@@ -1,0 +1,25 @@
+{
+  "name": "ledger-wallet-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "babel-preset-react-native-stage-0": "^1.0.1",
+    "jest-expo": "23.0.0",
+    "react-test-renderer": "16.0.0"
+  },
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "node node_modules/jest/bin/jest.js --watch"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "react": "16.0.0",
+    "react-native": "0.50.3",
+    "react-native-ble-plx": "^0.8.0",
+    "wallet-common": "github:LedgerHQ/ledger-wallet-common"
+  }
+}
