@@ -21,7 +21,7 @@ Mobile application for the Ledger Wallet
 
 ### `yarn install`
 
-### `start`
+### `yarn start`
 
 Runs your app in development mode.
 
@@ -31,7 +31,7 @@ Sometimes you may need to reset or clear the React Native packager's cache. To d
 yarn start -- --reset-cache
 ```
 
-#### `test`
+#### `yarn test`
 
 Runs the [jest](https://github.com/facebook/jest) test runner on your tests.
 
