@@ -5,12 +5,10 @@
 .gradle
 local.properties
 *.iml
-/android/
-/android/build
-/android/app/build
-/android/app/gradle/
-/android/app/gradlew
-/android/app/gradlew.bat
+build/
+gradle/
+gradlew
+gradlew.bat
 
 # expo
 .expo/
