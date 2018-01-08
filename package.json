@@ -1,0 +1,46 @@
+{
+  "name": "wallet-common",
+  "version": "0.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "bootstrap": "flow-typed install -s",
+    "build": "./scripts/build.sh",
+    "prepare": "npm run build",
+    "postinstall": "flow-typed install -s",
+    "watch": "babel src -d lib -w",
+    "prettier": "prettier --write 'src/**/*.js'",
+    "lint": "eslint src",
+    "flow": "flow src",
+    "test": "jest"
+  },
+  "dependencies": {
+    "babel-jest": "^22.0.4",
+    "fbjs": "^0.8.16",
+    "invariant": "^2.2.2",
+    "lodash": "^4.17.4",
+    "normalizr-gre": "^3.2.4",
+    "prop-types": "^15.5.10",
+    "query-string": "^5.0.0",
+    "react": "^16.0.0",
+    "react-redux": "^5.0.5",
+    "react-test-renderer": "^16.2.0",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.2",
+    "babel-preset-react-native": "^4.0.0",
+    "eslint": "^4.11.0",
+    "eslint-config-prettier": "^2.7.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-react": "^7.4.0",
+    "flow-bin": "^0.59.0",
+    "flow-copy-source": "^1.2.1",
+    "flow-typed": "^2.2.3",
+    "jest": "^21.2.1",
+    "prettier": "^1.8.2"
+  }
+}
