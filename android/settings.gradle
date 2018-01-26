@@ -1,4 +1,19 @@
 rootProject.name = 'ledgerwalletmobile'
+include ':react-native-camera'
+project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
+
+include ':react-native-hid'
+project(':react-native-hid').projectDir = new File(rootProject.projectDir, '../node_modules/@ledgerhq/react-native-hid/android')
+
+include ':react-native-blur'
+project(':react-native-blur').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-blur/android')
+
+include ':react-native-svg'
+project(':react-native-svg').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-svg/android')
+
+include ':react-native-config'
+project(':react-native-config').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-config/android')
+
 include ':react-native-ble-plx'
 project(':react-native-ble-plx').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-ble-plx/android')
 

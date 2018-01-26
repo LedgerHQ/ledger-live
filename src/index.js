@@ -1,21 +1,11 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+//@flow
+import "./polyfill";
+import React, { Component } from "react";
+import { NativeModules } from "react-native";
+import App from "./App";
 
-export default class App extends React.Component {
+export default class Root extends Component<{}> {
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>LEDGER WALLET</Text>
-      </View>
-    );
+    return <App />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});

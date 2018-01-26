@@ -3,6 +3,11 @@ package com.ledgerwalletmobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.lwansbrough.RCTCamera.RCTCameraPackage;
+import com.cmcewen.blurview.BlurViewPackage;
+import com.horcrux.svg.SvgPackage;
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
+import com.ledgerwallet.hid.ReactHIDPackage;
 import com.polidea.reactnativeble.BlePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -23,8 +28,13 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new BlePackage()
+              new MainReactPackage(),
+              new RCTCameraPackage(),
+              new ReactHIDPackage(),
+              new BlurViewPackage(),
+              new SvgPackage(),
+              new ReactNativeConfigPackage(),
+              new BlePackage()
       );
     }
 

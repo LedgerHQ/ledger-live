@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
 
@@ -94,13 +95,15 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.ledgerwalletmobile"
         minSdkVersion 18
-        targetSdkVersion 22
+        targetSdkVersion 25
+        renderscriptTargetApi 20
+        renderscriptSupportModeEnabled true
         versionCode 1
         versionName "1.0"
         ndk {
@@ -137,9 +140,19 @@ android {
 }
 
 dependencies {
+    compile (project(':react-native-camera')) {
+        exclude group: "com.android.support"
+    }
+    compile ('com.android.support:exifinterface:26.0.1') {
+        force = true;
+    }
+    compile project(':react-native-hid')
+    compile project(':react-native-blur')
+    compile project(':react-native-svg')
+    compile project(':react-native-config')
     compile project(':react-native-ble-plx')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:25.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
 }
 
