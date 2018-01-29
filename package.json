@@ -3,15 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "rnpm": {
-    "assets": [
-      "./assets/fonts/"
-    ]
+    "assets": ["./assets/fonts/"]
   },
   "devDependencies": {
     "babel-preset-react-native-stage-0": "^1.0.1",
-    "jest-expo": "23.0.0",
+    "jest-expo": "^25.0.0",
     "prettier": "^1.10.2",
-    "react-test-renderer": "16.0.0"
+    "react-test-renderer": "16.2.0"
   },
   "scripts": {
     "start": "react-native start",
@@ -23,23 +21,23 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@ledgerhq/common": "^2.0.0",
     "@ledgerhq/hw-app-btc": "^2.0.0",
     "@ledgerhq/hw-transport": "^2.0.0",
-    "@ledgerhq/hw-transport-http": "^2.0.2",
+    "@ledgerhq/hw-transport-http": "^2.0.0",
     "@ledgerhq/react-native-hid": "^2.0.0",
     "@ledgerhq/react-native-hw-transport-ble": "^2.0.0",
-    "buffer": "^5.0.8",
-    "invariant": "^2.2.2",
-    "react": "16.0.0",
-    "react-native": "0.50.3",
-    "react-native-ble-plx": "^0.8.0",
-    "react-native-blur": "^3.2.2",
-    "react-native-camera": "^0.13.0",
-    "react-native-config": "^0.11.5",
-    "react-native-qrcode-svg": "^5.0.6",
-    "react-native-svg": "^6.0.1-rc.1",
-    "react-navigation": "^1.0.0-beta.26",
-    "rxjs": "^5.5.6",
-    "wallet-common": "github:LedgerHQ/ledger-wallet-common"
+    "buffer": "5.0.8",
+    "invariant": "2.2.2",
+    "react": "16.2.0",
+    "react-native": "0.52.2",
+    "react-native-ble-plx": "0.8.0",
+    "react-native-blur": "3.2.2",
+    "react-native-camera": "0.13.0",
+    "react-native-config": "0.11.5",
+    "react-native-qrcode-svg": "5.0.6",
+    "react-native-svg": "6.0.1-rc.3",
+    "react-navigation": "1.0.0-beta.27",
+    "rxjs": "5.5.6"
   }
 }
