@@ -13,9 +13,11 @@ import HeaderRightClose from "../components/HeaderRightClose";
 import BlueButton from "../components/BlueButton";
 
 export default class SendFundsSelectAccount extends Component<*> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = ({ screenProps }: *) => ({
     title: "Select account",
-    headerRight: <HeaderRightClose navigation={navigation} />
+    headerRight: (
+      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
+    )
   });
   confirmAccount = () => {
     const { navigation } = this.props;
