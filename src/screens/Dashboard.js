@@ -135,15 +135,11 @@ export default class Dashboard extends Component<*, *> {
     return (
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.headerText}>Good morning, Khlalil!</Text>
+          <Text style={styles.headerText}>Good morning, Khalil!</Text>
           <Text style={styles.headerTextSubtitle}>
             Here's a summary of your accounts
           </Text>
         </View>
-        <Image
-          source={require("../images/update.png")}
-          style={{ width: 30, height: 30 }}
-        />
       </View>
     );
   };

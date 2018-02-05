@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { StyleSheet, View, Image, StatusBar } from "react-native";
+import { StyleSheet, View, Image, StatusBar, Linking } from "react-native";
 import { StackNavigator, TabNavigator, TabBarBottom } from "react-navigation";
 import colors from "../colors";
 import Dashboard from "../screens/Dashboard";
@@ -127,9 +127,15 @@ class Main extends Component<*> {
 const RootNavigator = StackNavigator(
   {
     Main: { screen: Main },
-    ReceiveFunds: { screen: ReceiveFunds },
+    ReceiveFunds: {
+      screen: ReceiveFunds,
+      path: "receive"
+    },
     // TODO SendFunds. maybe should put in a sub level StackNavigator!!
-    SendFundsSelectAccount: { screen: SendFundsSelectAccount },
+    SendFundsSelectAccount: {
+      path: "send",
+      screen: SendFundsSelectAccount
+    },
     SendFundsScanAddress: { screen: SendFundsScanAddress },
     SendFundsChoseAmount: { screen: SendFundsChoseAmount },
     SendFundsChoseFee: { screen: SendFundsChoseFee },
