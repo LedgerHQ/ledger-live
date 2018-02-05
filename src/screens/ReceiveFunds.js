@@ -4,6 +4,7 @@ import {
   View,
   ScrollView,
   Text,
+  Share,
   StyleSheet,
   Image,
   ActivityIndicator,
@@ -25,7 +26,9 @@ export default class ReceiveFunds extends Component<*, *> {
   state = {
     qrCodeModalOpened: false,
     address: null,
-    error: null
+    error: null,
+    amount: null,
+    account: 0
   };
   viewHandle: ?*;
   onRef = (ref: *) => {
@@ -41,6 +44,7 @@ export default class ReceiveFunds extends Component<*, *> {
   sub: *;
 
   componentWillMount() {
+    // TODO use navigator state to get the potential amount / account .etc..
     this.sub = findFirstTransport().subscribe(
       this.onTransport,
       this.onTransportError
@@ -71,6 +75,17 @@ export default class ReceiveFunds extends Component<*, *> {
 
   onTransportError = (error: *) => {
     this.setState({ error });
+  };
+
+  onShare = () => {
+    const { address, amount, account } = this.state;
+    if (!address) return;
+    const currencySymbol = "BTC";
+    const link = "bitcoin:" + address; // TODO needs formatter
+    Share.share({
+      title: "Send me " + (amount ? amount + " " : "") + currencySymbol,
+      message: link
+    });
   };
 
   render() {
@@ -154,33 +169,19 @@ export default class ReceiveFunds extends Component<*, *> {
             </View>
 
             <View style={{ flexDirection: "row" }}>
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  margin: 10,
-                  backgroundColor: "white",
-                  borderRadius: 8
-                }}
-              />
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  margin: 10,
-                  backgroundColor: "white",
-                  borderRadius: 8
-                }}
-              />
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  margin: 10,
-                  backgroundColor: "white",
-                  borderRadius: 8
-                }}
-              />
+              <TouchableOpacity onPress={this.onShare}>
+                <View
+                  style={{
+                    width: 80,
+                    height: 40,
+                    margin: 10,
+                    backgroundColor: "white",
+                    borderRadius: 8
+                  }}
+                >
+                  <Text>SHARE</Text>
+                </View>
+              </TouchableOpacity>
             </View>
 
             {qrCodeModalOpened ? (
