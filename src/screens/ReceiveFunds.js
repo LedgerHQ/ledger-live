@@ -44,7 +44,16 @@ export default class ReceiveFunds extends Component<*, *> {
   sub: *;
 
   componentWillMount() {
-    // TODO use navigator state to get the potential amount / account .etc..
+    const { params } = this.props.navigation.state;
+    const account = params.currency /* HACK */; // TODO we need to find a account that matches params.currency
+    let amount = null;
+    if (params.amount) {
+      let amount = parseFloat(params.amount);
+      if (isNaN(amount) || !isFinite(amount) || amount <= 0) {
+        amount = null;
+      }
+    }
+    this.setState({ account, amount });
     this.sub = findFirstTransport().subscribe(
       this.onTransport,
       this.onTransportError
@@ -89,7 +98,7 @@ export default class ReceiveFunds extends Component<*, *> {
   };
 
   render() {
-    const { qrCodeModalOpened, address, error } = this.state;
+    const { qrCodeModalOpened, address, error, amount, account } = this.state;
     return (
       <ScrollView
         style={styles.root}
@@ -108,7 +117,9 @@ export default class ReceiveFunds extends Component<*, *> {
             backgroundColor: "white",
             marginBottom: 10
           }}
-        />
+        >
+          <Text>{account}</Text>
+        </View>
 
         <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
           Request amount (optional)
@@ -129,7 +140,9 @@ export default class ReceiveFunds extends Component<*, *> {
               height: 50,
               backgroundColor: "white"
             }}
-          />
+          >
+            <Text>{amount}</Text>
+          </View>
           <View
             style={{
               width: 120,

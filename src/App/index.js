@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { StyleSheet, View, Image, StatusBar } from "react-native";
+import { StyleSheet, View, Image, StatusBar, Linking } from "react-native";
 import { StackNavigator, TabNavigator, TabBarBottom } from "react-navigation";
 import colors from "../colors";
 import Dashboard from "../screens/Dashboard";
@@ -155,8 +155,14 @@ class SendFunds extends Component<*> {
 const RootNavigator = StackNavigator(
   {
     Main: { screen: Main },
-    ReceiveFunds: { screen: ReceiveFunds },
-    SendFunds: { screen: SendFunds },
+    ReceiveFunds: {
+      path: "receive",
+      screen: ReceiveFunds
+    },
+    SendFunds: {
+      path: "send",
+      screen: SendFunds
+    },
     AddAccount: { screen: AddAccount },
     AccountSettings: { screen: AccountSettings }
   },
