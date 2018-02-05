@@ -23,7 +23,25 @@ export default class SendFundsScanAddress extends Component<*, *> {
     headerRight: <HeaderRightText>2 of 5</HeaderRightText>
   };
   state = {
-    address: null
+    address: null,
+    focused: false
+  };
+  willFocusSub: *;
+  didBlurSub: *;
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.willFocusSub = navigation.addListener("willFocus", this.willFocus);
+    this.didBlurSub = navigation.addListener("didBlur", this.didBlur);
+  }
+  componentWillUnmount() {
+    this.didBlurSub.remove();
+    this.willFocusSub.remove();
+  }
+  willFocus = () => {
+    this.setState({ focused: true });
+  };
+  didBlur = () => {
+    this.setState({ focused: false });
   };
   onRequestClose = () => {
     this.setState({ address: null });
@@ -38,21 +56,24 @@ export default class SendFundsScanAddress extends Component<*, *> {
     });
   };
 
-  barCodeRead = data => {
+  barCodeRead = (data: *) => {
     const address = data.data;
-
     this.setState({ address });
   };
 
   render() {
-    const { address } = this.state;
+    const { address, focused } = this.state;
     return (
       <View style={styles.root}>
-        <Camera
-          style={styles.camera}
-          aspect={Camera.constants.Aspect.fill}
-          onBarCodeRead={this.barCodeRead}
-        />
+        {focused ? (
+          <Camera
+            style={styles.camera}
+            aspect={Camera.constants.Aspect.fill}
+            onBarCodeRead={this.barCodeRead}
+          />
+        ) : (
+          <View style={styles.camera} />
+        )}
         <View style={{ padding: 40 }}>
           <BlueButton
             title="fakely picking an address"
@@ -99,6 +120,7 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+    backgroundColor: "black",
     justifyContent: "flex-end",
     alignItems: "center",
     alignSelf: "stretch"
