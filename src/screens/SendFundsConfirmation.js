@@ -1,5 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
+import { NavigationActions } from "react-navigation";
 import { View, Text, StyleSheet } from "react-native";
 import colors from "../colors";
 import WhiteButton from "../components/WhiteButton";
@@ -10,7 +11,11 @@ export default class SendFundsConfirmation extends Component<*> {
   };
   onDone = () => {
     const { navigation } = this.props;
-    navigation.goBack();
+    const action = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: "Main" })]
+    });
+    navigation.dispatch(action);
   };
   render() {
     return (

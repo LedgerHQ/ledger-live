@@ -10,7 +10,7 @@ import MenuChoice from "../components/MenuChoice";
 class CreateModal extends Component<*> {
   onSendFunds = () => {
     const { navigation, onRequestClose } = this.props;
-    navigation.navigate("SendFundsSelectAccount", {
+    navigation.navigate("SendFunds", {
       goBackKey: navigation.state.key
     });
     onRequestClose();

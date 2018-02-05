@@ -124,24 +124,45 @@ class Main extends Component<*> {
   }
 }
 
-const RootNavigator = StackNavigator(
+const SendFundsStack = StackNavigator(
   {
-    Main: { screen: Main },
-    ReceiveFunds: {
-      screen: ReceiveFunds,
-      path: "receive"
-    },
-    // TODO SendFunds. maybe should put in a sub level StackNavigator!!
-    SendFundsSelectAccount: {
-      path: "send",
-      screen: SendFundsSelectAccount
-    },
+    SendFundsSelectAccount: { screen: SendFundsSelectAccount },
     SendFundsScanAddress: { screen: SendFundsScanAddress },
     SendFundsChoseAmount: { screen: SendFundsChoseAmount },
     SendFundsChoseFee: { screen: SendFundsChoseFee },
     SendFundsReview: { screen: SendFundsReview },
     SendFundsPlugDevice: { screen: SendFundsPlugDevice },
-    SendFundsConfirmation: { screen: SendFundsConfirmation },
+    SendFundsConfirmation: { screen: SendFundsConfirmation }
+  },
+  {
+    navigationOptions: stackNavigatiorDefaultNavigationOptions,
+    cardStyle: styles.card
+  }
+);
+class SendFunds extends Component<*> {
+  static navigationOptions = {
+    header: null
+  };
+  render() {
+    return (
+      <SendFundsStack
+        screenProps={{ topLevelNavigation: this.props.navigation }}
+      />
+    );
+  }
+}
+
+const RootNavigator = StackNavigator(
+  {
+    Main: { screen: Main },
+    ReceiveFunds: {
+      path: "receive",
+      screen: ReceiveFunds
+    },
+    SendFunds: {
+      path: "send",
+      screen: SendFunds
+    },
     AddAccount: { screen: AddAccount },
     AccountSettings: { screen: AccountSettings }
   },
