@@ -31,3 +31,6 @@ yarn-error.log*
 
 # xcode
 *.xcuserstate
+
+# VS Code
+*.vscode

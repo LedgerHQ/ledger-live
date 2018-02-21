@@ -13,6 +13,7 @@ import { TabNavigator, TabBarTop } from "react-navigation";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import { getTransactions } from "../API";
+import LText from "../components/LText";
 
 const transactionsPromise = getTransactions(
   "1XPTgDRhN8RFnzniWCddobD9iKZatrvH4"
@@ -22,66 +23,22 @@ class ListHeaderComponent extends Component<*> {
   render() {
     return (
       <View style={styles.carouselCountainer}>
-        <Text
-          style={{
-            color: "white",
-            fontFamily: "Open Sans",
-            fontWeight: "400",
-            fontSize: 24
-          }}
-        >
-          Open Sans Regular
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontFamily: "Open Sans",
-            fontWeight: "600",
-            fontSize: 24
-          }}
-        >
-          Open Sans SemiBold
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontFamily: "Open Sans",
-            fontWeight: "700",
-            fontSize: 24
-          }}
-        >
-          Open Sans Bold
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontFamily: "Museo Sans",
-            fontWeight: "400",
-            fontSize: 24
-          }}
-        >
-          Museo Sans Regular
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontFamily: "Museo Sans",
-            fontWeight: "600",
-            fontSize: 24
-          }}
-        >
-          Museo Sans SemiBold
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontFamily: "Museo Sans",
-            fontWeight: "700",
-            fontSize: 24
-          }}
-        >
-          Museo Sans Bold
-        </Text>
+        <LText style={styles.testText}>Aa Ledger (default)</LText>
+        <LText style={styles.testText} semiBold>
+          Aa Ledger (default semiBold)
+        </LText>
+        <LText style={styles.testText} bold>
+          Aa Ledger (default bold)
+        </LText>
+        <LText style={styles.testText} secondary>
+          Aa Ledger (secondary)
+        </LText>
+        <LText style={styles.testText} secondary semiBold>
+          Aa Ledger (secondary semiBold)
+        </LText>
+        <LText style={styles.testText} secondary bold>
+          Aa Ledger (secondary bold)
+        </LText>
       </View>
     );
   }
@@ -224,5 +181,9 @@ const styles = StyleSheet.create({
   headerText: {
     color: "white",
     fontSize: 16
+  },
+  testText: {
+    color: "white",
+    fontSize: 18
   }
 });
