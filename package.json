@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ledgerhq/common": "^2.0.0",
+    "@ledgerhq/currencies": "^4.2.0",
     "@ledgerhq/hw-app-btc": "^2.0.0",
     "@ledgerhq/hw-transport": "^2.0.0",
     "@ledgerhq/hw-transport-http": "^2.0.0",
@@ -29,6 +30,7 @@
     "@ledgerhq/react-native-hw-transport-ble": "^2.0.0",
     "buffer": "5.0.8",
     "invariant": "2.2.2",
+    "moment": "^2.20.1",
     "react": "16.2.0",
     "react-native": "0.52.2",
     "react-native-ble-plx": "0.8.0",
@@ -38,6 +40,7 @@
     "react-native-qrcode-svg": "5.0.6",
     "react-native-svg": "6.0.1-rc.3",
     "react-navigation": "1.0.0-beta.29",
-    "rxjs": "5.5.6"
+    "rxjs": "5.5.6",
+    "victory-native": "^0.17.1"
   }
 }

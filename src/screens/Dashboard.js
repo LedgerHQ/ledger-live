@@ -14,31 +14,41 @@ import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import { getTransactions } from "../API";
 import LText from "../components/LText";
+import BalanceChart from "../components/BalanceChart";
+import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
 
 const transactionsPromise = getTransactions(
   "1XPTgDRhN8RFnzniWCddobD9iKZatrvH4"
 );
 
+const data = [
+  { date: new Date(2018, 2, 10), value: 3000000 },
+  { date: new Date(2018, 2, 11), value: 3300000 },
+  { date: new Date(2018, 2, 12), value: 1500000 },
+  { date: new Date(2018, 2, 13), value: 3000000 },
+  { date: new Date(2018, 2, 14), value: 1800000 },
+  { date: new Date(2018, 2, 15), value: 2200000 },
+  { date: new Date(2018, 2, 16), value: 1600000 },
+  { date: new Date(2018, 2, 17), value: 6000000 }
+];
 class ListHeaderComponent extends Component<*> {
   render() {
     return (
       <View style={styles.carouselCountainer}>
-        <LText style={styles.testText}>Aa Ledger (default)</LText>
-        <LText style={styles.testText} semiBold>
-          Aa Ledger (default semiBold)
-        </LText>
-        <LText style={styles.testText} bold>
-          Aa Ledger (default bold)
-        </LText>
-        <LText style={styles.testText} secondary>
-          Aa Ledger (secondary)
-        </LText>
-        <LText style={styles.testText} secondary semiBold>
-          Aa Ledger (secondary semiBold)
-        </LText>
-        <LText style={styles.testText} secondary bold>
-          Aa Ledger (secondary bold)
-        </LText>
+        <View style={{ padding: 10, flexDirection: "row" }}>
+          <LText style={styles.balanceText}>Total balance: </LText>
+          <LText bold style={styles.balanceText}>
+            {formatCurrencyUnit(getFiatUnit("USD"), 4728252, {
+              showCode: true
+            })}
+          </LText>
+        </View>
+        <BalanceChart
+          width={400}
+          height={250}
+          data={data}
+          unit={getFiatUnit("USD")}
+        />
       </View>
     );
   }
@@ -79,23 +89,23 @@ export default class Dashboard extends Component<*, *> {
   keyExtractor = (item: string) => item;
 
   renderItem = ({ item }: *) => (
-    <Text
+    <LText
       numberOfLines={1}
       ellipsizeMode="middle"
       style={{ paddingVertical: 12, paddingHorizontal: 20 }}
     >
       {item}
-    </Text>
+    </LText>
   );
 
   renderHeader = () => {
     return (
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.headerText}>Good morning, Khalil!</Text>
-          <Text style={styles.headerTextSubtitle}>
+          <LText style={styles.headerText}>Good morning, Khalil!</LText>
+          <LText style={styles.headerTextSubtitle}>
             Here's a summary of your accounts
-          </Text>
+          </LText>
         </View>
       </View>
     );
@@ -119,7 +129,6 @@ export default class Dashboard extends Component<*, *> {
           contentContainerStyle={styles.flatListContent}
           refreshControl={
             <RefreshControl
-              tintColor="white"
               refreshing={refreshing}
               onRefresh={this.onRefresh}
             />
@@ -146,16 +155,16 @@ export default class Dashboard extends Component<*, *> {
 
 const styles = StyleSheet.create({
   carouselCountainer: {
-    padding: 40,
+    padding: 0,
     height: 300,
-    backgroundColor: colors.blue
+    backgroundColor: "white"
   },
   topBackground: {
     position: "absolute",
     top: 0,
     width: 600,
     height: 300,
-    backgroundColor: colors.blue
+    backgroundColor: "white"
   },
   flatList: {
     flex: 1
@@ -182,8 +191,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16
   },
-  testText: {
-    color: "white",
+  balanceText: {
     fontSize: 18
   }
 });
