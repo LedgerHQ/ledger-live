@@ -12,7 +12,10 @@ import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import { genData, genDataNext } from "../mock/balance";
+import { listCurrencies, formatCurrencyUnit } from "@ledgerhq/currencies";
 import LText from "../components/LText";
+
+const currencies = listCurrencies();
 
 const fakeAccounts = Array(20)
   .fill(null)
@@ -22,6 +25,8 @@ const fakeAccounts = Array(20)
       Math.floor(3 * Math.random())
     ],
     data: genData(8, 86400000),
+    currency: currencies[Math.floor(currencies.length * Math.random())],
+    amount: Math.floor(10000000000 * Math.random() * Math.random()),
     name:
       String.fromCharCode(Math.floor(65 + 26 * Math.random())) +
       Array(Math.floor(4 + 30 * Math.random()))
@@ -119,13 +124,23 @@ export default class Accounts extends Component<*, *> {
                     <LText
                       numberOfLines={1}
                       style={{
-                        marginLeft: 10,
+                        marginHorizontal: 10,
                         fontSize: 16,
                         color: a.color,
                         flex: 1
                       }}
                     >
                       {a.name}
+                    </LText>
+                    <LText
+                      bold
+                      style={{
+                        fontSize: 16
+                      }}
+                    >
+                      {formatCurrencyUnit(a.currency.units[0], a.amount, {
+                        showCode: true
+                      })}
                     </LText>
                   </View>
                 ))}
@@ -158,11 +173,22 @@ export default class Accounts extends Component<*, *> {
                           style={{
                             alignSelf: "flex-start",
                             fontSize: 16,
-                            color: a.color,
-                            flex: 1
+                            color: a.color
                           }}
                         >
                           {a.name}
+                        </LText>
+                        <LText
+                          bold
+                          style={{
+                            alignSelf: "flex-start",
+                            fontSize: 16,
+                            marginVertical: 10
+                          }}
+                        >
+                          {formatCurrencyUnit(a.currency.units[0], a.amount, {
+                            showCode: true
+                          })}
                         </LText>
                         <View style={{ flex: 1 }} />
                         <BalanceChartMiniature
