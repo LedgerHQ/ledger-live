@@ -8,15 +8,18 @@ import {
   VictoryCursorContainer,
   Point
 } from "victory-native";
-import { G, Line, Defs, LinearGradient, Stop } from "react-native-svg";
 import colors from "../colors";
 import { formatCurrencyUnit } from "@ledgerhq/currencies";
 import getFontStyle from "./LText/getFontStyle";
+import { Defs } from "react-native-svg";
+import BalanceChartGradient from "./BalanceChartGradient";
 
 export default class BalanceChart extends PureComponent {
+  static defaultProps = {
+    color: colors.blue
+  };
   render() {
-    const { width, height, unit, data, granularity } = this.props;
-    const Gradient = ({ index }) => <Defs key={index}>{blueGradient}</Defs>;
+    const { width, height, unit, data, color } = this.props;
     return (
       <VictoryChart
         width={width}
@@ -30,10 +33,7 @@ export default class BalanceChart extends PureComponent {
         }
       >
         <Defs>
-          <LinearGradient id="bgFillGradient" x1="0%" y="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={colors.blue} stopOpacity={0.5} />
-            <Stop offset="90%" stopColor={colors.blue} stopOpacity={0} />
-          </LinearGradient>
+          <BalanceChartGradient id="bgFillGradient" color={color} />
         </Defs>
         <VictoryArea
           x="date"
@@ -46,7 +46,7 @@ export default class BalanceChart extends PureComponent {
           style={{
             data: {
               fill: "url(#bgFillGradient)",
-              stroke: colors.blue,
+              stroke: color,
               strokeWidth: 2
             }
           }}

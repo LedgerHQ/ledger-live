@@ -16,23 +16,32 @@ import { getTransactions } from "../API";
 import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
 import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
+import { genData, genDataNext } from "../mock/balance";
 
 const transactionsPromise = getTransactions(
   "1XPTgDRhN8RFnzniWCddobD9iKZatrvH4"
 );
 
-const data = [
-  { date: new Date(2018, 2, 10), value: 3000000 },
-  { date: new Date(2018, 2, 11), value: 3300000 },
-  { date: new Date(2018, 2, 12), value: 1500000 },
-  { date: new Date(2018, 2, 13), value: 3000000 },
-  { date: new Date(2018, 2, 14), value: 1800000 },
-  { date: new Date(2018, 2, 15), value: 2200000 },
-  { date: new Date(2018, 2, 16), value: 1600000 },
-  { date: new Date(2018, 2, 17), value: 6000000 }
-];
-class ListHeaderComponent extends Component<*> {
+class ListHeaderComponent extends Component<*, *> {
+  state = {
+    data: genData(8, 86400000)
+  };
+  interval: *;
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.setState(({ data }) => ({
+        data:
+          data.length > 100
+            ? genData(8, 86400000)
+            : data.concat(genDataNext(data, 86400000))
+      }));
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   render() {
+    const { data } = this.state;
     return (
       <View style={styles.carouselCountainer}>
         <View style={{ padding: 10, flexDirection: "row" }}>
@@ -81,7 +90,6 @@ export default class Dashboard extends Component<*, *> {
     new Promise(s => setTimeout(s, 500 + 500 * Math.random()))
       .then(() => transactionsPromise)
       .then(transactions => {
-        console.log(transactions);
         this.setState({ transactions, refreshing: false });
       });
   };
