@@ -9,7 +9,7 @@ type Res = {
   fontWeight: string
 };
 
-export default ({ bold, semiBold, secondary }: Opts): Res => {
+export default ({ bold, semiBold, secondary }: Opts = {}): Res => {
   const family = secondary ? "MuseoSans" : "OpenSans";
   let weight;
   if (semiBold) {
