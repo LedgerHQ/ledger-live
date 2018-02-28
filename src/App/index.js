@@ -74,9 +74,10 @@ class AddAccount extends Component<*> {
     header: null
   };
   render() {
+    const { screenProps, navigation } = this.props;
     return (
       <AddAccountStack
-        screenProps={{ parentNavigation: this.props.navigation }}
+        screenProps={{ ...screenProps, parentNavigation: navigation }}
       />
     );
   }
@@ -116,9 +117,10 @@ class Main extends Component<*> {
     header: null
   };
   render() {
+    const { screenProps, navigation } = this.props;
     return (
       <MainNavigator
-        screenProps={{ topLevelNavigation: this.props.navigation }}
+        screenProps={{ ...screenProps, topLevelNavigation: navigation }}
       />
     );
   }
@@ -144,9 +146,10 @@ class SendFunds extends Component<*> {
     header: null
   };
   render() {
+    const { navigation, screenProps } = this.props;
     return (
       <SendFundsStack
-        screenProps={{ topLevelNavigation: this.props.navigation }}
+        screenProps={{ ...screenProps, topLevelNavigation: navigation }}
       />
     );
   }
@@ -175,10 +178,11 @@ const RootNavigator = StackNavigator(
 
 export default class App extends Component<*> {
   render() {
+    const { t } = this.props;
     return (
       <View style={styles.root}>
         <StatusBar backgroundColor={colors.blue} />
-        <RootNavigator />
+        <RootNavigator screenProps={{ t }} />
       </View>
     );
   }

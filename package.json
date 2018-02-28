@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "rnpm": {
-    "assets": ["./assets/fonts/"]
+    "assets": [
+      "./assets/fonts/"
+    ]
   },
   "devDependencies": {
     "babel-preset-react-native-stage-0": "^1.0.1",
-    "jest-expo": "^25.1.0",
+    "jest": "^22.4.2",
+    "jest-react-native": "^18.0.0",
     "prettier": "^1.11.0",
     "react-test-renderer": "16.2.0"
   },
@@ -16,10 +19,14 @@
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "test": "node node_modules/jest/bin/jest.js --watch"
+    "test": "node node_modules/jest/bin/jest.js --watch",
+    "sync-locales": "./scripts/sync-locales.sh"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "react-native",
+    "transformIgnorePatterns": [
+      "node_modules/(?!victory-native)/"
+    ]
   },
   "dependencies": {
     "@ledgerhq/common": "^4.2.0",
@@ -30,20 +37,22 @@
     "@ledgerhq/react-native-hid": "^4.2.0",
     "@ledgerhq/react-native-hw-transport-ble": "^4.2.0",
     "buffer": "5.1.0",
+    "i18next": "^10.5.0",
     "invariant": "2.2.3",
     "moment": "^2.20.1",
     "react": "16.2.0",
+    "react-i18next": "^7.4.0",
     "react-native": "0.53.3",
     "react-native-ble-plx": "0.8.0",
     "react-native-blur": "3.2.2",
     "react-native-camera": "1.0.1",
     "react-native-config": "0.11.5",
+    "react-native-locale": "^0.0.18",
     "react-native-qrcode-svg": "5.0.6",
     "react-native-svg": "6.2.2",
     "react-navigation": "1.2.1",
     "rxjs": "5.5.6",
-    "stream":
-      "github:substack/stream-browserify#cc923068f618204f80769627ea126a61c55c7cee",
+    "stream": "github:substack/stream-browserify#cc923068f618204f80769627ea126a61c55c7cee",
     "victory-native": "^0.17.1"
   }
 }

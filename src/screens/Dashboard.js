@@ -107,13 +107,14 @@ export default class Dashboard extends Component<*, *> {
   );
 
   renderHeader = () => {
+    const { screenProps: { t } } = this.props;
     return (
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <LText style={styles.headerText}>Good morning, Khalil!</LText>
-          <LText style={styles.headerTextSubtitle}>
-            Here's a summary of your accounts
+          <LText style={styles.headerText}>
+            {t("home_title", { name: "Khalil" })}
           </LText>
+          <LText style={styles.headerTextSubtitle}>{t("home_subtitle")}</LText>
         </View>
       </View>
     );

@@ -140,6 +140,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-locale')
     compile project(':react-native-hid')
     compile (project(':react-native-camera')) {
         exclude group: "com.android.support"
