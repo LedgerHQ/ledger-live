@@ -2,7 +2,6 @@
 
 Mobile application for the Ledger Wallet
 
----
 
 ## Pre-requisite
 
