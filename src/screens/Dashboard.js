@@ -26,20 +26,6 @@ class ListHeaderComponent extends Component<*, *> {
   state = {
     data: genData(8, 86400000)
   };
-  interval: *;
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.setState(({ data }) => ({
-        data:
-          data.length > 100
-            ? genData(8, 86400000)
-            : data.concat(genDataNext(data, 86400000))
-      }));
-    }, 1000);
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
   render() {
     const { data } = this.state;
     return (
@@ -78,7 +64,7 @@ export default class Dashboard extends Component<*, *> {
     refreshing: false
   };
 
-  componentWillMount() {
+  componentDidMount() {
     transactionsPromise.then(transactions => {
       console.log(transactions);
       this.setState({ transactions });
