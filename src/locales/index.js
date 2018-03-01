@@ -1,2 +1,2 @@
-exports.en = { common: require("./en.json") };
-exports.fr = { common: require("./fr.json") };
+exports.en = { common: require("./en/common.json"), };
+exports.fr = { common: require("./fr/common.json"), };

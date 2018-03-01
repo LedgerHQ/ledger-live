@@ -1,9 +1,17 @@
 #!/bin/bash
 set -e
 
-lokalise --token $LOKALISE_TOKEN export $LOKALISE_PROJECT_ID --type json  --bundle_structure '%LANG_ISO%.json' --unzip_to src/locales/
 cd src/locales
-for f in *.json; do
-  id=${f%.*};
-  echo "exports.$id = { common: require(\"./$f\") };"
+echo "/* THIS FILE IS GENERATED, DO NOT EDIT */" > index.js
+for lang in *; do
+  if [ -d $lang ]; then
+    echo -n "exports.$lang = { ";
+    cd $lang
+    for f in *.json; do
+      name=${f%.*};
+      echo -n "$name: require(\"./$lang/$f\"), "
+    done
+    cd - > /dev/null
+    echo "};"
+  fi
 done 1> index.js
