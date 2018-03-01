@@ -26,20 +26,6 @@ class ListHeaderComponent extends Component<*, *> {
   state = {
     data: genData(8, 86400000)
   };
-  interval: *;
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.setState(({ data }) => ({
-        data:
-          data.length > 100
-            ? genData(8, 86400000)
-            : data.concat(genDataNext(data, 86400000))
-      }));
-    }, 1000);
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
   render() {
     const { data } = this.state;
     return (
@@ -78,7 +64,7 @@ export default class Dashboard extends Component<*, *> {
     refreshing: false
   };
 
-  componentWillMount() {
+  componentDidMount() {
     transactionsPromise.then(transactions => {
       console.log(transactions);
       this.setState({ transactions });
@@ -107,13 +93,14 @@ export default class Dashboard extends Component<*, *> {
   );
 
   renderHeader = () => {
+    const { screenProps: { t } } = this.props;
     return (
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <LText style={styles.headerText}>Good morning, Khalil!</LText>
-          <LText style={styles.headerTextSubtitle}>
-            Here's a summary of your accounts
+          <LText style={styles.headerText}>
+            {t("home_title", { name: "Khalil" })}
           </LText>
+          <LText style={styles.headerTextSubtitle}>{t("home_subtitle")}</LText>
         </View>
       </View>
     );

@@ -62,14 +62,14 @@
 	<false/>
 	<key>CFBundleURLTypes</key>
 	<array>
-	    <dict>
-	        <key>CFBundleURLName</key>
-	        <string>com.ledgerwallet</string>
-	        <key>CFBundleURLSchemes</key>
-	        <array>
-	            <string>ledgerhq</string>
-	        </array>
-	    </dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.ledgerwallet</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ledgerhq</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>

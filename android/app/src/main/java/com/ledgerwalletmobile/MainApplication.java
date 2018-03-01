@@ -3,6 +3,7 @@ package com.ledgerwalletmobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.fixd.rctlocale.RCTLocalePackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.ledgerwallet.hid.ReactHIDPackage;
 import com.cmcewen.blurview.BlurViewPackage;
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
               new MainReactPackage(),
+            new RCTLocalePackage(),
               new RNCameraPackage(),
               new ReactHIDPackage(),
               new BlurViewPackage(),

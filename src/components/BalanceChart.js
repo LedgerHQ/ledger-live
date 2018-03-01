@@ -39,10 +39,6 @@ export default class BalanceChart extends PureComponent {
           x="date"
           y="value"
           data={data}
-          animate={{
-            duration: 2000,
-            onLoad: { duration: 1000 }
-          }}
           style={{
             data: {
               fill: "url(#bgFillGradient)",
