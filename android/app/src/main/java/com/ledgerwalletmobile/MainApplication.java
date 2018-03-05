@@ -3,6 +3,7 @@ package com.ledgerwalletmobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.sentry.RNSentryPackage;
 import io.fixd.rctlocale.RCTLocalePackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.ledgerwallet.hid.ReactHIDPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
               new MainReactPackage(),
+            new RNSentryPackage(MainApplication.this),
             new RCTLocalePackage(),
               new RNCameraPackage(),
               new ReactHIDPackage(),
