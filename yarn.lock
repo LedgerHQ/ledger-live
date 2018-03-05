@@ -352,42 +352,44 @@
     redux "^3.7.2"
     redux-thunk "^2.2.0"
 
-"@ledgerhq/currencies@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.2.2.tgz#3fadbdff2b4f7adce9ba255a407bd3999aea3fdc"
+"@ledgerhq/currencies@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.3.0.tgz#d06d82030b374e72c237d0fb065d1fc175399c9e"
   dependencies:
+    lodash "^4.17.5"
+    numeral "^2.0.6"
     querystring "^0.2.0"
 
-"@ledgerhq/hw-app-btc@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.2.2.tgz#17be52803ce4fb639b62e9920ff450acebac789f"
+"@ledgerhq/hw-app-btc@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.3.0.tgz#15e2b01c5e8493c3de78b59386ec029719dda1dd"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.2.0"
+    "@ledgerhq/hw-transport" "^4.3.0"
     create-hash "^1.1.3"
 
-"@ledgerhq/hw-transport-http@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.2.0.tgz#f6799cc8683edb91a8c834d74eae14f701177a31"
+"@ledgerhq/hw-transport-http@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.3.0.tgz#50e1fa4e5145cb390c7a5bd577ec406991af9237"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.2.0"
+    "@ledgerhq/hw-transport" "^4.3.0"
 
-"@ledgerhq/hw-transport@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.2.0.tgz#ed0c30fc36beb0c9760fbdcb29ee4e0c61be37e8"
+"@ledgerhq/hw-transport@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.3.0.tgz#24e1ff819d8aad00a58ae10ed3ee5d60aad54d7c"
   dependencies:
     events "^1.1.1"
 
-"@ledgerhq/react-native-hid@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.2.0.tgz#82b40c1a618a403e4f1bf24a9b03c1a79d81a871"
+"@ledgerhq/react-native-hid@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.3.0.tgz#80e3ae9fb4b91ba0a92f38d4bc7ee0e7636a6b65"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.2.0"
+    "@ledgerhq/hw-transport" "^4.3.0"
 
-"@ledgerhq/react-native-hw-transport-ble@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-4.2.0.tgz#c43a956b9796cd88eb035b2a29c0a2f317189407"
+"@ledgerhq/react-native-hw-transport-ble@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-4.3.0.tgz#0d49c0c21d860e455330b8ce4e382887090b119b"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.2.0"
+    "@ledgerhq/hw-transport" "^4.3.0"
     invariant "^2.2.0"
 
 "@sentry/cli@^1.28.4":
@@ -3818,6 +3820,10 @@ npmlog@^4.0.2:
 number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
+
+numeral@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
 
 nwmatcher@^1.4.3:
   version "1.4.3"
