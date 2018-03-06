@@ -13,6 +13,7 @@ import { formatCurrencyUnit } from "@ledgerhq/currencies";
 import getFontStyle from "./LText/getFontStyle";
 import { Defs } from "react-native-svg";
 import BalanceChartGradient from "./BalanceChartGradient";
+import { formatShort } from "@ledgerhq/currencies";
 
 export default class BalanceChart extends PureComponent {
   static defaultProps = {
@@ -56,12 +57,7 @@ export default class BalanceChart extends PureComponent {
                 fontSize: 12,
                 ...getFontStyle()
               }}
-              text={
-                data =>
-                  "$" +
-                  data / 100000 +
-                  "k" /* FIXME part of the currency formatter */
-              }
+              text={data => formatShort(unit, data)}
             />
           }
           style={{

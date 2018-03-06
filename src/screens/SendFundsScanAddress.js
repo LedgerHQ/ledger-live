@@ -10,6 +10,7 @@ import {
   Modal
 } from "react-native";
 import Camera from "react-native-camera";
+import { decodeURIScheme } from "@ledgerhq/currencies";
 import colors from "../colors";
 import Menu from "../components/Menu";
 import MenuTitle from "../components/MenuTitle";
@@ -23,7 +24,7 @@ export default class SendFundsScanAddress extends Component<*, *> {
     headerRight: <HeaderRightText>2 of 5</HeaderRightText>
   };
   state = {
-    address: null,
+    decodedResult: null,
     focused: false
   };
   willFocusSub: *;
@@ -48,21 +49,31 @@ export default class SendFundsScanAddress extends Component<*, *> {
   };
   onConfirm = () => {
     const { navigation } = this.props;
-    const { address } = this.state;
-    this.setState({ address: null });
-    navigation.navigate("SendFundsChoseAmount", {
-      ...navigation.state.params,
-      address
-    });
+    const { decodedResult } = this.state;
+    if (!decodedResult) return;
+    const { address, amount } = decodedResult;
+    this.setState({ decodedResult: null });
+    if (amount) {
+      navigation.navigate("SendFundsChoseFee", {
+        ...navigation.state.params,
+        address,
+        amount
+      });
+    } else {
+      navigation.navigate("SendFundsChoseAmount", {
+        ...navigation.state.params,
+        address
+      });
+    }
   };
 
   barCodeRead = (data: *) => {
-    const address = data.data;
-    this.setState({ address });
+    const decodedResult = decodeURIScheme(data.data);
+    this.setState({ decodedResult });
   };
 
   render() {
-    const { address, focused } = this.state;
+    const { decodedResult, focused } = this.state;
     return (
       <View style={styles.root}>
         {focused ? (
@@ -83,13 +94,13 @@ export default class SendFundsScanAddress extends Component<*, *> {
           />
         </View>
 
-        {address ? (
+        {decodedResult ? (
           <Modal transparent onRequestClose={this.onRequestClose}>
             <Menu
               onRequestClose={this.onRequestClose}
               header={<MenuTitle>Bitcoin address</MenuTitle>}
             >
-              <Text style={styles.address}>{address}</Text>
+              <Text style={styles.address}>{decodedResult.address}</Text>
               <View style={styles.footer}>
                 <GreyButton
                   title="Scan QR Code"

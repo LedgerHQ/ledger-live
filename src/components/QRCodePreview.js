@@ -1,23 +1,37 @@
 /* @flow */
 import React, { Component } from "react";
+import invariant from "invariant";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import { encodeURIScheme } from "@ledgerhq/currencies";
+import type { Currency } from "@ledgerhq/currencies";
 import colors from "../colors";
 
 export default class QRCodePreview extends Component<{
   address: string,
-  size: number
+  size: number,
+  currency?: Currency,
+  amount?: number,
+  useURIScheme?: boolean
 }> {
   static defaultProps = {
-    size: 160
+    size: 200,
+    useURIScheme: false
   };
   render() {
-    const { address, size } = this.props;
+    const { useURIScheme, address, currency, amount, size } = this.props;
+    let value;
+    if (useURIScheme) {
+      invariant(currency, "when using URI scheme, currency is required");
+      value = encodeURIScheme({ address, currency, amount });
+    } else {
+      value = address;
+    }
     return (
       <View style={styles.root}>
         <QRCode
           size={size}
-          value={address}
+          value={value}
           logo={require("../images/qrledger.jpg")}
         />
       </View>

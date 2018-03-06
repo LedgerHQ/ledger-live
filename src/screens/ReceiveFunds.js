@@ -5,85 +5,97 @@ import {
   ScrollView,
   Text,
   Share,
+  Clipboard,
   StyleSheet,
   Image,
   ActivityIndicator,
   TouchableOpacity,
-  findNodeHandle
+  findNodeHandle,
+  TextInput
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import { getCurrencyByCoinType, getFiatUnit } from "@ledgerhq/currencies";
+import type { Unit } from "@ledgerhq/currencies";
 import colors from "../colors";
 import QRCodePreview from "../components/QRCodePreview";
 import QRCodeModal from "../modals/QRCodeAddress";
 import AppBtc from "@ledgerhq/hw-app-btc";
 import type Transport from "@ledgerhq/hw-transport";
 import findFirstTransport from "../hw/findFirstTransport";
+import CurrencyUnitInput from "../components/CurrencyUnitInput";
 
 export default class ReceiveFunds extends Component<*, *> {
   static navigationOptions = {
     title: "Receive Funds"
   };
   state = {
-    qrCodeModalOpened: false,
-    address: null,
-    error: null,
-    amount: null,
+    address: undefined,
+    currency: getCurrencyByCoinType(0),
+    countervalue: undefined,
+    error: undefined,
+    amount: 0,
     account: 0
   };
   viewHandle: ?*;
   onRef = (ref: *) => {
     this.viewHandle = findNodeHandle(ref);
   };
-  openQRCodeModal = () => {
-    this.setState({ qrCodeModalOpened: true });
-  };
-  closeQRCodeModal = () => {
-    this.setState({ qrCodeModalOpened: false });
-  };
 
-  sub: *;
+  subs = [];
 
-  componentWillMount() {
+  componentDidMount() {
     const { params } = this.props.navigation.state;
-    const account = params.currency /* HACK */; // TODO we need to find a account that matches params.currency
-    let amount = null;
+    let amount = 0;
     if (params.amount) {
       let amount = parseFloat(params.amount);
       if (isNaN(amount) || !isFinite(amount) || amount <= 0) {
-        amount = null;
+        amount = 0;
       }
     }
-    this.setState({ account, amount });
-    this.sub = findFirstTransport().subscribe(
-      this.onTransport,
-      this.onTransportError
-    );
+    this.setState({ amount });
+    this.syncCountervalue();
+    this.syncPublicAddress("44'/0'/0'/0");
   }
 
   componentWillUnmount() {
-    this.stop();
+    for (let sub of this.subs) {
+      sub.unsubscribe();
+    }
   }
 
-  stop = () => {
-    if (this.sub) {
-      this.sub.unsubscribe();
-      this.sub = null;
-    }
-  };
+  async syncCountervalue() {
+    const r = await fetch(
+      "https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD"
+    );
+    const countervalue = await r.json();
+    this.setState({ countervalue });
+  }
 
-  onTransport = async (transport: *) => {
-    try {
-      transport.setDebugMode(true);
-      const btc = new AppBtc(transport);
-      const { bitcoinAddress } = await btc.getWalletPublicKey("44'/0'/0'/0");
-      this.setState({ address: bitcoinAddress });
-    } catch (error) {
-      this.setState({ error });
-    }
-  };
+  syncPublicAddress(path: string, verify: boolean = false) {
+    this.addSub(
+      findFirstTransport().subscribe(
+        async transport => {
+          try {
+            transport.setDebugMode(true);
+            const btc = new AppBtc(transport);
+            const { bitcoinAddress } = await btc.getWalletPublicKey(
+              path,
+              verify
+            );
+            this.setState({ address: bitcoinAddress });
+          } catch (error) {
+            this.setState({ error });
+          }
+        },
+        error => {
+          this.setState({ error });
+        }
+      )
+    );
+  }
 
-  onTransportError = (error: *) => {
-    this.setState({ error });
+  addSub = (sub: *) => {
+    this.subs.push(sub);
   };
 
   onShare = () => {
@@ -97,8 +109,43 @@ export default class ReceiveFunds extends Component<*, *> {
     });
   };
 
+  onVerify = () => {
+    this.syncPublicAddress("44'/0'/0'/0", true);
+  };
+
+  onCopy = () => {
+    const { address } = this.state;
+    if (address) Clipboard.setString(address);
+  };
+
+  onChangeAmount = (value: number) => {
+    this.setState({ amount: value });
+  };
+
+  onChangeCountervalueAmount = (value: number) => {
+    const usdUnit = getFiatUnit("USD");
+    this.setState(({ countervalue, currency }) => {
+      if (!countervalue) return null;
+      return {
+        amount: Math.round(
+          value /
+            (countervalue.USD * 10 ** usdUnit.magnitude) *
+            10 ** currency.units[0].magnitude
+        )
+      };
+    });
+  };
+
   render() {
-    const { qrCodeModalOpened, address, error, amount, account } = this.state;
+    const {
+      address,
+      error,
+      amount,
+      currency,
+      countervalue,
+      account
+    } = this.state;
+    const countervalueUnit = getFiatUnit("USD");
     return (
       <ScrollView
         style={styles.root}
@@ -118,7 +165,7 @@ export default class ReceiveFunds extends Component<*, *> {
             marginBottom: 10
           }}
         >
-          <Text>{account}</Text>
+          <Text>{"Bitcoin Account"}</Text>
         </View>
 
         <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
@@ -134,22 +181,31 @@ export default class ReceiveFunds extends Component<*, *> {
             justifyContent: "space-between"
           }}
         >
-          <View
-            style={{
-              width: 120,
-              height: 50,
-              backgroundColor: "white"
-            }}
-          >
-            <Text>{amount}</Text>
-          </View>
-          <View
-            style={{
-              width: 120,
-              height: 50,
-              backgroundColor: "white"
-            }}
+          <CurrencyUnitInput
+            value={amount}
+            unit={currency.units[0]}
+            onChange={this.onChangeAmount}
+            width={130}
+            height={50}
+            fontSize={14}
+            padding={8}
           />
+          {countervalue ? (
+            <CurrencyUnitInput
+              value={Math.round(
+                amount *
+                  countervalue[countervalueUnit.code] *
+                  10 **
+                    (countervalueUnit.magnitude - currency.units[0].magnitude)
+              )}
+              onChange={this.onChangeCountervalueAmount}
+              unit={countervalueUnit}
+              width={130}
+              height={50}
+              fontSize={14}
+              padding={8}
+            />
+          ) : null}
         </View>
 
         {error ? (
@@ -158,9 +214,13 @@ export default class ReceiveFunds extends Component<*, *> {
           <ActivityIndicator />
         ) : (
           <View style={styles.content}>
-            <TouchableOpacity onPress={this.openQRCodeModal}>
-              <QRCodePreview address={address} />
-            </TouchableOpacity>
+            <QRCodePreview
+              address={address}
+              currency={currency}
+              amount={amount}
+              size={220}
+              useURIScheme
+            />
 
             <View />
 
@@ -189,21 +249,45 @@ export default class ReceiveFunds extends Component<*, *> {
                     height: 40,
                     margin: 10,
                     backgroundColor: "white",
-                    borderRadius: 8
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center"
                   }}
                 >
-                  <Text>SHARE</Text>
+                  <Text>Share</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.onCopy}>
+                <View
+                  style={{
+                    width: 80,
+                    height: 40,
+                    margin: 10,
+                    backgroundColor: "white",
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <Text>Copy</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.onVerify}>
+                <View
+                  style={{
+                    width: 80,
+                    height: 40,
+                    margin: 10,
+                    backgroundColor: "white",
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <Text>Verify</Text>
                 </View>
               </TouchableOpacity>
             </View>
-
-            {qrCodeModalOpened ? (
-              <QRCodeModal
-                viewRef={this.viewHandle}
-                address={address}
-                onRequestClose={this.closeQRCodeModal}
-              />
-            ) : null}
           </View>
         )}
       </ScrollView>
