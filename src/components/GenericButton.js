@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import colors from "../colors";
+import LText from "./LText";
 
 export default class GenericButton extends Component<{
   onPress: () => void,
@@ -10,7 +11,8 @@ export default class GenericButton extends Component<{
   color: string,
   backgroundColor: string,
   containerStyle: ?*,
-  titleStyle: ?*
+  titleStyle: ?*,
+  withShadow?: boolean
 }> {
   render() {
     const {
@@ -19,12 +21,19 @@ export default class GenericButton extends Component<{
       color,
       containerStyle,
       titleStyle,
-      backgroundColor
+      backgroundColor,
+      withShadow
     } = this.props;
     return (
       <TouchableOpacity onPress={onPress}>
-        <View style={[styles.container, containerStyle]}>
-          <Text style={[styles.title, titleStyle]}>{title}</Text>
+        <View
+          style={[
+            styles.container,
+            containerStyle,
+            withShadow && styles.shadow
+          ]}
+        >
+          <LText style={[styles.title, titleStyle]}>{title}</LText>
         </View>
       </TouchableOpacity>
     );
@@ -37,5 +46,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  title: {}
+  title: {},
+  shadow: {}
 });

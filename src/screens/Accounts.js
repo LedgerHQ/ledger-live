@@ -4,23 +4,29 @@ import {
   ScrollView,
   View,
   Text,
+  FlatList,
+  TouchableOpacity,
   StyleSheet,
   Image,
-  TouchableOpacity
+  Dimensions
 } from "react-native";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import { genData, genDataNext } from "../mock/balance";
 import { listCurrencies, formatCurrencyUnit } from "@ledgerhq/currencies";
 import LText from "../components/LText";
+import WhiteButton from "../components/WhiteButton";
+
+const windowDim = Dimensions.get("window");
 
 const currencies = listCurrencies();
 
 const fakeAccounts = Array(20)
   .fill(null)
   .map((_, i) => ({
-    id: i,
+    id: String(i),
     color: [colors.green, colors.red, colors.blue][
       Math.floor(3 * Math.random())
     ],
@@ -45,9 +51,14 @@ export default class Accounts extends Component<*, *> {
       />
     )
   };
-  state: { bitcoinAddress: ?string, expandedMode: boolean } = {
+  state: {
+    bitcoinAddress: ?string,
+    expandedMode: boolean,
+    selectedIndex: number
+  } = {
     bitcoinAddress: null,
-    expandedMode: false
+    expandedMode: false,
+    selectedIndex: 0
   };
   renderHeader = () => {
     const { expandedMode } = this.state;
@@ -88,9 +99,129 @@ export default class Accounts extends Component<*, *> {
     });
   };
 
+  onPressExpandedItem = (selectedIndex: number) => {
+    this.setState({ selectedIndex, expandedMode: false });
+  };
+
+  onSnapToItem = (selectedIndex: number) => {
+    this.setState({ selectedIndex });
+  };
+
+  renderItemExpanded = ({ item, index }) => (
+    <TouchableOpacity onPress={() => this.onPressExpandedItem(index)}>
+      <View
+        key={item.id}
+        style={{
+          marginVertical: 6,
+          marginHorizontal: 16,
+          height: 60,
+          padding: 5,
+          borderRadius: 4,
+          backgroundColor: "white",
+          alignItems: "center",
+          flexDirection: "row"
+        }}
+      >
+        <BalanceChartMiniature
+          width={80}
+          height={50}
+          data={item.data}
+          color={item.color}
+          withGradient={false}
+        />
+        <LText
+          numberOfLines={1}
+          style={{
+            marginHorizontal: 10,
+            fontSize: 16,
+            color: item.color,
+            flex: 1
+          }}
+        >
+          {item.name}
+        </LText>
+        <LText
+          bold
+          style={{
+            fontSize: 16
+          }}
+        >
+          {formatCurrencyUnit(item.currency.units[0], item.amount, {
+            showCode: true
+          })}
+        </LText>
+      </View>
+    </TouchableOpacity>
+  );
+
+  renderItemFull = ({ item }) => (
+    <View
+      key={item.id}
+      style={{
+        width: 280,
+        height: 220,
+        padding: 10,
+        backgroundColor: "white",
+        position: "relative"
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          alignItems: "center"
+        }}
+      >
+        <LText
+          numberOfLines={1}
+          style={{
+            alignSelf: "flex-start",
+            fontSize: 16,
+            color: item.color
+          }}
+        >
+          {item.name}
+        </LText>
+        <LText
+          bold
+          style={{
+            alignSelf: "flex-start",
+            fontSize: 16,
+            marginVertical: 10
+          }}
+        >
+          {formatCurrencyUnit(item.currency.units[0], item.amount, {
+            showCode: true
+          })}
+        </LText>
+        <View style={{ flex: 1 }} />
+        <BalanceChartMiniature
+          width={240}
+          height={100}
+          data={item.data}
+          color={item.color}
+        />
+      </View>
+      <TouchableOpacity
+        style={{ position: "absolute", top: 10, right: 10 }}
+        onPress={this.onGoAccountSettings}
+      >
+        <Image
+          source={require("../images/accountsettings.png")}
+          style={{ width: 30, height: 30 }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+
+  keyExtractor = (item: *) => item.id;
+
   render() {
-    const { bitcoinAddress, expandedMode } = this.state;
+    const { bitcoinAddress, expandedMode, selectedIndex } = this.state;
+
     // FIXME this is not so clean. we might need to use react-navigation for the expanded mode as well...
+
     return (
       <View style={styles.root}>
         <ScreenGeneric
@@ -99,119 +230,66 @@ export default class Accounts extends Component<*, *> {
         >
           <ScrollView bounces={false} style={styles.body}>
             {expandedMode ? (
-              <View style={styles.expanded}>
-                {fakeAccounts.map(a => (
-                  <View
-                    key={a.id}
-                    style={{
-                      marginVertical: 6,
-                      marginHorizontal: 16,
-                      height: 60,
-                      padding: 5,
-                      borderRadius: 4,
-                      backgroundColor: "white",
-                      alignItems: "center",
-                      flexDirection: "row"
-                    }}
-                  >
-                    <BalanceChartMiniature
-                      width={80}
-                      height={50}
-                      data={a.data}
-                      color={a.color}
-                      withGradient={false}
-                    />
-                    <LText
-                      numberOfLines={1}
-                      style={{
-                        marginHorizontal: 10,
-                        fontSize: 16,
-                        color: a.color,
-                        flex: 1
-                      }}
-                    >
-                      {a.name}
-                    </LText>
-                    <LText
-                      bold
-                      style={{
-                        fontSize: 16
-                      }}
-                    >
-                      {formatCurrencyUnit(a.currency.units[0], a.amount, {
-                        showCode: true
-                      })}
-                    </LText>
-                  </View>
-                ))}
-              </View>
+              <FlatList
+                style={styles.expanded}
+                data={fakeAccounts}
+                keyExtractor={this.keyExtractor}
+                renderItem={this.renderItemExpanded}
+              />
             ) : (
               <View>
-                <ScrollView style={styles.carouselCountainer} horizontal>
-                  {fakeAccounts.map(a => (
-                    <View
-                      key={a.id}
-                      style={{
-                        margin: 20,
-                        width: 280,
-                        height: 220,
-                        padding: 10,
-                        backgroundColor: "white",
-                        position: "relative"
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                          flexDirection: "column",
-                          justifyContent: "flex-end",
-                          alignItems: "center"
-                        }}
-                      >
-                        <LText
-                          numberOfLines={1}
-                          style={{
-                            alignSelf: "flex-start",
-                            fontSize: 16,
-                            color: a.color
-                          }}
-                        >
-                          {a.name}
-                        </LText>
-                        <LText
-                          bold
-                          style={{
-                            alignSelf: "flex-start",
-                            fontSize: 16,
-                            marginVertical: 10
-                          }}
-                        >
-                          {formatCurrencyUnit(a.currency.units[0], a.amount, {
-                            showCode: true
-                          })}
-                        </LText>
-                        <View style={{ flex: 1 }} />
-                        <BalanceChartMiniature
-                          width={240}
-                          height={100}
-                          data={a.data}
-                          color={a.color}
-                        />
-                      </View>
-                      <TouchableOpacity
-                        style={{ position: "absolute", top: 10, right: 10 }}
-                        onPress={this.onGoAccountSettings}
-                      >
-                        <Image
-                          source={require("../images/accountsettings.png")}
-                          style={{ width: 30, height: 30 }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </ScrollView>
+                <View style={styles.carousel}>
+                  <Carousel
+                    data={fakeAccounts}
+                    keyExtractor={this.keyExtractor}
+                    itemWidth={280}
+                    itemHeight={220}
+                    sliderWidth={windowDim.width}
+                    sliderHeight={300}
+                    inactiveSlideScale={0.8}
+                    onSnapToItem={this.onSnapToItem}
+                    firstItem={selectedIndex}
+                    renderItem={this.renderItemFull}
+                  />
+                  <Pagination
+                    dotsLength={fakeAccounts.length}
+                    activeDotIndex={selectedIndex}
+                    dotContainerStyle={{
+                      marginHorizontal: 4
+                    }}
+                    dotStyle={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: "rgba(255, 255, 255, 0.92)"
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.6}
+                  />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-around",
+                      position: "relative",
+                      bottom: -20
+                    }}
+                  >
+                    <WhiteButton
+                      withShadow
+                      containerStyle={{ width: 100 }}
+                      title="Send"
+                    />
+                    <WhiteButton
+                      withShadow
+                      containerStyle={{ width: 100 }}
+                      title="Receive"
+                    />
+                  </View>
+                </View>
                 <View style={{ height: 800 }}>
-                  <Text>{bitcoinAddress}</Text>
+                  <LText>{" # " + selectedIndex}</LText>
+                  <LText>{bitcoinAddress}</LText>
                 </View>
               </View>
             )}
@@ -229,8 +307,9 @@ const styles = StyleSheet.create({
   body: {
     flex: 1
   },
-  carouselCountainer: {
-    height: 300,
+  carousel: {
+    paddingTop: 20,
+    paddingBottom: 0,
     backgroundColor: colors.blue
   },
   expanded: {
