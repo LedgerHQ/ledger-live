@@ -246,7 +246,7 @@ export default class Accounts extends Component<*, *> {
                     itemHeight={220}
                     sliderWidth={windowDim.width}
                     sliderHeight={300}
-                    inactiveSlideScale={0.8}
+                    inactiveSlideOpacity={0.4}
                     onSnapToItem={this.onSnapToItem}
                     firstItem={selectedIndex}
                     renderItem={this.renderItemFull}
