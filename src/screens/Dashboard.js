@@ -17,6 +17,7 @@ import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
 import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
 import { genData, genDataNext } from "../mock/balance";
+import { withLocale } from "../components/LocaleContext";
 
 const transactionsPromise = getTransactions(
   "1XPTgDRhN8RFnzniWCddobD9iKZatrvH4"
@@ -49,7 +50,7 @@ class ListHeaderComponent extends Component<*, *> {
   }
 }
 
-export default class Dashboard extends Component<*, *> {
+class Dashboard extends Component<*, *> {
   static navigationOptions = {
     tabBarIcon: ({ tintColor }: *) => (
       <Image
@@ -93,7 +94,7 @@ export default class Dashboard extends Component<*, *> {
   );
 
   renderHeader = () => {
-    const { screenProps: { t } } = this.props;
+    const { t } = this.props;
     return (
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -147,6 +148,8 @@ export default class Dashboard extends Component<*, *> {
     );
   }
 }
+
+export default withLocale(Dashboard);
 
 const styles = StyleSheet.create({
   carouselCountainer: {

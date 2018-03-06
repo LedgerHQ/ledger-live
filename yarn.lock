@@ -352,9 +352,9 @@
     redux "^3.7.2"
     redux-thunk "^2.2.0"
 
-"@ledgerhq/currencies@^4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.3.0.tgz#d06d82030b374e72c237d0fb065d1fc175399c9e"
+"@ledgerhq/currencies@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.5.0.tgz#b54650049be6e2452e3b9f869edd6ea5deb45169"
   dependencies:
     lodash "^4.17.5"
     numeral "^2.0.6"
@@ -4425,9 +4425,18 @@ react-transform-hmr@^1.0.4:
     global "^4.3.0"
     react-proxy "^1.1.7"
 
-react@16.2.0, react@^16.0.0:
+react@^16.0.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.2.0.tgz#a31bd2dab89bff65d42134fa187f24d054c273ba"
+  dependencies:
+    fbjs "^0.8.16"
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.0"
+
+react@^16.3.0-alpha.1:
+  version "16.3.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.3.0-alpha.1.tgz#de20f646e31e8b3c004e6bcbd3c54d51b48e1120"
   dependencies:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
