@@ -3,7 +3,6 @@ import React, { Component, PureComponent } from "react";
 import {
   ScrollView,
   View,
-  Text,
   FlatList,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -78,7 +77,7 @@ class AccountRow extends PureComponent<*, *> {
             }
           }}
           unit={account.currency.units[0]}
-          value={account.amount}
+          value={account.balance}
         />
       </View>
     );
@@ -166,7 +165,7 @@ class AccountCard extends PureComponent<*, *> {
             <View>
               <CurrencyUnitValue
                 unit={account.currency.units[0]}
-                value={account.amount}
+                value={account.balance}
                 ltextProps={{
                   semiBold: true,
                   style: {
@@ -274,11 +273,11 @@ class OperationRow extends Component<{ operation: * }> {
           ltextProps={{
             style: {
               fontSize: 14,
-              color: operation.balance > 0 ? colors.green : "#999"
+              color: operation.amount > 0 ? colors.green : colors.red
             }
           }}
           unit={currency.units[0]}
-          value={operation.balance}
+          value={operation.amount}
         />
       </View>
     );
@@ -369,7 +368,7 @@ export default class Accounts extends Component<
             style={{ width: 24, height: 20 }}
           />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Accounts</Text>
+        <LText style={styles.headerText}>Accounts</LText>
         <TouchableOpacity onPress={this.onAddAccount}>
           <Image
             source={require("../images/accountsplus.png")}
@@ -411,6 +410,7 @@ export default class Accounts extends Component<
                 renderItem={this.renderItemExpanded}
               />
             ) : (
+              // TODO the AccountBody should encapsulate the header so that we can properly use FlatList
               <View>
                 <View style={styles.carousel}>
                   <Carousel

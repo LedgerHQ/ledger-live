@@ -61,9 +61,9 @@ export function genOperation(account, ops, currency) {
     id: String("mock_op_" + ops.length),
     account,
     address: genAddress(currency),
-    balance:
+    amount:
       (Math.random() < 0.5 ? -1 : 1) *
-      Math.floor(10000000000 * Math.random() * Math.random()),
+      Math.floor(1000000000 * Math.random() * Math.random()),
     hash: genHex(64),
     receivedAt,
     confirmations: Math.floor((Date.now() - receivedAt) / 900000)
@@ -76,7 +76,7 @@ export function genAccount(accountIndex) {
     id: String("mock_account_" + accountIndex),
     data: genBalanceData(8, 86400000),
     currency,
-    amount: Math.floor(10000000000 * Math.random() * Math.random()),
+    balance: Math.floor(10000000000 * Math.random() * Math.random()),
     name:
       String.fromCharCode(Math.floor(65 + 26 * Math.random())) +
       Array(Math.floor(4 + 30 * Math.random()))
