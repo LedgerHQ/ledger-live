@@ -1,11 +1,12 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import {
   ScrollView,
   View,
   Text,
   FlatList,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   StyleSheet,
   Image,
   Dimensions
@@ -17,6 +18,7 @@ import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import { genData, genDataNext } from "../mock/balance";
 import { listCurrencies, formatCurrencyUnit } from "@ledgerhq/currencies";
 import LText from "../components/LText";
+import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import WhiteButton from "../components/WhiteButton";
 
 const windowDim = Dimensions.get("window");
@@ -27,9 +29,6 @@ const fakeAccounts = Array(20)
   .fill(null)
   .map((_, i) => ({
     id: String(i),
-    color: [colors.green, colors.red, colors.blue][
-      Math.floor(3 * Math.random())
-    ],
     data: genData(8, 86400000),
     currency: currencies[Math.floor(currencies.length * Math.random())],
     amount: Math.floor(10000000000 * Math.random() * Math.random()),
@@ -41,6 +40,165 @@ const fakeAccounts = Array(20)
         .join("")
         .toLowerCase()
   }));
+
+class AccountRow extends PureComponent<*, *> {
+  render() {
+    const { account } = this.props;
+    return (
+      <View
+        style={{
+          marginVertical: 6,
+          marginHorizontal: 16,
+          height: 60,
+          padding: 5,
+          borderRadius: 4,
+          backgroundColor: "white",
+          alignItems: "center",
+          flexDirection: "row"
+        }}
+      >
+        <View
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 10,
+            marginRight: 10,
+            backgroundColor:
+              account.currency.color /* PLACEHOLDER FOR THE ICON */
+          }}
+        />
+        <LText
+          numberOfLines={1}
+          style={{
+            fontSize: 14,
+            flex: 1
+          }}
+        >
+          {account.name}
+        </LText>
+        <BalanceChartMiniature
+          width={50}
+          height={50}
+          data={account.data}
+          color={account.currency.color}
+          withGradient={false}
+        />
+        <CurrencyUnitValue
+          ltextProps={{
+            semiBold: true,
+            style: {
+              fontSize: 14
+            }
+          }}
+          unit={account.currency.units[0]}
+          value={account.amount}
+        />
+      </View>
+    );
+  }
+}
+
+class AccountCard extends PureComponent<*, *> {
+  onGoAccountSettings = () =>
+    this.props.topLevelNavigation.navigate("AccountSettings", {
+      accountId: "42"
+    });
+
+  render() {
+    const { account } = this.props;
+    return (
+      <View
+        style={{
+          width: 280,
+          height: 220,
+          padding: 10,
+          backgroundColor: "white"
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "flex-end"
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+              marginVertical: 10
+            }}
+          >
+            <View
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 10,
+                marginRight: 10,
+                backgroundColor:
+                  account.currency.color /* PLACEHOLDER FOR THE ICON */
+              }}
+            />
+            <View
+              style={{
+                flexDirection: "column",
+                flex: 1
+              }}
+            >
+              <LText
+                semiBold
+                numberOfLines={1}
+                style={{
+                  fontSize: 14
+                }}
+              >
+                {account.name}
+              </LText>
+              <LText
+                numberOfLines={1}
+                style={{
+                  fontSize: 12,
+                  color: "#999"
+                }}
+              >
+                {account.currency.name}
+              </LText>
+            </View>
+
+            <TouchableOpacity onPress={this.onGoAccountSettings}>
+              <Image
+                source={require("../images/accountsettings.png")}
+                style={{ width: 30, height: 30 }}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            <CurrencyUnitValue
+              unit={account.currency.units[0]}
+              value={account.amount}
+              ltextProps={{
+                semiBold: true,
+                style: {
+                  alignSelf: "flex-start",
+                  fontSize: 22,
+                  marginVertical: 10
+                }
+              }}
+            />
+          </View>
+          <BalanceChartMiniature
+            width={260}
+            height={100}
+            data={account.data}
+            color={account.currency.color}
+          />
+        </View>
+      </View>
+    );
+  }
+}
 
 export default class Accounts extends Component<*, *> {
   static navigationOptions = {
@@ -93,10 +251,9 @@ export default class Accounts extends Component<*, *> {
     this.props.screenProps.topLevelNavigation.navigate("AddAccount");
   };
 
-  onGoAccountSettings = () => {
-    this.props.screenProps.topLevelNavigation.navigate("AccountSettings", {
-      accountId: "42"
-    });
+  carousel: ?Carousel;
+  onCarousel = (ref: ?Carousel) => {
+    this.carousel = ref;
   };
 
   onPressExpandedItem = (selectedIndex: number) => {
@@ -109,110 +266,24 @@ export default class Accounts extends Component<*, *> {
 
   renderItemExpanded = ({ item, index }) => (
     <TouchableOpacity onPress={() => this.onPressExpandedItem(index)}>
-      <View
-        key={item.id}
-        style={{
-          marginVertical: 6,
-          marginHorizontal: 16,
-          height: 60,
-          padding: 5,
-          borderRadius: 4,
-          backgroundColor: "white",
-          alignItems: "center",
-          flexDirection: "row"
-        }}
-      >
-        <BalanceChartMiniature
-          width={80}
-          height={50}
-          data={item.data}
-          color={item.color}
-          withGradient={false}
-        />
-        <LText
-          numberOfLines={1}
-          style={{
-            marginHorizontal: 10,
-            fontSize: 16,
-            color: item.color,
-            flex: 1
-          }}
-        >
-          {item.name}
-        </LText>
-        <LText
-          bold
-          style={{
-            fontSize: 16
-          }}
-        >
-          {formatCurrencyUnit(item.currency.units[0], item.amount, {
-            showCode: true
-          })}
-        </LText>
-      </View>
+      <AccountRow account={item} />
     </TouchableOpacity>
   );
 
-  renderItemFull = ({ item }) => (
-    <View
-      key={item.id}
-      style={{
-        width: 280,
-        height: 220,
-        padding: 10,
-        backgroundColor: "white",
-        position: "relative"
-      }}
-    >
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          alignItems: "center"
-        }}
-      >
-        <LText
-          numberOfLines={1}
-          style={{
-            alignSelf: "flex-start",
-            fontSize: 16,
-            color: item.color
-          }}
-        >
-          {item.name}
-        </LText>
-        <LText
-          bold
-          style={{
-            alignSelf: "flex-start",
-            fontSize: 16,
-            marginVertical: 10
-          }}
-        >
-          {formatCurrencyUnit(item.currency.units[0], item.amount, {
-            showCode: true
-          })}
-        </LText>
-        <View style={{ flex: 1 }} />
-        <BalanceChartMiniature
-          width={240}
-          height={100}
-          data={item.data}
-          color={item.color}
-        />
-      </View>
-      <TouchableOpacity
-        style={{ position: "absolute", top: 10, right: 10 }}
-        onPress={this.onGoAccountSettings}
-      >
-        <Image
-          source={require("../images/accountsettings.png")}
-          style={{ width: 30, height: 30 }}
-        />
-      </TouchableOpacity>
-    </View>
+  onItemFullPress = (item, index) => {
+    const { carousel } = this;
+    if (carousel && index !== this.state.selectedIndex) {
+      carousel.snapToItem(index);
+    }
+  };
+
+  renderItemFull = ({ item, index }) => (
+    <TouchableWithoutFeedback onPress={() => this.onItemFullPress(item, index)}>
+      <AccountCard
+        account={item}
+        topLevelNavigation={this.props.screenProps.topLevelNavigation}
+      />
+    </TouchableWithoutFeedback>
   );
 
   keyExtractor = (item: *) => item.id;
@@ -240,6 +311,7 @@ export default class Accounts extends Component<*, *> {
               <View>
                 <View style={styles.carousel}>
                   <Carousel
+                    ref={this.onCarousel}
                     data={fakeAccounts}
                     keyExtractor={this.keyExtractor}
                     itemWidth={280}
