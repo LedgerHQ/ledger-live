@@ -52,6 +52,7 @@
     "react-native-locale": "0.0.18",
     "react-native-qrcode-svg": "5.0.6",
     "react-native-sentry": "0.34.1",
+    "react-native-snap-carousel": "^3.6.0",
     "react-native-svg": "6.2.2",
     "react-navigation": "1.4.0",
     "rxjs": "5.5.6",

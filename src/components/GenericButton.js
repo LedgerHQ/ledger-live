@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import colors from "../colors";
+import LText from "./LText";
 
 export default class GenericButton extends Component<{
   onPress: () => void,
@@ -24,7 +25,7 @@ export default class GenericButton extends Component<{
     return (
       <TouchableOpacity onPress={onPress}>
         <View style={[styles.container, containerStyle]}>
-          <Text style={[styles.title, titleStyle]}>{title}</Text>
+          <LText style={[styles.title, titleStyle]}>{title}</LText>
         </View>
       </TouchableOpacity>
     );

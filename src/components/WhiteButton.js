@@ -7,8 +7,11 @@ export default class WhiteButton extends Component<*> {
     return (
       <GenericButton
         {...this.props}
-        textStyle={{ color: colors.blue }}
-        containerStyle={{ backgroundColor: "white" }}
+        textStyle={[{ color: colors.blue }, this.props.textStyle]}
+        containerStyle={[
+          { backgroundColor: "white" },
+          this.props.containerStyle
+        ]}
       />
     );
   }

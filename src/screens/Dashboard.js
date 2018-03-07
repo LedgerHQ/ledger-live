@@ -16,7 +16,7 @@ import { getTransactions } from "../API";
 import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
 import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
-import { genData, genDataNext } from "../mock/balance";
+import { genBalanceData } from "../mock/account";
 import { withLocale } from "../components/LocaleContext";
 
 const transactionsPromise = getTransactions(
@@ -25,7 +25,7 @@ const transactionsPromise = getTransactions(
 
 class ListHeaderComponent extends Component<*, *> {
   state = {
-    data: genData(8, 86400000)
+    data: genBalanceData(8, 86400000)
   };
   render() {
     const { data } = this.state;
