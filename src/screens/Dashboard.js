@@ -32,8 +32,7 @@ class ListHeaderComponent extends Component<*, *> {
     return (
       <View style={styles.carouselCountainer}>
         <View style={{ padding: 10, flexDirection: "row" }}>
-          <LText style={styles.balanceText}>Total balance: </LText>
-          <LText bold style={styles.balanceText}>
+          <LText semiBold style={styles.balanceText}>
             {formatCurrencyUnit(getFiatUnit("USD"), 4728252, {
               showCode: true
             })}
@@ -190,6 +189,6 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   balanceText: {
-    fontSize: 18
+    fontSize: 24
   }
 });
