@@ -8,7 +8,8 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   Image,
-  Dimensions
+  Dimensions,
+  RefreshControl
 } from "react-native";
 import moment from "moment";
 import Carousel, { Pagination } from "react-native-snap-carousel";
@@ -210,7 +211,8 @@ class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-around"
+          justifyContent: "space-around",
+          marginBottom: 10
         }}
       >
         <WhiteButton
@@ -235,10 +237,10 @@ class OperationRow extends Component<{ operation: * }> {
     return (
       <View
         style={{
-          marginVertical: 1,
           height: 60,
           padding: 10,
-          borderRadius: 4,
+          borderBottomWidth: 1,
+          borderBottomColor: "#eee",
           backgroundColor: "white",
           alignItems: "center",
           flexDirection: "row"
@@ -284,17 +286,114 @@ class OperationRow extends Component<{ operation: * }> {
   }
 }
 
-class AccountBody extends Component<{ account: * }> {
+class AccountsCarousel extends Component<{
+  topLevelNavigation: *,
+  accounts: *,
+  selectedIndex: number,
+  onSelectIndex: number => void
+}> {
+  carousel: ?Carousel;
+  onCarousel = (ref: ?Carousel) => {
+    this.carousel = ref;
+  };
+
   keyExtractor = (item: *) => item.id;
 
+  onItemFullPress = (item: *, index: *) => {
+    const { carousel } = this;
+    if (carousel && index !== this.props.selectedIndex) {
+      carousel.snapToItem(index);
+    }
+  };
+
+  snapToItem = (...args) => {
+    const { carousel } = this;
+    if (carousel) carousel.snapToItem(...args);
+  };
+
+  renderItemFull = ({ item, index }: *) => (
+    <AccountCard
+      account={item}
+      topLevelNavigation={this.props.topLevelNavigation}
+      onPress={() => this.onItemFullPress(item, index)}
+    />
+  );
+
+  render() {
+    const { accounts, onSelectIndex, selectedIndex } = this.props;
+    return (
+      <Carousel
+        ref={this.onCarousel}
+        data={accounts}
+        keyExtractor={this.keyExtractor}
+        itemWidth={280}
+        itemHeight={220}
+        sliderWidth={windowDim.width}
+        sliderHeight={300}
+        inactiveSlideOpacity={0.4}
+        onSnapToItem={onSelectIndex}
+        firstItem={selectedIndex}
+        renderItem={this.renderItemFull}
+      />
+    );
+  }
+}
+
+class AccountBody extends Component<{ style: *, Header: *, account: ?* }, *> {
+  state = { refreshing: false };
+
+  onRefresh = () => {
+    this.setState({ refreshing: true });
+    new Promise(s => setTimeout(s, 500 + 500 * Math.random())).then(() => {
+      this.setState({ refreshing: false });
+    });
+  };
+
+  keyExtractor = (item: *) => item.id;
   renderItem = ({ item, index }: *) => <OperationRow operation={item} />;
   render() {
-    const { account } = this.props;
+    const { style, Header, account } = this.props;
+    const { refreshing } = this.state;
     return (
       <FlatList
-        data={account.operations}
+        style={style}
+        refreshControl={
+          <RefreshControl
+            tintColor="white"
+            refreshing={refreshing}
+            onRefresh={this.onRefresh}
+          />
+        }
         renderItem={this.renderItem}
+        data={account ? account.operations : []}
+        ListHeaderComponent={Header}
         keyExtractor={this.keyExtractor}
+      />
+    );
+  }
+}
+
+class AccountExpanded extends Component<{
+  style: *,
+  accounts: ?*,
+  onPressExpandedItem: *
+}> {
+  keyExtractor = (item: *) => item.id;
+
+  renderItemExpanded = ({ item, index }: *) => (
+    <TouchableOpacity onPress={() => this.props.onPressExpandedItem(index)}>
+      <AccountRow account={item} />
+    </TouchableOpacity>
+  );
+
+  render() {
+    const { style, accounts } = this.props;
+    return (
+      <FlatList
+        style={style}
+        data={accounts}
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItemExpanded}
       />
     );
   }
@@ -324,11 +423,6 @@ export default class Accounts extends Component<
     accounts: fakeAccounts
   };
 
-  carousel: ?Carousel;
-  onCarousel = (ref: ?Carousel) => {
-    this.carousel = ref;
-  };
-
   onToggleExpandedMode = () => {
     this.setState(({ expandedMode }) => ({ expandedMode: !expandedMode }));
   };
@@ -341,18 +435,9 @@ export default class Accounts extends Component<
     this.setState({ selectedIndex, expandedMode: false });
   };
 
-  onSnapToItem = (selectedIndex: number) => {
+  onSelectIndex = (selectedIndex: number) => {
     this.setState({ selectedIndex });
   };
-
-  onItemFullPress = (item: *, index: *) => {
-    const { carousel } = this;
-    if (carousel && index !== this.state.selectedIndex) {
-      carousel.snapToItem(index);
-    }
-  };
-
-  keyExtractor = (item: *) => item.id;
 
   renderHeader = () => {
     const { expandedMode } = this.state;
@@ -379,19 +464,35 @@ export default class Accounts extends Component<
     );
   };
 
-  renderItemExpanded = ({ item, index }: *) => (
-    <TouchableOpacity onPress={() => this.onPressExpandedItem(index)}>
-      <AccountRow account={item} />
-    </TouchableOpacity>
-  );
-
-  renderItemFull = ({ item, index }: *) => (
-    <AccountCard
-      account={item}
-      topLevelNavigation={this.props.screenProps.topLevelNavigation}
-      onPress={() => this.onItemFullPress(item, index)}
-    />
-  );
+  renderAccountBodyHeader = () => {
+    const { accounts, selectedIndex } = this.state;
+    const { screenProps: { topLevelNavigation } } = this.props;
+    const account = accounts[selectedIndex];
+    return (
+      <View style={styles.carousel}>
+        <AccountsCarousel
+          accounts={accounts}
+          onSelectIndex={this.onSelectIndex}
+          selectedIndex={selectedIndex}
+          topLevelNavigation={topLevelNavigation}
+        />
+        <Pagination
+          dotsLength={accounts.length}
+          activeDotIndex={selectedIndex}
+          dotContainerStyle={styles.paginationDotContainerStyle}
+          dotStyle={styles.paginationDotStyle}
+          inactiveDotOpacity={0.4}
+          inactiveDotScale={0.6}
+        />
+        {account ? (
+          <AccountHeadMenu
+            topLevelNavigation={topLevelNavigation}
+            account={account}
+          />
+        ) : null}
+      </View>
+    );
+  };
 
   render() {
     const { accounts, expandedMode, selectedIndex } = this.state;
@@ -400,60 +501,19 @@ export default class Accounts extends Component<
     return (
       <View style={styles.root}>
         <ScreenGeneric renderHeader={this.renderHeader}>
-          <ScrollView bounces={false} style={styles.body}>
-            {expandedMode ? (
-              // TODO expanded mode shouldn't unmount the main screen part but should be position absoluted on top
-              <FlatList
-                style={styles.expanded}
-                data={accounts}
-                keyExtractor={this.keyExtractor}
-                renderItem={this.renderItemExpanded}
-              />
-            ) : (
-              // TODO the AccountBody should encapsulate the header so that we can properly use FlatList
-              <View>
-                <View style={styles.carousel}>
-                  <Carousel
-                    ref={this.onCarousel}
-                    data={accounts}
-                    keyExtractor={this.keyExtractor}
-                    itemWidth={280}
-                    itemHeight={220}
-                    sliderWidth={windowDim.width}
-                    sliderHeight={300}
-                    inactiveSlideOpacity={0.4}
-                    onSnapToItem={this.onSnapToItem}
-                    firstItem={selectedIndex}
-                    renderItem={this.renderItemFull}
-                  />
-                  <Pagination
-                    dotsLength={accounts.length}
-                    activeDotIndex={selectedIndex}
-                    dotContainerStyle={styles.paginationDotContainerStyle}
-                    dotStyle={styles.paginationDotStyle}
-                    inactiveDotOpacity={0.4}
-                    inactiveDotScale={0.6}
-                  />
-                  <View style={styles.accountHeadMenu}>
-                    {account ? (
-                      <AccountHeadMenu
-                        topLevelNavigation={topLevelNavigation}
-                        account={account}
-                      />
-                    ) : null}
-                  </View>
-                </View>
-                <View style={styles.accountBody}>
-                  {account ? (
-                    <AccountBody
-                      topLevelNavigation={topLevelNavigation}
-                      account={account}
-                    />
-                  ) : null}
-                </View>
-              </View>
-            )}
-          </ScrollView>
+          <View style={styles.topBackground} />
+          {/* FIXME perf are not good, investigate why */}
+          <AccountExpanded
+            style={[styles.expanded, !expandedMode && { display: "none" }]}
+            accounts={accounts}
+            onPressExpandedItem={this.onPressExpandedItem}
+          />
+          <AccountBody
+            style={[styles.accountBody, expandedMode && { display: "none" }]}
+            topLevelNavigation={topLevelNavigation}
+            account={account}
+            Header={this.renderAccountBodyHeader}
+          />
         </ScreenGeneric>
       </View>
     );
@@ -461,10 +521,20 @@ export default class Accounts extends Component<
 }
 
 const styles = StyleSheet.create({
+  topBackground: {
+    position: "absolute",
+    top: 0,
+    width: 600,
+    height: 300,
+    backgroundColor: colors.blue
+  },
   root: {
     flex: 1
   },
   body: {
+    flex: 1
+  },
+  accountBody: {
     flex: 1
   },
   carousel: {
@@ -473,7 +543,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.blue
   },
   expanded: {
-    backgroundColor: colors.blue
+    backgroundColor: colors.blue,
+    flex: 1
   },
   header: {
     flexDirection: "row",
@@ -485,14 +556,6 @@ const styles = StyleSheet.create({
   headerText: {
     color: "white",
     fontSize: 16
-  },
-  accountHeadMenu: {
-    position: "relative",
-    bottom: -20
-  },
-  accountBody: {
-    height: 800,
-    paddingTop: 40
   },
   paginationDotContainerStyle: {
     marginHorizontal: 4
