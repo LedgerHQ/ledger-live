@@ -11,35 +11,22 @@ import {
   Image,
   Dimensions
 } from "react-native";
+import moment from "moment";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
-import { genData, genDataNext } from "../mock/balance";
-import { listCurrencies, formatCurrencyUnit } from "@ledgerhq/currencies";
+import { genAccount } from "../mock/account";
+import { formatCurrencyUnit } from "@ledgerhq/currencies";
 import LText from "../components/LText";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import WhiteButton from "../components/WhiteButton";
 
 const windowDim = Dimensions.get("window");
 
-const currencies = listCurrencies();
-
 const fakeAccounts = Array(12)
   .fill(null)
-  .map((_, i) => ({
-    id: String(i),
-    data: genData(8, 86400000),
-    currency: currencies[Math.floor(currencies.length * Math.random())],
-    amount: Math.floor(10000000000 * Math.random() * Math.random()),
-    name:
-      String.fromCharCode(Math.floor(65 + 26 * Math.random())) +
-      Array(Math.floor(4 + 30 * Math.random()))
-        .fill("")
-        .map((_, j) => String.fromCharCode(Math.floor(65 + 26 * Math.random())))
-        .join("")
-        .toLowerCase()
-  }));
+  .map((_, i) => genAccount(i));
 
 class AccountRow extends PureComponent<*, *> {
   render() {
@@ -242,42 +229,74 @@ class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
   }
 }
 
+class OperationRow extends Component<{ operation: * }> {
+  render() {
+    const { operation } = this.props;
+    const currency = operation.account.currency;
+    return (
+      <View
+        style={{
+          marginVertical: 1,
+          height: 60,
+          padding: 10,
+          borderRadius: 4,
+          backgroundColor: "white",
+          alignItems: "center",
+          flexDirection: "row"
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "column",
+            flex: 1,
+            marginRight: 10
+          }}
+        >
+          <LText
+            numberOfLines={1}
+            style={{
+              fontSize: 14
+            }}
+          >
+            {operation.address}
+          </LText>
+          <LText
+            numberOfLines={1}
+            style={{
+              fontSize: 14,
+              color: "#999"
+            }}
+          >
+            {moment(operation.receivedAt).calendar()}
+          </LText>
+        </View>
+        <CurrencyUnitValue
+          ltextProps={{
+            style: {
+              fontSize: 14,
+              color: operation.balance > 0 ? colors.green : "#999"
+            }
+          }}
+          unit={currency.units[0]}
+          value={operation.balance}
+        />
+      </View>
+    );
+  }
+}
+
 class AccountBody extends Component<{ account: * }> {
+  keyExtractor = (item: *) => item.id;
+
+  renderItem = ({ item, index }: *) => <OperationRow operation={item} />;
   render() {
     const { account } = this.props;
     return (
-      <View style={{ padding: 40 }}>
-        <LText
-          semiBold
-          numberOfLines={1}
-          style={{
-            fontSize: 14
-          }}
-        >
-          {account.name}
-        </LText>
-        <LText
-          numberOfLines={1}
-          style={{
-            fontSize: 12,
-            color: "#999"
-          }}
-        >
-          {account.currency.name}
-        </LText>
-        <CurrencyUnitValue
-          unit={account.currency.units[0]}
-          value={account.amount}
-          ltextProps={{
-            semiBold: true,
-            style: {
-              alignSelf: "flex-start",
-              fontSize: 22,
-              marginVertical: 10
-            }
-          }}
-        />
-      </View>
+      <FlatList
+        data={account.operations}
+        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
+      />
     );
   }
 }
@@ -473,7 +492,7 @@ const styles = StyleSheet.create({
   },
   accountBody: {
     height: 800,
-    paddingTop: 20
+    paddingTop: 40
   },
   paginationDotContainerStyle: {
     marginHorizontal: 4
