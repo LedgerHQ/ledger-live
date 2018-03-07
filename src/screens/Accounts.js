@@ -25,7 +25,7 @@ const windowDim = Dimensions.get("window");
 
 const currencies = listCurrencies();
 
-const fakeAccounts = Array(20)
+const fakeAccounts = Array(12)
   .fill(null)
   .map((_, i) => ({
     id: String(i),
@@ -99,103 +99,106 @@ class AccountRow extends PureComponent<*, *> {
 }
 
 class AccountCard extends PureComponent<*, *> {
-  onGoAccountSettings = () =>
-    this.props.topLevelNavigation.navigate("AccountSettings", {
-      accountId: "42"
+  onGoAccountSettings = () => {
+    const { account, topLevelNavigation } = this.props;
+    topLevelNavigation.navigate("AccountSettings", {
+      accountId: account.id
     });
-
+  };
   render() {
-    const { account } = this.props;
+    const { account, onPress } = this.props;
     return (
-      <View
-        style={{
-          width: 280,
-          height: 220,
-          padding: 10,
-          backgroundColor: "white"
-        }}
-      >
+      <TouchableWithoutFeedback onPress={onPress}>
         <View
           style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "flex-end"
+            width: 280,
+            height: 220,
+            padding: 10,
+            backgroundColor: "white"
           }}
         >
           <View
             style={{
               flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 10
+              flexDirection: "column",
+              justifyContent: "flex-end"
             }}
           >
             <View
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: 10,
-                marginRight: 10,
-                backgroundColor:
-                  account.currency.color /* PLACEHOLDER FOR THE ICON */
-              }}
-            />
-            <View
-              style={{
-                flexDirection: "column",
-                flex: 1
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                marginVertical: 10
               }}
             >
-              <LText
-                semiBold
-                numberOfLines={1}
+              <View
                 style={{
-                  fontSize: 14
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10,
+                  marginRight: 10,
+                  backgroundColor:
+                    account.currency.color /* PLACEHOLDER FOR THE ICON */
+                }}
+              />
+              <View
+                style={{
+                  flexDirection: "column",
+                  flex: 1
                 }}
               >
-                {account.name}
-              </LText>
-              <LText
-                numberOfLines={1}
-                style={{
-                  fontSize: 12,
-                  color: "#999"
-                }}
-              >
-                {account.currency.name}
-              </LText>
+                <LText
+                  semiBold
+                  numberOfLines={1}
+                  style={{
+                    fontSize: 14
+                  }}
+                >
+                  {account.name}
+                </LText>
+                <LText
+                  numberOfLines={1}
+                  style={{
+                    fontSize: 12,
+                    color: "#999"
+                  }}
+                >
+                  {account.currency.name}
+                </LText>
+              </View>
+
+              <TouchableOpacity onPress={this.onGoAccountSettings}>
+                <Image
+                  source={require("../images/accountsettings.png")}
+                  style={{ width: 30, height: 30 }}
+                />
+              </TouchableOpacity>
             </View>
 
-            <TouchableOpacity onPress={this.onGoAccountSettings}>
-              <Image
-                source={require("../images/accountsettings.png")}
-                style={{ width: 30, height: 30 }}
+            <View>
+              <CurrencyUnitValue
+                unit={account.currency.units[0]}
+                value={account.amount}
+                ltextProps={{
+                  semiBold: true,
+                  style: {
+                    alignSelf: "flex-start",
+                    fontSize: 22,
+                    marginVertical: 10
+                  }
+                }}
               />
-            </TouchableOpacity>
-          </View>
-
-          <View>
-            <CurrencyUnitValue
-              unit={account.currency.units[0]}
-              value={account.amount}
-              ltextProps={{
-                semiBold: true,
-                style: {
-                  alignSelf: "flex-start",
-                  fontSize: 22,
-                  marginVertical: 10
-                }
-              }}
+            </View>
+            <BalanceChartMiniature
+              width={260}
+              height={100}
+              data={account.data}
+              color={account.currency.color}
             />
           </View>
-          <BalanceChartMiniature
-            width={260}
-            height={100}
-            data={account.data}
-            color={account.currency.color}
-          />
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -272,18 +275,18 @@ export default class Accounts extends Component<*, *> {
 
   onItemFullPress = (item, index) => {
     const { carousel } = this;
+    console.log(carousel, index, this.state.selectedIndex);
     if (carousel && index !== this.state.selectedIndex) {
       carousel.snapToItem(index);
     }
   };
 
   renderItemFull = ({ item, index }) => (
-    <TouchableWithoutFeedback onPress={() => this.onItemFullPress(item, index)}>
-      <AccountCard
-        account={item}
-        topLevelNavigation={this.props.screenProps.topLevelNavigation}
-      />
-    </TouchableWithoutFeedback>
+    <AccountCard
+      account={item}
+      topLevelNavigation={this.props.screenProps.topLevelNavigation}
+      onPress={() => this.onItemFullPress(item, index)}
+    />
   );
 
   keyExtractor = (item: *) => item.id;
