@@ -326,8 +326,24 @@ class AccountsCarousel extends Component<{
   }
 }
 
-class AccountBody extends Component<{ style: *, Header: *, account: ?* }, *> {
+class AccountBody extends Component<
+  { style: *, Header: *, account: ?*, visible?: boolean },
+  *
+> {
   state = { refreshing: false };
+
+  flatList: ?FlatList<*>;
+  onFlatListRef = (ref: ?FlatList<*>) => {
+    this.flatList = ref;
+  };
+
+  componentDidUpdate(prevProps) {
+    const { flatList } = this;
+    // when flatlist become unvisible, we want to scroll it on top again for when we come back
+    if (flatList && prevProps.visible && !this.props.visible) {
+      flatList.scrollToOffset({ offset: 0, animated: false });
+    }
+  }
 
   onRefresh = () => {
     this.setState({ refreshing: true });
@@ -337,13 +353,16 @@ class AccountBody extends Component<{ style: *, Header: *, account: ?* }, *> {
   };
 
   keyExtractor = (item: *) => item.id;
+
   renderItem = ({ item, index }: *) => <OperationRow operation={item} />;
+
   render() {
-    const { style, Header, account } = this.props;
+    const { style, Header, account, visible } = this.props;
     const { refreshing } = this.state;
     return (
       <FlatList
-        style={style}
+        ref={this.onFlatListRef}
+        style={[style, !visible && { display: "none" }]}
         refreshControl={
           <RefreshControl
             tintColor="white"
@@ -498,7 +517,8 @@ export default class Accounts extends Component<
             />
           ) : null}
           <AccountBody
-            style={[styles.accountBody, expandedMode && { display: "none" }]}
+            visible={!expandedMode}
+            style={styles.accountBody}
             topLevelNavigation={topLevelNavigation}
             account={account}
             Header={this.renderAccountBodyHeader}
