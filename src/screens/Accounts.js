@@ -203,60 +203,91 @@ class AccountCard extends PureComponent<*, *> {
   }
 }
 
-export default class Accounts extends Component<*, *> {
-  static navigationOptions = {
-    tabBarIcon: ({ tintColor }: *) => (
-      <Image
-        source={require("../images/accounts.png")}
-        style={{ tintColor, width: 32, height: 32 }}
-      />
-    )
+class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
+  onSend = () => {
+    const { account, topLevelNavigation } = this.props;
+    topLevelNavigation.navigate("SendFunds", {
+      goBackKey: topLevelNavigation.state.key,
+      accountId: account.id
+    });
   };
-  state: {
-    bitcoinAddress: ?string,
-    expandedMode: boolean,
-    selectedIndex: number
-  } = {
-    bitcoinAddress: null,
-    expandedMode: false,
-    selectedIndex: 0
+  onReceive = () => {
+    const { account, topLevelNavigation } = this.props;
+    topLevelNavigation.navigate("ReceiveFunds", {
+      goBackKey: topLevelNavigation.state.key,
+      accountId: account.id
+    });
   };
-  renderHeader = () => {
-    const { expandedMode } = this.state;
+  render() {
     return (
-      <View style={styles.header}>
-        <TouchableOpacity onPress={this.toggleExpandedMode}>
-          <Image
-            source={
-              expandedMode
-                ? require("../images/accountsmenutoggled.png")
-                : require("../images/accountsmenu.png")
-            }
-            style={{ width: 24, height: 20 }}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Accounts</Text>
-        <TouchableOpacity onPress={this.goToAddAccount}>
-          <Image
-            source={require("../images/accountsplus.png")}
-            style={{ width: 22, height: 21 }}
-          />
-        </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-around"
+        }}
+      >
+        <WhiteButton
+          onPress={this.onSend}
+          containerStyle={{ width: 100 }}
+          title="Send"
+        />
+        <WhiteButton
+          onPress={this.onReceive}
+          containerStyle={{ width: 100 }}
+          title="Receive"
+        />
       </View>
     );
-  };
+  }
+}
 
-  toggleExpandedMode = () => {
-    this.setState(({ expandedMode }) => ({ expandedMode: !expandedMode }));
-  };
+class AccountBody extends Component<{ account: * }> {
+  render() {
+    const { account } = this.props;
+    return (
+      <View>
+        <LText>{account.name}</LText>
+      </View>
+    );
+  }
+}
 
-  goToAddAccount = () => {
-    this.props.screenProps.topLevelNavigation.navigate("AddAccount");
+const navigationOptions = {
+  tabBarIcon: ({ tintColor }: *) => (
+    <Image
+      source={require("../images/accounts.png")}
+      style={{ tintColor, width: 32, height: 32 }}
+    />
+  )
+};
+
+export default class Accounts extends Component<
+  *,
+  {
+    expandedMode: boolean,
+    selectedIndex: number,
+    accounts: *
+  }
+> {
+  static navigationOptions = navigationOptions;
+  state = {
+    expandedMode: false,
+    selectedIndex: 0,
+    accounts: fakeAccounts
   };
 
   carousel: ?Carousel;
   onCarousel = (ref: ?Carousel) => {
     this.carousel = ref;
+  };
+
+  onToggleExpandedMode = () => {
+    this.setState(({ expandedMode }) => ({ expandedMode: !expandedMode }));
+  };
+
+  onAddAccount = () => {
+    this.props.screenProps.topLevelNavigation.navigate("AddAccount");
   };
 
   onPressExpandedItem = (selectedIndex: number) => {
@@ -267,21 +298,47 @@ export default class Accounts extends Component<*, *> {
     this.setState({ selectedIndex });
   };
 
-  renderItemExpanded = ({ item, index }) => (
-    <TouchableOpacity onPress={() => this.onPressExpandedItem(index)}>
-      <AccountRow account={item} />
-    </TouchableOpacity>
-  );
-
-  onItemFullPress = (item, index) => {
+  onItemFullPress = (item: *, index: *) => {
     const { carousel } = this;
-    console.log(carousel, index, this.state.selectedIndex);
     if (carousel && index !== this.state.selectedIndex) {
       carousel.snapToItem(index);
     }
   };
 
-  renderItemFull = ({ item, index }) => (
+  keyExtractor = (item: *) => item.id;
+
+  renderHeader = () => {
+    const { expandedMode } = this.state;
+    return (
+      <View style={styles.header}>
+        <TouchableOpacity onPress={this.onToggleExpandedMode}>
+          <Image
+            source={
+              expandedMode
+                ? require("../images/accountsmenutoggled.png")
+                : require("../images/accountsmenu.png")
+            }
+            style={{ width: 24, height: 20 }}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Accounts</Text>
+        <TouchableOpacity onPress={this.onAddAccount}>
+          <Image
+            source={require("../images/accountsplus.png")}
+            style={{ width: 22, height: 21 }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  renderItemExpanded = ({ item, index }: *) => (
+    <TouchableOpacity onPress={() => this.onPressExpandedItem(index)}>
+      <AccountRow account={item} />
+    </TouchableOpacity>
+  );
+
+  renderItemFull = ({ item, index }: *) => (
     <AccountCard
       account={item}
       topLevelNavigation={this.props.screenProps.topLevelNavigation}
@@ -289,24 +346,19 @@ export default class Accounts extends Component<*, *> {
     />
   );
 
-  keyExtractor = (item: *) => item.id;
-
   render() {
-    const { bitcoinAddress, expandedMode, selectedIndex } = this.state;
-
-    // FIXME this is not so clean. we might need to use react-navigation for the expanded mode as well...
-
+    const { accounts, expandedMode, selectedIndex } = this.state;
+    const { screenProps: { topLevelNavigation } } = this.props;
+    const account = accounts[selectedIndex];
     return (
       <View style={styles.root}>
-        <ScreenGeneric
-          key={String(expandedMode) /* force a redraw */}
-          renderHeader={this.renderHeader}
-        >
+        <ScreenGeneric renderHeader={this.renderHeader}>
           <ScrollView bounces={false} style={styles.body}>
             {expandedMode ? (
+              // TODO expanded mode shouldn't unmount the main screen part but should be position absoluted on top
               <FlatList
                 style={styles.expanded}
-                data={fakeAccounts}
+                data={accounts}
                 keyExtractor={this.keyExtractor}
                 renderItem={this.renderItemExpanded}
               />
@@ -315,7 +367,7 @@ export default class Accounts extends Component<*, *> {
                 <View style={styles.carousel}>
                   <Carousel
                     ref={this.onCarousel}
-                    data={fakeAccounts}
+                    data={accounts}
                     keyExtractor={this.keyExtractor}
                     itemWidth={280}
                     itemHeight={220}
@@ -327,44 +379,29 @@ export default class Accounts extends Component<*, *> {
                     renderItem={this.renderItemFull}
                   />
                   <Pagination
-                    dotsLength={fakeAccounts.length}
+                    dotsLength={accounts.length}
                     activeDotIndex={selectedIndex}
-                    dotContainerStyle={{
-                      marginHorizontal: 4
-                    }}
-                    dotStyle={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: 4,
-                      backgroundColor: "rgba(255, 255, 255, 0.92)"
-                    }}
+                    dotContainerStyle={styles.paginationDotContainerStyle}
+                    dotStyle={styles.paginationDotStyle}
                     inactiveDotOpacity={0.4}
                     inactiveDotScale={0.6}
                   />
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-around",
-                      position: "relative",
-                      bottom: -20
-                    }}
-                  >
-                    <WhiteButton
-                      withShadow
-                      containerStyle={{ width: 100 }}
-                      title="Send"
-                    />
-                    <WhiteButton
-                      withShadow
-                      containerStyle={{ width: 100 }}
-                      title="Receive"
-                    />
+                  <View style={styles.accountHeadMenu}>
+                    {account ? (
+                      <AccountHeadMenu
+                        topLevelNavigation={topLevelNavigation}
+                        account={account}
+                      />
+                    ) : null}
                   </View>
                 </View>
-                <View style={{ height: 800 }}>
-                  <LText>{" # " + selectedIndex}</LText>
-                  <LText>{bitcoinAddress}</LText>
+                <View style={styles.accountBody}>
+                  {account ? (
+                    <AccountBody
+                      topLevelNavigation={topLevelNavigation}
+                      account={account}
+                    />
+                  ) : null}
                 </View>
               </View>
             )}
@@ -400,5 +437,22 @@ const styles = StyleSheet.create({
   headerText: {
     color: "white",
     fontSize: 16
+  },
+  accountHeadMenu: {
+    position: "relative",
+    bottom: -20
+  },
+  accountBody: {
+    height: 800,
+    paddingTop: 20
+  },
+  paginationDotContainerStyle: {
+    marginHorizontal: 4
+  },
+  paginationDotStyle: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.92)"
   }
 });

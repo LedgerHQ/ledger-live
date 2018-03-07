@@ -11,8 +11,7 @@ export default class GenericButton extends Component<{
   color: string,
   backgroundColor: string,
   containerStyle: ?*,
-  titleStyle: ?*,
-  withShadow?: boolean
+  titleStyle: ?*
 }> {
   render() {
     const {
@@ -21,18 +20,11 @@ export default class GenericButton extends Component<{
       color,
       containerStyle,
       titleStyle,
-      backgroundColor,
-      withShadow
+      backgroundColor
     } = this.props;
     return (
       <TouchableOpacity onPress={onPress}>
-        <View
-          style={[
-            styles.container,
-            containerStyle,
-            withShadow && styles.shadow
-          ]}
-        >
+        <View style={[styles.container, containerStyle]}>
           <LText style={[styles.title, titleStyle]}>{title}</LText>
         </View>
       </TouchableOpacity>
@@ -46,6 +38,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  title: {},
-  shadow: {}
+  title: {}
 });
