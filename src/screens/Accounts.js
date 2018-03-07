@@ -246,8 +246,37 @@ class AccountBody extends Component<{ account: * }> {
   render() {
     const { account } = this.props;
     return (
-      <View>
-        <LText>{account.name}</LText>
+      <View style={{ padding: 40 }}>
+        <LText
+          semiBold
+          numberOfLines={1}
+          style={{
+            fontSize: 14
+          }}
+        >
+          {account.name}
+        </LText>
+        <LText
+          numberOfLines={1}
+          style={{
+            fontSize: 12,
+            color: "#999"
+          }}
+        >
+          {account.currency.name}
+        </LText>
+        <CurrencyUnitValue
+          unit={account.currency.units[0]}
+          value={account.amount}
+          ltextProps={{
+            semiBold: true,
+            style: {
+              alignSelf: "flex-start",
+              fontSize: 22,
+              marginVertical: 10
+            }
+          }}
+        />
       </View>
     );
   }
