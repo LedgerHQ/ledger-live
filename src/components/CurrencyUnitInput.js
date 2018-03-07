@@ -1,25 +1,9 @@
-//@flow
+// @flow
 import React, { Component } from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  Share,
-  StyleSheet,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
-  findNodeHandle,
-  TextInput
-} from "react-native";
-import {
-  getCurrencyByCoinType,
-  getFiatUnit,
-  formatCurrencyUnit,
-  parseCurrencyUnit
-} from "@ledgerhq/currencies";
-import LText, { getFontStyle } from "../components/LText";
 import type { Unit } from "@ledgerhq/currencies";
+import { View, StyleSheet, TextInput } from "react-native";
+import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/currencies";
+import LText, { getFontStyle } from "../components/LText";
 import { withLocale } from "./LocaleContext";
 
 const initialValueStringFromProps = props =>

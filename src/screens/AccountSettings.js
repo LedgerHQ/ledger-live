@@ -1,13 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  ScrollView,
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Image
-} from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import BlueButton from "../components/BlueButton";
 
 // TODO improve and reuse Settings components

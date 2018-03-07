@@ -1,21 +1,19 @@
 /* @flow */
 import React, { Component } from "react";
+import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
 import {
   Image,
   View,
-  Text,
   FlatList,
   RefreshControl,
   StyleSheet,
   ActivityIndicator
 } from "react-native";
-import { TabNavigator, TabBarTop } from "react-navigation";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import { getTransactions } from "../API";
 import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
-import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
 import { genBalanceData } from "../mock/account";
 import { withLocale } from "../components/LocaleContext";
 

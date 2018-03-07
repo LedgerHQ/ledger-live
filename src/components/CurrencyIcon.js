@@ -2,8 +2,10 @@
 
 import React, { PureComponent } from "react";
 import { View } from "react-native";
-import * as icons from "../icons";
+
 import type { Currency } from "@ledgerhq/currencies";
+
+import * as icons from "../icons";
 
 const iconsByCoinType = {
   "0": icons.btc,

@@ -1,17 +1,9 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Modal
-} from "react-native";
+import { Text, View, StyleSheet, Modal } from "react-native";
 import Camera from "react-native-camera";
 import { decodeURIScheme } from "@ledgerhq/currencies";
-import colors from "../colors";
+
 import Menu from "../components/Menu";
 import MenuTitle from "../components/MenuTitle";
 import BlueButton from "../components/BlueButton";

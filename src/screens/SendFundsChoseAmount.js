@@ -2,15 +2,11 @@
 import React, { Component } from "react";
 import {
   ScrollView,
-  Text,
   StyleSheet,
-  View,
   KeyboardAvoidingView,
-  TextInput,
-  Image,
-  TouchableOpacity
+  TextInput
 } from "react-native";
-import colors from "../colors";
+
 import BlueButton from "../components/BlueButton";
 import HeaderRightText from "../components/HeaderRightText";
 
@@ -31,7 +27,6 @@ export default class SendFundsChoseAmount extends Component<*, *> {
     });
   };
   render() {
-    const { amount } = this.state;
     return (
       <KeyboardAvoidingView
         behavior="padding"

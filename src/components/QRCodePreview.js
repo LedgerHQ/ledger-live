@@ -1,11 +1,10 @@
 /* @flow */
 import React, { Component } from "react";
 import invariant from "invariant";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { encodeURIScheme } from "@ledgerhq/currencies";
 import type { Currency } from "@ledgerhq/currencies";
-import colors from "../colors";
 
 export default class QRCodePreview extends Component<{
   address: string,

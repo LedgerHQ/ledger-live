@@ -1,4 +1,4 @@
-import { listCurrencies, formatCurrencyUnit } from "@ledgerhq/currencies";
+import { listCurrencies } from "@ledgerhq/currencies";
 
 const currencies = listCurrencies();
 
@@ -26,13 +26,10 @@ export function genBalanceData(n, dateIncrement) {
 
 export function genBitcoinAddressLike() {
   const charset = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-  return (
-    "1" +
-    Array(Math.floor(25 + 9 * Math.random()))
-      .fill(null)
-      .map(() => charset[Math.floor(Math.random() * charset.length)])
-      .join("")
-  );
+  return `1${Array(Math.floor(25 + 9 * Math.random()))
+    .fill(null)
+    .map(() => charset[Math.floor(Math.random() * charset.length)])
+    .join("")}`;
 }
 
 export function genHex(length) {
@@ -44,7 +41,7 @@ export function genHex(length) {
 
 export function genAddress(currency) {
   if (currency.coinType === 60 || currency.coinType === 61) {
-    return "0x" + genHex(40);
+    return `0x${genHex(40)}`;
   }
   return genBitcoinAddressLike();
 }
@@ -58,7 +55,7 @@ export function genOperation(account, ops, currency) {
       : Date.now() - Math.floor(10000000000 * Math.random() * Math.random())
   ).toUTCString();
   return {
-    id: String("mock_op_" + ops.length),
+    id: String(`mock_op_${ops.length}`),
     account,
     address: genAddress(currency),
     amount:
@@ -73,7 +70,7 @@ export function genOperation(account, ops, currency) {
 export function genAccount(accountIndex) {
   const currency = currencies[Math.floor(currencies.length * Math.random())];
   const account = {
-    id: String("mock_account_" + accountIndex),
+    id: String(`mock_account_${accountIndex}`),
     data: genBalanceData(8, 86400000),
     currency,
     balance: Math.floor(10000000000 * Math.random() * Math.random()),
@@ -81,15 +78,12 @@ export function genAccount(accountIndex) {
       String.fromCharCode(Math.floor(65 + 26 * Math.random())) +
       Array(Math.floor(4 + 30 * Math.random()))
         .fill("")
-        .map((_, j) => String.fromCharCode(Math.floor(65 + 26 * Math.random())))
+        .map(() => String.fromCharCode(Math.floor(65 + 26 * Math.random())))
         .join("")
         .toLowerCase()
   };
   account.operations = Array(Math.floor(1 + 200 * Math.random()))
     .fill(null)
-    .reduce(
-      (ops, _, i) => ops.concat(genOperation(account, ops, currency)),
-      []
-    );
+    .reduce(ops => ops.concat(genOperation(account, ops, currency)), []);
   return account;
 }

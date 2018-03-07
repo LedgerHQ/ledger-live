@@ -1,13 +1,5 @@
-import React, { Component, PureComponent } from "react";
-import { View } from "react-native";
-import {
-  VictoryChart,
-  VictoryLabel,
-  VictoryArea,
-  VictoryAxis,
-  VictoryCursorContainer,
-  Point
-} from "victory-native";
+import React, { PureComponent } from "react";
+import { VictoryArea } from "victory-native";
 import { Svg, Defs } from "react-native-svg";
 import BalanceChartGradient from "./BalanceChartGradient";
 import colors from "../colors";

@@ -1,3 +1,5 @@
+// @flow
+
 import { NativeModules, NativeEventEmitter } from "react-native";
 
 let getTransactions;

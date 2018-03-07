@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { Modal, View, Text, StyleSheet } from "react-native";
+import { Modal } from "react-native";
 import { withNavigation } from "react-navigation";
 import Menu from "../components/Menu";
 import MenuTitle from "../components/MenuTitle";
@@ -45,7 +45,5 @@ class CreateModal extends Component<*> {
     );
   }
 }
-
-const styles = StyleSheet.create({});
 
 export default withNavigation(CreateModal);

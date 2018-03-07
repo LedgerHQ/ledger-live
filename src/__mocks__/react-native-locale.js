@@ -1,5 +1,7 @@
+// @flow
+
 const NativeLocale = {
-  decimalStyle: number => "" + number,
+  decimalStyle: number => `${number}`,
   numberFromDecimalString: number => parseFloat(number),
   dateFormat: date => date.toString(),
   currencyCode: "USD",
@@ -32,7 +34,7 @@ const m = {
   },
 
   validateDateFormatStyle(style: string) {
-    let valid = ["full", "long", "medium", "short", "none"];
+    const valid = ["full", "long", "medium", "short", "none"];
     return valid.indexOf(style) >= 0;
   },
 
