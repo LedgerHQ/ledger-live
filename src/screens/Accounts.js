@@ -29,7 +29,7 @@ const fakeAccounts = Array(12)
   .fill(null)
   .map((_, i) => genAccount(i));
 
-class AccountRow extends Component<*, *> {
+class AccountRow extends PureComponent<*, *> {
   render() {
     const { account } = this.props;
     return (
@@ -490,11 +490,13 @@ export default class Accounts extends Component<
         <ScreenGeneric renderHeader={this.renderHeader}>
           <View style={styles.topBackground} />
           {/* FIXME perf are not good, investigate why */}
-          <AccountExpanded
-            style={[styles.expanded, !expandedMode && { display: "none" }]}
-            accounts={accounts}
-            onPressExpandedItem={this.onPressExpandedItem}
-          />
+          {expandedMode ? (
+            <AccountExpanded
+              style={styles.expanded}
+              accounts={accounts}
+              onPressExpandedItem={this.onPressExpandedItem}
+            />
+          ) : null}
           <AccountBody
             style={[styles.accountBody, expandedMode && { display: "none" }]}
             topLevelNavigation={topLevelNavigation}
