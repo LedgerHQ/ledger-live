@@ -21,6 +21,7 @@ import { formatCurrencyUnit } from "@ledgerhq/currencies";
 import LText from "../components/LText";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import WhiteButton from "../components/WhiteButton";
+import CurrencyIcon from "../components/CurrencyIcon";
 
 const windowDim = Dimensions.get("window");
 
@@ -28,7 +29,7 @@ const fakeAccounts = Array(12)
   .fill(null)
   .map((_, i) => genAccount(i));
 
-class AccountRow extends PureComponent<*, *> {
+class AccountRow extends Component<*, *> {
   render() {
     const { account } = this.props;
     return (
@@ -44,16 +45,9 @@ class AccountRow extends PureComponent<*, *> {
           flexDirection: "row"
         }}
       >
-        <View
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 10,
-            marginRight: 10,
-            backgroundColor:
-              account.currency.color /* PLACEHOLDER FOR THE ICON */
-          }}
-        />
+        <View style={{ marginRight: 10 }}>
+          <CurrencyIcon currency={account.currency} size={32} />
+        </View>
         <LText
           numberOfLines={1}
           style={{
@@ -119,16 +113,9 @@ class AccountCard extends PureComponent<*, *> {
                 marginVertical: 10
               }}
             >
-              <View
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 10,
-                  marginRight: 10,
-                  backgroundColor:
-                    account.currency.color /* PLACEHOLDER FOR THE ICON */
-                }}
-              />
+              <View style={{ marginRight: 10 }}>
+                <CurrencyIcon currency={account.currency} size={32} />
+              </View>
               <View
                 style={{
                   flexDirection: "column",
@@ -230,7 +217,7 @@ class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
   }
 }
 
-class OperationRow extends Component<{ operation: * }> {
+class OperationRow extends PureComponent<{ operation: * }> {
   render() {
     const { operation } = this.props;
     const currency = operation.account.currency;
