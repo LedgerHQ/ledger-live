@@ -1,7 +1,6 @@
 /* @flow */
 import React, { Component, PureComponent } from "react";
 import {
-  ScrollView,
   View,
   FlatList,
   TouchableOpacity,
@@ -17,7 +16,6 @@ import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import { genAccount } from "../mock/account";
-import { formatCurrencyUnit } from "@ledgerhq/currencies";
 import LText from "../components/LText";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import WhiteButton from "../components/WhiteButton";
@@ -220,7 +218,7 @@ class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
 class OperationRow extends PureComponent<{ operation: * }> {
   render() {
     const { operation } = this.props;
-    const currency = operation.account.currency;
+    const { currency } = operation.account;
     return (
       <View
         style={{
@@ -354,7 +352,7 @@ class AccountBody extends Component<
 
   keyExtractor = (item: *) => item.id;
 
-  renderItem = ({ item, index }: *) => <OperationRow operation={item} />;
+  renderItem = ({ item }: *) => <OperationRow operation={item} />;
 
   render() {
     const { style, Header, account, visible } = this.props;

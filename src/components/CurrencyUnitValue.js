@@ -1,9 +1,10 @@
-//@flow
+// @flow
+import { formatCurrencyUnit } from "@ledgerhq/currencies";
+import type { Unit } from "@ledgerhq/currencies";
+
 import React, { Component } from "react";
 import LText from "./LText";
 import { withLocale } from "./LocaleContext";
-import { formatCurrencyUnit } from "@ledgerhq/currencies";
-import type { Unit } from "@ledgerhq/currencies";
 
 class CurrencyUnitValue extends Component<{
   unit: Unit,

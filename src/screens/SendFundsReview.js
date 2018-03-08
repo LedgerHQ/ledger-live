@@ -1,12 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  ScrollView,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity
-} from "react-native";
+import { ScrollView, Text, StyleSheet } from "react-native";
 import colors from "../colors";
 import WhiteButton from "../components/WhiteButton";
 import HeaderRightText from "../components/HeaderRightText";
@@ -32,7 +26,7 @@ export default class SendFundsReview extends Component<*> {
           <Text>Account {params.accountId}</Text>
         </ScrollView>
         <WhiteButton
-          title={"SEND BTC " + params.amount}
+          title={`SEND BTC ${params.amount}`}
           onPress={this.confirm}
         />
       </ScrollView>

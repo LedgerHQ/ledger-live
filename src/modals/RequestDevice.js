@@ -1,13 +1,6 @@
-//@flow
+// @flow
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Modal,
-  Platform,
-  ActivityIndicator
-} from "react-native";
+import { StyleSheet, Text, View, Modal, ActivityIndicator } from "react-native";
 import type Transport from "@ledgerhq/hw-transport";
 import findFirstTransport from "../hw/findFirstTransport";
 

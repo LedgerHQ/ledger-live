@@ -1,3 +1,5 @@
+// @flow
+
 import { NativeModules, NativeEventEmitter } from "react-native";
 
 let getTransactions;
@@ -15,7 +17,7 @@ if (NativeModules.LGApi) {
       NativeModules.LGApi.getTransactions(address);
     });
 } else {
-  getTransactions = () => Promise.resolve([]);
+  getTransactions = (_: string) => Promise.resolve([]);
 }
 
 export { getTransactions };

@@ -1,13 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity
-} from "react-native";
+import { ScrollView, Text, View, StyleSheet } from "react-native";
 import colors from "../colors";
 import WhiteButton from "../components/WhiteButton";
 import HeaderRightText from "../components/HeaderRightText";

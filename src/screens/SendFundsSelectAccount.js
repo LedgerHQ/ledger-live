@@ -1,14 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  Button
-} from "react-native";
-import colors from "../colors";
+import { ScrollView, View, StyleSheet } from "react-native";
+
 import HeaderRightClose from "../components/HeaderRightClose";
 import BlueButton from "../components/BlueButton";
 

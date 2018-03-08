@@ -1,12 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback
-} from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import colors from "../colors";
 
 export default class ScreenGeneric extends Component<{

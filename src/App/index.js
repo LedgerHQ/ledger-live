@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { StyleSheet, View, Image, StatusBar, Linking } from "react-native";
+import { StyleSheet, View, Image, StatusBar } from "react-native";
 import { StackNavigator, TabNavigator, TabBarBottom } from "react-navigation";
 import colors from "../colors";
 import Dashboard from "../screens/Dashboard";

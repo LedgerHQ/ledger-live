@@ -1,13 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  ScrollView,
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Image
-} from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import colors from "../colors";
 
 class EditPersonalInfo extends Component<*> {

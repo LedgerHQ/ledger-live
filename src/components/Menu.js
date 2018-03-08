@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 
 /**
  * Menu takes the full space.

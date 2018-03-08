@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import colors from "../colors";
+import { View } from "react-native";
+
 import BlueButton from "../components/BlueButton";
 import HeaderRightText from "../components/HeaderRightText";
 
@@ -25,5 +25,3 @@ export default class SendFundsChoseFee extends Component<*> {
     );
   }
 }
-
-const styles = StyleSheet.create({});

@@ -1,8 +1,8 @@
 /* @flow */
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-import colors from "../colors";
 import GenericButton from "./GenericButton";
+
 export default class GreyButton extends Component<*> {
   render() {
     return (

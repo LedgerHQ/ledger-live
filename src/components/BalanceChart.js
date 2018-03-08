@@ -1,21 +1,19 @@
-import React, { Component, PureComponent } from "react";
-import { View } from "react-native";
+import React, { PureComponent } from "react";
+import { formatCurrencyUnit, formatShort } from "@ledgerhq/currencies";
+import { Defs } from "react-native-svg";
 import {
   VictoryChart,
   VictoryLabel,
   VictoryArea,
   VictoryAxis,
-  VictoryCursorContainer,
-  Point
+  VictoryCursorContainer
 } from "victory-native";
-import colors from "../colors";
-import { formatCurrencyUnit } from "@ledgerhq/currencies";
-import getFontStyle from "./LText/getFontStyle";
-import { Defs } from "react-native-svg";
-import BalanceChartGradient from "./BalanceChartGradient";
-import { formatShort } from "@ledgerhq/currencies";
 
-export default class BalanceChart extends PureComponent {
+import colors from "../colors";
+import getFontStyle from "./LText/getFontStyle"; // eslint-disable-line import/no-unresolved
+import BalanceChartGradient from "./BalanceChartGradient";
+
+export default class BalanceChart extends PureComponent<*> {
   static defaultProps = {
     color: colors.blue
   };
