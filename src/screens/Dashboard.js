@@ -64,7 +64,6 @@ class Dashboard extends Component<*, *> {
 
   componentDidMount() {
     transactionsPromise.then(transactions => {
-      console.log(transactions);
       this.setState({ transactions });
     });
   }
@@ -104,8 +103,14 @@ class Dashboard extends Component<*, *> {
     );
   };
 
+  flatList: ?FlatList<*>;
+  onFlatListRef = (ref: ?FlatList<*>) => {
+    this.flatList = ref;
+  };
+
   scrollUp = () => {
-    this.refs.flatList.scrollToOffset({ offset: 0 });
+    const { flatList } = this;
+    if (flatList) flatList.scrollToOffset({ offset: 0 });
   };
 
   render() {
@@ -117,7 +122,7 @@ class Dashboard extends Component<*, *> {
       >
         <View style={styles.topBackground} />
         <FlatList
-          ref="flatList"
+          ref={this.onFlatListRef}
           style={styles.flatList}
           contentContainerStyle={styles.flatListContent}
           refreshControl={

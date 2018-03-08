@@ -13,7 +13,7 @@ import colors from "../colors";
 import getFontStyle from "./LText/getFontStyle"; // eslint-disable-line import/no-unresolved
 import BalanceChartGradient from "./BalanceChartGradient";
 
-export default class BalanceChart extends PureComponent {
+export default class BalanceChart extends PureComponent<*> {
   static defaultProps = {
     color: colors.blue
   };

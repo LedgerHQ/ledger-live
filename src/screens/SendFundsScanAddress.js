@@ -37,7 +37,7 @@ export default class SendFundsScanAddress extends Component<*, *> {
     this.setState({ focused: false });
   };
   onRequestClose = () => {
-    this.setState({ address: null });
+    this.setState({ decodedResult: null });
   };
   onConfirm = () => {
     const { navigation } = this.props;

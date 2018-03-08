@@ -4,7 +4,7 @@ import { Svg, Defs } from "react-native-svg";
 import BalanceChartGradient from "./BalanceChartGradient";
 import colors from "../colors";
 
-export default class BalanceChartMiniature extends PureComponent {
+export default class BalanceChartMiniature extends PureComponent<*> {
   static defaultProps = {
     color: colors.blue,
     withGradient: true,

@@ -27,8 +27,7 @@ export default class ReceiveFunds extends Component<*, *> {
     currency: getCurrencyByCoinType(0),
     countervalue: undefined,
     error: undefined,
-    amount: 0,
-    account: 0
+    amount: 0
   };
   viewHandle: ?*;
   onRef = (ref: *) => {
@@ -38,15 +37,18 @@ export default class ReceiveFunds extends Component<*, *> {
   subs = [];
 
   componentDidMount() {
+    // TODO implement getDerivedStateFromProps to handle the navigation state
+    /*
     const { params } = this.props.navigation.state;
-    const amount = 0;
+    let amount = 0;
     if (params.amount) {
-      let amount = parseFloat(params.amount);
+      amount = parseFloat(params.amount);
       if (isNaN(amount) || !isFinite(amount) || amount <= 0) {
         amount = 0;
       }
     }
     this.setState({ amount });
+    */
     this.syncCountervalue();
     this.syncPublicAddress("44'/0'/0'/0");
   }
