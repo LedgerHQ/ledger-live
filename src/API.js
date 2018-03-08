@@ -17,7 +17,7 @@ if (NativeModules.LGApi) {
       NativeModules.LGApi.getTransactions(address);
     });
 } else {
-  getTransactions = (_: string) => Promise.resolve([]);
+  getTransactions = (_: string): Promise<Array<*>> => Promise.resolve([]);
 }
 
 export { getTransactions };
