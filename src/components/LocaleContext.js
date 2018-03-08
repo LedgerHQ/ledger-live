@@ -26,6 +26,7 @@ const i18n = i18next
     }
   });
 
+// $FlowFixMe
 const LocaleContext = React.createContext({
   i18n,
   t: i18n.getFixedT(),
