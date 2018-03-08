@@ -81,7 +81,9 @@ export default class SendFundsScanAddress extends Component<*, *> {
           <BlueButton
             title="fakely picking an address"
             onPress={() =>
-              this.setState({ address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV" })
+              this.setState({
+                decodedResult: { address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV" }
+              })
             }
           />
         </View>
