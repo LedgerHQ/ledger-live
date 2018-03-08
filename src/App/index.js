@@ -103,8 +103,7 @@ const MainNavigator = TabNavigator(
         backgroundColor: "#ffffff",
         height: 4
       }
-    },
-    cardStyle: styles.card
+    }
   }
 );
 

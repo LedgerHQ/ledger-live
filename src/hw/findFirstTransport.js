@@ -20,7 +20,7 @@ if (__DEV__) {
 export default () =>
   Observable.merge(
     ...transports.map(t =>
-      Observable.create(t.listen)
+      Observable.create(o => t.listen(o))
         .map(({ descriptor }) => ({ descriptor, t }))
         .catch(e => {
           console.warn(`discover failed for ${t.name}: ${e}`);
