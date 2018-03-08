@@ -22,24 +22,22 @@ export default class Search extends Component<*> {
   };
   onPressCancel = () => {};
   onChangeText = () => {};
-  renderHeader = () => {
-    return (
-      <View style={styles.header}>
-        <TextInput
-          placeholder="Search"
-          placeholderTextColor="#ddd"
-          autoCorrect={false}
-          autoCapitalize="none"
-          returnKeyType="search"
-          style={styles.textInput}
-          onChangeText={this.onChangeText}
-        />
-        <TouchableOpacity style={styles.button} onPress={this.onPressCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  renderHeader = () => (
+    <View style={styles.header}>
+      <TextInput
+        placeholder="Search"
+        placeholderTextColor="#ddd"
+        autoCorrect={false}
+        autoCapitalize="none"
+        returnKeyType="search"
+        style={styles.textInput}
+        onChangeText={this.onChangeText}
+      />
+      <TouchableOpacity style={styles.button} onPress={this.onPressCancel}>
+        <Text style={styles.buttonText}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
+  );
   render() {
     return (
       <ScreenGeneric renderHeader={this.renderHeader}>

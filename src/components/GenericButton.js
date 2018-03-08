@@ -1,27 +1,17 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import colors from "../colors";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import LText from "./LText";
 
 export default class GenericButton extends Component<{
   onPress: () => void,
   title: string,
-  color: string,
-  backgroundColor: string,
   containerStyle: ?*,
   titleStyle: ?*
 }> {
   render() {
-    const {
-      onPress,
-      title,
-      color,
-      containerStyle,
-      titleStyle,
-      backgroundColor
-    } = this.props;
+    const { onPress, title, containerStyle, titleStyle } = this.props;
     return (
       <TouchableOpacity onPress={onPress}>
         <View style={[styles.container, containerStyle]}>

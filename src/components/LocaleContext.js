@@ -1,9 +1,9 @@
-//@flow
+// @flow
 import React from "react";
 import i18next from "i18next";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import { reactI18nextModule } from "react-i18next";
-import Locale from "react-native-locale";
+import Locale from "react-native-locale"; // eslint-disable-line import/no-unresolved
 import locales from "../locales";
 
 const languageDetector = {

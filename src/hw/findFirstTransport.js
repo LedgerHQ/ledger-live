@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import { Observable } from "rxjs/Observable";
 import { PromiseObservable } from "rxjs/observable/PromiseObservable";
 import "rxjs/add/observable/merge";
@@ -23,7 +23,7 @@ export default () =>
       Observable.create(t.listen)
         .map(({ descriptor }) => ({ descriptor, t }))
         .catch(e => {
-          console.log("discover failed for " + t.name + ": " + e);
+          console.warn(`discover failed for ${t.name}: ${e}`);
           return Observable.empty();
         })
     )

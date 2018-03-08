@@ -5,10 +5,8 @@ import {
   View,
   TouchableOpacity,
   Text,
-  StyleSheet,
-  Image
+  StyleSheet
 } from "react-native";
-import { withNavigation } from "react-navigation";
 
 class SectionTitle extends Component<*> {
   render() {

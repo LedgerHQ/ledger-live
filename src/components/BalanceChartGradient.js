@@ -1,7 +1,6 @@
-//@flow
+// @flow
 import React, { PureComponent } from "react";
-import { G, Line, Defs, LinearGradient, Stop } from "react-native-svg";
-import colors from "../colors";
+import { LinearGradient, Stop } from "react-native-svg";
 
 export default class BalanceChartGradient extends PureComponent<*> {
   render() {

@@ -2,8 +2,10 @@
 
 import React, { PureComponent } from "react";
 import { View } from "react-native";
-import * as icons from "../icons";
+
 import type { Currency } from "@ledgerhq/currencies";
+
+import * as icons from "../icons";
 
 const iconsByCoinType = {
   "0": icons.btc,
@@ -29,12 +31,11 @@ export default class CurrencyIcon extends PureComponent<Props> {
     const { size, currency } = this.props;
     const IconComponent: typeIcon = getIconByCoinType(currency.coinType);
     if (!IconComponent) {
-      console.log(
+      console.warn(
         `No icon for currency ${currency.name} (coinType ${currency.coinType})`
       );
       return <View style={{ width: size, height: size }} />;
     }
-    console.log(currency);
     return <IconComponent size={size} color={currency.color} />;
   }
 }

@@ -1,5 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
+import AppBtc from "@ledgerhq/hw-app-btc";
 import {
   View,
   ScrollView,
@@ -7,20 +8,13 @@ import {
   Share,
   Clipboard,
   StyleSheet,
-  Image,
   ActivityIndicator,
   TouchableOpacity,
-  findNodeHandle,
-  TextInput
+  findNodeHandle
 } from "react-native";
-import QRCode from "react-native-qrcode-svg";
 import { getCurrencyByCoinType, getFiatUnit } from "@ledgerhq/currencies";
-import type { Unit } from "@ledgerhq/currencies";
 import colors from "../colors";
 import QRCodePreview from "../components/QRCodePreview";
-import QRCodeModal from "../modals/QRCodeAddress";
-import AppBtc from "@ledgerhq/hw-app-btc";
-import type Transport from "@ledgerhq/hw-transport";
 import findFirstTransport from "../hw/findFirstTransport";
 import CurrencyUnitInput from "../components/CurrencyUnitInput";
 
@@ -33,8 +27,7 @@ export default class ReceiveFunds extends Component<*, *> {
     currency: getCurrencyByCoinType(0),
     countervalue: undefined,
     error: undefined,
-    amount: 0,
-    account: 0
+    amount: 0
   };
   viewHandle: ?*;
   onRef = (ref: *) => {
@@ -44,21 +37,24 @@ export default class ReceiveFunds extends Component<*, *> {
   subs = [];
 
   componentDidMount() {
+    // TODO implement getDerivedStateFromProps to handle the navigation state
+    /*
     const { params } = this.props.navigation.state;
     let amount = 0;
     if (params.amount) {
-      let amount = parseFloat(params.amount);
+      amount = parseFloat(params.amount);
       if (isNaN(amount) || !isFinite(amount) || amount <= 0) {
         amount = 0;
       }
     }
     this.setState({ amount });
+    */
     this.syncCountervalue();
     this.syncPublicAddress("44'/0'/0'/0");
   }
 
   componentWillUnmount() {
-    for (let sub of this.subs) {
+    for (const sub of this.subs) {
       sub.unsubscribe();
     }
   }
@@ -99,12 +95,12 @@ export default class ReceiveFunds extends Component<*, *> {
   };
 
   onShare = () => {
-    const { address, amount, account } = this.state;
+    const { address, amount } = this.state;
     if (!address) return;
     const currencySymbol = "BTC";
-    const link = "bitcoin:" + address; // TODO needs formatter
+    const link = `bitcoin:${address}`; // TODO needs formatter
     Share.share({
-      title: "Send me " + (amount ? amount + " " : "") + currencySymbol,
+      title: `Send me ${amount ? `${amount} ` : ""}${currencySymbol}`,
       message: link
     });
   };
@@ -137,14 +133,7 @@ export default class ReceiveFunds extends Component<*, *> {
   };
 
   render() {
-    const {
-      address,
-      error,
-      amount,
-      currency,
-      countervalue,
-      account
-    } = this.state;
+    const { address, error, amount, currency, countervalue } = this.state;
     const countervalueUnit = getFiatUnit("USD");
     return (
       <ScrollView
@@ -165,7 +154,7 @@ export default class ReceiveFunds extends Component<*, *> {
             marginBottom: 10
           }}
         >
-          <Text>{"Bitcoin Account"}</Text>
+          <Text>Bitcoin Account</Text>
         </View>
 
         <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>

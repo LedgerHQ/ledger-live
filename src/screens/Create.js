@@ -36,7 +36,6 @@ class Icon extends Component<*, *> {
     this.setState({ modalOpened: false });
   };
   render() {
-    const { tintColor } = this.props;
     const { modalOpened } = this.state;
     return (
       <TouchableOpacity onPress={this.onPress}>
@@ -59,7 +58,7 @@ class Icon extends Component<*, *> {
 export default class Create extends Component<*> {
   static navigationOptions = {
     tabBarIcon: (props: *) => <Icon {...props} />,
-    tabBarOnPress: (props: *) => {} // noop
+    tabBarOnPress: () => {} // noop
   };
   render() {
     return null;
