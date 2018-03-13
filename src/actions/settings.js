@@ -1,0 +1,25 @@
+// @flow
+
+import type { Dispatch } from "redux";
+import db from "../db";
+import type { Settings } from "../types/common";
+
+export type SaveSettings = Settings => { type: string, payload: Settings };
+
+export const saveSettings: SaveSettings = payload => ({
+  type: "DB:SAVE_SETTINGS",
+  payload
+});
+
+type InitSettings = () => (Dispatch<*>) => Promise<void>;
+
+export const initSettings: InitSettings = () => async dispatch => {
+  const settings = (await db.get("settings")) || {};
+  if (Object.keys(settings).length === 0) {
+    return;
+  }
+  dispatch({
+    type: "FETCH_SETTINGS",
+    payload: settings
+  });
+};
