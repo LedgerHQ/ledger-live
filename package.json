@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "rnpm": {
-    "assets": ["./assets/fonts/"]
+    "assets": [
+      "./assets/fonts/"
+    ]
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
@@ -35,7 +37,9 @@
   },
   "jest": {
     "preset": "react-native",
-    "transformIgnorePatterns": ["node_modules/(?!victory-native)/"]
+    "transformIgnorePatterns": [
+      "node_modules/(?!victory-native)/"
+    ]
   },
   "dependencies": {
     "@ledgerhq/common": "4.2.0",
@@ -49,6 +53,7 @@
     "hoist-non-react-statics": "^2.5.0",
     "i18next": "10.5.0",
     "invariant": "2.2.3",
+    "lodash": "^4.17.5",
     "moment": "^2.21.0",
     "numeral": "^2.0.6",
     "react": "^16.3.0-alpha.1",
@@ -61,12 +66,16 @@
     "react-native-locale": "0.0.18",
     "react-native-qrcode-svg": "5.0.6",
     "react-native-sentry": "0.34.1",
+    "react-native-simple-store": "^1.3.0",
     "react-native-snap-carousel": "^3.6.0",
     "react-native-svg": "6.2.2",
     "react-navigation": "1.4.0",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2",
+    "redux-actions": "^2.3.0",
+    "redux-thunk": "^2.2.0",
     "rxjs": "5.5.6",
-    "stream":
-      "github:substack/stream-browserify#cc923068f618204f80769627ea126a61c55c7cee",
+    "stream": "github:substack/stream-browserify#cc923068f618204f80769627ea126a61c55c7cee",
     "victory-native": "0.17.1"
   }
 }

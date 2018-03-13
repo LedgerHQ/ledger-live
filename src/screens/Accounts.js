@@ -12,10 +12,15 @@ import {
 } from "react-native";
 import moment from "moment";
 import Carousel, { Pagination } from "react-native-snap-carousel";
+import { connect } from "react-redux";
+import type { Account, Operation } from "../types/common";
+import {
+  getVisibleAccounts,
+  getBalanceHistoryUntilNow
+} from "../reducers/accounts";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
-import { genAccount } from "../mock/account";
 import LText from "../components/LText";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import WhiteButton from "../components/WhiteButton";
@@ -23,13 +28,14 @@ import CurrencyIcon from "../components/CurrencyIcon";
 
 const windowDim = Dimensions.get("window");
 
-const fakeAccounts = Array(12)
-  .fill(null)
-  .map((_, i) => genAccount(i));
+const mapStateToProps = state => ({
+  accounts: getVisibleAccounts(state)
+});
 
 class AccountRow extends PureComponent<*, *> {
   render() {
     const { account } = this.props;
+    const data = getBalanceHistoryUntilNow(account, 30);
     return (
       <View
         style={{
@@ -58,7 +64,7 @@ class AccountRow extends PureComponent<*, *> {
         <BalanceChartMiniature
           width={50}
           height={50}
-          data={account.data}
+          data={data}
           color={account.currency.color}
           withGradient={false}
         />
@@ -86,6 +92,7 @@ class AccountCard extends PureComponent<*, *> {
   };
   render() {
     const { account, onPress } = this.props;
+    const data = getBalanceHistoryUntilNow(account, 30);
     return (
       <TouchableWithoutFeedback onPress={onPress}>
         <View
@@ -165,7 +172,7 @@ class AccountCard extends PureComponent<*, *> {
             <BalanceChartMiniature
               width={260}
               height={100}
-              data={account.data}
+              data={data}
               color={account.currency.color}
             />
           </View>
@@ -215,7 +222,7 @@ class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
   }
 }
 
-class OperationRow extends PureComponent<{ operation: * }> {
+class OperationRow extends PureComponent<{ operation: Operation }> {
   render() {
     const { operation } = this.props;
     const { currency } = operation.account;
@@ -412,19 +419,20 @@ const navigationOptions = {
   )
 };
 
-export default class Accounts extends Component<
-  *,
+class Accounts extends Component<
+  {
+    accounts: Account[],
+    screenProps: *
+  },
   {
     expandedMode: boolean,
-    selectedIndex: number,
-    accounts: *
+    selectedIndex: number
   }
 > {
   static navigationOptions = navigationOptions;
   state = {
     expandedMode: false,
-    selectedIndex: 0,
-    accounts: fakeAccounts
+    selectedIndex: 0
   };
 
   onToggleExpandedMode = () => {
@@ -469,8 +477,8 @@ export default class Accounts extends Component<
   };
 
   renderAccountBodyHeader = () => {
-    const { accounts, selectedIndex } = this.state;
-    const { screenProps: { topLevelNavigation } } = this.props;
+    const { selectedIndex } = this.state;
+    const { accounts, screenProps: { topLevelNavigation } } = this.props;
     const account = accounts[selectedIndex];
     return (
       <View style={styles.carousel}>
@@ -499,8 +507,8 @@ export default class Accounts extends Component<
   };
 
   render() {
-    const { accounts, expandedMode, selectedIndex } = this.state;
-    const { screenProps: { topLevelNavigation } } = this.props;
+    const { expandedMode, selectedIndex } = this.state;
+    const { accounts, screenProps: { topLevelNavigation } } = this.props;
     const account = accounts[selectedIndex];
     return (
       <View style={styles.root}>
@@ -526,6 +534,8 @@ export default class Accounts extends Component<
     );
   }
 }
+
+export default connect(mapStateToProps)(Accounts);
 
 const styles = StyleSheet.create({
   topBackground: {
