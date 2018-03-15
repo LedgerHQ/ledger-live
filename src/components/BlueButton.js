@@ -10,6 +10,7 @@ export default class BlueButton extends Component<*> {
         {...this.props}
         titleStyle={{ color: "white" }}
         containerStyle={{ backgroundColor: colors.blue }}
+        spinnerColor="white"
       />
     );
   }

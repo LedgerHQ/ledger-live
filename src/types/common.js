@@ -1,6 +1,6 @@
 // @flow
 
-import type { Currency } from "@ledgerhq/currencies";
+import type { Currency, Unit } from "@ledgerhq/currencies";
 
 // FIXME some types have diverged a bit from the desktop project; we'll converge later
 
@@ -23,7 +23,7 @@ export type Account = {
   coinType: number,
   name: string,
   operations: Operation[],
-  unitIndex: number
+  unit: Unit
 };
 
 export type SettingsDisplay = {

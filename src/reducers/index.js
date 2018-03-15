@@ -17,6 +17,7 @@ export type State = {
 };
 
 export default combineReducers({
+  // $FlowFixMe : not sure what's going on with accounts type
   accounts,
   counterValues,
   settings

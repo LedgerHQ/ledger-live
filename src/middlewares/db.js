@@ -18,7 +18,19 @@ export default store => next => action => {
 
   const accounts = getAccounts(state);
 
-  db.save("settings", settings);
-  db.save("accounts", deserializeAccounts(accounts));
-  db.save("countervalues", counterValues);
+  const startTime = Date.now();
+  db
+    .save([
+      ["settings", settings],
+      ["accounts", deserializeAccounts(accounts)],
+      ["countervalues", counterValues]
+    ])
+    .then(
+      () => {
+        console.log(`DB saved in ${(Date.now() - startTime).toFixed(0)} ms`);
+      },
+      e => {
+        console.error(e);
+      }
+    );
 };

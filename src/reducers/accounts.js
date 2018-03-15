@@ -124,16 +124,17 @@ type AccountSerial = *;
 
 export function serializeAccounts(accounts: Array<AccountSerial>): Account[] {
   return accounts.map((account, key) => {
+    const currency = getCurrencyByCoinType(account.coinType);
     const a: Account = {
       id: account.id,
       address: account.address,
       archived: account.archived,
       balance: account.balance,
       coinType: account.coinType,
-      currency: getCurrencyByCoinType(account.coinType),
+      currency,
       operations: [],
       name: account.name || `${key}`,
-      unitIndex: account.unitIndex || 0
+      unit: account.unit || currency.units[0]
     };
     a.operations = account.operations.map(t => ({
       ...t,
@@ -152,7 +153,7 @@ export function deserializeAccounts(accounts: Account[]): AccountSerial[] {
     coinType: account.coinType,
     name: account.name,
     operations: account.operations.map(({ account: _acc, ...t }) => t),
-    unitIndex: account.unitIndex
+    unit: account.unit
   }));
 }
 

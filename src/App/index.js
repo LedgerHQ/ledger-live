@@ -8,7 +8,7 @@ import Accounts from "../screens/Accounts";
 import AccountSettings from "../screens/AccountSettings";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
-import EditPersonalInfo from "../screens/EditPersonalInfo";
+import ImportAccounts from "../screens/ImportAccounts";
 import Create from "../screens/Create";
 import ReceiveFunds from "../screens/ReceiveFunds";
 import SendFundsSelectAccount from "../screens/SendFundsSelectAccount";
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
 const SettingsStack = StackNavigator(
   {
     Settings: { screen: Settings },
-    EditPersonalInfo: { screen: EditPersonalInfo }
+    ImportAccounts: { screen: ImportAccounts }
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
@@ -154,7 +154,8 @@ const RootNavigator = StackNavigator(
       screen: SendFunds
     },
     AddAccount: { screen: AddAccount },
-    AccountSettings: { screen: AccountSettings }
+    AccountSettings: { screen: AccountSettings },
+    ImportAccounts: { screen: ImportAccounts }
   },
   {
     mode: "modal",
