@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
 import {
   Image,
@@ -9,45 +9,92 @@ import {
   StyleSheet,
   ActivityIndicator
 } from "react-native";
+import { connect } from "react-redux";
+import type { Currency, Unit } from "@ledgerhq/currencies";
+import type { Account, Operation } from "../types/common";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
-import { getTransactions } from "../API";
 import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
-import { genBalanceData } from "../mock/account";
 import { withLocale } from "../components/LocaleContext";
+import {
+  getVisibleAccounts,
+  getBalanceHistoryUntilNow
+} from "../reducers/accounts";
+import { calculateCounterValueSelector } from "../reducers/counterValues";
 
-const transactionsPromise = getTransactions(
-  "1XPTgDRhN8RFnzniWCddobD9iKZatrvH4"
-);
-
-class ListHeaderComponent extends Component<*, *> {
-  state = {
-    data: genBalanceData(8, 86400000)
-  };
+class ListHeaderComponent extends PureComponent<
+  {
+    accounts: Account[],
+    totalBalance: number,
+    calculateCounterValue: (
+      currency: Currency,
+      fiatUnit: Unit
+    ) => (number, Date) => number
+  },
+  *
+> {
   render() {
-    const { data } = this.state;
+    const { accounts, calculateCounterValue } = this.props;
+    const fiatUnit = getFiatUnit("USD"); // FIXME no more hardcoded
+
+    const data =
+      accounts.length === 0
+        ? null
+        : accounts
+            .map(account => {
+              const history = getBalanceHistoryUntilNow(account, 30);
+              const calculateAccountCounterValue = calculateCounterValue(
+                account.currency,
+                fiatUnit
+              );
+              return history.map(h => ({
+                date: h.date,
+                value: calculateAccountCounterValue(h.value, h.date)
+              }));
+            })
+            .reduce((acc, history) =>
+              acc.map((a, i) => ({
+                date: a.date,
+                value: a.value + history[i].value
+              }))
+            );
+
     return (
       <View style={styles.carouselCountainer}>
         <View style={{ padding: 10, flexDirection: "row" }}>
           <LText semiBold style={styles.balanceText}>
-            {formatCurrencyUnit(getFiatUnit("USD"), 4728252, {
+            {formatCurrencyUnit(fiatUnit, this.props.totalBalance, {
               showCode: true
             })}
           </LText>
         </View>
-        <BalanceChart
-          width={400}
-          height={250}
-          data={data}
-          unit={getFiatUnit("USD")}
-        />
+        {data ? (
+          <BalanceChart
+            width={400}
+            height={250}
+            data={data}
+            unit={getFiatUnit("USD")}
+          />
+        ) : null}
       </View>
     );
   }
 }
 
-class Dashboard extends Component<*, *> {
+const mapStateToProps = state => ({
+  accounts: getVisibleAccounts(state),
+  calculateCounterValue: calculateCounterValueSelector(state)
+});
+
+class Dashboard extends Component<
+  {
+    accounts: Account[],
+    calculateCounterValue: *,
+    t: *
+  },
+  *
+> {
   static navigationOptions = {
     tabBarIcon: ({ tintColor }: *) => (
       <Image
@@ -58,26 +105,37 @@ class Dashboard extends Component<*, *> {
   };
 
   state = {
-    transactions: null,
+    data: null,
     refreshing: false
   };
 
   componentDidMount() {
-    transactionsPromise.then(transactions => {
-      this.setState({ transactions });
-    });
+    this.load();
   }
 
-  onRefresh = () => {
-    this.setState({ refreshing: true });
-    new Promise(s => setTimeout(s, 500 + 500 * Math.random()))
-      .then(() => transactionsPromise)
-      .then(transactions => {
-        this.setState({ transactions, refreshing: false });
-      });
+  load = async () => {
+    // TODO generate data for a SectionList
+    this.setState({
+      // FIXME we need to generate the section list data properly.
+      // maybe write a selector function in store side
+      data: this.props.accounts.reduce(
+        (all, account) => all.concat(account.operations),
+        []
+      )
+    });
+    return Promise.resolve();
   };
 
-  keyExtractor = (item: string) => item;
+  onRefresh = async () => {
+    this.setState({ refreshing: true });
+    try {
+      await this.load();
+    } finally {
+      this.setState({ refreshing: false });
+    }
+  };
+
+  keyExtractor = (item: Operation) => item.id;
 
   renderItem = ({ item }: *) => (
     <LText
@@ -85,7 +143,7 @@ class Dashboard extends Component<*, *> {
       ellipsizeMode="middle"
       style={{ paddingVertical: 12, paddingHorizontal: 20 }}
     >
-      {item}
+      {item.address}
     </LText>
   );
 
@@ -114,7 +172,16 @@ class Dashboard extends Component<*, *> {
   };
 
   render() {
-    const { transactions, refreshing } = this.state;
+    const { accounts, calculateCounterValue } = this.props;
+    const { data, refreshing } = this.state;
+    const totalBalance = accounts.reduce(
+      (sum, account) =>
+        sum +
+        calculateCounterValue(account.currency, getFiatUnit("USD"))(
+          account.balance
+        ),
+      0
+    );
     return (
       <ScreenGeneric
         onPressHeader={this.scrollUp}
@@ -131,9 +198,15 @@ class Dashboard extends Component<*, *> {
               onRefresh={this.onRefresh}
             />
           }
-          ListHeaderComponent={ListHeaderComponent}
+          ListHeaderComponent={() => (
+            <ListHeaderComponent
+              totalBalance={totalBalance}
+              accounts={accounts}
+              calculateCounterValue={calculateCounterValue}
+            />
+          )}
           ListFooterComponent={
-            transactions
+            data
               ? null
               : () => (
                   <ActivityIndicator
@@ -142,7 +215,7 @@ class Dashboard extends Component<*, *> {
                   />
                 )
           }
-          data={transactions ? transactions.txsHash : []}
+          data={data || []}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
         />
@@ -151,7 +224,7 @@ class Dashboard extends Component<*, *> {
   }
 }
 
-export default withLocale(Dashboard);
+export default withLocale(connect(mapStateToProps)(Dashboard));
 
 const styles = StyleSheet.create({
   carouselCountainer: {

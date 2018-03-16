@@ -163,6 +163,12 @@ const RootNavigator = StackNavigator(
   }
 );
 
+export class LoadingApp extends Component<*> {
+  render() {
+    return null;
+  }
+}
+
 export default class App extends Component<*> {
   render() {
     return (
