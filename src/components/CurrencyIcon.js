@@ -10,6 +10,7 @@ type Props = {
   size: number
 };
 
+type typeIcon = React$ComponentType<{ size: number, color: string }>;
 export default class CurrencyIcon extends PureComponent<Props> {
   render() {
     const { size, currency } = this.props;
