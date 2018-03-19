@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@ledgerhq/common": "4.2.0",
-    "@ledgerhq/currencies": "4.5.0",
+    "@ledgerhq/currencies": "4.7.1",
     "@ledgerhq/hw-app-btc": "4.6.0",
     "@ledgerhq/hw-transport": "4.6.0",
     "@ledgerhq/hw-transport-http": "4.6.0",
