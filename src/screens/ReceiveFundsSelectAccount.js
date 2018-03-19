@@ -4,7 +4,6 @@ import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { getVisibleAccounts } from "../reducers/accounts";
-import HeaderRightClose from "../components/HeaderRightClose";
 import AccountChoice from "../components/AccountChoice";
 import type { Account } from "../types/common";
 
@@ -21,25 +20,24 @@ const mapPropsToState = state => ({
   accounts: getVisibleAccounts(state)
 });
 
-class SendFundsSelectAccount extends Component<{
+class ReceiveFundsSelectAccount extends Component<{
   accounts: Account[],
   navigation: NavigationScreenProp<{
-    params: {}
+    params: {
+      selectedAccountId: string,
+      setAccountId: string => void
+    }
   }>
 }> {
-  static navigationOptions = ({ screenProps }: *) => ({
-    title: "Select account",
-    headerRight: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    )
-  });
+  static navigationOptions = {
+    title: "Select an account"
+  };
 
   onAccountPress = (account: Account) => {
     const { navigation } = this.props;
-    navigation.navigate("SendFundsScanAddress", {
-      ...navigation.state.params,
-      accountId: account.id
-    });
+    const { selectedAccountId, setAccountId } = navigation.state.params;
+    if (selectedAccountId !== account.id) setAccountId(account.id);
+    navigation.goBack();
   };
 
   renderItem = ({ item }: { item: Account }) => (
@@ -62,4 +60,4 @@ class SendFundsSelectAccount extends Component<{
   }
 }
 
-export default connect(mapPropsToState)(SendFundsSelectAccount);
+export default connect(mapPropsToState)(ReceiveFundsSelectAccount);

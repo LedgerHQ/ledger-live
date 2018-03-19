@@ -16,7 +16,7 @@ export default class CurrencyIcon extends PureComponent<Props> {
     const { size, currency } = this.props;
     const IconComponent: typeIcon = getIconByCoinType(currency.coinType);
     if (!IconComponent) {
-      console.log(
+      console.warn(
         `No icon for currency ${currency.name} (coinType ${currency.coinType})`
       );
       return <View style={{ width: size, height: size }} />;
