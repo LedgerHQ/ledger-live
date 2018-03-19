@@ -7,3 +7,7 @@ fi
 cp node_modules/react-native-camera/postinstall_project/projectWithoutFaceDetection.pbxproj node_modules/react-native-camera/ios/RNCamera.xcodeproj/project.pbxproj
 
 flow-typed install -s
+
+if [ "$CI" != "true" ] ; then
+  rndebugger-open
+fi

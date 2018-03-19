@@ -5,15 +5,18 @@ import {
   View,
   TouchableOpacity,
   Text,
-  StyleSheet
+  StyleSheet,
+  Alert
 } from "react-native";
+import LText from "../components/LText";
+import { withReboot } from "../components/RebootContext";
 
 class SectionTitle extends Component<*> {
   render() {
     const { title } = this.props;
     return (
       <View style={styles.sectionTitle}>
-        <Text style={styles.sectionTitleText}>{title}</Text>
+        <LText style={styles.sectionTitleText}>{title}</LText>
       </View>
     );
   }
@@ -34,8 +37,20 @@ class SectionEntry extends Component<*> {
   }
 }
 
-class SignOut extends Component<*> {
-  onSignOut = () => {};
+class SignOut_ extends Component<{ reboot: (?boolean) => * }> {
+  onResetAll = async () => {
+    await this.props.reboot(true);
+  };
+  onSignOut = () => {
+    Alert.alert(
+      "Are you sure you want to sign out?",
+      "All accounts data will be removed from your phone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Sign me out", onPress: this.onResetAll }
+      ]
+    );
+  };
   render() {
     return (
       <View style={{ marginVertical: 40 }}>
@@ -47,6 +62,8 @@ class SignOut extends Component<*> {
   }
 }
 
+const SignOut = withReboot(SignOut_);
+
 export default class Settings extends Component<*> {
   static navigationOptions = {
     title: "Settings"
@@ -55,42 +72,14 @@ export default class Settings extends Component<*> {
     const { navigation } = this.props;
     return (
       <ScrollView style={styles.container}>
-        <SectionTitle title="PERSONAL INFO" />
-        <SectionEntry onPress={() => navigation.navigate("EditPersonalInfo")}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                backgroundColor: "black",
-                borderRadius: 25,
-                marginRight: 10
-              }}
-            />
-            <Text style={{ fontWeight: "bold" }}>Evelyn Fowler</Text>
-          </View>
-        </SectionEntry>
         <SectionTitle title="DISPLAY" />
         <SectionEntry>
-          <Text style={styles.sectionEntryLabel}>Countervalue</Text>
+          <LText>Countervalue</LText>
         </SectionEntry>
-        <SectionEntry />
-        <SectionEntry />
-        <SectionTitle title="COIN" />
-        <SectionEntry />
-        <SectionEntry />
         <SectionTitle title="TOOLS" />
-        <SectionEntry />
-        <SectionEntry />
-        <SectionEntry />
-        <SectionTitle title="ACCOUNTS" />
-        <SectionEntry />
-        <SectionTitle title="ABOUT LEDGET WALLET" />
-        <SectionEntry />
-        <SectionEntry />
-        <SectionTitle title="HELP" />
-        <SectionEntry />
-        <SectionEntry />
+        <SectionEntry onPress={() => navigation.navigate("ImportAccounts")}>
+          <LText>Import Accounts</LText>
+        </SectionEntry>
         <SignOut />
       </ScrollView>
     );
@@ -125,10 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginBottom: 1
   },
-  sectionEntryLabel: {
-    color: "#666",
-    fontWeight: "bold"
-  },
+  sectionEntryLabel: {},
   sectionEntryCenter: {
     justifyContent: "center"
   },

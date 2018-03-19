@@ -28,9 +28,9 @@ export const calculateCounterValueSelector: CalculateCounterValueSelector = stat
   currency,
   fiatUnit
 ) => {
-  const byDate =
-    state.counterValues[`${currency.units[0].code}-${fiatUnit.code}`];
+  const pairKey = `${currency.units[0].code}-${fiatUnit.code}`;
   return (value, date = new Date()) => {
+    const byDate = state.counterValues[pairKey] || {};
     const countervalue = byDate[formatCounterValueDate(date)];
     if (!countervalue) return 0;
     return Math.round(

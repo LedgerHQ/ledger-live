@@ -75,7 +75,7 @@ class AccountRow extends PureComponent<*, *> {
               fontSize: 14
             }
           }}
-          unit={account.currency.units[0]}
+          unit={account.unit}
           value={account.balance}
         />
       </View>
@@ -157,7 +157,7 @@ class AccountCard extends PureComponent<*, *> {
 
             <View>
               <CurrencyUnitValue
-                unit={account.currency.units[0]}
+                unit={account.unit}
                 value={account.balance}
                 ltextProps={{
                   semiBold: true,
@@ -225,7 +225,7 @@ class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
 class OperationRow extends PureComponent<{ operation: Operation }> {
   render() {
     const { operation } = this.props;
-    const { currency } = operation.account;
+    const { unit } = operation.account;
     return (
       <View
         style={{
@@ -270,7 +270,7 @@ class OperationRow extends PureComponent<{ operation: Operation }> {
               color: operation.amount > 0 ? colors.green : colors.red
             }
           }}
-          unit={currency.units[0]}
+          unit={unit}
           value={operation.amount}
         />
       </View>

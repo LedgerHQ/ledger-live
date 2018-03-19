@@ -65,11 +65,26 @@ export function genOperation(account: Account, ops: *, currency: Currency) {
     address: genAddress(currency),
     amount:
       (Math.random() < 0.3 ? -1 : 1) *
-      Math.floor(1000000000 * Math.random() * Math.random()),
+      Math.floor(100000000 * Math.random() * Math.random()),
     hash: genHex(64),
     receivedAt,
     confirmations: Math.floor((Date.now() - new Date(receivedAt)) / 900000)
   };
+}
+
+export function genAddingOperationsInAccount(
+  account: Account,
+  count: number
+): Account {
+  const copy = { ...account };
+  copy.operations = Array(count)
+    .fill(null)
+    .reduce(ops => {
+      const op = genOperation(copy, ops, copy.currency);
+      return ops.concat(op);
+    }, copy.operations);
+  copy.balance = account.operations.reduce((sum, op) => sum + op.amount, 0);
+  return copy;
 }
 
 export function genAccount(accountIndex: number) {
@@ -80,7 +95,7 @@ export function genAccount(accountIndex: number) {
     data: genBalanceData(8, 86400000),
     currency,
     coinType: currency.coinType,
-    unitIndex: 0,
+    unit: currency.units[0],
     balance: 0,
     address: genAddress(currency),
     operations: [],

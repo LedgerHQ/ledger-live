@@ -16,6 +16,7 @@ import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
+import BlueButton from "../components/BlueButton";
 import { withLocale } from "../components/LocaleContext";
 import {
   getVisibleAccounts,
@@ -91,7 +92,8 @@ class Dashboard extends Component<
   {
     accounts: Account[],
     calculateCounterValue: *,
-    t: *
+    t: *,
+    screenProps: *
   },
   *
 > {
@@ -114,6 +116,8 @@ class Dashboard extends Component<
   }
 
   load = async () => {
+    // TODO we want to trigger a counter value refetch
+
     // TODO generate data for a SectionList
     this.setState({
       // FIXME we need to generate the section list data properly.
@@ -171,6 +175,10 @@ class Dashboard extends Component<
     if (flatList) flatList.scrollToOffset({ offset: 0 });
   };
 
+  goToImportAccounts = () => {
+    this.props.screenProps.topLevelNavigation.navigate("ImportAccounts");
+  };
+
   render() {
     const { accounts, calculateCounterValue } = this.props;
     const { data, refreshing } = this.state;
@@ -182,12 +190,30 @@ class Dashboard extends Component<
         ),
       0
     );
-    return (
+    return accounts.length === 0 ? (
+      <View
+        style={{
+          flex: 1,
+          padding: 20,
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <LText semiBold style={{ fontSize: 24, marginBottom: 20 }}>
+          No accounts yet!
+        </LText>
+        <BlueButton
+          title="Import Accounts from Desktop"
+          onPress={this.goToImportAccounts}
+        />
+      </View>
+    ) : (
       <ScreenGeneric
         onPressHeader={this.scrollUp}
         renderHeader={this.renderHeader}
       >
         <View style={styles.topBackground} />
+
         <FlatList
           ref={this.onFlatListRef}
           style={styles.flatList}
