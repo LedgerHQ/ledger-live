@@ -25,9 +25,7 @@ function orderAccountsTransactions(account: Account) {
 
 function applyDefaults(account) {
   return defaultsDeep(account, {
-    settings: {
       minConfirmations: 2
-    }
   });
 }
 

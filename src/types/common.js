@@ -23,7 +23,8 @@ export type Account = {
   coinType: number,
   name: string,
   operations: Operation[],
-  unit: Unit
+  unit: Unit,
+  minConfirmations: number
 };
 
 export type SettingsDisplay = {
