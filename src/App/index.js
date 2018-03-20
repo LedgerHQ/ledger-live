@@ -10,7 +10,8 @@ import Search from "../screens/Search";
 import Settings from "../screens/Settings";
 import ImportAccounts from "../screens/ImportAccounts";
 import Create from "../screens/Create";
-import ReceiveFunds from "../screens/ReceiveFunds";
+import ReceiveFundsMain from "../screens/ReceiveFunds";
+import ReceiveFundsSelectAccount from "../screens/ReceiveFundsSelectAccount";
 import SendFundsSelectAccount from "../screens/SendFundsSelectAccount";
 import SendFundsChoseAmount from "../screens/SendFundsChoseAmount";
 import SendFundsScanAddress from "../screens/SendFundsScanAddress";
@@ -117,6 +118,28 @@ class Main extends Component<*> {
   }
 }
 
+const ReceiveFundsStack = StackNavigator(
+  {
+    ReceiveFundsMain: { screen: ReceiveFundsMain },
+    ReceiveFundsSelectAccount: { screen: ReceiveFundsSelectAccount }
+  },
+  {
+    navigationOptions: stackNavigatiorDefaultNavigationOptions,
+    cardStyle: styles.card
+  }
+);
+class ReceiveFunds extends Component<*> {
+  static navigationOptions = {
+    header: null
+  };
+  render() {
+    const { navigation } = this.props;
+    return (
+      <ReceiveFundsStack screenProps={{ topLevelNavigation: navigation }} />
+    );
+  }
+}
+
 const SendFundsStack = StackNavigator(
   {
     SendFundsSelectAccount: { screen: SendFundsSelectAccount },
@@ -155,7 +178,8 @@ const RootNavigator = StackNavigator(
     },
     AddAccount: { screen: AddAccount },
     AccountSettings: { screen: AccountSettings },
-    ImportAccounts: { screen: ImportAccounts }
+    ImportAccounts: { screen: ImportAccounts },
+    ReceiveFundsSelectAccount: { screen: ReceiveFundsSelectAccount }
   },
   {
     mode: "modal",

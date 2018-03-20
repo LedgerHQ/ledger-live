@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import AppBtc from "@ledgerhq/hw-app-btc";
 import {
   View,
@@ -12,21 +12,54 @@ import {
   TouchableOpacity,
   findNodeHandle
 } from "react-native";
+import { connect } from "react-redux";
 import { getCurrencyByCoinType, getFiatUnit } from "@ledgerhq/currencies";
+import type { NavigationScreenProp } from "react-navigation";
 import colors from "../colors";
 import QRCodePreview from "../components/QRCodePreview";
 import findFirstTransport from "../hw/findFirstTransport";
 import CurrencyUnitInput from "../components/CurrencyUnitInput";
+import { getVisibleAccounts } from "../reducers/accounts";
+import type { Account } from "../types/common";
+import CurrencyIcon from "../components/CurrencyIcon";
+import CurrencyUnitValue from "../components/CurrencyUnitValue";
+import HeaderRightClose from "../components/HeaderRightClose";
+import LText from "../components/LText";
 
-export default class ReceiveFunds extends Component<*, *> {
-  static navigationOptions = {
-    title: "Receive Funds"
-  };
+const styles = StyleSheet.create({
+  root: {
+    backgroundColor: colors.blue,
+    flex: 1
+  },
+  content: {
+    justifyContent: "center",
+    padding: 20
+  }
+});
+
+const mapPropsToState = state => ({
+  accounts: getVisibleAccounts(state)
+});
+
+class ReceiveFunds extends Component<
+  {
+    navigation: NavigationScreenProp<*>,
+    accounts: Account[]
+  },
+  *
+> {
+  static navigationOptions = ({ screenProps }: *) => ({
+    title: "Receive Funds",
+    headerLeft: <HeaderRightClose navigation={screenProps.topLevelNavigation} />
+  });
+
   state = {
     address: undefined,
     currency: getCurrencyByCoinType(0),
     countervalue: undefined,
     error: undefined,
+    accountId:
+      this.props.accounts.length > 0 ? this.props.accounts[0].id : null,
     amount: 0
   };
   viewHandle: ?*;
@@ -132,9 +165,25 @@ export default class ReceiveFunds extends Component<*, *> {
     });
   };
 
+  onChooseAccount = () => {
+    this.props.navigation.navigate("ReceiveFundsSelectAccount", {
+      selectedAccountId: this.state.accountId,
+      setAccountId: accountId => this.setState({ accountId })
+    });
+  };
+
   render() {
-    const { address, error, amount, currency, countervalue } = this.state;
+    const { accounts } = this.props;
+    const {
+      address,
+      error,
+      amount,
+      currency,
+      countervalue,
+      accountId
+    } = this.state;
     const countervalueUnit = getFiatUnit("USD");
+    const account = accounts.find(a => a.id === accountId);
     return (
       <ScrollView
         style={styles.root}
@@ -146,16 +195,33 @@ export default class ReceiveFunds extends Component<*, *> {
           Choose account
         </Text>
 
-        <View
-          style={{
-            width: 300,
-            height: 50,
-            backgroundColor: "white",
-            marginBottom: 10
-          }}
-        >
-          <Text>Bitcoin Account</Text>
-        </View>
+        <TouchableOpacity onPress={this.onChooseAccount}>
+          <View
+            style={{
+              padding: 16,
+              marginBottom: 10,
+              backgroundColor: "white",
+              flexDirection: "row",
+              alignItems: "center"
+            }}
+          >
+            {account ? (
+              <Fragment>
+                <CurrencyIcon currency={account.currency} size={32} />
+                <LText semiBold style={{ marginHorizontal: 10, flex: 1 }}>
+                  {account.name}
+                </LText>
+                <CurrencyUnitValue
+                  unit={account.unit}
+                  value={account.balance}
+                  showCode
+                />
+              </Fragment>
+            ) : (
+              <LText style={{ opacity: 0.5 }}>Select an account...</LText>
+            )}
+          </View>
+        </TouchableOpacity>
 
         <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
           Request amount (optional)
@@ -163,11 +229,11 @@ export default class ReceiveFunds extends Component<*, *> {
 
         <View
           style={{
-            width: 300,
             height: 50,
             marginBottom: 40,
             flexDirection: "row",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
+            alignSelf: "stretch"
           }}
         >
           <CurrencyUnitInput
@@ -284,13 +350,4 @@ export default class ReceiveFunds extends Component<*, *> {
   }
 }
 
-const styles = StyleSheet.create({
-  root: {
-    backgroundColor: colors.blue,
-    flex: 1
-  },
-  content: {
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
+export default connect(mapPropsToState)(ReceiveFunds);

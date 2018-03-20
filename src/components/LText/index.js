@@ -5,6 +5,15 @@ import getFontStyle from "./getFontStyle"; // eslint-disable-line import/no-unre
 
 export { getFontStyle };
 
+/**
+ * Usage:
+ *
+ * <LText>123</LText>
+ * <LText bold>toto</LText>
+ * <LText semiBold>foobar</LText>
+ * <LText secondary>alternate font</LText>
+ * <LText style={styles.text}>some specific styles</LText>
+ */
 export default class LText extends Component<*> {
   render() {
     const { bold, semiBold, secondary, style, ...newProps } = this.props;
