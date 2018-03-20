@@ -37,3 +37,26 @@ export type Account = {
   // minimal nb of blocks to consider an operation confirmed (set by the user)
   minConfirmations: number
 };
+
+export type OperationRaw = {
+  id: string,
+  hash: string,
+  address: string,
+  amount: number,
+  date: string,
+  confirmations: number,
+  accountId: string
+};
+
+export type AccountRaw = {
+  id: string,
+  name: string,
+  xpub: string,
+  address: string,
+  balance: number,
+  coinType: number,
+  unit: Unit,
+  operations: OperationRaw[],
+  archived: boolean,
+  minConfirmations: number
+};

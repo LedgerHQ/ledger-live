@@ -11,9 +11,13 @@ export type GetPairHistory = (
   fiat: string
 ) => Date => ?number;
 
-// Returns the calculated countervalue for a given amount value at a specific date (fallback to "now")
+/**
+ * Returns the calculated countervalue for a given amount value at a specific date (fallback to "now")
+ */
 export type Calc = (value: number, date?: Date) => number;
 
+/*
+*/
 export type CalculateCounterValue = (cur: Currency, fiat: Unit) => Calc;
 
 /**
@@ -34,5 +38,7 @@ export const makeCalculateCounterValue = (
 };
 
 const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
+/**
+ */
 export const formatCounterValueDay = (d: Date) =>
   `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`;

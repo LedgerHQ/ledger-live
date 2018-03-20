@@ -2,6 +2,8 @@
 import type { Account, Unit } from "../types";
 import type { CalculateCounterValue } from "./countervalue";
 
+/*
+*/
 export type BalanceHistory = Array<{ date: Date, value: number }>;
 
 /**

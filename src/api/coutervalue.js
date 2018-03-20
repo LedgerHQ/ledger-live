@@ -3,12 +3,16 @@ import querystring from "querystring";
 import type { Currency, Unit } from "../types";
 import { formatCounterValueDay } from "../helpers/countervalue";
 
-// nesting object map: crypto ticker -> fiat code -> Inner
-// e.g. CounterValuesPairing<number> can be { BTC: { USD: 1 } }
+/**
+ * nesting object map: crypto ticker -> fiat code -> Inner
+ * e.g. CounterValuesPairing<number> can be { BTC: { USD: 1 } }
+ */
 export type CounterValuesPairing<Inner> = {
   [_: string]: { [_: string]: Inner }
 };
 
+/*
+*/
 export type Histoday = { [_: string]: number };
 
 const convertToSatCent = (
@@ -17,6 +21,8 @@ const convertToSatCent = (
   value: number
 ): number => value * 10 ** (fiatUnit.magnitude - currency.units[0].magnitude);
 
+/**
+ */
 export async function fetchCurrentCounterValues(
   currencies: Currency[],
   fiatUnit: Unit
@@ -79,6 +85,8 @@ export async function fetchHistodayCounterValues(
   return data;
 }
 
+/*
+*/
 export function fetchHistodayCounterValuesMultiple(
   currencies: Currency[],
   fiatUnit: Unit
