@@ -1,33 +1,27 @@
 {
-  "name": "wallet-common",
+  "name": "@ledgerhq/wallet-common",
   "version": "0.0.0",
   "main": "src/index.js",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "bootstrap": "flow-typed install -s",
-    "build": "./scripts/build.sh",
+    "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) { console.log('\u001b[31mPlease use yarn\u001b[0m'); process.exit(1); }\"",
+    "postinstall": "flow-typed install -s",
+    "build": "yarn clean && babel --source-maps -d lib src && flow-copy-source src lib",
+    "watch": "babel --watch --source-maps -d lib src && flow-copy-source -w -v src lib",
     "prepare": "npm run build",
-    "install-flow-typed": "flow-typed install -s",
-    "watch": "babel src -d lib -w",
+    "clean": "rm -rf lib/",
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
     "flow": "flow src",
     "test": "jest"
   },
   "dependencies": {
-    "babel-jest": "^22.0.4",
-    "fbjs": "^0.8.16",
+    "@ledgerhq/currencies": "^4.7.1",
+    "babel-jest": "^23.0.0-alpha.0",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
-    "normalizr-gre": "^3.2.4",
-    "prop-types": "^15.5.10",
-    "query-string": "^5.0.0",
-    "react": "^16.0.0",
-    "react-redux": "^5.0.5",
-    "react-test-renderer": "^16.2.0",
-    "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0"
+    "react": "^16.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -37,10 +31,10 @@
     "eslint-config-prettier": "^2.7.0",
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-react": "^7.4.0",
-    "flow-bin": "^0.59.0",
+    "flow-bin": "^0.68.0",
     "flow-copy-source": "^1.2.1",
     "flow-typed": "^2.2.3",
-    "jest": "^21.2.1",
+    "jest": "^22.4.2",
     "prettier": "^1.8.2"
   }
 }
