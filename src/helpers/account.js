@@ -21,7 +21,7 @@ export function getBalanceHistory(
   let t = new Date();
   history.unshift({ date: t, value: balance });
   t = new Date(t.getFullYear(), t.getMonth(), t.getDate()); // start of the day
-  for (let d = 0; d < daysCount; d++) {
+  for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < account.operations.length && account.operations[i].date > t) {
       balance -= account.operations[i].amount;
