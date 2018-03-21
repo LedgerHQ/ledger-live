@@ -94,7 +94,7 @@ const getLastOperations = (accounts, nbOperations) => {
     i: null,
     j: null
   };
-  const operations = {};
+  const operations = new Map();
 
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
@@ -111,29 +111,40 @@ const getLastOperations = (accounts, nbOperations) => {
     }
   }
 
-  if (lastOperation.i !== null && lastOperation.j !== null && lastDate !== null) {
+  if (
+    lastOperation.i !== null &&
+    lastOperation.j !== null &&
+    lastDate !== null
+  ) {
     const day = lastDate.toDateString();
+    const dayOperations = operations.has(day) ? operations.get(day) : [];
 
-    if (!operations[day]) {
-      operations[day] = [];
-    }
-
-    operations[day].push(
+    dayOperations.push(
       accounts[lastOperation.i].operations.splice(lastOperation.j, 1)[0]
     );
+
+    operations.set(day, dayOperations);
 
     if (nbOperations > 1) {
       const nextOperations = getLastOperations(accounts, nbOperations - 1);
 
-      for (const k in nextOperations) {
-        if (nextOperations.hasOwnProperty(k)) {
-          if (!operations[k]) {
-            operations[k] = nextOperations[k];
-          } else {
-            operations[k] = operations[k].concat(nextOperations[k]);
-          }
+      for (const [k, v] of nextOperations) {
+        if (operations.has(k)) {
+          operations.set(k, operations.get(k).concat(v));
+        } else {
+          operations.set(k, v);
         }
       }
+
+      // for (const k in nextOperations) {
+      //   if (nextOperations.hasOwnProperty(k)) {
+      //     if (!operations[k]) {
+      //       operations[k] = nextOperations[k];
+      //     } else {
+      //       operations[k] = operations[k].concat(nextOperations[k]);
+      //     }
+      //   }
+      // }
     }
   }
 
