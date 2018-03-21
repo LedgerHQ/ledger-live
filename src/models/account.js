@@ -4,32 +4,46 @@ import { createDataModel } from "../DataModel";
 import type { DataModel } from "../DataModel";
 import type { Account, AccountRaw } from "../types";
 
+const MAX_OP_SIZE_TO_KEEP = 100;
+
 /**
  */
 const accountModel: DataModel<AccountRaw, Account> = createDataModel({
-  version: 0,
+  migrations: [
+    // Each time a modification is brought to the model, add here a migration function
+  ],
 
-  migrations: {
-    [0]: a => a
-    // last migration function should return an AccountRaw
+  wrap: ({
+    coinType,
+    unitMagnitude,
+    operations,
+    ...acc
+  }: AccountRaw): Account => {
+    const currency = getCurrencyByCoinType(coinType);
+    const unit =
+      currency.units.find(u => u.magnitude === unitMagnitude) ||
+      currency.units[0];
+    return {
+      ...acc,
+      operations: operations.map(({ date, ...op }) => ({
+        ...op,
+        date: new Date(date)
+      })),
+      unit,
+      currency
+    };
   },
 
-  wrap: ({ coinType, operations, ...acc }: AccountRaw): Account => ({
+  unwrap: ({ currency, operations, unit, ...acc }: Account): AccountRaw => ({
     ...acc,
-    operations: operations.map(({ date, ...op }) => ({
-      ...op,
-      date: new Date(date)
-    })),
-    currency: getCurrencyByCoinType(coinType)
-  }),
-
-  unwrap: ({ currency, operations, ...acc }: Account): AccountRaw => ({
-    ...acc,
-    operations: operations.map(({ date, ...op }) => ({
-      ...op,
-      date: date.toISOString()
-    })),
-    coinType: currency.coinType
+    operations: operations
+      .slice(0, MAX_OP_SIZE_TO_KEEP)
+      .map(({ date, ...op }) => ({
+        ...op,
+        date: date.toISOString()
+      })),
+    coinType: currency.coinType,
+    unitMagnitude: unit.magnitude
   })
 });
 

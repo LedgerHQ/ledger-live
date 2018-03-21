@@ -1,6 +1,211 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getBalanceHistory(*,7) returns an array of 7 items 1`] = `
+exports[`getBalanceHistory last item is now and have an amount equals to account balance 1`] = `
+Array [
+  Object {
+    "date": 2018-01-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-31T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-07T23:00:00.000Z,
+    "value": 12296491,
+  },
+  Object {
+    "date": 2018-03-08T23:00:00.000Z,
+    "value": 29399487,
+  },
+  Object {
+    "date": 2018-03-09T23:00:00.000Z,
+    "value": 73160275,
+  },
+  Object {
+    "date": 2018-03-10T23:00:00.000Z,
+    "value": 84346506,
+  },
+  Object {
+    "date": 2018-03-11T23:00:00.000Z,
+    "value": 110897342,
+  },
+  Object {
+    "date": 2018-03-12T23:00:00.000Z,
+    "value": 87249905,
+  },
+  Object {
+    "date": 2018-03-13T23:00:00.000Z,
+    "value": 127313085,
+  },
+  Object {
+    "date": 2018-03-14T13:34:42.000Z,
+    "value": 136281719,
+  },
+]
+`;
+
+exports[`getBalanceHistory(*,30) returns an array of 30 items 1`] = `
 Array [
   Object {
     "date": 2018-02-13T23:00:00.000Z,
@@ -56,71 +261,1190 @@ Array [
   },
   Object {
     "date": 2018-02-26T23:00:00.000Z,
-    "value": 268678,
+    "value": -5876155,
   },
   Object {
     "date": 2018-02-27T23:00:00.000Z,
-    "value": 51478886,
+    "value": -58489058,
   },
   Object {
     "date": 2018-02-28T23:00:00.000Z,
-    "value": 170739259,
+    "value": -27535429,
   },
   Object {
     "date": 2018-03-01T23:00:00.000Z,
-    "value": 225132270,
+    "value": 75486199,
   },
   Object {
     "date": 2018-03-02T23:00:00.000Z,
-    "value": 279552149,
+    "value": 166131090,
   },
   Object {
     "date": 2018-03-03T23:00:00.000Z,
-    "value": 348627562,
+    "value": 93668114,
   },
   Object {
     "date": 2018-03-04T23:00:00.000Z,
-    "value": 366198487,
+    "value": 110174609,
   },
   Object {
     "date": 2018-03-05T23:00:00.000Z,
-    "value": 311913099,
+    "value": 138580277,
   },
   Object {
     "date": 2018-03-06T23:00:00.000Z,
-    "value": 314208713,
+    "value": 115994360,
   },
   Object {
     "date": 2018-03-07T23:00:00.000Z,
-    "value": 335213094,
+    "value": 64526310,
   },
   Object {
     "date": 2018-03-08T23:00:00.000Z,
-    "value": 352741418,
+    "value": 57009289,
   },
   Object {
     "date": 2018-03-09T23:00:00.000Z,
-    "value": 301971393,
+    "value": 72392398,
   },
   Object {
     "date": 2018-03-10T23:00:00.000Z,
-    "value": 422779272,
+    "value": 108713306,
   },
   Object {
     "date": 2018-03-11T23:00:00.000Z,
-    "value": 425656703,
+    "value": 169740752,
   },
   Object {
     "date": 2018-03-12T23:00:00.000Z,
-    "value": 455704382,
+    "value": 171798135,
   },
   Object {
     "date": 2018-03-13T23:00:00.000Z,
-    "value": 487322711,
+    "value": 209966536,
   },
   Object {
     "date": 2018-03-14T13:34:42.000Z,
-    "value": 560869067,
+    "value": 229529426,
+  },
+]
+`;
+
+exports[`getBalanceHistory(*,365) works as well 1`] = `
+Array [
+  Object {
+    "date": 2017-07-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-31T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-31T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-31T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-31T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-26T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-27T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-28T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-29T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-30T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-31T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-01T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-02T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-03T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-04T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-05T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-06T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-07T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-08T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-09T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-10T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-11T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-12T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-16T23:00:00.000Z,
+    "value": 15256243,
+  },
+  Object {
+    "date": 2018-02-17T23:00:00.000Z,
+    "value": 73138513,
+  },
+  Object {
+    "date": 2018-02-18T23:00:00.000Z,
+    "value": 104423752,
+  },
+  Object {
+    "date": 2018-02-19T23:00:00.000Z,
+    "value": 107192497,
+  },
+  Object {
+    "date": 2018-02-20T23:00:00.000Z,
+    "value": 189954809,
+  },
+  Object {
+    "date": 2018-02-21T23:00:00.000Z,
+    "value": 200011247,
+  },
+  Object {
+    "date": 2018-02-22T23:00:00.000Z,
+    "value": 241579125,
+  },
+  Object {
+    "date": 2018-02-23T23:00:00.000Z,
+    "value": 396675086,
+  },
+  Object {
+    "date": 2018-02-24T23:00:00.000Z,
+    "value": 454591467,
+  },
+  Object {
+    "date": 2018-02-25T23:00:00.000Z,
+    "value": 451943165,
+  },
+  Object {
+    "date": 2018-02-26T23:00:00.000Z,
+    "value": 535583416,
+  },
+  Object {
+    "date": 2018-02-27T23:00:00.000Z,
+    "value": 578431651,
+  },
+  Object {
+    "date": 2018-02-28T23:00:00.000Z,
+    "value": 579471052,
+  },
+  Object {
+    "date": 2018-03-01T23:00:00.000Z,
+    "value": 651596704,
+  },
+  Object {
+    "date": 2018-03-02T23:00:00.000Z,
+    "value": 720846064,
+  },
+  Object {
+    "date": 2018-03-03T23:00:00.000Z,
+    "value": 720792763,
+  },
+  Object {
+    "date": 2018-03-04T23:00:00.000Z,
+    "value": 707626891,
+  },
+  Object {
+    "date": 2018-03-05T23:00:00.000Z,
+    "value": 739770769,
+  },
+  Object {
+    "date": 2018-03-06T23:00:00.000Z,
+    "value": 743622806,
+  },
+  Object {
+    "date": 2018-03-07T23:00:00.000Z,
+    "value": 760506245,
+  },
+  Object {
+    "date": 2018-03-08T23:00:00.000Z,
+    "value": 753079240,
+  },
+  Object {
+    "date": 2018-03-09T23:00:00.000Z,
+    "value": 764834449,
+  },
+  Object {
+    "date": 2018-03-10T23:00:00.000Z,
+    "value": 835576461,
+  },
+  Object {
+    "date": 2018-03-11T23:00:00.000Z,
+    "value": 936116956,
+  },
+  Object {
+    "date": 2018-03-12T23:00:00.000Z,
+    "value": 1002365437,
+  },
+  Object {
+    "date": 2018-03-13T23:00:00.000Z,
+    "value": 1056240073,
+  },
+  Object {
+    "date": 2018-03-14T13:34:42.000Z,
+    "value": 1119161091,
+  },
+]
+`;
+
+exports[`getBalanceHistorySum with lot of accounts 1`] = `
+Array [
+  Object {
+    "date": 2018-03-05T23:00:00.000Z,
+    "value": 14289807856,
+  },
+  Object {
+    "date": 2018-03-06T23:00:00.000Z,
+    "value": 16259998938,
+  },
+  Object {
+    "date": 2018-03-07T23:00:00.000Z,
+    "value": 17763346187,
+  },
+  Object {
+    "date": 2018-03-08T23:00:00.000Z,
+    "value": 18870962747,
+  },
+  Object {
+    "date": 2018-03-09T23:00:00.000Z,
+    "value": 20639797568,
+  },
+  Object {
+    "date": 2018-03-10T23:00:00.000Z,
+    "value": 22488497010,
+  },
+  Object {
+    "date": 2018-03-11T23:00:00.000Z,
+    "value": 24646826799,
+  },
+  Object {
+    "date": 2018-03-12T23:00:00.000Z,
+    "value": 26732051046,
+  },
+  Object {
+    "date": 2018-03-13T23:00:00.000Z,
+    "value": 29400548708,
+  },
+  Object {
+    "date": 2018-03-14T13:34:42.000Z,
+    "value": 30653879784,
+  },
+]
+`;
+
+exports[`getBalanceHistorySum works with one account and is identically to that account history 1`] = `
+Array [
+  Object {
+    "date": 2018-03-05T23:00:00.000Z,
+    "value": 830861710,
+  },
+  Object {
+    "date": 2018-03-06T23:00:00.000Z,
+    "value": 848425699,
+  },
+  Object {
+    "date": 2018-03-07T23:00:00.000Z,
+    "value": 940721982,
+  },
+  Object {
+    "date": 2018-03-08T23:00:00.000Z,
+    "value": 1042822928,
+  },
+  Object {
+    "date": 2018-03-09T23:00:00.000Z,
+    "value": 1085864418,
+  },
+  Object {
+    "date": 2018-03-10T23:00:00.000Z,
+    "value": 943391399,
+  },
+  Object {
+    "date": 2018-03-11T23:00:00.000Z,
+    "value": 1045551428,
+  },
+  Object {
+    "date": 2018-03-12T23:00:00.000Z,
+    "value": 1055600746,
+  },
+  Object {
+    "date": 2018-03-13T23:00:00.000Z,
+    "value": 1130682741,
+  },
+  Object {
+    "date": 2018-03-14T13:34:42.000Z,
+    "value": 1183088638,
   },
 ]
 `;

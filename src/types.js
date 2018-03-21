@@ -3,6 +3,9 @@ import type { Currency, Unit } from "@ledgerhq/currencies";
 
 // common models types
 
+// Reference types to inspire from as this will comes from the libcore:
+// https://github.com/KhalilBellakrid/lib-ledger-core/tree/develop/core/src/api
+
 /**
  */
 export type { Currency, Unit }; // convenient to export them back
@@ -15,7 +18,9 @@ export type Operation = {
   address: string,
   amount: number,
   date: Date,
-  confirmations: number,
+  // blockHeight allows us to compute the confirmations number (currentBlockHeight - blockHeight)
+  // if null, the operation is not yet on the blockchain
+  blockHeight: ?number,
   accountId: string
 };
 
@@ -36,6 +41,8 @@ export type Account = {
   currency: Currency,
   // user preferred unit to use. unit is coming from currency.units
   unit: Unit,
+  // the last block height currently synchronized
+  lastBlockHeight: number,
   // lazy list of operations. potentially big & uncomplete list.
   operations: Operation[],
   // if true, the account won't be visible
@@ -65,7 +72,8 @@ export type AccountRaw = {
   address: string,
   balance: number,
   coinType: number,
-  unit: Unit,
+  // user preferred magnitude. used to recover the account.unit
+  unitMagnitude: number,
   operations: OperationRaw[],
   archived: boolean,
   minConfirmations: number

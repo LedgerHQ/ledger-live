@@ -39,6 +39,7 @@ export const makeCalculateCounterValue = (
 
 const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
 /**
+ * efficient implementation of YYYY-MM-DD formatter
  */
 export const formatCounterValueDay = (d: Date) =>
   `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`;

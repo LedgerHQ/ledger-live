@@ -44,7 +44,8 @@ export function genOperation(
       rng.nextInt(0, 100000000 * rng.next() * rng.next()),
     hash: genHex(64, rng),
     date,
-    confirmations: Math.floor((Date.now() - date) / 900000)
+    blockHeight:
+      account.lastBlockHeight - Math.floor((Date.now() - date) / 900000)
   };
 }
 
@@ -53,10 +54,10 @@ export function genOperation(
 export function genAddingOperationsInAccount(
   account: Account,
   count: number,
-  seed: ?(number | string)
+  seed: number | string
 ): Account {
   const rng = new Prando(seed);
-  const copy = { ...account };
+  const copy: Account = { ...account };
   copy.operations = Array(count)
     .fill(null)
     .reduce(ops => {
@@ -68,17 +69,18 @@ export function genAddingOperationsInAccount(
 }
 
 /**
+ * @param id is a number or a string, used as an account identifier and as a seed for the generation.
  */
-export function genAccount(accountIndex: number, seed: ?(number | string)) {
-  const rng = new Prando(seed);
+export function genAccount(id: number | string) {
+  const rng = new Prando(id);
   const currency = rng.nextArrayItem(currencies);
   const account: Account = {
-    id: String(`mock_account_${accountIndex}`),
+    id: `mock_account_${id}`,
     xpub: genHex(64, rng),
     archived: false,
     currency,
-    coinType: currency.coinType,
-    unit: currency.units[0],
+    lastBlockHeight: rng.nextInt(100000, 200000),
+    unit: rng.nextArrayItem(currency.units),
     balance: 0,
     address: genAddress(currency, rng),
     operations: [],

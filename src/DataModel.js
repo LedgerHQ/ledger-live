@@ -7,7 +7,9 @@ export type DataModel<R, M> = {
   // import a given version of rawData back into model
   decode(rawModel: { data: R, version: number }): { data: M, version: number },
   // export data into a serializable object (can be saved to a JSON file)
-  encode(model: { data: M, version: number }): { data: R, version: number }
+  encode(model: { data: M, version: number }): { data: R, version: number },
+  // current version of the model
+  version: number
 };
 
 // this is to be implemented to create a DataModel
@@ -16,20 +18,16 @@ export type DataSchema<R, M> = {
   wrap(raw: R): M,
   // reverse version of wrap, that will transform it back to a serializable object
   unwrap(data: M): R,
-  // Define the current version of the schema
-  version: number,
   // A map of migrations functions that are unrolled when an old version is imported
-  migrations: {
-    [key: number]: (any) => R | any
-  }
+  migrations: Array<(any) => R | any>
 };
 
 export function createDataModel<R, M>({
-  version,
   migrations,
   unwrap,
   wrap
 }: DataSchema<R, M>): DataModel<R, M> {
+  const version = migrations.length;
   function decode(raw) {
     let data = raw.data;
     for (let i = raw.version; i < version; i++) {
@@ -50,5 +48,5 @@ export function createDataModel<R, M>({
     const data = unwrap(model.data);
     return { data, version };
   }
-  return Object.freeze({ decode, encode });
+  return Object.freeze({ version, decode, encode });
 }
