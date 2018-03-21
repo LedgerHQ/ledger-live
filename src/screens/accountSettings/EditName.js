@@ -18,8 +18,7 @@ class EditName extends Component<{
   navigation: NavigationScreenProp<{
     params: {
       account: Account
-    },
-    goBack: () => void
+    }
   }>
 }> {
   static navigationOptions = {
@@ -27,9 +26,9 @@ class EditName extends Component<{
   };
   onNameEndEditing = e => {
     const { account } = this.props.navigation.state.params;
-    e.nativeEvent.text.length
-      ? this.props.updateAccount({ name: e.nativeEvent.text, id: account.id })
-      : null;
+    if (e.nativeEvent.text.length) {
+      this.props.updateAccount({ name: e.nativeEvent.text, id: account.id });
+    }
     const { navigation } = this.props;
     navigation.goBack();
   };

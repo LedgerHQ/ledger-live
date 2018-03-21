@@ -1,7 +1,7 @@
+// @flow
 import React, { PureComponent } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import type { Unit } from "@ledgerhq/currencies";
-
 
 import LText from "../components/LText";
 
@@ -13,17 +13,7 @@ export default class UnitRow extends PureComponent<{
     const { unit, onPress } = this.props;
     return (
       <TouchableOpacity onPress={onPress}>
-        <View
-          style={{
-            minHeight: 50,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 20,
-            backgroundColor: "white",
-            marginBottom: 1
-          }}
-        >
+        <View style={styles.unitRow}>
           <LText
             semiBold
             numberOfLines={1}
@@ -38,3 +28,15 @@ export default class UnitRow extends PureComponent<{
     );
   }
 }
+
+const styles = StyleSheet.create({
+  unitRow: {
+    minHeight: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+    backgroundColor: "white",
+    marginBottom: 1
+  }
+});

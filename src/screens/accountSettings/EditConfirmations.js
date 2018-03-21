@@ -18,8 +18,7 @@ class EditConfirmations extends Component<{
   navigation: NavigationScreenProp<{
     params: {
       account: Account
-    },
-    goBack: () => void
+    }
   }>,
   updateAccount: ($Shape<Account>) => *
 }> {
@@ -28,12 +27,12 @@ class EditConfirmations extends Component<{
   };
   onConfNumEndEditing = (e: *) => {
     const { account } = this.props.navigation.state.params;
-    e.nativeEvent.text.length
-      ? this.props.updateAccount({
-          minConfirmations: parseInt(e.nativeEvent.text),
-          id: account.id
-        })
-      : null;
+    if (e.nativeEvent.text.length) {
+      this.props.updateAccount({
+        minConfirmations: parseInt(e.nativeEvent.text, 10),
+        id: account.id
+      });
+    }
     const { navigation } = this.props;
     navigation.goBack();
   };

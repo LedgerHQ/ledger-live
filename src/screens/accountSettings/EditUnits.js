@@ -19,16 +19,15 @@ class EditUnits extends Component<{
   navigation: NavigationScreenProp<{
     params: {
       account: Account
-    },
-    goBack: () => void
+    }
   }>
 }> {
   static navigationOptions = {
     title: "Edit Units"
   };
   onItemFullPress = (item: *) => {
-    const { account } = this.props.navigation.state.params;
     const { navigation, updateAccount } = this.props;
+    const { account } = navigation.state.params;
     updateAccount({ unit: item, id: account.id });
     navigation.goBack();
   };
