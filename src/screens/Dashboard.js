@@ -88,6 +88,64 @@ const mapStateToProps = state => ({
   calculateCounterValue: calculateCounterValueSelector(state)
 });
 
+const getLastOperations = (accounts, nbOperations) => {
+  let lastDate = null;
+  let lastOperation = {
+    i: null,
+    j: null
+  };
+  const operations = {};
+
+  for (let i = 0; i < accounts.length; i++) {
+    const account = accounts[i];
+
+    for (let j = 0; j < account.operations.length; j++) {
+      const operation = account.operations[j];
+      const opDate = new Date(operation.receivedAt);
+
+      if (!lastDate || opDate > lastDate) {
+        lastDate = opDate;
+        lastOperation = { i, j };
+      }
+      break;
+    }
+  }
+
+  if (lastOperation.i !== null && lastOperation.j !== null && lastDate !== null) {
+    const day = lastDate.toDateString();
+
+    if (!operations[day]) {
+      operations[day] = [];
+    }
+
+    operations[day].push(
+      accounts[lastOperation.i].operations.splice(lastOperation.j, 1)[0]
+    );
+
+    if (nbOperations > 1) {
+      const nextOperations = getLastOperations(accounts, nbOperations - 1);
+
+      for (const k in nextOperations) {
+        if (nextOperations.hasOwnProperty(k)) {
+          if (!operations[k]) {
+            operations[k] = nextOperations[k];
+          } else {
+            operations[k] = operations[k].concat(nextOperations[k]);
+          }
+        }
+      }
+    }
+  }
+
+  return operations;
+};
+
+const groupOperations = (accounts, nbOperations) => {
+  const operations = getLastOperations(accounts, 25);
+  console.log(operations);
+  accounts.reduce((all, account) => all.concat(account.operations), []);
+};
+
 class Dashboard extends Component<
   {
     accounts: Account[],
@@ -122,10 +180,7 @@ class Dashboard extends Component<
     this.setState({
       // FIXME we need to generate the section list data properly.
       // maybe write a selector function in store side
-      data: this.props.accounts.reduce(
-        (all, account) => all.concat(account.operations),
-        []
-      )
+      data: groupOperations(this.props.accounts)
     });
     return Promise.resolve();
   };
