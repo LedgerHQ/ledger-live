@@ -5,10 +5,13 @@ import { StackNavigator, TabNavigator, TabBarBottom } from "react-navigation";
 import colors from "../colors";
 import Dashboard from "../screens/Dashboard";
 import Accounts from "../screens/Accounts";
-import AccountSettings from "../screens/AccountSettings";
+import AccountSettings from "../screens/accountSettings/index";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
 import ImportAccounts from "../screens/ImportAccounts";
+import EditUnits from "../screens/accountSettings/EditUnits";
+import EditConfirmations from "../screens/accountSettings/EditConfirmations";
+import EditName from "../screens/accountSettings/EditName";
 import Create from "../screens/Create";
 import ReceiveFundsMain from "../screens/ReceiveFunds";
 import ReceiveFundsSelectAccount from "../screens/ReceiveFundsSelectAccount";
@@ -58,6 +61,29 @@ SettingsStack.navigationOptions = {
     />
   )
 };
+
+const AccountSettingsStack = StackNavigator(
+  {
+    AccountSettings: { screen: AccountSettings },
+    EditUnits: { screen: EditUnits },
+    EditConfirmations: { screen: EditConfirmations },
+    EditName: { screen: EditName }
+  },
+  {
+    navigationOptions: stackNavigatiorDefaultNavigationOptions,
+    cardStyle: styles.card
+  }
+);
+
+class AccountSettingsConfig extends Component<*> {
+  static navigationOptions = {
+    header: null
+  };
+  render() {
+    const { navigation } = this.props;
+    return <AccountSettingsStack screenProps={{ topLevelNavigation: navigation }} />;
+  }
+}
 
 const AddAccountStack = StackNavigator(
   {
@@ -177,7 +203,7 @@ const RootNavigator = StackNavigator(
       screen: SendFunds
     },
     AddAccount: { screen: AddAccount },
-    AccountSettings: { screen: AccountSettings },
+    AccountSettings: { screen: AccountSettingsConfig },
     ImportAccounts: { screen: ImportAccounts },
     ReceiveFundsSelectAccount: { screen: ReceiveFundsSelectAccount }
   },

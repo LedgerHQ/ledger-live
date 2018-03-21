@@ -63,7 +63,7 @@ export const initAccounts: InitAccounts = () => async (dispatch, getState) => {
   });
 };
 
-export type UpdateAccount = Account => (Function, Function) => void;
+export type UpdateAccount = $Shape<Account> => (Function, Function) => void;
 export const updateAccount: UpdateAccount = payload => (dispatch, getState) => {
   const { settings: { orderAccounts } } = getState();
   dispatch({

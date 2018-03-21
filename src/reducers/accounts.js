@@ -25,9 +25,7 @@ function orderAccountsTransactions(account: Account) {
 
 function applyDefaults(account) {
   return defaultsDeep(account, {
-    settings: {
       minConfirmations: 2
-    }
   });
 }
 
@@ -134,7 +132,8 @@ export function serializeAccounts(accounts: Array<AccountSerial>): Account[] {
       currency,
       operations: [],
       name: account.name || `${key}`,
-      unit: account.unit || currency.units[0]
+      unit: account.unit || currency.units[0],
+      minConfirmations: account.minConfirmations
     };
     a.operations = account.operations.map(t => ({
       ...t,

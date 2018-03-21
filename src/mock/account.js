@@ -99,6 +99,7 @@ export function genAccount(accountIndex: number) {
     balance: 0,
     address: genAddress(currency),
     operations: [],
+    minConfirmations: 2,
     name:
       String.fromCharCode(Math.floor(65 + 26 * Math.random())) +
       Array(Math.floor(4 + 30 * Math.random()))
