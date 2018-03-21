@@ -17,12 +17,19 @@
     "flow": "flow src",
     "test": "jest"
   },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/jest/globals.js"
+    ]
+  },
   "dependencies": {
     "@ledgerhq/currencies": "^4.7.1",
     "babel-jest": "^23.0.0-alpha.0",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
-    "react": "^16.0.0"
+    "prando": "^3.0.1",
+    "react": "^16.0.0",
+    "timemachine": "^0.3.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

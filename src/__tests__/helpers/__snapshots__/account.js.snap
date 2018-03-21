@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getBalanceHistory(*,7) returns an array of 7 items 1`] = `
+Array [
+  Object {
+    "date": 2018-02-13T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-14T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-15T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-16T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-17T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-18T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-19T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-20T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-21T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-22T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-23T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-24T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-25T23:00:00.000Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-26T23:00:00.000Z,
+    "value": 268678,
+  },
+  Object {
+    "date": 2018-02-27T23:00:00.000Z,
+    "value": 51478886,
+  },
+  Object {
+    "date": 2018-02-28T23:00:00.000Z,
+    "value": 170739259,
+  },
+  Object {
+    "date": 2018-03-01T23:00:00.000Z,
+    "value": 225132270,
+  },
+  Object {
+    "date": 2018-03-02T23:00:00.000Z,
+    "value": 279552149,
+  },
+  Object {
+    "date": 2018-03-03T23:00:00.000Z,
+    "value": 348627562,
+  },
+  Object {
+    "date": 2018-03-04T23:00:00.000Z,
+    "value": 366198487,
+  },
+  Object {
+    "date": 2018-03-05T23:00:00.000Z,
+    "value": 311913099,
+  },
+  Object {
+    "date": 2018-03-06T23:00:00.000Z,
+    "value": 314208713,
+  },
+  Object {
+    "date": 2018-03-07T23:00:00.000Z,
+    "value": 335213094,
+  },
+  Object {
+    "date": 2018-03-08T23:00:00.000Z,
+    "value": 351305391,
+  },
+  Object {
+    "date": 2018-03-09T23:00:00.000Z,
+    "value": 325366737,
+  },
+  Object {
+    "date": 2018-03-10T23:00:00.000Z,
+    "value": 422779272,
+  },
+  Object {
+    "date": 2018-03-11T23:00:00.000Z,
+    "value": 435988042,
+  },
+  Object {
+    "date": 2018-03-12T23:00:00.000Z,
+    "value": 455704382,
+  },
+  Object {
+    "date": 2018-03-13T23:00:00.000Z,
+    "value": 487322711,
+  },
+  Object {
+    "date": 2018-03-14T12:34:42.000Z,
+    "value": 560869067,
+  },
+]
+`;
