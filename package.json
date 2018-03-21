@@ -15,7 +15,7 @@
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
     "flow": "flow src",
-    "test": "jest"
+    "test": "jest src"
   },
   "jest": {
     "setupFiles": [
