@@ -90,6 +90,8 @@ export function genAddingOperationsInAccount(
   return copy;
 }
 
+/**
+ */
 export function genAccount(accountIndex: number) {
   const currency = currencies[Math.floor(currencies.length * Math.random())];
   const account: Account = {

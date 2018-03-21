@@ -4,11 +4,14 @@ import { createDataModel } from "../DataModel";
 import type { DataModel } from "../DataModel";
 import type { Account, AccountRaw } from "../types";
 
-const model: DataModel<AccountRaw, Account> = createDataModel({
+/**
+ */
+const accountModel: DataModel<AccountRaw, Account> = createDataModel({
   version: 0,
 
   migrations: {
     [0]: a => a
+    // last migration function should return an AccountRaw
   },
 
   wrap: ({ coinType, operations, ...acc }: AccountRaw): Account => ({
@@ -30,4 +33,4 @@ const model: DataModel<AccountRaw, Account> = createDataModel({
   })
 });
 
-export default model;
+export default accountModel;

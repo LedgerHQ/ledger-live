@@ -3,8 +3,12 @@ import type { Currency, Unit } from "@ledgerhq/currencies";
 
 // common models types
 
+/**
+ */
 export type { Currency, Unit }; // convenient to export them back
 
+/**
+ */
 export type Operation = {
   id: string,
   hash: string,
@@ -15,6 +19,8 @@ export type Operation = {
   accountId: string
 };
 
+/**
+ */
 export type Account = {
   // unique id for the account. we typically use the xpub but it's convenient to name it id.
   id: string,
@@ -38,6 +44,8 @@ export type Account = {
   minConfirmations: number
 };
 
+/**
+ */
 export type OperationRaw = {
   id: string,
   hash: string,
@@ -48,6 +56,8 @@ export type OperationRaw = {
   accountId: string
 };
 
+/**
+ */
 export type AccountRaw = {
   id: string,
   name: string,
