@@ -59,7 +59,7 @@ export type OperationRaw = {
   address: string,
   amount: number,
   date: string,
-  confirmations: number,
+  blockHeight: ?number,
   accountId: string
 };
 
@@ -72,6 +72,7 @@ export type AccountRaw = {
   address: string,
   balance: number,
   coinType: number,
+  lastBlockHeight: number,
   // user preferred magnitude. used to recover the account.unit
   unitMagnitude: number,
   operations: OperationRaw[],
