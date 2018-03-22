@@ -2,7 +2,6 @@
  * @flow
  * @module DataModel
  */
-import invariant from "invariant";
 
 /**
  * Interface for the end user.
@@ -11,9 +10,9 @@ import invariant from "invariant";
 export type DataModel<R, M> = {
   // R: Raw , M: Model
   // import a given version of rawData back into model
-  decode(rawModel: { data: R, version: number }): { data: M, version: number },
+  decode(rawModel: { data: R, version: number }): M,
   // export data into a serializable object (can be saved to a JSON file)
-  encode(model: { data: M, version: number }): { data: R, version: number },
+  encode(model: M): { data: R, version: number },
   // current version of the model
   version: number
 };
@@ -49,14 +48,10 @@ export function createDataModel<R, M>(
       }
     }
     data = wrap(data);
-    return { data, version };
+    return data;
   }
   function encode(model) {
-    invariant(
-      model.version === version,
-      "encode can only works with latest version of the model"
-    );
-    const data = unwrap(model.data);
+    const data = unwrap(model);
     return { data, version };
   }
   return Object.freeze({ version, decode, encode });
