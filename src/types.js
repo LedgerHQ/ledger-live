@@ -59,6 +59,8 @@ export type Account = {
   lastBlockHeight: number,
   /* lazy list of operations. potentially big & uncomplete list. */
   operations: Operation[],
+  /* track the total number of operations. if it is different than operations.length, it means we can pull more operations */
+  operationsSize: number,
   /* if true, the account won't be visible */
   archived: boolean,
   /* minimal nb of blocks to consider an operation confirmed (set by the user) */
@@ -90,6 +92,7 @@ export type AccountRaw = {
   // user preferred magnitude. used to recover the account.unit
   unitMagnitude: number,
   operations: OperationRaw[],
+  operationsSize: number,
   archived: boolean,
   minConfirmations: number
 };

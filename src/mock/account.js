@@ -90,6 +90,7 @@ export function genAddingOperationsInAccount(
 export function genAccount(id: number | string): Account {
   const rng = new Prando(id);
   const currency = rng.nextArrayItem(currencies);
+  const operationsSize = rng.nextInt(1, 200);
   const account = {
     id: `mock_account_${id}`,
     xpub: genHex(64, rng),
@@ -100,15 +101,17 @@ export function genAccount(id: number | string): Account {
     balance: 0,
     address: genAddress(currency, rng),
     operations: [],
+    operationsSize,
     minConfirmations: 2,
     name: rng.nextString(rng.nextInt(4, 34))
   };
-  account.operations = Array(rng.nextInt(1, 200))
+  account.operations = Array(operationsSize)
     .fill(null)
     .reduce(ops => {
       const op = genOperation(account, ops, currency, rng);
       return ops.concat(op);
     }, []);
+
   account.balance = account.operations.reduce((sum, op) => sum + op.amount, 0);
   return account;
 }
