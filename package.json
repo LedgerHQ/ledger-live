@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "main": "src/index.js",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) { console.log('\u001b[31mPlease use yarn\u001b[0m'); process.exit(1); }\"",
     "postinstall": "flow-typed install -s",
