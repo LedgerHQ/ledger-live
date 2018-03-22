@@ -109,7 +109,6 @@ export type CounterValuesPairing<Inner> = {
 export type Histoday = { [_: string]: number };
 
 /**
- * @memberof helpers/account
  */
 export type BalanceHistory = Array<{ date: Date, value: number }>;
 

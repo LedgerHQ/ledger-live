@@ -2,8 +2,12 @@
  * @flow
  * @module helpers/account
  */
-import type { Account, Unit, BalanceHistory } from "../types";
-import type { CalculateCounterValue } from "./countervalue";
+import type {
+  Account,
+  Unit,
+  BalanceHistory,
+  CalculateCounterValue
+} from "../types";
 
 /**
  * generate an array of {daysCount} datapoints, one per day,
