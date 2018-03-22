@@ -1,4 +1,7 @@
-// @flow
+/**
+ * @module mock/account
+ * @flow
+ */
 import { listCurrencies } from "@ledgerhq/currencies";
 import Prando from "prando";
 import type { Currency } from "@ledgerhq/currencies";
@@ -6,15 +9,24 @@ import type { Account, Operation } from "../types";
 
 const currencies = listCurrencies();
 
+/**
+ * @memberof mock/account
+ */
 export function genBitcoinAddressLike(rng: Prando) {
   const charset = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
   return `1${rng.nextString(rng.nextInt(25, 34), charset)}`;
 }
 
+/**
+ * @memberof mock/account
+ */
 export function genHex(length: number, rng: Prando) {
   return rng.nextString(length, "0123456789ABCDEF");
 }
 
+/**
+ * @memberof mock/account
+ */
 export function genAddress(currency: Currency, rng: Prando) {
   if (currency.coinType === 60 || currency.coinType === 61) {
     return `0x${genHex(40, rng)}`;
@@ -23,7 +35,9 @@ export function genAddress(currency: Currency, rng: Prando) {
 }
 
 // TODO fix the mock to never generate negative balance...
-
+/**
+ * @memberof mock/account
+ */
 export function genOperation(
   account: Account,
   ops: *,
@@ -50,6 +64,7 @@ export function genOperation(
 }
 
 /**
+ * @memberof mock/account
  */
 export function genAddingOperationsInAccount(
   account: Account,
@@ -70,11 +85,12 @@ export function genAddingOperationsInAccount(
 
 /**
  * @param id is a number or a string, used as an account identifier and as a seed for the generation.
+ * @memberof mock/account
  */
-export function genAccount(id: number | string) {
+export function genAccount(id: number | string): Account {
   const rng = new Prando(id);
   const currency = rng.nextArrayItem(currencies);
-  const account: Account = {
+  const account = {
     id: `mock_account_${id}`,
     xpub: genHex(64, rng),
     archived: false,

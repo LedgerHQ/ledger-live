@@ -1,15 +1,15 @@
-// @flow
-import type { Account, Unit } from "../types";
+/**
+ * @flow
+ * @module helpers/account
+ */
+import type { Account, Unit, BalanceHistory } from "../types";
 import type { CalculateCounterValue } from "./countervalue";
-
-/*
-*/
-export type BalanceHistory = Array<{ date: Date, value: number }>;
 
 /**
  * generate an array of {daysCount} datapoints, one per day,
  * for the balance history of an account.
  * The last item of the array is the balance available right now.
+ * @memberof helpers/account
  */
 export function getBalanceHistory(
   account: Account,
@@ -37,6 +37,7 @@ export function getBalanceHistory(
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
  * NB the last item of the array is actually the current total balance.
+ * @memberof helpers/account
  */
 export function getBalanceHistorySum(
   accounts: Account[],

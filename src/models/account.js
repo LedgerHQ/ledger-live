@@ -1,4 +1,5 @@
-//@flow
+// @flow
+
 import { getCurrencyByCoinType } from "@ledgerhq/currencies";
 import { createDataModel } from "../DataModel";
 import type { DataModel } from "../DataModel";
@@ -6,8 +7,6 @@ import type { Account, AccountRaw } from "../types";
 
 const MAX_OP_SIZE_TO_KEEP = 100;
 
-/**
- */
 const accountModel: DataModel<AccountRaw, Account> = createDataModel({
   migrations: [
     // Each time a modification is brought to the model, add here a migration function

@@ -1,7 +1,13 @@
-//@flow
+/**
+ * @flow
+ * @module DataModel
+ */
 import invariant from "invariant";
 
-// Interface for the end user.
+/**
+ * Interface for the end user.
+ * @memberof DataModel
+ */
 export type DataModel<R, M> = {
   // R: Raw , M: Model
   // import a given version of rawData back into model
@@ -12,7 +18,10 @@ export type DataModel<R, M> = {
   version: number
 };
 
-// this is to be implemented to create a DataModel
+/**
+ * this is to be implemented to create a DataModel
+ * @memberof DataModel
+ */
 export type DataSchema<R, M> = {
   // write extra logic to transform raw data into your model
   wrap(raw: R): M,
@@ -22,11 +31,13 @@ export type DataSchema<R, M> = {
   migrations: Array<(any) => R | any>
 };
 
-export function createDataModel<R, M>({
-  migrations,
-  unwrap,
-  wrap
-}: DataSchema<R, M>): DataModel<R, M> {
+/**
+ * @memberof DataModel
+ */
+export function createDataModel<R, M>(
+  schema: DataSchema<R, M>
+): DataModel<R, M> {
+  const { migrations, unwrap, wrap } = schema;
   const version = migrations.length;
   function decode(raw) {
     let data = raw.data;

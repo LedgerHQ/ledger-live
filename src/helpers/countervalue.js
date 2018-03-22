@@ -1,29 +1,15 @@
-// @flow
-
-import type { Currency, Unit } from "../types";
-
 /**
- * Synchronously lookup the history price of coin against a fiat.
- * the returned countervalue is expressed in satoshis per cents so it can be multiplied by the value to convert.
+ * @module helpers/countervalue
+ * @flow
  */
-export type GetPairHistory = (
-  coinTicker: string,
-  fiat: string
-) => Date => ?number;
 
-/**
- * Returns the calculated countervalue for a given amount value at a specific date (fallback to "now")
- */
-export type Calc = (value: number, date?: Date) => number;
-
-/*
-*/
-export type CalculateCounterValue = (cur: Currency, fiat: Unit) => Calc;
+import type { GetPairHistory, CalculateCounterValue } from "../types";
 
 /**
  * creates a CalculateCounterValue utility with a GetPairHistory.
  * This can be plugged on a redux store.
  * NB you still have to sync prices yourself. (later we might embrace future React suspense idea in GetPairHistory)
+ * @memberof helpers/countervalue
  */
 export const makeCalculateCounterValue = (
   getPairHistory: GetPairHistory
@@ -38,8 +24,10 @@ export const makeCalculateCounterValue = (
 };
 
 const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
+
 /**
  * efficient implementation of YYYY-MM-DD formatter
+ * @memberof helpers/countervalue
  */
 export const formatCounterValueDay = (d: Date) =>
   `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`;
