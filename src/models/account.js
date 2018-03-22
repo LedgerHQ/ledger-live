@@ -19,12 +19,12 @@ export const opRetentionStategy = (maxDaysOld: number, keepFirst: number) => (
 /**
  * @memberof models/account
  * @example
- * import createAccountModel from "@ledgerhq/wallet-common/lib/models/account";
+ * import { createAccountModel } from "@ledgerhq/wallet-common/lib/models/account";
  * const AccountModel = createAccountModel();
- * const raw = AccountModel.encode({ data: account, version: AccountModel.version });
+ * const raw = AccountModel.encode(account);
  * const decoded = AccountModel.decode(raw);
  */
-export default (
+export const createAccountModel = (
   opRetentionFilter: (
     op: Operation,
     index: number

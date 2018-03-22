@@ -1,6 +1,6 @@
 // @flow
 import { getFiatUnit } from "@ledgerhq/currencies";
-import createAccountModel from "../../models/account";
+import { createAccountModel } from "../../models/account";
 import { genAccount } from "../../mock/account";
 
 test("for current accountModel, decode(encode(...)) is pseudo-identity", () => {
