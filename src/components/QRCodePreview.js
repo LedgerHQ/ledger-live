@@ -41,6 +41,7 @@ export default class QRCodePreview extends Component<{
 const styles = StyleSheet.create({
   root: {
     backgroundColor: "white",
-    padding: 10
+    padding: 15,
+    margin: 20
   }
 });
