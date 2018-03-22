@@ -5,6 +5,7 @@ import {
   Image,
   View,
   FlatList,
+  SectionList,
   RefreshControl,
   StyleSheet,
   ActivityIndicator
@@ -23,6 +24,7 @@ import {
   getBalanceHistoryUntilNow
 } from "../reducers/accounts";
 import { calculateCounterValueSelector } from "../reducers/counterValues";
+import merge from "lodash/merge";
 
 class ListHeaderComponent extends PureComponent<
   {
@@ -88,73 +90,63 @@ const mapStateToProps = state => ({
   calculateCounterValue: calculateCounterValueSelector(state)
 });
 
-const getLastOperations = (accounts, nbOperations) => {
-  let lastDate = null;
-  let lastOperation = {
-    i: null,
-    j: null
-  };
-  const operations = new Map();
+const logGroupOperations = (accounts, nbOperations) => {
+  const operations = groupOperations(accounts, nbOperations);
 
-  for (let i = 0; i < accounts.length; i++) {
-    const account = accounts[i];
-
-    for (let j = 0; j < account.operations.length; j++) {
-      const operation = account.operations[j];
-      const opDate = new Date(operation.receivedAt);
-
-      if (!lastDate || opDate > lastDate) {
-        lastDate = opDate;
-        lastOperation = { i, j };
-      }
-      break;
-    }
-  }
-
-  if (
-    lastOperation.i !== null &&
-    lastOperation.j !== null &&
-    lastDate !== null
-  ) {
-    const day = lastDate.toDateString();
-    const dayOperations = operations.has(day) ? operations.get(day) : [];
-
-    dayOperations.push(
-      accounts[lastOperation.i].operations.splice(lastOperation.j, 1)[0]
-    );
-
-    operations.set(day, dayOperations);
-
-    if (nbOperations > 1) {
-      const nextOperations = getLastOperations(accounts, nbOperations - 1);
-
-      for (const [k, v] of nextOperations) {
-        if (operations.has(k)) {
-          operations.set(k, operations.get(k).concat(v));
-        } else {
-          operations.set(k, v);
-        }
-      }
-
-      // for (const k in nextOperations) {
-      //   if (nextOperations.hasOwnProperty(k)) {
-      //     if (!operations[k]) {
-      //       operations[k] = nextOperations[k];
-      //     } else {
-      //       operations[k] = operations[k].concat(nextOperations[k]);
-      //     }
-      //   }
-      // }
-    }
-  }
+  console.log(operations);
 
   return operations;
 };
 
 const groupOperations = (accounts, nbOperations) => {
-  const operations = getLastOperations(accounts, 25);
-  console.log(operations);
-  accounts.reduce((all, account) => all.concat(account.operations), []);
+  const operations = [];
+  let lastDate = null;
+  let lastAccount = null;
+
+  for (let i = 0; i < accounts.length; i++) {
+    const operation = accounts[i].operations[0];
+    const operationDate = new Date(operation.receivedAt);
+
+    if (!lastDate || operationDate > lastDate) {
+      lastDate = operationDate;
+      lastAccount = i;
+    }
+  }
+
+  if (lastAccount !== null && lastDate !== null) {
+    const lastOperationDay = new Date(
+      lastDate.getFullYear(),
+      lastDate.getMonth(),
+      lastDate.getDate()
+    );
+
+    operations.push({
+      day: lastOperationDay,
+      data: [accounts[lastAccount].operations.shift()]
+    });
+
+    if (nbOperations > 1) {
+      const nextOperations = groupOperations(accounts, nbOperations - 1);
+      let lastGroup = 0;
+
+      for (const nextOperationGroup of nextOperations) {
+        if (operations[lastGroup].day > nextOperationGroup.day) {
+          operations.push({
+            day: nextOperationGroup.day,
+            data: []
+          });
+
+          lastGroup++;
+        }
+
+        operations[lastGroup].data = operations[lastGroup].data.concat(
+          nextOperationGroup.data
+        );
+      }
+    }
+  }
+
+  return operations;
 };
 
 class Dashboard extends Component<
@@ -191,7 +183,7 @@ class Dashboard extends Component<
     this.setState({
       // FIXME we need to generate the section list data properly.
       // maybe write a selector function in store side
-      data: groupOperations(this.props.accounts)
+      data: logGroupOperations(this.props.accounts, 25)
     });
     return Promise.resolve();
   };
@@ -279,8 +271,15 @@ class Dashboard extends Component<
         renderHeader={this.renderHeader}
       >
         <View style={styles.topBackground} />
+        {/* <SectionList
+          sections={[
+            {data: [...], renderItem: ...},
+            {data: [...], renderItem: ...},
+            {data: [...], renderItem: ...},
+          ]}
+        /> */}
 
-        <FlatList
+        {/* <FlatList
           ref={this.onFlatListRef}
           style={styles.flatList}
           contentContainerStyle={styles.flatListContent}
@@ -310,7 +309,7 @@ class Dashboard extends Component<
           data={data || []}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
-        />
+        /> */}
       </ScreenGeneric>
     );
   }
