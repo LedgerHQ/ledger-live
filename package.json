@@ -16,6 +16,11 @@
     "flow": "flow src",
     "test": "TZ=America/New_York jest src"
   },
+  "files": [
+    "lib",
+    "src",
+    "flow"
+  ],
   "jest": {
     "setupFiles": [
       "<rootDir>/jest/globals.js"
