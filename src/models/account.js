@@ -49,6 +49,7 @@ export const createAccountModel = (
         ...acc,
         operations: operations.map(({ date, ...op }) => ({
           ...op,
+          accountId: acc.id,
           date: new Date(date)
         })),
         unit,
@@ -60,7 +61,7 @@ export const createAccountModel = (
       ...acc,
       operations: operations
         .filter(opRetentionFilter)
-        .map(({ date, ...op }) => ({
+        .map(({ date, accountId: _, ...op }) => ({
           ...op,
           date: date.toISOString()
         })),
