@@ -29,11 +29,7 @@ export type Operation = {
    * blockHeight allows us to compute the confirmations number (currentBlockHeight - blockHeight)
    * if null, the operation is not yet on the blockchain
    */
-  blockHeight: ?number,
-  /*
-   * the account id. available for convenient reason
-   */
-  accountId: string
+  blockHeight: ?number
 };
 
 /**
@@ -75,8 +71,7 @@ export type OperationRaw = {
   address: string,
   amount: number,
   date: string,
-  blockHeight: ?number,
-  accountId: string
+  blockHeight: ?number
 };
 
 /**

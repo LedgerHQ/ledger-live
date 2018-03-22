@@ -51,7 +51,6 @@ export function genOperation(
   );
   return {
     id: String(`mock_op_${ops.length}_${account.id}`),
-    accountId: account.id,
     address: genAddress(currency, rng),
     amount:
       (rng.next() < 0.3 ? -1 : 1) *
