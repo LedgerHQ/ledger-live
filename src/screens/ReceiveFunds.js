@@ -163,8 +163,10 @@ class ReceiveFunds extends Component<
   onChooseAccount = () => {
     this.props.navigation.navigate("ReceiveFundsSelectAccount", {
       selectedAccountId: this.state.accountId,
-      setAccountId: accountId => this.setState({ accountId }),
-      syncCounterValue: unit => this.syncCountervalue(unit)
+      setSelectedAccount: (accountId, unit) => {
+        this.setState({ accountId });
+        this.syncCountervalue(unit);
+      }
     });
   };
 
