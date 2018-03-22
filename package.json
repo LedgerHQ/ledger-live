@@ -15,7 +15,7 @@
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
     "flow": "flow src",
-    "test": "jest src"
+    "test": "TZ=America/New_York jest src"
   },
   "jest": {
     "setupFiles": [
