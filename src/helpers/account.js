@@ -95,17 +95,42 @@ export function groupAccountOperationsByDay(
   for (let i = 0; i < max; i++) {
     const op = operations[i];
     if (op.date < day) {
-      if (data.length > 0) {
-        sections.push({ day, data });
-      }
+      sections.push({ day, data });
       day = startOfDay(op.date);
       data = [op];
     } else {
       data.push(op);
     }
   }
-  if (data.length > 0) {
-    sections.push({ day, data });
+  sections.push({ day, data });
+  return sections;
+}
+
+/**
+ */
+export function groupAccountsOperationsByDay(
+  accounts: Account[],
+  count: number
+): DailyOperationsSection[] {
+  // FIXME later we'll do it in a more lazy way, without sorting ALL ops
+  const operations = accounts
+    .reduce((ops, acc) => ops.concat(acc.operations), [])
+    .sort((a, b) => b.date - a.date);
+  if (operations.length === 0) return [];
+  const sections = [];
+  let day = startOfDay(operations[0].date);
+  let data = [];
+  const max = Math.min(count, operations.length);
+  for (let i = 0; i < max; i++) {
+    const op = operations[i];
+    if (op.date < day) {
+      sections.push({ day, data });
+      day = startOfDay(op.date);
+      data = [op];
+    } else {
+      data.push(op);
+    }
   }
+  sections.push({ day, data });
   return sections;
 }

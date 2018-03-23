@@ -3,13 +3,11 @@ import { getFiatUnit } from "@ledgerhq/currencies";
 import { createAccountModel } from "../../models/account";
 import { genAccount } from "../../mock/account";
 
-
 test("accountModel encode", () => {
-  const {encode} = createAccountModel();
+  const { encode } = createAccountModel();
   const account = genAccount("model1");
   expect(encode(account)).toMatchSnapshot();
 });
-
 
 test("for current accountModel, decode(encode(...)) is pseudo-identity", () => {
   const { encode, decode } = createAccountModel();
