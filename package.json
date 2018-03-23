@@ -1,11 +1,11 @@
 {
   "name": "@ledgerhq/wallet-common",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
     "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) { console.log('\u001b[31mPlease use yarn\u001b[0m'); process.exit(1); }\"",
-    "postinstall": "flow-typed install -s",
+    "flow-typed": "flow-typed install -s",
     "build": "yarn clean && yarn documentation && babel --source-maps -d lib src && flow-copy-source src lib",
     "watch": "babel --watch --source-maps -d lib src && flow-copy-source -w -v src lib",
     "prepare": "npm run build",
