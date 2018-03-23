@@ -4,6 +4,7 @@
  */
 import type {
   Account,
+  Operation,
   Unit,
   BalanceHistory,
   CalculateCounterValue,
@@ -112,17 +113,31 @@ export function groupAccountsOperationsByDay(
   accounts: Account[],
   count: number
 ): DailyOperationsSection[] {
-  // FIXME later we'll do it in a more lazy way, without sorting ALL ops
-  const operations = accounts
-    .reduce((ops, acc) => ops.concat(acc.operations), [])
-    .sort((a, b) => b.date - a.date);
-  if (operations.length === 0) return [];
+  // Track indexes of account.operations[] for each account
+  const indexes: number[] = Array(accounts.length).fill(0);
+  // Returns the most recent operation from the account with current indexes
+  function getNextOperation(): ?Operation {
+    let bestOp: ?Operation,
+      bestOpIndex = 0;
+    for (let i = 0; i < accounts.length; i++) {
+      const op = accounts[i].operations[indexes[i]];
+      if (op && (!bestOp || op.date > bestOp.date)) {
+        bestOp = op;
+        bestOpIndex = i;
+      }
+    }
+    if (bestOp) {
+      indexes[bestOpIndex]++;
+    }
+    return bestOp;
+  }
+
+  let op = getNextOperation();
+  if (!op) return [];
   const sections = [];
-  let day = startOfDay(operations[0].date);
+  let day = startOfDay(op.date);
   let data = [];
-  const max = Math.min(count, operations.length);
-  for (let i = 0; i < max; i++) {
-    const op = operations[i];
+  for (let i = 0; i < count && op; i++) {
     if (op.date < day) {
       sections.push({ day, data });
       day = startOfDay(op.date);
@@ -130,6 +145,7 @@ export function groupAccountsOperationsByDay(
     } else {
       data.push(op);
     }
+    op = getNextOperation();
   }
   sections.push({ day, data });
   return sections;
