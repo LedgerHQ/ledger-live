@@ -25,7 +25,7 @@ class ReceiveFundsSelectAccount extends Component<{
   navigation: NavigationScreenProp<{
     params: {
       selectedAccountId: string,
-      setAccountId: string => void
+      setSelectedAccount: (string, string) => void
     }
   }>
 }> {
@@ -35,8 +35,9 @@ class ReceiveFundsSelectAccount extends Component<{
 
   onAccountPress = (account: Account) => {
     const { navigation } = this.props;
-    const { selectedAccountId, setAccountId } = navigation.state.params;
-    if (selectedAccountId !== account.id) setAccountId(account.id);
+    const { selectedAccountId, setSelectedAccount } = navigation.state.params;
+    if (selectedAccountId !== account.id)
+      setSelectedAccount(account.id, account.unit.code);
     navigation.goBack();
   };
 

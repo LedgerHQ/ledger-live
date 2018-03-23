@@ -25,17 +25,7 @@ import CurrencyIcon from "../components/CurrencyIcon";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import HeaderRightClose from "../components/HeaderRightClose";
 import LText from "../components/LText";
-
-const styles = StyleSheet.create({
-  root: {
-    backgroundColor: colors.blue,
-    flex: 1
-  },
-  content: {
-    justifyContent: "center",
-    padding: 20
-  }
-});
+import ReceiveFundsButton from "../components/ReceiveFundsButton";
 
 const mapPropsToState = state => ({
   accounts: getVisibleAccounts(state)
@@ -70,6 +60,9 @@ class ReceiveFunds extends Component<
   subs = [];
 
   componentDidMount() {
+    const account = this.props.accounts.find(
+      a => a.id === this.state.accountId
+    );
     // TODO implement getDerivedStateFromProps to handle the navigation state
     /*
     const { params } = this.props.navigation.state;
@@ -82,7 +75,9 @@ class ReceiveFunds extends Component<
     }
     this.setState({ amount });
     */
-    this.syncCountervalue();
+    if (account && account.unit) {
+      this.syncCountervalue(account.unit.code);
+    }
     this.syncPublicAddress("44'/0'/0'/0");
   }
 
@@ -92,9 +87,9 @@ class ReceiveFunds extends Component<
     }
   }
 
-  async syncCountervalue() {
+  async syncCountervalue(unit) {
     const r = await fetch(
-      "https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD"
+      `https://min-api.cryptocompare.com/data/price?fsym=${unit}&tsyms=USD`
     );
     const countervalue = await r.json();
     this.setState({ countervalue });
@@ -168,22 +163,20 @@ class ReceiveFunds extends Component<
   onChooseAccount = () => {
     this.props.navigation.navigate("ReceiveFundsSelectAccount", {
       selectedAccountId: this.state.accountId,
-      setAccountId: accountId => this.setState({ accountId })
+      setSelectedAccount: (accountId, unit) => {
+        this.setState({ accountId, countervalue: null, amount: 0 });
+        this.syncCountervalue(unit);
+      }
     });
   };
 
   render() {
     const { accounts } = this.props;
-    const {
-      address,
-      error,
-      amount,
-      currency,
-      countervalue,
-      accountId
-    } = this.state;
+    const { error, amount, countervalue, accountId } = this.state;
     const countervalueUnit = getFiatUnit("USD");
     const account = accounts.find(a => a.id === accountId);
+    const address = account && account.address;
+    const currency = account && account.currency;
     return (
       <ScrollView
         style={styles.root}
@@ -191,24 +184,20 @@ class ReceiveFunds extends Component<
         ref={this.onRef}
         bounces={false}
       >
-        <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
+        <Text style={styles.inputTitle} semiBold>
           Choose account
         </Text>
 
         <TouchableOpacity onPress={this.onChooseAccount}>
-          <View
-            style={{
-              padding: 16,
-              marginBottom: 10,
-              backgroundColor: "white",
-              flexDirection: "row",
-              alignItems: "center"
-            }}
-          >
+          <View style={styles.choseAccountInput}>
             {account ? (
               <Fragment>
                 <CurrencyIcon currency={account.currency} size={32} />
-                <LText semiBold style={{ marginHorizontal: 10, flex: 1 }}>
+                <LText
+                  numberOfLines={1}
+                  semiBold
+                  style={{ marginHorizontal: 10, flex: 1 }}
+                >
                   {account.name}
                 </LText>
                 <CurrencyUnitValue
@@ -222,47 +211,38 @@ class ReceiveFunds extends Component<
             )}
           </View>
         </TouchableOpacity>
-
-        <Text style={{ color: "white", fontWeight: "bold", margin: 10 }}>
-          Request amount (optional)
-        </Text>
-
-        <View
-          style={{
-            height: 50,
-            marginBottom: 40,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignSelf: "stretch"
-          }}
-        >
-          <CurrencyUnitInput
-            value={amount}
-            unit={currency.units[0]}
-            onChange={this.onChangeAmount}
-            width={130}
-            height={50}
-            fontSize={14}
-            padding={8}
-          />
-          {countervalue ? (
-            <CurrencyUnitInput
-              value={Math.round(
-                amount *
-                  countervalue[countervalueUnit.code] *
-                  10 **
-                    (countervalueUnit.magnitude - currency.units[0].magnitude)
-              )}
-              onChange={this.onChangeCountervalueAmount}
-              unit={countervalueUnit}
-              width={130}
-              height={50}
-              fontSize={14}
-              padding={8}
-            />
-          ) : null}
-        </View>
-
+        {account ? (
+          <View>
+            <Text style={styles.inputTitle}>Request amount (optional)</Text>
+            <View style={styles.currencyUnitInput}>
+              <CurrencyUnitInput
+                value={amount}
+                unit={account.unit}
+                onChange={this.onChangeAmount}
+                width={140}
+                height={50}
+                fontSize={14}
+                padding={8}
+              />
+              {countervalue ? (
+                <CurrencyUnitInput
+                  value={Math.round(
+                    amount *
+                      countervalue[countervalueUnit.code] *
+                      10 **
+                        (countervalueUnit.magnitude - account.unit.magnitude)
+                  )}
+                  onChange={this.onChangeCountervalueAmount}
+                  unit={countervalueUnit}
+                  width={140}
+                  height={50}
+                  fontSize={14}
+                  padding={8}
+                />
+              ) : null}
+            </View>
+          </View>
+        ) : null}
         {error ? (
           <Text style={{ color: "white" }}>{String(error)}</Text>
         ) : !address ? (
@@ -276,72 +256,14 @@ class ReceiveFunds extends Component<
               size={220}
               useURIScheme
             />
-
-            <View />
-
-            <Text style={{ color: "white", fontWeight: "bold", marginTop: 30 }}>
-              Current address
-            </Text>
-            <View
-              style={{
-                // FIXME this should be a component
-                padding: 10,
-                margin: 10,
-                backgroundColor: "rgba(255,255,255,0.1)",
-                borderWidth: 1,
-                borderColor: "white",
-                borderStyle: "dashed"
-              }}
-            >
+            <Text style={styles.addressTitle}>Current address</Text>
+            <View style={styles.addressBox}>
               <Text style={{ color: "white" }}>{address}</Text>
             </View>
-
             <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity onPress={this.onShare}>
-                <View
-                  style={{
-                    width: 80,
-                    height: 40,
-                    margin: 10,
-                    backgroundColor: "white",
-                    borderRadius: 8,
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  <Text>Share</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.onCopy}>
-                <View
-                  style={{
-                    width: 80,
-                    height: 40,
-                    margin: 10,
-                    backgroundColor: "white",
-                    borderRadius: 8,
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  <Text>Copy</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.onVerify}>
-                <View
-                  style={{
-                    width: 80,
-                    height: 40,
-                    margin: 10,
-                    backgroundColor: "white",
-                    borderRadius: 8,
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  <Text>Verify</Text>
-                </View>
-              </TouchableOpacity>
+              <ReceiveFundsButton title="Share" onPress={this.onShare} />
+              <ReceiveFundsButton title="Copy" onPress={this.onCopy} />
+              <ReceiveFundsButton title="Verify" onPress={this.onVerify} />
             </View>
           </View>
         )}
@@ -351,3 +273,48 @@ class ReceiveFunds extends Component<
 }
 
 export default connect(mapPropsToState)(ReceiveFunds);
+
+const styles = StyleSheet.create({
+  root: {
+    backgroundColor: colors.blue,
+    flex: 1
+  },
+  content: {
+    justifyContent: "center",
+    padding: 20
+  },
+  inputTitle: {
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginTop: 10
+  },
+  choseAccountInput: {
+    padding: 16,
+    marginBottom: 10,
+    backgroundColor: "white",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  currencyUnitInput: {
+    height: 50,
+    marginBottom: 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignSelf: "stretch"
+  },
+  addressBox: {
+    padding: 10,
+    margin: 10,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 1,
+    borderColor: "white",
+    borderStyle: "dashed"
+  },
+  addressTitle: {
+    color: "white",
+    fontWeight: "bold",
+    marginTop: 30,
+    marginLeft: 10
+  }
+});
