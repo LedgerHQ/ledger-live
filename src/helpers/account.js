@@ -6,8 +6,13 @@ import type {
   Account,
   Unit,
   BalanceHistory,
-  CalculateCounterValue
+  CalculateCounterValue,
+  DailyOperationsSection
 } from "../types";
+
+function startOfDay(t) {
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+}
 
 /**
  * generate an array of {daysCount} datapoints, one per day,
@@ -24,7 +29,7 @@ export function getBalanceHistory(
   let i = 0; // index of operation
   let t = new Date();
   history.unshift({ date: t, value: balance });
-  t = new Date(t.getFullYear(), t.getMonth(), t.getDate()); // start of the day
+  t = startOfDay(t); // start of the day
   for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < account.operations.length && account.operations[i].date > t) {
@@ -72,4 +77,35 @@ export function getBalanceHistorySum(
         value: a.value + history[i].value
       }))
     );
+}
+
+/**
+ * Return a list of `{count}` operations grouped by day.
+ */
+export function groupAccountOperationsByDay(
+  account: Account,
+  count: number
+): DailyOperationsSection[] {
+  const { operations } = account;
+  if (operations.length === 0) return [];
+  const sections = [];
+  let day = startOfDay(operations[0].date);
+  let data = [];
+  const max = Math.min(count, operations.length);
+  for (let i = 0; i < max; i++) {
+    const op = operations[i];
+    if (op.date < day) {
+      if (data.length > 0) {
+        sections.push({ day, data });
+      }
+      day = startOfDay(op.date);
+      data = [op];
+    } else {
+      data.push(op);
+    }
+  }
+  if (data.length > 0) {
+    sections.push({ day, data });
+  }
+  return sections;
 }

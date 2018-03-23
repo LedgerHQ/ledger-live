@@ -98,6 +98,11 @@ export type AccountRaw = {
 
 // other types
 
+export type DailyOperationsSection = {
+  day: Date,
+  data: Operation[]
+};
+
 /**
  * nesting object map: crypto ticker -> fiat code -> Inner
  * e.g. CounterValuesPairing<number> can be { BTC: { USD: 1 } }

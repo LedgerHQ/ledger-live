@@ -1,6 +1,6 @@
 // @flow
 import { getFiatUnit } from "@ledgerhq/currencies";
-import { getBalanceHistory, getBalanceHistorySum } from "../../helpers/account";
+import { getBalanceHistory, getBalanceHistorySum, groupAccountOperationsByDay } from "../../helpers/account";
 import { genAccount } from "../../mock/account";
 
 test("getBalanceHistory(*,30) returns an array of 30 items", () => {
@@ -73,6 +73,11 @@ test("getBalanceHistorySum with lot of accounts", () => {
     () => value => value // using identity, at any time, 1 token = 1 USD
   );
   expect(allHistory).toMatchSnapshot();
+});
+
+test("groupAccountOperationsByDay", () => {
+  const account = genAccount("seed_7");
+  expect(groupAccountOperationsByDay(account, 100)).toMatchSnapshot();
 });
 
 // TODO testing calculateCounterValue is correctly called for picking diff coins/dates.
