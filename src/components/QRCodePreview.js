@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   root: {
     backgroundColor: "white",
     padding: 15,
-    margin: 20
+    margin: 20,
+    alignSelf: "center"
   }
 });

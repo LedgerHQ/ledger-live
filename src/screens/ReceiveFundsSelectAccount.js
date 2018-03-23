@@ -25,8 +25,7 @@ class ReceiveFundsSelectAccount extends Component<{
   navigation: NavigationScreenProp<{
     params: {
       selectedAccountId: string,
-      setSelectedAccount: (string, string) => void,
-      syncCounterValue: string => void
+      setSelectedAccount: (string, string) => void
     }
   }>
 }> {

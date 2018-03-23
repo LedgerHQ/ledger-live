@@ -164,7 +164,7 @@ class ReceiveFunds extends Component<
     this.props.navigation.navigate("ReceiveFundsSelectAccount", {
       selectedAccountId: this.state.accountId,
       setSelectedAccount: (accountId, unit) => {
-        this.setState({ accountId });
+        this.setState({ accountId, countervalue: null, amount: 0 });
         this.syncCountervalue(unit);
       }
     });
@@ -219,7 +219,7 @@ class ReceiveFunds extends Component<
                 value={amount}
                 unit={account.unit}
                 onChange={this.onChangeAmount}
-                width={130}
+                width={140}
                 height={50}
                 fontSize={14}
                 padding={8}
@@ -234,7 +234,7 @@ class ReceiveFunds extends Component<
                   )}
                   onChange={this.onChangeCountervalueAmount}
                   unit={countervalueUnit}
-                  width={130}
+                  width={140}
                   height={50}
                   fontSize={14}
                   padding={8}
