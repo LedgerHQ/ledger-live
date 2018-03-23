@@ -1,3 +1,4 @@
+// @flow
 export default {
   blue: "#4b84ff",
   green: "#41ccb4",

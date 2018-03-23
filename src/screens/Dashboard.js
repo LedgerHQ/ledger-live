@@ -5,7 +5,6 @@ import moment from "moment";
 import {
   Image,
   View,
-  StatusBar,
   SectionList,
   RefreshControl,
   StyleSheet,
@@ -23,6 +22,7 @@ import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import CurrencyIcon from "../components/CurrencyIcon";
 import { withLocale } from "../components/LocaleContext";
+import GenerateMockAccountsButton from "../components/GenerateMockAccountsButton";
 import {
   getVisibleAccounts,
   getBalanceHistoryUntilNow
@@ -105,7 +105,7 @@ function startOfDay(t) {
 export function groupAccountsOperationsByDay(
   accounts: Account[],
   count: number
-): DailyOperationsSection[] {
+): * {
   // FIXME later we'll do it in a more lazy way, without sorting ALL ops
   const operations = accounts
     .reduce((ops, acc) => ops.concat(acc.operations), [])
@@ -195,6 +195,31 @@ const ListFooterComponent = () => (
   <ActivityIndicator style={{ margin: 40 }} color={colors.blue} />
 );
 
+const Onboarding = ({ goToImportAccounts }: *) => (
+  <View
+    style={{
+      flex: 1,
+      padding: 40,
+      justifyContent: "center"
+    }}
+  >
+    <LText
+      semiBold
+      style={{ fontSize: 24, marginBottom: 20, textAlign: "center" }}
+    >
+      No accounts yet!
+    </LText>
+    <View style={{ flexDirection: "row" }}>
+      <BlueButton
+        title="Import Accounts"
+        onPress={goToImportAccounts}
+        containerStyle={{ marginRight: 20 }}
+      />
+      {__DEV__ ? <GenerateMockAccountsButton title="Generate Mock" /> : null}
+    </View>
+  </View>
+);
+
 class Dashboard extends Component<
   {
     accounts: Account[],
@@ -230,11 +255,11 @@ class Dashboard extends Component<
 
   keyExtractor = (item: Operation) => item.id;
 
-  renderItem = ({ item }: *) => (
+  renderItem = ({ item }: { item: Operation }) => (
     <OperationRow operation={item} account={item.account} />
   );
 
-  renderSectionHeader = ({ section }: *) => (
+  renderSectionHeader = ({ section }: { section: * }) => (
     <LText
       numberOfLines={1}
       semiBold
@@ -256,7 +281,7 @@ class Dashboard extends Component<
     </LText>
   );
 
-  renderHeader = ({ totalBalance }) => {
+  renderHeader = ({ totalBalance }: *) => {
     const { t, accounts, calculateCounterValue } = this.props;
     if (accounts.length === 0) return null;
     const { headerSwitched } = this.state;
@@ -362,7 +387,7 @@ class Dashboard extends Component<
 
   render() {
     const { accounts, calculateCounterValue } = this.props;
-    const { opCount, refreshing, headerSwitched } = this.state;
+    const { opCount, refreshing } = this.state;
     const data = groupAccountsOperationsByDay(accounts, opCount);
     const totalBalance = accounts.reduce(
       (sum, account) =>
@@ -373,22 +398,7 @@ class Dashboard extends Component<
       0
     );
     return accounts.length === 0 ? (
-      <View
-        style={{
-          flex: 1,
-          padding: 20,
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <LText semiBold style={{ fontSize: 24, marginBottom: 20 }}>
-          No accounts yet!
-        </LText>
-        <BlueButton
-          title="Import Accounts from Desktop"
-          onPress={this.goToImportAccounts}
-        />
-      </View>
+      <Onboarding goToImportAccounts={this.goToImportAccounts} />
     ) : (
       <ScreenGeneric
         onPressHeader={this.scrollUp}
