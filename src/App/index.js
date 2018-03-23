@@ -81,7 +81,9 @@ class AccountSettingsConfig extends Component<*> {
   };
   render() {
     const { navigation } = this.props;
-    return <AccountSettingsStack screenProps={{ topLevelNavigation: navigation }} />;
+    return (
+      <AccountSettingsStack screenProps={{ topLevelNavigation: navigation }} />
+    );
   }
 }
 
