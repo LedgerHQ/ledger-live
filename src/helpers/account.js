@@ -82,6 +82,7 @@ export function getBalanceHistorySum(
 
 /**
  * Return a list of `{count}` operations grouped by day.
+ * @memberof helpers/account
  */
 export function groupAccountOperationsByDay(
   account: Account,
@@ -108,6 +109,7 @@ export function groupAccountOperationsByDay(
 }
 
 /**
+ * @memberof helpers/account
  */
 export function groupAccountsOperationsByDay(
   accounts: Account[],

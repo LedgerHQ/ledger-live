@@ -8,7 +8,7 @@
     "flow-typed": "flow-typed install -s",
     "build": "yarn clean && yarn documentation && babel --source-maps -d lib src && flow-copy-source src lib",
     "watch": "babel --watch --source-maps -d lib src && flow-copy-source -w -v src lib",
-    "prepare": "npm run build",
+    "prepare": "yarn flow-typed && yarn build",
     "clean": "rm -rf lib/",
     "documentation": "documentation build src/** --project-name '@ledgerhq/wallet-common' --project-version `node -e \"console.log(require('./package.json').version)\"` --project-homepage https://github.com/LedgerHQ/ledger-wallet-common -g -f html -o documentation-website/public/docs",
     "prettier": "prettier --write 'src/**/*.js'",
