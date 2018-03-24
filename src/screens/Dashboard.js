@@ -93,10 +93,12 @@ const mapStateToProps = state => ({
   calculateCounterValue: calculateCounterValueSelector(state)
 });
 
+/*
 type DailyOperationsSection = {
   day: Date,
   data: Operation[]
 };
+*/
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
