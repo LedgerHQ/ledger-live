@@ -3,10 +3,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet, TextInput, ScrollView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
 import SectionEntry from "../../components/SectionEntry";
 import { updateAccount } from "../../actions/accounts";
-import type { Account } from "../../types/common";
 
 const mapStateToProps = () => ({});
 const mapDispatchToProps = {

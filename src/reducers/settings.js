@@ -4,8 +4,6 @@ import { handleActions } from "redux-actions";
 
 import get from "lodash/get";
 
-import type { Settings } from "../types/common";
-
 export type SettingsState = Object;
 
 const defaultState: SettingsState = {
@@ -21,14 +19,14 @@ const state: SettingsState = {
 const handlers: Object = {
   SAVE_SETTINGS: (
     state: SettingsState,
-    { payload: settings }: { payload: Settings }
+    { payload: settings }: { payload: * }
   ) => ({
     ...state,
     ...settings
   }),
   FETCH_SETTINGS: (
     state: SettingsState,
-    { payload: settings }: { payload: Settings }
+    { payload: settings }: { payload: * }
   ) => ({
     ...state,
     ...settings

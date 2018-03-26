@@ -11,8 +11,15 @@ import {
   ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
-import type { Currency, Unit } from "@ledgerhq/currencies";
-import type { Account, Operation } from "../types/common";
+import type {
+  CalculateCounterValue,
+  Account,
+  Operation
+} from "@ledgerhq/wallet-common/lib/types";
+import {
+  getBalanceHistorySum,
+  groupAccountsOperationsByDay
+} from "@ledgerhq/wallet-common/lib/helpers/account";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import LText from "../components/LText";
@@ -23,49 +30,26 @@ import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import CurrencyIcon from "../components/CurrencyIcon";
 import { withLocale } from "../components/LocaleContext";
 import GenerateMockAccountsButton from "../components/GenerateMockAccountsButton";
-import {
-  getVisibleAccounts,
-  getBalanceHistoryUntilNow
-} from "../reducers/accounts";
+import { getVisibleAccounts } from "../reducers/accounts";
 import { calculateCounterValueSelector } from "../reducers/counterValues";
 
 class ListHeaderComponent extends PureComponent<
   {
     accounts: Account[],
     totalBalance: number,
-    calculateCounterValue: (
-      currency: Currency,
-      fiatUnit: Unit
-    ) => (number, Date) => number
+    calculateCounterValue: CalculateCounterValue
   },
   *
 > {
   render() {
     const { accounts, calculateCounterValue } = this.props;
     const fiatUnit = getFiatUnit("USD"); // FIXME no more hardcoded
-
-    const data =
-      accounts.length === 0
-        ? null
-        : accounts
-            .map(account => {
-              const history = getBalanceHistoryUntilNow(account, 30);
-              const calculateAccountCounterValue = calculateCounterValue(
-                account.currency,
-                fiatUnit
-              );
-              return history.map(h => ({
-                date: h.date,
-                value: calculateAccountCounterValue(h.value, h.date)
-              }));
-            })
-            .reduce((acc, history) =>
-              acc.map((a, i) => ({
-                date: a.date,
-                value: a.value + history[i].value
-              }))
-            );
-
+    const data = getBalanceHistorySum(
+      accounts,
+      30,
+      fiatUnit,
+      calculateCounterValue
+    );
     return (
       <View style={styles.carouselCountainer}>
         <View style={{ padding: 10, flexDirection: "row" }}>
@@ -92,46 +76,6 @@ const mapStateToProps = state => ({
   accounts: getVisibleAccounts(state),
   calculateCounterValue: calculateCounterValueSelector(state)
 });
-
-/*
-type DailyOperationsSection = {
-  day: Date,
-  data: Operation[]
-};
-*/
-
-function startOfDay(t) {
-  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
-}
-
-export function groupAccountsOperationsByDay(
-  accounts: Account[],
-  count: number
-): * {
-  // FIXME later we'll do it in a more lazy way, without sorting ALL ops
-  const operations = accounts
-    .reduce((ops, acc) => ops.concat(acc.operations), [])
-    .sort((a, b) => new Date(b.receivedAt) - new Date(a.receivedAt));
-
-  if (operations.length === 0) return [];
-  const sections = [];
-  let day = startOfDay(new Date(operations[0].receivedAt));
-  let data = [];
-  const max = Math.min(count, operations.length);
-  for (let i = 0; i < max; i++) {
-    const op = operations[i];
-    const date = new Date(op.receivedAt);
-    if (date < day) {
-      sections.push({ day, data });
-      day = startOfDay(date);
-      data = [op];
-    } else {
-      data.push(op);
-    }
-  }
-  sections.push({ day, data });
-  return sections;
-}
 
 class OperationRow extends PureComponent<{
   operation: Operation,
@@ -257,9 +201,11 @@ class Dashboard extends Component<
 
   keyExtractor = (item: Operation) => item.id;
 
-  renderItem = ({ item }: { item: Operation }) => (
-    <OperationRow operation={item} account={item.account} />
-  );
+  renderItem = ({ item }: { item: Operation }) => {
+    const account = this.props.accounts.find(a => a.id === item.accountId);
+    if (!account) return null;
+    return <OperationRow operation={item} account={account} />;
+  };
 
   renderSectionHeader = ({ section }: { section: * }) => (
     <LText
@@ -288,24 +234,12 @@ class Dashboard extends Component<
     if (accounts.length === 0) return null;
     const { headerSwitched } = this.state;
     const fiatUnit = getFiatUnit("USD");
-    const data = accounts
-      .map(account => {
-        const history = getBalanceHistoryUntilNow(account, 30);
-        const calculateAccountCounterValue = calculateCounterValue(
-          account.currency,
-          fiatUnit
-        );
-        return history.map(h => ({
-          date: h.date,
-          value: calculateAccountCounterValue(h.value, h.date)
-        }));
-      })
-      .reduce((acc, history) =>
-        acc.map((a, i) => ({
-          date: a.date,
-          value: a.value + history[i].value
-        }))
-      );
+    const data = getBalanceHistorySum(
+      accounts,
+      30,
+      fiatUnit,
+      calculateCounterValue
+    );
 
     return (
       <View style={styles.header}>
@@ -390,13 +324,13 @@ class Dashboard extends Component<
   render() {
     const { accounts, calculateCounterValue } = this.props;
     const { opCount, refreshing } = this.state;
+    const fiatUnit = getFiatUnit("USD");
     const data = groupAccountsOperationsByDay(accounts, opCount);
     const totalBalance = accounts.reduce(
+      // FIXME pick from last graph point? (no need to compute it again)
       (sum, account) =>
         sum +
-        calculateCounterValue(account.currency, getFiatUnit("USD"))(
-          account.balance
-        ),
+        calculateCounterValue(account.currency, fiatUnit)(account.balance),
       0
     );
     return accounts.length === 0 ? (
@@ -409,7 +343,7 @@ class Dashboard extends Component<
       >
         <View style={styles.topBackground} />
         <SectionList
-          sections={data || []}
+          sections={(data: any) /* FIXME flow */ || []}
           ref={this.onSectionListRef}
           style={styles.sectionList}
           contentContainerStyle={styles.sectionListContent}

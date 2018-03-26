@@ -1,20 +1,18 @@
 // @flow
 import React from "react";
 import { connect } from "react-redux";
+import { genAccount } from "@ledgerhq/wallet-common/lib/mock/account";
 import GreyButton from "./GreyButton";
-import { deserializeAccounts } from "../reducers/accounts";
-import { genAccount } from "../mock/account";
+import { accountModel } from "../reducers/accounts";
 import { initAccounts } from "../actions/accounts";
 import db from "../db";
 
 async function injectMockAccountsInDB(count) {
   await db.save(
     "accounts",
-    deserializeAccounts(
-      Array(count)
-        .fill(null)
-        .map((_, i) => genAccount(i))
-    )
+    Array(count)
+      .fill(null)
+      .map(() => accountModel.encode(genAccount(String(Math.random()))))
   );
 }
 

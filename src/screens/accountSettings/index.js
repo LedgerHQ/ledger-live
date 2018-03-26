@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { ScrollView, View, StyleSheet, Switch, Image } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
 import { getAccountById } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
@@ -10,7 +11,6 @@ import HeaderRightClose from "../../components/HeaderRightClose";
 import SectionEntry from "../../components/SectionEntry";
 import SectionTitle from "../../components/SectionTitle";
 import LText from "../../components/LText";
-import type { Account } from "../../types/common";
 
 const mapStateToProps = (state, { screenProps }) => ({
   account: getAccountById(

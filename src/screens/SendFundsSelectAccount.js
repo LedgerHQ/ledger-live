@@ -3,10 +3,11 @@ import React, { Component } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
+
 import { getVisibleAccounts } from "../reducers/accounts";
 import HeaderRightClose from "../components/HeaderRightClose";
 import AccountChoice from "../components/AccountChoice";
-import type { Account } from "../types/common";
 
 const styles = StyleSheet.create({
   root: {

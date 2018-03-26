@@ -5,27 +5,19 @@ import { handleActions } from "redux-actions";
 import every from "lodash/every";
 import get from "lodash/get";
 import defaultsDeep from "lodash/defaultsDeep";
-import { getCurrencyByCoinType } from "@ledgerhq/currencies";
-
+import { createAccountModel } from "@ledgerhq/wallet-common/lib/models/account";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import type { State } from ".";
-import type { Account } from "../types/common";
+
+export const accountModel = createAccountModel();
 
 export type AccountsState = Account[];
 
 const state: AccountsState = [];
 
-function orderAccountsTransactions(account: Account) {
-  const { operations } = account;
-  operations.sort((a, b) => new Date(b.receivedAt) - new Date(a.receivedAt));
-  return {
-    ...account,
-    operations
-  };
-}
-
 function applyDefaults(account) {
   return defaultsDeep(account, {
-      minConfirmations: 2
+    minConfirmations: 2
   });
 }
 
@@ -38,7 +30,7 @@ const handlers: Object = {
   ADD_ACCOUNT: (
     state: AccountsState,
     { payload: account }: { payload: Account }
-  ): AccountsState => [...state, orderAccountsTransactions(account)],
+  ): AccountsState => [...state, account],
 
   UPDATE_ACCOUNT: (
     state: AccountsState,
@@ -54,7 +46,7 @@ const handlers: Object = {
         ...account
       };
 
-      return orderAccountsTransactions(updatedAccount);
+      return updatedAccount;
     }),
 
   REMOVE_ACCOUNT: (
@@ -64,31 +56,6 @@ const handlers: Object = {
 };
 
 // Selectors
-
-export function getBalanceHistoryUntilNow(
-  account: Account,
-  daysCount: number
-): Array<{ date: Date, value: number }> {
-  const history = [];
-  let { balance } = account;
-  let i = 0; // index of operation
-  let t = new Date();
-  history.unshift({ date: t, value: balance });
-  t = new Date(t.getFullYear(), t.getMonth(), t.getDate()); // start of the day
-  for (let d = 0; d < daysCount; d++) {
-    // accumulate operations after time t
-    while (
-      i < account.operations.length &&
-      new Date(account.operations[i].receivedAt) > t
-    ) {
-      balance -= account.operations[i].amount;
-      i++;
-    }
-    history.unshift({ date: t, value: balance });
-    t = new Date(t - 24 * 60 * 60 * 1000);
-  }
-  return history;
-}
 
 export function getAccounts(state: { accounts: AccountsState }): Account[] {
   return state.accounts;
@@ -116,44 +83,6 @@ export function getAccountById(
 
 export function canCreateAccount(state: State): boolean {
   return every(getAccounts(state), a => get(a, "operations.length", 0) > 0);
-}
-
-type AccountSerial = *;
-
-export function serializeAccounts(accounts: Array<AccountSerial>): Account[] {
-  return accounts.map((account, key) => {
-    const currency = getCurrencyByCoinType(account.coinType);
-    const a: Account = {
-      id: account.id,
-      address: account.address,
-      archived: account.archived,
-      balance: account.balance,
-      coinType: account.coinType,
-      currency,
-      operations: [],
-      name: account.name || `${key}`,
-      unit: account.unit || currency.units[0],
-      minConfirmations: account.minConfirmations
-    };
-    a.operations = account.operations.map(t => ({
-      ...t,
-      account: a
-    }));
-    return a;
-  });
-}
-
-export function deserializeAccounts(accounts: Account[]): AccountSerial[] {
-  return accounts.map(account => ({
-    id: account.id,
-    address: account.address,
-    archived: account.archived,
-    balance: account.balance,
-    coinType: account.coinType,
-    name: account.name,
-    operations: account.operations.map(({ account: _acc, ...t }) => t),
-    unit: account.unit
-  }));
 }
 
 export default handleActions(handlers, state);

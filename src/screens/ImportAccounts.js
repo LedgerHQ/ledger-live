@@ -11,15 +11,15 @@ import {
 import groupBy from "lodash/groupBy";
 import { connect } from "react-redux";
 import Camera from "react-native-camera";
+import { genAddingOperationsInAccount } from "@ledgerhq/wallet-common/lib/mock/account";
 import { getCurrencyByCoinType } from "@ledgerhq/currencies";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import LText from "../components/LText";
 import BlueButton from "../components/BlueButton";
-import type { Account } from "../types/common";
 import { getAccounts } from "../reducers/accounts";
 import { updateAccount, addAccount } from "../actions/accounts";
 import { fetchCounterValues } from "../actions/counterValues";
-import { genAddingOperationsInAccount } from "../mock/account";
 
 type Data = Array<mixed>;
 type AccountData = ["account", string, string, number];
@@ -289,7 +289,8 @@ class PresentResult_ extends Component<Props, State> {
       ...accountItem,
       account: genAddingOperationsInAccount(
         accountItem.account,
-        Math.floor(1 + 20 * Math.random())
+        Math.floor(1 + 20 * Math.random()),
+        `${accountItem.account.id}_${accountItem.account.operations.length}`
       )
     };
     items[index] = accountItem;
