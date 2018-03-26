@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import { TouchableOpacity, Image, View, Text, StyleSheet } from "react-native";
+import { Image, View, Text, StyleSheet } from "react-native";
+import Touchable from "./Touchable";
 
 export default class MenuTitle extends Component<{
   onPress: *,
@@ -11,7 +12,7 @@ export default class MenuTitle extends Component<{
   render() {
     const { icon, title, description, onPress } = this.props;
     return (
-      <TouchableOpacity onPress={onPress}>
+      <Touchable onPress={onPress}>
         <View style={styles.root}>
           <View style={styles.left}>
             <Image style={styles.img} source={icon} />
@@ -21,7 +22,7 @@ export default class MenuTitle extends Component<{
             <Text style={styles.description}>{description}</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

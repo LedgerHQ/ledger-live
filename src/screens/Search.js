@@ -6,9 +6,9 @@ import {
   Text,
   StyleSheet,
   Image,
-  TouchableOpacity,
   TextInput
 } from "react-native";
+import Touchable from "../components/Touchable";
 import ScreenGeneric from "../components/ScreenGeneric";
 
 export default class Search extends Component<*> {
@@ -33,9 +33,9 @@ export default class Search extends Component<*> {
         style={styles.textInput}
         onChangeText={this.onChangeText}
       />
-      <TouchableOpacity style={styles.button} onPress={this.onPressCancel}>
+      <Touchable style={styles.button} onPress={this.onPressCancel}>
         <Text style={styles.buttonText}>Cancel</Text>
-      </TouchableOpacity>
+      </Touchable>
     </View>
   );
   render() {

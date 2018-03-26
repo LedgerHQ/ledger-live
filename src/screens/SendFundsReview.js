@@ -12,7 +12,11 @@ export default class SendFundsReview extends Component<*> {
   };
   confirm = () => {
     const { navigation } = this.props;
-    navigation.navigate("SendFundsPlugDevice", navigation.state.params);
+    navigation.navigate({
+      routeName: "SendFundsPlugDevice",
+      params: navigation.state.params,
+      key: "sendfundsplugdevice"
+    });
   };
   render() {
     const { navigation } = this.props;

@@ -6,17 +6,17 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   TouchableWithoutFeedback
 } from "react-native";
 import { BlurView } from "react-native-blur";
+import Touchable from "../components/Touchable";
 import QRCodePreview from "../components/QRCodePreview";
 
 class MenuItem extends Component<{ title: string, onPress: * }> {
   render() {
     const { title, onPress } = this.props;
     return (
-      <TouchableOpacity onPress={onPress}>
+      <Touchable onPress={onPress}>
         <View style={styles.menuItem}>
           <View
             style={[
@@ -28,7 +28,7 @@ class MenuItem extends Component<{ title: string, onPress: * }> {
           />
           <Text style={styles.menuItemText}>{title}</Text>
         </View>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

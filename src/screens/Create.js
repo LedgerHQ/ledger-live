@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import { Image, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
+import Touchable from "../components/Touchable";
 import CreateModal from "../modals/Create";
 import colors from "../colors";
 
@@ -38,7 +39,7 @@ class Icon extends Component<*, *> {
   render() {
     const { modalOpened } = this.state;
     return (
-      <TouchableOpacity onPress={this.onPress}>
+      <Touchable onPress={this.onPress}>
         <View style={styles.root}>
           <View style={styles.view}>
             <Image
@@ -50,7 +51,7 @@ class Icon extends Component<*, *> {
             <CreateModal onRequestClose={this.onRequestClose} />
           ) : null}
         </View>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

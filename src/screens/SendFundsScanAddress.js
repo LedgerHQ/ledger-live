@@ -46,15 +46,23 @@ export default class SendFundsScanAddress extends Component<*, *> {
     const { address, amount } = decodedResult;
     this.setState({ decodedResult: null });
     if (amount) {
-      navigation.navigate("SendFundsChoseFee", {
-        ...navigation.state.params,
-        address,
-        amount
+      navigation.navigate({
+        routeName: "SendFundsChoseFee",
+        params: {
+          ...navigation.state.params,
+          address,
+          amount
+        },
+        key: "sendfundschosefee"
       });
     } else {
-      navigation.navigate("SendFundsChoseAmount", {
-        ...navigation.state.params,
-        address
+      navigation.navigate({
+        routeName: "SendFundsChoseAmount",
+        params: {
+          ...navigation.state.params,
+          address
+        },
+        key: "sendfundschoseamount"
       });
     }
   };

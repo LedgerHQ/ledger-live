@@ -288,7 +288,10 @@ class Dashboard extends Component<
   };
 
   goToImportAccounts = () => {
-    this.props.screenProps.topLevelNavigation.navigate("ImportAccounts");
+    this.props.screenProps.topLevelNavigation.navigate({
+      routeName: "ImportAccounts",
+      key: "importaccounts"
+    });
   };
 
   onEndReached = () => {

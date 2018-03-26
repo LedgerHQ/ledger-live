@@ -1,10 +1,11 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-import LText from "../components/LText";
-import CurrencyIcon from "../components/CurrencyIcon";
-import CurrencyUnitValue from "../components/CurrencyUnitValue";
+import LText from "./LText";
+import Touchable from "./Touchable";
+import CurrencyIcon from "./CurrencyIcon";
+import CurrencyUnitValue from "./CurrencyUnitValue";
 
 const styles = StyleSheet.create({
   root: {
@@ -49,7 +50,7 @@ export default class AccountChoice extends PureComponent<{
   render() {
     const { account } = this.props;
     return (
-      <TouchableOpacity onPress={this.onPress}>
+      <Touchable onPress={this.onPress}>
         <View style={styles.root}>
           <View style={styles.header}>
             <CurrencyIcon size={32} currency={account.currency} />
@@ -70,7 +71,7 @@ export default class AccountChoice extends PureComponent<{
             />
           </View>
         </View>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

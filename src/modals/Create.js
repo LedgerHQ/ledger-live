@@ -10,14 +10,22 @@ import MenuChoice from "../components/MenuChoice";
 class CreateModal extends Component<*> {
   onSendFunds = () => {
     const { navigation, onRequestClose } = this.props;
-    navigation.navigate("SendFunds", {
-      goBackKey: navigation.state.key
+    navigation.navigate({
+      routeName: "SendFunds",
+      params: {
+        goBackKey: navigation.state.key
+      },
+      key: "sendfunds"
     });
     onRequestClose();
   };
   onReceiveFunds = () => {
     const { navigation, onRequestClose } = this.props;
-    navigation.navigate("ReceiveFunds", { goBackKey: navigation.state.key });
+    navigation.navigate({
+      routeName: "ReceiveFunds",
+      params: { goBackKey: navigation.state.key },
+      key: "receiveffunds"
+    });
     onRequestClose();
   };
   render() {

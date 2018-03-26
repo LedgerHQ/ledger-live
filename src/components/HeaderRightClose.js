@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import { Image, TouchableOpacity } from "react-native";
+import { Image } from "react-native";
+import Touchable from "./Touchable";
 
 export default class Close extends Component<*> {
   onPress = () => {
@@ -8,7 +9,7 @@ export default class Close extends Component<*> {
   };
   render() {
     return (
-      <TouchableOpacity onPress={this.onPress}>
+      <Touchable onPress={this.onPress}>
         <Image
           source={require("../images/close.png")}
           style={{
@@ -18,7 +19,7 @@ export default class Close extends Component<*> {
             tintColor: "white"
           }}
         />
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import Touchable from "./Touchable";
 
 export default class SectionEntry extends Component<{
   onPress: () => void,
@@ -9,13 +10,13 @@ export default class SectionEntry extends Component<{
   render() {
     const { onPress, children, center } = this.props;
     return (
-      <TouchableOpacity onPress={onPress}>
+      <Touchable onPress={onPress}>
         <View
           style={[styles.sectionEntry, center && styles.sectionEntryCenter]}
         >
           {children}
         </View>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

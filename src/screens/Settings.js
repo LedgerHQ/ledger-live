@@ -46,7 +46,14 @@ export default class Settings extends Component<*> {
           <LText>Countervalue</LText>
         </SectionEntry>
         <SectionTitle title="TOOLS" />
-        <SectionEntry onPress={() => navigation.navigate("ImportAccounts")}>
+        <SectionEntry
+          onPress={() =>
+            navigation.navigate({
+              routeName: "ImportAccounts",
+              key: "sendfunds"
+            })
+          }
+        >
           <LText>Import Accounts</LText>
         </SectionEntry>
         <SignOut />

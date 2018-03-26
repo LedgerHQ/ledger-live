@@ -12,8 +12,12 @@ export default class AddAccountSelectCurrency extends Component<*> {
   });
   onSelect = () => {
     const { navigation } = this.props;
-    navigation.navigate("AddAccountInfo", {
-      currency: "bitcoin"
+    navigation.navigate({
+      routeName: "AddAccountInfo",
+      params: {
+        currency: "bitcoin"
+      },
+      key: "addaccountinfo"
     });
   };
   render() {
