@@ -3,6 +3,7 @@
  * @module api/countervalue
  */
 import querystring from "querystring";
+import axios from "axios";
 import type { Currency, Unit, CounterValuesPairing, Histoday } from "../types";
 import { formatCounterValueDay } from "../helpers/countervalue";
 
@@ -19,7 +20,7 @@ export async function fetchCurrentCounterValues(
   currencies: Currency[],
   fiatUnit: Unit
 ): Promise<CounterValuesPairing<number>> {
-  const r = await fetch(
+  const { data }: { data: mixed } = await axios.get(
     "https://min-api.cryptocompare.com/data/pricemulti?" +
       querystring.stringify({
         extraParams: "ledger-test",
@@ -27,24 +28,23 @@ export async function fetchCurrentCounterValues(
         tsyms: fiatUnit.code
       })
   );
-  const res: mixed = await r.json();
-  const data = {};
+  const out = {};
   // we'll replace in-place the map to convert the crypto to a sats/cents mapping
-  if (res && typeof res === "object") {
-    Object.keys(res).forEach(ticker => {
+  if (data && typeof data === "object") {
+    Object.keys(data).forEach(ticker => {
       const currency = currencies.find(c => c.units[0].code === ticker);
-      const map = res[ticker];
+      const map = data[ticker];
       if (currency && map && typeof map === "object") {
         const value = map[fiatUnit.code];
         if (typeof value === "number") {
-          data[ticker] = {
+          out[ticker] = {
             [fiatUnit.code]: convertToSatCent(currency, fiatUnit, value)
           };
         }
       }
     });
   }
-  return data;
+  return out;
 }
 
 /**
@@ -54,8 +54,8 @@ export async function fetchHistodayCounterValues(
   currency: Currency,
   fiatUnit: Unit
 ): Promise<Histoday> {
-  const r = await fetch(
-    "https://min-api.cryptocompare.com/data/pricemulti?" +
+  const { data }: { data: mixed } = await axios.get(
+    "https://min-api.cryptocompare.com/data/histoday?" +
       querystring.stringify({
         extraParams: "ledger-test",
         fsym: currency.units[0].code,
@@ -63,21 +63,20 @@ export async function fetchHistodayCounterValues(
         allData: 1
       })
   );
-  const res: mixed = await r.json();
-  const data = {};
+  const out = {};
 
   // we'll replace in-place the map to convert the crypto to a sats/cents mapping
-  if (res && typeof res === "object" && Array.isArray(res.Data)) {
-    for (const item of res.Data) {
+  if (data && typeof data === "object" && Array.isArray(data.Data)) {
+    for (const item of data.Data) {
       if (!item || typeof item !== "object") continue;
       const { time, close } = item;
       if (typeof close !== "number" || typeof time !== "number") continue;
       const day = formatCounterValueDay(new Date(time * 1000));
-      data[day] = convertToSatCent(currency, fiatUnit, close);
+      out[day] = convertToSatCent(currency, fiatUnit, close);
     }
   }
 
-  return data;
+  return out;
 }
 
 /**

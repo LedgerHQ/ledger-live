@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@ledgerhq/currencies": "^4.7.1",
+    "axios": "^0.18.0",
     "babel-jest": "^23.0.0-alpha.0",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
