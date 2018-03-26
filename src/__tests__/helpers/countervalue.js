@@ -5,15 +5,18 @@ import { makeCalculateCounterValue } from "../../helpers/countervalue";
 
 test("makeCalculateCounterValue basic test", () => {
   const getPairHistory = (ticker, fiat) => date =>
-    0.0000001 * (Date.now() - date) +
+    !date
+    ? 1 // for the test, we make countervalue value 1 at current price
+    : 0.0000001 * (Date.now() - date) +
     new Prando(`${ticker}-${fiat}`).next(0, 99);
   const calculateCounterValue = makeCalculateCounterValue(getPairHistory);
   const cur = getCurrencyByCoinType(1);
   const fiat = getFiatUnit("USD");
   const calc = calculateCounterValue(cur, fiat);
-  expect(calc(42)).toBe(
+  expect(calc(42, new Date())).toBe(
     Math.round(42 * getPairHistory(cur.units[0].code, fiat.code)(new Date()))
   );
+  expect(calc(42)).toBe(42);
   expect(calc(42, new Date(2017, 3, 14))).toBe(
     Math.round(
       42 * getPairHistory(cur.units[0].code, fiat.code)(new Date(2017, 3, 14))

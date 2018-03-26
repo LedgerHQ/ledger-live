@@ -122,11 +122,12 @@ export type BalanceHistory = Array<{ date: Date, value: number }>;
 /**
  * Synchronously lookup the history price of coin against a fiat.
  * the returned countervalue is expressed in satoshis per cents so it can be multiplied by the value to convert.
+ * if Date is falsy, the current price is expected to be returned.
  */
 export type GetPairHistory = (
   coinTicker: string,
   fiat: string
-) => Date => ?number;
+) => (?Date) => ?number;
 
 /**
  * Returns the calculated countervalue for a given amount value at a specific date (fallback to "now")

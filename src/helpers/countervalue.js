@@ -16,7 +16,7 @@ export const makeCalculateCounterValue = (
 ): CalculateCounterValue => (currency, fiatUnit) => {
   // FIXME we need to introduce ticker field on currency type
   const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
-  return (value, date = new Date()) => {
+  return (value, date) => {
     const countervalue = getPair(date);
     if (!countervalue) return 0;
     return Math.round(value * countervalue);
