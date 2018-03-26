@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-common",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
