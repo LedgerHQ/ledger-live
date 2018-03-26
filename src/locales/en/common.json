@@ -1,4 +1,4 @@
 {
-    "home_title": "Hello, {{name}}!",
-    "home_subtitle": "Here's a summary of your accounts"
+  "home_title": "Hello, {{name}}.",
+  "home_subtitle": "Here's a summary of your {{count}} accounts"
 }

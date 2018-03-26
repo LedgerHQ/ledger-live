@@ -8,8 +8,11 @@ export default class BlueButton extends Component<*> {
     return (
       <GenericButton
         {...this.props}
-        titleStyle={{ color: "white" }}
-        containerStyle={{ backgroundColor: colors.blue }}
+        titleStyle={[{ color: "white" }, this.props.titleStyle]}
+        containerStyle={[
+          { backgroundColor: colors.blue },
+          this.props.containerStyle
+        ]}
         spinnerColor="white"
       />
     );

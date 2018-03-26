@@ -3,7 +3,6 @@
 import "./polyfill";
 import React, { Component } from "react"; // eslint-disable-line import/first
 import { createStore, applyMiddleware, compose } from "redux";
-import Config from "react-native-config";
 import dbMiddleware from "./middlewares/db";
 import db from "./db";
 import { Provider } from "react-redux";
@@ -15,24 +14,6 @@ import { RebootProvider } from "./components/RebootContext";
 import { initAccounts } from "./actions/accounts";
 import { initSettings } from "./actions/settings";
 import { initCounterValues, fetchCounterValues } from "./actions/counterValues";
-import { genAccount } from "./mock/account";
-import { deserializeAccounts } from "./reducers/accounts";
-
-async function injectMockAccountsInDB() {
-  // NB to enable this mode, you need to set BOOTSTRAP_MOCK_ACCOUNTS=<nb> in your .env file
-  await db.save(
-    "accounts",
-    deserializeAccounts(
-      Array(
-        typeof Config.BOOTSTRAP_MOCK_ACCOUNTS === "number"
-          ? Config.BOOTSTRAP_MOCK_ACCOUNTS
-          : 12
-      )
-        .fill(null)
-        .map((_, i) => genAccount(i))
-    )
-  );
-}
 
 const createLedgerStore = () =>
   createStore(
@@ -71,9 +52,6 @@ export default class Root extends Component<
 
   async init() {
     const { store } = this.state;
-    if (__DEV__ && Config.BOOTSTRAP_MOCK_ACCOUNTS) {
-      await injectMockAccountsInDB();
-    }
     await store.dispatch(initSettings());
     await store.dispatch(initCounterValues());
     await store.dispatch(initAccounts());

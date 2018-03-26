@@ -8,8 +8,8 @@ export default class GreyButton extends Component<*> {
     return (
       <GenericButton
         {...this.props}
-        titleStyle={styles.title}
-        containerStyle={styles.container}
+        titleStyle={[styles.title, this.props.titleStyle]}
+        containerStyle={[styles.container, this.props.containerStyle]}
       />
     );
   }

@@ -6,14 +6,15 @@ import colors from "../colors";
 export default class ScreenGeneric extends Component<{
   renderHeader: (props: *) => *,
   children: *,
-  onPressHeader?: () => void
+  onPressHeader?: () => void,
+  extraData?: *
 }> {
   render() {
-    const { children, renderHeader, onPressHeader } = this.props;
+    const { children, renderHeader, onPressHeader, extraData } = this.props;
     return (
       <View style={styles.container}>
         <TouchableWithoutFeedback onPress={onPressHeader}>
-          <View style={styles.header}>{renderHeader(this.props)}</View>
+          <View style={styles.header}>{renderHeader(extraData)}</View>
         </TouchableWithoutFeedback>
         <View style={styles.body}>{children}</View>
       </View>
