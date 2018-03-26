@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import type { Account } from "../types/common";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import LText from "../components/LText";
 import CurrencyIcon from "../components/CurrencyIcon";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";

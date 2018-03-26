@@ -1,8 +1,7 @@
 // @flow
-
-import { getDefaultUnitByCoinType } from "@ledgerhq/currencies";
+import { fetchHistodayCounterValuesMultiple } from "@ledgerhq/wallet-common/lib/api/coutervalue";
+import { getFiatUnit } from "@ledgerhq/currencies";
 import type { Dispatch } from "redux";
-import get from "lodash/get";
 import db from "../db";
 
 export type InitCounterValues = () => (Dispatch<*>) => Promise<void>;
@@ -24,64 +23,19 @@ export type FetchCounterValues = (
   ?number
 ) => (Dispatch<*>, Function) => Promise<any>;
 
-const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
-export const formatCounterValueDate = (d: Date) =>
-  `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`;
-
-export const fetchCounterValues: FetchCounterValues = coinType => (
+export const fetchCounterValues: FetchCounterValues = () => async (
   dispatch,
   getState
 ) => {
-  const { accounts, counterValues, settings } = getState();
+  const { accounts, settings } = getState();
   const { counterValue } = settings;
-
-  let coinTypes = [];
-
-  if (!coinType) {
-    coinTypes = [...new Set(accounts.map(a => a.coinType))];
-  } else {
-    coinTypes = [coinType];
-  }
-
-  const today = formatCounterValueDate(new Date());
-
-  const fetchCounterValuesByCoinType = coinType => {
-    const { code } = getDefaultUnitByCoinType(coinType);
-    const todayCounterValues = get(
-      counterValues,
-      `${code}-${counterValue}.${today}`,
-      null
-    );
-
-    if (todayCounterValues !== null) {
-      return null;
-    }
-    return fetch(
-      `https://min-api.cryptocompare.com/data/histoday?&extraParams=ledger-test&fsym=${code}&tsym=${counterValue}&allData=1`
-    )
-      .then(r => r.json())
-      .then(data => ({
-        symbol: `${code}-${counterValue}`,
-        values: data.Data.reduce((result, d) => {
-          const date = formatCounterValueDate(new Date(d.time * 1000));
-          result[date] = d.close; // eslint-disable-line no-param-reassign
-          return result;
-        }, {})
-      }));
-  };
-
-  return Promise.all(coinTypes.map(fetchCounterValuesByCoinType)).then(
-    result => {
-      const newCounterValues = result.reduce((r, v) => {
-        if (v !== null) {
-          r[v.symbol] = v.values; // eslint-disable-line no-param-reassign
-        }
-        return r;
-      }, {});
-
-      if (Object.keys(newCounterValues).length !== 0) {
-        dispatch(updateCounterValues(newCounterValues));
-      }
-    }
+  const currencies = [...new Set(accounts.map(a => a.currency))];
+  const res = await fetchHistodayCounterValuesMultiple(
+    currencies,
+    getFiatUnit(counterValue)
   );
+  if (Object.keys(res).length !== 0) {
+    dispatch(updateCounterValues(res));
+  }
+  return res;
 };

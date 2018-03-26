@@ -3,10 +3,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet, ScrollView, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
 import { updateAccount } from "../../actions/accounts";
 import UnitRow from "../../components/UnitRow";
-import type { Account } from "../../types/common";
 
 const mapStateToProps = () => ({});
 
@@ -32,7 +32,7 @@ class EditUnits extends Component<{
     navigation.goBack();
   };
 
-  keyExtractor = (item: *) => item.code;
+  keyExtractor = (item: *) => String(item.magnitude);
 
   renderItem = ({ item }: *) => (
     <UnitRow unit={item} onPress={() => this.onItemFullPress(item)} />

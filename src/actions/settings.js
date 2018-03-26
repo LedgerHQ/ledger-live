@@ -2,7 +2,8 @@
 
 import type { Dispatch } from "redux";
 import db from "../db";
-import type { Settings } from "../types/common";
+
+type Settings = *;
 
 export type SaveSettings = Settings => { type: string, payload: Settings };
 

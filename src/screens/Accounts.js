@@ -13,11 +13,9 @@ import {
 import moment from "moment";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { connect } from "react-redux";
-import type { Account, Operation } from "../types/common";
-import {
-  getVisibleAccounts,
-  getBalanceHistoryUntilNow
-} from "../reducers/accounts";
+import type { Account, Operation } from "@ledgerhq/wallet-common/lib/types";
+import { getBalanceHistory } from "@ledgerhq/wallet-common/lib/helpers/account";
+import { getVisibleAccounts } from "../reducers/accounts";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
@@ -35,7 +33,7 @@ const mapStateToProps = state => ({
 class AccountRow extends PureComponent<*, *> {
   render() {
     const { account } = this.props;
-    const data = getBalanceHistoryUntilNow(account, 30);
+    const data = getBalanceHistory(account, 30);
     return (
       <View
         style={{
@@ -92,7 +90,7 @@ class AccountCard extends PureComponent<*, *> {
   };
   render() {
     const { account, onPress } = this.props;
-    const data = getBalanceHistoryUntilNow(account, 30);
+    const data = getBalanceHistory(account, 30);
     return (
       <TouchableWithoutFeedback onPress={onPress}>
         <View
@@ -222,10 +220,13 @@ class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
   }
 }
 
-class OperationRow extends PureComponent<{ operation: Operation }> {
+class OperationRow extends PureComponent<{
+  operation: Operation,
+  account: Account
+}> {
   render() {
-    const { operation } = this.props;
-    const { unit } = operation.account;
+    const { operation, account } = this.props;
+    const { unit } = account;
     return (
       <View
         style={{
@@ -260,7 +261,7 @@ class OperationRow extends PureComponent<{ operation: Operation }> {
               color: "#999"
             }}
           >
-            {moment(operation.receivedAt).calendar()}
+            {moment(operation.date).calendar()}
           </LText>
         </View>
         <CurrencyUnitValue
@@ -332,7 +333,7 @@ class AccountsCarousel extends Component<{
 }
 
 class AccountBody extends Component<
-  { style: *, Header: *, account: ?*, visible?: boolean },
+  { style: *, Header: *, account: Account, visible?: boolean },
   *
 > {
   state = { refreshing: false };
@@ -359,7 +360,9 @@ class AccountBody extends Component<
 
   keyExtractor = (item: *) => item.id;
 
-  renderItem = ({ item }: *) => <OperationRow operation={item} />;
+  renderItem = ({ item }: *) => (
+    <OperationRow operation={item} account={this.props.account} />
+  );
 
   render() {
     const { style, Header, account, visible } = this.props;

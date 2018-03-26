@@ -15,12 +15,12 @@ import {
 import { connect } from "react-redux";
 import { getCurrencyByCoinType, getFiatUnit } from "@ledgerhq/currencies";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import colors from "../colors";
 import QRCodePreview from "../components/QRCodePreview";
 import findFirstTransport from "../hw/findFirstTransport";
 import CurrencyUnitInput from "../components/CurrencyUnitInput";
 import { getVisibleAccounts } from "../reducers/accounts";
-import type { Account } from "../types/common";
 import CurrencyIcon from "../components/CurrencyIcon";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import HeaderRightClose from "../components/HeaderRightClose";
@@ -147,15 +147,10 @@ class ReceiveFunds extends Component<
   };
 
   onChangeCountervalueAmount = (value: number) => {
-    const usdUnit = getFiatUnit("USD");
-    this.setState(({ countervalue, currency }) => {
+    this.setState(({ countervalue }) => {
       if (!countervalue) return null;
       return {
-        amount: Math.round(
-          value /
-            (countervalue.USD * 10 ** usdUnit.magnitude) *
-            10 ** currency.units[0].magnitude
-        )
+        amount: Math.round(value / countervalue.USD)
       };
     });
   };
@@ -227,10 +222,7 @@ class ReceiveFunds extends Component<
               {countervalue ? (
                 <CurrencyUnitInput
                   value={Math.round(
-                    amount *
-                      countervalue[countervalueUnit.code] *
-                      10 **
-                        (countervalueUnit.magnitude - account.unit.magnitude)
+                    amount * countervalue[countervalueUnit.code]
                   )}
                   onChange={this.onChangeCountervalueAmount}
                   unit={countervalueUnit}
@@ -281,7 +273,7 @@ const styles = StyleSheet.create({
   },
   content: {
     justifyContent: "center",
-    padding: 20
+    paddingHorizontal: 20
   },
   inputTitle: {
     color: "white",

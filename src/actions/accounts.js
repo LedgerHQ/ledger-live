@@ -2,10 +2,9 @@
 
 import sortBy from "lodash/sortBy";
 import type { Dispatch } from "redux";
-
+import type { Account } from "@ledgerhq/wallet-common/lib/types";
+import { accountModel } from "../reducers/accounts";
 import db from "../db";
-import type { Account } from "../types/common";
-import { serializeAccounts } from "../reducers/accounts";
 
 function sortAccounts(accounts, orderAccounts) {
   const [order, sort] = orderAccounts.split("|");
@@ -56,14 +55,22 @@ export type InitAccounts = () => (Function, Function) => Promise<*>;
 
 export const initAccounts: InitAccounts = () => async (dispatch, getState) => {
   const { settings: { orderAccounts } } = getState();
-  const accounts = serializeAccounts((await db.get("accounts")) || []);
+  let accounts = [];
+  try {
+    const accountsRaw = await db.get("accounts");
+    if (accountsRaw) {
+      accounts = accountsRaw.map(accountModel.decode);
+    }
+  } catch (e) {
+    console.warn(e);
+  }
   dispatch({
     type: "SET_ACCOUNTS",
     payload: sortAccounts(accounts, orderAccounts)
   });
 };
 
-export type UpdateAccount = $Shape<Account> => (Function, Function) => void;
+export type UpdateAccount = ($Shape<Account>) => (Function, Function) => void;
 export const updateAccount: UpdateAccount = payload => (dispatch, getState) => {
   const { settings: { orderAccounts } } = getState();
   dispatch({

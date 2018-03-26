@@ -337,24 +337,17 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@ledgerhq/common@4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/common/-/common-4.2.0.tgz#b4e831f2d4b6b9550660141ae4f3aee0198a0987"
-  dependencies:
-    fbjs "^0.8.16"
-    invariant "^2.2.2"
-    lodash "^4.17.4"
-    normalizr-gre "^3.2.4"
-    prop-types "^15.5.10"
-    query-string "^5.0.0"
-    react "^16.0.0"
-    react-redux "^5.0.5"
-    redux "^3.7.2"
-    redux-thunk "^2.2.0"
-
 "@ledgerhq/currencies@4.7.1":
   version "4.7.1"
   resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.7.1.tgz#fb09d025aa029edecf35b22c4e1b6aa4399dfed0"
+  dependencies:
+    lodash "^4.17.5"
+    numeral "^2.0.6"
+    querystring "^0.2.0"
+
+"@ledgerhq/currencies@^4.7.1":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.7.3.tgz#0e28c0f1c74cf00b990be6865fbec374f808b71f"
   dependencies:
     lodash "^4.17.5"
     numeral "^2.0.6"
@@ -391,6 +384,19 @@
   dependencies:
     "@ledgerhq/hw-transport" "^4.6.0"
     invariant "^2.2.0"
+
+"@ledgerhq/wallet-common@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-0.5.0.tgz#3c865c100ccb9c7fb52b74f0b7d7c26ebd07586a"
+  dependencies:
+    "@ledgerhq/currencies" "^4.7.1"
+    axios "^0.18.0"
+    babel-jest "^23.0.0-alpha.0"
+    invariant "^2.2.2"
+    lodash "^4.17.4"
+    prando "^3.0.1"
+    react "^16.0.0"
+    timemachine "^0.3.0"
 
 "@sentry/cli@^1.28.4":
   version "1.30.2"
@@ -695,6 +701,13 @@ aws4@^1.2.1, aws4@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
 
+axios@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
+  dependencies:
+    follow-redirects "^1.3.0"
+    is-buffer "^1.1.5"
+
 axobject-query@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-0.1.0.tgz#62f59dbc59c9f9242759ca349960e7a2fe3c36c0"
@@ -873,6 +886,13 @@ babel-jest@^22.4.1:
     babel-plugin-istanbul "^4.1.5"
     babel-preset-jest "^22.4.1"
 
+babel-jest@^23.0.0-alpha.0:
+  version "23.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-23.0.0-alpha.1.tgz#ecd83afa5ebd759e17548e55cb58d143ca62c63a"
+  dependencies:
+    babel-plugin-istanbul "^4.1.5"
+    babel-preset-jest "^23.0.0-alpha.1"
+
 babel-messages@^6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-messages/-/babel-messages-6.23.0.tgz#f3cdf4703858035b2a2951c6ec5edf6c62f2630e"
@@ -902,6 +922,10 @@ babel-plugin-istanbul@^4.1.5:
 babel-plugin-jest-hoist@^22.4.1:
   version "22.4.1"
   resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-22.4.1.tgz#d712fe5da8b6965f3191dacddbefdbdf4fb66d63"
+
+babel-plugin-jest-hoist@^23.0.0-alpha.1:
+  version "23.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-23.0.0-alpha.1.tgz#b22e1008129cac02a63a4a1c274a5835ae61e87e"
 
 babel-plugin-react-transform@2.0.2:
   version "2.0.2"
@@ -1286,6 +1310,13 @@ babel-preset-jest@^22.4.1:
   resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-22.4.1.tgz#efa2e5f5334242a9457a068452d7d09735db172a"
   dependencies:
     babel-plugin-jest-hoist "^22.4.1"
+    babel-plugin-syntax-object-rest-spread "^6.13.0"
+
+babel-preset-jest@^23.0.0-alpha.1:
+  version "23.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-23.0.0-alpha.1.tgz#57ecc8d3ef3186621355eefc72cff53e78920ed5"
+  dependencies:
+    babel-plugin-jest-hoist "^23.0.0-alpha.1"
     babel-plugin-syntax-object-rest-spread "^6.13.0"
 
 babel-preset-react-native-stage-0@^1.0.1:
@@ -1965,10 +1996,6 @@ decamelize@^1.0.0, decamelize@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
 
-decode-uri-component@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
-
 decompress-response@^3.2.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/decompress-response/-/decompress-response-3.3.0.tgz#80a4dd323748384bfa248083622aedec982adff3"
@@ -2609,6 +2636,12 @@ flow-typed@^2.3.0:
     unzip "^0.1.11"
     which "^1.3.0"
     yargs "^4.2.0"
+
+follow-redirects@^1.3.0:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.4.1.tgz#d8120f4518190f55aac65bb6fc7b85fcd666d6aa"
+  dependencies:
+    debug "^3.1.0"
 
 for-in@^1.0.1:
   version "1.0.2"
@@ -4341,10 +4374,6 @@ normalize-path@^2.0.0, normalize-path@^2.0.1:
   dependencies:
     remove-trailing-separator "^1.0.1"
 
-normalizr-gre@^3.2.4:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/normalizr-gre/-/normalizr-gre-3.2.4.tgz#1e0bbd84dad08f00a222c0cf89764b115e9f83f0"
-
 npm-run-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-2.0.2.tgz#35a9232dfa35d7067b4cb2ddf2357b1871536c5f"
@@ -4670,6 +4699,10 @@ pngjs@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-2.3.1.tgz#11d1e12b9cb64d63e30c143a330f4c1f567da85f"
 
+prando@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/prando/-/prando-3.0.1.tgz#8fa6d856277fad738e50f3e550b702380ad52d6e"
+
 prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
@@ -4768,14 +4801,6 @@ qs@~6.4.0:
 qs@~6.5.1:
   version "6.5.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
-
-query-string@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-5.1.0.tgz#9583b15fd1307f899e973ed418886426a9976469"
-  dependencies:
-    decode-uri-component "^0.2.0"
-    object-assign "^4.1.0"
-    strict-uri-encode "^1.0.0"
 
 querystring@^0.2.0:
   version "0.2.0"
@@ -5022,7 +5047,7 @@ react-proxy@^1.1.7:
     lodash "^4.6.1"
     react-deep-force-update "^1.0.0"
 
-react-redux@^5.0.5, react-redux@^5.0.7:
+react-redux@^5.0.7:
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-5.0.7.tgz#0dc1076d9afb4670f993ffaef44b8f8c1155a4c8"
   dependencies:
@@ -5661,10 +5686,6 @@ stream-buffers@~2.2.0:
     inherits "~2.0.1"
     readable-stream "^2.0.2"
 
-strict-uri-encode@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
-
 string-length@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/string-length/-/string-length-2.0.0.tgz#d40dbb686a3ace960c1cffca562bf2c45f8363ed"
@@ -5845,6 +5866,10 @@ time-stamp@^1.0.0:
 timed-out@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/timed-out/-/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
+
+timemachine@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/timemachine/-/timemachine-0.3.0.tgz#83e2eb696cbfe4696c1708e6a3700df4e62fc525"
 
 tmp@^0.0.33:
   version "0.0.33"

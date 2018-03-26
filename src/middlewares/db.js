@@ -1,9 +1,10 @@
+// @flow
 /* eslint-disable consistent-return */
 
 import db from "../db";
-import { getAccounts, deserializeAccounts } from "../reducers/accounts";
+import { getAccounts, accountModel } from "../reducers/accounts";
 
-export default store => next => action => {
+export default (store: *) => (next: *) => (action: *) => {
   if (!action.type.startsWith("DB:")) {
     return next(action);
   }
@@ -22,7 +23,7 @@ export default store => next => action => {
   db
     .save([
       ["settings", settings],
-      ["accounts", deserializeAccounts(accounts)],
+      ["accounts", accounts.map(accountModel.encode)],
       ["countervalues", counterValues]
     ])
     .then(
