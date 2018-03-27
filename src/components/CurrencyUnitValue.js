@@ -1,32 +1,26 @@
 // @flow
+import { Component } from "react";
+
 import { formatCurrencyUnit } from "@ledgerhq/currencies";
 import type { Unit } from "@ledgerhq/currencies";
 
-import React, { Component } from "react";
-import LText from "./LText";
 import { withLocale } from "./LocaleContext";
 
 class CurrencyUnitValue extends Component<{
   unit: Unit,
   value: number,
   locale: string,
-  showCode: boolean,
-  ltextProps: *
+  showCode: boolean
 }> {
   static defaultProps = {
-    showCode: true,
-    ltextProps: {}
+    showCode: true
   };
   render() {
-    const { unit, value, showCode, locale, ltextProps } = this.props;
-    return (
-      <LText {...ltextProps}>
-        {formatCurrencyUnit(unit, value, {
-          showCode,
-          locale
-        })}
-      </LText>
-    );
+    const { unit, value, showCode, locale } = this.props;
+    return formatCurrencyUnit(unit, value, {
+      showCode,
+      locale
+    });
   }
 }
 

@@ -23,6 +23,7 @@ import LText from "../components/LText";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import WhiteButton from "../components/WhiteButton";
 import CurrencyIcon from "../components/CurrencyIcon";
+import CounterValue from "../components/CounterValue";
 
 const windowDim = Dimensions.get("window");
 
@@ -66,16 +67,14 @@ class AccountRow extends PureComponent<*, *> {
           color={account.currency.color}
           withGradient={false}
         />
-        <CurrencyUnitValue
-          ltextProps={{
-            semiBold: true,
-            style: {
-              fontSize: 14
-            }
-          }}
-          unit={account.unit}
-          value={account.balance}
-        />
+        <View style={[styles.operationsColumn, { alignItems: "flex-end" }]}>
+          <LText semiBold style={{ fontSize: 14 }}>
+            <CurrencyUnitValue unit={account.unit} value={account.balance} />
+          </LText>
+          <LText style={styles.operationsSubText}>
+            <CounterValue value={account.balance} currency={account.currency} />
+          </LText>
+        </View>
       </View>
     );
   }
@@ -153,19 +152,19 @@ class AccountCard extends PureComponent<*, *> {
               </TouchableOpacity>
             </View>
 
-            <View>
-              <CurrencyUnitValue
-                unit={account.unit}
-                value={account.balance}
-                ltextProps={{
-                  semiBold: true,
-                  style: {
-                    alignSelf: "flex-start",
-                    fontSize: 22,
-                    marginVertical: 10
-                  }
-                }}
-              />
+            <View style={styles.operationsColumn}>
+              <LText semiBold style={styles.accountCardUnit}>
+                <CurrencyUnitValue
+                  unit={account.unit}
+                  value={account.balance}
+                />
+              </LText>
+              <LText style={styles.operationsSubText}>
+                <CounterValue
+                  value={account.balance}
+                  currency={account.currency}
+                />
+              </LText>
             </View>
             <BalanceChartMiniature
               width={260}
@@ -228,24 +227,8 @@ class OperationRow extends PureComponent<{
     const { operation, account } = this.props;
     const { unit } = account;
     return (
-      <View
-        style={{
-          height: 60,
-          padding: 10,
-          borderBottomWidth: 1,
-          borderBottomColor: "#eee",
-          backgroundColor: "white",
-          alignItems: "center",
-          flexDirection: "row"
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "column",
-            flex: 1,
-            marginRight: 10
-          }}
-        >
+      <View style={styles.operationsContainer}>
+        <View style={styles.operationsColumn}>
           <LText
             numberOfLines={1}
             style={{
@@ -254,26 +237,27 @@ class OperationRow extends PureComponent<{
           >
             {operation.address}
           </LText>
-          <LText
-            numberOfLines={1}
-            style={{
-              fontSize: 14,
-              color: "#999"
-            }}
-          >
+          <LText numberOfLines={1} style={styles.operationsSubText}>
             {moment(operation.date).calendar()}
           </LText>
         </View>
-        <CurrencyUnitValue
-          ltextProps={{
-            style: {
+        <View style={[styles.operationsColumn, { alignItems: "flex-end" }]}>
+          <LText
+            style={{
               fontSize: 14,
               color: operation.amount > 0 ? colors.green : colors.red
-            }
-          }}
-          unit={unit}
-          value={operation.amount}
-        />
+            }}
+          >
+            <CurrencyUnitValue unit={unit} value={operation.amount} />
+          </LText>
+          <LText style={styles.operationsSubText}>
+            <CounterValue
+              value={operation.amount}
+              date={operation.date}
+              currency={account.currency}
+            />
+          </LText>
+        </View>
       </View>
     );
   }
@@ -585,5 +569,28 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: "rgba(255, 255, 255, 0.92)"
+  },
+  accountCardUnit: {
+    alignSelf: "flex-start",
+    fontSize: 22,
+    marginTop: 10
+  },
+  operationsContainer: {
+    height: 60,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    backgroundColor: "white",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  operationsColumn: {
+    flexDirection: "column",
+    flex: 1,
+    marginRight: 10
+  },
+  operationsSubText: {
+    fontSize: 12,
+    color: "#999"
   }
 });
