@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component, PureComponent, Fragment } from "react";
 import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
-import moment from "moment";
+import moment from 'moment';
 import {
   Image,
   View,
@@ -26,6 +26,7 @@ import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
 import BlueButton from "../components/BlueButton";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
+import CounterValue from "../components/CounterValue";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import CurrencyIcon from "../components/CurrencyIcon";
 import { withLocale } from "../components/LocaleContext";
@@ -84,6 +85,8 @@ class OperationRow extends PureComponent<{
   render() {
     const { operation, account } = this.props;
     const { unit, currency } = account;
+    const date = new Date(operation.receivedAt);
+    const fiatUnit = getFiatUnit("USD");
     return (
       <View
         style={{
@@ -122,6 +125,13 @@ class OperationRow extends PureComponent<{
             {operation.address}
           </LText>
         </View>
+        <View
+          style={{
+            flexDirection: "column",
+            flex: 1,
+            marginHorizontal: 10
+          }}
+        >
         <CurrencyUnitValue
           ltextProps={{
             style: {
@@ -132,6 +142,8 @@ class OperationRow extends PureComponent<{
           unit={unit}
           value={operation.amount}
         />
+        <CounterValue value={operation.amount} date={date} fiatUnit={fiatUnit} currency={account.currency} />
+      </View>
       </View>
     );
   }
