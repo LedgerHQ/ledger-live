@@ -1,9 +1,10 @@
 // @flow
 import React, { PureComponent } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import type { Unit } from "@ledgerhq/currencies";
 
-import LText from "../components/LText";
+import Touchable from "./Touchable";
+import LText from "./LText";
 
 export default class UnitRow extends PureComponent<{
   unit: Unit,
@@ -12,7 +13,7 @@ export default class UnitRow extends PureComponent<{
   render() {
     const { unit, onPress } = this.props;
     return (
-      <TouchableOpacity onPress={onPress}>
+      <Touchable onPress={onPress}>
         <View style={styles.unitRow}>
           <LText
             semiBold
@@ -24,7 +25,7 @@ export default class UnitRow extends PureComponent<{
             {unit.name}
           </LText>
         </View>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

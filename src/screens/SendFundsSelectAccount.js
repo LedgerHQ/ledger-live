@@ -37,9 +37,14 @@ class SendFundsSelectAccount extends Component<{
 
   onAccountPress = (account: Account) => {
     const { navigation } = this.props;
-    navigation.navigate("SendFundsScanAddress", {
-      ...navigation.state.params,
-      accountId: account.id
+    // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+    navigation.navigate({
+      routeName: "SendFundsScanAddress",
+      params: {
+        ...navigation.state.params,
+        accountId: account.id
+      },
+      key: "sendfundsscanaddress"
     });
   };
 

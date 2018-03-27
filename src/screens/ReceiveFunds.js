@@ -9,7 +9,6 @@ import {
   Clipboard,
   StyleSheet,
   ActivityIndicator,
-  TouchableOpacity,
   findNodeHandle
 } from "react-native";
 import { connect } from "react-redux";
@@ -17,6 +16,7 @@ import { getCurrencyByCoinType, getFiatUnit } from "@ledgerhq/currencies";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import colors from "../colors";
+import Touchable from "../components/Touchable";
 import QRCodePreview from "../components/QRCodePreview";
 import findFirstTransport from "../hw/findFirstTransport";
 import CurrencyUnitInput from "../components/CurrencyUnitInput";
@@ -156,12 +156,17 @@ class ReceiveFunds extends Component<
   };
 
   onChooseAccount = () => {
-    this.props.navigation.navigate("ReceiveFundsSelectAccount", {
-      selectedAccountId: this.state.accountId,
-      setSelectedAccount: (accountId, unit) => {
-        this.setState({ accountId, countervalue: null, amount: 0 });
-        this.syncCountervalue(unit);
-      }
+    // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+    this.props.navigation.navigate({
+      routeName: "ReceiveFundsSelectAccount",
+      params: {
+        selectedAccountId: this.state.accountId,
+        setSelectedAccount: (accountId, unit) => {
+          this.setState({ accountId, countervalue: null, amount: 0 });
+          this.syncCountervalue(unit);
+        }
+      },
+      key: "receivefundsselectaccount"
     });
   };
 
@@ -183,7 +188,7 @@ class ReceiveFunds extends Component<
           Choose account
         </Text>
 
-        <TouchableOpacity onPress={this.onChooseAccount}>
+        <Touchable onPress={this.onChooseAccount}>
           <View style={styles.choseAccountInput}>
             {account ? (
               <Fragment>
@@ -205,7 +210,7 @@ class ReceiveFunds extends Component<
               <LText style={{ opacity: 0.5 }}>Select an account...</LText>
             )}
           </View>
-        </TouchableOpacity>
+        </Touchable>
         {account ? (
           <View>
             <Text style={styles.inputTitle}>Request amount (optional)</Text>

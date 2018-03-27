@@ -21,10 +21,16 @@ export default class SendFundsChoseAmount extends Component<*, *> {
   onConfirm = () => {
     const { navigation } = this.props;
     const { amount } = this.state;
-    navigation.navigate("SendFundsChoseFee", {
-      ...navigation.state.params,
-      amount
-    });
+    navigation.navigate(
+      "SendFundsChoseFee",
+      {
+        ...navigation.state.params,
+        amount
+      },
+      {
+        key: "sendfundschosefee"
+      }
+    );
   };
   render() {
     return (

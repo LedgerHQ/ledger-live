@@ -3,7 +3,6 @@ import React, { Component, PureComponent } from "react";
 import {
   View,
   FlatList,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   StyleSheet,
   Image,
@@ -16,6 +15,7 @@ import { connect } from "react-redux";
 import type { Account, Operation } from "@ledgerhq/wallet-common/lib/types";
 import { getBalanceHistory } from "@ledgerhq/wallet-common/lib/helpers/account";
 import { getVisibleAccounts } from "../reducers/accounts";
+import Touchable from "../components/Touchable";
 import ScreenGeneric from "../components/ScreenGeneric";
 import colors from "../colors";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
@@ -83,8 +83,12 @@ class AccountRow extends PureComponent<*, *> {
 class AccountCard extends PureComponent<*, *> {
   onGoAccountSettings = () => {
     const { account, topLevelNavigation } = this.props;
-    topLevelNavigation.navigate("AccountSettings", {
-      accountId: account.id
+    topLevelNavigation.navigate({
+      routeName: "AccountSettings",
+      params: {
+        accountId: account.id
+      },
+      key: "accountsettings"
     });
   };
   render() {
@@ -144,12 +148,12 @@ class AccountCard extends PureComponent<*, *> {
                 </LText>
               </View>
 
-              <TouchableOpacity onPress={this.onGoAccountSettings}>
+              <Touchable onPress={this.onGoAccountSettings}>
                 <Image
                   source={require("../images/accountsettings.png")}
                   style={{ width: 30, height: 30 }}
                 />
-              </TouchableOpacity>
+              </Touchable>
             </View>
 
             <View style={styles.operationsColumn}>
@@ -182,16 +186,24 @@ class AccountCard extends PureComponent<*, *> {
 class AccountHeadMenu extends Component<{ topLevelNavigation: *, account: * }> {
   onSend = () => {
     const { account, topLevelNavigation } = this.props;
-    topLevelNavigation.navigate("SendFunds", {
-      goBackKey: topLevelNavigation.state.key,
-      accountId: account.id
+    topLevelNavigation.navigate({
+      routeName: "SendFunds",
+      params: {
+        goBackKey: topLevelNavigation.state.key,
+        accountId: account.id
+      },
+      key: "sendfunds"
     });
   };
   onReceive = () => {
     const { account, topLevelNavigation } = this.props;
-    topLevelNavigation.navigate("ReceiveFunds", {
-      goBackKey: topLevelNavigation.state.key,
-      accountId: account.id
+    topLevelNavigation.navigate({
+      routeName: "ReceiveFunds",
+      params: {
+        goBackKey: topLevelNavigation.state.key,
+        accountId: account.id
+      },
+      key: "receivefunds"
     });
   };
   render() {
@@ -379,9 +391,9 @@ class AccountExpanded extends Component<{
   keyExtractor = (item: *) => item.id;
 
   renderItemExpanded = ({ item, index }: *) => (
-    <TouchableOpacity onPress={() => this.props.onPressExpandedItem(index)}>
+    <Touchable onPress={() => this.props.onPressExpandedItem(index)}>
       <AccountRow account={item} />
-    </TouchableOpacity>
+    </Touchable>
   );
 
   render() {
@@ -427,7 +439,10 @@ class Accounts extends Component<
   };
 
   onAddAccount = () => {
-    this.props.screenProps.topLevelNavigation.navigate("AddAccount");
+    this.props.screenProps.topLevelNavigation.navigate({
+      routeName: "AddAccount",
+      key: "addaccount"
+    });
   };
 
   onPressExpandedItem = (selectedIndex: number) => {
@@ -442,7 +457,7 @@ class Accounts extends Component<
     const { expandedMode } = this.state;
     return (
       <View style={styles.header}>
-        <TouchableOpacity onPress={this.onToggleExpandedMode}>
+        <Touchable onPress={this.onToggleExpandedMode}>
           <Image
             source={
               expandedMode
@@ -451,14 +466,14 @@ class Accounts extends Component<
             }
             style={{ width: 24, height: 20 }}
           />
-        </TouchableOpacity>
+        </Touchable>
         <LText style={styles.headerText}>Accounts</LText>
-        <TouchableOpacity onPress={this.onAddAccount}>
+        <Touchable onPress={this.onAddAccount}>
           <Image
             source={require("../images/accountsplus.png")}
             style={{ width: 22, height: 21 }}
           />
-        </TouchableOpacity>
+        </Touchable>
       </View>
     );
   };

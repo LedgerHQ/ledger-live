@@ -12,10 +12,16 @@ export default class SendFundsChoseFee extends Component<*> {
   };
   onConfirm = () => {
     const { navigation } = this.props;
-    navigation.navigate("SendFundsReview", {
-      ...navigation.state.params,
-      fee: 0.3
-    });
+    navigation.navigate(
+      "SendFundsReview",
+      {
+        ...navigation.state.params,
+        fee: 0.3
+      },
+      {
+        key: "sendfundreview"
+      }
+    );
   };
   render() {
     return (

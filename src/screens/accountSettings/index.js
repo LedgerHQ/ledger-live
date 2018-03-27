@@ -44,7 +44,14 @@ class AccountSettings extends Component<{
         <ScrollView style={styles.container} />
         <SectionTitle title="ACCOUNT" />
         <SectionEntry
-          onPress={() => navigation.navigate("EditName", { account })}
+          onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+            navigation.navigate({
+              routeName: "EditName",
+              props: { account },
+              key: "editname"
+            })
+          }
         >
           <LText>Name</LText>
           <LText style={styles.tempLineHeight}>
@@ -61,7 +68,14 @@ class AccountSettings extends Component<{
         </SectionEntry>
         <SectionTitle title="DISPLAY" />
         <SectionEntry
-          onPress={() => navigation.navigate("EditUnits", { account })}
+          onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+            navigation.navigate({
+              routeName: "EditUnits",
+              params: { account },
+              key: "editunits"
+            })
+          }
         >
           <LText>Units</LText>
           <LText style={styles.tempLineHeight}>
@@ -72,7 +86,14 @@ class AccountSettings extends Component<{
         <SectionEntry />
         <SectionTitle title="COIN" />
         <SectionEntry
-          onPress={() => navigation.navigate("EditConfirmations", { account })}
+          onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+            navigation.navigate({
+              routeName: "EditConfirmations",
+              params: { account },
+              key: "editconfirmations"
+            })
+          }
         >
           <LText>Required Confirmations</LText>
           <LText style={styles.tempLineHeight}>
