@@ -43,10 +43,13 @@ export function genOperation(account: Account, ops: *, currency: Currency, rng: 
   const date = new Date(
     (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 100000000 * rng.next() * rng.next()),
   )
+  const address = genAddress(currency, rng)
   return {
     id: String(`mock_op_${ops.length}_${account.id}`),
+    confirmations: 0,
     accountId: account.id,
-    address: genAddress(currency, rng),
+    address,
+    addresses: [address],
     amount: (rng.next() < 0.3 ? -1 : 1) * rng.nextInt(0, 100000000 * rng.next() * rng.next()),
     hash: genHex(64, rng),
     date,
@@ -82,19 +85,26 @@ export function genAccount(id: number | string): Account {
   const rng = new Prando(id)
   const currency = rng.nextArrayItem(currencies)
   const operationsSize = rng.nextInt(1, 200)
+  const address = genAddress(currency, rng)
   const account = {
     id: `mock_account_${id}`,
+    coinType: currency.coinType,
+    index: 0,
+    path: "49'/1'/1'/0/2",
+    rootPath: "49'/1'/1'",
     xpub: genHex(64, rng),
     archived: false,
     currency,
     lastBlockHeight: rng.nextInt(100000, 200000),
     unit: rng.nextArrayItem(currency.units),
     balance: 0,
-    address: genAddress(currency, rng),
+    address,
+    addresses: [address],
     operations: [],
     operationsSize,
     minConfirmations: 2,
     name: rng.nextString(rng.nextInt(4, 34)),
+    balanceByDay: {},
   }
   account.operations = Array(operationsSize)
     .fill(null)
