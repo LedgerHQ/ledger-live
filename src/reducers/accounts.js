@@ -76,9 +76,8 @@ export function getVisibleAccounts(state: {
 export function getAccountById(
   state: { accounts: AccountsState },
   id: string
-): Account | null {
-  const account = getAccounts(state).find(account => account.id === id);
-  return account || null;
+): ?Account {
+  return getAccounts(state).find(account => account.id === id);
 }
 
 export function canCreateAccount(state: State): boolean {

@@ -12,14 +12,14 @@ import {
   findNodeHandle
 } from "react-native";
 import { connect } from "react-redux";
-import { getCurrencyByCoinType, getFiatUnit } from "@ledgerhq/currencies";
+import { getCurrencyByCoinType } from "@ledgerhq/currencies";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import colors from "../colors";
 import Touchable from "../components/Touchable";
 import QRCodePreview from "../components/QRCodePreview";
 import findFirstTransport from "../hw/findFirstTransport";
-import CurrencyUnitInput from "../components/CurrencyUnitInput";
+import CurrencyDoubleInput from "../components/CurrencyDoubleInput";
 import { getVisibleAccounts } from "../reducers/accounts";
 import CurrencyIcon from "../components/CurrencyIcon";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
@@ -46,7 +46,6 @@ class ReceiveFunds extends Component<
   state = {
     address: undefined,
     currency: getCurrencyByCoinType(0),
-    countervalue: undefined,
     error: undefined,
     accountId:
       this.props.accounts.length > 0 ? this.props.accounts[0].id : null,
@@ -60,24 +59,6 @@ class ReceiveFunds extends Component<
   subs = [];
 
   componentDidMount() {
-    const account = this.props.accounts.find(
-      a => a.id === this.state.accountId
-    );
-    // TODO implement getDerivedStateFromProps to handle the navigation state
-    /*
-    const { params } = this.props.navigation.state;
-    let amount = 0;
-    if (params.amount) {
-      amount = parseFloat(params.amount);
-      if (isNaN(amount) || !isFinite(amount) || amount <= 0) {
-        amount = 0;
-      }
-    }
-    this.setState({ amount });
-    */
-    if (account && account.unit) {
-      this.syncCountervalue(account.unit.code);
-    }
     this.syncPublicAddress("44'/0'/0'/0");
   }
 
@@ -85,14 +66,6 @@ class ReceiveFunds extends Component<
     for (const sub of this.subs) {
       sub.unsubscribe();
     }
-  }
-
-  async syncCountervalue(unit) {
-    const r = await fetch(
-      `https://min-api.cryptocompare.com/data/price?fsym=${unit}&tsyms=USD`
-    );
-    const countervalue = await r.json();
-    this.setState({ countervalue });
   }
 
   syncPublicAddress(path: string, verify: boolean = false) {
@@ -146,24 +119,14 @@ class ReceiveFunds extends Component<
     this.setState({ amount: value });
   };
 
-  onChangeCountervalueAmount = (value: number) => {
-    this.setState(({ countervalue }) => {
-      if (!countervalue) return null;
-      return {
-        amount: Math.round(value / countervalue.USD)
-      };
-    });
-  };
-
   onChooseAccount = () => {
     // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
     this.props.navigation.navigate({
       routeName: "ReceiveFundsSelectAccount",
       params: {
         selectedAccountId: this.state.accountId,
-        setSelectedAccount: (accountId, unit) => {
-          this.setState({ accountId, countervalue: null, amount: 0 });
-          this.syncCountervalue(unit);
+        setSelectedAccount: (accountId: string) => {
+          this.setState({ accountId, amount: 0 });
         }
       },
       key: "receivefundsselectaccount"
@@ -172,8 +135,7 @@ class ReceiveFunds extends Component<
 
   render() {
     const { accounts } = this.props;
-    const { error, amount, countervalue, accountId } = this.state;
-    const countervalueUnit = getFiatUnit("USD");
+    const { error, amount, accountId } = this.state;
     const account = accounts.find(a => a.id === accountId);
     const address = account && account.address;
     const currency = account && account.currency;
@@ -215,28 +177,12 @@ class ReceiveFunds extends Component<
           <View>
             <Text style={styles.inputTitle}>Request amount (optional)</Text>
             <View style={styles.currencyUnitInput}>
-              <CurrencyUnitInput
+              <CurrencyDoubleInput
                 value={amount}
-                unit={account.unit}
                 onChange={this.onChangeAmount}
-                width={140}
-                height={50}
-                fontSize={14}
-                padding={8}
+                currency={account.currency}
+                unit={account.unit}
               />
-              {countervalue ? (
-                <CurrencyUnitInput
-                  value={Math.round(
-                    amount * countervalue[countervalueUnit.code]
-                  )}
-                  onChange={this.onChangeCountervalueAmount}
-                  unit={countervalueUnit}
-                  width={140}
-                  height={50}
-                  fontSize={14}
-                  padding={8}
-                />
-              ) : null}
             </View>
           </View>
         ) : null}
@@ -294,10 +240,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   currencyUnitInput: {
-    height: 50,
     marginBottom: 40,
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignSelf: "stretch"
   },
   addressBox: {

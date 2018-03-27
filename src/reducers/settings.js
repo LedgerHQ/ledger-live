@@ -1,14 +1,15 @@
 // @flow
-
 import { handleActions } from "redux-actions";
+import { getFiatUnit } from "@ledgerhq/currencies";
+import type { State } from ".";
 
-import get from "lodash/get";
-
-export type SettingsState = Object;
+export type SettingsState = {
+  counterValue: string,
+  orderAccounts: string
+};
 
 const defaultState: SettingsState = {
   counterValue: "USD",
-  language: "en",
   orderAccounts: "balance|desc"
 };
 
@@ -33,13 +34,7 @@ const handlers: Object = {
   })
 };
 
-export const getCounterValue = (state: Object) =>
-  get(state.settings, "counterValue", defaultState.counterValue);
-
-export const getLanguage = (state: Object) =>
-  get(state.settings, "language", defaultState.language);
-
-export const getOrderAccounts = (state: Object) =>
-  get(state.settings, "orderAccounts", defaultState.orderAccounts);
+export const fiatUnitSelector = (state: State) =>
+  getFiatUnit(state.settings.counterValue);
 
 export default handleActions(handlers, state);

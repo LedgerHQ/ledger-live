@@ -337,9 +337,17 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@ledgerhq/currencies@4.7.3", "@ledgerhq/currencies@^4.7.1":
+"@ledgerhq/currencies@^4.7.1":
   version "4.7.3"
   resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.7.3.tgz#0e28c0f1c74cf00b990be6865fbec374f808b71f"
+  dependencies:
+    lodash "^4.17.5"
+    numeral "^2.0.6"
+    querystring "^0.2.0"
+
+"@ledgerhq/currencies@^4.7.5":
+  version "4.7.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.7.5.tgz#e852b58359254fbb2087de328df84343b586f4ab"
   dependencies:
     lodash "^4.17.5"
     numeral "^2.0.6"
@@ -377,9 +385,9 @@
     "@ledgerhq/hw-transport" "^4.7.3"
     invariant "^2.2.4"
 
-"@ledgerhq/wallet-common@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-0.5.0.tgz#3c865c100ccb9c7fb52b74f0b7d7c26ebd07586a"
+"@ledgerhq/wallet-common@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-0.8.0.tgz#94e5bed3ae0dcefc14b21b64eb8949d8a6f7e62c"
   dependencies:
     "@ledgerhq/currencies" "^4.7.1"
     axios "^0.18.0"
