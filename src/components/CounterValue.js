@@ -20,7 +20,6 @@ class CounterValue extends Component<{
   fiatUnit: Unit,
   getCounterValue: (Object, Object) => (number, ?Date) => number
 }> {
-  static defaultProps = {};
 
   render() {
     const { value, date, currency, fiatUnit, getCounterValue } = this.props;

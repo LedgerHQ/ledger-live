@@ -89,7 +89,7 @@ class OperationRow extends PureComponent<{
 
     return (
       <View style={styles.operationsRowContainer}>
-        <CurrencyIcon size={32}s currency={currency} />
+        <CurrencyIcon size={32} currency={currency} />
         <View style={styles.operationsCurrencyIcon}>
           <LText
             numberOfLines={1}
