@@ -35,18 +35,15 @@ export const createAccountModel = (
       // Each time a modification is brought to the model, add here a migration function
     ],
 
-    wrap: ({
-      coinType,
-      unitMagnitude,
-      operations,
-      ...acc
-    }: AccountRaw): Account => {
+    decode: (rawAccount: AccountRaw): Account => {
+      const { coinType, unitMagnitude, operations, ...acc } = rawAccount;
       const currency = getCurrencyByCoinType(coinType);
       const unit =
         currency.units.find(u => u.magnitude === unitMagnitude) ||
         currency.units[0];
       return {
         ...acc,
+        coinType,
         operations: operations.map(({ date, ...op }) => ({
           ...op,
           accountId: acc.id,
@@ -57,15 +54,19 @@ export const createAccountModel = (
       };
     },
 
-    unwrap: ({ currency, operations, unit, ...acc }: Account): AccountRaw => ({
-      ...acc,
-      operations: operations
-        .filter(opRetentionFilter)
-        .map(({ date, accountId: _, ...op }) => ({
-          ...op,
-          date: date.toISOString()
-        })),
-      coinType: currency.coinType,
-      unitMagnitude: unit.magnitude
-    })
+    encode: ({ currency, operations, unit, ...acc }: Account): AccountRaw => {
+      return {
+        ...acc,
+        operations: operations
+          .filter(opRetentionFilter)
+          .map(({ date, ...op }) => {
+            return {
+              ...op,
+              date: date.toISOString()
+            };
+          }),
+        coinType: currency.coinType,
+        unitMagnitude: unit.magnitude
+      };
+    }
   });

@@ -23,9 +23,9 @@ export type DataModel<R, M> = {
  */
 export type DataSchema<R, M> = {
   // write extra logic to transform raw data into your model
-  wrap(raw: R): M,
+  decode(raw: R): M,
   // reverse version of wrap, that will transform it back to a serializable object
-  unwrap(data: M): R,
+  encode(data: M): R,
   // A map of migrations functions that are unrolled when an old version is imported
   migrations: Array<(any) => R | any>
 };
@@ -36,9 +36,9 @@ export type DataSchema<R, M> = {
 export function createDataModel<R, M>(
   schema: DataSchema<R, M>
 ): DataModel<R, M> {
-  const { migrations, unwrap, wrap } = schema;
+  const { migrations, encode, decode } = schema;
   const version = migrations.length;
-  function decode(raw) {
+  function decodeModel(raw) {
     let data = raw.data;
     for (let i = raw.version; i < version; i++) {
       // we need to migrate for entering version (i+1)
@@ -47,12 +47,12 @@ export function createDataModel<R, M>(
         data = migrations[newVersion](data);
       }
     }
-    data = wrap(data);
+    data = decode(data);
     return data;
   }
-  function encode(model) {
-    const data = unwrap(model);
+  function encodeModel(model) {
+    const data = encode(model);
     return { data, version };
   }
-  return Object.freeze({ version, decode, encode });
+  return Object.freeze({ version, decode: decodeModel, encode: encodeModel });
 }

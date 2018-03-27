@@ -7,10 +7,10 @@ import {
 } from "../../api/coutervalue";
 
 test("fetchCurrentCounterValues", async () => {
-  const res = await fetchCurrentCounterValues([
-    getCurrencyByCoinType(0),
-    getCurrencyByCoinType(2)
-  ], getFiatUnit("EUR"));
+  const res = await fetchCurrentCounterValues(
+    [getCurrencyByCoinType(0), getCurrencyByCoinType(2)],
+    getFiatUnit("EUR")
+  );
   expect(res.BTC).toBeTruthy();
   expect(res.LTC).toBeTruthy();
   expect(res.BTC.EUR).toBeGreaterThan(0);
@@ -27,10 +27,8 @@ test("fetchHistodayCounterValues", async () => {
 });
 
 test("fetchHistodayCounterValuesMultiple", async () => {
-  const res = await fetchHistodayCounterValuesMultiple([
-    getCurrencyByCoinType(0),
-    getCurrencyByCoinType(2)
-  ],
+  const res = await fetchHistodayCounterValuesMultiple(
+    [getCurrencyByCoinType(0), getCurrencyByCoinType(2)],
     getFiatUnit("USD")
   );
   expect(res.BTC).toBeTruthy();
