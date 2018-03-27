@@ -13,8 +13,8 @@ test("fetchCurrentCounterValues", async () => {
   );
   expect(res.BTC).toBeTruthy();
   expect(res.LTC).toBeTruthy();
-  expect(res.BTC.EUR).toBeGreaterThan(0);
-  expect(res.LTC.EUR).toBeGreaterThan(0);
+  expect(res.BTC.EUR.latest).toBeGreaterThan(0);
+  expect(res.LTC.EUR.latest).toBeGreaterThan(0);
 });
 
 test("fetchHistodayCounterValues", async () => {

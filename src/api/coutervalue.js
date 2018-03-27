@@ -19,7 +19,7 @@ const convertToSatCent = (
 export async function fetchCurrentCounterValues(
   currencies: Currency[],
   fiatUnit: Unit
-): Promise<CounterValuesPairing<number>> {
+): Promise<CounterValuesPairing<{ latest: number }>> {
   const { data }: { data: mixed } = await axios.get(
     "https://min-api.cryptocompare.com/data/pricemulti?" +
       querystring.stringify({
@@ -38,7 +38,9 @@ export async function fetchCurrentCounterValues(
         const value = map[fiatUnit.code];
         if (typeof value === "number") {
           out[ticker] = {
-            [fiatUnit.code]: convertToSatCent(currency, fiatUnit, value)
+            [fiatUnit.code]: {
+              latest: convertToSatCent(currency, fiatUnit, value)
+            }
           };
         }
       }
