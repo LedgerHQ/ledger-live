@@ -17,6 +17,8 @@
   "rules": {
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "flowtype/generic-spacing": 0,
     "flowtype/space-after-type-colon": 0

@@ -1,8 +1,8 @@
 // @flow
 
-import type { Currency, Unit } from '@ledgerhq/currencies'
+import type { Currency, Unit } from "@ledgerhq/currencies";
 
-import type { OperationRaw, Operation } from './operation'
+import type { OperationRaw, Operation } from "./operation";
 
 /**
  *
@@ -68,8 +68,8 @@ export type AccountRaw = {
   operations: OperationRaw[],
 
   // user preferred magnitude. used to recover the account.unit
-  unitMagnitude: number,
-}
+  unitMagnitude: number
+};
 
 export type Account = {
   // unique account identifier
@@ -131,5 +131,5 @@ export type Account = {
   operations: Operation[],
 
   // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
-  unit: Unit,
-}
+  unit: Unit
+};

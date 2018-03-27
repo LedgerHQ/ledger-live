@@ -34,8 +34,8 @@ export type Operation = {
   // --------------------------------------------- specific operation raw fields
 
   // transaction date
-  date: Date,
-}
+  date: Date
+};
 
 export type OperationRaw = {
   // unique identifier (usually hash)
@@ -64,5 +64,5 @@ export type OperationRaw = {
   // --------------------------------------------- specific operation raw fields
 
   // transaction date
-  date: string,
-}
+  date: string
+};

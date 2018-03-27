@@ -14,8 +14,8 @@ export type DataModel<R, M> = {
   // export data into a serializable object (can be saved to a JSON file)
   encode(model: M): { data: R, version: number },
   // current version of the model
-  version: number,
-}
+  version: number
+};
 
 /**
  * this is to be implemented to create a DataModel
@@ -27,30 +27,32 @@ export type DataSchema<R, M> = {
   // reverse version of wrap, that will transform it back to a serializable object
   encode(data: M): R,
   // A map of migrations functions that are unrolled when an old version is imported
-  migrations: Array<(any) => R | any>,
-}
+  migrations: Array<(any) => R | any>
+};
 
 /**
  * @memberof DataModel
  */
-export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M> {
-  const { migrations, encode, decode } = schema
-  const version = migrations.length
+export function createDataModel<R, M>(
+  schema: DataSchema<R, M>
+): DataModel<R, M> {
+  const { migrations, encode, decode } = schema;
+  const version = migrations.length;
   function decodeModel(raw) {
-    let data = raw.data
+    let data = raw.data;
     for (let i = raw.version; i < version; i++) {
       // we need to migrate for entering version (i+1)
-      const newVersion = i + 1
+      const newVersion = i + 1;
       if (newVersion in migrations) {
-        data = migrations[newVersion](data)
+        data = migrations[newVersion](data);
       }
     }
-    data = decode(data)
-    return data
+    data = decode(data);
+    return data;
   }
   function encodeModel(model) {
-    const data = encode(model)
-    return { data, version }
+    const data = encode(model);
+    return { data, version };
   }
-  return Object.freeze({ version, decode: decodeModel, encode: encodeModel })
+  return Object.freeze({ version, decode: decodeModel, encode: encodeModel });
 }

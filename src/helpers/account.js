@@ -8,11 +8,11 @@ import type {
   Unit,
   BalanceHistory,
   CalculateCounterValue,
-  DailyOperationsSection,
-} from '../types'
+  DailyOperationsSection
+} from "../types";
 
 function startOfDay(t) {
-  return new Date(t.getFullYear(), t.getMonth(), t.getDate())
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 
 /**
@@ -21,23 +21,26 @@ function startOfDay(t) {
  * The last item of the array is the balance available right now.
  * @memberof helpers/account
  */
-export function getBalanceHistory(account: Account, daysCount: number): BalanceHistory {
-  const history = []
-  let { balance } = account
-  let i = 0 // index of operation
-  let t = new Date()
-  history.unshift({ date: t, value: balance })
-  t = startOfDay(t) // start of the day
+export function getBalanceHistory(
+  account: Account,
+  daysCount: number
+): BalanceHistory {
+  const history = [];
+  let { balance } = account;
+  let i = 0; // index of operation
+  let t = new Date();
+  history.unshift({ date: t, value: balance });
+  t = startOfDay(t); // start of the day
   for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < account.operations.length && account.operations[i].date > t) {
-      balance -= account.operations[i].amount
-      i++
+      balance -= account.operations[i].amount;
+      i++;
     }
-    history.unshift({ date: t, value: balance })
-    t = new Date(t - 24 * 60 * 60 * 1000)
+    history.unshift({ date: t, value: balance });
+    t = new Date(t - 24 * 60 * 60 * 1000);
   }
-  return history
+  return history;
 }
 
 /**
@@ -50,31 +53,31 @@ export function getBalanceHistorySum(
   accounts: Account[],
   daysCount: number,
   fiatUnit: Unit,
-  calculateCounterValue: CalculateCounterValue,
+  calculateCounterValue: CalculateCounterValue
 ): BalanceHistory {
   if (accounts.length === 0) {
-    const now = Date.now()
-    const zeros: 0[] = Array(daysCount).fill(0)
+    const now = Date.now();
+    const zeros: 0[] = Array(daysCount).fill(0);
     return zeros.map((value, i) => ({
       date: new Date(now - 24 * 60 * 60 * 1000 * (daysCount - i - 1)),
-      value,
-    }))
+      value
+    }));
   }
   return accounts
     .map(account => {
-      const history = getBalanceHistory(account, daysCount)
-      const calc = calculateCounterValue(account.currency, fiatUnit)
+      const history = getBalanceHistory(account, daysCount);
+      const calc = calculateCounterValue(account.currency, fiatUnit);
       return history.map(h => ({
         date: h.date,
-        value: calc(h.value, h.date),
-      }))
+        value: calc(h.value, h.date)
+      }));
     })
     .reduce((acc, history) =>
       acc.map((a, i) => ({
         date: a.date,
-        value: a.value + history[i].value,
-      })),
-    )
+        value: a.value + history[i].value
+      }))
+    );
 }
 
 /**
@@ -83,26 +86,26 @@ export function getBalanceHistorySum(
  */
 export function groupAccountOperationsByDay(
   account: Account,
-  count: number,
+  count: number
 ): DailyOperationsSection[] {
-  const { operations } = account
-  if (operations.length === 0) return []
-  const sections = []
-  let day = startOfDay(operations[0].date)
-  let data = []
-  const max = Math.min(count, operations.length)
+  const { operations } = account;
+  if (operations.length === 0) return [];
+  const sections = [];
+  let day = startOfDay(operations[0].date);
+  let data = [];
+  const max = Math.min(count, operations.length);
   for (let i = 0; i < max; i++) {
-    const op = operations[i]
+    const op = operations[i];
     if (op.date < day) {
-      sections.push({ day, data })
-      day = startOfDay(op.date)
-      data = [op]
+      sections.push({ day, data });
+      day = startOfDay(op.date);
+      data = [op];
     } else {
-      data.push(op)
+      data.push(op);
     }
   }
-  sections.push({ day, data })
-  return sections
+  sections.push({ day, data });
+  return sections;
 }
 
 /**
@@ -110,42 +113,42 @@ export function groupAccountOperationsByDay(
  */
 export function groupAccountsOperationsByDay(
   accounts: Account[],
-  count: number,
+  count: number
 ): DailyOperationsSection[] {
   // Track indexes of account.operations[] for each account
-  const indexes: number[] = Array(accounts.length).fill(0)
+  const indexes: number[] = Array(accounts.length).fill(0);
   // Returns the most recent operation from the account with current indexes
   function getNextOperation(): ?Operation {
     let bestOp: ?Operation,
-      bestOpIndex = 0
+      bestOpIndex = 0;
     for (let i = 0; i < accounts.length; i++) {
-      const op = accounts[i].operations[indexes[i]]
+      const op = accounts[i].operations[indexes[i]];
       if (op && (!bestOp || op.date > bestOp.date)) {
-        bestOp = op
-        bestOpIndex = i
+        bestOp = op;
+        bestOpIndex = i;
       }
     }
     if (bestOp) {
-      indexes[bestOpIndex]++
+      indexes[bestOpIndex]++;
     }
-    return bestOp
+    return bestOp;
   }
 
-  let op = getNextOperation()
-  if (!op) return []
-  const sections = []
-  let day = startOfDay(op.date)
-  let data = []
+  let op = getNextOperation();
+  if (!op) return [];
+  const sections = [];
+  let day = startOfDay(op.date);
+  let data = [];
   for (let i = 0; i < count && op; i++) {
     if (op.date < day) {
-      sections.push({ day, data })
-      day = startOfDay(op.date)
-      data = [op]
+      sections.push({ day, data });
+      day = startOfDay(op.date);
+      data = [op];
     } else {
-      data.push(op)
+      data.push(op);
     }
-    op = getNextOperation()
+    op = getNextOperation();
   }
-  sections.push({ day, data })
-  return sections
+  sections.push({ day, data });
+  return sections;
 }
