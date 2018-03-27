@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
+import CounterValue from "./CounterValue";
 import LText from "./LText";
 import Touchable from "./Touchable";
 import CurrencyIcon from "./CurrencyIcon";
