@@ -65,3 +65,8 @@ export type GetPairHistory = (
 export type Calc = (value: number, date?: Date) => number;
 
 export type CalculateCounterValue = (cur: Currency, fiat: Unit) => Calc;
+
+export type GetCounterValue = (
+  cur: Currency,
+  fiat: Unit
+) => (date?: Date) => number;

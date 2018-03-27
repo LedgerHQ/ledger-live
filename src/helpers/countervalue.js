@@ -3,7 +3,24 @@
  * @flow
  */
 
-import type { GetPairHistory, CalculateCounterValue } from "../types";
+import type {
+  GetPairHistory,
+  GetCounterValue,
+  CalculateCounterValue
+} from "../types";
+
+/**
+ * get the countervalue rate with a GetPairHistory.
+ * @memberof helpers/countervalue
+ */
+export const makeGetCounterValue = (
+  getPairHistory: GetPairHistory
+): GetCounterValue => (currency, fiatUnit) => {
+  // FIXME we need to introduce ticker field on currency type
+  const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
+  // we try to pick at the date, otherwise we fallback on the "latest" countervalue
+  return date => getPair(date) || getPair() || 0;
+};
 
 /**
  * creates a CalculateCounterValue utility with a GetPairHistory.
@@ -13,14 +30,11 @@ import type { GetPairHistory, CalculateCounterValue } from "../types";
  */
 export const makeCalculateCounterValue = (
   getPairHistory: GetPairHistory
-): CalculateCounterValue => (currency, fiatUnit) => {
-  // FIXME we need to introduce ticker field on currency type
-  const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
-  return (value, date) => {
-    // we try to pick at the date, otherwise we fallback on the "latest" countervalue
-    const rate = getPair(date) || getPair();
-    if (!rate) return 0;
-    return Math.round(value * rate);
+): CalculateCounterValue => {
+  const getCounterValue = makeGetCounterValue(getPairHistory);
+  return (currency, fiatUnit) => {
+    const getRate = getCounterValue(currency, fiatUnit);
+    return (value, date) => Math.round(value * getRate(date));
   };
 };
 
@@ -31,14 +45,15 @@ export const makeCalculateCounterValue = (
  */
 export const makeReverseCounterValue = (
   getPairHistory: GetPairHistory
-): CalculateCounterValue => (currency, fiatUnit) => {
-  // FIXME we need to introduce ticker field on currency type
-  const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
-  return (countervalue, date) => {
-    // we try to pick at the date, otherwise we fallback on the "latest" countervalue
-    const rate = getPair(date) || getPair();
-    if (!rate) return 0;
-    return Math.round(countervalue / rate);
+): CalculateCounterValue => {
+  const getCounterValue = makeGetCounterValue(getPairHistory);
+  return (currency, fiatUnit) => {
+    const getRate = getCounterValue(currency, fiatUnit);
+    return (value, date) => {
+      const rate = getRate(date);
+      if (!rate) return 0;
+      return Math.round(value / rate);
+    };
   };
 };
 
