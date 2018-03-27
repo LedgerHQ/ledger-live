@@ -4,7 +4,51 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import LText from "../components/LText";
 import CurrencyIcon from "../components/CurrencyIcon";
+import CounterValue from "../components/CounterValue";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
+
+export default class AccountChoice extends PureComponent<{
+  onPress: Account => ?Promise<*>,
+  account: Account
+}> {
+  onPress = () => {
+    const { onPress, account } = this.props;
+    return onPress(account);
+  };
+  render() {
+    const { account } = this.props;
+    return (
+      <TouchableOpacity onPress={this.onPress}>
+        <View style={styles.root}>
+          <View style={styles.header}>
+            <CurrencyIcon size={32} currency={account.currency} />
+            <View style={styles.headerContent}>
+              <LText bold numberOfLines={1}>
+                {account.name}
+              </LText>
+              <LText style={{ opacity: 0.5 }}>{account.currency.name}</LText>
+            </View>
+          </View>
+          <View style={styles.body}>
+            <LText semiBold style={styles.currencyUnitText}>
+              <CurrencyUnitValue
+                unit={account.unit}
+                value={account.balance}
+                showCode
+              />
+            </LText>
+            <LText style={styles.accountSubText}>
+              <CounterValue
+                value={account.balance}
+                currency={account.currency}
+              />
+            </LText>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -35,42 +79,9 @@ const styles = StyleSheet.create({
   },
   currencyUnitText: {
     fontSize: 28
+  },
+  accountSubText: {
+    fontSize: 14,
+    color: "#999"
   }
 });
-
-export default class AccountChoice extends PureComponent<{
-  onPress: Account => ?Promise<*>,
-  account: Account
-}> {
-  onPress = () => {
-    const { onPress, account } = this.props;
-    return onPress(account);
-  };
-  render() {
-    const { account } = this.props;
-    return (
-      <TouchableOpacity onPress={this.onPress}>
-        <View style={styles.root}>
-          <View style={styles.header}>
-            <CurrencyIcon size={32} currency={account.currency} />
-            <View style={styles.headerContent}>
-              <LText bold>{account.name}</LText>
-              <LText style={{ opacity: 0.5 }}>{account.currency.name}</LText>
-            </View>
-          </View>
-          <View style={styles.body}>
-            <CurrencyUnitValue
-              ltextProps={{
-                semiBold: true,
-                style: styles.currencyUnitText
-              }}
-              unit={account.unit}
-              value={account.balance}
-              showCode
-            />
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-}
