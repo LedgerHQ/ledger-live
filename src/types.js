@@ -1,6 +1,6 @@
 // @flow
 
-import type { Currency, Unit } from "@ledgerhq/currencies";
+import type { Currency, Unit } from '@ledgerhq/currencies'
 
 // common models types
 
@@ -12,7 +12,7 @@ import type { Currency, Unit } from "@ledgerhq/currencies";
 
 /**
  */
-export type { Currency, Unit }; // convenient to export them back
+export type { Currency, Unit } // convenient to export them back
 
 /**
  */
@@ -33,8 +33,8 @@ export type Operation = {
   /*
    * the account id. available for convenient reason
    */
-  accountId: string
-};
+  accountId: string,
+}
 
 /**
  */
@@ -64,8 +64,8 @@ export type Account = {
   /* if true, the account won't be visible */
   archived: boolean,
   /* minimal nb of blocks to consider an operation confirmed (set by the user) */
-  minConfirmations: number
-};
+  minConfirmations: number,
+}
 
 /**
  */
@@ -75,8 +75,8 @@ export type OperationRaw = {
   address: string,
   amount: number,
   date: string,
-  blockHeight: ?number
-};
+  blockHeight: ?number,
+}
 
 /**
  */
@@ -93,31 +93,31 @@ export type AccountRaw = {
   operations: OperationRaw[],
   operationsSize: number,
   archived: boolean,
-  minConfirmations: number
-};
+  minConfirmations: number,
+}
 
 // other types
 
 export type DailyOperationsSection = {
   day: Date,
-  data: Operation[]
-};
+  data: Operation[],
+}
 
 /**
  * nesting object map: crypto ticker -> fiat code -> Inner
  * e.g. CounterValuesPairing<number> can be { BTC: { USD: 1 } }
  */
 export type CounterValuesPairing<Inner> = {
-  [_: string]: { [_: string]: Inner }
-};
+  [_: string]: { [_: string]: Inner },
+}
 
 /**
  */
-export type Histoday = { [_: string]: number };
+export type Histoday = { [_: string]: number }
 
 /**
  */
-export type BalanceHistory = Array<{ date: Date, value: number }>;
+export type BalanceHistory = Array<{ date: Date, value: number }>
 
 /**
  * Synchronously lookup the history price of coin against a fiat.
@@ -126,17 +126,14 @@ export type BalanceHistory = Array<{ date: Date, value: number }>;
  * the value 0 or any falsy returned value is means the countervalue is not available.
  * It it up to GetPairHistory implementation to chose the date granularity to use.
  */
-export type GetPairHistory = (
-  coinTicker: string,
-  fiat: string
-) => (?Date) => ?number;
+export type GetPairHistory = (coinTicker: string, fiat: string) => (?Date) => ?number
 
 /**
  * Returns the calculated countervalue for an amount value and date
  * if date is not provided (falsy), Calc will return the "latest" countervalue
  */
-export type Calc = (value: number, date?: Date) => number;
+export type Calc = (value: number, date?: Date) => number
 
 /**
  */
-export type CalculateCounterValue = (cur: Currency, fiat: Unit) => Calc;
+export type CalculateCounterValue = (cur: Currency, fiat: Unit) => Calc

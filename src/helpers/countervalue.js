@@ -3,7 +3,7 @@
  * @flow
  */
 
-import type { GetPairHistory, CalculateCounterValue } from "../types";
+import type { GetPairHistory, CalculateCounterValue } from '../types'
 
 /**
  * creates a CalculateCounterValue utility with a GetPairHistory.
@@ -12,22 +12,22 @@ import type { GetPairHistory, CalculateCounterValue } from "../types";
  * @memberof helpers/countervalue
  */
 export const makeCalculateCounterValue = (
-  getPairHistory: GetPairHistory
+  getPairHistory: GetPairHistory,
 ): CalculateCounterValue => (currency, fiatUnit) => {
   // FIXME we need to introduce ticker field on currency type
-  const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
+  const getPair = getPairHistory(currency.units[0].code, fiatUnit.code)
   return (value, date) => {
     // we try to pick at the date, otherwise we fallback on the "latest" countervalue
-    const countervalue = getPair(date) || getPair() || 0;
-    return Math.round(value * countervalue);
-  };
-};
+    const countervalue = getPair(date) || getPair() || 0
+    return Math.round(value * countervalue)
+  }
+}
 
-const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
+const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`)
 
 /**
  * efficient implementation of YYYY-MM-DD formatter
  * @memberof helpers/countervalue
  */
 export const formatCounterValueDay = (d: Date) =>
-  `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`;
+  `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`
