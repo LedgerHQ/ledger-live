@@ -1,23 +1,57 @@
-/* @flow */
+// @flow
 import React, { Component } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  KeyboardAvoidingView,
-  TextInput
-} from "react-native";
-
+import { connect } from "react-redux";
+import { ScrollView, StyleSheet, KeyboardAvoidingView } from "react-native";
+import { Account } from "@ledgerhq/wallet-common";
+import CurrencyDoubleInput from "../components/CurrencyDoubleInput";
 import BlueButton from "../components/BlueButton";
 import HeaderRightText from "../components/HeaderRightText";
+import { getAccountById } from "../reducers/accounts";
 
-export default class SendFundsChoseAmount extends Component<*, *> {
+type Props = {
+  navigation: *,
+  getAccountById: string => ?Account
+};
+type State = {
+  amount: number,
+  account: ?Account
+};
+
+const mapStateToProps = state => ({
+  getAccountById: id => getAccountById(state, id)
+});
+
+class SendFundsChoseAmount extends Component<Props, State> {
   static navigationOptions = {
     title: "Chose amount",
     headerRight: <HeaderRightText>3 of 5</HeaderRightText>
   };
+
   state = {
-    amount: 1.2
+    amount: this.props.navigation.state.params.amount || 0,
+    account: null
   };
+
+  static getDerivedStateFromProps(
+    nextProps: Props,
+    prevState: State
+  ): $Shape<State> {
+    let state = null;
+    if (!prevState.account) {
+      state = {
+        ...state,
+        account: nextProps.getAccountById(
+          nextProps.navigation.state.params.accountId
+        )
+      };
+    }
+    return state;
+  }
+
+  onChangeAmount = (amount: number) => {
+    this.setState({ amount });
+  };
+
   onConfirm = () => {
     const { navigation } = this.props;
     const { amount } = this.state;
@@ -32,7 +66,10 @@ export default class SendFundsChoseAmount extends Component<*, *> {
       }
     );
   };
+
   render() {
+    const { amount, account } = this.state;
+    if (!account) return null;
     return (
       <KeyboardAvoidingView
         behavior="padding"
@@ -40,10 +77,11 @@ export default class SendFundsChoseAmount extends Component<*, *> {
         keyboardVerticalOffset={65}
       >
         <ScrollView style={styles.body}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="1.20"
-            keyboardType="numeric"
+          <CurrencyDoubleInput
+            value={amount}
+            onChange={this.onChangeAmount}
+            currency={account.currency}
+            unit={account.unit}
           />
         </ScrollView>
         <BlueButton title="Confirm amount" onPress={this.onConfirm} />
@@ -52,6 +90,8 @@ export default class SendFundsChoseAmount extends Component<*, *> {
   }
 }
 
+export default connect(mapStateToProps)(SendFundsChoseAmount);
+
 const styles = StyleSheet.create({
   root: {
     flex: 1
@@ -59,8 +99,5 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     padding: 10
-  },
-  textInput: {
-    fontSize: 32
   }
 });

@@ -12,50 +12,59 @@ const initialValueStringFromProps = props =>
     : formatCurrencyUnit(props.unit, props.value, {
         locale: props.locale,
         disableRounding: true
+        // useGrouping: false // FIXME should we disable grouping?
       });
 
 const styles = StyleSheet.create({
   root: {
     backgroundColor: "white",
     position: "relative",
-    alignItems: "center",
-    flexDirection: "row"
+    flexDirection: "row",
+    padding: 8,
+    height: 60,
+    flex: 1
   },
   textInput: {
     paddingRight: 48,
-    color: "#999"
+    color: "#999",
+    fontSize: 14,
+    flex: 1
   },
   unit: {
     color: "#999",
-    position: "absolute"
+    position: "absolute",
+    right: 8,
+    padding: 8,
+    fontSize: 14,
+    alignSelf: "center"
   }
 });
 
-class CurrencyUnitInput extends Component<
-  {
-    value: number,
-    onChange: number => void,
-    unit: Unit,
+type Props = {
+  value: number,
+  onChange: number => void,
+  unit: Unit,
 
-    locale?: string,
-    width: number,
-    height: number,
-    fontSize: number,
-    padding: number
-  },
-  {
-    value: number, // Track the last "stable" value coming from props
-    valueString: string, // Track the TextInput string
-    editing: boolean // Track the focus state
-  }
-> {
+  locale?: string
+};
+
+type State = {
+  value: number, // Track the last "stable" value coming from props
+  valueString: string, // Track the TextInput string
+  editing: boolean // Track the focus state
+};
+
+class CurrencyUnitInput extends Component<Props, State> {
   state = {
     editing: false,
     value: 0,
     valueString: ""
   };
 
-  static getDerivedStateFromProps(nextProps: *, prevState: *) {
+  static getDerivedStateFromProps(
+    nextProps: Props,
+    prevState: State
+  ): $Shape<State> {
     if (!prevState.editing && nextProps.value !== prevState.value) {
       return {
         value: nextProps.value,
@@ -66,10 +75,13 @@ class CurrencyUnitInput extends Component<
   }
 
   onChangeText = (valueString: string) => {
-    const value = parseCurrencyUnit(this.props.unit, valueString);
+    const { locale, unit, onChange } = this.props;
+    const value = parseCurrencyUnit(unit, valueString, { locale });
+    // TODO polish: valueString needs to be cleaned if there are more digits than required
+    // TODO polish: we need to MAX the field if value is higher than threshold
     this.setState({ value, valueString });
     if (!isNaN(value)) {
-      this.props.onChange(value);
+      onChange(value);
     }
   };
 
@@ -78,24 +90,19 @@ class CurrencyUnitInput extends Component<
   };
 
   onBlur = () => {
-    this.setState({
-      editing: false,
-      value: this.props.value,
-      valueString: formatCurrencyUnit(this.props.unit, this.props.value)
-    });
+    const { value } = this.props;
+    const valueString = initialValueStringFromProps(this.props);
+    this.setState({ editing: false, value, valueString });
   };
 
   render() {
-    const { padding, width, height, fontSize, unit, locale } = this.props;
+    const { unit, locale } = this.props;
     const { valueString } = this.state;
+    const placeholder = formatCurrencyUnit(unit, 0, { locale });
     return (
-      <View style={[styles.root, { padding, width, height }]}>
+      <View style={styles.root}>
         <TextInput
-          style={[
-            styles.textInput,
-            getFontStyle({ bold: true }),
-            { width, height, fontSize }
-          ]}
+          style={[styles.textInput, getFontStyle({ bold: true })]}
           keyboardType="numeric"
           autoCorrect={false}
           autoCapitalize="none"
@@ -103,12 +110,9 @@ class CurrencyUnitInput extends Component<
           onChangeText={this.onChangeText}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
-          placeholder={formatCurrencyUnit(unit, 0, { locale })}
+          placeholder={placeholder}
         />
-        <LText
-          pointerEvents="none"
-          style={[styles.unit, { right: padding, fontSize }]}
-        >
+        <LText pointerEvents="none" style={styles.unit}>
           {unit.code}
         </LText>
       </View>
