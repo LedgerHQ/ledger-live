@@ -18,8 +18,27 @@ export const makeCalculateCounterValue = (
   const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
   return (value, date) => {
     // we try to pick at the date, otherwise we fallback on the "latest" countervalue
-    const countervalue = getPair(date) || getPair() || 0;
-    return Math.round(value * countervalue);
+    const rate = getPair(date) || getPair();
+    if (!rate) return 0;
+    return Math.round(value * rate);
+  };
+};
+
+/**
+ * creates the inverse version of makeCalculateCounterValue.
+ * this allows to goes from a countervalue to the currency value.
+ * @memberof helpers/countervalue
+ */
+export const makeInverseCalculateCounterValue = (
+  getPairHistory: GetPairHistory
+): CalculateCounterValue => (currency, fiatUnit) => {
+  // FIXME we need to introduce ticker field on currency type
+  const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
+  return (countervalue, date) => {
+    // we try to pick at the date, otherwise we fallback on the "latest" countervalue
+    const rate = getPair(date) || getPair();
+    if (!rate) return 0;
+    return Math.round(countervalue / rate);
   };
 };
 
