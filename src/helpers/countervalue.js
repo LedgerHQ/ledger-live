@@ -17,8 +17,8 @@ export const makeCalculateCounterValue = (
   // FIXME we need to introduce ticker field on currency type
   const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
   return (value, date) => {
-    const countervalue = getPair(date);
-    if (!countervalue) return 0;
+    // we try to pick at the date, otherwise we fallback on the "latest" countervalue
+    const countervalue = getPair(date) || getPair() || 0;
     return Math.round(value * countervalue);
   };
 };
