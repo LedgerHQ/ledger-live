@@ -29,7 +29,7 @@ export const makeCalculateCounterValue = (
  * this allows to goes from a countervalue to the currency value.
  * @memberof helpers/countervalue
  */
-export const makeInverseCalculateCounterValue = (
+export const makeReverseCounterValue = (
   getPairHistory: GetPairHistory
 ): CalculateCounterValue => (currency, fiatUnit) => {
   // FIXME we need to introduce ticker field on currency type

@@ -3,7 +3,7 @@ import Prando from "prando";
 import { getFiatUnit, getCurrencyByCoinType } from "@ledgerhq/currencies";
 import {
   makeCalculateCounterValue,
-  makeInverseCalculateCounterValue
+  makeReverseCounterValue
 } from "../../helpers/countervalue";
 
 test("makeCalculateCounterValue basic test", () => {
@@ -15,11 +15,11 @@ test("makeCalculateCounterValue basic test", () => {
         : 0.0000001 * (Date.now() - date) +
           new Prando(`${ticker}-${fiat}`).next(0, 99);
   const calculateCounterValue = makeCalculateCounterValue(getPairHistory);
-  const inverseCalculateCounterValue = makeInverseCalculateCounterValue(getPairHistory);
+  const reverseCounterValue = makeReverseCounterValue(getPairHistory);
   const cur = getCurrencyByCoinType(1);
   const fiat = getFiatUnit("USD");
   const calc = calculateCounterValue(cur, fiat);
-  const inverseCalc = inverseCalculateCounterValue(cur, fiat);
+  const reverse = reverseCounterValue(cur, fiat);
   expect(calc(42, new Date())).toBe(
     Math.round(42 * getPairHistory(cur.units[0].code, fiat.code)(new Date()))
   );
@@ -32,7 +32,7 @@ test("makeCalculateCounterValue basic test", () => {
     )
   );
 
-  expect(inverseCalc(calc(42))).toBe(42);
-  expect(inverseCalc(calc(42, new Date(2017, 3, 14)), new Date(2017, 3, 14))).toBe(42);
-  expect(inverseCalc(calc(42, new Date(2019, 3, 14)), new Date(2019, 3, 14))).toBe(42);
+  expect(reverse(calc(42))).toBe(42);
+  expect(reverse(calc(42, new Date(2017, 3, 14)), new Date(2017, 3, 14))).toBe(42);
+  expect(reverse(calc(42, new Date(2019, 3, 14)), new Date(2019, 3, 14))).toBe(42);
 });
