@@ -7,6 +7,49 @@ import Touchable from "./Touchable";
 import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
+export default class AccountChoice extends PureComponent<{
+  onPress: Account => ?Promise<*>,
+  account: Account
+}> {
+  onPress = () => {
+    const { onPress, account } = this.props;
+    return onPress(account);
+  };
+  render() {
+    const { account } = this.props;
+    return (
+      <Touchable onPress={this.onPress}>
+        <View style={styles.root}>
+          <View style={styles.header}>
+            <CurrencyIcon size={32} currency={account.currency} />
+            <View style={styles.headerContent}>
+              <LText bold numberOfLines={1}>
+                {account.name}
+              </LText>
+              <LText style={{ opacity: 0.5 }}>{account.currency.name}</LText>
+            </View>
+          </View>
+          <View style={styles.body}>
+            <LText semiBold style={styles.currencyUnitText}>
+              <CurrencyUnitValue
+                unit={account.unit}
+                value={account.balance}
+                showCode
+              />
+            </LText>
+            <LText style={styles.accountSubText}>
+              <CounterValue
+                value={account.balance}
+                currency={account.currency}
+              />
+            </LText>
+          </View>
+        </View>
+      </Touchable>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -36,42 +79,9 @@ const styles = StyleSheet.create({
   },
   currencyUnitText: {
     fontSize: 28
+  },
+  accountSubText: {
+    fontSize: 14,
+    color: "#999"
   }
 });
-
-export default class AccountChoice extends PureComponent<{
-  onPress: Account => ?Promise<*>,
-  account: Account
-}> {
-  onPress = () => {
-    const { onPress, account } = this.props;
-    return onPress(account);
-  };
-  render() {
-    const { account } = this.props;
-    return (
-      <Touchable onPress={this.onPress}>
-        <View style={styles.root}>
-          <View style={styles.header}>
-            <CurrencyIcon size={32} currency={account.currency} />
-            <View style={styles.headerContent}>
-              <LText bold>{account.name}</LText>
-              <LText style={{ opacity: 0.5 }}>{account.currency.name}</LText>
-            </View>
-          </View>
-          <View style={styles.body}>
-            <CurrencyUnitValue
-              ltextProps={{
-                semiBold: true,
-                style: styles.currencyUnitText
-              }}
-              unit={account.unit}
-              value={account.balance}
-              showCode
-            />
-          </View>
-        </View>
-      </Touchable>
-    );
-  }
-}

@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component, PureComponent, Fragment } from "react";
-import { getFiatUnit, formatCurrencyUnit } from "@ledgerhq/currencies";
+import { getFiatUnit } from "@ledgerhq/currencies";
 import moment from "moment";
 import {
   Image,
@@ -26,6 +26,7 @@ import LText from "../components/LText";
 import BalanceChart from "../components/BalanceChart";
 import BlueButton from "../components/BlueButton";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
+import CounterValue from "../components/CounterValue";
 import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import CurrencyIcon from "../components/CurrencyIcon";
 import { withLocale } from "../components/LocaleContext";
@@ -54,9 +55,10 @@ class ListHeaderComponent extends PureComponent<
       <View style={styles.carouselCountainer}>
         <View style={{ padding: 10, flexDirection: "row" }}>
           <LText semiBold style={styles.balanceText}>
-            {formatCurrencyUnit(fiatUnit, this.props.totalBalance, {
-              showCode: true
-            })}
+            <CurrencyUnitValue
+              unit={fiatUnit}
+              value={this.props.totalBalance}
+            />
           </LText>
         </View>
         {data ? (
@@ -84,54 +86,46 @@ class OperationRow extends PureComponent<{
   render() {
     const { operation, account } = this.props;
     const { unit, currency } = account;
+
     return (
-      <View
-        style={{
-          padding: 20,
-          borderBottomWidth: 1,
-          borderBottomColor: "#eee",
-          backgroundColor: "white",
-          alignItems: "center",
-          flexDirection: "row"
-        }}
-      >
+      <View style={styles.operationsRowContainer}>
         <CurrencyIcon size={32} currency={currency} />
-        <View
-          style={{
-            flexDirection: "column",
-            flex: 1,
-            marginHorizontal: 10
-          }}
-        >
+        <View style={styles.operationsCurrencyIcon}>
           <LText
             numberOfLines={1}
             semiBold
             ellipsizeMode="clip"
-            style={{ marginLeft: 6, fontSize: 12 }}
+            style={styles.operationsAccountName}
           >
             {account.name}
           </LText>
           <LText
             numberOfLines={1}
             ellipsizeMode="middle"
-            style={{
-              fontSize: 12,
-              opacity: 0.5
-            }}
+            style={styles.operationsAddress}
           >
             {operation.address}
           </LText>
         </View>
-        <CurrencyUnitValue
-          ltextProps={{
-            style: {
+        <View
+          style={[styles.operationsAmountContainer, { alignItems: "flex-end" }]}
+        >
+          <LText
+            style={{
               fontSize: 14,
               color: operation.amount > 0 ? colors.green : colors.red
-            }
-          }}
-          unit={unit}
-          value={operation.amount}
-        />
+            }}
+          >
+            <CurrencyUnitValue unit={unit} value={operation.amount} />
+          </LText>
+          <LText style={styles.counterValue}>
+            <CounterValue
+              value={operation.amount}
+              date={operation.date}
+              currency={account.currency}
+            />
+          </LText>
+        </View>
       </View>
     );
   }
@@ -208,17 +202,7 @@ class Dashboard extends Component<
   };
 
   renderSectionHeader = ({ section }: { section: * }) => (
-    <LText
-      numberOfLines={1}
-      semiBold
-      style={{
-        fontSize: 12,
-        color: "#999",
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        backgroundColor: colors.lightBackground
-      }}
-    >
+    <LText numberOfLines={1} semiBold style={styles.sectionHeader}>
       {moment(section.day).calendar(null, {
         sameDay: "[Today]",
         nextDay: "[Tomorrow]",
@@ -246,9 +230,7 @@ class Dashboard extends Component<
         {headerSwitched ? (
           <Fragment>
             <LText semiBold style={styles.balanceTextHeader}>
-              {formatCurrencyUnit(fiatUnit, totalBalance, {
-                showCode: true
-              })}
+              <CurrencyUnitValue unit={fiatUnit} value={totalBalance} />
             </LText>
             <BalanceChartMiniature
               width={100}
@@ -415,5 +397,39 @@ const styles = StyleSheet.create({
   balanceTextHeader: {
     color: "white",
     fontSize: 24
+  },
+  sectionHeader: {
+    fontSize: 12,
+    color: "#999",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: colors.lightBackground
+  },
+  operationsRowContainer: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    backgroundColor: "white",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  operationsCurrencyIcon: {
+    flexDirection: "column",
+    flex: 1,
+    marginHorizontal: 10
+  },
+  operationsAddress: {
+    fontSize: 12,
+    opacity: 0.5
+  },
+  operationsAmountContainer: {
+    flexDirection: "column",
+    flex: 1,
+    marginHorizontal: 10
+  },
+  operationsAccountName: { marginLeft: 6, fontSize: 12 },
+  counterValue: {
+    fontSize: 12,
+    opacity: 0.5
   }
 });
