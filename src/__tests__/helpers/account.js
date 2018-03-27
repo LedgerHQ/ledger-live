@@ -96,9 +96,4 @@ test("groupAccountsOperationsByDay", () => {
   ).toMatchSnapshot();
 });
 
-test("groupAccountOperationsByDay", () => {
-  const account = genAccount("seed_7");
-  expect(groupAccountOperationsByDay(account, 100)).toMatchSnapshot();
-});
-
 // TODO testing calculateCounterValue is correctly called for picking diff coins/dates.
