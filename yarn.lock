@@ -385,9 +385,9 @@
     "@ledgerhq/hw-transport" "^4.7.3"
     invariant "^2.2.4"
 
-"@ledgerhq/wallet-common@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-0.8.0.tgz#94e5bed3ae0dcefc14b21b64eb8949d8a6f7e62c"
+"@ledgerhq/wallet-common@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-0.10.1.tgz#72e17329de02bebb5ed54bf797113266824e4af8"
   dependencies:
     "@ledgerhq/currencies" "^4.7.1"
     axios "^0.18.0"

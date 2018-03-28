@@ -1,5 +1,5 @@
 // @flow
-import { fetchHistodayCounterValuesMultiple } from "@ledgerhq/wallet-common/lib/api/coutervalue";
+import { fetchHistodayCounterValuesMultiple } from "@ledgerhq/wallet-common/lib/api/countervalue";
 import { getFiatUnit } from "@ledgerhq/currencies";
 import type { Dispatch } from "redux";
 import db from "../db";
