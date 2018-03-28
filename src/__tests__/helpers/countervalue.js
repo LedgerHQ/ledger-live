@@ -36,8 +36,12 @@ test("makeCalculateCounterValue basic test", () => {
   );
 
   expect(reverse(calc(42))).toBe(42);
-  expect(reverse(calc(42, new Date(2017, 3, 14)), new Date(2017, 3, 14))).toBe(42);
-  expect(reverse(calc(42, new Date(2019, 3, 14)), new Date(2019, 3, 14))).toBe(42);
+  expect(reverse(calc(42, new Date(2017, 3, 14)), new Date(2017, 3, 14))).toBe(
+    42
+  );
+  expect(reverse(calc(42, new Date(2019, 3, 14)), new Date(2019, 3, 14))).toBe(
+    42
+  );
   expect(get(new Date(2017, 10, 14))).toBe(1091.4770484628843);
   expect(get(new Date(2019, 3, 14))).toBe(1);
   expect(get()).toBe(1);

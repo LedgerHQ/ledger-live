@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`import 1`] = `
+Object {
+  "accounts": Array [
+    Array [
+      "account",
+      "mock_account_export_0",
+      "pQNKgto",
+      141,
+    ],
+    Array [
+      "account",
+      "mock_account_export_1",
+      "2KTQvcmdW2zTneCnPImZvgYLGi5rIBgc",
+      141,
+    ],
+    Array [
+      "account",
+      "mock_account_export_2",
+      "23PIvq83MrbdhquMsST6yH4PX3dBptsh",
+      141,
+    ],
+  ],
+  "meta": Object {
+    "chunksFormatVersion": 1,
+    "exporterName": "test",
+    "exporterVersion": "0.0.0",
+  },
+}
+`;

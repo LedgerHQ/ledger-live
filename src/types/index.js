@@ -52,6 +52,10 @@ export type BalanceHistory = Array<{ date: Date, value: number }>;
  * if Date is falsy, the current "latest" price is to be returned.
  * the value 0 or any falsy returned value is means the countervalue is not available.
  * It it up to GetPairHistory implementation to chose the date granularity to use.
+ * NB Ideally a get pair history implementation should fallback on 0 if before the timerange he knows, or "latest" after the timerange it knows
+@example
+<any date before>    2018-03-01  2018-03-02  2018-03-03  <any date after>
+0 0 0 0 0 0 0 0 0       9.65         9.22      8.77      latest latest latest ...
  */
 export type GetPairHistory = (
   coinTicker: string,
