@@ -4,7 +4,7 @@ import {
   fetchCurrentCounterValues,
   fetchHistodayCounterValues,
   fetchHistodayCounterValuesMultiple
-} from "../../api/coutervalue";
+} from "../../api/countervalue";
 
 test("fetchCurrentCounterValues", async () => {
   const res = await fetchCurrentCounterValues(
