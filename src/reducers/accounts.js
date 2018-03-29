@@ -1,13 +1,11 @@
 // @flow
-
 import { handleActions } from "redux-actions";
-
-import every from "lodash/every";
-import get from "lodash/get";
-import defaultsDeep from "lodash/defaultsDeep";
+import { createSelector } from "reselect";
 import { createAccountModel } from "@ledgerhq/wallet-common/lib/models/account";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-import type { State } from ".";
+import { getBalanceHistorySum } from "@ledgerhq/wallet-common/lib/helpers/account";
+import { fiatUnitSelector } from "./settings";
+import { calculateCounterValueSelector } from "./counterValues";
 
 export const accountModel = createAccountModel();
 
@@ -15,17 +13,11 @@ export type AccountsState = Account[];
 
 const state: AccountsState = [];
 
-function applyDefaults(account) {
-  return defaultsDeep(account, {
-    minConfirmations: 2
-  });
-}
-
 const handlers: Object = {
   SET_ACCOUNTS: (
     state: AccountsState,
     { payload: accounts }: { payload: Account[] }
-  ): AccountsState => accounts.map(applyDefaults),
+  ): AccountsState => accounts,
 
   ADD_ACCOUNT: (
     state: AccountsState,
@@ -61,18 +53,15 @@ export function getAccounts(state: { accounts: AccountsState }): Account[] {
   return state.accounts;
 }
 
-export function getArchivedAccounts(state: {
-  accounts: AccountsState
-}): Account[] {
-  return state.accounts.filter(acc => acc.archived === true);
-}
+export const getArchivedAccounts = createSelector(getAccounts, accounts =>
+  accounts.filter(acc => acc.archived)
+);
 
-export function getVisibleAccounts(state: {
-  accounts: AccountsState
-}): Account[] {
-  return getAccounts(state).filter(account => account.archived !== true);
-}
+export const getVisibleAccounts = createSelector(getAccounts, accounts =>
+  accounts.filter(acc => !acc.archived)
+);
 
+// TODO move to the (state, props) style https://github.com/reactjs/reselect#accessing-react-props-in-selectors
 export function getAccountById(
   state: { accounts: AccountsState },
   id: string
@@ -80,8 +69,12 @@ export function getAccountById(
   return getAccounts(state).find(account => account.id === id);
 }
 
-export function canCreateAccount(state: State): boolean {
-  return every(getAccounts(state), a => get(a, "operations.length", 0) > 0);
-}
+export const globalBalanceHistorySelector = createSelector(
+  getVisibleAccounts,
+  () => 20, // TODO this will come from settings probably
+  fiatUnitSelector,
+  calculateCounterValueSelector,
+  getBalanceHistorySum
+);
 
 export default handleActions(handlers, state);
