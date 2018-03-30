@@ -19,7 +19,7 @@ import LText from "../components/LText";
 import BlueButton from "../components/BlueButton";
 import { getAccounts } from "../reducers/accounts";
 import { updateAccount, addAccount } from "../actions/accounts";
-import { fetchCounterValues } from "../actions/counterValues";
+import { fetchCounterValuesHist } from "../actions/counterValues";
 
 type Data = Array<mixed>;
 type AccountData = ["account", string, string, number];
@@ -146,7 +146,7 @@ type Props = {
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
-  fetchCounterValues: () => void
+  fetchCounterValuesHist: () => void
 };
 type State = {
   selectedAccounts: string[],
@@ -233,7 +233,7 @@ class PresentResult_ extends Component<Props, State> {
       onDone,
       addAccount,
       updateAccount,
-      fetchCounterValues
+      fetchCounterValuesHist
     } = this.props;
     this.setState({ importing: true });
     const selectedItems = items.filter(item =>
@@ -258,7 +258,7 @@ class PresentResult_ extends Component<Props, State> {
         default:
       }
     }
-    await fetchCounterValues();
+    await fetchCounterValuesHist();
     // ////////////////////////////////////////////////
 
     onDone();
@@ -393,7 +393,7 @@ class PresentResult_ extends Component<Props, State> {
 const PresentResult = connect(state => ({ accounts: getAccounts(state) }), {
   addAccount,
   updateAccount,
-  fetchCounterValues
+  fetchCounterValuesHist
 })(PresentResult_);
 
 class Scanning extends Component<{

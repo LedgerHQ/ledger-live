@@ -1,5 +1,8 @@
 // @flow
-import { fetchHistodayCounterValuesMultiple } from "@ledgerhq/wallet-common/lib/api/countervalue";
+import {
+  fetchHistodayCounterValuesMultiple,
+  fetchCurrentCounterValues
+} from "@ledgerhq/wallet-common/lib/api/countervalue";
 import { getFiatUnit } from "@ledgerhq/currencies";
 import type { Dispatch } from "redux";
 import db from "../db";
@@ -19,17 +22,18 @@ export const updateCounterValues: UpdateCounterValues = payload => ({
   payload
 });
 
-export type FetchCounterValues = (
+export type FetchCounterValuesHist = (
   ?number
 ) => (Dispatch<*>, Function) => Promise<any>;
 
-export const fetchCounterValues: FetchCounterValues = () => async (
+export const fetchCounterValuesHist: FetchCounterValuesHist = () => async (
   dispatch,
   getState
 ) => {
   const { accounts, settings } = getState();
   const { counterValue } = settings;
   const currencies = [...new Set(accounts.map(a => a.currency))];
+
   const res = await fetchHistodayCounterValuesMultiple(
     currencies,
     getFiatUnit(counterValue)
@@ -38,4 +42,20 @@ export const fetchCounterValues: FetchCounterValues = () => async (
     dispatch(updateCounterValues(res));
   }
   return res;
+};
+
+export type FetchCounterValuesLatest = () => (Dispatch<*>, Function) => void;
+
+export const fetchCounterValuesLatest: FetchCounterValuesLatest = () => (
+  dispatch,
+  getState
+) => {
+  const { accounts, settings } = getState();
+  const { counterValue } = settings;
+  const currencies = [...new Set(accounts.map(a => a.currency))];
+  fetchCurrentCounterValues(currencies, getFiatUnit(counterValue)).then(
+    data => {
+      dispatch(updateCounterValues(data));
+    }
+  );
 };
