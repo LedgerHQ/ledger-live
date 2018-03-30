@@ -518,7 +518,7 @@ class Accounts extends Component<
     const account = accounts[selectedIndex];
     return (
       <View style={styles.root}>
-        <ScreenGeneric renderHeader={this.renderHeader}>
+        <ScreenGeneric Header={this.renderHeader}>
           <View style={styles.topBackground} />
           {/* FIXME perf are not good, investigate why */}
           {expandedMode ? (

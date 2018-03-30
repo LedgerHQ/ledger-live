@@ -34,14 +34,19 @@ export default class GenericButton extends Component<
     pending: false,
     spinnerOn: false
   };
+  timeout: *;
+  unmounted = false;
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+    this.unmounted = true;
+  }
   onPress = async () => {
-    let timeout;
     try {
       const res = this.props.onPress();
       if (res && res.then) {
         // it's a promise, we will use pending/spinnerOn state
         this.setState({ pending: true });
-        timeout = setTimeout(() => {
+        this.timeout = setTimeout(() => {
           this.setState(({ pending, spinnerOn }) => {
             if (spinnerOn || !pending) return null;
             return { spinnerOn: true };
@@ -50,10 +55,13 @@ export default class GenericButton extends Component<
         await res;
       }
     } finally {
-      clearTimeout(timeout);
-      this.setState(
-        ({ pending }) => (pending ? { pending: false, spinnerOn: false } : null)
-      );
+      clearTimeout(this.timeout);
+      if (!this.unmounted) {
+        this.setState(
+          ({ pending }) =>
+            pending ? { pending: false, spinnerOn: false } : null
+        );
+      }
     }
   };
   render() {

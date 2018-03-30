@@ -3,18 +3,20 @@ import React, { Component } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import colors from "../colors";
 
-export default class ScreenGeneric extends Component<{
-  renderHeader: (props: *) => *,
+export default class ScreenGeneric<T> extends Component<{
+  Header: React$ComponentType<$Shape<T>>,
   children: *,
   onPressHeader?: () => void,
-  extraData?: *
+  extraData?: T
 }> {
   render() {
-    const { children, renderHeader, onPressHeader, extraData } = this.props;
+    const { children, Header, onPressHeader, extraData } = this.props;
     return (
       <View style={styles.container}>
         <TouchableWithoutFeedback onPress={onPressHeader}>
-          <View style={styles.header}>{renderHeader(extraData)}</View>
+          <View style={styles.header}>
+            <Header {...extraData} />
+          </View>
         </TouchableWithoutFeedback>
         <View style={styles.body}>{children}</View>
       </View>

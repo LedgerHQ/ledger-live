@@ -1,10 +1,12 @@
 // @flow
-import React from "react";
+import React, { Component } from "react";
 import i18next from "i18next";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import { reactI18nextModule } from "react-i18next";
 import Locale from "react-native-locale"; // eslint-disable-line import/no-unresolved
 import locales from "../locales";
+
+export type TranslateFunction = (string, ?Object) => string;
 
 const languageDetector = {
   type: "languageDetector",
@@ -33,7 +35,18 @@ const LocaleContext = React.createContext({
   locale: i18n.language
 });
 
-export class LocaleProvider extends React.Component<*, *> {
+type State = {
+  i18n: *,
+  t: TranslateFunction,
+  locale: string
+};
+
+export class LocaleProvider extends React.Component<
+  {
+    children: *
+  },
+  State
+> {
   state = {
     i18n,
     t: i18n.getFixedT(),
@@ -57,16 +70,21 @@ export class LocaleProvider extends React.Component<*, *> {
   }
 }
 
-export const withLocale = (Cmp: *) => {
-  class WithLocale extends React.Component<*> {
+export const withLocale = (
+  Cmp: React$ComponentType<*>
+): React$ComponentType<*> => {
+  class WithLocale extends Component<*> {
     render() {
       return (
         <LocaleContext.Consumer>
-          {val => <Cmp {...val} {...this.props} />}
+          {(val: State) => <Cmp {...this.props} {...val} />}
         </LocaleContext.Consumer>
       );
     }
   }
+  WithLocale.displayName = `withLocale(${Cmp.displayName ||
+    Cmp.name ||
+    "Component"})`;
   hoistNonReactStatic(WithLocale, Cmp);
   return WithLocale;
 };

@@ -40,7 +40,7 @@ export default class Search extends Component<*> {
   );
   render() {
     return (
-      <ScreenGeneric renderHeader={this.renderHeader}>
+      <ScreenGeneric Header={this.renderHeader}>
         <ScrollView bounces={false} style={styles.container} />
       </ScreenGeneric>
     );
