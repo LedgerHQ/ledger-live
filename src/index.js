@@ -50,6 +50,9 @@ export default class Root extends Component<
     return this.init();
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   componentDidCatch(e: *) {
     console.error(e);
     throw e;
