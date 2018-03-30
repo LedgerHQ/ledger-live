@@ -24,6 +24,7 @@ import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import WhiteButton from "../components/WhiteButton";
 import CurrencyIcon from "../components/CurrencyIcon";
 import CounterValue from "../components/CounterValue";
+import DeltaChange from "../components/DeltaChange";
 
 const windowDim = Dimensions.get("window");
 
@@ -93,7 +94,9 @@ class AccountCard extends PureComponent<*, *> {
   };
   render() {
     const { account, onPress } = this.props;
-    const data = getBalanceHistory(account, 30);
+    const data = getBalanceHistory(account, 10);
+    const startPrice = data[0].value;
+    const endPrice = data[data.length - 1].value;
     return (
       <TouchableWithoutFeedback onPress={onPress}>
         <View
@@ -169,6 +172,7 @@ class AccountCard extends PureComponent<*, *> {
                   currency={account.currency}
                 />
               </LText>
+              <DeltaChange before={startPrice} after={endPrice} />
             </View>
             <BalanceChartMiniature
               width={260}

@@ -31,6 +31,7 @@ import BalanceChartMiniature from "../components/BalanceChartMiniature";
 import CurrencyIcon from "../components/CurrencyIcon";
 import { withLocale } from "../components/LocaleContext";
 import GenerateMockAccountsButton from "../components/GenerateMockAccountsButton";
+import DeltaChange from "../components/DeltaChange";
 import { getVisibleAccounts } from "../reducers/accounts";
 import { calculateCounterValueSelector } from "../reducers/counterValues";
 
@@ -47,19 +48,25 @@ class ListHeaderComponent extends PureComponent<
     const fiatUnit = getFiatUnit("USD"); // FIXME no more hardcoded
     const data = getBalanceHistorySum(
       accounts,
-      30,
+      15,
       fiatUnit,
       calculateCounterValue
     );
+    const startPrice = data ? data[0].value : 0;
+    const endPrice = data ? data[data.length - 1].value : 0;
+
     return (
       <View style={styles.carouselCountainer}>
         <View style={{ padding: 10, flexDirection: "row" }}>
-          <LText semiBold style={styles.balanceText}>
-            <CurrencyUnitValue
-              unit={fiatUnit}
-              value={this.props.totalBalance}
-            />
-          </LText>
+          <View>
+            <LText semiBold style={styles.balanceText}>
+              <CurrencyUnitValue
+                unit={fiatUnit}
+                value={this.props.totalBalance}
+              />
+            </LText>
+            {data ? <DeltaChange before={startPrice} after={endPrice} /> : null}
+          </View>
         </View>
         {data ? (
           <BalanceChart
@@ -94,7 +101,6 @@ class OperationRow extends PureComponent<{
           <LText
             numberOfLines={1}
             semiBold
-            ellipsizeMode="clip"
             style={styles.operationsAccountName}
           >
             {account.name}
@@ -220,10 +226,12 @@ class Dashboard extends Component<
     const fiatUnit = getFiatUnit("USD");
     const data = getBalanceHistorySum(
       accounts,
-      30,
+      15,
       fiatUnit,
       calculateCounterValue
     );
+    const startPrice = data ? data[0].value : 0;
+    const endPrice = data ? data[data.length - 1].value : 0;
 
     return (
       <View style={styles.header}>
@@ -232,6 +240,11 @@ class Dashboard extends Component<
             <LText semiBold style={styles.balanceTextHeader}>
               <CurrencyUnitValue unit={fiatUnit} value={totalBalance} />
             </LText>
+            <DeltaChange
+              before={startPrice}
+              after={endPrice}
+              style={{ color: "white" }}
+            />
             <BalanceChartMiniature
               width={100}
               height={60}
