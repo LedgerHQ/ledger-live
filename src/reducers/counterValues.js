@@ -28,7 +28,8 @@ const handlers = {
 const getPairHistory = state => (coinTicker, fiat) => {
   const byDate = get(state, `counterValues.${coinTicker}.${fiat}`);
   return date =>
-    (byDate && (date ? byDate[formatCounterValueDay(date)] : byDate.latest)) ||
+    (byDate &&
+      ((date && byDate[formatCounterValueDay(date)]) || byDate.latest)) ||
     0;
 };
 

@@ -18,7 +18,6 @@ import {
   fetchCounterValuesHist,
   fetchCounterValuesLatest
 } from "./actions/counterValues";
-import TimerMixin from "react-timer-mixin";
 
 const createLedgerStore = () =>
   createStore(
@@ -45,6 +44,8 @@ export default class Root extends Component<
     ready: false,
     rebootId: 0
   };
+  interval: *;
+
   componentDidMount() {
     return this.init();
   }
@@ -53,9 +54,10 @@ export default class Root extends Component<
     console.error(e);
     throw e;
   }
+
   startCounterValuePolling = () => {
     const { store } = this.state;
-    TimerMixin.setInterval(() => {
+    this.interval = setInterval(() => {
       store.dispatch(fetchCounterValuesLatest());
     }, 60000);
   };
@@ -72,6 +74,7 @@ export default class Root extends Component<
   }
 
   reboot = async (resetData: boolean = false) => {
+    clearInterval(this.interval);
     if (resetData) {
       await db.delete(["settings", "accounts", "countervalues"]);
     }
