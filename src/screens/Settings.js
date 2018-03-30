@@ -1,10 +1,29 @@
 /* @flow */
 import React, { Component } from "react";
-import { ScrollView, View, Text, StyleSheet, Alert } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  Switch
+} from "react-native";
+import { connect } from "react-redux";
 import LText from "../components/LText";
+import DeltaChange from "../components/DeltaChange";
 import { withReboot } from "../components/RebootContext";
 import SectionEntry from "../components/SectionEntry";
 import SectionTitle from "../components/SectionTitle";
+import { updateSettings } from "../actions/settings";
+import type { State } from "../reducers";
+
+const mapStateToProps = (state: State) => ({
+  settings: state.settings
+});
+
+const mapDispatchToProps = {
+  updateSettings
+};
 
 class SignOut_ extends Component<{ reboot: (?boolean) => * }> {
   onResetAll = async () => {
@@ -33,17 +52,37 @@ class SignOut_ extends Component<{ reboot: (?boolean) => * }> {
 
 const SignOut = withReboot(SignOut_);
 
-export default class Settings extends Component<*> {
+class Settings extends Component<*> {
   static navigationOptions = {
     title: "Settings"
   };
+
+  setEasternColorLocale = (isEastern: boolean) => {
+    const { settings, updateSettings } = this.props;
+
+    console.log(settings);
+
+    if (isEastern) {
+      updateSettings({ deltaChangeColorLocale: "eastern" });
+    } else {
+      updateSettings({ deltaChangeColorLocale: "western" });
+    }
+  };
+
   render() {
-    const { navigation } = this.props;
+    const { navigation, settings } = this.props;
     return (
       <ScrollView style={styles.container}>
         <SectionTitle title="DISPLAY" />
         <SectionEntry>
           <LText>Countervalue</LText>
+        </SectionEntry>
+        <SectionEntry>
+          <LText>Use red for values going up</LText>
+          <Switch
+            value={settings.deltaChangeColorLocale === "eastern"}
+            onValueChange={this.setEasternColorLocale}
+          />
         </SectionEntry>
         <SectionTitle title="TOOLS" />
         <SectionEntry
@@ -57,10 +96,16 @@ export default class Settings extends Component<*> {
           <LText>Import Accounts</LText>
         </SectionEntry>
         <SignOut />
+        <View>
+          <DeltaChange before={666} after={1024} />
+          <DeltaChange before={666} after={512} />
+        </View>
       </ScrollView>
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);
 
 const styles = StyleSheet.create({
   container: {

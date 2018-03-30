@@ -24,3 +24,10 @@ export const initSettings: InitSettings = () => async dispatch => {
     payload: settings
   });
 };
+
+export const updateSettings = payload => dispatch => {
+  dispatch({
+    type: "SAVE_SETTINGS",
+    payload
+  });
+};
