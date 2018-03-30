@@ -3,11 +3,15 @@ import { handleActions } from "redux-actions";
 import {
   makeCalculateCounterValue,
   makeReverseCounterValue,
-  formatCounterValueDay
+  formatCounterValueDay,
+  makeGetCounterValue
 } from "@ledgerhq/wallet-common/lib/helpers/countervalue";
 import get from "lodash/get";
 import merge from "lodash/merge";
-import type { CalculateCounterValue } from "@ledgerhq/wallet-common/lib/types";
+import type {
+  CalculateCounterValue,
+  GetCounterValue
+} from "@ledgerhq/wallet-common/lib/types";
 import type { State } from ".";
 
 export type CounterValuesState = {};
@@ -18,16 +22,19 @@ const handlers = {
   UPDATE_COUNTER_VALUES: (
     state: CounterValuesState,
     { payload: counterValues }: { payload: CounterValuesState }
-  ): CounterValuesState => merge(state, counterValues)
+  ): CounterValuesState => merge({ ...state }, counterValues)
 };
 
 const getPairHistory = state => (coinTicker, fiat) => {
   const byDate = get(state, `counterValues.${coinTicker}.${fiat}`);
-  return date => {
-    const d = date || new Date(); // TODO later, we need instead to branch the lookup to pick from latest value
-    return (byDate && byDate[formatCounterValueDay(d)]) || 0;
-  };
+  return date =>
+    (byDate &&
+      ((date && byDate[formatCounterValueDay(date)]) || byDate.latest)) ||
+    0;
 };
+
+export const getCounterValueSelector = (state: State): GetCounterValue =>
+  makeGetCounterValue(getPairHistory(state));
 
 export const calculateCounterValueSelector = (
   state: State
