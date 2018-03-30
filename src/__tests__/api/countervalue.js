@@ -1,13 +1,9 @@
 // @flow
 import { getCurrencyByCoinType, getFiatUnit } from "@ledgerhq/currencies";
-import {
-  fetchCurrentCounterValues,
-  fetchHistodayCounterValues,
-  fetchHistodayCounterValuesMultiple
-} from "../../api/countervalue";
+import { fetchCurrentRates, fetchHistodayRates } from "../../api/countervalue";
 
-test("fetchCurrentCounterValues", async () => {
-  const res = await fetchCurrentCounterValues(
+test("fetchCurrentRates", async () => {
+  const res = await fetchCurrentRates(
     [getCurrencyByCoinType(0), getCurrencyByCoinType(2)],
     getFiatUnit("EUR")
   );
@@ -17,8 +13,8 @@ test("fetchCurrentCounterValues", async () => {
   expect(res.LTC.EUR.latest).toBeGreaterThan(0);
 });
 
-test("fetchHistodayCounterValues", async () => {
-  const res = await fetchHistodayCounterValues(
+test("fetchHistodayRates", async () => {
+  const res = await fetchHistodayRates(
     getCurrencyByCoinType(0),
     getFiatUnit("USD")
   );
@@ -26,8 +22,8 @@ test("fetchHistodayCounterValues", async () => {
   expect(Object.keys(res).length).toBeGreaterThan(100);
 });
 
-test("fetchHistodayCounterValuesMultiple", async () => {
-  const res = await fetchHistodayCounterValuesMultiple(
+test("fetchHistodayRates with multiple currencies", async () => {
+  const res = await fetchHistodayRates(
     [getCurrencyByCoinType(0), getCurrencyByCoinType(2)],
     getFiatUnit("USD")
   );

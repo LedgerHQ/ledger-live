@@ -57,7 +57,7 @@ export type BalanceHistory = Array<{ date: Date, value: number }>;
 <any date before>    2018-03-01  2018-03-02  2018-03-03  <any date after>
 0 0 0 0 0 0 0 0 0       9.65         9.22      8.77      latest latest latest ...
  */
-export type GetPairHistory = (
+export type GetPairRate = (
   coinTicker: string,
   fiat: string
 ) => (?Date) => ?number;
@@ -66,11 +66,19 @@ export type GetPairHistory = (
  * Returns the calculated countervalue for an amount value and date
  * if date is not provided (falsy), Calc will return the "latest" countervalue
  */
-export type Calc = (value: number, date?: Date) => number;
+export type Calc = (
+  value: number,
+  date?: Date,
+  disableRounding?: boolean
+) => number;
 
+/**
+ */
 export type CalculateCounterValue = (cur: Currency, fiat: Unit) => Calc;
 
-export type GetCounterValue = (
+/**
+ */
+export type GetCounterValueRate = (
   cur: Currency,
   fiat: Unit
 ) => (date?: Date) => number;
