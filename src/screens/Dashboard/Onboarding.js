@@ -8,7 +8,7 @@ import GenerateMockAccountsButton from "../../components/GenerateMockAccountsBut
 export default class Onboarding extends PureComponent<{
   goToImportAccounts: () => void
 }> {
-  return() {
+  render() {
     const { goToImportAccounts } = this.props;
     return (
       <View style={styles.root}>
