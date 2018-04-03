@@ -27,21 +27,21 @@ test("makeCalculateCounterValue basic test", () => {
   const calc = calculateCounterValue(cur, fiat);
   const reverse = reverseCounterValue(cur, fiat);
   expect(calc(42, new Date())).toBe(
-    Math.round(42 * getPairHistory(cur.units[0].code, fiat.code)(new Date()))
+    Math.round(42 * getPairHistory(cur.ticker, fiat.ticker)(new Date()))
   );
   expect(calc(42, new Date(), true)).toBe(
-    42 * getPairHistory(cur.units[0].code, fiat.code)(new Date())
+    42 * getPairHistory(cur.ticker, fiat.ticker)(new Date())
   );
   expect(calc(42)).toBe(42);
   // test it fallbacks on latest countervalue for an invalid date
   expect(calc(42, new Date(2019, 1, 1))).toBe(42);
   expect(calc(42, new Date(2017, 3, 14))).toBe(
     Math.round(
-      42 * getPairHistory(cur.units[0].code, fiat.code)(new Date(2017, 3, 14))
+      42 * getPairHistory(cur.ticker, fiat.ticker)(new Date(2017, 3, 14))
     )
   );
   expect(calc(42, new Date(2017, 3, 14), true)).toBe(
-    42 * getPairHistory(cur.units[0].code, fiat.code)(new Date(2017, 3, 14))
+    42 * getPairHistory(cur.ticker, fiat.ticker)(new Date(2017, 3, 14))
   );
 
   expect(reverse(calc(42))).toBe(42);

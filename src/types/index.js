@@ -1,6 +1,6 @@
 // @flow
 
-import type { Currency, Unit } from "@ledgerhq/currencies";
+import type { Currency, Unit, FiatUnit } from "@ledgerhq/currencies";
 
 /**
  *
@@ -22,7 +22,7 @@ import type { Operation, OperationRaw } from "./operation";
 export type { Operation, OperationRaw };
 
 // exporting here for convenience
-export type { Currency, Unit };
+export type { Currency, Unit, FiatUnit };
 
 /**
  * Other stuff
@@ -35,7 +35,7 @@ export type DailyOperationsSection = {
 };
 
 /**
- * Nesting object map: crypto ticker -> fiat code -> Inner
+ * Nesting object map: crypto ticker -> fiat ticker -> Inner
  * e.g. CounterValuesPairing<number> can be { BTC: { USD: 1 } }
  */
 export type CounterValuesPairing<Inner> = {
@@ -59,7 +59,7 @@ export type BalanceHistory = Array<{ date: Date, value: number }>;
  */
 export type GetPairRate = (
   coinTicker: string,
-  fiat: string
+  fiatTicker: string
 ) => (?Date) => ?number;
 
 /**
@@ -74,11 +74,11 @@ export type Calc = (
 
 /**
  */
-export type CalculateCounterValue = (cur: Currency, fiat: Unit) => Calc;
+export type CalculateCounterValue = (cur: Currency, fiat: FiatUnit) => Calc;
 
 /**
  */
 export type GetCounterValueRate = (
   cur: Currency,
-  fiat: Unit
+  fiat: FiatUnit
 ) => (date?: Date) => number;
