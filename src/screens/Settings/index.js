@@ -9,12 +9,12 @@ import {
   Switch
 } from "react-native";
 import { connect } from "react-redux";
-import LText from "../components/LText";
-import { withReboot } from "../components/RebootContext";
-import SectionEntry from "../components/SectionEntry";
-import SectionTitle from "../components/SectionTitle";
-import { saveSettings } from "../actions/settings";
-import type { State } from "../reducers";
+import LText from "../../components/LText";
+import { withReboot } from "../../components/RebootContext";
+import SectionEntry from "../../components/SectionEntry";
+import SectionTitle from "../../components/SectionTitle";
+import { saveSettings } from "../../actions/settings";
+import type { State } from "../../reducers";
 
 const mapStateToProps = (state: State) => ({
   settings: state.settings
@@ -71,8 +71,15 @@ class Settings extends Component<*> {
     return (
       <ScrollView style={styles.container}>
         <SectionTitle title="DISPLAY" />
-        <SectionEntry>
-          <LText>Countervalue</LText>
+        <SectionEntry
+          onPress={() =>
+            navigation.navigate({
+              routeName: "SelectFiatUnit",
+              key: "selectfiatunit"
+            })
+          }
+        >
+          <LText>Countervalue currency</LText>
         </SectionEntry>
         <SectionEntry>
           <LText>Use red for values going up</LText>
