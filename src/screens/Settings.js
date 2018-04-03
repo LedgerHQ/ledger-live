@@ -10,11 +10,10 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import LText from "../components/LText";
-import DeltaChange from "../components/DeltaChange";
 import { withReboot } from "../components/RebootContext";
 import SectionEntry from "../components/SectionEntry";
 import SectionTitle from "../components/SectionTitle";
-import { updateSettings } from "../actions/settings";
+import { saveSettings } from "../actions/settings";
 import type { State } from "../reducers";
 
 const mapStateToProps = (state: State) => ({
@@ -22,7 +21,7 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = {
-  updateSettings
+  saveSettings
 };
 
 class SignOut_ extends Component<{ reboot: (?boolean) => * }> {
@@ -58,14 +57,12 @@ class Settings extends Component<*> {
   };
 
   setEasternColorLocale = (isEastern: boolean) => {
-    const { settings, updateSettings } = this.props;
-
-    console.log(settings);
+    const { saveSettings } = this.props;
 
     if (isEastern) {
-      updateSettings({ deltaChangeColorLocale: "eastern" });
+      saveSettings({ deltaChangeColorLocale: "eastern" });
     } else {
-      updateSettings({ deltaChangeColorLocale: "western" });
+      saveSettings({ deltaChangeColorLocale: "western" });
     }
   };
 
@@ -96,10 +93,6 @@ class Settings extends Component<*> {
           <LText>Import Accounts</LText>
         </SectionEntry>
         <SignOut />
-        <View>
-          <DeltaChange before={666} after={1024} />
-          <DeltaChange before={666} after={512} />
-        </View>
       </ScrollView>
     );
   }

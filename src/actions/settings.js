@@ -3,14 +3,16 @@
 import type { Dispatch } from "redux";
 import db from "../db";
 
-type Settings = *;
+type Settings = {};
 
-export type SaveSettings = Settings => { type: string, payload: Settings };
+export type SaveSettings = Settings => (Dispatch<*>) => void;
 
-export const saveSettings: SaveSettings = payload => ({
-  type: "DB:SAVE_SETTINGS",
-  payload
-});
+export const saveSettings: SaveSettings = payload => dispatch => {
+  dispatch({
+    type: "DB:SAVE_SETTINGS",
+    payload
+  });
+};
 
 type InitSettings = () => (Dispatch<*>) => Promise<void>;
 
@@ -22,12 +24,5 @@ export const initSettings: InitSettings = () => async dispatch => {
   dispatch({
     type: "FETCH_SETTINGS",
     payload: settings
-  });
-};
-
-export const updateSettings = payload => dispatch => {
-  dispatch({
-    type: "SAVE_SETTINGS",
-    payload
   });
 };
