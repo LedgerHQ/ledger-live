@@ -5,9 +5,10 @@
 import querystring from "querystring";
 import axios from "axios";
 import type { Currency, Unit, CounterValuesPairing, Histoday } from "../types";
-import { formatCounterValueDay } from "../helpers/countervalue";
+import { formatCounterValueDayUTC } from "../helpers/countervalue";
+import { deprecateRenamedFunction } from "../internal";
 
-const convertToSatCent = (
+const convertToCentPerSat = (
   currency: Currency,
   fiatUnit: Unit,
   value: number
@@ -16,7 +17,7 @@ const convertToSatCent = (
 /**
  * @memberof api/countervalue
  */
-export async function fetchCurrentCounterValues(
+export async function fetchCurrentRates(
   currencies: Currency[],
   fiatUnit: Unit
 ): Promise<CounterValuesPairing<{ latest: number }>> {
@@ -39,7 +40,7 @@ export async function fetchCurrentCounterValues(
         if (typeof value === "number") {
           out[ticker] = {
             [fiatUnit.code]: {
-              latest: convertToSatCent(currency, fiatUnit, value)
+              latest: convertToCentPerSat(currency, fiatUnit, value)
             }
           };
         }
@@ -50,17 +51,62 @@ export async function fetchCurrentCounterValues(
 }
 
 /**
+ * @return the latest day available on the server in YYYY-MM-DD format
+ * NB this is not so trivial because this needs to use same timezone as the server
+ */
+export function getLatestDayAvailable(): string {
+  const oneDayAgo = new Date(Date.now() - 1000 * 60 * 60 * 24);
+  return formatCounterValueDayUTC(oneDayAgo);
+}
+
+/**
+ * Fetch countervalue rates history for crypto currencies (or a currency)
+ * per day granularity.
+ * @param getLatestDayFetched will returns for a currency the latest day that
+ * is already loaded and don't need to be refreshed.
+ * It returns this in YYYY-MM-DD format.
+ * If data was never loaded OR all data needs to be refetched,
+ * you can return a falsy value.
+ * NOTE: This allow implementation to do two things:
+ * - don't fetch anything if current day is the latest
+ * - only fetch part of the data that are missing (patch)
+ * @return a subset of pairs with only the new data (regarding getLatestDayFetched)
  * @memberof api/countervalue
  */
-export async function fetchHistodayCounterValues(
-  currency: Currency,
-  fiatUnit: Unit
-): Promise<Histoday> {
+export async function fetchHistodayRates(
+  currencyOrCurrencies: Currency | Currency[],
+  fiatUnit: Unit,
+  getLatestDayFetched?: Currency => ?string = () => null
+): Promise<CounterValuesPairing<Histoday>> {
+  if (Array.isArray(currencyOrCurrencies)) {
+    // NB in the future we want a single API call
+    return Promise.all(
+      currencyOrCurrencies.map(currency =>
+        fetchHistodayRates(currency, fiatUnit)
+      )
+    ).then(all => {
+      const data = {};
+      all.forEach((histoday, i) => {
+        const currency = currencyOrCurrencies[i];
+        // FIXME in future need to have currency.ticker
+        data[currency.units[0].code] = {
+          // FIXME same
+          [fiatUnit.code]: histoday
+        };
+      });
+      return data;
+    });
+  }
+  const latestDayFetched = getLatestDayFetched(currencyOrCurrencies);
+  if (latestDayFetched && latestDayFetched === getLatestDayAvailable()) {
+    return {};
+  }
+  // TODO later our API should accept from which date we want to pull
   const { data }: { data: mixed } = await axios.get(
     "https://min-api.cryptocompare.com/data/histoday?" +
       querystring.stringify({
         extraParams: "ledger-test",
-        fsym: currency.units[0].code,
+        fsym: currencyOrCurrencies.units[0].code,
         tsym: fiatUnit.code,
         allData: 1
       })
@@ -73,31 +119,25 @@ export async function fetchHistodayCounterValues(
       if (!item || typeof item !== "object") continue;
       const { time, close } = item;
       if (typeof close !== "number" || typeof time !== "number") continue;
-      const day = formatCounterValueDay(new Date(time * 1000));
-      out[day] = convertToSatCent(currency, fiatUnit, close);
+      const day = formatCounterValueDayUTC(new Date(time * 1000));
+      out[day] = convertToCentPerSat(currencyOrCurrencies, fiatUnit, close);
     }
   }
 
   return out;
 }
 
-/**
- * @memberof api/countervalue
- */
-export function fetchHistodayCounterValuesMultiple(
-  currencies: Currency[],
-  fiatUnit: Unit
-): Promise<CounterValuesPairing<Histoday>> {
-  return Promise.all(
-    currencies.map(currency => fetchHistodayCounterValues(currency, fiatUnit))
-  ).then(all => {
-    const data = {};
-    all.forEach((histoday, i) => {
-      const currency = currencies[i];
-      data[currency.units[0].code] = {
-        [fiatUnit.code]: histoday
-      };
-    });
-    return data;
-  });
-}
+// DEPRECATED
+
+export const fetchCurrentCounterValues = deprecateRenamedFunction(
+  "fetchCurrentCounterValues",
+  fetchCurrentRates
+);
+export const fetchHistodayCounterValues = deprecateRenamedFunction(
+  "fetchHistodayCounterValues",
+  fetchHistodayRates
+);
+export const fetchHistodayCounterValuesMultiple = deprecateRenamedFunction(
+  "fetchHistodayCounterValuesMultiple",
+  fetchHistodayRates
+);
