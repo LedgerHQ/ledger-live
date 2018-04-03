@@ -60,7 +60,7 @@ export type BalanceHistory = Array<{ date: Date, value: number }>;
 export type GetPairRate = (
   coinTicker: string,
   fiatTicker: string
-) => (?Date) => ?number;
+) => (?Date) => number;
 
 /**
  * Returns the calculated countervalue for an amount value and date

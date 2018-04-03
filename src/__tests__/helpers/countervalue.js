@@ -17,7 +17,7 @@ test("makeCalculateCounterValue basic test", () => {
     !date
       ? 1 // for the test, we make countervalue value 1 at current price
       : date > new Date()
-        ? 0
+        ? 0 // let's assume we return 0 for future
         : 0.0000001 * (Date.now() - date) +
           new Prando(`${ticker}-${fiat}`).next(0, 99);
   const calculateCounterValue = makeCalculateCounterValue(getPairHistory);
@@ -33,22 +33,21 @@ test("makeCalculateCounterValue basic test", () => {
     42 * getPairHistory(cur.ticker, fiat.ticker)(new Date())
   );
   expect(calc(42)).toBe(42);
-  // test it fallbacks on latest countervalue for an invalid date
-  expect(calc(42, new Date(2019, 1, 1))).toBe(42);
-  expect(calc(42, new Date(2017, 3, 14))).toBe(
+  expect(calc(42, new Date(2019, 1, 1))).toBe(0);
+  expect(calc(42, new Date(2017, 1, 14))).toBe(
     Math.round(
-      42 * getPairHistory(cur.ticker, fiat.ticker)(new Date(2017, 3, 14))
+      42 * getPairHistory(cur.ticker, fiat.ticker)(new Date(2017, 1, 14))
     )
   );
-  expect(calc(42, new Date(2017, 3, 14), true)).toBe(
-    42 * getPairHistory(cur.ticker, fiat.ticker)(new Date(2017, 3, 14))
+  expect(calc(42, new Date(2017, 1, 14), true)).toBe(
+    42 * getPairHistory(cur.ticker, fiat.ticker)(new Date(2017, 1, 14))
   );
 
   expect(reverse(calc(42))).toBe(42);
-  expect(reverse(calc(42, new Date(2017, 3, 14)), new Date(2017, 3, 14))).toBe(
+  expect(reverse(calc(42, new Date(2017, 1, 14)), new Date(2017, 1, 14))).toBe(
     42
   );
-  expect(reverse(calc(42, new Date(2019, 3, 14)), new Date(2019, 3, 14))).toBe(
-    42
+  expect(reverse(calc(42, new Date(2019, 1, 14)), new Date(2019, 1, 14))).toBe(
+    0
   );
 });
