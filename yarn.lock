@@ -337,17 +337,17 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@ledgerhq/currencies@^4.7.1":
-  version "4.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.7.3.tgz#0e28c0f1c74cf00b990be6865fbec374f808b71f"
+"@ledgerhq/currencies@^4.10.1":
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.10.1.tgz#462081005e3e37e0737bad9aba189eef1663e96a"
   dependencies:
     lodash "^4.17.5"
     numeral "^2.0.6"
     querystring "^0.2.0"
 
-"@ledgerhq/currencies@^4.7.5":
-  version "4.7.5"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.7.5.tgz#e852b58359254fbb2087de328df84343b586f4ab"
+"@ledgerhq/currencies@^4.7.1":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.7.3.tgz#0e28c0f1c74cf00b990be6865fbec374f808b71f"
   dependencies:
     lodash "^4.17.5"
     numeral "^2.0.6"
@@ -4991,9 +4991,9 @@ react-native-svg@6.3.1:
   dependencies:
     prop-types "^15.6.0"
 
-react-native@0.54.2:
-  version "0.54.2"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.54.2.tgz#73786e7bf3f80b0b060ca0bfe5b192f9c2f253da"
+react-native@0.54.4:
+  version "0.54.4"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.54.4.tgz#19c6c598f6acf04f1c032fe9a1812f0c640fa8b7"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"
@@ -5093,7 +5093,7 @@ react-test-renderer@^16.3.0-alpha.1:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-timer-mixin@^0.13.2, react-timer-mixin@^0.13.3:
+react-timer-mixin@^0.13.2:
   version "0.13.3"
   resolved "https://registry.yarnpkg.com/react-timer-mixin/-/react-timer-mixin-0.13.3.tgz#0da8b9f807ec07dc3e854d082c737c65605b3d22"
 

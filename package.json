@@ -43,7 +43,7 @@
     ]
   },
   "dependencies": {
-    "@ledgerhq/currencies": "^4.7.5",
+    "@ledgerhq/currencies": "^4.10.1",
     "@ledgerhq/hw-app-btc": "4.7.3",
     "@ledgerhq/hw-transport": "4.7.3",
     "@ledgerhq/hw-transport-http": "4.7.3",
@@ -59,7 +59,7 @@
     "numeral": "^2.0.6",
     "react": "^16.3.0-alpha.1",
     "react-i18next": "7.5.1",
-    "react-native": "0.54.2",
+    "react-native": "0.54.4",
     "react-native-ble-plx": "0.8.0",
     "react-native-blur": "3.2.2",
     "react-native-camera": "1.0.3",
