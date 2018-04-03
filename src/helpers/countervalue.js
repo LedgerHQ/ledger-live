@@ -19,8 +19,7 @@ import type {
 const makeGetCounterValueRate = (
   getPairHistory: GetPairRate
 ): GetCounterValueRate => (currency, fiatUnit) => {
-  // FIXME we need to introduce ticker field on currency type
-  const getPair = getPairHistory(currency.units[0].code, fiatUnit.code);
+  const getPair = getPairHistory(currency.ticker, fiatUnit.ticker);
   // we try to pick at the date, otherwise we fallback on the "latest" countervalue
   return date => getPair(date) || getPair() || 0;
 };

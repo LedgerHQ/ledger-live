@@ -5,7 +5,7 @@
 import type {
   Account,
   Operation,
-  Unit,
+  FiatUnit,
   BalanceHistory,
   CalculateCounterValue,
   DailyOperationsSection
@@ -52,7 +52,7 @@ export function getBalanceHistory(
 export function getBalanceHistorySum(
   accounts: Account[],
   daysCount: number,
-  fiatUnit: Unit,
+  fiatUnit: FiatUnit,
   calculateCounterValue: CalculateCounterValue
 ): BalanceHistory {
   if (accounts.length === 0) {

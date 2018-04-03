@@ -27,9 +27,9 @@
     ]
   },
   "dependencies": {
-    "@ledgerhq/currencies": "^4.7.1",
+    "@ledgerhq/currencies": "^4.10.1",
     "axios": "^0.18.0",
-    "babel-jest": "^23.0.0-alpha.0",
+    "babel-jest": "^22.4.3",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
     "prando": "^3.0.1",
@@ -41,14 +41,14 @@
     "babel-eslint": "^8.0.2",
     "babel-preset-react-native": "^4.0.0",
     "documentation": "^6.1.0",
-    "eslint": "^4.11.0",
+    "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-react": "^7.4.0",
-    "flow-bin": "^0.68.0",
+    "flow-bin": "^0.69.0",
     "flow-copy-source": "^1.2.1",
     "flow-typed": "^2.2.3",
-    "jest": "^22.4.2",
+    "jest": "^22.4.3",
     "prettier": "^1.8.2"
   }
 }
