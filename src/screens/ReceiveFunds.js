@@ -172,11 +172,13 @@ class ReceiveFunds extends Component<
                 >
                   {account.name}
                 </LText>
-                <CurrencyUnitValue
-                  unit={account.unit}
-                  value={account.balance}
-                  showCode
-                />
+                <LText>
+                  <CurrencyUnitValue
+                    unit={account.unit}
+                    value={account.balance}
+                    showCode
+                  />
+                </LText>
               </Fragment>
             ) : (
               <LText style={{ opacity: 0.5 }}>Select an account...</LText>
