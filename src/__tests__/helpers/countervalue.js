@@ -10,7 +10,7 @@ import {
 test("valueFromUnit", () => {
   expect(valueFromUnit(1, getFiatUnit("USD"))).toBe(100);
   expect(valueFromUnit(0.01, getCurrencyByCoinType(0).units[0])).toBe(1000000);
-})
+});
 
 test("makeCalculateCounterValue basic test", () => {
   const getPairHistory = (ticker, fiat) => date =>
