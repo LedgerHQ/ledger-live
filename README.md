@@ -29,4 +29,7 @@ yarn build
 
 # rebuild on every change
 yarn watch
+
+# publish new version
+yarn publish
 ```
