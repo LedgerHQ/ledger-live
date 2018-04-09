@@ -75,8 +75,8 @@ class CurrencyUnitInput extends Component<Props, State> {
   }
 
   onChangeText = (valueString: string) => {
-    const { locale, unit, onChange } = this.props;
-    const value = parseCurrencyUnit(unit, valueString, { locale });
+    const { unit, onChange } = this.props;
+    const value = parseCurrencyUnit(unit, valueString);
     // TODO polish: valueString needs to be cleaned if there are more digits than required
     // TODO polish: we need to MAX the field if value is higher than threshold
     this.setState({ value, valueString });

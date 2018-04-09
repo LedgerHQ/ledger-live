@@ -24,6 +24,7 @@ export default class BalanceChart extends PureComponent<*> {
         width={width}
         height={height}
         scale={{ x: "time" }}
+        animate={{ duration: 0, onLoad: { duration: 0 } }}
         containerComponent={
           <VictoryCursorContainer
             cursorDimension="x"

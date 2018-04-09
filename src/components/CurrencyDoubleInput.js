@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import type { Unit, Currency } from "@ledgerhq/currencies";
+import type { FiatUnit, Unit, Currency } from "@ledgerhq/currencies";
 import type { CalculateCounterValue } from "@ledgerhq/wallet-common/lib/types";
 import { View, StyleSheet } from "react-native";
 import type { State } from "../reducers";
@@ -32,7 +32,7 @@ class CurrencyDoubleInput extends Component<{
   // connected
   calculateCounterValue: CalculateCounterValue,
   reverseCounterValue: CalculateCounterValue,
-  fiatUnit: Unit
+  fiatUnit: FiatUnit
 }> {
   onChangeAmount = (value: number) => {
     const { onChange } = this.props;

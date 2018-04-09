@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getFiatUnit } from "@ledgerhq/currencies";
-import type { Unit, Currency } from "@ledgerhq/currencies";
+import type { FiatUnit, Currency } from "@ledgerhq/currencies";
 import type { State } from "../reducers";
 
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -17,10 +17,9 @@ class CounterValue extends Component<{
   value: number,
   currency: Currency,
   date?: Date,
-  fiatUnit: Unit,
+  fiatUnit: FiatUnit,
   getCounterValue: (Object, Object) => (number, ?Date) => number
 }> {
-
   render() {
     const { value, date, currency, fiatUnit, getCounterValue } = this.props;
     const counterValue = getCounterValue(currency, fiatUnit)(value, date);

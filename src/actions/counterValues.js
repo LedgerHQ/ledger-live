@@ -1,7 +1,7 @@
 // @flow
 import {
-  fetchHistodayCounterValuesMultiple,
-  fetchCurrentCounterValues
+  fetchHistodayRates,
+  fetchCurrentRates
 } from "@ledgerhq/wallet-common/lib/api/countervalue";
 import { getFiatUnit } from "@ledgerhq/currencies";
 import type { Dispatch } from "redux";
@@ -34,10 +34,7 @@ export const fetchCounterValuesHist: FetchCounterValuesHist = () => async (
   const { counterValue } = settings;
   const currencies = [...new Set(accounts.map(a => a.currency))];
 
-  const res = await fetchHistodayCounterValuesMultiple(
-    currencies,
-    getFiatUnit(counterValue)
-  );
+  const res = await fetchHistodayRates(currencies, getFiatUnit(counterValue));
   if (Object.keys(res).length !== 0) {
     dispatch(updateCounterValues(res));
   }
@@ -53,9 +50,7 @@ export const fetchCounterValuesLatest: FetchCounterValuesLatest = () => (
   const { accounts, settings } = getState();
   const { counterValue } = settings;
   const currencies = [...new Set(accounts.map(a => a.currency))];
-  fetchCurrentCounterValues(currencies, getFiatUnit(counterValue)).then(
-    data => {
-      dispatch(updateCounterValues(data));
-    }
-  );
+  fetchCurrentRates(currencies, getFiatUnit(counterValue)).then(data => {
+    dispatch(updateCounterValues(data));
+  });
 };
