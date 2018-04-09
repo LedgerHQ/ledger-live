@@ -48,7 +48,7 @@ class AccountSettings extends Component<{
             // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
               routeName: "EditName",
-              props: { account },
+              params: { account },
               key: "editname"
             })
           }
