@@ -29,7 +29,8 @@
     "axios": "^0.18.0",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
-    "react": "^16.0.0"
+    "react": "^16.0.0",
+    "prando": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -47,7 +48,6 @@
     "flow-copy-source": "^1.2.1",
     "flow-typed": "^2.2.3",
     "jest": "^22.4.3",
-    "prando": "^3.0.1",
     "prettier": "^1.8.2",
     "timemachine": "^0.3.0"
   }

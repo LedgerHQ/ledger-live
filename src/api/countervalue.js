@@ -58,6 +58,7 @@ export async function fetchCurrentRates(
 /**
  * @return the latest day available on the server in YYYY-MM-DD format
  * NB this is not so trivial because this needs to use same timezone as the server
+ * TODO we will probably make the countervalue server returning this information
  */
 export function getLatestDayAvailable(): string {
   const oneDayAgo = new Date(Date.now() - 1000 * 60 * 60 * 24);
