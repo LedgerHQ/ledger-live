@@ -1,37 +1,50 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, FlatList } from "react-native";
+import { connect } from "react-redux";
 import { listFiats } from "@ledgerhq/currencies";
-import LText from "../../components/LText";
+import UnitRow from "../../components/UnitRow";
+import { saveSettings } from "../../actions/settings";
+import type { SaveSettings } from "../../actions/settings";
+
+const mapDispatchToProps = {
+  saveSettings
+};
 
 class SelectFiatUnit extends Component<{
-  navigation: *
+  navigation: *,
+  saveSettings: SaveSettings
 }> {
   static navigationOptions = {
     title: "Countervalue currency"
   };
+
+  onPress = (item: *) => {
+    const { navigation, saveSettings } = this.props;
+
+    saveSettings({ counterValue: item.code });
+    navigation.goBack();
+  };
+
+  renderItem = ({ item }) => (
+    <UnitRow unit={item} onPress={() => this.onPress(item)} />
+  );
+
+  keyExtractor = item => item.code;
+
   render() {
-    console.log(listFiats());
+    const fiats = listFiats();
 
     return (
-      <View style={styles.container}>
-        <View style={styles.body}>
-          <LText>KIKOU</LText>
-        </View>
+      <View>
+        <FlatList
+          data={fiats}
+          renderItem={this.renderItem}
+          keyExtractor={this.keyExtractor}
+        />
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  body: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center"
-  }
-});
-
-export default SelectFiatUnit;
+export default connect(null, mapDispatchToProps)(SelectFiatUnit);

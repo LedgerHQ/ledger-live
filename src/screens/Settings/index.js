@@ -79,7 +79,7 @@ class Settings extends Component<*> {
             })
           }
         >
-          <LText>Countervalue currency</LText>
+          <LText>Countervalue currency ({settings.counterValue})</LText>
         </SectionEntry>
         <SectionEntry>
           <LText>Use red for values going up</LText>
