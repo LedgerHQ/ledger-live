@@ -1,15 +1,13 @@
 {
   "name": "@ledgerhq/wallet-common",
   "version": "0.13.0",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
-    "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) { console.log('\u001b[31mPlease use yarn\u001b[0m'); process.exit(1); }\"",
     "flow-typed": "flow-typed install -s",
-    "build": "yarn clean && yarn documentation && babel --source-maps -d lib src && flow-copy-source src lib",
-    "watch": "babel --watch --source-maps -d lib src && flow-copy-source -w -v src lib",
-    "prepare": "yarn flow-typed && yarn build",
-    "clean": "rm -rf lib/",
+    "build": "rm -rf lib && babel -sd lib src && flow-copy-source src lib",
+    "prepublish": "yarn build && yarn documentation",
+    "watch": "babel -wsd lib src && flow-copy-source -wv src lib",
     "documentation": "documentation build src/** --project-name '@ledgerhq/wallet-common' --project-version `node -e \"console.log(require('./package.json').version)\"` --project-homepage https://github.com/LedgerHQ/ledger-wallet-common -g -f html -o documentation-website/public/docs",
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
@@ -29,17 +27,17 @@
   "dependencies": {
     "@ledgerhq/currencies": "^4.10.1",
     "axios": "^0.18.0",
-    "babel-jest": "^22.4.3",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
-    "prando": "^3.0.1",
-    "react": "^16.0.0",
-    "timemachine": "^0.3.0"
+    "react": "^16.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.2",
-    "babel-preset-react-native": "^4.0.0",
+    "babel-jest": "^22.4.3",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1",
     "documentation": "^6.1.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
@@ -49,6 +47,8 @@
     "flow-copy-source": "^1.2.1",
     "flow-typed": "^2.2.3",
     "jest": "^22.4.3",
-    "prettier": "^1.8.2"
+    "prando": "^3.0.1",
+    "prettier": "^1.8.2",
+    "timemachine": "^0.3.0"
   }
 }
