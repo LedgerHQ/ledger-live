@@ -3,15 +3,11 @@ import { handleActions } from "redux-actions";
 import {
   makeCalculateCounterValue,
   makeReverseCounterValue,
-  formatCounterValueDay,
-  makeGetCounterValue
+  formatCounterValueDay
 } from "@ledgerhq/wallet-common/lib/helpers/countervalue";
 import get from "lodash/get";
 import merge from "lodash/merge";
-import type {
-  CalculateCounterValue,
-  GetCounterValueRate
-} from "@ledgerhq/wallet-common/lib/types";
+import type { CalculateCounterValue } from "@ledgerhq/wallet-common/lib/types";
 import type { State } from ".";
 
 export type CounterValuesState = {};
@@ -32,9 +28,6 @@ const getPairHistory = state => (coinTicker, fiat) => {
       ((date && byDate[formatCounterValueDay(date)]) || byDate.latest)) ||
     0;
 };
-
-export const getCounterValueSelector = (state: State): GetCounterValueRate =>
-  makeGetCounterValue(getPairHistory(state));
 
 export const calculateCounterValueSelector = (
   state: State

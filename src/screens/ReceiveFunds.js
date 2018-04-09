@@ -12,11 +12,7 @@ import {
   findNodeHandle
 } from "react-native";
 import { connect } from "react-redux";
-import {
-  getCurrencyByCoinType,
-  getFiatUnit,
-  formatCurrencyUnit
-} from "@ledgerhq/currencies";
+import { getCurrencyByCoinType } from "@ledgerhq/currencies";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import colors from "../colors";
@@ -25,23 +21,21 @@ import QRCodePreview from "../components/QRCodePreview";
 import findFirstTransport from "../hw/findFirstTransport";
 import CurrencyDoubleInput from "../components/CurrencyDoubleInput";
 import { getVisibleAccounts } from "../reducers/accounts";
-import { getCounterValueSelector } from "../reducers/counterValues";
 import CurrencyIcon from "../components/CurrencyIcon";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import HeaderRightClose from "../components/HeaderRightClose";
 import LText from "../components/LText";
 import ReceiveFundsButton from "../components/ReceiveFundsButton";
+import CurrencyRate from "../components/CurrencyRate";
 
 const mapPropsToState = state => ({
-  accounts: getVisibleAccounts(state),
-  getCounterValue: getCounterValueSelector(state)
+  accounts: getVisibleAccounts(state)
 });
 
 class ReceiveFunds extends Component<
   {
     navigation: NavigationScreenProp<*>,
-    accounts: Account[],
-    getCounterValue: *
+    accounts: Account[]
   },
   *
 > {
@@ -140,15 +134,11 @@ class ReceiveFunds extends Component<
   };
 
   render() {
-    const { accounts, getCounterValue } = this.props;
+    const { accounts } = this.props;
     const { error, amount, accountId } = this.state;
     const account = accounts.find(a => a.id === accountId);
     const address = account && account.address;
     const currency = account && account.currency;
-
-    const fiatUnit = getFiatUnit("USD");
-    const accountCounterValue = getCounterValue(currency, fiatUnit)();
-
     return (
       <ScrollView
         style={styles.root}
@@ -188,19 +178,7 @@ class ReceiveFunds extends Component<
         {account ? (
           <View>
             <Text style={styles.inputTitle}>Request amount (optional)</Text>
-            <LText style={styles.inputTitle}>
-              1{account.unit.code} ={" "}
-              {formatCurrencyUnit(
-                getFiatUnit("USD"),
-                // manual formatting temporary. later to be delegated to common lib
-                accountCounterValue * 10 ** account.unit.magnitude,
-                {
-                  showCode: true,
-                  showAllDigits: true,
-                  disableRounding: true
-                }
-              )}{" "}
-            </LText>
+            <CurrencyRate currency={account.currency} unit={account.unit} />
             <View style={styles.currencyUnitInput}>
               <CurrencyDoubleInput
                 value={amount}
