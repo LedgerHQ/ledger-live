@@ -34,14 +34,16 @@ import ReceiveFundsButton from "../components/ReceiveFundsButton";
 
 const mapPropsToState = state => ({
   accounts: getVisibleAccounts(state),
-  getCounterValue: getCounterValueSelector(state)
+  getCounterValue: getCounterValueSelector(state),
+  fiatCode: state.settings.counterValue
 });
 
 class ReceiveFunds extends Component<
   {
     navigation: NavigationScreenProp<*>,
     accounts: Account[],
-    getCounterValue: *
+    getCounterValue: *,
+    fiatCode: string
   },
   *
 > {
@@ -140,13 +142,13 @@ class ReceiveFunds extends Component<
   };
 
   render() {
-    const { accounts, getCounterValue } = this.props;
+    const { accounts, getCounterValue, fiatCode } = this.props;
     const { error, amount, accountId } = this.state;
     const account = accounts.find(a => a.id === accountId);
     const address = account && account.address;
     const currency = account && account.currency;
 
-    const fiatUnit = getFiatUnit("USD");
+    const fiatUnit = getFiatUnit(fiatCode);
     const accountCounterValue = getCounterValue(currency, fiatUnit)();
 
     return (
@@ -191,7 +193,7 @@ class ReceiveFunds extends Component<
             <LText style={styles.inputTitle}>
               1{account.unit.code} ={" "}
               {formatCurrencyUnit(
-                getFiatUnit("USD"),
+                fiatUnit,
                 // manual formatting temporary. later to be delegated to common lib
                 accountCounterValue * 10 ** account.unit.magnitude,
                 {
