@@ -10,7 +10,7 @@ import get from "lodash/get";
 import merge from "lodash/merge";
 import type {
   CalculateCounterValue,
-  GetCounterValue
+  GetCounterValueRate
 } from "@ledgerhq/wallet-common/lib/types";
 import type { State } from ".";
 
@@ -33,7 +33,7 @@ const getPairHistory = state => (coinTicker, fiat) => {
     0;
 };
 
-export const getCounterValueSelector = (state: State): GetCounterValue =>
+export const getCounterValueSelector = (state: State): GetCounterValueRate =>
   makeGetCounterValue(getPairHistory(state));
 
 export const calculateCounterValueSelector = (

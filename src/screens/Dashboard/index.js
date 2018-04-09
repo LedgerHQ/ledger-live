@@ -12,7 +12,7 @@ import type {
   Account,
   Operation,
   BalanceHistory,
-  Unit,
+  FiatUnit,
   CalculateCounterValue
 } from "@ledgerhq/wallet-common/lib/types";
 import { groupAccountsOperationsByDay } from "@ledgerhq/wallet-common/lib/helpers/account";
@@ -62,7 +62,7 @@ class Dashboard extends Component<
     globalBalanceHistory: BalanceHistory,
     totalBalance: number,
     totalBalancePeriodBegin: number,
-    fiatUnit: Unit,
+    fiatUnit: FiatUnit,
     calculateCounterValue: CalculateCounterValue,
     screenProps: {
       topLevelNavigation: *

@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import type {
   Account,
   BalanceHistory,
-  Unit
+  FiatUnit
 } from "@ledgerhq/wallet-common/lib/types";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -17,7 +17,7 @@ class HeaderScrolled extends Component<
     globalBalanceHistory: BalanceHistory,
     totalBalance: number,
     totalBalancePeriodBegin: number,
-    fiatUnit: Unit
+    fiatUnit: FiatUnit
   },
   *
 > {
