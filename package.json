@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-common",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -29,8 +29,8 @@
     "axios": "^0.18.0",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
-    "react": "^16.0.0",
-    "prando": "^3.0.1"
+    "prando": "^3.0.1",
+    "react": "^16.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
