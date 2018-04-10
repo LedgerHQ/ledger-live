@@ -6,7 +6,8 @@ import {
   Text,
   StyleSheet,
   Alert,
-  Switch
+  Switch,
+  Image
 } from "react-native";
 import { connect } from "react-redux";
 import LText from "../../components/LText";
@@ -79,7 +80,11 @@ class Settings extends Component<*> {
             })
           }
         >
-          <LText>Countervalue currency ({settings.counterValue})</LText>
+          <LText>Countervalue currency</LText>
+          <LText style={styles.tempLineHeight}>
+            {settings.counterValue}
+            <Image source={require("../../images/arrow_right.png")} />
+          </LText>
         </SectionEntry>
         <SectionEntry>
           <LText>Use red for values going up</LText>
@@ -119,6 +124,9 @@ const styles = StyleSheet.create({
   headerText: {
     color: "white",
     fontSize: 16
+  },
+  tempLineHeight: {
+    lineHeight: 30
   },
   signOutText: {
     color: "#c00"

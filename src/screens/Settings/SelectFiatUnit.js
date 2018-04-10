@@ -33,12 +33,14 @@ class SelectFiatUnit extends Component<{
   keyExtractor = item => item.code;
 
   render() {
-    const fiats = listFiats();
+    const fiatList = listFiats();
+
+    fiatList.sort((a, b) => a.name.localeCompare(b.name));
 
     return (
       <View>
         <FlatList
-          data={fiats}
+          data={fiatList}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
         />
