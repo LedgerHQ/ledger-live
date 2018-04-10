@@ -4,19 +4,13 @@ import { View, StyleSheet, Image } from "react-native";
 import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 
-class Accounts extends PureComponent<{
+class Header extends PureComponent<{
   expandedMode: boolean,
   onToggleExpandedMode: () => ?Promise<*>,
-  onAddAccount: () => ?Promise<*>,
-  title: string
+  onAddAccount: () => ?Promise<*>
 }> {
   render() {
-    const {
-      expandedMode,
-      onToggleExpandedMode,
-      onAddAccount,
-      title
-    } = this.props;
+    const { expandedMode, onToggleExpandedMode, onAddAccount } = this.props;
     return (
       <View style={styles.header}>
         <Touchable onPress={onToggleExpandedMode}>
@@ -29,7 +23,7 @@ class Accounts extends PureComponent<{
             style={{ width: 24, height: 20 }}
           />
         </Touchable>
-        <LText style={styles.headerText}>{title}</LText>
+        <LText style={styles.headerText}>Accounts</LText>
         <Touchable onPress={onAddAccount}>
           <Image
             source={require("../../images/accountsplus.png")}
@@ -41,7 +35,7 @@ class Accounts extends PureComponent<{
   }
 }
 
-export default Accounts;
+export default Header;
 
 const styles = StyleSheet.create({
   header: {
