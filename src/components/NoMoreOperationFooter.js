@@ -1,0 +1,17 @@
+/* @flow */
+import React from "react";
+import { Text } from "react-native";
+
+const el = (
+  <Text
+    style={{
+      padding: 60,
+      opacity: 0.5,
+      textAlign: "center"
+    }}
+  >
+    No More Operations.
+  </Text>
+);
+
+export default () => el;
