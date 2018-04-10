@@ -115,10 +115,16 @@ export function genAccount(id: number | string): Account {
     name: rng.nextString(rng.nextInt(4, 34)),
     balanceByDay: {}
   };
+
+  let total = 0;
   account.operations = Array(operationsSize)
     .fill(null)
     .reduce(ops => {
       const op = genOperation(account, ops, currency, rng);
+      if (total + op.amount < 0) {
+        op.amount = -op.amount;
+      }
+      total += op.amount;
       return ops.concat(op);
     }, []);
 
