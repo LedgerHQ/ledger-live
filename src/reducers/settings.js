@@ -1,6 +1,7 @@
 // @flow
 import { handleActions } from "redux-actions";
-import { getFiatUnit } from "@ledgerhq/currencies";
+import { getFiatUnit, hasFiatUnit } from "@ledgerhq/currencies";
+import Locale from "react-native-locale"; // eslint-disable-line import/no-unresolved
 import type { State } from ".";
 
 export type SettingsState = {
@@ -9,8 +10,14 @@ export type SettingsState = {
   deltaChangeColorLocale: "western" | "eastern"
 };
 
+const getLocaleCurrency = () => {
+  const localeCurrency = Locale.constants().currencyCode;
+
+  return hasFiatUnit(localeCurrency) ? localeCurrency : "USD";
+};
+
 const defaultState: SettingsState = {
-  counterValue: "USD",
+  counterValue: getLocaleCurrency(),
   orderAccounts: "balance|desc",
   deltaChangeColorLocale: "western"
 };
