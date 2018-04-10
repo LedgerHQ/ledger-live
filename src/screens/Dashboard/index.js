@@ -29,8 +29,9 @@ import OperationRow from "./OperationRow";
 import Onboarding from "./Onboarding";
 import Header from "./Header";
 import HeaderScrolled from "./HeaderScrolled";
-import FooterOperationLoading from "./FooterOperationLoading";
 import SectionHeader from "./SectionHeader";
+import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
+import NoOperationFooter from "../../components/NoOperationFooter";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
@@ -166,12 +167,17 @@ class Dashboard extends Component<
             />
           }
           ListHeaderComponent={this.ListHeaderComponent}
-          ListFooterComponent={operationsByDay ? null : FooterOperationLoading}
+          ListFooterComponent={
+            operationsByDay.length === 0
+              ? NoOperationFooter
+              : NoMoreOperationFooter
+          }
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={SectionHeader}
           onEndReached={this.onEndReached}
           onScroll={this.onScroll}
+          showsVerticalScrollIndicator={false}
         />
       </ScreenGeneric>
     );
