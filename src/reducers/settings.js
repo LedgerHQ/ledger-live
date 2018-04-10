@@ -10,16 +10,21 @@ export type SettingsState = {
   deltaChangeColorLocale: "western" | "eastern"
 };
 
-const getLocaleCurrency = () => {
-  const localeCurrency = Locale.constants().currencyCode;
+const locale = Locale.constants();
 
-  return hasFiatUnit(localeCurrency) ? localeCurrency : "USD";
+const getLocaleFiat = () =>
+  hasFiatUnit(locale.currencyCode) ? locale.currencyCode : "USD";
+
+const getLocaleColor = () => {
+  const eastern = ["KR", "JP", "CN", "KP"];
+
+  return eastern.indexOf(locale.countryCode) !== -1 ? "eastern" : "western";
 };
 
 const defaultState: SettingsState = {
-  counterValue: getLocaleCurrency(),
+  counterValue: getLocaleFiat(),
   orderAccounts: "balance|desc",
-  deltaChangeColorLocale: "western"
+  deltaChangeColorLocale: getLocaleColor()
 };
 
 const state: SettingsState = {
