@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "flow-typed": "flow-typed install -s",
-    "build": "rm -rf lib && babel -sd lib src && flow-copy-source src lib",
+    "build": "rm -rf lib && babel --ignore __tests__ -sd lib src && flow-copy-source -i \"__tests__/**\" src lib",
     "prepublish": "yarn build && yarn documentation",
     "watch": "babel -wsd lib src && flow-copy-source -wv src lib",
     "documentation": "documentation build src/** --project-name '@ledgerhq/wallet-common' --project-version `node -e \"console.log(require('./package.json').version)\"` --project-homepage https://github.com/LedgerHQ/ledger-wallet-common -g -f html -o documentation-website/public/docs",
