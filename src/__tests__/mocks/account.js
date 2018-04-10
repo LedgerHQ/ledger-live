@@ -7,6 +7,11 @@ test("generate an account from seed", () => {
 });
 
 test("dont generate negative balance", () => {
-  const a = genAccount("n");
+  const a = genAccount("n"); // <= with just prando, this seed generates negative balance
   expect(a.balance).toBeGreaterThan(0);
+});
+
+test("allow specifying number of operations", () => {
+  const a = genAccount("n", { operationsSize: 10 });
+  expect(a.operations.length).toBe(10);
 });

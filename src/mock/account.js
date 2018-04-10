@@ -90,10 +90,17 @@ export function genAddingOperationsInAccount(
  * @param id is a number or a string, used as an account identifier and as a seed for the generation.
  * @memberof mock/account
  */
-export function genAccount(id: number | string): Account {
+type GenAccountOptions = {
+  operationsSize?: number
+};
+
+export function genAccount(
+  id: number | string,
+  opts: GenAccountOptions = {}
+): Account {
   const rng = new Prando(id);
   const currency = rng.nextArrayItem(currencies);
-  const operationsSize = rng.nextInt(1, 200);
+  const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
   const account = {
     id: `mock_account_${id}`,
