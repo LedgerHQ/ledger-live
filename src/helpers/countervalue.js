@@ -3,7 +3,6 @@
  * @flow
  */
 
-import { deprecateFunction } from "../internal";
 import type {
   GetPairRate,
   GetCounterValueRate,
@@ -84,11 +83,3 @@ export const formatCounterValueDayUTC = (d: Date) =>
   `${d.getUTCFullYear()}-${twoDigits(d.getUTCMonth() + 1)}-${twoDigits(
     d.getUTCDate()
   )}`;
-
-export const makeGetCounterValue = deprecateFunction(
-  makeGetCounterValueRate,
-  "makeGetCounterValue is deprecated. " +
-    "countervalue rate is not meant to be directly used from userland. " +
-    "If a feature is missing we add it on the wallet-common side. " +
-    "This allow us to change the rate unit in the future if needed."
-);

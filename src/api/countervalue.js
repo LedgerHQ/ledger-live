@@ -11,7 +11,6 @@ import type {
   Histoday
 } from "../types";
 import { formatCounterValueDayUTC } from "../helpers/countervalue";
-import { deprecateRenamedFunction } from "../internal";
 
 const convertToCentPerSat = (
   currency: Currency,
@@ -132,18 +131,3 @@ export async function fetchHistodayRates(
 
   return out;
 }
-
-// DEPRECATED
-
-export const fetchCurrentCounterValues = deprecateRenamedFunction(
-  "fetchCurrentCounterValues",
-  fetchCurrentRates
-);
-export const fetchHistodayCounterValues = deprecateRenamedFunction(
-  "fetchHistodayCounterValues",
-  fetchHistodayRates
-);
-export const fetchHistodayCounterValuesMultiple = deprecateRenamedFunction(
-  "fetchHistodayCounterValuesMultiple",
-  fetchHistodayRates
-);
