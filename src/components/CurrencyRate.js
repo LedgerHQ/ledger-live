@@ -1,18 +1,14 @@
 // @flow
-import React, { Component } from "react";
-import { StyleSheet } from "react-native";
-
+import { Component } from "react";
 import { connect } from "react-redux";
 import { formatCurrencyUnit, getFiatUnit } from "@ledgerhq/currencies";
 import type { Unit, FiatUnit, Currency } from "@ledgerhq/currencies";
 import type { Calc } from "@ledgerhq/wallet-common/lib/types";
-
 import type { State } from "../reducers";
-import LText from "./LText";
 import { calculateCounterValueSelector } from "../reducers/counterValues";
 
 type Props = {
-  unit: Unit,
+  unit?: Unit,
   currency: Currency
 };
 
@@ -31,7 +27,9 @@ class CurrencyRate extends Component<
   }
 > {
   render() {
-    const { unit, fiatUnit, calc } = this.props;
+    const { props } = this;
+    const { currency, fiatUnit, calc } = props;
+    const unit = props.unit || currency.units[0];
     const value = 10 ** unit.magnitude; // 1 in the unit
     const countervalue = calc(value, undefined, true);
     const valueFormat = formatCurrencyUnit(unit, value, {
@@ -41,20 +39,7 @@ class CurrencyRate extends Component<
       showCode: true,
       subMagnitude: 3
     });
-    return (
-      <LText numberOfLines={1} style={styles.inputTitle}>
-        {`${valueFormat} = ${fiatFormat}`}
-      </LText>
-    );
+    return `${valueFormat} = ${fiatFormat}`;
   }
 }
 export default connect(mapStateToProps)(CurrencyRate);
-
-const styles = StyleSheet.create({
-  inputTitle: {
-    color: "white",
-    fontWeight: "bold",
-    marginBottom: 10,
-    marginTop: 10
-  }
-});

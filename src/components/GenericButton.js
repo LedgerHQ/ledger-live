@@ -1,12 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import {
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  ActivityIndicator
-} from "react-native";
+import { TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import LText from "./LText";
 
 const WAIT_TIME_BEFORE_SPINNER = 300;
@@ -75,22 +70,22 @@ export default class GenericButton extends Component<
     const { pending, spinnerOn } = this.state;
     const disabled = !onPress || pending;
     return (
-      <TouchableOpacity onPress={this.onPress} disabled={disabled}>
-        <View
-          style={[
-            styles.container,
-            disabled ? styles.containerDisabled : null,
-            containerStyle
-          ]}
-        >
-          <LText style={[styles.title, titleStyle]}>{title}</LText>
-          {spinnerOn && spinnerColor ? (
-            <ActivityIndicator
-              color={spinnerColor}
-              style={{ position: "absolute" }}
-            />
-          ) : null}
-        </View>
+      <TouchableOpacity
+        onPress={this.onPress}
+        disabled={disabled}
+        style={[
+          styles.container,
+          disabled ? styles.containerDisabled : null,
+          containerStyle
+        ]}
+      >
+        <LText style={[styles.title, titleStyle]}>{title}</LText>
+        {spinnerOn && spinnerColor ? (
+          <ActivityIndicator
+            color={spinnerColor}
+            style={styles.activityIndicator}
+          />
+        ) : null}
       </TouchableOpacity>
     );
   }
@@ -105,6 +100,9 @@ const styles = StyleSheet.create({
   },
   containerDisabled: {
     opacity: 0.5
+  },
+  activityIndicator: {
+    position: "absolute"
   },
   title: {}
 });

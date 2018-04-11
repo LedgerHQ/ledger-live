@@ -18,6 +18,8 @@ import {
   fetchCounterValuesHist,
   fetchCounterValuesLatest
 } from "./actions/counterValues";
+import { AppState } from "react-native";
+import throttle from "lodash/throttle";
 
 const createLedgerStore = () =>
   createStore(
@@ -47,22 +49,37 @@ export default class Root extends Component<
   interval: *;
 
   componentDidMount() {
+    AppState.addEventListener("change", this.handleAppStateChange);
     return this.init();
   }
 
   componentWillUnmount() {
+    AppState.removeEventListener("change", this.handleAppStateChange);
     clearInterval(this.interval);
   }
+
   componentDidCatch(e: *) {
     console.error(e);
     throw e;
   }
 
-  startCounterValuePolling = () => {
+  poll = throttle(() => {
     const { store } = this.state;
-    this.interval = setInterval(() => {
-      store.dispatch(fetchCounterValuesLatest());
-    }, 60000);
+    store.dispatch(fetchCounterValuesLatest());
+  }, 30000);
+
+  initPolling = () => {
+    clearInterval(this.interval);
+    this.interval = setInterval(this.poll, 120000);
+    this.poll();
+  };
+
+  handleAppStateChange = (nextAppState: string) => {
+    if (nextAppState === "active") {
+      this.initPolling();
+    } else {
+      clearInterval(this.interval);
+    }
   };
 
   async init() {
@@ -71,9 +88,8 @@ export default class Root extends Component<
     await store.dispatch(initCounterValues());
     await store.dispatch(initAccounts());
     await store.dispatch(fetchCounterValuesHist());
-    store.dispatch(fetchCounterValuesLatest());
     this.setState({ ready: true });
-    this.startCounterValuePolling();
+    this.initPolling();
   }
 
   reboot = async (resetData: boolean = false) => {

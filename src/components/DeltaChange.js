@@ -13,7 +13,7 @@ class DeltaChange extends Component<{
   before: number,
   after: number,
   colorLocale: "western" | "eastern",
-  style?: {}
+  style?: *
 }> {
   static defaultProps = { color: true };
 

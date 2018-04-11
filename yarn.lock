@@ -461,9 +461,9 @@
     "@ledgerhq/hw-transport" "^4.7.3"
     invariant "^2.2.4"
 
-"@ledgerhq/wallet-common@^0.13.2":
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-0.13.2.tgz#55bff35179acb8e4c12836eeea7885ebaa85e6c4"
+"@ledgerhq/wallet-common@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-1.0.1.tgz#0e746e5e4fc669404f53db56651e6139c0731ade"
   dependencies:
     "@ledgerhq/currencies" "^4.10.1"
     axios "^0.18.0"
@@ -473,8 +473,8 @@
     react "^16.0.0"
 
 "@sentry/cli@^1.30.1":
-  version "1.30.3"
-  resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.30.3.tgz#02d0f7781c1ee5e1be5a4312a325fbe8b1b37231"
+  version "1.30.4"
+  resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.30.4.tgz#4d2f4f1db319f2950262b8e75b6d6892fe1779ca"
   dependencies:
     https-proxy-agent "^2.1.1"
     node-fetch "^1.7.3"
@@ -482,8 +482,8 @@
     proxy-from-env "^1.0.0"
 
 "@sentry/wizard@^0.9.1":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@sentry/wizard/-/wizard-0.9.4.tgz#79068ddc3ec40eb67090047908d5b1e9c964f82a"
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/@sentry/wizard/-/wizard-0.9.5.tgz#3fc84de626dd4863affe3417ba71f1d89af7265d"
   dependencies:
     "@sentry/cli" "^1.30.1"
     chalk "^2.3.1"
@@ -1585,8 +1585,8 @@ beeper@^1.0.0:
   resolved "https://registry.yarnpkg.com/beeper/-/beeper-1.1.1.tgz#e6d5ea8c5dad001304a70b22638447f69cb2f809"
 
 big-integer@^1.6.17, big-integer@^1.6.7:
-  version "1.6.27"
-  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.27.tgz#8e56c6f8b2dd6c4fe8d32102b83d4f25868e4b3a"
+  version "1.6.28"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.28.tgz#8cef0fda3ccde8759c2c66efcfacc35aea658283"
 
 binary@~0.3.0:
   version "0.3.0"
@@ -5930,9 +5930,9 @@ rx-lite@*, rx-lite@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-4.0.8.tgz#0b1e11af8bc44836f04a6407e92da42467b79444"
 
-rxjs@5.5.8, rxjs@^5.5.2:
-  version "5.5.8"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.8.tgz#b2b0809a57614ad6254c03d7446dea0d83ca3791"
+rxjs@5.5.9, rxjs@^5.5.2:
+  version "5.5.9"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.9.tgz#12a0487794b00f5eb370fec2751bd973a89886fb"
   dependencies:
     symbol-observable "1.0.1"
 
@@ -6688,16 +6688,16 @@ verror@1.10.0:
     extsprintf "^1.2.0"
 
 victory-chart@^25.2.0:
-  version "25.2.2"
-  resolved "https://registry.yarnpkg.com/victory-chart/-/victory-chart-25.2.2.tgz#6a4fccd56d0dcf5064b40c992e89e2152c8b9e87"
+  version "25.2.3"
+  resolved "https://registry.yarnpkg.com/victory-chart/-/victory-chart-25.2.3.tgz#7b4ee628ea380e99f229df044f39e386f2501dbe"
   dependencies:
     d3-voronoi "^1.1.2"
     lodash "^4.17.5"
     victory-core "^21.1.2"
 
 victory-core@^21.1.0, victory-core@^21.1.1, victory-core@^21.1.2:
-  version "21.1.5"
-  resolved "https://registry.yarnpkg.com/victory-core/-/victory-core-21.1.5.tgz#1eb599e2ee7311305fd01040c5d178f3df5ccc7a"
+  version "21.1.6"
+  resolved "https://registry.yarnpkg.com/victory-core/-/victory-core-21.1.6.tgz#536a57c797beed8e6ada5c175162c96c7c9ddf08"
   dependencies:
     d3-ease "^1.0.0"
     d3-interpolate "^1.1.1"

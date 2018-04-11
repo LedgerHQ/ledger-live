@@ -24,6 +24,8 @@ const mapStateToProps = (state: State) => ({
   reverseCounterValue: reverseCounterValueSelector(state)
 });
 
+const separator = <View style={{ height: 2 }} />;
+
 class CurrencyDoubleInput extends Component<{
   value: number,
   onChange: number => void,
@@ -61,7 +63,7 @@ class CurrencyDoubleInput extends Component<{
           unit={unit}
           onChange={this.onChangeAmount}
         />
-        <View style={{ height: 2 }} />
+        {separator}
         <CurrencyUnitInput
           value={countervalue}
           onChange={this.onChangeCountervalueAmount}

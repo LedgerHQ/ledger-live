@@ -178,7 +178,6 @@ class ReceiveFunds extends Component<
         {account ? (
           <View>
             <Text style={styles.inputTitle}>Request amount (optional)</Text>
-            <CurrencyRate currency={account.currency} unit={account.unit} />
             <View style={styles.currencyUnitInput}>
               <CurrencyDoubleInput
                 value={amount}
@@ -186,6 +185,9 @@ class ReceiveFunds extends Component<
                 currency={account.currency}
                 unit={account.unit}
               />
+              <LText numberOfLines={1} style={styles.inputTitle}>
+                <CurrencyRate currency={account.currency} />
+              </LText>
             </View>
           </View>
         ) : null}
@@ -243,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   currencyUnitInput: {
-    marginBottom: 40,
+    marginBottom: 10,
     alignSelf: "stretch"
   },
   addressBox: {
