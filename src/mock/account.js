@@ -82,6 +82,7 @@ export function genAddingOperationsInAccount(
       const op = genOperation(copy, ops, copy.currency, rng);
       return ops.concat(op);
     }, copy.operations);
+  ensureNoNegative(copy.operations);
   copy.balance = account.operations.reduce((sum, op) => sum + op.amount, 0);
   return copy;
 }
