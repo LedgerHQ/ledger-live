@@ -7,7 +7,8 @@ import type { State } from ".";
 export type SettingsState = {
   counterValue: string,
   orderAccounts: string,
-  deltaChangeColorLocale: "western" | "eastern"
+  deltaChangeColorLocale: "western" | "eastern",
+  chartTimeRange: number
 };
 
 const locale = Locale.constants();
@@ -24,7 +25,8 @@ const getLocaleColor = () => {
 const defaultState: SettingsState = {
   counterValue: getLocaleFiat(),
   orderAccounts: "balance|desc",
-  deltaChangeColorLocale: getLocaleColor()
+  deltaChangeColorLocale: getLocaleColor(),
+  chartTimeRange: 7
 };
 
 const state: SettingsState = {

@@ -14,6 +14,7 @@ import LText from "../../components/LText";
 import { withReboot } from "../../components/RebootContext";
 import SectionEntry from "../../components/SectionEntry";
 import SectionTitle from "../../components/SectionTitle";
+import { getLabelFromRange } from "./ChartTimeRange";
 import { saveSettings } from "../../actions/settings";
 import type { State } from "../../reducers";
 
@@ -69,6 +70,8 @@ class Settings extends Component<*> {
 
   render() {
     const { navigation, settings } = this.props;
+    const arrowRight = require("../../images/arrow_right.png");
+
     return (
       <ScrollView style={styles.container}>
         <SectionTitle title="DISPLAY" />
@@ -83,7 +86,21 @@ class Settings extends Component<*> {
           <LText>Countervalue currency</LText>
           <LText style={styles.tempLineHeight}>
             {settings.counterValue}
-            <Image source={require("../../images/arrow_right.png")} />
+            <Image source={arrowRight} />
+          </LText>
+        </SectionEntry>
+        <SectionEntry
+          onPress={() =>
+            navigation.navigate({
+              routeName: "ChartTimeRange",
+              key: "ChartTimeRange"
+            })
+          }
+        >
+          <LText>Dashboard chart time range</LText>
+          <LText style={styles.tempLineHeight}>
+            {getLabelFromRange(settings.chartTimeRange)}
+            <Image source={arrowRight} />
           </LText>
         </SectionEntry>
         <SectionEntry>

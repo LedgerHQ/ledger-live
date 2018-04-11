@@ -71,7 +71,7 @@ export function getAccountById(
 
 export const globalBalanceHistorySelector = createSelector(
   getVisibleAccounts,
-  () => 20, // TODO this will come from settings probably
+  state => state.settings.chartTimeRange,
   fiatUnitSelector,
   calculateCounterValueSelector,
   getBalanceHistorySum
