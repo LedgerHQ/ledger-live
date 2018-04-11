@@ -32,6 +32,7 @@ import HeaderScrolled from "./HeaderScrolled";
 import SectionHeader from "./SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
+import LoadingFooter from "../../components/LoadingFooter";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
@@ -146,8 +147,10 @@ class Dashboard extends Component<
     if (accounts.length === 0) {
       return <Onboarding goToImportAccounts={this.goToImportAccounts} />;
     }
-    const operationsByDay = groupAccountsOperationsByDay(accounts, opCount);
-    const sections: any = operationsByDay || [];
+    const { sections, completed } = groupAccountsOperationsByDay(
+      accounts,
+      opCount
+    );
     return (
       <ScreenGeneric
         onPressHeader={this.scrollUp}
@@ -156,7 +159,7 @@ class Dashboard extends Component<
       >
         <View style={styles.topBackground} />
         <SectionList
-          sections={sections}
+          sections={(sections: any)}
           ref={this.onSectionListRef}
           style={styles.sectionList}
           contentContainerStyle={styles.sectionListContent}
@@ -168,9 +171,11 @@ class Dashboard extends Component<
           }
           ListHeaderComponent={this.ListHeaderComponent}
           ListFooterComponent={
-            operationsByDay.length === 0
-              ? NoOperationFooter
-              : NoMoreOperationFooter
+            !completed
+              ? LoadingFooter
+              : sections.length === 0
+                ? NoOperationFooter
+                : NoMoreOperationFooter
           }
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}

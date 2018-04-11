@@ -7,6 +7,7 @@ import OperationRow from "./OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
+import LoadingFooter from "../../components/LoadingFooter";
 
 type Props = {
   Header: *,
@@ -82,8 +83,10 @@ class AccountBody extends Component<Props, State> {
   render() {
     const { Header, account, visible, onScroll } = this.props;
     const { refreshing, opCount } = this.state;
-    const operationsByDay = groupAccountOperationsByDay(account, opCount);
-    const sections: any = operationsByDay || [];
+    const { sections, completed } = groupAccountOperationsByDay(
+      account,
+      opCount
+    );
     return (
       <SectionList
         ref={this.onSectionListRef}
@@ -98,10 +101,12 @@ class AccountBody extends Component<Props, State> {
         onEndReached={this.onEndReached}
         renderItem={this.renderItem}
         renderSectionHeader={SectionHeader}
-        sections={sections}
+        sections={(sections: any)}
         ListHeaderComponent={Header}
         ListFooterComponent={
-          sections.length === 0 ? NoOperationFooter : NoMoreOperationFooter
+          !completed
+            ? LoadingFooter
+            : sections.length === 0 ? NoOperationFooter : NoMoreOperationFooter
         }
         keyExtractor={this.keyExtractor}
         onScroll={onScroll}
