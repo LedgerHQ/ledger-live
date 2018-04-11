@@ -10,6 +10,7 @@ import AccountExpanded from "./AccountExpanded";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountBody from "./AccountBody";
 import Header from "./Header";
+import AccountHeader from "./AccountHeader";
 
 const mapStateToProps = state => ({
   accounts: getVisibleAccounts(state)
@@ -88,13 +89,14 @@ class Accounts extends Component<
     const { expandedMode, selectedIndex, headerScrolled } = this.state;
     const { accounts } = this.props;
     const account = accounts[selectedIndex];
-    const title = headerScrolled && account ? account.name : "Accounts";
+    if (headerScrolled && account) {
+      return <AccountHeader account={account} />;
+    }
     return (
       <Header
         expandedMode={expandedMode}
         onToggleExpandedMode={this.onToggleExpandedMode}
         onAddAccount={this.onAddAccount}
-        title={title}
       />
     );
   };
