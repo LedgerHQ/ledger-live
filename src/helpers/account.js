@@ -8,7 +8,7 @@ import type {
   FiatUnit,
   BalanceHistory,
   CalculateCounterValue,
-  DailyOperationsSection
+  DailyOperations
 } from "../types";
 
 function startOfDay(t) {
@@ -80,6 +80,8 @@ export function getBalanceHistorySum(
     );
 }
 
+const emptyDailyOperations = { sections: [], completed: true };
+
 /**
  * Return a list of `{count}` operations grouped by day.
  * @memberof helpers/account
@@ -87,9 +89,9 @@ export function getBalanceHistorySum(
 export function groupAccountOperationsByDay(
   account: Account,
   count: number
-): DailyOperationsSection[] {
+): DailyOperations {
   const { operations } = account;
-  if (operations.length === 0) return [];
+  if (operations.length === 0) return emptyDailyOperations;
   const sections = [];
   let day = startOfDay(operations[0].date);
   let data = [];
@@ -105,7 +107,10 @@ export function groupAccountOperationsByDay(
     }
   }
   sections.push({ day, data });
-  return sections;
+  return {
+    sections,
+    completed: count >= operations.length
+  };
 }
 
 /**
@@ -114,7 +119,7 @@ export function groupAccountOperationsByDay(
 export function groupAccountsOperationsByDay(
   accounts: Account[],
   count: number
-): DailyOperationsSection[] {
+): DailyOperations {
   // Track indexes of account.operations[] for each account
   const indexes: number[] = Array(accounts.length).fill(0);
   // Returns the most recent operation from the account with current indexes
@@ -135,7 +140,7 @@ export function groupAccountsOperationsByDay(
   }
 
   let op = getNextOperation();
-  if (!op) return [];
+  if (!op) return emptyDailyOperations;
   const sections = [];
   let day = startOfDay(op.date);
   let data = [];
@@ -150,5 +155,8 @@ export function groupAccountsOperationsByDay(
     op = getNextOperation();
   }
   sections.push({ day, data });
-  return sections;
+  return {
+    sections,
+    completed: !op
+  };
 }

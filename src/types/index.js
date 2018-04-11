@@ -34,6 +34,13 @@ export type DailyOperationsSection = {
   data: Operation[]
 };
 
+export type DailyOperations = {
+  // operations grouped by day
+  sections: DailyOperationsSection[],
+  // Is the sections complete? means there is no more operations to pull
+  completed: boolean
+};
+
 /**
  * Nesting object map: crypto ticker -> fiat ticker -> Inner
  * e.g. CounterValuesPairing<number> can be { BTC: { USD: 1 } }
