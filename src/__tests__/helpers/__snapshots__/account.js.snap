@@ -1342,19 +1342,19 @@ Array [
   },
   Object {
     "date": 2018-03-12T04:00:00.000Z,
-    "value": 79902987,
+    "value": 80860621,
   },
   Object {
     "date": 2018-03-13T04:00:00.000Z,
-    "value": 104635728,
+    "value": 105593362,
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 174181748,
+    "value": 175139382,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 287899386,
+    "value": 288857020,
   },
 ]
 `;
@@ -1363,43 +1363,43 @@ exports[`getBalanceHistorySum with lot of accounts 1`] = `
 Array [
   Object {
     "date": 2018-03-06T04:00:00.000Z,
-    "value": 5589958968,
+    "value": 6509097582,
   },
   Object {
     "date": 2018-03-07T04:00:00.000Z,
-    "value": 6603744525,
+    "value": 7630636511,
   },
   Object {
     "date": 2018-03-08T04:00:00.000Z,
-    "value": 7929046325,
+    "value": 9112916061,
   },
   Object {
     "date": 2018-03-09T04:00:00.000Z,
-    "value": 9330981297,
+    "value": 10562477039,
   },
   Object {
     "date": 2018-03-10T04:00:00.000Z,
-    "value": 11028221752,
+    "value": 12264619464,
   },
   Object {
     "date": 2018-03-11T04:00:00.000Z,
-    "value": 12376763521,
+    "value": 13846184545,
   },
   Object {
     "date": 2018-03-12T04:00:00.000Z,
-    "value": 14549420157,
+    "value": 16021479123,
   },
   Object {
     "date": 2018-03-13T04:00:00.000Z,
-    "value": 16128860851,
+    "value": 17996914003,
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 17527760914,
+    "value": 19690971970,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 18695478309,
+    "value": 20948609203,
   },
 ]
 `;
@@ -1416,35 +1416,35 @@ Array [
   },
   Object {
     "date": 2018-03-08T04:00:00.000Z,
-    "value": 15891548,
+    "value": 58027808,
   },
   Object {
     "date": 2018-03-09T04:00:00.000Z,
-    "value": 33421439,
+    "value": 75557699,
   },
   Object {
     "date": 2018-03-10T04:00:00.000Z,
-    "value": -36880456,
+    "value": 111218942,
   },
   Object {
     "date": 2018-03-11T04:00:00.000Z,
-    "value": 49449445,
+    "value": 197548843,
   },
   Object {
     "date": 2018-03-12T04:00:00.000Z,
-    "value": 151232396,
+    "value": 299331794,
   },
   Object {
     "date": 2018-03-13T04:00:00.000Z,
-    "value": 165695777,
+    "value": 313795175,
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 191023289,
+    "value": 339122687,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 226716238,
+    "value": 374815636,
   },
 ]
 `;
@@ -3083,7 +3083,7 @@ Array [
         "addresses": Array [
           "1w6KFx6ueEfahxec9tnP253t6t",
         ],
-        "amount": -47267356,
+        "amount": 47267356,
         "blockHeight": 177493,
         "confirmations": 0,
         "date": 2018-03-14T12:22:32.221Z,
@@ -3161,7 +3161,7 @@ Array [
         "addresses": Array [
           "1JdyVmJ2WvWnGtqjWwmTQK86vxTP",
         ],
-        "amount": -24559081,
+        "amount": 24559081,
         "blockHeight": 103195,
         "confirmations": 0,
         "date": 2018-03-14T10:53:27.418Z,
@@ -3226,7 +3226,7 @@ Array [
         "addresses": Array [
           "1faMm4Lh4yo8QeiTC8ye44DF9o",
         ],
-        "amount": -25503097,
+        "amount": 25503097,
         "blockHeight": 177483,
         "confirmations": 0,
         "date": 2018-03-14T09:59:39.307Z,
@@ -3621,7 +3621,7 @@ Array [
         "addresses": Array [
           "1xqDnrp16xAebGVesdvwihgiU8up8Mv6N1",
         ],
-        "amount": -5398803,
+        "amount": 5398803,
         "blockHeight": 177456,
         "confirmations": 0,
         "date": 2018-03-14T03:08:28.893Z,

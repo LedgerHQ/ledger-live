@@ -8,7 +8,7 @@ Object {
       "1TrvaGgHc7nK3XbHERUhDwHorM",
     ],
     "archived": false,
-    "balance": 41017413,
+    "balance": 56339471,
     "balanceByDay": Object {},
     "coinType": 2,
     "id": "mock_account_model1",
@@ -478,7 +478,7 @@ Object {
         "addresses": Array [
           "1zshXWTa6LBC6b74j8LA6JyvYy8n",
         ],
-        "amount": -7661029,
+        "amount": 7661029,
         "blockHeight": 156748,
         "confirmations": 0,
         "date": "2018-03-09T01:24:00.155Z",

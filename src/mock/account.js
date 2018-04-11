@@ -90,10 +90,17 @@ export function genAddingOperationsInAccount(
  * @param id is a number or a string, used as an account identifier and as a seed for the generation.
  * @memberof mock/account
  */
-export function genAccount(id: number | string): Account {
+type GenAccountOptions = {
+  operationsSize?: number
+};
+
+export function genAccount(
+  id: number | string,
+  opts: GenAccountOptions = {}
+): Account {
   const rng = new Prando(id);
   const currency = rng.nextArrayItem(currencies);
-  const operationsSize = rng.nextInt(1, 200);
+  const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
   const account = {
     id: `mock_account_${id}`,
@@ -115,6 +122,7 @@ export function genAccount(id: number | string): Account {
     name: rng.nextString(rng.nextInt(4, 34)),
     balanceByDay: {}
   };
+
   account.operations = Array(operationsSize)
     .fill(null)
     .reduce(ops => {
@@ -122,6 +130,19 @@ export function genAccount(id: number | string): Account {
       return ops.concat(op);
     }, []);
 
+  ensureNoNegative(account.operations);
+
   account.balance = account.operations.reduce((sum, op) => sum + op.amount, 0);
   return account;
+}
+
+function ensureNoNegative(operations) {
+  let total = 0;
+  for (let i = operations.length - 1; i >= 0; i--) {
+    const op = operations[i];
+    if (total + op.amount < 0) {
+      op.amount = -op.amount;
+    }
+    total += op.amount;
+  }
 }
