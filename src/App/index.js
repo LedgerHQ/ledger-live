@@ -9,7 +9,7 @@ import AccountSettings from "../screens/accountSettings/index";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
 import SelectFiatUnit from "../screens/Settings/SelectFiatUnit";
-import ChartTimeRange from "../screens/Settings/ChartTimeRange";
+import GenericSelectScreen from "../screens/GenericSelectScreen";
 import ImportAccounts from "../screens/ImportAccounts";
 import EditUnits from "../screens/accountSettings/EditUnits";
 import EditConfirmations from "../screens/accountSettings/EditConfirmations";
@@ -49,7 +49,7 @@ const SettingsStack = StackNavigator(
     Settings: { screen: Settings },
     ImportAccounts: { screen: ImportAccounts },
     SelectFiatUnit: { screen: SelectFiatUnit },
-    ChartTimeRange: { screen: ChartTimeRange }
+    ChartTimeRange: { screen: GenericSelectScreen }
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,

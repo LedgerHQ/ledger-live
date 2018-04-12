@@ -14,7 +14,7 @@ import LText from "../../components/LText";
 import { withReboot } from "../../components/RebootContext";
 import SectionEntry from "../../components/SectionEntry";
 import SectionTitle from "../../components/SectionTitle";
-import { getLabelFromRange } from "./ChartTimeRange";
+import ChartTimeRangeSection from "./ChartTimeRangeSection";
 import { saveSettings } from "../../actions/settings";
 import type { State } from "../../reducers";
 
@@ -69,7 +69,7 @@ class Settings extends Component<*> {
   };
 
   render() {
-    const { navigation, settings } = this.props;
+    const { navigation, settings, saveSettings } = this.props;
     const arrowRight = require("../../images/arrow_right.png");
 
     return (
@@ -89,20 +89,11 @@ class Settings extends Component<*> {
             <Image source={arrowRight} />
           </LText>
         </SectionEntry>
-        <SectionEntry
-          onPress={() =>
-            navigation.navigate({
-              routeName: "ChartTimeRange",
-              key: "ChartTimeRange"
-            })
-          }
-        >
-          <LText>Dashboard chart time range</LText>
-          <LText style={styles.tempLineHeight}>
-            {getLabelFromRange(settings.chartTimeRange)}
-            <Image source={arrowRight} />
-          </LText>
-        </SectionEntry>
+        <ChartTimeRangeSection
+          navigation={navigation}
+          saveSettings={saveSettings}
+          value={settings.chartTimeRange}
+        />
         <SectionEntry>
           <LText>Use red for values going up</LText>
           <Switch
