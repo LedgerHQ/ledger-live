@@ -6,14 +6,14 @@ import {
   Text,
   StyleSheet,
   Alert,
-  Switch,
-  Image
+  Switch
 } from "react-native";
 import { connect } from "react-redux";
 import LText from "../../components/LText";
 import { withReboot } from "../../components/RebootContext";
 import SectionEntry from "../../components/SectionEntry";
 import SectionTitle from "../../components/SectionTitle";
+import FiatUnitSection from "./FiatUnitSection";
 import ChartTimeRangeSection from "./ChartTimeRangeSection";
 import { saveSettings } from "../../actions/settings";
 import type { State } from "../../reducers";
@@ -70,25 +70,15 @@ class Settings extends Component<*> {
 
   render() {
     const { navigation, settings, saveSettings } = this.props;
-    const arrowRight = require("../../images/arrow_right.png");
 
     return (
       <ScrollView style={styles.container}>
         <SectionTitle title="DISPLAY" />
-        <SectionEntry
-          onPress={() =>
-            navigation.navigate({
-              routeName: "SelectFiatUnit",
-              key: "selectfiatunit"
-            })
-          }
-        >
-          <LText>Countervalue currency</LText>
-          <LText style={styles.tempLineHeight}>
-            {settings.counterValue}
-            <Image source={arrowRight} />
-          </LText>
-        </SectionEntry>
+        <FiatUnitSection
+          navigation={navigation}
+          saveSettings={saveSettings}
+          value={settings.counterValue}
+        />
         <ChartTimeRangeSection
           navigation={navigation}
           saveSettings={saveSettings}

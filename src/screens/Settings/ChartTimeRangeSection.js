@@ -1,10 +1,10 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, Image } from "react-native";
 import LText from "../../components/LText";
 import SectionEntry from "../../components/SectionEntry";
 
-class ChartTimeRangeSection extends Component<*> {
+class ChartTimeRangeSection extends PureComponent<*> {
   render() {
     const { navigation, saveSettings, value } = this.props;
     const arrowRight = require("../../images/arrow_right.png");
