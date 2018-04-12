@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, FlatList } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
+// import type { NavigationScreenProp } from "react-navigation";
 import SectionEntry from "../components/SectionEntry";
 import LText from "../components/LText";
 
@@ -10,20 +10,21 @@ type Item = {
   value: *
 };
 
-type NavigationState = {
-  params: {
-    title: string,
-    data: *,
-    callback: Item => void
-  }
-};
+// TODO: wrap my head around how flowtyping work with react-navigation screens
+// type NavigationState = {
+//   params: {
+//     title: string,
+//     data: *,
+//     callback: Item => void
+//   }
+// };
 
-type Navigation = NavigationScreenProp<NavigationState, *>;
+// type Navigation = NavigationScreenProp<NavigationState, *>;
 
 class GenericSelectScreen extends Component<{
-  navigation: Navigation
+  navigation: *
 }> {
-  static navigationOptions = ({ navigation }: { navigation: Navigation }) => {
+  static navigationOptions = ({ navigation }: { navigation: * }) => {
     const { title } = navigation.state.params;
     return { title };
   };
