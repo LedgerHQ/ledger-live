@@ -33,6 +33,8 @@ import SectionHeader from "./SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
+import { withCounterValuePolling } from "../../components/CounterValuePolling";
+import type { CounterValuePolling } from "../../components/CounterValuePolling";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
@@ -66,6 +68,7 @@ class Dashboard extends Component<
     totalBalancePeriodBegin: number,
     fiatUnit: FiatUnit,
     calculateCounterValue: CalculateCounterValue,
+    counterValuePolling: CounterValuePolling,
     screenProps: {
       topLevelNavigation: *
     }
@@ -88,6 +91,7 @@ class Dashboard extends Component<
     this.setState({ refreshing: true });
     try {
       this.setState({ opCount: 50 });
+      await this.props.counterValuePolling.poll();
     } finally {
       this.setState({ refreshing: false });
     }
@@ -189,7 +193,7 @@ class Dashboard extends Component<
   }
 }
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps)(withCounterValuePolling(Dashboard));
 
 const styles = StyleSheet.create({
   topBackground: {

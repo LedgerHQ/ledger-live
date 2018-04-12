@@ -9,17 +9,12 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import reducers from "./reducers";
 import App, { LoadingApp } from "./App";
+import { CounterValuePollingProvider } from "./components/CounterValuePolling";
 import { LocaleProvider } from "./components/LocaleContext";
 import { RebootProvider } from "./components/RebootContext";
 import { initAccounts } from "./actions/accounts";
 import { initSettings } from "./actions/settings";
-import {
-  initCounterValues,
-  fetchCounterValuesHist,
-  fetchCounterValuesLatest
-} from "./actions/counterValues";
-import { AppState } from "react-native";
-import throttle from "lodash/throttle";
+import { initCounterValues } from "./actions/counterValues";
 
 const createLedgerStore = () =>
   createStore(
@@ -46,16 +41,9 @@ export default class Root extends Component<
     ready: false,
     rebootId: 0
   };
-  interval: *;
 
   componentDidMount() {
-    AppState.addEventListener("change", this.handleAppStateChange);
     return this.init();
-  }
-
-  componentWillUnmount() {
-    AppState.removeEventListener("change", this.handleAppStateChange);
-    clearInterval(this.interval);
   }
 
   componentDidCatch(e: *) {
@@ -63,45 +51,23 @@ export default class Root extends Component<
     throw e;
   }
 
-  poll = throttle(() => {
-    const { store } = this.state;
-    store.dispatch(fetchCounterValuesLatest());
-  }, 30000);
-
-  initPolling = () => {
-    clearInterval(this.interval);
-    this.interval = setInterval(this.poll, 120000);
-    this.poll();
-  };
-
-  handleAppStateChange = (nextAppState: string) => {
-    if (nextAppState === "active") {
-      this.initPolling();
-    } else {
-      clearInterval(this.interval);
-    }
-  };
-
   async init() {
     const { store } = this.state;
     await store.dispatch(initSettings());
     await store.dispatch(initCounterValues());
     await store.dispatch(initAccounts());
-    await store.dispatch(fetchCounterValuesHist());
     this.setState({ ready: true });
-    this.initPolling();
   }
 
   reboot = async (resetData: boolean = false) => {
-    clearInterval(this.interval);
-    if (resetData) {
-      await db.delete(["settings", "accounts", "countervalues"]);
-    }
     this.setState({
       store: createLedgerStore(),
       ready: false,
       rebootId: this.state.rebootId + 1
     });
+    if (resetData) {
+      await db.delete(["settings", "accounts", "countervalues"]);
+    }
     return this.init();
   };
 
@@ -111,7 +77,15 @@ export default class Root extends Component<
     return (
       <RebootProvider reboot={this.reboot}>
         <Provider key={rebootId} store={store}>
-          <LocaleProvider>{ready ? <App /> : <LoadingApp />}</LocaleProvider>
+          <LocaleProvider>
+            {ready ? (
+              <CounterValuePollingProvider store={store}>
+                <App />
+              </CounterValuePollingProvider>
+            ) : (
+              <LoadingApp />
+            )}
+          </LocaleProvider>
         </Provider>
       </RebootProvider>
     );
