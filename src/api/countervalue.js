@@ -87,7 +87,7 @@ export async function fetchHistodayRates(
     // NB in the future we want a single API call
     return Promise.all(
       currencyOrCurrencies.map(currency =>
-        fetchHistodayRates(currency, fiatUnit)
+        fetchHistodayRates(currency, fiatUnit, getLatestDayFetched)
       )
     ).then(all => {
       const data = {};
