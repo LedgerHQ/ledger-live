@@ -122,10 +122,11 @@ export async function fetchHistodayRates(
   if (data && typeof data === "object" && Array.isArray(data.Data)) {
     for (const item of data.Data) {
       if (!item || typeof item !== "object") continue;
-      const { time, close } = item;
-      if (typeof close !== "number" || typeof time !== "number") continue;
-      const day = formatCounterValueDayUTC(new Date(time * 1000));
-      out[day] = convertToCentPerSat(currencyOrCurrencies, fiatUnit, close);
+      const { time, open } = item;
+      if (typeof open !== "number" || typeof time !== "number") continue;
+      // API gives a time at 00:00, we remove one second to format the day before because we want the close value of previous day.
+      const day = formatCounterValueDayUTC(new Date(time * 1000 - 1000));
+      out[day] = convertToCentPerSat(currencyOrCurrencies, fiatUnit, open);
     }
   }
 
