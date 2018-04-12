@@ -4,7 +4,7 @@ import { createSelector } from "reselect";
 import { createAccountModel } from "@ledgerhq/wallet-common/lib/models/account";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import { getBalanceHistorySum } from "@ledgerhq/wallet-common/lib/helpers/account";
-import { fiatUnitSelector } from "./settings";
+import { fiatUnitSelector, chartTimeRangeSelector } from "./settings";
 import { calculateCounterValueSelector } from "./counterValues";
 
 export const accountModel = createAccountModel();
@@ -71,7 +71,7 @@ export function getAccountById(
 
 export const globalBalanceHistorySelector = createSelector(
   getVisibleAccounts,
-  state => state.settings.chartTimeRange,
+  chartTimeRangeSelector,
   fiatUnitSelector,
   calculateCounterValueSelector,
   getBalanceHistorySum

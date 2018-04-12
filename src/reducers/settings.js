@@ -53,4 +53,7 @@ const handlers: Object = {
 export const fiatUnitSelector = (state: State) =>
   getFiatUnit(state.settings.counterValue);
 
+export const chartTimeRangeSelector = (state: State) =>
+  state.settings.chartTimeRange;
+
 export default handleActions(handlers, state);
