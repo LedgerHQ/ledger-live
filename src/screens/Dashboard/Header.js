@@ -5,6 +5,7 @@ import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import LText from "../../components/LText";
 import { withLocale } from "../../components/LocaleContext";
 import type { TranslateFunction } from "../../components/LocaleContext";
+import NetworkIndicator from "../../components/NetworkIndicator";
 
 class Header extends Component<{
   accounts: Account[],
@@ -22,6 +23,7 @@ class Header extends Component<{
             {t("home_subtitle", { count: accounts.length })}
           </LText>
         </View>
+        <NetworkIndicator />
       </View>
     );
   }
@@ -35,7 +37,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flex: 1,
     flexDirection: "row",
-    paddingLeft: 10
+    paddingLeft: 10,
+    paddingRight: 20
   },
   headerLeft: {
     justifyContent: "space-around"

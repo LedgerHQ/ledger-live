@@ -19,7 +19,7 @@ import LText from "../components/LText";
 import BlueButton from "../components/BlueButton";
 import { getAccounts } from "../reducers/accounts";
 import { updateAccount, addAccount } from "../actions/accounts";
-import { fetchCounterValuesHist } from "../actions/counterValues";
+import { pollRates } from "../actions/counterValues";
 
 type Data = Array<mixed>;
 type AccountData = ["account", string, string, number];
@@ -146,7 +146,7 @@ type Props = {
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
-  fetchCounterValuesHist: () => void
+  pollRates: () => void
 };
 type State = {
   selectedAccounts: string[],
@@ -229,12 +229,7 @@ class PresentResult_ extends Component<Props, State> {
 
   onImport = async () => {
     const { selectedAccounts, items } = this.state;
-    const {
-      onDone,
-      addAccount,
-      updateAccount,
-      fetchCounterValuesHist
-    } = this.props;
+    const { onDone, addAccount, updateAccount, pollRates } = this.props;
     this.setState({ importing: true });
     const selectedItems = items.filter(item =>
       selectedAccounts.includes(item.account.id)
@@ -258,7 +253,7 @@ class PresentResult_ extends Component<Props, State> {
         default:
       }
     }
-    await fetchCounterValuesHist();
+    await pollRates();
     // ////////////////////////////////////////////////
 
     onDone();
@@ -393,7 +388,7 @@ class PresentResult_ extends Component<Props, State> {
 const PresentResult = connect(state => ({ accounts: getAccounts(state) }), {
   addAccount,
   updateAccount,
-  fetchCounterValuesHist
+  pollRates
 })(PresentResult_);
 
 class Scanning extends Component<{
