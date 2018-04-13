@@ -5457,9 +5457,9 @@ react-native-svg@6.3.1:
   dependencies:
     prop-types "^15.6.0"
 
-react-native@facebook/react-native#0.55-stable:
+react-native@0.55.2:
   version "0.55.2"
-  resolved "https://codeload.github.com/facebook/react-native/tar.gz/a05f85172e8f7dae98c979096f24a55ad94b7356"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.55.2.tgz#80d26a3f4193ebd1fd49a4859011c501b0ca3bab"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"

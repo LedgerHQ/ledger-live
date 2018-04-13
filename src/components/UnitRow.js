@@ -22,7 +22,7 @@ export default class UnitRow extends PureComponent<{
               fontSize: 14
             }}
           >
-            {unit.name}
+            {unit.name} ({unit.code})
           </LText>
         </View>
       </Touchable>
@@ -34,8 +34,6 @@ const styles = StyleSheet.create({
   unitRow: {
     minHeight: 50,
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
     padding: 20,
     backgroundColor: "white",
     marginBottom: 1

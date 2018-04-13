@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { View, StyleSheet, ScrollView, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
@@ -42,8 +42,6 @@ class EditUnits extends Component<{
     const { account } = this.props.navigation.state.params;
     return (
       <View>
-        <ScrollView style={styles.container} />
-        <View style={styles.header} />
         <FlatList
           data={account.currency.units}
           renderItem={this.renderItem}
@@ -53,23 +51,5 @@ class EditUnits extends Component<{
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  header: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1
-  },
-  body: {
-    marginTop: -50,
-    alignItems: "center"
-  },
-  avatar: {
-    width: 100,
-    height: 100
-  }
-});
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditUnits);

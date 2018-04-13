@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { View, StyleSheet, TextInput, ScrollView } from "react-native";
+import { View, TextInput } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
@@ -41,8 +41,6 @@ class EditConfirmations extends Component<{
     const { account } = this.props.navigation.state.params;
     return (
       <View>
-        <ScrollView style={styles.container} />
-        <View style={styles.header} />
         <SectionEntry>
           <LText>Required Confirmations</LText>
           <TextInput
@@ -59,16 +57,5 @@ class EditConfirmations extends Component<{
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  header: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1
-  }
-});
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditConfirmations);
