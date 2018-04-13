@@ -4,24 +4,21 @@ import { StyleSheet, Image } from "react-native";
 import { listFiats } from "@ledgerhq/currencies";
 import LText from "../../components/LText";
 import SectionEntry from "../../components/SectionEntry";
+import { withCounterValuePolling } from "../../components/CounterValuePolling";
 
 const fiatList = listFiats()
-  .reduce(
-    (acc, cur) => [
-      ...acc,
-      { value: cur.code, label: `${cur.name} (${cur.code})` }
-    ],
-    []
-  )
+  .map(cur => ({ value: cur.code, label: `${cur.name} (${cur.code})` }))
   .sort((a, b) => a.label.localeCompare(b.label));
 
 class FiatUnitSection extends PureComponent<*> {
   render() {
-    const { navigation, saveSettings, value } = this.props;
+    const { navigation, saveSettings, value, counterValuePolling } = this.props;
     const arrowRight = require("../../images/arrow_right.png");
 
     const callback = item => {
       saveSettings({ counterValue: item.value });
+      counterValuePolling.poll();
+      counterValuePolling.flush();
     };
 
     return (
@@ -48,7 +45,7 @@ class FiatUnitSection extends PureComponent<*> {
   }
 }
 
-export default FiatUnitSection;
+export default withCounterValuePolling(FiatUnitSection);
 
 const styles = StyleSheet.create({
   tempLineHeight: {
