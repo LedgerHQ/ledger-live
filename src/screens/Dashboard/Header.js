@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 20
   },
   headerLeft: {
     justifyContent: "space-around"

@@ -15,7 +15,7 @@ class Header extends Component<{
       <View
         style={{
           // TODO proper design
-          backgroundColor: counterValuePolling.error ? "red" : "green",
+          backgroundColor: counterValuePolling.error ? "#f22" : "#6f6",
           width: 8,
           height: 8,
           borderRadius: 8
