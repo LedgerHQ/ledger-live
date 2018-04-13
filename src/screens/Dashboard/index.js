@@ -193,7 +193,7 @@ class Dashboard extends Component<
   }
 }
 
-export default connect(mapStateToProps)(withCounterValuePolling(Dashboard));
+export default withCounterValuePolling(connect(mapStateToProps)(Dashboard));
 
 const styles = StyleSheet.create({
   topBackground: {

@@ -10,6 +10,7 @@ export const PollingContext = React.createContext(() => {});
 
 export type CounterValuePolling = {
   poll: () => Promise<boolean>,
+  flush: () => void,
   pending: boolean,
   error: ?Error
 };
@@ -83,6 +84,7 @@ export class CounterValuePollingProvider extends React.Component<
   state = {
     pending: false,
     poll: this.poll,
+    flush: this.poll.flush,
     error: null
   };
 

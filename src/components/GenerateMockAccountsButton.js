@@ -6,6 +6,8 @@ import GreyButton from "./GreyButton";
 import { accountModel } from "../reducers/accounts";
 import { initAccounts } from "../actions/accounts";
 import db from "../db";
+import { withCounterValuePolling } from "./CounterValuePolling";
+import type { CounterValuePolling } from "./CounterValuePolling";
 
 async function injectMockAccountsInDB(count) {
   await db.save(
@@ -18,18 +20,24 @@ async function injectMockAccountsInDB(count) {
 
 const GenerateMockAccountsButton = ({
   title,
-  initAccounts
+  initAccounts,
+  counterValuePolling
 }: {
   initAccounts: () => *,
-  title: string
+  title: string,
+  counterValuePolling: CounterValuePolling
 }) => (
   <GreyButton
     title={title}
     onPress={async () => {
       await injectMockAccountsInDB(12);
       await initAccounts();
+      await counterValuePolling.poll();
+      counterValuePolling.flush();
     }}
   />
 );
 
-export default connect(null, { initAccounts })(GenerateMockAccountsButton);
+export default withCounterValuePolling(
+  connect(null, { initAccounts })(GenerateMockAccountsButton)
+);
