@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { withCounterValuePolling } from "./CounterValuePolling";
 import type { CounterValuePolling } from "./CounterValuePolling";
 
@@ -9,18 +9,20 @@ class Header extends Component<{
 }> {
   render() {
     const { counterValuePolling } = this.props;
-    return counterValuePolling.pending ? (
-      <ActivityIndicator color="white" />
-    ) : (
-      <View
-        style={{
-          // TODO proper design
-          backgroundColor: counterValuePolling.error ? "#f22" : "#6f6",
-          width: 8,
-          height: 8,
-          borderRadius: 8
-        }}
-      />
+    return (
+      <TouchableOpacity onPress={counterValuePolling.poll}>
+        <View
+          style={{
+            // TODO proper design
+            backgroundColor: counterValuePolling.pending
+              ? "#69f"
+              : counterValuePolling.error ? "#f22" : "#6f6",
+            width: 8,
+            height: 8,
+            borderRadius: 8
+          }}
+        />
+      </TouchableOpacity>
     );
   }
 }
