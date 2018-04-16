@@ -91,6 +91,10 @@ export class CounterValuePollingProvider extends React.Component<
   pollTimeout: *;
   unmounted = false;
 
+  appIsActive = true;
+  // assuming we are connected because we want to start polling when we go connected again
+  networkIsConnected = true;
+
   componentDidMount() {
     AppState.addEventListener("change", this.handleAppStateChange);
     NetInfo.isConnected.addEventListener(
@@ -113,21 +117,21 @@ export class CounterValuePollingProvider extends React.Component<
   handleAppStateChange = (nextAppState: string) => {
     clearTimeout(this.pollTimeout);
     if (nextAppState === "active") {
+      this.appIsActive = true;
       // poll when coming back
       this.schedulePoll(this.props.activeAppDelay);
     } else {
+      this.appIsActive = false;
       this.cancelPoll();
     }
   };
 
-  // assuming we are connected because we want to start polling when we go connected again
-  wasConnected = true;
   handleConnectivityChange = (isConnected: boolean) => {
-    if (isConnected && !this.wasConnected) {
+    if (isConnected && !this.networkIsConnected && this.appIsActive) {
       // poll when recovering a connection
       this.schedulePoll(this.props.connectionRecoveredDelay);
     }
-    this.wasConnected = isConnected;
+    this.networkIsConnected = isConnected;
   };
 
   render() {
