@@ -1,0 +1,175 @@
+/* @flow */
+import React, { Component } from "react";
+import moment from "moment";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Linking,
+  Image,
+  TouchableOpacity
+} from "react-native";
+import type { NavigationScreenProp } from "react-navigation";
+import HeaderRightClose from "../components/HeaderRightClose";
+import LText from "../components/LText";
+import CurrencyIcon from "../components/CurrencyIcon";
+import SectionEntry from "../components/SectionEntry";
+import BlueButton from "../components/BlueButton";
+import CurrencyUnitValue from "../components/CurrencyUnitValue";
+import CounterValue from "../components/CounterValue";
+import colors from "../colors";
+
+export default class OperationDetails extends Component<{
+  navigation: NavigationScreenProp<*>
+}> {
+  static navigationOptions = ({ navigation }: *) => ({
+    title: "Operation Details",
+    headerRight: <HeaderRightClose navigation={navigation} />,
+    headerLeft: null
+  });
+
+  viewOperation = () => {
+    const { operation } = this.props.navigation.state.params;
+    Linking.openURL(`https://testnet.blockchain.info/tx/${operation.id}`).catch(
+      err => console.error("An error occurred", err)
+    );
+  };
+  viewAccount = () => {
+    const { navigation } = this.props;
+    /* Fix Me to have an access to the mainNavigation */
+    const { mainNavigation } = this.props.navigation.state.params;
+    mainNavigation.navigate({
+      routeName: "Accounts",
+      params: { accountId: navigation.state.params.account.id },
+      key: "accounts"
+    });
+    navigation.goBack();
+  };
+  render() {
+    const {
+      operation,
+      account,
+      linkToAccount
+    } = this.props.navigation.state.params;
+    const isConfirmed = operation.confirmations >= account.minConfirmations;
+    const colorConfirmed = isConfirmed ? colors.green : colors.red;
+    const colorTransaction = operation.amount >= 0 ? colors.green : "black";
+
+    return (
+      <View style={styles.container}>
+        <ScrollView style={{ flex: 1 }}>
+          <SectionEntry>
+            <View style={styles.transactionAmount}>
+              <LText style={{ margin: 10 }}>
+                <CurrencyIcon size={46} currency={account.currency} />
+              </LText>
+              <LText
+                style={[styles.currencyValue, { color: colorTransaction }]}
+              >
+                <CurrencyUnitValue
+                  unit={account.unit}
+                  value={operation.amount}
+                />
+              </LText>
+              <LText
+                style={[styles.counterValue, { flexDirection: "row", flex: 1 }]}
+              >
+                <CounterValue
+                  value={operation.amount}
+                  date={operation.date}
+                  currency={account.currency}
+                />
+              </LText>
+            </View>
+          </SectionEntry>
+          <SectionEntry>
+            <LText style={[styles.operationLabel, styles.colLeft]}>
+              Account
+            </LText>
+            <LText numberOfLines={1} style={styles.colRight}>
+              {account.name}
+            </LText>
+            {linkToAccount ? (
+              <TouchableOpacity onPress={() => this.viewAccount()}>
+                <Image
+                  style={{ width: 18, height: 18, opacity: 0.6 }}
+                  source={require("../images/lookUp.png")}
+                />
+              </TouchableOpacity>
+            ) : null}
+          </SectionEntry>
+          <SectionEntry>
+            <LText style={[styles.operationLabel, styles.colLeft]}>Date</LText>
+            <LText style={styles.colRight}>
+              {moment(operation.date).format("MMMM Do YYYY, h:mm:ss a")}
+            </LText>
+          </SectionEntry>
+          <SectionEntry>
+            <LText style={[styles.operationLabel, styles.colLeft]}>
+              Status
+            </LText>
+            <LText
+              style={{
+                color: colorConfirmed,
+                flexDirection: "column",
+                flex: 4
+              }}
+            >
+              {isConfirmed
+                ? `Confirmed (${operation.confirmations})`
+                : `Not Confirmed (${operation.confirmations})`}
+            </LText>
+          </SectionEntry>
+          <SectionEntry>
+            <LText style={[styles.operationLabel, styles.colLeft]}>From</LText>
+            <LText style={styles.colRight}>Coming...</LText>
+          </SectionEntry>
+          <SectionEntry>
+            <LText style={[styles.operationLabel, styles.colLeft]}>To</LText>
+            <LText style={styles.colRight}>Coming...</LText>
+          </SectionEntry>
+          <SectionEntry>
+            <LText style={[styles.operationLabel, styles.colLeft]}>
+              Identifier
+            </LText>
+            <LText style={styles.colRight}>{operation.id}</LText>
+          </SectionEntry>
+        </ScrollView>
+        <BlueButton onPress={this.viewOperation} title="View Operation" />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white"
+  },
+  operationLabel: {
+    color: "#6c6d6c"
+  },
+  currencyValue: {
+    fontSize: 28
+  },
+  opRow: {
+    flexDirection: "row"
+  },
+  colLeft: {
+    flexDirection: "column",
+    flex: 2
+  },
+  colRight: {
+    flexDirection: "column",
+    flex: 4
+  },
+  transactionAmount: {
+    flexDirection: "column",
+    flex: 1,
+    alignItems: "center"
+  },
+  counterValue: {
+    fontSize: 18,
+    opacity: 0.5
+  }
+});

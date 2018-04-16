@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { connect } from "react-redux";
+import findIndex from "lodash/findIndex";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import { getVisibleAccounts } from "../../reducers/accounts";
 import ScreenGeneric from "../../components/ScreenGeneric";
@@ -24,14 +25,15 @@ const navigationOptions = {
     />
   )
 };
-
+type Props = {
+  accounts: Account[],
+  navigation: *,
+  screenProps: {
+    topLevelNavigation: *
+  }
+};
 class Accounts extends Component<
-  {
-    accounts: Account[],
-    screenProps: {
-      topLevelNavigation: *
-    }
-  },
+  Props,
   {
     expandedMode: boolean,
     selectedIndex: number,
@@ -39,10 +41,29 @@ class Accounts extends Component<
   }
 > {
   static navigationOptions = navigationOptions;
+  static getDerivedStateFromProps(nextProps: Props, prevState) {
+    const accountId = nextProps.navigation.state.params
+      ? nextProps.navigation.state.params.accountId
+      : null;
+    if (accountId && accountId !== prevState.navigationFocusAccountId) {
+      const selectedIndex = findIndex(
+        nextProps.accounts,
+        acc => acc.id === accountId
+      );
+      return {
+        selectedIndex,
+        expandedMode: false,
+        navigationFocusAccountId: accountId
+      };
+    }
+    return null;
+  }
+
   state = {
     expandedMode: false,
     selectedIndex: 0,
-    headerScrolled: false
+    headerScrolled: false,
+    navigationFocusAccountId: null
   };
 
   onToggleExpandedMode = () => {

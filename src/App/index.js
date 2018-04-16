@@ -8,7 +8,6 @@ import Accounts from "../screens/Accounts";
 import AccountSettings from "../screens/accountSettings/index";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
-import GenericSelectScreen from "../screens/GenericSelectScreen";
 import ImportAccounts from "../screens/ImportAccounts";
 import EditUnits from "../screens/accountSettings/EditUnits";
 import EditConfirmations from "../screens/accountSettings/EditConfirmations";
@@ -25,6 +24,7 @@ import SendFundsPlugDevice from "../screens/SendFundsPlugDevice";
 import SendFundsConfirmation from "../screens/SendFundsConfirmation";
 import AddAccountSelectCurrency from "../screens/AddAccountSelectCurrency";
 import AddAccountInfo from "../screens/AddAccountInfo";
+import OperationDetails from "../screens/OperationDetails";
 
 const stackNavigatiorDefaultNavigationOptions = {
   headerStyle: {
@@ -46,9 +46,7 @@ const styles = StyleSheet.create({
 const SettingsStack = StackNavigator(
   {
     Settings: { screen: Settings },
-    ImportAccounts: { screen: ImportAccounts },
-    SelectFiatUnit: { screen: GenericSelectScreen },
-    ChartTimeRange: { screen: GenericSelectScreen }
+    ImportAccounts: { screen: ImportAccounts }
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
@@ -207,6 +205,7 @@ const RootNavigator = StackNavigator(
       path: "send",
       screen: SendFunds
     },
+    OperationDetails: { screen: OperationDetails },
     AddAccount: { screen: AddAccount },
     AccountSettings: { screen: AccountSettingsConfig },
     ImportAccounts: { screen: ImportAccounts },
