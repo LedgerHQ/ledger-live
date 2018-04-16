@@ -21,9 +21,7 @@ export default class Onboarding extends PureComponent<{
             onPress={goToImportAccounts}
             containerStyle={styles.importButton}
           />
-          {__DEV__ ? (
-            <GenerateMockAccountsButton title="Generate Mock" />
-          ) : null}
+          <GenerateMockAccountsButton title="Generate Mock" />
         </View>
       </View>
     );
