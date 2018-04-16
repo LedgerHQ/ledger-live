@@ -7,6 +7,7 @@ import dbMiddleware from "./middlewares/db";
 import db from "./db";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
+import SplashScreen from "react-native-splash-screen";
 import reducers from "./reducers";
 import App, { LoadingApp } from "./App";
 import { CounterValuePollingProvider } from "./components/CounterValuePolling";
@@ -28,6 +29,8 @@ const createLedgerStore = () =>
     )
   );
 
+const INIT_TIMEOUT = 300;
+
 export default class Root extends Component<
   {},
   {
@@ -42,8 +45,14 @@ export default class Root extends Component<
     rebootId: 0
   };
 
+  initTimeout: *;
+
   componentDidMount() {
     return this.init();
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.initTimeout);
   }
 
   componentDidCatch(e: *) {
@@ -56,10 +65,14 @@ export default class Root extends Component<
     await store.dispatch(initSettings());
     await store.dispatch(initCounterValues());
     await store.dispatch(initAccounts());
-    this.setState({ ready: true });
+    this.setState({ ready: true }, () => {
+      this.initTimeout = setTimeout(() => SplashScreen.hide(), INIT_TIMEOUT);
+    });
   }
 
   reboot = async (resetData: boolean = false) => {
+    clearTimeout(this.initTimeout);
+    SplashScreen.show();
     this.setState({
       store: createLedgerStore(),
       ready: false,

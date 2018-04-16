@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import { StyleSheet, View, Image, StatusBar } from "react-native";
 import { StackNavigator, TabNavigator, TabBarBottom } from "react-navigation";
 import colors from "../colors";
@@ -219,7 +219,7 @@ const RootNavigator = StackNavigator(
   }
 );
 
-export class LoadingApp extends Component<*> {
+export class LoadingApp extends PureComponent<*> {
   render() {
     return null;
   }
