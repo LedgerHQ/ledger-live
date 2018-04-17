@@ -49,7 +49,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>The Ledger wallet app needs access to your camera to scan QR codes</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MuseoSans-Bold.otf</string>
