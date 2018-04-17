@@ -227,6 +227,12 @@ export class LoadingApp extends PureComponent<*> {
   }
 }
 
+export class NoAuthApp extends PureComponent<*> {
+  render() {
+    return null;
+  }
+}
+
 export default class App extends Component<*> {
   render() {
     return (
