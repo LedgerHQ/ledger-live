@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { SectionList, RefreshControl, StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/wallet-common/lib/types";
+import type { Account, Operation } from "@ledgerhq/wallet-common/lib/types";
 import { groupAccountOperationsByDay } from "@ledgerhq/wallet-common/lib/helpers/account";
 import OperationRow from "./OperationRow";
 import SectionHeader from "../../components/SectionHeader";
@@ -13,7 +13,8 @@ type Props = {
   Header: *,
   account: Account,
   visible?: boolean,
-  onScroll?: (*) => void
+  onScroll?: (*) => void,
+  topLevelNavigation: *
 };
 
 type State = {
@@ -77,8 +78,20 @@ class AccountBody extends Component<Props, State> {
   keyExtractor = (item: *) => item.id;
 
   renderItem = ({ item }: *) => (
-    <OperationRow operation={item} account={this.props.account} />
+    <OperationRow
+      operation={item}
+      account={this.props.account}
+      onPress={this.goToOperationDetails}
+    />
   );
+
+  goToOperationDetails = (operation: Operation, account: Account) => {
+    this.props.topLevelNavigation.navigate({
+      routeName: "OperationDetails",
+      params: { operation, account },
+      key: "operationdetails"
+    });
+  };
 
   render() {
     const { Header, account, visible, onScroll } = this.props;

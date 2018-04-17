@@ -71,7 +71,8 @@ class Dashboard extends Component<
     counterValuePolling: CounterValuePolling,
     screenProps: {
       topLevelNavigation: *
-    }
+    },
+    navigation: *
   },
   {
     headerScrolled: boolean,
@@ -102,7 +103,26 @@ class Dashboard extends Component<
   renderItem = ({ item }: { item: Operation }) => {
     const account = this.props.accounts.find(a => a.id === item.accountId);
     if (!account) return null;
-    return <OperationRow operation={item} account={account} />;
+    return (
+      <OperationRow
+        operation={item}
+        account={account}
+        onPress={this.goToOperationDetails}
+      />
+    );
+  };
+
+  goToOperationDetails = (operation, account) => {
+    this.props.screenProps.topLevelNavigation.navigate({
+      routeName: "OperationDetails",
+      params: {
+        operation,
+        account,
+        mainNavigation: this.props.navigation,
+        linkToAccount: true
+      },
+      key: "operationdetails"
+    });
   };
 
   sectionList: ?SectionList<*>;

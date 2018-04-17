@@ -5,29 +5,38 @@ import { View, StyleSheet } from "react-native";
 import type { Account, Operation } from "@ledgerhq/wallet-common/lib/types";
 import LText from "../../components/LText";
 import OperationRowAmount from "../../components/OperationRowAmount";
+import Touchable from "../../components/Touchable";
 
 class OperationRow extends PureComponent<{
   operation: Operation,
-  account: Account
+  account: Account,
+  onPress: (operation: Operation, account: Account) => void
 }> {
+  onPress = () => {
+    const { operation, account, onPress } = this.props;
+    return onPress(operation, account);
+  };
+
   render() {
     const { operation, account } = this.props;
     return (
-      <View style={styles.root}>
-        <View style={styles.body}>
-          <LText
-            numberOfLines={1}
-            ellipsizeMode="middle"
-            style={styles.address}
-          >
-            {operation.address}
-          </LText>
-          <LText numberOfLines={1} style={styles.time}>
-            {moment(operation.date).format("HH:mm")}
-          </LText>
+      <Touchable onPress={this.onPress}>
+        <View style={styles.root}>
+          <View style={styles.body}>
+            <LText
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              style={styles.address}
+            >
+              {operation.address}
+            </LText>
+            <LText numberOfLines={1} style={styles.time}>
+              {moment(operation.date).format("HH:mm")}
+            </LText>
+          </View>
+          <OperationRowAmount operation={operation} account={account} />
         </View>
-        <OperationRowAmount operation={operation} account={account} />
-      </View>
+      </Touchable>
     );
   }
 }

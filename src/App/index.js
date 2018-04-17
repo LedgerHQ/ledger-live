@@ -25,6 +25,7 @@ import SendFundsPlugDevice from "../screens/SendFundsPlugDevice";
 import SendFundsConfirmation from "../screens/SendFundsConfirmation";
 import AddAccountSelectCurrency from "../screens/AddAccountSelectCurrency";
 import AddAccountInfo from "../screens/AddAccountInfo";
+import OperationDetails from "../screens/OperationDetails";
 
 const stackNavigatiorDefaultNavigationOptions = {
   headerStyle: {
@@ -207,6 +208,7 @@ const RootNavigator = StackNavigator(
       path: "send",
       screen: SendFunds
     },
+    OperationDetails: { screen: OperationDetails },
     AddAccount: { screen: AddAccount },
     AccountSettings: { screen: AccountSettingsConfig },
     ImportAccounts: { screen: ImportAccounts },
