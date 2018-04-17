@@ -1,6 +1,7 @@
 // @flow
 import React from "react";
 import { AppState, NetInfo } from "react-native";
+import { connect } from "react-redux";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import throttle from "lodash/throttle";
 import { pollRates } from "../actions/counterValues";
@@ -15,10 +16,10 @@ export type CounterValuePolling = {
   error: ?Error
 };
 
-export class CounterValuePollingProvider extends React.Component<
+class CounterValuePollingProvider_ extends React.Component<
   {
     children: *,
-    store: *,
+    pollRates: () => *,
     pollThrottle: number,
     pollInitDelay: number,
     connectionRecoveredDelay: number,
@@ -57,8 +58,8 @@ export class CounterValuePollingProvider extends React.Component<
       this.setState(prevState => {
         if (prevState.pending) return null; // prevent concurrency calls.
 
-        this.props.store
-          .dispatch(pollRates())
+        this.props
+          .pollRates()
           // TODO pollRates() should have a timeout, because we don't want this promise to hang forever
           .then(() => {
             if (this.unmounted) return;
@@ -142,6 +143,10 @@ export class CounterValuePollingProvider extends React.Component<
     );
   }
 }
+
+export const CounterValuePollingProvider = connect(null, { pollRates })(
+  CounterValuePollingProvider_
+);
 
 // TODO improve flow types
 export const withCounterValuePolling = (Cmp: *) => {

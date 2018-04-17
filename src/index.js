@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import SplashScreen from "react-native-splash-screen";
 import reducers from "./reducers";
-import App, { LoadingApp } from "./App";
+import App, { LoadingApp, NoAuthApp } from "./App";
 import { CounterValuePollingProvider } from "./components/CounterValuePolling";
 import { LocaleProvider } from "./components/LocaleContext";
 import { RebootProvider } from "./components/RebootContext";
@@ -29,30 +29,51 @@ const createLedgerStore = () =>
     )
   );
 
-const INIT_TIMEOUT = 300;
+class AuthPass extends Component<
+  {
+    enabled?: boolean,
+    children: (success: boolean) => *
+  },
+  {
+    success: boolean
+  }
+> {
+  state = {
+    success: !this.props.enabled
+  };
+  componentDidMount() {
+    if (!this.state.success) {
+      // TODO replace by the actual auth we will do
+      console.log("simulate auth");
+      setTimeout(() => {
+        this.setState({ success: true });
+      }, 1000);
+    }
+  }
+  render() {
+    const { children } = this.props;
+    const { success } = this.state;
+    return children(success);
+  }
+}
 
-export default class Root extends Component<
-  {},
+class LedgerStoreProvider extends Component<
+  {
+    onInitFinished: () => void,
+    children: (ready: boolean) => *
+  },
   {
     store: *,
-    ready: boolean,
-    rebootId: number
+    ready: boolean
   }
 > {
   state = {
     store: createLedgerStore(),
-    ready: false,
-    rebootId: 0
+    ready: false
   };
-
-  initTimeout: *;
 
   componentDidMount() {
     return this.init();
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.initTimeout);
   }
 
   componentDidCatch(e: *) {
@@ -66,40 +87,82 @@ export default class Root extends Component<
     await store.dispatch(initCounterValues());
     await store.dispatch(initAccounts());
     this.setState({ ready: true }, () => {
-      this.initTimeout = setTimeout(() => SplashScreen.hide(), INIT_TIMEOUT);
+      this.props.onInitFinished();
     });
   }
+
+  render() {
+    const { children } = this.props;
+    const { store, ready } = this.state;
+    return <Provider store={store}>{children(ready)}</Provider>;
+  }
+}
+
+export default class Root extends Component<
+  {},
+  {
+    rebootId: number
+  }
+> {
+  state = {
+    rebootId: 0
+  };
+
+  initTimeout: *;
+
+  componentWillUnmount() {
+    clearTimeout(this.initTimeout);
+  }
+
+  componentDidCatch(e: *) {
+    console.error(e);
+    throw e;
+  }
+
+  onInitFinished = () => {
+    this.initTimeout = setTimeout(() => SplashScreen.hide(), 300);
+  };
 
   reboot = async (resetData: boolean = false) => {
     clearTimeout(this.initTimeout);
     SplashScreen.show();
     this.setState({
-      store: createLedgerStore(),
-      ready: false,
       rebootId: this.state.rebootId + 1
     });
     if (resetData) {
       await db.delete(["settings", "accounts", "countervalues"]);
     }
-    return this.init();
   };
 
   render() {
-    const { store, ready, rebootId } = this.state;
-    // TODO later we might want to init the stores asynchronously before rendering the App
+    const { rebootId } = this.state;
+    const authRequired = false; // TODO this should be opt-in from settings
     return (
       <RebootProvider reboot={this.reboot}>
-        <Provider key={rebootId} store={store}>
-          <LocaleProvider>
-            {ready ? (
-              <CounterValuePollingProvider store={store}>
-                <App />
-              </CounterValuePollingProvider>
-            ) : (
-              <LoadingApp />
-            )}
-          </LocaleProvider>
-        </Provider>
+        <LedgerStoreProvider
+          key={rebootId /* force LedgerStoreProvider to remount */}
+          onInitFinished={this.onInitFinished}
+        >
+          {ready => (
+            <AuthPass enabled={authRequired}>
+              {authenticated =>
+                !authenticated ? (
+                  <NoAuthApp />
+                ) : (
+                  <LocaleProvider>
+                    {ready ? (
+                      <CounterValuePollingProvider>
+                        <App />
+                      </CounterValuePollingProvider>
+                    ) : (
+                      <LoadingApp />
+                    )}
+                  </LocaleProvider>
+                )
+              }
+            </AuthPass>
+          )}
+        </LedgerStoreProvider>
       </RebootProvider>
     );
   }
