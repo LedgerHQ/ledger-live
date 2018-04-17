@@ -1,14 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import moment from "moment";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Linking,
-  Image,
-  TouchableOpacity
-} from "react-native";
+import { View, StyleSheet, ScrollView, Linking, Image } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import HeaderRightClose from "../components/HeaderRightClose";
 import LText from "../components/LText";
@@ -17,6 +10,7 @@ import SectionEntry from "../components/SectionEntry";
 import BlueButton from "../components/BlueButton";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import CounterValue from "../components/CounterValue";
+import Touchable from "../components/Touchable";
 import colors from "../colors";
 
 export default class OperationDetails extends Component<{
@@ -30,8 +24,8 @@ export default class OperationDetails extends Component<{
 
   viewOperation = () => {
     const { operation } = this.props.navigation.state.params;
-    Linking.openURL(`https://testnet.blockchain.info/tx/${operation.id}`).catch(
-      err => console.error("An error occurred", err)
+    return Linking.openURL(
+      `https://testnet.blockchain.info/tx/${operation.id}`
     );
   };
   viewAccount = () => {
@@ -57,10 +51,10 @@ export default class OperationDetails extends Component<{
 
     return (
       <View style={styles.container}>
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={styles.body}>
           <SectionEntry>
             <View style={styles.transactionAmount}>
-              <LText style={{ margin: 10 }}>
+              <LText style={styles.currencyIcon}>
                 <CurrencyIcon size={46} currency={account.currency} />
               </LText>
               <LText
@@ -71,9 +65,7 @@ export default class OperationDetails extends Component<{
                   value={operation.amount}
                 />
               </LText>
-              <LText
-                style={[styles.counterValue, { flexDirection: "row", flex: 1 }]}
-              >
+              <LText style={styles.counterValue}>
                 <CounterValue
                   value={operation.amount}
                   date={operation.date}
@@ -90,12 +82,12 @@ export default class OperationDetails extends Component<{
               {account.name}
             </LText>
             {linkToAccount ? (
-              <TouchableOpacity onPress={() => this.viewAccount()}>
+              <Touchable onPress={this.viewAccount}>
                 <Image
-                  style={{ width: 18, height: 18, opacity: 0.6 }}
+                  style={styles.viewAccountIcon}
                   source={require("../images/lookUp.png")}
                 />
-              </TouchableOpacity>
+              </Touchable>
             ) : null}
           </SectionEntry>
           <SectionEntry>
@@ -146,6 +138,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white"
   },
+  body: {
+    flex: 1
+  },
+  currencyIcon: {
+    margin: 10
+  },
+  viewAccountIcon: {
+    width: 18,
+    height: 18,
+    opacity: 0.6
+  },
   operationLabel: {
     color: "#6c6d6c"
   },
@@ -170,6 +173,8 @@ const styles = StyleSheet.create({
   },
   counterValue: {
     fontSize: 18,
-    opacity: 0.5
+    opacity: 0.5,
+    flexDirection: "row",
+    flex: 1
   }
 });
