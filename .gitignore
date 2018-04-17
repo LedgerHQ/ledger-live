@@ -1,22 +1,65 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
+# OSX
+#
+.DS_Store
 
-/flow-typed/
+# Xcode
+#
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
 
-# Android
+# Android/IntelliJ
+#
+build/
 .idea
 .gradle
 local.properties
 *.iml
-build/
-gradle/
-gradlew
-gradlew.bat
 
-# expo
-.expo/
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
 
-# dependencies
-/node_modules
+# BUCK
+buck-out/
+\.buckd/
+*.keystore
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
+
+# Bundle artifact
+*.jsbundle
+
+# Flow typed
+/flow-typed/
+
+# VS Code
+*.vscode
 
 # misc
 .env
@@ -28,12 +71,3 @@ gradlew.bat
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-.DS_Store
-
-# xcode
-*.xcuserstate
-*xcuserdata
-
-# VS Code
-*.vscode
