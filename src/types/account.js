@@ -19,11 +19,9 @@ export type AccountRaw = {
   xpub: string,
 
   // account path on the device
-  // TODO: get rid of it
   path: string,
 
   // account root path on the device
-  // TODO: get rid of it
   rootPath: string,
 
   // account name
@@ -44,14 +42,8 @@ export type AccountRaw = {
   // the last block height currently synchronized
   lastBlockHeight: number,
 
-  // track the total number of operations. if it is different than operations.length, it means we can pull more operations
-  operationsSize: number,
-
   // whether or not the account is archived
   archived: boolean,
-
-  // minimal nb of blocks to consider an operation confirmed (set by the user)
-  minConfirmations: number,
 
   // Actually used in the desktop app
   // TODO: should get rid of that if possible
@@ -104,14 +96,8 @@ export type Account = {
   // the last block height currently synchronized
   lastBlockHeight: number,
 
-  // track the total number of operations. if it is different than operations.length, it means we can pull more operations
-  operationsSize: number,
-
   // whether or not the account is archived
   archived: boolean,
-
-  // minimal nb of blocks to consider an operation confirmed (set by the user)
-  minConfirmations: number,
 
   // Actually used in the desktop app
   // TODO: should get rid of that if possible
