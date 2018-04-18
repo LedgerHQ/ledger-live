@@ -4,7 +4,7 @@ import { StyleSheet, Image } from "react-native";
 import { listFiats } from "@ledgerhq/currencies";
 import LText from "../../components/LText";
 import SectionEntry from "../../components/SectionEntry";
-import { withCounterValuePolling } from "../../components/CounterValuePolling";
+import { withCounterValuePolling } from "../../context/CounterValuePolling";
 
 const fiatList = listFiats()
   .map(cur => ({ value: cur.code, label: `${cur.name} (${cur.code})` }))

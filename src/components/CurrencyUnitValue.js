@@ -4,7 +4,7 @@ import { Component } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/currencies";
 import type { Unit } from "@ledgerhq/currencies";
 
-import { withLocale } from "./LocaleContext";
+import { withLocale } from "../context/Locale";
 
 class CurrencyUnitValue extends Component<{
   unit: Unit,

@@ -41,7 +41,7 @@ type State = {
   locale: string
 };
 
-export class LocaleProvider extends React.Component<
+export default class LocaleProvider extends React.Component<
   {
     children: *
   },
