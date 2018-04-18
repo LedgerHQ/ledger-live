@@ -1,31 +1,31 @@
 // @flow
-import React, { Component, PureComponent } from "react";
-import { StyleSheet, View, Image, StatusBar } from "react-native";
+import React, { Component } from "react";
+import { StyleSheet, Image } from "react-native";
 import { StackNavigator, TabNavigator, TabBarBottom } from "react-navigation";
-import colors from "../colors";
-import Dashboard from "../screens/Dashboard";
-import Accounts from "../screens/Accounts";
-import AccountSettings from "../screens/accountSettings/index";
-import Search from "../screens/Search";
-import Settings from "../screens/Settings";
-import GenericSelectScreen from "../screens/GenericSelectScreen";
-import ImportAccounts from "../screens/ImportAccounts";
-import EditUnits from "../screens/accountSettings/EditUnits";
-import EditConfirmations from "../screens/accountSettings/EditConfirmations";
-import EditName from "../screens/accountSettings/EditName";
-import Create from "../screens/Create";
-import ReceiveFundsMain from "../screens/ReceiveFunds";
-import ReceiveFundsSelectAccount from "../screens/ReceiveFundsSelectAccount";
-import SendFundsSelectAccount from "../screens/SendFundsSelectAccount";
-import SendFundsChoseAmount from "../screens/SendFundsChoseAmount";
-import SendFundsScanAddress from "../screens/SendFundsScanAddress";
-import SendFundsChoseFee from "../screens/SendFundsChoseFee";
-import SendFundsReview from "../screens/SendFundsReview";
-import SendFundsPlugDevice from "../screens/SendFundsPlugDevice";
-import SendFundsConfirmation from "../screens/SendFundsConfirmation";
-import AddAccountSelectCurrency from "../screens/AddAccountSelectCurrency";
-import AddAccountInfo from "../screens/AddAccountInfo";
-import OperationDetails from "../screens/OperationDetails";
+import colors from "./colors";
+import Dashboard from "./screens/Dashboard";
+import Accounts from "./screens/Accounts";
+import AccountSettings from "./screens/accountSettings/index";
+import Search from "./screens/Search";
+import Settings from "./screens/Settings";
+import GenericSelectScreen from "./screens/GenericSelectScreen";
+import ImportAccounts from "./screens/ImportAccounts";
+import EditUnits from "./screens/accountSettings/EditUnits";
+import EditConfirmations from "./screens/accountSettings/EditConfirmations";
+import EditName from "./screens/accountSettings/EditName";
+import Create from "./screens/Create";
+import ReceiveFundsMain from "./screens/ReceiveFunds";
+import ReceiveFundsSelectAccount from "./screens/ReceiveFundsSelectAccount";
+import SendFundsSelectAccount from "./screens/SendFundsSelectAccount";
+import SendFundsChoseAmount from "./screens/SendFundsChoseAmount";
+import SendFundsScanAddress from "./screens/SendFundsScanAddress";
+import SendFundsChoseFee from "./screens/SendFundsChoseFee";
+import SendFundsReview from "./screens/SendFundsReview";
+import SendFundsPlugDevice from "./screens/SendFundsPlugDevice";
+import SendFundsConfirmation from "./screens/SendFundsConfirmation";
+import AddAccountSelectCurrency from "./screens/AddAccountSelectCurrency";
+import AddAccountInfo from "./screens/AddAccountInfo";
+import OperationDetails from "./screens/OperationDetails";
 
 const stackNavigatiorDefaultNavigationOptions = {
   headerStyle: {
@@ -38,9 +38,6 @@ const stackNavigatiorDefaultNavigationOptions = {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.lightBackground
-  },
-  root: {
-    flex: 1
   }
 });
 
@@ -60,7 +57,7 @@ const SettingsStack = StackNavigator(
 SettingsStack.navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
     <Image
-      source={require("../images/settings.png")}
+      source={require("./images/settings.png")}
       style={{ tintColor, width: 32, height: 32 }}
     />
   )
@@ -197,7 +194,7 @@ class SendFunds extends Component<*> {
   }
 }
 
-const RootNavigator = StackNavigator(
+export const RootNavigator = StackNavigator(
   {
     Main: { screen: Main },
     ReceiveFunds: {
@@ -220,26 +217,3 @@ const RootNavigator = StackNavigator(
     cardStyle: styles.card
   }
 );
-
-export class LoadingApp extends PureComponent<*> {
-  render() {
-    return null;
-  }
-}
-
-export class NoAuthApp extends PureComponent<*> {
-  render() {
-    return null;
-  }
-}
-
-export default class App extends Component<*> {
-  render() {
-    return (
-      <View style={styles.root}>
-        <StatusBar backgroundColor={colors.blue} />
-        <RootNavigator />
-      </View>
-    );
-  }
-}
