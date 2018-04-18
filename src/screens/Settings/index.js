@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import LText from "../../components/LText";
-import { withReboot } from "../../components/RebootContext";
+import { withReboot } from "../../context/Reboot";
 import SectionEntry from "../../components/SectionEntry";
 import SectionTitle from "../../components/SectionTitle";
 import FiatUnitSection from "./FiatUnitSection";

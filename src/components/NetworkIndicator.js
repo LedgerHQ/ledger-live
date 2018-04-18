@@ -1,8 +1,8 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { withCounterValuePolling } from "./CounterValuePolling";
-import type { CounterValuePolling } from "./CounterValuePolling";
+import { withCounterValuePolling } from "../context/CounterValuePolling";
+import type { CounterValuePolling } from "../context/CounterValuePolling";
 
 class Header extends Component<{
   counterValuePolling: CounterValuePolling

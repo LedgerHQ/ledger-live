@@ -6,8 +6,8 @@ import GreyButton from "./GreyButton";
 import { accountModel } from "../reducers/accounts";
 import { initAccounts } from "../actions/accounts";
 import db from "../db";
-import { withCounterValuePolling } from "./CounterValuePolling";
-import type { CounterValuePolling } from "./CounterValuePolling";
+import { withCounterValuePolling } from "../context/CounterValuePolling";
+import type { CounterValuePolling } from "../context/CounterValuePolling";
 
 async function injectMockAccountsInDB(count) {
   await db.save(

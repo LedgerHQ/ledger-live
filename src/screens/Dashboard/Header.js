@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import LText from "../../components/LText";
-import { withLocale } from "../../components/LocaleContext";
-import type { TranslateFunction } from "../../components/LocaleContext";
+import { withLocale } from "../../context/Locale";
+import type { TranslateFunction } from "../../context/Locale";
 import NetworkIndicator from "../../components/NetworkIndicator";
 
 class Header extends Component<{

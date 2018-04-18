@@ -16,7 +16,7 @@ export type CounterValuePolling = {
   error: ?Error
 };
 
-class CounterValuePollingProvider_ extends React.Component<
+class CounterValuePollingProvider extends React.Component<
   {
     children: *,
     pollRates: () => *,
@@ -144,9 +144,7 @@ class CounterValuePollingProvider_ extends React.Component<
   }
 }
 
-export const CounterValuePollingProvider = connect(null, { pollRates })(
-  CounterValuePollingProvider_
-);
+export default connect(null, { pollRates })(CounterValuePollingProvider);
 
 // TODO improve flow types
 export const withCounterValuePolling = (Cmp: *) => {

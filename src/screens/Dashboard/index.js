@@ -33,8 +33,8 @@ import SectionHeader from "./SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
-import { withCounterValuePolling } from "../../components/CounterValuePolling";
-import type { CounterValuePolling } from "../../components/CounterValuePolling";
+import { withCounterValuePolling } from "../../context/CounterValuePolling";
+import type { CounterValuePolling } from "../../context/CounterValuePolling";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
