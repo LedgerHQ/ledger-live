@@ -41,13 +41,11 @@ class EditUnits extends Component<{
   render() {
     const { account } = this.props.navigation.state.params;
     return (
-      <View>
-        <FlatList
-          data={account.currency.units}
-          renderItem={this.renderItem}
-          keyExtractor={this.keyExtractor}
-        />
-      </View>
+      <FlatList
+        data={account.currency.units}
+        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
+      />
     );
   }
 }

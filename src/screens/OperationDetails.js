@@ -6,7 +6,6 @@ import type { NavigationScreenProp } from "react-navigation";
 import HeaderRightClose from "../components/HeaderRightClose";
 import LText from "../components/LText";
 import CurrencyIcon from "../components/CurrencyIcon";
-import SectionEntry from "../components/SectionEntry";
 import BlueButton from "../components/BlueButton";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import CounterValue from "../components/CounterValue";
@@ -51,7 +50,7 @@ export default class OperationDetails extends Component<{
     return (
       <View style={styles.container}>
         <ScrollView style={styles.body}>
-          <SectionEntry>
+          <View style={styles.row}>
             <View style={styles.transactionAmount}>
               <CurrencyIcon
                 style={styles.currencyIcon}
@@ -74,8 +73,8 @@ export default class OperationDetails extends Component<{
                 />
               </LText>
             </View>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>
               Account
             </LText>
@@ -90,14 +89,14 @@ export default class OperationDetails extends Component<{
                 />
               </Touchable>
             ) : null}
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>Date</LText>
             <LText style={styles.colRight}>
               {moment(operation.date).format("MMMM Do YYYY, h:mm:ss a")}
             </LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>
               Status
             </LText>
@@ -112,21 +111,21 @@ export default class OperationDetails extends Component<{
                 ? `Confirmed (${operation.confirmations})`
                 : `Not Confirmed (${operation.confirmations})`}
             </LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>From</LText>
             <LText style={styles.colRight}>Coming...</LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>To</LText>
             <LText style={styles.colRight}>Coming...</LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>
               Identifier
             </LText>
             <LText style={styles.colRight}>{operation.id}</LText>
-          </SectionEntry>
+          </View>
         </ScrollView>
         <BlueButton onPress={this.viewOperation} title="View Operation" />
       </View>
@@ -141,6 +140,15 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1
+  },
+  row: {
+    minHeight: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 20,
+    backgroundColor: "white",
+    marginBottom: 1
   },
   currencyIcon: {
     margin: 10

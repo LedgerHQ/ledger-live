@@ -1,16 +1,15 @@
 /* @flow */
 import React, { Component } from "react";
-import { ScrollView, View, StyleSheet, Switch, Image } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-
 import { getAccountById } from "../../reducers/accounts";
-import { updateAccount } from "../../actions/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
-import SectionEntry from "../../components/SectionEntry";
+import SettingsRow from "../../components/SettingsRow";
 import SectionTitle from "../../components/SectionTitle";
 import LText from "../../components/LText";
+import ArchiveToggle from "./ArchiveToggle";
 
 const mapStateToProps = (state, { screenProps }) => ({
   account: getAccountById(
@@ -18,14 +17,10 @@ const mapStateToProps = (state, { screenProps }) => ({
     screenProps.topLevelNavigation.state.params.accountId
   )
 });
-const mapDispatchToProps = {
-  updateAccount
-};
 
 class AccountSettings extends Component<{
   account: Account,
-  navigation: NavigationScreenProp<{}>,
-  updateAccount: ($Shape<Account>) => *
+  navigation: NavigationScreenProp<*>
 }> {
   static navigationOptions = ({ screenProps }: *) => ({
     title: "Account settings",
@@ -33,17 +28,14 @@ class AccountSettings extends Component<{
       <HeaderRightClose navigation={screenProps.topLevelNavigation} />
     )
   });
-  toggleArchived = (value: boolean) => {
-    const { account, updateAccount } = this.props;
-    updateAccount({ archived: value, id: account.id });
-  };
   render() {
     const { account, navigation } = this.props;
     return (
-      <View>
-        <ScrollView style={styles.container} />
+      <ScrollView style={styles.container}>
         <SectionTitle title="ACCOUNT" />
-        <SectionEntry
+        <SettingsRow
+          title="Name"
+          arrowRight
           onPress={() =>
             // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
@@ -53,21 +45,14 @@ class AccountSettings extends Component<{
             })
           }
         >
-          <LText>Name</LText>
-          <LText style={styles.tempLineHeight}>
-            {account.name}
-            <Image source={require("../../images/arrow_right.png")} />
-          </LText>
-        </SectionEntry>
-        <SectionEntry>
-          <LText>Archive</LText>
-          <Switch
-            value={account.archived}
-            onValueChange={this.toggleArchived}
-          />
-        </SectionEntry>
+          <LText>{account.name}</LText>
+        </SettingsRow>
+        <SettingsRow title="Archive">
+          <ArchiveToggle accountId={account.id} />
+        </SettingsRow>
         <SectionTitle title="DISPLAY" />
-        <SectionEntry
+        <SettingsRow
+          title="Units"
           onPress={() =>
             // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
@@ -77,15 +62,14 @@ class AccountSettings extends Component<{
             })
           }
         >
-          <LText>Units</LText>
-          <LText style={styles.tempLineHeight}>
-            {account.unit.name}
-            <Image source={require("../../images/arrow_right.png")} />
+          <LText>
+            {account.unit.name} ({account.unit.code})
           </LText>
-        </SectionEntry>
-        <SectionEntry />
+        </SettingsRow>
         <SectionTitle title="COIN" />
-        <SectionEntry
+        <SettingsRow
+          title="Required Confirmations"
+          arrowRight
           onPress={() =>
             // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
@@ -95,19 +79,14 @@ class AccountSettings extends Component<{
             })
           }
         >
-          <LText>Required Confirmations</LText>
-          <LText style={styles.tempLineHeight}>
-            {account.minConfirmations}
-            <Image source={require("../../images/arrow_right.png")} />
-          </LText>
-        </SectionEntry>
-        <SectionEntry />
-      </View>
+          <LText>{account.minConfirmations}</LText>
+        </SettingsRow>
+      </ScrollView>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountSettings);
+export default connect(mapStateToProps)(AccountSettings);
 
 const styles = StyleSheet.create({
   root: {
@@ -122,13 +101,5 @@ const styles = StyleSheet.create({
   headerText: {
     color: "white",
     fontSize: 16
-  },
-  tempLineHeight: {
-    lineHeight: 30
-  },
-  image: {
-    tintColor: "#fff",
-    width: 28,
-    height: 28
   }
 });

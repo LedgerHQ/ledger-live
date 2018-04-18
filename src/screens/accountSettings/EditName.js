@@ -5,7 +5,7 @@ import { View, StyleSheet, TextInput } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
-import SectionEntry from "../../components/SectionEntry";
+import SettingsRow from "../../components/SettingsRow";
 import { updateAccount } from "../../actions/accounts";
 
 const mapStateToProps = () => ({});
@@ -36,20 +36,18 @@ class EditName extends Component<{
   render() {
     const { account } = this.props.navigation.state.params;
     return (
-      <View>
-        <SectionEntry>
-          <TextInput
-            autoFocus
-            style={styles.textInputAS}
-            placeholder="Name"
-            defaultValue={account.name}
-            underlineColorAndroid="transparent"
-            returnKeyType="done"
-            maxLength={20}
-            onEndEditing={this.onNameEndEditing}
-          />
-        </SectionEntry>
-      </View>
+      <SettingsRow title="Name">
+        <TextInput
+          autoFocus
+          style={styles.textInputAS}
+          placeholder="Name"
+          defaultValue={account.name}
+          underlineColorAndroid="transparent"
+          returnKeyType="done"
+          maxLength={20}
+          onEndEditing={this.onNameEndEditing}
+        />
+      </SettingsRow>
     );
   }
 }

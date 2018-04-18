@@ -5,7 +5,7 @@ import { View, TextInput } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
-import SectionEntry from "../../components/SectionEntry";
+import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
 import { updateAccount } from "../../actions/accounts";
 
@@ -40,20 +40,17 @@ class EditConfirmations extends Component<{
   render() {
     const { account } = this.props.navigation.state.params;
     return (
-      <View>
-        <SectionEntry>
-          <LText>Required Confirmations</LText>
-          <TextInput
-            keyboardType="numeric"
-            placeholder="#"
-            autoFocus
-            underlineColorAndroid="transparent"
-            returnKeyType="done"
-            onEndEditing={this.onConfNumEndEditing}
-            defaultValue={`${account.minConfirmations}`}
-          />
-        </SectionEntry>
-      </View>
+      <SettingsRow title="Required Confirmations">
+        <TextInput
+          keyboardType="numeric"
+          placeholder="#"
+          autoFocus
+          underlineColorAndroid="transparent"
+          returnKeyType="done"
+          onEndEditing={this.onConfNumEndEditing}
+          defaultValue={`${account.minConfirmations}`}
+        />
+      </SettingsRow>
     );
   }
 }
