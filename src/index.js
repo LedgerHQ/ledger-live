@@ -1,14 +1,44 @@
 // @flow
-/* eslint-disable import/first */
-import "./polyfill";
-import React, { Component } from "react";
+import "./polyfill"; /* eslint-disable import/first */
+import React, { Component, PureComponent } from "react";
+import { StyleSheet, View, StatusBar } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import App, { LoadingApp, NoAuthApp } from "./App";
+import colors from "./colors";
 import CounterValuePollingProvider from "./context/CounterValuePolling";
 import LocaleProvider from "./context/Locale";
 import RebootProvider from "./context/Reboot";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
+import { RootNavigator } from "./navigators";
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1
+  }
+});
+
+class LoadingApp extends PureComponent<*> {
+  render() {
+    return null;
+  }
+}
+
+class NoAuthApp extends PureComponent<*> {
+  render() {
+    return null;
+  }
+}
+
+class App extends Component<*> {
+  render() {
+    return (
+      <View style={styles.root}>
+        <StatusBar backgroundColor={colors.blue} />
+        <RootNavigator />
+      </View>
+    );
+  }
+}
 
 export default class Root extends Component<{}, {}> {
   initTimeout: *;
