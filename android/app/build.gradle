@@ -122,10 +122,28 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
+    signingConfigs {
+        stagingRelease {
+            if (project.hasProperty('STAGING_STORE_FILE')) {
+                storeFile file(STAGING_STORE_FILE)
+                storePassword STAGING_STORE_PASSWORD
+                keyAlias STAGING_KEY_ALIAS
+                keyPassword STAGING_KEY_PASSWORD
+            }
+        }
+    }
     buildTypes {
+        dev {
+            applicationIdSuffix ".dev"
+        }
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        stagingRelease {
+            initWith(buildTypes.release)
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.stagingRelease
         }
     }
     // applicationVariants are e.g. debug, release
