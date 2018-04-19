@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 
-import { getVisibleAccounts } from "../reducers/accounts";
+import { visibleAccountsSelector } from "../reducers/accounts";
 import AccountChoice from "../components/AccountChoice";
 
 const styles = StyleSheet.create({
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 });
 
 const mapPropsToState = state => ({
-  accounts: getVisibleAccounts(state)
+  accounts: visibleAccountsSelector(state)
 });
 
 class ReceiveFundsSelectAccount extends Component<{

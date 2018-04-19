@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import SettingsRow from "../../components/SettingsRow";
 import { updateAccount } from "../../actions/accounts";
-import { getAccountById } from "../../reducers/accounts";
+import { accountByIdSelector } from "../../reducers/accounts";
 import type { State } from "../../reducers";
 
 const mapStateToProps = (
@@ -22,7 +22,7 @@ const mapStateToProps = (
   }
 ) => {
   const { accountId } = navigation.state.params;
-  const account = getAccountById(state, accountId);
+  const account = accountByIdSelector(state, accountId);
   if (!account) throw new Error(`no account ${accountId}`);
   return { account };
 };

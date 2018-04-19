@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Unit } from "@ledgerhq/currencies";
 import { updateAccount } from "../../actions/accounts";
-import { getAccountById } from "../../reducers/accounts";
+import { accountByIdSelector } from "../../reducers/accounts";
 import type { State } from "../../reducers";
 import makeGenericSelectScreen from "../makeGenericSelectScreen";
 
@@ -19,7 +19,7 @@ const keyExtractor = (unit: Unit) => String(unit.magnitude);
 
 const mapStateToProps = (state: State, { navigation }: Props) => {
   const { accountId } = navigation.state.params;
-  const account = getAccountById(state, accountId);
+  const account = accountByIdSelector(state, accountId);
   if (!account) throw new Error(`no account ${accountId}`);
   return {
     selectedKey: keyExtractor(account.unit),

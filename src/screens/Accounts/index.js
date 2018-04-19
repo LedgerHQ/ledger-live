@@ -4,7 +4,7 @@ import { View, StyleSheet, Image } from "react-native";
 import { connect } from "react-redux";
 import findIndex from "lodash/findIndex";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-import { getVisibleAccounts } from "../../reducers/accounts";
+import { visibleAccountsSelector } from "../../reducers/accounts";
 import ScreenGeneric from "../../components/ScreenGeneric";
 import colors from "../../colors";
 import AccountExpanded from "./AccountExpanded";
@@ -14,7 +14,7 @@ import Header from "./Header";
 import AccountHeader from "./AccountHeader";
 
 const mapStateToProps = state => ({
-  accounts: getVisibleAccounts(state)
+  accounts: visibleAccountsSelector(state)
 });
 
 const navigationOptions = {

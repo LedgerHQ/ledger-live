@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-import { getAccountById } from "../../reducers/accounts";
+import { accountByIdSelector } from "../../reducers/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import SettingsRow from "../../components/SettingsRow";
 import SectionTitle from "../../components/SectionTitle";
@@ -13,7 +13,7 @@ import ArchiveToggle from "./ArchiveToggle";
 import CurrencySettingsSection from "../CurrenciesSettings/Section";
 
 const mapStateToProps = (state, { screenProps }) => ({
-  account: getAccountById(
+  account: accountByIdSelector(
     state,
     screenProps.topLevelNavigation.state.params.accountId
   )

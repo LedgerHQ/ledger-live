@@ -6,11 +6,11 @@ import { Account } from "@ledgerhq/wallet-common";
 import CurrencyDoubleInput from "../components/CurrencyDoubleInput";
 import BlueButton from "../components/BlueButton";
 import HeaderRightText from "../components/HeaderRightText";
-import { getAccountById } from "../reducers/accounts";
+import { accountByIdSelector } from "../reducers/accounts";
 
 type Props = {
   navigation: *,
-  getAccountById: string => ?Account
+  accountByIdSelector: string => ?Account
 };
 type State = {
   amount: number,
@@ -18,7 +18,7 @@ type State = {
 };
 
 const mapStateToProps = state => ({
-  getAccountById: id => getAccountById(state, id)
+  accountByIdSelector: id => accountByIdSelector(state, id)
 });
 
 class SendFundsChoseAmount extends Component<Props, State> {
@@ -40,7 +40,7 @@ class SendFundsChoseAmount extends Component<Props, State> {
     if (!prevState.account) {
       state = {
         ...state,
-        account: nextProps.getAccountById(
+        account: nextProps.accountByIdSelector(
           nextProps.navigation.state.params.accountId
         )
       };

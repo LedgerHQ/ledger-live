@@ -20,7 +20,7 @@ import Touchable from "../components/Touchable";
 import QRCodePreview from "../components/QRCodePreview";
 import findFirstTransport from "../hw/findFirstTransport";
 import CurrencyDoubleInput from "../components/CurrencyDoubleInput";
-import { getVisibleAccounts } from "../reducers/accounts";
+import { visibleAccountsSelector } from "../reducers/accounts";
 import CurrencyIcon from "../components/CurrencyIcon";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import HeaderRightClose from "../components/HeaderRightClose";
@@ -29,7 +29,7 @@ import ReceiveFundsButton from "../components/ReceiveFundsButton";
 import CurrencyRate from "../components/CurrencyRate";
 
 const mapPropsToState = state => ({
-  accounts: getVisibleAccounts(state)
+  accounts: visibleAccountsSelector(state)
 });
 
 class ReceiveFunds extends Component<

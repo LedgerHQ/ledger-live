@@ -18,7 +18,7 @@ import type {
 import { groupAccountsOperationsByDay } from "@ledgerhq/wallet-common/lib/helpers/account";
 import ScreenGeneric from "../../components/ScreenGeneric";
 import colors from "../../colors";
-import { getVisibleAccounts } from "../../reducers/accounts";
+import { visibleAccountsSelector } from "../../reducers/accounts";
 import { globalBalanceHistorySelector } from "../../selectors";
 import { calculateCounterValueSelector } from "../../reducers/counterValues";
 import { fiatUnitSelector } from "../../reducers/settings";
@@ -49,7 +49,7 @@ const mapStateToProps = state => {
     globalBalanceHistory[globalBalanceHistory.length - 1].value;
   const totalBalancePeriodBegin = globalBalanceHistory[0].value;
   return {
-    accounts: getVisibleAccounts(state),
+    accounts: visibleAccountsSelector(state),
     calculateCounterValue: calculateCounterValueSelector(state),
     globalBalanceHistory,
     totalBalancePeriodBegin,

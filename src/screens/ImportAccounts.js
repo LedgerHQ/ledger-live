@@ -17,7 +17,7 @@ import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import LText from "../components/LText";
 import BlueButton from "../components/BlueButton";
-import { getAccounts } from "../reducers/accounts";
+import { accountsSelector } from "../reducers/accounts";
 import { updateAccount, addAccount } from "../actions/accounts";
 import { pollRates } from "../actions/counterValues";
 
@@ -385,11 +385,14 @@ class PresentResult_ extends Component<Props, State> {
     );
   }
 }
-const PresentResult = connect(state => ({ accounts: getAccounts(state) }), {
-  addAccount,
-  updateAccount,
-  pollRates
-})(PresentResult_);
+const PresentResult = connect(
+  state => ({ accounts: accountsSelector(state) }),
+  {
+    addAccount,
+    updateAccount,
+    pollRates
+  }
+)(PresentResult_);
 
 class Scanning extends Component<{
   onResult: Result => void
@@ -429,7 +432,7 @@ class Intro extends Component<{
     return (
       <View style={styles.body}>
         <LText style={styles.headHelp}>
-          Please open Ledger Wallet Desktop App and go to{" "}
+          Please open Ledger Live desktop application and go to{" "}
           <LText bold>
             Settings {">"} Tools {">"} QRCode Mobile Export
           </LText>.

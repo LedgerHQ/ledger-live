@@ -2,11 +2,11 @@
 import React, { Component } from "react";
 import { Switch } from "react-native";
 import { connect } from "react-redux";
-import { getAccountById } from "../../reducers/accounts";
+import { accountByIdSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 
 const mapStateToProps = (state, { accountId }) => ({
-  account: getAccountById(state, accountId)
+  account: accountByIdSelector(state, accountId)
 });
 
 const mapDispatchToProps = {

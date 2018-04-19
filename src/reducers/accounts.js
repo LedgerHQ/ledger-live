@@ -46,34 +46,40 @@ const handlers: Object = {
 
 // Selectors
 
-export function getAccounts(state: { accounts: AccountsState }): Account[] {
+export function accountsSelector(state: {
+  accounts: AccountsState
+}): Account[] {
   return state.accounts;
 }
 
-export const getArchivedAccounts = createSelector(getAccounts, accounts =>
-  accounts.filter(acc => acc.archived)
+export const archivedAccountsSelector = createSelector(
+  accountsSelector,
+  accounts => accounts.filter(acc => acc.archived)
 );
 
-export const getVisibleAccounts = createSelector(getAccounts, accounts =>
-  accounts.filter(acc => !acc.archived)
+export const visibleAccountsSelector = createSelector(
+  accountsSelector,
+  accounts => accounts.filter(acc => !acc.archived)
 );
 
-export const currenciesSelector = createSelector(getVisibleAccounts, accounts =>
-  [...new Set(accounts.map(a => a.currency))].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  )
+export const currenciesSelector = createSelector(
+  visibleAccountsSelector,
+  accounts =>
+    [...new Set(accounts.map(a => a.currency))].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    )
 );
 
 // TODO move to the (state, props) style https://github.com/reactjs/reselect#accessing-react-props-in-selectors
-export function getAccountById(
+export function accountByIdSelector(
   state: { accounts: AccountsState },
   id: string
 ): ?Account {
-  return getAccounts(state).find(account => account.id === id);
+  return accountsSelector(state).find(account => account.id === id);
 }
 
 export const accountSelector = createSelector(
-  getAccounts,
+  accountsSelector,
   (_, { accountId }: { accountId: string }) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId)
 );
