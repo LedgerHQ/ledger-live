@@ -48,15 +48,16 @@ export default class OperationDetails extends Component<{
     const isConfirmed = operation.confirmations >= account.minConfirmations;
     const colorConfirmed = isConfirmed ? colors.green : colors.red;
     const colorTransaction = operation.amount >= 0 ? colors.green : "black";
-
     return (
       <View style={styles.container}>
         <ScrollView style={styles.body}>
           <SectionEntry>
             <View style={styles.transactionAmount}>
-              <LText style={styles.currencyIcon}>
-                <CurrencyIcon size={46} currency={account.currency} />
-              </LText>
+              <CurrencyIcon
+                style={styles.currencyIcon}
+                size={46}
+                currency={account.currency}
+              />
               <LText
                 style={[styles.currencyValue, { color: colorTransaction }]}
               >
