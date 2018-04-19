@@ -19,11 +19,9 @@ export type AccountRaw = {
   xpub: string,
 
   // account path on the device
-  // TODO: get rid of it
   path: string,
 
   // account root path on the device
-  // TODO: get rid of it
   rootPath: string,
 
   // account name
@@ -42,16 +40,10 @@ export type AccountRaw = {
   coinType: number,
 
   // the last block height currently synchronized
-  lastBlockHeight: number,
-
-  // track the total number of operations. if it is different than operations.length, it means we can pull more operations
-  operationsSize: number,
+  blockHeight: number,
 
   // whether or not the account is archived
   archived: boolean,
-
-  // minimal nb of blocks to consider an operation confirmed (set by the user)
-  minConfirmations: number,
 
   // Actually used in the desktop app
   // TODO: should get rid of that if possible
@@ -68,7 +60,10 @@ export type AccountRaw = {
   operations: OperationRaw[],
 
   // user preferred magnitude. used to recover the account.unit
-  unitMagnitude: number
+  unitMagnitude: number,
+
+  // used to know when the last sync happened
+  lastSyncDate: string
 };
 
 export type Account = {
@@ -102,16 +97,10 @@ export type Account = {
   coinType: number,
 
   // the last block height currently synchronized
-  lastBlockHeight: number,
-
-  // track the total number of operations. if it is different than operations.length, it means we can pull more operations
-  operationsSize: number,
+  blockHeight: number,
 
   // whether or not the account is archived
   archived: boolean,
-
-  // minimal nb of blocks to consider an operation confirmed (set by the user)
-  minConfirmations: number,
 
   // Actually used in the desktop app
   // TODO: should get rid of that if possible
@@ -131,5 +120,8 @@ export type Account = {
   operations: Operation[],
 
   // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
-  unit: Unit
+  unit: Unit,
+
+  // used to know when the last sync happened
+  lastSyncDate: Date
 };

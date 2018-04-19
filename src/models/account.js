@@ -36,7 +36,13 @@ export const createAccountModel = (
     ],
 
     decode: (rawAccount: AccountRaw): Account => {
-      const { coinType, unitMagnitude, operations, ...acc } = rawAccount;
+      const {
+        coinType,
+        unitMagnitude,
+        operations,
+        lastSyncDate,
+        ...acc
+      } = rawAccount;
       const currency = getCurrencyByCoinType(coinType);
       const unit =
         currency.units.find(u => u.magnitude === unitMagnitude) ||
@@ -50,11 +56,18 @@ export const createAccountModel = (
           date: new Date(date)
         })),
         unit,
-        currency
+        currency,
+        lastSyncDate: new Date(lastSyncDate)
       };
     },
 
-    encode: ({ currency, operations, unit, ...acc }: Account): AccountRaw => {
+    encode: ({
+      currency,
+      operations,
+      unit,
+      lastSyncDate,
+      ...acc
+    }: Account): AccountRaw => {
       return {
         ...acc,
         operations: operations
@@ -66,7 +79,8 @@ export const createAccountModel = (
             };
           }),
         coinType: currency.coinType,
-        unitMagnitude: unit.magnitude
+        unitMagnitude: unit.magnitude,
+        lastSyncDate: lastSyncDate.toISOString()
       };
     }
   });

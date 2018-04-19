@@ -61,8 +61,7 @@ export function genOperation(
       rng.nextInt(0, 100000000 * rng.next() * rng.next()),
     hash: genHex(64, rng),
     date,
-    blockHeight:
-      account.lastBlockHeight - Math.floor((Date.now() - date) / 900000)
+    blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000)
   };
 }
 
@@ -112,7 +111,8 @@ export function genAccount(
     xpub: genHex(64, rng),
     archived: false,
     currency,
-    lastBlockHeight: rng.nextInt(100000, 200000),
+    blockHeight: rng.nextInt(100000, 200000),
+    lastSyncDate: new Date(),
     unit: rng.nextArrayItem(currency.units),
     balance: 0,
     address,

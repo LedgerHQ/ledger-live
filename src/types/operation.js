@@ -27,10 +27,6 @@ export type Operation = {
   // the account id. available for convenient reason
   accountId: string,
 
-  // legacy key to store number of confirmations (used by desktop app)
-  // TODO: get rid
-  confirmations: number,
-
   // --------------------------------------------- specific operation raw fields
 
   // transaction date
@@ -56,10 +52,6 @@ export type OperationRaw = {
 
   // the account id. available for convenient reason
   accountId: string,
-
-  // legacy key to store number of confirmations (used by desktop app)
-  // TODO: get rid
-  confirmations: number,
 
   // --------------------------------------------- specific operation raw fields
 

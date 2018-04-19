@@ -11,7 +11,7 @@
     "documentation": "documentation build src/** --project-name '@ledgerhq/wallet-common' --project-version `node -e \"console.log(require('./package.json').version)\"` --project-homepage https://github.com/LedgerHQ/ledger-wallet-common -g -f html -o documentation-website/public/docs",
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
-    "flow": "flow src",
+    "flow": "flow",
     "test": "TZ=America/New_York jest src"
   },
   "files": [
