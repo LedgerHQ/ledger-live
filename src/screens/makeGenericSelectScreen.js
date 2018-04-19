@@ -4,56 +4,57 @@ import { FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import SettingsRow from "../components/SettingsRow";
 
-type Item<T> = {
-  label: string,
-  value: T
-};
-
-type Opts<T> = {
+type Opts<Item> = {
   title: string,
-  keyExtractor?: (Item<T>) => string,
-  items: Item<T>[]
+  keyExtractor: Item => string,
+  formatItem?: Item => string,
+  Entry?: React$ComponentType<{
+    item: Item,
+    onPress: Item => void
+  }>
 };
 
-const defaultOpts = {
-  keyExtractor: item => String(item.value)
-};
-
-export default <T>(opts: Opts<T>) => {
-  const { title, keyExtractor, items } = { ...opts, ...defaultOpts };
-
-  class Entry extends Component<{
-    item: Item<T>,
-    onPress: (Item<T>) => void
-  }> {
-    onPress = () => this.props.onPress(this.props.item);
-    render() {
-      const { item } = this.props;
-      return <SettingsRow title={item.label} onPress={this.onPress} />;
+export default <Item>(opts: Opts<Item>) => {
+  const { title, keyExtractor, formatItem } = opts;
+  let { Entry } = opts;
+  if (!Entry) {
+    if (!formatItem) {
+      throw new Error("formatItem is required if Entry is not provided");
     }
+    Entry = class DefaultEntry extends Component<{
+      item: Item,
+      onPress: Item => void
+    }> {
+      onPress = () => this.props.onPress(this.props.item);
+      render() {
+        const { item } = this.props;
+        return <SettingsRow title={formatItem(item)} onPress={this.onPress} />;
+      }
+    };
   }
 
   return class GenericSelectScreen extends Component<{
-    value: T,
-    onValueChange: T => void,
+    value: Item,
+    items: Item[],
+    onValueChange: Item => void,
     navigation: NavigationScreenProp<*>
   }> {
     static navigationOptions = { title };
 
-    onPress = (item: Item<T>) => {
+    onPress = (item: Item) => {
       const { navigation, onValueChange } = this.props;
-      onValueChange(item.value);
+      onValueChange(item);
       navigation.goBack();
     };
 
-    renderItem = ({ item }: { item: Item<T> }) => (
+    renderItem = ({ item }: { item: Item }) => (
       <Entry onPress={this.onPress} item={item} />
     );
 
     render() {
       return (
         <FlatList
-          data={items}
+          data={this.props.items}
           renderItem={this.renderItem}
           keyExtractor={keyExtractor}
         />

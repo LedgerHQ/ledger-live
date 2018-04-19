@@ -21,16 +21,18 @@ export const formatChartTimeRange = (value: number) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  value: state.settings.chartTimeRange
+  value: state.settings.chartTimeRange,
+  items: rangeList
 });
 
 const mapDispatchToProps = {
-  onValueChange: chartTimeRange => saveSettings({ chartTimeRange })
+  onValueChange: ({ value }) => saveSettings({ chartTimeRange: value })
 };
 
 const Screen = makeGenericSelectScreen({
   title: "Dashboard chart time range",
-  items: rangeList
+  keyExtractor: item => String(item.value),
+  formatItem: item => item.label
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Screen);

@@ -20,7 +20,7 @@ const mapStateToProps = (state: State) => ({
   currenciesSettings: currenciesSettingsSelector(state)
 });
 
-class SettingsSection extends PureComponent<{
+class CurrencySettingsSection extends PureComponent<{
   currency: Currency,
   currencySettings: CurrencySettings,
   navigation: *
@@ -49,6 +49,7 @@ class SettingsSection extends PureComponent<{
         <SettingsRow arrowRight title="Default Transactions fees">
           <LText>{currencySettings.transactionFees}</LText>
         </SettingsRow>
+
         <SettingsRow arrowRight title="Blockchain explorer">
           <LText>{currencySettings.blockchainExplorer}</LText>
         </SettingsRow>
@@ -72,7 +73,7 @@ class Settings extends Component<{
           const currency = getCurrencyByCoinType(coinType);
           const currencySettings = currenciesSettings[coinType];
           return (
-            <SettingsSection
+            <CurrencySettingsSection
               key={coinTypeStr}
               currency={currency}
               currencySettings={currencySettings}
