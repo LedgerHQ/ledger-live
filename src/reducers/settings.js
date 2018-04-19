@@ -73,8 +73,10 @@ export const defaultCurrencySettingsForCurrency = (
   blockchainExplorer: "blockchain.info"
 });
 
-export const getCurrenciesSettingsSelector = (state: State) =>
-  state.settings.currenciesSettings;
+export const currencySettingsSelector = (state: State, currency: Currency) => ({
+  ...defaultCurrencySettingsForCurrency(currency),
+  ...state.settings.currenciesSettings[currency.coinType]
+});
 
 export const fiatUnitSelector = (state: State) =>
   getFiatUnit(state.settings.counterValue);

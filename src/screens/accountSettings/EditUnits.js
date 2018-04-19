@@ -15,11 +15,13 @@ type Props = {
   }>
 };
 
+const keyExtractor = (unit: Unit) => String(unit.magnitude);
+
 const mapStateToProps = (state: State, { navigation }: Props) => {
   const { account } = navigation.state.params; // FIXME should get by id
   return {
-    items: account.currency.units,
-    value: account.unit
+    selectedKey: keyExtractor(account.unit),
+    items: account.currency.units
   };
 };
 
@@ -36,8 +38,8 @@ const mapDispatchToProps = (dispatch: *, { navigation }: Props) => ({
 
 const Screen = makeGenericSelectScreen({
   title: "Edit Units",
-  keyExtractor: unit => String(unit.magnitude),
-  formatItem: unit => `${unit.name} (${unit.code})`
+  keyExtractor,
+  formatItem: (unit: Unit) => `${unit.name} (${unit.code})`
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Screen);

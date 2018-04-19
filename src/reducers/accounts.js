@@ -58,7 +58,7 @@ export const getVisibleAccounts = createSelector(getAccounts, accounts =>
   accounts.filter(acc => !acc.archived)
 );
 
-export const getUniqueCurrenciesSelector = createSelector(
+export const currenciesSelector = createSelector(
   getVisibleAccounts,
   accounts =>
     [...new Set(accounts.map(a => a.currency))].sort((a, b) =>

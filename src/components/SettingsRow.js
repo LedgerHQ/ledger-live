@@ -8,12 +8,20 @@ const flowPush = <View style={{ flex: 1 }} />;
 export default class SettingsRow extends Component<{
   onPress: () => void,
   title: string,
+  selected?: boolean,
   arrowRight?: boolean,
   center?: boolean,
   children: *
 }> {
   render() {
-    const { onPress, children, title, arrowRight, center } = this.props;
+    const {
+      onPress,
+      children,
+      title,
+      arrowRight,
+      center,
+      selected
+    } = this.props;
     return (
       <Touchable
         onPress={onPress}
@@ -24,6 +32,11 @@ export default class SettingsRow extends Component<{
         {children}
         {arrowRight ? (
           <Image source={require("../images/arrow_right.png")} />
+        ) : selected ? (
+          <Image
+            style={{ width: 24, height: 24 }}
+            source={require("../images/check.png")}
+          />
         ) : null}
       </Touchable>
     );

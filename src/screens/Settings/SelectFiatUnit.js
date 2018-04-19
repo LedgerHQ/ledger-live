@@ -11,7 +11,7 @@ const items = listFiats()
   .sort((a, b) => a.label.localeCompare(b.label));
 
 const mapStateToProps = (state: State) => ({
-  value: state.settings.counterValue,
+  selectedKey: state.settings.counterValue,
   items
 });
 
@@ -25,8 +25,8 @@ const mapDispatchToProps = (dispatch: *, props: *) => ({
 
 const Screen = makeGenericSelectScreen({
   title: "Countervalue currency",
-  keyExtractor: item => item.value,
-  formatItem: item => item.label
+  keyExtractor: (item: Item) => item.value,
+  formatItem: (item: Item) => item.label
 });
 
 export default withCounterValuePolling(

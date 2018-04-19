@@ -4,7 +4,9 @@ import { saveSettings } from "../../actions/settings";
 import type { State } from "../../reducers";
 import makeGenericSelectScreen from "../makeGenericSelectScreen";
 
-export const rangeList = [
+type Item = { label: string, value: number };
+
+export const rangeList: Item[] = [
   { value: 7, label: "1 week" },
   { value: 14, label: "2 weeks" },
   { value: 30, label: "1 month" },
@@ -21,18 +23,18 @@ export const formatChartTimeRange = (value: number) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  value: state.settings.chartTimeRange,
+  selectedKey: String(state.settings.chartTimeRange),
   items: rangeList
 });
 
 const mapDispatchToProps = {
-  onValueChange: ({ value }) => saveSettings({ chartTimeRange: value })
+  onValueChange: ({ value }: Item) => saveSettings({ chartTimeRange: value })
 };
 
 const Screen = makeGenericSelectScreen({
   title: "Dashboard chart time range",
-  keyExtractor: item => String(item.value),
-  formatItem: item => item.label
+  keyExtractor: (item: Item) => String(item.value),
+  formatItem: (item: Item) => item.label
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Screen);

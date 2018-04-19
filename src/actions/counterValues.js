@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/wallet-common/lib/api/countervalue";
 import type { Dispatch } from "redux";
 import { fiatUnitSelector } from "../reducers/settings";
-import { getUniqueCurrenciesSelector } from "../reducers/accounts";
+import { currenciesSelector } from "../reducers/accounts";
 import type { State } from "../reducers";
 import db from "../db";
 
@@ -33,7 +33,7 @@ export const pollRates: PollRates = () => async (dispatch, getState) => {
   const state = getState();
   const { counterValues } = state;
   const fiatUnit = fiatUnitSelector(state);
-  const currencies = getUniqueCurrenciesSelector(state);
+  const currencies = currenciesSelector(state);
   const getLatestDayFetched = cur => {
     const all = {
       ...(counterValues[cur.ticker] || {})[fiatUnit.ticker]
