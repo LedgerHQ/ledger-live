@@ -40,7 +40,7 @@ export const createAccountModel = (
         coinType,
         unitMagnitude,
         operations,
-        blockTime,
+        lastSyncDate,
         ...acc
       } = rawAccount;
       const currency = getCurrencyByCoinType(coinType);
@@ -57,7 +57,7 @@ export const createAccountModel = (
         })),
         unit,
         currency,
-        blockTime: new Date(blockTime)
+        lastSyncDate: new Date(lastSyncDate)
       };
     },
 
@@ -65,7 +65,7 @@ export const createAccountModel = (
       currency,
       operations,
       unit,
-      blockTime,
+      lastSyncDate,
       ...acc
     }: Account): AccountRaw => {
       return {
@@ -80,7 +80,7 @@ export const createAccountModel = (
           }),
         coinType: currency.coinType,
         unitMagnitude: unit.magnitude,
-        blockTime: blockTime.toISOString()
+        lastSyncDate: lastSyncDate.toISOString()
       };
     }
   });

@@ -112,7 +112,7 @@ export function genAccount(
     archived: false,
     currency,
     blockHeight: rng.nextInt(100000, 200000),
-    blockTime: new Date(),
+    lastSyncDate: new Date(),
     unit: rng.nextArrayItem(currency.units),
     balance: 0,
     address,

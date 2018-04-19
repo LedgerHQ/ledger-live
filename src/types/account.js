@@ -63,7 +63,7 @@ export type AccountRaw = {
   unitMagnitude: number,
 
   // used to know when the last sync happened
-  blockTime: string
+  lastSyncDate: string
 };
 
 export type Account = {
@@ -123,5 +123,5 @@ export type Account = {
   unit: Unit,
 
   // used to know when the last sync happened
-  blockTime: Date
+  lastSyncDate: Date
 };
