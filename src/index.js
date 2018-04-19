@@ -1,113 +1,46 @@
 // @flow
-/* eslint-disable import/first */
-import "./polyfill";
-import React, { Component } from "react"; // eslint-disable-line import/first
-import { createStore, applyMiddleware, compose } from "redux";
-import dbMiddleware from "./middlewares/db";
-import db from "./db";
-import { Provider } from "react-redux";
-import thunk from "redux-thunk";
+import "./polyfill"; /* eslint-disable import/first */
+import React, { Component, PureComponent } from "react";
+import { StyleSheet, View, StatusBar } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import reducers from "./reducers";
-import App, { LoadingApp, NoAuthApp } from "./App";
-import { CounterValuePollingProvider } from "./components/CounterValuePolling";
-import { LocaleProvider } from "./components/LocaleContext";
-import { RebootProvider } from "./components/RebootContext";
-import { initAccounts } from "./actions/accounts";
-import { initSettings } from "./actions/settings";
-import { initCounterValues } from "./actions/counterValues";
+import colors from "./colors";
+import CounterValuePollingProvider from "./context/CounterValuePolling";
+import LocaleProvider from "./context/Locale";
+import RebootProvider from "./context/Reboot";
+import AuthPass from "./context/AuthPass";
+import LedgerStoreProvider from "./context/LedgerStore";
+import { RootNavigator } from "./navigators";
 
-const createLedgerStore = () =>
-  createStore(
-    reducers,
-    undefined,
-    compose(
-      applyMiddleware(thunk, dbMiddleware),
-      typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
-        ? __REDUX_DEVTOOLS_EXTENSION__()
-        : f => f
-    )
-  );
+const styles = StyleSheet.create({
+  root: {
+    flex: 1
+  }
+});
 
-class AuthPass extends Component<
-  {
-    enabled?: boolean,
-    children: (success: boolean) => *
-  },
-  {
-    success: boolean
-  }
-> {
-  state = {
-    success: !this.props.enabled
-  };
-  componentDidMount() {
-    if (!this.state.success) {
-      // TODO replace by the actual auth we will do
-      console.log("simulate auth");
-      setTimeout(() => {
-        this.setState({ success: true });
-      }, 1000);
-    }
-  }
+class LoadingApp extends PureComponent<*> {
   render() {
-    const { children } = this.props;
-    const { success } = this.state;
-    return children(success);
+    return null;
   }
 }
 
-class LedgerStoreProvider extends Component<
-  {
-    onInitFinished: () => void,
-    children: (ready: boolean) => *
-  },
-  {
-    store: *,
-    ready: boolean
-  }
-> {
-  state = {
-    store: createLedgerStore(),
-    ready: false
-  };
-
-  componentDidMount() {
-    return this.init();
-  }
-
-  componentDidCatch(e: *) {
-    console.error(e);
-    throw e;
-  }
-
-  async init() {
-    const { store } = this.state;
-    await store.dispatch(initSettings());
-    await store.dispatch(initCounterValues());
-    await store.dispatch(initAccounts());
-    this.setState({ ready: true }, () => {
-      this.props.onInitFinished();
-    });
-  }
-
+class NoAuthApp extends PureComponent<*> {
   render() {
-    const { children } = this.props;
-    const { store, ready } = this.state;
-    return <Provider store={store}>{children(ready)}</Provider>;
+    return null;
   }
 }
 
-export default class Root extends Component<
-  {},
-  {
-    rebootId: number
+class App extends Component<*> {
+  render() {
+    return (
+      <View style={styles.root}>
+        <StatusBar backgroundColor={colors.blue} />
+        <RootNavigator />
+      </View>
+    );
   }
-> {
-  state = {
-    rebootId: 0
-  };
+}
 
+export default class Root extends Component<{}, {}> {
   initTimeout: *;
 
   componentWillUnmount() {
@@ -123,26 +56,16 @@ export default class Root extends Component<
     this.initTimeout = setTimeout(() => SplashScreen.hide(), 300);
   };
 
-  reboot = async (resetData: boolean = false) => {
+  onRebootStart = () => {
     clearTimeout(this.initTimeout);
-    SplashScreen.show();
-    this.setState({
-      rebootId: this.state.rebootId + 1
-    });
-    if (resetData) {
-      await db.delete(["settings", "accounts", "countervalues"]);
-    }
+    if (SplashScreen.show) SplashScreen.show(); // on iOS it seems to not be exposed
   };
 
   render() {
-    const { rebootId } = this.state;
     const authRequired = false; // TODO this should be opt-in from settings
     return (
-      <RebootProvider reboot={this.reboot}>
-        <LedgerStoreProvider
-          key={rebootId /* force LedgerStoreProvider to remount */}
-          onInitFinished={this.onInitFinished}
-        >
+      <RebootProvider onRebootStart={this.onRebootStart}>
+        <LedgerStoreProvider onInitFinished={this.onInitFinished}>
           {ready => (
             <AuthPass enabled={authRequired}>
               {authenticated =>

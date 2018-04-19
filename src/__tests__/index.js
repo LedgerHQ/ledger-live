@@ -2,7 +2,7 @@
 
 import React from "react";
 import renderer from "react-test-renderer";
-import Root from ".";
+import Root from "..";
 
 jest.useFakeTimers();
 // TODO we need to actually render App with a mock store so we can test screens
