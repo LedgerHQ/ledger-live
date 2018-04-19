@@ -4,34 +4,39 @@ import { FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import SettingsRow from "../components/SettingsRow";
 
+type EntryComponent<Item> = React$ComponentType<{
+  item: Item,
+  onPress: Item => void
+}>;
+
 type Opts<Item> = {
   title: string,
   keyExtractor: Item => string,
   formatItem?: Item => string,
-  Entry?: React$ComponentType<{
-    item: Item,
-    onPress: Item => void
-  }>
+  Entry?: EntryComponent<Item>
 };
 
-export default <Item>(opts: Opts<Item>) => {
-  const { title, keyExtractor, formatItem } = opts;
-  let { Entry } = opts;
-  if (!Entry) {
-    if (!formatItem) {
-      throw new Error("formatItem is required if Entry is not provided");
-    }
-    Entry = class DefaultEntry extends Component<{
-      item: Item,
-      onPress: Item => void
-    }> {
-      onPress = () => this.props.onPress(this.props.item);
-      render() {
-        const { item } = this.props;
-        return <SettingsRow title={formatItem(item)} onPress={this.onPress} />;
-      }
-    };
+function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
+  if (opts.Entry) return opts.Entry;
+  const { formatItem } = opts;
+  if (!formatItem) {
+    throw new Error("formatItem is required if Entry is not provided");
   }
+  return class DefaultEntry extends Component<{
+    item: Item,
+    onPress: Item => void
+  }> {
+    onPress = () => this.props.onPress(this.props.item);
+    render() {
+      const { item } = this.props;
+      return <SettingsRow title={formatItem(item)} onPress={this.onPress} />;
+    }
+  };
+}
+
+export default <Item>(opts: Opts<Item>) => {
+  const { title, keyExtractor } = opts;
+  const Entry = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<{
     value: Item,
