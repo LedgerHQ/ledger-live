@@ -1,1 +1,4 @@
-export default () => Promise.resolve(false);
+export default {
+  isSupported: () => Promise.resolve(false),
+  authenticate: () => Promise.reject(new Error("not supported"))
+};
