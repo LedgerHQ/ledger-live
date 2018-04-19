@@ -1,12 +1,11 @@
 import React, { PureComponent } from "react";
-import { formatCurrencyUnit, formatShort } from "@ledgerhq/currencies";
+import { formatShort } from "@ledgerhq/currencies";
 import { Defs } from "react-native-svg";
 import {
   VictoryChart,
   VictoryLabel,
   VictoryArea,
-  VictoryAxis,
-  VictoryCursorContainer
+  VictoryAxis
 } from "victory-native";
 
 import colors from "../colors";
@@ -25,12 +24,6 @@ export default class BalanceChart extends PureComponent<*> {
         height={height}
         scale={{ x: "time" }}
         animate={{ duration: 0, onLoad: { duration: 0 } }}
-        containerComponent={
-          <VictoryCursorContainer
-            cursorDimension="x"
-            cursorLabel={d => formatCurrencyUnit(unit, d.y, { showCode: true })}
-          />
-        }
       >
         <Defs>
           <BalanceChartGradient id="bgFillGradient" color={color} />
