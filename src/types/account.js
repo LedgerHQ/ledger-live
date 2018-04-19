@@ -40,7 +40,7 @@ export type AccountRaw = {
   coinType: number,
 
   // the last block height currently synchronized
-  lastBlockHeight: number,
+  blockHeight: number,
 
   // whether or not the account is archived
   archived: boolean,
@@ -60,7 +60,10 @@ export type AccountRaw = {
   operations: OperationRaw[],
 
   // user preferred magnitude. used to recover the account.unit
-  unitMagnitude: number
+  unitMagnitude: number,
+
+  // used to know when the last sync happened
+  blockTime: string
 };
 
 export type Account = {
@@ -94,7 +97,7 @@ export type Account = {
   coinType: number,
 
   // the last block height currently synchronized
-  lastBlockHeight: number,
+  blockHeight: number,
 
   // whether or not the account is archived
   archived: boolean,
@@ -117,5 +120,8 @@ export type Account = {
   operations: Operation[],
 
   // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
-  unit: Unit
+  unit: Unit,
+
+  // used to know when the last sync happened
+  blockTime: Date
 };

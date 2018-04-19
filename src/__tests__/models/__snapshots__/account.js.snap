@@ -10,10 +10,11 @@ Object {
     "archived": false,
     "balance": 56339471,
     "balanceByDay": Object {},
+    "blockHeight": 157292,
+    "blockTime": "2018-03-14T17:34:42.000Z",
     "coinType": 2,
     "id": "mock_account_model1",
     "index": 0,
-    "lastBlockHeight": 157292,
     "minConfirmations": 2,
     "name": "1A9mz43nd6",
     "operations": Array [
