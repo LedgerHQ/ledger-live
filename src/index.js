@@ -11,18 +11,13 @@ import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
 import AuthFailedApp from "./components/AuthFailedApp";
+import AuthPendingApp from "./components/AuthPendingApp";
 
 const styles = StyleSheet.create({
   root: {
     flex: 1
   }
 });
-
-class LoadingApp extends PureComponent<*> {
-  render() {
-    return <View />;
-  }
-}
 
 class App extends Component<*> {
   render() {
@@ -65,7 +60,7 @@ export default class Root extends Component<{}, {}> {
               <AuthPass>
                 {state =>
                   state.pending ? (
-                    <LoadingApp />
+                    <AuthPendingApp />
                   ) : !state.success ? (
                     <AuthFailedApp />
                   ) : (
@@ -78,7 +73,7 @@ export default class Root extends Component<{}, {}> {
                 }
               </AuthPass>
             ) : (
-              <LoadingApp />
+              <View />
             )
           }
         </LedgerStoreProvider>

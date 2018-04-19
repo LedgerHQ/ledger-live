@@ -6,7 +6,7 @@ import LText from "./LText";
 import BlueButton from "./BlueButton";
 import RedButton from "./RedButton";
 
-class Settings extends Component<{
+class AuthFailedApp extends Component<{
   reboot: (?boolean) => *
 }> {
   onRebootSoft = () => this.props.reboot();
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withReboot(Settings);
+export default withReboot(AuthFailedApp);
