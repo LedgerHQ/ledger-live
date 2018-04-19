@@ -421,7 +421,7 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@ledgerhq/currencies@^4.10.1", "@ledgerhq/currencies@^4.7.5":
+"@ledgerhq/currencies@4.10.1", "@ledgerhq/currencies@^4.10.1":
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/@ledgerhq/currencies/-/currencies-4.10.1.tgz#462081005e3e37e0737bad9aba189eef1663e96a"
   dependencies:
@@ -461,7 +461,11 @@
     "@ledgerhq/hw-transport" "^4.7.3"
     invariant "^2.2.4"
 
-"@ledgerhq/wallet-common@^1.1.0":
+"@ledgerhq/react-native-passcode-auth@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-passcode-auth/-/react-native-passcode-auth-2.0.0.tgz#18f8fcc64d72b410300de203c2ddf8b4ae2a7fc3"
+
+"@ledgerhq/wallet-common@1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-common/-/wallet-common-1.1.0.tgz#f57efcce56f86c27269b975906934e6168ab7bfd"
   dependencies:
@@ -3266,7 +3270,7 @@ hoek@4.x.x:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.1.tgz#9634502aa12c445dd5a7c5734b572bb8738aacbb"
 
-hoist-non-react-statics@^2.2.0, hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
+hoist-non-react-statics@2.5.0, hoist-non-react-statics@^2.2.0, hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.0.tgz#d2ca2dfc19c5a91c5a6615ce8e564ef0347e2a40"
 
@@ -3329,9 +3333,9 @@ https-proxy-agent@^2.1.1:
     agent-base "^4.1.0"
     debug "^3.1.0"
 
-i18next@11.1.1:
-  version "11.1.1"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-11.1.1.tgz#df3a683542d7756a8aa8d6b884b61141239c394a"
+i18next@11.2.3:
+  version "11.2.3"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-11.2.3.tgz#cc29400460ede53ecc0a3a399e3497e82a1d830e"
 
 iconv-lite@0.4.19:
   version "0.4.19"
@@ -4289,13 +4293,13 @@ lodash.throttle@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
 
+lodash@4.17.5, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.6, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
+  version "4.17.5"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+
 lodash@^3.5.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
-
-lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.6, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
-  version "4.17.5"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
 longest@^1.0.1:
   version "1.0.1"
@@ -4610,7 +4614,7 @@ mixin-deep@^1.2.0:
   dependencies:
     minimist "0.0.8"
 
-moment@^2.22.0:
+moment@2.22.1:
   version "2.22.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
 
@@ -4754,7 +4758,7 @@ number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
 
-numeral@^2.0.6:
+numeral@2.0.6, numeral@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
 
@@ -5252,9 +5256,9 @@ react-fast-compare@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-1.0.0.tgz#813a039155e49b43ceffe99528fe5e9d97a6c938"
 
-react-i18next@7.5.1:
-  version "7.5.1"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-7.5.1.tgz#5fe4cdfd2ecba22cc967213d880ab4cdd2c2ce61"
+react-i18next@7.6.0:
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-7.6.0.tgz#abdb44b9dee5b43b4340590e25a6f7b04e2df6bc"
   dependencies:
     hoist-non-react-statics "^2.3.1"
     html-parse-stringify2 "2.0.1"
@@ -5278,9 +5282,9 @@ react-native-blur@3.2.2:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-camera@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-1.0.3.tgz#bb255a3e24659c7da6f36138d0fc1e49ae34c127"
+react-native-camera@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-1.1.1.tgz#307e8239800e6282298bbb1807d72c026899c03f"
   dependencies:
     lodash "^4.17.4"
     prop-types "^15.5.10"
@@ -5318,10 +5322,6 @@ react-native-locale@0.0.18:
   version "0.0.18"
   resolved "https://registry.yarnpkg.com/react-native-locale/-/react-native-locale-0.0.18.tgz#0d9207710dcbb41fe63400df6a6321c28b5c95cf"
 
-react-native-passcode-auth@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-passcode-auth/-/react-native-passcode-auth-1.0.0.tgz#250f543923a39608f99e23ce609381e723a6c1ae"
-
 react-native-qrcode-svg@5.0.6:
   version "5.0.6"
   resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-5.0.6.tgz#4e054788d1bf1bafe6a229056cde576644d059db"
@@ -5342,24 +5342,24 @@ react-native-sentry@0.35.3:
     "@sentry/wizard" "^0.9.1"
     raven-js "^3.22.1"
 
-react-native-simple-store@^1.3.0:
+react-native-simple-store@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/react-native-simple-store/-/react-native-simple-store-1.3.0.tgz#84953a7b007b8e3c50ec768478e98dc3636ef092"
   dependencies:
     lodash.merge "4.6.0"
 
-react-native-smart-splash-screen@^2.3.5:
+react-native-smart-splash-screen@2.3.5:
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/react-native-smart-splash-screen/-/react-native-smart-splash-screen-2.3.5.tgz#68a1e45bfd708678aa12e65f2ba997ac5c1292a0"
 
-react-native-snap-carousel@^3.6.0:
+react-native-snap-carousel@3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/react-native-snap-carousel/-/react-native-snap-carousel-3.7.0.tgz#7d2794339c661d3e1f8ec4786b6335ae7cb23262"
   dependencies:
     prop-types "^15.6.1"
     react-addons-shallow-compare "15.6.2"
 
-react-native-splash-screen@^3.0.6:
+react-native-splash-screen@3.0.6:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/react-native-splash-screen/-/react-native-splash-screen-3.0.6.tgz#c0bbf2c8ae40a313c4c7044f55e569414ff68332"
 
@@ -5377,7 +5377,7 @@ react-native-svg@6.3.1:
   dependencies:
     prop-types "^15.6.0"
 
-react-native-touch-id@^4.0.1:
+react-native-touch-id@4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/react-native-touch-id/-/react-native-touch-id-4.0.1.tgz#f284410d16ae142c1bd539284bebf92f5ff6a8e2"
 
@@ -5465,7 +5465,7 @@ react-proxy@^1.1.7:
     lodash "^4.6.1"
     react-deep-force-update "^1.0.0"
 
-react-redux@^5.0.7:
+react-redux@5.0.7:
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-5.0.7.tgz#0dc1076d9afb4670f993ffaef44b8f8c1155a4c8"
   dependencies:
@@ -5496,7 +5496,7 @@ react-transform-hmr@^1.0.4:
     global "^4.3.0"
     react-proxy "^1.1.7"
 
-react@^16.0.0, react@^16.3.1:
+react@16.3.2, react@^16.0.0:
   version "16.3.2"
   resolved "https://registry.yarnpkg.com/react/-/react-16.3.2.tgz#fdc8420398533a1e58872f59091b272ce2f91ea9"
   dependencies:
@@ -5575,7 +5575,7 @@ reduce-reducers@^0.1.0:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/reduce-reducers/-/reduce-reducers-0.1.5.tgz#ff77ca8068ff41007319b8b4b91533c7e0e54576"
 
-redux-actions@^2.3.0:
+redux-actions@2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/redux-actions/-/redux-actions-2.3.0.tgz#4e9967d86594b8c235bab6e08960b5c185f296d3"
   dependencies:
@@ -5584,11 +5584,11 @@ redux-actions@^2.3.0:
     lodash-es "^4.17.4"
     reduce-reducers "^0.1.0"
 
-redux-thunk@^2.2.0:
+redux-thunk@2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.2.0.tgz#e615a16e16b47a19a515766133d1e3e99b7852e5"
 
-redux@^3.7.2:
+redux@3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/redux/-/redux-3.7.2.tgz#06b73123215901d25d065be342eb026bc1c8537b"
   dependencies:
@@ -5759,7 +5759,7 @@ require-uncached@^1.0.3:
     caller-path "^0.1.0"
     resolve-from "^1.0.0"
 
-reselect@^3.0.1:
+reselect@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-3.0.1.tgz#efdaa98ea7451324d092b2b2163a6a1d7a9a2147"
 
@@ -5841,13 +5841,7 @@ rx-lite@*, rx-lite@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-4.0.8.tgz#0b1e11af8bc44836f04a6407e92da42467b79444"
 
-rxjs@5.5.9:
-  version "5.5.9"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.9.tgz#12a0487794b00f5eb370fec2751bd973a89886fb"
-  dependencies:
-    symbol-observable "1.0.1"
-
-rxjs@^5.5.2:
+rxjs@5.5.10, rxjs@^5.5.2:
   version "5.5.10"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.10.tgz#fde02d7a614f6c8683d0d1957827f492e09db045"
   dependencies:

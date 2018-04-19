@@ -1,3 +1,3 @@
-import PasscodeAuth from "react-native-passcode-auth";
+import PasscodeAuth from "@ledgerhq/react-native-passcode-auth";
 
 export default PasscodeAuth;

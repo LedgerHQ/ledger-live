@@ -1,6 +1,6 @@
 // @flow
 import "./polyfill"; /* eslint-disable import/first */
-import React, { Component, PureComponent } from "react";
+import React, { Component } from "react";
 import { StyleSheet, View, StatusBar } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import colors from "./colors";
@@ -12,6 +12,7 @@ import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
 import AuthFailedApp from "./components/AuthFailedApp";
 import AuthPendingApp from "./components/AuthPendingApp";
+import LoadingApp from "./components/LoadingApp";
 
 const styles = StyleSheet.create({
   root: {
@@ -73,7 +74,7 @@ export default class Root extends Component<{}, {}> {
                 }
               </AuthPass>
             ) : (
-              <View />
+              <LoadingApp />
             )
           }
         </LedgerStoreProvider>
