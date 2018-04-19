@@ -114,8 +114,8 @@ class Dashboard extends Component<
     this.props.screenProps.topLevelNavigation.navigate({
       routeName: "OperationDetails",
       params: {
-        operation,
-        account,
+        operationId: operation.id,
+        accountId: account.id,
         mainNavigation: this.props.navigation,
         linkToAccount: true
       },

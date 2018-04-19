@@ -88,7 +88,7 @@ class AccountBody extends Component<Props, State> {
   goToOperationDetails = (operation: Operation, account: Account) => {
     this.props.topLevelNavigation.navigate({
       routeName: "OperationDetails",
-      params: { operation, account },
+      params: { operationId: operation.id, accountId: account.id },
       key: "operationdetails"
     });
   };
