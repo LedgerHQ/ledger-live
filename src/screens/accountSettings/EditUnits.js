@@ -2,15 +2,15 @@
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Unit } from "@ledgerhq/currencies";
-import type { Account } from "@ledgerhq/wallet-common/lib/types";
 import { updateAccount } from "../../actions/accounts";
+import { getAccountById } from "../../reducers/accounts";
 import type { State } from "../../reducers";
 import makeGenericSelectScreen from "../makeGenericSelectScreen";
 
 type Props = {
   navigation: NavigationScreenProp<{
     params: {
-      account: Account
+      accountId: string
     }
   }>
 };
@@ -18,7 +18,9 @@ type Props = {
 const keyExtractor = (unit: Unit) => String(unit.magnitude);
 
 const mapStateToProps = (state: State, { navigation }: Props) => {
-  const { account } = navigation.state.params; // FIXME should get by id
+  const { accountId } = navigation.state.params;
+  const account = getAccountById(state, accountId);
+  if (!account) throw new Error(`no account ${accountId}`);
   return {
     selectedKey: keyExtractor(account.unit),
     items: account.currency.units
@@ -30,7 +32,7 @@ const mapDispatchToProps = (dispatch: *, { navigation }: Props) => ({
     dispatch(
       updateAccount({
         unit,
-        id: navigation.state.params.account.id
+        id: navigation.state.params.accountId
       })
     );
   }

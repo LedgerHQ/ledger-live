@@ -31,6 +31,7 @@ class AccountSettings extends Component<{
   });
   render() {
     const { account, navigation } = this.props;
+    const accountId = account.id;
     return (
       <ScrollView style={styles.container}>
         <SectionTitle title="ACCOUNT" />
@@ -41,7 +42,7 @@ class AccountSettings extends Component<{
             // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
               routeName: "EditName",
-              params: { account },
+              params: { accountId },
               key: "editname"
             })
           }
@@ -49,7 +50,7 @@ class AccountSettings extends Component<{
           <LText>{account.name}</LText>
         </SettingsRow>
         <SettingsRow title="Archive">
-          <ArchiveToggle accountId={account.id} />
+          <ArchiveToggle accountId={accountId} />
         </SettingsRow>
         <SectionTitle title="DISPLAY" />
         <SettingsRow
@@ -58,7 +59,7 @@ class AccountSettings extends Component<{
             // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
               routeName: "EditUnits",
-              params: { account },
+              params: { accountId },
               key: "editunits"
             })
           }
