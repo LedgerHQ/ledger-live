@@ -11,7 +11,8 @@ const mapStateToProps = createStructuredSelector({
 
 type State = {
   pending: boolean,
-  success: boolean
+  success: boolean,
+  error: ?Error
 };
 
 type Props = {
@@ -21,7 +22,8 @@ type Props = {
 
 const initialState = ({ authSecurityEnabled }: Props): State => ({
   success: !authSecurityEnabled,
-  pending: authSecurityEnabled
+  pending: authSecurityEnabled,
+  error: null
 });
 
 class AuthPass extends Component<Props, State> {
@@ -29,19 +31,13 @@ class AuthPass extends Component<Props, State> {
 
   componentDidMount() {
     if (!this.state.success) {
-      this.auth();
+      auth("Please authenticate to Ledger app")
+        .then(success => this.setState({ success, pending: false }))
+        .catch(error =>
+          this.setState({ success: false, pending: false, error })
+        );
     }
   }
-
-  auth = async () => {
-    try {
-      const success = await auth();
-      this.setState({ success, pending: false });
-    } catch (e) {
-      console.warn(e);
-      this.setState({ success: false, pending: false });
-    }
-  };
 
   render() {
     const { children } = this.props;

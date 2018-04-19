@@ -2,9 +2,7 @@
 import biometry from "./methods/biometry";
 import passCode from "./methods/passCode"; // eslint-disable-line
 
-const reason = "Please authenticate to Ledger app";
-
-export default async () => {
+export default async (reason: string) => {
   let success = false;
   if (await passCode.isSupported()) {
     success = await passCode.authenticate(reason);
