@@ -6,6 +6,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import SettingsRow from "../../components/SettingsRow";
 import SectionTitle from "../../components/SectionTitle";
 import LText from "../../components/LText";
+import AuthSecurityToggle from "./AuthSecurityToggle";
 import DeltaColorToggle from "./DeltaColorToggle";
 import SignOut from "./SignOut";
 import { formatChartTimeRange } from "./ChartTimeRange";
@@ -74,7 +75,7 @@ class Settings extends Component<{
           }
         />
 
-        <SectionTitle title="TOOLS" />
+        <SectionTitle title="PROFILE" />
 
         <SettingsRow
           title="Import Accounts"
@@ -87,6 +88,10 @@ class Settings extends Component<{
             })
           }
         />
+
+        <SettingsRow title="Auth Security">
+          <AuthSecurityToggle />
+        </SettingsRow>
 
         <SectionTitle title="ABOUT" />
 

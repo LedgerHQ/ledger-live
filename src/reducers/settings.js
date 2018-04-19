@@ -21,7 +21,8 @@ export type SettingsState = {
   orderAccounts: string,
   deltaChangeColorLocale: "western" | "eastern",
   chartTimeRange: number,
-  currenciesSettings: CurrenciesSettings
+  currenciesSettings: CurrenciesSettings,
+  authSecurityEnabled: boolean
 };
 
 const locale = Locale.constants();
@@ -40,7 +41,8 @@ const defaultState: SettingsState = {
   orderAccounts: "balance|desc",
   deltaChangeColorLocale: getLocaleColor(),
   chartTimeRange: 7,
-  currenciesSettings: {}
+  currenciesSettings: {},
+  authSecurityEnabled: false
 };
 
 const state: SettingsState = {
@@ -93,5 +95,8 @@ export const fiatUnitSelector = (state: State) =>
 
 export const chartTimeRangeSelector = (state: State) =>
   state.settings.chartTimeRange;
+
+export const authSecurityEnabledSelector = (state: State) =>
+  state.settings.authSecurityEnabled;
 
 export default handleActions(handlers, state);

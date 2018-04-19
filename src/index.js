@@ -10,6 +10,7 @@ import RebootProvider from "./context/Reboot";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
+import AuthFailedApp from "./components/AuthFailedApp";
 
 const styles = StyleSheet.create({
   root: {
@@ -19,13 +20,7 @@ const styles = StyleSheet.create({
 
 class LoadingApp extends PureComponent<*> {
   render() {
-    return null;
-  }
-}
-
-class NoAuthApp extends PureComponent<*> {
-  render() {
-    return null;
+    return <View />;
   }
 }
 
@@ -62,29 +57,30 @@ export default class Root extends Component<{}, {}> {
   };
 
   render() {
-    const authRequired = false; // TODO this should be opt-in from settings
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
-          {ready => (
-            <AuthPass enabled={authRequired}>
-              {authenticated =>
-                !authenticated ? (
-                  <NoAuthApp />
-                ) : (
-                  <LocaleProvider>
-                    {ready ? (
+          {ready =>
+            ready ? (
+              <AuthPass>
+                {state =>
+                  state.pending ? (
+                    <LoadingApp />
+                  ) : !state.success ? (
+                    <AuthFailedApp />
+                  ) : (
+                    <LocaleProvider>
                       <CounterValuePollingProvider>
                         <App />
                       </CounterValuePollingProvider>
-                    ) : (
-                      <LoadingApp />
-                    )}
-                  </LocaleProvider>
-                )
-              }
-            </AuthPass>
-          )}
+                    </LocaleProvider>
+                  )
+                }
+              </AuthPass>
+            ) : (
+              <LoadingApp />
+            )
+          }
         </LedgerStoreProvider>
       </RebootProvider>
     );

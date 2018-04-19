@@ -32,7 +32,7 @@ export const updateCurrencySettings = (
   coinType: number,
   patch: $Shape<CurrencySettings>
 ) => ({
-  type: "UPDATE_CURRENCY_SETTINGS",
+  type: "DB:UPDATE_CURRENCY_SETTINGS",
   coinType,
   patch
 });

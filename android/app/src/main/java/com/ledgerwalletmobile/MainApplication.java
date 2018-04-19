@@ -3,6 +3,7 @@ package com.ledgerwalletmobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnfingerprint.FingerprintAuthPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import io.sentry.RNSentryPackage;
 import io.fixd.rctlocale.RCTLocalePackage;
@@ -32,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
               new MainReactPackage(),
+            new FingerprintAuthPackage(),
             new SplashScreenReactPackage(),
             new RNSentryPackage(MainApplication.this),
             new RCTLocalePackage(),
