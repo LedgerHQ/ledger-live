@@ -61,6 +61,16 @@ const handlers: Object = {
   ) => ({
     ...state,
     ...settings
+  }),
+  UPDATE_CURRENCY_SETTINGS: (
+    { currenciesSettings, ...state }: SettingsState,
+    { coinType, patch }
+  ) => ({
+    ...state,
+    currenciesSettings: {
+      ...currenciesSettings,
+      [coinType]: { ...currenciesSettings[coinType], ...patch }
+    }
   })
 };
 

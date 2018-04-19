@@ -25,8 +25,8 @@ const mapDispatchToProps = (dispatch: *, props: *) => ({
 
 const Screen = makeGenericSelectScreen({
   title: "Countervalue currency",
-  keyExtractor: (item: Item) => item.value,
-  formatItem: (item: Item) => item.label
+  keyExtractor: item => item.value,
+  formatItem: item => item.label
 });
 
 export default withCounterValuePolling(

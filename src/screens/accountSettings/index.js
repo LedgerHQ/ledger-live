@@ -10,6 +10,7 @@ import SettingsRow from "../../components/SettingsRow";
 import SectionTitle from "../../components/SectionTitle";
 import LText from "../../components/LText";
 import ArchiveToggle from "./ArchiveToggle";
+import CurrencySettingsSection from "../CurrenciesSettings/Section";
 
 const mapStateToProps = (state, { screenProps }) => ({
   account: getAccountById(
@@ -66,21 +67,10 @@ class AccountSettings extends Component<{
             {account.unit.name} ({account.unit.code})
           </LText>
         </SettingsRow>
-        <SectionTitle title="COIN" />
-        <SettingsRow
-          title="Required Confirmations"
-          arrowRight
-          onPress={() =>
-            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
-            navigation.navigate({
-              routeName: "EditConfirmations",
-              params: { account },
-              key: "editconfirmations"
-            })
-          }
-        >
-          <LText>{account.minConfirmations}</LText>
-        </SettingsRow>
+        <CurrencySettingsSection
+          navigation={navigation}
+          currency={account.currency}
+        />
       </ScrollView>
     );
   }

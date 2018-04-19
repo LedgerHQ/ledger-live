@@ -2,6 +2,7 @@
 
 import type { Dispatch } from "redux";
 import db from "../db";
+import type { CurrencySettings } from "../reducers/settings";
 
 type Settings = {};
 
@@ -26,3 +27,12 @@ export const initSettings: InitSettings = () => async dispatch => {
     payload: settings
   });
 };
+
+export const updateCurrencySettings = (
+  coinType: number,
+  patch: $Shape<CurrencySettings>
+) => ({
+  type: "UPDATE_CURRENCY_SETTINGS",
+  coinType,
+  patch
+});

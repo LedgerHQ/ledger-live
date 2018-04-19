@@ -65,6 +65,7 @@
     "react-native-blur": "3.2.2",
     "react-native-camera": "1.0.3",
     "react-native-config": "0.11.5",
+    "react-native-keychain": "3.0.0-rc.3",
     "react-native-locale": "0.0.18",
     "react-native-qrcode-svg": "5.0.6",
     "react-native-sentry": "0.35.3",
