@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { ScrollView } from "react-native";
+import { ScrollView, Linking } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import SettingsRow from "../../components/SettingsRow";
 import SectionTitle from "../../components/SectionTitle";
@@ -53,7 +53,6 @@ class Settings extends Component<{
             })
           }
         >
-          {" "}
           <LText>{formatChartTimeRange(settings.chartTimeRange)}</LText>
         </SettingsRow>
 
@@ -61,10 +60,25 @@ class Settings extends Component<{
           <DeltaColorToggle />
         </SettingsRow>
 
+        <SectionTitle title="CURRENCIES" />
+
+        <SettingsRow
+          title="Currencies Settings"
+          arrowRight
+          onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+            navigation.navigate({
+              routeName: "CurrenciesSettings",
+              key: "CurrenciesSettings"
+            })
+          }
+        />
+
         <SectionTitle title="TOOLS" />
 
         <SettingsRow
           title="Import Accounts"
+          arrowRight
           onPress={() =>
             // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
@@ -72,9 +86,27 @@ class Settings extends Component<{
               key: "ImportAccounts"
             })
           }
-        >
-          <DeltaColorToggle />
-        </SettingsRow>
+        />
+
+        <SectionTitle title="ABOUT" />
+
+        <SettingsRow
+          title="FAQ"
+          arrowRight
+          onPress={() => Linking.openURL("https://support.ledgerwallet.com")}
+        />
+
+        <SettingsRow
+          title="Contact us"
+          arrowRight
+          onPress={() => Linking.openURL("https://support.ledgerwallet.com")}
+        />
+
+        <SettingsRow
+          title="Term & Policy"
+          arrowRight
+          onPress={() => Linking.openURL("https://support.ledgerwallet.com")}
+        />
 
         <SignOut />
       </ScrollView>

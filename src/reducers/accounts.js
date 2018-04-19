@@ -3,9 +3,6 @@ import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import { createAccountModel } from "@ledgerhq/wallet-common/lib/models/account";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-import { getBalanceHistorySum } from "@ledgerhq/wallet-common/lib/helpers/account";
-import { fiatUnitSelector, chartTimeRangeSelector } from "./settings";
-import { calculateCounterValueSelector } from "./counterValues";
 
 export const accountModel = createAccountModel();
 
@@ -61,6 +58,14 @@ export const getVisibleAccounts = createSelector(getAccounts, accounts =>
   accounts.filter(acc => !acc.archived)
 );
 
+export const getUniqueCurrenciesSelector = createSelector(
+  getVisibleAccounts,
+  accounts =>
+    [...new Set(accounts.map(a => a.currency))].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    )
+);
+
 // TODO move to the (state, props) style https://github.com/reactjs/reselect#accessing-react-props-in-selectors
 export function getAccountById(
   state: { accounts: AccountsState },
@@ -68,13 +73,5 @@ export function getAccountById(
 ): ?Account {
   return getAccounts(state).find(account => account.id === id);
 }
-
-export const globalBalanceHistorySelector = createSelector(
-  getVisibleAccounts,
-  chartTimeRangeSelector,
-  fiatUnitSelector,
-  calculateCounterValueSelector,
-  getBalanceHistorySum
-);
 
 export default handleActions(handlers, state);

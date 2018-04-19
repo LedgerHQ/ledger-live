@@ -1,14 +1,27 @@
 // @flow
 import { handleActions } from "redux-actions";
 import { getFiatUnit, hasFiatUnit } from "@ledgerhq/currencies";
+import type { Currency } from "@ledgerhq/currencies";
 import Locale from "react-native-locale"; // eslint-disable-line import/no-unresolved
 import type { State } from ".";
+
+export type CurrencySettings = {
+  confirmations: number,
+  confirmationsToSpend: number,
+  transactionFees: string,
+  blockchainExplorer: string
+};
+
+export type CurrenciesSettings = {
+  [coinType: number]: CurrencySettings
+};
 
 export type SettingsState = {
   counterValue: string,
   orderAccounts: string,
   deltaChangeColorLocale: "western" | "eastern",
-  chartTimeRange: number
+  chartTimeRange: number,
+  currenciesSettings: CurrenciesSettings
 };
 
 const locale = Locale.constants();
@@ -26,7 +39,8 @@ const defaultState: SettingsState = {
   counterValue: getLocaleFiat(),
   orderAccounts: "balance|desc",
   deltaChangeColorLocale: getLocaleColor(),
-  chartTimeRange: 7
+  chartTimeRange: 7,
+  currenciesSettings: {}
 };
 
 const state: SettingsState = {
@@ -49,6 +63,18 @@ const handlers: Object = {
     ...settings
   })
 };
+
+export const defaultCurrencySettingsForCurrency = (
+  _currency: Currency
+): CurrencySettings => ({
+  confirmations: 5,
+  confirmationsToSpend: 10,
+  transactionFees: "high",
+  blockchainExplorer: "blockchain.info"
+});
+
+export const getCurrenciesSettingsSelector = (state: State) =>
+  state.settings.currenciesSettings;
 
 export const fiatUnitSelector = (state: State) =>
   getFiatUnit(state.settings.counterValue);

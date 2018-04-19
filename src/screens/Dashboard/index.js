@@ -18,10 +18,8 @@ import type {
 import { groupAccountsOperationsByDay } from "@ledgerhq/wallet-common/lib/helpers/account";
 import ScreenGeneric from "../../components/ScreenGeneric";
 import colors from "../../colors";
-import {
-  getVisibleAccounts,
-  globalBalanceHistorySelector
-} from "../../reducers/accounts";
+import { getVisibleAccounts } from "../../reducers/accounts";
+import { globalBalanceHistorySelector } from "../../selectors";
 import { calculateCounterValueSelector } from "../../reducers/counterValues";
 import { fiatUnitSelector } from "../../reducers/settings";
 import ListHeaderComponent from "./ListHeaderComponent";

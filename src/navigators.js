@@ -8,6 +8,7 @@ import Accounts from "./screens/Accounts";
 import AccountSettings from "./screens/accountSettings/index";
 import Search from "./screens/Search";
 import Settings from "./screens/Settings";
+import CurrenciesSettings from "./screens/CurrenciesSettings";
 import SelectFiatUnit from "./screens/Settings/SelectFiatUnit";
 import ChartTimeRange from "./screens/Settings/ChartTimeRange";
 import ImportAccounts from "./screens/ImportAccounts";
@@ -47,7 +48,8 @@ const SettingsStack = StackNavigator(
     Settings: { screen: Settings },
     ImportAccounts: { screen: ImportAccounts },
     SelectFiatUnit: { screen: SelectFiatUnit },
-    ChartTimeRange: { screen: ChartTimeRange }
+    ChartTimeRange: { screen: ChartTimeRange },
+    CurrenciesSettings: { screen: CurrenciesSettings }
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,

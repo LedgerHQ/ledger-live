@@ -2,13 +2,15 @@ import React, { Component } from "react";
 import { View, StyleSheet, Text } from "react-native";
 
 export default class SectionTitle extends Component<{
-  title: string
+  title?: string,
+  children?: *
 }> {
   render() {
-    const { title } = this.props;
+    const { title, children } = this.props;
     return (
       <View style={styles.sectionTitle}>
-        <Text style={styles.sectionTitleText}>{title}</Text>
+        {title ? <Text style={styles.sectionTitleText}>{title}</Text> : null}
+        {children}
       </View>
     );
   }
