@@ -21,7 +21,7 @@ class Settings extends Component<{
   render() {
     const { navigation, currencies } = this.props;
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
         {currencies.map(currency => (
           <CurrencySettingsSection
             key={currency.coinType}

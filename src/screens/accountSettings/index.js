@@ -33,7 +33,10 @@ class AccountSettings extends Component<{
     const { account, navigation } = this.props;
     const accountId = account.id;
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 60 }}
+      >
         <SectionTitle title="ACCOUNT" />
         <SettingsRow
           title="Name"

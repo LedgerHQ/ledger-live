@@ -26,7 +26,7 @@ class Settings extends Component<{
   render() {
     const { navigation, settings } = this.props;
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <SectionTitle title="DISPLAY" />
 
         <SettingsRow
