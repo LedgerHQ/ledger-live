@@ -8,10 +8,15 @@ import Accounts from "./screens/Accounts";
 import AccountSettings from "./screens/accountSettings/index";
 import Search from "./screens/Search";
 import Settings from "./screens/Settings";
-import GenericSelectScreen from "./screens/GenericSelectScreen";
+import CurrenciesSettings from "./screens/CurrenciesSettings";
+import Confirmations from "./screens/CurrenciesSettings/Confirmations";
+import ConfirmationsToSpend from "./screens/CurrenciesSettings/ConfirmationsToSpend";
+import BlockchainExplorer from "./screens/CurrenciesSettings/BlockchainExplorer";
+import TransactionFees from "./screens/CurrenciesSettings/TransactionFees";
+import SelectFiatUnit from "./screens/Settings/SelectFiatUnit";
+import ChartTimeRange from "./screens/Settings/ChartTimeRange";
 import ImportAccounts from "./screens/ImportAccounts";
 import EditUnits from "./screens/accountSettings/EditUnits";
-import EditConfirmations from "./screens/accountSettings/EditConfirmations";
 import EditName from "./screens/accountSettings/EditName";
 import Create from "./screens/Create";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
@@ -41,12 +46,21 @@ const styles = StyleSheet.create({
   }
 });
 
+const currencySettingsScreens = {
+  ConfirmationsToSpend: { screen: ConfirmationsToSpend },
+  Confirmations: { screen: Confirmations },
+  TransactionFees: { screen: TransactionFees },
+  BlockchainExplorer: { screen: BlockchainExplorer }
+};
+
 const SettingsStack = StackNavigator(
   {
     Settings: { screen: Settings },
     ImportAccounts: { screen: ImportAccounts },
-    SelectFiatUnit: { screen: GenericSelectScreen },
-    ChartTimeRange: { screen: GenericSelectScreen }
+    SelectFiatUnit: { screen: SelectFiatUnit },
+    ChartTimeRange: { screen: ChartTimeRange },
+    CurrenciesSettings: { screen: CurrenciesSettings },
+    ...currencySettingsScreens
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
@@ -67,8 +81,8 @@ const AccountSettingsStack = StackNavigator(
   {
     AccountSettings: { screen: AccountSettings },
     EditUnits: { screen: EditUnits },
-    EditConfirmations: { screen: EditConfirmations },
-    EditName: { screen: EditName }
+    EditName: { screen: EditName },
+    ...currencySettingsScreens
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,

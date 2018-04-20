@@ -1,20 +1,39 @@
 /* @flow */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { View, StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-
-import SectionEntry from "../../components/SectionEntry";
+import SettingsRow from "../../components/SettingsRow";
 import { updateAccount } from "../../actions/accounts";
+import { accountByIdSelector } from "../../reducers/accounts";
+import type { State } from "../../reducers";
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (
+  state: State,
+  {
+    navigation
+  }: {
+    navigation: NavigationScreenProp<{
+      params: {
+        accountId: string
+      }
+    }>
+  }
+) => {
+  const { accountId } = navigation.state.params;
+  const account = accountByIdSelector(state, accountId);
+  if (!account) throw new Error(`no account ${accountId}`);
+  return { account };
+};
+
 const mapDispatchToProps = {
   updateAccount
 };
 
 class EditName extends Component<{
   updateAccount: ($Shape<Account>) => *,
+  account: Account,
   navigation: NavigationScreenProp<{
     params: {
       account: Account
@@ -24,32 +43,32 @@ class EditName extends Component<{
   static navigationOptions = {
     title: "Edit Name"
   };
-  onNameEndEditing = e => {
-    const { account } = this.props.navigation.state.params;
+  onNameEndEditing = (e: *) => {
+    const { updateAccount, account, navigation } = this.props;
     if (e.nativeEvent.text.length) {
-      this.props.updateAccount({ name: e.nativeEvent.text, id: account.id });
+      updateAccount({
+        name: e.nativeEvent.text,
+        id: account.id
+      });
     }
-    const { navigation } = this.props;
     navigation.goBack();
   };
 
   render() {
-    const { account } = this.props.navigation.state.params;
+    const { account } = this.props;
     return (
-      <View>
-        <SectionEntry>
-          <TextInput
-            autoFocus
-            style={styles.textInputAS}
-            placeholder="Name"
-            defaultValue={account.name}
-            underlineColorAndroid="transparent"
-            returnKeyType="done"
-            maxLength={20}
-            onEndEditing={this.onNameEndEditing}
-          />
-        </SectionEntry>
-      </View>
+      <SettingsRow title="Name">
+        <TextInput
+          autoFocus
+          style={styles.textInputAS}
+          placeholder="Name"
+          defaultValue={account.name}
+          underlineColorAndroid="transparent"
+          returnKeyType="done"
+          maxLength={20}
+          onEndEditing={this.onNameEndEditing}
+        />
+      </SettingsRow>
     );
   }
 }

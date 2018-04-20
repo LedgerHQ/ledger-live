@@ -2,9 +2,9 @@
 /* eslint-disable consistent-return */
 
 import db from "../db";
-import { getAccounts, accountModel } from "../reducers/accounts";
+import { accountsSelector, accountModel } from "../reducers/accounts";
 
-export default (store: *) => (next: *) => (action: *) => {
+export default (store: *) => (next: *) => (action: Object) => {
   if (!action.type.startsWith("DB:")) {
     return next(action);
   }
@@ -12,12 +12,12 @@ export default (store: *) => (next: *) => (action: *) => {
   const { dispatch, getState } = store;
   const [, type] = action.type.split(":");
 
-  dispatch({ type, payload: action.payload });
+  dispatch({ ...action, type });
 
   const state = getState();
   const { settings, counterValues } = state;
 
-  const accounts = getAccounts(state);
+  const accounts = accountsSelector(state);
 
   const startTime = Date.now();
   db

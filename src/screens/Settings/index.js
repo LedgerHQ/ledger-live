@@ -1,132 +1,122 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  ScrollView,
-  View,
-  Text,
-  StyleSheet,
-  Alert,
-  Switch
-} from "react-native";
 import { connect } from "react-redux";
-import LText from "../../components/LText";
-import { withReboot } from "../../context/Reboot";
-import SectionEntry from "../../components/SectionEntry";
+import { ScrollView, Linking } from "react-native";
+import type { NavigationScreenProp } from "react-navigation";
+import SettingsRow from "../../components/SettingsRow";
 import SectionTitle from "../../components/SectionTitle";
-import FiatUnitSection from "./FiatUnitSection";
-import ChartTimeRangeSection from "./ChartTimeRangeSection";
-import { saveSettings } from "../../actions/settings";
+import LText from "../../components/LText";
+import AuthSecurityToggle from "./AuthSecurityToggle";
+import DeltaColorToggle from "./DeltaColorToggle";
+import SignOut from "./SignOut";
+import { formatChartTimeRange } from "./ChartTimeRange";
 import type { State } from "../../reducers";
+import type { SettingsState } from "../../reducers/settings";
 
 const mapStateToProps = (state: State) => ({
   settings: state.settings
 });
 
-const mapDispatchToProps = {
-  saveSettings
-};
-
-class SignOut_ extends Component<{ reboot: (?boolean) => * }> {
-  onResetAll = async () => {
-    await this.props.reboot(true);
-  };
-  onSignOut = () => {
-    Alert.alert(
-      "Are you sure you want to sign out?",
-      "All accounts data will be removed from your phone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Sign me out", onPress: this.onResetAll }
-      ]
-    );
-  };
-  render() {
-    return (
-      <View style={{ marginVertical: 40 }}>
-        <SectionEntry onPress={this.onSignOut} center>
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </SectionEntry>
-      </View>
-    );
-  }
-}
-
-const SignOut = withReboot(SignOut_);
-
-class Settings extends Component<*> {
-  static navigationOptions = {
-    title: "Settings"
-  };
-
-  setEasternColorLocale = (isEastern: boolean) => {
-    const { saveSettings } = this.props;
-
-    if (isEastern) {
-      saveSettings({ deltaChangeColorLocale: "eastern" });
-    } else {
-      saveSettings({ deltaChangeColorLocale: "western" });
-    }
-  };
+class Settings extends Component<{
+  navigation: NavigationScreenProp<*>,
+  settings: SettingsState
+}> {
+  static navigationOptions = { title: "Settings" };
 
   render() {
-    const { navigation, settings, saveSettings } = this.props;
-
+    const { navigation, settings } = this.props;
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <SectionTitle title="DISPLAY" />
-        <FiatUnitSection
-          navigation={navigation}
-          saveSettings={saveSettings}
-          value={settings.counterValue}
-        />
-        <ChartTimeRangeSection
-          navigation={navigation}
-          saveSettings={saveSettings}
-          value={settings.chartTimeRange}
-        />
-        <SectionEntry>
-          <LText>Use red for values going up</LText>
-          <Switch
-            value={settings.deltaChangeColorLocale === "eastern"}
-            onValueChange={this.setEasternColorLocale}
-          />
-        </SectionEntry>
-        <SectionTitle title="TOOLS" />
-        <SectionEntry
+
+        <SettingsRow
+          title="Countervalue currency"
+          arrowRight
           onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
             navigation.navigate({
-              routeName: "ImportAccounts",
-              key: "sendfunds"
+              routeName: "SelectFiatUnit",
+              key: "selectfiatunit"
             })
           }
         >
-          <LText>Import Accounts</LText>
-        </SectionEntry>
+          <LText>{settings.counterValue}</LText>
+        </SettingsRow>
+
+        <SettingsRow
+          title="Dashboard chart time range"
+          arrowRight
+          onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+            navigation.navigate({
+              routeName: "ChartTimeRange",
+              key: "ChartTimeRange"
+            })
+          }
+        >
+          <LText>{formatChartTimeRange(settings.chartTimeRange)}</LText>
+        </SettingsRow>
+
+        <SettingsRow title="Use red for values going up">
+          <DeltaColorToggle />
+        </SettingsRow>
+
+        <SectionTitle title="CURRENCIES" />
+
+        <SettingsRow
+          title="Currencies Settings"
+          arrowRight
+          onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+            navigation.navigate({
+              routeName: "CurrenciesSettings",
+              key: "CurrenciesSettings"
+            })
+          }
+        />
+
+        <SectionTitle title="PROFILE" />
+
+        <SettingsRow
+          title="Import Accounts"
+          arrowRight
+          onPress={() =>
+            // $FlowFixMe https://github.com/react-navigation/react-navigation/pull/3843
+            navigation.navigate({
+              routeName: "ImportAccounts",
+              key: "ImportAccounts"
+            })
+          }
+        />
+
+        <SettingsRow title="Auth Security">
+          <AuthSecurityToggle />
+        </SettingsRow>
+
+        <SectionTitle title="ABOUT" />
+
+        <SettingsRow
+          title="FAQ"
+          arrowRight
+          onPress={() => Linking.openURL("https://support.ledgerwallet.com")}
+        />
+
+        <SettingsRow
+          title="Contact us"
+          arrowRight
+          onPress={() => Linking.openURL("https://support.ledgerwallet.com")}
+        />
+
+        <SettingsRow
+          title="Term & Policy"
+          arrowRight
+          onPress={() => Linking.openURL("https://support.ledgerwallet.com")}
+        />
+
         <SignOut />
       </ScrollView>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  header: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1
-  },
-  headerText: {
-    color: "white",
-    fontSize: 16
-  },
-  tempLineHeight: {
-    lineHeight: 30
-  },
-  signOutText: {
-    color: "#c00"
-  }
-});
+export default connect(mapStateToProps)(Settings);

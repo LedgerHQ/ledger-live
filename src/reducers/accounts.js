@@ -1,11 +1,8 @@
 // @flow
 import { handleActions } from "redux-actions";
-import { createSelector } from "reselect";
+import { createSelector, createStructuredSelector } from "reselect";
 import { createAccountModel } from "@ledgerhq/wallet-common/lib/models/account";
 import type { Account } from "@ledgerhq/wallet-common/lib/types";
-import { getBalanceHistorySum } from "@ledgerhq/wallet-common/lib/helpers/account";
-import { fiatUnitSelector, chartTimeRangeSelector } from "./settings";
-import { calculateCounterValueSelector } from "./counterValues";
 
 export const accountModel = createAccountModel();
 
@@ -49,32 +46,54 @@ const handlers: Object = {
 
 // Selectors
 
-export function getAccounts(state: { accounts: AccountsState }): Account[] {
+export function accountsSelector(state: {
+  accounts: AccountsState
+}): Account[] {
   return state.accounts;
 }
 
-export const getArchivedAccounts = createSelector(getAccounts, accounts =>
-  accounts.filter(acc => acc.archived)
+export const archivedAccountsSelector = createSelector(
+  accountsSelector,
+  accounts => accounts.filter(acc => acc.archived)
 );
 
-export const getVisibleAccounts = createSelector(getAccounts, accounts =>
-  accounts.filter(acc => !acc.archived)
+export const visibleAccountsSelector = createSelector(
+  accountsSelector,
+  accounts => accounts.filter(acc => !acc.archived)
+);
+
+export const currenciesSelector = createSelector(
+  visibleAccountsSelector,
+  accounts =>
+    [...new Set(accounts.map(a => a.currency))].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    )
 );
 
 // TODO move to the (state, props) style https://github.com/reactjs/reselect#accessing-react-props-in-selectors
-export function getAccountById(
+export function accountByIdSelector(
   state: { accounts: AccountsState },
   id: string
 ): ?Account {
-  return getAccounts(state).find(account => account.id === id);
+  return accountsSelector(state).find(account => account.id === id);
 }
 
-export const globalBalanceHistorySelector = createSelector(
-  getVisibleAccounts,
-  chartTimeRangeSelector,
-  fiatUnitSelector,
-  calculateCounterValueSelector,
-  getBalanceHistorySum
+export const accountSelector = createSelector(
+  accountsSelector,
+  (_, { accountId }: { accountId: string }) => accountId,
+  (accounts, accountId) => accounts.find(a => a.id === accountId)
 );
+
+export const operationSelector = createSelector(
+  accountSelector,
+  (_, { operationId }: { operationId: string }) => operationId,
+  (account, operationId) =>
+    account && account.operations.find(o => o.id === operationId)
+);
+
+export const operationAndAccountSelector = createStructuredSelector({
+  account: accountSelector,
+  operation: operationSelector
+});
 
 export default handleActions(handlers, state);

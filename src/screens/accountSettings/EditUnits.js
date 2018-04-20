@@ -1,55 +1,47 @@
 /* @flow */
-import React, { Component } from "react";
 import { connect } from "react-redux";
-import { View, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/wallet-common/lib/types";
-
+import type { Unit } from "@ledgerhq/currencies";
 import { updateAccount } from "../../actions/accounts";
-import UnitRow from "../../components/UnitRow";
+import { accountByIdSelector } from "../../reducers/accounts";
+import type { State } from "../../reducers";
+import makeGenericSelectScreen from "../makeGenericSelectScreen";
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = {
-  updateAccount
-};
-
-class EditUnits extends Component<{
-  updateAccount: ($Shape<Account>) => *,
+type Props = {
   navigation: NavigationScreenProp<{
     params: {
-      account: Account
+      accountId: string
     }
   }>
-}> {
-  static navigationOptions = {
-    title: "Edit Units"
+};
+
+const keyExtractor = (unit: Unit) => String(unit.magnitude);
+
+const mapStateToProps = (state: State, { navigation }: Props) => {
+  const { accountId } = navigation.state.params;
+  const account = accountByIdSelector(state, accountId);
+  if (!account) throw new Error(`no account ${accountId}`);
+  return {
+    selectedKey: keyExtractor(account.unit),
+    items: account.currency.units
   };
-  onItemFullPress = (item: *) => {
-    const { navigation, updateAccount } = this.props;
-    const { account } = navigation.state.params;
-    updateAccount({ unit: item, id: account.id });
-    navigation.goBack();
-  };
+};
 
-  keyExtractor = (item: *) => String(item.magnitude);
-
-  renderItem = ({ item }: *) => (
-    <UnitRow unit={item} onPress={() => this.onItemFullPress(item)} />
-  );
-
-  render() {
-    const { account } = this.props.navigation.state.params;
-    return (
-      <View>
-        <FlatList
-          data={account.currency.units}
-          renderItem={this.renderItem}
-          keyExtractor={this.keyExtractor}
-        />
-      </View>
+const mapDispatchToProps = (dispatch: *, { navigation }: Props) => ({
+  onValueChange: (unit: Unit) => {
+    dispatch(
+      updateAccount({
+        unit,
+        id: navigation.state.params.accountId
+      })
     );
   }
-}
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditUnits);
+const Screen = makeGenericSelectScreen({
+  title: "Edit Units",
+  keyExtractor,
+  formatItem: (unit: Unit) => `${unit.name} (${unit.code})`
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Screen);

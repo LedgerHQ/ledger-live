@@ -18,10 +18,8 @@ import type {
 import { groupAccountsOperationsByDay } from "@ledgerhq/wallet-common/lib/helpers/account";
 import ScreenGeneric from "../../components/ScreenGeneric";
 import colors from "../../colors";
-import {
-  getVisibleAccounts,
-  globalBalanceHistorySelector
-} from "../../reducers/accounts";
+import { visibleAccountsSelector } from "../../reducers/accounts";
+import { globalBalanceHistorySelector } from "../../selectors";
 import { calculateCounterValueSelector } from "../../reducers/counterValues";
 import { fiatUnitSelector } from "../../reducers/settings";
 import ListHeaderComponent from "./ListHeaderComponent";
@@ -51,7 +49,7 @@ const mapStateToProps = state => {
     globalBalanceHistory[globalBalanceHistory.length - 1].value;
   const totalBalancePeriodBegin = globalBalanceHistory[0].value;
   return {
-    accounts: getVisibleAccounts(state),
+    accounts: visibleAccountsSelector(state),
     calculateCounterValue: calculateCounterValueSelector(state),
     globalBalanceHistory,
     totalBalancePeriodBegin,
@@ -116,8 +114,8 @@ class Dashboard extends Component<
     this.props.screenProps.topLevelNavigation.navigate({
       routeName: "OperationDetails",
       params: {
-        operation,
-        account,
+        operationId: operation.id,
+        accountId: account.id,
         mainNavigation: this.props.navigation,
         linkToAccount: true
       },

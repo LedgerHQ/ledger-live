@@ -1,57 +1,74 @@
 /* @flow */
 import React, { Component } from "react";
 import moment from "moment";
+import { connect } from "react-redux";
 import { View, StyleSheet, ScrollView, Linking, Image } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Operation, Account } from "@ledgerhq/wallet-common/lib/types";
 import HeaderRightClose from "../components/HeaderRightClose";
 import LText from "../components/LText";
 import CurrencyIcon from "../components/CurrencyIcon";
-import SectionEntry from "../components/SectionEntry";
 import BlueButton from "../components/BlueButton";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
 import CounterValue from "../components/CounterValue";
 import Touchable from "../components/Touchable";
 import colors from "../colors";
+import { operationAndAccountSelector } from "../reducers/accounts";
+import type { State } from "../reducers";
 
-export default class OperationDetails extends Component<{
-  navigation: NavigationScreenProp<*>
-}> {
-  static navigationOptions = ({ navigation }: *) => ({
+type Nav = NavigationScreenProp<{
+  params: {
+    accountId: string,
+    operationId: string,
+    linkToAccount?: boolean,
+    // FIXME hack:
+    mainNavigation: NavigationScreenProp<*>
+  }
+}>;
+
+const mapStateToProps = (state: State, props: { navigation: Nav }) =>
+  operationAndAccountSelector(state, props.navigation.state.params);
+
+type Props = {
+  navigation: Nav,
+  operation: Operation,
+  account: Account
+};
+
+class OperationDetails extends Component<Props> {
+  static navigationOptions = ({ navigation }: Props) => ({
     title: "Operation Details",
     headerRight: <HeaderRightClose navigation={navigation} />,
     headerLeft: null
   });
 
   viewOperation = () => {
-    const { operation } = this.props.navigation.state.params;
+    const { operation } = this.props;
     return Linking.openURL(
       `https://testnet.blockchain.info/tx/${operation.id}`
     );
   };
   viewAccount = () => {
-    const { navigation } = this.props;
-    /* Fix Me to have an access to the mainNavigation */
-    const { mainNavigation } = this.props.navigation.state.params;
+    const { account, navigation } = this.props;
+    const { mainNavigation } = navigation.state.params;
+    // $FlowFixMe
     mainNavigation.navigate({
       routeName: "Accounts",
-      params: { accountId: navigation.state.params.account.id },
+      params: { accountId: account.id },
       key: "accounts"
     });
     navigation.goBack();
   };
   render() {
-    const {
-      operation,
-      account,
-      linkToAccount
-    } = this.props.navigation.state.params;
+    const { operation, account, navigation } = this.props;
+    const { linkToAccount } = navigation.state.params;
     const isConfirmed = operation.confirmations >= account.minConfirmations;
     const colorConfirmed = isConfirmed ? colors.green : colors.red;
     const colorTransaction = operation.amount >= 0 ? colors.green : "black";
     return (
       <View style={styles.container}>
         <ScrollView style={styles.body}>
-          <SectionEntry>
+          <View style={styles.row}>
             <View style={styles.transactionAmount}>
               <CurrencyIcon
                 style={styles.currencyIcon}
@@ -74,8 +91,8 @@ export default class OperationDetails extends Component<{
                 />
               </LText>
             </View>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>
               Account
             </LText>
@@ -90,14 +107,14 @@ export default class OperationDetails extends Component<{
                 />
               </Touchable>
             ) : null}
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>Date</LText>
             <LText style={styles.colRight}>
               {moment(operation.date).format("MMMM Do YYYY, h:mm:ss a")}
             </LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>
               Status
             </LText>
@@ -112,27 +129,29 @@ export default class OperationDetails extends Component<{
                 ? `Confirmed (${operation.confirmations})`
                 : `Not Confirmed (${operation.confirmations})`}
             </LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>From</LText>
             <LText style={styles.colRight}>Coming...</LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>To</LText>
             <LText style={styles.colRight}>Coming...</LText>
-          </SectionEntry>
-          <SectionEntry>
+          </View>
+          <View style={styles.row}>
             <LText style={[styles.operationLabel, styles.colLeft]}>
               Identifier
             </LText>
             <LText style={styles.colRight}>{operation.id}</LText>
-          </SectionEntry>
+          </View>
         </ScrollView>
         <BlueButton onPress={this.viewOperation} title="View Operation" />
       </View>
     );
   }
 }
+
+export default connect(mapStateToProps)(OperationDetails);
 
 const styles = StyleSheet.create({
   container: {
@@ -141,6 +160,15 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1
+  },
+  row: {
+    minHeight: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 20,
+    backgroundColor: "white",
+    marginBottom: 1
   },
   currencyIcon: {
     margin: 10
