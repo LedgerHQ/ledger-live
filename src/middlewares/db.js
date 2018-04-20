@@ -4,7 +4,7 @@
 import db from "../db";
 import { accountsSelector, accountModel } from "../reducers/accounts";
 
-export default (store: *) => (next: *) => (action: *) => {
+export default (store: *) => (next: *) => (action: Object) => {
   if (!action.type.startsWith("DB:")) {
     return next(action);
   }
@@ -12,7 +12,7 @@ export default (store: *) => (next: *) => (action: *) => {
   const { dispatch, getState } = store;
   const [, type] = action.type.split(":");
 
-  dispatch({ type, payload: action.payload });
+  dispatch({ ...action, type });
 
   const state = getState();
   const { settings, counterValues } = state;
