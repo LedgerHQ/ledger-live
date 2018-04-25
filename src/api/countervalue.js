@@ -4,33 +4,28 @@
  */
 import querystring from "querystring";
 import axios from "axios";
-import type {
-  Currency,
-  FiatUnit,
-  CounterValuesPairing,
-  Histoday
-} from "../types";
+import type { Currency, CounterValuesPairing, Histoday } from "../types";
 import { formatCounterValueDayUTC } from "../helpers/countervalue";
 
 const convertToCentPerSat = (
-  currency: Currency,
-  fiatUnit: FiatUnit,
+  from: Currency,
+  to: Currency,
   value: number
-): number => value * 10 ** (fiatUnit.magnitude - currency.units[0].magnitude);
+): number => value * 10 ** (to.units[0].magnitude - from.units[0].magnitude);
 
 /**
  * @memberof api/countervalue
  */
 export async function fetchCurrentRates(
   currencies: Currency[],
-  fiatUnit: FiatUnit
+  against: Currency
 ): Promise<CounterValuesPairing<{ latest: number }>> {
   const { data }: { data: mixed } = await axios.get(
     "https://min-api.cryptocompare.com/data/pricemulti?" +
       querystring.stringify({
         extraParams: "ledger-test",
         fsyms: currencies.map(c => c.ticker).join(","),
-        tsyms: fiatUnit.ticker
+        tsyms: against.ticker
       })
   );
   const out = {};
@@ -40,11 +35,11 @@ export async function fetchCurrentRates(
       const currency = currencies.find(c => c.ticker === ticker);
       const map = data[ticker];
       if (currency && map && typeof map === "object") {
-        const value = map[fiatUnit.ticker];
+        const value = map[against.ticker];
         if (typeof value === "number") {
           out[ticker] = {
-            [fiatUnit.ticker]: {
-              latest: convertToCentPerSat(currency, fiatUnit, value)
+            [against.ticker]: {
+              latest: convertToCentPerSat(currency, against, value)
             }
           };
         }
@@ -80,14 +75,14 @@ export function getLatestDayAvailable(): string {
  */
 export async function fetchHistodayRates(
   currencyOrCurrencies: Currency | Currency[],
-  fiatUnit: FiatUnit,
+  against: Currency,
   getLatestDayFetched?: Currency => ?string = () => null
 ): Promise<CounterValuesPairing<Histoday>> {
   if (Array.isArray(currencyOrCurrencies)) {
     // NB in the future we want a single API call
     return Promise.all(
       currencyOrCurrencies.map(currency =>
-        fetchHistodayRates(currency, fiatUnit, getLatestDayFetched)
+        fetchHistodayRates(currency, against, getLatestDayFetched)
       )
     ).then(all => {
       const data = {};
@@ -96,7 +91,7 @@ export async function fetchHistodayRates(
         // FIXME in future need to have currency.ticker
         data[currency.ticker] = {
           // FIXME same
-          [fiatUnit.ticker]: histoday
+          [against.ticker]: histoday
         };
       });
       return data;
@@ -112,7 +107,7 @@ export async function fetchHistodayRates(
       querystring.stringify({
         extraParams: "ledger-test",
         fsym: currencyOrCurrencies.ticker,
-        tsym: fiatUnit.ticker,
+        tsym: against.ticker,
         allData: 1
       })
   );
@@ -126,7 +121,7 @@ export async function fetchHistodayRates(
       if (typeof open !== "number" || typeof time !== "number") continue;
       // API gives a time at 00:00, we remove one second to format the day before because we want the close value of previous day.
       const day = formatCounterValueDayUTC(new Date(time * 1000 - 1000));
-      out[day] = convertToCentPerSat(currencyOrCurrencies, fiatUnit, open);
+      out[day] = convertToCentPerSat(currencyOrCurrencies, against, open);
     }
   }
 

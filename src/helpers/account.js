@@ -5,7 +5,7 @@
 import type {
   Account,
   Operation,
-  FiatUnit,
+  Currency,
   BalanceHistory,
   CalculateCounterValue,
   DailyOperations
@@ -52,7 +52,7 @@ export function getBalanceHistory(
 export function getBalanceHistorySum(
   accounts: Account[],
   daysCount: number,
-  fiatUnit: FiatUnit,
+  currency: Currency,
   calculateCounterValue: CalculateCounterValue
 ): BalanceHistory {
   if (accounts.length === 0) {
@@ -66,7 +66,7 @@ export function getBalanceHistorySum(
   return accounts
     .map(account => {
       const history = getBalanceHistory(account, daysCount);
-      const calc = calculateCounterValue(account.currency, fiatUnit);
+      const calc = calculateCounterValue(account.currency, currency);
       return history.map(h => ({
         date: h.date,
         value: calc(h.value, h.date)

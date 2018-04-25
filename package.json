@@ -1,13 +1,13 @@
 {
-  "name": "@ledgerhq/wallet-common",
-  "version": "1.1.0",
+  "name": "@ledgerhq/live-common",
+  "version": "2.0.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
     "flow-typed": "flow-typed install -s",
-    "build": "rm -rf lib && babel --ignore __tests__ -sd lib src && flow-copy-source -i \"__tests__/**\" src lib",
+    "build": "rm -rf lib src/data/icons/react* && node scripts/buildReactIcons.js && babel --ignore __tests__ -sd lib src && flow-copy-source -i \"__tests__/**\" src lib",
     "prepublish": "yarn build && yarn documentation",
-    "watch": "babel -wsd lib src && flow-copy-source -wv src lib",
+    "watch": "node scripts/buildReactIcons.js && babel -wsd lib src && flow-copy-source -wv src lib",
     "documentation": "documentation build src/** --project-name '@ledgerhq/wallet-common' --project-version `node -e \"console.log(require('./package.json').version)\"` --project-homepage https://github.com/LedgerHQ/ledger-wallet-common -g -f html -o documentation-website/public/docs",
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
@@ -25,10 +25,10 @@
     ]
   },
   "dependencies": {
-    "@ledgerhq/currencies": "^4.10.1",
     "axios": "^0.18.0",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
+    "numeral": "^2.0.6",
     "prando": "^3.0.1",
     "react": "^16.0.0"
   },
@@ -43,12 +43,14 @@
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-flowtype": "^2.39.1",
-    "eslint-plugin-react": "^7.4.0",
+    "eslint-plugin-react": "^7.7.0",
     "flow-bin": "^0.69.0",
     "flow-copy-source": "^1.2.1",
     "flow-typed": "^2.2.3",
+    "glob": "^7.1.2",
     "jest": "^22.4.3",
     "prettier": "^1.8.2",
+    "svgr": "^1.9.1",
     "timemachine": "^0.3.0"
   }
 }

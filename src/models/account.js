@@ -2,7 +2,7 @@
  * @module models/account
  * @flow
  */
-import { getCurrencyByCoinType } from "@ledgerhq/currencies";
+import { getCryptoCurrencyById } from "../helpers/currencies";
 import { createDataModel } from "../DataModel";
 import type { DataModel } from "../DataModel";
 import type { Account, AccountRaw, Operation } from "../types";
@@ -37,19 +37,18 @@ export const createAccountModel = (
 
     decode: (rawAccount: AccountRaw): Account => {
       const {
-        coinType,
+        currencyId,
         unitMagnitude,
         operations,
         lastSyncDate,
         ...acc
       } = rawAccount;
-      const currency = getCurrencyByCoinType(coinType);
+      const currency = getCryptoCurrencyById(currencyId);
       const unit =
         currency.units.find(u => u.magnitude === unitMagnitude) ||
         currency.units[0];
       return {
         ...acc,
-        coinType,
         operations: operations.map(({ date, ...op }) => ({
           ...op,
           accountId: acc.id,
@@ -78,7 +77,7 @@ export const createAccountModel = (
               date: date.toISOString()
             };
           }),
-        coinType: currency.coinType,
+        currencyId: currency.id,
         unitMagnitude: unit.magnitude,
         lastSyncDate: lastSyncDate.toISOString()
       };

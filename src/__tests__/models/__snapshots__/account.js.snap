@@ -11,7 +11,7 @@ Object {
     "balance": 56339471,
     "balanceByDay": Object {},
     "blockHeight": 157292,
-    "coinType": 2,
+    "currencyId": "litecoin",
     "id": "mock_account_model1",
     "index": 0,
     "lastSyncDate": "2018-03-14T17:34:42.000Z",

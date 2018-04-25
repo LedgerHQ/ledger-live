@@ -1,7 +1,7 @@
 // @flow
 
 export type Data = Array<mixed>;
-export type AccountData = ["account", string, string, number];
+export type AccountData = ["account", string, string, string];
 export type Result = {
   accounts: AccountData[],
   meta: {
@@ -72,13 +72,13 @@ export function chunksToResult(rawChunks: Data[]): Result {
         meta = { chunksFormatVersion, exporterName, exporterVersion };
       }
     } else if (type === "account") {
-      const [, id, name, coinType] = d;
+      const [, id, name, currencyId] = d;
       if (
         typeof id === "string" &&
         typeof name === "string" &&
-        typeof coinType === "number"
+        typeof currencyId === "string"
       ) {
-        accounts.push([type, id, name, coinType]);
+        accounts.push([type, id, name, currencyId]);
       }
     }
   }

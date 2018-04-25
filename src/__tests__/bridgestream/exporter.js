@@ -1,5 +1,4 @@
 // @flow
-import { getFiatUnit } from "@ledgerhq/currencies";
 import { makeChunks } from "../../bridgestream/exporter";
 import { genAccount } from "../../mock/account";
 
