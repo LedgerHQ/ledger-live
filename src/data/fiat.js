@@ -19,7 +19,7 @@ function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {
   };
 }
 
-const byKey: { [key: string]: FiatCurrency } = {
+const byTicker: { [key: string]: FiatCurrency } = {
   AED: fiat("Emirati Dirham", "AED", "د.إ.", 2),
   AUD: fiat("Australian Dollar", "AUD", "$", 2),
   BGN: fiat("Bulgarian lev", "BGN", "лв.", 2),
@@ -71,19 +71,23 @@ const byKey: { [key: string]: FiatCurrency } = {
   ZAR: fiat("South African Rand", "ZAR", "R", 2)
 };
 
-export function hasFiatCurrencyTicker(fiat: string): boolean {
-  return fiat in byKey;
+export function hasFiatCurrencyTicker(ticker: string): boolean {
+  return ticker in byTicker;
 }
 
-export function getFiatCurrencyByTicker(fiat: string): FiatCurrency {
-  const unit: FiatCurrency = byKey[fiat];
-  if (!unit) {
-    throw new Error(`unit "${fiat}" not found`);
+export function findFiatCurrencyByTicker(ticker: string): ?FiatCurrency {
+  return byTicker[ticker];
+}
+
+export function getFiatCurrencyByTicker(ticker: string): FiatCurrency {
+  const cur = findFiatCurrencyByTicker(ticker);
+  if (!cur) {
+    throw new Error(`fiat currency "${ticker}" not found`);
   }
-  return unit;
+  return cur;
 }
 
-const list = Object.keys(byKey).map(k => byKey[k]);
+const list = Object.keys(byTicker).map(k => byTicker[k]);
 
 export function listFiatCurrencies(): FiatCurrency[] {
   return list;

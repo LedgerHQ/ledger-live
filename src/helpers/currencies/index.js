@@ -1,9 +1,10 @@
 //@flow
-
 import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
+import type { Currency } from "../../types";
 
 import {
   listFiatCurrencies,
+  findFiatCurrencyByTicker,
   getFiatCurrencyByTicker,
   hasFiatCurrencyTicker
 } from "../../data/fiat";
@@ -11,7 +12,10 @@ import {
 import {
   listCryptoCurrencies,
   getCryptoCurrencyById,
-  hasCryptoCurrencyId
+  hasCryptoCurrencyId,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  findCryptoCurrencyByTicker
 } from "../../data/cryptocurrencies";
 
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
@@ -25,10 +29,18 @@ import {
 
 import { formatShort } from "./formatShort";
 
+const findCurrencyByTicker = (ticker: string): ?Currency =>
+  findCryptoCurrencyByTicker(ticker) || findFiatCurrencyByTicker(ticker);
+
 export {
   listFiatCurrencies,
   listCryptoCurrencies,
   getFiatCurrencyByTicker,
+  findCurrencyByTicker,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByTicker,
+  findCryptoCurrencyByScheme,
+  findFiatCurrencyByTicker,
   hasFiatCurrencyTicker,
   parseCurrencyUnit,
   chopCurrencyUnitDecimals,

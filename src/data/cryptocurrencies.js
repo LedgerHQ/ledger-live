@@ -82,7 +82,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     id: "bitcoin_testnet",
     name: "Bitcoin Testnet",
     ticker: "BTC",
-    scheme: "bitcoin",
+    scheme: "testnet",
     color: "#ffae35",
     units: bitcoinUnits
   },
@@ -90,7 +90,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     id: "bitcoin_cash",
     name: "Bitcoin Cash",
     ticker: "BCH",
-    scheme: "bitcoin",
+    scheme: "bch",
     color: "#85bb65",
     units: [
       {
@@ -123,7 +123,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     id: "bitcoin_gold",
     name: "Bitcoin Gold",
     ticker: "BTG",
-    scheme: "bitcoin",
+    scheme: "btg",
     color: "#132c47",
     units: [
       {
@@ -255,8 +255,12 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
 ];
 
 const cryptocurrenciesById: { [_: string]: CryptoCurrency } = {};
+const cryptocurrenciesByScheme: { [_: string]: CryptoCurrency } = {};
+const cryptocurrenciesByTicker: { [_: string]: CryptoCurrency } = {};
 cryptocurrenciesArray.forEach(c => {
   cryptocurrenciesById[c.id] = c;
+  cryptocurrenciesByScheme[c.scheme] = c;
+  cryptocurrenciesByTicker[c.ticker] = c;
 });
 
 export function listCryptoCurrencies(): CryptoCurrency[] {
@@ -264,14 +268,22 @@ export function listCryptoCurrencies(): CryptoCurrency[] {
 }
 
 export function findCryptoCurrencyByScheme(scheme: string): ?CryptoCurrency {
-  return cryptocurrenciesArray.find(c => c.scheme === scheme);
+  return cryptocurrenciesByScheme[scheme];
+}
+
+export function findCryptoCurrencyByTicker(ticker: string): ?CryptoCurrency {
+  return cryptocurrenciesByTicker[ticker];
+}
+
+export function findCryptoCurrencyById(id: string): ?CryptoCurrency {
+  return cryptocurrenciesById[id];
 }
 
 export const hasCryptoCurrencyId = (id: string): boolean =>
   id in cryptocurrenciesById;
 
 export function getCryptoCurrencyById(id: string): CryptoCurrency {
-  const currency = cryptocurrenciesById[id];
+  const currency = findCryptoCurrencyById(id);
   if (!currency) {
     throw new Error(`currency with id "${id}" not found`);
   }
