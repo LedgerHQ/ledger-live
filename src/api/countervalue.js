@@ -59,6 +59,42 @@ export function getLatestDayAvailable(): string {
   return formatCounterValueDayUTC(oneDayAgo);
 }
 
+async function fetchOneHistodayRates(
+  currency: Currency,
+  against: Currency,
+  getLatestDayFetched?: Currency => ?string = () => null
+): Promise<CounterValuesPairing<Histoday>> {
+  const latestDayFetched = getLatestDayFetched(currency);
+  if (latestDayFetched && latestDayFetched === getLatestDayAvailable()) {
+    return {};
+  }
+  // TODO later our API should accept from which date we want to pull
+  const { data }: { data: mixed } = await axios.get(
+    "https://min-api.cryptocompare.com/data/histoday?" +
+      querystring.stringify({
+        extraParams: "ledger-test",
+        fsym: currency.ticker,
+        tsym: against.ticker,
+        allData: 1
+      })
+  );
+  const out = {};
+
+  // we'll replace in-place the map to convert the crypto to a sats/cents mapping
+  if (data && typeof data === "object" && Array.isArray(data.Data)) {
+    for (const item of data.Data) {
+      if (!item || typeof item !== "object") continue;
+      const { time, open } = item;
+      if (typeof open !== "number" || typeof time !== "number") continue;
+      // API gives a time at 00:00, we remove one second to format the day before because we want the close value of previous day.
+      const day = formatCounterValueDayUTC(new Date(time * 1000 - 1000));
+      out[day] = convertToCentPerSat(currency, against, open);
+    }
+  }
+
+  return out;
+}
+
 /**
  * Fetch countervalue rates history for crypto currencies (or a currency)
  * per day granularity.
@@ -74,56 +110,25 @@ export function getLatestDayAvailable(): string {
  * @memberof api/countervalue
  */
 export async function fetchHistodayRates(
-  currencyOrCurrencies: Currency | Currency[],
+  currencies: Currency[],
   against: Currency,
   getLatestDayFetched?: Currency => ?string = () => null
 ): Promise<CounterValuesPairing<Histoday>> {
-  if (Array.isArray(currencyOrCurrencies)) {
-    // NB in the future we want a single API call
-    return Promise.all(
-      currencyOrCurrencies.map(currency =>
-        fetchHistodayRates(currency, against, getLatestDayFetched)
-      )
-    ).then(all => {
-      const data = {};
-      all.forEach((histoday, i) => {
-        const currency = currencyOrCurrencies[i];
-        // FIXME in future need to have currency.ticker
-        data[currency.ticker] = {
-          // FIXME same
-          [against.ticker]: histoday
-        };
-      });
-      return data;
+  // NB in the future we want a single API call
+  return Promise.all(
+    currencies.map(currency =>
+      fetchOneHistodayRates(currency, against, getLatestDayFetched)
+    )
+  ).then(all => {
+    const data = {};
+    all.forEach((histoday, i) => {
+      const currency = currencies[i];
+      // FIXME in future need to have currency.ticker
+      data[currency.ticker] = {
+        // FIXME same
+        [against.ticker]: histoday
+      };
     });
-  }
-  const latestDayFetched = getLatestDayFetched(currencyOrCurrencies);
-  if (latestDayFetched && latestDayFetched === getLatestDayAvailable()) {
-    return {};
-  }
-  // TODO later our API should accept from which date we want to pull
-  const { data }: { data: mixed } = await axios.get(
-    "https://min-api.cryptocompare.com/data/histoday?" +
-      querystring.stringify({
-        extraParams: "ledger-test",
-        fsym: currencyOrCurrencies.ticker,
-        tsym: against.ticker,
-        allData: 1
-      })
-  );
-  const out = {};
-
-  // we'll replace in-place the map to convert the crypto to a sats/cents mapping
-  if (data && typeof data === "object" && Array.isArray(data.Data)) {
-    for (const item of data.Data) {
-      if (!item || typeof item !== "object") continue;
-      const { time, open } = item;
-      if (typeof open !== "number" || typeof time !== "number") continue;
-      // API gives a time at 00:00, we remove one second to format the day before because we want the close value of previous day.
-      const day = formatCounterValueDayUTC(new Date(time * 1000 - 1000));
-      out[day] = convertToCentPerSat(currencyOrCurrencies, against, open);
-    }
-  }
-
-  return out;
+    return data;
+  });
 }
