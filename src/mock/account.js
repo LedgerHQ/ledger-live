@@ -2,12 +2,11 @@
  * @module mock/account
  * @flow
  */
-import { listCurrencies } from "@ledgerhq/currencies";
+import { listCryptoCurrencies } from "../helpers/currencies";
 import Prando from "prando";
-import type { Currency } from "@ledgerhq/currencies";
-import type { Account, Operation } from "../types";
+import type { Account, Operation, CryptoCurrency } from "../types";
 
-const currencies = listCurrencies();
+const currencies = listCryptoCurrencies();
 
 /**
  * @memberof mock/account
@@ -27,8 +26,8 @@ export function genHex(length: number, rng: Prando) {
 /**
  * @memberof mock/account
  */
-export function genAddress(currency: Currency, rng: Prando) {
-  if (currency.coinType === 60 || currency.coinType === 61) {
+export function genAddress(currency: CryptoCurrency, rng: Prando) {
+  if (currency.id === "ethereum" || currency.id === "ethereum_classic") {
     return `0x${genHex(40, rng)}`;
   }
   return genBitcoinAddressLike(rng);
@@ -41,7 +40,7 @@ export function genAddress(currency: Currency, rng: Prando) {
 export function genOperation(
   account: Account,
   ops: *,
-  currency: Currency,
+  currency: CryptoCurrency,
   rng: Prando
 ): Operation {
   const lastOp = ops[ops.length - 1];
@@ -104,7 +103,6 @@ export function genAccount(
   const address = genAddress(currency, rng);
   const account = {
     id: `mock_account_${id}`,
-    coinType: currency.coinType,
     index: 0,
     path: "49'/1'/1'/0/2",
     rootPath: "49'/1'/1'",

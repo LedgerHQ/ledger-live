@@ -1,6 +1,11 @@
 // @flow
 
-import type { Currency, Unit, FiatUnit } from "@ledgerhq/currencies";
+import type {
+  Currency,
+  Unit,
+  FiatCurrency,
+  CryptoCurrency
+} from "./currencies";
 
 /**
  *
@@ -21,8 +26,7 @@ export type { Account, AccountRaw };
 import type { Operation, OperationRaw } from "./operation";
 export type { Operation, OperationRaw };
 
-// exporting here for convenience
-export type { Currency, Unit, FiatUnit };
+export type { Currency, Unit, FiatCurrency, CryptoCurrency };
 
 /**
  * Other stuff
@@ -64,10 +68,7 @@ export type BalanceHistory = Array<{ date: Date, value: number }>;
 <any date before>    2018-03-01  2018-03-02  2018-03-03  <any date after>
 0 0 0 0 0 0 0 0 0       9.65         9.22      8.77      latest latest latest ...
  */
-export type GetPairRate = (
-  coinTicker: string,
-  fiatTicker: string
-) => (?Date) => number;
+export type GetPairRate = (string, string) => (?Date) => number;
 
 /**
  * Returns the calculated countervalue for an amount value and date
@@ -81,11 +82,8 @@ export type Calc = (
 
 /**
  */
-export type CalculateCounterValue = (cur: Currency, fiat: FiatUnit) => Calc;
+export type CalculateCounterValue = (Currency, Currency) => Calc;
 
 /**
  */
-export type GetCounterValueRate = (
-  cur: Currency,
-  fiat: FiatUnit
-) => (date?: Date) => number;
+export type GetCounterValueRate = (Currency, Currency) => (?Date) => number;

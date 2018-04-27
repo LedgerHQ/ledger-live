@@ -1,5 +1,4 @@
 // @flow
-import { getFiatUnit } from "@ledgerhq/currencies";
 import { makeChunks } from "../../bridgestream/exporter";
 import {
   parseChunksReducer,
@@ -31,7 +30,7 @@ test("import", () => {
   const res = chunksToResult(data);
   // $FlowFixMe
   expect(res.accounts).toMatchObject(
-    accounts.map(a => ["account", a.id, a.name, a.currency.coinType])
+    accounts.map(a => ["account", a.id, a.name, a.currency.id])
   );
   expect(res).toMatchSnapshot();
 });

@@ -9,7 +9,8 @@
         }
       }
     ],
-    "stage-0",
-    "flow"
+    "flow",
+    "react",
+    "stage-0"
   ]
 }

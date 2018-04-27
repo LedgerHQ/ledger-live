@@ -1,6 +1,6 @@
 // @flow
 import Prando from "prando";
-import { getFiatUnit, getCurrencyByCoinType } from "@ledgerhq/currencies";
+import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "../../helpers/currencies";
 import {
   makeCalculateCounterValue,
   makeReverseCounterValue,
@@ -8,8 +8,8 @@ import {
 } from "../../helpers/countervalue";
 
 test("valueFromUnit", () => {
-  expect(valueFromUnit(1, getFiatUnit("USD"))).toBe(100);
-  expect(valueFromUnit(0.01, getCurrencyByCoinType(0).units[0])).toBe(1000000);
+  expect(valueFromUnit(1, getFiatCurrencyByTicker("USD").units[0])).toBe(100);
+  expect(valueFromUnit(0.01, getCryptoCurrencyById("bitcoin_testnet").units[0])).toBe(1000000);
 });
 
 test("makeCalculateCounterValue basic test", () => {
@@ -22,8 +22,8 @@ test("makeCalculateCounterValue basic test", () => {
           new Prando(`${ticker}-${fiat}`).next(0, 99);
   const calculateCounterValue = makeCalculateCounterValue(getPairHistory);
   const reverseCounterValue = makeReverseCounterValue(getPairHistory);
-  const cur = getCurrencyByCoinType(1);
-  const fiat = getFiatUnit("USD");
+  const cur = getCryptoCurrencyById("bitcoin");
+  const fiat = getFiatCurrencyByTicker("USD");
   const calc = calculateCounterValue(cur, fiat);
   const reverse = reverseCounterValue(cur, fiat);
   expect(calc(42, new Date())).toBe(

@@ -1,6 +1,6 @@
 // @flow
 import flatMap from "lodash/flatMap";
-import { getFiatUnit } from "@ledgerhq/currencies";
+import { getFiatCurrencyByTicker } from "../../helpers/currencies";
 import {
   getBalanceHistory,
   getBalanceHistorySum,
@@ -36,7 +36,7 @@ test("getBalanceHistorySum works with one account and is identically to that acc
   const allHistory = getBalanceHistorySum(
     [account],
     10,
-    getFiatUnit("USD"),
+    getFiatCurrencyByTicker("USD"),
     () => value => value // using identity, at any time, 1 token = 1 USD
   );
   expect(allHistory).toMatchObject(history);
@@ -49,7 +49,7 @@ test("getBalanceHistorySum with twice same account will double the amounts", () 
   const allHistory = getBalanceHistorySum(
     [account, account],
     10,
-    getFiatUnit("USD"),
+    getFiatCurrencyByTicker("USD"),
     () => value => value // using identity, at any time, 1 token = 1 USD
   );
   allHistory.forEach((h, i) => {
@@ -63,7 +63,7 @@ test("getBalanceHistorySum calculateCounterValue is taken into account", () => {
   const allHistory = getBalanceHistorySum(
     [account, account],
     10,
-    getFiatUnit("USD"),
+    getFiatCurrencyByTicker("USD"),
     () => value => value / 2
   );
   expect(allHistory).toMatchObject(history);
@@ -75,7 +75,7 @@ test("getBalanceHistorySum with lot of accounts", () => {
       .fill(null)
       .map((_, i) => genAccount("mult" + i)),
     10,
-    getFiatUnit("USD"),
+    getFiatCurrencyByTicker("USD"),
     () => value => value // using identity, at any time, 1 token = 1 USD
   );
   expect(allHistory).toMatchSnapshot();

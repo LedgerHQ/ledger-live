@@ -1,15 +1,8 @@
 // @flow
 
-import type { Currency, Unit } from "@ledgerhq/currencies";
+import type { CryptoCurrency, Unit } from "./currencies";
 
 import type { OperationRaw, Operation } from "./operation";
-
-/**
- *
- *                                  Account
- *                                  -------
- *
- */
 
 export type AccountRaw = {
   // unique account identifier
@@ -36,9 +29,6 @@ export type AccountRaw = {
   // account balance in satoshi
   balance: number,
 
-  // account coin type
-  coinType: number,
-
   // the last block height currently synchronized
   blockHeight: number,
 
@@ -55,6 +45,9 @@ export type AccountRaw = {
   balanceByDay: any,
 
   // ------------------------------------- Specific raw fields
+
+  // account currency id
+  currencyId: string,
 
   // list of operations
   operations: OperationRaw[],
@@ -74,11 +67,9 @@ export type Account = {
   xpub: string,
 
   // account path on the device
-  // TODO: get rid of it
   path: string,
 
   // account root path on the device
-  // TODO: get rid of it
   rootPath: string,
 
   // account name
@@ -92,9 +83,6 @@ export type Account = {
 
   // account balance in satoshi
   balance: number,
-
-  // account coin type
-  coinType: number,
 
   // the last block height currently synchronized
   blockHeight: number,
@@ -114,7 +102,7 @@ export type Account = {
   // ------------------------------------- Specific account fields
 
   // currency of this account
-  currency: Currency,
+  currency: CryptoCurrency,
 
   // lazy list of operations. potentially big & uncomplete list.
   operations: Operation[],

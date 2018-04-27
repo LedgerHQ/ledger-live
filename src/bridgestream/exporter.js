@@ -22,14 +22,14 @@ export function makeChunks({
   exporterVersion,
   pad
 }: DataIn): string[] {
-  const chunksFormatVersion = 1;
+  const chunksFormatVersion = 2;
   const data = [
     ["meta", chunksFormatVersion, exporterName, exporterVersion],
     ...accounts.map(account => [
       "account",
       account.id,
       account.name,
-      account.currency.coinType
+      account.currency.id
     ])
   ];
   let r = data.map((arr, i) => JSON.stringify([data.length, i, ...arr]));

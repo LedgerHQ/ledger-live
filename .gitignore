@@ -23,3 +23,6 @@ yarn-error.log*
 
 flow-typed/
 flow-coverage
+
+src/data/icons/react
+src/data/icons/reactNative
