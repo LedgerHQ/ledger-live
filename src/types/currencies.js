@@ -1,5 +1,15 @@
 //@flow
 
+type CurrencyCommon = {
+  // display name of a currency
+  name: string,
+  // the ticker name in exchanges / countervalue apis (e.g. BTC)
+  ticker: string,
+  // all units of a currency (e.g. Bitcoin have bitcoin, mBTC, bit, satoshi)
+  // by convention, [0] is the default and have "highest" magnitude
+  units: Unit[]
+};
+
 export type Unit = {
   // display name of a given unit (exemple: satoshi)
   name: string,
@@ -13,23 +23,17 @@ export type Unit = {
   showAllDigits?: boolean
 };
 
-export type Currency = {
-  // display name of a currency
-  name: string,
-  // the ticker name in exchanges / countervalue apis (e.g. BTC)
-  ticker: string,
-  // all units of a currency (e.g. Bitcoin have bitcoin, mBTC, bit, satoshi)
-  // by convention, [0] is the default and have "highest" magnitude
-  units: Unit[]
-};
+export type FiatCurrency = CurrencyCommon;
 
-export type CryptoCurrency = Currency & {
+export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency
   id: string,
   // the scheme name to use when formatting an URI (without the ':')
   scheme: string,
   // used for UI
-  color: string
+  color: string,
+  // if defined this coin is a testnet for another crypto (id)};
+  isTestnetFor?: string
 };
 
-export type FiatCurrency = Currency;
+export type Currency = Currency | CryptoCurrency;

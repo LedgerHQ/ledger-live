@@ -5,9 +5,7 @@
 import type {
   Account,
   Operation,
-  Currency,
   BalanceHistory,
-  CalculateCounterValue,
   DailyOperations
 } from "../types";
 
@@ -52,9 +50,14 @@ export function getBalanceHistory(
 export function getBalanceHistorySum(
   accounts: Account[],
   daysCount: number,
-  currency: Currency,
-  calculateCounterValue: CalculateCounterValue
+  // for a given account, calculate the countervalue of a value at given date.
+  calculateAccountCounterValue: (Account, number, Date) => number
 ): BalanceHistory {
+  if (typeof calculateAccountCounterValue !== "function") {
+    throw new Error(
+      "getBalanceHistorySum signature has changed, please port the code"
+    );
+  }
   if (accounts.length === 0) {
     const now = Date.now();
     const zeros: 0[] = Array(daysCount).fill(0);
@@ -66,10 +69,9 @@ export function getBalanceHistorySum(
   return accounts
     .map(account => {
       const history = getBalanceHistory(account, daysCount);
-      const calc = calculateCounterValue(account.currency, currency);
       return history.map(h => ({
         date: h.date,
-        value: calc(h.value, h.date)
+        value: calculateAccountCounterValue(account, h.value, h.date)
       }));
     })
     .reduce((acc, history) =>

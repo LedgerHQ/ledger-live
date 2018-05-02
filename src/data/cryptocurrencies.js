@@ -96,14 +96,6 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     units: ethereumUnitsClassic
   },
   {
-    id: "bitcoin_testnet",
-    name: "Bitcoin Testnet",
-    ticker: "BTC",
-    scheme: "testnet",
-    color: "#ffae35",
-    units: bitcoinUnits
-  },
-  {
     id: "bitcoin_cash",
     name: "Bitcoin Cash",
     ticker: "BCH",
@@ -289,20 +281,44 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
         magnitude: 8
       }
     ]
+  },
+  {
+    id: "ethereum_testnet",
+    name: "Ethereum",
+    ticker: "ETH",
+    scheme: "ethereum",
+    color: "#ffae35",
+    units: ethereumUnits,
+    isTestnetFor: "ethereum"
+  },
+  {
+    id: "bitcoin_testnet",
+    name: "Bitcoin Testnet",
+    ticker: "BTC",
+    scheme: "testnet",
+    color: "#ffae35",
+    units: bitcoinUnits,
+    isTestnetFor: "bitcoin"
   }
 ];
 
 const cryptocurrenciesById: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesByScheme: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesByTicker: { [_: string]: CryptoCurrency } = {};
+const prodCryptoArray = [];
 cryptocurrenciesArray.forEach(c => {
   cryptocurrenciesById[c.id] = c;
   cryptocurrenciesByScheme[c.scheme] = c;
   cryptocurrenciesByTicker[c.ticker] = c;
+  if (!c.isTestnetFor) {
+    prodCryptoArray.push(c);
+  }
 });
 
-export function listCryptoCurrencies(): CryptoCurrency[] {
-  return cryptocurrenciesArray;
+export function listCryptoCurrencies(
+  withDevCrypto: boolean = false
+): CryptoCurrency[] {
+  return withDevCrypto ? cryptocurrenciesArray : prodCryptoArray;
 }
 
 export function findCryptoCurrencyByScheme(scheme: string): ?CryptoCurrency {

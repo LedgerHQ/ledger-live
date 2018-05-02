@@ -3,12 +3,15 @@
  * @flow
  */
 
-import type {
-  GetPairRate,
-  GetCounterValueRate,
-  CalculateCounterValue,
-  Unit
-} from "../types";
+console.warn(
+  "@ledgerhq/live-common/lib/helpers/countervalue is deprecated. switch to @ledgerhq/live-common/lib/countervalues"
+);
+
+import type { Unit } from "../types";
+
+type GetPairRate = *;
+type GetCounterValueRate = *;
+type CalculateCounterValue = *;
 
 /**
  * get the countervalue rate with a GetPairRate.

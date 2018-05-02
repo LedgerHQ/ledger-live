@@ -29,6 +29,8 @@ import {
 
 import { formatShort } from "./formatShort";
 
+import { valueFromUnit } from "./valueFromUnit";
+
 const findCurrencyByTicker = (ticker: string): ?Currency =>
   findCryptoCurrencyByTicker(ticker) || findFiatCurrencyByTicker(ticker);
 
@@ -50,5 +52,6 @@ export {
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
   encodeURIScheme,
-  decodeURIScheme
+  decodeURIScheme,
+  valueFromUnit
 };

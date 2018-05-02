@@ -9,14 +9,18 @@ export const getFragPositions = memoize((locale: string): Array<*> => {
   });
   const frags = [];
   let mandatoryFrags = 0;
+  let codeFound = false;
   for (let i = 0; i < res.length; i++) {
     const c = res[i];
-    if (c === "$") {
-      // force code to be surround by separators. we'll dedup later
-      frags.push("separator");
-      frags.push("code");
-      frags.push("separator");
-      mandatoryFrags++;
+    if (c === "$" || c === "U") {
+      if (!codeFound) {
+        codeFound = true;
+        // force code to be surround by separators. we'll dedup later
+        frags.push("separator");
+        frags.push("code");
+        frags.push("separator");
+        mandatoryFrags++;
+      }
     } else if (c === "-") {
       frags.push("sign");
       mandatoryFrags++;

@@ -31,6 +31,15 @@ test("can get currency by coin type", () => {
   expect(() => getCryptoCurrencyById("_")).toThrow();
 });
 
+test("there are some dev cryptocurrencies", () => {
+  const all = listCryptoCurrencies(true)
+  const prod = listCryptoCurrencies()
+  expect(listCryptoCurrencies(false)).toBe(listCryptoCurrencies())
+  expect(all).not.toBe(prod)
+  expect(all.filter(a => !a.isTestnetFor)).toMatchObject(prod)
+  expect(all.length).toBeGreaterThan(prod.length)
+});
+
 test("all cryptocurrencies have at least one unit", () => {
   for (let c of listCryptoCurrencies()) {
     expect(c.units.length).toBeGreaterThan(0);
