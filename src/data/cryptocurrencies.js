@@ -79,6 +79,14 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     units: ethereumUnits
   },
   {
+    id: "ethereum_classic",
+    name: "Ethereum Classic",
+    ticker: "ETC",
+    scheme: "ethereum",
+    color: "#ffae35",
+    units: ethereumUnits
+  },
+  {
     id: "bitcoin_testnet",
     name: "Bitcoin Testnet",
     ticker: "BTC",
@@ -164,6 +172,27 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
         code: "LTC",
         symbol: "Ł",
         magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "xrp",
+    name: "XRP",
+    ticker: "XRP",
+    scheme: "ripple",
+    color: "#000",
+    units: [
+      {
+        name: "XRP",
+        code: "XRP",
+        symbol: "XRP",
+        magnitude: 6
+      },
+      {
+        name: "drop",
+        code: "drop",
+        symbol: "drop",
+        magnitude: 0
       }
     ]
   },
