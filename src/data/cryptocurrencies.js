@@ -67,7 +67,7 @@ const ethereumUnitsClassic = [
     code: "ETC",
     symbol: "Ξ",
     magnitude: 18
-  },
+  }
 ];
 
 const cryptocurrenciesArray: CryptoCurrency[] = [
@@ -185,7 +185,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
-    id: "xrp",
+    id: "ripple",
     name: "Ripple",
     ticker: "XRP",
     scheme: "ripple",
