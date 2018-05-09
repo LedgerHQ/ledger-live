@@ -36,8 +36,7 @@ test("getBalanceHistorySum works with one account and is identically to that acc
   const allHistory = getBalanceHistorySum(
     [account],
     10,
-    getFiatCurrencyByTicker("USD"),
-    () => value => value // using identity, at any time, 1 token = 1 USD
+    (account, value, date) => value // using identity, at any time, 1 token = 1 USD
   );
   expect(allHistory).toMatchObject(history);
   expect(allHistory).toMatchSnapshot();
@@ -49,8 +48,7 @@ test("getBalanceHistorySum with twice same account will double the amounts", () 
   const allHistory = getBalanceHistorySum(
     [account, account],
     10,
-    getFiatCurrencyByTicker("USD"),
-    () => value => value // using identity, at any time, 1 token = 1 USD
+    (account, value, date) => value // using identity, at any time, 1 token = 1 USD
   );
   allHistory.forEach((h, i) => {
     expect(h.value).toBe(2 * history[i].value);
@@ -63,8 +61,7 @@ test("getBalanceHistorySum calculateCounterValue is taken into account", () => {
   const allHistory = getBalanceHistorySum(
     [account, account],
     10,
-    getFiatCurrencyByTicker("USD"),
-    () => value => value / 2
+    (account, value, date) => value / 2
   );
   expect(allHistory).toMatchObject(history);
 });
@@ -75,8 +72,7 @@ test("getBalanceHistorySum with lot of accounts", () => {
       .fill(null)
       .map((_, i) => genAccount("mult" + i)),
     10,
-    getFiatCurrencyByTicker("USD"),
-    () => value => value // using identity, at any time, 1 token = 1 USD
+    (account, value, date) => value // using identity, at any time, 1 token = 1 USD
   );
   expect(allHistory).toMatchSnapshot();
 });

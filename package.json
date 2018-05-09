@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-common",
-  "version": "2.1.0",
+  "version": "2.2.0-beta.10",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
     "documentation": "documentation build src/** --project-name '@ledgerhq/wallet-common' --project-version `node -e \"console.log(require('./package.json').version)\"` --project-homepage https://github.com/LedgerHQ/ledger-wallet-common -g -f html -o documentation-website/public/docs",
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
-    "flow": "flow",
+    "flow": "flow src",
     "test": "TZ=America/New_York jest src"
   },
   "files": [
@@ -30,7 +30,10 @@
     "lodash": "^4.17.4",
     "numeral": "^2.0.6",
     "prando": "^3.0.1",
-    "react": "^16.0.0"
+    "react": "^16.3.2",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "reselect": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

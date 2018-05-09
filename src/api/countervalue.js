@@ -4,8 +4,15 @@
  */
 import querystring from "querystring";
 import axios from "axios";
-import type { Currency, CounterValuesPairing, Histoday } from "../types";
+import type { Currency } from "../types";
 import { formatCounterValueDayUTC } from "../helpers/countervalue";
+
+type CounterValuesPairing<T> = *; // eslint-disable-line
+type Histoday = *;
+
+console.warn(
+  "@ledgerhq/live-common/lib/api/countervalue is deprecated. switch to @ledgerhq/live-common/lib/countervalues"
+);
 
 const convertToCentPerSat = (
   from: Currency,

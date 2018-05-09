@@ -13,7 +13,7 @@ type Data = {
 
 export function encodeURIScheme(data: Data): string {
   const { currency, address, amount, ...specificFields } = data;
-  const query = { ...specificFields };
+  const query: Object = { ...specificFields };
   if (!currency) return address;
   if (amount) {
     const { magnitude } = currency.units[0];
@@ -30,7 +30,7 @@ export function decodeURIScheme(str: string): Data {
     return { address: str };
   }
   const [, , scheme, address, , queryStr] = m;
-  const query = queryStr ? querystring.parse(queryStr) : {};
+  const query: Object = queryStr ? querystring.parse(queryStr) : {};
   const currency = findCryptoCurrencyByScheme(scheme);
   if (!currency) {
     return { address };

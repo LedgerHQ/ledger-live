@@ -1,5 +1,6 @@
 [ignore]
 <PROJECT_ROOT>/lib
+<PROJECT_ROOT>/demo
 
 [include]
 
