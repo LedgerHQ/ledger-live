@@ -156,51 +156,51 @@ Array [
   },
   Object {
     "date": 2018-03-04T04:00:00.000Z,
-    "value": 31226687,
+    "value": 624040766,
   },
   Object {
     "date": 2018-03-05T04:00:00.000Z,
-    "value": 42706844,
+    "value": 853477214,
   },
   Object {
     "date": 2018-03-06T04:00:00.000Z,
-    "value": 158816114,
+    "value": 3173840921,
   },
   Object {
     "date": 2018-03-07T04:00:00.000Z,
-    "value": 191832605,
+    "value": 3833653071,
   },
   Object {
     "date": 2018-03-08T04:00:00.000Z,
-    "value": 204327427,
+    "value": 4083413261,
   },
   Object {
     "date": 2018-03-09T04:00:00.000Z,
-    "value": 234695082,
+    "value": 4690287759,
   },
   Object {
     "date": 2018-03-10T04:00:00.000Z,
-    "value": 279858908,
+    "value": 5592845711,
   },
   Object {
     "date": 2018-03-11T04:00:00.000Z,
-    "value": 276377442,
+    "value": 5523261377,
   },
   Object {
     "date": 2018-03-12T04:00:00.000Z,
-    "value": 304408841,
+    "value": 6083453220,
   },
   Object {
     "date": 2018-03-13T04:00:00.000Z,
-    "value": 319424597,
+    "value": 6383513171,
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 393126699,
+    "value": 7856354895,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 393601408,
+    "value": 7865827317,
   },
 ]
 `;
@@ -321,11 +321,11 @@ Array [
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 10780331,
+    "value": 9183917,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 10780331,
+    "value": 9183917,
   },
 ]
 `;
@@ -1342,19 +1342,19 @@ Array [
   },
   Object {
     "date": 2018-03-12T04:00:00.000Z,
-    "value": 80860621,
+    "value": 1615927256,
   },
   Object {
     "date": 2018-03-13T04:00:00.000Z,
-    "value": 105593362,
+    "value": 2110171859,
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 175139382,
+    "value": 3499999994,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 288857020,
+    "value": 5772561943,
   },
 ]
 `;
@@ -1363,43 +1363,43 @@ exports[`getBalanceHistorySum with lot of accounts 1`] = `
 Array [
   Object {
     "date": 2018-03-06T04:00:00.000Z,
-    "value": 6583328103,
+    "value": 12334211406514460000,
   },
   Object {
     "date": 2018-03-07T04:00:00.000Z,
-    "value": 7756674215,
+    "value": 16596324647270530000,
   },
   Object {
     "date": 2018-03-08T04:00:00.000Z,
-    "value": 9413317337,
+    "value": 18464473687483910000,
   },
   Object {
     "date": 2018-03-09T04:00:00.000Z,
-    "value": 10799164875,
+    "value": 18107952966512382000,
   },
   Object {
     "date": 2018-03-10T04:00:00.000Z,
-    "value": 12505292176,
+    "value": 20886300024973890000,
   },
   Object {
     "date": 2018-03-11T04:00:00.000Z,
-    "value": 14251121256,
+    "value": 25704792762083210000,
   },
   Object {
     "date": 2018-03-12T04:00:00.000Z,
-    "value": 16207853724,
+    "value": 27831272091414940000,
   },
   Object {
     "date": 2018-03-13T04:00:00.000Z,
-    "value": 18517219733,
+    "value": 38507161957166555000,
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 19981512223,
+    "value": 40045338193610340000,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 21141993358,
+    "value": 41933049989842410000,
   },
 ]
 `;
@@ -1416,35 +1416,35 @@ Array [
   },
   Object {
     "date": 2018-03-08T04:00:00.000Z,
-    "value": 58027808,
+    "value": 1159632293,
   },
   Object {
     "date": 2018-03-09T04:00:00.000Z,
-    "value": 75557699,
+    "value": 1509952036,
   },
   Object {
     "date": 2018-03-10T04:00:00.000Z,
-    "value": 111218942,
+    "value": 2222621899,
   },
   Object {
     "date": 2018-03-11T04:00:00.000Z,
-    "value": 197548843,
+    "value": 3947841721,
   },
   Object {
     "date": 2018-03-12T04:00:00.000Z,
-    "value": 299331794,
+    "value": 5981874491,
   },
   Object {
     "date": 2018-03-13T04:00:00.000Z,
-    "value": 313795175,
+    "value": 6270903267,
   },
   Object {
     "date": 2018-03-14T04:00:00.000Z,
-    "value": 339122687,
+    "value": 6777058343,
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": 374815636,
+    "value": 7490307742,
   },
 ]
 `;
@@ -1461,7 +1461,7 @@ Object {
           "addresses": Array [
             "1SEUourfx2M1DzFZioHiL4aemRX",
           ],
-          "amount": 13536488,
+          "amount": 115424624,
           "blockHeight": 146935,
           "confirmations": 0,
           "date": 2018-03-14T16:57:02.699Z,
@@ -1474,7 +1474,7 @@ Object {
           "addresses": Array [
             "1bsvV2zfXt12xrxU1ebUse575Q8FXXMvjRf",
           ],
-          "amount": 47434164,
+          "amount": 404459413,
           "blockHeight": 146934,
           "confirmations": 0,
           "date": 2018-03-14T16:46:29.651Z,
@@ -1487,7 +1487,7 @@ Object {
           "addresses": Array [
             "1dVrPF7PkefAsDKjnZGccE6SQonTJAgL",
           ],
-          "amount": -13433527,
+          "amount": -114546384,
           "blockHeight": 146930,
           "confirmations": 0,
           "date": 2018-03-14T15:36:33.311Z,
@@ -1500,7 +1500,7 @@ Object {
           "addresses": Array [
             "1y5muw7Ja8E3UxS1VfxiU1MHp5LhVCLAf4g",
           ],
-          "amount": 2745649,
+          "amount": 23405525,
           "blockHeight": 146905,
           "confirmations": 0,
           "date": 2018-03-14T09:21:51.876Z,
@@ -1518,7 +1518,7 @@ Object {
           "addresses": Array [
             "1o9Yoytfv4GZKXS7UoyNf5Q6hJxrnkpm",
           ],
-          "amount": 602602,
+          "amount": 5133015,
           "blockHeight": 146859,
           "confirmations": 0,
           "date": 2018-03-13T22:00:08.015Z,
@@ -1531,7 +1531,7 @@ Object {
           "addresses": Array [
             "15m935KoAjfEu8SfzLFJBXhXrkseN",
           ],
-          "amount": 287464,
+          "amount": 2447135,
           "blockHeight": 146804,
           "confirmations": 0,
           "date": 2018-03-13T08:16:18.277Z,
@@ -1549,7 +1549,7 @@ Object {
           "addresses": Array [
             "1hEnXu3qAWYwpotyewvZxg6r3wC2mdQ",
           ],
-          "amount": -1341187,
+          "amount": -11434174,
           "blockHeight": 146768,
           "confirmations": 0,
           "date": 2018-03-12T23:04:48.558Z,
@@ -1562,7 +1562,7 @@ Object {
           "addresses": Array [
             "1YE1jQ4nhiF5wiq7ADd7Dnuxp6E",
           ],
-          "amount": -974023,
+          "amount": -8304911,
           "blockHeight": 146742,
           "confirmations": 0,
           "date": 2018-03-12T16:45:08.956Z,
@@ -1575,7 +1575,7 @@ Object {
           "addresses": Array [
             "1MNYN9FKJkVkZ3rdqcNuF3Canj5qd9uNpJ",
           ],
-          "amount": 228513,
+          "amount": 1944065,
           "blockHeight": 146737,
           "confirmations": 0,
           "date": 2018-03-12T15:25:55.209Z,
@@ -1588,7 +1588,7 @@ Object {
           "addresses": Array [
             "1cfXZzTskNGNxoiuD8xWqvrErLb5Ps",
           ],
-          "amount": 22914087,
+          "amount": 195378581,
           "blockHeight": 146734,
           "confirmations": 0,
           "date": 2018-03-12T14:46:45.596Z,
@@ -1614,7 +1614,7 @@ Object {
           "addresses": Array [
             "1J3VWG42D6ie3dx47cv7a4eXFb",
           ],
-          "amount": -5230917,
+          "amount": -23146017,
           "blockHeight": 179255,
           "confirmations": 0,
           "date": 2018-03-14T17:26:14.964Z,
@@ -1627,7 +1627,7 @@ Object {
           "addresses": Array [
             "1FNY7m3pekMhNQuQQquwdta5KxeQkHg",
           ],
-          "amount": -10533170,
+          "amount": -210491606,
           "blockHeight": 114104,
           "confirmations": 0,
           "date": 2018-03-14T17:22:43.942Z,
@@ -1640,7 +1640,7 @@ Object {
           "addresses": Array [
             "1TNRyv4xXGE3fMWgGvXdkaHVBeUm6fm",
           ],
-          "amount": -5473928,
+          "amount": -24221238,
           "blockHeight": 179254,
           "confirmations": 0,
           "date": 2018-03-14T17:05:28.027Z,
@@ -1653,7 +1653,7 @@ Object {
           "addresses": Array [
             "1pe19pnNsQ1HLn7zQekUUbQhyc4v4AJtM",
           ],
-          "amount": 735052,
+          "amount": 14708233,
           "blockHeight": 103218,
           "confirmations": 0,
           "date": 2018-03-14T16:45:15.937Z,
@@ -1666,7 +1666,7 @@ Object {
           "addresses": Array [
             "1waRzBUTgbFfwiejVN4XBeNA1io",
           ],
-          "amount": 2499176,
+          "amount": 7422037,
           "blockHeight": 177510,
           "confirmations": 0,
           "date": 2018-03-14T16:41:50.289Z,
@@ -1679,7 +1679,7 @@ Object {
           "addresses": Array [
             "1y56NoZCBFZPfZ6UyQResaQLmcyPKR",
           ],
-          "amount": 74616,
+          "amount": 219780,
           "blockHeight": 184655,
           "confirmations": 0,
           "date": 2018-03-14T16:35:37.160Z,
@@ -1692,7 +1692,7 @@ Object {
           "addresses": Array [
             "1JcvhLrmcZS16VLRRPrGXfSX49Mh9mf",
           ],
-          "amount": 11369713,
+          "amount": 33768933,
           "blockHeight": 150673,
           "confirmations": 0,
           "date": 2018-03-14T16:27:37.125Z,
@@ -1705,7 +1705,7 @@ Object {
           "addresses": Array [
             "1fyKWnXMQHXBDSea8iuPtLy9bfgqSgR28t",
           ],
-          "amount": 669562,
+          "amount": 1986931,
           "blockHeight": 184654,
           "confirmations": 0,
           "date": 2018-03-14T16:25:34.731Z,
@@ -1718,7 +1718,7 @@ Object {
           "addresses": Array [
             "1i9pNJ51fhYWsnSzQFMWBRdS7oxAFeN1dP",
           ],
-          "amount": 62960844,
+          "amount": 278588495,
           "blockHeight": 179250,
           "confirmations": 0,
           "date": 2018-03-14T16:05:25.011Z,
@@ -1731,7 +1731,7 @@ Object {
           "addresses": Array [
             "1mKN7E3sf1jAfCtSJGsjcHV1hKtzuC7AQD",
           ],
-          "amount": 4571953,
+          "amount": 13578853,
           "blockHeight": 177505,
           "confirmations": 0,
           "date": 2018-03-14T15:21:38.507Z,
@@ -1744,7 +1744,7 @@ Object {
           "addresses": Array [
             "1SZWrpuZ8UKQExUCyMZG8nWvJc6VU",
           ],
-          "amount": 6724934,
+          "amount": 19973269,
           "blockHeight": 164926,
           "confirmations": 0,
           "date": 2018-03-14T14:39:39.990Z,
@@ -1757,7 +1757,7 @@ Object {
           "addresses": Array [
             "1EJqhXr4ovykjwamGdRedE4wGPaTobNii",
           ],
-          "amount": 682518,
+          "amount": 3017699,
           "blockHeight": 148692,
           "confirmations": 0,
           "date": 2018-03-14T14:28:09.441Z,
@@ -1770,7 +1770,7 @@ Object {
           "addresses": Array [
             "1iZQoHbfHKgy6bi237DVqpdc7ua",
           ],
-          "amount": -12199928,
+          "amount": -53982300,
           "blockHeight": 148691,
           "confirmations": 0,
           "date": 2018-03-14T14:16:44.979Z,
@@ -1783,7 +1783,7 @@ Object {
           "addresses": Array [
             "154m4LkU1UQgRQ6ZUt8Adt61ERqmzb8F",
           ],
-          "amount": 22273549,
+          "amount": 98557522,
           "blockHeight": 179241,
           "confirmations": 0,
           "date": 2018-03-14T13:56:42.347Z,
@@ -1796,7 +1796,7 @@ Object {
           "addresses": Array [
             "1b9P5vzAGMY2JMSHWP2RGjxhc8zHDYjKE",
           ],
-          "amount": 9572025,
+          "amount": 191286970,
           "blockHeight": 114089,
           "confirmations": 0,
           "date": 2018-03-14T13:48:56.899Z,
@@ -1809,7 +1809,7 @@ Object {
           "addresses": Array [
             "1eKesaREDPVmm7mNrGuSxsGmSC",
           ],
-          "amount": -1132942,
+          "amount": -3365013,
           "blockHeight": 150658,
           "confirmations": 0,
           "date": 2018-03-14T12:35:12.870Z,
@@ -1822,7 +1822,7 @@ Object {
           "addresses": Array [
             "1CJcqpAPSkcoPsLroidz75rZK7ibge1E3Fy",
           ],
-          "amount": -4739731,
+          "amount": -14077814,
           "blockHeight": 164917,
           "confirmations": 0,
           "date": 2018-03-14T12:28:55.687Z,
@@ -1835,7 +1835,7 @@ Object {
           "addresses": Array [
             "1YAQiGpT9vkSiMdHfm4KyZ31xLonYriM1G",
           ],
-          "amount": 2256138,
+          "amount": 9982300,
           "blockHeight": 179235,
           "confirmations": 0,
           "date": 2018-03-14T12:25:28.165Z,
@@ -1848,7 +1848,7 @@ Object {
           "addresses": Array [
             "1w6KFx6ueEfahxec9tnP253t6t",
           ],
-          "amount": 47267356,
+          "amount": 140383130,
           "blockHeight": 177493,
           "confirmations": 0,
           "date": 2018-03-14T12:22:32.221Z,
@@ -1861,7 +1861,7 @@ Object {
           "addresses": Array [
             "1izu8Kp2HxWWQSj58CnjEU4Gh5hf9vU",
           ],
-          "amount": 2543,
+          "amount": 5940,
           "blockHeight": 164915,
           "confirmations": 0,
           "date": 2018-03-14T11:54:28.934Z,
@@ -1874,7 +1874,7 @@ Object {
           "addresses": Array [
             "1EDHoyBtmHHNMxyqZf4KVSWQ3fqx",
           ],
-          "amount": -9806035,
+          "amount": -29123849,
           "blockHeight": 164914,
           "confirmations": 0,
           "date": 2018-03-14T11:47:20.905Z,
@@ -1887,7 +1887,7 @@ Object {
           "addresses": Array [
             "1sEG5qMBHNRXjFkEz8oFuFeaB6Vs",
           ],
-          "amount": 63412168,
+          "amount": 188333828,
           "blockHeight": 164913,
           "confirmations": 0,
           "date": 2018-03-14T11:28:08.815Z,
@@ -1900,7 +1900,7 @@ Object {
           "addresses": Array [
             "1Lrv3XucfGAcQSsY61pxM4VoiXEwf33666",
           ],
-          "amount": 22804825,
+          "amount": 67730917,
           "blockHeight": 164912,
           "confirmations": 0,
           "date": 2018-03-14T11:16:41.563Z,
@@ -1913,7 +1913,7 @@ Object {
           "addresses": Array [
             "1dmNngdWY2N1KcWdSLYSntpvByzrkvfJ",
           ],
-          "amount": 2850415,
+          "amount": 56954436,
           "blockHeight": 118095,
           "confirmations": 0,
           "date": 2018-03-14T11:02:12.411Z,
@@ -1926,7 +1926,7 @@ Object {
           "addresses": Array [
             "1JdyVmJ2WvWnGtqjWwmTQK86vxTP",
           ],
-          "amount": 24559081,
+          "amount": 490787370,
           "blockHeight": 103195,
           "confirmations": 0,
           "date": 2018-03-14T10:53:27.418Z,
@@ -1939,7 +1939,7 @@ Object {
           "addresses": Array [
             "1JXFi8EtFFZ9ArHV61NqUs4FJhCKB2AAd",
           ],
-          "amount": 1753860,
+          "amount": 35051958,
           "blockHeight": 103194,
           "confirmations": 0,
           "date": 2018-03-14T10:43:16.532Z,
@@ -1952,7 +1952,7 @@ Object {
           "addresses": Array [
             "1ti4SvpEDfkTC81aqZASMrqKHEaDV2R",
           ],
-          "amount": -11427126,
+          "amount": -228357314,
           "blockHeight": 118094,
           "confirmations": 0,
           "date": 2018-03-14T10:40:45.539Z,
@@ -1965,7 +1965,7 @@ Object {
           "addresses": Array [
             "12fL7EDA3QBmqwSEwrrp323RJn",
           ],
-          "amount": -13597970,
+          "amount": -271742605,
           "blockHeight": 114076,
           "confirmations": 0,
           "date": 2018-03-14T10:31:15.804Z,
@@ -1978,7 +1978,7 @@ Object {
           "addresses": Array [
             "1ApqG4D4mPdEZrdpQ9w4k42YTsNdPWD",
           ],
-          "amount": 14063878,
+          "amount": 281055155,
           "blockHeight": 118092,
           "confirmations": 0,
           "date": 2018-03-14T10:08:00.241Z,
@@ -1991,7 +1991,7 @@ Object {
           "addresses": Array [
             "1faMm4Lh4yo8QeiTC8ye44DF9o",
           ],
-          "amount": 25503097,
+          "amount": 75743985,
           "blockHeight": 177483,
           "confirmations": 0,
           "date": 2018-03-14T09:59:39.307Z,
@@ -2004,7 +2004,7 @@ Object {
           "addresses": Array [
             "1jGfioQnnt6Emv55tZRJGaRnAwR8YR",
           ],
-          "amount": 26005267,
+          "amount": 77234927,
           "blockHeight": 184627,
           "confirmations": 0,
           "date": 2018-03-14T09:47:23.191Z,
@@ -2017,7 +2017,7 @@ Object {
           "addresses": Array [
             "1a8GECqv7aVsCTgVv4cYe66h9eu1GhCqQ5",
           ],
-          "amount": -3521275,
+          "amount": -15579646,
           "blockHeight": 148672,
           "confirmations": 0,
           "date": 2018-03-14T09:28:03.830Z,
@@ -2030,7 +2030,7 @@ Object {
           "addresses": Array [
             "1BWjMu9n7b1JFZB2Ex2j1VUqKj",
           ],
-          "amount": 19522025,
+          "amount": 86380530,
           "blockHeight": 179220,
           "confirmations": 0,
           "date": 2018-03-14T08:44:18.362Z,
@@ -2043,7 +2043,7 @@ Object {
           "addresses": Array [
             "1v2P5DuvtxeZxRvTGhWhWKvb55HjaFG",
           ],
-          "amount": 12518128,
+          "amount": 250159872,
           "blockHeight": 114066,
           "confirmations": 0,
           "date": 2018-03-14T07:53:07.704Z,
@@ -2056,7 +2056,7 @@ Object {
           "addresses": Array [
             "1JaGfoNQLRPGhdDDy53YcXmRCwc7",
           ],
-          "amount": 3603994,
+          "amount": 72022382,
           "blockHeight": 114066,
           "confirmations": 0,
           "date": 2018-03-14T07:50:35.419Z,
@@ -2069,7 +2069,7 @@ Object {
           "addresses": Array [
             "1fWKAXCqvyL2gBoDzrnqQHbdLcnpGWiYMJk",
           ],
-          "amount": -4012471,
+          "amount": -17752212,
           "blockHeight": 179217,
           "confirmations": 0,
           "date": 2018-03-14T07:50:20.976Z,
@@ -2082,7 +2082,7 @@ Object {
           "addresses": Array [
             "1jVaS6VzbVsk5YxUZbiYHQKwCmYkE",
           ],
-          "amount": -6057911,
+          "amount": -121063149,
           "blockHeight": 118082,
           "confirmations": 0,
           "date": 2018-03-14T07:35:34.813Z,
@@ -2095,7 +2095,7 @@ Object {
           "addresses": Array [
             "1rqRv9HDyPuoj2txEWEXTCAwjy",
           ],
-          "amount": 16826921,
+          "amount": 49976239,
           "blockHeight": 164895,
           "confirmations": 0,
           "date": 2018-03-14T07:01:31.919Z,
@@ -2108,7 +2108,7 @@ Object {
           "addresses": Array [
             "1P5vCi1L1g4edGndaSyGZiUsrZH",
           ],
-          "amount": 774015,
+          "amount": 2298782,
           "blockHeight": 184613,
           "confirmations": 0,
           "date": 2018-03-14T06:11:32.264Z,
@@ -2121,7 +2121,7 @@ Object {
           "addresses": Array [
             "1HgFPWaUTMSnLBaa2SHLon47Wgj9Q",
           ],
-          "amount": -1917176,
+          "amount": -8482300,
           "blockHeight": 112036,
           "confirmations": 0,
           "date": 2018-03-14T06:04:06.309Z,
@@ -2134,7 +2134,7 @@ Object {
           "addresses": Array [
             "1sLwyvp95vSbqUsEpJRSAFcoc5BiHvWr",
           ],
-          "amount": 49587419,
+          "amount": 147276507,
           "blockHeight": 184611,
           "confirmations": 0,
           "date": 2018-03-14T05:46:01.531Z,
@@ -2147,7 +2147,7 @@ Object {
           "addresses": Array [
             "15GEDJJ67HSoLWVow8HwAxsCimMQE17Zytf",
           ],
-          "amount": 2620503,
+          "amount": 11592920,
           "blockHeight": 179208,
           "confirmations": 0,
           "date": 2018-03-14T05:45:38.265Z,
@@ -2160,7 +2160,7 @@ Object {
           "addresses": Array [
             "1zp3PqUUfSyev9FoeiWoVT3MpZ",
           ],
-          "amount": -4624134,
+          "amount": -20460176,
           "blockHeight": 112035,
           "confirmations": 0,
           "date": 2018-03-14T05:36:48.242Z,
@@ -2173,7 +2173,7 @@ Object {
           "addresses": Array [
             "1zi3RizjvGtn51EdmaXKDaiDME",
           ],
-          "amount": 28392525,
+          "amount": 125632743,
           "blockHeight": 148655,
           "confirmations": 0,
           "date": 2018-03-14T05:10:58.553Z,
@@ -2186,7 +2186,7 @@ Object {
           "addresses": Array [
             "1nVa4iHYjK7w84F41yQQ6deAk38Vin4",
           ],
-          "amount": 5182427,
+          "amount": 22929203,
           "blockHeight": 148654,
           "confirmations": 0,
           "date": 2018-03-14T05:03:17.541Z,
@@ -2199,7 +2199,7 @@ Object {
           "addresses": Array [
             "1DR18J15U4XQQniFwim4qS9QHuJn2DXkP",
           ],
-          "amount": 33079,
+          "amount": 98010,
           "blockHeight": 150627,
           "confirmations": 0,
           "date": 2018-03-14T04:57:23.397Z,
@@ -2212,7 +2212,7 @@ Object {
           "addresses": Array [
             "1VPyLsmP9eEjnDTTH8zsM5vWPZaRSQKuXK",
           ],
-          "amount": 1342804,
+          "amount": 26818545,
           "blockHeight": 114054,
           "confirmations": 0,
           "date": 2018-03-14T04:52:28.990Z,
@@ -2225,7 +2225,7 @@ Object {
           "addresses": Array [
             "1fE36wN964RwQTWnBmdGNeeDY5zvzUTX6",
           ],
-          "amount": -20350737,
+          "amount": -60442530,
           "blockHeight": 150627,
           "confirmations": 0,
           "date": 2018-03-14T04:50:38.189Z,
@@ -2238,7 +2238,7 @@ Object {
           "addresses": Array [
             "178jPKvzQUmWPfC1x9Ez3DufeT",
           ],
-          "amount": -767526,
+          "amount": -2280962,
           "blockHeight": 184607,
           "confirmations": 0,
           "date": 2018-03-14T04:38:55.846Z,
@@ -2251,7 +2251,7 @@ Object {
           "addresses": Array [
             "1okDcheWEBvr89r1Azhp7fGike6EaZGce",
           ],
-          "amount": 4964776,
+          "amount": 21969026,
           "blockHeight": 112030,
           "confirmations": 0,
           "date": 2018-03-14T04:23:12.393Z,
@@ -2264,7 +2264,7 @@ Object {
           "addresses": Array [
             "1ZVBqejmBxsH5bHNWFLBZsVCkYH8Vd",
           ],
-          "amount": 13593859,
+          "amount": 60150442,
           "blockHeight": 179203,
           "confirmations": 0,
           "date": 2018-03-14T04:22:37.628Z,
@@ -2277,7 +2277,7 @@ Object {
           "addresses": Array [
             "1hCeSfREkpg6yh8ErG9fJBYX9mPZCM",
           ],
-          "amount": 9468915,
+          "amount": 28122958,
           "blockHeight": 184606,
           "confirmations": 0,
           "date": 2018-03-14T04:19:56.822Z,
@@ -2290,7 +2290,7 @@ Object {
           "addresses": Array [
             "12F52qibXdE2d8i57SzbYyekqxwZ",
           ],
-          "amount": 178581,
+          "amount": 792035,
           "blockHeight": 112029,
           "confirmations": 0,
           "date": 2018-03-14T04:18:13.367Z,
@@ -2303,7 +2303,7 @@ Object {
           "addresses": Array [
             "14YB41PHpkKQZGrBmDLu8CKCDFB",
           ],
-          "amount": 517070,
+          "amount": 10331734,
           "blockHeight": 114051,
           "confirmations": 0,
           "date": 2018-03-14T04:13:13.978Z,
@@ -2316,7 +2316,7 @@ Object {
           "addresses": Array [
             "1KPj32KAc9yWHFh7Ax6uLkNZJZhf7yWFHp",
           ],
-          "amount": 25839701,
+          "amount": 114336283,
           "blockHeight": 179202,
           "confirmations": 0,
           "date": 2018-03-14T04:11:49.590Z,
@@ -2334,7 +2334,7 @@ Object {
           "addresses": Array [
             "1iqo769uBG8sAheyzuouA59cTUZYyC",
           ],
-          "amount": 17293010,
+          "amount": 51360261,
           "blockHeight": 184603,
           "confirmations": 0,
           "date": 2018-03-14T03:49:29.106Z,
@@ -2347,7 +2347,7 @@ Object {
           "addresses": Array [
             "1Df3ZshToAJWjFJT4crmnw5f6xiXBcVqT6k",
           ],
-          "amount": 9150391,
+          "amount": 27175527,
           "blockHeight": 184603,
           "confirmations": 0,
           "date": 2018-03-14T03:45:35.882Z,
@@ -2360,7 +2360,7 @@ Object {
           "addresses": Array [
             "1AHN3Uhm5nufjdW2x6KqbNvUG2vW",
           ],
-          "amount": 4621949,
+          "amount": 13727353,
           "blockHeight": 164881,
           "confirmations": 0,
           "date": 2018-03-14T03:31:31.355Z,
@@ -2373,7 +2373,7 @@ Object {
           "addresses": Array [
             "1Zy7aBk9N8tAGSLbvLz7e2i3oUv8d4N",
           ],
-          "amount": 5773021,
+          "amount": 25544247,
           "blockHeight": 179198,
           "confirmations": 0,
           "date": 2018-03-14T03:16:52.549Z,
@@ -2386,7 +2386,7 @@ Object {
           "addresses": Array [
             "1xqDnrp16xAebGVesdvwihgiU8up8Mv6N1",
           ],
-          "amount": 5398803,
+          "amount": 16035046,
           "blockHeight": 177456,
           "confirmations": 0,
           "date": 2018-03-14T03:08:28.893Z,
@@ -2399,7 +2399,7 @@ Object {
           "addresses": Array [
             "1zca6Zzqk9c3GXZNBALTntGWQNF2s",
           ],
-          "amount": 5165878,
+          "amount": 22858407,
           "blockHeight": 112025,
           "confirmations": 0,
           "date": 2018-03-14T03:07:58.885Z,
@@ -2412,7 +2412,7 @@ Object {
           "addresses": Array [
             "1kB4SrtKRRhHHN9yHRztj3grtCMq4SX",
           ],
-          "amount": 1756216,
+          "amount": 7769911,
           "blockHeight": 112024,
           "confirmations": 0,
           "date": 2018-03-14T02:50:27.824Z,
@@ -2425,7 +2425,7 @@ Object {
           "addresses": Array [
             "1HKgyXoQA2tYctNQ5tL8nstVmy",
           ],
-          "amount": 9583205,
+          "amount": 191506794,
           "blockHeight": 114045,
           "confirmations": 0,
           "date": 2018-03-14T02:47:58.319Z,
@@ -2438,7 +2438,7 @@ Object {
           "addresses": Array [
             "1uFxPiFD7PiTctJU5fKp1VB6ETb6xXF5Q9Z",
           ],
-          "amount": 24965343,
+          "amount": 498900879,
           "blockHeight": 114045,
           "confirmations": 0,
           "date": 2018-03-14T02:42:19.587Z,
@@ -2451,7 +2451,7 @@ Object {
           "addresses": Array [
             "1PcN5AjvMsH7egyyLNvP9eZL5aZVh",
           ],
-          "amount": 1547317,
+          "amount": 6845132,
           "blockHeight": 179196,
           "confirmations": 0,
           "date": 2018-03-14T02:37:06.081Z,
@@ -2464,7 +2464,7 @@ Object {
           "addresses": Array [
             "1QkXK9h35NYifmq28jn5ZVDND6Lb",
           ],
-          "amount": 28345745,
+          "amount": 84187704,
           "blockHeight": 184596,
           "confirmations": 0,
           "date": 2018-03-14T01:56:54.757Z,
@@ -2477,7 +2477,7 @@ Object {
           "addresses": Array [
             "1petA5tJVFFoY8MqwH9fXg5sqvwMP",
           ],
-          "amount": 50611863,
+          "amount": 150317790,
           "blockHeight": 164874,
           "confirmations": 0,
           "date": 2018-03-14T01:39:36.088Z,
@@ -2490,7 +2490,7 @@ Object {
           "addresses": Array [
             "1m51wckgA6cgaEHdXyNenq8iudPBN",
           ],
-          "amount": -33077800,
+          "amount": -98241758,
           "blockHeight": 164872,
           "confirmations": 0,
           "date": 2018-03-14T01:16:14.537Z,
@@ -2503,7 +2503,7 @@ Object {
           "addresses": Array [
             "1ecUxMfANwpMoMcHvdERiEQwYV",
           ],
-          "amount": 55447740,
+          "amount": 245345132,
           "blockHeight": 148636,
           "confirmations": 0,
           "date": 2018-03-14T00:31:55.488Z,
@@ -2516,7 +2516,7 @@ Object {
           "addresses": Array [
             "1b4i2VRWgypijmjXweZpiwFmFUtqkSG5",
           ],
-          "amount": -3440915,
+          "amount": -68745003,
           "blockHeight": 118053,
           "confirmations": 0,
           "date": 2018-03-14T00:23:45.692Z,
@@ -2529,7 +2529,7 @@ Object {
           "addresses": Array [
             "1nB5Cd4uGSG1fgyXe1aDzm6YUZxUbJL",
           ],
-          "amount": 29242453,
+          "amount": 86848826,
           "blockHeight": 150609,
           "confirmations": 0,
           "date": 2018-03-14T00:21:40.492Z,
@@ -2542,7 +2542,7 @@ Object {
           "addresses": Array [
             "1KaoxZLXAoEuqRR5XecA6BAvTdWn4MShH",
           ],
-          "amount": -7373325,
+          "amount": -21897831,
           "blockHeight": 184587,
           "confirmations": 0,
           "date": 2018-03-13T23:45:12.915Z,
@@ -2555,7 +2555,7 @@ Object {
           "addresses": Array [
             "1dnS47wyEFm7mChYJcG3qD3unboSojWKNm",
           ],
-          "amount": 2382052,
+          "amount": 7074547,
           "blockHeight": 164864,
           "confirmations": 0,
           "date": 2018-03-13T23:19:06.736Z,
@@ -2568,7 +2568,7 @@ Object {
           "addresses": Array [
             "15xfjpkd6ELGuVwP8BkNci8HKDjKd2xu",
           ],
-          "amount": 20177885,
+          "amount": 59928719,
           "blockHeight": 150599,
           "confirmations": 0,
           "date": 2018-03-13T21:55:25.548Z,
@@ -2581,7 +2581,7 @@ Object {
           "addresses": Array [
             "1HhaAQqmfPYfNWbAynSt4TesymTFvqTEs",
           ],
-          "amount": 52940803,
+          "amount": 157234927,
           "blockHeight": 164857,
           "confirmations": 0,
           "date": 2018-03-13T21:30:13.423Z,
@@ -2594,7 +2594,7 @@ Object {
           "addresses": Array [
             "1gvfeJ554hJcMb28kqDZhf3syp2",
           ],
-          "amount": 56963005,
+          "amount": 252048672,
           "blockHeight": 179175,
           "confirmations": 0,
           "date": 2018-03-13T21:21:01.879Z,
@@ -2607,7 +2607,7 @@ Object {
           "addresses": Array [
             "1qjUc6pDTDSh5rNBfnEQNqnJi7g9mLabbS1",
           ],
-          "amount": 3608626,
+          "amount": 10715770,
           "blockHeight": 164856,
           "confirmations": 0,
           "date": 2018-03-13T21:14:53.308Z,
@@ -2620,7 +2620,7 @@ Object {
           "addresses": Array [
             "1geHoT6QKGLE8QVnGLg22S6jtV",
           ],
-          "amount": 2838612,
+          "amount": 12557522,
           "blockHeight": 179174,
           "confirmations": 0,
           "date": 2018-03-13T21:11:57.075Z,
@@ -2633,7 +2633,7 @@ Object {
           "addresses": Array [
             "1ZS3WiNWr4JvQbdWtez6gVo2fUkrHa",
           ],
-          "amount": -6520632,
+          "amount": -130315747,
           "blockHeight": 118040,
           "confirmations": 0,
           "date": 2018-03-13T21:06:11.907Z,
@@ -2646,7 +2646,7 @@ Object {
           "addresses": Array [
             "1p7PP6jsCehGAQZS8wzaSXAiuhb7m2d",
           ],
-          "amount": 7416091,
+          "amount": 22025542,
           "blockHeight": 150595,
           "confirmations": 0,
           "date": 2018-03-13T21:04:02.837Z,
@@ -2659,7 +2659,7 @@ Object {
           "addresses": Array [
             "1Yp1b1UzHNhugRUzcEdTGFDUZUESN",
           ],
-          "amount": 2749693,
+          "amount": 8164538,
           "blockHeight": 164854,
           "confirmations": 0,
           "date": 2018-03-13T20:35:06.708Z,
@@ -2672,7 +2672,7 @@ Object {
           "addresses": Array [
             "1rcWau1dyUovvWQqXPiQnzy5xTg",
           ],
-          "amount": -3512848,
+          "amount": -10433620,
           "blockHeight": 164852,
           "confirmations": 0,
           "date": 2018-03-13T20:19:30.350Z,
@@ -2685,7 +2685,7 @@ Object {
           "addresses": Array [
             "1jFkjmRhE8ZNRnffdQFnEk4hGGV4r9U",
           ],
-          "amount": 37031934,
+          "amount": 740047961,
           "blockHeight": 114014,
           "confirmations": 0,
           "date": 2018-03-13T18:55:59.345Z,
@@ -2698,7 +2698,7 @@ Object {
           "addresses": Array [
             "1fxFne19n3fEWS37WT6F8r9v8uAEFeHi",
           ],
-          "amount": -9931728,
+          "amount": -29495099,
           "blockHeight": 150587,
           "confirmations": 0,
           "date": 2018-03-13T18:55:50.202Z,
@@ -2711,7 +2711,7 @@ Object {
           "addresses": Array [
             "1m4VpuMcySUdff7rMXFhfNpM3mY",
           ],
-          "amount": 13582,
+          "amount": 259792,
           "blockHeight": 118030,
           "confirmations": 0,
           "date": 2018-03-13T18:47:47.144Z,
@@ -2724,7 +2724,7 @@ Object {
           "addresses": Array [
             "1j3FvkTnnpf83uh4Tvcm9F5TEfGzG",
           ],
-          "amount": 16112394,
+          "amount": 71296460,
           "blockHeight": 111989,
           "confirmations": 0,
           "date": 2018-03-13T18:13:01.418Z,
@@ -2737,7 +2737,7 @@ Object {
           "addresses": Array [
             "1QwAseFj7JGgMEZN4LsSDMEsu44U3g3dD",
           ],
-          "amount": 87826,
+          "amount": 1738609,
           "blockHeight": 114008,
           "confirmations": 0,
           "date": 2018-03-13T17:34:40.528Z,
@@ -2750,7 +2750,7 @@ Object {
           "addresses": Array [
             "13MqvatzDyNBEea96JQAM2ng2ZPyGFWU",
           ],
-          "amount": 2187000,
+          "amount": 43705035,
           "blockHeight": 118024,
           "confirmations": 0,
           "date": 2018-03-13T17:08:31.787Z,
@@ -2763,7 +2763,7 @@ Object {
           "addresses": Array [
             "13528ECfttRRE5c5NgJvCaUsGuAqyMWZoqe",
           ],
-          "amount": 25302136,
+          "amount": 111955752,
           "blockHeight": 179149,
           "confirmations": 0,
           "date": 2018-03-13T15:02:08.246Z,
@@ -2776,7 +2776,7 @@ Object {
           "addresses": Array [
             "1jJbRPNdRTcuJqjV864rxcxoYG1S",
           ],
-          "amount": 3856849,
+          "amount": 11455301,
           "blockHeight": 164828,
           "confirmations": 0,
           "date": 2018-03-13T14:17:11.658Z,
@@ -2789,7 +2789,7 @@ Object {
           "addresses": Array [
             "1oby3txBHirtxXL16vJRZFqUYFvUKb",
           ],
-          "amount": 46921596,
+          "amount": 937689848,
           "blockHeight": 118012,
           "confirmations": 0,
           "date": 2018-03-13T14:10:34.018Z,
@@ -2802,7 +2802,7 @@ Object {
           "addresses": Array [
             "1yGRhaqyKSC93iG9DNr3rAxkRocY",
           ],
-          "amount": 230523,
+          "amount": 683100,
           "blockHeight": 150567,
           "confirmations": 0,
           "date": 2018-03-13T13:55:12.436Z,
@@ -2815,7 +2815,7 @@ Object {
           "addresses": Array [
             "1zTtGkAcyEC618B7bHgyCHk6oHJfXGFvxQ",
           ],
-          "amount": 5716421,
+          "amount": 16979506,
           "blockHeight": 150565,
           "confirmations": 0,
           "date": 2018-03-13T13:29:57.787Z,
@@ -2828,7 +2828,7 @@ Object {
           "addresses": Array [
             "1B6tDwLjUoXDDqc3vVC4PSBoYpq",
           ],
-          "amount": 5457366,
+          "amount": 109072741,
           "blockHeight": 113990,
           "confirmations": 0,
           "date": 2018-03-13T13:04:03.137Z,
@@ -2841,7 +2841,7 @@ Object {
           "addresses": Array [
             "1xcYFNQY7BPCUTmdr2KxE1csXbqVodccnG",
           ],
-          "amount": 13314796,
+          "amount": 39545589,
           "blockHeight": 184542,
           "confirmations": 0,
           "date": 2018-03-13T12:31:27.274Z,
@@ -2854,7 +2854,7 @@ Object {
           "addresses": Array [
             "1qcTAUzyj9TfiGaQTYfvunPpNcf1pre",
           ],
-          "amount": 22524779,
+          "amount": 66899316,
           "blockHeight": 184542,
           "confirmations": 0,
           "date": 2018-03-13T12:30:40.695Z,
@@ -2867,7 +2867,7 @@ Object {
           "addresses": Array [
             "1grNcKNKHAHt3m8KV5TLXqK9aDe8KQ5ps",
           ],
-          "amount": 2146198,
+          "amount": 9495575,
           "blockHeight": 148588,
           "confirmations": 0,
           "date": 2018-03-13T12:25:09.770Z,
@@ -2880,7 +2880,7 @@ Object {
           "addresses": Array [
             "1X5i6HZDdpSXgsBQKXRRbYgKcxT",
           ],
-          "amount": 1479678,
+          "amount": 4392634,
           "blockHeight": 164820,
           "confirmations": 0,
           "date": 2018-03-13T12:05:10.232Z,
@@ -2893,7 +2893,7 @@ Object {
           "addresses": Array [
             "1BBDXLRRJ7uFiyfmt7NLSVF95BN",
           ],
-          "amount": -27689738,
+          "amount": -82239382,
           "blockHeight": 184537,
           "confirmations": 0,
           "date": 2018-03-13T11:16:47.558Z,
@@ -2906,7 +2906,7 @@ Object {
           "addresses": Array [
             "1zo9amZ79ek4BZmfwSogVrNVTu7JfVFaS",
           ],
-          "amount": 800880,
+          "amount": 16007194,
           "blockHeight": 113981,
           "confirmations": 0,
           "date": 2018-03-13T10:41:38.265Z,

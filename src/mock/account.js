@@ -8,6 +8,21 @@ import type { Account, Operation, CryptoCurrency } from "../types";
 
 const currencies = listCryptoCurrencies();
 
+// for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
+const tickerApproxMarketPrice = {
+  BTC: 0.0073059,
+  ETH: 5.7033e-14,
+  ETC: 1.4857e-15,
+  BCH: 0.0011739,
+  BTG: 0.00005004,
+  LTC: 0.00011728,
+  XRP: 0.000057633,
+  DOGE: 4.9e-9,
+  DASH: 0.0003367,
+  PPC: 0.000226,
+  ZEC: 0.000205798
+};
+
 /**
  * @memberof mock/account
  */
@@ -57,7 +72,11 @@ export function genOperation(
     addresses: [address],
     amount:
       (rng.next() < 0.3 ? -1 : 1) *
-      rng.nextInt(0, 100000000 * rng.next() * rng.next()),
+      Math.floor(
+        rng.nextInt(0, 100000 * rng.next() * rng.next()) /
+          (tickerApproxMarketPrice[currency.ticker] ||
+            tickerApproxMarketPrice.BTC)
+      ),
     hash: genHex(64, rng),
     date,
     blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000)
