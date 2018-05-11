@@ -1,6 +1,9 @@
 // @flow
 import Prando from "prando";
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "../../helpers/currencies";
+import {
+  getFiatCurrencyByTicker,
+  getCryptoCurrencyById
+} from "../../helpers/currencies";
 import {
   makeCalculateCounterValue,
   makeReverseCounterValue,
@@ -9,7 +12,9 @@ import {
 
 test("valueFromUnit", () => {
   expect(valueFromUnit(1, getFiatCurrencyByTicker("USD").units[0])).toBe(100);
-  expect(valueFromUnit(0.01, getCryptoCurrencyById("bitcoin_testnet").units[0])).toBe(1000000);
+  expect(
+    valueFromUnit(0.01, getCryptoCurrencyById("bitcoin_testnet").units[0])
+  ).toBe(1000000);
 });
 
 test("makeCalculateCounterValue basic test", () => {
