@@ -90,7 +90,8 @@ export function genAddingOperationsInAccount(
  * @memberof mock/account
  */
 type GenAccountOptions = {
-  operationsSize?: number
+  operationsSize?: number,
+  currency?: CryptoCurrency
 };
 
 export function genAccount(
@@ -98,7 +99,7 @@ export function genAccount(
   opts: GenAccountOptions = {}
 ): Account {
   const rng = new Prando(id);
-  const currency = rng.nextArrayItem(currencies);
+  const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
   const account = {
