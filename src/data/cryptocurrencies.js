@@ -284,7 +284,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "ethereum_testnet",
-    name: "Ethereum",
+    name: "Ethereum Testnet",
     ticker: "ETH",
     scheme: "ethereum",
     color: "#ffae35",
