@@ -6,6 +6,7 @@
 
 [libs]
 flow-typed
+flow-defs
 flow
 
 [lints]
