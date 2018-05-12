@@ -14,16 +14,19 @@ export type AccountRaw = {
   // account path on the device
   path: string,
 
-  // account root path on the device
-  rootPath: string,
+  // account wallet path on the device
+  walletPath: string,
 
   // account name
   name: string,
 
-  // account address
+  // whether or not the account is segwit (useful to not re-parse path everytime)
+  isSegwit: boolean,
+
+  // account bitcoinAddress received when derivating account path
   address: string,
 
-  // transaction all addresses (actually needed by desktop app)
+  // bunch of fresh receive addresses, calculated by libcore
   addresses: string[],
 
   // account balance in satoshi
@@ -69,13 +72,16 @@ export type Account = {
   // account path on the device
   path: string,
 
-  // account root path on the device
-  rootPath: string,
+  // account wallet path on the device
+  walletPath: string,
 
   // account name
   name: string,
 
-  // account address
+  // whether or not the account is segwit (useful to not re-parse path everytime)
+  isSegwit: boolean,
+
+  // account bitcoinAddress received when derivating account path
   address: string,
 
   // transaction all addresses (actually needed by desktop app)
