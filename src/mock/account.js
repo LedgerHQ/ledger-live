@@ -70,6 +70,8 @@ export function genOperation(
     accountId: account.id,
     address,
     addresses: [address],
+    senders: [address],
+    recipients: [address],
     amount:
       (rng.next() < 0.3 ? -1 : 1) *
       Math.floor(
