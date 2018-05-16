@@ -70,6 +70,8 @@ export function genOperation(
     accountId: account.id,
     address,
     addresses: [address],
+    senders: [address],
+    recipients: [address],
     amount:
       (rng.next() < 0.3 ? -1 : 1) *
       Math.floor(
@@ -123,9 +125,10 @@ export function genAccount(
   const address = genAddress(currency, rng);
   const account = {
     id: `mock_account_${id}`,
+    isSegwit: true,
     index: 0,
     path: "49'/1'/1'/0/2",
-    rootPath: "49'/1'/1'",
+    walletPath: "49'/1'/1'",
     xpub: genHex(64, rng),
     archived: false,
     currency,

@@ -27,6 +27,10 @@ export type Operation = {
   // the account id. available for convenient reason
   accountId: string,
 
+  // senders & recipients addresses
+  senders: string[],
+  recipients: string[],
+
   // --------------------------------------------- specific operation raw fields
 
   // transaction date
@@ -52,6 +56,10 @@ export type OperationRaw = {
 
   // the account id. available for convenient reason
   accountId: string,
+
+  // senders & recipients addresses
+  senders: string[],
+  recipients: string[],
 
   // --------------------------------------------- specific operation raw fields
 

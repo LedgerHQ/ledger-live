@@ -14,6 +14,7 @@ Object {
     "currencyId": "litecoin",
     "id": "mock_account_model1",
     "index": 0,
+    "isSegwit": true,
     "lastSyncDate": "2018-03-14T17:34:42.000Z",
     "minConfirmations": 2,
     "name": "1A9mz43nd6",
@@ -30,6 +31,12 @@ Object {
         "date": "2018-03-14T15:19:05.714Z",
         "hash": "20FBDB7C235F4848FC204CC05EF510B5421F191ECF3825AB13ABD5471EF6A382",
         "id": "mock_op_0_mock_account_model1",
+        "recipients": Array [
+          "1eD4pkaorigA9P5jBnMRdb51y8YZE",
+        ],
+        "senders": Array [
+          "1eD4pkaorigA9P5jBnMRdb51y8YZE",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -43,6 +50,12 @@ Object {
         "date": "2018-03-14T07:49:43.891Z",
         "hash": "20C761ACFFE0AC902391D29FDFBF59E935D254DD66FCB54846A7D7340EE5986B",
         "id": "mock_op_1_mock_account_model1",
+        "recipients": Array [
+          "1nVJXEctWHbJTjkTVeoXsRo5uRPhZb",
+        ],
+        "senders": Array [
+          "1nVJXEctWHbJTjkTVeoXsRo5uRPhZb",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -56,6 +69,12 @@ Object {
         "date": "2018-03-14T02:29:02.478Z",
         "hash": "8D4BFE52AC9E860F9F0ADB75822D23FA54B7CE322D272272C81B71A56531F1AA",
         "id": "mock_op_2_mock_account_model1",
+        "recipients": Array [
+          "1nKrKTLNnmmwZAUJzz4wbQp4SvUjZ",
+        ],
+        "senders": Array [
+          "1nKrKTLNnmmwZAUJzz4wbQp4SvUjZ",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -69,6 +88,12 @@ Object {
         "date": "2018-03-14T02:26:54.722Z",
         "hash": "0853DA61E9F3F70B62C8C23573B70714CFF5FD63AAA8501089847AD11E952D86",
         "id": "mock_op_3_mock_account_model1",
+        "recipients": Array [
+          "1GGysjNsDGRYHzpzKCWUdaPTXsrT",
+        ],
+        "senders": Array [
+          "1GGysjNsDGRYHzpzKCWUdaPTXsrT",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -82,6 +107,12 @@ Object {
         "date": "2018-03-14T02:03:41.676Z",
         "hash": "6AB43DA207D1B944F71026C82FDE9420EF0BCF211D0FF8D7963ACB8D0C68A256",
         "id": "mock_op_4_mock_account_model1",
+        "recipients": Array [
+          "191x81pnRBCxotKP3BEkTCj9hc",
+        ],
+        "senders": Array [
+          "191x81pnRBCxotKP3BEkTCj9hc",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -95,6 +126,12 @@ Object {
         "date": "2018-03-14T01:28:24.601Z",
         "hash": "EA5F053C6E00566F3E98B1FEB56CCFFFB7E1AEBB3B1E54A3BBDD055773D99BC2",
         "id": "mock_op_5_mock_account_model1",
+        "recipients": Array [
+          "1eGv8x5pMhM6tTyYAyyzB6TY5qCjX1",
+        ],
+        "senders": Array [
+          "1eGv8x5pMhM6tTyYAyyzB6TY5qCjX1",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -108,6 +145,12 @@ Object {
         "date": "2018-03-13T22:27:36.742Z",
         "hash": "E21CDC40B9F1551A8E9701D417320D31EF1F6E9BFF00F13167F014F242001675",
         "id": "mock_op_6_mock_account_model1",
+        "recipients": Array [
+          "1HxtV8aM9y8VXqK4mMFn5NxjKbQfqz",
+        ],
+        "senders": Array [
+          "1HxtV8aM9y8VXqK4mMFn5NxjKbQfqz",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -121,6 +164,12 @@ Object {
         "date": "2018-03-13T19:20:09.190Z",
         "hash": "5D66B1AC11D206502200C3FA100FC1EBE0C414A1052061833D8098E761462530",
         "id": "mock_op_7_mock_account_model1",
+        "recipients": Array [
+          "1GJk9FDfUxZ4CcekkHUgTGJ9EJZETmzL7",
+        ],
+        "senders": Array [
+          "1GJk9FDfUxZ4CcekkHUgTGJ9EJZETmzL7",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -134,6 +183,12 @@ Object {
         "date": "2018-03-13T13:36:26.482Z",
         "hash": "D794DDF2F33BC0AC4820652F9DA9D5409F80F394D5EA2961D83DAF28AF57EDF6",
         "id": "mock_op_8_mock_account_model1",
+        "recipients": Array [
+          "1jMnJYFvP8Q7DQtktSxL9hVN4Q6CZV",
+        ],
+        "senders": Array [
+          "1jMnJYFvP8Q7DQtktSxL9hVN4Q6CZV",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -147,6 +202,12 @@ Object {
         "date": "2018-03-13T13:15:47.668Z",
         "hash": "D5DC3E17D7E95359EAB72D2BD63E908F28FB7D89A5D96B39167079C60720963D",
         "id": "mock_op_9_mock_account_model1",
+        "recipients": Array [
+          "1bHFZb2iQ3Vd6Qjmb6AoCTt91Bw28mN8SJT",
+        ],
+        "senders": Array [
+          "1bHFZb2iQ3Vd6Qjmb6AoCTt91Bw28mN8SJT",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -160,6 +221,12 @@ Object {
         "date": "2018-03-13T08:16:02.082Z",
         "hash": "931C815AE08F5E6335B536ACB852D11DBD7CF11094E600428D5805925F1A277B",
         "id": "mock_op_10_mock_account_model1",
+        "recipients": Array [
+          "1cJ3PeU9RzzLePJJpsgLiBBbkAT6y33cKY",
+        ],
+        "senders": Array [
+          "1cJ3PeU9RzzLePJJpsgLiBBbkAT6y33cKY",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -173,6 +240,12 @@ Object {
         "date": "2018-03-13T08:07:09.524Z",
         "hash": "43D49199CC3CC96FD3E7D2A08F5B7776BF152B9546B41A81DA5F069A30961AFF",
         "id": "mock_op_11_mock_account_model1",
+        "recipients": Array [
+          "1iu336WmgD8XPf3b2dVXs2pMC56Gk49J",
+        ],
+        "senders": Array [
+          "1iu336WmgD8XPf3b2dVXs2pMC56Gk49J",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -186,6 +259,12 @@ Object {
         "date": "2018-03-13T04:58:27.008Z",
         "hash": "9B0577803ACEAEB259C924596EAE3968F4CC2F5862F99D221644B6672ADBAB07",
         "id": "mock_op_12_mock_account_model1",
+        "recipients": Array [
+          "1tXuzugB8kV62HjLiN23ZvPwGWbSUUuGGS",
+        ],
+        "senders": Array [
+          "1tXuzugB8kV62HjLiN23ZvPwGWbSUUuGGS",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -199,6 +278,12 @@ Object {
         "date": "2018-03-13T04:57:08.081Z",
         "hash": "BD0E42EF2F30D5E187DC1DCEE0AB88AAF1FFECBEBF05DE204BC0D5667319EA4C",
         "id": "mock_op_13_mock_account_model1",
+        "recipients": Array [
+          "1BEW4rJAfTTpcWNd45HycySLqo",
+        ],
+        "senders": Array [
+          "1BEW4rJAfTTpcWNd45HycySLqo",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -212,6 +297,12 @@ Object {
         "date": "2018-03-13T04:39:22.385Z",
         "hash": "674525DD5C34D06F5FF18874CC779F233673848F629369DBFFAE08D02CEDAF44",
         "id": "mock_op_14_mock_account_model1",
+        "recipients": Array [
+          "1PT7U2H5umjnRYJFk8DZ6ewAZS",
+        ],
+        "senders": Array [
+          "1PT7U2H5umjnRYJFk8DZ6ewAZS",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -225,6 +316,12 @@ Object {
         "date": "2018-03-13T04:26:11.667Z",
         "hash": "A5331EA4F74B797238A0D2AD74DBFA3B9E84C3B93E258852E700B6E789BCA5B2",
         "id": "mock_op_15_mock_account_model1",
+        "recipients": Array [
+          "1RgjKsvHJrkfVfGNqYkya4tzMCyq7Vzm",
+        ],
+        "senders": Array [
+          "1RgjKsvHJrkfVfGNqYkya4tzMCyq7Vzm",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -238,6 +335,12 @@ Object {
         "date": "2018-03-12T12:15:02.564Z",
         "hash": "F2CC44D7F1B641C6C58554AA6FEDA5FC92BE62D9BFB495B063E4EC5E0148524F",
         "id": "mock_op_16_mock_account_model1",
+        "recipients": Array [
+          "1zyNjuKQGJqWNg1XqbjA7cDwoVt",
+        ],
+        "senders": Array [
+          "1zyNjuKQGJqWNg1XqbjA7cDwoVt",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -251,6 +354,12 @@ Object {
         "date": "2018-03-12T02:31:52.390Z",
         "hash": "11A5FDB746F0EAEB7593B023B73B6A5B77239C90CDADC16F63CD8B9BFA394FA4",
         "id": "mock_op_17_mock_account_model1",
+        "recipients": Array [
+          "12T54jBpaxZ3sqR1DKjZioXNmK1U2pgnW",
+        ],
+        "senders": Array [
+          "12T54jBpaxZ3sqR1DKjZioXNmK1U2pgnW",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -264,6 +373,12 @@ Object {
         "date": "2018-03-12T01:29:02.580Z",
         "hash": "18EF1488CCC3B75F18B3CAE79AFE3089EE36F523B1314D3BBA898DB0059B6A0B",
         "id": "mock_op_18_mock_account_model1",
+        "recipients": Array [
+          "1E13YMD3FeP9VYBAjN43m4L6hguz96wPkCA",
+        ],
+        "senders": Array [
+          "1E13YMD3FeP9VYBAjN43m4L6hguz96wPkCA",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -277,6 +392,12 @@ Object {
         "date": "2018-03-11T20:07:43.455Z",
         "hash": "FE3CC4148D1C07EDAF57791288A1015B91A4406C733292F4C01C1D221DA18C38",
         "id": "mock_op_19_mock_account_model1",
+        "recipients": Array [
+          "1UTYMBCxSKrUYyV412mp2xRBJhzVsi9DLC",
+        ],
+        "senders": Array [
+          "1UTYMBCxSKrUYyV412mp2xRBJhzVsi9DLC",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -290,6 +411,12 @@ Object {
         "date": "2018-03-11T09:17:27.156Z",
         "hash": "2E7F83904C81B879F0DAA74C521B4AF624AE630DD6CB27864A8C115A4204E74E",
         "id": "mock_op_20_mock_account_model1",
+        "recipients": Array [
+          "1oqFrtnuJTA1oj5cHPjYawoJR9WP68b8y",
+        ],
+        "senders": Array [
+          "1oqFrtnuJTA1oj5cHPjYawoJR9WP68b8y",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -303,6 +430,12 @@ Object {
         "date": "2018-03-11T09:01:33.169Z",
         "hash": "F6A7312756D0F4DCAE039E3C1D24B53F80472BABFD5661FB96944E76F9F8D5D5",
         "id": "mock_op_21_mock_account_model1",
+        "recipients": Array [
+          "19Jhbis1cuCBpmGaARS9GZGqxgA9PjszAZ",
+        ],
+        "senders": Array [
+          "19Jhbis1cuCBpmGaARS9GZGqxgA9PjszAZ",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -316,6 +449,12 @@ Object {
         "date": "2018-03-11T07:25:59.104Z",
         "hash": "214EECAB84D82EAE61EB478C11223F0F2E82EE46EE69FF36C8FB0A28102E26A7",
         "id": "mock_op_22_mock_account_model1",
+        "recipients": Array [
+          "1gQYdit3NKc4RQyvaz85a9aBYRErPY",
+        ],
+        "senders": Array [
+          "1gQYdit3NKc4RQyvaz85a9aBYRErPY",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -329,6 +468,12 @@ Object {
         "date": "2018-03-11T06:30:22.351Z",
         "hash": "6ABA8EE395F9EB9DFE5684C355A7F874D6EC4542E178D360DCC0515D407A720E",
         "id": "mock_op_23_mock_account_model1",
+        "recipients": Array [
+          "1DtZww1fz2rxRemgwYgKPAKvayJHhSegg",
+        ],
+        "senders": Array [
+          "1DtZww1fz2rxRemgwYgKPAKvayJHhSegg",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -342,6 +487,12 @@ Object {
         "date": "2018-03-11T03:21:17.874Z",
         "hash": "89569842FD0BC53AFB1E3E4237852FDE77A83B4BA492D2B3BCC7AC0738ED373C",
         "id": "mock_op_24_mock_account_model1",
+        "recipients": Array [
+          "11roCBAguGAnqzbH2mt1zkBGStvg37",
+        ],
+        "senders": Array [
+          "11roCBAguGAnqzbH2mt1zkBGStvg37",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -355,6 +506,12 @@ Object {
         "date": "2018-03-10T15:41:16.337Z",
         "hash": "B40EE8933FCEC7A2EAEF48B36A852C12E4E7898A94ACD56C1A30D13A0BCDB5EC",
         "id": "mock_op_25_mock_account_model1",
+        "recipients": Array [
+          "14W8nBU3HnUAgohHkoFgzFuU8vd5",
+        ],
+        "senders": Array [
+          "14W8nBU3HnUAgohHkoFgzFuU8vd5",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -368,6 +525,12 @@ Object {
         "date": "2018-03-10T11:20:23.673Z",
         "hash": "A651097F8400EBDB98EF9EB0109E7E117F8CB51ED3059477F1F407DEFBAC3EDD",
         "id": "mock_op_26_mock_account_model1",
+        "recipients": Array [
+          "1FmZy71i1qgjPWrA57taZMs5UsSBPet",
+        ],
+        "senders": Array [
+          "1FmZy71i1qgjPWrA57taZMs5UsSBPet",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -381,6 +544,12 @@ Object {
         "date": "2018-03-10T08:51:19.522Z",
         "hash": "B8E2A41E94EAF18560B0FC86F5871521E7203A333BAB22F0629AB29E4AF76C16",
         "id": "mock_op_27_mock_account_model1",
+        "recipients": Array [
+          "1zVSs6VsSL4o7anGb2NbXzAQr49",
+        ],
+        "senders": Array [
+          "1zVSs6VsSL4o7anGb2NbXzAQr49",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -394,6 +563,12 @@ Object {
         "date": "2018-03-09T18:17:40.026Z",
         "hash": "D7417D316FD952728303967D5327EDD976A3EBB86567E9EDF5E6E14F5DF33251",
         "id": "mock_op_28_mock_account_model1",
+        "recipients": Array [
+          "1Qa5HEE2cEgRwCi9EcypizzmdbaMCRv",
+        ],
+        "senders": Array [
+          "1Qa5HEE2cEgRwCi9EcypizzmdbaMCRv",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -407,6 +582,12 @@ Object {
         "date": "2018-03-09T17:57:04.398Z",
         "hash": "0A9E8A6CD5685968FD8A5179112F94A0A4DE28DB3C0DBDCC157CDE39E856EC88",
         "id": "mock_op_29_mock_account_model1",
+        "recipients": Array [
+          "1VYZJcXF3VPUK51QckgffY7uEto",
+        ],
+        "senders": Array [
+          "1VYZJcXF3VPUK51QckgffY7uEto",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -420,6 +601,12 @@ Object {
         "date": "2018-03-09T16:29:00.960Z",
         "hash": "C43CCC28118734AB643CD29A768E14A67C7EC028519334F1D60AE29B4F77575D",
         "id": "mock_op_30_mock_account_model1",
+        "recipients": Array [
+          "1UZ3X3RiVdm7aem8MBiH3xgsjEFUWQEZUQD",
+        ],
+        "senders": Array [
+          "1UZ3X3RiVdm7aem8MBiH3xgsjEFUWQEZUQD",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -433,6 +620,12 @@ Object {
         "date": "2018-03-09T12:17:48.821Z",
         "hash": "FE902D1AD0953185E3A0339BEE972342960F39B25CA07E7D5A91C8710F97C9C6",
         "id": "mock_op_31_mock_account_model1",
+        "recipients": Array [
+          "18HFRsupa3vYG58wEH5eEi5aqKM",
+        ],
+        "senders": Array [
+          "18HFRsupa3vYG58wEH5eEi5aqKM",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -446,6 +639,12 @@ Object {
         "date": "2018-03-09T08:58:48.786Z",
         "hash": "D32A2C28A3A642BC9FC6CAB4D3C8DDF00EC9ACD54ADD92A4F5572900C4A97EEA",
         "id": "mock_op_32_mock_account_model1",
+        "recipients": Array [
+          "1UhVtaePLKsEnPJdMmwJL6M7hArWHJJ",
+        ],
+        "senders": Array [
+          "1UhVtaePLKsEnPJdMmwJL6M7hArWHJJ",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -459,6 +658,12 @@ Object {
         "date": "2018-03-09T05:44:19.950Z",
         "hash": "C322E06EC7D07F3CC21BAE46F353D16233E6DFC3A59B6CF7B8C71DC76CABF327",
         "id": "mock_op_33_mock_account_model1",
+        "recipients": Array [
+          "1e5dTV91ec9JMZKzej1QvqMs8WT31ES",
+        ],
+        "senders": Array [
+          "1e5dTV91ec9JMZKzej1QvqMs8WT31ES",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -472,6 +677,12 @@ Object {
         "date": "2018-03-09T05:41:06.165Z",
         "hash": "0A2A1D6C50DF75D4A5044442F6D254C7EDD46B441B87E516EA8F0E2378733490",
         "id": "mock_op_34_mock_account_model1",
+        "recipients": Array [
+          "1VmVmmYnc1xAufVRY7dus7cBxHP7bswy",
+        ],
+        "senders": Array [
+          "1VmVmmYnc1xAufVRY7dus7cBxHP7bswy",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -485,6 +696,12 @@ Object {
         "date": "2018-03-09T01:24:00.155Z",
         "hash": "CACF4D4CB84D30A98DB9539C784F9346913697F9083523FF39AA7A35D4FE8233",
         "id": "mock_op_35_mock_account_model1",
+        "recipients": Array [
+          "1zshXWTa6LBC6b74j8LA6JyvYy8n",
+        ],
+        "senders": Array [
+          "1zshXWTa6LBC6b74j8LA6JyvYy8n",
+        ],
       },
       Object {
         "accountId": "mock_account_model1",
@@ -498,12 +715,18 @@ Object {
         "date": "2018-03-08T21:02:43.336Z",
         "hash": "E19131FC7FDC807979374A2CA88C4BCDF26BE507171793A7A95D69C3FFB48278",
         "id": "mock_op_36_mock_account_model1",
+        "recipients": Array [
+          "1phz4kW4U38YP9ma7875PPbMp3Egcyy325",
+        ],
+        "senders": Array [
+          "1phz4kW4U38YP9ma7875PPbMp3Egcyy325",
+        ],
       },
     ],
     "operationsSize": 37,
     "path": "49'/1'/1'/0/2",
-    "rootPath": "49'/1'/1'",
     "unitMagnitude": 8,
+    "walletPath": "49'/1'/1'",
     "xpub": "F645D40EED6E262E3A6CCC3181EB9CAECCF89E8E4B36187F92C319A29A4E3A56",
   },
   "version": 0,
