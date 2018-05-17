@@ -84,7 +84,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     name: "Ethereum",
     ticker: "ETH",
     scheme: "ethereum",
-    color: "#ffae35",
+    color: "#0ebdcd",
     units: ethereumUnits
   },
   {
@@ -100,7 +100,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     name: "Bitcoin Cash",
     ticker: "BCH",
     scheme: "bch",
-    color: "#85bb65",
+    color: "#3ca569",
     units: [
       {
         name: "bitcoin cash",
@@ -287,7 +287,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     name: "Ethereum Testnet",
     ticker: "ETH",
     scheme: "ethereum",
-    color: "#ffae35",
+    color: "#00ff00",
     units: ethereumUnits,
     isTestnetFor: "ethereum"
   },
@@ -296,7 +296,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     name: "Bitcoin Testnet",
     ticker: "BTC",
     scheme: "testnet",
-    color: "#ffae35",
+    color: "#00ff00",
     units: bitcoinUnits,
     isTestnetFor: "bitcoin"
   }
