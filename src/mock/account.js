@@ -141,8 +141,7 @@ export function genAccount(
     operations: [],
     operationsSize,
     minConfirmations: 2,
-    name: rng.nextString(rng.nextInt(4, 34)),
-    balanceByDay: {}
+    name: rng.nextString(rng.nextInt(4, 34))
   };
 
   account.operations = Array(operationsSize)

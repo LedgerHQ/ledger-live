@@ -42,11 +42,6 @@ export type AccountRaw = {
   // TODO: should get rid of that if possible
   index: number,
 
-  // Actually used in the desktop app
-  // TODO: should be moved to separate reducer, I think. Because balance is
-  // derived data, it's not really data.
-  balanceByDay: any,
-
   // ------------------------------------- Specific raw fields
 
   // account currency id
@@ -99,11 +94,6 @@ export type Account = {
   // Actually used in the desktop app
   // TODO: should get rid of that if possible
   index: number,
-
-  // Actually used in the desktop app
-  // TODO: should be moved to separate reducer, I think. Because balance is
-  // derived data, it's not really data.
-  balanceByDay: any,
 
   // ------------------------------------- Specific account fields
 

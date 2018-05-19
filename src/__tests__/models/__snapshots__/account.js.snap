@@ -9,7 +9,6 @@ Object {
     ],
     "archived": false,
     "balance": 480405863,
-    "balanceByDay": Object {},
     "blockHeight": 157292,
     "currencyId": "litecoin",
     "id": "mock_account_model1",
