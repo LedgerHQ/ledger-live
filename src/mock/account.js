@@ -64,6 +64,16 @@ export function genOperation(
       rng.nextInt(0, 100000000 * rng.next() * rng.next())
   );
   const address = genAddress(currency, rng);
+  const amount =
+    (rng.next() < 0.3 ? -1 : 1) *
+    Math.floor(
+      rng.nextInt(0, 100000 * rng.next() * rng.next()) /
+        (tickerApproxMarketPrice[currency.ticker] ||
+          tickerApproxMarketPrice.BTC)
+    );
+  if (isNaN(amount)) {
+    throw new Error("invalid amount generated for " + currency.id);
+  }
   return {
     id: String(`mock_op_${ops.length}_${account.id}`),
     confirmations: 0,
@@ -72,13 +82,7 @@ export function genOperation(
     addresses: [address],
     senders: [address],
     recipients: [address],
-    amount:
-      (rng.next() < 0.3 ? -1 : 1) *
-      Math.floor(
-        rng.nextInt(0, 100000 * rng.next() * rng.next()) /
-          (tickerApproxMarketPrice[currency.ticker] ||
-            tickerApproxMarketPrice.BTC)
-      ),
+    amount,
     hash: genHex(64, rng),
     date,
     blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000)
@@ -101,8 +105,7 @@ export function genAddingOperationsInAccount(
       const op = genOperation(copy, ops, copy.currency, rng);
       return ops.concat(op);
     }, copy.operations);
-  ensureNoNegative(copy.operations);
-  copy.balance = account.operations.reduce((sum, op) => sum + op.amount, 0);
+  copy.balance = ensureNoNegative(copy.operations);
   return copy;
 }
 
@@ -152,13 +155,12 @@ export function genAccount(
       return ops.concat(op);
     }, []);
 
-  ensureNoNegative(account.operations);
-
-  account.balance = account.operations.reduce((sum, op) => sum + op.amount, 0);
+  account.balance = ensureNoNegative(account.operations);
   return account;
 }
 
 function ensureNoNegative(operations) {
+  // NB impl bug because https://twitter.com/greweb/status/997781276546555904
   let total = 0;
   for (let i = operations.length - 1; i >= 0; i--) {
     const op = operations[i];
@@ -167,4 +169,5 @@ function ensureNoNegative(operations) {
     }
     total += op.amount;
   }
+  return total;
 }

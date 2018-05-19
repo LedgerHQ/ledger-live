@@ -94,13 +94,26 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     units: ethereumUnits
   },
   {
-    id: "ethereum_classic",
-    coinType: 61,
-    name: "Ethereum Classic",
-    ticker: "ETC",
-    scheme: "ethereumclassic",
-    color: "#3ca569",
-    units: ethereumUnitsClassic
+    id: "ripple",
+    coinType: 144,
+    name: "Ripple",
+    ticker: "XRP",
+    scheme: "ripple",
+    color: "#27a2db",
+    units: [
+      {
+        name: "XRP",
+        code: "XRP",
+        symbol: "XRP",
+        magnitude: 6
+      },
+      {
+        name: "drop",
+        code: "drop",
+        symbol: "drop",
+        magnitude: 0
+      }
+    ]
   },
   {
     id: "bitcoin_cash",
@@ -133,6 +146,61 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
         code: "satoshi",
         symbol: "Ƀ",
         magnitude: 0
+      }
+    ]
+  },
+  {
+    id: "litecoin",
+    coinType: 2,
+    name: "Litecoin",
+    ticker: "LTC",
+    scheme: "litecoin",
+    color: "#cccccc",
+    units: [
+      {
+        name: "litecoin",
+        code: "LTC",
+        symbol: "Ł",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "dash",
+    coinType: 5,
+    name: "Dash",
+    ticker: "DASH",
+    scheme: "dash",
+    color: "#0e76aa",
+    units: [
+      {
+        name: "dash",
+        code: "DASH",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "ethereum_classic",
+    coinType: 61,
+    name: "Ethereum Classic",
+    ticker: "ETC",
+    scheme: "ethereumclassic",
+    color: "#3ca569",
+    units: ethereumUnitsClassic
+  },
+  {
+    id: "zcash",
+    coinType: 133,
+    name: "Zcash",
+    ticker: "ZEC",
+    scheme: "zcash",
+    color: "#3790ca",
+    units: [
+      {
+        name: "zcash",
+        code: "ZEC",
+        magnitude: 8
       }
     ]
   },
@@ -171,40 +239,17 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
-    id: "litecoin",
-    coinType: 2,
-    name: "Litecoin",
-    ticker: "LTC",
-    scheme: "litecoin",
-    color: "#cccccc",
+    id: "stratis",
+    coinType: 105,
+    name: "Stratis",
+    ticker: "STRAT",
+    scheme: "stratis",
+    color: "#1382c6",
     units: [
       {
-        name: "litecoin",
-        code: "LTC",
-        symbol: "Ł",
+        name: "stratis",
+        code: "STRAT",
         magnitude: 8
-      }
-    ]
-  },
-  {
-    id: "ripple",
-    coinType: 144,
-    name: "Ripple",
-    ticker: "XRP",
-    scheme: "ripple",
-    color: "#27a2db",
-    units: [
-      {
-        name: "XRP",
-        code: "XRP",
-        symbol: "XRP",
-        magnitude: 6
-      },
-      {
-        name: "drop",
-        code: "drop",
-        symbol: "drop",
-        magnitude: 0
       }
     ]
   },
@@ -225,16 +270,16 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
-    id: "dash",
-    coinType: 5,
-    name: "Dash",
-    ticker: "DASH",
-    scheme: "dash",
-    color: "#0e76aa",
+    id: "komodo",
+    coinType: 141,
+    name: "Komodo",
+    ticker: "KMD",
+    scheme: "komodo",
+    color: "#326464",
     units: [
       {
-        name: "dash",
-        code: "DASH",
+        name: "komodo",
+        code: "KMD",
         magnitude: 8
       }
     ]
@@ -255,49 +300,14 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
-    id: "stratis",
-    coinType: 105,
-    name: "Stratis",
-    ticker: "STRAT",
-    scheme: "stratis",
-    color: "#1382c6",
-    units: [
-      {
-        name: "stratis",
-        code: "STRAT",
-        magnitude: 8
-      }
-    ]
-  },
-  {
-    id: "zcash",
-    coinType: 133,
-    name: "Zcash",
-    ticker: "ZEC",
-    scheme: "zcash",
-    color: "#3790ca",
-    units: [
-      {
-        name: "zcash",
-        code: "ZEC",
-        magnitude: 8
-      }
-    ]
-  },
-  {
-    id: "komodo",
-    coinType: 141,
-    name: "Komodo",
-    ticker: "KMD",
-    scheme: "komodo",
-    color: "#326464",
-    units: [
-      {
-        name: "komodo",
-        code: "KMD",
-        magnitude: 8
-      }
-    ]
+    id: "bitcoin_testnet",
+    coinType: 1,
+    name: "Bitcoin Testnet",
+    ticker: "BTC",
+    scheme: "testnet",
+    color: "#00ff00",
+    units: bitcoinUnits,
+    isTestnetFor: "bitcoin"
   },
   {
     id: "ethereum_testnet",
@@ -308,16 +318,6 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     color: "#00ff00",
     units: ethereumUnits,
     isTestnetFor: "ethereum"
-  },
-  {
-    id: "bitcoin_testnet",
-    coinType: 1,
-    name: "Bitcoin Testnet",
-    ticker: "BTC",
-    scheme: "testnet",
-    color: "#00ff00",
-    units: bitcoinUnits,
-    isTestnetFor: "bitcoin"
   }
 ];
 

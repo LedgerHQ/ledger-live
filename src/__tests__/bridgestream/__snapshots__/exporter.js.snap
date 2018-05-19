@@ -3,17 +3,17 @@
 exports[`basic export 1`] = `
 Array [
   "[4,0,\\"meta\\",2,\\"test\\",\\"0.0.0\\"]",
-  "[4,1,\\"account\\",\\"mock_account_export_0\\",\\"pQNKgto\\",\\"komodo\\"]",
-  "[4,2,\\"account\\",\\"mock_account_export_1\\",\\"2KTQvcmdW2zTneCnPImZvgYLGi5rIBgc\\",\\"komodo\\"]",
-  "[4,3,\\"account\\",\\"mock_account_export_2\\",\\"23PIvq83MrbdhquMsST6yH4PX3dBptsh\\",\\"komodo\\"]",
+  "[4,1,\\"account\\",\\"mock_account_export_0\\",\\"pQNKgto\\",\\"peercoin\\"]",
+  "[4,2,\\"account\\",\\"mock_account_export_1\\",\\"2KTQvcmdW2zTneCnPImZvgYLGi5rIBgc\\",\\"peercoin\\"]",
+  "[4,3,\\"account\\",\\"mock_account_export_2\\",\\"23PIvq83MrbdhquMsST6yH4PX3dBptsh\\",\\"peercoin\\"]",
 ]
 `;
 
 exports[`basic export with pad 1`] = `
 Array [
-  "[4,0,\\"meta\\",2,\\"test\\",\\"0.0.0\\"]                                                      ",
-  "[4,1,\\"account\\",\\"mock_account_export_0\\",\\"pQNKgto\\",\\"komodo\\"]                         ",
-  "[4,2,\\"account\\",\\"mock_account_export_1\\",\\"2KTQvcmdW2zTneCnPImZvgYLGi5rIBgc\\",\\"komodo\\"]",
-  "[4,3,\\"account\\",\\"mock_account_export_2\\",\\"23PIvq83MrbdhquMsST6yH4PX3dBptsh\\",\\"komodo\\"]",
+  "[4,0,\\"meta\\",2,\\"test\\",\\"0.0.0\\"]                                                        ",
+  "[4,1,\\"account\\",\\"mock_account_export_0\\",\\"pQNKgto\\",\\"peercoin\\"]                         ",
+  "[4,2,\\"account\\",\\"mock_account_export_1\\",\\"2KTQvcmdW2zTneCnPImZvgYLGi5rIBgc\\",\\"peercoin\\"]",
+  "[4,3,\\"account\\",\\"mock_account_export_2\\",\\"23PIvq83MrbdhquMsST6yH4PX3dBptsh\\",\\"peercoin\\"]",
 ]
 `;
