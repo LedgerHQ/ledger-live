@@ -70,9 +70,14 @@ const ethereumUnitsClassic = [
   }
 ];
 
+// for id, we use by convention lowercased coin name with _ instead of space.
+// for coinType look at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+// for ticker, make sure it works in countervalues api
+
 const cryptocurrenciesArray: CryptoCurrency[] = [
   {
     id: "bitcoin",
+    coinType: 0,
     name: "Bitcoin",
     ticker: "BTC",
     scheme: "bitcoin",
@@ -81,6 +86,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "ethereum",
+    coinType: 60,
     name: "Ethereum",
     ticker: "ETH",
     scheme: "ethereum",
@@ -89,6 +95,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "ethereum_classic",
+    coinType: 61,
     name: "Ethereum Classic",
     ticker: "ETC",
     scheme: "ethereumclassic",
@@ -97,6 +104,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "bitcoin_cash",
+    coinType: 145,
     name: "Bitcoin Cash",
     ticker: "BCH",
     scheme: "bch",
@@ -130,6 +138,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "bitcoin_gold",
+    coinType: 156,
     name: "Bitcoin Gold",
     ticker: "BTG",
     scheme: "btg",
@@ -163,6 +172,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "litecoin",
+    coinType: 2,
     name: "Litecoin",
     ticker: "LTC",
     scheme: "litecoin",
@@ -178,6 +188,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "ripple",
+    coinType: 144,
     name: "Ripple",
     ticker: "XRP",
     scheme: "ripple",
@@ -199,6 +210,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "dogecoin",
+    coinType: 3,
     name: "Dogecoin",
     ticker: "DOGE",
     scheme: "dogecoin",
@@ -214,6 +226,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "dash",
+    coinType: 5,
     name: "Dash",
     ticker: "DASH",
     scheme: "dash",
@@ -228,6 +241,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "peercoin",
+    coinType: 6,
     name: "Peercoin",
     ticker: "PPC",
     scheme: "peercoin",
@@ -242,6 +256,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "stratis",
+    coinType: 105,
     name: "Stratis",
     ticker: "STRAT",
     scheme: "stratis",
@@ -256,6 +271,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "zcash",
+    coinType: 133,
     name: "Zcash",
     ticker: "ZEC",
     scheme: "zcash",
@@ -270,6 +286,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "komodo",
+    coinType: 141,
     name: "Komodo",
     ticker: "KMD",
     scheme: "komodo",
@@ -284,6 +301,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "ethereum_testnet",
+    coinType: 1,
     name: "Ethereum Testnet",
     ticker: "ETH",
     scheme: "ethereum",
@@ -293,6 +311,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "bitcoin_testnet",
+    coinType: 1,
     name: "Bitcoin Testnet",
     ticker: "BTC",
     scheme: "testnet",
