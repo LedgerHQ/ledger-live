@@ -70,9 +70,14 @@ const ethereumUnitsClassic = [
   }
 ];
 
+// for id, we use by convention lowercased coin name with _ instead of space.
+// for coinType look at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+// for ticker, make sure it works in countervalues api
+
 const cryptocurrenciesArray: CryptoCurrency[] = [
   {
     id: "bitcoin",
+    coinType: 0,
     name: "Bitcoin",
     ticker: "BTC",
     scheme: "bitcoin",
@@ -81,6 +86,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
   {
     id: "ethereum",
+    coinType: 60,
     name: "Ethereum",
     ticker: "ETH",
     scheme: "ethereum",
@@ -88,15 +94,30 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     units: ethereumUnits
   },
   {
-    id: "ethereum_classic",
-    name: "Ethereum Classic",
-    ticker: "ETC",
-    scheme: "ethereumclassic",
-    color: "#3ca569",
-    units: ethereumUnitsClassic
+    id: "ripple",
+    coinType: 144,
+    name: "Ripple",
+    ticker: "XRP",
+    scheme: "ripple",
+    color: "#27a2db",
+    units: [
+      {
+        name: "XRP",
+        code: "XRP",
+        symbol: "XRP",
+        magnitude: 6
+      },
+      {
+        name: "drop",
+        code: "drop",
+        symbol: "drop",
+        magnitude: 0
+      }
+    ]
   },
   {
     id: "bitcoin_cash",
+    coinType: 145,
     name: "Bitcoin Cash",
     ticker: "BCH",
     scheme: "bch",
@@ -129,7 +150,63 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
+    id: "litecoin",
+    coinType: 2,
+    name: "Litecoin",
+    ticker: "LTC",
+    scheme: "litecoin",
+    color: "#cccccc",
+    units: [
+      {
+        name: "litecoin",
+        code: "LTC",
+        symbol: "Ł",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "dash",
+    coinType: 5,
+    name: "Dash",
+    ticker: "DASH",
+    scheme: "dash",
+    color: "#0e76aa",
+    units: [
+      {
+        name: "dash",
+        code: "DASH",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "ethereum_classic",
+    coinType: 61,
+    name: "Ethereum Classic",
+    ticker: "ETC",
+    scheme: "ethereumclassic",
+    color: "#3ca569",
+    units: ethereumUnitsClassic
+  },
+  {
+    id: "zcash",
+    coinType: 133,
+    name: "Zcash",
+    ticker: "ZEC",
+    scheme: "zcash",
+    color: "#3790ca",
+    units: [
+      {
+        name: "zcash",
+        code: "ZEC",
+        magnitude: 8
+      }
+    ]
+  },
+  {
     id: "bitcoin_gold",
+    coinType: 156,
     name: "Bitcoin Gold",
     ticker: "BTG",
     scheme: "btg",
@@ -162,43 +239,23 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
-    id: "litecoin",
-    name: "Litecoin",
-    ticker: "LTC",
-    scheme: "litecoin",
-    color: "#cccccc",
+    id: "stratis",
+    coinType: 105,
+    name: "Stratis",
+    ticker: "STRAT",
+    scheme: "stratis",
+    color: "#1382c6",
     units: [
       {
-        name: "litecoin",
-        code: "LTC",
-        symbol: "Ł",
+        name: "stratis",
+        code: "STRAT",
         magnitude: 8
       }
     ]
   },
   {
-    id: "ripple",
-    name: "Ripple",
-    ticker: "XRP",
-    scheme: "ripple",
-    color: "#27a2db",
-    units: [
-      {
-        name: "XRP",
-        code: "XRP",
-        symbol: "XRP",
-        magnitude: 6
-      },
-      {
-        name: "drop",
-        code: "drop",
-        symbol: "drop",
-        magnitude: 0
-      }
-    ]
-  },
-  {
     id: "dogecoin",
+    coinType: 3,
     name: "Dogecoin",
     ticker: "DOGE",
     scheme: "dogecoin",
@@ -213,63 +270,8 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
-    id: "dash",
-    name: "Dash",
-    ticker: "DASH",
-    scheme: "dash",
-    color: "#0e76aa",
-    units: [
-      {
-        name: "dash",
-        code: "DASH",
-        magnitude: 8
-      }
-    ]
-  },
-  {
-    id: "peercoin",
-    name: "Peercoin",
-    ticker: "PPC",
-    scheme: "peercoin",
-    color: "#3cb054",
-    units: [
-      {
-        name: "peercoin",
-        code: "PPC",
-        magnitude: 6
-      }
-    ]
-  },
-  {
-    id: "stratis",
-    name: "Stratis",
-    ticker: "STRAT",
-    scheme: "stratis",
-    color: "#1382c6",
-    units: [
-      {
-        name: "stratis",
-        code: "STRAT",
-        magnitude: 8
-      }
-    ]
-  },
-  {
-    id: "zcash",
-    name: "Zcash",
-    ticker: "ZEC",
-    scheme: "zcash",
-    color: "#3790ca",
-    units: [
-      {
-        name: "zcash",
-        code: "ZEC",
-        magnitude: 8
-      }
-    ]
-  },
-  {
     id: "komodo",
+    coinType: 141,
     name: "Komodo",
     ticker: "KMD",
     scheme: "komodo",
@@ -283,22 +285,39 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
-    id: "ethereum_testnet",
-    name: "Ethereum Testnet",
-    ticker: "ETH",
-    scheme: "ethereum",
-    color: "#00ff00",
-    units: ethereumUnits,
-    isTestnetFor: "ethereum"
+    id: "peercoin",
+    coinType: 6,
+    name: "Peercoin",
+    ticker: "PPC",
+    scheme: "peercoin",
+    color: "#3cb054",
+    units: [
+      {
+        name: "peercoin",
+        code: "PPC",
+        magnitude: 6
+      }
+    ]
   },
   {
     id: "bitcoin_testnet",
+    coinType: 1,
     name: "Bitcoin Testnet",
     ticker: "BTC",
     scheme: "testnet",
     color: "#00ff00",
     units: bitcoinUnits,
     isTestnetFor: "bitcoin"
+  },
+  {
+    id: "ethereum_testnet",
+    coinType: 1,
+    name: "Ethereum Testnet",
+    ticker: "ETH",
+    scheme: "ethereum",
+    color: "#00ff00",
+    units: ethereumUnits,
+    isTestnetFor: "ethereum"
   }
 ];
 

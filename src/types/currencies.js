@@ -28,6 +28,8 @@ export type FiatCurrency = CurrencyCommon;
 export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency
   id: string,
+  // coin type according to slip44. THIS IS NOT GUARANTEED UNIQUE across currencies (e.g testnets,..)
+  coinType: number,
   // the scheme name to use when formatting an URI (without the ':')
   scheme: string,
   // used for UI
