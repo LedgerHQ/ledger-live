@@ -9,7 +9,6 @@ Object {
     ],
     "archived": false,
     "balance": 167335903,
-    "balanceByDay": Object {},
     "blockHeight": 157292,
     "currencyId": "dash",
     "id": "mock_account_model1",
