@@ -85,6 +85,7 @@ export function genOperation(
     amount,
     hash: genHex(64, rng),
     date,
+    blockHash: genHex(64, rng),
     blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000)
   };
 }

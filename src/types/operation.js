@@ -24,6 +24,8 @@ export type Operation = {
   // if null, the operation is not yet on the blockchain
   blockHeight: number,
 
+  blockHash: string,
+
   // the account id. available for convenient reason
   accountId: string,
 
@@ -53,6 +55,8 @@ export type OperationRaw = {
   // blockHeight allows us to compute the confirmations number (currentBlockHeight - blockHeight)
   // if null, the operation is not yet on the blockchain
   blockHeight: number,
+
+  blockHash: string,
 
   // the account id. available for convenient reason
   accountId: string,
