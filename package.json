@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-common",
-  "version": "2.7.3",
+  "version": "2.7.4",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
