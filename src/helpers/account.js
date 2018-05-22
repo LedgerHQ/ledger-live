@@ -8,6 +8,7 @@ import type {
   BalanceHistory,
   DailyOperations
 } from "../types";
+import { getOperationAmountNumber } from "./operation";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
@@ -32,7 +33,7 @@ export function getBalanceHistory(
   for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < account.operations.length && account.operations[i].date > t) {
-      balance -= account.operations[i].amount;
+      balance -= getOperationAmountNumber(account.operations[i]);
       i++;
     }
     history.unshift({ date: t, value: balance });

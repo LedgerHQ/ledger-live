@@ -5,6 +5,7 @@
 import { listCryptoCurrencies } from "../helpers/currencies";
 import Prando from "prando";
 import type { Account, Operation, CryptoCurrency } from "../types";
+import { getOperationAmountNumber } from "../helpers/operation";
 
 const currencies = listCryptoCurrencies();
 
@@ -64,29 +65,25 @@ export function genOperation(
       rng.nextInt(0, 100000000 * rng.next() * rng.next())
   );
   const address = genAddress(currency, rng);
-  const amount =
-    (rng.next() < 0.3 ? -1 : 1) *
-    Math.floor(
-      rng.nextInt(0, 100000 * rng.next() * rng.next()) /
-        (tickerApproxMarketPrice[currency.ticker] ||
-          tickerApproxMarketPrice.BTC)
-    );
-  if (isNaN(amount)) {
+  const type = rng.next() < 0.05 ? "SELF" : rng.next() < 0.3 ? "OUT" : "IN";
+  const value = Math.floor(
+    rng.nextInt(0, 100000 * rng.next() * rng.next()) /
+      (tickerApproxMarketPrice[currency.ticker] || tickerApproxMarketPrice.BTC)
+  );
+  if (isNaN(value)) {
     throw new Error("invalid amount generated for " + currency.id);
   }
   return {
     id: String(`mock_op_${ops.length}_${account.id}`),
-    confirmations: 0,
-    accountId: account.id,
-    address,
-    addresses: [address],
-    senders: [address],
-    recipients: [address],
-    amount,
     hash: genHex(64, rng),
-    date,
+    type,
+    value,
+    senders: [type !== "IN" ? genAddress(currency, rng) : address],
+    recipients: [type === "IN" ? genAddress(currency, rng) : address],
     blockHash: genHex(64, rng),
-    blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000)
+    blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000),
+    accountId: account.id,
+    date
   };
 }
 
@@ -129,23 +126,20 @@ export function genAccount(
   const address = genAddress(currency, rng);
   const account = {
     id: `mock_account_${id}`,
-    isSegwit: true,
-    index: 0,
-    path: "49'/1'/1'/0/2",
-    walletPath: "49'/1'/1'",
     xpub: genHex(64, rng),
+    path: "49'/1'/1'",
+    freshAddress: address,
+    freshAddressPath: "49'/1'/1'/0/2",
+    name: rng.nextString(rng.nextInt(4, 34)),
+    isSegwit: true,
+    balance: 0,
+    blockHeight: rng.nextInt(100000, 200000),
     archived: false,
     currency,
-    blockHeight: rng.nextInt(100000, 200000),
-    lastSyncDate: new Date(),
     unit: rng.nextArrayItem(currency.units),
-    balance: 0,
-    address,
-    addresses: [{ str: address, path: "49'/1'/1'/1" }],
     operations: [],
-    operationsSize,
-    minConfirmations: 2,
-    name: rng.nextString(rng.nextInt(4, 34))
+    pendingOperations: [],
+    lastSyncDate: new Date()
   };
 
   account.operations = Array(operationsSize)
@@ -164,10 +158,15 @@ function ensureNoNegative(operations) {
   let total = 0;
   for (let i = operations.length - 1; i >= 0; i--) {
     const op = operations[i];
-    if (total + op.amount < 0) {
-      op.amount = -op.amount;
+    const amount = getOperationAmountNumber(op);
+    if (total + amount < 0) {
+      if (op.type === "IN") {
+        op.type = "OUT";
+      } else if (op.type === "OUT") {
+        op.type = "IN";
+      }
     }
-    total += op.amount;
+    total += getOperationAmountNumber(op);
   }
   return total;
 }
