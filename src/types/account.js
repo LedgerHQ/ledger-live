@@ -4,6 +4,11 @@ import type { CryptoCurrency, Unit } from "./currencies";
 
 import type { OperationRaw, Operation } from "./operation";
 
+export type Address = {
+  str: string,
+  path: string,
+}
+
 export type AccountRaw = {
   // unique account identifier
   id: string,
@@ -27,7 +32,7 @@ export type AccountRaw = {
   address: string,
 
   // bunch of fresh receive addresses, calculated by libcore
-  addresses: string[],
+  addresses: Address[],
 
   // account balance in satoshi
   balance: number,
@@ -80,7 +85,7 @@ export type Account = {
   address: string,
 
   // transaction all addresses (actually needed by desktop app)
-  addresses: string[],
+  addresses: Address[],
 
   // account balance in satoshi
   balance: number,
