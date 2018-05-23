@@ -141,7 +141,7 @@ export function genAccount(
     unit: rng.nextArrayItem(currency.units),
     balance: 0,
     address,
-    addresses: [address],
+    addresses: [{ str: address, path: "49'/1'/1'/1" }],
     operations: [],
     operationsSize,
     minConfirmations: 2,
