@@ -15,6 +15,9 @@ export type Account = {
   // exemple: 44'/0'/0'
   path: string,
 
+  // The account field of bip44 ( m/purpose'/cointype'/account' )
+  index: number,
+
   // next receive address. to be used to display to user.
   freshAddress: string,
 
@@ -64,6 +67,7 @@ export type AccountRaw = {
   id: string,
   xpub: string,
   path: string,
+  index: number,
   freshAddress: string,
   freshAddressPath: string,
   name: string,

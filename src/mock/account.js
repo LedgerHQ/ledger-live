@@ -58,7 +58,7 @@ export function genOperation(
   ops: *,
   currency: CryptoCurrency,
   rng: Prando
-): Operation {
+): $Exact<Operation> {
   const lastOp = ops[ops.length - 1];
   const date = new Date(
     (lastOp ? lastOp.date : Date.now()) -
@@ -119,7 +119,7 @@ type GenAccountOptions = {
 export function genAccount(
   id: number | string,
   opts: GenAccountOptions = {}
-): Account {
+): $Exact<Account> {
   const rng = new Prando(id);
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
@@ -128,6 +128,7 @@ export function genAccount(
     id: `mock_account_${id}`,
     xpub: genHex(64, rng),
     path: "49'/1'/1'",
+    index: 1,
     freshAddress: address,
     freshAddressPath: "49'/1'/1'/0/2",
     name: rng.nextString(rng.nextInt(4, 34)),
