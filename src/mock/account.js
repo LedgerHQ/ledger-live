@@ -65,7 +65,7 @@ export function genOperation(
       rng.nextInt(0, 100000000 * rng.next() * rng.next())
   );
   const address = genAddress(currency, rng);
-  const type = rng.next() < 0.05 ? "SELF" : rng.next() < 0.3 ? "OUT" : "IN";
+  const type = rng.next() < 0.3 ? "OUT" : "IN";
   const value = Math.floor(
     rng.nextInt(0, 100000 * rng.next() * rng.next()) /
       (tickerApproxMarketPrice[currency.ticker] || tickerApproxMarketPrice.BTC)

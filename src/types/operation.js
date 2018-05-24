@@ -1,6 +1,6 @@
 // @flow
 
-export type OperationType = "IN" | "OUT" | "SELF";
+export type OperationType = "IN" | "OUT";
 
 export type Operation = {
   // unique identifier (usually hash)
@@ -12,10 +12,10 @@ export type Operation = {
   // the direction of the operation
   // IN when funds was received (means the related account is in the recipients)
   // OUT when funds was sent (means the related account is in the senders)
-  // SELF means funds was exclusively send from the account to the same account.
   type: OperationType,
 
   // this is the atomic value of the operation. it is always positive (later will be a BigInt)
+  // in "OUT" case, it includes the fees. in "IN" case, it excludes them.
   value: number,
 
   // senders & recipients addresses
