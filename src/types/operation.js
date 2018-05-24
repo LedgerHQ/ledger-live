@@ -29,6 +29,9 @@ export type Operation = {
   // the hash of the block the operation is in
   blockHash: ?string,
 
+  // if available, this is the sequence number of the transaction in blockchains (aka "nonce" in Ethereum)
+  transactionSequenceNumber?: number,
+
   // the account id. available for convenient reason
   accountId: string,
 
@@ -47,6 +50,7 @@ export type OperationRaw = {
   recipients: string[],
   blockHeight: ?number,
   blockHash: ?string,
+  transactionSequenceNumber?: number,
   accountId: string,
   // --------------------------------------------- specific operation raw fields
   date: string
