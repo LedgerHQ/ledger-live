@@ -8,6 +8,7 @@ import type {
   BalanceHistory,
   DailyOperations
 } from "../types";
+import { getOperationAmountNumber } from "./operation";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
@@ -32,7 +33,7 @@ export function getBalanceHistory(
   for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < account.operations.length && account.operations[i].date > t) {
-      balance -= account.operations[i].amount;
+      balance -= getOperationAmountNumber(account.operations[i]);
       i++;
     }
     history.unshift({ date: t, value: balance });
@@ -85,37 +86,6 @@ export function getBalanceHistorySum(
 const emptyDailyOperations = { sections: [], completed: true };
 
 /**
- * Return a list of `{count}` operations grouped by day.
- * @memberof helpers/account
- */
-export function groupAccountOperationsByDay(
-  account: Account,
-  count: number
-): DailyOperations {
-  const { operations } = account;
-  if (operations.length === 0) return emptyDailyOperations;
-  const sections = [];
-  let day = startOfDay(operations[0].date);
-  let data = [];
-  const max = Math.min(count, operations.length);
-  for (let i = 0; i < max; i++) {
-    const op = operations[i];
-    if (op.date < day) {
-      sections.push({ day, data });
-      day = startOfDay(op.date);
-      data = [op];
-    } else {
-      data.push(op);
-    }
-  }
-  sections.push({ day, data });
-  return {
-    sections,
-    completed: count >= operations.length
-  };
-}
-
-/**
  * @memberof helpers/account
  */
 export function groupAccountsOperationsByDay(
@@ -124,19 +94,32 @@ export function groupAccountsOperationsByDay(
 ): DailyOperations {
   // Track indexes of account.operations[] for each account
   const indexes: number[] = Array(accounts.length).fill(0);
+  // Track indexes of account.pendingOperations[] for each account
+  const indexesPending: number[] = Array(accounts.length).fill(0);
   // Returns the most recent operation from the account with current indexes
   function getNextOperation(): ?Operation {
-    let bestOp: ?Operation,
-      bestOpIndex = 0;
+    let bestOp: ?Operation;
+    let bestOpInfo = { accountI: 0, fromPending: false };
     for (let i = 0; i < accounts.length; i++) {
+      // look in operations
       const op = accounts[i].operations[indexes[i]];
       if (op && (!bestOp || op.date > bestOp.date)) {
         bestOp = op;
-        bestOpIndex = i;
+        bestOpInfo = { accountI: i, fromPending: false };
+      }
+      // look in pending operations
+      const opP = accounts[i].pendingOperations[indexesPending[i]];
+      if (opP && (!bestOp || opP.date > bestOp.date)) {
+        bestOp = opP;
+        bestOpInfo = { accountI: i, fromPending: true };
       }
     }
     if (bestOp) {
-      indexes[bestOpIndex]++;
+      if (bestOpInfo.fromPending) {
+        indexesPending[bestOpInfo.accountI]++;
+      } else {
+        indexes[bestOpInfo.accountI]++;
+      }
     }
     return bestOp;
   }
@@ -161,4 +144,15 @@ export function groupAccountsOperationsByDay(
     sections,
     completed: !op
   };
+}
+
+/**
+ * Return a list of `{count}` operations grouped by day.
+ * @memberof helpers/account
+ */
+export function groupAccountOperationsByDay(
+  account: Account,
+  count: number
+): DailyOperations {
+  return groupAccountsOperationsByDay([account], count);
 }

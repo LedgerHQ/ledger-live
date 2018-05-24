@@ -23,8 +23,8 @@ import type {
 import type { Account, AccountRaw } from "./account";
 export type { Account, AccountRaw };
 
-import type { Operation, OperationRaw } from "./operation";
-export type { Operation, OperationRaw };
+import type { Operation, OperationRaw, OperationType } from "./operation";
+export type { Operation, OperationRaw, OperationType };
 
 export type { Currency, Unit, FiatCurrency, CryptoCurrency };
 

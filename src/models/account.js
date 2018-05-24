@@ -40,6 +40,7 @@ export const createAccountModel = (
         currencyId,
         unitMagnitude,
         operations,
+        pendingOperations,
         lastSyncDate,
         ...acc
       } = rawAccount;
@@ -47,13 +48,16 @@ export const createAccountModel = (
       const unit =
         currency.units.find(u => u.magnitude === unitMagnitude) ||
         currency.units[0];
+
+      const convertOperation = ({ date, ...op }) => ({
+        ...op,
+        accountId: acc.id,
+        date: new Date(date)
+      });
       return {
         ...acc,
-        operations: operations.map(({ date, ...op }) => ({
-          ...op,
-          accountId: acc.id,
-          date: new Date(date)
-        })),
+        operations: operations.map(convertOperation),
+        pendingOperations: pendingOperations.map(convertOperation),
         unit,
         currency,
         lastSyncDate: new Date(lastSyncDate)
@@ -63,20 +67,21 @@ export const createAccountModel = (
     encode: ({
       currency,
       operations,
+      pendingOperations,
       unit,
       lastSyncDate,
       ...acc
     }: Account): AccountRaw => {
+      const convertOperation = ({ date, ...op }) => {
+        return {
+          ...op,
+          date: date.toISOString()
+        };
+      };
       return {
         ...acc,
-        operations: operations
-          .filter(opRetentionFilter)
-          .map(({ date, ...op }) => {
-            return {
-              ...op,
-              date: date.toISOString()
-            };
-          }),
+        operations: operations.filter(opRetentionFilter).map(convertOperation),
+        pendingOperations: pendingOperations.map(convertOperation),
         currencyId: currency.id,
         unitMagnitude: unit.magnitude,
         lastSyncDate: lastSyncDate.toISOString()
