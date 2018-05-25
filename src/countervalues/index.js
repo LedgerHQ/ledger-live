@@ -4,7 +4,7 @@ import axios from "axios";
 import throttle from "lodash/throttle";
 import merge from "lodash/merge";
 import { connect } from "react-redux";
-import { createSelector } from "reselect";
+import { createSelector, createStructuredSelector } from "reselect";
 import type { Dispatch } from "redux";
 import type {
   Input,
@@ -23,7 +23,8 @@ type PollingProviderOwnProps = {
   pollInitDelay: number,
   autopollInterval: number,
   poll: () => *,
-  wipe: () => *
+  wipe: () => *,
+  pairsKey: string
 };
 
 type PollAPIPair = {
@@ -163,6 +164,13 @@ function createCounterValues<State>({
       }
       return res;
     }
+  );
+
+  const pairsKeySelector = createSelector(pairsSelector, pairs =>
+    pairs
+      .map(p => `${p.from.ticker}-${p.to.ticker}-${p.exchange || ""}`)
+      .sort()
+      .join("|")
   );
 
   const importAction = (data: mixed) => (dispatch: Dispatch<*>) => {
@@ -365,6 +373,12 @@ function createCounterValues<State>({
         : () => {};
     }
 
+    componentDidUpdate(prevProps) {
+      if (prevProps.pairsKey !== this.props.pairsKey) {
+        this.poll();
+      }
+    }
+
     componentWillUnmount() {
       this.unmounted = true;
       clearTimeout(this.pollTimeout);
@@ -380,7 +394,10 @@ function createCounterValues<State>({
     }
   }
 
-  const PollingProvider = connect(null, { poll, wipe })(Provider);
+  const PollingProvider = connect(
+    createStructuredSelector({ pairsKey: pairsKeySelector }),
+    { poll, wipe }
+  )(Provider);
 
   const PollingConsumer = PollingContext.Consumer;
 

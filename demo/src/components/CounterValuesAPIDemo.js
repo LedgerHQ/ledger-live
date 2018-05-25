@@ -64,10 +64,10 @@ class App extends Component<{
   render() {
     const { classes, markets, setMarket, addMarket } = this.props;
     return (
-      <CounterValues.PollingConsumer>
-        {polling => (
-          <div className={classes.root}>
-            <AppBar position="static">
+      <div className={classes.root}>
+        <AppBar position="static">
+          <CounterValues.PollingConsumer>
+            {polling => (
               <Toolbar>
                 <Typography
                   variant="title"
@@ -96,112 +96,103 @@ class App extends Component<{
                   }}
                 />
               </Toolbar>
-            </AppBar>
+            )}
+          </CounterValues.PollingConsumer>
+        </AppBar>
 
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>from currency</TableCell>
-                  <TableCell>to currency</TableCell>
-                  <TableCell>exchange</TableCell>
-                  <TableCell>price</TableCell>
-                  <TableCell>reverse price</TableCell>
-                  <TableCell>graph 1Y</TableCell>
-                  <TableCell>graph 1M</TableCell>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>from currency</TableCell>
+              <TableCell>to currency</TableCell>
+              <TableCell>exchange</TableCell>
+              <TableCell>price</TableCell>
+              <TableCell>reverse price</TableCell>
+              <TableCell>graph 1Y</TableCell>
+              <TableCell>graph 1M</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {markets.map(({ from, to, exchange }, index) => {
+              return (
+                <TableRow key={index}>
+                  <TableCell>
+                    <CurrencySelect
+                      currencies={fromCurrencyList.filter(c => c !== to)}
+                      value={from}
+                      onChange={from => setMarket(index, { from })}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <CurrencySelect
+                      currencies={toCurrencyList.filter(c => c !== from)}
+                      value={to}
+                      onChange={to => setMarket(index, { to })}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {from && to ? (
+                      <ExchangeSelect
+                        from={from}
+                        to={to}
+                        value={exchange}
+                        onChange={exchange => setMarket(index, { exchange })}
+                      />
+                    ) : null}
+                  </TableCell>
+                  <TableCell>
+                    {from && to && exchange ? (
+                      <Price
+                        value={10 ** from.units[0].magnitude}
+                        from={from}
+                        to={to}
+                        exchange={exchange}
+                      />
+                    ) : null}
+                  </TableCell>
+                  <TableCell>
+                    {from && to && exchange ? (
+                      <ReversePrice
+                        value={10 ** to.units[0].magnitude}
+                        from={from}
+                        to={to}
+                        exchange={exchange}
+                      />
+                    ) : null}
+                  </TableCell>
+                  <TableCell>
+                    {from && to && exchange ? (
+                      <PriceGraph
+                        days={365}
+                        from={from}
+                        to={to}
+                        exchange={exchange}
+                        width={140}
+                        height={50}
+                      />
+                    ) : null}
+                  </TableCell>
+                  <TableCell>
+                    {from && to && exchange ? (
+                      <PriceGraph
+                        days={30}
+                        from={from}
+                        to={to}
+                        exchange={exchange}
+                        width={140}
+                        height={50}
+                      />
+                    ) : null}
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {markets.map(({ from, to, exchange }, index) => {
-                  return (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <CurrencySelect
-                          currencies={fromCurrencyList.filter(c => c !== to)}
-                          value={from}
-                          onChange={from => {
-                            setMarket(index, { from });
-                            polling.poll();
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <CurrencySelect
-                          currencies={toCurrencyList.filter(c => c !== from)}
-                          value={to}
-                          onChange={to => {
-                            setMarket(index, { to });
-                            polling.poll();
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {from && to ? (
-                          <ExchangeSelect
-                            from={from}
-                            to={to}
-                            value={exchange}
-                            onChange={exchange => {
-                              setMarket(index, { exchange });
-                              polling.poll();
-                            }}
-                          />
-                        ) : null}
-                      </TableCell>
-                      <TableCell>
-                        {from && to && exchange ? (
-                          <Price
-                            value={10 ** from.units[0].magnitude}
-                            from={from}
-                            to={to}
-                            exchange={exchange}
-                          />
-                        ) : null}
-                      </TableCell>
-                      <TableCell>
-                        {from && to && exchange ? (
-                          <ReversePrice
-                            value={10 ** to.units[0].magnitude}
-                            from={from}
-                            to={to}
-                            exchange={exchange}
-                          />
-                        ) : null}
-                      </TableCell>
-                      <TableCell>
-                        {from && to && exchange ? (
-                          <PriceGraph
-                            days={365}
-                            from={from}
-                            to={to}
-                            exchange={exchange}
-                            width={140}
-                            height={50}
-                          />
-                        ) : null}
-                      </TableCell>
-                      <TableCell>
-                        {from && to && exchange ? (
-                          <PriceGraph
-                            days={30}
-                            from={from}
-                            to={to}
-                            exchange={exchange}
-                            width={140}
-                            height={50}
-                          />
-                        ) : null}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-            <footer className={classes.footer} onClick={addMarket}>
-              <Button>ADD ROW</Button>
-            </footer>
-          </div>
-        )}
-      </CounterValues.PollingConsumer>
+              );
+            })}
+          </TableBody>
+        </Table>
+        <footer className={classes.footer} onClick={addMarket}>
+          <Button>ADD ROW</Button>
+        </footer>
+      </div>
     );
   }
 }
