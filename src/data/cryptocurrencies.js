@@ -82,7 +82,8 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ticker: "BTC",
     scheme: "bitcoin",
     color: "#ffae35",
-    units: bitcoinUnits
+    units: bitcoinUnits,
+    supportsSegwit: true
   },
   {
     id: "ethereum",
@@ -156,6 +157,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ticker: "LTC",
     scheme: "litecoin",
     color: "#cccccc",
+    supportsSegwit: true,
     units: [
       {
         name: "litecoin",
@@ -190,6 +192,21 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     units: ethereumUnitsClassic
   },
   {
+    id: "qtum",
+    coinType: 88,
+    name: "Qtum",
+    ticker: "QTUM",
+    scheme: "qtum",
+    color: "#2e9ad0",
+    units: [
+      {
+        name: "qtum",
+        code: "QTUM",
+        magnitude: 8
+      }
+    ]
+  },
+  {
     id: "zcash",
     coinType: 133,
     name: "Zcash",
@@ -211,6 +228,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ticker: "BTG",
     scheme: "btg",
     color: "#132c47",
+    supportsSegwit: true,
     units: [
       {
         name: "bitcoin gold",
@@ -270,6 +288,21 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
+    id: "hshare",
+    coinType: 171,
+    name: "Hshare",
+    ticker: "HSR",
+    scheme: "hshare",
+    color: "#56438c",
+    units: [
+      {
+        name: "hshare",
+        code: "HSR",
+        magnitude: 8
+      }
+    ]
+  },
+  {
     id: "komodo",
     coinType: 141,
     name: "Komodo",
@@ -280,6 +313,52 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       {
         name: "komodo",
         code: "KMD",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "pivx",
+    coinType: 77,
+    name: "PivX",
+    ticker: "PIVX",
+    scheme: "pivx",
+    color: "#46385d",
+    units: [
+      {
+        name: "pivx",
+        code: "PIVX",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "zencash",
+    coinType: 121,
+    name: "ZenCash",
+    ticker: "ZEN",
+    scheme: "zencash",
+    color: "#152f5c",
+    units: [
+      {
+        name: "zencash",
+        code: "ZEN",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "vertcoin",
+    coinType: 28,
+    name: "Vertcoin",
+    ticker: "VTC",
+    scheme: "vertcoin",
+    color: "#1b5c2e",
+    supportsSegwit: true,
+    units: [
+      {
+        name: "vertcoin",
+        code: "VTC",
         magnitude: 8
       }
     ]
@@ -300,6 +379,54 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ]
   },
   {
+    id: "viacoin",
+    coinType: 14,
+    name: "Viacoin",
+    ticker: "VIA",
+    scheme: "viacoin",
+    color: "#414141",
+    supportsSegwit: true,
+    units: [
+      {
+        name: "viacoin",
+        code: "VIA",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "stealthcoin",
+    coinType: 125,
+    name: "Stealth",
+    ticker: "XST",
+    scheme: "stealth",
+    color: "#000000",
+    units: [
+      {
+        name: "stealth",
+        code: "XST",
+        magnitude: 8
+      }
+    ]
+  },
+  {
+    id: "digibyte",
+    coinType: 20,
+    name: "Digibyte",
+    ticker: "DGB",
+    scheme: "digibyte",
+    color: "#0066cc",
+    units: [
+      {
+        name: "digibyte",
+        code: "DGB",
+        magnitude: 8
+      }
+    ]
+  },
+
+  // Testnets
+  {
     id: "bitcoin_testnet",
     coinType: 1,
     name: "Bitcoin Testnet",
@@ -307,6 +434,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     scheme: "testnet",
     color: "#00ff00",
     units: bitcoinUnits,
+    supportsSegwit: true,
     isTestnetFor: "bitcoin"
   },
   {

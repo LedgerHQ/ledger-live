@@ -25,3 +25,4 @@ export { default as ubiq } from "./ubiq";
 export { default as vertcoin } from "./vertcoin";
 export { default as viacoin } from "./viacoin";
 export { default as zcash } from "./zcash";
+export { default as zencash } from "./zencash";
