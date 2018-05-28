@@ -34,6 +34,7 @@ export type CryptoCurrency = CurrencyCommon & {
   scheme: string,
   // used for UI
   color: string,
+  supportsSegwit?: boolean,
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string
 };

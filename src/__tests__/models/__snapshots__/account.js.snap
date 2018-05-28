@@ -4,9 +4,9 @@ exports[`accountModel encode 1`] = `
 Object {
   "data": Object {
     "archived": false,
-    "balance": 524226306,
+    "balance": 3527318138,
     "blockHeight": 185713,
-    "currencyId": "dash",
+    "currencyId": "bitcoin_gold",
     "freshAddress": "1TrvaGgHc7nK3XbHERUhDwHorM",
     "freshAddressPath": "49'/1'/1'/0/2",
     "id": "mock_account_model1",
@@ -29,7 +29,7 @@ Object {
           "19P5jBnMRdb51y8YZEYo91zjqhV",
         ],
         "type": "IN",
-        "value": 2990792,
+        "value": 20123900,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -45,7 +45,7 @@ Object {
           "1K5Gm6dgZxueBgksGqJ9VkbgKkD2vdUZQ",
         ],
         "type": "IN",
-        "value": 4909414,
+        "value": 33033573,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -61,7 +61,7 @@ Object {
           "1otKP3BEkTCj9hcd4NgjFCqfB2Sq6jcHJxU",
         ],
         "type": "IN",
-        "value": 305910,
+        "value": 2058353,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -77,7 +77,7 @@ Object {
           "1J9EJZETmzL7UqLqQQi4dm67r81R",
         ],
         "type": "OUT",
-        "value": 9622809,
+        "value": 64748201,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -93,7 +93,7 @@ Object {
           "1CmvDr4RKBe1zXidAU3oeWtKLgo355zd",
         ],
         "type": "OUT",
-        "value": 5631125,
+        "value": 37889688,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -109,7 +109,7 @@ Object {
           "11m7tPd3mcqybhx82ncPavE6yaqKqLxZ",
         ],
         "type": "IN",
-        "value": 79284229,
+        "value": 533473221,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -125,7 +125,7 @@ Object {
           "19oZYw1Lg6PPKV6zH1g9EvZWGuZGMB9v",
         ],
         "type": "OUT",
-        "value": 2105732,
+        "value": 14168665,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -141,7 +141,7 @@ Object {
           "16ySc7iD79jSNSDxFbhKQG9TxAN2i",
         ],
         "type": "IN",
-        "value": 42625482,
+        "value": 286810551,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -157,7 +157,7 @@ Object {
           "1juKQGJqWNg1XqbjA7cDwoVt39zBk",
         ],
         "type": "IN",
-        "value": 6183546,
+        "value": 41606714,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -173,7 +173,7 @@ Object {
           "1ZpykCPV1sNMPndABh52eDe8sWixyER6J",
         ],
         "type": "IN",
-        "value": 3222453,
+        "value": 21682653,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -189,7 +189,7 @@ Object {
           "1K6hAJCHDsNmtJgKGFmNkAoKnJTC9ar",
         ],
         "type": "OUT",
-        "value": 6284526,
+        "value": 42286171,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -205,7 +205,7 @@ Object {
           "1fYpusHvF2Ndb6ZvxyV1EgCX9QuHQAdJnQ",
         ],
         "type": "IN",
-        "value": 8274428,
+        "value": 55675459,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -221,7 +221,7 @@ Object {
           "1UbRGifqKRtRwhQyeJMDtm7cPzvp",
         ],
         "type": "OUT",
-        "value": 18114048,
+        "value": 121882494,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -237,7 +237,7 @@ Object {
           "1N2Sb5wht88FyXnQSt1LWRhHy9dp7W9",
         ],
         "type": "IN",
-        "value": 231660,
+        "value": 1558752,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -253,7 +253,7 @@ Object {
           "1z3PAadj9bvFexTSm5PkaQa5HEE",
         ],
         "type": "IN",
-        "value": 4903474,
+        "value": 32993605,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -269,7 +269,7 @@ Object {
           "1to2AWL6bEEHy6qS3dv9chHyVUKTKr",
         ],
         "type": "OUT",
-        "value": 21149391,
+        "value": 142306155,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -285,7 +285,7 @@ Object {
           "1EchAKmf3SsUqLeb7oXV82ybTmdmPpYUhVt",
         ],
         "type": "IN",
-        "value": 44633204,
+        "value": 300319744,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -301,7 +301,7 @@ Object {
           "1V248wvBiZJoJGUeD4dZ8mVYD29tU",
         ],
         "type": "IN",
-        "value": 84431244,
+        "value": 568105515,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -317,7 +317,7 @@ Object {
           "1GdDtcd743PMaKyrhPu7J936UXbGe",
         ],
         "type": "OUT",
-        "value": 2996732,
+        "value": 20163868,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -333,7 +333,7 @@ Object {
           "1ka5cCsvbASXDib59WkmG57JKZvcTQfb",
         ],
         "type": "OUT",
-        "value": 33029403,
+        "value": 222242206,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -349,7 +349,7 @@ Object {
           "1LnfuUVTcdXAY824pxvwDFybTh",
         ],
         "type": "OUT",
-        "value": 3587763,
+        "value": 24140687,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -365,7 +365,7 @@ Object {
           "14QCMcbY5WcDy2pJzWiXXCsyciUVo",
         ],
         "type": "OUT",
-        "value": 31125631,
+        "value": 209432454,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -381,7 +381,7 @@ Object {
           "1897qnSkDTFhAsGzF9mAvW3YpK33hmR",
         ],
         "type": "OUT",
-        "value": 50163350,
+        "value": 337529976,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -397,7 +397,7 @@ Object {
           "12NiyvzcNQ68mn5mMyvtbDEGW3Rd",
         ],
         "type": "IN",
-        "value": 57897237,
+        "value": 389568345,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -413,7 +413,7 @@ Object {
           "18iUMHgsayahX38KWBiuLkxLCytcg",
         ],
         "type": "IN",
-        "value": 7211167,
+        "value": 48521183,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -429,7 +429,7 @@ Object {
           "1LcBa8RHX26vtsgRALedcg3fyRueT",
         ],
         "type": "IN",
-        "value": 730620,
+        "value": 4916067,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -445,7 +445,7 @@ Object {
           "1soUABAhoCeQZCczk3iLr7TY6o",
         ],
         "type": "IN",
-        "value": 48767448,
+        "value": 328137490,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -461,7 +461,7 @@ Object {
           "1KVtKTsjMrEieC7GGnYEEr3XQY3UT",
         ],
         "type": "IN",
-        "value": 32423522,
+        "value": 218165467,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -477,7 +477,7 @@ Object {
           "1niZavgshcFKzQFkdQwFZTbeiTd4kKgN",
         ],
         "type": "IN",
-        "value": 1597861,
+        "value": 10751398,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -493,7 +493,7 @@ Object {
           "1tvXstHAJ3ej6MPnXv5Fo4e9sRT7",
         ],
         "type": "OUT",
-        "value": 323730,
+        "value": 2178257,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -509,7 +509,7 @@ Object {
           "1WdQcCtjJ9ShPoSdgt5a3Ef5yaq5ybL2",
         ],
         "type": "IN",
-        "value": 112741312,
+        "value": 758593125,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -525,7 +525,7 @@ Object {
           "1uxy7qMhCEzfHWBEt6Z31j1YmiBfjc85yL",
         ],
         "type": "OUT",
-        "value": 26421146,
+        "value": 177777777,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -541,7 +541,7 @@ Object {
           "1vXLVgMTjzPqXqCMpo5chbH2UYEx",
         ],
         "type": "IN",
-        "value": 3210573,
+        "value": 21602717,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -557,7 +557,7 @@ Object {
           "1fVJm1LjseytU3vCDrCFkfemYuuA",
         ],
         "type": "IN",
-        "value": 95268785,
+        "value": 641027178,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -573,7 +573,7 @@ Object {
           "16EYq5DajE3sow79zzFZJby6sUsish",
         ],
         "type": "IN",
-        "value": 50986040,
+        "value": 343065547,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -589,7 +589,7 @@ Object {
           "1Zf2hKWj1sTNH3cQRuTY4S345ibUFSLRbz",
         ],
         "type": "IN",
-        "value": 18910008,
+        "value": 127238209,
       },
       Object {
         "accountId": "mock_account_model1",
@@ -605,11 +605,11 @@ Object {
           "1apTpz9udQ2LeFAkNnxXsMxW1f",
         ],
         "type": "IN",
-        "value": 23041283,
+        "value": 155035971,
       },
     ],
     "pendingOperations": Array [],
-    "unitMagnitude": 8,
+    "unitMagnitude": 2,
     "xpub": "F645D40EED6E262E3A6CCC3181EB9CAECCF89E8E4B36187F92C319A29A4E3A56",
   },
   "version": 0,
