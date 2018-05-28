@@ -314,7 +314,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     coinType: 1,
     name: "Ethereum Testnet",
     ticker: "ETH",
-    scheme: "ethereum",
+    scheme: "ethereum_testnet",
     color: "#00ff00",
     units: ethereumUnits,
     isTestnetFor: "ethereum"
