@@ -11,10 +11,6 @@ export type Account = {
   // account xpub
   xpub: string,
 
-  // account path on the device. this stops at the account field of bip44
-  // exemple: 44'/0'/0'
-  path: string,
-
   // The account field of bip44 ( m/purpose'/cointype'/account' )
   index: number,
 
@@ -29,6 +25,7 @@ export type Account = {
   name: string,
 
   // whether or not the account is segwit (useful to not re-parse path everytime)
+  // FIXME later we will replace by purpose as in bip44
   isSegwit?: ?boolean,
 
   // account balance in satoshi (later will be a BigInt)
@@ -66,7 +63,6 @@ export type Account = {
 export type AccountRaw = {
   id: string,
   xpub: string,
-  path: string,
   index: number,
   freshAddress: string,
   freshAddressPath: string,

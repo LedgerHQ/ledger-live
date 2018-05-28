@@ -127,7 +127,6 @@ export function genAccount(
   const account = {
     id: `mock_account_${id}`,
     xpub: genHex(64, rng),
-    path: "49'/1'/1'",
     index: 1,
     freshAddress: address,
     freshAddressPath: "49'/1'/1'/0/2",
