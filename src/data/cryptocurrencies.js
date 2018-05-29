@@ -1,6 +1,11 @@
 //@flow
 import type { CryptoCurrency, Unit } from "../types";
 
+const makeTestnetUnit = u => ({
+  ...u,
+  code: `𝚝${u.code}`
+});
+
 const bitcoinUnits: Unit[] = [
   {
     name: "bitcoin",
@@ -433,7 +438,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ticker: "BTC",
     scheme: "testnet",
     color: "#00ff00",
-    units: bitcoinUnits,
+    units: bitcoinUnits.map(makeTestnetUnit),
     supportsSegwit: true,
     isTestnetFor: "bitcoin"
   },
@@ -444,7 +449,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     ticker: "ETH",
     scheme: "ethereum_testnet",
     color: "#00ff00",
-    units: ethereumUnits,
+    units: ethereumUnits.map(makeTestnetUnit),
     isTestnetFor: "ethereum"
   }
 ];
