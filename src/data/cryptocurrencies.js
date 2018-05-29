@@ -292,16 +292,16 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  hshare: {
-    id: "hshare",
+  hcash: {
+    id: "hcash",
     coinType: 171,
-    name: "Hshare",
+    name: "Hcash",
     ticker: "HSR",
-    scheme: "hshare",
+    scheme: "hcash",
     color: "#56438c",
     units: [
       {
-        name: "hshare",
+        name: "hcash",
         code: "HSR",
         magnitude: 8
       }
