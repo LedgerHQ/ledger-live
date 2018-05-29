@@ -9,10 +9,11 @@ import type {
 
 import type {
   CryptoCurrencyConfig,
-  CryptoCurrencyObjMap
+  CryptoCurrencyObjMap,
+  CryptoCurrencyIds
 } from "../data/cryptocurrencies";
 
-export type { CryptoCurrencyConfig, CryptoCurrencyObjMap };
+export type { CryptoCurrencyConfig, CryptoCurrencyObjMap, CryptoCurrencyIds };
 
 /**
  *

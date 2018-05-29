@@ -460,6 +460,8 @@ export type CryptoCurrencyObjMap<F> = $Exact<
 
 export type CryptoCurrencyConfig<C> = CryptoCurrencyObjMap<(*) => C>;
 
+export type CryptoCurrencyIds = $Keys<typeof cryptocurrenciesById>;
+
 const cryptocurrenciesByScheme: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesByTicker: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesArray = [];
