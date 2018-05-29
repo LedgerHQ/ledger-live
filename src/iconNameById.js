@@ -5,7 +5,6 @@ const aliases = {
   bitcoin_gold: "bitcoin",
   ethereum: "ethereumClassic",
   ethereum_classic: "ethereumClassic",
-  ethereum_testnet: "ethereumClassic",
-  hshare: "hcash"
+  ethereum_testnet: "ethereumClassic"
 };
 export default (id: string) => aliases[id] || id;
