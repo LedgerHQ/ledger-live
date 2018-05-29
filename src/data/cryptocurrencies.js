@@ -79,8 +79,8 @@ const ethereumUnitsClassic = [
 // for coinType look at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 // for ticker, make sure it works in countervalues api
 
-const cryptocurrenciesArray: CryptoCurrency[] = [
-  {
+const cryptocurrenciesById = {
+  bitcoin: {
     id: "bitcoin",
     coinType: 0,
     name: "Bitcoin",
@@ -90,7 +90,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     units: bitcoinUnits,
     supportsSegwit: true
   },
-  {
+  ethereum: {
     id: "ethereum",
     coinType: 60,
     name: "Ethereum",
@@ -99,7 +99,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     color: "#0ebdcd",
     units: ethereumUnits
   },
-  {
+  ripple: {
     id: "ripple",
     coinType: 144,
     name: "Ripple",
@@ -121,7 +121,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  bitcoin_cash: {
     id: "bitcoin_cash",
     coinType: 145,
     name: "Bitcoin Cash",
@@ -155,7 +155,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  litecoin: {
     id: "litecoin",
     coinType: 2,
     name: "Litecoin",
@@ -172,7 +172,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  dash: {
     id: "dash",
     coinType: 5,
     name: "Dash",
@@ -187,7 +187,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  ethereum_classic: {
     id: "ethereum_classic",
     coinType: 61,
     name: "Ethereum Classic",
@@ -196,7 +196,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     color: "#3ca569",
     units: ethereumUnitsClassic
   },
-  {
+  qtum: {
     id: "qtum",
     coinType: 88,
     name: "Qtum",
@@ -211,7 +211,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  zcash: {
     id: "zcash",
     coinType: 133,
     name: "Zcash",
@@ -226,7 +226,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  bitcoin_gold: {
     id: "bitcoin_gold",
     coinType: 156,
     name: "Bitcoin Gold",
@@ -261,7 +261,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  stratis: {
     id: "stratis",
     coinType: 105,
     name: "Stratis",
@@ -276,7 +276,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  dogecoin: {
     id: "dogecoin",
     coinType: 3,
     name: "Dogecoin",
@@ -292,7 +292,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  hshare: {
     id: "hshare",
     coinType: 171,
     name: "Hshare",
@@ -307,7 +307,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  komodo: {
     id: "komodo",
     coinType: 141,
     name: "Komodo",
@@ -322,7 +322,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  pivx: {
     id: "pivx",
     coinType: 77,
     name: "PivX",
@@ -337,7 +337,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  zencash: {
     id: "zencash",
     coinType: 121,
     name: "ZenCash",
@@ -352,7 +352,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  vertcoin: {
     id: "vertcoin",
     coinType: 28,
     name: "Vertcoin",
@@ -368,7 +368,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  peercoin: {
     id: "peercoin",
     coinType: 6,
     name: "Peercoin",
@@ -383,7 +383,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  viacoin: {
     id: "viacoin",
     coinType: 14,
     name: "Viacoin",
@@ -399,7 +399,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  stealthcoin: {
     id: "stealthcoin",
     coinType: 125,
     name: "Stealth",
@@ -414,7 +414,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
       }
     ]
   },
-  {
+  digibyte: {
     id: "digibyte",
     coinType: 20,
     name: "Digibyte",
@@ -431,7 +431,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
   },
 
   // Testnets
-  {
+  bitcoin_testnet: {
     id: "bitcoin_testnet",
     coinType: 1,
     name: "Bitcoin Testnet",
@@ -442,7 +442,7 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     supportsSegwit: true,
     isTestnetFor: "bitcoin"
   },
-  {
+  ethereum_testnet: {
     id: "ethereum_testnet",
     coinType: 1,
     name: "Ethereum Testnet",
@@ -452,20 +452,28 @@ const cryptocurrenciesArray: CryptoCurrency[] = [
     units: ethereumUnits.map(makeTestnetUnit),
     isTestnetFor: "ethereum"
   }
-];
+};
 
-const cryptocurrenciesById: { [_: string]: CryptoCurrency } = {};
+export type CryptoCurrencyObjMap<F> = $Exact<
+  $ObjMap<typeof cryptocurrenciesById, F>
+>;
+
+export type CryptoCurrencyConfig<C> = CryptoCurrencyObjMap<(*) => C>;
+
 const cryptocurrenciesByScheme: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesByTicker: { [_: string]: CryptoCurrency } = {};
+const cryptocurrenciesArray = [];
 const prodCryptoArray = [];
-cryptocurrenciesArray.forEach(c => {
+for (let id in cryptocurrenciesById) {
+  const c = cryptocurrenciesById[id];
   cryptocurrenciesById[c.id] = c;
   cryptocurrenciesByScheme[c.scheme] = c;
   cryptocurrenciesByTicker[c.ticker] = c;
   if (!c.isTestnetFor) {
     prodCryptoArray.push(c);
   }
-});
+  cryptocurrenciesArray.push(c);
+}
 
 export function listCryptoCurrencies(
   withDevCrypto: boolean = false
