@@ -5,6 +5,7 @@ const axios = require("axios");
 const {
   listCryptoCurrencies,
   formatCurrencyUnit
+  // $FlowFixMe
 } = require("../lib/helpers/currencies");
 
 const { COUNTERVALUE_API, AMOUNT } = process.env;
