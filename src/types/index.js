@@ -7,6 +7,13 @@ import type {
   CryptoCurrency
 } from "./currencies";
 
+import type {
+  CryptoCurrencyConfig,
+  CryptoCurrencyObjMap
+} from "../data/cryptocurrencies";
+
+export type { CryptoCurrencyConfig, CryptoCurrencyObjMap };
+
 /**
  *
  *                            Common models types
