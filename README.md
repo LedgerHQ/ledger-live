@@ -5,7 +5,7 @@ Common ground for the Ledger Wallet apps
 ## Install
 
 ```
-yarn add @ledgerhq/wallet-common
+yarn add @ledgerhq/live-common
 ```
 
 ## Development
