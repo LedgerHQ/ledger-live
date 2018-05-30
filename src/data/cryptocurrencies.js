@@ -88,7 +88,11 @@ const cryptocurrenciesById = {
     scheme: "bitcoin",
     color: "#ffae35",
     units: bitcoinUnits,
-    supportsSegwit: true
+    supportsSegwit: true,
+    bitcoinLikeInfo: {
+      regular: 0,
+      P2SH: 5
+    }
   },
   ethereum: {
     id: "ethereum",
@@ -128,6 +132,10 @@ const cryptocurrenciesById = {
     ticker: "BCH",
     scheme: "bch",
     color: "#3ca569",
+    bitcoinLikeInfo: {
+      regular: 0,
+      P2SH: 5
+    },
     units: [
       {
         name: "bitcoin cash",
@@ -163,6 +171,10 @@ const cryptocurrenciesById = {
     scheme: "litecoin",
     color: "#cccccc",
     supportsSegwit: true,
+    bitcoinLikeInfo: {
+      regular: 48,
+      P2SH: 50
+    },
     units: [
       {
         name: "litecoin",
@@ -179,6 +191,10 @@ const cryptocurrenciesById = {
     ticker: "DASH",
     scheme: "dash",
     color: "#0e76aa",
+    bitcoinLikeInfo: {
+      regular: 76,
+      P2SH: 16
+    },
     units: [
       {
         name: "dash",
@@ -203,6 +219,10 @@ const cryptocurrenciesById = {
     ticker: "QTUM",
     scheme: "qtum",
     color: "#2e9ad0",
+    bitcoinLikeInfo: {
+      regular: 58,
+      P2SH: 50
+    },
     units: [
       {
         name: "qtum",
@@ -218,6 +238,10 @@ const cryptocurrenciesById = {
     ticker: "ZEC",
     scheme: "zcash",
     color: "#3790ca",
+    bitcoinLikeInfo: {
+      regular: 0x1cb8,
+      P2SH: 0x1cbd
+    },
     units: [
       {
         name: "zcash",
@@ -234,6 +258,10 @@ const cryptocurrenciesById = {
     scheme: "btg",
     color: "#132c47",
     supportsSegwit: true,
+    bitcoinLikeInfo: {
+      regular: 38,
+      P2SH: 23
+    },
     units: [
       {
         name: "bitcoin gold",
@@ -268,6 +296,10 @@ const cryptocurrenciesById = {
     ticker: "STRAT",
     scheme: "stratis",
     color: "#1382c6",
+    bitcoinLikeInfo: {
+      regular: 63,
+      P2SH: 125
+    },
     units: [
       {
         name: "stratis",
@@ -283,6 +315,10 @@ const cryptocurrenciesById = {
     ticker: "DOGE",
     scheme: "dogecoin",
     color: "#65d196",
+    bitcoinLikeInfo: {
+      regular: 30,
+      P2SH: 22
+    },
     units: [
       {
         name: "dogecoin",
@@ -299,6 +335,10 @@ const cryptocurrenciesById = {
     ticker: "HSR",
     scheme: "hcash",
     color: "#56438c",
+    bitcoinLikeInfo: {
+      regular: 40,
+      P2SH: 100
+    },
     units: [
       {
         name: "hcash",
@@ -314,6 +354,10 @@ const cryptocurrenciesById = {
     ticker: "KMD",
     scheme: "komodo",
     color: "#326464",
+    bitcoinLikeInfo: {
+      regular: 60,
+      P2SH: 85
+    },
     units: [
       {
         name: "komodo",
@@ -329,6 +373,10 @@ const cryptocurrenciesById = {
     ticker: "PIVX",
     scheme: "pivx",
     color: "#46385d",
+    bitcoinLikeInfo: {
+      regular: 30,
+      P2SH: 13
+    },
     units: [
       {
         name: "pivx",
@@ -344,6 +392,10 @@ const cryptocurrenciesById = {
     ticker: "ZEN",
     scheme: "zencash",
     color: "#152f5c",
+    bitcoinLikeInfo: {
+      regular: 0x2089,
+      P2SH: 0x2096
+    },
     units: [
       {
         name: "zencash",
@@ -360,6 +412,10 @@ const cryptocurrenciesById = {
     scheme: "vertcoin",
     color: "#1b5c2e",
     supportsSegwit: true,
+    bitcoinLikeInfo: {
+      regular: 71,
+      P2SH: 5
+    },
     units: [
       {
         name: "vertcoin",
@@ -375,6 +431,10 @@ const cryptocurrenciesById = {
     ticker: "PPC",
     scheme: "peercoin",
     color: "#3cb054",
+    bitcoinLikeInfo: {
+      regular: 55,
+      P2SH: 117
+    },
     units: [
       {
         name: "peercoin",
@@ -391,6 +451,10 @@ const cryptocurrenciesById = {
     scheme: "viacoin",
     color: "#414141",
     supportsSegwit: true,
+    bitcoinLikeInfo: {
+      regular: 71,
+      P2SH: 33
+    },
     units: [
       {
         name: "viacoin",
@@ -406,6 +470,10 @@ const cryptocurrenciesById = {
     ticker: "XST",
     scheme: "stealth",
     color: "#000000",
+    bitcoinLikeInfo: {
+      regular: 62,
+      P2SH: 85
+    },
     units: [
       {
         name: "stealth",
@@ -421,6 +489,10 @@ const cryptocurrenciesById = {
     ticker: "DGB",
     scheme: "digibyte",
     color: "#0066cc",
+    bitcoinLikeInfo: {
+      regular: 30,
+      P2SH: 5
+    },
     units: [
       {
         name: "digibyte",
@@ -440,7 +512,11 @@ const cryptocurrenciesById = {
     color: "#00ff00",
     units: bitcoinUnits.map(makeTestnetUnit),
     supportsSegwit: true,
-    isTestnetFor: "bitcoin"
+    isTestnetFor: "bitcoin",
+    bitcoinLikeInfo: {
+      regular: 111,
+      P2SH: 196
+    }
   },
   ethereum_testnet: {
     id: "ethereum_testnet",
