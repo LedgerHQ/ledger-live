@@ -36,7 +36,11 @@ export type CryptoCurrency = CurrencyCommon & {
   color: string,
   supportsSegwit?: boolean,
   // if defined this coin is a testnet for another crypto (id)};
-  isTestnetFor?: string
+  isTestnetFor?: string,
+  bitcoinLikeInfo?: {
+    P2PKH: number,
+    P2SH: number
+  }
 };
 
 export type Currency = Currency | CryptoCurrency;
