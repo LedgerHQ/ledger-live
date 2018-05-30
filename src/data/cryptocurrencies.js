@@ -90,7 +90,7 @@ const cryptocurrenciesById = {
     units: bitcoinUnits,
     supportsSegwit: true,
     bitcoinLikeInfo: {
-      regular: 0,
+      P2PKH: 0,
       P2SH: 5
     }
   },
@@ -133,7 +133,7 @@ const cryptocurrenciesById = {
     scheme: "bch",
     color: "#3ca569",
     bitcoinLikeInfo: {
-      regular: 0,
+      P2PKH: 0,
       P2SH: 5
     },
     units: [
@@ -172,7 +172,7 @@ const cryptocurrenciesById = {
     color: "#cccccc",
     supportsSegwit: true,
     bitcoinLikeInfo: {
-      regular: 48,
+      P2PKH: 48,
       P2SH: 50
     },
     units: [
@@ -192,7 +192,7 @@ const cryptocurrenciesById = {
     scheme: "dash",
     color: "#0e76aa",
     bitcoinLikeInfo: {
-      regular: 76,
+      P2PKH: 76,
       P2SH: 16
     },
     units: [
@@ -220,7 +220,7 @@ const cryptocurrenciesById = {
     scheme: "qtum",
     color: "#2e9ad0",
     bitcoinLikeInfo: {
-      regular: 58,
+      P2PKH: 58,
       P2SH: 50
     },
     units: [
@@ -239,7 +239,7 @@ const cryptocurrenciesById = {
     scheme: "zcash",
     color: "#3790ca",
     bitcoinLikeInfo: {
-      regular: 0x1cb8,
+      P2PKH: 0x1cb8,
       P2SH: 0x1cbd
     },
     units: [
@@ -259,7 +259,7 @@ const cryptocurrenciesById = {
     color: "#132c47",
     supportsSegwit: true,
     bitcoinLikeInfo: {
-      regular: 38,
+      P2PKH: 38,
       P2SH: 23
     },
     units: [
@@ -297,7 +297,7 @@ const cryptocurrenciesById = {
     scheme: "stratis",
     color: "#1382c6",
     bitcoinLikeInfo: {
-      regular: 63,
+      P2PKH: 63,
       P2SH: 125
     },
     units: [
@@ -316,7 +316,7 @@ const cryptocurrenciesById = {
     scheme: "dogecoin",
     color: "#65d196",
     bitcoinLikeInfo: {
-      regular: 30,
+      P2PKH: 30,
       P2SH: 22
     },
     units: [
@@ -336,7 +336,7 @@ const cryptocurrenciesById = {
     scheme: "hcash",
     color: "#56438c",
     bitcoinLikeInfo: {
-      regular: 40,
+      P2PKH: 40,
       P2SH: 100
     },
     units: [
@@ -355,7 +355,7 @@ const cryptocurrenciesById = {
     scheme: "komodo",
     color: "#326464",
     bitcoinLikeInfo: {
-      regular: 60,
+      P2PKH: 60,
       P2SH: 85
     },
     units: [
@@ -374,7 +374,7 @@ const cryptocurrenciesById = {
     scheme: "pivx",
     color: "#46385d",
     bitcoinLikeInfo: {
-      regular: 30,
+      P2PKH: 30,
       P2SH: 13
     },
     units: [
@@ -393,7 +393,7 @@ const cryptocurrenciesById = {
     scheme: "zencash",
     color: "#152f5c",
     bitcoinLikeInfo: {
-      regular: 0x2089,
+      P2PKH: 0x2089,
       P2SH: 0x2096
     },
     units: [
@@ -413,7 +413,7 @@ const cryptocurrenciesById = {
     color: "#1b5c2e",
     supportsSegwit: true,
     bitcoinLikeInfo: {
-      regular: 71,
+      P2PKH: 71,
       P2SH: 5
     },
     units: [
@@ -432,7 +432,7 @@ const cryptocurrenciesById = {
     scheme: "peercoin",
     color: "#3cb054",
     bitcoinLikeInfo: {
-      regular: 55,
+      P2PKH: 55,
       P2SH: 117
     },
     units: [
@@ -452,7 +452,7 @@ const cryptocurrenciesById = {
     color: "#414141",
     supportsSegwit: true,
     bitcoinLikeInfo: {
-      regular: 71,
+      P2PKH: 71,
       P2SH: 33
     },
     units: [
@@ -471,7 +471,7 @@ const cryptocurrenciesById = {
     scheme: "stealth",
     color: "#000000",
     bitcoinLikeInfo: {
-      regular: 62,
+      P2PKH: 62,
       P2SH: 85
     },
     units: [
@@ -490,7 +490,7 @@ const cryptocurrenciesById = {
     scheme: "digibyte",
     color: "#0066cc",
     bitcoinLikeInfo: {
-      regular: 30,
+      P2PKH: 30,
       P2SH: 5
     },
     units: [
@@ -514,7 +514,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     isTestnetFor: "bitcoin",
     bitcoinLikeInfo: {
-      regular: 111,
+      P2PKH: 111,
       P2SH: 196
     }
   },
