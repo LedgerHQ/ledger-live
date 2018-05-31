@@ -497,7 +497,7 @@ const cryptocurrenciesById = {
       {
         name: "stealth",
         code: "XST",
-        magnitude: 8
+        magnitude: 6
       }
     ]
   },
