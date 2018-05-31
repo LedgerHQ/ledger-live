@@ -328,6 +328,25 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  digibyte: {
+    id: "digibyte",
+    coinType: 20,
+    name: "Digibyte",
+    ticker: "DGB",
+    scheme: "digibyte",
+    color: "#0066cc",
+    bitcoinLikeInfo: {
+      P2PKH: 30,
+      P2SH: 5
+    },
+    units: [
+      {
+        name: "digibyte",
+        code: "DGB",
+        magnitude: 8
+      }
+    ]
+  },
   hcash: {
     id: "hcash",
     coinType: 171,
@@ -482,21 +501,21 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  digibyte: {
-    id: "digibyte",
-    coinType: 20,
-    name: "Digibyte",
-    ticker: "DGB",
-    scheme: "digibyte",
-    color: "#0066cc",
+  posw: {
+    id: "posw",
+    coinType: 47,
+    name: "PosW",
+    ticker: "POSW",
+    scheme: "posw",
+    color: "#000000", // FIXME
     bitcoinLikeInfo: {
-      P2PKH: 30,
-      P2SH: 5
+      P2PKH: 55,
+      P2SH: 85
     },
     units: [
       {
-        name: "digibyte",
-        code: "DGB",
+        name: "posw",
+        code: "POSW",
         magnitude: 8
       }
     ]
