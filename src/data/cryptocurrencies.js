@@ -501,8 +501,8 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  posw: {
-    id: "posw",
+  poswallet: {
+    id: "poswallet",
     coinType: 47,
     name: "PosW",
     ticker: "POSW",
