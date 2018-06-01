@@ -3,7 +3,6 @@
 exports[`accountModel encode 1`] = `
 Object {
   "data": Object {
-    "archived": false,
     "balance": 3527318138,
     "blockHeight": 185713,
     "currencyId": "bitcoin_gold",

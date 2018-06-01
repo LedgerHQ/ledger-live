@@ -34,9 +34,6 @@ export type Account = {
   // the last block height currently synchronized
   blockHeight: number,
 
-  // whether or not the account is archived
-  archived: boolean,
-
   // ------------------------------------- Specific account fields
 
   // currency of this account
@@ -70,7 +67,6 @@ export type AccountRaw = {
   isSegwit?: ?boolean,
   balance: number,
   blockHeight: number,
-  archived: boolean,
   // ------------------------------------- Specific raw fields
   currencyId: string,
   operations: OperationRaw[],
