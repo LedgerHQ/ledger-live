@@ -36,7 +36,8 @@ export function getBalanceHistory(
       balance -= getOperationAmountNumber(account.operations[i]);
       i++;
     }
-    history.unshift({ date: t, value: balance });
+    // FIXME use BigInteger
+    history.unshift({ date: t, value: Math.max(balance, 0) });
     t = new Date(t - 24 * 60 * 60 * 1000);
   }
   return history;
