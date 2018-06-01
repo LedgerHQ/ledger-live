@@ -27,7 +27,7 @@ const bitcoinUnits: Unit[] = [
   },
   {
     name: "satoshi",
-    code: "satoshi",
+    code: "sat",
     symbol: "Ƀ",
     magnitude: 0
   }
@@ -72,6 +72,30 @@ const ethereumUnitsClassic = [
     code: "ETC",
     symbol: "Ξ",
     magnitude: 18
+  },
+  {
+    name: "Gwei",
+    code: "Gwei",
+    symbol: "Ξ",
+    magnitude: 9
+  },
+  {
+    name: "Mwei",
+    code: "Mwei",
+    symbol: "Ξ",
+    magnitude: 6
+  },
+  {
+    name: "Kwei",
+    code: "Kwei",
+    symbol: "Ξ",
+    magnitude: 3
+  },
+  {
+    name: "wei",
+    code: "wei",
+    symbol: "Ξ",
+    magnitude: 0
   }
 ];
 
@@ -157,7 +181,7 @@ const cryptocurrenciesById = {
       },
       {
         name: "satoshi",
-        code: "satoshi",
+        code: "sat",
         symbol: "Ƀ",
         magnitude: 0
       }
@@ -181,6 +205,18 @@ const cryptocurrenciesById = {
         code: "LTC",
         symbol: "Ł",
         magnitude: 8
+      },
+      {
+        name: "mLTC",
+        code: "mLTC",
+        symbol: "Ł",
+        magnitude: 5
+      },
+      {
+        name: "litoshi",
+        code: "litoshi",
+        symbol: "Ł",
+        magnitude: 0
       }
     ]
   },
@@ -200,6 +236,11 @@ const cryptocurrenciesById = {
         name: "dash",
         code: "DASH",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -228,6 +269,11 @@ const cryptocurrenciesById = {
         name: "qtum",
         code: "QTUM",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -247,6 +293,11 @@ const cryptocurrenciesById = {
         name: "zcash",
         code: "ZEC",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -283,7 +334,7 @@ const cryptocurrenciesById = {
       },
       {
         name: "satoshi",
-        code: "satoshi",
+        code: "sat",
         symbol: "Ƀ",
         magnitude: 0
       }
@@ -305,6 +356,11 @@ const cryptocurrenciesById = {
         name: "stratis",
         code: "STRAT",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -325,6 +381,11 @@ const cryptocurrenciesById = {
         code: "DOGE",
         symbol: "Ð",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -344,6 +405,11 @@ const cryptocurrenciesById = {
         name: "digibyte",
         code: "DGB",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -363,6 +429,11 @@ const cryptocurrenciesById = {
         name: "hcash",
         code: "HSR",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -382,6 +453,11 @@ const cryptocurrenciesById = {
         name: "komodo",
         code: "KMD",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -401,6 +477,11 @@ const cryptocurrenciesById = {
         name: "pivx",
         code: "PIVX",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -420,6 +501,11 @@ const cryptocurrenciesById = {
         name: "zencash",
         code: "ZEN",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -440,6 +526,11 @@ const cryptocurrenciesById = {
         name: "vertcoin",
         code: "VTC",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -459,6 +550,11 @@ const cryptocurrenciesById = {
         name: "peercoin",
         code: "PPC",
         magnitude: 6
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -479,6 +575,11 @@ const cryptocurrenciesById = {
         name: "viacoin",
         code: "VIA",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -498,6 +599,11 @@ const cryptocurrenciesById = {
         name: "stealth",
         code: "XST",
         magnitude: 6
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
@@ -517,6 +623,11 @@ const cryptocurrenciesById = {
         name: "posw",
         code: "POSW",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
       }
     ]
   },
