@@ -281,6 +281,10 @@ test("formatShort", () => {
   expect(formatShort(getFiatCurrencyByTicker("EUR").units[0], 123456)).toBe(
     "1.2k"
   );
+
+  expect(formatShort(getCryptoCurrencyById("ethereum").units[0], 600000)).toBe(
+    "0.0000000000006"
+  );
 });
 
 test("chopCurrencyUnitDecimals", () => {

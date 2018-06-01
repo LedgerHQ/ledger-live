@@ -1,6 +1,7 @@
 //@flow
 import type { Unit } from "../../types";
 import numeral from "numeral";
+import { formatCurrencyUnit } from "./formatCurrencyUnit";
 
 /**
  * This will format in a very concise way a valid, typically to be used on axis.
@@ -9,5 +10,9 @@ import numeral from "numeral";
 export function formatShort(unit: Unit, value: number): string {
   const { magnitude } = unit;
   const floatValue = value / 10 ** magnitude;
+  if (floatValue < 1) {
+    return formatCurrencyUnit(unit, value);
+  }
+
   return numeral(floatValue).format("0[.]0a");
 }
