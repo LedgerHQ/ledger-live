@@ -63,7 +63,8 @@ function createCounterValues<State>({
   pairsSelector,
   setExchangePairsAction,
   maximumDays,
-  addExtraPollingHooks
+  addExtraPollingHooks,
+  log
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
 
@@ -221,40 +222,52 @@ function createCounterValues<State>({
       pairs.push(pair);
     }
     if (pairs.length === 0) return;
-    const { data } = await axios.post(
+    const { data }: { data: mixed } = await axios.post(
       getAPIBaseURL() + "/rates/daily",
       {
         pairs
       },
       apiConfig
     );
-    if (data) {
+    if (data && typeof data === "object") {
       const ev: PollAction = { type: POLL, data };
       dispatch(ev);
 
-      // for pairs requested without exchanges yet,
+      // for pairs requested without exchanges yet OR api don't have the requested exchange,
       // we need to dispatch which exchanges was used
       // so diffing can properly work the next time
       // and asking with different exchanges will prevent to happen (over times, as arbitrary fallback can change)
-      const unsetExchangesPairs = [];
+      const pairsToUpdate = [];
       for (let pair of userPairs) {
-        if (!pair.exchange) {
-          const a = data[pair.to.ticker];
-          if (!a) continue;
-          const b = a[pair.from.ticker];
-          if (!b) continue;
-          const [exchange] = Object.keys(b);
-          if (exchange) {
-            unsetExchangesPairs.push({
-              from: pair.from,
-              to: pair.to,
-              exchange
-            });
-          }
+        const {
+          exchange,
+          to: { ticker: to },
+          from: { ticker: from }
+        } = pair;
+        const a = data[to] || {};
+        if (typeof a !== "object") continue;
+        const b = a[from] || {};
+        if (typeof b !== "object") continue;
+        const availableExchanges: string[] = Object.keys(b);
+        const fallback = availableExchanges[0] || null;
+        if (!exchange || !availableExchanges.includes(exchange)) {
+          log &&
+            log(
+              `${from}/${to}: ${
+                exchange
+                  ? `exchange ${exchange} no longer in countervalue API`
+                  : "no exchange defined yet"
+              }. fallback to ${String(fallback)}`
+            );
+          pairsToUpdate.push({
+            from: pair.from,
+            to: pair.to,
+            exchange: fallback
+          });
         }
       }
-      if (unsetExchangesPairs.length > 0) {
-        dispatch(setExchangePairsAction(unsetExchangesPairs));
+      if (pairsToUpdate.length > 0) {
+        dispatch(setExchangePairsAction(pairsToUpdate));
       }
     }
   };
@@ -375,6 +388,12 @@ function createCounterValues<State>({
 
     componentDidUpdate(prevProps) {
       if (prevProps.pairsKey !== this.props.pairsKey) {
+        log &&
+          log(
+            `pairsKey changed:\n    ${prevProps.pairsKey}\n => ${
+              this.props.pairsKey
+            }`
+          );
         this.poll();
       }
     }
