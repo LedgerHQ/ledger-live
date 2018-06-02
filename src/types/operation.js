@@ -18,6 +18,9 @@ export type Operation = {
   // in "OUT" case, it includes the fees. in "IN" case, it excludes them.
   value: number,
 
+  // fee of the transaction (in satoshi value)
+  fee: number,
+
   // senders & recipients addresses
   senders: string[],
   recipients: string[],
@@ -46,6 +49,7 @@ export type OperationRaw = {
   hash: string,
   type: OperationType,
   value: number,
+  fee: number,
   senders: string[],
   recipients: string[],
   blockHeight: ?number,
