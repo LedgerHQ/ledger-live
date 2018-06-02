@@ -134,7 +134,6 @@ export function genAccount(
     isSegwit: true,
     balance: 0,
     blockHeight: rng.nextInt(100000, 200000),
-    archived: false,
     currency,
     unit: rng.nextArrayItem(currency.units),
     operations: [],
