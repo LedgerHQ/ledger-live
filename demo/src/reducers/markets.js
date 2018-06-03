@@ -16,22 +16,22 @@ const initialState: State = [
   {
     from: getCryptoCurrencyById("bitcoin"),
     to: getFiatCurrencyByTicker("USD"),
-    exchange: "COINBASE"
+    exchange: "KRAKEN"
   },
   {
     from: getCryptoCurrencyById("bitcoin"),
     to: getFiatCurrencyByTicker("EUR"),
-    exchange: "KRAKEN"
+    exchange: null
   },
   {
     from: getCryptoCurrencyById("ripple"),
     to: getCryptoCurrencyById("ethereum"),
-    exchange: "BINANCE"
+    exchange: null
   },
   {
     from: getCryptoCurrencyById("litecoin"),
     to: getCryptoCurrencyById("bitcoin"),
-    exchange: "BITTREX"
+    exchange: null
   }
 ];
 
@@ -46,7 +46,7 @@ const reducers = {
 
   SET_EXCHANGE_PAIRS: (state, action) =>
     state.map(market => {
-      if (!market.from || !market.to || market.exchange) return market;
+      if (!market.from || !market.to) return market;
       const el = action.pairs.find(
         p => p.from === market.from && p.to === market.to
       );

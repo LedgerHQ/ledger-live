@@ -22,7 +22,7 @@ export const setExchangePairsAction = (
   pairs: Array<{
     from: Currency,
     to: Currency,
-    exchange: string
+    exchange: ?string
   }>
 ) => ({
   type: "SET_EXCHANGE_PAIRS",

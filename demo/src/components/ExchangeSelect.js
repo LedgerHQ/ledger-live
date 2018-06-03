@@ -27,7 +27,11 @@ class ExchangeSelect extends Component<
 
   static getDerivedStateFromProps(nextProps: *, prevState: *) {
     const fromTo = nextProps.from.ticker + "/" + nextProps.to.ticker;
-    if (fromTo !== prevState.prevFromTo) {
+    if (
+      fromTo !== prevState.prevFromTo ||
+      (nextProps.value &&
+        !prevState.exchanges.some(e => e.id === nextProps.value))
+    ) {
       return {
         prevFromTo: fromTo,
         exchanges: null
@@ -74,8 +78,8 @@ class ExchangeSelect extends Component<
     const { exchanges, error } = this.state;
     return exchanges ? (
       <Select value={value || ""} onChange={this.handleChange}>
-        <MenuItem value="">
-          <em>None</em>
+        <MenuItem value={value || ""}>
+          <em>{value || ""}</em>
         </MenuItem>
         {exchanges.map(e => (
           <MenuItem key={e.id} value={e.id}>

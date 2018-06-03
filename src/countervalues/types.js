@@ -41,6 +41,8 @@ export type CounterValuesState = {
 };
 
 export type Input<State> = {
+  log?: (...args: *) => void,
+
   // example: () => "http://localhost:8088"
   getAPIBaseURL: () => string,
 
@@ -51,11 +53,12 @@ export type Input<State> = {
   pairsSelector: PairsSelector<State>,
   // in case pairsSelector was containing pairs without exchanges specified, this action will be called
   // the action must change your settings state in order for the next call to `pairsSelector` to have exchanges resolved.
+  // it might also unset an exchange if it disappear from the API.
   setExchangePairsAction: (
     Array<{
       from: Currency,
       to: Currency,
-      exchange: string
+      exchange: ?string
     }>
   ) => Object,
 
