@@ -78,6 +78,7 @@ export function genOperation(
     hash: genHex(64, rng),
     type,
     value,
+    fee: Math.round(value * 0.01),
     senders: [type !== "IN" ? genAddress(currency, rng) : address],
     recipients: [type === "IN" ? genAddress(currency, rng) : address],
     blockHash: genHex(64, rng),
