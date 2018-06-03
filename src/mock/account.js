@@ -144,7 +144,7 @@ export function genAccount(
 
   account.operations = Array(operationsSize)
     .fill(null)
-    .reduce(ops => {
+    .reduce((ops: Operation[]) => {
       const op = genOperation(account, ops, currency, rng);
       return ops.concat(op);
     }, []);

@@ -30,7 +30,7 @@
     "lodash": "^4.17.4",
     "numeral": "^2.0.6",
     "prando": "^3.0.1",
-    "react": "^16.3.2",
+    "react": "^16.4.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "reselect": "^3.0.1"
@@ -38,22 +38,22 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.2",
-    "babel-jest": "^22.4.3",
+    "babel-jest": "^23.0.1",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-0": "^6.24.1",
-    "documentation": "^6.1.0",
+    "documentation": "^7.1.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-flowtype": "^2.49.3",
     "eslint-plugin-react": "^7.7.0",
-    "flow-bin": "^0.69.0",
+    "flow-bin": "^0.73.0",
     "flow-copy-source": "^1.2.1",
     "flow-typed": "^2.2.3",
     "glob": "^7.1.2",
-    "jest": "^22.4.3",
-    "prettier": "^1.8.2",
-    "svgr": "^1.9.1",
+    "jest": "^23.1.0",
+    "prettier": "^1.13.4",
+    "svgr": "^1.10.0",
     "timemachine": "^0.3.0"
   }
 }
