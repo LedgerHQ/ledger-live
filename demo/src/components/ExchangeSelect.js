@@ -27,11 +27,7 @@ class ExchangeSelect extends Component<
 
   static getDerivedStateFromProps(nextProps: *, prevState: *) {
     const fromTo = nextProps.from.ticker + "/" + nextProps.to.ticker;
-    if (
-      fromTo !== prevState.prevFromTo ||
-      (nextProps.value &&
-        !prevState.exchanges.some(e => e.id === nextProps.value))
-    ) {
+    if (fromTo !== prevState.prevFromTo) {
       return {
         prevFromTo: fromTo,
         exchanges: null
