@@ -34,6 +34,9 @@ export type CryptoCurrency = CurrencyCommon & {
   scheme: string,
   // used for UI
   color: string,
+  family: "bitcoin" | "ethereum" | "ripple",
+  ledgerExplorerId?: string,
+  blockAvgTime?: number, // in seconds
   supportsSegwit?: boolean,
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string,
