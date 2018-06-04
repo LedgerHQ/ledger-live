@@ -113,6 +113,9 @@ const cryptocurrenciesById = {
     color: "#ffae35",
     units: bitcoinUnits,
     supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "btc",
+    blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0,
       P2SH: 5
@@ -125,7 +128,10 @@ const cryptocurrenciesById = {
     ticker: "ETH",
     scheme: "ethereum",
     color: "#0ebdcd",
-    units: ethereumUnits
+    units: ethereumUnits,
+    family: "ethereum",
+    ledgerExplorerId: "eth",
+    blockAvgTime: 15
   },
   ripple: {
     id: "ripple",
@@ -147,7 +153,8 @@ const cryptocurrenciesById = {
         symbol: "drop",
         magnitude: 0
       }
-    ]
+    ],
+    family: "ripple"
   },
   bitcoin_cash: {
     id: "bitcoin_cash",
@@ -156,6 +163,9 @@ const cryptocurrenciesById = {
     ticker: "BCH",
     scheme: "bch",
     color: "#3ca569",
+    family: "bitcoin",
+    ledgerExplorerId: "abc",
+    blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0,
       P2SH: 5
@@ -195,6 +205,9 @@ const cryptocurrenciesById = {
     scheme: "litecoin",
     color: "#cccccc",
     supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "ltc",
+    blockAvgTime: 5 * 60,
     bitcoinLikeInfo: {
       P2PKH: 48,
       P2SH: 50
@@ -227,6 +240,9 @@ const cryptocurrenciesById = {
     ticker: "DASH",
     scheme: "dash",
     color: "#0e76aa",
+    family: "bitcoin",
+    ledgerExplorerId: "dash",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 76,
       P2SH: 16
@@ -251,7 +267,10 @@ const cryptocurrenciesById = {
     ticker: "ETC",
     scheme: "ethereumclassic",
     color: "#3ca569",
-    units: ethereumUnitsClassic
+    units: ethereumUnitsClassic,
+    family: "ethereum",
+    ledgerExplorerId: "ethc",
+    blockAvgTime: 15
   },
   qtum: {
     id: "qtum",
@@ -260,6 +279,9 @@ const cryptocurrenciesById = {
     ticker: "QTUM",
     scheme: "qtum",
     color: "#2e9ad0",
+    family: "bitcoin",
+    ledgerExplorerId: "qtum",
+    blockAvgTime: 2 * 60,
     bitcoinLikeInfo: {
       P2PKH: 58,
       P2SH: 50
@@ -284,6 +306,9 @@ const cryptocurrenciesById = {
     ticker: "ZEC",
     scheme: "zcash",
     color: "#3790ca",
+    family: "bitcoin",
+    ledgerExplorerId: "zec",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 0x1cb8,
       P2SH: 0x1cbd
@@ -309,6 +334,9 @@ const cryptocurrenciesById = {
     scheme: "btg",
     color: "#132c47",
     supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "btg",
+    blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 38,
       P2SH: 23
@@ -347,6 +375,9 @@ const cryptocurrenciesById = {
     ticker: "STRAT",
     scheme: "stratis",
     color: "#1382c6",
+    family: "bitcoin",
+    ledgerExplorerId: "strat",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 63,
       P2SH: 125
@@ -371,6 +402,9 @@ const cryptocurrenciesById = {
     ticker: "DOGE",
     scheme: "dogecoin",
     color: "#65d196",
+    family: "bitcoin",
+    ledgerExplorerId: "doge",
+    blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 30,
       P2SH: 22
@@ -396,6 +430,9 @@ const cryptocurrenciesById = {
     ticker: "DGB",
     scheme: "digibyte",
     color: "#0066cc",
+    family: "bitcoin",
+    ledgerExplorerId: "dgb",
+    blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 30,
       P2SH: 5
@@ -420,6 +457,9 @@ const cryptocurrenciesById = {
     ticker: "HSR",
     scheme: "hcash",
     color: "#56438c",
+    family: "bitcoin",
+    ledgerExplorerId: "hsr",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 40,
       P2SH: 100
@@ -444,6 +484,9 @@ const cryptocurrenciesById = {
     ticker: "KMD",
     scheme: "komodo",
     color: "#326464",
+    family: "bitcoin",
+    ledgerExplorerId: "kmd",
+    blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 60,
       P2SH: 85
@@ -468,6 +511,9 @@ const cryptocurrenciesById = {
     ticker: "PIVX",
     scheme: "pivx",
     color: "#46385d",
+    family: "bitcoin",
+    ledgerExplorerId: "pivx",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 30,
       P2SH: 13
@@ -492,6 +538,9 @@ const cryptocurrenciesById = {
     ticker: "ZEN",
     scheme: "zencash",
     color: "#152f5c",
+    family: "bitcoin",
+    ledgerExplorerId: "zen",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 0x2089,
       P2SH: 0x2096
@@ -517,6 +566,9 @@ const cryptocurrenciesById = {
     scheme: "vertcoin",
     color: "#1b5c2e",
     supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "vtc",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 71,
       P2SH: 5
@@ -541,6 +593,9 @@ const cryptocurrenciesById = {
     ticker: "PPC",
     scheme: "peercoin",
     color: "#3cb054",
+    family: "bitcoin",
+    ledgerExplorerId: "ppc",
+    blockAvgTime: 450,
     bitcoinLikeInfo: {
       P2PKH: 55,
       P2SH: 117
@@ -566,6 +621,9 @@ const cryptocurrenciesById = {
     scheme: "viacoin",
     color: "#414141",
     supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "via",
+    blockAvgTime: 24,
     bitcoinLikeInfo: {
       P2PKH: 71,
       P2SH: 33
@@ -590,6 +648,9 @@ const cryptocurrenciesById = {
     ticker: "XST",
     scheme: "stealth",
     color: "#000000",
+    family: "bitcoin",
+    ledgerExplorerId: "xst",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 62,
       P2SH: 85
@@ -614,6 +675,9 @@ const cryptocurrenciesById = {
     ticker: "POSW",
     scheme: "posw",
     color: "#000000", // FIXME
+    family: "bitcoin",
+    ledgerExplorerId: "posw",
+    blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 55,
       P2SH: 85
@@ -643,6 +707,9 @@ const cryptocurrenciesById = {
     units: bitcoinUnits.map(makeTestnetUnit),
     supportsSegwit: true,
     isTestnetFor: "bitcoin",
+    family: "bitcoin",
+    ledgerExplorerId: "testnet",
+    blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 111,
       P2SH: 196
@@ -656,7 +723,10 @@ const cryptocurrenciesById = {
     scheme: "ethereum_testnet",
     color: "#00ff00",
     units: ethereumUnits.map(makeTestnetUnit),
-    isTestnetFor: "ethereum"
+    isTestnetFor: "ethereum",
+    family: "ethereum",
+    ledgerExplorerId: "eth_testnet",
+    blockAvgTime: 15
   }
 };
 
