@@ -17,9 +17,9 @@ export type Polling = {
 
 export type PairConversion = {
   from: Currency,
-  fromExchange: string,
+  fromExchange: ?string,
   intermediary: Currency,
-  toExchange: string,
+  toExchange: ?string,
   to: Currency
 };
 
@@ -115,7 +115,7 @@ export type Module<State> = {
       value: number,
       from: Currency,
       to: Currency,
-      exchange: string,
+      exchange: ?string,
       disableRounding?: boolean,
       date?: Date
     }
@@ -129,7 +129,7 @@ export type Module<State> = {
       value: number,
       from: Currency,
       to: Currency,
-      exchange: string,
+      exchange: ?string,
       disableRounding?: boolean,
       date?: Date
     }
@@ -143,9 +143,9 @@ export type Module<State> = {
     {
       value: number,
       from: Currency,
-      fromExchange: string,
+      fromExchange: ?string,
       intermediary: Currency,
-      toExchange: string,
+      toExchange: ?string,
       to: Currency,
       disableRounding?: boolean,
       date?: Date
@@ -159,9 +159,9 @@ export type Module<State> = {
     {
       value: number,
       from: Currency,
-      fromExchange: string,
+      fromExchange: ?string,
       intermediary: Currency,
-      toExchange: string,
+      toExchange: ?string,
       to: Currency,
       disableRounding?: boolean,
       date?: Date
