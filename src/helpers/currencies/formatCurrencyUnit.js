@@ -35,6 +35,18 @@ export function formatCurrencyUnitFragment(
   value: number,
   options?: $Shape<typeof defaultFormatOptions>
 ): FormatFragment[] {
+  if (typeof value !== "number") {
+    console.warn("formatCurrencyUnit called with value=", value);
+    return [];
+  }
+  if (isNaN(value)) {
+    console.warn("formatCurrencyUnit called with NaN value!");
+    return [];
+  }
+  if (!isFinite(value)) {
+    console.warn("formatCurrencyUnit called with infinite value=", value);
+    return [];
+  }
   const {
     showCode,
     alwaysShowSign,
