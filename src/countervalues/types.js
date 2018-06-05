@@ -15,6 +15,14 @@ export type Polling = {
   error: ?Error
 };
 
+export type PairConversion = {
+  from: Currency,
+  fromExchange: string,
+  intermediary: Currency,
+  toExchange: string,
+  to: Currency
+};
+
 export type PairOptExchange = {
   from: Currency,
   to: Currency,
@@ -122,6 +130,39 @@ export type Module<State> = {
       from: Currency,
       to: Currency,
       exchange: string,
+      disableRounding?: boolean,
+      date?: Date
+    }
+  ) => ?number,
+
+  // like calculateSelector but with a intermediary currency to use for conversion
+  // to use this, it is expected you have correctly provided in pairsSelector
+  // the pairs from->intermediary AND intermediary->to
+  calculateWithIntermediarySelector: (
+    state: State,
+    {
+      value: number,
+      from: Currency,
+      fromExchange: string,
+      intermediary: Currency,
+      toExchange: string,
+      to: Currency,
+      disableRounding?: boolean,
+      date?: Date
+    }
+  ) => ?number,
+
+  // selector which reverse a countervalue for a given pair & exchange
+  // returns null if the countervalue is not available
+  reverseWithIntermediarySelector: (
+    state: State,
+    {
+      value: number,
+      from: Currency,
+      fromExchange: string,
+      intermediary: Currency,
+      toExchange: string,
+      to: Currency,
       disableRounding?: boolean,
       date?: Date
     }
