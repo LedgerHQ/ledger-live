@@ -1,7 +1,8 @@
 // @flow
 import {
   getCryptoCurrencyById,
-  getFiatCurrencyByTicker
+  getFiatCurrencyByTicker,
+  listCryptoCurrencies
 } from "@ledgerhq/live-common/lib/helpers/currencies";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createSelector } from "reselect";
@@ -16,6 +17,8 @@ export type State = {
     value: number
   }>
 };
+
+const pick = array => array[Math.floor(Math.random() * array.length)];
 
 const initialState: State = {
   countervalueCurrency: getFiatCurrencyByTicker("USD"),
@@ -58,7 +61,11 @@ const reducers: { [_: string]: (State, *) => State } = {
 
   ADD_ROW: state => ({
     ...state,
-    rows: state.rows.concat({ currency: null, exchange: null, value: 1 })
+    rows: state.rows.concat({
+      currency: pick(listCryptoCurrencies()),
+      exchange: null,
+      value: 1
+    })
   }),
 
   SET_ROW: (state, action) => ({
