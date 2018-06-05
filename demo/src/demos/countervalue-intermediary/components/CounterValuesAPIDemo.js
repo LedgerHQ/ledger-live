@@ -32,9 +32,8 @@ import type { State } from "../reducers/app";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import CounterValues from "../countervalues";
 
-const currencies: Currency[] = listCryptoCurrencies().concat(
-  listFiatCurrencies()
-);
+const cryptos: Currency[] = listCryptoCurrencies();
+const fiats: Currency[] = listFiatCurrencies();
 
 const styles = theme => ({
   root: {
@@ -87,7 +86,7 @@ class App extends Component<{
                 </Typography>
                 <div className={classes.head}>
                   <CurrencySelect
-                    currencies={currencies}
+                    currencies={fiats}
                     value={app.countervalueCurrency}
                     onChange={setCountervalueCurrency}
                   />
@@ -137,7 +136,7 @@ class App extends Component<{
                 <TableRow key={index}>
                   <TableCell>
                     <CurrencySelect
-                      currencies={currencies}
+                      currencies={cryptos}
                       value={currency}
                       onChange={currency => setRow(index, { currency })}
                     />
