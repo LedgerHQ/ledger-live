@@ -1,38 +1,51 @@
 import "babel-polyfill";
-import React from "react";
+import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
+import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
-import { initStore } from "./store";
-import App from "./components/App";
-import CounterValues from "./countervalues";
+import Demos from "./demos";
 
-const store = initStore();
+window.LEDGER_CV_API =
+  window.LEDGER_CV_API || "https://ledger-countervalue-poc.herokuapp.com";
 
-// quick way to store countervalues with localStorage
-const LS_KEY = "countervalues";
-try {
-  const json = localStorage.getItem(LS_KEY);
-  if (json) {
-    store.dispatch(CounterValues.importAction(JSON.parse(json)));
+class Dashboard extends Component {
+  render() {
+    return (
+      <div style={{ width: 600, margin: "40px auto", fontSize: "32px" }}>
+        {Object.keys(Demos).map(key => {
+          const Demo = Demos[key];
+          const { url, title } = Demo.demo;
+          return (
+            <Link key={key} to={url} style={{ display: "block", padding: 20 }}>
+              {title}
+            </Link>
+          );
+        })}
+      </div>
+    );
   }
-} catch (e) {
-  console.warn(e);
 }
-store.subscribe(() => {
-  localStorage.setItem(
-    LS_KEY,
-    JSON.stringify(CounterValues.exportSelector(store.getState()))
-  );
-});
+
+class App extends Component {
+  render() {
+    return (
+      <Switch>
+        <Route exact path="/" component={Dashboard} />
+        {Object.keys(Demos).map(key => {
+          const Demo = Demos[key];
+          const { url } = Demo.demo;
+          return <Route key={key} path={url} component={Demo} />;
+        })}
+      </Switch>
+    );
+  }
+}
 
 ReactDOM.render(
-  <Provider store={store}>
-    <CounterValues.PollingProvider>
-      <App />
-    </CounterValues.PollingProvider>
-  </Provider>,
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
   document.getElementById("root")
 );
 registerServiceWorker();

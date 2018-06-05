@@ -1,8 +1,8 @@
 // @flow
 
 import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
-import { pairsSelector } from "./reducers/markets";
-import { setExchangePairsAction } from "./actions/markets";
+import { pairsSelector } from "./reducers/app";
+import { setExchangePairsAction } from "./actions/app";
 
 // provide a basic mecanism to stop polling when you leave the tab
 // & immediately poll when you come back.
@@ -21,14 +21,12 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
   };
 };
 
-window.LEDGER_CV_API =
-  window.LEDGER_CV_API || "https://ledger-countervalue-poc.herokuapp.com";
-
 export default createCounterValues({
   log: (...args) => console.log(...args), // eslint-disable-line no-console
   getAPIBaseURL: () => window.LEDGER_CV_API,
   storeSelector: state => state.countervalues,
   pairsSelector,
   setExchangePairsAction,
-  addExtraPollingHooks
+  addExtraPollingHooks,
+  maximumDays: 1 // we don't actually need history
 });

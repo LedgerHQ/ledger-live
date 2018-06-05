@@ -13,6 +13,7 @@ import type {
   Histodays,
   CounterValuesState,
   PairOptExchange,
+  PairConversion,
   Exchange,
   RatesMap
 } from "./types";
@@ -81,6 +82,17 @@ function createCounterValues<State>({
     exchange
   });
 
+  const conversionExtractor = (
+    _store,
+    { from, fromExchange, intermediary, toExchange, to }
+  ): PairConversion => ({
+    from,
+    fromExchange,
+    intermediary,
+    toExchange,
+    to
+  });
+
   const valueExtractor = (_, { value }: { value: number }) => value;
 
   const disableRoundingExtractor = (
@@ -115,34 +127,72 @@ function createCounterValues<State>({
     b[exchange] = map;
   }
 
-  const ratesSelector = createSelector(
+  const getRate = (store, pair, date) => {
+    if (pair.from === pair.to) return 1;
+    const rates = lenseRatesInMap(store.rates, pair);
+    return (
+      rates && ((date && rates[formatCounterValueDay(date)]) || rates.latest)
+    );
+  };
+
+  const getRateWithIntermediary = (
+    store,
+    { from, fromExchange, intermediary, toExchange, to },
+    date
+  ) => {
+    const fromPair = { from, to: intermediary, exchange: fromExchange };
+    const toPair = { from: intermediary, to, exchange: toExchange };
+    const a = getRate(store, fromPair, date);
+    const b = getRate(store, toPair, date);
+    return a && b && a * b;
+  };
+
+  const rateSelector = createSelector(
     storeSelector,
     pairOptExchangeExtractor,
-    (store, pair) => lenseRatesInMap(store.rates, pair)
+    dateExtractor,
+    getRate
   );
 
-  // $FlowFixMe not sure what's wrong
-  const rateByDaySelector = createSelector(
-    ratesSelector,
+  const rateWithIntermediarySelector = createSelector(
+    storeSelector,
+    conversionExtractor,
     dateExtractor,
-    (rates, date) =>
-      rates && ((date && rates[formatCounterValueDay(date)]) || rates.latest)
+    getRateWithIntermediary
   );
+
+  const calculate = (rate, value, disableRounding) =>
+    rate && (disableRounding ? value * rate : Math.round(value * rate));
+
+  const reverse = (rate, value, disableRounding) =>
+    rate && (disableRounding ? value / rate : Math.round(value / rate));
 
   const calculateSelector = createSelector(
-    rateByDaySelector,
+    rateSelector,
     valueExtractor,
     disableRoundingExtractor,
-    (rate, value, disableRounding) =>
-      rate && (disableRounding ? value * rate : Math.round(value * rate))
+    calculate
   );
 
   const reverseSelector = createSelector(
-    rateByDaySelector,
+    rateSelector,
     valueExtractor,
     disableRoundingExtractor,
-    (rate, value, disableRounding) =>
-      rate && (disableRounding ? value / rate : Math.round(value / rate))
+    reverse
+  );
+
+  const calculateWithIntermediarySelector = createSelector(
+    rateWithIntermediarySelector,
+    valueExtractor,
+    disableRoundingExtractor,
+    calculate
+  );
+
+  const reverseWithIntermediarySelector = createSelector(
+    rateWithIntermediarySelector,
+    valueExtractor,
+    disableRoundingExtractor,
+    reverse
   );
 
   // if data format changes, increment this. we don't support importing old data
@@ -197,6 +247,7 @@ function createCounterValues<State>({
   const poll: Poll = () => async (dispatch, getState) => {
     const state = getState();
     const userPairs = pairsSelector(state);
+    const store = storeSelector(state);
     const pairs = [];
     const dedupKeys = {};
     for (const p of userPairs) {
@@ -209,7 +260,7 @@ function createCounterValues<State>({
       }
       if (p.exchange) {
         pair.exchange = p.exchange;
-        const histodays = ratesSelector(state, p);
+        const histodays = lenseRatesInMap(store.rates, p);
         if (histodays) {
           const keys = Object.keys(histodays)
             .filter(a => a !== "latest")
@@ -422,7 +473,9 @@ function createCounterValues<State>({
 
   return {
     calculateSelector,
+    calculateWithIntermediarySelector,
     reverseSelector,
+    reverseWithIntermediarySelector,
     reducer,
     PollingProvider,
     PollingConsumer,
