@@ -32,7 +32,7 @@ import type { State } from "../reducers/app";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import CounterValues from "../countervalues";
 
-const cryptos: Currency[] = listCryptoCurrencies();
+const cryptos: Currency[] = listCryptoCurrencies(true);
 const fiats: Currency[] = listFiatCurrencies();
 
 const styles = theme => ({

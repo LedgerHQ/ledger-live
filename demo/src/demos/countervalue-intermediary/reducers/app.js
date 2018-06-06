@@ -82,8 +82,8 @@ const reducers: { [_: string]: (State, *) => State } = {
     // re-set the countervalueExchange if it is in the pairs
     const globalPair = action.pairs.find(
       p =>
-        p.from === state.intermediaryCurrency &&
-        p.to === state.countervalueCurrency
+        p.from.ticker === state.intermediaryCurrency.ticker &&
+        p.to.ticker === state.countervalueCurrency.ticker
     );
     if (globalPair) {
       state.countervalueExchange = globalPair.exchange;
@@ -93,7 +93,10 @@ const reducers: { [_: string]: (State, *) => State } = {
     state.rows = state.rows.map(row => {
       if (!row.currency) return row;
       const el = action.pairs.find(
-        p => p.from === row.currency && p.to === state.intermediaryCurrency
+        p =>
+          row.currency &&
+          p.from.ticker === row.currency.ticker &&
+          p.to.ticker === state.intermediaryCurrency.ticker
       );
       if (el) {
         return { ...row, exchange: el.exchange };
@@ -126,7 +129,7 @@ export const pairsSelector = createSelector(appSelector, (state: State) => {
     exchange: countervalueExchange
   });
   for (const { currency, exchange } of rows) {
-    if (currency && currency !== intermediaryCurrency) {
+    if (currency && currency.ticker !== intermediaryCurrency.ticker) {
       array.push({ from: currency, to: intermediaryCurrency, exchange });
     }
   }
