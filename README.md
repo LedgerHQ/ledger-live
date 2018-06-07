@@ -33,3 +33,7 @@ yarn watch
 # publish new version
 yarn publish
 ```
+
+## Process on Adding a new coin
+
+Please find instruction in [`src/data/cryptocurrencies.js`](src/data/cryptocurrencies.js).

@@ -40,6 +40,12 @@ test("there are some dev cryptocurrencies", () => {
   expect(all.length).toBeGreaterThan(prod.length);
 });
 
+test("all cryptocurrencies match (by reference) the one you get by id", () => {
+  for (let c of listCryptoCurrencies()) {
+    expect(c).toBe(getCryptoCurrencyById(c.id));
+  }
+});
+
 test("all cryptocurrencies have at least one unit", () => {
   for (let c of listCryptoCurrencies()) {
     expect(c.units.length).toBeGreaterThan(0);
