@@ -28,7 +28,8 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   vertcoin: hash => `http://explorer.vertcoin.info/tx/${hash}`,
   viacoin: hash => `https://explorer.viacoin.org/tx/${hash}`,
   zcash: hash => `https://explorer.zcha.in/transactions/${hash}`,
-  zencash: hash => `https://explorer.zensystem.io/tx/${hash}`
+  zencash: hash => `https://explorer.zensystem.io/tx/${hash}`,
+  clubcoin: () => null
 };
 
 export const getAccountOperationExplorer = (

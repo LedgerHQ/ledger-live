@@ -1,4 +1,28 @@
 //@flow
+/**
+ * ADDING A NEW COIN to the frontend stack:
+ * You need to add the coin in cryptocurrenciesById,
+ * We sort coins by their current market cap rank so please respect this order.
+ *
+ * ~~ fields ~~
+ *
+ * for id, we use by convention lowercased coin name with _ instead of space.
+ * for coinType look at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+ * for ticker, check this is the one used in exchanges (BTW our countervalues api will only support the new coin until we do a redeployment to support it (whitelist))
+ * scheme is generally the id
+ * for color, check with us, this is usually picked by our design team.
+ * for ledgerExplorerId, check with us, it is our internal explorer id (backend explorer team).
+ * for blockAvgTime, check online & on explorers what's the average time between 2 blocks.
+ * if it's a testnet coin, use isTestnetFor field. testnet MUST only be added if we actually support it at ledger (in our explorer api)
+ * if the coin is in bitcoin family, please provide bitcoinLikeInfo field
+ *
+ * ~~ icon ~~
+ *
+ * there is a folder src/data/icons/svg/ that will contain all coin icons.
+ * Either add one by respecting the other icons convention, or ask us and we will have our design team doing it.
+ *
+ */
+
 import type { CryptoCurrency, Unit } from "../types";
 
 const makeTestnetUnit = u => ({
@@ -98,10 +122,6 @@ const ethereumUnitsClassic = [
     magnitude: 0
   }
 ];
-
-// for id, we use by convention lowercased coin name with _ instead of space.
-// for coinType look at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-// for ticker, make sure it works in countervalues api
 
 const cryptocurrenciesById = {
   bitcoin: {
@@ -686,6 +706,33 @@ const cryptocurrenciesById = {
       {
         name: "posw",
         code: "POSW",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  clubcoin: {
+    id: "clubcoin",
+    coinType: 79,
+    name: "Clubcoin",
+    ticker: "CLUB",
+    scheme: "club",
+    color: "#000000", // FIXME
+    family: "bitcoin",
+    ledgerExplorerId: "club",
+    blockAvgTime: 140,
+    bitcoinLikeInfo: {
+      P2PKH: 28,
+      P2SH: 85
+    },
+    units: [
+      {
+        name: "club",
+        code: "CLUB",
         magnitude: 8
       },
       {
