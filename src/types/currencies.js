@@ -3,7 +3,7 @@
 type CurrencyCommon = {
   // display name of a currency
   name: string,
-  // the ticker name in exchanges / countervalue apis (e.g. BTC)
+  // the ticker name in exchanges / countervalue apis (e.g. BTC).
   ticker: string,
   // all units of a currency (e.g. Bitcoin have bitcoin, mBTC, bit, satoshi)
   // by convention, [0] is the default and have "highest" magnitude
@@ -25,6 +25,8 @@ export type Unit = {
 
 export type FiatCurrency = CurrencyCommon;
 
+export type CryptoCurrencyFamily = "bitcoin" | "ethereum" | "ripple";
+
 export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency
   id: string,
@@ -34,7 +36,7 @@ export type CryptoCurrency = CurrencyCommon & {
   scheme: string,
   // used for UI
   color: string,
-  family: "bitcoin" | "ethereum" | "ripple",
+  family: CryptoCurrencyFamily,
   ledgerExplorerId?: string,
   blockAvgTime?: number, // in seconds
   supportsSegwit?: boolean,

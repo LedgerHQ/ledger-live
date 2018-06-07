@@ -695,6 +695,33 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  clubcoin: {
+    id: "clubcoin",
+    coinType: 79,
+    name: "Clubcoin",
+    ticker: "CLUB",
+    scheme: "club",
+    color: "#000000", // FIXME
+    family: "bitcoin",
+    ledgerExplorerId: "club",
+    blockAvgTime: 140,
+    bitcoinLikeInfo: {
+      P2PKH: 28,
+      P2SH: 85
+    },
+    units: [
+      {
+        name: "club",
+        code: "CLUB",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
 
   // Testnets
   bitcoin_testnet: {
