@@ -24,10 +24,6 @@ export type Account = {
   // account name
   name: string,
 
-  // whether or not the account is segwit (useful to not re-parse path everytime)
-  // FIXME later we will replace by purpose as in bip44
-  isSegwit?: ?boolean,
-
   // account balance in satoshi (later will be a BigInt)
   balance: number,
 
@@ -64,7 +60,6 @@ export type AccountRaw = {
   freshAddress: string,
   freshAddressPath: string,
   name: string,
-  isSegwit?: ?boolean,
   balance: number,
   blockHeight: number,
   // ------------------------------------- Specific raw fields

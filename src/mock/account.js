@@ -132,7 +132,6 @@ export function genAccount(
     freshAddress: address,
     freshAddressPath: "49'/1'/1'/0/2",
     name: rng.nextString(rng.nextInt(4, 34)),
-    isSegwit: true,
     balance: 0,
     blockHeight: rng.nextInt(100000, 200000),
     currency,
