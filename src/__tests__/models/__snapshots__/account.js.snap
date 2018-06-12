@@ -10,7 +10,6 @@ Object {
     "freshAddressPath": "49'/1'/1'/0/2",
     "id": "mock_account_model1",
     "index": 1,
-    "isSegwit": true,
     "lastSyncDate": "2018-03-14T17:34:42.000Z",
     "name": "KpRYSSEgIp6Sw2KiPY1Ue",
     "operations": Array [
