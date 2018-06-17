@@ -12,7 +12,8 @@ import {
   chopCurrencyUnitDecimals,
   formatShort,
   decodeURIScheme,
-  encodeURIScheme
+  encodeURIScheme,
+  sanitizeValueString
 } from "../../helpers/currencies";
 
 test("can get currency by coin type", () => {
@@ -348,5 +349,46 @@ test("decodeURIScheme", () => {
     currency: getCryptoCurrencyById("bitcoin"),
     address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV",
     amount: 1234567000000
+  });
+});
+
+test("sanitizeValueString", () => {
+  const btcUnit = getCryptoCurrencyById("bitcoin").units[0];
+  expect(sanitizeValueString(btcUnit, "")).toMatchObject({
+    display: ""
+  });
+  expect(sanitizeValueString(btcUnit, "123456")).toMatchObject({
+    display: "123456",
+    value: "12345600000000"
+  });
+  expect(sanitizeValueString(btcUnit, "1")).toMatchObject({
+    display: "1",
+    value: "100000000"
+  });
+  expect(sanitizeValueString(btcUnit, "1.00")).toMatchObject({
+    display: "1.00",
+    value: "100000000"
+  });
+  expect(sanitizeValueString(btcUnit, ".00")).toMatchObject({
+    display: "0.00"
+  });
+  expect(sanitizeValueString(btcUnit, ".1")).toMatchObject({
+    display: "0.1"
+  });
+  expect(sanitizeValueString(btcUnit, ".123456789")).toMatchObject({
+    display: "0.12345678"
+  });
+  expect(sanitizeValueString(btcUnit, "1ab")).toMatchObject({
+    display: "1"
+  });
+  expect(sanitizeValueString(btcUnit, "1,3")).toMatchObject({
+    display: "1.3"
+  });
+  expect(sanitizeValueString(btcUnit, "1 300")).toMatchObject({
+    display: "1300"
+  });
+  expect(sanitizeValueString(btcUnit, "13.")).toMatchObject({
+    display: "13.",
+    value: "1300000000"
   });
 });
