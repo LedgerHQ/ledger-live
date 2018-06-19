@@ -2,6 +2,8 @@
 import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
 import type { Currency } from "../../types";
 
+import { sanitizeValueString } from "./sanitizeValueString";
+
 import {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
@@ -53,5 +55,6 @@ export {
   hasCryptoCurrencyId,
   encodeURIScheme,
   decodeURIScheme,
-  valueFromUnit
+  valueFromUnit,
+  sanitizeValueString
 };
