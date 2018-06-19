@@ -50,7 +50,10 @@ export type Account = {
   pendingOperations: Operation[],
 
   // used to know when the last sync happened
-  lastSyncDate: Date
+  lastSyncDate: Date,
+
+  // A configuration for the endpoint to use. (usecase: Ripple node)
+  endpointConfig?: ?string
 };
 
 export type AccountRaw = {
@@ -67,5 +70,6 @@ export type AccountRaw = {
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
   unitMagnitude: number,
-  lastSyncDate: string
+  lastSyncDate: string,
+  endpointConfig?: ?string
 };
