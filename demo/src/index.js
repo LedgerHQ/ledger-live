@@ -7,7 +7,7 @@ import registerServiceWorker from "./registerServiceWorker";
 import Demos from "./demos";
 
 window.LEDGER_CV_API =
-  window.LEDGER_CV_API || "https://ledger-countervalue-poc.herokuapp.com";
+  window.LEDGER_CV_API || "https://countervalues.api.live.ledger.com";
 
 class Dashboard extends Component {
   render() {
