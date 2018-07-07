@@ -16,7 +16,7 @@ const initialState: State = [
   {
     from: getCryptoCurrencyById("bitcoin"),
     to: getFiatCurrencyByTicker("USD"),
-    exchange: "Kraken"
+    exchange: "KRAKEN"
   },
   {
     from: getCryptoCurrencyById("bitcoin"),

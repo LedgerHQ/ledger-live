@@ -32,17 +32,17 @@ const initialState: State = {
     },
     {
       currency: getCryptoCurrencyById("litecoin"),
-      exchange: "Binance",
+      exchange: "BINANCE",
       value: 2
     },
     {
       currency: getCryptoCurrencyById("ethereum"),
-      exchange: "Binance",
+      exchange: "BINANCE",
       value: 1
     },
     {
       currency: getCryptoCurrencyById("zencash"),
-      exchange: "Binance",
+      exchange: "BINANCE",
       value: 10
     }
   ]
