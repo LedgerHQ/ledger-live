@@ -30,6 +30,8 @@ export type CryptoCurrencyFamily = "bitcoin" | "ethereum" | "ripple";
 export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency
   id: string,
+  // name of the app as shown in the Manager
+  managerAppName: string,
   // coin type according to slip44. THIS IS NOT GUARANTEED UNIQUE across currencies (e.g testnets,..)
   coinType: number,
   // the scheme name to use when formatting an URI (without the ':')
