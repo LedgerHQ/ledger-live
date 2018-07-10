@@ -29,7 +29,7 @@ export function getBalanceHistory(
   let i = 0; // index of operation
   let t = new Date();
   history.unshift({ date: t, value: balance });
-  t = startOfDay(t); // start of the day
+  t = new Date(startOfDay(t) - 1); // end of yesterday
   for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < account.operations.length && account.operations[i].date > t) {
