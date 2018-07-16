@@ -28,6 +28,7 @@ export type { CryptoCurrencyConfig, CryptoCurrencyObjMap, CryptoCurrencyIds };
  *
  */
 
+import type { BigNumber } from "bignumber.js";
 import type { Account, AccountRaw } from "./account";
 export type { Account, AccountRaw };
 
@@ -53,4 +54,7 @@ export type DailyOperations = {
   completed: boolean
 };
 
-export type BalanceHistory = Array<{ date: Date, value: number }>;
+export type BalanceHistory = Array<{
+  date: Date,
+  value: BigNumber
+}>;

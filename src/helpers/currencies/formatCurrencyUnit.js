@@ -1,4 +1,5 @@
 //@flow
+import type { BigNumber } from "bignumber.js";
 import type { Unit } from "../../types";
 import { getFragPositions } from "./localeUtility";
 
@@ -32,9 +33,11 @@ type FormatFragment =
 
 export function formatCurrencyUnitFragment(
   unit: Unit,
-  value: number,
+  bigNumberValue: BigNumber,
   options?: $Shape<typeof defaultFormatOptions>
 ): FormatFragment[] {
+  const value = bigNumberValue.toNumber(); // FIXME quick escape hatch
+
   if (typeof value !== "number") {
     console.warn("formatCurrencyUnit called with value=", value);
     return [];
@@ -110,7 +113,7 @@ export function formatCurrencyUnitFragment(
 // simplification of formatCurrencyUnitFragment if no fragmented styles is needed
 export function formatCurrencyUnit(
   unit: Unit,
-  value: number,
+  value: BigNumber,
   options?: $Shape<typeof defaultFormatOptions>
 ): string {
   return formatCurrencyUnitFragment(unit, value, options)

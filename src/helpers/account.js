@@ -2,6 +2,7 @@
  * @flow
  * @module helpers/account
  */
+import { BigNumber } from "bignumber.js";
 import type {
   Account,
   Operation,
@@ -33,11 +34,10 @@ export function getBalanceHistory(
   for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < account.operations.length && account.operations[i].date > t) {
-      balance -= getOperationAmountNumber(account.operations[i]);
+      balance = balance.minus(getOperationAmountNumber(account.operations[i]));
       i++;
     }
-    // FIXME use BigInteger
-    history.unshift({ date: t, value: Math.max(balance, 0) });
+    history.unshift({ date: t, value: balance });
     t = new Date(t - 24 * 60 * 60 * 1000);
   }
   return history;
@@ -53,7 +53,7 @@ export function getBalanceHistorySum(
   accounts: Account[],
   daysCount: number,
   // for a given account, calculate the countervalue of a value at given date.
-  calculateAccountCounterValue: (Account, number, Date) => number
+  calculateAccountCounterValue: (Account, BigNumber, Date) => BigNumber
 ): BalanceHistory {
   if (typeof calculateAccountCounterValue !== "function") {
     throw new Error(
@@ -62,7 +62,7 @@ export function getBalanceHistorySum(
   }
   if (accounts.length === 0) {
     const now = Date.now();
-    const zeros: 0[] = Array(daysCount).fill(0);
+    const zeros: BigNumber[] = Array(daysCount).fill(BigNumber(0));
     return zeros.map((value, i) => ({
       date: new Date(now - 24 * 60 * 60 * 1000 * (daysCount - i - 1)),
       value
@@ -79,7 +79,7 @@ export function getBalanceHistorySum(
     .reduce((acc, history) =>
       acc.map((a, i) => ({
         date: a.date,
-        value: a.value + history[i].value
+        value: a.value.plus(history[i].value)
       }))
     );
 }

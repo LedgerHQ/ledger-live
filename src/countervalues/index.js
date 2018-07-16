@@ -1,4 +1,5 @@
 // @flow
+import { BigNumber } from "bignumber.js";
 import React, { Component } from "react";
 import axios from "axios";
 import throttle from "lodash/throttle";
@@ -93,7 +94,7 @@ function createCounterValues<State>({
     to
   });
 
-  const valueExtractor = (_, { value }: { value: number }) => value;
+  const valueExtractor = (_, { value }: { value: BigNumber }) => value;
 
   const disableRoundingExtractor = (
     _,
@@ -162,10 +163,18 @@ function createCounterValues<State>({
   );
 
   const calculate = (rate, value, disableRounding) =>
-    rate && (disableRounding ? value * rate : Math.round(value * rate));
+    rate
+      ? disableRounding
+        ? value.times(rate)
+        : value.times(rate).integerValue()
+      : undefined;
 
   const reverse = (rate, value, disableRounding) =>
-    rate && (disableRounding ? value / rate : Math.round(value / rate));
+    rate
+      ? disableRounding
+        ? value.div(rate)
+        : value.div(rate).integerValue()
+      : undefined;
 
   const calculateSelector = createSelector(
     rateSelector,

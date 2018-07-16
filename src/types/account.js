@@ -1,7 +1,7 @@
 // @flow
 
+import type { BigNumber } from "bignumber.js";
 import type { CryptoCurrency, Unit } from "./currencies";
-
 import type { OperationRaw, Operation } from "./operation";
 
 export type Account = {
@@ -24,8 +24,8 @@ export type Account = {
   // account name
   name: string,
 
-  // account balance in satoshi (later will be a BigInt)
-  balance: number,
+  // account balance in satoshi
+  balance: BigNumber,
 
   // the last block height currently synchronized
   blockHeight: number,
@@ -63,7 +63,7 @@ export type AccountRaw = {
   freshAddress: string,
   freshAddressPath: string,
   name: string,
-  balance: number,
+  balance: string,
   blockHeight: number,
   // ------------------------------------- Specific raw fields
   currencyId: string,

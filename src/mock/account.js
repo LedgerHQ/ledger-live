@@ -2,6 +2,7 @@
  * @module mock/account
  * @flow
  */
+import { BigNumber } from "bignumber.js";
 import { listCryptoCurrencies } from "../helpers/currencies";
 import Prando from "prando";
 import type { Account, Operation, CryptoCurrency } from "../types";
@@ -66,9 +67,12 @@ export function genOperation(
   );
   const address = genAddress(currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
-  const value = Math.floor(
-    rng.nextInt(0, 100000 * rng.next() * rng.next()) /
-      (tickerApproxMarketPrice[currency.ticker] || tickerApproxMarketPrice.BTC)
+  const value = BigNumber(
+    Math.floor(
+      rng.nextInt(0, 100000 * rng.next() * rng.next()) /
+        (tickerApproxMarketPrice[currency.ticker] ||
+          tickerApproxMarketPrice.BTC)
+    )
   );
   if (isNaN(value)) {
     throw new Error("invalid amount generated for " + currency.id);
@@ -78,7 +82,7 @@ export function genOperation(
     hash: genHex(64, rng),
     type,
     value,
-    fee: Math.round(value * 0.01),
+    fee: BigNumber(Math.round(value.toNumber() * 0.01)),
     senders: [type !== "IN" ? genAddress(currency, rng) : address],
     recipients: [type === "IN" ? genAddress(currency, rng) : address],
     blockHash: genHex(64, rng),
@@ -132,7 +136,7 @@ export function genAccount(
     freshAddress: address,
     freshAddressPath: "49'/1'/1'/0/2",
     name: rng.nextString(rng.nextInt(4, 34)),
-    balance: 0,
+    balance: BigNumber(0),
     blockHeight: rng.nextInt(100000, 200000),
     currency,
     unit: rng.nextArrayItem(currency.units),
@@ -153,19 +157,18 @@ export function genAccount(
 }
 
 function ensureNoNegative(operations) {
-  // NB impl bug because https://twitter.com/greweb/status/997781276546555904
-  let total = 0;
+  let total = BigNumber(0);
   for (let i = operations.length - 1; i >= 0; i--) {
     const op = operations[i];
     const amount = getOperationAmountNumber(op);
-    if (total + amount < 0) {
+    if (total.plus(amount).isNegative()) {
       if (op.type === "IN") {
         op.type = "OUT";
       } else if (op.type === "OUT") {
         op.type = "IN";
       }
     }
-    total += getOperationAmountNumber(op);
+    total = total.plus(getOperationAmountNumber(op));
   }
   return total;
 }
