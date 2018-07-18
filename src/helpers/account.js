@@ -37,7 +37,7 @@ export function getBalanceHistory(
       balance = balance.minus(getOperationAmountNumber(account.operations[i]));
       i++;
     }
-    history.unshift({ date: t, value: balance });
+    history.unshift({ date: t, value: BigNumber.max(balance, 0) });
     t = new Date(t - 24 * 60 * 60 * 1000);
   }
   return history;
