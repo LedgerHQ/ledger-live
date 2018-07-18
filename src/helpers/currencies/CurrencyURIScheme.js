@@ -44,7 +44,7 @@ export function decodeURIScheme(str: string): Data {
   Object.assign(data, specificFields);
   if (amount) {
     const amountFloat = BigNumber(amount);
-    if (!amountFloat.isNaN() && amountFloat.isPositive()) {
+    if (!amountFloat.isNaN() && amountFloat.gt(0)) {
       const { magnitude } = currency.units[0];
       data.amount = amountFloat.times(BigNumber(10).pow(magnitude));
     }
