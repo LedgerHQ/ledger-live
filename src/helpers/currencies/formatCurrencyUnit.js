@@ -1,6 +1,8 @@
 //@flow
+import { BigNumber } from "bignumber.js";
 import type { Unit } from "../../types";
 import { getFragPositions } from "./localeUtility";
+import { toLocaleString } from "./BigNumberToLocaleString";
 
 const nonBreakableSpace = " ";
 const defaultFormatOptions = {
@@ -32,18 +34,18 @@ type FormatFragment =
 
 export function formatCurrencyUnitFragment(
   unit: Unit,
-  value: number,
+  value: BigNumber,
   options?: $Shape<typeof defaultFormatOptions>
 ): FormatFragment[] {
-  if (typeof value !== "number") {
+  if (!BigNumber.isBigNumber(value)) {
     console.warn("formatCurrencyUnit called with value=", value);
     return [];
   }
-  if (isNaN(value)) {
+  if (value.isNaN()) {
     console.warn("formatCurrencyUnit called with NaN value!");
     return [];
   }
-  if (!isFinite(value)) {
+  if (!value.isFinite()) {
     console.warn("formatCurrencyUnit called with infinite value=", value);
     return [];
   }
@@ -61,8 +63,8 @@ export function formatCurrencyUnitFragment(
     ...options
   };
   const { magnitude, code } = unit;
-  const floatValue = value / 10 ** magnitude;
-  const floatValueAbs = Math.abs(floatValue);
+  const floatValue = value.div(BigNumber(10).pow(magnitude));
+  const floatValueAbs = floatValue.abs();
   const minimumFractionDigits = showAllDigits ? magnitude : 0;
   const maximumFractionDigits = disableRounding
     ? magnitude + subMagnitude
@@ -72,7 +74,7 @@ export function formatCurrencyUnitFragment(
           0,
           // dynamic max number of digits based on the value itself. to only show significant part
           Math.min(
-            4 - Math.round(Math.log10(floatValueAbs)),
+            4 - Math.round(Math.log10(floatValueAbs.toNumber())),
             magnitude + subMagnitude
           )
         )
@@ -80,9 +82,13 @@ export function formatCurrencyUnitFragment(
 
   const fragValueByKind = {
     sign:
-      alwaysShowSign || floatValue < 0 ? (floatValue < 0 ? "-" : "+") : null,
+      alwaysShowSign || floatValue.isNegative()
+        ? floatValue.isNegative()
+          ? "-"
+          : "+"
+        : null,
     code: showCode ? code : null,
-    value: floatValueAbs.toLocaleString(locale, {
+    value: toLocaleString(floatValueAbs, locale, {
       maximumFractionDigits,
       minimumFractionDigits,
       useGrouping
@@ -110,7 +116,7 @@ export function formatCurrencyUnitFragment(
 // simplification of formatCurrencyUnitFragment if no fragmented styles is needed
 export function formatCurrencyUnit(
   unit: Unit,
-  value: number,
+  value: BigNumber,
   options?: $Shape<typeof defaultFormatOptions>
 ): string {
   return formatCurrencyUnitFragment(unit, value, options)

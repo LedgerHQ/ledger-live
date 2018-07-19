@@ -1,5 +1,7 @@
 // @flow
 
+import type { BigNumber } from "bignumber.js";
+
 export type OperationType = "IN" | "OUT";
 
 export type Operation = {
@@ -16,10 +18,10 @@ export type Operation = {
 
   // this is the atomic value of the operation. it is always positive (later will be a BigInt)
   // in "OUT" case, it includes the fees. in "IN" case, it excludes them.
-  value: number,
+  value: BigNumber,
 
   // fee of the transaction (in satoshi value)
-  fee: number,
+  fee: BigNumber,
 
   // senders & recipients addresses
   senders: string[],
@@ -48,8 +50,8 @@ export type OperationRaw = {
   id: string,
   hash: string,
   type: OperationType,
-  value: number,
-  fee: number,
+  value: string,
+  fee: string,
   senders: string[],
   recipients: string[],
   blockHeight: ?number,

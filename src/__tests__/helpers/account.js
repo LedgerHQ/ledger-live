@@ -51,7 +51,7 @@ test("getBalanceHistorySum with twice same account will double the amounts", () 
     (account, value, date) => value // using identity, at any time, 1 token = 1 USD
   );
   allHistory.forEach((h, i) => {
-    expect(h.value).toBe(2 * history[i].value);
+    expect(h.value.toString()).toBe(history[i].value.times(2).toString());
   });
 });
 
@@ -61,7 +61,7 @@ test("getBalanceHistorySum calculateCounterValue is taken into account", () => {
   const allHistory = getBalanceHistorySum(
     [account, account],
     10,
-    (account, value, date) => value / 2
+    (account, value, date) => value.div(2)
   );
   expect(allHistory).toMatchObject(history);
 });

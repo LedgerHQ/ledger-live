@@ -2,6 +2,7 @@
  * @module models/account
  * @flow
  */
+import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById } from "../helpers/currencies";
 import { createDataModel } from "../DataModel";
 import type { DataModel } from "../DataModel";
@@ -42,6 +43,7 @@ export const createAccountModel = (
         operations,
         pendingOperations,
         lastSyncDate,
+        balance,
         ...acc
       } = rawAccount;
       const currency = getCryptoCurrencyById(currencyId);
@@ -49,13 +51,16 @@ export const createAccountModel = (
         currency.units.find(u => u.magnitude === unitMagnitude) ||
         currency.units[0];
 
-      const convertOperation = ({ date, ...op }) => ({
+      const convertOperation = ({ date, value, fee, ...op }) => ({
         ...op,
         accountId: acc.id,
-        date: new Date(date)
+        date: new Date(date),
+        value: BigNumber(value),
+        fee: BigNumber(fee)
       });
       return {
         ...acc,
+        balance: BigNumber(balance),
         operations: operations.map(convertOperation),
         pendingOperations: pendingOperations.map(convertOperation),
         unit,
@@ -70,12 +75,15 @@ export const createAccountModel = (
       pendingOperations,
       unit,
       lastSyncDate,
+      balance,
       ...acc
     }: Account): AccountRaw => {
-      const convertOperation = ({ date, ...op }) => {
+      const convertOperation = ({ date, value, fee, ...op }) => {
         return {
           ...op,
-          date: date.toISOString()
+          date: date.toISOString(),
+          value: value.toString(),
+          fee: fee.toString()
         };
       };
       return {
@@ -84,7 +92,8 @@ export const createAccountModel = (
         pendingOperations: pendingOperations.map(convertOperation),
         currencyId: currency.id,
         unitMagnitude: unit.magnitude,
-        lastSyncDate: lastSyncDate.toISOString()
+        lastSyncDate: lastSyncDate.toISOString(),
+        balance: balance.toString()
       };
     }
   });

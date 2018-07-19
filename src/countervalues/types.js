@@ -1,4 +1,5 @@
 // @flow
+import type { BigNumber } from "bignumber.js";
 import type { Currency } from "../types/currencies";
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
@@ -112,28 +113,28 @@ export type Module<State> = {
   calculateSelector: (
     state: State,
     {
-      value: number,
+      value: BigNumber,
       from: Currency,
       to: Currency,
       exchange: ?string,
       disableRounding?: boolean,
       date?: Date
     }
-  ) => ?number,
+  ) => ?BigNumber,
 
   // selector which reverse a countervalue for a given pair & exchange
   // returns null if the countervalue is not available
   reverseSelector: (
     state: State,
     {
-      value: number,
+      value: BigNumber,
       from: Currency,
       to: Currency,
       exchange: ?string,
       disableRounding?: boolean,
       date?: Date
     }
-  ) => ?number,
+  ) => ?BigNumber,
 
   // like calculateSelector but with a intermediary currency to use for conversion
   // to use this, it is expected you have correctly provided in pairsSelector
@@ -141,7 +142,7 @@ export type Module<State> = {
   calculateWithIntermediarySelector: (
     state: State,
     {
-      value: number,
+      value: BigNumber,
       from: Currency,
       fromExchange: ?string,
       intermediary: Currency,
@@ -150,14 +151,14 @@ export type Module<State> = {
       disableRounding?: boolean,
       date?: Date
     }
-  ) => ?number,
+  ) => ?BigNumber,
 
   // selector which reverse a countervalue for a given pair & exchange
   // returns null if the countervalue is not available
   reverseWithIntermediarySelector: (
     state: State,
     {
-      value: number,
+      value: BigNumber,
       from: Currency,
       fromExchange: ?string,
       intermediary: Currency,
@@ -166,7 +167,7 @@ export type Module<State> = {
       disableRounding?: boolean,
       date?: Date
     }
-  ) => ?number,
+  ) => ?BigNumber,
 
   // selector which returns a data blob you can save to a file and attempt to import later
   exportSelector: (state: State) => Object,

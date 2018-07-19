@@ -43,7 +43,7 @@ export const getSeparators = memoize(
     locale: string
   ): {
     decimal: ?string,
-    thousands: ?string
+    thousands: ?string // FIXME rename to group
   } => {
     const res = (10000.2).toLocaleString(locale);
     let decimal, thousands;
