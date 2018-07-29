@@ -325,7 +325,7 @@ Array [
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": "29866349",
+    "value": "11947903345224473400",
   },
 ]
 `;
@@ -1363,43 +1363,43 @@ exports[`getBalanceHistorySum with lot of accounts 1`] = `
 Array [
   Object {
     "date": 2018-03-06T03:59:59.999Z,
-    "value": "2828445801197695384",
+    "value": "2828279119179114277",
   },
   Object {
     "date": 2018-03-07T03:59:59.999Z,
-    "value": "2799579300316895988",
+    "value": "2799444600540921750",
   },
   Object {
     "date": 2018-03-08T03:59:59.999Z,
-    "value": "4277781836434639336",
+    "value": "4277679037446629699",
   },
   Object {
     "date": 2018-03-09T03:59:59.999Z,
-    "value": "7773972601747911553",
+    "value": "7773905757391307082",
   },
   Object {
     "date": 2018-03-10T03:59:59.999Z,
-    "value": "10563476467022889768",
+    "value": "10563374875287945915",
   },
   Object {
     "date": 2018-03-11T03:59:59.999Z,
-    "value": "12922115081261401136",
+    "value": "12922028696652082626",
   },
   Object {
     "date": 2018-03-12T03:59:59.999Z,
-    "value": "15632810714650137203",
+    "value": "15632700338666775383",
   },
   Object {
     "date": 2018-03-13T03:59:59.999Z,
-    "value": "22152503222626330244",
+    "value": "22152417838825356659",
   },
   Object {
     "date": 2018-03-14T03:59:59.999Z,
-    "value": "27615437513729597463",
+    "value": "27615360904310242679",
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": "30510624192861857366",
+    "value": "30510589449765842140",
   },
 ]
 `;
@@ -1420,31 +1420,31 @@ Array [
   },
   Object {
     "date": 2018-03-09T03:59:59.999Z,
-    "value": "2840441",
+    "value": "100836740",
   },
   Object {
     "date": 2018-03-10T03:59:59.999Z,
-    "value": "11165355",
+    "value": "396374109",
   },
   Object {
     "date": 2018-03-11T03:59:59.999Z,
-    "value": "24381380",
+    "value": "865547760",
   },
   Object {
     "date": 2018-03-12T03:59:59.999Z,
-    "value": "21492208",
+    "value": "762981165",
   },
   Object {
     "date": 2018-03-13T03:59:59.999Z,
-    "value": "22044773",
+    "value": "782597487",
   },
   Object {
     "date": 2018-03-14T03:59:59.999Z,
-    "value": "35944221",
+    "value": "1276032795",
   },
   Object {
     "date": 2018-03-14T17:34:42.000Z,
-    "value": "40043374",
+    "value": "1421554131",
   },
 ]
 `;
@@ -1988,7 +1988,7 @@ Object {
           "blockHash": "5FB66BFF0FD13259828A83BF7AC8DC2691E4ACB69C37647F2F51E6974AB0BB01",
           "blockHeight": 158885,
           "date": 2018-03-14T12:45:18.912Z,
-          "fee": "30113",
+          "fee": "1069009",
           "hash": "BEA4325AF5D4B0EACBEB34DEB17E7E8076F1E5E026DDFD3D923EE63201B08193",
           "id": "mock_op_0_mock_account_gaobd8",
           "recipients": Array [
@@ -1998,14 +1998,14 @@ Object {
             "1sH7ANYGgdmNngdWY2N1KcWdSLYSntpvBy",
           ],
           "type": "IN",
-          "value": "3011264",
+          "value": "106900941",
         },
         Object {
           "accountId": "mock_account_gaobd8",
           "blockHash": "465F3C8B3BB8057E84FF1C25D2E902C9CFE5FAA7E4131D3EA3A7468D7A0BE379",
           "blockHeight": 158885,
           "date": 2018-03-14T12:37:29.877Z,
-          "fee": "42667",
+          "fee": "1514689",
           "hash": "09ADEA40642FE0BBF8985E12F7FAD0FB0FB34A39F5B15D38B306A305E17C25C3",
           "id": "mock_op_1_mock_account_gaobd8",
           "recipients": Array [
@@ -2015,7 +2015,7 @@ Object {
             "1HePZJvkJmAgtHCNjVaS6VzbVsk5YxUZbiY",
           ],
           "type": "OUT",
-          "value": "4266688",
+          "value": "151468916",
         },
         Object {
           "accountId": "mock_account_gaobd9",
@@ -2124,7 +2124,7 @@ Object {
           "blockHash": "545E099614C53A33735C0F1C89E3BF8FCD5D993D777A6AE9CC19022C57E03990",
           "blockHeight": 158879,
           "date": 2018-03-14T11:16:53.700Z,
-          "fee": "91092",
+          "fee": "3233802",
           "hash": "3C47EDB741F0C66AEA8604902F90A568367A5A8ED763BFDCC666FA8F537D7C28",
           "id": "mock_op_2_mock_account_gaobd8",
           "recipients": Array [
@@ -2134,7 +2134,7 @@ Object {
             "173uEibVCBgfb4i2VRWgypijmjXweZp",
           ],
           "type": "IN",
-          "value": "9109213",
+          "value": "323380207",
         },
         Object {
           "accountId": "mock_account_gaobd4",
@@ -2158,7 +2158,7 @@ Object {
           "blockHash": "146250CB096F438751A2AEA57EAB3689997F3133019FCB9D3001236FBF8D0BD4",
           "blockHeight": 158874,
           "date": 2018-03-14T10:00:41.145Z,
-          "fee": "7298",
+          "fee": "259089",
           "hash": "608D4FA2F0E14865CD7E57F25C5877BF6CB59ED1AB41BEFB438D85CC9BAEAC6A",
           "id": "mock_op_3_mock_account_gaobd8",
           "recipients": Array [
@@ -2168,7 +2168,7 @@ Object {
             "1D2BK7rXSocNKYovtbW7unmuruSq9Adfn",
           ],
           "type": "IN",
-          "value": "729821",
+          "value": "25908900",
         },
         Object {
           "accountId": "mock_account_gaobd7",
@@ -2401,7 +2401,7 @@ Object {
           "blockHash": "22FC459422FFF90D1D9A02829C17E35E159CFB33C52AF417CDB33F1BC66718A4",
           "blockHeight": 158847,
           "date": 2018-03-14T03:14:46.935Z,
-          "fee": "16680",
+          "fee": "592134",
           "hash": "01E4693D783E7599D49EE5068C5334CB38A4DC9017FAEB059739FEA0C1B80F87",
           "id": "mock_op_4_mock_account_gaobd8",
           "recipients": Array [
@@ -2411,14 +2411,14 @@ Object {
             "1ChTx5BdEiv47v42BupY6tNrSMpFmJufUSj",
           ],
           "type": "OUT",
-          "value": "1667966",
+          "value": "59213403",
         },
         Object {
           "accountId": "mock_account_gaobd8",
           "blockHash": "AF386AB61CBD6F1C0700113CC12EDDDE1AE0D77679EEF3DE09F06F1D28AD8A1A",
           "blockHeight": 158847,
           "date": 2018-03-14T03:14:44.119Z,
-          "fee": "28767",
+          "fee": "1021244",
           "hash": "9FCD6FA57370AE82CD4F1D13BC4984D44185BD1B0757FD003484C19FB57BED2B",
           "id": "mock_op_5_mock_account_gaobd8",
           "recipients": Array [
@@ -2428,7 +2428,7 @@ Object {
             "1WqbvfMYaGnay7uKra6i4vvwGj",
           ],
           "type": "IN",
-          "value": "2876716",
+          "value": "102124413",
         },
         Object {
           "accountId": "mock_account_gaobd7",
@@ -2554,7 +2554,7 @@ Object {
           "blockHash": "63C25BC34D4133FE3F4550F3A5F57CD6DAC95BD206FD7099097ABEC2722B2B61",
           "blockHeight": 158838,
           "date": 2018-03-14T01:01:52.663Z,
-          "fee": "51109",
+          "fee": "1814401",
           "hash": "C3E1EBDC2D45177F487F2F4CF5325BBA2A4D5BD609FE72FDA0A39FDA72F3DD9B",
           "id": "mock_op_6_mock_account_gaobd8",
           "recipients": Array [
@@ -2564,7 +2564,7 @@ Object {
             "1cRXqpfL4VggcUfiU6eAVESNgsVHxcx",
           ],
           "type": "IN",
-          "value": "5110937",
+          "value": "181440052",
         },
         Object {
           "accountId": "mock_account_gaobd5",
@@ -3030,7 +3030,7 @@ Object {
           "blockHash": "F6B7EC6BFEE76865A7E4111B6A76C0F759BAC31F25589B161F49E131E085E770",
           "blockHeight": 158778,
           "date": 2018-03-13T09:55:57.435Z,
-          "fee": "16862",
+          "fee": "598597",
           "hash": "25EC402110AA9F1D5FB4BBD4DA0CBB229F3B60F589DA803741B1BE8D0C7A27CD",
           "id": "mock_op_7_mock_account_gaobd8",
           "recipients": Array [
@@ -3040,7 +3040,7 @@ Object {
             "18kgT7kWTqCZYKtjevycdhduJBMo",
           ],
           "type": "OUT",
-          "value": "1686171",
+          "value": "59859668",
         },
         Object {
           "accountId": "mock_account_gaobd1",
@@ -3256,7 +3256,7 @@ Object {
           "blockHash": "EE60ABE1ECBE419AACD82088BAF48F884AEDB1CA37B17A94C1E8DF385CEE38E3",
           "blockHeight": 158749,
           "date": 2018-03-13T02:41:28.108Z,
-          "fee": "33628",
+          "fee": "1193792",
           "hash": "805146DCB8AC4BF19C0DD802BE5A2BC6CFE99E834CFDD262A7F3DA639178C686",
           "id": "mock_op_8_mock_account_gaobd8",
           "recipients": Array [
@@ -3266,7 +3266,7 @@ Object {
             "1ESjuMgJQ9LuQuijgnmRXJmZpAo48pA",
           ],
           "type": "IN",
-          "value": "3362761",
+          "value": "119379197",
         },
         Object {
           "accountId": "mock_account_gaobd4",
@@ -3290,7 +3290,7 @@ Object {
           "blockHash": "8A60E480E4C2DE0753B82C95C33D58C522B914EE89831AC25D1D8D951B74482D",
           "blockHeight": 158747,
           "date": 2018-03-13T02:05:58.052Z,
-          "fee": "2795",
+          "fee": "99224",
           "hash": "3B1051FF056076FB6832D72F55D4A29A03C5FA01EE61DE56667B9224EADB1360",
           "id": "mock_op_9_mock_account_gaobd8",
           "recipients": Array [
@@ -3300,7 +3300,7 @@ Object {
             "1m6nqRZDFeDd71PzmS54DUojox5aWJ",
           ],
           "type": "IN",
-          "value": "279500",
+          "value": "9922351",
         },
         Object {
           "accountId": "mock_account_gaobd2",
@@ -3341,7 +3341,7 @@ Object {
           "blockHash": "7B57BD87F243DD544D2FB0CBA198F3760A78A1A11A1694D207A25CFE14F7F666",
           "blockHeight": 158744,
           "date": 2018-03-13T01:30:16.353Z,
-          "fee": "2664",
+          "fee": "94559",
           "hash": "D75E8229F8165AF88C69B06BD1E306DA93BDB553A8AE2068BC15A70184788400",
           "id": "mock_op_10_mock_account_gaobd8",
           "recipients": Array [
@@ -3351,7 +3351,7 @@ Object {
             "1X8Y79JJjeLN4ppEsHDP6RGx8YkRd6JcTUg",
           ],
           "type": "IN",
-          "value": "266360",
+          "value": "9455874",
         },
       ],
       "day": 2018-03-12T04:00:00.000Z,
