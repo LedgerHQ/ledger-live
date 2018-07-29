@@ -22,7 +22,8 @@
   "jest": {
     "setupFiles": [
       "<rootDir>/jest/globals.js"
-    ]
+    ],
+    "testURL": "http://localhost"
   },
   "dependencies": {
     "axios": "^0.18.0",
