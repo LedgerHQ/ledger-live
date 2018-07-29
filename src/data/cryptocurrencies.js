@@ -764,6 +764,50 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  ubiq: {
+    id: "ubiq",
+    coinType: 108,
+    name: "Ubiq",
+    managerAppName: "Ubiq",
+    ticker: "UBQ",
+    scheme: "ubiq",
+    color: "#02e785",
+    family: "ethereum",
+    ledgerExplorerId: "ubq",
+    blockAvgTime: 88,
+    units: [
+      {
+        name: "ubiq",
+        code: "UBQ",
+        symbol: "Ξ",
+        magnitude: 18
+      },
+      {
+        name: "Gwei",
+        code: "Gwei",
+        symbol: "Ξ",
+        magnitude: 9
+      },
+      {
+        name: "Mwei",
+        code: "Mwei",
+        symbol: "Ξ",
+        magnitude: 6
+      },
+      {
+        name: "Kwei",
+        code: "Kwei",
+        symbol: "Ξ",
+        magnitude: 3
+      },
+      {
+        name: "wei",
+        code: "wei",
+        symbol: "Ξ",
+        magnitude: 0
+      }
+    ]
+  },
 
   // Testnets
   bitcoin_testnet: {
