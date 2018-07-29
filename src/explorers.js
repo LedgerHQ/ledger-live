@@ -5,17 +5,17 @@ import type { Account, Operation, CryptoCurrencyConfig } from "./types";
 type Explorer = string => ?string;
 
 export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
+  bitcoin: hash => `https://blockchain.info/tx/${hash}`,
   bitcoin_cash: hash => `https://bitcoincash.blockexplorer.com/tx/${hash}`,
   bitcoin_gold: hash => `https://btgexplorer.com/tx/${hash}`,
   bitcoin_testnet: hash => `https://testnet.blockchain.info/tx/${hash}`,
-  bitcoin: hash => `https://blockchain.info/tx/${hash}`,
   clubcoin: hash => `https://chainz.cryptoid.info/club/tx.dws?${hash}.htm`,
   dash: hash => `https://explorer.dash.org/tx/${hash}`,
   digibyte: hash => `https://digiexplorer.info/tx/${hash}`,
   dogecoin: hash => `https://dogechain.info/tx/${hash}`,
+  ethereum: hash => `https://etherscan.io/tx/${hash}`,
   ethereum_classic: hash => `https://gastracker.io/tx/${hash}`,
   ethereum_testnet: hash => `https://ropsten.etherscan.io/tx/${hash}`,
-  ethereum: hash => `https://etherscan.io/tx/${hash}`,
   hcash: hash => `http://explorer.h.cash/tx/${hash}`,
   komodo: hash => `https://kmdexplorer.io/tx/${hash}`,
   litecoin: hash => `https://live.blockcypher.com/ltc/tx/${hash}/`,
