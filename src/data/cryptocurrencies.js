@@ -20,6 +20,13 @@
  * there is a folder src/data/icons/svg/ that will contain all coin icons.
  * Either add one by respecting the other icons convention, or ask us and we will have our design team doing it.
  *
+ * ~~ also ~~
+ *
+ * Once added here, you also need to update CryptoCurrencyConfig in `src/explorers.js`.
+ * In addition, you will need to run `yarn test`.
+ * If it doesn't pass you will need to update the snapshots with `TZ=America/New_York jest -u`.
+ * If you don't have `jest` installed locally you can install it with `npm install -g jest`.
+ *
  */
 
 import type { CryptoCurrency, Unit } from "../types";
@@ -760,6 +767,50 @@ const cryptocurrenciesById = {
       {
         name: "satoshi",
         code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  ubiq: {
+    id: "ubiq",
+    coinType: 108,
+    name: "Ubiq",
+    managerAppName: "Ubiq",
+    ticker: "UBQ",
+    scheme: "ubiq",
+    color: "#02e785",
+    family: "ethereum",
+    ledgerExplorerId: "ubq",
+    blockAvgTime: 88,
+    units: [
+      {
+        name: "ubiq",
+        code: "UBQ",
+        symbol: "Ξ",
+        magnitude: 18
+      },
+      {
+        name: "Gwei",
+        code: "Gwei",
+        symbol: "Ξ",
+        magnitude: 9
+      },
+      {
+        name: "Mwei",
+        code: "Mwei",
+        symbol: "Ξ",
+        magnitude: 6
+      },
+      {
+        name: "Kwei",
+        code: "Kwei",
+        symbol: "Ξ",
+        magnitude: 3
+      },
+      {
+        name: "wei",
+        code: "wei",
+        symbol: "Ξ",
         magnitude: 0
       }
     ]

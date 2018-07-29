@@ -25,6 +25,7 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   ripple: hash => `https://bithomp.com/explorer/${hash}`,
   stealthcoin: () => null, // FIXME can't find a reliable/official explorer
   stratis: () => null, // FIXME can't find a reliable/official explorer
+  ubiq: hash => `https://ubiqscan.io/tx/${hash}`,
   vertcoin: hash => `http://explorer.vertcoin.info/tx/${hash}`,
   viacoin: hash => `https://explorer.viacoin.org/tx/${hash}`,
   zcash: hash => `https://explorer.zcha.in/transactions/${hash}`,
