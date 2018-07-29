@@ -22,7 +22,10 @@
  *
  * ~~ also ~~
  *
- * Once added here, you also need to update CryptoCurrencyConfig in src/explorers.js
+ * Once added here, you also need to update CryptoCurrencyConfig in `src/explorers.js`.
+ * In addition, you will need to run `yarn test`.
+ * If it doesn't pass you will need to update the snapshots with `TZ=America/New_York jest -u`.
+ * If you don't have `jest` installed locally you can install it with `npm install -g jest`.
  *
  */
 
