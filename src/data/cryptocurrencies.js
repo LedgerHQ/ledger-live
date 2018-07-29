@@ -20,6 +20,10 @@
  * there is a folder src/data/icons/svg/ that will contain all coin icons.
  * Either add one by respecting the other icons convention, or ask us and we will have our design team doing it.
  *
+ * ~~ also ~~
+ *
+ * Once added here, you also need to update CryptoCurrencyConfig in src/explorers.js
+ *
  */
 
 import type { CryptoCurrency, Unit } from "../types";
