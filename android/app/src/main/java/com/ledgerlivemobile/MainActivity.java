@@ -1,4 +1,4 @@
-package com.ledgerwalletmobile;
+package com.ledgerlivemobile;
 
 import android.os.Bundle;
 
@@ -14,7 +14,7 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "ledgerwalletmobile";
+        return "ledgerlivemobile";
     }
 
     @Override

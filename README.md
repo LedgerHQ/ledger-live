@@ -1,4 +1,4 @@
-# ledger-wallet-mobile
+# ledger-live-mobile
 
 Mobile application for the Ledger Wallet
 

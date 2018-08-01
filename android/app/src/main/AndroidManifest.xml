@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ledgerwalletmobile"
+    package="com.ledgerlivemobile"
     android:versionCode="1"
     android:versionName="1.0">
 

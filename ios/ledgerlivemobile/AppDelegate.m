@@ -25,7 +25,7 @@
 
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"ledgerwalletmobile"
+                                                      moduleName:@"ledgerlivemobile"
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
 [RNSentry installWithRootView:rootView];
