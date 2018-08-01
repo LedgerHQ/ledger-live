@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { createStructuredSelector } from "reselect";
 import { Switch, Alert } from "react-native";
 import { connect } from "react-redux";
-import { saveSettings } from "../../actions/settings";
+import { setAuthSecurity } from "../../actions/settings";
 import { authSecurityEnabledSelector } from "../../reducers/settings";
 import auth from "../../context/AuthPass/auth";
 
@@ -12,7 +12,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = {
-  saveSettings
+  setAuthSecurity
 };
 
 class AuthSecurityToggle extends Component<*, { validationPending: boolean }> {
@@ -40,7 +40,7 @@ class AuthSecurityToggle extends Component<*, { validationPending: boolean }> {
         return;
       }
     }
-    this.props.saveSettings({ authSecurityEnabled });
+    this.props.setAuthSecurity(authSecurityEnabled);
   };
 
   render() {
@@ -55,4 +55,7 @@ class AuthSecurityToggle extends Component<*, { validationPending: boolean }> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthSecurityToggle);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AuthSecurityToggle);

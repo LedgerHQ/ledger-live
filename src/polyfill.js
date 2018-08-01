@@ -13,5 +13,5 @@ if (__DEV__) {
     } catch (e) {
       console.warn(e);
     }
-  }, 500);
+  }, 100);
 }

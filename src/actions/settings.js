@@ -1,38 +1,31 @@
 // @flow
 
-import type { Dispatch } from "redux";
-import db from "../db";
-import type { CurrencySettings } from "../reducers/settings";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
 
-type Settings = {};
+type SetExchangePairs = (
+  Array<{
+    from: Currency,
+    to: Currency,
+    exchange: ?string
+  }>
+) => *;
 
-export type SaveSettings = Settings => (Dispatch<*>) => void;
+export const setExchangePairsAction: SetExchangePairs = pairs => ({
+  type: "SETTINGS_SET_PAIRS",
+  pairs
+});
 
-export const saveSettings: SaveSettings = payload => dispatch => {
-  dispatch({
-    type: "DB:SAVE_SETTINGS",
-    payload
-  });
-};
+export const setAuthSecurity = (authSecurityEnabled: boolean) => ({
+  type: "SETTINGS_SET_AUTH_SECURITY",
+  authSecurityEnabled
+});
 
-type InitSettings = () => (Dispatch<*>) => Promise<void>;
+export const setCountervalue = (counterValue: string) => ({
+  type: "SETTINGS_SET_COUNTERVALUE",
+  counterValue
+});
 
-export const initSettings: InitSettings = () => async dispatch => {
-  const settings = (await db.get("settings")) || {};
-  if (Object.keys(settings).length === 0) {
-    return;
-  }
-  dispatch({
-    type: "FETCH_SETTINGS",
-    payload: settings
-  });
-};
-
-export const updateCurrencySettings = (
-  coinType: number,
-  patch: $Shape<CurrencySettings>
-) => ({
-  type: "DB:UPDATE_CURRENCY_SETTINGS",
-  coinType,
-  patch
+export const importSettings = (settings: *) => ({
+  type: "SETTINGS_IMPORT",
+  settings
 });

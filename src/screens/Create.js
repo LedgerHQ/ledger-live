@@ -48,6 +48,7 @@ class Icon extends Component<*, *> {
             />
           </View>
           {modalOpened ? (
+            // $FlowFixMe
             <CreateModal onRequestClose={this.onRequestClose} />
           ) : null}
         </View>
