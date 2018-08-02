@@ -8,8 +8,8 @@ See `poc` branch as a reference implementation.
 ## UI ONLY things to do (with estimation time)
 
 > These can be worked with mock data.
+> Almost all these tasks can be done in parallel and are not dependent from each other, so feel free to pick and dispatch between devs. 
 
-- (1d) @gre – connect mock data to our store & integrate all redux part that make sense from desktop.
 - (3d-7d) Implement the Dashboard screen without the graph card but with a functional operation list.
 - (3d) Bootstrap a basic version of Accounts screen
 - (3d) Bootstrap a basic version of Operation Details
