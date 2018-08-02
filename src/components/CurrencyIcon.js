@@ -2,19 +2,18 @@
 
 import React, { PureComponent } from "react";
 import { View } from "react-native";
-import { getIconByCoinType } from "@ledgerhq/currencies/reactNative";
-import type { Currency } from "@ledgerhq/currencies";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
 
 type Props = {
   currency: Currency,
   size: number
 };
 
-type typeIcon = React$ComponentType<{ size: number, color: string }>;
 export default class CurrencyIcon extends PureComponent<Props> {
   render() {
     const { size, currency } = this.props;
-    const IconComponent: typeIcon = getIconByCoinType(currency.coinType);
+    const IconComponent = getCryptoCurrencyIcon(currency);
     if (!IconComponent) {
       console.warn(
         `No icon for currency ${currency.name} (coinType ${currency.coinType})`

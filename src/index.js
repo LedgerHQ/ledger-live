@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, StatusBar } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import colors from "./colors";
-import CounterValuePollingProvider from "./context/CounterValuePolling";
+import CounterValues from "./countervalues";
 import LocaleProvider from "./context/Locale";
 import RebootProvider from "./context/Reboot";
 import AuthPass from "./context/AuthPass";
@@ -66,9 +66,9 @@ export default class Root extends Component<{}, {}> {
                     <AuthFailedApp />
                   ) : (
                     <LocaleProvider>
-                      <CounterValuePollingProvider>
+                      <CounterValues.PollingProvider>
                         <App />
-                      </CounterValuePollingProvider>
+                      </CounterValues.PollingProvider>
                     </LocaleProvider>
                   )
                 }

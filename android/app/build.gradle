@@ -103,7 +103,7 @@ android {
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        applicationId "com.ledgerwalletmobile"
+        applicationId "com.ledgerlivemobile"
         minSdkVersion 18
         targetSdkVersion 27
         renderscriptTargetApi 20

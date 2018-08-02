@@ -8,4 +8,4 @@ if (Config.SENTRY_DSN) {
   Sentry.config(Config.SENTRY_DSN).install();
 }
 
-AppRegistry.registerComponent("ledgerwalletmobile", () => App);
+AppRegistry.registerComponent("ledgerlivemobile", () => App);

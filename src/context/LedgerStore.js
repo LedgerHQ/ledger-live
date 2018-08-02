@@ -5,15 +5,17 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
 import dbMiddleware from "../middlewares/db";
+import db from "../db";
+import CounterValues from "../countervalues";
 import reducers from "../reducers";
-import { initAccounts } from "../actions/accounts";
-import { initSettings } from "../actions/settings";
-import { initCounterValues } from "../actions/counterValues";
+import { importSettings } from "../actions/settings";
+import { importStore as importAccounts } from "../actions/accounts";
 
 const createLedgerStore = () =>
   createStore(
     reducers,
     undefined,
+    // $FlowFixMe
     compose(
       applyMiddleware(thunk, dbMiddleware),
       typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
@@ -48,9 +50,16 @@ export default class LedgerStoreProvider extends Component<
 
   async init() {
     const { store } = this.state;
-    await store.dispatch(initSettings());
-    await store.dispatch(initCounterValues());
-    await store.dispatch(initAccounts());
+
+    const settingsData = await db.get("settings");
+    store.dispatch(importSettings(settingsData));
+
+    const accountsData = await db.get("accounts");
+    store.dispatch(importAccounts(accountsData));
+
+    const countervaluesData = await db.get("countervalues");
+    store.dispatch(CounterValues.importAction(countervaluesData));
+
     this.setState({ ready: true }, () => {
       this.props.onInitFinished();
     });

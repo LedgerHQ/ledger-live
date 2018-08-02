@@ -1,102 +1,109 @@
 // @flow
+
 import { handleActions } from "redux-actions";
-import { getFiatUnit, hasFiatUnit } from "@ledgerhq/currencies";
-import type { Currency } from "@ledgerhq/currencies";
-import Locale from "react-native-locale"; // eslint-disable-line import/no-unresolved
-import type { State } from ".";
+import {
+  findCurrencyByTicker,
+  getCryptoCurrencyById,
+  getFiatCurrencyByTicker
+} from "@ledgerhq/live-common/lib/helpers/currencies";
+import { createSelector } from "reselect";
+import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
 
-export type CurrencySettings = {
-  confirmations: number,
-  confirmationsToSpend: number,
-  transactionFees: string,
-  blockchainExplorer: string
-};
-
-export type CurrenciesSettings = {
-  [coinType: number]: CurrencySettings
-};
+export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
 
 export type SettingsState = {
   counterValue: string,
-  orderAccounts: string,
-  deltaChangeColorLocale: "western" | "eastern",
-  chartTimeRange: number,
-  currenciesSettings: CurrenciesSettings,
+  counterValueExchange: ?string,
   authSecurityEnabled: boolean
 };
 
-const locale = Locale.constants();
-
-const getLocaleFiat = () =>
-  hasFiatUnit(locale.currencyCode) ? locale.currencyCode : "USD";
-
-const getLocaleColor = () => {
-  const eastern = ["KR", "JP", "CN", "KP"];
-
-  return eastern.indexOf(locale.countryCode) !== -1 ? "eastern" : "western";
-};
-
-const defaultState: SettingsState = {
-  counterValue: getLocaleFiat(),
-  orderAccounts: "balance|desc",
-  deltaChangeColorLocale: getLocaleColor(),
-  chartTimeRange: 7,
-  currenciesSettings: {},
+const INITIAL_STATE: SettingsState = {
+  counterValue: "USD",
+  counterValueExchange: null,
   authSecurityEnabled: false
 };
 
-const state: SettingsState = {
-  ...defaultState
-};
+function asCryptoCurrency(c: Currency): ?CryptoCurrency {
+  return "id" in c ? c : null;
+}
 
 const handlers: Object = {
-  SAVE_SETTINGS: (
-    state: SettingsState,
-    { payload: settings }: { payload: * }
-  ) => ({
+  SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
     ...state,
     ...settings
   }),
-  FETCH_SETTINGS: (
+
+  SETTINGS_SET_AUTH_SECURITY: (
     state: SettingsState,
-    { payload: settings }: { payload: * }
-  ) => ({
+    { authSecurityEnabled }
+  ) => ({ ...state, authSecurityEnabled }),
+
+  SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
     ...state,
-    ...settings
+    counterValue,
+    counterValueExchange: null // also reset the exchange
   }),
-  UPDATE_CURRENCY_SETTINGS: (
-    { currenciesSettings, ...state }: SettingsState,
-    { coinType, patch }
-  ) => ({
-    ...state,
-    currenciesSettings: {
-      ...currenciesSettings,
-      [coinType]: { ...currenciesSettings[coinType], ...patch }
+
+  SETTINGS_SET_PAIRS: (
+    state: SettingsState,
+    {
+      pairs
+    }: {
+      pairs: Array<{
+        from: Currency,
+        to: Currency,
+        exchange: string
+      }>
     }
-  })
+  ) => {
+    const counterValueCurrency = counterValueCurrencyLocalSelector(state);
+    const copy = { ...state };
+    copy.currenciesSettings = { ...copy.currenciesSettings };
+    for (const { to, from, exchange } of pairs) {
+      const fromCrypto = asCryptoCurrency(from);
+      if (fromCrypto && to.ticker === intermediaryCurrency.ticker) {
+        copy.currenciesSettings[fromCrypto.id] = {
+          ...copy.currenciesSettings[fromCrypto.id],
+          exchange
+        };
+      } else if (
+        from.ticker === intermediaryCurrency.ticker &&
+        to.ticker === counterValueCurrency.ticker
+      ) {
+        copy.counterValueExchange = exchange;
+      }
+    }
+    return copy;
+  }
 };
 
-export const defaultCurrencySettingsForCurrency = (
-  _currency: Currency
-): CurrencySettings => ({
-  confirmations: 5,
-  confirmationsToSpend: 10,
-  transactionFees: "high",
-  blockchainExplorer: "blockchain.info"
-});
+const storeSelector = (state: *): SettingsState => state.settings;
 
-export const currencySettingsSelector = (state: State, currency: Currency) => ({
-  ...defaultCurrencySettingsForCurrency(currency),
-  ...state.settings.currenciesSettings[currency.coinType]
-});
+export const exportSelector = storeSelector;
 
-export const fiatUnitSelector = (state: State) =>
-  getFiatUnit(state.settings.counterValue);
+const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
+  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
-export const chartTimeRangeSelector = (state: State) =>
-  state.settings.chartTimeRange;
+export const counterValueCurrencySelector = createSelector(
+  storeSelector,
+  counterValueCurrencyLocalSelector
+);
 
-export const authSecurityEnabledSelector = (state: State) =>
-  state.settings.authSecurityEnabled;
+const counterValueExchangeLocalSelector = (s: SettingsState) =>
+  s.counterValueExchange;
 
-export default handleActions(handlers, state);
+export const counterValueExchangeSelector = createSelector(
+  storeSelector,
+  counterValueExchangeLocalSelector
+);
+
+export const currencySettingsSelector = (_s: *, _o: *) => ({
+  exchange: "BINANCE"
+}); // FIXME
+
+export const authSecurityEnabledSelector = createSelector(
+  storeSelector,
+  s => s.authSecurityEnabled
+);
+
+export default handleActions(handlers, INITIAL_STATE);
