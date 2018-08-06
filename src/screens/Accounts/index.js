@@ -18,16 +18,16 @@ const navigationOptions = {
       source={require("../../images/accounts.png")}
       style={{ tintColor, width: 32, height: 32 }}
     />
-  )
+  ),
 };
 
 const mapStateToProps = createStructuredSelector({
-  accounts: accountsSelector
+  accounts: accountsSelector,
 });
 
 type Props = {
   navigation: *,
-  accounts: Account[]
+  accounts: Account[],
 };
 class Accounts extends Component<Props> {
   static navigationOptions = navigationOptions;
@@ -56,7 +56,7 @@ class Accounts extends Component<Props> {
         title="Settings"
         onPress={() =>
           this.props.navigation.navigate("AccountSettings", {
-            accountId: item.id
+            accountId: item.id,
           })
         }
       />
@@ -86,6 +86,6 @@ export default connect(mapStateToProps)(Accounts);
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });

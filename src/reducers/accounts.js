@@ -8,33 +8,33 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 export const accountModel = createAccountModel();
 
 export type AccountsState = {
-  active: Account[]
+  active: Account[],
 };
 
 const initialState: AccountsState = {
-  active: []
+  active: [],
 };
 
 const handlers: Object = {
-  ACCOUNTS_IMPORT: (s, { state }) => state
+  ACCOUNTS_IMPORT: (s, { state }) => state,
 };
 
 // Selectors
 
 export const exportSelector = (s: *) => ({
-  active: s.accounts.active.map(accountModel.encode)
+  active: s.accounts.active.map(accountModel.encode),
 });
 
 export const accountsSelector = (s: *): Account[] => s.accounts.active;
 
 export const currenciesSelector = createSelector(accountsSelector, acc =>
-  uniq(acc.map(a => a.currency))
+  uniq(acc.map(a => a.currency)),
 );
 
 export const accountScreenSelector = createSelector(
   accountsSelector,
   (_, { navigation }) => navigation.state.params.accountId,
-  (accounts, accountId) => accounts.find(a => a.id === accountId)
+  (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 
 export default handleActions(handlers, initialState);

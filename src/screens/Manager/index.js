@@ -4,10 +4,10 @@ import { ScrollView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 
 class Settings extends Component<{
-  navigation: NavigationScreenProp<*>
+  navigation: NavigationScreenProp<*>,
 }> {
   static navigationOptions = {
-    title: "Manager"
+    title: "Manager",
   };
 
   render() {

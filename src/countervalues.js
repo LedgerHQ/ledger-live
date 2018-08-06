@@ -9,7 +9,7 @@ import {
   counterValueCurrencySelector,
   counterValueExchangeSelector,
   currencySettingsSelector,
-  intermediaryCurrency
+  intermediaryCurrency,
 } from "./reducers/settings";
 
 const LEDGER_COUNTERVALUES_API = "https://countervalues.api.live.ledger.com";
@@ -26,17 +26,17 @@ const pairsSelector = createSelector(
           {
             from: intermediaryCurrency,
             to: counterValueCurrency,
-            exchange: counterValueExchange
-          }
+            exchange: counterValueExchange,
+          },
         ].concat(
           currencies
             .filter(c => c.ticker !== intermediaryCurrency.ticker)
             .map(currency => ({
               from: currency,
               to: intermediaryCurrency,
-              exchange: currencySettingsSelector(state, { currency }).exchange
-            }))
-        )
+              exchange: currencySettingsSelector(state, { currency }).exchange,
+            })),
+        ),
 );
 
 const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
@@ -66,14 +66,14 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
   AppState.addEventListener("change", handleAppStateChange);
   NetInfo.isConnected.addEventListener(
     "connectionChange",
-    handleConnectivityChange
+    handleConnectivityChange,
   );
 
   return () => {
     AppState.removeEventListener("change", handleAppStateChange);
     NetInfo.isConnected.removeEventListener(
       "connectionChange",
-      handleConnectivityChange
+      handleConnectivityChange,
     );
   };
 };
@@ -84,7 +84,7 @@ const CounterValues = createCounterValues({
   storeSelector: state => state.countervalues,
   pairsSelector,
   setExchangePairsAction,
-  addExtraPollingHooks
+  addExtraPollingHooks,
 });
 
 export default CounterValues;

@@ -16,7 +16,7 @@ export default class Close extends Component<*> {
             marginHorizontal: 10,
             width: 20,
             height: 20,
-            tintColor: "white"
+            tintColor: "white",
           }}
         />
       </Touchable>

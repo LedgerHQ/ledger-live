@@ -7,7 +7,7 @@ import type { Currency } from "@ledgerhq/live-common/lib/types";
 
 type Props = {
   currency: Currency,
-  size: number
+  size: number,
 };
 
 export default class CurrencyIcon extends PureComponent<Props> {
@@ -16,7 +16,7 @@ export default class CurrencyIcon extends PureComponent<Props> {
     const IconComponent = getCryptoCurrencyIcon(currency);
     if (!IconComponent) {
       console.warn(
-        `No icon for currency ${currency.name} (coinType ${currency.coinType})`
+        `No icon for currency ${currency.name} (coinType ${currency.coinType})`,
       );
       return <View style={{ width: size, height: size }} />;
     }

@@ -6,26 +6,26 @@ type SetExchangePairs = (
   Array<{
     from: Currency,
     to: Currency,
-    exchange: ?string
-  }>
+    exchange: ?string,
+  }>,
 ) => *;
 
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
-  pairs
+  pairs,
 });
 
 export const setAuthSecurity = (authSecurityEnabled: boolean) => ({
   type: "SETTINGS_SET_AUTH_SECURITY",
-  authSecurityEnabled
+  authSecurityEnabled,
 });
 
 export const setCountervalue = (counterValue: string) => ({
   type: "SETTINGS_SET_COUNTERVALUE",
-  counterValue
+  counterValue,
 });
 
 export const importSettings = (settings: *) => ({
   type: "SETTINGS_IMPORT",
-  settings
+  settings,
 });

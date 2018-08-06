@@ -16,8 +16,8 @@ import LoadingApp from "./components/LoadingApp";
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 class App extends Component<*> {

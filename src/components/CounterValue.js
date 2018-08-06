@@ -9,7 +9,7 @@ import {
   counterValueCurrencySelector,
   currencySettingsSelector,
   counterValueExchangeSelector,
-  intermediaryCurrency
+  intermediaryCurrency,
 } from "../reducers/settings";
 import CounterValues from "../countervalues";
 
@@ -22,13 +22,13 @@ type OwnProps = {
   // when? if not given: take latest
   date?: Date,
 
-  value: BigNumber
+  value: BigNumber,
 };
 
 type Props = OwnProps & {
   // from reducers
   counterValueCurrency: Currency,
-  value: ?number
+  value: ?number,
 };
 
 const mapStateToProps = (state: State, props: OwnProps) => {
@@ -43,12 +43,12 @@ const mapStateToProps = (state: State, props: OwnProps) => {
     toExchange,
     to: counterValueCurrency,
     value,
-    date
+    date,
   });
 
   return {
     counterValueCurrency,
-    value: counterValue
+    value: counterValue,
   };
 };
 

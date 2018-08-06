@@ -10,14 +10,14 @@ export default class GenericButton extends Component<
     // will wait the promise to complete before enabling the button again
     // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
     onPress: () => ?Promise<any>,
-    children: *
+    children: *,
   },
   {
-    pending: boolean
-  }
+    pending: boolean,
+  },
 > {
   state = {
-    pending: false
+    pending: false,
   };
   onPress = async () => {
     try {

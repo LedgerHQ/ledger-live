@@ -11,7 +11,7 @@ export default class BlueButton extends Component<*> {
         titleStyle={[{ color: "white" }, this.props.titleStyle]}
         containerStyle={[
           { backgroundColor: colors.blue },
-          this.props.containerStyle
+          this.props.containerStyle,
         ]}
         spinnerColor="white"
       />

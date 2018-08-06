@@ -7,7 +7,7 @@ import BlueButton from "./BlueButton";
 import RedButton from "./RedButton";
 
 class AuthFailedApp extends Component<{
-  reboot: (?boolean) => *
+  reboot: (?boolean) => *,
 }> {
   onRebootSoft = () => this.props.reboot();
   onRebootHard = () => {
@@ -16,8 +16,8 @@ class AuthFailedApp extends Component<{
       "All accounts data will be removed from your phone.",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Sign me out", onPress: () => this.props.reboot(true) }
-      ]
+        { text: "Sign me out", onPress: () => this.props.reboot(true) },
+      ],
     );
   };
   render() {
@@ -47,19 +47,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 40,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    textAlign: "center"
+    textAlign: "center",
   },
   buttons: {
-    flexDirection: "row"
+    flexDirection: "row",
   },
   button: {
-    margin: 20
-  }
+    margin: 20,
+  },
 });
 
 export default withReboot(AuthFailedApp);

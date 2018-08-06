@@ -14,8 +14,8 @@ class SignOut extends Component<{ reboot: (?boolean) => * }> {
       "All accounts data will be removed from your phone.",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Sign me out", onPress: this.onResetAll }
-      ]
+        { text: "Sign me out", onPress: this.onResetAll },
+      ],
     );
   };
   render() {
@@ -33,9 +33,9 @@ export default withReboot(SignOut);
 
 const styles = StyleSheet.create({
   root: {
-    marginVertical: 40
+    marginVertical: 40,
   },
   signOutText: {
-    color: "#c00"
-  }
+    color: "#c00",
+  },
 });

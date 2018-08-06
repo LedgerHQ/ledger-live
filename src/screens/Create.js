@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   root: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 4
+    padding: 4,
   },
   view: {
     backgroundColor: colors.blue,
@@ -17,18 +17,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 4,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   image: {
     tintColor: "#fff",
     width: 32,
-    height: 32
-  }
+    height: 32,
+  },
 });
 
 class Icon extends Component<*, *> {
   state = {
-    modalOpened: false
+    modalOpened: false,
   };
   onPress = () => {
     this.setState({ modalOpened: true });
@@ -60,7 +60,7 @@ class Icon extends Component<*, *> {
 export default class Create extends Component<*> {
   static navigationOptions = {
     tabBarIcon: (props: *) => <Icon {...props} />,
-    tabBarOnPress: () => {} // noop
+    tabBarOnPress: () => {}, // noop
   };
   render() {
     return null;

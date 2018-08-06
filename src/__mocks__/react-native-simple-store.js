@@ -87,10 +87,10 @@ const deviceStorage = {
     }
     return Promise.reject(
       new Error(
-        `Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`
-      )
+        `Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`,
+      ),
     );
-  }
+  },
 };
 
 module.exports = deviceStorage;

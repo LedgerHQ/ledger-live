@@ -8,15 +8,15 @@ import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
 
 const mapStateToProps = createStructuredSelector({
-  counterValueCurrency: counterValueCurrencySelector
+  counterValueCurrency: counterValueCurrencySelector,
 });
 
 class CountervalueSettingsRow extends PureComponent<{
   navigation: NavigationScreenProp<*>,
-  counterValueCurrency: *
+  counterValueCurrency: *,
 }> {
   static navigationOptions = {
-    title: "Settings"
+    title: "Settings",
   };
 
   render() {

@@ -8,11 +8,11 @@ const navigationOptions = {
       source={require("../../images/dashboard.png")}
       style={{ tintColor, width: 32, height: 32 }}
     />
-  )
+  ),
 };
 
 class Dashboard extends Component<{
-  navigation: *
+  navigation: *,
 }> {
   static navigationOptions = navigationOptions;
 
@@ -25,6 +25,6 @@ export default Dashboard;
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });

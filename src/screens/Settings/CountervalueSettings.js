@@ -12,20 +12,20 @@ const items = listFiatCurrencies()
 
 const mapStateToProps = (state: State) => ({
   selectedKey: counterValueCurrencySelector(state).ticker,
-  items
+  items,
 });
 
 const mapDispatchToProps = {
-  onValueChange: ({ value }: *) => setCountervalue(value)
+  onValueChange: ({ value }: *) => setCountervalue(value),
 };
 
 const Screen = makeGenericSelectScreen({
   title: "Countervalue currency",
   keyExtractor: item => item.value,
-  formatItem: item => item.label
+  formatItem: item => item.label,
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Screen);

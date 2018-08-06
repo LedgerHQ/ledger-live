@@ -10,21 +10,21 @@ export default class RebootProvider extends React.Component<
   {
     onRebootStart?: () => void,
     onRebootEnd?: () => void,
-    children: *
+    children: *,
   },
   {
-    rebootId: number
-  }
+    rebootId: number,
+  },
 > {
   state = {
-    rebootId: 0
+    rebootId: 0,
   };
 
   reboot = async (resetData: boolean = false) => {
     const { onRebootStart, onRebootEnd } = this.props;
     if (onRebootStart) onRebootStart();
     this.setState({
-      rebootId: this.state.rebootId + 1
+      rebootId: this.state.rebootId + 1,
     });
     if (resetData) {
       await db.delete(["settings", "accounts", "countervalues"]);

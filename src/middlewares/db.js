@@ -14,12 +14,12 @@ export default (store: any) => (next: any) => (action: any) => {
     db.save("countervalues", CounterValues.exportSelector(newState)).then(
       () => {
         console.log(
-          `countervalues DB saved in ${(Date.now() - startTime).toFixed(0)} ms`
+          `countervalues DB saved in ${(Date.now() - startTime).toFixed(0)} ms`,
         );
       },
       e => {
         console.error(e);
-      }
+      },
     );
   }
   if (oldState.settings !== newState.settings) {
@@ -27,12 +27,12 @@ export default (store: any) => (next: any) => (action: any) => {
     db.save("settings", exportSelector(newState)).then(
       () => {
         console.log(
-          `settings DB saved in ${(Date.now() - startTime).toFixed(0)} ms`
+          `settings DB saved in ${(Date.now() - startTime).toFixed(0)} ms`,
         );
       },
       e => {
         console.error(e);
-      }
+      },
     );
   }
   if (oldState.accounts !== newState.accounts) {
@@ -40,12 +40,12 @@ export default (store: any) => (next: any) => (action: any) => {
     db.save("accounts", accountsExportSelector(newState)).then(
       () => {
         console.log(
-          `accounts DB saved in ${(Date.now() - startTime).toFixed(0)} ms`
+          `accounts DB saved in ${(Date.now() - startTime).toFixed(0)} ms`,
         );
       },
       e => {
         console.error(e);
-      }
+      },
     );
   }
   return res;

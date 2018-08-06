@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, Image } from "react-native";
 import {
   createBottomTabNavigator,
-  createStackNavigator
+  createStackNavigator,
 } from "react-navigation";
 import colors from "./colors";
 import Dashboard from "./screens/Dashboard";
@@ -20,26 +20,26 @@ import Create from "./screens/Create";
 const stackNavigatiorDefaultNavigationOptions = {
   headerStyle: {
     backgroundColor: "white",
-    borderBottomWidth: 0
-  }
+    borderBottomWidth: 0,
+  },
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.lightBackground
-  }
+    backgroundColor: colors.lightBackground,
+  },
 });
 
 const SettingsStack = createStackNavigator(
   {
     // $FlowFixMe
     Settings,
-    CountervalueSettings
+    CountervalueSettings,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+    cardStyle: styles.card,
+  },
 );
 
 SettingsStack.navigationOptions = {
@@ -48,18 +48,18 @@ SettingsStack.navigationOptions = {
       source={require("./images/settings.png")}
       style={{ tintColor, width: 32, height: 32 }}
     />
-  )
+  ),
 };
 
 const ManagerStack = createStackNavigator(
   {
     // $FlowFixMe
-    Manager
+    Manager,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+    cardStyle: styles.card,
+  },
 );
 
 ManagerStack.navigationOptions = {
@@ -68,20 +68,20 @@ ManagerStack.navigationOptions = {
       source={require("./images/settings.png")}
       style={{ tintColor, width: 32, height: 32 }}
     />
-  )
+  ),
 };
 
 const AccountSettings = createStackNavigator(
   {
-    AccSettings
+    AccSettings,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+    cardStyle: styles.card,
+  },
 );
 AccountSettings.navigationOptions = {
-  header: null
+  header: null,
 };
 
 const Main = createBottomTabNavigator({
@@ -92,37 +92,37 @@ const Main = createBottomTabNavigator({
   // $FlowFixMe
   Create,
   Manager: ManagerStack,
-  Settings: SettingsStack
+  Settings: SettingsStack,
 });
 
 Main.navigationOptions = {
-  header: null
+  header: null,
 };
 
 const ReceiveFunds = createStackNavigator(
   {
-    ReceiveFundsMain
+    ReceiveFundsMain,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+    cardStyle: styles.card,
+  },
 );
 ReceiveFunds.navigationOptions = {
-  header: null
+  header: null,
 };
 
 const SendFunds = createStackNavigator(
   {
-    SendFundsMain
+    SendFundsMain,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+    cardStyle: styles.card,
+  },
 );
 SendFunds.navigationOptions = {
-  header: null
+  header: null,
 };
 
 export const RootNavigator = createStackNavigator(
@@ -131,11 +131,11 @@ export const RootNavigator = createStackNavigator(
     ReceiveFunds,
     SendFunds,
     OperationDetails,
-    AccountSettings
+    AccountSettings,
   },
   {
     mode: "modal",
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+    cardStyle: styles.card,
+  },
 );

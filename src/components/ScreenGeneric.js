@@ -7,7 +7,7 @@ export default class ScreenGeneric<T> extends Component<{
   Header: React$ComponentType<$Shape<T>>,
   children: *,
   onPressHeader?: () => void,
-  extraData?: T
+  extraData?: T,
 }> {
   render() {
     const { children, Header, onPressHeader, extraData } = this.props;
@@ -26,15 +26,15 @@ export default class ScreenGeneric<T> extends Component<{
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   header: {
     height: 70,
     paddingTop: 20,
-    backgroundColor: colors.blue
+    backgroundColor: colors.blue,
   },
   body: {
     flex: 1,
-    position: "relative"
-  }
+    position: "relative",
+  },
 });
