@@ -8,12 +8,12 @@ type Nav = NavigationScreenProp<{
   params: {
     accountId: string,
     operationId: string,
-    mainNavigation: NavigationScreenProp<*>
-  }
+    mainNavigation: NavigationScreenProp<*>,
+  },
 }>;
 
 type Props = {
-  navigation: Nav
+  navigation: Nav,
   // TODO operation and account in props via connect mapping from the ids
 };
 
@@ -21,7 +21,7 @@ class OperationDetails extends Component<Props> {
   static navigationOptions = ({ navigation }: *) => ({
     title: "Operation Details",
     headerRight: <HeaderRightClose navigation={navigation} />,
-    headerLeft: null
+    headerLeft: null,
   });
 
   render() {
@@ -34,6 +34,6 @@ export default OperationDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white"
-  }
+    backgroundColor: "white",
+  },
 });

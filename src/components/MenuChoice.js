@@ -7,7 +7,7 @@ export default class MenuTitle extends Component<{
   onPress: *,
   icon: *,
   title: *,
-  description: *
+  description: *,
 }> {
   render() {
     const { icon, title, description, onPress } = this.props;
@@ -33,25 +33,25 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderColor: "#eee",
-    alignItems: "center"
+    alignItems: "center",
   },
   left: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 20
+    padding: 20,
   },
   img: {
     width: 20,
-    height: 20
+    height: 20,
   },
   body: {
-    flexDirection: "column"
+    flexDirection: "column",
   },
   title: {
     fontWeight: "bold",
-    fontSize: 12
+    fontSize: 12,
   },
   description: {
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 });

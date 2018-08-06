@@ -12,11 +12,11 @@ export default class QRCodePreview extends Component<{
   size: number,
   currency?: Currency,
   amount?: BigNumber,
-  useURIScheme?: boolean
+  useURIScheme?: boolean,
 }> {
   static defaultProps = {
     size: 200,
-    useURIScheme: false
+    useURIScheme: false,
   };
   render() {
     const { useURIScheme, address, currency, amount, size } = this.props;
@@ -43,6 +43,6 @@ const styles = StyleSheet.create({
   root: {
     backgroundColor: "white",
     padding: 15,
-    alignSelf: "center"
-  }
+    alignSelf: "center",
+  },
 });

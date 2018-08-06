@@ -13,6 +13,6 @@ export default class HeaderRightText extends Component<{ children: * }> {
 const styles = StyleSheet.create({
   text: {
     color: "white",
-    paddingHorizontal: 10
-  }
+    paddingHorizontal: 10,
+  },
 });

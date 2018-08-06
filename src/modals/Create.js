@@ -13,9 +13,9 @@ class CreateModal extends Component<*> {
     navigation.navigate({
       routeName: "SendFunds",
       params: {
-        goBackKey: navigation.state.key
+        goBackKey: navigation.state.key,
       },
-      key: "sendfunds"
+      key: "sendfunds",
     });
     onRequestClose();
   };
@@ -24,7 +24,7 @@ class CreateModal extends Component<*> {
     navigation.navigate({
       routeName: "ReceiveFunds",
       params: { goBackKey: navigation.state.key },
-      key: "receiveffunds"
+      key: "receiveffunds",
     });
     onRequestClose();
   };

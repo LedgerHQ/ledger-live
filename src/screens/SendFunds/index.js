@@ -8,21 +8,21 @@ import HeaderRightClose from "../../components/HeaderRightClose";
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 class SendFundsSelectAccount extends Component<{
   accounts: Account[],
   navigation: NavigationScreenProp<{
-    params: {}
-  }>
+    params: {},
+  }>,
 }> {
   static navigationOptions = ({ screenProps }: *) => ({
     title: "Select account",
     headerRight: (
       <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    )
+    ),
   });
 
   render() {

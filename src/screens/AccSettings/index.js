@@ -12,11 +12,11 @@ import LText from "../../components/LText";
 class AccountSettings extends Component<{
   account: ?Account,
   navigation: NavigationScreenProp<{
-    accountId: string
-  }>
+    accountId: string,
+  }>,
 }> {
   static navigationOptions = {
-    title: "Account settings"
+    title: "Account settings",
   };
   render() {
     const { account } = this.props;
@@ -34,10 +34,10 @@ class AccountSettings extends Component<{
 
 export default connect(
   createStructuredSelector({
-    account: accountScreenSelector
-  })
+    account: accountScreenSelector,
+  }),
 )(AccountSettings);
 
 const styles = StyleSheet.create({
-  container: { flex: 1 }
+  container: { flex: 1 },
 });

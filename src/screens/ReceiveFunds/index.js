@@ -8,13 +8,15 @@ import HeaderRightClose from "../../components/HeaderRightClose";
 class ReceiveFunds extends Component<
   {
     navigation: NavigationScreenProp<*>,
-    accounts: Account[]
+    accounts: Account[],
   },
-  *
+  *,
 > {
   static navigationOptions = ({ screenProps }: *) => ({
     title: "Receive Funds",
-    headerLeft: <HeaderRightClose navigation={screenProps.topLevelNavigation} />
+    headerLeft: (
+      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
+    ),
   });
   render() {
     return (
@@ -31,10 +33,10 @@ export default ReceiveFunds;
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
+    flex: 1,
   },
   content: {
     justifyContent: "center",
-    paddingHorizontal: 20
-  }
+    paddingHorizontal: 20,
+  },
 });

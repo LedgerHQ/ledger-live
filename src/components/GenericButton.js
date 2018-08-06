@@ -18,16 +18,16 @@ export default class GenericButton extends Component<
     // text of the button
     title: string,
     containerStyle: ?*,
-    titleStyle: ?*
+    titleStyle: ?*,
   },
   {
     pending: boolean,
-    spinnerOn: boolean
-  }
+    spinnerOn: boolean,
+  },
 > {
   state = {
     pending: false,
-    spinnerOn: false
+    spinnerOn: false,
   };
   timeout: *;
   unmounted = false;
@@ -54,7 +54,7 @@ export default class GenericButton extends Component<
       if (!this.unmounted) {
         this.setState(
           ({ pending }) =>
-            pending ? { pending: false, spinnerOn: false } : null
+            pending ? { pending: false, spinnerOn: false } : null,
         );
       }
     }
@@ -65,7 +65,7 @@ export default class GenericButton extends Component<
       title,
       containerStyle,
       titleStyle,
-      spinnerColor
+      spinnerColor,
     } = this.props;
     const { pending, spinnerOn } = this.state;
     const disabled = !onPress || pending;
@@ -76,7 +76,7 @@ export default class GenericButton extends Component<
         style={[
           styles.container,
           disabled ? styles.containerDisabled : null,
-          containerStyle
+          containerStyle,
         ]}
       >
         <LText style={[styles.title, titleStyle]}>{title}</LText>
@@ -96,13 +96,13 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   containerDisabled: {
-    opacity: 0.5
+    opacity: 0.5,
   },
   activityIndicator: {
-    position: "absolute"
+    position: "absolute",
   },
-  title: {}
+  title: {},
 });

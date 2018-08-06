@@ -4,7 +4,7 @@ import { handleActions } from "redux-actions";
 import {
   findCurrencyByTicker,
   getCryptoCurrencyById,
-  getFiatCurrencyByTicker
+  getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/lib/helpers/currencies";
 import { createSelector } from "reselect";
 import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
@@ -14,13 +14,13 @@ export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
 export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
-  authSecurityEnabled: boolean
+  authSecurityEnabled: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
-  authSecurityEnabled: false
+  authSecurityEnabled: false,
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -30,31 +30,31 @@ function asCryptoCurrency(c: Currency): ?CryptoCurrency {
 const handlers: Object = {
   SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
     ...state,
-    ...settings
+    ...settings,
   }),
 
   SETTINGS_SET_AUTH_SECURITY: (
     state: SettingsState,
-    { authSecurityEnabled }
+    { authSecurityEnabled },
   ) => ({ ...state, authSecurityEnabled }),
 
   SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
     ...state,
     counterValue,
-    counterValueExchange: null // also reset the exchange
+    counterValueExchange: null, // also reset the exchange
   }),
 
   SETTINGS_SET_PAIRS: (
     state: SettingsState,
     {
-      pairs
+      pairs,
     }: {
       pairs: Array<{
         from: Currency,
         to: Currency,
-        exchange: string
-      }>
-    }
+        exchange: string,
+      }>,
+    },
   ) => {
     const counterValueCurrency = counterValueCurrencyLocalSelector(state);
     const copy = { ...state };
@@ -64,7 +64,7 @@ const handlers: Object = {
       if (fromCrypto && to.ticker === intermediaryCurrency.ticker) {
         copy.currenciesSettings[fromCrypto.id] = {
           ...copy.currenciesSettings[fromCrypto.id],
-          exchange
+          exchange,
         };
       } else if (
         from.ticker === intermediaryCurrency.ticker &&
@@ -74,7 +74,7 @@ const handlers: Object = {
       }
     }
     return copy;
-  }
+  },
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -86,7 +86,7 @@ const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
 
 export const counterValueCurrencySelector = createSelector(
   storeSelector,
-  counterValueCurrencyLocalSelector
+  counterValueCurrencyLocalSelector,
 );
 
 const counterValueExchangeLocalSelector = (s: SettingsState) =>
@@ -94,16 +94,16 @@ const counterValueExchangeLocalSelector = (s: SettingsState) =>
 
 export const counterValueExchangeSelector = createSelector(
   storeSelector,
-  counterValueExchangeLocalSelector
+  counterValueExchangeLocalSelector,
 );
 
 export const currencySettingsSelector = (_s: *, _o: *) => ({
-  exchange: "BINANCE"
+  exchange: "BINANCE",
 }); // FIXME
 
 export const authSecurityEnabledSelector = createSelector(
   storeSelector,
-  s => s.authSecurityEnabled
+  s => s.authSecurityEnabled,
 );
 
 export default handleActions(handlers, INITIAL_STATE);

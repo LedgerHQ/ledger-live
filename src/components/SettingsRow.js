@@ -11,7 +11,7 @@ export default class SettingsRow extends Component<{
   selected?: boolean,
   arrowRight?: boolean,
   center?: boolean,
-  children: *
+  children: *,
 }> {
   render() {
     const {
@@ -20,7 +20,7 @@ export default class SettingsRow extends Component<{
       title,
       arrowRight,
       center,
-      selected
+      selected,
     } = this.props;
     return (
       <Touchable
@@ -50,9 +50,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     backgroundColor: "white",
-    marginBottom: 1
+    marginBottom: 1,
   },
   center: {
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });

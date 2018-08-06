@@ -16,12 +16,12 @@ class AuthPendingApp extends Component<{}> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 40
+    padding: 40,
   },
   title: {
     fontSize: 18,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
 
 export default AuthPendingApp;

@@ -27,11 +27,11 @@ const supported: CryptoCurrencyIds[] = [
   "stealthcoin",
   "poswallet",
   "clubcoin",
-  "bitcoin_testnet"
+  "bitcoin_testnet",
 ];
 
 export const listCryptoCurrencies = memoize((withDevCrypto?: boolean) =>
   listCC(withDevCrypto)
     .filter(c => supported.includes(c.id))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => a.name.localeCompare(b.name)),
 );

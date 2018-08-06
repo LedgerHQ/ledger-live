@@ -16,11 +16,11 @@ export default class GreyButton extends Component<*> {
 }
 const styles = StyleSheet.create({
   title: {
-    color: "#aaa"
+    color: "#aaa",
   },
   container: {
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#aaa"
-  }
+    borderColor: "#aaa",
+  },
 });

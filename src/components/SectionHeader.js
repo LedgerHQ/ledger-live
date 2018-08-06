@@ -10,14 +10,14 @@ const calendarOpts = {
   nextDay: "LL – [Tomorrow]",
   lastDay: "LL – [Yesterday]",
   lastWeek: "LL",
-  sameElse: "LL"
+  sameElse: "LL",
 };
 
 export default ({
-  section
+  section,
 }: {
   // $FlowFixMe
-  section: { day: Date }
+  section: { day: Date },
 }) => (
   <LText numberOfLines={1} semiBold style={styles.sectionHeader}>
     {moment(section.day).calendar(null, calendarOpts)}
@@ -30,6 +30,6 @@ const styles = StyleSheet.create({
     color: "#999",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    backgroundColor: colors.lightBackground
-  }
+    backgroundColor: colors.lightBackground,
+  },
 });

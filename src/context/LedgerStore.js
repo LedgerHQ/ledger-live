@@ -20,23 +20,23 @@ const createLedgerStore = () =>
       applyMiddleware(thunk, dbMiddleware),
       typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
         ? __REDUX_DEVTOOLS_EXTENSION__()
-        : f => f
-    )
+        : f => f,
+    ),
   );
 
 export default class LedgerStoreProvider extends Component<
   {
     onInitFinished: () => void,
-    children: (ready: boolean) => *
+    children: (ready: boolean) => *,
   },
   {
     store: *,
-    ready: boolean
-  }
+    ready: boolean,
+  },
 > {
   state = {
     store: createLedgerStore(),
-    ready: false
+    ready: false,
   };
 
   componentDidMount() {

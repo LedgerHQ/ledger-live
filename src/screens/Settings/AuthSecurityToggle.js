@@ -8,16 +8,16 @@ import { authSecurityEnabledSelector } from "../../reducers/settings";
 import auth from "../../context/AuthPass/auth";
 
 const mapStateToProps = createStructuredSelector({
-  authSecurityEnabled: authSecurityEnabledSelector
+  authSecurityEnabled: authSecurityEnabledSelector,
 });
 
 const mapDispatchToProps = {
-  setAuthSecurity
+  setAuthSecurity,
 };
 
 class AuthSecurityToggle extends Component<*, { validationPending: boolean }> {
   state = {
-    validationPending: false
+    validationPending: false,
   };
   onValueChange = async (authSecurityEnabled: boolean) => {
     if (authSecurityEnabled) {
@@ -34,8 +34,8 @@ class AuthSecurityToggle extends Component<*, { validationPending: boolean }> {
         Alert.alert(
           "Authentication failed",
           `Auth Security was not enabled because your phone failed to authenticate.\n${String(
-            error || ""
-          )}`
+            error || "",
+          )}`,
         );
         return;
       }
@@ -57,5 +57,5 @@ class AuthSecurityToggle extends Component<*, { validationPending: boolean }> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AuthSecurityToggle);

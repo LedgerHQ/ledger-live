@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Text, StyleSheet } from "react-native";
 
 export default class MenuTitle extends Component<{
-  children: *
+  children: *,
 }> {
   render() {
     const { children } = this.props;
@@ -14,6 +14,6 @@ export default class MenuTitle extends Component<{
 const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 });

@@ -7,7 +7,7 @@ const el = (
     style={{
       padding: 60,
       opacity: 0.5,
-      textAlign: "center"
+      textAlign: "center",
     }}
   >
     No More Operations.

@@ -11,7 +11,7 @@ export default class WhiteButton extends Component<*> {
         textStyle={[{ color: colors.blue }, this.props.textStyle]}
         containerStyle={[
           { backgroundColor: "white" },
-          this.props.containerStyle
+          this.props.containerStyle,
         ]}
       />
     );

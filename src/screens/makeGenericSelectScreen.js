@@ -7,7 +7,7 @@ import SettingsRow from "../components/SettingsRow";
 type EntryProps<Item> = {
   item: Item,
   onPress: Item => void,
-  selected: boolean
+  selected: boolean,
 };
 type EntryComponent<Item> = React$ComponentType<EntryProps<Item>>;
 
@@ -15,7 +15,7 @@ type Opts<Item> = {
   title: string,
   keyExtractor: Item => string,
   formatItem?: Item => string,
-  Entry?: EntryComponent<Item>
+  Entry?: EntryComponent<Item>,
   // TODO in future: searchable: boolean
 };
 
@@ -48,7 +48,7 @@ export default <Item>(opts: Opts<Item>) => {
     selectedKey: string,
     items: Item[],
     onValueChange: Item => void,
-    navigation: NavigationScreenProp<*>
+    navigation: NavigationScreenProp<*>,
   }> {
     static navigationOptions = { title };
 

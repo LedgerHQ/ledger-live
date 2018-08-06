@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 
 export default class SectionTitle extends Component<{
   title?: string,
-  children?: *
+  children?: *,
 }> {
   render() {
     const { title, children } = this.props;
@@ -18,9 +18,9 @@ export default class SectionTitle extends Component<{
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    padding: 15
+    padding: 15,
   },
   sectionTitleText: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 });

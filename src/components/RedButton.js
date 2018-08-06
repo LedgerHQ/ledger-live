@@ -16,11 +16,11 @@ export default class RedButton extends Component<*> {
 }
 const styles = StyleSheet.create({
   title: {
-    color: "#f00"
+    color: "#f00",
   },
   container: {
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#f00"
-  }
+    borderColor: "#f00",
+  },
 });

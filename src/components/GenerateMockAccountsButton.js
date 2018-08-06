@@ -10,16 +10,16 @@ async function injectMockAccountsInDB(count) {
   await db.save("accounts", {
     active: Array(count)
       .fill(null)
-      .map(() => accountModel.encode(genAccount(String(Math.random()))))
+      .map(() => accountModel.encode(genAccount(String(Math.random())))),
   });
 }
 
 const GenerateMockAccountsButton = ({
   title,
-  reboot
+  reboot,
 }: {
   title: string,
-  reboot: *
+  reboot: *,
 }) => (
   <BlueButton
     title={title}

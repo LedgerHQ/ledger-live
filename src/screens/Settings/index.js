@@ -8,10 +8,10 @@ import AuthSecurityToggle from "./AuthSecurityToggle";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 
 class Settings extends Component<{
-  navigation: NavigationScreenProp<*>
+  navigation: NavigationScreenProp<*>,
 }> {
   static navigationOptions = {
-    title: "Settings"
+    title: "Settings",
   };
 
   render() {

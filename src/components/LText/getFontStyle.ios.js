@@ -2,11 +2,11 @@
 type Opts = {
   bold?: boolean,
   semiBold?: boolean,
-  secondary?: boolean
+  secondary?: boolean,
 };
 type Res = {
   fontFamily: string,
-  fontWeight: string
+  fontWeight: string,
 };
 
 export default ({ bold, semiBold, secondary }: Opts = {}): Res => {

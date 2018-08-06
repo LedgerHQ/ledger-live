@@ -10,7 +10,7 @@ import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 export default class Menu extends Component<{
   header: *,
   children: *,
-  onRequestClose: () => void
+  onRequestClose: () => void,
 }> {
   render() {
     const { header, children, onRequestClose } = this.props;
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.4)"
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
   main: {},
   head: {
@@ -42,9 +42,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 60,
     borderBottomWidth: 1,
-    borderColor: "#eee"
+    borderColor: "#eee",
   },
   body: {
-    backgroundColor: "white"
-  }
+    backgroundColor: "white",
+  },
 });

@@ -12,11 +12,11 @@ import type { SettingsState } from "./settings";
 export type State = {
   accounts: AccountsState,
   countervalues: *,
-  settings: SettingsState
+  settings: SettingsState,
 };
 
 export default combineReducers({
   accounts,
   countervalues: CounterValues.reducer,
-  settings
+  settings,
 });

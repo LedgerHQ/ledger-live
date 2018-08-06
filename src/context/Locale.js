@@ -12,7 +12,7 @@ const languageDetector = {
   type: "languageDetector",
   detect: () => Locale.constants().localeIdentifier.replace("_", "-"),
   init: () => {},
-  cacheUserLanguage: () => {}
+  cacheUserLanguage: () => {},
 };
 
 const i18n = i18next
@@ -24,40 +24,40 @@ const i18n = i18next
     ns: ["common"],
     defaultNS: "common",
     interpolation: {
-      escapeValue: false // not needed for react as it does escape per default to prevent xss!
-    }
+      escapeValue: false, // not needed for react as it does escape per default to prevent xss!
+    },
   });
 
 // $FlowFixMe
 const LocaleContext = React.createContext({
   i18n,
   t: i18n.getFixedT(),
-  locale: i18n.language
+  locale: i18n.language,
 });
 
 type State = {
   i18n: *,
   t: TranslateFunction,
-  locale: string
+  locale: string,
 };
 
 export default class LocaleProvider extends React.Component<
   {
-    children: *
+    children: *,
   },
-  State
+  State,
 > {
   state = {
     i18n,
     t: i18n.getFixedT(),
-    locale: i18n.language
+    locale: i18n.language,
   };
   componentDidMount() {
     i18next.on("languageChanged", locale => {
       this.setState({
         i18n,
         t: i18n.getFixedT(locale),
-        locale: i18n.language
+        locale: i18n.language,
       });
     });
   }
@@ -71,7 +71,7 @@ export default class LocaleProvider extends React.Component<
 }
 
 export const withLocale = (
-  Cmp: React$ComponentType<*>
+  Cmp: React$ComponentType<*>,
 ): React$ComponentType<*> => {
   class WithLocale extends Component<*> {
     render() {

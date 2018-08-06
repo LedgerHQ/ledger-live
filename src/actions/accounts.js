@@ -8,6 +8,6 @@ export const importStore = (state: *) => ({
     active:
       state && Array.isArray(state.active)
         ? state.active.map(accountModel.decode)
-        : []
-  }
+        : [],
+  },
 });
