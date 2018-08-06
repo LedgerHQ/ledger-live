@@ -162,6 +162,15 @@ android {
     dexOptions {
         jumboMode true
     }
+
+    // - NDK v17+ dropped support for MIPS
+    // - The latest Gradle version compatible with RN isn't aware of that
+    // - This prevents it to try to load inexisting libs
+    // cf https://github.com/android-ndk/ndk/issues/700
+    packagingOptions {
+        doNotStrip '*/mips/*.so'
+        doNotStrip '*/mips64/*.so'
+    }
 }
 
 dependencies {
