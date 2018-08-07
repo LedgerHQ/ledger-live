@@ -6,4 +6,5 @@ export default {
   red: "#ea2e49",
   lightBackground: "rgb(244,244,244)",
   darkBar: "rgb(30,32,39)",
+  dark: '#142533',
 };
