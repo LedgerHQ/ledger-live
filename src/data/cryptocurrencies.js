@@ -191,7 +191,7 @@ const cryptocurrenciesById = {
     name: "Bitcoin Cash",
     managerAppName: "Bitcoin Cash",
     ticker: "BCH",
-    scheme: "bch",
+    scheme: "bitcoincash",
     color: "#3ca569",
     family: "bitcoin",
     ledgerExplorerId: "abc",
