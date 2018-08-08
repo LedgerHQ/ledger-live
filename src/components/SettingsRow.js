@@ -29,18 +29,9 @@ export default class SettingsRow extends Component<{
         onPress={onPress}
         style={[styles.root, center && styles.center]}
       >
-        <View
-          style={{
-            flexDirection: "column",
-            margin: 10,
-            flexGrow: 1,
-            flexShrink: 1,
-          }}
-        >
+        <View style={styles.textBlock}>
           <LText bold>{title}</LText>
-          {desc && (
-            <LText style={{ color: "#999", paddingTop: 5 }}>{desc}</LText>
-          )}
+          {desc && <LText style={styles.description}>{desc}</LText>}
         </View>
         {!center ? flowPush : null}
         {children}
@@ -69,4 +60,11 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: "center",
   },
+  textBlock: {
+    flexDirection: "column",
+    margin: 10,
+    flexGrow: 1,
+    flexShrink: 1,
+  },
+  description: { color: "#999", paddingTop: 5 },
 });
