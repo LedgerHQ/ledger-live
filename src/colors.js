@@ -6,5 +6,7 @@ export default {
   red: "#ea2e49",
   lightBackground: "rgb(244,244,244)",
   darkBar: "rgb(30,32,39)",
-  dark: '#142533',
+  dark: "#142533",
+  wallet: "#6490f1",
+  walletLight: "#4b84ff19",
 };

@@ -1,4 +1,30 @@
 {
-  "home_title": "Hello, {{name}}.",
-  "home_subtitle": "Here's a summary of your {{count}} accounts"
+  "settings": {
+    "display": {
+      "title": "General",
+      "desc": "Change settings that affect Ledger Live in general.",
+      "language": "Display language",
+      "languageDesc": "Set the language displayed in Ledger Live.",
+      "password": "Password lock",
+      "passwordDesc": "Set a password to prevent unauthorized access to Ledger Live data stored on your computer, including account names, balances, transactions and public addresses.",
+      "counterValue": "Countervalue",
+      "counterValueDesc": "Choose the currency to display next to your balance and operations.",
+      "exchange": "Rate provider",
+      "exchangeDesc": "Choose the provider of the exchange rate from Bitcoin to {{fiat}}. The value of crypto assets is first calculated in Bitcoin, before being converted to {{fiat}} (crypto asset → BTC → {{fiat}}).",
+      "stock": "Regional market indicator",
+      "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red."
+    },
+    "currencies": {
+      "title": "Currencies",
+      "desc": "Select a crypto asset to edit its settings."
+    },
+    "about": {
+      "title": "About",
+      "desc": "Information about Ledger Live, terms and conditions, and privacy policy."
+    },
+    "help": {
+      "title": "Help",
+      "desc": "Learn about Ledger Live features or get help."
+    }
+  }
 }

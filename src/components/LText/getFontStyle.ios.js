@@ -11,7 +11,11 @@ type Res = {
 };
 
 export default ({ bold, semiBold, secondary, tertiary }: Opts = {}): Res => {
-  const fontFamily = secondary ? "Museo Sans" : tertiary ? "Rubik" : "Open Sans";
+  const fontFamily = secondary
+    ? "Museo Sans"
+    : tertiary
+      ? "Rubik"
+      : "Open Sans";
   let fontWeight = secondary ? -200 : 0; // Fix for Museo weights being off by 200;
   if (semiBold) {
     fontWeight += 600;

@@ -10,7 +10,12 @@ import Dashboard from "./screens/Dashboard";
 import Accounts from "./screens/Accounts";
 import AccSettings from "./screens/AccSettings";
 import Settings from "./screens/Settings";
-import CountervalueSettings from "./screens/Settings/CountervalueSettings";
+import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
+import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
+import GeneralSettings from "./screens/Settings/General";
+import AboutSettings from "./screens/Settings/About";
+import HelpSettings from "./screens/Settings/Help";
+import CurrenciesSettings from "./screens/Settings/Currencies";
 import Manager from "./screens/Manager";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
 import SendFundsMain from "./screens/SendFunds";
@@ -35,6 +40,11 @@ const SettingsStack = createStackNavigator(
     // $FlowFixMe
     Settings,
     CountervalueSettings,
+    RateProviderSettings,
+    GeneralSettings,
+    AboutSettings,
+    HelpSettings,
+    CurrenciesSettings,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,

@@ -3,9 +3,9 @@ import React, { Component } from "react";
 import { createStructuredSelector } from "reselect";
 import { Switch, Alert } from "react-native";
 import { connect } from "react-redux";
-import { setAuthSecurity } from "../../actions/settings";
-import { authSecurityEnabledSelector } from "../../reducers/settings";
-import auth from "../../context/AuthPass/auth";
+import { setAuthSecurity } from "../../../actions/settings";
+import { authSecurityEnabledSelector } from "../../../reducers/settings";
+import auth from "../../../context/AuthPass/auth";
 
 const mapStateToProps = createStructuredSelector({
   authSecurityEnabled: authSecurityEnabledSelector,
