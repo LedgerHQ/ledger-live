@@ -1,4 +1,5 @@
 // @flow
+
 import React, { Component } from "react";
 import { View, StyleSheet, Image, FlatList } from "react-native";
 import { connect } from "react-redux";
@@ -8,6 +9,7 @@ import { accountsSelector } from "../../reducers/accounts";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
 
 import AccountCard from "./AccountCard";
+import AccountsHeader from "./AccountsHeader";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: { tintColor: string }) => (
@@ -47,19 +49,22 @@ class Accounts extends Component<Props> {
 
   render() {
     const { accounts } = this.props;
+
     return (
       <View style={styles.root}>
-        {accounts.length === 0 && (
-          <View style={{ padding: 40 }}>
-            <GenerateMockAccountsButton title="Generate Mock Accounts" />
-          </View>
-        )}
-        <FlatList
-          data={accounts}
-          renderItem={this.renderItem}
-          keyExtractor={this.keyExtractor}
-          style={styles.list}
-        />
+        <AccountsHeader>
+          {accounts.length === 0 && (
+            <View style={{ padding: 40 }}>
+              <GenerateMockAccountsButton title="Generate Mock Accounts" />
+            </View>
+          )}
+          <FlatList
+            data={accounts}
+            renderItem={this.renderItem}
+            keyExtractor={this.keyExtractor}
+            style={styles.list}
+          />
+        </AccountsHeader>
       </View>
     );
   }
