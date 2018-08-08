@@ -8,6 +8,7 @@ const flowPush = <View style={{ flex: 1 }} />;
 export default class SettingsRow extends Component<{
   onPress: () => void,
   title: string,
+  desc?: string,
   selected?: boolean,
   arrowRight?: boolean,
   center?: boolean,
@@ -18,6 +19,7 @@ export default class SettingsRow extends Component<{
       onPress,
       children,
       title,
+      desc,
       arrowRight,
       center,
       selected,
@@ -27,7 +29,10 @@ export default class SettingsRow extends Component<{
         onPress={onPress}
         style={[styles.root, center && styles.center]}
       >
-        <LText>{title}</LText>
+        <View style={styles.textBlock}>
+          <LText bold>{title}</LText>
+          {desc && <LText style={styles.description}>{desc}</LText>}
+        </View>
         {!center ? flowPush : null}
         {children}
         {arrowRight ? (
@@ -55,4 +60,11 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: "center",
   },
+  textBlock: {
+    flexDirection: "column",
+    margin: 10,
+    flexGrow: 1,
+    flexShrink: 1,
+  },
+  description: { color: "#999", paddingTop: 5 },
 });

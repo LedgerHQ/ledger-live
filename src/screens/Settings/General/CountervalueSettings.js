@@ -1,10 +1,10 @@
 /* @flow */
 import { connect } from "react-redux";
 import { listFiatCurrencies } from "@ledgerhq/live-common/lib/helpers/currencies";
-import { setCountervalue } from "../../actions/settings";
-import { counterValueCurrencySelector } from "../../reducers/settings";
-import type { State } from "../../reducers";
-import makeGenericSelectScreen from "../makeGenericSelectScreen";
+import { setCountervalue } from "../../../actions/settings";
+import { counterValueCurrencySelector } from "../../../reducers/settings";
+import type { State } from "../../../reducers";
+import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 
 const items = listFiatCurrencies()
   .map(cur => ({ value: cur.ticker, label: `${cur.name} (${cur.ticker})` }))
@@ -20,7 +20,7 @@ const mapDispatchToProps = {
 };
 
 const Screen = makeGenericSelectScreen({
-  title: "Countervalue currency",
+  title: "Countervalue",
   keyExtractor: item => item.value,
   formatItem: item => item.label,
 });
