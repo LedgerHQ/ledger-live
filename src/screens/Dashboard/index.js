@@ -47,19 +47,4 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  header: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 150,
-    alignItems: "center",
-    justifyContent: "flex-end",
-    paddingBottom: 10,
-    backgroundColor: "red",
-  },
-  headerText: {
-    color: "#fff",
-    fontSize: 30,
-  },
 });
