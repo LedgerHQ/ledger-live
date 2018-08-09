@@ -19,7 +19,6 @@ class HelpSettings extends PureComponent<{
   };
 
   render() {
-    const { navigation } = this.props;
     return (
       <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
         <LedgerSupportRow />
