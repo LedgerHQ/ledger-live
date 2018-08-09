@@ -3,7 +3,11 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
-import SettingsRow from "../../../components/SettingsRow";
+import { ScrollView } from "react-native";
+import LedgerSupportRow from "./LedgerSupportRow";
+import ClearCacheRow from "./ClearCacheRow";
+import ExportLogsRow from "./ExportLogsRow";
+import HardResetRow from "./HardResetRow";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -15,8 +19,15 @@ class HelpSettings extends PureComponent<{
   };
 
   render() {
-    // const { navigation } = this.props;
-    return <SettingsRow title="PLACEHOLDER" />;
+    const { navigation } = this.props;
+    return (
+      <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
+        <LedgerSupportRow />
+        <ClearCacheRow />
+        <ExportLogsRow />
+        <HardResetRow />
+      </ScrollView>
+    );
   }
 }
 
