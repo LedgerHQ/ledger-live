@@ -8,7 +8,7 @@ import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
  * typically rendered inside a modal.
  */
 export default class Menu extends Component<{
-  header: *,
+  header?: *,
   children: *,
   onRequestClose: () => void,
 }> {
@@ -18,7 +18,7 @@ export default class Menu extends Component<{
       <TouchableWithoutFeedback onPress={onRequestClose}>
         <View style={styles.container}>
           <View style={styles.main}>
-            <View style={styles.head}>{header}</View>
+            {header && <View style={styles.head}>{header}</View>}
             <View style={styles.body}>{children}</View>
           </View>
         </View>
