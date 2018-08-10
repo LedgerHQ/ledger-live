@@ -59,7 +59,7 @@ class HardResetRow extends PureComponent<Props, State> {
                 title={t("common:settings.help.hardResetModal")}
                 icon={
                   <View style={styles.imageContainer}>
-                    <Warning size={16} color={colors.red} />
+                    <Warning size={16} color={colors.alert} />
                   </View>
                 }
                 description={t("common:settings.help.hardResetModalDesc")}
@@ -90,13 +90,13 @@ const styles = StyleSheet.create({
     height: 56,
     width: 56,
     borderRadius: 50,
-    backgroundColor: colors.redLight,
+    backgroundColor: colors.lightAlert,
     alignItems: "center",
     justifyContent: "center",
   },
   buttonContainer: {
     margin: 10,
-    backgroundColor: colors.red,
+    backgroundColor: colors.alert,
     flexDirection: "row",
     flexGrow: 1,
     borderRadius: 4,

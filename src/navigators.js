@@ -31,7 +31,7 @@ const stackNavigatiorDefaultNavigationOptions = {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.lightBackground,
+    backgroundColor: colors.lightGrey,
   },
 });
 

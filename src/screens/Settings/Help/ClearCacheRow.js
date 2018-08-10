@@ -62,7 +62,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
                 title={t("common:settings.help.clearCacheModal")}
                 icon={
                   <View style={styles.imageContainer}>
-                    <Warning size={16} color={colors.wallet} />
+                    <Warning size={16} color={colors.live} />
                   </View>
                 }
                 description={t("common:settings.help.clearCacheModalDesc")}
@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
     height: 56,
     width: 56,
     borderRadius: 50,
-    backgroundColor: colors.walletLight,
+    backgroundColor: colors.lightLive,
     alignItems: "center",
     justifyContent: "center",
   },
   buttonContainer: {
     margin: 10,
-    backgroundColor: colors.wallet,
+    backgroundColor: colors.live,
     flexDirection: "row",
     flexGrow: 1,
     borderRadius: 4,
