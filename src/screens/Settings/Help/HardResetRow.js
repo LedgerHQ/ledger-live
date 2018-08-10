@@ -56,7 +56,7 @@ class HardResetRow extends PureComponent<Props, State> {
           <Modal transparent onRequestClose={this.onRequestClose}>
             <Menu onRequestClose={this.onRequestClose}>
               <ModalBottomAction
-                title={null}
+                title={t("common:settings.help.hardResetModal")}
                 icon={
                   <View style={styles.imageContainer}>
                     <Warning size={16} color={colors.red} />
