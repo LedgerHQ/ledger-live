@@ -7,6 +7,7 @@ import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/Animat
 
 type Props = {
   children: React$Node,
+  headerHeight?: number,
   headerComponent: ({ scrollY: AnimatedValue }) => React$Node,
 };
 
@@ -20,19 +21,28 @@ type State = {
  * @prop chidren React.Node - children to render
  * @prop headerComponent React.Component - the header that needs to be animated on scroll
  *                                         it takes scrollY as prop
+ * @prop headerHeight Number - header height
+ *
  */
 export default class ScrollViewAnimatedHeader extends Component<Props, State> {
+  static defaultProps = {
+    headerHeight: 150,
+  };
+
   state = {
     scrollY: new Animated.Value(0),
   };
 
   render() {
-    const { children, headerComponent: Header } = this.props;
+    const { children, headerComponent: Header, headerHeight } = this.props;
 
     return (
       <Fragment>
         <Animated.ScrollView
-          contentContainerStyle={{ marginTop: 150 }}
+          contentContainerStyle={{
+            marginTop: headerHeight,
+            paddingBottom: headerHeight,
+          }}
           scrollEventThrottle={16}
           onScroll={Animated.event(
             [
