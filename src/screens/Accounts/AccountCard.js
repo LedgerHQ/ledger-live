@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   accountNameText: {
-    color: colors.dark,
+    color: colors.darkBlue,
   },
   balanceContainer: {
     marginLeft: 16,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   balanceNumText: {
     fontSize: 16,
-    color: colors.dark,
+    color: colors.darkBlue,
   },
   balanceCounterContainer: {
     marginTop: 5,

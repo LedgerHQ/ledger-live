@@ -1,14 +1,18 @@
 // @flow
 export default {
-  white: "#ffffff",
-  blue: "#4b84ff",
-  green: "#41ccb4",
-  red: "#ea2e49",
-  redLight: "#ea2e490c",
-  lightBackground: "rgb(244,244,244)",
-  darkBar: "rgb(30,32,39)",
-  dark: "#142533",
-  wallet: "#6490f1",
-  walletLight: "#4b84ff19",
+  /* MAIN */
+  live: "#6490f1",
+  alert: "#ea2e49",
+  success: "#66BE54",
+  darkBlue: "#142533",
+  smoke: "#666666",
   grey: "#999999",
+  fog: "#D8D8D8",
+  white: "#ffffff",
+
+  /* DERIVATIVES */
+  lightLive: "#4b84ff19",
+  lightAlert: "#ea2e490c",
+  lightFog: "#EEEEEE",
+  lightGrey: "#F9F9F9",
 };

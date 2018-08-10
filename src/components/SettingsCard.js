@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     height: 32,
     width: 32,
     borderRadius: 50,
-    backgroundColor: colors.walletLight,
+    backgroundColor: colors.lightLive,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 10,

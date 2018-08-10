@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   header: {
     height: 70,
     paddingTop: 20,
-    backgroundColor: colors.blue,
+    backgroundColor: colors.live,
   },
   body: {
     flex: 1,

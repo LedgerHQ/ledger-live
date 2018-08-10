@@ -24,7 +24,7 @@ class App extends Component<*> {
   render() {
     return (
       <View style={styles.root}>
-        <StatusBar backgroundColor={colors.blue} />
+        <StatusBar backgroundColor={colors.live} />
         <RootNavigator />
       </View>
     );

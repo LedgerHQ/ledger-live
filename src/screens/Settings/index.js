@@ -27,7 +27,7 @@ class Settings extends Component<{
     const settingsCards = [
       {
         key: "general",
-        icon: <Display size={16} color={colors.wallet} />,
+        icon: <Display size={16} color={colors.live} />,
         title: t("common:settings.display.title"),
         desc: t("common:settings.display.desc"),
         onClick: () => {
@@ -36,7 +36,7 @@ class Settings extends Component<{
       },
       {
         key: "currencies",
-        icon: <Assets size={16} color={colors.wallet} />,
+        icon: <Assets size={16} color={colors.live} />,
         title: t("common:settings.currencies.title"),
         desc: t("common:settings.currencies.desc"),
         onClick: () => {
@@ -45,7 +45,7 @@ class Settings extends Component<{
       },
       {
         key: "about",
-        icon: <LiveLogo size={16} color={colors.wallet} />,
+        icon: <LiveLogo size={16} color={colors.live} />,
         title: t("common:settings.about.title"),
         desc: t("common:settings.about.desc"),
         onClick: () => {
@@ -54,7 +54,7 @@ class Settings extends Component<{
       },
       {
         key: "help",
-        icon: <Help size={16} color={colors.wallet} />,
+        icon: <Help size={16} color={colors.live} />,
         title: t("common:settings.help.title"),
         desc: t("common:settings.help.desc"),
         onClick: () => {

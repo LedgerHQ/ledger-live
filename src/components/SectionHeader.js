@@ -30,6 +30,6 @@ const styles = StyleSheet.create({
     color: "#999",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    backgroundColor: colors.lightBackground,
+    backgroundColor: colors.lightGrey,
   },
 });

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   view: {
-    backgroundColor: colors.blue,
+    backgroundColor: colors.live,
     paddingVertical: 0,
     paddingHorizontal: 8,
     borderRadius: 4,
