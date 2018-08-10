@@ -29,11 +29,15 @@
       "supportDesc": "A problem? Get help with Ledger Live, Ledger devices, supported crypto assets and apps.",
       "clearCache": "Clear Cache",
       "clearCacheDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
+      "clearCacheModal": "Are you sure?",
+      "clearCacheModalDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
+      "clearCacheButton": "Clear Cache",
       "exportLogs": "Export logs",
       "exportLogsDesc": "Exporting Ledger Live logs may be necessary for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",
       "hardResetDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
-      "hardResetModalDesc": "Are you sure to reset ? Lorem ipsum dolor imet consectetur.",
+      "hardResetModal": "Are you sure?",
+      "hardResetModalDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
       "hardResetModalButton": "Reset"
     }
   }
