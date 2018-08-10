@@ -24,10 +24,7 @@ class App extends Component<*> {
   render() {
     const ColoredBar =
       Platform.OS === "android" && Platform.Version < 23 ? null : (
-        <StatusBar
-          backgroundColor={colors.lightBackground}
-          barStyle="dark-content"
-        />
+        <StatusBar backgroundColor={colors.lightGrey} barStyle="dark-content" />
       );
 
     return (
