@@ -2,15 +2,16 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import LText from "../components/LText";
+import colors from "../colors";
 
 export default class ModalBottomAction extends Component<{
   icon: *,
   title: *,
   description: *,
-  button: *,
+  footer: *,
 }> {
   render() {
-    const { icon, title, description, button } = this.props;
+    const { icon, title, description, footer } = this.props;
     return (
       <View>
         <View style={styles.root}>
@@ -22,8 +23,8 @@ export default class ModalBottomAction extends Component<{
               </LText>
             )}
             <LText style={styles.description}>{description}</LText>
+            <View style={styles.footer}>{footer}</View>
           </View>
-          <View style={styles.button}>{button}</View>
         </View>
       </View>
     );
@@ -32,30 +33,29 @@ export default class ModalBottomAction extends Component<{
 
 const styles = StyleSheet.create({
   root: {
-    padding: 10,
     borderBottomWidth: 1,
     borderColor: "#eee",
     alignItems: "center",
   },
   icon: {
-    marginTop: 15,
+    margin: 24,
   },
   body: {
     flexDirection: "column",
+    marginHorizontal: 16,
   },
   title: {
-    marginTop: 15,
+    marginTop: 16,
     textAlign: "center",
     fontSize: 14,
   },
   description: {
     fontSize: 14,
     textAlign: "center",
-    margin: 15,
+    marginBottom: 24,
+    color: colors.grey,
   },
-  button: {
-    margin: 25,
-    flexDirection: "row",
-    flexGrow: 1,
+  footer: {
+    paddingBottom: 16,
   },
 });

@@ -1,4 +1,7 @@
 {
+  "common": {
+    "cancel": "Cancel"
+  },
   "settings": {
     "display": {
       "title": "General",
@@ -38,7 +41,7 @@
       "clearCacheDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
       "clearCacheModal": "Are you sure?",
       "clearCacheModalDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
-      "clearCacheButton": "Clear Cache",
+      "clearCacheButton": "Clear",
       "exportLogs": "Export logs",
       "exportLogsDesc": "Exporting Ledger Live logs may be necessary for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",

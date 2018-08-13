@@ -12,6 +12,7 @@ import Menu from "../../../components/Menu";
 import Warning from "../../../images/icons/Warning";
 import ModalBottomAction from "../../../components/ModalBottomAction";
 import BlueButton from "../../../components/BlueButton";
+import GreyButton from "../../../components/GreyButton";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -55,20 +56,32 @@ class ClearCacheRow extends PureComponent<Props, State> {
           <Modal transparent onRequestClose={this.onRequestClose}>
             <Menu onRequestClose={this.onRequestClose}>
               <ModalBottomAction
-                title={t("common:settings.help.clearCacheModal")}
+                title={null}
                 icon={
                   <View style={styles.imageContainer}>
-                    <Warning size={16} color={colors.live} />
+                    <Warning size={24} color={colors.live} />
                   </View>
                 }
                 description={t("common:settings.help.clearCacheModalDesc")}
-                button={
-                  <BlueButton
-                    title={t("common:settings.help.clearCacheButton")}
-                    onPress={this.onClearCache}
-                    containerStyle={styles.buttonContainer}
-                    titleStyle={styles.buttonTitle}
-                  />
+                footer={
+                  <View style={styles.footerContainer}>
+                    <GreyButton
+                      title={t("common:common.cancel")}
+                      onPress={this.onRequestClose}
+                      containerStyle={styles.buttonContainer}
+                      titleStyle={styles.buttonTitle}
+                    />
+
+                    <BlueButton
+                      title={t("common:settings.help.clearCacheButton")}
+                      onPress={this.onClearCache}
+                      containerStyle={[
+                        styles.buttonContainer,
+                        styles.clearCacheBg,
+                      ]}
+                      titleStyle={[styles.buttonTitle, styles.clearCacheTitle]}
+                    />
+                  </View>
                 }
               />
             </Menu>
@@ -93,15 +106,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonContainer: {
-    margin: 10,
-    backgroundColor: colors.live,
+
+  footerContainer: {
     flexDirection: "row",
-    flexGrow: 1,
-    borderRadius: 4,
+    justifyContent: "space-around",
+  },
+  buttonContainer: {
+    height: 48,
+    width: 136,
+  },
+  clearCacheBg: {
+    backgroundColor: colors.live,
   },
   buttonTitle: {
+    fontSize: 16,
+  },
+  clearCacheTitle: {
     color: colors.white,
-    fontSize: 14,
   },
 });
