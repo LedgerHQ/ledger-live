@@ -8,7 +8,7 @@ import type { T } from "../../types/common";
 
 import SettingsCard from "../../components/SettingsCard";
 import Assets from "../../images/icons/Assets";
-import LiveLogo from "../../images/icons/LiveLogo";
+import LiveLogoIcon from "../../images/icons/LiveLogoIcon";
 import Help from "../../images/icons/Help";
 import Display from "../../images/icons/Display";
 import colors from "../../colors";
@@ -45,7 +45,7 @@ class Settings extends Component<{
       },
       {
         key: "about",
-        icon: <LiveLogo size={16} color={colors.live} />,
+        icon: <LiveLogoIcon size={16} color={colors.live} />,
         title: t("common:settings.about.title"),
         desc: t("common:settings.about.desc"),
         onClick: () => {

@@ -42,6 +42,7 @@ const SettingsStack = createStackNavigator(
     CountervalueSettings,
     RateProviderSettings,
     GeneralSettings,
+    // $FlowFixMe
     AboutSettings,
     HelpSettings,
     CurrenciesSettings,
