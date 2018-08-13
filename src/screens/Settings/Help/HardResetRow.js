@@ -10,9 +10,10 @@ import { withReboot } from "../../../context/Reboot";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
 import Menu from "../../../components/Menu";
-import Warning from "../../../images/icons/Warning";
+import Trash from "../../../images/icons/Trash";
 import ModalBottomAction from "../../../components/ModalBottomAction";
-import RedButton from "../../../components/GenericButton";
+import RedButton from "../../../components/RedButton";
+import GreyButton from "../../../components/GreyButton";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -56,20 +57,31 @@ class HardResetRow extends PureComponent<Props, State> {
           <Modal transparent onRequestClose={this.onRequestClose}>
             <Menu onRequestClose={this.onRequestClose}>
               <ModalBottomAction
-                title={t("common:settings.help.hardResetModal")}
+                title={null}
                 icon={
                   <View style={styles.imageContainer}>
-                    <Warning size={16} color={colors.alert} />
+                    <Trash size={24} color={colors.alert} />
                   </View>
                 }
                 description={t("common:settings.help.hardResetModalDesc")}
-                button={
-                  <RedButton
-                    title={t("common:settings.help.hardResetModalButton")}
-                    onPress={this.onHardReset}
-                    containerStyle={styles.buttonContainer}
-                    titleStyle={styles.buttonTitle}
-                  />
+                footer={
+                  <View style={styles.footerContainer}>
+                    <GreyButton
+                      title={t("common:common.cancel")}
+                      onPress={this.onRequestClose}
+                      containerStyle={styles.buttonContainer}
+                      titleStyle={styles.buttonTitle}
+                    />
+                    <RedButton
+                      title={t("common:settings.help.hardResetModalButton")}
+                      onPress={this.onHardReset}
+                      containerStyle={[
+                        styles.buttonContainer,
+                        styles.resetButtonBg,
+                      ]}
+                      titleStyle={[styles.buttonTitle, styles.resetButtonTitle]}
+                    />
+                  </View>
                 }
               />
             </Menu>
@@ -94,15 +106,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonContainer: {
-    margin: 10,
-    backgroundColor: colors.alert,
+  footerContainer: {
     flexDirection: "row",
-    flexGrow: 1,
-    borderRadius: 4,
+    justifyContent: "space-around",
+  },
+  buttonContainer: {
+    height: 48,
+    width: 136,
+  },
+  resetButtonBg: {
+    backgroundColor: colors.alert,
   },
   buttonTitle: {
+    fontSize: 16,
+  },
+  resetButtonTitle: {
     color: colors.white,
-    fontSize: 14,
   },
 });

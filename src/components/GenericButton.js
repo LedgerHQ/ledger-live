@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 10,
+    borderRadius: 4,
   },
   containerDisabled: {
     opacity: 0.5,
