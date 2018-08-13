@@ -1,23 +1,28 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import type { NavigationScreenProp } from "react-navigation";
-import SettingsRow from "../../../components/SettingsRow";
+import { ScrollView } from "react-native";
+import AppVersionRow from "./AppVersionRow";
+import LiveReviewRow from "./LiveReviewRow";
+import PrivacyPolicyRow from "./PrivacyPolicyRow";
+import TermsConditionsRow from "./TermsConditionsRow";
+import DescriptionRow from "./DescriptionRow";
 
-const mapStateToProps = createStructuredSelector({});
-
-class About extends PureComponent<{
-  navigation: NavigationScreenProp<*>,
-}> {
+class About extends PureComponent<*, *> {
   static navigationOptions = {
     title: "About",
   };
 
   render() {
-    // const { navigation } = this.props;
-    return <SettingsRow title="PLACEHOLDER" />;
+    return (
+      <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
+        <DescriptionRow />
+        <AppVersionRow />
+        <TermsConditionsRow />
+        <PrivacyPolicyRow />
+        <LiveReviewRow />
+      </ScrollView>
+    );
   }
 }
 
-export default connect(mapStateToProps)(About);
+export default About;

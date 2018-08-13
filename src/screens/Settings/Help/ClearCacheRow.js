@@ -24,10 +24,6 @@ type State = {
 };
 
 class ClearCacheRow extends PureComponent<Props, State> {
-  static navigationOptions = {
-    title: "Clear Cache",
-  };
-
   state = {
     modalOpened: false,
   };

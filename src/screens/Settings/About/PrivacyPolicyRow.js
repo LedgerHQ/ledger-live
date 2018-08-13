@@ -2,23 +2,23 @@
 import React, { PureComponent } from "react";
 import { translate } from "react-i18next";
 import { View, Linking } from "react-native";
-import colors from "../../../colors";
-import { urls } from "../../../config/urls";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
+import colors from "../../../colors";
+import { urls } from "../../../config/urls";
 import ExternalLink from "../../../images/icons/ExternalLink";
 
-class LedgerSupportRow extends PureComponent<{
+class PrivacyPolicyRow extends PureComponent<{
   t: T,
 }> {
   render() {
     const { t } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.help.support")}
-        desc={t("common:settings.help.supportDesc")}
+        title={t("common:settings.about.privacyPolicy")}
+        desc={t("common:settings.about.privacyPolicyDesc")}
         onPress={() =>
-          Linking.openURL(urls.faq).catch(err =>
+          Linking.openURL(urls.privacyPolicy).catch(err =>
             console.error("An error occurred", err),
           )
         }
@@ -31,4 +31,4 @@ class LedgerSupportRow extends PureComponent<{
   }
 }
 
-export default translate()(LedgerSupportRow);
+export default translate()(PrivacyPolicyRow);

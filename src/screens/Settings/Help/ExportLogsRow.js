@@ -14,10 +14,6 @@ class ExportLogsRow extends PureComponent<{
   navigation: NavigationScreenProp<*>,
   t: T,
 }> {
-  static navigationOptions = {
-    title: "Export Logs",
-  };
-
   render() {
     const { t } = this.props;
     return (

@@ -20,7 +20,14 @@
     },
     "about": {
       "title": "About",
-      "desc": "Information about Ledger Live, terms and conditions, and privacy policy."
+      "desc": "Information about Ledger Live, terms and conditions, and privacy policy.",
+      "appDescription": "The perfect companion for your Ledger devices. Add new cryptocurrencies and check your balance in just a few clicks",
+      "appVersion": "App version",
+      "termsConditions": "Terms and conditions",
+      "termsConditionsDesc": "By using Ledger Live you are deemed to have accepeted our terms",
+      "privacyPolicy": "Privacy policy",
+      "privacyPolicyDesc": "Refer to our privacy policy to learn what personal data we collect",
+      "liveReview": "Review Ledger Live"
     },
     "help": {
       "title": "Help",
