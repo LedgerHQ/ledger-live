@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet, Image, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -12,12 +12,7 @@ import AccountCard from "./AccountCard";
 import AccountsHeader from "./AccountsHeader";
 
 const navigationOptions = {
-  tabBarIcon: ({ tintColor }: { tintColor: string }) => (
-    <Image
-      source={require("../../images/accounts.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
-  ),
+  header: null,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -37,7 +32,7 @@ class Accounts extends Component<Props> {
     <AccountCard
       account={item}
       onPress={() =>
-        this.props.navigation.navigate("AccountSettings", {
+        this.props.navigation.navigate("Account", {
           accountId: item.id,
         })
       }
