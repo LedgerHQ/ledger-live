@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Image } from "react-native";
 import {
   createBottomTabNavigator,
   createStackNavigator,
@@ -10,7 +10,7 @@ import SettingsIcon from "./images/icons/Settings";
 import ManagerIcon from "./images/icons/Manager";
 import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
-import AccSettings from "./screens/AccSettings";
+import Account from "./screens/Account";
 import Settings from "./screens/Settings";
 import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
 import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
@@ -76,24 +76,31 @@ ManagerStack.navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => <ManagerIcon size={18} color={tintColor} />,
 };
 
-const AccountSettings = createStackNavigator(
+const AccountsStack = createStackNavigator(
   {
-    AccSettings,
+    Accounts,
+    Account,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
     cardStyle: styles.card,
   },
 );
-AccountSettings.navigationOptions = {
+AccountsStack.navigationOptions = {
   header: null,
+  tabBarIcon: ({ tintColor }: *) => (
+    <Image
+      source={require("./images/accounts.png")}
+      style={{ tintColor, width: 32, height: 32 }}
+    />
+  ),
 };
 
 const Main = createBottomTabNavigator({
   // $FlowFixMe
   Portfolio,
   // $FlowFixMe
-  Accounts,
+  Accounts: AccountsStack,
   // $FlowFixMe
   Transfer,
   Manager: ManagerStack,
@@ -136,7 +143,6 @@ export const RootNavigator = createStackNavigator(
     ReceiveFunds,
     SendFunds,
     OperationDetails,
-    AccountSettings,
   },
   {
     mode: "modal",

@@ -16,8 +16,8 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import LText from "../../components/LText";
-import PortfolioHeader from "./PortfolioHeader";
-import OperationRow from "./OperationRow";
+// import PortfolioHeader from "./PortfolioHeader";
+import OperationRow from "../../components/OperationRow";
 import PortfolioIcon from "../../images/icons/Portfolio";
 
 const navigationOptions = {
@@ -77,24 +77,24 @@ class Portfolio extends Component<
     return (
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
-        <PortfolioHeader>
-          <SectionList
-            sections={(sections: any)}
-            style={styles.sectionList}
-            ListFooterComponent={
-              !completed
-                ? LoadingFooter
-                : sections.length === 0
-                  ? NoOperationFooter
-                  : NoMoreOperationFooter
-            }
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
-            renderSectionHeader={SectionHeader}
-            onEndReached={this.onEndReached}
-            showsVerticalScrollIndicator={false}
-          />
-        </PortfolioHeader>
+        {/* <PortfolioHeader> */}
+        <SectionList
+          sections={(sections: any)}
+          style={styles.sectionList}
+          ListFooterComponent={
+            !completed
+              ? LoadingFooter
+              : sections.length === 0
+                ? NoOperationFooter
+                : NoMoreOperationFooter
+          }
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+          renderSectionHeader={SectionHeader}
+          onEndReached={this.onEndReached}
+          showsVerticalScrollIndicator={false}
+        />
+        {/* </PortfolioHeader> */}
       </View>
     );
   }

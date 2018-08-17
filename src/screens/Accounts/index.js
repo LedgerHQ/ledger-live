@@ -35,7 +35,7 @@ class Accounts extends Component<Props> {
     <AccountCard
       account={item}
       onPress={() =>
-        this.props.navigation.navigate("AccountSettings", {
+        this.props.navigation.navigate("Account", {
           accountId: item.id,
         })
       }

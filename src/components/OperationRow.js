@@ -4,12 +4,12 @@ import { View, StyleSheet } from "react-native";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 
-import LText from "../../components/LText";
-import OperationIcon from "../../components/OperationIcon";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
+import LText from "./LText";
+import OperationIcon from "./OperationIcon";
+import CurrencyUnitValue from "./CurrencyUnitValue";
+import CounterValue from "./CounterValue";
 
-import colors from "../../colors";
+import colors from "../colors";
 
 class OperationRow extends PureComponent<{
   operation: Operation,
