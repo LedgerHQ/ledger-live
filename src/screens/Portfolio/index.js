@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { Image, View, StyleSheet, StatusBar, SectionList } from "react-native";
+import { View, StyleSheet, StatusBar, SectionList } from "react-native";
 import { connect } from "react-redux";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
@@ -16,21 +16,19 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import LText from "../../components/LText";
-import DashboardHeader from "./DashboardHeader";
+import PortfolioHeader from "./PortfolioHeader";
 import OperationRow from "./OperationRow";
+import PortfolioIcon from "../../images/icons/Portfolio";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
-    <Image
-      source={require("../../images/dashboard.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
+    <PortfolioIcon size={18} color={tintColor} />
   ),
 };
 
 const mapStateToProps = state => ({ accounts: accountsSelector(state) });
 
-class Dashboard extends Component<
+class Portfolio extends Component<
   {
     accounts: Account[],
     navigation: *,
@@ -79,7 +77,7 @@ class Dashboard extends Component<
     return (
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
-        <DashboardHeader>
+        <PortfolioHeader>
           <SectionList
             sections={(sections: any)}
             style={styles.sectionList}
@@ -96,13 +94,13 @@ class Dashboard extends Component<
             onEndReached={this.onEndReached}
             showsVerticalScrollIndicator={false}
           />
-        </DashboardHeader>
+        </PortfolioHeader>
       </View>
     );
   }
 }
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps)(Portfolio);
 
 const styles = StyleSheet.create({
   root: {

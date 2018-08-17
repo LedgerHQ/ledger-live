@@ -1,22 +1,20 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet, Image, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
+import AccountsIcon from "../../images/icons/Accounts";
 
 import AccountCard from "./AccountCard";
 import AccountsHeader from "./AccountsHeader";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: { tintColor: string }) => (
-    <Image
-      source={require("../../images/accounts.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
+    <AccountsIcon size={18} color={tintColor} />
   ),
 };
 
