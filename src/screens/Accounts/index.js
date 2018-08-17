@@ -7,12 +7,15 @@ import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
+import AccountsIcon from "../../images/icons/Accounts";
 
 import AccountCard from "./AccountCard";
 import AccountsHeader from "./AccountsHeader";
 
 const navigationOptions = {
-  header: null,
+  tabBarIcon: ({ tintColor }: { tintColor: string }) => (
+    <AccountsIcon size={18} color={tintColor} />
+  ),
 };
 
 const mapStateToProps = createStructuredSelector({

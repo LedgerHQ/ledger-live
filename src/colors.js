@@ -9,7 +9,7 @@ export default {
   grey: "#999999",
   fog: "#D8D8D8",
   white: "#ffffff",
-  green: "rgba(102, 190, 84, 1)",
+  green: "rgb(102, 190, 84)",
 
   /* DERIVATIVES */
   lightLive: "#4b84ff19",
