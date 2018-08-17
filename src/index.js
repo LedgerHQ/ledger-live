@@ -1,7 +1,7 @@
 // @flow
 import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
-import { StyleSheet, View, StatusBar } from "react-native";
+import { StyleSheet, View, StatusBar, Platform } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import colors from "./colors";
 import CounterValues from "./countervalues";
@@ -22,9 +22,14 @@ const styles = StyleSheet.create({
 
 class App extends Component<*> {
   render() {
+    const ColoredBar =
+      Platform.OS === "android" && Platform.Version < 23 ? null : (
+        <StatusBar backgroundColor={colors.white} barStyle="dark-content" />
+      );
+
     return (
       <View style={styles.root}>
-        <StatusBar backgroundColor={colors.live} />
+        {ColoredBar}
         <RootNavigator />
       </View>
     );

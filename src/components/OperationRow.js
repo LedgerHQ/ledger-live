@@ -1,4 +1,4 @@
-// @flow
+/* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
@@ -9,14 +9,12 @@ import OperationIcon from "./OperationIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 
-import colors from "./../colors";
+import colors from "../colors";
 
-type Props = {
+class OperationRow extends PureComponent<{
   operation: Operation,
   account: Account,
-};
-
-class OperationRow extends PureComponent<Props> {
+}> {
   render() {
     const { operation, account } = this.props;
     const valueColor = operation.type === "IN" ? colors.green : colors.smoke;

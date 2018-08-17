@@ -1,12 +1,14 @@
 // @flow
 import React from "react";
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet } from "react-native";
 import {
   createBottomTabNavigator,
   createStackNavigator,
 } from "react-navigation";
 import colors from "./colors";
-import Dashboard from "./screens/Dashboard";
+import SettingsIcon from "./images/icons/Settings";
+import ManagerIcon from "./images/icons/Manager";
+import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
 import Settings from "./screens/Settings";
@@ -20,7 +22,7 @@ import Manager from "./screens/Manager";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
 import SendFundsMain from "./screens/SendFunds";
 import OperationDetails from "./screens/OperationDetails";
-import Create from "./screens/Create";
+import Transfer from "./screens/Transfer";
 
 const stackNavigatiorDefaultNavigationOptions = {
   headerStyle: {
@@ -55,10 +57,7 @@ const SettingsStack = createStackNavigator(
 
 SettingsStack.navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
-    <Image
-      source={require("./images/settings.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
+    <SettingsIcon size={18} color={tintColor} />
   ),
 };
 
@@ -74,12 +73,7 @@ const ManagerStack = createStackNavigator(
 );
 
 ManagerStack.navigationOptions = {
-  tabBarIcon: ({ tintColor }: *) => (
-    <Image
-      source={require("./images/settings.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
-  ),
+  tabBarIcon: ({ tintColor }: *) => <ManagerIcon size={18} color={tintColor} />,
 };
 
 const AccountsStack = createStackNavigator(
@@ -104,11 +98,11 @@ AccountsStack.navigationOptions = {
 
 const Main = createBottomTabNavigator({
   // $FlowFixMe
-  Dashboard,
+  Portfolio,
   // $FlowFixMe
   Accounts: AccountsStack,
   // $FlowFixMe
-  Create,
+  Transfer,
   Manager: ManagerStack,
   Settings: SettingsStack,
 });

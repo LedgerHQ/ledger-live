@@ -8,7 +8,7 @@ import type { OperationType } from "@ledgerhq/live-common/lib/types";
 import ReceiveIcon from "../images/icons/Receive";
 import SendIcon from "../images/icons/Send";
 
-import colors from "./../colors";
+import colors from "../colors";
 
 type Props = {
   type: OperationType,
@@ -18,28 +18,20 @@ type Props = {
 export default class OperationIcon extends PureComponent<Props> {
   render() {
     const { type, size } = this.props;
+    let icon;
+    let bgColor;
 
     if (type === "IN") {
-      return (
-        <View
-          style={[
-            styles.iconContainer,
-            { backgroundColor: colors.translucentGreen },
-          ]}
-        >
-          <ReceiveIcon size={size} color={colors.green} />
-        </View>
-      );
+      icon = <ReceiveIcon size={size} color={colors.green} />;
+      bgColor = colors.translucentGreen;
+    } else {
+      icon = <SendIcon size={size} color={colors.grey} />;
+      bgColor = colors.translucentGrey;
     }
 
     return (
-      <View
-        style={[
-          styles.iconContainer,
-          { backgroundColor: colors.translucentGrey },
-        ]}
-      >
-        <SendIcon size={size} color={colors.grey} />
+      <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
+        {icon}
       </View>
     );
   }

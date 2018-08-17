@@ -1,45 +1,42 @@
 // @flow
 
 import React, { Component } from "react";
-import { Image, View, StyleSheet, StatusBar, SectionList } from "react-native";
+import { View, StyleSheet, StatusBar, SectionList } from "react-native";
 import { connect } from "react-redux";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/helpers/account";
+
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/helpers/account";
 
 import { accountsSelector } from "../../reducers/accounts";
 
-import colors from "./../../colors";
+import colors from "../../colors";
 
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
-import LText from "../../components/LText/index";
-import OperationRow from "./../../components/OperationRow";
-
-// import DashboardHeader from "./DashboardHeader";
-
-const mapStateToProps = state => ({ accounts: accountsSelector(state) });
+import LText from "../../components/LText";
+// import PortfolioHeader from "./PortfolioHeader";
+import OperationRow from "../../components/OperationRow";
+import PortfolioIcon from "../../images/icons/Portfolio";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
-    <Image
-      source={require("../../images/dashboard.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
+    <PortfolioIcon size={18} color={tintColor} />
   ),
 };
 
-type Props = {
-  accounts: Account[],
-  navigation: *,
-};
+const mapStateToProps = state => ({ accounts: accountsSelector(state) });
 
-type State = {
-  opCount: number,
-};
-
-class Dashboard extends Component<Props, State> {
+class Portfolio extends Component<
+  {
+    accounts: Account[],
+    navigation: *,
+  },
+  {
+    opCount: number,
+  },
+> {
   static navigationOptions = navigationOptions;
 
   state = {
@@ -56,8 +53,9 @@ class Dashboard extends Component<Props, State> {
     return <OperationRow operation={item} account={account} />;
   };
 
-  onEndReached = () =>
+  onEndReached = () => {
     this.setState(({ opCount }) => ({ opCount: opCount + 50 }));
+  };
 
   render() {
     const { accounts } = this.props;
@@ -66,7 +64,7 @@ class Dashboard extends Component<Props, State> {
     if (accounts.length === 0) {
       return (
         <View style={styles.root}>
-          <LText>No Account</LText>
+          <LText>No account</LText>
         </View>
       );
     }
@@ -79,7 +77,7 @@ class Dashboard extends Component<Props, State> {
     return (
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
-        {/* <DashboardHeader> */}
+        {/* <PortfolioHeader> */}
         <SectionList
           sections={(sections: any)}
           style={styles.sectionList}
@@ -96,13 +94,13 @@ class Dashboard extends Component<Props, State> {
           onEndReached={this.onEndReached}
           showsVerticalScrollIndicator={false}
         />
-        {/* </DashboardHeader> */}
+        {/* </PortfolioHeader> */}
       </View>
     );
   }
 }
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps)(Portfolio);
 
 const styles = StyleSheet.create({
   root: {
