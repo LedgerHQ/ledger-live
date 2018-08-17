@@ -29,3 +29,13 @@ export const importSettings = (settings: *) => ({
   type: "SETTINGS_IMPORT",
   settings,
 });
+
+export const setReportErrors = (reportErrorsEnabled: boolean) => ({
+  type: "SETTINGS_SET_REPORT_ERRORS",
+  reportErrorsEnabled,
+});
+
+export const setAnalytics = (analyticsEnabled: boolean) => ({
+  type: "SETTINGS_SET_ANALYTICS",
+  analyticsEnabled,
+});

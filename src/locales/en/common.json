@@ -15,7 +15,11 @@
       "exchange": "Rate provider",
       "exchangeDesc": "Choose the provider of the exchange rate from Bitcoin to {{fiat}}. The value of crypto assets is first calculated in Bitcoin, before being converted to {{fiat}} (crypto asset → BTC → {{fiat}}).",
       "stock": "Regional market indicator",
-      "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red."
+      "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red.",
+      "reportErrors": "Report bugs",
+      "reportErrorsDesc": "Share anonymous usage and diagnostics data to help improve Ledger products, services and security features.",
+      "analytics": "Analytics",
+      "analyticsDesc": "Enable analytics of anonymous data to help Ledger improve the user experience. This includes the operating system, language, firmware versions and the number of added accounts."
     },
     "currencies": {
       "title": "Currencies",
