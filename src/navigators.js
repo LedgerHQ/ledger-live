@@ -24,6 +24,8 @@ import SendFundsMain from "./screens/SendFunds";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 
+// TODO look into all $FlowFixMe
+
 const stackNavigatiorDefaultNavigationOptions = {
   headerStyle: {
     backgroundColor: "white",
@@ -43,6 +45,7 @@ const SettingsStack = createStackNavigator(
     Settings,
     CountervalueSettings,
     RateProviderSettings,
+    // $FlowFixMe
     GeneralSettings,
     // $FlowFixMe
     AboutSettings,

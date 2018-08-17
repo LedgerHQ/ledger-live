@@ -15,12 +15,16 @@ export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
   authSecurityEnabled: boolean,
+  reportErrorsEnabled: boolean,
+  analyticsEnabled: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
   authSecurityEnabled: false,
+  reportErrorsEnabled: false,
+  analyticsEnabled: false,
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -37,6 +41,19 @@ const handlers: Object = {
     state: SettingsState,
     { authSecurityEnabled },
   ) => ({ ...state, authSecurityEnabled }),
+
+  SETTINGS_SET_REPORT_ERRORS: (
+    state: SettingsState,
+    { reportErrorsEnabled },
+  ) => ({
+    ...state,
+    reportErrorsEnabled,
+  }),
+
+  SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
+    ...state,
+    analyticsEnabled,
+  }),
 
   SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
     ...state,
@@ -104,6 +121,15 @@ export const currencySettingsSelector = (_s: *, _o: *) => ({
 export const authSecurityEnabledSelector = createSelector(
   storeSelector,
   s => s.authSecurityEnabled,
+);
+
+export const reportErrorsEnabledSelector = createSelector(
+  storeSelector,
+  s => s.reportErrorsEnabled,
+);
+export const analyticsEnabledSelector = createSelector(
+  storeSelector,
+  s => s.analyticsEnabled,
 );
 
 export default handleActions(handlers, INITIAL_STATE);
