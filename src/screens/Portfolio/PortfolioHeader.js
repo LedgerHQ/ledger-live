@@ -57,7 +57,7 @@ type Props = {
   children: React$Node,
 };
 
-class DashboardHeader extends Component<Props> {
+class PortfolioHeader extends Component<Props> {
   render() {
     const { children } = this.props;
     return (
@@ -68,7 +68,7 @@ class DashboardHeader extends Component<Props> {
   }
 }
 
-export default DashboardHeader;
+export default PortfolioHeader;
 
 const styles = StyleSheet.create({
   header: {
