@@ -815,6 +815,29 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  stellar: {
+    id: "stellar",
+    coinType: 148,
+    name: "Stellar",
+    managerAppName: "Stellar",
+    ticker: "XLM",
+    scheme: "stellar",
+    color: "#07B5E5",
+    family: "stellar",
+    units: [
+      {
+        name: "Lumen",
+        code: "XLM",
+        symbol: "XLM",
+        magnitude: 7
+      },
+      {
+        name: "stroop",
+        code: "stroop",
+        magnitude: 0
+      },
+    ]
+  },
 
   // Testnets
   bitcoin_testnet: {
