@@ -470,6 +470,7 @@ const cryptocurrenciesById = {
     scheme: "digibyte",
     color: "#0066cc",
     family: "bitcoin",
+    supportsSegwit: true,
     ledgerExplorerId: "dgb",
     blockAvgTime: 60,
     bitcoinLikeInfo: {
