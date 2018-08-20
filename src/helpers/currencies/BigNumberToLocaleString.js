@@ -53,18 +53,16 @@ export const toLocaleString = (
   const maxDecimals = bn.toFormat(maximumFractionDigits);
   if (maximumFractionDigits !== minimumFractionDigits) {
     const minDecimals = bn.toFormat(minimumFractionDigits);
-    let i = maxDecimals.length - 1;
+    let i = maxDecimals.length;
     // cleanup useless '0's from the right until the minimumFractionDigits
     while (i > minDecimals.length) {
-      if (maxDecimals[i] === "0") {
-        i--;
-      } else if (maxDecimals[i] === format.decimalSeparator) {
-        i--;
+      if (maxDecimals[i - 1] !== "0") {
+        if (maxDecimals[i - 1] === format.decimalSeparator) {
+          i--;
+        }
         break; // we reach decimal. stop now.
-      } else {
-        i++; // we eat one character that we shouldn't. we stop there and roll it back (nb slice won't overflow)
-        break;
       }
+      i--;
     }
     return maxDecimals.slice(0, i);
   } else {

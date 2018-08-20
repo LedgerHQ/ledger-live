@@ -27,6 +27,14 @@ test("toLocaleString to default maximumFractionDigits to 3", () => {
   expect(toLocaleString(BigNumber(9.99999))).toBe("10");
   expect(toLocaleString(BigNumber(111111.111111111))).toBe("111,111.111");
   expect(toLocaleString(BigNumber(0.999999999))).toBe("1");
+  expect(toLocaleString(BigNumber(9.5))).toBe("9.5");
+  expect(toLocaleString(BigNumber(9.9))).toBe("9.9");
+  expect(toLocaleString(BigNumber(99.6))).toBe("99.6");
+  expect(toLocaleString(BigNumber(99.8))).toBe("99.8");
+  expect(toLocaleString(BigNumber(999.7))).toBe("999.7");
+  expect(toLocaleString(BigNumber(999.9))).toBe("999.9");
+  expect(toLocaleString(BigNumber(999999.7))).toBe("999,999.7");
+  expect(toLocaleString(BigNumber(999999.9))).toBe("999,999.9");
 });
 
 test("toLocaleString minimumFractionDigits", () => {
@@ -42,6 +50,12 @@ test("toLocaleString minimumFractionDigits", () => {
   expect(
     toLocaleString(BigNumber(0.001), "en", { minimumFractionDigits: 1 })
   ).toBe("0.001");
+  expect(
+    toLocaleString(BigNumber(9.5), "en", { minimumFractionDigits: 1 })
+  ).toBe("9.5");
+  expect(
+    toLocaleString(BigNumber(9.6), "en", { minimumFractionDigits: 2 })
+  ).toBe("9.60");
   expect(
     toLocaleString(BigNumber(13.1), "en", { minimumFractionDigits: 3 })
   ).toBe("13.100");
@@ -109,8 +123,16 @@ test("toLocaleString minimumFractionDigits and maximumFractionDigits", () => {
       maximumFractionDigits: 5
     })
   ).toBe("0.0");
+  expect(
+    toLocaleString(BigNumber(9.7), "en", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    })
+  ).toBe("9.7");
 
   expect(
-    toLocaleString(BigNumber('4.4444444444444444444411111111111111'), "en", { maximumFractionDigits: 20 })
+    toLocaleString(BigNumber("4.4444444444444444444411111111111111"), "en", {
+      maximumFractionDigits: 20
+    })
   ).toBe("4.44444444444444444444");
 });
