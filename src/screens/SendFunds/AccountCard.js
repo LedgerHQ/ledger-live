@@ -1,13 +1,14 @@
 // @flow
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import LText from "../../components/LText";
+
 import Card from "../../components/Card";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
 import CurrencyIcon from "../../components/CurrencyIcon";
-import colors from "../../colors";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import LText from "../../components/LText";
+
+import colors from "./../../colors";
 
 type Props = {
   account: Account,
@@ -15,14 +16,14 @@ type Props = {
   style?: any,
 };
 
-class AccountCard extends Component<Props> {
+class AccountCard extends PureComponent<Props> {
   render() {
-    const { account, onPress, style } = this.props;
+    const { onPress, account, style } = this.props;
     return (
-      <Card onPress={onPress} style={[styles.root, style]}>
+      <Card onPress={onPress} style={[styles.card, style]}>
         <CurrencyIcon size={24} currency={account.currency} />
         <View style={styles.accountName}>
-          <LText semiBold numberOfLines={2} style={styles.accountNameText}>
+          <LText semiBold numberOfLines={1} style={styles.accountNameText}>
             {account.name}
           </LText>
         </View>
@@ -34,29 +35,18 @@ class AccountCard extends Component<Props> {
               value={account.balance}
             />
           </LText>
-          <View style={styles.balanceCounterContainer}>
-            <LText tertiary>
-              <CounterValue
-                showCode
-                currency={account.currency}
-                value={account.balance}
-              />
-            </LText>
-          </View>
         </View>
       </Card>
     );
   }
 }
 
-export default AccountCard;
-
 const styles = StyleSheet.create({
-  root: {
+  card: {
+    flex: 1,
     flexDirection: "row",
     paddingHorizontal: 16,
-    alignItems: "center",
-    height: 72,
+    paddingVertical: 18,
   },
   accountName: {
     flexGrow: 1,
@@ -64,6 +54,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   accountNameText: {
+    fontSize: 14,
     color: colors.darkBlue,
   },
   balanceContainer: {
@@ -71,10 +62,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   balanceNumText: {
-    fontSize: 16,
-    color: colors.darkBlue,
-  },
-  balanceCounterContainer: {
-    marginTop: 5,
+    fontSize: 12,
+    color: colors.grey,
   },
 });
+
+export default AccountCard;
