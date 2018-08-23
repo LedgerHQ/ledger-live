@@ -50,7 +50,13 @@ class Portfolio extends Component<
 
     if (!account) return null;
 
-    return <OperationRow operation={item} account={account} />;
+    return (
+      <OperationRow
+        operation={item}
+        account={account}
+        navigation={this.props.navigation}
+      />
+    );
   };
 
   onEndReached = () => {

@@ -13,11 +13,12 @@ import colors from "../colors";
 type Props = {
   type: OperationType,
   size: number,
+  containerSize: number,
 };
 
 export default class OperationIcon extends PureComponent<Props> {
   render() {
-    const { type, size } = this.props;
+    const { type, size, containerSize } = this.props;
     let icon;
     let bgColor;
 
@@ -30,7 +31,16 @@ export default class OperationIcon extends PureComponent<Props> {
     }
 
     return (
-      <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
+      <View
+        style={[
+          styles.iconContainer,
+          {
+            backgroundColor: bgColor,
+            width: containerSize,
+            height: containerSize,
+          },
+        ]}
+      >
         {icon}
       </View>
     );
@@ -39,8 +49,6 @@ export default class OperationIcon extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   iconContainer: {
-    height: 28,
-    width: 28,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",

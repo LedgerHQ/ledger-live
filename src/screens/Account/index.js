@@ -47,11 +47,17 @@ class Accnt extends Component<Props, State> {
   keyExtractor = (item: Operation) => item.id;
 
   renderItem = ({ item }: { item: Operation }) => {
-    const { account } = this.props;
+    const { account, navigation } = this.props;
 
     if (!account) return null;
 
-    return <OperationRow operation={item} account={account} />;
+    return (
+      <OperationRow
+        operation={item}
+        account={account}
+        navigation={navigation}
+      />
+    );
   };
 
   onEndReached = () => {
