@@ -2,6 +2,22 @@
   "common": {
     "cancel": "Cancel"
   },
+  "operationDetails": {
+    "title": "Operation details",
+    "account": "Account",
+    "date": "Date",
+    "confirmed": "Confirmed",
+    "notConfirmed": "Not confirmed",
+    "fees": "Fees",
+    "noFees": "No fee",
+    "from": "From ({{count}})",
+    "to": "To ({{count}})",
+    "identifier": "Transaction ID",
+    "viewOperation": "View in explorer",
+    "seeAll": "See all",
+    "seeLess": "See less",
+    "viewInExplorer": "View in explorer"
+  },
   "settings": {
     "display": {
       "title": "General",

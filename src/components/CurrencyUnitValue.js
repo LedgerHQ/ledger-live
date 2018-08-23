@@ -11,15 +11,17 @@ class CurrencyUnitValue extends Component<{
   value: BigNumber,
   locale: string,
   showCode: boolean,
+  alwaysShowSign?: boolean,
 }> {
   static defaultProps = {
     showCode: true,
   };
   render() {
-    const { unit, value, showCode, locale } = this.props;
+    const { unit, value, showCode, locale, alwaysShowSign } = this.props;
     return formatCurrencyUnit(unit, value, {
       showCode,
       locale,
+      alwaysShowSign,
     });
   }
 }

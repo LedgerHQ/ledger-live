@@ -145,6 +145,7 @@ export const RootNavigator = createStackNavigator(
     Main,
     ReceiveFunds,
     SendFunds,
+    // $FlowFixMe
     OperationDetails,
   },
   {
