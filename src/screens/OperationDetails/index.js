@@ -15,11 +15,10 @@ type Props = {
   }>,
 };
 class OperationDetails extends PureComponent<Props, *> {
-  static navigationOptions = ({ screenProps }: *) => ({
+  static navigationOptions = ({ navigation }: *) => ({
     title: "Operation Details",
-    headerLeft: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    ),
+    headerRight: <HeaderRightClose navigation={navigation} />,
+    headerLeft: null,
   });
   render() {
     const { navigation } = this.props;

@@ -49,6 +49,7 @@ class HardResetRow extends PureComponent<Props, State> {
       <Fragment>
         <SettingsRow
           title={t("common:settings.help.hardReset")}
+          titleStyle={{ color: colors.alert }}
           desc={t("common:settings.help.hardResetDesc")}
           arrowRight
           onPress={this.onPress}

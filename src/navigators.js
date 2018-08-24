@@ -23,6 +23,7 @@ import ReceiveFundsMain from "./screens/ReceiveFunds";
 import SendFundsMain from "./screens/SendFunds";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
+import AccountSettings from "./screens/AccountSettings";
 
 // TODO look into all $FlowFixMe
 
@@ -147,6 +148,7 @@ export const RootNavigator = createStackNavigator(
     SendFunds,
     // $FlowFixMe
     OperationDetails,
+    AccountSettings,
   },
   {
     mode: "modal",
