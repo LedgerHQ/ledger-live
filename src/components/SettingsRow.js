@@ -1,16 +1,21 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Touchable from "./Touchable";
 import LText from "./LText";
+import colors from "../colors";
+import ArrowRight from "../images/icons/ArrowRight";
+import Check from "../images/icons/Check";
 
 const flowPush = <View style={{ flex: 1 }} />;
 
 export default class SettingsRow extends Component<{
   onPress: () => void,
   title: string,
+  titleStyle?: *,
   desc?: string,
   selected?: boolean,
   arrowRight?: boolean,
+  iconLeft?: *,
   center?: boolean,
   children: *,
 }> {
@@ -19,8 +24,10 @@ export default class SettingsRow extends Component<{
       onPress,
       children,
       title,
+      titleStyle,
       desc,
       arrowRight,
+      iconLeft,
       center,
       selected,
     } = this.props;
@@ -29,19 +36,23 @@ export default class SettingsRow extends Component<{
         onPress={onPress}
         style={[styles.root, center && styles.center]}
       >
+        {iconLeft && <View style={{ paddingHorizontal: 10 }}>{iconLeft}</View>}
         <View style={styles.textBlock}>
-          <LText bold>{title}</LText>
+          <LText semiBold style={titleStyle}>
+            {title}
+          </LText>
           {desc && <LText style={styles.description}>{desc}</LText>}
         </View>
         {!center ? flowPush : null}
         {children}
         {arrowRight ? (
-          <Image source={require("../images/arrow_right.png")} />
+          <View style={styles.iconRightContainer}>
+            <ArrowRight size={16} color={colors.grey} />
+          </View>
         ) : selected ? (
-          <Image
-            style={{ width: 24, height: 24 }}
-            source={require("../images/check.png")}
-          />
+          <View style={styles.iconLeftContainer}>
+            <Check size={16} color={colors.live} />
+          </View>
         ) : null}
       </Touchable>
     );
@@ -53,9 +64,9 @@ const styles = StyleSheet.create({
     minHeight: 50,
     flexDirection: "row",
     alignItems: "center",
-    padding: 20,
+    padding: 10,
     backgroundColor: "white",
-    marginBottom: 1,
+    marginBottom: 2,
   },
   center: {
     justifyContent: "center",
@@ -66,5 +77,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
   },
-  description: { color: "#999", paddingTop: 5 },
+  description: { color: colors.grey, paddingTop: 5, fontSize: 12 },
+  iconRightContainer: {
+    marginLeft: 8,
+  },
 });

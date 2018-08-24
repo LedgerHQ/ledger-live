@@ -1,7 +1,8 @@
 /* @flow */
 import React, { Component } from "react";
-import { Image } from "react-native";
 import Touchable from "./Touchable";
+import CloseIcon from "../images/icons/Close";
+import colors from "../colors";
 
 export default class Close extends Component<*> {
   onPress = () => {
@@ -9,16 +10,8 @@ export default class Close extends Component<*> {
   };
   render() {
     return (
-      <Touchable onPress={this.onPress}>
-        <Image
-          source={require("../images/close.png")}
-          style={{
-            marginHorizontal: 10,
-            width: 20,
-            height: 20,
-            tintColor: "white",
-          }}
-        />
+      <Touchable onPress={this.onPress} style={{ marginHorizontal: 16 }}>
+        <CloseIcon size={18} color={colors.grey} />
       </Touchable>
     );
   }

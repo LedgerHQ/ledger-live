@@ -18,6 +18,40 @@
     "seeLess": "See less",
     "viewInExplorer": "View in explorer"
   },
+  "account": {
+    "lastOperations": "Last operations",
+    "emptyState": {
+      "title": "No crypto assets yet?",
+      "desc": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving",
+      "buttons": {
+        "receiveFunds": "Receive"
+      }
+    },
+    "settings": {
+      "title": "Edit account",
+      "advancedLogs": "Advanced logs",
+      "accountName": {
+        "title": "Account name",
+        "desc": "Describe this account"
+      },
+      "unit": {
+        "title": "Unit",
+        "desc": "Choose the unit to display"
+      },
+      "endpointConfig": {
+        "title": "Node",
+        "desc": "The API node to use"
+      },
+      "delete": {
+        "title": "Delete Account",
+        "desc": "Stored data will be deleted"
+      },
+      "archive": {
+        "title": "Archive Account",
+        "desc": "Lorem ipsum dolor imet"
+      }
+    }
+  },
   "settings": {
     "display": {
       "title": "General",

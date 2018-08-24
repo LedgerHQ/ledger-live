@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, SectionList } from "react-native";
+import { ScrollView, StyleSheet, SectionList, View } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -14,7 +14,8 @@ import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
-
+import Wrench from "../../images/icons/Wrench";
+import Touchable from "../../components/Touchable";
 import colors from "./../../colors";
 
 type Props = {
@@ -31,6 +32,19 @@ type State = {
 class Accnt extends Component<Props, State> {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.getParam("accountTitle", "Account"),
+    headerRight: (
+      <Touchable
+        onPress={() => {
+          navigation.navigate("AccountSettings", {
+            account: navigation.getParam("account", {}),
+          });
+        }}
+      >
+        <View style={{ marginRight: 16 }}>
+          <Wrench size={16} color={colors.grey} />
+        </View>
+      </Touchable>
+    ),
   });
 
   state = {
@@ -40,7 +54,10 @@ class Accnt extends Component<Props, State> {
   componentDidMount() {
     const { account, navigation } = this.props;
     if (account) {
-      navigation.setParams({ accountTitle: `Account ${account.name}` });
+      navigation.setParams({
+        accountTitle: `Account ${account.name}`,
+        account: this.props.account,
+      });
     }
   }
 
