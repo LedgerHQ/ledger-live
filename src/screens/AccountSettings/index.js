@@ -48,7 +48,11 @@ class AccountSettings extends PureComponent<Props> {
             title={t("common:account.settings.accountName.title")}
             desc={t("common:account.settings.accountName.desc")}
             arrowRight
-            onPress={() => navigation.navigate("")}
+            onPress={() =>
+              navigation.navigate("EditAccountName", {
+                accountId: account.id,
+              })
+            }
           >
             <LText
               numberOfLines={1}
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     width: 32,
   },
   accountName: {
-    flex: 4,
+    flex: 1,
     flexShrink: 1,
     color: colors.grey,
   },

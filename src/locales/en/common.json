@@ -1,6 +1,7 @@
 {
   "common": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "apply": "Apply"
   },
   "operationDetails": {
     "title": "Operation details",

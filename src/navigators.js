@@ -25,6 +25,7 @@ import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
+import EditAccountName from "./screens/AccountSettings/EditAccountName";
 
 // TODO look into all $FlowFixMe
 
@@ -145,6 +146,7 @@ const AccountSettings = createStackNavigator(
   {
     AccountSettingsMain,
     EditAccountUnits,
+    EditAccountName,
   },
   {
     navigationOptions: stackNavigatiorDefaultNavigationOptions,
