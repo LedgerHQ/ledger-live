@@ -1,9 +1,13 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
+import { connect } from "react-redux";
+import { compose } from "redux";
+import { createStructuredSelector } from "reselect";
+import { accountScreenSelector } from "../../reducers/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import type { T } from "../../types/common";
 import SettingsRow from "../../components/SettingsRow";
@@ -14,21 +18,29 @@ import Archive from "../../images/icons/Archive";
 
 type Props = {
   navigation: NavigationScreenProp<{
-    account: Account,
+    accountId: string,
   }>,
   t: T,
+  account: Account,
 };
 
-class AccountSettings extends Component<Props> {
+const mapStateToProps = createStructuredSelector({
+  account: accountScreenSelector,
+});
+
+class AccountSettings extends PureComponent<Props> {
+  // NOTE dangerouslyGetParent - hopefully temp
+
   static navigationOptions = ({ navigation }: *) => ({
     title: "Account Settings",
-    headerRight: <HeaderRightClose navigation={navigation} />,
+    headerRight: (
+      <HeaderRightClose navigation={navigation.dangerouslyGetParent()} />
+    ),
     headerLeft: null,
   });
 
   render() {
-    const { navigation, t } = this.props;
-    const account = navigation.getParam("account", {});
+    const { navigation, t, account } = this.props;
     return (
       <View>
         <View style={styles.sectionRow}>
@@ -50,7 +62,11 @@ class AccountSettings extends Component<Props> {
             title={t("common:account.settings.unit.title")}
             desc={t("common:account.settings.unit.desc")}
             arrowRight
-            onPress={() => navigation.navigate("")}
+            onPress={() =>
+              navigation.navigate("EditAccountUnits", {
+                accountId: account.id,
+              })
+            }
           >
             <LText style={{ color: colors.grey }}>{account.unit.code}</LText>
           </SettingsRow>
@@ -85,7 +101,13 @@ class AccountSettings extends Component<Props> {
   }
 }
 
-export default translate()(AccountSettings);
+export default compose(
+  connect(
+    mapStateToProps,
+    null,
+  ),
+  translate(),
+)(AccountSettings);
 
 export function IconLeft({
   icon,

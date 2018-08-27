@@ -36,7 +36,7 @@ class Accnt extends Component<Props, State> {
       <Touchable
         onPress={() => {
           navigation.navigate("AccountSettings", {
-            account: navigation.getParam("account", {}),
+            accountId: navigation.getParam("accountId", ""),
           });
         }}
       >
@@ -56,7 +56,7 @@ class Accnt extends Component<Props, State> {
     if (account) {
       navigation.setParams({
         accountTitle: `Account ${account.name}`,
-        account: this.props.account,
+        accountId: account.id,
       });
     }
   }

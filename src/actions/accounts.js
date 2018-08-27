@@ -1,5 +1,6 @@
 // @flow
 
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountModel } from "../reducers/accounts";
 
 export const importStore = (state: *) => ({
@@ -11,3 +12,24 @@ export const importStore = (state: *) => ({
         : [],
   },
 });
+
+export type UpdateAccountWithUpdater = (
+  accountId: string,
+  (Account) => Account,
+) => *;
+
+export const updateAccountWithUpdater: UpdateAccountWithUpdater = (
+  accountId,
+  updater,
+) => ({
+  type: "UPDATE_ACCOUNT",
+  accountId,
+  updater,
+});
+
+export type UpdateAccount = ($Shape<Account>) => *;
+export const updateAccount: UpdateAccount = payload =>
+  updateAccountWithUpdater(payload.id, (account: Account) => ({
+    ...account,
+    ...payload,
+  }));
