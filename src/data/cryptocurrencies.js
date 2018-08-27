@@ -296,7 +296,7 @@ const cryptocurrenciesById = {
     id: "ethereum_classic",
     coinType: 61,
     name: "Ethereum Classic",
-    managerAppName: "Ethereum Classic", // It's a different app now
+    managerAppName: "Ethereum Classic",
     ticker: "ETC",
     scheme: "ethereumclassic",
     color: "#3ca569",
