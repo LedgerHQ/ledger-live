@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet } from "react-native";
 import {
   createBottomTabNavigator,
   createStackNavigator,
@@ -8,6 +8,7 @@ import {
 import colors from "./colors";
 import SettingsIcon from "./images/icons/Settings";
 import ManagerIcon from "./images/icons/Manager";
+import AccountsIcon from "./images/icons/Accounts";
 import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
@@ -93,10 +94,7 @@ const AccountsStack = createStackNavigator(
 AccountsStack.navigationOptions = {
   header: null,
   tabBarIcon: ({ tintColor }: *) => (
-    <Image
-      source={require("./images/accounts.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
+    <AccountsIcon size={18} color={tintColor} />
   ),
 };
 
