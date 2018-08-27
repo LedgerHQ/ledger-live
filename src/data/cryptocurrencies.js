@@ -130,6 +130,23 @@ const ethereumUnitsClassic = [
 ];
 
 const cryptocurrenciesById = {
+  ark: {
+    id: "ark",
+    coinType: 111,
+    name: "Ark",
+    managerAppName: "Ark",
+    ticker: "ARK",
+    scheme: "ark",
+    color: "#dd3333",
+    family: "ark",
+    units: [
+      {
+        name: "ARK",
+        code: "ARK",
+        magnitude: 8
+      }
+    ]
+  },
   bitcoin: {
     id: "bitcoin",
     coinType: 0,
@@ -147,43 +164,6 @@ const cryptocurrenciesById = {
       P2PKH: 0,
       P2SH: 5
     }
-  },
-  ethereum: {
-    id: "ethereum",
-    coinType: 60,
-    name: "Ethereum",
-    managerAppName: "Ethereum",
-    ticker: "ETH",
-    scheme: "ethereum",
-    color: "#0ebdcd",
-    units: ethereumUnits,
-    family: "ethereum",
-    ledgerExplorerId: "eth",
-    blockAvgTime: 15
-  },
-  ripple: {
-    id: "ripple",
-    coinType: 144,
-    name: "Ripple",
-    managerAppName: "Ripple",
-    ticker: "XRP",
-    scheme: "ripple",
-    color: "#27a2db",
-    units: [
-      {
-        name: "XRP",
-        code: "XRP",
-        symbol: "XRP",
-        magnitude: 6
-      },
-      {
-        name: "drop",
-        code: "drop",
-        symbol: "drop",
-        magnitude: 0
-      }
-    ],
-    family: "ripple"
   },
   bitcoin_cash: {
     id: "bitcoin_cash",
@@ -223,140 +203,6 @@ const cryptocurrenciesById = {
         name: "satoshi",
         code: "sat",
         symbol: "Ƀ",
-        magnitude: 0
-      }
-    ]
-  },
-  litecoin: {
-    id: "litecoin",
-    coinType: 2,
-    name: "Litecoin",
-    managerAppName: "Litecoin",
-    ticker: "LTC",
-    scheme: "litecoin",
-    color: "#cccccc",
-    supportsSegwit: true,
-    family: "bitcoin",
-    ledgerExplorerId: "ltc",
-    blockAvgTime: 5 * 60,
-    bitcoinLikeInfo: {
-      P2PKH: 48,
-      P2SH: 50
-    },
-    units: [
-      {
-        name: "litecoin",
-        code: "LTC",
-        symbol: "Ł",
-        magnitude: 8
-      },
-      {
-        name: "mLTC",
-        code: "mLTC",
-        symbol: "Ł",
-        magnitude: 5
-      },
-      {
-        name: "litoshi",
-        code: "litoshi",
-        symbol: "Ł",
-        magnitude: 0
-      }
-    ]
-  },
-  dash: {
-    id: "dash",
-    coinType: 5,
-    name: "Dash",
-    managerAppName: "Dash",
-    ticker: "DASH",
-    scheme: "dash",
-    color: "#0e76aa",
-    family: "bitcoin",
-    ledgerExplorerId: "dash",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 76,
-      P2SH: 16
-    },
-    units: [
-      {
-        name: "dash",
-        code: "DASH",
-        magnitude: 8
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0
-      }
-    ]
-  },
-  ethereum_classic: {
-    id: "ethereum_classic",
-    coinType: 61,
-    name: "Ethereum Classic",
-    managerAppName: "Ethereum Classic",
-    ticker: "ETC",
-    scheme: "ethereumclassic",
-    color: "#3ca569",
-    units: ethereumUnitsClassic,
-    family: "ethereum",
-    ledgerExplorerId: "ethc",
-    blockAvgTime: 15
-  },
-  qtum: {
-    id: "qtum",
-    coinType: 88,
-    name: "Qtum",
-    managerAppName: "Qtum",
-    ticker: "QTUM",
-    scheme: "qtum",
-    color: "#2e9ad0",
-    family: "bitcoin",
-    ledgerExplorerId: "qtum",
-    blockAvgTime: 2 * 60,
-    bitcoinLikeInfo: {
-      P2PKH: 58,
-      P2SH: 50
-    },
-    units: [
-      {
-        name: "qtum",
-        code: "QTUM",
-        magnitude: 8
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0
-      }
-    ]
-  },
-  zcash: {
-    id: "zcash",
-    coinType: 133,
-    name: "Zcash",
-    managerAppName: "Zcash",
-    ticker: "ZEC",
-    scheme: "zcash",
-    color: "#3790ca",
-    family: "bitcoin",
-    ledgerExplorerId: "zec",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 0x1cb8,
-      P2SH: 0x1cbd
-    },
-    units: [
-      {
-        name: "zcash",
-        code: "ZEC",
-        magnitude: 8
-      },
-      {
-        name: "satoshi",
-        code: "sat",
         magnitude: 0
       }
     ]
@@ -404,25 +250,63 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  stratis: {
-    id: "stratis",
-    coinType: 105,
-    name: "Stratis",
-    managerAppName: "Stratis",
-    ticker: "STRAT",
-    scheme: "stratis",
-    color: "#1382c6",
+  bitcoin_private: {
+    id: "bitcoin_private",
+    coinType: 183,
+    name: "Bitcoin Private",
+    managerAppName: "Bitcoin Private",
+    ticker: "BTCP",
+    scheme: "btcp",
+    color: "#2F2D63",
     family: "bitcoin",
-    ledgerExplorerId: "strat",
-    blockAvgTime: 150,
+    ledgerExplorerId: "btcp",
+    blockAvgTime: 2.5 * 60,
+    units: [
+      {
+        name: "bitcoin private",
+        code: "BTCP",
+        symbol: "Ƀ",
+        magnitude: 8
+      },
+      {
+        name: "mBTCP",
+        code: "mBTCP",
+        symbol: "Ƀ",
+        magnitude: 5
+      },
+      {
+        name: "bit",
+        code: "bit",
+        symbol: "Ƀ",
+        magnitude: 2
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        symbol: "Ƀ",
+        magnitude: 0
+      }
+    ]
+  },
+  clubcoin: {
+    id: "clubcoin",
+    coinType: 79,
+    name: "Clubcoin",
+    managerAppName: "Clubcoin",
+    ticker: "CLUB",
+    scheme: "club",
+    color: "#000000", // FIXME
+    family: "bitcoin",
+    ledgerExplorerId: "club",
+    blockAvgTime: 140,
     bitcoinLikeInfo: {
-      P2PKH: 63,
-      P2SH: 125
+      P2PKH: 28,
+      P2SH: 85
     },
     units: [
       {
-        name: "stratis",
-        code: "STRAT",
+        name: "club",
+        code: "CLUB",
         magnitude: 8
       },
       {
@@ -432,26 +316,25 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  dogecoin: {
-    id: "dogecoin",
-    coinType: 3,
-    name: "Dogecoin",
-    managerAppName: "Dogecoin",
-    ticker: "DOGE",
-    scheme: "dogecoin",
-    color: "#65d196",
+  dash: {
+    id: "dash",
+    coinType: 5,
+    name: "Dash",
+    managerAppName: "Dash",
+    ticker: "DASH",
+    scheme: "dash",
+    color: "#0e76aa",
     family: "bitcoin",
-    ledgerExplorerId: "doge",
-    blockAvgTime: 60,
+    ledgerExplorerId: "dash",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
-      P2PKH: 30,
-      P2SH: 22
+      P2PKH: 76,
+      P2SH: 16
     },
     units: [
       {
-        name: "dogecoin",
-        code: "DOGE",
-        symbol: "Ð",
+        name: "dash",
+        code: "DASH",
         magnitude: 8
       },
       {
@@ -490,6 +373,78 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  dogecoin: {
+    id: "dogecoin",
+    coinType: 3,
+    name: "Dogecoin",
+    managerAppName: "Dogecoin",
+    ticker: "DOGE",
+    scheme: "dogecoin",
+    color: "#65d196",
+    family: "bitcoin",
+    ledgerExplorerId: "doge",
+    blockAvgTime: 60,
+    bitcoinLikeInfo: {
+      P2PKH: 30,
+      P2SH: 22
+    },
+    units: [
+      {
+        name: "dogecoin",
+        code: "DOGE",
+        symbol: "Ð",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  ethereum: {
+    id: "ethereum",
+    coinType: 60,
+    name: "Ethereum",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "ethereum",
+    color: "#0ebdcd",
+    units: ethereumUnits,
+    family: "ethereum",
+    ledgerExplorerId: "eth",
+    blockAvgTime: 15
+  },
+  ethereum_classic: {
+    id: "ethereum_classic",
+    coinType: 61,
+    name: "Ethereum Classic",
+    managerAppName: "Ethereum Classic",
+    ticker: "ETC",
+    scheme: "ethereumclassic",
+    color: "#3ca569",
+    units: ethereumUnitsClassic,
+    family: "ethereum",
+    ledgerExplorerId: "ethc",
+    blockAvgTime: 15
+  },
+  expanse: {
+    id: "expanse",
+    coinType: 40,
+    name: "Expanse",
+    managerAppName: "Expanse",
+    ticker: "EXP",
+    scheme: "expanse",
+    color: "#EE4500",
+    family: "expanse",
+    units: [
+      {
+        name: "EXP",
+        code: "EXP",
+        magnitude: 8
+      }
+    ]
+  },
   hcash: {
     id: "hcash",
     coinType: 171,
@@ -518,6 +473,22 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  icon: {
+    id: "icon",
+    name: "ICON",
+    managerAppName: "ICON",
+    ticker: "ICON",
+    scheme: "icon",
+    color: "#00A3B4",
+    family: "icon",
+    units: [
+      {
+        name: "ICON",
+        code: "ICON",
+        magnitude: 8
+      }
+    ]
+  },
   komodo: {
     id: "komodo",
     coinType: 141,
@@ -538,6 +509,173 @@ const cryptocurrenciesById = {
         name: "komodo",
         code: "KMD",
         magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  litecoin: {
+    id: "litecoin",
+    coinType: 2,
+    name: "Litecoin",
+    managerAppName: "Litecoin",
+    ticker: "LTC",
+    scheme: "litecoin",
+    color: "#cccccc",
+    supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "ltc",
+    blockAvgTime: 5 * 60,
+    bitcoinLikeInfo: {
+      P2PKH: 48,
+      P2SH: 50
+    },
+    units: [
+      {
+        name: "litecoin",
+        code: "LTC",
+        symbol: "Ł",
+        magnitude: 8
+      },
+      {
+        name: "mLTC",
+        code: "mLTC",
+        symbol: "Ł",
+        magnitude: 5
+      },
+      {
+        name: "litoshi",
+        code: "litoshi",
+        symbol: "Ł",
+        magnitude: 0
+      }
+    ]
+  },
+  monero: {
+    id: "monero",
+    coinType: 128,
+    name: "Monero",
+    managerAppName: "Monero",
+    ticker: "XMR",
+    scheme: "monero",
+    color: "#FF5900",
+    family: "monero",
+    units: [
+      {
+        name: "XMR",
+        code: "XMR",
+        magnitude: 12
+      }
+    ]
+  },
+  nano: {
+    id: "nano",
+    coinType: 165,
+    name: "Nano",
+    managerAppName: "Nano",
+    ticker: "NANO",
+    scheme: "nano",
+    color: "#4E8FB6",
+    family: "nano",
+    units: [
+      {
+        name: "NANO",
+        code: "NANO",
+        magnitude: 8
+      }
+    ]
+  },
+  neo: {
+    id: "neo",
+    coinType: 888,
+    name: "Neo",
+    managerAppName: "Neo",
+    ticker: "NEO",
+    scheme: "neo",
+    color: "#09C300",
+    family: "neo",
+    units: [
+      {
+        name: "NEO",
+        code: "NEO",
+        magnitude: 8
+      }
+    ]
+  },
+  nimiq: {
+    id: "nimiq",
+    coinType: 242,
+    name: "Nimiq",
+    managerAppName: "Nimiq",
+    ticker: "NIM",
+    scheme: "nimiq",
+    color: "#FFBE00",
+    family: "nimiq",
+    units: [
+      {
+        name: "NIM",
+        code: "NIM",
+        magnitude: 5
+      }
+    ]
+  },
+  ontology: {
+    id: "ontology",
+    coinType: 1024,
+    name: "Ontology",
+    managerAppName: "Ontology",
+    ticker: "ONT",
+    scheme: "ontology",
+    color: "#00A6C2",
+    family: "ontology",
+    units: [
+      {
+        name: "ONT",
+        code: "ONT",
+        magnitude: 8
+      }
+    ]
+  },
+  particl: {
+    id: "particl",
+    coinType: 44,
+    name: "Particl",
+    managerAppName: "Particl",
+    ticker: "PART",
+    scheme: "particl",
+    color: "#00E3A4",
+    family: "particl",
+    units: [
+      {
+        name: "PART",
+        code: "PART",
+        magnitude: 8
+      }
+    ]
+  },
+  peercoin: {
+    id: "peercoin",
+    coinType: 6,
+    name: "Peercoin",
+    managerAppName: "Peercoin",
+    ticker: "PPC",
+    scheme: "peercoin",
+    color: "#3cb054",
+    family: "bitcoin",
+    ledgerExplorerId: "ppc",
+    blockAvgTime: 450,
+    bitcoinLikeInfo: {
+      P2PKH: 55,
+      P2SH: 117
+    },
+    units: [
+      {
+        name: "peercoin",
+        code: "PPC",
+        magnitude: 6
       },
       {
         name: "satoshi",
@@ -574,111 +712,122 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  zencash: {
-    id: "zencash",
-    coinType: 121,
-    name: "ZenCash",
-    managerAppName: "ZenCash",
-    ticker: "ZEN",
-    scheme: "zencash",
-    color: "#152f5c",
-    family: "bitcoin",
-    ledgerExplorerId: "zen",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 0x2089,
-      P2SH: 0x2096
-    },
+  poa: {
+    id: "poa",
+    coinType: 178,
+    name: "POA",
+    managerAppName: "POA",
+    ticker: "POA",
+    scheme: "poa",
+    color: "#4D46BD",
+    family: "poa",
     units: [
       {
-        name: "zencash",
-        code: "ZEN",
+        name: "POA",
+        code: "POA",
         magnitude: 8
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0
       }
     ]
   },
-  vertcoin: {
-    id: "vertcoin",
-    coinType: 28,
-    name: "Vertcoin",
-    managerAppName: "Vertcoin",
-    ticker: "VTC",
-    scheme: "vertcoin",
-    color: "#1b5c2e",
-    supportsSegwit: true,
+  poswallet: {
+    id: "poswallet",
+    coinType: 47,
+    name: "PosW",
+    managerAppName: "PoSW",
+    ticker: "POSW",
+    scheme: "posw",
+    color: "#000000", // FIXME
     family: "bitcoin",
-    ledgerExplorerId: "vtc",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 5
-    },
-    units: [
-      {
-        name: "vertcoin",
-        code: "VTC",
-        magnitude: 8
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0
-      }
-    ]
-  },
-  peercoin: {
-    id: "peercoin",
-    coinType: 6,
-    name: "Peercoin",
-    managerAppName: "Peercoin",
-    ticker: "PPC",
-    scheme: "peercoin",
-    color: "#3cb054",
-    family: "bitcoin",
-    ledgerExplorerId: "ppc",
-    blockAvgTime: 450,
+    ledgerExplorerId: "posw",
+    blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 55,
-      P2SH: 117
+      P2SH: 85
     },
     units: [
       {
-        name: "peercoin",
-        code: "PPC",
+        name: "posw",
+        code: "POSW",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  qtum: {
+    id: "qtum",
+    coinType: 88,
+    name: "Qtum",
+    managerAppName: "Qtum",
+    ticker: "QTUM",
+    scheme: "qtum",
+    color: "#2e9ad0",
+    family: "bitcoin",
+    ledgerExplorerId: "qtum",
+    blockAvgTime: 2 * 60,
+    bitcoinLikeInfo: {
+      P2PKH: 58,
+      P2SH: 50
+    },
+    units: [
+      {
+        name: "qtum",
+        code: "QTUM",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  ripple: {
+    id: "ripple",
+    coinType: 144,
+    name: "Ripple",
+    managerAppName: "Ripple",
+    ticker: "XRP",
+    scheme: "ripple",
+    color: "#27a2db",
+    units: [
+      {
+        name: "XRP",
+        code: "XRP",
+        symbol: "XRP",
         magnitude: 6
       },
       {
-        name: "satoshi",
-        code: "sat",
+        name: "drop",
+        code: "drop",
+        symbol: "drop",
         magnitude: 0
       }
-    ]
+    ],
+    family: "ripple"
   },
-  viacoin: {
-    id: "viacoin",
-    coinType: 14,
-    name: "Viacoin",
-    managerAppName: "Viacoin",
-    ticker: "VIA",
-    scheme: "viacoin",
-    color: "#414141",
-    supportsSegwit: true,
+  stratis: {
+    id: "stratis",
+    coinType: 105,
+    name: "Stratis",
+    managerAppName: "Stratis",
+    ticker: "STRAT",
+    scheme: "stratis",
+    color: "#1382c6",
     family: "bitcoin",
-    ledgerExplorerId: "via",
-    blockAvgTime: 24,
+    ledgerExplorerId: "strat",
+    blockAvgTime: 150,
     bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 33
+      P2PKH: 63,
+      P2SH: 125
     },
     units: [
       {
-        name: "viacoin",
-        code: "VIA",
+        name: "stratis",
+        code: "STRAT",
         magnitude: 8
       },
       {
@@ -716,59 +865,60 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  poswallet: {
-    id: "poswallet",
-    coinType: 47,
-    name: "PosW",
-    managerAppName: "PoSW",
-    ticker: "POSW",
-    scheme: "posw",
-    color: "#000000", // FIXME
-    family: "bitcoin",
-    ledgerExplorerId: "posw",
-    blockAvgTime: 60,
-    bitcoinLikeInfo: {
-      P2PKH: 55,
-      P2SH: 85
-    },
+  stellar: {
+    id: "stellar",
+    coinType: 148,
+    name: "Stellar",
+    managerAppName: "Stellar",
+    ticker: "XLM",
+    scheme: "stellar",
+    color: "#07B5E5",
+    family: "stellar",
     units: [
       {
-        name: "posw",
-        code: "POSW",
-        magnitude: 8
+        name: "Lumen",
+        code: "XLM",
+        symbol: "XLM",
+        magnitude: 7
       },
       {
-        name: "satoshi",
-        code: "sat",
+        name: "stroop",
+        code: "stroop",
         magnitude: 0
       }
     ]
   },
-  clubcoin: {
-    id: "clubcoin",
-    coinType: 79,
-    name: "Clubcoin",
-    managerAppName: "Clubcoin",
-    ticker: "CLUB",
-    scheme: "club",
-    color: "#000000", // FIXME
-    family: "bitcoin",
-    ledgerExplorerId: "club",
-    blockAvgTime: 140,
-    bitcoinLikeInfo: {
-      P2PKH: 28,
-      P2SH: 85
-    },
+  tezos: {
+    id: "tezos",
+    coinType: 1729,
+    name: "Tezos",
+    managerAppName: "Tezos Wallet",
+    ticker: "XTZ",
+    scheme: "tezos",
+    color: "#007BFF",
+    family: "tezos",
     units: [
       {
-        name: "club",
-        code: "CLUB",
+        name: "XTZ",
+        code: "XTZ",
         magnitude: 8
-      },
+      }
+    ]
+  },
+  tron: {
+    id: "tron",
+    coinType: 195,
+    name: "Tron",
+    managerAppName: "Tron",
+    ticker: "TRX",
+    scheme: "tron",
+    color: "#D9012C",
+    family: "tron",
+    units: [
       {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0
+        name: "TRX",
+        code: "TRX",
+        magnitude: 8
       }
     ]
   },
@@ -816,27 +966,169 @@ const cryptocurrenciesById = {
       }
     ]
   },
-  stellar: {
-    id: "stellar",
-    coinType: 148,
-    name: "Stellar",
-    managerAppName: "Stellar",
-    ticker: "XLM",
-    scheme: "stellar",
-    color: "#07B5E5",
-    family: "stellar",
+  vechain: {
+    id: "vechain",
+    coinType: 818,
+    name: "VeChain",
+    managerAppName: "VeChain",
+    ticker: "VET",
+    scheme: "vechain",
+    color: "#00C2FF",
+    family: "vechain",
     units: [
       {
-        name: "Lumen",
-        code: "XLM",
-        symbol: "XLM",
-        magnitude: 7
+        name: "VET",
+        code: "VET",
+        magnitude: 8
+      }
+    ]
+  },
+  vertcoin: {
+    id: "vertcoin",
+    coinType: 28,
+    name: "Vertcoin",
+    managerAppName: "Vertcoin",
+    ticker: "VTC",
+    scheme: "vertcoin",
+    color: "#1b5c2e",
+    supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "vtc",
+    blockAvgTime: 150,
+    bitcoinLikeInfo: {
+      P2PKH: 71,
+      P2SH: 5
+    },
+    units: [
+      {
+        name: "vertcoin",
+        code: "VTC",
+        magnitude: 8
       },
       {
-        name: "stroop",
-        code: "stroop",
+        name: "satoshi",
+        code: "sat",
         magnitude: 0
+      }
+    ]
+  },
+  viacoin: {
+    id: "viacoin",
+    coinType: 14,
+    name: "Viacoin",
+    managerAppName: "Viacoin",
+    ticker: "VIA",
+    scheme: "viacoin",
+    color: "#414141",
+    supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "via",
+    blockAvgTime: 24,
+    bitcoinLikeInfo: {
+      P2PKH: 71,
+      P2SH: 33
+    },
+    units: [
+      {
+        name: "viacoin",
+        code: "VIA",
+        magnitude: 8
       },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  wanchain: {
+    id: "wanchain",
+    coinType: 5718350,
+    name: "Wanchain",
+    managerAppName: "Wanchain",
+    ticker: "WAN",
+    scheme: "wanchain",
+    color: "#276097",
+    family: "wanchain",
+    units: [
+      {
+        name: "WAN",
+        code: "WAN",
+        magnitude: 8
+      }
+    ]
+  },
+  zcash: {
+    id: "zcash",
+    coinType: 133,
+    name: "Zcash",
+    managerAppName: "Zcash",
+    ticker: "ZEC",
+    scheme: "zcash",
+    color: "#3790ca",
+    family: "bitcoin",
+    ledgerExplorerId: "zec",
+    blockAvgTime: 150,
+    bitcoinLikeInfo: {
+      P2PKH: 0x1cb8,
+      P2SH: 0x1cbd
+    },
+    units: [
+      {
+        name: "zcash",
+        code: "ZEC",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
+  zcoin: {
+    id: "zcoin",
+    coinType: 136,
+    name: "ZCoin",
+    managerAppName: "ZCoin",
+    ticker: "XZC",
+    scheme: "zcoin",
+    color: "#00C027",
+    family: "zcoin",
+    units: [
+      {
+        name: "XZC",
+        code: "XZC",
+        magnitude: 8
+      }
+    ]
+  },
+  zencash: {
+    id: "zencash",
+    coinType: 121,
+    name: "ZenCash",
+    managerAppName: "ZenCash",
+    ticker: "ZEN",
+    scheme: "zencash",
+    color: "#152f5c",
+    family: "bitcoin",
+    ledgerExplorerId: "zen",
+    blockAvgTime: 150,
+    bitcoinLikeInfo: {
+      P2PKH: 0x2089,
+      P2SH: 0x2096
+    },
+    units: [
+      {
+        name: "zencash",
+        code: "ZEN",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
     ]
   },
 
