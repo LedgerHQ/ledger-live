@@ -25,7 +25,7 @@ export type Unit = {
 
 export type FiatCurrency = CurrencyCommon;
 
-export type CryptoCurrencyFamily = "bitcoin" | "ethereum" | "ripple";
+export type CryptoCurrencyFamily = "bitcoin" | "ethereum" | "ripple" | "stellar";
 
 export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency

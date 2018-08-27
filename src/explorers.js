@@ -24,6 +24,7 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   poswallet: () => null, // FIXME can't find a reliable/official explorer
   qtum: hash => `https://explorer.qtum.org/tx/${hash}`,
   ripple: hash => `https://bithomp.com/explorer/${hash}`,
+  stellar: hash => `https://stellar.expert/explorer/public/tx/${hash}`,
   stealthcoin: hash => `https://chain.stealth.org/tx/${hash}`,
   stratis: hash => `https://chainz.cryptoid.info/strat/tx.dws?${hash}.htm`,
   ubiq: hash => `https://ubiqscan.io/tx/${hash}`,
