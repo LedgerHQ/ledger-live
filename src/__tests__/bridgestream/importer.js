@@ -28,9 +28,16 @@ test("import", () => {
   });
   expect(areChunksComplete(data)).toBe(true);
   const res = chunksToResult(data);
-  // $FlowFixMe
   expect(res.accounts).toMatchObject(
-    accounts.map(a => ["account", a.id, a.name, a.currency.id])
+    accounts.map(a => ({
+      balance: a.balance.toString(),
+      currencyId: a.currency.id,
+      id: a.id,
+      name: a.name,
+      index: a.index,
+      freshAddress: a.freshAddress,
+      freshAddressPath: a.freshAddressPath
+    }))
   );
   expect(res).toMatchSnapshot();
 });

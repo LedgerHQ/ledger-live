@@ -42,6 +42,13 @@ export type { Currency, Unit, FiatCurrency, CryptoCurrency };
  * -----------
  */
 
+export type AccountIdParams = {
+  type: string,
+  version: string,
+  xpub: string,
+  walletName: string
+};
+
 export type DailyOperationsSection = {
   day: Date,
   data: Operation[]

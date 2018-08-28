@@ -2,18 +2,18 @@
 
 exports[`basic export 1`] = `
 Array [
-  "[4,0,\\"meta\\",2,\\"test\\",\\"0.0.0\\"]",
-  "[4,1,\\"account\\",\\"mock_account_export_0\\",\\"PcbUsj9a5mnpn6wT6InSD9n\\",\\"zcoin\\"]",
-  "[4,2,\\"account\\",\\"mock_account_export_1\\",\\"rv6RjflCC8\\",\\"zcoin\\"]",
-  "[4,3,\\"account\\",\\"mock_account_export_2\\",\\"f9mx3pw3IAcuP7ovSPao6EQ\\",\\"zencash\\"]",
+  "[4,0,\\"meta\\",3,\\"test\\",\\"0.0.0\\"]",
+  "[4,1,\\"account\\",{\\"id\\":\\"mock_account_export_0\\",\\"name\\":\\"PcbUsj9a5mnpn6wT6InSD9n\\",\\"currencyId\\":\\"zcoin\\",\\"index\\":1,\\"freshAddressPath\\":\\"49'/1'/1'/0/2\\",\\"freshAddress\\":\\"1gUcMjNiuEM3mNzJvT7FV9djo6r1dU\\",\\"balance\\":\\"50626466\\"}]",
+  "[4,2,\\"account\\",{\\"id\\":\\"mock_account_export_1\\",\\"name\\":\\"rv6RjflCC8\\",\\"currencyId\\":\\"zcoin\\",\\"index\\":1,\\"freshAddressPath\\":\\"49'/1'/1'/0/2\\",\\"freshAddress\\":\\"1wDYTKohYihaXEy1usRxg35Yeo83bMXyn7\\",\\"balance\\":\\"38657242\\"}]",
+  "[4,3,\\"account\\",{\\"id\\":\\"mock_account_export_2\\",\\"name\\":\\"f9mx3pw3IAcuP7ovSPao6EQ\\",\\"currencyId\\":\\"zencash\\",\\"index\\":1,\\"freshAddressPath\\":\\"49'/1'/1'/0/2\\",\\"freshAddress\\":\\"1cvZPTwGuXvxDTi7sYS4tbfib3\\",\\"balance\\":\\"80627416\\"}]",
 ]
 `;
 
 exports[`basic export with pad 1`] = `
 Array [
-  "[4,0,\\"meta\\",2,\\"test\\",\\"0.0.0\\"]                                              ",
-  "[4,1,\\"account\\",\\"mock_account_export_0\\",\\"PcbUsj9a5mnpn6wT6InSD9n\\",\\"zcoin\\"]  ",
-  "[4,2,\\"account\\",\\"mock_account_export_1\\",\\"rv6RjflCC8\\",\\"zcoin\\"]               ",
-  "[4,3,\\"account\\",\\"mock_account_export_2\\",\\"f9mx3pw3IAcuP7ovSPao6EQ\\",\\"zencash\\"]",
+  "[4,0,\\"meta\\",3,\\"test\\",\\"0.0.0\\"]                                                                                                                                                                                         ",
+  "[4,1,\\"account\\",{\\"id\\":\\"mock_account_export_0\\",\\"name\\":\\"PcbUsj9a5mnpn6wT6InSD9n\\",\\"currencyId\\":\\"zcoin\\",\\"index\\":1,\\"freshAddressPath\\":\\"49'/1'/1'/0/2\\",\\"freshAddress\\":\\"1gUcMjNiuEM3mNzJvT7FV9djo6r1dU\\",\\"balance\\":\\"50626466\\"}]",
+  "[4,2,\\"account\\",{\\"id\\":\\"mock_account_export_1\\",\\"name\\":\\"rv6RjflCC8\\",\\"currencyId\\":\\"zcoin\\",\\"index\\":1,\\"freshAddressPath\\":\\"49'/1'/1'/0/2\\",\\"freshAddress\\":\\"1wDYTKohYihaXEy1usRxg35Yeo83bMXyn7\\",\\"balance\\":\\"38657242\\"}]         ",
+  "[4,3,\\"account\\",{\\"id\\":\\"mock_account_export_2\\",\\"name\\":\\"f9mx3pw3IAcuP7ovSPao6EQ\\",\\"currencyId\\":\\"zencash\\",\\"index\\":1,\\"freshAddressPath\\":\\"49'/1'/1'/0/2\\",\\"freshAddress\\":\\"1cvZPTwGuXvxDTi7sYS4tbfib3\\",\\"balance\\":\\"80627416\\"}]  ",
 ]
 `;

@@ -1,16 +1,27 @@
 // @flow
-import type { Account } from "../types/account";
 
-export type DataIn = {
-  // accounts to export (filter them to only be the visible ones)
-  accounts: Account[],
-  // the name of the exporter. e.g. "desktop" for the desktop app
-  exporterName: string,
-  // the version of the exporter. e.g. the desktop app version
-  exporterVersion: string,
-  // enable a mode that will add empty space to make all chunks of same size. to makes QR code of same dimension
-  pad?: boolean
-};
+import type { Account } from "../types/account";
+import type { DataIn, AccountData } from "./types";
+
+export function accountToAccountData({
+  id,
+  name,
+  currency,
+  index,
+  freshAddress,
+  freshAddressPath,
+  balance
+}: Account): AccountData {
+  return {
+    id,
+    name,
+    currencyId: currency.id,
+    index,
+    freshAddressPath,
+    freshAddress,
+    balance: balance.toString()
+  };
+}
 
 /**
  * export data into a chunk of string
@@ -22,15 +33,10 @@ export function makeChunks({
   exporterVersion,
   pad
 }: DataIn): string[] {
-  const chunksFormatVersion = 2;
+  const chunksFormatVersion = 3;
   const data = [
     ["meta", chunksFormatVersion, exporterName, exporterVersion],
-    ...accounts.map(account => [
-      "account",
-      account.id,
-      account.name,
-      account.currency.id
-    ])
+    ...accounts.map(account => ["account", accountToAccountData(account)])
   ];
   let r = data.map((arr, i) => JSON.stringify([data.length, i, ...arr]));
   if (pad) {
