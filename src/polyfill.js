@@ -2,7 +2,7 @@ global.Buffer = require("buffer").Buffer;
 
 process.browser = true; // for readable-stream/lib/_stream_writable.js
 
-if (__DEV__) {
+if (__DEV__ && process.env.NODE_ENV !== 'test') {
   setTimeout(() => {
     // it logs weird things without the timeout...
     try {
