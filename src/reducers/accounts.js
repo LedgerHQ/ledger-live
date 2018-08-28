@@ -17,6 +17,27 @@ const initialState: AccountsState = {
 
 const handlers: Object = {
   ACCOUNTS_IMPORT: (s, { state }) => state,
+  UPDATE_ACCOUNT: (
+    state: AccountsState,
+    { accountId, updater }: { accountId: string, updater: Account => Account },
+  ): AccountsState => {
+    function update(existingAccount) {
+      if (accountId !== existingAccount.id) return existingAccount;
+      return {
+        ...existingAccount,
+        ...updater(existingAccount),
+      };
+    }
+    return {
+      active: state.active.map(update),
+    };
+  },
+  DELETE_ACCOUNT: (
+    state: AccountsState,
+    { payload: account }: { payload: Account },
+  ): AccountsState => ({
+      active: state.active.filter(acc => acc.id !== account.id),
+    }),
 };
 
 // Selectors

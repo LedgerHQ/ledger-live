@@ -24,7 +24,9 @@ import ReceiveFundsMain from "./screens/ReceiveFunds";
 import SendFundsMain from "./screens/SendFunds";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
-import AccountSettings from "./screens/AccountSettings";
+import AccountSettingsMain from "./screens/AccountSettings";
+import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
+import EditAccountName from "./screens/AccountSettings/EditAccountName";
 
 // TODO look into all $FlowFixMe
 
@@ -138,7 +140,20 @@ const SendFunds = createStackNavigator(
 SendFunds.navigationOptions = {
   header: null,
 };
-
+const AccountSettings = createStackNavigator(
+  {
+    AccountSettingsMain,
+    EditAccountUnits,
+    EditAccountName,
+  },
+  {
+    navigationOptions: stackNavigatiorDefaultNavigationOptions,
+    cardStyle: styles.card,
+  },
+);
+AccountSettings.navigationOptions = {
+  header: null,
+};
 export const RootNavigator = createStackNavigator(
   {
     Main,
