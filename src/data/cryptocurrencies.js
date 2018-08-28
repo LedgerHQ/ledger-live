@@ -788,8 +788,8 @@ const cryptocurrenciesById = {
   ripple: {
     id: "ripple",
     coinType: 144,
-    name: "Ripple",
-    managerAppName: "Ripple",
+    name: "XRP",
+    managerAppName: "XRP",
     ticker: "XRP",
     scheme: "ripple",
     color: "#27a2db",
