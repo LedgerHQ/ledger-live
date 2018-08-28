@@ -1,20 +1,25 @@
 /* @flow */
-import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import React, { PureComponent, Fragment } from "react";
+import { View, StyleSheet, Modal } from "react-native";
+import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
+import { deleteAccount } from "../../actions/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import type { T } from "../../types/common";
 import SettingsRow from "../../components/SettingsRow";
+import Menu from "../../components/Menu";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import Trash from "../../images/icons/Trash";
 import Archive from "../../images/icons/Archive";
+import ModalBottomAction from "../../components/ModalBottomAction";
+import RedButton from "../../components/RedButton";
+import GreyButton from "../../components/GreyButton";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -22,13 +27,19 @@ type Props = {
   }>,
   t: T,
   account: Account,
+  deleteAccount: Function,
 };
 
+type State = {
+  modalOpened: boolean,
+};
 const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
-
-class AccountSettings extends PureComponent<Props> {
+const mapDispatchToProps = {
+  deleteAccount,
+};
+class AccountSettings extends PureComponent<Props, State> {
   // NOTE dangerouslyGetParent - hopefully temp
 
   static navigationOptions = ({ navigation }: *) => ({
@@ -39,10 +50,28 @@ class AccountSettings extends PureComponent<Props> {
     headerLeft: null,
   });
 
+  state = {
+    modalOpened: false,
+  };
+
+  onRequestClose = () => {
+    this.setState({ modalOpened: false });
+  };
+
+  onPress = () => {
+    this.setState({ modalOpened: true });
+  };
+  deleteAccount = () => {
+    const { account, deleteAccount, navigation } = this.props;
+    deleteAccount(account);
+    navigation.navigate("Accounts");
+  };
   render() {
     const { navigation, t, account } = this.props;
+    const { modalOpened } = this.state;
+    if (!account) return null;
     return (
-      <View>
+      <Fragment>
         <View style={styles.sectionRow}>
           <SettingsRow
             title={t("common:account.settings.accountName.title")}
@@ -96,11 +125,54 @@ class AccountSettings extends PureComponent<Props> {
                 icon={<Trash size={16} color={colors.alert} />}
               />
             }
-            onPress={() => navigation.navigate("")}
+            onPress={this.onPress}
             titleStyle={{ color: colors.alert }}
           />
         </View>
-      </View>
+        {modalOpened && (
+          <Modal transparent onRequestClose={this.onRequestClose}>
+            <Menu onRequestClose={this.onRequestClose}>
+              <ModalBottomAction
+                title={null}
+                icon={
+                  <View style={styles.imageContainer}>
+                    <Trash size={24} color={colors.alert} />
+                  </View>
+                }
+                description={
+                  <Trans i18nKey="common:account.settings.delete.confirmationDesc">
+                    {"Are you sure you want to delete "}
+                    <LText bold>{account.name}</LText>
+                    {"account"}
+                  </Trans>
+                }
+                footer={
+                  <View style={styles.footerContainer}>
+                    <GreyButton
+                      title={t("common:common.cancel")}
+                      onPress={this.onRequestClose}
+                      containerStyle={styles.buttonContainer}
+                      titleStyle={styles.buttonTitle}
+                    />
+                    <RedButton
+                      title={t("common:common.delete")}
+                      onPress={this.deleteAccount}
+                      containerStyle={[
+                        styles.buttonContainer,
+                        styles.deleteButtonBg,
+                      ]}
+                      titleStyle={[
+                        styles.buttonTitle,
+                        styles.deleteButtonTitle,
+                      ]}
+                    />
+                  </View>
+                }
+              />
+            </Menu>
+          </Modal>
+        )}
+      </Fragment>
     );
   }
 }
@@ -108,7 +180,7 @@ class AccountSettings extends PureComponent<Props> {
 export default compose(
   connect(
     mapStateToProps,
-    null,
+    mapDispatchToProps,
   ),
   translate(),
 )(AccountSettings);
@@ -142,5 +214,30 @@ const styles = StyleSheet.create({
     flex: 1,
     flexShrink: 1,
     color: colors.grey,
+  },
+  imageContainer: {
+    height: 56,
+    width: 56,
+    borderRadius: 50,
+    backgroundColor: colors.lightAlert,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  footerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  buttonContainer: {
+    height: 48,
+    width: 136,
+  },
+  deleteButtonBg: {
+    backgroundColor: colors.alert,
+  },
+  buttonTitle: {
+    fontSize: 16,
+  },
+  deleteButtonTitle: {
+    color: colors.white,
   },
 });

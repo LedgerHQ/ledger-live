@@ -33,3 +33,9 @@ export const updateAccount: UpdateAccount = payload =>
     ...account,
     ...payload,
   }));
+
+export type DeleteAccount = Account => { type: string, payload: Account };
+export const deleteAccount: DeleteAccount = payload => ({
+  type: "DELETE_ACCOUNT",
+  payload,
+});

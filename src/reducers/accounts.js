@@ -32,6 +32,12 @@ const handlers: Object = {
       active: state.active.map(update),
     };
   },
+  DELETE_ACCOUNT: (
+    state: AccountsState,
+    { payload: account }: { payload: Account },
+  ): AccountsState => ({
+      active: state.active.filter(acc => acc.id !== account.id),
+    }),
 };
 
 // Selectors

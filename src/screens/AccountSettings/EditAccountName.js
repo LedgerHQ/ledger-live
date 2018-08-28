@@ -39,7 +39,7 @@ class EditAccountName extends PureComponent<Props, State> {
     title: "Account Name",
   };
   onChangeText = (accountName: string) => {
-    this.setState({ accountName: accountName });
+    this.setState({ accountName });
   };
   onNameEndEditing = () => {
     const { updateAccount, account, navigation } = this.props;
