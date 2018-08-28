@@ -358,7 +358,7 @@ const cryptocurrenciesById = {
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 30,
-      P2SH: 5
+      P2SH: 63
     },
     units: [
       {
