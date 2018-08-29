@@ -56,6 +56,7 @@ class Accounts extends Component<Props> {
             <View style={{ padding: 40 }}>
               <GenerateMockAccountsButton title="Generate Mock Accounts" />
               <View style={{ height: 10 }} />
+              {/* $FlowFixMe */}
               <ImportAccountsButton title="Import Accounts" />
             </View>
           )}

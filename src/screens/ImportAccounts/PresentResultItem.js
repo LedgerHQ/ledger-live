@@ -38,17 +38,19 @@ export default class PresentResultItem extends Component<{
           {account.name}
         </LText>
         <View style={{ flex: 1 }} />
-        <CurrencyUnitValue
-          unit={account.unit}
-          value={account.balance}
-          showCode
-          ltextProps={{
-            numberOfLines: 1,
-            style: {
-              marginRight: 5,
-            },
-          }}
-        />
+        <LText>
+          <CurrencyUnitValue
+            unit={account.unit}
+            value={account.balance}
+            showCode
+            ltextProps={{
+              numberOfLines: 1,
+              style: {
+                marginRight: 5,
+              },
+            }}
+          />
+        </LText>
         {mode === "create" && loading ? <ActivityIndicator /> : null}
       </View>
     );

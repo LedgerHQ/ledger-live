@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
+import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
 import PresentResult from "./PresentResult";
 import Intro from "./Intro";
 import Scanning from "./Scanning";
