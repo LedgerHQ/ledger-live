@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { ScrollView, StyleSheet, SectionList, View } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
@@ -33,7 +33,7 @@ type State = {
 const isAccountEmpty = (a: Account): boolean =>
   a.operations.length === 0 && a.balance.isZero();
 
-class Accnt extends Component<Props, State> {
+class Accnt extends PureComponent<Props, State> {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.getParam("accountTitle", "Account"),
     headerRight: (
@@ -52,7 +52,7 @@ class Accnt extends Component<Props, State> {
   });
 
   state = {
-    opCount: 50,
+    opCount: 100,
   };
 
   componentDidMount() {

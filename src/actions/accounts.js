@@ -13,6 +13,11 @@ export const importStore = (state: *) => ({
   },
 });
 
+export const addAccount = (account: Account) => ({
+  type: "ACCOUNTS_ADD",
+  account,
+});
+
 export type UpdateAccountWithUpdater = (
   accountId: string,
   (Account) => Account,

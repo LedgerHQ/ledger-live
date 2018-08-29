@@ -7,6 +7,7 @@ import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
+import ImportAccountsButton from "../../components/ImportAccountsButton";
 import AccountsIcon from "../../images/icons/Accounts";
 
 import AccountCard from "./AccountCard";
@@ -54,6 +55,9 @@ class Accounts extends Component<Props> {
           {accounts.length === 0 && (
             <View style={{ padding: 40 }}>
               <GenerateMockAccountsButton title="Generate Mock Accounts" />
+              <View style={{ height: 10 }} />
+              {/* $FlowFixMe */}
+              <ImportAccountsButton title="Import Accounts" />
             </View>
           )}
           <FlatList

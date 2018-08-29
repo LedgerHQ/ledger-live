@@ -17,6 +17,9 @@ const initialState: AccountsState = {
 
 const handlers: Object = {
   ACCOUNTS_IMPORT: (s, { state }) => state,
+  ACCOUNTS_ADD: (s, { account }) => ({
+    active: s.active.concat(account),
+  }),
   UPDATE_ACCOUNT: (
     state: AccountsState,
     { accountId, updater }: { accountId: string, updater: Account => Account },
@@ -36,8 +39,8 @@ const handlers: Object = {
     state: AccountsState,
     { payload: account }: { payload: Account },
   ): AccountsState => ({
-      active: state.active.filter(acc => acc.id !== account.id),
-    }),
+    active: state.active.filter(acc => acc.id !== account.id),
+  }),
 };
 
 // Selectors
