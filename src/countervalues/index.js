@@ -216,12 +216,12 @@ function createCounterValues<State>({
         rates: {}
       };
       // filter rates to only those of interest (in current pairs)
-      for (const pair of pairs) {
+      pairs.forEach(pair => {
         const map = lenseRatesInMap(state.rates, pair);
         if (map) {
           putMapInRates(res.rates, pair, map);
         }
-      }
+      });
       return res;
     }
   );
@@ -259,9 +259,9 @@ function createCounterValues<State>({
     const store = storeSelector(state);
     const pairs = [];
     const dedupKeys = {};
-    for (const p of userPairs) {
+    userPairs.forEach(p => {
       const key = `${p.from.ticker}|${p.to.ticker}|${p.exchange || ""}`;
-      if (key in dedupKeys) continue;
+      if (key in dedupKeys) return;
       dedupKeys[key] = 1;
       const pair: PollAPIPair = { from: p.from.ticker, to: p.to.ticker };
       if (defaultAfterDay) {
@@ -280,7 +280,7 @@ function createCounterValues<State>({
         }
       }
       pairs.push(pair);
-    }
+    });
     if (pairs.length === 0) return;
     const { data }: { data: mixed } = await axios.post(
       getAPIBaseURL() + "/rates/daily",
@@ -298,16 +298,16 @@ function createCounterValues<State>({
       // so diffing can properly work the next time
       // and asking with different exchanges will prevent to happen (over times, as arbitrary fallback can change)
       const pairsToUpdate = [];
-      for (let pair of userPairs) {
+      userPairs.forEach(pair => {
         const {
           exchange,
           to: { ticker: to },
           from: { ticker: from }
         } = pair;
         const a = data[to] || {};
-        if (typeof a !== "object") continue;
+        if (typeof a !== "object") return;
         const b = a[from] || {};
-        if (typeof b !== "object") continue;
+        if (typeof b !== "object") return;
         const availableExchanges: string[] = Object.keys(b);
         const fallback = availableExchanges[0] || null;
         if (!exchange || !availableExchanges.includes(exchange)) {
@@ -325,7 +325,7 @@ function createCounterValues<State>({
             exchange: fallback
           });
         }
-      }
+      });
       if (pairsToUpdate.length > 0) {
         dispatch(setExchangePairsAction(pairsToUpdate));
       }
