@@ -25,8 +25,10 @@ export default class SettingsCard extends Component<{
         <Card style={styles.cardStyle}>
           <View style={styles.imageContainer}>{card.icon}</View>
           <View style={styles.cardTextBlock}>
-            <LText bold>{card.title}</LText>
-            <LText>{card.desc}</LText>
+            <LText secondary semiBold style={styles.title}>
+              {card.title}
+            </LText>
+            <LText style={styles.desc}>{card.desc}</LText>
           </View>
         </Card>
       </Touchable>
@@ -38,19 +40,17 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: 16,
     backgroundColor: "white",
-    marginVertical: 10,
-    marginHorizontal: 20,
+    marginVertical: 4,
   },
   cardStyle: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: 85,
   },
   cardTextBlock: {
     flexDirection: "column",
-    padding: 15,
+    marginLeft: 16,
     flex: 1,
     flexWrap: "wrap",
   },
@@ -61,6 +61,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightLive,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 10,
+  },
+  title: {
+    color: colors.darkBlue,
+    fontSize: 14,
+    lineHeight: 17,
+    marginBottom: 4,
+  },
+  desc: {
+    color: colors.grey,
+    fontSize: 12,
   },
 });
