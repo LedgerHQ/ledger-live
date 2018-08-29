@@ -37,7 +37,7 @@ export type CryptoCurrency = CurrencyCommon & {
   // name of the app as shown in the Manager
   managerAppName: string,
   // coin type according to slip44. THIS IS NOT GUARANTEED UNIQUE across currencies (e.g testnets,..)
-  coinType?: number,
+  coinType: number,
   // the scheme name to use when formatting an URI (without the ':')
   scheme: string,
   // used for UI

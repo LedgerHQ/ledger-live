@@ -475,6 +475,7 @@ const cryptocurrenciesById = {
   },
   icon: {
     id: "icon",
+    coinType: 4801368,
     name: "ICON",
     managerAppName: "ICON",
     ticker: "ICON",
