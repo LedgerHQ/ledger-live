@@ -10,6 +10,7 @@ import SettingsIcon from "./images/icons/Settings";
 import ManagerIcon from "./images/icons/Manager";
 import AccountsIcon from "./images/icons/Accounts";
 import HeaderTitle from "./components/HeaderTitle";
+import HeaderBackImage from "./components/HeaderBackImage";
 import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
@@ -47,6 +48,8 @@ const StackNavigatorConfig = {
   navigationOptions: {
     headerStyle: styles.header,
     headerTitle: HeaderTitle,
+    headerBackTitle: null,
+    headerBackImage: HeaderBackImage,
   },
   cardStyle: styles.card,
   headerLayoutPreset: "center",
