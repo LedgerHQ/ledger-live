@@ -24,11 +24,11 @@ export const genDateRange = ({ dateFrom, dateTo, rate }: Pair): Histodays => {
 
 export const genStoreState = (pairs: Pair[]): CounterValuesState => {
   const state = { rates: {} };
-  for (const pair of pairs) {
+  pairs.forEach(pair => {
     const { from, to, exchange } = pair;
     const a = (state.rates[to.ticker] = state.rates[to.ticker] || {});
     const b = (a[from.ticker] = a[from.ticker] || {});
     b[exchange] = genDateRange(pair);
-  }
+  });
   return state;
 };
