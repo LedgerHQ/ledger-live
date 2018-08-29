@@ -17,6 +17,7 @@ import LoadingFooter from "../../components/LoadingFooter";
 import Wrench from "../../images/icons/Wrench";
 import Touchable from "../../components/Touchable";
 import colors from "./../../colors";
+import EmptyStateAccount from "./EmptyStateAccount";
 
 type Props = {
   account: ?Account,
@@ -28,6 +29,9 @@ type Props = {
 type State = {
   opCount: number,
 };
+
+const isAccountEmpty = (a: Account): boolean =>
+  a.operations.length === 0 && a.balance.isZero();
 
 class Accnt extends PureComponent<Props, State> {
   static navigationOptions = ({ navigation }) => ({
@@ -82,10 +86,9 @@ class Accnt extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account } = this.props;
+    const { account, navigation } = this.props;
     const { opCount } = this.state;
     if (!account) return null;
-    console.log("account", this.props);
 
     const { sections, completed } = groupAccountOperationsByDay(
       account,
@@ -93,26 +96,27 @@ class Accnt extends PureComponent<Props, State> {
     );
 
     return (
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ paddingBottom: 60 }}
-      >
-        <SectionList
-          sections={(sections: any)}
-          style={styles.sectionList}
-          ListFooterComponent={
-            !completed
-              ? LoadingFooter
-              : sections.length === 0
-                ? NoOperationFooter
-                : NoMoreOperationFooter
-          }
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-          renderSectionHeader={SectionHeader}
-          onEndReached={this.onEndReached}
-          showsVerticalScrollIndicator={false}
-        />
+      <ScrollView style={styles.container} contentContainerStyle={{ flex: 1 }}>
+        {!isAccountEmpty(account) ? (
+          <SectionList
+            sections={(sections: any)}
+            style={styles.sectionList}
+            ListFooterComponent={
+              !completed
+                ? LoadingFooter
+                : sections.length === 0
+                  ? NoOperationFooter
+                  : NoMoreOperationFooter
+            }
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+            renderSectionHeader={SectionHeader}
+            onEndReached={this.onEndReached}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : (
+          <EmptyStateAccount account={account} navigation={navigation} />
+        )}
       </ScrollView>
     );
   }
@@ -125,6 +129,9 @@ export default connect(
 )(Accnt);
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.lightGrey },
+  container: {
+    flex: 1,
+    backgroundColor: colors.lightGrey,
+  },
   sectionList: { flex: 1 },
 });
