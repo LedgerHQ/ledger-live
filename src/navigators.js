@@ -27,8 +27,9 @@ import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
+import ImportAccounts from "./screens/ImportAccounts";
 
-// TODO look into all $FlowFixMe
+// TODO look into all FlowFixMe
 
 const stackNavigatiorDefaultNavigationOptions = {
   headerStyle: {
@@ -45,7 +46,6 @@ const styles = StyleSheet.create({
 
 const SettingsStack = createStackNavigator(
   {
-    // $FlowFixMe
     Settings,
     CountervalueSettings,
     RateProviderSettings,
@@ -101,9 +101,7 @@ AccountsStack.navigationOptions = {
 };
 
 const Main = createBottomTabNavigator({
-  // $FlowFixMe
   Portfolio,
-  // $FlowFixMe
   Accounts: AccountsStack,
   // $FlowFixMe
   Transfer,
@@ -159,9 +157,9 @@ export const RootNavigator = createStackNavigator(
     Main,
     ReceiveFunds,
     SendFunds,
-    // $FlowFixMe
     OperationDetails,
     AccountSettings,
+    ImportAccounts,
   },
   {
     mode: "modal",

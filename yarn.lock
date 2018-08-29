@@ -533,9 +533,9 @@
   dependencies:
     events "^2.0.0"
 
-"@ledgerhq/live-common@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.0.0.tgz#abbd88e351c7d0ffffabf7e8502f5b2fbecdc150"
+"@ledgerhq/live-common@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.2.0.tgz#5373c2dc635b85f68f3941fe185176c0033585de"
   dependencies:
     axios "^0.18.0"
     bignumber.js "^7.2.1"

@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { ScrollView, StyleSheet, SectionList, View } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
@@ -29,7 +29,7 @@ type State = {
   opCount: number,
 };
 
-class Accnt extends Component<Props, State> {
+class Accnt extends PureComponent<Props, State> {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.getParam("accountTitle", "Account"),
     headerRight: (
@@ -48,7 +48,7 @@ class Accnt extends Component<Props, State> {
   });
 
   state = {
-    opCount: 50,
+    opCount: 100,
   };
 
   componentDidMount() {
@@ -85,6 +85,7 @@ class Accnt extends Component<Props, State> {
     const { account } = this.props;
     const { opCount } = this.state;
     if (!account) return null;
+    console.log("account", this.props);
 
     const { sections, completed } = groupAccountOperationsByDay(
       account,
