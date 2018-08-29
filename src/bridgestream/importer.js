@@ -1,7 +1,9 @@
 // @flow
 
-export type Data = Array<mixed>;
-export type AccountData = ["account", string, string, string];
+import type { AccountData } from "./types";
+
+type Data = Array<mixed>;
+
 export type Result = {
   accounts: AccountData[],
   meta: {
@@ -72,13 +74,36 @@ export function chunksToResult(rawChunks: Data[]): Result {
         meta = { chunksFormatVersion, exporterName, exporterVersion };
       }
     } else if (type === "account") {
-      const [, id, name, currencyId] = d;
-      if (
-        typeof id === "string" &&
-        typeof name === "string" &&
-        typeof currencyId === "string"
-      ) {
-        accounts.push([type, id, name, currencyId]);
+      const [, accountData] = d;
+      if (accountData && typeof accountData === "object") {
+        const {
+          id,
+          currencyId,
+          name,
+          freshAddress,
+          freshAddressPath,
+          index,
+          balance
+        } = accountData;
+        if (
+          typeof id === "string" &&
+          typeof currencyId === "string" &&
+          typeof name === "string" &&
+          typeof freshAddress === "string" &&
+          typeof freshAddressPath === "string" &&
+          typeof index === "number" &&
+          typeof balance === "string"
+        ) {
+          accounts.push({
+            id,
+            currencyId,
+            name,
+            freshAddress,
+            freshAddressPath,
+            index,
+            balance
+          });
+        }
       }
     }
   }

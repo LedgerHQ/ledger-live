@@ -2,9 +2,11 @@
  * @flow
  * @module helpers/account
  */
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type {
   Account,
+  AccountIdParams,
   Operation,
   BalanceHistory,
   DailyOperations
@@ -156,4 +158,21 @@ export function groupAccountOperationsByDay(
   count: number
 ): DailyOperations {
   return groupAccountsOperationsByDay([account], count);
+}
+
+export function encodeAccountId({
+  type,
+  version,
+  xpub,
+  walletName
+}: AccountIdParams) {
+  return `${type}:${version}:${xpub}:${walletName}`;
+}
+
+export function decodeAccountId(accountId: string): AccountIdParams {
+  invariant(typeof accountId === "string", "accountId is not a string");
+  const splitted = accountId.split(":");
+  invariant(splitted.length === 4, "invalid size for accountId");
+  const [type, version, xpub, walletName] = splitted;
+  return { type, version, xpub, walletName };
 }
