@@ -62,7 +62,7 @@ export function chunksToResult(rawChunks: Data[]): Result {
     .map(chunk => chunk.slice(2));
   const accounts = [];
   let meta;
-  for (const d of chunks) {
+  chunks.forEach(d => {
     const [type] = d;
     if (type === "meta") {
       const [, chunksFormatVersion, exporterName, exporterVersion] = d;
@@ -106,7 +106,7 @@ export function chunksToResult(rawChunks: Data[]): Result {
         }
       }
     }
-  }
+  });
   if (!meta) {
     throw new Error("meta chunk not found");
   }
