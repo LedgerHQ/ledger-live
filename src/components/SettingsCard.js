@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginLeft: 16,
     flex: 1,
-    flexWrap: "wrap",
   },
   imageContainer: {
     height: 32,
