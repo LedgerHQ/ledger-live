@@ -105,7 +105,7 @@ android {
 
     defaultConfig {
         applicationId "com.ledgerlivemobile"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 27
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
@@ -171,6 +171,16 @@ android {
     packagingOptions {
         doNotStrip '*/mips/*.so'
         doNotStrip '*/mips64/*.so'
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            if (details.requested.name == 'android-jsc') {
+                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r224109'
+            }
+        }
     }
 }
 
