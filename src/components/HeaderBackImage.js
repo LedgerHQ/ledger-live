@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
 import { View, Platform } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import ArrowLeft from "../images/icons/ArrowLeft";
 import colors from "../colors";
 
 const HeaderBackImage = () => {
@@ -9,7 +9,7 @@ const HeaderBackImage = () => {
 
   return (
     <View style={{ paddingLeft }}>
-      <Icon name="arrow-back" size={22} color={colors.darkBlue} />
+      <ArrowLeft size={16} color={colors.darkBlue} />
     </View>
   );
 };
