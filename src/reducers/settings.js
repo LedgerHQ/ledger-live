@@ -11,12 +11,20 @@ import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
 
 export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
 
+export type CurrencySettings = {
+  confirmationsNb: number,
+  exchange: ?*,
+};
+
 export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
   authSecurityEnabled: boolean,
   reportErrorsEnabled: boolean,
   analyticsEnabled: boolean,
+  currenciesSettings: {
+    [currencyId: string]: CurrencySettings,
+  },
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -25,6 +33,7 @@ const INITIAL_STATE: SettingsState = {
   authSecurityEnabled: false,
   reportErrorsEnabled: false,
   analyticsEnabled: false,
+  currenciesSettings: {},
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -69,7 +78,7 @@ const handlers: Object = {
       pairs: Array<{
         from: Currency,
         to: Currency,
-        exchange: string,
+        exchange: *,
       }>,
     },
   ) => {
@@ -114,9 +123,10 @@ export const counterValueExchangeSelector = createSelector(
   counterValueExchangeLocalSelector,
 );
 
-export const currencySettingsSelector = (_s: *, _o: *) => ({
-  exchange: "BINANCE",
-}); // FIXME
+export const currencySettingsSelector = (s: *, { currency }: *) => ({
+  exchange: null,
+  ...s.settings.currenciesSettings[currency.id],
+});
 
 export const authSecurityEnabledSelector = createSelector(
   storeSelector,
