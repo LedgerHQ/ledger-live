@@ -67,6 +67,7 @@ const SettingsStack = createStackNavigator(
     HelpSettings,
     CurrenciesSettings,
   },
+  // $FlowFixMe
   StackNavigatorConfig,
 );
 
@@ -81,6 +82,7 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     Manager,
   },
+  // $FlowFixMe
   StackNavigatorConfig,
 );
 
@@ -93,6 +95,7 @@ const AccountsStack = createStackNavigator(
     Accounts,
     Account,
   },
+  // $FlowFixMe
   StackNavigatorConfig,
 );
 AccountsStack.navigationOptions = {
@@ -119,6 +122,7 @@ const ReceiveFunds = createStackNavigator(
   {
     ReceiveFundsMain,
   },
+  // $FlowFixMe
   StackNavigatorConfig,
 );
 ReceiveFunds.navigationOptions = {
@@ -129,6 +133,7 @@ const SendFunds = createStackNavigator(
   {
     SendFundsMain,
   },
+  // $FlowFixMe
   StackNavigatorConfig,
 );
 SendFunds.navigationOptions = {
@@ -140,6 +145,7 @@ const AccountSettings = createStackNavigator(
     EditAccountUnits,
     EditAccountName,
   },
+  // $FlowFixMe
   StackNavigatorConfig,
 );
 AccountSettings.navigationOptions = {
@@ -155,6 +161,7 @@ export const RootNavigator = createStackNavigator(
     // $FlowFixMe
     ImportAccounts,
   },
+  // $FlowFixMe
   {
     mode: "modal",
     ...StackNavigatorConfig,
