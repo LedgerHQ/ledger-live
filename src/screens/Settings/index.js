@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 
@@ -64,8 +64,8 @@ class Settings extends Component<{
     ];
 
     return (
-      <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
-        <View>
+      <ScrollView>
+        <View style={styles.root}>
           {settingsCards.map(card => (
             <SettingsCard key={card.key} card={card} />
           ))}
@@ -76,3 +76,10 @@ class Settings extends Component<{
 }
 
 export default translate()(Settings);
+
+const styles = StyleSheet.create({
+  root: {
+    paddingTop: 12,
+    paddingHorizontal: 16,
+  },
+});
