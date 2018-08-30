@@ -1,23 +1,70 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import type { NavigationScreenProp } from "react-navigation";
-import SettingsRow from "../../../components/SettingsRow";
+import { findCurrencyByTicker } from "@ledgerhq/live-common/lib/helpers/currencies";
 
-const mapStateToProps = createStructuredSelector({});
+import type { Currency } from "@ledgerhq/live-common/lib/types";
 
-class RateProviderSettings extends PureComponent<{
-  navigation: NavigationScreenProp<*>,
-}> {
-  static navigationOptions = {
-    title: "Settings",
-  };
+import type { State } from "../../../reducers";
+import { setExchangePairsAction } from "../../../actions/settings";
+import makeGenericSelectScreen from "../../makeGenericSelectScreen";
+import CounterValues from "../../../countervalues";
 
-  render() {
-    // const { navigation } = this.props;
-    return <SettingsRow title="PLACEHOLDER" />;
+const getExchanges = (from: Currency, to: Currency) => {
+  const promise = CounterValues.fetchExchangesForPair(from, to);
+  promise.catch(() => {
+    console.log("error in async call of getExchanges");
+  });
+  return promise;
+};
+
+const extractFromTo = props => {
+  const { params } = props.navigation.state;
+  const from = findCurrencyByTicker(params.from);
+  const to = findCurrencyByTicker(params.to);
+  return { from, to };
+};
+
+const injectItems = C => {
+  class Clz extends Component<*, *> {
+    state = {
+      items: [],
+    };
+    async componentWillMount() {
+      const { from, to } = extractFromTo(this.props);
+      const exchanges = await getExchanges(from, to);
+      this.setState({ items: exchanges });
+    }
+    render() {
+      const { items } = this.state;
+      const { from, to } = extractFromTo(this.props);
+      return <C {...this.props} from={from} to={to} items={items} />;
+    }
   }
-}
+  // $FlowFixMe
+  Clz.navigationOptions = C.navigationOptions;
 
-export default connect(mapStateToProps)(RateProviderSettings);
+  return Clz;
+};
+
+const mapStateToProps = (state: State, props: *) => ({
+  selectedKey: props.navigation.state.params.selected,
+});
+
+const mapDispatchToProps = {
+  onValueChange: ({ id }: *, { from, to }) =>
+    setExchangePairsAction([{ from, to, exchange: id }]),
+};
+
+const Screen = makeGenericSelectScreen({
+  title: "Exchange",
+  keyExtractor: item => item.id,
+  formatItem: item => item.name,
+});
+
+export default injectItems(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(Screen),
+);

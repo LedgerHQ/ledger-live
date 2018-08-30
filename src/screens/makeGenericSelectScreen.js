@@ -47,14 +47,14 @@ export default <Item>(opts: Opts<Item>) => {
   return class GenericSelectScreen extends Component<{
     selectedKey: string,
     items: Item[],
-    onValueChange: Item => void,
+    onValueChange: (Item, *) => void,
     navigation: NavigationScreenProp<*>,
   }> {
     static navigationOptions = { title };
 
     onPress = (item: Item) => {
       const { navigation, onValueChange } = this.props;
-      onValueChange(item);
+      onValueChange(item, this.props);
       navigation.goBack();
     };
 
