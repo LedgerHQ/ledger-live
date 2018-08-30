@@ -39,3 +39,8 @@ export const setAnalytics = (analyticsEnabled: boolean) => ({
   type: "SETTINGS_SET_ANALYTICS",
   analyticsEnabled,
 });
+
+export const setSelectedTimeRange = (selectedTimeRange: string) => ({
+  type: "SETTINGS_SET_SELECTED_TIME_RANGE",
+  payload: selectedTimeRange,
+});
