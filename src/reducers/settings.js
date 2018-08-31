@@ -12,8 +12,8 @@ import type {
   Currency,
   Account,
 } from "@ledgerhq/live-common/lib/types";
-
-import type { State } from "./index";
+import type { State } from "./";
+import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 
 export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
 
@@ -61,7 +61,16 @@ const handlers: Object = {
     ...state,
     ...settings,
   }),
-
+  UPDATE_CURRENCY_SETTINGS: (
+    { currenciesSettings, ...state }: SettingsState,
+    { currencyId, patch },
+  ) => ({
+    ...state,
+    currenciesSettings: {
+      ...currenciesSettings,
+      [currencyId]: { ...currenciesSettings[currencyId], ...patch },
+    },
+  }),
   SETTINGS_SET_AUTH_SECURITY: (
     state: SettingsState,
     { authSecurityEnabled },
@@ -147,9 +156,20 @@ export const counterValueExchangeSelector = createSelector(
   counterValueExchangeLocalSelector,
 );
 
-export const currencySettingsSelector = (s: *, { currency }: *) => ({
+const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = crypto => {
+  const defaults = currencySettingsDefaults(crypto);
+  return {
+    confirmationsNb: defaults.confirmationsNb
+      ? defaults.confirmationsNb.def
+      : 0,
+    exchange: null,
+  };
+};
+
+export const currencySettingsSelector = (state: State, currency: Currency) => ({
   exchange: null,
-  ...s.settings.currenciesSettings[currency.id],
+  ...defaultCurrencySettingsForCurrency(currency),
+  ...state.settings.currenciesSettings[currency.id],
 });
 
 export const authSecurityEnabledSelector = createSelector(
