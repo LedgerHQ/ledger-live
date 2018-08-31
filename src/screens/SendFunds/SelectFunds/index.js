@@ -110,7 +110,9 @@ class SelectFunds extends Component<Props, State> {
             <OutlineButton
               outlineColor={colors.live}
               containerStyle={styles.useMaxButton}
-              onPress={() => console.log("max")}
+              onPress={() => {
+                console.log("max"); // eslint-disable-line no-console
+              }}
               hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
             >
               <LText bold style={styles.useMaxText}>

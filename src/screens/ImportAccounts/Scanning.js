@@ -19,9 +19,7 @@ export default class Scanning extends Component<{
     if (data && data !== this.lastData && !this.completed) {
       this.lastData = data;
       this.chunks = parseChunksReducer(this.chunks, data);
-      console.log(this.chunks.length, " chunks");
       if (areChunksComplete(this.chunks)) {
-        console.log("completed");
         this.completed = true;
         // TODO read the chunks version and check it's correctly supported (if newers version, we deny the import with an error)
         this.props.onResult(chunksToResult(this.chunks));

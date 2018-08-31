@@ -80,7 +80,11 @@ class SelectRecipient extends Component<Props, State> {
       <SafeAreaView style={styles.root}>
         <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
           <View style={styles.container}>
-            <OutlineButton onPress={() => console.log("scan qr code")}>
+            <OutlineButton
+              onPress={() => {
+                console.log("scan qr code"); // eslint-disable-line no-console
+              }}
+            >
               <Icon name="qrcode" size={16} color={colors.live} />
               <LText semiBold secondary style={styles.buttonText}>
                 Scan QR code
