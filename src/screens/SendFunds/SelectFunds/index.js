@@ -45,7 +45,7 @@ class SelectFunds extends Component<Props, State> {
   };
 
   state = {
-    amount: "0",
+    amount: "",
     amountBigNumber: new BigNumber(0),
   };
 
@@ -76,6 +76,7 @@ class SelectFunds extends Component<Props, State> {
       accountId: account.id,
       address,
       amount,
+      // FIXME we shouldn't pass amountBigNumber because not serializable, also want to avoid derivated data
       amountBigNumber,
     });
   };

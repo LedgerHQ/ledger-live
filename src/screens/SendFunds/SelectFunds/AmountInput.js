@@ -46,6 +46,7 @@ class AmountInput extends Component<Props> {
             value={value}
             onChangeText={onChangeText}
             keyboardType="numeric"
+            placeholder="0"
             ref={this.input}
           />
           {!!value && (

@@ -37,6 +37,8 @@ class SendSummary extends Component<Props, State> {
     title: "Summary",
   };
 
+  // FIXME remove the fees state, instead each SummaryRow press should just do a back on the relevant screen
+
   state = {
     // $FlowFixMe
     fees: this.props.navigation.state.params.fees || 10,
@@ -77,6 +79,14 @@ class SendSummary extends Component<Props, State> {
       amount,
       amountBigNumber,
       fees,
+    });
+  };
+
+  onContinue = () => {
+    const { navigation } = this.props;
+    navigation.navigate("SendValidation", {
+      // $FlowFixMe
+      ...navigation.state.params,
     });
   };
 
@@ -162,9 +172,7 @@ class SendSummary extends Component<Props, State> {
             title="Continue"
             containerStyle={styles.continueButton}
             titleStyle={styles.continueButtonTitle}
-            onPress={() => {
-              console.log("finish"); // eslint-disable-line no-console
-            }}
+            onPress={this.onContinue}
           />
         </View>
       </SafeAreaView>

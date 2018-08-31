@@ -30,11 +30,9 @@ type Props = {
 type State = {};
 
 class SendFundsSelectAccount extends Component<Props, State> {
-  static navigationOptions = ({ screenProps }: *) => ({
+  static navigationOptions = ({ navigation }: *) => ({
     title: "Select an account",
-    headerRight: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    ),
+    headerRight: <HeaderRightClose navigation={navigation} />,
   });
 
   renderItem = ({ item }: { item: Account }) => (

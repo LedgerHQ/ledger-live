@@ -13,6 +13,7 @@ import { RootNavigator } from "./navigators";
 import AuthFailedApp from "./components/AuthFailedApp";
 import AuthPendingApp from "./components/AuthPendingApp";
 import LoadingApp from "./components/LoadingApp";
+import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 
 const styles = StyleSheet.create({
   root: {
@@ -71,9 +72,11 @@ export default class Root extends Component<{}, {}> {
                     <AuthFailedApp />
                   ) : (
                     <LocaleProvider>
-                      <CounterValues.PollingProvider>
-                        <App />
-                      </CounterValues.PollingProvider>
+                      <BridgeSyncProvider>
+                        <CounterValues.PollingProvider>
+                          <App />
+                        </CounterValues.PollingProvider>
+                      </BridgeSyncProvider>
                     </LocaleProvider>
                   )
                 }
