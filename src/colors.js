@@ -1,4 +1,22 @@
 // @flow
+import color from "color";
+
+export const rgba = (c: string, a: number) =>
+  color(c)
+    .alpha(a)
+    .rgb()
+    .toString();
+
+export const darken = (c: string, a: number) =>
+  color(c)
+    .darken(a)
+    .toString();
+
+export const lighten = (c: string, a: number) =>
+  color(c)
+    .lighten(a)
+    .toString();
+
 export default {
   /* MAIN */
   live: "#6490f1",
@@ -18,4 +36,9 @@ export default {
   lightGrey: "#F9F9F9",
   translucentGreen: "rgba(102, 190, 84, 0.2)",
   translucentGrey: "rgba(153, 153, 153, 0.2)",
+
+  /* PILLS */
+  pillForeground: "#999999",
+  pillActiveBackground: rgba("#6490f1", 0.1),
+  pillActiveForeground: "#6490f1",
 };
