@@ -1107,8 +1107,8 @@ const cryptocurrenciesById = {
   zencash: {
     id: "zencash",
     coinType: 121,
-    name: "ZenCash",
-    managerAppName: "ZenCash",
+    name: "Horizen",
+    managerAppName: "Horizen",
     ticker: "ZEN",
     scheme: "zencash",
     color: "#152f5c",
