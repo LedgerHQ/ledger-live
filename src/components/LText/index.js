@@ -23,12 +23,16 @@ export default class LText extends Component<*> {
       secondary,
       monospace,
       style,
+      tertiary,
       ...newProps
     } = this.props;
     return (
       <Text
         {...newProps}
-        style={[style, getFontStyle({ bold, semiBold, secondary, monospace })]}
+        style={[
+          style,
+          getFontStyle({ bold, semiBold, secondary, monospace, tertiary }),
+        ]}
       />
     );
   }

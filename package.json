@@ -53,6 +53,7 @@
     "@ledgerhq/react-native-passcode-auth": "2.0.0",
     "bignumber.js": "^7.2.1",
     "buffer": "5.2.0",
+    "fuse.js": "^3.2.1",
     "hoist-non-react-statics": "3.0.1",
     "i18next": "11.5.0",
     "invariant": "2.2.4",

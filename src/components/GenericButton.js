@@ -73,6 +73,7 @@ export default class GenericButton extends Component<
       titleStyle,
       spinnerColor,
       iconLeft,
+      ...otherProps
     } = this.props;
     const { pending, spinnerOn } = this.state;
     const disabled = !onPress || pending;
@@ -85,6 +86,7 @@ export default class GenericButton extends Component<
           disabled ? styles.containerDisabled : null,
           containerStyle,
         ]}
+        {...otherProps}
       >
         {iconLeft && <View style={{ marginRight: 10 }}>{iconLeft}</View>}
         <LText style={[styles.title, titleStyle]}>{title}</LText>

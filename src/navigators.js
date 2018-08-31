@@ -24,12 +24,16 @@ import CurrenciesSettings from "./screens/Settings/Currencies";
 import Manager from "./screens/Manager";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
 import SendFundsMain from "./screens/SendFunds";
+import SendSelectRecipient from "./screens/SendFunds/SelectRecipient";
+import SendSelectFunds from "./screens/SendFunds/SelectFunds";
+import SendSummary from "./screens/SendFunds/Summary";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
 import ImportAccounts from "./screens/ImportAccounts";
+import EditFees from "./screens/EditFees";
 
 // TODO look into all FlowFixMe
 
@@ -132,13 +136,30 @@ ReceiveFunds.navigationOptions = {
 const SendFunds = createStackNavigator(
   {
     SendFundsMain,
+    SendSelectRecipient,
+    SendSelectFunds,
+    SendSummary,
   },
   // $FlowFixMe
   StackNavigatorConfig,
 );
+
 SendFunds.navigationOptions = {
   header: null,
 };
+
+const SendFundsSettings = createStackNavigator(
+  {
+    EditFees,
+  },
+  // $FlowFixMe
+  StackNavigatorConfig,
+);
+
+SendFundsSettings.navigationOptions = {
+  header: null,
+};
+
 const AccountSettings = createStackNavigator(
   {
     AccountSettingsMain,
@@ -148,9 +169,11 @@ const AccountSettings = createStackNavigator(
   // $FlowFixMe
   StackNavigatorConfig,
 );
+
 AccountSettings.navigationOptions = {
   header: null,
 };
+
 export const RootNavigator = createStackNavigator(
   {
     Main,
@@ -160,6 +183,7 @@ export const RootNavigator = createStackNavigator(
     AccountSettings,
     // $FlowFixMe
     ImportAccounts,
+    SendFundsSettings,
   },
   // $FlowFixMe
   {
