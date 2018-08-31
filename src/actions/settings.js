@@ -2,6 +2,11 @@
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 
+export type CurrencySettings = {
+  confirmationsNb: number,
+  exchange: ?*,
+};
+
 type SetExchangePairs = (
   Array<{
     from: Currency,
@@ -43,4 +48,13 @@ export const setAnalytics = (analyticsEnabled: boolean) => ({
 export const setSelectedTimeRange = (selectedTimeRange: string) => ({
   type: "SETTINGS_SET_SELECTED_TIME_RANGE",
   payload: selectedTimeRange,
+});
+
+export const updateCurrencySettings = (
+  currencyId: number,
+  patch: $Shape<CurrencySettings>,
+) => ({
+  type: "UPDATE_CURRENCY_SETTINGS",
+  currencyId,
+  patch,
 });

@@ -88,7 +88,11 @@
     },
     "currencies": {
       "title": "Currencies",
-      "desc": "Select a crypto asset to edit its settings."
+      "desc": "Select a crypto asset to edit its settings.",
+      "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
+      "rateProviderDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn",
+      "confirmationNb": "Number of confirmations",
+      "confirmationNbDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn"
     },
     "about": {
       "title": "About",
