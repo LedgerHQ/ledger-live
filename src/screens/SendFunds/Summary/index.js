@@ -162,7 +162,9 @@ class SendSummary extends Component<Props, State> {
             title="Continue"
             containerStyle={styles.continueButton}
             titleStyle={styles.continueButtonTitle}
-            onPress={() => console.log("finish")}
+            onPress={() => {
+              console.log("finish"); // eslint-disable-line no-console
+            }}
           />
         </View>
       </SafeAreaView>

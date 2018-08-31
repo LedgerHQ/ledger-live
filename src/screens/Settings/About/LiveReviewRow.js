@@ -15,7 +15,7 @@ class LiveReviewRow extends PureComponent<{
         desc={null}
         arrowRight
         onPress={() => {
-          console.log("Set up deep linking with App store");
+          console.log("Set up deep linking with App store"); // eslint-disable-line no-console
         }}
       />
     );

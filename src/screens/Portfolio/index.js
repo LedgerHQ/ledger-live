@@ -16,6 +16,7 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import LText from "../../components/LText";
+import PortfolioGraphCard from "./PortfolioGraphCard";
 // import PortfolioHeader from "./PortfolioHeader";
 import OperationRow from "../../components/OperationRow";
 import PortfolioIcon from "../../images/icons/Portfolio";
@@ -83,6 +84,9 @@ class Portfolio extends Component<
     return (
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
+        <View style={styles.graphCardContainer}>
+          <PortfolioGraphCard />
+        </View>
         {/* <PortfolioHeader> */}
         <SectionList
           sections={(sections: any)}
@@ -115,5 +119,8 @@ const styles = StyleSheet.create({
   },
   sectionList: {
     flex: 1,
+  },
+  graphCardContainer: {
+    padding: 20,
   },
 });

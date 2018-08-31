@@ -13,7 +13,7 @@ import CounterValues from "../../../countervalues";
 const getExchanges = (from: Currency, to: Currency) => {
   const promise = CounterValues.fetchExchangesForPair(from, to);
   promise.catch(() => {
-    console.log("error in async call of getExchanges");
+    console.log("error in async call of getExchanges"); // eslint-disable-line no-console
   });
   return promise;
 };

@@ -7,7 +7,13 @@ import {
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/lib/helpers/currencies";
 import { createSelector } from "reselect";
-import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
+import type {
+  CryptoCurrency,
+  Currency,
+  Account,
+} from "@ledgerhq/live-common/lib/types";
+
+import type { State } from "./index";
 
 export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
 
@@ -15,6 +21,14 @@ export type CurrencySettings = {
   confirmationsNb: number,
   exchange: ?*,
 };
+
+export const timeRangeDaysByKey = {
+  week: 7,
+  month: 30,
+  year: 365,
+};
+
+export type TimeRange = $Keys<typeof timeRangeDaysByKey>;
 
 export type SettingsState = {
   counterValue: string,
@@ -25,6 +39,7 @@ export type SettingsState = {
   currenciesSettings: {
     [currencyId: string]: CurrencySettings,
   },
+  selectedTimeRange: TimeRange,
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -34,6 +49,7 @@ const INITIAL_STATE: SettingsState = {
   reportErrorsEnabled: false,
   analyticsEnabled: false,
   currenciesSettings: {},
+  selectedTimeRange: "month",
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -101,6 +117,14 @@ const handlers: Object = {
     }
     return copy;
   },
+
+  SETTINGS_SET_SELECTED_TIME_RANGE: (
+    state,
+    { payload: selectedTimeRange },
+  ) => ({
+    ...state,
+    selectedTimeRange,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -137,9 +161,23 @@ export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
 );
+
 export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
 );
+
+export const currencySettingsForAccountSelector = (
+  s: *,
+  { account }: { account: Account },
+) => currencySettingsSelector(s, { currency: account.currency });
+
+export const exchangeSettingsForAccountSelector = createSelector(
+  currencySettingsForAccountSelector,
+  settings => settings.exchange,
+);
+
+export const selectedTimeRangeSelector = (state: State) =>
+  state.settings.selectedTimeRange;
 
 export default handleActions(handlers, INITIAL_STATE);

@@ -12,7 +12,7 @@ export { getFontStyle };
  * <LText bold>toto</LText>
  * <LText semiBold>foobar</LText>
  * <LText secondary>alternate font</LText>
- * <LText monospace>monospace font</LText>
+ * <LText tertiary>tertiary font</LText>
  * <LText style={styles.text}>some specific styles</LText>
  */
 export default class LText extends Component<*> {
@@ -21,18 +21,14 @@ export default class LText extends Component<*> {
       bold,
       semiBold,
       secondary,
-      monospace,
-      style,
       tertiary,
+      style,
       ...newProps
     } = this.props;
     return (
       <Text
         {...newProps}
-        style={[
-          style,
-          getFontStyle({ bold, semiBold, secondary, monospace, tertiary }),
-        ]}
+        style={[style, getFontStyle({ bold, semiBold, secondary, tertiary })]}
       />
     );
   }

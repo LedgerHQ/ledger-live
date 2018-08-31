@@ -4,6 +4,18 @@
     "apply": "Apply",
     "delete": "Delete"
   },
+  "time": {
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "year": "Year",
+    "since": {
+      "day": "past day",
+      "week": "past week",
+      "month": "past month",
+      "year": "past year"
+    }
+  },
   "operationDetails": {
     "title": "Operation details",
     "account": "Account",

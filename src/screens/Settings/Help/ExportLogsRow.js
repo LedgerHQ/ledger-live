@@ -21,7 +21,9 @@ class ExportLogsRow extends PureComponent<{
         title={t("common:settings.help.exportLogs")}
         desc={t("common:settings.help.exportLogsDesc")}
         arrowRight
-        onPress={() => console.log("trying to export logs!")}
+        onPress={() => {
+          console.log("trying to export logs!"); // eslint-disable-line no-console
+        }}
       />
     );
   }
