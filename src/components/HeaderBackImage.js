@@ -5,10 +5,10 @@ import ArrowLeft from "../images/icons/ArrowLeft";
 import colors from "../colors";
 
 const HeaderBackImage = () => (
-    <View style={styles.root}>
-      <ArrowLeft size={16} color={colors.darkBlue} />
-    </View>
-  );
+  <View style={styles.root}>
+    <ArrowLeft size={16} color={colors.darkBlue} />
+  </View>
+);
 
 export default HeaderBackImage;
 
