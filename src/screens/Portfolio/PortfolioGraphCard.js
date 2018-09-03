@@ -1,29 +1,19 @@
 // @flow
 
-import React, { PureComponent, Component, Fragment } from "react";
+import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet } from "react-native";
-import { getBalanceHistorySum } from "@ledgerhq/live-common/lib/helpers/account";
 import { translate } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import type { Unit, Currency } from "@ledgerhq/live-common/lib/types";
+import type { Unit } from "@ledgerhq/live-common/lib/types";
+
+import type { Summary } from "../../components/provideSummary";
 
 import colors from "../../colors";
 
-import { accountsSelector } from "../../reducers/accounts";
 import { setSelectedTimeRange } from "../../actions/settings";
-import {
-  exchangeSettingsForAccountSelector,
-  counterValueCurrencySelector,
-  counterValueExchangeSelector,
-  intermediaryCurrency,
-  selectedTimeRangeSelector,
-  timeRangeDaysByKey,
-} from "../../reducers/settings";
-
-import CounterValues from "../../countervalues";
 
 import Delta from "../../components/Delta";
 import Space from "../../components/Space";
@@ -40,88 +30,17 @@ const mapDispatchToProps = {
   setSelectedTimeRange,
 };
 
-const mapStateToProps = state => {
-  const accounts = accountsSelector(state);
-  const counterValueCurrency = counterValueCurrencySelector(state);
-  const counterValueExchange = counterValueExchangeSelector(state);
-  const selectedTimeRange = selectedTimeRangeSelector(state);
-  const daysCount = timeRangeDaysByKey[selectedTimeRange];
-  let isAvailable = true;
-
-  // create array of original values, used to reconciliate
-  // with counter values after calculation
-  const originalValues = [];
-
-  const balanceHistory = getBalanceHistorySum(
-    accounts,
-    daysCount || 30,
-    (account, value, date) => {
-      // keep track of original value
-      originalValues.push(value);
-      const fromExchange = exchangeSettingsForAccountSelector(state, {
-        account,
-      });
-
-      const cv = CounterValues.calculateWithIntermediarySelector(state, {
-        value,
-        date,
-        from: account.currency,
-        fromExchange,
-        intermediary: intermediaryCurrency,
-        toExchange: counterValueExchange,
-        to: counterValueCurrency,
-      });
-      if (!cv) {
-        isAvailable = false;
-        return BigNumber(0);
-      }
-      return cv;
-    },
-  ).map((item, i) => ({
-    // reconciliate balance history with original values
-    ...item,
-    originalValue: originalValues[i] || BigNumber(0),
-  }));
-
-  const balanceEnd = balanceHistory[balanceHistory.length - 1].value;
-
-  return {
-    isAvailable,
-    balanceHistory,
-    balanceStart: balanceHistory[0].value,
-    balanceEnd,
-    selectedTimeRange,
-    hash: `${accounts.length > 0 ? accounts[0].id : ""}_${
-      balanceHistory.length
-    }_${balanceEnd.toString()}_${isAvailable.toString()}`,
-    counterValueCurrency,
-  };
-};
-
 type Props = {
   t: T,
-  isAvailable: boolean,
-  balanceHistory: Item[],
-  balanceStart: BigNumber,
-  balanceEnd: BigNumber,
-  hash: string,
-  selectedTimeRange: string,
+  summary: Summary,
   setSelectedTimeRange: string => void,
-  counterValueCurrency: Currency,
 };
 
 type State = {
   hoveredItem: ?Item,
 };
 
-class PortfolioGraphCard extends Component<Props, State> {
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    return (
-      nextProps.hash !== this.props.hash ||
-      nextState.hoveredItem !== this.state.hoveredItem
-    );
-  }
-
+class PortfolioGraphCard extends PureComponent<Props, State> {
   state = {
     hoveredItem: null,
   };
@@ -131,14 +50,15 @@ class PortfolioGraphCard extends Component<Props, State> {
   onHoverStop = () => this.setState({ hoveredItem: null });
 
   render() {
+    const { summary, t } = this.props;
+
     const {
       balanceHistory,
       balanceStart,
       balanceEnd,
       selectedTimeRange,
       counterValueCurrency,
-      t,
-    } = this.props;
+    } = summary;
 
     const { hoveredItem } = this.state;
 
@@ -198,6 +118,7 @@ class PortfolioGraphCardHeader extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     paddingVertical: 20,
+    margin: 20,
   },
   balanceTextContainer: {
     marginBottom: 5,
@@ -220,7 +141,7 @@ const styles = StyleSheet.create({
 
 export default compose(
   connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps,
   ),
   translate(),

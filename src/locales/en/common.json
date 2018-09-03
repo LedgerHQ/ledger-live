@@ -4,6 +4,9 @@
     "apply": "Apply",
     "delete": "Delete"
   },
+  "portfolio": {
+    "totalBalance": "Total balance"
+  },
   "time": {
     "day": "Day",
     "week": "Week",
