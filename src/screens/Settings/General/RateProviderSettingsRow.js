@@ -39,7 +39,9 @@ class RateProviderSettingsRow extends PureComponent<{
     return (
       <SettingsRow
         title={t("common:settings.display.exchange")}
-        desc={t("common:settings.display.exchangeDesc")}
+        desc={t("common:settings.display.exchangeDesc", {
+          fiat: counterValueCurrency.ticker,
+        })}
         arrowRight
         onPress={() =>
           navigation.navigate("RateProviderSettings", {
