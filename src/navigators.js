@@ -68,6 +68,7 @@ const SettingsStack = createStackNavigator(
     GeneralSettings,
     // $FlowFixMe
     AboutSettings,
+    // $FlowFixMe
     HelpSettings,
     CurrenciesSettings,
   },
