@@ -24,11 +24,12 @@ import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
 import Manager from "./screens/Manager";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
+import ConnectDevice from "./screens/ConnectDevice";
 import SendFundsMain from "./screens/SendFunds";
-import SendSelectRecipient from "./screens/SendFunds/SelectRecipient";
-import SendSelectFunds from "./screens/SendFunds/SelectFunds";
-import SendSummary from "./screens/SendFunds/Summary";
-import SendValidation from "./screens/SendFunds/Validation";
+import SendSelectRecipient from "./screens/SelectRecipient";
+import SendSelectFunds from "./screens/SelectFunds";
+import SendSummary from "./screens/SendSummary";
+import SendValidation from "./screens/Validation";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
@@ -36,6 +37,8 @@ import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
 import ImportAccounts from "./screens/ImportAccounts";
 import EditFees from "./screens/EditFees";
+import VerifyAddress from "./screens/VerifyAddress";
+import ReceiveConfirmation from "./screens/ReceiveComfirmation";
 
 // TODO look into all FlowFixMe
 
@@ -129,6 +132,9 @@ Main.navigationOptions = {
 const ReceiveFunds = createStackNavigator(
   {
     ReceiveFundsMain,
+    ConnectDevice,
+    VerifyAddress,
+    ReceiveConfirmation,
   },
   // $FlowFixMe
   StackNavigatorConfig,

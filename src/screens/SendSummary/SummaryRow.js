@@ -1,11 +1,11 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import ExternalLink from "../../../images/icons/ExternalLink";
+import ExternalLink from "../../images/icons/ExternalLink";
 
-import LText from "../../../components/LText/index";
+import LText from "../../components/LText/index";
 
-import colors from "../../../colors";
+import colors from "../../colors";
 
 type Props = {
   title: string,

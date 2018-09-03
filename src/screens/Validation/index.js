@@ -5,13 +5,17 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
-import { getBridgeForCurrency } from "../../../bridge";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import colors from "../../../colors";
-import SelectDevice from "../../../components/SelectDevice";
-import LText from "../../../components/LText";
 
-import { tmpTestEthExchange } from "../../../logic/hw";
+import { getBridgeForCurrency } from "../../bridge";
+import { tmpTestEthExchange } from "../../logic/hw";
+import { accountScreenSelector } from "../../reducers/accounts";
+
+import SelectDevice from "../../components/SelectDevice";
+import LText from "../../components/LText";
+import Stepper from "../../components/Stepper";
+import StepHeader from "../../components/StepHeader";
+
+import colors from "../../colors";
 
 type Props = {
   account: Account,
@@ -33,7 +37,7 @@ type State = {
 
 class Validation extends Component<Props, State> {
   static navigationOptions = {
-    title: "Device",
+    headerTitle: <StepHeader title="Device" subtitle="step 5 of 5" />,
   };
 
   state = {
@@ -97,6 +101,7 @@ class Validation extends Component<Props, State> {
     const { result, error, signed, deviceId } = this.state;
     return (
       <View style={styles.root}>
+        <Stepper nbSteps={5} currentStep={5} />
         {result ? (
           <LText>well done! {result.hash}</LText>
         ) : error ? (

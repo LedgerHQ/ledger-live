@@ -2,10 +2,10 @@
 import React, { Component, Fragment } from "react";
 import { TextInput, View, StyleSheet, TouchableOpacity } from "react-native";
 
-import LText from "../../../components/LText/index";
-import Close from "../../../images/icons/Close";
+import LText from "../../components/LText/index";
+import Close from "../../images/icons/Close";
 
-import colors from "../../../colors";
+import colors from "../../colors";
 
 type Props = {
   currency: string,
