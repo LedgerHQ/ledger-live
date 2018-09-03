@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-import Camera from "react-native-camera";
+import { RNCamera } from "react-native-camera";
 import {
   parseChunksReducer,
   areChunksComplete,
@@ -30,11 +30,7 @@ export default class Scanning extends Component<{
   render() {
     // TODO some instruction on screen + progress indicator
     return (
-      <Camera
-        style={styles.camera}
-        aspect={Camera.constants.Aspect.fill}
-        onBarCodeRead={this.onBarCodeRead}
-      />
+      <RNCamera style={styles.camera} onBarCodeRead={this.onBarCodeRead} />
     );
   }
 }
