@@ -35,7 +35,7 @@ class AccountCard extends Component<Props> {
             />
           </LText>
           <View style={styles.balanceCounterContainer}>
-            <LText tertiary>
+            <LText tertiary style={styles.balanceCounterText}>
               <CounterValue
                 showCode
                 currency={account.currency}
@@ -76,5 +76,9 @@ const styles = StyleSheet.create({
   },
   balanceCounterContainer: {
     marginTop: 5,
+  },
+  balanceCounterText: {
+    fontSize: 14,
+    color: colors.smoke,
   },
 });
