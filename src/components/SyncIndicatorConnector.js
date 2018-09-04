@@ -19,6 +19,7 @@ export default (Inner: *) => {
   const SyncIndicator = ({
     globalSyncState,
     isUpToDate,
+    ...rest
   }: {
     globalSyncState: AsyncState,
     isUpToDate: boolean,
@@ -38,6 +39,7 @@ export default (Inner: *) => {
                 error={isError ? globalSyncState.error : null}
                 cvPoll={cvPolling.poll}
                 setSyncBehavior={setSyncBehavior}
+                {...rest}
               />
             );
           }}

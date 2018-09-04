@@ -9,12 +9,14 @@ import { accountsSelector } from "../../reducers/accounts";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
 import ImportAccountsButton from "../../components/ImportAccountsButton";
 import AccountsIcon from "../../images/icons/Accounts";
-import SyncRefreshControl from "../../components/SyncRefreshControl";
+import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 
 import AccountCard from "./AccountCard";
 import AccountsHeader from "./AccountsHeader";
 
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+const List = provideSyncRefreshControl(
+  Animated.createAnimatedComponent(FlatList),
+);
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: { tintColor: string }) => (
@@ -72,13 +74,12 @@ class Accounts extends Component<Props, { scrollY: Animated.Value }> {
 
     return (
       <View style={styles.root}>
-        <AnimatedFlatList
+        <List
           data={accounts}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
           style={styles.list}
           contentContainerStyle={styles.contentContainer}
-          refreshControl={<SyncRefreshControl />}
           scrollEventThrottle={16}
           onScroll={Animated.event(
             [

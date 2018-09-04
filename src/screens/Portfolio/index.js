@@ -21,7 +21,9 @@ import PortfolioGraphCard from "./PortfolioGraphCard";
 import OperationRow from "../../components/OperationRow";
 import PortfolioIcon from "../../images/icons/Portfolio";
 import SyncIndicator from "../../components/SyncIndicator";
-import SyncRefreshControl from "../../components/SyncRefreshControl";
+import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
+
+const List = provideSyncRefreshControl(SectionList);
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
@@ -89,7 +91,7 @@ class Portfolio extends Component<
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
 
-        <SectionList
+        <List
           sections={(sections: any)}
           style={styles.sectionList}
           ListHeaderComponent={GraphCardContainer}
@@ -100,7 +102,6 @@ class Portfolio extends Component<
                 ? NoOperationFooter
                 : NoMoreOperationFooter
           }
-          refreshControl={<SyncRefreshControl />}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={SectionHeader}
