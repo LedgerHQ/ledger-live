@@ -40,7 +40,9 @@ class Settings extends Component<{
         title: t("common:settings.currencies.title"),
         desc: t("common:settings.currencies.desc"),
         onClick: () => {
-          navigation.navigate("CurrenciesSettings", {});
+          navigation.navigate("CurrenciesSettings", {
+            title: t("common:settings.currencies.title"),
+          });
         },
       },
       {

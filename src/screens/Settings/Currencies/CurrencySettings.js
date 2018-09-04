@@ -1,13 +1,13 @@
 /* @flow */
-import React, { Fragment, PureComponent } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
-import { View, StyleSheet, Slider } from "react-native";
+import { View, Slider, StyleSheet } from "react-native";
+import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
 import SettingsRow from "../../../components/SettingsRow";
-import SectionTitle from "../../../components/SectionTitle";
-import CurrencyIcon from "../../../components/CurrencyIcon";
 import LText from "../../../components/LText";
 import {
   currencySettingsSelector,
@@ -21,26 +21,46 @@ import colors from "../../../colors";
 import { currencySettingsDefaults } from "../../../helpers/CurrencySettingsDefaults";
 
 type Props = {
-  currency: Currency,
   currencySettings: CurrencySettings,
-  navigation: *,
+  navigation: NavigationScreenProp<*>,
   updateCurrencySettings: Function,
   t: T,
   defaults: *,
+  currency: Currency,
 };
 type LocalState = {
   value: number,
 };
-
-const mapStateToProps = (state: State, props: { currency: Currency }) => ({
-  currencySettings: currencySettingsSelector(state, props.currency),
-  defaults: currencySettingsDefaults(props.currency),
-});
+const mapStateToProps = (
+  state: State,
+  props: { navigation: NavigationScreenProp<*>, currencyId: string },
+) => {
+  const currency = props.currencyId
+    ? getCryptoCurrencyById(props.currencyId)
+    : getCryptoCurrencyById(props.navigation.state.params.currencyId);
+  return {
+    currencySettings: currencySettingsSelector(state, currency),
+    defaults: currencySettingsDefaults(currency),
+    currency,
+  };
+};
 
 const mapDispatchToProps = {
   updateCurrencySettings,
 };
-class CurrencySettingsSection extends PureComponent<Props, LocalState> {
+
+class EachCurrencySettings extends Component<Props, LocalState> {
+  static navigationOptions = ({ navigation }) => ({
+    title: `${navigation.state.params.title}`,
+  });
+  componentDidMount() {
+    const { navigation, t, currency } = this.props;
+    navigation.setParams({
+      title: t("common:settings.currencies.currencySettingsTitle", {
+        currencyName: currency.name,
+      }),
+    });
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -62,20 +82,12 @@ class CurrencySettingsSection extends PureComponent<Props, LocalState> {
     const { updateCurrencySettings, currency } = this.props;
     updateCurrencySettings(currency.id, { confirmationsNb: value });
   };
-  render() {
-    const { currency, defaults, t, currencySettings } = this.props;
-    const { value } = this.state;
 
+  render() {
+    const { defaults, t, currencySettings, currency } = this.props;
+    const { value } = this.state;
     return (
       <Fragment>
-        <SectionTitle>
-          <View style={styles.currencySection}>
-            <CurrencyIcon size={20} currency={currency} />
-            <LText semiBold style={styles.currencyName}>
-              {currency.name}
-            </LText>
-          </View>
-        </SectionTitle>
         <SettingsRow
           arrowRight={currencySettings.exchange}
           title={t("common:settings.currencies.rateProvider", {
@@ -127,16 +139,9 @@ export default compose(
     mapDispatchToProps,
   ),
   translate(),
-)(CurrencySettingsSection);
+)(EachCurrencySettings);
 
 const styles = StyleSheet.create({
-  currencySection: {
-    flexDirection: "row",
-  },
-  currencyName: {
-    fontSize: 14,
-    marginLeft: 6,
-  },
   currencyExchange: {
     fontSize: 14,
     color: colors.grey,
@@ -157,5 +162,6 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     backgroundColor: "white",
+    minHeight: 200,
   },
 });
