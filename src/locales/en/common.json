@@ -16,6 +16,16 @@
       "year": "past year"
     }
   },
+  "orderOption": {
+    "label": {
+      "balance": "Balance",
+      "name": "Name"
+    },
+    "ordering": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    }
+  },
   "operationDetails": {
     "title": "Operation details",
     "account": "Account",

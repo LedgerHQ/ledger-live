@@ -51,7 +51,6 @@ function makeMockBridge(opts?: Opts): WalletBridge<*> {
 
       const sync = () => {
         const ops = broadcasted[accountId] || [];
-        console.log("sync", ops);
         broadcasted[accountId] = [];
         o.next(acc => {
           const account = { ...acc };
@@ -167,7 +166,6 @@ function makeMockBridge(opts?: Opts): WalletBridge<*> {
           op.blockHeight = account.blockHeight;
           op.date = new Date();
           broadcasted[account.id] = (broadcasted[account.id] || []).concat(op);
-          console.log(op, broadcasted);
           o.next({ type: "broadcasted", operation: { ...op } });
           o.complete();
         }, 3000);
