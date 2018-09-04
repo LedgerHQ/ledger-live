@@ -32,8 +32,8 @@ type LocalState = {
   value: number,
 };
 
-const mapStateToProps = (state: State, props: { currency: Currency }) => ({
-  currencySettings: currencySettingsSelector(state, props.currency),
+const mapStateToProps = (state: State, props: *) => ({
+  currencySettings: currencySettingsSelector(state, props),
   defaults: currencySettingsDefaults(props.currency),
 });
 

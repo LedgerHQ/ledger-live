@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
 import { translate } from "react-i18next";
 import LText from "../../components/LText";
@@ -11,8 +12,7 @@ import OperationIcon from "../../components/OperationIcon";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import type { CurrencySettings } from "../../reducers/settings";
-import { currencySettingsSelector } from "../../reducers/settings";
-import type { State } from "../../reducers";
+import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import colors from "../../colors";
 import type { T } from "../../types/common";
 import DataList from "./DataList";
@@ -24,8 +24,8 @@ type Props = {
   currencySettings: CurrencySettings,
 };
 
-const mapStateToProps = (state: State, props: { account: Account }) => ({
-  currencySettings: currencySettingsSelector(state, props.account.currency),
+const mapStateToProps = createStructuredSelector({
+  currencySettings: currencySettingsForAccountSelector,
 });
 
 class Content extends PureComponent<Props, *> {

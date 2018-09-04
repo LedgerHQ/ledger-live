@@ -173,7 +173,10 @@ const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = c
   };
 };
 
-export const currencySettingsSelector = (state: State, currency: Currency) => ({
+export const currencySettingsSelector = (
+  state: State,
+  { currency }: { currency: Currency },
+) => ({
   exchange: null,
   ...defaultCurrencySettingsForCurrency(currency),
   ...state.settings.currenciesSettings[currency.id],
