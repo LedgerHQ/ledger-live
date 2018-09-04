@@ -1,10 +1,23 @@
 {
   "parser": "babel-eslint",
-  "extends": ["airbnb", "plugin:flowtype/recommended", "prettier", "prettier/react"],
+  "extends": [
+    "airbnb",
+    "plugin:flowtype/recommended",
+    "prettier",
+    "prettier/react"
+  ],
   "plugins": ["flowtype"],
   "rules": {
-    "no-console": [1, { "allow": [ "warn", "error" ] }],
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
+    "no-console": 0,
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true
+      }
+    ],
     "no-shadow": 0,
     "no-plusplus": 0,
     "no-nested-ternary": 0,
@@ -24,12 +37,13 @@
     "class-methods-use-this": 0,
     "react/no-unused-prop-types": 0,
     "react/require-default-props": 0,
+    "prefer-destructuring": 0
   },
   "globals": {
     "__DEV__": false,
     "__REDUX_DEVTOOLS_EXTENSION__": false,
     "fetch": false,
     "it": false,
-    "expect": false,
-  },
+    "expect": false
+  }
 }

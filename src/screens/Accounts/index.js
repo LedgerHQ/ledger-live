@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Animated } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -9,9 +9,12 @@ import { accountsSelector } from "../../reducers/accounts";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
 import ImportAccountsButton from "../../components/ImportAccountsButton";
 import AccountsIcon from "../../images/icons/Accounts";
+import SyncRefreshControl from "../../components/SyncRefreshControl";
 
 import AccountCard from "./AccountCard";
 import AccountsHeader from "./AccountsHeader";
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: { tintColor: string }) => (
@@ -27,8 +30,12 @@ type Props = {
   navigation: *,
   accounts: Account[],
 };
-class Accounts extends Component<Props> {
+class Accounts extends Component<Props, { scrollY: Animated.Value }> {
   static navigationOptions = navigationOptions;
+
+  state = {
+    scrollY: new Animated.Value(0),
+  };
 
   onAddMockAccount = () => {};
 
@@ -48,25 +55,47 @@ class Accounts extends Component<Props> {
 
   render() {
     const { accounts } = this.props;
+    const { scrollY } = this.state;
+
+    if (accounts.length === 0) {
+      return (
+        <View style={{ padding: 40 }}>
+          <GenerateMockAccountsButton title="Generate Mock Accounts" />
+          <View style={{ height: 10 }} />
+          {/* $FlowFixMe */}
+          <ImportAccountsButton title="Import Accounts" />
+        </View>
+      );
+    }
+
+    // FIXME drop the animated header. it's not actually animated!
 
     return (
       <View style={styles.root}>
-        <AccountsHeader>
-          {accounts.length === 0 && (
-            <View style={{ padding: 40 }}>
-              <GenerateMockAccountsButton title="Generate Mock Accounts" />
-              <View style={{ height: 10 }} />
-              {/* $FlowFixMe */}
-              <ImportAccountsButton title="Import Accounts" />
-            </View>
+        <AnimatedFlatList
+          data={accounts}
+          renderItem={this.renderItem}
+          keyExtractor={this.keyExtractor}
+          style={styles.list}
+          contentContainerStyle={styles.contentContainer}
+          refreshControl={<SyncRefreshControl />}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: this.state.scrollY,
+                  },
+                },
+              },
+            ],
+            {
+              useNativeDriver: true,
+            },
           )}
-          <FlatList
-            data={accounts}
-            renderItem={this.renderItem}
-            keyExtractor={this.keyExtractor}
-            style={styles.list}
-          />
-        </AccountsHeader>
+        />
+        <AccountsHeader scrollY={scrollY} />
       </View>
     );
   }
@@ -80,6 +109,10 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 16,
+  },
+  contentContainer: {
+    marginTop: 150,
+    paddingBottom: 150,
   },
   accountItem: {
     marginBottom: 10,

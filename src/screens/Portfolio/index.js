@@ -20,6 +20,8 @@ import PortfolioGraphCard from "./PortfolioGraphCard";
 // import PortfolioHeader from "./PortfolioHeader";
 import OperationRow from "../../components/OperationRow";
 import PortfolioIcon from "../../images/icons/Portfolio";
+import SyncIndicator from "../../components/SyncIndicator";
+import SyncRefreshControl from "../../components/SyncRefreshControl";
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
@@ -81,16 +83,16 @@ class Portfolio extends Component<
       opCount,
     );
 
+    // TODO pull to refresh connected to bridge (need to think it modular so we can reuse easily)
+
     return (
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
-        <View style={styles.graphCardContainer}>
-          <PortfolioGraphCard />
-        </View>
-        {/* <PortfolioHeader> */}
+
         <SectionList
           sections={(sections: any)}
           style={styles.sectionList}
+          ListHeaderComponent={GraphCardContainer}
           ListFooterComponent={
             !completed
               ? LoadingFooter
@@ -98,17 +100,24 @@ class Portfolio extends Component<
                 ? NoOperationFooter
                 : NoMoreOperationFooter
           }
+          refreshControl={<SyncRefreshControl />}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={SectionHeader}
           onEndReached={this.onEndReached}
           showsVerticalScrollIndicator={false}
         />
-        {/* </PortfolioHeader> */}
       </View>
     );
   }
 }
+
+const GraphCardContainer = () => (
+  <View style={styles.graphCardContainer}>
+    <SyncIndicator />
+    <PortfolioGraphCard />
+  </View>
+);
 
 export default connect(mapStateToProps)(Portfolio);
 

@@ -27,6 +27,7 @@ import SendFundsMain from "./screens/SendFunds";
 import SendSelectRecipient from "./screens/SendFunds/SelectRecipient";
 import SendSelectFunds from "./screens/SendFunds/SelectFunds";
 import SendSummary from "./screens/SendFunds/Summary";
+import SendValidation from "./screens/SendFunds/Validation";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
@@ -140,6 +141,7 @@ const SendFunds = createStackNavigator(
     SendSelectRecipient,
     SendSelectFunds,
     SendSummary,
+    SendValidation,
   },
   // $FlowFixMe
   StackNavigatorConfig,

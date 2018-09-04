@@ -51,6 +51,7 @@
     "@ledgerhq/react-native-hid": "4.7.3",
     "@ledgerhq/react-native-hw-transport-ble": "4.7.3",
     "@ledgerhq/react-native-passcode-auth": "2.0.0",
+    "async": "^2.6.1",
     "bignumber.js": "^7.2.1",
     "buffer": "5.2.0",
     "color": "^3.0.0",
@@ -65,6 +66,7 @@
     "lodash": "4.17.10",
     "moment": "2.22.2",
     "numeral": "2.0.6",
+    "prando": "^3.0.3",
     "querystring": "^0.2.0",
     "react": "16.3.2",
     "react-i18next": "7.10.1",
@@ -88,6 +90,7 @@
     "redux-thunk": "2.3.0",
     "reselect": "3.0.1",
     "rxjs": "6.2.2",
+    "rxjs-compat": "^6.3.1",
     "stream": "github:substack/stream-browserify#cc923068f618204f80769627ea126a61c55c7cee"
   }
 }
