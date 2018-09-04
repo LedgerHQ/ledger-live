@@ -16,7 +16,7 @@ import colors from "../../colors";
 import { setSelectedTimeRange } from "../../actions/settings";
 
 import Delta from "../../components/Delta";
-import Space from "../../components/Space";
+import FormatDate from "../../components/FormatDate";
 import Graph from "../../components/Graph";
 import Pills from "../../components/Pills";
 import Card from "../../components/Card";
@@ -66,7 +66,8 @@ class PortfolioGraphCard extends PureComponent<Props, State> {
       <Card style={styles.root}>
         <PortfolioGraphCardHeader
           from={balanceStart}
-          to={hoveredItem ? hoveredItem.value : balanceEnd}
+          to={balanceEnd}
+          hoveredItem={hoveredItem}
           unit={counterValueCurrency.units[0]}
         />
         <Graph
@@ -95,20 +96,31 @@ class PortfolioGraphCardHeader extends PureComponent<{
   from: BigNumber,
   to: BigNumber,
   unit: Unit,
+  hoveredItem: ?Item,
 }> {
   render() {
-    const { unit, from, to } = this.props;
+    const { unit, from, to, hoveredItem } = this.props;
     return (
       <Fragment>
         <View style={styles.balanceTextContainer}>
           <LText style={styles.balanceText}>
-            <CurrencyUnitValue unit={unit} value={to} />
+            <CurrencyUnitValue
+              unit={unit}
+              value={hoveredItem ? hoveredItem.value : to}
+            />
           </LText>
         </View>
         <View style={styles.subtitleContainer}>
-          <Delta percent from={from} to={to} />
-          <Space w={20} />
-          <Delta from={from} to={to} unit={unit} />
+          {hoveredItem ? (
+            <LText>
+              <FormatDate date={hoveredItem.date} format="LL" />
+            </LText>
+          ) : (
+            <Fragment>
+              <Delta percent from={from} to={to} style={styles.deltaPercent} />
+              <Delta from={from} to={to} unit={unit} />
+            </Fragment>
+          )}
         </View>
       </Fragment>
     );
@@ -136,6 +148,9 @@ const styles = StyleSheet.create({
   pillsContainer: {
     marginTop: 10,
     alignItems: "center",
+  },
+  deltaPercent: {
+    marginRight: 20,
   },
 });
 

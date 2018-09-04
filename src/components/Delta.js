@@ -18,6 +18,7 @@ type Props = {
   to: BigNumber,
   percent?: boolean,
   unit?: Unit,
+  style?: mixed,
 };
 
 const arrowUp = <IconArrowUp size={12} color={colors.success} />;
@@ -25,9 +26,13 @@ const arrowDown = <IconArrowDown size={12} color={colors.alert} />;
 
 export default class Delta extends PureComponent<Props> {
   render() {
-    const { from, to, percent, unit } = this.props;
+    const { from, to, percent, unit, style } = this.props;
 
-    let delta = percent
+    if (percent && from.isEqualTo(0)) {
+      return null;
+    }
+
+    const delta = percent
       ? to
           .minus(from)
           .dividedBy(from)
@@ -35,10 +40,11 @@ export default class Delta extends PureComponent<Props> {
       : to.minus(from);
 
     if (delta.isNaN()) {
-      delta = BigNumber(0);
+      return null;
     }
+
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, style]}>
         {delta.isGreaterThanOrEqualTo(0) ? arrowUp : arrowDown}
         <View style={styles.content}>
           <LText tertiary style={styles.text}>
