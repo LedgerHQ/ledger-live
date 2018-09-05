@@ -1,29 +1,41 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet, StatusBar, SectionList } from "react-native";
+import { compose } from "redux";
 import { connect } from "react-redux";
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  SectionList,
+  Animated,
+} from "react-native";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/helpers/account";
-
-import { accountsSelector } from "../../reducers/accounts";
+import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 
 import colors from "../../colors";
+
+import { accountsSelector } from "../../reducers/accounts";
 
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
-import LText from "../../components/LText";
 import PortfolioGraphCard from "./PortfolioGraphCard";
-// import PortfolioHeader from "./PortfolioHeader";
+import AnimatedTopBar from "./AnimatedTopBar";
 import OperationRow from "../../components/OperationRow";
+import LText from "../../components/LText";
 import PortfolioIcon from "../../images/icons/Portfolio";
 import SyncIndicator from "../../components/SyncIndicator";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
+import provideSummary from "../../components/provideSummary";
 
-const List = provideSyncRefreshControl(SectionList);
+import type { Summary } from "../../components/provideSummary";
+
+const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
+const List = provideSyncRefreshControl(AnimatedSectionList);
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
@@ -31,24 +43,33 @@ const navigationOptions = {
   ),
 };
 
-const mapStateToProps = state => ({ accounts: accountsSelector(state) });
+const mapStateToProps = state => ({
+  accounts: accountsSelector(state),
+});
 
 class Portfolio extends Component<
   {
     accounts: Account[],
+    summary: Summary,
     navigation: *,
   },
   {
     opCount: number,
+    scrollY: AnimatedValue,
   },
 > {
   static navigationOptions = navigationOptions;
 
   state = {
     opCount: 50,
+    scrollY: new Animated.Value(0),
   };
 
   keyExtractor = (item: Operation) => item.id;
+
+  ListHeaderComponent = () => (
+    <GraphCardContainer summary={this.props.summary} />
+  );
 
   renderItem = ({ item }: { item: Operation }) => {
     const account = this.props.accounts.find(a => a.id === item.accountId);
@@ -69,8 +90,8 @@ class Portfolio extends Component<
   };
 
   render() {
-    const { accounts } = this.props;
-    const { opCount } = this.state;
+    const { accounts, summary } = this.props;
+    const { opCount, scrollY } = this.state;
 
     if (accounts.length === 0) {
       return (
@@ -90,11 +111,20 @@ class Portfolio extends Component<
     return (
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
-
         <List
-          sections={(sections: any)}
+          sections={sections}
           style={styles.sectionList}
-          ListHeaderComponent={GraphCardContainer}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+          renderSectionHeader={SectionHeader}
+          onEndReached={this.onEndReached}
+          showsVerticalScrollIndicator
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true },
+          )}
+          ListHeaderComponent={this.ListHeaderComponent}
           ListFooterComponent={
             !completed
               ? LoadingFooter
@@ -102,25 +132,24 @@ class Portfolio extends Component<
                 ? NoOperationFooter
                 : NoMoreOperationFooter
           }
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-          renderSectionHeader={SectionHeader}
-          onEndReached={this.onEndReached}
-          showsVerticalScrollIndicator={false}
         />
+        <AnimatedTopBar scrollY={scrollY} summary={summary} />
       </View>
     );
   }
 }
 
-const GraphCardContainer = () => (
-  <View style={styles.graphCardContainer}>
+const GraphCardContainer = ({ summary }: { summary: Summary }) => (
+  <View>
     <SyncIndicator />
-    <PortfolioGraphCard />
+    <PortfolioGraphCard summary={summary} />
   </View>
 );
 
-export default connect(mapStateToProps)(Portfolio);
+export default compose(
+  connect(mapStateToProps),
+  provideSummary,
+)(Portfolio);
 
 const styles = StyleSheet.create({
   root: {
