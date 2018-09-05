@@ -1,10 +1,22 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, StatusBar } from "react-native";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
+import HeaderTitle from "../../components/HeaderTitle";
+import HeaderRightClose from "../../components/HeaderRightClose";
 import PresentResult from "./PresentResult";
-import Intro from "./Intro";
 import Scanning from "./Scanning";
+import colors from "../../colors";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  transparentHeader: {
+    backgroundColor: "transparent",
+    paddingTop: StatusBar.currentHeight,
+  },
+});
 
 class ImportAccounts extends Component<
   {
@@ -15,9 +27,18 @@ class ImportAccounts extends Component<
     accepted: boolean,
   },
 > {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }: *) => ({
     title: "Import Accounts",
-  };
+    headerTransparent: true,
+    headerStyle: styles.transparentHeader,
+    headerRight: (
+      <HeaderRightClose navigation={navigation} color={colors.white} />
+    ),
+    headerLeft: null,
+    headerTitle: (props: *) => (
+      <HeaderTitle {...props} style={{ color: "white" }} />
+    ),
+  });
 
   state = {
     accepted: false,
@@ -37,14 +58,12 @@ class ImportAccounts extends Component<
   };
 
   render() {
-    const { accepted, result } = this.state;
+    const { result } = this.state;
 
     return (
       <View style={styles.container}>
         {result ? (
           <PresentResult result={result} onDone={this.onDone} />
-        ) : !accepted ? (
-          <Intro onAccept={this.onAccept} />
         ) : (
           <Scanning onResult={this.onResult} />
         )}
@@ -52,11 +71,5 @@ class ImportAccounts extends Component<
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default ImportAccounts;
