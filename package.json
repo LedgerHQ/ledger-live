@@ -7,24 +7,6 @@
       "./assets/fonts/"
     ]
   },
-  "devDependencies": {
-    "babel-eslint": "^8.2.2",
-    "babel-preset-react-native-stage-0": "^1.0.1",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-flowtype": "^2.46.1",
-    "eslint-plugin-import": "^2.10.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0",
-    "flow-bin": "0.67.1",
-    "flow-typed": "^2.4.0",
-    "jest": "^22.4.3",
-    "jest-react-native": "^18.0.0",
-    "prettier": "^1.11.1",
-    "react-native-debugger-open": "^0.3.17",
-    "react-test-renderer": "^16.3.1"
-  },
   "scripts": {
     "postinstall": "./scripts/post.sh",
     "start": "react-native start",
@@ -92,5 +74,23 @@
     "rxjs": "6.2.2",
     "rxjs-compat": "^6.3.1",
     "stream": "github:substack/stream-browserify#cc923068f618204f80769627ea126a61c55c7cee"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.2",
+    "babel-preset-react-native-stage-0": "^1.0.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.46.1",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "flow-bin": "0.67.1",
+    "flow-typed": "^2.4.0",
+    "jest": "^22.4.3",
+    "jest-react-native": "^18.0.0",
+    "prettier": "^1.11.1",
+    "react-native-debugger-open": "^0.3.17",
+    "react-test-renderer": "^16.3.1"
   }
 }
