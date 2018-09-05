@@ -92,7 +92,8 @@
       "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
       "rateProviderDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn",
       "confirmationNb": "Number of confirmations",
-      "confirmationNbDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn"
+      "confirmationNbDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn",
+      "currencySettingsTitle": "{{currencyName}} Settings"
     },
     "about": {
       "title": "About",
