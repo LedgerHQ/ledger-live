@@ -5,7 +5,14 @@
     "delete": "Delete"
   },
   "portfolio": {
-    "totalBalance": "Total balance"
+    "totalBalance": "Total balance",
+    "greeting": {
+      "morning": "Good morning",
+      "evening": "Good evening",
+      "afternoon": "Good afternoon"
+    },
+    "summary": "Here's the summary of your account",
+    "summary_plural": "Here's the summary of your {{count}} accounts"
   },
   "time": {
     "day": "Day",

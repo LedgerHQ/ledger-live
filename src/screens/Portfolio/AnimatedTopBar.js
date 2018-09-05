@@ -45,7 +45,7 @@ class AnimatedTopBar extends PureComponent<{
           <LText tertiary style={styles.balanceText}>
             <CurrencyUnitValue
               unit={summary.counterValueCurrency.units[0]}
-              value={summary.balanceEnd}
+              value={summary.balanceEnd.value}
             />
           </LText>
         </Animated.View>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   labelText: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.grey,
   },
   balanceText: {

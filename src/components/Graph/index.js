@@ -21,6 +21,7 @@ import colors, { rgba } from "../../colors";
 export type Item = {
   date: Date,
   value: BigNumber,
+  originalValue: BigNumber,
 };
 
 type Props = {
@@ -28,15 +29,16 @@ type Props = {
   data: Item[],
   color: string,
   isInteractive: boolean,
-  onItemHover: Item => void,
-  onHoverStop: () => void,
+  onItemHover?: Item => void,
+  onPanResponderStart?: () => *,
+  onPanResponderRelease?: () => *,
 };
 
 type State = {
   width: number,
   barVisible: boolean,
   barOffsetX: number,
-  hoveredItem: ?Item,
+  barOffsetY: number,
 };
 
 const STROKE_WIDTH = 2;
@@ -55,7 +57,7 @@ export default class Graph extends PureComponent<Props, State> {
     width: 0,
     barVisible: false,
     barOffsetX: 0,
-    hoveredItem: null,
+    barOffsetY: 0,
   };
 
   x: * = null;
@@ -79,28 +81,28 @@ export default class Graph extends PureComponent<Props, State> {
     const d = Math.abs(x0 - xLeft) < Math.abs(x0 - xRight) ? d0 : d1;
     if (onItemHover) onItemHover(d);
     return {
-      hoveredItem: d,
       barOffsetX: this.x(d.date),
+      barOffsetY: this.y(d.value.toNumber()),
     };
   };
 
   onStartShouldSetResponder = () => true;
-  onResponderGrant = (evt: *) =>
-    this.setState({
-      barVisible: true,
-      ...this.collectHovered(evt),
-    });
+  onResponderGrant = (evt: *) => {
+    const { onPanResponderStart } = this.props;
+    if (onPanResponderStart) onPanResponderStart();
+    this.setState({ barVisible: true, ...this.collectHovered(evt) });
+  };
 
   onResponderMove = (evt: *) => this.setState(this.collectHovered(evt));
   onResponderRelease = () => {
-    const { onHoverStop } = this.props;
+    const { onPanResponderRelease } = this.props;
+    if (onPanResponderRelease) onPanResponderRelease();
     this.setState({ barVisible: false });
-    if (onHoverStop) onHoverStop();
   };
 
   render() {
     const { height, data, color, isInteractive } = this.props;
-    const { width, barVisible, barOffsetX, hoveredItem } = this.state;
+    const { width, barVisible, barOffsetX, barOffsetY } = this.state;
 
     this.x = scale
       .scaleTime()
@@ -126,9 +128,6 @@ export default class Graph extends PureComponent<Props, State> {
       .x(d => this.x(d.date))
       .y(d => this.y(d.value.toNumber()))
       .curve(shape.curveCatmullRom)(data);
-
-    const focusPointY =
-      isInteractive && hoveredItem ? this.y(hoveredItem.value.toNumber()) : 0;
 
     return (
       <View
@@ -161,14 +160,14 @@ export default class Graph extends PureComponent<Props, State> {
                 <Line
                   x1={barOffsetX}
                   x2={barOffsetX}
-                  y1={focusPointY}
+                  y1={barOffsetY}
                   y2={height}
                   stroke={rgba(color, 0.2)}
                   strokeWidth={FOCUS_RADIUS}
                 />
                 <Circle
                   cx={barOffsetX}
-                  cy={focusPointY}
+                  cy={barOffsetY}
                   r={5}
                   stroke={color}
                   strokeWidth={STROKE_WIDTH}

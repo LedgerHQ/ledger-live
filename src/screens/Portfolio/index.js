@@ -23,8 +23,6 @@ import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
-import PortfolioGraphCard from "./PortfolioGraphCard";
-import AnimatedTopBar from "./AnimatedTopBar";
 import OperationRow from "../../components/OperationRow";
 import LText from "../../components/LText";
 import PortfolioIcon from "../../images/icons/Portfolio";
@@ -33,6 +31,10 @@ import provideSyncRefreshControl from "../../components/provideSyncRefreshContro
 import provideSummary from "../../components/provideSummary";
 
 import type { Summary } from "../../components/provideSummary";
+
+import GraphCard from "../../components/GraphCard";
+import AnimatedTopBar from "./AnimatedTopBar";
+import Greetings from "./Greetings";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = provideSyncRefreshControl(AnimatedSectionList);
@@ -56,6 +58,7 @@ class Portfolio extends Component<
   {
     opCount: number,
     scrollY: AnimatedValue,
+    scrollEnabled: boolean,
   },
 > {
   static navigationOptions = navigationOptions;
@@ -63,12 +66,20 @@ class Portfolio extends Component<
   state = {
     opCount: 50,
     scrollY: new Animated.Value(0),
+    scrollEnabled: true,
   };
 
   keyExtractor = (item: Operation) => item.id;
 
+  disableScroll = () => this.setState({ scrollEnabled: false });
+  enableScroll = () => this.setState({ scrollEnabled: true });
+
   ListHeaderComponent = () => (
-    <GraphCardContainer summary={this.props.summary} />
+    <GraphCardContainer
+      summary={this.props.summary}
+      onPanResponderStart={this.disableScroll}
+      onPanResponderRelease={this.enableScroll}
+    />
   );
 
   renderItem = ({ item }: { item: Operation }) => {
@@ -91,7 +102,7 @@ class Portfolio extends Component<
 
   render() {
     const { accounts, summary } = this.props;
-    const { opCount, scrollY } = this.state;
+    const { opCount, scrollY, scrollEnabled } = this.state;
 
     if (accounts.length === 0) {
       return (
@@ -120,6 +131,7 @@ class Portfolio extends Component<
           onEndReached={this.onEndReached}
           showsVerticalScrollIndicator
           scrollEventThrottle={16}
+          scrollEnabled={scrollEnabled}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: true },
@@ -139,10 +151,23 @@ class Portfolio extends Component<
   }
 }
 
-const GraphCardContainer = ({ summary }: { summary: Summary }) => (
+const GraphCardContainer = ({
+  summary,
+  onPanResponderStart,
+  onPanResponderRelease,
+}: {
+  summary: Summary,
+  onPanResponderStart: () => *,
+  onPanResponderRelease: () => *,
+}) => (
   <View>
     <SyncIndicator />
-    <PortfolioGraphCard summary={summary} />
+    <Greetings nbAccounts={summary.accounts.length} />
+    <GraphCard
+      summary={summary}
+      onPanResponderStart={onPanResponderStart}
+      onPanResponderRelease={onPanResponderRelease}
+    />
   </View>
 );
 
