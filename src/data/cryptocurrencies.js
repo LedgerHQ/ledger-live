@@ -130,6 +130,23 @@ const ethereumUnitsClassic = [
 ];
 
 const cryptocurrenciesById = {
+  akroma: {
+    id: "akroma",
+    coinType: 200625,
+    name: "Akroma",
+    managerAppName: "Akroma",
+    ticker: "AKA",
+    scheme: "akroma",
+    color: "#AA0087",
+    family: "akroma",
+    units: [
+      {
+        name: "AKA",
+        code: "AKA",
+        magnitude: 8
+      }
+    ]
+  },
   ark: {
     id: "ark",
     coinType: 111,

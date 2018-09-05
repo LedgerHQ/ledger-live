@@ -5,6 +5,7 @@ import type { Account, Operation, CryptoCurrencyConfig } from "./types";
 type Explorer = string => ?string;
 
 export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
+  akroma: hash => `https://akroma.io/explorer/transaction/${hash}`,
   ark: hash => `https://explorer.ark.io/transaction/${hash}`,
   bitcoin_cash: hash => `https://bitcoincash.blockexplorer.com/tx/${hash}`,
   bitcoin_gold: hash => `https://btgexplorer.com/tx/${hash}`,
