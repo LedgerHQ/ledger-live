@@ -1,24 +1,55 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { RNCamera } from "react-native-camera";
+import toLength from "lodash/toLength";
+import ProgressCircle from "react-native-progress/Circle";
 import {
   parseChunksReducer,
   areChunksComplete,
   chunksToResult,
 } from "@ledgerhq/live-common/lib/bridgestream/importer";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
+import colors from "../../colors";
 
-export default class Scanning extends Component<{
-  onResult: Result => void,
-}> {
+export default class Scanning extends PureComponent<
+  {
+    onResult: Result => void,
+  },
+  {
+    progress: number,
+  },
+> {
+  state = { progress: 0 };
+
   lastData: ?string = null;
+  nbChunks: ?number = null;
   chunks: * = [];
   completed: boolean = false;
+
   onBarCodeRead = ({ data }: { data: string }) => {
     if (data && data !== this.lastData && !this.completed) {
+      const previousLength = this.chunks.length;
+
       this.lastData = data;
       this.chunks = parseChunksReducer(this.chunks, data);
+
+      if (this.chunks.length <= previousLength) {
+        return;
+      }
+
+      if (this.nbChunks === null) {
+        this.nbChunks = toLength(this.chunks[0][0]);
+      }
+
+      if (!this.nbChunks) {
+        return;
+      }
+
+      if (this.nbChunks) {
+        this.setState({ progress: this.chunks.length / this.nbChunks });
+      }
+
       if (areChunksComplete(this.chunks)) {
         this.completed = true;
         // TODO read the chunks version and check it's correctly supported (if newers version, we deny the import with an error)
@@ -31,6 +62,8 @@ export default class Scanning extends Component<{
     // Make the viewfinder borders 2/3 of the screen smallest border
     const { width, height } = Dimensions.get("window");
     const size = (width > height ? height : width) / 1.5;
+
+    const { progress } = this.state;
 
     // TODO some instruction on screen + progress indicator
     return (
@@ -65,7 +98,17 @@ export default class Scanning extends Component<{
           </View>
           <View style={styles.darken} />
         </View>
-        <View style={styles.darken} />
+        <View style={[styles.darken, styles.bottom]}>
+          <ProgressCircle
+            showsText
+            indeterminate={!progress}
+            progress={progress}
+            color={colors.live}
+            size={size / 4}
+            strokeCap="round"
+            textStyle={{color: "white"}}
+          />
+        </View>
       </RNCamera>
     );
   }
@@ -108,5 +151,10 @@ const styles = StyleSheet.create({
   },
   borderRight: {
     borderRightWidth: 6,
+  },
+  bottom: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
