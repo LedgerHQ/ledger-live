@@ -28,8 +28,9 @@ type Props = {
   data: Item[],
   color: string,
   isInteractive: boolean,
-  onItemHover: Item => void,
-  onHoverStop: () => void,
+  onItemHover?: Item => void,
+  onPanResponderStart?: () => *,
+  onPanResponderRelease?: () => *,
 };
 
 type State = {
@@ -85,17 +86,17 @@ export default class Graph extends PureComponent<Props, State> {
   };
 
   onStartShouldSetResponder = () => true;
-  onResponderGrant = (evt: *) =>
-    this.setState({
-      barVisible: true,
-      ...this.collectHovered(evt),
-    });
+  onResponderGrant = (evt: *) => {
+    const { onPanResponderStart } = this.props;
+    if (onPanResponderStart) onPanResponderStart();
+    this.setState({ barVisible: true, ...this.collectHovered(evt) });
+  };
 
   onResponderMove = (evt: *) => this.setState(this.collectHovered(evt));
   onResponderRelease = () => {
-    const { onHoverStop } = this.props;
+    const { onPanResponderRelease } = this.props;
+    if (onPanResponderRelease) onPanResponderRelease();
     this.setState({ barVisible: false });
-    if (onHoverStop) onHoverStop();
   };
 
   render() {

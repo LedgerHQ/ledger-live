@@ -56,6 +56,7 @@ class Portfolio extends Component<
   {
     opCount: number,
     scrollY: AnimatedValue,
+    scrollEnabled: boolean,
   },
 > {
   static navigationOptions = navigationOptions;
@@ -63,12 +64,20 @@ class Portfolio extends Component<
   state = {
     opCount: 50,
     scrollY: new Animated.Value(0),
+    scrollEnabled: true,
   };
 
   keyExtractor = (item: Operation) => item.id;
 
+  disableScroll = () => this.setState({ scrollEnabled: false });
+  enableScroll = () => this.setState({ scrollEnabled: true });
+
   ListHeaderComponent = () => (
-    <GraphCardContainer summary={this.props.summary} />
+    <GraphCardContainer
+      summary={this.props.summary}
+      onPanResponderStart={this.disableScroll}
+      onPanResponderRelease={this.enableScroll}
+    />
   );
 
   renderItem = ({ item }: { item: Operation }) => {
@@ -91,7 +100,7 @@ class Portfolio extends Component<
 
   render() {
     const { accounts, summary } = this.props;
-    const { opCount, scrollY } = this.state;
+    const { opCount, scrollY, scrollEnabled } = this.state;
 
     if (accounts.length === 0) {
       return (
@@ -120,6 +129,7 @@ class Portfolio extends Component<
           onEndReached={this.onEndReached}
           showsVerticalScrollIndicator
           scrollEventThrottle={16}
+          scrollEnabled={scrollEnabled}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: true },
@@ -139,10 +149,22 @@ class Portfolio extends Component<
   }
 }
 
-const GraphCardContainer = ({ summary }: { summary: Summary }) => (
+const GraphCardContainer = ({
+  summary,
+  onPanResponderStart,
+  onPanResponderRelease,
+}: {
+  summary: Summary,
+  onPanResponderStart: () => *,
+  onPanResponderRelease: () => *,
+}) => (
   <View>
     <SyncIndicator />
-    <PortfolioGraphCard summary={summary} />
+    <PortfolioGraphCard
+      summary={summary}
+      onPanResponderStart={onPanResponderStart}
+      onPanResponderRelease={onPanResponderRelease}
+    />
   </View>
 );
 

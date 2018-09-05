@@ -34,6 +34,8 @@ type Props = {
   t: T,
   summary: Summary,
   setSelectedTimeRange: string => void,
+  onPanResponderStart: () => *,
+  onPanResponderRelease: () => *,
 };
 
 type State = {
@@ -47,10 +49,13 @@ class PortfolioGraphCard extends PureComponent<Props, State> {
 
   onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
   onItemHover = hoveredItem => this.setState({ hoveredItem });
-  onHoverStop = () => this.setState({ hoveredItem: null });
+  onPanResponderRelease = () => {
+    this.props.onPanResponderRelease();
+    this.setState({ hoveredItem: null });
+  };
 
   render() {
-    const { summary, t } = this.props;
+    const { summary, t, onPanResponderStart } = this.props;
 
     const {
       balanceHistory,
@@ -74,7 +79,8 @@ class PortfolioGraphCard extends PureComponent<Props, State> {
           isInteractive
           data={balanceHistory}
           onItemHover={this.onItemHover}
-          onHoverStop={this.onHoverStop}
+          onPanResponderStart={onPanResponderStart}
+          onPanResponderRelease={this.onPanResponderRelease}
         />
         <View style={styles.pillsContainer}>
           <Pills
