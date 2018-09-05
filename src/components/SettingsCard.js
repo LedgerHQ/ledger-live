@@ -7,28 +7,24 @@ import Card from "./Card";
 import LText from "./LText";
 import colors from "../colors";
 
-type SettingsCardType = {
+type Props = {
   title: string,
-  key: string,
   desc: string,
-  onClick: () => void,
   icon: any,
+  onClick: Function,
 };
-
-export default class SettingsCard extends Component<{
-  card: SettingsCardType,
-}> {
+export default class SettingsCard extends Component<Props> {
   render() {
-    const { card } = this.props;
+    const { title, desc, icon, onClick } = this.props;
     return (
-      <Touchable style={[styles.root]} onPress={card.onClick}>
+      <Touchable style={[styles.root]} onPress={onClick}>
         <Card style={styles.cardStyle}>
-          <View style={styles.imageContainer}>{card.icon}</View>
+          <View style={styles.imageContainer}>{icon}</View>
           <View style={styles.cardTextBlock}>
             <LText secondary semiBold style={styles.title}>
-              {card.title}
+              {title}
             </LText>
-            <LText style={styles.desc}>{card.desc}</LText>
+            <LText style={styles.desc}>{desc}</LText>
           </View>
         </Card>
       </Touchable>

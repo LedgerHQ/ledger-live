@@ -20,8 +20,8 @@ import RateProviderSettings from "./screens/Settings/General/RateProviderSetting
 import GeneralSettings from "./screens/Settings/General";
 import AboutSettings from "./screens/Settings/About";
 import HelpSettings from "./screens/Settings/Help";
-import CurrenciesSettings from "./screens/Settings/Currencies/";
 import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
+import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
 import Manager from "./screens/Manager";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
 import SendFundsMain from "./screens/SendFunds";
@@ -72,7 +72,7 @@ const SettingsStack = createStackNavigator(
     AboutSettings,
     // $FlowFixMe
     HelpSettings,
-    CurrenciesSettings,
+    CurrenciesList,
     CurrencySettings,
   },
   // $FlowFixMe
