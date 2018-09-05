@@ -130,6 +130,23 @@ const ethereumUnitsClassic = [
 ];
 
 const cryptocurrenciesById = {
+  akroma: {
+    id: "akroma",
+    coinType: 200625,
+    name: "Akroma",
+    managerAppName: "Akroma",
+    ticker: "AKA",
+    scheme: "akroma",
+    color: "#AA0087",
+    family: "akroma",
+    units: [
+      {
+        name: "AKA",
+        code: "AKA",
+        magnitude: 8
+      }
+    ]
+  },
   ark: {
     id: "ark",
     coinType: 111,
@@ -682,6 +699,23 @@ const cryptocurrenciesById = {
         name: "satoshi",
         code: "sat",
         magnitude: 0
+      }
+    ]
+  },
+  pirl: {
+    id: "pirl",
+    coinType: 3125659152,
+    name: "Pirl",
+    managerAppName: "Pirl",
+    ticker: "PIRL",
+    scheme: "pirl",
+    color: "#A2D729",
+    family: "pirl",
+    units: [
+      {
+        name: "PIRL",
+        code: "PIRL",
+        magnitude: 8
       }
     ]
   },
