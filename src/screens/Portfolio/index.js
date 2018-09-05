@@ -32,7 +32,7 @@ import provideSummary from "../../components/provideSummary";
 
 import type { Summary } from "../../components/provideSummary";
 
-import PortfolioGraphCard from "./PortfolioGraphCard";
+import GraphCard from "../../components/GraphCard";
 import AnimatedTopBar from "./AnimatedTopBar";
 import Greetings from "./Greetings";
 
@@ -163,7 +163,7 @@ const GraphCardContainer = ({
   <View>
     <SyncIndicator />
     <Greetings nbAccounts={summary.accounts.length} />
-    <PortfolioGraphCard
+    <GraphCard
       summary={summary}
       onPanResponderStart={onPanResponderStart}
       onPanResponderRelease={onPanResponderRelease}

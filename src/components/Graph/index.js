@@ -21,6 +21,7 @@ import colors, { rgba } from "../../colors";
 export type Item = {
   date: Date,
   value: BigNumber,
+  originalValue: BigNumber,
 };
 
 type Props = {

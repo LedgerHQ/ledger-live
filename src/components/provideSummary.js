@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getBalanceHistorySum } from "@ledgerhq/live-common/lib/helpers/account";
+import hoistNonReactStatic from "hoist-non-react-statics";
 import { BigNumber } from "bignumber.js";
 
 import type { Currency, Account } from "@ledgerhq/live-common/lib/types";
@@ -25,8 +26,8 @@ export type Summary = {
   accounts: Account[],
   isAvailable: boolean,
   balanceHistory: Item[],
-  balanceStart: BigNumber,
-  balanceEnd: BigNumber,
+  balanceStart: Item,
+  balanceEnd: Item,
   selectedTimeRange: string,
   setSelectedTimeRange: string => void,
   counterValueCurrency: Currency,
@@ -37,8 +38,13 @@ type Props = {
   hash: string,
 };
 
-const mapStateToProps = state => {
-  const accounts = accountsSelector(state);
+const mapStateToProps = (state, props) => {
+  let accounts = accountsSelector(state);
+
+  if (props.account) {
+    accounts = accounts.filter(a => a.id === props.account.id);
+  }
+
   const counterValueCurrency = counterValueCurrencySelector(state);
   const counterValueExchange = counterValueExchangeSelector(state);
   const selectedTimeRange = selectedTimeRangeSelector(state);
@@ -80,13 +86,13 @@ const mapStateToProps = state => {
     originalValue: originalValues[i] || BigNumber(0),
   }));
 
-  const balanceEnd = balanceHistory[balanceHistory.length - 1].value;
+  const balanceEnd = balanceHistory[balanceHistory.length - 1];
 
   const summary = {
     accounts,
     isAvailable,
     balanceHistory,
-    balanceStart: balanceHistory[0].value,
+    balanceStart: balanceHistory[0],
     balanceEnd,
     selectedTimeRange,
     counterValueCurrency,
@@ -96,7 +102,7 @@ const mapStateToProps = state => {
     summary,
     hash: `${accounts.length > 0 ? accounts[0].id : ""}_${
       balanceHistory.length
-    }_${balanceEnd.toString()}_${isAvailable.toString()}`,
+    }_${balanceEnd.value.toString()}_${isAvailable.toString()}`,
   };
 };
 
@@ -109,6 +115,7 @@ export default (WrappedComponent: any) => {
       return <WrappedComponent {...this.props} />;
     }
   }
-
-  return connect(mapStateToProps)(Inner);
+  const Connected = connect(mapStateToProps)(Inner);
+  hoistNonReactStatic(Connected, WrappedComponent);
+  return Connected;
 };

@@ -5,26 +5,25 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
-import { BigNumber } from "bignumber.js";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
-import type { Summary } from "../../components/provideSummary";
+import type { Summary } from "./provideSummary";
 
-import colors from "../../colors";
+import colors from "../colors";
 
-import { setSelectedTimeRange } from "../../actions/settings";
+import { setSelectedTimeRange } from "../actions/settings";
 
-import Delta from "../../components/Delta";
-import FormatDate from "../../components/FormatDate";
-import Graph from "../../components/Graph";
-import Pills from "../../components/Pills";
-import Card from "../../components/Card";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import Delta from "./Delta";
+import FormatDate from "./FormatDate";
+import Graph from "./Graph";
+import Pills from "./Pills";
+import Card from "./Card";
+import LText from "./LText";
+import CurrencyUnitValue from "./CurrencyUnitValue";
 
-import type { Item } from "../../components/Graph";
-import type { T } from "../../types/common";
+import type { Item } from "./Graph";
+import type { T } from "../types/common";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
@@ -36,16 +35,19 @@ type Props = {
   setSelectedTimeRange: string => void,
   onPanResponderStart: () => *,
   onPanResponderRelease: () => *,
+  renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 };
 
 type State = {
   hoveredItem: ?Item,
 };
 
-class PortfolioGraphCard extends PureComponent<Props, State> {
+class GraphCard extends PureComponent<Props, State> {
   state = {
     hoveredItem: null,
   };
+
+  timeRangeItems = null;
 
   onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
   onItemHover = hoveredItem => this.setState({ hoveredItem });
@@ -55,9 +57,10 @@ class PortfolioGraphCard extends PureComponent<Props, State> {
   };
 
   render() {
-    const { summary, t, onPanResponderStart } = this.props;
+    const { summary, t, onPanResponderStart, renderTitle } = this.props;
 
     const {
+      accounts,
       balanceHistory,
       balanceStart,
       balanceEnd,
@@ -67,16 +70,29 @@ class PortfolioGraphCard extends PureComponent<Props, State> {
 
     const { hoveredItem } = this.state;
 
+    if (!this.timeRangeItems) {
+      this.timeRangeItems = [
+        { key: "week", label: t("common:time.week") },
+        { key: "month", label: t("common:time.month") },
+        { key: "year", label: t("common:time.year") },
+      ];
+    }
+
+    const graphColor =
+      accounts.length === 1 ? accounts[0].currency.color : undefined;
+
     return (
       <Card style={styles.root}>
-        <PortfolioGraphCardHeader
+        <GraphCardHeader
           from={balanceStart}
           to={balanceEnd}
           hoveredItem={hoveredItem}
           unit={counterValueCurrency.units[0]}
+          renderTitle={renderTitle}
         />
         <Graph
           isInteractive
+          color={graphColor}
           data={balanceHistory}
           onItemHover={this.onItemHover}
           onPanResponderStart={onPanResponderStart}
@@ -86,11 +102,7 @@ class PortfolioGraphCard extends PureComponent<Props, State> {
           <Pills
             value={selectedTimeRange}
             onChange={this.onTimeRangeChange}
-            items={[
-              { key: "week", label: t("common:time.week") },
-              { key: "month", label: t("common:time.month") },
-              { key: "year", label: t("common:time.year") },
-            ]}
+            items={this.timeRangeItems}
           />
         </View>
       </Card>
@@ -98,23 +110,26 @@ class PortfolioGraphCard extends PureComponent<Props, State> {
   }
 }
 
-class PortfolioGraphCardHeader extends PureComponent<{
-  from: BigNumber,
-  to: BigNumber,
+class GraphCardHeader extends PureComponent<{
+  from: Item,
+  to: Item,
   unit: Unit,
   hoveredItem: ?Item,
+  renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 }> {
   render() {
-    const { unit, from, to, hoveredItem } = this.props;
+    const { unit, from, to, hoveredItem, renderTitle } = this.props;
+    const item = hoveredItem || to;
     return (
       <Fragment>
         <View style={styles.balanceTextContainer}>
-          <LText style={styles.balanceText}>
-            <CurrencyUnitValue
-              unit={unit}
-              value={hoveredItem ? hoveredItem.value : to}
-            />
-          </LText>
+          {renderTitle ? (
+            renderTitle({ counterValueUnit: unit, item })
+          ) : (
+            <LText style={styles.balanceText}>
+              <CurrencyUnitValue unit={unit} value={item.value} />
+            </LText>
+          )}
         </View>
         <View style={styles.subtitleContainer}>
           {hoveredItem ? (
@@ -123,8 +138,13 @@ class PortfolioGraphCardHeader extends PureComponent<{
             </LText>
           ) : (
             <Fragment>
-              <Delta percent from={from} to={to} style={styles.deltaPercent} />
-              <Delta from={from} to={to} unit={unit} />
+              <Delta
+                percent
+                from={from.value}
+                to={to.value}
+                style={styles.deltaPercent}
+              />
+              <Delta from={from.value} to={to.value} unit={unit} />
             </Fragment>
           )}
         </View>
@@ -166,4 +186,4 @@ export default compose(
     mapDispatchToProps,
   ),
   translate(),
-)(PortfolioGraphCard);
+)(GraphCard);
