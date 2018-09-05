@@ -19,6 +19,7 @@ import type { T } from "../../../types/common";
 import { updateCurrencySettings } from "../../../actions/settings";
 import colors from "../../../colors";
 import { currencySettingsDefaults } from "../../../helpers/CurrencySettingsDefaults";
+import CurrencyIcon from "../../../components/CurrencyIcon";
 
 type Props = {
   currencySettings: CurrencySettings,
@@ -31,15 +32,13 @@ type Props = {
 type LocalState = {
   value: number,
 };
-
 const mapStateToProps = (
   state: State,
   props: { navigation: NavigationScreenProp<*>, currencyId: string },
 ) => {
-  // TODO we shouldn't do the branching here. introduce more nested component to resolve this and not having to do if.
-  const currency = props.currencyId
-    ? getCryptoCurrencyById(props.currencyId)
-    : getCryptoCurrencyById(props.navigation.state.params.currencyId);
+  const currency = getCryptoCurrencyById(
+    props.navigation.state.params.currencyId,
+  );
   return {
     currencySettings: currencySettingsSelector(state, { currency }),
     defaults: currencySettingsDefaults(currency),
@@ -53,16 +52,15 @@ const mapDispatchToProps = {
 
 class EachCurrencySettings extends Component<Props, LocalState> {
   static navigationOptions = ({ navigation }) => ({
-    title: `${navigation.state.params.title}`,
+    headerTitle: navigation.state.params.headerTitle,
   });
   componentDidMount() {
     const { navigation, t, currency } = this.props;
     navigation.setParams({
-      title: t("common:settings.currencies.currencySettingsTitle", {
-        currencyName: currency.name,
-      }),
+      headerTitle: <CustomCurrencyHeader currency={currency} t={t} />,
     });
   }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -108,7 +106,17 @@ class EachCurrencySettings extends Component<Props, LocalState> {
               title={t("common:settings.currencies.confirmationNb")}
               desc={t("common:settings.currencies.confirmationNbDesc")}
               onPress={null}
-            />
+            >
+              <LText
+                tertiary
+                style={[
+                  styles.confirmationNbValue,
+                  { color: colors.live, marginLeft: 8 },
+                ]}
+              >
+                {value}
+              </LText>
+            </SettingsRow>
             <View style={styles.container}>
               <Slider
                 step={1}
@@ -119,11 +127,16 @@ class EachCurrencySettings extends Component<Props, LocalState> {
                 onSlidingComplete={this.updateSettings}
               />
               <View style={styles.textContainer}>
-                <LText style={styles.rangeText}>
+                <LText
+                  tertiary
+                  style={[styles.confirmationNbValue, { color: colors.grey }]}
+                >
                   {defaults.confirmationsNb.min}
                 </LText>
-                <LText>{this.state.value}</LText>
-                <LText style={styles.rangeText}>
+                <LText
+                  tertiary
+                  style={[styles.confirmationNbValue, { color: colors.grey }]}
+                >
                   {defaults.confirmationsNb.max}
                 </LText>
               </View>
@@ -166,4 +179,32 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     minHeight: 200,
   },
+  confirmationNbValue: {
+    fontSize: 16,
+  },
 });
+
+export function CustomCurrencyHeader({
+  currency,
+  t,
+}: {
+  currency: Currency,
+  t: T,
+}) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+      }}
+    >
+      <View style={{ marginRight: 5, justifyContent: "center" }}>
+        <CurrencyIcon size={16} currency={currency} />
+      </View>
+      <LText>
+        {t("common:settings.currencies.currencySettingsTitle", {
+          currencyName: currency.name,
+        })}
+      </LText>
+    </View>
+  );
+}
