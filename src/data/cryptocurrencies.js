@@ -702,6 +702,23 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  pirl: {
+    id: "pirl",
+    coinType: 3125659152,
+    name: "Pirl",
+    managerAppName: "Pirl",
+    ticker: "PIRL",
+    scheme: "pirl",
+    color: "#A2D729",
+    family: "pirl",
+    units: [
+      {
+        name: "PIRL",
+        code: "PIRL",
+        magnitude: 8
+      }
+    ]
+  },
   pivx: {
     id: "pivx",
     coinType: 77,

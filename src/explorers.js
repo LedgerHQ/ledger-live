@@ -31,6 +31,7 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   ontology: hash => `https://explorer.ont.io/transaction/${hash}`,
   particl: hash => `https://explorer.particl.io/tx/${hash}`,
   peercoin: hash => `https://explorer.peercoin.net/tx/${hash}`,
+  pirl: hash => `https://poseidon.pirl.io/explorer/transaction/${hash}`,
   pivx: hash => `https://chainz.cryptoid.info/pivx/tx.dws?${hash}.htm`,
   poa: hash => `https://poaexplorer.com/tx/${hash}`,
   poswallet: () => null, // FIXME can't find a reliable/official explorer
