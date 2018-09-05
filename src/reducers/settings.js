@@ -40,6 +40,7 @@ export type SettingsState = {
     [currencyId: string]: CurrencySettings,
   },
   selectedTimeRange: TimeRange,
+  orderAccounts: string,
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -50,6 +51,7 @@ const INITIAL_STATE: SettingsState = {
   analyticsEnabled: false,
   currenciesSettings: {},
   selectedTimeRange: "month",
+  orderAccounts: "balance|desc",
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -93,6 +95,11 @@ const handlers: Object = {
     ...state,
     counterValue,
     counterValueExchange: null, // also reset the exchange
+  }),
+
+  SETTINGS_SET_ORDER_ACCOUNTS: (state: SettingsState, { orderAccounts }) => ({
+    ...state,
+    orderAccounts,
   }),
 
   SETTINGS_SET_PAIRS: (
@@ -166,7 +173,10 @@ const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = c
   };
 };
 
-export const currencySettingsSelector = (state: State, currency: Currency) => ({
+export const currencySettingsSelector = (
+  state: State,
+  { currency }: { currency: Currency },
+) => ({
   exchange: null,
   ...defaultCurrencySettingsForCurrency(currency),
   ...state.settings.currenciesSettings[currency.id],
@@ -199,5 +209,8 @@ export const exchangeSettingsForAccountSelector = createSelector(
 
 export const selectedTimeRangeSelector = (state: State) =>
   state.settings.selectedTimeRange;
+
+export const orderAccountsSelector = (state: State) =>
+  state.settings.orderAccounts;
 
 export default handleActions(handlers, INITIAL_STATE);

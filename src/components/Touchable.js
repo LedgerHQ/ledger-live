@@ -36,7 +36,18 @@ export default class GenericButton extends Component<
     const { pending } = this.state;
     const disabled = !onPress || pending;
     return (
-      <TouchableOpacity onPress={this.onPress} disabled={disabled} {...rest}>
+      <TouchableOpacity
+        onPress={this.onPress}
+        disabled={disabled}
+        hitSlop={{
+          // default & can be overrided by rest
+          top: 16,
+          left: 16,
+          right: 16,
+          bottom: 16,
+        }}
+        {...rest}
+      >
         {children}
       </TouchableOpacity>
     );

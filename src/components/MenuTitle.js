@@ -1,19 +1,23 @@
 /* @flow */
 import React, { Component } from "react";
-import { Text, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import LText from "./LText";
 
 export default class MenuTitle extends Component<{
   children: *,
 }> {
   render() {
     const { children } = this.props;
-    return <Text style={styles.text}>{children}</Text>;
+    return (
+      <LText semiBold style={styles.text}>
+        {children}
+      </LText>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   text: {
-    fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 16,
   },
 });

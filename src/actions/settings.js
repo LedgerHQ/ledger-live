@@ -45,6 +45,11 @@ export const setAnalytics = (analyticsEnabled: boolean) => ({
   analyticsEnabled,
 });
 
+export const setOrderAccounts = (orderAccounts: string) => ({
+  type: "SETTINGS_SET_ORDER_ACCOUNTS",
+  orderAccounts,
+});
+
 export const setSelectedTimeRange = (selectedTimeRange: string) => ({
   type: "SETTINGS_SET_SELECTED_TIME_RANGE",
   payload: selectedTimeRange,

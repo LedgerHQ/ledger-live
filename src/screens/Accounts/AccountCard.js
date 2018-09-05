@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "../../components/LText";
@@ -11,15 +11,20 @@ import colors from "../../colors";
 
 type Props = {
   account: Account,
-  onPress: () => void,
   style?: any,
+  navigation: *,
 };
 
-class AccountCard extends Component<Props> {
+class AccountCard extends PureComponent<Props> {
+  onPress = () => {
+    this.props.navigation.navigate("Account", {
+      accountId: this.props.account.id,
+    });
+  };
   render() {
-    const { account, onPress, style } = this.props;
+    const { account, style } = this.props;
     return (
-      <Card onPress={onPress} style={[styles.root, style]}>
+      <Card onPress={this.onPress} style={[styles.root, style]}>
         <CurrencyIcon size={24} currency={account.currency} />
         <View style={styles.accountName}>
           <LText semiBold numberOfLines={2} style={styles.accountNameText}>
@@ -53,6 +58,7 @@ export default AccountCard;
 
 const styles = StyleSheet.create({
   root: {
+    marginBottom: 10,
     flexDirection: "row",
     paddingHorizontal: 16,
     alignItems: "center",

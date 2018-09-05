@@ -21,6 +21,14 @@ const handlers: Object = {
   ACCOUNTS_ADD: (s, { account }) => ({
     active: s.active.concat(account),
   }),
+  REORDER_ACCOUNTS: (
+    state: AccountsState,
+    { payload }: { payload: string[] },
+  ) => ({
+    active: state.active
+      .slice(0)
+      .sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id)),
+  }),
   UPDATE_ACCOUNT: (
     state: AccountsState,
     { accountId, updater }: { accountId: string, updater: Account => Account },

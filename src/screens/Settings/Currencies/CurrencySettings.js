@@ -31,15 +31,17 @@ type Props = {
 type LocalState = {
   value: number,
 };
+
 const mapStateToProps = (
   state: State,
   props: { navigation: NavigationScreenProp<*>, currencyId: string },
 ) => {
+  // TODO we shouldn't do the branching here. introduce more nested component to resolve this and not having to do if.
   const currency = props.currencyId
     ? getCryptoCurrencyById(props.currencyId)
     : getCryptoCurrencyById(props.navigation.state.params.currencyId);
   return {
-    currencySettings: currencySettingsSelector(state, currency),
+    currencySettings: currencySettingsSelector(state, { currency }),
     defaults: currencySettingsDefaults(currency),
     currency,
   };
