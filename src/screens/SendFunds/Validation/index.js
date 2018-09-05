@@ -6,12 +6,12 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
 import { getBridgeForCurrency } from "../../../bridge";
-
 import { accountScreenSelector } from "../../../reducers/accounts";
-
+import colors from "../../../colors";
+import SelectDevice from "../../../components/SelectDevice";
 import LText from "../../../components/LText";
 
-import colors from "../../../colors";
+import { tmpTestEthExchange } from "../../../logic/hw";
 
 type Props = {
   account: Account,
@@ -28,6 +28,7 @@ type State = {
   signed: boolean,
   result: ?Operation,
   error: ?Error,
+  deviceId: ?string,
 };
 
 class Validation extends Component<Props, State> {
@@ -39,9 +40,10 @@ class Validation extends Component<Props, State> {
     signed: false,
     result: null,
     error: null,
+    deviceId: null,
   };
 
-  componentDidMount() {
+  sign() {
     const {
       account,
       navigation: {
@@ -51,6 +53,8 @@ class Validation extends Component<Props, State> {
         },
       },
     } = this.props;
+    const { deviceId } = this.state;
+    if (!deviceId) return;
     const bridge = getBridgeForCurrency(account.currency);
     let transaction = bridge.createTransaction(account);
     transaction = bridge.editTransactionRecipient(
@@ -65,8 +69,8 @@ class Validation extends Component<Props, State> {
     );
     // FIXME the concept of fees in bridge is not yet addressed. as it's very depend of the crypto, we need to unify it properly
 
-    // FIXME we need a way to manage devices and get ids so we can pass to signAndBroadcast and use the device
-    const deviceId = "_fake_device_id_";
+    tmpTestEthExchange(deviceId);
+
     bridge.signAndBroadcast(account, transaction, deviceId).subscribe({
       next: e => {
         switch (e.type) {
@@ -85,8 +89,12 @@ class Validation extends Component<Props, State> {
     });
   }
 
+  onSelectDevice = (deviceId: string) => {
+    this.setState({ deviceId }, this.sign);
+  };
+
   render() {
-    const { result, error, signed } = this.state;
+    const { result, error, signed, deviceId } = this.state;
     return (
       <View style={styles.root}>
         {result ? (
@@ -95,8 +103,10 @@ class Validation extends Component<Props, State> {
           <LText>ERROR! {String(error)}</LText>
         ) : signed ? (
           <ActivityIndicator />
+        ) : deviceId ? (
+          <LText>Please validate transaction on your device...</LText>
         ) : (
-          <LText>validate on your device...</LText>
+          <SelectDevice onSelectItem={this.onSelectDevice} />
         )}
       </View>
     );

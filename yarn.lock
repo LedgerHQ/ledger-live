@@ -508,34 +508,34 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@ledgerhq/hw-app-btc@4.7.3":
-  version "4.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.7.3.tgz#5a7d365f893f5a72bbb6b639d1738edced712c5f"
+"@ledgerhq/hw-app-btc@4.21.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.21.0.tgz#4f94571bb3d63cd785e31a7e1f77ce597c344516"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.7.3"
+    "@ledgerhq/hw-transport" "^4.21.0"
     create-hash "^1.1.3"
 
-"@ledgerhq/hw-transport-http@4.7.3":
-  version "4.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.7.3.tgz#8d69abd1a95f154faa5efba3cd7386a22130adc9"
+"@ledgerhq/hw-app-eth@^4.21.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-4.21.0.tgz#2d8bfbe5f09b92e8d6951ae685036d9d5aea96ff"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.7.3"
+    "@ledgerhq/hw-transport" "^4.21.0"
 
-"@ledgerhq/hw-transport@4.7.3":
-  version "4.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.7.3.tgz#e89cd90d30aaf008adf9fdfa4af317a48fe798ca"
+"@ledgerhq/hw-transport-http@4.21.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.21.0.tgz#bbcb068dfec2949e99b87348f7890ec38d2f368e"
   dependencies:
-    events "^2.0.0"
+    "@ledgerhq/hw-transport" "^4.21.0"
 
-"@ledgerhq/hw-transport@^4.7.3":
+"@ledgerhq/hw-transport@4.21.0", "@ledgerhq/hw-transport@^4.21.0":
   version "4.21.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.21.0.tgz#50f85cfe115ba3f9d5bf94755c701e927175794f"
   dependencies:
     events "^2.0.0"
 
-"@ledgerhq/live-common@^3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.2.3.tgz#24853f89548f68dc55bde956eb8e2e0d580ee340"
+"@ledgerhq/live-common@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.4.0.tgz#49a9f8865d2e3ea898cfba15d69bdaf32c949f80"
   dependencies:
     axios "^0.18.0"
     bignumber.js "^7.2.1"
@@ -548,17 +548,17 @@
     redux "^4.0.0"
     reselect "^3.0.1"
 
-"@ledgerhq/react-native-hid@4.7.3":
-  version "4.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.7.3.tgz#4fb36ee2825928fbfe031a9f1e42e32e4828b2cb"
+"@ledgerhq/react-native-hid@4.21.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.21.0.tgz#65a0cd1ffd13e9a60c2c7ee75c1f1c652a2ef1c9"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.7.3"
+    "@ledgerhq/hw-transport" "^4.21.0"
 
-"@ledgerhq/react-native-hw-transport-ble@4.7.3":
-  version "4.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-4.7.3.tgz#90d6ddf65344ed1f69afb6ebea64206457fe0b3d"
+"@ledgerhq/react-native-hw-transport-ble@4.21.0":
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-4.21.0.tgz#c8e4a2b9bd1cd5db33f8cb4e95316d6953e99e9a"
   dependencies:
-    "@ledgerhq/hw-transport" "^4.7.3"
+    "@ledgerhq/hw-transport" "^4.21.0"
     invariant "^2.2.4"
 
 "@ledgerhq/react-native-passcode-auth@2.0.0":

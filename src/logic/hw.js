@@ -1,12 +1,24 @@
 // @flow
 
 import { Observable } from "rxjs/Observable";
+import { empty, merge } from "rxjs";
+import { map } from "rxjs/operators/map";
+import { catchError } from "rxjs/operators/catchError";
 
-import type { Transport } from "@ledgerhq/hw-transport";
+import type Transport from "@ledgerhq/hw-transport";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import { withStaticURL } from "@ledgerhq/hw-transport-http";
 import Config from "react-native-config";
+
+import Eth from "@ledgerhq/hw-app-eth";
+
+export async function tmpTestEthExchange(deviceId: string) {
+  const t = await open(deviceId);
+  const eth = new Eth(t);
+  const r = await eth.getAddress("44'/60'/0'/0/0");
+  console.log("eth.getAddress:", r);
+}
 
 const transports: { [_: string]: * } = {
   HIDTransport,
@@ -20,12 +32,12 @@ const observables = [];
 const openHandlers: Array<(string) => ?Promise<Transport<*>>> = [];
 
 // Add support of BLE
-const bleObservable = Observable.create(o => BluetoothTransport.listen(o)).map(
-  ({ descriptor }) => ({
+const bleObservable = Observable.create(o => BluetoothTransport.listen(o)).pipe(
+  map(({ descriptor }) => ({
     type: "ble",
     id: `ble|${descriptor.id}`,
     name: descriptor.name,
-  }),
+  })),
 );
 openHandlers.push(id => {
   if (id.startsWith("ble|")) {
@@ -36,16 +48,18 @@ openHandlers.push(id => {
 observables.push(bleObservable);
 
 // Add support of HID
-const hidObservable = Observable.create(o => BluetoothTransport.listen(o)).map(
-  () => ({
+const hidObservable = Observable.create(o => BluetoothTransport.listen(o)).pipe(
+  map(({ descriptor }) => ({
     type: "usb",
-    id: "usb",
+    id: `usb|${JSON.stringify(descriptor)}`,
     name: "USB device",
-  }),
+  })),
 );
 openHandlers.push(id => {
-  if (id === "usb") {
-    return HIDTransport.open(null);
+  if (id.startsWith("usb|")) {
+    const json = JSON.parse(id.slice(4));
+    // $FlowFixMe: we should have concept of id in HIDTransport
+    return HIDTransport.open(json);
   }
   return null;
 });
@@ -57,11 +71,13 @@ if (__DEV__) {
   const DebugHttpProxy = withStaticURL(DEBUG_COMM_HTTP_PROXY);
   const debugHttpObservable = Observable.create(o =>
     DebugHttpProxy.listen(o),
-  ).map(() => ({
-    type: "httpdebug",
-    id: `httpdebug|${DEBUG_COMM_HTTP_PROXY}`,
-    name: "USB device",
-  }));
+  ).pipe(
+    map(({ descriptor }) => ({
+      type: "httpdebug",
+      id: `httpdebug|${descriptor}`,
+      name: descriptor,
+    })),
+  );
   openHandlers.push(id => {
     if (id.startsWith("httpdebug|")) {
       return DebugHttpProxy.open(id.slice(10));
@@ -75,19 +91,22 @@ export const devicesObservable: Observable<{
   type: string,
   id: string,
   name: string,
-}> = Observable.merge(
+}> = merge(
   ...observables.map(o =>
-    o.catch(e => {
-      console.warn(`discover failure ${e}`);
-      return Observable.empty();
-    }),
+    o.pipe(
+      catchError(e => {
+        console.log(`One Transport provider failed: ${e}`);
+        return empty();
+      }),
+    ),
   ),
 );
 
 export const open = (deviceId: string): Promise<Transport<*>> => {
-  const p = openHandlers.find(open => open(deviceId));
-  if (!p) {
-    return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));
+  for (let i = 0; i < openHandlers.length; i++) {
+    const open = openHandlers[i];
+    const p = open(deviceId);
+    if (p) return p;
   }
-  return p;
+  return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));
 };
