@@ -704,7 +704,7 @@ const cryptocurrenciesById = {
   },
   pirl: {
     id: "pirl",
-    coinType: 3125659152,
+    coinType: 164,
     name: "Pirl",
     managerAppName: "Pirl",
     ticker: "PIRL",
