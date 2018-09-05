@@ -23,8 +23,6 @@ import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
-import PortfolioGraphCard from "./PortfolioGraphCard";
-import AnimatedTopBar from "./AnimatedTopBar";
 import OperationRow from "../../components/OperationRow";
 import LText from "../../components/LText";
 import PortfolioIcon from "../../images/icons/Portfolio";
@@ -33,6 +31,10 @@ import provideSyncRefreshControl from "../../components/provideSyncRefreshContro
 import provideSummary from "../../components/provideSummary";
 
 import type { Summary } from "../../components/provideSummary";
+
+import PortfolioGraphCard from "./PortfolioGraphCard";
+import AnimatedTopBar from "./AnimatedTopBar";
+import Greetings from "./Greetings";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = provideSyncRefreshControl(AnimatedSectionList);
@@ -160,6 +162,7 @@ const GraphCardContainer = ({
 }) => (
   <View>
     <SyncIndicator />
+    <Greetings nbAccounts={summary.accounts.length} />
     <PortfolioGraphCard
       summary={summary}
       onPanResponderStart={onPanResponderStart}
