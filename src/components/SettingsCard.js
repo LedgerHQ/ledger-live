@@ -6,6 +6,7 @@ import Touchable from "./Touchable";
 import Card from "./Card";
 import LText from "./LText";
 import colors from "../colors";
+import { getElevationStyle } from "./ElevatedView";
 
 type Props = {
   title: string,
@@ -17,8 +18,8 @@ export default class SettingsCard extends Component<Props> {
   render() {
     const { title, desc, icon, onClick } = this.props;
     return (
-      <Touchable style={[styles.root]} onPress={onClick}>
-        <Card style={styles.cardStyle}>
+      <Touchable onPress={onClick}>
+        <Card style={[getElevationStyle(3), styles.cardStyle]}>
           <View style={styles.imageContainer}>{icon}</View>
           <View style={styles.cardTextBlock}>
             <LText secondary semiBold style={styles.title}>
@@ -33,16 +34,11 @@ export default class SettingsCard extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "white",
-    marginVertical: 4,
-  },
   cardStyle: {
     flexDirection: "row",
     alignItems: "center",
+    padding: 16,
+    marginVertical: 4,
   },
   cardTextBlock: {
     flexDirection: "column",

@@ -21,6 +21,7 @@ import Pills from "./Pills";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import { getElevationStyle } from "./ElevatedView";
 
 import type { Item } from "./Graph";
 import type { T } from "../types/common";
@@ -82,7 +83,7 @@ class GraphCard extends PureComponent<Props, State> {
       accounts.length === 1 ? accounts[0].currency.color : undefined;
 
     return (
-      <Card style={styles.root}>
+      <Card style={[getElevationStyle(3), styles.root]}>
         <GraphCardHeader
           from={balanceStart}
           to={balanceEnd}
