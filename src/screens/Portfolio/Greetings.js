@@ -26,7 +26,7 @@ const getCurrentGreetings = () => {
   } else if (localTimeHour >= eveningBreakpoint) {
     return "common:portfolio.greeting.evening";
   }
-  return "app:dashboard.greeting.morning";
+  return "common:portfolio.greeting.morning";
 };
 
 class Greetings extends PureComponent<Props> {
