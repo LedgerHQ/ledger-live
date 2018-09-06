@@ -1,5 +1,6 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
+import { FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
@@ -22,25 +23,31 @@ class CurrenciesList extends PureComponent<Props> {
     title: "Currencies",
   });
 
+  renderItem = ({ item }) => (
+    <SettingsRow
+      title={item.ticker}
+      iconLeft={<CurrencyIcon size={20} currency={item} />}
+      key={item.id}
+      desc={null}
+      arrowRight
+      onPress={() =>
+        this.props.navigation.navigate("CurrencySettings", {
+          currencyId: item.id,
+        })
+      }
+    />
+  );
+
+  keyExtractor = item => item.id;
+
   render() {
-    const { currencies, navigation } = this.props;
+    const { currencies } = this.props;
     return (
-      <Fragment>
-        {currencies.map(currency => (
-          <SettingsRow
-            title={currency.ticker}
-            iconLeft={<CurrencyIcon size={20} currency={currency} />}
-            key={currency.id}
-            desc={null}
-            arrowRight
-            onPress={() =>
-              navigation.navigate("CurrencySettings", {
-                currencyId: currency.id,
-              })
-            }
-          />
-        ))}
-      </Fragment>
+      <FlatList
+        data={currencies}
+        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
+      />
     );
   }
 }
