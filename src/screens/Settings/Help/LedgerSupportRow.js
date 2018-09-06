@@ -15,8 +15,8 @@ class LedgerSupportRow extends PureComponent<{
     const { t } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.help.support")}
-        desc={t("common:settings.help.supportDesc")}
+        title={t("settings.help.support")}
+        desc={t("settings.help.supportDesc")}
         onPress={() =>
           Linking.openURL(urls.faq).catch(err =>
             console.error("An error occurred", err),

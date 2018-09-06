@@ -13,6 +13,8 @@ import Warning from "../../../images/icons/Warning";
 import ModalBottomAction from "../../../components/ModalBottomAction";
 import BlueButton from "../../../components/BlueButton";
 import GreyButton from "../../../components/GreyButton";
+import Archive from "../../../images/icons/Archive";
+import IconInCircularCont from "../../../components/IconInCircularCont";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -47,9 +49,15 @@ class ClearCacheRow extends PureComponent<Props, State> {
     return (
       <Fragment>
         <SettingsRow
-          title={t("common:settings.help.clearCache")}
-          desc={t("common:settings.help.clearCacheDesc")}
-          arrowRight
+          title={t("settings.help.clearCache")}
+          desc={t("settings.help.clearCacheDesc")}
+          iconLeft={
+            <IconInCircularCont
+              bgIconContainer="rgba(153,153,153,0.1)"
+              size={32}
+              icon={<Archive size={16} color={colors.grey} />}
+            />
+          }
           onPress={this.onPress}
         />
         {modalOpened && (
@@ -58,22 +66,24 @@ class ClearCacheRow extends PureComponent<Props, State> {
               <ModalBottomAction
                 title={null}
                 icon={
-                  <View style={styles.imageContainer}>
-                    <Warning size={24} color={colors.live} />
-                  </View>
+                  <IconInCircularCont
+                    bgIconContainer={colors.lightLive}
+                    size={56}
+                    icon={<Warning size={24} color={colors.live} />}
+                  />
                 }
-                description={t("common:settings.help.clearCacheModalDesc")}
+                description={t("settings.help.clearCacheModalDesc")}
                 footer={
                   <View style={styles.footerContainer}>
                     <GreyButton
-                      title={t("common:common.cancel")}
+                      title={t("common.cancel")}
                       onPress={this.onRequestClose}
                       containerStyle={styles.buttonContainer}
                       titleStyle={styles.buttonTitle}
                     />
 
                     <BlueButton
-                      title={t("common:settings.help.clearCacheButton")}
+                      title={t("settings.help.clearCacheButton")}
                       onPress={this.onClearCache}
                       containerStyle={[
                         styles.buttonContainer,
@@ -98,15 +108,6 @@ export default compose(
 )(ClearCacheRow);
 
 const styles = StyleSheet.create({
-  imageContainer: {
-    height: 56,
-    width: 56,
-    borderRadius: 50,
-    backgroundColor: colors.lightLive,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
   footerContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
