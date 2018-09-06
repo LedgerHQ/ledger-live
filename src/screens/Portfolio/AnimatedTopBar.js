@@ -12,6 +12,7 @@ import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import { getElevationStyle } from "../../components/ElevatedView";
 
 import type { Summary } from "../../components/provideSummary";
 
@@ -36,7 +37,7 @@ class AnimatedTopBar extends PureComponent<{
     });
 
     return (
-      <Animated.View style={[styles.root, { opacity }]}>
+      <Animated.View style={[getElevationStyle(20), styles.root, { opacity }]}>
         <Animated.View style={[styles.inner, { transform: [{ translateY }] }]}>
           <LText secondary style={styles.labelText}>
             {t("common:portfolio.totalBalance")}
@@ -56,7 +57,6 @@ class AnimatedTopBar extends PureComponent<{
 
 const styles = StyleSheet.create({
   root: {
-    elevation: 20,
     position: "absolute",
     backgroundColor: "white",
     top: 0,

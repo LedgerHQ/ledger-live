@@ -9,6 +9,7 @@ import {
   StatusBar,
   SectionList,
   Animated,
+  SafeAreaView,
 } from "react-native";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
@@ -26,7 +27,6 @@ import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
 import LText from "../../components/LText";
 import PortfolioIcon from "../../images/icons/Portfolio";
-import SyncIndicator from "../../components/SyncIndicator";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
 
@@ -120,7 +120,7 @@ class Portfolio extends Component<
     // TODO pull to refresh connected to bridge (need to think it modular so we can reuse easily)
 
     return (
-      <View style={styles.root}>
+      <SafeAreaView style={styles.root}>
         <StatusBar barStyle="dark-content" />
         <List
           sections={sections}
@@ -146,7 +146,7 @@ class Portfolio extends Component<
           }
         />
         <AnimatedTopBar scrollY={scrollY} summary={summary} />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -161,7 +161,6 @@ const GraphCardContainer = ({
   onPanResponderRelease: () => *,
 }) => (
   <View>
-    <SyncIndicator />
     <Greetings nbAccounts={summary.accounts.length} />
     <GraphCard
       summary={summary}
