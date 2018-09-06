@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
-import dbMiddleware from "../middlewares/db";
 import db from "../db";
 import CounterValues from "../countervalues";
 import reducers from "../reducers";
@@ -17,7 +16,7 @@ const createLedgerStore = () =>
     undefined,
     // $FlowFixMe
     compose(
-      applyMiddleware(thunk, dbMiddleware),
+      applyMiddleware(thunk),
       typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
         ? __REDUX_DEVTOOLS_EXTENSION__()
         : f => f,
