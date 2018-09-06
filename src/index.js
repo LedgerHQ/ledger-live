@@ -4,6 +4,8 @@ import React, { Component } from "react";
 import { StyleSheet, View, StatusBar, Platform } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import colors from "./colors";
+import { exportSelector as settingsExportSelector } from "./reducers/settings";
+import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import CounterValues from "./countervalues";
 import LocaleProvider from "./context/Locale";
 import RebootProvider from "./context/Reboot";
@@ -14,6 +16,7 @@ import AuthFailedApp from "./components/AuthFailedApp";
 import AuthPendingApp from "./components/AuthPendingApp";
 import LoadingApp from "./components/LoadingApp";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
+import DBSave from "./components/DBSave";
 
 const styles = StyleSheet.create({
   root: {
@@ -22,6 +25,12 @@ const styles = StyleSheet.create({
 });
 
 class App extends Component<*> {
+  hasCountervaluesChanged = (a, b) => a.countervalues !== b.countervalues;
+
+  hasSettingsChanged = (a, b) => a.settings !== b.settings;
+
+  hasAccountsChanged = (a, b) => a.accounts !== b.accounts;
+
   render() {
     const ColoredBar =
       Platform.OS === "android" && Platform.Version < 23 ? null : (
@@ -31,6 +40,26 @@ class App extends Component<*> {
     return (
       <View style={styles.root}>
         {ColoredBar}
+
+        <DBSave
+          dbKey="countervalues"
+          throttle={2000}
+          hasChanged={this.hasCountervaluesChanged}
+          lense={CounterValues.exportSelector}
+        />
+        <DBSave
+          dbKey="settings"
+          throttle={400}
+          hasChanged={this.hasSettingsChanged}
+          lense={settingsExportSelector}
+        />
+        <DBSave
+          dbKey="accounts"
+          throttle={500}
+          hasChanged={this.hasAccountsChanged}
+          lense={accountsExportSelector}
+        />
+
         <RootNavigator />
       </View>
     );
