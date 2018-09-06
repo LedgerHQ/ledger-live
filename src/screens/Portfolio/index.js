@@ -129,7 +129,7 @@ class Portfolio extends Component<
           renderItem={this.renderItem}
           renderSectionHeader={SectionHeader}
           onEndReached={this.onEndReached}
-          showsVerticalScrollIndicator
+          showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           scrollEnabled={scrollEnabled}
           onScroll={Animated.event(
