@@ -32,7 +32,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -46,10 +48,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>The Ledger Live app needs access device</string>
 	<key>NSCameraUsageDescription</key>
-	<string>The Ledger wallet app needs access to your camera to scan QR codes</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MuseoSans-Bold.otf</string>
