@@ -5592,6 +5592,16 @@ react-navigation-tabs@0.5.1:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
+react-navigation-tabs@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-0.6.0.tgz#2f526194f4360e56c2702e736887449acc2080dc"
+  dependencies:
+    hoist-non-react-statics "^2.5.0"
+    prop-types "^15.6.1"
+    react-lifecycles-compat "^3.0.4"
+    react-native-safe-area-view "^0.7.0"
+    react-native-tab-view "^1.0.0"
+
 react-navigation@2.9.3:
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.9.3.tgz#de97f7102df6b836af780bfa5bfa80747148da19"

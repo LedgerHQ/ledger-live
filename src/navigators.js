@@ -1,10 +1,8 @@
 // @flow
 import React from "react";
 import { StyleSheet } from "react-native";
-import {
-  createBottomTabNavigator,
-  createStackNavigator,
-} from "react-navigation";
+import { createStackNavigator } from "react-navigation";
+import { createBottomTabNavigator, BottomTabBar } from "react-navigation-tabs";
 import colors from "./colors";
 import SettingsIcon from "./images/icons/Settings";
 import ManagerIcon from "./images/icons/Manager";
@@ -47,6 +45,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderBottomWidth: 0,
     elevation: 0,
+  },
+  bottomTabBar: {
+    height: 48,
+    borderTopColor: colors.lightFog,
+    backgroundColor: colors.white,
   },
 });
 
@@ -113,14 +116,23 @@ AccountsStack.navigationOptions = {
   ),
 };
 
-const Main = createBottomTabNavigator({
-  Portfolio,
-  Accounts: AccountsStack,
-  // $FlowFixMe
-  Transfer,
-  Manager: ManagerStack,
-  Settings: SettingsStack,
-});
+const CustomTabBar = props => (
+  <BottomTabBar {...props} style={styles.bottomTabBar} />
+);
+
+const Main = createBottomTabNavigator(
+  {
+    Portfolio,
+    Accounts: AccountsStack,
+    // $FlowFixMe
+    Transfer,
+    Manager: ManagerStack,
+    Settings: SettingsStack,
+  },
+  {
+    tabBarComponent: CustomTabBar,
+  },
+);
 
 Main.navigationOptions = {
   header: null,
