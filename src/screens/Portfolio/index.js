@@ -25,7 +25,6 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
-import LText from "../../components/LText";
 import PortfolioIcon from "../../images/icons/Portfolio";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
@@ -35,6 +34,7 @@ import type { Summary } from "../../components/provideSummary";
 import GraphCard from "../../components/GraphCard";
 import AnimatedTopBar from "./AnimatedTopBar";
 import Greetings from "./Greetings";
+import EmptyStatePortfolio from "./EmptyStatePortfolio";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = provideSyncRefreshControl(AnimatedSectionList);
@@ -101,13 +101,13 @@ class Portfolio extends Component<
   };
 
   render() {
-    const { accounts, summary } = this.props;
+    const { summary, accounts, navigation } = this.props;
     const { opCount, scrollY, scrollEnabled } = this.state;
 
     if (accounts.length === 0) {
       return (
         <View style={styles.root}>
-          <LText>No account</LText>
+          <EmptyStatePortfolio navigation={navigation} />
         </View>
       );
     }
