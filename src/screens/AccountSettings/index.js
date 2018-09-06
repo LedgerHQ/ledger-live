@@ -20,7 +20,7 @@ import Archive from "../../images/icons/Archive";
 import ModalBottomAction from "../../components/ModalBottomAction";
 import RedButton from "../../components/RedButton";
 import GreyButton from "../../components/GreyButton";
-import IconInCircularCont from "../../components/IconInCircularCont";
+import Circle from "../../components/Circle";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -110,11 +110,9 @@ class AccountSettings extends PureComponent<Props, State> {
             title={t("common:account.settings.archive.title")}
             desc={t("common:account.settings.archive.desc")}
             iconLeft={
-              <IconInCircularCont
-                bgIconContainer="rgba(153,153,153,0.1)"
-                size={32}
-                icon={<Archive size={16} color={colors.grey} />}
-              />
+              <Circle bg="rgba(153,153,153,0.1)" size={32}>
+                <Archive size={16} color={colors.grey} />
+              </Circle>
             }
             onPress={() => navigation.navigate("")}
           />
@@ -122,11 +120,9 @@ class AccountSettings extends PureComponent<Props, State> {
             title={t("common:account.settings.delete.title")}
             desc={t("common:account.settings.delete.desc")}
             iconLeft={
-              <IconInCircularCont
-                bgIconContainer="rgba(234,46,73,0.1)"
-                size={32}
-                icon={<Trash size={16} color={colors.alert} />}
-              />
+              <Circle bg="rgba(234,46,73,0.1)" size={32}>
+                <Trash size={16} color={colors.alert} />
+              </Circle>
             }
             onPress={this.onPress}
             titleStyle={{ color: colors.alert }}
@@ -138,11 +134,9 @@ class AccountSettings extends PureComponent<Props, State> {
               <ModalBottomAction
                 title={null}
                 icon={
-                  <IconInCircularCont
-                    bgIconContainer={colors.lightAlert}
-                    size={56}
-                    icon={<Trash size={24} color={colors.alert} />}
-                  />
+                  <Circle bg={colors.lightAlert} size={56}>
+                    <Trash size={24} color={colors.alert} />
+                  </Circle>
                 }
                 description={
                   <Trans i18nKey="common:account.settings.delete.confirmationDesc">

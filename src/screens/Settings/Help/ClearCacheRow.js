@@ -14,7 +14,7 @@ import ModalBottomAction from "../../../components/ModalBottomAction";
 import BlueButton from "../../../components/BlueButton";
 import GreyButton from "../../../components/GreyButton";
 import Archive from "../../../images/icons/Archive";
-import IconInCircularCont from "../../../components/IconInCircularCont";
+import Circle from "../../../components/Circle";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -52,11 +52,9 @@ class ClearCacheRow extends PureComponent<Props, State> {
           title={t("settings.help.clearCache")}
           desc={t("settings.help.clearCacheDesc")}
           iconLeft={
-            <IconInCircularCont
-              bgIconContainer="rgba(153,153,153,0.1)"
-              size={32}
-              icon={<Archive size={16} color={colors.grey} />}
-            />
+            <Circle bg="rgba(153,153,153,0.1)" size={32}>
+              <Archive size={16} color={colors.grey} />
+            </Circle>
           }
           onPress={this.onPress}
         />
@@ -66,11 +64,9 @@ class ClearCacheRow extends PureComponent<Props, State> {
               <ModalBottomAction
                 title={null}
                 icon={
-                  <IconInCircularCont
-                    bgIconContainer={colors.lightLive}
-                    size={56}
-                    icon={<Warning size={24} color={colors.live} />}
-                  />
+                  <Circle bg={colors.lightLive} size={56}>
+                    <Warning size={24} color={colors.live} />
+                  </Circle>
                 }
                 description={t("settings.help.clearCacheModalDesc")}
                 footer={

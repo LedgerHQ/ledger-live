@@ -6,7 +6,7 @@ import Touchable from "./Touchable";
 import Card from "./Card";
 import LText from "./LText";
 import colors from "../colors";
-import IconInCircularCont from "./IconInCircularCont";
+import Circle from "./Circle";
 import { getElevationStyle } from "./ElevatedView";
 
 type Props = {
@@ -21,11 +21,9 @@ export default class SettingsCard extends Component<Props> {
     return (
       <Touchable onPress={onClick}>
         <Card style={[getElevationStyle(3), styles.cardStyle]}>
-          <IconInCircularCont
-            bgIconContainer={colors.lightLive}
-            size={32}
-            icon={icon}
-          />
+          <Circle bg={colors.lightLive} size={32}>
+            {icon}
+          </Circle>
           <View style={styles.cardTextBlock}>
             <LText secondary semiBold style={styles.title}>
               {title}
