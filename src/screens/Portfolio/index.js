@@ -165,6 +165,7 @@ const GraphCardContainer = ({
     <Greetings nbAccounts={summary.accounts.length} />
     <GraphCard
       summary={summary}
+      useCounterValue
       onPanResponderStart={onPanResponderStart}
       onPanResponderRelease={onPanResponderRelease}
     />

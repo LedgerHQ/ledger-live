@@ -35,6 +35,7 @@ type Props = {
   setSelectedTimeRange: string => void,
   onPanResponderStart: () => *,
   onPanResponderRelease: () => *,
+  useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 };
 
@@ -57,7 +58,13 @@ class GraphCard extends PureComponent<Props, State> {
   };
 
   render() {
-    const { summary, t, onPanResponderStart, renderTitle } = this.props;
+    const {
+      summary,
+      t,
+      onPanResponderStart,
+      renderTitle,
+      useCounterValue,
+    } = this.props;
 
     const {
       accounts,
@@ -97,6 +104,7 @@ class GraphCard extends PureComponent<Props, State> {
           onItemHover={this.onItemHover}
           onPanResponderStart={onPanResponderStart}
           onPanResponderRelease={this.onPanResponderRelease}
+          useCounterValue={useCounterValue}
         />
         <View style={styles.pillsContainer}>
           <Pills

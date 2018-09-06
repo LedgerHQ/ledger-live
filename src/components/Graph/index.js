@@ -29,6 +29,7 @@ type Props = {
   data: Item[],
   color: string,
   isInteractive: boolean,
+  useCounterValue: boolean,
   onItemHover?: Item => void,
   onPanResponderStart?: () => *,
   onPanResponderRelease?: () => *,
@@ -51,6 +52,7 @@ export default class Graph extends PureComponent<Props, State> {
     data: [],
     color: colors.live,
     isInteractive: false,
+    useCounterValue: false,
   };
 
   state = {
@@ -70,7 +72,7 @@ export default class Graph extends PureComponent<Props, State> {
   }: *) => this.setState({ width });
 
   collectHovered = (evt: *) => {
-    const { data, onItemHover } = this.props;
+    const { data, onItemHover, useCounterValue } = this.props;
     const x0 = Math.round(evt.nativeEvent.locationX);
     const hoveredDate = this.x.invert(x0);
     const i = bisectDate(data, hoveredDate, 1);
@@ -80,9 +82,10 @@ export default class Graph extends PureComponent<Props, State> {
     const xRight = this.x(d1.date);
     const d = Math.abs(x0 - xLeft) < Math.abs(x0 - xRight) ? d0 : d1;
     if (onItemHover) onItemHover(d);
+    const value = (useCounterValue ? d.value : d.originalValue).toNumber();
     return {
       barOffsetX: this.x(d.date),
-      barOffsetY: this.y(d.value.toNumber()),
+      barOffsetY: this.y(value),
     };
   };
 
@@ -101,15 +104,25 @@ export default class Graph extends PureComponent<Props, State> {
   };
 
   render() {
-    const { height, data, color, isInteractive } = this.props;
+    const { height, data, color, isInteractive, useCounterValue } = this.props;
     const { width, barVisible, barOffsetX, barOffsetY } = this.state;
+
+    const maxY = useCounterValue
+      ? maxBy(data, d => d.value.toNumber()).value.toNumber()
+      : maxBy(data, d => d.originalValue.toNumber()).originalValue.toNumber();
+
+    const yExtractor = useCounterValue
+      ? d => this.y(d.value.toNumber())
+      : d => this.y(d.originalValue.toNumber());
+
+    const curve = useCounterValue
+      ? shape.curveCatmullRom
+      : shape.curveStepBefore;
 
     this.x = scale
       .scaleTime()
       .range([0, width])
       .domain([data[0].date, data[data.length - 1].date]);
-
-    const maxY = maxBy(data, d => d.value.toNumber()).value.toNumber();
 
     this.y = scale
       .scaleLinear()
@@ -120,14 +133,14 @@ export default class Graph extends PureComponent<Props, State> {
       .area()
       .x(d => this.x(d.date))
       .y0(this.y(0))
-      .y1(d => this.y(d.value.toNumber()))
-      .curve(shape.curveCatmullRom)(data);
+      .y1(yExtractor)
+      .curve(curve)(data);
 
     const line = shape
       .line()
       .x(d => this.x(d.date))
-      .y(d => this.y(d.value.toNumber()))
-      .curve(shape.curveCatmullRom)(data);
+      .y(yExtractor)
+      .curve(curve)(data);
 
     return (
       <View
