@@ -13,18 +13,20 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { BigNumber as BigNumberType } from "bignumber.js";
 
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 
-import colors from "../../../colors";
+import colors from "../../colors";
 
-import LText from "./../../../components/LText/index";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import OutlineButton from "../../../components/OutlineButton";
-import BlueButton from "../../../components/BlueButton";
+import LText from "./../../components/LText/index";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import CounterValue from "../../components/CounterValue";
+import OutlineButton from "../../components/OutlineButton";
+import BlueButton from "../../components/BlueButton";
 
 import AmountInput from "./AmountInput";
 import CounterValuesSeparator from "./CounterValuesSeparator";
+import Stepper from "../../components/Stepper";
+import StepHeader from "../../components/StepHeader";
 
 type Props = {
   account: Account,
@@ -41,7 +43,7 @@ type State = {
 
 class SelectFunds extends Component<Props, State> {
   static navigationOptions = {
-    title: "Amount",
+    headerTitle: <StepHeader title="Amount" subtitle="step 3 of 5" />,
   };
 
   state = {
@@ -50,7 +52,7 @@ class SelectFunds extends Component<Props, State> {
   };
 
   onChangeText = (amount: string) => {
-    if (!isNaN(amount)) {
+    if (amount && !isNaN(amount)) {
       const { account } = this.props;
       const num = new BigNumber(parseFloat(amount));
       const big = valueFromUnit(num, account.unit);
@@ -90,7 +92,12 @@ class SelectFunds extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
-        <KeyboardAvoidingView style={styles.container}>
+        <Stepper nbSteps={5} currentStep={3} />
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior="padding"
+          enabled
+        >
           <AmountInput
             onChangeText={this.onChangeText}
             currency={account.unit.code}
@@ -153,11 +160,11 @@ class SelectFunds extends Component<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingHorizontal: 16,
     backgroundColor: colors.white,
   },
   container: {
     flex: 1,
+    paddingHorizontal: 16,
     alignItems: "flex-start",
   },
   available: {

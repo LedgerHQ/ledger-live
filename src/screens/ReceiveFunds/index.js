@@ -1,42 +1,114 @@
 /* @flow */
 import React, { Component } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  StyleSheet,
+  FlatList,
+  KeyboardAvoidingView,
+} from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import HeaderRightClose from "../../components/HeaderRightClose";
 
-class ReceiveFunds extends Component<
-  {
-    navigation: NavigationScreenProp<*>,
-    accounts: Account[],
-  },
-  *,
-> {
+import LText from "./../../components/LText";
+import HeaderRightClose from "../../components/HeaderRightClose";
+import FilteredSearchBar from "../../components/FilteredSearchBar";
+import AccountCard from "../../components/AccountCard";
+import Stepper from "../../components/Stepper";
+import StepHeader from "../../components/StepHeader";
+
+import { accountsSelector } from "../../reducers/accounts";
+import colors from "../../colors";
+
+type Props = {
+  accounts: Account[],
+  navigation: NavigationScreenProp<{
+    params: {},
+  }>,
+};
+
+type State = {};
+
+class ReceiveFunds extends Component<Props, State> {
   static navigationOptions = ({ screenProps }: *) => ({
-    title: "Receive Funds",
-    headerLeft: (
+    headerTitle: <StepHeader title="Receive funds" subtitle="step 1 of 4" />,
+    headerRight: (
       <HeaderRightClose navigation={screenProps.topLevelNavigation} />
     ),
   });
+
+  renderItem = ({ item }: { item: Account }) => (
+    <AccountCard
+      account={item}
+      style={{ backgroundColor: "transparent" }}
+      onPress={() => {
+        this.props.navigation.navigate("ConnectDevice", {
+          accountId: item.id,
+        });
+      }}
+    />
+  );
+
+  keyExtractor = item => item.id;
+
   render() {
+    const { accounts } = this.props;
     return (
-      <ScrollView
-        style={styles.root}
-        contentContainerStyle={styles.content}
-        bounces={false}
-      />
+      <SafeAreaView style={styles.root}>
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          <Stepper nbSteps={4} currentStep={1} />
+          <View style={styles.searchContainer}>
+            <FilteredSearchBar
+              list={accounts}
+              renderList={items => (
+                <FlatList
+                  data={items}
+                  renderItem={this.renderItem}
+                  keyExtractor={this.keyExtractor}
+                  showsVerticalScrollIndicator={false}
+                />
+              )}
+              renderEmptySearch={() => (
+                <View style={styles.emptyResults}>
+                  <LText style={styles.emptyText}>No account found</LText>
+                </View>
+              )}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   }
 }
 
-export default ReceiveFunds;
+const mapStateToProps = state => ({
+  accounts: accountsSelector(state),
+});
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: colors.white,
   },
-  content: {
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 18,
+    flex: 1,
+  },
+  list: {
+    paddingTop: 8,
+  },
+  emptyResults: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.fog,
   },
 });
+
+export default connect(mapStateToProps)(ReceiveFunds);

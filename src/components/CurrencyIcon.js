@@ -9,11 +9,12 @@ import LText from "../components/LText";
 type Props = {
   currency: Currency,
   size: number,
+  color?: string,
 };
 
 export default class CurrencyIcon extends PureComponent<Props> {
   render() {
-    const { size, currency } = this.props;
+    const { size, currency, color } = this.props;
     const IconComponent = getCryptoCurrencyIcon(currency);
     if (!IconComponent) {
       return (
@@ -24,7 +25,7 @@ export default class CurrencyIcon extends PureComponent<Props> {
         </View>
       );
     }
-    return <IconComponent size={size} color={currency.color} />;
+    return <IconComponent size={size} color={color || currency.color} />;
   }
 }
 

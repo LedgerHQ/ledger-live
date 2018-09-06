@@ -14,11 +14,12 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "./../../components/LText";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
+import Stepper from "../../components/Stepper";
+import AccountCard from "../../components/AccountCard";
+import StepHeader from "../../components/StepHeader";
 
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-
-import AccountCard from "./AccountCard";
 
 type Props = {
   accounts: Account[],
@@ -31,7 +32,9 @@ type State = {};
 
 class SendFundsSelectAccount extends Component<Props, State> {
   static navigationOptions = ({ navigation }: *) => ({
-    title: "Select an account",
+    headerTitle: (
+      <StepHeader title="Select an account" subtitle="step 1 of 5" />
+    ),
     headerRight: <HeaderRightClose navigation={navigation} />,
   });
 
@@ -53,7 +56,8 @@ class SendFundsSelectAccount extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+        <Stepper nbSteps={5} currentStep={1} />
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }} enabled>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               list={accounts}
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 18,
     flex: 1,
   },
   list: {

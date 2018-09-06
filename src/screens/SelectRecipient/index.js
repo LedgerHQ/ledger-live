@@ -15,15 +15,17 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import throttle from "lodash/throttle";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 
-import LText from "../../../components/LText";
-import OutlineButton from "../../../components/OutlineButton";
-import BlueButton from "../../../components/BlueButton";
+import LText from "../../components/LText";
+import OutlineButton from "../../components/OutlineButton";
+import BlueButton from "../../components/BlueButton";
+import Stepper from "../../components/Stepper";
+import StepHeader from "../../components/StepHeader";
 
-import Close from "../../../images/icons/Close";
+import Close from "../../images/icons/Close";
 
-import colors from "../../../colors";
+import colors from "../../colors";
 
 type Props = {
   account: Account,
@@ -39,7 +41,9 @@ type State = {
 
 class SelectRecipient extends Component<Props, State> {
   static navigationOptions = {
-    title: "Recipient address",
+    headerTitle: (
+      <StepHeader title="Recipient address" subtitle="step 2 of 5" />
+    ),
   };
 
   constructor(props: *) {
@@ -55,10 +59,6 @@ class SelectRecipient extends Component<Props, State> {
 
   // $FlowFixMe
   input = React.createRef();
-
-  componentDidMount() {
-    this.input.current.focus();
-  }
 
   clear = () => {
     this.input.current.clear();
@@ -78,7 +78,8 @@ class SelectRecipient extends Component<Props, State> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+        <Stepper nbSteps={5} currentStep={2} />
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }} enabled>
           <View style={styles.container}>
             <OutlineButton
               onPress={() => {
@@ -104,6 +105,7 @@ class SelectRecipient extends Component<Props, State> {
                 value={address}
                 ref={this.input}
                 multiline
+                blurOnSubmit
               />
               {!!address && (
                 <TouchableOpacity onPress={this.clear}>
@@ -149,10 +151,10 @@ class SelectRecipient extends Component<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingHorizontal: 16,
     backgroundColor: colors.white,
   },
   container: {
+    paddingHorizontal: 16,
     paddingVertical: 16,
   },
   containerFlexEnd: {

@@ -6,16 +6,18 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { BigNumber as BigNumberType } from "bignumber.js";
 
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 
-import LText from "../../../components/LText";
-import BlueButton from "../../../components/BlueButton";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import CounterValue from "../../../components/CounterValue";
+import LText from "../../components/LText";
+import BlueButton from "../../components/BlueButton";
+import CurrencyIcon from "../../components/CurrencyIcon";
+import CounterValue from "../../components/CounterValue";
 
-import colors from "../../../colors";
+import colors from "../../colors";
 
 import SummaryRow from "./SummaryRow";
+import Stepper from "../../components/Stepper";
+import StepHeader from "../../components/StepHeader";
 
 type Props = {
   account: Account,
@@ -34,7 +36,7 @@ type State = {
 
 class SendSummary extends Component<Props, State> {
   static navigationOptions = {
-    title: "Summary",
+    headerTitle: <StepHeader title="Summary" subtitle="step 4 of 5" />,
   };
 
   // FIXME remove the fees state, instead each SummaryRow press should just do a back on the relevant screen
@@ -103,6 +105,7 @@ class SendSummary extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
+        <Stepper nbSteps={5} currentStep={4} />
         <SummaryRow title="Account">
           <View style={styles.accountContainer}>
             <View style={{ paddingRight: 8 }}>

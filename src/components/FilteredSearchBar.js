@@ -55,11 +55,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
 
     return (
       <Fragment>
-        <View
-          style={
-            focused ? [styles.wrapper, styles.wrapperFocused] : styles.wrapper
-          }
-        >
+        <View style={styles.wrapper}>
           <View style={styles.iconContainer}>
             <SearchIcon
               size={16}
@@ -103,15 +99,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.fog,
-    borderRadius: 4,
     paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: "transparent",
-  },
-  wrapperFocused: {
-    borderColor: colors.live,
   },
   iconContainer: {
     marginRight: 16,
@@ -121,7 +109,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 18,
+    fontFamily: "Museo Sans",
+    fontWeight: "500",
     color: colors.darkBlue,
   },
   closeContainer: {
