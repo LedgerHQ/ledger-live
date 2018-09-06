@@ -28,6 +28,7 @@ export default {
   fog: "#D8D8D8",
   white: "#ffffff",
   green: "rgb(102, 190, 84)",
+  black: "#000000",
 
   /* DERIVATIVES */
   lightLive: "#4b84ff19",

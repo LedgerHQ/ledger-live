@@ -24,23 +24,23 @@ class EmptyStateAccount extends PureComponent<{
     return (
       <View style={styles.root}>
         <View style={styles.body}>
-          <Image source={require("../../images/content.png")} />
+          <Image source={require("../../images/EmptyStateAccount.png")} />
           <LText secondary semiBold style={styles.title}>
             {t("common:account.emptyState.title")}
           </LText>
           <LText style={styles.desc}>
             <Trans i18nKey="common:account.emptyState.desc">
               {"Make sure the"}
-              <LText bold>{account.currency.managerAppName}</LText>
+              <LText semiBold style={styles.managerAppName}>
+                {account.currency.managerAppName}
+              </LText>
               {"app is installed and start receiving"}
             </Trans>
           </LText>
-        </View>
-        <View style={{ marginHorizontal: 16 }}>
           <BlueButton
             title={t("common:account.emptyState.buttons.receiveFunds")}
             onPress={this.goToReceiveFunds}
-            containerStyle={null}
+            containerStyle={styles.recieveButton}
             titleStyle={[styles.buttonTitle]}
             iconLeft={<Receive size={16} color={colors.white} />}
           />
@@ -65,14 +65,23 @@ const styles = StyleSheet.create({
   buttonTitle: {
     fontSize: 16,
   },
+  recieveButton: {
+    height: 48,
+    width: 290,
+  },
   title: {
-    marginVertical: 16,
+    marginTop: 32,
+    marginBottom: 16,
     fontSize: 16,
   },
   desc: {
     color: colors.grey,
     marginHorizontal: 24,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 32,
+    maxWidth: 280,
+  },
+  managerAppName: {
+    color: colors.black,
   },
 });
