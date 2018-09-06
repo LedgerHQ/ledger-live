@@ -67,6 +67,7 @@
     "react-native-touch-id": "4.0.1",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "2.9.3",
+    "react-navigation-tabs": "^0.6.0",
     "react-redux": "5.0.7",
     "redux": "4.0.0",
     "redux-actions": "2.6.1",
