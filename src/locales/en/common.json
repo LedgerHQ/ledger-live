@@ -12,7 +12,14 @@
       "afternoon": "Good afternoon"
     },
     "summary": "Here's the summary of your account",
-    "summary_plural": "Here's the summary of your {{count}} accounts"
+    "summary_plural": "Here's the summary of your {{count}} accounts",
+    "emptyState": {
+      "title": "Add accounts to your portfolio",
+      "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
+      "buttons": {
+        "import": "Import accounts"
+      }
+    }
   },
   "time": {
     "day": "Day",
