@@ -14,6 +14,7 @@ import Trash from "../../../images/icons/Trash";
 import ModalBottomAction from "../../../components/ModalBottomAction";
 import RedButton from "../../../components/RedButton";
 import GreyButton from "../../../components/GreyButton";
+import IconInCircularCont from "../../../components/IconInCircularCont";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -48,10 +49,16 @@ class HardResetRow extends PureComponent<Props, State> {
     return (
       <Fragment>
         <SettingsRow
-          title={t("common:settings.help.hardReset")}
+          title={t("settings.help.hardReset")}
           titleStyle={{ color: colors.alert }}
-          desc={t("common:settings.help.hardResetDesc")}
-          arrowRight
+          desc={t("settings.help.hardResetDesc")}
+          iconLeft={
+            <IconInCircularCont
+              bgIconContainer="rgba(234,46,73,0.1)"
+              size={32}
+              icon={<Trash size={16} color={colors.alert} />}
+            />
+          }
           onPress={this.onPress}
         />
         {modalOpened && (
@@ -60,21 +67,23 @@ class HardResetRow extends PureComponent<Props, State> {
               <ModalBottomAction
                 title={null}
                 icon={
-                  <View style={styles.imageContainer}>
-                    <Trash size={24} color={colors.alert} />
-                  </View>
+                  <IconInCircularCont
+                    bgIconContainer={colors.lightAlert}
+                    size={56}
+                    icon={<Trash size={24} color={colors.alert} />}
+                  />
                 }
-                description={t("common:settings.help.hardResetModalDesc")}
+                description={t("settings.help.hardResetModalDesc")}
                 footer={
                   <View style={styles.footerContainer}>
                     <GreyButton
-                      title={t("common:common.cancel")}
+                      title={t("common.cancel")}
                       onPress={this.onRequestClose}
                       containerStyle={styles.buttonContainer}
                       titleStyle={styles.buttonTitle}
                     />
                     <RedButton
-                      title={t("common:settings.help.hardResetModalButton")}
+                      title={t("settings.help.hardResetModalButton")}
                       onPress={this.onHardReset}
                       containerStyle={[
                         styles.buttonContainer,
@@ -99,14 +108,6 @@ export default compose(
 )(withReboot(HardResetRow));
 
 const styles = StyleSheet.create({
-  imageContainer: {
-    height: 56,
-    width: 56,
-    borderRadius: 50,
-    backgroundColor: colors.lightAlert,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   footerContainer: {
     flexDirection: "row",
     justifyContent: "space-around",

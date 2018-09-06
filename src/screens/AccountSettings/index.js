@@ -20,6 +20,7 @@ import Archive from "../../images/icons/Archive";
 import ModalBottomAction from "../../components/ModalBottomAction";
 import RedButton from "../../components/RedButton";
 import GreyButton from "../../components/GreyButton";
+import IconInCircularCont from "../../components/IconInCircularCont";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -109,8 +110,9 @@ class AccountSettings extends PureComponent<Props, State> {
             title={t("common:account.settings.archive.title")}
             desc={t("common:account.settings.archive.desc")}
             iconLeft={
-              <IconLeft
+              <IconInCircularCont
                 bgIconContainer="rgba(153,153,153,0.1)"
+                size={32}
                 icon={<Archive size={16} color={colors.grey} />}
               />
             }
@@ -120,8 +122,9 @@ class AccountSettings extends PureComponent<Props, State> {
             title={t("common:account.settings.delete.title")}
             desc={t("common:account.settings.delete.desc")}
             iconLeft={
-              <IconLeft
+              <IconInCircularCont
                 bgIconContainer="rgba(234,46,73,0.1)"
+                size={32}
                 icon={<Trash size={16} color={colors.alert} />}
               />
             }
@@ -135,9 +138,11 @@ class AccountSettings extends PureComponent<Props, State> {
               <ModalBottomAction
                 title={null}
                 icon={
-                  <View style={styles.imageContainer}>
-                    <Trash size={24} color={colors.alert} />
-                  </View>
+                  <IconInCircularCont
+                    bgIconContainer={colors.lightAlert}
+                    size={56}
+                    icon={<Trash size={24} color={colors.alert} />}
+                  />
                 }
                 description={
                   <Trans i18nKey="common:account.settings.delete.confirmationDesc">
@@ -185,43 +190,14 @@ export default compose(
   translate(),
 )(AccountSettings);
 
-export function IconLeft({
-  icon,
-  bgIconContainer,
-}: {
-  icon: any,
-  bgIconContainer: string,
-}) {
-  return (
-    <View style={[styles.iconContainer, { backgroundColor: bgIconContainer }]}>
-      {icon}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   sectionRow: {
     marginTop: 16,
-  },
-  iconContainer: {
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 32,
-    width: 32,
   },
   accountName: {
     flex: 1,
     flexShrink: 1,
     color: colors.grey,
-  },
-  imageContainer: {
-    height: 56,
-    width: 56,
-    borderRadius: 50,
-    backgroundColor: colors.lightAlert,
-    alignItems: "center",
-    justifyContent: "center",
   },
   footerContainer: {
     flexDirection: "row",

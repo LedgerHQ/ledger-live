@@ -1,12 +1,13 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 
 import type { OperationType } from "@ledgerhq/live-common/lib/types";
 
 import ReceiveIcon from "../images/icons/Receive";
 import SendIcon from "../images/icons/Send";
+import IconInCircularCont from "./IconInCircularCont";
 
 import colors from "../colors";
 
@@ -31,27 +32,13 @@ export default class OperationIcon extends PureComponent<Props> {
     }
 
     return (
-      <View
-        style={[
-          styles.iconContainer,
-          {
-            backgroundColor: bgColor,
-            width: containerSize,
-            height: containerSize,
-          },
-        ]}
-      >
-        {icon}
+      <View style={{ marginLeft: 10 }}>
+        <IconInCircularCont
+          bgIconContainer={bgColor}
+          size={containerSize}
+          icon={icon}
+        />
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 10,
-  },
-});

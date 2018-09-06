@@ -6,6 +6,7 @@ import Touchable from "./Touchable";
 import Card from "./Card";
 import LText from "./LText";
 import colors from "../colors";
+import IconInCircularCont from "./IconInCircularCont";
 import { getElevationStyle } from "./ElevatedView";
 
 type Props = {
@@ -20,7 +21,11 @@ export default class SettingsCard extends Component<Props> {
     return (
       <Touchable onPress={onClick}>
         <Card style={[getElevationStyle(3), styles.cardStyle]}>
-          <View style={styles.imageContainer}>{icon}</View>
+          <IconInCircularCont
+            bgIconContainer={colors.lightLive}
+            size={32}
+            icon={icon}
+          />
           <View style={styles.cardTextBlock}>
             <LText secondary semiBold style={styles.title}>
               {title}
@@ -44,14 +49,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginLeft: 16,
     flex: 1,
-  },
-  imageContainer: {
-    height: 32,
-    width: 32,
-    borderRadius: 50,
-    backgroundColor: colors.lightLive,
-    alignItems: "center",
-    justifyContent: "center",
   },
   title: {
     color: colors.darkBlue,
