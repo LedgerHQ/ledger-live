@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import LText from "../../components/LText";
 import BlueButton from "../../components/BlueButton";
+import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
 
 export default class Intro extends Component<{
   onAccept: () => void,
@@ -20,6 +21,16 @@ export default class Intro extends Component<{
           .
         </LText>
         <BlueButton title="Scan the QR Code" onPress={onAccept} />
+
+        <GenerateMockAccountsButton
+          title="Generate Mock Accounts"
+          containerStyle={{
+            position: "absolute",
+            bottom: 20,
+            left: 20,
+            right: 20,
+          }}
+        />
       </View>
     );
   }
