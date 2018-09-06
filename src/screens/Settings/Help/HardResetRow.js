@@ -14,7 +14,7 @@ import Trash from "../../../images/icons/Trash";
 import ModalBottomAction from "../../../components/ModalBottomAction";
 import RedButton from "../../../components/RedButton";
 import GreyButton from "../../../components/GreyButton";
-import IconInCircularCont from "../../../components/IconInCircularCont";
+import Circle from "../../../components/Circle";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -53,11 +53,9 @@ class HardResetRow extends PureComponent<Props, State> {
           titleStyle={{ color: colors.alert }}
           desc={t("settings.help.hardResetDesc")}
           iconLeft={
-            <IconInCircularCont
-              bgIconContainer="rgba(234,46,73,0.1)"
-              size={32}
-              icon={<Trash size={16} color={colors.alert} />}
-            />
+            <Circle bg="rgba(234,46,73,0.1)" size={32}>
+              <Trash size={16} color={colors.alert} />
+            </Circle>
           }
           onPress={this.onPress}
         />
@@ -67,11 +65,9 @@ class HardResetRow extends PureComponent<Props, State> {
               <ModalBottomAction
                 title={null}
                 icon={
-                  <IconInCircularCont
-                    bgIconContainer={colors.lightAlert}
-                    size={56}
-                    icon={<Trash size={24} color={colors.alert} />}
-                  />
+                  <Circle bg={colors.lightAlert} size={56}>
+                    <Trash size={24} color={colors.alert} />
+                  </Circle>
                 }
                 description={t("settings.help.hardResetModalDesc")}
                 footer={

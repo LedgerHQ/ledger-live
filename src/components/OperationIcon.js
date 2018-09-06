@@ -7,7 +7,7 @@ import type { OperationType } from "@ledgerhq/live-common/lib/types";
 
 import ReceiveIcon from "../images/icons/Receive";
 import SendIcon from "../images/icons/Send";
-import IconInCircularCont from "./IconInCircularCont";
+import Circle from "./Circle";
 
 import colors from "../colors";
 
@@ -33,11 +33,9 @@ export default class OperationIcon extends PureComponent<Props> {
 
     return (
       <View style={{ marginLeft: 10 }}>
-        <IconInCircularCont
-          bgIconContainer={bgColor}
-          size={containerSize}
-          icon={icon}
-        />
+        <Circle bg={bgColor} size={containerSize}>
+          {icon}
+        </Circle>
       </View>
     );
   }

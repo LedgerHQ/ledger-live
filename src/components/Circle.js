@@ -3,28 +3,28 @@ import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 
 type Props = {
-  icon: any,
-  bgIconContainer: string,
+  bg: string,
   size: number,
+  children: *,
 };
-class IconInCircularCont extends Component<Props> {
+class Circle extends Component<Props> {
   render() {
-    const { icon, bgIconContainer, size } = this.props;
+    const { bg, size, children } = this.props;
 
     return (
       <View
         style={[
           styles.iconContainer,
-          { backgroundColor: bgIconContainer, height: size, width: size },
+          { backgroundColor: bg, height: size, width: size },
         ]}
       >
-        {icon}
+        {children}
       </View>
     );
   }
 }
 
-export default IconInCircularCont;
+export default Circle;
 
 const styles = StyleSheet.create({
   iconContainer: {
