@@ -25,8 +25,6 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import LText from "../../components/LText";
 import GraphCard from "../../components/GraphCard";
 import LoadingFooter from "../../components/LoadingFooter";
-import Wrench from "../../images/icons/Wrench";
-import Touchable from "../../components/Touchable";
 import colors from "./../../colors";
 import provideSummary from "../../components/provideSummary";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -35,6 +33,8 @@ import type { Item } from "../../components/Graph";
 import type { Summary } from "../../components/provideSummary";
 
 import EmptyStateAccount from "./EmptyStateAccount";
+import AccountHeaderRight from "./AccountHeaderRight";
+import AccountHeaderTitle from "./AccountHeaderTitle";
 
 type Props = {
   account: Account,
@@ -57,36 +57,14 @@ const isAccountEmpty = (a: Account): boolean =>
 
 class AccountScreen extends PureComponent<Props, State> {
   static navigationOptions = ({ navigation }) => ({
-    title: navigation.getParam("accountTitle", "Account"),
-    headerRight: (
-      <Touchable
-        onPress={() => {
-          navigation.navigate("AccountSettings", {
-            accountId: navigation.getParam("accountId", ""),
-          });
-        }}
-      >
-        <View style={{ marginRight: 16 }}>
-          <Wrench size={16} color={colors.grey} />
-        </View>
-      </Touchable>
-    ),
+    headerTitle: <AccountHeaderTitle navigation={navigation} />,
+    headerRight: <AccountHeaderRight navigation={navigation} />,
   });
 
   state = {
     opCount: 100,
     scrollEnabled: true,
   };
-
-  componentDidMount() {
-    const { account, navigation } = this.props;
-    if (account) {
-      navigation.setParams({
-        accountTitle: `Account ${account.name}`,
-        accountId: account.id,
-      });
-    }
-  }
 
   disableScroll = () => this.setState({ scrollEnabled: false });
   enableScroll = () => this.setState({ scrollEnabled: true });
