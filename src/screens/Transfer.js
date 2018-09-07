@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import Touchable from "../components/Touchable";
 import CreateModal from "../modals/Create";
@@ -14,35 +14,32 @@ const styles = StyleSheet.create({
   },
 });
 
-class Icon extends Component<*, *> {
+class Transfer extends Component<null, { isModalOpened: boolean }> {
   state = {
-    modalOpened: false,
+    isModalOpened: false,
   };
-  onPress = () => {
-    this.setState({ modalOpened: true });
-  };
-  onRequestClose = () => {
-    this.setState({ modalOpened: false });
-  };
+
+  openModal = () => this.setState({ isModalOpened: true });
+  onModalClose = () => this.setState({ isModalOpened: false });
+
   render() {
-    const { modalOpened } = this.state;
+    const { isModalOpened } = this.state;
     return (
-      <Touchable onPress={this.onPress}>
-        <View style={styles.root}>
-          <TransferIcon size={18} color={colors.grey} />
-          {modalOpened ? (
-            // $FlowFixMe
-            <CreateModal onRequestClose={this.onRequestClose} />
-          ) : null}
-        </View>
-      </Touchable>
+      <Fragment>
+        <Touchable onPress={this.openModal}>
+          <View style={styles.root}>
+            <TransferIcon size={18} color={colors.grey} />
+          </View>
+        </Touchable>
+        <CreateModal isOpened={isModalOpened} onClose={this.onModalClose} />
+      </Fragment>
     );
   }
 }
 
 export default class Create extends Component<*> {
   static navigationOptions = {
-    tabBarIcon: (props: *) => <Icon {...props} />,
+    tabBarIcon: (props: *) => <Transfer {...props} />,
     tabBarOnPress: () => {}, // noop
   };
   render() {

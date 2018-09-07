@@ -3,15 +3,15 @@ import React, { PureComponent, Fragment } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
-import { View, Modal, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { createStructuredSelector } from "reselect";
 import colors from "../../../colors";
 import { withReboot } from "../../../context/Reboot";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
-import Menu from "../../../components/Menu";
 import Trash from "../../../images/icons/Trash";
 import ModalBottomAction from "../../../components/ModalBottomAction";
+import BottomModal from "../../../components/BottomModal";
 import RedButton from "../../../components/RedButton";
 import GreyButton from "../../../components/GreyButton";
 import Circle from "../../../components/Circle";
@@ -24,27 +24,20 @@ type Props = {
 };
 
 type State = {
-  modalOpened: boolean,
+  isModalOpened: boolean,
 };
 class HardResetRow extends PureComponent<Props, State> {
   state = {
-    modalOpened: false,
+    isModalOpened: false,
   };
 
-  onRequestClose = () => {
-    this.setState({ modalOpened: false });
-  };
+  onRequestClose = () => this.setState({ isModalOpened: false });
+  onPress = () => this.setState({ isModalOpened: true });
+  onHardReset = () => this.props.reboot(true);
 
-  onPress = () => {
-    this.setState({ modalOpened: true });
-  };
-
-  onHardReset = () => {
-    this.props.reboot(true);
-  };
   render() {
     const { t } = this.props;
-    const { modalOpened } = this.state;
+    const { isModalOpened } = this.state;
 
     return (
       <Fragment>
@@ -59,40 +52,36 @@ class HardResetRow extends PureComponent<Props, State> {
           }
           onPress={this.onPress}
         />
-        {modalOpened && (
-          <Modal transparent onRequestClose={this.onRequestClose}>
-            <Menu onRequestClose={this.onRequestClose}>
-              <ModalBottomAction
-                title={null}
-                icon={
-                  <Circle bg={colors.lightAlert} size={56}>
-                    <Trash size={24} color={colors.alert} />
-                  </Circle>
-                }
-                description={t("settings.help.hardResetModalDesc")}
-                footer={
-                  <View style={styles.footerContainer}>
-                    <GreyButton
-                      title={t("common.cancel")}
-                      onPress={this.onRequestClose}
-                      containerStyle={styles.buttonContainer}
-                      titleStyle={styles.buttonTitle}
-                    />
-                    <RedButton
-                      title={t("settings.help.hardResetModalButton")}
-                      onPress={this.onHardReset}
-                      containerStyle={[
-                        styles.buttonContainer,
-                        styles.resetButtonBg,
-                      ]}
-                      titleStyle={[styles.buttonTitle, styles.resetButtonTitle]}
-                    />
-                  </View>
-                }
-              />
-            </Menu>
-          </Modal>
-        )}
+        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+          <ModalBottomAction
+            title={null}
+            icon={
+              <Circle bg={colors.lightAlert} size={56}>
+                <Trash size={24} color={colors.alert} />
+              </Circle>
+            }
+            description={t("settings.help.hardResetModalDesc")}
+            footer={
+              <View style={styles.footerContainer}>
+                <GreyButton
+                  title={t("common.cancel")}
+                  onPress={this.onRequestClose}
+                  containerStyle={styles.buttonContainer}
+                  titleStyle={styles.buttonTitle}
+                />
+                <RedButton
+                  title={t("settings.help.hardResetModalButton")}
+                  onPress={this.onHardReset}
+                  containerStyle={[
+                    styles.buttonContainer,
+                    styles.resetButtonBg,
+                  ]}
+                  titleStyle={[styles.buttonTitle, styles.resetButtonTitle]}
+                />
+              </View>
+            }
+          />
+        </BottomModal>
       </Fragment>
     );
   }

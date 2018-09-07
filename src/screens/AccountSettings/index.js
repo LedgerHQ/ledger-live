@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
-import { View, StyleSheet, Modal } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
@@ -12,7 +12,6 @@ import { deleteAccount } from "../../actions/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import type { T } from "../../types/common";
 import SettingsRow from "../../components/SettingsRow";
-import Menu from "../../components/Menu";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import Trash from "../../images/icons/Trash";
@@ -21,6 +20,7 @@ import ModalBottomAction from "../../components/ModalBottomAction";
 import RedButton from "../../components/RedButton";
 import GreyButton from "../../components/GreyButton";
 import Circle from "../../components/Circle";
+import BottomModal from "../../components/BottomModal";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -32,7 +32,7 @@ type Props = {
 };
 
 type State = {
-  modalOpened: boolean,
+  isModalOpened: boolean,
 };
 const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
@@ -52,15 +52,15 @@ class AccountSettings extends PureComponent<Props, State> {
   });
 
   state = {
-    modalOpened: false,
+    isModalOpened: false,
   };
 
   onRequestClose = () => {
-    this.setState({ modalOpened: false });
+    this.setState({ isModalOpened: false });
   };
 
   onPress = () => {
-    this.setState({ modalOpened: true });
+    this.setState({ isModalOpened: true });
   };
   deleteAccount = () => {
     const { account, deleteAccount, navigation } = this.props;
@@ -69,7 +69,7 @@ class AccountSettings extends PureComponent<Props, State> {
   };
   render() {
     const { navigation, t, account } = this.props;
-    const { modalOpened } = this.state;
+    const { isModalOpened } = this.state;
     if (!account) return null;
     return (
       <Fragment>
@@ -128,49 +128,42 @@ class AccountSettings extends PureComponent<Props, State> {
             titleStyle={{ color: colors.alert }}
           />
         </View>
-        {modalOpened && (
-          <Modal transparent onRequestClose={this.onRequestClose}>
-            <Menu onRequestClose={this.onRequestClose}>
-              <ModalBottomAction
-                title={null}
-                icon={
-                  <Circle bg={colors.lightAlert} size={56}>
-                    <Trash size={24} color={colors.alert} />
-                  </Circle>
-                }
-                description={
-                  <Trans i18nKey="common:account.settings.delete.confirmationDesc">
-                    {"Are you sure you want to delete "}
-                    <LText bold>{account.name}</LText>
-                    {"account"}
-                  </Trans>
-                }
-                footer={
-                  <View style={styles.footerContainer}>
-                    <GreyButton
-                      title={t("common:common.cancel")}
-                      onPress={this.onRequestClose}
-                      containerStyle={styles.buttonContainer}
-                      titleStyle={styles.buttonTitle}
-                    />
-                    <RedButton
-                      title={t("common:common.delete")}
-                      onPress={this.deleteAccount}
-                      containerStyle={[
-                        styles.buttonContainer,
-                        styles.deleteButtonBg,
-                      ]}
-                      titleStyle={[
-                        styles.buttonTitle,
-                        styles.deleteButtonTitle,
-                      ]}
-                    />
-                  </View>
-                }
-              />
-            </Menu>
-          </Modal>
-        )}
+        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+          <ModalBottomAction
+            title={null}
+            icon={
+              <Circle bg={colors.lightAlert} size={56}>
+                <Trash size={24} color={colors.alert} />
+              </Circle>
+            }
+            description={
+              <Trans i18nKey="common:account.settings.delete.confirmationDesc">
+                {"Are you sure you want to delete "}
+                <LText bold>{account.name}</LText>
+                {"account"}
+              </Trans>
+            }
+            footer={
+              <View style={styles.footerContainer}>
+                <GreyButton
+                  title={t("common:common.cancel")}
+                  onPress={this.onRequestClose}
+                  containerStyle={styles.buttonContainer}
+                  titleStyle={styles.buttonTitle}
+                />
+                <RedButton
+                  title={t("common:common.delete")}
+                  onPress={this.deleteAccount}
+                  containerStyle={[
+                    styles.buttonContainer,
+                    styles.deleteButtonBg,
+                  ]}
+                  titleStyle={[styles.buttonTitle, styles.deleteButtonTitle]}
+                />
+              </View>
+            }
+          />
+        </BottomModal>
       </Fragment>
     );
   }

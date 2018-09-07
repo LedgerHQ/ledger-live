@@ -6,24 +6,20 @@ import Touchable from "../../components/Touchable";
 import colors from "../../colors";
 import AccountOrderModal from "./AccountOrderModal";
 
-class AddAccount extends PureComponent<{}, { opened: boolean }> {
+class AddAccount extends PureComponent<{}, { isOpened: boolean }> {
   state = {
-    opened: false,
+    isOpened: false,
   };
-  onPress = () => {
-    this.setState({ opened: true });
-  };
-  onRequestClose = () => {
-    this.setState({ opened: false });
-  };
+
+  onPress = () => this.setState({ isOpened: true });
+  onClose = () => this.setState({ isOpened: false });
+
   render() {
-    const { opened } = this.state;
+    const { isOpened } = this.state;
     return (
       <Touchable style={{ marginHorizontal: 16 }} onPress={this.onPress}>
         <Icon name="sliders" color={colors.grey} size={20} />
-        {opened ? (
-          <AccountOrderModal onRequestClose={this.onRequestClose} />
-        ) : null}
+        <AccountOrderModal isOpened={isOpened} onClose={this.onClose} />
       </Touchable>
     );
   }

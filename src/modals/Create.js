@@ -1,15 +1,22 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { Modal } from "react-native";
 import { withNavigation } from "react-navigation";
-import Menu from "../components/Menu";
-import MenuTitle from "../components/MenuTitle";
-import MenuChoice from "../components/MenuChoice";
 
-class CreateModal extends Component<*> {
+import type { NavigationScreenProp } from "react-navigation";
+
+import MenuChoice from "../components/MenuChoice";
+import BottomModal from "../components/BottomModal";
+
+import type { Props as ModalProps } from "../components/BottomModal";
+
+type Props = ModalProps & {
+  navigation: NavigationScreenProp<*>,
+};
+
+class CreateModal extends Component<Props> {
   onSendFunds = () => {
-    const { navigation, onRequestClose } = this.props;
+    const { navigation, onClose } = this.props;
     navigation.navigate({
       routeName: "SendFunds",
       params: {
@@ -17,39 +24,34 @@ class CreateModal extends Component<*> {
       },
       key: "sendfunds",
     });
-    onRequestClose();
+    onClose();
   };
   onReceiveFunds = () => {
-    const { navigation, onRequestClose } = this.props;
+    const { navigation, onClose } = this.props;
     navigation.navigate({
       routeName: "ReceiveFunds",
       params: { goBackKey: navigation.state.key },
       key: "receiveffunds",
     });
-    onRequestClose();
+    onClose();
   };
   render() {
-    const { onRequestClose } = this.props;
+    const { onClose, isOpened } = this.props;
     return (
-      <Modal transparent onRequestClose={onRequestClose}>
-        <Menu
-          onRequestClose={onRequestClose}
-          header={<MenuTitle>Transfer money</MenuTitle>}
-        >
-          <MenuChoice
-            title="Send funds"
-            icon={null}
-            description="Lorem ipsum dolor ledger"
-            onPress={this.onSendFunds}
-          />
-          <MenuChoice
-            title="Receive funds"
-            icon={null}
-            description="Lorem ipsum dolor ledger"
-            onPress={this.onReceiveFunds}
-          />
-        </Menu>
-      </Modal>
+      <BottomModal isOpened={isOpened} onClose={onClose}>
+        <MenuChoice
+          title="Send funds"
+          icon={null}
+          description="Lorem ipsum dolor ledger"
+          onPress={this.onSendFunds}
+        />
+        <MenuChoice
+          title="Receive funds"
+          icon={null}
+          description="Lorem ipsum dolor ledger"
+          onPress={this.onReceiveFunds}
+        />
+      </BottomModal>
     );
   }
 }

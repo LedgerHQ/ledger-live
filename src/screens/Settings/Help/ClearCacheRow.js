@@ -3,18 +3,18 @@ import React, { PureComponent, Fragment } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
-import { View, Modal, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { createStructuredSelector } from "reselect";
 import colors from "../../../colors";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
-import Menu from "../../../components/Menu";
 import Warning from "../../../images/icons/Warning";
 import ModalBottomAction from "../../../components/ModalBottomAction";
 import BlueButton from "../../../components/BlueButton";
 import GreyButton from "../../../components/GreyButton";
 import Archive from "../../../images/icons/Archive";
 import Circle from "../../../components/Circle";
+import BottomModal from "../../../components/BottomModal";
 
 const mapStateToProps = createStructuredSelector({});
 
@@ -23,20 +23,20 @@ type Props = {
 };
 
 type State = {
-  modalOpened: boolean,
+  isModalOpened: boolean,
 };
 
 class ClearCacheRow extends PureComponent<Props, State> {
   state = {
-    modalOpened: false,
+    isModalOpened: false,
   };
 
   onRequestClose = () => {
-    this.setState({ modalOpened: false });
+    this.setState({ isModalOpened: false });
   };
 
   onPress = () => {
-    this.setState({ modalOpened: true });
+    this.setState({ isModalOpened: true });
   };
 
   onClearCache = () => {
@@ -44,7 +44,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
   };
   render() {
     const { t } = this.props;
-    const { modalOpened } = this.state;
+    const { isModalOpened } = this.state;
 
     return (
       <Fragment>
@@ -58,41 +58,34 @@ class ClearCacheRow extends PureComponent<Props, State> {
           }
           onPress={this.onPress}
         />
-        {modalOpened && (
-          <Modal transparent onRequestClose={this.onRequestClose}>
-            <Menu onRequestClose={this.onRequestClose}>
-              <ModalBottomAction
-                title={null}
-                icon={
-                  <Circle bg={colors.lightLive} size={56}>
-                    <Warning size={24} color={colors.live} />
-                  </Circle>
-                }
-                description={t("settings.help.clearCacheModalDesc")}
-                footer={
-                  <View style={styles.footerContainer}>
-                    <GreyButton
-                      title={t("common.cancel")}
-                      onPress={this.onRequestClose}
-                      containerStyle={styles.buttonContainer}
-                      titleStyle={styles.buttonTitle}
-                    />
+        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+          <ModalBottomAction
+            title={null}
+            icon={
+              <Circle bg={colors.lightLive} size={56}>
+                <Warning size={24} color={colors.live} />
+              </Circle>
+            }
+            description={t("settings.help.clearCacheModalDesc")}
+            footer={
+              <View style={styles.footerContainer}>
+                <GreyButton
+                  title={t("common.cancel")}
+                  onPress={this.onRequestClose}
+                  containerStyle={styles.buttonContainer}
+                  titleStyle={styles.buttonTitle}
+                />
 
-                    <BlueButton
-                      title={t("settings.help.clearCacheButton")}
-                      onPress={this.onClearCache}
-                      containerStyle={[
-                        styles.buttonContainer,
-                        styles.clearCacheBg,
-                      ]}
-                      titleStyle={[styles.buttonTitle, styles.clearCacheTitle]}
-                    />
-                  </View>
-                }
-              />
-            </Menu>
-          </Modal>
-        )}
+                <BlueButton
+                  title={t("settings.help.clearCacheButton")}
+                  onPress={this.onClearCache}
+                  containerStyle={[styles.buttonContainer, styles.clearCacheBg]}
+                  titleStyle={[styles.buttonTitle, styles.clearCacheTitle]}
+                />
+              </View>
+            }
+          />
+        </BottomModal>
       </Fragment>
     );
   }
