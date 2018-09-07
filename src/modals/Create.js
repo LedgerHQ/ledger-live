@@ -5,8 +5,11 @@ import { withNavigation } from "react-navigation";
 
 import type { NavigationScreenProp } from "react-navigation";
 
-import MenuChoice from "../components/MenuChoice";
 import BottomModal from "../components/BottomModal";
+import BottomModalChoice from "../components/BottomModalChoice";
+import IconSend from "../images/icons/Send";
+import IconReceive from "../images/icons/Receive";
+import IconExchange from "../images/icons/Exchange";
 
 import type { Props as ModalProps } from "../components/BottomModal";
 
@@ -35,21 +38,34 @@ class CreateModal extends Component<Props> {
     });
     onClose();
   };
+  onExchange = () => {
+    console.log(`exchange screen`);
+  };
   render() {
     const { onClose, isOpened } = this.props;
     return (
-      <BottomModal isOpened={isOpened} onClose={onClose}>
-        <MenuChoice
+      <BottomModal
+        isOpened={isOpened}
+        onClose={onClose}
+        style={{ paddingVertical: 20 }}
+      >
+        <BottomModalChoice
           title="Send funds"
-          icon={null}
           description="Lorem ipsum dolor ledger"
           onPress={this.onSendFunds}
+          Icon={IconSend}
         />
-        <MenuChoice
+        <BottomModalChoice
           title="Receive funds"
-          icon={null}
           description="Lorem ipsum dolor ledger"
           onPress={this.onReceiveFunds}
+          Icon={IconReceive}
+        />
+        <BottomModalChoice
+          title="Exchange"
+          description="Lorem ipsum dolor ledger"
+          Icon={IconExchange}
+          onPress={this.onExchange}
         />
       </BottomModal>
     );
