@@ -92,6 +92,7 @@ class Portfolio extends Component<
         operation={item}
         account={account}
         navigation={this.props.navigation}
+        multipleAccounts
       />
     );
   };

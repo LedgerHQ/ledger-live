@@ -31,7 +31,7 @@ export function sortAccounts(param: Param) {
   const [order, sort] = param.orderAccounts.split("|");
   if (order === "name" || order === "balance") {
     const ids = sortMethod[order](param);
-    if (sort === "asc") {
+    if (sort === "desc") {
       ids.reverse();
     }
     return ids;

@@ -17,11 +17,9 @@ class CurrencyUnitValue extends Component<{
     showCode: true,
   };
   render() {
-    const { unit, value, showCode, locale, alwaysShowSign } = this.props;
+    const { unit, value, ...rest } = this.props;
     return formatCurrencyUnit(unit, value, {
-      showCode,
-      locale,
-      alwaysShowSign,
+      ...rest,
     });
   }
 }
