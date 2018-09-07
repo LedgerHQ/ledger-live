@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   root: {
     position: "absolute",
     backgroundColor: "white",
+    overflow: "hidden",
     top: 0,
     left: 0,
     right: 0,
