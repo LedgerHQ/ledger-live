@@ -1,15 +1,25 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { Modal } from "react-native";
 import { withNavigation } from "react-navigation";
-import Menu from "../components/Menu";
-import MenuTitle from "../components/MenuTitle";
-import MenuChoice from "../components/MenuChoice";
 
-class CreateModal extends Component<*> {
+import type { NavigationScreenProp } from "react-navigation";
+
+import BottomModal from "../components/BottomModal";
+import BottomModalChoice from "../components/BottomModalChoice";
+import IconSend from "../images/icons/Send";
+import IconReceive from "../images/icons/Receive";
+import IconExchange from "../images/icons/Exchange";
+
+import type { Props as ModalProps } from "../components/BottomModal";
+
+type Props = ModalProps & {
+  navigation: NavigationScreenProp<*>,
+};
+
+class CreateModal extends Component<Props> {
   onSendFunds = () => {
-    const { navigation, onRequestClose } = this.props;
+    const { navigation, onClose } = this.props;
     navigation.navigate({
       routeName: "SendFunds",
       params: {
@@ -17,39 +27,47 @@ class CreateModal extends Component<*> {
       },
       key: "sendfunds",
     });
-    onRequestClose();
+    onClose();
   };
   onReceiveFunds = () => {
-    const { navigation, onRequestClose } = this.props;
+    const { navigation, onClose } = this.props;
     navigation.navigate({
       routeName: "ReceiveFunds",
       params: { goBackKey: navigation.state.key },
       key: "receiveffunds",
     });
-    onRequestClose();
+    onClose();
+  };
+  onExchange = () => {
+    console.log(`exchange screen`);
   };
   render() {
-    const { onRequestClose } = this.props;
+    const { onClose, isOpened } = this.props;
     return (
-      <Modal transparent onRequestClose={onRequestClose}>
-        <Menu
-          onRequestClose={onRequestClose}
-          header={<MenuTitle>Transfer money</MenuTitle>}
-        >
-          <MenuChoice
-            title="Send funds"
-            icon={null}
-            description="Lorem ipsum dolor ledger"
-            onPress={this.onSendFunds}
-          />
-          <MenuChoice
-            title="Receive funds"
-            icon={null}
-            description="Lorem ipsum dolor ledger"
-            onPress={this.onReceiveFunds}
-          />
-        </Menu>
-      </Modal>
+      <BottomModal
+        isOpened={isOpened}
+        onClose={onClose}
+        style={{ paddingVertical: 20 }}
+      >
+        <BottomModalChoice
+          title="Send funds"
+          description="Lorem ipsum dolor ledger"
+          onPress={this.onSendFunds}
+          Icon={IconSend}
+        />
+        <BottomModalChoice
+          title="Receive funds"
+          description="Lorem ipsum dolor ledger"
+          onPress={this.onReceiveFunds}
+          Icon={IconReceive}
+        />
+        <BottomModalChoice
+          title="Exchange"
+          description="Lorem ipsum dolor ledger"
+          Icon={IconExchange}
+          onPress={this.onExchange}
+        />
+      </BottomModal>
     );
   }
 }

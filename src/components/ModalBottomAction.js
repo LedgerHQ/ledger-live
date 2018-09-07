@@ -13,18 +13,16 @@ export default class ModalBottomAction extends Component<{
   render() {
     const { icon, title, description, footer } = this.props;
     return (
-      <View>
-        <View style={styles.root}>
-          <View style={styles.icon}>{icon}</View>
-          <View style={styles.body}>
-            {title && (
-              <LText bold style={styles.title}>
-                {title}
-              </LText>
-            )}
-            <LText style={styles.description}>{description}</LText>
-            <View style={styles.footer}>{footer}</View>
-          </View>
+      <View style={styles.root}>
+        <View style={styles.icon}>{icon}</View>
+        <View style={styles.body}>
+          {title && (
+            <LText bold style={styles.title}>
+              {title}
+            </LText>
+          )}
+          <LText style={styles.description}>{description}</LText>
+          <View style={styles.footer}>{footer}</View>
         </View>
       </View>
     );

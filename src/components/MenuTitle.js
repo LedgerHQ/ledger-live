@@ -1,22 +1,27 @@
 /* @flow */
-import React, { Component } from "react";
-import { StyleSheet } from "react-native";
+import React, { PureComponent } from "react";
+import { StyleSheet, View } from "react-native";
 import LText from "./LText";
 
-export default class MenuTitle extends Component<{
-  children: *,
-}> {
+export default class MenuTitle extends PureComponent<{ children: any }> {
   render() {
     const { children } = this.props;
     return (
-      <LText semiBold style={styles.text}>
-        {children}
-      </LText>
+      <View style={styles.root}>
+        <LText semiBold style={styles.text}>
+          {children}
+        </LText>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  root: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 60,
+  },
   text: {
     fontSize: 16,
   },
