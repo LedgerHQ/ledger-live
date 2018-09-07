@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Dimensions, StatusBar } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import { RNCamera } from "react-native-camera";
 import toLength from "lodash/toLength";
 import ProgressCircle from "react-native-progress/Circle";
@@ -10,6 +10,7 @@ import {
   chunksToResult,
 } from "@ledgerhq/live-common/lib/bridgestream/importer";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
+import StatusBar from "../../components/StatusBar";
 import colors, { rgba } from "../../colors";
 
 type Props = { onResult: Result => void };
@@ -86,13 +87,10 @@ export default class Scanning extends PureComponent<
     // Make the viewfinder borders 2/3 of the screen shortest border
     const viewFinderSize = (width > height ? height : width) * (2 / 3);
 
-    StatusBar.setTranslucent(true);
-    StatusBar.setBarStyle("light-content");
-    StatusBar.setBackgroundColor("rgba(0, 0, 0, 0)", true);
-
     // TODO some instruction on screen + progress indicator
     return (
       <View style={styles.root} onLayout={this.setDimensions}>
+        <StatusBar transparent="light-content" />
         <RNCamera
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
           onBarCodeRead={this.onBarCodeRead}

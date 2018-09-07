@@ -1,7 +1,7 @@
 // @flow
 import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
-import { StyleSheet, View, StatusBar, Platform } from "react-native";
+import { StyleSheet, View } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import colors from "./colors";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
@@ -15,6 +15,7 @@ import { RootNavigator } from "./navigators";
 import AuthFailedApp from "./components/AuthFailedApp";
 import AuthPendingApp from "./components/AuthPendingApp";
 import LoadingApp from "./components/LoadingApp";
+import StatusBar from "./components/StatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
 
@@ -32,14 +33,9 @@ class App extends Component<*> {
   hasAccountsChanged = (a, b) => a.accounts !== b.accounts;
 
   render() {
-    const ColoredBar =
-      Platform.OS === "android" && Platform.Version < 23 ? null : (
-        <StatusBar backgroundColor={colors.white} barStyle="dark-content" />
-      );
-
     return (
       <View style={styles.root}>
-        {ColoredBar}
+        <StatusBar backgroundColor={colors.white} />
 
         <DBSave
           dbKey="countervalues"
