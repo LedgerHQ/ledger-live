@@ -1,13 +1,15 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, TouchableHighlight } from "react-native";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 
 import LText from "./LText";
-import OperationIcon from "./OperationIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
+import CurrencyIcon from "./CurrencyIcon";
+import OperationIcon from "./OperationIcon";
 
 import colors from "../colors";
 
@@ -15,9 +17,14 @@ type Props = {
   operation: Operation,
   account: Account,
   navigation: *,
+  multipleAccounts?: boolean,
 };
 
 class OperationRow extends PureComponent<Props, *> {
+  static defaultProps = {
+    displayCurrencyLogo: false,
+  };
+
   goToOperationDetails = () => {
     this.props.navigation.navigate("OperationDetails", {
       account: this.props.account,
@@ -26,13 +33,18 @@ class OperationRow extends PureComponent<Props, *> {
   };
 
   render() {
-    const { operation, account } = this.props;
-    const valueColor = operation.type === "IN" ? colors.green : colors.smoke;
-
+    const { operation, account, multipleAccounts } = this.props;
+    const amount = getOperationAmountNumber(operation);
+    const valueColor = amount.isNegative() ? colors.smoke : colors.green;
+    const text = operation.type === "IN" ? "Received" : "Sent";
     return (
       <TouchableHighlight onPress={this.goToOperationDetails}>
         <View style={styles.root}>
-          <OperationIcon size={16} containerSize={28} type={operation.type} />
+          {multipleAccounts ? (
+            <CurrencyIcon size={20} currency={account.currency} />
+          ) : (
+            <OperationIcon size={16} containerSize={28} type={operation.type} />
+          )}
           <View style={[styles.body, styles.bodyLeft]}>
             <LText
               numberOfLines={1}
@@ -40,13 +52,13 @@ class OperationRow extends PureComponent<Props, *> {
               ellipsizeMode="tail"
               style={styles.topLine}
             >
-              {account.name}
+              {multipleAccounts ? account.name : text}
             </LText>
             <LText numberOfLines={1} style={styles.bottomLine}>
-              {operation.date.toLocaleTimeString([], {
+              {`${text} at ${operation.date.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
-              })}
+              })}`}
             </LText>
           </View>
           <View style={[styles.body, styles.bodyRight]}>
@@ -59,7 +71,8 @@ class OperationRow extends PureComponent<Props, *> {
               <CurrencyUnitValue
                 showCode
                 unit={account.unit}
-                value={operation.value}
+                value={amount}
+                alwaysShowSign
               />
             </LText>
             <LText
@@ -71,7 +84,8 @@ class OperationRow extends PureComponent<Props, *> {
               <CounterValue
                 showCode
                 currency={account.currency}
-                value={operation.value}
+                value={amount}
+                alwaysShowSign
               />
             </LText>
           </View>

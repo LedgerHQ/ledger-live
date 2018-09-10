@@ -48,6 +48,7 @@ class AmountInput extends Component<Props> {
             keyboardType="numeric"
             placeholder="0"
             ref={this.input}
+            blurOnSubmit
           />
           {!!value && (
             <TouchableOpacity onPress={this.clear}>

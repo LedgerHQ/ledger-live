@@ -5,6 +5,9 @@ import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
 } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
@@ -51,6 +54,11 @@ class SelectFunds extends Component<Props, State> {
     amountBigNumber: new BigNumber(0),
   };
 
+  blur = () => {
+    console.log("blur");
+    Keyboard.dismiss();
+  };
+
   onChangeText = (amount: string) => {
     if (amount && !isNaN(amount)) {
       const { account } = this.props;
@@ -90,67 +98,74 @@ class SelectFunds extends Component<Props, State> {
     const isWithinBalance = amountBigNumber.lt(account.balance);
     const isValid = amountBigNumber.gt(0) && isWithinBalance;
 
+    const keyboardVerticalOffset = Platform.OS === "ios" ? 60 : 0;
+
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={5} currentStep={3} />
         <KeyboardAvoidingView
           style={styles.container}
+          keyboardVerticalOffset={keyboardVerticalOffset}
           behavior="padding"
           enabled
         >
-          <AmountInput
-            onChangeText={this.onChangeText}
-            currency={account.unit.code}
-            value={amount}
-            isWithinBalance={isWithinBalance}
-          />
-          <CounterValuesSeparator />
-          <View style={styles.countervaluesWrapper}>
-            <LText tertiary style={styles.countervaluesText}>
-              <CounterValue
-                showCode
-                currency={account.currency}
-                value={amountBigNumber}
+          <TouchableWithoutFeedback onPress={this.blur}>
+            <View style={{ flex: 1 }}>
+              <AmountInput
+                onChangeText={this.onChangeText}
+                currency={account.unit.code}
+                value={amount}
+                isWithinBalance={isWithinBalance}
               />
-            </LText>
-          </View>
-          <View style={styles.bottomWrapper}>
-            <OutlineButton
-              outlineColor={colors.live}
-              containerStyle={styles.useMaxButton}
-              onPress={() => {
-                console.log("max"); // eslint-disable-line no-console
-              }}
-              hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
-            >
-              <LText bold style={styles.useMaxText}>
-                USE MAX
-              </LText>
-            </OutlineButton>
-            <LText style={styles.available}>
-              Available : &nbsp;
-              <CurrencyUnitValue
-                showCode
-                unit={account.unit}
-                value={account.balance}
-              />
-            </LText>
-            <View style={styles.continueWrapper}>
-              <BlueButton
-                title="Continue"
-                onPress={this.navigate}
-                disabled={!isValid}
-                containerStyle={[
-                  styles.continueButton,
-                  !isValid ? styles.disabledContinueButton : null,
-                ]}
-                titleStyle={[
-                  styles.continueButtonText,
-                  !isValid ? styles.disabledContinueButtonText : null,
-                ]}
-              />
+              <CounterValuesSeparator />
+              <View style={styles.countervaluesWrapper}>
+                <LText tertiary style={styles.countervaluesText}>
+                  <CounterValue
+                    showCode
+                    currency={account.currency}
+                    value={amountBigNumber}
+                  />
+                </LText>
+              </View>
+              <View style={styles.bottomWrapper}>
+                <OutlineButton
+                  outlineColor={colors.live}
+                  containerStyle={styles.useMaxButton}
+                  onPress={() => {
+                    console.log("max"); // eslint-disable-line no-console
+                  }}
+                  hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
+                >
+                  <LText bold style={styles.useMaxText}>
+                    USE MAX
+                  </LText>
+                </OutlineButton>
+                <LText style={styles.available}>
+                  Available : &nbsp;
+                  <CurrencyUnitValue
+                    showCode
+                    unit={account.unit}
+                    value={account.balance}
+                  />
+                </LText>
+                <View style={styles.continueWrapper}>
+                  <BlueButton
+                    title="Continue"
+                    onPress={this.navigate}
+                    disabled={!isValid}
+                    containerStyle={[
+                      styles.continueButton,
+                      !isValid ? styles.disabledContinueButton : null,
+                    ]}
+                    titleStyle={[
+                      styles.continueButtonText,
+                      !isValid ? styles.disabledContinueButtonText : null,
+                    ]}
+                  />
+                </View>
+              </View>
             </View>
-          </View>
+          </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
@@ -165,7 +180,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    alignItems: "flex-start",
+    alignItems: "stretch",
   },
   available: {
     fontSize: 12,

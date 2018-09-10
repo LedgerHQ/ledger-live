@@ -1,6 +1,14 @@
 // @flow
 import React, { Component } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Keyboard,
+  Platform,
+} from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
@@ -32,11 +40,9 @@ type State = {
 };
 
 class FeeSettings extends Component<Props, State> {
-  static navigationOptions = ({ screenProps }: *) => ({
+  static navigationOptions = ({ navigation }: *) => ({
     title: "Edit fees",
-    headerRight: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    ),
+    headerRight: <HeaderRightClose navigation={navigation} />,
   });
 
   state = {
@@ -55,6 +61,7 @@ class FeeSettings extends Component<Props, State> {
       },
     } = navigation;
     const { fees } = this.state;
+    Keyboard.dismiss();
     navigation.navigate("SendSummary", {
       ...params,
       accountId: account.id,
@@ -63,39 +70,52 @@ class FeeSettings extends Component<Props, State> {
   };
 
   render(): React$Node {
+    const keyboardVerticalOffset = Platform.OS === "ios" ? 60 : 0;
+
     return (
       <SafeAreaView style={styles.root}>
-        <FeesRow
-          title="Low"
-          value={5}
-          currentValue={this.state.fees}
-          onPress={this.onPressFees}
-        />
-        <FeesRow
-          title="Standard"
-          value={10}
-          currentValue={this.state.fees}
-          onPress={this.onPressFees}
-        />
-        <FeesRow
-          title="High"
-          value={15}
-          currentValue={this.state.fees}
-          onPress={this.onPressFees}
-        />
-        <CustomFeesRow
-          title="Custom"
-          currentValue={this.state.fees}
-          onPress={this.onPressFees}
-        />
-        <View style={styles.buttonContainer}>
-          <BlueButton
-            title="Validate Fees"
-            containerStyle={styles.continueButton}
-            titleStyle={styles.continueButtonTitle}
-            onPress={this.onValidateFees}
-          />
-        </View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          keyboardVerticalOffset={keyboardVerticalOffset}
+          behavior="padding"
+          enabled
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{ flex: 1 }}>
+              <FeesRow
+                title="Low"
+                value={5}
+                currentValue={this.state.fees}
+                onPress={this.onPressFees}
+              />
+              <FeesRow
+                title="Standard"
+                value={10}
+                currentValue={this.state.fees}
+                onPress={this.onPressFees}
+              />
+              <FeesRow
+                title="High"
+                value={15}
+                currentValue={this.state.fees}
+                onPress={this.onPressFees}
+              />
+              <CustomFeesRow
+                title="Custom"
+                currentValue={this.state.fees}
+                onPress={this.onPressFees}
+              />
+              <View style={styles.buttonContainer}>
+                <BlueButton
+                  title="Validate Fees"
+                  containerStyle={styles.continueButton}
+                  titleStyle={styles.continueButtonTitle}
+                  onPress={this.onValidateFees}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
@@ -119,6 +139,9 @@ const styles = StyleSheet.create({
   continueButtonTitle: {
     fontSize: 16,
     fontFamily: "Museo Sans",
+  },
+  container: {
+    flex: 1,
   },
 });
 

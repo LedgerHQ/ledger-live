@@ -7,6 +7,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -76,10 +77,18 @@ class SelectRecipient extends Component<Props, State> {
   render() {
     const { address, validAddress } = this.state;
     const { account } = this.props;
+
+    const keyboardVerticalOffset = Platform.OS === "ios" ? 60 : 0;
+
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={5} currentStep={2} />
-        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }} enabled>
+        <KeyboardAvoidingView
+          behavior="padding"
+          style={{ flex: 1 }}
+          enabled
+          keyboardVerticalOffset={keyboardVerticalOffset}
+        >
           <View style={styles.container}>
             <OutlineButton
               onPress={() => {
