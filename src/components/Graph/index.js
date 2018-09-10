@@ -152,6 +152,9 @@ export default class Graph extends PureComponent<Props, State> {
         onResponderGrant={isInteractive ? this.onResponderGrant : undefined}
         onResponderMove={isInteractive ? this.onResponderMove : undefined}
         onResponderRelease={isInteractive ? this.onResponderRelease : undefined}
+        onResponderTerminate={
+          isInteractive ? this.onResponderRelease : undefined
+        }
       >
         {!!width && (
           <Svg height={height} width={width}>

@@ -38,6 +38,7 @@ type Props = {
   onPanResponderRelease: () => *,
   useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
+  style?: mixed,
 };
 
 type State = {
@@ -65,6 +66,7 @@ class GraphCard extends PureComponent<Props, State> {
       onPanResponderStart,
       renderTitle,
       useCounterValue,
+      style,
     } = this.props;
 
     const {
@@ -90,7 +92,7 @@ class GraphCard extends PureComponent<Props, State> {
       accounts.length === 1 ? accounts[0].currency.color : undefined;
 
     return (
-      <Card style={[getElevationStyle(3), styles.root]}>
+      <Card style={[getElevationStyle(3), styles.root, style]}>
         <GraphCardHeader
           from={balanceStart}
           to={balanceEnd}
