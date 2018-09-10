@@ -124,7 +124,7 @@ class SelectRecipient extends Component<Props, State> {
                 </TouchableOpacity>
               )}
             </View>
-            {address &&
+            {!!address &&
               !validAddress && (
                 <LText style={styles.errorText}>
                   This is not a valid address
