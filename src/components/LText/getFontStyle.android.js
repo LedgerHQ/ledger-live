@@ -1,14 +1,5 @@
 /* @flow */
-type Opts = {
-  bold?: boolean,
-  semiBold?: boolean,
-  secondary?: boolean,
-  tertiary?: boolean,
-};
-type Res = {
-  fontFamily: string,
-  fontWeight: string,
-};
+import type { Opts, Res } from "./";
 
 export default ({ bold, semiBold, secondary, tertiary }: Opts = {}): Res => {
   const family = secondary ? "MuseoSans" : tertiary ? "Rubik" : "OpenSans";
