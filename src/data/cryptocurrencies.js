@@ -364,8 +364,8 @@ const cryptocurrenciesById = {
   digibyte: {
     id: "digibyte",
     coinType: 20,
-    name: "Digibyte",
-    managerAppName: "Digibyte",
+    name: "DigiByte",
+    managerAppName: "DigiByte",
     ticker: "DGB",
     scheme: "digibyte",
     color: "#0066cc",
