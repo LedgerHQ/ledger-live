@@ -2,6 +2,7 @@
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -31,7 +32,8 @@ const mapStateToProps = createStructuredSelector({
 class Content extends PureComponent<Props, *> {
   render() {
     const { account, operation, t, currencySettings } = this.props;
-    const valueColor = operation.type === "IN" ? colors.green : colors.smoke;
+    const amount = getOperationAmountNumber(operation);
+    const valueColor = amount.isNegative() ? colors.smoke : colors.green;
     const confirmations = operation.blockHeight
       ? account.blockHeight - operation.blockHeight
       : 0;
@@ -52,7 +54,7 @@ class Content extends PureComponent<Props, *> {
             <CurrencyUnitValue
               showCode
               unit={account.unit}
-              value={operation.value}
+              value={amount}
               alwaysShowSign
             />
           </LText>
@@ -61,7 +63,7 @@ class Content extends PureComponent<Props, *> {
               showCode
               alwaysShowSign
               currency={account.currency}
-              value={operation.value}
+              value={amount}
             />
           </LText>
           <View style={styles.confirmationContainer}>
