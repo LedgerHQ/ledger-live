@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   Platform,
+  Text,
 } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -95,7 +96,9 @@ class SelectRecipient extends Component<Props, State> {
                 console.log("scan qr code"); // eslint-disable-line no-console
               }}
             >
-              <Icon name="qrcode" size={16} color={colors.live} />
+              <Text>
+                <Icon name="qrcode" size={16} color={colors.live} />
+              </Text>
               <LText semiBold secondary style={styles.buttonText}>
                 Scan QR code
               </LText>
@@ -116,20 +119,19 @@ class SelectRecipient extends Component<Props, State> {
                 multiline
                 blurOnSubmit
               />
-              {!!address && (
+              {address ? (
                 <TouchableOpacity onPress={this.clear}>
                   <View style={styles.closeContainer}>
                     <Close color={colors.white} size={8} />
                   </View>
                 </TouchableOpacity>
-              )}
+              ) : null}
             </View>
-            {!!address &&
-              !validAddress && (
-                <LText style={styles.errorText}>
-                  This is not a valid address
-                </LText>
-              )}
+            {!!address && !validAddress ? (
+              <LText style={styles.errorText}>
+                This is not a valid address
+              </LText>
+            ) : null}
           </View>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <BlueButton
