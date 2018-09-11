@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { StatusBar, Platform } from "react-native";
 import Color from "color";
+import colors from "../colors";
 
 type Props = {
   hidden?: boolean,
@@ -23,6 +24,10 @@ const OSType =
       : "newAndroid";
 
 class StyledStatusBar extends Component<Props> {
+  static defaultProps = {
+    backgroundColor: colors.white,
+  };
+
   render() {
     const { transparent, backgroundColor, ...restProps } = this.props;
     const styledProps: Props = {};

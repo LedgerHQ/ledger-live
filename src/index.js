@@ -3,7 +3,6 @@ import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import colors from "./colors";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import CounterValues from "./countervalues";
@@ -35,7 +34,7 @@ class App extends Component<*> {
   render() {
     return (
       <View style={styles.root}>
-        <StyledStatusBar backgroundColor={colors.white} />
+        <StyledStatusBar />
 
         <DBSave
           dbKey="countervalues"
