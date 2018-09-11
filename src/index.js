@@ -15,7 +15,7 @@ import { RootNavigator } from "./navigators";
 import AuthFailedApp from "./components/AuthFailedApp";
 import AuthPendingApp from "./components/AuthPendingApp";
 import LoadingApp from "./components/LoadingApp";
-import StatusBar from "./components/StatusBar";
+import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
 
@@ -35,7 +35,7 @@ class App extends Component<*> {
   render() {
     return (
       <View style={styles.root}>
-        <StatusBar backgroundColor={colors.white} />
+        <StyledStatusBar backgroundColor={colors.white} />
 
         <DBSave
           dbKey="countervalues"

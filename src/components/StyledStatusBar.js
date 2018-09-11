@@ -22,7 +22,7 @@ const OSType =
       ? "oldAndroid"
       : "newAndroid";
 
-class StyledBar extends Component<Props> {
+class StyledStatusBar extends Component<Props> {
   render() {
     const { transparent, backgroundColor, ...restProps } = this.props;
     const styledProps: Props = {};
@@ -68,4 +68,4 @@ class StyledBar extends Component<Props> {
   }
 }
 
-export default StyledBar;
+export default StyledStatusBar;
