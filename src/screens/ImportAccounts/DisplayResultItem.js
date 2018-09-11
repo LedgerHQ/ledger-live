@@ -6,7 +6,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
 
-export default class PresentResultItem extends Component<{
+export default class DisplayResultItem extends Component<{
   account: Account,
   mode: *,
   checked: boolean,

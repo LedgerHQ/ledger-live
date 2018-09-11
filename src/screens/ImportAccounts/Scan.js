@@ -4,17 +4,19 @@ import { StyleSheet, View, Dimensions } from "react-native";
 import { RNCamera } from "react-native-camera";
 import toLength from "lodash/toLength";
 import ProgressCircle from "react-native-progress/Circle";
+import type { NavigationScreenProp } from "react-navigation";
 import {
   parseChunksReducer,
   areChunksComplete,
   chunksToResult,
 } from "@ledgerhq/live-common/lib/bridgestream/importer";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
-import StatusBar from "../../components/StatusBar";
+import HeaderRightClose from "../../components/HeaderRightClose";
+import StyledStatusBar from "../../components/StyledStatusBar";
 import LText, { getFontStyle } from "../../components/LText";
 import colors, { rgba } from "../../colors";
 
-type Props = { onResult: Result => void };
+type Props = { navigation: NavigationScreenProp<*> };
 
 export default class Scanning extends PureComponent<
   Props,
@@ -24,6 +26,22 @@ export default class Scanning extends PureComponent<
     height: number,
   },
 > {
+  static navigationOptions = ({
+    navigation,
+  }: {
+    navigation: NavigationScreenProp<*>,
+  }) => ({
+    title: "Scan QR Code",
+    headerRight: (
+      <HeaderRightClose
+        // $FlowFixMe
+        navigation={navigation.dangerouslyGetParent()}
+        color={colors.white}
+      />
+    ),
+    headerLeft: null,
+  });
+
   constructor(props: Props) {
     super(props);
 
@@ -61,9 +79,13 @@ export default class Scanning extends PureComponent<
       if (areChunksComplete(this.chunks)) {
         this.completed = true;
         // TODO read the chunks version and check it's correctly supported (if newers version, we deny the import with an error)
-        this.props.onResult(chunksToResult(this.chunks));
+        this.onResult(chunksToResult(this.chunks));
       }
     }
+  };
+
+  onResult = (result: Result) => {
+    this.props.navigation.navigate("DisplayResult", { result });
   };
 
   // Force ratio for camera view to prevent image stretching
@@ -91,7 +113,7 @@ export default class Scanning extends PureComponent<
     // TODO some instruction on screen + progress indicator
     return (
       <View style={styles.root} onLayout={this.setDimensions}>
-        <StatusBar transparent="light-content" />
+        <StyledStatusBar transparent="light-content" />
         <RNCamera
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
           onBarCodeRead={this.onBarCodeRead}
@@ -163,6 +185,13 @@ export default class Scanning extends PureComponent<
         </RNCamera>
       </View>
     );
+  }
+
+  componentWillUnmount() {
+    this.lastData = null;
+    this.nbChunks = null;
+    this.chunks = [];
+    this.completed = false;
   }
 }
 

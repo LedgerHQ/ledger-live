@@ -4,6 +4,7 @@ import { ScrollView, View, SectionList, StyleSheet } from "react-native";
 import groupBy from "lodash/groupBy";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
 import { importExistingAccount } from "../../logic/account";
@@ -12,7 +13,9 @@ import { accountsSelector } from "../../reducers/accounts";
 
 import LText from "../../components/LText";
 import BlueButton from "../../components/BlueButton";
-import PresentResultItem from "./PresentResultItem";
+import HeaderRightClose from "../../components/HeaderRightClose";
+import StyledStatusBar from "../../components/StyledStatusBar";
+import DisplayResultItem from "./DisplayResultItem";
 
 type Item = {
   // current account, might be partially completed as sync happen in background
@@ -24,7 +27,7 @@ type Item = {
 };
 
 type Props = {
-  result: Result,
+  navigation: NavigationScreenProp<{ result: Result }>,
   onDone: () => void,
   accounts: Account[],
   addAccount: Account => void,
@@ -43,7 +46,7 @@ const itemModeDisplaySort = {
   id: 3,
 };
 
-class PresentResult extends Component<Props, State> {
+class DisplayResult extends Component<Props, State> {
   state = {
     selectedAccounts: [],
     items: [],
@@ -57,10 +60,26 @@ class PresentResult extends Component<Props, State> {
     this.unmounted = true;
   }
 
+  static navigationOptions = ({
+    navigation,
+  }: {
+    navigation: NavigationScreenProp<*>,
+  }) => ({
+    title: "Select accounts",
+    headerRight: (
+      <HeaderRightClose
+        // $FlowFixMe
+        navigation={navigation.dangerouslyGetParent()}
+      />
+    ),
+    headerLeft: null,
+  });
+
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const pendingImportingAccounts = { ...prevState.pendingImportingAccounts };
-    const items = nextProps.result.accounts
-      .map(accInput => {
+    const items = nextProps.navigation
+      .getParam("result", {})
+      .accounts.map(accInput => {
         const prevItem = prevState.items.find(
           item => item.account.id === accInput.id,
         );
@@ -94,7 +113,7 @@ class PresentResult extends Component<Props, State> {
   }
 
   onImport = async () => {
-    const { onDone, addAccount, updateAccount } = this.props;
+    const { navigation, addAccount, updateAccount } = this.props;
     const { selectedAccounts, items } = this.state;
     this.setState({ importing: true });
     const selectedItems = items.filter(item =>
@@ -113,8 +132,8 @@ class PresentResult extends Component<Props, State> {
     }
 
     // TODO we probably want to sync all the imported accounts before ending
-
-    onDone();
+    // $FlowFixMe
+    navigation.dangerouslyGetParent().goBack();
   };
 
   onSwitchResultItem = (checked: boolean, account: Account) => {
@@ -130,7 +149,7 @@ class PresentResult extends Component<Props, State> {
   };
 
   renderItem = ({ item: { account, mode } }) => (
-    <PresentResultItem
+    <DisplayResultItem
       key={account.id}
       account={account}
       mode={mode}
@@ -175,7 +194,8 @@ class PresentResult extends Component<Props, State> {
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
-      <ScrollView contentContainerStyle={styles.presentResult}>
+      <ScrollView contentContainerStyle={styles.DisplayResult}>
+        <StyledStatusBar />
         {items.length === 0 ? (
           <View>
             <LText bold>Nothing to import.</LText>
@@ -204,10 +224,10 @@ export default connect(
     addAccount,
     updateAccount,
   },
-)(PresentResult);
+)(DisplayResult);
 
 const styles = StyleSheet.create({
-  presentResult: {
+  DisplayResult: {
     padding: 20,
   },
 });
