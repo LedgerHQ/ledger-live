@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/live-common/lib/bridgestream/importer";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
 import StatusBar from "../../components/StatusBar";
+import LText, { getFontStyle } from "../../components/LText";
 import colors, { rgba } from "../../colors";
 
 type Props = { onResult: Result => void };
@@ -97,7 +98,16 @@ export default class Scanning extends PureComponent<
           ratio="16:9"
           style={{ width, height }}
         >
-          <View style={styles.darken} />
+          <View style={[styles.darken, styles.centered]}>
+            <LText semibold style={styles.text}>
+              Please open Ledger Live desktop application with
+              EXPERIMENTAL_TOOLS_SETTINGS=1 and go to
+            </LText>
+            <LText bold style={styles.text}>
+              Settings {">"} Experimental Tools {">"} QRCode Mobile Export
+            </LText>
+          </View>
+
           <View style={styles.row}>
             <View style={styles.darken} />
             <View style={{ width: viewFinderSize, height: viewFinderSize }}>
@@ -131,16 +141,24 @@ export default class Scanning extends PureComponent<
             </View>
             <View style={styles.darken} />
           </View>
-          <View style={[styles.darken, styles.bottom]}>
-            <ProgressCircle
-              showsText
-              indeterminate={!progress}
-              progress={progress}
-              color={colors.live}
-              size={viewFinderSize / 4}
-              strokeCap="round"
-              textStyle={{ color: "white" }}
-            />
+          <View style={[styles.darken, styles.centered]}>
+            <View style={styles.centered}>
+              <LText semibold style={styles.text}>
+                Please put the QR code within the square
+              </LText>
+            </View>
+            <View style={styles.centered}>
+              <ProgressCircle
+                showsText={!!progress}
+                progress={progress}
+                color={colors.white}
+                borderWidth={0}
+                thickness={progress ? 4 : 0}
+                size={viewFinderSize / 4}
+                strokeCap="round"
+                textStyle={styles.progressText}
+              />
+            </View>
           </View>
         </RNCamera>
       </View>
@@ -172,6 +190,11 @@ const styles = StyleSheet.create({
     backgroundColor: rgba(colors.darkBlue, 0.4),
     flexGrow: 1,
   },
+  text: {
+    fontSize: 14,
+    textAlign: "center",
+    color: colors.white,
+  },
   border: {
     borderColor: "white",
     flexGrow: 1,
@@ -188,9 +211,14 @@ const styles = StyleSheet.create({
   borderRight: {
     borderRightWidth: 6,
   },
-  bottom: {
+  centered: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  progressText: {
+    color: colors.white,
+    fontSize: 16,
+    ...getFontStyle({ tertiary: true, semiBold: true }),
   },
 });
