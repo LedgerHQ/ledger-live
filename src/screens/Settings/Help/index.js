@@ -18,7 +18,8 @@ class HelpSettings extends PureComponent<{
     return (
       <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
         <LedgerSupportRow />
-        <ConfigureDeviceRow />
+        {null && <ConfigureDeviceRow /> // FIXME enable when implemented
+        }
         <View style={{ marginTop: 16 }}>
           <ClearCacheRow />
           <HardResetRow />
