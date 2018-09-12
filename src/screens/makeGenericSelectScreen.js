@@ -27,6 +27,7 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
   }
   return class DefaultEntry extends Component<EntryProps<Item>> {
     onPress = () => this.props.onPress(this.props.item);
+
     render() {
       const { item, selected } = this.props;
       return (

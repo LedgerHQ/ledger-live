@@ -20,7 +20,7 @@ import {
 
 import CounterValues from "../countervalues";
 
-import type { Item } from "../components/Graph";
+import type { Item } from "./Graph";
 
 export type Summary = {
   accounts: Account[],
@@ -111,6 +111,7 @@ export default (WrappedComponent: any) => {
     shouldComponentUpdate(nextProps: Props) {
       return nextProps.hash !== this.props.hash;
     }
+
     render() {
       return <WrappedComponent {...this.props} />;
     }

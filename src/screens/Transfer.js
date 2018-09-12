@@ -20,6 +20,7 @@ class Transfer extends Component<null, { isModalOpened: boolean }> {
   };
 
   openModal = () => this.setState({ isModalOpened: true });
+
   onModalClose = () => this.setState({ isModalOpened: false });
 
   render() {
@@ -42,6 +43,7 @@ export default class Create extends Component<*> {
     tabBarIcon: (props: *) => <Transfer {...props} />,
     tabBarOnPress: () => {}, // noop
   };
+
   render() {
     return null;
   }

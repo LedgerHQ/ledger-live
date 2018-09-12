@@ -30,11 +30,13 @@ const injectItems = C => {
     state = {
       items: [],
     };
+
     async componentWillMount() {
       const { from, to } = extractFromTo(this.props);
       const exchanges = await getExchanges(from, to);
       this.setState({ items: exchanges });
     }
+
     render() {
       const { items } = this.state;
       const { from, to } = extractFromTo(this.props);

@@ -6,8 +6,8 @@ import { View, StyleSheet } from "react-native";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
-import LText from "../components/LText";
-import CurrencyUnitValue from "../components/CurrencyUnitValue";
+import LText from "./LText";
+import CurrencyUnitValue from "./CurrencyUnitValue";
 import IconArrowUp from "../icons/ArrowUp";
 import IconArrowDown from "../icons/ArrowDown";
 

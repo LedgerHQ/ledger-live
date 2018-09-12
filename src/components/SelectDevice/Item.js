@@ -4,8 +4,8 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import colors from "../../colors";
-import LText from "../../components/LText";
-import Touchable from "../../components/Touchable";
+import LText from "../LText";
+import Touchable from "../Touchable";
 import ArrowRight from "../../icons/ArrowRight";
 
 const iconByType = {
@@ -23,6 +23,7 @@ class SelectDeviceItem extends PureComponent<{
   onPress = () => {
     this.props.onSelectItem(this.props.id);
   };
+
   render() {
     const { name, type } = this.props;
     return (

@@ -19,6 +19,7 @@ export default class GenericButton extends Component<
   state = {
     pending: false,
   };
+
   onPress = async () => {
     try {
       const res = this.props.onPress();
@@ -31,6 +32,7 @@ export default class GenericButton extends Component<
       this.setState(({ pending }) => (pending ? { pending: false } : null));
     }
   };
+
   render() {
     const { onPress, children, ...rest } = this.props;
     const { pending } = this.state;

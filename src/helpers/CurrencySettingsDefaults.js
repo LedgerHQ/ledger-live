@@ -1,7 +1,7 @@
 // @flow
 
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import type { ConfirmationDefaults } from "./../types/common";
+import type { ConfirmationDefaults } from "../types/common";
 
 export const currencySettingsDefaults = ({
   blockAvgTime,

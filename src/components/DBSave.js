@@ -17,9 +17,11 @@ class DBSave extends Component<{
       this.save();
     }
   }
+
   componentWillUnmount() {
     this.save.cancel();
   }
+
   save = throttle(() => {
     const startTime = Date.now();
     const { lense, dbKey, state } = this.props;
@@ -34,6 +36,7 @@ class DBSave extends Component<{
       },
     );
   }, this.props.throttle || 500);
+
   render() {
     return null;
   }

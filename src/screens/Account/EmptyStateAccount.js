@@ -19,6 +19,7 @@ class EmptyStateAccount extends PureComponent<{
     const { navigation } = this.props;
     navigation.navigate("ReceiveFundsMain");
   };
+
   render() {
     const { t, account } = this.props;
     return (

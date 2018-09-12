@@ -1,8 +1,8 @@
 // @flow
-
+/* eslint import/no-cycle: 0 */
 import { createSelector } from "reselect";
 import { handleActions } from "redux-actions";
-import type { State } from "../reducers";
+import type { State } from ".";
 import { accountsSelector } from "./accounts";
 
 export type AsyncState = {

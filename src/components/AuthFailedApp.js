@@ -29,7 +29,9 @@ class AuthFailedApp extends Component<Props, State> {
   onRequestClose = () => this.setState({ isModalOpened: false });
 
   onPress = () => this.setState({ isModalOpened: true });
+
   onHardReset = () => this.props.reboot(true);
+
   onSoftReset = () => this.props.reboot();
 
   render() {

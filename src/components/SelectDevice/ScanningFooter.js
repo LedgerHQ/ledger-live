@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
-import LText from "../../components/LText";
+import LText from "../LText";
 
 class ScanningFooter extends PureComponent<{}> {
   render() {

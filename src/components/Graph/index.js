@@ -56,6 +56,7 @@ export default class Graph extends PureComponent<Props, State> {
   };
 
   x: * = null;
+
   y: * = null;
 
   collectHovered = (evt: *) => {

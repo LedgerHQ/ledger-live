@@ -11,7 +11,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
-import LText from "./../../components/LText";
+import LText from "../../components/LText";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";

@@ -29,6 +29,7 @@ class CreateModal extends Component<Props> {
     });
     onClose();
   };
+
   onReceiveFunds = () => {
     const { navigation, onClose } = this.props;
     navigation.navigate({
@@ -38,9 +39,11 @@ class CreateModal extends Component<Props> {
     });
     onClose();
   };
+
   onExchange = () => {
     console.log(`exchange screen`);
   };
+
   render() {
     const { onClose, isOpened } = this.props;
     return (

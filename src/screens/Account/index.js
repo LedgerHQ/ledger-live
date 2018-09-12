@@ -18,14 +18,14 @@ import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
-import OperationRow from "./../../components/OperationRow";
+import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LText from "../../components/LText";
 import GraphCard from "../../components/GraphCard";
 import LoadingFooter from "../../components/LoadingFooter";
-import colors from "./../../colors";
+import colors from "../../colors";
 import provideSummary from "../../components/provideSummary";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
@@ -67,6 +67,7 @@ class AccountScreen extends PureComponent<Props, State> {
   };
 
   disableScroll = () => this.setState({ scrollEnabled: false });
+
   enableScroll = () => this.setState({ scrollEnabled: true });
 
   keyExtractor = (item: Operation) => item.id;

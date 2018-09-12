@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
 import {
   findCurrencyByTicker,
@@ -12,7 +12,7 @@ import type {
   Currency,
   Account,
 } from "@ledgerhq/live-common/lib/types";
-import type { State } from "./";
+import type { State } from ".";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 
 export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");

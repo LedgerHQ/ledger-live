@@ -54,6 +54,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: navigation.state.params.headerTitle,
   });
+
   componentDidMount() {
     const { navigation, t, currency } = this.props;
     navigation.setParams({

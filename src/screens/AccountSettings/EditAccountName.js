@@ -35,12 +35,15 @@ class EditAccountName extends PureComponent<Props, State> {
   state = {
     accountName: "",
   };
+
   static navigationOptions = {
     title: "Account Name",
   };
+
   onChangeText = (accountName: string) => {
     this.setState({ accountName });
   };
+
   onNameEndEditing = () => {
     const { updateAccount, account, navigation } = this.props;
     const { accountName } = this.state;
@@ -52,6 +55,7 @@ class EditAccountName extends PureComponent<Props, State> {
     }
     navigation.goBack();
   };
+
   render() {
     const { account, t } = this.props;
     return (

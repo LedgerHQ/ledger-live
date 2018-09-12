@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import LText from "../components/LText";
+import LText from "./LText";
 import colors from "../colors";
 
 export default class ModalBottomAction extends Component<{

@@ -21,6 +21,7 @@ class AccountCard extends PureComponent<Props> {
       accountId: this.props.account.id,
     });
   };
+
   render() {
     const { account, style } = this.props;
     return (

@@ -18,9 +18,11 @@ export default class DataList extends PureComponent<Props, State> {
   state = {
     showAll: false,
   };
+
   toggleShowAll = () => {
     this.setState(({ showAll }) => ({ showAll: !showAll }));
   };
+
   // TODO make it more generic with title definition in parent
   render() {
     const { data, t, title } = this.props;

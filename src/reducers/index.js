@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint import/no-cycle: 0 */
 import { combineReducers } from "redux";
 
 import accounts from "./accounts";

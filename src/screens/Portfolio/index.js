@@ -71,10 +71,12 @@ class Portfolio extends Component<
 
   // $FlowFixMe
   ref = React.createRef();
+
   scrollSub: *;
 
   componentDidMount() {
     this.scrollSub = scrollToTopIntent.subscribe(() => {
+      // $FlowFixMe
       const sectionList = this.ref.current.getNode();
       sectionList.getScrollResponder().scrollTo({
         x: 0,
@@ -91,6 +93,7 @@ class Portfolio extends Component<
   keyExtractor = (item: Operation) => item.id;
 
   disableScroll = () => this.setState({ scrollEnabled: false });
+
   enableScroll = () => this.setState({ scrollEnabled: true });
 
   ListHeaderComponent = () => (
