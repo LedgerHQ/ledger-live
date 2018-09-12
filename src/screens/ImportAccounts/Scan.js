@@ -184,7 +184,10 @@ class Scan extends PureComponent<
                 thickness={progress ? 4 : 0}
                 size={viewFinderSize / 4}
                 strokeCap="round"
-                textStyle={styles.progressText}
+                textStyle={[
+                  styles.progressText,
+                  getFontStyle({ tertiary: true, semiBold: true }),
+                ]}
               />
             </View>
           </View>
@@ -249,6 +252,5 @@ const styles = StyleSheet.create({
   progressText: {
     color: colors.white,
     fontSize: 16,
-    ...getFontStyle({ tertiary: true, semiBold: true }),
   },
 });
