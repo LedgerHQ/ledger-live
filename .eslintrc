@@ -7,6 +7,13 @@
     "prettier/react"
   ],
   "plugins": ["flowtype"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".android.js", ".ios.js"]
+      }
+    }
+  },
   "rules": {
     "no-console": 0,
     "no-unused-vars": [
