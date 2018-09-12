@@ -37,7 +37,7 @@ export default (ScrollListLike: any) => {
       } = this.props;
       const { lastClickTime } = this.state;
       const isUserClick = Date.now() - lastClickTime < 1000;
-      const isLoading = isPending && (!isUpToDate || isUserClick);
+      const isLoading = isPending && isUserClick;
       return (
         <ScrollListLike
           {...props}
