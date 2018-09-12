@@ -3406,9 +3406,9 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@0.67.1:
-  version "0.67.1"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.67.1.tgz#eabb7197cce870ac9442cfd04251c7ddc30377db"
+flow-bin@^0.78.0:
+  version "0.78.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.78.0.tgz#df9fe7f9c9a2dfaff39083949fe2d831b41627b7"
 
 flow-typed@^2.4.0:
   version "2.5.1"
@@ -6383,7 +6383,7 @@ react-deep-force-update@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.1.1.tgz#bcd31478027b64b3339f108921ab520b4313dc2c"
 
-react-devtools-core@^3.2.2:
+react-devtools-core@3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-3.3.4.tgz#9e497a94b73413b91774bf3e3197e539d5f9a21d"
   dependencies:
@@ -6568,9 +6568,9 @@ react-native-vector-icons@^5.0.0:
     prop-types "^15.5.10"
     yargs "^8.0.2"
 
-react-native@0.57-RC:
-  version "0.57.0-rc.4"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.57.0-rc.4.tgz#d8227aad5b7a7f49d066fccb02b36938a3dd4506"
+react-native@0.57.0:
+  version "0.57.0"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.57.0.tgz#b0d098bbd5393fc3c079f8d7c2a8bf9a10b86b9e"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"
@@ -6611,7 +6611,7 @@ react-native@0.57-RC:
     promise "^7.1.1"
     prop-types "^15.5.8"
     react-clone-referenced-element "^1.0.1"
-    react-devtools-core "^3.2.2"
+    react-devtools-core "3.3.4"
     react-timer-mixin "^0.13.2"
     regenerator-runtime "^0.11.0"
     rimraf "^2.5.4"
