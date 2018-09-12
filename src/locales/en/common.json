@@ -4,6 +4,20 @@
     "apply": "Apply",
     "delete": "Delete"
   },
+  "auth": {
+    "failed": {
+      "title": "Authentication failed",
+      "buttons": {
+        "tryAgain": "Try again",
+        "reset": "Reset"
+      }
+    }
+  },
+  "reset": {
+    "title": "Are you sure?",
+    "description": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
+    "button": "Reset"
+  },
   "portfolio": {
     "totalBalance": "Total balance",
     "greeting": {
@@ -148,10 +162,7 @@
       "exportLogs": "Export logs",
       "exportLogsDesc": "Exporting Ledger Live logs may be necessary for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",
-      "hardResetDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings.",
-      "hardResetModal": "Are you sure?",
-      "hardResetModalDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
-      "hardResetModalButton": "Reset"
+      "hardResetDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings."
     }
   }
 }
