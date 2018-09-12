@@ -51,6 +51,7 @@
 		A854DAD55ED1456696918FDF /* MuseoSans-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CE7E1D553FBD49E0A85347D3 /* MuseoSans-Bold.otf */; };
 		AA971EB1796D4FD797316C3D /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44387CB2EE84464C83A75FD7 /* OpenSans-Regular.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+		BF60DBE7214A955600912E7C /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF60DBB5214A954900912E7C /* libART.a */; };
 		D5C1F1874ECE48F4AA5693AF /* MuseoSans-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CEDB8CDC561E4D4BBA7A64CD /* MuseoSans-SemiBold.otf */; };
 		DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 545FD04868AD450083DC4717 /* libz.tbd */; };
 		E346451EC3604977A20BAAB1 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C5890E524DD4BA092CB8080 /* libRNBlur.a */; };
@@ -394,6 +395,20 @@
 			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
 			remoteInfo = RCTBlob;
 		};
+		BF60DBB4214A954900912E7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF60DBAF214A954900912E7C /* ART.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = ART;
+		};
+		BF60DBB6214A954900912E7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF60DBAF214A954900912E7C /* ART.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 323A12871E5F266B004975B8;
+			remoteInfo = "ART-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -449,6 +464,7 @@
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		AE0C18E225CD47BA91948A0E /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
 		AFD05AA846DD466ABCB867EB /* RNBlur.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBlur.xcodeproj; path = "../node_modules/react-native-blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; };
+		BF60DBAF214A954900912E7C /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		C7C5BB743ED04E53A2323979 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		CE7E1D553FBD49E0A85347D3 /* MuseoSans-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-Bold.otf"; path = "../assets/fonts/MuseoSans-Bold.otf"; sourceTree = "<group>"; };
 		CEDB8CDC561E4D4BBA7A64CD /* MuseoSans-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-SemiBold.otf"; path = "../assets/fonts/MuseoSans-SemiBold.otf"; sourceTree = "<group>"; };
@@ -476,6 +492,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF60DBE7214A955600912E7C /* libART.a in Frameworks */,
 				347AB25E20498A4E00BE6F60 /* libRNSentry.a in Frameworks */,
 				349F66892045ADD9002149B4 /* libRNCamera.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
@@ -739,6 +756,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				BF60DBAF214A954900912E7C /* ART.xcodeproj */,
 				349F66542045ADCC002149B4 /* RNCamera.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -836,6 +854,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BF60DBB0214A954900912E7C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF60DBB5214A954900912E7C /* libART.a */,
+				BF60DBB7214A954900912E7C /* libART-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -917,6 +944,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = BF60DBB0214A954900912E7C /* Products */;
+					ProjectRef = BF60DBAF214A954900912E7C /* ART.xcodeproj */;
+				},
 				{
 					ProductGroup = 34457ED22003A12500415724 /* Products */;
 					ProjectRef = F0450D78A15B475EAD41F683 /* BleClient.xcodeproj */;
@@ -1334,6 +1365,20 @@
 			fileType = archive.ar;
 			path = libRCTBlob.a;
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF60DBB5214A954900912E7C /* libART.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libART.a;
+			remoteRef = BF60DBB4214A954900912E7C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BF60DBB7214A954900912E7C /* libART-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libART-tvOS.a";
+			remoteRef = BF60DBB6214A954900912E7C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
