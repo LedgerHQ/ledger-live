@@ -3,7 +3,7 @@
 import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { translate } from "react-i18next";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
@@ -49,7 +49,11 @@ class GraphCard extends PureComponent<Props, State> {
     hoveredItem: null,
   };
 
-  timeRangeItems = null;
+  timeRangeItems = [
+    { key: "week", label: this.props.t("common:time.week") },
+    { key: "month", label: this.props.t("common:time.month") },
+    { key: "year", label: this.props.t("common:time.year") },
+  ];
 
   onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
   onItemHover = hoveredItem => this.setState({ hoveredItem });
@@ -61,7 +65,6 @@ class GraphCard extends PureComponent<Props, State> {
   render() {
     const {
       summary,
-      t,
       onPanResponderStart,
       renderTitle,
       useCounterValue,
@@ -78,14 +81,6 @@ class GraphCard extends PureComponent<Props, State> {
 
     const { hoveredItem } = this.state;
 
-    if (!this.timeRangeItems) {
-      this.timeRangeItems = [
-        { key: "week", label: t("common:time.week") },
-        { key: "month", label: t("common:time.month") },
-        { key: "year", label: t("common:time.year") },
-      ];
-    }
-
     const graphColor =
       accounts.length === 1 ? accounts[0].currency.color : undefined;
 
@@ -100,6 +95,8 @@ class GraphCard extends PureComponent<Props, State> {
         />
         <Graph
           isInteractive
+          height={100}
+          width={Dimensions.get("window").width - 40}
           color={graphColor}
           data={balanceHistory}
           onItemHover={this.onItemHover}
