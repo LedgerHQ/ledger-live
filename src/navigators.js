@@ -29,7 +29,7 @@ import SendSelectFunds from "./screens/SelectFunds";
 import SendSummary from "./screens/SendSummary";
 import SendValidation from "./screens/Validation";
 import OperationDetails from "./screens/OperationDetails";
-import Transfer from "./screens/Transfer";
+// import Transfer from "./screens/Transfer"; // FIXME READONLYMVP
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
@@ -81,7 +81,6 @@ const SettingsStack = createStackNavigator(
     CurrenciesList,
     CurrencySettings,
   },
-  // $FlowFixMe
   StackNavigatorConfig,
 );
 
@@ -96,7 +95,6 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     Manager,
   },
-  // $FlowFixMe
   StackNavigatorConfig,
 );
 
@@ -109,7 +107,6 @@ const AccountsStack = createStackNavigator(
     Accounts,
     Account,
   },
-  // $FlowFixMe
   StackNavigatorConfig,
 );
 AccountsStack.navigationOptions = {
@@ -127,9 +124,8 @@ const Main = createBottomTabNavigator(
   {
     Portfolio,
     Accounts: AccountsStack,
-    // $FlowFixMe
-    Transfer,
-    Manager: ManagerStack,
+    // Transfer, // FIXME READONLYMVP
+    // Manager: ManagerStack, // FIXME READONLYMVP
     Settings: SettingsStack,
   },
   {
@@ -148,7 +144,6 @@ const ReceiveFunds = createStackNavigator(
     VerifyAddress,
     ReceiveConfirmation,
   },
-  // $FlowFixMe
   StackNavigatorConfig,
 );
 ReceiveFunds.navigationOptions = {
@@ -163,7 +158,6 @@ const SendFunds = createStackNavigator(
     SendSummary,
     SendValidation,
   },
-  // $FlowFixMe
   StackNavigatorConfig,
 );
 
@@ -175,7 +169,6 @@ const SendFundsSettings = createStackNavigator(
   {
     EditFees,
   },
-  // $FlowFixMe
   StackNavigatorConfig,
 );
 
@@ -189,7 +182,6 @@ const AccountSettings = createStackNavigator(
     EditAccountUnits,
     EditAccountName,
   },
-  // $FlowFixMe
   StackNavigatorConfig,
 );
 
@@ -208,7 +200,6 @@ export const RootNavigator = createStackNavigator(
     ImportAccounts,
     SendFundsSettings,
   },
-  // $FlowFixMe
   {
     mode: "modal",
     ...StackNavigatorConfig,
