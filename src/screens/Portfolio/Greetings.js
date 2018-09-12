@@ -49,7 +49,6 @@ class Greetings extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   root: {
-    marginTop: 20,
     marginHorizontal: 20,
   },
   greetingsText: {

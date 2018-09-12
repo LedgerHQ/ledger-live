@@ -1,7 +1,13 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { StyleSheet, Animated } from "react-native";
+import {
+  StyleSheet,
+  Animated,
+  View,
+  TouchableWithoutFeedback,
+  SafeAreaView,
+} from "react-native";
 import { translate } from "react-i18next";
 
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
@@ -16,60 +22,70 @@ import { getElevationStyle } from "../../components/ElevatedView";
 
 import type { Summary } from "../../components/provideSummary";
 
+import { scrollToTopIntent } from "./events";
+
 class AnimatedTopBar extends PureComponent<{
   scrollY: AnimatedValue,
   summary: Summary,
   t: T,
 }> {
+  onPress = () => {
+    scrollToTopIntent.next();
+  };
   render() {
     const { scrollY, summary, t } = this.props;
 
     const opacity = scrollY.interpolate({
-      inputRange: [0, 100],
+      inputRange: [140, 240],
       outputRange: [0, 1],
       extrapolate: "clamp",
     });
 
-    const translateY = scrollY.interpolate({
-      inputRange: [0, 120],
-      outputRange: [60, 0],
-      extrapolate: "clamp",
-    });
-
     return (
-      <Animated.View style={[getElevationStyle(20), styles.root, { opacity }]}>
-        <Animated.View style={[styles.inner, { transform: [{ translateY }] }]}>
-          <LText secondary style={styles.labelText}>
-            {t("common:portfolio.totalBalance")}
-          </LText>
-          <Space h={5} />
-          <LText tertiary style={styles.balanceText}>
-            <CurrencyUnitValue
-              unit={summary.counterValueCurrency.units[0]}
-              value={summary.balanceEnd.value}
-            />
-          </LText>
+      <TouchableWithoutFeedback onPress={this.onPress}>
+        <Animated.View
+          style={[getElevationStyle(20), styles.root, { opacity }]}
+        >
+          <View style={styles.outer}>
+            <SafeAreaView>
+              <View style={styles.content}>
+                <LText secondary style={styles.labelText}>
+                  {t("common:portfolio.totalBalance")}
+                </LText>
+                <Space h={5} />
+                <LText tertiary style={styles.balanceText}>
+                  <CurrencyUnitValue
+                    unit={summary.counterValueCurrency.units[0]}
+                    value={summary.balanceEnd.value}
+                  />
+                </LText>
+              </View>
+            </SafeAreaView>
+          </View>
         </Animated.View>
-      </Animated.View>
+      </TouchableWithoutFeedback>
     );
   }
 }
 
 const styles = StyleSheet.create({
   root: {
-    position: "absolute",
     backgroundColor: "white",
-    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 60,
-    alignItems: "center",
-    justifyContent: "center",
   },
-  inner: {
+  outer: {
+    overflow: "hidden",
+  },
+  content: {
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 8,
   },
   labelText: {
     fontSize: 14,
