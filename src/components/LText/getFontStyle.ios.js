@@ -1,4 +1,6 @@
 /* @flow */
+import { StyleSheet } from "react-native";
+
 type Opts = {
   bold?: boolean,
   semiBold?: boolean,
@@ -7,10 +9,15 @@ type Opts = {
 };
 type Res = {
   fontFamily: string,
-  fontWeight: string,
+  fontWeight: "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800",
 };
 
-export default ({ bold, semiBold, secondary, tertiary }: Opts = {}): Res => {
+const getFontStyle = ({
+  bold,
+  semiBold,
+  secondary,
+  tertiary,
+}: Opts = {}): Res => {
   const fontFamily = secondary
     ? "Museo Sans"
     : tertiary
@@ -24,5 +31,24 @@ export default ({ bold, semiBold, secondary, tertiary }: Opts = {}): Res => {
   } else {
     fontWeight += 400;
   }
-  return { fontFamily, fontWeight: fontWeight.toString() };
+  return {
+    fontFamily,
+    // $FlowFixMe trust me it's one of the font weights!
+    fontWeight: fontWeight.toString(),
+  };
 };
+
+const cache = StyleSheet.create({});
+
+const cachedGetFontStyle = (opts: Opts = {}) => {
+  const r = getFontStyle(opts);
+  const key = `${r.fontFamily}_${r.fontWeight}`;
+  if (cache[key]) {
+    return cache[key];
+  }
+  const { style } = StyleSheet.create({ style: r });
+  cache[key] = style;
+  return style;
+};
+
+export default cachedGetFontStyle;
