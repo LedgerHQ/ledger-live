@@ -1,13 +1,19 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import LText from "./LText";
+import colors from "../colors";
+import LedgerLiveLogo from "./LedgerLiveLogo";
+import LiveLogo from "../images/icons/LiveLogo";
 
-class AuthPendingApp extends Component<{}> {
+class AuthPendingApp extends Component<*> {
   render() {
     return (
       <View style={styles.root}>
-        <LText>Please Authenticate to access the application</LText>
+        <LedgerLiveLogo
+          width={62}
+          height={62}
+          icon={<LiveLogo size={42} color={colors.live} />}
+        />
       </View>
     );
   }
@@ -17,10 +23,8 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     padding: 40,
-  },
-  title: {
-    fontSize: 18,
-    textAlign: "center",
+    marginVertical: 32,
+    alignItems: "center",
   },
 });
 

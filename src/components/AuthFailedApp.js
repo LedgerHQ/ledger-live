@@ -1,42 +1,75 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, Alert, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { translate } from "react-i18next";
 import { withReboot } from "../context/Reboot";
 import LText from "./LText";
+import type { T } from "../types/common";
+import colors from "../colors";
+import BottomModal from "./BottomModal";
+import GreyButton from "./GreyButton";
 import BlueButton from "./BlueButton";
-import RedButton from "./RedButton";
+import LedgerLiveLogo from "./LedgerLiveLogo";
+import LiveLogo from "../images/icons/LiveLogo";
+import HardResetModal from "./HardResetModal";
 
-class AuthFailedApp extends Component<{
-  reboot: (?boolean) => *,
-}> {
-  onRebootSoft = () => this.props.reboot();
-  onRebootHard = () => {
-    Alert.alert(
-      "Are you sure you want to sign out?",
-      "All accounts data will be removed from your phone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Sign me out", onPress: () => this.props.reboot(true) },
-      ],
-    );
+type Props = {
+  t: T,
+  reboot: (?boolean) => void,
+};
+type State = {
+  isModalOpened: boolean,
+};
+
+class AuthFailedApp extends Component<Props, State> {
+  state = {
+    isModalOpened: false,
   };
+
+  onRequestClose = () => this.setState({ isModalOpened: false });
+
+  onPress = () => this.setState({ isModalOpened: true });
+  onHardReset = () => this.props.reboot(true);
+  onSoftReset = () => this.props.reboot();
+
   render() {
+    const { t } = this.props;
+    const { isModalOpened } = this.state;
+    // temp UI
     return (
       <View style={styles.root}>
-        <LText>Authentication Failed</LText>
-
-        <View style={styles.buttons}>
-          <BlueButton
-            title="Try Again"
-            onPress={this.onRebootSoft}
-            containerStyle={styles.button}
+        <View style={styles.descriptionContainer}>
+          <LedgerLiveLogo
+            width={62}
+            height={62}
+            icon={<LiveLogo size={42} color={colors.live} />}
           />
-          <RedButton
-            title="Sign out"
-            onPress={this.onRebootHard}
-            containerStyle={styles.button}
-          />
+          <LText semiBold style={styles.title}>
+            {t("auth.failed.title")}
+          </LText>
         </View>
+        <BlueButton
+          title={t("auth.failed.buttons.tryAgain")}
+          onPress={this.onSoftReset}
+          containerStyle={{ height: 48, marginBottom: 10 }}
+          titleStyle={styles.buttonTitle}
+        />
+        <GreyButton
+          title={t("auth.failed.buttons.reset")}
+          onPress={this.onPress}
+          containerStyle={{
+            marginTop: 10,
+            height: 48,
+            backgroundColor: colors.lightGrey,
+          }}
+          titleStyle={styles.buttonTitle}
+        />
+        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+          <HardResetModal
+            onRequestClose={this.onRequestClose}
+            onHardReset={this.onHardReset}
+          />
+        </BottomModal>
       </View>
     );
   }
@@ -47,19 +80,22 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 40,
     justifyContent: "center",
+    backgroundColor: colors.lightGrey,
+  },
+  buttonTitle: {
+    fontSize: 16,
+  },
+  descriptionContainer: {
+    marginHorizontal: 16,
+    marginVertical: 24,
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
     textAlign: "center",
-  },
-  buttons: {
-    flexDirection: "row",
-  },
-  button: {
-    margin: 20,
+    fontSize: 16,
+    marginTop: 32,
+    color: colors.grey,
   },
 });
 
-export default withReboot(AuthFailedApp);
+export default translate()(withReboot(AuthFailedApp));

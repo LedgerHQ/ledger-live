@@ -1,22 +1,14 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
-import { connect } from "react-redux";
-import { compose } from "redux";
 import { translate } from "react-i18next";
-import { View, StyleSheet } from "react-native";
-import { createStructuredSelector } from "reselect";
 import colors from "../../../colors";
 import { withReboot } from "../../../context/Reboot";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
-import Trash from "../../../images/icons/Trash";
-import ModalBottomAction from "../../../components/ModalBottomAction";
 import BottomModal from "../../../components/BottomModal";
-import RedButton from "../../../components/RedButton";
-import GreyButton from "../../../components/GreyButton";
 import Circle from "../../../components/Circle";
-
-const mapStateToProps = createStructuredSelector({});
+import HardResetModal from "../../../components/HardResetModal";
+import Trash from "../../../images/icons/Trash";
 
 type Props = {
   t: T,
@@ -53,33 +45,9 @@ class HardResetRow extends PureComponent<Props, State> {
           onPress={this.onPress}
         />
         <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
-          <ModalBottomAction
-            title={null}
-            icon={
-              <Circle bg={colors.lightAlert} size={56}>
-                <Trash size={24} color={colors.alert} />
-              </Circle>
-            }
-            description={t("settings.help.hardResetModalDesc")}
-            footer={
-              <View style={styles.footerContainer}>
-                <GreyButton
-                  title={t("common.cancel")}
-                  onPress={this.onRequestClose}
-                  containerStyle={styles.buttonContainer}
-                  titleStyle={styles.buttonTitle}
-                />
-                <RedButton
-                  title={t("settings.help.hardResetModalButton")}
-                  onPress={this.onHardReset}
-                  containerStyle={[
-                    styles.buttonContainer,
-                    styles.resetButtonBg,
-                  ]}
-                  titleStyle={[styles.buttonTitle, styles.resetButtonTitle]}
-                />
-              </View>
-            }
+          <HardResetModal
+            onRequestClose={this.onRequestClose}
+            onHardReset={this.onHardReset}
           />
         </BottomModal>
       </Fragment>
@@ -87,27 +55,4 @@ class HardResetRow extends PureComponent<Props, State> {
   }
 }
 
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(withReboot(HardResetRow));
-
-const styles = StyleSheet.create({
-  footerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  buttonContainer: {
-    height: 48,
-    width: 136,
-  },
-  resetButtonBg: {
-    backgroundColor: colors.alert,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  resetButtonTitle: {
-    color: colors.white,
-  },
-});
+export default translate()(withReboot(HardResetRow));
