@@ -7,6 +7,9 @@ import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
+import { translate } from "react-i18next";
+import i18next from "i18next";
+import type { T } from "../../types/common";
 import { importExistingAccount } from "../../logic/account";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
@@ -33,7 +36,9 @@ type Props = {
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
+  t: T,
 };
+
 type State = {
   selectedAccounts: string[],
   items: Item[],
@@ -64,7 +69,7 @@ class DisplayResult extends Component<Props, State> {
   }: {
     navigation: NavigationScreenProp<*>,
   }) => ({
-    title: "Select accounts",
+    title: i18next.t("account.import.result.title"),
     headerRight: (
       <HeaderRightClose
         // $FlowFixMe
@@ -157,16 +162,17 @@ class DisplayResult extends Component<Props, State> {
   );
 
   renderSectionHeader = ({ section: { mode } }) => {
+    const { t } = this.props;
     let text;
     switch (mode) {
       case "create":
-        text = `New accounts`;
+        text = t("account.import.result.newAccounts");
         break;
       case "patch":
-        text = `Updated accounts`;
+        text = t("account.import.result.updatedAccounts");
         break;
       case "id":
-        text = `Already imported`;
+        text = t("account.import.result.alreadyImported");
         break;
       default:
         text = "";
@@ -181,7 +187,7 @@ class DisplayResult extends Component<Props, State> {
   ListFooterComponent = () =>
     this.state.selectedAccounts.length === 0 ? null : (
       <BlueButton
-        title="Continue"
+        title={this.props.t("common.continue")}
         onPress={this.onImport}
         containerStyle={styles.button}
         titleStyle={styles.buttonText}
@@ -193,7 +199,7 @@ class DisplayResult extends Component<Props, State> {
   keyExtractor = item => item.account.id;
 
   render() {
-    const { onDone } = this.props;
+    const { onDone, t } = this.props;
     const { items } = this.state;
 
     const itemsGroupedByMode = groupBy(items, "mode");
@@ -203,7 +209,7 @@ class DisplayResult extends Component<Props, State> {
         <StyledStatusBar />
         {items.length === 0 ? (
           <View>
-            <LText bold>Nothing to import.</LText>
+            <LText bold>{t("account.import.result.noAccounts")}</LText>
             <BlueButton title="Done" onPress={onDone} />
           </View>
         ) : (
@@ -223,13 +229,16 @@ class DisplayResult extends Component<Props, State> {
     );
   }
 }
-export default connect(
-  createStructuredSelector({ accounts: accountsSelector }),
-  {
-    addAccount,
-    updateAccount,
-  },
-)(DisplayResult);
+
+export default translate()(
+  connect(
+    createStructuredSelector({ accounts: accountsSelector }),
+    {
+      addAccount,
+      updateAccount,
+    },
+  )(DisplayResult),
+);
 
 const styles = StyleSheet.create({
   DisplayResult: {

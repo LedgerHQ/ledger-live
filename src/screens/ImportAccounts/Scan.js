@@ -11,14 +11,20 @@ import {
   chunksToResult,
 } from "@ledgerhq/live-common/lib/bridgestream/importer";
 import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
+import { translate } from "react-i18next";
+import i18next from "i18next";
+import type { T } from "../../types/common";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import LText, { getFontStyle } from "../../components/LText";
 import colors, { rgba } from "../../colors";
 
-type Props = { navigation: NavigationScreenProp<*> };
+type Props = {
+  navigation: NavigationScreenProp<*>,
+  t: T,
+};
 
-export default class Scanning extends PureComponent<
+class Scan extends PureComponent<
   Props,
   {
     progress: number,
@@ -31,7 +37,7 @@ export default class Scanning extends PureComponent<
   }: {
     navigation: NavigationScreenProp<*>,
   }) => ({
-    title: "Scan QR Code",
+    title: i18next.t("account.import.scan.title"),
     headerRight: (
       <HeaderRightClose
         // $FlowFixMe
@@ -106,6 +112,7 @@ export default class Scanning extends PureComponent<
 
   render() {
     const { progress, width, height } = this.state;
+    const { t } = this.props;
 
     // Make the viewfinder borders 2/3 of the screen shortest border
     const viewFinderSize = (width > height ? height : width) * (2 / 3);
@@ -122,11 +129,10 @@ export default class Scanning extends PureComponent<
         >
           <View style={[styles.darken, styles.centered]}>
             <LText semibold style={styles.text}>
-              Please open Ledger Live desktop application with
-              EXPERIMENTAL_TOOLS_SETTINGS=1 and go to
+              {t("account.import.scan.descTop.line1")}
             </LText>
             <LText bold style={styles.text}>
-              Settings {">"} Experimental Tools {">"} QRCode Mobile Export
+              {t("account.import.scan.descTop.line2")}
             </LText>
           </View>
 
@@ -166,7 +172,7 @@ export default class Scanning extends PureComponent<
           <View style={[styles.darken, styles.centered]}>
             <View style={styles.centered}>
               <LText semibold style={styles.text}>
-                Please put the QR code within the square
+                {t("account.import.scan.descBottom")}
               </LText>
             </View>
             <View style={styles.centered}>
@@ -187,6 +193,8 @@ export default class Scanning extends PureComponent<
     );
   }
 }
+
+export default translate()(Scan);
 
 const styles = StyleSheet.create({
   root: {
