@@ -11,6 +11,7 @@ type Props = {
   isUpToDate: boolean,
   cvPoll: *,
   setSyncBehavior: *,
+  forwardedRef?: *,
 };
 
 export default (ScrollListLike: any) => {
@@ -33,6 +34,7 @@ export default (ScrollListLike: any) => {
         isError,
         cvPoll,
         setSyncBehavior,
+        forwardedRef,
         ...props
       } = this.props;
       const { lastClickTime } = this.state;
@@ -41,6 +43,7 @@ export default (ScrollListLike: any) => {
       return (
         <ScrollListLike
           {...props}
+          ref={forwardedRef}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={this.onPress} />
           }

@@ -31,10 +31,11 @@ import provideSummary from "../../components/provideSummary";
 
 import type { Summary } from "../../components/provideSummary";
 
-import GraphCard from "../../components/GraphCard";
+import GraphCardContainer from "./GraphCardContainer";
 import AnimatedTopBar from "./AnimatedTopBar";
-import Greetings from "./Greetings";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
+
+import { scrollToTopIntent } from "./events";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = provideSyncRefreshControl(AnimatedSectionList);
@@ -68,6 +69,25 @@ class Portfolio extends Component<
     scrollY: new Animated.Value(0),
     scrollEnabled: true,
   };
+
+  // $FlowFixMe
+  ref = React.createRef();
+  scrollSub: *;
+
+  componentDidMount() {
+    this.scrollSub = scrollToTopIntent.subscribe(() => {
+      const sectionList = this.ref.current.getNode();
+      sectionList.getScrollResponder().scrollTo({
+        x: 0,
+        y: 0,
+        animated: true,
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    this.scrollSub.unsubscribe();
+  }
 
   keyExtractor = (item: Operation) => item.id;
 
@@ -121,9 +141,12 @@ class Portfolio extends Component<
     return (
       <SafeAreaView style={styles.root}>
         <StatusBar barStyle="dark-content" />
+        <AnimatedTopBar scrollY={scrollY} summary={summary} />
         <List
+          forwardedRef={this.ref}
           sections={sections}
-          style={styles.sectionList}
+          style={styles.list}
+          contentContainerStyle={styles.contentContainer}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={SectionHeader}
@@ -144,31 +167,10 @@ class Portfolio extends Component<
                 : NoMoreOperationFooter
           }
         />
-        <AnimatedTopBar scrollY={scrollY} summary={summary} />
       </SafeAreaView>
     );
   }
 }
-
-const GraphCardContainer = ({
-  summary,
-  onPanResponderStart,
-  onPanResponderRelease,
-}: {
-  summary: Summary,
-  onPanResponderStart: () => *,
-  onPanResponderRelease: () => *,
-}) => (
-  <View>
-    <Greetings nbAccounts={summary.accounts.length} />
-    <GraphCard
-      summary={summary}
-      useCounterValue
-      onPanResponderStart={onPanResponderStart}
-      onPanResponderRelease={onPanResponderRelease}
-    />
-  </View>
-);
 
 export default compose(
   connect(mapStateToProps),
@@ -180,10 +182,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.lightGrey,
   },
-  sectionList: {
+  list: {
     flex: 1,
   },
-  graphCardContainer: {
-    padding: 20,
+  contentContainer: {
+    paddingTop: 20,
   },
 });
