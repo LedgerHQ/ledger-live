@@ -14,10 +14,10 @@ import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/helpers/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
-import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
+import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import OperationRow from "./../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
@@ -33,34 +33,37 @@ import type { Item } from "../../components/Graph";
 import type { Summary } from "../../components/provideSummary";
 
 import EmptyStateAccount from "./EmptyStateAccount";
-import AccountTopBar from "./AccountTopBar";
+import AccountHeaderRight from "./AccountHeaderRight";
+import AccountHeaderTitle from "./AccountHeaderTitle";
 
 type Props = {
   account: Account,
   summary: Summary,
-  navigation: NavigationScreenProp<{ accountId: string }>,
+  navigation: NavigationScreenProp<{
+    accountId: string,
+  }>,
 };
 
 type State = {
   opCount: number,
   scrollEnabled: boolean,
-  scrollY: AnimatedValue,
 };
 
-const List = Animated.createAnimatedComponent(SectionList);
+const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
+const List = provideSyncRefreshControl(AnimatedSectionList);
 
 const isAccountEmpty = (a: Account): boolean =>
   a.operations.length === 0 && a.balance.isZero();
 
 class AccountScreen extends PureComponent<Props, State> {
-  static navigationOptions = () => ({
-    header: null,
+  static navigationOptions = ({ navigation }) => ({
+    headerTitle: <AccountHeaderTitle navigation={navigation} />,
+    headerRight: <AccountHeaderRight navigation={navigation} />,
   });
 
   state = {
     opCount: 100,
     scrollEnabled: true,
-    scrollY: new Animated.Value(0),
   };
 
   disableScroll = () => this.setState({ scrollEnabled: false });
@@ -110,7 +113,6 @@ class AccountScreen extends PureComponent<Props, State> {
     const { summary } = this.props;
     return (
       <GraphCard
-        style={styles.header}
         summary={summary}
         onPanResponderStart={this.disableScroll}
         onPanResponderRelease={this.enableScroll}
@@ -121,7 +123,7 @@ class AccountScreen extends PureComponent<Props, State> {
 
   render() {
     const { account, navigation } = this.props;
-    const { opCount, scrollEnabled, scrollY } = this.state;
+    const { opCount, scrollEnabled } = this.state;
     if (!account) return null;
 
     const { sections, completed } = groupAccountOperationsByDay(
@@ -136,11 +138,6 @@ class AccountScreen extends PureComponent<Props, State> {
             sections={sections}
             style={styles.sectionList}
             scrollEnabled={scrollEnabled}
-            scrollEventThrottle={16}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              { useNativeDriver: true },
-            )}
             ListFooterComponent={
               !completed
                 ? LoadingFooter
@@ -158,11 +155,6 @@ class AccountScreen extends PureComponent<Props, State> {
         ) : (
           <EmptyStateAccount account={account} navigation={navigation} />
         )}
-        <AccountTopBar
-          account={account}
-          navigation={navigation}
-          scrollY={scrollY}
-        />
       </ScrollView>
     );
   }
@@ -181,9 +173,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.lightGrey,
-  },
-  header: {
-    marginTop: 80,
   },
   sectionList: { flex: 1 },
   balanceContainer: {
