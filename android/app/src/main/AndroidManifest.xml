@@ -14,7 +14,8 @@
 
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="27" />
+        android:targetSdkVersion="27"
+        tools:overrideLibrary="com.ledger.reactnative" />
 
     <application
       android:name=".MainApplication"
