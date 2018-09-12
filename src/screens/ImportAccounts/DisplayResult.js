@@ -12,6 +12,7 @@ import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 
 import LText from "../../components/LText";
+import colors from "../../colors";
 import BlueButton from "../../components/BlueButton";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
@@ -37,7 +38,6 @@ type State = {
   selectedAccounts: string[],
   items: Item[],
   importing: boolean,
-  pendingImportingAccounts: { [_: string]: true },
 };
 
 const itemModeDisplaySort = {
@@ -51,7 +51,6 @@ class DisplayResult extends Component<Props, State> {
     selectedAccounts: [],
     items: [],
     importing: false,
-    pendingImportingAccounts: {},
   };
 
   unmounted = false;
@@ -76,7 +75,6 @@ class DisplayResult extends Component<Props, State> {
   });
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const pendingImportingAccounts = { ...prevState.pendingImportingAccounts };
     const items = nextProps.navigation
       .getParam("result", {})
       .accounts.map(accInput => {
@@ -103,13 +101,12 @@ class DisplayResult extends Component<Props, State> {
 
         const account = importExistingAccount(accInput);
 
-        pendingImportingAccounts[accInput.id] = true;
         return { account, mode: "create" };
       })
       .sort(
         (a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode],
       );
-    return { items, pendingImportingAccounts };
+    return { items };
   }
 
   onImport = async () => {
@@ -155,32 +152,40 @@ class DisplayResult extends Component<Props, State> {
       mode={mode}
       checked={this.state.selectedAccounts.some(s => s === account.id)}
       onSwitch={this.onSwitchResultItem}
-      loading={account.id in this.state.pendingImportingAccounts}
       importing={this.state.importing}
     />
   );
 
-  renderSectionHeader = ({ section: { mode, data } }) => {
+  renderSectionHeader = ({ section: { mode } }) => {
     let text;
     switch (mode) {
       case "create":
-        text = `${data.length} new accounts`;
+        text = `New accounts`;
         break;
       case "patch":
-        text = `${data.length} accounts with new changes`;
+        text = `Updated accounts`;
         break;
       case "id":
-        text = `${data.length} accounts already imported`;
+        text = `Already imported`;
         break;
       default:
         text = "";
     }
-    return <LText bold>{text}</LText>;
+    return (
+      <LText semiBold style={styles.sectionHeaderText}>
+        {text}
+      </LText>
+    );
   };
 
   ListFooterComponent = () =>
     this.state.selectedAccounts.length === 0 ? null : (
-      <BlueButton title="Import" onPress={this.onImport} />
+      <BlueButton
+        title="Continue"
+        onPress={this.onImport}
+        containerStyle={styles.button}
+        titleStyle={styles.buttonText}
+      />
     );
 
   SectionSeparatorComponent = () => <View style={{ height: 20 }} />;
@@ -229,5 +234,16 @@ export default connect(
 const styles = StyleSheet.create({
   DisplayResult: {
     padding: 20,
+    backgroundColor: "white",
+  },
+  sectionHeaderText: {
+    color: colors.grey,
+    fontSize: 14,
+  },
+  button: {
+    height: 48,
+  },
+  buttonText: {
+    fontSize: 16,
   },
 });

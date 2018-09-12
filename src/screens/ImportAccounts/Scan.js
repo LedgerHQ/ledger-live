@@ -186,13 +186,6 @@ export default class Scanning extends PureComponent<
       </View>
     );
   }
-
-  componentWillUnmount() {
-    this.lastData = null;
-    this.nbChunks = null;
-    this.chunks = [];
-    this.completed = false;
-  }
 }
 
 const styles = StyleSheet.create({
