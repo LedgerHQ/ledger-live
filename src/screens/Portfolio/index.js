@@ -118,8 +118,6 @@ class Portfolio extends Component<
       opCount,
     );
 
-    // TODO pull to refresh connected to bridge (need to think it modular so we can reuse easily)
-
     return (
       <SafeAreaView style={styles.root}>
         <StatusBar barStyle="dark-content" />
