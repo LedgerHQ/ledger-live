@@ -69,20 +69,20 @@ class Portfolio extends Component<
     scrollEnabled: true,
   };
 
-  // $FlowFixMe
   ref = React.createRef();
 
   scrollSub: *;
 
   componentDidMount() {
     this.scrollSub = scrollToTopIntent.subscribe(() => {
-      // $FlowFixMe
-      const sectionList = this.ref.current.getNode();
-      sectionList.getScrollResponder().scrollTo({
-        x: 0,
-        y: 0,
-        animated: true,
-      });
+      const sectionList = this.ref.current && this.ref.current.getNode();
+      if (sectionList) {
+        sectionList.getScrollResponder().scrollTo({
+          x: 0,
+          y: 0,
+          animated: true,
+        });
+      }
     });
   }
 

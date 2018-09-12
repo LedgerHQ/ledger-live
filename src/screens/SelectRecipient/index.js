@@ -59,11 +59,12 @@ class SelectRecipient extends Component<Props, State> {
     address: "",
   };
 
-  // $FlowFixMe
   input = React.createRef();
 
   clear = () => {
-    this.input.current.clear();
+    if (this.input.current) {
+      this.input.current.clear();
+    }
     this.validateAddress("");
   };
 

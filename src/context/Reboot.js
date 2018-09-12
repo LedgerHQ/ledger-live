@@ -3,7 +3,6 @@ import React, { Fragment } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import db from "../db";
 
-// $FlowFixMe
 export const RebootContext = React.createContext(() => {});
 
 export default class RebootProvider extends React.Component<
