@@ -22,8 +22,10 @@ class GeneralSettings extends PureComponent<{
         <CountervalueSettingsRow navigation={navigation} />
         <RateProviderSettingsRow navigation={navigation} />
         <AuthSecurityToggle />
-        <ReportErrorsRow />
-        <AnalyticsRow />
+        {null && <ReportErrorsRow /> // FIXME enable when implemented
+        }
+        {null && <AnalyticsRow /> // FIXME enable when implemented
+        }
       </ScrollView>
     );
   }

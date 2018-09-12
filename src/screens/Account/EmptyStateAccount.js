@@ -37,13 +37,15 @@ class EmptyStateAccount extends PureComponent<{
               {"app is installed and start receiving"}
             </Trans>
           </LText>
-          <BlueButton
-            title={t("common:account.emptyState.buttons.receiveFunds")}
-            onPress={this.goToReceiveFunds}
-            containerStyle={styles.recieveButton}
-            titleStyle={[styles.buttonTitle]}
-            iconLeft={<Receive size={16} color={colors.white} />}
-          />
+          {null && ( // FIXME READONLYMVP
+            <BlueButton
+              title={t("common:account.emptyState.buttons.receiveFunds")}
+              onPress={this.goToReceiveFunds}
+              containerStyle={styles.recieveButton}
+              titleStyle={[styles.buttonTitle]}
+              iconLeft={<Receive size={16} color={colors.white} />}
+            />
+          )}
         </View>
       </View>
     );
