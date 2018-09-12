@@ -123,6 +123,7 @@ class Portfolio extends Component<
     return (
       <SafeAreaView style={styles.root}>
         <StatusBar barStyle="dark-content" />
+        <AnimatedTopBar scrollY={scrollY} summary={summary} />
         <List
           sections={sections}
           style={styles.sectionList}
@@ -146,7 +147,6 @@ class Portfolio extends Component<
                 : NoMoreOperationFooter
           }
         />
-        <AnimatedTopBar scrollY={scrollY} summary={summary} />
       </SafeAreaView>
     );
   }
