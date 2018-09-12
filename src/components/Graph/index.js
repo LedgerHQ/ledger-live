@@ -25,6 +25,7 @@ export type Item = {
 };
 
 type Props = {
+  width: number,
   height: number,
   data: Item[],
   color: string,
@@ -36,7 +37,6 @@ type Props = {
 };
 
 type State = {
-  width: number,
   barVisible: boolean,
   barOffsetX: number,
   barOffsetY: number,
@@ -48,7 +48,6 @@ const bisectDate = array.bisector(d => d.date).left;
 
 export default class Graph extends PureComponent<Props, State> {
   static defaultProps = {
-    height: 100,
     data: [],
     color: colors.live,
     isInteractive: false,
@@ -56,7 +55,6 @@ export default class Graph extends PureComponent<Props, State> {
   };
 
   state = {
-    width: 0,
     barVisible: false,
     barOffsetX: 0,
     barOffsetY: 0,
@@ -64,12 +62,6 @@ export default class Graph extends PureComponent<Props, State> {
 
   x: * = null;
   y: * = null;
-
-  onLayout = ({
-    nativeEvent: {
-      layout: { width },
-    },
-  }: *) => this.setState({ width });
 
   collectHovered = (evt: *) => {
     const { data, onItemHover, useCounterValue } = this.props;
@@ -104,8 +96,15 @@ export default class Graph extends PureComponent<Props, State> {
   };
 
   render() {
-    const { height, data, color, isInteractive, useCounterValue } = this.props;
-    const { width, barVisible, barOffsetX, barOffsetY } = this.state;
+    const {
+      width,
+      height,
+      data,
+      color,
+      isInteractive,
+      useCounterValue,
+    } = this.props;
+    const { barVisible, barOffsetX, barOffsetY } = this.state;
 
     const maxY = useCounterValue
       ? maxBy(data, d => d.value.toNumber()).value.toNumber()
@@ -144,8 +143,7 @@ export default class Graph extends PureComponent<Props, State> {
 
     return (
       <View
-        style={{ height }}
-        onLayout={this.onLayout}
+        style={{ width, height }}
         onStartShouldSetResponder={
           isInteractive ? this.onStartShouldSetResponder : undefined
         }
