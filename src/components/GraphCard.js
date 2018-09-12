@@ -50,7 +50,11 @@ class GraphCard extends PureComponent<Props, State> {
     hoveredItem: null,
   };
 
-  timeRangeItems = null;
+  timeRangeItems = [
+    { key: "week", label: this.props.t("common:time.week") },
+    { key: "month", label: this.props.t("common:time.month") },
+    { key: "year", label: this.props.t("common:time.year") },
+  ];
 
   onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
   onItemHover = hoveredItem => this.setState({ hoveredItem });
@@ -62,7 +66,6 @@ class GraphCard extends PureComponent<Props, State> {
   render() {
     const {
       summary,
-      t,
       onPanResponderStart,
       renderTitle,
       useCounterValue,
@@ -79,14 +82,6 @@ class GraphCard extends PureComponent<Props, State> {
     } = summary;
 
     const { hoveredItem } = this.state;
-
-    if (!this.timeRangeItems) {
-      this.timeRangeItems = [
-        { key: "week", label: t("common:time.week") },
-        { key: "month", label: t("common:time.month") },
-        { key: "year", label: t("common:time.year") },
-      ];
-    }
 
     const graphColor =
       accounts.length === 1 ? accounts[0].currency.color : undefined;

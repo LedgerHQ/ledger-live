@@ -1,22 +1,17 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import * as array from "d3-array";
 import * as shape from "d3-shape";
 import * as scale from "d3-scale";
 import { BigNumber } from "bignumber.js";
 import { View } from "react-native";
 import maxBy from "lodash/maxBy";
-import Svg, {
-  Path,
-  Defs,
-  LinearGradient,
-  Stop,
-  Line,
-  Circle,
-} from "react-native-svg";
+import Svg, { Path, Defs } from "react-native-svg";
 
-import colors, { rgba } from "../../colors";
+import colors from "../../colors";
+import DefGraph from "./DefGrad";
+import Bar from "./Bar";
 
 export type Item = {
   date: Date,
@@ -82,13 +77,26 @@ export default class Graph extends PureComponent<Props, State> {
   };
 
   onStartShouldSetResponder = () => true;
+
   onResponderGrant = (evt: *) => {
     const { onPanResponderStart } = this.props;
     if (onPanResponderStart) onPanResponderStart();
     this.setState({ barVisible: true, ...this.collectHovered(evt) });
   };
 
-  onResponderMove = (evt: *) => this.setState(this.collectHovered(evt));
+  onResponderMove = (evt: *) => {
+    const r = this.collectHovered(evt);
+    this.setState(oldState => {
+      if (
+        oldState.barOffsetX === r.barOffsetX &&
+        oldState.barOffsetY === r.barOffsetY
+      ) {
+        return null; // do not setState if the position have not changed.
+      }
+      return r;
+    });
+  };
+
   onResponderRelease = () => {
     const { onPanResponderRelease } = this.props;
     if (onPanResponderRelease) onPanResponderRelease();
@@ -141,56 +149,33 @@ export default class Graph extends PureComponent<Props, State> {
       .y(yExtractor)
       .curve(curve)(data);
 
+    const responderProps = isInteractive
+      ? {
+          onStartShouldSetResponder: this.onStartShouldSetResponder,
+          onResponderGrant: this.onResponderGrant,
+          onResponderMove: this.onResponderMove,
+          onResponderRelease: this.onResponderRelease,
+          onResponderTerminate: this.onResponderRelease,
+        }
+      : null;
+
     return (
-      <View
-        style={{ width, height }}
-        onStartShouldSetResponder={
-          isInteractive ? this.onStartShouldSetResponder : undefined
-        }
-        onResponderGrant={isInteractive ? this.onResponderGrant : undefined}
-        onResponderMove={isInteractive ? this.onResponderMove : undefined}
-        onResponderRelease={isInteractive ? this.onResponderRelease : undefined}
-        onResponderTerminate={
-          isInteractive ? this.onResponderRelease : undefined
-        }
-      >
-        {!!width && (
-          <Svg height={height} width={width}>
-            <Defs>
-              <LinearGradient id="grad" x1="0" y1="0" x2="0" y2={height}>
-                <Stop offset="0" stopColor={color} stopOpacity="0.3" />
-                <Stop offset="1" stopColor={color} stopOpacity="0" />
-              </LinearGradient>
-            </Defs>
-            <Path d={area} fill="url(#grad)" />
-            <Path
-              d={line}
-              stroke={color}
-              strokeWidth={STROKE_WIDTH}
-              fill="none"
-            />
-            {barVisible && (
-              <Fragment>
-                <Line
-                  x1={barOffsetX}
-                  x2={barOffsetX}
-                  y1={barOffsetY}
-                  y2={height}
-                  stroke={rgba(color, 0.2)}
-                  strokeWidth={FOCUS_RADIUS}
-                />
-                <Circle
-                  cx={barOffsetX}
-                  cy={barOffsetY}
-                  r={5}
-                  stroke={color}
-                  strokeWidth={STROKE_WIDTH}
-                  fill="white"
-                />
-              </Fragment>
-            )}
-          </Svg>
-        )}
+      <View style={{ width, height }} {...responderProps}>
+        <Svg height={height} width={width}>
+          <Defs>
+            <DefGraph height={height} color={color} />
+          </Defs>
+          <Path d={area} fill="url(#grad)" />
+          <Path
+            d={line}
+            stroke={color}
+            strokeWidth={STROKE_WIDTH}
+            fill="none"
+          />
+          {!barVisible ? null : (
+            <Bar x={barOffsetX} y={barOffsetY} height={height} color={color} />
+          )}
+        </Svg>
       </View>
     );
   }
