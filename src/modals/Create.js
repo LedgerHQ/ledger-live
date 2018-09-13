@@ -7,9 +7,9 @@ import type { NavigationScreenProp } from "react-navigation";
 
 import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
-import IconSend from "../images/icons/Send";
-import IconReceive from "../images/icons/Receive";
-import IconExchange from "../images/icons/Exchange";
+import IconSend from "../icons/Send";
+import IconReceive from "../icons/Receive";
+import IconExchange from "../icons/Exchange";
 
 import type { Props as ModalProps } from "../components/BottomModal";
 

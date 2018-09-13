@@ -6,7 +6,7 @@ import Icon from "react-native-vector-icons/dist/Feather";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
-import ArrowRight from "../../images/icons/ArrowRight";
+import ArrowRight from "../../icons/ArrowRight";
 
 const iconByType = {
   ble: "bluetooth",

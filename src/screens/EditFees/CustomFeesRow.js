@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 
 import LText from "../../components/LText/index";
-import Check from "../../images/icons/Check";
+import Check from "../../icons/Check";
 
 import colors from "../../colors";
 

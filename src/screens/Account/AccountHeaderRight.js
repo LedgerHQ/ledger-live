@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import Touchable from "../../components/Touchable";
-import Wrench from "../../images/icons/Wrench";
+import Wrench from "../../icons/Wrench";
 import colors from "../../colors";
 
 type Props = {

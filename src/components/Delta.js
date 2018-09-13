@@ -8,8 +8,8 @@ import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import LText from "../components/LText";
 import CurrencyUnitValue from "../components/CurrencyUnitValue";
-import IconArrowUp from "../images/icons/ArrowUp";
-import IconArrowDown from "../images/icons/ArrowDown";
+import IconArrowUp from "../icons/ArrowUp";
+import IconArrowDown from "../icons/ArrowDown";
 
 import colors from "../colors";
 

@@ -10,7 +10,7 @@ import BottomModal from "./BottomModal";
 import GreyButton from "./GreyButton";
 import BlueButton from "./BlueButton";
 import LedgerLiveLogo from "./LedgerLiveLogo";
-import LiveLogo from "../images/icons/LiveLogo";
+import LiveLogo from "../icons/LiveLogo";
 import HardResetModal from "./HardResetModal";
 
 type Props = {

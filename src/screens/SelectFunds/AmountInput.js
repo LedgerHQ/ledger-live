@@ -3,7 +3,7 @@ import React, { Component, Fragment } from "react";
 import { TextInput, View, StyleSheet, TouchableOpacity } from "react-native";
 
 import LText from "../../components/LText/index";
-import Close from "../../images/icons/Close";
+import Close from "../../icons/Close";
 
 import colors from "../../colors";
 

@@ -6,7 +6,7 @@ import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
 import colors from "../../../colors";
 import { urls } from "../../../config/urls";
-import ExternalLink from "../../../images/icons/ExternalLink";
+import ExternalLink from "../../../icons/ExternalLink";
 
 class PrivacyPolicyRow extends PureComponent<{
   t: T,

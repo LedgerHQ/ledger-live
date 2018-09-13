@@ -6,7 +6,7 @@ import LText from "../../components/LText";
 import colors from "../../colors";
 import type { T } from "../../types/common";
 import Touchable from "../../components/Touchable";
-import ExternalLink from "../../images/icons/ExternalLink";
+import ExternalLink from "../../icons/ExternalLink";
 
 type Props = {
   t: T,

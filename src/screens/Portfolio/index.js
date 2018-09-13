@@ -25,7 +25,7 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
-import PortfolioIcon from "../../images/icons/Portfolio";
+import PortfolioIcon from "../../icons/Portfolio";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
 
