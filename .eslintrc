@@ -25,6 +25,7 @@
         "ignoreRestSiblings": true
       }
     ],
+    "flowtype/space-after-type-colon": 0,
     "no-shadow": 0,
     "no-plusplus": 0,
     "no-nested-ternary": 0,

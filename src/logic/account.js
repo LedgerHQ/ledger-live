@@ -7,6 +7,13 @@ import type { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
 import { decodeAccountId } from "@ledgerhq/live-common/lib/helpers/account";
 import type { AccountData } from "@ledgerhq/live-common/lib/bridgestream/types";
+import { listCryptoCurrencies } from "../cryptocurrencies";
+
+export const supportsExistingAccount = ({
+  currencyId,
+}: {
+  currencyId: string,
+}) => listCryptoCurrencies(true).some(c => c.id === currencyId);
 
 export const importExistingAccount = ({
   id,

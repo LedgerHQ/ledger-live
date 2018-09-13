@@ -25,16 +25,18 @@ async function injectMockAccountsInDB(count) {
 const GenerateMockAccountsButton = ({
   title,
   reboot,
+  count,
   ...rest
 }: {
   title: string,
+  count: number,
   reboot: *,
 }) => (
   <GreyButton
     {...rest}
     title={title}
     onPress={async () => {
-      await injectMockAccountsInDB(12);
+      await injectMockAccountsInDB(count);
       reboot();
     }}
   />

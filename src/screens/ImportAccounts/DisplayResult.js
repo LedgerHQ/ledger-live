@@ -10,7 +10,10 @@ import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { T } from "../../types/common";
-import { importExistingAccount } from "../../logic/account";
+import {
+  importExistingAccount,
+  supportsExistingAccount,
+} from "../../logic/account";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 
@@ -27,7 +30,8 @@ type Item = {
   // create: account is a new entity to create
   // patch: account exists and need to be patched
   // id: account exists and nothing changes
-  mode: "create" | "patch" | "id",
+  // unsupported: we can't support adding this account
+  mode: "create" | "patch" | "id" | "unsupported",
 };
 
 type Props = {
@@ -49,6 +53,7 @@ const itemModeDisplaySort = {
   create: 1,
   patch: 2,
   id: 3,
+  unsupported: 4,
 };
 
 class DisplayResult extends Component<Props, State> {
@@ -81,7 +86,7 @@ class DisplayResult extends Component<Props, State> {
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const items = nextProps.navigation
-      .getParam("result", {})
+      .getParam("result")
       .accounts.map(accInput => {
         const prevItem = prevState.items.find(
           item => item.account.id === accInput.id,
@@ -103,15 +108,28 @@ class DisplayResult extends Component<Props, State> {
             mode: "patch",
           };
         }
-
-        const account = importExistingAccount(accInput);
-
-        return { account, mode: "create" };
+        try {
+          const account = importExistingAccount(accInput);
+          return {
+            account,
+            mode: supportsExistingAccount(accInput) ? "create" : "unsupported",
+          };
+        } catch (e) {
+          console.log(e);
+          return null;
+        }
       })
+      .filter(o => o)
       .sort(
         (a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode],
       );
-    return { items };
+
+    let selectedAccounts = prevState.selectedAccounts;
+    if (prevState.items.length === 0) {
+      // select all by default
+      selectedAccounts = items.map(i => i.account.id);
+    }
+    return { items, selectedAccounts };
   }
 
   onImport = async () => {
@@ -173,6 +191,9 @@ class DisplayResult extends Component<Props, State> {
         break;
       case "id":
         text = t("account.import.result.alreadyImported");
+        break;
+      case "unsupported":
+        text = t("account.import.result.unsupported");
         break;
       default:
         text = "";
