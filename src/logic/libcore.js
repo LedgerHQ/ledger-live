@@ -1,6 +1,24 @@
 // @flow
 
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
+
 import getLibCore from "./getLibcore";
+import * as accountIdHelper from "./accountId";
+import {
+  getAccountPlaceholderName,
+  getNewAccountPlaceholderName,
+} from "./accountName";
+
+// FIXME: is there a way to import from libcore?
+const OperationTypeMap = {
+  SEND: "OUT",
+  RECEIVE: "IN",
+};
+
+type ScanOpts = {
+  isSegwit: boolean,
+  isUnsplit: boolean,
+};
 
 async function getOrCreateWallet({
   core,
@@ -37,9 +55,15 @@ async function getOrCreateWallet({
   return wallet;
 }
 
-export async function syncAccount({ core, account }: { core: *, account: * }) {
+export async function syncAccount({
+  core,
+  coreAccount,
+}: {
+  core: *,
+  coreAccount: *,
+}) {
   const eventReceiver = await core.coreEventReceiver.newInstance();
-  const eventBus = await core.coreAccount.synchronize(account);
+  const eventBus = await core.coreAccount.synchronize(coreAccount);
   const serialContext = await core.coreThreadDispatcher.getSerialExecutionContext(
     core.getThreadDispatcher(),
     "main",
@@ -50,27 +74,26 @@ export async function syncAccount({ core, account }: { core: *, account: * }) {
 export async function getAccountFromXPUB({
   xpub,
   currencyId,
+  opts: { isSegwit = true, isUnsplit = false } = {},
 }: {
   xpub: string,
   currencyId: string,
+  opts: ScanOpts,
 }) {
-  let account;
+  let coreAccount;
   const index = 0;
   const core = await getLibCore();
 
   // TODO: real wallet name
   const walletName = `temporary-wallet-name-${Date.now()}`;
 
-  const wallet = await getOrCreateWallet({ core, walletName, currencyId });
-
-  // TODO: why do we do this now?
-  await core.flush();
+  const coreWallet = await getOrCreateWallet({ core, walletName, currencyId });
 
   try {
-    account = await core.coreWallet.getAccount(wallet, index);
+    coreAccount = await core.coreWallet.getAccount(coreWallet, index);
   } catch (err) {
     const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
-      wallet,
+      coreWallet,
       index,
     );
     const infosIndex = await core.coreExtendedKeyAccountCreationInfo.getIndex(
@@ -95,23 +118,195 @@ export async function getAccountFromXPUB({
       extendedKeys,
     );
 
-    account = await core.coreWallet.newAccountWithExtendedKeyInfo(
-      wallet,
+    coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
+      coreWallet,
       newExtendedKeys,
     );
   }
 
-  await syncAccount({ core, account });
+  await syncAccount({ core, coreAccount });
 
-  const query = await core.coreAccount.queryOperations(account);
+  const query = await core.coreAccount.queryOperations(coreAccount);
   const completedQuery = await core.coreOperationQuery.complete(query);
-  const operations = await core.coreOperationQuery.execute(completedQuery);
+  const coreOperations = await core.coreOperationQuery.execute(completedQuery);
+
+  const account = await buildAccountRaw({
+    core,
+    coreWallet,
+    coreAccount,
+    coreOperations,
+    walletName,
+    currencyId,
+    accountIndex: index,
+    opts: {
+      isSegwit,
+      isUnsplit,
+    },
+  });
 
   await core.flush();
 
-  // TODO: build an Account
+  return account;
+}
+
+async function buildAccountRaw({
+  core,
+  coreWallet,
+  coreAccount,
+  coreOperations,
+  walletName,
+  currencyId,
+  accountIndex,
+  opts: { isSegwit, isUnsplit },
+}: {
+  core: *,
+  coreWallet: *,
+  coreAccount: *,
+  coreOperations: *,
+  walletName: string,
+  currencyId: string,
+  accountIndex: number,
+  opts: ScanOpts,
+}) {
+  const nativeBalance = await core.coreAccount.getBalance(coreAccount);
+  const { value: balance } = await core.coreAmount.toLong(nativeBalance);
+
+  const currency = getCryptoCurrencyById(currencyId);
+  const coreAccountCreationInfo = await core.coreWallet.getAccountCreationInfo(
+    coreWallet,
+    accountIndex,
+  );
+  const derivations = await core.coreAccountCreationInfo.getDerivations(
+    coreAccountCreationInfo,
+  );
+  const [walletPath, accountPath] = derivations;
+
+  // FIXME: this is throwing
+  //        `Cannot convert argument of type class java.lang.Long`
+  //
+  // const coreBlock = await core.coreAccount.getLastBlock(coreAccount)
+  // const blockHeight = await core.coreBlock.getHeight(coreBlock)
+  const blockHeight = 0;
+
+  const [coreFreshAddress] = await core.coreAccount.getFreshPublicAddresses(
+    coreAccount,
+  );
+  const [
+    { value: freshAddressStr },
+    { value: freshAddressPath },
+  ] = await Promise.all([
+    core.coreAddress.toString(coreFreshAddress),
+    core.coreAddress.getDerivationPath(coreFreshAddress),
+  ]);
+  const freshAddress = {
+    str: freshAddressStr,
+    path: `${accountPath}/${freshAddressPath}`,
+  };
+
+  const name =
+    coreOperations.length === 0
+      ? getNewAccountPlaceholderName(currency, accountIndex)
+      : getAccountPlaceholderName(
+          currency,
+          accountIndex,
+          (currency.supportsSegwit && !isSegwit) || false,
+          isUnsplit,
+        );
+
+  // retrieve xpub
+  const { value: xpub } = await core.coreAccount.getRestoreKey(coreAccount);
+
+  // build operations
+  const operations = await Promise.all(
+    coreOperations.map(coreOperation =>
+      buildOperationRaw({
+        core,
+        coreOperation,
+        xpub,
+      }),
+    ),
+  );
+
   return {
-    account,
+    id: accountIdHelper.encode({
+      type: "libcore",
+      version: "1",
+      xpub,
+      walletName,
+    }),
+    xpub,
+    path: walletPath,
+    name,
+    isSegwit,
+    freshAddress: freshAddress.str,
+    freshAddressPath: freshAddress.path,
+    balance,
+    blockHeight,
+    archived: false,
+    index: accountIndex,
     operations,
+    pendingOperations: [],
+    currencyId,
+    unitMagnitude: currency.units[0].magnitude,
+    lastSyncDate: new Date().toISOString(),
+  };
+}
+
+async function buildOperationRaw({
+  core,
+  coreOperation,
+  xpub,
+}: {
+  core: *,
+  coreOperation: *,
+  xpub: string,
+}) {
+  const bitcoinLikeOperation = await core.coreOperation.asBitcoinLikeOperation(
+    coreOperation,
+  );
+  const bitcoinLikeTransaction = await core.coreBitcoinLikeOperation.getTransaction(
+    bitcoinLikeOperation,
+  );
+  const { value: hash } = await core.coreBitcoinLikeTransaction.getHash(
+    bitcoinLikeTransaction,
+  );
+  const { value: operationType } = await core.coreOperation.getOperationType(
+    coreOperation,
+  );
+
+  const coreValue = await core.coreOperation.getAmount(coreOperation);
+  const { value } = await core.coreAmount.toLong(coreValue);
+
+  const coreFee = await core.coreOperation.getFees(coreOperation);
+  const { value: fee } = await core.coreAmount.toLong(coreFee);
+
+  const [{ value: recipients }, { value: senders }] = await Promise.all([
+    core.coreOperation.getRecipients(coreOperation),
+    core.coreOperation.getSenders(coreOperation),
+  ]);
+
+  // FIXME: libcore is sending date without timezone, and with weird
+  //        format (e.g: `2018-59-31 03:59:53`)
+  //
+  // const { value: date } = await core.coreOperation.getDate(coreOperation);
+  const date = new Date();
+
+  // if transaction is a send, amount becomes negative
+  const type = OperationTypeMap[operationType];
+
+  const id = `${xpub}-${hash}-${type}`;
+
+  return {
+    id,
+    hash,
+    type,
+    value,
+    fee,
+    senders,
+    recipients,
+    blockHeight: 0, // FIXME: fill it
+    blockHash: null, // FIXME: why? (unused)
+    accountId: xpub, // FIXME: iso as desktop, but looks wrong
+    date: date.toISOString(), // FIXME: ensure that timezone is correct
   };
 }

@@ -25,6 +25,12 @@ export default async () => {
 
       // forwarding native functions
       coreAccount: NativeModules.CoreAccount,
+      coreAccountCreationInfo: NativeModules.CoreAccountCreationInfo,
+      coreAddress: NativeModules.CoreAddress,
+      coreAmount: NativeModules.CoreAmount,
+      coreBitcoinLikeOperation: NativeModules.CoreBitcoinLikeOperation,
+      coreBitcoinLikeTransaction: NativeModules.CoreBitcoinLikeTransaction,
+      coreBlock: NativeModules.CoreBlock,
       coreDatabaseBackend: NativeModules.CoreDatabaseBackend,
       coreDynamicObject: NativeModules.CoreDynamicObject,
       coreEventBus: NativeModules.CoreEventBus,
@@ -33,6 +39,7 @@ export default async () => {
         NativeModules.CoreExtendedKeyAccountCreationInfo,
       coreHttpClient: NativeModules.CoreHttpClient,
       coreLogPrinter: NativeModules.CoreLogPrinter,
+      coreOperation: NativeModules.CoreOperation,
       coreOperationQuery: NativeModules.CoreOperationQuery,
       corePathResolver: NativeModules.CorePathResolver,
       coreRandomNumberGenerator: NativeModules.CoreRandomNumberGenerator,
