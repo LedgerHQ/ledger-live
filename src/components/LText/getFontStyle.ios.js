@@ -1,16 +1,6 @@
 /* @flow */
 import { StyleSheet } from "react-native";
-
-type Opts = {
-  bold?: boolean,
-  semiBold?: boolean,
-  secondary?: boolean,
-  tertiary?: boolean,
-};
-type Res = {
-  fontFamily: string,
-  fontWeight: "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800",
-};
+import type { Opts, Res } from "./";
 
 const getFontStyle = ({
   bold,
@@ -23,19 +13,15 @@ const getFontStyle = ({
     : tertiary
       ? "Rubik"
       : "Open Sans";
-  let fontWeight = secondary ? -200 : 0; // Fix for Museo weights being off by 200;
+  let fontWeight;
   if (semiBold) {
-    fontWeight += 600;
+    fontWeight = secondary ? "400" : "600"; // Fix for Museo weights being off by 200;
   } else if (bold) {
-    fontWeight += 700;
+    fontWeight = secondary ? "500" : "700";
   } else {
-    fontWeight += 400;
+    fontWeight = secondary ? "200" : "400";
   }
-  return {
-    fontFamily,
-    // $FlowFixMe trust me it's one of the font weights!
-    fontWeight: fontWeight.toString(),
-  };
+  return { fontFamily, fontWeight };
 };
 
 const cache = StyleSheet.create({});

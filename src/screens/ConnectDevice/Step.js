@@ -2,7 +2,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
-import Check from "../../images/icons/Check";
+import Check from "../../icons/Check";
 
 import colors from "../../colors";
 

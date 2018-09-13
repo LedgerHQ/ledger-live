@@ -5,8 +5,8 @@ import { View } from "react-native";
 
 import type { OperationType } from "@ledgerhq/live-common/lib/types";
 
-import ReceiveIcon from "../images/icons/Receive";
-import SendIcon from "../images/icons/Send";
+import ReceiveIcon from "../icons/Receive";
+import SendIcon from "../icons/Send";
 import Circle from "./Circle";
 
 import colors from "../colors";

@@ -6,7 +6,7 @@ import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
-import ExternalLink from "../../../images/icons/ExternalLink";
+import ExternalLink from "../../../icons/ExternalLink";
 
 class LedgerSupportRow extends PureComponent<{
   t: T,

@@ -12,7 +12,7 @@ import colors from "../colors";
 
 type Props = {
   account: Account,
-  onPress: () => void,
+  onPress?: () => void,
   style?: any,
 };
 
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     paddingVertical: 18,
+    alignItems: "center",
   },
   accountName: {
     flexGrow: 1,

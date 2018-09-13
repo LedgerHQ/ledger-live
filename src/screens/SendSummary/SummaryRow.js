@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import ExternalLink from "../../images/icons/ExternalLink";
+import ExternalLink from "../../icons/ExternalLink";
 
 import LText from "../../components/LText/index";
 

@@ -85,7 +85,7 @@ class GraphCard extends PureComponent<Props, State> {
       accounts.length === 1 ? accounts[0].currency.color : undefined;
 
     return (
-      <Card style={[getElevationStyle(3), styles.root]}>
+      <Card style={[getElevationStyle(4), styles.root]}>
         <GraphCardHeader
           from={balanceStart}
           to={balanceEnd}

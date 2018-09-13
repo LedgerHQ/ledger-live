@@ -8,7 +8,7 @@ import type { T } from "../../../types/common";
 import BottomModal from "../../../components/BottomModal";
 import Circle from "../../../components/Circle";
 import HardResetModal from "../../../components/HardResetModal";
-import Trash from "../../../images/icons/Trash";
+import Trash from "../../../icons/Trash";
 
 type Props = {
   t: T,

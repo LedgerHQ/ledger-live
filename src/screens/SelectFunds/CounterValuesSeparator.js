@@ -3,7 +3,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
 import colors from "../../colors";
-import TranserIcon from "../../images/icons/Transfer";
+import TranserIcon from "../../icons/Transfer";
 
 export default class CounterValuesSeparator extends PureComponent<{}> {
   render() {
