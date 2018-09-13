@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import type { NavigationScreenProp } from "react-navigation";
 import Touchable from "./Touchable";
-import CloseIcon from "../images/icons/Close";
+import CloseIcon from "../icons/Close";
 import colors from "../colors";
 
 export default class Close extends Component<{

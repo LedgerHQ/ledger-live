@@ -10,10 +10,10 @@ import { createStructuredSelector } from "reselect";
 import { currenciesSelector } from "../../reducers/accounts";
 import type { T } from "../../types/common";
 import SettingsCard from "../../components/SettingsCard";
-import Assets from "../../images/icons/Assets";
-import LiveLogoIcon from "../../images/icons/LiveLogoIcon";
-import Help from "../../images/icons/Help";
-import Display from "../../images/icons/Display";
+import Assets from "../../icons/Assets";
+import LiveLogoIcon from "../../icons/LiveLogoIcon";
+import Help from "../../icons/Help";
+import Display from "../../icons/Display";
 import colors from "../../colors";
 
 type Props = {

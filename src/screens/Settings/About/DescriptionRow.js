@@ -6,7 +6,7 @@ import colors from "../../../colors";
 import type { T } from "../../../types/common";
 import LText from "../../../components/LText";
 import LedgerLiveLogo from "../../../components/LedgerLiveLogo";
-import LiveLogo from "../../../images/icons/LiveLogo";
+import LiveLogo from "../../../icons/LiveLogo";
 
 class DescriptionRow extends PureComponent<{
   t: T,

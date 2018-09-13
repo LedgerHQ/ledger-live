@@ -8,11 +8,11 @@ import { createStructuredSelector } from "reselect";
 import colors from "../../../colors";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
-import Warning from "../../../images/icons/Warning";
+import Warning from "../../../icons/Warning";
 import ModalBottomAction from "../../../components/ModalBottomAction";
 import BlueButton from "../../../components/BlueButton";
 import GreyButton from "../../../components/GreyButton";
-import Archive from "../../../images/icons/Archive";
+import Archive from "../../../icons/Archive";
 import Circle from "../../../components/Circle";
 import BottomModal from "../../../components/BottomModal";
 

@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import colors from "../colors";
 import LedgerLiveLogo from "./LedgerLiveLogo";
-import LiveLogo from "../images/icons/LiveLogo";
+import LiveLogo from "../icons/LiveLogo";
 
 class AuthPendingApp extends Component<*> {
   render() {

@@ -3,8 +3,8 @@ import { View, StyleSheet } from "react-native";
 import Touchable from "./Touchable";
 import LText from "./LText";
 import colors from "../colors";
-import ArrowRight from "../images/icons/ArrowRight";
-import Check from "../images/icons/Check";
+import ArrowRight from "../icons/ArrowRight";
+import Check from "../icons/Check";
 
 const flowPush = <View style={{ flex: 1 }} />;
 

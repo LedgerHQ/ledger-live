@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
 import { View, Platform, StyleSheet } from "react-native";
-import ArrowLeft from "../images/icons/ArrowLeft";
+import ArrowLeft from "../icons/ArrowLeft";
 import colors from "../colors";
 
 const HeaderBackImage = () => (
