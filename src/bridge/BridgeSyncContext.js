@@ -19,7 +19,7 @@ import {
 import type { BridgeSyncState } from "../reducers/bridgeSync";
 import { accountsSelector, isUpToDateSelector } from "../reducers/accounts";
 import { SYNC_MAX_CONCURRENT, SYNC_TIMEOUT } from "../constants";
-import { getBridgeForCurrency } from ".";
+import { getAccountBridge } from ".";
 
 type BridgeSyncProviderProps = {
   children: *,
@@ -78,7 +78,7 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
         return;
       }
 
-      const bridge = getBridgeForCurrency(account.currency);
+      const bridge = getAccountBridge(account);
 
       this.props.setAccountSyncState(accountId, { pending: true, error: null });
 
