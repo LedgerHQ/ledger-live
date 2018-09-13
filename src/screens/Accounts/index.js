@@ -9,6 +9,8 @@ import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../images/icons/Accounts";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import RefreshAccountsOrdering from "../../components/RefreshAccountOrdering";
+import StyledStatusBar from "../../components/StyledStatusBar";
+import colors from "../../colors";
 
 import NoAccounts from "./NoAccounts";
 import AccountCard from "./AccountCard";
@@ -54,6 +56,7 @@ class Accounts extends Component<Props> {
 
     return (
       <Fragment>
+        <StyledStatusBar backgroundColor={colors.white} />
         <RefreshAccountsOrdering onMount />
         <List
           data={accounts}

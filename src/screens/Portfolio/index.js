@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import {
   View,
   StyleSheet,
-  StatusBar,
   SectionList,
   Animated,
   SafeAreaView,
@@ -28,6 +27,7 @@ import OperationRow from "../../components/OperationRow";
 import PortfolioIcon from "../../images/icons/Portfolio";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
+import StyledStatusBar from "../../components/StyledStatusBar";
 
 import type { Summary } from "../../components/provideSummary";
 
@@ -140,7 +140,7 @@ class Portfolio extends Component<
 
     return (
       <SafeAreaView style={styles.root}>
-        <StatusBar barStyle="dark-content" />
+        <StyledStatusBar backgroundColor={colors.lightGrey} />
         <AnimatedTopBar scrollY={scrollY} summary={summary} />
         <List
           forwardedRef={this.ref}

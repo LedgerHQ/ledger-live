@@ -6,19 +6,22 @@ import colors from "../colors";
 
 class HeaderTitle extends Component<*> {
   render() {
-    const { children } = this.props;
+    const { style, ...newProps } = this.props;
 
     return (
-      <LText secondary semiBold style={style.root}>
-        {children}
-      </LText>
+      <LText
+        {...newProps}
+        secondary
+        semiBold
+        style={[styleSheet.root, style]}
+      />
     );
   }
 }
 
 export default HeaderTitle;
 
-const style = StyleSheet.create({
+const styleSheet = StyleSheet.create({
   root: {
     color: colors.darkBlue,
     fontSize: 16,

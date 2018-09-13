@@ -43,9 +43,7 @@ class AnimatedTopBar extends PureComponent<{
 
     return (
       <TouchableWithoutFeedback onPress={this.onPress}>
-        <Animated.View
-          style={[getElevationStyle(20), styles.root, { opacity }]}
-        >
+        <Animated.View style={[getElevationStyle(8), styles.root, { opacity }]}>
           <View style={styles.outer}>
             <SafeAreaView>
               <View style={styles.content}>
