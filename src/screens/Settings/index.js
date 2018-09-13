@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import config from "react-native-config";
 import { translate } from "react-i18next";
 import { ScrollView, View, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
@@ -15,6 +16,7 @@ import LiveLogoIcon from "../../icons/LiveLogoIcon";
 import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
+import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -72,6 +74,13 @@ class Settings extends Component<Props> {
             icon={<Help size={16} color={colors.live} />}
             onClick={() => this.navigateTo("HelpSettings")}
           />
+          {config.DEBUG_MOCK_ACCOUNT && !isNaN(config.DEBUG_MOCK_ACCOUNT) ? (
+            <GenerateMockAccountsButton
+              containerStyle={{ marginTop: 40 }}
+              title={`Generate ${config.DEBUG_MOCK_ACCOUNT} Mock Accounts`}
+              count={parseInt(config.DEBUG_MOCK_ACCOUNT, 10)}
+            />
+          ) : null}
         </View>
       </ScrollView>
     );
