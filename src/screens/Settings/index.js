@@ -17,6 +17,7 @@ import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
+import ImportBridgeStreamData from "../../components/ImportBridgeStreamData";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -44,6 +45,7 @@ class Settings extends Component<Props> {
     }
     return navigation.navigate(screenName);
   };
+
   render() {
     const { t } = this.props;
 
@@ -76,9 +78,17 @@ class Settings extends Component<Props> {
           />
           {config.DEBUG_MOCK_ACCOUNT && !isNaN(config.DEBUG_MOCK_ACCOUNT) ? (
             <GenerateMockAccountsButton
-              containerStyle={{ marginTop: 40 }}
+              containerStyle={{ marginTop: 20 }}
               title={`Generate ${config.DEBUG_MOCK_ACCOUNT} Mock Accounts`}
               count={parseInt(config.DEBUG_MOCK_ACCOUNT, 10)}
+            />
+          ) : null}
+          {config.BRIDGESTREAM_DATA ? (
+            // $FlowFixMe
+            <ImportBridgeStreamData
+              containerStyle={{ marginTop: 20 }}
+              title="Import hardcoded BRIDGESTREAM_DATA"
+              dataStr={config.BRIDGESTREAM_DATA}
             />
           ) : null}
         </View>

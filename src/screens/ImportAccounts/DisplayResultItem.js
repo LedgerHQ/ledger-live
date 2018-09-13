@@ -4,6 +4,8 @@ import { Switch, View } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import AccountCard from "../../components/AccountCard";
 
+const selectableModes = ["create", "patch"];
+
 export default class DisplayResultItem extends Component<{
   account: Account,
   mode: *,
@@ -16,15 +18,17 @@ export default class DisplayResultItem extends Component<{
   };
   render() {
     const { account, checked, mode, importing } = this.props;
+    const selectable = selectableModes.includes(mode);
     return (
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
+          opacity: selectable ? 1 : 0.5,
         }}
       >
         <AccountCard account={account} />
-        {mode === "id" ? null : (
+        {!selectable ? null : (
           <Switch
             onValueChange={this.onSwitch}
             value={checked}

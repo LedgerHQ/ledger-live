@@ -24,6 +24,15 @@ type Props = {
   t: T,
 };
 
+const getDimensions = () => {
+  const { width, height } = Dimensions.get("window");
+  const ratio = 16 / 9;
+
+  return width < height
+    ? { width, height: width * ratio }
+    : { width: height * ratio, height };
+};
+
 class Scan extends PureComponent<
   Props,
   {
@@ -48,10 +57,20 @@ class Scan extends PureComponent<
     headerLeft: null,
   });
 
-  constructor(props: Props) {
-    super(props);
+  state = {
+    progress: 0,
+    ...getDimensions(),
+  };
 
-    this.state = { progress: 0, ...this.getDimensions() };
+  componentDidMount() {
+    const { navigation } = this.props;
+    const data = navigation.getParam("data");
+    if (data) {
+      const chunks = data.reduce(parseChunksReducer, []);
+      if (areChunksComplete(chunks)) {
+        this.onResult(chunksToResult(chunks));
+      }
+    }
   }
 
   lastData: ?string = null;
@@ -91,21 +110,12 @@ class Scan extends PureComponent<
   };
 
   onResult = (result: Result) => {
-    this.props.navigation.navigate("DisplayResult", { result });
-  };
-
-  // Force ratio for camera view to prevent image stretching
-  getDimensions = () => {
-    const { width, height } = Dimensions.get("window");
-    const ratio = 16 / 9;
-
-    return width < height
-      ? { width, height: width * ratio }
-      : { width: height * ratio, height };
+    // $FlowFixMe
+    this.props.navigation.replace("DisplayResult", { result });
   };
 
   setDimensions = () => {
-    const dimensions = this.getDimensions();
+    const dimensions = getDimensions();
 
     this.setState(dimensions);
   };

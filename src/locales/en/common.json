@@ -122,7 +122,8 @@
         "newAccounts": "New accounts",
         "updatedAccounts": "Updated accounts",
         "alreadyImported": "Already imported",
-        "noAccounts": "Nothing to import"
+        "noAccounts": "Nothing to import",
+        "unsupported": "Unsupported"
       }
     }
   },
