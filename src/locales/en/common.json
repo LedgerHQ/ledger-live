@@ -31,6 +31,7 @@
   },
   "portfolio": {
     "totalBalance": "Total balance",
+    "syncFailed": "Synchronization failed",
     "greeting": {
       "morning": "Good morning",
       "evening": "Good evening",
