@@ -205,7 +205,6 @@ AccountSettings.navigationOptions = {
 const ImportAccounts = createStackNavigator(
   {
     ScanAccounts: {
-      // $FlowFixMe
       screen: ScanAccounts,
       navigationOptions: TransparentHeaderNavigationOptions,
     },
@@ -225,7 +224,6 @@ export const RootNavigator = createStackNavigator(
     SendFunds,
     OperationDetails,
     AccountSettings,
-    // $FlowFixMe
     ImportAccounts,
     SendFundsSettings,
   },

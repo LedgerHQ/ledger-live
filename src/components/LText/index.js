@@ -14,7 +14,8 @@ export type Opts = {
 
 export type Res = {
   fontFamily: string,
-  fontWeight: | "normal"
+  fontWeight:
+    | "normal"
     | "bold"
     | "100"
     | "200"
