@@ -11,7 +11,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  account: Account,
+  account: ?Account,
 };
 const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
@@ -19,6 +19,7 @@ const mapStateToProps = createStructuredSelector({
 class AccountHeaderTitle extends Component<Props> {
   render() {
     const { account } = this.props;
+    if (!account) return null;
     return (
       <View style={styles.headerContainer}>
         <View style={styles.iconContainer}>

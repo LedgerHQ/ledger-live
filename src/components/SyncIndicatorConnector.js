@@ -15,7 +15,7 @@ const mapStateToProps = createStructuredSelector({
   isUpToDate: isUpToDateSelector,
 });
 
-export default (Inner: *) => {
+export default (Inner: React$ComponentType<any>) => {
   const SyncIndicator = ({
     globalSyncState,
     isUpToDate,

@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { StatusBar, Platform } from "react-native";
 import Color from "color";
 import colors from "../colors";
@@ -23,7 +23,7 @@ const OSType =
       ? "oldAndroid"
       : "newAndroid";
 
-class StyledStatusBar extends Component<Props> {
+class StyledStatusBar extends PureComponent<Props> {
   static defaultProps = {
     backgroundColor: colors.white,
   };

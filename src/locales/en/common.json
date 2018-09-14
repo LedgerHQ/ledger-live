@@ -5,6 +5,16 @@
     "delete": "Delete",
     "continue": "Continue"
   },
+  "errors": {
+    "generic": {
+      "title": "{{message}}",
+      "description": "Something went wrong. Please retry or contact us."
+    },
+    "Error": {
+      "title": "{{message}}",
+      "description": "Something went wrong. Please retry or contact us."
+    }
+  },
   "auth": {
     "failed": {
       "title": "Authentication failed",
@@ -21,6 +31,7 @@
   },
   "portfolio": {
     "totalBalance": "Total balance",
+    "syncFailed": "Synchronization failed",
     "greeting": {
       "morning": "Good morning",
       "evening": "Good evening",
