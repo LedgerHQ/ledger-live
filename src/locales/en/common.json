@@ -164,7 +164,11 @@
       "termsConditionsDesc": "By using Ledger Live you are deemed to have accepeted our terms",
       "privacyPolicy": "Privacy policy",
       "privacyPolicyDesc": "Refer to our privacy policy to learn what personal data we collect",
-      "liveReview": "Review Ledger Live"
+      "liveReview": {
+        "title": "Review Ledger Live",
+        "ios": "Leave your review in the App store",
+        "android": "Leave your review in the Google Play store"
+      }
     },
     "help": {
       "title": "Help",
