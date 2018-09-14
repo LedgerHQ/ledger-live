@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import AppVersionRow from "./AppVersionRow";
 import LiveReviewRow from "./LiveReviewRow";
 import PrivacyPolicyRow from "./PrivacyPolicyRow";
@@ -19,7 +19,9 @@ class About extends PureComponent<*, *> {
         <AppVersionRow />
         <TermsConditionsRow />
         <PrivacyPolicyRow />
-        <LiveReviewRow />
+        <View style={{ marginTop: 16 }}>
+          <LiveReviewRow />
+        </View>
       </ScrollView>
     );
   }
