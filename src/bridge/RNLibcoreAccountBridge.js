@@ -3,9 +3,62 @@ import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "./types";
 
-const startSync = (_initialAccount, _observation) =>
-  Observable.create(o => {
-    o.error(new Error("Not Implemented"));
+import { syncAccount } from "../logic/libcore";
+
+function operationsDiffer(a, b) {
+  if ((a && !b) || (b && !a)) return true;
+  return (
+    a.hash !== b.hash ||
+    !a.value.isEqualTo(b.value) ||
+    a.blockHeight !== b.blockHeight
+  );
+}
+
+const startSync = (initialAccount, _observation) =>
+  Observable.create(async o => {
+    try {
+      const syncedAccount = await syncAccount({ account: initialAccount });
+
+      o.next(initialAccount => {
+        const patch = {
+          ...initialAccount,
+          id: syncedAccount.id,
+          freshAddress: syncedAccount.freshAddress,
+          freshAddressPath: syncedAccount.freshAddressPath,
+          balance: syncedAccount.balance,
+          blockHeight: syncedAccount.blockHeight,
+          lastSyncDate: new Date(),
+          operations: initialAccount.operations,
+          pendingOperations: [],
+        };
+
+        const oldOpsLength = initialAccount.operations.length;
+        const newOpsLength = syncedAccount.operations.length;
+
+        const patchedOperations = [];
+        let hasChanged = false;
+
+        for (let i = 0; i < newOpsLength; i++) {
+          const newOp = syncedAccount.operations[newOpsLength - 1 - i];
+          const oldOp = initialAccount.operations[oldOpsLength - 1 - i];
+          if (operationsDiffer(newOp, oldOp)) {
+            hasChanged = true;
+            patchedOperations.push(newOp);
+          } else {
+            patchedOperations.push(oldOp);
+          }
+        }
+
+        if (hasChanged) {
+          patch.operations = patchedOperations
+        }
+
+        return patch;
+      });
+      o.complete();
+    } catch (err) {
+      o.error(err);
+    }
     return () => {};
   });
 
