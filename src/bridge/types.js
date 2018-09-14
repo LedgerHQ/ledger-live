@@ -22,12 +22,16 @@ export type SignAndBroadcastEvent =
   | { type: "signed" }
   | { type: "broadcasted", operation: Operation };
 
-export interface WalletBridge<Transaction> {
+// Abstraction related to a currency
+export interface CurrencyBridge {
   scanAccountsOnDevice(
     currency: Currency,
     deviceId: DeviceId,
   ): Observable<Account>;
+}
 
+// Abstraction related to an account
+export interface AccountBridge<Transaction> {
   // synchronizes an account continuously to update with latest blochchains state.
   // if used with observation=true, it will keep the Observable opened and emit to it new updates.
   // if used with observation=false, it stops at first sync and you will have to call it again.

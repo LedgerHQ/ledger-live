@@ -2,30 +2,22 @@
 
 // FIXME NB: goal for "bridge/" folder is to be moved to live-common and used by desktop again!
 
-import type { Currency } from "@ledgerhq/live-common/lib/types";
-import invariant from "invariant";
-import { WalletBridge } from "./types";
-import makeMockBridge from "./makeMockBridge";
-// import EthereumJSBridge from "./EthereumJSBridge";
+import type { Currency, Account } from "@ledgerhq/live-common/lib/types";
+import type { CurrencyBridge, AccountBridge } from "./types";
+import {
+  makeMockCurrencyBridge,
+  makeMockAccountBridge,
+} from "./makeMockBridge";
 
-const perFamily = {
-  stellar: null,
-  ethereum: makeMockBridge(),
-  bitcoin: makeMockBridge(),
-  ripple: makeMockBridge(),
-};
+import RNLibcoreAccountBridge from "./RNLibcoreAccountBridge";
 
-const USE_MOCK_DATA = true;
+const mockCurrencyBridge = makeMockCurrencyBridge();
+const mockAccountBridge = makeMockAccountBridge();
 
-if (USE_MOCK_DATA) {
-  const mockBridge = makeMockBridge();
-  perFamily.bitcoin = mockBridge;
-  perFamily.ethereum = mockBridge;
-  perFamily.ripple = mockBridge;
-}
+export const getCurrencyBridge = (_currency: Currency): CurrencyBridge =>
+  mockCurrencyBridge; // will stay mock while the app is read only
 
-export const getBridgeForCurrency = (currency: Currency): WalletBridge<any> => {
-  const bridge = perFamily[currency.family];
-  invariant(bridge, `${currency.id} currency is not supported`);
-  return bridge;
+export const getAccountBridge = (_account: Account): AccountBridge<*> => {
+  if (_account.id.startsWith("mock_")) return mockAccountBridge;
+  return RNLibcoreAccountBridge;
 };

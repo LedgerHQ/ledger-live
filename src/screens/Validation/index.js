@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
 
-import { getBridgeForCurrency } from "../../bridge";
+import { getAccountBridge } from "../../bridge";
 import { tmpTestEthExchange } from "../../logic/hw";
 import { accountScreenSelector } from "../../reducers/accounts";
 
@@ -59,7 +59,7 @@ class Validation extends Component<Props, State> {
     } = this.props;
     const { deviceId } = this.state;
     if (!deviceId) return;
-    const bridge = getBridgeForCurrency(account.currency);
+    const bridge = getAccountBridge(account);
     let transaction = bridge.createTransaction(account);
     transaction = bridge.editTransactionRecipient(
       account,
