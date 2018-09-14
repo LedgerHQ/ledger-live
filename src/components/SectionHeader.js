@@ -13,12 +13,7 @@ const calendarOpts = {
   sameElse: "LL",
 };
 
-export default ({
-  section,
-}: {
-  // $FlowFixMe
-  section: { day: Date },
-}) => (
+export default ({ section }: { section: { day: Date } }) => (
   <LText numberOfLines={1} semiBold style={styles.sectionHeader}>
     {moment(section.day).calendar(null, calendarOpts)}
   </LText>

@@ -28,7 +28,6 @@ class FeesRow extends Component<Props, State> {
     fees: this.props.currentValue || undefined,
   };
 
-  // $FlowFixMe
   input = React.createRef();
 
   onChangeText = (fees: string) => {
@@ -40,7 +39,10 @@ class FeesRow extends Component<Props, State> {
   onPress = () => {
     const { onPress } = this.props;
     onPress(0);
-    this.input.current.focus();
+
+    if (this.input.current) {
+      this.input.current.focus();
+    }
   };
 
   render(): React$Node {

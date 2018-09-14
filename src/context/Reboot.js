@@ -3,7 +3,6 @@ import React, { Fragment } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import db from "../db";
 
-// $FlowFixMe
 export const RebootContext = React.createContext(() => {});
 
 export default class RebootProvider extends React.Component<
@@ -23,9 +22,9 @@ export default class RebootProvider extends React.Component<
   reboot = async (resetData: boolean = false) => {
     const { onRebootStart, onRebootEnd } = this.props;
     if (onRebootStart) onRebootStart();
-    this.setState({
-      rebootId: this.state.rebootId + 1,
-    });
+    this.setState(state => ({
+      rebootId: state.rebootId + 1,
+    }));
     if (resetData) {
       await db.delete(["settings", "accounts", "countervalues"]);
     }

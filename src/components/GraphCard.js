@@ -56,7 +56,9 @@ class GraphCard extends PureComponent<Props, State> {
   ];
 
   onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
+
   onItemHover = hoveredItem => this.setState({ hoveredItem });
+
   onPanResponderRelease = () => {
     this.props.onPanResponderRelease();
     this.setState({ hoveredItem: null });

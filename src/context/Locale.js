@@ -28,7 +28,6 @@ const i18n = i18next
     },
   });
 
-// $FlowFixMe
 const LocaleContext = React.createContext({
   i18n,
   t: i18n.getFixedT(),
@@ -52,6 +51,7 @@ export default class LocaleProvider extends React.Component<
     t: i18n.getFixedT(),
     locale: i18n.language,
   };
+
   componentDidMount() {
     i18next.on("languageChanged", locale => {
       this.setState({
@@ -61,6 +61,7 @@ export default class LocaleProvider extends React.Component<
       });
     });
   }
+
   render() {
     return (
       <LocaleContext.Provider value={this.state}>

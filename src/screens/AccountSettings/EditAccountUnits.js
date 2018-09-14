@@ -32,7 +32,9 @@ class EditAccountUnits extends PureComponent<Props> {
   static navigationOptions = {
     title: "Edit Units",
   };
+
   keyExtractor = (item: any) => item.code;
+
   updateAccount = (item: any) => {
     const { account, navigation, updateAccount } = this.props;
     const updatedAccount = {
@@ -42,6 +44,7 @@ class EditAccountUnits extends PureComponent<Props> {
     updateAccount(updatedAccount);
     navigation.goBack();
   };
+
   render() {
     const { account } = this.props;
     const accountUnits = account.currency.units;

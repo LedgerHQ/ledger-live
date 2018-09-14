@@ -16,6 +16,7 @@ class EmptyStatePortfolio extends PureComponent<{
     const { navigation } = this.props;
     navigation.navigate("ImportAccounts");
   };
+
   render() {
     const { t } = this.props;
     return (

@@ -23,9 +23,11 @@ class SyncContPendingOpsConnected extends Component<{
   componentDidMount() {
     this.timeout = setTimeout(this.check, this.props.interval);
   }
+
   componentWillUnmount() {
     clearTimeout(this.timeout);
   }
+
   check = () => {
     const { sync, accounts, priority, interval } = this.props;
     setTimeout(this.check, interval);
@@ -41,7 +43,9 @@ class SyncContPendingOpsConnected extends Component<{
       });
     }
   };
+
   timeout: *;
+
   render() {
     return null;
   }

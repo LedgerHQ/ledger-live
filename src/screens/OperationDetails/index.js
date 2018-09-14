@@ -20,6 +20,7 @@ class OperationDetails extends PureComponent<Props, *> {
     headerRight: <HeaderRightClose navigation={navigation} />,
     headerLeft: null,
   });
+
   render() {
     const { navigation } = this.props;
     const account = navigation.getParam("account", {});

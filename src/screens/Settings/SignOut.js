@@ -6,8 +6,10 @@ import SettingsRow from "../../components/SettingsRow";
 
 class SignOut extends Component<{ reboot: (?boolean) => * }> {
   onResetAll = async () => {
-    await this.props.reboot(true);
+    const { reboot } = this.props;
+    await reboot(true);
   };
+
   onSignOut = () => {
     Alert.alert(
       "Are you sure you want to sign out?",
@@ -18,6 +20,7 @@ class SignOut extends Component<{ reboot: (?boolean) => * }> {
       ],
     );
   };
+
   render() {
     return (
       <View style={styles.root}>

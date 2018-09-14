@@ -12,6 +12,7 @@ class TranslatedError extends PureComponent<Props> {
   static defaultProps = {
     field: "title",
   };
+
   render() {
     const { t, error, field } = this.props;
     if (!error) return null;

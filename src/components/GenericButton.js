@@ -35,12 +35,16 @@ export default class GenericButton extends Component<
     pending: false,
     spinnerOn: false,
   };
+
   timeout: *;
+
   unmounted = false;
+
   componentWillUnmount() {
     clearTimeout(this.timeout);
     this.unmounted = true;
   }
+
   onPress = async () => {
     try {
       const res = this.props.onPress();
@@ -65,6 +69,7 @@ export default class GenericButton extends Component<
       }
     }
   };
+
   render() {
     const {
       onPress,

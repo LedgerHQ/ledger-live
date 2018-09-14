@@ -12,6 +12,7 @@ class Camera extends React.Component {
     FlashMode: {},
     TorchMode: {},
   };
+
   render() {
     return null;
   }

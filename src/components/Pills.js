@@ -5,7 +5,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 import colors from "../colors";
 
-import LText from "../components/LText";
+import LText from "./LText";
 
 type Item = {
   key: string,

@@ -13,12 +13,14 @@ export class Effect extends Component<{
     const { sync, accountId, priority } = this.props;
     sync({ type: "SYNC_ONE_ACCOUNT", accountId, priority });
   }
+
   componentDidUpdate(prevProps: *) {
     const { sync, accountId, priority } = this.props;
     if (accountId !== prevProps.accountId) {
       sync({ type: "SYNC_ONE_ACCOUNT", accountId, priority });
     }
   }
+
   render() {
     return null;
   }

@@ -10,6 +10,7 @@ class AddAccount extends PureComponent<{ navigation: * }> {
   onPress = () => {
     this.props.navigation.navigate("ImportAccounts");
   };
+
   render() {
     return (
       <Touchable style={{ marginHorizontal: 16 }} onPress={this.onPress}>

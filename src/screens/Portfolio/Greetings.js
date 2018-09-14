@@ -23,7 +23,8 @@ const getCurrentGreetings = () => {
     localTimeHour < eveningBreakpoint
   ) {
     return "common:portfolio.greeting.afternoon";
-  } else if (localTimeHour >= eveningBreakpoint) {
+  }
+  if (localTimeHour >= eveningBreakpoint) {
     return "common:portfolio.greeting.evening";
   }
   return "common:portfolio.greeting.morning";

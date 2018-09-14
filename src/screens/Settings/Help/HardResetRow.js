@@ -24,7 +24,9 @@ class HardResetRow extends PureComponent<Props, State> {
   };
 
   onRequestClose = () => this.setState({ isModalOpened: false });
+
   onPress = () => this.setState({ isModalOpened: true });
+
   onHardReset = () => this.props.reboot(true);
 
   render() {

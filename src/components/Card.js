@@ -12,11 +12,12 @@ type Props = {
 export default class Card extends Component<Props> {
   render() {
     const { onPress, style, children } = this.props;
-    const Container = onPress ? TouchableOpacity : View;
-    return (
-      <Container onPress={onPress} style={[styles.root, style]}>
+    return onPress ? (
+      <TouchableOpacity onPress={onPress} style={[styles.root, style]}>
         {children}
-      </Container>
+      </TouchableOpacity>
+    ) : (
+      <View style={[styles.root, style]}>{children}</View>
     );
   }
 }

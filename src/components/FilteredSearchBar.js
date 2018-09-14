@@ -31,7 +31,6 @@ class FilteredSearchBar extends PureComponent<Props, State> {
     query: "",
   };
 
-  // $FlowFixMe
   input = React.createRef();
 
   componentWillUnmount() {
@@ -39,13 +38,16 @@ class FilteredSearchBar extends PureComponent<Props, State> {
   }
 
   onFocus = () => this.setState({ focused: true });
+
   onBlur = () => this.setState({ focused: false });
 
   onChange = throttle((text: string) => this.setState({ query: text }), 200);
 
   clear = () => {
     this.onChange.cancel();
-    this.input.current.clear();
+    if (this.input.current) {
+      this.input.current.clear();
+    }
     this.onChange("");
   };
 
