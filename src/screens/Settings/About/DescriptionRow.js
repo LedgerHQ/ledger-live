@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: "center",
-    margin: 15,
+    margin: 16,
+    color: colors.smoke,
   },
 });
