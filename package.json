@@ -12,7 +12,7 @@
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "staging-android": "ADB=$ANDROID_HOME/platform-tools/adb && cd android && ./gradlew assembleStagingRelease && $ADB install -r app/build/outputs/apk/app-stagingRelease.apk && $ADB shell monkey -p com.ledgerlivemobile.staging 1",
+    "staging-android": "ADB=$ANDROID_HOME/platform-tools/adb && cd android && ./gradlew assembleStagingRelease && $ADB install -r app/build/outputs/apk/stagingRelease/app-stagingRelease.apk && $ADB shell monkey -p com.ledgerlivemobile.staging 1",
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",

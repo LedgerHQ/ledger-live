@@ -135,11 +135,13 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            matchingFallbacks = ['debug']
         }
         stagingRelease {
             initWith(buildTypes.release)
             applicationIdSuffix ".staging"
             signingConfig signingConfigs.stagingRelease
+            matchingFallbacks = ['release']
         }
     }
     // applicationVariants are e.g. debug, release
