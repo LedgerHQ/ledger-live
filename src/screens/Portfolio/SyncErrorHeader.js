@@ -21,6 +21,7 @@ class SyncErrorHeader extends PureComponent<{
   onPress = () => {
     scrollToTopIntent.next();
   };
+
   render() {
     const { error, t } = this.props;
     return (

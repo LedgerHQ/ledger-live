@@ -1,5 +1,5 @@
 /* @flow */
-import type { Opts, Res } from "./";
+import type { Opts, Res } from "."; // eslint-disable-line
 
 export default ({ bold, semiBold, secondary, tertiary }: Opts = {}): Res => {
   const family = secondary ? "MuseoSans" : tertiary ? "Rubik" : "OpenSans";

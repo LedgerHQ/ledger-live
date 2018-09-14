@@ -74,8 +74,11 @@ class Scan extends PureComponent<
   }
 
   lastData: ?string = null;
+
   nbChunks: ?number = null;
+
   chunks: * = [];
+
   completed: boolean = false;
 
   onBarCodeRead = ({ data }: { data: string }) => {
