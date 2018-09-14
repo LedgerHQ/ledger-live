@@ -24,7 +24,7 @@ import BlueButton from "../../components/BlueButton";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
-import Close from "../../images/icons/Close";
+import Close from "../../icons/Close";
 
 import colors from "../../colors";
 
@@ -124,7 +124,7 @@ class SelectRecipient extends Component<Props, State> {
                 </TouchableOpacity>
               )}
             </View>
-            {address &&
+            {!!address &&
               !validAddress && (
                 <LText style={styles.errorText}>
                   This is not a valid address

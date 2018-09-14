@@ -4,8 +4,8 @@ import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
 import throttle from "lodash/throttle";
 
 import Search from "./Search";
-import SearchIcon from "../images/icons/Search";
-import Close from "../images/icons/Close";
+import SearchIcon from "../icons/Search";
+import Close from "../icons/Close";
 
 import colors from "../colors";
 

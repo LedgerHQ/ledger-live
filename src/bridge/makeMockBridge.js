@@ -9,7 +9,7 @@ import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/oper
 import { BigNumber } from "bignumber.js";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
 import { validateNameEdition } from "../logic/account";
-import type { WalletBridge } from "./types";
+import type { AccountBridge, CurrencyBridge } from "./types";
 
 const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
 
@@ -25,10 +25,8 @@ const delay = ms => new Promise(success => setTimeout(success, ms));
 
 type Opts = *;
 
-function makeMockBridge(opts?: Opts): WalletBridge<*> {
+export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
   const {
-    transactionsSizeTarget,
-    scanAccountDeviceSuccessRate,
     extraInitialTransactionProps,
     getTotalSpent,
     getMaxAmount,
@@ -41,9 +39,6 @@ function makeMockBridge(opts?: Opts): WalletBridge<*> {
   const broadcasted: { [_: string]: Operation[] } = {};
 
   const syncTimeouts = {};
-
-  const substractOneYear = date =>
-    new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
   const startSync = (initialAccount, observation) =>
     Observable.create(o => {
@@ -79,45 +74,6 @@ function makeMockBridge(opts?: Opts): WalletBridge<*> {
       return () => {
         clearTimeout(syncTimeouts[accountId]);
         syncTimeouts[accountId] = null;
-      };
-    });
-
-  const scanAccountsOnDevice = currency =>
-    Observable.create(o => {
-      let unsubscribed = false;
-      async function job() {
-        if (Math.random() > scanAccountDeviceSuccessRate) {
-          await delay(1000);
-          if (!unsubscribed) o.error(new Error("scan failed"));
-          return;
-        }
-        const nbAccountToGen = 3;
-        for (let i = 0; i < nbAccountToGen && !unsubscribed; i++) {
-          await delay(500);
-          const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${i}`, {
-            operationsSize: transactionsSizeTarget,
-            currency,
-          });
-          account.unit = currency.units[0];
-          account.index = i;
-          account.operations = account.operations.map(operation => ({
-            ...operation,
-            date: substractOneYear(operation.date),
-          }));
-          account.name = "";
-          account.name = validateNameEdition(account);
-
-          if (!unsubscribed) o.next(account);
-        }
-        if (!unsubscribed) o.complete();
-      }
-
-      job();
-
-      return {
-        unsubscribe() {
-          unsubscribed = true;
-        },
       };
     });
 
@@ -184,7 +140,6 @@ function makeMockBridge(opts?: Opts): WalletBridge<*> {
   // TODO add optimistic update
   return {
     startSync,
-    scanAccountsOnDevice,
     checkValidRecipient,
     createTransaction,
     editTransactionAmount,
@@ -199,4 +154,55 @@ function makeMockBridge(opts?: Opts): WalletBridge<*> {
   };
 }
 
-export default makeMockBridge;
+export function makeMockCurrencyBridge(opts?: Opts): CurrencyBridge {
+  const { transactionsSizeTarget, scanAccountDeviceSuccessRate } = {
+    ...defaultOpts,
+    ...opts,
+  };
+
+  const substractOneYear = date =>
+    new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
+
+  const scanAccountsOnDevice = currency =>
+    Observable.create(o => {
+      let unsubscribed = false;
+      async function job() {
+        if (Math.random() > scanAccountDeviceSuccessRate) {
+          await delay(1000);
+          if (!unsubscribed) o.error(new Error("scan failed"));
+          return;
+        }
+        const nbAccountToGen = 3;
+        for (let i = 0; i < nbAccountToGen && !unsubscribed; i++) {
+          await delay(500);
+          const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${i}`, {
+            operationsSize: transactionsSizeTarget,
+            currency,
+          });
+          account.unit = currency.units[0];
+          account.index = i;
+          account.operations = account.operations.map(operation => ({
+            ...operation,
+            date: substractOneYear(operation.date),
+          }));
+          account.name = "";
+          account.name = validateNameEdition(account);
+
+          if (!unsubscribed) o.next(account);
+        }
+        if (!unsubscribed) o.complete();
+      }
+
+      job();
+
+      return {
+        unsubscribe() {
+          unsubscribed = true;
+        },
+      };
+    });
+
+  return {
+    scanAccountsOnDevice,
+  };
+}

@@ -8,7 +8,7 @@ import colors from "../../colors";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import BlueButton from "../../components/BlueButton";
-import Receive from "../../images/icons/Receive";
+import Receive from "../../icons/Receive";
 
 class EmptyStateAccount extends PureComponent<{
   t: T,

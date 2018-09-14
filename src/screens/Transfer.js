@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import Touchable from "../components/Touchable";
 import CreateModal from "../modals/Create";
 import colors from "../colors";
-import TransferIcon from "../images/icons/Transfer";
+import TransferIcon from "../icons/Transfer";
 
 const styles = StyleSheet.create({
   root: {

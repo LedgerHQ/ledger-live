@@ -6,7 +6,7 @@ import { translate } from "react-i18next";
 import type { T } from "../types/common";
 import colors from "../colors";
 import ModalBottomAction from "./ModalBottomAction";
-import Trash from "../images/icons/Trash";
+import Trash from "../icons/Trash";
 import RedButton from "./RedButton";
 import GreyButton from "./GreyButton";
 import Circle from "./Circle";

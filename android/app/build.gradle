@@ -191,19 +191,12 @@ dependencies {
     compile project(':react-native-locale')
     compile project(':react-native-hid')
     compile (project(':react-native-camera')) {
-        exclude group: "com.android.support"
-        // uncomment this if also com.google.android.gms:play-services-vision versions are conflicting
-        // this can happen if you use react-native-firebase
-        // exclude group: "com.google.android.gms"
+        exclude group: "com.google.android.gms"
+        compile 'com.android.support:exifinterface:27.+'
+        compile ('com.google.android.gms:play-services-vision:12.0.1') {
+            force = true
+        }
     }
-    compile ('com.android.support:exifinterface:27.1.1') {
-        force = true;
-    }
-    // uncomment this if you uncommented the previous line
-    // compile ('com.google.android.gms:play-services-vision:11.6.0') {
-    //    force = true;
-    // }
-
     compile project(':react-native-blur')
     compile project(':react-native-svg')
     compile project(':react-native-config')

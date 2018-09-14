@@ -1,12 +1,12 @@
 // @flow
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, StatusBar } from "react-native";
 import { createStackNavigator } from "react-navigation";
 import { createBottomTabNavigator, BottomTabBar } from "react-navigation-tabs";
 import colors from "./colors";
-import SettingsIcon from "./images/icons/Settings";
-import ManagerIcon from "./images/icons/Manager";
-import AccountsIcon from "./images/icons/Accounts";
+import SettingsIcon from "./icons/Settings";
+import ManagerIcon from "./icons/Manager";
+import AccountsIcon from "./icons/Accounts";
 import HeaderTitle from "./components/HeaderTitle";
 import HeaderBackImage from "./components/HeaderBackImage";
 import Portfolio from "./screens/Portfolio";
@@ -33,7 +33,8 @@ import OperationDetails from "./screens/OperationDetails";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
-import ImportAccounts from "./screens/ImportAccounts";
+import ScanAccounts from "./screens/ImportAccounts/Scan";
+import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import EditFees from "./screens/EditFees";
 import VerifyAddress from "./screens/VerifyAddress";
 import ReceiveConfirmation from "./screens/ReceiveComfirmation";
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   header: {
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     borderBottomWidth: 0,
     elevation: 0,
   },
@@ -53,6 +54,10 @@ const styles = StyleSheet.create({
     height: 48,
     borderTopColor: colors.lightFog,
     backgroundColor: colors.white,
+  },
+  transparentHeader: {
+    backgroundColor: "transparent",
+    paddingTop: StatusBar.currentHeight,
   },
 });
 
@@ -65,6 +70,14 @@ const StackNavigatorConfig = {
   },
   cardStyle: styles.card,
   headerLayoutPreset: "center",
+};
+
+const TransparentHeaderNavigationOptions = {
+  headerTransparent: true,
+  headerStyle: styles.transparentHeader,
+  headerTitle: (props: *) => (
+    <HeaderTitle {...props} style={{ color: colors.white }} />
+  ),
 };
 
 const SettingsStack = createStackNavigator(
@@ -189,6 +202,21 @@ AccountSettings.navigationOptions = {
   header: null,
 };
 
+const ImportAccounts = createStackNavigator(
+  {
+    ScanAccounts: {
+      screen: ScanAccounts,
+      navigationOptions: TransparentHeaderNavigationOptions,
+    },
+    DisplayResult,
+  },
+  StackNavigatorConfig,
+);
+
+ImportAccounts.navigationOptions = {
+  header: null,
+};
+
 export const RootNavigator = createStackNavigator(
   {
     Main,
@@ -196,7 +224,6 @@ export const RootNavigator = createStackNavigator(
     SendFunds,
     OperationDetails,
     AccountSettings,
-    // $FlowFixMe
     ImportAccounts,
     SendFundsSettings,
   },

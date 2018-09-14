@@ -2,7 +2,8 @@
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
-    "delete": "Delete"
+    "delete": "Delete",
+    "continue": "Continue"
   },
   "auth": {
     "failed": {
@@ -105,6 +106,24 @@
       "archive": {
         "title": "Archive Account",
         "desc": "Lorem ipsum dolor imet"
+      }
+    },
+    "import": {
+      "scan": {
+        "title": "Scan QR Code",
+        "descTop": {
+          "line1": "Please open Ledger Live desktop application with EXPERIMENTAL_TOOLS_SETTINGS=1 and go to",
+          "line2": "Settings > Experimental Tools > QRCode Mobile Export"
+        },
+        "descBottom": "Please put the QR code within the square"
+      },
+      "result": {
+        "title": "Select accounts",
+        "newAccounts": "New accounts",
+        "updatedAccounts": "Updated accounts",
+        "alreadyImported": "Already imported",
+        "noAccounts": "Nothing to import",
+        "unsupported": "Unsupported"
       }
     }
   },

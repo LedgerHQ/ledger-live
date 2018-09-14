@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import config from "react-native-config";
 import { translate } from "react-i18next";
 import { ScrollView, View, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
@@ -10,11 +11,13 @@ import { createStructuredSelector } from "reselect";
 import { currenciesSelector } from "../../reducers/accounts";
 import type { T } from "../../types/common";
 import SettingsCard from "../../components/SettingsCard";
-import Assets from "../../images/icons/Assets";
-import LiveLogoIcon from "../../images/icons/LiveLogoIcon";
-import Help from "../../images/icons/Help";
-import Display from "../../images/icons/Display";
+import Assets from "../../icons/Assets";
+import LiveLogoIcon from "../../icons/LiveLogoIcon";
+import Help from "../../icons/Help";
+import Display from "../../icons/Display";
 import colors from "../../colors";
+import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
+import ImportBridgeStreamData from "../../components/ImportBridgeStreamData";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -42,6 +45,7 @@ class Settings extends Component<Props> {
     }
     return navigation.navigate(screenName);
   };
+
   render() {
     const { t } = this.props;
 
@@ -72,6 +76,21 @@ class Settings extends Component<Props> {
             icon={<Help size={16} color={colors.live} />}
             onClick={() => this.navigateTo("HelpSettings")}
           />
+          {config.DEBUG_MOCK_ACCOUNT && !isNaN(config.DEBUG_MOCK_ACCOUNT) ? (
+            <GenerateMockAccountsButton
+              containerStyle={{ marginTop: 20 }}
+              title={`Generate ${config.DEBUG_MOCK_ACCOUNT} Mock Accounts`}
+              count={parseInt(config.DEBUG_MOCK_ACCOUNT, 10)}
+            />
+          ) : null}
+          {config.BRIDGESTREAM_DATA ? (
+            // $FlowFixMe
+            <ImportBridgeStreamData
+              containerStyle={{ marginTop: 20 }}
+              title="Import hardcoded BRIDGESTREAM_DATA"
+              dataStr={config.BRIDGESTREAM_DATA}
+            />
+          ) : null}
         </View>
       </ScrollView>
     );
