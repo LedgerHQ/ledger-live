@@ -15,7 +15,7 @@
 #import "RNSentry.h" // This is used for versions of react < 0.40
 #endif
 #import <React/RCTLinkingManager.h>
-#import "SplashScreen.h"
+#import "RNSplashScreen.h"
 
 @implementation AppDelegate
 
@@ -37,7 +37,7 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-    [SplashScreen show];
+    [RNSplashScreen show];
   return YES;
 }
 

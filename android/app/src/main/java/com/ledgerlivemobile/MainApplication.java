@@ -9,7 +9,6 @@ import io.sentry.RNSentryPackage;
 import io.fixd.rctlocale.RCTLocalePackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.ledgerwallet.hid.ReactHIDPackage;
-import com.cmcewen.blurview.BlurViewPackage;
 import com.horcrux.svg.SvgPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.polidea.reactnativeble.BlePackage;

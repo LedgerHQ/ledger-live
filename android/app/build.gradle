@@ -197,7 +197,6 @@ dependencies {
             force = true
         }
     }
-    compile project(':react-native-blur')
     compile project(':react-native-svg')
     compile project(':react-native-config')
     compile project(':react-native-ble-plx')
