@@ -47,6 +47,7 @@ class CurrenciesList extends PureComponent<Props> {
         data={currencies}
         renderItem={this.renderItem}
         keyExtractor={this.keyExtractor}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: 100 }}
       />
     );
   }

@@ -104,7 +104,8 @@ export default compose(
 
 const styles = StyleSheet.create({
   root: {
-    paddingTop: 12,
+    paddingTop: 16,
     paddingHorizontal: 16,
+    paddingBottom: 100,
   },
 });

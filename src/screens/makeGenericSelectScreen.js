@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import SettingsRow from "../components/SettingsRow";
 
@@ -41,6 +41,13 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
   };
 }
 
+const styles = StyleSheet.create({
+  root: {
+    paddingTop: 16,
+    paddingBottom: 100,
+  },
+});
+
 export default <Item>(opts: Opts<Item>) => {
   const { title, keyExtractor } = opts;
   const Entry = getEntryFromOptions(opts);
@@ -73,6 +80,7 @@ export default <Item>(opts: Opts<Item>) => {
           data={this.props.items}
           renderItem={this.renderItem}
           keyExtractor={keyExtractor}
+          contentContainerStyle={styles.root}
         />
       );
     }

@@ -194,5 +194,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 20,
+    paddingBottom: 100,
   },
 });

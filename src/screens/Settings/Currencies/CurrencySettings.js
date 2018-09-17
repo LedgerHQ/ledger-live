@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
@@ -88,7 +88,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
     const { defaults, t, currencySettings, currency } = this.props;
     const { value } = this.state;
     return (
-      <Fragment>
+      <View style={styles.root}>
         {currency !== intermediaryCurrency && (
           <SettingsRow
             arrowRight={currencySettings.exchange}
@@ -148,7 +148,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
             </View>
           </View>
         )}
-      </Fragment>
+      </View>
     );
   }
 }
@@ -162,6 +162,11 @@ export default compose(
 )(EachCurrencySettings);
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    paddingTop: 16,
+    paddingBottom: 100,
+  },
   currencyExchange: {
     fontSize: 14,
     color: colors.grey,

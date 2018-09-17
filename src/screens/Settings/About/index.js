@@ -14,7 +14,7 @@ class About extends PureComponent<*, *> {
 
   render() {
     return (
-      <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <DescriptionRow />
         <AppVersionRow />
         <TermsConditionsRow />

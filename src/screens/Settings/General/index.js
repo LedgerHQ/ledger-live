@@ -18,7 +18,9 @@ class GeneralSettings extends PureComponent<{
   render() {
     const { navigation } = this.props;
     return (
-      <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: 100 }}
+      >
         <CountervalueSettingsRow navigation={navigation} />
         <RateProviderSettingsRow navigation={navigation} />
         <AuthSecurityToggle />
