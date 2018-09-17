@@ -2,13 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { compose } from "redux";
-import {
-  ScrollView,
-  StyleSheet,
-  SectionList,
-  View,
-  Animated,
-} from "react-native";
+import { StyleSheet, SectionList, View, Animated } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -126,6 +120,9 @@ class AccountScreen extends PureComponent<Props, State> {
     const { account, navigation } = this.props;
     const { opCount, scrollEnabled } = this.state;
     if (!account) return null;
+    if (isAccountEmpty(account)) {
+      return <EmptyStateAccount account={account} navigation={navigation} />;
+    }
 
     const { sections, completed } = groupAccountOperationsByDay(
       account,
@@ -133,30 +130,24 @@ class AccountScreen extends PureComponent<Props, State> {
     );
 
     return (
-      <ScrollView style={styles.container} contentContainerStyle={{ flex: 1 }}>
-        {!isAccountEmpty(account) ? (
-          <List
-            sections={sections}
-            style={styles.sectionList}
-            scrollEnabled={scrollEnabled}
-            ListFooterComponent={
-              !completed
-                ? LoadingFooter
-                : sections.length === 0
-                  ? NoOperationFooter
-                  : NoMoreOperationFooter
-            }
-            ListHeaderComponent={this.ListHeaderComponent}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
-            renderSectionHeader={SectionHeader}
-            onEndReached={this.onEndReached}
-            showsVerticalScrollIndicator={false}
-          />
-        ) : (
-          <EmptyStateAccount account={account} navigation={navigation} />
-        )}
-      </ScrollView>
+      <List
+        sections={sections}
+        style={styles.sectionList}
+        scrollEnabled={scrollEnabled}
+        ListFooterComponent={
+          !completed
+            ? LoadingFooter
+            : sections.length === 0
+              ? NoOperationFooter
+              : NoMoreOperationFooter
+        }
+        ListHeaderComponent={this.ListHeaderComponent}
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItem}
+        renderSectionHeader={SectionHeader}
+        onEndReached={this.onEndReached}
+        showsVerticalScrollIndicator={false}
+      />
     );
   }
 }
@@ -171,11 +162,10 @@ export default compose(
 )(AccountScreen);
 
 const styles = StyleSheet.create({
-  container: {
+  sectionList: {
     flex: 1,
     backgroundColor: colors.lightGrey,
   },
-  sectionList: { flex: 1 },
   balanceContainer: {
     alignItems: "center",
     marginBottom: 10,

@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     margin: 16,
     flexDirection: "column",
     justifyContent: "center",
+    backgroundColor: colors.lightGrey,
   },
   body: {
     alignItems: "center",
