@@ -138,6 +138,11 @@
       }
     }
   },
+  "accounts": {
+    "importNotification": {
+      "message": "Your accounts have successfully been imported!"
+    }
+  },
   "settings": {
     "display": {
       "title": "General",
