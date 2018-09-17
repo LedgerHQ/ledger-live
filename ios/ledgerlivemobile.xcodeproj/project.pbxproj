@@ -70,6 +70,7 @@
 		D5C1F1874ECE48F4AA5693AF /* MuseoSans-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CEDB8CDC561E4D4BBA7A64CD /* MuseoSans-SemiBold.otf */; };
 		DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 545FD04868AD450083DC4717 /* libz.tbd */; };
 		FEA0D6AE27DE42709BBB7FC7 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CD5489262AA84BDF9684E3AA /* Foundation.ttf */; };
+		FD935BBB77A24B79B2604726 /* libRNScreens.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 35AA9FCF9B3A4E54A2282A09 /* libRNScreens.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -499,6 +500,8 @@
 		F91D74A42E59456DBB925283 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
 		FEE547B54ACD4EF5AD24A94E /* libPasscodeAuth.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libPasscodeAuth.a; sourceTree = "<group>"; };
 		FF58CBC5DEF846309BD66D85 /* libBleClient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBleClient.a; sourceTree = "<group>"; };
+		1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */ = {isa = PBXFileReference; name = "RNScreens.xcodeproj"; path = "../node_modules/react-native-screens/ios/RNScreens.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		35AA9FCF9B3A4E54A2282A09 /* libRNScreens.a */ = {isa = PBXFileReference; name = "libRNScreens.a"; path = "libRNScreens.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -536,6 +539,7 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */,
 				7EDEA35621D64751B73F49C7 /* libReact Native Open Settings.a in Frameworks */,
+				FD935BBB77A24B79B2604726 /* libRNScreens.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -805,6 +809,7 @@
 				EE89361C161C48FB98136880 /* PasscodeAuth.xcodeproj */,
 				4AD2AECC687D45E9BBCCED05 /* RNVectorIcons.xcodeproj */,
 				A49125B8906C40DFB2011F37 /* React Native Open Settings.xcodeproj */,
+				1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1561,6 +1566,7 @@
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-passcode-auth",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 				INFOPLIST_FILE = ledgerlivemobileTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1600,6 +1606,7 @@
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-passcode-auth",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 				INFOPLIST_FILE = ledgerlivemobileTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1643,6 +1650,7 @@
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-passcode-auth",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -1684,6 +1692,7 @@
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-passcode-auth",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
