@@ -3,6 +3,7 @@ package com.ledgerlivemobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.opensettings.OpenSettingsPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.horcrux.svg.SvgPackage;
 import com.ledgerwallet.hid.ReactHIDPackage;
@@ -32,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new OpenSettingsPackage(),
             new ReactNativeConfigPackage(),
             new SvgPackage(),
             new ReactHIDPackage(),

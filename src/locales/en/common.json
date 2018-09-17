@@ -135,6 +135,14 @@
         "alreadyImported": "Already imported",
         "noAccounts": "Nothing to import",
         "unsupported": "Unsupported"
+      },
+      "fallback": {
+        "header": "Import account",
+        "title": "Camera access",
+        "descIOS": "To import account, Ledger Live needs to <1><0>access your camera</0></1>. You’ll be taken to iOS settings to activate it",
+        "buttonIOS": "Open iPhone Settings",
+        "descAndroid": "To import account, Ledger Live needs to <1><0>access your camera</0></1>. You’ll be taken to Android settings to activate it",
+        "buttonAndroid": "Open Android Settings"
       }
     }
   },
