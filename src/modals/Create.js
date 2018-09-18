@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { withNavigation } from "react-navigation";
-
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 
 import BottomModal from "../components/BottomModal";
@@ -10,11 +10,13 @@ import BottomModalChoice from "../components/BottomModalChoice";
 import IconSend from "../icons/Send";
 import IconReceive from "../icons/Receive";
 import IconExchange from "../icons/Exchange";
+import type { T } from "../types/common";
 
 import type { Props as ModalProps } from "../components/BottomModal";
 
 type Props = ModalProps & {
   navigation: NavigationScreenProp<*>,
+  t: T,
 };
 
 class CreateModal extends Component<Props> {
@@ -45,7 +47,7 @@ class CreateModal extends Component<Props> {
   };
 
   render() {
-    const { onClose, isOpened } = this.props;
+    const { onClose, isOpened, t } = this.props;
     return (
       <BottomModal
         isOpened={isOpened}
@@ -53,20 +55,20 @@ class CreateModal extends Component<Props> {
         style={{ paddingVertical: 20 }}
       >
         <BottomModalChoice
-          title="Send funds"
-          description="Lorem ipsum dolor ledger"
+          title={t("transfer.send.title")}
+          description={t("transfer.send.desc")}
           onPress={this.onSendFunds}
           Icon={IconSend}
         />
         <BottomModalChoice
-          title="Receive funds"
-          description="Lorem ipsum dolor ledger"
+          title={t("transfer.receive.title")}
+          description={t("transfer.receive.desc")}
           onPress={this.onReceiveFunds}
           Icon={IconReceive}
         />
         <BottomModalChoice
-          title="Exchange"
-          description="Lorem ipsum dolor ledger"
+          title={t("transfer.exchange.title")}
+          description={t("transfer.exchange.desc")}
           Icon={IconExchange}
           onPress={this.onExchange}
         />
@@ -75,4 +77,4 @@ class CreateModal extends Component<Props> {
   }
 }
 
-export default withNavigation(CreateModal);
+export default translate()(withNavigation(CreateModal));

@@ -89,23 +89,27 @@ class EachCurrencySettings extends Component<Props, LocalState> {
     const { value } = this.state;
     return (
       <Fragment>
-        <SettingsRow
-          arrowRight={currencySettings.exchange}
-          title={t("common:settings.currencies.rateProvider", {
-            currencyTicker: currency.ticker,
-          })}
-          desc={t("common:settings.currencies.rateProviderDesc")}
-          onPress={currencySettings.exchange ? this.goToExchange : null}
-        >
-          <LText style={styles.currencyExchange}>
-            {currencySettings.exchange}
-          </LText>
-        </SettingsRow>
+        {currency !== intermediaryCurrency && (
+          <SettingsRow
+            arrowRight={currencySettings.exchange}
+            title={t("settings.currencies.rateProvider", {
+              currencyTicker: currency.ticker,
+            })}
+            desc={t("settings.currencies.rateProviderDesc", {
+              currencyTicker: currency.ticker,
+            })}
+            onPress={currencySettings.exchange ? this.goToExchange : null}
+          >
+            <LText style={styles.currencyExchange}>
+              {currencySettings.exchange}
+            </LText>
+          </SettingsRow>
+        )}
         {defaults.confirmationsNb && (
           <View style={styles.sliderContainer}>
             <SettingsRow
-              title={t("common:settings.currencies.confirmationNb")}
-              desc={t("common:settings.currencies.confirmationNbDesc")}
+              title={t("settings.currencies.confirmationNb")}
+              desc={t("settings.currencies.confirmationNbDesc")}
               onPress={null}
             >
               <LText
