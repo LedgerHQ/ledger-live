@@ -8,26 +8,20 @@ import {
   SafeAreaView,
 } from "react-native";
 import { translate } from "react-i18next";
-import colors from "../../colors";
-import LText from "../../components/LText";
-import TranslatedError from "../../components/TranslatedError";
-import StyledStatusBar from "../../components/StyledStatusBar";
-import { scrollToTopIntent } from "./events";
+import colors from "../colors";
+import LText from "./LText";
+import TranslatedError from "./TranslatedError";
 
 class SyncErrorHeader extends PureComponent<{
   error: ?Error,
+  onPress: () => void,
   t: *,
 }> {
-  onPress = () => {
-    scrollToTopIntent.next();
-  };
-
   render() {
-    const { error, t } = this.props;
+    const { error, t, onPress } = this.props;
     return (
-      <TouchableWithoutFeedback onPress={this.onPress}>
+      <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.root}>
-          <StyledStatusBar backgroundColor={colors.errorBg} />
           <SafeAreaView>
             <View style={styles.body}>
               <LText bold style={styles.title}>

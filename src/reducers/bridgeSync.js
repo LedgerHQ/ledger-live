@@ -42,7 +42,10 @@ const nothingState = { pending: false, error: null };
 export const syncStateLocalSelector = (
   bridgeSync: BridgeSyncState,
   { accountId }: { accountId: string },
-) => bridgeSync.syncs[accountId] || nothingState;
+): AsyncState => bridgeSync.syncs[accountId] || nothingState;
+
+export const accountScreenSyncStateSelector = (s: State, p: *): AsyncState =>
+  syncStateLocalSelector(bridgeSyncSelector(s), p.navigation.state.params);
 
 export const globalSyncStateSelector = createSelector(
   accountsSelector,

@@ -10,7 +10,8 @@ import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/helpers/a
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import { accountScreenSyncStateSelector } from "../../reducers/bridgeSync";
+import type { AsyncState } from "../../reducers/bridgeSync";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
@@ -22,6 +23,7 @@ import LoadingFooter from "../../components/LoadingFooter";
 import colors from "../../colors";
 import provideSummary from "../../components/provideSummary";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import SyncErrorHeader from "../../components/SyncErrorHeader";
 
 import type { Item } from "../../components/Graph";
 import type { Summary } from "../../components/provideSummary";
@@ -29,9 +31,11 @@ import type { Summary } from "../../components/provideSummary";
 import EmptyStateAccount from "./EmptyStateAccount";
 import AccountHeaderRight from "./AccountHeaderRight";
 import AccountHeaderTitle from "./AccountHeaderTitle";
+import { scrollToTopIntent } from "./events";
 
 type Props = {
   account: Account,
+  syncState: AsyncState,
   summary: Summary,
   navigation: NavigationScreenProp<{
     accountId: string,
@@ -116,13 +120,44 @@ class AccountScreen extends PureComponent<Props, State> {
     );
   };
 
+  ref = React.createRef();
+
+  componentDidMount() {
+    this.scrollSub = scrollToTopIntent.subscribe(() => {
+      const sectionList = this.ref.current;
+      if (sectionList) {
+        sectionList.getScrollResponder().scrollTo({
+          x: 0,
+          y: 0,
+          animated: true,
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.scrollSub.unsubscribe();
+  }
+
+  scrollSub: *;
+
+  onPress = () => {
+    scrollToTopIntent.next();
+  };
+
   render() {
-    const { account, navigation } = this.props;
+    const { account, navigation, syncState } = this.props;
     const { opCount, scrollEnabled } = this.state;
+
     if (!account) return null;
+
     if (isAccountEmpty(account)) {
       return <EmptyStateAccount account={account} navigation={navigation} />;
     }
+
+    console.log(syncState);
+
+    const { error } = syncState;
 
     const { sections, completed } = groupAccountOperationsByDay(
       account,
@@ -130,24 +165,35 @@ class AccountScreen extends PureComponent<Props, State> {
     );
 
     return (
-      <List
-        sections={sections}
-        style={styles.sectionList}
-        scrollEnabled={scrollEnabled}
-        ListFooterComponent={
-          !completed
-            ? LoadingFooter
-            : sections.length === 0
-              ? NoOperationFooter
-              : NoMoreOperationFooter
-        }
-        ListHeaderComponent={this.ListHeaderComponent}
-        keyExtractor={this.keyExtractor}
-        renderItem={this.renderItem}
-        renderSectionHeader={SectionHeader}
-        onEndReached={this.onEndReached}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={styles.root}>
+        {error ? (
+          <SyncErrorHeader error={error} onPress={this.onPress} />
+        ) : null}
+        <List
+          ref={this.ref}
+          sections={sections}
+          style={styles.sectionList}
+          scrollEnabled={scrollEnabled}
+          ListFooterComponent={
+            !completed
+              ? LoadingFooter
+              : sections.length === 0
+                ? NoOperationFooter
+                : NoMoreOperationFooter
+          }
+          ListHeaderComponent={this.ListHeaderComponent}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+          renderSectionHeader={SectionHeader}
+          onEndReached={this.onEndReached}
+          showsVerticalScrollIndicator={false}
+          provideSyncRefreshControlBehavior={{
+            type: "SYNC_ONE_ACCOUNT",
+            accountId: account.id,
+            priority: 10,
+          }}
+        />
+      </View>
     );
   }
 }
@@ -156,12 +202,16 @@ export default compose(
   connect(
     createStructuredSelector({
       account: accountScreenSelector,
+      syncState: accountScreenSyncStateSelector,
     }),
   ),
   provideSummary,
 )(AccountScreen);
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   sectionList: {
     flex: 1,
     backgroundColor: colors.lightGrey,

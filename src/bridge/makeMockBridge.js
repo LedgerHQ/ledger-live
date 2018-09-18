@@ -45,6 +45,10 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
       const accountId = initialAccount.id;
 
       const sync = () => {
+        if (initialAccount.name.includes("crash")) {
+          o.error(new Error("mock failure"));
+          return;
+        }
         const ops = broadcasted[accountId] || [];
         broadcasted[accountId] = [];
         o.next(acc => {
