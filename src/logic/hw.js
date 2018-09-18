@@ -17,7 +17,7 @@ export async function tmpTestEthExchange(deviceId: string) {
   const t = await open(deviceId);
   const eth = new Eth(t);
   const r = await eth.getAddress("44'/60'/0'/0/0");
-  console.log("eth.getAddress:", r);
+  console.warn("eth.getAddress:", r);
 }
 
 const transports: { [_: string]: * } = {
@@ -95,7 +95,7 @@ export const devicesObservable: Observable<{
   ...observables.map(o =>
     o.pipe(
       catchError(e => {
-        console.log(`One Transport provider failed: ${e}`);
+        console.warn(`One Transport provider failed: ${e}`);
         return empty();
       }),
     ),

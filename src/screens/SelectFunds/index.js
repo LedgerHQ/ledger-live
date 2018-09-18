@@ -55,7 +55,6 @@ class SelectFunds extends Component<Props, State> {
   };
 
   blur = () => {
-    console.log("blur");
     Keyboard.dismiss();
   };
 

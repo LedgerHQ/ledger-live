@@ -43,7 +43,7 @@ class CreateModal extends Component<Props> {
   };
 
   onExchange = () => {
-    console.log(`exchange screen`);
+    console.warn(`TODO: exchange screen`);
   };
 
   render() {
