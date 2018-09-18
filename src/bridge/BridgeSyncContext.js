@@ -75,7 +75,6 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
         next();
         return;
       }
-      console.log("sync", accountId);
 
       const bridge = getAccountBridge(account);
 
@@ -163,7 +162,6 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
     const sync = (action: BehaviorAction) => {
       const handler = handlers[action.type];
       if (handler) {
-        console.debug(`action ${action.type}`, { action, type: "syncQueue" });
         // $FlowFixMe
         handler(action);
       } else {

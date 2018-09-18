@@ -155,8 +155,6 @@ class AccountScreen extends PureComponent<Props, State> {
       return <EmptyStateAccount account={account} navigation={navigation} />;
     }
 
-    console.log(syncState);
-
     const { error } = syncState;
 
     const { sections, completed } = groupAccountOperationsByDay(
