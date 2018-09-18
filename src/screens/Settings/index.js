@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
   root: {
     paddingTop: 16,
     paddingHorizontal: 16,
-    paddingBottom: 100,
+    paddingBottom: 64,
   },
 });

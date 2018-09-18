@@ -20,7 +20,7 @@ class HelpSettings extends PureComponent<{
         <LedgerSupportRow />
         {null && <ConfigureDeviceRow /> // FIXME enable when implemented
         }
-        <View style={{ marginTop: 16 }}>
+        <View style={styles.container}>
           <ClearCacheRow />
           <HardResetRow />
         </View>
@@ -30,7 +30,10 @@ class HelpSettings extends PureComponent<{
 }
 
 const styles = StyleSheet.create({
-  root: { paddingTop: 16, paddingBottom: 100 },
+  root: { paddingTop: 16, paddingBottom: 64 },
+  container: {
+    marginTop: 16,
+  },
 });
 
 export default HelpSettings;

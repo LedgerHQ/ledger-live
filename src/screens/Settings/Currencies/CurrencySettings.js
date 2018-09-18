@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     paddingTop: 16,
-    paddingBottom: 100,
+    paddingBottom: 64,
   },
   currencyExchange: {
     fontSize: 14,

@@ -44,7 +44,7 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
 const styles = StyleSheet.create({
   root: {
     paddingTop: 16,
-    paddingBottom: 100,
+    paddingBottom: 64,
   },
 });
 

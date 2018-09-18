@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import RateProviderSettingsRow from "./RateProviderSettingsRow";
@@ -18,9 +18,7 @@ class GeneralSettings extends PureComponent<{
   render() {
     const { navigation } = this.props;
     return (
-      <ScrollView
-        contentContainerStyle={{ paddingTop: 16, paddingBottom: 100 }}
-      >
+      <ScrollView contentContainerStyle={styles.root}>
         <CountervalueSettingsRow navigation={navigation} />
         <RateProviderSettingsRow navigation={navigation} />
         <AuthSecurityToggle />
@@ -32,5 +30,9 @@ class GeneralSettings extends PureComponent<{
     );
   }
 }
+
+const styles = StyleSheet.create({
+  root: { paddingTop: 16, paddingBottom: 64 },
+});
 
 export default GeneralSettings;

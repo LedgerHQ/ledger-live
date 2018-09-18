@@ -228,6 +228,6 @@ const styles = StyleSheet.create({
     color: colors.smoke,
   },
   contentContainer: {
-    paddingBottom: 100,
+    paddingBottom: 64,
   },
 });
