@@ -54,6 +54,7 @@
     "numeral": "2.0.6",
     "prando": "^3.0.3",
     "querystring": "^0.2.0",
+    "re-reselect": "^2.1.0",
     "react": "16.5.0",
     "react-i18next": "7.10.1",
     "react-native": "0.57.0",
