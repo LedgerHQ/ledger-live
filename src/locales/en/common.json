@@ -116,7 +116,7 @@
       },
       "archive": {
         "title": "Archive Account",
-        "desc": "Lorem ipsum dolor imet"
+        "desc": "This account will be archived"
       }
     },
     "import": {
@@ -166,9 +166,9 @@
       "title": "Currencies",
       "desc": "Select a crypto asset to edit its settings.",
       "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
-      "rateProviderDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn",
+      "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
-      "confirmationNbDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn",
+      "confirmationNbDesc": "Set the number of network confirmations for a transaction to be marked as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings"
     },
     "about": {
@@ -192,7 +192,7 @@
       "support": "Ledger Support",
       "supportDesc": "A problem? Get help with Ledger Live, Ledger devices, supported crypto assets and apps.",
       "configureDevice": "Configure device",
-      "configureDeviceDesc": "Lorem ipsum dolor sit amet, ectetur adipiscing elit. Donec congue urn",
+      "configureDeviceDesc": "Securely initialize or restore a Ledger device to use with Ledger Live. Your accounts and settings are kept.",
       "clearCache": "Clear Cache",
       "clearCacheDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected.",
       "clearCacheModal": "Are you sure?",
@@ -202,6 +202,20 @@
       "exportLogsDesc": "Exporting Ledger Live logs may be necessary for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",
       "hardResetDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings."
+    }
+  },
+  "transfer": {
+    "send": {
+      "title": "Send funds",
+      "desc": "Send your funds"
+    },
+    "receive": {
+      "title": "Receive funds",
+      "desc": "Recieve crypto assets"
+    },
+    "exchange": {
+      "title": "Exchange",
+      "desc": "Try our trading services"
     }
   }
 }
