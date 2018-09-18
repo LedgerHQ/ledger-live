@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from "react";
+import type BigNumber from "bignumber.js";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import CounterValues from "../countervalues";
@@ -16,8 +17,8 @@ class Price extends Component<{
   intermediary: Currency,
   toExchange: string,
   to: Currency,
-  value: number,
-  countervalue: ?number,
+  value: BigNumber,
+  countervalue: ?BigNumber,
   date?: Date
 }> {
   render() {

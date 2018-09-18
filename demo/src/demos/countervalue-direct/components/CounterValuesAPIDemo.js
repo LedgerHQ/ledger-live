@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from "react";
+import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import Table, {
   TableBody,
@@ -143,7 +144,7 @@ class App extends Component<{
                   <TableCell>
                     {from && to && exchange ? (
                       <Price
-                        value={10 ** from.units[0].magnitude}
+                        value={BigNumber(10 ** from.units[0].magnitude)}
                         from={from}
                         to={to}
                         exchange={exchange}
@@ -153,7 +154,7 @@ class App extends Component<{
                   <TableCell>
                     {from && to && exchange ? (
                       <ReversePrice
-                        value={10 ** to.units[0].magnitude}
+                        value={BigNumber(10 ** to.units[0].magnitude)}
                         from={from}
                         to={to}
                         exchange={exchange}
@@ -198,5 +199,8 @@ class App extends Component<{
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps, { setMarket, addMarket })(App)
+  connect(
+    mapStateToProps,
+    { setMarket, addMarket }
+  )(App)
 );

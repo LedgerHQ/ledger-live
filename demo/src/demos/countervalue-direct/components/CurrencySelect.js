@@ -7,7 +7,6 @@ import type { Currency, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 function inferCrypto(currency: Currency): ?CryptoCurrency {
   if ("id" in currency) {
-    // $FlowFixMe not sure how to address this properly
     return currency;
   }
 }
