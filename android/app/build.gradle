@@ -170,6 +170,7 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':react-native-open-settings')
     compile project(':react-native-config')
     compile project(':react-native-svg')
     compile project(':@ledgerhq_react-native-hid')

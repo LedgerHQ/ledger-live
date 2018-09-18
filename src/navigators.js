@@ -38,6 +38,7 @@ import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import EditFees from "./screens/EditFees";
 import VerifyAddress from "./screens/VerifyAddress";
 import ReceiveConfirmation from "./screens/ReceiveComfirmation";
+import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 
 // TODO look into all FlowFixMe
 
@@ -209,6 +210,7 @@ const ImportAccounts = createStackNavigator(
       navigationOptions: TransparentHeaderNavigationOptions,
     },
     DisplayResult,
+    FallBackCameraScreen,
   },
   StackNavigatorConfig,
 );
