@@ -52,13 +52,13 @@ export default class DataList extends PureComponent<Props, State> {
           )}
         </View>
         {(shouldShowMore ? data.slice(0, numToShow) : data).map(line => (
-          <LText semiBold key={line}>
+          <LText semiBold selectable key={line}>
             {line}
           </LText>
         ))}
         {showAll &&
           data.slice(numToShow).map(line => (
-            <LText semiBold key={line}>
+            <LText semiBold selectable key={line}>
               {line}
             </LText>
           ))}

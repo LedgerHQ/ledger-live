@@ -86,6 +86,8 @@ export default compose(
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    paddingTop: 16,
+    paddingBottom: 64,
   },
   body: {
     flexDirection: "column",

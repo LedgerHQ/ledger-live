@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     color: colors.smoke,
   },
   bottomLine: {
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 17,
     height: 18,
     color: colors.grey,
