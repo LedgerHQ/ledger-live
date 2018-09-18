@@ -190,6 +190,7 @@ class AccountScreen extends PureComponent<Props, State> {
             accountId: account.id,
             priority: 10,
           }}
+          contentContainerStyle={styles.contentContainer}
         />
       </View>
     );
@@ -225,5 +226,8 @@ const styles = StyleSheet.create({
   balanceSubText: {
     fontSize: 16,
     color: colors.smoke,
+  },
+  contentContainer: {
+    paddingBottom: 64,
   },
 });

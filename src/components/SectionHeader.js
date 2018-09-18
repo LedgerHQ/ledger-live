@@ -21,7 +21,7 @@ export default ({ section }: { section: { day: Date } }) => (
 
 const styles = StyleSheet.create({
   sectionHeader: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#999",
     paddingVertical: 12,
     paddingHorizontal: 20,

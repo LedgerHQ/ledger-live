@@ -125,7 +125,9 @@ class Content extends PureComponent<Props, *> {
             <LText style={styles.sectionTitle}>
               {t("common:operationDetails.identifier")}
             </LText>
-            <LText semiBold>{operation.hash}</LText>
+            <LText semiBold selectable>
+              {operation.hash}
+            </LText>
           </View>
           <View style={styles.section}>
             <DataList
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     height: 6,
     width: 6,
-    marginRight: 5,
+    marginRight: 8,
     alignSelf: "center",
   },
 });

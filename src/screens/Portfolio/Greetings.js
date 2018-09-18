@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   nbAccountsText: {
     fontSize: 14,
-    color: colors.darkBlue,
+    color: colors.grey,
   },
 });
 

@@ -1,10 +1,12 @@
 /* @flow */
 
 import React, { Component } from "react";
+import { View } from "react-native";
 import { withNavigation } from "react-navigation";
 import MenuTitle from "../../components/MenuTitle";
 import OrderOption from "./OrderOption";
 import BottomModal from "../../components/BottomModal";
+import BlueButton from "../../components/BlueButton";
 
 class AccountOrderModal extends Component<{
   navigation: *,
@@ -18,6 +20,13 @@ class AccountOrderModal extends Component<{
         <MenuTitle>Sort by</MenuTitle>
         <OrderOption id="balance" />
         <OrderOption id="name" />
+        <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
+          <BlueButton
+            onPress={onClose}
+            title="Done"
+            containerStyle={{ height: 48 }}
+          />
+        </View>
       </BottomModal>
     );
   }

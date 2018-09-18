@@ -1,6 +1,14 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { ScrollView, View, StyleSheet, TextInput } from "react-native";
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+} from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { connect } from "react-redux";
@@ -58,26 +66,36 @@ class EditAccountName extends PureComponent<Props, State> {
 
   render() {
     const { account, t } = this.props;
+    const keyboardVerticalOffset = Platform.OS === "ios" ? 64 : 0;
     return (
-      <ScrollView contentContainerStyle={styles.root}>
-        <View style={styles.body}>
-          <TextInput
-            autoFocus
-            style={styles.textInputAS}
-            defaultValue={account.name}
-            returnKeyType="done"
-            maxLength={20}
-            onChangeText={accountName => this.setState({ accountName })}
-            onSubmitEditing={this.onNameEndEditing}
-          />
-          <BlueButton
-            title={t("common:common.apply")}
-            onPress={this.onNameEndEditing}
-            containerStyle={[styles.buttonContainer]}
-            titleStyle={[styles.buttonTitle]}
-          />
-        </View>
-      </ScrollView>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          style={styles.body}
+          keyboardVerticalOffset={keyboardVerticalOffset}
+          behavior="padding"
+          enabled
+        >
+          <ScrollView contentContainerStyle={styles.root}>
+            <TextInput
+              autoFocus
+              style={styles.textInputAS}
+              defaultValue={account.name}
+              returnKeyType="done"
+              maxLength={20}
+              onChangeText={accountName => this.setState({ accountName })}
+              onSubmitEditing={this.onNameEndEditing}
+            />
+            <View style={styles.flex}>
+              <BlueButton
+                title={t("common:common.apply")}
+                onPress={this.onNameEndEditing}
+                containerStyle={[styles.buttonContainer]}
+                titleStyle={[styles.buttonTitle]}
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   }
 }
@@ -105,8 +123,15 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginHorizontal: 16,
+    height: 48,
   },
   buttonTitle: {
     fontSize: 16,
+  },
+  flex: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    paddingBottom: 16,
   },
 });
