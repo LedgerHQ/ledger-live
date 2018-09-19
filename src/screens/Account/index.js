@@ -145,6 +145,8 @@ class AccountScreen extends PureComponent<Props, State> {
     scrollToTopIntent.next();
   };
 
+  renderSectionHeader = ({ section }) => <SectionHeader section={section} />;
+
   render() {
     const { account, navigation, syncState } = this.props;
     const { opCount, scrollEnabled } = this.state;
@@ -182,7 +184,7 @@ class AccountScreen extends PureComponent<Props, State> {
           ListHeaderComponent={this.ListHeaderComponent}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
-          renderSectionHeader={SectionHeader}
+          renderSectionHeader={this.renderSectionHeader}
           onEndReached={this.onEndReached}
           showsVerticalScrollIndicator={false}
           provideSyncRefreshControlBehavior={{
