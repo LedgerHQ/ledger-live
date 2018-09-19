@@ -33,7 +33,7 @@ import type { Summary } from "../../components/provideSummary";
 import GraphCardContainer from "./GraphCardContainer";
 import Header from "./Header";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
-
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
@@ -141,7 +141,7 @@ class Portfolio extends Component<
     );
 
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
         <Header scrollY={scrollY} summary={summary} />
         <SafeAreaView style={styles.inner}>
           <List
