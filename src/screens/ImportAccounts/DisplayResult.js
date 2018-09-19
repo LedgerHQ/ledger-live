@@ -129,7 +129,9 @@ class DisplayResult extends Component<Props, State> {
       // select all by default
       selectedAccounts = items.reduce(
         (acc, cur) =>
-          cur.mode === "create" ? concat(acc, cur.account.id) : acc,
+          cur.mode === "create" || cur.mode === "patch"
+            ? concat(acc, cur.account.id)
+            : acc,
         [],
       );
     }
