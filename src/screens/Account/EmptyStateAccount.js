@@ -3,6 +3,7 @@ import React, { PureComponent } from "react";
 import { translate, Trans } from "react-i18next";
 import { View, Image, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import config from "react-native-config";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import colors from "../../colors";
 import type { T } from "../../types/common";
@@ -38,7 +39,7 @@ class EmptyStateAccount extends PureComponent<{
               {"app is installed and start receiving"}
             </Trans>
           </LText>
-          {null && ( // FIXME READONLYMVP
+          {config.READ_ONLY === "0" && (
             <BlueButton
               title={t("common:account.emptyState.buttons.receiveFunds")}
               onPress={this.goToReceiveFunds}
