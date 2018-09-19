@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>7</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -48,12 +48,12 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSFaceIDUsageDescription</key>
-	<string>This app requires Face ID permission to authenticate using Face recognition.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>The Ledger Live app needs access device</string>
 	<key>NSCameraUsageDescription</key>
 	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>This app requires Face ID permission to authenticate using Face recognition.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MuseoSans-Bold.otf</string>
