@@ -15,7 +15,7 @@ const mapStateToProps = createStructuredSelector({
   isUpToDate: isUpToDateSelector,
 });
 
-export default (Inner: React$ComponentType<any>) => {
+export default (Decorated: React$ComponentType<any>) => {
   const SyncIndicator = ({
     globalSyncState,
     isUpToDate,
@@ -31,7 +31,7 @@ export default (Inner: React$ComponentType<any>) => {
             const isPending = cvPolling.pending || globalSyncState.pending;
             const error = cvPolling.error || globalSyncState.error;
             return (
-              <Inner
+              <Decorated
                 isUpToDate={isUpToDate}
                 isPending={isPending}
                 error={error}
