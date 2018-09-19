@@ -9,9 +9,9 @@
     core-js "^2.5.7"
     regenerator-runtime "^0.12.0"
 
-"@ledgerhq/live-common@3":
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.5.1.tgz#dab3eb061f361999a9e04ef564808831faac61ea"
+"@ledgerhq/live-common@^3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.6.0.tgz#36ece92911efb237840789f2f272362395f218e4"
   dependencies:
     axios "^0.18.0"
     bignumber.js "^7.2.1"
