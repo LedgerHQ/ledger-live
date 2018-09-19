@@ -21,6 +21,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { getElevationStyle } from "../../components/ElevatedView";
 
 import type { Summary } from "../../components/provideSummary";
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 
 import { scrollToTopIntent } from "./events";
 
@@ -45,7 +46,7 @@ class AnimatedTopBar extends PureComponent<{
     return (
       <TouchableWithoutFeedback onPress={this.onPress}>
         <Animated.View style={[getElevationStyle(8), styles.root, { opacity }]}>
-          <View style={styles.outer}>
+          <View style={[styles.outer, { paddingTop: extraStatusBarPadding }]}>
             <SafeAreaView>
               <View style={styles.content}>
                 <LText secondary style={styles.labelText}>
