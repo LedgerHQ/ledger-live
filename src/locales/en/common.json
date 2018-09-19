@@ -3,7 +3,8 @@
     "cancel": "Cancel",
     "apply": "Apply",
     "delete": "Delete",
-    "continue": "Continue"
+    "continue": "Continue",
+    "done": "Done"
   },
   "errors": {
     "generic": {
