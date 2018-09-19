@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { ScrollView, View, SectionList, StyleSheet } from "react-native";
 import groupBy from "lodash/groupBy";
+import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
@@ -36,7 +37,6 @@ type Item = {
 
 type Props = {
   navigation: NavigationScreenProp<{ result: Result }>,
-  onDone: () => void,
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
@@ -127,13 +127,26 @@ class DisplayResult extends Component<Props, State> {
     let selectedAccounts = prevState.selectedAccounts;
     if (prevState.items.length === 0) {
       // select all by default
-      selectedAccounts = items.map(i => i.account.id);
+      selectedAccounts = items.reduce(
+        (acc, cur) =>
+          cur.mode === "create" || cur.mode === "patch"
+            ? concat(acc, cur.account.id)
+            : acc,
+        [],
+      );
     }
     return { items, selectedAccounts };
   }
 
+  close = () => {
+    const { navigation } = this.props;
+
+    // $FlowFixMe
+    navigation.dangerouslyGetParent().goBack();
+  };
+
   onImport = async () => {
-    const { navigation, addAccount, updateAccount } = this.props;
+    const { addAccount, updateAccount } = this.props;
     const { selectedAccounts, items } = this.state;
     this.setState({ importing: true });
     const selectedItems = items.filter(item =>
@@ -152,8 +165,7 @@ class DisplayResult extends Component<Props, State> {
     }
 
     // TODO we probably want to sync all the imported accounts before ending
-    // $FlowFixMe
-    navigation.dangerouslyGetParent().goBack();
+    this.close();
   };
 
   onSwitchResultItem = (checked: boolean, account: Account) => {
@@ -205,48 +217,54 @@ class DisplayResult extends Component<Props, State> {
     );
   };
 
-  ListFooterComponent = () =>
-    this.state.selectedAccounts.length === 0 ? null : (
-      <BlueButton
-        title={this.props.t("common.continue")}
-        onPress={this.onImport}
-        containerStyle={styles.button}
-        titleStyle={styles.buttonText}
-      />
-    );
-
   SectionSeparatorComponent = () => <View style={{ height: 20 }} />;
 
   keyExtractor = item => item.account.id;
 
   render() {
-    const { onDone, t } = this.props;
-    const { items } = this.state;
+    const { t } = this.props;
+    const { items, selectedAccounts } = this.state;
 
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
-      <ScrollView contentContainerStyle={styles.DisplayResult}>
+      <View style={styles.root}>
         <StyledStatusBar />
-        {items.length === 0 ? (
-          <View>
-            <LText bold>{t("account.import.result.noAccounts")}</LText>
-            <BlueButton title="Done" onPress={onDone} />
-          </View>
+        {items.length ? (
+          <ScrollView contentContainerStyle={styles.DisplayResult}>
+            <SectionList
+              renderItem={this.renderItem}
+              renderSectionHeader={this.renderSectionHeader}
+              keyExtractor={this.keyExtractor}
+              SectionSeparatorComponent={this.SectionSeparatorComponent}
+              sections={Object.keys(itemsGroupedByMode).map(mode => ({
+                mode,
+                data: itemsGroupedByMode[mode],
+              }))}
+            />
+            {selectedAccounts.length ? (
+              <BlueButton
+                title={t("common.continue")}
+                onPress={this.onImport}
+                containerStyle={styles.button}
+                titleStyle={styles.buttonText}
+              />
+            ) : null}
+          </ScrollView>
         ) : (
-          <SectionList
-            renderItem={this.renderItem}
-            renderSectionHeader={this.renderSectionHeader}
-            keyExtractor={this.keyExtractor}
-            SectionSeparatorComponent={this.SectionSeparatorComponent}
-            ListFooterComponent={this.ListFooterComponent}
-            sections={Object.keys(itemsGroupedByMode).map(mode => ({
-              mode,
-              data: itemsGroupedByMode[mode],
-            }))}
-          />
+          <View style={styles.DisplayResult}>
+            <LText bold style={styles.noAccountText}>
+              {t("account.import.result.noAccounts")}
+            </LText>
+            <BlueButton
+              title={t("common.done")}
+              onPress={this.close}
+              containerStyle={styles.button}
+              titleStyle={styles.buttonText}
+            />
+          </View>
         )}
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -262,18 +280,32 @@ export default translate()(
 );
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    flexGrow: 1,
+    flexDirection: "column",
+    alignSelf: "stretch",
+    justifyContent: "space-between",
+    backgroundColor: colors.white,
+  },
   DisplayResult: {
     padding: 20,
-    backgroundColor: "white",
+    flexDirection: "column",
+    flexGrow: 1,
   },
   sectionHeaderText: {
     color: colors.grey,
     fontSize: 14,
   },
   button: {
-    height: 48,
+    paddingVertical: 16,
+    height: "auto",
   },
   buttonText: {
+    fontSize: 16,
+  },
+  noAccountText: {
+    flex: 1,
     fontSize: 16,
   },
 });
