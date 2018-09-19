@@ -160,7 +160,7 @@ export function getBalanceHistory(
 }
 
 const cacheKeyForOps = (ops: Operation[]) =>
-  ops.length === 0 ? `${ops[0].accountId}_${ops[0].id}_` : "";
+  ops.length > 0 ? `${ops[0].accountId}_${ops[0].id}_` : "";
 
 export const balanceHistorySelector = createCachedSelector(
   (ops: Operation[]) => ops,
