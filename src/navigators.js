@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, StatusBar } from "react-native";
 import { createStackNavigator } from "react-navigation";
 import { createBottomTabNavigator, BottomTabBar } from "react-navigation-tabs";
+import config from "react-native-config";
 import colors from "./colors";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
@@ -29,7 +30,7 @@ import SendSelectFunds from "./screens/SelectFunds";
 import SendSummary from "./screens/SendSummary";
 import SendValidation from "./screens/Validation";
 import OperationDetails from "./screens/OperationDetails";
-// import Transfer from "./screens/Transfer"; // FIXME READONLYMVP
+import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
@@ -134,18 +135,25 @@ const CustomTabBar = props => (
   <BottomTabBar {...props} style={styles.bottomTabBar} />
 );
 
-const Main = createBottomTabNavigator(
-  {
+const getTabItems = () => {
+  const items: any = {
     Portfolio,
     Accounts: AccountsStack,
-    // Transfer, // FIXME READONLYMVP
-    // Manager: ManagerStack, // FIXME READONLYMVP
-    Settings: SettingsStack,
-  },
-  {
-    tabBarComponent: CustomTabBar,
-  },
-);
+  };
+
+  if (config.READ_ONLY === "0") {
+    items.Transfer = Transfer;
+    items.Manager = ManagerStack;
+  }
+
+  items.Settings = SettingsStack;
+
+  return items;
+};
+
+const Main = createBottomTabNavigator(getTabItems(), {
+  tabBarComponent: CustomTabBar,
+});
 
 Main.navigationOptions = {
   header: null,

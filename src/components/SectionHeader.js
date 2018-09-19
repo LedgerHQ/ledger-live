@@ -1,5 +1,5 @@
 /* @flow */
-import React from "react";
+import React, { Component } from "react";
 import moment from "moment";
 import { StyleSheet } from "react-native";
 import colors from "../colors";
@@ -13,11 +13,26 @@ const calendarOpts = {
   sameElse: "LL",
 };
 
-export default ({ section }: { section: { day: Date } }) => (
-  <LText numberOfLines={1} semiBold style={styles.sectionHeader}>
-    {moment(section.day).calendar(null, calendarOpts)}
-  </LText>
-);
+type Props = {
+  section: {
+    day: Date,
+  },
+};
+
+export default class SectionHeader extends Component<Props> {
+  shouldComponentUpdate(nextProps: Props) {
+    return nextProps.section.day.getTime() !== this.props.section.day.getTime();
+  }
+
+  render() {
+    const { section } = this.props;
+    return (
+      <LText numberOfLines={1} semiBold style={styles.sectionHeader}>
+        {moment(section.day).calendar(null, calendarOpts)}
+      </LText>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   sectionHeader: {

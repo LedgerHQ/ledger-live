@@ -110,7 +110,7 @@ const mapStateToProps = (state, props) => {
 };
 
 export default (WrappedComponent: any) => {
-  class Inner extends Component<Props> {
+  class ProvideSummary extends Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
       return nextProps.hash !== this.props.hash;
     }
@@ -119,7 +119,7 @@ export default (WrappedComponent: any) => {
       return <WrappedComponent {...this.props} />;
     }
   }
-  const Connected = connect(mapStateToProps)(Inner);
+  const Connected = connect(mapStateToProps)(ProvideSummary);
   hoistNonReactStatic(Connected, WrappedComponent);
   return Connected;
 };
