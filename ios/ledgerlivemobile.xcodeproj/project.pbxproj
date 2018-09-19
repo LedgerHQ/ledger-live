@@ -26,9 +26,12 @@
 		347AB25E20498A4E00BE6F60 /* libRNSentry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 347AB21B2049885900BE6F60 /* libRNSentry.a */; };
 		34945F952003AECD00D80E26 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		349F66892045ADD9002149B4 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 349F66862045ADCC002149B4 /* libRNCamera.a */; };
-		34B4AF362152B14E0080F194 /* libledger-core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 34B4AF352152B14E0080F194 /* libledger-core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		34B4AF392152B1520080F194 /* libledger-core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 34B4AF382152B1520080F194 /* libledger-core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		34B4AF3B2152B1560080F194 /* libledger-core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 34B4AF3A2152B1560080F194 /* libledger-core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		34AAF74A2152B81500C986D6 /* libledger-core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 34B4AFBD2152B6CD0080F194 /* libledger-core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		34AAF74B2152B81500C986D6 /* libledger-core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 34B4AFBC2152B6CD0080F194 /* libledger-core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		34AAF74C2152B81600C986D6 /* libledger-core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 34B4AFBB2152B6CD0080F194 /* libledger-core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		34B4AFBE2152B6CE0080F194 /* libledger-core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B4AFBB2152B6CD0080F194 /* libledger-core.dylib */; };
+		34B4AFBF2152B6CE0080F194 /* libledger-core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B4AFBC2152B6CD0080F194 /* libledger-core.dylib */; };
+		34B4AFC02152B6CE0080F194 /* libledger-core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B4AFBD2152B6CD0080F194 /* libledger-core.dylib */; };
 		381DCCBE6BFC414E8DC790E4 /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7C5BB743ED04E53A2323979 /* OpenSans-SemiBold.ttf */; };
 		3DA97B22606449008235C1CA /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BF8FF922072F4CF3B96390AA /* EvilIcons.ttf */; };
 		3F73E57F80C14CFE990782D3 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5144736E6C134554877E0D22 /* Feather.ttf */; };
@@ -436,9 +439,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				34B4AF392152B1520080F194 /* libledger-core.dylib in Embed Libraries */,
-				34B4AF3B2152B1560080F194 /* libledger-core.dylib in Embed Libraries */,
-				34B4AF362152B14E0080F194 /* libledger-core.dylib in Embed Libraries */,
+				34AAF74B2152B81500C986D6 /* libledger-core.dylib in Embed Libraries */,
+				34AAF74C2152B81600C986D6 /* libledger-core.dylib in Embed Libraries */,
+				34AAF74A2152B81500C986D6 /* libledger-core.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -469,11 +472,9 @@
 		2CB99C7AA791411C87B310E9 /* ReactNativeConfig.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeConfig.xcodeproj; path = "../node_modules/react-native-config/ios/ReactNativeConfig.xcodeproj"; sourceTree = "<group>"; };
 		3263CCC7104E4B86AC2ADDB4 /* MuseoSans-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-Regular.otf"; path = "../assets/fonts/MuseoSans-Regular.otf"; sourceTree = "<group>"; };
 		349F66542045ADCC002149B4 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; };
-		34B4AEFF2152B0550080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/arm64/libledger-core.dylib"; sourceTree = "<group>"; };
-		34B4AF332152B05F0080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/armv7/libledger-core.dylib"; sourceTree = "<group>"; };
-		34B4AF352152B14E0080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/arm64/libledger-core.dylib"; sourceTree = "<group>"; };
-		34B4AF382152B1520080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/armv7/libledger-core.dylib"; sourceTree = "<group>"; };
-		34B4AF3A2152B1560080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/x86/libledger-core.dylib"; sourceTree = "<group>"; };
+		34B4AFBB2152B6CD0080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/armv7/libledger-core.dylib"; sourceTree = "<group>"; };
+		34B4AFBC2152B6CD0080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/x86/libledger-core.dylib"; sourceTree = "<group>"; };
+		34B4AFBD2152B6CD0080F194 /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/arm64/libledger-core.dylib"; sourceTree = "<group>"; };
 		3A45C4CF346C4C9594B2EC36 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		4396DC4264644851ADA99A35 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		44387CB2EE84464C83A75FD7 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
@@ -553,6 +554,7 @@
 				BF09D4F8214BF7640040397B /* libPasscodeAuth.a in Frameworks */,
 				BF09D4F7214BF75B0040397B /* libSplashScreen.a in Frameworks */,
 				BF09D4F6214BF7500040397B /* libRCTLocale.a in Frameworks */,
+				34B4AFBF2152B6CE0080F194 /* libledger-core.dylib in Frameworks */,
 				BF09D4F5214BF7460040397B /* libRNSVG.a in Frameworks */,
 				BF09D4F4214BF73D0040397B /* libReactNativeConfig.a in Frameworks */,
 				BF60DBE7214A955600912E7C /* libART.a in Frameworks */,
@@ -569,7 +571,9 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */,
+				34B4AFC02152B6CE0080F194 /* libledger-core.dylib in Frameworks */,
 				7EDEA35621D64751B73F49C7 /* libReact Native Open Settings.a in Frameworks */,
+				34B4AFBE2152B6CE0080F194 /* libledger-core.dylib in Frameworks */,
 				9A36AF5F4A714CC4AF9DA940 /* libRNLibLedgerCore.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -866,11 +870,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				34B4AEFF2152B0550080F194 /* libledger-core.dylib */,
-				34B4AF332152B05F0080F194 /* libledger-core.dylib */,
-				34B4AF352152B14E0080F194 /* libledger-core.dylib */,
-				34B4AF382152B1520080F194 /* libledger-core.dylib */,
-				34B4AF3A2152B1560080F194 /* libledger-core.dylib */,
 				13B07FAE1A68108700A75B9A /* ledgerlivemobile */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* ledgerlivemobileTests */,
@@ -926,6 +925,9 @@
 		90B115AE643A42D1BF8AA6F4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				34B4AFBD2152B6CD0080F194 /* libledger-core.dylib */,
+				34B4AFBC2152B6CD0080F194 /* libledger-core.dylib */,
+				34B4AFBB2152B6CD0080F194 /* libledger-core.dylib */,
 				545FD04868AD450083DC4717 /* libz.tbd */,
 			);
 			name = Frameworks;
@@ -1687,6 +1689,7 @@
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1713,7 +1716,7 @@
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/**";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/ios/**";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1730,6 +1733,7 @@
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1755,7 +1759,7 @@
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/**";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/ios/**";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
