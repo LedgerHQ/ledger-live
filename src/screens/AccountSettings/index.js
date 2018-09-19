@@ -62,11 +62,13 @@ class AccountSettings extends PureComponent<Props, State> {
   onPress = () => {
     this.setState({ isModalOpened: true });
   };
+
   deleteAccount = () => {
     const { account, deleteAccount, navigation } = this.props;
     deleteAccount(account);
     navigation.navigate("Accounts");
   };
+
   render() {
     const { navigation, t, account } = this.props;
     const { isModalOpened } = this.state;

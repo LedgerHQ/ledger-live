@@ -16,6 +16,7 @@ class CurrencyUnitValue extends Component<{
   static defaultProps = {
     showCode: true,
   };
+
   render() {
     const { unit, value, ...rest } = this.props;
     return formatCurrencyUnit(unit, value, {

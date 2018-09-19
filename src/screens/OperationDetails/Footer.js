@@ -44,7 +44,10 @@ export default translate()(Footer);
 
 const styles = StyleSheet.create({
   footer: {
+    borderTopWidth: 1,
+    borderColor: "#eee",
     alignItems: "center",
-    marginVertical: 24,
+    paddingVertical: 16,
+    backgroundColor: colors.white,
   },
 });

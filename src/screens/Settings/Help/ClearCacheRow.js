@@ -42,6 +42,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
   onClearCache = () => {
     console.log("Placeholder for clearing cache"); // eslint-disable-line no-console
   };
+
   render() {
     const { t } = this.props;
     const { isModalOpened } = this.state;

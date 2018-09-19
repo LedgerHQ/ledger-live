@@ -32,6 +32,7 @@ class AuthSecurityToggle extends Component<Props, State> {
   state = {
     validationPending: false,
   };
+
   onValueChange = async (authSecurityEnabled: boolean) => {
     if (authSecurityEnabled) {
       this.setState({ validationPending: true });

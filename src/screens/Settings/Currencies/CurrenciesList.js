@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
@@ -47,9 +47,14 @@ class CurrenciesList extends PureComponent<Props> {
         data={currencies}
         renderItem={this.renderItem}
         keyExtractor={this.keyExtractor}
+        contentContainerStyle={styles.containerStyle}
       />
     );
   }
 }
+
+const styles = StyleSheet.create({
+  containerStyle: { paddingTop: 16, paddingBottom: 64 },
+});
 
 export default connect(mapStateToProps)(CurrenciesList);

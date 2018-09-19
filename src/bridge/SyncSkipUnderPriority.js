@@ -14,9 +14,11 @@ export class Effect extends PureComponent<{
     instances.push(this);
     this.check();
   }
+
   componentDidUpdate() {
     this.check();
   }
+
   componentWillUnmount() {
     const i = instances.indexOf(this);
     if (i !== -1) {
@@ -24,6 +26,7 @@ export class Effect extends PureComponent<{
       this.check();
     }
   }
+
   check() {
     const { sync } = this.props;
     const priority =
@@ -32,6 +35,7 @@ export class Effect extends PureComponent<{
         : Math.max(...instances.map(i => i.props.priority));
     sync({ type: "SET_SKIP_UNDER_PRIORITY", priority });
   }
+
   render() {
     return null;
   }

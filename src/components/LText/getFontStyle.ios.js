@@ -1,6 +1,6 @@
 /* @flow */
 import { StyleSheet } from "react-native";
-import type { Opts, Res } from "./";
+import type { Opts, Res } from ".";
 
 const getFontStyle = ({
   bold,

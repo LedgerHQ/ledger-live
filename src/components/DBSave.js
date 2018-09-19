@@ -17,23 +17,30 @@ class DBSave extends Component<{
       this.save();
     }
   }
+
   componentWillUnmount() {
     this.save.cancel();
   }
+
   save = throttle(() => {
     const startTime = Date.now();
     const { lense, dbKey, state } = this.props;
     db.save(dbKey, lense(state)).then(
       () => {
-        console.log(
-          `${dbKey} DB saved in ${(Date.now() - startTime).toFixed(0)} ms`,
-        );
+        if (__DEV__) {
+          /* eslint-disable no-console */
+          console.log(
+            `${dbKey} DB saved in ${(Date.now() - startTime).toFixed(0)} ms`,
+          );
+          /* eslint-enable no-console */
+        }
       },
       e => {
         console.error(e);
       },
     );
   }, this.props.throttle || 500);
+
   render() {
     return null;
   }

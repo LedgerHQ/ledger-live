@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint import/no-cycle: 0 */
 import { AppState, NetInfo } from "react-native";
 import { createSelector } from "reselect";
 import createCounterValues from "@ledgerhq/live-common/lib/countervalues";

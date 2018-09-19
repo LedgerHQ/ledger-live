@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
@@ -54,6 +54,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: navigation.state.params.headerTitle,
   });
+
   componentDidMount() {
     const { navigation, t, currency } = this.props;
     navigation.setParams({
@@ -87,24 +88,28 @@ class EachCurrencySettings extends Component<Props, LocalState> {
     const { defaults, t, currencySettings, currency } = this.props;
     const { value } = this.state;
     return (
-      <Fragment>
-        <SettingsRow
-          arrowRight={currencySettings.exchange}
-          title={t("common:settings.currencies.rateProvider", {
-            currencyTicker: currency.ticker,
-          })}
-          desc={t("common:settings.currencies.rateProviderDesc")}
-          onPress={currencySettings.exchange ? this.goToExchange : null}
-        >
-          <LText style={styles.currencyExchange}>
-            {currencySettings.exchange}
-          </LText>
-        </SettingsRow>
+      <View style={styles.root}>
+        {currency !== intermediaryCurrency && (
+          <SettingsRow
+            arrowRight={currencySettings.exchange}
+            title={t("settings.currencies.rateProvider", {
+              currencyTicker: currency.ticker,
+            })}
+            desc={t("settings.currencies.rateProviderDesc", {
+              currencyTicker: currency.ticker,
+            })}
+            onPress={currencySettings.exchange ? this.goToExchange : null}
+          >
+            <LText style={styles.currencyExchange}>
+              {currencySettings.exchange}
+            </LText>
+          </SettingsRow>
+        )}
         {defaults.confirmationsNb && (
           <View style={styles.sliderContainer}>
             <SettingsRow
-              title={t("common:settings.currencies.confirmationNb")}
-              desc={t("common:settings.currencies.confirmationNbDesc")}
+              title={t("settings.currencies.confirmationNb")}
+              desc={t("settings.currencies.confirmationNbDesc")}
               onPress={null}
             >
               <LText
@@ -143,7 +148,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
             </View>
           </View>
         )}
-      </Fragment>
+      </View>
     );
   }
 }
@@ -157,6 +162,11 @@ export default compose(
 )(EachCurrencySettings);
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    paddingTop: 16,
+    paddingBottom: 64,
+  },
   currencyExchange: {
     fontSize: 14,
     color: colors.grey,
@@ -165,7 +175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
-    margin: 16,
+    paddingHorizontal: 16,
   },
   textContainer: {
     flex: 1,

@@ -3,15 +3,15 @@ package com.ledgerlivemobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.rnfingerprint.FingerprintAuthPackage;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import io.sentry.RNSentryPackage;
-import io.fixd.rctlocale.RCTLocalePackage;
-import org.reactnative.camera.RNCameraPackage;
-import com.ledgerwallet.hid.ReactHIDPackage;
-import com.cmcewen.blurview.BlurViewPackage;
-import com.horcrux.svg.SvgPackage;
+import com.opensettings.OpenSettingsPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
+import com.horcrux.svg.SvgPackage;
+import com.ledgerwallet.hid.ReactHIDPackage;
+import org.reactnative.camera.RNCameraPackage;
+import io.fixd.rctlocale.RCTLocalePackage;
+import io.sentry.RNSentryPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.rnfingerprint.FingerprintAuthPackage;
 import com.polidea.reactnativeble.BlePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -42,18 +42,18 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-              new MainReactPackage(),
-            new FingerprintAuthPackage(),
-            new SplashScreenReactPackage(),
-            new RNSentryPackage(MainApplication.this),
+          new MainReactPackage(),
+            new OpenSettingsPackage(),
+            new ReactNativeConfigPackage(),
+            new SvgPackage(),
+            new ReactHIDPackage(),
+            new RNCameraPackage(),
             new RCTLocalePackage(),
-              new RNCameraPackage(),
-              new ReactHIDPackage(),
-              new BlurViewPackage(),
-              new SvgPackage(),
-              new ReactNativeConfigPackage(),
-              new RCTCoreBindingPackage(),
-              new BlePackage()
+            new RNSentryPackage(),
+            new SplashScreenReactPackage(),
+            new FingerprintAuthPackage(),
+            new RCTCoreBindingPackage(),
+            new BlePackage()
       );
     }
 

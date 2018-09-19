@@ -6,7 +6,7 @@ import colors from "../colors";
 
 const HeaderBackImage = () => (
   <View style={styles.root}>
-    <ArrowLeft size={16} color={colors.darkBlue} />
+    <ArrowLeft size={16} color={colors.grey} />
   </View>
 );
 

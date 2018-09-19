@@ -40,7 +40,8 @@ const styles = StyleSheet.create({
   cardStyle: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
     marginVertical: 4,
   },
   cardTextBlock: {
@@ -50,12 +51,12 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.darkBlue,
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 17,
     marginBottom: 4,
   },
   desc: {
     color: colors.grey,
-    fontSize: 12,
+    fontSize: 14,
   },
 });

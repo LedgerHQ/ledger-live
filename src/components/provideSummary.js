@@ -2,12 +2,16 @@
 
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { getBalanceHistorySum } from "@ledgerhq/live-common/lib/helpers/account";
 import hoistNonReactStatic from "hoist-non-react-statics";
+import createCachedSelector from "re-reselect";
 import { BigNumber } from "bignumber.js";
-
-import type { Currency, Account } from "@ledgerhq/live-common/lib/types";
-
+import type {
+  Account,
+  Operation,
+  BalanceHistory,
+  Currency,
+} from "@ledgerhq/live-common/lib/types";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
 import { accountsSelector } from "../reducers/accounts";
 import {
   exchangeSettingsForAccountSelector,
@@ -17,10 +21,9 @@ import {
   selectedTimeRangeSelector,
   timeRangeDaysByKey,
 } from "../reducers/settings";
-
 import CounterValues from "../countervalues";
 
-import type { Item } from "../components/Graph";
+import type { Item } from "./Graph";
 
 export type Summary = {
   accounts: Account[],
@@ -111,6 +114,7 @@ export default (WrappedComponent: any) => {
     shouldComponentUpdate(nextProps: Props) {
       return nextProps.hash !== this.props.hash;
     }
+
     render() {
       return <WrappedComponent {...this.props} />;
     }
@@ -119,3 +123,93 @@ export default (WrappedComponent: any) => {
   hoistNonReactStatic(Connected, WrappedComponent);
   return Connected;
 };
+
+// ~~~ This is forked from live-common ~~~ //
+
+function startOfDay(t) {
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+}
+
+/**
+ * generate an array of {daysCount} datapoints, one per day,
+ * for the balance history of an account.
+ * The last item of the array is the balance available right now.
+ * @memberof helpers/account
+ */
+export function getBalanceHistory(
+  accountOperations: Operation[],
+  accountBalance: BigNumber,
+  daysCount: number,
+): BalanceHistory {
+  const history = [];
+  let i = 0; // index of operation
+  let t = new Date();
+  let balance = accountBalance;
+  history.unshift({ date: t, value: balance });
+  t = new Date(startOfDay(t) - 1); // end of yesterday
+  for (let d = daysCount - 1; d > 0; d--) {
+    // accumulate operations after time t
+    while (i < accountOperations.length && accountOperations[i].date > t) {
+      balance = balance.minus(getOperationAmountNumber(accountOperations[i]));
+      i++;
+    }
+    history.unshift({ date: t, value: BigNumber.max(balance, 0) });
+    t = new Date(t - 24 * 60 * 60 * 1000);
+  }
+  return history;
+}
+
+const cacheKeyForOps = (ops: Operation[]) =>
+  ops.length === 0 ? `${ops[0].accountId}_${ops[0].id}_` : "";
+
+export const balanceHistorySelector = createCachedSelector(
+  (ops: Operation[]) => ops,
+  (_, balance: BigNumber) => balance,
+  (_, _2, count: number) => count,
+  getBalanceHistory,
+)(
+  // our cache will consider the last op loaded to cache it all
+  (ops: Operation[], balance: BigNumber, count: number) =>
+    /* eslint-disable prefer-template */
+    cacheKeyForOps(ops) + `${balance.toString()}_${count}`,
+);
+
+// TODO optim getBalanceHistorySum as well
+export function getBalanceHistorySum(
+  accounts: Account[],
+  daysCount: number,
+  // for a given account, calculate the countervalue of a value at given date.
+  calculateAccountCounterValue: (Account, BigNumber, Date) => BigNumber,
+): BalanceHistory {
+  if (typeof calculateAccountCounterValue !== "function") {
+    throw new Error(
+      "getBalanceHistorySum signature has changed, please port the code",
+    );
+  }
+  if (accounts.length === 0) {
+    const now = Date.now();
+    const zeros: BigNumber[] = Array(daysCount).fill(BigNumber(0));
+    return zeros.map((value, i) => ({
+      date: new Date(now - 24 * 60 * 60 * 1000 * (daysCount - i - 1)),
+      value,
+    }));
+  }
+  return accounts
+    .map(account => {
+      const history = balanceHistorySelector(
+        account.operations,
+        account.balance,
+        daysCount,
+      );
+      return history.map(h => ({
+        date: h.date,
+        value: calculateAccountCounterValue(account, h.value, h.date),
+      }));
+    })
+    .reduce((acc, history) =>
+      acc.map((a, i) => ({
+        date: a.date,
+        value: a.value.plus(history[i].value),
+      })),
+    );
+}

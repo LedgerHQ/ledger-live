@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import type { NavigationScreenProp } from "react-navigation";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import LedgerSupportRow from "./LedgerSupportRow";
 import ClearCacheRow from "./ClearCacheRow";
 import HardResetRow from "./HardResetRow";
@@ -16,11 +16,11 @@ class HelpSettings extends PureComponent<{
 
   render() {
     return (
-      <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
+      <ScrollView contentContainerStyle={styles.root}>
         <LedgerSupportRow />
         {null && <ConfigureDeviceRow /> // FIXME enable when implemented
         }
-        <View style={{ marginTop: 16 }}>
+        <View style={styles.container}>
           <ClearCacheRow />
           <HardResetRow />
         </View>
@@ -28,5 +28,12 @@ class HelpSettings extends PureComponent<{
     );
   }
 }
+
+const styles = StyleSheet.create({
+  root: { paddingTop: 16, paddingBottom: 64 },
+  container: {
+    marginTop: 16,
+  },
+});
 
 export default HelpSettings;

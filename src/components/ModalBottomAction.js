@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import LText from "../components/LText";
+import LText from "./LText";
 import colors from "../colors";
 
 export default class ModalBottomAction extends Component<{
@@ -31,8 +31,6 @@ export default class ModalBottomAction extends Component<{
 
 const styles = StyleSheet.create({
   root: {
-    borderBottomWidth: 1,
-    borderColor: "#eee",
     alignItems: "center",
   },
   icon: {
@@ -40,6 +38,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flexDirection: "column",
+    alignSelf: "stretch",
     marginHorizontal: 16,
   },
   title: {
@@ -53,7 +52,5 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     color: colors.grey,
   },
-  footer: {
-    paddingBottom: 16,
-  },
+  footer: {},
 });

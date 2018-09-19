@@ -15,7 +15,7 @@ const mapStateToProps = createStructuredSelector({
   isUpToDate: isUpToDateSelector,
 });
 
-export default (Inner: *) => {
+export default (Inner: React$ComponentType<any>) => {
   const SyncIndicator = ({
     globalSyncState,
     isUpToDate,
@@ -29,14 +29,12 @@ export default (Inner: *) => {
         <CounterValues.PollingConsumer>
           {cvPolling => {
             const isPending = cvPolling.pending || globalSyncState.pending;
-            const isError =
-              !isPending && (cvPolling.error || globalSyncState.error);
+            const error = cvPolling.error || globalSyncState.error;
             return (
               <Inner
                 isUpToDate={isUpToDate}
                 isPending={isPending}
-                isError={!!isError && !isUpToDate} // we only show error if it's not up to date. this hide a bit error that happen from time to time
-                error={isError ? globalSyncState.error : null}
+                error={error}
                 cvPoll={cvPolling.poll}
                 setSyncBehavior={setSyncBehavior}
                 {...rest}

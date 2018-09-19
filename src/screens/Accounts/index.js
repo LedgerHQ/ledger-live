@@ -10,6 +10,7 @@ import AccountsIcon from "../../icons/Accounts";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import RefreshAccountsOrdering from "../../components/RefreshAccountOrdering";
 import StyledStatusBar from "../../components/StyledStatusBar";
+import ImportedAccountsNotification from "../../components/ImportedAccountsNotification";
 import colors from "../../colors";
 
 import NoAccounts from "./NoAccounts";
@@ -36,6 +37,7 @@ type Props = {
   navigation: *,
   accounts: Account[],
 };
+
 class Accounts extends Component<Props> {
   static navigationOptions = navigationOptions;
 
@@ -47,6 +49,8 @@ class Accounts extends Component<Props> {
 
   keyExtractor = item => item.id;
 
+  initiallyHadNoAccounts = this.props.accounts.length === 0;
+
   render() {
     const { accounts } = this.props;
 
@@ -54,10 +58,13 @@ class Accounts extends Component<Props> {
       return <NoAccounts />;
     }
 
+    const enableImportNotif = this.initiallyHadNoAccounts;
+
     return (
       <Fragment>
         <StyledStatusBar backgroundColor={colors.white} />
         <RefreshAccountsOrdering onMount />
+        {enableImportNotif ? <ImportedAccountsNotification /> : null}
         <List
           data={accounts}
           renderItem={this.renderItem}
@@ -77,7 +84,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingTop: 10,
+    paddingTop: 16,
     paddingHorizontal: 16,
+    paddingBottom: 64,
   },
 });

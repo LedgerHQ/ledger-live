@@ -15,16 +15,19 @@ type Props = {
 };
 
 class AmountInput extends Component<Props> {
-  componentDidMount() {
-    this.input.current.focus();
-  }
-
-  // $FlowFixMe
   input = React.createRef();
+
+  componentDidMount() {
+    if (this.input.current) {
+      this.input.current.focus();
+    }
+  }
 
   clear = () => {
     const { onChangeText } = this.props;
-    this.input.current.clear();
+    if (this.input.current) {
+      this.input.current.clear();
+    }
     onChangeText("");
   };
 

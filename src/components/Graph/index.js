@@ -56,6 +56,7 @@ export default class Graph extends PureComponent<Props, State> {
   };
 
   x: * = null;
+
   y: * = null;
 
   collectHovered = (evt: *) => {
@@ -122,9 +123,7 @@ export default class Graph extends PureComponent<Props, State> {
       ? d => this.y(d.value.toNumber())
       : d => this.y(d.originalValue.toNumber());
 
-    const curve = useCounterValue
-      ? shape.curveCatmullRom
-      : shape.curveStepBefore;
+    const curve = useCounterValue ? shape.curveLinear : shape.curveStepBefore;
 
     this.x = scale
       .scaleTime()

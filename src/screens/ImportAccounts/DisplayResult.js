@@ -115,7 +115,7 @@ class DisplayResult extends Component<Props, State> {
             mode: supportsExistingAccount(accInput) ? "create" : "unsupported",
           };
         } catch (e) {
-          console.log(e);
+          console.warn(e);
           return null;
         }
       })

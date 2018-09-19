@@ -12,6 +12,7 @@ class AddAccount extends PureComponent<{}, { isOpened: boolean }> {
   };
 
   onPress = () => this.setState({ isOpened: true });
+
   onClose = () => this.setState({ isOpened: false });
 
   render() {

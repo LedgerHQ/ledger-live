@@ -32,6 +32,7 @@ class AnimatedTopBar extends PureComponent<{
   onPress = () => {
     scrollToTopIntent.next();
   };
+
   render() {
     const { scrollY, summary, t } = this.props;
 

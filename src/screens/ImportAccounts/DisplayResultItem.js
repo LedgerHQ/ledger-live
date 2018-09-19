@@ -16,6 +16,7 @@ export default class DisplayResultItem extends Component<{
   onSwitch = (checked: boolean) => {
     this.props.onSwitch(checked, this.props.account);
   };
+
   render() {
     const { account, checked, mode, importing } = this.props;
     const selectable = selectableModes.includes(mode);

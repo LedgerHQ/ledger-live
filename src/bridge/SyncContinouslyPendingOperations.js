@@ -23,17 +23,15 @@ class SyncContPendingOpsConnected extends Component<{
   componentDidMount() {
     this.timeout = setTimeout(this.check, this.props.interval);
   }
+
   componentWillUnmount() {
     clearTimeout(this.timeout);
   }
+
   check = () => {
     const { sync, accounts, priority, interval } = this.props;
     setTimeout(this.check, interval);
     if (accounts.length > 0) {
-      console.log(
-        `SyncContinouslyPendingOperations: found ${accounts.length} accounts`,
-        accounts,
-      );
       sync({
         type: "SYNC_SOME_ACCOUNTS",
         accountIds: accounts.map(a => a.id),
@@ -41,7 +39,9 @@ class SyncContPendingOpsConnected extends Component<{
       });
     }
   };
+
   timeout: *;
+
   render() {
     return null;
   }

@@ -90,7 +90,7 @@ class ReceiveConfirmation extends Component<Props, State> {
             title="Verify Address"
             containerStyle={styles.continueButton}
             titleStyle={styles.continueButtonText}
-            onPress={() => console.log("trigger verify on device")}
+            onPress={() => console.warn("TODO: trigger verify on device")}
           />
         </View>
       </SafeAreaView>

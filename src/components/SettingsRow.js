@@ -38,7 +38,7 @@ export default class SettingsRow extends Component<{
       >
         {iconLeft && <View style={{ paddingHorizontal: 10 }}>{iconLeft}</View>}
         <View style={styles.textBlock}>
-          <LText semiBold style={titleStyle}>
+          <LText semiBold style={[styles.titleStyle, titleStyle]}>
             {title}
           </LText>
           {desc && <LText style={styles.description}>{desc}</LText>}
@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
     minHeight: 50,
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
     backgroundColor: "white",
     marginBottom: 2,
   },
@@ -73,12 +74,18 @@ const styles = StyleSheet.create({
   },
   textBlock: {
     flexDirection: "column",
-    margin: 10,
+    paddingRight: 16,
     flexGrow: 1,
     flexShrink: 1,
   },
-  description: { color: colors.grey, paddingTop: 5, fontSize: 12 },
+  titleStyle: {
+    fontSize: 16,
+  },
+  description: { color: colors.grey, paddingTop: 5, fontSize: 14 },
   iconRightContainer: {
     marginLeft: 8,
+  },
+  iconLeftContainer: {
+    marginRight: 8,
   },
 });

@@ -20,7 +20,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
 
-import LText from "./../../components/LText/index";
+import LText from "../../components/LText/index";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import OutlineButton from "../../components/OutlineButton";
@@ -55,7 +55,6 @@ class SelectFunds extends Component<Props, State> {
   };
 
   blur = () => {
-    console.log("blur");
     Keyboard.dismiss();
   };
 

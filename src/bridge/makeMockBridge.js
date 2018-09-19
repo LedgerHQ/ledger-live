@@ -45,6 +45,10 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
       const accountId = initialAccount.id;
 
       const sync = () => {
+        if (initialAccount.name.includes("crash")) {
+          o.error(new Error("mock failure"));
+          return;
+        }
         const ops = broadcasted[accountId] || [];
         broadcasted[accountId] = [];
         o.next(acc => {
@@ -101,9 +105,8 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
 
   const getTransactionRecipient = (a, t) => t.recipient;
 
-  const signAndBroadcast = (account, t, deviceId) =>
+  const signAndBroadcast = (account, t, _deviceId) =>
     Observable.create(o => {
-      console.log("signAndBroadcast", { account, transaction: t, deviceId });
       let timeout = setTimeout(() => {
         o.next({ type: "signed" });
         timeout = setTimeout(() => {

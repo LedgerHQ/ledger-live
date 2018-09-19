@@ -1,6 +1,7 @@
 // @flow
 
 import { createSelector, createStructuredSelector } from "reselect";
+import isEqual from "lodash/isEqual";
 import CounterValues from "../countervalues";
 import {
   intermediaryCurrency,
@@ -37,9 +38,14 @@ export const refreshAccountsOrdering = () => (dispatch: *, getState: *) => {
   const all = selectAccountsBalanceAndOrder(getState());
   const allRatesAvailable = all.accountsBtcBalance.every(b => !!b);
   if (allRatesAvailable) {
-    dispatch({
-      type: "REORDER_ACCOUNTS",
-      payload: sortAccounts(all),
-    });
+    const payload = sortAccounts(all);
+    if (!payload) return;
+    const accounts = accountsSelector(getState()).map(a => a.id);
+    if (!isEqual(accounts, payload)) {
+      dispatch({
+        type: "REORDER_ACCOUNTS",
+        payload,
+      });
+    }
   }
 };

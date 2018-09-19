@@ -18,6 +18,7 @@ import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import LText, { getFontStyle } from "../../components/LText";
 import colors, { rgba } from "../../colors";
+import FallBackCamera from "./FallBackCamera";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -74,8 +75,11 @@ class Scan extends PureComponent<
   }
 
   lastData: ?string = null;
+
   nbChunks: ?number = null;
+
   chunks: * = [];
+
   completed: boolean = false;
 
   onBarCodeRead = ({ data }: { data: string }) => {
@@ -122,7 +126,7 @@ class Scan extends PureComponent<
 
   render() {
     const { progress, width, height } = this.state;
-    const { t } = this.props;
+    const { t, navigation } = this.props;
 
     // Make the viewfinder borders 2/3 of the screen shortest border
     const viewFinderSize = (width > height ? height : width) * (2 / 3);
@@ -136,6 +140,7 @@ class Scan extends PureComponent<
           onBarCodeRead={this.onBarCodeRead}
           ratio="16:9"
           style={{ width, height }}
+          notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >
           <View style={[styles.darken, styles.centered]}>
             <LText semibold style={styles.text}>

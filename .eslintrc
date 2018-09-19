@@ -15,7 +15,12 @@
     }
   },
   "rules": {
-    "no-console": 0,
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "no-unused-vars": [
       "error",
       {
@@ -46,7 +51,8 @@
     "class-methods-use-this": 0,
     "react/no-unused-prop-types": 0,
     "react/require-default-props": 0,
-    "prefer-destructuring": 0
+    "prefer-destructuring": 0,
+    "react/destructuring-assignment": 0
   },
   "globals": {
     "__DEV__": false,

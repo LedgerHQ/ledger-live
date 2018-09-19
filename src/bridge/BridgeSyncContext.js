@@ -3,8 +3,6 @@
 // it handles automatically re-calling synchronize
 // this is an even high abstraction than the bridge
 
-import shuffle from "lodash/shuffle";
-import { timeout } from "rxjs/operators/timeout";
 import React, { Component } from "react";
 import priorityQueue from "async/priorityQueue";
 import { connect } from "react-redux";
@@ -18,7 +16,7 @@ import {
 } from "../reducers/bridgeSync";
 import type { BridgeSyncState } from "../reducers/bridgeSync";
 import { accountsSelector, isUpToDateSelector } from "../reducers/accounts";
-import { SYNC_MAX_CONCURRENT, SYNC_TIMEOUT } from "../constants";
+import { SYNC_MAX_CONCURRENT } from "../constants";
 import { getAccountBridge } from ".";
 
 type BridgeSyncProviderProps = {
@@ -47,7 +45,6 @@ export type BehaviorAction =
 
 export type Sync = (action: BehaviorAction) => void;
 
-// $FlowFixMe
 const BridgeSyncContext = React.createContext((_: BehaviorAction) => {});
 
 const mapStateToProps = createStructuredSelector({
@@ -64,6 +61,7 @@ const actions = {
 class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
   constructor() {
     super();
+
     const synchronize = (accountId: string, next: () => void) => {
       const state = syncStateLocalSelector(this.props.bridgeSync, {
         accountId,
@@ -83,51 +81,58 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
       this.props.setAccountSyncState(accountId, { pending: true, error: null });
 
       // TODO migrate to the observation mode in future
-      bridge
-        .startSync(account, false)
-        .pipe(timeout(SYNC_TIMEOUT))
-        .subscribe({
-          next: accountUpdater => {
-            this.props.updateAccountWithUpdater(accountId, accountUpdater);
-          },
-          complete: () => {
-            this.props.setAccountSyncState(accountId, {
-              pending: false,
-              error: null,
-            });
-            next();
-          },
-          error: error => {
-            this.props.setAccountSyncState(accountId, {
-              pending: false,
-              error,
-            });
-            next();
-          },
-        });
+      bridge.startSync(account, false).subscribe({
+        next: accountUpdater => {
+          this.props.updateAccountWithUpdater(accountId, accountUpdater);
+        },
+        complete: () => {
+          this.props.setAccountSyncState(accountId, {
+            pending: false,
+            error: null,
+          });
+          next();
+        },
+        error: error => {
+          this.props.setAccountSyncState(accountId, {
+            pending: false,
+            error,
+          });
+          next();
+        },
+      });
     };
 
     const syncQueue = priorityQueue(synchronize, SYNC_MAX_CONCURRENT);
 
     let skipUnderPriority: number = -1;
 
-    const schedule = (ids: string[], priority: number) => {
+    const schedule = (_ids: string[], priority: number) => {
       if (priority < skipUnderPriority) return;
-      // by convention we remove concurrent tasks with same priority
-      // FIXME this is somehow a hack. ideally we should just dedup the account ids in the pending queue...
-      syncQueue.remove(o => priority === o.priority);
-      console.debug("schedule", { type: "syncQueue", ids });
+      const ids = _ids.slice(0);
+      syncQueue.remove(o => {
+        const i = ids.indexOf(o.data);
+        if (i !== -1) {
+          if (o.priority >= priority) {
+            ids.splice(i, 1);
+          } else {
+            return true;
+          }
+        }
+        return false;
+      });
       syncQueue.push(ids, -priority);
     };
 
     // don't always sync in same order to avoid potential "never account never reached"
-    const shuffledAccountIds = () =>
-      shuffle(this.props.accounts.map(a => a.id));
+    const allAccountIds = () =>
+      this.props.accounts
+        .sort((a, b) => (a.lastSyncDate || 0) - (b.lastSyncDate || 0))
+        .map(a => a.id);
 
     const handlers = {
       BACKGROUND_TICK: () => {
         if (syncQueue.idle()) {
-          schedule(shuffledAccountIds(), -1);
+          schedule(allAccountIds(), -1);
         }
       },
 
@@ -137,12 +142,12 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
         syncQueue.remove(({ priority }) => priority < skipUnderPriority);
         if (priority === -1 && !this.props.isUpToDate) {
           // going back to -1 priority => retriggering a background sync if it is "Paused"
-          schedule(shuffledAccountIds(), -1);
+          schedule(allAccountIds(), -1);
         }
       },
 
       SYNC_ALL_ACCOUNTS: ({ priority }) => {
-        schedule(shuffledAccountIds(), priority);
+        schedule(allAccountIds(), priority);
       },
 
       SYNC_ONE_ACCOUNT: ({ accountId, priority }) => {
@@ -157,7 +162,6 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
     const sync = (action: BehaviorAction) => {
       const handler = handlers[action.type];
       if (handler) {
-        console.debug(`action ${action.type}`, { action, type: "syncQueue" });
         // $FlowFixMe
         handler(action);
       } else {

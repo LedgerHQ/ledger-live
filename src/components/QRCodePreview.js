@@ -18,6 +18,7 @@ export default class QRCodePreview extends Component<{
     size: 200,
     useURIScheme: false,
   };
+
   render() {
     const { useURIScheme, address, currency, amount, size } = this.props;
     let value;

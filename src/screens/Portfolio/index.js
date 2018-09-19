@@ -27,12 +27,11 @@ import OperationRow from "../../components/OperationRow";
 import PortfolioIcon from "../../icons/Portfolio";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
-import StyledStatusBar from "../../components/StyledStatusBar";
 
 import type { Summary } from "../../components/provideSummary";
 
 import GraphCardContainer from "./GraphCardContainer";
-import AnimatedTopBar from "./AnimatedTopBar";
+import Header from "./Header";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
 
 import { scrollToTopIntent } from "./events";
@@ -70,18 +69,20 @@ class Portfolio extends Component<
     scrollEnabled: true,
   };
 
-  // $FlowFixMe
   ref = React.createRef();
+
   scrollSub: *;
 
   componentDidMount() {
     this.scrollSub = scrollToTopIntent.subscribe(() => {
-      const sectionList = this.ref.current.getNode();
-      sectionList.getScrollResponder().scrollTo({
-        x: 0,
-        y: 0,
-        animated: true,
-      });
+      const sectionList = this.ref.current && this.ref.current.getNode();
+      if (sectionList) {
+        sectionList.getScrollResponder().scrollTo({
+          x: 0,
+          y: 0,
+          animated: true,
+        });
+      }
     });
   }
 
@@ -92,6 +93,7 @@ class Portfolio extends Component<
   keyExtractor = (item: Operation) => item.id;
 
   disableScroll = () => this.setState({ scrollEnabled: false });
+
   enableScroll = () => this.setState({ scrollEnabled: true });
 
   ListHeaderComponent = () => (
@@ -139,35 +141,37 @@ class Portfolio extends Component<
     );
 
     return (
-      <SafeAreaView style={styles.root}>
-        <StyledStatusBar backgroundColor={colors.lightGrey} />
-        <AnimatedTopBar scrollY={scrollY} summary={summary} />
-        <List
-          forwardedRef={this.ref}
-          sections={sections}
-          style={styles.list}
-          contentContainerStyle={styles.contentContainer}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-          renderSectionHeader={SectionHeader}
-          onEndReached={this.onEndReached}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
-          scrollEnabled={scrollEnabled}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true },
-          )}
-          ListHeaderComponent={this.ListHeaderComponent}
-          ListFooterComponent={
-            !completed
-              ? LoadingFooter
-              : sections.length === 0
-                ? NoOperationFooter
-                : NoMoreOperationFooter
-          }
-        />
-      </SafeAreaView>
+      <View style={styles.root}>
+        <Header scrollY={scrollY} summary={summary} />
+        <SafeAreaView style={styles.inner}>
+          <List
+            forwardedRef={this.ref}
+            sections={sections}
+            style={styles.list}
+            contentContainerStyle={styles.contentContainer}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+            renderSectionHeader={SectionHeader}
+            onEndReached={this.onEndReached}
+            stickySectionHeadersEnabled={false}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+            scrollEnabled={scrollEnabled}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: true },
+            )}
+            ListHeaderComponent={this.ListHeaderComponent}
+            ListFooterComponent={
+              !completed
+                ? LoadingFooter
+                : sections.length === 0
+                  ? NoOperationFooter
+                  : NoMoreOperationFooter
+            }
+          />
+        </SafeAreaView>
+      </View>
     );
   }
 }
@@ -182,10 +186,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.lightGrey,
   },
+  inner: {
+    flex: 1,
+  },
   list: {
     flex: 1,
   },
   contentContainer: {
-    paddingTop: 20,
+    paddingTop: 16,
+    paddingBottom: 64,
   },
 });

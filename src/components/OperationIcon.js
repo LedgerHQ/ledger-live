@@ -32,7 +32,7 @@ export default class OperationIcon extends PureComponent<Props> {
     }
 
     return (
-      <View style={{ marginLeft: 10 }}>
+      <View>
         <Circle bg={bgColor} size={containerSize}>
           {icon}
         </Circle>
