@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from "react";
+import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { VictoryLine } from "victory";
 import CounterValues from "../countervalues";
@@ -9,17 +10,17 @@ const DAY = 24 * 60 * 60 * 1000;
 const mapStateToProps = (state, props: *) => {
   const data = [];
   let t = Date.now() - props.days * DAY;
-  const value = 10 ** props.from.units[0].magnitude;
+  const value = BigNumber(10 ** props.from.units[0].magnitude);
   for (let i = 0; i < props.days; i++) {
     const date = new Date(t);
+    const cv = CounterValues.calculateSelector(state, {
+      ...props,
+      date,
+      value
+    });
     data.push({
       date,
-      value:
-        CounterValues.calculateSelector(state, {
-          ...props,
-          date,
-          value
-        }) || 0
+      value: cv ? cv.toNumber() : 0
     });
     t += DAY;
   }

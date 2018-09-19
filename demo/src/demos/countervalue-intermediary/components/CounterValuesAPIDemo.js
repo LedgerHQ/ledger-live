@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { BigNumber } from "bignumber.js";
 import Table, {
   TableBody,
   TableCell,
@@ -166,8 +167,8 @@ class App extends Component<{
                   <TableCell>
                     {currency ? (
                       <Price
-                        value={Math.round(
-                          value * 10 ** currency.units[0].magnitude
+                        value={BigNumber(
+                          Math.round(value * 10 ** currency.units[0].magnitude)
                         )}
                         from={currency}
                         fromExchange={exchange}

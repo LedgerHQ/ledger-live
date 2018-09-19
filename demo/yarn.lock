@@ -9,11 +9,12 @@
     core-js "^2.5.7"
     regenerator-runtime "^0.12.0"
 
-"@ledgerhq/live-common@^2.28.0":
-  version "2.31.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-2.31.0.tgz#0f599a1e23b64d9ed74a845d3a9c82f0696f1df3"
+"@ledgerhq/live-common@3":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.5.1.tgz#dab3eb061f361999a9e04ef564808831faac61ea"
   dependencies:
     axios "^0.18.0"
+    bignumber.js "^7.2.1"
     invariant "^2.2.2"
     lodash "^4.17.4"
     numeral "^2.0.6"
@@ -1092,6 +1093,10 @@ bcrypt-pbkdf@^1.0.0:
 big.js@^3.1.3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-3.2.0.tgz#a5fc298b81b9e0dca2e458824784b65c52ba588e"
+
+bignumber.js@^7.2.1:
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-7.2.1.tgz#80c048759d826800807c4bfd521e50edbba57a5f"
 
 binary-extensions@^1.0.0:
   version "1.11.0"

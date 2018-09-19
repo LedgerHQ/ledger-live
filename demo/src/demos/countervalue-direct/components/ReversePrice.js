@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import type BigNumber from "bignumber.js";
 import { createStructuredSelector } from "reselect";
 import CounterValues from "../countervalues";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/helpers/currencies";
@@ -14,8 +15,8 @@ class ReversePrice extends Component<{
   from: Currency,
   to: Currency,
   exchange: string,
-  value: number,
-  reversed: ?number,
+  value: BigNumber,
+  reversed: ?BigNumber,
   date?: Date
 }> {
   render() {

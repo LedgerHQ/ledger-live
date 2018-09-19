@@ -184,5 +184,7 @@ export type Module<State> = {
   }>,
 
   // Complementary APIs, independently of the store
-  fetchExchangesForPair: (from: Currency, to: Currency) => Promise<Exchange[]>
+
+  fetchExchangesForPair: (from: Currency, to: Currency) => Promise<Exchange[]>,
+  fetchTickersByMarketcap: () => Promise<string[]>
 };
