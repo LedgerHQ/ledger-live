@@ -49,4 +49,5 @@ You can create a .env with following optional variables
 DEBUG_COMM_HTTP_PROXY=http://localhost:8435   # enable a dev mode to use the device over HTTP. use with https://github.com/LedgerHQ/ledgerjs/tree/master/packages/hw-http-proxy-devserver
 DEBUG_MOCK_ACCOUNT=12       # enable a "generate mock accounts" button in Settings that will create this number of accounts.
 BRIDGESTREAM_DATA=...       # come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning
+READ_ONLY=0                 # re-enable screens which have been disabled for MVP (transfer and manager)
 ```
