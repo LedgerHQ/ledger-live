@@ -371,6 +371,11 @@ function createCounterValues<State>({
     return data;
   };
 
+  const fetchTickersByMarketcap = async (): Promise<string[]> => {
+    const { data } = await axios.get(getAPIBaseURL() + "/tickers", apiConfig);
+    return data;
+  };
+
   // $FlowFixMe can't wait flow implement createContext
   const PollingContext = React.createContext(() => {});
 
@@ -489,6 +494,7 @@ function createCounterValues<State>({
     PollingProvider,
     PollingConsumer,
     fetchExchangesForPair,
+    fetchTickersByMarketcap,
     exportSelector,
     importAction
   };
