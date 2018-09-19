@@ -119,6 +119,10 @@ class Portfolio extends Component<
     );
   };
 
+  renderSectionHeader = ({ section }: { section: * }) => (
+    <SectionHeader section={section} />
+  );
+
   onEndReached = () => {
     this.setState(({ opCount }) => ({ opCount: opCount + 50 }));
   };
@@ -151,7 +155,7 @@ class Portfolio extends Component<
             contentContainerStyle={styles.contentContainer}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}
-            renderSectionHeader={SectionHeader}
+            renderSectionHeader={this.renderSectionHeader}
             onEndReached={this.onEndReached}
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
