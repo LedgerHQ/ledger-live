@@ -15,7 +15,12 @@ const createLedgerStore = () =>
     reducers,
     undefined,
     // $FlowFixMe
-    compose(applyMiddleware(thunk)),
+    compose(
+      applyMiddleware(thunk),
+      typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
+        ? __REDUX_DEVTOOLS_EXTENSION__()
+        : f => f,
+    ),
   );
 
 export default class LedgerStoreProvider extends Component<
