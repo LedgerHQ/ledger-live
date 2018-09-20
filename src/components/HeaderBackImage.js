@@ -5,7 +5,15 @@ import ArrowLeft from "../icons/ArrowLeft";
 import colors from "../colors";
 
 const HeaderBackImage = () => (
-  <View style={styles.root}>
+  <View
+    style={styles.root}
+    hitSlop={{
+      top: 16,
+      left: 16,
+      right: 16,
+      bottom: 16,
+    }}
+  >
     <ArrowLeft size={16} color={colors.grey} />
   </View>
 );
