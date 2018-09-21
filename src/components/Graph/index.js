@@ -1,5 +1,9 @@
 // @flow
 
+// TODO
+// - render something else for non countervalues available case
+// - optim the interaction. just a translate !
+
 import React, { PureComponent } from "react";
 import * as array from "d3-array";
 import * as shape from "d3-shape";
@@ -8,6 +12,7 @@ import { BigNumber } from "bignumber.js";
 import { View } from "react-native";
 import maxBy from "lodash/maxBy";
 import Svg, { Path, Defs } from "react-native-svg";
+import { PanGestureHandler } from "react-native-gesture-handler";
 
 import colors from "../../colors";
 import DefGraph from "./DefGrad";
@@ -26,9 +31,7 @@ type Props = {
   color: string,
   isInteractive: boolean,
   useCounterValue: boolean,
-  onItemHover?: Item => void,
-  onPanResponderStart?: () => *,
-  onPanResponderRelease?: () => *,
+  onItemHover?: (?Item) => void,
 };
 
 type State = {
@@ -59,9 +62,9 @@ export default class Graph extends PureComponent<Props, State> {
 
   y: * = null;
 
-  collectHovered = (evt: *) => {
+  collectHovered = (evt: *, isActive: boolean) => {
     const { data, onItemHover, useCounterValue } = this.props;
-    const x0 = Math.round(evt.nativeEvent.locationX);
+    const x0 = Math.round(evt.nativeEvent.x);
     const hoveredDate = this.x.invert(x0);
     const i = bisectDate(data, hoveredDate, 1);
     const d0 = data[i - 1];
@@ -69,7 +72,7 @@ export default class Graph extends PureComponent<Props, State> {
     const xLeft = this.x(d0.date);
     const xRight = this.x(d1.date);
     const d = Math.abs(x0 - xLeft) < Math.abs(x0 - xRight) ? d0 : d1;
-    if (onItemHover) onItemHover(d);
+    if (onItemHover) onItemHover(isActive ? d : null);
     const value = (useCounterValue ? d.value : d.originalValue).toNumber();
     return {
       barOffsetX: this.x(d.date),
@@ -77,16 +80,17 @@ export default class Graph extends PureComponent<Props, State> {
     };
   };
 
-  onStartShouldSetResponder = () => true;
-
-  onResponderGrant = (evt: *) => {
-    const { onPanResponderStart } = this.props;
-    if (onPanResponderStart) onPanResponderStart();
-    this.setState({ barVisible: true, ...this.collectHovered(evt) });
+  onHandlerStateChange = (e: *) => {
+    const barVisible = e.nativeEvent.numberOfPointers > 0;
+    const r = this.collectHovered(e, barVisible);
+    this.setState({
+      barVisible,
+      ...r,
+    });
   };
 
-  onResponderMove = (evt: *) => {
-    const r = this.collectHovered(evt);
+  onPanGestureEvent = (e: *) => {
+    const r = this.collectHovered(e, true);
     this.setState(oldState => {
       if (
         oldState.barOffsetX === r.barOffsetX &&
@@ -96,12 +100,6 @@ export default class Graph extends PureComponent<Props, State> {
       }
       return r;
     });
-  };
-
-  onResponderRelease = () => {
-    const { onPanResponderRelease } = this.props;
-    if (onPanResponderRelease) onPanResponderRelease();
-    this.setState({ barVisible: false });
   };
 
   render() {
@@ -148,18 +146,8 @@ export default class Graph extends PureComponent<Props, State> {
       .y(yExtractor)
       .curve(curve)(data);
 
-    const responderProps = isInteractive
-      ? {
-          onStartShouldSetResponder: this.onStartShouldSetResponder,
-          onResponderGrant: this.onResponderGrant,
-          onResponderMove: this.onResponderMove,
-          onResponderRelease: this.onResponderRelease,
-          onResponderTerminate: this.onResponderRelease,
-        }
-      : null;
-
-    return (
-      <View style={{ width, height }} {...responderProps}>
+    const content = (
+      <View style={{ width, height }}>
         <Svg height={height} width={width}>
           <Defs>
             <DefGraph height={height} color={color} />
@@ -176,6 +164,19 @@ export default class Graph extends PureComponent<Props, State> {
           )}
         </Svg>
       </View>
+    );
+
+    return isInteractive ? (
+      <PanGestureHandler
+        onHandlerStateChange={this.onHandlerStateChange}
+        onGestureEvent={this.onPanGestureEvent}
+        minDeltaX={10} // nb of pixel to wait before start point
+        maxDeltaY={20} // allow to scroll
+      >
+        {content}
+      </PanGestureHandler>
+    ) : (
+      content
     );
   }
 }

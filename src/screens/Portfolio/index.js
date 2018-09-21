@@ -58,7 +58,6 @@ class Portfolio extends Component<
   {
     opCount: number,
     scrollY: AnimatedValue,
-    scrollEnabled: boolean,
   },
 > {
   static navigationOptions = navigationOptions;
@@ -66,7 +65,6 @@ class Portfolio extends Component<
   state = {
     opCount: 50,
     scrollY: new Animated.Value(0),
-    scrollEnabled: true,
   };
 
   ref = React.createRef();
@@ -92,16 +90,8 @@ class Portfolio extends Component<
 
   keyExtractor = (item: Operation) => item.id;
 
-  disableScroll = () => this.setState({ scrollEnabled: false });
-
-  enableScroll = () => this.setState({ scrollEnabled: true });
-
   ListHeaderComponent = () => (
-    <GraphCardContainer
-      summary={this.props.summary}
-      onPanResponderStart={this.disableScroll}
-      onPanResponderRelease={this.enableScroll}
-    />
+    <GraphCardContainer summary={this.props.summary} />
   );
 
   renderItem = ({ item }: { item: Operation }) => {
@@ -129,7 +119,7 @@ class Portfolio extends Component<
 
   render() {
     const { summary, accounts, navigation } = this.props;
-    const { opCount, scrollY, scrollEnabled } = this.state;
+    const { opCount, scrollY } = this.state;
 
     if (accounts.length === 0) {
       return (
@@ -160,7 +150,6 @@ class Portfolio extends Component<
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
             scrollEventThrottle={16}
-            scrollEnabled={scrollEnabled}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: true },
