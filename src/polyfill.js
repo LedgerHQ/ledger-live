@@ -39,7 +39,7 @@ function setupDirtyHackToHandleLibcoreDoubleCallback() {
       }
       require("ExceptionsManager").handleException(e, isFatal); // eslint-disable-line import/no-unresolved
     } catch (ee) {
-      console.log("Failed to print error: ", ee.message);
+      console.log("Failed to print error: ", ee.message); // eslint-disable-line no-console
     }
   });
 }
