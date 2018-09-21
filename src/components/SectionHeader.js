@@ -1,17 +1,9 @@
 /* @flow */
 import React, { Component } from "react";
-import moment from "moment";
 import { StyleSheet } from "react-native";
 import colors from "../colors";
 import LText from "./LText";
-
-const calendarOpts = {
-  sameDay: "LL – [Today]",
-  nextDay: "LL – [Tomorrow]",
-  lastDay: "LL – [Yesterday]",
-  lastWeek: "LL",
-  sameElse: "LL",
-};
+import SectionHeaderDate from "./SectionHeaderDate";
 
 type Props = {
   section: {
@@ -28,7 +20,7 @@ export default class SectionHeader extends Component<Props> {
     const { section } = this.props;
     return (
       <LText numberOfLines={1} semiBold style={styles.sectionHeader}>
-        {moment(section.day).calendar(null, calendarOpts)}
+        <SectionHeaderDate day={section.day} />
       </LText>
     );
   }

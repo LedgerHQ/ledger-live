@@ -1,16 +1,15 @@
 // @flow
-
 import { PureComponent } from "react";
-import moment from "moment";
+import format from "date-fns/format";
 
 type Props = {
   date: Date,
-  format: string,
+  format?: string,
 };
 
 export default class FormatDate extends PureComponent<Props> {
   render() {
-    const { date, format } = this.props;
-    return moment(date).format(format);
+    const { date, format: propFormat } = this.props;
+    return format(date, propFormat);
   }
 }
