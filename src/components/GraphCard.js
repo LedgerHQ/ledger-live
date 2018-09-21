@@ -128,7 +128,7 @@ class GraphCardHeader extends PureComponent<{
         <View style={styles.subtitleContainer}>
           {hoveredItem ? (
             <LText>
-              <FormatDate date={hoveredItem.date} format="LL" />
+              <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
             </LText>
           ) : (
             <Fragment>
