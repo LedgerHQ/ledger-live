@@ -5,7 +5,7 @@ import * as array from "d3-array";
 import { BigNumber } from "bignumber.js";
 import { View } from "react-native";
 import Svg, { G } from "react-native-svg";
-import { PanGestureHandler } from "react-native-gesture-handler";
+import { PanGestureHandler, State } from "react-native-gesture-handler";
 
 import Bar from "./Bar";
 
@@ -27,24 +27,25 @@ type Props = {
   y: *,
 };
 
-type State = {
-  barVisible: boolean,
-  barOffsetX: number,
-  barOffsetY: number,
-};
-
 const bisectDate = array.bisector(d => d.date).left;
 
-export default class BarInteraction extends Component<Props, State> {
+export default class BarInteraction extends Component<
+  Props,
+  {
+    barVisible: boolean,
+    barOffsetX: number,
+    barOffsetY: number,
+  },
+> {
   state = {
     barVisible: false,
     barOffsetX: 0,
     barOffsetY: 0,
   };
 
-  collectHovered = (evt: *, isActive: boolean) => {
+  collectHovered = (xPos: number) => {
     const { data, onItemHover, useCounterValue, x, y } = this.props;
-    const x0 = Math.round(evt.nativeEvent.x);
+    const x0 = Math.round(xPos);
     const hoveredDate = x.invert(x0);
     const i = bisectDate(data, hoveredDate, 1);
     const d0 = data[i - 1];
@@ -52,7 +53,7 @@ export default class BarInteraction extends Component<Props, State> {
     const xLeft = x(d0.date);
     const xRight = x(d1.date);
     const d = Math.abs(x0 - xLeft) < Math.abs(x0 - xRight) ? d0 : d1;
-    if (onItemHover) onItemHover(isActive ? d : null);
+    if (onItemHover) onItemHover(d);
     const value = (useCounterValue ? d.value : d.originalValue).toNumber();
     return {
       barOffsetX: x(d.date),
@@ -61,16 +62,27 @@ export default class BarInteraction extends Component<Props, State> {
   };
 
   onHandlerStateChange = (e: *) => {
-    const barVisible = e.nativeEvent.numberOfPointers > 0;
-    const r = this.collectHovered(e, barVisible);
-    this.setState({
-      barVisible,
-      ...r,
-    });
+    const { nativeEvent } = e;
+    if (nativeEvent.state === State.ACTIVE) {
+      const r = this.collectHovered(nativeEvent.x);
+      this.setState({
+        barVisible: true,
+        ...r,
+      });
+    } else if (
+      nativeEvent.state === State.END ||
+      nativeEvent.state === State.CANCELLED
+    ) {
+      const { onItemHover } = this.props;
+      if (onItemHover) onItemHover(null);
+      this.setState({
+        barVisible: false,
+      });
+    }
   };
 
   onPanGestureEvent = (e: *) => {
-    const r = this.collectHovered(e, true);
+    const r = this.collectHovered(e.nativeEvent.x);
     this.setState(oldState => {
       if (
         oldState.barOffsetX === r.barOffsetX &&
@@ -85,15 +97,22 @@ export default class BarInteraction extends Component<Props, State> {
   render() {
     const { width, height, color, children } = this.props;
     const { barVisible, barOffsetX, barOffsetY } = this.state;
-
     return (
       <PanGestureHandler
         onHandlerStateChange={this.onHandlerStateChange}
         onGestureEvent={this.onPanGestureEvent}
+        maxPointers={1}
         minDeltaX={10} // nb of pixel to wait before start point
         maxDeltaY={20} // allow to scroll
       >
-        <View style={{ width, height, position: "relative" }}>
+        <View
+          style={{
+            width,
+            height,
+            position: "relative",
+          }}
+          collapsable={false}
+        >
           {children}
           <Svg
             height={height}
