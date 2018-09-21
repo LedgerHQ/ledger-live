@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import colors from "../colors";
 import LText from "./LText";
-import SectionHeaderDate from "./SectionHeaderDate";
+import FormatDay from "./FormatDay";
 
 type Props = {
   section: {
@@ -12,15 +12,11 @@ type Props = {
 };
 
 export default class SectionHeader extends Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
-    return nextProps.section.day.getTime() !== this.props.section.day.getTime();
-  }
-
   render() {
     const { section } = this.props;
     return (
       <LText numberOfLines={1} semiBold style={styles.sectionHeader}>
-        <SectionHeaderDate day={section.day} />
+        <FormatDay day={section.day} />
       </LText>
     );
   }
