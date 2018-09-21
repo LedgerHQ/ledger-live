@@ -33,7 +33,7 @@ import type { Summary } from "../../components/provideSummary";
 import GraphCardContainer from "./GraphCardContainer";
 import Header from "./Header";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
-
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
@@ -119,6 +119,10 @@ class Portfolio extends Component<
     );
   };
 
+  renderSectionHeader = ({ section }: { section: * }) => (
+    <SectionHeader section={section} />
+  );
+
   onEndReached = () => {
     this.setState(({ opCount }) => ({ opCount: opCount + 50 }));
   };
@@ -141,7 +145,7 @@ class Portfolio extends Component<
     );
 
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
         <Header scrollY={scrollY} summary={summary} />
         <SafeAreaView style={styles.inner}>
           <List
@@ -151,7 +155,7 @@ class Portfolio extends Component<
             contentContainerStyle={styles.contentContainer}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}
-            renderSectionHeader={SectionHeader}
+            renderSectionHeader={this.renderSectionHeader}
             onEndReached={this.onEndReached}
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}

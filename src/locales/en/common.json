@@ -96,6 +96,7 @@
       }
     },
     "settings": {
+      "header": "Account Settings",
       "title": "Edit account",
       "advancedLogs": "Advanced logs",
       "accountName": {

@@ -35,7 +35,6 @@ class Settings extends Component<Props> {
 
   navigateTo = (screenName: string) => {
     const { navigation, currencies } = this.props;
-    if (!currencies.length) return null;
     if (screenName === "CurrencySettings") {
       return currencies.length < 2
         ? navigation.navigate("CurrencySettings", {
@@ -47,7 +46,7 @@ class Settings extends Component<Props> {
   };
 
   render() {
-    const { t } = this.props;
+    const { t, currencies } = this.props;
 
     return (
       <ScrollView>
@@ -58,12 +57,14 @@ class Settings extends Component<Props> {
             icon={<Display size={16} color={colors.live} />}
             onClick={() => this.navigateTo("GeneralSettings")}
           />
-          <SettingsCard
-            title={t("common:settings.currencies.title")}
-            desc={t("common:settings.currencies.desc")}
-            icon={<Assets size={16} color={colors.live} />}
-            onClick={() => this.navigateTo("CurrencySettings")}
-          />
+          {currencies.length > 0 && (
+            <SettingsCard
+              title={t("common:settings.currencies.title")}
+              desc={t("common:settings.currencies.desc")}
+              icon={<Assets size={16} color={colors.live} />}
+              onClick={() => this.navigateTo("CurrencySettings")}
+            />
+          )}
           <SettingsCard
             title={t("common:settings.about.title")}
             desc={t("common:settings.about.desc")}

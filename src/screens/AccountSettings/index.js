@@ -1,7 +1,8 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate, Trans } from "react-i18next";
+import { translate } from "react-i18next";
+import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -10,23 +11,18 @@ import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
-import type { T } from "../../types/common";
-import SettingsRow from "../../components/SettingsRow";
-import LText from "../../components/LText";
-import colors from "../../colors";
-import Trash from "../../icons/Trash";
-import Archive from "../../icons/Archive";
-import ModalBottomAction from "../../components/ModalBottomAction";
-import RedButton from "../../components/RedButton";
-import GreyButton from "../../components/GreyButton";
-import Circle from "../../components/Circle";
 import BottomModal from "../../components/BottomModal";
+
+import AccountNameRow from "./AccountNameRow";
+import AccountUnitsRow from "./AccountUnitsRow";
+import ArchiveAccountRow from "./ArchiveAccountRow";
+import DeleteAccountRow from "./DeleteAccountRow";
+import DeleteAccountModal from "./DeleteAccountModal";
 
 type Props = {
   navigation: NavigationScreenProp<{
     accountId: string,
   }>,
-  t: T,
   account: Account,
   deleteAccount: Function,
 };
@@ -41,10 +37,8 @@ const mapDispatchToProps = {
   deleteAccount,
 };
 class AccountSettings extends PureComponent<Props, State> {
-  // NOTE dangerouslyGetParent - hopefully temp
-
   static navigationOptions = ({ navigation }: *) => ({
-    title: "Account Settings",
+    title: i18next.t("account.settings.header"),
     headerRight: (
       <HeaderRightClose navigation={navigation.dangerouslyGetParent()} />
     ),
@@ -70,100 +64,24 @@ class AccountSettings extends PureComponent<Props, State> {
   };
 
   render() {
-    const { navigation, t, account } = this.props;
+    const { navigation, account } = this.props;
     const { isModalOpened } = this.state;
     if (!account) return null;
     return (
       <Fragment>
         <View style={styles.sectionRow}>
-          <SettingsRow
-            title={t("common:account.settings.accountName.title")}
-            desc={t("common:account.settings.accountName.desc")}
-            arrowRight
-            onPress={() =>
-              navigation.navigate("EditAccountName", {
-                accountId: account.id,
-              })
-            }
-          >
-            <LText
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.accountName}
-            >
-              {account.name}
-            </LText>
-          </SettingsRow>
-          <SettingsRow
-            title={t("common:account.settings.unit.title")}
-            desc={t("common:account.settings.unit.desc")}
-            arrowRight
-            onPress={() =>
-              navigation.navigate("EditAccountUnits", {
-                accountId: account.id,
-              })
-            }
-          >
-            <LText style={{ color: colors.grey }}>{account.unit.code}</LText>
-          </SettingsRow>
+          <AccountNameRow account={account} navigation={navigation} />
+          <AccountUnitsRow account={account} navigation={navigation} />
         </View>
         <View style={styles.sectionRow}>
-          <SettingsRow
-            title={t("common:account.settings.archive.title")}
-            desc={t("common:account.settings.archive.desc")}
-            iconLeft={
-              <Circle bg="rgba(153,153,153,0.1)" size={32}>
-                <Archive size={16} color={colors.grey} />
-              </Circle>
-            }
-            onPress={() => navigation.navigate("")}
-          />
-          <SettingsRow
-            title={t("common:account.settings.delete.title")}
-            desc={t("common:account.settings.delete.desc")}
-            iconLeft={
-              <Circle bg="rgba(234,46,73,0.1)" size={32}>
-                <Trash size={16} color={colors.alert} />
-              </Circle>
-            }
-            onPress={this.onPress}
-            titleStyle={{ color: colors.alert }}
-          />
+          <ArchiveAccountRow />
+          <DeleteAccountRow onPress={this.onPress} />
         </View>
         <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
-          <ModalBottomAction
-            title={null}
-            icon={
-              <Circle bg={colors.lightAlert} size={56}>
-                <Trash size={24} color={colors.alert} />
-              </Circle>
-            }
-            description={
-              <Trans i18nKey="common:account.settings.delete.confirmationDesc">
-                {"Are you sure you want to delete "}
-                <LText bold>{account.name}</LText>
-                {"account"}
-              </Trans>
-            }
-            footer={
-              <View style={styles.footerContainer}>
-                <GreyButton
-                  title={t("common:common.cancel")}
-                  onPress={this.onRequestClose}
-                  containerStyle={styles.buttonContainer}
-                  titleStyle={styles.buttonTitle}
-                />
-                <RedButton
-                  title={t("common:common.delete")}
-                  onPress={this.deleteAccount}
-                  containerStyle={[
-                    styles.buttonContainer,
-                    styles.deleteButtonBg,
-                  ]}
-                  titleStyle={[styles.buttonTitle, styles.deleteButtonTitle]}
-                />
-              </View>
-            }
+          <DeleteAccountModal
+            onRequestClose={this.onRequestClose}
+            deleteAccount={this.deleteAccount}
+            account={account}
           />
         </BottomModal>
       </Fragment>
@@ -182,27 +100,5 @@ export default compose(
 const styles = StyleSheet.create({
   sectionRow: {
     marginTop: 16,
-  },
-  accountName: {
-    flex: 1,
-    flexShrink: 1,
-    color: colors.grey,
-  },
-  footerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  buttonContainer: {
-    height: 48,
-    width: 136,
-  },
-  deleteButtonBg: {
-    backgroundColor: colors.alert,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  deleteButtonTitle: {
-    color: colors.white,
   },
 });
