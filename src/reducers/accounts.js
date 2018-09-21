@@ -50,6 +50,13 @@ const handlers: Object = {
   ): AccountsState => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
+  CLEAN_ACCOUNTS_CACHE: (state: AccountsState): AccountsState => ({
+    active: state.active.map(account => ({
+      ...account,
+      operations: [],
+      pendingOperations: [],
+    })),
+  }),
 };
 
 // Selectors
