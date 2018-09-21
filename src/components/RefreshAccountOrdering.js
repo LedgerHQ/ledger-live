@@ -1,6 +1,6 @@
 // @flow
 
-import { Component } from "react";
+import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { refreshAccountsOrdering } from "../actions/general";
 
@@ -10,13 +10,20 @@ const mapDispatchToProps = {
   refreshAccountsOrdering,
 };
 
-class RefreshAccountsOrdering extends Component<{
+class RefreshAccountsOrdering extends PureComponent<{
   refreshAccountsOrdering: () => *,
   onMount?: boolean,
   onUnmount?: boolean,
+  onUpdate?: boolean,
 }> {
   componentDidMount() {
     if (this.props.onMount) {
+      this.props.refreshAccountsOrdering();
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.onUpdate) {
       this.props.refreshAccountsOrdering();
     }
   }
