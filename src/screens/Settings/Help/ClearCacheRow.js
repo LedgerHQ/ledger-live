@@ -4,11 +4,12 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import { createStructuredSelector } from "reselect";
+import { cleanAccountsCache } from "../../../actions/accounts";
 import colors from "../../../colors";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
 import Warning from "../../../icons/Warning";
+import { withReboot } from "../../../context/Reboot";
 import ModalBottomAction from "../../../components/ModalBottomAction";
 import BlueButton from "../../../components/BlueButton";
 import GreyButton from "../../../components/GreyButton";
@@ -16,10 +17,14 @@ import Archive from "../../../icons/Archive";
 import Circle from "../../../components/Circle";
 import BottomModal from "../../../components/BottomModal";
 
-const mapStateToProps = createStructuredSelector({});
+const mapDispatchToProps = {
+  cleanAccountsCache,
+};
 
 type Props = {
   t: T,
+  cleanAccountsCache: () => void,
+  reboot: (?boolean) => *,
 };
 
 type State = {
@@ -39,8 +44,9 @@ class ClearCacheRow extends PureComponent<Props, State> {
     this.setState({ isModalOpened: true });
   };
 
-  onClearCache = () => {
-    console.log("Placeholder for clearing cache"); // eslint-disable-line no-console
+  onClearCache = async () => {
+    await this.props.cleanAccountsCache();
+    this.props.reboot();
   };
 
   render() {
@@ -93,9 +99,12 @@ class ClearCacheRow extends PureComponent<Props, State> {
 }
 
 export default compose(
-  connect(mapStateToProps),
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
   translate(),
-)(ClearCacheRow);
+)(withReboot(ClearCacheRow));
 
 const styles = StyleSheet.create({
   footerContainer: {

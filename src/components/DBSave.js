@@ -5,6 +5,10 @@ import { connect } from "react-redux";
 import db from "../db";
 import type { State } from "../reducers";
 
+const instances = [];
+
+export const flushAll = () => Promise.all(instances.map(i => i.save.flush()));
+
 class DBSave extends Component<{
   dbKey: string,
   state: State,
@@ -18,14 +22,22 @@ class DBSave extends Component<{
     }
   }
 
+  componentWillMount() {
+    instances.push(this);
+  }
+
   componentWillUnmount() {
     this.save.cancel();
+    const i = instances.indexOf(this);
+    if (i !== -1) {
+      instances.splice(i, 1);
+    }
   }
 
   save = throttle(() => {
     const startTime = Date.now();
     const { lense, dbKey, state } = this.props;
-    db.save(dbKey, lense(state)).then(
+    return db.save(dbKey, lense(state)).then(
       () => {
         if (__DEV__) {
           /* eslint-disable no-console */
