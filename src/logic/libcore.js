@@ -94,10 +94,12 @@ export async function syncAccount({ account }: { account: Account }) {
     opts,
   });
 
-  const coreAccount = await core.coreWallet.getAccount(
+  const coreAccount = await getOrCreateAccount({
+    core,
     coreWallet,
-    account.index,
-  );
+    index: account.index,
+    xpub: decodedAccountId.xpub,
+  });
 
   const updatedAccount = await syncCoreAccount({
     core,
@@ -110,6 +112,45 @@ export async function syncAccount({ account }: { account: Account }) {
   });
 
   return updatedAccount;
+}
+
+async function getOrCreateAccount({ core, coreWallet, xpub, index }) {
+  let coreAccount;
+  try {
+    coreAccount = await core.coreWallet.getAccount(coreWallet, index);
+  } catch (err) {
+    const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
+      coreWallet,
+      index,
+    );
+    const infosIndex = await core.coreExtendedKeyAccountCreationInfo.getIndex(
+      extendedInfos,
+    );
+    const extendedKeys = await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
+      extendedInfos,
+    );
+    const owners = await core.coreExtendedKeyAccountCreationInfo.getOwners(
+      extendedInfos,
+    );
+    const derivations = await core.coreExtendedKeyAccountCreationInfo.getDerivations(
+      extendedInfos,
+    );
+
+    extendedKeys.push(xpub);
+
+    const newExtendedKeys = await core.coreExtendedKeyAccountCreationInfo.init(
+      infosIndex,
+      owners,
+      derivations,
+      extendedKeys,
+    );
+
+    coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
+      coreWallet,
+      newExtendedKeys,
+    );
+  }
+  return coreAccount;
 }
 
 export async function syncCoreAccount({
@@ -166,7 +207,6 @@ export async function getAccountFromXPUB({
   currencyId: string,
   opts: ScanOpts,
 }) {
-  let coreAccount;
   const index = 0;
   const core = await getLibCore();
 
@@ -180,40 +220,12 @@ export async function getAccountFromXPUB({
     opts,
   });
 
-  try {
-    coreAccount = await core.coreWallet.getAccount(coreWallet, index);
-  } catch (err) {
-    const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
-      coreWallet,
-      index,
-    );
-    const infosIndex = await core.coreExtendedKeyAccountCreationInfo.getIndex(
-      extendedInfos,
-    );
-    const extendedKeys = await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
-      extendedInfos,
-    );
-    const owners = await core.coreExtendedKeyAccountCreationInfo.getOwners(
-      extendedInfos,
-    );
-    const derivations = await core.coreExtendedKeyAccountCreationInfo.getDerivations(
-      extendedInfos,
-    );
-
-    extendedKeys.push(xpub);
-
-    const newExtendedKeys = await core.coreExtendedKeyAccountCreationInfo.init(
-      infosIndex,
-      owners,
-      derivations,
-      extendedKeys,
-    );
-
-    coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
-      coreWallet,
-      newExtendedKeys,
-    );
-  }
+  const coreAccount = await getOrCreateAccount({
+    core,
+    coreWallet,
+    index,
+    xpub,
+  });
 
   const account = await syncCoreAccount({
     core,

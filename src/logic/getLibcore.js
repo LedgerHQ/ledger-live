@@ -8,7 +8,12 @@ export default async () => {
   if (core) {
     return core;
   }
+  core = await loadCore();
+  return core;
+};
 
+async function loadCore() {
+  let core;
   if (Platform.OS === "android") {
     core = {
       getPoolInstance: () => walletPoolInstance,
@@ -76,4 +81,4 @@ export default async () => {
   );
 
   return core;
-};
+}
