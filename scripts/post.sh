@@ -8,6 +8,6 @@ cp node_modules/react-native-camera/postinstall_project/projectWithoutFaceDetect
 
 flow-typed install -s
 
-if [ "$CI" != "true" ] ; then
-  rndebugger-open
-fi
+# if [ "$CI" != "true" ] ; then
+#   rndebugger-open
+# fi

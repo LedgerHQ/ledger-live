@@ -75,6 +75,7 @@
 		D38D9E8A1BA34222AFFD6469 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C3CB4695C9554CACBA1EDD1F /* Octicons.ttf */; };
 		D5C1F1874ECE48F4AA5693AF /* MuseoSans-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CEDB8CDC561E4D4BBA7A64CD /* MuseoSans-SemiBold.otf */; };
 		DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 545FD04868AD450083DC4717 /* libz.tbd */; };
+		FD935BBB77A24B79B2604726 /* libRNScreens.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 35AA9FCF9B3A4E54A2282A09 /* libRNScreens.a */; };
 		FEA0D6AE27DE42709BBB7FC7 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CD5489262AA84BDF9684E3AA /* Foundation.ttf */; };
 /* End PBXBuildFile section */
 
@@ -169,6 +170,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3DBE0D0D1F3B181C0099AA32;
 			remoteInfo = "fishhook-tvOS";
+		};
+		34532BFD2159525400CA371F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNScreens;
 		};
 		345C15652089152000A0E797 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -481,11 +489,13 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ledgerlivemobile/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ledgerlivemobile/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNScreens.xcodeproj; path = "../node_modules/react-native-screens/ios/RNScreens.xcodeproj"; sourceTree = "<group>"; };
 		2CB99C7AA791411C87B310E9 /* ReactNativeConfig.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeConfig.xcodeproj; path = "../node_modules/react-native-config/ios/ReactNativeConfig.xcodeproj"; sourceTree = "<group>"; };
 		3263CCC7104E4B86AC2ADDB4 /* MuseoSans-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-Regular.otf"; path = "../assets/fonts/MuseoSans-Regular.otf"; sourceTree = "<group>"; };
 		345E146E2154CDD9008C5BFC /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		345E14C02154D095008C5BFC /* libledger-core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libledger-core.dylib"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Libraries/arm64/libledger-core.dylib"; sourceTree = "<group>"; };
 		349F66542045ADCC002149B4 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; };
+		35AA9FCF9B3A4E54A2282A09 /* libRNScreens.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNScreens.a; sourceTree = "<group>"; };
 		3A45C4CF346C4C9594B2EC36 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		3E46E77C7D524ECDB200DA38 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		4396DC4264644851ADA99A35 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
@@ -588,6 +598,7 @@
 				DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */,
 				B9E5B9A72153F4490053D868 /* libRNLibLedgerCore.a in Frameworks */,
 				7EDEA35621D64751B73F49C7 /* libReact Native Open Settings.a in Frameworks */,
+				FD935BBB77A24B79B2604726 /* libRNScreens.a in Frameworks */,
 				C1E2A1AC36C040B689A72E76 /* libRNGestureHandler.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -736,8 +747,17 @@
 				88F6163E74364066BC1A5713 /* libReact Native Open Settings.a */,
 				887CA7F3B5FF4445BB1C5960 /* libRNLibLedgerCore.a */,
 				76B12D3F99F7436CAD186C2C /* libRNGestureHandler.a */,
+				35AA9FCF9B3A4E54A2282A09 /* libRNScreens.a */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		34532BFA2159525400CA371F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				34532BFE2159525400CA371F /* libRNScreens.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		345C15612089152000A0E797 /* Products */ = {
@@ -877,6 +897,7 @@
 				4AD2AECC687D45E9BBCCED05 /* RNVectorIcons.xcodeproj */,
 				A49125B8906C40DFB2011F37 /* React Native Open Settings.xcodeproj */,
 				036E6F552B38455AA1CAFE28 /* RNLibLedgerCore.xcodeproj */,
+				1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */,
 				3E46E77C7D524ECDB200DA38 /* RNGestureHandler.xcodeproj */,
 			);
 			name = Libraries;
@@ -1128,6 +1149,9 @@
 				{
 					ProductGroup = 34A272732152A95200B97A07 /* Products */;
 					ProjectRef = 036E6F552B38455AA1CAFE28 /* RNLibLedgerCore.xcodeproj */;
+},{
+					ProductGroup = 34532BFA2159525400CA371F /* Products */;
+					ProjectRef = 1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */;
 				},
 				{
 					ProductGroup = 347AB1EC2049885900BE6F60 /* Products */;
@@ -1241,6 +1265,13 @@
 			fileType = archive.ar;
 			path = "libfishhook-tvOS.a";
 			remoteRef = 34457ED02003A12500415724 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		34532BFE2159525400CA371F /* libRNScreens.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNScreens.a;
+			remoteRef = 34532BFD2159525400CA371F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		345C15662089152000A0E797 /* libPasscodeAuth.a */ = {
@@ -1667,6 +1698,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/support-lib/**",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				INFOPLIST_FILE = ledgerlivemobileTests/Info.plist;
@@ -1709,6 +1741,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/support-lib/**",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				INFOPLIST_FILE = ledgerlivemobileTests/Info.plist;
@@ -1754,6 +1787,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/support-lib/**",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
@@ -1800,6 +1834,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-open-settings",
 					"$(SRCROOT)/../node_modules/@ledgerhq/react-native-ledger-core/support-lib/**",
+					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;

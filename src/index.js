@@ -2,6 +2,7 @@
 import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
+import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
@@ -17,6 +18,8 @@ import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
+
+useScreens();
 
 const styles = StyleSheet.create({
   root: {
@@ -115,6 +118,6 @@ export default class Root extends Component<{}, {}> {
   }
 }
 
-if (__DEV__) {
-  require("./snoopy");
-}
+// if (__DEV__) {
+//   require("./snoopy");
+// }
