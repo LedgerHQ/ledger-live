@@ -1,6 +1,8 @@
 import { Platform, NativeModules } from "react-native";
 
 let core;
+let corePromise;
+
 let walletPoolInstance;
 let threadDispatcher;
 
@@ -8,7 +10,10 @@ export default async () => {
   if (core) {
     return core;
   }
-  core = await loadCore();
+  if (!corePromise) {
+    corePromise = loadCore()
+  }
+  core = await corePromise;
   return core;
 };
 
