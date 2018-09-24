@@ -2450,7 +2450,7 @@ create-react-class@^15.5.2, create-react-class@^15.5.3, create-react-class@^15.6
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
-create-react-context@0.2.2, create-react-context@^0.2.1:
+create-react-context@0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.2.tgz#9836542f9aaa22868cd7d4a6f82667df38019dca"
   dependencies:
@@ -6722,17 +6722,21 @@ react-native-qrcode-svg@5.1.0:
     prop-types "^15.5.10"
     qrcode "^1.2.0"
 
+react-native-safe-area-view@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.10.0.tgz#e8e9228d22698c0f82ad1202d24a4e4977260489"
+  dependencies:
+    hoist-non-react-statics "^2.3.1"
+
 react-native-safe-area-view@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.7.0.tgz#38f5ab9368d6ef9e5d18ab64212938af3ec39421"
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
-react-native-safe-area-view@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.8.0.tgz#22d78cb8e8658d04a10cd53c1546e0bc86cb7aea"
-  dependencies:
-    hoist-non-react-statics "^2.3.1"
+react-native-screens@^1.0.0-alpha.10, react-native-screens@^1.0.0-alpha.11:
+  version "1.0.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.11.tgz#4f4faeb5607b1e08cc70d76a04c2f8da0b241200"
 
 react-native-sentry@0.39.0:
   version "0.39.0"
@@ -6845,20 +6849,25 @@ react-navigation-deprecated-tab-navigator@1.3.0:
   dependencies:
     react-native-tab-view "^0.0.77"
 
-react-navigation-drawer@0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.4.3.tgz#c04c94e2429b7e724801af05bd0a93a79cb27f71"
+react-navigation-drawer@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.5.0.tgz#d91b6a6ec65c34ba78c00f814b1e6508922cc9ec"
   dependencies:
     react-native-drawer-layout-polyfill "^1.3.2"
 
-react-navigation-tabs@0.5.1:
+react-navigation-stack@0.5.1:
   version "0.5.1"
-  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-0.5.1.tgz#ed33bce3a3e21b92646700de25bd94b8fc570371"
+  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-0.5.1.tgz#acc3c84c7b5209c7d89380d7f4576f17624f683c"
+  dependencies:
+    react-native-screens "^1.0.0-alpha.10"
+
+react-navigation-tabs@0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-0.7.0.tgz#c89d41e501043f7fdb38550de85814452c3e6104"
   dependencies:
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
-    react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
 react-navigation-tabs@^0.6.0:
@@ -6871,20 +6880,21 @@ react-navigation-tabs@^0.6.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.9.3:
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.9.3.tgz#de97f7102df6b836af780bfa5bfa80747148da19"
+react-navigation@2.14.2:
+  version "2.14.2"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.14.2.tgz#e3c933b15efdc6bcb1e9b014aeacfb2a08997d5b"
   dependencies:
     clamp "^1.0.1"
-    create-react-context "^0.2.1"
+    create-react-context "0.2.2"
     hoist-non-react-statics "^2.2.0"
     path-to-regexp "^1.7.0"
     query-string "^6.1.0"
     react-lifecycles-compat "^3"
-    react-native-safe-area-view "^0.8.0"
+    react-native-safe-area-view "^0.10.0"
     react-navigation-deprecated-tab-navigator "1.3.0"
-    react-navigation-drawer "0.4.3"
-    react-navigation-tabs "0.5.1"
+    react-navigation-drawer "0.5.0"
+    react-navigation-stack "0.5.1"
+    react-navigation-tabs "0.7.0"
 
 react-proxy@^1.1.7:
   version "1.1.8"
