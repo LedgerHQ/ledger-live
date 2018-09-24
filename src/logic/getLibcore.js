@@ -11,7 +11,7 @@ export default async () => {
     return core;
   }
   if (!corePromise) {
-    corePromise = loadCore()
+    corePromise = loadCore();
   }
   core = await corePromise;
   return core;
