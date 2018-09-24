@@ -51,3 +51,18 @@ DEBUG_MOCK_ACCOUNT=12       # enable a "generate mock accounts" button in Settin
 BRIDGESTREAM_DATA=...       # come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning
 READ_ONLY=0                 # re-enable screens which have been disabled for MVP (transfer and manager)
 ```
+
+## Troobleshooting
+
+### XCode 10
+
+When trying to build with XCode 10 and React Native v0.57.0, you might have issues with third party packages from React Native.  
+To solve this issue you must:
+
+```sh
+cd ledger-live-mobile
+./node_modules/react-native/scripts/ios-install-third-party.sh
+```
+
+You can them remove the `third-party` folder created at the root of your project.
+The build on XCode 10 should work then.

@@ -34,8 +34,6 @@ type Props = {
   t: T,
   summary: Summary,
   setSelectedTimeRange: string => void,
-  onPanResponderStart: () => *,
-  onPanResponderRelease: () => *,
   useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 };
@@ -59,18 +57,8 @@ class GraphCard extends PureComponent<Props, State> {
 
   onItemHover = hoveredItem => this.setState({ hoveredItem });
 
-  onPanResponderRelease = () => {
-    this.props.onPanResponderRelease();
-    this.setState({ hoveredItem: null });
-  };
-
   render() {
-    const {
-      summary,
-      onPanResponderStart,
-      renderTitle,
-      useCounterValue,
-    } = this.props;
+    const { summary, renderTitle, useCounterValue } = this.props;
 
     const {
       accounts,
@@ -102,8 +90,6 @@ class GraphCard extends PureComponent<Props, State> {
           color={graphColor}
           data={balanceHistory}
           onItemHover={this.onItemHover}
-          onPanResponderStart={onPanResponderStart}
-          onPanResponderRelease={this.onPanResponderRelease}
           useCounterValue={useCounterValue}
         />
         <View style={styles.pillsContainer}>
@@ -142,7 +128,7 @@ class GraphCardHeader extends PureComponent<{
         <View style={styles.subtitleContainer}>
           {hoveredItem ? (
             <LText>
-              <FormatDate date={hoveredItem.date} format="LL" />
+              <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
             </LText>
           ) : (
             <Fragment>

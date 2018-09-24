@@ -126,6 +126,7 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
     // don't always sync in same order to avoid potential "never account never reached"
     const allAccountIds = () =>
       this.props.accounts
+        .slice(0)
         .sort((a, b) => (a.lastSyncDate || 0) - (b.lastSyncDate || 0))
         .map(a => a.id);
 

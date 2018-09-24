@@ -44,7 +44,6 @@ type Props = {
 
 type State = {
   opCount: number,
-  scrollEnabled: boolean,
 };
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
@@ -61,12 +60,7 @@ class AccountScreen extends PureComponent<Props, State> {
 
   state = {
     opCount: 100,
-    scrollEnabled: true,
   };
-
-  disableScroll = () => this.setState({ scrollEnabled: false });
-
-  enableScroll = () => this.setState({ scrollEnabled: true });
 
   keyExtractor = (item: Operation) => item.id;
 
@@ -110,13 +104,12 @@ class AccountScreen extends PureComponent<Props, State> {
 
   ListHeaderComponent = () => {
     const { summary } = this.props;
+    // TODO: we need to make a different GraphCard for Account screen:
+    // - we can optimize more (e.g. only need to calculate the balance of this account, which is cached btw. no need for countervalues and the more complex algo)
+    // - less if logic in graph (we shouldn't have magically guess if it's a "countervalue" mode or a "crypto" one)
+    // - the fact we want later to diverge both a bit (graph differ already, and later if we intro the idea to switch between modes)
     return (
-      <GraphCard
-        summary={summary}
-        onPanResponderStart={this.disableScroll}
-        onPanResponderRelease={this.enableScroll}
-        renderTitle={this.renderListHeaderTitle}
-      />
+      <GraphCard summary={summary} renderTitle={this.renderListHeaderTitle} />
     );
   };
 
@@ -149,7 +142,7 @@ class AccountScreen extends PureComponent<Props, State> {
 
   render() {
     const { account, navigation, syncState } = this.props;
-    const { opCount, scrollEnabled } = this.state;
+    const { opCount } = this.state;
 
     if (!account) return null;
 
@@ -173,7 +166,6 @@ class AccountScreen extends PureComponent<Props, State> {
           ref={this.ref}
           sections={sections}
           style={styles.sectionList}
-          scrollEnabled={scrollEnabled}
           ListFooterComponent={
             !completed
               ? LoadingFooter
