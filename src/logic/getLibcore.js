@@ -6,6 +6,8 @@ let corePromise;
 let walletPoolInstance;
 let threadDispatcher;
 
+console.log(NativeModules);
+
 export default async () => {
   if (core) {
     return core;
