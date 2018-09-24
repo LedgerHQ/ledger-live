@@ -44,8 +44,10 @@ export const syncStateLocalSelector = (
   { accountId }: { accountId: string },
 ): AsyncState => bridgeSync.syncs[accountId] || nothingState;
 
-export const accountScreenSyncStateSelector = (s: State, p: *): AsyncState =>
-  syncStateLocalSelector(bridgeSyncSelector(s), p.navigation.state.params);
+export const accountSyncStateSelector = (
+  s: State,
+  o: { accountId: string },
+): AsyncState => syncStateLocalSelector(bridgeSyncSelector(s), o);
 
 export const globalSyncStateSelector = createSelector(
   accountsSelector,

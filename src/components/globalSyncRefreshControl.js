@@ -1,15 +1,52 @@
 // @flow
 
 import React, { PureComponent } from "react";
+import { connect } from "react-redux";
 import { RefreshControl } from "react-native";
-import SyncIndicatorConnector from "./SyncIndicatorConnector";
+import { createStructuredSelector } from "reselect";
 import type { BehaviorAction } from "../bridge/BridgeSyncContext";
+import type { AsyncState } from "../reducers/bridgeSync";
+import { globalSyncStateSelector } from "../reducers/bridgeSync";
+import { BridgeSyncConsumer } from "../bridge/BridgeSyncContext";
+import CounterValues from "../countervalues";
+
+const mapStateToProps = createStructuredSelector({
+  globalSyncState: globalSyncStateSelector,
+});
+
+const Connector = (Decorated: React$ComponentType<any>) => {
+  const SyncIndicator = ({
+    globalSyncState,
+    ...rest
+  }: {
+    globalSyncState: AsyncState,
+  }) => (
+    <BridgeSyncConsumer>
+      {setSyncBehavior => (
+        <CounterValues.PollingConsumer>
+          {cvPolling => {
+            const isPending = cvPolling.pending || globalSyncState.pending;
+            return (
+              <Decorated
+                isPending={isPending}
+                cvPoll={cvPolling.poll}
+                setSyncBehavior={setSyncBehavior}
+                {...rest}
+              />
+            );
+          }}
+        </CounterValues.PollingConsumer>
+      )}
+    </BridgeSyncConsumer>
+  );
+
+  return connect(mapStateToProps)(SyncIndicator);
+};
 
 type Props = {
   error: ?Error,
   isPending: boolean,
   isError: boolean,
-  isUpToDate: boolean,
   cvPoll: *,
   setSyncBehavior: *,
   forwardedRef?: *,
@@ -35,7 +72,6 @@ export default (ScrollListLike: any) => {
 
     render() {
       const {
-        isUpToDate,
         isPending,
         error,
         isError,
@@ -59,5 +95,5 @@ export default (ScrollListLike: any) => {
     }
   }
 
-  return SyncIndicatorConnector(Inner);
+  return Connector(Inner);
 };

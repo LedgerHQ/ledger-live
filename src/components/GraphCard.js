@@ -150,7 +150,7 @@ class GraphCardHeader extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     paddingVertical: 16,
-    margin: 20,
+    margin: 16,
   },
   balanceTextContainer: {
     marginBottom: 5,

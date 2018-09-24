@@ -2,4 +2,4 @@
 
 import { createCustomErrorClass } from "./logic/errors";
 
-export const Toto = createCustomErrorClass("Toto");
+export const SyncError = createCustomErrorClass("SyncError");

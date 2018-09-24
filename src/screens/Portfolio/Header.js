@@ -1,37 +1,34 @@
 // @flow
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import type { AsyncState } from "../../reducers/bridgeSync";
+import { globalSyncStateSelector } from "../../reducers/bridgeSync";
+import HeaderErrorTitle from "../../components/HeaderErrorTitle";
+import HeaderSynchronizing from "../../components/HeaderSynchronizing";
+import Greetings from "./Greetings";
 
-import React, { Component, Fragment } from "react";
-import colors from "../../colors";
-import SyncIndicatorConnector from "../../components/SyncIndicatorConnector";
-import StyledStatusBar from "../../components/StyledStatusBar";
-import SyncErrorHeader from "../../components/SyncErrorHeader";
-import AnimatedTopBar from "./AnimatedTopBar";
-import { scrollToTopIntent } from "./events";
+const mapStateToProps = createStructuredSelector({
+  globalSyncState: globalSyncStateSelector,
+});
 
-class Portfolio extends Component<{
-  summary: *,
-  scrollY: *,
-  error: *,
+class PortfolioHeader extends Component<{
+  nbAccounts: number,
+  globalSyncState: AsyncState,
 }> {
-  onPress = () => {
-    scrollToTopIntent.next();
-  };
-
   render() {
-    const { scrollY, summary, error } = this.props;
-    return (
-      <Fragment>
-        <StyledStatusBar
-          backgroundColor={error ? colors.errorBg : colors.lightGrey}
-        />
-        {error ? (
-          <SyncErrorHeader error={error} onPress={this.onPress} />
-        ) : (
-          <AnimatedTopBar scrollY={scrollY} summary={summary} />
-        )}
-      </Fragment>
+    const {
+      nbAccounts,
+      globalSyncState: { pending, error },
+    } = this.props;
+    return pending ? (
+      <HeaderSynchronizing />
+    ) : error ? (
+      <HeaderErrorTitle withDescription withDetail error={error} />
+    ) : (
+      <Greetings nbAccounts={nbAccounts} />
     );
   }
 }
 
-export default SyncIndicatorConnector(Portfolio);
+export default connect(mapStateToProps)(PortfolioHeader);

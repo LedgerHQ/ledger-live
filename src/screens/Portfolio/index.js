@@ -25,19 +25,19 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
 import PortfolioIcon from "../../icons/Portfolio";
-import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
+import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
 
 import type { Summary } from "../../components/provideSummary";
 
 import GraphCardContainer from "./GraphCardContainer";
-import Header from "./Header";
+import StickyHeader from "./StickyHeader";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
-const List = provideSyncRefreshControl(AnimatedSectionList);
+const List = globalSyncRefreshControl(AnimatedSectionList);
 
 const navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
@@ -136,7 +136,7 @@ class Portfolio extends Component<
 
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
-        <Header scrollY={scrollY} summary={summary} />
+        <StickyHeader scrollY={scrollY} summary={summary} />
         <SafeAreaView style={styles.inner}>
           <List
             forwardedRef={this.ref}
