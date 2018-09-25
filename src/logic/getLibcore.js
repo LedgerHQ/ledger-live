@@ -20,61 +20,76 @@ export default async () => {
 };
 
 async function loadCore() {
-  let core;
-  if (Platform.OS === "android") {
-    core = {
-      getPoolInstance: () => walletPoolInstance,
-      getThreadDispatcher: () => threadDispatcher,
-      flush: async () => {
-        await core.coreHttpClient.flush();
-        await core.coreWebSocketClient.flush();
-        await core.corePathResolver.flush();
-        await core.coreLogPrinter.flush();
-        await core.coreRandomNumberGenerator.flush();
-        await core.coreDynamicObject.flush();
-        await core.coreDatabaseBackend.flush();
-      },
+  let core = {
+    getPoolInstance: () => walletPoolInstance,
+    getThreadDispatcher: () => threadDispatcher,
+    flush: async () => {
+      await core.coreHttpClient.flush();
+      await core.coreWebSocketClient.flush();
+      await core.corePathResolver.flush();
+      await core.coreLogPrinter.flush();
+      await core.coreRandomNumberGenerator.flush();
+      await core.coreDynamicObject.flush();
+      await core.coreDatabaseBackend.flush();
+    },
+  };
 
-      // forwarding native functions
-      coreAccount: NativeModules.CoreAccount,
-      coreAccountCreationInfo: NativeModules.CoreAccountCreationInfo,
-      coreAddress: NativeModules.CoreAddress,
-      coreAmount: NativeModules.CoreAmount,
-      coreBitcoinLikeOperation: NativeModules.CoreBitcoinLikeOperation,
-      coreBitcoinLikeTransaction: NativeModules.CoreBitcoinLikeTransaction,
-      coreBlock: NativeModules.CoreBlock,
-      coreDatabaseBackend: NativeModules.CoreDatabaseBackend,
-      coreDynamicObject: NativeModules.CoreDynamicObject,
-      coreEventBus: NativeModules.CoreEventBus,
-      coreEventReceiver: NativeModules.CoreEventReceiver,
-      coreExtendedKeyAccountCreationInfo:
-        NativeModules.CoreExtendedKeyAccountCreationInfo,
-      coreHttpClient: NativeModules.CoreHttpClient,
-      coreLogPrinter: NativeModules.CoreLogPrinter,
-      coreOperation: NativeModules.CoreOperation,
-      coreOperationQuery: NativeModules.CoreOperationQuery,
-      corePathResolver: NativeModules.CorePathResolver,
-      coreRandomNumberGenerator: NativeModules.CoreRandomNumberGenerator,
-      coreThreadDispatcher: NativeModules.CoreThreadDispatcher,
-      coreWallet: NativeModules.CoreWallet,
-      coreWalletPool: NativeModules.CoreWalletPool,
-      coreWebSocketClient: NativeModules.CoreWebSocketClient,
-    };
+  const modules = [
+    "Account",
+    "AccountCreationInfo",
+    "Address",
+    "Amount",
+    "BitcoinLikeOperation",
+    "BitcoinLikeTransaction",
+    "Block",
+    "DatabaseBackend",
+    "DynamicObject",
+    "EventBus",
+    "EventReceiver",
+    "ExtendedKeyAccountCreationInfo",
+    "HttpClient",
+    "LogPrinter",
+    "Operation",
+    "OperationQuery",
+    "PathResolver",
+    "RandomNumberGenerator",
+    "ThreadDispatcher",
+    "Wallet",
+    "WalletPool",
+    "WebSocketClient",
+  ];
+
+  const createInstance = (factory, ...params) => {
+    let newInstance = factory.newInstance;
+    if (!newInstance) {
+      // cc khalil!
+      console.log("no newInstance method for", factory); // eslint-disable-line no-console
+      newInstance = factory.new;
+    }
+    return newInstance.call(factory, ...params);
+  };
+
+  if (Platform.OS === "ios") {
+    modules.forEach(m => {
+      core[`core${m}`] = NativeModules[`CoreLG${m}`];
+    });
   } else {
-    // TODO: ios here
-    throw new Error(`Unsupported platform: ${Platform.OS}`);
+    modules.forEach(m => {
+      core[`core${m}`] = NativeModules[`Core${m}`];
+    });
   }
 
-  const httpClient = await core.coreHttpClient.newInstance();
-  const webSocket = await core.coreWebSocketClient.newInstance();
-  const pathResolver = await core.corePathResolver.newInstance();
-  const logPrinter = await core.coreLogPrinter.newInstance();
-  threadDispatcher = await core.coreThreadDispatcher.newInstance();
-  const rng = await core.coreRandomNumberGenerator.newInstance();
+  const httpClient = await createInstance(core.coreHttpClient);
+  const webSocket = await createInstance(core.coreWebSocketClient);
+  const pathResolver = await createInstance(core.corePathResolver);
+  const logPrinter = await createInstance(core.coreLogPrinter);
+  threadDispatcher = await createInstance(core.coreThreadDispatcher);
+  const rng = await createInstance(core.coreRandomNumberGenerator);
   const backend = await core.coreDatabaseBackend.getSqlite3Backend();
-  const dynamicObject = await core.coreDynamicObject.newInstance();
+  const dynamicObject = await createInstance(core.coreDynamicObject);
 
-  walletPoolInstance = await core.coreWalletPool.newInstance(
+  walletPoolInstance = await createInstance(
+    core.coreWalletPool,
     "ledger_live_desktop",
     "",
     httpClient,
