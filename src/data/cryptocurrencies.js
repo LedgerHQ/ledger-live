@@ -63,43 +63,10 @@ const bitcoinUnits: Unit[] = [
   }
 ];
 
-const ethereumUnits = [
+const ethereumUnits = (name, code) => [
   {
-    name: "ether",
-    code: "ETH",
-    symbol: "Ξ",
-    magnitude: 18
-  },
-  {
-    name: "Gwei",
-    code: "Gwei",
-    symbol: "Ξ",
-    magnitude: 9
-  },
-  {
-    name: "Mwei",
-    code: "Mwei",
-    symbol: "Ξ",
-    magnitude: 6
-  },
-  {
-    name: "Kwei",
-    code: "Kwei",
-    symbol: "Ξ",
-    magnitude: 3
-  },
-  {
-    name: "wei",
-    code: "wei",
-    symbol: "Ξ",
-    magnitude: 0
-  }
-];
-
-const ethereumUnitsClassic = [
-  {
-    name: "ETC",
-    code: "ETC",
+    name,
+    code,
     symbol: "Ξ",
     magnitude: 18
   },
@@ -130,6 +97,23 @@ const ethereumUnitsClassic = [
 ];
 
 const cryptocurrenciesById = {
+  aion: {
+    id: "aion",
+    coinType: 425,
+    name: "Aion",
+    managerAppName: "Aion",
+    ticker: "AION",
+    scheme: "aion",
+    color: "#000000",
+    family: "aion",
+    units: [
+      {
+        name: "AION",
+        code: "AION",
+        magnitude: 8
+      }
+    ]
+  },
   akroma: {
     id: "akroma",
     coinType: 200625,
@@ -160,6 +144,40 @@ const cryptocurrenciesById = {
       {
         name: "ARK",
         code: "ARK",
+        magnitude: 8
+      }
+    ]
+  },
+  atheios: {
+    id: "atheios",
+    coinType: 1620,
+    name: "Atheios",
+    managerAppName: "Atheios",
+    ticker: "ATH",
+    scheme: "atheios",
+    color: "#000000",
+    family: "atheios",
+    units: [
+      {
+        name: "ATH",
+        code: "ATH",
+        magnitude: 8
+      }
+    ]
+  },
+  banano: {
+    id: "banano",
+    coinType: 198,
+    name: "Bananos",
+    managerAppName: "Bananos",
+    ticker: "BANANO",
+    scheme: "banano",
+    color: "#000000",
+    family: "banano",
+    units: [
+      {
+        name: "BANANO",
+        code: "BANANO",
         magnitude: 8
       }
     ]
@@ -305,6 +323,23 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  callisto: {
+    id: "callisto",
+    coinType: 820,
+    name: "Callisto",
+    managerAppName: "Callisto",
+    ticker: "CLO",
+    scheme: "callisto",
+    color: "#000000",
+    family: "callisto",
+    units: [
+      {
+        name: "CLO",
+        code: "CLO",
+        magnitude: 8
+      }
+    ]
+  },
   clubcoin: {
     id: "clubcoin",
     coinType: 79,
@@ -419,6 +454,23 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  ellaism: {
+    id: "ellaism",
+    coinType: 163,
+    name: "Ellaism",
+    managerAppName: "Ellaism",
+    ticker: "ELLA",
+    scheme: "ellaism",
+    color: "#000000",
+    family: "ellaism",
+    units: [
+      {
+        name: "ELLA",
+        code: "ELLA",
+        magnitude: 8
+      }
+    ]
+  },
   eos: {
     id: "eos",
     coinType: 194,
@@ -436,6 +488,23 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  eos_classic: {
+    id: "eos_classic",
+    coinType: 2018,
+    name: "EOSC",
+    managerAppName: "EOSC",
+    ticker: "EOSC",
+    scheme: "eosclassic",
+    color: "#000000",
+    family: "eosclassic",
+    units: [
+      {
+        name: "EOSC",
+        code: "EOSC",
+        magnitude: 2
+      }
+    ]
+  },
   ethereum: {
     id: "ethereum",
     coinType: 60,
@@ -444,7 +513,7 @@ const cryptocurrenciesById = {
     ticker: "ETH",
     scheme: "ethereum",
     color: "#0ebdcd",
-    units: ethereumUnits,
+    units: ethereumUnits("ether", "ETH"),
     family: "ethereum",
     ledgerExplorerId: "eth",
     blockAvgTime: 15
@@ -457,9 +526,45 @@ const cryptocurrenciesById = {
     ticker: "ETC",
     scheme: "ethereumclassic",
     color: "#3ca569",
-    units: ethereumUnitsClassic,
+    units: ethereumUnits("ETC", "ETC"),
     family: "ethereum",
     ledgerExplorerId: "ethc",
+    blockAvgTime: 15
+  },
+  ether1: {
+    id: "ether1",
+    coinType: 61,
+    name: "Ether1",
+    managerAppName: "Ether1",
+    ticker: "ETHO",
+    scheme: "ether1",
+    color: "#000000",
+    units: ethereumUnits("ETHO", "ETHO"),
+    family: "ethereum",
+    blockAvgTime: 15
+  },
+  ethergem: {
+    id: "ethergem",
+    coinType: 61,
+    name: "EtherGem",
+    managerAppName: "EtherGem",
+    ticker: "EGEM",
+    scheme: "ethergem",
+    color: "#000000",
+    units: ethereumUnits("EGEM", "EGEM"),
+    family: "ethereum",
+    blockAvgTime: 15
+  },
+  ethersocial: {
+    id: "ethersocial",
+    coinType: 61,
+    name: "Ethersocial",
+    managerAppName: "Ethersocial",
+    ticker: "ESN",
+    scheme: "ethersocial",
+    color: "#000000",
+    units: ethereumUnits("ESN", "ESN"),
+    family: "ethereum",
     blockAvgTime: 15
   },
   expanse: {
@@ -475,6 +580,23 @@ const cryptocurrenciesById = {
       {
         name: "EXP",
         code: "EXP",
+        magnitude: 8
+      }
+    ]
+  },
+  gochain: {
+    id: "gochain",
+    coinType: 6060,
+    name: "GoChain",
+    managerAppName: "GoChain",
+    ticker: "GO",
+    scheme: "gochain",
+    color: "#000000",
+    family: "gochain",
+    units: [
+      {
+        name: "GO",
+        code: "GO",
         magnitude: 8
       }
     ]
@@ -520,6 +642,23 @@ const cryptocurrenciesById = {
       {
         name: "ICON",
         code: "ICON",
+        magnitude: 8
+      }
+    ]
+  },
+  iota: {
+    id: "iota",
+    coinType: 4218,
+    name: "IOTA",
+    managerAppName: "IOTA",
+    ticker: "MIOTA",
+    scheme: "iota",
+    color: "#000000",
+    family: "iota",
+    units: [
+      {
+        name: "IOTA",
+        code: "IOTA",
         magnitude: 8
       }
     ]
@@ -620,6 +759,23 @@ const cryptocurrenciesById = {
         name: "XMR",
         code: "XMR",
         magnitude: 12
+      }
+    ]
+  },
+  musicoin: {
+    id: "musicoin",
+    coinType: 184,
+    name: "Musicoin",
+    managerAppName: "Musicoin",
+    ticker: "MUSIC",
+    scheme: "musicoin",
+    color: "#000000",
+    family: "musicoin",
+    units: [
+      {
+        name: "MUSIC",
+        code: "MUSIC",
+        magnitude: 8
       }
     ]
   },
@@ -1246,7 +1402,7 @@ const cryptocurrenciesById = {
     ticker: "ETH",
     scheme: "ethereum_testnet",
     color: "#00ff00",
-    units: ethereumUnits.map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
     isTestnetFor: "ethereum",
     family: "ethereum",
     ledgerExplorerId: "eth_testnet",
