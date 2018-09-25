@@ -12,6 +12,7 @@ import CurrencyIcon from "./CurrencyIcon";
 import OperationIcon from "./OperationIcon";
 
 import colors from "../colors";
+import OperationRowDate from "./OperationRowDate";
 
 type Props = {
   operation: Operation,
@@ -55,10 +56,7 @@ class OperationRow extends PureComponent<Props, *> {
               {multipleAccounts ? account.name : text}
             </LText>
             <LText numberOfLines={1} style={styles.bottomLine}>
-              {`${text} at ${operation.date.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}`}
+              <OperationRowDate text={text} date={operation.date} />
             </LText>
           </View>
           <View style={[styles.body, styles.bodyRight]}>

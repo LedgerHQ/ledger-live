@@ -1,10 +1,13 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
+import { translate } from "react-i18next";
+
+import type { T } from "../../types/common";
 import { withReboot } from "../../context/Reboot";
 import SettingsRow from "../../components/SettingsRow";
 
-class SignOut extends Component<{ reboot: (?boolean) => * }> {
+class SignOut extends Component<{ reboot: (?boolean) => *, t: T }> {
   onResetAll = async () => {
     const { reboot } = this.props;
     await reboot(true);
@@ -22,17 +25,18 @@ class SignOut extends Component<{ reboot: (?boolean) => * }> {
   };
 
   render() {
+    const { t } = this.props;
     return (
       <View style={styles.root}>
         <SettingsRow onPress={this.onSignOut} center>
-          <Text style={styles.signOutText}>Sign Out</Text>
+          <Text style={styles.signOutText}>{t("common.common.signOut")}</Text>
         </SettingsRow>
       </View>
     );
   }
 }
 
-export default withReboot(SignOut);
+export default translate()(withReboot(SignOut));
 
 const styles = StyleSheet.create({
   root: {
