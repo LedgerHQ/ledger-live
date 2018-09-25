@@ -168,8 +168,8 @@ const cryptocurrenciesById = {
   banano: {
     id: "banano",
     coinType: 198,
-    name: "Bananos",
-    managerAppName: "Bananos",
+    name: "Banano",
+    managerAppName: "Banano",
     ticker: "BANANO",
     scheme: "banano",
     color: "#000000",
