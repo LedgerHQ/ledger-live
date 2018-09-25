@@ -118,6 +118,6 @@ export default class Root extends Component<{}, {}> {
   }
 }
 
-if (__DEV__ && (process.env.DEBUG_SNOOPY && process.env.DEBUG_SNOOPY === "1")) {
+if (__DEV__) {
   require("./snoopy");
 }
