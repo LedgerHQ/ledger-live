@@ -1,3 +1,3 @@
 <resources>
-    <string name="app_name">Ledger Live</string>
+    <string name="app_name">@string/APP_NAME</string>
 </resources>
