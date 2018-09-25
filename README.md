@@ -43,7 +43,7 @@ or open `android/` in Android Studio.
 
 ## Environment variables
 
-You can create a .env with following optional variables
+Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively
 
 ```
 DEBUG_COMM_HTTP_PROXY=http://localhost:8435   # enable a dev mode to use the device over HTTP. use with https://github.com/LedgerHQ/ledgerjs/tree/master/packages/hw-http-proxy-devserver
