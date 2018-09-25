@@ -1,9 +1,10 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
+import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
 
 export type Props = {
@@ -26,7 +27,15 @@ class BottomModal extends Component<Props> {
           margin: 0,
         }}
       >
-        <View style={[styles.modal, style]}>{children}</View>
+        <View style={[styles.modal, style]}>
+          <StyledStatusBar
+            backgroundColor={
+              Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
+            }
+            barStyle="light-content"
+          />
+          {children}
+        </View>
       </ReactNativeModal>
     );
   }

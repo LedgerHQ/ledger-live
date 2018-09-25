@@ -134,7 +134,7 @@ class Scan extends PureComponent<
     // TODO some instruction on screen + progress indicator
     return (
       <View style={styles.root} onLayout={this.setDimensions}>
-        <StyledStatusBar transparent="light-content" />
+        <StyledStatusBar barStyle="light-content" />
         <RNCamera
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
           onBarCodeRead={this.onBarCodeRead}

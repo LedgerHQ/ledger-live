@@ -8,9 +8,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
 import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
-import StyledStatusBar from "../../components/StyledStatusBar";
 import ImportedAccountsNotification from "../../components/ImportedAccountsNotification";
-import colors from "../../colors";
 
 import NoAccounts from "./NoAccounts";
 import AccountCard from "./AccountCard";
@@ -61,7 +59,6 @@ class Accounts extends Component<Props> {
 
     return (
       <Fragment>
-        <StyledStatusBar backgroundColor={colors.white} />
         {enableImportNotif ? <ImportedAccountsNotification /> : null}
         <List
           data={accounts}

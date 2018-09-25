@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { StyleSheet, StatusBar } from "react-native";
+import { StyleSheet, StatusBar, Platform } from "react-native";
 import { createStackNavigator } from "react-navigation";
 import { createBottomTabNavigator, BottomTabBar } from "react-navigation-tabs";
 import config from "react-native-config";
@@ -43,11 +43,16 @@ import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen"
 
 // TODO look into all FlowFixMe
 
+const statusBarPadding =
+  Platform.OS === "android" ? StatusBar.currentHeight : 0;
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.lightGrey,
   },
   header: {
+    height: 48 + statusBarPadding,
+    paddingTop: statusBarPadding,
     backgroundColor: colors.white,
     borderBottomWidth: 0,
     elevation: 0,
@@ -56,10 +61,6 @@ const styles = StyleSheet.create({
     height: 48,
     borderTopColor: colors.lightFog,
     backgroundColor: colors.white,
-  },
-  transparentHeader: {
-    backgroundColor: "transparent",
-    paddingTop: StatusBar.currentHeight,
   },
 });
 
@@ -76,7 +77,6 @@ const StackNavigatorConfig = {
 
 const TransparentHeaderNavigationOptions = {
   headerTransparent: true,
-  headerStyle: styles.transparentHeader,
   headerTitle: (props: *) => (
     <HeaderTitle {...props} style={{ color: colors.white }} />
   ),
