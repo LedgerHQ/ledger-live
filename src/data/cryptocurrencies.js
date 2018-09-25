@@ -419,6 +419,23 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  eos: {
+    id: "eos",
+    coinType: 194,
+    name: "EOS",
+    managerAppName: "EOS",
+    ticker: "EOS",
+    scheme: "eos",
+    color: "#000000",
+    family: "eos",
+    units: [
+      {
+        name: "EOS",
+        code: "EOS",
+        magnitude: 2
+      }
+    ]
+  },
   ethereum: {
     id: "ethereum",
     coinType: 60,
@@ -569,6 +586,23 @@ const cryptocurrenciesById = {
         code: "litoshi",
         symbol: "Ł",
         magnitude: 0
+      }
+    ]
+  },
+  lisk: {
+    id: "lisk",
+    coinType: 134,
+    name: "lisk",
+    managerAppName: "lisk",
+    ticker: "LSK",
+    scheme: "lisk",
+    color: "#16213D",
+    family: "lisk",
+    units: [
+      {
+        name: "LSK",
+        code: "LSK",
+        magnitude: 8
       }
     ]
   },
@@ -876,7 +910,7 @@ const cryptocurrenciesById = {
     id: "stealthcoin",
     coinType: 125,
     name: "Stealth",
-    managerAppName: "Stealthcoin",
+    managerAppName: "Stealth",
     ticker: "XST",
     scheme: "stealth",
     color: "#000000",
@@ -1089,6 +1123,23 @@ const cryptocurrenciesById = {
       {
         name: "WAN",
         code: "WAN",
+        magnitude: 8
+      }
+    ]
+  },
+  waves: {
+    id: "waves",
+    coinType: 5741564,
+    name: "Waves",
+    managerAppName: "Waves",
+    ticker: "WAVES",
+    scheme: "waves",
+    color: "#004FFF",
+    family: "waves",
+    units: [
+      {
+        name: "WAVES",
+        code: "WAVES",
         magnitude: 8
       }
     ]

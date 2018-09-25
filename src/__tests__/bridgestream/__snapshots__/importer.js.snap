@@ -4,8 +4,8 @@ exports[`import 1`] = `
 Object {
   "accounts": Array [
     Object {
-      "balance": "50626466",
-      "currencyId": "zcoin",
+      "balance": "1797257488",
+      "currencyId": "zcash",
       "freshAddress": "1gUcMjNiuEM3mNzJvT7FV9djo6r1dU",
       "freshAddressPath": "49'/1'/1'/0/2",
       "id": "mock_account_export_0",
