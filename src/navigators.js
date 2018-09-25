@@ -43,7 +43,8 @@ import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen"
 
 // TODO look into all FlowFixMe
 
-const statusBarPadding = Platform.OS === "android" ? StatusBar.currentHeight : 0;
+const statusBarPadding =
+  Platform.OS === "android" ? StatusBar.currentHeight : 0;
 
 const styles = StyleSheet.create({
   card: {
