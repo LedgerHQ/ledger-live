@@ -6,8 +6,6 @@ let corePromise;
 let walletPoolInstance;
 let threadDispatcher;
 
-console.log(NativeModules);
-
 export default async () => {
   if (core) {
     return core;
@@ -20,7 +18,7 @@ export default async () => {
 };
 
 async function loadCore() {
-  let core = {
+  const core = {
     getPoolInstance: () => walletPoolInstance,
     getThreadDispatcher: () => threadDispatcher,
     flush: async () => {
