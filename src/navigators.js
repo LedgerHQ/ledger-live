@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   transparentHeader: {
-    backgroundColor: "transparent"
-  }
+    backgroundColor: "transparent",
+  },
 });
 
 const StackNavigatorConfig = {
@@ -80,7 +80,7 @@ const StackNavigatorConfig = {
 
 const TransparentHeaderNavigationOptions = {
   headerTransparent: true,
-  headerStyle: styles.transparentHeader,
+  headerStyle: [styles.header, styles.transparentHeader],
   headerTitle: (props: *) => (
     <HeaderTitle {...props} style={{ color: colors.white }} />
   ),
