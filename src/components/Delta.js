@@ -43,15 +43,17 @@ export default class Delta extends PureComponent<Props> {
       return null;
     }
 
+    const absDelta = delta.absoluteValue();
+
     return (
       <View style={[styles.root, style]}>
         {delta.isGreaterThanOrEqualTo(0) ? arrowUp : arrowDown}
         <View style={styles.content}>
           <LText tertiary style={styles.text}>
             {unit ? (
-              <CurrencyUnitValue unit={unit} value={delta} />
+              <CurrencyUnitValue unit={unit} value={absDelta} />
             ) : percent ? (
-              `${delta.toFixed(0)}%`
+              `${absDelta.toFixed(0)}%`
             ) : null}
           </LText>
         </View>
