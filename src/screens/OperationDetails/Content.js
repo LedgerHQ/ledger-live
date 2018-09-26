@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
 import uniq from "lodash/uniq";
@@ -23,6 +23,7 @@ type Props = {
   account: Account,
   operation: Operation,
   currencySettings: CurrencySettings,
+  navigation: *,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -30,6 +31,13 @@ const mapStateToProps = createStructuredSelector({
 });
 
 class Content extends PureComponent<Props, *> {
+  onPress = () => {
+    const { navigation, account } = this.props;
+    navigation.navigate("Account", {
+      accountId: account.id,
+    });
+  };
+
   render() {
     const { account, operation, t, currencySettings } = this.props;
     const amount = getOperationAmountNumber(operation);
@@ -75,11 +83,13 @@ class Content extends PureComponent<Props, *> {
             />
             {isConfirmed ? (
               <LText style={[styles.confirmation, { color: colors.green }]}>
-                {t("common:operationDetails.confirmed")}
+                {`${t("common:operationDetails.confirmed")} (${confirmations})`}
               </LText>
             ) : (
               <LText style={[styles.confirmation, { color: colors.grey }]}>
-                {t("common:operationDetails.notConfirmed")}
+                {`${t(
+                  "common:operationDetails.notConfirmed",
+                )} (${confirmations})`}
               </LText>
             )}
           </View>
@@ -89,7 +99,9 @@ class Content extends PureComponent<Props, *> {
             <LText style={styles.sectionTitle}>
               {t("common:operationDetails.account")}
             </LText>
-            <LText semiBold>{account.name}</LText>
+            <TouchableOpacity onPress={this.onPress}>
+              <LText semiBold>{account.name}</LText>
+            </TouchableOpacity>
           </View>
           <View style={styles.section}>
             <LText style={styles.sectionTitle}>

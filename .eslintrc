@@ -31,6 +31,7 @@
       }
     ],
     "flowtype/space-after-type-colon": 0,
+    "no-return-assign": 0,
     "no-shadow": 0,
     "no-plusplus": 0,
     "no-nested-ternary": 0,
@@ -42,6 +43,7 @@
     "import/prefer-default-export": 0,
     "no-use-before-define": 0,
     "react/sort-comp": 0,
+    "react/jsx-boolean-value": 0,
     "react/prefer-stateless-function": 0,
     "react/jsx-filename-extension": 0,
     "react/no-multi-comp": 0,

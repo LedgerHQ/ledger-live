@@ -2,12 +2,14 @@
 import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
+import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import CounterValues from "./countervalues";
 import LocaleProvider from "./context/Locale";
 import RebootProvider from "./context/Reboot";
+import ButtonUseTouchable from "./context/ButtonUseTouchable";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
@@ -17,6 +19,8 @@ import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
+
+useScreens();
 
 const styles = StyleSheet.create({
   root: {
@@ -98,7 +102,9 @@ export default class Root extends Component<{}, {}> {
                     <LocaleProvider>
                       <BridgeSyncProvider>
                         <CounterValues.PollingProvider>
-                          <App />
+                          <ButtonUseTouchable.Provider value={false}>
+                            <App />
+                          </ButtonUseTouchable.Provider>
                         </CounterValues.PollingProvider>
                       </BridgeSyncProvider>
                     </LocaleProvider>

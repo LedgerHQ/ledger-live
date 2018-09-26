@@ -28,7 +28,8 @@ type State = {
   errorValue: Animated.Value,
 };
 
-const TICK_W = 8;
+const TICK_W = 6;
+const TICK_H = 20;
 
 class AccountRow extends PureComponent<Props, State> {
   state = {
@@ -61,14 +62,7 @@ class AccountRow extends PureComponent<Props, State> {
           style={[
             styles.errorTick,
             {
-              transform: [
-                {
-                  translateX: errorValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [-TICK_W, 0],
-                  }),
-                },
-              ],
+              opacity: errorValue,
             },
           ]}
         />
@@ -110,7 +104,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "center",
     height: 72,
-    overflow: "hidden",
   },
   accountName: {
     flexGrow: 1,
@@ -138,7 +131,8 @@ const styles = StyleSheet.create({
   errorTick: {
     backgroundColor: colors.alert,
     position: "absolute",
+    left: -TICK_W + 1, // +1 is hack for android. it would disappear otherwise^^
     width: TICK_W,
-    height: "100%",
+    height: TICK_H,
   },
 });

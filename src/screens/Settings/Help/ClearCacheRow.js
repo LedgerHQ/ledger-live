@@ -11,8 +11,7 @@ import type { T } from "../../../types/common";
 import Warning from "../../../icons/Warning";
 import { withReboot } from "../../../context/Reboot";
 import ModalBottomAction from "../../../components/ModalBottomAction";
-import BlueButton from "../../../components/BlueButton";
-import GreyButton from "../../../components/GreyButton";
+import Button from "../../../components/Button";
 import Archive from "../../../icons/Archive";
 import Circle from "../../../components/Circle";
 import BottomModal from "../../../components/BottomModal";
@@ -76,18 +75,17 @@ class ClearCacheRow extends PureComponent<Props, State> {
             description={t("settings.help.clearCacheModalDesc")}
             footer={
               <View style={styles.footerContainer}>
-                <GreyButton
+                <Button
+                  type="secondary"
                   title={t("common.cancel")}
                   onPress={this.onRequestClose}
                   containerStyle={styles.buttonContainer}
-                  titleStyle={styles.buttonTitle}
                 />
-
-                <BlueButton
+                <Button
+                  type="primary"
                   title={t("settings.help.clearCacheButton")}
                   onPress={this.onClearCache}
-                  containerStyle={[styles.buttonContainer, styles.clearCacheBg]}
-                  titleStyle={[styles.buttonTitle, styles.clearCacheTitle]}
+                  containerStyle={styles.buttonContainer}
                 />
               </View>
             }
@@ -112,16 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   buttonContainer: {
-    height: 48,
     width: 136,
-  },
-  clearCacheBg: {
-    backgroundColor: colors.live,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  clearCacheTitle: {
-    color: colors.white,
   },
 });

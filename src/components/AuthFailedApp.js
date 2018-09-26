@@ -7,8 +7,7 @@ import LText from "./LText";
 import type { T } from "../types/common";
 import colors from "../colors";
 import BottomModal from "./BottomModal";
-import GreyButton from "./GreyButton";
-import BlueButton from "./BlueButton";
+import Button from "./Button";
 import LedgerLiveLogo from "./LedgerLiveLogo";
 import LiveLogo from "../icons/LiveLogo";
 import HardResetModal from "./HardResetModal";
@@ -50,21 +49,17 @@ class AuthFailedApp extends Component<Props, State> {
             {t("auth.failed.title")}
           </LText>
         </View>
-        <BlueButton
+        <Button
+          type="primary"
           title={t("auth.failed.buttons.tryAgain")}
           onPress={this.onSoftReset}
-          containerStyle={{ height: 48, marginBottom: 10 }}
-          titleStyle={styles.buttonTitle}
+          containerStyle={{ marginBottom: 10 }}
         />
-        <GreyButton
+        <Button
+          type="secondary"
           title={t("auth.failed.buttons.reset")}
           onPress={this.onPress}
-          containerStyle={{
-            marginTop: 10,
-            height: 48,
-            backgroundColor: colors.lightGrey,
-          }}
-          titleStyle={styles.buttonTitle}
+          containerStyle={{ marginTop: 10 }}
         />
         <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
           <HardResetModal
@@ -83,9 +78,6 @@ const styles = StyleSheet.create({
     padding: 40,
     justifyContent: "center",
     backgroundColor: colors.lightGrey,
-  },
-  buttonTitle: {
-    fontSize: 16,
   },
   descriptionContainer: {
     marginHorizontal: 16,

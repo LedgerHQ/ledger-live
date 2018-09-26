@@ -1,8 +1,11 @@
 /* @flow */
 import React from "react";
 import { Text } from "react-native";
+import { translate } from "react-i18next";
 
-const el = (
+import type { T } from "../types/common";
+
+const el = ({ t }: { t: T }) => (
   <Text
     style={{
       padding: 60,
@@ -10,8 +13,8 @@ const el = (
       textAlign: "center",
     }}
   >
-    No Operations.
+    {t("common:operationList.noOperations")}
   </Text>
 );
 
-export default () => el;
+export default translate()(el);

@@ -174,6 +174,7 @@ class AccountScreen extends PureComponent<Props, State> {
           onEndReached={this.onEndReached}
           showsVerticalScrollIndicator={false}
           accountId={account.id}
+          stickySectionHeadersEnabled={false}
         />
       </View>
     );

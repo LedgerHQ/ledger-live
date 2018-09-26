@@ -3,7 +3,7 @@ import React from "react";
 // $FlowFixMe
 import { Buffer } from "buffer";
 import { withNavigation } from "react-navigation";
-import GreyButton from "./GreyButton";
+import Button from "./Button";
 
 const ImportBridgeStreamData = ({
   title,
@@ -17,8 +17,9 @@ const ImportBridgeStreamData = ({
   reboot: *,
   dataStr: *,
 }) => (
-  <GreyButton
+  <Button
     {...rest}
+    type="secondary"
     title={title}
     onPress={() => {
       const data = JSON.parse(Buffer.from(dataStr, "base64").toString("utf8"));

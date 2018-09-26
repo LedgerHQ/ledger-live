@@ -2,15 +2,23 @@
 
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
+import { translate } from "react-i18next";
+
+import type { T } from "../types/common";
 import LText from "./LText";
 import Touchable from "./Touchable";
 
-export default class SyncIndicatorError extends Component<*> {
+type Props = {
+  t: T,
+  onPress: () => void,
+};
+
+class SyncIndicatorError extends Component<Props> {
   render() {
-    const { onPress } = this.props;
+    const { onPress, t } = this.props;
     return (
       <Touchable onPress={onPress}>
-        <LText style={styles.text}>Sync Error</LText>
+        <LText style={styles.text}>{t("common.sync.error")}</LText>
       </Touchable>
     );
   }
@@ -20,3 +28,5 @@ const styles = StyleSheet.create({
     color: "#f00",
   },
 });
+
+export default translate()(SyncIndicatorError);

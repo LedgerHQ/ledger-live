@@ -4,7 +4,9 @@
     "apply": "Apply",
     "delete": "Delete",
     "continue": "Continue",
-    "done": "Done"
+    "done": "Done",
+    "sortBy": "Sort by",
+    "signOut": "Sign Out"
   },
   "errors": {
     "generic": {
@@ -31,7 +33,7 @@
   },
   "reset": {
     "title": "Are you sure?",
-    "description": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
+    "description": "Erase all Ledger Live data stored on your device, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
     "button": "Reset"
   },
   "portfolio": {
@@ -91,6 +93,10 @@
     "seeAll": "See all",
     "seeLess": "See less",
     "viewInExplorer": "View in explorer"
+  },
+  "operationList": {
+    "noOperations": "No Operations",
+    "noMoreOperations": "No More Operations"
   },
   "account": {
     "lastOperations": "Last operations",
@@ -227,11 +233,19 @@
     },
     "receive": {
       "title": "Receive funds",
-      "desc": "Recieve crypto assets"
+      "desc": "Recieve crypto assets",
+      "verifyAddress": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security."
     },
     "exchange": {
       "title": "Exchange",
       "desc": "Try our trading services"
     }
+  },
+  "sync": {
+    "error": "Sync Error",
+    "loading": "Sync"
+  },
+  "scanning": {
+    "loading": "Searching devices..."
   }
 }
