@@ -83,11 +83,13 @@ class Content extends PureComponent<Props, *> {
             />
             {isConfirmed ? (
               <LText style={[styles.confirmation, { color: colors.green }]}>
-                {t("common:operationDetails.confirmed")}
+                {`${t("common:operationDetails.confirmed")} (${confirmations})`}
               </LText>
             ) : (
               <LText style={[styles.confirmation, { color: colors.grey }]}>
-                {t("common:operationDetails.notConfirmed")}
+                {`${t(
+                  "common:operationDetails.notConfirmed",
+                )} (${confirmations})`}
               </LText>
             )}
           </View>
