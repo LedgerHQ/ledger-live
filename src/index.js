@@ -118,6 +118,6 @@ export default class Root extends Component<{}, {}> {
   }
 }
 
-// if (__DEV__) {
-//   require("./snoopy");
-// }
+if (__DEV__) {
+  require("./snoopy");
+}

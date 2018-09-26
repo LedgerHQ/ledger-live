@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "./types";
 
-import { syncAccount } from "../logic/libcore";
+import { syncAccount } from "../libcore";
 
 function operationsDiffer(a, b) {
   if ((a && !b) || (b && !a)) return true;
@@ -66,6 +66,7 @@ const startSync = (initialAccount, _observation) =>
         });
         o.complete();
       } catch (err) {
+        console.error(err);
         o.error(err);
       }
     })();

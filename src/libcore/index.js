@@ -1,24 +1,18 @@
 // @flow
+// TODO split in files!!!
 
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-
 import { splittedCurrencies } from "../config/cryptocurrencies";
-
 import { accountModel } from "../reducers/accounts";
-import getLibCore from "./getLibcore";
-import * as accountIdHelper from "./accountId";
-import { isSegwitPath, isUnsplitPath } from "./bip32";
+import load from "./load";
+import * as accountIdHelper from "../logic/accountId";
+import { isSegwitPath, isUnsplitPath } from "../logic/bip32";
 import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
-} from "./accountName";
-
-// FIXME: is there a way to import from libcore?
-const OperationTypeMap = {
-  SEND: "OUT",
-  RECEIVE: "IN",
-};
+} from "../logic/accountName";
+import { getValue, createInstance, OperationTypeMap } from "./specific";
 
 type ScanOpts = {
   isSegwit: boolean,
@@ -75,7 +69,7 @@ async function getOrCreateWallet({
 }
 
 export async function syncAccount({ account }: { account: Account }) {
-  const core = await getLibCore();
+  const core = await load();
   const decodedAccountId = accountIdHelper.decode(account.id);
   const { walletName } = decodedAccountId;
 
@@ -123,17 +117,22 @@ async function getOrCreateAccount({ core, coreWallet, xpub, index }) {
       coreWallet,
       index,
     );
-    const infosIndex = await core.coreExtendedKeyAccountCreationInfo.getIndex(
-      extendedInfos,
+
+    const infosIndex = getValue(
+      await core.coreExtendedKeyAccountCreationInfo.getIndex(extendedInfos),
     );
-    const extendedKeys = await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
-      extendedInfos,
+    const extendedKeys = getValue(
+      await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
+        extendedInfos,
+      ),
     );
-    const owners = await core.coreExtendedKeyAccountCreationInfo.getOwners(
-      extendedInfos,
+    const owners = getValue(
+      await core.coreExtendedKeyAccountCreationInfo.getOwners(extendedInfos),
     );
-    const derivations = await core.coreExtendedKeyAccountCreationInfo.getDerivations(
-      extendedInfos,
+    const derivations = getValue(
+      await core.coreExtendedKeyAccountCreationInfo.getDerivations(
+        extendedInfos,
+      ),
     );
 
     extendedKeys.push(xpub);
@@ -170,7 +169,7 @@ export async function syncCoreAccount({
   accountIndex: number,
   opts: ScanOpts,
 }) {
-  const eventReceiver = await core.coreEventReceiver.newInstance();
+  const eventReceiver = await createInstance(core.coreEventReceiver);
   const eventBus = await core.coreAccount.synchronize(coreAccount);
   const serialContext = await core.coreThreadDispatcher.getSerialExecutionContext(
     core.getThreadDispatcher(),
@@ -181,7 +180,6 @@ export async function syncCoreAccount({
   const query = await core.coreAccount.queryOperations(coreAccount);
   const completedQuery = await core.coreOperationQuery.complete(query);
   const coreOperations = await core.coreOperationQuery.execute(completedQuery);
-
   const rawAccount = await buildAccountRaw({
     core,
     coreWallet,
@@ -198,48 +196,7 @@ export async function syncCoreAccount({
   return accountModel.decode({ data: rawAccount, version: 0 });
 }
 
-export async function getAccountFromXPUB({
-  xpub,
-  currencyId,
-  opts = { isSegwit: true, isUnsplit: false },
-}: {
-  xpub: string,
-  currencyId: string,
-  opts: ScanOpts,
-}) {
-  const index = 0;
-  const core = await getLibCore();
-
-  // TODO: real wallet name
-  const walletName = `temporary-wallet-name-${Date.now()}`;
-
-  const coreWallet = await getOrCreateWallet({
-    core,
-    walletName,
-    currencyId,
-    opts,
-  });
-
-  const coreAccount = await getOrCreateAccount({
-    core,
-    coreWallet,
-    index,
-    xpub,
-  });
-
-  const account = await syncCoreAccount({
-    core,
-    coreWallet,
-    coreAccount,
-    walletName,
-    currencyId,
-    accountIndex: index,
-    opts,
-  });
-
-  return account;
-}
-
+// TODO get read of the "AccountRaw" abstraction
 async function buildAccountRaw({
   core,
   coreWallet,
@@ -260,24 +217,32 @@ async function buildAccountRaw({
   opts: ScanOpts,
 }) {
   const nativeBalance = await core.coreAccount.getBalance(coreAccount);
+
   const { value: balance } = await core.coreAmount.toLong(nativeBalance);
 
   const currency = getCryptoCurrencyById(currencyId);
+
   const coreAccountCreationInfo = await core.coreWallet.getAccountCreationInfo(
     coreWallet,
     accountIndex,
   );
-  const derivations = await core.coreAccountCreationInfo.getDerivations(
-    coreAccountCreationInfo,
+
+  const derivations = getValue(
+    await core.coreAccountCreationInfo.getDerivations(coreAccountCreationInfo),
   );
+
   const [walletPath, accountPath] = derivations;
 
-  // FIXME: this is throwing
-  //        `Cannot convert argument of type class java.lang.Long`
-  //
-  // const coreBlock = await core.coreAccount.getLastBlock(coreAccount)
-  // const blockHeight = await core.coreBlock.getHeight(coreBlock)
-  const blockHeight = 0;
+  let blockHeight = 0;
+  try {
+    const coreBlock = await core.coreAccount.getLastBlock(coreAccount);
+    const blockHeightRes = await core.coreBlock.getHeight(coreBlock);
+    blockHeight = blockHeightRes.value;
+  } catch (e) {
+    // FIXME: this is throwing `Cannot convert argument of type class java.lang.Long`
+    // note: works on iOS, to be tested again on Android
+    console.warn(e);
+  }
 
   const [coreFreshAddress] = await core.coreAccount.getFreshPublicAddresses(
     coreAccount,
@@ -307,24 +272,26 @@ async function buildAccountRaw({
   // retrieve xpub
   const { value: xpub } = await core.coreAccount.getRestoreKey(coreAccount);
 
+  const id = accountIdHelper.encode({
+    type: "libcore",
+    version: "1",
+    xpub,
+    walletName,
+  });
+
   // build operations
   const operations = await Promise.all(
     coreOperations.map(coreOperation =>
       buildOperationRaw({
         core,
         coreOperation,
-        xpub,
+        accountId: id,
       }),
     ),
   );
 
   return {
-    id: accountIdHelper.encode({
-      type: "libcore",
-      version: "1",
-      xpub,
-      walletName,
-    }),
+    id,
     xpub,
     path: walletPath,
     name,
@@ -343,15 +310,18 @@ async function buildAccountRaw({
   };
 }
 
+// TODO get read of the "OperationRaw" abstraction (directly generate Operation)
 async function buildOperationRaw({
   core,
   coreOperation,
-  xpub,
+  accountId,
 }: {
   core: *,
   coreOperation: *,
-  xpub: string,
+  accountId: string,
 }) {
+  // FIXME lot of async stuff could be done in parallel. [a,b]=await Promise.all(...)
+
   const bitcoinLikeOperation = await core.coreOperation.asBitcoinLikeOperation(
     coreOperation,
   );
@@ -371,6 +341,10 @@ async function buildOperationRaw({
   const coreFee = await core.coreOperation.getFees(coreOperation);
   const { value: fee } = await core.coreAmount.toLong(coreFee);
 
+  const { value: blockHeight } = await core.coreOperation.getBlockHeight(
+    coreOperation,
+  );
+
   const [{ value: recipients }, { value: senders }] = await Promise.all([
     core.coreOperation.getRecipients(coreOperation),
     core.coreOperation.getSenders(coreOperation),
@@ -378,14 +352,13 @@ async function buildOperationRaw({
 
   // FIXME: libcore is sending date without timezone, and with weird
   //        format (e.g: `2018-59-31 03:59:53`)
-  //
-  // const { value: date } = await core.coreOperation.getDate(coreOperation);
-  const date = new Date();
+  // on iOS, date is just null !
+  const dateR = await core.coreOperation.getDate(coreOperation);
+  const date = new Date(dateR.value);
 
-  // if transaction is a send, amount becomes negative
   const type = OperationTypeMap[operationType];
 
-  const id = `${xpub}-${hash}-${type}`;
+  const id = `${accountId}-${hash}-${type}`;
 
   return {
     id,
@@ -395,9 +368,9 @@ async function buildOperationRaw({
     fee,
     senders,
     recipients,
-    blockHeight: 0, // FIXME: fill it
+    blockHeight,
     blockHash: null, // FIXME: why? (unused)
-    accountId: xpub, // FIXME: iso as desktop, but looks wrong
-    date: date.toISOString(), // FIXME: ensure that timezone is correct
+    accountId,
+    date: date.toISOString(),
   };
 }

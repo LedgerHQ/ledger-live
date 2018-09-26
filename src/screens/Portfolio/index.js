@@ -35,6 +35,7 @@ import Header from "./Header";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
+import SyncBackground from "../../bridge/SyncBackground";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = provideSyncRefreshControl(AnimatedSectionList);
@@ -137,6 +138,7 @@ class Portfolio extends Component<
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
         <Header scrollY={scrollY} summary={summary} />
+        <SyncBackground />
         <SafeAreaView style={styles.inner}>
           <List
             forwardedRef={this.ref}

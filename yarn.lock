@@ -888,9 +888,9 @@
     "@ledgerhq/hw-transport" "^4.21.0"
     invariant "^2.2.4"
 
-"@ledgerhq/react-native-ledger-core@^0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.4.tgz#7621a0fb347e8039e081567a53adb495cc10f966"
+"@ledgerhq/react-native-ledger-core@^0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.5.tgz#c6f5429e2cb77b0c0a4dd71d376f42d7db99825b"
 
 "@ledgerhq/react-native-passcode-auth@2.0.0":
   version "2.0.0"

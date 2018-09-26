@@ -103,18 +103,11 @@ const mapStateToProps = (state, props) => {
 
   return {
     summary,
-    hash: `${accounts.length > 0 ? accounts[0].id : ""}_${
-      balanceHistory.length
-    }_${balanceEnd.value.toString()}_${isAvailable.toString()}`,
   };
 };
 
 export default (WrappedComponent: any) => {
   class ProvideSummary extends Component<Props> {
-    shouldComponentUpdate(nextProps: Props) {
-      return nextProps.hash !== this.props.hash;
-    }
-
     render() {
       return <WrappedComponent {...this.props} />;
     }

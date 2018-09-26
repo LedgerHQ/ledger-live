@@ -1,4 +1,4 @@
-import { Platform, NativeModules } from "react-native";
+import { createInstance, getNativeModule } from "./specific";
 
 let core;
 let corePromise;
@@ -57,25 +57,9 @@ async function loadCore() {
     "WebSocketClient",
   ];
 
-  const createInstance = (factory, ...params) => {
-    let newInstance = factory.newInstance;
-    if (!newInstance) {
-      // cc khalil!
-      console.log("no newInstance method for", factory); // eslint-disable-line no-console
-      newInstance = factory.new;
-    }
-    return newInstance.call(factory, ...params);
-  };
-
-  if (Platform.OS === "ios") {
-    modules.forEach(m => {
-      core[`core${m}`] = NativeModules[`CoreLG${m}`];
-    });
-  } else {
-    modules.forEach(m => {
-      core[`core${m}`] = NativeModules[`Core${m}`];
-    });
-  }
+  modules.forEach(m => {
+    core[`core${m}`] = getNativeModule(m);
+  });
 
   const httpClient = await createInstance(core.coreHttpClient);
   const webSocket = await createInstance(core.coreWebSocketClient);
@@ -84,10 +68,9 @@ async function loadCore() {
   threadDispatcher = await createInstance(core.coreThreadDispatcher);
   const rng = await createInstance(core.coreRandomNumberGenerator);
   const backend = await core.coreDatabaseBackend.getSqlite3Backend();
-  const dynamicObject = await createInstance(core.coreDynamicObject);
 
-  walletPoolInstance = await createInstance(
-    core.coreWalletPool,
+  const dynamicObject = await core.coreDynamicObject.newInstance();
+  walletPoolInstance = await core.coreWalletPool.newInstance(
     "ledger_live_desktop",
     "",
     httpClient,
@@ -99,6 +82,10 @@ async function loadCore() {
     backend,
     dynamicObject,
   );
+
+  if (__DEV__) {
+    console.log({ core }); // eslint-disable-line
+  }
 
   return core;
 }
