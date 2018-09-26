@@ -1,4 +1,4 @@
-package com.ledgerlivemobile;
+package com.ledger.live;
 
 import android.app.Application;
 

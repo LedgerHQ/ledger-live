@@ -111,7 +111,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.ledgerlivemobile"
+        applicationId "com.ledger.live"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -119,7 +119,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        resValue "string", "build_config_package", "com.ledgerlivemobile"
+        resValue "string", "build_config_package", "com.ledger.live"
     }
     splits {
         abi {
