@@ -142,7 +142,7 @@ class Scan extends PureComponent<
           style={{ width, height }}
           notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >
-          <View style={[styles.darken, styles.centered]}>
+          <View style={[styles.darken, styles.centered, styles.topCell]}>
             <LText semibold style={styles.text}>
               {t("account.import.scan.descTop.line1")}
             </LText>
@@ -233,6 +233,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     flexGrow: 1,
+  },
+  topCell: {
+    paddingTop: 64,
   },
   darken: {
     backgroundColor: rgba(colors.darkBlue, 0.4),
