@@ -32,7 +32,11 @@ class OperationDetails extends PureComponent<Props, *> {
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <View style={styles.root}>
-            <Content account={account} operation={operation} />
+            <Content
+              account={account}
+              operation={operation}
+              navigation={navigation}
+            />
           </View>
         </ScrollView>
         {url && <Footer url={url} />}
