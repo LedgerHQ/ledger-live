@@ -15,6 +15,7 @@ import BottomModal from "../../components/BottomModal";
 
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
+import AccountCurrencyRow from "./AccountCurrencyRow";
 import ArchiveAccountRow from "./ArchiveAccountRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
@@ -66,12 +67,17 @@ class AccountSettings extends PureComponent<Props, State> {
   render() {
     const { navigation, account } = this.props;
     const { isModalOpened } = this.state;
+
     if (!account) return null;
     return (
       <Fragment>
         <View style={styles.sectionRow}>
           <AccountNameRow account={account} navigation={navigation} />
           <AccountUnitsRow account={account} navigation={navigation} />
+          <AccountCurrencyRow
+            currency={account.currency}
+            navigation={navigation}
+          />
         </View>
         <View style={styles.sectionRow}>
           <ArchiveAccountRow />

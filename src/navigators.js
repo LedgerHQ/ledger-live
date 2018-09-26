@@ -203,6 +203,7 @@ const AccountSettings = createStackNavigator(
     AccountSettingsMain,
     EditAccountUnits,
     EditAccountName,
+    AccountCurrencySettings: CurrencySettings,
   },
   StackNavigatorConfig,
 );
