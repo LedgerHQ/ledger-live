@@ -13,7 +13,7 @@ const el = ({ t }: { t: T }) => (
       textAlign: "center",
     }}
   >
-    {t("common.operationList.noOperations")}
+    {t("common:operationList.noOperations")}
   </Text>
 );
 
