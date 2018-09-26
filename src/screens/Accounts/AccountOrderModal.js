@@ -22,7 +22,7 @@ class AccountOrderModal extends Component<{
     const { onClose, isOpened, t } = this.props;
     return (
       <BottomModal onClose={onClose} isOpened={isOpened}>
-        <MenuTitle>{t("common.common.sortBy")}</MenuTitle>
+        <MenuTitle>{t("common:common.sortBy")}</MenuTitle>
         <OrderOption id="balance" />
         <OrderOption id="name" />
         <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
