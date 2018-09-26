@@ -7,8 +7,7 @@ import type { T } from "../types/common";
 import colors from "../colors";
 import ModalBottomAction from "./ModalBottomAction";
 import Trash from "../icons/Trash";
-import RedButton from "./RedButton";
-import GreyButton from "./GreyButton";
+import Button from "./Button";
 import Circle from "./Circle";
 
 type Props = {
@@ -30,17 +29,17 @@ class HardResetModal extends PureComponent<Props> {
         description={t("reset.description")}
         footer={
           <View style={styles.footerContainer}>
-            <GreyButton
+            <Button
+              type="secondary"
               title={t("common.cancel")}
               onPress={onRequestClose}
               containerStyle={styles.buttonContainer}
-              titleStyle={styles.buttonTitle}
             />
-            <RedButton
+            <Button
+              type="alert"
               title={t("reset.button")}
               onPress={onHardReset}
-              containerStyle={[styles.buttonContainer, styles.resetButtonBg]}
-              titleStyle={[styles.buttonTitle, styles.resetButtonTitle]}
+              containerStyle={styles.buttonContainer}
             />
           </View>
         }
@@ -57,16 +56,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   buttonContainer: {
-    height: 48,
     width: 136,
-  },
-  resetButtonBg: {
-    backgroundColor: colors.alert,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  resetButtonTitle: {
-    color: colors.white,
   },
 });

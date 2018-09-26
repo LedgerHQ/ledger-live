@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   Platform,
-  Text,
 } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -20,8 +19,7 @@ import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import LText from "../../components/LText";
-import OutlineButton from "../../components/OutlineButton";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
@@ -92,18 +90,14 @@ class SelectRecipient extends Component<Props, State> {
           keyboardVerticalOffset={keyboardVerticalOffset}
         >
           <View style={styles.container}>
-            <OutlineButton
+            <Button
+              type="tertiary"
+              title="Scan QR code"
+              IconLeft={IconQRCode}
               onPress={() => {
                 console.log("scan qr code"); // eslint-disable-line no-console
               }}
-            >
-              <Text>
-                <Icon name="qrcode" size={16} color={colors.live} />
-              </Text>
-              <LText semiBold secondary style={styles.buttonText}>
-                Scan QR code
-              </LText>
-            </OutlineButton>
+            />
           </View>
           <View style={styles.container}>
             <LText style={styles.addressTitle}>
@@ -135,7 +129,8 @@ class SelectRecipient extends Component<Props, State> {
             ) : null}
           </View>
           <View style={[styles.container, styles.containerFlexEnd]}>
-            <BlueButton
+            <Button
+              type="primary"
               title="Continue"
               onPress={() =>
                 this.props.navigation.navigate("SendSelectFunds", {
@@ -144,14 +139,6 @@ class SelectRecipient extends Component<Props, State> {
                 })
               }
               disabled={!validAddress}
-              containerStyle={[
-                styles.continueButton,
-                !validAddress ? styles.disabledContinueButton : null,
-              ]}
-              titleStyle={[
-                styles.continueButtonText,
-                !validAddress ? styles.disabledContinueButtonText : null,
-              ]}
             />
           </View>
         </KeyboardAvoidingView>
@@ -159,6 +146,10 @@ class SelectRecipient extends Component<Props, State> {
     );
   }
 }
+
+const IconQRCode = ({ size, color }: { size: number, color: string }) => (
+  <Icon name="qrcode" size={size} color={color} />
+);
 
 const styles = StyleSheet.create({
   root: {
@@ -173,10 +164,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
-  buttonText: {
-    color: colors.live,
-    marginLeft: 16,
-  },
   addressTitle: {
     color: colors.grey,
     fontSize: 12,
@@ -186,20 +173,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 24,
     color: colors.darkBlue,
-  },
-  continueButton: {
-    paddingVertical: 16,
-    height: "auto",
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontFamily: "Museo Sans",
-  },
-  disabledContinueButton: {
-    backgroundColor: colors.lightFog,
-  },
-  disabledContinueButtonText: {
-    color: colors.grey,
   },
   errorText: {
     color: colors.alert,

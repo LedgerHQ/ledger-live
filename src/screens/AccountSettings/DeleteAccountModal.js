@@ -9,8 +9,7 @@ import Trash from "../../icons/Trash";
 import type { T } from "../../types/common";
 import colors from "../../colors";
 import ModalBottomAction from "../../components/ModalBottomAction";
-import RedButton from "../../components/RedButton";
-import GreyButton from "../../components/GreyButton";
+import Button from "../../components/Button";
 
 type Props = {
   t: T,
@@ -39,17 +38,17 @@ class DeleteAccountModal extends PureComponent<Props> {
         }
         footer={
           <View style={styles.footerContainer}>
-            <GreyButton
+            <Button
+              type="secondary"
               title={t("common:common.cancel")}
               onPress={onRequestClose}
               containerStyle={styles.buttonContainer}
-              titleStyle={styles.buttonTitle}
             />
-            <RedButton
+            <Button
+              type="alert"
               title={t("common:common.delete")}
               onPress={deleteAccount}
-              containerStyle={[styles.buttonContainer, styles.deleteButtonBg]}
-              titleStyle={[styles.buttonTitle, styles.deleteButtonTitle]}
+              containerStyle={styles.buttonContainer}
             />
           </View>
         }
@@ -66,16 +65,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   buttonContainer: {
-    height: 48,
     width: 136,
-  },
-  deleteButtonBg: {
-    backgroundColor: colors.alert,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  deleteButtonTitle: {
-    color: colors.white,
   },
 });

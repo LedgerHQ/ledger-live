@@ -19,7 +19,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import type { T } from "../../types/common";
 import colors from "../../colors";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -86,11 +86,11 @@ class EditAccountName extends PureComponent<Props, State> {
               onSubmitEditing={this.onNameEndEditing}
             />
             <View style={styles.flex}>
-              <BlueButton
+              <Button
+                type="primary"
                 title={t("common:common.apply")}
                 onPress={this.onNameEndEditing}
-                containerStyle={[styles.buttonContainer]}
-                titleStyle={[styles.buttonTitle]}
+                containerStyle={styles.buttonContainer}
               />
             </View>
           </ScrollView>
@@ -123,10 +123,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginHorizontal: 16,
-    height: 48,
-  },
-  buttonTitle: {
-    fontSize: 16,
   },
   flex: {
     flex: 1,

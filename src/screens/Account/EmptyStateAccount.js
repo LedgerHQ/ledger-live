@@ -8,7 +8,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import colors from "../../colors";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 import Receive from "../../icons/Receive";
 
 class EmptyStateAccount extends PureComponent<{
@@ -40,12 +40,12 @@ class EmptyStateAccount extends PureComponent<{
             </Trans>
           </LText>
           {config.READ_ONLY === "0" && (
-            <BlueButton
+            <Button
+              type="primary"
               title={t("common:account.emptyState.buttons.receiveFunds")}
               onPress={this.goToReceiveFunds}
-              containerStyle={styles.recieveButton}
-              titleStyle={[styles.buttonTitle]}
-              iconLeft={<Receive size={16} color={colors.white} />}
+              containerStyle={styles.receiveButton}
+              iconLeft={Receive}
             />
           )}
         </View>
@@ -67,11 +67,7 @@ const styles = StyleSheet.create({
   body: {
     alignItems: "center",
   },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  recieveButton: {
-    height: 48,
+  receiveButton: {
     width: 290,
   },
   title: {

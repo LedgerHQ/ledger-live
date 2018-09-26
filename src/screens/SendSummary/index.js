@@ -9,7 +9,7 @@ import type { BigNumber as BigNumberType } from "bignumber.js";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import LText from "../../components/LText";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CounterValue from "../../components/CounterValue";
 
@@ -171,10 +171,10 @@ class SendSummary extends Component<Props, State> {
             />
           </LText>
           <View style={{ flex: 1 }} />
-          <BlueButton
+          <Button
+            type="primary"
             title="Continue"
             containerStyle={styles.continueButton}
-            titleStyle={styles.continueButtonTitle}
             onPress={this.onContinue}
           />
         </View>
@@ -229,13 +229,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   continueButton: {
-    height: "auto",
-    paddingVertical: 16,
     alignSelf: "stretch",
-  },
-  continueButtonTitle: {
-    fontSize: 16,
-    fontFamily: "Museo Sans",
   },
   link: {
     color: colors.live,

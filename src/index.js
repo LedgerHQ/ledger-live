@@ -9,6 +9,7 @@ import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import CounterValues from "./countervalues";
 import LocaleProvider from "./context/Locale";
 import RebootProvider from "./context/Reboot";
+import ButtonUseTouchable from "./context/ButtonUseTouchable";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
@@ -101,7 +102,9 @@ export default class Root extends Component<{}, {}> {
                     <LocaleProvider>
                       <BridgeSyncProvider>
                         <CounterValues.PollingProvider>
-                          <App />
+                          <ButtonUseTouchable.Provider value={false}>
+                            <App />
+                          </ButtonUseTouchable.Provider>
                         </CounterValues.PollingProvider>
                       </BridgeSyncProvider>
                     </LocaleProvider>
