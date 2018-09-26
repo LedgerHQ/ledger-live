@@ -26,6 +26,7 @@ type Props = {
 
 type State = {
   errorValue: Animated.Value,
+  pendingValue: Animated.Value,
 };
 
 const TICK_W = 6;
@@ -34,6 +35,7 @@ const TICK_H = 20;
 class AccountRow extends PureComponent<Props, State> {
   state = {
     errorValue: new Animated.Value(this.props.syncState.error ? 1 : 0),
+    pendingValue: new Animated.Value(this.props.syncState.pending ? 1 : 0),
   };
 
   onPress = () => {
@@ -47,7 +49,14 @@ class AccountRow extends PureComponent<Props, State> {
     if (!old.syncState.error !== !syncState.error) {
       Animated.timing(this.state.errorValue, {
         toValue: syncState.error ? 1 : 0,
-        useNativeEvent: true,
+        useNativeDriver: true,
+        duration: 1000,
+      }).start();
+    }
+    if (!old.syncState.pending !== !syncState.pending) {
+      Animated.timing(this.state.pendingValue, {
+        toValue: syncState.pending ? 1 : 0,
+        useNativeDriver: true,
         duration: 1000,
       }).start();
     }
@@ -55,14 +64,24 @@ class AccountRow extends PureComponent<Props, State> {
 
   render() {
     const { account, style } = this.props;
-    const { errorValue } = this.state;
+    const { errorValue, pendingValue } = this.state;
     return (
       <Card onPress={this.onPress} style={[styles.root, style]}>
         <Animated.View
           style={[
-            styles.errorTick,
+            styles.tickError,
+            styles.tick,
             {
               opacity: errorValue,
+            },
+          ]}
+        />
+        <Animated.View
+          style={[
+            styles.tickPending,
+            styles.tick,
+            {
+              opacity: pendingValue,
             },
           ]}
         />
@@ -128,8 +147,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.smoke,
   },
-  errorTick: {
+  tickError: {
     backgroundColor: colors.alert,
+  },
+  tickPending: {
+    backgroundColor: colors.fog,
+  },
+  tick: {
     position: "absolute",
     left: -TICK_W + 1, // +1 is hack for android. it would disappear otherwise^^
     width: TICK_W,
