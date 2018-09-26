@@ -2,7 +2,7 @@
 import React from "react";
 import sample from "lodash/sample";
 import { genAccount } from "@ledgerhq/live-common/lib/mock/account";
-import GreyButton from "./GreyButton";
+import Button from "./Button";
 import { accountModel } from "../reducers/accounts";
 import db from "../db";
 import { withReboot } from "../context/Reboot";
@@ -23,7 +23,6 @@ async function injectMockAccountsInDB(count) {
 }
 
 const GenerateMockAccountsButton = ({
-  title,
   reboot,
   count,
   ...rest
@@ -32,9 +31,9 @@ const GenerateMockAccountsButton = ({
   count: number,
   reboot: *,
 }) => (
-  <GreyButton
+  <Button
     {...rest}
-    title={title}
+    type="secondary"
     onPress={async () => {
       await injectMockAccountsInDB(count);
       reboot();

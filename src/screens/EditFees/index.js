@@ -19,7 +19,7 @@ import colors from "../../colors";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 import HeaderRightClose from "../../components/HeaderRightClose";
 
 import FeesRow from "./FeesRow";
@@ -106,10 +106,10 @@ class FeeSettings extends Component<Props, State> {
                 onPress={this.onPressFees}
               />
               <View style={styles.buttonContainer}>
-                <BlueButton
+                <Button
+                  type="primary"
                   title="Validate Fees"
                   containerStyle={styles.continueButton}
-                  titleStyle={styles.continueButtonTitle}
                   onPress={this.onValidateFees}
                 />
               </View>
@@ -132,13 +132,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   continueButton: {
-    height: "auto",
-    paddingVertical: 16,
     alignSelf: "stretch",
-  },
-  continueButtonTitle: {
-    fontSize: 16,
-    fontFamily: "Museo Sans",
   },
   container: {
     flex: 1,

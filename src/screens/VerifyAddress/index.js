@@ -14,7 +14,7 @@ import LText from "../../components/LText/index";
 
 import colors from "../../colors";
 import Stepper from "../../components/Stepper";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 
 import deviceConnected from "../../images/device-connected.png";
 
@@ -60,12 +60,7 @@ class VerifyAddress extends Component<Props, State> {
         </View>
         <Image source={deviceConnected} />
         <View style={styles.bottomContainer}>
-          <BlueButton
-            title="Verify"
-            onPress={this.navigate}
-            containerStyle={styles.continueButton}
-            titleStyle={styles.continueButtonText}
-          />
+          <Button type="primary" title="Verify" onPress={this.navigate} />
         </View>
       </SafeAreaView>
     );
@@ -97,14 +92,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     color: colors.smoke,
-  },
-  continueButton: {
-    paddingVertical: 16,
-    height: "auto",
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontFamily: "Museo Sans",
   },
 });
 

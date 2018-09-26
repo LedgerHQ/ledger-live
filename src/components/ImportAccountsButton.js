@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { withNavigation } from "react-navigation";
-import BlueButton from "./BlueButton";
+import Button from "./Button";
 
 const ImportAccountsButton = ({
   title,
@@ -10,7 +10,8 @@ const ImportAccountsButton = ({
   title: string,
   navigation: *,
 }) => (
-  <BlueButton
+  <Button
+    type="primary"
     title={title}
     onPress={() => navigation.navigate("ImportAccounts")}
   />

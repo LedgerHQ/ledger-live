@@ -10,7 +10,7 @@ import type { T } from "../../types/common";
 import MenuTitle from "../../components/MenuTitle";
 import OrderOption from "./OrderOption";
 import BottomModal from "../../components/BottomModal";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 
 class AccountOrderModal extends Component<{
   navigation: *,
@@ -22,15 +22,11 @@ class AccountOrderModal extends Component<{
     const { onClose, isOpened, t } = this.props;
     return (
       <BottomModal onClose={onClose} isOpened={isOpened}>
-        <MenuTitle>{t("common.common.sortBy")}</MenuTitle>
+        <MenuTitle>{t("common:common.sortBy")}</MenuTitle>
         <OrderOption id="balance" />
         <OrderOption id="name" />
         <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
-          <BlueButton
-            onPress={onClose}
-            title="Done"
-            containerStyle={{ height: 48 }}
-          />
+          <Button type="primary" onPress={onClose} title="Done" />
         </View>
       </BottomModal>
     );

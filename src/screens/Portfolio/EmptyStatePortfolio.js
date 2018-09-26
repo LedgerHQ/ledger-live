@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import colors from "../../colors";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 
 class EmptyStatePortfolio extends PureComponent<{
   t: T,
@@ -27,11 +27,11 @@ class EmptyStatePortfolio extends PureComponent<{
             {t("portfolio.emptyState.title")}
           </LText>
           <LText style={styles.desc}>{t("portfolio.emptyState.desc")}</LText>
-          <BlueButton
+          <Button
+            type="primary"
             title={t("portfolio.emptyState.buttons.import")}
             onPress={this.goToImportAccounts}
-            containerStyle={styles.recieveButton}
-            titleStyle={[styles.buttonTitle]}
+            containerStyle={styles.receiveButton}
           />
         </View>
       </View>
@@ -51,11 +51,7 @@ const styles = StyleSheet.create({
   body: {
     alignItems: "center",
   },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  recieveButton: {
-    height: 48,
+  receiveButton: {
     width: 290,
   },
   title: {
