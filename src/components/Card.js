@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { RectButton } from "react-native-gesture-handler";
+import { View, StyleSheet } from "react-native";
 
 type Props = {
   onPress?: () => void,
@@ -13,9 +14,9 @@ export default class Card extends Component<Props> {
   render() {
     const { onPress, style, children } = this.props;
     return onPress ? (
-      <TouchableOpacity onPress={onPress} style={[styles.root, style]}>
+      <RectButton onPress={onPress} style={[styles.root, style]}>
         {children}
-      </TouchableOpacity>
+      </RectButton>
     ) : (
       <View style={[styles.root, style]}>{children}</View>
     );
