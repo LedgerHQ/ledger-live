@@ -23,8 +23,7 @@ import colors from "../../colors";
 import LText from "../../components/LText/index";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
-import OutlineButton from "../../components/OutlineButton";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 
 import AmountInput from "./AmountInput";
 import CounterValuesSeparator from "./CounterValuesSeparator";
@@ -127,18 +126,13 @@ class SelectFunds extends Component<Props, State> {
                 </LText>
               </View>
               <View style={styles.bottomWrapper}>
-                <OutlineButton
-                  outlineColor={colors.live}
-                  containerStyle={styles.useMaxButton}
+                <Button
+                  type="tertiary"
+                  title="USE MAX"
                   onPress={() => {
                     console.log("max"); // eslint-disable-line no-console
                   }}
-                  hitSlop={{ top: 10, bottom: 10, left: 0, right: 0 }}
-                >
-                  <LText bold style={styles.useMaxText}>
-                    USE MAX
-                  </LText>
-                </OutlineButton>
+                />
                 <LText style={styles.available}>
                   Available : &nbsp;
                   <CurrencyUnitValue
@@ -148,18 +142,11 @@ class SelectFunds extends Component<Props, State> {
                   />
                 </LText>
                 <View style={styles.continueWrapper}>
-                  <BlueButton
+                  <Button
+                    type="primary"
                     title="Continue"
                     onPress={this.navigate}
                     disabled={!isValid}
-                    containerStyle={[
-                      styles.continueButton,
-                      !isValid ? styles.disabledContinueButton : null,
-                    ]}
-                    titleStyle={[
-                      styles.continueButtonText,
-                      !isValid ? styles.disabledContinueButtonText : null,
-                    ]}
                   />
                 </View>
               </View>
@@ -186,11 +173,6 @@ const styles = StyleSheet.create({
     color: colors.grey,
     marginTop: 10,
   },
-  useMaxButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-  },
   useMaxText: {
     fontSize: 10,
     color: colors.live,
@@ -216,20 +198,6 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     justifyContent: "flex-end",
     paddingBottom: 16,
-  },
-  continueButton: {
-    paddingVertical: 16,
-    height: "auto",
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontFamily: "Museo Sans",
-  },
-  disabledContinueButton: {
-    backgroundColor: colors.lightFog,
-  },
-  disabledContinueButtonText: {
-    color: colors.grey,
   },
 });
 

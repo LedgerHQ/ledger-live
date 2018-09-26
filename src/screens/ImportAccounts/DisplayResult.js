@@ -20,7 +20,7 @@ import { accountsSelector } from "../../reducers/accounts";
 
 import LText from "../../components/LText";
 import colors from "../../colors";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import DisplayResultItem from "./DisplayResultItem";
@@ -243,11 +243,10 @@ class DisplayResult extends Component<Props, State> {
               }))}
             />
             {selectedAccounts.length ? (
-              <BlueButton
+              <Button
+                type="primary"
                 title={t("common.continue")}
                 onPress={this.onImport}
-                containerStyle={styles.button}
-                titleStyle={styles.buttonText}
               />
             ) : null}
           </ScrollView>
@@ -256,11 +255,10 @@ class DisplayResult extends Component<Props, State> {
             <LText bold style={styles.noAccountText}>
               {t("account.import.result.noAccounts")}
             </LText>
-            <BlueButton
+            <Button
+              type="primary"
               title={t("common.done")}
               onPress={this.close}
-              containerStyle={styles.button}
-              titleStyle={styles.buttonText}
             />
           </View>
         )}
@@ -296,13 +294,6 @@ const styles = StyleSheet.create({
   sectionHeaderText: {
     color: colors.grey,
     fontSize: 14,
-  },
-  button: {
-    paddingVertical: 16,
-    height: "auto",
-  },
-  buttonText: {
-    fontSize: 16,
   },
   noAccountText: {
     flex: 1,

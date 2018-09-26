@@ -9,7 +9,7 @@ import Icon from "react-native-vector-icons/dist/Feather";
 import colors from "../../colors";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import FallbackCamera from "../../icons/FallbackCamera";
 
@@ -87,18 +87,22 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
               {"You’ll be taken to Android settings to activate it"}
             </Trans>
           </LText>
-          <BlueButton
+          <Button
+            type="primary"
             title={t("account.import.fallback.buttonAndroid")}
             onPress={this.openNativeSettings}
             containerStyle={styles.buttonContainer}
-            titleStyle={styles.buttonTitle}
-            iconLeft={<Icon name="settings" size={16} color={colors.white} />}
+            iconLeft={IconSettings}
           />
         </View>
       </View>
     );
   }
 }
+
+const IconSettings = ({ size, color }: { size: number, color: string }) => (
+  <Icon name="settings" size={size} color={color} />
+);
 
 export default translate()(FallBackCameraScreen);
 
@@ -126,10 +130,6 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   buttonContainer: {
-    height: 48,
     width: 290,
-  },
-  buttonTitle: {
-    fontSize: 16,
   },
 });

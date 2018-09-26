@@ -14,7 +14,7 @@ import StepHeader from "../../components/StepHeader";
 import Stepper from "../../components/Stepper";
 import LText from "../../components/LText";
 import CurrencyIcon from "../../components/CurrencyIcon";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 
 import colors from "../../colors";
 
@@ -188,20 +188,13 @@ class ConnectDevice extends Component<Props, State> {
         </View>
         <View style={styles.bottomContainer}>
           <LText semiBold style={styles.noDeviceText}>
-            Don&#39;t have your device ?
+            {"Don't have your device ?"}
           </LText>
-          <BlueButton
+          <Button
+            type="primary"
             title="Continue"
             onPress={this.navigate}
             disabled={!enabled}
-            containerStyle={[
-              styles.continueButton,
-              !enabled ? styles.disabledContinueButton : null,
-            ]}
-            titleStyle={[
-              styles.continueButtonText,
-              !enabled ? styles.disabledContinueButtonText : null,
-            ]}
           />
         </View>
       </SafeAreaView>
@@ -256,20 +249,6 @@ const styles = StyleSheet.create({
   },
   step: {
     marginBottom: 16,
-  },
-  continueButton: {
-    paddingVertical: 16,
-    height: "auto",
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontFamily: "Museo Sans",
-  },
-  disabledContinueButton: {
-    backgroundColor: colors.lightFog,
-  },
-  disabledContinueButtonText: {
-    color: colors.grey,
   },
 });
 

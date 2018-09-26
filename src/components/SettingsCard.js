@@ -2,7 +2,6 @@
 
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import Touchable from "./Touchable";
 import Card from "./Card";
 import LText from "./LText";
 import colors from "../colors";
@@ -19,19 +18,17 @@ export default class SettingsCard extends Component<Props> {
   render() {
     const { title, desc, icon, onClick } = this.props;
     return (
-      <Touchable onPress={onClick}>
-        <Card style={[getElevationStyle(3), styles.cardStyle]}>
-          <Circle bg={colors.lightLive} size={32}>
-            {icon}
-          </Circle>
-          <View style={styles.cardTextBlock}>
-            <LText secondary semiBold style={styles.title}>
-              {title}
-            </LText>
-            <LText style={styles.desc}>{desc}</LText>
-          </View>
-        </Card>
-      </Touchable>
+      <Card onPress={onClick} style={[getElevationStyle(3), styles.cardStyle]}>
+        <Circle bg={colors.lightLive} size={32}>
+          {icon}
+        </Circle>
+        <View style={styles.cardTextBlock}>
+          <LText secondary semiBold style={styles.title}>
+            {title}
+          </LText>
+          <LText style={styles.desc}>{desc}</LText>
+        </View>
+      </Card>
     );
   }
 }

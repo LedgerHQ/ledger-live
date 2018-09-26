@@ -13,7 +13,7 @@ import colors from "../../colors";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import HeaderRightClose from "../../components/HeaderRightClose";
-import BlueButton from "../../components/BlueButton";
+import Button from "../../components/Button";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
@@ -86,10 +86,9 @@ class ReceiveConfirmation extends Component<Props, State> {
           </View>
         </View>
         <View style={styles.bottomContainer}>
-          <BlueButton
+          <Button
+            type="primary"
             title="Verify Address"
-            containerStyle={styles.continueButton}
-            titleStyle={styles.continueButtonText}
             onPress={() => console.warn("TODO: trigger verify on device")}
           />
         </View>
@@ -111,14 +110,6 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     padding: 16,
-  },
-  continueButton: {
-    paddingVertical: 16,
-    height: "auto",
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontFamily: "Museo Sans",
   },
   qrWrapper: {
     borderWidth: 1,
