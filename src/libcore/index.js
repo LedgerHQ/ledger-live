@@ -12,7 +12,13 @@ import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
 } from "../logic/accountName";
-import { getValue, createInstance, OperationTypeMap } from "./specific";
+import {
+  getValue,
+  getBlockHeightForAccount,
+  getOperationDate,
+  createInstance,
+  OperationTypeMap,
+} from "./specific";
 
 type ScanOpts = {
   isSegwit: boolean,
@@ -233,16 +239,7 @@ async function buildAccountRaw({
 
   const [walletPath, accountPath] = derivations;
 
-  let blockHeight = 0;
-  try {
-    const coreBlock = await core.coreAccount.getLastBlock(coreAccount);
-    const blockHeightRes = await core.coreBlock.getHeight(coreBlock);
-    blockHeight = blockHeightRes.value;
-  } catch (e) {
-    // FIXME: this is throwing `Cannot convert argument of type class java.lang.Long`
-    // note: works on iOS, to be tested again on Android
-    console.warn(e);
-  }
+  const blockHeight = await getBlockHeightForAccount(core, coreAccount);
 
   const [coreFreshAddress] = await core.coreAccount.getFreshPublicAddresses(
     coreAccount,
@@ -350,11 +347,7 @@ async function buildOperationRaw({
     core.coreOperation.getSenders(coreOperation),
   ]);
 
-  // FIXME: libcore is sending date without timezone, and with weird
-  //        format (e.g: `2018-59-31 03:59:53`)
-  // on iOS, date is just null !
-  const dateR = await core.coreOperation.getDate(coreOperation);
-  const date = new Date(dateR.value);
+  const date = await getOperationDate(core, coreOperation);
 
   const type = OperationTypeMap[operationType];
 
