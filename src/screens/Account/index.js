@@ -185,6 +185,7 @@ class AccountScreen extends PureComponent<Props, State> {
             priority: 10,
           }}
           contentContainerStyle={styles.contentContainer}
+          stickySectionHeadersEnabled={false}
         />
       </View>
     );
