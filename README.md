@@ -4,7 +4,8 @@ Mobile application for the Ledger Wallet
 
 ## Pre-requisite
 
-- Yarn
+- Node LTS version
+- Yarn 1.10.1 or above
 
 ### iOS
 
