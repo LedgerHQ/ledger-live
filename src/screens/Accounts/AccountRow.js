@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { Animated, View, StyleSheet } from "react-native";
+import { EXPERIMENTAL_ACCOUNT_FEEDBACK } from "react-native-config";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -70,24 +71,28 @@ class AccountRow extends PureComponent<Props, State> {
     const { errorValue, pendingValue } = this.state;
     return (
       <Card onPress={this.onPress} style={[styles.root, style]}>
-        <Animated.View
-          style={[
-            styles.tickError,
-            styles.tick,
-            {
-              opacity: errorValue,
-            },
-          ]}
-        />
-        <Animated.View
-          style={[
-            styles.tickPending,
-            styles.tick,
-            {
-              opacity: pendingValue,
-            },
-          ]}
-        />
+        {EXPERIMENTAL_ACCOUNT_FEEDBACK ? (
+          <Animated.View
+            style={[
+              styles.tickError,
+              styles.tick,
+              {
+                opacity: errorValue,
+              },
+            ]}
+          />
+        ) : null}
+        {EXPERIMENTAL_ACCOUNT_FEEDBACK ? (
+          <Animated.View
+            style={[
+              styles.tickPending,
+              styles.tick,
+              {
+                opacity: pendingValue,
+              },
+            ]}
+          />
+        ) : null}
         <CurrencyIcon size={24} currency={account.currency} />
         <View style={styles.accountName}>
           <LText semiBold numberOfLines={2} style={styles.accountNameText}>
