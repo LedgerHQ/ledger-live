@@ -6,16 +6,19 @@ import accounts from "./accounts";
 import CounterValues from "../countervalues";
 import settings from "./settings";
 import bridgeSync from "./bridgeSync";
+import appstate from "./appstate";
 
 import type { AccountsState } from "./accounts";
 import type { SettingsState } from "./settings";
 import type { BridgeSyncState } from "./bridgeSync";
+import type { AppState } from "./appstate";
 
 export type State = {
   accounts: AccountsState,
   countervalues: *,
   settings: SettingsState,
   bridgeSync: BridgeSyncState,
+  appstate: AppState,
 };
 
 export default combineReducers({
@@ -23,4 +26,5 @@ export default combineReducers({
   countervalues: CounterValues.reducer,
   settings,
   bridgeSync,
+  appstate,
 });

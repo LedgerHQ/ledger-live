@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "center",
     height: 72,
+    overflow: "visible",
   },
   accountName: {
     flexGrow: 1,

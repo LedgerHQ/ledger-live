@@ -4,7 +4,6 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { RefreshControl } from "react-native";
 import { createStructuredSelector } from "reselect";
-import type { BehaviorAction } from "../bridge/BridgeSyncContext";
 import type { AsyncState } from "../reducers/bridgeSync";
 import { globalSyncStateSelector } from "../reducers/bridgeSync";
 import { BridgeSyncConsumer } from "../bridge/BridgeSyncContext";
@@ -50,7 +49,6 @@ type Props = {
   cvPoll: *,
   setSyncBehavior: *,
   forwardedRef?: *,
-  provideSyncRefreshControlBehavior?: BehaviorAction,
 };
 
 export default (ScrollListLike: any) => {
@@ -61,12 +59,10 @@ export default (ScrollListLike: any) => {
 
     onPress = () => {
       this.props.cvPoll();
-      this.props.setSyncBehavior(
-        this.props.provideSyncRefreshControlBehavior || {
-          type: "SYNC_ALL_ACCOUNTS",
-          priority: 5,
-        },
-      );
+      this.props.setSyncBehavior({
+        type: "SYNC_ALL_ACCOUNTS",
+        priority: 5,
+      });
       this.setState({ lastClickTime: Date.now() });
     };
 

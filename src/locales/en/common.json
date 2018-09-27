@@ -20,6 +20,10 @@
     "SyncError": {
       "title": "Synchronization error",
       "description": "Something went wrong with the blockchains synchronization.  Please retry or contact us."
+    },
+    "NetworkDown": {
+      "title": "Oops, internet seems down",
+      "description": "Please check your internet connection."
     }
   },
   "auth": {

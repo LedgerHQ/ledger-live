@@ -4,7 +4,6 @@ import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { createAccountModel } from "@ledgerhq/live-common/lib/models/account";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { OUTDATED_CONSIDERED_DELAY } from "../constants";
 
 export const accountModel = createAccountModel();
 
@@ -82,9 +81,7 @@ export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
     const { lastSyncDate } = a;
     const { blockAvgTime } = a.currency;
     if (!blockAvgTime) return true;
-    const outdated =
-      Date.now() - (lastSyncDate || 0) >
-      blockAvgTime * 1000 + OUTDATED_CONSIDERED_DELAY;
+    const outdated = Date.now() - (lastSyncDate || 0) > blockAvgTime * 1000;
     return !outdated;
   }),
 );
