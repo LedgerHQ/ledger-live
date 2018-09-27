@@ -40,6 +40,7 @@ import EditFees from "./screens/EditFees";
 import VerifyAddress from "./screens/VerifyAddress";
 import ReceiveConfirmation from "./screens/ReceiveComfirmation";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
+import DebugBLE from "./screens/DebugBLE";
 
 // TODO look into all FlowFixMe
 
@@ -241,6 +242,8 @@ export const RootNavigator = createStackNavigator(
     AccountSettings,
     ImportAccounts,
     SendFundsSettings,
+    // $FlowFixMe
+    DebugBLE,
   },
   {
     mode: "modal",

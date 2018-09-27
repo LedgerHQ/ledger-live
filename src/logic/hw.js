@@ -7,11 +7,11 @@ import { catchError } from "rxjs/operators/catchError";
 
 import type Transport from "@ledgerhq/hw-transport";
 import HIDTransport from "@ledgerhq/react-native-hid";
-import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import { withStaticURL } from "@ledgerhq/hw-transport-http";
 import Config from "react-native-config";
-
 import Eth from "@ledgerhq/hw-app-eth";
+
+import BluetoothTransport from "../react-native-hw-transport-ble";
 
 export async function tmpTestEthExchange(deviceId: string) {
   const t = await open(deviceId);
