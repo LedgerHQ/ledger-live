@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { RectButton } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
 
 export default class Touchable extends Component<
   {
@@ -38,9 +38,9 @@ export default class Touchable extends Component<
     const { pending } = this.state;
     const disabled = !onPress || pending;
     return (
-      <RectButton
+      <TouchableOpacity
         onPress={this.onPress}
-        enabled={!disabled}
+        disabled={disabled}
         hitSlop={{
           // default & can be overrided by rest
           top: 16,
@@ -51,7 +51,7 @@ export default class Touchable extends Component<
         {...rest}
       >
         {children}
-      </RectButton>
+      </TouchableOpacity>
     );
   }
 }
