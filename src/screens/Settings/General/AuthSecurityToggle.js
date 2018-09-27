@@ -1,73 +1,59 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { createStructuredSelector } from "reselect";
-import { Switch, Alert } from "react-native";
+import { Switch } from "react-native";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
-import { setAuthSecurity } from "../../../actions/settings";
-import { authSecurityEnabledSelector } from "../../../reducers/settings";
-import auth from "../../../context/AuthPass/auth";
+import { setPrivacy } from "../../../actions/settings";
+import { privacySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
+import type { T } from "../../../types/common";
+import type { Privacy } from "../../../reducers/settings";
+import BiometricsRow from "./BiometricsRow";
 
 type Props = {
-  authSecurityEnabled: boolean,
-  setAuthSecurity: boolean => void,
-};
-type State = {
-  validationPending: boolean,
+  privacy: Privacy,
+  setPrivacy: ($Shape<Privacy>) => void,
+  navigation: *,
+  t: T,
 };
 
 const mapStateToProps = createStructuredSelector({
-  authSecurityEnabled: authSecurityEnabledSelector,
+  privacy: privacySelector,
 });
 
 const mapDispatchToProps = {
-  setAuthSecurity,
+  setPrivacy,
 };
 
-class AuthSecurityToggle extends Component<Props, State> {
-  state = {
-    validationPending: false,
-  };
-
-  onValueChange = async (authSecurityEnabled: boolean) => {
+class AuthSecurityToggle extends Component<Props> {
+  onValueChange = (authSecurityEnabled: boolean) => {
+    const { navigation, setPrivacy } = this.props;
     if (authSecurityEnabled) {
-      this.setState({ validationPending: true });
-      let success = false;
-      let error;
-      try {
-        success = await auth("Please authenticate to enable Auth Security");
-      } catch (e) {
-        error = e;
-      }
-      this.setState({ validationPending: false });
-      if (!success) {
-        Alert.alert(
-          "Authentication failed",
-          `Auth Security was not enabled because your phone failed to authenticate.\n${String(
-            error || "",
-          )}`,
-        );
-        return;
-      }
+      return navigation.navigate("PasswordAdd");
     }
-    this.props.setAuthSecurity(authSecurityEnabled);
+    return setPrivacy({
+      authSecurityEnabled,
+      biometricsEnabled: false,
+    });
   };
 
   render() {
-    const { authSecurityEnabled } = this.props;
-    const { validationPending } = this.state;
+    const { privacy } = this.props;
     return (
-      <SettingsRow
+      <Fragment>
+        <SettingsRow
         title={<Trans i18nKey="common:settings.display.password" />}
         desc={<Trans i18nKey="common:settings.display.passwordDesc" />}
         alignedTop
-      >
-        <Switch
-          value={authSecurityEnabled || validationPending}
-          onValueChange={this.onValueChange}
-        />
-      </SettingsRow>
+        >
+          <Switch
+            value={privacy.authSecurityEnabled}
+            onValueChange={this.onValueChange}
+          />
+        </SettingsRow>
+        {privacy.authSecurityEnabled && <BiometricsRow />}
+      </Fragment>
     );
   }
 }

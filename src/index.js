@@ -15,8 +15,6 @@ import ButtonUseTouchable from "./context/ButtonUseTouchable";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
-import AuthFailedApp from "./components/AuthFailedApp";
-import AuthPendingApp from "./components/AuthPendingApp";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
@@ -85,7 +83,7 @@ class App extends Component<*> {
   }
 }
 
-export default class Root extends Component<{}, {}> {
+export default class Root extends Component<{}, { appState: * }> {
   initTimeout: *;
 
   componentWillUnmount() {
@@ -114,11 +112,7 @@ export default class Root extends Component<{}, {}> {
             ready ? (
               <AuthPass>
                 {state =>
-                  state.pending ? (
-                    <AuthPendingApp />
-                  ) : !state.success ? (
-                    <AuthFailedApp />
-                  ) : (
+                  !state.isLocked && (
                     <LocaleProvider>
                       <BridgeSyncProvider>
                         <CounterValues.PollingProvider>

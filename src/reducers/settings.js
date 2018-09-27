@@ -30,13 +30,17 @@ export const timeRangeDaysByKey = {
 };
 
 export type TimeRange = $Keys<typeof timeRangeDaysByKey>;
-
+export type Privacy = {
+  authSecurityEnabled: boolean,
+  value: ?string,
+  biometricsEnabled: boolean,
+};
 export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
-  authSecurityEnabled: boolean,
   reportErrorsEnabled: boolean,
   analyticsEnabled: boolean,
+  privacy: Privacy,
   currenciesSettings: {
     [currencyId: string]: CurrencySettings,
   },
@@ -49,7 +53,11 @@ export type SettingsState = {
 const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
-  authSecurityEnabled: false,
+  privacy: {
+    authSecurityEnabled: false,
+    value: null,
+    biometricsEnabled: false,
+  },
   reportErrorsEnabled: false,
   developerModeEnabled: false,
   analyticsEnabled: false,
@@ -86,10 +94,13 @@ const handlers: Object = {
       [currencyId]: { ...currenciesSettings[currencyId], ...patch },
     },
   }),
-  SETTINGS_SET_AUTH_SECURITY: (
-    state: SettingsState,
-    { authSecurityEnabled },
-  ) => ({ ...state, authSecurityEnabled }),
+  SETTINGS_SET_PRIVACY: (state: SettingsState, { privacy }) => ({
+    ...state,
+    privacy: {
+      ...state.privacy,
+      ...privacy,
+    },
+  }),
 
   SETTINGS_SET_REPORT_ERRORS: (
     state: SettingsState,
@@ -208,10 +219,7 @@ export const currencySettingsSelector = (
   ...state.settings.currenciesSettings[currency.id],
 });
 
-export const authSecurityEnabledSelector = createSelector(
-  storeSelector,
-  s => s.authSecurityEnabled,
-);
+export const privacySelector = createSelector(storeSelector, s => s.privacy);
 
 export const reportErrorsEnabledSelector = createSelector(
   storeSelector,

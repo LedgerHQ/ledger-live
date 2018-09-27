@@ -20,9 +20,9 @@ export const setExchangePairsAction: SetExchangePairs = pairs => ({
   pairs,
 });
 
-export const setAuthSecurity = (authSecurityEnabled: boolean) => ({
-  type: "SETTINGS_SET_AUTH_SECURITY",
-  authSecurityEnabled,
+export const setPrivacy = (privacy: *) => ({
+  type: "SETTINGS_SET_PRIVACY",
+  privacy,
 });
 
 export const setCountervalue = (counterValue: string) => ({
