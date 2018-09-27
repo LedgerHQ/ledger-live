@@ -23,6 +23,7 @@ class BottomModal extends Component<Props> {
         <ReactNativeModal
           isVisible={isOpened}
           onBackdropPress={onClose}
+          onBackButtonPress={onClose}
           useNativeDriver
           style={{
             justifyContent: "flex-end",
