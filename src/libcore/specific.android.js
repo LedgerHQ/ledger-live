@@ -19,20 +19,13 @@ export const OperationTypeMap = {
 
 /* eslint-disable */
 export const getBlockHeightForAccount = async (core: *, coreAccount: *) => {
-  // FIXME: this is throwing
-  // `Cannot convert argument of type class java.lang.Long`
-  /*
-    const coreBlock = await core.coreAccount.getLastBlock(coreAccount);
-    const blockHeightRes = await core.coreBlock.getHeight(coreBlock);
-    return blockHeightRes.value;
-  */
-  return 0;
+  const coreBlock = await core.coreAccount.getLastBlock(coreAccount);
+  const blockHeightRes = await core.coreBlock.getHeight(coreBlock);
+  return blockHeightRes;
 };
 
-// FIXME: libcore is sending date without timezone, and with weird
-//        format (e.g: `2018-59-31 03:59:53`)
-export const getOperationDate = async (core, coreOperation) => {
-  const _dateR = await core.coreOperation.getDate(coreOperation);
-  return new Date();
-  //return new Date(dateR.value);
+/* eslint-disable */
+export const getOperationDate = async (core: *, coreOperation: *) => {
+  const dateR = await core.coreOperation.getDate(coreOperation);
+  return new Date(dateR.value);
 };

@@ -38,7 +38,7 @@
     "@ledgerhq/live-common": "^3.4.0",
     "@ledgerhq/react-native-hid": "4.21.0",
     "@ledgerhq/react-native-hw-transport-ble": "4.21.0",
-    "@ledgerhq/react-native-ledger-core": "^0.3.8",
+    "@ledgerhq/react-native-ledger-core": "^0.3.11",
     "@ledgerhq/react-native-passcode-auth": "2.0.0",
     "async": "^2.6.1",
     "bignumber.js": "^7.2.1",
