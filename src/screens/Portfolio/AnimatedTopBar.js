@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   content: {
     justifyContent: "center",
     paddingVertical: 8,
+    height: 56,
   },
 });
 
