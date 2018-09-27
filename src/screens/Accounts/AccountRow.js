@@ -10,17 +10,20 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import colors from "../../colors";
+import { isUpToDateAccountSelector } from "../../reducers/accounts";
 import { accountSyncStateSelector } from "../../reducers/bridgeSync";
 import type { AsyncState } from "../../reducers/bridgeSync";
 
 const mapStateToProps = createStructuredSelector({
   syncState: accountSyncStateSelector,
+  isUpToDateAccount: isUpToDateAccountSelector,
 });
 
 type Props = {
   account: Account,
   syncState: AsyncState,
   style?: any,
+  isUpToDateAccount: boolean,
   navigation: *,
 };
 
@@ -45,7 +48,7 @@ class AccountRow extends PureComponent<Props, State> {
   };
 
   componentDidUpdate(old) {
-    const { syncState } = this.props;
+    const { syncState, isUpToDateAccount } = this.props;
     if (!old.syncState.error !== !syncState.error) {
       Animated.timing(this.state.errorValue, {
         toValue: syncState.error ? 1 : 0,
@@ -53,9 +56,9 @@ class AccountRow extends PureComponent<Props, State> {
         duration: 1000,
       }).start();
     }
-    if (!old.syncState.pending !== !syncState.pending) {
+    if (!old.isUpToDateAccount !== !isUpToDateAccount) {
       Animated.timing(this.state.pendingValue, {
-        toValue: syncState.pending ? 1 : 0,
+        toValue: !isUpToDateAccount ? 1 : 0,
         useNativeDriver: true,
         duration: 1000,
       }).start();
