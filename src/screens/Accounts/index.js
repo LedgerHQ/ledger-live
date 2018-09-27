@@ -7,15 +7,15 @@ import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
-import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
+import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import ImportedAccountsNotification from "../../components/ImportedAccountsNotification";
 
 import NoAccounts from "./NoAccounts";
-import AccountCard from "./AccountCard";
+import AccountRow from "./AccountRow";
 import AccountOrder from "./AccountOrder";
 import AddAccount from "./AddAccount";
 
-const List = provideSyncRefreshControl(FlatList);
+const List = globalSyncRefreshControl(FlatList);
 
 const navigationOptions = {
   title: "Accounts",
@@ -41,7 +41,11 @@ class Accounts extends Component<Props> {
   onAddMockAccount = () => {};
 
   renderItem = ({ item }: { item: Account }) => (
-    <AccountCard navigation={this.props.navigation} account={item} />
+    <AccountRow
+      navigation={this.props.navigation}
+      account={item}
+      accountId={item.id}
+    />
   );
 
   keyExtractor = item => item.id;

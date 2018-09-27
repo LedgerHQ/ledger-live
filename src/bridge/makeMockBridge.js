@@ -10,6 +10,7 @@ import { BigNumber } from "bignumber.js";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
 import { validateNameEdition } from "../logic/account";
 import type { AccountBridge, CurrencyBridge } from "./types";
+import { SyncError } from "../errors";
 
 const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
 
@@ -46,7 +47,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
 
       const sync = () => {
         if (initialAccount.name.includes("crash")) {
-          o.error(new Error("mock failure"));
+          o.error(new SyncError("mock failure"));
           return;
         }
         const ops = broadcasted[accountId] || [];
@@ -172,7 +173,7 @@ export function makeMockCurrencyBridge(opts?: Opts): CurrencyBridge {
       async function job() {
         if (Math.random() > scanAccountDeviceSuccessRate) {
           await delay(1000);
-          if (!unsubscribed) o.error(new Error("scan failed"));
+          if (!unsubscribed) o.error(new SyncError("scan failed"));
           return;
         }
         const nbAccountToGen = 3;

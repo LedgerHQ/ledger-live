@@ -16,6 +16,14 @@
     "Error": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
+    },
+    "SyncError": {
+      "title": "Synchronization error",
+      "description": "Something went wrong with the blockchains synchronization.  Please retry or contact us."
+    },
+    "NetworkDown": {
+      "title": "Oops, internet seems down",
+      "description": "Please check your internet connection."
     }
   },
   "auth": {
@@ -34,14 +42,16 @@
   },
   "portfolio": {
     "totalBalance": "Total balance",
+    "syncError": "Sync error",
     "syncFailed": "Synchronization failed",
+    "syncPending": "Synchronizing...",
     "greeting": {
       "morning": "Good morning",
       "evening": "Good evening",
       "afternoon": "Good afternoon"
     },
     "summary": "Here's the summary of your account",
-    "summary_plural": "Here's the summary of your {{count}} accounts",
+    "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {
       "title": "Add accounts to your portfolio",
       "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",

@@ -3,16 +3,8 @@
 import React, { PureComponent } from "react";
 import { translate } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-
 import LText from "../../components/LText";
-import Space from "../../components/Space";
-
 import colors from "../../colors";
-
-type Props = {
-  nbAccounts: number,
-  t: *,
-};
 
 const getCurrentGreetings = () => {
   const localTimeHour = new Date().getHours();
@@ -30,17 +22,18 @@ const getCurrentGreetings = () => {
   return "common:portfolio.greeting.morning";
 };
 
-class Greetings extends PureComponent<Props> {
+class Greetings extends PureComponent<{
+  nbAccounts: number,
+  t: *,
+}> {
   render() {
     const { nbAccounts, t } = this.props;
-
     return (
       <View style={styles.root}>
-        <LText secondary style={styles.greetingsText} bold>
+        <LText secondary style={styles.title} bold>
           {t(getCurrentGreetings())}
         </LText>
-        <Space h={5} />
-        <LText secondary style={styles.nbAccountsText}>
+        <LText secondary style={styles.description} numberOfLines={2}>
           {t("common:portfolio.summary", { count: nbAccounts })}
         </LText>
       </View>
@@ -50,13 +43,15 @@ class Greetings extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   root: {
-    marginHorizontal: 20,
+    marginHorizontal: 16,
   },
-  greetingsText: {
+  title: {
     fontSize: 16,
     color: colors.darkBlue,
+    justifyContent: "center",
   },
-  nbAccountsText: {
+  description: {
+    marginTop: 5,
     fontSize: 14,
     color: colors.grey,
   },

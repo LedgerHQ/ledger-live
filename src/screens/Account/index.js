@@ -8,11 +8,8 @@ import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/helpers/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
-
 import { accountScreenSelector } from "../../reducers/accounts";
-import { accountScreenSyncStateSelector } from "../../reducers/bridgeSync";
-import type { AsyncState } from "../../reducers/bridgeSync";
-import provideSyncRefreshControl from "../../components/provideSyncRefreshControl";
+import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
@@ -23,11 +20,9 @@ import LoadingFooter from "../../components/LoadingFooter";
 import colors from "../../colors";
 import provideSummary from "../../components/provideSummary";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import SyncErrorHeader from "../../components/SyncErrorHeader";
-
 import type { Item } from "../../components/Graph";
 import type { Summary } from "../../components/provideSummary";
-
+import Header from "./Header";
 import EmptyStateAccount from "./EmptyStateAccount";
 import AccountHeaderRight from "./AccountHeaderRight";
 import AccountHeaderTitle from "./AccountHeaderTitle";
@@ -35,7 +30,6 @@ import { scrollToTopIntent } from "./events";
 
 type Props = {
   account: Account,
-  syncState: AsyncState,
   summary: Summary,
   navigation: NavigationScreenProp<{
     accountId: string,
@@ -47,7 +41,7 @@ type State = {
 };
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
-const List = provideSyncRefreshControl(AnimatedSectionList);
+const List = accountSyncRefreshControl(AnimatedSectionList);
 
 const isAccountEmpty = (a: Account): boolean =>
   a.operations.length === 0 && a.balance.isZero();
@@ -103,13 +97,17 @@ class AccountScreen extends PureComponent<Props, State> {
   );
 
   ListHeaderComponent = () => {
-    const { summary } = this.props;
+    const { summary, account } = this.props;
+    if (!account) return null;
     // TODO: we need to make a different GraphCard for Account screen:
     // - we can optimize more (e.g. only need to calculate the balance of this account, which is cached btw. no need for countervalues and the more complex algo)
     // - less if logic in graph (we shouldn't have magically guess if it's a "countervalue" mode or a "crypto" one)
     // - the fact we want later to diverge both a bit (graph differ already, and later if we intro the idea to switch between modes)
     return (
-      <GraphCard summary={summary} renderTitle={this.renderListHeaderTitle} />
+      <View>
+        <Header accountId={account.id} />
+        <GraphCard summary={summary} renderTitle={this.renderListHeaderTitle} />
+      </View>
     );
   };
 
@@ -141,7 +139,7 @@ class AccountScreen extends PureComponent<Props, State> {
   renderSectionHeader = ({ section }) => <SectionHeader section={section} />;
 
   render() {
-    const { account, navigation, syncState } = this.props;
+    const { account, navigation } = this.props;
     const { opCount } = this.state;
 
     if (!account) return null;
@@ -150,8 +148,6 @@ class AccountScreen extends PureComponent<Props, State> {
       return <EmptyStateAccount account={account} navigation={navigation} />;
     }
 
-    const { error } = syncState;
-
     const { sections, completed } = groupAccountOperationsByDay(
       account,
       opCount,
@@ -159,13 +155,11 @@ class AccountScreen extends PureComponent<Props, State> {
 
     return (
       <View style={styles.root}>
-        {error ? (
-          <SyncErrorHeader error={error} onPress={this.onPress} />
-        ) : null}
         <List
           ref={this.ref}
           sections={sections}
           style={styles.sectionList}
+          contentContainerStyle={styles.contentContainer}
           ListFooterComponent={
             !completed
               ? LoadingFooter
@@ -179,12 +173,7 @@ class AccountScreen extends PureComponent<Props, State> {
           renderSectionHeader={this.renderSectionHeader}
           onEndReached={this.onEndReached}
           showsVerticalScrollIndicator={false}
-          provideSyncRefreshControlBehavior={{
-            type: "SYNC_ONE_ACCOUNT",
-            accountId: account.id,
-            priority: 10,
-          }}
-          contentContainerStyle={styles.contentContainer}
+          accountId={account.id}
           stickySectionHeadersEnabled={false}
         />
       </View>
@@ -196,7 +185,6 @@ export default compose(
   connect(
     createStructuredSelector({
       account: accountScreenSelector,
-      syncState: accountScreenSyncStateSelector,
     }),
   ),
   provideSummary,

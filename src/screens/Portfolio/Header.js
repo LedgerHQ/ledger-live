@@ -1,32 +1,46 @@
 // @flow
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import type { AsyncState } from "../../reducers/bridgeSync";
+import { globalSyncStateSelector } from "../../reducers/bridgeSync";
+import { isUpToDateSelector } from "../../reducers/accounts";
+import { networkErrorSelector } from "../../reducers/appstate";
+import HeaderErrorTitle from "../../components/HeaderErrorTitle";
+import HeaderSynchronizing from "../../components/HeaderSynchronizing";
+import Greetings from "./Greetings";
 
-import React, { Component, Fragment } from "react";
-import SyncIndicatorConnector from "../../components/SyncIndicatorConnector";
-import SyncErrorHeader from "../../components/SyncErrorHeader";
-import AnimatedTopBar from "./AnimatedTopBar";
-import { scrollToTopIntent } from "./events";
+const mapStateToProps = createStructuredSelector({
+  networkError: networkErrorSelector,
+  globalSyncState: globalSyncStateSelector,
+  isUpToDate: isUpToDateSelector,
+});
 
-class Portfolio extends Component<{
-  summary: *,
-  scrollY: *,
-  error: *,
+class PortfolioHeader extends Component<{
+  nbAccounts: number,
+  isUpToDate: boolean,
+  globalSyncState: AsyncState,
+  networkError: ?Error,
 }> {
-  onPress = () => {
-    scrollToTopIntent.next();
-  };
-
   render() {
-    const { scrollY, summary, error } = this.props;
-    return (
-      <Fragment>
-        {error ? (
-          <SyncErrorHeader error={error} onPress={this.onPress} />
-        ) : (
-          <AnimatedTopBar scrollY={scrollY} summary={summary} />
-        )}
-      </Fragment>
+    const {
+      nbAccounts,
+      isUpToDate,
+      networkError,
+      globalSyncState: { pending, error },
+    } = this.props;
+    return pending && !isUpToDate ? (
+      <HeaderSynchronizing />
+    ) : !isUpToDate && error ? (
+      <HeaderErrorTitle
+        withDescription
+        withDetail
+        error={networkError || error}
+      />
+    ) : (
+      <Greetings nbAccounts={nbAccounts} />
     );
   }
 }
 
-export default SyncIndicatorConnector(Portfolio);
+export default connect(mapStateToProps)(PortfolioHeader);

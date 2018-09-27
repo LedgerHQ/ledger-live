@@ -29,7 +29,7 @@ export default (Decorated: React$ComponentType<any>) => {
         <CounterValues.PollingConsumer>
           {cvPolling => {
             const isPending = cvPolling.pending || globalSyncState.pending;
-            const error = cvPolling.error || globalSyncState.error;
+            const error = globalSyncState.error;
             return (
               <Decorated
                 isUpToDate={isUpToDate}

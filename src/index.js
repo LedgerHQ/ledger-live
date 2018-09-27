@@ -19,6 +19,7 @@ import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
+import AppStateListener from "./components/AppStateListener";
 
 useScreens();
 
@@ -58,6 +59,8 @@ class App extends Component<*> {
           hasChanged={this.hasAccountsChanged}
           lense={accountsExportSelector}
         />
+
+        <AppStateListener />
 
         <RootNavigator />
       </View>
