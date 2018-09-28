@@ -63,9 +63,9 @@ To solve this issue you must:
 
 ```sh
 cd node_modules/react-native
-./scripts/ios-install-third-party.sh.
+./scripts/ios-install-third-party.sh
 cd third-party/glog-*
-../../scripts/ios-configure.sh.
+../../scripts/ios-configure-glog.sh
 cd ../../../..
 ```
 
