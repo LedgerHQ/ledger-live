@@ -18,6 +18,7 @@ import Display from "../../icons/Display";
 import colors from "../../colors";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
 import ImportBridgeStreamData from "../../components/ImportBridgeStreamData";
+import OpenDebugBLE from "../../components/OpenDebugBLE";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -92,6 +93,7 @@ class Settings extends Component<Props> {
               dataStr={config.BRIDGESTREAM_DATA}
             />
           ) : null}
+          {config.DEBUG_BLE ? <OpenDebugBLE /> : null}
         </View>
       </ScrollView>
     );
