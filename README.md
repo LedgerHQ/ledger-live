@@ -10,7 +10,6 @@ Mobile application for the Ledger Wallet
 ### iOS
 
 - XCode
-- Carthage: brew install carthage
 
 ### Android
 
