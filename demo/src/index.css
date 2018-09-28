@@ -4,6 +4,12 @@ body {
   font-family: sans-serif;
 }
 
+@media print {
+  canvas {
+    page-break-inside: avoid;
+  }
+}
+
 a,
 a:visited,
 a:hover {
