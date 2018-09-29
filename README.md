@@ -62,11 +62,7 @@ When trying to build with XCode 10 and React Native v0.57.0, you might have issu
 To solve this issue you must:
 
 ```sh
-cd node_modules/react-native
-./scripts/ios-install-third-party.sh
-cd third-party/glog-*
-../../scripts/ios-configure-glog.sh
-cd ../../../..
+./node_modules/react-native/scripts/ios-install-third-party.sh
 ```
 
 The build on XCode 10 should work then.
