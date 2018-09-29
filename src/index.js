@@ -20,6 +20,7 @@ import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
 import AppStateListener from "./components/AppStateListener";
+import SyncNewAccounts from "./bridge/SyncNewAccounts";
 
 useScreens();
 
@@ -61,6 +62,8 @@ class App extends Component<*> {
         />
 
         <AppStateListener />
+
+        <SyncNewAccounts priority={5} />
 
         <RootNavigator />
       </View>
