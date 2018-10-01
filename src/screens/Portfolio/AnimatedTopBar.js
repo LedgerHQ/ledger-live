@@ -7,9 +7,9 @@ import {
   View,
   TouchableWithoutFeedback,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
-import { getElevationStyle } from "../../components/ElevatedView";
 import type { Summary } from "../../components/provideSummary";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
@@ -38,7 +38,7 @@ class AnimatedTopBar extends PureComponent<{
 
     return (
       <TouchableWithoutFeedback onPress={this.onPress}>
-        <Animated.View style={[getElevationStyle(8), styles.root, { opacity }]}>
+        <Animated.View style={[styles.root, { opacity }]}>
           <View style={[styles.outer, { paddingTop: extraStatusBarPadding }]}>
             <SafeAreaView>
               {pending ? (
@@ -68,6 +68,18 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowOpacity: 0.03,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 4,
+        },
+      },
+    }),
   },
   outer: {
     overflow: "hidden",

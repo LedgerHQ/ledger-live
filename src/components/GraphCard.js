@@ -3,7 +3,7 @@
 import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Platform } from "react-native";
 import { translate } from "react-i18next";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
@@ -21,7 +21,6 @@ import Pills from "./Pills";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import { getElevationStyle } from "./ElevatedView";
 
 import type { Item } from "./Graph";
 import type { T } from "../types/common";
@@ -75,7 +74,7 @@ class GraphCard extends PureComponent<Props, State> {
       accounts.length === 1 ? accounts[0].currency.color : undefined;
 
     return (
-      <Card style={[getElevationStyle(4), styles.root]}>
+      <Card style={styles.root}>
         <GraphCardHeader
           from={balanceStart}
           to={balanceEnd}
@@ -149,8 +148,21 @@ class GraphCardHeader extends PureComponent<{
 
 const styles = StyleSheet.create({
   root: {
+    backgroundColor: colors.white,
     paddingVertical: 16,
     margin: 16,
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowOpacity: 0.03,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 4,
+        },
+      },
+    }),
   },
   balanceTextContainer: {
     marginBottom: 5,
