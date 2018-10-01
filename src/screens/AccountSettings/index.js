@@ -16,7 +16,6 @@ import BottomModal from "../../components/BottomModal";
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
 import AccountCurrencyRow from "./AccountCurrencyRow";
-import ArchiveAccountRow from "./ArchiveAccountRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
 
@@ -80,7 +79,6 @@ class AccountSettings extends PureComponent<Props, State> {
           />
         </View>
         <View style={styles.sectionRow}>
-          <ArchiveAccountRow />
           <DeleteAccountRow onPress={this.onPress} />
         </View>
         <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
