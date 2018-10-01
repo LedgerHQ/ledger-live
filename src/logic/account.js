@@ -40,7 +40,7 @@ export const importExistingAccount = ({
     operations: [],
     pendingOperations: [],
     unit: currency.units[0],
-    lastSyncDate: new Date(),
+    lastSyncDate: new Date(0),
   };
   return account;
 };
