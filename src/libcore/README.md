@@ -1,12 +1,10 @@
-
-## TODO 
+## TODO
 
 High:
 
-- iOS: XCode Archive will currently generate a "Generic Xcode Archive" instead of a "iOS App Archive" (and this does not happen without libcore dep)
-
 Medium:
 
+- iOS: If using "Exception Breakpoint", you will see crash inside libcore (createWallet)
 - Android crashes with: `Attempt to invoke virtual method 'long java.lang.Long.longValue()' on a null object reference`. To me this appear after the last JS<>core exchange was `CoreOperation.getSenders([{"uid":"f692e53a-3ebc-4c1c-8a9f-ed6b7b8c057d","type":"RCTCoreOperation"},12288,12289])`.
 
 Low:

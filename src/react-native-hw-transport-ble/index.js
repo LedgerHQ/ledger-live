@@ -10,6 +10,8 @@ const NotifyCharacteristicUuid = "d973f2e1-b19e-11e2-9e96-0800200c9a66";
 const MaxChunkBytes = 20;
 const TagId = 0x05;
 
+const acceptServiceUUID = uuid => uuid === ServiceUuid;
+
 type Device = *;
 type Characteristic = *;
 
@@ -151,7 +153,8 @@ export default class BluetoothTransport extends Transport<Device> {
             unsubscribe();
             return;
           }
-          // FIXME this is not the final filtering. we should eventually use the serviceUUIDs
+          // FIXME this should be the final filtering:
+          // if (device.serviceUUIDs && device.serviceUUIDs.some(acceptServiceUUID)) {
           if ((device.name || "").startsWith("Balenos")) {
             observer.next({ type: "add", descriptor: device });
           }
