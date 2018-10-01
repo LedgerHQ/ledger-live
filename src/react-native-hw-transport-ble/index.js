@@ -10,7 +10,7 @@ const NotifyCharacteristicUuid = "d973f2e1-b19e-11e2-9e96-0800200c9a66";
 const MaxChunkBytes = 20;
 const TagId = 0x05;
 
-const acceptServiceUUID = uuid => uuid === ServiceUuid;
+// const acceptServiceUUID = uuid => uuid === ServiceUuid;
 
 type Device = *;
 type Characteristic = *;
