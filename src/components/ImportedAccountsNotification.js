@@ -1,10 +1,15 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { StyleSheet, Animated, TouchableWithoutFeedback } from "react-native";
+import {
+  StyleSheet,
+  Animated,
+  TouchableWithoutFeedback,
+  View,
+  Platform,
+} from "react-native";
 import { translate } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
-import ElevatedView from "./ElevatedView";
 import colors from "../colors";
 import LText from "./LText";
 
@@ -55,12 +60,12 @@ class ImportedAccountsNotification extends PureComponent<
         style={[StyleSheet.absoluteFill, styles.root, { opacity: progress }]}
       >
         <TouchableWithoutFeedback onPress={this.finish}>
-          <ElevatedView style={styles.container} elevation={3}>
+          <View style={styles.container}>
             <Icon name="check-circle" color={colors.white} size={28} />
             <LText semiBold style={styles.text} numberOfLines={2}>
               {t("accounts.importNotification.message")}
             </LText>
-          </ElevatedView>
+          </View>
         </TouchableWithoutFeedback>
       </Animated.View>
     );
@@ -79,6 +84,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowOpacity: 0.03,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 4,
+        },
+      },
+    }),
   },
   text: {
     marginLeft: 16,
