@@ -39,8 +39,12 @@ class OperationRow extends PureComponent<Props, *> {
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.smoke : colors.green;
     const text = operation.type === "IN" ? "Received" : "Sent";
+    const isOptimistic = operation.blockHeight === null;
     return (
-      <RectButton onPress={this.goToOperationDetails} style={styles.root}>
+      <RectButton
+        onPress={this.goToOperationDetails}
+        style={[styles.root, isOptimistic ? styles.optimistic : null]}
+      >
         {multipleAccounts ? (
           <CurrencyIcon size={20} currency={account.currency} />
         ) : (
@@ -101,6 +105,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     alignItems: "center",
     flexDirection: "row",
+  },
+  optimistic: {
+    opacity: 0.5,
   },
   body: {
     flexDirection: "column",
