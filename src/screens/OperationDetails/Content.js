@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { RectButton } from "react-native-gesture-handler";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
 import uniq from "lodash/uniq";
@@ -94,72 +95,68 @@ class Content extends PureComponent<Props, *> {
             )}
           </View>
         </View>
-        <View style={styles.body}>
-          <View style={styles.section}>
-            <LText style={styles.sectionTitle}>
-              {t("common:operationDetails.account")}
-            </LText>
-            <TouchableOpacity onPress={this.onPress}>
-              <LText semiBold>{account.name}</LText>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.section}>
-            <LText style={styles.sectionTitle}>
-              {t("common:operationDetails.date")}
-            </LText>
+        <RectButton style={styles.section} onPress={this.onPress}>
+          <LText style={styles.sectionTitle}>
+            {t("common:operationDetails.account")}
+          </LText>
+          <LText semiBold>{account.name}</LText>
+        </RectButton>
+        <View style={styles.section}>
+          <LText style={styles.sectionTitle}>
+            {t("common:operationDetails.date")}
+          </LText>
+          <LText semiBold>
+            {operation.date.toLocaleDateString([], {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </LText>
+        </View>
+        <View style={styles.section}>
+          <LText style={styles.sectionTitle}>
+            {t("common:operationDetails.fees")}
+          </LText>
+          {operation.fee ? (
             <LText semiBold>
-              {operation.date.toLocaleDateString([], {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              <CurrencyUnitValue
+                showCode
+                unit={account.unit}
+                value={operation.fee}
+              />
             </LText>
-          </View>
-          <View style={styles.section}>
-            <LText style={styles.sectionTitle}>
-              {t("common:operationDetails.fees")}
-            </LText>
-            {operation.fee ? (
-              <LText semiBold>
-                <CurrencyUnitValue
-                  showCode
-                  unit={account.unit}
-                  value={operation.fee}
-                />
-              </LText>
-            ) : (
-              <LText semiBold>{t("common:operationDetails.noFees")}</LText>
-            )}
-          </View>
-          <View style={styles.section}>
-            <LText style={styles.sectionTitle}>
-              {t("common:operationDetails.identifier")}
-            </LText>
-            <LText semiBold selectable>
-              {operation.hash}
-            </LText>
-          </View>
-          <View style={styles.section}>
-            <DataList
-              data={uniqueSenders}
-              t={t}
-              title={t("common:operationDetails.from", {
-                count: uniqueSenders.length,
-              })}
-              titleStyle={styles.sectionTitle}
-            />
-          </View>
-          <View style={styles.section}>
-            <DataList
-              data={uniqueRecipients}
-              t={t}
-              title={t("common:operationDetails.to", {
-                count: uniqueRecipients.length,
-              })}
-            />
-          </View>
+          ) : (
+            <LText semiBold>{t("common:operationDetails.noFees")}</LText>
+          )}
+        </View>
+        <View style={styles.section}>
+          <LText style={styles.sectionTitle}>
+            {t("common:operationDetails.identifier")}
+          </LText>
+          <LText semiBold selectable>
+            {operation.hash}
+          </LText>
+        </View>
+        <View style={styles.section}>
+          <DataList
+            data={uniqueSenders}
+            t={t}
+            title={t("common:operationDetails.from", {
+              count: uniqueSenders.length,
+            })}
+            titleStyle={styles.sectionTitle}
+          />
+        </View>
+        <View style={styles.section}>
+          <DataList
+            data={uniqueRecipients}
+            t={t}
+            title={t("common:operationDetails.to", {
+              count: uniqueRecipients.length,
+            })}
+          />
         </View>
       </Fragment>
     );
@@ -180,10 +177,6 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-  },
-
-  body: {
-    marginHorizontal: 16,
   },
   icon: {
     marginBottom: 16,
@@ -207,7 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   section: {
-    marginBottom: 24,
+    padding: 16,
   },
   sectionTitle: {
     fontSize: 14,
