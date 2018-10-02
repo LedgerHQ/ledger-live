@@ -2,9 +2,14 @@
 import React, { Component } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import config from "react-native-config";
 import { translate } from "react-i18next";
-import { ScrollView, View, StyleSheet } from "react-native";
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from "react-native";
+import Icon from "react-native-vector-icons/dist/Feather";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
@@ -16,10 +21,6 @@ import LiveLogoIcon from "../../icons/LiveLogoIcon";
 import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
-import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
-import ImportBridgeStreamData from "../../components/ImportBridgeStreamData";
-import OpenDebugBLE from "../../components/OpenDebugBLE";
-import BenchmarkQRStream from "../../components/BenchmarkQRStream";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -30,9 +31,13 @@ type Props = {
 const mapStateToProps = createStructuredSelector({
   currencies: currenciesSelector,
 });
-class Settings extends Component<Props> {
+class Settings extends Component<Props, *> {
   static navigationOptions = {
     title: "Settings",
+  };
+
+  state = {
+    debugVisible: false,
   };
 
   navigateTo = (screenName: string) => {
@@ -47,8 +52,24 @@ class Settings extends Component<Props> {
     return navigation.navigate(screenName);
   };
 
+  count = 0;
+
+  debugTimeout: *;
+
+  onDebugHiddenPress = () => {
+    clearTimeout(this.debugTimeout);
+    if (this.count++ > 6) {
+      this.setState({ debugVisible: true });
+    } else {
+      this.debugTimeout = setTimeout(() => {
+        this.count = 1;
+      }, 1000);
+    }
+  };
+
   render() {
     const { t, currencies } = this.props;
+    const { debugVisible } = this.state;
 
     return (
       <ScrollView>
@@ -79,23 +100,18 @@ class Settings extends Component<Props> {
             icon={<Help size={16} color={colors.live} />}
             onClick={() => this.navigateTo("HelpSettings")}
           />
-          {config.DEBUG_MOCK_ACCOUNT && !isNaN(config.DEBUG_MOCK_ACCOUNT) ? (
-            <GenerateMockAccountsButton
-              containerStyle={{ marginTop: 20 }}
-              title={`Generate ${config.DEBUG_MOCK_ACCOUNT} Mock Accounts`}
-              count={parseInt(config.DEBUG_MOCK_ACCOUNT, 10)}
+          {debugVisible ? (
+            <SettingsCard
+              title="Debug"
+              desc="Use at your own risk – Developer tools"
+              icon={<Icon name="wind" size={16} color={colors.live} />}
+              onClick={() => this.navigateTo("DebugSettings")}
             />
-          ) : null}
-          {config.BRIDGESTREAM_DATA ? (
-            // $FlowFixMe
-            <ImportBridgeStreamData
-              containerStyle={{ marginTop: 20 }}
-              title="Import hardcoded BRIDGESTREAM_DATA"
-              dataStr={config.BRIDGESTREAM_DATA}
-            />
-          ) : null}
-          {config.DEBUG_BLE ? <OpenDebugBLE /> : null}
-          {config.BENCHMARK_QRSTREAM ? <BenchmarkQRStream /> : null}
+          ) : (
+            <TouchableWithoutFeedback onPress={this.onDebugHiddenPress}>
+              <View style={{ height: 50 }} />
+            </TouchableWithoutFeedback>
+          )}
         </View>
       </ScrollView>
     );

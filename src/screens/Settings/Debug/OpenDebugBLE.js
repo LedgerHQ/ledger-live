@@ -1,14 +1,12 @@
 // @flow
 import React from "react";
 import { withNavigation } from "react-navigation";
-import Button from "./Button";
+import SettingsRow from "../../../components/SettingsRow";
 
 const GenerateMockAccountsButton = ({ navigation }: { navigation: * }) => (
-  <Button
-    type="secondary"
+  <SettingsRow
     title="Debug BLE"
     onPress={() => navigation.navigate("DebugBLE")}
-    containerStyle={{ marginTop: 20 }}
   />
 );
 
