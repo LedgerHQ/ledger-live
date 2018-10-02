@@ -6,8 +6,6 @@ import colors from "../colors";
 import ArrowRight from "../icons/ArrowRight";
 import Check from "../icons/Check";
 
-const flowPush = <View style={{ flex: 1 }} />;
-
 export default class SettingsRow extends Component<{
   onPress: () => void,
   title: string,
@@ -16,8 +14,7 @@ export default class SettingsRow extends Component<{
   selected?: boolean,
   arrowRight?: boolean,
   iconLeft?: *,
-  center?: boolean,
-  children: *,
+  children: React$Node,
 }> {
   render() {
     const {
@@ -28,14 +25,10 @@ export default class SettingsRow extends Component<{
       desc,
       arrowRight,
       iconLeft,
-      center,
       selected,
     } = this.props;
     return (
-      <Touchable
-        onPress={onPress}
-        style={[styles.root, center && styles.center]}
-      >
+      <Touchable onPress={onPress} style={[styles.root]}>
         {iconLeft && <View style={{ paddingHorizontal: 10 }}>{iconLeft}</View>}
         <View style={styles.textBlock}>
           <LText semiBold style={[styles.titleStyle, titleStyle]}>
@@ -43,7 +36,6 @@ export default class SettingsRow extends Component<{
           </LText>
           {desc && <LText style={styles.description}>{desc}</LText>}
         </View>
-        {!center ? flowPush : null}
         {children}
         {arrowRight ? (
           <View style={styles.iconRightContainer}>
@@ -68,9 +60,6 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     backgroundColor: "white",
     marginBottom: 2,
-  },
-  center: {
-    justifyContent: "center",
   },
   textBlock: {
     flexDirection: "column",

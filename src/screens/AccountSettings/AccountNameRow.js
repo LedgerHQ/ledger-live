@@ -45,8 +45,9 @@ export default translate()(AccountNameRow);
 
 const styles = StyleSheet.create({
   accountName: {
-    flex: 1,
+    flexGrow: 1,
     flexShrink: 1,
+    textAlign: "right",
     color: colors.grey,
   },
 });
