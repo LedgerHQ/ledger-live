@@ -1,6 +1,6 @@
 // @flow
 
-import type { Account } from "../types/account";
+import type { Account, CryptoCurrencyIds } from "../types";
 
 export type AccountData = {
   id: string,
@@ -14,7 +14,14 @@ export type DataIn = {
   // accounts to export (filter them to only be the visible ones)
   accounts: Account[],
   // settings
-  settings?: Object,
+  settings: {
+    currenciesSettings: {
+      [_: CryptoCurrencyIds]: {
+        exchange: ?string,
+        confirmationsNb: number
+      }
+    }
+  },
   // the name of the exporter. e.g. "desktop" for the desktop app
   exporterName: string,
   // the version of the exporter. e.g. the desktop app version
