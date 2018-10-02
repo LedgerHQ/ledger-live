@@ -36,7 +36,7 @@
     "@ledgerhq/hw-app-eth": "^4.21.0",
     "@ledgerhq/hw-transport": "4.21.0",
     "@ledgerhq/hw-transport-http": "4.21.0",
-    "@ledgerhq/live-common": "3.8.0-beta.7",
+    "@ledgerhq/live-common": "3.8.0",
     "@ledgerhq/react-native-hid": "4.21.0",
     "@ledgerhq/react-native-hw-transport-ble": "4.21.0",
     "@ledgerhq/react-native-ledger-core": "^0.3.13",
