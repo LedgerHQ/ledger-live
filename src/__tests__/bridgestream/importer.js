@@ -37,8 +37,6 @@ test("import", () => {
       id: a.id,
       name: a.name,
       index: a.index,
-      freshAddress: a.freshAddress,
-      freshAddressPath: a.freshAddressPath
     }))
   );
   expect(res).toMatchSnapshot();

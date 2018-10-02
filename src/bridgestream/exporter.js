@@ -1,5 +1,6 @@
 // @flow
 
+import lzw from "node-lzw";
 import type { Account } from "../types/account";
 import type { DataIn, AccountData } from "./types";
 import { makeChunks as qrStreamMakeChunks } from "../qrstream/exporter";
@@ -9,8 +10,6 @@ export function accountToAccountData({
   name,
   currency,
   index,
-  freshAddress,
-  freshAddressPath,
   balance
 }: Account): AccountData {
   return {
@@ -18,8 +17,6 @@ export function accountToAccountData({
     name,
     currencyId: currency.id,
     index,
-    freshAddressPath,
-    freshAddress,
     balance: balance.toString()
   };
 }
@@ -30,15 +27,19 @@ export function accountToAccountData({
  */
 export function makeChunks({
   accounts,
+  settings,
   exporterName,
   exporterVersion,
   chunkSize = 120
 }: DataIn): string[] {
   return qrStreamMakeChunks(
-    JSON.stringify({
-      meta: { exporterName, exporterVersion },
-      accounts: accounts.map(accountToAccountData)
-    }),
+    lzw.encode(
+      JSON.stringify({
+        meta: { exporterName, exporterVersion },
+        accounts: accounts.map(accountToAccountData),
+        settings
+      })
+    ),
     chunkSize
   );
 }
