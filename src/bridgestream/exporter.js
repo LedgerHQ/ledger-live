@@ -2,6 +2,7 @@
 
 import type { Account } from "../types/account";
 import type { DataIn, AccountData } from "./types";
+import { makeChunks as qrStreamMakeChunks } from "../qrstream/exporter";
 
 export function accountToAccountData({
   id,
@@ -31,17 +32,13 @@ export function makeChunks({
   accounts,
   exporterName,
   exporterVersion,
-  pad
+  chunkSize = 120
 }: DataIn): string[] {
-  const chunksFormatVersion = 3;
-  const data = [
-    ["meta", chunksFormatVersion, exporterName, exporterVersion],
-    ...accounts.map(account => ["account", accountToAccountData(account)])
-  ];
-  let r = data.map((arr, i) => JSON.stringify([data.length, i, ...arr]));
-  if (pad) {
-    const max = r.reduce((max, s) => Math.max(max, s.length), 0);
-    r = r.map(s => s.padEnd(max));
-  }
-  return r;
+  return qrStreamMakeChunks(
+    JSON.stringify({
+      meta: { exporterName, exporterVersion },
+      accounts: accounts.map(accountToAccountData)
+    }),
+    chunkSize
+  );
 }

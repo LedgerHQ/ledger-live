@@ -19,8 +19,8 @@ export type DataIn = {
   exporterName: string,
   // the version of the exporter. e.g. the desktop app version
   exporterVersion: string,
-  // enable a mode that will add empty space to make all chunks of same size. to makes QR code of same dimension
-  pad?: boolean
+
+  chunkSize: number
 };
 
 export type Result = {

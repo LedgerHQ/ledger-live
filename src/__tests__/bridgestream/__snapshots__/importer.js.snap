@@ -32,7 +32,6 @@ Object {
     },
   ],
   "meta": Object {
-    "chunksFormatVersion": 3,
     "exporterName": "test",
     "exporterVersion": "0.0.0",
   },
