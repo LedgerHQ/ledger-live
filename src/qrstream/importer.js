@@ -15,7 +15,7 @@ type Chunk = {
 export function parseChunksReducer(
   chunks: Chunk[],
   chunk: string,
-  logger?: typeof console
+  logger?: ?typeof console
 ): Chunk[] {
   try {
     const head = Buffer.from(chunk.slice(0, 5));
