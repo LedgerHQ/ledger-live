@@ -22,12 +22,3 @@ export type DataIn = {
 
   chunkSize?: number
 };
-
-export type Result = {
-  accounts: AccountData[],
-  meta: {
-    chunksFormatVersion: number,
-    exporterName: string,
-    exporterVersion: string
-  }
-};
