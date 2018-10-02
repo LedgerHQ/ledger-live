@@ -1,150 +1,101 @@
-/* @flow */
+// @flow
+
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { RNCamera } from "react-native-camera";
-import ProgressCircle from "react-native-progress/Circle";
 import type { NavigationScreenProp } from "react-navigation";
-import {
-  parseChunksReducer,
-  areChunksComplete,
-  chunksToResult,
-} from "@ledgerhq/live-common/lib/bridgestream/importer";
-import type { Result } from "@ledgerhq/live-common/lib/bridgestream/importer";
-import { translate } from "react-i18next";
-import i18next from "i18next";
-import type { T } from "../../types/common";
-import HeaderRightClose from "../../components/HeaderRightClose";
-import StyledStatusBar from "../../components/StyledStatusBar";
-import LText, { getFontStyle } from "../../components/LText";
-import colors, { rgba } from "../../colors";
-import FallBackCamera from "./FallBackCamera";
-
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  t: T,
-};
+import LText from "../components/LText";
+import colors, { rgba } from "../colors";
 
 const getDimensions = () => {
   const { width, height } = Dimensions.get("window");
-
   return { width, height };
 };
 
-class Scan extends PureComponent<
-  Props,
+export default class BenchmarkQRStream extends PureComponent<
   {
-    progress: number,
-    width: number,
-    height: number,
-  },
-> {
-  static navigationOptions = ({
-    navigation,
-  }: {
-    // $FlowFixMe
     navigation: NavigationScreenProp<*>,
-  }) => ({
-    title: i18next.t("account.import.scan.title"),
-    headerRight: (
-      <HeaderRightClose
-        // $FlowFixMe
-        navigation={navigation.dangerouslyGetParent()}
-        color={colors.white}
-      />
-    ),
-    headerLeft: null,
-  });
+  },
+  *,
+> {
+  static navigationOptions = {
+    title: "Benchmark QRStream",
+  };
 
   state = {
-    progress: 0,
     ...getDimensions(),
+    benchmarks: [],
+    end: false,
   };
 
-  componentDidMount() {
-    const { navigation } = this.props;
-    const data = navigation.getParam("data");
-    if (data) {
-      const chunks = data.reduce(parseChunksReducer, []);
-      if (areChunksComplete(chunks)) {
-        this.onResult(chunksToResult(chunks));
-      }
-    }
-  }
+  count = 0;
 
-  lastData: ?string = null;
+  dataSize = 0;
 
-  chunks: * = [];
+  previous = "";
 
-  completed: boolean = false;
+  end = false;
 
   onBarCodeRead = ({ data }: { data: string }) => {
-    if (data && data !== this.lastData && !this.completed) {
-      const previousLength = this.chunks.length;
-
-      this.lastData = data;
-      this.chunks = parseChunksReducer(this.chunks, data, console);
-
-      if (this.chunks.length <= previousLength) {
-        return; // no new chunks
+    if (this.previous === data || this.end) return;
+    this.previous = data;
+    if (data.indexOf("bench:") === 0 || data === "end") {
+      if (this.dataSize) {
+        const bench = { count: this.count, dataSize: this.dataSize };
+        this.setState(({ benchmarks }) => ({
+          end: data === "end",
+          benchmarks: benchmarks.some(b => b.dataSize === bench.dataSize)
+            ? benchmarks
+            : benchmarks.concat(bench),
+        }));
       }
-
-      const { chunksCount } = this.chunks[0];
-
-      this.setState({ progress: this.chunks.length / chunksCount });
-
-      if (areChunksComplete(this.chunks)) {
-        this.completed = true;
-        // TODO read the chunks version and check it's correctly supported (if newers version, we deny the import with an error)
-        this.onResult(chunksToResult(this.chunks));
+      if (data === "end") {
+        this.end = true;
+      } else {
+        this.count = 0;
+        this.dataSize = parseInt(data.slice(6), 10);
       }
+    } else {
+      this.count++;
     }
-  };
-
-  onResult = (result: Result) => {
-    // $FlowFixMe
-    this.props.navigation.replace("DisplayResult", { result });
-  };
-
-  setDimensions = () => {
-    const dimensions = getDimensions();
-
-    this.setState(dimensions);
   };
 
   render() {
-    const { progress, width, height } = this.state;
-    const { t, navigation } = this.props;
+    const { width, height, benchmarks, end } = this.state;
+    const summary = benchmarks.map(b => `${b.dataSize}:${b.count}`).join(" ");
     const cameraRatio = 16 / 9;
     const cameraDimensions =
       width > height
         ? { width, height: width / cameraRatio }
         : { width: height / cameraRatio, height };
-
-    // Make the viewfinder borders 2/3 of the screen shortest border
     const viewFinderSize = (width > height ? height : width) * (2 / 3);
     const wrapperStyle =
       width > height
         ? { height, alignSelf: "stretch" }
         : { width, flexGrow: 1 };
 
-    // TODO refactor to components!
+    if (end) {
+      return (
+        <View style={styles.resultRoot}>
+          <LText selectable style={styles.result}>
+            {benchmarks.map(b => `${b.dataSize} ${b.count}`).join("\n")}
+          </LText>
+        </View>
+      );
+    }
+
     return (
-      <View style={styles.root} onLayout={this.setDimensions}>
-        <StyledStatusBar barStyle="light-content" />
+      <View style={styles.root}>
         <RNCamera
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
           onBarCodeRead={this.onBarCodeRead}
           ratio="16:9"
           style={[styles.camera, cameraDimensions]}
-          notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >
           <View style={wrapperStyle}>
             <View style={[styles.darken, styles.centered, styles.topCell]}>
               <LText semibold style={styles.text}>
-                {t("account.import.scan.descTop.line1")}
-              </LText>
-              <LText bold style={styles.text}>
-                {t("account.import.scan.descTop.line2")}
+                {"ledger-live-tools.netlify.com/qrstreambenchmark"}
               </LText>
             </View>
 
@@ -188,23 +139,8 @@ class Scan extends PureComponent<
             <View style={[styles.darken, styles.centered]}>
               <View style={styles.centered}>
                 <LText semibold style={styles.text}>
-                  {t("account.import.scan.descBottom")}
+                  {summary}
                 </LText>
-              </View>
-              <View style={styles.centered}>
-                <ProgressCircle
-                  showsText={!!progress}
-                  progress={progress}
-                  color={colors.white}
-                  borderWidth={0}
-                  thickness={progress ? 4 : 0}
-                  size={viewFinderSize / 4}
-                  strokeCap="round"
-                  textStyle={[
-                    styles.progressText,
-                    getFontStyle({ tertiary: true, semiBold: true }),
-                  ]}
-                />
               </View>
             </View>
           </View>
@@ -214,14 +150,21 @@ class Scan extends PureComponent<
   }
 }
 
-export default translate()(Scan);
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "black",
     alignItems: "center",
     justifyContent: "center",
+  },
+  resultRoot: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  result: {
+    color: "black",
+    padding: 20,
   },
   camera: {
     alignItems: "center",

@@ -19,6 +19,7 @@ import colors from "../../colors";
 import GenerateMockAccountsButton from "../../components/GenerateMockAccountsButton";
 import ImportBridgeStreamData from "../../components/ImportBridgeStreamData";
 import OpenDebugBLE from "../../components/OpenDebugBLE";
+import BenchmarkQRStream from "../../components/BenchmarkQRStream";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -94,6 +95,7 @@ class Settings extends Component<Props> {
             />
           ) : null}
           {config.DEBUG_BLE ? <OpenDebugBLE /> : null}
+          {config.BENCHMARK_QRSTREAM ? <BenchmarkQRStream /> : null}
         </View>
       </ScrollView>
     );

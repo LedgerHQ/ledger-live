@@ -1,6 +1,7 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
+import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
   getCryptoCurrencyById,
@@ -62,6 +63,14 @@ const handlers: Object = {
   SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
     ...state,
     ...settings,
+  }),
+  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => ({
+    ...state,
+    ...settings,
+    currenciesSettings: merge(
+      state.currenciesSettings,
+      settings.currenciesSettings,
+    ),
   }),
   UPDATE_CURRENCY_SETTINGS: (
     { currenciesSettings, ...state }: SettingsState,

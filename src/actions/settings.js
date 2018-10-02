@@ -35,6 +35,11 @@ export const importSettings = (settings: *) => ({
   settings,
 });
 
+export const importDesktopSettings = (settings: *) => ({
+  type: "SETTINGS_IMPORT_DESKTOP",
+  settings,
+});
+
 export const setReportErrors = (reportErrorsEnabled: boolean) => ({
   type: "SETTINGS_SET_REPORT_ERRORS",
   reportErrorsEnabled,

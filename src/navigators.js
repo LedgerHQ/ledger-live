@@ -41,6 +41,7 @@ import VerifyAddress from "./screens/VerifyAddress";
 import ReceiveConfirmation from "./screens/ReceiveComfirmation";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import DebugBLE from "./screens/DebugBLE";
+import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 
 // TODO look into all FlowFixMe
 
@@ -244,6 +245,8 @@ export const RootNavigator = createStackNavigator(
     SendFundsSettings,
     // $FlowFixMe
     DebugBLE,
+    // $FlowFixMe
+    BenchmarkQRStream,
   },
   {
     mode: "modal",

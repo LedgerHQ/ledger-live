@@ -152,7 +152,9 @@
         "updatedAccounts": "Updated accounts",
         "alreadyImported": "Already imported",
         "noAccounts": "Nothing to import",
-        "unsupported": "Unsupported"
+        "unsupported": "Unsupported",
+        "settings": "Settings",
+        "includeGeneralSettings": "Include general settings"
       },
       "fallback": {
         "header": "Import account",

@@ -1,13 +1,13 @@
 // @flow
-import React, { Component } from "react";
-import { ScrollView, View, SectionList, StyleSheet } from "react-native";
+import React, { Component, Fragment } from "react";
+import { View, SectionList, StyleSheet } from "react-native";
 import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Result } from "@ledgerhq/live-common/lib/bridgestream/types";
+import type { Result } from "@ledgerhq/live-common/lib/bridgestream/importer";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { T } from "../../types/common";
@@ -15,6 +15,7 @@ import {
   importExistingAccount,
   supportsExistingAccount,
 } from "../../logic/account";
+import { importDesktopSettings } from "../../actions/settings";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 
@@ -24,6 +25,8 @@ import Button from "../../components/Button";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import DisplayResultItem from "./DisplayResultItem";
+import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
+import ResultSection from "./ResultSection";
 
 type Item = {
   // current account, might be partially completed as sync happen in background
@@ -40,6 +43,7 @@ type Props = {
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
+  importDesktopSettings: (*) => void,
   t: T,
 };
 
@@ -47,6 +51,7 @@ type State = {
   selectedAccounts: string[],
   items: Item[],
   importing: boolean,
+  importSettings: boolean,
 };
 
 const itemModeDisplaySort = {
@@ -60,6 +65,7 @@ class DisplayResult extends Component<Props, State> {
   state = {
     selectedAccounts: [],
     items: [],
+    importSettings: true,
     importing: false,
   };
 
@@ -146,8 +152,13 @@ class DisplayResult extends Component<Props, State> {
   };
 
   onImport = async () => {
-    const { addAccount, updateAccount } = this.props;
-    const { selectedAccounts, items } = this.state;
+    const {
+      addAccount,
+      updateAccount,
+      importDesktopSettings,
+      navigation,
+    } = this.props;
+    const { selectedAccounts, items, importSettings } = this.state;
     this.setState({ importing: true });
     const selectedItems = items.filter(item =>
       selectedAccounts.includes(item.account.id),
@@ -164,8 +175,12 @@ class DisplayResult extends Component<Props, State> {
       }
     }
 
-    // TODO we probably want to sync all the imported accounts before ending
-    this.close();
+    if (importSettings) {
+      importDesktopSettings(navigation.getParam("result").settings);
+    }
+
+    // $FlowFixMe
+    navigation.navigate("Accounts");
   };
 
   onSwitchResultItem = (checked: boolean, account: Account) => {
@@ -191,39 +206,24 @@ class DisplayResult extends Component<Props, State> {
     />
   );
 
-  renderSectionHeader = ({ section: { mode } }) => {
-    const { t } = this.props;
-    let text;
-    switch (mode) {
-      case "create":
-        text = t("account.import.result.newAccounts");
-        break;
-      case "patch":
-        text = t("account.import.result.updatedAccounts");
-        break;
-      case "id":
-        text = t("account.import.result.alreadyImported");
-        break;
-      case "unsupported":
-        text = t("account.import.result.unsupported");
-        break;
-      default:
-        text = "";
-    }
-    return (
-      <LText semiBold style={styles.sectionHeaderText}>
-        {text}
-      </LText>
-    );
-  };
+  renderSectionHeader = ({ section: { mode } }) => (
+    <ResultSection mode={mode} />
+  );
 
-  SectionSeparatorComponent = () => <View style={{ height: 20 }} />;
+  onSwitchSettings = importSettings => this.setState({ importSettings });
+
+  ListFooterComponent = () => (
+    <DisplayResultSettingsSection
+      onSwitch={this.onSwitchSettings}
+      checked={this.state.importSettings}
+    />
+  );
 
   keyExtractor = item => item.account.id;
 
   render() {
     const { t } = this.props;
-    const { items, selectedAccounts } = this.state;
+    const { items } = this.state;
 
     const itemsGroupedByMode = groupBy(items, "mode");
 
@@ -231,36 +231,42 @@ class DisplayResult extends Component<Props, State> {
       <View style={styles.root}>
         <StyledStatusBar />
         {items.length ? (
-          <ScrollView contentContainerStyle={styles.DisplayResult}>
+          <Fragment>
             <SectionList
+              style={styles.body}
+              contentContainerStyle={styles.list}
               renderItem={this.renderItem}
               renderSectionHeader={this.renderSectionHeader}
+              ListFooterComponent={this.ListFooterComponent}
               keyExtractor={this.keyExtractor}
-              SectionSeparatorComponent={this.SectionSeparatorComponent}
               sections={Object.keys(itemsGroupedByMode).map(mode => ({
                 mode,
                 data: itemsGroupedByMode[mode],
               }))}
             />
-            {selectedAccounts.length ? (
+            <View style={styles.footer}>
               <Button
                 type="primary"
                 title={t("common.continue")}
                 onPress={this.onImport}
               />
-            ) : null}
-          </ScrollView>
+            </View>
+          </Fragment>
         ) : (
-          <View style={styles.DisplayResult}>
-            <LText bold style={styles.noAccountText}>
-              {t("account.import.result.noAccounts")}
-            </LText>
-            <Button
-              type="primary"
-              title={t("common.done")}
-              onPress={this.close}
-            />
-          </View>
+          <Fragment>
+            <View style={styles.body}>
+              <LText bold style={styles.noAccountText}>
+                {t("account.import.result.noAccounts")}
+              </LText>
+            </View>
+            <View style={styles.footer}>
+              <Button
+                type="primary"
+                title={t("common.done")}
+                onPress={this.close}
+              />
+            </View>
+          </Fragment>
         )}
       </View>
     );
@@ -273,6 +279,7 @@ export default translate()(
     {
       addAccount,
       updateAccount,
+      importDesktopSettings,
     },
   )(DisplayResult),
 );
@@ -286,14 +293,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: colors.white,
   },
-  DisplayResult: {
+  body: {
+    paddingHorizontal: 20,
+    flex: 1,
+  },
+  footer: {
     padding: 20,
-    flexDirection: "column",
-    flexGrow: 1,
+  },
+  list: {
+    paddingBottom: 40,
   },
   sectionHeaderText: {
+    backgroundColor: colors.white,
     color: colors.grey,
     fontSize: 14,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   noAccountText: {
     flex: 1,
