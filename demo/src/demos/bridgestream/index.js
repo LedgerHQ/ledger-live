@@ -78,11 +78,7 @@ class BridgeStream extends Component<*, *> {
     const els = [...qrcodes.children];
 
     els.forEach(canvas => {
-      gif.addFrame(canvas, { delay: 125 });
-    });
-
-    els.forEach(canvas => {
-      gif.addFrame(canvas, { delay: 500 });
+      gif.addFrame(canvas, { delay: 200 });
     });
 
     gif.on("finished", blob => {

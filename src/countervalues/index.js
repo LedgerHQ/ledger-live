@@ -1,5 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+// $FlowFixMe no idea what's going on here
 import React, { Component } from "react";
 import axios from "axios";
 import throttle from "lodash/throttle";

@@ -6,8 +6,6 @@ Object {
     Object {
       "balance": "1797257488",
       "currencyId": "zcash",
-      "freshAddress": "1gUcMjNiuEM3mNzJvT7FV9djo6r1dU",
-      "freshAddressPath": "49'/1'/1'/0/2",
       "id": "mock_account_export_0",
       "index": 1,
       "name": "PcbUsj9a5mnpn6wT6InSD9n",
@@ -15,8 +13,6 @@ Object {
     Object {
       "balance": "38657242",
       "currencyId": "zcoin",
-      "freshAddress": "1wDYTKohYihaXEy1usRxg35Yeo83bMXyn7",
-      "freshAddressPath": "49'/1'/1'/0/2",
       "id": "mock_account_export_1",
       "index": 1,
       "name": "rv6RjflCC8",
@@ -24,17 +20,23 @@ Object {
     Object {
       "balance": "80627416",
       "currencyId": "zencash",
-      "freshAddress": "1cvZPTwGuXvxDTi7sYS4tbfib3",
-      "freshAddressPath": "49'/1'/1'/0/2",
       "id": "mock_account_export_2",
       "index": 1,
       "name": "f9mx3pw3IAcuP7ovSPao6EQ",
     },
   ],
   "meta": Object {
-    "chunksFormatVersion": 3,
     "exporterName": "test",
     "exporterVersion": "0.0.0",
+  },
+  "settings": Object {
+    "counterValue": "USD",
+    "counterValueExchange": "KRAKEN",
+    "currenciesSettings": Object {
+      "bitcoin": Object {
+        "exchange": "KRAKEN",
+      },
+    },
   },
 }
 `;

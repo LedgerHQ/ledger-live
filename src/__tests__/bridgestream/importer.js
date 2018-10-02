@@ -1,5 +1,6 @@
 // @flow
 import { makeChunks } from "../../bridgestream/exporter";
+import shuffle from "lodash/shuffle"
 import {
   parseChunksReducer,
   areChunksComplete,
@@ -13,17 +14,27 @@ test("import", () => {
     .map((_, i) => genAccount("export_" + i));
   const arg = {
     accounts,
+    settings: {
+      counterValue: "USD",
+      counterValueExchange: "KRAKEN",
+      currenciesSettings: {
+        bitcoin: {
+          exchange: "KRAKEN",
+        }
+      }
+    },
     exporterName: "test",
-    exporterVersion: "0.0.0"
+    exporterVersion: "0.0.0",
+    chunkSize: 100
   };
   const chunks = makeChunks(arg);
 
   let data = [];
-  [1, 2, 0, 3].forEach((nb, i) => {
+  shuffle(chunks).forEach((chunk, i) => {
     expect(areChunksComplete(data)).toBe(false);
-    data = parseChunksReducer(data, chunks[nb]);
+    data = parseChunksReducer(data, chunk, console);
     expect(data.length).toBe(i + 1);
-    data = parseChunksReducer(data, chunks[nb]);
+    data = parseChunksReducer(data, chunk, console);
     expect(data.length).toBe(i + 1); // chunk already existed
   });
   expect(areChunksComplete(data)).toBe(true);
@@ -35,9 +46,16 @@ test("import", () => {
       id: a.id,
       name: a.name,
       index: a.index,
-      freshAddress: a.freshAddress,
-      freshAddressPath: a.freshAddressPath
     }))
   );
+  expect(res.settings).toMatchObject({
+    counterValue: "USD",
+    counterValueExchange: "KRAKEN",
+    currenciesSettings: {
+      bitcoin: {
+        exchange: "KRAKEN",
+      }
+    }
+  })
   expect(res).toMatchSnapshot();
 });
