@@ -14,6 +14,15 @@ test("import", () => {
     .map((_, i) => genAccount("export_" + i));
   const arg = {
     accounts,
+    settings: {
+      counterValue: "USD",
+      counterValueExchange: "KRAKEN",
+      currenciesSettings: {
+        bitcoin: {
+          exchange: "KRAKEN",
+        }
+      }
+    },
     exporterName: "test",
     exporterVersion: "0.0.0",
     chunkSize: 100
@@ -39,5 +48,14 @@ test("import", () => {
       index: a.index,
     }))
   );
+  expect(res.settings).toMatchObject({
+    counterValue: "USD",
+    counterValueExchange: "KRAKEN",
+    currenciesSettings: {
+      bitcoin: {
+        exchange: "KRAKEN",
+      }
+    }
+  })
   expect(res).toMatchSnapshot();
 });

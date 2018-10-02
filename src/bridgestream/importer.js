@@ -18,6 +18,5 @@ export const areChunksComplete = qrstreamImporter.areChunksComplete;
 
 export function chunksToResult(rawChunks: *): Result {
   const result = qrstreamImporter.chunksToResult(rawChunks);
-  const { meta, accounts } = JSON.parse(lzw.decode(result));
-  return { accounts, meta };
+  return JSON.parse(lzw.decode(result));
 }

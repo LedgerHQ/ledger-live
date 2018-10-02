@@ -15,10 +15,12 @@ export type DataIn = {
   accounts: Account[],
   // settings
   settings: {
+    counterValue?: string,
+    counterValueExchange?: ?string,
     currenciesSettings: {
       [_: CryptoCurrencyIds]: {
-        exchange: ?string,
-        confirmationsNb: number
+        exchange?: ?string,
+        confirmationsNb?: number
       }
     }
   },

@@ -29,5 +29,14 @@ Object {
     "exporterName": "test",
     "exporterVersion": "0.0.0",
   },
+  "settings": Object {
+    "counterValue": "USD",
+    "counterValueExchange": "KRAKEN",
+    "currenciesSettings": Object {
+      "bitcoin": Object {
+        "exchange": "KRAKEN",
+      },
+    },
+  },
 }
 `;
