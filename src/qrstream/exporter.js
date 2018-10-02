@@ -19,6 +19,7 @@ export function makeChunks(data: string, chunkSize: number): string[] {
   const dataSize = chunkSize - 2;
   const dataChunks = chunkSubstr(data, dataSize);
   const r = dataChunks.map(
+    // base64 of:
     // version: 1 byte
     // nb of frames: 2 bytes
     // index of frames: 2 bytes
@@ -28,7 +29,7 @@ export function makeChunks(data: string, chunkSize: number): string[] {
       head.writeUInt8(1, 0); // version 1 of the format
       head.writeUInt16BE(dataChunks.length, 1);
       head.writeUInt16BE(i, 3);
-      return head.toString() + data;
+      return Buffer.concat([head, Buffer.from(data)]).toString("base64");
     }
   );
   if (r.length > 255) {

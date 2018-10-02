@@ -14,15 +14,16 @@ type Chunk = {
  */
 export function parseChunksReducer(
   chunks: Chunk[],
-  chunk: string,
+  chunkStr: string,
   logger?: ?typeof console
 ): Chunk[] {
   try {
-    const head = Buffer.from(chunk.slice(0, 5));
+    const chunk = Buffer.from(chunkStr, "base64");
+    const head = chunk.slice(0, 5);
     const version = head.readUInt8(0);
     const chunksCount = head.readUInt16BE(1);
     const index = head.readUInt16BE(3);
-    const data = chunk.slice(5);
+    const data = chunk.slice(5).toString();
     if (version !== 1) {
       throw new Error(`qrstream version not supported. Got: ${version}`);
     }
