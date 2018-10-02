@@ -1,11 +1,12 @@
 // @flow
 
 import lzw from "node-lzw";
-import type { AccountData } from "./types";
+import type { AccountData, Settings } from "./types";
 import * as qrstreamImporter from "../qrstream/importer";
 
 export type Result = {
   accounts: AccountData[],
+  settings: Settings,
   meta: {
     exporterName: string,
     exporterVersion: string
