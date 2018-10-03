@@ -5,9 +5,7 @@ import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
   Keyboard,
-  Platform,
 } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -21,6 +19,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 import Button from "../../components/Button";
 import HeaderRightClose from "../../components/HeaderRightClose";
+import KeyboardView from "../../components/KeyboardView";
 
 import FeesRow from "./FeesRow";
 import CustomFeesRow from "./CustomFeesRow";
@@ -70,16 +69,9 @@ class FeeSettings extends Component<Props, State> {
   };
 
   render(): React$Node {
-    const keyboardVerticalOffset = Platform.OS === "ios" ? 60 : 0;
-
     return (
       <SafeAreaView style={styles.root}>
-        <KeyboardAvoidingView
-          style={styles.container}
-          keyboardVerticalOffset={keyboardVerticalOffset}
-          behavior="padding"
-          enabled
-        >
+        <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ flex: 1 }}>
               <FeesRow
@@ -115,7 +107,7 @@ class FeeSettings extends Component<Props, State> {
               </View>
             </View>
           </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+        </KeyboardView>
       </SafeAreaView>
     );
   }
