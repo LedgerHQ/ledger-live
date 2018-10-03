@@ -123,11 +123,11 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
       syncQueue.push(ids, -priority);
     };
 
-    // don't always sync in same order to avoid potential "never account never reached"
     const allAccountIds = () =>
       this.props.accounts
         .slice(0)
-        .sort((a, b) => (a.lastSyncDate || 0) - (b.lastSyncDate || 0))
+        // for now we sync in order for esthetic. might refine later
+        // .sort((a, b) => (a.lastSyncDate || 0) - (b.lastSyncDate || 0))
         .map(a => a.id);
 
     const handlers = {

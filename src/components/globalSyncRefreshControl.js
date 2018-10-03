@@ -23,17 +23,13 @@ const Connector = (Decorated: React$ComponentType<any>) => {
     <BridgeSyncConsumer>
       {setSyncBehavior => (
         <CounterValues.PollingConsumer>
-          {cvPolling => {
-            const isPending = cvPolling.pending || globalSyncState.pending;
-            return (
-              <Decorated
-                isPending={isPending}
-                cvPoll={cvPolling.poll}
-                setSyncBehavior={setSyncBehavior}
-                {...rest}
-              />
-            );
-          }}
+          {cvPolling => (
+            <Decorated
+              cvPoll={cvPolling.poll}
+              setSyncBehavior={setSyncBehavior}
+              {...rest}
+            />
+          )}
         </CounterValues.PollingConsumer>
       )}
     </BridgeSyncConsumer>
@@ -52,18 +48,28 @@ type Props = {
 };
 
 export default (ScrollListLike: any) => {
-  class Inner extends PureComponent<Props, { lastClickTime: number }> {
+  class Inner extends PureComponent<Props, { refreshing: boolean }> {
     state = {
-      lastClickTime: 0,
+      refreshing: false,
     };
 
-    onPress = () => {
+    timeout: *;
+
+    componentWillUnmount() {
+      clearTimeout(this.timeout);
+    }
+
+    onRefresh = () => {
       this.props.cvPoll();
       this.props.setSyncBehavior({
         type: "SYNC_ALL_ACCOUNTS",
         priority: 5,
       });
-      this.setState({ lastClickTime: Date.now() });
+      this.setState({ refreshing: true }, () => {
+        this.timeout = setTimeout(() => {
+          this.setState({ refreshing: false });
+        }, 100);
+      });
     };
 
     render() {
@@ -76,15 +82,16 @@ export default (ScrollListLike: any) => {
         forwardedRef,
         ...props
       } = this.props;
-      const { lastClickTime } = this.state;
-      const isUserClick = Date.now() - lastClickTime < 1000;
-      const isLoading = isPending && isUserClick;
+      const { refreshing } = this.state;
       return (
         <ScrollListLike
           {...props}
           ref={forwardedRef}
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={this.onPress} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={this.onRefresh}
+            />
           }
         />
       );
