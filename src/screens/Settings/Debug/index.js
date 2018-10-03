@@ -9,6 +9,7 @@ import { accountsSelector } from "../../../reducers/accounts";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import OpenDebugBLE from "./OpenDebugBLE";
+import OpenDebugCrash from "./OpenDebugCrash";
 import BenchmarkQRStream from "./BenchmarkQRStream";
 
 class DebugSettings extends PureComponent<{
@@ -35,6 +36,7 @@ class DebugSettings extends PureComponent<{
         ) : null}
         <OpenDebugBLE />
         <BenchmarkQRStream />
+        <OpenDebugCrash />
       </ScrollView>
     );
   }
