@@ -123,6 +123,9 @@
         "title": "Unit",
         "desc": "Choose the unit to display"
       },
+      "currency": {
+        "title": "Currency"
+      },
       "endpointConfig": {
         "title": "Node",
         "desc": "The API node to use"
