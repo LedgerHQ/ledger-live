@@ -1006,10 +1006,10 @@
     "@ledgerhq/hw-transport" "^4.21.0"
     invariant "^2.2.4"
 
-"@ledgerhq/react-native-ledger-core@^0.3.13":
-  version "0.3.13"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.13.tgz#cd528c7aa996fdb4e84a10e06a19d9d444736615"
-  integrity sha512-isCxDZNVTJttq1d4XxcEyEV51yunR1YN7SrOwNp5c6ahotRJQoyMCunyKG5bL1/rqcFKMYlaDYDjfAAGGbtk8Q==
+"@ledgerhq/react-native-ledger-core@^0.3.15":
+  version "0.3.15"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.15.tgz#ac95ceebb2a504303b0c47e0233dad8900f8b464"
+  integrity sha512-qcjO2uuvqshRkSAQ8Nm46NnVkV5JkGqA9QZ4pdBgHbWw/4T4HAJjEuu8LudQggA5cPB1SOTMQq3dZneE8/7Lew==
 
 "@ledgerhq/react-native-passcode-auth@2.0.0":
   version "2.0.0"
