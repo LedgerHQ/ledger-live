@@ -1,24 +1,25 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import type { NavigationScreenProp } from "react-navigation";
+import { translate } from "react-i18next";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type { T } from "../../types/common";
 import SettingsRow from "../../components/SettingsRow";
-import CurrencyIcon from "../../components/CurrencyIcon";
 
 type Props = {
+  t: T,
   navigation: NavigationScreenProp<*>,
   currency: CryptoCurrency,
 };
 
 class AccountCurrencyRow extends PureComponent<Props> {
   render() {
-    const { currency } = this.props;
+    const { currency, t } = this.props;
     return (
       <SettingsRow
-        title={`${currency.name} (${currency.ticker})`}
-        iconLeft={<CurrencyIcon size={20} currency={currency} />}
+        title={t("common:account.settings.currency.title")}
+        desc={`${currency.name} (${currency.ticker})`}
         key={currency.id}
-        desc={null}
         arrowRight
         onPress={() =>
           this.props.navigation.navigate("AccountCurrencySettings", {
@@ -30,4 +31,4 @@ class AccountCurrencyRow extends PureComponent<Props> {
   }
 }
 
-export default AccountCurrencyRow;
+export default translate()(AccountCurrencyRow);
