@@ -2,11 +2,11 @@
 import React from "react";
 import sample from "lodash/sample";
 import { genAccount } from "@ledgerhq/live-common/lib/mock/account";
-import Button from "./Button";
-import { accountModel } from "../reducers/accounts";
-import db from "../db";
-import { withReboot } from "../context/Reboot";
-import { listCryptoCurrencies } from "../cryptocurrencies";
+import SettingsRow from "../../../components/SettingsRow";
+import { accountModel } from "../../../reducers/accounts";
+import db from "../../../db";
+import { withReboot } from "../../../context/Reboot";
+import { listCryptoCurrencies } from "../../../cryptocurrencies";
 
 async function injectMockAccountsInDB(count) {
   await db.save("accounts", {
@@ -25,15 +25,14 @@ async function injectMockAccountsInDB(count) {
 const GenerateMockAccountsButton = ({
   reboot,
   count,
-  ...rest
+  title,
 }: {
   title: string,
   count: number,
   reboot: *,
 }) => (
-  <Button
-    {...rest}
-    type="secondary"
+  <SettingsRow
+    title={title}
     onPress={async () => {
       await injectMockAccountsInDB(count);
       reboot();

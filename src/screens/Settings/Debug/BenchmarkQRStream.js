@@ -1,14 +1,12 @@
 // @flow
 import React from "react";
 import { withNavigation } from "react-navigation";
-import Button from "./Button";
+import SettingsRow from "../../../components/SettingsRow";
 
 const BenchmarkQRStream = ({ navigation }: { navigation: * }) => (
-  <Button
-    type="secondary"
+  <SettingsRow
     title="Benchmark QRStream"
     onPress={() => navigation.navigate("BenchmarkQRStream")}
-    containerStyle={{ marginTop: 20 }}
   />
 );
 

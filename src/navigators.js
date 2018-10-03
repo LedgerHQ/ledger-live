@@ -19,6 +19,7 @@ import RateProviderSettings from "./screens/Settings/General/RateProviderSetting
 import GeneralSettings from "./screens/Settings/General";
 import AboutSettings from "./screens/Settings/About";
 import HelpSettings from "./screens/Settings/Help";
+import DebugSettings from "./screens/Settings/Debug";
 import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
 import Manager from "./screens/Manager";
@@ -101,6 +102,12 @@ const SettingsStack = createStackNavigator(
     HelpSettings,
     CurrenciesList,
     CurrencySettings,
+    // $FlowFixMe
+    DebugSettings,
+    // $FlowFixMe
+    DebugBLE,
+    // $FlowFixMe
+    BenchmarkQRStream,
   },
   StackNavigatorConfig,
 );
@@ -243,10 +250,6 @@ export const RootNavigator = createStackNavigator(
     AccountSettings,
     ImportAccounts,
     SendFundsSettings,
-    // $FlowFixMe
-    DebugBLE,
-    // $FlowFixMe
-    BenchmarkQRStream,
   },
   {
     mode: "modal",
