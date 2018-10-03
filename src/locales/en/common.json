@@ -172,6 +172,11 @@
   "accounts": {
     "importNotification": {
       "message": "Your accounts have successfully been imported!"
+    },
+    "row": {
+      "syncPending": "Synchronizing...",
+      "upToDate": "Up to date",
+      "error": "Error"
     }
   },
   "settings": {
