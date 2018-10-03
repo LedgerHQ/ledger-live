@@ -4,10 +4,8 @@ import {
   SafeAreaView,
   View,
   StyleSheet,
-  KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Platform,
 } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
@@ -29,6 +27,7 @@ import AmountInput from "./AmountInput";
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
+import KeyboardView from "../../components/KeyboardView";
 
 type Props = {
   account: Account,
@@ -96,17 +95,10 @@ class SelectFunds extends Component<Props, State> {
     const isWithinBalance = amountBigNumber.lt(account.balance);
     const isValid = amountBigNumber.gt(0) && isWithinBalance;
 
-    const keyboardVerticalOffset = Platform.OS === "ios" ? 60 : 0;
-
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={5} currentStep={3} />
-        <KeyboardAvoidingView
-          style={styles.container}
-          keyboardVerticalOffset={keyboardVerticalOffset}
-          behavior="padding"
-          enabled
-        >
+        <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={this.blur}>
             <View style={{ flex: 1 }}>
               <AmountInput
@@ -152,7 +144,7 @@ class SelectFunds extends Component<Props, State> {
               </View>
             </View>
           </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+        </KeyboardView>
       </SafeAreaView>
     );
   }

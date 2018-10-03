@@ -5,9 +5,7 @@ import {
   SafeAreaView,
   StyleSheet,
   TextInput,
-  KeyboardAvoidingView,
   TouchableOpacity,
-  Platform,
 } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -22,6 +20,7 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
+import KeyboardView from "../../components/KeyboardView";
 
 import Close from "../../icons/Close";
 
@@ -78,17 +77,10 @@ class SelectRecipient extends Component<Props, State> {
     const { address, validAddress } = this.state;
     const { account } = this.props;
 
-    const keyboardVerticalOffset = Platform.OS === "ios" ? 60 : 0;
-
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={5} currentStep={2} />
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={{ flex: 1 }}
-          enabled
-          keyboardVerticalOffset={keyboardVerticalOffset}
-        >
+        <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Button
               type="tertiary"
@@ -141,7 +133,7 @@ class SelectRecipient extends Component<Props, State> {
               disabled={!validAddress}
             />
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardView>
       </SafeAreaView>
     );
   }

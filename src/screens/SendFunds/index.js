@@ -1,12 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  View,
-  SafeAreaView,
-  StyleSheet,
-  FlatList,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, SafeAreaView, StyleSheet, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -17,6 +11,7 @@ import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Stepper from "../../components/Stepper";
 import AccountCard from "../../components/AccountCard";
 import StepHeader from "../../components/StepHeader";
+import KeyboardView from "../../components/KeyboardView";
 
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -57,7 +52,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={5} currentStep={1} />
-        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }} enabled>
+        <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               list={accounts}
@@ -76,7 +71,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
               )}
             />
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardView>
       </SafeAreaView>
     );
   }

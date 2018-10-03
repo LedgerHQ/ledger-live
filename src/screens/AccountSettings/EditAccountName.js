@@ -5,8 +5,6 @@ import {
   View,
   StyleSheet,
   TextInput,
-  KeyboardAvoidingView,
-  Platform,
   SafeAreaView,
 } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
@@ -18,8 +16,10 @@ import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import type { T } from "../../types/common";
-import colors from "../../colors";
 import Button from "../../components/Button";
+import KeyboardView from "../../components/KeyboardView";
+
+import colors from "../../colors";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -66,15 +66,9 @@ class EditAccountName extends PureComponent<Props, State> {
 
   render() {
     const { account, t } = this.props;
-    const keyboardVerticalOffset = Platform.OS === "ios" ? 64 : 0;
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAvoidingView
-          style={styles.body}
-          keyboardVerticalOffset={keyboardVerticalOffset}
-          behavior="padding"
-          enabled
-        >
+        <KeyboardView style={styles.body}>
           <ScrollView contentContainerStyle={styles.root}>
             <TextInput
               autoFocus
@@ -94,7 +88,7 @@ class EditAccountName extends PureComponent<Props, State> {
               />
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardView>
       </SafeAreaView>
     );
   }
