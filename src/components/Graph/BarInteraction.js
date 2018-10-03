@@ -5,7 +5,11 @@ import * as array from "d3-array";
 import { BigNumber } from "bignumber.js";
 import { View } from "react-native";
 import Svg, { G } from "react-native-svg";
-import { PanGestureHandler, State } from "react-native-gesture-handler";
+import {
+  PanGestureHandler,
+  State,
+  LongPressGestureHandler,
+} from "react-native-gesture-handler";
 
 import Bar from "./Bar";
 
@@ -97,6 +101,10 @@ export default class BarInteraction extends Component<
   render() {
     const { width, height, color, children } = this.props;
     const { barVisible, barOffsetX, barOffsetY } = this.state;
+
+    const panRef = React.createRef();
+    const longPressRef = React.createRef();
+
     return (
       <PanGestureHandler
         onHandlerStateChange={this.onHandlerStateChange}
@@ -104,31 +112,38 @@ export default class BarInteraction extends Component<
         maxPointers={1}
         minDeltaX={10} // nb of pixel to wait before start point
         maxDeltaY={20} // allow to scroll
+        simultaneousHandlers={longPressRef}
       >
-        <View
-          style={{
-            width,
-            height,
-            position: "relative",
-          }}
-          collapsable={false}
+        <LongPressGestureHandler
+          onHandlerStateChange={this.onHandlerStateChange}
+          onGestureEvent={this.onPanGestureEvent}
+          simultaneousHandlers={panRef}
         >
-          {children}
-          <Svg
-            height={height}
-            width={width}
+          <View
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: barVisible ? 1 : 0,
+              width,
+              height,
+              position: "relative",
             }}
+            collapsable={false}
           >
-            <G x={barOffsetX} y={barOffsetY}>
-              <Bar height={height} color={color} />
-            </G>
-          </Svg>
-        </View>
+            {children}
+            <Svg
+              height={height}
+              width={width}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                opacity: barVisible ? 1 : 0,
+              }}
+            >
+              <G x={barOffsetX} y={barOffsetY}>
+                <Bar height={height} color={color} />
+              </G>
+            </Svg>
+          </View>
+        </LongPressGestureHandler>
       </PanGestureHandler>
     );
   }
