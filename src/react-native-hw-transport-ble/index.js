@@ -5,6 +5,8 @@ import Transport, { TransportError } from "@ledgerhq/hw-transport";
 import { BleManager } from "react-native-ble-plx";
 
 const ServiceUuid = "d973f2e0-b19e-11e2-9e96-0800200c9a66";
+const ConnectionWriteCharacteristicUuid =
+  "d973f2e3-b19e-11e2-9e96-0800200c9a66";
 const WriteCharacteristicUuid = "d973f2e2-b19e-11e2-9e96-0800200c9a66";
 const NotifyCharacteristicUuid = "d973f2e1-b19e-11e2-9e96-0800200c9a66";
 const MaxChunkBytes = 20;
@@ -145,6 +147,7 @@ export default class BluetoothTransport extends Transport<Device> {
       sub.remove();
       bleManager.stopDeviceScan();
     };
+
     const onBleStateChange = (state: string) => {
       if (state === "PoweredOn") {
         bleManager.startDeviceScan(null, null, (bleError, device) => {
@@ -155,7 +158,7 @@ export default class BluetoothTransport extends Transport<Device> {
           }
           // FIXME this should be the final filtering:
           // if (device.serviceUUIDs && device.serviceUUIDs.some(acceptServiceUUID)) {
-          if ((device.name || "").startsWith("Balenos")) {
+          if ((device.name || "").indexOf("Balenos") !== -1) {
             observer.next({ type: "add", descriptor: device });
           }
         });
@@ -186,12 +189,21 @@ export default class BluetoothTransport extends Transport<Device> {
     }
     let writeC;
     let notifyC;
+    let connectC;
     for (const c of characteristics) {
-      if (c.uuid === WriteCharacteristicUuid) {
+      if (c.uuid === ConnectionWriteCharacteristicUuid) {
+        connectC = c;
+      } else if (c.uuid === WriteCharacteristicUuid) {
         writeC = c;
       } else if (c.uuid === NotifyCharacteristicUuid) {
         notifyC = c;
       }
+    }
+    if (!connectC) {
+      throw new TransportError(
+        "connect characteristic not found",
+        "BLEChracteristicNotFound",
+      );
     }
     if (!writeC) {
       throw new TransportError(
@@ -203,6 +215,12 @@ export default class BluetoothTransport extends Transport<Device> {
       throw new TransportError(
         "notify characteristic not found",
         "BLEChracteristicNotFound",
+      );
+    }
+    if (!connectC.isWritableWithResponse) {
+      throw new TransportError(
+        "write characteristic not writableWithResponse",
+        "BLEChracteristicInvalid",
       );
     }
     if (!writeC.isWritableWithResponse) {
@@ -217,7 +235,14 @@ export default class BluetoothTransport extends Transport<Device> {
         "BLEChracteristicInvalid",
       );
     }
-    return new BluetoothTransport(device, writeC, notifyC);
+
+    /*
+
+    await connectC.writeWithoutResponse(Buffer.from([0x01]).toString("base64"));
+
+    */
+
+    return new BluetoothTransport(device, writeC, notifyC, connectC);
   }
 
   device: Device;
@@ -226,15 +251,19 @@ export default class BluetoothTransport extends Transport<Device> {
 
   notifyCharacteristic: Characteristic;
 
+  connectCharacteristic: Characteristic;
+
   constructor(
     device: Device,
     writeCharacteristic: Characteristic,
     notifyCharacteristic: Characteristic,
+    connectCharacteristic: Characteristic,
   ) {
     super();
     this.device = device;
     this.writeCharacteristic = writeCharacteristic;
     this.notifyCharacteristic = notifyCharacteristic;
+    this.connectCharacteristic = connectCharacteristic;
     device.onDisconnected(e => {
       if (this.debug) {
         console.log("BLE disconnect", this.device); // eslint-disable-line
