@@ -3,11 +3,8 @@
 High:
 
 - Android and iOS: some account would just fail to sync and set 0.00 in balance. I wonder if related to following bug:
-- iOS: If using "Exception Breakpoint", you will see crash inside libcore (createWallet)
 
 Medium:
-
-- iOS Simulator not supported (I guess this would fix it: [#263](https://github.com/LedgerHQ/ledger-live-mobile/issues/263))
 
 Low:
 
