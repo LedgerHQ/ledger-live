@@ -19,6 +19,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.apsl.versionnumber.RNVersionNumberPackage;
 import com.ledger.reactnative.RCTCoreBindingPackage;
 
 import java.util.Arrays;
@@ -57,6 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
             new SplashScreenReactPackage(),
             new FingerprintAuthPackage(),
             new RCTCoreBindingPackage(),
+            new RNVersionNumberPackage(),
             new BlePackage()
       );
     }
