@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { translate } from "react-i18next";
-import { View, Linking } from "react-native";
+import { View, Linking, StyleSheet } from "react-native";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
 import colors from "../../../colors";
@@ -22,13 +22,18 @@ class TermsConditionsRow extends PureComponent<{
             console.error("An error occurred", err),
           )
         }
+        alignedTop
       >
-        <View style={{ margin: 10 }}>
+        <View style={styles.externalLinkContainer}>
           <ExternalLink size={16} color={colors.grey} />
         </View>
       </SettingsRow>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  externalLinkContainer: { marginHorizontal: 10 },
+});
 
 export default translate()(TermsConditionsRow);

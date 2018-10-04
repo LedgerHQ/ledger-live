@@ -119,7 +119,7 @@ class GraphCardHeader extends PureComponent<{
           {renderTitle ? (
             renderTitle({ counterValueUnit: unit, item })
           ) : (
-            <LText style={styles.balanceText}>
+            <LText tertiary style={styles.balanceText}>
               <CurrencyUnitValue unit={unit} value={item.value} />
             </LText>
           )}
