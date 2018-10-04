@@ -1,8 +1,9 @@
 // @flow
 import React, { Component } from "react";
-import { Switch, View } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import AccountCard from "../../components/AccountCard";
+import CheckBox from "../../components/CheckBox";
 
 const selectableModes = ["create", "patch"];
 
@@ -13,15 +14,16 @@ export default class DisplayResultItem extends Component<{
   importing: boolean,
   onSwitch: (boolean, Account) => void,
 }> {
-  onSwitch = (checked: boolean) => {
-    this.props.onSwitch(checked, this.props.account);
+  onSwitch = () => {
+    this.props.onSwitch(!this.props.checked, this.props.account);
   };
 
   render() {
     const { account, checked, mode, importing } = this.props;
     const selectable = selectableModes.includes(mode);
     return (
-      <View
+      <TouchableOpacity
+        onPress={importing ? undefined : this.onSwitch}
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -30,14 +32,13 @@ export default class DisplayResultItem extends Component<{
       >
         <AccountCard account={account} />
         {!selectable ? null : (
-          <Switch
-            onValueChange={this.onSwitch}
-            value={checked}
-            disabled={importing}
-            style={{ marginLeft: 16 }}
-          />
+          <CheckBox isChecked={checked} style={styles.marginLeft} />
         )}
-      </View>
+      </TouchableOpacity>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  marginLeft: { marginLeft: 16 },
+});
