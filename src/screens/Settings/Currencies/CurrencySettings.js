@@ -71,7 +71,12 @@ class EachCurrencySettings extends Component<Props, LocalState> {
 
   goToExchange = () => {
     const { navigation, currency, currencySettings } = this.props;
-    navigation.navigate("RateProviderSettings", {
+    const fromAccountSettings = navigation.getParam("fromAccount");
+
+    const to = fromAccountSettings
+      ? "AccountRateProviderSettings"
+      : "RateProviderSettings";
+    navigation.navigate(to, {
       from: currency.ticker,
       to: intermediaryCurrency.ticker,
       selected: currencySettings.exchange,

@@ -220,6 +220,7 @@ const AccountSettings = createStackNavigator(
     EditAccountUnits,
     EditAccountName,
     AccountCurrencySettings: CurrencySettings,
+    AccountRateProviderSettings: RateProviderSettings,
   },
   StackNavigatorConfig,
 );
