@@ -1,24 +1,30 @@
 // @flow
-
+/* eslint import/no-cycle: 0 */
 import { combineReducers } from "redux";
 
 import accounts from "./accounts";
-import counterValues from "./counterValues";
+import CounterValues from "../countervalues";
 import settings from "./settings";
+import bridgeSync from "./bridgeSync";
+import appstate from "./appstate";
 
 import type { AccountsState } from "./accounts";
-import type { CounterValuesState } from "./counterValues";
 import type { SettingsState } from "./settings";
+import type { BridgeSyncState } from "./bridgeSync";
+import type { AppState } from "./appstate";
 
 export type State = {
   accounts: AccountsState,
-  counterValues: CounterValuesState,
-  settings: SettingsState
+  countervalues: *,
+  settings: SettingsState,
+  bridgeSync: BridgeSyncState,
+  appstate: AppState,
 };
 
 export default combineReducers({
-  // $FlowFixMe : not sure what's going on with accounts type
   accounts,
-  counterValues,
-  settings
+  countervalues: CounterValues.reducer,
+  settings,
+  bridgeSync,
+  appstate,
 });

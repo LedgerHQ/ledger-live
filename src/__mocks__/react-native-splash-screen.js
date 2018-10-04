@@ -2,7 +2,7 @@
 
 const m = {
   show() {},
-  hide() {}
+  hide() {},
 };
 
 export default m;

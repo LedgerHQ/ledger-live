@@ -6,24 +6,24 @@ import { authSecurityEnabledSelector } from "../../reducers/settings";
 import auth from "./auth";
 
 const mapStateToProps = createStructuredSelector({
-  authSecurityEnabled: authSecurityEnabledSelector
+  authSecurityEnabled: authSecurityEnabledSelector,
 });
 
 type State = {
   pending: boolean,
   success: boolean,
-  error: ?Error
+  error: ?Error,
 };
 
 type Props = {
   authSecurityEnabled: boolean,
-  children: State => *
+  children: State => *,
 };
 
 const initialState = ({ authSecurityEnabled }: Props): State => ({
   success: !authSecurityEnabled,
   pending: authSecurityEnabled,
-  error: null
+  error: null,
 });
 
 class AuthPass extends Component<Props, State> {
@@ -34,7 +34,7 @@ class AuthPass extends Component<Props, State> {
       auth("Please authenticate to Ledger app")
         .then(success => this.setState({ success, pending: false }))
         .catch(error =>
-          this.setState({ success: false, pending: false, error })
+          this.setState({ success: false, pending: false, error }),
         );
     }
   }

@@ -1,24 +1,26 @@
 /* @flow */
 import React, { Component } from "react";
-import { Image } from "react-native";
+import type { NavigationScreenProp } from "react-navigation";
 import Touchable from "./Touchable";
+import CloseIcon from "../icons/Close";
+import colors from "../colors";
 
-export default class Close extends Component<*> {
+export default class Close extends Component<{
+  navigation: NavigationScreenProp<*>,
+  color: string,
+}> {
+  static defaultProps = {
+    color: colors.grey,
+  };
+
   onPress = () => {
     this.props.navigation.goBack();
   };
+
   render() {
     return (
-      <Touchable onPress={this.onPress}>
-        <Image
-          source={require("../images/close.png")}
-          style={{
-            marginHorizontal: 10,
-            width: 20,
-            height: 20,
-            tintColor: "white"
-          }}
-        />
+      <Touchable onPress={this.onPress} style={{ marginHorizontal: 16 }}>
+        <CloseIcon size={18} color={this.props.color} />
       </Touchable>
     );
   }

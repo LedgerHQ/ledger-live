@@ -1,57 +1,80 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { Modal } from "react-native";
 import { withNavigation } from "react-navigation";
-import Menu from "../components/Menu";
-import MenuTitle from "../components/MenuTitle";
-import MenuChoice from "../components/MenuChoice";
+import { translate } from "react-i18next";
+import type { NavigationScreenProp } from "react-navigation";
 
-class CreateModal extends Component<*> {
+import BottomModal from "../components/BottomModal";
+import BottomModalChoice from "../components/BottomModalChoice";
+import IconSend from "../icons/Send";
+import IconReceive from "../icons/Receive";
+import IconExchange from "../icons/Exchange";
+import type { T } from "../types/common";
+
+import type { Props as ModalProps } from "../components/BottomModal";
+
+type Props = ModalProps & {
+  navigation: NavigationScreenProp<*>,
+  t: T,
+};
+
+class CreateModal extends Component<Props> {
   onSendFunds = () => {
-    const { navigation, onRequestClose } = this.props;
+    const { navigation, onClose } = this.props;
     navigation.navigate({
       routeName: "SendFunds",
       params: {
-        goBackKey: navigation.state.key
+        goBackKey: navigation.state.key,
       },
-      key: "sendfunds"
+      key: "sendfunds",
     });
-    onRequestClose();
+    onClose();
   };
+
   onReceiveFunds = () => {
-    const { navigation, onRequestClose } = this.props;
+    const { navigation, onClose } = this.props;
     navigation.navigate({
       routeName: "ReceiveFunds",
       params: { goBackKey: navigation.state.key },
-      key: "receiveffunds"
+      key: "receiveffunds",
     });
-    onRequestClose();
+    onClose();
   };
+
+  onExchange = () => {
+    console.warn(`TODO: exchange screen`);
+  };
+
   render() {
-    const { onRequestClose } = this.props;
+    const { onClose, isOpened, t } = this.props;
     return (
-      <Modal transparent onRequestClose={onRequestClose}>
-        <Menu
-          onRequestClose={onRequestClose}
-          header={<MenuTitle>Transfer money</MenuTitle>}
-        >
-          <MenuChoice
-            title="Send funds"
-            icon={null}
-            description="Lorem ipsum dolor ledger"
-            onPress={this.onSendFunds}
-          />
-          <MenuChoice
-            title="Receive funds"
-            icon={null}
-            description="Lorem ipsum dolor ledger"
-            onPress={this.onReceiveFunds}
-          />
-        </Menu>
-      </Modal>
+      <BottomModal
+        isOpened={isOpened}
+        onClose={onClose}
+        style={{ paddingVertical: 20 }}
+      >
+        <BottomModalChoice
+          title={t("transfer.send.title")}
+          description={t("transfer.send.desc")}
+          onPress={this.onSendFunds}
+          Icon={IconSend}
+        />
+        <BottomModalChoice
+          title={t("transfer.receive.title")}
+          description={t("transfer.receive.desc")}
+          onPress={this.onReceiveFunds}
+          Icon={IconReceive}
+        />
+        <BottomModalChoice
+          title={t("transfer.exchange.title")}
+          description={t("transfer.exchange.desc")}
+          Icon={IconExchange}
+          onPress={this.onExchange}
+        />
+      </BottomModal>
     );
   }
 }
 
-export default withNavigation(CreateModal);
+export default translate()(withNavigation(CreateModal));

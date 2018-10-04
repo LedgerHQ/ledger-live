@@ -1,38 +1,70 @@
 // @flow
 
-import type { Dispatch } from "redux";
-import db from "../db";
-import type { CurrencySettings } from "../reducers/settings";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
 
-type Settings = {};
-
-export type SaveSettings = Settings => (Dispatch<*>) => void;
-
-export const saveSettings: SaveSettings = payload => dispatch => {
-  dispatch({
-    type: "DB:SAVE_SETTINGS",
-    payload
-  });
+export type CurrencySettings = {
+  confirmationsNb: number,
+  exchange: ?*,
 };
 
-type InitSettings = () => (Dispatch<*>) => Promise<void>;
+type SetExchangePairs = (
+  Array<{
+    from: Currency,
+    to: Currency,
+    exchange: ?string,
+  }>,
+) => *;
 
-export const initSettings: InitSettings = () => async dispatch => {
-  const settings = (await db.get("settings")) || {};
-  if (Object.keys(settings).length === 0) {
-    return;
-  }
-  dispatch({
-    type: "FETCH_SETTINGS",
-    payload: settings
-  });
-};
+export const setExchangePairsAction: SetExchangePairs = pairs => ({
+  type: "SETTINGS_SET_PAIRS",
+  pairs,
+});
+
+export const setAuthSecurity = (authSecurityEnabled: boolean) => ({
+  type: "SETTINGS_SET_AUTH_SECURITY",
+  authSecurityEnabled,
+});
+
+export const setCountervalue = (counterValue: string) => ({
+  type: "SETTINGS_SET_COUNTERVALUE",
+  counterValue,
+});
+
+export const importSettings = (settings: *) => ({
+  type: "SETTINGS_IMPORT",
+  settings,
+});
+
+export const importDesktopSettings = (settings: *) => ({
+  type: "SETTINGS_IMPORT_DESKTOP",
+  settings,
+});
+
+export const setReportErrors = (reportErrorsEnabled: boolean) => ({
+  type: "SETTINGS_SET_REPORT_ERRORS",
+  reportErrorsEnabled,
+});
+
+export const setAnalytics = (analyticsEnabled: boolean) => ({
+  type: "SETTINGS_SET_ANALYTICS",
+  analyticsEnabled,
+});
+
+export const setOrderAccounts = (orderAccounts: string) => ({
+  type: "SETTINGS_SET_ORDER_ACCOUNTS",
+  orderAccounts,
+});
+
+export const setSelectedTimeRange = (selectedTimeRange: string) => ({
+  type: "SETTINGS_SET_SELECTED_TIME_RANGE",
+  payload: selectedTimeRange,
+});
 
 export const updateCurrencySettings = (
-  coinType: number,
-  patch: $Shape<CurrencySettings>
+  currencyId: number,
+  patch: $Shape<CurrencySettings>,
 ) => ({
-  type: "DB:UPDATE_CURRENCY_SETTINGS",
-  coinType,
-  patch
+  type: "UPDATE_CURRENCY_SETTINGS",
+  currencyId,
+  patch,
 });

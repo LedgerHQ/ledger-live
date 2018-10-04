@@ -1,16 +1,8 @@
 /* @flow */
-type Opts = {
-  bold?: boolean,
-  semiBold?: boolean,
-  secondary?: boolean
-};
-type Res = {
-  fontFamily: string,
-  fontWeight: string
-};
+import type { Opts, Res } from "."; // eslint-disable-line
 
-export default ({ bold, semiBold, secondary }: Opts = {}): Res => {
-  const family = secondary ? "MuseoSans" : "OpenSans";
+export default ({ bold, semiBold, secondary, tertiary }: Opts = {}): Res => {
+  const family = secondary ? "MuseoSans" : tertiary ? "Rubik" : "OpenSans";
   let weight;
   if (semiBold) {
     weight = "SemiBold";

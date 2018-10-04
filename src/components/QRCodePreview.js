@@ -1,22 +1,24 @@
 /* @flow */
 import React, { Component } from "react";
+import type { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { View, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { encodeURIScheme } from "@ledgerhq/currencies";
-import type { Currency } from "@ledgerhq/currencies";
+import { encodeURIScheme } from "@ledgerhq/live-common/lib/helpers/currencies";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
 
 export default class QRCodePreview extends Component<{
   address: string,
   size: number,
   currency?: Currency,
-  amount?: number,
-  useURIScheme?: boolean
+  amount?: BigNumber,
+  useURIScheme?: boolean,
 }> {
   static defaultProps = {
     size: 200,
-    useURIScheme: false
+    useURIScheme: false,
   };
+
   render() {
     const { useURIScheme, address, currency, amount, size } = this.props;
     let value;
@@ -42,6 +44,6 @@ const styles = StyleSheet.create({
   root: {
     backgroundColor: "white",
     padding: 15,
-    alignSelf: "center"
-  }
+    alignSelf: "center",
+  },
 });

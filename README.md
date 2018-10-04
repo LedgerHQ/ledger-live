@@ -1,24 +1,25 @@
-# ledger-wallet-mobile
+# ledger-live-mobile
 
 Mobile application for the Ledger Wallet
 
-
 ## Pre-requisite
 
-* Yarn
+- Node LTS version
+- Yarn 1.10.1 or above
 
 ### iOS
 
-* XCode
-* Carthage: brew install carthage
+- XCode
 
 ### Android
 
-* Android studio
+- Android studio
 
 ## Scripts
 
 ### `yarn install`
+
+install dependencies.
 
 ### `yarn start`
 
@@ -32,27 +33,34 @@ yarn start -- --reset-cache
 
 #### `yarn test`
 
-Runs the [jest](https://github.com/facebook/jest) test runner on your tests.
-
 #### `yarn run ios`
 
-Like `npm start`, but also attempts to open your app in the iOS Simulator if you're on a Mac and have it installed.
+or `open ios/ledgerlivemobile.xcodproj`
 
 #### `yarn run android`
 
-Like `yarn start`, but also attempts to open your app on a connected Android device or emulator. Requires an installation of Android build tools (see [React Native docs](https://facebook.github.io/react-native/docs/getting-started.html) for detailed setup). We also recommend installing Genymotion as your Android emulator. Once you've finished setting up the native build environment, there are two options for making the right copy of `adb` available to Create React Native App:
+or open `android/` in Android Studio.
 
-##### Using Android Studio's `adb`
+## Environment variables
 
-1. Make sure that you can run adb from your terminal.
-2. Open Genymotion and navigate to `Settings -> ADB`. Select “Use custom Android SDK tools” and update with your [Android SDK directory](https://stackoverflow.com/questions/25176594/android-sdk-location).
+Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively
 
-##### Using Genymotion's `adb`
+```
+DEBUG_COMM_HTTP_PROXY=http://localhost:8435   # enable a dev mode to use the device over HTTP. use with https://github.com/LedgerHQ/ledgerjs/tree/master/packages/hw-http-proxy-devserver
+BRIDGESTREAM_DATA=...       # come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning
+READ_ONLY=0                 # re-enable screens which have been disabled for MVP (transfer and manager)
+DEBUG_RNDEBUGGER=1          # enable react native debugger
+```
 
-1. Find Genymotion’s copy of adb. On macOS for example, this is normally `/Applications/Genymotion.app/Contents/MacOS/tools/`.
-2. Add the Genymotion tools directory to your path (instructions for [Mac](http://osxdaily.com/2014/08/14/add-new-path-to-path-command-line/), [Linux](http://www.computerhope.com/issues/ch001647.htm), and [Windows](https://www.howtogeek.com/118594/how-to-edit-your-system-path-for-easy-command-line-access/)).
-3. Make sure that you can run adb from your terminal.
+## Troobleshooting
 
-## Writing and Running Tests
+### XCode 10
 
-This project is set up to use [jest](https://facebook.github.io/jest/) for tests. You can configure whatever testing strategy you like, but jest works out of the box. Create test files in directories called `__tests__` or with the `.test` extension to have the files loaded by jest. See the [the template project](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/App.test.js) for an example test. The [jest documentation](https://facebook.github.io/jest/docs/en/getting-started.html) is also a wonderful resource, as is the [React Native testing tutorial](https://facebook.github.io/jest/docs/en/tutorial-react-native.html).
+When trying to build with XCode 10 and React Native v0.57.0, you might have issues with third party packages from React Native.  
+To solve this issue you must:
+
+```sh
+./node_modules/react-native/scripts/ios-install-third-party.sh
+```
+
+The build on XCode 10 should work then.

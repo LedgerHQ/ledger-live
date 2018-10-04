@@ -12,12 +12,12 @@ const NativeLocale = {
     short: "M/d/yy",
     long: "MMMM d, y",
     medium: "MMM d, y",
-    full: "EEEE, MMMM d, y"
+    full: "EEEE, MMMM d, y",
   },
   localeIdentifier: "en_US",
   preferredLanguages: ["en", "fr-FR"],
   quotationBeginDelimiterKey: "“",
-  quotationEndDelimiterKey: "”"
+  quotationEndDelimiterKey: "”",
 };
 
 const m = {
@@ -40,7 +40,7 @@ const m = {
 
   dateFormat(date: *, dateStyle: string, timeStyle: string) {
     return NativeLocale.dateFormat(date, dateStyle, timeStyle);
-  }
+  },
 };
 
 export default m;

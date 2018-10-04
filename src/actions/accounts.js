@@ -1,81 +1,56 @@
 // @flow
 
-import sortBy from "lodash/sortBy";
-import type { Dispatch } from "redux";
-import type { Account } from "@ledgerhq/wallet-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountModel } from "../reducers/accounts";
-import db from "../db";
+import { flushAll } from "../components/DBSave";
 
-function sortAccounts(accounts, orderAccounts) {
-  const [order, sort] = orderAccounts.split("|");
-
-  const accountsSorted = sortBy(accounts, a => {
-    if (order === "balance") {
-      return a.balance;
-    }
-
-    return a[order];
-  });
-
-  if (sort === "asc") {
-    accountsSorted.reverse();
-  }
-
-  return accountsSorted;
-}
-
-export type UpdateOrderAccounts = string => (Dispatch<*>, Function) => void;
-export const updateOrderAccounts: UpdateOrderAccounts = (
-  orderAccounts: string
-) => (dispatch, getState) => {
-  const { accounts } = getState();
-  dispatch({
-    type: "DB:SET_ACCOUNTS",
-    payload: sortAccounts(accounts, orderAccounts)
-  });
-};
-
-export type AddAccount = Account => (Function, Function) => void;
-export const addAccount: AddAccount = payload => (dispatch, getState) => {
-  const { settings: { orderAccounts } } = getState();
-  dispatch({
-    type: "ADD_ACCOUNT",
-    payload
-  });
-  dispatch(updateOrderAccounts(orderAccounts));
-};
-
-export type RemoveAccount = Account => { type: string, payload: Account };
-export const removeAccount: RemoveAccount = payload => ({
-  type: "DB:REMOVE_ACCOUNT",
-  payload
+export const importStore = (state: *) => ({
+  type: "ACCOUNTS_IMPORT",
+  state: {
+    active:
+      state && Array.isArray(state.active)
+        ? state.active.map(accountModel.decode)
+        : [],
+  },
 });
 
-export type InitAccounts = () => (Function, Function) => Promise<*>;
+export const addAccount = (account: Account) => ({
+  type: "ACCOUNTS_ADD",
+  account,
+});
 
-export const initAccounts: InitAccounts = () => async (dispatch, getState) => {
-  const { settings: { orderAccounts } } = getState();
-  let accounts = [];
-  try {
-    const accountsRaw = await db.get("accounts");
-    if (accountsRaw) {
-      accounts = accountsRaw.map(accountModel.decode);
-    }
-  } catch (e) {
-    console.warn(e);
-  }
-  dispatch({
-    type: "SET_ACCOUNTS",
-    payload: sortAccounts(accounts, orderAccounts)
-  });
-};
+export type UpdateAccountWithUpdater = (
+  accountId: string,
+  (Account) => Account,
+) => *;
 
-export type UpdateAccount = ($Shape<Account>) => (Function, Function) => void;
-export const updateAccount: UpdateAccount = payload => (dispatch, getState) => {
-  const { settings: { orderAccounts } } = getState();
-  dispatch({
-    type: "UPDATE_ACCOUNT",
-    payload
-  });
-  dispatch(updateOrderAccounts(orderAccounts));
+export const updateAccountWithUpdater: UpdateAccountWithUpdater = (
+  accountId,
+  updater,
+) => ({
+  type: "UPDATE_ACCOUNT",
+  accountId,
+  updater,
+});
+
+export type UpdateAccount = ($Shape<Account>) => *;
+export const updateAccount: UpdateAccount = payload =>
+  updateAccountWithUpdater(payload.id, (account: Account) => ({
+    ...account,
+    ...payload,
+  }));
+
+export type DeleteAccount = Account => { type: string, payload: Account };
+export const deleteAccount: DeleteAccount = payload => ({
+  type: "DELETE_ACCOUNT",
+  payload,
+});
+
+const delay = ms => new Promise(success => setTimeout(success, ms));
+
+export const cleanAccountsCache = () => async (dispatch: *) => {
+  dispatch({ type: "CLEAN_ACCOUNTS_CACHE" });
+  dispatch({ type: "LEDGER_CV:WIPE" });
+  await delay(100);
+  flushAll();
 };

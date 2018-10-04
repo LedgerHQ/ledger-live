@@ -1,26 +1,37 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View } from "react-native";
-import { getIconByCoinType } from "@ledgerhq/currencies/reactNative";
-import type { Currency } from "@ledgerhq/currencies";
+import { View, StyleSheet } from "react-native";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
+import LText from "./LText";
 
 type Props = {
   currency: Currency,
-  size: number
+  size: number,
+  color?: string,
 };
 
-type typeIcon = React$ComponentType<{ size: number, color: string }>;
 export default class CurrencyIcon extends PureComponent<Props> {
   render() {
-    const { size, currency } = this.props;
-    const IconComponent: typeIcon = getIconByCoinType(currency.coinType);
+    const { size, currency, color } = this.props;
+    const IconComponent = getCryptoCurrencyIcon(currency);
     if (!IconComponent) {
-      console.warn(
-        `No icon for currency ${currency.name} (coinType ${currency.coinType})`
+      return (
+        <View style={[styles.altRoot, { width: size, height: size }]}>
+          <LText style={{ fontSize: Math.floor(size / 3) }}>
+            {currency.ticker}
+          </LText>
+        </View>
       );
-      return <View style={{ width: size, height: size }} />;
     }
-    return <IconComponent size={size} color={currency.color} />;
+    return <IconComponent size={size} color={color || currency.color} />;
   }
 }
+
+const styles = StyleSheet.create({
+  altRoot: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

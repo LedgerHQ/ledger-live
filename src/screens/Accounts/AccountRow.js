@@ -1,67 +1,127 @@
-/* @flow */
+// @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/wallet-common/lib/types";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "../../components/LText";
+import Card from "../../components/Card";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CurrencyIcon from "../../components/CurrencyIcon";
 import CounterValue from "../../components/CounterValue";
+import CurrencyIcon from "../../components/CurrencyIcon";
+import colors from "../../colors";
+import { isUpToDateAccountSelector } from "../../reducers/accounts";
+import { accountSyncStateSelector } from "../../reducers/bridgeSync";
+import type { AsyncState } from "../../reducers/bridgeSync";
+import AccountSyncStatus from "./AccountSyncStatus";
 
-export default class AccountRow extends PureComponent<{
-  account: Account
-}> {
+const mapStateToProps = createStructuredSelector({
+  syncState: accountSyncStateSelector,
+  isUpToDateAccount: isUpToDateAccountSelector,
+});
+
+type Props = {
+  account: Account,
+  syncState: AsyncState,
+  style?: any,
+  isUpToDateAccount: boolean,
+  navigation: *,
+};
+
+const TICK_W = 6;
+const TICK_H = 20;
+
+class AccountRow extends PureComponent<Props> {
+  onPress = () => {
+    this.props.navigation.navigate("Account", {
+      accountId: this.props.account.id,
+    });
+  };
+
   render() {
-    const { account } = this.props;
+    const { account, style, isUpToDateAccount, syncState } = this.props;
     return (
-      <View style={styles.root}>
-        <View style={styles.icon}>
-          <CurrencyIcon currency={account.currency} size={32} />
-        </View>
-        <LText numberOfLines={1} style={styles.account}>
-          {account.name}
-        </LText>
-        <View style={styles.operationsColumn}>
-          <LText semiBold style={styles.currencyUnit}>
-            <CurrencyUnitValue unit={account.unit} value={account.balance} />
+      <Card onPress={this.onPress} style={[styles.root, style]}>
+        <CurrencyIcon size={24} currency={account.currency} />
+        <View style={styles.inner}>
+          <LText semiBold numberOfLines={1} style={styles.accountNameText}>
+            {account.name}
           </LText>
-          <LText style={styles.operationsSubText}>
-            <CounterValue value={account.balance} currency={account.currency} />
-          </LText>
+          <AccountSyncStatus
+            isUpToDateAccount={isUpToDateAccount}
+            {...syncState}
+          />
         </View>
-      </View>
+        <View style={styles.balanceContainer}>
+          <LText tertiary style={styles.balanceNumText}>
+            <CurrencyUnitValue
+              showCode
+              unit={account.unit}
+              value={account.balance}
+            />
+          </LText>
+          <View style={styles.balanceCounterContainer}>
+            <LText tertiary style={styles.balanceCounterText}>
+              <CounterValue
+                showCode
+                currency={account.currency}
+                value={account.balance}
+              />
+            </LText>
+          </View>
+        </View>
+      </Card>
     );
   }
 }
 
+export default connect(mapStateToProps)(AccountRow);
+
 const styles = StyleSheet.create({
   root: {
-    marginVertical: 6,
-    marginHorizontal: 16,
-    height: 60,
-    padding: 5,
-    borderRadius: 4,
-    backgroundColor: "white",
+    marginBottom: 10,
+    flexDirection: "row",
+    paddingHorizontal: 16,
     alignItems: "center",
-    flexDirection: "row"
+    height: 72,
+    overflow: "visible",
   },
-  icon: {
-    marginRight: 10
-  },
-  account: {
-    fontSize: 14,
-    flex: 1
-  },
-  currencyUnit: {
-    fontSize: 14
-  },
-  operationsColumn: {
+  inner: {
+    flexGrow: 1,
+    flexShrink: 1,
+    marginLeft: 16,
     flexDirection: "column",
-    marginLeft: 4,
-    marginRight: 8,
-    alignItems: "flex-end"
   },
-  operationsSubText: {
-    fontSize: 12,
-    color: "#999"
-  }
+  accountNameText: {
+    color: colors.darkBlue,
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  balanceContainer: {
+    marginLeft: 16,
+    alignItems: "flex-end",
+  },
+  balanceNumText: {
+    fontSize: 16,
+    color: colors.darkBlue,
+  },
+  balanceCounterContainer: {
+    marginTop: 5,
+  },
+  balanceCounterText: {
+    fontSize: 14,
+    color: colors.smoke,
+  },
+  tickError: {
+    backgroundColor: colors.alert,
+  },
+  tickPending: {
+    backgroundColor: colors.fog,
+  },
+  tick: {
+    position: "absolute",
+    left: -TICK_W + 1, // +1 is hack for android. it would disappear otherwise^^
+    width: TICK_W,
+    height: TICK_H,
+  },
 });

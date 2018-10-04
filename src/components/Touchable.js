@@ -3,22 +3,23 @@
 import React, { Component } from "react";
 import { TouchableOpacity } from "react-native";
 
-export default class GenericButton extends Component<
+export default class Touchable extends Component<
   {
     // when on press returns a promise,
     // the button will toggle in a pending state and
     // will wait the promise to complete before enabling the button again
     // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
     onPress: () => ?Promise<any>,
-    children: *
+    children: *,
   },
   {
-    pending: boolean
-  }
+    pending: boolean,
+  },
 > {
   state = {
-    pending: false
+    pending: false,
   };
+
   onPress = async () => {
     try {
       const res = this.props.onPress();
@@ -31,12 +32,24 @@ export default class GenericButton extends Component<
       this.setState(({ pending }) => (pending ? { pending: false } : null));
     }
   };
+
   render() {
     const { onPress, children, ...rest } = this.props;
     const { pending } = this.state;
     const disabled = !onPress || pending;
     return (
-      <TouchableOpacity onPress={this.onPress} disabled={disabled} {...rest}>
+      <TouchableOpacity
+        onPress={this.onPress}
+        disabled={disabled}
+        hitSlop={{
+          // default & can be overrided by rest
+          top: 16,
+          left: 16,
+          right: 16,
+          bottom: 16,
+        }}
+        {...rest}
+      >
         {children}
       </TouchableOpacity>
     );

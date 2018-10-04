@@ -1,233 +1,261 @@
 // @flow
-import React, { Component } from "react";
-import { StyleSheet, Image } from "react-native";
-import { StackNavigator, TabNavigator, TabBarBottom } from "react-navigation";
+import React from "react";
+import { StyleSheet, StatusBar, Platform } from "react-native";
+import { createStackNavigator } from "react-navigation";
+import { createBottomTabNavigator, BottomTabBar } from "react-navigation-tabs";
+import config from "react-native-config";
 import colors from "./colors";
-import Dashboard from "./screens/Dashboard";
+import SettingsIcon from "./icons/Settings";
+import ManagerIcon from "./icons/Manager";
+import AccountsIcon from "./icons/Accounts";
+import HeaderTitle from "./components/HeaderTitle";
+import HeaderBackImage from "./components/HeaderBackImage";
+import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
-import AccountSettings from "./screens/accountSettings/index";
-import Search from "./screens/Search";
+import Account from "./screens/Account";
 import Settings from "./screens/Settings";
-import CurrenciesSettings from "./screens/CurrenciesSettings";
-import Confirmations from "./screens/CurrenciesSettings/Confirmations";
-import ConfirmationsToSpend from "./screens/CurrenciesSettings/ConfirmationsToSpend";
-import BlockchainExplorer from "./screens/CurrenciesSettings/BlockchainExplorer";
-import TransactionFees from "./screens/CurrenciesSettings/TransactionFees";
-import SelectFiatUnit from "./screens/Settings/SelectFiatUnit";
-import ChartTimeRange from "./screens/Settings/ChartTimeRange";
-import ImportAccounts from "./screens/ImportAccounts";
-import EditUnits from "./screens/accountSettings/EditUnits";
-import EditName from "./screens/accountSettings/EditName";
-import Create from "./screens/Create";
+import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
+import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
+import GeneralSettings from "./screens/Settings/General";
+import AboutSettings from "./screens/Settings/About";
+import HelpSettings from "./screens/Settings/Help";
+import DebugSettings from "./screens/Settings/Debug";
+import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
+import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
+import Manager from "./screens/Manager";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
-import ReceiveFundsSelectAccount from "./screens/ReceiveFundsSelectAccount";
-import SendFundsSelectAccount from "./screens/SendFundsSelectAccount";
-import SendFundsChoseAmount from "./screens/SendFundsChoseAmount";
-import SendFundsScanAddress from "./screens/SendFundsScanAddress";
-import SendFundsChoseFee from "./screens/SendFundsChoseFee";
-import SendFundsReview from "./screens/SendFundsReview";
-import SendFundsPlugDevice from "./screens/SendFundsPlugDevice";
-import SendFundsConfirmation from "./screens/SendFundsConfirmation";
-import AddAccountSelectCurrency from "./screens/AddAccountSelectCurrency";
-import AddAccountInfo from "./screens/AddAccountInfo";
+import ConnectDevice from "./screens/ConnectDevice";
+import SendFundsMain from "./screens/SendFunds";
+import SendSelectRecipient from "./screens/SelectRecipient";
+import SendSelectFunds from "./screens/SelectFunds";
+import SendSummary from "./screens/SendSummary";
+import SendValidation from "./screens/Validation";
 import OperationDetails from "./screens/OperationDetails";
+import Transfer from "./screens/Transfer";
+import AccountSettingsMain from "./screens/AccountSettings";
+import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
+import EditAccountName from "./screens/AccountSettings/EditAccountName";
+import ScanAccounts from "./screens/ImportAccounts/Scan";
+import DisplayResult from "./screens/ImportAccounts/DisplayResult";
+import EditFees from "./screens/EditFees";
+import VerifyAddress from "./screens/VerifyAddress";
+import ReceiveConfirmation from "./screens/ReceiveComfirmation";
+import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
+import DebugBLE from "./screens/DebugBLE";
+import DebugCrash from "./screens/DebugCrash";
+import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 
-const stackNavigatiorDefaultNavigationOptions = {
-  headerStyle: {
-    backgroundColor: colors.blue,
-    borderBottomWidth: 0
-  },
-  headerTintColor: "white"
-};
+// TODO look into all FlowFixMe
+
+const statusBarPadding =
+  Platform.OS === "android" ? StatusBar.currentHeight : 0;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.lightBackground
-  }
+    backgroundColor: colors.lightGrey,
+  },
+  header: {
+    height: 48 + statusBarPadding,
+    paddingTop: statusBarPadding,
+    backgroundColor: colors.white,
+    borderBottomWidth: 0,
+    elevation: 0,
+  },
+  bottomTabBar: {
+    height: 48,
+    borderTopColor: colors.lightFog,
+    backgroundColor: colors.white,
+  },
+  transparentHeader: {
+    backgroundColor: "transparent",
+  },
 });
 
-const currencySettingsScreens = {
-  ConfirmationsToSpend: { screen: ConfirmationsToSpend },
-  Confirmations: { screen: Confirmations },
-  TransactionFees: { screen: TransactionFees },
-  BlockchainExplorer: { screen: BlockchainExplorer }
+const StackNavigatorConfig = {
+  navigationOptions: {
+    headerStyle: styles.header,
+    headerTitle: HeaderTitle,
+    headerBackTitle: null,
+    headerBackImage: HeaderBackImage,
+  },
+  cardStyle: styles.card,
+  headerLayoutPreset: "center",
 };
 
-const SettingsStack = StackNavigator(
+const TransparentHeaderNavigationOptions = {
+  headerTransparent: true,
+  headerStyle: [styles.header, styles.transparentHeader],
+  headerTitle: (props: *) => (
+    <HeaderTitle {...props} style={{ color: colors.white }} />
+  ),
+};
+
+const SettingsStack = createStackNavigator(
   {
-    Settings: { screen: Settings },
-    ImportAccounts: { screen: ImportAccounts },
-    SelectFiatUnit: { screen: SelectFiatUnit },
-    ChartTimeRange: { screen: ChartTimeRange },
-    CurrenciesSettings: { screen: CurrenciesSettings },
-    ...currencySettingsScreens
+    Settings,
+    CountervalueSettings,
+    RateProviderSettings,
+    // $FlowFixMe
+    GeneralSettings,
+    // $FlowFixMe
+    AboutSettings,
+    // $FlowFixMe
+    HelpSettings,
+    CurrenciesList,
+    CurrencySettings,
+    // $FlowFixMe
+    DebugSettings,
+    // $FlowFixMe
+    DebugBLE,
+    // $FlowFixMe
+    DebugCrash,
+    // $FlowFixMe
+    BenchmarkQRStream,
   },
-  {
-    navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+  StackNavigatorConfig,
 );
 
 SettingsStack.navigationOptions = {
   tabBarIcon: ({ tintColor }: *) => (
-    <Image
-      source={require("./images/settings.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
-  )
+    <SettingsIcon size={18} color={tintColor} />
+  ),
 };
 
-const AccountSettingsStack = StackNavigator(
+const ManagerStack = createStackNavigator(
   {
-    AccountSettings: { screen: AccountSettings },
-    EditUnits: { screen: EditUnits },
-    EditName: { screen: EditName },
-    ...currencySettingsScreens
+    // $FlowFixMe
+    Manager,
   },
-  {
-    navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+  StackNavigatorConfig,
 );
 
-class AccountSettingsConfig extends Component<*> {
-  static navigationOptions = {
-    header: null
-  };
-  render() {
-    const { navigation } = this.props;
-    return (
-      <AccountSettingsStack screenProps={{ topLevelNavigation: navigation }} />
-    );
-  }
-}
+ManagerStack.navigationOptions = {
+  tabBarIcon: ({ tintColor }: *) => <ManagerIcon size={18} color={tintColor} />,
+};
 
-const AddAccountStack = StackNavigator(
+const AccountsStack = createStackNavigator(
   {
-    AddAccountSelectCurrency: { screen: AddAccountSelectCurrency },
-    AddAccountInfo: { screen: AddAccountInfo }
+    Accounts,
+    Account,
   },
-  {
-    navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+  StackNavigatorConfig,
+);
+AccountsStack.navigationOptions = {
+  header: null,
+  tabBarIcon: ({ tintColor }: *) => (
+    <AccountsIcon size={18} color={tintColor} />
+  ),
+};
+
+const CustomTabBar = props => (
+  <BottomTabBar {...props} style={styles.bottomTabBar} />
 );
 
-class AddAccount extends Component<*> {
-  static navigationOptions = {
-    header: null
+const getTabItems = () => {
+  const items: any = {
+    Portfolio,
+    Accounts: AccountsStack,
   };
-  render() {
-    const { navigation } = this.props;
-    return <AddAccountStack screenProps={{ parentNavigation: navigation }} />;
-  }
-}
 
-const MainNavigator = TabNavigator(
-  {
-    Dashboard: { screen: Dashboard },
-    Accounts: { screen: Accounts },
-    Create: { screen: Create },
-    Search: { screen: Search },
-    Settings: { screen: SettingsStack }
-  },
-  {
-    tabBarComponent: TabBarBottom,
-    tabBarPosition: "bottom",
-    swipeEnabled: false,
-    animationEnabled: false,
-    tabBarOptions: {
-      showLabel: false,
-      activeTintColor: "white",
-      inactiveTintColor: "rgb(164,165,168)",
-      style: {
-        backgroundColor: colors.darkBar
-      },
-      indicatorStyle: {
-        backgroundColor: "#ffffff",
-        height: 4
-      }
-    }
+  if (config.READ_ONLY === "0") {
+    items.Transfer = Transfer;
+    items.Manager = ManagerStack;
   }
+
+  items.Settings = SettingsStack;
+
+  return items;
+};
+
+const Main = createBottomTabNavigator(getTabItems(), {
+  tabBarComponent: CustomTabBar,
+});
+
+Main.navigationOptions = {
+  header: null,
+};
+
+const ReceiveFunds = createStackNavigator(
+  {
+    ReceiveFundsMain,
+    ConnectDevice,
+    VerifyAddress,
+    ReceiveConfirmation,
+  },
+  StackNavigatorConfig,
+);
+ReceiveFunds.navigationOptions = {
+  header: null,
+};
+
+const SendFunds = createStackNavigator(
+  {
+    SendFundsMain,
+    SendSelectRecipient,
+    SendSelectFunds,
+    SendSummary,
+    SendValidation,
+  },
+  StackNavigatorConfig,
 );
 
-class Main extends Component<*> {
-  static navigationOptions = {
-    header: null
-  };
-  render() {
-    const { navigation } = this.props;
-    return <MainNavigator screenProps={{ topLevelNavigation: navigation }} />;
-  }
-}
+SendFunds.navigationOptions = {
+  header: null,
+};
 
-const ReceiveFundsStack = StackNavigator(
+const SendFundsSettings = createStackNavigator(
   {
-    ReceiveFundsMain: { screen: ReceiveFundsMain },
-    ReceiveFundsSelectAccount: { screen: ReceiveFundsSelectAccount }
+    EditFees,
   },
-  {
-    navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+  StackNavigatorConfig,
 );
-class ReceiveFunds extends Component<*> {
-  static navigationOptions = {
-    header: null
-  };
-  render() {
-    const { navigation } = this.props;
-    return (
-      <ReceiveFundsStack screenProps={{ topLevelNavigation: navigation }} />
-    );
-  }
-}
 
-const SendFundsStack = StackNavigator(
+SendFundsSettings.navigationOptions = {
+  header: null,
+};
+
+const AccountSettings = createStackNavigator(
   {
-    SendFundsSelectAccount: { screen: SendFundsSelectAccount },
-    SendFundsScanAddress: { screen: SendFundsScanAddress },
-    SendFundsChoseAmount: { screen: SendFundsChoseAmount },
-    SendFundsChoseFee: { screen: SendFundsChoseFee },
-    SendFundsReview: { screen: SendFundsReview },
-    SendFundsPlugDevice: { screen: SendFundsPlugDevice },
-    SendFundsConfirmation: { screen: SendFundsConfirmation }
+    AccountSettingsMain,
+    EditAccountUnits,
+    EditAccountName,
+    AccountCurrencySettings: CurrencySettings,
   },
-  {
-    navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+  StackNavigatorConfig,
 );
-class SendFunds extends Component<*> {
-  static navigationOptions = {
-    header: null
-  };
-  render() {
-    const { navigation } = this.props;
-    return <SendFundsStack screenProps={{ topLevelNavigation: navigation }} />;
-  }
-}
 
-export const RootNavigator = StackNavigator(
+AccountSettings.navigationOptions = {
+  header: null,
+};
+
+const ImportAccounts = createStackNavigator(
   {
-    Main: { screen: Main },
-    ReceiveFunds: {
-      path: "receive",
-      screen: ReceiveFunds
+    ScanAccounts: {
+      screen: ScanAccounts,
+      navigationOptions: TransparentHeaderNavigationOptions,
     },
-    SendFunds: {
-      path: "send",
-      screen: SendFunds
-    },
-    OperationDetails: { screen: OperationDetails },
-    AddAccount: { screen: AddAccount },
-    AccountSettings: { screen: AccountSettingsConfig },
-    ImportAccounts: { screen: ImportAccounts },
-    ReceiveFundsSelectAccount: { screen: ReceiveFundsSelectAccount }
+    DisplayResult,
+    FallBackCameraScreen,
+  },
+  StackNavigatorConfig,
+);
+
+ImportAccounts.navigationOptions = {
+  header: null,
+};
+
+export const RootNavigator = createStackNavigator(
+  {
+    Main,
+    ReceiveFunds,
+    SendFunds,
+    OperationDetails,
+    AccountSettings,
+    ImportAccounts,
+    SendFundsSettings,
   },
   {
     mode: "modal",
-    navigationOptions: stackNavigatiorDefaultNavigationOptions,
-    cardStyle: styles.card
-  }
+    ...StackNavigatorConfig,
+  },
 );

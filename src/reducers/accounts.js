@@ -1,99 +1,105 @@
 // @flow
 import { handleActions } from "redux-actions";
-import { createSelector, createStructuredSelector } from "reselect";
-import { createAccountModel } from "@ledgerhq/wallet-common/lib/models/account";
-import type { Account } from "@ledgerhq/wallet-common/lib/types";
+import { createSelector } from "reselect";
+import uniq from "lodash/uniq";
+import { createAccountModel } from "@ledgerhq/live-common/lib/models/account";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import { UP_TO_DATE_THRESHOLD } from "../constants";
 
 export const accountModel = createAccountModel();
 
-export type AccountsState = Account[];
+export type AccountsState = {
+  active: Account[],
+};
 
-const state: AccountsState = [];
+const initialState: AccountsState = {
+  active: [],
+};
 
 const handlers: Object = {
-  SET_ACCOUNTS: (
+  ACCOUNTS_IMPORT: (s, { state }) => state,
+  ACCOUNTS_ADD: (s, { account }) => ({
+    active: s.active.concat(account),
+  }),
+  REORDER_ACCOUNTS: (
     state: AccountsState,
-    { payload: accounts }: { payload: Account[] }
-  ): AccountsState => accounts,
-
-  ADD_ACCOUNT: (
-    state: AccountsState,
-    { payload: account }: { payload: Account }
-  ): AccountsState => [...state, account],
-
+    { payload }: { payload: string[] },
+  ) => ({
+    active: state.active
+      .slice(0)
+      .sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id)),
+  }),
   UPDATE_ACCOUNT: (
     state: AccountsState,
-    { payload: account }: { payload: Account }
-  ): AccountsState =>
-    state.map(existingAccount => {
-      if (existingAccount.id !== account.id) {
-        return existingAccount;
-      }
-
-      const updatedAccount = {
+    { accountId, updater }: { accountId: string, updater: Account => Account },
+  ): AccountsState => {
+    function update(existingAccount) {
+      if (accountId !== existingAccount.id) return existingAccount;
+      return {
         ...existingAccount,
-        ...account
+        ...updater(existingAccount),
       };
-
-      return updatedAccount;
-    }),
-
-  REMOVE_ACCOUNT: (
+    }
+    return {
+      active: state.active.map(update),
+    };
+  },
+  DELETE_ACCOUNT: (
     state: AccountsState,
-    { payload: account }: { payload: Account }
-  ) => state.filter(acc => acc.id !== account.id)
+    { payload: account }: { payload: Account },
+  ): AccountsState => ({
+    active: state.active.filter(acc => acc.id !== account.id),
+  }),
+  CLEAN_ACCOUNTS_CACHE: (state: AccountsState): AccountsState => ({
+    active: state.active.map(account => ({
+      ...account,
+      operations: [],
+      pendingOperations: [],
+    })),
+  }),
 };
 
 // Selectors
 
-export function accountsSelector(state: {
-  accounts: AccountsState
-}): Account[] {
-  return state.accounts;
-}
+export const exportSelector = (s: *) => ({
+  active: s.accounts.active.map(accountModel.encode),
+});
 
-export const archivedAccountsSelector = createSelector(
+export const accountsSelector = (s: *): Account[] => s.accounts.active;
+
+export const currenciesSelector = createSelector(accountsSelector, acc =>
+  uniq(acc.map(a => a.currency)),
+);
+
+export const accountScreenSelector = createSelector(
   accountsSelector,
-  accounts => accounts.filter(acc => acc.archived)
+  (_, { navigation }) => navigation.state.params.accountId,
+  (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
-
-export const visibleAccountsSelector = createSelector(
-  accountsSelector,
-  accounts => accounts.filter(acc => !acc.archived)
-);
-
-export const currenciesSelector = createSelector(
-  visibleAccountsSelector,
-  accounts =>
-    [...new Set(accounts.map(a => a.currency))].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    )
-);
-
-// TODO move to the (state, props) style https://github.com/reactjs/reselect#accessing-react-props-in-selectors
-export function accountByIdSelector(
-  state: { accounts: AccountsState },
-  id: string
-): ?Account {
-  return accountsSelector(state).find(account => account.id === id);
-}
 
 export const accountSelector = createSelector(
   accountsSelector,
-  (_, { accountId }: { accountId: string }) => accountId,
-  (accounts, accountId) => accounts.find(a => a.id === accountId)
+  (_, { accountId }) => accountId,
+  (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 
-export const operationSelector = createSelector(
+const isUpToDateAccount = a => {
+  const { lastSyncDate } = a;
+  const { blockAvgTime } = a.currency;
+  if (!blockAvgTime) return true;
+  const outdated =
+    Date.now() - (lastSyncDate || 0) >
+    blockAvgTime * 1000 + UP_TO_DATE_THRESHOLD;
+  return !outdated;
+};
+
+export const isUpToDateAccountSelector = createSelector(
   accountSelector,
-  (_, { operationId }: { operationId: string }) => operationId,
-  (account, operationId) =>
-    account && account.operations.find(o => o.id === operationId)
+  isUpToDateAccount,
 );
 
-export const operationAndAccountSelector = createStructuredSelector({
-  account: accountSelector,
-  operation: operationSelector
-});
+export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
+  accounts.every(isUpToDateAccount),
+);
 
-export default handleActions(handlers, state);
+export default handleActions(handlers, initialState);

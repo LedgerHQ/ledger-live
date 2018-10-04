@@ -1,102 +1,225 @@
 // @flow
+/* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
-import { getFiatUnit, hasFiatUnit } from "@ledgerhq/currencies";
-import type { Currency } from "@ledgerhq/currencies";
-import Locale from "react-native-locale"; // eslint-disable-line import/no-unresolved
+import merge from "lodash/merge";
+import {
+  findCurrencyByTicker,
+  getCryptoCurrencyById,
+  getFiatCurrencyByTicker,
+} from "@ledgerhq/live-common/lib/helpers/currencies";
+import { createSelector } from "reselect";
+import type {
+  CryptoCurrency,
+  Currency,
+  Account,
+} from "@ledgerhq/live-common/lib/types";
 import type { State } from ".";
+import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
+
+export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
 
 export type CurrencySettings = {
-  confirmations: number,
-  confirmationsToSpend: number,
-  transactionFees: string,
-  blockchainExplorer: string
+  confirmationsNb: number,
+  exchange: ?*,
 };
 
-export type CurrenciesSettings = {
-  [coinType: number]: CurrencySettings
+export const timeRangeDaysByKey = {
+  week: 7,
+  month: 30,
+  year: 365,
 };
+
+export type TimeRange = $Keys<typeof timeRangeDaysByKey>;
 
 export type SettingsState = {
   counterValue: string,
+  counterValueExchange: ?string,
+  authSecurityEnabled: boolean,
+  reportErrorsEnabled: boolean,
+  analyticsEnabled: boolean,
+  currenciesSettings: {
+    [currencyId: string]: CurrencySettings,
+  },
+  selectedTimeRange: TimeRange,
   orderAccounts: string,
-  deltaChangeColorLocale: "western" | "eastern",
-  chartTimeRange: number,
-  currenciesSettings: CurrenciesSettings,
-  authSecurityEnabled: boolean
 };
 
-const locale = Locale.constants();
-
-const getLocaleFiat = () =>
-  hasFiatUnit(locale.currencyCode) ? locale.currencyCode : "USD";
-
-const getLocaleColor = () => {
-  const eastern = ["KR", "JP", "CN", "KP"];
-
-  return eastern.indexOf(locale.countryCode) !== -1 ? "eastern" : "western";
-};
-
-const defaultState: SettingsState = {
-  counterValue: getLocaleFiat(),
-  orderAccounts: "balance|desc",
-  deltaChangeColorLocale: getLocaleColor(),
-  chartTimeRange: 7,
+const INITIAL_STATE: SettingsState = {
+  counterValue: "USD",
+  counterValueExchange: null,
+  authSecurityEnabled: false,
+  reportErrorsEnabled: false,
+  analyticsEnabled: false,
   currenciesSettings: {},
-  authSecurityEnabled: false
+  selectedTimeRange: "month",
+  orderAccounts: "balance|desc",
 };
 
-const state: SettingsState = {
-  ...defaultState
-};
+function asCryptoCurrency(c: Currency): ?CryptoCurrency {
+  return "id" in c ? c : null;
+}
 
 const handlers: Object = {
-  SAVE_SETTINGS: (
-    state: SettingsState,
-    { payload: settings }: { payload: * }
-  ) => ({
+  SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
     ...state,
-    ...settings
+    ...settings,
   }),
-  FETCH_SETTINGS: (
-    state: SettingsState,
-    { payload: settings }: { payload: * }
-  ) => ({
+  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => ({
     ...state,
-    ...settings
+    ...settings,
+    currenciesSettings: merge(
+      state.currenciesSettings,
+      settings.currenciesSettings,
+    ),
   }),
   UPDATE_CURRENCY_SETTINGS: (
     { currenciesSettings, ...state }: SettingsState,
-    { coinType, patch }
+    { currencyId, patch },
   ) => ({
     ...state,
     currenciesSettings: {
       ...currenciesSettings,
-      [coinType]: { ...currenciesSettings[coinType], ...patch }
+      [currencyId]: { ...currenciesSettings[currencyId], ...patch },
+    },
+  }),
+  SETTINGS_SET_AUTH_SECURITY: (
+    state: SettingsState,
+    { authSecurityEnabled },
+  ) => ({ ...state, authSecurityEnabled }),
+
+  SETTINGS_SET_REPORT_ERRORS: (
+    state: SettingsState,
+    { reportErrorsEnabled },
+  ) => ({
+    ...state,
+    reportErrorsEnabled,
+  }),
+
+  SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
+    ...state,
+    analyticsEnabled,
+  }),
+
+  SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
+    ...state,
+    counterValue,
+    counterValueExchange: null, // also reset the exchange
+  }),
+
+  SETTINGS_SET_ORDER_ACCOUNTS: (state: SettingsState, { orderAccounts }) => ({
+    ...state,
+    orderAccounts,
+  }),
+
+  SETTINGS_SET_PAIRS: (
+    state: SettingsState,
+    {
+      pairs,
+    }: {
+      pairs: Array<{
+        from: Currency,
+        to: Currency,
+        exchange: *,
+      }>,
+    },
+  ) => {
+    const counterValueCurrency = counterValueCurrencyLocalSelector(state);
+    const copy = { ...state };
+    copy.currenciesSettings = { ...copy.currenciesSettings };
+    for (const { to, from, exchange } of pairs) {
+      const fromCrypto = asCryptoCurrency(from);
+      if (fromCrypto && to.ticker === intermediaryCurrency.ticker) {
+        copy.currenciesSettings[fromCrypto.id] = {
+          ...copy.currenciesSettings[fromCrypto.id],
+          exchange,
+        };
+      } else if (
+        from.ticker === intermediaryCurrency.ticker &&
+        to.ticker === counterValueCurrency.ticker
+      ) {
+        copy.counterValueExchange = exchange;
+      }
     }
-  })
+    return copy;
+  },
+
+  SETTINGS_SET_SELECTED_TIME_RANGE: (
+    state,
+    { payload: selectedTimeRange },
+  ) => ({
+    ...state,
+    selectedTimeRange,
+  }),
 };
 
-export const defaultCurrencySettingsForCurrency = (
-  _currency: Currency
-): CurrencySettings => ({
-  confirmations: 5,
-  confirmationsToSpend: 10,
-  transactionFees: "high",
-  blockchainExplorer: "blockchain.info"
-});
+const storeSelector = (state: *): SettingsState => state.settings;
 
-export const currencySettingsSelector = (state: State, currency: Currency) => ({
+export const exportSelector = storeSelector;
+
+const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
+  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+
+export const counterValueCurrencySelector = createSelector(
+  storeSelector,
+  counterValueCurrencyLocalSelector,
+);
+
+const counterValueExchangeLocalSelector = (s: SettingsState) =>
+  s.counterValueExchange;
+
+export const counterValueExchangeSelector = createSelector(
+  storeSelector,
+  counterValueExchangeLocalSelector,
+);
+
+const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = crypto => {
+  const defaults = currencySettingsDefaults(crypto);
+  return {
+    confirmationsNb: defaults.confirmationsNb
+      ? defaults.confirmationsNb.def
+      : 0,
+    exchange: null,
+  };
+};
+
+export const currencySettingsSelector = (
+  state: State,
+  { currency }: { currency: Currency },
+) => ({
+  exchange: null,
   ...defaultCurrencySettingsForCurrency(currency),
-  ...state.settings.currenciesSettings[currency.coinType]
+  ...state.settings.currenciesSettings[currency.id],
 });
 
-export const fiatUnitSelector = (state: State) =>
-  getFiatUnit(state.settings.counterValue);
+export const authSecurityEnabledSelector = createSelector(
+  storeSelector,
+  s => s.authSecurityEnabled,
+);
 
-export const chartTimeRangeSelector = (state: State) =>
-  state.settings.chartTimeRange;
+export const reportErrorsEnabledSelector = createSelector(
+  storeSelector,
+  s => s.reportErrorsEnabled,
+);
 
-export const authSecurityEnabledSelector = (state: State) =>
-  state.settings.authSecurityEnabled;
+export const analyticsEnabledSelector = createSelector(
+  storeSelector,
+  s => s.analyticsEnabled,
+);
 
-export default handleActions(handlers, state);
+export const currencySettingsForAccountSelector = (
+  s: *,
+  { account }: { account: Account },
+) => currencySettingsSelector(s, { currency: account.currency });
+
+export const exchangeSettingsForAccountSelector = createSelector(
+  currencySettingsForAccountSelector,
+  settings => settings.exchange,
+);
+
+export const selectedTimeRangeSelector = (state: State) =>
+  state.settings.selectedTimeRange;
+
+export const orderAccountsSelector = (state: State) =>
+  state.settings.orderAccounts;
+
+export default handleActions(handlers, INITIAL_STATE);

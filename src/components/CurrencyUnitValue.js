@@ -1,25 +1,26 @@
 // @flow
 import { Component } from "react";
-
-import { formatCurrencyUnit } from "@ledgerhq/currencies";
-import type { Unit } from "@ledgerhq/currencies";
+import type { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/helpers/currencies";
+import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import { withLocale } from "../context/Locale";
 
 class CurrencyUnitValue extends Component<{
   unit: Unit,
-  value: number,
+  value: BigNumber,
   locale: string,
-  showCode: boolean
+  showCode: boolean,
+  alwaysShowSign?: boolean,
 }> {
   static defaultProps = {
-    showCode: true
+    showCode: true,
   };
+
   render() {
-    const { unit, value, showCode, locale } = this.props;
+    const { unit, value, ...rest } = this.props;
     return formatCurrencyUnit(unit, value, {
-      showCode,
-      locale
+      ...rest,
     });
   }
 }

@@ -1,4 +1,3 @@
-export default {
-  isSupported: () => Promise.resolve(false),
-  authenticate: () => Promise.reject(new Error("not supported"))
-};
+import unsupported from "./unsupported";
+
+export default unsupported;

@@ -1,13 +1,13 @@
 /* @flow */
 import React, { Component } from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import SettingsRow from "../components/SettingsRow";
 
 type EntryProps<Item> = {
   item: Item,
   onPress: Item => void,
-  selected: boolean
+  selected: boolean,
 };
 type EntryComponent<Item> = React$ComponentType<EntryProps<Item>>;
 
@@ -15,7 +15,7 @@ type Opts<Item> = {
   title: string,
   keyExtractor: Item => string,
   formatItem?: Item => string,
-  Entry?: EntryComponent<Item>
+  Entry?: EntryComponent<Item>,
   // TODO in future: searchable: boolean
 };
 
@@ -27,6 +27,7 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
   }
   return class DefaultEntry extends Component<EntryProps<Item>> {
     onPress = () => this.props.onPress(this.props.item);
+
     render() {
       const { item, selected } = this.props;
       return (
@@ -40,6 +41,13 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
   };
 }
 
+const styles = StyleSheet.create({
+  root: {
+    paddingTop: 16,
+    paddingBottom: 64,
+  },
+});
+
 export default <Item>(opts: Opts<Item>) => {
   const { title, keyExtractor } = opts;
   const Entry = getEntryFromOptions(opts);
@@ -47,14 +55,14 @@ export default <Item>(opts: Opts<Item>) => {
   return class GenericSelectScreen extends Component<{
     selectedKey: string,
     items: Item[],
-    onValueChange: Item => void,
-    navigation: NavigationScreenProp<*>
+    onValueChange: (Item, *) => void,
+    navigation: NavigationScreenProp<*>,
   }> {
     static navigationOptions = { title };
 
     onPress = (item: Item) => {
       const { navigation, onValueChange } = this.props;
-      onValueChange(item);
+      onValueChange(item, this.props);
       navigation.goBack();
     };
 
@@ -72,6 +80,7 @@ export default <Item>(opts: Opts<Item>) => {
           data={this.props.items}
           renderItem={this.renderItem}
           keyExtractor={keyExtractor}
+          contentContainerStyle={styles.root}
         />
       );
     }

@@ -1,165 +1,77 @@
-/* @flow */
-import React, { Component } from "react";
-import { View, StyleSheet, Image } from "react-native";
-import { connect } from "react-redux";
-import findIndex from "lodash/findIndex";
-import type { Account } from "@ledgerhq/wallet-common/lib/types";
-import { visibleAccountsSelector } from "../../reducers/accounts";
-import ScreenGeneric from "../../components/ScreenGeneric";
-import colors from "../../colors";
-import AccountExpanded from "./AccountExpanded";
-import AccountBodyHeader from "./AccountBodyHeader";
-import AccountBody from "./AccountBody";
-import Header from "./Header";
-import AccountHeader from "./AccountHeader";
+// @flow
 
-const mapStateToProps = state => ({
-  accounts: visibleAccountsSelector(state)
-});
+import React, { Component, Fragment } from "react";
+import { StyleSheet, FlatList } from "react-native";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import { accountsSelector } from "../../reducers/accounts";
+import AccountsIcon from "../../icons/Accounts";
+import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import ImportedAccountsNotification from "../../components/ImportedAccountsNotification";
+
+import NoAccounts from "./NoAccounts";
+import AccountRow from "./AccountRow";
+import AccountOrder from "./AccountOrder";
+import AddAccount from "./AddAccount";
+
+const List = globalSyncRefreshControl(FlatList);
 
 const navigationOptions = {
+  title: "Accounts",
+  headerLeft: <AccountOrder />,
+  headerRight: <AddAccount />,
   tabBarIcon: ({ tintColor }: { tintColor: string }) => (
-    <Image
-      source={require("../../images/accounts.png")}
-      style={{ tintColor, width: 32, height: 32 }}
-    />
-  )
+    <AccountsIcon size={18} color={tintColor} />
+  ),
 };
+
+const mapStateToProps = createStructuredSelector({
+  accounts: accountsSelector,
+});
+
 type Props = {
-  accounts: Account[],
   navigation: *,
-  screenProps: {
-    topLevelNavigation: *
-  }
+  accounts: Account[],
 };
-class Accounts extends Component<
-  Props,
-  {
-    expandedMode: boolean,
-    selectedIndex: number,
-    headerScrolled: boolean
-  }
-> {
+
+class Accounts extends Component<Props> {
   static navigationOptions = navigationOptions;
-  static getDerivedStateFromProps(nextProps: Props, prevState) {
-    const accountId = nextProps.navigation.state.params
-      ? nextProps.navigation.state.params.accountId
-      : null;
-    if (accountId && accountId !== prevState.navigationFocusAccountId) {
-      const selectedIndex = findIndex(
-        nextProps.accounts,
-        acc => acc.id === accountId
-      );
-      return {
-        selectedIndex,
-        expandedMode: false,
-        navigationFocusAccountId: accountId
-      };
-    }
-    return null;
-  }
 
-  state = {
-    expandedMode: false,
-    selectedIndex: 0,
-    headerScrolled: false,
-    navigationFocusAccountId: null
-  };
+  onAddMockAccount = () => {};
 
-  onToggleExpandedMode = () => {
-    this.setState(({ expandedMode }) => ({ expandedMode: !expandedMode }));
-  };
+  renderItem = ({ item }: { item: Account }) => (
+    <AccountRow
+      navigation={this.props.navigation}
+      account={item}
+      accountId={item.id}
+    />
+  );
 
-  onAddAccount = () => {
-    this.props.screenProps.topLevelNavigation.navigate({
-      routeName: "AddAccount",
-      key: "addaccount"
-    });
-  };
+  keyExtractor = item => item.id;
 
-  onPressExpandedItem = (selectedIndex: number) => {
-    this.setState({ selectedIndex, expandedMode: false });
-  };
-
-  onSelectIndex = (selectedIndex: number) => {
-    this.setState({ selectedIndex });
-  };
-
-  onScroll = ({
-    nativeEvent: { contentOffset }
-  }: {
-    nativeEvent: { contentOffset: { y: number } }
-  }) => {
-    const headerScrolled = contentOffset.y > 300;
-    this.setState(
-      s => (headerScrolled !== s.headerScrolled ? { headerScrolled } : null)
-    );
-  };
-
-  accountBody: ?AccountBody;
-  onAccountBodyRef = (accountBody: ?AccountBody) => {
-    this.accountBody = accountBody;
-  };
-
-  scrollUp = () => {
-    const { accountBody } = this;
-    if (accountBody) accountBody.scrollUp();
-  };
-
-  renderHeader = () => {
-    const { expandedMode, selectedIndex, headerScrolled } = this.state;
-    const { accounts } = this.props;
-    const account = accounts[selectedIndex];
-    if (headerScrolled && account) {
-      return <AccountHeader account={account} />;
-    }
-    return (
-      <Header
-        expandedMode={expandedMode}
-        onToggleExpandedMode={this.onToggleExpandedMode}
-        onAddAccount={this.onAddAccount}
-      />
-    );
-  };
-
-  renderAccountBodyHeader = () => {
-    const { selectedIndex } = this.state;
-    const { accounts, screenProps: { topLevelNavigation } } = this.props;
-    return (
-      <AccountBodyHeader
-        accounts={accounts}
-        topLevelNavigation={topLevelNavigation}
-        selectedIndex={selectedIndex}
-        onSelectIndex={this.onSelectIndex}
-      />
-    );
-  };
+  initiallyHadNoAccounts = this.props.accounts.length === 0;
 
   render() {
-    const { expandedMode, selectedIndex } = this.state;
-    const { accounts, screenProps: { topLevelNavigation } } = this.props;
-    const account = accounts[selectedIndex];
+    const { accounts } = this.props;
+
+    if (accounts.length === 0) {
+      return <NoAccounts />;
+    }
+
+    const enableImportNotif = this.initiallyHadNoAccounts;
+
     return (
-      <View style={styles.root}>
-        <ScreenGeneric Header={this.renderHeader} onPressHeader={this.scrollUp}>
-          <View style={styles.topBackground} />
-          {/* FIXME perf are not good, investigate why */}
-          {expandedMode ? (
-            <AccountExpanded
-              accounts={accounts}
-              onPressExpandedItem={this.onPressExpandedItem}
-            />
-          ) : null}
-          <AccountBody
-            ref={this.onAccountBodyRef}
-            visible={!expandedMode}
-            topLevelNavigation={topLevelNavigation}
-            account={account}
-            Header={this.renderAccountBodyHeader}
-            onScroll={this.onScroll}
-          />
-        </ScreenGeneric>
-      </View>
+      <Fragment>
+        {enableImportNotif ? <ImportedAccountsNotification /> : null}
+        <List
+          data={accounts}
+          renderItem={this.renderItem}
+          keyExtractor={this.keyExtractor}
+          style={styles.list}
+          contentContainerStyle={styles.contentContainer}
+        />
+      </Fragment>
     );
   }
 }
@@ -167,14 +79,12 @@ class Accounts extends Component<
 export default connect(mapStateToProps)(Accounts);
 
 const styles = StyleSheet.create({
-  topBackground: {
-    position: "absolute",
-    top: 0,
-    width: 600,
-    height: 300,
-    backgroundColor: colors.blue
+  list: {
+    flex: 1,
   },
-  root: {
-    flex: 1
-  }
+  contentContainer: {
+    paddingTop: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 64,
+  },
 });

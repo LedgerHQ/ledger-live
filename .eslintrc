@@ -1,10 +1,37 @@
 {
   "parser": "babel-eslint",
-  "extends": ["airbnb", "plugin:flowtype/recommended", "prettier", "prettier/react"],
+  "extends": [
+    "airbnb",
+    "plugin:flowtype/recommended",
+    "prettier",
+    "prettier/react"
+  ],
   "plugins": ["flowtype"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".android.js", ".ios.js"]
+      }
+    }
+  },
   "rules": {
-    "no-console": [1, { "allow": [ "warn", "error" ] }],
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "flowtype/space-after-type-colon": 0,
+    "no-return-assign": 0,
     "no-shadow": 0,
     "no-plusplus": 0,
     "no-nested-ternary": 0,
@@ -16,19 +43,23 @@
     "import/prefer-default-export": 0,
     "no-use-before-define": 0,
     "react/sort-comp": 0,
+    "react/jsx-boolean-value": 0,
     "react/prefer-stateless-function": 0,
     "react/jsx-filename-extension": 0,
     "react/no-multi-comp": 0,
     "react/no-unused-state": 0,
     "no-await-in-loop": 0,
     "class-methods-use-this": 0,
-    "react/no-unused-prop-types": 0
+    "react/no-unused-prop-types": 0,
+    "react/require-default-props": 0,
+    "prefer-destructuring": 0,
+    "react/destructuring-assignment": 0
   },
   "globals": {
     "__DEV__": false,
     "__REDUX_DEVTOOLS_EXTENSION__": false,
     "fetch": false,
     "it": false,
-    "expect": false,
-  },
+    "expect": false
+  }
 }

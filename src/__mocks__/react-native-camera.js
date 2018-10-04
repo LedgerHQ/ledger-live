@@ -10,8 +10,9 @@ class Camera extends React.Component {
     CaptureQuality: {},
     Orientation: {},
     FlashMode: {},
-    TorchMode: {}
+    TorchMode: {},
   };
+
   render() {
     return null;
   }

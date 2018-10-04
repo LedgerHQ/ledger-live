@@ -1,4 +1,265 @@
 {
-  "home_title": "Hello, {{name}}.",
-  "home_subtitle": "Here's a summary of your {{count}} accounts"
+  "common": {
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "delete": "Delete",
+    "continue": "Continue",
+    "done": "Done",
+    "sortBy": "Sort by",
+    "signOut": "Sign Out"
+  },
+  "errors": {
+    "generic": {
+      "title": "{{message}}",
+      "description": "Something went wrong. Please retry or contact us."
+    },
+    "Error": {
+      "title": "{{message}}",
+      "description": "Something went wrong. Please retry or contact us."
+    },
+    "SyncError": {
+      "title": "Synchronization error",
+      "description": "Something went wrong with the blockchains synchronization.  Please retry or contact us."
+    },
+    "NetworkDown": {
+      "title": "Oops, internet seems down",
+      "description": "Please check your internet connection."
+    }
+  },
+  "auth": {
+    "failed": {
+      "title": "Authentication failed",
+      "buttons": {
+        "tryAgain": "Try again",
+        "reset": "Reset"
+      }
+    }
+  },
+  "reset": {
+    "title": "Are you sure?",
+    "description": "Erase all Ledger Live data stored on your device, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
+    "button": "Reset"
+  },
+  "portfolio": {
+    "totalBalance": "Total balance",
+    "syncError": "Sync error",
+    "syncFailed": "Synchronization failed",
+    "syncPending": "Synchronizing...",
+    "greeting": {
+      "morning": "Good morning",
+      "evening": "Good evening",
+      "afternoon": "Good afternoon"
+    },
+    "summary": "Here's the summary of your account",
+    "summary_plural": "Your {{count}} accounts are synchronized.",
+    "emptyState": {
+      "title": "Add accounts to your portfolio",
+      "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
+      "buttons": {
+        "import": "Import accounts"
+      }
+    }
+  },
+  "time": {
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "year": "Year",
+    "since": {
+      "day": "past day",
+      "week": "past week",
+      "month": "past month",
+      "year": "past year"
+    }
+  },
+  "orderOption": {
+    "label": {
+      "balance": "Balance",
+      "name": "Name"
+    },
+    "ordering": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    }
+  },
+  "operationDetails": {
+    "title": "Operation details",
+    "account": "Account",
+    "date": "Date",
+    "confirmed": "Confirmed",
+    "notConfirmed": "Not confirmed",
+    "fees": "Fees",
+    "noFees": "No fee",
+    "from": "From ({{count}})",
+    "to": "To ({{count}})",
+    "identifier": "Transaction ID",
+    "viewOperation": "View in explorer",
+    "seeAll": "See all",
+    "seeLess": "See less",
+    "viewInExplorer": "View in explorer"
+  },
+  "operationList": {
+    "noOperations": "No Operations",
+    "noMoreOperations": "No More Operations"
+  },
+  "account": {
+    "lastOperations": "Last operations",
+    "emptyState": {
+      "title": "No crypto assets yet?",
+      "desc": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving",
+      "buttons": {
+        "receiveFunds": "Receive"
+      }
+    },
+    "settings": {
+      "header": "Account Settings",
+      "title": "Edit account",
+      "advancedLogs": "Advanced logs",
+      "accountName": {
+        "title": "Account name",
+        "desc": "Describe this account"
+      },
+      "unit": {
+        "title": "Unit",
+        "desc": "Choose the unit to display"
+      },
+      "currency": {
+        "title": "Currency"
+      },
+      "endpointConfig": {
+        "title": "Node",
+        "desc": "The API node to use"
+      },
+      "delete": {
+        "title": "Delete Account",
+        "desc": "Stored data will be deleted",
+        "confirmationDesc": "Are you sure you want to delete <1><0>{{accountName}}</0></1> account"
+      },
+      "archive": {
+        "title": "Archive Account",
+        "desc": "This account will be archived"
+      }
+    },
+    "import": {
+      "scan": {
+        "title": "Scan QR Code",
+        "descTop": {
+          "line1": "Please open Ledger Live desktop application with EXPERIMENTAL_TOOLS_SETTINGS=1 and go to",
+          "line2": "Settings > Experimental Tools > QRCode Mobile Export"
+        },
+        "descBottom": "Please put the QR code within the square"
+      },
+      "result": {
+        "title": "Select accounts",
+        "newAccounts": "New accounts",
+        "updatedAccounts": "Updated accounts",
+        "alreadyImported": "Already imported",
+        "noAccounts": "Nothing to import",
+        "unsupported": "Unsupported",
+        "settings": "Settings",
+        "includeGeneralSettings": "Include general settings"
+      },
+      "fallback": {
+        "header": "Import account",
+        "title": "Camera access",
+        "descIOS": "To import account, Ledger Live needs to <1><0>access your camera</0></1>. You’ll be taken to iOS settings to activate it",
+        "buttonIOS": "Open iPhone Settings",
+        "descAndroid": "To import account, Ledger Live needs to <1><0>access your camera</0></1>. You’ll be taken to Android settings to activate it",
+        "buttonAndroid": "Open Android Settings"
+      }
+    }
+  },
+  "accounts": {
+    "importNotification": {
+      "message": "Your accounts have successfully been imported!"
+    },
+    "row": {
+      "syncPending": "Synchronizing...",
+      "upToDate": "Up to date",
+      "error": "Error"
+    }
+  },
+  "settings": {
+    "display": {
+      "title": "General",
+      "desc": "Change settings that affect Ledger Live in general.",
+      "language": "Display language",
+      "languageDesc": "Set the language displayed in Ledger Live.",
+      "password": "Password lock",
+      "passwordDesc": "Set a password to prevent unauthorized access to Ledger Live data stored on your computer, including account names, balances, transactions and public addresses.",
+      "counterValue": "Countervalue",
+      "counterValueDesc": "Choose the currency to display next to your balance and operations.",
+      "exchange": "Rate provider",
+      "exchangeDesc": "Choose the provider of the exchange rate from Bitcoin to {{fiat}}. The value of crypto assets is first calculated in Bitcoin, before being converted to {{fiat}} (crypto asset → BTC → {{fiat}}).",
+      "stock": "Regional market indicator",
+      "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red.",
+      "reportErrors": "Report bugs",
+      "reportErrorsDesc": "Share anonymous usage and diagnostics data to help improve Ledger products, services and security features.",
+      "analytics": "Analytics",
+      "analyticsDesc": "Enable analytics of anonymous data to help Ledger improve the user experience. This includes the operating system, language, firmware versions and the number of added accounts."
+    },
+    "currencies": {
+      "title": "Currencies",
+      "desc": "Select a crypto asset to edit its settings.",
+      "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
+      "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
+      "confirmationNb": "Number of confirmations",
+      "confirmationNbDesc": "Set the number of network confirmations for a transaction to be marked as confirmed.",
+      "currencySettingsTitle": "{{currencyName}} Settings"
+    },
+    "about": {
+      "title": "About",
+      "desc": "Information about Ledger Live, terms and conditions, and privacy policy.",
+      "appDescription": "The perfect companion for your Ledger devices. Add new cryptocurrencies and check your balance in just a few clicks",
+      "appVersion": "App version",
+      "termsConditions": "Terms and conditions",
+      "termsConditionsDesc": "By using Ledger Live you are deemed to have accepeted our terms",
+      "privacyPolicy": "Privacy policy",
+      "privacyPolicyDesc": "Refer to our privacy policy to learn what personal data we collect",
+      "liveReview": {
+        "title": "Review Ledger Live",
+        "ios": "Leave your review in the App store",
+        "android": "Leave your review in the Google Play store"
+      }
+    },
+    "help": {
+      "title": "Help",
+      "desc": "Learn about Ledger Live features or get help.",
+      "support": "Ledger Support",
+      "supportDesc": "A problem? Get help with Ledger Live, Ledger devices, supported crypto assets and apps.",
+      "configureDevice": "Configure device",
+      "configureDeviceDesc": "Securely initialize or restore a Ledger device to use with Ledger Live. Your accounts and settings are kept.",
+      "clearCache": "Clear Cache",
+      "clearCacheDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected.",
+      "clearCacheModal": "Are you sure?",
+      "clearCacheModalDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
+      "clearCacheButton": "Clear",
+      "exportLogs": "Export logs",
+      "exportLogsDesc": "Exporting Ledger Live logs may be necessary for troubleshooting purposes.",
+      "hardReset": "Reset Ledger Live",
+      "hardResetDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings."
+    }
+  },
+  "transfer": {
+    "send": {
+      "title": "Send funds",
+      "desc": "Send your funds"
+    },
+    "receive": {
+      "title": "Receive funds",
+      "desc": "Recieve crypto assets",
+      "verifyAddress": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security."
+    },
+    "exchange": {
+      "title": "Exchange",
+      "desc": "Try our trading services"
+    }
+  },
+  "sync": {
+    "error": "Sync Error",
+    "loading": "Sync"
+  },
+  "scanning": {
+    "loading": "Searching devices..."
+  }
 }
