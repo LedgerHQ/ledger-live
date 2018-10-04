@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import { StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
@@ -9,6 +10,7 @@ import { counterValueCurrencySelector } from "../../../reducers/settings";
 import type { T } from "../../../types/common";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
+import colors from "../../../colors";
 
 const mapStateToProps = createStructuredSelector({
   counterValueCurrency: counterValueCurrencySelector,
@@ -31,12 +33,21 @@ class CountervalueSettingsRow extends PureComponent<{
         desc={t("common:settings.display.counterValueDesc")}
         arrowRight
         onPress={() => navigation.navigate("CountervalueSettings")}
+        alignedTop
       >
-        <LText>{counterValueCurrency.ticker}</LText>
+        <LText semiBold style={styles.tickerText}>
+          {counterValueCurrency.ticker}
+        </LText>
       </SettingsRow>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  tickerText: {
+    color: colors.grey,
+  },
+});
 
 export default compose(
   connect(mapStateToProps),

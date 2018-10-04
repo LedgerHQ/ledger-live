@@ -64,6 +64,7 @@ class AuthSecurityToggle extends Component<Props, State> {
       <SettingsRow
         title={t("common:settings.display.password")}
         desc={t("common:settings.display.passwordDesc")}
+        alignedTop
       >
         <Switch
           value={authSecurityEnabled || validationPending}

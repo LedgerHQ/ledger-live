@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 
 import { withNavigation } from "react-navigation";
@@ -25,12 +25,16 @@ class AccountOrderModal extends Component<{
         <MenuTitle>{t("common:common.sortBy")}</MenuTitle>
         <OrderOption id="balance" />
         <OrderOption id="name" />
-        <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
+        <View style={styles.buttonContainer}>
           <Button type="primary" onPress={onClose} title="Done" />
         </View>
       </BottomModal>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  buttonContainer: { paddingHorizontal: 16, marginTop: 16 },
+});
 
 export default translate()(withNavigation(AccountOrderModal));

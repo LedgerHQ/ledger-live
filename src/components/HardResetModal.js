@@ -39,7 +39,7 @@ class HardResetModal extends PureComponent<Props> {
               type="alert"
               title={t("reset.button")}
               onPress={onHardReset}
-              containerStyle={styles.buttonContainer}
+              containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
             />
           </View>
         }
@@ -53,9 +53,11 @@ export default translate()(HardResetModal);
 const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
   },
   buttonContainer: {
-    width: 136,
+    flex: 1,
+  },
+  buttonMarginLeft: {
+    marginLeft: 16,
   },
 });
