@@ -196,6 +196,7 @@ dependencies {
             force = true
         }
     }
+    compile project(':react-native-version-number')
     compile project(':react-native-ledger-core')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
