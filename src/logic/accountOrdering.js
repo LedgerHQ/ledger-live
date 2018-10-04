@@ -16,8 +16,15 @@ type SortMethod = "name" | "balance";
 const sortMethod: { [_: SortMethod]: (Param) => string[] } = {
   balance: ({ accounts, accountsBtcBalance }) =>
     accounts
-      .map((a, i) => [a.id, accountsBtcBalance[i]])
-      .sort((a, b) => a[1].minus(b[1]).toNumber())
+      .map((a, i) => [a.id, accountsBtcBalance[i], a.name])
+      .sort((a, b) => {
+        const numOrder = a[1].minus(b[1]).toNumber();
+        if (numOrder === 0) {
+          return a[2].localeCompare(b[2]);
+        }
+
+        return numOrder;
+      })
       .map(o => o[0]),
 
   name: ({ accounts }) =>

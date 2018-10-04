@@ -5,8 +5,9 @@ If you want to run app on iOS simulator you should remove the Universal framewor
 
 High:
 
-Medium:
+- Android and iOS: some account would just fail to sync and set 0.00 in balance. I wonder if related to following bug:
 
+Medium:
 - (No strange behaviour, we try and catch from libcore side so exception brakpoints are hit) iOS: If using "Exception Breakpoint", you will see crash inside libcore (createWallet)
 - (Not Reproducible) Android crashes with: `Attempt to invoke virtual method 'long java.lang.Long.longValue()' on a null object reference`. To me this appear after the last JS<>core exchange was `CoreOperation.getSenders([{"uid":"f692e53a-3ebc-4c1c-8a9f-ed6b7b8c057d","type":"RCTCoreOperation"},12288,12289])`.
 

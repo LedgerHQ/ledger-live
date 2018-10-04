@@ -144,8 +144,8 @@
       "scan": {
         "title": "Scan QR Code",
         "descTop": {
-          "line1": "Please open Ledger Live desktop application with EXPERIMENTAL_TOOLS_SETTINGS=1 and go to",
-          "line2": "Settings > Experimental Tools > QRCode Mobile Export"
+          "line1": "Please open Ledger Live desktop and go to",
+          "line2": "Settings > Mobile > Export"
         },
         "descBottom": "Please put the QR code within the square"
       },

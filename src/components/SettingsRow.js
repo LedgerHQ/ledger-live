@@ -14,6 +14,8 @@ export default class SettingsRow extends Component<{
   selected?: boolean,
   arrowRight?: boolean,
   iconLeft?: *,
+  alignedTop?: boolean,
+  compact?: boolean,
   children: React$Node,
 }> {
   render() {
@@ -25,27 +27,41 @@ export default class SettingsRow extends Component<{
       desc,
       arrowRight,
       iconLeft,
+      alignedTop,
+      compact,
       selected,
     } = this.props;
     return (
-      <Touchable onPress={onPress} style={[styles.root]}>
-        {iconLeft && <View style={{ paddingHorizontal: 10 }}>{iconLeft}</View>}
+      <Touchable
+        onPress={onPress}
+        style={[
+          styles.root,
+          alignedTop && styles.rootAlignedTop,
+          compact && styles.rootCompact,
+        ]}
+      >
+        {iconLeft && <View style={styles.iconLeft}>{iconLeft}</View>}
         <View style={styles.textBlock}>
-          <LText semiBold style={[styles.titleStyle, titleStyle]}>
+          <LText
+            semiBold={selected !== false}
+            style={[styles.titleStyle, titleStyle]}
+          >
             {title}
           </LText>
           {desc && <LText style={styles.description}>{desc}</LText>}
         </View>
-        {children}
-        {arrowRight ? (
-          <View style={styles.iconRightContainer}>
-            <ArrowRight size={16} color={colors.grey} />
-          </View>
-        ) : selected ? (
-          <View style={styles.iconLeftContainer}>
-            <Check size={16} color={colors.live} />
-          </View>
-        ) : null}
+        <View style={styles.rightBlock}>
+          {children}
+          {arrowRight ? (
+            <View style={styles.iconRightContainer}>
+              <ArrowRight size={16} color={colors.grey} />
+            </View>
+          ) : selected ? (
+            <View style={styles.iconLeftContainer}>
+              <Check size={16} color={colors.live} />
+            </View>
+          ) : null}
+        </View>
       </Touchable>
     );
   }
@@ -61,18 +77,32 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginBottom: 2,
   },
+  rootAlignedTop: {
+    alignItems: "flex-start",
+  },
+  rootCompact: {
+    paddingVertical: 16,
+  },
   textBlock: {
     flexDirection: "column",
     paddingRight: 16,
     flexGrow: 1,
     flexShrink: 1,
   },
+  rightBlock: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   titleStyle: {
     fontSize: 16,
+    color: colors.darkBlue,
   },
   description: { color: colors.grey, paddingTop: 5, fontSize: 14 },
   iconRightContainer: {
-    marginLeft: 8,
+    marginLeft: 4,
+  },
+  iconLeft: {
+    paddingRight: 16,
   },
   iconLeftContainer: {
     marginRight: 8,

@@ -34,7 +34,8 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
         <SettingsRow
           title={formatItem(item)}
           onPress={this.onPress}
-          selected={selected}
+          selected={!!selected}
+          compact
         />
       );
     }

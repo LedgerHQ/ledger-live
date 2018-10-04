@@ -251,7 +251,8 @@ const styles = StyleSheet.create({
   primaryTitle: { color: "white" },
 
   secondaryContainer: { backgroundColor: "transparent" },
-  secondaryOutlineBorder: { borderColor: colors.grey },
+  secondaryTitle: { color: colors.grey },
+  secondaryOutlineBorder: { borderColor: colors.fog },
 
   tertiaryContainer: { backgroundColor: "transparent" },
   tertiaryTitle: { color: colors.live },

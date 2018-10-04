@@ -27,6 +27,7 @@ class DeviceItem extends Component<{ device: * }, *> {
     const { device } = this.props;
     try {
       const transport = await TransportBLE.open(device);
+      transport.setDebugMode(true);
       try {
         const data = await transport.send(0, 0, 0, 0);
         this.setState({ data });

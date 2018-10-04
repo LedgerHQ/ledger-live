@@ -248,7 +248,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   text: {
-    fontSize: 14,
+    fontSize: 16,
+    lineHeight: 32,
     textAlign: "center",
     color: colors.white,
   },
