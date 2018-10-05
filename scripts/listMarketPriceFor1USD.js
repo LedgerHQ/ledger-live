@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable no-console */
 
+// $FlowFixMe install axios yourself :D
 const axios = require("axios");
 const {
   listCryptoCurrencies,
@@ -46,7 +47,7 @@ function main() {
       currencies.forEach(c => {
         const rate =
           getRate(c.ticker, "USD") || btcRate * getRate(c.ticker, "BTC");
-        const price = formatCurrencyUnit(c.units[0], amount * 100 / rate);
+        const price = formatCurrencyUnit(c.units[0], (amount * 100) / rate);
         console.log(c.ticker + "\t" + price);
       });
     })
