@@ -87,7 +87,7 @@ class SelectRecipient extends Component<Props, State> {
               title="Scan QR code"
               IconLeft={IconQRCode}
               onPress={() => {
-                console.log("scan qr code"); // eslint-disable-line no-console
+                console.warn("NOT IMPLEMENTED scan qr code");
               }}
             />
           </View>

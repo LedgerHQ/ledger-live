@@ -122,7 +122,7 @@ class SelectFunds extends Component<Props, State> {
                   type="tertiary"
                   title="USE MAX"
                   onPress={() => {
-                    console.log("max"); // eslint-disable-line no-console
+                    console.warn("MAX not implemented");
                   }}
                 />
                 <LText style={styles.available}>

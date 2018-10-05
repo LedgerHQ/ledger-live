@@ -79,7 +79,9 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
 };
 
 const CounterValues = createCounterValues({
-  log: (...args) => console.log("CounterValues:", ...args), // eslint-disable-line no-console
+  log: __DEV__
+    ? (...args) => console.log("CounterValues:", ...args) // eslint-disable-line no-console
+    : undefined,
   getAPIBaseURL: () => LEDGER_COUNTERVALUES_API,
   storeSelector: state => state.countervalues,
   pairsSelector,
