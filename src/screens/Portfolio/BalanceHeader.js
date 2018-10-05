@@ -13,7 +13,7 @@ class BalanceHeader extends PureComponent<{ summary: *, t: * }> {
     const { summary, t } = this.props;
     return (
       <View style={styles.content}>
-        <LText secondary style={styles.labelText}>
+        <LText secondary semiBold style={styles.labelText}>
           {t("common:portfolio.totalBalance")}
         </LText>
         <Space h={5} />

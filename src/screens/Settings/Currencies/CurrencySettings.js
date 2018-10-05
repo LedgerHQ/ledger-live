@@ -116,6 +116,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
               title={t("settings.currencies.confirmationNb")}
               desc={t("settings.currencies.confirmationNbDesc")}
               onPress={null}
+              alignedTop
             >
               <LText
                 tertiary
@@ -215,7 +216,7 @@ export function CustomCurrencyHeader({
       <View style={{ marginRight: 5, justifyContent: "center" }}>
         <CurrencyIcon size={16} currency={currency} />
       </View>
-      <LText>
+      <LText semiBold secondary style={{ fontSize: 16 }}>
         {t("common:settings.currencies.currencySettingsTitle", {
           currencyName: currency.name,
         })}

@@ -25,7 +25,13 @@ class AccountHeaderTitle extends Component<Props> {
         <View style={styles.iconContainer}>
           <CurrencyIcon size={18} currency={account.currency} />
         </View>
-        <LText semiBold secondary numberOfLines={1} ellipsizeMode="tail">
+        <LText
+          semiBold
+          secondary
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={styles.title}
+        >
           {account.name}
         </LText>
       </View>
@@ -36,6 +42,9 @@ class AccountHeaderTitle extends Component<Props> {
 export default connect(mapStateToProps)(AccountHeaderTitle);
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 16,
+  },
   headerContainer: {
     flexDirection: "row",
     marginHorizontal: 24,

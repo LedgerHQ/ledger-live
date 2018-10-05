@@ -147,8 +147,18 @@ AccountsStack.navigationOptions = {
   ),
 };
 
+const labelStyle = {
+  fontFamily: "Museo Sans",
+  fontSize: 12,
+  fontWeight: Platform.OS === "android" ? "SemiBold" : "400",
+};
+
 const CustomTabBar = props => (
-  <BottomTabBar {...props} style={styles.bottomTabBar} />
+  <BottomTabBar
+    {...props}
+    style={styles.bottomTabBar}
+    labelStyle={labelStyle}
+  />
 );
 
 const getTabItems = () => {
