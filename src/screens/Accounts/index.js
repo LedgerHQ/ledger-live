@@ -8,7 +8,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import ImportedAccountsNotification from "../../components/ImportedAccountsNotification";
 
 import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
@@ -59,11 +58,8 @@ class Accounts extends Component<Props> {
       return <NoAccounts />;
     }
 
-    const enableImportNotif = this.initiallyHadNoAccounts;
-
     return (
       <Fragment>
-        {enableImportNotif ? <ImportedAccountsNotification /> : null}
         <List
           data={accounts}
           renderItem={this.renderItem}
