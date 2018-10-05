@@ -23,6 +23,7 @@ class AccountNameRow extends PureComponent<Props> {
         title={t("common:account.settings.accountName.title")}
         desc={t("common:account.settings.accountName.desc")}
         arrowRight
+        alignedTop
         onPress={() =>
           navigation.navigate("EditAccountName", {
             accountId: account.id,
@@ -30,6 +31,7 @@ class AccountNameRow extends PureComponent<Props> {
         }
       >
         <LText
+          semiBold
           numberOfLines={1}
           ellipsizeMode="tail"
           style={styles.accountName}

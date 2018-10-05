@@ -67,7 +67,7 @@ class Content extends PureComponent<Props, *> {
               alwaysShowSign
             />
           </LText>
-          <LText style={styles.counterValue}>
+          <LText tertiary style={styles.counterValue}>
             <CounterValue
               showCode
               alwaysShowSign
@@ -83,7 +83,10 @@ class Content extends PureComponent<Props, *> {
               ]}
             />
             {isConfirmed ? (
-              <LText style={[styles.confirmation, { color: colors.green }]}>
+              <LText
+                semiBold
+                style={[styles.confirmation, { color: colors.green }]}
+              >
                 {`${t("common:operationDetails.confirmed")} (${confirmations})`}
               </LText>
             ) : (
