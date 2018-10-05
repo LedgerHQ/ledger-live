@@ -10,13 +10,8 @@ import { setExchangePairsAction } from "../../../actions/settings";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 import CounterValues from "../../../countervalues";
 
-const getExchanges = (from: Currency, to: Currency) => {
-  const promise = CounterValues.fetchExchangesForPair(from, to);
-  promise.catch(() => {
-    console.log("error in async call of getExchanges"); // eslint-disable-line no-console
-  });
-  return promise;
-};
+const getExchanges = (from: Currency, to: Currency) =>
+  CounterValues.fetchExchangesForPair(from, to);
 
 const extractFromTo = props => {
   const { params } = props.navigation.state;

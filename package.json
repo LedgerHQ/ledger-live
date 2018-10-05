@@ -65,6 +65,7 @@
     "react-native-ble-plx": "^0.10.0",
     "react-native-camera": "1.2.0",
     "react-native-config": "0.11.5",
+    "react-native-device-info": "^0.22.6",
     "react-native-gesture-handler": "^1.0.7",
     "react-native-locale": "0.0.19",
     "react-native-modal": "^6.5.0",
