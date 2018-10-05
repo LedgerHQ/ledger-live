@@ -2,7 +2,6 @@
 import { BigNumber } from "bignumber.js";
 // $FlowFixMe no idea what's going on here
 import React, { Component } from "react";
-import axios from "axios";
 import throttle from "lodash/throttle";
 import merge from "lodash/merge";
 import { connect } from "react-redux";
@@ -67,13 +66,10 @@ function createCounterValues<State>({
   setExchangePairsAction,
   maximumDays,
   addExtraPollingHooks,
-  log
+  log,
+  network
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
-
-  const apiConfig = {
-    timeout: 30000
-  };
 
   const pairOptExchangeExtractor = (
     _store,
@@ -283,13 +279,13 @@ function createCounterValues<State>({
       pairs.push(pair);
     });
     if (pairs.length === 0) return;
-    const { data }: { data: mixed } = await axios.post(
-      getAPIBaseURL() + "/rates/daily",
-      {
+    const { data }: { data: mixed } = await network({
+      method: "POST",
+      url: getAPIBaseURL() + "/rates/daily",
+      data: {
         pairs
-      },
-      apiConfig
-    );
+      }
+    });
     if (data && typeof data === "object") {
       const ev: PollAction = { type: POLL, data };
       dispatch(ev);
@@ -365,15 +361,18 @@ function createCounterValues<State>({
   };
 
   const fetchExchangesForPair = async (from, to): Promise<Exchange[]> => {
-    const { data } = await axios.get(
-      getAPIBaseURL() + "/exchanges/" + from.ticker + "/" + to.ticker,
-      apiConfig
-    );
+    const { data } = await network({
+      method: "GET",
+      url: getAPIBaseURL() + "/exchanges/" + from.ticker + "/" + to.ticker
+    });
     return data;
   };
 
   const fetchTickersByMarketcap = async (): Promise<string[]> => {
-    const { data } = await axios.get(getAPIBaseURL() + "/tickers", apiConfig);
+    const { data } = await network({
+      method: "GET",
+      url: getAPIBaseURL() + "/tickers"
+    });
     return data;
   };
 

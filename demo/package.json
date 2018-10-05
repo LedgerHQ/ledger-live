@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ledgerhq/live-common": "^3.8.0",
+    "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^7.2.1",
     "flow-bin": "^0.73.0",
