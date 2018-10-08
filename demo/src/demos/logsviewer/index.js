@@ -1,25 +1,8 @@
 // @flow
-import React, { Component, PureComponent } from "react";
+import React, { Fragment, Component } from "react";
 import { ObjectInspector } from "react-inspector";
-import styled from "styled-components";
-
-const Table = styled.table``;
-
-const TableHead = styled.thead`
-  td {
-    font-weight: bold;
-  }
-`;
-
-const TableBody = styled.tbody``;
-
-const TableRow = styled.tr`
-  opacity: ${p => (p.level === "debug" ? 0.7 : 1)};
-  color: ${p =>
-    p.level === "error" ? "#C00" : p.level === "warn" ? "#F90" : "#000"};
-`;
-
-const TableCell = styled.td``;
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 
 const messageLenses = {
   libcore: ({ message }) => {
@@ -28,84 +11,106 @@ const messageLenses = {
   }
 };
 
-const formatDT = dt => {
-  const v = Math.abs(dt);
-  let sec = v / 1000;
-  let str;
-  if (sec < 60) str = sec.toFixed(3) + "s";
-  else {
-    const min = Math.floor(sec / 60);
-    sec -= 60 * min;
-    sec = Math.floor(sec);
-    str = min + "m " + (sec > 9 ? sec : "0" + sec) + "s";
-  }
-  return str;
+const ContentCell = (props: *) => {
+  const log = props.original;
+  const { type, level, pname, message: _msg, timestamp, ...rest } = log; // eslint-disable-line no-unused-vars
+  const messageLense = messageLenses[type];
+  const message = messageLense ? messageLense(log) : log.message;
+  return (
+    <Fragment>
+      <code>{message}</code>
+      {Object.keys(rest).length > 0 ? <ObjectInspector data={rest} /> : null}
+    </Fragment>
+  );
 };
 
-class Log extends PureComponent<*> {
-  render() {
-    const { log, referenceTime } = this.props;
-    const { type, level, pname, message: _msg, timestamp, ...rest } = log; // eslint-disable-line no-unused-vars
-    const messageLense = messageLenses[type];
-    const message = messageLense ? messageLense(log) : log.message;
-    const deltaT = new Date(timestamp) - referenceTime;
-    return (
-      <TableRow level={level}>
-        <TableCell title={deltaT} style={{ whiteSpace: "nowrap" }}>
-          {formatDT(deltaT)}
-        </TableCell>
-        <TableCell>{pname}</TableCell>
-        <TableCell>{type}</TableCell>
-        <TableCell>
-          <code>{message}</code>
-          {Object.keys(rest).length > 0 ? (
-            <ObjectInspector data={rest} />
-          ) : null}
-        </TableCell>
-      </TableRow>
-    );
+const columns = [
+  {
+    id: "index",
+    Header: "index",
+    accessor: "index",
+    minWidth: 80,
+    maxWidth: 80
+  },
+  {
+    id: "time",
+    Header: "time",
+    accessor: "timestamp",
+    maxWidth: 220
+  },
+  {
+    Header: "process",
+    accessor: "pname",
+    maxWidth: 100
+  },
+  {
+    Header: "type",
+    accessor: "type",
+    maxWidth: 150
+  },
+  {
+    id: "content",
+    Header: "Content",
+    accessor: "message",
+    Cell: ContentCell
   }
-}
+];
+
+/*
+const getTrProps = (state, p) => {
+  if (!p) return;
+  const { original } = p;
+  return {
+    style: {
+      opacity: original.level === "debug" ? 0.7 : 1,
+      color:
+        original.level === "error"
+          ? "#C00"
+          : original.level === "warn"
+            ? "#F90"
+            : "#000"
+    }
+  };
+};
+*/
 
 class Logs extends Component<*> {
   render() {
     const { logs } = this.props;
-    const referenceTime = new Date(logs[0].timestamp);
     return (
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>time</TableCell>
-            <TableCell>process</TableCell>
-            <TableCell>type</TableCell>
-            <TableCell>content</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {logs.map((log, i) => (
-            <Log key={i} referenceTime={referenceTime} log={log} />
-          ))}
-        </TableBody>
-      </Table>
+      <ReactTable
+        defaultPageSize={logs.length}
+        filterable
+        data={logs}
+        columns={columns}
+      />
     );
   }
 }
 
 class HeaderEmptyState extends Component<*> {
+  onChange = (e: *) => {
+    this.props.onFiles(e.target.files);
+  };
   render() {
     return (
-      <header>
-        <div>
+      <header style={{ padding: 20 }}>
+        <h1>
           Welcome to{" "}
           <span>
             Ledger <strong>Live</strong>
           </span>{" "}
-          Log Viewer
-        </div>
-        <div>
-          Drag & Drop here a <code>*.json</code> log file that was exported from
-          Ledger Live with <code>Ctrl+E</code> (or Export Logs)
-        </div>
+          LogsViewer
+        </h1>
+        <p>
+          Select a <code>*.json</code> log exported from Ledger Live (<code>
+            Ctrl+E
+          </code>{" "}
+          / Export Logs)
+        </p>
+        <p>
+          <input type="file" onChange={this.onChange} accept=".json" />
+        </p>
       </header>
     );
   }
@@ -123,14 +128,19 @@ class LogsViewer extends Component<*, *> {
   onDrop = (evt: *) => {
     evt.stopPropagation();
     evt.preventDefault();
-    var files = evt.dataTransfer.files;
+    this.onFiles(evt.dataTransfer.files);
+  };
+  onFiles = (files: *) => {
     for (var i = 0, f; (f = files[i]); i++) {
       if (!f.type.match("application/json")) {
         continue;
       }
       var reader = new FileReader();
       reader.onload = e => {
-        const logs = JSON.parse(e.target.result);
+        const logs = JSON.parse(e.target.result).map((l, index) => ({
+          index,
+          ...l
+        }));
         console.log({ logs }); // eslint-disable-line no-console
         this.setState({ logs });
       };
@@ -145,7 +155,11 @@ class LogsViewer extends Component<*, *> {
         onDragOver={this.onDragOver}
         onDrop={this.onDrop}
       >
-        {!logs ? <HeaderEmptyState /> : <Logs logs={logs} />}
+        {!logs ? (
+          <HeaderEmptyState onFiles={this.onFiles} />
+        ) : (
+          <Logs logs={logs} />
+        )}
       </div>
     );
   }
