@@ -24,6 +24,16 @@
     "NetworkDown": {
       "title": "Oops, internet seems down",
       "description": "Please check your internet connection."
+    },
+    "NotEnoughBalance": {
+      "title": "Oops, insufficient balance",
+      "description": "Make sure the account to debit has sufficient balance"
+    },
+    "NotEnoughBalanceBecauseDestinationNotCreated": {
+      "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
+    },
+    "FeeNotLoaded": {
+      "title": "Couldn’t load fee rates. Please set manual fees"
     }
   },
   "auth": {

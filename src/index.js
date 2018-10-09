@@ -1,4 +1,5 @@
 // @flow
+import "../shim";
 import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";

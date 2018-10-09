@@ -2,6 +2,7 @@ package com.ledger.live;
 
 import android.app.Application;
 
+import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactApplication;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.opensettings.OpenSettingsPackage;
@@ -59,7 +60,8 @@ public class MainApplication extends Application implements ReactApplication {
             new FingerprintAuthPackage(),
             new RCTCoreBindingPackage(),
             new RNVersionNumberPackage(),
-            new BlePackage()
+            new BlePackage(),
+            new RandomBytesPackage()
       );
     }
 

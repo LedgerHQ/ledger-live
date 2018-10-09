@@ -6,7 +6,7 @@ import type { CryptoCurrencyIds } from "@ledgerhq/live-common/lib/types";
 const supported: CryptoCurrencyIds[] = [
   "bitcoin",
   // "ethereum",
-  // "ripple",
+  "ripple",
   "bitcoin_cash",
   "litecoin",
   "dash",

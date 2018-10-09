@@ -22,17 +22,28 @@ export const importExistingAccount = ({
   index,
   balance,
 }: AccountData): Account => {
-  const { xpub } = decodeAccountId(id);
+  const { xpub: xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
   const currency = getCryptoCurrencyById(currencyId);
+  let xpub = "";
+  let freshAddress = "";
+  let freshAddressPath = "";
+  if (currency.family === "bitcoin") {
+    xpub = xpubOrAddress;
+  } else {
+    freshAddress = xpubOrAddress;
+    // TODO in this case, we should extract what is the path from the technique used to derivate
+    freshAddressPath = "";
+  }
+
   const account: $Exact<Account> = {
     id,
     xpub,
     name,
     currency,
     index,
+    freshAddress,
+    freshAddressPath,
     // these fields will be completed as we will sync
-    freshAddress: "",
-    freshAddressPath: "",
     blockHeight: 0,
     balance: BigNumber(balance),
     operations: [],
