@@ -26,6 +26,7 @@ export default class RebootProvider extends React.Component<
       rebootId: state.rebootId + 1,
     }));
     if (resetData) {
+      // $FlowFixMe https://github.com/flow-typed/flow-typed/pull/2805
       await db.delete(["settings", "accounts", "countervalues"]);
     }
     if (onRebootEnd) onRebootEnd();
