@@ -12,6 +12,7 @@ import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
 import HeaderTitle from "./components/HeaderTitle";
 import HeaderBackImage from "./components/HeaderBackImage";
+import defaultNavigationOptions from "./screens/defaultNavigationOptions";
 import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
@@ -46,7 +47,6 @@ import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen"
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
-import getFontStyle from "./components/LText/getFontStyle";
 
 // TODO look into all FlowFixMe
 
@@ -120,6 +120,7 @@ const SettingsStack = createStackNavigator(
 );
 
 SettingsStack.navigationOptions = {
+  ...defaultNavigationOptions,
   tabBarIcon: ({ tintColor }: *) => (
     <SettingsIcon size={18} color={tintColor} />
   ),
@@ -134,6 +135,7 @@ const ManagerStack = createStackNavigator(
 );
 
 ManagerStack.navigationOptions = {
+  ...defaultNavigationOptions,
   tabBarIcon: ({ tintColor }: *) => <ManagerIcon size={18} color={tintColor} />,
 };
 
@@ -145,6 +147,7 @@ const AccountsStack = createStackNavigator(
   StackNavigatorConfig,
 );
 AccountsStack.navigationOptions = {
+  ...defaultNavigationOptions,
   header: null,
   tabBarIcon: ({ tintColor }: *) => (
     <AccountsIcon size={18} color={tintColor} />
@@ -170,10 +173,6 @@ const getTabItems = () => {
 const Main = createBottomTabNavigator(getTabItems(), {
   tabBarOptions: {
     style: styles.bottomTabBar,
-    labelStyle: [
-      getFontStyle({ semiBold: true, secondary: true }),
-      styles.labelStyle,
-    ],
   },
 });
 
