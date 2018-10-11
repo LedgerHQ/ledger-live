@@ -53,6 +53,7 @@ const handlers: Object = {
   CLEAN_ACCOUNTS_CACHE: (state: AccountsState): AccountsState => ({
     active: state.active.map(account => ({
       ...account,
+      lastSyncDate: new Date(0),
       operations: [],
       pendingOperations: [],
     })),
