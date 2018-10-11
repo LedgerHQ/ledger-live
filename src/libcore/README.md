@@ -1,8 +1,5 @@
 ## TODO
 
-### Run App on iOS Simulator:
-If you want to run app on iOS simulator you should remove the Universal framework from `Embedded Binaries` section, replace it (drag and drop) with x86 framework which is already under `Frameworks` folder of `ledgerlivemobile.xcodeproj` (and of course add it under `Link Binary With Libraries` section)
-
 High:
 
 - Android and iOS: some account would just fail to sync and set 0.00 in balance. I wonder if related to following bug:
