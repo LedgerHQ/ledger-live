@@ -5,7 +5,6 @@ import {
   createStackNavigator,
   createBottomTabNavigator,
 } from "react-navigation";
-import config from "react-native-config";
 import colors from "./colors";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
@@ -158,15 +157,10 @@ const getTabItems = () => {
   const items: any = {
     Portfolio,
     Accounts: AccountsStack,
+    Transfer,
+    Manager: ManagerStack,
+    Settings: SettingsStack,
   };
-
-  if (config.READ_ONLY === "0") {
-    items.Transfer = Transfer;
-    items.Manager = ManagerStack;
-  }
-
-  items.Settings = SettingsStack;
-
   return items;
 };
 
