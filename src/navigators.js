@@ -1,8 +1,10 @@
 // @flow
 import React from "react";
 import { StyleSheet, StatusBar, Platform } from "react-native";
-import { createStackNavigator } from "react-navigation";
-import { createBottomTabNavigator, BottomTabBar } from "react-navigation-tabs";
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+} from "react-navigation";
 import config from "react-native-config";
 import colors from "./colors";
 import SettingsIcon from "./icons/Settings";
@@ -44,6 +46,7 @@ import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen"
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
+import getFontStyle from "./components/LText/getFontStyle";
 
 // TODO look into all FlowFixMe
 
@@ -69,6 +72,7 @@ const styles = StyleSheet.create({
   transparentHeader: {
     backgroundColor: "transparent",
   },
+  labelStyle: { fontSize: 12 },
 });
 
 const StackNavigatorConfig = {
@@ -147,20 +151,6 @@ AccountsStack.navigationOptions = {
   ),
 };
 
-const labelStyle = {
-  fontFamily: "Museo Sans",
-  fontSize: 12,
-  fontWeight: Platform.OS === "android" ? "SemiBold" : "400",
-};
-
-const CustomTabBar = props => (
-  <BottomTabBar
-    {...props}
-    style={styles.bottomTabBar}
-    labelStyle={labelStyle}
-  />
-);
-
 const getTabItems = () => {
   const items: any = {
     Portfolio,
@@ -178,7 +168,13 @@ const getTabItems = () => {
 };
 
 const Main = createBottomTabNavigator(getTabItems(), {
-  tabBarComponent: CustomTabBar,
+  tabBarOptions: {
+    style: styles.bottomTabBar,
+    labelStyle: [
+      getFontStyle({ semiBold: true, secondary: true }),
+      styles.labelStyle,
+    ],
+  },
 });
 
 Main.navigationOptions = {
