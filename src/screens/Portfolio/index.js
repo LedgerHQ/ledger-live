@@ -36,11 +36,13 @@ import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
+import defaultNavigationOptions from "../defaultNavigationOptions";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
 
 const navigationOptions = {
+  ...defaultNavigationOptions,
   tabBarIcon: ({ tintColor }: *) => (
     <PortfolioIcon size={18} color={tintColor} />
   ),
