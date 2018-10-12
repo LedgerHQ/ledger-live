@@ -24,11 +24,7 @@ export default class DisplayResultItem extends Component<{
     return (
       <TouchableOpacity
         onPress={importing ? undefined : this.onSwitch}
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          opacity: selectable ? 1 : 0.5,
-        }}
+        style={[styles.root, { opacity: selectable ? 1 : 0.5 }]}
       >
         <AccountCard account={account} />
         {!selectable ? null : (
@@ -40,5 +36,9 @@ export default class DisplayResultItem extends Component<{
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   marginLeft: { marginLeft: 16 },
 });

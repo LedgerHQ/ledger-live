@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, View } from "react-native";
 
 import IconCheck from "../icons/Check";
 
@@ -21,18 +21,30 @@ export default class CheckBox extends PureComponent<Props> {
   };
 
   render() {
-    const { isChecked, disabled, style } = this.props;
+    const { isChecked, disabled, onChange, style } = this.props;
+
+    const Container = onChange ? TouchableOpacity : View;
+    const containerProps: any = {
+      style: [styles.root, isChecked && styles.rootChecked, style],
+    };
+
+    Object.assign(
+      containerProps,
+      onChange
+        ? {
+            onPress: disabled ? undefined : this.onPress,
+          }
+        : {},
+    );
+
     return (
-      <TouchableOpacity
-        style={[styles.root, isChecked && styles.rootChecked, style]}
-        onPress={disabled ? undefined : this.onPress}
-      >
+      <Container {...containerProps}>
         <IconCheck
           size={16}
           color={colors.white}
           style={[!isChecked && styles.invisible]}
         />
-      </TouchableOpacity>
+      </Container>
     );
   }
 }
