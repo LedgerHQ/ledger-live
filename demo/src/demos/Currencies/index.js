@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import styled from "styled-components";
-import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/helpers/currencies";
+import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
 import countervalues from "./countervalues";
 

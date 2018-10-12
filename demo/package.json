@@ -3,33 +3,40 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ledgerhq/live-common": "^3.8.0",
+    "@ledgerhq/hw-transport-u2f": "^4.24.0",
+    "@ledgerhq/live-common": "4.0.0-beta.3",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^7.2.1",
     "flow-bin": "^0.73.0",
     "material-ui": "^1.0.0-beta.44",
     "qrcode": "^1.3.0",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
     "react-inspector": "^2.3.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4",
+    "react-scripts": "2.0.4",
     "react-table": "^6.8.6",
     "redux": "^4.0.0",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
-    "styled-components": "^3.3.3",
+    "styled-components": "^3.4.10",
     "victory": "^0.26.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "HTTS=true react-scripts start",
     "build": "react-scripts build && cp build/index.html build/200.html && cp build/index.html build/404.html",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "deploy": "surge -p build -d ledger-countervalues-demo.surge.sh"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

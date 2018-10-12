@@ -18,7 +18,7 @@ import Typography from "material-ui/Typography";
 import {
   listFiatCurrencies,
   listCryptoCurrencies
-} from "@ledgerhq/live-common/lib/helpers/currencies";
+} from "@ledgerhq/live-common/lib/currencies";
 import CurrencySelect from "./CurrencySelect";
 import ExchangeSelect from "./ExchangeSelect";
 import { appSelector } from "../reducers/app";

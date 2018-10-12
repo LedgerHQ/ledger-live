@@ -3,7 +3,7 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   listCryptoCurrencies
-} from "@ledgerhq/live-common/lib/helpers/currencies";
+} from "@ledgerhq/live-common/lib/currencies";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createSelector } from "reselect";
 

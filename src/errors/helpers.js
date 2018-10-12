@@ -3,7 +3,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-prototype-builtins */
 
-// TODO we need to centralize the error in one place. so all are recorded
 const errorClasses = {};
 
 export const createCustomErrorClass = (name: string): Class<any> => {
