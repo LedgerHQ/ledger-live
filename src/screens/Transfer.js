@@ -5,6 +5,7 @@ import Touchable from "../components/Touchable";
 import CreateModal from "../modals/Create";
 import colors from "../colors";
 import TransferIcon from "../icons/Transfer";
+import defaultNavigationOptions from "./defaultNavigationOptions";
 
 const styles = StyleSheet.create({
   root: {
@@ -40,6 +41,7 @@ class Transfer extends Component<null, { isModalOpened: boolean }> {
 
 export default class Create extends Component<*> {
   static navigationOptions = {
+    ...defaultNavigationOptions,
     tabBarIcon: (props: *) => <Transfer {...props} />,
     tabBarOnPress: () => {}, // noop
   };
