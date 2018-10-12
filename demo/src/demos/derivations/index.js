@@ -150,7 +150,9 @@ class Derivations extends Component<*, *> {
           value={currency}
           onChange={this.onChangeCurrency}
         />
-        {currency ? <CurrencyDerivations currency={currency} /> : null}
+        {currency ? (
+          <CurrencyDerivations currency={currency} key={currency.id} />
+        ) : null}
       </Main>
     );
   }
