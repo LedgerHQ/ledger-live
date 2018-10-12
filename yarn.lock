@@ -745,9 +745,9 @@
     "@ledgerhq/hw-transport" "^4.24.0"
 
 "@ledgerhq/hw-app-xrp@^4.24.0":
-  version "4.24.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-xrp/-/hw-app-xrp-4.24.0.tgz#cb41975597ac43d6f95dfb6ef52ff3ce5376ab80"
-  integrity sha512-KWxqnf4Ci3pF/2RsavDLNXHwh7iG2xBkUBD5iYgui9WaWCJfTv+F5zBYeeDeULfTSj9+WAtNcPXFHyiKLYPTfw==
+  version "4.25.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-xrp/-/hw-app-xrp-4.25.0.tgz#d97d7e85290dd2d1ec99f85747a26145e7a7383e"
+  integrity sha512-kG9S8CxUFMG1hbLBiKtoPMquzlTigndDsxhoXB8oywAdbGsoCi2cufMHV2p5Bek6YlGfn5J5p49Hx5iNIf2y5Q==
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
     bip32-path "0.4.2"
