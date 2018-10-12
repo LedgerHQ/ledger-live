@@ -24,21 +24,14 @@ export default class CheckBox extends PureComponent<Props> {
     const { isChecked, disabled, onChange, style } = this.props;
 
     const Container = onChange ? TouchableOpacity : View;
-    const containerProps: any = {
-      style: [styles.root, isChecked && styles.rootChecked, style],
-    };
-
-    Object.assign(
-      containerProps,
-      onChange
-        ? {
-            onPress: disabled ? undefined : this.onPress,
-          }
-        : {},
-    );
 
     return (
-      <Container {...containerProps}>
+      <Container
+        {...{
+          style: [styles.root, isChecked && styles.rootChecked, style],
+          ...(onChange ? { onPress: disabled ? undefined : this.onPress } : {}),
+        }}
+      >
         <IconCheck
           size={16}
           color={colors.white}
