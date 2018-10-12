@@ -36,7 +36,7 @@ class CurrencyDerivation extends Component<*, *> {
 
   getAddress = (verify: boolean = false) =>
     execInQueue(async () => {
-      const { derivationMode, currency, account } = this.props;
+      const { derivationMode, currency, index: account } = this.props;
       try {
         const transport = await TransportU2F.create();
         const { address, path } = await getAddress(
