@@ -1,6 +1,6 @@
 // @flow
 
-import type { Unit } from "../../types/currencies";
+import type { Unit } from "../types/currencies";
 
 const numbers = "0123456789";
 

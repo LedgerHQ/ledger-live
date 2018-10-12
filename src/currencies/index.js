@@ -1,6 +1,6 @@
 //@flow
 import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
-import type { Currency } from "../../types";
+import type { Currency } from "../types";
 
 import { sanitizeValueString } from "./sanitizeValueString";
 
@@ -9,7 +9,7 @@ import {
   findFiatCurrencyByTicker,
   getFiatCurrencyByTicker,
   hasFiatCurrencyTicker
-} from "../../data/fiat";
+} from "../data/fiat";
 
 import {
   listCryptoCurrencies,
@@ -18,7 +18,7 @@ import {
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByTicker
-} from "../../data/cryptocurrencies";
+} from "../data/cryptocurrencies";
 
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 

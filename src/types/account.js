@@ -8,10 +8,23 @@ export type Account = {
   // unique account identifier
   id: string,
 
-  // account xpub
-  xpub: string,
+  // a unique way to identify a seed the account was associated with
+  // it MUST be different between 2 seeds
+  // but it is not necessarily the same between 2 accounts (if possible – not always possible)
+  // in BTC like accounts, we use pubKey(purpose'/coinType')
+  // For other accounts that don't have sub derivation, we have used the account address
+  seedIdentifier: string,
 
-  // The account field of bip44 ( m/purpose'/cointype'/account' )
+  // account xpub if available
+  xpub?: string,
+
+  // Identify the derivation used. it allows us to map this to a derivation scheme.
+  // exemple of values: segwit | unsplit | segwit_unsplit | mew | eth_mew (eg for etc accounts on eth)
+  // the special value of '' means it's bip44 with purpose 44.
+  derivationMode: string,
+
+  // the iterated number to derivate the account in a given derivationMode config
+  // in context of bip44, it would be the account field of bip44 ( m/purpose'/cointype'/account' )
   index: number,
 
   // next receive address. to be used to display to user.
@@ -58,7 +71,9 @@ export type Account = {
 
 export type AccountRaw = {
   id: string,
-  xpub: string,
+  seedIdentifier: string,
+  xpub?: string,
+  derivationMode: string,
   index: number,
   freshAddress: string,
   freshAddressPath: string,

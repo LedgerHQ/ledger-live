@@ -34,6 +34,8 @@ export type CryptoCurrencyFamily =
 export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency
   id: string,
+  // define if a crypto is a fork from another coin. helps dealing with split/unsplit
+  forkedFrom?: string,
   // name of the app as shown in the Manager
   managerAppName: string,
   // coin type according to slip44. THIS IS NOT GUARANTEED UNIQUE across currencies (e.g testnets,..)

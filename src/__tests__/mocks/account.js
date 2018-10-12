@@ -1,5 +1,5 @@
 import { genAccount } from "../../mock/account";
-import { getBalanceHistory } from "../../helpers/account";
+import { getBalanceHistory } from "../../account";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");

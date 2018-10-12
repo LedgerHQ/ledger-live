@@ -1,6 +1,6 @@
 //@flow
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "../../types";
+import type { Unit } from "../types";
 
 // parse a value that was formatted with formatCurrencyUnit
 // NB this function parse a subset of formats because it it locale independant.

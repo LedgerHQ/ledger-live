@@ -1,6 +1,6 @@
 [ignore]
-<PROJECT_ROOT>/lib
 <PROJECT_ROOT>/demo
+<PROJECT_ROOT>/scripts
 
 [include]
 

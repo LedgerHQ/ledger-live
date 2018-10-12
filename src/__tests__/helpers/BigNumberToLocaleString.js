@@ -1,7 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import { toLocaleString } from "../../helpers/currencies/BigNumberToLocaleString";
+import { toLocaleString } from "../../currencies/BigNumberToLocaleString";
 
 test("basic toLocaleString usage", () => {
   expect(toLocaleString(BigNumber(0))).toBe("0");

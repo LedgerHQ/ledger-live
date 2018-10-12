@@ -1,10 +1,10 @@
 /**
  * @flow
- * @module helpers/account
+ * @module account
  */
 
 import { BigNumber } from "bignumber.js";
-import type { Operation } from "../types";
+import type { Operation } from "./types";
 
 export function getOperationAmountNumber(op: Operation): BigNumber {
   switch (op.type) {

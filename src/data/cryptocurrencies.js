@@ -202,6 +202,7 @@ const cryptocurrenciesById = {
   },
   bitcoin_cash: {
     id: "bitcoin_cash",
+    forkedFrom: "bitcoin",
     coinType: 145,
     name: "Bitcoin Cash",
     managerAppName: "Bitcoin Cash",
@@ -244,6 +245,7 @@ const cryptocurrenciesById = {
   },
   bitcoin_gold: {
     id: "bitcoin_gold",
+    forkedFrom: "bitcoin",
     coinType: 156,
     name: "Bitcoin Gold",
     managerAppName: "Bitcoin Gold",
@@ -287,6 +289,7 @@ const cryptocurrenciesById = {
   },
   bitcoin_private: {
     id: "bitcoin_private",
+    forkedFrom: "bitcoin",
     coinType: 183,
     name: "Bitcoin Private",
     managerAppName: "Bitcoin Private",

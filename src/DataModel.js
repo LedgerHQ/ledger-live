@@ -41,11 +41,7 @@ export function createDataModel<R, M>(
   function decodeModel(raw) {
     let data = raw.data;
     for (let i = raw.version; i < version; i++) {
-      // we need to migrate for entering version (i+1)
-      const newVersion = i + 1;
-      if (newVersion in migrations) {
-        data = migrations[newVersion](data);
-      }
+      data = migrations[i](data);
     }
     data = decode(data);
     return data;

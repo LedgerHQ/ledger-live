@@ -1,5 +1,5 @@
 //@flow
-import type { Unit } from "../../types";
+import type { Unit } from "../types";
 
 // remove the extra decimals that can't be represented in unit
 // this function will preserve the string characters

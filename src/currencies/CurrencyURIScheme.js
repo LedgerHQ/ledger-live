@@ -1,8 +1,8 @@
 //@flow
 import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "../../types";
-import { findCryptoCurrencyByScheme } from "../../data/cryptocurrencies";
+import type { CryptoCurrency } from "../types";
+import { findCryptoCurrencyByScheme } from "../data/cryptocurrencies";
 // see https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki
 
 type Data = {

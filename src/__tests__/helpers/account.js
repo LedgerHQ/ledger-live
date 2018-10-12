@@ -1,12 +1,12 @@
 // @flow
 import flatMap from "lodash/flatMap";
-import { getFiatCurrencyByTicker } from "../../helpers/currencies";
+import { getFiatCurrencyByTicker } from "../../currencies";
 import {
   getBalanceHistory,
   getBalanceHistorySum,
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay
-} from "../../helpers/account";
+} from "../../account";
 import { genAccount } from "../../mock/account";
 
 test("getBalanceHistory(*,30) returns an array of 30 items", () => {

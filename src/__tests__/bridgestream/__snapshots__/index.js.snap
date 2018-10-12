@@ -1,28 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`import 1`] = `
+exports[`encode/decode 1`] = `
 Object {
   "accounts": Array [
     Object {
       "balance": "1797257488",
       "currencyId": "zcash",
-      "id": "mock_account_export_0",
+      "derivationMode": "",
+      "id": "mock:1:zcash:export_0:",
       "index": 1,
       "name": "PcbUsj9a5mnpn6wT6InSD9n",
+      "seedIdentifier": "mock",
     },
     Object {
       "balance": "38657242",
       "currencyId": "zcoin",
-      "id": "mock_account_export_1",
+      "derivationMode": "",
+      "id": "mock:1:zcoin:export_1:",
       "index": 1,
       "name": "rv6RjflCC8",
+      "seedIdentifier": "mock",
     },
     Object {
       "balance": "80627416",
       "currencyId": "zencash",
-      "id": "mock_account_export_2",
+      "derivationMode": "",
+      "id": "mock:1:zencash:export_2:",
       "index": 1,
       "name": "f9mx3pw3IAcuP7ovSPao6EQ",
+      "seedIdentifier": "mock",
     },
   ],
   "meta": Object {

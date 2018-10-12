@@ -1,6 +1,6 @@
 //@flow
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "../../types";
+import type { Unit } from "../types";
 import { getFragPositions } from "./localeUtility";
 import { toLocaleString } from "./BigNumberToLocaleString";
 

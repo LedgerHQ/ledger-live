@@ -15,7 +15,7 @@ import {
   decodeURIScheme,
   encodeURIScheme,
   sanitizeValueString
-} from "../../helpers/currencies";
+} from "../../currencies";
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
