@@ -13,9 +13,7 @@ import {
 import CurrencySelect from "./CurrencySelect";
 
 const Main = styled.div`
-  width: 900px;
-  margin: auto;
-  padding: 20px;
+  padding: 40px;
 `;
 
 let queue = Promise.resolve();
@@ -66,7 +64,7 @@ class CurrencyDerivation extends Component<*, *> {
     return (
       <div style={{ padding: "5px 0" }}>
         <strong
-          style={{ margin: "0 5px", width: 200, display: "inline-block" }}
+          style={{ margin: "0 5px", width: 300, display: "inline-block" }}
         >
           {getAccountPlaceholderName({ currency, derivationMode, index })}
         </strong>
@@ -145,11 +143,13 @@ class Derivations extends Component<*, *> {
       );
     return (
       <Main>
-        <CurrencySelect
-          currencies={currencies}
-          value={currency}
-          onChange={this.onChangeCurrency}
-        />
+        <div style={{ textAlign: "center" }}>
+          <CurrencySelect
+            currencies={currencies}
+            value={currency}
+            onChange={this.onChangeCurrency}
+          />
+        </div>
         {currency ? (
           <CurrencyDerivations currency={currency} key={currency.id} />
         ) : null}
