@@ -5,11 +5,12 @@ import { RNCamera } from "react-native-camera";
 import ProgressCircle from "react-native-progress/Circle";
 import type { NavigationScreenProp } from "react-navigation";
 import {
-  parseChunksReducer,
-  areChunksComplete,
-  chunksToResult,
-} from "@ledgerhq/live-common/lib/bridgestream/importer";
-import type { Result } from "@ledgerhq/live-common/lib/bridgestream/importer";
+  parseFramesReducer,
+  framesToData,
+  areFramesComplete,
+  progressOfFrames,
+} from "qrloop/importer";
+import { decode } from "@ledgerhq/live-common/lib/cross";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { T } from "../../types/common";
@@ -64,43 +65,39 @@ class Scan extends PureComponent<
     const { navigation } = this.props;
     const data = navigation.getParam("data");
     if (data) {
-      const chunks = data.reduce(parseChunksReducer, []);
-      if (areChunksComplete(chunks)) {
-        this.onResult(chunksToResult(chunks));
+      const frames = data.reduce(parseFramesReducer, []);
+      if (areFramesComplete(frames)) {
+        this.onResult(decode(framesToData(frames)));
       }
     }
   }
 
   lastData: ?string = null;
 
-  chunks: * = [];
+  frames: * = null;
 
   completed: boolean = false;
 
   onBarCodeRead = ({ data }: { data: string }) => {
     if (data && data !== this.lastData && !this.completed) {
-      const previousLength = this.chunks.length;
-
       this.lastData = data;
-      this.chunks = parseChunksReducer(this.chunks, data, console);
+      try {
+        this.frames = parseFramesReducer(this.frames, data);
 
-      if (this.chunks.length <= previousLength) {
-        return; // no new chunks
-      }
+        this.setState({ progress: progressOfFrames(this.frames) });
 
-      const { chunksCount } = this.chunks[0];
-
-      this.setState({ progress: this.chunks.length / chunksCount });
-
-      if (areChunksComplete(this.chunks)) {
-        this.completed = true;
-        // TODO read the chunks version and check it's correctly supported (if newers version, we deny the import with an error)
-        this.onResult(chunksToResult(this.chunks));
+        if (areFramesComplete(this.frames)) {
+          this.completed = true;
+          // TODO read the frames version and check it's correctly supported (if newers version, we deny the import with an error)
+          this.onResult(decode(framesToData(this.frames)));
+        }
+      } catch (e) {
+        console.warn(e);
       }
     }
   };
 
-  onResult = (result: Result) => {
+  onResult = result => {
     // $FlowFixMe
     this.props.navigation.replace("DisplayResult", { result });
   };

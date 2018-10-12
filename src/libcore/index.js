@@ -1,17 +1,24 @@
 // @flow
 // TODO split in files!!!
 
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { splittedCurrencies } from "../config/cryptocurrencies";
-import { accountModel } from "../reducers/accounts";
-import load from "./load";
-import * as accountIdHelper from "../logic/accountId";
-import { isSegwitPath, isUnsplitPath } from "../logic/bip32";
 import {
+  isSegwitDerivationMode,
+  getDerivationScheme,
+} from "@ledgerhq/live-common/lib/derivation";
+import {
+  encodeAccountId,
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
-} from "../logic/accountName";
+  getWalletName,
+} from "@ledgerhq/live-common/lib/account";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import type {
+  Account,
+  AccountRaw,
+  CryptoCurrency,
+} from "@ledgerhq/live-common/lib/types";
+import accountModel from "../logic/accountModel";
+import load from "./load";
 import {
   getValue,
   getBlockHeightForAccount,
@@ -20,54 +27,43 @@ import {
   OperationTypeMap,
 } from "./specific";
 
-type ScanOpts = {
-  isSegwit: boolean,
-  isUnsplit: boolean,
-};
-
 async function getOrCreateWallet({
   core,
   walletName,
-  currencyId,
-  opts: { isSegwit, isUnsplit },
+  currency,
+  derivationMode,
 }: {
   core: *,
   walletName: string,
-  currencyId: string,
-  opts: ScanOpts,
+  currency: CryptoCurrency,
+  derivationMode: string,
 }) {
   const poolInstance = core.getPoolInstance();
   let wallet;
   try {
     wallet = await core.coreWalletPool.getWallet(poolInstance, walletName);
   } catch (err) {
-    const currency = await core.coreWalletPool.getCurrency(
+    const currencyCore = await core.coreWalletPool.getCurrency(
       poolInstance,
-      currencyId,
+      currency.id,
     );
     const config = await core.coreDynamicObject.newInstance();
-    const splitConfig = isUnsplit
-      ? splittedCurrencies[currencyId] || null
-      : null;
-    const coinType = splitConfig ? splitConfig.coinType : "<coin_type>";
-    if (isSegwit) {
+
+    const derivationScheme = getDerivationScheme({ currency, derivationMode });
+
+    if (isSegwitDerivationMode(derivationMode)) {
       core.coreDynamicObject.putString(config, "KEYCHAIN_ENGINE", "BIP49_P2SH");
-      core.coreDynamicObject.putString(
-        config,
-        "KEYCHAIN_DERIVATION_SCHEME",
-        `49'/${coinType}'/<account>'/<node>/<address>`,
-      );
-    } else if (isUnsplit) {
-      core.coreDynamicObject.putString(
-        config,
-        "KEYCHAIN_DERIVATION_SCHEME",
-        `44'/${coinType}'/<account>'/<node>/<address>`,
-      );
     }
+    core.coreDynamicObject.putString(
+      config,
+      "KEYCHAIN_DERIVATION_SCHEME",
+      derivationScheme,
+    );
+
     wallet = await core.coreWalletPool.createWallet(
       poolInstance,
       walletName,
-      currency,
+      currencyCore,
       config,
     );
   }
@@ -75,30 +71,22 @@ async function getOrCreateWallet({
 }
 
 export async function syncAccount({ account }: { account: Account }) {
+  const { derivationMode, currency, xpub, index, seedIdentifier } = account;
   const core = await load();
-  const decodedAccountId = accountIdHelper.decode(account.id);
-  const { walletName } = decodedAccountId;
-
-  const isSegwit = isSegwitPath(account.freshAddressPath);
-  const isUnsplit = isUnsplitPath(
-    account.freshAddressPath,
-    splittedCurrencies[account.currency.id],
-  );
-
-  const opts = { isSegwit, isUnsplit };
+  const walletName = getWalletName(account);
 
   const coreWallet = await getOrCreateWallet({
     core,
     walletName,
-    currencyId: account.currency.id,
-    opts,
+    currency,
+    derivationMode,
   });
 
   const coreAccount = await getOrCreateAccount({
     core,
     coreWallet,
-    index: account.index,
-    xpub: decodedAccountId.xpub,
+    index,
+    xpub,
   });
 
   const updatedAccount = await syncCoreAccount({
@@ -106,9 +94,10 @@ export async function syncAccount({ account }: { account: Account }) {
     coreWallet,
     coreAccount,
     walletName,
-    currencyId: account.currency.id,
+    currencyId: currency.id,
     accountIndex: account.index,
-    opts,
+    derivationMode,
+    seedIdentifier,
   });
 
   return updatedAccount;
@@ -162,10 +151,10 @@ export async function syncCoreAccount({
   core,
   coreWallet,
   coreAccount,
-  walletName,
   currencyId,
   accountIndex,
-  opts,
+  derivationMode,
+  seedIdentifier,
 }: {
   core: *,
   coreWallet: *,
@@ -173,7 +162,8 @@ export async function syncCoreAccount({
   walletName: string,
   currencyId: string,
   accountIndex: number,
-  opts: ScanOpts,
+  derivationMode: string,
+  seedIdentifier: string,
 }) {
   const eventReceiver = await createInstance(core.coreEventReceiver);
   const eventBus = await core.coreAccount.synchronize(coreAccount);
@@ -191,10 +181,10 @@ export async function syncCoreAccount({
     coreWallet,
     coreAccount,
     coreOperations,
-    walletName,
     currencyId,
     accountIndex,
-    opts,
+    derivationMode,
+    seedIdentifier,
   });
 
   await core.flush();
@@ -208,19 +198,19 @@ async function buildAccountRaw({
   coreWallet,
   coreAccount,
   coreOperations,
-  walletName,
   currencyId,
   accountIndex,
-  opts: { isSegwit, isUnsplit },
+  derivationMode,
+  seedIdentifier,
 }: {
   core: *,
   coreWallet: *,
   coreAccount: *,
   coreOperations: *,
-  walletName: string,
   currencyId: string,
   accountIndex: number,
-  opts: ScanOpts,
+  derivationMode: string,
+  seedIdentifier: string,
 }) {
   const nativeBalance = await core.coreAccount.getBalance(coreAccount);
 
@@ -237,7 +227,7 @@ async function buildAccountRaw({
     await core.coreAccountCreationInfo.getDerivations(coreAccountCreationInfo),
   );
 
-  const [walletPath, accountPath] = derivations;
+  const [, accountPath] = derivations;
 
   const blockHeight = await getBlockHeightForAccount(core, coreAccount);
 
@@ -258,22 +248,26 @@ async function buildAccountRaw({
 
   const name =
     coreOperations.length === 0
-      ? getNewAccountPlaceholderName(currency, accountIndex)
-      : getAccountPlaceholderName(
+      ? getNewAccountPlaceholderName({
           currency,
-          accountIndex,
-          (currency.supportsSegwit && !isSegwit) || false,
-          isUnsplit,
-        );
+          index: accountIndex,
+          derivationMode,
+        })
+      : getAccountPlaceholderName({
+          currency,
+          index: accountIndex,
+          derivationMode,
+        });
 
   // retrieve xpub
   const { value: xpub } = await core.coreAccount.getRestoreKey(coreAccount);
 
-  const id = accountIdHelper.encode({
+  const id = encodeAccountId({
     type: "libcore",
     version: "1",
-    xpub,
-    walletName,
+    currencyId: currency.id,
+    xpubOrAddress: xpub,
+    derivationMode,
   });
 
   // build operations
@@ -287,17 +281,16 @@ async function buildAccountRaw({
     ),
   );
 
-  return {
+  const raw: $Exact<AccountRaw> = {
     id,
     xpub,
-    path: walletPath,
+    derivationMode,
+    seedIdentifier,
     name,
-    isSegwit,
     freshAddress: freshAddress.str,
     freshAddressPath: freshAddress.path,
     balance,
     blockHeight,
-    archived: false,
     index: accountIndex,
     operations,
     pendingOperations: [],
@@ -305,6 +298,8 @@ async function buildAccountRaw({
     unitMagnitude: currency.units[0].magnitude,
     lastSyncDate: new Date().toISOString(),
   };
+
+  return raw;
 }
 
 // TODO get read of the "OperationRaw" abstraction (directly generate Operation)

@@ -5,7 +5,7 @@ import {
   parseCurrencyUnit,
   getCryptoCurrencyById,
   formatCurrencyUnit,
-} from "@ledgerhq/live-common/lib/helpers/currencies";
+} from "@ledgerhq/live-common/lib/currencies";
 
 const rippleUnit = getCryptoCurrencyById("ripple").units[0];
 

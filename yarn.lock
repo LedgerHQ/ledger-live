@@ -816,6 +816,13 @@
     pirates "^4.0.0"
     source-map-support "^0.5.9"
 
+"@babel/runtime@^7.1.2":
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.1.2.tgz#81c89935f4647706fc54541145e6b4ecfef4b8e3"
+  integrity sha512-Y3SCjmhSupzFB6wcv1KmmFucH6gDVnI30WjOcicV10ju0cZjak3Jcs67YLIXBrmZYw1xCrVeJPbycFwrqNyxpg==
+  dependencies:
+    regenerator-runtime "^0.12.0"
+
 "@babel/template@7.0.0-beta.44":
   version "7.0.0-beta.44"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.0.0-beta.44.tgz#f8832f4fdcee5d59bf515e595fc5106c529b394f"
@@ -974,10 +981,10 @@
   dependencies:
     events "^2.0.0"
 
-"@ledgerhq/live-common@3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-3.8.0.tgz#8a956f4995c6006d7788a98959d0b0cab92307f6"
-  integrity sha512-ZfhNP9Zt6LGVJhwIdGqeqUZdele6cWEiGDsuXl5NGxS5BGuFZFp7MfrQ7IQWIaePQ5/A1FMy4SoOkgdPskqtvw==
+"@ledgerhq/live-common@4.0.0-beta.1":
+  version "4.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.0.0-beta.1.tgz#52ed90757761a08a5f5c9c40c1fed0cb2f1fb4ca"
+  integrity sha512-Ms06Za/EI8yP/4GOAziCMecqIssZbkS5tjSCgaqd1h0zHLzM6i6PvgjhJyvG5SrET6+uQVp4YM4qbo2tc6irjQ==
   dependencies:
     axios "^0.18.0"
     bignumber.js "^7.2.1"
@@ -987,6 +994,7 @@
     numeral "^2.0.6"
     prando "^3.0.1"
     react "^16.4.0"
+    react-i18next "^8.0.7"
     react-redux "^5.0.7"
     redux "^4.0.0"
     reselect "^3.0.1"
@@ -3045,6 +3053,14 @@ create-react-context@0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.2.tgz#9836542f9aaa22868cd7d4a6f82667df38019dca"
   integrity sha512-KkpaLARMhsTsgp0d2NA/R94F/eDLbhXERdIq3LvX2biCAXcDvHYoOqHfWCHf1+OLj+HKBotLG3KqaOOf+C1C+A==
+  dependencies:
+    fbjs "^0.8.0"
+    gud "^1.0.0"
+
+create-react-context@0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.3.tgz#9ec140a6914a22ef04b8b09b7771de89567cb6f3"
+  integrity sha512-CQBmD0+QGgTaxDL3OX1IDXYqjkp2It4RIbcb99jS6AEg27Ga+a9G3JtK6SIu0HBwPLZlmwt9F7UwWA4Bn92Rag==
   dependencies:
     fbjs "^0.8.0"
     gud "^1.0.0"
@@ -6323,7 +6339,7 @@ md5.js@^1.3.4:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-md5@^2.1.0:
+md5@^2.1.0, md5@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/md5/-/md5-2.2.1.tgz#53ab38d5fe3c8891ba465329ea23fac0540126f9"
   integrity sha1-U6s41f48iJG6RlMp6iP6wFQBJvk=
@@ -7678,6 +7694,14 @@ qrcode@^1.2.0:
     pngjs "^3.3.0"
     yargs "^8.0.2"
 
+qrloop@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.6.1.tgz#167f8868f03018c7625b0e887049830e9253beae"
+  integrity sha512-1wJwoKpukmkfqwzyb9lMMEE9BDWXlKv63J/gdWMIeUfzgSR3QrZ3VKTtjN9Xvyo1DWwJd/G3FuMtJaH9cf+XUw==
+  dependencies:
+    flow-typed "^2.5.1"
+    md5 "^2.2.1"
+
 qs@^6.5.1, qs@~6.5.1:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
@@ -8188,6 +8212,16 @@ react-i18next@7.10.1:
     hoist-non-react-statics "^2.3.1"
     html-parse-stringify2 "2.0.1"
     prop-types "^15.6.0"
+
+react-i18next@^8.0.7:
+  version "8.0.7"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-8.0.7.tgz#9e6ffdaa01f4454ba216fa50377a7c2ba6f1e662"
+  integrity sha512-oJDVe5X8QK72NYYH7/VQtopONZPcNiarlWdVuCSkn9PucQCEAOf/yRt0V2LdjC4nBY48Y20/540glwR1nlE9gA==
+  dependencies:
+    "@babel/runtime" "^7.1.2"
+    create-react-context "0.2.3"
+    hoist-non-react-statics "3.0.1"
+    html-parse-stringify2 "2.0.1"
 
 react-is@^16.3.2:
   version "16.4.1"
@@ -8838,6 +8872,11 @@ regenerator-runtime@^0.11.0:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
   integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
+
+regenerator-runtime@^0.12.0:
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.12.1.tgz#fa1a71544764c036f8c49b13a08b2594c9f8a0de"
+  integrity sha512-odxIc1/vDlo4iZcfXqRYFj0vpXFNoGdKMAUieAlFYO6m/nl5e9KR/beGf41z4a1FI+aQgtjhuaSlDxQ0hmkrHg==
 
 regenerator-transform@^0.13.3:
   version "0.13.3"

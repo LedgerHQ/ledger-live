@@ -9,17 +9,21 @@ import { computeBinaryTransactionHash } from "ripple-hashes";
 import throttle from "lodash/throttle";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import {
+  getDerivationModesForCurrency,
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/live-common/lib/derivation";
+import {
+  getAccountPlaceholderName,
+  getNewAccountPlaceholderName,
+} from "@ledgerhq/live-common/lib/account";
+import {
   apiForEndpointConfig,
   defaultEndpoint,
   parseAPIValue,
   parseAPICurrencyObject,
   formatAPICurrencyXRP,
 } from "../api/Ripple";
-import { getDerivations } from "../logic/derivations";
-import {
-  getAccountPlaceholderName,
-  getNewAccountPlaceholderName,
-} from "../logic/accountName";
 import {
   NotEnoughBalance,
   FeeNotLoaded,
@@ -301,25 +305,32 @@ export const currencyBridge: CurrencyBridge = {
           const minLedgerVersion = Number(ledgers[0]);
           const maxLedgerVersion = Number(ledgers[1]);
 
-          const derivations = getDerivations(currency);
-          for (const derivation of derivations) {
-            const legacy = derivation !== derivations[derivations.length - 1];
+          const derivationModes = getDerivationModesForCurrency(currency);
+          for (const derivationMode of derivationModes) {
+            const derivationScheme = getDerivationScheme({
+              derivationMode,
+              currency,
+            });
             for (let index = 0; index < 255; index++) {
-              const freshAddressPath = derivation({
+              const freshAddressPath = runDerivationScheme(
+                derivationScheme,
                 currency,
-                x: index,
-                segwit: false,
-              });
-              const { address, publicKey } = await getAddress({
+                {
+                  account: index,
+                },
+              );
+
+              const { address } = await getAddress({
                 currencyId: currency.id,
                 devicePath: deviceId,
                 path: freshAddressPath,
               });
+
               if (finished) return;
 
-              const accountId = `ripplejs:${
+              const accountId = `ripplejs:2:${
                 currency.id
-              }:${address}:${publicKey}`;
+              }:${address}:${derivationMode}`;
 
               let info;
               try {
@@ -336,11 +347,16 @@ export const currencyBridge: CurrencyBridge = {
               if (!info) {
                 // account does not exist in Ripple server
                 // we are generating a new account locally
-                if (!legacy) {
+                if (derivationMode === "") {
                   o.next({
                     id: accountId,
-                    xpub: "",
-                    name: getNewAccountPlaceholderName(currency, index),
+                    seedIdentifier: freshAddress,
+                    derivationMode,
+                    name: getNewAccountPlaceholderName({
+                      currency,
+                      index,
+                      derivationMode,
+                    }),
                     freshAddress,
                     freshAddressPath,
                     balance: BigNumber(0),
@@ -373,8 +389,13 @@ export const currencyBridge: CurrencyBridge = {
 
               const account: $Exact<Account> = {
                 id: accountId,
-                xpub: "",
-                name: getAccountPlaceholderName(currency, index, legacy),
+                seedIdentifier: freshAddress,
+                derivationMode,
+                name: getAccountPlaceholderName({
+                  currency,
+                  index,
+                  derivationMode,
+                }),
                 freshAddress,
                 freshAddressPath,
                 balance,
