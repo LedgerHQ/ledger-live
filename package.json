@@ -28,7 +28,12 @@
     "testURL": "http://localhost"
   },
   "dependencies": {
+    "@ledgerhq/hw-app-btc": "^4.24.0",
+    "@ledgerhq/hw-app-eth": "^4.24.0",
+    "@ledgerhq/hw-app-xrp": "^4.24.0",
+    "@ledgerhq/hw-transport": "^4.24.0",
     "bignumber.js": "^7.2.1",
+    "eip55": "^1.0.3",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
     "node-lzw": "^0.3.1",
