@@ -1,7 +1,7 @@
 // @flow
 
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { accountModel } from "../reducers/accounts";
+import accountModel from "../logic/accountModel";
 import { flushAll } from "../components/DBSave";
 
 export const importStore = (state: *) => ({

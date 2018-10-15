@@ -1,7 +1,7 @@
 // @flow
 import { Component } from "react";
 import type { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/helpers/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import { withLocale } from "../context/Locale";

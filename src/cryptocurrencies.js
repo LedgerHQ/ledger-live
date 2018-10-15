@@ -1,12 +1,12 @@
 // @flow
 import memoize from "lodash/memoize";
-import { listCryptoCurrencies as listCC } from "@ledgerhq/live-common/lib/helpers/currencies";
+import { listCryptoCurrencies as listCC } from "@ledgerhq/live-common/lib/currencies";
 import type { CryptoCurrencyIds } from "@ledgerhq/live-common/lib/types";
 
 const supported: CryptoCurrencyIds[] = [
   "bitcoin",
   // "ethereum",
-  // "ripple",
+  "ripple",
   "bitcoin_cash",
   "litecoin",
   "dash",
@@ -35,3 +35,9 @@ export const listCryptoCurrencies = memoize((withDevCrypto?: boolean) =>
     .filter(c => supported.includes(c.id))
     .sort((a, b) => a.name.localeCompare(b.name)),
 );
+
+export const supportsExistingAccount = ({
+  currencyId,
+}: {
+  currencyId: string,
+}) => listCryptoCurrencies(true).some(c => c.id === currencyId);

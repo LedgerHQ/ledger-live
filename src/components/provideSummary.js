@@ -11,7 +11,7 @@ import type {
   BalanceHistory,
   Currency,
 } from "@ledgerhq/live-common/lib/types";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import { accountsSelector } from "../reducers/accounts";
 import {
   exchangeSettingsForAccountSelector,

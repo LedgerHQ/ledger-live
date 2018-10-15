@@ -6,7 +6,7 @@ import { translate } from "react-i18next";
 import { View, Slider, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
 import {

@@ -3,7 +3,7 @@ import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";

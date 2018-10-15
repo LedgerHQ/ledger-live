@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { findCurrencyByTicker } from "@ledgerhq/live-common/lib/helpers/currencies";
+import { findCurrencyByTicker } from "@ledgerhq/live-common/lib/currencies";
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 

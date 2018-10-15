@@ -5,10 +5,10 @@ import {
   genAccount,
   genOperation,
 } from "@ledgerhq/live-common/lib/mock/account";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import { validateNameEdition } from "@ledgerhq/live-common/lib/account";
 import { BigNumber } from "bignumber.js";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
-import { validateNameEdition } from "../logic/account";
 import type { AccountBridge, CurrencyBridge } from "./types";
 import { SyncError } from "../errors";
 
