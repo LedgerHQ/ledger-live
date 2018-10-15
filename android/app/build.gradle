@@ -108,7 +108,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.ledger.live"
@@ -178,6 +178,7 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':react-native-randombytes')
     compile project(':react-native-gesture-handler')
     compile project(':react-native-open-settings')
     compile project(':react-native-screens')

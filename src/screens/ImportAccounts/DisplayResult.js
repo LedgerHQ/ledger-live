@@ -7,14 +7,12 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Result } from "@ledgerhq/live-common/lib/bridgestream/importer";
+import type { Result } from "@ledgerhq/live-common/lib/cross";
+import { accountDataToAccount } from "@ledgerhq/live-common/lib/cross";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { T } from "../../types/common";
-import {
-  importExistingAccount,
-  supportsExistingAccount,
-} from "../../logic/account";
+import { supportsExistingAccount } from "../../cryptocurrencies";
 import { importDesktopSettings } from "../../actions/settings";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
@@ -115,7 +113,7 @@ class DisplayResult extends Component<Props, State> {
           };
         }
         try {
-          const account = importExistingAccount(accInput);
+          const account = accountDataToAccount(accInput);
           return {
             account,
             mode: supportsExistingAccount(accInput) ? "create" : "unsupported",

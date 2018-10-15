@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/helpers/account";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 
 import colors from "../../colors";

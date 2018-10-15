@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import { valueFromUnit } from "@ledgerhq/live-common/lib/helpers/currencies/valueFromUnit";
+import { valueFromUnit } from "@ledgerhq/live-common/lib/currencies/valueFromUnit";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { BigNumber as BigNumberType } from "bignumber.js";

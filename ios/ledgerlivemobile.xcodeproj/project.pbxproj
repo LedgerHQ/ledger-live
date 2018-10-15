@@ -59,6 +59,7 @@
 		AA971EB1796D4FD797316C3D /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44387CB2EE84464C83A75FD7 /* OpenSans-Regular.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B440B7422B4547ACBB665508 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9A58AC9A5DA149AC83518141 /* SimpleLineIcons.ttf */; };
+		B561934651654AF4ABB3DF57 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A659B2E3DBB64F1F920A5DCA /* libRNRandomBytes.a */; };
 		B91C45DF21665C1200E250AB /* ledger-core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DE21665C1200E250AB /* ledger-core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B91C45E021665C3B00E250AB /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DE21665C1200E250AB /* ledger-core.framework */; };
 		B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = B91C45DB2166562200E250AB /* ledger-core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -299,6 +300,20 @@
 			remoteGlobalIDString = DB248BF21C18396500105A5D;
 			remoteInfo = RCTLocale;
 		};
+		34B8115D216F7B7600A3BEF4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 38B9AF17C40D456AB55D2B02 /* RNRandomBytes.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 73EEC9391BFE4B1D00D468EB;
+			remoteInfo = RNRandomBytes;
+		};
+		34B8115F216F7B7600A3BEF4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 38B9AF17C40D456AB55D2B02 /* RNRandomBytes.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 163CDE4E2087CAD3001065FB;
+			remoteInfo = "RNRandomBytes-tvOS";
+		};
 		34BE1FF020092032009E8710 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2CB99C7AA791411C87B310E9 /* ReactNativeConfig.xcodeproj */;
@@ -516,6 +531,7 @@
 		345E146E2154CDD9008C5BFC /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		349F66542045ADCC002149B4 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; };
 		35AA9FCF9B3A4E54A2282A09 /* libRNScreens.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNScreens.a; sourceTree = "<group>"; };
+		38B9AF17C40D456AB55D2B02 /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
 		3A45C4CF346C4C9594B2EC36 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		3E46E77C7D524ECDB200DA38 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		4396DC4264644851ADA99A35 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
@@ -557,6 +573,7 @@
 		9A58AC9A5DA149AC83518141 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		9AE4011B27774E1EAFC940E3 /* libReactNativeConfig.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativeConfig.a; sourceTree = "<group>"; };
 		A49125B8906C40DFB2011F37 /* React Native Open Settings.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = "React Native Open Settings.xcodeproj"; path = "../node_modules/react-native-open-settings/React Native Open Settings.xcodeproj"; sourceTree = "<group>"; };
+		A659B2E3DBB64F1F920A5DCA /* libRNRandomBytes.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNRandomBytes.a; sourceTree = "<group>"; };
 		AAD9939A2894455FB2EC4881 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		AE0C18E225CD47BA91948A0E /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
@@ -622,6 +639,7 @@
 				C1E2A1AC36C040B689A72E76 /* libRNGestureHandler.a in Frameworks */,
 				B91C45E021665C3B00E250AB /* ledger-core.framework in Frameworks */,
 				B91C46CD216812DE00E250AB /* ledger-core.framework in Frameworks */,
+				B561934651654AF4ABB3DF57 /* libRNRandomBytes.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -771,6 +789,7 @@
 				887CA7F3B5FF4445BB1C5960 /* libRNLibLedgerCore.a */,
 				76B12D3F99F7436CAD186C2C /* libRNGestureHandler.a */,
 				35AA9FCF9B3A4E54A2282A09 /* libRNScreens.a */,
+				A659B2E3DBB64F1F920A5DCA /* libRNRandomBytes.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -837,6 +856,15 @@
 			isa = PBXGroup;
 			children = (
 				34AB90C12046C203008783DA /* libRCTLocale.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		34B81159216F7B7600A3BEF4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				34B8115E216F7B7600A3BEF4 /* libRNRandomBytes.a */,
+				34B81160216F7B7600A3BEF4 /* libRNRandomBytes-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -931,6 +959,7 @@
 				1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */,
 				3E46E77C7D524ECDB200DA38 /* RNGestureHandler.xcodeproj */,
 				D82E81409691424CBB16A841 /* BleClient.xcodeproj */,
+				38B9AF17C40D456AB55D2B02 /* RNRandomBytes.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1189,6 +1218,10 @@
 					ProjectRef = 036E6F552B38455AA1CAFE28 /* RNLibLedgerCore.xcodeproj */;
 				},
 				{
+					ProductGroup = 34B81159216F7B7600A3BEF4 /* Products */;
+					ProjectRef = 38B9AF17C40D456AB55D2B02 /* RNRandomBytes.xcodeproj */;
+				},
+				{
 					ProductGroup = 34532BFA2159525400CA371F /* Products */;
 					ProjectRef = 1A6A2D21459F426EA996EA88 /* RNScreens.xcodeproj */;
 				},
@@ -1430,6 +1463,20 @@
 			fileType = archive.ar;
 			path = libRCTLocale.a;
 			remoteRef = 34AB90C02046C203008783DA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		34B8115E216F7B7600A3BEF4 /* libRNRandomBytes.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNRandomBytes.a;
+			remoteRef = 34B8115D216F7B7600A3BEF4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		34B81160216F7B7600A3BEF4 /* libRNRandomBytes-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRNRandomBytes-tvOS.a";
+			remoteRef = 34B8115F216F7B7600A3BEF4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		34BE1FF120092032009E8710 /* libReactNativeConfig.a */ = {
@@ -1749,12 +1796,14 @@
 					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-randombytes",
 				);
 				INFOPLIST_FILE = ledgerlivemobileTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1794,12 +1843,14 @@
 					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-randombytes",
 				);
 				INFOPLIST_FILE = ledgerlivemobileTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1844,6 +1895,7 @@
 					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-randombytes",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -1896,6 +1948,7 @@
 					"$(SRCROOT)/../node_modules/react-native-screens/ios",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-ble-plx/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-randombytes",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;

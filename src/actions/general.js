@@ -2,6 +2,7 @@
 
 import { createSelector, createStructuredSelector } from "reselect";
 import isEqual from "lodash/isEqual";
+import { sortAccounts } from "@ledgerhq/live-common/lib/account";
 import CounterValues from "../countervalues";
 import {
   intermediaryCurrency,
@@ -9,7 +10,6 @@ import {
   orderAccountsSelector,
 } from "../reducers/settings";
 import { accountsSelector } from "../reducers/accounts";
-import { sortAccounts } from "../logic/accountOrdering";
 
 const accountsBtcBalanceSelector = createSelector(
   accountsSelector,

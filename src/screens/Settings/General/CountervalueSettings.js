@@ -1,6 +1,6 @@
 /* @flow */
 import { connect } from "react-redux";
-import { listFiatCurrencies } from "@ledgerhq/live-common/lib/helpers/currencies";
+import { listFiatCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { setCountervalue } from "../../../actions/settings";
 import { counterValueCurrencySelector } from "../../../reducers/settings";
 import type { State } from "../../../reducers";
