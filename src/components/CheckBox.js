@@ -23,22 +23,27 @@ export default class CheckBox extends PureComponent<Props> {
   render() {
     const { isChecked, disabled, onChange, style } = this.props;
 
-    const Container = onChange ? TouchableOpacity : View;
-
-    return (
-      <Container
-        {...{
-          style: [styles.root, isChecked && styles.rootChecked, style],
-          ...(onChange ? { onPress: disabled ? undefined : this.onPress } : {}),
-        }}
-      >
-        <IconCheck
-          size={16}
-          color={colors.white}
-          style={[!isChecked && styles.invisible]}
-        />
-      </Container>
+    const body = (
+      <IconCheck
+        size={16}
+        color={colors.white}
+        style={[!isChecked && styles.invisible]}
+      />
     );
+
+    const commonProps = {
+      style: [styles.root, isChecked && styles.rootChecked, style],
+    };
+
+    if (onChange && !disabled) {
+      return (
+        <TouchableOpacity {...commonProps} onPress={this.onPress}>
+          {body}
+        </TouchableOpacity>
+      );
+    }
+
+    return <View {...commonProps}>{body}</View>;
   }
 }
 
