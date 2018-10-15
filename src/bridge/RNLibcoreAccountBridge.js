@@ -3,8 +3,8 @@ import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "./types";
 
-import { SyncError } from "../errors";
-import { syncAccount } from "../libcore";
+import { SyncError, NoRecipient } from "../errors";
+import { syncAccount, isValidRecipient } from "../libcore";
 
 function operationsDiffer(a, b) {
   if ((a && !b) || (b && !a)) return true;
@@ -74,8 +74,10 @@ const startSync = (initialAccount, _observation) =>
     return cancel;
   });
 
-const checkValidRecipient = (_currency, _recipient) =>
-  Promise.reject(new Error("Not Implemented"));
+const checkValidRecipient = (currency, recipient) => {
+  if (!recipient) return Promise.reject(new NoRecipient());
+  return isValidRecipient({ currency, recipient });
+};
 
 const createTransaction = () => ({
   amount: BigNumber(0),

@@ -10,11 +10,17 @@ import {
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { translate } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import throttle from "lodash/throttle";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 
+import type { T } from "../../types/common";
+
 import { accountScreenSelector } from "../../reducers/accounts";
+
+import { getAccountBridge } from "../../bridge/index";
 
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -25,8 +31,10 @@ import KeyboardView from "../../components/KeyboardView";
 import Close from "../../icons/Close";
 
 import colors from "../../colors";
+import TranslatedError from "../../components/TranslatedError";
 
 type Props = {
+  t: T,
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
@@ -36,6 +44,7 @@ type Props = {
 type State = {
   validAddress: boolean,
   address: string,
+  error: ?Error,
 };
 
 class SelectRecipient extends Component<Props, State> {
@@ -54,6 +63,7 @@ class SelectRecipient extends Component<Props, State> {
   state = {
     validAddress: false,
     address: "",
+    error: null,
   };
 
   input = React.createRef();
@@ -65,17 +75,28 @@ class SelectRecipient extends Component<Props, State> {
     this.validateAddress("");
   };
 
-  validateAddress = (text: string): void => {
-    if (text) {
-      this.setState({ address: text, validAddress: text.length > 10 });
-    } else {
-      this.setState({ address: "", validAddress: false });
+  onChangeText = (address: string) => {
+    this.setState({ address });
+    this.validateAddress(address);
+  };
+
+  validateAddress = async (address: string) => {
+    const { account } = this.props;
+    const bridge = getAccountBridge(account);
+
+    try {
+      const res = await bridge.checkValidRecipient(account.currency, address);
+      if (!res) return this.setState({ validAddress: true, error: null });
+
+      return this.setState({ validAddress: false, error: res });
+    } catch (e) {
+      return this.setState({ validAddress: false, error: e });
     }
   };
 
   render() {
-    const { address, validAddress } = this.state;
-    const { account } = this.props;
+    const { address, validAddress, error } = this.state;
+    const { account, t } = this.props;
 
     return (
       <SafeAreaView style={styles.root}>
@@ -84,7 +105,7 @@ class SelectRecipient extends Component<Props, State> {
           <View style={styles.container}>
             <Button
               type="tertiary"
-              title="Scan QR code"
+              title={t("common:send.recipient.scan")}
               IconLeft={IconQRCode}
               onPress={() => {
                 console.warn("NOT IMPLEMENTED scan qr code");
@@ -93,14 +114,14 @@ class SelectRecipient extends Component<Props, State> {
           </View>
           <View style={styles.container}>
             <LText style={styles.addressTitle}>
-              Or enter a recipient address
+              {t("common:send.recipient.enterAddress")}
             </LText>
             <View style={styles.inputWrapper}>
               <TextInput
-                placeholder="Address"
+                placeholder={t("common:send.recipient.input")}
                 placeholderTextColor={colors.fog}
                 style={styles.addressInput}
-                onChangeText={this.validateAddress}
+                onChangeText={this.onChangeText}
                 value={address}
                 ref={this.input}
                 multiline
@@ -116,7 +137,7 @@ class SelectRecipient extends Component<Props, State> {
             </View>
             {!!address && !validAddress ? (
               <LText style={styles.errorText}>
-                This is not a valid address
+                <TranslatedError error={error} />
               </LText>
             ) : null}
           </View>
@@ -190,4 +211,7 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(SelectRecipient);
+export default compose(
+  translate(),
+  connect(mapStateToProps),
+)(SelectRecipient);

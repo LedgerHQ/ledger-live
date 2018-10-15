@@ -34,6 +34,12 @@
     },
     "FeeNotLoaded": {
       "title": "Couldn’t load fee rates. Please set manual fees"
+    },
+    "InvalidRecipient": {
+      "title": "Invalid recipient"
+    },
+    "NoRecipient": {
+      "title": "No recipient"
     }
   },
   "auth": {
@@ -271,5 +277,12 @@
   },
   "scanning": {
     "loading": "Searching devices..."
+  },
+  "send": {
+    "recipient": {
+      "scan": "Scan QR Code",
+      "enterAddress": "Or enter a recipient address",
+      "input": "address"
+    }
   }
 }
