@@ -45,6 +45,9 @@ const modes = Object.freeze({
     mandatoryEmptyAccountSkip: 10,
     overridesDerivation: "44'/60'/160720'/0'/<account>"
   },
+  aeternity: {
+    overridesDerivation: "<account>"
+  },
   segwit: {
     isSegwit: true
   },
@@ -146,6 +149,9 @@ export const getDerivationModesForCurrency = (
   all.push("");
   if (currency.supportsSegwit) {
     all.push("segwit");
+  }
+  if (currency.id === "aeternity") {
+    return ["aeternity"];
   }
   return all;
 };

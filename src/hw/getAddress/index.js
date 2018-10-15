@@ -4,11 +4,13 @@ import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "../../types";
 import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "../../errors";
 
+import aeternity from "./aeternity";
 import bitcoin from "./btc";
 import ethereum from "./ethereum";
 import ripple from "./ripple";
 
 export const perFamily: { [_: string]: Resolver } = {
+  aeternity,
   bitcoin,
   ethereum,
   ripple

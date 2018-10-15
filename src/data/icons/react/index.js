@@ -1,3 +1,4 @@
+export { default as aeternity } from "./aeternity";
 export { default as ark } from "./ark";
 export { default as bitcloud } from "./bitcloud";
 export { default as bitcoin } from "./bitcoin";

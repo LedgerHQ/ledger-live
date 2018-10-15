@@ -5,6 +5,7 @@ import type { Account, Operation, CryptoCurrencyConfig } from "./types";
 type Explorer = string => ?string;
 
 export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
+  aeternity: hash => `https://explorer.aepps.com/#/tx/${hash}`,
   aion: () => null,
   akroma: hash => `https://akroma.io/explorer/transaction/${hash}`,
   ark: hash => `https://explorer.ark.io/transaction/${hash}`,

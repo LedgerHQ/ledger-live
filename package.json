@@ -32,6 +32,7 @@
     "react": "*"
   },
   "dependencies": {
+    "@aeternity/ledger-app-api": "0.0.4",
     "@ledgerhq/hw-app-btc": "^4.24.0",
     "@ledgerhq/hw-app-eth": "^4.24.0",
     "@ledgerhq/hw-app-xrp": "^4.24.0",
