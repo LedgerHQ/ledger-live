@@ -224,7 +224,7 @@ const txToOperation = (account: Account) => ({
   }
 
   const op: $Exact<Operation> = {
-    id,
+    id: `${account.id}-${id}-${type}`,
     hash: id,
     accountId: account.id,
     type,
