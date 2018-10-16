@@ -13,7 +13,7 @@ const messageLenses = {
 
 const ContentCell = (props: *) => {
   const log = props.original;
-  const { type, level, pname, message: _msg, timestamp, ...rest } = log; // eslint-disable-line no-unused-vars
+  const { type, level, pname, message: _msg, timestamp, index: _index, ...rest } = log; // eslint-disable-line no-unused-vars
   const messageLense = messageLenses[type];
   const message = messageLense ? messageLense(log) : log.message;
   return (
