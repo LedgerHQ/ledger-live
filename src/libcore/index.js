@@ -17,7 +17,6 @@ import type {
   AccountRaw,
   CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
-import accountModel from "../logic/accountModel";
 import load from "./load";
 import {
   getValue,
@@ -26,6 +25,8 @@ import {
   createInstance,
   OperationTypeMap,
 } from "./specific";
+import accountModel from "../logic/accountModel";
+import { InvalidRecipient } from "../errors";
 
 async function getOrCreateWallet({
   core,
@@ -361,4 +362,26 @@ async function buildOperationRaw({
     accountId,
     date: date.toISOString(),
   };
+}
+
+export async function isValidRecipient({
+  currency,
+  recipient,
+}: {
+  currency: CryptoCurrency,
+  recipient: string,
+}): Promise<?Error> {
+  const core = await load();
+  const poolInstance = core.getPoolInstance();
+  const currencyCore = await core.coreWalletPool.getCurrency(
+    poolInstance,
+    currency.id,
+  );
+  const addr = core.coreAddress;
+  const { value } = await addr.isValid(recipient, currencyCore);
+  if (value) {
+    return Promise.resolve(null);
+  }
+
+  return Promise.resolve(new InvalidRecipient());
 }
