@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
-import { Animated, View, StyleSheet } from "react-native";
+import { Animated, View, StyleSheet, Platform } from "react-native";
 
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 
@@ -31,7 +31,7 @@ class Stepper extends PureComponent<Props, State> {
     const { currentStep, nbSteps } = this.props;
     Animated.timing(this.state.width, {
       toValue: currentStep / nbSteps,
-      duration: 1000,
+      duration: Platform.OS === "android" ? 0 : 1000,
     }).start();
   }
 

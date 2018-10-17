@@ -38,6 +38,7 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
+    result: string,
   }>,
 };
 
@@ -45,6 +46,7 @@ type State = {
   validAddress: boolean,
   address: string,
   error: ?Error,
+  shouldUpdate: boolean,
 };
 
 class SelectRecipient extends Component<Props, State> {
@@ -60,10 +62,20 @@ class SelectRecipient extends Component<Props, State> {
     this.validateAddress = throttle(this.validateAddress, 200);
   }
 
+  componentDidUpdate(_, { address: prevAddress }) {
+    const { navigation } = this.props;
+    const { shouldUpdate } = this.state;
+    const qrResult = navigation.getParam("result");
+    if (!shouldUpdate && qrResult && prevAddress !== qrResult) {
+      this.onChangeText(qrResult, false);
+    }
+  }
+
   state = {
     validAddress: false,
     address: "",
     error: null,
+    shouldUpdate: false,
   };
 
   input = React.createRef();
@@ -75,8 +87,8 @@ class SelectRecipient extends Component<Props, State> {
     this.validateAddress("");
   };
 
-  onChangeText = (address: string) => {
-    this.setState({ address });
+  onChangeText = (address: string, shouldUpdate = true) => {
+    this.setState({ address, shouldUpdate });
     this.validateAddress(address);
   };
 
@@ -107,9 +119,12 @@ class SelectRecipient extends Component<Props, State> {
               type="tertiary"
               title={t("common:send.recipient.scan")}
               IconLeft={IconQRCode}
-              onPress={() => {
-                console.warn("NOT IMPLEMENTED scan qr code");
-              }}
+              onPress={() =>
+                // $FlowFixMe
+                this.props.navigation.replace("ScanRecipient", {
+                  accountId: this.props.navigation.getParam("accountId"),
+                })
+              }
             />
           </View>
           <View style={styles.container}>
@@ -120,7 +135,10 @@ class SelectRecipient extends Component<Props, State> {
               <TextInput
                 placeholder={t("common:send.recipient.input")}
                 placeholderTextColor={colors.fog}
-                style={styles.addressInput}
+                style={[
+                  styles.addressInput,
+                  !validAddress ? styles.invalidAddressInput : null,
+                ]}
                 onChangeText={this.onChangeText}
                 value={address}
                 ref={this.input}
@@ -186,6 +204,9 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 24,
     color: colors.darkBlue,
+  },
+  invalidAddressInput: {
+    color: colors.alert,
   },
   errorText: {
     color: colors.alert,

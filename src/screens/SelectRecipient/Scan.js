@@ -3,25 +3,25 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { RNCamera } from "react-native-camera";
 import type { NavigationScreenProp } from "react-navigation";
-import {
-  parseFramesReducer,
-  framesToData,
-  areFramesComplete,
-  progressOfFrames,
-} from "qrloop/importer";
-import { decode } from "@ledgerhq/live-common/lib/cross";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { T } from "../../types/common";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
-import colors from "../../colors";
-import FallBackCamera from "./FallBackCamera";
 import CameraScreen from "../../components/CameraScreen";
+import colors from "../../colors";
+import FallBackCamera from "../ImportAccounts/FallBackCamera";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: NavigationScreenProp<{
+    accountId: string,
+  }>,
   t: T,
+};
+
+type State = {
+  width: number,
+  height: number,
 };
 
 const getDimensions = () => {
@@ -30,19 +30,13 @@ const getDimensions = () => {
   return { width, height };
 };
 
-class Scan extends PureComponent<
-  Props,
-  {
-    progress: number,
-    width: number,
-    height: number,
-  },
-> {
+class Scan extends PureComponent<Props, State> {
   static navigationOptions = ({
     navigation,
   }: {
-    // $FlowFixMe
-    navigation: NavigationScreenProp<*>,
+    navigation: NavigationScreenProp<{
+      accountId: string,
+    }>,
   }) => ({
     title: i18next.t("account.import.scan.title"),
     headerRight: (
@@ -56,20 +50,8 @@ class Scan extends PureComponent<
   });
 
   state = {
-    progress: 0,
     ...getDimensions(),
   };
-
-  componentDidMount() {
-    const { navigation } = this.props;
-    const data = navigation.getParam("data");
-    if (data) {
-      const frames = data.reduce(parseFramesReducer, []);
-      if (areFramesComplete(frames)) {
-        this.onResult(decode(framesToData(frames)));
-      }
-    }
-  }
 
   lastData: ?string = null;
 
@@ -78,27 +60,15 @@ class Scan extends PureComponent<
   completed: boolean = false;
 
   onBarCodeRead = ({ data }: { data: string }) => {
-    if (data && data !== this.lastData && !this.completed) {
-      this.lastData = data;
-      try {
-        this.frames = parseFramesReducer(this.frames, data);
-
-        this.setState({ progress: progressOfFrames(this.frames) });
-
-        if (areFramesComplete(this.frames)) {
-          this.completed = true;
-          // TODO read the frames version and check it's correctly supported (if newers version, we deny the import with an error)
-          this.onResult(decode(framesToData(this.frames)));
-        }
-      } catch (e) {
-        console.warn(e);
-      }
+    if (data) {
+      this.onResult(data);
     }
   };
 
-  onResult = result => {
+  onResult = (result: string) => {
+    const accountId = this.props.navigation.getParam("accountId");
     // $FlowFixMe
-    this.props.navigation.replace("DisplayResult", { result });
+    this.props.navigation.replace("SendSelectRecipient", { result, accountId });
   };
 
   setDimensions = () => {
@@ -108,7 +78,7 @@ class Scan extends PureComponent<
   };
 
   render() {
-    const { progress, width, height } = this.state;
+    const { width, height } = this.state;
     const { navigation } = this.props;
     const cameraRatio = 16 / 9;
     const cameraDimensions =
@@ -126,7 +96,7 @@ class Scan extends PureComponent<
           style={[styles.camera, cameraDimensions]}
           notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >
-          <CameraScreen width={width} height={height} progress={progress} />
+          <CameraScreen width={width} height={height} />
         </RNCamera>
       </View>
     );

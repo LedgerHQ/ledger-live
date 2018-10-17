@@ -29,6 +29,7 @@ import ReceiveFundsMain from "./screens/ReceiveFunds";
 import ConnectDevice from "./screens/ConnectDevice";
 import SendFundsMain from "./screens/SendFunds";
 import SendSelectRecipient from "./screens/SelectRecipient";
+import ScanRecipient from "./screens/SelectRecipient/Scan";
 import SendSelectFunds from "./screens/SelectFunds";
 import SendSummary from "./screens/SendSummary";
 import SendValidation from "./screens/Validation";
@@ -191,6 +192,10 @@ const SendFunds = createStackNavigator(
   {
     SendFundsMain,
     SendSelectRecipient,
+    ScanRecipient: {
+      screen: ScanRecipient,
+      navigationOptions: TransparentHeaderNavigationOptions,
+    },
     SendSelectFunds,
     SendSummary,
     SendValidation,
