@@ -7694,10 +7694,10 @@ qrcode@^1.2.0:
     pngjs "^3.3.0"
     yargs "^8.0.2"
 
-qrloop@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.7.0.tgz#edb3f31a5261e913b4ad1f507bbfb888fd57ffba"
-  integrity sha512-340hLSB2IHHwyZ4gKVAg5qmoRAKKzu50tteRwy0/F3avuTVv6n/Gu/HOcCm/eWnP2oeIqNz7dkqnriaulbF5YQ==
+qrloop@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.7.1.tgz#15ae3b3f277f0498107d9e4b24ac249133c4466f"
+  integrity sha512-vZWqUKQWBeiatYKuuWDCIrJVp4HOQqLiQCHX8F8aVgDdhIIOT8LpDzmiEydsQ9xJf+5maPA0MJJw3mL+Jx0mRg==
   dependencies:
     flow-typed "^2.5.1"
     md5 "^2.2.1"
