@@ -46,6 +46,7 @@ type State = {
   validAddress: boolean,
   address: string,
   error: ?Error,
+  shouldUpdate: boolean,
 };
 
 class SelectRecipient extends Component<Props, State> {
@@ -63,9 +64,10 @@ class SelectRecipient extends Component<Props, State> {
 
   componentDidUpdate(_, { address: prevAddress }) {
     const { navigation } = this.props;
+    const { shouldUpdate } = this.state;
     const qrResult = navigation.getParam("result");
-    if (qrResult && prevAddress !== qrResult) {
-      this.onChangeText(qrResult);
+    if (!shouldUpdate && qrResult && prevAddress !== qrResult) {
+      this.onChangeText(qrResult, false);
     }
   }
 
@@ -73,6 +75,7 @@ class SelectRecipient extends Component<Props, State> {
     validAddress: false,
     address: "",
     error: null,
+    shouldUpdate: false,
   };
 
   input = React.createRef();
@@ -84,8 +87,8 @@ class SelectRecipient extends Component<Props, State> {
     this.validateAddress("");
   };
 
-  onChangeText = (address: string) => {
-    this.setState({ address });
+  onChangeText = (address: string, shouldUpdate = true) => {
+    this.setState({ address, shouldUpdate });
     this.validateAddress(address);
   };
 

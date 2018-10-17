@@ -8,8 +8,8 @@ import i18next from "i18next";
 import type { T } from "../../types/common";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
-import LText from "../../components/LText";
-import colors, { rgba } from "../../colors";
+import CameraScreen from "../../components/CameraScreen";
+import colors from "../../colors";
 import FallBackCamera from "../ImportAccounts/FallBackCamera";
 
 type Props = {
@@ -50,7 +50,6 @@ class Scan extends PureComponent<Props, State> {
   });
 
   state = {
-    progress: 0,
     ...getDimensions(),
   };
 
@@ -66,7 +65,7 @@ class Scan extends PureComponent<Props, State> {
     }
   };
 
-  onResult = result => {
+  onResult = (result: string) => {
     const accountId = this.props.navigation.getParam("accountId");
     // $FlowFixMe
     this.props.navigation.replace("SendSelectRecipient", { result, accountId });
@@ -80,21 +79,13 @@ class Scan extends PureComponent<Props, State> {
 
   render() {
     const { width, height } = this.state;
-    const { t, navigation } = this.props;
+    const { navigation } = this.props;
     const cameraRatio = 16 / 9;
     const cameraDimensions =
       width > height
         ? { width, height: width / cameraRatio }
         : { width: height / cameraRatio, height };
 
-    // Make the viewfinder borders 2/3 of the screen shortest border
-    const viewFinderSize = (width > height ? height : width) * (2 / 3);
-    const wrapperStyle =
-      width > height
-        ? { height, alignSelf: "stretch" }
-        : { width, flexGrow: 1 };
-
-    // TODO refactor to components!
     return (
       <View style={styles.root} onLayout={this.setDimensions}>
         <StyledStatusBar barStyle="light-content" />
@@ -105,52 +96,7 @@ class Scan extends PureComponent<Props, State> {
           style={[styles.camera, cameraDimensions]}
           notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >
-          <View style={wrapperStyle}>
-            <View style={styles.row}>
-              <View style={styles.darken} />
-              <View style={{ width: viewFinderSize, height: viewFinderSize }}>
-                <View style={styles.innerRow}>
-                  <View
-                    style={[styles.border, styles.borderLeft, styles.borderTop]}
-                  />
-                  <View style={styles.border} />
-                  <View
-                    style={[
-                      styles.border,
-                      styles.borderRight,
-                      styles.borderTop,
-                    ]}
-                  />
-                </View>
-                <View style={styles.innerRow} />
-                <View style={styles.innerRow}>
-                  <View
-                    style={[
-                      styles.border,
-                      styles.borderLeft,
-                      styles.borderBottom,
-                    ]}
-                  />
-                  <View style={styles.border} />
-                  <View
-                    style={[
-                      styles.border,
-                      styles.borderRight,
-                      styles.borderBottom,
-                    ]}
-                  />
-                </View>
-              </View>
-              <View style={styles.darken} />
-            </View>
-            <View style={[styles.darken, styles.centered]}>
-              <View style={styles.centered}>
-                <LText semibold style={styles.text}>
-                  {t("account.import.scan.descBottom")}
-                </LText>
-              </View>
-            </View>
-          </View>
+          <CameraScreen width={width} height={height} />
         </RNCamera>
       </View>
     );
@@ -167,49 +113,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   camera: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "stretch",
-  },
-  innerRow: {
-    flexDirection: "row",
-    alignItems: "stretch",
-    flexGrow: 1,
-  },
-  topCell: {
-    paddingTop: 64,
-  },
-  darken: {
-    backgroundColor: rgba(colors.darkBlue, 0.4),
-    flexGrow: 1,
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 32,
-    textAlign: "center",
-    color: colors.white,
-  },
-  border: {
-    borderColor: "white",
-    flexGrow: 1,
-  },
-  borderTop: {
-    borderTopWidth: 6,
-  },
-  borderBottom: {
-    borderBottomWidth: 6,
-  },
-  borderLeft: {
-    borderLeftWidth: 6,
-  },
-  borderRight: {
-    borderRightWidth: 6,
-  },
-  centered: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
