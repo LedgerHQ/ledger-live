@@ -5,12 +5,12 @@ import { translate } from "react-i18next";
 type Props = {
   error: ?Error,
   t: *,
-  field: "title" | "description",
+  field: "title" | "description"
 };
 
 class TranslatedError extends PureComponent<Props> {
   static defaultProps = {
-    field: "title",
+    field: "title"
   };
 
   render() {

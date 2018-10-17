@@ -1,6 +1,6 @@
 // @flow
 import { encode, decode } from "../../cross";
-import shuffle from "lodash/shuffle"
+import shuffle from "lodash/shuffle";
 import { genAccount } from "../../mock/account";
 
 test("encode/decode", () => {
@@ -14,7 +14,7 @@ test("encode/decode", () => {
       counterValueExchange: "KRAKEN",
       currenciesSettings: {
         bitcoin: {
-          exchange: "KRAKEN",
+          exchange: "KRAKEN"
         }
       }
     },
@@ -30,7 +30,7 @@ test("encode/decode", () => {
       currencyId: a.currency.id,
       id: a.id,
       name: a.name,
-      index: a.index,
+      index: a.index
     }))
   );
   expect(res.settings).toMatchObject({
@@ -38,9 +38,9 @@ test("encode/decode", () => {
     counterValueExchange: "KRAKEN",
     currenciesSettings: {
       bitcoin: {
-        exchange: "KRAKEN",
+        exchange: "KRAKEN"
       }
     }
-  })
+  });
   expect(res).toMatchSnapshot();
 });
