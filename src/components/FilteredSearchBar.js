@@ -1,11 +1,11 @@
 // @flow
 import React, { PureComponent, Fragment } from "react";
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import throttle from "lodash/throttle";
 
-import Search from "./Search";
 import SearchIcon from "../icons/Search";
-import Close from "../icons/Close";
+import Search from "./Search";
+import InputResetCross from "./InputResetCross";
 
 import colors from "../colors";
 
@@ -81,13 +81,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             value={query}
             ref={this.input}
           />
-          {!!query && (
-            <TouchableOpacity onPress={this.clear}>
-              <View style={styles.closeContainer}>
-                <Close color={colors.white} size={8} />
-              </View>
-            </TouchableOpacity>
-          )}
+          {query ? <InputResetCross onPress={this.clear} /> : null}
         </View>
         <Search
           fuseOptions={{
@@ -118,15 +112,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Museo Sans",
     color: colors.darkBlue,
-  },
-  closeContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: 12,
-    height: 12,
-    borderRadius: 12,
-    backgroundColor: colors.fog,
-    marginLeft: 6,
   },
 });
 
