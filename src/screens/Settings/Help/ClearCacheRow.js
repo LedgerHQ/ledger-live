@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import { cleanAccountsCache } from "../../../actions/accounts";
+import { cleanCache } from "../../../actions/general";
 import colors from "../../../colors";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
@@ -17,12 +17,12 @@ import Circle from "../../../components/Circle";
 import BottomModal from "../../../components/BottomModal";
 
 const mapDispatchToProps = {
-  cleanAccountsCache,
+  cleanCache,
 };
 
 type Props = {
   t: T,
-  cleanAccountsCache: () => void,
+  cleanCache: () => void,
   reboot: (?boolean) => *,
 };
 
@@ -44,7 +44,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
   };
 
   onClearCache = async () => {
-    await this.props.cleanAccountsCache();
+    await this.props.cleanCache();
     this.props.reboot();
   };
 

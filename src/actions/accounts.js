@@ -2,7 +2,6 @@
 
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import accountModel from "../logic/accountModel";
-import { flushAll } from "../components/DBSave";
 
 export const importStore = (state: *) => ({
   type: "ACCOUNTS_IMPORT",
@@ -45,12 +44,3 @@ export const deleteAccount: DeleteAccount = payload => ({
   type: "DELETE_ACCOUNT",
   payload,
 });
-
-const delay = ms => new Promise(success => setTimeout(success, ms));
-
-export const cleanAccountsCache = () => async (dispatch: *) => {
-  dispatch({ type: "CLEAN_ACCOUNTS_CACHE" });
-  dispatch({ type: "LEDGER_CV:WIPE" });
-  await delay(100);
-  flushAll();
-};

@@ -7,6 +7,7 @@ import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
+import { exportSelector as bleSelector } from "./reducers/ble";
 import CounterValues from "./countervalues";
 import LocaleProvider from "./context/Locale";
 import RebootProvider from "./context/Reboot";
@@ -38,6 +39,8 @@ class App extends Component<*> {
 
   hasAccountsChanged = (a, b) => a.accounts !== b.accounts;
 
+  hasBleChanged = (a, b) => a.ble !== b.ble;
+
   render() {
     return (
       <View style={styles.root}>
@@ -60,6 +63,12 @@ class App extends Component<*> {
           throttle={500}
           hasChanged={this.hasAccountsChanged}
           lense={accountsExportSelector}
+        />
+        <DBSave
+          dbKey="ble"
+          throttle={500}
+          hasChanged={this.hasBleChanged}
+          lense={bleSelector}
         />
 
         <AppStateListener />

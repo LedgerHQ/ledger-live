@@ -4,12 +4,14 @@ import { StyleSheet, StatusBar, Platform } from "react-native";
 import {
   createStackNavigator,
   createBottomTabNavigator,
+  createMaterialTopTabNavigator,
 } from "react-navigation";
 import colors from "./colors";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
 import HeaderTitle from "./components/HeaderTitle";
+import { getFontStyle } from "./components/LText";
 import HeaderBackImage from "./components/HeaderBackImage";
 import defaultNavigationOptions from "./screens/defaultNavigationOptions";
 import Portfolio from "./screens/Portfolio";
@@ -25,6 +27,8 @@ import DebugSettings from "./screens/Settings/Debug";
 import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
 import Manager from "./screens/Manager";
+import ManagerAppsList from "./screens/Manager/AppsList";
+import ManagerDevice from "./screens/Manager/Device";
 import ReceiveFundsMain from "./screens/ReceiveFunds";
 import ConnectDevice from "./screens/ConnectDevice";
 import SendFundsMain from "./screens/SendFunds";
@@ -47,6 +51,8 @@ import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen"
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
+import EditDeviceName from "./screens/EditDeviceName";
+import PairDevices from "./screens/PairDevices";
 
 // TODO look into all FlowFixMe
 
@@ -126,10 +132,44 @@ SettingsStack.navigationOptions = {
   ),
 };
 
+const ManagerMain = createMaterialTopTabNavigator(
+  {
+    // $FlowFixMe
+    ManagerAppsList,
+    // $FlowFixMe
+    ManagerDevice,
+  },
+  {
+    tabBarOptions: {
+      activeTintColor: colors.live,
+      inactiveTintColor: colors.grey,
+      upperCaseLabel: false,
+      labelStyle: {
+        fontSize: 14,
+        ...getFontStyle({
+          semiBold: true,
+        }),
+      },
+      style: {
+        backgroundColor: colors.white,
+      },
+      indicatorStyle: {
+        backgroundColor: colors.live,
+      },
+    },
+  },
+);
+
+ManagerMain.navigationOptions = {
+  title: "Manager",
+};
+
 const ManagerStack = createStackNavigator(
   {
     // $FlowFixMe
     Manager,
+    // $FlowFixMe
+    ManagerMain,
   },
   StackNavigatorConfig,
 );
@@ -258,6 +298,9 @@ export const RootNavigator = createStackNavigator(
     AccountSettings,
     ImportAccounts,
     SendFundsSettings,
+    PairDevices,
+    // $FlowFixMe non-sense error
+    EditDeviceName,
   },
   {
     mode: "modal",

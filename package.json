@@ -15,7 +15,7 @@
     "android:release": "./scripts/android-release.sh",
     "ios": "react-native run-ios",
     "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Release",
-    "staging-android": "yarn android:staging && ADB=$ANDROID_HOME/platform-tools/adb && $ADB install -r app/build/outputs/apk/stagingRelease/app-stagingRelease.apk && $ADB shell monkey -p com.ledger.live.staging 1",
+    "staging-android": "yarn android:staging && ADB=$ANDROID_HOME/platform-tools/adb && $ADB install -r android/app/build/outputs/apk/stagingRelease/app-stagingRelease.apk && $ADB shell monkey -p com.ledger.live.staging 1",
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",

@@ -9,6 +9,7 @@ import CounterValues from "../countervalues";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
+import { importBle } from "../actions/ble";
 
 const createLedgerStore = () =>
   createStore(
@@ -49,6 +50,9 @@ export default class LedgerStoreProvider extends Component<
 
   async init() {
     const { store } = this.state;
+
+    const bleData = await db.get("ble");
+    store.dispatch(importBle(bleData));
 
     const settingsData = await db.get("settings");
     store.dispatch(importSettings(settingsData));

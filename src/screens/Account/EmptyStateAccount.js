@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     textAlign: "center",
     marginBottom: 32,
-    maxWidth: 280,
   },
   managerAppName: {
     color: colors.black,

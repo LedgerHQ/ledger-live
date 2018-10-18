@@ -111,7 +111,7 @@ class Validation extends Component<Props, State> {
         ) : deviceId ? (
           <LText>Please validate transaction on your device...</LText>
         ) : (
-          <SelectDevice onSelectItem={this.onSelectDevice} />
+          <SelectDevice onSelect={this.onSelectDevice} />
         )}
       </View>
     );

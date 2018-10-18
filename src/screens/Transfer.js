@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
+import config from "react-native-config";
 import Touchable from "../components/Touchable";
 import CreateModal from "../modals/Create";
 import colors from "../colors";
@@ -28,7 +29,11 @@ class Transfer extends Component<null, { isModalOpened: boolean }> {
     const { isModalOpened } = this.state;
     return (
       <Fragment>
-        <Touchable onPress={this.openModal}>
+        <Touchable
+          onPress={this.openModal}
+          disabled={!!config.DISABLE_TRANSFER}
+          style={{ opacity: config.DISABLE_TRANSFER ? 0.3 : 1 }}
+        >
           <View style={styles.root}>
             <TransferIcon size={18} color={colors.grey} />
           </View>

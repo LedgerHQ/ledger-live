@@ -11,7 +11,7 @@ import { withStaticURL } from "@ledgerhq/hw-transport-http";
 import Config from "react-native-config";
 import Eth from "@ledgerhq/hw-app-eth";
 
-import BluetoothTransport from "../react-native-hw-transport-ble";
+import BluetoothTransport from "../../react-native-hw-transport-ble";
 
 export async function tmpTestEthExchange(deviceId: string) {
   const t = await open(deviceId);
@@ -22,7 +22,6 @@ export async function tmpTestEthExchange(deviceId: string) {
 
 const transports: { [_: string]: * } = {
   HIDTransport,
-  BluetoothTransport,
 };
 if (__DEV__) {
   transports.DebugHttpProxy = withStaticURL(Config.DEBUG_COMM_HTTP_PROXY);
@@ -31,26 +30,11 @@ if (__DEV__) {
 const observables = [];
 const openHandlers: Array<(string) => ?Promise<Transport<*>>> = [];
 
-// Add support of BLE
-const bleObservable = Observable.create(o => BluetoothTransport.listen(o)).pipe(
-  map(({ descriptor }) => ({
-    type: "ble",
-    id: `ble|${descriptor.id}`,
-    name: descriptor.name,
-  })),
-);
-openHandlers.push(id => {
-  if (id.startsWith("ble|")) {
-    return BluetoothTransport.open(id.slice(4));
-  }
-  return null;
-});
-observables.push(bleObservable);
-
 // Add support of HID
-const hidObservable = Observable.create(o => BluetoothTransport.listen(o)).pipe(
-  map(({ descriptor }) => ({
-    type: "usb",
+const hidObservable = Observable.create(o => HIDTransport.listen(o)).pipe(
+  map(({ type, descriptor }) => ({
+    type,
+    family: "usb",
     id: `usb|${JSON.stringify(descriptor)}`,
     name: "USB device",
   })),
@@ -72,8 +56,9 @@ if (__DEV__) {
   const debugHttpObservable = Observable.create(o =>
     DebugHttpProxy.listen(o),
   ).pipe(
-    map(({ descriptor }) => ({
-      type: "httpdebug",
+    map(({ type, descriptor }) => ({
+      type,
+      family: "httpdebug",
       id: `httpdebug|${descriptor}`,
       name: descriptor,
     })),
@@ -89,6 +74,7 @@ if (__DEV__) {
 
 export const devicesObservable: Observable<{
   type: string,
+  family: string,
   id: string,
   name: string,
 }> = merge(
@@ -100,6 +86,14 @@ export const devicesObservable: Observable<{
       }),
     ),
   ),
+);
+
+// Add support of BLE
+// it is always the fallback choice because we always keep raw id in it.
+// NB: we don't use ble observable because it will be given on ble redux state side
+openHandlers.push(id =>
+  // $FlowFixMe subtyping god help me
+  BluetoothTransport.open(id),
 );
 
 export const open = (deviceId: string): Promise<Transport<*>> => {

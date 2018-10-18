@@ -10,6 +10,7 @@ import {
   orderAccountsSelector,
 } from "../reducers/settings";
 import { accountsSelector } from "../reducers/accounts";
+import { flushAll } from "../components/DBSave";
 
 const accountsBtcBalanceSelector = createSelector(
   accountsSelector,
@@ -48,4 +49,13 @@ export const refreshAccountsOrdering = () => (dispatch: *, getState: *) => {
       });
     }
   }
+};
+
+const delay = ms => new Promise(success => setTimeout(success, ms));
+
+export const cleanCache = () => async (dispatch: *) => {
+  dispatch({ type: "CLEAN_CACHE" });
+  dispatch({ type: "LEDGER_CV:WIPE" });
+  await delay(100);
+  flushAll();
 };

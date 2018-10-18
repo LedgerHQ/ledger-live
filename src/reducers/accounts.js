@@ -48,7 +48,7 @@ const handlers: Object = {
   ): AccountsState => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
-  CLEAN_ACCOUNTS_CACHE: (state: AccountsState): AccountsState => ({
+  CLEAN_CACHE: (state: AccountsState): AccountsState => ({
     active: state.active.map(account => ({
       ...account,
       lastSyncDate: new Date(0),

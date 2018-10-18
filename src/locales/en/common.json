@@ -4,6 +4,7 @@
     "apply": "Apply",
     "delete": "Delete",
     "continue": "Continue",
+    "retry": "Try again",
     "done": "Done",
     "sortBy": "Sort by",
     "signOut": "Sign Out"
@@ -34,6 +35,17 @@
     },
     "FeeNotLoaded": {
       "title": "Couldn’t load fee rates. Please set manual fees"
+    },
+    "DeviceNameRequired": {
+      "title": "A device name is required"
+    },
+    "GenuineCheckFailed": {
+      "title": "Genuine Check Failed",
+      "description": "Request Ledger Support assistance."
+    },
+    "PairingFailed": {
+      "title": "Bluetooth Pairing Failed",
+      "description": "Check your Bluetooth settings, make sure the Nano X device is booted up and test again."
     },
     "InvalidRecipient": {
       "title": "Invalid recipient"
@@ -196,6 +208,8 @@
     }
   },
   "settings": {
+    "configureDevice": "Configure device",
+    "configureDeviceDesc": "Pair new Ledger devices",
     "display": {
       "title": "General",
       "desc": "Change settings that affect Ledger Live in general.",
@@ -284,5 +298,32 @@
       "enterAddress": "Or enter a recipient address",
       "input": "address"
     }
+  },
+  "SelectDevice": {
+    "deviceNotFoundPairNewDevice": "Device not in the list? Pair a new"
+  },
+  "EditDeviceName": {
+    "charactersRemaining": "{{remainingCount}} characters remaining",
+    "inputPlaceholder": "Custom Device Name",
+    "action": "Change name"
+  },
+  "PairDevices": {
+    "Paired": {
+      "title": "Nano X paired with success!",
+      "desc": "You can now use your Nano X on your Ledger Live mobile App to <1><0>send & receive funds</0></1>. You can also mange your device on the <1><1>Manager</1></1> section",
+      "action": "Continue"
+    },
+    "ScanningHeader": {
+      "title": "We are searching for Nano X",
+      "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
+    },
+    "ScanningTimeout": {
+      "title": "We didn't find any devices around",
+      "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
+    },
+    "bypassGenuine": "Use anyway"
+  },
+  "DeviceItemSummary": {
+    "genuine": "Your device is genuine"
   }
 }
