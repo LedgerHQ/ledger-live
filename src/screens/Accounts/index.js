@@ -51,10 +51,10 @@ class Accounts extends Component<Props> {
   keyExtractor = item => item.id;
 
   render() {
-    const { accounts } = this.props;
+    const { accounts, navigation } = this.props;
 
     if (accounts.length === 0) {
-      return <NoAccounts />;
+      return <NoAccounts navigation={navigation} />;
     }
 
     return (
