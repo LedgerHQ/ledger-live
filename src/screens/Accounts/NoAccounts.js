@@ -2,10 +2,16 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import EmptyStatePortfolio from "../Portfolio/EmptyStatePortfolio";
+import colors from "../../colors";
 
-class NoAccounts extends PureComponent<{}> {
+class NoAccounts extends PureComponent<{ navigation: * }> {
   render() {
-    return <View style={styles.root}>{/* TODO */}</View>;
+    return (
+      <View style={styles.root}>
+        <EmptyStatePortfolio navigation={this.props.navigation} />
+      </View>
+    );
   }
 }
 
@@ -13,9 +19,7 @@ export default NoAccounts;
 
 const styles = StyleSheet.create({
   root: {
-    padding: 40,
-  },
-  split: {
-    height: 10,
+    flex: 1,
+    backgroundColor: colors.lightGrey,
   },
 });
