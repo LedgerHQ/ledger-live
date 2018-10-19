@@ -16,6 +16,13 @@ const styles = StyleSheet.create({
   },
 });
 
+const hitSlop = {
+  top: 10,
+  left: 25,
+  right: 25,
+  bottom: 25,
+};
+
 class Transfer extends Component<null, { isModalOpened: boolean }> {
   state = {
     isModalOpened: false,
@@ -30,6 +37,7 @@ class Transfer extends Component<null, { isModalOpened: boolean }> {
     return (
       <Fragment>
         <Touchable
+          hitSlop={hitSlop}
           onPress={this.openModal}
           disabled={!!config.DISABLE_TRANSFER}
           style={{ opacity: config.DISABLE_TRANSFER ? 0.3 : 1 }}
