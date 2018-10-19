@@ -204,7 +204,8 @@
     "row": {
       "syncPending": "Synchronizing...",
       "upToDate": "Up to date",
-      "error": "Error"
+      "error": "Error",
+      "queued": "In queue"
     }
   },
   "settings": {
