@@ -147,18 +147,25 @@ export default class BluetoothTransport extends Transport<Device | string> {
   };
 
   static listen(observer: *) {
+    // TODO protect from race condition. should not allow to call listen() twice before stopDeviceScan is done.
     const bleManager = new BleManager();
+    const stateSub = bleManager.onStateChange(state => {
+      if (state === "PoweredOn") {
+        stateSub.remove();
+        bleManager.startDeviceScan([ServiceUuid], null, (bleError, device) => {
+          if (bleError) {
+            observer.error(bleError);
+            unsubscribe();
+            return;
+          }
+          observer.next({ type: "add", descriptor: device });
+        });
+      }
+    }, true);
     const unsubscribe = () => {
       bleManager.stopDeviceScan();
+      stateSub.remove();
     };
-    bleManager.startDeviceScan([ServiceUuid], null, (bleError, device) => {
-      if (bleError) {
-        observer.error(bleError);
-        unsubscribe();
-        return;
-      }
-      observer.next({ type: "add", descriptor: device });
-    });
     return { unsubscribe };
   }
 
