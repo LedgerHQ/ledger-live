@@ -1,8 +1,38 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import LText from "../../components/LText";
+
+const Header = () => (
+  <View
+    style={{
+      height: 42,
+      borderWidth: 1,
+      borderColor: "#d8d8d8",
+      backgroundColor: "white",
+      borderRadius: 4,
+      marginBottom: 20,
+    }}
+  />
+);
+
+const AppsList = () => (
+  <FlatList
+    renderItem={() => (
+      <View
+        style={{
+          marginBottom: 8,
+          height: 70,
+          backgroundColor: "white",
+          borderRadius: 4,
+        }}
+      />
+    )}
+    data={Array(40)
+      .fill(null)
+      .map((_, id) => ({ id }))}
+  />
+);
 
 class ManagerAppsList extends Component<{
   navigation: NavigationScreenProp<*>,
@@ -12,10 +42,10 @@ class ManagerAppsList extends Component<{
   };
 
   render() {
-    const deviceId = this.props.navigation.getParam("deviceId");
     return (
       <View style={styles.root}>
-        <LText bold>{deviceId}</LText>
+        <Header />
+        <AppsList />
       </View>
     );
   }

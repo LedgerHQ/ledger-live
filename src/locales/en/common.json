@@ -325,5 +325,8 @@
   },
   "DeviceItemSummary": {
     "genuine": "Your device is genuine"
+  },
+  "DeviceNameRow": {
+    "title": "Device Name"
   }
 }
