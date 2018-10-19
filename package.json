@@ -99,7 +99,7 @@
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^5.0.0",
     "react-native-version-number": "^0.3.4",
-    "react-navigation": "2.14.2",
+    "react-navigation": "2.18.0",
     "react-redux": "5.0.7",
     "readable-stream": "1.0.33",
     "redux": "4.0.0",
