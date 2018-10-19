@@ -1,9 +1,10 @@
 // @flow
 
 import Transport from "@ledgerhq/hw-transport";
-import { from } from "rxjs";
+import { from, Observable } from "rxjs";
 import { delay } from "../logic/promise";
 import type { ApduMock } from "../logic/createAPDUMock";
+import { hookRejections, rejectionOp } from "../components/DebugRejectSwitch";
 
 export type DeviceMock = {
   id: string,
@@ -33,39 +34,46 @@ export default (opts: Opts) => {
     static list = () => Promise.resolve([]);
 
     static listen(observer: *) {
-      let timeout;
+      return Observable.create(observer => {
+        let timeout;
 
-      const unsubscribe = () => {
-        clearTimeout(timeout);
-      };
+        const unsubscribe = () => {
+          clearTimeout(timeout);
+        };
 
-      timeout = setTimeout(() => {
-        observer.next({
-          type: "add",
-          descriptor: createTransportDeviceMock("mock_1", "Nano X de David"),
-        });
         timeout = setTimeout(() => {
           observer.next({
             type: "add",
-            descriptor: createTransportDeviceMock("mock_2", "Nano X de Arnaud"),
+            descriptor: createTransportDeviceMock("mock_1", "Nano X de David"),
           });
           timeout = setTimeout(() => {
             observer.next({
               type: "add",
               descriptor: createTransportDeviceMock(
-                "mock_3",
-                "Nano X de Didier Duchmol",
+                "mock_2",
+                "Nano X de Arnaud",
               ),
             });
-          }, 2000);
-        }, 1000);
-      }, 500);
+            timeout = setTimeout(() => {
+              observer.next({
+                type: "add",
+                descriptor: createTransportDeviceMock(
+                  "mock_3",
+                  "Nano X de Didier Duchmol",
+                ),
+              });
+            }, 2000);
+          }, 1000);
+        }, 500);
 
-      return { unsubscribe };
+        return unsubscribe;
+      })
+        .pipe(rejectionOp())
+        .subscribe(observer);
     }
 
     static async open(device: *) {
-      await delay(1000);
+      await hookRejections(delay(1000));
       return new BluetoothTransportMock(
         typeof device === "string"
           ? createTransportDeviceMock(device, "")
@@ -81,7 +89,7 @@ export default (opts: Opts) => {
     }
 
     exchange(apdu: Buffer): Promise<Buffer> {
-      return this.device.apduMock.exchange(apdu);
+      return hookRejections(this.device.apduMock.exchange(apdu));
     }
 
     setScrambleKey() {}
