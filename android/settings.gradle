@@ -1,4 +1,6 @@
 rootProject.name = 'ledgerlivemobile'
+include ':react-native-android-location-services-dialog-box'
+project(':react-native-android-location-services-dialog-box').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-android-location-services-dialog-box/android')
 include ':react-native-randombytes'
 project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-randombytes/android')
 include ':react-native-gesture-handler'

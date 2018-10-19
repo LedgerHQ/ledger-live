@@ -34,7 +34,12 @@ class RenderError extends Component<Props> {
 
     // $FlowFixMe
     if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
-      return <LocationRequired />;
+      return <LocationRequired onRetry={onRetry} errorType="disabled" />;
+    }
+
+    // $FlowFixMe
+    if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
+      return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
     }
 
     const primaryError =

@@ -8,18 +8,16 @@ import LocationRequired from "../../screens/LocationRequired";
 
 const permission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
 
-// FIXME this only detect the permission. not if location is enabled at runtime –_–
-
 export default class RequiresBLE extends Component<
   {
     children: *,
   },
   {
-    state: *,
+    state: { granted: ?boolean },
   },
 > {
   state = {
-    state: null,
+    granted: null,
   };
 
   componentDidMount() {
@@ -27,22 +25,29 @@ export default class RequiresBLE extends Component<
   }
 
   request = async () => {
-    this.setState({
-      state: await PermissionsAndroid.request(permission, {
-        title: "Location is required for Bluetooth BLE",
-        message:
-          "on Android, Location permission is required to being able to list Bluetooth BLE devices.",
-      }),
+    const result = await PermissionsAndroid.request(permission, {
+      title: "Location is required for Bluetooth LE",
+      message:
+        "On Android, location permission is required to be able to list Bluetooth LE devices.",
     });
+
+    this.setState({ granted: result === PermissionsAndroid.RESULTS.GRANTED });
+  };
+
+  retry = async () => {
+    const granted = await PermissionsAndroid.check(permission);
+
+    this.setState({ granted });
   };
 
   render() {
     const { children } = this.props;
-    const { state } = this.state;
-    if (!state) return null; // suspense PLZ
-    if (state === PermissionsAndroid.RESULTS.GRANTED) {
-      return children;
-    }
-    return <LocationRequired />;
+    const { granted } = this.state;
+
+    if (granted === null) return null; // suspense PLZ
+
+    if (granted === true) return children;
+
+    return <LocationRequired errorType="unauthorized" onRetry={this.retry} />;
   }
 }

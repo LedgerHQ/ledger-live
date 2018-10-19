@@ -178,6 +178,7 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':react-native-android-location-services-dialog-box')
     compile project(':react-native-randombytes')
     compile project(':react-native-gesture-handler')
     compile project(':react-native-open-settings')

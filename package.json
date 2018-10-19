@@ -75,6 +75,7 @@
     "react": "16.6.0-alpha.8af6728",
     "react-i18next": "7.10.1",
     "react-native": "0.57.3",
+    "react-native-android-location-services-dialog-box": "^2.7.0",
     "react-native-ble-plx": "^0.10.0",
     "react-native-camera": "1.2.0",
     "react-native-config": "0.11.5",

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactApplication;
+import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.opensettings.OpenSettingsPackage;
 import com.swmansion.rnscreens.RNScreenPackage;
@@ -47,6 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new LocationServicesDialogBoxPackage(),
             new RNGestureHandlerPackage(),
             new OpenSettingsPackage(),
             new RNScreenPackage(),
