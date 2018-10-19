@@ -16,4 +16,8 @@ if (Config.SENTRY_DSN) {
   });
 }
 
+if (Config.DISABLE_YELLOW_BOX) {
+  console.disableYellowBox = true; // eslint-disable-line no-console
+}
+
 AppRegistry.registerComponent("ledgerlivemobile", () => App);

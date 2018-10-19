@@ -21,6 +21,7 @@ import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
+import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import AppStateListener from "./components/AppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 
@@ -76,6 +77,8 @@ class App extends Component<*> {
         <SyncNewAccounts priority={5} />
 
         <RootNavigator />
+
+        <DebugRejectSwitch />
       </View>
     );
   }
