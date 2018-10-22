@@ -8,7 +8,7 @@ import { translate } from "react-i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import Icon from "react-native-vector-icons/dist/Feather";
-import TransportBLE from "../react-native-hw-transport-ble";
+import { open } from "../logic/hw";
 import editDeviceName from "../logic/hw/editDeviceName";
 import Button from "../components/Button";
 import LText, { getFontStyle } from "../components/LText";
@@ -64,7 +64,7 @@ class EditDeviceName extends PureComponent<
     const deviceId = this.props.navigation.getParam("deviceId");
     if (this.initialName !== name) {
       try {
-        const transport = await TransportBLE.open(deviceId);
+        const transport = await open(deviceId);
         await editDeviceName(transport, name);
         transport.close();
         this.props.saveBleDeviceName(deviceId, name);

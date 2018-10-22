@@ -26,8 +26,6 @@ type Props<T> = {
 };
 
 const iconByFamily = {
-  ble: "bluetooth",
-  usb: "usb",
   httpdebug: "terminal",
 };
 
@@ -54,9 +52,11 @@ export default class DeviceItem<T> extends PureComponent<Props<T>> {
       onForget,
     } = this.props;
 
+    const iconName = family && iconByFamily[family];
+
     let res = (
       <View style={[styles.root, disabled && styles.rootDisabled]}>
-        {!family ? (
+        {!iconName ? (
           <IconNanoX
             color={colors.darkBlue}
             height={36}
@@ -64,7 +64,7 @@ export default class DeviceItem<T> extends PureComponent<Props<T>> {
             style={disabled ? styles.deviceIconDisabled : undefined}
           />
         ) : (
-          <Icon name={iconByFamily[family]} size={32} color={colors.darkBlue} />
+          <Icon name={iconName} size={32} color={colors.darkBlue} />
         )}
         <View style={styles.content}>
           <LText
