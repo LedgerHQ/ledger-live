@@ -9,6 +9,13 @@ import LText from "./LText";
 
 const iconWrapperBg = rgba(colors.live, 0.1);
 
+const hitSlop = {
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+};
+
 export default class BottomModalChoice extends PureComponent<{
   onPress: () => void,
   Icon: React$ComponentType<*>,
@@ -18,7 +25,7 @@ export default class BottomModalChoice extends PureComponent<{
   render() {
     const { Icon, title, description, onPress } = this.props;
     return (
-      <Touchable onPress={onPress} style={styles.root}>
+      <Touchable onPress={onPress} style={styles.root} hitSlop={hitSlop}>
         <View style={styles.left}>{Icon && <IconWrapper Icon={Icon} />}</View>
         <View style={styles.body}>
           <LText style={styles.title} semiBold>
