@@ -216,7 +216,9 @@ export default class BluetoothTransport extends Transport<Device | string> {
       device = deviceOrId;
     }
 
-    await device.connect();
+    if (!(await device.isConnected())) {
+      await device.connect();
+    }
     await device.discoverAllServicesAndCharacteristics();
 
     const characteristics = await device.characteristicsForService(ServiceUuid);
