@@ -68,7 +68,7 @@
     "path-browserify": "0.0.0",
     "prando": "^3.0.3",
     "process": "^0.11.0",
-    "qrloop": "^0.7.1",
+    "qrloop": "0.8.0",
     "querystring": "^0.2.0",
     "querystring-es3": "~0.2.0",
     "re-reselect": "^2.1.0",
