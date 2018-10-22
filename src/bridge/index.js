@@ -22,7 +22,7 @@ export const getCurrencyBridge = (currency: Currency): CurrencyBridge => {
 };
 
 export const getAccountBridge = (account: Account): AccountBridge<any> => {
-  if (account.id.startsWith("mock_")) return mockAccountBridge;
+  if (account.id.startsWith("mock")) return mockAccountBridge;
   if (account.currency.family === "ripple") return RippleBridge.accountBridge;
   return RNLibcoreAccountBridge;
 };
