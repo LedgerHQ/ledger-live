@@ -14,7 +14,6 @@ import StepHeader from "../../components/StepHeader";
 import colors from "../../colors";
 
 type Props = {
-  accounts: Account[],
   navigation: NavigationScreenProp<{
     params: {},
   }>,

@@ -2,8 +2,9 @@
 
 import React, { Component } from "react";
 import { translate } from "react-i18next";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
 
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -14,9 +15,10 @@ import StepHeader from "../../components/StepHeader";
 import colors from "../../colors";
 
 type Props = {
-  accounts: Account[],
   navigation: NavigationScreenProp<{
-    params: {},
+    params: {
+      currency: Currency,
+    },
   }>,
 };
 
@@ -33,10 +35,16 @@ class AddAccountsSelectDevice extends Component<Props, State> {
   };
 
   render() {
+    const { navigation } = this.props;
+    const currency = navigation.getParam("currency");
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={4} currentStep={2} />
-        <LText>select device</LText>
+        <View style={{ padding: 20 }}>
+          <LText style={{ fontSize: 20 }}>{`you chose currency: ${
+            currency.name
+          }`}</LText>
+        </View>
         <Button type="primary" title="next" onPress={this.next} />
       </SafeAreaView>
     );
