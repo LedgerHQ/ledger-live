@@ -170,11 +170,22 @@ export default class BluetoothTransport extends Transport<Device | string> {
   }
 
   // TODO : usage of open(deviceId): try { open } catch { e => inform it fails and ask user if he wants to remove the device from the list }
-  static async open(deviceOrId: Device | string) {
+  static async open(deviceOrId: Device | string, _timeout: number = 30000) {
+    // TODO implement timeout
+
     let device;
     if (typeof deviceOrId === "string") {
       console.log(`deviceId=${deviceOrId}`); // eslint-disable-line no-console
       const manager = new BleManager();
+      await new Promise(success => {
+        const stateSub = manager.onStateChange(state => {
+          if (state === "PoweredOn") {
+            stateSub.remove();
+            success();
+          }
+        }, true);
+      });
+
       const devices = await manager.devices([deviceOrId]);
       console.log(`${devices.length} devices`); // eslint-disable-line no-console
       [device] = devices;
@@ -198,8 +209,6 @@ export default class BluetoothTransport extends Transport<Device | string> {
       }
 
       if (!device) {
-        console.log("cancelDeviceConnection (force device to be redeemed)"); // eslint-disable-line no-console
-        await manager.cancelDeviceConnection(deviceOrId);
         console.log("Last chance, we attempt to connectToDevice"); // eslint-disable-line no-console
         device = await manager.connectToDevice(deviceOrId);
       }
