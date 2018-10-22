@@ -761,12 +761,12 @@
   dependencies:
     "@ledgerhq/hw-transport" "^4.21.0"
 
-"@ledgerhq/hw-transport-http@4.26.0-beta.61c8ac0d":
-  version "4.26.0-beta.61c8ac0d"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.26.0-beta.61c8ac0d.tgz#a6d5313ffd6e0ca4a92781d21287c8beecfec9a1"
-  integrity sha512-stVdeRmErEqSWelrfh9h4ilsSPx3pMvv3sQtWhrWbMfkz3/BZEwLQi3O4TTVEI/CqbLTh1etQWEekMrwO57pGw==
+"@ledgerhq/hw-transport-http@4.26.0":
+  version "4.26.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.26.0.tgz#ed77c694ca25dd17763b672c66e721913e07a2d6"
+  integrity sha512-PG6AYLVub/+uoqzd0pt+IzkX0IJKCkbVKOkEt/yaIAdvd8F6CjNqM1y+XUtK5BjagCyL/mxTxvvo+oBWOKO53w==
   dependencies:
-    "@ledgerhq/hw-transport" "^4.26.0-beta.61c8ac0d"
+    "@ledgerhq/hw-transport" "^4.24.0"
     axios "^0.18.0"
     ws "^6.1.0"
 
@@ -777,10 +777,10 @@
   dependencies:
     events "^2.0.0"
 
-"@ledgerhq/hw-transport@^4.26.0-beta.61c8ac0d":
-  version "4.26.0-beta.ebeb3540"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.26.0-beta.ebeb3540.tgz#c4eaee8cc233a179bbf357670b0a9f007279d491"
-  integrity sha512-7xhCSjEEYAdWAtYINJnqeyiqJdvXIwgDxHnBk1ZiAx2IouCaEaujm3b5b2gNVyXHUJx1ZedjbScVygn/sQiYWA==
+"@ledgerhq/hw-transport@^4.24.0":
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.24.0.tgz#8def925d8c2e1f73d15128d9e27ead729870be58"
+  integrity sha512-L34TG1Ss7goRB+5BxtvBwUuu0CmDSIxS33oUqkpEy6rCs31k7XicV48iUGAnRnt8hNY2DvJ9WFyaOroUE9h6wQ==
   dependencies:
     events "^3.0.0"
 
