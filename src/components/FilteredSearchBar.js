@@ -14,6 +14,7 @@ type Props = {
   renderEmptySearch: () => React$Node,
   keys?: Array<string>,
   list: Array<*>,
+  inputWrapperStyle?: *,
 };
 
 type State = {
@@ -52,12 +53,18 @@ class FilteredSearchBar extends PureComponent<Props, State> {
   };
 
   render() {
-    const { keys, renderList, list, renderEmptySearch } = this.props;
+    const {
+      keys,
+      renderList,
+      list,
+      renderEmptySearch,
+      inputWrapperStyle,
+    } = this.props;
     const { query, focused } = this.state;
 
     return (
       <Fragment>
-        <View style={styles.wrapper}>
+        <View style={[styles.wrapper, inputWrapperStyle]}>
           <View style={styles.iconContainer}>
             <SearchIcon
               size={16}
@@ -106,14 +113,10 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginRight: 16,
   },
-  crossContainer: {
-    marginLeft: 16,
-  },
   input: {
     flex: 1,
     fontSize: 18,
     fontFamily: "Museo Sans",
-    fontWeight: "500",
     color: colors.darkBlue,
   },
   closeContainer: {

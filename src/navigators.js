@@ -54,6 +54,12 @@ import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
 
+// add accounts
+import AddAccountsSelectCrypto from "./screens/AddAccounts/01-SelectCrypto";
+import AddAccountsSelectDevice from "./screens/AddAccounts/02-SelectDevice";
+import AddAccountsAccounts from "./screens/AddAccounts/03-Accounts";
+import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
+
 // TODO look into all FlowFixMe
 
 const statusBarPadding =
@@ -228,6 +234,20 @@ ReceiveFunds.navigationOptions = {
   header: null,
 };
 
+const AddAccounts = createStackNavigator(
+  {
+    AddAccountsSelectCrypto,
+    AddAccountsSelectDevice,
+    AddAccountsAccounts,
+    AddAccountsSuccess,
+  },
+  StackNavigatorConfig,
+);
+
+AddAccounts.navigationOptions = {
+  header: null,
+};
+
 const SendFunds = createStackNavigator(
   {
     SendFundsMain,
@@ -294,6 +314,7 @@ export const RootNavigator = createStackNavigator(
     Main,
     ReceiveFunds,
     SendFunds,
+    AddAccounts,
     OperationDetails,
     AccountSettings,
     ImportAccounts,
