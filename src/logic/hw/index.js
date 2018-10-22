@@ -43,9 +43,10 @@ openHandlers.push(id => {
 observables.push(hidObservable);
 
 // Add dev mode support of an http proxy
-if (__DEV__) {
-  const { DEBUG_COMM_HTTP_PROXY } = Config;
-  const DebugHttpProxy = withStaticURLs(DEBUG_COMM_HTTP_PROXY.split("|"));
+if (__DEV__ && Config.DEBUG_COMM_HTTP_PROXY) {
+  const DebugHttpProxy = withStaticURLs(
+    Config.DEBUG_COMM_HTTP_PROXY.split("|"),
+  );
   const debugHttpObservable = Observable.create(o =>
     DebugHttpProxy.listen(o),
   ).pipe(
