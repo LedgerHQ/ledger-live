@@ -7,7 +7,7 @@ import { catchError } from "rxjs/operators/catchError";
 
 import type Transport from "@ledgerhq/hw-transport";
 import HIDTransport from "@ledgerhq/react-native-hid";
-import { withStaticURL } from "@ledgerhq/hw-transport-http";
+import withStaticURLs from "@ledgerhq/hw-transport-http";
 import Config from "react-native-config";
 import Eth from "@ledgerhq/hw-app-eth";
 
@@ -18,13 +18,6 @@ export async function tmpTestEthExchange(deviceId: string) {
   const eth = new Eth(t);
   const r = await eth.getAddress("44'/60'/0'/0/0");
   console.warn("eth.getAddress:", r);
-}
-
-const transports: { [_: string]: * } = {
-  HIDTransport,
-};
-if (__DEV__) {
-  transports.DebugHttpProxy = withStaticURL(Config.DEBUG_COMM_HTTP_PROXY);
 }
 
 const observables = [];
@@ -52,7 +45,7 @@ observables.push(hidObservable);
 // Add dev mode support of an http proxy
 if (__DEV__) {
   const { DEBUG_COMM_HTTP_PROXY } = Config;
-  const DebugHttpProxy = withStaticURL(DEBUG_COMM_HTTP_PROXY);
+  const DebugHttpProxy = withStaticURLs(DEBUG_COMM_HTTP_PROXY.split("|"));
   const debugHttpObservable = Observable.create(o =>
     DebugHttpProxy.listen(o),
   ).pipe(
@@ -65,6 +58,7 @@ if (__DEV__) {
   );
   openHandlers.push(id => {
     if (id.startsWith("httpdebug|")) {
+      // $FlowFixMe wtf
       return DebugHttpProxy.open(id.slice(10));
     }
     return null;

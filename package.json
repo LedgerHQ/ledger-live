@@ -35,7 +35,7 @@
     "@ledgerhq/hw-app-btc": "4.21.0",
     "@ledgerhq/hw-app-eth": "^4.21.0",
     "@ledgerhq/hw-transport": "4.21.0",
-    "@ledgerhq/hw-transport-http": "4.21.0",
+    "@ledgerhq/hw-transport-http": "4.26.0-beta.33b393bd",
     "@ledgerhq/live-common": "4.0.0-beta.1",
     "@ledgerhq/react-native-hid": "4.21.0",
     "@ledgerhq/react-native-hw-transport-ble": "4.21.0",
