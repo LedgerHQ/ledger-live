@@ -6988,10 +6988,10 @@ qrcode@^1.2.0:
     pngjs "^3.3.0"
     yargs "^8.0.2"
 
-qrloop@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.7.1.tgz#15ae3b3f277f0498107d9e4b24ac249133c4466f"
-  integrity sha512-vZWqUKQWBeiatYKuuWDCIrJVp4HOQqLiQCHX8F8aVgDdhIIOT8LpDzmiEydsQ9xJf+5maPA0MJJw3mL+Jx0mRg==
+qrloop@0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/qrloop/-/qrloop-0.8.0.tgz#4c2ddd1122274222b34bf37d971ef822d1804ede"
+  integrity sha512-SzqJSQb9f0za1Hk3UXvkKxcJST2nBbHaR2Pq5TQ0h/6Dc9xojinYWGpI1Mk1iAEyiH6qhGoMqU86Hbeg66H9MQ==
   dependencies:
     flow-typed "^2.5.1"
     md5 "^2.2.1"

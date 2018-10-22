@@ -66,7 +66,7 @@ class Scan extends PureComponent<
     if (data) {
       const frames = data.reduce(parseFramesReducer, []);
       if (areFramesComplete(frames)) {
-        this.onResult(decode(framesToData(frames)));
+        this.onResult(decode(framesToData(frames).toString()));
       }
     }
   }
@@ -88,7 +88,7 @@ class Scan extends PureComponent<
         if (areFramesComplete(this.frames)) {
           this.completed = true;
           // TODO read the frames version and check it's correctly supported (if newers version, we deny the import with an error)
-          this.onResult(decode(framesToData(this.frames)));
+          this.onResult(decode(framesToData(this.frames).toString()));
         }
       } catch (e) {
         console.warn(e);
