@@ -7,18 +7,29 @@ import colors from "../../colors";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
+import AddAccountsModal from "../../components/AddAccountsModal";
 
-class EmptyStatePortfolio extends PureComponent<{
+type Props = {
   t: T,
   navigation: NavigationScreenProp<*>,
-}> {
-  goToImportAccounts = () => {
-    const { navigation } = this.props;
-    navigation.navigate("ImportAccounts");
+};
+
+type State = {
+  isAddModalOpened: boolean,
+};
+
+class EmptyStatePortfolio extends PureComponent<Props, State> {
+  state = {
+    isAddModalOpened: false,
   };
 
+  openAddModal = () => this.setState({ isAddModalOpened: true });
+
+  closeAddModal = () => this.setState({ isAddModalOpened: false });
+
   render() {
-    const { t } = this.props;
+    const { t, navigation } = this.props;
+    const { isAddModalOpened } = this.state;
     return (
       <View style={styles.root}>
         <View style={styles.body}>
@@ -30,8 +41,13 @@ class EmptyStatePortfolio extends PureComponent<{
           <Button
             type="primary"
             title={t("portfolio.emptyState.buttons.import")}
-            onPress={this.goToImportAccounts}
+            onPress={this.openAddModal}
             containerStyle={styles.receiveButton}
+          />
+          <AddAccountsModal
+            navigation={navigation}
+            isOpened={isAddModalOpened}
+            onClose={this.closeAddModal}
           />
         </View>
       </View>

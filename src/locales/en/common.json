@@ -84,9 +84,15 @@
       "title": "Add accounts to your portfolio",
       "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
       "buttons": {
-        "import": "Import accounts"
+        "import": "Add accounts"
       }
     }
+  },
+  "addAccountsModal": {
+    "ctaAdd": "Add accounts",
+    "descAdd": "Lorem ipsum dolor sit amet",
+    "ctaImport": "Import accounts",
+    "descImport": "Lorem ipsum dolor sit amet"
   },
   "time": {
     "day": "Day",
