@@ -1,5 +1,5 @@
 // @flow
-import { createCustomErrorClass } from "@ledgerhq/live-common/lib/errors";
+import { createCustomErrorClass } from "@ledgerhq/live-common/lib/errors/helpers";
 
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 export const PairingFailed = createCustomErrorClass("PairingFailed");

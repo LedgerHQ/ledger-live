@@ -87,6 +87,7 @@ const CounterValues = createCounterValues({
   pairsSelector,
   setExchangePairsAction,
   addExtraPollingHooks,
+  network: fetch,
 });
 
 export default CounterValues;

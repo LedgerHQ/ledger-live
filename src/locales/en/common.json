@@ -308,7 +308,25 @@
     }
   },
   "SelectDevice": {
-    "deviceNotFoundPairNewDevice": "Device not in the list? Pair a new"
+    "deviceNotFoundPairNewDevice": "Device not in the list? Pair a new",
+    "steps": {
+      "connecting": {
+        "title": "Connecting...",
+        "description": "Make sure your device is powered on and the Bluetooth is ON."
+      },
+      "dashboard": {
+        "title": "Go to Dashboard...",
+        "description": "On your device, make sure to be on Dashboard."
+      },
+      "currencyApp": {
+        "title": "Open app {{managerAppName}}...",
+        "description": "On your device, open the app {{managerAppName}}."
+      },
+      "accountApp": {
+        "title": "Open app {{managerAppName}}...",
+        "description": "On your device associated to account ‘{{accountName}}’, open the app {{managerAppName}}."
+      }
+    }
   },
   "EditDeviceName": {
     "charactersRemaining": "{{remainingCount}} characters remaining",
@@ -336,5 +354,8 @@
   },
   "DeviceNameRow": {
     "title": "Device Name"
+  },
+  "FirmwareVersionRow": {
+    "title": "Firmware version"
   }
 }
