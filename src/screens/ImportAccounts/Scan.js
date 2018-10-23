@@ -64,7 +64,7 @@ class Scan extends PureComponent<
     const { navigation } = this.props;
     const data = navigation.getParam("data");
     if (data) {
-      const frames = data.reduce(parseFramesReducer, []);
+      const frames = data.reduce(parseFramesReducer, null);
       if (areFramesComplete(frames)) {
         this.onResult(decode(framesToData(frames).toString()));
       }
