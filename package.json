@@ -43,6 +43,7 @@
     "@tradle/react-native-http": "^2.0.0",
     "assert": "^1.4.1",
     "async": "^2.6.1",
+    "axios": "^0.18.0",
     "bignumber.js": "^7.2.1",
     "browserify-zlib": "~0.1.4",
     "buffer": "5.2.0",

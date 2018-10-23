@@ -29,14 +29,16 @@ import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
 import Manager from "./screens/Manager";
 import ManagerAppsList from "./screens/Manager/AppsList";
 import ManagerDevice from "./screens/Manager/Device";
-import ReceiveFundsMain from "./screens/ReceiveFunds";
-import ConnectDevice from "./screens/ConnectDevice";
-import SendFundsMain from "./screens/SendFunds";
-import SendSelectRecipient from "./screens/SelectRecipient";
-import ScanRecipient from "./screens/SelectRecipient/Scan";
-import SendSelectFunds from "./screens/SelectFunds";
-import SendSummary from "./screens/SendSummary";
-import SendValidation from "./screens/Validation";
+import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
+import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
+import ReceiveVerifyAddress from "./screens/ReceiveFunds/03-VerifyAddress";
+import ReceiveConfirmation from "./screens/ReceiveFunds/04-Confirmation";
+import SendFundsMain from "./screens/SendFunds/01-SelectAccount";
+import SendSelectRecipient from "./screens/SendFunds/02-SelectRecipient";
+import ScanRecipient from "./screens/SendFunds/Scan";
+import SendAmount from "./screens/SendFunds/03-Amount";
+import SendSummary from "./screens/SendFunds/04-Summary";
+import SendValidation from "./screens/SendFunds/06-Validation";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
@@ -45,8 +47,6 @@ import EditAccountName from "./screens/AccountSettings/EditAccountName";
 import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import EditFees from "./screens/EditFees";
-import VerifyAddress from "./screens/VerifyAddress";
-import ReceiveConfirmation from "./screens/ReceiveComfirmation";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
@@ -223,9 +223,9 @@ Main.navigationOptions = {
 
 const ReceiveFunds = createStackNavigator(
   {
-    ReceiveFundsMain,
-    ConnectDevice,
-    VerifyAddress,
+    ReceiveSelectAccount,
+    ReceiveConnectDevice,
+    ReceiveVerifyAddress,
     ReceiveConfirmation,
   },
   StackNavigatorConfig,
@@ -256,7 +256,7 @@ const SendFunds = createStackNavigator(
       screen: ScanRecipient,
       navigationOptions: TransparentHeaderNavigationOptions,
     },
-    SendSelectFunds,
+    SendAmount,
     SendSummary,
     SendValidation,
   },

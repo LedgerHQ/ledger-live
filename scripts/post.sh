@@ -14,6 +14,7 @@ if ! [ -f .env ]; then
 fi
 
 flow-typed install -s
+rm flow-typed/npm/axios_v0.18.x.js
 
 if [[ $DEBUG_RNDEBUGGER == "1" ]] ; then
   rndebugger-open

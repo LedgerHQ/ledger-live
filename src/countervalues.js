@@ -2,6 +2,7 @@
 /* eslint import/no-cycle: 0 */
 import { AppState, NetInfo } from "react-native";
 import { createSelector } from "reselect";
+import axios from "axios";
 import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
 import { setExchangePairsAction } from "./actions/settings";
 import { currenciesSelector } from "./reducers/accounts";
@@ -87,7 +88,7 @@ const CounterValues = createCounterValues({
   pairsSelector,
   setExchangePairsAction,
   addExtraPollingHooks,
-  network: fetch,
+  network: axios,
 });
 
 export default CounterValues;
