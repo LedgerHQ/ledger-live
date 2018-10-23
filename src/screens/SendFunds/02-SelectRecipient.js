@@ -77,7 +77,7 @@ class SelectRecipient extends Component<Props, State> {
     if (this.input.current) {
       this.input.current.clear();
     }
-    this.validateAddress("");
+    this.onChangeText("");
   };
 
   onChangeText = (address: string, shouldUpdate = true) => {

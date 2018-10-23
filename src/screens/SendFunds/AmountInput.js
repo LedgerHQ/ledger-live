@@ -1,21 +1,50 @@
 // @flow
-import React, { Component, Fragment } from "react";
-import { TextInput, View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { Component } from "react";
+import { View, StyleSheet } from "react-native";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { translate } from "react-i18next";
+import { BigNumber } from "bignumber.js";
+import type { Account, Currency } from "@ledgerhq/live-common/lib/types";
+
+import {
+  counterValueCurrencySelector,
+  currencySettingsSelector,
+  counterValueExchangeSelector,
+  intermediaryCurrency,
+} from "../../reducers/settings";
+import type { State } from "../../reducers";
 
 import LText from "../../components/LText/index";
-import Close from "../../icons/Close";
-
+import CounterValues from "../../countervalues";
 import colors from "../../colors";
 
-type Props = {
+import CounterValuesSeparator from "./CounterValuesSeparator";
+import CurrencyInput from "../../components/CurrencyInput";
+
+type OwnProps = {
+  account: Account,
   currency: string,
-  value: string,
-  onChangeText: string => void,
-  isWithinBalance: boolean,
+  value: BigNumber,
+  onChange: BigNumber => void,
 };
 
-class AmountInput extends Component<Props> {
+type Props = OwnProps & {
+  rightCurrency: Currency,
+  getCounterValue: BigNumber => ?BigNumber,
+  getReverseCounterValue: BigNumber => ?BigNumber,
+};
+
+type OwnState = {
+  active: "left" | "right",
+};
+
+class AmountInput extends Component<Props, OwnState> {
   input = React.createRef();
+
+  state = {
+    active: "left",
+  };
 
   componentDidMount() {
     if (this.input.current) {
@@ -23,86 +52,156 @@ class AmountInput extends Component<Props> {
     }
   }
 
-  clear = () => {
-    const { onChangeText } = this.props;
-    if (this.input.current) {
-      this.input.current.clear();
+  handleAmountChange = (changeField: "left" | "right") => (
+    value: BigNumber,
+  ) => {
+    const { getReverseCounterValue, onChange } = this.props;
+    if (changeField === "left") {
+      onChange(value);
+    } else {
+      const leftVal = getReverseCounterValue(value) || BigNumber(0);
+      onChange(leftVal);
     }
-    onChangeText("");
   };
 
+  onChangeLeft = this.handleAmountChange("left");
+
+  onChangeRight = this.handleAmountChange("right");
+
+  onFocus = (direction: "left" | "right") => () =>
+    this.setState({ active: direction });
+
+  onFocusLeft = this.onFocus("left");
+
+  onFocusRight = this.onFocus("right");
+
   render() {
-    const { currency, value, onChangeText, isWithinBalance } = this.props;
+    const { active } = this.state;
+    const {
+      currency,
+      value,
+      rightCurrency,
+      getCounterValue,
+      account,
+    } = this.props;
+    const isLeft = active === "left";
+    const right = value ? getCounterValue(value) : BigNumber(0);
+    const rightUnit = rightCurrency.units[0];
     return (
-      <Fragment>
-        <View
-          style={[
-            styles.inputWrapper,
-            !isWithinBalance ? styles.inputWrapperError : null,
-          ]}
-        >
-          <LText style={styles.currency} tertiary>
-            {currency}
-          </LText>
-          <TextInput
-            style={styles.input}
-            value={value}
-            onChangeText={onChangeText}
-            keyboardType="numeric"
-            placeholder="0"
-            ref={this.input}
-            blurOnSubmit
-          />
-          {!!value && (
-            <TouchableOpacity onPress={this.clear}>
-              <View style={styles.closeContainer}>
-                <Close color={colors.white} size={8} />
-              </View>
-            </TouchableOpacity>
-          )}
+      <View style={styles.container}>
+        <View style={styles.wrapper}>
+          <View style={styles.inputWrapper}>
+            <CurrencyInput
+              isActive={isLeft}
+              onFocus={this.onFocusLeft}
+              onChange={this.onChangeLeft}
+              unit={account.unit}
+              value={value}
+              renderRight={
+                <LText
+                  style={[styles.currency, isLeft ? styles.active : null]}
+                  tertiary
+                >
+                  {currency}
+                </LText>
+              }
+            />
+          </View>
         </View>
-        {!isWithinBalance && (
-          <LText style={styles.errorText}>Oops, insufficient balance</LText>
-        )}
-      </Fragment>
+        <CounterValuesSeparator />
+        <View style={styles.wrapper}>
+          <View style={styles.inputWrapper}>
+            <CurrencyInput
+              isActive={!isLeft}
+              onFocus={this.onFocusRight}
+              onChange={this.onChangeRight}
+              unit={rightUnit}
+              value={right}
+              renderRight={
+                <LText
+                  style={[styles.currency, !isLeft ? styles.active : null]}
+                  tertiary
+                >
+                  {rightUnit.code}
+                </LText>
+              }
+            />
+          </View>
+        </View>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  wrapper: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
   inputWrapper: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 32,
-    paddingBottom: 24,
-  },
-  inputWrapperError: {
-    paddingBottom: 8,
   },
   currency: {
-    fontSize: 30,
-    color: colors.darkBlue,
+    fontSize: 24,
+    color: colors.grey,
   },
-  input: {
-    flex: 1,
-    marginLeft: 8,
-    fontFamily: "Rubik",
-    fontSize: 30,
-    color: colors.darkBlue,
+  active: {
+    fontSize: 32,
+  },
+  error: {
+    color: colors.alert,
   },
   errorText: {
-    color: colors.alert,
-    fontSize: 12,
-  },
-  closeContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: 12,
-    height: 12,
-    borderRadius: 12,
-    backgroundColor: colors.fog,
-    marginLeft: 6,
+    fontSize: 14,
+    flex: 1,
   },
 });
 
-export default AmountInput;
+const mapStateToProps = (state: State, props: OwnProps) => {
+  const {
+    account: { currency },
+  } = props;
+
+  const counterValueCurrency = counterValueCurrencySelector(state);
+  const fromExchange = currencySettingsSelector(state, { currency }).exchange;
+  const toExchange = counterValueExchangeSelector(state);
+
+  const getCounterValue = value =>
+    CounterValues.calculateWithIntermediarySelector(state, {
+      from: currency,
+      fromExchange,
+      intermediary: intermediaryCurrency,
+      toExchange,
+      to: counterValueCurrency,
+      value,
+      disableRounding: true,
+    });
+
+  const getReverseCounterValue = value =>
+    CounterValues.reverseWithIntermediarySelector(state, {
+      from: currency,
+      fromExchange,
+      intermediary: intermediaryCurrency,
+      toExchange,
+      to: counterValueCurrency,
+      value,
+    });
+
+  return {
+    rightCurrency: counterValueCurrency,
+    getCounterValue,
+    getReverseCounterValue,
+  };
+};
+
+export default compose(
+  translate(),
+  connect(mapStateToProps),
+)(AmountInput);
