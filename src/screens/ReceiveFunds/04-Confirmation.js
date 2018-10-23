@@ -19,14 +19,17 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 
+type Navigation = NavigationScreenProp<{
+  params: {
+    accountId: string,
+  },
+}>;
+
 type Props = {
   account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-    },
-  }>,
+  navigation: Navigation,
 };
+
 type State = {
   verified: boolean,
 };

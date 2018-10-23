@@ -15,11 +15,11 @@ import KeyboardView from "../../components/KeyboardView";
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 
+type Navigation = NavigationScreenProp<{ params: {} }>;
+
 type Props = {
   accounts: Account[],
-  navigation: NavigationScreenProp<{
-    params: {},
-  }>,
+  navigation: Navigation,
 };
 
 type State = {};

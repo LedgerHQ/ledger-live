@@ -16,13 +16,15 @@ import { accountApp } from "../../components/SelectDevice/steps";
 
 import colors from "../../colors";
 
+type Navigation = NavigationScreenProp<{
+  params: {
+    accountId: string,
+  },
+}>;
+
 type Props = {
   account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-    },
-  }>,
+  navigation: Navigation,
 };
 
 class ConnectDevice extends Component<Props> {
