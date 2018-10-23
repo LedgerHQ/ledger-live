@@ -6,9 +6,11 @@ import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
+import { open } from "../../logic/hw";
 
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
@@ -42,23 +44,30 @@ class ReceiveConfirmation extends Component<Props, State> {
     verified: false,
   };
 
-  timeout: *;
-
   componentDidMount() {
-    this.timeout = setTimeout(this.verify, 2000);
+    const deviceId = this.props.navigation.getParam("deviceId");
+    if (deviceId) this.verifyOnDevice(deviceId);
   }
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-  }
+  verifyOnDevice = async (deviceId: string) => {
+    const { account } = this.props;
 
-  verify = () => this.setState({ verified: true });
+    const transport = await open(deviceId);
+    getAddress(transport, account.currency, account.freshAddressPath, true);
+    await transport.close();
+    this.setState({ verified: true });
+  };
+
+  onVerifyAddress = () => {
+    // FIXME re check what the LL is doing on this? (going back to a step or is it a device call?)
+  };
 
   render(): React$Node {
-    const { account } = this.props;
+    const { account, navigation } = this.props;
     const { verified } = this.state;
+    const unsafe = !navigation.getParam("deviceId"); // eslint-disable-line no-unused-vars
+    // TODO: use unsafe to render the error case
+
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={4} currentStep={4} />
@@ -89,7 +98,7 @@ class ReceiveConfirmation extends Component<Props, State> {
           <Button
             type="primary"
             title="Verify Address"
-            onPress={() => console.warn("TODO: trigger verify on device")}
+            onPress={this.onVerifyAddress}
           />
         </View>
       </SafeAreaView>
