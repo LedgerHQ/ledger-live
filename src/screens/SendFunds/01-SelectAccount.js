@@ -8,8 +8,8 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "../../components/LText";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import AccountCard from "../../components/AccountCard";
 import Stepper from "../../components/Stepper";
+import AccountCard from "../../components/AccountCard";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 
@@ -25,12 +25,12 @@ type Props = {
 
 type State = {};
 
-class ReceiveFunds extends Component<Props, State> {
-  static navigationOptions = ({ screenProps }: *) => ({
-    headerTitle: <StepHeader title="Receive funds" subtitle="step 1 of 4" />,
-    headerRight: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
+class SendFundsSelectAccount extends Component<Props, State> {
+  static navigationOptions = ({ navigation }: *) => ({
+    headerTitle: (
+      <StepHeader title="Select an account" subtitle="step 1 of 6" />
     ),
+    headerRight: <HeaderRightClose navigation={navigation} />,
   });
 
   renderItem = ({ item }: { item: Account }) => (
@@ -38,7 +38,7 @@ class ReceiveFunds extends Component<Props, State> {
       account={item}
       style={{ backgroundColor: "transparent" }}
       onPress={() => {
-        this.props.navigation.navigate("ConnectDevice", {
+        this.props.navigation.navigate("SendSelectRecipient", {
           accountId: item.id,
         });
       }}
@@ -51,8 +51,8 @@ class ReceiveFunds extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <Stepper nbSteps={5} currentStep={1} />
         <KeyboardView style={{ flex: 1 }}>
-          <Stepper nbSteps={4} currentStep={1} />
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               list={accounts}
@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(ReceiveFunds);
+export default connect(mapStateToProps)(SendFundsSelectAccount);

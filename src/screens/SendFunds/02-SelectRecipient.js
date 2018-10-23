@@ -52,7 +52,7 @@ type State = {
 class SelectRecipient extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
-      <StepHeader title="Recipient address" subtitle="step 2 of 5" />
+      <StepHeader title="Recipient address" subtitle="step 2 of 6" />
     ),
   };
 
@@ -164,7 +164,7 @@ class SelectRecipient extends Component<Props, State> {
               type="primary"
               title="Continue"
               onPress={() =>
-                this.props.navigation.navigate("SendSelectFunds", {
+                this.props.navigation.navigate("SendAmount", {
                   accountId: account.id,
                   address,
                 })

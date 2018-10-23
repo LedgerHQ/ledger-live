@@ -37,7 +37,7 @@ type State = {
 
 class Validation extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="step 5 of 5" />,
+    headerTitle: <StepHeader title="Device" subtitle="step 6 of 6" />,
   };
 
   state = {

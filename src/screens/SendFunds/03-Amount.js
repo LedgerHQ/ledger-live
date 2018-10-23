@@ -44,7 +44,7 @@ type State = {
 
 class SelectFunds extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Amount" subtitle="step 3 of 5" />,
+    headerTitle: <StepHeader title="Amount" subtitle="step 3 of 6" />,
   };
 
   state = {

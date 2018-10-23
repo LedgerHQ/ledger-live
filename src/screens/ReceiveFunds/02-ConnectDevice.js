@@ -59,7 +59,7 @@ class ConnectDevice extends Component<Props, State> {
 
   navigate = () => {
     const { navigation, account } = this.props;
-    navigation.navigate("VerifyAddress", {
+    navigation.navigate("ReceiveVerifyAddress", {
       accountId: account.id,
     });
   };

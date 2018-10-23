@@ -36,7 +36,7 @@ type State = {
 
 class SendSummary extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Summary" subtitle="step 4 of 5" />,
+    headerTitle: <StepHeader title="Summary" subtitle="step 4 of 6" />,
   };
 
   // FIXME remove the fees state, instead each SummaryRow press should just do a back on the relevant screen
