@@ -29,7 +29,7 @@ type BaseProps = {
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
   onPress: () => ?Promise<any> | any,
   // text of the button
-  title: string,
+  title: React$Node,
   containerStyle?: *,
   titleStyle?: *,
   IconLeft?: *,

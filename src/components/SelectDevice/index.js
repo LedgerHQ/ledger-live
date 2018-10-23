@@ -1,24 +1,61 @@
 // @flow
 
-import React, { Component } from "react";
-import { FlatList, Alert, StyleSheet } from "react-native";
+// TODO
+// - try to use React Suspense to debounce the UI
+// - implement the auto-retry AND retry mecanism in the steps
+// - integrate the UI
+
+import React, { Component, Fragment } from "react";
+import { FlatList, StyleSheet } from "react-native";
+import { Observable, from } from "rxjs";
+import { mergeMap, last, tap } from "rxjs/operators";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import type Transport from "@ledgerhq/hw-transport";
 import { open, devicesObservable } from "../../logic/hw";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
 import ScanningFooter from "./ScanningFooter";
+import SelectDeviceConnectModal from "./SelectDeviceConnectModal";
+import type { Step } from "./types";
+import { connectingStep } from "./steps";
+
+const runStep = (
+  step: Step,
+  transport: Transport<*>,
+  meta: Object,
+): Observable<Object> => step.run(transport, meta);
+
+const chainSteps = (
+  steps: Step[],
+  transport: Transport<*>,
+  onStepPass: number => void,
+): Observable<Object> =>
+  steps.reduce(
+    (meta: Observable<*>, step: Step, i: number) =>
+      meta.pipe(
+        mergeMap(meta =>
+          // $FlowFixMe figure it out
+          runStep(step, transport, meta)
+            .pipe(last())
+            .pipe(tap(() => onStepPass(i))),
+        ),
+      ),
+    from([{}]),
+  );
 
 class SelectDevice extends Component<
   {
-    onSelect: string => void,
+    onSelect: (deviceId: string, meta: Object) => void,
+    steps: Step[],
+    editMode?: boolean,
+    // connect-ed
     knownDevices: Array<{
       id: string,
       name: string,
     }>,
     removeKnownDevice: string => *,
-    editMode?: boolean,
   },
   {
     devices: Array<{
@@ -26,18 +63,34 @@ class SelectDevice extends Component<
       name: string,
       family: string,
     }>,
-    pending: boolean,
+    scanning: boolean,
+    connecting: boolean,
+    connectingId: ?string,
+    meta: Object,
+    error: ?Error,
+    stepIndex: number,
   },
 > {
+  static defaultProps = {
+    steps: [],
+  };
+
   state = {
     devices: [],
-    pending: true,
+    scanning: true,
+    connecting: false,
+    connectingId: null,
+    stepIndex: -1,
+    error: null,
+    meta: {},
   };
+
+  selectSubscription: *;
 
   componentDidMount() {
     devicesObservable.subscribe({
       complete: () => {
-        this.setState({ pending: false });
+        this.setState({ scanning: false });
       },
       next: e =>
         this.setState(({ devices }) => ({
@@ -53,39 +106,57 @@ class SelectDevice extends Component<
     });
   }
 
+  componentWillUnmount() {
+    if (this.selectSubscription) this.selectSubscription.unsubscribe();
+  }
+
   onForget = async ({ id }) => {
     this.props.removeKnownDevice(id);
   };
 
-  onSelect = async ({ id, family }) => {
-    if (!family) {
-      // this is ble case
-      try {
-        const t = await open(id);
-        await t.close();
-      } catch (e) {
-        Alert.alert(
-          "Failed to connect to device with Bluetooth",
-          "Would you like to forget the device to attempt to pair it again?",
-          [
-            {
-              text: "Ask me later",
-              onPress: () => {},
-              style: "cancel",
-            },
-            {
-              text: "OK",
-              onPress: () => {
-                this.props.removeKnownDevice(id);
-              },
-            },
-          ],
-          { cancelable: false },
-        );
-        return;
-      }
+  onSelect = ({ id }) => {
+    this.setState({
+      connecting: true,
+      connectingId: id,
+      error: null,
+      stepIndex: -1,
+      meta: {},
+    });
+
+    this.selectSubscription = from(open(id))
+      .pipe(
+        mergeMap(transport =>
+          chainSteps(this.props.steps, transport, stepIndex =>
+            this.setState({ stepIndex }),
+          ).pipe(
+            // close transport and returns meta
+            mergeMap(meta =>
+              from(transport.close().then(() => meta, () => meta)),
+            ),
+          ),
+        ),
+      )
+      .subscribe({
+        next: meta => {
+          this.setState({ connecting: false });
+          this.props.onSelect(id, meta);
+        },
+        error: error => {
+          this.setState({ error });
+        },
+      });
+  };
+
+  onRetry = () => {
+    const { connectingId, connecting, error } = this.state;
+    if (connecting && error && connectingId) {
+      this.onSelect({ id: connectingId });
     }
-    this.props.onSelect(id);
+  };
+
+  onRequestClose = () => {
+    if (this.selectSubscription) this.selectSubscription.unsubscribe();
+    this.setState({ connecting: false, error: null });
   };
 
   renderItem = ({ item }: *) => (
@@ -101,20 +172,29 @@ class SelectDevice extends Component<
   keyExtractor = (item: *) => item.id;
 
   render() {
-    const { devices, pending } = this.state;
-    const { knownDevices } = this.props;
+    const { knownDevices, steps } = this.props;
+    const { devices, connecting, stepIndex, error } = this.state;
 
     // $FlowFixMe
     const data = devices.concat(knownDevices);
 
     return (
-      <FlatList
-        contentContainerStyle={styles.root}
-        data={data}
-        renderItem={this.renderItem}
-        ListFooterComponent={pending ? ScanningFooter : null}
-        keyExtractor={this.keyExtractor}
-      />
+      <Fragment>
+        <FlatList
+          contentContainerStyle={styles.root}
+          data={data}
+          renderItem={this.renderItem}
+          ListFooterComponent={ScanningFooter}
+          keyExtractor={this.keyExtractor}
+        />
+        <SelectDeviceConnectModal
+          isOpened={connecting}
+          onClose={this.onRequestClose}
+          onRetry={this.onRetry}
+          step={steps[stepIndex] || connectingStep}
+          error={error}
+        />
+      </Fragment>
     );
   }
 }

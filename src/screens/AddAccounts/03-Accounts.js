@@ -4,7 +4,9 @@ import React, { Component } from "react";
 import { translate } from "react-i18next";
 import { SafeAreaView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
+import { open } from "../../logic/hw";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import HeaderRightClose from "../../components/HeaderRightClose";
@@ -15,7 +17,10 @@ import colors from "../../colors";
 
 type Props = {
   navigation: NavigationScreenProp<{
-    params: {},
+    params: {
+      currency: CryptoCurrency,
+      deviceId: string,
+    },
   }>,
 };
 
@@ -26,6 +31,14 @@ class AddAccountsAccounts extends Component<Props, State> {
     headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 4" />,
     headerRight: <HeaderRightClose navigation={navigation} />,
   });
+
+  async componentDidMount() {
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    const transport = await open(deviceId);
+    // TODO do your stuff^^
+    await transport.close();
+  }
 
   next = () => {
     this.props.navigation.navigate("AddAccountsSuccess");

@@ -746,22 +746,30 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@ledgerhq/hw-app-btc@4.21.0":
-  version "4.21.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.21.0.tgz#4f94571bb3d63cd785e31a7e1f77ce597c344516"
-  integrity sha1-T5RXG7PWPNeF4xp+H3fOWXw0RRY=
+"@ledgerhq/hw-app-btc@^4.21.0", "@ledgerhq/hw-app-btc@^4.24.0":
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.24.0.tgz#8889b2bc9b9583209ed24f832c96ea8d23e1dc74"
+  integrity sha512-OEc8UCcdAWp10PPM9Keoh8imuusmNVe2o/89ujMT5UIWOGCu7duezpsnCY11jGNxf2hyos6lezUMlUAOHBuISQ==
   dependencies:
-    "@ledgerhq/hw-transport" "^4.21.0"
+    "@ledgerhq/hw-transport" "^4.24.0"
     create-hash "^1.1.3"
 
-"@ledgerhq/hw-app-eth@^4.21.0":
-  version "4.21.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-4.21.0.tgz#2d8bfbe5f09b92e8d6951ae685036d9d5aea96ff"
-  integrity sha1-LYv75fCbkujWlRrmhQNtnVrqlv8=
+"@ledgerhq/hw-app-eth@^4.24.0":
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-4.24.0.tgz#b62514e0d18672d6d35d76dfbeaf93b67d2e5324"
+  integrity sha512-x8qFHN+JUsLgtm4GI3E1OxwL/7LVIaUfGkKs53a2Zr89h5YFp2GZvFcHdwbEypQAWS8cs+4vEqaEYFwQ9bSwlQ==
   dependencies:
-    "@ledgerhq/hw-transport" "^4.21.0"
+    "@ledgerhq/hw-transport" "^4.24.0"
 
-"@ledgerhq/hw-transport-http@4.26.0":
+"@ledgerhq/hw-app-xrp@^4.24.0":
+  version "4.25.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-xrp/-/hw-app-xrp-4.25.0.tgz#d97d7e85290dd2d1ec99f85747a26145e7a7383e"
+  integrity sha512-kG9S8CxUFMG1hbLBiKtoPMquzlTigndDsxhoXB8oywAdbGsoCi2cufMHV2p5Bek6YlGfn5J5p49Hx5iNIf2y5Q==
+  dependencies:
+    "@ledgerhq/hw-transport" "^4.24.0"
+    bip32-path "0.4.2"
+
+"@ledgerhq/hw-transport-http@^4.26.0":
   version "4.26.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.26.0.tgz#ed77c694ca25dd17763b672c66e721913e07a2d6"
   integrity sha512-PG6AYLVub/+uoqzd0pt+IzkX0IJKCkbVKOkEt/yaIAdvd8F6CjNqM1y+XUtK5BjagCyL/mxTxvvo+oBWOKO53w==
@@ -770,13 +778,6 @@
     axios "^0.18.0"
     ws "^6.1.0"
 
-"@ledgerhq/hw-transport@4.21.0", "@ledgerhq/hw-transport@^4.21.0":
-  version "4.21.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.21.0.tgz#50f85cfe115ba3f9d5bf94755c701e927175794f"
-  integrity sha1-UPhc/hFbo/nVv5R1XHAeknF1eU8=
-  dependencies:
-    events "^2.0.0"
-
 "@ledgerhq/hw-transport@^4.24.0":
   version "4.24.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.24.0.tgz#8def925d8c2e1f73d15128d9e27ead729870be58"
@@ -784,13 +785,17 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@4.0.0-beta.1":
-  version "4.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.0.0-beta.1.tgz#52ed90757761a08a5f5c9c40c1fed0cb2f1fb4ca"
-  integrity sha512-Ms06Za/EI8yP/4GOAziCMecqIssZbkS5tjSCgaqd1h0zHLzM6i6PvgjhJyvG5SrET6+uQVp4YM4qbo2tc6irjQ==
+"@ledgerhq/live-common@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.0.0.tgz#18233fa42a3a841126ca749e67760253344761b4"
+  integrity sha512-Ge28UYEERepANBTVgy2/QJYB5ghcAo8lVi8EBHdBFYMZZci7dgKJC1aLpf2okfbT/oVFYYKLVoxINOixoU6AhQ==
   dependencies:
-    axios "^0.18.0"
+    "@ledgerhq/hw-app-btc" "^4.24.0"
+    "@ledgerhq/hw-app-eth" "^4.24.0"
+    "@ledgerhq/hw-app-xrp" "^4.24.0"
+    "@ledgerhq/hw-transport" "^4.24.0"
     bignumber.js "^7.2.1"
+    eip55 "^1.0.3"
     invariant "^2.2.2"
     lodash "^4.17.4"
     node-lzw "^0.3.1"
@@ -802,27 +807,19 @@
     redux "^4.0.0"
     reselect "^3.0.1"
 
-"@ledgerhq/react-native-hid@4.21.0":
-  version "4.21.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.21.0.tgz#65a0cd1ffd13e9a60c2c7ee75c1f1c652a2ef1c9"
-  integrity sha1-ZaDNH/0T6aYMLH7nXB8cZSou8ck=
+"@ledgerhq/react-native-hid@^4.21.0":
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.24.0.tgz#cb1ed0da45206444dbdaa0ff5c24c1542bb16e15"
+  integrity sha512-oFJ3K8dQz4GTAKWcbpguqqN8k64jvV6sys/P/pjLA1y/3iGLt21UL//WDu78hXj8R17dKub8dQH0o5OQxM7eRw==
   dependencies:
-    "@ledgerhq/hw-transport" "^4.21.0"
-
-"@ledgerhq/react-native-hw-transport-ble@4.21.0":
-  version "4.21.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-4.21.0.tgz#c8e4a2b9bd1cd5db33f8cb4e95316d6953e99e9a"
-  integrity sha1-yOSiub0c1dsz+MtOlTFtaVPpnpo=
-  dependencies:
-    "@ledgerhq/hw-transport" "^4.21.0"
-    invariant "^2.2.4"
+    "@ledgerhq/hw-transport" "^4.24.0"
 
 "@ledgerhq/react-native-ledger-core@^0.3.19":
   version "0.3.19"
   resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.19.tgz#112fe58518e07c1ebfa93f32293f6e8eca179de8"
   integrity sha512-fFaycVFEkEU0CRQRMwASG+sfh0ew1jYOZ2nnNZJ6Dgnete9evy9fwc8GWCIwYFPRKlHlF2v5Zmu/yRbbJkVEVA==
 
-"@ledgerhq/react-native-passcode-auth@2.0.0":
+"@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-passcode-auth/-/react-native-passcode-auth-2.0.0.tgz#18f8fcc64d72b410300de203c2ddf8b4ae2a7fc3"
   integrity sha512-ZsdtZQuyAp+50zJGvyBMJ/Zf3wq5PN/ipOND+CmQghILvvrDPOzK23ch49zjUqnJfMSuUwqLqJuuOm72Weofmg==
@@ -1994,6 +1991,16 @@ binary@~0.3.0:
     buffers "~0.1.1"
     chainsaw "~0.1.0"
 
+bindings@^1.2.1:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.3.0.tgz#b346f6ecf6a95f5a815c5839fc7cdb22502f1ed7"
+  integrity sha512-DpLh5EzMR2kzvX1KIlVC0VkC3iZtHKTgdtZ0a3pglBZdaQFjt5S9g9xd1lE+YvXyfd6mtCeRnrUfOLYiTMlNSw==
+
+bip32-path@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/bip32-path/-/bip32-path-0.4.2.tgz#5db0416ad6822712f077836e2557b8697c0c7c99"
+  integrity sha1-XbBBataCJxLwd4NuJVe4aXwMfJk=
+
 bl@~0.8.1:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/bl/-/bl-0.8.2.tgz#c9b6bca08d1bc2ea00fc8afb4f1a5fd1e1c66e4e"
@@ -3075,6 +3082,13 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
+eip55@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/eip55/-/eip55-1.0.3.tgz#a927e6850aed8d8a34ed496d629bb3a7bfb037f2"
+  integrity sha512-x1p4OJNlt0G3mPPZx9GgwOaLFvz8Wd4VFpkx3iNzW4SrakFnjjO4mDdmAJpETxJZp9SlNB4UFqDuFhElnX9K/Q==
+  dependencies:
+    keccak "^1.3.0"
+
 elliptic@^5.1.0:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-5.2.1.tgz#fa294b6563c6ddbc9ba3dc8594687ae840858f10"
@@ -3451,11 +3465,6 @@ events@^1.0.0, events@^1.0.2:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
   integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
-
-events@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/events/-/events-2.1.0.tgz#2a9a1e18e6106e0e812aa9ebd4a819b3c29c0ba5"
-  integrity sha512-3Zmiobend8P9DjmKAty0Era4jV8oJ0yGYe2nJJAxgymF9+N8F2m0hhZiMoWtcfepExzNKZumFU3ksdQbInGWCg==
 
 events@^3.0.0:
   version "3.0.0"
@@ -5374,6 +5383,16 @@ jsx-ast-utils@^2.0.1:
   dependencies:
     array-includes "^3.0.3"
 
+keccak@^1.3.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/keccak/-/keccak-1.4.0.tgz#572f8a6dbee8e7b3aa421550f9e6408ca2186f80"
+  integrity sha512-eZVaCpblK5formjPjeTBik7TAg+pqnDrMHIffSvi9Lh7PQgM1+hSzakUeZFCk9DVVG0dacZJuaz2ntwlzZUIBw==
+  dependencies:
+    bindings "^1.2.1"
+    inherits "^2.0.3"
+    nan "^2.2.1"
+    safe-buffer "^5.1.0"
+
 kind-of@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-1.1.0.tgz#140a3d2d41a36d2efcfa9377b62c24f8495a5c44"
@@ -6152,6 +6171,11 @@ mute-stream@0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
+
+nan@^2.2.1:
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.11.1.tgz#90e22bccb8ca57ea4cd37cc83d3819b52eea6766"
+  integrity sha512-iji6k87OSXa0CcrLl9z+ZiYSuR2o+c0bGuNmXdrhTQTakxytAFsC56SArGYoiHlJlFoHSnvmhpceZJaXkVuOtA==
 
 nan@^2.9.2:
   version "2.11.0"
