@@ -17,7 +17,7 @@ export default class BluetoothDisabled extends PureComponent<{}> {
             Bluetooth required
           </LText>
         </View>
-        <View>
+        <View style={styles.desc}>
           <LText style={styles.descFont}>
             It seems bluetooth is disabled on your mobile. Go to settings and
             enable bluetooth to pair a Nano X
@@ -38,6 +38,9 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     fontSize: 18,
     marginTop: 24,
+  },
+  desc: {
+    paddingHorizontal: 20,
   },
   descFont: {
     color: colors.grey,
