@@ -40,11 +40,7 @@ class Scan extends PureComponent<Props, State> {
   }) => ({
     title: i18next.t("account.import.scan.title"),
     headerRight: (
-      <HeaderRightClose
-        // $FlowFixMe
-        navigation={navigation.dangerouslyGetParent()}
-        color={colors.white}
-      />
+      <HeaderRightClose navigation={navigation} color={colors.white} />
     ),
     headerLeft: null,
   });

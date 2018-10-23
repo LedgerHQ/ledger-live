@@ -30,7 +30,9 @@ class SendFundsSelectAccount extends Component<Props, State> {
     headerTitle: (
       <StepHeader title="Select an account" subtitle="step 1 of 6" />
     ),
-    headerRight: <HeaderRightClose navigation={navigation} />,
+    headerRight: (
+      <HeaderRightClose navigation={navigation.dangerouslyGetParent()} />
+    ),
   });
 
   renderItem = ({ item }: { item: Account }) => (
@@ -51,7 +53,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={5} currentStep={1} />
+        <Stepper currentStep={1} nbSteps={6} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
