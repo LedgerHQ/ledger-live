@@ -38,8 +38,10 @@ class VerifyAddress extends Component<Props, State> {
 
   navigate = () => {
     const { navigation, account } = this.props;
+    const deviceId = navigation.getParam("deviceId");
     navigation.navigate("ReceiveConfirmation", {
       accountId: account.id,
+      deviceId,
     });
   };
 
