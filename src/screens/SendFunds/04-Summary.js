@@ -86,7 +86,7 @@ class SendSummary extends Component<Props, State> {
 
   onContinue = () => {
     const { navigation } = this.props;
-    navigation.navigate("SendValidation", {
+    navigation.navigate("SendConnectDevice", {
       // $FlowFixMe
       ...navigation.state.params,
     });
@@ -105,7 +105,7 @@ class SendSummary extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={5} currentStep={4} />
+        <Stepper nbSteps={6} currentStep={4} />
         <SummaryRow title="Account">
           <View style={styles.accountContainer}>
             <View style={{ paddingRight: 8 }}>

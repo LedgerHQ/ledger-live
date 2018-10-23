@@ -9,16 +9,8 @@ import type Transport from "@ledgerhq/hw-transport";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import Config from "react-native-config";
-import Eth from "@ledgerhq/hw-app-eth";
 
 import BluetoothTransport from "../../react-native-hw-transport-ble";
-
-export async function tmpTestEthExchange(deviceId: string) {
-  const t = await open(deviceId);
-  const eth = new Eth(t);
-  const r = await eth.getAddress("44'/60'/0'/0/0");
-  console.warn("eth.getAddress:", r);
-}
 
 const observables = [];
 const openHandlers: Array<(string) => ?Promise<Transport<*>>> = [];

@@ -38,6 +38,7 @@ import SendSelectRecipient from "./screens/SendFunds/02-SelectRecipient";
 import ScanRecipient from "./screens/SendFunds/Scan";
 import SendAmount from "./screens/SendFunds/03-Amount";
 import SendSummary from "./screens/SendFunds/04-Summary";
+import SendConnectDevice from "./screens/SendFunds/05-ConnectDevice";
 import SendValidation from "./screens/SendFunds/06-Validation";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
@@ -258,6 +259,7 @@ const SendFunds = createStackNavigator(
     },
     SendAmount,
     SendSummary,
+    SendConnectDevice,
     SendValidation,
   },
   StackNavigatorConfig,

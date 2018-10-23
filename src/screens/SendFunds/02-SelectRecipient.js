@@ -112,7 +112,7 @@ class SelectRecipient extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={5} currentStep={2} />
+        <Stepper currentStep={2} nbSteps={6} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Button
