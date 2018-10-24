@@ -27,7 +27,7 @@ type BaseProps = {
   // the button will toggle in a pending state and
   // will wait the promise to complete before enabling the button again
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
-  onPress: () => ?Promise<any> | any,
+  onPress?: () => ?Promise<any> | any,
   // text of the button
   title: React$Node,
   containerStyle?: *,
@@ -70,6 +70,7 @@ class Button extends PureComponent<
   }
 
   onPress = async () => {
+    if (!this.props.onPress) return;
     let isPromise;
     try {
       const res = this.props.onPress();
