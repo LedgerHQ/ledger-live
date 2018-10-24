@@ -9,7 +9,6 @@ import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { open } from "../../logic/hw";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
@@ -27,10 +26,9 @@ type Props = {
 type State = {};
 
 class AddAccountsAccounts extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 4" />,
-    headerRight: <HeaderRightClose navigation={navigation} />,
-  });
+  };
 
   async componentDidMount() {
     const { navigation } = this.props;

@@ -9,28 +9,15 @@ import colors from "../../colors";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import FallbackCamera from "../../icons/FallbackCamera";
 
 class FallBackCameraScreen extends PureComponent<{
   navigation: NavigationScreenProp<*>,
   t: T,
 }> {
-  static navigationOptions = ({
-    navigation,
-  }: {
-    navigation: NavigationScreenProp<*>,
-  }) => ({
+  static navigationOptions = {
     title: i18next.t("account.import.fallback.header"),
-    headerRight: (
-      <HeaderRightClose
-        // $FlowFixMe
-        navigation={navigation.dangerouslyGetParent()}
-        color={colors.grey}
-      />
-    ),
-    headerLeft: null,
-  });
+  };
 
   openNativeSettings = () => {
     Linking.openURL("app-settings:");

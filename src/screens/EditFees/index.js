@@ -18,7 +18,6 @@ import colors from "../../colors";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import Button from "../../components/Button";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import KeyboardView from "../../components/KeyboardView";
 
 import FeesRow from "./FeesRow";
@@ -39,10 +38,9 @@ type State = {
 };
 
 class FeeSettings extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     title: "Edit fees",
-    headerRight: <HeaderRightClose navigation={navigation} />,
-  });
+  };
 
   state = {
     // $FlowFixMe

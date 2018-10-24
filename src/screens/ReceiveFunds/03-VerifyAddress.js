@@ -8,7 +8,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import HeaderRightClose from "../../components/HeaderRightClose";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
 
@@ -29,12 +28,9 @@ type Props = {
 type State = {};
 
 class VerifyAddress extends Component<Props, State> {
-  static navigationOptions = ({ screenProps }: *) => ({
-    headerTitle: <StepHeader title="Verification" subtitle="step 3 of 4" />,
-    headerRight: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    ),
-  });
+  static navigationOptions = {
+    headerTitle: <StepHeader title="Verification" subtitle="3 of 4" />,
+  };
 
   navigate = () => {
     const { navigation, account } = this.props;
