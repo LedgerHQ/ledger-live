@@ -38,7 +38,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
   renderItem = ({ item }: { item: Account }) => (
     <AccountCard
       account={item}
-      style={{ backgroundColor: "transparent" }}
+      style={styles.cardStyle}
       onPress={() => {
         this.props.navigation.navigate("SendSelectRecipient", {
           accountId: item.id,
@@ -58,6 +58,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               list={accounts}
+              inputWrapperStyle={styles.padding}
               renderList={items => (
                 <FlatList
                   data={items}
@@ -89,7 +90,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   searchContainer: {
-    paddingHorizontal: 16,
     paddingTop: 18,
     flex: 1,
   },
@@ -105,6 +105,13 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: colors.fog,
+  },
+  padding: {
+    paddingHorizontal: 16,
+  },
+  cardStyle: {
+    paddingHorizontal: 16,
+    backgroundColor: "transparent",
   },
 });
 
