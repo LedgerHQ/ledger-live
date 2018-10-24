@@ -14,7 +14,13 @@ export default class Close extends Component<{
   };
 
   onPress = () => {
-    this.props.navigation.goBack();
+    const { navigation } = this.props;
+    const parent = navigation.dangerouslyGetParent();
+    if (parent) {
+      parent.goBack();
+    } else {
+      navigation.goBack();
+    }
   };
 
   render() {
