@@ -36,9 +36,21 @@ export const getDerivationScheme = ({
     // old MEW derivation scheme for ETC
     return "44'/60'/160720'/0'/<account>";
   }
-  if (derivationMode === "rip") {
-    // XRP legacy that the old Chrome Ripple Wallet used to wrongly derivate addresses on.
-    return "44'/144'/0'/<account>'";
+  if (derivationMode === "ripWalletIdentifier") {
+    // XRP legacy that the old Chrome Ripple Wallet used to wrongly derivate addresse on.
+    return "44'/144'/0'/0'";
+  }
+  if (derivationMode === "ripWalletMetaPassword") {
+    // XRP legacy that the old Chrome Ripple Wallet used to wrongly derivate addresse on.
+    return "44'/144'/14'/5'/16";
+  }
+  if (derivationMode === "ethWalletIdentifier") {
+    // ETH legacy that the old Chrome Ripple Wallet used to wrongly derivate addresse on.
+    return "44'/60'/0'/0'";
+  }
+  if (derivationMode === "ethWalletMetaPassword") {
+    // ETH legacy that the old Chrome Ripple Wallet used to wrongly derivate addresse on.
+    return "44'/60'/14'/5'/16";
   }
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -60,9 +72,14 @@ export const runDerivationScheme = (
     .replace("<address>", String(opts.address || 0));
 
 const legacyDerivations = {
-  ethereum: ["ethM"],
-  ethereum_classic: ["ethM", "etcM"],
-  ripple: ["rip"]
+  ethereum: ["ethM", "ethWalletIdentifier", "ethWalletMetaPassword"],
+  ethereum_classic: [
+    "ethM",
+    "etcM",
+    "ethWalletIdentifier",
+    "ethWalletMetaPassword"
+  ],
+  ripple: ["ripWalletIdentifier", "ripWalletMetaPassword"]
 };
 
 // return an array of ways to derivate, by convention the latest is the standard one.
