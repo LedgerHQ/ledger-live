@@ -5,7 +5,10 @@ import { RNCamera } from "react-native-camera";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
+import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
+
 import type { T } from "../../types/common";
+
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import CameraScreen from "../../components/CameraScreen";
@@ -34,14 +37,17 @@ class Scan extends PureComponent<Props, State> {
   static navigationOptions = ({
     navigation,
   }: {
-    navigation: NavigationScreenProp<{
-      accountId: string,
-    }>,
+    navigation: NavigationScreenProp<*>,
   }) => ({
     title: i18next.t("account.import.scan.title"),
     headerRight: (
-      <HeaderRightClose navigation={navigation} color={colors.white} />
+      <HeaderRightClose
+        navigation={navigation}
+        color={colors.white}
+        preferDismiss={false}
+      />
     ),
+    headerLeft: null,
   });
 
   state = {
@@ -56,11 +62,11 @@ class Scan extends PureComponent<Props, State> {
 
   onBarCodeRead = ({ data }: { data: string }) => {
     if (data) {
-      this.onResult(data);
+      this.onResult(decodeURIScheme(data));
     }
   };
 
-  onResult = (result: string) => {
+  onResult = (result: *) => {
     const accountId = this.props.navigation.getParam("accountId");
     // $FlowFixMe
     this.props.navigation.replace("SendSelectRecipient", { result, accountId });

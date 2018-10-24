@@ -6,23 +6,27 @@ import CloseIcon from "../icons/Close";
 import colors from "../colors";
 
 export default class Close extends Component<{
+  preferDismiss: boolean,
   navigation: NavigationScreenProp<*>,
   color: string,
 }> {
   static defaultProps = {
     color: colors.grey,
+    preferDismiss: true,
   };
 
   onPress = () => {
-    const { navigation } = this.props;
+    const { navigation, preferDismiss } = this.props;
 
-    if (navigation.dismiss) {
+    if (navigation.dismiss && preferDismiss) {
       const dismissed = navigation.dismiss();
 
       if (!dismissed) navigation.goBack();
     }
 
     if (navigation.closeDrawer) navigation.closeDrawer();
+
+    navigation.goBack();
   };
 
   render() {

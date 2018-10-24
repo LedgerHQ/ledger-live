@@ -1,10 +1,22 @@
 // @flow
 import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
+
 import type { AccountBridge } from "./types";
 
-import { SyncError, NoRecipient } from "../errors";
-import { syncAccount, isValidRecipient } from "../libcore";
+import {
+  SyncError,
+  NoRecipient,
+  FeeNotLoaded,
+  NotEnoughBalance,
+} from "../errors";
+import {
+  syncAccount,
+  isValidRecipient,
+  getFeesForTransaction,
+} from "../libcore";
+
+const NOT_ENOUGH_FUNDS = 52;
 
 function operationsDiffer(a, b) {
   if ((a && !b) || (b && !a)) return true;
@@ -14,6 +26,15 @@ function operationsDiffer(a, b) {
     a.blockHeight !== b.blockHeight
   );
 }
+
+const serializeTransaction = t => {
+  const { feePerByte } = t;
+  return {
+    recipient: t.recipient,
+    amount: t.amount.toString(),
+    feePerByte: (feePerByte && feePerByte.toString()) || "0",
+  };
+};
 
 const startSync = (initialAccount, _observation) =>
   Observable.create(o => {
@@ -74,7 +95,7 @@ const startSync = (initialAccount, _observation) =>
     return cancel;
   });
 
-const checkValidRecipient = (currency, recipient) => {
+const checkValidRecipient = async (currency, recipient) => {
   if (!recipient) return Promise.reject(new NoRecipient());
   return isValidRecipient({ currency, recipient });
 };
@@ -108,8 +129,30 @@ const addPendingOperation = (account, optimisticOperation) => ({
   pendingOperations: [...account.pendingOperations, optimisticOperation],
 });
 
-const checkValidTransaction = () =>
-  Promise.reject(new Error("Not Implemented"));
+const getFees = async (a, t) => {
+  const isValid = await checkValidRecipient(a.currency, t.recipient);
+  if (isValid !== null) return null;
+
+  return getFeesForTransaction({
+    account: a,
+    transaction: serializeTransaction(t),
+  });
+};
+
+const checkValidTransaction = (a, t) =>
+  // $FlowFixMe
+  !t.feePerByte
+    ? Promise.reject(new FeeNotLoaded())
+    : !t.amount
+      ? Promise.resolve(null)
+      : getFees(a, t)
+          .then(() => null)
+          .catch(e => {
+            if (e.code === NOT_ENOUGH_FUNDS) {
+              throw new NotEnoughBalance();
+            }
+            throw e;
+          });
 
 const getTotalSpent = () => Promise.reject(new Error("Not Implemented"));
 

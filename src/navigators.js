@@ -297,10 +297,7 @@ const SendFunds = createStackNavigator(
     SendConnectDevice,
     SendValidation,
   },
-  {
-    headerMode: "float",
-    ...closableStackNavigatorConfig,
-  },
+  closableStackNavigatorConfig,
 );
 
 SendFunds.navigationOptions = {

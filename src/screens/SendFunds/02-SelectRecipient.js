@@ -31,13 +31,13 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    result: string,
+    result: *,
   }>,
 };
 
 type State = {
   validAddress: boolean,
-  address: string,
+  address: *,
   error: ?Error,
   shouldUpdate: boolean,
 };
@@ -59,8 +59,8 @@ class SelectRecipient extends Component<Props, State> {
     const { navigation } = this.props;
     const { shouldUpdate } = this.state;
     const qrResult = navigation.getParam("result");
-    if (!shouldUpdate && qrResult && prevAddress !== qrResult) {
-      this.onChangeText(qrResult, false);
+    if (!shouldUpdate && qrResult && prevAddress !== qrResult.address) {
+      this.onChangeText(qrResult.address, false);
     }
   }
 
@@ -100,8 +100,7 @@ class SelectRecipient extends Component<Props, State> {
   };
 
   onPressScan = () => {
-    // $FlowFixMe
-    this.props.navigation.replace("ScanRecipient", {
+    this.props.navigation.navigate("ScanRecipient", {
       accountId: this.props.navigation.getParam("accountId"),
     });
   };
