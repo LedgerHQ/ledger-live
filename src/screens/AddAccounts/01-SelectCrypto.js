@@ -19,6 +19,8 @@ import colors from "../../colors";
 // TODO: handle dev crypto currencies (connect to settings...)
 const cryptocurrencies = listCryptoCurrencies();
 
+const SEARCH_KEYS = ["name", "ticker"];
+
 type Props = {
   t: *,
   navigation: NavigationScreenProp<{
@@ -58,6 +60,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
+              keys={SEARCH_KEYS}
               inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
               list={cryptocurrencies}
               renderList={this.renderList}
