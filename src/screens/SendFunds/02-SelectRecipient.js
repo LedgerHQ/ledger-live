@@ -99,9 +99,25 @@ class SelectRecipient extends Component<Props, State> {
     }
   };
 
+  onPressScan = () => {
+    // $FlowFixMe
+    this.props.navigation.replace("ScanRecipient", {
+      accountId: this.props.navigation.getParam("accountId"),
+    });
+  };
+
+  onPressContinue = () => {
+    const { account } = this.props;
+    const { address } = this.state;
+    this.props.navigation.navigate("SendAmount", {
+      accountId: account.id,
+      address,
+    });
+  };
+
   render() {
     const { address, validAddress, error } = this.state;
-    const { account, t } = this.props;
+    const { t } = this.props;
 
     return (
       <SafeAreaView style={styles.root}>
@@ -112,12 +128,7 @@ class SelectRecipient extends Component<Props, State> {
               type="tertiary"
               title={t("common:send.recipient.scan")}
               IconLeft={IconQRCode}
-              onPress={() =>
-                // $FlowFixMe
-                this.props.navigation.replace("ScanRecipient", {
-                  accountId: this.props.navigation.getParam("accountId"),
-                })
-              }
+              onPress={this.onPressScan}
             />
           </View>
           <View style={styles.container}>
@@ -150,12 +161,7 @@ class SelectRecipient extends Component<Props, State> {
             <Button
               type="primary"
               title="Continue"
-              onPress={() =>
-                this.props.navigation.navigate("SendAmount", {
-                  accountId: account.id,
-                  address,
-                })
-              }
+              onPress={this.onPressContinue}
               disabled={!validAddress}
             />
           </View>

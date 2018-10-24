@@ -30,9 +30,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
     headerTitle: (
       <StepHeader title="Select an account" subtitle="step 1 of 6" />
     ),
-    headerRight: (
-      <HeaderRightClose navigation={navigation.dangerouslyGetParent()} />
-    ),
+    headerRight: <HeaderRightClose navigation={navigation} />,
   });
 
   renderItem = ({ item }: { item: Account }) => (
