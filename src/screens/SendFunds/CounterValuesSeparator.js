@@ -3,16 +3,13 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
 import colors from "../../colors";
-import TranserIcon from "../../icons/Transfer";
 
 export default class CounterValuesSeparator extends PureComponent<{}> {
   render() {
     return (
       <View style={styles.separator}>
         <View style={styles.line} />
-        <View style={styles.iconWrapper}>
-          <TranserIcon size={12} color={colors.live} />
-        </View>
+        {/* TODO: "Use Max" Button when feature is ready */}
         <View style={styles.line} />
       </View>
     );

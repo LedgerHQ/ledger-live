@@ -1,12 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  View,
-  SafeAreaView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, SafeAreaView, StyleSheet, TextInput } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
@@ -27,11 +21,10 @@ import Button from "../../components/Button";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
-
-import Close from "../../icons/Close";
+import TranslatedError from "../../components/TranslatedError";
+import InputResetCross from "../../components/InputResetCross";
 
 import colors from "../../colors";
-import TranslatedError from "../../components/TranslatedError";
 
 type Props = {
   t: T,
@@ -84,7 +77,7 @@ class SelectRecipient extends Component<Props, State> {
     if (this.input.current) {
       this.input.current.clear();
     }
-    this.validateAddress("");
+    this.onChangeText("");
   };
 
   onChangeText = (address: string, shouldUpdate = true) => {
@@ -145,13 +138,7 @@ class SelectRecipient extends Component<Props, State> {
                 multiline
                 blurOnSubmit
               />
-              {address ? (
-                <TouchableOpacity onPress={this.clear}>
-                  <View style={styles.closeContainer}>
-                    <Close color={colors.white} size={8} />
-                  </View>
-                </TouchableOpacity>
-              ) : null}
+              {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>
             {!!address && !validAddress ? (
               <LText style={styles.errorText}>

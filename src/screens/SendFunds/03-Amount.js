@@ -8,28 +8,28 @@ import {
   Keyboard,
 } from "react-native";
 import { connect } from "react-redux";
+import { compose } from "redux";
 import { BigNumber } from "bignumber.js";
-import { valueFromUnit } from "@ledgerhq/live-common/lib/currencies/valueFromUnit";
+import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { BigNumber as BigNumberType } from "bignumber.js";
 
+import type { T } from "../../types/common";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
 
 import LText from "../../components/LText/index";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
 import Button from "../../components/Button";
 
 import AmountInput from "./AmountInput";
-import CounterValuesSeparator from "./CounterValuesSeparator";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 
 type Props = {
+  t: T,
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
@@ -38,8 +38,7 @@ type Props = {
 };
 
 type State = {
-  amount: string,
-  amountBigNumber: BigNumberType,
+  amount: BigNumber,
 };
 
 class SelectFunds extends Component<Props, State> {
@@ -48,52 +47,33 @@ class SelectFunds extends Component<Props, State> {
   };
 
   state = {
-    amount: "",
-    amountBigNumber: new BigNumber(0),
+    amount: BigNumber(0),
   };
 
   blur = () => {
     Keyboard.dismiss();
   };
 
-  onChangeText = (amount: string) => {
-    if (amount && !isNaN(amount)) {
-      const { account } = this.props;
-      const num = new BigNumber(parseFloat(amount));
-      const big = valueFromUnit(num, account.unit);
-      this.setState({
-        amount,
-        amountBigNumber: big,
-      });
+  onChange = (amount: BigNumber) => {
+    if (!amount.isNaN()) {
+      this.setState({ amount });
     }
   };
 
   navigate = () => {
-    const {
-      account,
-      navigation: {
-        state: {
-          // $FlowFixMe
-          params: { address },
-        },
-      },
-    } = this.props;
-    const { amount, amountBigNumber } = this.state;
-    this.props.navigation.navigate("SendSummary", {
+    const { account, navigation } = this.props;
+    const address = navigation.getParam("address");
+    const { amount } = this.state;
+    navigation.navigate("SendSummary", {
       accountId: account.id,
       address,
       amount,
-      // FIXME we shouldn't pass amountBigNumber because not serializable, also want to avoid derivated data
-      amountBigNumber,
     });
   };
 
   render() {
-    const { account } = this.props;
-    const { amount, amountBigNumber } = this.state;
-
-    const isWithinBalance = amountBigNumber.lt(account.balance);
-    const isValid = amountBigNumber.gt(0) && isWithinBalance;
+    const { account, t } = this.props;
+    const { amount } = this.state;
 
     return (
       <SafeAreaView style={styles.root}>
@@ -101,44 +81,34 @@ class SelectFunds extends Component<Props, State> {
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={this.blur}>
             <View style={{ flex: 1 }}>
+              {/* $FlowFixMe */}
               <AmountInput
-                onChangeText={this.onChangeText}
+                account={account}
+                onChange={this.onChange}
                 currency={account.unit.code}
                 value={amount}
-                isWithinBalance={isWithinBalance}
               />
-              <CounterValuesSeparator />
-              <View style={styles.countervaluesWrapper}>
-                <LText tertiary style={styles.countervaluesText}>
-                  <CounterValue
-                    showCode
-                    currency={account.currency}
-                    value={amountBigNumber}
-                  />
-                </LText>
-              </View>
+
               <View style={styles.bottomWrapper}>
-                <Button
-                  type="tertiary"
-                  title="USE MAX"
-                  onPress={() => {
-                    console.warn("MAX not implemented");
-                  }}
-                />
                 <LText style={styles.available}>
-                  Available : &nbsp;
-                  <CurrencyUnitValue
-                    showCode
-                    unit={account.unit}
-                    value={account.balance}
-                  />
+                  <Trans i18nKey="send.amount.available">
+                    You have
+                    <LText tertiary style={styles.availableAmount}>
+                      <CurrencyUnitValue
+                        showCode
+                        unit={account.unit}
+                        value={account.balance}
+                      />
+                    </LText>
+                    available
+                  </Trans>
                 </LText>
                 <View style={styles.continueWrapper}>
                   <Button
                     type="primary"
-                    title="Continue"
+                    title={t("common:common.continue")}
                     onPress={this.navigate}
-                    disabled={!isValid}
+                    // disabled={!isValid}
                   />
                 </View>
               </View>
@@ -161,13 +131,12 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   available: {
-    fontSize: 12,
+    fontSize: 16,
     color: colors.grey,
-    marginTop: 10,
+    marginBottom: 16,
   },
-  useMaxText: {
-    fontSize: 10,
-    color: colors.live,
+  availableAmount: {
+    color: colors.darkBlue,
   },
   countervaluesWrapper: {
     paddingTop: 24,
@@ -183,9 +152,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignSelf: "stretch",
     alignItems: "center",
+    justifyContent: "flex-end",
   },
   continueWrapper: {
-    flex: 1,
     alignSelf: "stretch",
     alignItems: "stretch",
     justifyContent: "flex-end",
@@ -197,4 +166,7 @@ const mapStateToProps = (state, props: Props): { account: Account } => ({
   account: accountScreenSelector(state, props),
 });
 
-export default connect(mapStateToProps)(SelectFunds);
+export default compose(
+  translate(),
+  connect(mapStateToProps),
+)(SelectFunds);

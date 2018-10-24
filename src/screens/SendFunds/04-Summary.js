@@ -98,7 +98,7 @@ class SendSummary extends Component<Props, State> {
       navigation: {
         state: {
           // $FlowFixMe
-          params: { address, amount, amountBigNumber },
+          params: { address, amount },
         },
       },
     } = this.props;
@@ -137,11 +137,11 @@ class SendSummary extends Component<Props, State> {
         <SummaryRow title="Amount">
           <View style={styles.amountContainer}>
             <LText style={styles.valueText}>
-              {`${account.unit.code} ${amount}`}
+              {`${account.unit.code} ${amount.toString()}`}
             </LText>
             <LText style={styles.counterValueText}>
               <CounterValue
-                value={amountBigNumber}
+                value={amount}
                 currency={account.currency}
                 showCode
               />
@@ -162,13 +162,9 @@ class SendSummary extends Component<Props, State> {
         <View style={styles.summary}>
           <LText semiBold style={styles.summaryValueText}>{`${
             account.unit.code
-          } ${amount}`}</LText>
+          } ${amount.toString()}`}</LText>
           <LText style={styles.summaryCounterValueText}>
-            <CounterValue
-              value={amountBigNumber}
-              currency={account.currency}
-              showCode
-            />
+            <CounterValue value={amount} currency={account.currency} showCode />
           </LText>
           <View style={{ flex: 1 }} />
           <Button
