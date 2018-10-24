@@ -9,7 +9,6 @@ import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
@@ -30,10 +29,9 @@ type Props = {
 type State = {};
 
 class AddAccountsSelectCrypto extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     headerTitle: <StepHeader title="Crypto asset" subtitle="step 1 of 4" />,
-    headerRight: <HeaderRightClose navigation={navigation} />,
-  });
+  };
 
   keyExtractor = currency => currency.id;
 

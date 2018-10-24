@@ -8,7 +8,6 @@ import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 import SelectDevice from "../../components/SelectDevice";
 import { currencyApp } from "../../components/SelectDevice/steps";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
@@ -25,10 +24,9 @@ type Props = {
 type State = {};
 
 class AddAccountsSelectDevice extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     headerTitle: <StepHeader title="Device" subtitle="step 2 of 4" />,
-    headerRight: <HeaderRightClose navigation={navigation} />,
-  });
+  };
 
   onSelectDevice = (deviceId: string) => {
     const { navigation } = this.props;

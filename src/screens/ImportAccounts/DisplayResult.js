@@ -20,7 +20,6 @@ import { accountsSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import Button from "../../components/Button";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
@@ -73,20 +72,10 @@ class DisplayResult extends Component<Props, State> {
     this.unmounted = true;
   }
 
-  static navigationOptions = ({
-    navigation,
-  }: {
-    navigation: NavigationScreenProp<*>,
-  }) => ({
+  static navigationOptions = {
     title: i18next.t("account.import.result.title"),
-    headerRight: (
-      <HeaderRightClose
-        // $FlowFixMe
-        navigation={navigation.dangerouslyGetParent()}
-      />
-    ),
     headerLeft: null,
-  });
+  };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const items = nextProps.navigation
@@ -146,7 +135,7 @@ class DisplayResult extends Component<Props, State> {
     const { navigation } = this.props;
 
     // $FlowFixMe
-    navigation.dangerouslyGetParent().goBack();
+    navigation.dismiss();
   };
 
   onImport = async () => {

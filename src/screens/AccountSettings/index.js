@@ -10,7 +10,6 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import BottomModal from "../../components/BottomModal";
 
 import AccountNameRow from "./AccountNameRow";
@@ -37,13 +36,9 @@ const mapDispatchToProps = {
   deleteAccount,
 };
 class AccountSettings extends PureComponent<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     title: i18next.t("account.settings.header"),
-    headerRight: (
-      <HeaderRightClose navigation={navigation.dangerouslyGetParent()} />
-    ),
-    headerLeft: null,
-  });
+  };
 
   state = {
     isModalOpened: false,

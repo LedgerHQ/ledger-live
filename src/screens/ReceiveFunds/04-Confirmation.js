@@ -14,7 +14,6 @@ import { open } from "../../logic/hw";
 
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import Button from "../../components/Button";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
@@ -33,12 +32,9 @@ type State = {
 };
 
 class ReceiveConfirmation extends Component<Props, State> {
-  static navigationOptions = ({ screenProps }: *) => ({
-    headerTitle: <StepHeader title="Receive" subtitle="step 4 of 4" />,
-    headerRight: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    ),
-  });
+  static navigationOptions = {
+    headerTitle: <StepHeader title="Receive" subtitle="4 of 4" />,
+  };
 
   state = {
     verified: false,

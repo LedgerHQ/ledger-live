@@ -6,11 +6,13 @@ import {
   createBottomTabNavigator,
   createMaterialTopTabNavigator,
 } from "react-navigation";
+import type { NavigationScreenProp } from "react-navigation";
 import colors from "./colors";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
 import HeaderTitle from "./components/HeaderTitle";
+import HeaderRightClose from "./components/HeaderRightClose";
 import { getFontStyle } from "./components/LText";
 import HeaderBackImage from "./components/HeaderBackImage";
 import defaultNavigationOptions from "./screens/defaultNavigationOptions";
@@ -88,15 +90,31 @@ const styles = StyleSheet.create({
   labelStyle: { fontSize: 12 },
 });
 
-const StackNavigatorConfig = {
-  navigationOptions: {
-    headerStyle: styles.header,
-    headerTitle: HeaderTitle,
-    headerBackTitle: null,
-    headerBackImage: HeaderBackImage,
-  },
+const navigationOptions = {
+  headerStyle: styles.header,
+  headerTitle: HeaderTitle,
+  headerBackTitle: null,
+  headerBackImage: HeaderBackImage,
+};
+
+const closableNavigationOptions = ({
+  navigation,
+}: {
+  navigation: NavigationScreenProp<*>,
+}) => ({
+  ...navigationOptions,
+  headerRight: <HeaderRightClose navigation={navigation} />,
+});
+
+const stackNavigatorConfig = {
+  navigationOptions,
   cardStyle: styles.card,
   headerLayoutPreset: "center",
+};
+
+const closableStackNavigatorConfig = {
+  ...stackNavigatorConfig,
+  navigationOptions: closableNavigationOptions,
 };
 
 const TransparentHeaderNavigationOptions = {
@@ -129,7 +147,7 @@ const SettingsStack = createStackNavigator(
     // $FlowFixMe
     BenchmarkQRStream,
   },
-  StackNavigatorConfig,
+  stackNavigatorConfig,
 );
 
 SettingsStack.navigationOptions = {
@@ -178,7 +196,7 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     ManagerMain,
   },
-  StackNavigatorConfig,
+  stackNavigatorConfig,
 );
 
 ManagerStack.navigationOptions = {
@@ -191,7 +209,7 @@ const AccountsStack = createStackNavigator(
     Accounts,
     Account,
   },
-  StackNavigatorConfig,
+  stackNavigatorConfig,
 );
 AccountsStack.navigationOptions = {
   ...defaultNavigationOptions,
@@ -229,7 +247,7 @@ const ReceiveFunds = createStackNavigator(
     ReceiveVerifyAddress,
     ReceiveConfirmation,
   },
-  StackNavigatorConfig,
+  closableStackNavigatorConfig,
 );
 ReceiveFunds.navigationOptions = {
   header: null,
@@ -242,7 +260,7 @@ const AddAccounts = createStackNavigator(
     AddAccountsAccounts,
     AddAccountsSuccess,
   },
-  StackNavigatorConfig,
+  closableStackNavigatorConfig,
 );
 
 AddAccounts.navigationOptions = {
@@ -262,7 +280,7 @@ const SendFunds = createStackNavigator(
     SendConnectDevice,
     SendValidation,
   },
-  StackNavigatorConfig,
+  closableStackNavigatorConfig,
 );
 
 SendFunds.navigationOptions = {
@@ -273,7 +291,7 @@ const SendFundsSettings = createStackNavigator(
   {
     EditFees,
   },
-  StackNavigatorConfig,
+  closableStackNavigatorConfig,
 );
 
 SendFundsSettings.navigationOptions = {
@@ -288,7 +306,7 @@ const AccountSettings = createStackNavigator(
     AccountCurrencySettings: CurrencySettings,
     AccountRateProviderSettings: RateProviderSettings,
   },
-  StackNavigatorConfig,
+  closableStackNavigatorConfig,
 );
 
 AccountSettings.navigationOptions = {
@@ -304,7 +322,7 @@ const ImportAccounts = createStackNavigator(
     DisplayResult,
     FallBackCameraScreen,
   },
-  StackNavigatorConfig,
+  closableStackNavigatorConfig,
 );
 
 ImportAccounts.navigationOptions = {
@@ -317,6 +335,7 @@ export const RootNavigator = createStackNavigator(
     ReceiveFunds,
     SendFunds,
     AddAccounts,
+    // $FlowFixMe
     OperationDetails,
     AccountSettings,
     ImportAccounts,
@@ -327,6 +346,6 @@ export const RootNavigator = createStackNavigator(
   },
   {
     mode: "modal",
-    ...StackNavigatorConfig,
+    ...closableStackNavigatorConfig,
   },
 );

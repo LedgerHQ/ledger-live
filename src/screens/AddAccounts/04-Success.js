@@ -6,7 +6,6 @@ import { SafeAreaView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 
 import LText from "../../components/LText";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
@@ -21,10 +20,9 @@ type Props = {
 type State = {};
 
 class AddAccountsSuccess extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     headerTitle: <StepHeader title="Success" subtitle="step 3 of 4" />,
-    headerRight: <HeaderRightClose navigation={navigation} />,
-  });
+  };
 
   render() {
     return (

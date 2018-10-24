@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import LText from "../../components/LText";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Stepper from "../../components/Stepper";
 import AccountCard from "../../components/AccountCard";
@@ -26,12 +25,11 @@ type Props = {
 type State = {};
 
 class SendFundsSelectAccount extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     headerTitle: (
       <StepHeader title="Select an account" subtitle="step 1 of 6" />
     ),
-    headerRight: <HeaderRightClose navigation={navigation} />,
-  });
+  };
 
   renderItem = ({ item }: { item: Account }) => (
     <AccountCard

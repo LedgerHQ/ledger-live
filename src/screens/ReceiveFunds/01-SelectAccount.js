@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import LText from "../../components/LText";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import Stepper from "../../components/Stepper";
@@ -26,12 +25,9 @@ type Props = {
 type State = {};
 
 class ReceiveFunds extends Component<Props, State> {
-  static navigationOptions = ({ screenProps }: *) => ({
-    headerTitle: <StepHeader title="Receive funds" subtitle="step 1 of 4" />,
-    headerRight: (
-      <HeaderRightClose navigation={screenProps.topLevelNavigation} />
-    ),
-  });
+  static navigationOptions = {
+    headerTitle: <StepHeader title="Receive funds" subtitle="1 of 4" />,
+  };
 
   renderItem = ({ item }: { item: Account }) => (
     <AccountCard

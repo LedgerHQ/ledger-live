@@ -8,7 +8,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import HeaderRightClose from "../../components/HeaderRightClose";
 import StepHeader from "../../components/StepHeader";
 import Stepper from "../../components/Stepper";
 import SelectDevice from "../../components/SelectDevice";
@@ -26,12 +25,9 @@ type Props = {
 };
 
 class ConnectDevice extends Component<Props> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     headerTitle: <StepHeader title="Device" subtitle="step 5 of 6" />,
-    headerRight: (
-      <HeaderRightClose navigation={navigation.dangerouslyGetParent()} />
-    ),
-  });
+  };
 
   onSelectDevice = (deviceId: string) => {
     const { navigation } = this.props;

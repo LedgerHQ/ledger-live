@@ -46,6 +46,7 @@ class EditDeviceName extends PureComponent<
 > {
   static navigationOptions = {
     title: "Edit Device Name",
+    headerLeft: null,
   };
 
   initialName = this.props.name;

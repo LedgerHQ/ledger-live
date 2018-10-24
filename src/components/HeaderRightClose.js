@@ -15,12 +15,14 @@ export default class Close extends Component<{
 
   onPress = () => {
     const { navigation } = this.props;
-    const parent = navigation.dangerouslyGetParent();
-    if (parent) {
-      parent.goBack();
-    } else {
-      navigation.goBack();
+
+    if (navigation.dismiss) {
+      const dismissed = navigation.dismiss();
+
+      if (!dismissed) navigation.goBack();
     }
+
+    if (navigation.closeDrawer) navigation.closeDrawer();
   };
 
   render() {

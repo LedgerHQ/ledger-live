@@ -42,7 +42,6 @@ class Scan extends PureComponent<Props, State> {
     headerRight: (
       <HeaderRightClose navigation={navigation} color={colors.white} />
     ),
-    headerLeft: null,
   });
 
   state = {

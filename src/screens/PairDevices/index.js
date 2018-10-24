@@ -15,7 +15,6 @@ import type { DeviceLike } from "../../reducers/ble";
 import genuineCheck from "../../logic/hw/genuineCheck";
 import getDeviceName from "../../logic/hw/getDeviceName";
 import colors from "../../colors";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import RequiresBLE from "../../components/RequiresBLE";
 import PendingContainer from "./PendingContainer";
 import PendingPairing from "./PendingPairing";
@@ -45,12 +44,9 @@ type State = {
 };
 
 class PairDevices extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     title: "Choose your device",
-    headerRight: (
-      <HeaderRightClose navigation={navigation.dangerouslyGetParent()} />
-    ),
-  });
+  };
 
   state = {
     status: "scanning",
@@ -176,11 +172,10 @@ class PairDevices extends Component<Props, State> {
 }
 
 class Screen extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     title: "Choose your device",
     headerLeft: null,
-    headerRight: <HeaderRightClose navigation={navigation} />,
-  });
+  };
 
   render() {
     return (

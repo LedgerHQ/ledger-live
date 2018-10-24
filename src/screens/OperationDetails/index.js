@@ -7,7 +7,6 @@ import type { NavigationScreenProp } from "react-navigation";
 import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
-import HeaderRightClose from "../../components/HeaderRightClose";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -16,11 +15,10 @@ type Props = {
   }>,
 };
 class OperationDetails extends PureComponent<Props, *> {
-  static navigationOptions = ({ navigation }: *) => ({
+  static navigationOptions = {
     title: "Operation Details",
-    headerRight: <HeaderRightClose navigation={navigation} />,
     headerLeft: null,
-  });
+  };
 
   render() {
     const { navigation } = this.props;
