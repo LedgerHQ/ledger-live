@@ -6,6 +6,7 @@ import throttle from "lodash/throttle";
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
 import InputResetCross from "./InputResetCross";
+import getFontStyle from "./LText/getFontStyle";
 
 import colors from "../colors";
 
@@ -110,8 +111,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 18,
-    fontFamily: "Museo Sans",
     color: colors.darkBlue,
+    ...getFontStyle({ secondary: true, semiBold: true }),
   },
 });
 

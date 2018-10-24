@@ -247,7 +247,10 @@ const ReceiveFunds = createStackNavigator(
     ReceiveVerifyAddress,
     ReceiveConfirmation,
   },
-  closableStackNavigatorConfig,
+  {
+    headerMode: "float",
+    ...closableStackNavigatorConfig,
+  },
 );
 ReceiveFunds.navigationOptions = {
   header: null,
@@ -280,7 +283,10 @@ const SendFunds = createStackNavigator(
     SendConnectDevice,
     SendValidation,
   },
-  closableStackNavigatorConfig,
+  {
+    headerMode: "float",
+    ...closableStackNavigatorConfig,
+  },
 );
 
 SendFunds.navigationOptions = {

@@ -17,14 +17,17 @@ import Button from "../../components/Button";
 
 import deviceConnected from "../../images/device-connected.png";
 
+type Navigation = NavigationScreenProp<{
+  params: {
+    accountId: string,
+  },
+}>;
+
 type Props = {
   account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-    },
-  }>,
+  navigation: Navigation,
 };
+
 type State = {};
 
 class VerifyAddress extends Component<Props, State> {
