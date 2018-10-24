@@ -32,7 +32,7 @@ class ReceiveFunds extends Component<Props, State> {
   renderItem = ({ item }: { item: Account }) => (
     <AccountCard
       account={item}
-      style={{ backgroundColor: "transparent" }}
+      style={styles.card}
       onPress={() => {
         this.props.navigation.navigate("ReceiveConnectDevice", {
           accountId: item.id,
@@ -51,6 +51,7 @@ class ReceiveFunds extends Component<Props, State> {
           <Stepper nbSteps={4} currentStep={1} />
           <View style={styles.searchContainer}>
             <FilteredSearchBar
+              inputWrapperStyle={styles.card}
               list={accounts}
               renderList={items => (
                 <FlatList
@@ -82,8 +83,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  searchContainer: {
+  card: {
     paddingHorizontal: 16,
+    backgroundColor: "transparent",
+  },
+  searchContainer: {
     paddingTop: 18,
     flex: 1,
   },
