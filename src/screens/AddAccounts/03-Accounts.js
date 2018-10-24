@@ -6,7 +6,7 @@ import { SafeAreaView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
-import { open } from "../../logic/hw";
+import { getCurrencyBridge } from "../../bridge";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Stepper from "../../components/Stepper";
@@ -30,12 +30,31 @@ class AddAccountsAccounts extends Component<Props, State> {
     headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 4" />,
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const { navigation } = this.props;
+    const currency = navigation.getParam("currency");
     const deviceId = navigation.getParam("deviceId");
-    const transport = await open(deviceId);
-    // TODO do your stuff^^
-    await transport.close();
+    const bridge = getCurrencyBridge(currency);
+
+    this.scanSubscription = bridge
+      .scanAccountsOnDevice(currency, deviceId)
+      .subscribe({
+        next: account => {
+          console.log(`>> `, account);
+        },
+        complete: () => {
+          console.log(`>> complete`);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+  }
+
+  componentWillUnmount() {
+    if (this.scanSubscription) {
+      this.scanSubscription.unsubscribe();
+    }
   }
 
   next = () => {
