@@ -18,7 +18,8 @@ const modes = {
 
   // MEW legacy derivation
   ethM: {
-    mandatoryEmptyAccountSkip: 10
+    mandatoryEmptyAccountSkip: 10,
+    overridesDerivation: "44'/60'/0'/<account>"
   },
   // chrome wallet legacy derivation
   ethW1: {
