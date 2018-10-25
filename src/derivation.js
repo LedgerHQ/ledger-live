@@ -1,15 +1,83 @@
 // @flow
-import type { CryptoCurrency } from "./types";
+import type { CryptoCurrency, CryptoCurrencyConfig } from "./types";
 import { getCryptoCurrencyById } from "./currencies";
 
-export const getMandatoryEmptyAccountSkip = (derivationMode: string): number =>
-  derivationMode === "ethM" || derivationMode === "etcM" ? 10 : 0;
+export type ModeSpec = {
+  mandatoryEmptyAccountSkip?: number,
+  isNonIterable?: boolean,
+  overridesDerivation?: string,
+  isSegwit?: boolean,
+  isUnsplit?: boolean
+};
 
-export const isSegwitDerivationMode = (derivationMode: string): boolean =>
-  derivationMode === "segwit" || derivationMode === "segwit_unsplit";
+export type DerivationMode = $Keys<typeof modes>;
 
-export const isUnsplitDerivationMode = (derivationMode: string): boolean =>
-  derivationMode === "unsplit" || derivationMode === "segwit_unsplit";
+const modes = {
+  // this is "default" by convention
+  "": {},
+
+  // MEW legacy derivation
+  ethM: {
+    mandatoryEmptyAccountSkip: 10
+  },
+  // chrome wallet legacy derivation
+  ethW1: {
+    isNonIterable: true,
+    overridesDerivation: "44'/60'/0'/0'"
+  },
+  ethW2: {
+    isNonIterable: true,
+    overridesDerivation: "44'/60'/14'/5'/16"
+  },
+  // chrome ripple legacy derivations
+  rip: {
+    isNonIterable: true,
+    overridesDerivation: "44'/144'/0'/0'"
+  },
+  rip2: {
+    isNonIterable: true,
+    overridesDerivation: "44'/144'/14'/5'/16"
+  },
+  // MEW legacy derivation for eth
+  etcM: {
+    mandatoryEmptyAccountSkip: 10,
+    overridesDerivation: "44'/60'/160720'/0'/<account>"
+  },
+  segwit: {
+    isSegwit: true
+  },
+  segwit_unsplit: {
+    isSegwit: true,
+    isUnsplit: true
+  },
+  unsplit: {
+    isUnsplit: true
+  }
+};
+
+(modes: { [_: DerivationMode]: ModeSpec });
+
+const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
+  ethereum: ["ethM", "ethW1", "ethW2"],
+  ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2"],
+  ripple: ["rip", "rip2"]
+};
+
+export const getMandatoryEmptyAccountSkip = (
+  derivationMode: DerivationMode
+): number => modes[derivationMode].mandatoryEmptyAccountSkip || 0;
+
+export const isSegwitDerivationMode = (
+  derivationMode: DerivationMode
+): boolean => modes[derivationMode].isSegwit || false;
+
+export const isUnsplitDerivationMode = (
+  derivationMode: DerivationMode
+): boolean => modes[derivationMode].isUnsplit || false;
+
+export const isIterableDerivationMode = (
+  derivationMode: DerivationMode
+): boolean => !modes[derivationMode].isNonIterable;
 
 /**
  * return a ledger-lib-core compatible DerivationScheme format
@@ -19,39 +87,17 @@ export const getDerivationScheme = ({
   derivationMode,
   currency
 }: {
-  derivationMode: string,
+  derivationMode: DerivationMode,
   currency: CryptoCurrency
 }): string => {
+  const { overridesDerivation } = modes[derivationMode];
+  if (overridesDerivation) return overridesDerivation;
   const splitFrom =
     isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
     : "<coin_type>";
   const purpose = isSegwitDerivationMode(derivationMode) ? "49" : "44";
-  if (derivationMode === "ethM") {
-    // old MEW derivation scheme
-    return "44'/60'/0'/<account>";
-  }
-  if (derivationMode === "etcM") {
-    // old MEW derivation scheme for ETC
-    return "44'/60'/160720'/0'/<account>";
-  }
-  if (derivationMode === "rip") {
-    // XRP legacy that the old Chrome Ripple Wallet used to wrongly derivate address on.
-    return "44'/144'/0'/0'";
-  }
-  if (derivationMode === "rip2") {
-    // XRP legacy that the old Chrome Ripple Wallet used to wrongly derivate address on.
-    return "44'/144'/14'/5'/16";
-  }
-  if (derivationMode === "ethW1") {
-    // ETH legacy that the old Chrome Wallet used to wrongly derivate address on.
-    return "44'/60'/0'/0'";
-  }
-  if (derivationMode === "ethW2") {
-    // ETH legacy that the old Chrome Wallet used to wrongly derivate address on.
-    return "44'/60'/14'/5'/16";
-  }
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
 
@@ -71,16 +117,10 @@ export const runDerivationScheme = (
     .replace("<node>", String(opts.node || 0))
     .replace("<address>", String(opts.address || 0));
 
-const legacyDerivations = {
-  ethereum: ["ethM", "ethW1", "ethW2"],
-  ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2"],
-  ripple: ["rip", "rip2"]
-};
-
 // return an array of ways to derivate, by convention the latest is the standard one.
 export const getDerivationModesForCurrency = (
   currency: CryptoCurrency
-): string[] => {
+): DerivationMode[] => {
   const all =
     currency.id in legacyDerivations
       ? legacyDerivations[currency.id].slice(0)

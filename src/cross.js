@@ -3,7 +3,7 @@
 
 import { BigNumber } from "bignumber.js";
 import lzw from "node-lzw";
-import type { Account, CryptoCurrencyIds } from "./types";
+import type { Account, CryptoCurrencyIds, DerivationMode } from "./types";
 import { runDerivationScheme, getDerivationScheme } from "./derivation";
 import { decodeAccountId } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
@@ -12,7 +12,7 @@ export type AccountData = {
   id: string,
   currencyId: string,
   seedIdentifier: string,
-  derivationMode: string,
+  derivationMode: DerivationMode,
   name: string,
   index: number,
   balance: string

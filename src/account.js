@@ -10,7 +10,8 @@ import type {
   Operation,
   BalanceHistory,
   DailyOperations,
-  CryptoCurrency
+  CryptoCurrency,
+  DerivationMode
 } from "./types";
 import { getOperationAmountNumber } from "./operation";
 import { isSegwitDerivationMode, isUnsplitDerivationMode } from "./derivation";
@@ -205,7 +206,7 @@ export const getAccountPlaceholderName = ({
 }: {
   currency: CryptoCurrency,
   index: number,
-  derivationMode: string
+  derivationMode: DerivationMode
 }) =>
   `${currency.name} ${index + 1}${
     (!isSegwitDerivationMode(derivationMode) && currency.supportsSegwit) ||
