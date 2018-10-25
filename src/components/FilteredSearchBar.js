@@ -1,7 +1,6 @@
 // @flow
 import React, { PureComponent, Fragment } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
-import throttle from "lodash/throttle";
 
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
@@ -43,7 +42,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
 
   onBlur = () => this.setState({ focused: false });
 
-  onChange = throttle((text: string) => this.setState({ query: text }), 200);
+  onChange = (text: string) => this.setState({ query: text });
 
   clear = () => {
     this.onChange.cancel();
@@ -86,7 +85,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
         </View>
         <Search
           fuseOptions={{
-            threshold: 0.5,
+            threshold: 0.1,
             keys,
           }}
           value={query}
