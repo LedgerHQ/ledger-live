@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     right: 0,
     ...Platform.select({
       android: {
-        elevation: 1,
+        elevation: 4,
       },
       ios: {
         shadowOpacity: 0.03,
