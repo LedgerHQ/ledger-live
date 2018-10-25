@@ -197,7 +197,7 @@ export function getWalletName({
 
 const MAX_ACCOUNT_NAME_SIZE = 50;
 
-const alwaysConsideredLegacy = ["ethM", "etcM", "rip"];
+const alwaysSuffixLegacyExcept = ["", "segwit", "segwit_unsplit", "unsplit"];
 
 export const getAccountPlaceholderName = ({
   currency,
@@ -210,7 +210,7 @@ export const getAccountPlaceholderName = ({
 }) =>
   `${currency.name} ${index + 1}${
     (!isSegwitDerivationMode(derivationMode) && currency.supportsSegwit) ||
-    alwaysConsideredLegacy.includes(derivationMode)
+    !alwaysSuffixLegacyExcept.includes(derivationMode)
       ? " (legacy)"
       : ""
   }${isUnsplitDerivationMode(derivationMode) ? " (unsplit)" : ""}`;
