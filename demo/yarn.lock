@@ -877,10 +877,10 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.1.0.tgz#9e26ef627babcf3d72a0d5e726fe39c7479bcfec"
-  integrity sha512-BDeCWQYXIFzhQXt2CaeyNQrXkzIsyNRKukYQiiWev3lUL3dg+k4Pi3BXZmvaxgRtR6nwYEriuK/1U2EoPciGfg==
+"@ledgerhq/live-common@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.1.1.tgz#75988fc5393846d033284fa68d01913dc87517c4"
+  integrity sha512-F2MdB3o2YATqg1jabJ1VUhgwtWESJCLJiW08AQ4Uyzn+sLGexLKCcNQen6p6X48Klil6guonlpAjSDUhUwA5Xw==
   dependencies:
     "@ledgerhq/hw-app-btc" "^4.24.0"
     "@ledgerhq/hw-app-eth" "^4.24.0"
