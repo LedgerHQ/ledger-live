@@ -65,19 +65,35 @@ import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
 // TODO look into all FlowFixMe
 
-const statusBarPadding =
-  Platform.OS === "android" ? StatusBar.currentHeight : 0;
+let headerStyle;
+
+if (Platform.OS === "ios") {
+  headerStyle = {
+    height: 48,
+    borderBottomWidth: 0,
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    shadowOffset: {
+      height: 4,
+    },
+  };
+} else {
+  const statusBarPadding = StatusBar.currentHeight;
+
+  headerStyle = {
+    height: 48 + statusBarPadding,
+    paddingTop: statusBarPadding,
+    elevation: 4,
+  };
+}
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.lightGrey,
   },
   header: {
-    height: 48 + statusBarPadding,
-    paddingTop: statusBarPadding,
     backgroundColor: colors.white,
-    borderBottomWidth: 0,
-    elevation: 0,
+    ...headerStyle,
   },
   bottomTabBar: {
     height: 48,
