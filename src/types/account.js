@@ -3,6 +3,7 @@
 import type { BigNumber } from "bignumber.js";
 import type { CryptoCurrency, Unit } from "./currencies";
 import type { OperationRaw, Operation } from "./operation";
+import type { DerivationMode } from "../derivation";
 
 export type Account = {
   // unique account identifier
@@ -21,7 +22,7 @@ export type Account = {
   // Identify the derivation used. it allows us to map this to a derivation scheme.
   // exemple of values: segwit | unsplit | segwit_unsplit | mew | eth_mew (eg for etc accounts on eth)
   // the special value of '' means it's bip44 with purpose 44.
-  derivationMode: string,
+  derivationMode: DerivationMode,
 
   // the iterated number to derivate the account in a given derivationMode config
   // in context of bip44, it would be the account field of bip44 ( m/purpose'/cointype'/account' )
@@ -73,7 +74,7 @@ export type AccountRaw = {
   id: string,
   seedIdentifier: string,
   xpub?: string,
-  derivationMode: string,
+  derivationMode: DerivationMode,
   index: number,
   freshAddress: string,
   freshAddressPath: string,

@@ -8,7 +8,8 @@ import getAddress, { perFamily } from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
-  runDerivationScheme
+  runDerivationScheme,
+  isIterableDerivationMode
 } from "@ledgerhq/live-common/lib/derivation";
 import CurrencySelect from "./CurrencySelect";
 
@@ -102,14 +103,16 @@ class CurrencyDerivations extends Component<*, *> {
         {Array(total)
           .fill(null)
           .map((_, index) =>
-            getDerivationModesForCurrency(currency).map(derivationMode => (
-              <CurrencyDerivation
-                key={derivationMode}
-                currency={currency}
-                derivationMode={derivationMode}
-                index={index}
-              />
-            ))
+            getDerivationModesForCurrency(currency)
+              .filter(mode => index === 0 || isIterableDerivationMode(mode))
+              .map(derivationMode => (
+                <CurrencyDerivation
+                  key={derivationMode}
+                  currency={currency}
+                  derivationMode={derivationMode}
+                  index={index}
+                />
+              ))
           )}
         <button onClick={this.more}>MORE</button>
       </div>

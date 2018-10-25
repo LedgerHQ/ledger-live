@@ -13,6 +13,10 @@ import type {
   CryptoCurrencyIds
 } from "../data/cryptocurrencies";
 
+import type { DerivationMode } from "../derivation";
+
+export type { DerivationMode };
+
 export type { CryptoCurrencyConfig, CryptoCurrencyObjMap, CryptoCurrencyIds };
 
 /**
