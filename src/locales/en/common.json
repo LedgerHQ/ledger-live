@@ -294,6 +294,8 @@
     "noMoreOperations": "No More Operations"
   },
   "account": {
+    "send": "Send",
+    "receive": "Receive",
     "lastOperations": "Last operations",
     "emptyState": {
       "title": "No crypto assets yet?",

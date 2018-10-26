@@ -31,7 +31,7 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    result: string,
+    result?: ?string,
   }>,
 };
 
