@@ -863,6 +863,35 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  megacoin: {
+    id: "megacoin",
+    forkedFrom: "bitcoin",
+    coinType: 217,
+    name: "Megacoin",
+    managerAppName: "Megacoin",
+    ticker: "MEC",
+    scheme: "mec",
+    color: "#b31e24",
+    family: "bitcoin",
+    ledgerExplorerId: "mec",
+    blockAvgTime: 2.5 * 60,
+    bitcoinLikeInfo: {
+      P2PKH: 50,
+      P2SH: 5
+    },
+    units: [
+      {
+        name: "Megacoin",
+        code: "MEC",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
   monero: {
     id: "monero",
     coinType: 128,

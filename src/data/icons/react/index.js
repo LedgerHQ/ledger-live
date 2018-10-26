@@ -11,6 +11,7 @@ export { default as expanse } from "./expanse";
 export { default as hcash } from "./hcash";
 export { default as komodo } from "./komodo";
 export { default as litecoin } from "./litecoin";
+export { default as megacoin } from "./megacoin";
 export { default as monero } from "./monero";
 export { default as neo } from "./neo";
 export { default as peercoin } from "./peercoin";
