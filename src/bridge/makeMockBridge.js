@@ -111,6 +111,10 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
 
   const getTransactionRecipient = (a, t) => t.recipient;
 
+  const editTransactionExtra = (account, t) => t;
+
+  const getTransactionExtra = () => undefined;
+
   const signAndBroadcast = (account, t, _deviceId) =>
     Observable.create(o => {
       let timeout = setTimeout(() => {
@@ -157,6 +161,8 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     getTransactionAmount,
     editTransactionRecipient,
     getTransactionRecipient,
+    editTransactionExtra,
+    getTransactionExtra,
     checkValidTransaction,
     getTotalSpent,
     getMaxAmount,

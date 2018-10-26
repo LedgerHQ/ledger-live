@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { View, SafeAreaView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import { BigNumber } from "bignumber.js";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
@@ -95,7 +96,7 @@ class SendSummary extends Component<Props, State> {
 
     // TODO: build transaction with libcore
     await RNLibcoreAccountBridge.checkValidTransaction(account, {
-      feePerByte: this.state.fees,
+      feePerByte: this.state.fees ? BigNumber(this.state.fees) : null,
       recipient,
       amount,
     });

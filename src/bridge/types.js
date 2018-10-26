@@ -76,6 +76,23 @@ export interface AccountBridge<Transaction> {
 
   getTransactionRecipient(account: Account, transaction: Transaction): string;
 
+  // edit any extra parameter (e.g. ripple tagId)
+  // nothing happen if field is not supported, undefined is returned if not supported.
+  editTransactionExtra(
+    account: Account,
+    transaction: Transaction,
+    field: string,
+    value: any,
+  ): Transaction;
+
+  // edit any extra parameter (e.g. ripple tagId)
+  // undefined is returned if not supported.
+  getTransactionExtra(
+    account: Account,
+    transaction: Transaction,
+    field: string,
+  ): any;
+
   // checks if a recipient is valid and returns potential warnings
   // - if promise is successful with null, all is fine
   // - if promise is successful with an error object, it's a warning to display

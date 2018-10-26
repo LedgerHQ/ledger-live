@@ -68,11 +68,11 @@ class ScanRecipient extends PureComponent<Props, State> {
 
   onBarCodeRead = ({ data }: { data: string }) => {
     if (data) {
-      this.onResult(decodeURIScheme(data));
+      this.onResult(data);
     }
   };
 
-  onResult = (result: *) => {
+  onResult = (result: string) => {
     const accountId = this.props.navigation.getParam("accountId");
     const { amount, address, currency, ...rest } = decodeURIScheme(result);
     const params: { [_: string]: * } = {
