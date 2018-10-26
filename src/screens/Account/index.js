@@ -26,6 +26,7 @@ import Header from "./Header";
 import EmptyStateAccount from "./EmptyStateAccount";
 import AccountHeaderRight from "./AccountHeaderRight";
 import AccountHeaderTitle from "./AccountHeaderTitle";
+import AccountActions from "./AccountActions";
 import { scrollToTopIntent } from "./events";
 
 type Props = {
@@ -104,9 +105,10 @@ class AccountScreen extends PureComponent<Props, State> {
     // - less if logic in graph (we shouldn't have magically guess if it's a "countervalue" mode or a "crypto" one)
     // - the fact we want later to diverge both a bit (graph differ already, and later if we intro the idea to switch between modes)
     return (
-      <View>
+      <View style={styles.header}>
         <Header accountId={account.id} />
         <GraphCard summary={summary} renderTitle={this.renderListHeaderTitle} />
+        <AccountActions accountId={account.id} />
       </View>
     );
   };
@@ -193,6 +195,9 @@ export default compose(
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  header: {
+    flexDirection: "column",
   },
   sectionList: {
     flex: 1,
