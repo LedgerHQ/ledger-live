@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     flexDirection: "row",
-    paddingVertical: 18,
+    paddingVertical: 16,
     alignItems: "center",
   },
   accountName: {

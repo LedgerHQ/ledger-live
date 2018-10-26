@@ -34,10 +34,7 @@ class AddAccountsSelectDevice extends Component<Props, State> {
   onSelectDevice = (deviceId: string) => {
     const { navigation } = this.props;
     const currency = navigation.getParam("currency");
-    navigation.navigate("AddAccountsAccounts", {
-      currency,
-      deviceId,
-    });
+    navigation.navigate("AddAccountsAccounts", { currency, deviceId });
   };
 
   render() {

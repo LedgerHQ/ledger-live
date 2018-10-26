@@ -10,6 +10,7 @@ import {
 } from "./makeMockBridge";
 
 import RNLibcoreAccountBridge from "./RNLibcoreAccountBridge";
+import RNLibcoreCurrencyBridge from "./RNLibcoreCurrencyBridge";
 
 import * as RippleBridge from "./RippleJSBridge";
 
@@ -18,6 +19,7 @@ const mockAccountBridge = makeMockAccountBridge();
 
 export const getCurrencyBridge = (currency: Currency): CurrencyBridge => {
   if (currency.family === "ripple") return RippleBridge.currencyBridge;
+  if (currency.family === "bitcoin") return RNLibcoreCurrencyBridge;
   return mockCurrencyBridge; // fallback mock until we implement it all!
 };
 

@@ -6,9 +6,9 @@ import IconFa from "react-native-vector-icons/dist/FontAwesome";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 
-import colors from "../colors";
-import BottomModal from "./BottomModal";
-import BottomModalChoice from "./BottomModalChoice";
+import colors from "../../colors";
+import BottomModal from "../../components/BottomModal";
+import BottomModalChoice from "../../components/BottomModalChoice";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
