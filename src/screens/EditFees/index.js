@@ -27,9 +27,6 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    address: string,
-    amount: string,
-    amountBigNumber: BigNumberType,
     fees: number,
   }>,
 };

@@ -12,6 +12,7 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CounterValue from "../../components/CounterValue";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
 import colors from "../../colors";
 
@@ -25,13 +26,12 @@ type Props = {
     accountId: string,
     address: string,
     amount: string,
-    amountBigNumber: BigNumberType,
     fees?: number,
   }>,
 };
 
 type State = {
-  fees: number,
+  fees: ?number,
 };
 
 class SendSummary extends Component<Props, State> {
@@ -43,7 +43,7 @@ class SendSummary extends Component<Props, State> {
 
   state = {
     // $FlowFixMe
-    fees: this.props.navigation.state.params.fees || 10,
+    fees: this.props.navigation.state.params.fees,
   };
 
   componentDidUpdate() {
@@ -69,7 +69,7 @@ class SendSummary extends Component<Props, State> {
       navigation: {
         state: {
           // $FlowFixMe
-          params: { address, amount, amountBigNumber },
+          params,
         },
       },
     } = this.props;
@@ -77,18 +77,18 @@ class SendSummary extends Component<Props, State> {
 
     this.props.navigation.navigate("EditFees", {
       accountId: account.id,
-      address,
-      amount,
-      amountBigNumber,
+      ...params,
       fees,
     });
   };
 
   onContinue = () => {
     const { navigation } = this.props;
+    const { fees } = this.state;
     navigation.navigate("SendConnectDevice", {
       // $FlowFixMe
       ...navigation.state.params,
+      fees,
     });
   };
 
@@ -137,7 +137,7 @@ class SendSummary extends Component<Props, State> {
         <SummaryRow title="Amount">
           <View style={styles.amountContainer}>
             <LText style={styles.valueText}>
-              {`${account.unit.code} ${amount.toString()}`}
+              <CurrencyUnitValue unit={account.unit} value={amount} />
             </LText>
             <LText style={styles.counterValueText}>
               <CounterValue
@@ -150,9 +150,8 @@ class SendSummary extends Component<Props, State> {
         </SummaryRow>
         <SummaryRow title="Fees" link="link" last>
           <View style={styles.accountContainer}>
-            <LText style={styles.valueText}>{`${
-              this.state.fees
-            } sat/bytes`}</LText>
+            <LText style={styles.valueText}>{`${this.state.fees ||
+              "?"} sat/bytes`}</LText>
 
             <LText style={styles.link} onPress={this.openFees}>
               Edit
@@ -160,9 +159,9 @@ class SendSummary extends Component<Props, State> {
           </View>
         </SummaryRow>
         <View style={styles.summary}>
-          <LText semiBold style={styles.summaryValueText}>{`${
-            account.unit.code
-          } ${amount.toString()}`}</LText>
+          <LText semiBold style={styles.summaryValueText}>
+            <CurrencyUnitValue unit={account.unit} value={amount} />
+          </LText>
           <LText style={styles.summaryCounterValueText}>
             <CounterValue value={amount} currency={account.currency} showCode />
           </LText>

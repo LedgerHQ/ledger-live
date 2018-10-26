@@ -2,9 +2,11 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { RNCamera } from "react-native-camera";
+import Config from "react-native-config";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
+import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
 import type { T } from "../../types/common";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
@@ -30,7 +32,7 @@ const getDimensions = () => {
   return { width, height };
 };
 
-class Scan extends PureComponent<Props, State> {
+class ScanRecipient extends PureComponent<Props, State> {
   static navigationOptions = ({
     navigation,
   }: {
@@ -54,6 +56,12 @@ class Scan extends PureComponent<Props, State> {
 
   completed: boolean = false;
 
+  componentDidMount() {
+    if (Config.MOCK_SCAN_RECIPIENT) {
+      this.onResult(Config.MOCK_SCAN_RECIPIENT);
+    }
+  }
+
   onBarCodeRead = ({ data }: { data: string }) => {
     if (data) {
       this.onResult(data);
@@ -62,8 +70,17 @@ class Scan extends PureComponent<Props, State> {
 
   onResult = (result: string) => {
     const accountId = this.props.navigation.getParam("accountId");
+    const { amount, address, currency, ...rest } = decodeURIScheme(result);
+    const params: { [_: string]: * } = {
+      accountId,
+      address,
+      ...rest,
+    };
+    if (amount) {
+      params.amount = amount.toString();
+    }
     // $FlowFixMe
-    this.props.navigation.replace("SendSelectRecipient", { result, accountId });
+    this.props.navigation.replace("SendSelectRecipient", params);
   };
 
   setDimensions = () => {
@@ -98,7 +115,7 @@ class Scan extends PureComponent<Props, State> {
   }
 }
 
-export default translate()(Scan);
+export default translate()(ScanRecipient);
 
 const styles = StyleSheet.create({
   root: {

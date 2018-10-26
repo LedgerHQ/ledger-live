@@ -34,6 +34,7 @@ type Props = {
   navigation: NavigationScreenProp<{
     accountId: string,
     address: string,
+    amount?: string,
   }>,
 };
 
@@ -47,7 +48,7 @@ class SelectFunds extends Component<Props, State> {
   };
 
   state = {
-    amount: BigNumber(0),
+    amount: BigNumber(this.props.navigation.getParam("amount") || "0"),
   };
 
   blur = () => {
@@ -62,11 +63,10 @@ class SelectFunds extends Component<Props, State> {
 
   navigate = () => {
     const { account, navigation } = this.props;
-    const address = navigation.getParam("address");
     const { amount } = this.state;
     navigation.navigate("SendSummary", {
+      ...navigation.state.params,
       accountId: account.id,
-      address,
       amount,
     });
   };

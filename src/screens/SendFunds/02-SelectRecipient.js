@@ -58,9 +58,9 @@ class SelectRecipient extends Component<Props, State> {
   componentDidUpdate(_, { address: prevAddress }) {
     const { navigation } = this.props;
     const { shouldUpdate } = this.state;
-    const qrResult = navigation.getParam("result");
-    if (!shouldUpdate && qrResult && prevAddress !== qrResult) {
-      this.onChangeText(qrResult, false);
+    const address = navigation.getParam("address");
+    if (!shouldUpdate && address && prevAddress !== address) {
+      this.onChangeText(address, false);
     }
   }
 
@@ -107,9 +107,11 @@ class SelectRecipient extends Component<Props, State> {
   };
 
   onPressContinue = () => {
-    const { account } = this.props;
+    const { account, navigation } = this.props;
     const { address } = this.state;
-    this.props.navigation.navigate("SendAmount", {
+    console.log(navigation.state.params);
+    navigation.navigate("SendAmount", {
+      ...navigation.state.params,
       accountId: account.id,
       address,
     });

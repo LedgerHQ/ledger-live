@@ -21,8 +21,7 @@ type Props = {
     accountId: string,
     address: string,
     amount: string,
-    amountBigNumber: BigNumber,
-    fees?: number,
+    fees: number,
   }>,
 };
 
@@ -49,22 +48,17 @@ class Validation extends Component<Props, State> {
       navigation: {
         state: {
           // $FlowFixMe
-          params: { address, amount, deviceId },
+          params: { address, amount, deviceId, ...rest },
         },
       },
     } = this.props;
     const bridge = getAccountBridge(account);
     let transaction = bridge.createTransaction(account);
-    transaction = bridge.editTransactionRecipient(
-      account,
-      transaction,
+    transaction = bridge.editTransactionParameters(account, transaction, {
       address,
-    );
-    transaction = bridge.editTransactionAmount(
-      account,
-      transaction,
-      new BigNumber(amount),
-    );
+      amount: new BigNumber(amount),
+      ...rest,
+    });
     bridge.signAndBroadcast(account, transaction, deviceId).subscribe({
       next: e => {
         switch (e.type) {
