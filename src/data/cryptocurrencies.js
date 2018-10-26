@@ -333,6 +333,44 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  bitsend: {
+    id: "bitsend",
+    coinType: 91,
+    name: "BitSend",
+    managerAppName: "BitSend",
+    ticker: "BSD",
+    scheme: "bitsend",
+    color: "#5fb7ff",
+    family: "bitcoin",
+    ledgerExplorerId: "bsd",
+    blockAvgTime: 200,
+    bitcoinLikeInfo: {
+      P2PKH: 102,
+      P2SH: 5
+    },
+    units: [
+      {
+        name: "Bitsend",
+        code: "BSD",
+        magnitude: 8
+      },
+      {
+        name: "Milli-Bitsend",
+        code: "mBSD",
+        magnitude: 5
+      },
+      {
+        name: "Micro-Bitsend",
+        code: "uBSD",
+        magnitude: 2
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
   callisto: {
     id: "callisto",
     coinType: 820,
