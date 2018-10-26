@@ -560,7 +560,7 @@ export const accountBridge: AccountBridge<Transaction> = {
           !value || BigNumber.isBigNumber(value),
           "editTransactionExtra(a,t,'fee',value): BigNumber value expected",
         );
-        return { ...t, fee: value ? value : null };
+        return { ...t, fee: value };
 
       case "tag":
         invariant(
@@ -568,16 +568,22 @@ export const accountBridge: AccountBridge<Transaction> = {
           "editTransactionExtra(a,t,'tag',value): number value expected",
         );
         return { ...t, tag: value };
+
+      default:
+        return t;
     }
-    return t;
   },
 
   getTransactionExtra: (a, t, field) => {
     switch (field) {
       case "fee":
         return t.fee;
+
       case "tag":
         return t.tag;
+
+      default:
+        return undefined;
     }
   },
 

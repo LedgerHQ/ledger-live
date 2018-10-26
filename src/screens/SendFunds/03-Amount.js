@@ -16,30 +16,27 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import type { T } from "../../types/common";
 import { accountScreenSelector } from "../../reducers/accounts";
-
 import colors from "../../colors";
-
+import { getAccountBridge } from "../../bridge";
 import LText from "../../components/LText/index";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Button from "../../components/Button";
-
-import AmountInput from "./AmountInput";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
+import AmountInput from "./AmountInput";
 
 type Props = {
   t: T,
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    address: string,
-    amount?: string,
+    transaction: *,
   }>,
 };
 
 type State = {
-  amount: BigNumber,
+  transaction: *,
 };
 
 class SelectFunds extends Component<Props, State> {
@@ -48,7 +45,8 @@ class SelectFunds extends Component<Props, State> {
   };
 
   state = {
-    amount: BigNumber(this.props.navigation.getParam("amount") || "0"),
+    // TODO probably could leave in the navigation param itself
+    transaction: this.props.navigation.getParam("transaction"),
   };
 
   blur = () => {
@@ -57,24 +55,30 @@ class SelectFunds extends Component<Props, State> {
 
   onChange = (amount: BigNumber) => {
     if (!amount.isNaN()) {
-      this.setState({ amount });
+      this.setState(({ transaction }, { account }) => ({
+        transaction: getAccountBridge(account).editTransactionAmount(
+          account,
+          transaction,
+          amount,
+        ),
+      }));
     }
   };
 
   navigate = () => {
     const { account, navigation } = this.props;
-    const { amount } = this.state;
+    const { transaction } = this.state;
     navigation.navigate("SendSummary", {
-      // $FlowFixMe
-      ...navigation.state.params,
       accountId: account.id,
-      amount,
+      transaction,
     });
   };
 
   render() {
     const { account, t } = this.props;
-    const { amount } = this.state;
+    const { transaction } = this.state;
+    const bridge = getAccountBridge(account);
+    const amount = bridge.getTransactionAmount(account, transaction);
 
     return (
       <SafeAreaView style={styles.root}>

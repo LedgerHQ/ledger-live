@@ -139,15 +139,20 @@ const editTransactionExtra = (a, t, field, value) => {
         !value || BigNumber.isBigNumber(value),
         "editTransactionExtra(a,t,'feePerByte',value): BigNumber value expected",
       );
-      return { ...t, feePerByte: value ? value : null };
+      return { ...t, feePerByte: value };
+
+    default:
+      return t;
   }
-  return t;
 };
 
 const getTransactionExtra = (a, t, field) => {
   switch (field) {
     case "feePerByte":
       return t.feePerByte;
+
+    default:
+      return undefined;
   }
 };
 

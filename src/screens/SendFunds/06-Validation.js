@@ -4,7 +4,6 @@ import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { BigNumber } from "bignumber.js";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -19,9 +18,8 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    address: string,
-    amount: string,
-    fees: number,
+    deviceId: string,
+    transaction: *,
   }>,
 };
 
@@ -43,27 +41,10 @@ class Validation extends Component<Props, State> {
   };
 
   sign() {
-    const {
-      account,
-      navigation: {
-        state: {
-          // $FlowFixMe
-          params: { address, amount, deviceId, ...rest },
-        },
-      },
-    } = this.props;
+    const { account, navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
-    let transaction = bridge.createTransaction(account);
-    transaction = bridge.editTransactionRecipient(
-      account,
-      transaction,
-      address,
-    );
-    transaction = bridge.editTransactionAmount(
-      account,
-      transaction,
-      new BigNumber(amount),
-    );
     bridge.signAndBroadcast(account, transaction, deviceId).subscribe({
       next: e => {
         switch (e.type) {

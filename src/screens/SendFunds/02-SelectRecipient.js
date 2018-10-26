@@ -14,7 +14,7 @@ import type { T } from "../../types/common";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import { getAccountBridge } from "../../bridge/index";
+import { getAccountBridge } from "../../bridge";
 
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -31,7 +31,7 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    result: *,
+    transaction: *,
   }>,
 };
 
@@ -49,18 +49,39 @@ class SelectRecipient extends Component<Props, State> {
     ),
   };
 
-  constructor(props: *) {
-    super(props);
-
+  constructor() {
+    super();
     this.validateAddress = throttle(this.validateAddress, 200);
   }
 
+  unmounted = false;
+
+  transactionNetworkInfo: Promise<*>;
+
+  componentDidMount() {
+    const { account } = this.props;
+    const bridge = getAccountBridge(account);
+    this.transactionNetworkInfo = bridge.fetchTransactionNetworkInfo(account);
+  }
+
+  componentWillUnmount() {
+    this.validateAddress.cancel();
+    this.unmounted = true;
+  }
+
   componentDidUpdate(_, { address: prevAddress }) {
-    const { navigation } = this.props;
+    // FIXME we should refactor this in a more elegant way
+    const { navigation, account } = this.props;
     const { shouldUpdate } = this.state;
-    const address = navigation.getParam("address");
-    if (!shouldUpdate && address && prevAddress !== address) {
-      this.onChangeText(address, false);
+    if (!shouldUpdate) {
+      const transaction = navigation.getParam("transaction");
+      if (transaction) {
+        const bridge = getAccountBridge(account);
+        const address = bridge.getTransactionRecipient(account, transaction);
+        if (address && prevAddress !== address) {
+          this.onChangeText(address, false);
+        }
+      }
     }
   }
 
@@ -88,14 +109,13 @@ class SelectRecipient extends Component<Props, State> {
   validateAddress = async (address: string) => {
     const { account } = this.props;
     const bridge = getAccountBridge(account);
-
     try {
       const res = await bridge.checkValidRecipient(account.currency, address);
-      if (!res) return this.setState({ validAddress: true, error: null });
-
-      return this.setState({ validAddress: false, error: res });
+      if (this.unmounted) return;
+      if (!res) this.setState({ validAddress: true, error: null });
+      else this.setState({ validAddress: false, error: res });
     } catch (e) {
-      return this.setState({ validAddress: false, error: e });
+      this.setState({ validAddress: false, error: e });
     }
   };
 
@@ -105,14 +125,34 @@ class SelectRecipient extends Component<Props, State> {
     });
   };
 
-  onPressContinue = () => {
+  onPressContinue = async () => {
     const { account, navigation } = this.props;
     const { address } = this.state;
-    navigation.navigate("SendAmount", {
-      // $FlowFixMe
-      ...navigation.state.params,
-      accountId: account.id,
+    const bridge = getAccountBridge(account);
+    let transaction =
+      navigation.getParam("transaction") || bridge.createTransaction(account);
+
+    transaction = bridge.editTransactionRecipient(
+      account,
+      transaction,
       address,
+    );
+
+    try {
+      const networkInfo = await this.transactionNetworkInfo;
+      // FIXME race with a timeout
+      transaction = bridge.applyTransactionNetworkInfo(
+        account,
+        transaction,
+        networkInfo,
+      );
+    } catch (e) {
+      console.warn(e);
+    }
+
+    navigation.navigate("SendAmount", {
+      accountId: account.id,
+      transaction,
     });
   };
 
