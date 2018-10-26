@@ -2,7 +2,7 @@
 // TODO rename this file at the end (don't want to mess up merges after renaming)
 
 import React, { Component } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
@@ -16,7 +16,6 @@ import { open } from "../../logic/hw";
 
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
-import Button from "../../components/Button";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
@@ -67,6 +66,7 @@ class ReceiveConfirmation extends Component<Props, State> {
   render(): React$Node {
     const { account, navigation } = this.props;
     const { verified } = this.state;
+    const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId"); // eslint-disable-line no-unused-vars
     // TODO: use unsafe to render the error case
 
@@ -75,32 +75,24 @@ class ReceiveConfirmation extends Component<Props, State> {
         <Stepper nbSteps={3} currentStep={3} />
         <View style={styles.container}>
           <View style={styles.qrWrapper}>
-            <QRCode size={130} value={account.freshAddress} />
+            <QRCode size={width / 2 - 30} value={account.freshAddress} />
           </View>
-          <View style={styles.addressContainer}>
-            <LText style={styles.addressTitle}>
-              Address account for{" "}
-              <LText
-                semiBold
-                style={[styles.addressTitle, styles.addressTitleBold]}
-              >
-                {account.name}
-              </LText>
+          <View>
+            <LText style={styles.addressTitle}>Address for account</LText>
+          </View>
+          <View>
+            <LText semiBold style={styles.addressTitleBold}>
+              {account.name}
             </LText>
-            <View style={styles.address}>
-              <DisplayAddress address={account.freshAddress} />
-            </View>
-            <VerifyAddressDisclaimer
-              verified={verified}
-              accountType={account.currency.managerAppName}
-            />
+          </View>
+          <View style={styles.address}>
+            <DisplayAddress address={account.freshAddress} />
           </View>
         </View>
         <View style={styles.bottomContainer}>
-          <Button
-            type="primary"
-            title="Verify Address"
-            onPress={this.onVerifyAddress}
+          <VerifyAddressDisclaimer
+            verified={verified}
+            accountType={account.currency.managerAppName}
           />
         </View>
       </SafeAreaView>
@@ -126,21 +118,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.lightFog,
     padding: 15,
-  },
-  addressContainer: {
-    paddingVertical: 24,
-    alignItems: "center",
+    borderRadius: 4,
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    shadowOffset: {
+      height: 4,
+    },
   },
   addressTitle: {
-    fontSize: 12,
-    color: colors.smoke,
+    paddingTop: 24,
+    fontSize: 14,
+    color: colors.grey,
   },
   addressTitleBold: {
+    paddingTop: 4,
+    fontSize: 16,
     color: colors.darkBlue,
   },
   address: {
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingTop: 25,
   },
 });
 
