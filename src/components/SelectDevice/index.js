@@ -7,40 +7,46 @@
 
 import React, { Component, Fragment } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { Observable, from } from "rxjs";
-import { mergeMap, last, tap } from "rxjs/operators";
+import { Observable, Subject, from } from "rxjs";
+import debounce from "lodash/debounce";
+import { mergeMap, last, tap, filter } from "rxjs/operators";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import type Transport from "@ledgerhq/hw-transport";
-import { open, devicesObservable } from "../../logic/hw";
+import { devicesObservable } from "../../logic/hw";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
-import ScanningFooter from "./ScanningFooter";
+import Header from "./Header";
+import Footer from "./Footer";
 import SelectDeviceConnectModal from "./SelectDeviceConnectModal";
 import type { Step } from "./types";
-import { connectingStep } from "./steps";
 
 const runStep = (
   step: Step,
-  transport: Transport<*>,
+  deviceId: string,
   meta: Object,
-): Observable<Object> => step.run(transport, meta);
+  onDoneO: Observable<*>,
+): Observable<Object> => step.run(deviceId, meta, onDoneO);
 
 const chainSteps = (
   steps: Step[],
-  transport: Transport<*>,
-  onStepPass: number => void,
+  deviceId: string,
+  onStepEnter: number => void,
+  onDoneO: Observable<number>,
 ): Observable<Object> =>
   steps.reduce(
     (meta: Observable<*>, step: Step, i: number) =>
       meta.pipe(
+        tap(() => onStepEnter(i)),
         mergeMap(meta =>
-          // $FlowFixMe figure it out
-          runStep(step, transport, meta)
-            .pipe(last())
-            .pipe(tap(() => onStepPass(i))),
+          runStep(
+            step,
+            deviceId,
+            meta,
+            onDoneO.pipe(filter(index => index === i)),
+          ),
         ),
+        last(),
       ),
     from([{}]),
   );
@@ -80,15 +86,19 @@ class SelectDevice extends Component<
     scanning: true,
     connecting: false,
     connectingId: null,
-    stepIndex: -1,
+    stepIndex: 0,
     error: null,
     meta: {},
   };
 
   selectSubscription: *;
 
+  listingSubscription: *;
+
+  onDoneSubject = new Subject();
+
   componentDidMount() {
-    devicesObservable.subscribe({
+    this.listingSubscription = devicesObservable.subscribe({
       complete: () => {
         this.setState({ scanning: false });
       },
@@ -107,11 +117,21 @@ class SelectDevice extends Component<
   }
 
   componentWillUnmount() {
+    this.onStepEntered.cancel();
     if (this.selectSubscription) this.selectSubscription.unsubscribe();
+    this.listingSubscription.unsubscribe();
   }
 
   onForget = async ({ id }) => {
     this.props.removeKnownDevice(id);
+  };
+
+  onStepEntered = debounce(stepIndex => {
+    this.setState({ stepIndex });
+  }, 500);
+
+  onStepDone = () => {
+    this.onDoneSubject.next(this.state.stepIndex);
   };
 
   onSelect = ({ id }) => {
@@ -119,32 +139,28 @@ class SelectDevice extends Component<
       connecting: true,
       connectingId: id,
       error: null,
-      stepIndex: -1,
+      stepIndex: 0,
       meta: {},
     });
 
-    this.selectSubscription = from(open(id))
-      .pipe(
-        mergeMap(transport =>
-          chainSteps(this.props.steps, transport, stepIndex =>
-            this.setState({ stepIndex }),
-          ).pipe(
-            // close transport and returns meta
-            mergeMap(meta =>
-              from(transport.close().then(() => meta, () => meta)),
-            ),
-          ),
-        ),
-      )
-      .subscribe({
-        next: meta => {
-          this.setState({ connecting: false });
+    this.onStepEntered.cancel();
+    if (this.selectSubscription) this.selectSubscription.unsubscribe();
+    this.selectSubscription = chainSteps(
+      this.props.steps,
+      id,
+      this.onStepEntered,
+      this.onDoneSubject,
+    ).subscribe({
+      next: meta => {
+        this.onStepEntered.cancel();
+        this.setState({ connecting: false }, () => {
           this.props.onSelect(id, meta);
-        },
-        error: error => {
-          this.setState({ error });
-        },
-      });
+        });
+      },
+      error: error => {
+        this.setState({ error });
+      },
+    });
   };
 
   onRetry = () => {
@@ -155,6 +171,7 @@ class SelectDevice extends Component<
   };
 
   onRequestClose = () => {
+    this.onStepEntered.cancel();
     if (this.selectSubscription) this.selectSubscription.unsubscribe();
     this.setState({ connecting: false, error: null });
   };
@@ -173,7 +190,9 @@ class SelectDevice extends Component<
 
   render() {
     const { knownDevices, steps } = this.props;
-    const { devices, connecting, stepIndex, error } = this.state;
+    const { devices, connecting, connectingId, stepIndex, error } = this.state;
+
+    const connectingDevice = devices.find(d => d.id === connectingId);
 
     // $FlowFixMe
     const data = devices.concat(knownDevices);
@@ -184,14 +203,17 @@ class SelectDevice extends Component<
           contentContainerStyle={styles.root}
           data={data}
           renderItem={this.renderItem}
-          ListFooterComponent={ScanningFooter}
+          ListHeaderComponent={Header}
+          ListFooterComponent={Footer}
           keyExtractor={this.keyExtractor}
         />
         <SelectDeviceConnectModal
+          deviceName={connectingDevice ? connectingDevice.name : ""}
           isOpened={connecting}
           onClose={this.onRequestClose}
           onRetry={this.onRetry}
-          step={steps[stepIndex] || connectingStep}
+          step={steps[stepIndex]}
+          onStepDone={this.onStepDone}
           error={error}
         />
       </Fragment>

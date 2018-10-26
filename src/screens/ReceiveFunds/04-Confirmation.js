@@ -1,4 +1,6 @@
 // @flow
+// TODO rename this file at the end (don't want to mess up merges after renaming)
+
 import React, { Component } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { createStructuredSelector } from "reselect";
@@ -36,7 +38,7 @@ type State = {
 
 class ReceiveConfirmation extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Receive" subtitle="4 of 4" />,
+    headerTitle: <StepHeader title="Receive" subtitle="3 of 3" />,
   };
 
   state = {
@@ -69,7 +71,7 @@ class ReceiveConfirmation extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={4} currentStep={4} />
+        <Stepper nbSteps={3} currentStep={3} />
         <View style={styles.container}>
           <View style={styles.qrWrapper}>
             <QRCode size={130} value={account.freshAddress} />

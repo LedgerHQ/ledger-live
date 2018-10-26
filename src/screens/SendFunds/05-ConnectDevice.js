@@ -11,7 +11,10 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import StepHeader from "../../components/StepHeader";
 import Stepper from "../../components/Stepper";
 import SelectDevice from "../../components/SelectDevice";
-import { accountApp } from "../../components/SelectDevice/steps";
+import {
+  connectingStep,
+  accountApp,
+} from "../../components/SelectDevice/steps";
 
 import colors from "../../colors";
 
@@ -44,7 +47,7 @@ class ConnectDevice extends Component<Props> {
         <Stepper currentStep={5} nbSteps={6} />
         <SelectDevice
           onSelect={this.onSelectDevice}
-          steps={[accountApp(account)]}
+          steps={[connectingStep, accountApp(account)]}
         />
       </SafeAreaView>
     );

@@ -84,6 +84,7 @@ class Scanning extends Component<Props, State> {
         name={item.name}
         onSelect={this.props.onSelect}
         disabled={!!knownDevice}
+        withArrow
         description={knownDevice ? "Already paired" : ""}
       />
     );
