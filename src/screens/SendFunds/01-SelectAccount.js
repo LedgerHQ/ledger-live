@@ -31,6 +31,15 @@ class SendFundsSelectAccount extends Component<Props, State> {
     ),
   };
 
+  renderList = items => (
+    <FlatList
+      data={items}
+      renderItem={this.renderItem}
+      keyExtractor={this.keyExtractor}
+      showsVerticalScrollIndicator={false}
+    />
+  );
+
   renderItem = ({ item }: { item: Account }) => (
     <AccountCard
       account={item}
@@ -41,6 +50,12 @@ class SendFundsSelectAccount extends Component<Props, State> {
         });
       }}
     />
+  );
+
+  renderEmptySearch = () => (
+    <View style={styles.emptyResults}>
+      <LText style={styles.emptyText}>No account found</LText>
+    </View>
   );
 
   keyExtractor = item => item.id;
@@ -55,19 +70,8 @@ class SendFundsSelectAccount extends Component<Props, State> {
             <FilteredSearchBar
               list={accounts}
               inputWrapperStyle={styles.padding}
-              renderList={items => (
-                <FlatList
-                  data={items}
-                  renderItem={this.renderItem}
-                  keyExtractor={this.keyExtractor}
-                  showsVerticalScrollIndicator={false}
-                />
-              )}
-              renderEmptySearch={() => (
-                <View style={styles.emptyResults}>
-                  <LText style={styles.emptyText}>No account found</LText>
-                </View>
-              )}
+              renderList={this.renderList}
+              renderEmptySearch={this.renderEmptySearch}
             />
           </View>
         </KeyboardView>

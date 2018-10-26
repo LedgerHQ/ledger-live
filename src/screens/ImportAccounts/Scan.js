@@ -41,7 +41,6 @@ class Scan extends PureComponent<
   static navigationOptions = ({
     navigation,
   }: {
-    // $FlowFixMe
     navigation: NavigationScreenProp<*>,
   }) => ({
     title: i18next.t("account.import.scan.title"),

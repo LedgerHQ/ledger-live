@@ -4,7 +4,7 @@ import { View, SafeAreaView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { BigNumber as BigNumberType } from "bignumber.js";
+import type { BigNumber } from "bignumber.js";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
@@ -19,13 +19,14 @@ import SummaryRow from "./SummaryRow";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
+import RNLibcoreAccountBridge from "../../bridge/RNLibcoreAccountBridge";
+
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
     address: string,
-    amount: string,
-    amountBigNumber: BigNumberType,
+    amount: BigNumber,
     fees?: number,
   }>,
 };
@@ -47,14 +48,9 @@ class SendSummary extends Component<Props, State> {
   };
 
   componentDidUpdate() {
-    const {
-      navigation: {
-        state: {
-          // $FlowFixMe
-          params: { fees },
-        },
-      },
-    } = this.props;
+    const { navigation } = this.props;
+
+    const fees = navigation.getParam("fees");
 
     if (fees !== this.state.fees) {
       this.setFees(fees);
@@ -63,13 +59,20 @@ class SendSummary extends Component<Props, State> {
 
   setFees = (fees: number) => this.setState({ fees });
 
+  getNavigationParams = (...params) => {
+    const { navigation } = this.props;
+    const res = {};
+    params.forEach(param => (res[param] = navigation.getParam(param)));
+    return res;
+  };
+
   openFees = () => {
     const {
       account,
       navigation: {
         state: {
           // $FlowFixMe
-          params: { address, amount, amountBigNumber },
+          params: { address, amount },
         },
       },
     } = this.props;
@@ -79,13 +82,24 @@ class SendSummary extends Component<Props, State> {
       accountId: account.id,
       address,
       amount,
-      amountBigNumber,
       fees,
     });
   };
 
-  onContinue = () => {
-    const { navigation } = this.props;
+  onContinue = async () => {
+    const { account, navigation } = this.props;
+    const { address: recipient, amount } = this.getNavigationParams(
+      "address",
+      "amount",
+    );
+
+    // TODO: build transaction with libcore
+    await RNLibcoreAccountBridge.checkValidTransaction(account, {
+      feePerByte: this.state.fees,
+      recipient,
+      amount,
+    });
+
     navigation.navigate("SendConnectDevice", {
       // $FlowFixMe
       ...navigation.state.params,

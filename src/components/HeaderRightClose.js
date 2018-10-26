@@ -8,6 +8,7 @@ import colors from "../colors";
 import ConfirmationModal from "./ConfirmationModal";
 
 type Props = {
+  preferDismiss: boolean,
   navigation: NavigationScreenProp<*>,
   color: string,
   withConfirmation?: boolean,
@@ -22,6 +23,7 @@ type State = {
 class HeaderRightClose extends Component<Props, State> {
   static defaultProps = {
     color: colors.grey,
+    preferDismiss: true,
   };
 
   state = {
@@ -29,12 +31,14 @@ class HeaderRightClose extends Component<Props, State> {
   };
 
   close = () => {
-    const { navigation } = this.props;
-    if (navigation.dismiss) {
+    const { navigation, preferDismiss } = this.props;
+    if (navigation.dismiss && preferDismiss) {
       const dismissed = navigation.dismiss();
       if (!dismissed) navigation.goBack();
     }
     if (navigation.closeDrawer) navigation.closeDrawer();
+
+    navigation.goBack();
   };
 
   onPress = () => {
