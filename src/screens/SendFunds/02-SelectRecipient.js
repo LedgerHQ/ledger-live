@@ -109,8 +109,8 @@ class SelectRecipient extends Component<Props, State> {
   onPressContinue = () => {
     const { account, navigation } = this.props;
     const { address } = this.state;
-    console.log(navigation.state.params);
     navigation.navigate("SendAmount", {
+      // $FlowFixMe
       ...navigation.state.params,
       accountId: account.id,
       address,

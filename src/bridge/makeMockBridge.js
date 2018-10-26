@@ -93,6 +93,11 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     ...extraInitialTransactionProps(),
   });
 
+  const fetchTransactionNetworkInfo = () => Promise.resolve({});
+
+  const applyTransactionNetworkInfo = () => (account, transaction) =>
+    transaction;
+
   const editTransactionAmount = (account, t, amount) => ({
     ...t,
     amount,
@@ -146,6 +151,8 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     startSync,
     checkValidRecipient,
     createTransaction,
+    fetchTransactionNetworkInfo,
+    applyTransactionNetworkInfo,
     editTransactionAmount,
     getTransactionAmount,
     editTransactionRecipient,

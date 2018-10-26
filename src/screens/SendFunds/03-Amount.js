@@ -65,6 +65,7 @@ class SelectFunds extends Component<Props, State> {
     const { account, navigation } = this.props;
     const { amount } = this.state;
     navigation.navigate("SendSummary", {
+      // $FlowFixMe
       ...navigation.state.params,
       accountId: account.id,
       amount,

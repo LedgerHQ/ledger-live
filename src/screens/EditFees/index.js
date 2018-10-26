@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { BigNumber as BigNumberType } from "bignumber.js";
 
 import colors from "../../colors";
 

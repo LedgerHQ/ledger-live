@@ -84,6 +84,10 @@ const createTransaction = () => ({
   recipient: "",
 });
 
+const fetchTransactionNetworkInfo = () => Promise.resolve({});
+
+const applyTransactionNetworkInfo = (account, transaction) => transaction;
+
 const editTransactionAmount = (account, t, amount) => ({
   ...t,
   amount,
@@ -119,6 +123,8 @@ const bridge: AccountBridge<*> = {
   startSync,
   checkValidRecipient,
   createTransaction,
+  fetchTransactionNetworkInfo,
+  applyTransactionNetworkInfo,
   editTransactionAmount,
   getTransactionAmount,
   editTransactionRecipient,

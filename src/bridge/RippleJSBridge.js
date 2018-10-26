@@ -533,6 +533,10 @@ export const accountBridge: AccountBridge<Transaction> = {
     tag: undefined,
   }),
 
+  fetchTransactionNetworkInfo: () => Promise.resolve({}),
+
+  applyTransactionNetworkInfo: (account, transaction) => transaction,
+
   editTransactionAmount: (account, t, amount) => ({
     ...t,
     amount,

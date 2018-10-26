@@ -54,11 +54,16 @@ class Validation extends Component<Props, State> {
     } = this.props;
     const bridge = getAccountBridge(account);
     let transaction = bridge.createTransaction(account);
-    transaction = bridge.editTransactionParameters(account, transaction, {
+    transaction = bridge.editTransactionRecipient(
+      account,
+      transaction,
       address,
-      amount: new BigNumber(amount),
-      ...rest,
-    });
+    );
+    transaction = bridge.editTransactionAmount(
+      account,
+      transaction,
+      new BigNumber(amount),
+    );
     bridge.signAndBroadcast(account, transaction, deviceId).subscribe({
       next: e => {
         switch (e.type) {

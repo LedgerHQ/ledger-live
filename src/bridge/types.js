@@ -49,6 +49,17 @@ export interface AccountBridge<Transaction> {
   // it needs to be a serializable JS object
   createTransaction(account: Account): Transaction;
 
+  // fetch various information asynchronously: typically fees.
+  // ideally should be loaded before checking valid tranction / calculating total to spend / max amount / ..
+  fetchTransactionNetworkInfo(account: Account): Promise<Object>;
+
+  // apply network info that was previously fetched
+  applyTransactionNetworkInfo(
+    account: Account,
+    transaction: Transaction,
+    networkInfo: Object,
+  ): Transaction;
+
   editTransactionAmount(
     account: Account,
     transaction: Transaction,

@@ -4,7 +4,6 @@ import { View, SafeAreaView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { BigNumber as BigNumberType } from "bignumber.js";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
