@@ -189,6 +189,44 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  bitcloud: {
+    id: "bitcloud",
+    coinType: 218,
+    name: "BitCloud",
+    managerAppName: "BitCloud",
+    ticker: "BTDX",
+    scheme: "bitcloud",
+    color: "#00d2ff",
+    family: "bitcoin",
+    ledgerExplorerId: "btdx",
+    blockAvgTime: 300,
+    bitcoinLikeInfo: {
+      P2PKH: 25,
+      P2SH: 5
+    },
+    units: [
+      {
+        name: "BTDX",
+        code: "BTDX",
+        magnitude: 8
+      },
+      {
+        name: "Milli-BTDX",
+        code: "mBTDX",
+        magnitude: 5
+      },
+      {
+        name: "Micro-BTDX",
+        code: "uBTDX",
+        magnitude: 2
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
   bitcoin: {
     id: "bitcoin",
     coinType: 0,

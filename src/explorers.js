@@ -10,6 +10,7 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   ark: hash => `https://explorer.ark.io/transaction/${hash}`,
   atheios: () => null,
   banano: () => null,
+  bitcloud: hash => `https://chainz.cryptoid.info/btdx/tx.dws?${hash}.htm`,
   bitcoin_cash: hash => `https://bitcoincash.blockexplorer.com/tx/${hash}`,
   bitcoin_gold: hash => `https://btgexplorer.com/tx/${hash}`,
   bitcoin_private: hash => `https://explorer.btcprivate.org/tx/${hash}`,
