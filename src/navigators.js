@@ -83,7 +83,7 @@ if (Platform.OS === "ios") {
   headerStyle = {
     height: 48 + statusBarPadding,
     paddingTop: statusBarPadding,
-    elevation: 4,
+    elevation: 1,
   };
 }
 
@@ -102,6 +102,8 @@ const styles = StyleSheet.create({
   },
   transparentHeader: {
     backgroundColor: "transparent",
+    shadowOpacity: 0,
+    elevation: 0,
   },
   labelStyle: { fontSize: 12 },
 });
