@@ -28,7 +28,9 @@ import {
 } from "./specific";
 import accountModel from "../logic/accountModel";
 
-async function getOrCreateWallet({
+const hexToBytes = str => Array.from(Buffer.from(str, "hex"));
+
+export async function getOrCreateWallet({
   core,
   walletName,
   currency,
@@ -121,6 +123,57 @@ export async function syncAccount({ account }: { account: Account }) {
   return updatedAccount;
 }
 
+export async function createAccountFromDevice({
+  core,
+  wallet,
+  hwApp,
+}: {
+  core: *,
+  wallet: *,
+  hwApp: *,
+}) {
+  const accountCreationInfos = await core.coreWallet.getNextAccountCreationInfo(
+    wallet,
+  );
+  const chainCodes = await core.coreAccountCreationInfo.getChainCodes(
+    accountCreationInfos,
+  );
+  const publicKeys = await core.coreAccountCreationInfo.getPublicKeys(
+    accountCreationInfos,
+  );
+  const index = await core.coreAccountCreationInfo.getIndex(
+    accountCreationInfos,
+  );
+  const derivations = await core.coreAccountCreationInfo.getDerivations(
+    accountCreationInfos,
+  );
+  const owners = await core.coreAccountCreationInfo.getOwners(
+    accountCreationInfos,
+  );
+
+  await derivations.reduce(
+    (promise, derivation) =>
+      promise.then(async () => {
+        const { publicKey, chainCode } = await hwApp.getWalletPublicKey(
+          derivation,
+        );
+        publicKeys.push(hexToBytes(publicKey));
+        chainCodes.push(hexToBytes(chainCode));
+      }),
+    Promise.resolve(),
+  );
+
+  const newAccountCreationInfos = await core.coreAccountCreationInfo.init(
+    index,
+    owners,
+    derivations,
+    publicKeys,
+    chainCodes,
+  );
+
+  return core.coreWallet.newAccountWithInfo(wallet, newAccountCreationInfos);
+}
+
 async function getOrCreateAccount({ core, coreWallet, xpub, index }) {
   let coreAccount;
   try {
@@ -177,12 +230,11 @@ export async function syncCoreAccount({
   core: *,
   coreWallet: *,
   coreAccount: *,
-  walletName: string,
   currencyId: string,
   accountIndex: number,
   derivationMode: string,
   seedIdentifier: string,
-}) {
+}): Promise<Account> {
   const eventReceiver = await createInstance(core.coreEventReceiver);
   const eventBus = await core.coreAccount.synchronize(coreAccount);
   const serialContext = await core.coreThreadDispatcher.getSerialExecutionContext(

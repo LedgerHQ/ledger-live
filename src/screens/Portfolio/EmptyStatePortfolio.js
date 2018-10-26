@@ -7,7 +7,7 @@ import colors from "../../colors";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import AddAccountsModal from "../../components/AddAccountsModal";
+import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 
 type Props = {
   t: T,
