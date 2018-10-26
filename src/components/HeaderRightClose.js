@@ -25,6 +25,7 @@ class HeaderRightClose extends Component<Props, State> {
     color: colors.grey,
     preferDismiss: true,
   };
+
   state = {
     isConfirmationModalOpened: false,
   };
