@@ -31,13 +31,13 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    result: string,
+    result: *,
   }>,
 };
 
 type State = {
   validAddress: boolean,
-  address: string,
+  address: *,
   error: ?Error,
   shouldUpdate: boolean,
 };
@@ -100,8 +100,7 @@ class SelectRecipient extends Component<Props, State> {
   };
 
   onPressScan = () => {
-    // $FlowFixMe
-    this.props.navigation.replace("ScanRecipient", {
+    this.props.navigation.navigate("ScanRecipient", {
       accountId: this.props.navigation.getParam("accountId"),
     });
   };

@@ -19,6 +19,8 @@ import SummaryRow from "./SummaryRow";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
+import RNLibcoreAccountBridge from "../../bridge/RNLibcoreAccountBridge";
+
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
@@ -46,14 +48,9 @@ class SendSummary extends Component<Props, State> {
   };
 
   componentDidUpdate() {
-    const {
-      navigation: {
-        state: {
-          // $FlowFixMe
-          params: { fees },
-        },
-      },
-    } = this.props;
+    const { navigation } = this.props;
+
+    const fees = navigation.getParam("fees");
 
     if (fees !== this.state.fees) {
       this.setFees(fees);
@@ -61,6 +58,13 @@ class SendSummary extends Component<Props, State> {
   }
 
   setFees = (fees: number) => this.setState({ fees });
+
+  getNavigationParams = (...params) => {
+    const { navigation } = this.props;
+    const res = {};
+    params.forEach(param => (res[param] = navigation.getParam(param)));
+    return res;
+  };
 
   openFees = () => {
     const {
@@ -81,9 +85,21 @@ class SendSummary extends Component<Props, State> {
     });
   };
 
-  onContinue = () => {
-    const { navigation } = this.props;
+  onContinue = async () => {
     const { fees } = this.state;
+    const { account, navigation } = this.props;
+    const { address: recipient, amount } = this.getNavigationParams(
+      "address",
+      "amount",
+    );
+
+    // TODO: build transaction with libcore
+    await RNLibcoreAccountBridge.checkValidTransaction(account, {
+      feePerByte: this.state.fees,
+      recipient,
+      amount,
+    });
+
     navigation.navigate("SendConnectDevice", {
       // $FlowFixMe
       ...navigation.state.params,

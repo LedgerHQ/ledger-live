@@ -1,6 +1,6 @@
 // @flow
 // TODO split in files!!!
-
+import { BigNumber } from "bignumber.js";
 import {
   isSegwitDerivationMode,
   getDerivationScheme,
@@ -17,6 +17,7 @@ import type {
   AccountRaw,
   CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
+import { InvalidAddress } from "@ledgerhq/live-common/lib/errors";
 import load from "./load";
 import {
   getValue,
@@ -26,9 +27,10 @@ import {
   OperationTypeMap,
 } from "./specific";
 import accountModel from "../logic/accountModel";
-import { InvalidRecipient } from "../errors";
 
-async function getOrCreateWallet({
+const hexToBytes = str => Array.from(Buffer.from(str, "hex"));
+
+export async function getOrCreateWallet({
   core,
   walletName,
   currency,
@@ -71,6 +73,23 @@ async function getOrCreateWallet({
   return wallet;
 }
 
+async function bigNumberToLibcoreAmount(
+  core: *,
+  walletCurrency: *,
+  amount: BigNumber,
+) {
+  return core.coreAmount.fromHex(walletCurrency, amount.toString(16));
+}
+
+async function libcoreAmountToBigNumber(
+  core: *,
+  amountInstance: string,
+): Promise<BigNumber> {
+  const coreBigInt = await core.coreAmount.toBigInt(amountInstance);
+  const { value } = await core.coreBigInt.toString(coreBigInt, 10);
+  return BigNumber(value);
+}
+
 export async function syncAccount({ account }: { account: Account }) {
   const { derivationMode, currency, xpub, index, seedIdentifier } = account;
   const core = await load();
@@ -102,6 +121,57 @@ export async function syncAccount({ account }: { account: Account }) {
   });
 
   return updatedAccount;
+}
+
+export async function createAccountFromDevice({
+  core,
+  wallet,
+  hwApp,
+}: {
+  core: *,
+  wallet: *,
+  hwApp: *,
+}) {
+  const accountCreationInfos = await core.coreWallet.getNextAccountCreationInfo(
+    wallet,
+  );
+  const chainCodes = await core.coreAccountCreationInfo.getChainCodes(
+    accountCreationInfos,
+  );
+  const publicKeys = await core.coreAccountCreationInfo.getPublicKeys(
+    accountCreationInfos,
+  );
+  const index = await core.coreAccountCreationInfo.getIndex(
+    accountCreationInfos,
+  );
+  const derivations = await core.coreAccountCreationInfo.getDerivations(
+    accountCreationInfos,
+  );
+  const owners = await core.coreAccountCreationInfo.getOwners(
+    accountCreationInfos,
+  );
+
+  await derivations.reduce(
+    (promise, derivation) =>
+      promise.then(async () => {
+        const { publicKey, chainCode } = await hwApp.getWalletPublicKey(
+          derivation,
+        );
+        publicKeys.push(hexToBytes(publicKey));
+        chainCodes.push(hexToBytes(chainCode));
+      }),
+    Promise.resolve(),
+  );
+
+  const newAccountCreationInfos = await core.coreAccountCreationInfo.init(
+    index,
+    owners,
+    derivations,
+    publicKeys,
+    chainCodes,
+  );
+
+  return core.coreWallet.newAccountWithInfo(wallet, newAccountCreationInfos);
 }
 
 async function getOrCreateAccount({ core, coreWallet, xpub, index }) {
@@ -160,12 +230,11 @@ export async function syncCoreAccount({
   core: *,
   coreWallet: *,
   coreAccount: *,
-  walletName: string,
   currencyId: string,
   accountIndex: number,
   derivationMode: string,
   seedIdentifier: string,
-}) {
+}): Promise<Account> {
   const eventReceiver = await createInstance(core.coreEventReceiver);
   const eventBus = await core.coreAccount.synchronize(coreAccount);
   const serialContext = await core.coreThreadDispatcher.getSerialExecutionContext(
@@ -383,5 +452,83 @@ export async function isValidRecipient({
     return Promise.resolve(null);
   }
 
-  return Promise.resolve(new InvalidRecipient());
+  return Promise.resolve(new InvalidAddress());
+}
+
+export async function getFeesForTransaction({
+  account,
+  transaction,
+}: {
+  account: Account,
+  transaction: *,
+}): Promise<BigNumber> {
+  const { derivationMode, currency, xpub, index } = account;
+  const core = await load();
+  const walletName = getWalletName(account);
+
+  const coreWallet = await getOrCreateWallet({
+    core,
+    walletName,
+    currency,
+    derivationMode,
+  });
+
+  const coreAccount = await getOrCreateAccount({
+    core,
+    coreWallet,
+    index,
+    xpub,
+  });
+
+  const bitcoinLikeAccount = await core.coreAccount.asBitcoinLikeAccount(
+    coreAccount,
+  );
+
+  const walletCurrency = await core.coreWallet.getCurrency(coreWallet);
+
+  const amount = await bigNumberToLibcoreAmount(
+    core,
+    walletCurrency,
+    BigNumber(transaction.amount),
+  );
+
+  const feesPerByte = await bigNumberToLibcoreAmount(
+    core,
+    walletCurrency,
+    BigNumber(transaction.feePerByte),
+  );
+
+  const transactionBuilder = await core.coreBitcoinLikeAccount.buildTransaction(
+    bitcoinLikeAccount,
+  );
+
+  const isValid = await isValidRecipient({
+    currency: account.currency,
+    recipient: transaction.recipient,
+  });
+
+  if (isValid !== null) {
+    throw new InvalidAddress();
+  }
+
+  await core.coreBitcoinLikeTransactionBuilder.sendToAddress(
+    transactionBuilder,
+    amount,
+    transaction.recipient,
+  );
+  await core.coreBitcoinLikeTransactionBuilder.pickInputs(
+    transactionBuilder,
+    0,
+    0xffffff,
+  );
+  await core.coreBitcoinLikeTransactionBuilder.setFeesPerByte(
+    transactionBuilder,
+    feesPerByte,
+  );
+  const builded = await core.coreBitcoinLikeTransactionBuilder.build(
+    transactionBuilder,
+  );
+  const feesAmount = await core.coreBitcoinLikeTransaction.getFees(builded);
+  const fees = await libcoreAmountToBigNumber(core, feesAmount);
+  return fees;
 }

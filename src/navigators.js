@@ -57,6 +57,7 @@ import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
 
 // add accounts
+import AddAccountsHeaderRightClose from "./screens/AddAccounts/AddAccountsHeaderRightClose";
 import AddAccountsSelectCrypto from "./screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "./screens/AddAccounts/02-SelectDevice";
 import AddAccountsAccounts from "./screens/AddAccounts/03-Accounts";
@@ -270,6 +271,19 @@ ReceiveFunds.navigationOptions = {
   header: null,
 };
 
+const addAccountsNavigatorConfig = {
+  ...closableStackNavigatorConfig,
+  headerMode: "float",
+  navigationOptions: ({
+    navigation,
+  }: {
+    navigation: NavigationScreenProp<*>,
+  }) => ({
+    ...navigationOptions,
+    headerRight: <AddAccountsHeaderRightClose navigation={navigation} />,
+  }),
+};
+
 const AddAccounts = createStackNavigator(
   {
     AddAccountsSelectCrypto,
@@ -277,7 +291,7 @@ const AddAccounts = createStackNavigator(
     AddAccountsAccounts,
     AddAccountsSuccess,
   },
-  closableStackNavigatorConfig,
+  addAccountsNavigatorConfig,
 );
 
 AddAccounts.navigationOptions = {
@@ -297,10 +311,7 @@ const SendFunds = createStackNavigator(
     SendConnectDevice,
     SendValidation,
   },
-  {
-    headerMode: "float",
-    ...closableStackNavigatorConfig,
-  },
+  closableStackNavigatorConfig,
 );
 
 SendFunds.navigationOptions = {

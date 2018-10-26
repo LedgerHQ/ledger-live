@@ -294,6 +294,8 @@
     "noMoreOperations": "No More Operations"
   },
   "account": {
+    "send": "Send",
+    "receive": "Receive",
     "lastOperations": "Last operations",
     "emptyState": {
       "title": "No crypto assets yet?",
@@ -465,6 +467,26 @@
     "amount": {
       "available": "You have <1><0>{{amount}}</></> available"
     }
+  },
+  "addAccounts": {
+    "sections": {
+      "accountsToImport": "Accounts to import",
+      "addNewAccount": "Add a new account",
+      "existing": "Existing accounts"
+    },
+    "success": {
+      "cta": "Add new accounts",
+      "secondaryCTA": "Go to accounts"
+    },
+    "stopScanning": "Stop scanning",
+    "retryScanning": "Retry scanning",
+    "retry": "Retry",
+    "done": "Done",
+    "finalCta": "Continue",
+    "synchronizing": "Synchronizing",
+    "synchronizingDesc": "We are synchronizing your accounts, this can take a while...",
+    "noAccountToCreate": "No <1><0>{{currencyName}}</></> account was found to create. Restart the flow and sync your accounts",
+    "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one."
   },
   "SelectDevice": {
     "deviceNotFoundPairNewDevice": "Pair a new device",

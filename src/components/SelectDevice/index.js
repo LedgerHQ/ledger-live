@@ -223,7 +223,7 @@ class SelectDevice extends Component<
 
 const styles = StyleSheet.create({
   root: {
-    padding: 20,
+    padding: 16,
   },
 });
 
