@@ -7,7 +7,10 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 import SelectDevice from "../../components/SelectDevice";
-import { currencyApp } from "../../components/SelectDevice/steps";
+import {
+  connectingStep,
+  currencyApp,
+} from "../../components/SelectDevice/steps";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
@@ -45,7 +48,7 @@ class AddAccountsSelectDevice extends Component<Props, State> {
         <Stepper nbSteps={4} currentStep={2} />
         <SelectDevice
           onSelect={this.onSelectDevice}
-          steps={[currencyApp(currency)]}
+          steps={[connectingStep, currencyApp(currency)]}
         />
       </SafeAreaView>
     );

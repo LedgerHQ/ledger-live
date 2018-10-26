@@ -28,6 +28,7 @@ const AppsList = () => (
         }}
       />
     )}
+    keyExtractor={d => String(d.id)}
     data={Array(40)
       .fill(null)
       .map((_, id) => ({ id }))}

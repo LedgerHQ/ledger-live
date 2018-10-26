@@ -1,70 +1,45 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
-import { translate, Trans } from "react-i18next";
+import { StyleSheet } from "react-native";
+import { translate } from "react-i18next";
 import BottomModal from "../BottomModal";
-import LText from "../LText";
-import TranslatedError from "../TranslatedError";
-import ErrorIcon from "../ErrorIcon";
 import Close from "../../icons/Close";
 import Touchable from "../Touchable";
-import Button from "../Button";
 import colors from "../../colors";
 import type { Step } from "./types";
-
-const RenderError = ({
-  error,
-  onRetry,
-}: {
-  error: Error,
-  onRetry: () => void,
-}) => (
-  <View style={styles.root}>
-    <View style={styles.headIcon}>
-      <ErrorIcon error={error} />
-    </View>
-    <LText secondary bold style={styles.title}>
-      <TranslatedError error={error} />
-    </LText>
-    <LText style={styles.description}>
-      <TranslatedError error={error} field="description" />
-    </LText>
-    <Button
-      type="secondary"
-      title={<Trans i18nKey="common.retry" />}
-      containerStyle={styles.retryButton}
-      onPress={onRetry}
-    />
-  </View>
-);
-
-const RenderStep = ({ step }: { step: Step }) => (
-  <View style={styles.root}>
-    <View style={styles.headIcon}>{step.icon}</View>
-    <LText secondary bold style={styles.title}>
-      {step.title}
-    </LText>
-    <LText style={styles.description}>{step.description}</LText>
-  </View>
-);
+import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 class SelectDeviceConnectModal extends PureComponent<{
+  deviceName: string,
   isOpened: boolean,
   onClose: () => void,
   onRetry: () => void,
+  onStepDone: () => void,
   step: Step,
   error: ?Error,
 }> {
   render() {
-    const { isOpened, onClose, onRetry, error, step } = this.props;
+    const {
+      deviceName,
+      isOpened,
+      onClose,
+      onRetry,
+      onStepDone,
+      error,
+      step,
+    } = this.props;
 
     return (
       <BottomModal isOpened={isOpened} onClose={onClose}>
         {error ? (
-          <RenderError error={error} onRetry={onRetry} />
+          <RenderError
+            error={error}
+            onRetry={onRetry}
+            Footer={step.ErrorFooter || ErrorFooterGeneric}
+          />
         ) : (
-          <RenderStep step={step} />
+          <step.Body deviceName={deviceName} step={step} onDone={onStepDone} />
         )}
         <Touchable style={styles.close} onPress={onClose}>
           <Close color={colors.fog} size={20} />
@@ -78,7 +53,9 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
     padding: 20,
+    minHeight: 280,
   },
   close: {
     position: "absolute",

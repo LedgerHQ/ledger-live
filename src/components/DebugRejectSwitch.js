@@ -15,9 +15,11 @@ export const rejections = new Subject();
 const defaultErrorCreator = () => new Error("DebugRejectSwitch");
 
 // usage: observable.pipe(rejectionOp())
-export const rejectionOp = <T>(
-  createError: () => Error = defaultErrorCreator,
-) => (observable: Observable<T>): Observable<T> =>
+export const rejectionOp = (createError: () => Error = defaultErrorCreator) => <
+  T,
+>(
+  observable: Observable<T>,
+): Observable<T> =>
   !Config.DEBUG_REJECT_SWITCH
     ? observable
     : Observable.create(o => {

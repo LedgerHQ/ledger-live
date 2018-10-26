@@ -33,7 +33,6 @@ import ManagerAppsList from "./screens/Manager/AppsList";
 import ManagerDevice from "./screens/Manager/Device";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
-import ReceiveVerifyAddress from "./screens/ReceiveFunds/03-VerifyAddress";
 import ReceiveConfirmation from "./screens/ReceiveFunds/04-Confirmation";
 import SendFundsMain from "./screens/SendFunds/01-SelectAccount";
 import SendSelectRecipient from "./screens/SendFunds/02-SelectRecipient";
@@ -260,7 +259,6 @@ const ReceiveFunds = createStackNavigator(
   {
     ReceiveSelectAccount,
     ReceiveConnectDevice,
-    ReceiveVerifyAddress,
     ReceiveConfirmation,
   },
   {

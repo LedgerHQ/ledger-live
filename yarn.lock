@@ -769,10 +769,10 @@
     "@ledgerhq/hw-transport" "^4.24.0"
     bip32-path "0.4.2"
 
-"@ledgerhq/hw-transport-http@^4.26.0":
-  version "4.26.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.26.0.tgz#ed77c694ca25dd17763b672c66e721913e07a2d6"
-  integrity sha512-PG6AYLVub/+uoqzd0pt+IzkX0IJKCkbVKOkEt/yaIAdvd8F6CjNqM1y+XUtK5BjagCyL/mxTxvvo+oBWOKO53w==
+"@ledgerhq/hw-transport-http@^4.27.1":
+  version "4.27.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.27.1.tgz#e162a302d9f9ea6e07b582a4be1ea0b2630964f7"
+  integrity sha512-C40XDFu7zO+8qeP8hfurUVFj6RKoRWXWCx2TFHsDm+Ki2CanhquRXxRkeEX01cbRKo0W7NnB7h1cIpmUvDKGfQ==
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
     axios "^0.18.0"

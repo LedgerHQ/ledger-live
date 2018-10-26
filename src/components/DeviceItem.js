@@ -20,6 +20,7 @@ type Props<T> = {
   name: string,
   family?: ?string,
   disabled?: boolean,
+  withArrow?: boolean,
   description?: string,
   onSelect?: T => any,
   onForget?: T => any,
@@ -50,21 +51,26 @@ export default class DeviceItem<T> extends PureComponent<Props<T>> {
       onSelect,
       description,
       onForget,
+      withArrow,
     } = this.props;
 
     const iconName = family && iconByFamily[family];
 
     let res = (
       <View style={[styles.root, disabled && styles.rootDisabled]}>
-        {!iconName ? (
-          <IconNanoX
+        <IconNanoX
+          color={colors.darkBlue}
+          height={36}
+          width={8}
+          style={disabled ? styles.deviceIconDisabled : undefined}
+        />
+        {!iconName ? null : (
+          <Icon
+            style={styles.specialIcon}
+            name={iconName}
+            size={16}
             color={colors.darkBlue}
-            height={36}
-            width={8}
-            style={disabled ? styles.deviceIconDisabled : undefined}
           />
-        ) : (
-          <Icon name={iconName} size={32} color={colors.darkBlue} />
         )}
         <View style={styles.content}>
           <LText
@@ -89,7 +95,9 @@ export default class DeviceItem<T> extends PureComponent<Props<T>> {
             </LText>
           ) : null}
         </View>
-        {!disabled && <IconArrowRight size={16} color={colors.grey} />}
+        {withArrow && !disabled ? (
+          <IconArrowRight size={16} color={colors.grey} />
+        ) : null}
       </View>
     );
 
@@ -131,6 +139,7 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   root: {
+    height: 64,
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderColor: colors.fog,
@@ -144,6 +153,10 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     backgroundColor: colors.lightGrey,
   },
+  specialIcon: {
+    position: "absolute",
+    left: 4,
+  },
   content: {
     flexDirection: "column",
     justifyContent: "center",
@@ -154,7 +167,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   deviceNameText: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.darkBlue,
   },
   deviceNameTextDisabled: {

@@ -26,7 +26,7 @@ type State = {};
 
 class ReceiveFunds extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Receive funds" subtitle="1 of 4" />,
+    headerTitle: <StepHeader title="Receive funds" subtitle="1 of 3" />,
   };
 
   renderItem = ({ item }: { item: Account }) => (
@@ -48,7 +48,7 @@ class ReceiveFunds extends Component<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView style={{ flex: 1 }}>
-          <Stepper nbSteps={4} currentStep={1} />
+          <Stepper nbSteps={3} currentStep={1} />
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               inputWrapperStyle={styles.card}
