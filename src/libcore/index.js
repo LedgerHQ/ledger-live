@@ -27,51 +27,61 @@ import {
   OperationTypeMap,
 } from "./specific";
 import accountModel from "../logic/accountModel";
+import { atomicQueue } from "../logic/promise";
 
 const hexToBytes = str => Array.from(Buffer.from(str, "hex"));
 
-export async function getOrCreateWallet({
-  core,
-  walletName,
-  currency,
-  derivationMode,
-}: {
-  core: *,
-  walletName: string,
-  currency: CryptoCurrency,
-  derivationMode: string,
-}) {
-  const poolInstance = core.getPoolInstance();
-  let wallet;
-  try {
-    wallet = await core.coreWalletPool.getWallet(poolInstance, walletName);
-  } catch (err) {
-    const currencyCore = await core.coreWalletPool.getCurrency(
-      poolInstance,
-      currency.id,
-    );
-    const config = await core.coreDynamicObject.newInstance();
+export const getOrCreateWallet = atomicQueue(
+  async ({
+    core,
+    walletName,
+    currency,
+    derivationMode,
+  }: {
+    core: *,
+    walletName: string,
+    currency: CryptoCurrency,
+    derivationMode: string,
+  }) => {
+    const poolInstance = core.getPoolInstance();
+    let wallet;
+    try {
+      wallet = await core.coreWalletPool.getWallet(poolInstance, walletName);
+    } catch (err) {
+      const currencyCore = await core.coreWalletPool.getCurrency(
+        poolInstance,
+        currency.id,
+      );
+      const config = await core.coreDynamicObject.newInstance();
 
-    const derivationScheme = getDerivationScheme({ currency, derivationMode });
+      const derivationScheme = getDerivationScheme({
+        currency,
+        derivationMode,
+      });
 
-    if (isSegwitDerivationMode(derivationMode)) {
-      core.coreDynamicObject.putString(config, "KEYCHAIN_ENGINE", "BIP49_P2SH");
+      if (isSegwitDerivationMode(derivationMode)) {
+        core.coreDynamicObject.putString(
+          config,
+          "KEYCHAIN_ENGINE",
+          "BIP49_P2SH",
+        );
+      }
+      core.coreDynamicObject.putString(
+        config,
+        "KEYCHAIN_DERIVATION_SCHEME",
+        derivationScheme,
+      );
+
+      wallet = await core.coreWalletPool.createWallet(
+        poolInstance,
+        walletName,
+        currencyCore,
+        config,
+      );
     }
-    core.coreDynamicObject.putString(
-      config,
-      "KEYCHAIN_DERIVATION_SCHEME",
-      derivationScheme,
-    );
-
-    wallet = await core.coreWalletPool.createWallet(
-      poolInstance,
-      walletName,
-      currencyCore,
-      config,
-    );
-  }
-  return wallet;
-}
+    return wallet;
+  },
+);
 
 async function bigNumberToLibcoreAmount(
   core: *,
@@ -174,49 +184,51 @@ export async function createAccountFromDevice({
   return core.coreWallet.newAccountWithInfo(wallet, newAccountCreationInfos);
 }
 
-async function getOrCreateAccount({ core, coreWallet, xpub, index }) {
-  let coreAccount;
-  try {
-    coreAccount = await core.coreWallet.getAccount(coreWallet, index);
-  } catch (err) {
-    const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
-      coreWallet,
-      index,
-    );
+const getOrCreateAccount = atomicQueue(
+  async ({ core, coreWallet, xpub, index }) => {
+    let coreAccount;
+    try {
+      coreAccount = await core.coreWallet.getAccount(coreWallet, index);
+    } catch (err) {
+      const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
+        coreWallet,
+        index,
+      );
 
-    const infosIndex = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getIndex(extendedInfos),
-    );
-    const extendedKeys = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
-        extendedInfos,
-      ),
-    );
-    const owners = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getOwners(extendedInfos),
-    );
-    const derivations = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getDerivations(
-        extendedInfos,
-      ),
-    );
+      const infosIndex = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getIndex(extendedInfos),
+      );
+      const extendedKeys = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
+          extendedInfos,
+        ),
+      );
+      const owners = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getOwners(extendedInfos),
+      );
+      const derivations = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getDerivations(
+          extendedInfos,
+        ),
+      );
 
-    extendedKeys.push(xpub);
+      extendedKeys.push(xpub);
 
-    const newExtendedKeys = await core.coreExtendedKeyAccountCreationInfo.init(
-      infosIndex,
-      owners,
-      derivations,
-      extendedKeys,
-    );
+      const newExtendedKeys = await core.coreExtendedKeyAccountCreationInfo.init(
+        infosIndex,
+        owners,
+        derivations,
+        extendedKeys,
+      );
 
-    coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
-      coreWallet,
-      newExtendedKeys,
-    );
-  }
-  return coreAccount;
-}
+      coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
+        coreWallet,
+        newExtendedKeys,
+      );
+    }
+    return coreAccount;
+  },
+);
 
 export async function syncCoreAccount({
   core,
@@ -237,9 +249,8 @@ export async function syncCoreAccount({
 }): Promise<Account> {
   const eventReceiver = await createInstance(core.coreEventReceiver);
   const eventBus = await core.coreAccount.synchronize(coreAccount);
-  const serialContext = await core.coreThreadDispatcher.getSerialExecutionContext(
+  const serialContext = await core.coreThreadDispatcher.getMainExecutionContext(
     core.getThreadDispatcher(),
-    "main",
   );
   await core.coreEventBus.subscribe(eventBus, serialContext, eventReceiver);
 
