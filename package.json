@@ -27,6 +27,9 @@
     ],
     "testURL": "http://localhost"
   },
+  "peerDependencies": {
+    "react": "*"
+  },
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^4.24.0",
     "@ledgerhq/hw-app-eth": "^4.24.0",
@@ -39,7 +42,6 @@
     "node-lzw": "^0.3.1",
     "numeral": "^2.0.6",
     "prando": "^3.0.1",
-    "react": "^16.4.0",
     "react-i18next": "^8.0.7",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
