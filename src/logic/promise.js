@@ -5,11 +5,16 @@ export const delay = (ms: number): Promise<void> =>
 
 type Job<R, A> = (...args: A) => Promise<R>;
 
-export const atomicQueue = <R, A: Array<*>>(job: Job<R, A>): Job<R, A> => {
-  let queue = Promise.resolve();
+export const atomicQueue = <R, A: Array<*>>(
+  job: Job<R, A>,
+  queueIdentifier: (...args: A) => string = () => "",
+): Job<R, A> => {
+  let queues = {};
   return (...args) => {
+    const id = queueIdentifier(...args);
+    const queue = queues[id] || Promise.resolve();
     const p = queue.then(() => job(...args));
-    queue = p.catch(() => {});
+    queues[id] = p.catch(() => {});
     return p;
   };
 };

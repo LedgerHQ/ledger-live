@@ -81,6 +81,7 @@ export const getOrCreateWallet = atomicQueue(
     }
     return wallet;
   },
+  ({ walletName }) => walletName,
 );
 
 async function bigNumberToLibcoreAmount(
@@ -228,6 +229,7 @@ const getOrCreateAccount = atomicQueue(
     }
     return coreAccount;
   },
+  ({ xpub }) => xpub || "",
 );
 
 export async function syncCoreAccount({
