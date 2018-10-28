@@ -24,6 +24,7 @@ import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
+    deviceId: string,
   },
 }>;
 

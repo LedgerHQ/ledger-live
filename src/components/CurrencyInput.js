@@ -91,6 +91,10 @@ class CurrencyInput extends PureComponent<Props, State> {
     displayValue: "",
   };
 
+  componentDidMount() {
+    this.setDisplayValue();
+  }
+
   componentDidUpdate(prevProps: Props) {
     const { value, showAllDigits, unit } = this.props;
     const needsToBeReformatted =

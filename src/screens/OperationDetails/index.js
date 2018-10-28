@@ -10,8 +10,10 @@ import colors from "../../colors";
 
 type Props = {
   navigation: NavigationScreenProp<{
-    account: Account,
-    operation: Operation,
+    params: {
+      account: Account,
+      operation: Operation,
+    },
   }>,
 };
 class OperationDetails extends PureComponent<Props, *> {
@@ -22,8 +24,8 @@ class OperationDetails extends PureComponent<Props, *> {
 
   render() {
     const { navigation } = this.props;
-    const account = navigation.getParam("account", {});
-    const operation = navigation.getParam("operation", {});
+    const account = navigation.getParam("account");
+    const operation = navigation.getParam("operation");
 
     const url = getAccountOperationExplorer(account, operation);
     return (

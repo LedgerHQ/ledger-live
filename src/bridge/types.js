@@ -49,6 +49,17 @@ export interface AccountBridge<Transaction> {
   // it needs to be a serializable JS object
   createTransaction(account: Account): Transaction;
 
+  // fetch various information asynchronously: typically fees.
+  // ideally should be loaded before checking valid tranction / calculating total to spend / max amount / ..
+  fetchTransactionNetworkInfo(account: Account): Promise<Object>;
+
+  // apply network info that was previously fetched
+  applyTransactionNetworkInfo(
+    account: Account,
+    transaction: Transaction,
+    networkInfo: Object,
+  ): Transaction;
+
   editTransactionAmount(
     account: Account,
     transaction: Transaction,
@@ -64,6 +75,23 @@ export interface AccountBridge<Transaction> {
   ): Transaction;
 
   getTransactionRecipient(account: Account, transaction: Transaction): string;
+
+  // edit any extra parameter (e.g. ripple tagId)
+  // nothing happen if field is not supported, undefined is returned if not supported.
+  editTransactionExtra(
+    account: Account,
+    transaction: Transaction,
+    field: string,
+    value: any,
+  ): Transaction;
+
+  // edit any extra parameter (e.g. ripple tagId)
+  // undefined is returned if not supported.
+  getTransactionExtra(
+    account: Account,
+    transaction: Transaction,
+    field: string,
+  ): any;
 
   // checks if a recipient is valid and returns potential warnings
   // - if promise is successful with null, all is fine

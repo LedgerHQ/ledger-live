@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { BigNumber } from "bignumber.js";
 
 import LText from "../../components/LText/index";
 import Check from "../../icons/Check";
@@ -10,12 +11,13 @@ import colors from "../../colors";
 type Props = {
   title: string,
   last?: boolean,
-  currentValue: number,
-  onPress: number => void,
+  currentValue: ?BigNumber,
+  onPress: (?BigNumber) => void,
+  isSelected: boolean,
 };
 
 type State = {
-  fees: ?number,
+  fees: ?string,
 };
 
 class FeesRow extends Component<Props, State> {
@@ -25,20 +27,19 @@ class FeesRow extends Component<Props, State> {
   };
 
   state = {
-    fees: this.props.currentValue || undefined,
+    fees: (this.props.currentValue || "").toString(),
   };
 
   input = React.createRef();
 
   onChangeText = (fees: string) => {
     const { onPress } = this.props;
-    const nbFees = parseInt(fees, 10);
-    this.setState(state => ({ ...state, fees: nbFees }), () => onPress(nbFees));
+    this.setState({ fees }, () => onPress(BigNumber(fees)));
   };
 
   onPress = () => {
     const { onPress } = this.props;
-    onPress(0);
+    onPress(null);
 
     if (this.input.current) {
       this.input.current.focus();
@@ -46,9 +47,7 @@ class FeesRow extends Component<Props, State> {
   };
 
   render(): React$Node {
-    const { title, last, currentValue } = this.props;
-    const isSelected =
-      currentValue !== 5 && currentValue !== 10 && currentValue !== 15;
+    const { title, last, isSelected } = this.props;
 
     return (
       <TouchableOpacity onPress={this.onPress}>

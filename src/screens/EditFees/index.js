@@ -11,11 +11,12 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { BigNumber as BigNumberType } from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import colors from "../../colors";
 
 import { accountScreenSelector } from "../../reducers/accounts";
+import { getAccountBridge } from "../../bridge";
 
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
@@ -27,46 +28,56 @@ type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
-    address: string,
-    amount: string,
-    amountBigNumber: BigNumberType,
-    fees: number,
+    transaction: *,
   }>,
 };
 type State = {
-  fees: number,
+  feePerByte: ?BigNumber,
 };
 
+// TODO current impl is only for Bitcoin family. we need to split components
+// into many files and dispatch from here.
 class FeeSettings extends Component<Props, State> {
   static navigationOptions = {
     title: "Edit fees",
   };
 
-  state = {
-    // $FlowFixMe
-    fees: this.props.navigation.state.params.fees,
-  };
+  constructor({ account, navigation }) {
+    super();
+    const bridge = getAccountBridge(account);
+    const transaction = navigation.getParam("transaction");
+    this.state = {
+      feePerByte: bridge.getTransactionExtra(
+        account,
+        transaction,
+        "feePerByte",
+      ),
+    };
+  }
 
-  onPressFees = (fees: number) => this.setState({ fees });
+  onChangeFeePerByte = (feePerByte: ?BigNumber) =>
+    this.setState({ feePerByte });
 
   onValidateFees = () => {
     const { navigation, account } = this.props;
-    const {
-      state: {
-        // $FlowFixMe
-        params,
-      },
-    } = navigation;
-    const { fees } = this.state;
+    const { feePerByte } = this.state;
+    const bridge = getAccountBridge(account);
+    const transaction = navigation.getParam("transaction");
     Keyboard.dismiss();
+
     navigation.navigate("SendSummary", {
-      ...params,
       accountId: account.id,
-      fees,
+      transaction: bridge.editTransactionExtra(
+        account,
+        transaction,
+        "feePerByte",
+        feePerByte,
+      ),
     });
   };
 
-  render(): React$Node {
+  render() {
+    const { feePerByte } = this.state;
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView style={styles.container}>
@@ -74,26 +85,31 @@ class FeeSettings extends Component<Props, State> {
             <View style={{ flex: 1 }}>
               <FeesRow
                 title="Low"
-                value={5}
-                currentValue={this.state.fees}
-                onPress={this.onPressFees}
+                value={BigNumber(5)}
+                currentValue={feePerByte}
+                onPress={this.onChangeFeePerByte}
               />
               <FeesRow
                 title="Standard"
-                value={10}
-                currentValue={this.state.fees}
-                onPress={this.onPressFees}
+                value={BigNumber(10)}
+                currentValue={feePerByte}
+                onPress={this.onChangeFeePerByte}
               />
               <FeesRow
                 title="High"
-                value={15}
-                currentValue={this.state.fees}
-                onPress={this.onPressFees}
+                value={BigNumber(15)}
+                currentValue={feePerByte}
+                onPress={this.onChangeFeePerByte}
               />
               <CustomFeesRow
                 title="Custom"
-                currentValue={this.state.fees}
-                onPress={this.onPressFees}
+                currentValue={feePerByte}
+                onPress={this.onChangeFeePerByte}
+                isSelected={
+                  !BigNumber(5).eq(feePerByte || 0) &&
+                  !BigNumber(10).eq(feePerByte || 0) &&
+                  !BigNumber(15).eq(feePerByte || 0)
+                }
               />
               <View style={styles.buttonContainer}>
                 <Button

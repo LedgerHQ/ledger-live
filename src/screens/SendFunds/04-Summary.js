@@ -4,7 +4,6 @@ import { View, SafeAreaView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { BigNumber } from "bignumber.js";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
@@ -12,6 +11,7 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CounterValue from "../../components/CounterValue";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
 import colors from "../../colors";
 
@@ -19,103 +19,50 @@ import SummaryRow from "./SummaryRow";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
-import RNLibcoreAccountBridge from "../../bridge/RNLibcoreAccountBridge";
+import { getAccountBridge } from "../../bridge";
 
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
     accountId: string,
     address: string,
-    amount: BigNumber,
+    amount: string,
     fees?: number,
   }>,
 };
 
-type State = {
-  fees: number,
-};
-
-class SendSummary extends Component<Props, State> {
+class SendSummary extends Component<Props> {
   static navigationOptions = {
     headerTitle: <StepHeader title="Summary" subtitle="step 4 of 6" />,
   };
 
-  // FIXME remove the fees state, instead each SummaryRow press should just do a back on the relevant screen
-
-  state = {
-    // $FlowFixMe
-    fees: this.props.navigation.state.params.fees || 10,
-  };
-
-  componentDidUpdate() {
-    const { navigation } = this.props;
-
-    const fees = navigation.getParam("fees");
-
-    if (fees !== this.state.fees) {
-      this.setFees(fees);
-    }
-  }
-
-  setFees = (fees: number) => this.setState({ fees });
-
-  getNavigationParams = (...params) => {
-    const { navigation } = this.props;
-    const res = {};
-    params.forEach(param => (res[param] = navigation.getParam(param)));
-    return res;
-  };
-
   openFees = () => {
-    const {
-      account,
-      navigation: {
-        state: {
-          // $FlowFixMe
-          params: { address, amount },
-        },
-      },
-    } = this.props;
-    const { fees } = this.state;
-
+    const { account, navigation } = this.props;
     this.props.navigation.navigate("EditFees", {
       accountId: account.id,
-      address,
-      amount,
-      fees,
+      transaction: navigation.getParam("transaction"),
     });
   };
 
   onContinue = async () => {
     const { account, navigation } = this.props;
-    const { address: recipient, amount } = this.getNavigationParams(
-      "address",
-      "amount",
-    );
-
-    // TODO: build transaction with libcore
-    await RNLibcoreAccountBridge.checkValidTransaction(account, {
-      feePerByte: this.state.fees,
-      recipient,
-      amount,
-    });
-
+    const transaction = navigation.getParam("transaction");
+    const bridge = getAccountBridge(account);
+    await bridge.checkValidTransaction(account, transaction);
     navigation.navigate("SendConnectDevice", {
-      // $FlowFixMe
-      ...navigation.state.params,
+      accountId: account.id,
+      transaction,
     });
   };
 
   render() {
-    const {
-      account,
-      navigation: {
-        state: {
-          // $FlowFixMe
-          params: { address, amount },
-        },
-      },
-    } = this.props;
+    const { account, navigation } = this.props;
+    const transaction = navigation.getParam("transaction");
+    const bridge = getAccountBridge(account);
+    const amount = bridge.getTransactionAmount(account, transaction);
+    const recipient = bridge.getTransactionRecipient(account, transaction);
+
+    // TODO when integrating new design: one row = one component !!
 
     return (
       <SafeAreaView style={styles.root}>
@@ -134,24 +81,21 @@ class SendSummary extends Component<Props, State> {
             </LText>
           </View>
         </SummaryRow>
-        <SummaryRow
-          title="Address"
-          link={`https://some.explorer.com/${address}`} // TODO: change url
-        >
+        <SummaryRow title="Address">
           <View style={{ flex: 1 }}>
             <LText
               numberOfLines={2}
               ellipsizeMode="middle"
               style={styles.summaryRowText}
             >
-              {address}
+              {recipient}
             </LText>
           </View>
         </SummaryRow>
         <SummaryRow title="Amount">
           <View style={styles.amountContainer}>
             <LText style={styles.valueText}>
-              {`${account.unit.code} ${amount.toString()}`}
+              <CurrencyUnitValue unit={account.unit} value={amount} />
             </LText>
             <LText style={styles.counterValueText}>
               <CounterValue
@@ -162,21 +106,26 @@ class SendSummary extends Component<Props, State> {
             </LText>
           </View>
         </SummaryRow>
+
+        {/* FIXME rendering of this will be branched with one component per family of coin */}
         <SummaryRow title="Fees" link="link" last>
           <View style={styles.accountContainer}>
-            <LText style={styles.valueText}>{`${
-              this.state.fees
-            } sat/bytes`}</LText>
+            <LText style={styles.valueText}>{`${bridge.getTransactionExtra(
+              account,
+              transaction,
+              "feePerByte",
+            ) || "?"} sat/bytes`}</LText>
 
             <LText style={styles.link} onPress={this.openFees}>
               Edit
             </LText>
           </View>
         </SummaryRow>
+
         <View style={styles.summary}>
-          <LText semiBold style={styles.summaryValueText}>{`${
-            account.unit.code
-          } ${amount.toString()}`}</LText>
+          <LText semiBold style={styles.summaryValueText}>
+            <CurrencyUnitValue unit={account.unit} value={amount} />
+          </LText>
           <LText style={styles.summaryCounterValueText}>
             <CounterValue value={amount} currency={account.currency} showCode />
           </LText>

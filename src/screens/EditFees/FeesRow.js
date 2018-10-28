@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { BigNumber } from "bignumber.js";
 
 import LText from "../../components/LText/index";
 import Check from "../../icons/Check";
@@ -10,9 +11,9 @@ import colors from "../../colors";
 type Props = {
   title: string,
   last?: boolean,
-  value: number,
-  currentValue: number,
-  onPress: number => void,
+  value: BigNumber,
+  currentValue: ?BigNumber,
+  onPress: BigNumber => void,
 };
 
 type State = {};
@@ -30,7 +31,7 @@ class FeesRow extends Component<Props, State> {
 
   render(): React$Node {
     const { title, last, currentValue, value } = this.props;
-    const isSelected = currentValue === value;
+    const isSelected = currentValue && currentValue.eq(value);
     return (
       <TouchableOpacity onPress={this.onPress}>
         <View style={[styles.root, last ? styles.last : null]}>
@@ -54,7 +55,7 @@ class FeesRow extends Component<Props, State> {
             <LText
               style={styles.text}
               semiBold={isSelected}
-            >{`${value} Sat/bytes`}</LText>
+            >{`${value.toString()} Sat/bytes`}</LText>
           </View>
         </View>
       </TouchableOpacity>
