@@ -17,9 +17,11 @@ import colors from "../../colors";
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    deviceId: string,
-    transaction: *,
+    params: {
+      accountId: string,
+      deviceId: string,
+      transaction: *,
+    },
   }>,
 };
 

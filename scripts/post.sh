@@ -15,7 +15,6 @@ fi
 
 flow-typed install -s
 rm flow-typed/npm/axios_v0.18.x.js
-rm flow-typed/npm/react-navigation_v2.x.x.js
 
 if [[ $DEBUG_RNDEBUGGER == "1" ]] ; then
   rndebugger-open

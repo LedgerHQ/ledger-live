@@ -3,7 +3,6 @@ import React, { PureComponent } from "react";
 import { translate } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { deviceNameByDeviceIdSelector } from "../../reducers/ble";
@@ -14,7 +13,7 @@ import colors from "../../colors";
 
 type Props = {
   t: T,
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   deviceId: string,
   name: string,
 };
