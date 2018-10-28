@@ -150,6 +150,8 @@ class SelectRecipient extends Component<Props, State> {
       console.warn(e);
     }
 
+    if (this.unmounted) return;
+
     navigation.navigate("SendAmount", {
       accountId: account.id,
       transaction,
