@@ -34,7 +34,7 @@ class CurrencyRow extends PureComponent<Props> {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
-    height: 40,
+    height: 48,
     alignItems: "center",
     paddingHorizontal: 16,
   },
