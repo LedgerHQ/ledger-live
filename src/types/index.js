@@ -51,7 +51,7 @@ export type AccountIdParams = {
   version: string,
   currencyId: string,
   xpubOrAddress: string,
-  derivationMode: string
+  derivationMode: DerivationMode
 };
 
 export type DailyOperationsSection = {

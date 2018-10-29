@@ -83,17 +83,21 @@ class Currencies extends Component<*, *> {
     const all = listCryptoCurrencies();
     const available = tickers
       .map(ticker => all.find(a => a.ticker === ticker))
-      .filter(a => a);
+      .filter(Boolean);
     const unavailable = all.filter(a => !available.includes(a));
     return (
       <div>
         <Section>
           <SectionHeader>Crypto assets</SectionHeader>
           <CryptoList>
-            {available.map(a => <Crypto crypto={a} key={a.id} />)}
+            {available.map(a => (
+              <Crypto crypto={a} key={a.id} />
+            ))}
           </CryptoList>
           <CryptoList>
-            {unavailable.map(a => <Crypto crypto={a} key={a.id} />)}
+            {unavailable.map(a => (
+              <Crypto crypto={a} key={a.id} />
+            ))}
           </CryptoList>
         </Section>
       </div>

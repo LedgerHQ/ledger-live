@@ -14,7 +14,11 @@ import type {
   DerivationMode
 } from "./types";
 import { getOperationAmountNumber } from "./operation";
-import { isSegwitDerivationMode, isUnsplitDerivationMode } from "./derivation";
+import {
+  isSegwitDerivationMode,
+  isUnsplitDerivationMode,
+  asDerivationMode
+} from "./derivation";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
@@ -178,7 +182,13 @@ export function decodeAccountId(accountId: string): AccountIdParams {
   const splitted = accountId.split(":");
   invariant(splitted.length === 5, "invalid size for accountId");
   const [type, version, currencyId, xpubOrAddress, derivationMode] = splitted;
-  return { type, version, currencyId, xpubOrAddress, derivationMode };
+  return {
+    type,
+    version,
+    currencyId,
+    xpubOrAddress,
+    derivationMode: asDerivationMode(derivationMode)
+  };
 }
 
 // you can pass account because type is shape of Account
@@ -189,7 +199,7 @@ export function getWalletName({
   currency
 }: {
   seedIdentifier: string,
-  derivationMode: string,
+  derivationMode: DerivationMode,
   currency: CryptoCurrency
 }) {
   return `${seedIdentifier}_${currency.id}_${derivationMode}`;

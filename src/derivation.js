@@ -1,4 +1,5 @@
 // @flow
+import invariant from "invariant";
 import type { CryptoCurrency, CryptoCurrencyConfig } from "./types";
 import { getCryptoCurrencyById } from "./currencies";
 
@@ -12,7 +13,7 @@ export type ModeSpec = {
 
 export type DerivationMode = $Keys<typeof modes>;
 
-const modes = {
+const modes = Object.freeze({
   // this is "default" by convention
   "": {},
 
@@ -54,7 +55,7 @@ const modes = {
   unsplit: {
     isUnsplit: true
   }
-};
+});
 
 (modes: { [_: DerivationMode]: ModeSpec });
 
@@ -62,6 +63,16 @@ const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
   ethereum: ["ethM", "ethW1", "ethW2"],
   ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2"],
   ripple: ["rip", "rip2"]
+};
+
+export const asDerivationMode = (derivationMode: string): DerivationMode => {
+  invariant(
+    derivationMode in modes,
+    "not a derivationMode. Got: '%s'",
+    derivationMode
+  );
+  // $FlowFixMe flow limitation
+  return derivationMode;
 };
 
 export const getMandatoryEmptyAccountSkip = (
