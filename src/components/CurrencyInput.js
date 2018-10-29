@@ -156,15 +156,16 @@ class CurrencyInput extends PureComponent<Props, State> {
       subMagnitude,
       isActive,
       renderRight,
+      allowZero,
     } = this.props;
     const { displayValue } = this.state;
-
+    const displayVal = displayValue === "0" && !allowZero ? "" : displayValue;
     return (
       <View style={styles.wrapper}>
         <TextInput
           style={[styles.input, isActive ? styles.active : null]}
           onChangeText={this.handleChange}
-          value={displayValue}
+          value={displayVal}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           placeholder={format(unit, BigNumber(0), {
