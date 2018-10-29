@@ -9,7 +9,11 @@ import {
   isUnsplitDerivationMode,
 } from "@ledgerhq/live-common/lib/derivation";
 import { getWalletName } from "@ledgerhq/live-common/lib/account";
-import type { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  CryptoCurrency,
+  DerivationMode,
+} from "@ledgerhq/live-common/lib/types";
 
 import type { CurrencyBridge } from "./types";
 
@@ -121,7 +125,7 @@ async function scanNextAccount(props: {
   accountIndex: number,
   onAccountScanned: Account => *,
   seedIdentifier: string,
-  derivationMode: string,
+  derivationMode: DerivationMode,
   showNewAccount: boolean,
   isUnsubscribed: () => boolean,
 }) {

@@ -16,6 +16,7 @@ import type {
   Account,
   AccountRaw,
   CryptoCurrency,
+  DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
 import { InvalidAddress } from "@ledgerhq/live-common/lib/errors";
 import load from "./load";
@@ -39,7 +40,7 @@ export async function getOrCreateWallet({
   core: *,
   walletName: string,
   currency: CryptoCurrency,
-  derivationMode: string,
+  derivationMode: DerivationMode,
 }) {
   const poolInstance = core.getPoolInstance();
   let wallet;
@@ -232,7 +233,7 @@ export async function syncCoreAccount({
   coreAccount: *,
   currencyId: string,
   accountIndex: number,
-  derivationMode: string,
+  derivationMode: DerivationMode,
   seedIdentifier: string,
 }): Promise<Account> {
   const eventReceiver = await createInstance(core.coreEventReceiver);
@@ -279,7 +280,7 @@ async function buildAccountRaw({
   coreOperations: *,
   currencyId: string,
   accountIndex: number,
-  derivationMode: string,
+  derivationMode: DerivationMode,
   seedIdentifier: string,
 }) {
   const nativeBalance = await core.coreAccount.getBalance(coreAccount);
