@@ -93,6 +93,11 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     ...extraInitialTransactionProps(),
   });
 
+  const fetchTransactionNetworkInfo = () => Promise.resolve({});
+
+  const applyTransactionNetworkInfo = () => (account, transaction) =>
+    transaction;
+
   const editTransactionAmount = (account, t, amount) => ({
     ...t,
     amount,
@@ -105,6 +110,10 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
   });
 
   const getTransactionRecipient = (a, t) => t.recipient;
+
+  const editTransactionExtra = (account, t) => t;
+
+  const getTransactionExtra = () => undefined;
 
   const signAndBroadcast = (account, t, _deviceId) =>
     Observable.create(o => {
@@ -146,10 +155,14 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     startSync,
     checkValidRecipient,
     createTransaction,
+    fetchTransactionNetworkInfo,
+    applyTransactionNetworkInfo,
     editTransactionAmount,
     getTransactionAmount,
     editTransactionRecipient,
     getTransactionRecipient,
+    editTransactionExtra,
+    getTransactionExtra,
     checkValidTransaction,
     getTotalSpent,
     getMaxAmount,

@@ -533,6 +533,10 @@ export const accountBridge: AccountBridge<Transaction> = {
     tag: undefined,
   }),
 
+  fetchTransactionNetworkInfo: () => Promise.resolve({}),
+
+  applyTransactionNetworkInfo: (account, transaction) => transaction,
+
   editTransactionAmount: (account, t, amount) => ({
     ...t,
     amount,
@@ -548,6 +552,40 @@ export const accountBridge: AccountBridge<Transaction> = {
     }),
 
   getTransactionRecipient: (a, t) => t.recipient,
+
+  editTransactionExtra: (a, t, field, value) => {
+    switch (field) {
+      case "fee":
+        invariant(
+          !value || BigNumber.isBigNumber(value),
+          "editTransactionExtra(a,t,'fee',value): BigNumber value expected",
+        );
+        return { ...t, fee: value };
+
+      case "tag":
+        invariant(
+          !value || typeof value === "number",
+          "editTransactionExtra(a,t,'tag',value): number value expected",
+        );
+        return { ...t, tag: value };
+
+      default:
+        return t;
+    }
+  },
+
+  getTransactionExtra: (a, t, field) => {
+    switch (field) {
+      case "fee":
+        return t.fee;
+
+      case "tag":
+        return t.tag;
+
+      default:
+        return undefined;
+    }
+  },
 
   checkValidTransaction: async (a, t) => {
     if (!t.fee) throw new FeeNotLoaded();

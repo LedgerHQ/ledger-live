@@ -2,13 +2,17 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { RNCamera } from "react-native-camera";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import Config from "react-native-config";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
-
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { T } from "../../types/common";
-
+import { accountScreenSelector } from "../../reducers/accounts";
+import { getAccountBridge } from "../../bridge";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import CameraScreen from "../../components/CameraScreen";
@@ -19,6 +23,7 @@ type Props = {
   navigation: NavigationScreenProp<{
     accountId: string,
   }>,
+  account: Account,
   t: T,
 };
 
@@ -33,7 +38,7 @@ const getDimensions = () => {
   return { width, height };
 };
 
-class Scan extends PureComponent<Props, State> {
+class ScanRecipient extends PureComponent<Props, State> {
   static navigationOptions = ({
     navigation,
   }: {
@@ -60,16 +65,37 @@ class Scan extends PureComponent<Props, State> {
 
   completed: boolean = false;
 
+  componentDidMount() {
+    if (Config.MOCK_SCAN_RECIPIENT) {
+      this.onResult(Config.MOCK_SCAN_RECIPIENT);
+    }
+  }
+
   onBarCodeRead = ({ data }: { data: string }) => {
     if (data) {
-      this.onResult(decodeURIScheme(data));
+      this.onResult(data);
     }
   };
 
-  onResult = (result: *) => {
-    const accountId = this.props.navigation.getParam("accountId");
+  onResult = (result: string) => {
+    const { account } = this.props;
+    const bridge = getAccountBridge(account);
+    const { amount, address, currency, ...rest } = decodeURIScheme(result);
+    let t = bridge.createTransaction(account);
+    t = bridge.editTransactionRecipient(account, t, address);
+    if (amount) {
+      t = bridge.editTransactionAmount(account, t, amount);
+    }
+    t = Object.keys(rest).reduce(
+      (t, k) => bridge.editTransactionExtra(account, t, k, rest[k]),
+      t,
+    );
+
     // $FlowFixMe
-    this.props.navigation.replace("SendSelectRecipient", { result, accountId });
+    this.props.navigation.replace("SendSelectRecipient", {
+      accountId: account.id,
+      transaction: t,
+    });
   };
 
   setDimensions = () => {
@@ -104,7 +130,11 @@ class Scan extends PureComponent<Props, State> {
   }
 }
 
-export default translate()(Scan);
+const mapStateToProps = createStructuredSelector({
+  account: accountScreenSelector,
+});
+
+export default translate()(connect(mapStateToProps)(ScanRecipient));
 
 const styles = StyleSheet.create({
   root: {

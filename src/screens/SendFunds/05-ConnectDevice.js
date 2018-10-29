@@ -23,6 +23,7 @@ type Props = {
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
+      transaction: *,
     },
   }>,
 };

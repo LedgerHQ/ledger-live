@@ -36,7 +36,7 @@ import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveConfirmation from "./screens/ReceiveFunds/04-Confirmation";
 import SendFundsMain from "./screens/SendFunds/01-SelectAccount";
 import SendSelectRecipient from "./screens/SendFunds/02-SelectRecipient";
-import ScanRecipient from "./screens/SendFunds/Scan";
+import ScanRecipient from "./screens/SendFunds/ScanRecipient";
 import SendAmount from "./screens/SendFunds/03-Amount";
 import SendSummary from "./screens/SendFunds/04-Summary";
 import SendConnectDevice from "./screens/SendFunds/05-ConnectDevice";

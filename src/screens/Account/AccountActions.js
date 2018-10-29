@@ -3,14 +3,13 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import { withNavigation } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
 import Button from "../../components/Button";
 import IconSend from "../../icons/Send";
 import IconReceive from "../../icons/Receive";
 
 type Props = {
   accountId: string,
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   t: *,
 };
 

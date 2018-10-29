@@ -3,7 +3,6 @@
 import React, { Component } from "react";
 import { withNavigation } from "react-navigation";
 import { translate } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
 
 import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
@@ -15,7 +14,7 @@ import type { T } from "../types/common";
 import type { Props as ModalProps } from "../components/BottomModal";
 
 type Props = ModalProps & {
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   t: T,
 };
 

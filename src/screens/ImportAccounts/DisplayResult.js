@@ -36,7 +36,11 @@ type Item = {
 };
 
 type Props = {
-  navigation: NavigationScreenProp<{ result: Result }>,
+  navigation: NavigationScreenProp<{
+    params: {
+      result: Result,
+    },
+  }>,
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
@@ -80,39 +84,43 @@ class DisplayResult extends Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const items = nextProps.navigation
       .getParam("result")
-      .accounts.map(accInput => {
-        const prevItem = prevState.items.find(
-          item => item.account.id === accInput.id,
-        );
-        if (prevItem) return prevItem;
-        const existingAccount = nextProps.accounts.find(
-          a => a.id === accInput.id,
-        );
-        if (existingAccount) {
-          // only the name is supposed to change. rest is never changing
-          if (existingAccount.name === accInput.name) {
+      .accounts.map(
+        (accInput: *): ?Item => {
+          const prevItem = prevState.items.find(
+            item => item.account.id === accInput.id,
+          );
+          if (prevItem) return prevItem;
+          const existingAccount = nextProps.accounts.find(
+            a => a.id === accInput.id,
+          );
+          if (existingAccount) {
+            // only the name is supposed to change. rest is never changing
+            if (existingAccount.name === accInput.name) {
+              return {
+                account: existingAccount,
+                mode: "id",
+              };
+            }
             return {
-              account: existingAccount,
-              mode: "id",
+              account: { ...existingAccount, name: accInput.name },
+              mode: "patch",
             };
           }
-          return {
-            account: { ...existingAccount, name: accInput.name },
-            mode: "patch",
-          };
-        }
-        try {
-          const account = accountDataToAccount(accInput);
-          return {
-            account,
-            mode: supportsExistingAccount(accInput) ? "create" : "unsupported",
-          };
-        } catch (e) {
-          console.warn(e);
-          return null;
-        }
-      })
-      .filter(o => o)
+          try {
+            const account = accountDataToAccount(accInput);
+            return {
+              account,
+              mode: supportsExistingAccount(accInput)
+                ? "create"
+                : "unsupported",
+            };
+          } catch (e) {
+            console.warn(e);
+            return null;
+          }
+        },
+      )
+      .filter(Boolean)
       .sort(
         (a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode],
       );
@@ -166,7 +174,6 @@ class DisplayResult extends Component<Props, State> {
       importDesktopSettings(navigation.getParam("result").settings);
     }
 
-    // $FlowFixMe
     navigation.navigate("Accounts");
   };
 
