@@ -32,11 +32,11 @@
     }
   },
   "dependencies": {
-    "@ledgerhq/hw-app-btc": "^4.21.0",
+    "@ledgerhq/hw-app-btc": "^4.27.0",
     "@ledgerhq/hw-app-eth": "^4.24.0",
     "@ledgerhq/hw-transport": "^4.24.0",
     "@ledgerhq/hw-transport-http": "^4.27.1",
-    "@ledgerhq/live-common": "^4.0.0",
+    "@ledgerhq/live-common": "^4.1.4",
     "@ledgerhq/react-native-hid": "^4.21.0",
     "@ledgerhq/react-native-ledger-core": "^0.3.21",
     "@ledgerhq/react-native-passcode-auth": "^2.0.0",
