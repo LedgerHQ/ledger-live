@@ -18,7 +18,8 @@
     "lib",
     "src",
     "flow",
-    "*.js",
+    "react.js",
+    "reactNative.js",
     ".flowconfig"
   ],
   "jest": {
