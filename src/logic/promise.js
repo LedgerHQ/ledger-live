@@ -9,7 +9,7 @@ export const atomicQueue = <R, A: Array<*>>(
   job: Job<R, A>,
   queueIdentifier: (...args: A) => string = () => "",
 ): Job<R, A> => {
-  let queues = {};
+  const queues = {};
   return (...args) => {
     const id = queueIdentifier(...args);
     const queue = queues[id] || Promise.resolve();
