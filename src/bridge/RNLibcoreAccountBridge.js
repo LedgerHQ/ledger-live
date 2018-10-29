@@ -176,7 +176,7 @@ const getFees = async (a, t) => {
   });
 };
 
-const checkValidTransaction = (a, t) =>
+const checkValidTransaction = async (a, t) =>
   // $FlowFixMe
   !t.feePerByte
     ? Promise.reject(new FeeNotLoaded())
@@ -191,9 +191,17 @@ const checkValidTransaction = (a, t) =>
             throw e;
           });
 
-const getTotalSpent = () => Promise.reject(new Error("Not Implemented"));
+const getTotalSpent = async (a, t) =>
+  t.amount.isZero()
+    ? Promise.resolve(BigNumber(0))
+    : getFees(a, t)
+        .then(totalFees => t.amount.plus(totalFees || 0))
+        .catch(() => BigNumber(0));
 
-const getMaxAmount = () => Promise.reject(new Error("Not Implemented"));
+const getMaxAmount = async (a, t) =>
+  getFees(a, t)
+    .catch(() => BigNumber(0))
+    .then(totalFees => a.balance.minus(totalFees || 0));
 
 const bridge: AccountBridge<Transaction> = {
   startSync,
