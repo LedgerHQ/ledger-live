@@ -2,15 +2,11 @@
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
+import { FeeNotLoaded } from "@ledgerhq/live-common/lib/errors";
 
 import type { AccountBridge } from "./types";
 
-import {
-  SyncError,
-  NoRecipient,
-  FeeNotLoaded,
-  NotEnoughBalance,
-} from "../errors";
+import { SyncError, NoRecipient } from "../errors";
 import {
   syncAccount,
   isValidRecipient,
@@ -22,8 +18,6 @@ type Transaction = {
   recipient: string,
   feePerByte: ?BigNumber,
 };
-
-const NOT_ENOUGH_FUNDS = 52;
 
 function operationsDiffer(a, b) {
   if ((a && !b) || (b && !a)) return true;
@@ -111,7 +105,7 @@ const checkValidRecipient = async (currency, recipient) => {
 const createTransaction = () => ({
   amount: BigNumber(0),
   recipient: "",
-  feePerByte: null,
+  feePerByte: BigNumber(10), // TODO: LOAD FEES DYNAMICALLY
 });
 
 const fetchTransactionNetworkInfo = () => Promise.resolve({});
@@ -182,14 +176,7 @@ const checkValidTransaction = async (a, t) =>
     ? Promise.reject(new FeeNotLoaded())
     : !t.amount
       ? Promise.resolve(null)
-      : getFees(a, t)
-          .then(() => null)
-          .catch(e => {
-            if (e.code === NOT_ENOUGH_FUNDS) {
-              throw new NotEnoughBalance();
-            }
-            throw e;
-          });
+      : getFees(a, t).then(() => null);
 
 const getTotalSpent = async (a, t) =>
   t.amount.isZero()

@@ -13,6 +13,7 @@ import { BigNumber } from "bignumber.js";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { NotEnoughBalance } from "@ledgerhq/live-common/lib/errors";
 
 import type { T } from "../../types/common";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -37,6 +38,7 @@ type Props = {
 
 type State = {
   transaction: *,
+  canNext: boolean,
 };
 
 class SelectFunds extends Component<Props, State> {
@@ -47,21 +49,30 @@ class SelectFunds extends Component<Props, State> {
   state = {
     // TODO probably could leave in the navigation param itself
     transaction: this.props.navigation.getParam("transaction"),
+    canNext: false,
   };
+
+  nonce: number = 0;
 
   blur = () => {
     Keyboard.dismiss();
   };
 
   onChange = (amount: BigNumber) => {
+    const id = ++this.nonce;
     if (!amount.isNaN()) {
-      this.setState(({ transaction }, { account }) => ({
-        transaction: getAccountBridge(account).editTransactionAmount(
-          account,
-          transaction,
-          amount,
-        ),
-      }));
+      this.setState(
+        ({ transaction }, { account }) => ({
+          transaction: getAccountBridge(account).editTransactionAmount(
+            account,
+            transaction,
+            amount,
+          ),
+        }),
+        () => {
+          this.checkCanNext(id);
+        },
+      );
     }
   };
 
@@ -74,9 +85,36 @@ class SelectFunds extends Component<Props, State> {
     });
   };
 
+  checkCanNext = async (nonce: number) => {
+    const { account } = this.props;
+    const { transaction } = this.state;
+
+    try {
+      const bridge = getAccountBridge(account);
+      const totalSpent = await bridge.getTotalSpent(account, transaction);
+      const checkValidTransaction = await bridge.checkValidTransaction(
+        account,
+        transaction,
+      );
+
+      const isValidTransaction = checkValidTransaction === null;
+      const canNext =
+        // $FlowFixMe
+        !transaction.amount.isZero() && isValidTransaction && totalSpent.gt(0);
+
+      if (nonce === this.nonce) {
+        this.setState({ canNext });
+      }
+    } catch (err) {
+      if (err instanceof NotEnoughBalance) {
+        // TODO: SET NOT ENOUGH FUNDS ERROR
+      }
+    }
+  };
+
   render() {
     const { account, t } = this.props;
-    const { transaction } = this.state;
+    const { transaction, canNext } = this.state;
     const bridge = getAccountBridge(account);
     const amount = bridge.getTransactionAmount(account, transaction);
 
@@ -113,7 +151,7 @@ class SelectFunds extends Component<Props, State> {
                     type="primary"
                     title={t("common:common.continue")}
                     onPress={this.navigate}
-                    // disabled={!isValid}
+                    disabled={!canNext}
                   />
                 </View>
               </View>
