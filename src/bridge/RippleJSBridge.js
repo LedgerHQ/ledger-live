@@ -17,6 +17,8 @@ import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
 } from "@ledgerhq/live-common/lib/account";
+import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import { open } from "../logic/hw";
 import {
   apiForEndpointConfig,
   defaultEndpoint,
@@ -39,9 +41,6 @@ type Transaction = {
 };
 
 async function signTransaction(_: *) {
-  return Promise.reject(new Error("FIXME not implemented"));
-}
-async function getAddress(_: *) {
   return Promise.reject(new Error("FIXME not implemented"));
 }
 
@@ -298,7 +297,9 @@ export const currencyBridge: CurrencyBridge = {
 
       async function main() {
         const api = apiForEndpointConfig();
+        let transport;
         try {
+          transport = await open(deviceId);
           await api.connect();
           const serverInfo = await getServerInfo();
           const ledgers = serverInfo.completeLedgers.split("-");
@@ -320,11 +321,11 @@ export const currencyBridge: CurrencyBridge = {
                 },
               );
 
-              const { address } = await getAddress({
-                currencyId: currency.id,
-                devicePath: deviceId,
-                path: freshAddressPath,
-              });
+              const { address } = await getAddress(
+                transport,
+                currency,
+                freshAddressPath,
+              );
 
               if (finished) return;
 
@@ -418,6 +419,9 @@ export const currencyBridge: CurrencyBridge = {
           o.error(e);
         } finally {
           api.disconnect();
+          if (transport) {
+            await transport.close();
+          }
         }
       }
 
