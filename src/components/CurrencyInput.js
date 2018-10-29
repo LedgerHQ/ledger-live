@@ -60,7 +60,7 @@ function format(
 
 type Props = {
   isActive: boolean,
-  onChangeFocus: boolean => void,
+  onFocus: boolean => void,
   onChange: BigNumber => void,
   unit: Unit,
   value: ?BigNumber,
@@ -77,7 +77,7 @@ type State = {
 
 class CurrencyInput extends PureComponent<Props, State> {
   static defaultProps = {
-    onChangeFocus: noop,
+    onFocus: noop,
     onChange: noop,
     value: null,
     showAllDigits: false,
@@ -136,12 +136,12 @@ class CurrencyInput extends PureComponent<Props, State> {
 
   handleBlur = () => {
     this.syncInput({ isFocused: false });
-    this.props.onChangeFocus(false);
+    this.props.onFocus(false);
   };
 
   handleFocus = () => {
     this.syncInput({ isFocused: true });
-    this.props.onChangeFocus(true);
+    this.props.onFocus(true);
   };
 
   syncInput = ({ isFocused }: { isFocused: boolean }) => {
