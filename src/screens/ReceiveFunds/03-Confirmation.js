@@ -1,5 +1,4 @@
 // @flow
-// TODO rename this file at the end (don't want to mess up merges after renaming)
 
 import React, { Component } from "react";
 import { SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
@@ -14,6 +13,7 @@ import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { open } from "../../logic/hw";
+import type { T } from "../../types/common";
 
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
@@ -35,6 +35,7 @@ type Navigation = NavigationScreenProp<{
 type Props = {
   account: Account,
   navigation: Navigation,
+  t: T,
 };
 
 type State = {
@@ -80,7 +81,7 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   render(): React$Node {
-    const { account, navigation } = this.props;
+    const { account, navigation, t } = this.props;
     const { verified, error } = this.state;
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
@@ -128,13 +129,13 @@ class ReceiveConfirmation extends Component<Props, State> {
               <View style={styles.buttonsContainer}>
                 <Button
                   type="secondary"
-                  title="Contact us"
+                  title={t("common.contactUs")}
                   containerStyle={styles.button}
-                  onPress={() => {}}
+                  onPress={() => {}} // TODO do something
                 />
                 <Button
                   type="primary"
-                  title="Retry"
+                  title={t("common.retry")}
                   containerStyle={styles.button}
                   onPress={this.onRetry}
                 />
