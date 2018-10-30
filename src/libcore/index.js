@@ -148,20 +148,20 @@ export async function createAccountFromDevice({
   const accountCreationInfos = await core.coreWallet.getNextAccountCreationInfo(
     wallet,
   );
-  const chainCodes = await core.coreAccountCreationInfo.getChainCodes(
-    accountCreationInfos,
+  const chainCodes = getValue(
+    await core.coreAccountCreationInfo.getChainCodes(accountCreationInfos),
   );
-  const publicKeys = await core.coreAccountCreationInfo.getPublicKeys(
-    accountCreationInfos,
+  const publicKeys = getValue(
+    await core.coreAccountCreationInfo.getPublicKeys(accountCreationInfos),
   );
-  const index = await core.coreAccountCreationInfo.getIndex(
-    accountCreationInfos,
+  const index = getValue(
+    await core.coreAccountCreationInfo.getIndex(accountCreationInfos),
   );
-  const derivations = await core.coreAccountCreationInfo.getDerivations(
-    accountCreationInfos,
+  const derivations = getValue(
+    await core.coreAccountCreationInfo.getDerivations(accountCreationInfos),
   );
-  const owners = await core.coreAccountCreationInfo.getOwners(
-    accountCreationInfos,
+  const owners = getValue(
+    await core.coreAccountCreationInfo.getOwners(accountCreationInfos),
   );
 
   await derivations.reduce(
