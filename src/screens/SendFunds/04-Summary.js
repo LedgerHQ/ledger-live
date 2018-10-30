@@ -24,10 +24,10 @@ import { getAccountBridge } from "../../bridge";
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    address: string,
-    amount: string,
-    fees?: number,
+    params: {
+      accountId: string,
+      transaction: *,
+    },
   }>,
 };
 

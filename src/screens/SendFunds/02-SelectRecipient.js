@@ -30,8 +30,10 @@ type Props = {
   t: T,
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    transaction: *,
+    params: {
+      accountId: string,
+      transaction: *,
+    },
   }>,
 };
 
@@ -138,16 +140,17 @@ class SelectRecipient extends Component<Props, State> {
       address,
     );
 
-    try {
-      const networkInfo = await this.transactionNetworkInfo;
-      // FIXME race with a timeout
-      transaction = bridge.applyTransactionNetworkInfo(
-        account,
-        transaction,
-        networkInfo,
-      );
-    } catch (e) {
-      console.warn(e);
+    if (!bridge.getTransactionNetworkInfo(account, transaction)) {
+      try {
+        const networkInfo = await this.transactionNetworkInfo;
+        transaction = bridge.applyTransactionNetworkInfo(
+          account,
+          transaction,
+          networkInfo,
+        );
+      } catch (error) {
+        this.setState({ error });
+      }
     }
 
     if (this.unmounted) return;

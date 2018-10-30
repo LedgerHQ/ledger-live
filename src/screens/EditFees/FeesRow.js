@@ -9,10 +9,10 @@ import Check from "../../icons/Check";
 import colors from "../../colors";
 
 type Props = {
-  title: string,
+  title: React$Node,
   last?: boolean,
   value: BigNumber,
-  currentValue: ?BigNumber,
+  isSelected: boolean,
   onPress: BigNumber => void,
 };
 
@@ -29,9 +29,8 @@ class FeesRow extends Component<Props, State> {
     onPress(value);
   };
 
-  render(): React$Node {
-    const { title, last, currentValue, value } = this.props;
-    const isSelected = currentValue && currentValue.eq(value);
+  render() {
+    const { title, last, isSelected, value } = this.props;
     return (
       <TouchableOpacity onPress={this.onPress}>
         <View style={[styles.root, last ? styles.last : null]}>

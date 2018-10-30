@@ -12,11 +12,14 @@ import {
   isValidRecipient,
   getFeesForTransaction,
 } from "../libcore";
+import { getFeeItems } from "../api/FeesBitcoin";
+import type { FeeItems } from "../api/FeesBitcoin";
 
-type Transaction = {
+export type Transaction = {
   amount: BigNumber,
   recipient: string,
   feePerByte: ?BigNumber,
+  networkInfo: ?{ feeItems: FeeItems },
 };
 
 function operationsDiffer(a, b) {
@@ -105,12 +108,23 @@ const checkValidRecipient = async (currency, recipient) => {
 const createTransaction = () => ({
   amount: BigNumber(0),
   recipient: "",
-  feePerByte: BigNumber(10), // TODO: LOAD FEES DYNAMICALLY
+  feePerByte: undefined,
+  networkInfo: null,
 });
 
-const fetchTransactionNetworkInfo = () => Promise.resolve({});
+const fetchTransactionNetworkInfo = async ({ currency }) => {
+  const feeItems = await getFeeItems(currency);
+  return { feeItems };
+};
 
-const applyTransactionNetworkInfo = (account, transaction) => transaction;
+const getTransactionNetworkInfo = (account, transaction) =>
+  transaction.networkInfo;
+
+const applyTransactionNetworkInfo = (account, transaction, networkInfo) => ({
+  ...transaction,
+  networkInfo,
+  feePerByte: transaction.feePerByte || networkInfo.feeItems.defaultFeePerByte,
+});
 
 const editTransactionAmount = (account, t, amount) => ({
   ...t,
@@ -195,6 +209,7 @@ const bridge: AccountBridge<Transaction> = {
   checkValidRecipient,
   createTransaction,
   fetchTransactionNetworkInfo,
+  getTransactionNetworkInfo,
   applyTransactionNetworkInfo,
   editTransactionAmount,
   getTransactionAmount,

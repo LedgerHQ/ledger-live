@@ -54,11 +54,19 @@ export interface AccountBridge<Transaction> {
   fetchTransactionNetworkInfo(account: Account): Promise<Object>;
 
   // apply network info that was previously fetched
+  // you might want to store the networkInfo so they can recovered in getTransactionNetworkInfo
   applyTransactionNetworkInfo(
     account: Account,
     transaction: Transaction,
     networkInfo: Object,
   ): Transaction;
+
+  // synchronously retrieve the transactionNetworkInfo from a Transaction
+  // null/undefined means the data needs to be fetched and applied
+  getTransactionNetworkInfo(
+    account: Account,
+    transaction: Transaction,
+  ): ?Object;
 
   editTransactionAmount(
     account: Account,

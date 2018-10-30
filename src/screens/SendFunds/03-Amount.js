@@ -31,8 +31,10 @@ type Props = {
   t: T,
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    transaction: *,
+    params: {
+      accountId: string,
+      transaction: *,
+    },
   }>,
 };
 
@@ -59,6 +61,14 @@ class SelectFunds extends Component<Props, State> {
   blur = () => {
     Keyboard.dismiss();
   };
+
+  componentDidMount() {
+    this.checkCanNext(this.nonce);
+  }
+
+  componentWillUnmount() {
+    this.nonce++;
+  }
 
   onChange = (amount: BigNumber) => {
     const id = ++this.nonce;
@@ -94,19 +104,20 @@ class SelectFunds extends Component<Props, State> {
     try {
       const bridge = getAccountBridge(account);
       const totalSpent = await bridge.getTotalSpent(account, transaction);
+      if (nonce !== this.nonce) return;
       const checkValidTransaction = await bridge.checkValidTransaction(
         account,
         transaction,
       );
+      if (nonce !== this.nonce) return;
 
       const isValidTransaction = checkValidTransaction === null;
       const canNext =
         // $FlowFixMe
         !transaction.amount.isZero() && isValidTransaction && totalSpent.gt(0);
 
-      if (nonce === this.nonce) {
-        this.setState({ canNext, notEnoughBalanceError: null });
-      }
+      if (nonce !== this.nonce) return;
+      this.setState({ canNext, notEnoughBalanceError: null });
     } catch (err) {
       if (err instanceof NotEnoughBalance) {
         this.setState({ notEnoughBalanceError: err });

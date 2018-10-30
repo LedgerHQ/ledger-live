@@ -98,6 +98,8 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
   const applyTransactionNetworkInfo = () => (account, transaction) =>
     transaction;
 
+  const getTransactionNetworkInfo = () => ({});
+
   const editTransactionAmount = (account, t, amount) => ({
     ...t,
     amount,
@@ -156,6 +158,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     checkValidRecipient,
     createTransaction,
     fetchTransactionNetworkInfo,
+    getTransactionNetworkInfo,
     applyTransactionNetworkInfo,
     editTransactionAmount,
     getTransactionAmount,

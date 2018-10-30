@@ -2,7 +2,6 @@
 /* eslint import/no-cycle: 0 */
 import { AppState, NetInfo } from "react-native";
 import { createSelector } from "reselect";
-import axios from "axios";
 import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
 import { setExchangePairsAction } from "./actions/settings";
 import { currenciesSelector } from "./reducers/accounts";
@@ -12,6 +11,7 @@ import {
   currencySettingsSelector,
   intermediaryCurrency,
 } from "./reducers/settings";
+import network from "./api/network";
 
 const LEDGER_COUNTERVALUES_API = "https://countervalues.api.live.ledger.com";
 
@@ -88,7 +88,7 @@ const CounterValues = createCounterValues({
   pairsSelector,
   setExchangePairsAction,
   addExtraPollingHooks,
-  network: axios,
+  network,
 });
 
 export default CounterValues;
