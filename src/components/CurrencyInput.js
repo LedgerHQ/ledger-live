@@ -60,14 +60,16 @@ function format(
 
 type Props = {
   isActive: boolean,
-  onChangeFocus: boolean => void,
+  onFocus: boolean => void,
   onChange: BigNumber => void,
   unit: Unit,
   value: ?BigNumber,
   showAllDigits?: boolean,
   subMagnitude: number,
   allowZero: boolean,
-  renderRight: any,
+  renderRight?: any,
+  renderError?: any,
+  hasError: boolean,
 };
 
 type State = {
@@ -77,13 +79,16 @@ type State = {
 
 class CurrencyInput extends PureComponent<Props, State> {
   static defaultProps = {
-    onChangeFocus: noop,
+    onFocus: noop,
     onChange: noop,
+    renderRight: noop,
+    renderError: noop,
     value: null,
     showAllDigits: false,
     subMagnitude: 0,
     allowZero: false,
     isActive: false,
+    hasError: false,
   };
 
   state = {
@@ -136,12 +141,12 @@ class CurrencyInput extends PureComponent<Props, State> {
 
   handleBlur = () => {
     this.syncInput({ isFocused: false });
-    this.props.onChangeFocus(false);
+    this.props.onFocus(false);
   };
 
   handleFocus = () => {
     this.syncInput({ isFocused: true });
-    this.props.onChangeFocus(true);
+    this.props.onFocus(true);
   };
 
   syncInput = ({ isFocused }: { isFocused: boolean }) => {
@@ -156,15 +161,22 @@ class CurrencyInput extends PureComponent<Props, State> {
       subMagnitude,
       isActive,
       renderRight,
+      renderError,
+      allowZero,
+      hasError,
     } = this.props;
     const { displayValue } = this.state;
-
+    const displayVal = displayValue === "0" && !allowZero ? "" : displayValue;
     return (
       <View style={styles.wrapper}>
         <TextInput
-          style={[styles.input, isActive ? styles.active : null]}
+          style={[
+            styles.input,
+            isActive ? styles.active : null,
+            hasError ? styles.error : null,
+          ]}
           onChangeText={this.handleChange}
-          value={displayValue}
+          value={displayVal}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           placeholder={format(unit, BigNumber(0), {
@@ -176,12 +188,21 @@ class CurrencyInput extends PureComponent<Props, State> {
           blurOnSubmit
         />
         {renderRight}
+        {hasError && renderError ? (
+          <View style={styles.absolute}>{renderError}</View>
+        ) : null}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  absolute: {
+    position: "absolute",
+    paddingVertical: 8,
+    height: 30,
+    bottom: -30,
+  },
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
@@ -195,6 +216,9 @@ const styles = StyleSheet.create({
   },
   active: {
     fontSize: 32,
+  },
+  error: {
+    color: colors.alert,
   },
 });
 

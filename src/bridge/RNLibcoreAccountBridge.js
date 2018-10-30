@@ -2,15 +2,11 @@
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
+import { FeeNotLoaded } from "@ledgerhq/live-common/lib/errors";
 
 import type { AccountBridge } from "./types";
 
-import {
-  SyncError,
-  NoRecipient,
-  FeeNotLoaded,
-  NotEnoughBalance,
-} from "../errors";
+import { SyncError, NoRecipient } from "../errors";
 import {
   syncAccount,
   isValidRecipient,
@@ -22,8 +18,6 @@ type Transaction = {
   recipient: string,
   feePerByte: ?BigNumber,
 };
-
-const NOT_ENOUGH_FUNDS = 52;
 
 function operationsDiffer(a, b) {
   if ((a && !b) || (b && !a)) return true;
@@ -111,7 +105,7 @@ const checkValidRecipient = async (currency, recipient) => {
 const createTransaction = () => ({
   amount: BigNumber(0),
   recipient: "",
-  feePerByte: null,
+  feePerByte: BigNumber(10), // TODO: LOAD FEES DYNAMICALLY
 });
 
 const fetchTransactionNetworkInfo = () => Promise.resolve({});
@@ -176,24 +170,25 @@ const getFees = async (a, t) => {
   });
 };
 
-const checkValidTransaction = (a, t) =>
+const checkValidTransaction = async (a, t) =>
   // $FlowFixMe
   !t.feePerByte
     ? Promise.reject(new FeeNotLoaded())
     : !t.amount
       ? Promise.resolve(null)
-      : getFees(a, t)
-          .then(() => null)
-          .catch(e => {
-            if (e.code === NOT_ENOUGH_FUNDS) {
-              throw new NotEnoughBalance();
-            }
-            throw e;
-          });
+      : getFees(a, t).then(() => null);
 
-const getTotalSpent = () => Promise.reject(new Error("Not Implemented"));
+const getTotalSpent = async (a, t) =>
+  t.amount.isZero()
+    ? Promise.resolve(BigNumber(0))
+    : getFees(a, t)
+        .then(totalFees => t.amount.plus(totalFees || 0))
+        .catch(() => BigNumber(0));
 
-const getMaxAmount = () => Promise.reject(new Error("Not Implemented"));
+const getMaxAmount = async (a, t) =>
+  getFees(a, t)
+    .catch(() => BigNumber(0))
+    .then(totalFees => a.balance.minus(totalFees || 0));
 
 const bridge: AccountBridge<Transaction> = {
   startSync,
