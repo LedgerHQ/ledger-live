@@ -18,10 +18,7 @@ import type {
   CryptoCurrency,
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
-import {
-  InvalidAddress,
-  NotEnoughBalance,
-} from "@ledgerhq/live-common/lib/errors";
+import { InvalidAddress } from "@ledgerhq/live-common/lib/errors";
 import load from "./load";
 import {
   getValue,
@@ -32,6 +29,7 @@ import {
 } from "./specific";
 import accountModel from "../logic/accountModel";
 import { atomicQueue } from "../logic/promise";
+import remapLibcoreErrors from "./errors";
 
 const hexToBytes = str => Array.from(Buffer.from(str, "hex"));
 
@@ -472,8 +470,6 @@ export async function isValidRecipient({
   return Promise.resolve(new InvalidAddress());
 }
 
-const NOT_ENOUGH_FUNDS = /* 52; */ "NOT_ENOUGH_FUNDS";
-
 export async function getFeesForTransaction({
   account,
   transaction,
@@ -555,11 +551,6 @@ export async function getFeesForTransaction({
     const fees = await libcoreAmountToBigNumber(core, feesAmount);
     return fees;
   } catch (error) {
-    // TODO: FIX LIBCORE SERIALIZATION
-    if (error.code.indexOf(NOT_ENOUGH_FUNDS) > -1) {
-      throw new NotEnoughBalance();
-    }
-
-    throw error;
+    throw remapLibcoreErrors(error);
   }
 }

@@ -39,6 +39,7 @@ type Props = {
 type State = {
   transaction: *,
   canNext: boolean,
+  notEnoughBalanceError: ?Error,
 };
 
 class SelectFunds extends Component<Props, State> {
@@ -50,6 +51,7 @@ class SelectFunds extends Component<Props, State> {
     // TODO probably could leave in the navigation param itself
     transaction: this.props.navigation.getParam("transaction"),
     canNext: false,
+    notEnoughBalanceError: null,
   };
 
   nonce: number = 0;
@@ -103,18 +105,20 @@ class SelectFunds extends Component<Props, State> {
         !transaction.amount.isZero() && isValidTransaction && totalSpent.gt(0);
 
       if (nonce === this.nonce) {
-        this.setState({ canNext });
+        this.setState({ canNext, notEnoughBalanceError: null });
       }
     } catch (err) {
       if (err instanceof NotEnoughBalance) {
-        // TODO: SET NOT ENOUGH FUNDS ERROR
+        this.setState({ notEnoughBalanceError: err });
+      } else if (this.state.notEnoughBalanceError) {
+        this.setState({ notEnoughBalanceError: null });
       }
     }
   };
 
   render() {
     const { account, t } = this.props;
-    const { transaction, canNext } = this.state;
+    const { transaction, canNext, notEnoughBalanceError } = this.state;
     const bridge = getAccountBridge(account);
     const amount = bridge.getTransactionAmount(account, transaction);
 
@@ -130,6 +134,7 @@ class SelectFunds extends Component<Props, State> {
                 onChange={this.onChange}
                 currency={account.unit.code}
                 value={amount}
+                error={notEnoughBalanceError}
               />
 
               <View style={styles.bottomWrapper}>

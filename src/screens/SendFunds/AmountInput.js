@@ -14,6 +14,7 @@ import {
   intermediaryCurrency,
 } from "../../reducers/settings";
 import type { State } from "../../reducers";
+import type { T } from "../../types/common";
 
 import LText from "../../components/LText/index";
 import CounterValues from "../../countervalues";
@@ -21,15 +22,18 @@ import colors from "../../colors";
 
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "../../components/CurrencyInput";
+import TranslatedError from "../../components/TranslatedError";
 
 type OwnProps = {
   account: Account,
   currency: string,
   value: BigNumber,
   onChange: BigNumber => void,
+  error?: Error,
 };
 
 type Props = OwnProps & {
+  t: T,
   rightCurrency: Currency,
   getCounterValue: BigNumber => ?BigNumber,
   getReverseCounterValue: BigNumber => ?BigNumber,
@@ -83,6 +87,7 @@ class AmountInput extends Component<Props, OwnState> {
       rightCurrency,
       getCounterValue,
       account,
+      error,
     } = this.props;
     const isLeft = active === "left";
     const right = value ? getCounterValue(value) : BigNumber(0);
@@ -105,6 +110,12 @@ class AmountInput extends Component<Props, OwnState> {
                   {currency}
                 </LText>
               }
+              renderError={
+                <LText style={styles.error} tertiary>
+                  <TranslatedError error={error} />
+                </LText>
+              }
+              hasError={!!error}
             />
           </View>
         </View>
@@ -157,6 +168,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.alert,
+    fontSize: 14,
   },
   errorText: {
     fontSize: 14,
