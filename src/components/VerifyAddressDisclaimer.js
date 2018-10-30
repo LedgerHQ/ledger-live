@@ -15,21 +15,25 @@ type Props = {
   t: T,
   accountType: string,
   verified: boolean,
+  unsafe: boolean,
 };
 
 class VerifyAddressDisclaimer extends PureComponent<Props> {
   render(): React$Node {
-    const { verified, accountType, t } = this.props;
+    const { verified, unsafe, accountType, t } = this.props;
+
     return (
       <View
-        style={[styles.wrapper, !verified ? styles.wrapperWarning : undefined]}
+        style={[styles.wrapper, unsafe ? styles.wrapperWarning : undefined]}
       >
-        <Image source={verified ? shield : shieldWarning} />
+        <Image source={unsafe ? shieldWarning : shield} />
         <View style={styles.textWrapper}>
-          <LText
-            style={[styles.text, !verified ? styles.textWarning : undefined]}
-          >
-            {t("transfer.receive.verifyAddress", { accountType })}
+          <LText style={[styles.text, unsafe ? styles.textWarning : undefined]}>
+            {unsafe
+              ? t("transfer.receive.verifySkipped", { accountType })
+              : verified
+                ? t("transfer.receive.verified")
+                : t("transfer.receive.verifyPending", { accountType })}
           </LText>
         </View>
       </View>

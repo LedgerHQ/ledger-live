@@ -6,6 +6,7 @@ import { SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
@@ -19,6 +20,10 @@ import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
+import BottomModal from "../../components/BottomModal";
+import TranslatedError from "../../components/TranslatedError";
+import RejectedImage from "./assets/RejectedImage";
+import Button from "../../components/Button";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -34,6 +39,7 @@ type Props = {
 
 type State = {
   verified: boolean,
+  error: ?Error,
 };
 
 class ReceiveConfirmation extends Component<Props, State> {
@@ -43,6 +49,7 @@ class ReceiveConfirmation extends Component<Props, State> {
 
   state = {
     verified: false,
+    error: null,
   };
 
   componentDidMount() {
@@ -54,21 +61,29 @@ class ReceiveConfirmation extends Component<Props, State> {
     const { account } = this.props;
 
     const transport = await open(deviceId);
-    getAddress(transport, account.currency, account.freshAddressPath, true);
+    try {
+      await getAddress(
+        transport,
+        account.currency,
+        account.freshAddressPath,
+        true,
+      );
+      this.setState({ verified: true });
+    } catch (error) {
+      this.setState({ error });
+    }
     await transport.close();
-    this.setState({ verified: true });
   };
 
-  onVerifyAddress = () => {
-    // FIXME re check what the LL is doing on this? (going back to a step or is it a device call?)
+  onRetry = () => {
+    this.props.navigation.goBack();
   };
 
   render(): React$Node {
     const { account, navigation } = this.props;
-    const { verified } = this.state;
+    const { verified, error } = this.state;
     const { width } = Dimensions.get("window");
-    const unsafe = !navigation.getParam("deviceId"); // eslint-disable-line no-unused-vars
-    // TODO: use unsafe to render the error case
+    const unsafe = !navigation.getParam("deviceId");
 
     return (
       <SafeAreaView style={styles.root}>
@@ -91,10 +106,42 @@ class ReceiveConfirmation extends Component<Props, State> {
         </View>
         <View style={styles.bottomContainer}>
           <VerifyAddressDisclaimer
+            unsafe={unsafe}
             verified={verified}
             accountType={account.currency.managerAppName}
           />
         </View>
+        <BottomModal isOpened={!!error} onClose={() => {}}>
+          {error ? (
+            <View style={styles.modal}>
+              <View style={styles.modalBody}>
+                <View style={styles.modalIcon}>
+                  <RejectedImage size={264} />
+                </View>
+                <LText secondary semiBold style={styles.modalTitle}>
+                  <TranslatedError error={error} />
+                </LText>
+                <LText style={styles.modalDescription}>
+                  <TranslatedError error={error} field="description" />
+                </LText>
+              </View>
+              <View style={styles.buttonsContainer}>
+                <Button
+                  type="secondary"
+                  title="Contact us"
+                  containerStyle={styles.button}
+                  onPress={() => {}}
+                />
+                <Button
+                  type="primary"
+                  title="Retry"
+                  containerStyle={styles.button}
+                  onPress={this.onRetry}
+                />
+              </View>
+            </View>
+          ) : null}
+        </BottomModal>
       </SafeAreaView>
     );
   }
@@ -138,10 +185,44 @@ const styles = StyleSheet.create({
   address: {
     paddingTop: 25,
   },
+  modal: {
+    flexDirection: "column",
+    minHeight: 350,
+  },
+  modalBody: {
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+  modalIcon: {
+    paddingTop: 60,
+  },
+  modalTitle: {
+    paddingTop: 40,
+    fontSize: 16,
+    color: colors.darkBlue,
+    textAlign: "center",
+  },
+  modalDescription: {
+    paddingTop: 16,
+    fontSize: 14,
+    color: colors.grey,
+    paddingHorizontal: 40,
+    textAlign: "center",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 8,
+    alignItems: "flex-end",
+    flexGrow: 1,
+  },
+  button: {
+    flexGrow: 1,
+    marginHorizontal: 8,
+  },
 });
 
 const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(ReceiveConfirmation);
+export default connect(mapStateToProps)(translate()(ReceiveConfirmation));
