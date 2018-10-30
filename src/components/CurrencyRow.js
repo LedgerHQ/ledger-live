@@ -11,6 +11,7 @@ import CurrencyIcon from "./CurrencyIcon";
 type Props = {
   currency: Currency,
   onPress: Currency => void,
+  style: *,
 };
 
 class CurrencyRow extends PureComponent<Props> {
@@ -19,9 +20,9 @@ class CurrencyRow extends PureComponent<Props> {
   };
 
   render() {
-    const { currency } = this.props;
+    const { currency, style } = this.props;
     return (
-      <RectButton style={styles.root} onPress={this.onPress}>
+      <RectButton style={[styles.root, style]} onPress={this.onPress}>
         <CurrencyIcon size={20} currency={currency} />
         <LText semiBold style={styles.name}>
           {currency.name}

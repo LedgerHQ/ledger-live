@@ -41,8 +41,14 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  renderItem = ({ item }: { item: Currency }) => (
-    <CurrencyRow currency={item} onPress={this.onPressCurrency} />
+  renderItem = ({ item, index }: { item: Currency, index: number }) => (
+    <CurrencyRow
+      style={
+        index === cryptocurrencies.length - 1 ? styles.lastItem : undefined
+      }
+      currency={item}
+      onPress={this.onPressCurrency}
+    />
   );
 
   renderList = (items = cryptocurrencies) => (
@@ -80,6 +86,9 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flex: 1,
+  },
+  lastItem: {
+    marginBottom: 32,
   },
   filteredSearchInputWrapperStyle: {
     marginHorizontal: 16,
