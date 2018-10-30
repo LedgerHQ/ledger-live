@@ -33,7 +33,7 @@ import ManagerAppsList from "./screens/Manager/AppsList";
 import ManagerDevice from "./screens/Manager/Device";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
-import ReceiveConfirmation from "./screens/ReceiveFunds/04-Confirmation";
+import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
 import SendFundsMain from "./screens/SendFunds/01-SelectAccount";
 import SendSelectRecipient from "./screens/SendFunds/02-SelectRecipient";
 import ScanRecipient from "./screens/SendFunds/ScanRecipient";
@@ -83,7 +83,7 @@ if (Platform.OS === "ios") {
   headerStyle = {
     height: 48 + statusBarPadding,
     paddingTop: statusBarPadding,
-    elevation: 4,
+    elevation: 1,
   };
 }
 
@@ -102,6 +102,8 @@ const styles = StyleSheet.create({
   },
   transparentHeader: {
     backgroundColor: "transparent",
+    shadowOpacity: 0,
+    elevation: 0,
   },
   labelStyle: { fontSize: 12 },
 });

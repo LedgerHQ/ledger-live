@@ -18,7 +18,7 @@ class DisplayAddress extends PureComponent<Props> {
         <LText
           numberOfLines={1}
           ellipsizeMode="middle"
-          semiBold
+          bold
           style={styles.text}
           selectable
         >
@@ -31,14 +31,14 @@ class DisplayAddress extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 12,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: colors.fog,
     borderStyle: "dashed",
   },
   text: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.darkBlue,
   },
 });

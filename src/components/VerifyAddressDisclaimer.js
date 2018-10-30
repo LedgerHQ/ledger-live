@@ -15,23 +15,25 @@ type Props = {
   t: T,
   accountType: string,
   verified: boolean,
+  unsafe: boolean,
 };
 
 class VerifyAddressDisclaimer extends PureComponent<Props> {
   render(): React$Node {
-    const { verified, accountType, t } = this.props;
+    const { verified, unsafe, accountType, t } = this.props;
+
     return (
       <View
-        style={[styles.wrapper, !verified ? styles.wrapperWarning : undefined]}
+        style={[styles.wrapper, unsafe ? styles.wrapperWarning : undefined]}
       >
-        <View style={styles.iconWrapper}>
-          <Image source={verified ? shield : shieldWarning} />
-        </View>
+        <Image source={unsafe ? shieldWarning : shield} />
         <View style={styles.textWrapper}>
-          <LText
-            style={[styles.text, !verified ? styles.textWarning : undefined]}
-          >
-            {t("common.transfer.receive.verifyAddress", { accountType })}
+          <LText style={[styles.text, unsafe ? styles.textWarning : undefined]}>
+            {unsafe
+              ? t("transfer.receive.verifySkipped", { accountType })
+              : verified
+                ? t("transfer.receive.verified")
+                : t("transfer.receive.verifyPending", { accountType })}
           </LText>
         </View>
       </View>
@@ -43,8 +45,6 @@ const styles = StyleSheet.create({
   wrapper: {
     padding: 16,
     borderRadius: 4,
-    borderWidth: 1,
-    borderStyle: "dashed",
     backgroundColor: colors.lightGrey,
     flexDirection: "row",
     alignItems: "center",
@@ -53,18 +53,14 @@ const styles = StyleSheet.create({
     borderColor: colors.alert,
     backgroundColor: colors.lightAlert,
   },
-  iconWrapper: {
-    flex: 1,
-    alignItems: "center",
-    paddingRight: 16,
-  },
   textWrapper: {
-    flex: 3,
+    flex: 1,
   },
   text: {
     fontSize: 12,
     color: colors.grey,
     lineHeight: 18,
+    paddingLeft: 16,
   },
   textWarning: {
     color: colors.alert,
