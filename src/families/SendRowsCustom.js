@@ -3,11 +3,12 @@ import React from "react";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
 
-import Ripple from "./Ripple";
+import ripple from "./ripple/SendRowsCustom";
 
-const customFieldsPerFamily: { [_: string]: * } = {
-  ripple: Ripple,
+const perFamily: { [_: string]: * } = {
+  ripple,
 };
+
 export default ({
   transaction,
   account,
@@ -17,7 +18,7 @@ export default ({
   account: Account,
   navigation: NavigationScreenProp<*>,
 }) => {
-  const C = customFieldsPerFamily[account.currency.family];
+  const C = perFamily[account.currency.family];
   return C ? (
     <C transaction={transaction} account={account} navigation={navigation} />
   ) : null;

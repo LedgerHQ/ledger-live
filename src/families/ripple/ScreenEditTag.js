@@ -31,7 +31,7 @@ type State = {
   tag: string,
 };
 
-class EditTag extends PureComponent<Props, State> {
+class RippleEditTag extends PureComponent<Props, State> {
   static navigationOptions = {
     title: "Tag",
   };
@@ -127,4 +127,4 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(EditTag);
+export default connect(mapStateToProps)(RippleEditTag);

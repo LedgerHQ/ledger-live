@@ -23,9 +23,13 @@ export default class SummaryAmountSection extends PureComponent<Props> {
             <CurrencyUnitValue unit={account.unit} value={amount} />
           </LText>
           <LText style={styles.counterValueText}>
-            (
-            <CounterValue value={amount} currency={account.currency} showCode />
-            )
+            <CounterValue
+              before="("
+              value={amount}
+              after=")"
+              currency={account.currency}
+              showCode
+            />
           </LText>
         </View>
       </SummaryRow>

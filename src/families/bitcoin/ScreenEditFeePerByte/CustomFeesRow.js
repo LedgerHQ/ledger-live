@@ -1,22 +1,24 @@
 // @flow
 import React, { Component } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { BigNumber } from "bignumber.js";
 
-import LText from "../../components/LText/index";
-import Check from "../../icons/Check";
+import LText from "../../../components/LText/index";
+import Check from "../../../icons/Check";
 
-import colors from "../../colors";
+import colors from "../../../colors";
 
 type Props = {
   title: React$Node,
   last?: boolean,
-  value: BigNumber,
+  initialValue: ?BigNumber,
+  onPress: (?BigNumber) => void,
   isSelected: boolean,
-  onPress: BigNumber => void,
 };
 
-type State = {};
+type State = {
+  fees: ?string,
+};
 
 class FeesRow extends Component<Props, State> {
   static defaultProps = {
@@ -24,13 +26,29 @@ class FeesRow extends Component<Props, State> {
     last: false,
   };
 
+  state = {
+    fees: (this.props.initialValue || "").toString(),
+  };
+
+  input = React.createRef();
+
+  onChangeText = (fees: string) => {
+    const { onPress } = this.props;
+    this.setState({ fees }, () => onPress(BigNumber(fees)));
+  };
+
   onPress = () => {
-    const { value, onPress } = this.props;
-    onPress(value);
+    const { onPress } = this.props;
+    onPress(null);
+
+    if (this.input.current) {
+      this.input.current.focus();
+    }
   };
 
   render() {
-    const { title, last, isSelected, value } = this.props;
+    const { title, last, isSelected } = this.props;
+
     return (
       <TouchableOpacity onPress={this.onPress}>
         <View style={[styles.root, last ? styles.last : null]}>
@@ -50,11 +68,21 @@ class FeesRow extends Component<Props, State> {
               {title}
             </LText>
           </View>
-          <View>
-            <LText
-              style={styles.text}
-              semiBold={isSelected}
-            >{`${value.toString()} Sat/bytes`}</LText>
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={this.input}
+              style={[
+                styles.textInput,
+                isSelected ? styles.textInputSelected : null,
+              ]}
+              onChangeText={this.onChangeText}
+              value={this.state.fees && isSelected ? `${this.state.fees}` : ""}
+              keyboardType="numeric"
+              selectTextOnFocus
+            />
+            <LText style={styles.text} semiBold={isSelected}>
+              Sat/bytes
+            </LText>
           </View>
         </View>
       </TouchableOpacity>
@@ -104,6 +132,19 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.darkBlue,
+  },
+  textInput: {
+    fontSize: 14,
+    marginRight: 6,
+    color: colors.darkBlue,
+    textAlign: "right",
+  },
+  textInputSelected: {
+    fontWeight: "600",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 

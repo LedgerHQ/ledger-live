@@ -3,12 +3,12 @@ import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { T } from "../../../types/common";
-import LText from "../../../components/LText";
-import { getAccountBridge } from "../../../bridge";
-import colors from "../../../colors";
-import SectionSeparator from "../SectionSeparator";
-import SummaryRow from "../SummaryRow";
+import type { T } from "../../types/common";
+import LText from "../../components/LText";
+import { getAccountBridge } from "../../bridge";
+import colors from "../../colors";
+import SectionSeparator from "../../screens/SendFunds/SectionSeparator";
+import SummaryRow from "../../screens/SendFunds/SummaryRow";
 
 type Props = {
   account: Account,
@@ -31,7 +31,7 @@ class RippleTagRow extends PureComponent<Props, State> {
 
   editTag = () => {
     const { account, navigation, transaction } = this.props;
-    navigation.navigate("EditTag", {
+    navigation.navigate("RippleEditTag", {
       accountId: account.id,
       transaction,
     });

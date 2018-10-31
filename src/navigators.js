@@ -48,8 +48,6 @@ import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
 import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
-import EditFees from "./screens/EditFees";
-import EditTag from "./screens/EditTag";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
@@ -64,6 +62,8 @@ import AddAccountsSelectCrypto from "./screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "./screens/AddAccounts/02-SelectDevice";
 import AddAccountsAccounts from "./screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
+
+import sendScreens from "./families/sendScreens";
 
 // TODO look into all FlowFixMe
 
@@ -316,8 +316,7 @@ const SendFunds = createStackNavigator(
     SendSummary,
     SendConnectDevice,
     SendValidation,
-    EditFees,
-    EditTag,
+    ...sendScreens,
   },
   closableStackNavigatorConfig,
 );

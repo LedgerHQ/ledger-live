@@ -12,16 +12,24 @@ class CurrencyUnitValue extends Component<{
   locale: string,
   showCode: boolean,
   alwaysShowSign?: boolean,
+  before: string,
+  after: string,
 }> {
   static defaultProps = {
     showCode: true,
+    before: "",
+    after: "",
   };
 
   render() {
-    const { unit, value, ...rest } = this.props;
-    return formatCurrencyUnit(unit, value, {
-      ...rest,
-    });
+    const { unit, value, before, after, ...rest } = this.props;
+    return (
+      before +
+      formatCurrencyUnit(unit, value, {
+        ...rest,
+      }) +
+      after
+    );
   }
 }
 

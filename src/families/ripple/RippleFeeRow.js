@@ -1,0 +1,88 @@
+/* @flow */
+import React, { Component } from "react";
+import { View, StyleSheet } from "react-native";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import SummaryRow from "../../screens/SendFunds/SummaryRow";
+import LText from "../../components/LText";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import CounterValue from "../../components/CounterValue";
+
+import colors from "../../colors";
+import { getAccountBridge } from "../../bridge";
+import type { Transaction } from "../../bridge/RippleJSBridge";
+
+type Props = {
+  account: Account,
+  transaction: Transaction,
+  navigation: *,
+};
+
+export default class RippleFeeRow extends Component<Props> {
+  openFees = () => {
+    const { account, navigation, transaction } = this.props;
+    navigation.navigate("RippleEditFee", {
+      accountId: account.id,
+      transaction,
+    });
+  };
+
+  render() {
+    const { account, transaction } = this.props;
+    const bridge = getAccountBridge(account);
+    const fee = bridge.getTransactionExtra(account, transaction, "fee");
+
+    return (
+      <SummaryRow title="Network fees" link="link">
+        <View style={{ alignItems: "flex-end" }}>
+          <View style={styles.accountContainer}>
+            {fee ? (
+              <LText style={styles.valueText}>
+                <CurrencyUnitValue
+                  unit={account.currency.units[0]}
+                  value={fee}
+                />
+              </LText>
+            ) : null}
+
+            <LText style={styles.link} onPress={this.openFees}>
+              Edit
+            </LText>
+          </View>
+          <LText style={styles.countervalue}>
+            <CounterValue
+              before="("
+              value={fee}
+              after=")"
+              currency={account.currency}
+            />
+          </LText>
+        </View>
+      </SummaryRow>
+    );
+  }
+}
+const styles = StyleSheet.create({
+  accountContainer: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  summaryRowText: {
+    fontSize: 16,
+    textAlign: "right",
+    color: colors.darkBlue,
+  },
+  countervalue: {
+    fontSize: 12,
+    color: colors.grey,
+  },
+  valueText: {
+    fontSize: 16,
+  },
+  link: {
+    color: colors.live,
+    textDecorationStyle: "solid",
+    textDecorationLine: "underline",
+    textDecorationColor: colors.live,
+    marginLeft: 8,
+  },
+});

@@ -9,7 +9,7 @@ import LText from "../../components/LText/index";
 import colors from "../../colors";
 
 type Props = {
-  title: string,
+  title: React$Node,
   titleProps?: *,
   link?: string,
   info?: string,
