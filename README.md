@@ -51,6 +51,20 @@ BRIDGESTREAM_DATA=...       # come from console.log of the desktop app during th
 DEBUG_RNDEBUGGER=1          # enable react native debugger
 ```
 
+## Maintenance
+
+### Refresh the flow-typed from flow-typed Github
+
+```
+yarn sync-flowtyped
+```
+
+### Refresh the languages (if we add new languages)
+
+```
+yarn sync-locales
+```
+
 ## Troobleshooting
 
 ### XCode 10
