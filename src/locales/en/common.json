@@ -9,7 +9,8 @@
     "sortBy": "Sort by",
     "signOut": "Sign Out",
     "search": "Search",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "edit": "Edit"
   },
   "errors": {
     "AccountNameRequired": {
@@ -455,7 +456,8 @@
       "desc": "Recieve crypto assets",
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
       "verifyPending": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
-      "verified": "You have verified your receive address on your Ledger Device."
+      "verified": "You have verified your receive address on your Ledger Device.",
+      "verifyAgain": "Verify again"
     },
     "exchange": {
       "title": "Exchange",
@@ -478,6 +480,13 @@
     "amount": {
       "available": "You have <1><0>{{amount}}</></> available",
       "loadingNetwork": "Loading Network fees..."
+    },
+    "summary": {
+      "tag": "Tag (Optional)",
+      "total": "Total",
+      "amount": "Amount",
+      "from": "From",
+      "to": "to"
     }
   },
   "addAccounts": {

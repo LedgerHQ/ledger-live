@@ -80,6 +80,12 @@ class ReceiveConfirmation extends Component<Props, State> {
     this.props.navigation.goBack();
   };
 
+  onDone = () => {
+    if (this.props.navigation.dismiss) {
+      this.props.navigation.dismiss();
+    }
+  };
+
   render(): React$Node {
     const { account, navigation, t } = this.props;
     const { verified, error } = this.state;
@@ -112,6 +118,22 @@ class ReceiveConfirmation extends Component<Props, State> {
             accountType={account.currency.managerAppName}
           />
         </View>
+        {verified && (
+          <View style={styles.footer}>
+            <Button
+              containerStyle={styles.button}
+              onPress={this.onDone}
+              type="secondary"
+              title={t("common.done")}
+            />
+            <Button
+              containerStyle={styles.button}
+              type="primary"
+              title={t("transfer.receive.verifyAgain")}
+              onPress={this.onRetry}
+            />
+          </View>
+        )}
         <BottomModal isOpened={!!error} onClose={() => {}}>
           {error ? (
             <View style={styles.modal}>
@@ -218,6 +240,11 @@ const styles = StyleSheet.create({
   },
   button: {
     flexGrow: 1,
+    marginHorizontal: 8,
+  },
+  footer: {
+    flexDirection: "row",
+    marginBottom: 16,
     marginHorizontal: 8,
   },
 });

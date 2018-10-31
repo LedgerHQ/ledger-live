@@ -49,6 +49,7 @@ import EditAccountName from "./screens/AccountSettings/EditAccountName";
 import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import EditFees from "./screens/EditFees";
+import EditTag from "./screens/EditTag";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
@@ -315,22 +316,13 @@ const SendFunds = createStackNavigator(
     SendSummary,
     SendConnectDevice,
     SendValidation,
+    EditFees,
+    EditTag,
   },
   closableStackNavigatorConfig,
 );
 
 SendFunds.navigationOptions = {
-  header: null,
-};
-
-const SendFundsSettings = createStackNavigator(
-  {
-    EditFees,
-  },
-  closableStackNavigatorConfig,
-);
-
-SendFundsSettings.navigationOptions = {
   header: null,
 };
 
@@ -375,7 +367,6 @@ export const RootNavigator = createStackNavigator(
     OperationDetails,
     AccountSettings,
     ImportAccounts,
-    SendFundsSettings,
     PairDevices,
     // $FlowFixMe non-sense error
     EditDeviceName,
