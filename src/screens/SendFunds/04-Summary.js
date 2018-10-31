@@ -56,6 +56,14 @@ class SendSummary extends Component<
   };
 
   componentDidMount() {
+    this.syncTotalSpent();
+  }
+
+  componentDidUpdate() {
+    this.syncTotalSpent();
+  }
+
+  componentWillUnmount() {
     this.nonceTotalSpent++;
   }
 
@@ -104,10 +112,15 @@ class SendSummary extends Component<
       if (nonce !== this.nonceTotalSpent) return;
 
       this.setState(old => {
-        if (old.totalSpent && totalSpent && totalSpent.eq(old.totalSpent)) {
+        if (
+          !old.notEnoughBalanceError &&
+          old.totalSpent &&
+          totalSpent &&
+          totalSpent.eq(old.totalSpent)
+        ) {
           return null;
         }
-        return { totalSpent };
+        return { totalSpent, notEnoughBalanceError: null };
       });
     } catch (e) {
       if (nonce !== this.nonceTotalSpent) return;
