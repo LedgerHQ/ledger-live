@@ -9,9 +9,9 @@ import Check from "../../icons/Check";
 import colors from "../../colors";
 
 type Props = {
-  title: string,
+  title: React$Node,
   last?: boolean,
-  currentValue: ?BigNumber,
+  initialValue: ?BigNumber,
   onPress: (?BigNumber) => void,
   isSelected: boolean,
 };
@@ -27,7 +27,7 @@ class FeesRow extends Component<Props, State> {
   };
 
   state = {
-    fees: (this.props.currentValue || "").toString(),
+    fees: (this.props.initialValue || "").toString(),
   };
 
   input = React.createRef();

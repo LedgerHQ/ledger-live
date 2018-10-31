@@ -8,35 +8,37 @@ import {
   Keyboard,
 } from "react-native";
 import { connect } from "react-redux";
+import { translate, Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
 
 import colors from "../../colors";
-
 import { accountScreenSelector } from "../../reducers/accounts";
 import { getAccountBridge } from "../../bridge";
+import type { Transaction } from "../../bridge/RNLibcoreAccountBridge";
 
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
-
 import FeesRow from "./FeesRow";
 import CustomFeesRow from "./CustomFeesRow";
 
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    transaction: *,
+    params: {
+      accountId: string,
+      transaction: Transaction,
+    },
   }>,
 };
 type State = {
   feePerByte: ?BigNumber,
 };
 
-// TODO current impl is only for Bitcoin family. we need to split components
-// into many files and dispatch from here.
+// TODO current impl will be only for Bitcoin family
+
 class FeeSettings extends Component<Props, State> {
   static navigationOptions = {
     title: "Edit fees",
@@ -77,39 +79,36 @@ class FeeSettings extends Component<Props, State> {
   };
 
   render() {
+    const { navigation } = this.props;
     const { feePerByte } = this.state;
+    const transaction: Transaction = navigation.getParam("transaction");
+    if (!transaction) return null;
+    const items = transaction.networkInfo
+      ? transaction.networkInfo.feeItems.items
+      : [];
+    const selectedItem =
+      feePerByte &&
+      items.find(item => item.feePerByte && item.feePerByte.eq(feePerByte));
+    const selectedKey = selectedItem ? selectedItem.key : "custom";
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ flex: 1 }}>
-              <FeesRow
-                title="Low"
-                value={BigNumber(5)}
-                currentValue={feePerByte}
-                onPress={this.onChangeFeePerByte}
-              />
-              <FeesRow
-                title="Standard"
-                value={BigNumber(10)}
-                currentValue={feePerByte}
-                onPress={this.onChangeFeePerByte}
-              />
-              <FeesRow
-                title="High"
-                value={BigNumber(15)}
-                currentValue={feePerByte}
-                onPress={this.onChangeFeePerByte}
-              />
+              {items.map(item => (
+                <FeesRow
+                  key={item.key}
+                  title={item.label}
+                  value={item.feePerByte}
+                  isSelected={item.key === selectedKey}
+                  onPress={this.onChangeFeePerByte}
+                />
+              ))}
               <CustomFeesRow
-                title="Custom"
-                currentValue={feePerByte}
+                title={<Trans i18nKey="fees.speed.custom" />}
+                initialValue={feePerByte}
                 onPress={this.onChangeFeePerByte}
-                isSelected={
-                  !BigNumber(5).eq(feePerByte || 0) &&
-                  !BigNumber(10).eq(feePerByte || 0) &&
-                  !BigNumber(15).eq(feePerByte || 0)
-                }
+                isSelected={selectedKey === "custom"}
               />
               <View style={styles.buttonContainer}>
                 <Button
@@ -149,4 +148,4 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(FeeSettings);
+export default connect(mapStateToProps)(translate()(FeeSettings));

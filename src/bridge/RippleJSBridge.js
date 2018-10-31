@@ -33,10 +33,11 @@ import {
 } from "../errors";
 import type { CurrencyBridge, AccountBridge } from "./types";
 
-type Transaction = {
+export type Transaction = {
   amount: BigNumber,
   recipient: string,
   fee: ?BigNumber,
+  networkInfo: ?{ serverFee: BigNumber },
   tag: ?number,
 };
 
@@ -535,11 +536,30 @@ export const accountBridge: AccountBridge<Transaction> = {
     recipient: "",
     fee: null,
     tag: undefined,
+    networkInfo: null,
   }),
 
-  fetchTransactionNetworkInfo: () => Promise.resolve({}),
+  fetchTransactionNetworkInfo: async account => {
+    const api = apiForEndpointConfig(account.endpointConfig);
+    try {
+      await api.connect();
+      const info = await api.getServerInfo();
+      const serverFee = parseAPIValue(info.validatedLedger.baseFeeXRP);
+      return {
+        serverFee,
+      };
+    } finally {
+      api.disconnect();
+    }
+  },
 
-  applyTransactionNetworkInfo: (account, transaction) => transaction,
+  getTransactionNetworkInfo: (account, transaction) => transaction.networkInfo,
+
+  applyTransactionNetworkInfo: (account, transaction, networkInfo) => ({
+    ...transaction,
+    networkInfo,
+    fee: transaction.fee || networkInfo.serverFee,
+  }),
 
   editTransactionAmount: (account, t, amount) => ({
     ...t,
