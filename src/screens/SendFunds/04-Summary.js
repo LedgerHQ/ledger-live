@@ -7,15 +7,17 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import LText from "../../components/LText";
 import Button from "../../components/Button";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import CounterValue from "../../components/CounterValue";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
 import colors from "../../colors";
 
-import SummaryRow from "./SummaryRow";
+import SummaryFromSection from "./SummaryFromSection";
+import SummaryToSection from "./SummaryToSection";
+import SectionSeparator from "./SectionSeparator";
+import SummaryCustomFields from "./SummaryCustomFields";
+import SummaryAmountSection from "./SummaryAmountSection";
+import SummaryFeesSection from "./SummaryFeesSection";
+import SummaryTotalSection from "./SummaryTotalSection";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
@@ -62,74 +64,26 @@ class SendSummary extends Component<Props> {
     const amount = bridge.getTransactionAmount(account, transaction);
     const recipient = bridge.getTransactionRecipient(account, transaction);
 
-    // TODO when integrating new design: one row = one component !!
-
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={6} currentStep={4} />
-        <SummaryRow title="Account">
-          <View style={styles.accountContainer}>
-            <View style={{ paddingRight: 8 }}>
-              <CurrencyIcon size={16} currency={account.currency} />
-            </View>
-            <LText
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.summaryRowText}
-            >
-              {account.name}
-            </LText>
-          </View>
-        </SummaryRow>
-        <SummaryRow title="Address">
-          <View style={{ flex: 1 }}>
-            <LText
-              numberOfLines={2}
-              ellipsizeMode="middle"
-              style={styles.summaryRowText}
-            >
-              {recipient}
-            </LText>
-          </View>
-        </SummaryRow>
-        <SummaryRow title="Amount">
-          <View style={styles.amountContainer}>
-            <LText style={styles.valueText}>
-              <CurrencyUnitValue unit={account.unit} value={amount} />
-            </LText>
-            <LText style={styles.counterValueText}>
-              <CounterValue
-                value={amount}
-                currency={account.currency}
-                showCode
-              />
-            </LText>
-          </View>
-        </SummaryRow>
-
-        {/* FIXME rendering of this will be branched with one component per family of coin */}
-        <SummaryRow title="Fees" link="link" last>
-          <View style={styles.accountContainer}>
-            <LText style={styles.valueText}>{`${bridge.getTransactionExtra(
-              account,
-              transaction,
-              "feePerByte",
-            ) || "?"} sat/bytes`}</LText>
-
-            <LText style={styles.link} onPress={this.openFees}>
-              Edit
-            </LText>
-          </View>
-        </SummaryRow>
-
+        <SummaryFromSection account={account} />
+        <SummaryToSection recipient={recipient} />
+        <SectionSeparator />
+        <SummaryCustomFields
+          transaction={transaction}
+          account={account}
+          navigation={navigation}
+        />
+        <SummaryAmountSection account={account} amount={amount} />
+        <SummaryFeesSection
+          account={account}
+          transaction={transaction}
+          navigation={navigation}
+        />
+        <SectionSeparator />
+        <SummaryTotalSection account={account} amount={amount} />
         <View style={styles.summary}>
-          <LText semiBold style={styles.summaryValueText}>
-            <CurrencyUnitValue unit={account.unit} value={amount} />
-          </LText>
-          <LText style={styles.summaryCounterValueText}>
-            <CounterValue value={amount} currency={account.currency} showCode />
-          </LText>
-          <View style={{ flex: 1 }} />
           <Button
             type="primary"
             title="Continue"
@@ -147,55 +101,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  accountContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  summaryRowText: {
-    fontSize: 16,
-    textAlign: "right",
-    color: colors.darkBlue,
-  },
-  amountContainer: {
-    flexDirection: "column",
-    alignItems: "flex-end",
-  },
-  valueText: {
-    fontSize: 16,
-  },
-  counterValueText: {
-    fontSize: 12,
-    color: colors.grey,
-  },
   summary: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    borderTopColor: colors.lightFog,
-    borderTopWidth: 1,
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 16,
   },
-  summaryValueText: {
-    fontSize: 20,
-    color: colors.live,
-  },
-  summaryCounterValueText: {
-    fontSize: 14,
-    color: colors.grey,
-  },
   continueButton: {
     alignSelf: "stretch",
-  },
-  link: {
-    color: colors.live,
-    textDecorationStyle: "solid",
-    textDecorationLine: "underline",
-    textDecorationColor: colors.live,
-    marginLeft: 8,
   },
 });
 

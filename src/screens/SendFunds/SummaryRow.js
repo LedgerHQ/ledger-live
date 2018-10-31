@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
 import ExternalLink from "../../icons/ExternalLink";
 
 import LText from "../../components/LText/index";
@@ -9,9 +10,10 @@ import colors from "../../colors";
 
 type Props = {
   title: string,
+  titleProps?: *,
   link?: string,
+  info?: string,
   children: React$Node,
-  last?: boolean,
 };
 
 type State = {};
@@ -19,15 +21,17 @@ type State = {};
 class SummaryRow extends Component<Props, State> {
   static defaultProps = {
     link: "",
-    last: false,
+    info: "",
   };
 
   render(): React$Node {
-    const { title, link, children, last } = this.props;
+    const { title, link, children, info, titleProps } = this.props;
     return (
-      <View style={[styles.root, last ? styles.last : null]}>
+      <View style={[styles.root]}>
         <View style={styles.titleContainer}>
-          <LText style={styles.title}>{title}</LText>
+          <LText style={[styles.title]} {...titleProps}>
+            {title}
+          </LText>
           <View style={styles.iconContainer}>
             {!!link && (
               <ExternalLink
@@ -36,6 +40,7 @@ class SummaryRow extends Component<Props, State> {
                 color={colors.grey}
               />
             )}
+            {!!info && <Icon name="info-circle" size={12} color={colors.fog} />}
           </View>
         </View>
         {children}
@@ -51,20 +56,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginLeft: 16,
     paddingRight: 16,
-    paddingVertical: 24,
-    borderBottomColor: colors.lightFog,
-    borderBottomWidth: 1,
+    paddingVertical: 16,
   },
-  last: {
-    borderBottomWidth: 0,
-  },
+
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginRight: 24,
   },
   title: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.grey,
   },
   iconContainer: {

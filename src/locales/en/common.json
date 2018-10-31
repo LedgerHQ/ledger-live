@@ -9,7 +9,8 @@
     "sortBy": "Sort by",
     "signOut": "Sign Out",
     "search": "Search",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "edit": "Edit"
   },
   "errors": {
     "AccountNameRequired": {
@@ -479,6 +480,13 @@
     },
     "amount": {
       "available": "You have <1><0>{{amount}}</></> available"
+    },
+    "summary": {
+      "tag": "Tag (Optional)",
+      "total": "Total",
+      "amount": "Amount",
+      "from": "From",
+      "to": "to"
     }
   },
   "addAccounts": {
