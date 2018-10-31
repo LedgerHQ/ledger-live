@@ -13,9 +13,6 @@ if ! [ -f .env ]; then
   echo 'APP_NAME="LL [DEV]"' > .env;
 fi
 
-flow-typed install -s
-rm flow-typed/npm/axios_v0.18.x.js
-
 if [[ $DEBUG_RNDEBUGGER == "1" ]] ; then
   rndebugger-open
 fi
