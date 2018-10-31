@@ -10,7 +10,8 @@
     "signOut": "Sign Out",
     "search": "Search",
     "contactUs": "Contact us",
-    "edit": "Edit"
+    "edit": "Edit",
+    "close": "Close"
   },
   "errors": {
     "AccountNameRequired": {
@@ -490,8 +491,16 @@
     },
     "validation": {
       "title": "Please verify all transaction details on your Ledger Nano X",
-      "message": "Confirm the transaction on your device to securely sign it.",
-      "disclaimer": "Carefully verify the informations on your Ledger device are correct. Try sending a small amount first."
+      "message": "Confirm the transaction on your device to securely sign it",
+      "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
+      "sent": "Transaction sent",
+      "confirm": "Your account balance will update once the blockchain has confirmed the transaction",
+      "refused": "Transaction refused",
+      "retry": "Please retry or contact Ledger Support in case of doubt",
+      "button": {
+        "details": "View details",
+        "retry": "Retry"
+      }
     }
   },
   "addAccounts": {

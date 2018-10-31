@@ -22,7 +22,7 @@ class CreateModal extends Component<Props> {
   onSendFunds = () => {
     const { navigation, onClose } = this.props;
     navigation.navigate({
-      routeName: "SendValidation", // TODO: BACK TO SENDFUNDSs
+      routeName: "SendFunds",
       params: {
         goBackKey: navigation.state.key,
       },

@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 
@@ -15,9 +15,8 @@ type Props = {
   t: T,
   action: () => void,
 };
-type State = *;
 
-class ValidateOnDevice extends Component<Props, State> {
+class ValidateOnDevice extends PureComponent<Props> {
   render() {
     const { t } = this.props;
     return (
