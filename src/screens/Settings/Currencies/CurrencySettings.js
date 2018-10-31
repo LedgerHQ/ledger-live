@@ -105,7 +105,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
             })}
             onPress={currencySettings.exchange ? this.goToExchange : null}
           >
-            <LText style={styles.currencyExchange}>
+            <LText semiBold style={styles.currencyExchange}>
               {currencySettings.exchange}
             </LText>
           </SettingsRow>
@@ -134,6 +134,8 @@ class EachCurrencySettings extends Component<Props, LocalState> {
                 minimumValue={defaults.confirmationsNb.min}
                 maximumValue={defaults.confirmationsNb.max}
                 value={value}
+                thumbTintColor={colors.live}
+                minimumTrackTintColor={colors.live}
                 onValueChange={val => this.setState({ value: val })}
                 onSlidingComplete={this.updateSettings}
               />
@@ -181,6 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+    paddingTop: 8,
     paddingHorizontal: 16,
   },
   textContainer: {

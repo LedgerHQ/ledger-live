@@ -48,11 +48,7 @@ class CreateModal extends Component<Props> {
   render() {
     const { onClose, isOpened, t } = this.props;
     return (
-      <BottomModal
-        isOpened={isOpened}
-        onClose={onClose}
-        style={{ paddingVertical: 20 }}
-      >
+      <BottomModal isOpened={isOpened} onClose={onClose}>
         <BottomModalChoice
           title={t("transfer.send.title")}
           description={t("transfer.send.desc")}

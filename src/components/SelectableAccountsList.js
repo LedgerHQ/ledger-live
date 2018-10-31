@@ -9,6 +9,13 @@ import CheckBox from "./CheckBox";
 import LText from "./LText";
 import colors from "../colors";
 
+const selectAllHitSlop = {
+  top: 16,
+  left: 16,
+  right: 16,
+  bottom: 16,
+};
+
 type ListProps = {
   accounts: Account[],
   onPressAccount?: Account => void,
@@ -133,9 +140,10 @@ class Header extends PureComponent<{
           <TouchableOpacity
             style={styles.headerSelectAll}
             onPress={areAllSelected ? onUnselectAll : onSelectAll}
+            hitSlop={selectAllHitSlop}
           >
             <LText style={styles.headerSelectAllText}>
-              {areAllSelected ? "Unselect all" : "Select all"}
+              {areAllSelected ? "Deselect all" : "Select all"}
             </LText>
           </TouchableOpacity>
         )}
@@ -147,7 +155,7 @@ class Header extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 24,
   },
   selectableAccountRoot: {
     flexDirection: "row",
@@ -168,7 +176,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   headerSelectAllText: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.live,
   },
   headerText: {

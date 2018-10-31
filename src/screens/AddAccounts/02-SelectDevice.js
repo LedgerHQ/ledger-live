@@ -28,7 +28,7 @@ type State = {};
 
 class AddAccountsSelectDevice extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="step 2 of 4" />,
+    headerTitle: <StepHeader title="Device" subtitle="step 2 of 3" />,
   };
 
   onSelectDevice = (deviceId: string) => {

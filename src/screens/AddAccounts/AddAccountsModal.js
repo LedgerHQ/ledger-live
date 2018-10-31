@@ -18,7 +18,7 @@ type Props = {
 };
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
-const IconQr = () => <IconFa name="qrcode" color={colors.live} sizse={48} />;
+const IconQr = () => <IconFa name="qrcode" color={colors.live} size={16} />;
 
 class AddAccountsModal extends PureComponent<Props> {
   onClickAdd = () => {

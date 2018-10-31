@@ -9,7 +9,8 @@
     "sortBy": "Sort by",
     "signOut": "Sign Out",
     "search": "Search",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "noCryptoFound": "No crypto assets found"
   },
   "errors": {
     "AccountNameRequired": {
