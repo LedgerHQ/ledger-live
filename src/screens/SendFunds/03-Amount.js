@@ -25,6 +25,9 @@ import Button from "../../components/Button";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
+import RetryButton from "../../components/RetryButton";
+import CancelButton from "../../components/CancelButton";
+import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import AmountInput from "./AmountInput";
 
 type Props = {
@@ -40,52 +43,179 @@ type Props = {
 
 type State = {
   transaction: *,
-  canNext: boolean,
+  networkInfoError: ?Error,
   notEnoughBalanceError: ?Error,
+  txValidationWarning: ?Error,
+  totalSpent: ?BigNumber,
+  leaving: boolean,
 };
 
-class SelectFunds extends Component<Props, State> {
+const similarError = (a, b) =>
+  a === b || (a && b && a.name === b.name && a.message === b.message);
+
+class SendAmount extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: <StepHeader title="Amount" subtitle="step 3 of 6" />,
   };
 
-  state = {
-    // TODO probably could leave in the navigation param itself
-    transaction: this.props.navigation.getParam("transaction"),
-    canNext: false,
-    notEnoughBalanceError: null,
-  };
+  constructor({ navigation }) {
+    super();
+    const transaction = navigation.getParam("transaction");
+    this.state = {
+      transaction,
+      networkInfoError: null,
+      notEnoughBalanceError: null,
+      txValidationWarning: null,
+      totalSpent: null,
+      leaving: false,
+    };
+  }
 
-  nonce: number = 0;
-
-  blur = () => {
-    Keyboard.dismiss();
+  setError = (e: Error) => {
+    if (e instanceof NotEnoughBalance) {
+      this.setState(old => {
+        if (similarError(old.notEnoughBalanceError, e)) return null;
+        return { notEnoughBalanceError: e };
+      });
+    } else if (this.state.notEnoughBalanceError) {
+      this.setState(old => {
+        if (!old.notEnoughBalanceError) return null;
+        return { notEnoughBalanceError: null };
+      });
+    }
   };
 
   componentDidMount() {
-    this.checkCanNext(this.nonce);
+    this.validate();
+  }
+
+  componentDidUpdate() {
+    this.validate();
   }
 
   componentWillUnmount() {
-    this.nonce++;
+    this.nonceTotalSpent++;
+    this.nonceValidTransaction++;
+    this.networkInfoPending = false;
   }
 
-  onChange = (amount: BigNumber) => {
-    const id = ++this.nonce;
-    if (!amount.isNaN()) {
-      this.setState(
-        ({ transaction }, { account }) => ({
-          transaction: getAccountBridge(account).editTransactionAmount(
+  networkInfoPending = false;
+  syncNetworkInfo = async () => {
+    if (this.networkInfoPending) return;
+    const { account } = this.props;
+    const bridge = getAccountBridge(account);
+    if (
+      !bridge.getTransactionNetworkInfo(account, this.state.transaction) &&
+      !this.state.networkInfoError
+    ) {
+      try {
+        this.networkInfoPending = true;
+        const networkInfo = await bridge.fetchTransactionNetworkInfo(account);
+        if (!this.networkInfoPending) return;
+        this.setState(({ transaction }, { account }) => ({
+          networkInfoError: null,
+          transaction: getAccountBridge(account).applyTransactionNetworkInfo(
             account,
             transaction,
-            amount,
+            networkInfo,
           ),
-        }),
-        () => {
-          this.checkCanNext(id);
-        },
-      );
+        }));
+      } catch (networkInfoError) {
+        this.setState(oldState => {
+          if (similarError(oldState.networkInfoError, networkInfoError)) {
+            return null;
+          }
+          return { networkInfoError };
+        });
+      } finally {
+        this.networkInfoPending = false;
+      }
     }
+  };
+
+  nonceTotalSpent = 0;
+  syncTotalSpent = async () => {
+    const { account } = this.props;
+    const { transaction } = this.state;
+    const bridge = getAccountBridge(account);
+    const nonce = ++this.nonceTotalSpent;
+    try {
+      const totalSpent = await bridge.getTotalSpent(account, transaction);
+      if (nonce !== this.nonceTotalSpent) return;
+
+      this.setState(old => {
+        if (old.totalSpent && totalSpent && totalSpent.eq(old.totalSpent)) {
+          return null;
+        }
+        return { totalSpent };
+      });
+    } catch (e) {
+      if (nonce !== this.nonceTotalSpent) return;
+
+      this.setError(e);
+    }
+  };
+
+  nonceValidTransaction = 0;
+  syncValidTransaction = async () => {
+    const { account } = this.props;
+    const { transaction } = this.state;
+    const bridge = getAccountBridge(account);
+    const nonce = ++this.nonceValidTransaction;
+    try {
+      const txValidationWarning = await bridge.checkValidTransaction(
+        account,
+        transaction,
+      );
+      if (nonce !== this.nonceValidTransaction) return;
+
+      this.setState(old => {
+        if (!old.notEnoughBalanceError) {
+          if (similarError(old.txValidationWarning, txValidationWarning)) {
+            return null;
+          }
+        }
+        return {
+          txValidationWarning,
+          notEnoughBalanceError: null,
+        };
+      });
+    } catch (e) {
+      if (nonce !== this.nonceValidTransaction) return;
+
+      this.setError(e);
+    }
+  };
+
+  validate = () => {
+    this.syncNetworkInfo();
+    this.syncTotalSpent();
+    this.syncValidTransaction();
+  };
+
+  onNetworkInfoCancel = () => {
+    this.setState({ leaving: true });
+    this.props.navigation.dangerouslyGetParent().goBack();
+  };
+
+  onNetworkInfoRetry = () => {
+    this.setState({ networkInfoError: null });
+  };
+
+  onChange = (amount: BigNumber) => {
+    if (!amount.isNaN()) {
+      this.setState(({ transaction }, { account }) => ({
+        transaction: getAccountBridge(account).editTransactionAmount(
+          account,
+          transaction,
+          amount,
+        ),
+      }));
+    }
+  };
+
+  blur = () => {
+    Keyboard.dismiss();
   };
 
   navigate = () => {
@@ -97,84 +227,94 @@ class SelectFunds extends Component<Props, State> {
     });
   };
 
-  checkCanNext = async (nonce: number) => {
-    const { account } = this.props;
-    const { transaction } = this.state;
-
-    try {
-      const bridge = getAccountBridge(account);
-      const totalSpent = await bridge.getTotalSpent(account, transaction);
-      if (nonce !== this.nonce) return;
-      const checkValidTransaction = await bridge.checkValidTransaction(
-        account,
-        transaction,
-      );
-      if (nonce !== this.nonce) return;
-
-      const isValidTransaction = checkValidTransaction === null;
-      const canNext =
-        // $FlowFixMe
-        !transaction.amount.isZero() && isValidTransaction && totalSpent.gt(0);
-
-      if (nonce !== this.nonce) return;
-      this.setState({ canNext, notEnoughBalanceError: null });
-    } catch (err) {
-      if (err instanceof NotEnoughBalance) {
-        this.setState({ notEnoughBalanceError: err });
-      } else if (this.state.notEnoughBalanceError) {
-        this.setState({ notEnoughBalanceError: null });
-      }
-    }
-  };
-
   render() {
     const { account, t } = this.props;
-    const { transaction, canNext, notEnoughBalanceError } = this.state;
+    const {
+      transaction,
+      notEnoughBalanceError,
+      networkInfoError,
+      txValidationWarning,
+      totalSpent,
+      leaving,
+    } = this.state;
     const bridge = getAccountBridge(account);
     const amount = bridge.getTransactionAmount(account, transaction);
+    const networkInfo = bridge.getTransactionNetworkInfo(account, transaction);
+    const pending = !networkInfo && !networkInfoError;
+
+    const canNext: boolean =
+      !!totalSpent &&
+      !notEnoughBalanceError &&
+      !networkInfoError &&
+      txValidationWarning === null &&
+      !transaction.amount.isZero() &&
+      totalSpent.gt(0) &&
+      !!networkInfo;
 
     return (
-      <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={5} currentStep={3} />
-        <KeyboardView style={styles.container}>
-          <TouchableWithoutFeedback onPress={this.blur}>
-            <View style={{ flex: 1 }}>
-              {/* $FlowFixMe */}
-              <AmountInput
-                account={account}
-                onChange={this.onChange}
-                currency={account.unit.code}
-                value={amount}
-                error={notEnoughBalanceError}
-              />
+      <>
+        <SafeAreaView style={styles.root}>
+          <Stepper nbSteps={5} currentStep={3} />
+          <KeyboardView style={styles.container}>
+            <TouchableWithoutFeedback onPress={this.blur}>
+              <View style={{ flex: 1 }}>
+                <AmountInput
+                  account={account}
+                  onChange={this.onChange}
+                  currency={account.unit.code}
+                  value={amount}
+                  error={notEnoughBalanceError}
+                />
 
-              <View style={styles.bottomWrapper}>
-                <LText style={styles.available}>
-                  <Trans i18nKey="send.amount.available">
-                    You have
-                    <LText tertiary style={styles.availableAmount}>
-                      <CurrencyUnitValue
-                        showCode
-                        unit={account.unit}
-                        value={account.balance}
-                      />
-                    </LText>
-                    available
-                  </Trans>
-                </LText>
-                <View style={styles.continueWrapper}>
-                  <Button
-                    type="primary"
-                    title={t("common:common.continue")}
-                    onPress={this.navigate}
-                    disabled={!canNext}
-                  />
+                <View style={styles.bottomWrapper}>
+                  <LText style={styles.available}>
+                    <Trans i18nKey="send.amount.available">
+                      You have
+                      <LText tertiary style={styles.availableAmount}>
+                        <CurrencyUnitValue
+                          showCode
+                          unit={account.unit}
+                          value={account.balance}
+                        />
+                      </LText>
+                      available
+                    </Trans>
+                  </LText>
+                  <View style={styles.continueWrapper}>
+                    <Button
+                      type="primary"
+                      title={
+                        !pending
+                          ? t("common.continue")
+                          : t("send.amount.loadingNetwork")
+                      }
+                      onPress={this.navigate}
+                      disabled={!canNext}
+                      pending={pending}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </KeyboardView>
-      </SafeAreaView>
+            </TouchableWithoutFeedback>
+          </KeyboardView>
+        </SafeAreaView>
+
+        <GenericErrorBottomModal
+          error={leaving ? null : networkInfoError}
+          footerButtons={
+            <>
+              <CancelButton
+                containerStyle={styles.button}
+                onPress={this.onNetworkInfoCancel}
+              />
+              <RetryButton
+                containerStyle={styles.button}
+                onPress={this.onNetworkInfoRetry}
+              />
+            </>
+          }
+        />
+      </>
     );
   }
 }
@@ -219,6 +359,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingBottom: 16,
   },
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
 });
 
 const mapStateToProps = (state, props: Props): { account: Account } => ({
@@ -228,4 +372,4 @@ const mapStateToProps = (state, props: Props): { account: Account } => ({
 export default compose(
   translate(),
   connect(mapStateToProps),
-)(SelectFunds);
+)(SendAmount);

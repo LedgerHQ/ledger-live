@@ -136,7 +136,6 @@
       "title": "Sorry, no accounts found",
       "description": "Something went wrong with address calculation, try again or contact Ledger Support."
     },
-    "NoRecipient": { "title": "No recipient" },
     "NotEnoughBalance": {
       "title": "Oops, insufficient balance",
       "description": "Make sure the account to debit has sufficient balance"
@@ -479,7 +478,8 @@
       "input": "address"
     },
     "amount": {
-      "available": "You have <1><0>{{amount}}</></> available"
+      "available": "You have <1><0>{{amount}}</></> available",
+      "loadingNetwork": "Loading Network fees..."
     },
     "summary": {
       "tag": "Tag (Optional)",

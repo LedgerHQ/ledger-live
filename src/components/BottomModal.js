@@ -16,6 +16,9 @@ export type Props = {
 };
 
 class BottomModal extends Component<Props> {
+  static defaultProps = {
+    onClose: () => {},
+  };
   render() {
     const { isOpened, onClose, children, style } = this.props;
     return (
