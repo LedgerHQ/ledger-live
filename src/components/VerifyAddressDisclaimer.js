@@ -1,9 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { translate } from "react-i18next";
 
-import type { T } from "../types/common";
 import shield from "../images/shield.png";
 import shieldWarning from "../images/shield-warning.png";
 
@@ -12,15 +10,17 @@ import colors from "../colors";
 import LText from "./LText";
 
 type Props = {
-  t: T,
-  accountType: string,
-  verified: boolean,
-  unsafe: boolean,
+  text: string,
+  unsafe?: boolean,
 };
 
 class VerifyAddressDisclaimer extends PureComponent<Props> {
-  render(): React$Node {
-    const { verified, unsafe, accountType, t } = this.props;
+  static defaultProps = {
+    unsafe: false,
+  };
+
+  render() {
+    const { unsafe, text } = this.props;
 
     return (
       <View
@@ -29,11 +29,7 @@ class VerifyAddressDisclaimer extends PureComponent<Props> {
         <Image source={unsafe ? shieldWarning : shield} />
         <View style={styles.textWrapper}>
           <LText style={[styles.text, unsafe ? styles.textWarning : undefined]}>
-            {unsafe
-              ? t("transfer.receive.verifySkipped", { accountType })
-              : verified
-                ? t("transfer.receive.verified")
-                : t("transfer.receive.verifyPending", { accountType })}
+            {text}
           </LText>
         </View>
       </View>
@@ -67,4 +63,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(VerifyAddressDisclaimer);
+export default VerifyAddressDisclaimer;
