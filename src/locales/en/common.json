@@ -487,6 +487,11 @@
       "amount": "Amount",
       "from": "From",
       "to": "to"
+    },
+    "validation": {
+      "title": "Please verify all transaction details on your Ledger Nano X",
+      "message": "Confirm the transaction on your device to securely sign it.",
+      "disclaimer": "Carefully verify the informations on your Ledger device are correct. Try sending a small amount first."
     }
   },
   "addAccounts": {

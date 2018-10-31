@@ -115,7 +115,17 @@ class ReceiveConfirmation extends Component<Props, State> {
           <VerifyAddressDisclaimer
             unsafe={unsafe}
             verified={verified}
-            accountType={account.currency.managerAppName}
+            text={
+              unsafe
+                ? t("transfer.receive.verifySkipped", {
+                    accountType: account.currency.managerAppName,
+                  })
+                : verified
+                  ? t("transfer.receive.verified")
+                  : t("transfer.receive.verifyPending", {
+                      accountType: account.currency.managerAppName,
+                    })
+            }
           />
         </View>
         {verified && (

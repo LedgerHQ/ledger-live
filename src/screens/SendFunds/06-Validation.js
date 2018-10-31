@@ -13,6 +13,7 @@ import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
 import colors from "../../colors";
+import ValidateOnDevice from "./ValidateOnDevice";
 
 type Props = {
   account: Account,
@@ -77,7 +78,7 @@ class Validation extends Component<Props, State> {
         ) : signed ? (
           <ActivityIndicator />
         ) : (
-          <LText>Please validate transaction on your device...</LText>
+          <ValidateOnDevice action={this.sign} />
         )}
       </View>
     );
