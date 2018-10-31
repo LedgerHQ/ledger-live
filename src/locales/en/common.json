@@ -456,7 +456,8 @@
       "desc": "Recieve crypto assets",
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
       "verifyPending": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
-      "verified": "You have verified your receive address on your Ledger Device."
+      "verified": "You have verified your receive address on your Ledger Device.",
+      "verifyAgain": "Verify again"
     },
     "exchange": {
       "title": "Exchange",
