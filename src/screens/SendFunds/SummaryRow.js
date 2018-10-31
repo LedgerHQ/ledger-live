@@ -1,8 +1,6 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
-import ExternalLink from "../../icons/ExternalLink";
 
 import LText from "../../components/LText/index";
 
@@ -11,21 +9,15 @@ import colors from "../../colors";
 type Props = {
   title: React$Node,
   titleProps?: *,
-  link?: string,
-  info?: string,
+  additionalInfo?: *,
   children: React$Node,
 };
 
 type State = {};
 
 class SummaryRow extends Component<Props, State> {
-  static defaultProps = {
-    link: "",
-    info: "",
-  };
-
   render(): React$Node {
-    const { title, link, children, info, titleProps } = this.props;
+    const { title, children, titleProps, additionalInfo } = this.props;
     return (
       <View style={[styles.root]}>
         <View style={styles.titleContainer}>
@@ -33,14 +25,7 @@ class SummaryRow extends Component<Props, State> {
             {title}
           </LText>
           <View style={styles.iconContainer}>
-            {!!link && (
-              <ExternalLink
-                name="external-link"
-                size={12}
-                color={colors.grey}
-              />
-            )}
-            {!!info && <Icon name="info-circle" size={12} color={colors.fog} />}
+            {!!additionalInfo && <View>{additionalInfo}</View>}
           </View>
         </View>
         {children}
