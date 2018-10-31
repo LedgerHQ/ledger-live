@@ -34,10 +34,6 @@ class FilteredSearchBar extends PureComponent<Props, State> {
 
   input = React.createRef();
 
-  componentWillUnmount() {
-    this.onChange.cancel();
-  }
-
   onFocus = () => this.setState({ focused: true });
 
   onBlur = () => this.setState({ focused: false });
@@ -45,7 +41,6 @@ class FilteredSearchBar extends PureComponent<Props, State> {
   onChange = (text: string) => this.setState({ query: text });
 
   clear = () => {
-    this.onChange.cancel();
     if (this.input.current) {
       this.input.current.clear();
     }
