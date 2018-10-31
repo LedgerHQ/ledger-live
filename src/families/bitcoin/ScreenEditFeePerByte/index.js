@@ -14,13 +14,13 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
 
-import colors from "../../colors";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { getAccountBridge } from "../../bridge";
-import type { Transaction } from "../../bridge/RNLibcoreAccountBridge";
+import colors from "../../../colors";
+import { accountScreenSelector } from "../../../reducers/accounts";
+import { getAccountBridge } from "../../../bridge";
+import type { Transaction } from "../../../bridge/RNLibcoreAccountBridge";
 
-import Button from "../../components/Button";
-import KeyboardView from "../../components/KeyboardView";
+import Button from "../../../components/Button";
+import KeyboardView from "../../../components/KeyboardView";
 import FeesRow from "./FeesRow";
 import CustomFeesRow from "./CustomFeesRow";
 
@@ -37,9 +37,7 @@ type State = {
   feePerByte: ?BigNumber,
 };
 
-// TODO current impl will be only for Bitcoin family
-
-class FeeSettings extends Component<Props, State> {
+class BitcoinEditFeePerByte extends Component<Props, State> {
   static navigationOptions = {
     title: "Edit fees",
   };
@@ -148,4 +146,4 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(translate()(FeeSettings));
+export default connect(mapStateToProps)(translate()(BitcoinEditFeePerByte));
