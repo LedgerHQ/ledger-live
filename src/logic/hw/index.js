@@ -19,7 +19,6 @@ const openHandlers: Array<(string) => ?Promise<Transport<*>>> = [];
 const hidObservable = Observable.create(o => HIDTransport.listen(o)).pipe(
   map(({ type, descriptor }) => ({
     type,
-    family: "usb",
     id: `usb|${JSON.stringify(descriptor)}`,
     name: "USB device",
   })),
@@ -35,33 +34,33 @@ openHandlers.push(id => {
 observables.push(hidObservable);
 
 // Add dev mode support of an http proxy
+let DebugHttpProxy;
 if (__DEV__ && Config.DEBUG_COMM_HTTP_PROXY) {
-  const DebugHttpProxy = withStaticURLs(
-    Config.DEBUG_COMM_HTTP_PROXY.split("|"),
-  );
+  DebugHttpProxy = withStaticURLs(Config.DEBUG_COMM_HTTP_PROXY.split("|"));
   const debugHttpObservable = Observable.create(o =>
     DebugHttpProxy.listen(o),
   ).pipe(
     map(({ type, descriptor }) => ({
       type,
-      family: "httpdebug",
       id: `httpdebug|${descriptor}`,
       name: descriptor,
     })),
   );
-  openHandlers.push(id => {
-    if (id.startsWith("httpdebug|")) {
-      // $FlowFixMe wtf
-      return DebugHttpProxy.open(id.slice(10));
-    }
-    return null;
-  });
   observables.push(debugHttpObservable);
+} else {
+  DebugHttpProxy = withStaticURLs([]);
 }
+
+openHandlers.push(id => {
+  if (id.startsWith("httpdebug|")) {
+    // $FlowFixMe wtf
+    return DebugHttpProxy.open(id.slice(10));
+  }
+  return null;
+});
 
 export const devicesObservable: Observable<{
   type: string,
-  family: string,
   id: string,
   name: string,
 }> = merge(

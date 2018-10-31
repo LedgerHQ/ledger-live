@@ -111,7 +111,7 @@ class SelectDevice extends Component<
                   name: e.name,
                   family: e.family,
                 })
-              : devices.filter(d => d.id === e.id),
+              : devices.filter(d => d.id !== e.id),
         })),
     });
   }

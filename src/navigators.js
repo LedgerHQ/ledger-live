@@ -52,6 +52,7 @@ import EditFees from "./screens/EditFees";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
+import DebugHttpTransport from "./screens/DebugHttpTransport";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
@@ -162,6 +163,8 @@ const SettingsStack = createStackNavigator(
     DebugBLE,
     // $FlowFixMe
     DebugCrash,
+    // $FlowFixMe
+    DebugHttpTransport,
     // $FlowFixMe
     BenchmarkQRStream,
   },
