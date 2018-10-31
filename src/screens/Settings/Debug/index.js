@@ -10,6 +10,7 @@ import GenerateMockAccounts from "./GenerateMockAccounts";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import OpenDebugBLE from "./OpenDebugBLE";
 import OpenDebugCrash from "./OpenDebugCrash";
+import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import BenchmarkQRStream from "./BenchmarkQRStream";
 
 class DebugSettings extends PureComponent<{
@@ -36,6 +37,7 @@ class DebugSettings extends PureComponent<{
         ) : null}
         <OpenDebugBLE />
         <BenchmarkQRStream />
+        <OpenDebugHttpTransport />
         <OpenDebugCrash />
       </ScrollView>
     );

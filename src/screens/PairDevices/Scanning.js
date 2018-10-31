@@ -82,6 +82,7 @@ class Scanning extends Component<Props, State> {
       <DeviceItem
         device={item}
         name={item.name}
+        id={item.id}
         onSelect={this.props.onSelect}
         disabled={!!knownDevice}
         withArrow

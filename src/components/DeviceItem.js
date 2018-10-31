@@ -18,7 +18,7 @@ export type Device = {
 type Props<T> = {
   device: T,
   name: string,
-  family?: ?string,
+  id: string,
   disabled?: boolean,
   withArrow?: boolean,
   description?: string,
@@ -46,7 +46,7 @@ export default class DeviceItem<T> extends PureComponent<Props<T>> {
   render() {
     const {
       name,
-      family,
+      id,
       disabled,
       onSelect,
       description,
@@ -54,6 +54,7 @@ export default class DeviceItem<T> extends PureComponent<Props<T>> {
       withArrow,
     } = this.props;
 
+    const family = id.split("|")[0];
     const iconName = family && iconByFamily[family];
 
     let res = (
