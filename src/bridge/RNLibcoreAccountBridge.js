@@ -1,17 +1,14 @@
 // @flow
 import invariant from "invariant";
 import { Observable } from "rxjs";
+import LRU from "lru-cache";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/live-common/lib/errors";
 
 import type { AccountBridge } from "./types";
 
-import { SyncError, NoRecipient } from "../errors";
-import {
-  syncAccount,
-  isValidRecipient,
-  getFeesForTransaction,
-} from "../libcore";
+import { SyncError } from "../errors";
+import * as libcore from "../libcore";
 import { getFeeItems } from "../api/FeesBitcoin";
 import type { FeeItems } from "../api/FeesBitcoin";
 
@@ -49,7 +46,7 @@ const startSync = (initialAccount, _observation) =>
 
     (async () => {
       try {
-        const syncedAccount = await syncAccount({
+        const syncedAccount = await libcore.syncAccount({
           account: initialAccount,
           cancel,
         });
@@ -100,9 +97,16 @@ const startSync = (initialAccount, _observation) =>
     return cancel;
   });
 
-const checkValidRecipient = async (currency, recipient) => {
-  if (!recipient) return Promise.reject(new NoRecipient());
-  return isValidRecipient({ currency, recipient });
+const recipientValidLRU = LRU({ max: 100 });
+
+const checkValidRecipient = (currency, recipient) => {
+  const key = `${currency.id}_${recipient}`;
+  let promise = recipientValidLRU.get(key);
+  if (promise) return promise;
+  if (!recipient) return Promise.resolve(null);
+  promise = libcore.isValidRecipient({ currency, recipient });
+  recipientValidLRU.set(key, promise);
+  return promise;
 };
 
 const createTransaction = () => ({
@@ -114,6 +118,7 @@ const createTransaction = () => ({
 
 const fetchTransactionNetworkInfo = async ({ currency }) => {
   const feeItems = await getFeeItems(currency);
+
   return { feeItems };
 };
 
@@ -174,14 +179,26 @@ const addPendingOperation = (account, optimisticOperation) => ({
   pendingOperations: [...account.pendingOperations, optimisticOperation],
 });
 
-const getFees = async (a, t) => {
-  const isValid = await checkValidRecipient(a.currency, t.recipient);
-  if (isValid !== null) return null;
+const feesLRU = LRU({ max: 100 });
 
-  return getFeesForTransaction({
+const getFeesKey = (a, t) =>
+  `${a.id}_${a.blockHeight || 0}_${t.amount.toString()}_${t.recipient}_${
+    t.feePerByte ? t.feePerByte.toString() : ""
+  }`;
+
+const getFees = async (a, t) => {
+  await checkValidRecipient(a.currency, t.recipient);
+
+  const key = getFeesKey(a, t);
+  let promise = feesLRU.get(key);
+  if (promise) return promise;
+
+  promise = libcore.getFeesForTransaction({
     account: a,
     transaction: serializeTransaction(t),
   });
+  feesLRU.set(key, promise);
+  return promise;
 };
 
 const checkValidTransaction = async (a, t) =>

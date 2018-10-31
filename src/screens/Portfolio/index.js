@@ -141,6 +141,7 @@ class Portfolio extends Component<
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
         <StickyHeader scrollY={scrollY} summary={summary} />
         <SyncBackground />
+
         <SafeAreaView style={styles.inner}>
           <List
             forwardedRef={this.ref}
