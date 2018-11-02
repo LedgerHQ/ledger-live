@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import LText from "../../components/LText/index";
 import colors from "../../colors";
 
@@ -27,7 +27,9 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
     paddingHorizontal: 16,
-    paddingVertical: 24,
+    paddingVertical: 16,
+    // NOTE: temp solution
+    width: Dimensions.get("window").width - 48,
   },
   labelStyle: {
     fontSize: 16,

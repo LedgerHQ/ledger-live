@@ -35,6 +35,5 @@ const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
     color: colors.darkBlue,
-    flexWrap: "wrap",
   },
 });

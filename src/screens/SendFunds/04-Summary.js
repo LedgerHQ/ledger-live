@@ -137,8 +137,8 @@ class SendSummary extends Component<
         <Stepper nbSteps={6} currentStep={4} />
         <ScrollView style={styles.body}>
           <SummaryFromSection account={account} />
+          <VerticalConnector />
           <SummaryToSection recipient={recipient} />
-          <SectionSeparator />
           <SendRowsCustom
             transaction={transaction}
             account={account}
@@ -197,6 +197,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 5,
   },
+  verticalConnector: {
+    position: "absolute",
+    borderLeftWidth: 1,
+    borderColor: colors.lightLive,
+    height: 20,
+    top: 60,
+    left: 32,
+  },
 });
 
 const mapStateToProps = (state, props) => ({
@@ -204,3 +212,9 @@ const mapStateToProps = (state, props) => ({
 });
 
 export default connect(mapStateToProps)(SendSummary);
+
+class VerticalConnector extends Component<*> {
+  render() {
+    return <View style={styles.verticalConnector} />;
+  }
+}
