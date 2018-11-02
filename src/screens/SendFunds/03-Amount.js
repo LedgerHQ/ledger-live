@@ -152,6 +152,7 @@ class SendAmount extends Component<Props, State> {
     } catch (e) {
       if (nonce !== this.nonceTotalSpent) return;
 
+      // FIXME potential race condition we should separate the different error and make sure it's set to null in normal case
       this.setError(e);
     }
   };
