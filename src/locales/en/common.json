@@ -487,7 +487,9 @@
       "total": "Total",
       "amount": "Amount",
       "from": "From",
-      "to": "to"
+      "to": "to",
+      "infoTotalTitle": "Total to spend",
+      "infoTotalDesc": "Includes transaction amount and the selected network fees"
     },
     "validation": {
       "title": "Please verify all transaction details on your Ledger Nano X",

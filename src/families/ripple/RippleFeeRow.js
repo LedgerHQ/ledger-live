@@ -6,6 +6,8 @@ import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
+import Touchable from "../../components/Touchable";
+import ExternalLink from "../../icons/ExternalLink";
 
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
@@ -25,6 +27,7 @@ export default class RippleFeeRow extends Component<Props> {
       transaction,
     });
   };
+  extraInfoFees = () => {};
 
   render() {
     const { account, transaction } = this.props;
@@ -32,7 +35,14 @@ export default class RippleFeeRow extends Component<Props> {
     const fee = bridge.getTransactionExtra(account, transaction, "fee");
 
     return (
-      <SummaryRow title="Network fees" link="link">
+      <SummaryRow
+        title="Network fees"
+        additionalInfo={
+          <Touchable onPress={this.extraInfoFees}>
+            <ExternalLink size={12} color={colors.grey} />
+          </Touchable>
+        }
+      >
         <View style={{ alignItems: "flex-end" }}>
           <View style={styles.accountContainer}>
             {fee ? (

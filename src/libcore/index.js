@@ -467,7 +467,9 @@ export async function isValidRecipient({
     return Promise.resolve(null);
   }
 
-  return Promise.resolve(new InvalidAddress());
+  return Promise.resolve(
+    new InvalidAddress("", { currencyName: currency.name }),
+  );
 }
 
 export async function getFeesForTransaction({
@@ -524,7 +526,7 @@ export async function getFeesForTransaction({
     });
 
     if (isValid !== null) {
-      throw new InvalidAddress();
+      throw new InvalidAddress("", { currencyName: currency.name });
     }
 
     await core.coreBitcoinLikeTransactionBuilder.sendToAddress(

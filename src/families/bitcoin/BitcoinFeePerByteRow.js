@@ -8,6 +8,8 @@ import LText from "../../components/LText";
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
 import type { Transaction } from "../../bridge/RNLibcoreAccountBridge";
+import Touchable from "../../components/Touchable";
+import ExternalLink from "../../icons/ExternalLink";
 
 type Props = {
   account: Account,
@@ -23,12 +25,19 @@ export default class BitcoinFeePerByteRow extends Component<Props> {
       transaction,
     });
   };
-
+  extraInfoFees = () => {};
   render() {
     const { account, transaction } = this.props;
     const bridge = getAccountBridge(account);
     return (
-      <SummaryRow title="Network fees" link="link">
+      <SummaryRow
+        title="Network fees"
+        additionalInfo={
+          <Touchable onPress={this.extraInfoFees}>
+            <ExternalLink size={12} color={colors.grey} />
+          </Touchable>
+        }
+      >
         <View style={{ alignItems: "flex-end" }}>
           <View style={styles.accountContainer}>
             <LText style={styles.valueText}>{`${bridge.getTransactionExtra(
