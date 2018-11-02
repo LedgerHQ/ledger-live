@@ -1,12 +1,11 @@
 /* @flow */
 import React, { Component, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
-import config from "react-native-config";
 import Touchable from "../components/Touchable";
 import CreateModal from "../modals/Create";
-import colors from "../colors";
 import TransferIcon from "../icons/Transfer";
 import defaultNavigationOptions from "./defaultNavigationOptions";
+import ExchangeScreen from "./Exchange";
 
 const styles = StyleSheet.create({
   root: {
@@ -23,7 +22,10 @@ const hitSlop = {
   bottom: 25,
 };
 
-class Transfer extends Component<null, { isModalOpened: boolean }> {
+class Transfer extends Component<
+  { tintColor: string },
+  { isModalOpened: boolean },
+> {
   state = {
     isModalOpened: false,
   };
@@ -36,14 +38,9 @@ class Transfer extends Component<null, { isModalOpened: boolean }> {
     const { isModalOpened } = this.state;
     return (
       <Fragment>
-        <Touchable
-          hitSlop={hitSlop}
-          onPress={this.openModal}
-          disabled={!!config.DISABLE_TRANSFER}
-          style={{ opacity: config.DISABLE_TRANSFER ? 0.3 : 1 }}
-        >
+        <Touchable hitSlop={hitSlop} onPress={this.openModal}>
           <View style={styles.root}>
-            <TransferIcon size={18} color={colors.grey} />
+            <TransferIcon size={18} color={this.props.tintColor} />
           </View>
         </Touchable>
         <CreateModal isOpened={isModalOpened} onClose={this.onModalClose} />
@@ -60,6 +57,7 @@ export default class Create extends Component<*> {
   };
 
   render() {
-    return null;
+    const { ...props } = this.props;
+    return <ExchangeScreen {...props} />;
   }
 }
