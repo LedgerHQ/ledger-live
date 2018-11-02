@@ -162,7 +162,6 @@ class CurrencyInput extends PureComponent<Props, State> {
       isActive,
       renderRight,
       renderError,
-      allowZero,
       hasError,
     } = this.props;
     const { displayValue } = this.state;
