@@ -121,7 +121,7 @@ export default class Root extends Component<{}, {}> {
                     <LocaleProvider>
                       <BridgeSyncProvider>
                         <CounterValues.PollingProvider>
-                          <ButtonUseTouchable.Provider value={false}>
+                          <ButtonUseTouchable.Provider value={true}>
                             <App />
                           </ButtonUseTouchable.Provider>
                         </CounterValues.PollingProvider>
