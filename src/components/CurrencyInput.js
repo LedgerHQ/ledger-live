@@ -166,7 +166,6 @@ class CurrencyInput extends PureComponent<Props, State> {
       hasError,
     } = this.props;
     const { displayValue } = this.state;
-    const displayVal = displayValue === "0" && !allowZero ? "" : displayValue;
     return (
       <View style={styles.wrapper}>
         <TextInput
@@ -176,7 +175,7 @@ class CurrencyInput extends PureComponent<Props, State> {
             hasError ? styles.error : null,
           ]}
           onChangeText={this.handleChange}
-          value={displayVal}
+          value={displayValue}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           placeholder={format(unit, BigNumber(0), {
