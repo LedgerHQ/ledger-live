@@ -58,16 +58,20 @@ class SummaryToSection extends PureComponent<Props, State> {
         >
           <View style={styles.summary}>
             <LText semiBold style={styles.summaryValueText}>
-              <CurrencyUnitValue unit={account.unit} value={amount} />
+              <CurrencyUnitValue
+                unit={account.unit}
+                value={amount}
+                disableRounding
+              />
             </LText>
             <LText style={styles.summaryCounterValueText}>
-              (
               <CounterValue
                 value={amount}
                 currency={account.currency}
                 showCode
+                before="("
+                after=")"
               />
-              )
             </LText>
           </View>
         </SummaryRow>
