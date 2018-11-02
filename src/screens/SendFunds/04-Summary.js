@@ -5,14 +5,13 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { BigNumber } from "bignumber.js";
-import { NotEnoughBalance } from "@ledgerhq/live-common/lib/errors";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import Button from "../../components/Button";
-
 import colors from "../../colors";
-
+import Button from "../../components/Button";
+import LText from "../../components/LText";
+import TranslatedError from "../../components/TranslatedError";
 import SummaryFromSection from "./SummaryFromSection";
 import SummaryToSection from "./SummaryToSection";
 import SectionSeparator from "./SectionSeparator";
@@ -43,7 +42,7 @@ class SendSummary extends Component<
   Props,
   {
     totalSpent: ?BigNumber,
-    notEnoughBalanceError: ?Error,
+    error: ?Error,
   },
 > {
   static navigationOptions = {
@@ -52,10 +51,18 @@ class SendSummary extends Component<
 
   state = {
     totalSpent: null,
-    notEnoughBalanceError: null, // TODO use notEnoughBalanceError somewhere!
+    error: null, // TODO use error somewhere!
   };
 
   componentDidMount() {
+    this.syncTotalSpent();
+  }
+
+  componentDidUpdate() {
+    this.syncTotalSpent();
+  }
+
+  componentWillUnmount() {
     this.nonceTotalSpent++;
   }
 
@@ -78,18 +85,11 @@ class SendSummary extends Component<
     });
   };
 
-  setError = (e: Error) => {
-    if (e instanceof NotEnoughBalance) {
-      this.setState(old => {
-        if (similarError(old.notEnoughBalanceError, e)) return null;
-        return { notEnoughBalanceError: e };
-      });
-    } else if (this.state.notEnoughBalanceError) {
-      this.setState(old => {
-        if (!old.notEnoughBalanceError) return null;
-        return { notEnoughBalanceError: null };
-      });
-    }
+  setError = (error: Error) => {
+    this.setState(old => {
+      if (similarError(old.error, error)) return null;
+      return { error };
+    });
   };
 
   // React Hooks PLZ. same code as step 3.
@@ -103,11 +103,19 @@ class SendSummary extends Component<
       const totalSpent = await bridge.getTotalSpent(account, transaction);
       if (nonce !== this.nonceTotalSpent) return;
 
+      await bridge.checkValidTransaction(account, transaction);
+      if (nonce !== this.nonceTotalSpent) return;
+
       this.setState(old => {
-        if (old.totalSpent && totalSpent && totalSpent.eq(old.totalSpent)) {
+        if (
+          !old.error &&
+          old.totalSpent &&
+          totalSpent &&
+          totalSpent.eq(old.totalSpent)
+        ) {
           return null;
         }
-        return { totalSpent };
+        return { totalSpent, error: null };
       });
     } catch (e) {
       if (nonce !== this.nonceTotalSpent) return;
@@ -117,7 +125,7 @@ class SendSummary extends Component<
   };
 
   render() {
-    const { totalSpent, notEnoughBalanceError } = this.state;
+    const { totalSpent, error } = this.state;
     const { account, navigation } = this.props;
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
@@ -149,12 +157,15 @@ class SendSummary extends Component<
           />
         </ScrollView>
         <View style={styles.footer}>
+          <LText style={styles.error}>
+            <TranslatedError error={error} />
+          </LText>
           <Button
             type="primary"
             title="Continue"
             containerStyle={styles.continueButton}
             onPress={this.onContinue}
-            disabled={!totalSpent && !notEnoughBalanceError}
+            disabled={!totalSpent || !!error}
           />
         </View>
       </SafeAreaView>
@@ -180,6 +191,11 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     alignSelf: "stretch",
+  },
+  error: {
+    color: colors.alert,
+    fontSize: 12,
+    marginBottom: 5,
   },
 });
 

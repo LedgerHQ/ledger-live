@@ -20,7 +20,11 @@ export default class SummaryAmountSection extends PureComponent<Props> {
       <SummaryRow title="Amount">
         <View style={styles.amountContainer}>
           <LText style={styles.valueText}>
-            <CurrencyUnitValue unit={account.unit} value={amount} />
+            <CurrencyUnitValue
+              unit={account.unit}
+              value={amount}
+              disableRounding
+            />
           </LText>
           <LText style={styles.counterValueText}>
             <CounterValue

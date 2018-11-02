@@ -128,6 +128,7 @@ class AmountInput extends Component<Props, OwnState> {
               onChange={this.onChangeRight}
               unit={rightUnit}
               value={right}
+              showAllDigits
               renderRight={
                 <LText
                   style={[styles.currency, !isLeft ? styles.active : null]}
