@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   closeContainer: {
     justifyContent: "center",
