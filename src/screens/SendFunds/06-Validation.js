@@ -105,7 +105,11 @@ class Validation extends Component<Props, State> {
             onViewDetails={this.goToOperationDetails}
           />
         ) : error ? (
-          <ValidateError onClose={this.dismiss} onContactUs={this.contactUs} />
+          <ValidateError
+            error={error}
+            onClose={this.dismiss}
+            onContactUs={this.contactUs}
+          />
         ) : signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />

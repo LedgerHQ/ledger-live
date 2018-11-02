@@ -7,28 +7,32 @@ import type { T } from "../../types/common";
 import colors from "../../colors";
 
 import LText from "../../components/LText";
+import ErrorIcon from "../../components/ErrorIcon";
+import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
-import Warning from "../../icons/Warning";
 
 type Props = {
   t: T,
+  error: Error,
   onContactUs: () => void,
   onClose: () => void,
 };
 
 class ValidatError extends PureComponent<Props> {
   render() {
-    const { t, onContactUs, onClose } = this.props;
+    const { t, error, onContactUs, onClose } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
           <View style={styles.icon}>
-            <Warning size={40} color={colors.alert} />
+            <ErrorIcon size={40} error={error} />
           </View>
           <LText secondary semiBold style={styles.title}>
-            {t("send.validation.refused")}
+            <TranslatedError error={error} />
           </LText>
-          <LText style={styles.message}>{t("send.validation.retry")}</LText>
+          <LText style={styles.message}>
+            <TranslatedError error={error} field="description" />
+          </LText>
         </View>
         <View style={styles.actionContainer}>
           <Button
