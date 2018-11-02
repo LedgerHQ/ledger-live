@@ -23,6 +23,8 @@ import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import TranslatedError from "../../components/TranslatedError";
 import InputResetCross from "../../components/InputResetCross";
+import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
+import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
 
 import colors from "../../colors";
 
@@ -159,10 +161,12 @@ class SendSelectRecipient extends Component<Props, State> {
 
   render() {
     const { address, validAddress, error } = this.state;
-    const { t } = this.props;
+    const { t, account } = this.props;
 
     return (
       <SafeAreaView style={styles.root}>
+        <SyncSkipUnderPriority priority={100} />
+        <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <Stepper currentStep={2} nbSteps={6} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
@@ -249,7 +253,7 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   closeContainer: {
     justifyContent: "center",
