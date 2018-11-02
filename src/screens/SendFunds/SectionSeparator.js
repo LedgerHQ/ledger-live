@@ -13,7 +13,6 @@ export default class SectionSeparator extends Component<*> {
 const styles = StyleSheet.create({
   separator: {
     marginHorizontal: 16,
-    paddingVertical: 16,
     borderBottomColor: colors.lightFog,
     borderBottomWidth: 2,
   },
