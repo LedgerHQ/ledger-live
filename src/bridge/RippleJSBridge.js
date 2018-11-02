@@ -32,6 +32,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "../errors";
 import type { CurrencyBridge, AccountBridge } from "./types";
+import signTransaction from "../logic/hw/signTransaction";
 
 export type Transaction = {
   amount: BigNumber,
@@ -40,10 +41,6 @@ export type Transaction = {
   networkInfo: ?{ serverFee: BigNumber },
   tag: ?number,
 };
-
-async function signTransaction(_: *) {
-  return Promise.reject(new Error("FIXME not implemented"));
-}
 
 async function signAndBroadcast({
   a,
@@ -81,12 +78,18 @@ async function signAndBroadcast({
       instruction,
     );
 
-    const transaction = await signTransaction({
-      currencyId: a.currency.id,
-      devicePath: deviceId,
-      path: a.freshAddressPath,
-      transaction: JSON.parse(prepared.txJSON),
-    });
+    const transport = await open(deviceId);
+    let transaction;
+    try {
+      transaction = await signTransaction(
+        a.currency,
+        transport,
+        a.freshAddressPath,
+        JSON.parse(prepared.txJSON),
+      );
+    } finally {
+      transport.close();
+    }
 
     if (!isCancelled()) {
       onSigned();
