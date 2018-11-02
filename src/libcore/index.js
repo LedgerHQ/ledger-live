@@ -86,7 +86,7 @@ export const getOrCreateWallet = atomicQueue(
   ({ walletName }) => walletName,
 );
 
-async function bigNumberToLibcoreAmount(
+export async function bigNumberToLibcoreAmount(
   core: *,
   walletCurrency: *,
   amount: BigNumber,
@@ -94,7 +94,7 @@ async function bigNumberToLibcoreAmount(
   return core.coreAmount.fromHex(walletCurrency, amount.toString(16));
 }
 
-async function libcoreAmountToBigNumber(
+export async function libcoreAmountToBigNumber(
   core: *,
   amountInstance: string,
 ): Promise<BigNumber> {

@@ -44,6 +44,10 @@ class Validation extends Component<Props, State> {
     error: null,
   };
 
+  componentDidMount() {
+    this.sign();
+  }
+
   sign() {
     const { account, navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");

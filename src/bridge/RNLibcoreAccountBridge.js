@@ -11,6 +11,7 @@ import { SyncError } from "../errors";
 import * as libcore from "../libcore";
 import { getFeeItems } from "../api/FeesBitcoin";
 import type { FeeItems } from "../api/FeesBitcoin";
+import libcoreSignAndBroadcast from "../libcore/signAndBroadcast";
 
 export type Transaction = {
   amount: BigNumber,
@@ -169,9 +170,17 @@ const getTransactionExtra = (a, t, field) => {
   }
 };
 
-const signAndBroadcast = (_account, _t, _deviceId) =>
-  Observable.create(o => {
-    o.error(new Error("Not Implemented"));
+const signAndBroadcast = (account, transaction, deviceId) =>
+  libcoreSignAndBroadcast({
+    accountId: account.id,
+    blockHeight: account.blockHeight,
+    currencyId: account.currency.id,
+    derivationMode: account.derivationMode,
+    seedIdentifier: account.seedIdentifier,
+    xpub: account.xpub || "",
+    index: account.index,
+    transaction,
+    deviceId,
   });
 
 const addPendingOperation = (account, optimisticOperation) => ({
