@@ -19,31 +19,21 @@ type Props = ModalProps & {
 };
 
 class CreateModal extends Component<Props> {
-  onSendFunds = () => {
+  onNavigate = (routeName: string, key: string) => {
     const { navigation, onClose } = this.props;
     navigation.navigate({
-      routeName: "SendFunds",
+      routeName,
       params: {
         goBackKey: navigation.state.key,
       },
-      key: "sendfunds",
+      key,
     });
     onClose();
   };
 
-  onReceiveFunds = () => {
-    const { navigation, onClose } = this.props;
-    navigation.navigate({
-      routeName: "ReceiveFunds",
-      params: { goBackKey: navigation.state.key },
-      key: "receiveffunds",
-    });
-    onClose();
-  };
-
-  onExchange = () => {
-    console.warn(`TODO: exchange screen`);
-  };
+  onSendFunds = () => this.onNavigate("SendFunds", "sendfunds");
+  onReceiveFunds = () => this.onNavigate("ReceiveFunds", "receivefunds");
+  onExchange = () => this.onNavigate("Transfer", "transfer");
 
   render() {
     const { onClose, isOpened, t } = this.props;
