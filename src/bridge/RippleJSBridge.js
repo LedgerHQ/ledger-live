@@ -120,6 +120,11 @@ async function signAndBroadcast({
             : 0) + a.pendingOperations.length,
       });
     }
+  } catch (e) {
+    if (e && e.name === "RippledError" && e.data.resultMessage) {
+      throw new Error(e.data.resultMessage);
+    }
+    throw e;
   } finally {
     api.disconnect();
   }
