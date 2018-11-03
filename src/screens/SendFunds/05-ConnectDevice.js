@@ -35,7 +35,7 @@ class ConnectDevice extends Component<Props> {
 
   onSelectDevice = (deviceId: string) => {
     const { navigation } = this.props;
-    navigation.navigate("SendConfirmation", {
+    navigation.navigate("SendValidation", {
       ...navigation.state.params,
       deviceId,
     });

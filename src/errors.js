@@ -11,4 +11,3 @@ export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
   "NotEnoughBalanceBecauseDestinationNotCreated",
 );
-export const NoRecipient = createCustomErrorClass("NoRecipient");

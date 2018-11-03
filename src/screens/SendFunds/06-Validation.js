@@ -8,11 +8,13 @@ import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import LText from "../../components/LText";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
 import colors from "../../colors";
+import ValidateOnDevice from "./ValidateOnDevice";
+import ValidateSuccess from "./ValideSuccess";
+import ValidateError from "./ValidateError";
 
 type Props = {
   account: Account,
@@ -42,6 +44,10 @@ class Validation extends Component<Props, State> {
     error: null,
   };
 
+  componentDidMount() {
+    this.sign();
+  }
+
   sign() {
     const { account, navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
@@ -65,19 +71,51 @@ class Validation extends Component<Props, State> {
     });
   }
 
+  dismiss = () => {
+    const { navigation } = this.props;
+    if (navigation.dismiss) {
+      const dismissed = navigation.dismiss();
+      if (!dismissed) navigation.goBack();
+    }
+  };
+
+  goToOperationDetails = () => {
+    const { result } = this.state;
+    const { navigation, account } = this.props;
+    if (!result) return;
+
+    navigation.navigate("OperationDetails", {
+      account,
+      operation: result,
+    });
+  };
+
+  contactUs = () => {
+    console.warn("not implemented");
+  };
+
   render() {
     const { result, error, signed } = this.state;
     return (
       <View style={styles.root}>
         <Stepper nbSteps={6} currentStep={6} />
         {result ? (
-          <LText>well done! {result.hash}</LText>
+          <ValidateSuccess
+            onClose={this.dismiss}
+            onViewDetails={this.goToOperationDetails}
+          />
         ) : error ? (
-          <LText>ERROR! {String(error)}</LText>
+          <ValidateError
+            error={error}
+            onClose={this.dismiss}
+            onContactUs={this.contactUs}
+          />
         ) : signed ? (
-          <ActivityIndicator />
+          <View style={styles.center}>
+            <ActivityIndicator size="large" />
+          </View>
         ) : (
-          <LText>Please validate transaction on your device...</LText>
+          <ValidateOnDevice action={this.sign} />
         )}
       </View>
     );
@@ -88,6 +126,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  center: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

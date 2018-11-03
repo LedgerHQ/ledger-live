@@ -17,7 +17,7 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
 import { open } from "../../logic/hw";
-import colors, { lighten } from "../../colors";
+import colors, { rgba } from "../../colors";
 import BluetoothScanning from "../BluetoothScanning";
 import Spinning from "../Spinning";
 import DeviceNanoAction from "../DeviceNanoAction";
@@ -126,7 +126,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
   Body: () => (
     <RenderStep
       icon={
-        <Rounded bg={lighten(currency.color, 0.6)}>
+        <Rounded bg={rgba(currency.color, 0.1)}>
           <CurrencyIcon currency={currency} size={32} />
         </Rounded>
       }
@@ -177,7 +177,7 @@ export const accountApp: Account => Step = account => ({
   Body: () => (
     <RenderStep
       icon={
-        <Rounded bg={lighten(account.currency.color, 0.6)}>
+        <Rounded bg={rgba(account.currency.color, 0.1)}>
           <CurrencyIcon currency={account.currency} size={32} />
         </Rounded>
       }

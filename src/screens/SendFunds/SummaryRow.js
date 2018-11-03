@@ -1,41 +1,31 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import ExternalLink from "../../icons/ExternalLink";
 
 import LText from "../../components/LText/index";
 
 import colors from "../../colors";
 
 type Props = {
-  title: string,
-  link?: string,
+  title: React$Node,
+  titleProps?: *,
+  additionalInfo?: *,
   children: React$Node,
-  last?: boolean,
 };
 
 type State = {};
 
 class SummaryRow extends Component<Props, State> {
-  static defaultProps = {
-    link: "",
-    last: false,
-  };
-
   render(): React$Node {
-    const { title, link, children, last } = this.props;
+    const { title, children, titleProps, additionalInfo } = this.props;
     return (
-      <View style={[styles.root, last ? styles.last : null]}>
+      <View style={[styles.root]}>
         <View style={styles.titleContainer}>
-          <LText style={styles.title}>{title}</LText>
+          <LText style={[styles.title]} {...titleProps}>
+            {title}
+          </LText>
           <View style={styles.iconContainer}>
-            {!!link && (
-              <ExternalLink
-                name="external-link"
-                size={12}
-                color={colors.grey}
-              />
-            )}
+            {!!additionalInfo && <View>{additionalInfo}</View>}
           </View>
         </View>
         {children}
@@ -51,20 +41,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginLeft: 16,
     paddingRight: 16,
-    paddingVertical: 24,
-    borderBottomColor: colors.lightFog,
-    borderBottomWidth: 1,
+    paddingVertical: 16,
   },
-  last: {
-    borderBottomWidth: 0,
-  },
+
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginRight: 24,
   },
   title: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.grey,
   },
   iconContainer: {

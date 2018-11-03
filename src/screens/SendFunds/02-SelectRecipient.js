@@ -23,6 +23,8 @@ import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import TranslatedError from "../../components/TranslatedError";
 import InputResetCross from "../../components/InputResetCross";
+import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
+import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
 
 import colors from "../../colors";
 
@@ -44,7 +46,7 @@ type State = {
   shouldUpdate: boolean,
 };
 
-class SelectRecipient extends Component<Props, State> {
+class SendSelectRecipient extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
       <StepHeader title="Recipient address" subtitle="step 2 of 6" />
@@ -58,12 +60,14 @@ class SelectRecipient extends Component<Props, State> {
 
   unmounted = false;
 
-  transactionNetworkInfo: Promise<*>;
+  preloadedNetworkInfo: ?Object;
 
   componentDidMount() {
     const { account } = this.props;
     const bridge = getAccountBridge(account);
-    this.transactionNetworkInfo = bridge.fetchTransactionNetworkInfo(account);
+    bridge.fetchTransactionNetworkInfo(account).then(networkInfo => {
+      this.preloadedNetworkInfo = networkInfo;
+    });
   }
 
   componentWillUnmount() {
@@ -122,8 +126,9 @@ class SelectRecipient extends Component<Props, State> {
   };
 
   onPressScan = () => {
-    this.props.navigation.navigate("ScanRecipient", {
-      accountId: this.props.navigation.getParam("accountId"),
+    const { navigation } = this.props;
+    navigation.navigate("ScanRecipient", {
+      accountId: navigation.getParam("accountId"),
     });
   };
 
@@ -140,20 +145,13 @@ class SelectRecipient extends Component<Props, State> {
       address,
     );
 
-    if (!bridge.getTransactionNetworkInfo(account, transaction)) {
-      try {
-        const networkInfo = await this.transactionNetworkInfo;
-        transaction = bridge.applyTransactionNetworkInfo(
-          account,
-          transaction,
-          networkInfo,
-        );
-      } catch (error) {
-        this.setState({ error });
-      }
+    if (this.preloadedNetworkInfo) {
+      transaction = bridge.applyTransactionNetworkInfo(
+        account,
+        transaction,
+        this.preloadedNetworkInfo,
+      );
     }
-
-    if (this.unmounted) return;
 
     navigation.navigate("SendAmount", {
       accountId: account.id,
@@ -163,10 +161,12 @@ class SelectRecipient extends Component<Props, State> {
 
   render() {
     const { address, validAddress, error } = this.state;
-    const { t } = this.props;
+    const { t, account } = this.props;
 
     return (
       <SafeAreaView style={styles.root}>
+        <SyncSkipUnderPriority priority={100} />
+        <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <Stepper currentStep={2} nbSteps={6} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   closeContainer: {
     justifyContent: "center",
@@ -274,4 +274,4 @@ const mapStateToProps = createStructuredSelector({
 export default compose(
   translate(),
   connect(mapStateToProps),
-)(SelectRecipient);
+)(SendSelectRecipient);

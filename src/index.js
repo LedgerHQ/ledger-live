@@ -3,7 +3,7 @@ import "../shim";
 import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
-import { useScreens } from "react-native-screens";
+// import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
@@ -25,7 +25,7 @@ import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import AppStateListener from "./components/AppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 
-useScreens();
+// useScreens(); // FIXME this is not working properly when using react-native-modal inside Send flow
 
 const styles = StyleSheet.create({
   root: {
@@ -121,7 +121,7 @@ export default class Root extends Component<{}, {}> {
                     <LocaleProvider>
                       <BridgeSyncProvider>
                         <CounterValues.PollingProvider>
-                          <ButtonUseTouchable.Provider value={false}>
+                          <ButtonUseTouchable.Provider value={true}>
                             <App />
                           </ButtonUseTouchable.Provider>
                         </CounterValues.PollingProvider>

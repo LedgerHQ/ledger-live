@@ -10,7 +10,9 @@
     "signOut": "Sign Out",
     "search": "Search",
     "contactUs": "Contact us",
-    "noCryptoFound": "No crypto assets found"
+    "noCryptoFound": "No crypto assets found",
+    "edit": "Edit",
+    "close": "Close"
   },
   "errors": {
     "AccountNameRequired": {
@@ -136,7 +138,6 @@
       "title": "Sorry, no accounts found",
       "description": "Something went wrong with address calculation, try again or contact Ledger Support."
     },
-    "NoRecipient": { "title": "No recipient" },
     "NotEnoughBalance": {
       "title": "Oops, insufficient balance",
       "description": "Make sure the account to debit has sufficient balance"
@@ -479,7 +480,28 @@
       "input": "address"
     },
     "amount": {
-      "available": "You have <1><0>{{amount}}</></> available"
+      "available": "You have <1><0>{{amount}}</></> available",
+      "loadingNetwork": "Loading Network fees..."
+    },
+    "summary": {
+      "tag": "Tag (Optional)",
+      "total": "Total",
+      "amount": "Amount",
+      "from": "From",
+      "to": "to",
+      "infoTotalTitle": "Total to spend",
+      "infoTotalDesc": "Includes transaction amount and the selected network fees"
+    },
+    "validation": {
+      "title": "Please verify all transaction details on your Ledger Nano X",
+      "message": "Confirm the transaction on your device to securely sign it",
+      "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
+      "sent": "Transaction sent",
+      "confirm": "Your account balance will update once the blockchain has confirmed the transaction",
+      "button": {
+        "details": "View details",
+        "retry": "Retry"
+      }
     }
   },
   "addAccounts": {

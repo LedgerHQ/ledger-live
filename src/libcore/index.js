@@ -86,7 +86,7 @@ export const getOrCreateWallet = atomicQueue(
   ({ walletName }) => walletName,
 );
 
-async function bigNumberToLibcoreAmount(
+export async function bigNumberToLibcoreAmount(
   core: *,
   walletCurrency: *,
   amount: BigNumber,
@@ -94,7 +94,7 @@ async function bigNumberToLibcoreAmount(
   return core.coreAmount.fromHex(walletCurrency, amount.toString(16));
 }
 
-async function libcoreAmountToBigNumber(
+export async function libcoreAmountToBigNumber(
   core: *,
   amountInstance: string,
 ): Promise<BigNumber> {
@@ -467,7 +467,9 @@ export async function isValidRecipient({
     return Promise.resolve(null);
   }
 
-  return Promise.resolve(new InvalidAddress());
+  return Promise.resolve(
+    new InvalidAddress("", { currencyName: currency.name }),
+  );
 }
 
 export async function getFeesForTransaction({
@@ -524,7 +526,7 @@ export async function getFeesForTransaction({
     });
 
     if (isValid !== null) {
-      throw new InvalidAddress();
+      throw new InvalidAddress("", { currencyName: currency.name });
     }
 
     await core.coreBitcoinLikeTransactionBuilder.sendToAddress(
