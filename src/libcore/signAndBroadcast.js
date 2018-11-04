@@ -323,10 +323,10 @@ async function doSignAndBroadcast({
 
   const sigHashType = (await core.coreBitcoinLikeNetworkParameters.getSigHash(
     networkParams,
-  )).value;
+  )).value.replace(/[< >]/g, ""); // FIXME FIXME FIXME;
   if (isCancelled()) return;
 
-  const hasTimestamp = (await core.coreBitcoinLikeNetworkParameters.getTimestamp(
+  const hasTimestamp = (await core.coreBitcoinLikeNetworkParameters.getUsesTimestampedTransaction(
     networkParams,
   )).value;
   if (isCancelled()) return;
