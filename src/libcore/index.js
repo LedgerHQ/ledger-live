@@ -31,8 +31,6 @@ import accountModel from "../logic/accountModel";
 import { atomicQueue } from "../logic/promise";
 import remapLibcoreErrors from "./errors";
 
-const hexToBytes = str => Array.from(Buffer.from(str, "hex"));
-
 export const getOrCreateWallet = atomicQueue(
   async ({
     core,
@@ -170,8 +168,8 @@ export async function createAccountFromDevice({
         const { publicKey, chainCode } = await hwApp.getWalletPublicKey(
           derivation,
         );
-        publicKeys.push(hexToBytes(publicKey));
-        chainCodes.push(hexToBytes(chainCode));
+        publicKeys.push(publicKey);
+        chainCodes.push(chainCode);
       }),
     Promise.resolve(),
   );
