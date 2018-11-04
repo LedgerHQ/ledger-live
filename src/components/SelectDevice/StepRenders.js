@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 40,
+    paddingTop: 40,
   },
   headIcon: {
     padding: 10,

@@ -13,6 +13,7 @@ import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
+import LText from "../../components/LText";
 
 import colors from "../../colors";
 
@@ -32,7 +33,7 @@ type State = {};
 
 class AddAccountsSelectCrypto extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Crypto asset" subtitle="step 1 of 4" />,
+    headerTitle: <StepHeader title="Crypto asset" subtitle="step 1 of 3" />,
   };
 
   keyExtractor = currency => currency.id;
@@ -41,8 +42,14 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  renderItem = ({ item }: { item: Currency }) => (
-    <CurrencyRow currency={item} onPress={this.onPressCurrency} />
+  renderItem = ({ item, index }: { item: Currency, index: number }) => (
+    <CurrencyRow
+      style={
+        index === cryptocurrencies.length - 1 ? styles.lastItem : undefined
+      }
+      currency={item}
+      onPress={this.onPressCurrency}
+    />
   );
 
   renderList = (items = cryptocurrencies) => (
@@ -51,6 +58,14 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
       renderItem={this.renderItem}
       keyExtractor={this.keyExtractor}
     />
+  );
+
+  renderEmptyList = () => (
+    <View style={styles.emptySearch}>
+      <LText style={styles.emptySearchText}>
+        {this.props.t("common.noCryptoFound")}
+      </LText>
+    </View>
   );
 
   render() {
@@ -64,7 +79,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
               inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
               list={cryptocurrencies}
               renderList={this.renderList}
-              renderEmptySearch={this.renderList}
+              renderEmptySearch={this.renderEmptyList}
             />
           </View>
         </KeyboardView>
@@ -81,8 +96,17 @@ const styles = StyleSheet.create({
   searchContainer: {
     flex: 1,
   },
+  lastItem: {
+    marginBottom: 32,
+  },
   filteredSearchInputWrapperStyle: {
     marginHorizontal: 16,
+  },
+  emptySearch: {
+    paddingHorizontal: 16,
+  },
+  emptySearchText: {
+    textAlign: "center",
   },
 });
 

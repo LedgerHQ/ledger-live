@@ -56,7 +56,7 @@ const mapDispatchToProps = {
 
 class AddAccountsAccounts extends PureComponent<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 4" />,
+    headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 3" />,
   };
 
   state = {
@@ -153,7 +153,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       if (selectedIds.indexOf(account.id) === -1) return;
       addAccount(account);
     });
-    navigation.navigate("AddAccountsSuccess", { currency });
+    if (navigation.replace) {
+      navigation.replace("AddAccountsSuccess", { currency });
+    }
   };
 
   isExistingAccount = account =>
@@ -284,7 +286,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           canRetry={
             status !== "scanning" && noImportableAccounts && !cantCreateAccount
           }
-          canDone={status !== "scanning" && cantCreateAccount}
+          canDone={
+            status !== "scanning" && cantCreateAccount && noImportableAccounts
+          }
           onRetry={this.restartSubscription}
           onStop={this.stopSubscription}
           onDone={this.quitFlow}
@@ -375,7 +379,7 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    paddingTop: 16,
+    paddingTop: 24,
   },
   descText: {
     paddingHorizontal: 16,

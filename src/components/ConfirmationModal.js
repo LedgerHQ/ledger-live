@@ -65,6 +65,7 @@ class ConfirmationModal extends PureComponent<Props> {
 const styles = StyleSheet.create({
   confirmationModal: {
     paddingVertical: 24,
+    paddingTop: 24,
     paddingHorizontal: 16,
   },
   confirmationTitle: {
