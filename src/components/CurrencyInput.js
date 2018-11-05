@@ -70,6 +70,7 @@ type Props = {
   renderRight?: any,
   renderError?: any,
   hasError: boolean,
+  autoFocus?: boolean,
 };
 
 type State = {
@@ -81,14 +82,13 @@ class CurrencyInput extends PureComponent<Props, State> {
   static defaultProps = {
     onFocus: noop,
     onChange: noop,
-    renderRight: noop,
-    renderError: noop,
     value: null,
     showAllDigits: false,
     subMagnitude: 0,
     allowZero: false,
     isActive: false,
     hasError: false,
+    autoFocus: false,
   };
 
   state = {
@@ -163,6 +163,7 @@ class CurrencyInput extends PureComponent<Props, State> {
       renderRight,
       renderError,
       hasError,
+      autoFocus,
     } = this.props;
     const { displayValue } = this.state;
     return (
@@ -175,6 +176,7 @@ class CurrencyInput extends PureComponent<Props, State> {
           ]}
           onChangeText={this.handleChange}
           value={displayValue}
+          autoFocus={autoFocus}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           placeholder={format(unit, BigNumber(0), {
