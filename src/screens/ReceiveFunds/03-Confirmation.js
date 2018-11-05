@@ -21,6 +21,8 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 import BottomModal from "../../components/BottomModal";
+import Close from "../../icons/Close";
+import Touchable from "../../components/Touchable";
 import TranslatedError from "../../components/TranslatedError";
 import RejectedImage from "./assets/RejectedImage";
 import Button from "../../components/Button";
@@ -84,6 +86,13 @@ class ReceiveConfirmation extends Component<Props, State> {
     this.setState({
       isModalOpened: false,
       onModalHide: this.props.navigation.goBack,
+    });
+  };
+
+  onModalClose = () => {
+    this.setState({
+      isModalOpened: false,
+      onModalHide: this.onDone,
     });
   };
 
@@ -181,6 +190,9 @@ class ReceiveConfirmation extends Component<Props, State> {
               </View>
             </View>
           ) : null}
+          <Touchable style={styles.close} onPress={this.onModalClose}>
+            <Close color={colors.fog} size={20} />
+          </Touchable>
         </BottomModal>
       </SafeAreaView>
     );
@@ -263,6 +275,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 16,
     marginHorizontal: 8,
+  },
+  close: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
 });
 
