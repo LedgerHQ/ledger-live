@@ -29,12 +29,14 @@ class ConfirmationModal extends PureComponent<Props> {
       confirmationTitle,
       confirmationDesc,
       onConfirm,
+      ...rest
     } = this.props;
     return (
       <BottomModal
         isOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}
+        {...rest}
       >
         <LText semiBold style={styles.confirmationTitle}>
           {confirmationTitle}

@@ -18,6 +18,7 @@ type Props = {
 
 type State = {
   isConfirmationModalOpened: boolean,
+  onModalHide: () => void,
 };
 
 class HeaderRightClose extends Component<Props, State> {
@@ -28,6 +29,7 @@ class HeaderRightClose extends Component<Props, State> {
 
   state = {
     isConfirmationModalOpened: false,
+    onModalHide: () => {},
   };
 
   close = () => {
@@ -56,13 +58,19 @@ class HeaderRightClose extends Component<Props, State> {
   closeConfirmationModal = () =>
     this.setState({ isConfirmationModalOpened: false });
 
+  onConfirm = () =>
+    this.setState({
+      onModalHide: this.close,
+      isConfirmationModalOpened: false,
+    });
+
   render() {
     const {
       withConfirmation,
       confirmationTitle,
       confirmationDesc,
     } = this.props;
-    const { isConfirmationModalOpened } = this.state;
+    const { isConfirmationModalOpened, onModalHide } = this.state;
     return (
       <Touchable onPress={this.onPress} style={{ marginHorizontal: 16 }}>
         <CloseIcon size={18} color={this.props.color} />
@@ -70,9 +78,10 @@ class HeaderRightClose extends Component<Props, State> {
           <ConfirmationModal
             isOpened={isConfirmationModalOpened}
             onClose={this.closeConfirmationModal}
-            onConfirm={this.close}
+            onConfirm={this.onConfirm}
             confirmationTitle={confirmationTitle}
             confirmationDesc={confirmationDesc}
+            onModalHide={onModalHide}
           />
         )}
       </Touchable>
