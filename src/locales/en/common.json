@@ -12,7 +12,8 @@
     "contactUs": "Contact us",
     "noCryptoFound": "No crypto assets found",
     "edit": "Edit",
-    "close": "Close"
+    "close": "Close",
+    "confirm": "Confirm",
   },
   "errors": {
     "AccountNameRequired": {
@@ -501,6 +502,12 @@
       "button": {
         "details": "View details",
         "retry": "Retry"
+      }
+    },
+    "fees": {
+      "title": "Network fees",
+      "edit": {
+        "title": "Choose Unit"
       }
     }
   },

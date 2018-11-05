@@ -47,10 +47,7 @@ export default class RippleFeeRow extends Component<Props> {
           <View style={styles.accountContainer}>
             {fee ? (
               <LText style={styles.valueText}>
-                <CurrencyUnitValue
-                  unit={account.currency.units[0]}
-                  value={fee}
-                />
+                <CurrencyUnitValue unit={account.unit} value={fee} />
               </LText>
             ) : null}
 
