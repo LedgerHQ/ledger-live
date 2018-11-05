@@ -52,6 +52,7 @@ import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen"
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
 import DebugHttpTransport from "./screens/DebugHttpTransport";
+import DebugIcons from "./screens/DebugIcons";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
@@ -166,6 +167,8 @@ const SettingsStack = createStackNavigator(
     DebugCrash,
     // $FlowFixMe
     DebugHttpTransport,
+    // $FlowFixMe
+    DebugIcons,
     // $FlowFixMe
     BenchmarkQRStream,
   },
