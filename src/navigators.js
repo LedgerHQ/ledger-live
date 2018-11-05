@@ -41,6 +41,8 @@ import SendAmount from "./screens/SendFunds/03-Amount";
 import SendSummary from "./screens/SendFunds/04-Summary";
 import SendConnectDevice from "./screens/SendFunds/05-ConnectDevice";
 import SendValidation from "./screens/SendFunds/06-Validation";
+import SendValidationSuccess from "./screens/SendFunds/07-ValidationSuccess";
+import SendValidationError from "./screens/SendFunds/07-ValidationError";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
@@ -319,6 +321,8 @@ const SendFunds = createStackNavigator(
     SendSummary,
     SendConnectDevice,
     SendValidation,
+    SendValidationSuccess,
+    SendValidationError,
     ...sendScreens,
   },
   closableStackNavigatorConfig,
