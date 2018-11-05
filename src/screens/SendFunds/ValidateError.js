@@ -10,17 +10,19 @@ import LText from "../../components/LText";
 import ErrorIcon from "../../components/ErrorIcon";
 import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
+import ExternalLink from "../../components/ExternalLink";
 
 type Props = {
   t: T,
   error: Error,
   onContactUs: () => void,
   onClose: () => void,
+  onRetry: () => void,
 };
 
 class ValidatError extends PureComponent<Props> {
   render() {
-    const { t, error, onContactUs, onClose } = this.props;
+    const { t, error, onContactUs, onClose, onRetry } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
@@ -33,6 +35,7 @@ class ValidatError extends PureComponent<Props> {
           <LText style={styles.message}>
             <TranslatedError error={error} field="description" />
           </LText>
+          <ExternalLink text={t("common.contactUs")} onPress={onContactUs} />
         </View>
         <View style={styles.actionContainer}>
           <Button
@@ -41,16 +44,11 @@ class ValidatError extends PureComponent<Props> {
             containerStyle={{ flex: 1, marginRight: 16 }}
             onPress={onClose}
           />
-          {/*
-            TODO: THERE IS A SUGGESTION TO USE CLOSE HERE INSTEAD OF A RETRY BUTTON
-            CHECK https://app.zeplin.io/project/5a6eed140b9285a37546f392/screen/5bbcd1b1e2c97b18e12643ee
-            NEEDS DISCUSSION
-           */}
           <Button
-            title={t("common.contactUs")}
+            title={t("send.validation.button.retry")}
             type="primary"
             containerStyle={{ flex: 1 }}
-            onPress={onContactUs}
+            onPress={onRetry}
           />
         </View>
       </View>
@@ -85,6 +83,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 14,
     paddingHorizontal: 16,
+    paddingBottom: 32,
     color: colors.smoke,
     textAlign: "center",
   },
