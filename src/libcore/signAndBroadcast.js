@@ -360,7 +360,7 @@ async function doSignAndBroadcast({
 
   const txHash = await core.coreBitcoinLikeAccount.broadcastRawTransaction(
     bitcoinLikeAccount,
-    Array.from(Buffer.from(signedTransaction, "hex")),
+    signedTransaction,
   );
   if (isCancelled()) return;
 
