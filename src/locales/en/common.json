@@ -257,6 +257,32 @@
     "description": "Reset all Ledger Live data, including accounts and settings? The private keys providing access to your crypto assets remain secure on your device and Recovery sheet.",
     "button": "Reset"
   },
+  "onboarding": {
+    "step01Welcome": {},
+    "step02GetStarted": {},
+    "step03ChooseDevice": {
+      "title": "Choose device"
+    },
+    "step04SetupPin": {
+      "title": "Setup PIN Code"
+    },
+    "step05WriteRecovery": {
+      "title": "Write recovery phrase"
+    },
+    "step06SecurityChecklist": {
+      "title": "Security checklist"
+    },
+    "step07PairNew": {
+      "title": "Pair a new device"
+    },
+    "step08Password": {
+      "title": "Password lock"
+    },
+    "step09ShareData": {
+      "title": "Share data"
+    },
+    "step10Finish": {}
+  },
   "portfolio": {
     "totalBalance": "Total balance",
     "syncError": "Sync error",
