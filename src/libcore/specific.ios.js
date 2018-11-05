@@ -18,11 +18,6 @@ export const getNativeModule = (name: string) => NativeModules[`CoreLG${name}`];
 // FIXME we should drop this need!
 export const getValue = (obj: any) => obj.value;
 
-export const OperationTypeMap = {
-  "0": "OUT",
-  "1": "IN",
-};
-
 export const getBlockHeightForAccount = async (core: *, coreAccount: *) => {
   const coreBlock = await core.coreAccount.getLastBlock(coreAccount);
   const blockHeightRes = await core.coreBlock.getHeight(coreBlock);

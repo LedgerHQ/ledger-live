@@ -14,7 +14,7 @@ import {
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import type {
   Account,
-  AccountRaw,
+  Operation,
   CryptoCurrency,
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
@@ -25,11 +25,14 @@ import {
   getBlockHeightForAccount,
   getOperationDate,
   createInstance,
-  OperationTypeMap,
 } from "./specific";
-import accountModel from "../logic/accountModel";
 import { atomicQueue } from "../logic/promise";
 import remapLibcoreErrors from "./errors";
+
+const OperationTypeMap = {
+  "0": "OUT",
+  "1": "IN",
+};
 
 export const getOrCreateWallet = atomicQueue(
   async ({
@@ -152,9 +155,9 @@ export async function createAccountFromDevice({
   const publicKeys = getValue(
     await core.coreAccountCreationInfo.getPublicKeys(accountCreationInfos),
   );
-  const index = getValue(
-    await core.coreAccountCreationInfo.getIndex(accountCreationInfos),
-  );
+  const index = (await core.coreAccountCreationInfo.getIndex(
+    accountCreationInfos,
+  )).value;
   const derivations = getValue(
     await core.coreAccountCreationInfo.getDerivations(accountCreationInfos),
   );
@@ -259,7 +262,7 @@ export async function syncCoreAccount({
   const query = await core.coreAccount.queryOperations(coreAccount);
   const completedQuery = await core.coreOperationQuery.complete(query);
   const coreOperations = await core.coreOperationQuery.execute(completedQuery);
-  const rawAccount = await buildAccountRaw({
+  const account = await buildAccount({
     core,
     coreWallet,
     coreAccount,
@@ -272,11 +275,10 @@ export async function syncCoreAccount({
 
   await core.flush();
 
-  return accountModel.decode({ data: rawAccount, version: 0 });
+  return account;
 }
 
-// TODO get read of the "AccountRaw" abstraction
-async function buildAccountRaw({
+async function buildAccount({
   core,
   coreWallet,
   coreAccount,
@@ -297,7 +299,7 @@ async function buildAccountRaw({
 }) {
   const nativeBalance = await core.coreAccount.getBalance(coreAccount);
 
-  const { value: balance } = await core.coreAmount.toLong(nativeBalance);
+  const balance = await libcoreAmountToBigNumber(core, nativeBalance);
 
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -356,7 +358,7 @@ async function buildAccountRaw({
   // build operations
   const operations = await Promise.all(
     coreOperations.map(coreOperation =>
-      buildOperationRaw({
+      buildOperation({
         core,
         coreOperation,
         accountId: id,
@@ -364,29 +366,28 @@ async function buildAccountRaw({
     ),
   );
 
-  const raw: $Exact<AccountRaw> = {
+  const raw: $Exact<Account> = {
     id,
+    seedIdentifier,
     xpub,
     derivationMode,
-    seedIdentifier,
-    name,
+    index: accountIndex,
     freshAddress: freshAddress.str,
     freshAddressPath: freshAddress.path,
+    name,
     balance,
     blockHeight,
-    index: accountIndex,
+    currency,
+    unit: currency.units[0],
     operations,
     pendingOperations: [],
-    currencyId,
-    unitMagnitude: currency.units[0].magnitude,
-    lastSyncDate: new Date().toISOString(),
+    lastSyncDate: new Date(),
   };
 
   return raw;
 }
 
-// TODO get read of the "OperationRaw" abstraction (directly generate Operation)
-async function buildOperationRaw({
+async function buildOperation({
   core,
   coreOperation,
   accountId,
@@ -395,8 +396,6 @@ async function buildOperationRaw({
   coreOperation: *,
   accountId: string,
 }) {
-  // FIXME lot of async stuff could be done in parallel. [a,b]=await Promise.all(...)
-
   const bitcoinLikeOperation = await core.coreOperation.asBitcoinLikeOperation(
     coreOperation,
   );
@@ -411,10 +410,10 @@ async function buildOperationRaw({
   );
 
   const coreValue = await core.coreOperation.getAmount(coreOperation);
-  const { value } = await core.coreAmount.toLong(coreValue);
+  const value = await libcoreAmountToBigNumber(core, coreValue);
 
   const coreFee = await core.coreOperation.getFees(coreOperation);
-  const { value: fee } = await core.coreAmount.toLong(coreFee);
+  const fee = await libcoreAmountToBigNumber(core, coreFee);
 
   const { value: blockHeight } = await core.coreOperation.getBlockHeight(
     coreOperation,
@@ -431,7 +430,7 @@ async function buildOperationRaw({
 
   const id = `${accountId}-${hash}-${type}`;
 
-  return {
+  const op: $Exact<Operation> = {
     id,
     hash,
     type,
@@ -442,8 +441,10 @@ async function buildOperationRaw({
     blockHeight,
     blockHash: null, // FIXME: why? (unused)
     accountId,
-    date: date.toISOString(),
+    date,
   };
+
+  return op;
 }
 
 export async function isValidRecipient({
