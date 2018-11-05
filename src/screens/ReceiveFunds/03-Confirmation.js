@@ -21,8 +21,10 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 import BottomModal from "../../components/BottomModal";
+import DeviceNanoAction from "../../components/DeviceNanoAction";
+import Close from "../../icons/Close";
+import Touchable from "../../components/Touchable";
 import TranslatedError from "../../components/TranslatedError";
-import RejectedImage from "./assets/RejectedImage";
 import Button from "../../components/Button";
 
 type Navigation = NavigationScreenProp<{
@@ -40,6 +42,8 @@ type Props = {
 
 type State = {
   verified: boolean,
+  isModalOpened: boolean,
+  onModalHide: Function,
   error: ?Error,
 };
 
@@ -50,6 +54,8 @@ class ReceiveConfirmation extends Component<Props, State> {
 
   state = {
     verified: false,
+    isModalOpened: false,
+    onModalHide: () => {},
     error: null,
   };
 
@@ -71,13 +77,23 @@ class ReceiveConfirmation extends Component<Props, State> {
       );
       this.setState({ verified: true });
     } catch (error) {
-      this.setState({ error });
+      this.setState({ error, isModalOpened: true });
     }
     await transport.close();
   };
 
   onRetry = () => {
-    this.props.navigation.goBack();
+    this.setState({
+      isModalOpened: false,
+      onModalHide: this.props.navigation.goBack,
+    });
+  };
+
+  onModalClose = () => {
+    this.setState({
+      isModalOpened: false,
+      onModalHide: this.onDone,
+    });
   };
 
   onDone = () => {
@@ -88,7 +104,7 @@ class ReceiveConfirmation extends Component<Props, State> {
 
   render(): React$Node {
     const { account, navigation, t } = this.props;
-    const { verified, error } = this.state;
+    const { verified, error, isModalOpened, onModalHide } = this.state;
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
 
@@ -144,12 +160,12 @@ class ReceiveConfirmation extends Component<Props, State> {
             />
           </View>
         )}
-        <BottomModal isOpened={!!error} onClose={() => {}}>
+        <BottomModal isOpened={isModalOpened} onModalHide={onModalHide}>
           {error ? (
             <View style={styles.modal}>
               <View style={styles.modalBody}>
                 <View style={styles.modalIcon}>
-                  <RejectedImage size={264} />
+                  <DeviceNanoAction error={error} />
                 </View>
                 <LText secondary semiBold style={styles.modalTitle}>
                   <TranslatedError error={error} />
@@ -174,6 +190,9 @@ class ReceiveConfirmation extends Component<Props, State> {
               </View>
             </View>
           ) : null}
+          <Touchable style={styles.close} onPress={this.onModalClose}>
+            <Close color={colors.fog} size={20} />
+          </Touchable>
         </BottomModal>
       </SafeAreaView>
     );
@@ -256,6 +275,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 16,
     marginHorizontal: 8,
+  },
+  close: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
 });
 

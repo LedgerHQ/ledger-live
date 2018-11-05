@@ -20,7 +20,7 @@ class BottomModal extends Component<Props> {
     onClose: () => {},
   };
   render() {
-    const { isOpened, onClose, children, style } = this.props;
+    const { isOpened, onClose, children, style, ...rest } = this.props;
     return (
       <ButtonUseTouchable.Provider value={true}>
         <ReactNativeModal
@@ -32,6 +32,7 @@ class BottomModal extends Component<Props> {
             justifyContent: "flex-end",
             margin: 0,
           }}
+          {...rest}
         >
           <View style={[styles.modal, style]}>
             <StyledStatusBar
