@@ -55,7 +55,7 @@ export const RenderStep = ({
 }: {
   icon: React$Node,
   title: React$Node,
-  description: React$Node,
+  description?: React$Node,
   children?: React$Node,
 }) => (
   <View style={styles.root}>
@@ -64,7 +64,9 @@ export const RenderStep = ({
       <LText secondary semiBold style={styles.title}>
         {title}
       </LText>
-      <LText style={styles.description}>{description}</LText>
+      {description ? (
+        <LText style={styles.description}>{description}</LText>
+      ) : null}
     </View>
     {children}
   </View>
@@ -88,6 +90,8 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingVertical: 20,
+    paddingHorizontal: 40,
+    lineHeight: 26,
     fontSize: 16,
     color: colors.darkBlue,
   },

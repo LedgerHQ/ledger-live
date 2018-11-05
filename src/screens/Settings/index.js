@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
+import Config from "react-native-config";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
@@ -37,7 +38,7 @@ class Settings extends Component<Props, *> {
   };
 
   state = {
-    debugVisible: false,
+    debugVisible: Config.FORCE_DEBUG_VISIBLE || false,
   };
 
   navigateTo = (screenName: string) => {
@@ -70,7 +71,6 @@ class Settings extends Component<Props, *> {
   render() {
     const { t, currencies } = this.props;
     const { debugVisible } = this.state;
-
     return (
       <ScrollView>
         <View style={styles.root}>

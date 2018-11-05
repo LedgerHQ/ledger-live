@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -13,8 +13,6 @@ import StepHeader from "../../components/StepHeader";
 
 import colors from "../../colors";
 import ValidateOnDevice from "./ValidateOnDevice";
-import ValidateSuccess from "./ValideSuccess";
-import ValidateError from "./ValidateError";
 
 type Props = {
   account: Account,
@@ -29,8 +27,6 @@ type Props = {
 
 type State = {
   signed: boolean,
-  result: ?Operation,
-  error: ?Error,
 };
 
 class Validation extends Component<Props, State> {
@@ -40,8 +36,6 @@ class Validation extends Component<Props, State> {
 
   state = {
     signed: false,
-    result: null,
-    error: null,
   };
 
   componentDidMount() {
@@ -60,57 +54,31 @@ class Validation extends Component<Props, State> {
             this.setState({ signed: true });
             break;
           case "broadcasted":
-            this.setState({ result: e.operation });
+            // $FlowFixMe
+            navigation.replace("SendValidationSuccess", {
+              ...navigation.state.params,
+              result: e.operation,
+            });
             break;
           default:
         }
       },
       error: error => {
-        this.setState({ error });
+        // $FlowFixMe
+        navigation.replace("SendValidationError", {
+          ...navigation.state.params,
+          error,
+        });
       },
     });
   }
 
-  dismiss = () => {
-    const { navigation } = this.props;
-    if (navigation.dismiss) {
-      const dismissed = navigation.dismiss();
-      if (!dismissed) navigation.goBack();
-    }
-  };
-
-  goToOperationDetails = () => {
-    const { result } = this.state;
-    const { navigation, account } = this.props;
-    if (!result) return;
-
-    navigation.navigate("OperationDetails", {
-      account,
-      operation: result,
-    });
-  };
-
-  contactUs = () => {
-    console.warn("not implemented");
-  };
-
   render() {
-    const { result, error, signed } = this.state;
+    const { signed } = this.state;
     return (
       <View style={styles.root}>
         <Stepper nbSteps={6} currentStep={6} />
-        {result ? (
-          <ValidateSuccess
-            onClose={this.dismiss}
-            onViewDetails={this.goToOperationDetails}
-          />
-        ) : error ? (
-          <ValidateError
-            error={error}
-            onClose={this.dismiss}
-            onContactUs={this.contactUs}
-          />
-        ) : signed ? (
+        {signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
           </View>
