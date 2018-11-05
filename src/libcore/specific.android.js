@@ -12,11 +12,6 @@ export const getNativeModule = (name: string) => NativeModules[`Core${name}`];
 
 export const getValue = (obj: any) => obj;
 
-export const OperationTypeMap = {
-  SEND: "OUT",
-  RECEIVE: "IN",
-};
-
 /* eslint-disable */
 export const getBlockHeightForAccount = async (core: *, coreAccount: *) => {
   const coreBlock = await core.coreAccount.getLastBlock(coreAccount);
