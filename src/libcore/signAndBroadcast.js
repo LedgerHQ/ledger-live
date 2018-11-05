@@ -18,6 +18,7 @@ import {
   libcoreAmountToBigNumber,
   bigNumberToLibcoreAmount,
 } from ".";
+import { getValue } from "./specific";
 import load from "./load";
 import { open } from "../logic/hw";
 
@@ -128,10 +129,9 @@ async function signTransaction({
 
   const inputs = await Promise.all(
     rawInputs.map(async input => {
-      const hexPreviousTransaction = (await core.coreBitcoinLikeInput.getPreviousTransaction(
-        input,
-      )).value.replace(/[< >]/g, ""); // FIXME FIXME FIXME
-
+      const hexPreviousTransaction = getValue(
+        await core.coreBitcoinLikeInput.getPreviousTransaction(input),
+      ).replace(/[< >]/g, ""); // FIXME FIXME FIXME
       const previousTransaction = hwApp.splitTransaction(
         hexPreviousTransaction,
         currency.supportsSegwit,
