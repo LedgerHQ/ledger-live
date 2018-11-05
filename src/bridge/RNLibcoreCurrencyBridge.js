@@ -24,6 +24,7 @@ import {
   createAccountFromDevice,
   syncCoreAccount,
 } from "../libcore";
+import { getValue } from "../libcore/specific";
 
 // TODO env var?
 const SHOW_LEGACY_NEW_ACCOUNT = false;
@@ -67,6 +68,7 @@ const scanAccountsOnDevice = (currency, deviceId) =>
             false,
             isSegwit,
           );
+
           if (isUnsubscribed()) return;
 
           const walletName = getWalletName({
@@ -82,7 +84,9 @@ const scanAccountsOnDevice = (currency, deviceId) =>
             derivationMode,
           });
 
-          const accountsCount = await core.coreWallet.getAccountCount(wallet);
+          const accountsCount = getValue(
+            await core.coreWallet.getAccountCount(wallet),
+          );
           const onAccountScanned = account => o.next(account);
 
           // recursively scan all accounts on device on the given app

@@ -158,6 +158,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     }
   };
 
+  // FIXME: would be better to refactor these into pure (props,state) => functions because it's used not only in render()
+
   isExistingAccount = account =>
     this.props.existingAccounts.find(a => a.id === account.id) !== undefined;
 
