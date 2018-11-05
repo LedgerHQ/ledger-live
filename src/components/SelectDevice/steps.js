@@ -19,15 +19,14 @@ import {
 import { open } from "../../logic/hw";
 import colors, { rgba } from "../../colors";
 import BluetoothScanning from "../BluetoothScanning";
-import Spinning from "../Spinning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
 import CurrencyIcon from "../CurrencyIcon";
 import Rounded from "../Rounded";
 import LText from "../LText";
-import LiveLogo from "../../icons/LiveLogoIcon";
 import getFirmwareInfo from "../../logic/hw/getFirmwareInfo";
 import { rejectionOp } from "../DebugRejectSwitch";
+import { deviceNames } from "../../wording";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
@@ -98,16 +97,18 @@ export const connectingStep: Step = {
     ),
 };
 
+// TODO genuine step
+
 export const dashboard: Step = {
   Body: () => (
     <RenderStep
-      icon={
-        <Spinning>
-          <LiveLogo size={32} color={colors.grey} />
-        </Spinning>
+      icon={<DeviceNanoAction screen="home" />}
+      title={
+        <Trans
+          i18nKey="SelectDevice.steps.dashboard.title"
+          values={deviceNames.nanoX}
+        />
       }
-      title={<Trans i18nKey="SelectDevice.steps.dashboard.title" />}
-      description={<Trans i18nKey="SelectDevice.steps.dashboard.description" />}
     />
   ),
   run: (deviceId, meta) =>
@@ -231,7 +232,7 @@ export const accountApp: Account => Step = account => ({
 export const receiveVerifyStep: Account => Step = account => ({
   Body: ({ onDone }: *) => (
     <RenderStep
-      icon={<DeviceNanoAction width={240} validationOnScreen />}
+      icon={<DeviceNanoAction width={240} screen="validation" />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.receiveVerify.title"

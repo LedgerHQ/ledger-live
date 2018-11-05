@@ -25,7 +25,7 @@ class PendingGenuineCheck extends PureComponent<*> {
         </LText>
 
         <View style={styles.footer}>
-          <DeviceNanoAction powerAction validationOnScreen width={width} />
+          <DeviceNanoAction powerAction screen="validation" width={width} />
         </View>
       </Fragment>
     );

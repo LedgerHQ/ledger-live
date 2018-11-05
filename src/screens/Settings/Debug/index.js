@@ -11,6 +11,7 @@ import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import OpenDebugBLE from "./OpenDebugBLE";
 import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
+import OpenDebugIcons from "./OpenDebugIcons";
 import BenchmarkQRStream from "./BenchmarkQRStream";
 
 class DebugSettings extends PureComponent<{
@@ -39,6 +40,7 @@ class DebugSettings extends PureComponent<{
         <BenchmarkQRStream />
         <OpenDebugHttpTransport />
         <OpenDebugCrash />
+        <OpenDebugIcons />
       </ScrollView>
     );
   }

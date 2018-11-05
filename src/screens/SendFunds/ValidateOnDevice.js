@@ -24,7 +24,7 @@ class ValidateOnDevice extends PureComponent<Props> {
         <View style={styles.container}>
           <View style={styles.innerContainer}>
             <View style={styles.picture}>
-              <DeviceNanoAction powerAction validationOnScreen />
+              <DeviceNanoAction powerAction screen="validation" />
             </View>
             <View style={styles.titleContainer}>
               <LText secondary semiBold style={styles.title}>

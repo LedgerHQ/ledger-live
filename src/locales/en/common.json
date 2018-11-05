@@ -533,8 +533,7 @@
         "description": "Don't forget to turn on your device and enter your PIN to unlock it"
       },
       "dashboard": {
-        "title": "Go to Dashboard...",
-        "description": "On your device, make sure to be on Dashboard."
+        "title": "Navigate to dashboard on your {{fullDeviceName}}"
       },
       "currencyApp": {
         "title": "Open app {{managerAppName}}...",
