@@ -40,6 +40,8 @@ type Props = {
 
 type State = {
   verified: boolean,
+  isModalOpened: boolean,
+  onModalHide: Function,
   error: ?Error,
 };
 
@@ -50,6 +52,8 @@ class ReceiveConfirmation extends Component<Props, State> {
 
   state = {
     verified: false,
+    isModalOpened: false,
+    onModalHide: () => {},
     error: null,
   };
 
@@ -71,13 +75,16 @@ class ReceiveConfirmation extends Component<Props, State> {
       );
       this.setState({ verified: true });
     } catch (error) {
-      this.setState({ error });
+      this.setState({ error, isModalOpened: true });
     }
     await transport.close();
   };
 
   onRetry = () => {
-    this.props.navigation.goBack();
+    this.setState({
+      isModalOpened: false,
+      onModalHide: this.props.navigation.goBack,
+    });
   };
 
   onDone = () => {
@@ -88,7 +95,7 @@ class ReceiveConfirmation extends Component<Props, State> {
 
   render(): React$Node {
     const { account, navigation, t } = this.props;
-    const { verified, error } = this.state;
+    const { verified, error, isModalOpened, onModalHide } = this.state;
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
 
@@ -144,7 +151,7 @@ class ReceiveConfirmation extends Component<Props, State> {
             />
           </View>
         )}
-        <BottomModal isOpened={!!error} onClose={() => {}}>
+        <BottomModal isOpened={isModalOpened} onModalHide={onModalHide}>
           {error ? (
             <View style={styles.modal}>
               <View style={styles.modalBody}>
