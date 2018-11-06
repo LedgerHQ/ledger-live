@@ -1,21 +1,64 @@
 // @flow
 
-import React, { Component } from "react";
-import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import React, { PureComponent, Fragment } from "react";
+import {
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  View,
+  ScrollView,
+} from "react-native";
 
-type Props = {
-  children: *,
-  centered?: boolean,
+import OnboardingHeader from "./OnboardingHeader";
+
+type Container = { children: *, style?: * };
+
+type Props = Container & {
+  isCentered?: boolean,
+  isFull?: boolean,
+  header?: string,
+  Footer?: React$ComponentType<*>,
 };
 
-class OnboardingLayout extends Component<Props> {
+export default class OnboardingLayout extends PureComponent<Props> {
   render() {
-    const { children, centered } = this.props;
+    const { children, header, Footer, isCentered, isFull, style } = this.props;
+
+    let inner: React$Node = children;
+
+    if (isCentered) {
+      inner = <View>{inner}</View>;
+    }
+
+    if (isFull) {
+      inner = <OnboardingInner>{inner}</OnboardingInner>;
+    }
+
+    if (header) {
+      inner = (
+        <Fragment>
+          <OnboardingHeader stepId={header} />
+          <OnboardingInner>{inner}</OnboardingInner>
+          {Footer && (
+            <View style={styles.footer}>
+              <Footer />
+            </View>
+          )}
+        </Fragment>
+      );
+    }
+
     return (
-      <SafeAreaView style={[styles.root, centered && styles.centered]}>
-        {children}
+      <SafeAreaView style={[styles.root, isCentered && styles.centered, style]}>
+        {inner}
       </SafeAreaView>
     );
+  }
+}
+
+export class OnboardingInner extends PureComponent<Container> {
+  render() {
+    return <ScrollView style={styles.inner}>{this.props.children}</ScrollView>;
   }
 }
 
@@ -29,6 +72,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  inner: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  footer: {
+    padding: 16,
+  },
 });
-
-export default OnboardingLayout;

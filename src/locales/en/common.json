@@ -258,29 +258,24 @@
     "button": "Reset"
   },
   "onboarding": {
+    "stepsTitles": {
+      "OnboardingStep03ChooseDevice": "Choose device",
+      "OnboardingStep04SetupPin": "Setup PIN code",
+      "OnboardingStep05WriteRecovery": "Write recovery phrase",
+      "OnboardingStep06SecurityChecklist": "Security checklist",
+      "OnboardingStep07PairNew": "Pair a new device",
+      "OnboardingStep08Password": "Password lock",
+      "OnboardingStep09ShareData": "Share data"
+    },
     "step01Welcome": {},
     "step02GetStarted": {},
-    "step03ChooseDevice": {
-      "title": "Choose device"
-    },
-    "step04SetupPin": {
-      "title": "Setup PIN Code"
-    },
-    "step05WriteRecovery": {
-      "title": "Write recovery phrase"
-    },
-    "step06SecurityChecklist": {
-      "title": "Security checklist"
-    },
-    "step07PairNew": {
-      "title": "Pair a new device"
-    },
-    "step08Password": {
-      "title": "Password lock"
-    },
-    "step09ShareData": {
-      "title": "Share data"
-    },
+    "step03ChooseDevice": {},
+    "step04SetupPin": {},
+    "step05WriteRecovery": {},
+    "step06SecurityChecklist": {},
+    "step07PairNew": {},
+    "step08Password": {},
+    "step09ShareData": {},
     "step10Finish": {}
   },
   "portfolio": {
