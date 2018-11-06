@@ -399,6 +399,41 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  decred: {
+    id: "decred",
+    coinType: 42,
+    name: "Decred",
+    managerAppName: "Decred",
+    ticker: "DCR",
+    scheme: "decred",
+    color: "???",
+    units: [
+      {
+        name: "decred",
+        code: "DCR",
+        symbol: "DCR",
+        magnitude: 8
+      },
+      {
+        name: "milli-decred",
+        code: "mDCR",
+        symbol: "mDCR",
+        magnitude: 5
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ],
+    family: "bitcoin",
+    ledgerExplorerId: "dcr",
+    blockAvgTime: 15 * 60,
+    bitcoinLikeInfo: {
+      P2PKH: 0x073f,
+      P2SH: 0x071a
+    }
+  },
   digibyte: {
     id: "digibyte",
     coinType: 20,
@@ -587,6 +622,44 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  factom: {
+    id: "factom",
+    coinType: 131,
+    name: "Factom",
+    managerAppName: "Factom",
+    ticker: "FCT",
+    scheme: "factom",
+    color: "???",
+    family: "factom",
+    units: [
+      {
+        name: "FCT",
+        code: "FCT",
+        magnitude: 8
+      }
+    ]
+  },
+  game_credits: {
+    id: "game_credits",
+    coinType: 101,
+    name: "GameCredits",
+    managerAppName: "GameCredits",
+    ticker: "GAME",
+    scheme: "game",
+    color: "???",
+    family: "bitcoin",
+    units: [
+      {
+        name: "GAME",
+        code: "GAME",
+        magnitude: 8
+      }
+    ],
+    bitcoinLikeInfo: {
+      P2PKH: 38,
+      P2SH: 62
+    }
+  },
   gochain: {
     id: "gochain",
     coinType: 6060,
@@ -748,6 +821,23 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  mix: {
+    id: "mix",
+    coinType: 76,
+    name: "MIX Blockchain",
+    managerAppName: "MIX Blockchain",
+    ticker: "MIX",
+    scheme: "mix",
+    color: "???",
+    family: "ethereum",
+    units: [
+      {
+        name: "MIX",
+        code: "MIX",
+        magnitude: 8
+      }
+    ]
+  },
   monero: {
     id: "monero",
     coinType: 128,
@@ -773,7 +863,7 @@ const cryptocurrenciesById = {
     ticker: "MUSIC",
     scheme: "musicoin",
     color: "#000000",
-    family: "musicoin",
+    family: "ethereum",
     units: [
       {
         name: "MUSIC",
