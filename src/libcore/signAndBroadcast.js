@@ -18,6 +18,7 @@ import {
   libcoreAmountToBigNumber,
   bigNumberToLibcoreAmount,
 } from ".";
+import { remapLibcoreErrors } from "./errors";
 import { getValue } from "./specific";
 import load from "./load";
 import { open } from "../logic/hw";
@@ -79,7 +80,7 @@ export default ({
           operation,
         });
       },
-    }).then(() => o.complete(), e => o.error(e));
+    }).then(() => o.complete(), e => o.error(remapLibcoreErrors(e)));
 
     return () => {
       unsubscribed = true;

@@ -27,7 +27,7 @@ import {
   createInstance,
 } from "./specific";
 import { atomicQueue } from "../logic/promise";
-import remapLibcoreErrors from "./errors";
+import { remapLibcoreErrors } from "./errors";
 
 const OperationTypeMap = {
   "0": "OUT",
