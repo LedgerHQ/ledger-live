@@ -1,17 +1,25 @@
 // @flow
 
 import React, { Component } from "react";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 
+import { completeOnboarding } from "../../actions/settings";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import OnboardingLayout from "./OnboardingLayout";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  completeOnboarding: () => void,
   t: *,
+};
+
+const mapDispatchToProps = {
+  completeOnboarding,
 };
 
 class OnboardingStep10Finish extends Component<Props> {
@@ -20,6 +28,7 @@ class OnboardingStep10Finish extends Component<Props> {
   };
 
   onNext = () => {
+    this.props.completeOnboarding();
     this.props.navigation.navigate("Main");
   };
 
@@ -41,4 +50,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(OnboardingStep10Finish);
+export default compose(
+  translate(),
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
+)(OnboardingStep10Finish);
