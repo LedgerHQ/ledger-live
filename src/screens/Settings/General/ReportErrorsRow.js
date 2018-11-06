@@ -28,8 +28,8 @@ class ReportErrorsRow extends PureComponent<Props> {
     const { t, reportErrorsEnabled, setReportErrors } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.display.reportErrors")}
-        desc={t("common:settings.display.reportErrorsDesc")}
+        title={t("settings.display.reportErrors")}
+        desc={t("settings.display.reportErrorsDesc")}
         onPress={null}
       >
         <Switch value={reportErrorsEnabled} onValueChange={setReportErrors} />

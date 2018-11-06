@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import type { NavigationScreenProp } from "react-navigation";
 import { ScrollView, View, StyleSheet } from "react-native";
+import i18next from "i18next";
 import LedgerSupportRow from "./LedgerSupportRow";
 import ClearCacheRow from "./ClearCacheRow";
 import HardResetRow from "./HardResetRow";
@@ -11,7 +12,7 @@ class HelpSettings extends PureComponent<{
   navigation: NavigationScreenProp<*>,
 }> {
   static navigationOptions = {
-    title: "Help",
+    title: i18next.t("settings.help.header"),
   };
 
   render() {

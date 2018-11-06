@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import i18next from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
@@ -20,7 +21,7 @@ const mapStateToProps = createStructuredSelector({
 
 class CurrenciesList extends PureComponent<Props> {
   static navigationOptions = () => ({
-    title: "Currencies",
+    title: i18next.t("settings.currencies.header"),
   });
 
   renderItem = ({ item }) => (

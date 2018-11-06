@@ -13,7 +13,8 @@
     "noCryptoFound": "No crypto assets found",
     "edit": "Edit",
     "close": "Close",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "poweredBy": "Powered by "
   },
   "errors": {
     "AccountNameRequired": {
@@ -234,8 +235,7 @@
     }
   },
   "reset": {
-    "title": "Are you sure?",
-    "description": "Erase all Ledger Live data stored on your device, including your accounts, transaction history and settings. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
+    "description": "Reset all Ledger Live data, including accounts and settings? The private keys providing access to your crypto assets remain secure on your device and Recovery sheet.",
     "button": "Reset"
   },
   "portfolio": {
@@ -387,66 +387,69 @@
     }
   },
   "settings": {
+    "header": "Settings",
     "configureDevice": "Configure device",
     "configureDeviceDesc": "Pair new Ledger devices",
     "display": {
       "title": "General",
-      "desc": "Change settings that affect Ledger Live in general.",
+      "desc": "Configure general Ledger Live settings.",
       "language": "Display language",
       "languageDesc": "Set the language displayed in Ledger Live.",
       "password": "Password lock",
-      "passwordDesc": "Set a password to prevent unauthorized access to Ledger Live data stored on your computer, including account names, balances, transactions and public addresses.",
+      "passwordDesc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
       "counterValue": "Countervalue",
-      "counterValueDesc": "Choose the currency to display next to your balance and operations.",
+      "counterValueDesc": "Set the currency shown next to your balance and operations.",
       "exchange": "Rate provider",
-      "exchangeDesc": "Choose the provider of the exchange rate from Bitcoin to {{fiat}}. The value of crypto assets is first calculated in Bitcoin, before being converted to {{fiat}} (crypto asset → BTC → {{fiat}}).",
+      "exchangeDesc": "Set provider of exchange rate from Bitcoin to {{fiat}}",
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red.",
       "reportErrors": "Report bugs",
-      "reportErrorsDesc": "Share anonymous usage and diagnostics data to help improve Ledger products, services and security features.",
+      "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics of anonymous data to help Ledger improve the user experience. This includes the operating system, language, firmware versions and the number of added accounts."
+      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience."
     },
     "currencies": {
+      "header": "Currencies",
       "title": "Currencies",
-      "desc": "Select a crypto asset to edit its settings.",
+      "desc": "Set rate provider and number of confirmations per crypto.",
       "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
-      "confirmationNbDesc": "Set the number of network confirmations for a transaction to be marked as confirmed.",
+      "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings"
     },
     "about": {
       "title": "About",
-      "desc": "Information about Ledger Live, terms and conditions, and privacy policy.",
-      "appDescription": "The perfect companion for your Ledger devices. Add new cryptocurrencies and check your balance in just a few clicks",
-      "appVersion": "App version",
+      "desc": "App information, terms and conditions, and privacy policy.",
+      "appDescription": "The perfect companion for your Ledger Nano X. Add new crypto assets and check your balance in just a few taps.",
+      "appVersion": "Version",
       "termsConditions": "Terms and conditions",
-      "termsConditionsDesc": "By using Ledger Live you are deemed to have accepeted our terms",
+      "termsConditionsDesc": "By using Ledger Live you are deemed to have accepted our terms and conditions.",
       "privacyPolicy": "Privacy policy",
-      "privacyPolicyDesc": "Refer to our privacy policy to learn what personal data we collect",
+      "privacyPolicyDesc": "Learn what personal data we collect, why and how we use it.",
       "liveReview": {
-        "title": "Review Ledger Live",
-        "ios": "Leave your review in the App store",
-        "android": "Leave your review in the Google Play store"
+        "title": "Rate the app!",
+        "ios": "Review in the App Store",
+        "android": "Review in the Google Play store"
       }
     },
     "help": {
       "title": "Help",
-      "desc": "Learn about Ledger Live features or get help.",
+      "header": "Help",
+      "desc": "Learn more about Ledger Live or get help.",
       "support": "Ledger Support",
-      "supportDesc": "A problem? Get help with Ledger Live, Ledger devices, supported crypto assets and apps.",
-      "configureDevice": "Configure device",
-      "configureDeviceDesc": "Securely initialize or restore a Ledger device to use with Ledger Live. Your accounts and settings are kept.",
+      "supportDesc": "A problem? Get help using Ledger Live with your hardware wallet.",
+      "configureDevice": "Set up a device",
+      "configureDeviceDesc": "Set up as new or restore a device. Accounts and settings are preserved.",
       "clearCache": "Clear Cache",
-      "clearCacheDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected.",
+      "clearCacheDesc": "Force resynchronization with the blockchain.",
       "clearCacheModal": "Are you sure?",
       "clearCacheModalDesc": "Clearing the Ledger Live cache forces network resynchronization. Your settings and accounts are not affected. The private keys to access your crypto assets in the blockchain remain secure on your Ledger device and on your Recovery sheet.",
       "clearCacheButton": "Clear",
       "exportLogs": "Export logs",
       "exportLogsDesc": "Exporting Ledger Live logs may be necessary for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",
-      "hardResetDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction history and settings."
+      "hardResetDesc": "Erase all Ledger Live data stored on your phone, including accounts and settings."
     }
   },
   "transfer": {
