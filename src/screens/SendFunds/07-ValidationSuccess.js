@@ -39,9 +39,8 @@ class ValidationSuccess extends Component<Props> {
     const { navigation, account } = this.props;
     const result = navigation.getParam("result");
     if (!result) return;
-
     navigation.navigate("OperationDetails", {
-      account,
+      accountId: account.id,
       operation: result,
     });
   };

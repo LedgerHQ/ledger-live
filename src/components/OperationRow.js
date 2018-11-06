@@ -29,7 +29,7 @@ class OperationRow extends PureComponent<Props, *> {
 
   goToOperationDetails = () => {
     this.props.navigation.navigate("OperationDetails", {
-      account: this.props.account,
+      accountId: this.props.account.id,
       operation: this.props.operation,
     });
   };

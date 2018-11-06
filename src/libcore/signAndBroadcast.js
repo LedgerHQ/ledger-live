@@ -18,6 +18,7 @@ import {
   libcoreAmountToBigNumber,
   bigNumberToLibcoreAmount,
 } from ".";
+import { remapLibcoreErrors } from "./errors";
 import { getValue } from "./specific";
 import load from "./load";
 import { open } from "../logic/hw";
@@ -79,7 +80,7 @@ export default ({
           operation,
         });
       },
-    }).then(() => o.complete(), e => o.error(e));
+    }).then(() => o.complete(), e => o.error(remapLibcoreErrors(e)));
 
     return () => {
       unsubscribed = true;
@@ -358,9 +359,11 @@ async function doSignAndBroadcast({
 
   onSigned();
 
-  const txHash = await core.coreBitcoinLikeAccount.broadcastRawTransaction(
-    bitcoinLikeAccount,
-    signedTransaction,
+  const txHash = getValue(
+    await core.coreBitcoinLikeAccount.broadcastRawTransaction(
+      bitcoinLikeAccount,
+      signedTransaction,
+    ),
   );
   if (isCancelled()) return;
 
@@ -400,7 +403,7 @@ async function doSignAndBroadcast({
     hash: txHash,
     type: "OUT",
     value: BigNumber(transaction.amount).plus(fee),
-    fee: fee.toString(),
+    fee,
     blockHash: null,
     blockHeight: null,
     senders,

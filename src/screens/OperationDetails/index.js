@@ -1,17 +1,21 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { getAccountOperationExplorer } from "@ledgerhq/live-common/lib/explorers";
 import type { NavigationScreenProp } from "react-navigation";
+import { accountScreenSelector } from "../../reducers/accounts";
 import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
 
 type Props = {
+  account: Account,
   navigation: NavigationScreenProp<{
     params: {
-      account: Account,
+      accountId: string,
       operation: Operation,
     },
   }>,
@@ -23,8 +27,7 @@ class OperationDetails extends PureComponent<Props, *> {
   };
 
   render() {
-    const { navigation } = this.props;
-    const account = navigation.getParam("account");
+    const { navigation, account } = this.props;
     const operation = navigation.getParam("operation");
 
     const url = getAccountOperationExplorer(account, operation);
@@ -45,7 +48,11 @@ class OperationDetails extends PureComponent<Props, *> {
   }
 }
 
-export default OperationDetails;
+export default connect(
+  createStructuredSelector({
+    account: accountScreenSelector,
+  }),
+)(OperationDetails);
 
 const styles = StyleSheet.create({
   container: {
