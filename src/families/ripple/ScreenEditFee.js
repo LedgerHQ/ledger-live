@@ -23,7 +23,6 @@ type Props = {
       transaction: Transaction,
     },
   }>,
-  updateAccount: Function,
   t: T,
 };
 

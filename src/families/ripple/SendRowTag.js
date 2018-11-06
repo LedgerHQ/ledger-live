@@ -3,6 +3,7 @@ import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { BigNumber } from "bignumber.js";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import { getAccountBridge } from "../../bridge";
@@ -18,17 +19,9 @@ type Props = {
 };
 
 type State = {
-  tag: number,
+  tag: ?BigNumber,
 };
 class RippleTagRow extends PureComponent<Props, State> {
-  constructor({ account, transaction }) {
-    super();
-    const bridge = getAccountBridge(account);
-    this.state = {
-      tag: bridge.getTransactionExtra(account, transaction, "tag"),
-    };
-  }
-
   editTag = () => {
     const { account, navigation, transaction } = this.props;
     navigation.navigate("RippleEditTag", {
@@ -38,16 +31,16 @@ class RippleTagRow extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, t } = this.props;
-    const { tag } = this.state;
-
+    const { account, t, transaction } = this.props;
+    const bridge = getAccountBridge(account);
+    const tag = bridge.getTransactionExtra(account, transaction, "tag");
     return (
       <Fragment>
         {account.currency.family === "ripple" && (
           <View>
             <SummaryRow title={t("send.summary.tag")} info="info">
               <View style={styles.tagContainer}>
-                <LText style={styles.tagText}>{tag}</LText>
+                {tag && <LText style={styles.tagText}>{tag.toString()}</LText>}
                 <LText style={styles.link} onPress={this.editTag}>
                   {t("common.edit")}
                 </LText>

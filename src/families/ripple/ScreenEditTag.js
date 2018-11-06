@@ -44,7 +44,6 @@ class RippleEditTag extends PureComponent<Props, State> {
       tag: bridge.getTransactionExtra(account, transaction, "tag"),
     };
   }
-
   onChangeTag = (tag: string) => {
     this.setState({ tag });
   };
@@ -55,14 +54,13 @@ class RippleEditTag extends PureComponent<Props, State> {
     const bridge = getAccountBridge(account);
     const transaction = navigation.getParam("transaction");
     Keyboard.dismiss();
-
     navigation.navigate("SendSummary", {
       accountId: account.id,
       transaction: bridge.editTransactionExtra(
         account,
         transaction,
         "tag",
-        tag,
+        parseInt(tag, 10),
       ),
     });
   };
@@ -77,13 +75,14 @@ class RippleEditTag extends PureComponent<Props, State> {
             <TextInput
               autoFocus
               style={styles.textInputAS}
-              defaultValue={tag}
+              defaultValue={tag ? tag.toString() : ""}
               keyboardType="numeric"
               returnKeyType="done"
               maxLength={10}
               onChangeText={tag => this.setState({ tag })}
               onSubmitEditing={this.onValidateText}
             />
+
             <View style={styles.flex}>
               <Button
                 type="primary"
