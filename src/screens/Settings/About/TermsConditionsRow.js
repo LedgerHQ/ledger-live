@@ -15,8 +15,8 @@ class TermsConditionsRow extends PureComponent<{
     const { t } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.about.termsConditions")}
-        desc={t("common:settings.about.termsConditionsDesc")}
+        title={t("settings.about.termsConditions")}
+        desc={t("settings.about.termsConditionsDesc")}
         onPress={() =>
           Linking.openURL(urls.terms).catch(err =>
             console.error("An error occurred", err),
