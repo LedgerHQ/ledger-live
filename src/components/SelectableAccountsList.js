@@ -25,7 +25,7 @@ type ListProps = {
   isDisabled?: boolean,
   forceSelected?: boolean,
   EmptyState?: React$ComponentType<*>,
-  header: string,
+  header: React$Node,
   style?: *,
 };
 
@@ -123,7 +123,7 @@ class SelectableAccount extends PureComponent<{
 }
 
 class Header extends PureComponent<{
-  text: string,
+  text: React$Node,
   areAllSelected: boolean,
   onSelectAll?: () => void,
   onUnselectAll?: () => void,

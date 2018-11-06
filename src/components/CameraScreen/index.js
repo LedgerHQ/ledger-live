@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
+import { translate } from "react-i18next";
 
 import colors, { rgba } from "../../colors";
 import QRCodeTopLayer from "./QRCodeTopLayer";
@@ -39,7 +40,7 @@ class CameraScreen extends PureComponent<Props> {
   }
 }
 
-export default CameraScreen;
+export default translate()(CameraScreen);
 
 const styles = StyleSheet.create({
   camera: {

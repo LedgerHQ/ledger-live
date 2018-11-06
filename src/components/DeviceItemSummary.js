@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { deviceNameByDeviceIdSelector } from "../reducers/ble";
@@ -18,12 +18,11 @@ type Props = {
   name: string,
   genuine: boolean,
   onEdit: () => *,
-  t: *,
 };
 
 class DeviceItemSummary extends PureComponent<Props> {
   render() {
-    const { name, genuine, onEdit, t } = this.props;
+    const { name, genuine, onEdit } = this.props;
     return (
       <View style={styles.root}>
         <IconNanoX color={colors.darkBlue} height={36} width={8} />
@@ -34,7 +33,7 @@ class DeviceItemSummary extends PureComponent<Props> {
           {genuine ? (
             <View style={styles.genuine}>
               <LText numberOfLines={1} style={styles.genuineText}>
-                {t("DeviceItemSummary.genuine")}
+                <Trans i18nKey="DeviceItemSummary.genuine" />
                 {"  "}
               </LText>
               <Circle bg={colors.live} size={16}>
@@ -45,7 +44,7 @@ class DeviceItemSummary extends PureComponent<Props> {
         </View>
         <Touchable onPress={onEdit}>
           <LText numberOfLines={1} style={styles.editText}>
-            Edit
+            <Trans i18nKey="common.edit" />
           </LText>
         </Touchable>
       </View>
@@ -57,7 +56,7 @@ export default connect(
   createStructuredSelector({
     name: deviceNameByDeviceIdSelector,
   }),
-)(translate()(DeviceItemSummary));
+)(DeviceItemSummary);
 
 const styles = StyleSheet.create({
   outer: {

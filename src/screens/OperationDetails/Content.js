@@ -7,8 +7,7 @@ import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { compose } from "redux";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -16,11 +15,9 @@ import CounterValue from "../../components/CounterValue";
 import type { CurrencySettings } from "../../reducers/settings";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import colors from "../../colors";
-import type { T } from "../../types/common";
 import DataList from "./DataList";
 
 type Props = {
-  t: T,
   account: Account,
   operation: Operation,
   currencySettings: CurrencySettings,
@@ -40,7 +37,7 @@ class Content extends PureComponent<Props, *> {
   };
 
   render() {
-    const { account, operation, t, currencySettings } = this.props;
+    const { account, operation, currencySettings } = this.props;
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.smoke : colors.green;
     const confirmations = operation.blockHeight
@@ -87,26 +84,26 @@ class Content extends PureComponent<Props, *> {
                 semiBold
                 style={[styles.confirmation, { color: colors.green }]}
               >
-                {`${t("common:operationDetails.confirmed")} (${confirmations})`}
+                <Trans i18nKey="operationDetails.confirmed" />{" "}
+                {`(${confirmations})`}
               </LText>
             ) : (
               <LText style={[styles.confirmation, { color: colors.grey }]}>
-                {`${t(
-                  "common:operationDetails.notConfirmed",
-                )} (${confirmations})`}
+                <Trans i18nKey="operationDetails.notConfirmed" />{" "}
+                {`(${confirmations})`}
               </LText>
             )}
           </View>
         </View>
         <RectButton style={styles.section} onPress={this.onPress}>
           <LText style={styles.sectionTitle}>
-            {t("common:operationDetails.account")}
+            <Trans i18nKey="operationDetails.account" />
           </LText>
           <LText semiBold>{account.name}</LText>
         </RectButton>
         <View style={styles.section}>
           <LText style={styles.sectionTitle}>
-            {t("common:operationDetails.date")}
+            <Trans i18nKey="operationDetails.date" />
           </LText>
           <LText semiBold>
             {operation.date.toLocaleDateString([], {
@@ -120,7 +117,7 @@ class Content extends PureComponent<Props, *> {
         </View>
         <View style={styles.section}>
           <LText style={styles.sectionTitle}>
-            {t("common:operationDetails.fees")}
+            <Trans i18nKey="operationDetails.fees" />
           </LText>
           {operation.fee ? (
             <LText semiBold>
@@ -131,12 +128,14 @@ class Content extends PureComponent<Props, *> {
               />
             </LText>
           ) : (
-            <LText semiBold>{t("common:operationDetails.noFees")}</LText>
+            <LText semiBold>
+              <Trans i18nKey="operationDetails.noFees" />
+            </LText>
           )}
         </View>
         <View style={styles.section}>
           <LText style={styles.sectionTitle}>
-            {t("common:operationDetails.identifier")}
+            <Trans i18nKey="operationDetails.identifier" />
           </LText>
           <LText semiBold selectable>
             {operation.hash}
@@ -145,20 +144,24 @@ class Content extends PureComponent<Props, *> {
         <View style={styles.section}>
           <DataList
             data={uniqueSenders}
-            t={t}
-            title={t("common:operationDetails.from", {
-              count: uniqueSenders.length,
-            })}
+            title={
+              <Trans
+                i18nKey="operationDetails.from"
+                count={uniqueSenders.length}
+              />
+            }
             titleStyle={styles.sectionTitle}
           />
         </View>
         <View style={styles.section}>
           <DataList
             data={uniqueRecipients}
-            t={t}
-            title={t("common:operationDetails.to", {
-              count: uniqueRecipients.length,
-            })}
+            title={
+              <Trans
+                i18nKey="operationDetails.to"
+                count={uniqueRecipients.length}
+              />
+            }
           />
         </View>
       </Fragment>
@@ -166,10 +169,7 @@ class Content extends PureComponent<Props, *> {
   }
 }
 
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(Content);
+export default connect(mapStateToProps)(Content);
 
 const styles = StyleSheet.create({
   root: {

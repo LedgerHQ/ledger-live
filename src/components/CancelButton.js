@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import Button from "./Button";
 
 class CancelButton extends Component<*> {
@@ -15,4 +15,4 @@ class CancelButton extends Component<*> {
   }
 }
 
-export default translate()(CancelButton);
+export default CancelButton;

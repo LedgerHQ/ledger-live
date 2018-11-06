@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
+import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -111,7 +112,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
               <View style={styles.buttonContainer}>
                 <Button
                   type="primary"
-                  title="Validate Fees"
+                  title={<Trans i18nKey="send.fees.validate" />}
                   containerStyle={styles.continueButton}
                   onPress={this.onValidateFees}
                 />
@@ -146,4 +147,7 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(translate()(BitcoinEditFeePerByte));
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(BitcoinEditFeePerByte);

@@ -2,7 +2,8 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { translate } from "react-i18next";
+import { Trans, translate } from "react-i18next";
+
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -62,7 +63,7 @@ class RippleFeeRow extends Component<Props> {
             ) : null}
 
             <LText style={styles.link} onPress={this.openFees}>
-              {t("common.edit")}
+              <Trans i18nKey="common.edit" />
             </LText>
           </View>
           <LText style={styles.countervalue}>
@@ -79,7 +80,6 @@ class RippleFeeRow extends Component<Props> {
   }
 }
 
-export default translate()(RippleFeeRow);
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,
@@ -105,3 +105,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+export default translate()(RippleFeeRow);

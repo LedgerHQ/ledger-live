@@ -1,29 +1,29 @@
 // @flow
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import colors from "../../colors";
 
-class ResultSection extends PureComponent<{ t: *, mode: string }> {
+class ResultSection extends PureComponent<{ mode: string }> {
   render() {
-    const { t, mode } = this.props;
+    const { mode } = this.props;
     let text;
     switch (mode) {
       case "create":
-        text = t("account.import.result.newAccounts");
+        text = <Trans i18nKey="account.import.result.newAccounts" />;
         break;
       case "patch":
-        text = t("account.import.result.updatedAccounts");
+        text = <Trans i18nKey="account.import.result.updatedAccounts" />;
         break;
       case "id":
-        text = t("account.import.result.alreadyImported");
+        text = <Trans i18nKey="account.import.result.alreadyImported" />;
         break;
       case "unsupported":
-        text = t("account.import.result.unsupported");
+        text = <Trans i18nKey="account.import.result.unsupported" />;
         break;
       case "settings":
-        text = t("account.import.result.settings");
+        text = <Trans i18nKey="account.import.result.settings" />;
         break;
       default:
         text = "";
@@ -46,4 +46,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(ResultSection);
+export default ResultSection;
