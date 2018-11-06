@@ -29,10 +29,10 @@ class ValidatError extends PureComponent<Props> {
           <View style={styles.icon}>
             <ErrorIcon size={40} error={error} />
           </View>
-          <LText secondary semiBold style={styles.title} numberOfLines={2}>
+          <LText secondary semiBold style={styles.title} numberOfLines={3}>
             <TranslatedError error={error} />
           </LText>
-          <LText style={styles.message} numberOfLines={4}>
+          <LText style={styles.message} numberOfLines={6}>
             <TranslatedError error={error} field="description" />
           </LText>
           <ExternalLink text={t("common.contactUs")} onPress={onContactUs} />
