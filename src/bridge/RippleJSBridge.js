@@ -7,7 +7,7 @@ import { Observable } from "rxjs";
 import bs58check from "ripple-bs58check";
 import { computeBinaryTransactionHash } from "ripple-hashes";
 import throttle from "lodash/throttle";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
@@ -40,6 +40,7 @@ export type Transaction = {
   fee: ?BigNumber,
   networkInfo: ?{ serverFee: BigNumber },
   tag: ?number,
+  feeCustomUnit: ?Unit,
 };
 
 async function signAndBroadcast({
@@ -545,6 +546,7 @@ export const accountBridge: AccountBridge<Transaction> = {
     fee: null,
     tag: undefined,
     networkInfo: null,
+    feeCustomUnit: null,
   }),
 
   fetchTransactionNetworkInfo: async account => {
@@ -601,6 +603,13 @@ export const accountBridge: AccountBridge<Transaction> = {
         );
         return { ...t, tag: value };
 
+      case "feeCustomUnit":
+        invariant(
+          value,
+          "editTransactionExtra(a,t,'feeCustomUnit',value): value is expected",
+        );
+        return { ...t, feeCustomUnit: value };
+
       default:
         return t;
     }
@@ -613,6 +622,9 @@ export const accountBridge: AccountBridge<Transaction> = {
 
       case "tag":
         return t.tag;
+
+      case "feeCustomUnit":
+        return t.feeCustomUnit;
 
       default:
         return undefined;

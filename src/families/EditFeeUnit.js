@@ -4,11 +4,9 @@ import { FlatList, View, StyleSheet, Keyboard } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../bridge";
-import { updateAccount } from "../actions/accounts";
 import type { T } from "../types/common";
 import SettingsRow from "../components/SettingsRow";
 import LText from "../components/LText";
@@ -20,10 +18,8 @@ import colors from "../colors";
 import CloseIcon from "../icons/Close";
 
 type Props = {
-  updateAccount: Function,
   account: Account,
   t: T,
-  transaction: *,
   navigation: NavigationScreenProp<*>,
 };
 
@@ -32,12 +28,10 @@ type State = {
   isModalOpened: boolean,
 };
 
-const mapDispatchToProps = {
-  updateAccount,
-};
 class EditFeeUnit extends PureComponent<Props, State> {
-  constructor({ account, transaction }) {
+  constructor({ account, navigation }) {
     super();
+    const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
     this.state = {
       fee: bridge.getTransactionExtra(account, transaction, "fee"),
@@ -54,13 +48,19 @@ class EditFeeUnit extends PureComponent<Props, State> {
 
   keyExtractor = (item: any) => item.code;
   onChange = (fee: ?BigNumber) => this.setState({ fee });
-  updateAccount = (item: any) => {
-    const { account, updateAccount } = this.props;
-    const updatedAccount = {
-      ...account,
-      unit: item,
-    };
-    updateAccount(updatedAccount);
+
+  updateTransaction = (item: any) => {
+    const { account, navigation } = this.props;
+    const transaction = navigation.getParam("transaction");
+    const bridge = getAccountBridge(account);
+    navigation.setParams({
+      transaction: bridge.editTransactionExtra(
+        account,
+        transaction,
+        "feeCustomUnit",
+        item,
+      ),
+    });
   };
 
   onValidateFees = () => {
@@ -82,22 +82,27 @@ class EditFeeUnit extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, t } = this.props;
+    const { account, t, navigation } = this.props;
     const { isModalOpened, fee } = this.state;
+    const transaction = navigation.getParam("transaction");
+    const bridge = getAccountBridge(account);
+    const feeCustomUnit =
+      bridge.getTransactionExtra(account, transaction, "feeCustomUnit") ||
+      account.unit;
     return (
       <Fragment>
         <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <CurrencyInput
               autoFocus
-              unit={account.unit}
+              unit={feeCustomUnit}
               value={fee}
               onChange={this.onChange}
             />
             <Touchable onPress={this.onPress} style={styles.unitContainer}>
               <View style={styles.unitSelectRow}>
                 <LText secondary semiBold style={styles.unitStyle}>
-                  {account.unit.code}
+                  {feeCustomUnit.code}
                 </LText>
                 <View style={styles.arrowDown}>
                   <Icon name="angle-down" size={12} />
@@ -129,15 +134,16 @@ class EditFeeUnit extends PureComponent<Props, State> {
           <FlatList
             data={account.currency.units}
             keyExtractor={this.keyExtractor}
+            extraData={feeCustomUnit}
             renderItem={({ item }) => (
               <Touchable
                 onPress={() => {
-                  this.updateAccount(item);
+                  this.updateTransaction(item);
                 }}
               >
                 <SettingsRow
                   title={item.code}
-                  selected={account.unit.code === item.code}
+                  selected={feeCustomUnit === item}
                 />
               </Touchable>
             )}
@@ -149,10 +155,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
     );
   }
 }
-export default connect(
-  null,
-  mapDispatchToProps,
-)(translate()(EditFeeUnit));
+export default translate()(EditFeeUnit);
 
 const styles = StyleSheet.create({
   buttonContainer: {
