@@ -42,7 +42,7 @@ class ValidationError extends Component<Props> {
   retry = () => {
     const { navigation } = this.props;
     // $FlowFixMe
-    navigation.replace("SendValidation", {
+    navigation.replace("SendSummary", {
       ...navigation.state.params,
     });
   };
