@@ -13,7 +13,7 @@
     "noCryptoFound": "No crypto assets found",
     "edit": "Edit",
     "close": "Close",
-    "confirm": "Confirm",
+    "confirm": "Confirm"
   },
   "errors": {
     "AccountNameRequired": {
@@ -538,6 +538,9 @@
       "connecting": {
         "title": "Connecting “{{deviceName}}”",
         "description": "Don't forget to turn on your device and enter your PIN to unlock it"
+      },
+      "genuineCheck": {
+        "title": "Allow Ledger Manager on your {{fullDeviceName}}"
       },
       "dashboard": {
         "title": "Navigate to dashboard on your {{fullDeviceName}}"

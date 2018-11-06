@@ -6,9 +6,17 @@ import type { NavigationScreenProp } from "react-navigation";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNameRow from "./DeviceNameRow";
 import FirmwareVersionRow from "./FirmwareVersionRow";
+import type { DeviceInfo } from "../../types/manager";
 
 class ManagerDevice extends Component<{
-  navigation: NavigationScreenProp<*>,
+  navigation: NavigationScreenProp<{
+    params: {
+      deviceId: string,
+      meta: {
+        deviceInfo: DeviceInfo,
+      },
+    },
+  }>,
 }> {
   static navigationOptions = {
     title: "Device",
@@ -20,7 +28,7 @@ class ManagerDevice extends Component<{
     return (
       <ScrollView style={styles.root} contentContainerStyle={styles.container}>
         <DeviceNameRow deviceId={deviceId} />
-        <FirmwareVersionRow firmwareInfo={meta.firmwareInfo} />
+        <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
       </ScrollView>
     );
   }
