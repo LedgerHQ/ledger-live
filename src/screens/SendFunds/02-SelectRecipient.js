@@ -182,6 +182,7 @@ class SendSelectRecipient extends Component<Props, State> {
               {t("common:send.recipient.enterAddress")}
             </LText>
             <View style={styles.inputWrapper}>
+              {/* make this a recipient component */}
               <TextInput
                 placeholder={t("common:send.recipient.input")}
                 placeholderTextColor={colors.fog}
@@ -194,6 +195,8 @@ class SendSelectRecipient extends Component<Props, State> {
                 ref={this.input}
                 multiline
                 blurOnSubmit
+                autoCapitalize="none"
+                autoCorrect={false}
               />
               {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>
