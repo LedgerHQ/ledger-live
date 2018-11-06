@@ -24,7 +24,8 @@ import Button from "../Button";
 import CurrencyIcon from "../CurrencyIcon";
 import Rounded from "../Rounded";
 import LText from "../LText";
-import getFirmwareInfo from "../../logic/hw/getFirmwareInfo";
+import getDeviceInfo from "../../logic/hw/getDeviceInfo";
+import doGenuineCheck from "../../logic/hw/theRealGenuineCheck";
 import { rejectionOp } from "../DebugRejectSwitch";
 import { deviceNames } from "../../wording";
 
@@ -112,15 +113,38 @@ export const dashboard: Step = {
     />
   ),
   run: (deviceId, meta) =>
-    withDevice(deviceId)(transport => from(getFirmwareInfo(transport)))
+    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
       .pipe(retryWhen(retryWhileErrors()))
       .pipe(
-        map(firmwareInfo => ({
+        map(deviceInfo => ({
           ...meta,
-          firmwareInfo,
+          deviceInfo,
         })),
         rejectionOp(() => new CantOpenDevice()),
       ),
+};
+
+export const genuineCheck: Step = {
+  Body: () => (
+    <RenderStep
+      icon={<DeviceNanoAction screen="validation" action />}
+      title={
+        <Trans
+          i18nKey="SelectDevice.steps.genuineCheck.title"
+          values={deviceNames.nanoX}
+        />
+      }
+    />
+  ),
+  run: (deviceId, meta) =>
+    withDevice(deviceId)(transport =>
+      from(doGenuineCheck(transport, meta.deviceInfo)),
+    ).pipe(
+      map(genuineResult => ({
+        ...meta,
+        genuineResult,
+      })),
+    ),
 };
 
 export const currencyApp: CryptoCurrency => Step = currency => ({

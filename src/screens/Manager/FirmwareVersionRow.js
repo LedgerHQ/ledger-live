@@ -7,20 +7,21 @@ import SettingsRow from "../../components/SettingsRow";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import colors from "../../colors";
+import type { DeviceInfo } from "../../types/manager";
 
 type Props = {
   t: T,
   navigation: *,
-  firmwareInfo: Object,
+  deviceInfo: DeviceInfo,
 };
 
 class FirmwareVersionRow extends PureComponent<Props> {
   render() {
-    const { t, firmwareInfo } = this.props;
+    const { t, deviceInfo } = this.props;
     return (
       <SettingsRow title={t("FirmwareVersionRow.title")} alignedTop>
         <LText semiBold numberOfLines={1} style={styles.version}>
-          {firmwareInfo.seVersion}
+          {deviceInfo.seVersion}
         </LText>
       </SettingsRow>
     );
