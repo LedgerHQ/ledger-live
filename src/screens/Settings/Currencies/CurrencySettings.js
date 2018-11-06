@@ -220,7 +220,7 @@ export function CustomCurrencyHeader({
         <CurrencyIcon size={16} currency={currency} />
       </View>
       <LText semiBold secondary style={{ fontSize: 16 }}>
-        {t("common:settings.currencies.currencySettingsTitle", {
+        {t("settings.currencies.currencySettingsTitle", {
           currencyName: currency.name,
         })}
       </LText>

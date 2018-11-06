@@ -15,8 +15,8 @@ class PrivacyPolicyRow extends PureComponent<{
     const { t } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.about.privacyPolicy")}
-        desc={t("common:settings.about.privacyPolicyDesc")}
+        title={t("settings.about.privacyPolicy")}
+        desc={t("settings.about.privacyPolicyDesc")}
         onPress={() =>
           Linking.openURL(urls.privacyPolicy).catch(err =>
             console.error("An error occurred", err),

@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
+import i18next from "i18next";
 import AppVersionRow from "./AppVersionRow";
 import LiveReviewRow from "./LiveReviewRow";
 import PrivacyPolicyRow from "./PrivacyPolicyRow";
@@ -9,7 +10,7 @@ import DescriptionRow from "./DescriptionRow";
 
 class About extends PureComponent<*, *> {
   static navigationOptions = {
-    title: "About",
+    title: i18next.t("settings.about.title"),
   };
 
   render() {

@@ -29,8 +29,8 @@ class AnalyticsRow extends PureComponent<Props> {
     const { t, analyticsEnabled, setAnalytics } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.display.analytics")}
-        desc={t("common:settings.display.analyticsDesc")}
+        title={t("settings.display.analytics")}
+        desc={t("settings.display.analyticsDesc")}
         onPress={null}
       >
         <Switch value={analyticsEnabled} onValueChange={setAnalytics} />
