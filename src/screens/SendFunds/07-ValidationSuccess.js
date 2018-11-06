@@ -41,7 +41,7 @@ class ValidationSuccess extends Component<Props> {
     if (!result) return;
 
     navigation.navigate("OperationDetails", {
-      account,
+      accountId: account.id,
       operation: result,
     });
   };
