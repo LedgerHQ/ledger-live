@@ -14,7 +14,9 @@
     "edit": "Edit",
     "close": "Close",
     "confirm": "Confirm",
-    "poweredBy": "Powered by "
+    "poweredBy": "Powered by ",
+    "received": "Received",
+    "sent": "Sent"
   },
   "errors": {
     "AccountNameRequired": {
@@ -216,6 +218,20 @@
       "description": "Something went wrong. Please retry or contact us."
     }
   },
+  "bluetooth": {
+    "required": "Bluetooth required",
+    "locationRequiredTitle": "Location is required for Bluetooth LE",
+    "locationRequiredMessage": "On Android, location permission is required to be able to list Bluetooth LE devices.",
+    "checkEnabled": "It seems bluetooth is disabled on your mobile. Go to settings and enable bluetooth to pair a Nano X"
+  },
+  "location": {
+    "required": "Location required",
+    "open": "Open location settings",
+    "disabled": "It seems location detection is disabled on your mobile. Go to settings and enable location to activate bluetooth."
+  },
+  "permissions": {
+    "open": "Open app permissions"
+  },
   "fees": {
     "speed": {
       "high": "High",
@@ -224,6 +240,9 @@
       "custom": "Custom",
       "blockCount": "{{blockCount}} blocks"
     }
+  },
+  "exchange": {
+    "title": "Trade & Exchange"
   },
   "auth": {
     "failed": {
@@ -463,7 +482,9 @@
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
       "verifyPending": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
       "verified": "You have verified your receive address on your Ledger Device.",
-      "verifyAgain": "Verify again"
+      "verifyAgain": "Verify again",
+      "noAccount": "No account found",
+      "withoutDevice": "Don't have my device"
     },
     "exchange": {
       "title": "Exchange",
@@ -509,12 +530,14 @@
     },
     "fees": {
       "title": "Network fees",
+      "validate": "Validate fees",
       "edit": {
         "title": "Choose Unit"
       }
     }
   },
   "addAccounts": {
+    "imported": "Accounts imported",
     "sections": {
       "accountsToImport": "Accounts to import",
       "addNewAccount": "Add a new account",
@@ -564,6 +587,7 @@
     }
   },
   "EditDeviceName": {
+    "title": "Edit Device Name",
     "charactersRemaining": "{{remainingCount}} characters remaining",
     "inputPlaceholder": "Custom Device Name",
     "action": "Change name"
@@ -573,6 +597,14 @@
       "title": "Nano X paired with success!",
       "desc": "You can now use your Nano X on your Ledger Live mobile App to <1><0>send & receive funds</0></1>. You can also mange your device on the <1><1>Manager</1></1> section",
       "action": "Continue"
+    },
+    "Pairing": {
+      "title": "Pairing...",
+      "subtitle": "Please don’t turn off your Nano X. Follow screen instructions."
+    },
+    "GenuineCheck": {
+      "title": "Genuine check...",
+      "accept": "Make sure your Nano X is on Dashboard and accept <1><0>Allow Manager</0></1>"
     },
     "ScanningHeader": {
       "title": "We are searching for Nano X",

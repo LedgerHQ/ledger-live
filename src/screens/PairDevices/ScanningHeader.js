@@ -2,29 +2,26 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import BluetoothScanning from "../../components/BluetoothScanning";
 import colors from "../../colors";
 
-type Props = {
-  t: *,
-};
+type Props = {};
 
 class ScanningHeader extends PureComponent<Props> {
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.root}>
         <BluetoothScanning isAnimated />
         <View style={styles.TitleContainer}>
           <LText secondary semiBold style={styles.TitleText}>
-            {t("PairDevices.ScanningHeader.title")}
+            {<Trans i18nKey="PairDevices.ScanningHeader.title" />}
           </LText>
         </View>
         <View style={styles.SubtitleContainer}>
           <LText style={styles.SubtitleText}>
-            {t("PairDevices.ScanningHeader.desc")}
+            {<Trans i18nKey="PairDevices.ScanningHeader.desc" />}
           </LText>
         </View>
       </View>
@@ -32,7 +29,7 @@ class ScanningHeader extends PureComponent<Props> {
   }
 }
 
-export default translate()(ScanningHeader);
+export default ScanningHeader;
 
 const styles = StyleSheet.create({
   root: {

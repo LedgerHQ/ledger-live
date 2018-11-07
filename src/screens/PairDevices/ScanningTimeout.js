@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import BluetoothScanning from "../../components/BluetoothScanning";
 import colors from "../../colors";
 import Button from "../../components/Button";
@@ -11,34 +11,33 @@ import LText from "../../components/LText";
 type Props = {
   onRetry: () => void,
   onCancel: () => void,
-  t: *,
 };
 
 class ScanningTimeout extends Component<Props> {
   render() {
-    const { onCancel, onRetry, t } = this.props;
+    const { onCancel, onRetry } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.body}>
           <BluetoothScanning isError />
           <LText secondary semiBold style={styles.titleText}>
-            {t("PairDevices.ScanningTimeout.title")}
+            {<Trans i18nKey="PairDevices.ScanningTimeout.title" />}
           </LText>
           <LText style={styles.SubtitleText}>
-            {t("PairDevices.ScanningTimeout.desc")}
+            {<Trans i18nKey="PairDevices.ScanningTimeout.desc" />}
           </LText>
         </View>
 
         <View style={styles.footer}>
           <Button
             type="secondary"
-            title={t("common.cancel")}
+            title={<Trans i18nKey="common.cancel" />}
             onPress={onCancel}
             containerStyle={styles.button}
           />
           <Button
             type="primary"
-            title={t("common.retry")}
+            title={<Trans i18nKey="common.retry" />}
             onPress={onRetry}
             containerStyle={[styles.button, styles.primaryButton]}
           />
@@ -48,7 +47,7 @@ class ScanningTimeout extends Component<Props> {
   }
 }
 
-export default translate()(ScanningTimeout);
+export default ScanningTimeout;
 
 const styles = StyleSheet.create({
   root: {

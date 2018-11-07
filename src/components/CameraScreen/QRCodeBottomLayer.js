@@ -1,28 +1,26 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 
-import type { T } from "../../types/common";
 import colors, { rgba } from "../../colors";
 
 import LText from "../LText";
 import QrCodeProgressBar from "./QRCodeProgressBar";
 
 type Props = {
-  t: T,
   progress?: number,
   viewFinderSize: number,
 };
 
 class QrCodeBottomLayer extends PureComponent<Props> {
   render() {
-    const { progress, t, viewFinderSize } = this.props;
+    const { progress, viewFinderSize } = this.props;
     return (
       <View style={[styles.darken, styles.centered]}>
         <View style={styles.centered}>
           <LText semibold style={styles.text}>
-            {t("account.import.scan.descBottom")}
+            <Trans i18nKey="account.import.scan.descBottom" />
           </LText>
         </View>
         <QrCodeProgressBar
@@ -52,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(QrCodeBottomLayer);
+export default QrCodeBottomLayer;

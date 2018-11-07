@@ -10,6 +10,7 @@ import {
   Animated,
   SafeAreaView,
 } from "react-native";
+import { translate } from "react-i18next";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
@@ -177,6 +178,7 @@ class Portfolio extends Component<
 export default compose(
   connect(mapStateToProps),
   provideSummary,
+  translate(),
 )(Portfolio);
 
 const styles = StyleSheet.create({

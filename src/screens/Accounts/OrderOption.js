@@ -4,7 +4,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { refreshAccountsOrdering } from "../../actions/general";
 import { setOrderAccounts } from "../../actions/settings";
@@ -62,7 +62,7 @@ class OrderOption extends Component<{
   };
 
   render() {
-    const { id, orderAccounts, t } = this.props;
+    const { id, orderAccounts } = this.props;
     const selected = orderAccounts.startsWith(id);
     const isDesc = orderAccounts.endsWith("|desc");
     return (
@@ -71,12 +71,14 @@ class OrderOption extends Component<{
         onPress={this.onPress}
       >
         <LText semiBold style={styles.label}>
-          {t(`orderOption.label.${id}`)}
+          <Trans i18nKey={`orderOption.label.${id}`} />
         </LText>
         {selected ? (
           <Fragment>
             <LText semiBold style={styles.order}>
-              {t(`orderOption.ordering.${isDesc ? "desc" : "asc"}`)}
+              <Trans
+                i18nKey={`orderOption.ordering.${isDesc ? "desc" : "asc"}`}
+              />
             </LText>
             <Icon
               name={isDesc ? "arrow-down" : "arrow-up"}
@@ -90,14 +92,12 @@ class OrderOption extends Component<{
   }
 }
 
-export default translate()(
-  connect(
-    createStructuredSelector({
-      orderAccounts: orderAccountsSelector,
-    }),
-    {
-      setOrderAccounts,
-      refreshAccountsOrdering,
-    },
-  )(OrderOption),
-);
+export default connect(
+  createStructuredSelector({
+    orderAccounts: orderAccountsSelector,
+  }),
+  {
+    setOrderAccounts,
+    refreshAccountsOrdering,
+  },
+)(OrderOption);

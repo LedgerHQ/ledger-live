@@ -9,7 +9,7 @@ import LText from "./LText";
 
 type Item = {
   key: string,
-  label: string,
+  label: *,
 };
 
 type Props = {

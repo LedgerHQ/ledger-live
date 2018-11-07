@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
@@ -14,7 +14,6 @@ import CurrencyIcon from "../../components/CurrencyIcon";
 import colors, { rgba } from "../../colors";
 
 type Props = {
-  t: *,
   navigation: NavigationScreenProp<{
     params: {
       currency: CryptoCurrency,
@@ -39,13 +38,13 @@ class AddAccountsSuccess extends Component<Props, State> {
   };
 
   render() {
-    const { navigation, t } = this.props;
+    const { navigation } = this.props;
     const currency = navigation.getParam("currency");
     return (
       <SafeAreaView style={styles.root}>
         <CurrencySuccess currency={currency} />
         <LText secondary semiBold style={styles.title}>
-          Accounts imported
+          <Trans i18nKey="addAccounts.imported" />
         </LText>
         <LText style={styles.desc}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit praesent sit
@@ -55,13 +54,13 @@ class AddAccountsSuccess extends Component<Props, State> {
           <Button
             containerStyle={styles.button}
             type="primary"
-            title={t("addAccounts.success.cta")}
+            title={<Trans i18nKey="addAccounts.success.cta" />}
             onPress={this.primaryCTA}
           />
           <Button
             onPress={this.secondaryCTA}
             type="secondary"
-            title={t("addAccounts.success.secondaryCTA")}
+            title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
           />
         </View>
       </SafeAreaView>

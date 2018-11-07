@@ -6,6 +6,7 @@ import { StyleSheet, SectionList, View, Animated } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
+import { translate } from "react-i18next";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -190,6 +191,7 @@ export default compose(
     }),
   ),
   provideSummary,
+  translate(),
 )(AccountScreen);
 
 const styles = StyleSheet.create({

@@ -3,19 +3,21 @@
 // otherwise render an error
 
 import React, { Component } from "react";
+import { translate } from "react-i18next";
 import { Observable } from "rxjs/Observable";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import RequiresLocationOnAndroid from "./RequiresLocationOnAndroid";
 import BluetoothDisabled from "./BluetoothDisabled";
 
-class RequiresBLE extends Component<
-  {
-    children: *,
-  },
-  {
-    type: *,
-  },
-> {
+type Props = {
+  children: *,
+};
+
+type State = {
+  type: *,
+};
+
+class RequiresBLE extends Component<Props, State> {
   state = {
     type: "Unknown",
   };
@@ -43,8 +45,10 @@ class RequiresBLE extends Component<
   }
 }
 
-export default ({ children }: *) => (
+const RequiresBLEWrapped = ({ children }: *) => (
   <RequiresLocationOnAndroid>
     <RequiresBLE>{children}</RequiresBLE>
   </RequiresLocationOnAndroid>
 );
+
+export default translate()(RequiresBLEWrapped);

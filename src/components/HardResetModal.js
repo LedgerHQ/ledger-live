@@ -2,8 +2,8 @@
 
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
-import { translate } from "react-i18next";
-import type { T } from "../types/common";
+import { Trans } from "react-i18next";
+
 import colors from "../colors";
 import ModalBottomAction from "./ModalBottomAction";
 import Trash from "../icons/Trash";
@@ -11,13 +11,12 @@ import Button from "./Button";
 import Circle from "./Circle";
 
 type Props = {
-  t: T,
   onRequestClose: () => void,
   onHardReset: () => void,
 };
 class HardResetModal extends PureComponent<Props> {
   render() {
-    const { t, onRequestClose, onHardReset } = this.props;
+    const { onRequestClose, onHardReset } = this.props;
     return (
       <ModalBottomAction
         title={null}
@@ -26,18 +25,18 @@ class HardResetModal extends PureComponent<Props> {
             <Trash size={24} color={colors.alert} />
           </Circle>
         }
-        description={t("reset.description")}
+        description={<Trans i18nKey="reset.description" />}
         footer={
           <View style={styles.footerContainer}>
             <Button
               type="secondary"
-              title={t("common.cancel")}
+              title={<Trans i18nKey="common.cancel" />}
               onPress={onRequestClose}
               containerStyle={styles.buttonContainer}
             />
             <Button
               type="alert"
-              title={t("reset.button")}
+              title={<Trans i18nKey="reset.button" />}
               onPress={onHardReset}
               containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
             />
@@ -48,7 +47,7 @@ class HardResetModal extends PureComponent<Props> {
   }
 }
 
-export default translate()(HardResetModal);
+export default HardResetModal;
 
 const styles = StyleSheet.create({
   footerContainer: {

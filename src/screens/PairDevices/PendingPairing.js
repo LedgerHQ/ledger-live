@@ -2,6 +2,7 @@
 
 import React, { Fragment, PureComponent } from "react";
 import { StyleSheet } from "react-native";
+import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 import LText from "../../components/LText";
@@ -11,10 +12,10 @@ class PendingPairing extends PureComponent<*> {
     return (
       <Fragment>
         <LText secondary semiBold style={styles.title}>
-          Pairing...
+          <Trans i18nKey="PairDevices.Pairing.title" />
         </LText>
         <LText style={styles.subtitle}>
-          Please don’t turn off your Nano X. Follow screen instructions.
+          <Trans i18nKey="PairDevices.Pairing.subtitle" />
         </LText>
       </Fragment>
     );
