@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 
+import colors from "../../colors";
 import OnboardingHeader from "./OnboardingHeader";
 
 type Container = { children: *, style?: * };
@@ -27,7 +28,16 @@ export default class OnboardingLayout extends PureComponent<Props> {
     let inner: React$Node = children;
 
     if (isCentered) {
-      inner = <View>{inner}</View>;
+      inner = (
+        <Fragment>
+          <View>{inner}</View>
+          {Footer && (
+            <View style={styles.centeredFooter}>
+              <Footer />
+            </View>
+          )}
+        </Fragment>
+      );
     }
 
     if (isFull) {
@@ -71,6 +81,7 @@ const styles = StyleSheet.create({
   centered: {
     alignItems: "center",
     justifyContent: "center",
+    padding: 16,
   },
   inner: {
     padding: 16,
@@ -78,5 +89,14 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
+  },
+  centeredFooter: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
 });

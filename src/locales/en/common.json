@@ -267,8 +267,16 @@
       "OnboardingStep08Password": "Password lock",
       "OnboardingStep09ShareData": "Share data"
     },
-    "step01Welcome": {},
-    "step02GetStarted": {},
+    "step01Welcome": {
+      "title": "Welcome to Ledger Live",
+      "desc": "Easily manage crypto secured by your Ledger Nano X. Anywhere you go.",
+      "start": "Start using Ledger Live",
+      "noDevice": "No device?",
+      "buy": "Buy a Ledger Nano X"
+    },
+    "step02GetStarted": {
+      "title": "Get started"
+    },
     "step03ChooseDevice": {},
     "step04SetupPin": {},
     "step05WriteRecovery": {},
