@@ -25,12 +25,6 @@ export type Unit = {
 
 export type FiatCurrency = CurrencyCommon;
 
-export type CryptoCurrencyFamily =
-  | "bitcoin"
-  | "ethereum"
-  | "ripple"
-  | "stellar";
-
 export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency
   id: string,
@@ -44,15 +38,19 @@ export type CryptoCurrency = CurrencyCommon & {
   scheme: string,
   // used for UI
   color: string,
-  family: CryptoCurrencyFamily,
+  family: string,
   ledgerExplorerId?: string,
   blockAvgTime?: number, // in seconds
   supportsSegwit?: boolean,
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string,
+  // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
   bitcoinLikeInfo?: {
     P2PKH: number,
     P2SH: number
+  },
+  ethereumLikeInfo?: {
+    chainId: number
   }
 };
 
