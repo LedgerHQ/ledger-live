@@ -2,7 +2,7 @@
 
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 
 import colors from "../../colors";
@@ -15,13 +15,15 @@ class PendingGenuineCheck extends PureComponent<*> {
     return (
       <Fragment>
         <LText secondary semiBold style={styles.title}>
-          Genuine check...
+          <Trans i18nKey="PairDevices.GenuineCheck.title" />
         </LText>
         <LText style={styles.subtitle}>
-          Make sure your Nano X is on Dashboard and accept{" "}
-          <LText bold style={styles.bold}>
-            Allow Manager
-          </LText>
+          <Trans i18nKey="PairDevices.GenuineCheck.title">
+            Make sure your Nano X is on Dashboard and accept
+            <LText bold style={styles.bold}>
+              Allow Manager
+            </LText>
+          </Trans>
         </LText>
 
         <View style={styles.footer}>
@@ -53,4 +55,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(PendingGenuineCheck);
+export default PendingGenuineCheck;

@@ -148,6 +148,7 @@ class Content extends PureComponent<Props, *> {
               <Trans
                 i18nKey="operationDetails.from"
                 count={uniqueSenders.length}
+                values={{ count: uniqueSenders.length }}
               />
             }
             titleStyle={styles.sectionTitle}
@@ -160,6 +161,7 @@ class Content extends PureComponent<Props, *> {
               <Trans
                 i18nKey="operationDetails.to"
                 count={uniqueRecipients.length}
+                values={{ count: uniqueRecipients.length }}
               />
             }
           />

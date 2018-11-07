@@ -482,7 +482,9 @@
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
       "verifyPending": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
       "verified": "You have verified your receive address on your Ledger Device.",
-      "verifyAgain": "Verify again"
+      "verifyAgain": "Verify again",
+      "noAccount": "No account found",
+      "withoutDevice": "Don't have my device"
     },
     "exchange": {
       "title": "Exchange",
@@ -585,6 +587,7 @@
     }
   },
   "EditDeviceName": {
+    "title": "Edit Device Name",
     "charactersRemaining": "{{remainingCount}} characters remaining",
     "inputPlaceholder": "Custom Device Name",
     "action": "Change name"
@@ -594,6 +597,14 @@
       "title": "Nano X paired with success!",
       "desc": "You can now use your Nano X on your Ledger Live mobile App to <1><0>send & receive funds</0></1>. You can also mange your device on the <1><1>Manager</1></1> section",
       "action": "Continue"
+    },
+    "Pairing": {
+      "title": "Pairing...",
+      "subtitle": "Please don’t turn off your Nano X. Follow screen instructions."
+    },
+    "GenuineCheck": {
+      "title": "Genuine check...",
+      "accept": "Make sure your Nano X is on Dashboard and accept <1><0>Allow Manager</0></1>"
     },
     "ScanningHeader": {
       "title": "We are searching for Nano X",

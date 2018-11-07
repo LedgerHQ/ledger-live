@@ -1,9 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import { compose } from "redux";
 import { connect } from "react-redux";
-import { translate } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import type { Account, Currency } from "@ledgerhq/live-common/lib/types";
 
@@ -14,7 +12,6 @@ import {
   intermediaryCurrency,
 } from "../../reducers/settings";
 import type { State } from "../../reducers";
-import type { T } from "../../types/common";
 
 import LText from "../../components/LText/index";
 import CounterValues from "../../countervalues";
@@ -33,7 +30,6 @@ type OwnProps = {
 };
 
 type Props = OwnProps & {
-  t: T,
   rightCurrency: Currency,
   getCounterValue: BigNumber => ?BigNumber,
   getReverseCounterValue: BigNumber => ?BigNumber,
@@ -214,7 +210,4 @@ const mapStateToProps = (state: State, props: OwnProps) => {
   };
 };
 
-export default compose(
-  translate(),
-  connect(mapStateToProps),
-)(AmountInput);
+export default connect(mapStateToProps)(AmountInput);

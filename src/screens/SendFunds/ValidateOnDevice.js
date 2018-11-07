@@ -1,9 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
-
-import type { T } from "../../types/common";
+import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 
@@ -12,13 +10,11 @@ import DeviceNanoAction from "../../components/DeviceNanoAction";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 
 type Props = {
-  t: T,
   action: () => void,
 };
 
 class ValidateOnDevice extends PureComponent<Props> {
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
@@ -28,17 +24,19 @@ class ValidateOnDevice extends PureComponent<Props> {
             </View>
             <View style={styles.titleContainer}>
               <LText secondary semiBold style={styles.title}>
-                {t("send.validation.title")}
+                <Trans i18nKey="send.validation.title" />
               </LText>
             </View>
             <View style={styles.messageContainer}>
               <LText style={styles.message}>
-                {t("send.validation.message")}
+                <Trans i18nKey="send.validation.message" />
               </LText>
             </View>
           </View>
         </View>
-        <VerifyAddressDisclaimer text={t("send.validation.disclaimer")} />
+        <VerifyAddressDisclaimer
+          text={<Trans i18nKey="send.validation.disclaimer" />}
+        />
       </View>
     );
   }
@@ -84,4 +82,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(ValidateOnDevice);
+export default ValidateOnDevice;
