@@ -2,9 +2,8 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
-import { Observable, from, defer, throwError, timer } from "rxjs";
-import { map, retryWhen, mergeMap, catchError, first } from "rxjs/operators";
-import type Transport from "@ledgerhq/hw-transport";
+import { Observable, from, throwError, timer } from "rxjs";
+import { map, retryWhen, mergeMap, first } from "rxjs/operators";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
@@ -16,7 +15,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
-import { open } from "../../logic/hw";
+import { withDevice } from "../../logic/hw/withDevice";
 import colors, { rgba } from "../../colors";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
@@ -31,32 +30,6 @@ import { deviceNames } from "../../wording";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
-
-const withDevice = (deviceId: string) => <T>(
-  job: (t: Transport<*>) => Observable<T>,
-): Observable<T> =>
-  defer(() =>
-    from(
-      open(deviceId).catch(e => {
-        throw new CantOpenDevice(e.message);
-      }),
-    ),
-  ).pipe(
-    mergeMap(transport =>
-      job(transport).pipe(
-        // throw error after closing the transport
-        catchError(error =>
-          from(
-            transport.close().then(() => {
-              throw error;
-            }),
-          ),
-        ),
-        // returns meta after a close, whatever if close succeed
-        mergeMap(meta => from(transport.close().then(() => meta, () => meta))),
-      ),
-    ),
-  );
 
 const genericCanRetryOnError = err => {
   if (err instanceof WrongDeviceForAccount) return false;
@@ -138,7 +111,7 @@ export const genuineCheck: Step = {
   ),
   run: (deviceId, meta) =>
     withDevice(deviceId)(transport =>
-      from(doGenuineCheck(transport, meta.deviceInfo)),
+      doGenuineCheck(transport, meta.deviceInfo),
     ).pipe(
       map(genuineResult => ({
         ...meta,
