@@ -12,18 +12,27 @@ import {
 import colors from "../../colors";
 import OnboardingHeader from "./OnboardingHeader";
 
-type Container = { children: *, style?: * };
+type Container = { children: *, style?: *, noHorizontalPadding?: boolean };
 
 type Props = Container & {
   isCentered?: boolean,
   isFull?: boolean,
+  noHorizontalPadding?: boolean,
   header?: string,
   Footer?: React$ComponentType<*>,
 };
 
 export default class OnboardingLayout extends PureComponent<Props> {
   render() {
-    const { children, header, Footer, isCentered, isFull, style } = this.props;
+    const {
+      children,
+      header,
+      Footer,
+      isCentered,
+      isFull,
+      noHorizontalPadding,
+      style,
+    } = this.props;
 
     let inner: React$Node = children;
 
@@ -41,14 +50,20 @@ export default class OnboardingLayout extends PureComponent<Props> {
     }
 
     if (isFull) {
-      inner = <OnboardingInner>{inner}</OnboardingInner>;
+      inner = (
+        <OnboardingInner noHorizontalPadding={noHorizontalPadding}>
+          {inner}
+        </OnboardingInner>
+      );
     }
 
     if (header) {
       inner = (
         <Fragment>
           <OnboardingHeader stepId={header} />
-          <OnboardingInner>{inner}</OnboardingInner>
+          <OnboardingInner noHorizontalPadding={noHorizontalPadding}>
+            {inner}
+          </OnboardingInner>
           {Footer && (
             <View style={styles.footer}>
               <Footer />
@@ -68,7 +83,16 @@ export default class OnboardingLayout extends PureComponent<Props> {
 
 export class OnboardingInner extends PureComponent<Container> {
   render() {
-    return <ScrollView style={styles.inner}>{this.props.children}</ScrollView>;
+    return (
+      <ScrollView
+        style={[
+          styles.inner,
+          this.props.noHorizontalPadding && styles.noHorizontalPadding,
+        ]}
+      >
+        {this.props.children}
+      </ScrollView>
+    );
   }
 }
 
@@ -86,6 +110,9 @@ const styles = StyleSheet.create({
   inner: {
     padding: 16,
     flexGrow: 1,
+  },
+  noHorizontalPadding: {
+    paddingHorizontal: 0,
   },
   footer: {
     padding: 16,
