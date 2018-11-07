@@ -62,10 +62,13 @@ class Settings extends Component<Props, *> {
   onDebugHiddenPress = () => {
     clearTimeout(this.debugTimeout);
     if (this.count++ > 6) {
-      this.setState({ debugVisible: true });
+      this.count = 0;
+      this.setState(({ debugVisible }) => ({
+        debugVisible: !debugVisible,
+      }));
     } else {
       this.debugTimeout = setTimeout(() => {
-        this.count = 1;
+        this.count = 0;
       }, 1000);
     }
   };
@@ -109,12 +112,10 @@ class Settings extends Component<Props, *> {
               icon={<Icon name="wind" size={16} color={colors.live} />}
               onClick={() => this.navigateTo("DebugSettings")}
             />
-          ) : (
-            <TouchableWithoutFeedback onPress={this.onDebugHiddenPress}>
-              <View style={{ height: 50 }} />
-            </TouchableWithoutFeedback>
-          )}
-          <PoweredByLedger />
+          ) : null}
+          <TouchableWithoutFeedback onPress={this.onDebugHiddenPress}>
+            <PoweredByLedger />
+          </TouchableWithoutFeedback>
         </View>
       </ScrollView>
     );

@@ -25,6 +25,7 @@ class PoweredByLedger extends Component<{
 
 const styles = StyleSheet.create({
   container: {
+    paddingVertical: 20,
     flexDirection: "row",
     justifyContent: "center",
   },
