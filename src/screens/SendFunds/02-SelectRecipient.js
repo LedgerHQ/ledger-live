@@ -5,7 +5,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import throttle from "lodash/throttle";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
@@ -29,7 +29,6 @@ import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
 import colors from "../../colors";
 
 type Props = {
-  t: T,
   account: Account,
   navigation: NavigationScreenProp<{
     params: {
@@ -37,6 +36,7 @@ type Props = {
       transaction: *,
     },
   }>,
+  t: T,
 };
 
 type State = {
@@ -161,7 +161,7 @@ class SendSelectRecipient extends Component<Props, State> {
 
   render() {
     const { address, validAddress, error } = this.state;
-    const { t, account } = this.props;
+    const { account, t } = this.props;
 
     return (
       <SafeAreaView style={styles.root}>
@@ -172,14 +172,14 @@ class SendSelectRecipient extends Component<Props, State> {
           <View style={styles.container}>
             <Button
               type="tertiary"
-              title={t("common:send.recipient.scan")}
+              title={<Trans i18nKey="common:send.recipient.scan" />}
               IconLeft={IconQRCode}
               onPress={this.onPressScan}
             />
           </View>
           <View style={styles.container}>
             <LText style={styles.addressTitle}>
-              {t("common:send.recipient.enterAddress")}
+              {<Trans i18nKey="common:send.recipient.enterAddress" />}
             </LText>
             <View style={styles.inputWrapper}>
               {/* make this a recipient component */}

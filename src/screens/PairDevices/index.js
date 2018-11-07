@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { timeout } from "rxjs/operators/timeout";
 import TransportBLE from "../../react-native-hw-transport-ble";
@@ -179,6 +180,7 @@ class Screen extends Component<Props, State> {
 
   render() {
     return (
+      // $FlowFixMe
       <RequiresBLE>
         <View style={styles.root}>
           <PairDevices {...this.props} />
@@ -195,7 +197,7 @@ export default connect(
   {
     addKnownDevice,
   },
-)(Screen);
+)(translate()(Screen));
 
 const styles = StyleSheet.create({
   root: {

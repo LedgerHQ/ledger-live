@@ -2,6 +2,8 @@
 import React, { Component } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { translate, Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -67,7 +69,7 @@ class ConnectDevice extends Component<Props> {
         <View style={styles.footer}>
           <Button
             type="secondary"
-            title="Don't have my device"
+            title={<Trans i18nKey="transfer.receive.withoutDevice" />}
             onPress={this.onSkipDevice}
           />
         </View>
@@ -90,4 +92,7 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(ConnectDevice);
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(ConnectDevice);

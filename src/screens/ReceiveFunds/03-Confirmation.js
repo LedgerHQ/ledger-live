@@ -5,7 +5,7 @@ import { SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
@@ -13,7 +13,6 @@ import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { open } from "../../logic/hw";
-import type { T } from "../../types/common";
 
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
@@ -37,7 +36,6 @@ type Navigation = NavigationScreenProp<{
 type Props = {
   account: Account,
   navigation: Navigation,
-  t: T,
 };
 
 type State = {
@@ -103,7 +101,7 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   render(): React$Node {
-    const { account, navigation, t } = this.props;
+    const { account, navigation } = this.props;
     const { verified, error, isModalOpened, onModalHide } = this.state;
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
@@ -132,15 +130,23 @@ class ReceiveConfirmation extends Component<Props, State> {
             unsafe={unsafe}
             verified={verified}
             text={
-              unsafe
-                ? t("transfer.receive.verifySkipped", {
+              unsafe ? (
+                <Trans
+                  i18nKey="transfer.receive.verifySkipped"
+                  values={{
                     accountType: account.currency.managerAppName,
-                  })
-                : verified
-                  ? t("transfer.receive.verified")
-                  : t("transfer.receive.verifyPending", {
-                      accountType: account.currency.managerAppName,
-                    })
+                  }}
+                />
+              ) : verified ? (
+                <Trans i18nKey="transfer.receive.verified" />
+              ) : (
+                <Trans
+                  i18nKey="transfer.receive.verifyPending"
+                  values={{
+                    accountType: account.currency.managerAppName,
+                  }}
+                />
+              )
             }
           />
         </View>
@@ -150,12 +156,12 @@ class ReceiveConfirmation extends Component<Props, State> {
               containerStyle={styles.button}
               onPress={this.onDone}
               type="secondary"
-              title={t("common.done")}
+              title={<Trans i18nKey="common.done" />}
             />
             <Button
               containerStyle={styles.button}
               type="primary"
-              title={t("transfer.receive.verifyAgain")}
+              title={<Trans i18nKey="transfer.receive.verifyAgain" />}
               onPress={this.onRetry}
             />
           </View>
@@ -177,13 +183,13 @@ class ReceiveConfirmation extends Component<Props, State> {
               <View style={styles.buttonsContainer}>
                 <Button
                   type="secondary"
-                  title={t("common.contactUs")}
+                  title={<Trans i18nKey="common.contactUs" />}
                   containerStyle={styles.button}
                   onPress={() => {}} // TODO do something
                 />
                 <Button
                   type="primary"
-                  title={t("common.retry")}
+                  title={<Trans i18nKey="common.retry" />}
                   containerStyle={styles.button}
                   onPress={this.onRetry}
                 />

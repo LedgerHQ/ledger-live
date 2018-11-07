@@ -4,7 +4,7 @@ import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Dimensions, Platform } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
@@ -23,14 +23,12 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 import type { Item } from "./Graph";
-import type { T } from "../types/common";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
 };
 
 type Props = {
-  t: T,
   summary: Summary,
   setSelectedTimeRange: string => void,
   useCounterValue?: boolean,
@@ -47,9 +45,9 @@ class GraphCard extends PureComponent<Props, State> {
   };
 
   timeRangeItems = [
-    { key: "week", label: this.props.t("common:time.week") },
-    { key: "month", label: this.props.t("common:time.month") },
-    { key: "year", label: this.props.t("common:time.year") },
+    { key: "week", label: <Trans i18nKey="common:time.week" /> },
+    { key: "month", label: <Trans i18nKey="common:time.month" /> },
+    { key: "year", label: <Trans i18nKey="common:time.year" /> },
   ];
 
   onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
@@ -191,5 +189,4 @@ export default compose(
     null,
     mapDispatchToProps,
   ),
-  translate(),
 )(GraphCard);

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
+import { translate } from "react-i18next";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNameRow from "./DeviceNameRow";
 import FirmwareVersionRow from "./FirmwareVersionRow";
@@ -48,4 +49,4 @@ export default connect(
   {
     removeKnownDevice,
   },
-)(ManagerDevice);
+)(translate()(ManagerDevice));

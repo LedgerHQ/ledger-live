@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { View, SafeAreaView, StyleSheet, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import LText from "../../components/LText";
@@ -63,7 +65,9 @@ class ReceiveFunds extends Component<Props, State> {
               )}
               renderEmptySearch={() => (
                 <View style={styles.emptyResults}>
-                  <LText style={styles.emptyText}>No account found</LText>
+                  <LText style={styles.emptyText}>
+                    <Trans i18nKey="transfer.receive.noAccount" />
+                  </LText>
                 </View>
               )}
             />
@@ -106,4 +110,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(ReceiveFunds);
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(ReceiveFunds);

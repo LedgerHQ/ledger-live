@@ -1,18 +1,16 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { deviceNameByDeviceIdSelector } from "../../reducers/ble";
 import SettingsRow from "../../components/SettingsRow";
-import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import colors from "../../colors";
 
 type Props = {
-  t: T,
   navigation: *,
   deviceId: string,
   name: string,
@@ -20,10 +18,10 @@ type Props = {
 
 class DeviceNameRow extends PureComponent<Props> {
   render() {
-    const { t, navigation, deviceId, name } = this.props;
+    const { navigation, deviceId, name } = this.props;
     return (
       <SettingsRow
-        title={t("DeviceNameRow.title")}
+        title={<Trans i18nKey="DeviceNameRow.title" />}
         arrowRight
         alignedTop
         onPress={() =>
@@ -47,7 +45,7 @@ class DeviceNameRow extends PureComponent<Props> {
 
 export default connect(
   createStructuredSelector({ name: deviceNameByDeviceIdSelector }),
-)(translate()(withNavigation(DeviceNameRow)));
+)(withNavigation(DeviceNameRow));
 
 const styles = StyleSheet.create({
   accountName: {

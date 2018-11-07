@@ -3,6 +3,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import { translate } from "react-i18next";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { getAccountOperationExplorer } from "@ledgerhq/live-common/lib/explorers";
 import type { NavigationScreenProp } from "react-navigation";
@@ -52,7 +53,7 @@ export default connect(
   createStructuredSelector({
     account: accountScreenSelector,
   }),
-)(OperationDetails);
+)(translate()(OperationDetails));
 
 const styles = StyleSheet.create({
   container: {

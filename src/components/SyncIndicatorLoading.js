@@ -2,22 +2,20 @@
 
 import React, { Component } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 
-import type { T } from "../types/common";
 import LText from "./LText";
 
-type Props = {
-  t: T,
-};
+type Props = {};
 
 class SyncIndicatorLoading extends Component<Props> {
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.root}>
         <ActivityIndicator />
-        <LText style={styles.text}>{t("common.sync.loading")}</LText>
+        <LText style={styles.text}>
+          <Trans i18nKey="sync.loading" />
+        </LText>
       </View>
     );
   }
@@ -31,4 +29,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(SyncIndicatorLoading);
+export default SyncIndicatorLoading;

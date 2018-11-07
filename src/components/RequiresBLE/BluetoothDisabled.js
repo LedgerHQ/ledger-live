@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { Trans } from "react-i18next";
 import LText from "../LText";
 import BluetoothDisabledImage from "./assets/BluetoothDisabledImage";
 import colors from "../../colors";
@@ -14,13 +15,12 @@ export default class BluetoothDisabled extends PureComponent<{}> {
         <BluetoothDisabledImage />
         <View>
           <LText bold secondary style={styles.titleFont}>
-            Bluetooth required
+            <Trans i18nKey="bluetooth.required" />
           </LText>
         </View>
         <View style={styles.desc}>
           <LText style={styles.descFont}>
-            It seems bluetooth is disabled on your mobile. Go to settings and
-            enable bluetooth to pair a Nano X
+            <Trans i18nKey="bluetooth.checkEnabled" />
           </LText>
         </View>
       </View>

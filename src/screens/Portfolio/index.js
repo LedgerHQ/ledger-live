@@ -10,6 +10,7 @@ import {
   Animated,
   SafeAreaView,
 } from "react-native";
+import { translate } from "react-i18next";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
@@ -18,6 +19,7 @@ import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/Animat
 import colors from "../../colors";
 
 import { accountsSelector } from "../../reducers/accounts";
+import { hasCompletedOnboardingSelector } from "../../reducers/settings";
 
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
@@ -50,6 +52,7 @@ const navigationOptions = {
 
 const mapStateToProps = state => ({
   accounts: accountsSelector(state),
+  hasCompletedOnboarding: hasCompletedOnboardingSelector(state),
 });
 
 class Portfolio extends Component<
@@ -57,6 +60,7 @@ class Portfolio extends Component<
     accounts: Account[],
     summary: Summary,
     navigation: *,
+    hasCompletedOnboarding: boolean,
   },
   {
     opCount: number,
@@ -75,6 +79,11 @@ class Portfolio extends Component<
   scrollSub: *;
 
   componentDidMount() {
+    if (!this.props.hasCompletedOnboarding) {
+      // TODO: there is probably more elegant way to do that
+      this.props.navigation.replace("Onboarding");
+      return;
+    }
     this.scrollSub = scrollToTopIntent.subscribe(() => {
       const sectionList = this.ref.current && this.ref.current.getNode();
       if (sectionList) {
@@ -88,7 +97,9 @@ class Portfolio extends Component<
   }
 
   componentWillUnmount() {
-    this.scrollSub.unsubscribe();
+    if (this.scrollSub) {
+      this.scrollSub.unsubscribe();
+    }
   }
 
   keyExtractor = (item: Operation) => item.id;
@@ -177,6 +188,7 @@ class Portfolio extends Component<
 export default compose(
   connect(mapStateToProps),
   provideSummary,
+  translate(),
 )(Portfolio);
 
 const styles = StyleSheet.create({

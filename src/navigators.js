@@ -20,6 +20,7 @@ import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
 import Settings from "./screens/Settings";
+import Onboarding from "./screens/Onboarding";
 import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
 import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
 import GeneralSettings from "./screens/Settings/General";
@@ -366,6 +367,7 @@ ImportAccounts.navigationOptions = {
 export const RootNavigator = createStackNavigator(
   {
     Main,
+    Onboarding,
     ReceiveFunds,
     SendFunds,
     AddAccounts,

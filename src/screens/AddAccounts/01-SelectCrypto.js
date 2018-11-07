@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import { SafeAreaView, StyleSheet, View, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
@@ -23,7 +23,6 @@ const cryptocurrencies = listCryptoCurrencies();
 const SEARCH_KEYS = ["name", "ticker"];
 
 type Props = {
-  t: *,
   navigation: NavigationScreenProp<{
     params: {},
   }>,
@@ -63,7 +62,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
   renderEmptyList = () => (
     <View style={styles.emptySearch}>
       <LText style={styles.emptySearchText}>
-        {this.props.t("common.noCryptoFound")}
+        <Trans i18nKey="common.noCryptoFound" />
       </LText>
     </View>
   );

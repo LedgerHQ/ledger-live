@@ -15,7 +15,6 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { NotEnoughBalance } from "@ledgerhq/live-common/lib/errors";
 
-import type { T } from "../../types/common";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
@@ -31,7 +30,6 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import AmountInput from "./AmountInput";
 
 type Props = {
-  t: T,
   account: Account,
   navigation: NavigationScreenProp<{
     params: {
@@ -229,7 +227,7 @@ class SendAmount extends Component<Props, State> {
   };
 
   render() {
-    const { account, t } = this.props;
+    const { account } = this.props;
     const {
       transaction,
       notEnoughBalanceError,
@@ -285,9 +283,11 @@ class SendAmount extends Component<Props, State> {
                     <Button
                       type="primary"
                       title={
-                        !pending
-                          ? t("common.continue")
-                          : t("send.amount.loadingNetwork")
+                        !pending ? (
+                          <Trans i18nKey="common.continue" />
+                        ) : (
+                          <Trans i18nKey="send.amount.loadingNetwork" />
+                        )
                       }
                       onPress={this.navigate}
                       disabled={!canNext}

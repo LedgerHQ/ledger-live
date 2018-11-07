@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 
@@ -74,4 +75,4 @@ const mapStateToProps = (state, props) => ({
   account: accountScreenSelector(state, props),
 });
 
-export default connect(mapStateToProps)(ValidationSuccess);
+export default connect(mapStateToProps)(translate()(ValidationSuccess));
