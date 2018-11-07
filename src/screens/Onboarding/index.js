@@ -1,9 +1,6 @@
 // @flow
 
-import React from "react";
 import { createStackNavigator } from "react-navigation";
-
-import { OnboardingContextProvider } from "./onboardingContext";
 
 import OnboardingStep01Welcome from "./steps/01-welcome";
 import OnboardingStep02GetStarted from "./steps/02-get-started";
@@ -29,13 +26,6 @@ const OnboardingStack = createStackNavigator({
   OnboardingStep10Finish,
 });
 
-const Onboarding = () => (
-  <OnboardingContextProvider>
-    <OnboardingStack />
-  </OnboardingContextProvider>
-);
+OnboardingStack.navigationOptions = { header: null };
 
-// $FlowFixMe flow is mad
-Onboarding.navigationOptions = { header: null };
-
-export default Onboarding;
+export default OnboardingStack;

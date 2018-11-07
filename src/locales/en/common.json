@@ -446,7 +446,9 @@
       "reportErrors": "Report bugs",
       "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience."
+      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience.",
+      "configureDevice": "Configure device",
+      "configureDeviceDesc": "Lorem ipsum dolor"
     },
     "currencies": {
       "header": "Currencies",

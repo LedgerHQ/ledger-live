@@ -22,6 +22,7 @@ const mapDispatchToProps = {
 class OnboardingStep10Finish extends Component<Props> {
   onFinish = () => {
     this.props.completeOnboarding();
+    this.props.resetCurrentStep();
     this.props.navigation.navigate("Main");
   };
 

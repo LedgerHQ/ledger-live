@@ -14,6 +14,7 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
     return (
       <OnboardingLayout isCentered>
         <LText>OnboardingStep01Welcome</LText>
+        <LText>{this.props.currentStep}</LText>
         <Button type="primary" title="Next" onPress={this.props.next} />
       </OnboardingLayout>
     );

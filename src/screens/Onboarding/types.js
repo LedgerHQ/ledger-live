@@ -22,6 +22,9 @@ export type OnboardingContextType = {
   // change screen to prev/next, sync navigation & state
   nextWithNavigation: StepNavigateType,
   prevWithNavigation: StepNavigateType,
+
+  // reset to step 0 of current mode
+  resetCurrentStep: Noop,
 };
 
 export type OnboardingStepProps = OnboardingContextType & {

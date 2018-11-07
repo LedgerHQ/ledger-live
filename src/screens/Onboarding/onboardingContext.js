@@ -23,6 +23,7 @@ const INITIAL_CONTEXT: OnboardingContextType = {
   // prop, passed to steps components
   mode: "full",
 
+  resetCurrentStep: noop,
   nextWithNavigation: noop,
   prevWithNavigation: noop,
   setOnboardingMode: noop,
@@ -44,6 +45,7 @@ export class OnboardingContextProvider extends PureComponent<
     this.state = {
       ...INITIAL_CONTEXT,
 
+      resetCurrentStep: this.resetCurrentStep,
       nextWithNavigation: this.next,
       prevWithNavigation: this.prev,
       setOnboardingMode: this.setOnboardingMode,
@@ -87,6 +89,13 @@ export class OnboardingContextProvider extends PureComponent<
       this.setState({ currentStep: routeName });
     }
   };
+
+  resetCurrentStep = () =>
+    new Promise(resolve => {
+      const { mode } = this.state;
+      const steps = STEPS_BY_MODE[mode];
+      this.setState({ currentStep: steps[0].id }, resolve);
+    });
 
   render() {
     return (
