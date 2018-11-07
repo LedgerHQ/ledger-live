@@ -2,9 +2,8 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
-import { Observable, from, defer, throwError, timer } from "rxjs";
+import { Observable, from, throwError, timer } from "rxjs";
 import { map, retryWhen, mergeMap, first } from "rxjs/operators";
-import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
@@ -16,7 +15,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
-import { open } from "../../logic/hw";
+import { withDevice } from "../../logic/hw/withDevice";
 import colors, { rgba } from "../../colors";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
@@ -31,47 +30,6 @@ import { deviceNames } from "../../wording";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
-
-const transportCleanup = (transport: Transport<*>) => <T>(
-  observable: Observable<T>,
-): Observable<T> =>
-  Observable.create(o => {
-    let done = false;
-    const sub = observable.subscribe({
-      next: e => o.next(e),
-      complete: () => {
-        done = true;
-        transport
-          .close()
-          .catch(() => {})
-          .then(() => o.complete());
-      },
-      error: e => {
-        done = true;
-        transport
-          .close()
-          .catch(() => {})
-          .then(() => o.error(e));
-      },
-    });
-    return () => {
-      sub.unsubscribe();
-      if (!done) transport.close();
-    };
-  });
-
-const withDevice = (deviceId: string) => <T>(
-  job: (t: Transport<*>) => Observable<T>,
-): Observable<T> =>
-  defer(() =>
-    from(
-      open(deviceId).catch(e => {
-        throw new CantOpenDevice(e.message);
-      }),
-    ),
-  ).pipe(
-    mergeMap(transport => job(transport).pipe(transportCleanup(transport))),
-  );
 
 const genericCanRetryOnError = err => {
   if (err instanceof WrongDeviceForAccount) return false;
