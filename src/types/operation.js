@@ -43,7 +43,10 @@ export type Operation = {
   // --------------------------------------------- specific operation raw fields
 
   // transaction date
-  date: Date
+  date: Date,
+
+  // Extra crypto specific fields
+  extra: Object
 };
 
 export type OperationRaw = {
@@ -59,5 +62,6 @@ export type OperationRaw = {
   transactionSequenceNumber?: number,
   accountId: string,
   // --------------------------------------------- specific operation raw fields
-  date: string
+  date: string,
+  extra: Object // would be a serializable version of the extra
 };
