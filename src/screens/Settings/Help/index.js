@@ -19,8 +19,7 @@ class HelpSettings extends PureComponent<{
     return (
       <ScrollView contentContainerStyle={styles.root}>
         <LedgerSupportRow />
-        {null && <ConfigureDeviceRow /> // FIXME enable when implemented
-        }
+        <ConfigureDeviceRow navigation={this.props.navigation} />
         <View style={styles.container}>
           <ClearCacheRow />
           <HardResetRow />

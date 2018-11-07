@@ -24,6 +24,7 @@ import DBSave from "./components/DBSave";
 import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import AppStateListener from "./components/AppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
+import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 
 // useScreens(); // FIXME this is not working properly when using react-native-modal inside Send flow
 
@@ -122,7 +123,9 @@ export default class Root extends Component<{}, {}> {
                       <BridgeSyncProvider>
                         <CounterValues.PollingProvider>
                           <ButtonUseTouchable.Provider value={true}>
-                            <App />
+                            <OnboardingContextProvider>
+                              <App />
+                            </OnboardingContextProvider>
                           </ButtonUseTouchable.Provider>
                         </CounterValues.PollingProvider>
                       </BridgeSyncProvider>

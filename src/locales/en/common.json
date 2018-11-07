@@ -257,6 +257,27 @@
     "description": "Reset all Ledger Live data, including accounts and settings? The private keys providing access to your crypto assets remain secure on your device and Recovery sheet.",
     "button": "Reset"
   },
+  "onboarding": {
+    "stepsTitles": {
+      "OnboardingStep03ChooseDevice": "Choose device",
+      "OnboardingStep04SetupPin": "Setup PIN code",
+      "OnboardingStep05WriteRecovery": "Write recovery phrase",
+      "OnboardingStep06SecurityChecklist": "Security checklist",
+      "OnboardingStep07PairNew": "Pair a new device",
+      "OnboardingStep08Password": "Password lock",
+      "OnboardingStep09ShareData": "Share data"
+    },
+    "step01Welcome": {},
+    "step02GetStarted": {},
+    "step03ChooseDevice": {},
+    "step04SetupPin": {},
+    "step05WriteRecovery": {},
+    "step06SecurityChecklist": {},
+    "step07PairNew": {},
+    "step08Password": {},
+    "step09ShareData": {},
+    "step10Finish": {}
+  },
   "portfolio": {
     "totalBalance": "Total balance",
     "syncError": "Sync error",
@@ -425,7 +446,9 @@
       "reportErrors": "Report bugs",
       "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience."
+      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience.",
+      "configureDevice": "Configure device",
+      "configureDeviceDesc": "Lorem ipsum dolor"
     },
     "currencies": {
       "header": "Currencies",
