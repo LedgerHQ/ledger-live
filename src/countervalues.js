@@ -3,6 +3,8 @@
 import { AppState, NetInfo } from "react-native";
 import { createSelector } from "reselect";
 import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
+import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { setExchangePairsAction } from "./actions/settings";
 import { currenciesSelector } from "./reducers/accounts";
 import {
@@ -90,5 +92,33 @@ const CounterValues = createCounterValues({
   addExtraPollingHooks,
   network,
 });
+
+type PC = Promise<CryptoCurrency[]>;
+
+let sortCache;
+export const getFullListSortedCryptoCurrencies: () => PC = () => {
+  if (!sortCache) {
+    sortCache = CounterValues.fetchTickersByMarketcap().then(
+      tickers => {
+        const list = listCryptoCurrencies().slice(0);
+        const prependList = [];
+        tickers.forEach(ticker => {
+          const item = list.find(c => c.ticker === ticker);
+          if (item) {
+            list.splice(list.indexOf(item), 1);
+            prependList.push(item);
+          }
+        });
+        return prependList.concat(list);
+      },
+      () => {
+        sortCache = null; // reset the cache for the next time it comes here to "try again"
+        return listCryptoCurrencies(); // fallback on default sort
+      },
+    );
+  }
+
+  return sortCache;
+};
 
 export default CounterValues;
