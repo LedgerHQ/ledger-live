@@ -29,7 +29,7 @@ type BaseProps = {
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
   onPress?: () => ?Promise<any> | any,
   // text of the button
-  title: React$Node,
+  title?: React$Node,
   containerStyle?: *,
   titleStyle?: *,
   IconLeft?: *,
@@ -196,13 +196,16 @@ class Button extends PureComponent<
 
         <Animated.View style={titleSliderStyle}>
           {IconLeft ? (
-            <View style={{ marginRight: 10 }}>
+            <View style={title ? { marginRight: 10 } : {}}>
               <IconLeft size={16} color={iconColor} />
             </View>
           ) : null}
-          <LText secondary semiBold style={textStyle}>
-            {title}
-          </LText>
+
+          {title ? (
+            <LText secondary semiBold style={textStyle}>
+              {title}
+            </LText>
+          ) : null}
         </Animated.View>
 
         <Animated.View style={spinnerSliderStyle}>
