@@ -14,8 +14,8 @@ import Import from "../../icons/Import";
 
 class AppRow extends PureComponent<{
   app: ApplicationVersion,
-  onInstall: ApplicationVersion => Promise<void>,
-  onUninstall: ApplicationVersion => Promise<void>,
+  onInstall: ApplicationVersion => *,
+  onUninstall: ApplicationVersion => *,
 }> {
   onInstall = () => {
     const { app, onInstall } = this.props;

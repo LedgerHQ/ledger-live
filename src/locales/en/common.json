@@ -647,5 +647,25 @@
   },
   "FirmwareVersionRow": {
     "title": "Firmware version"
+  },
+  "AppAction": {
+    "install": {
+      "loading": {
+        "title": "Installing {{appName}}",
+        "button": "Installing..."
+      },
+      "done": {
+        "title": "Successfully installed {{appName}} on your {{fullDeviceName}}"
+      }
+    },
+    "uninstall": {
+      "loading": {
+        "title": "Uninstalling {{appName}}",
+        "button": "Uninstalling..."
+      },
+      "done": {
+        "title": "Successfully uninstalled {{appName}} on your {{fullDeviceName}}"
+      }
+    }
   }
 }

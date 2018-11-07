@@ -15,13 +15,12 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
-import { withDevice } from "../../logic/hw/withDevice";
-import colors, { rgba } from "../../colors";
+import { withDevice } from "../../logic/hw/deviceAccess";
+import colors from "../../colors";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
-import CurrencyIcon from "../CurrencyIcon";
-import Rounded from "../Rounded";
+import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import LText from "../LText";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import doGenuineCheck from "../../logic/hw/theRealGenuineCheck";
@@ -123,11 +122,7 @@ export const genuineCheck: Step = {
 export const currencyApp: CryptoCurrency => Step = currency => ({
   Body: () => (
     <RenderStep
-      icon={
-        <Rounded bg={rgba(currency.color, 0.1)}>
-          <CurrencyIcon currency={currency} size={32} />
-        </Rounded>
-      }
+      icon={<RoundedCurrencyIcon currency={currency} size={32} />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.currencyApp.title"
@@ -174,11 +169,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
 export const accountApp: Account => Step = account => ({
   Body: () => (
     <RenderStep
-      icon={
-        <Rounded bg={rgba(account.currency.color, 0.1)}>
-          <CurrencyIcon currency={account.currency} size={32} />
-        </Rounded>
-      }
+      icon={<RoundedCurrencyIcon currency={account.currency} size={32} />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.accountApp.title"

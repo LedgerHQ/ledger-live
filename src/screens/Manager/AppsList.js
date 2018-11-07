@@ -1,13 +1,13 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { getFullListSortedCryptoCurrencies } from "../../countervalues";
 import type { DeviceInfo, ApplicationVersion } from "../../types/manager";
 import ManagerAPI from "../../api/Manager";
-import installApp from "../../logic/hw/installApp";
-import uninstallApp from "../../logic/hw/uninstallApp";
 import AppRow from "./AppRow";
+import AppAction from "./AppAction";
 
 const Header = () => (
   <View
@@ -34,10 +34,13 @@ const ErrorRender = (
   <View style={{ backgroundColor: "red", height: 100 }} />
 );
 
+const actionKey = action => `${action.app.id}_${action.type}`;
+
 class ManagerAppsList extends Component<
   {
     navigation: NavigationScreenProp<{
       params: {
+        deviceId: string,
         meta: {
           deviceInfo: DeviceInfo,
         },
@@ -48,6 +51,7 @@ class ManagerAppsList extends Component<
     apps: ApplicationVersion[],
     pending: boolean,
     error: ?Error,
+    action: ?{ type: "install" | "uninstall", app: ApplicationVersion },
   },
 > {
   static navigationOptions = {
@@ -58,6 +62,7 @@ class ManagerAppsList extends Component<
     apps: [],
     pending: true,
     error: null,
+    action: null,
   };
 
   unmount = false;
@@ -107,6 +112,8 @@ class ManagerAppsList extends Component<
     try {
       const { navigation } = this.props;
       const { deviceInfo } = navigation.getParam("meta");
+
+      // TODO we need to prefetch this before. we can already do it during the manager loading because we have the deviceInfo before the genuine check.
 
       const deviceVersionP = ManagerAPI.getDeviceVersion(
         deviceInfo.targetId,
@@ -163,12 +170,20 @@ class ManagerAppsList extends Component<
     }
   }
 
-  onInstall = async (app: ApplicationVersion) => {
-    // TODO
+  onActionClose = () => {
+    this.setState({ action: null });
   };
 
-  onUninstall = async (app: ApplicationVersion) => {
-    // TODO
+  onInstall = (app: ApplicationVersion) => {
+    this.setState({
+      action: { type: "install", app },
+    });
+  };
+
+  onUninstall = (app: ApplicationVersion) => {
+    this.setState({
+      action: { type: "uninstall", app },
+    });
   };
 
   renderRow = ({ item }: { item: ApplicationVersion }) => (
@@ -182,7 +197,10 @@ class ManagerAppsList extends Component<
   keyExtractor = (d: ApplicationVersion) => String(d.id);
 
   render() {
-    const { apps, pending, error } = this.state;
+    const { navigation } = this.props;
+    const { apps, pending, error, action } = this.state;
+    const { deviceInfo } = navigation.getParam("meta");
+    const deviceId = navigation.getParam("deviceId");
     return (
       <View style={styles.root}>
         <Header />
@@ -197,6 +215,15 @@ class ManagerAppsList extends Component<
             keyExtractor={this.keyExtractor}
           />
         )}
+        {action ? (
+          <AppAction
+            key={actionKey(action)}
+            action={action}
+            onClose={this.onActionClose}
+            deviceId={deviceId}
+            targetId={deviceInfo.targetId}
+          />
+        ) : null}
       </View>
     );
   }
@@ -209,4 +236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ManagerAppsList;
+export default translate()(ManagerAppsList);

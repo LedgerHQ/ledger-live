@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 
 const ICONS_FALLBACK = {
   bitcoin_testnet: "bitcoin",
@@ -15,21 +15,19 @@ const getIconUrl = (icon: string): string => {
 
 type Props = {
   icon: string,
+  size: number,
 };
 
 class AppIcon extends PureComponent<Props> {
-  render() {
-    const uri = getIconUrl(this.props.icon);
+  static defaultProps = {
+    size: 38,
+  };
 
-    return <Image source={{ uri }} style={styles.image} />;
+  render() {
+    const { size } = this.props;
+    const uri = getIconUrl(this.props.icon);
+    return <Image source={{ uri }} style={{ width: size, height: size }} />;
   }
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: 38,
-    height: 38,
-  },
-});
 
 export default AppIcon;
