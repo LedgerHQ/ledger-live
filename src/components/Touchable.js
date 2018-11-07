@@ -3,6 +3,14 @@
 import React, { Component } from "react";
 import { TouchableOpacity } from "react-native";
 
+const defaultHitSlop = {
+  // default & can be overrided by rest
+  top: 16,
+  left: 16,
+  right: 16,
+  bottom: 16,
+};
+
 export default class Touchable extends Component<
   {
     // when on press returns a promise,
@@ -41,13 +49,7 @@ export default class Touchable extends Component<
       <TouchableOpacity
         onPress={this.onPress}
         disabled={disabled}
-        hitSlop={{
-          // default & can be overrided by rest
-          top: 16,
-          left: 16,
-          right: 16,
-          bottom: 16,
-        }}
+        hitSlop={defaultHitSlop}
         {...rest}
       >
         {children}

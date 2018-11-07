@@ -1,11 +1,11 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { RectButton } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "../../components/LText";
-import Card from "../../components/Card";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -23,9 +23,9 @@ const mapStateToProps = createStructuredSelector({
 type Props = {
   account: Account,
   syncState: AsyncState,
-  style?: any,
   isUpToDateAccount: boolean,
   navigation: *,
+  isLast: boolean,
 };
 
 const TICK_W = 6;
@@ -39,38 +39,42 @@ class AccountRow extends PureComponent<Props> {
   };
 
   render() {
-    const { account, style, isUpToDateAccount, syncState } = this.props;
+    const { account, isUpToDateAccount, syncState, isLast } = this.props;
     return (
-      <Card onPress={this.onPress} style={[styles.root, style]}>
-        <CurrencyIcon size={24} currency={account.currency} />
-        <View style={styles.inner}>
-          <LText semiBold numberOfLines={1} style={styles.accountNameText}>
-            {account.name}
-          </LText>
-          <AccountSyncStatus
-            isUpToDateAccount={isUpToDateAccount}
-            {...syncState}
-          />
-        </View>
-        <View style={styles.balanceContainer}>
-          <LText tertiary style={styles.balanceNumText}>
-            <CurrencyUnitValue
-              showCode
-              unit={account.unit}
-              value={account.balance}
+      <RectButton onPress={this.onPress} style={styles.root}>
+        <View
+          style={[styles.innerContainer, isLast && styles.innerContainerLast]}
+        >
+          <CurrencyIcon size={24} currency={account.currency} />
+          <View style={styles.inner}>
+            <LText semiBold numberOfLines={1} style={styles.accountNameText}>
+              {account.name}
+            </LText>
+            <AccountSyncStatus
+              isUpToDateAccount={isUpToDateAccount}
+              {...syncState}
             />
-          </LText>
-          <View style={styles.balanceCounterContainer}>
-            <LText tertiary style={styles.balanceCounterText}>
-              <CounterValue
+          </View>
+          <View style={styles.balanceContainer}>
+            <LText tertiary style={styles.balanceNumText}>
+              <CurrencyUnitValue
                 showCode
-                currency={account.currency}
+                unit={account.unit}
                 value={account.balance}
               />
             </LText>
+            <View style={styles.balanceCounterContainer}>
+              <LText tertiary style={styles.balanceCounterText}>
+                <CounterValue
+                  showCode
+                  currency={account.currency}
+                  value={account.balance}
+                />
+              </LText>
+            </View>
           </View>
         </View>
-      </Card>
+      </RectButton>
     );
   }
 }
@@ -79,12 +83,19 @@ export default connect(mapStateToProps)(AccountRow);
 
 const styles = StyleSheet.create({
   root: {
-    marginBottom: 10,
-    flexDirection: "row",
+    backgroundColor: colors.white,
+  },
+  innerContainer: {
     paddingHorizontal: 16,
+    flexDirection: "row",
     alignItems: "center",
     height: 72,
     overflow: "visible",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightFog,
+  },
+  innerContainerLast: {
+    borderBottomWidth: 0,
   },
   inner: {
     flexGrow: 1,

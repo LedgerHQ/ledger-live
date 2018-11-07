@@ -22,13 +22,16 @@ class AccountUnitsRow extends PureComponent<Props> {
         title={t("common:account.settings.unit.title")}
         desc={t("common:account.settings.unit.desc")}
         arrowRight
+        alignedTop
         onPress={() =>
           navigation.navigate("EditAccountUnits", {
             accountId: account.id,
           })
         }
       >
-        <LText style={{ color: colors.grey }}>{account.unit.code}</LText>
+        <LText semiBold style={{ color: colors.grey }}>
+          {account.unit.code}
+        </LText>
       </SettingsRow>
     );
   }

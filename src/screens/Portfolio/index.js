@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/helpers/account";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 
 import colors from "../../colors";
@@ -36,11 +36,13 @@ import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
+import defaultNavigationOptions from "../defaultNavigationOptions";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
 
 const navigationOptions = {
+  ...defaultNavigationOptions,
   tabBarIcon: ({ tintColor }: *) => (
     <PortfolioIcon size={18} color={tintColor} />
   ),
@@ -139,6 +141,7 @@ class Portfolio extends Component<
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
         <StickyHeader scrollY={scrollY} summary={summary} />
         <SyncBackground />
+
         <SafeAreaView style={styles.inner}>
           <List
             forwardedRef={this.ref}

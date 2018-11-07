@@ -3,7 +3,7 @@ import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -67,7 +67,7 @@ class Content extends PureComponent<Props, *> {
               alwaysShowSign
             />
           </LText>
-          <LText style={styles.counterValue}>
+          <LText tertiary style={styles.counterValue}>
             <CounterValue
               showCode
               alwaysShowSign
@@ -83,7 +83,10 @@ class Content extends PureComponent<Props, *> {
               ]}
             />
             {isConfirmed ? (
-              <LText style={[styles.confirmation, { color: colors.green }]}>
+              <LText
+                semiBold
+                style={[styles.confirmation, { color: colors.green }]}
+              >
                 {`${t("common:operationDetails.confirmed")} (${confirmations})`}
               </LText>
             ) : (

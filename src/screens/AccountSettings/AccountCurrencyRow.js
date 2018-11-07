@@ -24,6 +24,7 @@ class AccountCurrencyRow extends PureComponent<Props> {
         onPress={() =>
           this.props.navigation.navigate("AccountCurrencySettings", {
             currencyId: currency.id,
+            fromAccount: true,
           })
         }
       />

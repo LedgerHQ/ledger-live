@@ -2,11 +2,9 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import { createAccountModel } from "@ledgerhq/live-common/lib/models/account";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import accountModel from "../logic/accountModel";
 import { UP_TO_DATE_THRESHOLD } from "../constants";
-
-export const accountModel = createAccountModel();
 
 export type AccountsState = {
   active: Account[],
@@ -50,9 +48,10 @@ const handlers: Object = {
   ): AccountsState => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
-  CLEAN_ACCOUNTS_CACHE: (state: AccountsState): AccountsState => ({
+  CLEAN_CACHE: (state: AccountsState): AccountsState => ({
     active: state.active.map(account => ({
       ...account,
+      lastSyncDate: new Date(0),
       operations: [],
       pendingOperations: [],
     })),

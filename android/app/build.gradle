@@ -114,8 +114,8 @@ android {
         applicationId "com.ledger.live"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -178,6 +178,8 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':react-native-android-location-services-dialog-box')
+    compile project(':react-native-randombytes')
     compile project(':react-native-gesture-handler')
     compile project(':react-native-open-settings')
     compile project(':react-native-screens')
@@ -196,6 +198,7 @@ dependencies {
             force = true
         }
     }
+    compile project(':react-native-version-number')
     compile project(':react-native-ledger-core')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"

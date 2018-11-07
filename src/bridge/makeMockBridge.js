@@ -5,10 +5,10 @@ import {
   genAccount,
   genOperation,
 } from "@ledgerhq/live-common/lib/mock/account";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import { validateNameEdition } from "@ledgerhq/live-common/lib/account";
 import { BigNumber } from "bignumber.js";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
-import { validateNameEdition } from "../logic/account";
 import type { AccountBridge, CurrencyBridge } from "./types";
 import { SyncError } from "../errors";
 
@@ -93,6 +93,13 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     ...extraInitialTransactionProps(),
   });
 
+  const fetchTransactionNetworkInfo = () => Promise.resolve({});
+
+  const applyTransactionNetworkInfo = () => (account, transaction) =>
+    transaction;
+
+  const getTransactionNetworkInfo = () => ({});
+
   const editTransactionAmount = (account, t, amount) => ({
     ...t,
     amount,
@@ -105,6 +112,10 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
   });
 
   const getTransactionRecipient = (a, t) => t.recipient;
+
+  const editTransactionExtra = (account, t) => t;
+
+  const getTransactionExtra = () => undefined;
 
   const signAndBroadcast = (account, t, _deviceId) =>
     Observable.create(o => {
@@ -146,10 +157,15 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     startSync,
     checkValidRecipient,
     createTransaction,
+    fetchTransactionNetworkInfo,
+    getTransactionNetworkInfo,
+    applyTransactionNetworkInfo,
     editTransactionAmount,
     getTransactionAmount,
     editTransactionRecipient,
     getTransactionRecipient,
+    editTransactionExtra,
+    getTransactionExtra,
     checkValidTransaction,
     getTotalSpent,
     getMaxAmount,

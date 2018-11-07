@@ -1,10 +1,8 @@
 // @flow
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import colors from "../../colors";
-import StyledStatusBar from "../../components/StyledStatusBar";
 import AnimatedTopBar from "./AnimatedTopBar";
 import { scrollToTopIntent } from "./events";
 import { isUpToDateSelector } from "../../reducers/accounts";
@@ -38,19 +36,16 @@ class Portfolio extends Component<{
       isUpToDate,
     } = this.props;
     return (
-      <Fragment>
-        <StyledStatusBar backgroundColor={colors.lightGrey} />
-        <AnimatedTopBar
-          scrollY={scrollY}
-          summary={summary}
-          pending={globalSyncState.pending && !isUpToDate}
-          error={
-            isUpToDate || !globalSyncState.error
-              ? null
-              : networkError || globalSyncState.error
-          }
-        />
-      </Fragment>
+      <AnimatedTopBar
+        scrollY={scrollY}
+        summary={summary}
+        pending={globalSyncState.pending && !isUpToDate}
+        error={
+          isUpToDate || !globalSyncState.error
+            ? null
+            : networkError || globalSyncState.error
+        }
+      />
     );
   }
 }

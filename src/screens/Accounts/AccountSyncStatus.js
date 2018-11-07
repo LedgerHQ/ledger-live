@@ -8,15 +8,30 @@ import colors from "../../colors";
 import LText from "../../components/LText";
 import Spinning from "../../components/Spinning";
 
-class StatusSynchronizing extends PureComponent<{
+class StatusQueued extends PureComponent<{
   t: *,
-  spinning: boolean,
 }> {
   render() {
-    const { t, spinning } = this.props;
+    const { t } = this.props;
     return (
       <View style={styles.root}>
-        <Spinning paused={!spinning}>
+        <LText secondary style={styles.pendingText}>
+          <Icon name="clock" size={14} color={colors.grey} />{" "}
+          {t("accounts.row.queued")}
+        </LText>
+      </View>
+    );
+  }
+}
+
+class StatusSynchronizing extends PureComponent<{
+  t: *,
+}> {
+  render() {
+    const { t } = this.props;
+    return (
+      <View style={styles.root}>
+        <Spinning>
           <LiveLogo size={14} color={colors.grey} />
         </Spinning>
         <LText secondary style={styles.pendingText}>
@@ -69,7 +84,8 @@ class AccountSyncStatus extends Component<{
     const { t, isUpToDateAccount, pending, error } = this.props;
     if (isUpToDateAccount) return <StatusUpToDate t={t} />;
     if (!pending && error) return <StatusError t={t} />;
-    return <StatusSynchronizing t={t} spinning={pending} />;
+    if (pending) return <StatusSynchronizing t={t} />;
+    return <StatusQueued t={t} />;
   }
 }
 

@@ -10,12 +10,15 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
+import Config from "react-native-config";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
+import i18next from "i18next";
 import { currenciesSelector } from "../../reducers/accounts";
 import type { T } from "../../types/common";
 import SettingsCard from "../../components/SettingsCard";
+import PoweredByLedger from "./PoweredByLedger";
 import Assets from "../../icons/Assets";
 import LiveLogoIcon from "../../icons/LiveLogoIcon";
 import Help from "../../icons/Help";
@@ -33,11 +36,11 @@ const mapStateToProps = createStructuredSelector({
 });
 class Settings extends Component<Props, *> {
   static navigationOptions = {
-    title: "Settings",
+    title: i18next.t("settings.header"),
   };
 
   state = {
-    debugVisible: false,
+    debugVisible: Config.FORCE_DEBUG_VISIBLE || false,
   };
 
   navigateTo = (screenName: string) => {
@@ -70,33 +73,32 @@ class Settings extends Component<Props, *> {
   render() {
     const { t, currencies } = this.props;
     const { debugVisible } = this.state;
-
     return (
       <ScrollView>
         <View style={styles.root}>
           <SettingsCard
-            title={t("common:settings.display.title")}
-            desc={t("common:settings.display.desc")}
+            title={t("settings.display.title")}
+            desc={t("settings.display.desc")}
             icon={<Display size={16} color={colors.live} />}
             onClick={() => this.navigateTo("GeneralSettings")}
           />
           {currencies.length > 0 && (
             <SettingsCard
-              title={t("common:settings.currencies.title")}
-              desc={t("common:settings.currencies.desc")}
+              title={t("settings.currencies.title")}
+              desc={t("settings.currencies.desc")}
               icon={<Assets size={16} color={colors.live} />}
               onClick={() => this.navigateTo("CurrencySettings")}
             />
           )}
           <SettingsCard
-            title={t("common:settings.about.title")}
-            desc={t("common:settings.about.desc")}
+            title={t("settings.about.title")}
+            desc={t("settings.about.desc")}
             icon={<LiveLogoIcon size={16} color={colors.live} />}
             onClick={() => this.navigateTo("AboutSettings")}
           />
           <SettingsCard
-            title={t("common:settings.help.title")}
-            desc={t("common:settings.help.desc")}
+            title={t("settings.help.title")}
+            desc={t("settings.help.desc")}
             icon={<Help size={16} color={colors.live} />}
             onClick={() => this.navigateTo("HelpSettings")}
           />
@@ -112,6 +114,7 @@ class Settings extends Component<Props, *> {
               <View style={{ height: 50 }} />
             </TouchableWithoutFeedback>
           )}
+          <PoweredByLedger />
         </View>
       </ScrollView>
     );

@@ -22,7 +22,7 @@ class DescriptionRow extends PureComponent<{
         />
 
         <LText style={styles.description}>
-          {t("common:settings.about.appDescription")}
+          {t("settings.about.appDescription")}
         </LText>
       </View>
     );

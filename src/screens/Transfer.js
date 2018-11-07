@@ -3,8 +3,9 @@ import React, { Component, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import Touchable from "../components/Touchable";
 import CreateModal from "../modals/Create";
-import colors from "../colors";
 import TransferIcon from "../icons/Transfer";
+import defaultNavigationOptions from "./defaultNavigationOptions";
+import ExchangeScreen from "./Exchange";
 
 const styles = StyleSheet.create({
   root: {
@@ -14,7 +15,17 @@ const styles = StyleSheet.create({
   },
 });
 
-class Transfer extends Component<null, { isModalOpened: boolean }> {
+const hitSlop = {
+  top: 10,
+  left: 25,
+  right: 25,
+  bottom: 25,
+};
+
+class Transfer extends Component<
+  { tintColor: string },
+  { isModalOpened: boolean },
+> {
   state = {
     isModalOpened: false,
   };
@@ -27,9 +38,9 @@ class Transfer extends Component<null, { isModalOpened: boolean }> {
     const { isModalOpened } = this.state;
     return (
       <Fragment>
-        <Touchable onPress={this.openModal}>
+        <Touchable hitSlop={hitSlop} onPress={this.openModal}>
           <View style={styles.root}>
-            <TransferIcon size={18} color={colors.grey} />
+            <TransferIcon size={18} color={this.props.tintColor} />
           </View>
         </Touchable>
         <CreateModal isOpened={isModalOpened} onClose={this.onModalClose} />
@@ -40,11 +51,13 @@ class Transfer extends Component<null, { isModalOpened: boolean }> {
 
 export default class Create extends Component<*> {
   static navigationOptions = {
+    ...defaultNavigationOptions,
     tabBarIcon: (props: *) => <Transfer {...props} />,
     tabBarOnPress: () => {}, // noop
   };
 
   render() {
-    return null;
+    const { ...props } = this.props;
+    return <ExchangeScreen {...props} />;
   }
 }

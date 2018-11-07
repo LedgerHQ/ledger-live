@@ -3,7 +3,6 @@
 import React, { Component } from "react";
 import { withNavigation } from "react-navigation";
 import { translate } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
 
 import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
@@ -15,45 +14,31 @@ import type { T } from "../types/common";
 import type { Props as ModalProps } from "../components/BottomModal";
 
 type Props = ModalProps & {
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   t: T,
 };
 
 class CreateModal extends Component<Props> {
-  onSendFunds = () => {
+  onNavigate = (routeName: string, key: string) => {
     const { navigation, onClose } = this.props;
     navigation.navigate({
-      routeName: "SendFunds",
+      routeName,
       params: {
         goBackKey: navigation.state.key,
       },
-      key: "sendfunds",
+      key,
     });
     onClose();
   };
 
-  onReceiveFunds = () => {
-    const { navigation, onClose } = this.props;
-    navigation.navigate({
-      routeName: "ReceiveFunds",
-      params: { goBackKey: navigation.state.key },
-      key: "receiveffunds",
-    });
-    onClose();
-  };
-
-  onExchange = () => {
-    console.warn(`TODO: exchange screen`);
-  };
+  onSendFunds = () => this.onNavigate("SendFunds", "sendfunds");
+  onReceiveFunds = () => this.onNavigate("ReceiveFunds", "receivefunds");
+  onExchange = () => this.onNavigate("Transfer", "transfer");
 
   render() {
     const { onClose, isOpened, t } = this.props;
     return (
-      <BottomModal
-        isOpened={isOpened}
-        onClose={onClose}
-        style={{ paddingVertical: 20 }}
-      >
+      <BottomModal isOpened={isOpened} onClose={onClose}>
         <BottomModalChoice
           title={t("transfer.send.title")}
           description={t("transfer.send.desc")}

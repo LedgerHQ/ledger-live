@@ -7,14 +7,12 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Result } from "@ledgerhq/live-common/lib/bridgestream/importer";
+import type { Result } from "@ledgerhq/live-common/lib/cross";
+import { accountDataToAccount } from "@ledgerhq/live-common/lib/cross";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { T } from "../../types/common";
-import {
-  importExistingAccount,
-  supportsExistingAccount,
-} from "../../logic/account";
+import { supportsExistingAccount } from "../../cryptocurrencies";
 import { importDesktopSettings } from "../../actions/settings";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
@@ -22,7 +20,6 @@ import { accountsSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import Button from "../../components/Button";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
@@ -39,7 +36,11 @@ type Item = {
 };
 
 type Props = {
-  navigation: NavigationScreenProp<{ result: Result }>,
+  navigation: NavigationScreenProp<{
+    params: {
+      result: Result,
+    },
+  }>,
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
@@ -75,57 +76,51 @@ class DisplayResult extends Component<Props, State> {
     this.unmounted = true;
   }
 
-  static navigationOptions = ({
-    navigation,
-  }: {
-    navigation: NavigationScreenProp<*>,
-  }) => ({
+  static navigationOptions = {
     title: i18next.t("account.import.result.title"),
-    headerRight: (
-      <HeaderRightClose
-        // $FlowFixMe
-        navigation={navigation.dangerouslyGetParent()}
-      />
-    ),
     headerLeft: null,
-  });
+  };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const items = nextProps.navigation
       .getParam("result")
-      .accounts.map(accInput => {
-        const prevItem = prevState.items.find(
-          item => item.account.id === accInput.id,
-        );
-        if (prevItem) return prevItem;
-        const existingAccount = nextProps.accounts.find(
-          a => a.id === accInput.id,
-        );
-        if (existingAccount) {
-          // only the name is supposed to change. rest is never changing
-          if (existingAccount.name === accInput.name) {
+      .accounts.map(
+        (accInput: *): ?Item => {
+          const prevItem = prevState.items.find(
+            item => item.account.id === accInput.id,
+          );
+          if (prevItem) return prevItem;
+          const existingAccount = nextProps.accounts.find(
+            a => a.id === accInput.id,
+          );
+          if (existingAccount) {
+            // only the name is supposed to change. rest is never changing
+            if (existingAccount.name === accInput.name) {
+              return {
+                account: existingAccount,
+                mode: "id",
+              };
+            }
             return {
-              account: existingAccount,
-              mode: "id",
+              account: { ...existingAccount, name: accInput.name },
+              mode: "patch",
             };
           }
-          return {
-            account: { ...existingAccount, name: accInput.name },
-            mode: "patch",
-          };
-        }
-        try {
-          const account = importExistingAccount(accInput);
-          return {
-            account,
-            mode: supportsExistingAccount(accInput) ? "create" : "unsupported",
-          };
-        } catch (e) {
-          console.warn(e);
-          return null;
-        }
-      })
-      .filter(o => o)
+          try {
+            const account = accountDataToAccount(accInput);
+            return {
+              account,
+              mode: supportsExistingAccount(accInput)
+                ? "create"
+                : "unsupported",
+            };
+          } catch (e) {
+            console.warn(e);
+            return null;
+          }
+        },
+      )
+      .filter(Boolean)
       .sort(
         (a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode],
       );
@@ -148,7 +143,7 @@ class DisplayResult extends Component<Props, State> {
     const { navigation } = this.props;
 
     // $FlowFixMe
-    navigation.dangerouslyGetParent().goBack();
+    navigation.dismiss();
   };
 
   onImport = async () => {
@@ -179,7 +174,6 @@ class DisplayResult extends Component<Props, State> {
       importDesktopSettings(navigation.getParam("result").settings);
     }
 
-    // $FlowFixMe
     navigation.navigate("Accounts");
   };
 

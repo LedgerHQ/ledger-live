@@ -1,11 +1,13 @@
 // @flow
+import "../shim";
 import "./polyfill"; /* eslint-disable import/first */
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
-import { useScreens } from "react-native-screens";
+// import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
+import { exportSelector as bleSelector } from "./reducers/ble";
 import CounterValues from "./countervalues";
 import LocaleProvider from "./context/Locale";
 import RebootProvider from "./context/Reboot";
@@ -19,10 +21,11 @@ import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
+import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import AppStateListener from "./components/AppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 
-useScreens();
+// useScreens(); // FIXME this is not working properly when using react-native-modal inside Send flow
 
 const styles = StyleSheet.create({
   root: {
@@ -36,6 +39,8 @@ class App extends Component<*> {
   hasSettingsChanged = (a, b) => a.settings !== b.settings;
 
   hasAccountsChanged = (a, b) => a.accounts !== b.accounts;
+
+  hasBleChanged = (a, b) => a.ble !== b.ble;
 
   render() {
     return (
@@ -60,12 +65,20 @@ class App extends Component<*> {
           hasChanged={this.hasAccountsChanged}
           lense={accountsExportSelector}
         />
+        <DBSave
+          dbKey="ble"
+          throttle={500}
+          hasChanged={this.hasBleChanged}
+          lense={bleSelector}
+        />
 
         <AppStateListener />
 
         <SyncNewAccounts priority={5} />
 
         <RootNavigator />
+
+        <DebugRejectSwitch />
       </View>
     );
   }
@@ -108,7 +121,7 @@ export default class Root extends Component<{}, {}> {
                     <LocaleProvider>
                       <BridgeSyncProvider>
                         <CounterValues.PollingProvider>
-                          <ButtonUseTouchable.Provider value={false}>
+                          <ButtonUseTouchable.Provider value={true}>
                             <App />
                           </ButtonUseTouchable.Provider>
                         </CounterValues.PollingProvider>

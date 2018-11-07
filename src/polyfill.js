@@ -1,6 +1,7 @@
 global.Buffer = require("buffer").Buffer;
 
 process.browser = true; // for readable-stream/lib/_stream_writable.js
+// FIXME shim want to set it to false tho...
 
 if (__DEV__ && process.env.NODE_ENV !== "test") {
   setTimeout(() => {

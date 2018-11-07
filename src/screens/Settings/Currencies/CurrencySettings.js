@@ -6,7 +6,7 @@ import { translate } from "react-i18next";
 import { View, Slider, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
 import {
@@ -71,7 +71,12 @@ class EachCurrencySettings extends Component<Props, LocalState> {
 
   goToExchange = () => {
     const { navigation, currency, currencySettings } = this.props;
-    navigation.navigate("RateProviderSettings", {
+    const fromAccountSettings = navigation.getParam("fromAccount");
+
+    const to = fromAccountSettings
+      ? "AccountRateProviderSettings"
+      : "RateProviderSettings";
+    navigation.navigate(to, {
       from: currency.ticker,
       to: intermediaryCurrency.ticker,
       selected: currencySettings.exchange,
@@ -100,7 +105,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
             })}
             onPress={currencySettings.exchange ? this.goToExchange : null}
           >
-            <LText style={styles.currencyExchange}>
+            <LText semiBold style={styles.currencyExchange}>
               {currencySettings.exchange}
             </LText>
           </SettingsRow>
@@ -111,6 +116,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
               title={t("settings.currencies.confirmationNb")}
               desc={t("settings.currencies.confirmationNbDesc")}
               onPress={null}
+              alignedTop
             >
               <LText
                 tertiary
@@ -128,6 +134,8 @@ class EachCurrencySettings extends Component<Props, LocalState> {
                 minimumValue={defaults.confirmationsNb.min}
                 maximumValue={defaults.confirmationsNb.max}
                 value={value}
+                thumbTintColor={colors.live}
+                minimumTrackTintColor={colors.live}
                 onValueChange={val => this.setState({ value: val })}
                 onSlidingComplete={this.updateSettings}
               />
@@ -175,6 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+    paddingTop: 8,
     paddingHorizontal: 16,
   },
   textContainer: {
@@ -210,8 +219,8 @@ export function CustomCurrencyHeader({
       <View style={{ marginRight: 5, justifyContent: "center" }}>
         <CurrencyIcon size={16} currency={currency} />
       </View>
-      <LText>
-        {t("common:settings.currencies.currencySettingsTitle", {
+      <LText semiBold secondary style={{ fontSize: 16 }}>
+        {t("settings.currencies.currencySettingsTitle", {
           currencyName: currency.name,
         })}
       </LText>

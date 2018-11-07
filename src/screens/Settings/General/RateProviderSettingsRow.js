@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import { StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
@@ -13,6 +14,7 @@ import {
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
 import LText from "../../../components/LText";
+import colors from "../../../colors";
 
 const mapStateToProps = createStructuredSelector({
   counterValueExchange: counterValueExchangeSelector,
@@ -50,12 +52,21 @@ class RateProviderSettingsRow extends PureComponent<{
             selected: counterValueExchange,
           })
         }
+        alignedTop
       >
-        <LText>{counterValueExchange}</LText>
+        <LText semiBold style={styles.exchangeText}>
+          {counterValueExchange}
+        </LText>
       </SettingsRow>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  exchangeText: {
+    color: colors.grey,
+  },
+});
 
 export default compose(
   connect(mapStateToProps),

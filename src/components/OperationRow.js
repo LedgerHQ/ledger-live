@@ -2,7 +2,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/helpers/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 
@@ -29,7 +29,7 @@ class OperationRow extends PureComponent<Props, *> {
 
   goToOperationDetails = () => {
     this.props.navigation.navigate("OperationDetails", {
-      account: this.props.account,
+      accountId: this.props.account.id,
       operation: this.props.operation,
     });
   };

@@ -30,9 +30,11 @@
         "ignoreRestSiblings": true
       }
     ],
+    "lines-between-class-members": 0,
     "flowtype/space-after-type-colon": 0,
     "no-return-assign": 0,
     "no-shadow": 0,
+    "no-unused-expressions": 0,
     "no-plusplus": 0,
     "no-nested-ternary": 0,
     "global-require": 0,
@@ -48,6 +50,7 @@
     "react/jsx-filename-extension": 0,
     "react/no-multi-comp": 0,
     "react/no-unused-state": 0,
+    "react/no-array-index-key": 0,
     "no-await-in-loop": 0,
     "class-methods-use-this": 0,
     "react/no-unused-prop-types": 0,

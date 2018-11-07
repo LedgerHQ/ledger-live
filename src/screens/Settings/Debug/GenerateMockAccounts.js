@@ -3,7 +3,7 @@ import React from "react";
 import sample from "lodash/sample";
 import { genAccount } from "@ledgerhq/live-common/lib/mock/account";
 import SettingsRow from "../../../components/SettingsRow";
-import { accountModel } from "../../../reducers/accounts";
+import accountModel from "../../../logic/accountModel";
 import db from "../../../db";
 import { withReboot } from "../../../context/Reboot";
 import { listCryptoCurrencies } from "../../../cryptocurrencies";

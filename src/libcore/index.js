@@ -1,104 +1,126 @@
 // @flow
 // TODO split in files!!!
-
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/helpers/currencies";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { splittedCurrencies } from "../config/cryptocurrencies";
-import { accountModel } from "../reducers/accounts";
-import load from "./load";
-import * as accountIdHelper from "../logic/accountId";
-import { isSegwitPath, isUnsplitPath } from "../logic/bip32";
+import { BigNumber } from "bignumber.js";
 import {
+  isSegwitDerivationMode,
+  getDerivationScheme,
+} from "@ledgerhq/live-common/lib/derivation";
+import {
+  encodeAccountId,
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
-} from "../logic/accountName";
+  getWalletName,
+} from "@ledgerhq/live-common/lib/account";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import type {
+  Account,
+  Operation,
+  CryptoCurrency,
+  DerivationMode,
+} from "@ledgerhq/live-common/lib/types";
+import { InvalidAddress } from "@ledgerhq/live-common/lib/errors";
+import load from "./load";
 import {
   getValue,
   getBlockHeightForAccount,
   getOperationDate,
   createInstance,
-  OperationTypeMap,
 } from "./specific";
+import { atomicQueue } from "../logic/promise";
+import { remapLibcoreErrors } from "./errors";
 
-type ScanOpts = {
-  isSegwit: boolean,
-  isUnsplit: boolean,
+const OperationTypeMap = {
+  "0": "OUT",
+  "1": "IN",
 };
 
-async function getOrCreateWallet({
-  core,
-  walletName,
-  currencyId,
-  opts: { isSegwit, isUnsplit },
-}: {
-  core: *,
-  walletName: string,
-  currencyId: string,
-  opts: ScanOpts,
-}) {
-  const poolInstance = core.getPoolInstance();
-  let wallet;
-  try {
-    wallet = await core.coreWalletPool.getWallet(poolInstance, walletName);
-  } catch (err) {
-    const currency = await core.coreWalletPool.getCurrency(
-      poolInstance,
-      currencyId,
-    );
-    const config = await core.coreDynamicObject.newInstance();
-    const splitConfig = isUnsplit
-      ? splittedCurrencies[currencyId] || null
-      : null;
-    const coinType = splitConfig ? splitConfig.coinType : "<coin_type>";
-    if (isSegwit) {
-      core.coreDynamicObject.putString(config, "KEYCHAIN_ENGINE", "BIP49_P2SH");
-      core.coreDynamicObject.putString(
-        config,
-        "KEYCHAIN_DERIVATION_SCHEME",
-        `49'/${coinType}'/<account>'/<node>/<address>`,
+export const getOrCreateWallet = atomicQueue(
+  async ({
+    core,
+    walletName,
+    currency,
+    derivationMode,
+  }: {
+    core: *,
+    walletName: string,
+    currency: CryptoCurrency,
+    derivationMode: DerivationMode,
+  }) => {
+    const poolInstance = core.getPoolInstance();
+    let wallet;
+    try {
+      wallet = await core.coreWalletPool.getWallet(poolInstance, walletName);
+    } catch (err) {
+      const currencyCore = await core.coreWalletPool.getCurrency(
+        poolInstance,
+        currency.id,
       );
-    } else if (isUnsplit) {
+      const config = await core.coreDynamicObject.newInstance();
+
+      const derivationScheme = getDerivationScheme({
+        currency,
+        derivationMode,
+      });
+
+      if (isSegwitDerivationMode(derivationMode)) {
+        core.coreDynamicObject.putString(
+          config,
+          "KEYCHAIN_ENGINE",
+          "BIP49_P2SH",
+        );
+      }
       core.coreDynamicObject.putString(
         config,
         "KEYCHAIN_DERIVATION_SCHEME",
-        `44'/${coinType}'/<account>'/<node>/<address>`,
+        derivationScheme,
+      );
+
+      wallet = await core.coreWalletPool.createWallet(
+        poolInstance,
+        walletName,
+        currencyCore,
+        config,
       );
     }
-    wallet = await core.coreWalletPool.createWallet(
-      poolInstance,
-      walletName,
-      currency,
-      config,
-    );
-  }
-  return wallet;
+    return wallet;
+  },
+  ({ walletName }) => walletName,
+);
+
+export async function bigNumberToLibcoreAmount(
+  core: *,
+  walletCurrency: *,
+  amount: BigNumber,
+) {
+  return core.coreAmount.fromHex(walletCurrency, amount.toString(16));
+}
+
+export async function libcoreAmountToBigNumber(
+  core: *,
+  amountInstance: string,
+): Promise<BigNumber> {
+  const coreBigInt = await core.coreAmount.toBigInt(amountInstance);
+  const { value } = await core.coreBigInt.toString(coreBigInt, 10);
+  return BigNumber(value);
 }
 
 export async function syncAccount({ account }: { account: Account }) {
+  const { derivationMode, currency, xpub, index, seedIdentifier } = account;
   const core = await load();
-  const decodedAccountId = accountIdHelper.decode(account.id);
-  const { walletName } = decodedAccountId;
-
-  const isSegwit = isSegwitPath(account.freshAddressPath);
-  const isUnsplit = isUnsplitPath(
-    account.freshAddressPath,
-    splittedCurrencies[account.currency.id],
-  );
-
-  const opts = { isSegwit, isUnsplit };
+  const walletName = getWalletName(account);
 
   const coreWallet = await getOrCreateWallet({
     core,
     walletName,
-    currencyId: account.currency.id,
-    opts,
+    currency,
+    derivationMode,
   });
 
   const coreAccount = await getOrCreateAccount({
     core,
     coreWallet,
-    index: account.index,
-    xpub: decodedAccountId.xpub,
+    index,
+    xpub,
   });
 
   const updatedAccount = await syncCoreAccount({
@@ -106,125 +128,178 @@ export async function syncAccount({ account }: { account: Account }) {
     coreWallet,
     coreAccount,
     walletName,
-    currencyId: account.currency.id,
+    currencyId: currency.id,
     accountIndex: account.index,
-    opts,
+    derivationMode,
+    seedIdentifier,
   });
 
   return updatedAccount;
 }
 
-async function getOrCreateAccount({ core, coreWallet, xpub, index }) {
-  let coreAccount;
-  try {
-    coreAccount = await core.coreWallet.getAccount(coreWallet, index);
-  } catch (err) {
-    const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
-      coreWallet,
-      index,
-    );
+export async function createAccountFromDevice({
+  core,
+  wallet,
+  hwApp,
+}: {
+  core: *,
+  wallet: *,
+  hwApp: *,
+}) {
+  const accountCreationInfos = await core.coreWallet.getNextAccountCreationInfo(
+    wallet,
+  );
+  const chainCodes = getValue(
+    await core.coreAccountCreationInfo.getChainCodes(accountCreationInfos),
+  );
+  const publicKeys = getValue(
+    await core.coreAccountCreationInfo.getPublicKeys(accountCreationInfos),
+  );
+  const index = (await core.coreAccountCreationInfo.getIndex(
+    accountCreationInfos,
+  )).value;
+  const derivations = getValue(
+    await core.coreAccountCreationInfo.getDerivations(accountCreationInfos),
+  );
+  const owners = getValue(
+    await core.coreAccountCreationInfo.getOwners(accountCreationInfos),
+  );
 
-    const infosIndex = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getIndex(extendedInfos),
-    );
-    const extendedKeys = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
-        extendedInfos,
-      ),
-    );
-    const owners = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getOwners(extendedInfos),
-    );
-    const derivations = getValue(
-      await core.coreExtendedKeyAccountCreationInfo.getDerivations(
-        extendedInfos,
-      ),
-    );
+  await derivations.reduce(
+    (promise, derivation) =>
+      promise.then(async () => {
+        const { publicKey, chainCode } = await hwApp.getWalletPublicKey(
+          derivation,
+        );
+        publicKeys.push(publicKey);
+        chainCodes.push(chainCode);
+      }),
+    Promise.resolve(),
+  );
 
-    extendedKeys.push(xpub);
+  const newAccountCreationInfos = await core.coreAccountCreationInfo.init(
+    index,
+    owners,
+    derivations,
+    publicKeys,
+    chainCodes,
+  );
 
-    const newExtendedKeys = await core.coreExtendedKeyAccountCreationInfo.init(
-      infosIndex,
-      owners,
-      derivations,
-      extendedKeys,
-    );
-
-    coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
-      coreWallet,
-      newExtendedKeys,
-    );
-  }
-  return coreAccount;
+  return core.coreWallet.newAccountWithInfo(wallet, newAccountCreationInfos);
 }
+
+const getOrCreateAccount = atomicQueue(
+  async ({ core, coreWallet, xpub, index }) => {
+    let coreAccount;
+    try {
+      coreAccount = await core.coreWallet.getAccount(coreWallet, index);
+    } catch (err) {
+      const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
+        coreWallet,
+        index,
+      );
+
+      const infosIndex = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getIndex(extendedInfos),
+      );
+      const extendedKeys = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
+          extendedInfos,
+        ),
+      );
+      const owners = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getOwners(extendedInfos),
+      );
+      const derivations = getValue(
+        await core.coreExtendedKeyAccountCreationInfo.getDerivations(
+          extendedInfos,
+        ),
+      );
+
+      extendedKeys.push(xpub);
+
+      const newExtendedKeys = await core.coreExtendedKeyAccountCreationInfo.init(
+        infosIndex,
+        owners,
+        derivations,
+        extendedKeys,
+      );
+
+      coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
+        coreWallet,
+        newExtendedKeys,
+      );
+    }
+    return coreAccount;
+  },
+  ({ xpub }) => xpub || "",
+);
 
 export async function syncCoreAccount({
   core,
   coreWallet,
   coreAccount,
-  walletName,
   currencyId,
   accountIndex,
-  opts,
+  derivationMode,
+  seedIdentifier,
 }: {
   core: *,
   coreWallet: *,
   coreAccount: *,
-  walletName: string,
   currencyId: string,
   accountIndex: number,
-  opts: ScanOpts,
-}) {
+  derivationMode: DerivationMode,
+  seedIdentifier: string,
+}): Promise<Account> {
   const eventReceiver = await createInstance(core.coreEventReceiver);
   const eventBus = await core.coreAccount.synchronize(coreAccount);
-  const serialContext = await core.coreThreadDispatcher.getSerialExecutionContext(
+  const serialContext = await core.coreThreadDispatcher.getMainExecutionContext(
     core.getThreadDispatcher(),
-    "main",
   );
   await core.coreEventBus.subscribe(eventBus, serialContext, eventReceiver);
 
   const query = await core.coreAccount.queryOperations(coreAccount);
   const completedQuery = await core.coreOperationQuery.complete(query);
   const coreOperations = await core.coreOperationQuery.execute(completedQuery);
-  const rawAccount = await buildAccountRaw({
+  const account = await buildAccount({
     core,
     coreWallet,
     coreAccount,
     coreOperations,
-    walletName,
     currencyId,
     accountIndex,
-    opts,
+    derivationMode,
+    seedIdentifier,
   });
 
   await core.flush();
 
-  return accountModel.decode({ data: rawAccount, version: 0 });
+  return account;
 }
 
-// TODO get read of the "AccountRaw" abstraction
-async function buildAccountRaw({
+async function buildAccount({
   core,
   coreWallet,
   coreAccount,
   coreOperations,
-  walletName,
   currencyId,
   accountIndex,
-  opts: { isSegwit, isUnsplit },
+  derivationMode,
+  seedIdentifier,
 }: {
   core: *,
   coreWallet: *,
   coreAccount: *,
   coreOperations: *,
-  walletName: string,
   currencyId: string,
   accountIndex: number,
-  opts: ScanOpts,
+  derivationMode: DerivationMode,
+  seedIdentifier: string,
 }) {
   const nativeBalance = await core.coreAccount.getBalance(coreAccount);
 
-  const { value: balance } = await core.coreAmount.toLong(nativeBalance);
+  const balance = await libcoreAmountToBigNumber(core, nativeBalance);
 
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -237,7 +312,7 @@ async function buildAccountRaw({
     await core.coreAccountCreationInfo.getDerivations(coreAccountCreationInfo),
   );
 
-  const [walletPath, accountPath] = derivations;
+  const [, accountPath] = derivations;
 
   const blockHeight = await getBlockHeightForAccount(core, coreAccount);
 
@@ -258,28 +333,32 @@ async function buildAccountRaw({
 
   const name =
     coreOperations.length === 0
-      ? getNewAccountPlaceholderName(currency, accountIndex)
-      : getAccountPlaceholderName(
+      ? getNewAccountPlaceholderName({
           currency,
-          accountIndex,
-          (currency.supportsSegwit && !isSegwit) || false,
-          isUnsplit,
-        );
+          index: accountIndex,
+          derivationMode,
+        })
+      : getAccountPlaceholderName({
+          currency,
+          index: accountIndex,
+          derivationMode,
+        });
 
   // retrieve xpub
   const { value: xpub } = await core.coreAccount.getRestoreKey(coreAccount);
 
-  const id = accountIdHelper.encode({
+  const id = encodeAccountId({
     type: "libcore",
     version: "1",
-    xpub,
-    walletName,
+    currencyId: currency.id,
+    xpubOrAddress: xpub,
+    derivationMode,
   });
 
   // build operations
   const operations = await Promise.all(
     coreOperations.map(coreOperation =>
-      buildOperationRaw({
+      buildOperation({
         core,
         coreOperation,
         accountId: id,
@@ -287,28 +366,28 @@ async function buildAccountRaw({
     ),
   );
 
-  return {
+  const raw: $Exact<Account> = {
     id,
+    seedIdentifier,
     xpub,
-    path: walletPath,
-    name,
-    isSegwit,
+    derivationMode,
+    index: accountIndex,
     freshAddress: freshAddress.str,
     freshAddressPath: freshAddress.path,
+    name,
     balance,
     blockHeight,
-    archived: false,
-    index: accountIndex,
+    currency,
+    unit: currency.units[0],
     operations,
     pendingOperations: [],
-    currencyId,
-    unitMagnitude: currency.units[0].magnitude,
-    lastSyncDate: new Date().toISOString(),
+    lastSyncDate: new Date(),
   };
+
+  return raw;
 }
 
-// TODO get read of the "OperationRaw" abstraction (directly generate Operation)
-async function buildOperationRaw({
+async function buildOperation({
   core,
   coreOperation,
   accountId,
@@ -317,8 +396,6 @@ async function buildOperationRaw({
   coreOperation: *,
   accountId: string,
 }) {
-  // FIXME lot of async stuff could be done in parallel. [a,b]=await Promise.all(...)
-
   const bitcoinLikeOperation = await core.coreOperation.asBitcoinLikeOperation(
     coreOperation,
   );
@@ -333,10 +410,10 @@ async function buildOperationRaw({
   );
 
   const coreValue = await core.coreOperation.getAmount(coreOperation);
-  const { value } = await core.coreAmount.toLong(coreValue);
+  const value = await libcoreAmountToBigNumber(core, coreValue);
 
   const coreFee = await core.coreOperation.getFees(coreOperation);
-  const { value: fee } = await core.coreAmount.toLong(coreFee);
+  const fee = await libcoreAmountToBigNumber(core, coreFee);
 
   const { value: blockHeight } = await core.coreOperation.getBlockHeight(
     coreOperation,
@@ -353,7 +430,7 @@ async function buildOperationRaw({
 
   const id = `${accountId}-${hash}-${type}`;
 
-  return {
+  const op: $Exact<Operation> = {
     id,
     hash,
     type,
@@ -364,6 +441,117 @@ async function buildOperationRaw({
     blockHeight,
     blockHash: null, // FIXME: why? (unused)
     accountId,
-    date: date.toISOString(),
+    date,
   };
+
+  return op;
+}
+
+export async function isValidRecipient({
+  currency,
+  recipient,
+}: {
+  currency: CryptoCurrency,
+  recipient: string,
+}): Promise<?Error> {
+  const core = await load();
+  const poolInstance = core.getPoolInstance();
+  const currencyCore = await core.coreWalletPool.getCurrency(
+    poolInstance,
+    currency.id,
+  );
+  const addr = core.coreAddress;
+  const { value } = await addr.isValid(recipient, currencyCore);
+  if (value) {
+    return Promise.resolve(null);
+  }
+
+  return Promise.resolve(
+    new InvalidAddress("", { currencyName: currency.name }),
+  );
+}
+
+export async function getFeesForTransaction({
+  account,
+  transaction,
+}: {
+  account: Account,
+  transaction: *,
+}): Promise<BigNumber> {
+  try {
+    const { derivationMode, currency, xpub, index } = account;
+    const core = await load();
+    const walletName = getWalletName(account);
+
+    const coreWallet = await getOrCreateWallet({
+      core,
+      walletName,
+      currency,
+      derivationMode,
+    });
+
+    const coreAccount = await getOrCreateAccount({
+      core,
+      coreWallet,
+      index,
+      xpub,
+    });
+
+    const bitcoinLikeAccount = await core.coreAccount.asBitcoinLikeAccount(
+      coreAccount,
+    );
+
+    const walletCurrency = await core.coreWallet.getCurrency(coreWallet);
+
+    const amount = await bigNumberToLibcoreAmount(
+      core,
+      walletCurrency,
+      BigNumber(transaction.amount),
+    );
+
+    const feesPerByte = await bigNumberToLibcoreAmount(
+      core,
+      walletCurrency,
+      BigNumber(transaction.feePerByte),
+    );
+
+    const transactionBuilder = await core.coreBitcoinLikeAccount.buildTransaction(
+      bitcoinLikeAccount,
+    );
+
+    const isValid = await isValidRecipient({
+      currency: account.currency,
+      recipient: transaction.recipient,
+    });
+
+    if (isValid !== null) {
+      throw new InvalidAddress("", { currencyName: currency.name });
+    }
+
+    await core.coreBitcoinLikeTransactionBuilder.sendToAddress(
+      transactionBuilder,
+      amount,
+      transaction.recipient,
+    );
+
+    await core.coreBitcoinLikeTransactionBuilder.pickInputs(
+      transactionBuilder,
+      0,
+      0xffffff,
+    );
+
+    await core.coreBitcoinLikeTransactionBuilder.setFeesPerByte(
+      transactionBuilder,
+      feesPerByte,
+    );
+
+    const builded = await core.coreBitcoinLikeTransactionBuilder.build(
+      transactionBuilder,
+    );
+    const feesAmount = await core.coreBitcoinLikeTransaction.getFees(builded);
+    const fees = await libcoreAmountToBigNumber(core, feesAmount);
+    return fees;
+  } catch (error) {
+    throw remapLibcoreErrors(error);
+  }
 }

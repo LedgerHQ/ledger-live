@@ -48,11 +48,42 @@ Optional environment variables you can put in `.env`, `.env.production` or `.env
 ```
 DEBUG_COMM_HTTP_PROXY=http://localhost:8435   # enable a dev mode to use the device over HTTP. use with https://github.com/LedgerHQ/ledgerjs/tree/master/packages/hw-http-proxy-devserver
 BRIDGESTREAM_DATA=...       # come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning
-READ_ONLY=0                 # re-enable screens which have been disabled for MVP (transfer and manager)
 DEBUG_RNDEBUGGER=1          # enable react native debugger
 ```
 
-## Troobleshooting
+## Maintenance
+
+### Refresh the flow-typed from flow-typed Github
+
+```
+yarn sync-flowtyped
+```
+
+### Refresh the languages (if we add new languages)
+
+```
+yarn sync-locales
+```
+
+### Release on testflight
+
+currently it is manually done with XCode.
+
+save your own .env somewhere and do:
+
+```
+cp .env.staging .env
+```
+
+- go to XCode.
+- manually increment the Build number in ledgerlivemobile Target.
+- go to Build Phases, expand Copy Files and remove ledger-core.framework from the list.
+- select Generic iOS Device target and do a Product > Archive.
+- The Archives window will open, click on Distribute App and follow the steps.
+  - if you miss a certificate problem, please contact gre.
+- commit the Info.plist but NOT the ledgerlivemobile.xcodeproj changes.
+
+## Troubleshooting
 
 ### XCode 10
 

@@ -1,11 +1,11 @@
 // @flow
 import React, { PureComponent, Fragment } from "react";
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
-import throttle from "lodash/throttle";
+import { StyleSheet, TextInput, View } from "react-native";
 
-import Search from "./Search";
 import SearchIcon from "../icons/Search";
-import Close from "../icons/Close";
+import Search from "./Search";
+import InputResetCross from "./InputResetCross";
+import getFontStyle from "./LText/getFontStyle";
 
 import colors from "../colors";
 
@@ -14,6 +14,7 @@ type Props = {
   renderEmptySearch: () => React$Node,
   keys?: Array<string>,
   list: Array<*>,
+  inputWrapperStyle?: *,
 };
 
 type State = {
@@ -33,18 +34,13 @@ class FilteredSearchBar extends PureComponent<Props, State> {
 
   input = React.createRef();
 
-  componentWillUnmount() {
-    this.onChange.cancel();
-  }
-
   onFocus = () => this.setState({ focused: true });
 
   onBlur = () => this.setState({ focused: false });
 
-  onChange = throttle((text: string) => this.setState({ query: text }), 200);
+  onChange = (text: string) => this.setState({ query: text });
 
   clear = () => {
-    this.onChange.cancel();
     if (this.input.current) {
       this.input.current.clear();
     }
@@ -52,12 +48,18 @@ class FilteredSearchBar extends PureComponent<Props, State> {
   };
 
   render() {
-    const { keys, renderList, list, renderEmptySearch } = this.props;
+    const {
+      keys,
+      renderList,
+      list,
+      renderEmptySearch,
+      inputWrapperStyle,
+    } = this.props;
     const { query, focused } = this.state;
 
     return (
       <Fragment>
-        <View style={styles.wrapper}>
+        <View style={[styles.wrapper, inputWrapperStyle]}>
           <View style={styles.iconContainer}>
             <SearchIcon
               size={16}
@@ -74,17 +76,11 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             value={query}
             ref={this.input}
           />
-          {!!query && (
-            <TouchableOpacity onPress={this.clear}>
-              <View style={styles.closeContainer}>
-                <Close color={colors.white} size={8} />
-              </View>
-            </TouchableOpacity>
-          )}
+          {query ? <InputResetCross onPress={this.clear} /> : null}
         </View>
         <Search
           fuseOptions={{
-            threshold: 0.5,
+            threshold: 0.1,
             keys,
           }}
           value={query}
@@ -106,24 +102,11 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginRight: 16,
   },
-  crossContainer: {
-    marginLeft: 16,
-  },
   input: {
     flex: 1,
     fontSize: 18,
-    fontFamily: "Museo Sans",
-    fontWeight: "500",
     color: colors.darkBlue,
-  },
-  closeContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: 12,
-    height: 12,
-    borderRadius: 12,
-    backgroundColor: colors.fog,
-    marginLeft: 6,
+    ...getFontStyle({ secondary: true, semiBold: true }),
   },
 });
 

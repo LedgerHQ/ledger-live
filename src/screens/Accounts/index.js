@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -8,7 +8,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import ImportedAccountsNotification from "../../components/ImportedAccountsNotification";
 
 import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
@@ -40,38 +39,32 @@ class Accounts extends Component<Props> {
 
   onAddMockAccount = () => {};
 
-  renderItem = ({ item }: { item: Account }) => (
+  renderItem = ({ item, index }: { item: Account, index: number }) => (
     <AccountRow
       navigation={this.props.navigation}
       account={item}
       accountId={item.id}
+      isLast={index === this.props.accounts.length - 1}
     />
   );
 
   keyExtractor = item => item.id;
 
-  initiallyHadNoAccounts = this.props.accounts.length === 0;
-
   render() {
-    const { accounts } = this.props;
+    const { accounts, navigation } = this.props;
 
     if (accounts.length === 0) {
-      return <NoAccounts />;
+      return <NoAccounts navigation={navigation} />;
     }
 
-    const enableImportNotif = this.initiallyHadNoAccounts;
-
     return (
-      <Fragment>
-        {enableImportNotif ? <ImportedAccountsNotification /> : null}
-        <List
-          data={accounts}
-          renderItem={this.renderItem}
-          keyExtractor={this.keyExtractor}
-          style={styles.list}
-          contentContainerStyle={styles.contentContainer}
-        />
-      </Fragment>
+      <List
+        data={accounts}
+        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
+        style={styles.list}
+        contentContainerStyle={styles.contentContainer}
+      />
     );
   }
 }
@@ -84,7 +77,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 16,
-    paddingHorizontal: 16,
     paddingBottom: 64,
   },
 });

@@ -27,9 +27,9 @@ type BaseProps = {
   // the button will toggle in a pending state and
   // will wait the promise to complete before enabling the button again
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
-  onPress: () => ?Promise<any> | any,
+  onPress?: () => ?Promise<any> | any,
   // text of the button
-  title: string,
+  title: React$Node,
   containerStyle?: *,
   titleStyle?: *,
   IconLeft?: *,
@@ -70,6 +70,7 @@ class Button extends PureComponent<
   }
 
   onPress = async () => {
+    if (!this.props.onPress) return;
     let isPromise;
     try {
       const res = this.props.onPress();
@@ -251,7 +252,8 @@ const styles = StyleSheet.create({
   primaryTitle: { color: "white" },
 
   secondaryContainer: { backgroundColor: "transparent" },
-  secondaryOutlineBorder: { borderColor: colors.grey },
+  secondaryTitle: { color: colors.grey },
+  secondaryOutlineBorder: { borderColor: colors.fog },
 
   tertiaryContainer: { backgroundColor: "transparent" },
   tertiaryTitle: { color: colors.live },

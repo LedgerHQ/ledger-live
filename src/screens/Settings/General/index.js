@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import i18next from "i18next";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import RateProviderSettingsRow from "./RateProviderSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
@@ -12,7 +13,7 @@ class GeneralSettings extends PureComponent<{
   navigation: NavigationScreenProp<*>,
 }> {
   static navigationOptions = {
-    title: "General",
+    title: i18next.t("settings.display.title"),
   };
 
   render() {
@@ -22,10 +23,8 @@ class GeneralSettings extends PureComponent<{
         <CountervalueSettingsRow navigation={navigation} />
         <RateProviderSettingsRow navigation={navigation} />
         <AuthSecurityToggle />
-        {null && <ReportErrorsRow /> // FIXME enable when implemented
-        }
-        {null && <AnalyticsRow /> // FIXME enable when implemented
-        }
+        <ReportErrorsRow />
+        <AnalyticsRow />
       </ScrollView>
     );
   }
