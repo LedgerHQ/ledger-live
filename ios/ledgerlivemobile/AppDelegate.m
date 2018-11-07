@@ -37,7 +37,9 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  #ifndef DEBUG
     [RNSplashScreen show];
+  #endif
   return YES;
 }
 
