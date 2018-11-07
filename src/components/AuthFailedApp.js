@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { translate } from "react-i18next";
 import { withReboot } from "../context/Reboot";
 import LText from "./LText";
@@ -8,8 +8,6 @@ import type { T } from "../types/common";
 import colors from "../colors";
 import BottomModal from "./BottomModal";
 import Button from "./Button";
-import LedgerLiveLogo from "./LedgerLiveLogo";
-import LiveLogo from "../icons/LiveLogo";
 import HardResetModal from "./HardResetModal";
 
 type Props = {
@@ -40,11 +38,7 @@ class AuthFailedApp extends Component<Props, State> {
     return (
       <View style={styles.root}>
         <View style={styles.descriptionContainer}>
-          <LedgerLiveLogo
-            width={62}
-            height={62}
-            icon={<LiveLogo size={42} color={colors.live} />}
-          />
+          <Image source={require("../images/logo_small.png")} />
           <LText semiBold style={styles.title}>
             {t("auth.failed.title")}
           </LText>
