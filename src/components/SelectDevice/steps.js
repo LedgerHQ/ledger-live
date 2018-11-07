@@ -3,7 +3,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { Observable, from, defer, throwError, timer } from "rxjs";
-import { map, retryWhen, mergeMap, catchError, first } from "rxjs/operators";
+import { map, retryWhen, mergeMap, first } from "rxjs/operators";
 import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
@@ -32,6 +32,34 @@ import { deviceNames } from "../../wording";
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
 
+const transportCleanup = (transport: Transport<*>) => <T>(
+  observable: Observable<T>,
+): Observable<T> =>
+  Observable.create(o => {
+    let done = false;
+    const sub = observable.subscribe({
+      next: e => o.next(e),
+      complete: () => {
+        done = true;
+        transport
+          .close()
+          .catch(() => {})
+          .then(() => o.complete());
+      },
+      error: e => {
+        done = true;
+        transport
+          .close()
+          .catch(() => {})
+          .then(() => o.error(e));
+      },
+    });
+    return () => {
+      sub.unsubscribe();
+      if (!done) transport.close();
+    };
+  });
+
 const withDevice = (deviceId: string) => <T>(
   job: (t: Transport<*>) => Observable<T>,
 ): Observable<T> =>
@@ -42,20 +70,7 @@ const withDevice = (deviceId: string) => <T>(
       }),
     ),
   ).pipe(
-    mergeMap(transport =>
-      job(transport).pipe(
-        // throw error after closing the transport
-        catchError(error =>
-          from(
-            transport.close().then(() => {
-              throw error;
-            }),
-          ),
-        ),
-        // returns meta after a close, whatever if close succeed
-        mergeMap(meta => from(transport.close().then(() => meta, () => meta))),
-      ),
-    ),
+    mergeMap(transport => job(transport).pipe(transportCleanup(transport))),
   );
 
 const genericCanRetryOnError = err => {
@@ -138,7 +153,7 @@ export const genuineCheck: Step = {
   ),
   run: (deviceId, meta) =>
     withDevice(deviceId)(transport =>
-      from(doGenuineCheck(transport, meta.deviceInfo)),
+      doGenuineCheck(transport, meta.deviceInfo),
     ).pipe(
       map(genuineResult => ({
         ...meta,
