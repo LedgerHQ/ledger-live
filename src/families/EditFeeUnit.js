@@ -7,6 +7,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { translate } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../bridge";
+import { getFeeByFamily, editTxFeeByFamily } from "./helpers";
 import type { T } from "../types/common";
 import SettingsRow from "../components/SettingsRow";
 import LText from "../components/LText";
@@ -31,10 +32,8 @@ type State = {
 class EditFeeUnit extends PureComponent<Props, State> {
   constructor({ account, navigation }) {
     super();
-    const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
     this.state = {
-      fee: bridge.getTransactionExtra(account, transaction, "fee"),
+      fee: getFeeByFamily(account, navigation),
       isModalOpened: false,
     };
   }
@@ -66,18 +65,11 @@ class EditFeeUnit extends PureComponent<Props, State> {
   onValidateFees = () => {
     const { navigation, account } = this.props;
     const { fee } = this.state;
-    const bridge = getAccountBridge(account);
-    const transaction = navigation.getParam("transaction");
     Keyboard.dismiss();
 
     navigation.navigate("SendSummary", {
       accountId: account.id,
-      transaction: bridge.editTransactionExtra(
-        account,
-        transaction,
-        "fee",
-        fee,
-      ),
+      transaction: editTxFeeByFamily(account, navigation, fee),
     });
   };
 

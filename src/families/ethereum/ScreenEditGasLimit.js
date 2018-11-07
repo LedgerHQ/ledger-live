@@ -10,11 +10,11 @@ import {
 } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { BigNumber } from "bignumber.js";
 import { translate } from "react-i18next";
 import i18next from "i18next";
+import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "../../bridge/RippleJSBridge";
 import { getAccountBridge } from "../../bridge";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
@@ -22,6 +22,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
 import type { T } from "../../types/common";
+import type { Transaction } from "../../bridge/EthereumJSBridge";
 
 type Props = {
   account: Account,
@@ -33,12 +34,12 @@ type Props = {
 };
 
 type State = {
-  tag: string,
+  gasLimit: string,
 };
 
-class RippleEditTag extends PureComponent<Props, State> {
+class EthereumEditGasLimit extends PureComponent<Props, State> {
   static navigationOptions = {
-    title: i18next.t("send.summary.tag"),
+    title: i18next.t("send.summary.gasLimit"),
   };
 
   constructor({ account, navigation }) {
@@ -46,16 +47,16 @@ class RippleEditTag extends PureComponent<Props, State> {
     const bridge = getAccountBridge(account);
     const transaction = navigation.getParam("transaction");
     this.state = {
-      tag: bridge.getTransactionExtra(account, transaction, "tag"),
+      gasLimit: bridge.getTransactionExtra(account, transaction, "gasLimit"),
     };
   }
-  onChangeTag = (tag: string) => {
-    this.setState({ tag });
+  onChangeTag = (gasLimit: string) => {
+    this.setState({ gasLimit });
   };
 
   onValidateText = () => {
     const { navigation, account } = this.props;
-    const { tag } = this.state;
+    const { gasLimit } = this.state;
     const bridge = getAccountBridge(account);
     const transaction = navigation.getParam("transaction");
     Keyboard.dismiss();
@@ -64,14 +65,14 @@ class RippleEditTag extends PureComponent<Props, State> {
       transaction: bridge.editTransactionExtra(
         account,
         transaction,
-        "tag",
-        parseInt(tag, 10),
+        "gasLimit",
+        BigNumber(gasLimit),
       ),
     });
   };
 
   render() {
-    const { tag } = this.state;
+    const { gasLimit } = this.state;
     const { t } = this.props;
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -80,18 +81,18 @@ class RippleEditTag extends PureComponent<Props, State> {
             <TextInput
               autoFocus
               style={styles.textInputAS}
-              defaultValue={tag ? tag.toString() : ""}
+              defaultValue={gasLimit ? gasLimit.toString() : ""}
               keyboardType="numeric"
               returnKeyType="done"
               maxLength={10}
-              onChangeText={tag => this.setState({ tag })}
+              onChangeText={gasLimit => this.setState({ gasLimit })}
               onSubmitEditing={this.onValidateText}
             />
 
             <View style={styles.flex}>
               <Button
                 type="primary"
-                title={t("send.summary.validateTag")}
+                title={t("send.summary.validateGasLimit")}
                 onPress={this.onValidateText}
                 containerStyle={styles.buttonContainer}
               />
@@ -131,4 +132,4 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(translate()(RippleEditTag));
+export default connect(mapStateToProps)(translate()(EthereumEditGasLimit));

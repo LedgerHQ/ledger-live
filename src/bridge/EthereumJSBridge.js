@@ -33,7 +33,7 @@ import type { Tx } from "../api/Ethereum";
 import signTransaction from "../logic/hw/signTransaction";
 import type { CurrencyBridge, AccountBridge } from "./types";
 
-type Transaction = {
+export type Transaction = {
   recipient: string,
   amount: BigNumber,
   gasPrice: ?BigNumber,
