@@ -84,13 +84,15 @@ export default class OnboardingLayout extends PureComponent<Props> {
 export class OnboardingInner extends PureComponent<Container> {
   render() {
     return (
-      <ScrollView
-        style={[
-          styles.inner,
-          this.props.noHorizontalPadding && styles.noHorizontalPadding,
-        ]}
-      >
-        <View style={styles.innerInner}>{this.props.children}</View>
+      <ScrollView style={[styles.inner]}>
+        <View
+          style={[
+            styles.innerInner,
+            this.props.noHorizontalPadding && styles.noHorizontalPadding,
+          ]}
+        >
+          {this.props.children}
+        </View>
       </ScrollView>
     );
   }

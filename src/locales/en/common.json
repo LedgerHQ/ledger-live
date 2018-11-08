@@ -263,7 +263,7 @@
   "onboarding": {
     "stepsTitles": {
       "OnboardingStep03ChooseDevice": "Choose your device",
-      "OnboardingStep04SetupPin": "Setup PIN code",
+      "OnboardingStep04SetupPin": "Choose your PIN code",
       "OnboardingStep05WriteRecovery": "Write recovery phrase",
       "OnboardingStep06SecurityChecklist": "Security checklist",
       "OnboardingStep07PairNew": "Pair a new device",
@@ -297,8 +297,17 @@
       "blueFallbackTitle": "Import your Ledger Blue accounts",
       "blueFallbackDesc": "You can import your Ledger Blue accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X."
     },
-    "step04SetupPin": {},
-    "step05WriteRecovery": {},
+    "step04SetupPin": {
+      "step1": "Turn on your Ledger Nano X.",
+      "step2": "Press both buttons to choose <1><1>Setup as new device</1></1>",
+      "step3": "Press left or right button to select a digit. Press both to validate.",
+      "step4": "Select ✓ to confirm your PIN code.\nSelect 🔙 to erase a digit."
+    },
+    "step05WriteRecovery": {
+      "step1": "Write <1><1>Word #1</1></1> in position 1 on a blank recovery sheet",
+      "step2": "Press the right button to continue and write down all 24 words.",
+      "step3": "Confirm your recovery phrase: select and validate each word by pressing both buttons."
+    },
     "step06SecurityChecklist": {
       "pinCode": {
         "title": "Did you choose your PIN code by yourself?",

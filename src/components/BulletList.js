@@ -15,7 +15,9 @@ class BulletList extends PureComponent<{
     const renderItem = (value, index) => (
       <View key={index} style={styles.item}>
         <Bullet>{index + 1}</Bullet>
-        <LText style={styles.text}>{value}</LText>
+        <View style={styles.textContainer}>
+          <LText style={styles.text}>{value}</LText>
+        </View>
       </View>
     );
 
@@ -42,6 +44,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  textContainer: { flexShrink: 1, flexGrow: 1 },
   bulletContainer: {
     width: 24,
     height: 24,

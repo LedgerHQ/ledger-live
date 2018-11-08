@@ -1,9 +1,11 @@
 // @flow
 
 import React, { Component } from "react";
+import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
 import Button from "../../../components/Button";
+import LText from "../../../components/LText";
 import BulletList from "../../../components/BulletList";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
@@ -31,10 +33,14 @@ class OnboardingStep04SetupPin extends Component<OnboardingStepProps> {
         <View style={styles.wrapper}>
           <BulletList
             list={[
-              "Turn on your Ledger Nano X.",
-              "Press both device buttons to continue.",
-              "Press left or right button to select a digit. Press both to validate.",
-              "Select ✓ to confirm your PIN code.\nSelect 🔙 to erase a digit.",
+              <Trans i18nKey="onboarding.step04SetupPin.step1" />,
+              <Trans i18nKey="onboarding.step04SetupPin.step2">
+                {"text"}
+                <LText semiBold>bold text</LText>
+                {"text"}
+              </Trans>,
+              <Trans i18nKey="onboarding.step04SetupPin.step3" />,
+              <Trans i18nKey="onboarding.step04SetupPin.step4" />,
             ]}
           />
         </View>
