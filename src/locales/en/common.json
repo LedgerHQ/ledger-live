@@ -651,6 +651,11 @@
   "FirmwareVersionRow": {
     "title": "Firmware version"
   },
+  "manager": {
+    "appList": {
+      "loading": "Loading apps..."
+    }
+  },
   "AppAction": {
     "install": {
       "loading": {

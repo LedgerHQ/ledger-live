@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import type { ApplicationVersion } from "../../types/manager";
 import install from "../../logic/hw/installApp";
@@ -13,8 +13,11 @@ import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import ErrorIcon from "../../components/ErrorIcon";
 import TranslatedError from "../../components/TranslatedError";
-import colors from "../../colors";
+import spinner from "../../images/spinner.png";
+import Check from "../../icons/Check";
+import Spinning from "../../components/Spinning";
 import { deviceNames } from "../../wording";
+import colors from "../../colors";
 import AppIcon from "./AppIcon";
 
 const hwCallPerType = {
@@ -101,7 +104,38 @@ class AppAction extends PureComponent<
       <BottomModal isOpened onClose={onClose}>
         <View style={styles.root}>
           <View style={styles.body}>
-            <View style={styles.headIcon}>{icon}</View>
+            <View style={styles.headIcon}>
+              {icon}
+              <View
+                style={{
+                  position: "absolute",
+                  top: -2,
+                  right: -2,
+                  backgroundColor: "white",
+                  padding: 4,
+                  borderRadius: 50,
+                }}
+              >
+                {pending ? (
+                  <Spinning>
+                    <Image source={spinner} style={{ width: 24, height: 24 }} />
+                  </Spinning>
+                ) : (
+                  <View
+                    style={{
+                      borderRadius: 24,
+                      backgroundColor: colors.green,
+                      width: 24,
+                      height: 24,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Check size={14} color={colors.white} />
+                  </View>
+                )}
+              </View>
+            </View>
             <LText secondary semiBold style={styles.title}>
               {title}
             </LText>
@@ -146,6 +180,7 @@ const styles = StyleSheet.create({
   },
   headIcon: {
     padding: 10,
+    position: "relative",
   },
   title: {
     paddingVertical: 20,
@@ -153,11 +188,13 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     fontSize: 16,
     color: colors.darkBlue,
+    textAlign: "center",
   },
   description: {
     fontSize: 14,
     color: colors.grey,
     paddingHorizontal: 40,
+    textAlign: "center",
   },
   retryButton: {
     alignSelf: "stretch",

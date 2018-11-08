@@ -1,30 +1,31 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { getFullListSortedCryptoCurrencies } from "../../countervalues";
 import type { DeviceInfo, ApplicationVersion } from "../../types/manager";
 import ManagerAPI from "../../api/Manager";
+import KeyboardView from "../../components/KeyboardView";
+import FilteredSearchBar from "../../components/FilteredSearchBar";
+import LText from "../../components/LText";
+import Spinning from "../../components/Spinning";
+import LiveLogo from "../../icons/LiveLogoIcon";
+import colors from "../../colors";
+
 import AppRow from "./AppRow";
 import AppAction from "./AppAction";
 
-const Header = () => (
-  <View
-    style={{
-      height: 42,
-      borderWidth: 1,
-      borderColor: "#d8d8d8",
-      backgroundColor: "white",
-      borderRadius: 4,
-      marginBottom: 20,
-    }}
-  />
-);
-
 const Pending = () => (
-  // what do we display here? ping design
-  <View style={{ backgroundColor: "grey", height: 100 }} />
+  <View style={styles.pending}>
+    <Spinning>
+      <LiveLogo color={colors.grey} size={32} />
+    </Spinning>
+
+    <LText style={styles.pendingText}>
+      <Trans i18nKey="manager.appList.loading" />
+    </LText>
+  </View>
 );
 
 const ErrorRender = (
@@ -194,6 +195,23 @@ class ManagerAppsList extends Component<
     />
   );
 
+  renderList = items => (
+    <FlatList
+      data={items}
+      renderItem={this.renderRow}
+      keyExtractor={this.keyExtractor}
+      showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag"
+      contentContainerStyle={styles.listContainer}
+    />
+  );
+
+  renderEmptySearch = () => (
+    <View>
+      <LText>No apps found</LText>
+    </View>
+  );
+
   keyExtractor = (d: ApplicationVersion) => String(d.id);
 
   render() {
@@ -203,27 +221,29 @@ class ManagerAppsList extends Component<
     const deviceId = navigation.getParam("deviceId");
     return (
       <View style={styles.root}>
-        <Header />
-        {pending ? (
-          <Pending />
-        ) : error ? (
-          <ErrorRender error={error} />
-        ) : (
-          <FlatList
-            data={apps}
-            renderItem={this.renderRow}
-            keyExtractor={this.keyExtractor}
-          />
-        )}
-        {action ? (
-          <AppAction
-            key={actionKey(action)}
-            action={action}
-            onClose={this.onActionClose}
-            deviceId={deviceId}
-            targetId={deviceInfo.targetId}
-          />
-        ) : null}
+        <KeyboardView style={{ flex: 1 }}>
+          {pending ? (
+            <Pending />
+          ) : error ? (
+            <ErrorRender error={error} />
+          ) : (
+            <FilteredSearchBar
+              list={apps}
+              renderList={this.renderList}
+              renderEmptySearch={this.renderEmptySearch}
+              inputWrapperStyle={styles.inputWrapper}
+            />
+          )}
+          {action ? (
+            <AppAction
+              key={actionKey(action)}
+              action={action}
+              onClose={this.onActionClose}
+              deviceId={deviceId}
+              targetId={deviceInfo.targetId}
+            />
+          ) : null}
+        </KeyboardView>
       </View>
     );
   }
@@ -232,7 +252,25 @@ class ManagerAppsList extends Component<
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
+  },
+  inputWrapper: {
+    marginTop: 8,
+  },
+  listContainer: {
+    paddingTop: 16,
+    marginBottom: 16,
+  },
+  pending: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pendingText: {
+    marginTop: 16,
+    fontSize: 14,
+    color: colors.grey,
   },
 });
 

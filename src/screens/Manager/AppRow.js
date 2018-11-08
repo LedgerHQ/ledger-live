@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     height: 38,
   },
   btnSpace: {
-    marginRight: 16,
+    marginRight: 8,
   },
 });
 
