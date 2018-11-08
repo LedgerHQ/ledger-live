@@ -23,6 +23,13 @@ const INITIAL_CONTEXT: OnboardingContextType = {
   // prop, passed to steps components
   mode: "full",
 
+  // used in security checklist
+  security: {
+    pinCode: null,
+    recoveryPhrase: null,
+  },
+
+  setSecurityKey: noop,
   resetCurrentStep: noop,
   nextWithNavigation: noop,
   prevWithNavigation: noop,
@@ -45,6 +52,7 @@ export class OnboardingContextProvider extends PureComponent<
     this.state = {
       ...INITIAL_CONTEXT,
 
+      setSecurityKey: this.setSecurityKey,
       resetCurrentStep: this.resetCurrentStep,
       nextWithNavigation: this.next,
       prevWithNavigation: this.prev,
@@ -71,6 +79,11 @@ export class OnboardingContextProvider extends PureComponent<
   // Replace current steps with steps of given mode
   setOnboardingMode: SetOnboardingModeType = mode =>
     new Promise(resolve => this.setState({ mode }, resolve));
+
+  setSecurityKey = (key: string, val: boolean | null) =>
+    this.setState(state => ({
+      security: { ...state.security, [key]: val },
+    }));
 
   navigate = (navigation: NavigationScreenProp<*>, index: number) => {
     const { mode } = this.state;

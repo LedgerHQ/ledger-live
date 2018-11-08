@@ -14,16 +14,25 @@ class BulletList extends PureComponent<{
 
     const renderItem = (value, index) => (
       <View key={index} style={styles.item}>
-        <View style={styles.bulletContainer}>
-          <LText style={styles.number} tertiary>
-            {index + 1}
-          </LText>
-        </View>
+        <Bullet>{index + 1}</Bullet>
         <LText style={styles.text}>{value}</LText>
       </View>
     );
 
     return <View>{list.map(renderItem)}</View>;
+  }
+}
+
+export class Bullet extends PureComponent<{ children: *, big?: boolean }> {
+  render() {
+    const { children, big } = this.props;
+    return (
+      <View style={[styles.bulletContainer, big && styles.bulletContainerBig]}>
+        <LText style={[styles.number, big && styles.numberBig]} tertiary>
+          {children}
+        </LText>
+      </View>
+    );
   }
 }
 
@@ -41,9 +50,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  bulletContainerBig: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
   number: {
     fontSize: 12,
     color: colors.live,
+  },
+  numberBig: {
+    fontSize: 16,
   },
   text: {
     color: colors.smoke,

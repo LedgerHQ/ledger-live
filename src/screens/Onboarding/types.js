@@ -15,6 +15,9 @@ export type OnboardingContextType = {
   // list of the currently active steps
   mode: OnboardingMode,
 
+  security: SecurityChecklist,
+  setSecurityKey: (string, boolean | null) => void,
+
   // allow to change the steps on the fly
   // e.g: skip (& hide) steps if device is already initialized
   setOnboardingMode: SetOnboardingModeType | Noop,
@@ -42,3 +45,8 @@ type OnboardingMode = "full" | "alreadyInitialized";
 
 type StepNavigateType = (NavigationScreenProp<*>) => void;
 type Noop = any => any;
+
+type SecurityChecklist = {
+  pinCode: ?boolean,
+  recoveryPhrase: ?boolean,
+};

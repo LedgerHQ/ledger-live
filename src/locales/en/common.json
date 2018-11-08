@@ -4,6 +4,8 @@
     "apply": "Apply",
     "back": "Back",
     "delete": "Delete",
+    "yes": "Yes",
+    "no": "No",
     "continue": "Continue",
     "retry": "Try again",
     "done": "Done",
@@ -297,7 +299,16 @@
     },
     "step04SetupPin": {},
     "step05WriteRecovery": {},
-    "step06SecurityChecklist": {},
+    "step06SecurityChecklist": {
+      "pinCode": {
+        "title": "Did you choose your PIN code by yourself?",
+        "error": "Never use a device supplied with a PIN code. Please contact us when in doubt."
+      },
+      "recoveryPhrase": {
+        "title": "Did you choose your recovery phrase by yourself?",
+        "error": "Never use a device supplied with a recovery phrase. Please contact us when in doubt."
+      }
+    },
     "step07PairNew": {},
     "step08Password": {},
     "step09ShareData": {},
