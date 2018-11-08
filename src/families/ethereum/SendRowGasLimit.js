@@ -1,16 +1,15 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate, Trans } from "react-i18next";
+import { translate } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "../../bridge/RippleJSBridge";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import { getAccountBridge } from "../../bridge";
 import colors from "../../colors";
-import SectionSeparator from "../../screens/SendFunds/SectionSeparator";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
+import type { Transaction } from "../../bridge/EthereumJSBridge";
 
 type Props = {
   account: Account,
@@ -20,32 +19,37 @@ type Props = {
 };
 
 type State = {
-  tag: ?BigNumber,
+  gasLimit: ?BigNumber,
 };
-class RippleTagRow extends PureComponent<Props, State> {
-  editTag = () => {
+class EthereumGasLimit extends PureComponent<Props, State> {
+  editGasLimit = () => {
     const { account, navigation, transaction } = this.props;
-    navigation.navigate("RippleEditTag", {
+    navigation.navigate("EthereumEditGasLimit", {
       accountId: account.id,
       transaction,
     });
   };
 
   render() {
-    const { account, transaction } = this.props;
+    const { account, t, transaction } = this.props;
     const bridge = getAccountBridge(account);
-    const tag = bridge.getTransactionExtra(account, transaction, "tag");
+    const gasLimit = bridge.getTransactionExtra(
+      account,
+      transaction,
+      "gasLimit",
+    );
     return (
       <View>
-        <SummaryRow title={<Trans i18nKey="send.summary.tag" />} info="info">
-          <View style={styles.tagContainer}>
-            {tag && <LText style={styles.tagText}>{tag.toString()}</LText>}
-            <LText style={styles.link} onPress={this.editTag}>
-              <Trans i18nKey="common.edit" />
+        <SummaryRow title={t("send.summary.gasLimit")} info="info">
+          <View style={styles.gasLimitContainer}>
+            {gasLimit && (
+              <LText style={styles.gasLimitText}>{gasLimit.toString()}</LText>
+            )}
+            <LText style={styles.link} onPress={this.editGasLimit}>
+              {t("common.edit")}
             </LText>
           </View>
         </SummaryRow>
-        <SectionSeparator />
       </View>
     );
   }
@@ -59,13 +63,13 @@ const styles = StyleSheet.create({
     textDecorationColor: colors.live,
     marginLeft: 8,
   },
-  tagContainer: {
+  gasLimitContainer: {
     flexDirection: "row",
   },
-  tagText: {
+  gasLimitText: {
     fontSize: 16,
     color: colors.darkBlue,
   },
 });
 
-export default translate()(RippleTagRow);
+export default translate()(EthereumGasLimit);
