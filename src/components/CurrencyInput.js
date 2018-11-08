@@ -185,6 +185,7 @@ class CurrencyInput extends PureComponent<Props, State> {
             subMagnitude,
           })}
           keyboardType="numeric"
+          returnKeyType="done"
           blurOnSubmit
         />
         {renderRight}

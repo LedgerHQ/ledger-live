@@ -5,36 +5,22 @@ import type { NavigationScreenProp } from "react-navigation";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../bridge";
 
-export const getFeeByFamily = (
+export const getFieldByFamily = (
   account: Account,
   navigation: NavigationScreenProp<*>,
+  field: string,
 ) => {
   const transaction = navigation.getParam("transaction");
   const bridge = getAccountBridge(account);
-
-  switch (account.currency.family) {
-    case "ripple":
-      return bridge.getTransactionExtra(account, transaction, "fee");
-    case "ethereum":
-      return bridge.getTransactionExtra(account, transaction, "gasPrice");
-    default:
-      return null;
-  }
+  return bridge.getTransactionExtra(account, transaction, field);
 };
-
 export const editTxFeeByFamily = (
   account: Account,
   navigation: NavigationScreenProp<*>,
+  field: string,
   fee: ?BigNumber,
 ) => {
   const transaction = navigation.getParam("transaction");
   const bridge = getAccountBridge(account);
-  switch (account.currency.family) {
-    case "ripple":
-      return bridge.editTransactionExtra(account, transaction, "fee", fee);
-    case "ethereum":
-      return bridge.editTransactionExtra(account, transaction, "gasPrice", fee);
-    default:
-      return null;
-  }
+  return bridge.editTransactionExtra(account, transaction, field, fee);
 };
