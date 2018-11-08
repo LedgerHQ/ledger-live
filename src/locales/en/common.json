@@ -14,6 +14,7 @@
     "search": "Search",
     "contactUs": "Contact us",
     "noCryptoFound": "No crypto assets found",
+    "needHelp": "Need help?",
     "edit": "Edit",
     "close": "Close",
     "confirm": "Confirm",
@@ -318,7 +319,10 @@
         "error": "Never use a device supplied with a recovery phrase. Please contact us when in doubt."
       }
     },
-    "step07PairNew": {},
+    "step07PairNew": {
+      "desc": "Please make sure your Ledger Nano X is unlocked with Bluetooth enabled",
+      "pairNew": "Pair new device"
+    },
     "step08Password": {},
     "step09ShareData": {},
     "step10Finish": {}

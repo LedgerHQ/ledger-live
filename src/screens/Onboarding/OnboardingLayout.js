@@ -18,6 +18,7 @@ type Props = Container & {
   isCentered?: boolean,
   isFull?: boolean,
   noHorizontalPadding?: boolean,
+  borderedFooter?: boolean,
   header?: string,
   Footer?: React$ComponentType<*>,
 };
@@ -31,6 +32,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
       isCentered,
       isFull,
       noHorizontalPadding,
+      borderedFooter,
       style,
     } = this.props;
 
@@ -65,7 +67,9 @@ export default class OnboardingLayout extends PureComponent<Props> {
             {inner}
           </OnboardingInner>
           {Footer && (
-            <View style={styles.footer}>
+            <View
+              style={[styles.footer, borderedFooter && styles.borderedFooter]}
+            >
               <Footer />
             </View>
           )}
@@ -120,6 +124,10 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
+  },
+  borderedFooter: {
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
   centeredFooter: {
     position: "absolute",
