@@ -26,7 +26,7 @@ type State = {
   isModalOpened: boolean,
 };
 
-class SummaryToSection extends PureComponent<Props, State> {
+class SummaryTotalSection extends PureComponent<Props, State> {
   state = {
     isModalOpened: false,
   };
@@ -115,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SummaryToSection;
+export default SummaryTotalSection;

@@ -42,6 +42,7 @@ class EthereumEditFee extends Component<Props> {
             account={account}
             transaction={transaction}
             navigation={navigation}
+            field="gasPrice"
           />
         </KeyboardView>
       </SafeAreaView>
