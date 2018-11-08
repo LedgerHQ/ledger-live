@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import LText from "../../components/LText";
 import colors from "../../colors";
@@ -14,27 +14,32 @@ const getCurrentGreetings = () => {
     localTimeHour >= afternoonBreakpoint &&
     localTimeHour < eveningBreakpoint
   ) {
-    return "common:portfolio.greeting.afternoon";
+    return "portfolio.greeting.afternoon";
   }
   if (localTimeHour >= eveningBreakpoint) {
-    return "common:portfolio.greeting.evening";
+    return "portfolio.greeting.evening";
   }
-  return "common:portfolio.greeting.morning";
+  return "portfolio.greeting.morning";
 };
 
 class Greetings extends PureComponent<{
   nbAccounts: number,
-  t: *,
 }> {
   render() {
-    const { nbAccounts, t } = this.props;
+    const { nbAccounts } = this.props;
     return (
       <View style={styles.root}>
         <LText secondary style={styles.title} bold>
-          {t(getCurrentGreetings())}
+          {<Trans i18nKey={getCurrentGreetings()} />}
         </LText>
         <LText secondary style={styles.description} numberOfLines={2}>
-          {t("common:portfolio.summary", { count: nbAccounts })}
+          {
+            <Trans
+              i18nKey="portfolio.summary"
+              count={nbAccounts}
+              values={{ count: nbAccounts }}
+            />
+          }
         </LText>
       </View>
     );
@@ -57,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(Greetings);
+export default Greetings;

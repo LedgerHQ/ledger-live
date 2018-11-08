@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 import LText from "../../components/LText";
@@ -15,7 +15,6 @@ class Paired extends PureComponent<{
   deviceId: *,
   onContinue: () => *,
   navigation: *,
-  t: *,
 }> {
   onEdit = () => {
     const { deviceId, navigation } = this.props;
@@ -25,12 +24,12 @@ class Paired extends PureComponent<{
   };
 
   render() {
-    const { deviceId, onContinue, t } = this.props;
+    const { deviceId, onContinue } = this.props;
     return (
       <View style={styles.root}>
         <PairingSuccess />
         <LText secondary semiBold style={styles.title}>
-          {t("PairDevices.Paired.title")}
+          <Trans i18nKey="PairDevices.Paired.title" />
         </LText>
         <LText style={styles.description}>
           <Trans i18nKey="PairDevices.Paired.desc">
@@ -47,7 +46,7 @@ class Paired extends PureComponent<{
         <View style={[styles.fullContainer, styles.buttonContainer]}>
           <Button
             type="primary"
-            title={t("PairDevices.Paired.action")}
+            title={<Trans i18nKey="PairDevices.Paired.action" />}
             onPress={onContinue}
           />
         </View>
@@ -85,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withNavigation(translate()(Paired));
+export default withNavigation(Paired);

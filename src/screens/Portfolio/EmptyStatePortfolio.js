@@ -1,16 +1,14 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { View, Image, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import colors from "../../colors";
-import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 
 type Props = {
-  t: T,
   navigation: NavigationScreenProp<*>,
 };
 
@@ -28,19 +26,21 @@ class EmptyStatePortfolio extends PureComponent<Props, State> {
   closeAddModal = () => this.setState({ isAddModalOpened: false });
 
   render() {
-    const { t, navigation } = this.props;
+    const { navigation } = this.props;
     const { isAddModalOpened } = this.state;
     return (
       <View style={styles.root}>
         <View style={styles.body}>
           <Image source={require("../../images/EmptyStatePortfolio.png")} />
           <LText secondary semiBold style={styles.title}>
-            {t("portfolio.emptyState.title")}
+            {<Trans i18nKey="portfolio.emptyState.title" />}
           </LText>
-          <LText style={styles.desc}>{t("portfolio.emptyState.desc")}</LText>
+          <LText style={styles.desc}>
+            {<Trans i18nKey="portfolio.emptyState.desc" />}
+          </LText>
           <Button
             type="primary"
-            title={t("portfolio.emptyState.buttons.import")}
+            title={<Trans i18nKey="portfolio.emptyState.buttons.import" />}
             onPress={this.openAddModal}
             containerStyle={styles.receiveButton}
           />
@@ -55,7 +55,7 @@ class EmptyStatePortfolio extends PureComponent<Props, State> {
   }
 }
 
-export default translate()(EmptyStatePortfolio);
+export default EmptyStatePortfolio;
 
 const styles = StyleSheet.create({
   root: {

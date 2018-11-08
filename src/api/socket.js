@@ -22,6 +22,8 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
   Observable.create(o => {
     let ws;
     let lastMessage: ?string;
+    let interrupted = false;
+    let currentDeviceJob: ?Promise<any>;
 
     try {
       ws = new global.WebSocket(url);
@@ -61,6 +63,7 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
       exchange: async input => {
         const { data, nonce } = input;
         const r: Buffer = await transport.exchange(Buffer.from(data, "hex"));
+        if (interrupted) return;
         const status = r.slice(r.length - 2);
         const buffer = r.slice(0, r.length - 2);
         const strStatus = status.toString("hex");
@@ -81,6 +84,7 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
           lastStatus = r.slice(r.length - 2);
 
           if (lastStatus.toString("hex") !== "9000") break;
+          if (interrupted) return;
         }
 
         if (!lastStatus) {
@@ -108,6 +112,7 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
     };
 
     const stackMessage = async e => {
+      if (interrupted) return;
       try {
         const msg = JSON.parse(e.data);
         if (!(msg.query in handlers)) {
@@ -127,14 +132,22 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
       }
     };
 
-    ws.onmessage = async rawMsg => {
-      stackMessage(rawMsg);
+    ws.onmessage = rawMsg => {
+      currentDeviceJob = stackMessage(rawMsg);
     };
 
-    return () => {
-      if (ws.readyState === 1) {
-        lastMessage = null;
-        ws.close();
+    async function finish() {
+      interrupted = true;
+      if (ws.readyState !== 1) return;
+      ws.close();
+      if (currentDeviceJob) {
+        // make sure we wait latest stuff
+        await currentDeviceJob.catch(() => {});
       }
+      await transport.send(0, 0, 0, 0).catch(() => {}); // send a dummy event just to reset the device state
+    }
+
+    return () => {
+      finish();
     };
   });

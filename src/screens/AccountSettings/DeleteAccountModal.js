@@ -1,18 +1,16 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "../../components/LText";
 import Circle from "../../components/Circle";
 import Trash from "../../icons/Trash";
-import type { T } from "../../types/common";
 import colors from "../../colors";
 import ModalBottomAction from "../../components/ModalBottomAction";
 import Button from "../../components/Button";
 
 type Props = {
-  t: T,
   onRequestClose: () => void,
   deleteAccount: () => void,
   account: Account,
@@ -20,7 +18,8 @@ type Props = {
 
 class DeleteAccountModal extends PureComponent<Props> {
   render() {
-    const { account, t, onRequestClose, deleteAccount } = this.props;
+    const { account, onRequestClose, deleteAccount } = this.props;
+
     return (
       <ModalBottomAction
         title={null}
@@ -40,13 +39,13 @@ class DeleteAccountModal extends PureComponent<Props> {
           <View style={styles.footerContainer}>
             <Button
               type="secondary"
-              title={t("common:common.cancel")}
+              title={<Trans i18nKey="common.cancel" />}
               onPress={onRequestClose}
               containerStyle={styles.buttonContainer}
             />
             <Button
               type="alert"
-              title={t("common:common.delete")}
+              title={<Trans i18nKey="common.delete" />}
               onPress={deleteAccount}
               containerStyle={styles.buttonContainer}
             />
@@ -57,7 +56,7 @@ class DeleteAccountModal extends PureComponent<Props> {
   }
 }
 
-export default translate()(DeleteAccountModal);
+export default DeleteAccountModal;
 
 const styles = StyleSheet.create({
   footerContainer: {

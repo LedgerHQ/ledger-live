@@ -10,7 +10,7 @@ import colors from "../colors";
 import LText from "./LText";
 
 type Props = {
-  text: string,
+  text: React$Node,
   unsafe?: boolean,
 };
 

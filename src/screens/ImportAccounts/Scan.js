@@ -12,7 +12,6 @@ import {
 import { decode } from "@ledgerhq/live-common/lib/cross";
 import { translate } from "react-i18next";
 import i18next from "i18next";
-import type { T } from "../../types/common";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import colors from "../../colors";
@@ -21,7 +20,6 @@ import CameraScreen from "../../components/CameraScreen";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  t: T,
 };
 
 const getDimensions = () => {

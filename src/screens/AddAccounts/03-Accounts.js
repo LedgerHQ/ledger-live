@@ -26,7 +26,6 @@ import AddAccountsError from "./AddAccountsError";
 import colors from "../../colors";
 
 type Props = {
-  t: *,
   navigation: NavigationScreenProp<{
     params: {
       currency: CryptoCurrency,
@@ -223,7 +222,6 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
   render() {
     const { selectedIds, status, scannedAccounts, error } = this.state;
-    const { t } = this.props;
     const newAccounts = this.getNewAccounts();
     const regularAccounts = this.getRegularAccounts();
     const existingAccountsFiltered = this.getExistingAccounts();
@@ -232,13 +230,14 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       newAccounts.length === 0;
     const noImportableAccounts =
       regularAccounts.length === 0 && newAccounts.length === 0;
+
     return (
       <SafeAreaView style={styles.root}>
         <Stepper nbSteps={4} currentStep={3} />
         <ScrollView style={styles.inner}>
           {regularAccounts.length > 0 ? (
             <SelectableAccountsList
-              header={t("addAccounts.sections.accountsToImport")}
+              header={<Trans i18nKey="addAccounts.sections.accountsToImport" />}
               accounts={regularAccounts}
               onPressAccount={this.onPressAccount}
               onSelectAll={this.selectAll}
@@ -247,14 +246,13 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             />
           ) : status === "scanning" ? (
             <LText style={styles.descText}>
-              {t("addAccounts.synchronizingDesc")}
+              <Trans i18nKey="addAccounts.synchronizingDesc" />
             </LText>
           ) : null}
-          {status === "scanning" && <ScanLoading t={t} />}
+          {status === "scanning" && <ScanLoading />}
           {status === "error" &&
             error && (
               <AddAccountsError
-                t={t}
                 error={error}
                 style={styles.addAccountsError}
                 onRetry={this.restartSubscription}
@@ -262,7 +260,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             )}
           {(newAccounts.length > 0 || status === "idle") && (
             <SelectableAccountsList
-              header={t("addAccounts.sections.addNewAccount")}
+              header={<Trans i18nKey="addAccounts.sections.addNewAccount" />}
               accounts={newAccounts}
               onPressAccount={this.onPressAccount}
               selectedIds={selectedIds}
@@ -275,7 +273,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           )}
           {existingAccountsFiltered.length > 0 && (
             <SelectableAccountsList
-              header={t("addAccounts.sections.existing")}
+              header={<Trans i18nKey="addAccounts.sections.existing" />}
               accounts={existingAccountsFiltered}
               forceSelected
               isDisabled
@@ -283,7 +281,6 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           )}
         </ScrollView>
         <Footer
-          t={t}
           isScanning={status === "scanning"}
           canRetry={
             status !== "scanning" && noImportableAccounts && !cantCreateAccount
@@ -303,7 +300,6 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 }
 
 class Footer extends PureComponent<{
-  t: *,
   isScanning: boolean,
   canRetry: boolean,
   canDone: boolean,
@@ -323,33 +319,33 @@ class Footer extends PureComponent<{
       canDone,
       onRetry,
       onDone,
-      t,
     } = this.props;
+
     return (
       <View style={styles.footer}>
         {isScanning ? (
           <Button
             type="tertiary"
-            title={t("addAccounts.stopScanning")}
+            title={<Trans i18nKey="addAccounts.stopScanning" />}
             onPress={onStop}
             IconLeft={IconPause}
           />
         ) : canRetry ? (
           <Button
             type="primary"
-            title={t("addAccounts.retryScanning")}
+            title={<Trans i18nKey="addAccounts.retryScanning" />}
             onPress={onRetry}
           />
         ) : canDone ? (
           <Button
             type="primary"
-            title={t("addAccounts.done")}
+            title={<Trans i18nKey="addAccounts.done" />}
             onPress={onDone}
           />
         ) : (
           <Button
             type="primary"
-            title={t("addAccounts.finalCta")}
+            title={<Trans i18nKey="addAccounts.finalCta" />}
             onPress={isDisabled ? undefined : onContinue}
           />
         )}
@@ -358,16 +354,15 @@ class Footer extends PureComponent<{
   }
 }
 
-class ScanLoading extends PureComponent<{ t: * }> {
+class ScanLoading extends PureComponent<{}> {
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.scanLoadingRoot}>
         <Spinning>
           <LiveLogo color={colors.grey} size={16} />
         </Spinning>
         <LText semiBold style={styles.scanLoadingText}>
-          {t("addAccounts.synchronizing")}
+          <Trans i18nKey="addAccounts.synchronizing" />
         </LText>
       </View>
     );

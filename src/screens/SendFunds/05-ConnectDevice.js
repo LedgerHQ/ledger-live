@@ -2,6 +2,8 @@
 import React, { Component } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { translate } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -66,4 +68,7 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(ConnectDevice);
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(ConnectDevice);

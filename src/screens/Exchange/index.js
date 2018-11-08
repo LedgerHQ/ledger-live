@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import { StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 
@@ -21,7 +21,9 @@ class ExchangeScreen extends Component<Props> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
-        <LText style={{ fontSize: 24 }}>Trade & Exchange</LText>
+        <LText style={{ fontSize: 24 }}>
+          <Trans i18nKey="exchange.title" />
+        </LText>
         <LText style={{ fontSize: 12 }}>TODO: integrate.</LText>
       </SafeAreaView>
     );

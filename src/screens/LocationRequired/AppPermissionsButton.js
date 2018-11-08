@@ -3,6 +3,7 @@
 import React, { PureComponent } from "react";
 import { AppState } from "react-native";
 import OpenSettings from "react-native-open-settings";
+import { Trans } from "react-i18next";
 import SettingsIcon from "./assets/SettingsIcon";
 import Button from "../../components/Button";
 
@@ -52,7 +53,7 @@ export default class AppPermissionsButton extends PureComponent<
     return (
       <Button
         type="primary"
-        title="Open app permissions"
+        title={<Trans i18nKey="permissions.open" />}
         onPress={this.openAppSettings}
         iconLeft={SettingsIcon}
       />

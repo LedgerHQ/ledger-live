@@ -84,7 +84,7 @@ class RippleEditTag extends PureComponent<Props, State> {
               keyboardType="numeric"
               returnKeyType="done"
               maxLength={10}
-              onChangeText={tag => this.setState({ tag })}
+              onChangeText={this.onChangeTag}
               onSubmitEditing={this.onValidateText}
             />
 

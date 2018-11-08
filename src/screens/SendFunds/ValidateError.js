@@ -1,8 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
-import type { T } from "../../types/common";
+import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 
@@ -13,7 +12,6 @@ import Button from "../../components/Button";
 import ExternalLink from "../../components/ExternalLink";
 
 type Props = {
-  t: T,
   error: Error,
   onContactUs: () => void,
   onClose: () => void,
@@ -22,7 +20,7 @@ type Props = {
 
 class ValidatError extends PureComponent<Props> {
   render() {
-    const { t, error, onContactUs, onClose, onRetry } = this.props;
+    const { error, onContactUs, onClose, onRetry } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
@@ -35,17 +33,20 @@ class ValidatError extends PureComponent<Props> {
           <LText style={styles.message} numberOfLines={6}>
             <TranslatedError error={error} field="description" />
           </LText>
-          <ExternalLink text={t("common.contactUs")} onPress={onContactUs} />
+          <ExternalLink
+            text={<Trans i18nKey="common.contactUs" />}
+            onPress={onContactUs}
+          />
         </View>
         <View style={styles.actionContainer}>
           <Button
-            title={t("common.close")}
+            title={<Trans i18nKey="common.close" />}
             type="secondary"
             containerStyle={{ flex: 1, marginRight: 16 }}
             onPress={onClose}
           />
           <Button
-            title={t("send.validation.button.retry")}
+            title={<Trans i18nKey="send.validation.button.retry" />}
             type="primary"
             containerStyle={{ flex: 1 }}
             onPress={onRetry}
@@ -93,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(ValidatError);
+export default ValidatError;

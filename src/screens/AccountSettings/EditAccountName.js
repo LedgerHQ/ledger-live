@@ -11,11 +11,10 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { translate } from "react-i18next";
+import { Trans, translate } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
-import type { T } from "../../types/common";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 
@@ -27,7 +26,6 @@ type Props = {
   }>,
   updateAccount: Function,
   account: Account,
-  t: T,
 };
 
 type State = {
@@ -65,7 +63,8 @@ class EditAccountName extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, t } = this.props;
+    const { account } = this.props;
+
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardView style={styles.body}>
@@ -82,7 +81,7 @@ class EditAccountName extends PureComponent<Props, State> {
             <View style={styles.flex}>
               <Button
                 type="primary"
-                title={t("common:common.apply")}
+                title={<Trans i18nKey="common.apply" />}
                 onPress={this.onNameEndEditing}
                 containerStyle={styles.buttonContainer}
               />

@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import LocationRequired from "../LocationRequired";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -19,7 +19,6 @@ type Props = {
   onCancel: () => void,
   onRetry: () => void,
   onBypassGenuine: () => void,
-  t: *,
 };
 
 const GenericErrorHeader = () => (
@@ -30,7 +29,7 @@ const GenericErrorHeader = () => (
 
 class RenderError extends Component<Props> {
   render() {
-    const { t, error, status, onCancel, onBypassGenuine, onRetry } = this.props;
+    const { error, status, onCancel, onBypassGenuine, onRetry } = this.props;
 
     // $FlowFixMe
     if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
@@ -72,21 +71,21 @@ class RenderError extends Component<Props> {
           {status === "genuinecheck" ? (
             <Button
               type="secondary"
-              title={t("PairDevices.bypassGenuine")}
+              title={<Trans i18nKey="PairDevices.bypassGenuine" />}
               onPress={onBypassGenuine}
               containerStyle={styles.button}
             />
           ) : (
             <Button
               type="secondary"
-              title={t("common.cancel")}
+              title={<Trans i18nKey="common.cancel" />}
               onPress={onCancel}
               containerStyle={styles.button}
             />
           )}
           <Button
             type="primary"
-            title={t("common.retry")}
+            title={<Trans i18nKey="common.retry" />}
             onPress={onRetry}
             containerStyle={[styles.button, styles.primaryButton]}
           />
@@ -96,7 +95,7 @@ class RenderError extends Component<Props> {
   }
 }
 
-export default translate()(RenderError);
+export default RenderError;
 
 const styles = StyleSheet.create({
   root: {

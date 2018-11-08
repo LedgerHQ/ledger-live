@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { Trans, translate } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 
@@ -17,7 +18,7 @@ type Props = {
   navigation: *,
 };
 
-export default class BitcoinFeePerByteRow extends Component<Props> {
+class BitcoinFeePerByteRow extends Component<Props> {
   openFees = () => {
     const { account, navigation, transaction } = this.props;
     navigation.navigate("BitcoinEditFeePerByte", {
@@ -31,7 +32,7 @@ export default class BitcoinFeePerByteRow extends Component<Props> {
     const bridge = getAccountBridge(account);
     return (
       <SummaryRow
-        title="Network fees"
+        title={<Trans i18nKey="send.fees.title" />}
         additionalInfo={
           <Touchable onPress={this.extraInfoFees}>
             <ExternalLink size={12} color={colors.grey} />
@@ -47,7 +48,7 @@ export default class BitcoinFeePerByteRow extends Component<Props> {
             )} sat/bytes`}</LText>
 
             <LText style={styles.link} onPress={this.openFees}>
-              Edit
+              <Trans i18nKey="common.edit" />
             </LText>
           </View>
         </View>
@@ -76,3 +77,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+export default translate()(BitcoinFeePerByteRow);

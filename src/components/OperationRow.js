@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
+import { Trans } from "react-i18next";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
@@ -38,7 +39,12 @@ class OperationRow extends PureComponent<Props, *> {
     const { operation, account, multipleAccounts } = this.props;
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.smoke : colors.green;
-    const text = operation.type === "IN" ? "Received" : "Sent";
+    const text =
+      operation.type === "IN" ? (
+        <Trans i18nKey="common.received" />
+      ) : (
+        <Trans i18nKey="common.sent" />
+      );
     const isOptimistic = operation.blockHeight === null;
     return (
       <RectButton
@@ -60,7 +66,7 @@ class OperationRow extends PureComponent<Props, *> {
             {multipleAccounts ? account.name : text}
           </LText>
           <LText numberOfLines={1} style={styles.bottomLine}>
-            <OperationRowDate text={text} date={operation.date} />
+            {text} <OperationRowDate date={operation.date} />
           </LText>
         </View>
         <View style={[styles.body, styles.bodyRight]}>

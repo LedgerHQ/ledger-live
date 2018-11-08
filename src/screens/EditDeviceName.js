@@ -4,7 +4,8 @@ import React, { PureComponent } from "react";
 import { Buffer } from "buffer";
 import { TextInput, View, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
+import i18next from "i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import Icon from "react-native-vector-icons/dist/Feather";
@@ -45,7 +46,7 @@ class EditDeviceName extends PureComponent<
   },
 > {
   static navigationOptions = {
-    title: "Edit Device Name",
+    title: i18next.t("EditDeviceName.title"),
     headerLeft: null,
   };
 
@@ -98,14 +99,17 @@ class EditDeviceName extends PureComponent<
             style={[getFontStyle({ semiBold: true }), styles.input]}
           />
           <LText style={styles.remainingText}>
-            {t("EditDeviceName.charactersRemaining", { remainingCount })}
+            <Trans
+              i18nKey="EditDeviceName.charactersRemaining"
+              values={{ remainingCount }}
+            />
           </LText>
         </View>
         <View style={styles.footer}>
           {error ? <FooterError error={error} /> : null}
           <Button
             type="primary"
-            title={t("EditDeviceName.action")}
+            title={<Trans i18nKey="EditDeviceName.action" />}
             onPress={this.onSubmit}
           />
         </View>

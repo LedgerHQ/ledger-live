@@ -68,3 +68,7 @@ export const updateCurrencySettings = (
   currencyId,
   patch,
 });
+
+export const completeOnboarding = () => ({
+  type: "SETTINGS_COMPLETE_ONBOARDING",
+});

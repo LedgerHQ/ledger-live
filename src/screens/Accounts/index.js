@@ -4,6 +4,8 @@ import React, { Component } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import { translate } from "react-i18next";
+import { compose } from "redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
@@ -69,7 +71,10 @@ class Accounts extends Component<Props> {
   }
 }
 
-export default connect(mapStateToProps)(Accounts);
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(Accounts);
 
 const styles = StyleSheet.create({
   list: {

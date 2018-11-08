@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { withNavigation } from "react-navigation";
 import Button from "../../components/Button";
 import IconSend from "../../icons/Send";
@@ -10,12 +10,11 @@ import IconReceive from "../../icons/Receive";
 type Props = {
   accountId: string,
   navigation: *,
-  t: *,
 };
 
 class AccountActions extends PureComponent<Props> {
   render() {
-    const { navigation, accountId, t } = this.props;
+    const { navigation, accountId } = this.props;
 
     return (
       <View style={styles.root}>
@@ -25,7 +24,7 @@ class AccountActions extends PureComponent<Props> {
           onPress={() =>
             navigation.navigate("SendSelectRecipient", { accountId })
           }
-          title={t("account.send")}
+          title={<Trans i18nKey="account.send" />}
           containerStyle={styles.btn1}
         />
         <Button
@@ -34,7 +33,7 @@ class AccountActions extends PureComponent<Props> {
           onPress={() =>
             navigation.navigate("ReceiveConnectDevice", { accountId })
           }
-          title={t("account.receive")}
+          title={<Trans i18nKey="account.receive" />}
           containerStyle={styles.btn2}
         />
       </View>
@@ -58,4 +57,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withNavigation(translate()(AccountActions));
+export default withNavigation(AccountActions);
