@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { BigNumber } from "bignumber.js";
 import { translate, Trans } from "react-i18next";
+import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { NotEnoughBalance } from "@ledgerhq/live-common/lib/errors";
@@ -21,7 +22,6 @@ import { getAccountBridge } from "../../bridge";
 import LText from "../../components/LText/index";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Button from "../../components/Button";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import RetryButton from "../../components/RetryButton";
@@ -53,7 +53,15 @@ const similarError = (a, b) =>
 
 class SendAmount extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Amount" subtitle="step 3 of 6" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("send.stepperHeader.selectAmount")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "3",
+          totalSteps: "6",
+        })}
+      />
+    ),
   };
 
   constructor({ navigation }) {
@@ -253,7 +261,6 @@ class SendAmount extends Component<Props, State> {
     return (
       <>
         <SafeAreaView style={styles.root}>
-          <Stepper nbSteps={5} currentStep={3} />
           <KeyboardView style={styles.container}>
             <TouchableWithoutFeedback onPress={this.blur}>
               <View style={{ flex: 1 }}>

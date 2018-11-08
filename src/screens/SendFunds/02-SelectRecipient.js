@@ -5,6 +5,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import throttle from "lodash/throttle";
@@ -18,7 +19,6 @@ import { getAccountBridge } from "../../bridge";
 
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import TranslatedError from "../../components/TranslatedError";
@@ -49,7 +49,13 @@ type State = {
 class SendSelectRecipient extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
-      <StepHeader title="Recipient address" subtitle="step 2 of 6" />
+      <StepHeader
+        title={i18next.t("send.stepperHeader.recipientAddress")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "2",
+          totalSteps: "6",
+        })}
+      />
     ),
   };
 
@@ -166,7 +172,6 @@ class SendSelectRecipient extends Component<Props, State> {
       <SafeAreaView style={styles.root}>
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
-        <Stepper currentStep={2} nbSteps={6} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Button

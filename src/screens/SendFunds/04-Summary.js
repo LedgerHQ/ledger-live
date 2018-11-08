@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { ScrollView, View, SafeAreaView, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
+import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { BigNumber } from "bignumber.js";
@@ -20,7 +21,6 @@ import SummaryAmountSection from "./SummaryAmountSection";
 import SendRowsCustom from "../../families/SendRowsCustom";
 import SendRowsFee from "../../families/SendRowsFee";
 import SummaryTotalSection from "./SummaryTotalSection";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
 import { getAccountBridge } from "../../bridge";
@@ -47,7 +47,15 @@ class SendSummary extends Component<
   },
 > {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Summary" subtitle="step 4 of 6" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("send.stepperHeader.summary")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "4",
+          totalSteps: "6",
+        })}
+      />
+    ),
   };
 
   state = {
@@ -135,7 +143,6 @@ class SendSummary extends Component<
 
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={6} currentStep={4} />
         <ScrollView style={styles.body}>
           <SummaryFromSection account={account} />
           <VerticalConnector />

@@ -522,6 +522,15 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "stepperHeader": {
+      "selectAccount": "Select an account",
+      "recipientAddress": "Recipient Address",
+      "selectAmount": "Amount",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "{{currentStep}} of {{totalSteps}}"
+    },
     "recipient": {
       "scan": "Scan QR Code",
       "enterAddress": "Enter address",

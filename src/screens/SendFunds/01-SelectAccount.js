@@ -3,11 +3,11 @@ import React, { Component } from "react";
 import { View, SafeAreaView, StyleSheet, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
+import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import Stepper from "../../components/Stepper";
 import AccountCard from "../../components/AccountCard";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
@@ -27,7 +27,13 @@ type State = {};
 class SendFundsSelectAccount extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
-      <StepHeader title="Select an account" subtitle="step 1 of 6" />
+      <StepHeader
+        title={i18next.t("send.stepperHeader.selectAccount")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "1",
+          totalSteps: "6",
+        })}
+      />
     ),
   };
 
@@ -64,7 +70,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper currentStep={1} nbSteps={6} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
