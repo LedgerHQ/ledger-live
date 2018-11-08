@@ -13,18 +13,32 @@ import RNLibcoreAccountBridge from "./RNLibcoreAccountBridge";
 import RNLibcoreCurrencyBridge from "./RNLibcoreCurrencyBridge";
 
 import * as RippleBridge from "./RippleJSBridge";
+import * as EthereumBridge from "./EthereumJSBridge";
 
 const mockCurrencyBridge = makeMockCurrencyBridge();
 const mockAccountBridge = makeMockAccountBridge();
 
 export const getCurrencyBridge = (currency: Currency): CurrencyBridge => {
-  if (currency.family === "ripple") return RippleBridge.currencyBridge;
-  if (currency.family === "bitcoin") return RNLibcoreCurrencyBridge;
-  return mockCurrencyBridge; // fallback mock until we implement it all!
+  switch (currency.family) {
+    case "ripple":
+      return RippleBridge.currencyBridge;
+    case "ethereum":
+      return EthereumBridge.currencyBridge;
+    case "bitcoin":
+      return RNLibcoreCurrencyBridge;
+    default:
+      return mockCurrencyBridge; // fallback mock until we implement it all!
+  }
 };
 
 export const getAccountBridge = (account: Account): AccountBridge<any> => {
   if (account.id.startsWith("mock")) return mockAccountBridge;
-  if (account.currency.family === "ripple") return RippleBridge.accountBridge;
-  return RNLibcoreAccountBridge;
+  switch (account.currency.family) {
+    case "ripple":
+      return RippleBridge.accountBridge;
+    case "ethereum":
+      return EthereumBridge.accountBridge;
+    default:
+      return RNLibcoreAccountBridge;
+  }
 };
