@@ -35,7 +35,7 @@ class RippleFeeRow extends Component<Props> {
   extraInfoFees = () => {
     Linking.openURL(urls.feesMoreInfo).catch(err =>
       console.error("An error occurred", err),
-    )
+    );
   };
 
   render() {
@@ -72,12 +72,7 @@ class RippleFeeRow extends Component<Props> {
             </LText>
           </View>
           <LText style={styles.countervalue}>
-            <CounterValue
-              before="("
-              value={fee}
-              after=")"
-              currency={account.currency}
-            />
+            <CounterValue before="≈ " value={fee} currency={account.currency} />
           </LText>
         </View>
       </SummaryRow>

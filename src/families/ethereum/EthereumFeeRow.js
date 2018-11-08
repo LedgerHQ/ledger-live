@@ -35,7 +35,7 @@ class EthereumFeeRow extends Component<Props> {
   extraInfoFees = () => {
     Linking.openURL(urls.feesMoreInfo).catch(err =>
       console.error("An error occurred", err),
-    )
+    );
   };
 
   render() {
@@ -78,9 +78,8 @@ class EthereumFeeRow extends Component<Props> {
             </View>
             <LText style={styles.countervalue}>
               <CounterValue
-                before="("
+                before="≈ "
                 value={gasPrice}
-                after=")"
                 currency={account.currency}
               />
             </LText>

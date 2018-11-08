@@ -67,8 +67,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
                 value={amount}
                 currency={account.currency}
                 showCode
-                before="("
-                after=")"
+                before="≈ "
               />
             </LText>
           </View>

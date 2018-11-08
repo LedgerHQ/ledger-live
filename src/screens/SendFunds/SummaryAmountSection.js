@@ -28,9 +28,8 @@ export default class SummaryAmountSection extends PureComponent<Props> {
           </LText>
           <LText style={styles.counterValueText}>
             <CounterValue
-              before="("
+              before="≈ "
               value={amount}
-              after=")"
               currency={account.currency}
               showCode
             />
