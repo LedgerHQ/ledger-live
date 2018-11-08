@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { Trans, translate } from "react-i18next";
 
@@ -10,6 +10,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Touchable from "../../components/Touchable";
 import ExternalLink from "../../icons/ExternalLink";
+import { urls } from "../../config/urls";
 
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
@@ -31,7 +32,11 @@ class RippleFeeRow extends Component<Props> {
       transaction,
     });
   };
-  extraInfoFees = () => {};
+  extraInfoFees = () => {
+    Linking.openURL(urls.feesMoreInfo).catch(err =>
+      console.error("An error occurred", err),
+    )
+  };
 
   render() {
     const { account, transaction, t } = this.props;
