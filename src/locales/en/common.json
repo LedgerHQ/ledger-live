@@ -13,6 +13,7 @@
     "signOut": "Sign Out",
     "search": "Search",
     "contactUs": "Contact us",
+    "skip": "Skip",
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Need help?",
     "edit": "Edit",
@@ -323,7 +324,10 @@
       "desc": "Please make sure your Ledger Nano X is unlocked with Bluetooth enabled",
       "pairNew": "Pair new device"
     },
-    "step08Password": {},
+    "step08Password": {
+      "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
+      "setPassword": "Set a password"
+    },
     "step09ShareData": {},
     "step10Finish": {}
   },

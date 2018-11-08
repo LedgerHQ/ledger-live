@@ -20,6 +20,7 @@ type Props = Container & {
   noHorizontalPadding?: boolean,
   borderedFooter?: boolean,
   header?: string,
+  withSkip?: boolean,
   Footer?: React$ComponentType<*>,
 };
 
@@ -34,6 +35,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
       noHorizontalPadding,
       borderedFooter,
       style,
+      withSkip,
     } = this.props;
 
     let inner: React$Node = children;
@@ -62,7 +64,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
     if (header) {
       inner = (
         <Fragment>
-          <OnboardingHeader stepId={header} />
+          <OnboardingHeader stepId={header} withSkip={withSkip} />
           <OnboardingInner noHorizontalPadding={noHorizontalPadding}>
             {inner}
           </OnboardingInner>
