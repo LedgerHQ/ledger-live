@@ -546,12 +546,15 @@
     },
     "summary": {
       "tag": "Tag (Optional)",
+      "validateTag": "Validate Tag",
       "total": "Total",
       "amount": "Amount",
       "from": "From",
       "to": "to",
       "infoTotalTitle": "Total to spend",
-      "infoTotalDesc": "Includes transaction amount and the selected network fees"
+      "infoTotalDesc": "Includes transaction amount and the selected network fees",
+      "gasLimit": "Gas Limit",
+      "validateGasLimit": "Validate Gas Limit"
     },
     "validation": {
       "title": "Please verify all transaction details on your Ledger Nano X",
