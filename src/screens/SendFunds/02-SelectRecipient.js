@@ -40,7 +40,7 @@ type Props = {
 };
 
 type State = {
-  validAddress: boolean,
+  addressStatus: string,
   address: *,
   error: ?Error,
   shouldUpdate: boolean,
@@ -92,7 +92,7 @@ class SendSelectRecipient extends Component<Props, State> {
   }
 
   state = {
-    validAddress: false,
+    addressStatus: "pending",
     address: "",
     error: null,
     shouldUpdate: false,
@@ -118,10 +118,10 @@ class SendSelectRecipient extends Component<Props, State> {
     try {
       const res = await bridge.checkValidRecipient(account.currency, address);
       if (this.unmounted) return;
-      if (!res) this.setState({ validAddress: true, error: null });
-      else this.setState({ validAddress: false, error: res });
+      if (!res) this.setState({ addressStatus: "valid", error: null });
+      else this.setState({ addressStatus: "warning", error: res });
     } catch (e) {
-      this.setState({ validAddress: false, error: e });
+      this.setState({ addressStatus: "invalid", error: e });
     }
   };
 
@@ -160,9 +160,8 @@ class SendSelectRecipient extends Component<Props, State> {
   };
 
   render() {
-    const { address, validAddress, error } = this.state;
+    const { address, error, addressStatus } = this.state;
     const { account, t } = this.props;
-
     return (
       <SafeAreaView style={styles.root}>
         <SyncSkipUnderPriority priority={100} />
@@ -172,23 +171,24 @@ class SendSelectRecipient extends Component<Props, State> {
           <View style={styles.container}>
             <Button
               type="tertiary"
-              title={<Trans i18nKey="common:send.recipient.scan" />}
+              title={<Trans i18nKey="send.recipient.scan" />}
               IconLeft={IconQRCode}
               onPress={this.onPressScan}
             />
           </View>
           <View style={styles.container}>
             <LText style={styles.addressTitle}>
-              {<Trans i18nKey="common:send.recipient.enterAddress" />}
+              {<Trans i18nKey="send.recipient.enterAddress" />}
             </LText>
             <View style={styles.inputWrapper}>
               {/* make this a recipient component */}
               <TextInput
-                placeholder={t("common:send.recipient.input")}
+                placeholder={t("send.recipient.input")}
                 placeholderTextColor={colors.fog}
                 style={[
                   styles.addressInput,
-                  !validAddress ? styles.invalidAddressInput : null,
+                  addressStatus === "invalid" && styles.invalidAddressInput,
+                  addressStatus === "warning" && styles.warning,
                 ]}
                 onChangeText={this.onChangeText}
                 value={address}
@@ -200,18 +200,27 @@ class SendSelectRecipient extends Component<Props, State> {
               />
               {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>
-            {!!address && !validAddress ? (
-              <LText style={styles.errorText}>
-                <TranslatedError error={error} />
-              </LText>
-            ) : null}
+            {!!address &&
+              addressStatus !== "valid" && (
+                <LText
+                  style={
+                    addressStatus === "invalid"
+                      ? styles.errorText
+                      : styles.warningText
+                  }
+                >
+                  <TranslatedError error={error} />
+                </LText>
+              )}
           </View>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button
               type="primary"
-              title="Continue"
+              title={<Trans i18nKey="common.continue" />}
               onPress={this.onPressContinue}
-              disabled={!validAddress}
+              disabled={
+                addressStatus === "invalid" || addressStatus === "pending"
+              }
             />
           </View>
         </KeyboardView>
@@ -239,20 +248,27 @@ const styles = StyleSheet.create({
   },
   addressTitle: {
     color: colors.grey,
-    fontSize: 12,
     marginBottom: 6,
   },
   addressInput: {
     flex: 1,
-    fontSize: 24,
+    fontSize: 20,
+    marginTop: 16,
     color: colors.darkBlue,
   },
   invalidAddressInput: {
     color: colors.alert,
   },
+  warning: {
+    color: colors.orange,
+  },
+  warningText: {
+    color: colors.orange,
+    marginTop: 8,
+  },
   errorText: {
     color: colors.alert,
-    fontSize: 12,
+    marginTop: 8,
   },
   inputWrapper: {
     flexDirection: "row",

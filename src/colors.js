@@ -29,6 +29,7 @@ export default {
   white: "#ffffff",
   green: "rgb(102, 190, 84)",
   black: "#000000",
+  orange: "#ff7701",
 
   /* DERIVATIVES */
   lightLive: "#4b84ff19",
