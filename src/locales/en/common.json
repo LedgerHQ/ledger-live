@@ -708,6 +708,9 @@
   "manager": {
     "appList": {
       "loading": "Loading apps..."
+    },
+    "device": {
+      "nanox": "Ledger Nano X"
     }
   },
   "AppAction": {
@@ -729,5 +732,12 @@
         "title": "Successfully uninstalled {{appName}} on your {{fullDeviceName}}"
       }
     }
+  },
+  "AuthenticityRow": {
+    "title": "Authenticity",
+    "subtitle": "Genuine"
+  },
+  "UnpairRow": {
+    "title": "Unpair device"
   }
 }

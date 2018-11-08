@@ -6,9 +6,9 @@ import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { deviceNameByDeviceIdSelector } from "../../reducers/ble";
-import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
 import colors from "../../colors";
+import Row from "./Row";
 
 type Props = {
   navigation: *,
@@ -17,18 +17,23 @@ type Props = {
 };
 
 class DeviceNameRow extends PureComponent<Props> {
+  onPress = () => {
+    const { navigation, deviceId } = this.props;
+    navigation.navigate("EditDeviceName", {
+      deviceId,
+    });
+  };
+
   render() {
-    const { navigation, deviceId, name } = this.props;
+    const { name } = this.props;
     return (
-      <SettingsRow
+      <Row
         title={<Trans i18nKey="DeviceNameRow.title" />}
         arrowRight
         alignedTop
-        onPress={() =>
-          navigation.navigate("EditDeviceName", {
-            deviceId,
-          })
-        }
+        onPress={this.onPress}
+        compact
+        top
       >
         <LText
           semiBold
@@ -38,7 +43,7 @@ class DeviceNameRow extends PureComponent<Props> {
         >
           {name}
         </LText>
-      </SettingsRow>
+      </Row>
     );
   }
 }
