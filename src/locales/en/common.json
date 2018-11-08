@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
+    "back": "Back",
     "delete": "Delete",
     "continue": "Continue",
     "retry": "Try again",
@@ -259,7 +260,7 @@
   },
   "onboarding": {
     "stepsTitles": {
-      "OnboardingStep03ChooseDevice": "Choose device",
+      "OnboardingStep03ChooseDevice": "Choose your device",
       "OnboardingStep04SetupPin": "Setup PIN code",
       "OnboardingStep05WriteRecovery": "Write recovery phrase",
       "OnboardingStep06SecurityChecklist": "Security checklist",
@@ -282,7 +283,18 @@
       "initialized": "Use initialized device",
       "buy": "No device? Buy a Ledger Nano X"
     },
-    "step03ChooseDevice": {},
+    "step03ChooseDevice": {
+      "device": {
+        "nanoX": "Ledger Nano X",
+        "nanoS": "Ledger Nano S",
+        "blue": "Ledger Blue"
+      },
+      "desktopOnly": "Desktop app only",
+      "nanoSFallbackTitle": "Import your Ledger Nano S accounts",
+      "nanoSFallbackDesc": "You can import your Ledger Nano S  accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X.",
+      "blueFallbackTitle": "Import your Ledger Blue accounts",
+      "blueFallbackDesc": "You can import your Ledger Blue accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X."
+    },
     "step04SetupPin": {},
     "step05WriteRecovery": {},
     "step06SecurityChecklist": {},

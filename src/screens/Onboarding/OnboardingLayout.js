@@ -90,7 +90,7 @@ export class OnboardingInner extends PureComponent<Container> {
           this.props.noHorizontalPadding && styles.noHorizontalPadding,
         ]}
       >
-        {this.props.children}
+        <View style={styles.innerInner}>{this.props.children}</View>
       </ScrollView>
     );
   }
@@ -108,8 +108,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   inner: {
-    padding: 16,
     flexGrow: 1,
+  },
+  innerInner: {
+    padding: 16,
   },
   noHorizontalPadding: {
     paddingHorizontal: 0,
