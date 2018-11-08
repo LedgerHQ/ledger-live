@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
@@ -14,6 +14,7 @@ import IconRestore from "../../../icons/History";
 import IconTruck from "../../../icons/Truck";
 import colors from "../../../colors";
 import type { OnboardingStepProps } from "../types";
+import { urls } from "../../../config/urls";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
@@ -30,7 +31,7 @@ class OnboardingStep02GetStarted extends Component<OnboardingStepProps> {
 
   onImport = () => {};
   onRestore = () => {};
-  onBuy = () => {};
+  onBuy = () => Linking.openURL(urls.buyNanoX);
 
   render() {
     return (

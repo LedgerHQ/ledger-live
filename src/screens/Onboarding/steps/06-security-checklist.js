@@ -22,9 +22,12 @@ const subSteps = ["pinCode", "recoveryPhrase"];
 
 type State = {
   subStepIndex: number,
-}
+};
 
-class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps, State> {
+class OnboardingStep06SecurityChecklist extends Component<
+  OnboardingStepProps,
+  State,
+> {
   state = {
     subStepIndex: 0,
   };
@@ -71,7 +74,7 @@ class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps, S
         header="OnboardingStep06SecurityChecklist"
         Footer={this.Footer}
       >
-        <Bullet big>1</Bullet>
+        <Bullet big>{subStepIndex + 1}</Bullet>
         <LText style={styles.title} semiBold>
           <Trans
             i18nKey={`onboarding.step06SecurityChecklist.${subStep}.title`}
