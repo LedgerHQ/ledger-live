@@ -8,9 +8,9 @@ import Check from "../icons/Check";
 
 export default class SettingsRow extends Component<{
   onPress: () => void,
-  title: string,
+  title: React$Node,
   titleStyle?: *,
-  desc?: string,
+  desc?: React$Node,
   selected?: boolean,
   arrowRight?: boolean,
   iconLeft?: *,
