@@ -26,7 +26,7 @@ import type { OnboardingStepProps } from "../types";
 
 const windowWidth = Dimensions.get("window").width;
 
-class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps> {
+class OnboardingStepSecurityChecklist extends Component<OnboardingStepProps> {
   Footer = () => {
     const { security, next } = this.props;
     const isDisabled =
@@ -74,7 +74,7 @@ class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps> {
     const isErrorModalOpened = !!subErr;
     return (
       <OnboardingLayout
-        header="OnboardingStep06SecurityChecklist"
+        header="OnboardingStepSecurityChecklist"
         Footer={this.Footer}
         noHorizontalPadding
         noScroll
@@ -89,7 +89,7 @@ class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps> {
           <View style={styles.page}>
             <Bullet big>1</Bullet>
             <LText style={styles.title} semiBold>
-              <Trans i18nKey="onboarding.step06SecurityChecklist.pinCode.title" />
+              <Trans i18nKey="onboarding.stepSecurityChecklist.pinCode.title" />
             </LText>
             <OnboardingChoice
               isChecked={security.pinCode === true}
@@ -107,7 +107,7 @@ class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps> {
           <View style={styles.page}>
             <Bullet big>2</Bullet>
             <LText style={styles.title} semiBold>
-              <Trans i18nKey="onboarding.step06SecurityChecklist.recoveryPhrase.title" />
+              <Trans i18nKey="onboarding.stepSecurityChecklist.recoveryPhrase.title" />
             </LText>
             <OnboardingChoice
               isChecked={security.recoveryPhrase === true}
@@ -131,7 +131,7 @@ class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps> {
           </View>
           <LText style={styles.modalText}>
             <Trans
-              i18nKey={`onboarding.step06SecurityChecklist.${subErr}.error`}
+              i18nKey={`onboarding.stepSecurityChecklist.${subErr}.error`}
             />
           </LText>
           <View style={styles.modalActions}>
@@ -189,4 +189,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep06SecurityChecklist);
+export default withOnboardingContext(OnboardingStepSecurityChecklist);

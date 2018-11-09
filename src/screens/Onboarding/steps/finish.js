@@ -19,7 +19,7 @@ const mapDispatchToProps = {
   completeOnboarding,
 };
 
-class OnboardingStep10Finish extends Component<Props> {
+class OnboardingStepFinish extends Component<Props> {
   onFinish = () => {
     this.props.completeOnboarding();
     this.props.resetCurrentStep();
@@ -29,7 +29,7 @@ class OnboardingStep10Finish extends Component<Props> {
   render() {
     return (
       <OnboardingLayout isCentered>
-        <LText>OnboardingStep10Finish</LText>
+        <LText>OnboardingStepFinish</LText>
         <Button type="primary" title="Finish" onPress={this.onFinish} />
       </OnboardingLayout>
     );
@@ -40,5 +40,5 @@ export default withOnboardingContext(
   connect(
     null,
     mapDispatchToProps,
-  )(OnboardingStep10Finish),
+  )(OnboardingStepFinish),
 );

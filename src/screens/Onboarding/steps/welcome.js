@@ -30,13 +30,13 @@ const hitSlop = {
   bottom: 16,
 };
 
-class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
+class OnboardingStepWelcome extends Component<OnboardingStepProps> {
   buy = () => Linking.openURL(urls.buyNanoX);
 
   Footer = () => (
     <View style={styles.footer}>
       <LText style={styles.footerText}>
-        <Trans i18nKey="onboarding.step01Welcome.noDevice" />
+        <Trans i18nKey="onboarding.stepWelcome.noDevice" />
       </LText>
       <TouchableOpacity
         onPress={this.buy}
@@ -45,7 +45,7 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
       >
         <LText style={[styles.footerText, styles.buy]}>
           <Trans
-            i18nKey="onboarding.step01Welcome.buy"
+            i18nKey="onboarding.stepWelcome.buy"
             values={deviceNames.nanoX}
           />
         </LText>
@@ -59,17 +59,17 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
       <OnboardingLayout isCentered Footer={this.Footer}>
         <View style={styles.logo}>{logo}</View>
         <LText style={styles.title} secondary semiBold>
-          <Trans i18nKey="onboarding.step01Welcome.title" />
+          <Trans i18nKey="onboarding.stepWelcome.title" />
         </LText>
         <LText style={styles.subTitle}>
           <Trans
-            i18nKey="onboarding.step01Welcome.desc"
+            i18nKey="onboarding.stepWelcome.desc"
             values={deviceNames.nanoX}
           />
         </LText>
         <Button
           type="primary"
-          title={<Trans i18nKey="onboarding.step01Welcome.start" />}
+          title={<Trans i18nKey="onboarding.stepWelcome.start" />}
           onPress={this.props.next}
         />
       </OnboardingLayout>
@@ -112,4 +112,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep01Welcome);
+export default withOnboardingContext(OnboardingStepWelcome);

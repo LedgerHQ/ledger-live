@@ -16,13 +16,13 @@ const illustration = (
   <Image source={require("../assets/password-illustration.png")} />
 );
 
-class OnboardingStep08Password extends Component<OnboardingStepProps> {
+class OnboardingStepPassword extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
     return (
       <Button
         type="primary"
-        title={<Trans i18nKey="onboarding.step08Password.setPassword" />}
+        title={<Trans i18nKey="onboarding.stepPassword.setPassword" />}
         onPress={next}
       />
     );
@@ -31,13 +31,13 @@ class OnboardingStep08Password extends Component<OnboardingStepProps> {
   render() {
     return (
       <OnboardingLayout
-        header="OnboardingStep08Password"
+        header="OnboardingStepPassword"
         Footer={this.Footer}
         withSkip
       >
         <View style={styles.hero}>{illustration}</View>
         <LText style={styles.desc} semiBold>
-          <Trans i18nKey="onboarding.step08Password.desc" />
+          <Trans i18nKey="onboarding.stepPassword.desc" />
         </LText>
       </OnboardingLayout>
     );
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep08Password);
+export default withOnboardingContext(OnboardingStepPassword);

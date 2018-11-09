@@ -6,15 +6,16 @@ import { View, StyleSheet } from "react-native";
 
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
+import BulletList from "../../../components/BulletList";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
+import NanoXPincode from "../assets/NanoXPincode";
 import colors from "../../../colors";
-import BulletList from "../../../components/BulletList";
-import RecoveryPhrase from "../assets/RecoveryPhrase";
+import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
-class OnboardingStep05WriteRecovery extends Component<OnboardingStepProps> {
+class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
     return <Button type="primary" title="Next" onPress={next} />;
@@ -23,23 +24,27 @@ class OnboardingStep05WriteRecovery extends Component<OnboardingStepProps> {
   render() {
     return (
       <OnboardingLayout
-        header="OnboardingStep05WriteRecovery"
+        header="OnboardingStepSetupPin"
         Footer={this.Footer}
         noHorizontalPadding
       >
         <View style={styles.hero}>
-          <RecoveryPhrase />
+          <NanoXPincode />
         </View>
         <View style={styles.wrapper}>
           <BulletList
             list={[
-              <Trans i18nKey="onboarding.step05WriteRecovery.step1">
+              <Trans
+                i18nKey="onboarding.stepSetupPin.step1"
+                values={deviceNames.nanoX}
+              />,
+              <Trans i18nKey="onboarding.stepSetupPin.step2">
                 {"text"}
                 <LText semiBold>bold text</LText>
                 {"text"}
               </Trans>,
-              <Trans i18nKey="onboarding.step05WriteRecovery.step2" />,
-              <Trans i18nKey="onboarding.step05WriteRecovery.step3" />,
+              <Trans i18nKey="onboarding.stepSetupPin.step3" />,
+              <Trans i18nKey="onboarding.stepSetupPin.step4" />,
             ]}
           />
         </View>
@@ -59,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep05WriteRecovery);
+export default withOnboardingContext(OnboardingStepSetupPin);

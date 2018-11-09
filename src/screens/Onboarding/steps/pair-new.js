@@ -25,7 +25,7 @@ const hitSlop = {
   bottom: 16,
 };
 
-class OnboardingStep07PairNew extends Component<OnboardingStepProps> {
+class OnboardingStepPairNew extends Component<OnboardingStepProps> {
   Footer = () => (
     <TouchableOpacity
       style={styles.footer}
@@ -46,7 +46,7 @@ class OnboardingStep07PairNew extends Component<OnboardingStepProps> {
   render() {
     return (
       <OnboardingLayout
-        header="OnboardingStep07PairNew"
+        header="OnboardingStepPairNew"
         Footer={this.Footer}
         borderedFooter
       >
@@ -57,7 +57,7 @@ class OnboardingStep07PairNew extends Component<OnboardingStepProps> {
         </View>
         <LText semiBold style={styles.desc}>
           <Trans
-            i18nKey="onboarding.step07PairNew.desc"
+            i18nKey="onboarding.stepPairNew.desc"
             values={deviceNames.nanoX}
           />
         </LText>
@@ -82,7 +82,7 @@ class Cta extends PureComponent<{ onPress: () => any }> {
           <Icon name="plus" color={colors.live} size={16} />
         </Circle>
         <LText style={styles.ctaText} semiBold>
-          <Trans i18nKey="onboarding.step07PairNew.pairNew" />
+          <Trans i18nKey="onboarding.stepPairNew.pairNew" />
         </LText>
       </TouchableOpacity>
     );
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep07PairNew);
+export default withOnboardingContext(OnboardingStepPairNew);

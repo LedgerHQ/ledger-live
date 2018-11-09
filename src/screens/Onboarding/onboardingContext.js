@@ -17,7 +17,7 @@ import type {
 const INITIAL_CONTEXT: OnboardingContextType = {
   // We assume onboarding always starts at this step
   // in the future we could allow to init with custom value
-  currentStep: "OnboardingStep01Welcome",
+  currentStep: "OnboardingStepGetStarted",
 
   // Can be changed on the fly with `setOnboardingMode`
   // prop, passed to steps components
