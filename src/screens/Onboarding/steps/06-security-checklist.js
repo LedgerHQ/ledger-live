@@ -1,8 +1,14 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, Linking } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Linking,
+  ScrollView,
+  Dimensions,
+} from "react-native";
 
 import LText from "../../../components/LText";
 import BottomModal from "../../../components/BottomModal";
@@ -18,78 +24,106 @@ import IconWarning from "../../../icons/Warning";
 
 import type { OnboardingStepProps } from "../types";
 
-const subSteps = ["pinCode", "recoveryPhrase"];
+const windowWidth = Dimensions.get("window").width;
 
-type State = {
-  subStepIndex: number,
-};
-
-class OnboardingStep06SecurityChecklist extends Component<
-  OnboardingStepProps,
-  State,
-> {
-  state = {
-    subStepIndex: 0,
-  };
-
+class OnboardingStep06SecurityChecklist extends Component<OnboardingStepProps> {
   Footer = () => {
-    const { security } = this.props;
-    const { subStepIndex } = this.state;
+    const { security, next } = this.props;
+    const isDisabled =
+      security.pinCode !== true || security.recoveryPhrase !== true;
     return (
       <Button
         type="primary"
-        title="Next"
-        onPress={this.next}
-        disabled={security[subSteps[subStepIndex]] !== true}
+        title={<Trans i18nKey="common.continue" />}
+        onPress={next}
+        disabled={isDisabled}
       />
     );
   };
 
-  next = () => {
-    const { next } = this.props;
-    const { subStepIndex } = this.state;
-    if (subStepIndex === subSteps.length - 1) {
-      next();
-    } else {
-      this.setState({ subStepIndex: subStepIndex + 1 });
+  answerYepPinCode = () => {
+    this.props.setSecurityKey("pinCode", true);
+    if (this.scrollView.current) {
+      this.scrollView.current.scrollTo({ x: windowWidth, animated: true });
     }
   };
 
-  answerYep = () =>
-    this.props.setSecurityKey(subSteps[this.state.subStepIndex], true);
-  answerNope = () =>
-    this.props.setSecurityKey(subSteps[this.state.subStepIndex], false);
-  resetAnswer = () =>
-    this.props.setSecurityKey(subSteps[this.state.subStepIndex], null);
+  answerNopePinCode = () => this.props.setSecurityKey("pinCode", false);
+  answerYepRecovery = () => this.props.setSecurityKey("recoveryPhrase", true);
+  answerNopeRecovery = () => this.props.setSecurityKey("recoveryPhrase", false);
+
+  resetAnswer = () => {
+    if (this.props.security.pinCode === false)
+      this.props.setSecurityKey("pinCode", null);
+    if (this.props.security.recoveryPhrase === false)
+      this.props.setSecurityKey("recoveryPhrase", null);
+  };
 
   contactSupport = () => Linking.openURL(urls.faq);
 
+  scrollView = createRef();
+
   render() {
     const { security } = this.props;
-    const { subStepIndex } = this.state;
-    const subStep = subSteps[subStepIndex];
-    const answer = security[subStep];
+    const subErr =
+      security.pinCode === false
+        ? "pinCode"
+        : security.recoveryPhrase === false
+          ? "recoveryPhrase"
+          : "";
+    const isErrorModalOpened = !!subErr;
     return (
       <OnboardingLayout
         header="OnboardingStep06SecurityChecklist"
         Footer={this.Footer}
+        noHorizontalPadding
+        noScroll
       >
-        <Bullet big>{subStepIndex + 1}</Bullet>
-        <LText style={styles.title} semiBold>
-          <Trans
-            i18nKey={`onboarding.step06SecurityChecklist.${subStep}.title`}
-          />
-        </LText>
-        <OnboardingChoice isChecked={answer === true} onPress={this.answerYep}>
-          <Trans i18nKey="common.yes" />
-        </OnboardingChoice>
-        <OnboardingChoice
-          isChecked={answer === false}
-          onPress={this.answerNope}
+        <ScrollView
+          ref={this.scrollView}
+          horizontal
+          pagingEnabled
+          style={styles.pager}
+          showsHorizontalScrollIndicator={false}
         >
-          <Trans i18nKey="common.no" />
-        </OnboardingChoice>
-        <BottomModal isOpened={answer === false} onClose={this.resetAnswer}>
+          <View style={styles.page}>
+            <Bullet big>1</Bullet>
+            <LText style={styles.title} semiBold>
+              <Trans i18nKey="onboarding.step06SecurityChecklist.pinCode.title" />
+            </LText>
+            <OnboardingChoice
+              isChecked={security.pinCode === true}
+              onPress={this.answerYepPinCode}
+            >
+              <Trans i18nKey="common.yes" />
+            </OnboardingChoice>
+            <OnboardingChoice
+              isChecked={security.pinCode === false}
+              onPress={this.answerNopePinCode}
+            >
+              <Trans i18nKey="common.no" />
+            </OnboardingChoice>
+          </View>
+          <View style={styles.page}>
+            <Bullet big>2</Bullet>
+            <LText style={styles.title} semiBold>
+              <Trans i18nKey="onboarding.step06SecurityChecklist.recoveryPhrase.title" />
+            </LText>
+            <OnboardingChoice
+              isChecked={security.recoveryPhrase === true}
+              onPress={this.answerYepRecovery}
+            >
+              <Trans i18nKey="common.yes" />
+            </OnboardingChoice>
+            <OnboardingChoice
+              isChecked={security.recoveryPhrase === false}
+              onPress={this.answerNopeRecovery}
+            >
+              <Trans i18nKey="common.no" />
+            </OnboardingChoice>
+          </View>
+        </ScrollView>
+        <BottomModal isOpened={isErrorModalOpened} onClose={this.resetAnswer}>
           <View style={styles.modalIconContainer}>
             <Circle bg={rgba(colors.alert, 0.1)} size={56}>
               <IconWarning size={24} color={colors.alert} />
@@ -97,7 +131,7 @@ class OnboardingStep06SecurityChecklist extends Component<
           </View>
           <LText style={styles.modalText}>
             <Trans
-              i18nKey={`onboarding.step06SecurityChecklist.${subStep}.error`}
+              i18nKey={`onboarding.step06SecurityChecklist.${subErr}.error`}
             />
           </LText>
           <View style={styles.modalActions}>
@@ -145,6 +179,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.smoke,
     textAlign: "center",
+  },
+  pager: {
+    flexGrow: 1,
+  },
+  page: {
+    width: windowWidth,
+    paddingHorizontal: 16,
   },
 });
 
