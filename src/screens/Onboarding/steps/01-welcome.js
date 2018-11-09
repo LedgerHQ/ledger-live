@@ -1,7 +1,13 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Linking,
+  Image,
+} from "react-native";
 import { Trans } from "react-i18next";
 
 import LText from "../../../components/LText";
@@ -14,6 +20,8 @@ import { urls } from "../../../config/urls";
 import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
+
+const logo = <Image source={require("../../../images/logo.png")} />;
 
 const hitSlop = {
   top: 16,
@@ -49,6 +57,7 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
   render() {
     return (
       <OnboardingLayout isCentered Footer={this.Footer}>
+        <View style={styles.logo}>{logo}</View>
         <LText style={styles.title} secondary semiBold>
           <Trans i18nKey="onboarding.step01Welcome.title" />
         </LText>
@@ -96,6 +105,10 @@ const styles = StyleSheet.create({
   buyTouch: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  logo: {
+    alignItems: "center",
+    marginBottom: 32,
   },
 });
 

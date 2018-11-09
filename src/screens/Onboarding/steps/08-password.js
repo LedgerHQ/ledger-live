@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -11,6 +11,10 @@ import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 
 import type { OnboardingStepProps } from "../types";
+
+const illustration = (
+  <Image source={require("../assets/password-illustration.png")} />
+);
 
 class OnboardingStep08Password extends Component<OnboardingStepProps> {
   Footer = () => {
@@ -31,11 +35,7 @@ class OnboardingStep08Password extends Component<OnboardingStepProps> {
         Footer={this.Footer}
         withSkip
       >
-        <View style={styles.hero}>
-          <View
-            style={{ width: 68, height: 79, backgroundColor: colors.lightFog }}
-          />
-        </View>
+        <View style={styles.hero}>{illustration}</View>
         <LText style={styles.desc} semiBold>
           <Trans i18nKey="onboarding.step08Password.desc" />
         </LText>
