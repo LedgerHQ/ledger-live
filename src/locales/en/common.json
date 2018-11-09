@@ -476,8 +476,6 @@
   },
   "settings": {
     "header": "Settings",
-    "configureDevice": "Configure device",
-    "configureDeviceDesc": "Pair new Ledger devices",
     "display": {
       "title": "General",
       "desc": "Configure general Ledger Live settings.",
@@ -495,9 +493,7 @@
       "reportErrors": "Report bugs",
       "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience.",
-      "configureDevice": "Configure device",
-      "configureDeviceDesc": "Lorem ipsum dolor"
+      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience."
     },
     "currencies": {
       "header": "Currencies",
