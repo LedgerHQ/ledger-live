@@ -1,25 +1,23 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 
 type Props = {
-  t: T,
   navigation: *,
 };
 
 class ConfigureDevice extends PureComponent<Props> {
   render() {
-    const { t, navigation } = this.props;
+    const { navigation } = this.props;
     return (
       <SettingsRow
-        title={t("settings.configureDevice")}
-        desc={t("settings.configureDeviceDesc")}
+        title={<Trans i18nKey="settings.configureDevice" />}
+        desc={<Trans i18nKey="settings.configureDeviceDesc" />}
         onPress={() => navigation.navigate("PairDevices")}
       />
     );
   }
 }
 
-export default translate()(ConfigureDevice);
+export default ConfigureDevice;

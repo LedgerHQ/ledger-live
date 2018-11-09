@@ -1,17 +1,14 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
 import { connect } from "react-redux";
-import { compose } from "redux";
 import { Switch } from "react-native";
+import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 import { setAnalytics } from "../../../actions/settings";
 import { analyticsEnabledSelector } from "../../../reducers/settings";
 
 type Props = {
-  t: T,
   analyticsEnabled: boolean,
   setAnalytics: boolean => void,
 };
@@ -26,11 +23,11 @@ const mapDispatchToProps = {
 
 class AnalyticsRow extends PureComponent<Props> {
   render() {
-    const { t, analyticsEnabled, setAnalytics } = this.props;
+    const { analyticsEnabled, setAnalytics } = this.props;
     return (
       <SettingsRow
-        title={t("settings.display.analytics")}
-        desc={t("settings.display.analyticsDesc")}
+        title={<Trans i18nKey="settings.display.analytics" />}
+        desc={<Trans i18nKey="settings.display.analyticsDesc" />}
         onPress={null}
       >
         <Switch value={analyticsEnabled} onValueChange={setAnalytics} />
@@ -39,10 +36,7 @@ class AnalyticsRow extends PureComponent<Props> {
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
 )(AnalyticsRow);

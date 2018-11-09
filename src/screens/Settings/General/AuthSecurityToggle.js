@@ -3,18 +3,15 @@ import React, { Component } from "react";
 import { createStructuredSelector } from "reselect";
 import { Switch, Alert } from "react-native";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { setAuthSecurity } from "../../../actions/settings";
 import { authSecurityEnabledSelector } from "../../../reducers/settings";
 import auth from "../../../context/AuthPass/auth";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 
 type Props = {
   authSecurityEnabled: boolean,
   setAuthSecurity: boolean => void,
-  t: T,
 };
 type State = {
   validationPending: boolean,
@@ -58,12 +55,12 @@ class AuthSecurityToggle extends Component<Props, State> {
   };
 
   render() {
-    const { t, authSecurityEnabled } = this.props;
+    const { authSecurityEnabled } = this.props;
     const { validationPending } = this.state;
     return (
       <SettingsRow
-        title={t("common:settings.display.password")}
-        desc={t("common:settings.display.passwordDesc")}
+        title={<Trans i18nKey="common:settings.display.password" />}
+        desc={<Trans i18nKey="common:settings.display.passwordDesc" />}
         alignedTop
       >
         <Switch
@@ -75,10 +72,7 @@ class AuthSecurityToggle extends Component<Props, State> {
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
 )(AuthSecurityToggle);
