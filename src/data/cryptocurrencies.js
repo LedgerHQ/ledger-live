@@ -406,7 +406,7 @@ const cryptocurrenciesById = {
     managerAppName: "Decred",
     ticker: "DCR",
     scheme: "decred",
-    color: "???",
+    color: "#2f74fb",
     units: [
       {
         name: "decred",
@@ -554,7 +554,10 @@ const cryptocurrenciesById = {
     units: ethereumUnits("ether", "ETH"),
     family: "ethereum",
     ledgerExplorerId: "eth",
-    blockAvgTime: 15
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 1
+    }
   },
   ethereum_classic: {
     id: "ethereum_classic",
@@ -567,7 +570,10 @@ const cryptocurrenciesById = {
     units: ethereumUnits("ETC", "ETC"),
     family: "ethereum",
     ledgerExplorerId: "ethc",
-    blockAvgTime: 15
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 61
+    }
   },
   ether1: {
     id: "ether1",
@@ -579,7 +585,10 @@ const cryptocurrenciesById = {
     color: "#000000",
     units: ethereumUnits("ETHO", "ETHO"),
     family: "ethereum",
-    blockAvgTime: 15
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 1313114
+    }
   },
   ethergem: {
     id: "ethergem",
@@ -591,7 +600,10 @@ const cryptocurrenciesById = {
     color: "#000000",
     units: ethereumUnits("EGEM", "EGEM"),
     family: "ethereum",
-    blockAvgTime: 15
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 1987
+    }
   },
   ethersocial: {
     id: "ethersocial",
@@ -603,7 +615,10 @@ const cryptocurrenciesById = {
     color: "#000000",
     units: ethereumUnits("ESN", "ESN"),
     family: "ethereum",
-    blockAvgTime: 15
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 31102
+    }
   },
   expanse: {
     id: "expanse",
@@ -629,7 +644,7 @@ const cryptocurrenciesById = {
     managerAppName: "Factom",
     ticker: "FCT",
     scheme: "factom",
-    color: "???",
+    color: "#2F2879",
     family: "factom",
     units: [
       {
@@ -646,7 +661,7 @@ const cryptocurrenciesById = {
     managerAppName: "GameCredits",
     ticker: "GAME",
     scheme: "game",
-    color: "???",
+    color: "#24485D",
     family: "bitcoin",
     units: [
       {
@@ -828,8 +843,11 @@ const cryptocurrenciesById = {
     managerAppName: "MIX Blockchain",
     ticker: "MIX",
     scheme: "mix",
-    color: "???",
+    color: "#00C4DF",
     family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 76
+    },
     units: [
       {
         name: "MIX",
@@ -864,6 +882,9 @@ const cryptocurrenciesById = {
     scheme: "musicoin",
     color: "#000000",
     family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 7762959
+    },
     units: [
       {
         name: "MUSIC",
@@ -1249,6 +1270,9 @@ const cryptocurrenciesById = {
     scheme: "ubiq",
     color: "#02e785",
     family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 8
+    },
     ledgerExplorerId: "ubq",
     blockAvgTime: 88,
     units: [
@@ -1499,7 +1523,10 @@ const cryptocurrenciesById = {
     isTestnetFor: "ethereum",
     family: "ethereum",
     ledgerExplorerId: "eth_testnet",
-    blockAvgTime: 15
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 3 // ropsten
+    }
   }
 };
 
