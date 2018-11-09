@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent, Fragment } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
+import { translate } from "react-i18next";
 
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
@@ -8,6 +9,7 @@ import InputResetCross from "./InputResetCross";
 import getFontStyle from "./LText/getFontStyle";
 
 import colors from "../colors";
+import type { T } from "../types/common";
 
 type Props = {
   renderList: (list: Array<*>) => React$Node,
@@ -15,6 +17,7 @@ type Props = {
   keys?: Array<string>,
   list: Array<*>,
   inputWrapperStyle?: *,
+  t: T,
 };
 
 type State = {
@@ -54,6 +57,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
       list,
       renderEmptySearch,
       inputWrapperStyle,
+      t,
     } = this.props;
     const { query, focused } = this.state;
 
@@ -62,16 +66,16 @@ class FilteredSearchBar extends PureComponent<Props, State> {
         <View style={[styles.wrapper, inputWrapperStyle]}>
           <View style={styles.iconContainer}>
             <SearchIcon
-              size={16}
-              color={focused ? colors.darkBlue : colors.fog}
+              size={20}
+              color={focused ? colors.darkBlue : colors.grey}
             />
           </View>
           <TextInput
             onBlur={this.onBlur}
             onFocus={this.onFocus}
             onChangeText={this.onChange}
-            placeholder="Search"
-            placeholderTextColor={colors.fog}
+            placeholder={t("common.search")}
+            placeholderTextColor={colors.grey}
             style={styles.input}
             value={query}
             ref={this.input}
@@ -100,14 +104,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   iconContainer: {
-    marginRight: 16,
+    marginRight: 8,
   },
   input: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 16,
     color: colors.darkBlue,
     ...getFontStyle({ secondary: true, semiBold: true }),
   },
 });
 
-export default FilteredSearchBar;
+export default translate()(FilteredSearchBar);

@@ -21,7 +21,7 @@ class AccountCard extends PureComponent<Props> {
     const { onPress, account, style } = this.props;
     return (
       <Card onPress={onPress} style={[styles.card, style]}>
-        <CurrencyIcon size={24} currency={account.currency} />
+        <CurrencyIcon size={20} currency={account.currency} />
         <View style={styles.accountName}>
           <LText
             semiBold
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   accountName: {
     flexGrow: 1,
     flexShrink: 1,
-    marginLeft: 16,
+    marginLeft: 8,
   },
   accountNameText: {
     fontSize: 14,
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   balanceNumText: {
-    fontSize: 14,
     color: colors.grey,
   },
 });

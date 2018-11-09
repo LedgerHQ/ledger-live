@@ -1,6 +1,12 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, SafeAreaView, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+  Platform,
+} from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
@@ -182,9 +188,13 @@ class SendSelectRecipient extends Component<Props, State> {
             />
           </View>
           <View style={styles.container}>
-            <LText style={styles.addressTitle}>
-              {<Trans i18nKey="send.recipient.enterAddress" />}
-            </LText>
+            <View style={styles.separatorContainer}>
+              <View style={styles.separatorLine} />
+              <LText style={styles.separatorText}>
+                {<Trans i18nKey="common.or" />}
+              </LText>
+              <View style={styles.separatorLine} />
+            </View>
             <View style={styles.inputWrapper}>
               {/* make this a recipient component */}
               <TextInput
@@ -208,11 +218,10 @@ class SendSelectRecipient extends Component<Props, State> {
             {!!address &&
               addressStatus !== "valid" && (
                 <LText
-                  style={
-                    addressStatus === "invalid"
-                      ? styles.errorText
-                      : styles.warningText
-                  }
+                  style={[
+                    styles.warningBox,
+                    addressStatus === "invalid" ? styles.error : styles.warning,
+                  ]}
                 >
                   <TranslatedError error={error} />
                 </LText>
@@ -247,6 +256,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
+  separatorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  separatorLine: {
+    flex: 1,
+    borderBottomColor: colors.lightFog,
+    borderBottomWidth: 1,
+    marginHorizontal: 8,
+  },
+  separatorText: {
+    color: colors.grey,
+  },
   containerFlexEnd: {
     flex: 1,
     justifyContent: "flex-end",
@@ -267,13 +289,16 @@ const styles = StyleSheet.create({
   warning: {
     color: colors.orange,
   },
-  warningText: {
-    color: colors.orange,
+  warningBox: {
     marginTop: 8,
+    ...Platform.select({
+      android: {
+        marginLeft: 6,
+      },
+    }),
   },
-  errorText: {
+  error: {
     color: colors.alert,
-    marginTop: 8,
   },
   inputWrapper: {
     flexDirection: "row",

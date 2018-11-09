@@ -16,7 +16,9 @@
     "confirm": "Confirm",
     "poweredBy": "Powered by ",
     "received": "Received",
-    "sent": "Sent"
+    "sent": "Sent",
+    "search": "Search",
+    "or": "OR"
   },
   "errors": {
     "AccountNameRequired": {
@@ -537,7 +539,7 @@
       "input": "Enter address"
     },
     "amount": {
-      "available": "You have <1><0>{{amount}}</></> available",
+      "available": "<1><0>{{amount}}</></> available",
       "loadingNetwork": "Loading Network fees..."
     },
     "summary": {
