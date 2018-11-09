@@ -14,6 +14,7 @@ import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import colors, { rgba } from "../../../colors";
 import { urls } from "../../../config/urls";
+import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
@@ -55,7 +56,10 @@ class OnboardingStep07PairNew extends Component<OnboardingStepProps> {
           </Rounded>
         </View>
         <LText semiBold style={styles.desc}>
-          <Trans i18nKey="onboarding.step07PairNew.desc" />
+          <Trans
+            i18nKey="onboarding.step07PairNew.desc"
+            values={deviceNames.nanoX}
+          />
         </LText>
         <Cta onPress={this.pairNew} />
         <Button

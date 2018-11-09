@@ -13,6 +13,7 @@ import NanoSVertical from "../assets/NanoSVertical";
 import NanoXVertical from "../assets/NanoXVertical";
 import Blue from "../assets/Blue";
 import colors from "../../../colors";
+import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
@@ -38,21 +39,25 @@ class OnboardingStep03ChooseDevice extends Component<
   render() {
     const { next } = this.props;
     const { isModalOpened, device } = this.state;
+    const modalValues = {
+      oldDeviceName: deviceNames[device].fullDeviceName,
+      fullDeviceName: deviceNames.nanoX.fullDeviceName,
+    };
     return (
       <OnboardingLayout header="OnboardingStep03ChooseDevice">
         <DeviceItem
-          title={<Trans i18nKey="onboarding.step03ChooseDevice.device.nanoX" />}
+          title={deviceNames.nanoX.fullDeviceName}
           onPress={next}
           Icon={NanoSVertical}
         />
         <DeviceItem
-          title={<Trans i18nKey="onboarding.step03ChooseDevice.device.nanoS" />}
+          title={deviceNames.nanoS.fullDeviceName}
           desc={<Trans i18nKey="onboarding.step03ChooseDevice.desktopOnly" />}
           onPress={this.openForNanoS}
           Icon={NanoXVertical}
         />
         <DeviceItem
-          title={<Trans i18nKey="onboarding.step03ChooseDevice.device.blue" />}
+          title={deviceNames.blue.fullDeviceName}
           desc={<Trans i18nKey="onboarding.step03ChooseDevice.desktopOnly" />}
           onPress={this.openForBlue}
           Icon={Blue}
@@ -60,12 +65,14 @@ class OnboardingStep03ChooseDevice extends Component<
         <BottomModal isOpened={isModalOpened} onClose={this.close}>
           <LText style={styles.modalTitle} semiBold>
             <Trans
-              i18nKey={`onboarding.step03ChooseDevice.${device}FallbackTitle`}
+              i18nKey="onboarding.step03ChooseDevice.fallbackTitle"
+              values={modalValues}
             />
           </LText>
           <LText style={styles.modalDesc}>
             <Trans
-              i18nKey={`onboarding.step03ChooseDevice.${device}FallbackDesc`}
+              i18nKey="onboarding.step03ChooseDevice.fallbackDesc"
+              values={modalValues}
             />
           </LText>
           <View style={styles.modalActions}>

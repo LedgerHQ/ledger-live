@@ -11,6 +11,7 @@ import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import NanoXPincode from "../assets/NanoXPincode";
 import colors from "../../../colors";
+import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
@@ -33,7 +34,10 @@ class OnboardingStep04SetupPin extends Component<OnboardingStepProps> {
         <View style={styles.wrapper}>
           <BulletList
             list={[
-              <Trans i18nKey="onboarding.step04SetupPin.step1" />,
+              <Trans
+                i18nKey="onboarding.step04SetupPin.step1"
+                values={deviceNames.nanoX}
+              />,
               <Trans i18nKey="onboarding.step04SetupPin.step2">
                 {"text"}
                 <LText semiBold>bold text</LText>

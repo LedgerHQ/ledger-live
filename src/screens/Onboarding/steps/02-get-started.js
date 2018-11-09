@@ -15,6 +15,7 @@ import IconTruck from "../../../icons/Truck";
 import colors from "../../../colors";
 import type { OnboardingStepProps } from "../types";
 import { urls } from "../../../config/urls";
+import { deviceNames } from "../../../wording";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
@@ -61,7 +62,12 @@ class OnboardingStep02GetStarted extends Component<OnboardingStepProps> {
         />
         <Row
           Icon={IconTruck}
-          label={<Trans i18nKey="onboarding.step02GetStarted.buy" />}
+          label={
+            <Trans
+              i18nKey="onboarding.step02GetStarted.buy"
+              values={deviceNames.nanoX}
+            />
+          }
           onPress={this.onBuy}
         />
       </OnboardingLayout>

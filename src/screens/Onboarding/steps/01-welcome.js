@@ -11,6 +11,7 @@ import { withOnboardingContext } from "../onboardingContext";
 import IconArrowRight from "../../../icons/ArrowRight";
 import colors from "../../../colors";
 import { urls } from "../../../config/urls";
+import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
@@ -35,7 +36,10 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
         hitSlop={hitSlop}
       >
         <LText style={[styles.footerText, styles.buy]}>
-          <Trans i18nKey="onboarding.step01Welcome.buy" />
+          <Trans
+            i18nKey="onboarding.step01Welcome.buy"
+            values={deviceNames.nanoX}
+          />
         </LText>
         <IconArrowRight size={16} color={colors.live} />
       </TouchableOpacity>
@@ -49,7 +53,10 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
           <Trans i18nKey="onboarding.step01Welcome.title" />
         </LText>
         <LText style={styles.subTitle}>
-          <Trans i18nKey="onboarding.step01Welcome.desc" />
+          <Trans
+            i18nKey="onboarding.step01Welcome.desc"
+            values={deviceNames.nanoX}
+          />
         </LText>
         <Button
           type="primary"
