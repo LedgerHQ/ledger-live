@@ -43,9 +43,9 @@ class AuthSecurityToggle extends Component<Props> {
     return (
       <Fragment>
         <SettingsRow
-        title={<Trans i18nKey="common:settings.display.password" />}
-        desc={<Trans i18nKey="common:settings.display.passwordDesc" />}
-        alignedTop
+          title={<Trans i18nKey="common:settings.display.password" />}
+          desc={<Trans i18nKey="common:settings.display.passwordDesc" />}
+          alignedTop
         >
           <Switch
             value={privacy.authSecurityEnabled}
