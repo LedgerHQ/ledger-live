@@ -96,7 +96,7 @@
       "description": "Please retry or contact Ledger Support."
     },
     "InvalidAddress": {
-      "title": "This is not a valid {{currencyName}} address"
+      "title": "This is not a valid {{currencyName}} address!"
     },
     "InvalidRecipient": { "title": "Invalid recipient" },
     "LatestMCUInstalledError": {
@@ -575,10 +575,19 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "stepperHeader": {
+      "selectAccount": "Select an account",
+      "recipientAddress": "Recipient Address",
+      "selectAmount": "Amount",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "{{currentStep}} of {{totalSteps}}"
+    },
     "recipient": {
       "scan": "Scan QR Code",
-      "enterAddress": "Or enter a recipient address",
-      "input": "address"
+      "enterAddress": "Enter address",
+      "input": "Enter address"
     },
     "amount": {
       "available": "You have <1><0>{{amount}}</></> available",

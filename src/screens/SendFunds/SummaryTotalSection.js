@@ -26,7 +26,7 @@ type State = {
   isModalOpened: boolean,
 };
 
-class SummaryToSection extends PureComponent<Props, State> {
+class SummaryTotalSection extends PureComponent<Props, State> {
   state = {
     isModalOpened: false,
   };
@@ -67,8 +67,7 @@ class SummaryToSection extends PureComponent<Props, State> {
                 value={amount}
                 currency={account.currency}
                 showCode
-                before="("
-                after=")"
+                before="≈ "
               />
             </LText>
           </View>
@@ -115,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SummaryToSection;
+export default SummaryTotalSection;

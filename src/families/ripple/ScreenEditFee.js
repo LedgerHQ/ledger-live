@@ -42,6 +42,7 @@ class RippleEditFee extends Component<Props> {
             account={account}
             transaction={transaction}
             navigation={navigation}
+            field="fee"
           />
         </KeyboardView>
       </SafeAreaView>

@@ -4,12 +4,12 @@ import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
+import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
 import colors from "../../colors";
@@ -32,7 +32,15 @@ type State = {
 
 class Validation extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="step 6 of 6" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("send.stepperHeader.verification")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "6",
+          totalSteps: "6",
+        })}
+      />
+    ),
   };
 
   state = {
@@ -78,7 +86,6 @@ class Validation extends Component<Props, State> {
     const { signed } = this.state;
     return (
       <View style={styles.root}>
-        <Stepper nbSteps={6} currentStep={6} />
         {signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />

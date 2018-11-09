@@ -7,7 +7,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { translate } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../bridge";
-import { getFeeByFamily, editTxFeeByFamily } from "./helpers";
+import { getFieldByFamily, editTxFeeByFamily } from "./helpers";
 import type { T } from "../types/common";
 import SettingsRow from "../components/SettingsRow";
 import LText from "../components/LText";
@@ -22,6 +22,7 @@ type Props = {
   account: Account,
   t: T,
   navigation: NavigationScreenProp<*>,
+  field: string,
 };
 
 type State = {
@@ -30,10 +31,10 @@ type State = {
 };
 
 class EditFeeUnit extends PureComponent<Props, State> {
-  constructor({ account, navigation }) {
+  constructor({ account, navigation, field }) {
     super();
     this.state = {
-      fee: getFeeByFamily(account, navigation),
+      fee: getFieldByFamily(account, navigation, field),
       isModalOpened: false,
     };
   }
@@ -63,13 +64,13 @@ class EditFeeUnit extends PureComponent<Props, State> {
   };
 
   onValidateFees = () => {
-    const { navigation, account } = this.props;
+    const { navigation, account, field } = this.props;
     const { fee } = this.state;
     Keyboard.dismiss();
 
     navigation.navigate("SendSummary", {
       accountId: account.id,
-      transaction: editTxFeeByFamily(account, navigation, fee),
+      transaction: editTxFeeByFamily(account, navigation, field, fee),
     });
   };
 

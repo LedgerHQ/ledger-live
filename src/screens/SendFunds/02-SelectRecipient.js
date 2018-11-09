@@ -5,6 +5,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import throttle from "lodash/throttle";
@@ -18,7 +19,6 @@ import { getAccountBridge } from "../../bridge";
 
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import TranslatedError from "../../components/TranslatedError";
@@ -40,7 +40,7 @@ type Props = {
 };
 
 type State = {
-  validAddress: boolean,
+  addressStatus: string,
   address: *,
   error: ?Error,
   shouldUpdate: boolean,
@@ -49,7 +49,13 @@ type State = {
 class SendSelectRecipient extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
-      <StepHeader title="Recipient address" subtitle="step 2 of 6" />
+      <StepHeader
+        title={i18next.t("send.stepperHeader.recipientAddress")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "2",
+          totalSteps: "6",
+        })}
+      />
     ),
   };
 
@@ -92,7 +98,7 @@ class SendSelectRecipient extends Component<Props, State> {
   }
 
   state = {
-    validAddress: false,
+    addressStatus: "pending",
     address: "",
     error: null,
     shouldUpdate: false,
@@ -118,10 +124,10 @@ class SendSelectRecipient extends Component<Props, State> {
     try {
       const res = await bridge.checkValidRecipient(account.currency, address);
       if (this.unmounted) return;
-      if (!res) this.setState({ validAddress: true, error: null });
-      else this.setState({ validAddress: false, error: res });
+      if (!res) this.setState({ addressStatus: "valid", error: null });
+      else this.setState({ addressStatus: "warning", error: res });
     } catch (e) {
-      this.setState({ validAddress: false, error: e });
+      this.setState({ addressStatus: "invalid", error: e });
     }
   };
 
@@ -160,35 +166,34 @@ class SendSelectRecipient extends Component<Props, State> {
   };
 
   render() {
-    const { address, validAddress, error } = this.state;
+    const { address, error, addressStatus } = this.state;
     const { account, t } = this.props;
-
     return (
       <SafeAreaView style={styles.root}>
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
-        <Stepper currentStep={2} nbSteps={6} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Button
               type="tertiary"
-              title={<Trans i18nKey="common:send.recipient.scan" />}
+              title={<Trans i18nKey="send.recipient.scan" />}
               IconLeft={IconQRCode}
               onPress={this.onPressScan}
             />
           </View>
           <View style={styles.container}>
             <LText style={styles.addressTitle}>
-              {<Trans i18nKey="common:send.recipient.enterAddress" />}
+              {<Trans i18nKey="send.recipient.enterAddress" />}
             </LText>
             <View style={styles.inputWrapper}>
               {/* make this a recipient component */}
               <TextInput
-                placeholder={t("common:send.recipient.input")}
+                placeholder={t("send.recipient.input")}
                 placeholderTextColor={colors.fog}
                 style={[
                   styles.addressInput,
-                  !validAddress ? styles.invalidAddressInput : null,
+                  addressStatus === "invalid" && styles.invalidAddressInput,
+                  addressStatus === "warning" && styles.warning,
                 ]}
                 onChangeText={this.onChangeText}
                 value={address}
@@ -200,18 +205,27 @@ class SendSelectRecipient extends Component<Props, State> {
               />
               {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>
-            {!!address && !validAddress ? (
-              <LText style={styles.errorText}>
-                <TranslatedError error={error} />
-              </LText>
-            ) : null}
+            {!!address &&
+              addressStatus !== "valid" && (
+                <LText
+                  style={
+                    addressStatus === "invalid"
+                      ? styles.errorText
+                      : styles.warningText
+                  }
+                >
+                  <TranslatedError error={error} />
+                </LText>
+              )}
           </View>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button
               type="primary"
-              title="Continue"
+              title={<Trans i18nKey="common.continue" />}
               onPress={this.onPressContinue}
-              disabled={!validAddress}
+              disabled={
+                addressStatus === "invalid" || addressStatus === "pending"
+              }
             />
           </View>
         </KeyboardView>
@@ -239,20 +253,27 @@ const styles = StyleSheet.create({
   },
   addressTitle: {
     color: colors.grey,
-    fontSize: 12,
     marginBottom: 6,
   },
   addressInput: {
     flex: 1,
-    fontSize: 24,
+    fontSize: 20,
+    marginTop: 16,
     color: colors.darkBlue,
   },
   invalidAddressInput: {
     color: colors.alert,
   },
+  warning: {
+    color: colors.orange,
+  },
+  warningText: {
+    color: colors.orange,
+    marginTop: 8,
+  },
   errorText: {
     color: colors.alert,
-    fontSize: 12,
+    marginTop: 8,
   },
   inputWrapper: {
     flexDirection: "row",

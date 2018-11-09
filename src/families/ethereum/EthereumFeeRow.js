@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component, Fragment } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { translate } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -10,6 +10,7 @@ import CounterValue from "../../components/CounterValue";
 import Touchable from "../../components/Touchable";
 import EthereumGasLimit from "./SendRowGasLimit";
 import ExternalLink from "../../icons/ExternalLink";
+import { urls } from "../../config/urls";
 
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
@@ -31,7 +32,11 @@ class EthereumFeeRow extends Component<Props> {
       transaction,
     });
   };
-  extraInfoFees = () => {};
+  extraInfoFees = () => {
+    Linking.openURL(urls.feesMoreInfo).catch(err =>
+      console.error("An error occurred", err),
+    );
+  };
 
   render() {
     const { account, transaction, t, navigation } = this.props;
@@ -73,9 +78,8 @@ class EthereumFeeRow extends Component<Props> {
             </View>
             <LText style={styles.countervalue}>
               <CounterValue
-                before="("
+                before="≈ "
                 value={gasPrice}
-                after=")"
                 currency={account.currency}
               />
             </LText>
