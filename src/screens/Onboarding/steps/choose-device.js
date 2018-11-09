@@ -22,10 +22,7 @@ type State = {
   device: string,
 };
 
-class OnboardingStepChooseDevice extends Component<
-  OnboardingStepProps,
-  State,
-> {
+class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
   state = {
     isModalOpened: false,
     device: "nanoS",

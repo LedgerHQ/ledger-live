@@ -30,7 +30,11 @@ const hitSlop = {
   bottom: 16,
 };
 
-class OnboardingStepWelcome extends Component<OnboardingStepProps> {
+type Props = OnboardingStepProps & {
+  onWelcomed: () => void,
+};
+
+class OnboardingStepWelcome extends Component<Props> {
   buy = () => Linking.openURL(urls.buyNanoX);
 
   Footer = () => (
@@ -55,6 +59,7 @@ class OnboardingStepWelcome extends Component<OnboardingStepProps> {
   );
 
   render() {
+    const { onWelcomed } = this.props;
     return (
       <OnboardingLayout isCentered Footer={this.Footer}>
         <View style={styles.logo}>{logo}</View>
@@ -70,7 +75,7 @@ class OnboardingStepWelcome extends Component<OnboardingStepProps> {
         <Button
           type="primary"
           title={<Trans i18nKey="onboarding.stepWelcome.start" />}
-          onPress={this.props.next}
+          onPress={onWelcomed}
         />
       </OnboardingLayout>
     );

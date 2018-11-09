@@ -9,7 +9,6 @@ type StepsByMode = {
 
 const steps: StepsByMode = {
   full: [
-    { id: "OnboardingStepWelcome", isGhost: true },
     { id: "OnboardingStepGetStarted", isGhost: true },
     { id: "OnboardingStepChooseDevice" },
     { id: "OnboardingStepSetupPin" },
@@ -21,7 +20,6 @@ const steps: StepsByMode = {
     { id: "OnboardingStepFinish", isGhost: true },
   ],
   alreadyInitialized: [
-    { id: "OnboardingStepWelcome", isGhost: true },
     { id: "OnboardingStepGetStarted", isGhost: true },
     { id: "OnboardingStepChooseDevice" },
     { id: "OnboardingStepSecurityChecklist" },

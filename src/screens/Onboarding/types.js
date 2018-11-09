@@ -15,6 +15,9 @@ export type OnboardingContextType = {
   // list of the currently active steps
   mode: OnboardingMode,
 
+  showWelcome: boolean,
+  setShowWelcome: boolean => Promise<void>,
+
   security: SecurityChecklist,
   setSecurityKey: (string, boolean | null) => void,
 

@@ -2,7 +2,6 @@
 
 import { createStackNavigator } from "react-navigation";
 
-import OnboardingStepWelcome from "./steps/welcome";
 import OnboardingStepGetStarted from "./steps/get-started";
 import OnboardingStepChooseDevice from "./steps/choose-device";
 import OnboardingStepSetupPin from "./steps/setup-pin";
@@ -14,7 +13,6 @@ import OnboardingStepShareData from "./steps/share-data";
 import OnboardingStepFinish from "./steps/finish";
 
 const OnboardingStack = createStackNavigator({
-  OnboardingStepWelcome,
   OnboardingStepGetStarted,
   OnboardingStepChooseDevice,
   OnboardingStepSetupPin,

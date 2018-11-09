@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
 import OnboardingLayout from "../OnboardingLayout";
+import OnboardingStepWelcome from "./welcome";
 import LText from "../../../components/LText";
 import { withOnboardingContext } from "../onboardingContext";
 import IconImport from "../../../icons/Import";
@@ -33,8 +34,17 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
   onImport = () => {};
   onRestore = () => {};
   onBuy = () => Linking.openURL(urls.buyNanoX);
+  onWelcome = () => this.props.setShowWelcome(false);
 
   render() {
+    const { showWelcome } = this.props;
+
+    if (showWelcome) {
+      return (
+        <OnboardingStepWelcome {...this.props} onWelcomed={this.onWelcome} />
+      );
+    }
+
     return (
       <OnboardingLayout isFull>
         <LText style={styles.title} secondary semiBold>
