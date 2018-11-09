@@ -710,6 +710,14 @@
   "manager": {
     "appList": {
       "loading": "Loading apps..."
+    },
+    "device": {
+      "nanox": "Ledger Nano X"
+    },
+    "unpair": {
+      "title": "Unpair device",
+      "description": "Are you sure? You can pair your Ledger Nano X again at any time.",
+      "button": "Unpair"
     }
   },
   "AppAction": {
@@ -731,5 +739,12 @@
         "title": "Successfully uninstalled {{appName}} on your {{fullDeviceName}}"
       }
     }
+  },
+  "AuthenticityRow": {
+    "title": "Authenticity",
+    "subtitle": "Genuine"
+  },
+  "UnpairRow": {
+    "title": "Unpair device"
   }
 }

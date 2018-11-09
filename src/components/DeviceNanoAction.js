@@ -35,7 +35,11 @@ class DeviceNanoAction extends PureComponent<{
           </LinearGradient>
         </Defs>
         <G fill="none" fillRule="evenodd">
-          <Path fill="#FFF" d="M0 0h272v88H0z" />
+          {/*
+            TODO: check why we need this element that adds a square of white background
+            around the nano X
+            <Path fill="#FFF" d="M0 0h272v88H0z" />
+          */}
           <G transform="rotate(-90 44.064 43.52)">
             <Path
               d="M11.648 1.153c-5.796 0-10.495 4.699-10.495 10.495v227.983c0 5.796 4.699 10.495 10.495 10.495h20.113c5.796 0 10.495-4.7 10.495-10.495V11.648c0-5.796-4.699-10.495-10.495-10.495H11.648z"

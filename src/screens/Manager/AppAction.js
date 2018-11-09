@@ -120,7 +120,7 @@ class AppAction extends PureComponent<
                   <Spinning>
                     <Image source={spinner} style={{ width: 24, height: 24 }} />
                   </Spinning>
-                ) : (
+                ) : !error ? (
                   <View
                     style={{
                       borderRadius: 24,
@@ -133,7 +133,7 @@ class AppAction extends PureComponent<
                   >
                     <Check size={14} color={colors.white} />
                   </View>
-                )}
+                ) : null}
               </View>
             </View>
             <LText secondary semiBold style={styles.title}>
