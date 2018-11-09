@@ -17,11 +17,14 @@ import type {
 const INITIAL_CONTEXT: OnboardingContextType = {
   // We assume onboarding always starts at this step
   // in the future we could allow to init with custom value
-  currentStep: "OnboardingStep01Welcome",
+  currentStep: "OnboardingStepGetStarted",
 
   // Can be changed on the fly with `setOnboardingMode`
   // prop, passed to steps components
   mode: "full",
+
+  // wether or not should "welcome to ledger live" in first step
+  showWelcome: true,
 
   // used in security checklist
   security: {
@@ -30,6 +33,7 @@ const INITIAL_CONTEXT: OnboardingContextType = {
   },
 
   setSecurityKey: noop,
+  setShowWelcome: noop,
   resetCurrentStep: noop,
   nextWithNavigation: noop,
   prevWithNavigation: noop,
@@ -53,6 +57,7 @@ export class OnboardingContextProvider extends PureComponent<
       ...INITIAL_CONTEXT,
 
       setSecurityKey: this.setSecurityKey,
+      setShowWelcome: this.setShowWelcome,
       resetCurrentStep: this.resetCurrentStep,
       nextWithNavigation: this.next,
       prevWithNavigation: this.prev,
@@ -84,6 +89,9 @@ export class OnboardingContextProvider extends PureComponent<
     this.setState(state => ({
       security: { ...state.security, [key]: val },
     }));
+
+  setShowWelcome = (showWelcome: boolean) =>
+    new Promise(r => this.setState({ showWelcome }, r));
 
   navigate = (navigation: NavigationScreenProp<*>, index: number) => {
     const { mode } = this.state;

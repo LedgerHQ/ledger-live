@@ -266,22 +266,23 @@
   },
   "onboarding": {
     "stepsTitles": {
-      "OnboardingStep03ChooseDevice": "Choose your device",
-      "OnboardingStep04SetupPin": "Choose your PIN code",
-      "OnboardingStep05WriteRecovery": "Write recovery phrase",
-      "OnboardingStep06SecurityChecklist": "Security checklist",
-      "OnboardingStep07PairNew": "Pair a new device",
-      "OnboardingStep08Password": "Password lock",
-      "OnboardingStep09ShareData": "Share data"
+      "OnboardingStepChooseDevice": "Choose your device",
+      "OnboardingStepSetupPin": "Choose your PIN code",
+      "OnboardingStepWriteRecovery": "Write recovery phrase",
+      "OnboardingStepSecurityChecklist": "Security checklist",
+      "OnboardingStepPairNew": "Pair a new device",
+      "OnboardingStepPassword": "Password lock",
+      "OnboardingStepScanQR": "Scan QR",
+      "OnboardingStepShareData": "Share data"
     },
-    "step01Welcome": {
+    "stepWelcome": {
       "title": "Welcome to Ledger Live",
       "desc": "Easily manage crypto secured by your {{fullDeviceName}}. Anywhere you go.",
       "start": "Start using Ledger Live",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}"
     },
-    "step02GetStarted": {
+    "stepGetStarted": {
       "title": "Get started",
       "import": "Import desktop accounts",
       "initialize": "Initialize as a new device",
@@ -289,23 +290,24 @@
       "initialized": "Use initialized device",
       "buy": "No device? Buy a {{fullDeviceName}}"
     },
-    "step03ChooseDevice": {
+    "stepChooseDevice": {
       "desktopOnly": "Desktop app only",
       "fallbackTitle": "Import your {{oldDeviceName}} accounts",
       "fallbackDesc": "You can import your {{oldDeviceName}} accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a {{fullDeviceName}}."
     },
-    "step04SetupPin": {
+    "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}}.",
       "step2": "Press both buttons to choose <1><1>Setup as new device</1></1>",
+      "step2-restore": "Press both buttons to choose <1><1>Restore from recovery phrase</1></1>",
       "step3": "Press left or right button to select a digit. Press both to validate.",
       "step4": "Select ✓ to confirm your PIN code.\nSelect 🔙 to erase a digit."
     },
-    "step05WriteRecovery": {
+    "stepWriteRecovery": {
       "step1": "Write <1><1>Word #1</1></1> in position 1 on a blank recovery sheet",
       "step2": "Press the right button to continue and write down all 24 words.",
       "step3": "Confirm your recovery phrase: select and validate each word by pressing both buttons."
     },
-    "step06SecurityChecklist": {
+    "stepSecurityChecklist": {
       "pinCode": {
         "title": "Did you choose your PIN code by yourself?",
         "error": "Never use a device supplied with a PIN code. Please contact us when in doubt."
@@ -315,16 +317,16 @@
         "error": "Never use a device supplied with a recovery phrase. Please contact us when in doubt."
       }
     },
-    "step07PairNew": {
+    "stepPairNew": {
       "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
       "pairNew": "Pair new device"
     },
-    "step08Password": {
+    "stepPassword": {
       "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
       "setPassword": "Set a password"
     },
-    "step09ShareData": {},
-    "step10Finish": {}
+    "stepShareData": {},
+    "stepFinish": {}
   },
   "portfolio": {
     "totalBalance": "Total balance",

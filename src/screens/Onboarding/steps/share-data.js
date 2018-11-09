@@ -9,7 +9,7 @@ import { withOnboardingContext } from "../onboardingContext";
 
 import type { OnboardingStepProps } from "../types";
 
-class OnboardingStep09ShareData extends Component<OnboardingStepProps> {
+class OnboardingStepShareData extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
     return <Button type="primary" title="Next" onPress={next} />;
@@ -17,12 +17,12 @@ class OnboardingStep09ShareData extends Component<OnboardingStepProps> {
 
   render() {
     return (
-      <OnboardingLayout header="OnboardingStep09ShareData" Footer={this.Footer}>
-        <LText>OnboardingStep09ShareData</LText>
-        <LText>OnboardingStep09ShareData</LText>
+      <OnboardingLayout header="OnboardingStepShareData" Footer={this.Footer}>
+        <LText>OnboardingStepShareData</LText>
+        <LText>OnboardingStepShareData</LText>
       </OnboardingLayout>
     );
   }
 }
 
-export default withOnboardingContext(OnboardingStep09ShareData);
+export default withOnboardingContext(OnboardingStepShareData);

@@ -12,7 +12,12 @@ import {
 import colors from "../../colors";
 import OnboardingHeader from "./OnboardingHeader";
 
-type Container = { children: *, style?: *, noHorizontalPadding?: boolean };
+type Container = {
+  children: *,
+  style?: *,
+  noHorizontalPadding?: boolean,
+  noScroll?: boolean,
+};
 
 type Props = Container & {
   isCentered?: boolean,
@@ -36,6 +41,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
       borderedFooter,
       style,
       withSkip,
+      noScroll,
     } = this.props;
 
     let inner: React$Node = children;
@@ -55,7 +61,10 @@ export default class OnboardingLayout extends PureComponent<Props> {
 
     if (isFull) {
       inner = (
-        <OnboardingInner noHorizontalPadding={noHorizontalPadding}>
+        <OnboardingInner
+          noHorizontalPadding={noHorizontalPadding}
+          noScroll={noScroll}
+        >
           {inner}
         </OnboardingInner>
       );
@@ -65,7 +74,10 @@ export default class OnboardingLayout extends PureComponent<Props> {
       inner = (
         <Fragment>
           <OnboardingHeader stepId={header} withSkip={withSkip} />
-          <OnboardingInner noHorizontalPadding={noHorizontalPadding}>
+          <OnboardingInner
+            noHorizontalPadding={noHorizontalPadding}
+            noScroll={noScroll}
+          >
             {inner}
           </OnboardingInner>
           {Footer && (
@@ -89,8 +101,10 @@ export default class OnboardingLayout extends PureComponent<Props> {
 
 export class OnboardingInner extends PureComponent<Container> {
   render() {
+    const { noScroll } = this.props;
+    const Container = noScroll ? View : ScrollView;
     return (
-      <ScrollView style={[styles.inner]}>
+      <Container style={styles.inner}>
         <View
           style={[
             styles.innerInner,
@@ -99,7 +113,7 @@ export class OnboardingInner extends PureComponent<Container> {
         >
           {this.props.children}
         </View>
-      </ScrollView>
+      </Container>
     );
   }
 }
@@ -119,6 +133,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   innerInner: {
+    flexGrow: 1,
     padding: 16,
   },
   noHorizontalPadding: {

@@ -14,7 +14,7 @@ import RecoveryPhrase from "../assets/RecoveryPhrase";
 
 import type { OnboardingStepProps } from "../types";
 
-class OnboardingStep05WriteRecovery extends Component<OnboardingStepProps> {
+class OnboardingStepWriteRecovery extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
     return <Button type="primary" title="Next" onPress={next} />;
@@ -23,7 +23,7 @@ class OnboardingStep05WriteRecovery extends Component<OnboardingStepProps> {
   render() {
     return (
       <OnboardingLayout
-        header="OnboardingStep05WriteRecovery"
+        header="OnboardingStepWriteRecovery"
         Footer={this.Footer}
         noHorizontalPadding
       >
@@ -33,13 +33,13 @@ class OnboardingStep05WriteRecovery extends Component<OnboardingStepProps> {
         <View style={styles.wrapper}>
           <BulletList
             list={[
-              <Trans i18nKey="onboarding.step05WriteRecovery.step1">
+              <Trans i18nKey="onboarding.stepWriteRecovery.step1">
                 {"text"}
                 <LText semiBold>bold text</LText>
                 {"text"}
               </Trans>,
-              <Trans i18nKey="onboarding.step05WriteRecovery.step2" />,
-              <Trans i18nKey="onboarding.step05WriteRecovery.step3" />,
+              <Trans i18nKey="onboarding.stepWriteRecovery.step2" />,
+              <Trans i18nKey="onboarding.stepWriteRecovery.step3" />,
             ]}
           />
         </View>
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep05WriteRecovery);
+export default withOnboardingContext(OnboardingStepWriteRecovery);

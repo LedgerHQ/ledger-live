@@ -22,10 +22,7 @@ type State = {
   device: string,
 };
 
-class OnboardingStep03ChooseDevice extends Component<
-  OnboardingStepProps,
-  State,
-> {
+class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
   state = {
     isModalOpened: false,
     device: "nanoS",
@@ -44,7 +41,7 @@ class OnboardingStep03ChooseDevice extends Component<
       fullDeviceName: deviceNames.nanoX.fullDeviceName,
     };
     return (
-      <OnboardingLayout header="OnboardingStep03ChooseDevice">
+      <OnboardingLayout header="OnboardingStepChooseDevice">
         <DeviceItem
           title={deviceNames.nanoX.fullDeviceName}
           onPress={next}
@@ -52,26 +49,26 @@ class OnboardingStep03ChooseDevice extends Component<
         />
         <DeviceItem
           title={deviceNames.nanoS.fullDeviceName}
-          desc={<Trans i18nKey="onboarding.step03ChooseDevice.desktopOnly" />}
+          desc={<Trans i18nKey="onboarding.stepChooseDevice.desktopOnly" />}
           onPress={this.openForNanoS}
           Icon={NanoXVertical}
         />
         <DeviceItem
           title={deviceNames.blue.fullDeviceName}
-          desc={<Trans i18nKey="onboarding.step03ChooseDevice.desktopOnly" />}
+          desc={<Trans i18nKey="onboarding.stepChooseDevice.desktopOnly" />}
           onPress={this.openForBlue}
           Icon={Blue}
         />
         <BottomModal isOpened={isModalOpened} onClose={this.close}>
           <LText style={styles.modalTitle} semiBold>
             <Trans
-              i18nKey="onboarding.step03ChooseDevice.fallbackTitle"
+              i18nKey="onboarding.stepChooseDevice.fallbackTitle"
               values={modalValues}
             />
           </LText>
           <LText style={styles.modalDesc}>
             <Trans
-              i18nKey="onboarding.step03ChooseDevice.fallbackDesc"
+              i18nKey="onboarding.stepChooseDevice.fallbackDesc"
               values={modalValues}
             />
           </LText>
@@ -158,4 +155,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep03ChooseDevice);
+export default withOnboardingContext(OnboardingStepChooseDevice);

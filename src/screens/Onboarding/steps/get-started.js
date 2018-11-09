@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
 import OnboardingLayout from "../OnboardingLayout";
+import OnboardingStepWelcome from "./welcome";
 import LText from "../../../components/LText";
 import { withOnboardingContext } from "../onboardingContext";
 import IconImport from "../../../icons/Import";
@@ -19,7 +20,7 @@ import { deviceNames } from "../../../wording";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
-class OnboardingStep02GetStarted extends Component<OnboardingStepProps> {
+class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
   onInitialized = async () => {
     await this.props.setOnboardingMode("alreadyInitialized");
     this.props.next();
@@ -30,41 +31,58 @@ class OnboardingStep02GetStarted extends Component<OnboardingStepProps> {
     this.props.next();
   };
 
-  onImport = () => {};
-  onRestore = () => {};
+  onImport = async () => {
+    await this.props.setOnboardingMode("qrcode");
+    this.props.next();
+  };
+
+  onRestore = async () => {
+    await this.props.setOnboardingMode("restore");
+    this.props.next();
+  };
+
   onBuy = () => Linking.openURL(urls.buyNanoX);
+  onWelcome = () => this.props.setShowWelcome(false);
 
   render() {
+    const { showWelcome } = this.props;
+
+    if (showWelcome) {
+      return (
+        <OnboardingStepWelcome {...this.props} onWelcomed={this.onWelcome} />
+      );
+    }
+
     return (
       <OnboardingLayout isFull>
         <LText style={styles.title} secondary semiBold>
-          <Trans i18nKey="onboarding.step02GetStarted.title" />
+          <Trans i18nKey="onboarding.stepGetStarted.title" />
         </LText>
         <Row
           Icon={IconImport}
-          label={<Trans i18nKey="onboarding.step02GetStarted.import" />}
+          label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
           onPress={this.onImport}
         />
         <Row
           Icon={IconPlus}
-          label={<Trans i18nKey="onboarding.step02GetStarted.initialize" />}
+          label={<Trans i18nKey="onboarding.stepGetStarted.initialize" />}
           onPress={this.onInit}
         />
         <Row
           Icon={IconRestore}
-          label={<Trans i18nKey="onboarding.step02GetStarted.restore" />}
+          label={<Trans i18nKey="onboarding.stepGetStarted.restore" />}
           onPress={this.onRestore}
         />
         <Row
           Icon={IconCheck}
-          label={<Trans i18nKey="onboarding.step02GetStarted.initialized" />}
+          label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
           onPress={this.onInitialized}
         />
         <Row
           Icon={IconTruck}
           label={
             <Trans
-              i18nKey="onboarding.step02GetStarted.buy"
+              i18nKey="onboarding.stepGetStarted.buy"
               values={deviceNames.nanoX}
             />
           }
@@ -117,4 +135,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep02GetStarted);
+export default withOnboardingContext(OnboardingStepGetStarted);

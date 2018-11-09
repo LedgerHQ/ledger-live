@@ -1,7 +1,13 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Linking,
+  Image,
+} from "react-native";
 import { Trans } from "react-i18next";
 
 import LText from "../../../components/LText";
@@ -15,6 +21,8 @@ import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
+const logo = <Image source={require("../../../images/logo.png")} />;
+
 const hitSlop = {
   top: 16,
   left: 16,
@@ -22,13 +30,17 @@ const hitSlop = {
   bottom: 16,
 };
 
-class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
+type Props = OnboardingStepProps & {
+  onWelcomed: () => void,
+};
+
+class OnboardingStepWelcome extends Component<Props> {
   buy = () => Linking.openURL(urls.buyNanoX);
 
   Footer = () => (
     <View style={styles.footer}>
       <LText style={styles.footerText}>
-        <Trans i18nKey="onboarding.step01Welcome.noDevice" />
+        <Trans i18nKey="onboarding.stepWelcome.noDevice" />
       </LText>
       <TouchableOpacity
         onPress={this.buy}
@@ -37,7 +49,7 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
       >
         <LText style={[styles.footerText, styles.buy]}>
           <Trans
-            i18nKey="onboarding.step01Welcome.buy"
+            i18nKey="onboarding.stepWelcome.buy"
             values={deviceNames.nanoX}
           />
         </LText>
@@ -47,21 +59,23 @@ class OnboardingStep01Welcome extends Component<OnboardingStepProps> {
   );
 
   render() {
+    const { onWelcomed } = this.props;
     return (
       <OnboardingLayout isCentered Footer={this.Footer}>
+        <View style={styles.logo}>{logo}</View>
         <LText style={styles.title} secondary semiBold>
-          <Trans i18nKey="onboarding.step01Welcome.title" />
+          <Trans i18nKey="onboarding.stepWelcome.title" />
         </LText>
         <LText style={styles.subTitle}>
           <Trans
-            i18nKey="onboarding.step01Welcome.desc"
+            i18nKey="onboarding.stepWelcome.desc"
             values={deviceNames.nanoX}
           />
         </LText>
         <Button
           type="primary"
-          title={<Trans i18nKey="onboarding.step01Welcome.start" />}
-          onPress={this.props.next}
+          title={<Trans i18nKey="onboarding.stepWelcome.start" />}
+          onPress={onWelcomed}
         />
       </OnboardingLayout>
     );
@@ -97,6 +111,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  logo: {
+    alignItems: "center",
+    marginBottom: 32,
+  },
 });
 
-export default withOnboardingContext(OnboardingStep01Welcome);
+export default withOnboardingContext(OnboardingStepWelcome);

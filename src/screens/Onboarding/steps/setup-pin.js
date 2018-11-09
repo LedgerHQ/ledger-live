@@ -15,16 +15,17 @@ import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
-class OnboardingStep04SetupPin extends Component<OnboardingStepProps> {
+class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
     return <Button type="primary" title="Next" onPress={next} />;
   };
 
   render() {
+    const { mode } = this.props;
     return (
       <OnboardingLayout
-        header="OnboardingStep04SetupPin"
+        header="OnboardingStepSetupPin"
         Footer={this.Footer}
         noHorizontalPadding
       >
@@ -35,16 +36,22 @@ class OnboardingStep04SetupPin extends Component<OnboardingStepProps> {
           <BulletList
             list={[
               <Trans
-                i18nKey="onboarding.step04SetupPin.step1"
+                i18nKey="onboarding.stepSetupPin.step1"
                 values={deviceNames.nanoX}
               />,
-              <Trans i18nKey="onboarding.step04SetupPin.step2">
+              <Trans
+                i18nKey={
+                  mode === "restore"
+                    ? "onboarding.stepSetupPin.step2-restore"
+                    : "onboarding.stepSetupPin.step2"
+                }
+              >
                 {"text"}
                 <LText semiBold>bold text</LText>
                 {"text"}
               </Trans>,
-              <Trans i18nKey="onboarding.step04SetupPin.step3" />,
-              <Trans i18nKey="onboarding.step04SetupPin.step4" />,
+              <Trans i18nKey="onboarding.stepSetupPin.step3" />,
+              <Trans i18nKey="onboarding.stepSetupPin.step4" />,
             ]}
           />
         </View>
@@ -64,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep04SetupPin);
+export default withOnboardingContext(OnboardingStepSetupPin);

@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -12,13 +12,17 @@ import { withOnboardingContext } from "../onboardingContext";
 
 import type { OnboardingStepProps } from "../types";
 
-class OnboardingStep08Password extends Component<OnboardingStepProps> {
+const illustration = (
+  <Image source={require("../assets/password-illustration.png")} />
+);
+
+class OnboardingStepPassword extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
     return (
       <Button
         type="primary"
-        title={<Trans i18nKey="onboarding.step08Password.setPassword" />}
+        title={<Trans i18nKey="onboarding.stepPassword.setPassword" />}
         onPress={next}
       />
     );
@@ -27,17 +31,13 @@ class OnboardingStep08Password extends Component<OnboardingStepProps> {
   render() {
     return (
       <OnboardingLayout
-        header="OnboardingStep08Password"
+        header="OnboardingStepPassword"
         Footer={this.Footer}
         withSkip
       >
-        <View style={styles.hero}>
-          <View
-            style={{ width: 68, height: 79, backgroundColor: colors.lightFog }}
-          />
-        </View>
+        <View style={styles.hero}>{illustration}</View>
         <LText style={styles.desc} semiBold>
-          <Trans i18nKey="onboarding.step08Password.desc" />
+          <Trans i18nKey="onboarding.stepPassword.desc" />
         </LText>
       </OnboardingLayout>
     );
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStep08Password);
+export default withOnboardingContext(OnboardingStepPassword);

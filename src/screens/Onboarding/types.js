@@ -15,6 +15,9 @@ export type OnboardingContextType = {
   // list of the currently active steps
   mode: OnboardingMode,
 
+  showWelcome: boolean,
+  setShowWelcome: boolean => Promise<void>,
+
   security: SecurityChecklist,
   setSecurityKey: (string, boolean | null) => void,
 
@@ -41,7 +44,7 @@ export type SetOnboardingModeType = OnboardingMode => Promise<void>;
 
 export type OnboardingContextProviderProps = { children: * };
 
-type OnboardingMode = "full" | "alreadyInitialized";
+type OnboardingMode = "full" | "alreadyInitialized" | "qrcode" | "restore";
 
 type StepNavigateType = (NavigationScreenProp<*>) => void;
 type Noop = any => any;
