@@ -96,7 +96,7 @@ class OnboardingStep03ChooseDevice extends Component<
 }
 
 type DeviceItemProps = {
-  title: React$Element<*>,
+  title: string,
   desc?: React$Element<*>,
   onPress?: () => void,
   Icon: React$ComponentType<*>,
