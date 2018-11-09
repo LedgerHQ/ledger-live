@@ -296,6 +296,7 @@
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}}.",
       "step2": "Press both buttons to choose <1><1>Setup as new device</1></1>",
+      "step2-restore": "Press both buttons to choose <1><1>Restore from recovery phrase</1></1>",
       "step3": "Press left or right button to select a digit. Press both to validate.",
       "step4": "Select ✓ to confirm your PIN code.\nSelect 🔙 to erase a digit."
     },

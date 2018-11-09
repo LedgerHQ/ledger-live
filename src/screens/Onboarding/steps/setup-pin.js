@@ -22,6 +22,7 @@ class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
   };
 
   render() {
+    const { mode } = this.props;
     return (
       <OnboardingLayout
         header="OnboardingStepSetupPin"
@@ -38,7 +39,13 @@ class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
                 i18nKey="onboarding.stepSetupPin.step1"
                 values={deviceNames.nanoX}
               />,
-              <Trans i18nKey="onboarding.stepSetupPin.step2">
+              <Trans
+                i18nKey={
+                  mode === "restore"
+                    ? "onboarding.stepSetupPin.step2-restore"
+                    : "onboarding.stepSetupPin.step2"
+                }
+              >
                 {"text"}
                 <LText semiBold>bold text</LText>
                 {"text"}

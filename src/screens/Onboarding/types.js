@@ -44,7 +44,7 @@ export type SetOnboardingModeType = OnboardingMode => Promise<void>;
 
 export type OnboardingContextProviderProps = { children: * };
 
-type OnboardingMode = "full" | "alreadyInitialized" | "qrcode";
+type OnboardingMode = "full" | "alreadyInitialized" | "qrcode" | "restore";
 
 type StepNavigateType = (NavigationScreenProp<*>) => void;
 type Noop = any => any;

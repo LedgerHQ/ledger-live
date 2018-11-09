@@ -36,7 +36,11 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
     this.props.next();
   };
 
-  onRestore = () => {};
+  onRestore = async () => {
+    await this.props.setOnboardingMode("restore");
+    this.props.next();
+  };
+
   onBuy = () => Linking.openURL(urls.buyNanoX);
   onWelcome = () => this.props.setShowWelcome(false);
 
