@@ -13,8 +13,8 @@ import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
-import genuineCheck from "../../logic/hw/genuineCheck";
-import getDeviceName from "../../logic/hw/getDeviceName";
+import genuineCheck from "../../logic/hw/theRealGenuineCheck";
+import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import colors from "../../colors";
 import RequiresBLE from "../../components/RequiresBLE";
 import PendingContainer from "./PendingContainer";
@@ -80,11 +80,11 @@ class PairDevices extends Component<Props, State> {
       if (this.unmounted) return;
       if (__DEV__) transport.setDebugMode(true);
       try {
-        // getDeviceName is a dummy apdu to trigger the pairing before the actual genuine check.
-        // we might still want to use its result to make sure the name is in sync!
-        await getDeviceName(transport);
+        const deviceInfo = await getDeviceInfo(transport);
+        console.log({ deviceInfo }); // eslint-disable-line
+
         this.setState({ device, status: "genuinecheck" });
-        const observable = genuineCheck(transport).pipe(
+        const observable = genuineCheck(transport, deviceInfo).pipe(
           timeout(GENUINE_CHECK_TIMEOUT),
         );
 
