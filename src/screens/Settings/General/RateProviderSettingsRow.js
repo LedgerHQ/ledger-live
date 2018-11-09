@@ -2,8 +2,7 @@
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import {
@@ -12,7 +11,6 @@ import {
   counterValueCurrencySelector,
 } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 import LText from "../../../components/LText";
 import colors from "../../../colors";
 
@@ -25,25 +23,25 @@ class RateProviderSettingsRow extends PureComponent<{
   navigation: NavigationScreenProp<*>,
   counterValueExchange: *,
   counterValueCurrency: *,
-  t: T,
 }> {
-  static navigationOptions = {
-    title: "Settings",
-  };
-
   render() {
     const {
       navigation,
       counterValueExchange,
-      t,
       counterValueCurrency,
     } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.display.exchange")}
-        desc={t("common:settings.display.exchangeDesc", {
-          fiat: counterValueCurrency.ticker,
-        })}
+        title={<Trans i18nKey="settings.display.exchange" />}
+        desc={
+          <Trans
+            i18nKey="settings.display.exchangeDesc"
+            values={{
+              ...counterValueCurrency,
+              fiat: counterValueCurrency.ticker,
+            }}
+          />
+        }
         arrowRight
         onPress={() =>
           navigation.navigate("RateProviderSettings", {
@@ -68,7 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(RateProviderSettingsRow);
+export default connect(mapStateToProps)(RateProviderSettingsRow);

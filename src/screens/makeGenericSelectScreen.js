@@ -12,7 +12,7 @@ type EntryProps<Item> = {
 type EntryComponent<Item> = React$ComponentType<EntryProps<Item>>;
 
 type Opts<Item> = {
-  title: string,
+  title: React$Node,
   keyExtractor: Item => string,
   formatItem?: Item => string,
   Entry?: EntryComponent<Item>,

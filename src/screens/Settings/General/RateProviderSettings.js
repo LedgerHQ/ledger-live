@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import i18next from "i18next";
 import { findCurrencyByTicker } from "@ledgerhq/live-common/lib/currencies";
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
@@ -54,7 +55,7 @@ const mapDispatchToProps = {
 };
 
 const Screen = makeGenericSelectScreen({
-  title: "Exchange",
+  title: i18next.t("settings.display.exchangeHeader"),
   keyExtractor: item => item.id,
   formatItem: item => item.name,
 });

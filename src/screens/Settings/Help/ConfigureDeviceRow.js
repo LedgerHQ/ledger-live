@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import { Trans } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
 import { withOnboardingContext } from "../../Onboarding/onboardingContext";
 import type { OnboardingStepProps } from "../../Onboarding/types";
@@ -13,11 +14,10 @@ class ConfigureDeviceRow extends PureComponent<OnboardingStepProps> {
   };
 
   render() {
-    const { t } = this.props;
     return (
       <SettingsRow
-        title={t("common:settings.display.configureDevice")}
-        desc={t("common:settings.display.configureDeviceDesc")}
+        title={<Trans i18nKey="settings.help.configureDevice" />}
+        desc={<Trans i18nKey="settings.help.configureDeviceDesc" />}
         arrowRight
         onPress={this.onPress}
       />
