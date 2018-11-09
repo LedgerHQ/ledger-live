@@ -711,6 +711,11 @@
     },
     "device": {
       "nanox": "Ledger Nano X"
+    },
+    "unpair": {
+      "title": "Unpair device",
+      "description": "Are you sure? You can pair your Ledger Nano X again at any time.",
+      "button": "Unpair"
     }
   },
   "AppAction": {

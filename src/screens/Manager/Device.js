@@ -15,6 +15,7 @@ import DeviceNameRow from "./DeviceNameRow";
 import FirmwareVersionRow from "./FirmwareVersionRow";
 import AuthenticityRow from "./AuthenticityRow";
 import UnpairRow from "./UnpairRow";
+import DeviceAction from "./DeviceAction";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -27,10 +28,17 @@ type Props = {
   }>,
 };
 
-class ManagerDevice extends Component<Props> {
+class ManagerDevice extends Component<Props, { opened: boolean }> {
   static navigationOptions = {
     title: "Device",
   };
+
+  state = {
+    opened: false,
+  };
+
+  open = () => this.setState({ opened: true });
+  close = () => this.setState({ opened: false });
 
   render() {
     const deviceId = this.props.navigation.getParam("deviceId");
@@ -48,7 +56,8 @@ class ManagerDevice extends Component<Props> {
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
-        <UnpairRow />
+        <UnpairRow onPress={this.open} deviceId={deviceId} />
+        <DeviceAction opened={this.state.opened} onClose={this.close} />
       </ScrollView>
     );
   }
