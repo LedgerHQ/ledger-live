@@ -61,6 +61,7 @@ class ReceiveFunds extends Component<Props, State> {
                   renderItem={this.renderItem}
                   keyExtractor={this.keyExtractor}
                   showsVerticalScrollIndicator={false}
+                  keyboardDismissMode="on-drag"
                 />
               )}
               renderEmptySearch={() => (

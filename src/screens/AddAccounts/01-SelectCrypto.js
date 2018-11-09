@@ -56,6 +56,8 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
       data={items}
       renderItem={this.renderItem}
       keyExtractor={this.keyExtractor}
+      showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag"
     />
   );
 
