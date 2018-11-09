@@ -86,7 +86,12 @@ export const open = (deviceId: string): Promise<Transport<*>> => {
   for (let i = 0; i < openHandlers.length; i++) {
     const open = openHandlers[i];
     const p = open(deviceId);
-    if (p) return p;
+    if (p) {
+      if (__DEV__) {
+        p.then(p => p.setDebugMode(true));
+      }
+      return p;
+    }
   }
   return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));
 };
