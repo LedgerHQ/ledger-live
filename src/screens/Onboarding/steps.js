@@ -5,6 +5,7 @@ import type { Step } from "./types";
 type StepsByMode = {
   full: Step[],
   alreadyInitialized: Step[],
+  qrcode: Step[],
 };
 
 const steps: StepsByMode = {
@@ -25,6 +26,12 @@ const steps: StepsByMode = {
     { id: "OnboardingStepSecurityChecklist" },
     { id: "OnboardingStepPairNew" },
     { id: "OnboardingStepPassword" },
+    { id: "OnboardingStepShareData" },
+    { id: "OnboardingStepFinish", isGhost: true },
+  ],
+  qrcode: [
+    { id: "OnboardingStepGetStarted", isGhost: true },
+    { id: "OnboardingStepScanQR" },
     { id: "OnboardingStepShareData" },
     { id: "OnboardingStepFinish", isGhost: true },
   ],

@@ -31,7 +31,11 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
     this.props.next();
   };
 
-  onImport = () => {};
+  onImport = async () => {
+    await this.props.setOnboardingMode("qrcode");
+    this.props.next();
+  };
+
   onRestore = () => {};
   onBuy = () => Linking.openURL(urls.buyNanoX);
   onWelcome = () => this.props.setShowWelcome(false);

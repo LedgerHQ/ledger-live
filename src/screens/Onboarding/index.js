@@ -10,6 +10,7 @@ import OnboardingStepSecurityChecklist from "./steps/security-checklist";
 import OnboardingStepPairNew from "./steps/pair-new";
 import OnboardingStepPassword from "./steps/password";
 import OnboardingStepShareData from "./steps/share-data";
+import OnboardingStepScanQR from "./steps/scan-qr";
 import OnboardingStepFinish from "./steps/finish";
 
 const OnboardingStack = createStackNavigator({
@@ -19,6 +20,7 @@ const OnboardingStack = createStackNavigator({
   OnboardingStepWriteRecovery,
   OnboardingStepSecurityChecklist,
   OnboardingStepPairNew,
+  OnboardingStepScanQR,
   OnboardingStepPassword,
   OnboardingStepShareData,
   OnboardingStepFinish,

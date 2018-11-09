@@ -270,6 +270,7 @@
       "OnboardingStepSecurityChecklist": "Security checklist",
       "OnboardingStepPairNew": "Pair a new device",
       "OnboardingStepPassword": "Password lock",
+      "OnboardingStepScanQR": "Scan QR",
       "OnboardingStepShareData": "Share data"
     },
     "stepWelcome": {
