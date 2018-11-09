@@ -2,7 +2,10 @@
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
+    "back": "Back",
     "delete": "Delete",
+    "yes": "Yes",
+    "no": "No",
     "continue": "Continue",
     "retry": "Try again",
     "done": "Done",
@@ -10,7 +13,9 @@
     "signOut": "Sign Out",
     "search": "Search",
     "contactUs": "Contact us",
+    "skip": "Skip",
     "noCryptoFound": "No crypto assets found",
+    "needHelp": "Need help?",
     "edit": "Edit",
     "close": "Close",
     "confirm": "Confirm",
@@ -259,22 +264,63 @@
   },
   "onboarding": {
     "stepsTitles": {
-      "OnboardingStep03ChooseDevice": "Choose device",
-      "OnboardingStep04SetupPin": "Setup PIN code",
+      "OnboardingStep03ChooseDevice": "Choose your device",
+      "OnboardingStep04SetupPin": "Choose your PIN code",
       "OnboardingStep05WriteRecovery": "Write recovery phrase",
       "OnboardingStep06SecurityChecklist": "Security checklist",
       "OnboardingStep07PairNew": "Pair a new device",
       "OnboardingStep08Password": "Password lock",
       "OnboardingStep09ShareData": "Share data"
     },
-    "step01Welcome": {},
-    "step02GetStarted": {},
-    "step03ChooseDevice": {},
-    "step04SetupPin": {},
-    "step05WriteRecovery": {},
-    "step06SecurityChecklist": {},
-    "step07PairNew": {},
-    "step08Password": {},
+    "step01Welcome": {
+      "title": "Welcome to Ledger Live",
+      "desc": "Easily manage crypto secured by your {{fullDeviceName}}. Anywhere you go.",
+      "start": "Start using Ledger Live",
+      "noDevice": "No device?",
+      "buy": "Buy a {{fullDeviceName}}"
+    },
+    "step02GetStarted": {
+      "title": "Get started",
+      "import": "Import desktop accounts",
+      "initialize": "Initialize as a new device",
+      "restore": "Restore from a recovery phrase",
+      "initialized": "Use initialized device",
+      "buy": "No device? Buy a {{fullDeviceName}}"
+    },
+    "step03ChooseDevice": {
+      "desktopOnly": "Desktop app only",
+      "fallbackTitle": "Import your {{oldDeviceName}} accounts",
+      "fallbackDesc": "You can import your {{oldDeviceName}} accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a {{fullDeviceName}}."
+    },
+    "step04SetupPin": {
+      "step1": "Turn on your {{fullDeviceName}}.",
+      "step2": "Press both buttons to choose <1><1>Setup as new device</1></1>",
+      "step3": "Press left or right button to select a digit. Press both to validate.",
+      "step4": "Select ✓ to confirm your PIN code.\nSelect 🔙 to erase a digit."
+    },
+    "step05WriteRecovery": {
+      "step1": "Write <1><1>Word #1</1></1> in position 1 on a blank recovery sheet",
+      "step2": "Press the right button to continue and write down all 24 words.",
+      "step3": "Confirm your recovery phrase: select and validate each word by pressing both buttons."
+    },
+    "step06SecurityChecklist": {
+      "pinCode": {
+        "title": "Did you choose your PIN code by yourself?",
+        "error": "Never use a device supplied with a PIN code. Please contact us when in doubt."
+      },
+      "recoveryPhrase": {
+        "title": "Did you choose your recovery phrase by yourself?",
+        "error": "Never use a device supplied with a recovery phrase. Please contact us when in doubt."
+      }
+    },
+    "step07PairNew": {
+      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
+      "pairNew": "Pair new device"
+    },
+    "step08Password": {
+      "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
+      "setPassword": "Set a password"
+    },
     "step09ShareData": {},
     "step10Finish": {}
   },
@@ -597,7 +643,7 @@
     "headerDescription": "Turn on your Nano X and the bluetooth on your phone",
     "steps": {
       "connecting": {
-        "title": "Connecting “{{deviceName}}”",
+        "title": "Connecting “{{fullDeviceName}}”",
         "description": "Don't forget to turn on your device and enter your PIN to unlock it"
       },
       "genuineCheck": {

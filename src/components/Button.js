@@ -181,7 +181,11 @@ class Button extends PureComponent<
       },
     ];
 
-    const Container = useTouchable ? TouchableOpacity : RectButton;
+    const Container = useTouchable
+      ? disabled
+        ? View
+        : TouchableOpacity
+      : RectButton;
     const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
 
     return (

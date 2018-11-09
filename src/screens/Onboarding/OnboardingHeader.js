@@ -6,6 +6,7 @@ import { withNavigation } from "react-navigation";
 
 import colors from "../../colors";
 import LText from "../../components/LText";
+import IconArrowLeft from "../../icons/ArrowLeft";
 import { withOnboardingContext } from "./onboardingContext";
 import STEPS_BY_MODE from "./steps";
 
@@ -13,9 +14,10 @@ import type { OnboardingStepProps } from "./types";
 
 type Props = OnboardingStepProps & {
   stepId: string,
+  withSkip?: boolean,
 };
 
-const backHitslop = {
+const hitSlop = {
   top: 16,
   left: 16,
   right: 16,
@@ -24,18 +26,29 @@ const backHitslop = {
 
 class OnboardingHeader extends PureComponent<Props> {
   render() {
-    const { mode, stepId, prev, t } = this.props;
+    const { mode, stepId, prev, t, withSkip, next } = this.props;
     const steps = STEPS_BY_MODE[mode];
     const visibleSteps = steps.filter(s => !s.isGhost);
     const indexInSteps = visibleSteps.findIndex(s => s.id === stepId);
     const stepMsg = `${indexInSteps + 1} of ${visibleSteps.length}`; // TODO translate
     return (
       <View style={styles.root}>
-        <TouchableOpacity
-          style={styles.arrow}
-          onPress={prev}
-          hitSlop={backHitslop}
-        />
+        <View style={styles.headerHeader}>
+          <TouchableOpacity
+            style={styles.arrow}
+            onPress={prev}
+            hitSlop={hitSlop}
+          >
+            <IconArrowLeft size={16} color={colors.grey} />
+          </TouchableOpacity>
+          {withSkip && (
+            <TouchableOpacity onPress={next} hitSlop={hitSlop}>
+              <LText style={styles.skip} tertiary semiBold>
+                {t("common.skip")}
+              </LText>
+            </TouchableOpacity>
+          )}
+        </View>
         <LText semiBold style={styles.steps}>
           {stepMsg}
         </LText>
@@ -57,6 +70,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: colors.lightFog,
     marginBottom: 16,
+    alignItems: "center",
+    justifyContent: "center",
   },
   steps: {
     color: colors.grey,
@@ -66,6 +81,14 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     fontSize: 24,
     lineHeight: 36,
+  },
+  headerHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  skip: {
+    color: colors.grey,
+    fontSize: 16,
   },
 });
 

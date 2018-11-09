@@ -9,38 +9,69 @@ import {
   ScrollView,
 } from "react-native";
 
+import colors from "../../colors";
 import OnboardingHeader from "./OnboardingHeader";
 
-type Container = { children: *, style?: * };
+type Container = { children: *, style?: *, noHorizontalPadding?: boolean };
 
 type Props = Container & {
   isCentered?: boolean,
   isFull?: boolean,
+  noHorizontalPadding?: boolean,
+  borderedFooter?: boolean,
   header?: string,
+  withSkip?: boolean,
   Footer?: React$ComponentType<*>,
 };
 
 export default class OnboardingLayout extends PureComponent<Props> {
   render() {
-    const { children, header, Footer, isCentered, isFull, style } = this.props;
+    const {
+      children,
+      header,
+      Footer,
+      isCentered,
+      isFull,
+      noHorizontalPadding,
+      borderedFooter,
+      style,
+      withSkip,
+    } = this.props;
 
     let inner: React$Node = children;
 
     if (isCentered) {
-      inner = <View>{inner}</View>;
+      inner = (
+        <Fragment>
+          <View>{inner}</View>
+          {Footer && (
+            <View style={styles.centeredFooter}>
+              <Footer />
+            </View>
+          )}
+        </Fragment>
+      );
     }
 
     if (isFull) {
-      inner = <OnboardingInner>{inner}</OnboardingInner>;
+      inner = (
+        <OnboardingInner noHorizontalPadding={noHorizontalPadding}>
+          {inner}
+        </OnboardingInner>
+      );
     }
 
     if (header) {
       inner = (
         <Fragment>
-          <OnboardingHeader stepId={header} />
-          <OnboardingInner>{inner}</OnboardingInner>
+          <OnboardingHeader stepId={header} withSkip={withSkip} />
+          <OnboardingInner noHorizontalPadding={noHorizontalPadding}>
+            {inner}
+          </OnboardingInner>
           {Footer && (
-            <View style={styles.footer}>
+            <View
+              style={[styles.footer, borderedFooter && styles.borderedFooter]}
+            >
               <Footer />
             </View>
           )}
@@ -58,7 +89,18 @@ export default class OnboardingLayout extends PureComponent<Props> {
 
 export class OnboardingInner extends PureComponent<Container> {
   render() {
-    return <ScrollView style={styles.inner}>{this.props.children}</ScrollView>;
+    return (
+      <ScrollView style={[styles.inner]}>
+        <View
+          style={[
+            styles.innerInner,
+            this.props.noHorizontalPadding && styles.noHorizontalPadding,
+          ]}
+        >
+          {this.props.children}
+        </View>
+      </ScrollView>
+    );
   }
 }
 
@@ -71,12 +113,31 @@ const styles = StyleSheet.create({
   centered: {
     alignItems: "center",
     justifyContent: "center",
+    padding: 16,
   },
   inner: {
-    padding: 16,
     flexGrow: 1,
+  },
+  innerInner: {
+    padding: 16,
+  },
+  noHorizontalPadding: {
+    paddingHorizontal: 0,
   },
   footer: {
     padding: 16,
+  },
+  borderedFooter: {
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
+  },
+  centeredFooter: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
 });
