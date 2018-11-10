@@ -5,6 +5,8 @@ import { View, StyleSheet } from "react-native";
 import colors from "../colors";
 import LText from "./LText";
 import ErrorIcon from "./ErrorIcon";
+import Touchable from "./Touchable";
+import Close from "../icons/Close";
 import BottomModal from "./BottomModal";
 import TranslatedError from "./TranslatedError";
 
@@ -33,6 +35,11 @@ class GenericErrorButtonModal extends PureComponent<{
             {footerButtons ? (
               <View style={styles.buttonsContainer}>{footerButtons}</View>
             ) : null}
+            {onClose ? (
+              <Touchable style={styles.close} onPress={onClose}>
+                <Close color={colors.fog} size={20} />
+              </Touchable>
+            ) : null}
           </View>
         ) : null}
       </BottomModal>
@@ -52,6 +59,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 40,
+  },
+  close: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
   headIcon: {
     padding: 10,
