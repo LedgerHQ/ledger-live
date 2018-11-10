@@ -2,7 +2,7 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 
 import { BigNumber } from "bignumber.js";
-import lzw from "node-lzw";
+import LZUTF8 from "lzutf8";
 import type { Account, CryptoCurrencyIds, DerivationMode } from "./types";
 import { runDerivationScheme, getDerivationScheme } from "./derivation";
 import { decodeAccountId } from "./account";
@@ -39,9 +39,7 @@ export type DataIn = {
   // the name of the exporter. e.g. "desktop" for the desktop app
   exporterName: string,
   // the version of the exporter. e.g. the desktop app version
-  exporterVersion: string,
-
-  chunkSize?: number
+  exporterVersion: string
 };
 
 export type Result = {
@@ -59,7 +57,7 @@ export function encode({
   exporterName,
   exporterVersion
 }: DataIn): string {
-  return lzw.encode(
+  return LZUTF8.compress(
     JSON.stringify({
       meta: { exporterName, exporterVersion },
       accounts: accounts.map(accountToAccountData),
@@ -69,7 +67,7 @@ export function encode({
 }
 
 export function decode(bytes: string): Result {
-  return JSON.parse(lzw.decode(bytes));
+  return JSON.parse(LZUTF8.decompress(Buffer.from(bytes)));
 }
 
 export function accountToAccountData({
