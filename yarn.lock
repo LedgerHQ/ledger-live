@@ -845,7 +845,7 @@ align-text@^0.1.1, align-text@^0.1.3:
     longest "^1.0.1"
     repeat-string "^1.5.2"
 
-amdefine@>=0.0.4, amdefine@~1.0.0:
+amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
@@ -2522,12 +2522,10 @@ component-emitter@^1.2.1:
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
   integrity sha1-E3kY1teCg/ffemt8WmPhQOaUJeY=
 
-compressjs@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/compressjs/-/compressjs-1.0.3.tgz#95db74dd5b9038cf80bca321ab0ede271b4959b6"
-  integrity sha1-ldt03VuQOM+AvKMhqw7eJxtJWbY=
+compressjs@gre/compressjs#hermit:
+  version "1.2.0"
+  resolved "https://codeload.github.com/gre/compressjs/tar.gz/19652f100671e559d7731980c26cd06a7e999b8d"
   dependencies:
-    amdefine "~1.0.0"
     commander "~2.8.1"
 
 concat-map@0.0.1:

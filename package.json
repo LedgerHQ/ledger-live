@@ -37,7 +37,7 @@
     "@ledgerhq/hw-app-xrp": "^4.24.0",
     "@ledgerhq/hw-transport": "^4.24.0",
     "bignumber.js": "^7.2.1",
-    "compressjs": "^1.0.3",
+    "compressjs": "gre/compressjs#hermit",
     "eip55": "^1.0.3",
     "invariant": "^2.2.2",
     "lodash": "^4.17.4",
