@@ -2,7 +2,7 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 
 import { BigNumber } from "bignumber.js";
-import LZUTF8 from "lzutf8";
+import compressjs from "compressjs";
 import type { Account, CryptoCurrencyIds, DerivationMode } from "./types";
 import { runDerivationScheme, getDerivationScheme } from "./derivation";
 import { decodeAccountId } from "./account";
@@ -57,17 +57,25 @@ export function encode({
   exporterName,
   exporterVersion
 }: DataIn): string {
-  return LZUTF8.compress(
-    JSON.stringify({
-      meta: { exporterName, exporterVersion },
-      accounts: accounts.map(accountToAccountData),
-      settings
-    })
-  );
+  return Buffer.from(
+    compressjs.Bzip2.compressFile(
+      Buffer.from(
+        JSON.stringify({
+          meta: { exporterName, exporterVersion },
+          accounts: accounts.map(accountToAccountData),
+          settings
+        })
+      )
+    )
+  ).toString("binary");
 }
 
 export function decode(bytes: string): Result {
-  return JSON.parse(LZUTF8.decompress(Buffer.from(bytes)));
+  return JSON.parse(
+    Buffer.from(
+      compressjs.Bzip2.decompressFile(Buffer.from(bytes, "binary"))
+    ).toString()
+  );
 }
 
 export function accountToAccountData({
