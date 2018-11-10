@@ -442,6 +442,7 @@ async function buildOperation({
     blockHash: null, // FIXME: why? (unused)
     accountId,
     date,
+    extra: {},
   };
 
   return op;

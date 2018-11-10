@@ -120,6 +120,7 @@ async function signAndBroadcast({
           (a.operations.length > 0
             ? a.operations[0].transactionSequenceNumber
             : 0) + a.pendingOperations.length,
+        extra: {},
       });
     }
   } catch (e) {
@@ -246,6 +247,7 @@ const txToOperation = (account: Account) => ({
     recipients: [destination.address],
     date: new Date(timestamp),
     transactionSequenceNumber: sequence,
+    extra: {},
   };
   return op;
 };

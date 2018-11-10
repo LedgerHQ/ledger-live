@@ -410,6 +410,7 @@ async function doSignAndBroadcast({
     recipients,
     accountId,
     date: new Date(),
+    extra: {},
   };
 
   onOperationBroadcasted(op);
