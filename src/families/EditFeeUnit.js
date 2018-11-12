@@ -28,6 +28,7 @@ type Props = {
 type State = {
   fee: ?BigNumber,
   isModalOpened: boolean,
+  isValid: boolean,
 };
 
 class EditFeeUnit extends PureComponent<Props, State> {
@@ -36,6 +37,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
     this.state = {
       fee: getFieldByFamily(account, navigation, field),
       isModalOpened: false,
+      isValid: true,
     };
   }
 
@@ -47,7 +49,11 @@ class EditFeeUnit extends PureComponent<Props, State> {
   };
 
   keyExtractor = (item: any) => item.code;
-  onChange = (fee: ?BigNumber) => this.setState({ fee });
+  onChange = (fee: ?BigNumber) => {
+    fee && fee.isZero()
+      ? this.setState({ fee, isValid: false })
+      : this.setState({ fee, isValid: true });
+  };
 
   updateTransaction = (item: any) => {
     const { account, navigation } = this.props;
@@ -76,7 +82,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
 
   render() {
     const { account, t, navigation } = this.props;
-    const { isModalOpened, fee } = this.state;
+    const { isModalOpened, fee, isValid } = this.state;
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
     const feeCustomUnit =
@@ -109,6 +115,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
               title={t("common.confirm")}
               containerStyle={styles.continueButton}
               onPress={this.onValidateFees}
+              disabled={!isValid}
             />
           </View>
         </View>
