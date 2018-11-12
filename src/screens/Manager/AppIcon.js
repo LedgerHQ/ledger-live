@@ -1,17 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { Image } from "react-native";
-
-const ICONS_FALLBACK = {
-  bitcoin_testnet: "bitcoin",
-};
-
-// TODO: Move to new ManagerAPI
-// When ready, the manager api will return an icon url instead of a name
-const getIconUrl = (icon: string): string => {
-  const icn = ICONS_FALLBACK[icon] || icon;
-  return `https://api.ledgerwallet.com/update/assets/icons/${icn}`;
-};
+import manager from "../../logic/manager";
 
 type Props = {
   icon: string,
@@ -25,7 +15,7 @@ class AppIcon extends PureComponent<Props> {
 
   render() {
     const { size } = this.props;
-    const uri = getIconUrl(this.props.icon);
+    const uri = manager.getIconUrl(this.props.icon);
     return <Image source={{ uri }} style={{ width: size, height: size }} />;
   }
 }

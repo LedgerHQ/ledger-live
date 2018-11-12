@@ -1,5 +1,5 @@
 // @flow
-type Id = number;
+export type Id = number;
 
 export type LedgerScriptParams = {
   firmware: string,
