@@ -6,13 +6,13 @@ import {
   StyleSheet,
   TextInput,
   SafeAreaView,
-  Keyboard,
 } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import i18next from "i18next";
+import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "../../bridge/RippleJSBridge";
 import { getAccountBridge } from "../../bridge";
@@ -33,8 +33,10 @@ type Props = {
 };
 
 type State = {
-  tag: string,
+  tag: ?BigNumber,
 };
+
+const uint32maxPlus1 = BigNumber(2).pow(32);
 
 class RippleEditTag extends PureComponent<Props, State> {
   static navigationOptions = {
@@ -49,8 +51,17 @@ class RippleEditTag extends PureComponent<Props, State> {
       tag: bridge.getTransactionExtra(account, transaction, "tag"),
     };
   }
-  onChangeTag = (tag: string) => {
-    this.setState({ tag });
+  onChangeTag = (str: string) => {
+    const tagNumeric = BigNumber(str.replace(/[^0-9]/g, ""));
+    if (
+      tagNumeric.isInteger() &&
+      tagNumeric.isPositive() &&
+      tagNumeric.lt(uint32maxPlus1)
+    ) {
+      this.setState({ tag: tagNumeric });
+    } else {
+      this.setState({ tag: undefined });
+    }
   };
 
   onValidateText = () => {
@@ -58,14 +69,13 @@ class RippleEditTag extends PureComponent<Props, State> {
     const { tag } = this.state;
     const bridge = getAccountBridge(account);
     const transaction = navigation.getParam("transaction");
-    Keyboard.dismiss();
     navigation.navigate("SendSummary", {
       accountId: account.id,
       transaction: bridge.editTransactionExtra(
         account,
         transaction,
         "tag",
-        parseInt(tag, 10),
+        tag,
       ),
     });
   };
@@ -76,14 +86,16 @@ class RippleEditTag extends PureComponent<Props, State> {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardView style={styles.body}>
-          <ScrollView contentContainerStyle={styles.root}>
+          <ScrollView
+            contentContainerStyle={styles.root}
+            keyboardShouldPersistTaps="always"
+          >
             <TextInput
               autoFocus
               style={styles.textInputAS}
               defaultValue={tag ? tag.toString() : ""}
               keyboardType="numeric"
               returnKeyType="done"
-              maxLength={10}
               onChangeText={this.onChangeTag}
               onSubmitEditing={this.onValidateText}
             />

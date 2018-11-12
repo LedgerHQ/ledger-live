@@ -601,10 +601,6 @@ export const accountBridge: AccountBridge<Transaction> = {
         return { ...t, fee: value };
 
       case "tag":
-        invariant(
-          !value || typeof value === "number",
-          "editTransactionExtra(a,t,'tag',value): number value expected",
-        );
         return { ...t, tag: value };
 
       case "feeCustomUnit":
