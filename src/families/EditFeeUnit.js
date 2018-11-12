@@ -67,6 +67,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
         item,
       ),
     });
+    this.onRequestClose();
   };
 
   onValidateFees = () => {
