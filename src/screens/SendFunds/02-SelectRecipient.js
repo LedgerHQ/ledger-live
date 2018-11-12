@@ -14,6 +14,7 @@ import { compose } from "redux";
 import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { InvalidAddress } from "@ledgerhq/live-common/lib/errors";
 import throttle from "lodash/throttle";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 
@@ -133,7 +134,12 @@ class SendSelectRecipient extends Component<Props, State> {
       if (!res) this.setState({ addressStatus: "valid", error: null });
       else this.setState({ addressStatus: "warning", error: res });
     } catch (e) {
-      this.setState({ addressStatus: "invalid", error: e });
+      this.setState({
+        addressStatus: "invalid",
+        error: new InvalidAddress(null, {
+          currencyName: account.currency.name,
+        }),
+      });
     }
   };
 
