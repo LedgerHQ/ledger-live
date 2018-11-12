@@ -3,9 +3,10 @@ import React, { Component } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
-import { getFullListSortedCryptoCurrencies } from "../../countervalues";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import type { DeviceInfo, ApplicationVersion } from "../../types/manager";
-import ManagerAPI from "../../api/Manager";
+import manager from "../../logic/manager";
 import KeyboardView from "../../components/KeyboardView";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import LText from "../../components/LText";
@@ -47,6 +48,7 @@ class ManagerAppsList extends Component<
         },
       },
     }>,
+    isDevMode: boolean,
   },
   {
     apps: ApplicationVersion[],
@@ -76,91 +78,22 @@ class ManagerAppsList extends Component<
     this.unmount = true;
   }
 
-  prepareAppList = ({
-    applicationsList,
-    compatibleAppVersionsList,
-    sortedCryptoCurrencies,
-  }: *): ApplicationVersion[] => {
-    const isDevMode = false; // TODO from redux
-    const filtered = isDevMode
-      ? compatibleAppVersionsList.slice(0)
-      : compatibleAppVersionsList.filter(version => {
-          const app = applicationsList.find(e => e.id === version.app);
-          if (app) {
-            return app.category !== 2;
-          }
-          return false;
-        });
-    const sortedCryptoApps = [];
-    // sort by crypto first
-    sortedCryptoCurrencies.forEach(crypto => {
-      const app = filtered.find(
-        item => item.name.toLowerCase() === crypto.managerAppName.toLowerCase(),
-      );
-      if (app) {
-        filtered.splice(filtered.indexOf(app), 1);
-        sortedCryptoApps.push(app);
-      }
-    });
-    return sortedCryptoApps.concat(filtered);
-  };
-
   async fetchAppList() {
     this.setState(old => {
       if (old.pending) return null;
       return { pending: true, error: null };
     });
     try {
-      const { navigation } = this.props;
+      const { navigation, isDevMode } = this.props;
       const { deviceInfo } = navigation.getParam("meta");
 
-      // TODO we need to prefetch this before. we can already do it during the manager loading because we have the deviceInfo before the genuine check.
-
-      const deviceVersionP = ManagerAPI.getDeviceVersion(
-        deviceInfo.targetId,
-        deviceInfo.providerId,
-      );
-
-      const firmwareDataP = deviceVersionP.then(deviceVersion =>
-        ManagerAPI.getCurrentFirmware({
-          deviceId: deviceVersion.id,
-          fullVersion: deviceInfo.fullVersion,
-          provider: deviceInfo.providerId,
-        }),
-      );
-
-      const applicationsByDeviceP = Promise.all([
-        deviceVersionP,
-        firmwareDataP,
-      ]).then(([deviceVersion, firmwareData]) =>
-        ManagerAPI.applicationsByDevice({
-          provider: deviceInfo.providerId,
-          current_se_firmware_final_version: firmwareData.id,
-          device_version: deviceVersion.id,
-        }),
-      );
-
-      const [
-        applicationsList,
-        compatibleAppVersionsList,
-        sortedCryptoCurrencies,
-      ] = await Promise.all([
-        ManagerAPI.listApps(),
-        applicationsByDeviceP,
-        getFullListSortedCryptoCurrencies(),
-      ]);
-
-      const filteredAppVersionsList = this.prepareAppList({
-        applicationsList,
-        compatibleAppVersionsList,
-        sortedCryptoCurrencies,
-      });
+      const apps = await manager.getAppsList(deviceInfo, isDevMode);
 
       if (this.unmount) return;
       this.setState({
         error: null,
         pending: false,
-        apps: filteredAppVersionsList,
+        apps,
       });
     } catch (error) {
       if (this.unmount) return;
@@ -274,4 +207,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(ManagerAppsList);
+export default translate()(
+  connect(
+    createStructuredSelector({
+      isDevMode: () => false, // TODO need a selector here
+    }),
+  )(ManagerAppsList),
+);

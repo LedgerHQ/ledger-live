@@ -31,13 +31,13 @@ const runStep = (
 const chainSteps = (
   steps: Step[],
   deviceId: string,
-  onStepEnter: number => void,
+  onStepEnter: (number, Object) => void,
   onDoneO: Observable<number>,
 ): Observable<Object> =>
   steps.reduce(
     (meta: Observable<*>, step: Step, i: number) =>
       meta.pipe(
-        tap(() => onStepEnter(i)),
+        tap(meta => onStepEnter(i, meta)),
         mergeMap(meta =>
           runStep(
             step,
@@ -62,6 +62,7 @@ class SelectDevice extends Component<
       name: string,
     }>,
     removeKnownDevice: string => *,
+    onStepEntered?: (number, Object) => void,
   },
   {
     devices: Array<{
@@ -117,7 +118,7 @@ class SelectDevice extends Component<
   }
 
   componentWillUnmount() {
-    this.onStepEntered.cancel();
+    this.debouncedSetStepIndex.cancel();
     if (this.selectSubscription) this.selectSubscription.unsubscribe();
     this.listingSubscription.unsubscribe();
   }
@@ -126,9 +127,15 @@ class SelectDevice extends Component<
     this.props.removeKnownDevice(id);
   };
 
-  onStepEntered = debounce(stepIndex => {
+  debouncedSetStepIndex = debounce(stepIndex => {
     this.setState({ stepIndex });
   }, 500);
+
+  onStepEntered = (stepIndex, meta) => {
+    this.debouncedSetStepIndex(stepIndex);
+    const { onStepEntered } = this.props;
+    if (onStepEntered) onStepEntered(stepIndex, meta);
+  };
 
   onStepDone = () => {
     this.onDoneSubject.next(this.state.stepIndex);
@@ -143,7 +150,7 @@ class SelectDevice extends Component<
       meta: {},
     });
 
-    this.onStepEntered.cancel();
+    this.debouncedSetStepIndex.cancel();
     if (this.selectSubscription) this.selectSubscription.unsubscribe();
     this.selectSubscription = chainSteps(
       this.props.steps,
@@ -152,7 +159,7 @@ class SelectDevice extends Component<
       this.onDoneSubject,
     ).subscribe({
       next: meta => {
-        this.onStepEntered.cancel();
+        this.debouncedSetStepIndex.cancel();
         this.setState({ connecting: false }, () => {
           this.props.onSelect(id, meta);
         });
@@ -171,7 +178,7 @@ class SelectDevice extends Component<
   };
 
   onRequestClose = () => {
-    this.onStepEntered.cancel();
+    this.debouncedSetStepIndex.cancel();
     if (this.selectSubscription) this.selectSubscription.unsubscribe();
     this.setState({ connecting: false, error: null });
   };

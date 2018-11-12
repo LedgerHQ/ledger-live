@@ -24,8 +24,9 @@ import type {
   ApplicationVersion,
   Application,
   Category,
-  DeviceInfo,
+  Id,
 } from "../types/manager";
+import { makeLRUCache } from "../logic/cache";
 
 const remapSocketError = (context?: string) =>
   catchError((e: Error) => {
@@ -55,24 +56,35 @@ const remapSocketError = (context?: string) =>
   });
 
 const API = {
-  applicationsByDevice: async (
-    params: *,
-  ): Promise<Array<ApplicationVersion>> => {
-    const r = await network({
-      method: "POST",
-      url: `${MANAGER_API_BASE}/get_apps`,
-      data: params,
-    });
-    return r.data.application_versions;
-  },
+  applicationsByDevice: makeLRUCache(
+    async (params: {
+      provider: number,
+      current_se_firmware_final_version: Id,
+      device_version: Id,
+    }): Promise<Array<ApplicationVersion>> => {
+      const r = await network({
+        method: "POST",
+        url: `${MANAGER_API_BASE}/get_apps`,
+        data: params,
+      });
+      return r.data.application_versions;
+    },
+    p =>
+      `${p.provider}_${p.current_se_firmware_final_version}_${
+        p.device_version
+      }`,
+  ),
 
-  listApps: async (): Promise<Array<Application>> => {
-    const r = await network({
-      method: "GET",
-      url: `${MANAGER_API_BASE}/applications`,
-    });
-    return r.data;
-  },
+  listApps: makeLRUCache(
+    async (): Promise<Array<Application>> => {
+      const r = await network({
+        method: "GET",
+        url: `${MANAGER_API_BASE}/applications`,
+      });
+      return r.data;
+    },
+    () => "",
+  ),
 
   listCategories: async (): Promise<Array<Category>> => {
     const r = await network({
@@ -95,9 +107,9 @@ const API = {
     device_version,
     provider,
   }: {
-    current_se_firmware_final_version: *,
-    device_version: *,
-    provider: *,
+    current_se_firmware_final_version: Id,
+    device_version: Id,
+    provider: number,
   }): Promise<?OsuFirmware> => {
     const {
       data,
@@ -156,22 +168,25 @@ const API = {
     return data;
   },
 
-  getCurrentFirmware: async (input: {
-    fullVersion: string,
-    deviceId: string | number,
-    provider: number,
-  }): Promise<FinalFirmware> => {
-    const { data }: { data: FinalFirmware } = await network({
-      method: "POST",
-      url: `${MANAGER_API_BASE}/get_firmware_version`,
-      data: {
-        device_version: input.deviceId,
-        version_name: input.fullVersion,
-        provider: input.provider,
-      },
-    });
-    return data;
-  },
+  getCurrentFirmware: makeLRUCache(
+    async (input: {
+      fullVersion: string,
+      deviceId: string | number,
+      provider: number,
+    }): Promise<FinalFirmware> => {
+      const { data }: { data: FinalFirmware } = await network({
+        method: "POST",
+        url: `${MANAGER_API_BASE}/get_firmware_version`,
+        data: {
+          device_version: input.deviceId,
+          version_name: input.fullVersion,
+          provider: input.provider,
+        },
+      });
+      return data;
+    },
+    a => `${a.fullVersion}_${a.deviceId}_${a.provider}`,
+  ),
 
   getFinalFirmwareById: async (id: number) => {
     const { data } = await network({
@@ -181,20 +196,23 @@ const API = {
     return data;
   },
 
-  getDeviceVersion: async (
-    targetId: string | number,
-    provider: number,
-  ): Promise<DeviceVersion> => {
-    const { data }: { data: DeviceVersion } = await network({
-      method: "POST",
-      url: `${MANAGER_API_BASE}/get_device_version`,
-      data: {
-        provider,
-        target_id: targetId,
-      },
-    });
-    return data;
-  },
+  getDeviceVersion: makeLRUCache(
+    async (
+      targetId: string | number,
+      provider: number,
+    ): Promise<DeviceVersion> => {
+      const { data }: { data: DeviceVersion } = await network({
+        method: "POST",
+        url: `${MANAGER_API_BASE}/get_device_version`,
+        data: {
+          provider,
+          target_id: targetId,
+        },
+      });
+      return data;
+    },
+    (targetId, provider) => `${targetId}_${provider}`,
+  ),
 
   install: (transport: Transport<*>, context: string, params: *) =>
     createDeviceSocket(
@@ -229,49 +247,6 @@ const API = {
         query: { targetId, version },
       }),
     ).pipe(remapSocketError(context)),
-
-  // Utilities on top of the simple endpoints
-
-  shouldFlashMcu: async (deviceInfo: DeviceInfo): Promise<boolean> => {
-    // Get device infos from targetId
-    const deviceVersion = await API.getDeviceVersion(
-      deviceInfo.targetId,
-      deviceInfo.providerId,
-    );
-
-    // Get firmware infos with firmware name and device version
-    const seFirmwareVersion = await API.getCurrentOSU({
-      version: deviceInfo.fullVersion,
-      deviceId: deviceVersion.id,
-      provider: deviceInfo.providerId,
-    });
-
-    // Fetch next possible firmware
-    const se_firmware_osu_version = await API.getLatestFirmware({
-      current_se_firmware_final_version: seFirmwareVersion.id,
-      device_version: deviceVersion.id,
-      provider: deviceInfo.providerId,
-    });
-
-    if (!se_firmware_osu_version) {
-      return false;
-    }
-
-    const { next_se_firmware_final_version } = se_firmware_osu_version;
-    const seFirmwareFinalVersion = await API.getFinalFirmwareById(
-      next_se_firmware_final_version,
-    );
-
-    const mcus = await API.getMcus();
-
-    const currentMcuVersionId = mcus
-      .filter(mcu => mcu.name === deviceInfo.mcuVersion)
-      .map(mcu => mcu.id);
-
-    return !seFirmwareFinalVersion.mcu_versions.includes(
-      ...currentMcuVersionId,
-    );
-  },
 };
 
 export default API;

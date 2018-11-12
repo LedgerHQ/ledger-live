@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { withNavigationFocus } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
@@ -12,6 +12,7 @@ import {
 import SelectDevice from "../../components/SelectDevice";
 import colors from "../../colors";
 import ToggleManagerEdition from "./ToggleManagerEdition";
+import manager from "../../logic/manager";
 
 class Manager extends Component<{
   navigation: NavigationScreenProp<*>,
@@ -29,6 +30,22 @@ class Manager extends Component<{
     });
   };
 
+  onStepEntered = (i: number, meta: Object) => {
+    if (i === 2) {
+      // Step dashboard, we preload the applist before entering manager while we're still doing the genuine check
+      manager
+        .getAppsList(meta.deviceInfo)
+        .then(apps =>
+          Promise.all(
+            apps.map(app => Image.prefetch(manager.getIconUrl(app.icon))),
+          ),
+        )
+        .catch(e => {
+          console.warn(e);
+        });
+    }
+  };
+
   render() {
     const { isFocused } = this.props;
     if (!isFocused) return null;
@@ -39,6 +56,7 @@ class Manager extends Component<{
           onSelect={this.onSelect}
           editMode={editMode}
           steps={[connectingStep, dashboard, genuineCheck]}
+          onStepEntered={this.onStepEntered}
         />
       </View>
     );
