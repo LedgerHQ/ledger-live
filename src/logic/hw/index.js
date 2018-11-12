@@ -88,7 +88,10 @@ export const open = (deviceId: string): Promise<Transport<*>> => {
     const p = open(deviceId);
     if (p) {
       if (__DEV__) {
-        p.then(p => p.setDebugMode(true));
+        return p.then(p => {
+          p.setDebugMode(true);
+          return p;
+        });
       }
       return p;
     }
