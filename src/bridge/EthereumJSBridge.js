@@ -73,6 +73,7 @@ const txToOps = (account: Account) => (tx: Tx): Operation[] => {
       senders: [tx.from],
       recipients: [tx.to],
       date: new Date(tx.received_at),
+      extra: {},
     });
   }
   if (receiving) {
@@ -88,6 +89,7 @@ const txToOps = (account: Account) => (tx: Tx): Operation[] => {
       senders: [tx.from],
       recipients: [tx.to],
       date: new Date(new Date(tx.received_at).getTime() + 1), // hack: make the IN appear after the OUT in history.
+      extra: {},
     });
   }
   return ops;
@@ -174,6 +176,7 @@ const signAndBroadcast = async ({
       recipients: [t.recipient],
       transactionSequenceNumber: nonce,
       date: new Date(),
+      extra: {},
     });
   }
 };

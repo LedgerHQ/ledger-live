@@ -17,6 +17,7 @@ import StyledStatusBar from "../../components/StyledStatusBar";
 import colors from "../../colors";
 import FallBackCamera from "./FallBackCamera";
 import CameraScreen from "../../components/CameraScreen";
+import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -32,6 +33,7 @@ class Scan extends PureComponent<
   Props,
   {
     progress: number,
+    error: ?Error,
     width: number,
     height: number,
   },
@@ -50,6 +52,7 @@ class Scan extends PureComponent<
 
   state = {
     progress: 0,
+    error: null,
     ...getDimensions(),
   };
 
@@ -79,14 +82,22 @@ class Scan extends PureComponent<
         this.setState({ progress: progressOfFrames(this.frames) });
 
         if (areFramesComplete(this.frames)) {
-          this.completed = true;
-          // TODO read the frames version and check it's correctly supported (if newers version, we deny the import with an error)
-          this.onResult(decode(framesToData(this.frames).toString()));
+          try {
+            this.onResult(decode(framesToData(this.frames).toString()));
+            this.completed = true;
+          } catch (error) {
+            this.frames = null;
+            this.setState({ error, progress: 0 });
+          }
         }
       } catch (e) {
         console.warn(e);
       }
     }
+  };
+
+  onCloseError = () => {
+    this.setState({ error: null });
   };
 
   onResult = result => {
@@ -101,7 +112,7 @@ class Scan extends PureComponent<
   };
 
   render() {
-    const { progress, width, height } = this.state;
+    const { progress, width, height, error } = this.state;
     const { navigation } = this.props;
     const cameraRatio = 16 / 9;
     const cameraDimensions =
@@ -121,6 +132,7 @@ class Scan extends PureComponent<
         >
           <CameraScreen width={width} height={height} progress={progress} />
         </RNCamera>
+        <GenericErrorBottomModal error={error} onClose={this.onCloseError} />
       </View>
     );
   }
