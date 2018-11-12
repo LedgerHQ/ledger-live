@@ -11,6 +11,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { translate } from "react-i18next";
+import Config from "react-native-config";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
@@ -79,7 +80,7 @@ class Portfolio extends Component<
   scrollSub: *;
 
   componentDidMount() {
-    if (!this.props.hasCompletedOnboarding) {
+    if (!this.props.hasCompletedOnboarding && !Config.SKIP_ONBOARDING) {
       // TODO: there is probably more elegant way to do that
       this.props.navigation.replace("Onboarding");
       return;
