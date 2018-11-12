@@ -38,6 +38,7 @@ type Props = {
   navigation: NavigationScreenProp<{
     params: {
       result: Result,
+      onFinish?: (NavigationScreenProp<*>) => void,
     },
   }>,
   accounts: Account[],
@@ -152,6 +153,7 @@ class DisplayResult extends Component<Props, State> {
       navigation,
     } = this.props;
     const { selectedAccounts, items, importSettings } = this.state;
+    const onFinish = navigation.getParam("onFinish");
     this.setState({ importing: true });
     const selectedItems = items.filter(item =>
       selectedAccounts.includes(item.account.id),
@@ -172,7 +174,8 @@ class DisplayResult extends Component<Props, State> {
       importDesktopSettings(navigation.getParam("result").settings);
     }
 
-    navigation.navigate("Accounts");
+    if (onFinish) onFinish(navigation);
+    else navigation.navigate("Accounts");
   };
 
   onSwitchResultItem = (checked: boolean, account: Account) => {

@@ -3,7 +3,9 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import { connect } from "react-redux";
 
+import { completeOnboarding } from "../../../actions/settings";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import OnboardingLayout from "../OnboardingLayout";
@@ -12,7 +14,15 @@ import colors from "../../../colors";
 
 import type { OnboardingStepProps } from "../types";
 
-class OnboardingStepScanQR extends Component<OnboardingStepProps> {
+type Props = OnboardingStepProps & {
+  completeOnboarding: () => void,
+};
+
+const mapDispatchToProps = {
+  completeOnboarding,
+};
+
+class OnboardingStepScanQR extends Component<Props> {
   Footer = () => (
     <Button
       type="primary"
@@ -21,7 +31,13 @@ class OnboardingStepScanQR extends Component<OnboardingStepProps> {
     />
   );
 
-  navigateToQR = () => this.props.navigation.navigate("ImportAccounts");
+  navigateToQR = () =>
+    this.props.navigation.navigate("ImportAccounts", {
+      onFinish: async n => {
+        n.dismiss();
+        this.props.next();
+      },
+    });
 
   render() {
     return (
@@ -58,4 +74,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStepScanQR);
+export default withOnboardingContext(
+  connect(
+    null,
+    mapDispatchToProps,
+  )(OnboardingStepScanQR),
+);
