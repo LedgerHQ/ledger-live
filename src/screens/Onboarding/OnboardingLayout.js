@@ -16,13 +16,13 @@ type Container = {
   children: *,
   style?: *,
   noHorizontalPadding?: boolean,
+  noTopPadding?: boolean,
   noScroll?: boolean,
 };
 
 type Props = Container & {
   isCentered?: boolean,
   isFull?: boolean,
-  noHorizontalPadding?: boolean,
   borderedFooter?: boolean,
   header?: string,
   withSkip?: boolean,
@@ -38,6 +38,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
       isCentered,
       isFull,
       noHorizontalPadding,
+      noTopPadding,
       borderedFooter,
       style,
       withSkip,
@@ -63,6 +64,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
       inner = (
         <OnboardingInner
           noHorizontalPadding={noHorizontalPadding}
+          noTopPadding={noTopPadding}
           noScroll={noScroll}
         >
           {inner}
@@ -76,6 +78,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
           <OnboardingHeader stepId={header} withSkip={withSkip} />
           <OnboardingInner
             noHorizontalPadding={noHorizontalPadding}
+            noTopPadding={noTopPadding}
             noScroll={noScroll}
           >
             {inner}
@@ -109,6 +112,7 @@ export class OnboardingInner extends PureComponent<Container> {
           style={[
             styles.innerInner,
             this.props.noHorizontalPadding && styles.noHorizontalPadding,
+            this.props.noTopPadding && styles.noTopPadding,
           ]}
         >
           {this.props.children}
@@ -138,6 +142,9 @@ const styles = StyleSheet.create({
   },
   noHorizontalPadding: {
     paddingHorizontal: 0,
+  },
+  noTopPadding: {
+    paddingTop: 0,
   },
   footer: {
     padding: 16,

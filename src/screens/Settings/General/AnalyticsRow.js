@@ -1,5 +1,6 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React, { PureComponent, Fragment } from "react";
+import FeatherIcon from "react-native-vector-icons/dist/Feather";
 import { connect } from "react-redux";
 import { Switch } from "react-native";
 import { Trans } from "react-i18next";
@@ -7,10 +8,16 @@ import { createStructuredSelector } from "reselect";
 import SettingsRow from "../../../components/SettingsRow";
 import { setAnalytics } from "../../../actions/settings";
 import { analyticsEnabledSelector } from "../../../reducers/settings";
+import InfoModal from "../../../components/InfoModal";
+import colors from "../../../colors";
 
 type Props = {
   analyticsEnabled: boolean,
   setAnalytics: boolean => void,
+};
+
+type State = {
+  isOpened: boolean,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -21,17 +28,73 @@ const mapDispatchToProps = {
   setAnalytics,
 };
 
-class AnalyticsRow extends PureComponent<Props> {
+const IconActivity = () => (
+  <FeatherIcon name="activity" size={32} color={colors.live} />
+);
+
+class AnalyticsRow extends PureComponent<Props, State> {
+  state = {
+    isOpened: false,
+  };
+
+  onOpen = () => this.setState({ isOpened: true });
+  onClose = () => this.setState({ isOpened: false });
+
   render() {
     const { analyticsEnabled, setAnalytics } = this.props;
+    const { isOpened } = this.state;
     return (
-      <SettingsRow
-        title={<Trans i18nKey="settings.display.analytics" />}
-        desc={<Trans i18nKey="settings.display.analyticsDesc" />}
-        onPress={null}
-      >
-        <Switch value={analyticsEnabled} onValueChange={setAnalytics} />
-      </SettingsRow>
+      <Fragment>
+        <SettingsRow
+          title={<Trans i18nKey="settings.display.analytics" />}
+          desc={<Trans i18nKey="settings.display.analyticsDesc" />}
+          onPress={null}
+          onHelpPress={this.onOpen}
+        >
+          <Switch value={analyticsEnabled} onValueChange={setAnalytics} />
+        </SettingsRow>
+        <InfoModal
+          Icon={IconActivity}
+          isOpened={isOpened}
+          onClose={this.onClose}
+          title={<Trans i18nKey="settings.display.analyticsModal.title" />}
+          desc={<Trans i18nKey="settings.display.analyticsModal.desc" />}
+          bullets={[
+            {
+              key: "bullet1",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet1" />,
+            },
+            {
+              key: "bullet2",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet2" />,
+            },
+            {
+              key: "bullet3",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet3" />,
+            },
+            {
+              key: "bullet4",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet4" />,
+            },
+            {
+              key: "bullet5",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet5" />,
+            },
+            {
+              key: "bullet6",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet6" />,
+            },
+            {
+              key: "bullet7",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet7" />,
+            },
+            {
+              key: "bullet8",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet8" />,
+            },
+          ]}
+        />
+      </Fragment>
     );
   }
 }
