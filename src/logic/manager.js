@@ -2,7 +2,11 @@
 /* eslint-disable camelcase */
 // Higher level cache on top of Manager
 
-import type { ApplicationVersion, DeviceInfo } from "../types/manager";
+import type {
+  ApplicationVersion,
+  DeviceInfo,
+  Firmware,
+} from "../types/manager";
 import { getFullListSortedCryptoCurrencies } from "../countervalues";
 import ManagerAPI from "../api/Manager";
 
@@ -18,7 +22,20 @@ const CacheAPI = {
     return `https://api.ledgerwallet.com/update/assets/icons/${icn}`;
   },
 
-  shouldFlashMcu: async (deviceInfo: DeviceInfo): Promise<boolean> => {
+  getFirmwareVersion: (firmware: Firmware): string =>
+    firmware.name.replace("-osu", ""),
+
+  formatHashName: (hash: string): string => hash,
+
+  // to check with firmware team if full hash is displayed or we need this:
+  /*
+    hash = (hash || "").toUpperCase();
+    return hash.length > 8 ? `${hash.slice(0, 4)}...${hash.substr(-4)}` : hash;
+    */
+
+  getLatestFirmwareForDevice: async (
+    deviceInfo: DeviceInfo,
+  ): Promise<?Firmware> => {
     // Get device infos from targetId
     const deviceVersion = await ManagerAPI.getDeviceVersion(
       deviceInfo.targetId,
@@ -26,8 +43,8 @@ const CacheAPI = {
     );
 
     // Get firmware infos with firmware name and device version
-    const seFirmwareVersion = await ManagerAPI.getCurrentOSU({
-      version: deviceInfo.fullVersion,
+    const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
+      fullVersion: deviceInfo.fullVersion,
       deviceId: deviceVersion.id,
       provider: deviceInfo.providerId,
     });
@@ -40,7 +57,7 @@ const CacheAPI = {
     });
 
     if (!se_firmware_osu_version) {
-      return false;
+      return null;
     }
 
     const { next_se_firmware_final_version } = se_firmware_osu_version;
@@ -50,13 +67,24 @@ const CacheAPI = {
 
     const mcus = await ManagerAPI.getMcus();
 
-    const currentMcuVersionId = mcus
+    const currentMcuVersionId: Array<number> = mcus
       .filter(mcu => mcu.name === deviceInfo.mcuVersion)
       .map(mcu => mcu.id);
 
-    return !seFirmwareFinalVersion.mcu_versions.includes(
-      ...currentMcuVersionId,
-    );
+    if (!seFirmwareFinalVersion.mcu_versions.includes(...currentMcuVersionId)) {
+      return {
+        ...se_firmware_osu_version,
+        shouldFlashMcu: true,
+      };
+    }
+
+    return { ...se_firmware_osu_version, shouldFlashMcu: false };
+  },
+
+  shouldFlashMcu: async (deviceInfo: DeviceInfo): Promise<boolean> => {
+    if (!deviceInfo.isOSU) return false;
+    const res = await CacheAPI.getLatestFirmwareForDevice(deviceInfo);
+    return res ? res.shouldFlashMcu : false;
   },
 
   // get list of apps for a given deviceInfo

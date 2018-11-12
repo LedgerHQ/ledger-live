@@ -6,22 +6,35 @@ import { View, StyleSheet } from "react-native";
 import LText from "./LText";
 import colors from "../colors";
 
-class BulletList extends PureComponent<{
-  list: *,
+export class BulletItem extends PureComponent<{
+  value: React$Node,
+  index: number,
 }> {
   render() {
-    const { list } = this.props;
-
-    const renderItem = (value, index) => (
-      <View key={index} style={styles.item}>
+    const { index, value } = this.props;
+    return (
+      <View style={styles.item}>
         <Bullet>{index + 1}</Bullet>
         <View style={styles.textContainer}>
           <LText style={styles.text}>{value}</LText>
         </View>
       </View>
     );
+  }
+}
 
-    return <View>{list.map(renderItem)}</View>;
+class BulletList extends PureComponent<{
+  list: *,
+}> {
+  render() {
+    const { list } = this.props;
+    return (
+      <View>
+        {list.map((value, index) => (
+          <BulletItem key={index} index={index} value={value} />
+        ))}
+      </View>
+    );
   }
 }
 

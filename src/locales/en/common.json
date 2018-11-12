@@ -704,19 +704,13 @@
   "DeviceNameRow": {
     "title": "Device Name"
   },
-  "FirmwareVersionRow": {
-    "title": "Firmware version"
-  },
   "manager": {
     "appList": {
       "loading": "Loading apps..."
     },
-    "device": {
-      "nanox": "Ledger Nano X"
-    },
     "unpair": {
       "title": "Unpair device",
-      "description": "Are you sure? You can pair your Ledger Nano X again at any time.",
+      "description": "Are you sure? You can pair your {{fullDeviceName}} again at any time.",
       "button": "Unpair"
     }
   },
@@ -746,5 +740,34 @@
   },
   "UnpairRow": {
     "title": "Unpair device"
+  },
+  "FirmwareVersionRow": {
+    "title": "Firmware version"
+  },
+  "FirmwareUpdateRow": {
+    "title": "Firmware version {{version}} is available",
+    "action": "Update"
+  },
+  "FirmwareUpdate": {
+    "title": "Update firmware"
+  },
+  "FirmwareUpdateReleaseNotes": {
+    "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
+    "introDescription1": "Please note that all the apps installed on your device will be deleted. You will be able to re-install your apps after the firmware update.",
+    "introDescription2": "This does not affect your crypto assets.",
+    "action": "Continue update"
+  },
+  "FirmwareUpdateCheckId": {
+    "subtitle": "Identifier",
+    "description": "Please press both buttons on your {{fullDeviceName}} if it displays the same identifier:"
+  },
+  "FirmwareUpdateMCU": {
+    "subtitle": "Restart device",
+    "desc1": "Unplug your device from your computer",
+    "desc2": "Press and hold left button and plug your device until the processing screen appears"
+  },
+  "FirmwareUpdateConfirmation": {
+    "title": "Firmware updated",
+    "description": "Open the Manager to re-install the apps on your device"
   }
 }

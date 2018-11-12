@@ -94,61 +94,73 @@ const API = {
     return r.data;
   },
 
-  getMcus: async () => {
-    const { data } = await network({
-      method: "GET",
-      url: `${MANAGER_API_BASE}/mcu_versions`,
-    });
-    return data;
-  },
+  getMcus: makeLRUCache(
+    async () => {
+      const { data } = await network({
+        method: "GET",
+        url: `${MANAGER_API_BASE}/mcu_versions`,
+      });
+      return data;
+    },
+    () => "",
+  ),
 
-  getLatestFirmware: async ({
-    current_se_firmware_final_version,
-    device_version,
-    provider,
-  }: {
-    current_se_firmware_final_version: Id,
-    device_version: Id,
-    provider: number,
-  }): Promise<?OsuFirmware> => {
-    const {
-      data,
+  getLatestFirmware: makeLRUCache(
+    async ({
+      current_se_firmware_final_version,
+      device_version,
+      provider,
     }: {
-      data: {
-        result: string,
-        se_firmware_osu_version: OsuFirmware,
-      },
-    } = await network({
-      method: "POST",
-      url: `${MANAGER_API_BASE}/get_latest_firmware`,
-      data: {
-        current_se_firmware_final_version,
-        device_version,
-        provider,
-      },
-    });
-    if (data.result === "null") {
-      return null;
-    }
-    return data.se_firmware_osu_version;
-  },
+      current_se_firmware_final_version: Id,
+      device_version: Id,
+      provider: number,
+    }): Promise<?OsuFirmware> => {
+      const {
+        data,
+      }: {
+        data: {
+          result: string,
+          se_firmware_osu_version: OsuFirmware,
+        },
+      } = await network({
+        method: "POST",
+        url: `${MANAGER_API_BASE}/get_latest_firmware`,
+        data: {
+          current_se_firmware_final_version,
+          device_version,
+          provider,
+        },
+      });
+      if (data.result === "null") {
+        return null;
+      }
+      return data.se_firmware_osu_version;
+    },
+    a =>
+      `${a.current_se_firmware_final_version}_${a.device_version}_${
+        a.provider
+      }`,
+  ),
 
-  getCurrentOSU: async (input: {
-    version: string,
-    deviceId: string | number,
-    provider: number,
-  }): Promise<*> => {
-    const { data } = await network({
-      method: "POST",
-      url: `${MANAGER_API_BASE}/get_osu_version`,
-      data: {
-        device_version: input.deviceId,
-        version_name: `${input.version}-osu`,
-        provider: input.provider,
-      },
-    });
-    return data;
-  },
+  getCurrentOSU: makeLRUCache(
+    async (input: {
+      version: string,
+      deviceId: string | number,
+      provider: number,
+    }): Promise<*> => {
+      const { data } = await network({
+        method: "POST",
+        url: `${MANAGER_API_BASE}/get_osu_version`,
+        data: {
+          device_version: input.deviceId,
+          version_name: `${input.version}-osu`,
+          provider: input.provider,
+        },
+      });
+      return data;
+    },
+    a => `${a.version}_${a.deviceId}_${a.provider}`,
+  ),
 
   getNextMCU: async (bootloaderVersion: string) => {
     const { data }: { data: OsuFirmware | "default" } = await network({
@@ -188,13 +200,16 @@ const API = {
     a => `${a.fullVersion}_${a.deviceId}_${a.provider}`,
   ),
 
-  getFinalFirmwareById: async (id: number) => {
-    const { data } = await network({
-      method: "GET",
-      url: `${MANAGER_API_BASE}/firmware_final_versions/${id}`,
-    });
-    return data;
-  },
+  getFinalFirmwareById: makeLRUCache(
+    async (id: number) => {
+      const { data } = await network({
+        method: "GET",
+        url: `${MANAGER_API_BASE}/firmware_final_versions/${id}`,
+      });
+      return data;
+    },
+    id => String(id),
+  ),
 
   getDeviceVersion: makeLRUCache(
     async (

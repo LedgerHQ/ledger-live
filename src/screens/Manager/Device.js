@@ -3,16 +3,18 @@ import React, { Component } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import { translate, Trans } from "react-i18next";
+import { translate } from "react-i18next";
 import type { DeviceInfo } from "../../types/manager";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNano from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import colors from "../../colors";
+import { deviceNames } from "../../wording";
 
 import DeviceNameRow from "./DeviceNameRow";
 import FirmwareVersionRow from "./FirmwareVersionRow";
+import FirmwareUpdateRow from "./FirmwareUpdateRow";
 import AuthenticityRow from "./AuthenticityRow";
 import UnpairRow from "./UnpairRow";
 import DeviceAction from "./DeviceAction";
@@ -49,8 +51,9 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
         <View style={styles.device}>
           <DeviceNano />
           <LText secondary semiBold style={styles.deviceName}>
-            <Trans i18nKey="manager.device.nanox" />
+            {deviceNames.nanoX.fullDeviceName}
           </LText>
+          <FirmwareUpdateRow deviceInfo={meta.deviceInfo} deviceId={deviceId} />
         </View>
         <DeviceNameRow deviceId={deviceId} />
         <AuthenticityRow />
