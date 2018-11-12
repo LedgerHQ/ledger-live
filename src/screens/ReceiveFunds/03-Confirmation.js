@@ -81,10 +81,14 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   onRetry = () => {
-    this.setState({
-      isModalOpened: false,
-      onModalHide: this.props.navigation.goBack,
-    });
+    if (this.state.isModalOpened) {
+      this.setState({
+        isModalOpened: false,
+        onModalHide: this.props.navigation.goBack,
+      });
+    } else {
+      this.props.navigation.goBack();
+    }
   };
 
   onModalClose = () => {
@@ -122,7 +126,10 @@ class ReceiveConfirmation extends Component<Props, State> {
             </LText>
           </View>
           <View style={styles.address}>
-            <DisplayAddress address={account.freshAddress} />
+            <DisplayAddress
+              address={account.freshAddress}
+              verified={verified}
+            />
           </View>
         </View>
         <View style={styles.bottomContainer}>

@@ -8,19 +8,24 @@ import LText from "./LText/index";
 
 type Props = {
   address: string,
+  verified?: boolean,
 };
 
 class DisplayAddress extends PureComponent<Props> {
+  static defaultProps = {
+    verified: false,
+  };
+
   render(): React$Node {
-    const { address } = this.props;
+    const { address, verified } = this.props;
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, verified ? styles.verified : undefined]}>
         <LText
           numberOfLines={1}
           ellipsizeMode="middle"
           bold
           style={styles.text}
-          selectable
+          selectable={!verified}
         >
           {address}
         </LText>
@@ -40,6 +45,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: colors.darkBlue,
+  },
+  verified: {
+    borderColor: colors.success,
+    backgroundColor: "rgba(102, 190, 84, 0.03)",
   },
 });
 

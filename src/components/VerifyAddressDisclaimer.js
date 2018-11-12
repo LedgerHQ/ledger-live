@@ -4,6 +4,7 @@ import { View, StyleSheet, Image } from "react-native";
 
 import shield from "../images/shield.png";
 import shieldWarning from "../images/shield-warning.png";
+import shieldCheckmark from "../images/shield-checkmark.png";
 
 import colors from "../colors";
 
@@ -12,21 +13,25 @@ import LText from "./LText";
 type Props = {
   text: React$Node,
   unsafe?: boolean,
+  verified?: boolean,
 };
 
 class VerifyAddressDisclaimer extends PureComponent<Props> {
   static defaultProps = {
     unsafe: false,
+    verified: false,
   };
 
   render() {
-    const { unsafe, text } = this.props;
+    const { unsafe, verified, text } = this.props;
 
     return (
       <View
         style={[styles.wrapper, unsafe ? styles.wrapperWarning : undefined]}
       >
-        <Image source={unsafe ? shieldWarning : shield} />
+        <Image
+          source={unsafe ? shieldWarning : verified ? shieldCheckmark : shield}
+        />
         <View style={styles.textWrapper}>
           <LText style={[styles.text, unsafe ? styles.textWarning : undefined]}>
             {text}
