@@ -32,6 +32,11 @@ class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
   close = () => this.setState({ isModalOpened: false });
   openForNanoS = () => this.open("nanoS");
   openForBlue = () => this.open("blue");
+  scanQR = async () => {
+    this.close();
+    await this.props.setOnboardingMode("qrcode");
+    this.props.navigation.navigate("OnboardingStepScanQR");
+  };
 
   render() {
     const { next } = this.props;
@@ -82,7 +87,7 @@ class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
             <Button
               type="primary"
               title={<Trans i18nKey="addAccountsModal.ctaAdd" />}
-              onPress={this.close}
+              onPress={this.scanQR}
               containerStyle={styles.modalAction}
             />
           </View>

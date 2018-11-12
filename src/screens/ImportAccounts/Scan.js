@@ -102,7 +102,10 @@ class Scan extends PureComponent<
 
   onResult = result => {
     // $FlowFixMe
-    this.props.navigation.replace("DisplayResult", { result });
+    this.props.navigation.replace("DisplayResult", {
+      result,
+      onFinish: this.props.navigation.getParam("onFinish"),
+    });
   };
 
   setDimensions = () => {
