@@ -17,6 +17,7 @@ import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
 } from "@ledgerhq/live-common/lib/account";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import eip55 from "eip55";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
@@ -470,7 +471,7 @@ export const accountBridge: AccountBridge<Transaction> = {
     gasPrice: null,
     gasLimit: BigNumber(0x5208),
     networkInfo: null,
-    feeCustomUnit: null,
+    feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
   }),
 
   editTransactionAmount: (account, t, amount) => ({
