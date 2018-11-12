@@ -19,6 +19,7 @@ import {
   getNewAccountPlaceholderName,
 } from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import { NotEnoughBalance } from "@ledgerhq/live-common/lib/errors";
 import { open } from "../logic/hw";
 import {
   apiForEndpointConfig,
@@ -28,7 +29,6 @@ import {
   formatAPICurrencyXRP,
 } from "../api/Ripple";
 import {
-  NotEnoughBalance,
   FeeNotLoaded,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "../errors";
