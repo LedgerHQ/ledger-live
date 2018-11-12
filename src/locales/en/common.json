@@ -327,7 +327,11 @@
       "setPassword": "Set a password"
     },
     "stepShareData": {},
-    "stepFinish": {}
+    "stepFinish": {
+      "title": "Your device is ready!",
+      "desc": "Install some apps on your device and access your portfolio",
+      "cta": "Open Ledger Live"
+    }
   },
   "portfolio": {
     "totalBalance": "Total balance",
