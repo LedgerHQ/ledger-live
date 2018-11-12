@@ -6,6 +6,7 @@
     "delete": "Delete",
     "yes": "Yes",
     "no": "No",
+    "gotit": "Got it",
     "continue": "Continue",
     "retry": "Try again",
     "done": "Done",
@@ -495,7 +496,32 @@
       "reportErrors": "Report bugs",
       "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience."
+      "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience.",
+      "analyticsModal": {
+        "title": "Share analytics",
+        "desc": "Enable analytics to help Ledger understand how to improve user experience",
+        "bullet1": "In-app page visits",
+        "bullet2": "Actions: send, receive, lock, etc.",
+        "bullet3": "Redirections to webpages",
+        "bullet4": "Overall and page session duration",
+        "bullet5": "Type of Ledger device",
+        "bullet6": "Scrolled to end of page",
+        "bullet7": "Device firmware and app versions",
+        "bullet8": "Number of accounts, currencies and operations"
+      },
+      "technicalData": "Technical data",
+      "technicalDataDesc": "Ledger will automatically collect fully anonymized technical data to help improve user experience.",
+      "technicalDataModal": {
+        "title": "Technical data",
+        "desc": "Ledger will automatically collect fully anonymized technical data to help improve user experience",
+        "bullet1": "Anonymous unique application ID",
+        "bullet2": "OS name and version",
+        "bullet3": "Ledger Live version",
+        "bullet4": "Application language or region",
+        "bullet5": "OS language and region"
+      },
+      "termsOfUse": "Terms of use",
+      "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1>."
     },
     "currencies": {
       "header": "Currencies",

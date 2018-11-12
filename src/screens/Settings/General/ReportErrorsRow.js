@@ -22,12 +22,13 @@ const mapDispatchToProps = {
 
 class ReportErrorsRow extends PureComponent<Props> {
   render() {
-    const { reportErrorsEnabled, setReportErrors } = this.props;
+    const { reportErrorsEnabled, setReportErrors, ...props } = this.props;
     return (
       <SettingsRow
         title={<Trans i18nKey="settings.display.reportErrors" />}
         desc={<Trans i18nKey="settings.display.reportErrorsDesc" />}
         onPress={null}
+        {...props}
       >
         <Switch value={reportErrorsEnabled} onValueChange={setReportErrors} />
       </SettingsRow>

@@ -1,13 +1,15 @@
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Touchable from "./Touchable";
 import LText from "./LText";
 import colors from "../colors";
 import ArrowRight from "../icons/ArrowRight";
 import Check from "../icons/Check";
+import IconHelp from "../icons/Info";
 
 export default class SettingsRow extends Component<{
   onPress: () => void,
+  onHelpPress: () => void,
   title: React$Node,
   titleStyle?: *,
   desc?: React$Node,
@@ -17,10 +19,13 @@ export default class SettingsRow extends Component<{
   alignedTop?: boolean,
   compact?: boolean,
   children: React$Node,
+  borderTop?: boolean,
+  noTextDesc?: boolean,
 }> {
   render() {
     const {
       onPress,
+      onHelpPress,
       children,
       title,
       titleStyle,
@@ -30,6 +35,8 @@ export default class SettingsRow extends Component<{
       alignedTop,
       compact,
       selected,
+      borderTop,
+      noTextDesc,
     } = this.props;
     return (
       <Touchable
@@ -38,17 +45,27 @@ export default class SettingsRow extends Component<{
           styles.root,
           alignedTop && styles.rootAlignedTop,
           compact && styles.rootCompact,
+          borderTop && styles.borderTop,
         ]}
       >
         {iconLeft && <View style={styles.iconLeft}>{iconLeft}</View>}
         <View style={styles.textBlock}>
-          <LText
-            semiBold={selected !== false}
-            style={[styles.titleStyle, titleStyle]}
-          >
-            {title}
-          </LText>
-          {desc && <LText style={styles.description}>{desc}</LText>}
+          <View style={styles.titleContainer}>
+            <LText
+              semiBold={selected !== false}
+              style={[styles.titleStyle, titleStyle]}
+            >
+              {title}
+            </LText>
+            {!!onHelpPress && (
+              <TouchableOpacity style={styles.helpIcon} onPress={onHelpPress}>
+                <IconHelp size={16} color={colors.grey} />
+              </TouchableOpacity>
+            )}
+          </View>
+          {desc &&
+            !noTextDesc && <LText style={styles.description}>{desc}</LText>}
+          {desc && noTextDesc && desc}
         </View>
         <View style={styles.rightBlock}>
           {children}
@@ -84,7 +101,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   textBlock: {
-    flexDirection: "column",
     paddingRight: 16,
     flexGrow: 1,
     flexShrink: 1,
@@ -92,6 +108,13 @@ const styles = StyleSheet.create({
   rightBlock: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  helpIcon: {
+    marginLeft: 8,
   },
   titleStyle: {
     fontSize: 16,
@@ -106,5 +129,9 @@ const styles = StyleSheet.create({
   },
   iconLeftContainer: {
     marginRight: 8,
+  },
+  borderTop: {
+    borderTopWidth: 1,
+    borderTopColor: colors.lightGrey,
   },
 });
