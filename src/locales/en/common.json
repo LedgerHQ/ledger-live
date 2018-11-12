@@ -331,6 +331,10 @@
       "title": "Your device is ready!",
       "desc": "Install some apps on your device and access your portfolio",
       "cta": "Open Ledger Live"
+    },
+    "stepScanQR": {
+      "title": "Scan the QR Code available on your Desktop app to import your accounts.",
+      "cta": "Scan QR code"
     }
   },
   "portfolio": {
