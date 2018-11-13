@@ -273,7 +273,7 @@
       "OnboardingStepSecurityChecklist": "Security checklist",
       "OnboardingStepPairNew": "Pair a new device",
       "OnboardingStepPassword": "Password lock",
-      "OnboardingStepScanQR": "Scan QR",
+      "OnboardingStepScanQR": "Import desktop accounts",
       "OnboardingStepShareData": "Share data"
     },
     "stepWelcome": {
@@ -333,7 +333,7 @@
       "cta": "Open Ledger Live"
     },
     "stepScanQR": {
-      "title": "Scan the QR Code available on your Desktop app to import your accounts.",
+      "title": "Please go to <1>Settings > General > Export accounts</1> in the desktop app and scan the QR code",
       "cta": "Scan QR code"
     }
   },

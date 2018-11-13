@@ -52,9 +52,17 @@ class OnboardingStepScanQR extends Component<Props> {
             }}
           />
         </View>
-        <LText style={styles.title} semiBold>
-          <Trans i18nKey="onboarding.stepScanQR.title" />
-        </LText>
+        <View style={styles.titleContainer}>
+          <LText style={styles.title}>
+            <Trans i18nKey="onboarding.stepScanQR.title">
+              {"text"}
+              <LText style={styles.title} semiBold>
+                {"bold text"}
+              </LText>
+              {"text"}
+            </Trans>
+          </LText>
+        </View>
       </OnboardingLayout>
     );
   }
@@ -67,9 +75,12 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 24,
   },
+  titleContainer: {
+    paddingHorizontal: 16,
+  },
   title: {
     fontSize: 16,
-    color: colors.darkBlue,
+    color: colors.smoke,
     textAlign: "center",
   },
 });
