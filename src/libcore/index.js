@@ -467,8 +467,8 @@ export async function isValidRecipient({
     return Promise.resolve(null);
   }
 
-  return Promise.resolve(
-    new InvalidAddress("", { currencyName: currency.name }),
+  return Promise.reject(
+    new InvalidAddress(null, { currencyName: currency.name }),
   );
 }
 

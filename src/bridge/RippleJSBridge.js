@@ -19,6 +19,10 @@ import {
   getNewAccountPlaceholderName,
 } from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import {
+  NotEnoughBalance,
+  InvalidAddress,
+} from "@ledgerhq/live-common/lib/errors";
 import { open } from "../logic/hw";
 import {
   apiForEndpointConfig,
@@ -28,7 +32,6 @@ import {
   formatAPICurrencyXRP,
 } from "../api/Ripple";
 import {
-  NotEnoughBalance,
   FeeNotLoaded,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "../errors";
@@ -147,7 +150,9 @@ function checkValidRecipient(currency, recipient) {
     bs58check.decode(recipient);
     return Promise.resolve(null);
   } catch (e) {
-    return Promise.reject(e);
+    return Promise.reject(
+      new InvalidAddress("", { currencyName: currency.name }),
+    );
   }
 }
 

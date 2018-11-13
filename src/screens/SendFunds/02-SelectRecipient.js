@@ -133,7 +133,10 @@ class SendSelectRecipient extends Component<Props, State> {
       if (!res) this.setState({ addressStatus: "valid", error: null });
       else this.setState({ addressStatus: "warning", error: res });
     } catch (e) {
-      this.setState({ addressStatus: "invalid", error: e });
+      this.setState({
+        addressStatus: "invalid",
+        error: e,
+      });
     }
   };
 
