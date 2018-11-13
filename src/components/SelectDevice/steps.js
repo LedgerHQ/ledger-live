@@ -2,20 +2,19 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
-import { Observable, from, throwError, timer } from "rxjs";
-import { map, retryWhen, mergeMap, first } from "rxjs/operators";
+import { from } from "rxjs";
+import { map, first } from "rxjs/operators";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
   WrongDeviceForAccount,
   CantOpenDevice,
-  UpdateYourApp,
 } from "@ledgerhq/live-common/lib/errors";
 import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
-import { withDevice } from "../../logic/hw/deviceAccess";
+import { withDevice, withDevicePolling } from "../../logic/hw/deviceAccess";
 import colors from "../../colors";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
@@ -29,25 +28,6 @@ import { deviceNames } from "../../wording";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
-
-const genericCanRetryOnError = err => {
-  if (err instanceof WrongDeviceForAccount) return false;
-  if (err instanceof CantOpenDevice) return false;
-  if (err instanceof UpdateYourApp) return false;
-  return true;
-};
-
-const retryWhileErrors = (
-  acceptError: Error => boolean = genericCanRetryOnError,
-) => (attempts: Observable<any>): Observable<any> =>
-  attempts.pipe(
-    mergeMap(error => {
-      if (!acceptError(error)) {
-        return throwError(error);
-      }
-      return timer(200);
-    }),
-  );
 
 export const connectingStep: Step = {
   Body: ({ deviceName }: *) => (
@@ -85,15 +65,15 @@ export const dashboard: Step = {
     />
   ),
   run: (deviceId, meta) =>
-    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
-      .pipe(retryWhen(retryWhileErrors()))
-      .pipe(
-        map(deviceInfo => ({
-          ...meta,
-          deviceInfo,
-        })),
-        rejectionOp(() => new CantOpenDevice()),
-      ),
+    withDevicePolling(deviceId)(transport =>
+      from(getDeviceInfo(transport)),
+    ).pipe(
+      map(deviceInfo => ({
+        ...meta,
+        deviceInfo,
+      })),
+      rejectionOp(() => new CantOpenDevice()),
+    ),
 };
 
 export const genuineCheck: Step = {
@@ -144,7 +124,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
     />
   ),
   run: (deviceId, meta) =>
-    withDevice(deviceId)(transport =>
+    withDevicePolling(deviceId)(transport =>
       from(
         getAddress(
           transport,
@@ -155,15 +135,13 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
           ),
         ),
       ),
-    )
-      .pipe(retryWhen(retryWhileErrors()))
-      .pipe(
-        map(addressInfo => ({
-          ...meta,
-          addressInfo,
-        })),
-        rejectionOp(() => new CantOpenDevice()),
-      ),
+    ).pipe(
+      map(addressInfo => ({
+        ...meta,
+        addressInfo,
+      })),
+      rejectionOp(() => new CantOpenDevice()),
+    ),
 });
 
 export const accountApp: Account => Step = account => ({
@@ -193,7 +171,7 @@ export const accountApp: Account => Step = account => ({
     />
   ),
   run: (deviceId, meta) =>
-    withDevice(deviceId)(transport =>
+    withDevicePolling(deviceId)(transport =>
       from(
         getAddress(transport, account.currency, account.freshAddressPath).then(
           addressInfo => {
@@ -210,7 +188,6 @@ export const accountApp: Account => Step = account => ({
         ),
       ),
     ).pipe(
-      retryWhen(retryWhileErrors()),
       rejectionOp(
         () => new WrongDeviceForAccount("", { accountName: account.name }),
       ),

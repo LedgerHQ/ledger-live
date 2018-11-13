@@ -44,6 +44,11 @@ import SendConnectDevice from "./screens/SendFunds/05-ConnectDevice";
 import SendValidation from "./screens/SendFunds/06-Validation";
 import SendValidationSuccess from "./screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "./screens/SendFunds/07-ValidationError";
+import FirmwareUpdateReleaseNotes from "./screens/FirmwareUpdate/01-ReleaseNotes";
+import FirmwareUpdateCheckId from "./screens/FirmwareUpdate/02-CheckId";
+import FirmwareUpdateMCU from "./screens/FirmwareUpdate/03-MCU";
+import FirmwareUpdateConfirmation from "./screens/FirmwareUpdate/04-Confirmation";
+import FirmwareUpdateFailure from "./screens/FirmwareUpdate/04-Failure";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
@@ -333,6 +338,21 @@ SendFunds.navigationOptions = {
   header: null,
 };
 
+const FirmwareUpdate = createStackNavigator(
+  {
+    FirmwareUpdateReleaseNotes,
+    FirmwareUpdateCheckId,
+    FirmwareUpdateMCU,
+    FirmwareUpdateConfirmation,
+    FirmwareUpdateFailure,
+  },
+  closableStackNavigatorConfig,
+);
+
+FirmwareUpdate.navigationOptions = {
+  header: null,
+};
+
 const AccountSettings = createStackNavigator(
   {
     AccountSettingsMain,
@@ -371,6 +391,7 @@ export const RootNavigator = createStackNavigator(
     ReceiveFunds,
     SendFunds,
     AddAccounts,
+    FirmwareUpdate,
     // $FlowFixMe
     OperationDetails,
     AccountSettings,

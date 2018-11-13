@@ -32,17 +32,20 @@ class Manager extends Component<{
 
   onStepEntered = (i: number, meta: Object) => {
     if (i === 2) {
-      // Step dashboard, we preload the applist before entering manager while we're still doing the genuine check
-      manager
-        .getAppsList(meta.deviceInfo)
-        .then(apps =>
-          Promise.all(
-            apps.map(app => Image.prefetch(manager.getIconUrl(app.icon))),
+      Promise.all([
+        // Step dashboard, we preload the applist before entering manager while we're still doing the genuine check
+        manager
+          .getAppsList(meta.deviceInfo)
+          .then(apps =>
+            Promise.all(
+              apps.map(app => Image.prefetch(manager.getIconUrl(app.icon))),
+            ),
           ),
-        )
-        .catch(e => {
-          console.warn(e);
-        });
+        // we also preload as much info as possible in case of a MCU
+        manager.getLatestFirmwareForDevice(meta.deviceInfo),
+      ]).catch(e => {
+        console.warn(e);
+      });
     }
   };
 

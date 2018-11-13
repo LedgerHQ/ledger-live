@@ -1,17 +1,18 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { translate } from "react-i18next";
 
 import colors from "../colors";
 import LText from "./LText";
 
 type Props = {
-  title: string,
-  subtitle: string,
+  title: React$Node,
+  subtitle: React$Node,
 };
 
 class StepHeader extends PureComponent<Props> {
-  render(): React$Node {
+  render() {
     const { title, subtitle } = this.props;
     return (
       <View style={styles.root}>
@@ -41,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StepHeader;
+export default translate()(StepHeader);

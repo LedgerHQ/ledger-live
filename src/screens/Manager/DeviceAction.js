@@ -14,6 +14,7 @@ import Button from "../../components/Button";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import Space from "../../components/Space";
+import { deviceNames } from "../../wording";
 
 import colors from "../../colors";
 
@@ -55,7 +56,10 @@ class DeviceAction extends PureComponent<Props, State> {
               <Trans i18nKey="manager.unpair.title" />
             </LText>
             <LText style={styles.description}>
-              <Trans i18nKey="manager.unpair.description" />
+              <Trans
+                i18nKey="manager.unpair.description"
+                values={deviceNames.nanoX}
+              />
             </LText>
           </View>
           <View style={styles.buttons}>
