@@ -42,8 +42,8 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
       <StepHeader
-        title={<Trans i18nKey="FirmwareUpdate.title" />}
-        subtitle={<Trans i18nKey="FirmwareUpdateCheckId.subtitle" />}
+        subtitle={<Trans i18nKey="FirmwareUpdate.title" />}
+        title={<Trans i18nKey="FirmwareUpdateCheckId.title" />}
       />
     ),
   };

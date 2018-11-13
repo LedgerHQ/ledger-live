@@ -783,7 +783,11 @@
     "action": "Update"
   },
   "FirmwareUpdate": {
-    "title": "Update firmware"
+    "title": "Update firmware",
+    "Installing": {
+      "title": "Firmware updating...",
+      "subtitle": "If asked on device, please enter your pin code to finish the process"
+    }
   },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
@@ -792,11 +796,11 @@
     "action": "Continue update"
   },
   "FirmwareUpdateCheckId": {
-    "subtitle": "Identifier",
+    "title": "Identifier",
     "description": "Please press both buttons on your {{fullDeviceName}} if it displays the same identifier:"
   },
   "FirmwareUpdateMCU": {
-    "subtitle": "Restart device",
+    "title": "Restart device",
     "desc1": "Unplug your device from your computer",
     "desc2": "Press and hold left button and plug your device until the processing screen appears"
   },

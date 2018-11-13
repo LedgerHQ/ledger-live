@@ -34,8 +34,8 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
       <StepHeader
-        title={<Trans i18nKey="FirmwareUpdate.title" />}
-        subtitle={<Trans i18nKey="FirmwareUpdateMCU.subtitle" />}
+        subtitle={<Trans i18nKey="FirmwareUpdate.title" />}
+        title={<Trans i18nKey="FirmwareUpdateMCU.title" />}
       />
     ),
   };
