@@ -1,4 +1,5 @@
 /* @flow */
+/* eslint-disable no-console */
 import React, { Component } from "react";
 import { View, SafeAreaView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
@@ -28,7 +29,7 @@ class FirmwareUpdateConfirmation extends Component<Props, State> {
   };
 
   onClose = () => {
-    this.props.navigation.dangerouslyGetParent().goBack();
+    this.props.navigation.navigate("Manager");
   };
 
   render() {

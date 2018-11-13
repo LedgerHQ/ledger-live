@@ -748,6 +748,9 @@
       "button": "Unpair"
     }
   },
+  "ManagerDevice": {
+    "title": "Device"
+  },
   "AppAction": {
     "install": {
       "loading": {

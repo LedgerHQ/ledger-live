@@ -92,6 +92,8 @@ const CacheAPI = {
     deviceInfo: DeviceInfo,
     isDevMode: boolean = false,
   ): Promise<ApplicationVersion[]> => {
+    if (deviceInfo.isOSU || deviceInfo.isBootloader) return Promise.resolve([]);
+
     const deviceVersionP = ManagerAPI.getDeviceVersion(
       deviceInfo.targetId,
       deviceInfo.providerId,

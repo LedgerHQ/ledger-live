@@ -9,9 +9,8 @@ import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
 
-class Installing extends PureComponent<*> {
+class Installing extends PureComponent<{}> {
   render() {
-    const { children } = this.props;
     return (
       <View style={styles.root}>
         <Spinning>
