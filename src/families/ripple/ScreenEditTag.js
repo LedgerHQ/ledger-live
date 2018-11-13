@@ -75,7 +75,7 @@ class RippleEditTag extends PureComponent<Props, State> {
         account,
         transaction,
         "tag",
-        tag,
+        tag && tag.toNumber(),
       ),
     });
   };

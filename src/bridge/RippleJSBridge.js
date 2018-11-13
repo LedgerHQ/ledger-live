@@ -19,7 +19,10 @@ import {
   getNewAccountPlaceholderName,
 } from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
-import { NotEnoughBalance } from "@ledgerhq/live-common/lib/errors";
+import {
+  NotEnoughBalance,
+  InvalidAddress,
+} from "@ledgerhq/live-common/lib/errors";
 import { open } from "../logic/hw";
 import {
   apiForEndpointConfig,
@@ -147,7 +150,9 @@ function checkValidRecipient(currency, recipient) {
     bs58check.decode(recipient);
     return Promise.resolve(null);
   } catch (e) {
-    return Promise.reject(e);
+    return Promise.reject(
+      new InvalidAddress("", { currencyName: currency.name }),
+    );
   }
 }
 
@@ -601,6 +606,10 @@ export const accountBridge: AccountBridge<Transaction> = {
         return { ...t, fee: value };
 
       case "tag":
+        invariant(
+          !value || typeof value === "number",
+          "editTransactionExtra(a,t,'tag',value): number value expected",
+        );
         return { ...t, tag: value };
 
       case "feeCustomUnit":

@@ -463,7 +463,7 @@ export const accountBridge: AccountBridge<Transaction> = {
   checkValidRecipient: (currency, recipient) =>
     isRecipientValid(currency, recipient)
       ? Promise.resolve(getRecipientWarning(currency, recipient))
-      : Promise.reject(new InvalidAddress()),
+      : Promise.reject(new InvalidAddress("", { currencyName: currency.name })),
 
   createTransaction: () => ({
     amount: BigNumber(0),
