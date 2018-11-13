@@ -199,9 +199,10 @@ const getOrCreateAccount = atomicQueue(
         index,
       );
 
-      const infosIndex = getValue(
-        await core.coreExtendedKeyAccountCreationInfo.getIndex(extendedInfos),
-      );
+      const infosIndex = (await core.coreExtendedKeyAccountCreationInfo.getIndex(
+        extendedInfos,
+      )).value; // TODO get rid of .value
+
       const extendedKeys = getValue(
         await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
           extendedInfos,
