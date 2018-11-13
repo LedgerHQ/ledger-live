@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, ScrollView, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { Trans } from "react-i18next";
@@ -9,16 +9,24 @@ import LocationRequired from "../LocationRequired";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import TranslatedError from "../../components/TranslatedError";
-import PairingFailure from "../../icons/PairingFailure";
+import BluetoothScanning from "../../components/BluetoothScanning";
 import { PairingFailed, GenuineCheckFailed } from "../../errors";
 import colors from "../../colors";
+import { urls } from "../../config/urls";
+import Help from "../../icons/Help";
 
 type Props = {
   error: Error,
   status: string,
-  onCancel: () => void,
   onRetry: () => void,
   onBypassGenuine: () => void,
+};
+
+const hitSlop = {
+  top: 16,
+  left: 16,
+  right: 16,
+  bottom: 16,
 };
 
 const GenericErrorHeader = () => (
@@ -27,9 +35,11 @@ const GenericErrorHeader = () => (
   </LText>
 );
 
+const PairingFailure = () => <BluetoothScanning isError />;
+
 class RenderError extends Component<Props> {
   render() {
-    const { error, status, onCancel, onBypassGenuine, onRetry } = this.props;
+    const { error, status, onBypassGenuine, onRetry } = this.props;
 
     // $FlowFixMe
     if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
@@ -52,43 +62,40 @@ class RenderError extends Component<Props> {
 
     return (
       <View style={styles.root}>
-        <ScrollView
-          style={styles.list}
-          contentContainerStyle={styles.contentContainer}
-        >
+        <View style={styles.body}>
           <Header />
-          <View style={styles.container}>
-            <LText semiBold style={styles.title}>
-              <TranslatedError error={primaryError} />
-            </LText>
-            <LText style={styles.description}>
-              <TranslatedError error={primaryError} field="description" />
-            </LText>
+          <LText semiBold style={styles.title}>
+            <TranslatedError error={primaryError} />
+          </LText>
+          <LText style={styles.description}>
+            <TranslatedError error={primaryError} field="description" />
+          </LText>
+          <View style={styles.buttonContainer}>
+            {status === "genuinecheck" ? (
+              <Button
+                type="secondary"
+                title={<Trans i18nKey="PairDevices.bypassGenuine" />}
+                onPress={onBypassGenuine}
+                containerStyle={[styles.button, styles.secondaryButton]}
+              />
+            ) : null}
+            <Button
+              type="primary"
+              title={<Trans i18nKey="common.retry" />}
+              onPress={onRetry}
+              containerStyle={styles.button}
+            />
           </View>
-        </ScrollView>
-
-        <View style={styles.footer}>
-          {status === "genuinecheck" ? (
-            <Button
-              type="secondary"
-              title={<Trans i18nKey="PairDevices.bypassGenuine" />}
-              onPress={onBypassGenuine}
-              containerStyle={styles.button}
-            />
-          ) : (
-            <Button
-              type="secondary"
-              title={<Trans i18nKey="common.cancel" />}
-              onPress={onCancel}
-              containerStyle={styles.button}
-            />
-          )}
-          <Button
-            type="primary"
-            title={<Trans i18nKey="common.retry" />}
-            onPress={onRetry}
-            containerStyle={[styles.button, styles.primaryButton]}
-          />
+          <TouchableOpacity
+            style={styles.helpContainer}
+            hitSlop={hitSlop}
+            onPress={() => Linking.openURL(urls.faq)}
+          >
+            <Help size={16} color={colors.live} />
+            <LText style={styles.helpText} semiBold>
+              <Trans i18nKey="common.needHelp" />
+            </LText>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -101,36 +108,45 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     padding: 20,
+    flexDirection: "column",
   },
-  list: {
+  body: {
     flex: 1,
-  },
-  contentContainer: {
-    paddingVertical: "20%",
-    flexDirection: "column",
     alignItems: "center",
-  },
-  container: {
+    justifyContent: "center",
     flexDirection: "column",
-    alignItems: "center",
-    paddingVertical: 20,
   },
   title: {
-    fontSize: 18,
-    marginBottom: 10,
+    marginTop: 32,
+    textAlign: "center",
     color: colors.darkBlue,
+    fontSize: 18,
   },
   description: {
+    marginTop: 16,
+    textAlign: "center",
     fontSize: 14,
+    lineHeight: 21,
     color: colors.grey,
   },
-  footer: {
+  buttonContainer: {
     flexDirection: "row",
+    marginTop: 32,
   },
   button: {
     flex: 1,
   },
-  primaryButton: {
-    marginLeft: 10,
+  helpContainer: {
+    marginTop: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  helpText: {
+    color: colors.live,
+    marginLeft: 6,
+  },
+  secondaryButton: {
+    marginRight: 10,
   },
 });

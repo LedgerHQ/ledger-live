@@ -8,7 +8,7 @@
     "no": "No",
     "gotit": "Got it",
     "continue": "Continue",
-    "retry": "Try again",
+    "retry": "Retry",
     "done": "Done",
     "sortBy": "Sort by",
     "signOut": "Sign Out",
@@ -23,7 +23,6 @@
     "poweredBy": "Powered by ",
     "received": "Received",
     "sent": "Sent",
-    "search": "Search",
     "or": "OR"
   },
   "errors": {
@@ -158,8 +157,8 @@
       "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
     },
     "PairingFailed": {
-      "title": "Bluetooth Pairing Failed",
-      "description": "Check your Bluetooth settings, make sure the Nano X device is booted up and test again."
+      "title": "Pairing unsuccessful",
+      "description": "Please try again or contact Ledger Support when in doubt."
     },
     "PasswordIncorrect": {
       "title": "The password you entered is incorrect",
