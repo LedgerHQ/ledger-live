@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, BackHandler } from "react-native";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
@@ -26,8 +26,14 @@ type Props = {
 class ValidationSuccess extends Component<Props> {
   static navigationOptions = {
     header: null,
+    gesturesEnabled: false,
   };
-
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", () => true);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress");
+  }
   dismiss = () => {
     const { navigation } = this.props;
     if (navigation.dismiss) {
