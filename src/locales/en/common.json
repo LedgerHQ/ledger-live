@@ -727,8 +727,8 @@
       "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
     },
     "ScanningTimeout": {
-      "title": "We didn't find any devices around",
-      "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
+      "title": "Oops, no device found",
+      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
     },
     "bypassGenuine": "Use anyway"
   },

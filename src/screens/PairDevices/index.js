@@ -144,7 +144,7 @@ class PairDevices extends Component<Props, State> {
 
       case "timedout":
         return (
-          <ScanningTimeout onRetry={this.onRetry} onCancel={this.onDone} />
+          <ScanningTimeout onRetry={this.onRetry} />
         );
 
       case "pairing":
