@@ -6,6 +6,7 @@ import { Animated, Easing } from "react-native";
 type Props = {
   children: any,
   paused?: boolean,
+  clockwise?: boolean,
 };
 
 class Spinning extends Component<Props> {
@@ -38,10 +39,10 @@ class Spinning extends Component<Props> {
   };
 
   render() {
-    const { children } = this.props;
+    const { children, clockwise } = this.props;
     const rotate = this.spinValue.interpolate({
       inputRange: [0, 1],
-      outputRange: ["0deg", "360deg"],
+      outputRange: clockwise ? ["0deg", "360deg"] : ["360deg", "0deg"],
     });
 
     return (
