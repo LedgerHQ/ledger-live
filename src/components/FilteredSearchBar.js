@@ -89,7 +89,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
           }}
           value={query}
           items={list}
-          render={items => renderList(items)}
+          render={renderList}
           renderEmptySearch={renderEmptySearch}
         />
       </Fragment>
