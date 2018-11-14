@@ -18,7 +18,7 @@ import {
   connectingStep,
   accountApp,
   receiveVerifyStep,
-} from "../../components/SelectDevice/steps";
+} from "../../components/DeviceJob/steps";
 
 import colors from "../../colors";
 

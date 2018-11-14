@@ -50,7 +50,6 @@
       "title": "Sorry, try again (genuine-close)",
       "description": null
     },
-    "DeviceNameRequired": { "title": "A device name is required" },
     "DeviceNotGenuine": {
       "title": "Possibly not genuine",
       "description": "Request Ledger Support assistance."
@@ -468,7 +467,7 @@
         "header": "Import account",
         "title": "Enable camera",
         "desc": "Please enable Camera in Settings to scan QR codes",
-        "buttonTitle": "Go to Settings",
+        "buttonTitle": "Go to Settings"
       }
     }
   },
@@ -601,13 +600,13 @@
     "loading": "Searching devices..."
   },
   "send": {
-    "scan":{
+    "scan": {
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",
         "desc": "Please enable Camera in Settings to scan QR codes",
         "buttonTitle": "Go to Settings"
-      },
+      }
     },
     "stepperHeader": {
       "selectAccount": "Select an account",
@@ -705,13 +704,18 @@
         "title": "Verify address on device",
         "description": "A <1><0>{{currencyName}}</0></1> address <3><0>will be displayed</0></3> on your device. Carefully verify that it matches the address on your phone.",
         "action": "Ok, I'm ready"
+      },
+      "getDeviceName": {
+        "title": "Press both buttons to allow get device name"
+      },
+      "editDeviceName": {
+        "title": "Press both buttons to allow set device name"
       }
     }
   },
   "EditDeviceName": {
     "title": "Edit Device Name",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "inputPlaceholder": "Custom Device Name",
     "action": "Change name"
   },
   "PairDevices": {
@@ -742,7 +746,8 @@
     "genuine": "Your device is genuine"
   },
   "DeviceNameRow": {
-    "title": "Device Name"
+    "title": "Device Name",
+    "action": "Get device name"
   },
   "manager": {
     "appList": {

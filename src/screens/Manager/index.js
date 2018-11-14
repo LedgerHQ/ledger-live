@@ -8,7 +8,7 @@ import {
   connectingStep,
   dashboard,
   genuineCheck,
-} from "../../components/SelectDevice/steps";
+} from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
 import colors from "../../colors";
 import ToggleManagerEdition from "./ToggleManagerEdition";

@@ -21,6 +21,8 @@ import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import LText from "../LText";
+import getDeviceNameTransport from "../../logic/hw/getDeviceName";
+import editDeviceNameTransport from "../../logic/hw/editDeviceName";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import doGenuineCheck from "../../logic/hw/theRealGenuineCheck";
 import { rejectionOp } from "../DebugRejectSwitch";
@@ -236,5 +238,42 @@ export const receiveVerifyStep: Account => Step = account => ({
     onDoneO.pipe(
       map(() => meta),
       first(),
+    ),
+});
+
+export const getDeviceName: Step = {
+  Body: () => (
+    <RenderStep
+      icon={
+        <DeviceNanoAction width={240} powerAction action screen="validation" />
+      }
+      title={<Trans i18nKey="SelectDevice.steps.getDeviceName.title" />}
+    />
+  ),
+
+  run: (deviceId, meta) =>
+    withDevice(deviceId)(transport =>
+      from(
+        getDeviceNameTransport(transport).then(deviceName => ({
+          ...meta,
+          deviceName,
+        })),
+      ),
+    ),
+};
+
+export const editDeviceName: string => Step = deviceName => ({
+  Body: () => (
+    <RenderStep
+      icon={
+        <DeviceNanoAction width={240} powerAction action screen="validation" />
+      }
+      title={<Trans i18nKey="SelectDevice.steps.editDeviceName.title" />}
+    />
+  ),
+
+  run: (deviceId, meta) =>
+    withDevice(deviceId)(transport =>
+      from(editDeviceNameTransport(transport, deviceName).then(() => meta)),
     ),
 });
