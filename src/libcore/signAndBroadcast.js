@@ -180,7 +180,9 @@ async function signTransaction({
     );
     if (isCancelled()) return;
 
-    const isDerivationPathNull = await core.coreDerivationPath.isNull(derivationPath);
+    const isDerivationPathNull = await core.coreDerivationPath.isNull(
+      derivationPath,
+    );
 
     if (!isDerivationPathNull && derivationPath.uid) {
       const strDerivationPath = (await core.coreDerivationPath.toString(
