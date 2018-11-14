@@ -415,9 +415,9 @@ async function buildOperation({
   const coreFee = await core.coreOperation.getFees(coreOperation);
   const fee = await libcoreAmountToBigNumber(core, coreFee);
 
-  const { value: blockHeight } = await core.coreOperation.getBlockHeight(
-    coreOperation,
-  );
+  // if tx is pending, libcore returns null (not wrapped with `value`)
+  const blockHeightRes = await core.coreOperation.getBlockHeight(coreOperation);
+  const blockHeight = blockHeightRes ? blockHeightRes.value : null;
 
   const [{ value: recipients }, { value: senders }] = await Promise.all([
     core.coreOperation.getRecipients(coreOperation),
