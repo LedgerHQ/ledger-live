@@ -78,11 +78,14 @@ import sendScreens from "./families/sendScreens";
 // TODO look into all FlowFixMe
 
 let headerStyle;
+let headerStyleShadow;
 
 if (Platform.OS === "ios") {
   headerStyle = {
     height: 48,
     borderBottomWidth: 0,
+  };
+  headerStyleShadow = {
     shadowOpacity: 0.03,
     shadowRadius: 8,
     shadowOffset: {
@@ -91,10 +94,11 @@ if (Platform.OS === "ios") {
   };
 } else {
   const statusBarPadding = StatusBar.currentHeight;
-
   headerStyle = {
     height: 48 + statusBarPadding,
     paddingTop: statusBarPadding,
+  };
+  headerStyleShadow = {
     elevation: 1,
   };
 }
@@ -104,6 +108,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   header: {
+    backgroundColor: colors.white,
+    ...headerStyle,
+    ...headerStyleShadow,
+  },
+  headerNoShadow: {
     backgroundColor: colors.white,
     ...headerStyle,
   },
@@ -230,7 +239,13 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     ManagerMain,
   },
-  stackNavigatorConfig,
+  {
+    ...stackNavigatorConfig,
+    navigationOptions: {
+      ...stackNavigatorConfig.navigationOptions,
+      headerStyle: styles.headerNoShadow,
+    },
+  },
 );
 
 ManagerStack.navigationOptions = {

@@ -19,7 +19,12 @@ const BUTTON_HEIGHT = 48;
 const ANIM_OFFSET = 20;
 const ANIM_DURATION = 300;
 
-type ButtonType = "primary" | "secondary" | "tertiary" | "alert";
+type ButtonType =
+  | "primary"
+  | "secondary"
+  | "lightSecondary"
+  | "tertiary"
+  | "alert";
 
 type BaseProps = {
   type: ButtonType,
@@ -261,6 +266,9 @@ const styles = StyleSheet.create({
   secondaryContainer: { backgroundColor: "transparent" },
   secondaryTitle: { color: colors.grey },
   secondaryOutlineBorder: { borderColor: colors.fog },
+
+  lightSecondaryContainer: { backgroundColor: "transparent" },
+  lightSecondaryTitle: { color: colors.live },
 
   tertiaryContainer: { backgroundColor: "transparent" },
   tertiaryTitle: { color: colors.live },

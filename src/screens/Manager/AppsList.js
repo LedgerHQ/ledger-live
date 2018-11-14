@@ -1,40 +1,19 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { translate, Trans } from "react-i18next";
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import type { DeviceInfo, ApplicationVersion } from "../../types/manager";
 import manager from "../../logic/manager";
-import KeyboardView from "../../components/KeyboardView";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import LText from "../../components/LText";
-import Spinning from "../../components/Spinning";
-import LiveLogo from "../../icons/LiveLogoIcon";
-import colors from "../../colors";
 
+import AppsListPending from "./AppsListPending";
+import AppsListError from "./AppsListError";
 import AppRow from "./AppRow";
 import AppAction from "./AppAction";
-
-const Pending = () => (
-  <View style={styles.pending}>
-    <Spinning>
-      <LiveLogo color={colors.grey} size={32} />
-    </Spinning>
-
-    <LText style={styles.pendingText}>
-      <Trans i18nKey="manager.appList.loading" />
-    </LText>
-  </View>
-);
-
-const ErrorRender = (
-  { error }: *, // eslint-disable-line
-) => (
-  // what do we display here? ping design
-  <View style={{ backgroundColor: "red", height: 100 }} />
-);
 
 const actionKey = action => `${action.app.id}_${action.type}`;
 
@@ -78,7 +57,7 @@ class ManagerAppsList extends Component<
     this.unmount = true;
   }
 
-  async fetchAppList() {
+  fetchAppList = async () => {
     this.setState(old => {
       if (old.pending) return null;
       return { pending: true, error: null };
@@ -102,7 +81,7 @@ class ManagerAppsList extends Component<
         error,
       });
     }
-  }
+  };
 
   onActionClose = () => {
     this.setState({ action: null });
@@ -154,29 +133,27 @@ class ManagerAppsList extends Component<
     const deviceId = navigation.getParam("deviceId");
     return (
       <View style={styles.root}>
-        <KeyboardView style={{ flex: 1 }}>
-          {pending ? (
-            <Pending />
-          ) : error ? (
-            <ErrorRender error={error} />
-          ) : (
-            <FilteredSearchBar
-              list={apps}
-              renderList={this.renderList}
-              renderEmptySearch={this.renderEmptySearch}
-              inputWrapperStyle={styles.inputWrapper}
-            />
-          )}
-          {action ? (
-            <AppAction
-              key={actionKey(action)}
-              action={action}
-              onClose={this.onActionClose}
-              deviceId={deviceId}
-              targetId={deviceInfo.targetId}
-            />
-          ) : null}
-        </KeyboardView>
+        {pending ? (
+          <AppsListPending />
+        ) : error ? (
+          <AppsListError error={error} onRetry={this.fetchAppList} />
+        ) : (
+          <FilteredSearchBar
+            list={apps}
+            renderList={this.renderList}
+            renderEmptySearch={this.renderEmptySearch}
+            inputWrapperStyle={styles.inputWrapper}
+          />
+        )}
+        {action ? (
+          <AppAction
+            key={actionKey(action)}
+            action={action}
+            onClose={this.onActionClose}
+            deviceId={deviceId}
+            targetId={deviceInfo.targetId}
+          />
+        ) : null}
       </View>
     );
   }
@@ -193,17 +170,6 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingTop: 16,
     marginBottom: 16,
-  },
-  pending: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pendingText: {
-    marginTop: 16,
-    fontSize: 14,
-    color: colors.grey,
   },
 });
 

@@ -3,13 +3,15 @@ import React, { Component } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import type { DeviceInfo } from "../../types/manager";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNano from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
+import Circle from "../../components/Circle";
 import colors from "../../colors";
+import manager from "../../logic/manager";
 import { deviceNames } from "../../wording";
 
 import DeviceNameRow from "./DeviceNameRow";
@@ -30,10 +32,49 @@ type Props = {
   }>,
 };
 
-class ManagerDevice extends Component<Props, { opened: boolean }> {
-  static navigationOptions = {
-    title: "Device",
+class DeviceLabel extends Component<
+  Props & { tintColor: string },
+  { haveUpdate: boolean },
+> {
+  state = {
+    haveUpdate: false,
   };
+
+  async componentDidMount() {
+    const { navigation } = this.props;
+    const { deviceInfo } = navigation.getParam("meta");
+    const latestFirmware = await manager
+      .getLatestFirmwareForDevice(deviceInfo)
+      .catch(() => null);
+    this.setState({ haveUpdate: !!latestFirmware });
+  }
+
+  render() {
+    const { tintColor } = this.props;
+    const { haveUpdate } = this.state;
+    return (
+      <View style={styles.tabBarLabel}>
+        <LText semiBold style={[styles.tabBarLabelText, { color: tintColor }]}>
+          <Trans i18nKey="ManagerDevice.title" />
+        </LText>
+        {haveUpdate ? (
+          <Circle bg={colors.live} size={16}>
+            <LText bold style={styles.notif}>
+              1
+            </LText>
+          </Circle>
+        ) : null}
+      </View>
+    );
+  }
+}
+
+const DeviceLabelT = translate()(DeviceLabel);
+
+class ManagerDevice extends Component<Props, { opened: boolean }> {
+  static navigationOptions = props => ({
+    tabBarLabel: labelProps => <DeviceLabelT {...props} {...labelProps} />,
+  });
 
   state = {
     opened: false,
@@ -83,6 +124,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colors.darkBlue,
     paddingTop: 24,
+  },
+  tabBarLabel: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  tabBarLabelText: {
+    fontSize: 14,
+    marginRight: 8,
+  },
+  notif: {
+    color: "white",
+    fontSize: 9,
   },
 });
 

@@ -14,6 +14,8 @@ const ICONS_FALLBACK = {
   bitcoin_testnet: "bitcoin",
 };
 
+const oldAppsInstallDisabled = ["ZenCash", "Ripple"];
+
 const CacheAPI = {
   // TODO: Move to new ManagerAPI
   // When ready, the manager api will return an icon url instead of a name
@@ -25,13 +27,13 @@ const CacheAPI = {
   getFirmwareVersion: (firmware: Firmware): string =>
     firmware.name.replace("-osu", ""),
 
-  formatHashName: (hash: string): string => hash,
-
-  // to check with firmware team if full hash is displayed or we need this:
-  /*
-    hash = (hash || "").toUpperCase();
+  formatHashName: (input: string): string => {
+    const hash = (input || "").toUpperCase();
     return hash.length > 8 ? `${hash.slice(0, 4)}...${hash.substr(-4)}` : hash;
-    */
+  },
+
+  canHandleInstall: (app: ApplicationVersion) =>
+    !oldAppsInstallDisabled.includes(app.name),
 
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo,
@@ -92,6 +94,8 @@ const CacheAPI = {
     deviceInfo: DeviceInfo,
     isDevMode: boolean = false,
   ): Promise<ApplicationVersion[]> => {
+    if (deviceInfo.isOSU || deviceInfo.isBootloader) return Promise.resolve([]);
+
     const deviceVersionP = ManagerAPI.getDeviceVersion(
       deviceInfo.targetId,
       deviceInfo.providerId,

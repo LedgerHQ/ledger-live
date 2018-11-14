@@ -3,11 +3,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
-import colors from "../../colors";
-
-import LText from "../../components/LText";
-import ErrorIcon from "../../components/ErrorIcon";
-import TranslatedError from "../../components/TranslatedError";
+import GenericErrorView from "../../components/GenericErrorView";
 import Button from "../../components/Button";
 import ExternalLink from "../../components/ExternalLink";
 
@@ -24,15 +20,7 @@ class ValidatError extends PureComponent<Props> {
     return (
       <View style={styles.root}>
         <View style={styles.container}>
-          <View style={styles.icon}>
-            <ErrorIcon size={40} error={error} />
-          </View>
-          <LText secondary semiBold style={styles.title} numberOfLines={3}>
-            <TranslatedError error={error} />
-          </LText>
-          <LText style={styles.message} numberOfLines={6}>
-            <TranslatedError error={error} field="description" />
-          </LText>
+          <GenericErrorView error={error} />
           <ExternalLink
             text={<Trans i18nKey="common.contactUs" />}
             onPress={onContactUs}
@@ -67,26 +55,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-  },
-  icon: {
-    padding: 20,
-    marginBottom: 32,
-    borderRadius: 46,
-    backgroundColor: colors.lightAlert,
-  },
-  title: {
-    fontSize: 16,
-    color: colors.darkBlue,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    textAlign: "center",
-  },
-  message: {
-    fontSize: 14,
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-    color: colors.smoke,
-    textAlign: "center",
   },
   actionContainer: {
     flexDirection: "row",
