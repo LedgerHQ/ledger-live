@@ -3,14 +3,13 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
 import type { ApplicationVersion } from "../../types/manager";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-
+import manager from "../../logic/manager";
 import colors from "../../colors";
-
-import AppIcon from "./AppIcon";
 import Trash from "../../icons/Trash";
 import Import from "../../icons/Import";
+import LText from "../../components/LText";
+import Button from "../../components/Button";
+import AppIcon from "./AppIcon";
 
 class AppRow extends PureComponent<{
   app: ApplicationVersion,
@@ -38,13 +37,15 @@ class AppRow extends PureComponent<{
           </LText>
           <LText style={styles.version}>{app.version}</LText>
         </View>
-        <Button
-          type="tertiary"
-          onPress={this.onInstall}
-          containerStyle={[styles.button, styles.btnSpace]}
-          IconLeft={Import}
-          iconColor={colors.live}
-        />
+        {manager.canHandleInstall(app) ? (
+          <Button
+            type="tertiary"
+            onPress={this.onInstall}
+            containerStyle={[styles.button, styles.btnSpace]}
+            IconLeft={Import}
+            iconColor={colors.live}
+          />
+        ) : null}
         <Button
           type="secondary"
           onPress={this.onUninstall}
