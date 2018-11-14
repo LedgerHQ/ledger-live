@@ -18,7 +18,7 @@ class DebugIcons extends Component<{}> {
           <DeviceNanoAction />
           <DeviceNanoAction screen="validation" action />
           <DeviceNanoAction screen="home" />
-          <DeviceNanoAction action powerAction />
+          <DeviceNanoAction powerAction />
           <DeviceNanoAction error={new UserRefusedAddress()} />
           <DeviceNanoAction error={new Error("whatever")} />
         </ScrollView>
