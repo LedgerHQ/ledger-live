@@ -1,5 +1,6 @@
 // @flow
 
+import isEqual from "lodash/isEqual";
 import {
   encodeAccountId,
   getAccountPlaceholderName,
@@ -23,6 +24,21 @@ const OperationTypeMap = {
   "1": "IN",
 };
 
+const sameOp = (a: Operation, b: Operation) =>
+  a === b ||
+  (a.id === b.id && // hash, accountId, type are in id
+    a.blockHash === b.blockHash &&
+    a.blockHeight === b.blockHeight &&
+    a.date.getTime() === b.date.getTime() &&
+    (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
+    (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
+    isEqual(a.senders, b.senders) &&
+    isEqual(a.recipients, b.recipients));
+
+function findExistingOp(ops, op) {
+  return ops.find(o => o.id === op.id);
+}
+
 export async function buildAccount({
   core,
   coreWallet,
@@ -32,6 +48,7 @@ export async function buildAccount({
   accountIndex,
   derivationMode,
   seedIdentifier,
+  existingOperations,
 }: {
   core: *,
   coreWallet: *,
@@ -41,6 +58,7 @@ export async function buildAccount({
   accountIndex: number,
   derivationMode: DerivationMode,
   seedIdentifier: string,
+  existingOperations: Operation[],
 }) {
   const nativeBalance = await core.coreAccount.getBalance(coreAccount);
 
@@ -90,7 +108,7 @@ export async function buildAccount({
   // retrieve xpub
   const { value: xpub } = await core.coreAccount.getRestoreKey(coreAccount);
 
-  const id = encodeAccountId({
+  const accountId = encodeAccountId({
     type: "libcore",
     version: "1",
     currencyId: currency.id,
@@ -98,19 +116,62 @@ export async function buildAccount({
     derivationMode,
   });
 
-  // build operations
-  const operations = await Promise.all(
-    coreOperations.map(coreOperation =>
-      buildOperation({
-        core,
-        coreOperation,
-        accountId: id,
-      }),
-    ),
-  );
+  // build operations with the minimal diff & call to libcore possible
+  let operations = [];
+  let existingOps = existingOperations;
+
+  let fullOpCmpChecked = false;
+  for (let i = coreOperations.length - 1; i >= 0; i--) {
+    const coreOperation = coreOperations[i];
+    const newOp = await buildOperation({
+      core,
+      coreOperation,
+      accountId,
+    });
+    const existingOp = findExistingOp(existingOps, newOp);
+
+    if (existingOp && !fullOpCmpChecked) {
+      // an Operation is supposely immutable.
+      fullOpCmpChecked = true;
+      // we still check the first existing op we meet...
+      if (!sameOp(existingOp, newOp)) {
+        // this implement a failsafe in case an op changes (when we fix bugs)
+        // tradeoff: in such case, we assume all existingOps are to trash
+        console.warn("op mismatch. doing a full clear cache.");
+        existingOps = [];
+        operations.push(newOp);
+        continue; // eslint-disable-line no-continue
+      }
+    }
+
+    if (existingOp) {
+      // as soon as we've found a first matching op in old op list,
+      const j = existingOps.indexOf(existingOp);
+      const rest = existingOps.slice(j);
+      if (rest.length !== i + 1) {
+        // if libcore happen to have different number of ops that what we have,
+        // we actualy need to continue because we don't know where hole will be,
+        // but we can keep existingOp
+        operations.push(existingOp);
+      } else {
+        // otherwise we stop the libcore iteration and continue with previous data
+        // and we're done on the iteration
+        if (operations.length === 0 && j === 0) {
+          // special case: we preserve the operations array as much as possible
+          operations = existingOps;
+        } else {
+          operations = operations.concat(rest);
+        }
+        break;
+      }
+    } else {
+      // otherwise it's a new op
+      operations.push(newOp);
+    }
+  }
 
   const raw: $Exact<Account> = {
-    id,
+    id: accountId,
     seedIdentifier,
     xpub,
     derivationMode,
@@ -151,6 +212,8 @@ export async function buildOperation({
   const { value: operationType } = await core.coreOperation.getOperationType(
     coreOperation,
   );
+  const type = OperationTypeMap[operationType];
+  const id = `${accountId}-${hash}-${type}`;
 
   const coreValue = await core.coreOperation.getAmount(coreOperation);
   const value = await libcoreAmountToBigNumber(core, coreValue);
@@ -168,10 +231,6 @@ export async function buildOperation({
   ]);
 
   const date = await getOperationDate(core, coreOperation);
-
-  const type = OperationTypeMap[operationType];
-
-  const id = `${accountId}-${hash}-${type}`;
 
   const op: $Exact<Operation> = {
     id,

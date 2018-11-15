@@ -5,6 +5,7 @@ import { mergeMap, map } from "rxjs/operators";
 import { getWalletName } from "@ledgerhq/live-common/lib/account";
 import type {
   Account,
+  Operation,
   CryptoCurrency,
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
@@ -15,14 +16,10 @@ import { buildAccount } from "./buildAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
 
-function operationsDiffer(a, b) {
-  if ((a && !b) || (b && !a)) return true;
-  return (
-    a.hash !== b.hash ||
-    !a.value.isEqualTo(b.value) ||
-    a.blockHeight !== b.blockHeight
-  );
-}
+// FIXME how to get that
+const OperationOrderKey = {
+  date: 0,
+};
 
 async function getCoreObjects(account: Account) {
   const walletName = getWalletName(account);
@@ -50,7 +47,12 @@ async function getCoreObjects(account: Account) {
 export function syncAccount(
   account: Account,
 ): Observable<(Account) => Account> {
-  const { derivationMode, seedIdentifier, currency } = account;
+  const {
+    derivationMode,
+    seedIdentifier,
+    currency,
+    operations: existingOperations,
+  } = account;
   return from(getCoreObjects(account)).pipe(
     mergeMap(({ core, coreWallet, coreAccount, walletName }) =>
       from(
@@ -63,44 +65,20 @@ export function syncAccount(
           accountIndex: account.index,
           derivationMode,
           seedIdentifier,
+          existingOperations,
         }),
       ).pipe(
-        map(syncedAccount => initialAccount => {
-          const patch = {
-            ...initialAccount,
-            id: syncedAccount.id,
-            freshAddress: syncedAccount.freshAddress,
-            freshAddressPath: syncedAccount.freshAddressPath,
-            balance: syncedAccount.balance,
-            blockHeight: syncedAccount.blockHeight,
-            lastSyncDate: new Date(),
-            operations: initialAccount.operations,
-            pendingOperations: [],
-          };
-
-          const oldOpsLength = initialAccount.operations.length;
-          const newOpsLength = syncedAccount.operations.length;
-
-          const patchedOperations = [];
-          let hasChanged = false;
-
-          for (let i = 0; i < newOpsLength; i++) {
-            const newOp = syncedAccount.operations[newOpsLength - 1 - i];
-            const oldOp = initialAccount.operations[oldOpsLength - 1 - i];
-            if (operationsDiffer(newOp, oldOp)) {
-              hasChanged = true;
-              patchedOperations.push(newOp);
-            } else {
-              patchedOperations.push(oldOp);
-            }
-          }
-
-          if (hasChanged) {
-            patch.operations = patchedOperations;
-          }
-
-          return patch;
-        }),
+        map(syncedAccount => initialAccount => ({
+          ...initialAccount,
+          id: syncedAccount.id,
+          freshAddress: syncedAccount.freshAddress,
+          freshAddressPath: syncedAccount.freshAddressPath,
+          balance: syncedAccount.balance,
+          blockHeight: syncedAccount.blockHeight,
+          lastSyncDate: new Date(),
+          operations: syncedAccount.operations,
+          pendingOperations: [],
+        })),
       ),
     ),
   );
@@ -114,6 +92,7 @@ export async function syncCoreAccount({
   accountIndex,
   derivationMode,
   seedIdentifier,
+  existingOperations,
 }: {
   core: *,
   coreWallet: *,
@@ -122,6 +101,7 @@ export async function syncCoreAccount({
   accountIndex: number,
   derivationMode: DerivationMode,
   seedIdentifier: string,
+  existingOperations: Operation[],
 }): Promise<Account> {
   const eventReceiver = await createInstance(core.coreEventReceiver);
   const eventBus = await core.coreAccount.synchronize(coreAccount);
@@ -130,14 +110,17 @@ export async function syncCoreAccount({
   );
   await core.coreEventBus.subscribe(eventBus, serialContext, eventReceiver);
 
-  let query;
-  let completedQuery;
   let coreOperations;
 
   try {
-    query = await core.coreAccount.queryOperations(coreAccount);
-    completedQuery = await core.coreOperationQuery.complete(query);
-    coreOperations = await core.coreOperationQuery.execute(completedQuery);
+    const query = await core.coreAccount.queryOperations(coreAccount);
+    const completedQuery = await core.coreOperationQuery.complete(query);
+    const sortedQuery = await core.coreOperationQuery.addOrder(
+      completedQuery,
+      OperationOrderKey.date,
+      false,
+    );
+    coreOperations = await core.coreOperationQuery.execute(sortedQuery);
   } catch (e) {
     throw new SyncError(e.message); // todo more precision needed
   }
@@ -151,6 +134,7 @@ export async function syncCoreAccount({
     accountIndex,
     derivationMode,
     seedIdentifier,
+    existingOperations,
   });
 
   await core.flush();
