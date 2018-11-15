@@ -283,20 +283,24 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             />
           )}
         </ScrollView>
-        <Footer
-          isScanning={status === "scanning"}
-          canRetry={
-            status !== "scanning" && noImportableAccounts && !cantCreateAccount
-          }
-          canDone={
-            status !== "scanning" && cantCreateAccount && noImportableAccounts
-          }
-          onRetry={this.restartSubscription}
-          onStop={this.stopSubscription}
-          onDone={this.quitFlow}
-          onContinue={this.import}
-          isDisabled={selectedIds.length === 0}
-        />
+        {!!scannedAccounts.length && (
+          <Footer
+            isScanning={status === "scanning"}
+            canRetry={
+              status !== "scanning" &&
+              noImportableAccounts &&
+              !cantCreateAccount
+            }
+            canDone={
+              status !== "scanning" && cantCreateAccount && noImportableAccounts
+            }
+            onRetry={this.restartSubscription}
+            onStop={this.stopSubscription}
+            onDone={this.quitFlow}
+            onContinue={this.import}
+            isDisabled={selectedIds.length === 0}
+          />
+        )}
       </SafeAreaView>
     );
   }
