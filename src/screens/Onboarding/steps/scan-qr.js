@@ -11,6 +11,7 @@ import Button from "../../../components/Button";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import colors from "../../../colors";
+import ScanIllustration from "../assets/ImportDesktopAccounts";
 
 import type { OnboardingStepProps } from "../types";
 
@@ -43,14 +44,7 @@ class OnboardingStepScanQR extends Component<Props> {
     return (
       <OnboardingLayout header="OnboardingStepScanQR" Footer={this.Footer}>
         <View style={styles.hero}>
-          <View
-            style={{
-              width: 100,
-              height: 100,
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-              borderRadius: 10,
-            }}
-          />
+          <ScanIllustration />
         </View>
         <View style={styles.titleContainer}>
           <LText style={styles.title}>
