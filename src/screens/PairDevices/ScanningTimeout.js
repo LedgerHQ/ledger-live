@@ -36,7 +36,12 @@ class ScanningTimeout extends Component<Props> {
             {<Trans i18nKey="PairDevices.ScanningTimeout.title" />}
           </LText>
           <LText style={styles.SubtitleText}>
-            {<Trans i18nKey="PairDevices.ScanningTimeout.desc" values={deviceNames.nanoX} />}
+            {
+              <Trans
+                i18nKey="PairDevices.ScanningTimeout.desc"
+                values={deviceNames.nanoX}
+              />
+            }
           </LText>
 
           <View style={styles.buttonContainer}>
