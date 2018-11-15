@@ -1,5 +1,9 @@
 // @flow
-import type { CryptoCurrencyIds } from "@ledgerhq/live-common/lib/types";
+import type {
+  CryptoCurrencyIds,
+  CryptoCurrency,
+  DerivationMode,
+} from "@ledgerhq/live-common/lib/types";
 import { getFullListSortedCryptoCurrenciesSync } from "./countervalues";
 
 const supported: CryptoCurrencyIds[] = [
@@ -39,3 +43,13 @@ export const supportsExistingAccount = ({
 }: {
   currencyId: string,
 }) => listCryptoCurrencies(true).some(c => c.id === currencyId);
+
+const SHOW_LEGACY_NEW_ACCOUNT = false;
+
+export const shouldShowNewAccount = (
+  currency: CryptoCurrency,
+  derivationMode: DerivationMode,
+) =>
+  derivationMode === ""
+    ? !!SHOW_LEGACY_NEW_ACCOUNT || !currency.supportsSegwit
+    : derivationMode === "segwit";
