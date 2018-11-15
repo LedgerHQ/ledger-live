@@ -158,6 +158,7 @@ async function scanNextAccount(props: {
     accountIndex,
     derivationMode,
     seedIdentifier,
+    existingOperations: [],
   });
 
   if (isUnsubscribed()) return;
