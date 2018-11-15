@@ -1,16 +1,16 @@
 // @flow
 import invariant from "invariant";
-import { Observable } from "rxjs";
 import LRU from "lru-cache";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/live-common/lib/errors";
 
 import type { AccountBridge } from "./types";
 
-import { SyncError } from "../errors";
-import * as libcore from "../libcore";
 import { getFeeItems } from "../api/FeesBitcoin";
 import type { FeeItems } from "../api/FeesBitcoin";
+import { syncAccount } from "../libcore/syncAccount";
+import { isValidRecipient } from "../libcore/isValidRecipient";
+import { getFeesForTransaction } from "../libcore/getFeesForTransaction";
 import libcoreSignAndBroadcast from "../libcore/signAndBroadcast";
 
 export type Transaction = {
@@ -19,15 +19,6 @@ export type Transaction = {
   feePerByte: ?BigNumber,
   networkInfo: ?{ feeItems: FeeItems },
 };
-
-function operationsDiffer(a, b) {
-  if ((a && !b) || (b && !a)) return true;
-  return (
-    a.hash !== b.hash ||
-    !a.value.isEqualTo(b.value) ||
-    a.blockHeight !== b.blockHeight
-  );
-}
 
 const serializeTransaction = t => {
   // FIXME there is literally no need for serializeTransaction in mobile context
@@ -39,64 +30,7 @@ const serializeTransaction = t => {
   };
 };
 
-const startSync = (initialAccount, _observation) =>
-  Observable.create(o => {
-    let cancelled = false;
-    const isCancelled = () => cancelled;
-    const cancel = () => (cancelled = true);
-
-    (async () => {
-      try {
-        const syncedAccount = await libcore.syncAccount({
-          account: initialAccount,
-          cancel,
-        });
-        if (isCancelled()) return;
-
-        o.next(initialAccount => {
-          const patch = {
-            ...initialAccount,
-            id: syncedAccount.id,
-            freshAddress: syncedAccount.freshAddress,
-            freshAddressPath: syncedAccount.freshAddressPath,
-            balance: syncedAccount.balance,
-            blockHeight: syncedAccount.blockHeight,
-            lastSyncDate: new Date(),
-            operations: initialAccount.operations,
-            pendingOperations: [],
-          };
-
-          const oldOpsLength = initialAccount.operations.length;
-          const newOpsLength = syncedAccount.operations.length;
-
-          const patchedOperations = [];
-          let hasChanged = false;
-
-          for (let i = 0; i < newOpsLength; i++) {
-            const newOp = syncedAccount.operations[newOpsLength - 1 - i];
-            const oldOp = initialAccount.operations[oldOpsLength - 1 - i];
-            if (operationsDiffer(newOp, oldOp)) {
-              hasChanged = true;
-              patchedOperations.push(newOp);
-            } else {
-              patchedOperations.push(oldOp);
-            }
-          }
-
-          if (hasChanged) {
-            patch.operations = patchedOperations;
-          }
-
-          return patch;
-        });
-        o.complete();
-      } catch (err) {
-        console.warn(err);
-        o.error(new SyncError(err.message));
-      }
-    })();
-    return cancel;
-  });
+const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
 const recipientValidLRU = LRU({ max: 100 });
 
@@ -105,7 +39,7 @@ const checkValidRecipient = (currency, recipient) => {
   let promise = recipientValidLRU.get(key);
   if (promise) return promise;
   if (!recipient) return Promise.resolve(null);
-  promise = libcore.isValidRecipient({ currency, recipient });
+  promise = isValidRecipient({ currency, recipient });
   recipientValidLRU.set(key, promise);
   return promise;
 };
@@ -202,7 +136,7 @@ const getFees = async (a, t) => {
   let promise = feesLRU.get(key);
   if (promise) return promise;
 
-  promise = libcore.getFeesForTransaction({
+  promise = getFeesForTransaction({
     account: a,
     transaction: serializeTransaction(t),
   });

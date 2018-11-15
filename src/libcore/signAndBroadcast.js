@@ -13,11 +13,11 @@ import type {
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
 import { getWalletName } from "@ledgerhq/live-common/lib/account";
+import { getOrCreateWallet } from "./getOrCreateWallet";
 import {
-  getOrCreateWallet,
   libcoreAmountToBigNumber,
   bigNumberToLibcoreAmount,
-} from ".";
+} from "./buildBigNumber";
 import { remapLibcoreErrors } from "./errors";
 import { getValue } from "./specific";
 import load from "./load";
