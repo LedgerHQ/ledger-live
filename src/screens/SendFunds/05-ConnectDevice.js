@@ -13,10 +13,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 import StepHeader from "../../components/StepHeader";
 import SelectDevice from "../../components/SelectDevice";
-import {
-  connectingStep,
-  accountApp,
-} from "../../components/SelectDevice/steps";
+import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
 
 import colors from "../../colors";
 

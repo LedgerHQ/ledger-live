@@ -40,7 +40,7 @@
     "@ledgerhq/hw-transport-http": "^4.29.0",
     "@ledgerhq/live-common": "^4.4.2",
     "@ledgerhq/react-native-hid": "^4.21.0",
-    "@ledgerhq/react-native-ledger-core": "^0.3.30",
+    "@ledgerhq/react-native-ledger-core": "^0.3.32",
     "@ledgerhq/react-native-passcode-auth": "^2.0.0",
     "@tradle/react-native-http": "^2.0.0",
     "assert": "^1.4.1",

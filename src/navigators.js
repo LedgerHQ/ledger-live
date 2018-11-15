@@ -36,6 +36,7 @@ import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
 import SendFundsMain from "./screens/SendFunds/01-SelectAccount";
+import FallbackCameraSend from "./screens/SendFunds/FallbackCamera/FallbackCameraSend";
 import SendSelectRecipient from "./screens/SendFunds/02-SelectRecipient";
 import ScanRecipient from "./screens/SendFunds/ScanRecipient";
 import SendAmount from "./screens/SendFunds/03-Amount";
@@ -77,11 +78,14 @@ import sendScreens from "./families/sendScreens";
 // TODO look into all FlowFixMe
 
 let headerStyle;
+let headerStyleShadow;
 
 if (Platform.OS === "ios") {
   headerStyle = {
     height: 48,
     borderBottomWidth: 0,
+  };
+  headerStyleShadow = {
     shadowOpacity: 0.03,
     shadowRadius: 8,
     shadowOffset: {
@@ -90,10 +94,11 @@ if (Platform.OS === "ios") {
   };
 } else {
   const statusBarPadding = StatusBar.currentHeight;
-
   headerStyle = {
     height: 48 + statusBarPadding,
     paddingTop: statusBarPadding,
+  };
+  headerStyleShadow = {
     elevation: 1,
   };
 }
@@ -103,6 +108,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   header: {
+    backgroundColor: colors.white,
+    ...headerStyle,
+    ...headerStyleShadow,
+  },
+  headerNoShadow: {
     backgroundColor: colors.white,
     ...headerStyle,
   },
@@ -229,7 +239,13 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     ManagerMain,
   },
-  stackNavigatorConfig,
+  {
+    ...stackNavigatorConfig,
+    navigationOptions: {
+      ...stackNavigatorConfig.navigationOptions,
+      headerStyle: styles.headerNoShadow,
+    },
+  },
 );
 
 ManagerStack.navigationOptions = {
@@ -329,6 +345,7 @@ const SendFunds = createStackNavigator(
     SendValidation,
     SendValidationSuccess,
     SendValidationError,
+    FallbackCameraSend,
     ...sendScreens,
   },
   closableStackNavigatorConfig,

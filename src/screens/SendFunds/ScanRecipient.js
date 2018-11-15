@@ -16,7 +16,7 @@ import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import CameraScreen from "../../components/CameraScreen";
 import colors from "../../colors";
-import FallBackCamera from "../ImportAccounts/FallBackCamera";
+import FallBackCamera from "./FallbackCamera/Fallback";
 
 type Props = {
   navigation: NavigationScreenProp<{

@@ -14,8 +14,8 @@ class EmptyStateAccount extends PureComponent<{
   navigation: NavigationScreenProp<*>,
 }> {
   goToReceiveFunds = () => {
-    const { navigation } = this.props;
-    navigation.navigate("ReceiveFundsMain");
+    const { navigation, account } = this.props;
+    navigation.navigate("ReceiveConnectDevice", { accountId: account.id });
   };
 
   render() {

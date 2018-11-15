@@ -1,8 +1,10 @@
 /* @flow */
+/* eslint-disable no-console */
 import React, { Component } from "react";
 import { View, SafeAreaView, Dimensions, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import { from } from "rxjs";
+import { from, of } from "rxjs";
+import { mergeMap, tap, delay } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 import installMcu from "../../logic/hw/installMcu";
 import installFinalFirmware from "../../logic/hw/installFinalFirmware";
@@ -30,12 +32,15 @@ type State = {
   installing: boolean,
 };
 
+const acceptAllErrors = () => true;
+
 class FirmwareUpdateMCU extends Component<Props, State> {
   static navigationOptions = {
+    headerLeft: null,
     headerTitle: (
       <StepHeader
-        title={<Trans i18nKey="FirmwareUpdate.title" />}
-        subtitle={<Trans i18nKey="FirmwareUpdateMCU.subtitle" />}
+        subtitle={<Trans i18nKey="FirmwareUpdate.title" />}
+        title={<Trans i18nKey="FirmwareUpdateMCU.title" />}
       />
     ),
   };
@@ -44,42 +49,66 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     installing: false,
   };
 
+  sub: *;
+
   async componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
 
-    // TODO IMPORTANT move this whole logic to RXJS
-    try {
-      let deviceInfo = await withDevice(deviceId)(transport =>
-        from(getDeviceInfo(transport)),
-      ).toPromise();
+    const step = () =>
+      withDevicePolling(deviceId)(
+        transport => from(getDeviceInfo(transport)),
+        acceptAllErrors,
+      ).pipe(
+        mergeMap(deviceInfo => {
+          console.log("step", { deviceInfo });
 
-      if (deviceInfo.isBootloader) {
-        this.setState({ installing: true });
-        await withDevice(deviceId)(transport =>
-          from(installMcu(transport)),
-        ).toPromise();
-      }
+          if (deviceInfo.isBootloader) {
+            this.setState({ installing: true });
+            return withDevice(deviceId)(transport =>
+              installMcu(transport),
+            ).pipe(
+              tap(res => console.log(`03 MCU: installMcu done ${res}`)),
+              delay(2000),
+              // loop again
+              mergeMap(step),
+            );
+          }
 
-      deviceInfo = await withDevicePolling(deviceId)(transport =>
-        from(getDeviceInfo(transport)),
-      ).toPromise();
+          if (deviceInfo.isOSU) {
+            this.setState({ installing: true });
+            return withDevice(deviceId)(transport =>
+              installFinalFirmware(transport),
+            ).pipe(
+              tap(res => console.log(`03 MCU: final firmware ${res}`)),
+              delay(2000),
+              // loop again
+              mergeMap(step),
+            );
+          }
 
-      if (deviceInfo.isOSU) {
-        await withDevice(deviceId)(transport =>
-          from(installFinalFirmware(transport)),
-        );
-      }
+          // if nor in bootloader or osu, we're done
+          return of(null);
+        }),
+      );
 
-      navigation.navigate("FirmwareUpdateConfirmation", {
-        ...navigation.state.params,
-      });
-    } catch (error) {
-      navigation.navigate("FirmwareUpdateFailure", {
-        ...navigation.state.params,
-        error,
-      });
-    }
+    this.sub = step().subscribe({
+      complete: () => {
+        navigation.navigate("FirmwareUpdateConfirmation", {
+          ...navigation.state.params,
+        });
+      },
+      error: error => {
+        navigation.navigate("FirmwareUpdateFailure", {
+          ...navigation.state.params,
+          error,
+        });
+      },
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.sub) this.sub.unsubscribe();
   }
 
   render() {

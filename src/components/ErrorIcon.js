@@ -6,24 +6,19 @@ import {
   CantOpenDevice,
   WrongDeviceForAccount,
 } from "@ledgerhq/live-common/lib/errors";
-import LText from "./LText";
 import Rounded from "./Rounded";
 import IconNanoX from "../icons/NanoX";
 import ErrorBadge from "./ErrorBadge";
+import Circle from "./Circle";
 import colors, { lighten } from "../colors";
 
 type Props = {
   error: ?Error,
-  size: number,
 };
 
 class ErrorIcon extends PureComponent<Props> {
-  static defaultProps = {
-    size: 32,
-  };
-
   render() {
-    const { error, size } = this.props;
+    const { error } = this.props;
     if (!error) return null;
     if (typeof error !== "object") {
       // this case should not happen (it is supposed to be a ?Error)
@@ -43,11 +38,10 @@ class ErrorIcon extends PureComponent<Props> {
       );
     }
 
-    // TODO map error.name to something
     return (
-      <LText>
-        <Icon name="alert-triangle" size={size} color={colors.alert} />
-      </LText>
+      <Circle size={80} bg={lighten(colors.alert, 0.75)}>
+        <Icon size={40} name="alert-triangle" color={colors.alert} />
+      </Circle>
     );
   }
 }

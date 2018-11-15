@@ -156,7 +156,11 @@ class PairDevices extends Component<Props, State> {
 
       case "paired":
         return device ? (
-          <Paired deviceId={device.id} onContinue={this.onDone} />
+          <Paired
+            deviceName={device.name}
+            deviceId={device.id}
+            onContinue={this.onDone}
+          />
         ) : null;
 
       default:

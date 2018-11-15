@@ -1,4 +1,6 @@
 /* @flow */
+// TODO name of this component is weird. i suggest DeviceUnpairModal
+
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";

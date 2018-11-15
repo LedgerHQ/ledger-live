@@ -1,14 +1,13 @@
 /* @flow */
+/* eslint-disable no-console */
 import React, { Component } from "react";
 import { View, SafeAreaView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/Feather";
 
-import Circle from "../../components/Circle";
-import LText from "../../components/LText";
+import GenericSuccessView from "../../components/GenericSuccessView";
 import Button from "../../components/Button";
-import colors, { lighten } from "../../colors";
+import colors from "../../colors";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -28,24 +27,19 @@ class FirmwareUpdateConfirmation extends Component<Props, State> {
   };
 
   onClose = () => {
-    this.props.navigation.dangerouslyGetParent().goBack();
+    this.props.navigation.navigate("Manager");
   };
 
   render() {
     return (
       <SafeAreaView style={styles.root}>
         <View style={styles.body}>
-          <View style={styles.icon}>
-            <Circle size={80} bg={lighten(colors.green, 0.75)}>
-              <Icon size={40} color={colors.green} name="check-circle" />
-            </Circle>
-          </View>
-          <LText secondary semiBold style={styles.title}>
-            <Trans i18nKey="FirmwareUpdateConfirmation.title" />
-          </LText>
-          <LText style={styles.message}>
-            <Trans i18nKey="FirmwareUpdateConfirmation.description" />
-          </LText>
+          <GenericSuccessView
+            title={<Trans i18nKey="FirmwareUpdateConfirmation.title" />}
+            description={
+              <Trans i18nKey="FirmwareUpdateConfirmation.description" />
+            }
+          />
           <Button
             type="primary"
             onPress={this.onClose}

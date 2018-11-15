@@ -12,14 +12,16 @@ import PairingSuccess from "../../icons/PairingSuccess";
 import DeviceItemSummary from "../../components/DeviceItemSummary";
 
 class Paired extends PureComponent<{
-  deviceId: *,
+  deviceId: string,
+  deviceName: string,
   onContinue: () => *,
   navigation: *,
 }> {
   onEdit = () => {
-    const { deviceId, navigation } = this.props;
+    const { deviceId, deviceName, navigation } = this.props;
     navigation.navigate("EditDeviceName", {
       deviceId,
+      deviceName,
     });
   };
 

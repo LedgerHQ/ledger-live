@@ -17,9 +17,6 @@ import LText from "../../components/LText";
 
 import colors from "../../colors";
 
-// TODO: handle dev crypto currencies (connect to settings...)
-const cryptocurrencies = listCryptoCurrencies();
-
 const SEARCH_KEYS = ["name", "ticker"];
 
 type Props = {
@@ -35,24 +32,22 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     headerTitle: <StepHeader title="Crypto asset" subtitle="step 1 of 3" />,
   };
 
+  // TODO connect to devMode (cryptocurrencies should be a selector basically)
+  cryptocurrencies = listCryptoCurrencies();
+
   keyExtractor = currency => currency.id;
 
   onPressCurrency = (currency: Currency) => {
     this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  renderItem = ({ item, index }: { item: Currency, index: number }) => (
-    <CurrencyRow
-      style={
-        index === cryptocurrencies.length - 1 ? styles.lastItem : undefined
-      }
-      currency={item}
-      onPress={this.onPressCurrency}
-    />
+  renderItem = ({ item }: { item: Currency }) => (
+    <CurrencyRow currency={item} onPress={this.onPressCurrency} />
   );
 
-  renderList = (items = cryptocurrencies) => (
+  renderList = items => (
     <FlatList
+      contentContainerStyle={styles.list}
       data={items}
       renderItem={this.renderItem}
       keyExtractor={this.keyExtractor}
@@ -78,7 +73,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
             <FilteredSearchBar
               keys={SEARCH_KEYS}
               inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-              list={cryptocurrencies}
+              list={this.cryptocurrencies}
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptyList}
             />
@@ -97,8 +92,8 @@ const styles = StyleSheet.create({
   searchContainer: {
     flex: 1,
   },
-  lastItem: {
-    marginBottom: 32,
+  list: {
+    paddingBottom: 32,
   },
   filteredSearchInputWrapperStyle: {
     marginHorizontal: 16,

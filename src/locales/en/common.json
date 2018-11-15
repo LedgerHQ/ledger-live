@@ -49,7 +49,6 @@
       "title": "Sorry, try again (genuine-close)",
       "description": null
     },
-    "DeviceNameRequired": { "title": "A device name is required" },
     "DeviceNotGenuine": {
       "title": "Possibly not genuine",
       "description": "Request Ledger Support assistance."
@@ -249,7 +248,18 @@
     }
   },
   "exchange": {
-    "title": "Trade & Exchange"
+    "title": "Trade & Exchange",
+    "subtitle": "Try a few services we've selected",
+    "visit": "Visit website",
+    "coinhouse": "Coinhouse is a trusted platform for individuals and institutional investors looking to analyze, acquire, sell and securely store crypto assets.",
+    "changelly": "Changelly is a popular instant crypto asset exchange with 100+ coins and tokens listed.",
+    "coinmama": "Coinmama is a financial service that makes it fast, safe and fun to buy digital assets, anywhere in the world.",
+    "simplex": "Simplex is a EU licensed financial institution, providing a fraudless credit card payment solution.",
+    "paybis": "it is safe and easy to Buy Bitcoin with credit card from PayBis. Service operates in US, Canada, Germany, Russia and Saudi Arabia.",
+    "luno": "Luno makes it safe and easy to buy, store and learn about cryptocurrencies like Bitcoin and Ethereum",
+    "shapeshift": "ShapeShift is an online marketplace where users can buy and sell digital assets. It is a fast and secure way for the world to buy and sell digital assets, with no lengthy signup process, no counterparty risk, and no friction.",
+    "genesis": "Genesis is an institutional trading firm offering liquidity and borrow for digital currencies, including bitcoin, bitcoin cash, ethereum, ethereum classic, litecoin, and XRP.",
+    "kyber": "Kyber is a trading platform for exchange and conversion of ERC-20 tokens"
   },
   "auth": {
     "failed": {
@@ -272,7 +282,7 @@
       "OnboardingStepSecurityChecklist": "Security checklist",
       "OnboardingStepPairNew": "Pair a new device",
       "OnboardingStepPassword": "Password lock",
-      "OnboardingStepScanQR": "Scan QR",
+      "OnboardingStepScanQR": "Import desktop accounts",
       "OnboardingStepShareData": "Share data"
     },
     "stepWelcome": {
@@ -332,7 +342,7 @@
       "cta": "Open Ledger Live"
     },
     "stepScanQR": {
-      "title": "Scan the QR Code available on your Desktop app to import your accounts.",
+      "title": "Please go to <1>Settings > General > Export accounts</1> in the desktop app and scan the QR code",
       "cta": "Scan QR code"
     }
   },
@@ -465,11 +475,9 @@
       },
       "fallback": {
         "header": "Import account",
-        "title": "Camera access",
-        "descIOS": "To import account, Ledger Live needs to <1><0>access your camera</0></1>. You’ll be taken to iOS settings to activate it",
-        "buttonIOS": "Open iPhone Settings",
-        "descAndroid": "To import account, Ledger Live needs to <1><0>access your camera</0></1>. You’ll be taken to Android settings to activate it",
-        "buttonAndroid": "Open Android Settings"
+        "title": "Enable camera",
+        "desc": "Please enable Camera in Settings to scan QR codes",
+        "buttonTitle": "Go to Settings"
       }
     }
   },
@@ -602,6 +610,14 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "scan": {
+      "fallback": {
+        "header": "Scan QR code",
+        "title": "Enable camera",
+        "desc": "Please enable Camera in Settings to scan QR codes",
+        "buttonTitle": "Go to Settings"
+      }
+    },
     "stepperHeader": {
       "selectAccount": "Select an account",
       "recipientAddress": "Recipient Address",
@@ -652,14 +668,15 @@
     }
   },
   "addAccounts": {
-    "imported": "Accounts imported",
+    "imported": "Accounts successfully added",
     "sections": {
       "accountsToImport": "Accounts to import",
       "addNewAccount": "Add a new account",
       "existing": "Existing accounts"
     },
     "success": {
-      "cta": "Add new accounts",
+      "desc": "Add more accounts or view your current ones",
+      "cta": "Add more accounts",
       "secondaryCTA": "Go to accounts"
     },
     "stopScanning": "Stop scanning",
@@ -698,13 +715,18 @@
         "title": "Verify address on device",
         "description": "A <1><0>{{currencyName}}</0></1> address <3><0>will be displayed</0></3> on your device. Carefully verify that it matches the address on your phone.",
         "action": "Ok, I'm ready"
+      },
+      "getDeviceName": {
+        "title": "Press both buttons to allow get device name"
+      },
+      "editDeviceName": {
+        "title": "Press both buttons to allow set device name"
       }
     }
   },
   "EditDeviceName": {
     "title": "Edit Device Name",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "inputPlaceholder": "Custom Device Name",
     "action": "Change name"
   },
   "PairDevices": {
@@ -735,7 +757,8 @@
     "genuine": "Your device is genuine"
   },
   "DeviceNameRow": {
-    "title": "Device Name"
+    "title": "Device Name",
+    "action": "Get device name"
   },
   "manager": {
     "appList": {
@@ -746,6 +769,9 @@
       "description": "Are you sure? You can pair your {{fullDeviceName}} again at any time.",
       "button": "Unpair"
     }
+  },
+  "ManagerDevice": {
+    "title": "Device"
   },
   "AppAction": {
     "install": {
@@ -782,7 +808,11 @@
     "action": "Update"
   },
   "FirmwareUpdate": {
-    "title": "Update firmware"
+    "title": "Update firmware",
+    "Installing": {
+      "title": "Firmware updating...",
+      "subtitle": "If asked on device, please enter your pin code to finish the process"
+    }
   },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
@@ -791,11 +821,11 @@
     "action": "Continue update"
   },
   "FirmwareUpdateCheckId": {
-    "subtitle": "Identifier",
+    "title": "Identifier",
     "description": "Please press both buttons on your {{fullDeviceName}} if it displays the same identifier:"
   },
   "FirmwareUpdateMCU": {
-    "subtitle": "Restart device",
+    "title": "Restart device",
     "desc1": "Unplug your device from your computer",
     "desc2": "Press and hold left button and plug your device until the processing screen appears"
   },

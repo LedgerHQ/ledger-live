@@ -3,11 +3,9 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import LText from "../LText";
-import TranslatedError from "../TranslatedError";
-import ErrorIcon from "../ErrorIcon";
+import GenericSuccessView from "../GenericSuccessView";
+import GenericErrorView from "../GenericErrorView";
 import Button from "../Button";
-import colors from "../../colors";
 
 export const ErrorFooterGeneric = ({ onRetry }: { onRetry: () => void }) => (
   <Button
@@ -29,15 +27,7 @@ export const RenderError = ({
 }) => (
   <View style={styles.root}>
     <View style={styles.body}>
-      <View style={styles.headIcon}>
-        <ErrorIcon error={error} />
-      </View>
-      <LText secondary semiBold style={styles.title}>
-        <TranslatedError error={error} />
-      </LText>
-      <LText style={styles.description}>
-        <TranslatedError error={error} field="description" />
-      </LText>
+      <GenericErrorView error={error} />
     </View>
     <Footer onRetry={onRetry} />
   </View>
@@ -60,13 +50,7 @@ export const RenderStep = ({
 }) => (
   <View style={styles.root}>
     <View style={styles.body}>
-      <View style={styles.headIcon}>{icon}</View>
-      <LText secondary semiBold style={styles.title}>
-        {title}
-      </LText>
-      {description ? (
-        <LText style={styles.description}>{description}</LText>
-      ) : null}
+      <GenericSuccessView icon={icon} title={title} description={description} />
     </View>
     {children}
   </View>
@@ -85,21 +69,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 40,
     paddingBottom: 20,
-  },
-  headIcon: {
-    padding: 10,
-  },
-  title: {
-    paddingVertical: 20,
-    paddingHorizontal: 40,
-    lineHeight: 26,
-    fontSize: 16,
-    color: colors.darkBlue,
-  },
-  description: {
-    fontSize: 14,
-    color: colors.grey,
-    paddingHorizontal: 40,
   },
   retryButton: {
     alignSelf: "stretch",

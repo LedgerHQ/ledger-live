@@ -4,9 +4,7 @@ import { View, SafeAreaView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 
-import TranslatedError from "../../components/TranslatedError";
-import LText from "../../components/LText";
-import ErrorIcon from "../../components/ErrorIcon";
+import GenericErrorView from "../../components/GenericErrorView";
 import Button from "../../components/Button";
 import NeedHelp from "../../components/NeedHelp";
 import colors from "../../colors";
@@ -30,7 +28,7 @@ class FirmwareUpdateFailure extends Component<Props, State> {
   };
 
   onRetry = () => {
-    this.props.navigation.navigate("FirmwareUpdate");
+    this.props.navigation.navigate("FirmwareUpdateCheckId");
   };
 
   onClose = () => {
@@ -43,15 +41,7 @@ class FirmwareUpdateFailure extends Component<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <View style={styles.body}>
-          <View style={styles.icon}>
-            <ErrorIcon size={40} error={error} />
-          </View>
-          <LText secondary semiBold style={styles.title} numberOfLines={3}>
-            <TranslatedError error={error} />
-          </LText>
-          <LText style={styles.message} numberOfLines={6}>
-            <TranslatedError error={error} field="description" />
-          </LText>
+          <GenericErrorView error={error} />
           <Button
             type="primary"
             onPress={this.onRetry}
@@ -59,7 +49,7 @@ class FirmwareUpdateFailure extends Component<Props, State> {
             containerStyle={styles.button}
           />
           <Button
-            type="secondary"
+            type="lightSecondary"
             onPress={this.onClose}
             title={<Trans i18nKey="common.close" />}
             containerStyle={styles.button}
@@ -100,7 +90,6 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 14,
     paddingHorizontal: 16,
-    paddingBottom: 32,
     color: colors.smoke,
     textAlign: "center",
   },

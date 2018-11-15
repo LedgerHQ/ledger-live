@@ -2,7 +2,7 @@
 
 import React, { Component, PureComponent } from "react";
 import { translate, Trans } from "react-i18next";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
@@ -41,7 +41,7 @@ class AddAccountsSuccess extends Component<Props, State> {
     const { navigation } = this.props;
     const currency = navigation.getParam("currency");
     return (
-      <SafeAreaView style={styles.root}>
+      <View style={styles.root}>
         <CurrencySuccess currency={currency} />
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="addAccounts.imported" />
@@ -59,11 +59,11 @@ class AddAccountsSuccess extends Component<Props, State> {
           />
           <Button
             onPress={this.secondaryCTA}
-            type="secondary"
+            type="lightSecondary"
             title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
           />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -92,7 +92,7 @@ class CurrencySuccess extends PureComponent<{ currency: CryptoCurrency }> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
@@ -126,13 +126,12 @@ const styles = StyleSheet.create({
   desc: {
     marginTop: 16,
     marginBottom: 16,
-    maxWidth: 350,
     textAlign: "center",
     fontSize: 14,
     color: colors.grey,
   },
   buttonsContainer: {
-    width: "100%",
+    alignSelf: "stretch",
   },
   button: {
     marginBottom: 10,

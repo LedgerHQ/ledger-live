@@ -17,7 +17,7 @@ export default class Touchable extends Component<
     // the button will toggle in a pending state and
     // will wait the promise to complete before enabling the button again
     // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
-    onPress: () => ?Promise<any>,
+    onPress: ?() => ?Promise<any>,
     children: *,
   },
   {
@@ -29,8 +29,10 @@ export default class Touchable extends Component<
   };
 
   onPress = async () => {
+    const { onPress } = this.props;
+    if (!onPress) return;
     try {
-      const res = this.props.onPress();
+      const res = onPress();
       if (res && res.then) {
         // it's a promise, we will use pending/spinnerOn state
         this.setState({ pending: true });

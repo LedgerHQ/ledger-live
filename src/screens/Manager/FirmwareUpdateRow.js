@@ -32,7 +32,9 @@ class FirmwareVersionRow extends PureComponent<Props, State> {
 
   async componentDidMount() {
     const { deviceInfo, deviceId, navigation } = this.props;
-    const latestFirmware = await manager.getLatestFirmwareForDevice(deviceInfo);
+    const latestFirmware = await manager
+      .getLatestFirmwareForDevice(deviceInfo)
+      .catch(() => null);
 
     if (this.unmount) return;
     try {
@@ -70,7 +72,9 @@ class FirmwareVersionRow extends PureComponent<Props, State> {
   render() {
     const { deviceInfo } = this.props;
     const { latestFirmware } = this.state;
-    if (!latestFirmware) return null;
+    if (!latestFirmware) {
+      return null;
+    }
     return (
       <View style={styles.root}>
         <LText semiBold numberOfLines={1} style={styles.title}>

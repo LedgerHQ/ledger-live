@@ -7,10 +7,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 import SelectDevice from "../../components/SelectDevice";
-import {
-  connectingStep,
-  currencyApp,
-} from "../../components/SelectDevice/steps";
+import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
