@@ -8,7 +8,7 @@
     "no": "No",
     "gotit": "Got it",
     "continue": "Continue",
-    "retry": "Try again",
+    "retry": "Retry",
     "done": "Done",
     "sortBy": "Sort by",
     "signOut": "Sign Out",
@@ -23,7 +23,6 @@
     "poweredBy": "Powered by ",
     "received": "Received",
     "sent": "Sent",
-    "search": "Search",
     "or": "OR"
   },
   "errors": {
@@ -90,8 +89,8 @@
       "title": "Couldn’t load fee rates. Please set manual fees"
     },
     "GenuineCheckFailed": {
-      "title": "Genuine Check Failed",
-      "description": "Request Ledger Support assistance."
+      "title": "Genuine check failed",
+      "description": "Something went wrong. Please try again or contact Ledger Support when in doubt."
     },
     "HardResetFail": {
       "title": "Oops, could not reset",
@@ -157,8 +156,8 @@
       "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
     },
     "PairingFailed": {
-      "title": "Bluetooth Pairing Failed",
-      "description": "Check your Bluetooth settings, make sure the Nano X device is booted up and test again."
+      "title": "Pairing unsuccessful",
+      "description": "Please try again or contact Ledger Support when in doubt."
     },
     "PasswordIncorrect": {
       "title": "The password you entered is incorrect",
@@ -741,16 +740,16 @@
       "subtitle": "Please don’t turn off your Nano X. Follow screen instructions."
     },
     "GenuineCheck": {
-      "title": "Genuine check...",
-      "accept": "Make sure your Nano X is on Dashboard and accept <1><0>Allow Manager</0></1>"
+      "title": "Genuine check",
+      "accept": "Please don’t turn off your {{deviceName}} and allow <1><0>Ledger Manager</0></1>"
     },
     "ScanningHeader": {
       "title": "We are searching for Nano X",
       "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
     },
     "ScanningTimeout": {
-      "title": "We didn't find any devices around",
-      "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
+      "title": "Oops, no device found",
+      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
     },
     "bypassGenuine": "Use anyway"
   },

@@ -5,21 +5,21 @@ class PhoneBle extends PureComponent<{}> {
   render() {
     return (
       <Svg width={43} height={74} {...this.props}>
-        <G
-          fillRule="nonzero"
-          transform="translate(1 1)"
-          stroke="#142533"
-          fill="none"
-        >
+        <G fillRule="nonzero" stroke="#142533" fill="none">
           <Path
-            d="M2.16 0h36.68A2.16 2.16 0 0 1 41 2.16v67.68A2.16 2.16 0 0 1 38.84 72H2.16A2.16 2.16 0 0 1 0 69.84V2.16A2.16 2.16 0 0 1 2.16 0z"
-            strokeWidth={2}
+            d="M4.006 1.002a3.005 3.005 0 0 0-3.004 3.004v63.988a3.005 3.005 0 0 0 3.004 3.004h33.05a3.005 3.005 0 0 0 3.004-3.004V4.006a3.005 3.005 0 0 0-3.004-3.004H4.006z"
+            strokeWidth={2.003}
           />
-          <Path d="M6.356 6.306a1.3 1.3 0 0 0-1.3 1.3v49.82a1.3 1.3 0 0 0 1.3 1.3h28.288a1.3 1.3 0 0 0 1.3-1.3V7.606a1.3 1.3 0 0 0-1.3-1.3H6.356z" />
-          <Ellipse cx={20.5} cy={65.032} rx={2.278} ry={2.323} />
           <Path
-            strokeWidth={1.6}
-            d="M15 36.085l10-8.638L19.634 22v20L25 36.553l-10-8.638"
+            strokeWidth={1.602}
+            d="M15.023 40.085l10.015-8.638L19.664 26v20l5.374-5.447-10.015-8.638"
+          />
+          <Ellipse
+            strokeWidth={1.099}
+            cx={20.531}
+            cy={64.5}
+            rx={2.504}
+            ry={2.5}
           />
         </G>
       </Svg>

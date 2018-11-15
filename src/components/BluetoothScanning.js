@@ -16,7 +16,10 @@ type Props = {
 const pauseValue = 0.8;
 
 class LeftRightDots extends PureComponent<
-  { isAnimated?: boolean },
+  {
+    isAnimated?: boolean,
+    isError?: boolean,
+  },
   { progress: Animated.Value },
 > {
   state = {
@@ -58,6 +61,7 @@ class LeftRightDots extends PureComponent<
 
   render() {
     const { progress } = this.state;
+    const { isError } = this.props;
 
     const opacities = Array(5)
       .fill(null)
@@ -72,7 +76,14 @@ class LeftRightDots extends PureComponent<
     return (
       <View style={styles.dots}>
         {opacities.map((opacity, i) => (
-          <Animated.View key={i} style={[styles.dot, { opacity }]} />
+          <Animated.View
+            key={i}
+            style={[
+              styles.dot,
+              isError ? styles.errorDot : undefined,
+              { opacity },
+            ]}
+          />
         ))}
       </View>
     );
@@ -86,7 +97,7 @@ export default class BluetoothScanning extends PureComponent<Props> {
       <View style={styles.root}>
         <View style={styles.body}>
           <PhoneBle />
-          <LeftRightDots isAnimated={isAnimated} />
+          <LeftRightDots isAnimated={isAnimated} isError={isError} />
           <DeviceNanoMedium />
           {isError && (
             <View style={styles.errorContainer}>
@@ -117,6 +128,9 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     marginRight: 7,
     backgroundColor: colors.live,
+  },
+  errorDot: {
+    backgroundColor: colors.alert,
   },
   errorContainer: {
     position: "absolute",
