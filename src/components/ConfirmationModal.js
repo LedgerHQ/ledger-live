@@ -12,8 +12,8 @@ type Props = {
   isOpened: boolean,
   onClose: () => void,
   onConfirm: () => void,
-  confirmationTitle: string | React$ComponentType<*>,
-  confirmationDesc: string | React$ComponentType<*>,
+  confirmationTitle: React$Node,
+  confirmationDesc: React$Node,
 };
 
 class ConfirmationModal extends PureComponent<Props> {
