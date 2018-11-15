@@ -66,6 +66,11 @@ export const exportSelector = (s: *) => ({
 
 export const accountsSelector = (s: *): Account[] => s.accounts.active;
 
+export const accountsCountSelector = createSelector(
+  accountsSelector,
+  acc => acc.length,
+);
+
 export const currenciesSelector = createSelector(accountsSelector, acc =>
   uniq(acc.map(a => a.currency)),
 );

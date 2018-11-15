@@ -3,19 +3,22 @@
 import React, { Component } from "react";
 import { withNavigation } from "react-navigation";
 import { translate } from "react-i18next";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 
-import BottomModal from "../components/BottomModal";
-import BottomModalChoice from "../components/BottomModalChoice";
+import { accountsCountSelector } from "../reducers/accounts";
 import IconSend from "../icons/Send";
 import IconReceive from "../icons/Receive";
 import IconExchange from "../icons/Exchange";
 import type { T } from "../types/common";
-
+import BottomModal from "../components/BottomModal";
+import BottomModalChoice from "../components/BottomModalChoice";
 import type { Props as ModalProps } from "../components/BottomModal";
 
 type Props = ModalProps & {
   navigation: *,
   t: T,
+  accountsCount: number,
 };
 
 class CreateModal extends Component<Props> {
@@ -36,19 +39,19 @@ class CreateModal extends Component<Props> {
   onExchange = () => this.onNavigate("Transfer", "transfer");
 
   render() {
-    const { onClose, isOpened, t } = this.props;
+    const { onClose, isOpened, accountsCount, t } = this.props;
     return (
       <BottomModal isOpened={isOpened} onClose={onClose}>
         <BottomModalChoice
           title={t("transfer.send.title")}
           description={t("transfer.send.desc")}
-          onPress={this.onSendFunds}
+          onPress={accountsCount > 0 ? this.onSendFunds : null}
           Icon={IconSend}
         />
         <BottomModalChoice
           title={t("transfer.receive.title")}
           description={t("transfer.receive.desc")}
-          onPress={this.onReceiveFunds}
+          onPress={accountsCount > 0 ? this.onReceiveFunds : null}
           Icon={IconReceive}
         />
         <BottomModalChoice
@@ -62,4 +65,12 @@ class CreateModal extends Component<Props> {
   }
 }
 
-export default translate()(withNavigation(CreateModal));
+export default translate()(
+  withNavigation(
+    connect(
+      createStructuredSelector({
+        accountsCount: accountsCountSelector,
+      }),
+    )(CreateModal),
+  ),
+);
