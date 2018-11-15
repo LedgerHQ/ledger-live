@@ -5,6 +5,7 @@ import {
   createStackNavigator,
   createBottomTabNavigator,
   createMaterialTopTabNavigator,
+  createSwitchNavigator,
 } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import colors from "./colors";
@@ -401,10 +402,9 @@ ImportAccounts.navigationOptions = {
   header: null,
 };
 
-export const RootNavigator = createStackNavigator(
+const BaseNavigator = createStackNavigator(
   {
     Main,
-    Onboarding,
     ReceiveFunds,
     SendFunds,
     AddAccounts,
@@ -422,3 +422,10 @@ export const RootNavigator = createStackNavigator(
     ...closableStackNavigatorConfig,
   },
 );
+
+export const RootNavigator = createSwitchNavigator({
+  Onboarding,
+  BaseNavigator,
+});
+
+RootNavigator.navigationOptions = { header: null };
