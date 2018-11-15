@@ -479,7 +479,7 @@
         "header": "Import account",
         "title": "Enable camera",
         "desc": "Please enable Camera in Settings to scan QR codes",
-        "buttonTitle": "Go to Settings",
+        "buttonTitle": "Go to Settings"
       }
     }
   },
@@ -612,13 +612,13 @@
     "loading": "Searching devices..."
   },
   "send": {
-    "scan":{
+    "scan": {
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",
         "desc": "Please enable Camera in Settings to scan QR codes",
         "buttonTitle": "Go to Settings"
-      },
+      }
     },
     "stepperHeader": {
       "selectAccount": "Select an account",
@@ -670,14 +670,15 @@
     }
   },
   "addAccounts": {
-    "imported": "Accounts imported",
+    "imported": "Accounts successfully added",
     "sections": {
       "accountsToImport": "Accounts to import",
       "addNewAccount": "Add a new account",
       "existing": "Existing accounts"
     },
     "success": {
-      "cta": "Add new accounts",
+      "desc": "Add more accounts or view your current ones",
+      "cta": "Add more accounts",
       "secondaryCTA": "Go to accounts"
     },
     "stopScanning": "Stop scanning",
