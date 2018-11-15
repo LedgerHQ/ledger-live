@@ -369,9 +369,7 @@
   },
   "addAccountsModal": {
     "ctaAdd": "Add accounts",
-    "descAdd": "Lorem ipsum dolor sit amet",
-    "ctaImport": "Import accounts",
-    "descImport": "Lorem ipsum dolor sit amet"
+    "ctaImport": "Import desktop accounts"
   },
   "time": {
     "day": "Day",
