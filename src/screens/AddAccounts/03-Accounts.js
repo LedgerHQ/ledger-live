@@ -14,6 +14,7 @@ import { addAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import { getCurrencyBridge } from "../../bridge";
 import Button from "../../components/Button";
+import PreventNativeBack from "../../components/PreventNativeBack";
 import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import SelectableAccountsList from "../../components/SelectableAccountsList";
@@ -56,6 +57,7 @@ const mapDispatchToProps = {
 class AddAccountsAccounts extends PureComponent<Props, State> {
   static navigationOptions = {
     headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 3" />,
+    gesturesEnabled: false,
   };
 
   state = {
@@ -233,6 +235,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
+        <PreventNativeBack />
         <Stepper nbSteps={4} currentStep={3} />
         <ScrollView style={styles.inner}>
           {regularAccounts.length > 0 ? (
@@ -280,20 +283,24 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             />
           )}
         </ScrollView>
-        <Footer
-          isScanning={status === "scanning"}
-          canRetry={
-            status !== "scanning" && noImportableAccounts && !cantCreateAccount
-          }
-          canDone={
-            status !== "scanning" && cantCreateAccount && noImportableAccounts
-          }
-          onRetry={this.restartSubscription}
-          onStop={this.stopSubscription}
-          onDone={this.quitFlow}
-          onContinue={this.import}
-          isDisabled={selectedIds.length === 0}
-        />
+        {!!scannedAccounts.length && (
+          <Footer
+            isScanning={status === "scanning"}
+            canRetry={
+              status !== "scanning" &&
+              noImportableAccounts &&
+              !cantCreateAccount
+            }
+            canDone={
+              status !== "scanning" && cantCreateAccount && noImportableAccounts
+            }
+            onRetry={this.restartSubscription}
+            onStop={this.stopSubscription}
+            onDone={this.quitFlow}
+            onContinue={this.import}
+            isDisabled={selectedIds.length === 0}
+          />
+        )}
       </SafeAreaView>
     );
   }

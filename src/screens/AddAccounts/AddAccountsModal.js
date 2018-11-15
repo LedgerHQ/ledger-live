@@ -37,13 +37,11 @@ class AddAccountsModal extends PureComponent<Props> {
       <BottomModal isOpened={isOpened} onClose={onClose}>
         <BottomModalChoice
           title={t("addAccountsModal.ctaAdd")}
-          description={t("addAccountsModal.descAdd")}
           onPress={this.onClickAdd}
           Icon={IconPlus}
         />
         <BottomModalChoice
           title={t("addAccountsModal.ctaImport")}
-          description={t("addAccountsModal.descImport")}
           onPress={this.onClickImport}
           Icon={IconQr}
         />

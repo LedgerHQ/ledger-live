@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent, Fragment } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
 import { translate } from "react-i18next";
 
 import SearchIcon from "../icons/Search";
@@ -43,6 +43,12 @@ class FilteredSearchBar extends PureComponent<Props, State> {
 
   onChange = (text: string) => this.setState({ query: text });
 
+  focusInput = () => {
+    if (this.input.current) {
+      this.input.current.focus();
+    }
+  };
+
   clear = () => {
     if (this.input.current) {
       this.input.current.clear();
@@ -63,7 +69,10 @@ class FilteredSearchBar extends PureComponent<Props, State> {
 
     return (
       <Fragment>
-        <View style={[styles.wrapper, inputWrapperStyle]}>
+        <TouchableOpacity
+          onPress={this.focusInput}
+          style={[styles.wrapper, inputWrapperStyle]}
+        >
           <View style={styles.iconContainer}>
             <SearchIcon
               size={20}
@@ -82,7 +91,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             autoCorrect={false}
           />
           {query ? <InputResetCross onPress={this.clear} /> : null}
-        </View>
+        </TouchableOpacity>
         <Search
           fuseOptions={{
             threshold: 0.1,

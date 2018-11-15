@@ -20,7 +20,7 @@ export default class BottomModalChoice extends PureComponent<{
   onPress: ?() => void,
   Icon: React$ComponentType<*>,
   title: string,
-  description: string,
+  description?: string,
 }> {
   render() {
     const { Icon, title, description, onPress } = this.props;
@@ -35,7 +35,9 @@ export default class BottomModalChoice extends PureComponent<{
           <LText style={styles.title} semiBold>
             {title}
           </LText>
-          <LText style={styles.description}>{description}</LText>
+          {!!description && (
+            <LText style={styles.description}>{description}</LText>
+          )}
         </View>
       </Touchable>
     );

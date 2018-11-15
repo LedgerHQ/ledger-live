@@ -368,9 +368,7 @@
   },
   "addAccountsModal": {
     "ctaAdd": "Add accounts",
-    "descAdd": "Lorem ipsum dolor sit amet",
-    "ctaImport": "Import accounts",
-    "descImport": "Lorem ipsum dolor sit amet"
+    "ctaImport": "Import desktop accounts"
   },
   "time": {
     "day": "Day",
@@ -668,6 +666,10 @@
     }
   },
   "addAccounts": {
+    "quitConfirmation": {
+      "title": "Cancel add account",
+      "desc": "You are about to cancel the Add account flow, do you wish to continue?"
+    },
     "imported": "Accounts successfully added",
     "sections": {
       "accountsToImport": "Accounts to import",
