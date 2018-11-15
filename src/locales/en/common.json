@@ -90,8 +90,8 @@
       "title": "Couldn’t load fee rates. Please set manual fees"
     },
     "GenuineCheckFailed": {
-      "title": "Genuine Check Failed",
-      "description": "Request Ledger Support assistance."
+      "title": "Genuine check failed",
+      "description": "Something went wrong. Please try again or contact Ledger Support when in doubt."
     },
     "HardResetFail": {
       "title": "Oops, could not reset",
@@ -718,8 +718,8 @@
       "subtitle": "Please don’t turn off your Nano X. Follow screen instructions."
     },
     "GenuineCheck": {
-      "title": "Genuine check...",
-      "accept": "Make sure your Nano X is on Dashboard and accept <1><0>Allow Manager</0></1>"
+      "title": "Genuine check",
+      "accept": "Please don’t turn off your {{deviceName}} and allow <1><0>Ledger Manager</0></1>"
     },
     "ScanningHeader": {
       "title": "We are searching for Nano X",

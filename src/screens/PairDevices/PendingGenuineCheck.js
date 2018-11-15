@@ -1,57 +1,62 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Trans } from "react-i18next";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
+import LText from "../../components/LText";
 
 import colors from "../../colors";
-import LText from "../../components/LText";
+import { deviceNames } from "../../wording";
 
 const { width } = Dimensions.get("window");
 
 class PendingGenuineCheck extends PureComponent<*> {
   render() {
     return (
-      <Fragment>
+      <View style={styles.root}>
+        <View style={styles.nano}>
+          <DeviceNanoAction action screen="validation" width={width} />
+        </View>
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="PairDevices.GenuineCheck.title" />
         </LText>
         <LText style={styles.subtitle}>
-          <Trans i18nKey="PairDevices.GenuineCheck.title">
+          <Trans
+            i18nKey="PairDevices.GenuineCheck.accept"
+            values={deviceNames.nanoX}
+          >
             Make sure your Nano X is on Dashboard and accept
-            <LText bold style={styles.bold}>
-              Allow Manager
-            </LText>
+            <LText bold>Ledger Manager</LText>
           </Trans>
         </LText>
-
-        <View style={styles.footer}>
-          <DeviceNanoAction powerAction screen="validation" width={width} />
-        </View>
-      </Fragment>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   title: {
-    marginTop: 16,
+    marginTop: 32,
     fontSize: 18,
     color: colors.darkBlue,
   },
-  subtitleContainer: {},
   subtitle: {
     fontSize: 14,
-    marginTop: 8,
+    marginTop: 16,
     textAlign: "center",
     paddingHorizontal: 20,
+    lineHeight: 21,
+    color: colors.smoke,
   },
-  bold: {},
-  footer: {
-    marginTop: 10,
-    paddingBottom: 80,
-    paddingLeft: "20%",
+  nano: {
+    paddingLeft: "33%",
   },
 });
 

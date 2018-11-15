@@ -152,11 +152,7 @@ class PairDevices extends Component<Props, State> {
         );
 
       case "genuinecheck":
-        return (
-          <PendingContainer>
-            <PendingGenuineCheck />
-          </PendingContainer>
-        );
+        return <PendingGenuineCheck />;
 
       case "paired":
         return device ? (
