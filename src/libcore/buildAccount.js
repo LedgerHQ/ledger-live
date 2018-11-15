@@ -24,11 +24,9 @@ const OperationTypeMap = {
   "1": "IN",
 };
 
-const sameOp = (a: Operation, b: Operation) =>
+const sameImmutableOp = (a: Operation, b: Operation) =>
   a === b ||
   (a.id === b.id && // hash, accountId, type are in id
-    a.blockHash === b.blockHash &&
-    a.blockHeight === b.blockHeight &&
     a.date.getTime() === b.date.getTime() &&
     (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
     (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
@@ -120,7 +118,7 @@ export async function buildAccount({
   let operations = [];
   let existingOps = existingOperations;
 
-  let fullOpCmpChecked = false;
+  let immutableOpCmpDoneOnce = false;
   for (let i = coreOperations.length - 1; i >= 0; i--) {
     const coreOperation = coreOperations[i];
     const newOp = await buildOperation({
@@ -130,17 +128,23 @@ export async function buildAccount({
     });
     const existingOp = findExistingOp(existingOps, newOp);
 
-    if (existingOp && !fullOpCmpChecked) {
+    if (existingOp && !immutableOpCmpDoneOnce) {
       // an Operation is supposely immutable.
-      fullOpCmpChecked = true;
-      // we still check the first existing op we meet...
-      if (!sameOp(existingOp, newOp)) {
-        // this implement a failsafe in case an op changes (when we fix bugs)
-        // tradeoff: in such case, we assume all existingOps are to trash
-        console.warn("op mismatch. doing a full clear cache.");
-        existingOps = [];
+      if (existingOp.blockHeight !== newOp.blockHeight) {
+        // except for blockHeight that can temporarily be null
         operations.push(newOp);
         continue; // eslint-disable-line no-continue
+      } else {
+        immutableOpCmpDoneOnce = true;
+        // we still check the first existing op we meet...
+        if (!sameImmutableOp(existingOp, newOp)) {
+          // this implement a failsafe in case an op changes (when we fix bugs)
+          // tradeoff: in such case, we assume all existingOps are to trash
+          console.warn("op mismatch. doing a full clear cache.");
+          existingOps = [];
+          operations.push(newOp);
+          continue; // eslint-disable-line no-continue
+        }
       }
     }
 
