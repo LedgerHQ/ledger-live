@@ -1,12 +1,13 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet, BackHandler } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
+import PreventNativeBack from "../../components/PreventNativeBack";
 
 import colors from "../../colors";
 import ValidateSuccess from "./ValideSuccess";
@@ -28,12 +29,7 @@ class ValidationSuccess extends Component<Props> {
     header: null,
     gesturesEnabled: false,
   };
-  componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", () => true);
-  }
-  componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress");
-  }
+
   dismiss = () => {
     const { navigation } = this.props;
     if (navigation.dismiss) {
@@ -55,6 +51,7 @@ class ValidationSuccess extends Component<Props> {
   render() {
     return (
       <View style={styles.root}>
+        <PreventNativeBack />
         <ValidateSuccess
           onClose={this.dismiss}
           onViewDetails={this.goToOperationDetails}
