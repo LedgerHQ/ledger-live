@@ -11,8 +11,8 @@ import type { Step } from "./types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 class SelectDeviceConnectModal extends PureComponent<{
-  deviceName: string,
   isOpened: boolean,
+  deviceName: ?string,
   onClose: () => void,
   onRetry: () => void,
   onStepDone: () => void,
@@ -39,7 +39,11 @@ class SelectDeviceConnectModal extends PureComponent<{
             Footer={step.ErrorFooter || ErrorFooterGeneric}
           />
         ) : (
-          <step.Body deviceName={deviceName} step={step} onDone={onStepDone} />
+          <step.Body
+            deviceName={deviceName || ""}
+            step={step}
+            onDone={onStepDone}
+          />
         )}
         <Touchable style={styles.close} onPress={onClose}>
           <Close color={colors.fog} size={20} />

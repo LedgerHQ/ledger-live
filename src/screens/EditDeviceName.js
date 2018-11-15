@@ -6,18 +6,14 @@ import { TextInput, View, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import Icon from "react-native-vector-icons/dist/Feather";
-import { open } from "../logic/hw";
-import editDeviceName from "../logic/hw/editDeviceName";
+import colors from "../colors";
 import Button from "../components/Button";
 import LText, { getFontStyle } from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
 import KeyboardView from "../components/KeyboardView";
-import colors from "../colors";
-import { deviceNameByNavigationDeviceIdSelector } from "../reducers/ble";
-import { saveBleDeviceName } from "../actions/ble";
+import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
+import DeviceJob from "../components/DeviceJob";
 
 const MAX_DEVICE_NAME = 32;
 
@@ -35,14 +31,18 @@ class FooterError extends PureComponent<{ error: Error }> {
 
 class EditDeviceName extends PureComponent<
   {
-    navigation: NavigationScreenProp<*>,
-    saveBleDeviceName: (string, string) => *,
-    name: string,
-    t: *,
+    navigation: NavigationScreenProp<{
+      params: {
+        deviceId: string,
+        deviceName: string,
+      },
+    }>,
+    deviceName: string,
   },
   {
     name: string,
     error: ?Error,
+    connecting: boolean,
   },
 > {
   static navigationOptions = {
@@ -50,11 +50,12 @@ class EditDeviceName extends PureComponent<
     headerLeft: null,
   };
 
-  initialName = this.props.name;
+  initialName = this.props.navigation.getParam("deviceName");
 
   state = {
-    name: this.props.name,
+    name: this.initialName,
     error: null,
+    connecting: false,
   };
 
   onChangeText = (name: string) => {
@@ -63,25 +64,25 @@ class EditDeviceName extends PureComponent<
 
   onSubmit = async () => {
     const { name } = this.state;
-    const deviceId = this.props.navigation.getParam("deviceId");
     if (this.initialName !== name) {
-      try {
-        const transport = await open(deviceId);
-        await editDeviceName(transport, name);
-        transport.close();
-        this.props.saveBleDeviceName(deviceId, name);
-      } catch (error) {
-        console.warn(error);
-        this.setState({ error });
-        return;
-      }
+      this.setState({ connecting: true });
+    } else {
+      this.props.navigation.goBack();
     }
+  };
+
+  onCancel = () => {
+    this.setState({ connecting: false });
+  };
+
+  onDone = () => {
     this.props.navigation.goBack();
   };
 
   render() {
-    const { name, error } = this.state;
-    const { t } = this.props;
+    const { name, error, connecting } = this.state;
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
     const remainingCount = MAX_DEVICE_NAME - Buffer.from(name).length;
     return (
       <KeyboardView style={styles.root}>
@@ -94,7 +95,7 @@ class EditDeviceName extends PureComponent<
             autoCorrect
             selectTextOnFocus
             clearButtonMode="always"
-            placeholder={t("EditDeviceName.placeholder")}
+            placeholder="Satoshi Nakamoto"
             returnKeyType="done"
             style={[getFontStyle({ semiBold: true }), styles.input]}
           />
@@ -113,19 +114,20 @@ class EditDeviceName extends PureComponent<
             onPress={this.onSubmit}
           />
         </View>
+
+        <DeviceJob
+          deviceName={name}
+          deviceId={connecting ? deviceId : null}
+          onCancel={this.onCancel}
+          onDone={this.onDone}
+          steps={[connectingStep, editDeviceName(name)]}
+        />
       </KeyboardView>
     );
   }
 }
 
-export default connect(
-  createStructuredSelector({
-    name: deviceNameByNavigationDeviceIdSelector,
-  }),
-  {
-    saveBleDeviceName,
-  },
-)(translate()(EditDeviceName));
+export default translate()(EditDeviceName);
 
 const styles = StyleSheet.create({
   root: {

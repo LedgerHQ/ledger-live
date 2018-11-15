@@ -1,9 +1,7 @@
 // @flow
 import Transport from "@ledgerhq/hw-transport";
-import { DeviceNameRequired } from "../../errors";
 
 export default async (transport: Transport<*>, name: string): Promise<void> => {
-  if (!name) throw new DeviceNameRequired();
   // Temporary BLE implementation for demoing rename,
   // should use real APDU in final release
   // $FlowFixMe
