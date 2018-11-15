@@ -82,7 +82,7 @@ class Portfolio extends Component<
   componentDidMount() {
     if (!this.props.hasCompletedOnboarding && !Config.SKIP_ONBOARDING) {
       // TODO: there is probably more elegant way to do that
-      this.props.navigation.replace("Onboarding");
+      this.props.navigation.navigate("Onboarding");
       return;
     }
     this.scrollSub = scrollToTopIntent.subscribe(() => {

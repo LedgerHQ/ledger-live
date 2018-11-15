@@ -424,8 +424,8 @@ const BaseNavigator = createStackNavigator(
 );
 
 export const RootNavigator = createSwitchNavigator({
-  Onboarding,
   BaseNavigator,
+  Onboarding,
 });
 
 RootNavigator.navigationOptions = { header: null };
