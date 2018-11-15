@@ -17,6 +17,8 @@ import KeyboardView from "../../components/KeyboardView";
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 
+const SEARCH_KEYS = ["name", "unit.code"];
+
 type Navigation = NavigationScreenProp<{ params: {} }>;
 
 type Props = {
@@ -53,6 +55,7 @@ class ReceiveFunds extends Component<Props, State> {
           <Stepper nbSteps={3} currentStep={1} />
           <View style={styles.searchContainer}>
             <FilteredSearchBar
+              keys={SEARCH_KEYS}
               inputWrapperStyle={styles.card}
               list={accounts}
               renderList={items => (

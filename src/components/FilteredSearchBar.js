@@ -79,6 +79,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             style={styles.input}
             value={query}
             ref={this.input}
+            autoCorrect={false}
           />
           {query ? <InputResetCross onPress={this.clear} /> : null}
         </View>

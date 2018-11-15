@@ -15,6 +15,8 @@ import KeyboardView from "../../components/KeyboardView";
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 
+const SEARCH_KEYS = ["name", "unit.code"];
+
 type Props = {
   accounts: Account[],
   navigation: NavigationScreenProp<{
@@ -78,6 +80,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
               inputWrapperStyle={styles.padding}
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptySearch}
+              keys={SEARCH_KEYS}
             />
           </View>
         </KeyboardView>
