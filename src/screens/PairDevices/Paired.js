@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, SafeAreaView } from "react-native";
 import { withNavigation } from "react-navigation";
 import { Trans } from "react-i18next";
 
@@ -26,31 +26,37 @@ class Paired extends PureComponent<{
   render() {
     const { deviceId, onContinue } = this.props;
     return (
-      <View style={styles.root}>
-        <PairingSuccess />
-        <LText secondary semiBold style={styles.title}>
-          <Trans i18nKey="PairDevices.Paired.title" />
-        </LText>
-        <LText style={styles.description}>
-          <Trans i18nKey="PairDevices.Paired.desc">
-            {"You can now use your Nano X on you Ledger Live mobile App to "}
-            <LText semiBold>send & receive funds</LText>
-            {". You can also mange your device on the "}
-            <LText semiBold>Manager</LText>
-            {" section"}
-          </Trans>
-        </LText>
-        <View style={styles.fullContainer}>
-          <DeviceItemSummary deviceId={deviceId} genuine onEdit={this.onEdit} />
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.root}>
+          <PairingSuccess />
+          <LText secondary semiBold style={styles.title}>
+            <Trans i18nKey="PairDevices.Paired.title" />
+          </LText>
+          <LText style={styles.description}>
+            <Trans i18nKey="PairDevices.Paired.desc">
+              {"You can now use your Nano X on you Ledger Live mobile App to "}
+              <LText semiBold>send & receive funds</LText>
+              {". You can also mange your device on the "}
+              <LText semiBold>Manager</LText>
+              {" section"}
+            </Trans>
+          </LText>
+          <View style={styles.fullContainer}>
+            <DeviceItemSummary
+              deviceId={deviceId}
+              genuine
+              onEdit={this.onEdit}
+            />
+          </View>
+          <View style={[styles.fullContainer, styles.buttonContainer]}>
+            <Button
+              type="primary"
+              title={<Trans i18nKey="PairDevices.Paired.action" />}
+              onPress={onContinue}
+            />
+          </View>
         </View>
-        <View style={[styles.fullContainer, styles.buttonContainer]}>
-          <Button
-            type="primary"
-            title={<Trans i18nKey="PairDevices.Paired.action" />}
-            onPress={onContinue}
-          />
-        </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -67,7 +73,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: "auto",
-    marginBottom: 16,
   },
   title: {
     marginTop: 24,

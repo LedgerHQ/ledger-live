@@ -1,7 +1,13 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Linking,
+  SafeAreaView,
+} from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { Trans } from "react-i18next";
@@ -10,6 +16,8 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import TranslatedError from "../../components/TranslatedError";
 import BluetoothScanning from "../../components/BluetoothScanning";
+import Circle from "../../components/Circle";
+import IconArrowRight from "../../icons/ArrowRight";
 import { PairingFailed, GenuineCheckFailed } from "../../errors";
 import colors from "../../colors";
 import { urls } from "../../config/urls";
@@ -30,12 +38,27 @@ const hitSlop = {
 };
 
 const GenericErrorHeader = () => (
-  <LText>
-    <Icon name="alert-triangle" size={32} color={colors.alert} />
-  </LText>
+  <Circle bg={colors.lightAlert} size={80}>
+    <LText>
+      <Icon name="alert-triangle" size={32} color={colors.alert} />
+    </LText>
+  </Circle>
 );
 
 const PairingFailure = () => <BluetoothScanning isError />;
+
+const HelpLink = () => (
+  <TouchableOpacity
+    style={styles.linkContainer}
+    hitSlop={hitSlop}
+    onPress={() => Linking.openURL(urls.faq)}
+  >
+    <Help size={16} color={colors.live} />
+    <LText style={styles.linkText} semiBold>
+      <Trans i18nKey="common.needHelp" />
+    </LText>
+  </TouchableOpacity>
+);
 
 class RenderError extends Component<Props> {
   render() {
@@ -61,7 +84,7 @@ class RenderError extends Component<Props> {
     const Header = status === "pairing" ? PairingFailure : GenericErrorHeader;
 
     return (
-      <View style={styles.root}>
+      <SafeAreaView style={styles.root}>
         <View style={styles.body}>
           <Header />
           <LText semiBold style={styles.title}>
@@ -71,14 +94,6 @@ class RenderError extends Component<Props> {
             <TranslatedError error={primaryError} field="description" />
           </LText>
           <View style={styles.buttonContainer}>
-            {status === "genuinecheck" ? (
-              <Button
-                type="secondary"
-                title={<Trans i18nKey="PairDevices.bypassGenuine" />}
-                onPress={onBypassGenuine}
-                containerStyle={[styles.button, styles.secondaryButton]}
-              />
-            ) : null}
             <Button
               type="primary"
               title={<Trans i18nKey="common.retry" />}
@@ -86,18 +101,27 @@ class RenderError extends Component<Props> {
               containerStyle={styles.button}
             />
           </View>
-          <TouchableOpacity
-            style={styles.helpContainer}
-            hitSlop={hitSlop}
-            onPress={() => Linking.openURL(urls.faq)}
-          >
-            <Help size={16} color={colors.live} />
-            <LText style={styles.helpText} semiBold>
-              <Trans i18nKey="common.needHelp" />
-            </LText>
-          </TouchableOpacity>
+          {status === "genuinecheck" ? (
+            <TouchableOpacity
+              onPress={onBypassGenuine}
+              hitSlop={hitSlop}
+              style={styles.linkContainer}
+            >
+              <LText style={styles.linkText} semiBold>
+                <Trans i18nKey="PairDevices.bypassGenuine" />{" "}
+              </LText>
+              <IconArrowRight size={16} color={colors.live} />
+            </TouchableOpacity>
+          ) : (
+            <HelpLink />
+          )}
         </View>
-      </View>
+        {status === "genuinecheck" ? (
+          <View style={styles.footer}>
+            <HelpLink />
+          </View>
+        ) : null}
+      </SafeAreaView>
     );
   }
 }
@@ -107,11 +131,11 @@ export default RenderError;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 20,
     flexDirection: "column",
   },
   body: {
     flex: 1,
+    padding: 20,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
@@ -136,17 +160,19 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
   },
-  helpContainer: {
+  linkContainer: {
     marginTop: 24,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
   },
-  helpText: {
+  linkText: {
     color: colors.live,
     marginLeft: 6,
   },
-  secondaryButton: {
-    marginRight: 10,
+  footer: {
+    height: 48,
+    borderTopWidth: 1,
+    borderColor: colors.lightFog,
   },
 });
