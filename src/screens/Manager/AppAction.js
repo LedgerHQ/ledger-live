@@ -117,7 +117,7 @@ class AppAction extends PureComponent<
                 }}
               >
                 {pending ? (
-                  <Spinning>
+                  <Spinning clockwise>
                     <Image source={spinner} style={{ width: 24, height: 24 }} />
                   </Spinning>
                 ) : !error ? (
