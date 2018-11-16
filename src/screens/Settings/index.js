@@ -114,7 +114,9 @@ class Settings extends Component<Props, *> {
             />
           ) : null}
           <TouchableWithoutFeedback onPress={this.onDebugHiddenPress}>
-            <PoweredByLedger />
+            <View>
+              <PoweredByLedger />
+            </View>
           </TouchableWithoutFeedback>
         </View>
       </ScrollView>
