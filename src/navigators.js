@@ -1,6 +1,5 @@
 // @flow
 import React from "react";
-import { StyleSheet, StatusBar, Platform } from "react-native";
 import {
   createStackNavigator,
   createBottomTabNavigator,
@@ -12,10 +11,7 @@ import colors from "./colors";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
-import HeaderTitle from "./components/HeaderTitle";
-import HeaderRightClose from "./components/HeaderRightClose";
 import { getFontStyle } from "./components/LText";
-import HeaderBackImage from "./components/HeaderBackImage";
 import defaultNavigationOptions from "./screens/defaultNavigationOptions";
 import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
@@ -56,9 +52,6 @@ import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
-import ScanAccounts from "./screens/ImportAccounts/Scan";
-import DisplayResult from "./screens/ImportAccounts/DisplayResult";
-import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import DebugBLE from "./screens/DebugBLE";
 import DebugCrash from "./screens/DebugCrash";
 import DebugHttpTransport from "./screens/DebugHttpTransport";
@@ -66,6 +59,14 @@ import DebugIcons from "./screens/DebugIcons";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
+import ImportAccounts from "./screens/ImportAccounts/importAccountsNavigator";
+import styles from "./navigation/styles";
+import TransparentHeaderNavigationOptions from "./navigation/TransparentHeaderNavigationOptions";
+import {
+  stackNavigatorConfig,
+  closableStackNavigatorConfig,
+  navigationOptions,
+} from "./navigation/navigatorConfig";
 
 // add accounts
 import AddAccountsHeaderRightClose from "./screens/AddAccounts/AddAccountsHeaderRightClose";
@@ -77,93 +78,6 @@ import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 import sendScreens from "./families/sendScreens";
 
 // TODO look into all FlowFixMe
-
-let headerStyle;
-let headerStyleShadow;
-
-if (Platform.OS === "ios") {
-  headerStyle = {
-    height: 48,
-    borderBottomWidth: 0,
-  };
-  headerStyleShadow = {
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    shadowOffset: {
-      height: 4,
-    },
-  };
-} else {
-  const statusBarPadding = StatusBar.currentHeight;
-  headerStyle = {
-    height: 48 + statusBarPadding,
-    paddingTop: statusBarPadding,
-  };
-  headerStyleShadow = {
-    elevation: 1,
-  };
-}
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.lightGrey,
-  },
-  header: {
-    backgroundColor: colors.white,
-    ...headerStyle,
-    ...headerStyleShadow,
-  },
-  headerNoShadow: {
-    backgroundColor: colors.white,
-    ...headerStyle,
-  },
-  bottomTabBar: {
-    height: 48,
-    borderTopColor: colors.lightFog,
-    backgroundColor: colors.white,
-  },
-  transparentHeader: {
-    backgroundColor: "transparent",
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  labelStyle: { fontSize: 12 },
-});
-
-const navigationOptions = {
-  headerStyle: styles.header,
-  headerTitle: HeaderTitle,
-  headerBackTitle: null,
-  headerBackImage: HeaderBackImage,
-};
-
-const closableNavigationOptions = ({
-  navigation,
-}: {
-  navigation: NavigationScreenProp<*>,
-}) => ({
-  ...navigationOptions,
-  headerRight: <HeaderRightClose navigation={navigation} />,
-});
-
-const stackNavigatorConfig = {
-  navigationOptions,
-  cardStyle: styles.card,
-  headerLayoutPreset: "center",
-};
-
-const closableStackNavigatorConfig = {
-  ...stackNavigatorConfig,
-  navigationOptions: closableNavigationOptions,
-};
-
-const TransparentHeaderNavigationOptions = {
-  headerTransparent: true,
-  headerStyle: [styles.header, styles.transparentHeader],
-  headerTitle: (props: *) => (
-    <HeaderTitle {...props} style={{ color: colors.white }} />
-  ),
-};
 
 const SettingsStack = createStackNavigator(
   {
@@ -383,22 +297,6 @@ const AccountSettings = createStackNavigator(
 );
 
 AccountSettings.navigationOptions = {
-  header: null,
-};
-
-const ImportAccounts = createStackNavigator(
-  {
-    ScanAccounts: {
-      screen: ScanAccounts,
-      navigationOptions: TransparentHeaderNavigationOptions,
-    },
-    DisplayResult,
-    FallBackCameraScreen,
-  },
-  closableStackNavigatorConfig,
-);
-
-ImportAccounts.navigationOptions = {
   header: null,
 };
 
