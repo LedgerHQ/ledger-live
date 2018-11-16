@@ -8,6 +8,7 @@ import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import RateProviderSettingsRow from "./RateProviderSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
 import ReportErrorsRow from "./ReportErrorsRow";
+import DeveloperModeRow from "./DeveloperModeRow";
 import AnalyticsRow from "./AnalyticsRow";
 
 class GeneralSettings extends PureComponent<{
@@ -25,6 +26,7 @@ class GeneralSettings extends PureComponent<{
         <RateProviderSettingsRow navigation={navigation} />
         <AuthSecurityToggle />
         <ReportErrorsRow />
+        <DeveloperModeRow />
         <AnalyticsRow />
       </ScrollView>
     );

@@ -508,6 +508,8 @@
       "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red.",
       "reportErrors": "Report bugs",
       "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
+      "developerMode": "Developer mode",
+      "developerModeDesc": "Show developer apps in the Manager and enable testnet apps.",
       "analytics": "Analytics",
       "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience.",
       "analyticsModal": {

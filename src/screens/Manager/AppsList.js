@@ -14,21 +14,28 @@ import AppsListPending from "./AppsListPending";
 import AppsListError from "./AppsListError";
 import AppRow from "./AppRow";
 import AppAction from "./AppAction";
+import { developerModeEnabledSelector } from "../../reducers/settings";
 
 const actionKey = action => `${action.app.id}_${action.type}`;
 
-class ManagerAppsList extends Component<
-  {
-    navigation: NavigationScreenProp<{
-      params: {
-        deviceId: string,
-        meta: {
-          deviceInfo: DeviceInfo,
-        },
+type Props = {
+  navigation: NavigationScreenProp<{
+    params: {
+      deviceId: string,
+      meta: {
+        deviceInfo: DeviceInfo,
       },
-    }>,
-    isDevMode: boolean,
-  },
+    },
+  }>,
+  developerModeEnabled: boolean,
+};
+
+const mapStateToProps = createStructuredSelector({
+  developerModeEnabled: developerModeEnabledSelector,
+});
+
+class ManagerAppsList extends Component<
+  Props,
   {
     apps: ApplicationVersion[],
     pending: boolean,
@@ -63,10 +70,10 @@ class ManagerAppsList extends Component<
       return { pending: true, error: null };
     });
     try {
-      const { navigation, isDevMode } = this.props;
+      const { navigation, developerModeEnabled } = this.props;
       const { deviceInfo } = navigation.getParam("meta");
 
-      const apps = await manager.getAppsList(deviceInfo, isDevMode);
+      const apps = await manager.getAppsList(deviceInfo, developerModeEnabled);
 
       if (this.unmount) return;
       this.setState({
@@ -173,10 +180,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(
-  connect(
-    createStructuredSelector({
-      isDevMode: () => false, // TODO need a selector here
-    }),
-  )(ManagerAppsList),
-);
+export default translate()(connect(mapStateToProps)(ManagerAppsList));

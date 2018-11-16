@@ -5,7 +5,9 @@ import { translate, Trans } from "react-i18next";
 import { SafeAreaView, StyleSheet, View, FlatList } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import { createStructuredSelector } from "reselect";
 
+import { connect } from "react-redux";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -16,14 +18,20 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 
 import colors from "../../colors";
+import { developerModeEnabledSelector } from "../../reducers/settings";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
 type Props = {
+  developerModeEnabled: boolean,
   navigation: NavigationScreenProp<{
     params: {},
   }>,
 };
+
+const mapStateToProps = createStructuredSelector({
+  developerModeEnabled: developerModeEnabledSelector,
+});
 
 type State = {};
 
@@ -32,8 +40,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     headerTitle: <StepHeader title="Crypto asset" subtitle="step 1 of 3" />,
   };
 
-  // TODO connect to devMode (cryptocurrencies should be a selector basically)
-  cryptocurrencies = listCryptoCurrencies();
+  cryptocurrencies = listCryptoCurrencies(this.props.developerModeEnabled);
 
   keyExtractor = currency => currency.id;
 
@@ -106,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(AddAccountsSelectCrypto);
+export default connect(mapStateToProps)(translate()(AddAccountsSelectCrypto));
