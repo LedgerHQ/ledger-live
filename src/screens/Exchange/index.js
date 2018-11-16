@@ -24,28 +24,23 @@ class ExchangeScreen extends Component<Props> {
   render() {
     const { t } = this.props;
     return (
-      <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
-        <SafeAreaView style={styles.inner}>
-          <ScrollView style={styles.scrollView}>
-            <View style={styles.root}>
-              <LText secondary style={styles.title} bold>
-                <Trans i18nKey="exchange.title" />
-              </LText>
-              <LText secondary style={styles.description} numberOfLines={2}>
-                <Trans i18nKey="exchange.subtitle" />
-              </LText>
-              {exchanges.map(card => (
-                <ExchangeCard
-                  icon={card.icon}
-                  key={card.key}
-                  t={t}
-                  card={card}
-                />
-              ))}
-            </View>
-          </ScrollView>
-        </SafeAreaView>
-      </View>
+      <SafeAreaView
+        style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      >
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.body}>
+            <LText secondary style={styles.title} bold>
+              <Trans i18nKey="exchange.title" />
+            </LText>
+            <LText secondary style={styles.description} numberOfLines={2}>
+              <Trans i18nKey="exchange.subtitle" />
+            </LText>
+            {exchanges.map(card => (
+              <ExchangeCard icon={card.icon} key={card.key} t={t} card={card} />
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
@@ -58,11 +53,10 @@ const styles = StyleSheet.create({
   scrollView: {
     paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: 64,
     flex: 1,
   },
-  inner: {
-    flex: 1,
+  body: {
+    paddingBottom: 64,
   },
   list: {
     flex: 1,
