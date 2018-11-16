@@ -12,6 +12,7 @@ import OnboardingStepPassword from "./steps/password";
 import OnboardingStepShareData from "./steps/share-data";
 import OnboardingStepScanQR from "./steps/scan-qr";
 import OnboardingStepFinish from "./steps/finish";
+import ImportAccounts from "../ImportAccounts/importAccountsNavigator";
 
 const OnboardingStack = createStackNavigator({
   OnboardingStepGetStarted,
@@ -24,6 +25,7 @@ const OnboardingStack = createStackNavigator({
   OnboardingStepPassword,
   OnboardingStepShareData,
   OnboardingStepFinish,
+  ImportAccounts,
 });
 
 OnboardingStack.navigationOptions = { header: null };
