@@ -4,8 +4,9 @@ import React, { Component } from "react";
 import { View, SafeAreaView, Dimensions, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { from, of } from "rxjs";
-import { mergeMap, tap, delay } from "rxjs/operators";
+import { mergeMap, delay, catchError, throwError } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
+import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
 import installMcu from "../../logic/hw/installMcu";
 import installFinalFirmware from "../../logic/hw/installFinalFirmware";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
@@ -32,7 +33,9 @@ type State = {
   installing: boolean,
 };
 
-const acceptAllErrors = () => true;
+const ignoreDeviceDisconnectedError = catchError(
+  e => (e instanceof CantOpenDevice ? of(null) : throwError(e)),
+);
 
 class FirmwareUpdateMCU extends Component<Props, State> {
   static navigationOptions = {
@@ -55,44 +58,34 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
 
-    const step = () =>
+    const loop = () =>
       withDevicePolling(deviceId)(
         transport => from(getDeviceInfo(transport)),
-        acceptAllErrors,
+        () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
       ).pipe(
         mergeMap(deviceInfo => {
-          console.log("step", { deviceInfo });
+          console.log({ deviceInfo });
 
-          if (deviceInfo.isBootloader) {
-            this.setState({ installing: true });
-            return withDevice(deviceId)(transport =>
-              installMcu(transport),
-            ).pipe(
-              tap(res => console.log(`03 MCU: installMcu done ${res}`)),
-              delay(2000),
-              // loop again
-              mergeMap(step),
-            );
+          if (!deviceInfo.isBootloader && !deviceInfo.isOSU) {
+            // nothing to do, we're done
+            return of(null);
           }
 
-          if (deviceInfo.isOSU) {
-            this.setState({ installing: true });
-            return withDevice(deviceId)(transport =>
-              installFinalFirmware(transport),
-            ).pipe(
-              tap(res => console.log(`03 MCU: final firmware ${res}`)),
-              delay(2000),
-              // loop again
-              mergeMap(step),
-            );
-          }
+          // appropriate script to install
+          const install = deviceInfo.isBootloader
+            ? installMcu
+            : installFinalFirmware;
 
-          // if nor in bootloader or osu, we're done
-          return of(null);
+          this.setState({ installing: true });
+          return withDevice(deviceId)(install).pipe(
+            delay(2000), // we're pausing 2s just for the device to "catch up". usually it reboots / switch mode
+            ignoreDeviceDisconnectedError, // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
+            mergeMap(loop), // loop again
+          );
         }),
       );
 
-    this.sub = step().subscribe({
+    this.sub = loop().subscribe({
       complete: () => {
         navigation.navigate("FirmwareUpdateConfirmation", {
           ...navigation.state.params,
