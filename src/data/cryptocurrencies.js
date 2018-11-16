@@ -1504,7 +1504,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     isTestnetFor: "bitcoin",
     family: "bitcoin",
-    ledgerExplorerId: "testnet",
+    ledgerExplorerId: "btc_testnet",
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 111,
