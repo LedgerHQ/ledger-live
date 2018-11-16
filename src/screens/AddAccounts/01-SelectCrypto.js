@@ -7,7 +7,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
 
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
