@@ -43,6 +43,7 @@ export type SettingsState = {
   selectedTimeRange: TimeRange,
   orderAccounts: string,
   hasCompletedOnboarding: boolean,
+  developerModeEnabled: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -50,6 +51,7 @@ const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   authSecurityEnabled: false,
   reportErrorsEnabled: false,
+  developerModeEnabled: false,
   analyticsEnabled: false,
   currenciesSettings: {},
   selectedTimeRange: "month",
@@ -95,6 +97,14 @@ const handlers: Object = {
   ) => ({
     ...state,
     reportErrorsEnabled,
+  }),
+
+  SETTINGS_SET_DEVELOPER_MODE: (
+    state: SettingsState,
+    { developerModeEnabled },
+  ) => ({
+    ...state,
+    developerModeEnabled,
   }),
 
   SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
@@ -206,6 +216,11 @@ export const authSecurityEnabledSelector = createSelector(
 export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
+);
+
+export const developerModeEnabledSelector = createSelector(
+  storeSelector,
+  s => s.developerModeEnabled,
 );
 
 export const analyticsEnabledSelector = createSelector(
