@@ -27,6 +27,7 @@ class Confetti extends PureComponent<
     Animated.timing(this.state.progress, {
       toValue: 1,
       duration,
+      useNativeDriver: true,
       easing,
     }).start();
   }
@@ -34,8 +35,8 @@ class Confetti extends PureComponent<
     const {
       initialXPercent,
       initialYPercent,
-      initialScale,
       initialRotation,
+      initialScale,
       shape,
       rotations,
       delta,
@@ -57,7 +58,6 @@ class Confetti extends PureComponent<
     const opacity = progress.interpolate({
       inputRange: [0.6, 1],
       outputRange: [1, 0],
-      clamp: true,
     });
 
     return (
@@ -72,12 +72,11 @@ class Confetti extends PureComponent<
             { translateX },
             { translateY },
             { scale: initialScale },
-            { rotate: `${initialRotation}deg` },
             { rotate },
           ],
         }}
       >
-        <Shape />
+        <Shape style={{ rotate: initialRotation }} />
       </Animated.View>
     );
   }
