@@ -18,6 +18,7 @@ export { default as pivx } from "./pivx";
 export { default as posw } from "./posw";
 export { default as qtum } from "./qtum";
 export { default as ripple } from "./ripple";
+export { default as stakenet } from "./stakenet";
 export { default as stealthcoin } from "./stealthcoin";
 export { default as stellar } from "./stellar";
 export { default as stratis } from "./stratis";
