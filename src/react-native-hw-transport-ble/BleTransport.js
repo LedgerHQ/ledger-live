@@ -3,6 +3,7 @@
 
 import Transport, { TransportError } from "@ledgerhq/hw-transport";
 import { BleManager } from "react-native-ble-plx";
+import { logSubject } from "./debug";
 
 const ServiceUuid = "d973f2e0-b19e-11e2-9e96-0800200c9a66";
 const RenameCharacteristicUuid = "d973f2e3-b19e-11e2-9e96-0800200c9a66";
@@ -29,7 +30,7 @@ function chunkBuffer(
   return chunks;
 }
 
-function receive(characteristic, debug) {
+function receive(characteristic) {
   let subscription;
   const promise = new Promise((resolve, reject) => {
     let notifiedIndex = 0;
@@ -42,9 +43,11 @@ function receive(characteristic, debug) {
       }
       try {
         const value = Buffer.from(c.value, "base64");
-        if (debug) {
-          console.log(`<= ${value.toString("hex")}`); // eslint-disable-line no-console
-        }
+        logSubject.next({
+          type: "ble-frame-in",
+          message: value.toString("hex"),
+        });
+
         const tag = value.readUInt8(0);
         const index = value.readUInt16BE(1);
         let data = value.slice(3);
@@ -91,7 +94,7 @@ function receive(characteristic, debug) {
   return { promise, subscription };
 }
 
-async function send(characteristic, apdu, termination, debug) {
+async function send(characteristic, apdu, termination) {
   const chunks = chunkBuffer(apdu, i => MaxChunkBytes - (i === 0 ? 5 : 3)).map(
     (buffer, i) => {
       const head = Buffer.alloc(i === 0 ? 5 : 3);
@@ -109,10 +112,9 @@ async function send(characteristic, apdu, termination, debug) {
   });
   for (const chunk of chunks) {
     if (terminated) return;
-    if (debug) {
-      console.log(`=> ${chunk.toString("hex")}`); // eslint-disable-line no-console
-    }
-    await characteristic.writeWithResponse(chunk.toString("base64"));
+    const message = chunk.toString("base64");
+    logSubject.next({ type: "ble-frame-out", message });
+    await characteristic.writeWithResponse(message);
   }
 }
 
@@ -304,10 +306,24 @@ export default class BluetoothTransport extends Transport<Device | string> {
     this.busy = true;
     let receiving;
     try {
-      receiving = receive(this.notifyCharacteristic, this.debug);
-      send(this.writeCharacteristic, apdu, receiving.promise, this.debug);
+      const { debug } = this;
+
+      const msgIn = apdu.toString("hex");
+      if (debug) debug(`=> ${msgIn}`); // eslint-disable-line no-console
+      logSubject.next({ type: "ble-apdu-in", message: msgIn });
+
+      receiving = receive(this.notifyCharacteristic);
+      send(this.writeCharacteristic, apdu, receiving.promise);
       const data = await receiving.promise;
+
+      const msgOut = data.toString("hex");
+      logSubject.next({ type: "ble-apdu-out", message: msgOut });
+      if (debug) debug(`<= ${msgOut}`); // eslint-disable-line no-console
+
       return data;
+    } catch (e) {
+      logSubject.next({ type: "ble-error", message: String(e) });
+      throw e;
     } finally {
       this.busy = false;
       if (receiving) {
