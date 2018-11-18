@@ -944,6 +944,35 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  nix: {
+    id: "nix",
+    coinType: 400,
+    name: "Nix",
+    managerAppName: "Nix",
+    ticker: "NIX",
+    scheme: "nix",
+    color: "#344cff",
+    supportsSegwit: true,
+    family: "bitcoin",
+    ledgerExplorerId: "nix",
+    blockAvgTime: 120,
+    bitcoinLikeInfo: {
+      P2PKH: 38,
+      P2SH: 53
+    },
+    units: [
+      {
+        name: "nix",
+        code: "NIX",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ]
+  },
   ontology: {
     id: "ontology",
     coinType: 1024,
