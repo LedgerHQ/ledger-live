@@ -8,15 +8,18 @@ import {
   ScrollView,
   View,
   StyleSheet,
-  TextInput,
   SafeAreaView,
   AppState,
+  Image,
 } from "react-native";
+import * as Keychain from "react-native-keychain";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
 import { privacySelector } from "../../reducers/settings";
 import { isLockedSelector } from "../../reducers/application";
 import { unlock, lock } from "../../actions/application";
+
 import auth from "./auth";
 import { withReboot } from "../Reboot";
 
@@ -24,6 +27,14 @@ import colors from "../../colors";
 import Button from "../../components/Button";
 import type { T } from "../../types/common";
 import type { Privacy } from "../../reducers/settings";
+import CustomHeader from "./CustomHeader";
+import FailBiometrics from "./FailBiometrics";
+import PoweredByLedger from "../../screens/Settings/PoweredByLedger";
+import BottomModal from "../../components/BottomModal";
+import HardResetModal from "../../components/HardResetModal";
+import Touchable from "../../components/Touchable";
+import PasswordInput from "../../components/PasswordInput";
+import KeyboardView from "../../components/KeyboardView";
 
 const mapStateToProps = createStructuredSelector({
   privacy: privacySelector,
@@ -41,6 +52,8 @@ type State = {
   password: string,
   appState: ?string,
   isLocked: boolean,
+  isModalOpened: boolean,
+  secureTextEntry: boolean,
 };
 
 type Props = {
@@ -60,6 +73,8 @@ class AuthPass extends PureComponent<Props, State> {
     password: "",
     appState: AppState.currentState,
     isLocked: this.props.isLocked,
+    isModalOpened: false,
+    secureTextEntry: true,
   };
 
   componentDidMount() {
@@ -78,6 +93,7 @@ class AuthPass extends PureComponent<Props, State> {
       appState.match(/active/) &&
       nextAppState.match(/background/)
     ) {
+      this.setState({ biometricsError: null });
       privacy.authSecurityEnabled && lock(); // eslint-disable-line
     } else if (
       appState &&
@@ -90,7 +106,6 @@ class AuthPass extends PureComponent<Props, State> {
             unlock();
           })
           .catch(error => {
-            // TODO android error respects expected json, iOS doesn't. fix it
             this.setState({ biometricsError: error });
           });
       }
@@ -100,89 +115,119 @@ class AuthPass extends PureComponent<Props, State> {
 
   onHardReset = () => this.props.reboot(true);
 
-  validatePassword = () => {
-    const { privacy, unlock, t } = this.props;
-    if (privacy.value === this.state.password) {
-      this.setState({ biometricsError: null, password: "" });
-      unlock();
-    } else {
-      this.setState({
-        passwordError: new Error(t("errors.passwordError.title")),
-      });
+  async load() {
+    const { unlock } = this.props;
+    const { password } = this.state;
+    try {
+      const credentials = await Keychain.getGenericPassword();
+      if (credentials && credentials.password === password) {
+        this.setState({ biometricsError: null, password: "" });
+        unlock();
+      } else {
+        credentials
+          ? this.setState({ passwordError: new PasswordIncorrectError() })
+          : console.log("no credentials stored"); // eslint-disable-line
+      }
+    } catch (err) {
+      console.log("could not load credentials"); // eslint-disable-line
+      this.setState({ passwordError: err });
     }
+  }
+
+  onSubmit = () => {
+    this.load();
   };
 
-  onChangeText = (password: string) => {
-    this.setState({ password });
+  onChange = (password: string) => {
+    this.setState({ password, passwordError: null });
   };
 
-  cleanErrors = () => {
-    this.setState({ passwordError: null });
+  onRequestClose = () => this.setState({ isModalOpened: false });
+
+  onPress = () => this.setState({ isModalOpened: true });
+
+  toggleSecureTextEntry = () => {
+    const { secureTextEntry } = this.state;
+    this.setState({ secureTextEntry: !secureTextEntry });
   };
 
   render() {
-    const { children, isLocked, t } = this.props;
-    const { passwordError, biometricsError } = this.state;
-
+    const { children, isLocked, t, privacy } = this.props;
+    const {
+      passwordError,
+      biometricsError,
+      isModalOpened,
+      secureTextEntry,
+    } = this.state;
     if (isLocked) {
       return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={styles.root}>
           <ScrollView contentContainerStyle={styles.root}>
+            <CustomHeader />
             <View style={styles.body}>
-              {biometricsError && (
-                <View style={styles.biometricsErrorContainer}>
-                  <LText semiBold style={styles.biometricsErrorMessage}>
-                    <TranslatedError error={biometricsError} />
-                  </LText>
-                  <LText
-                    style={[styles.biometricsErrorMessage, { fontSize: 12 }]}
-                  >
-                    <TranslatedError
-                      error={biometricsError}
-                      field="description"
-                    />
-                  </LText>
+              <KeyboardView>
+                <View>
+                  <View style={styles.logoCenter}>
+                    {biometricsError ? (
+                      <FailBiometrics privacy={privacy} />
+                    ) : (
+                      <View>
+                        <View style={{ alignSelf: "center" }}>
+                          <Image
+                            source={require("../../images/logo_small.png")}
+                          />
+                        </View>
+                        <View style={styles.textContainer}>
+                          <LText semiBold secondary style={styles.title}>
+                            {t("auth.unlock.title")}
+                          </LText>
+                          <LText style={styles.description}>
+                            {t("auth.unlock.desc")}
+                          </LText>
+                        </View>
+                      </View>
+                    )}
+                  </View>
                 </View>
-              )}
-              <View style={styles.textContainer}>
-                <LText bold style={styles.textStyle}>
-                  {t("auth.unlock.title")}
-                </LText>
-                <LText style={styles.textStyle}>{t("auth.unlock.desc")}</LText>
-              </View>
-              <TextInput
-                autoFocus
-                style={styles.textInputAS}
-                placeholder={t("auth.unlock.inputPlaceholder")}
-                returnKeyType="done"
-                keyboardType="numeric"
-                maxLength={7}
-                onChangeText={this.onChangeText}
-                onChange={this.cleanErrors}
-                onSubmitEditing={this.validatePassword}
-              />
-              {passwordError && (
-                <LText style={styles.errorStyle}>
-                  <TranslatedError error={passwordError} />
-                </LText>
-              )}
+                <View style={styles.inputWrapper}>
+                  <PasswordInput
+                    onChange={this.onChange}
+                    onSubmit={this.onSubmit}
+                    toggleSecureTextEntry={this.toggleSecureTextEntry}
+                    secureTextEntry={secureTextEntry}
+                    placeholder={t("auth.unlock.inputPlaceholder")}
+                  />
+                </View>
+                {passwordError && (
+                  <LText style={styles.errorStyle}>
+                    <TranslatedError error={passwordError} />
+                  </LText>
+                )}
+                <Button
+                  title={t("auth.unlock.login")}
+                  type="primary"
+                  onPress={this.onSubmit}
+                  containerStyle={[styles.buttonContainer]}
+                  titleStyle={[styles.buttonTitle]}
+                  disabled={!!passwordError}
+                />
+              </KeyboardView>
             </View>
+            <View style={{ flex: 1 }} />
             <View style={styles.flex}>
-              <Button
-                title={t("common.apply")}
-                type="primary"
-                onPress={this.validatePassword}
-                containerStyle={[styles.buttonContainer]}
-                titleStyle={[styles.buttonTitle]}
-              />
-              <Button
-                title={t("reset.button")}
-                type="alert"
-                onPress={this.onHardReset}
-                containerStyle={[styles.buttonContainer, styles.resetButtonBg]}
-                titleStyle={[styles.buttonTitle, styles.resetButtonTitle]}
-              />
+              <Touchable onPress={this.onPress}>
+                <LText style={styles.link}>
+                  {t("auth.unlock.forgotPassword")}
+                </LText>
+              </Touchable>
+              <PoweredByLedger />
             </View>
+            <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+              <HardResetModal
+                onRequestClose={this.onRequestClose}
+                onHardReset={this.onHardReset}
+              />
+            </BottomModal>
           </ScrollView>
         </SafeAreaView>
       );
@@ -207,27 +252,20 @@ const styles = StyleSheet.create({
     margin: 16,
   },
   textContainer: {
-    marginBottom: 16,
+    marginVertical: 16,
   },
-  textStyle: {
+  description: {
+    color: colors.grey,
+    textAlign: "center",
+  },
+  title: {
     fontSize: 16,
-    marginBottom: 8,
+    textAlign: "center",
+    marginVertical: 16,
   },
   errorStyle: {
     color: "red",
-  },
-  textInputAS: {
-    fontSize: 16,
-  },
-  biometricsErrorContainer: {
-    backgroundColor: colors.lightAlert,
-    height: 48,
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  biometricsErrorMessage: {
-    color: colors.live,
-    paddingLeft: 8,
+    margin: 16,
   },
   buttonContainer: {
     marginHorizontal: 16,
@@ -235,10 +273,10 @@ const styles = StyleSheet.create({
   buttonTitle: {
     fontSize: 16,
   },
+  inputWrapper: {
+    marginHorizontal: 16,
+  },
   flex: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-end",
     paddingBottom: 16,
   },
   resetButtonBg: {
@@ -247,5 +285,15 @@ const styles = StyleSheet.create({
   },
   resetButtonTitle: {
     color: colors.white,
+  },
+  logoCenter: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 32,
+  },
+  link: {
+    color: colors.live,
+    marginTop: 16,
+    textAlign: "center",
   },
 });

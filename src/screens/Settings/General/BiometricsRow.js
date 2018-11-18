@@ -4,23 +4,19 @@ import { createStructuredSelector } from "reselect";
 import { Switch, Alert } from "react-native";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import { setPrivacy } from "../../../actions/settings";
 import { privacySelector } from "../../../reducers/settings";
 import type { Privacy } from "../../../reducers/settings";
 import auth from "../../../context/AuthPass/auth";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
-import biometry from "../../../context/AuthPass/methods/biometry";
 
 type Props = {
   privacy: Privacy,
   setPrivacy: ($Shape<Privacy>) => void,
-  t: T,
 };
 type State = {
   validationPending: boolean,
-  biometrySupported: boolean,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -34,19 +30,7 @@ const mapDispatchToProps = {
 class BiometricsRow extends Component<Props, State> {
   state = {
     validationPending: false,
-    biometrySupported: false,
   };
-
-  componentDidMount() {
-    return this.checkForBiometry();
-  }
-
-  checkForBiometry() {
-    biometry
-      .isSupported()
-      .then(() => this.setState({ biometrySupported: true }))
-      .catch(() => this.setState({ biometrySupported: false }));
-  }
 
   onValueChange = async (biometricsEnabled: boolean) => {
     if (biometricsEnabled) {
@@ -75,14 +59,30 @@ class BiometricsRow extends Component<Props, State> {
   };
 
   render() {
-    const { t, privacy } = this.props;
-    const { validationPending, biometrySupported } = this.state;
+    const { privacy } = this.props;
+    const { validationPending } = this.state;
     return (
       <Fragment>
-        {biometrySupported && (
+        {privacy.biometricsType && (
           <SettingsRow
-            title={t("auth.addBiometrics.title")}
-            desc={t("auth.addBiometrics.desc")}
+            title={
+              <Trans
+                i18nKey="auth.enableBiometrics.title"
+                values={{
+                  ...privacy,
+                  biometricsType: privacy.biometricsType,
+                }}
+              />
+            }
+            desc={
+              <Trans
+                i18nKey="auth.enableBiometrics.desc"
+                values={{
+                  ...privacy,
+                  biometricsType: privacy.biometricsType,
+                }}
+              />
+            }
           >
             <Switch
               value={privacy.biometricsEnabled || validationPending}

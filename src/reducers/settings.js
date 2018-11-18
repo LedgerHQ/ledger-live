@@ -34,6 +34,7 @@ export type Privacy = {
   authSecurityEnabled: boolean,
   value: ?string,
   biometricsEnabled: boolean,
+  biometricsType: ?string,
 };
 export type SettingsState = {
   counterValue: string,
@@ -57,6 +58,7 @@ const INITIAL_STATE: SettingsState = {
     authSecurityEnabled: false,
     value: null,
     biometricsEnabled: false,
+    biometricsType: null,
   },
   reportErrorsEnabled: false,
   developerModeEnabled: false,

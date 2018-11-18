@@ -271,6 +271,10 @@
   },
   "auth": {
     "failed": {
+      "biometrics": {
+        "title": "{{biometricsType}} unlock failed",
+        "description": "Please type your password"
+      },
       "title": "Authentication failed",
       "buttons": {
         "tryAgain": "Try again",
@@ -278,18 +282,23 @@
       }
     },
     "unlock": {
-      "title": "Unlock your Ledger Live app",
-      "desc": "Please type in your password below:",
-      "inputPlaceholder": "Please type in your password"
+      "title": "Welcome back",
+      "desc": "Enter your password to continue",
+      "inputPlaceholder": "Type your password",
+      "login": "Log in",
+      "forgotPassword": "Forgot password"
     },
     "addPassword": {
-      "title": "Live Password",
-      "desc": "You can set up a password for privacy purposes",
-      "placeholder": "Set up your Live Password"
+      "placeholder": "Enter your password",
+      "title": "Password Lock",
     },
-    "addBiometrics": {
-      "title": "Enable biometrics",
-      "desc": "Enable the switch to use biometrics se on your phone for privacy instead of the password"
+    "confirmPassword": {
+      "title": "Confirm Password",
+      "placeholder": "Confirm your password"
+    },
+    "enableBiometrics": {
+      "title": "Enable {{biometricsType}}",
+      "desc": "Enable unlocking Ledger Live with {{biometricsType}}"
     }
   },
   "reset": {

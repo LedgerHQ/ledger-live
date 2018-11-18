@@ -78,6 +78,7 @@ import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
 import sendScreens from "./families/sendScreens";
 import PasswordAdd from "./screens/Settings/General/PasswordAdd";
+import ConfirmPassword from "./screens/Settings/General/ConfirmPassword";
 
 // TODO look into all FlowFixMe
 
@@ -323,6 +324,7 @@ const BaseNavigator = createStackNavigator(
     // $FlowFixMe non-sense error
     EditDeviceName,
     PasswordAdd,
+    ConfirmPassword,
   },
   {
     mode: "modal",

@@ -43,8 +43,8 @@ class AuthSecurityToggle extends Component<Props> {
     return (
       <Fragment>
         <SettingsRow
-          title={<Trans i18nKey="common:settings.display.password" />}
-          desc={<Trans i18nKey="common:settings.display.passwordDesc" />}
+          title={<Trans i18nKey="settings.display.password" />}
+          desc={<Trans i18nKey="settings.display.passwordDesc" />}
           alignedTop
         >
           <Switch

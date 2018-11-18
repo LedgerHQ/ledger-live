@@ -1,21 +1,13 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  TextInput,
-  SafeAreaView,
-} from "react-native";
+import { ScrollView, View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
 import { translate } from "react-i18next";
-import { setPrivacy } from "../../../actions/settings";
+import i18next from "i18next";
 import type { Privacy } from "../../../reducers/settings";
 import type { T } from "../../../types/common";
 import Button from "../../../components/Button";
-import LText from "../../../components/LText";
+import PasswordInput from "../../../components/PasswordInput";
 
 type Props = {
   t: T,
@@ -24,61 +16,50 @@ type Props = {
 };
 type State = {
   password: string,
-};
-
-const mapDispatchToProps = {
-  setPrivacy,
+  secureTextEntry: boolean,
 };
 
 class PasswordAdd extends PureComponent<Props, State> {
   static navigationOptions = {
-    title: "Live Password",
+    title: i18next.t("auth.addPassword.title"),
   };
 
   state = {
     password: "",
+    secureTextEntry: true,
   };
 
-  onChangeText = (password: string) => {
+  onChange = (password: string) => {
     this.setState({ password });
   };
-
-  onPasswordSave = () => {
-    const { navigation, setPrivacy } = this.props;
+  toggleSecureTextEntry = () => {
+    const { secureTextEntry } = this.state;
+    this.setState({ secureTextEntry: !secureTextEntry });
+  };
+  onSubmit = () => {
+    const { navigation } = this.props;
     const { password } = this.state;
-    setPrivacy({
-      value: password,
-      authSecurityEnabled: true,
-    });
-    navigation.goBack();
+    navigation.navigate("ConfirmPassword", { password });
   };
 
   render() {
     const { t } = this.props;
+    const { secureTextEntry } = this.state;
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.root}>
-          <View style={styles.textContainer}>
-            <LText bold style={styles.textStyle}>
-              {t("auth.addPassword.title")}
-            </LText>
-            <LText style={styles.textStyle}>{t("auth.addPassword.desc")}</LText>
-          </View>
-          <TextInput
-            autoFocus
-            style={styles.textInputAS}
+          <PasswordInput
+            onChange={this.onChange}
+            onSubmit={this.onSubmit}
+            toggleSecureTextEntry={this.toggleSecureTextEntry}
+            secureTextEntry={secureTextEntry}
             placeholder={t("auth.addPassword.placeholder")}
-            returnKeyType="done"
-            keyboardType="numeric"
-            maxLength={7}
-            onChangeText={this.onChangeText}
-            onSubmitEditing={this.onPasswordSave}
           />
           <View style={styles.flex}>
             <Button
-              title={t("common.apply")}
+              title={t("common.confirm")}
               type="primary"
-              onPress={this.onPasswordSave}
+              onPress={this.onSubmit}
               containerStyle={[styles.buttonContainer]}
               titleStyle={[styles.buttonTitle]}
             />
@@ -89,28 +70,11 @@ class PasswordAdd extends PureComponent<Props, State> {
   }
 }
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(PasswordAdd);
+export default translate()(PasswordAdd);
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  textInputAS: {
-    padding: 16,
-    fontSize: 16,
-  },
-  textContainer: {
-    margin: 16,
-  },
-  textStyle: {
-    fontSize: 16,
-    marginBottom: 8,
   },
   buttonContainer: {
     marginHorizontal: 16,
