@@ -1,19 +1,29 @@
 //@flow
 /**
- * ADDING A NEW COIN to the frontend stack:
- * You need to add the coin in cryptocurrenciesById
+ * To add a new coin in live-common,
+ * You need to add the coin in the following cryptocurrenciesById map.
  *
  * ~~ fields ~~
  *
- * for id, we use by convention lowercased coin name with _ instead of space.
- * for coinType look at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
- * for ticker, check this is the one used in exchanges (BTW our countervalues api will only support the new coin until we do a redeployment to support it (whitelist))
+ * id: use by convention lowercased coin name with _ instead of space. if a coin get later rename, we NEVER rename the id for backward compatibility.
+ * coinType: use https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+ * family: group multiple coins together. For instance the "bitcoin" family includes bitcoin and all its derivated altcoins.
+ * ticker: check this is the one used in exchanges (BTW our countervalues api will only support the new coin until we do a redeployment to support it (whitelist))
  * scheme is generally the id
- * for color, check with us, this is usually picked by our design team.
- * for ledgerExplorerId, check with us, it is our internal explorer id (backend explorer team).
- * for blockAvgTime, check online & on explorers what's the average time between 2 blocks.
+ * color: is the dominant color of the currency logo, we will color the logo svg with it.
+ * ledgerExplorerId: if any, is Ledger's internal explorer id (backend explorer team).
+ * managerAppName: if any, is the exact name of the related Ledger's app in LL Manager.
+ * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
+ * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
+ * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
+ *
+ * Specific cases:
+ *
  * if it's a testnet coin, use isTestnetFor field. testnet MUST only be added if we actually support it at ledger (in our explorer api)
+ * if the coin is a fork of another coin and it must support the "split", add forkedFrom info.
  * if the coin is in bitcoin family, please provide bitcoinLikeInfo field
+ * if the coin is in ethereum family, you must as well provide ethereumLikeInfo
+ * if bitcoin family, supportsSegwit defines if it supports segwit.
  *
  * ~~ icon ~~
  *
@@ -23,9 +33,6 @@
  * ~~ also ~~
  *
  * Once added here, you also need to update CryptoCurrencyConfig in `src/explorers.js`.
- * In addition, you will need to run `yarn test`.
- * If it doesn't pass you will need to update the snapshots with `TZ=America/New_York jest -u`.
- * If you don't have `jest` installed locally you can install it with `npm install -g jest`.
  *
  */
 
