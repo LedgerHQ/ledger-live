@@ -9,8 +9,6 @@ import type { Account, Operation, CryptoCurrency } from "../types";
 import { getOperationAmountNumber } from "../operation";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 
-const currencies = listCryptoCurrencies();
-
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
 const tickerApproxMarketPrice = {
   BTC: 0.0073059,
@@ -25,6 +23,11 @@ const tickerApproxMarketPrice = {
   PPC: 0.000226,
   ZEC: 0.000205798
 };
+
+// mock only use subset of cryptocurrencies to not affect tests when adding coins
+const currencies = listCryptoCurrencies().filter(
+  c => tickerApproxMarketPrice[c.ticker]
+);
 
 /**
  * @memberof mock/account
