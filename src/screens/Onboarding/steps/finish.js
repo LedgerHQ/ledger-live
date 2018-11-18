@@ -34,11 +34,11 @@ class OnboardingStepFinish extends Component<Props> {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "white" }}>
         <View style={styles.confettiContainer} pointerEvents="none">
           <ConfettiParty emit={false} />
         </View>
-        <OnboardingLayout isCentered>
+        <OnboardingLayout isCentered style={{ backgroundColor: "none" }}>
           <View style={styles.hero}>{logo}</View>
           <LText style={styles.title} secondary semiBold>
             <Trans i18nKey="onboarding.stepFinish.title" />
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    zIndex: 1,
   },
   title: {
     marginTop: 24,
