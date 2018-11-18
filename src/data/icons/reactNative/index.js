@@ -13,6 +13,7 @@ export { default as komodo } from "./komodo";
 export { default as litecoin } from "./litecoin";
 export { default as monero } from "./monero";
 export { default as neo } from "./neo";
+export { default as nix } from "./nix";
 export { default as peercoin } from "./peercoin";
 export { default as pivx } from "./pivx";
 export { default as posw } from "./posw";
