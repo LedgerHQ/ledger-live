@@ -45,6 +45,7 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   mix: () => null,
   nano: hash => `https://nanoexplorer.io/blocks/${hash}`,
   neo: hash => `https://neotracker.io/tx/${hash}`,
+  nix: hash => `https://blockchain.nixplatform.io/tx/${hash}`,
   nimiq: hash => `https://nimiq.watch/#${hash}`,
   ontology: hash => `https://explorer.ont.io/transaction/${hash}`,
   particl: hash => `https://explorer.particl.io/tx/${hash}`,
