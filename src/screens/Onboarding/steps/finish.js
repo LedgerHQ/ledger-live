@@ -38,7 +38,7 @@ class OnboardingStepFinish extends Component<Props> {
         <View style={styles.confettiContainer} pointerEvents="none">
           <ConfettiParty emit={false} />
         </View>
-        <OnboardingLayout isCentered style={{ backgroundColor: "none" }}>
+        <OnboardingLayout isCentered style={{ backgroundColor: "transparent" }}>
           <View style={styles.hero}>{logo}</View>
           <LText style={styles.title} secondary semiBold>
             <Trans i18nKey="onboarding.stepFinish.title" />
