@@ -158,18 +158,18 @@ class Portfolio extends Component<
       hasAcceptedTradingWarning,
     } = this.props;
     const { opCount, scrollY, isModalOpened } = this.state;
+    const disclaimer = !hasAcceptedTradingWarning && (
+      <TradingDisclaimer
+        isOpened={isModalOpened}
+        onClose={this.onModalClose}
+      />
+    );
 
     if (accounts.length === 0) {
       return (
         <View style={styles.root}>
           <EmptyStatePortfolio navigation={navigation} />
-
-          {!hasAcceptedTradingWarning && (
-            <TradingDisclaimer
-              isOpened={isModalOpened}
-              onClose={this.onModalClose}
-            />
-          )}
+          {disclaimer}
         </View>
       );
     }
@@ -211,12 +211,7 @@ class Portfolio extends Component<
             }
           />
         </SafeAreaView>
-        {!hasAcceptedTradingWarning && (
-          <TradingDisclaimer
-            isOpened={isModalOpened}
-            onClose={this.onModalClose}
-          />
-        )}
+        {disclaimer}
       </View>
     );
   }

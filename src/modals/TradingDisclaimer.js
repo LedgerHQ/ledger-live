@@ -1,9 +1,10 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { Image, View, StyleSheet, Text } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import Button from "../components/Button";
+import LText from "../components/LText";
 import type { T } from "../types/common";
 import BottomModal from "../components/BottomModal";
 import type { Props as ModalProps } from "../components/BottomModal";
@@ -23,15 +24,15 @@ class TradingDisclaimer extends Component<Props> {
           style={styles.image}
           source={require("../images/shield-blue.png")}
         />
-        <Text style={styles.title}>
+        <LText semiBold style={styles.title}>
           {t("portfolio.tradingDisclaimer.title")}
-        </Text>
-        <Text style={styles.text}>
+        </LText>
+        <LText style={styles.text}>
           {t("portfolio.tradingDisclaimer.text1")}
-        </Text>
-        <Text style={{ ...styles.text, marginTop: 28 }}>
+        </LText>
+        <LText style={{ ...styles.text, marginTop: 28 }}>
           {t("portfolio.tradingDisclaimer.text2")}
-        </Text>
+        </LText>
         <View style={{ marginTop: 24, flexDirection: "row" }}>
           <Button
             type="primary"
@@ -66,6 +67,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
+    lineHeight: 21,
     textAlign: "center",
     color: colors.grey,
   },
