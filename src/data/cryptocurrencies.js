@@ -871,7 +871,7 @@ const cryptocurrenciesById = {
     managerAppName: "Megacoin",
     ticker: "MEC",
     scheme: "mec",
-    color: "#b31e24",
+    color: "#ed0012",
     family: "bitcoin",
     ledgerExplorerId: "mec",
     blockAvgTime: 2.5 * 60,
