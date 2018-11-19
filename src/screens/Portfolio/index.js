@@ -41,7 +41,6 @@ import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
-import defaultNavigationOptions from "../defaultNavigationOptions";
 import TradingDisclaimer from "../../modals/TradingDisclaimer";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
@@ -149,10 +148,7 @@ class Portfolio extends Component<
     } = this.props;
     const { opCount, scrollY, isModalOpened } = this.state;
     const disclaimer = !hasAcceptedTradingWarning && (
-      <TradingDisclaimer
-        isOpened={isModalOpened}
-        onClose={this.onModalClose}
-      />
+      <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
     );
 
     if (accounts.length === 0) {
