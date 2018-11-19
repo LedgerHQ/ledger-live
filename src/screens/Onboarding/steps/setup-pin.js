@@ -44,6 +44,7 @@ class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
         </View>
         <View style={styles.wrapper}>
           <BulletList
+            animated
             list={[
               <Trans
                 i18nKey="onboarding.stepSetupPin.step1"

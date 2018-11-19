@@ -41,6 +41,7 @@ class OnboardingStepWriteRecovery extends Component<OnboardingStepProps> {
         </View>
         <View style={styles.wrapper}>
           <BulletList
+            animated
             list={
               mode === "restore"
                 ? [
