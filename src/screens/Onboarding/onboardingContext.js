@@ -26,12 +26,6 @@ const INITIAL_CONTEXT: OnboardingContextType = {
   // wether or not should "welcome to ledger live" in first step
   showWelcome: true,
 
-  // used in security checklist
-  security: {
-    pinCode: null,
-    recoveryPhrase: null,
-  },
-
   setSecurityKey: noop,
   setShowWelcome: noop,
   resetCurrentStep: noop,
@@ -56,7 +50,6 @@ export class OnboardingContextProvider extends PureComponent<
     this.state = {
       ...INITIAL_CONTEXT,
 
-      setSecurityKey: this.setSecurityKey,
       setShowWelcome: this.setShowWelcome,
       resetCurrentStep: this.resetCurrentStep,
       nextWithNavigation: this.next,
@@ -69,14 +62,16 @@ export class OnboardingContextProvider extends PureComponent<
   // Navigate to next step
   // we may want to handle onboarding finish here (e.g update settings)
   next = (navigation: NavigationScreenProp<*>) => {
-    const { currentStep, mode } = this.state;
+    const { mode } = this.state;
+    const currentStep = navigation.state.routeName;
     const steps = STEPS_BY_MODE[mode];
     this.navigate(navigation, steps.findIndex(s => s.id === currentStep) + 1);
   };
 
   // Navigate to previous step
   prev = (navigation: NavigationScreenProp<*>) => {
-    const { currentStep, mode } = this.state;
+    const { mode } = this.state;
+    const currentStep = navigation.state.routeName;
     const steps = STEPS_BY_MODE[mode];
     this.navigate(navigation, steps.findIndex(s => s.id === currentStep) - 1);
   };
@@ -84,11 +79,6 @@ export class OnboardingContextProvider extends PureComponent<
   // Replace current steps with steps of given mode
   setOnboardingMode: SetOnboardingModeType = mode =>
     new Promise(resolve => this.setState({ mode }, resolve));
-
-  setSecurityKey = (key: string, val: boolean | null) =>
-    this.setState(state => ({
-      security: { ...state.security, [key]: val },
-    }));
 
   setShowWelcome = (showWelcome: boolean) =>
     new Promise(r => this.setState({ showWelcome }, r));

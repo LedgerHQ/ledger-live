@@ -50,7 +50,7 @@ class OnboardingStepScanQR extends Component<Props> {
           <LText style={styles.title}>
             <Trans i18nKey="onboarding.stepScanQR.title">
               {"text"}
-              <LText style={styles.title} semiBold>
+              <LText style={styles.titleInside} semiBold>
                 {"bold text"}
               </LText>
               {"text"}
@@ -73,9 +73,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
+    alignSelf: "center",
+    width: 300,
     fontSize: 16,
+    lineHeight: 24,
     color: colors.smoke,
     textAlign: "center",
+  },
+  titleInside: {
+    color: colors.darkBlue,
   },
 });
 

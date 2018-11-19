@@ -14,13 +14,22 @@ import RecoveryPhrase from "../assets/RecoveryPhrase";
 
 import type { OnboardingStepProps } from "../types";
 
+// TODO missing feature Seed Warning Box
+
 class OnboardingStepWriteRecovery extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
-    return <Button type="primary" title="Next" onPress={next} />;
+    return (
+      <Button
+        type="primary"
+        title={<Trans i18nKey="common.continue" />}
+        onPress={next}
+      />
+    );
   };
 
   render() {
+    const { mode } = this.props;
     return (
       <OnboardingLayout
         header="OnboardingStepWriteRecovery"
@@ -32,15 +41,38 @@ class OnboardingStepWriteRecovery extends Component<OnboardingStepProps> {
         </View>
         <View style={styles.wrapper}>
           <BulletList
-            list={[
-              <Trans i18nKey="onboarding.stepWriteRecovery.step1">
-                {"text"}
-                <LText semiBold>bold text</LText>
-                {"text"}
-              </Trans>,
-              <Trans i18nKey="onboarding.stepWriteRecovery.step2" />,
-              <Trans i18nKey="onboarding.stepWriteRecovery.step3" />,
-            ]}
+            list={
+              mode === "restore"
+                ? [
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step1" />,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step2">
+                      {"text"}
+                      <LText semiBold style={{ color: colors.darkBlue }}>
+                        bold text
+                      </LText>
+                      {"text"}
+                    </Trans>,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step3">
+                      {"text"}
+                      <LText semiBold style={{ color: colors.darkBlue }}>
+                        bold text
+                      </LText>
+                      {"text"}
+                    </Trans>,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step4" />,
+                  ]
+                : [
+                    <Trans i18nKey="onboarding.stepWriteRecovery.step1">
+                      {"text"}
+                      <LText semiBold style={{ color: colors.darkBlue }}>
+                        bold text
+                      </LText>
+                      {"text"}
+                    </Trans>,
+                    <Trans i18nKey="onboarding.stepWriteRecovery.step2" />,
+                    <Trans i18nKey="onboarding.stepWriteRecovery.step3" />,
+                  ]
+            }
           />
         </View>
       </OnboardingLayout>
@@ -50,7 +82,7 @@ class OnboardingStepWriteRecovery extends Component<OnboardingStepProps> {
 
 const styles = StyleSheet.create({
   hero: {
-    paddingVertical: 60,
+    paddingVertical: 40,
     backgroundColor: colors.lightGrey,
     alignItems: "center",
   },

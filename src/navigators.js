@@ -18,7 +18,16 @@ import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
 import Settings from "./screens/Settings";
-import Onboarding from "./screens/Onboarding";
+import OnboardingStepGetStarted from "./screens/Onboarding/steps/get-started";
+import OnboardingStepChooseDevice from "./screens/Onboarding/steps/choose-device";
+import OnboardingStepSetupPin from "./screens/Onboarding/steps/setup-pin";
+import OnboardingStepWriteRecovery from "./screens/Onboarding/steps/write-recovery";
+import OnboardingStepSecurityChecklist from "./screens/Onboarding/steps/security-checklist";
+import OnboardingStepPairNew from "./screens/Onboarding/steps/pair-new";
+import OnboardingStepPassword from "./screens/Onboarding/steps/password";
+import OnboardingStepShareData from "./screens/Onboarding/steps/share-data";
+import OnboardingStepScanQR from "./screens/Onboarding/steps/scan-qr";
+import OnboardingStepFinish from "./screens/Onboarding/steps/finish";
 import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
 import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
 import GeneralSettings from "./screens/Settings/General";
@@ -327,6 +336,23 @@ const BaseNavigator = createStackNavigator(
     ...closableStackNavigatorConfig,
   },
 );
+
+const Onboarding = createStackNavigator({
+  OnboardingStepGetStarted,
+  OnboardingStepChooseDevice,
+  OnboardingStepSetupPin,
+  OnboardingStepWriteRecovery,
+  OnboardingStepSecurityChecklist,
+  OnboardingStepPairNew,
+  OnboardingStepScanQR,
+  OnboardingStepPassword,
+  OnboardingStepShareData,
+  OnboardingStepFinish,
+  ImportAccounts,
+  PairDevices,
+});
+
+Onboarding.navigationOptions = { header: null };
 
 export const RootNavigator = createSwitchNavigator({
   BaseNavigator,

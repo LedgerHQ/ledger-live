@@ -26,37 +26,62 @@ import type { OnboardingStepProps } from "../types";
 
 const windowWidth = Dimensions.get("window").width;
 
-class OnboardingStepSecurityChecklist extends Component<OnboardingStepProps> {
+type SecurityChecklist = {
+  pinCode: ?boolean,
+  recoveryPhrase: ?boolean,
+};
+
+class OnboardingStepSecurityChecklist extends Component<
+  OnboardingStepProps,
+  SecurityChecklist,
+> {
+  state = {
+    pinCode: null,
+    recoveryPhrase: null,
+  };
+
   Footer = () => {
-    const { security, next } = this.props;
-    const isDisabled =
-      security.pinCode !== true || security.recoveryPhrase !== true;
+    const { next } = this.props;
+    const { pinCode, recoveryPhrase } = this.state;
+    const hidden = !pinCode || !recoveryPhrase;
+    if (hidden) return null;
     return (
       <Button
         type="primary"
         title={<Trans i18nKey="common.continue" />}
         onPress={next}
-        disabled={isDisabled}
       />
     );
   };
 
   answerYepPinCode = () => {
-    this.props.setSecurityKey("pinCode", true);
-    if (this.scrollView.current) {
-      this.scrollView.current.scrollTo({ x: windowWidth, animated: true });
-    }
+    this.setState({ pinCode: true }, () => {
+      setTimeout(() => {
+        if (this.scrollView.current) {
+          this.scrollView.current.scrollTo({ x: windowWidth, animated: true });
+        }
+      }, 200);
+    });
   };
 
-  answerNopePinCode = () => this.props.setSecurityKey("pinCode", false);
-  answerYepRecovery = () => this.props.setSecurityKey("recoveryPhrase", true);
-  answerNopeRecovery = () => this.props.setSecurityKey("recoveryPhrase", false);
+  answerNopePinCode = () => {
+    this.setState({ pinCode: false });
+  };
+  answerYepRecovery = () => {
+    this.setState({ recoveryPhrase: true });
+  };
+  answerNopeRecovery = () => {
+    this.setState({ recoveryPhrase: false });
+  };
 
   resetAnswer = () => {
-    if (this.props.security.pinCode === false)
-      this.props.setSecurityKey("pinCode", null);
-    if (this.props.security.recoveryPhrase === false)
-      this.props.setSecurityKey("recoveryPhrase", null);
+    this.setState({
+      recoveryPhrase: null,
+      pinCode: null,
+    });
+    if (this.scrollView.current) {
+      this.scrollView.current.scrollTo({ x: 0 });
+    }
   };
 
   contactSupport = () => Linking.openURL(urls.faq);
@@ -64,11 +89,11 @@ class OnboardingStepSecurityChecklist extends Component<OnboardingStepProps> {
   scrollView = createRef();
 
   render() {
-    const { security } = this.props;
+    const { pinCode, recoveryPhrase } = this.state;
     const subErr =
-      security.pinCode === false
+      pinCode === false
         ? "pinCode"
-        : security.recoveryPhrase === false
+        : recoveryPhrase === false
           ? "recoveryPhrase"
           : "";
     const isErrorModalOpened = !!subErr;
@@ -92,13 +117,13 @@ class OnboardingStepSecurityChecklist extends Component<OnboardingStepProps> {
               <Trans i18nKey="onboarding.stepSecurityChecklist.pinCode.title" />
             </LText>
             <OnboardingChoice
-              isChecked={security.pinCode === true}
+              isChecked={pinCode === true}
               onPress={this.answerYepPinCode}
             >
               <Trans i18nKey="common.yes" />
             </OnboardingChoice>
             <OnboardingChoice
-              isChecked={security.pinCode === false}
+              isChecked={pinCode === false}
               onPress={this.answerNopePinCode}
             >
               <Trans i18nKey="common.no" />
@@ -110,13 +135,13 @@ class OnboardingStepSecurityChecklist extends Component<OnboardingStepProps> {
               <Trans i18nKey="onboarding.stepSecurityChecklist.recoveryPhrase.title" />
             </LText>
             <OnboardingChoice
-              isChecked={security.recoveryPhrase === true}
+              isChecked={recoveryPhrase === true}
               onPress={this.answerYepRecovery}
             >
               <Trans i18nKey="common.yes" />
             </OnboardingChoice>
             <OnboardingChoice
-              isChecked={security.recoveryPhrase === false}
+              isChecked={recoveryPhrase === false}
               onPress={this.answerNopeRecovery}
             >
               <Trans i18nKey="common.no" />
@@ -177,6 +202,7 @@ const styles = StyleSheet.create({
   modalText: {
     paddingHorizontal: 16,
     fontSize: 14,
+    lineHeight: 21,
     color: colors.smoke,
     textAlign: "center",
   },

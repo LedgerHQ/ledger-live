@@ -107,7 +107,9 @@ class Row extends PureComponent<RowProps> {
         <View style={styles.rowIcon}>
           {Icon && <Icon size={16} color={colors.live} />}
         </View>
-        <LText>{label}</LText>
+        <LText style={styles.label} semiBold>
+          {label}
+        </LText>
       </TouchableOpacity>
     );
   }
@@ -128,6 +130,10 @@ const styles = StyleSheet.create({
     borderColor: colors.fog,
     borderRadius: 4,
     marginBottom: 8,
+  },
+  label: {
+    fontSize: 14,
+    color: colors.darkBlue,
   },
   rowIcon: {
     width: 16,
