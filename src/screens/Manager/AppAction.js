@@ -106,31 +106,13 @@ class AppAction extends PureComponent<
           <View style={styles.body}>
             <View style={styles.headIcon}>
               {icon}
-              <View
-                style={{
-                  position: "absolute",
-                  top: -2,
-                  right: -2,
-                  backgroundColor: "white",
-                  padding: 4,
-                  borderRadius: 50,
-                }}
-              >
+              <View style={styles.loaderWrapper}>
                 {pending ? (
                   <Spinning clockwise>
                     <Image source={spinner} style={{ width: 24, height: 24 }} />
                   </Spinning>
                 ) : !error ? (
-                  <View
-                    style={{
-                      borderRadius: 24,
-                      backgroundColor: colors.green,
-                      width: 24,
-                      height: 24,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
+                  <View style={styles.iconWrapper}>
                     <Check size={14} color={colors.white} />
                   </View>
                 ) : null}
@@ -161,17 +143,14 @@ class AppAction extends PureComponent<
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
-    minHeight: 280,
     paddingHorizontal: 20,
   },
   body: {
-    flex: 1,
     flexDirection: "column",
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 40,
-    paddingBottom: 20,
+    paddingVertical: 20,
   },
   close: {
     position: "absolute",
@@ -198,6 +177,22 @@ const styles = StyleSheet.create({
   },
   retryButton: {
     alignSelf: "stretch",
+  },
+  loaderWrapper: {
+    position: "absolute",
+    top: -2,
+    right: -2,
+    backgroundColor: "white",
+    padding: 4,
+    borderRadius: 50,
+  },
+  iconWrapper: {
+    borderRadius: 24,
+    backgroundColor: colors.green,
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

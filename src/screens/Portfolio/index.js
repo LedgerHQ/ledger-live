@@ -30,7 +30,6 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
-import PortfolioIcon from "../../icons/Portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
 
@@ -47,13 +46,6 @@ import TradingDisclaimer from "../../modals/TradingDisclaimer";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
-
-const navigationOptions = {
-  ...defaultNavigationOptions,
-  tabBarIcon: ({ tintColor }: *) => (
-    <PortfolioIcon size={18} color={tintColor} />
-  ),
-};
 
 const mapStateToProps = state => ({
   accounts: accountsSelector(state),
@@ -80,8 +72,6 @@ class Portfolio extends Component<
     isModalOpened: boolean,
   },
 > {
-  static navigationOptions = navigationOptions;
-
   state = {
     opCount: 50,
     isModalOpened: !this.props.hasAcceptedTradingWarning,
