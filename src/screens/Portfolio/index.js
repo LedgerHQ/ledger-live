@@ -20,8 +20,11 @@ import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/Animat
 import colors from "../../colors";
 
 import { accountsSelector } from "../../reducers/accounts";
-import { hasCompletedOnboardingSelector } from "../../reducers/settings";
-
+import {
+  hasCompletedOnboardingSelector,
+  hasAcceptedTradingWarningSelector,
+} from "../../reducers/settings";
+import { acceptTradingWarning } from "../../actions/settings";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
@@ -40,6 +43,7 @@ import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
 import defaultNavigationOptions from "../defaultNavigationOptions";
+import TradingDisclaimer from "../../modals/TradingDisclaimer";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
@@ -54,24 +58,33 @@ const navigationOptions = {
 const mapStateToProps = state => ({
   accounts: accountsSelector(state),
   hasCompletedOnboarding: hasCompletedOnboardingSelector(state),
+  hasAcceptedTradingWarning: hasAcceptedTradingWarningSelector(state),
 });
+
+const mapDispatchToProps = {
+  acceptTradingWarning,
+};
 
 class Portfolio extends Component<
   {
+    acceptTradingWarning: () => void,
     accounts: Account[],
     summary: Summary,
     navigation: *,
     hasCompletedOnboarding: boolean,
+    hasAcceptedTradingWarning: boolean,
   },
   {
     opCount: number,
     scrollY: AnimatedValue,
+    isModalOpened: boolean,
   },
 > {
   static navigationOptions = navigationOptions;
 
   state = {
     opCount: 50,
+    isModalOpened: !this.props.hasAcceptedTradingWarning,
     scrollY: new Animated.Value(0),
   };
 
@@ -132,14 +145,31 @@ class Portfolio extends Component<
     this.setState(({ opCount }) => ({ opCount: opCount + 50 }));
   };
 
+  onModalClose = () => {
+    this.props.acceptTradingWarning();
+    this.setState({ isModalOpened: false });
+  };
+
   render() {
-    const { summary, accounts, navigation } = this.props;
-    const { opCount, scrollY } = this.state;
+    const {
+      summary,
+      accounts,
+      navigation,
+      hasAcceptedTradingWarning,
+    } = this.props;
+    const { opCount, scrollY, isModalOpened } = this.state;
 
     if (accounts.length === 0) {
       return (
         <View style={styles.root}>
           <EmptyStatePortfolio navigation={navigation} />
+
+          {!hasAcceptedTradingWarning && (
+            <TradingDisclaimer
+              isOpened={isModalOpened}
+              onClose={this.onModalClose}
+            />
+          )}
         </View>
       );
     }
@@ -181,13 +211,22 @@ class Portfolio extends Component<
             }
           />
         </SafeAreaView>
+        {!hasAcceptedTradingWarning && (
+          <TradingDisclaimer
+            isOpened={isModalOpened}
+            onClose={this.onModalClose}
+          />
+        )}
       </View>
     );
   }
 }
 
 export default compose(
-  connect(mapStateToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   provideSummary,
   translate(),
 )(Portfolio);

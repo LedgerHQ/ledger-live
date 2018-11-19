@@ -43,6 +43,7 @@ export type SettingsState = {
   selectedTimeRange: TimeRange,
   orderAccounts: string,
   hasCompletedOnboarding: boolean,
+  hasAcceptedTradingWarning: boolean,
   developerModeEnabled: boolean,
 };
 
@@ -57,6 +58,7 @@ const INITIAL_STATE: SettingsState = {
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
+  hasAcceptedTradingWarning: false,
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -167,6 +169,11 @@ const handlers: Object = {
     ...state,
     hasCompletedOnboarding: true,
   }),
+
+  SETTINGS_ACCEPT_TRADING_WARNING: state => ({
+    ...state,
+    hasAcceptedTradingWarning: true,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -246,5 +253,8 @@ export const orderAccountsSelector = (state: State) =>
 
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
+
+export const hasAcceptedTradingWarningSelector = (state: State) =>
+  state.settings.hasAcceptedTradingWarning;
 
 export default handleActions(handlers, INITIAL_STATE);
