@@ -7,11 +7,11 @@ import { View, StyleSheet } from "react-native";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import DeviceIconBack from "../../../components/DeviceIconBack";
+import DeviceNanoAction from "../../../components/DeviceNanoAction";
 import DeviceIconCheck from "../../../components/DeviceIconCheck";
 import BulletList, { BulletItemText } from "../../../components/BulletList";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
-import NanoXPincode from "../assets/NanoXPincode";
 import colors from "../../../colors";
 import { deviceNames } from "../../../wording";
 
@@ -40,7 +40,7 @@ class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
         noHorizontalPadding
       >
         <View style={styles.hero}>
-          <NanoXPincode />
+          <DeviceNanoAction screen="pin" />
         </View>
         <View style={styles.wrapper}>
           <BulletList
