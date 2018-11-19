@@ -1,13 +1,19 @@
 // @flow
 
 import React, { Component } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Observable } from "rxjs";
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  Clipboard,
+  ToastAndroid,
+} from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import LText from "../components/LText";
 import Button from "../components/Button";
-import TransportBLE from "../react-native-hw-transport-ble";
 import colors from "../colors";
+import type { Log } from "../react-native-hw-transport-ble/debug";
+import { logsObservable } from "../react-native-hw-transport-ble/debug";
 
 const styles = StyleSheet.create({
   root: {
@@ -16,60 +22,38 @@ const styles = StyleSheet.create({
   },
 });
 
-class DeviceItem extends Component<{ device: * }, *> {
-  state = {
-    data: null,
-    error: null,
-  };
+const mapLogToText = (log: Log) => {
+  switch (log.type) {
+    case "ble-apdu-in":
+      return "";
 
-  onPress = async () => {
-    this.setState({ data: null, error: null });
-    const { device } = this.props;
-    try {
-      const transport = await TransportBLE.open(device.id);
-      transport.setDebugMode(true);
-      try {
-        const data = await transport.send(0, 0, 0, 0);
-        this.setState({ data });
-      } finally {
-        transport.close();
-      }
-    } catch (error) {
-      this.setState({ error });
-    }
-  };
+    case "ble-frame-in":
+      return `<=  ${String(log.message)}`;
 
+    case "ble-frame-out":
+      return `=>  ${String(log.message)}`;
+
+    case "ble-apdu-out":
+      return "DONE";
+
+    default:
+      return log.message;
+  }
+};
+
+class LogItem extends Component<{ log: Log }> {
   render() {
-    const { device } = this.props;
-    const { data, error } = this.state;
+    const { log } = this.props;
+    const text = mapLogToText(log);
     return (
       <View
         style={{
-          margin: 5,
           padding: 5,
           borderBottomWidth: 1,
-          borderBottomColor: colors.grey,
+          borderBottomColor: colors.lightFog,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <LText semiBold numberOfLines={1} style={{ fontSize: 14, flex: 2 }}>
-            {device.name}
-          </LText>
-          <Button
-            containerStyle={{ flex: 1 }}
-            type="secondary"
-            title="send APDU"
-            onPress={this.onPress}
-          />
-        </View>
-        {data ? (
-          <LText style={{ color: colors.success }}>
-            {data.toString("hex")}
-          </LText>
-        ) : null}
-        {error ? (
-          <LText style={{ color: colors.alert }}>{String(error)}</LText>
-        ) : null}
+        <LText style={{ fontSize: 10 }}>{text}</LText>
       </View>
     );
   }
@@ -80,78 +64,62 @@ export default class DebugBLE extends Component<
     navigation: NavigationScreenProp<*>,
   },
   {
-    items: *[],
-    bleError: ?Error,
-    scanning: boolean,
+    logs: Log[],
   },
 > {
   static navigationOptions = {
-    title: "Debug BLE",
+    title: "Debug BLE – oto edition™",
   };
 
   state = {
-    items: [],
-    bleError: null,
-    scanning: false,
+    logs: [],
   };
 
   sub: *;
 
   componentDidMount() {
-    this.startScan();
-  }
-
-  startScan = () => {
-    this.setState({ scanning: true });
-
-    this.sub = Observable.create(TransportBLE.listen).subscribe({
-      complete: () => {
-        this.setState({ scanning: false });
-      },
-      next: e => {
-        if (e.type === "add") {
-          const device = e.descriptor;
-          this.setState(({ items }) => ({
-            // FIXME seems like we have dup. ideally we'll remove them on the listen side!
-            items: items.some(i => i.id === device.id)
-              ? items
-              : items.concat(device),
-          }));
-        }
-      },
-      error: bleError => {
-        this.setState({ bleError, scanning: false });
-      },
+    this.sub = logsObservable.subscribe(log => {
+      this.setState(({ logs }) => ({ logs: logs.concat(log) }));
     });
-  };
+  }
 
   componentWillUnmount() {
     if (this.sub) this.sub.unsubscribe();
   }
 
-  renderItem = ({ item }: { item: * }) => <DeviceItem device={item} />;
+  keyExtractor = (item: Log) => String(item.id);
 
-  keyExtractor = (item: *) => item.id;
+  renderItem = ({ item }: { item: Log }) => <LogItem log={item} />;
 
-  reload = async () => {
-    if (this.sub) this.sub.unsubscribe();
-    this.startScan();
+  copy = () => {
+    const content = this.state.logs.map(mapLogToText).join("\n");
+    Clipboard.setString(content);
+    ToastAndroid.show("logs copied!", ToastAndroid.SHORT);
   };
 
   render() {
-    const { items, bleError } = this.state;
+    const { logs } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        {bleError ? <LText>{bleError.message}</LText> : null}
-        <Button
-          type="primary"
-          title="Re-scan"
-          onPress={this.reload}
-          style={{ margin: 20 }}
-        />
+        <View
+          style={{
+            padding: 5,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <LText bold>BLE Framing logs</LText>
+          <Button
+            containerStyle={{ width: 100 }}
+            type="lightSecondary"
+            title="Copy"
+            onPress={this.copy}
+          />
+        </View>
         <FlatList
           style={{ flex: 1 }}
-          data={items}
+          data={logs}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
           contentContainerStyle={styles.root}

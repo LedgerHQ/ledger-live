@@ -754,10 +754,10 @@
     "@ledgerhq/hw-transport" "^4.24.0"
     create-hash "^1.1.3"
 
-"@ledgerhq/hw-app-btc@^4.27.0":
-  version "4.27.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.27.0.tgz#11fc822bd34a47a39b1a7ae03ced69cf1d432796"
-  integrity sha512-7Ck48wCBb6nd9UXarNeGOsOqbOTi2cs4AxFhbDNrVLvPiBSH0yEiNQEF95J6u5BxKkAdM1GV9LoRumR4KhZGqQ==
+"@ledgerhq/hw-app-btc@^4.30.0":
+  version "4.30.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.30.0.tgz#50cef544c361072ce12b12b1e8166d7a8b0d9dbd"
+  integrity sha512-xVXcI4cvBZiqx2o6fB+3tt0HhzJwGH17EoGP3PRJoFvIRi3Mnf3R0CU5k8Y7xFzISvmBEO2GKcetjg4dfgqDKw==
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
     create-hash "^1.1.3"
@@ -777,10 +777,10 @@
     "@ledgerhq/hw-transport" "^4.24.0"
     bip32-path "0.4.2"
 
-"@ledgerhq/hw-transport-http@^4.29.0":
-  version "4.29.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.29.0.tgz#d8c3b7ea7cb77b1d56d814d0b8ea2eb3f08c626b"
-  integrity sha512-N+VJn77GIBjDB9zbNIrBU5H7eWsG4SoQ6R7LyVfxVJjNuMvYw+0haeLf9jVjWbZmnJJfP+xSFaiZEpXKfUMcjQ==
+"@ledgerhq/hw-transport-http@^4.29.1":
+  version "4.29.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.29.1.tgz#db7179c6e22a994e762ac0f76a0a3aa816baffa6"
+  integrity sha512-RtBCMzVyQhji7kwrOSVsTA7i+tM537pI6vCWwDxOPFSdOTXHC5mVt0qOF3yWwCE6uGtvcC1/z8svUXnD2QbtRA==
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
     axios "^0.18.0"
@@ -793,10 +793,10 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@^4.4.2":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.4.2.tgz#0c60efe9f13fa17c39db880ee87d68561ba54da8"
-  integrity sha512-oghcqyZY9G2xSH/PDDqTH2DZ+JLeRLEN0nEEo1t48zdXsu6LZ5ZweF8pK3jSETi+IfLYOzUuB93iJM1+AcVYAA==
+"@ledgerhq/live-common@^4.4.3":
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.4.3.tgz#02d488707b1bb3a929f63b321513080f986a8526"
+  integrity sha512-LoBHvTwCZeaBJs4/3T+s9nve9nhdq6go1FXuXUP2cQ8U/TxWi1lbvsQkhsfa0f7HNpO/VlwoSaal/Trw9xXbVA==
   dependencies:
     "@ledgerhq/hw-app-btc" "^4.24.0"
     "@ledgerhq/hw-app-eth" "^4.24.0"
@@ -822,10 +822,10 @@
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
 
-"@ledgerhq/react-native-ledger-core@^0.3.32":
-  version "0.3.32"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.32.tgz#ed176752ad0e7ef9dbf9ce25b5a79d7176cf2a4e"
-  integrity sha512-ZocuHoPYP9BMXu7jWf9CkwCkkI/6LLkObS3lfWiaZzpHyBgmZ5rVrwiKvG5QaLEz6G1tkzCl9DCovMhuQqz7Mw==
+"@ledgerhq/react-native-ledger-core@^0.3.33":
+  version "0.3.33"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.33.tgz#8d73bc1faf02c2ee7090a142d682d9be849342d5"
+  integrity sha512-0V405q3pkXXws7+0ThxhHCYCOVzbL2zof/+ePh2xfwB2y23buXRQP6oROJ2HQ76tqCkiRBDsf0c2hQnG1ZqdkQ==
 
 "@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"

@@ -8,11 +8,12 @@ import {
 } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import colors from "./colors";
+import PortfolioIcon from "./icons/Portfolio";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
 import { getFontStyle } from "./components/LText";
-import defaultNavigationOptions from "./screens/defaultNavigationOptions";
+import TabIcon from "./components/TabIcon";
 import Portfolio from "./screens/Portfolio";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
@@ -109,9 +110,8 @@ const SettingsStack = createStackNavigator(
 );
 
 SettingsStack.navigationOptions = {
-  ...defaultNavigationOptions,
-  tabBarIcon: ({ tintColor }: *) => (
-    <SettingsIcon size={18} color={tintColor} />
+  tabBarIcon: (props: *) => (
+    <TabIcon Icon={SettingsIcon} i18nKey="tabs.settings" {...props} />
   ),
 };
 
@@ -164,8 +164,9 @@ const ManagerStack = createStackNavigator(
 );
 
 ManagerStack.navigationOptions = {
-  ...defaultNavigationOptions,
-  tabBarIcon: ({ tintColor }: *) => <ManagerIcon size={18} color={tintColor} />,
+  tabBarIcon: (props: *) => (
+    <TabIcon Icon={ManagerIcon} i18nKey="tabs.manager" {...props} />
+  ),
 };
 
 const AccountsStack = createStackNavigator(
@@ -176,29 +177,35 @@ const AccountsStack = createStackNavigator(
   stackNavigatorConfig,
 );
 AccountsStack.navigationOptions = {
-  ...defaultNavigationOptions,
   header: null,
-  tabBarIcon: ({ tintColor }: *) => (
-    <AccountsIcon size={18} color={tintColor} />
+  tabBarIcon: (props: *) => (
+    <TabIcon Icon={AccountsIcon} i18nKey="tabs.accounts" {...props} />
   ),
 };
 
-const getTabItems = () => {
-  const items: any = {
-    Portfolio,
-    Accounts: AccountsStack,
+const Main = createBottomTabNavigator(
+  {
+    Portfolio: {
+      screen: Portfolio,
+      navigationOptions: {
+        tabBarIcon: (props: *) => (
+          <TabIcon Icon={PortfolioIcon} i18nKey="tabs.portfolio" {...props} />
+        ),
+      },
+    },
+    AccountsStack,
+    // $FlowFixMe
     Transfer,
-    Manager: ManagerStack,
-    Settings: SettingsStack,
-  };
-  return items;
-};
-
-const Main = createBottomTabNavigator(getTabItems(), {
-  tabBarOptions: {
-    style: styles.bottomTabBar,
+    ManagerStack,
+    SettingsStack,
   },
-});
+  {
+    tabBarOptions: {
+      style: styles.bottomTabBar,
+      showLabel: false,
+    },
+  },
+);
 
 Main.navigationOptions = {
   header: null,

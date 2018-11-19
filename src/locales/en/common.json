@@ -346,6 +346,13 @@
       "cta": "Scan QR code"
     }
   },
+  "tabs": {
+    "portfolio": "Portfolio",
+    "accounts": "Accounts",
+    "transfer": "Transfer",
+    "manager": "Manager",
+    "settings": "Settings"
+  },
   "portfolio": {
     "totalBalance": "Total balance",
     "syncError": "Sync error",
