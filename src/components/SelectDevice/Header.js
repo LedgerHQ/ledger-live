@@ -5,6 +5,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
+import { deviceNames } from "../../wording";
 import colors from "../../colors";
 import Rounded from "../Rounded";
 import LText from "../LText";
@@ -20,8 +21,11 @@ class ScanningFooter extends PureComponent<Props> {
         <Rounded bg={colors.pillActiveBackground}>
           <Icon name="bluetooth" color={colors.live} size={28} />
         </Rounded>
-        <LText semiBold style={styles.text}>
-          <Trans i18nKey="SelectDevice.headerDescription" />
+        <LText style={styles.text}>
+          <Trans
+            i18nKey="SelectDevice.headerDescription"
+            values={deviceNames.nanoX}
+          />
         </LText>
       </View>
     );
@@ -30,8 +34,7 @@ class ScanningFooter extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   root: {
-    paddingVertical: 30,
-    paddingHorizontal: 50,
+    paddingVertical: 24,
     flexDirection: "column",
     alignItems: "center",
   },
@@ -39,6 +42,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
     color: colors.black,
     fontSize: 14,
+    lineHeight: 21,
     textAlign: "center",
   },
 });

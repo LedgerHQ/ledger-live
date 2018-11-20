@@ -61,6 +61,10 @@ class AnalyticsRow extends PureComponent<Props, State> {
           desc={<Trans i18nKey="settings.display.analyticsModal.desc" />}
           bullets={[
             {
+              key: "bullet0",
+              val: <Trans i18nKey="settings.display.analyticsModal.bullet0" />,
+            },
+            {
               key: "bullet1",
               val: <Trans i18nKey="settings.display.analyticsModal.bullet1" />,
             },

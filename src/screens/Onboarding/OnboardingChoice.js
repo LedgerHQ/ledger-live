@@ -22,7 +22,10 @@ class OnboardingChoice extends PureComponent<Props> {
         style={[styles.root, isChecked && styles.rootChecked]}
       >
         <View style={styles.inner}>
-          <LText style={[styles.text, isChecked && styles.textChecked]}>
+          <LText
+            semiBold={isChecked}
+            style={[styles.text, isChecked && styles.textChecked]}
+          >
             {children}
           </LText>
         </View>
@@ -55,6 +58,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
+    lineHeight: 24,
     color: colors.grey,
   },
   textChecked: {

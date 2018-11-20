@@ -18,7 +18,7 @@ import IconArrowRight from "../../../icons/ArrowRight";
 import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 import { deviceNames } from "../../../wording";
-
+import PoweredByLedger from "../../Settings/PoweredByLedger";
 import type { OnboardingStepProps } from "../types";
 
 const logo = <Image source={require("../../../images/logo.png")} />;
@@ -37,31 +37,12 @@ type Props = OnboardingStepProps & {
 class OnboardingStepWelcome extends Component<Props> {
   buy = () => Linking.openURL(urls.buyNanoX);
 
-  Footer = () => (
-    <View style={styles.footer}>
-      <LText style={styles.footerText}>
-        <Trans i18nKey="onboarding.stepWelcome.noDevice" />
-      </LText>
-      <TouchableOpacity
-        onPress={this.buy}
-        style={styles.buyTouch}
-        hitSlop={hitSlop}
-      >
-        <LText style={[styles.footerText, styles.buy]}>
-          <Trans
-            i18nKey="onboarding.stepWelcome.buy"
-            values={deviceNames.nanoX}
-          />
-        </LText>
-        <IconArrowRight size={16} color={colors.live} />
-      </TouchableOpacity>
-    </View>
-  );
+  Footer = () => <PoweredByLedger />;
 
   render() {
     const { onWelcomed } = this.props;
     return (
-      <OnboardingLayout isCentered Footer={this.Footer}>
+      <OnboardingLayout isCentered borderedFooter={false} Footer={this.Footer}>
         <View style={styles.logo}>{logo}</View>
         <LText style={styles.title} secondary semiBold>
           <Trans i18nKey="onboarding.stepWelcome.title" />
@@ -77,6 +58,24 @@ class OnboardingStepWelcome extends Component<Props> {
           title={<Trans i18nKey="onboarding.stepWelcome.start" />}
           onPress={onWelcomed}
         />
+        <View style={styles.sub}>
+          <LText style={styles.subText}>
+            <Trans i18nKey="onboarding.stepWelcome.noDevice" />
+          </LText>
+          <TouchableOpacity
+            onPress={this.buy}
+            style={styles.buyTouch}
+            hitSlop={hitSlop}
+          >
+            <LText style={[styles.subText, styles.buy]}>
+              <Trans
+                i18nKey="onboarding.stepWelcome.buy"
+                values={deviceNames.nanoX}
+              />
+            </LText>
+            <IconArrowRight size={16} color={colors.live} />
+          </TouchableOpacity>
+        </View>
       </OnboardingLayout>
     );
   }
@@ -95,14 +94,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 32,
   },
-  footer: {
+  sub: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 24,
   },
-  footerText: {
+  subText: {
     fontSize: 14,
   },
+  footer: {},
   buy: {
     marginHorizontal: 5,
     color: colors.live,

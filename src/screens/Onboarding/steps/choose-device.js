@@ -110,7 +110,9 @@ class DeviceItem extends PureComponent<DeviceItemProps> {
     return (
       <TouchableOpacity onPress={onPress} style={styles.deviceItem}>
         <Icon />
-        <LText style={styles.deviceTitle}>{title}</LText>
+        <LText semiBold style={styles.deviceTitle}>
+          {title}
+        </LText>
         {desc && <LText style={styles.deviceDesc}>{desc}</LText>}
       </TouchableOpacity>
     );
@@ -145,8 +147,10 @@ const styles = StyleSheet.create({
   },
   modalDesc: {
     fontSize: 14,
+    lineHeight: 21,
     color: colors.smoke,
     paddingHorizontal: 16,
+    marginBottom: 8,
     textAlign: "center",
   },
   modalActions: {

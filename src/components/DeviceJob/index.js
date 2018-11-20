@@ -109,6 +109,14 @@ class DeviceJob extends Component<
   };
 
   onStart = (deviceId: string) => {
+    this.debouncedSetStepIndex.cancel();
+    if (this.sub) this.sub.unsubscribe();
+
+    if (this.props.steps.length === 0) {
+      this.props.onDone(deviceId, {});
+      return;
+    }
+
     this.setState({
       connecting: true,
       error: null,
@@ -116,8 +124,6 @@ class DeviceJob extends Component<
       meta: {},
     });
 
-    this.debouncedSetStepIndex.cancel();
-    if (this.sub) this.sub.unsubscribe();
     this.sub = chainSteps(
       this.props.steps,
       deviceId,
@@ -155,12 +161,14 @@ class DeviceJob extends Component<
   render() {
     const { steps, deviceName } = this.props;
     const { connecting, stepIndex, error } = this.state;
+    const step = steps[stepIndex];
+    if (!step) return null;
     return (
       <StepRunnerModal
         isOpened={connecting}
         onClose={this.onClose}
         onRetry={this.onRetry}
-        step={steps[stepIndex]}
+        step={step}
         onStepDone={this.onStepDone}
         error={error}
         deviceName={deviceName}
