@@ -1,4 +1,9 @@
 {
-    "home_title": "Bonjour, {{name}} !",
-    "home_subtitle": "Voici un résumé de vos comptes"
+  "portfolio": {
+    "greeting": {
+      "morning": "Bonjour",
+      "evening": "Bonsoir",
+      "afternoon": "Bonjour"
+    }
+  }
 }
