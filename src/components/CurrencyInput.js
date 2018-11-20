@@ -116,6 +116,7 @@ class CurrencyInput extends PureComponent<Props, State> {
   setDisplayValue = (isFocused: boolean = false) => {
     const { value, showAllDigits, unit, subMagnitude, allowZero } = this.props;
     this.setState({
+      isFocused,
       displayValue:
         !value || (value.isZero() && !allowZero)
           ? ""
@@ -150,7 +151,6 @@ class CurrencyInput extends PureComponent<Props, State> {
 
   syncInput = ({ isFocused }: { isFocused: boolean }) => {
     if (isFocused !== this.state.isFocused) {
-      this.setState({ isFocused });
       this.setDisplayValue(isFocused);
     }
   };
