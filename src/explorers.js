@@ -40,6 +40,7 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   komodo: hash => `https://kmdexplorer.io/tx/${hash}`,
   lisk: () => null,
   litecoin: hash => `https://live.blockcypher.com/ltc/tx/${hash}`,
+  megacoin: hash => `https://chainz.cryptoid.info/mec/tx.dws?${hash}.htm`,
   monero: hash => `https://moneroblocks.info/tx/${hash}`,
   musicoin: () => null,
   mix: () => null,
