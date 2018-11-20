@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import { version } from "@ledgerhq/live-common/package.json";
 import "./index.css";
-import registerServiceWorker from "./registerServiceWorker";
+// import registerServiceWorker from "./registerServiceWorker";
 import Demos from "./demos";
 
 window.LEDGER_CV_API =
@@ -52,4 +52,5 @@ ReactDOM.render(
   </BrowserRouter>,
   document.getElementById("root")
 );
-registerServiceWorker();
+
+// registerServiceWorker();
