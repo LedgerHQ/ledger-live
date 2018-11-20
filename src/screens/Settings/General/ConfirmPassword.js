@@ -96,6 +96,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
       <SafeAreaView style={styles.root}>
         <KeyboardView>
           <PasswordInput
+            inline
             autoFocus
             error={passwordError}
             onChange={this.onChange}

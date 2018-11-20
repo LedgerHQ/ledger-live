@@ -13,7 +13,7 @@ type Props = {
   toggleSecureTextEntry: () => void,
   placeholder: string,
   autoFocus?: boolean,
-  withBorder?: boolean,
+  inline?: boolean,
   onFocus?: *,
   onBlur?: *,
   error?: ?Error,
@@ -29,12 +29,12 @@ class PasswordInput extends PureComponent<Props> {
       onSubmit,
       toggleSecureTextEntry,
       placeholder,
-      withBorder,
+      inline,
       onFocus,
       onBlur,
     } = this.props;
     return (
-      <View style={[styles.container, withBorder && styles.withBorder]}>
+      <View style={[styles.container, !inline && styles.nonInlineContainer]}>
         <TextInput
           autoFocus={autoFocus}
           style={[
@@ -55,11 +55,19 @@ class PasswordInput extends PureComponent<Props> {
         />
         {secureTextEntry ? (
           <Touchable style={styles.iconInput} onPress={toggleSecureTextEntry}>
-            <Icon name="eye-slash" size={16} color={colors.grey} />
+            <Icon
+              name="eye-slash"
+              size={16}
+              color={inline ? colors.grey : colors.fog}
+            />
           </Touchable>
         ) : (
           <Touchable style={styles.iconInput} onPress={toggleSecureTextEntry}>
-            <Icon name="eye" size={16} color={colors.grey} />
+            <Icon
+              name="eye"
+              size={16}
+              color={inline ? colors.grey : colors.fog}
+            />
           </Touchable>
         )}
       </View>
@@ -71,11 +79,11 @@ export default PasswordInput;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: colors.white,
     borderRadius: 4,
     marginBottom: 16,
   },
-  withBorder: {
+  nonInlineContainer: {
+    backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.lightFog,
   },

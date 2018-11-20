@@ -111,21 +111,17 @@ export default class Root extends Component<{}, { appState: * }> {
           {ready =>
             ready ? (
               <AuthPass>
-                {state =>
-                  !state.isLocked && (
-                    <LocaleProvider>
-                      <BridgeSyncProvider>
-                        <CounterValues.PollingProvider>
-                          <ButtonUseTouchable.Provider value={true}>
-                            <OnboardingContextProvider>
-                              <App />
-                            </OnboardingContextProvider>
-                          </ButtonUseTouchable.Provider>
-                        </CounterValues.PollingProvider>
-                      </BridgeSyncProvider>
-                    </LocaleProvider>
-                  )
-                }
+                <LocaleProvider>
+                  <BridgeSyncProvider>
+                    <CounterValues.PollingProvider>
+                      <ButtonUseTouchable.Provider value={true}>
+                        <OnboardingContextProvider>
+                          <App />
+                        </OnboardingContextProvider>
+                      </ButtonUseTouchable.Provider>
+                    </CounterValues.PollingProvider>
+                  </BridgeSyncProvider>
+                </LocaleProvider>
               </AuthPass>
             ) : (
               <LoadingApp />

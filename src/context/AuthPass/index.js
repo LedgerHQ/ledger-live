@@ -18,8 +18,6 @@ import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
 import { privacySelector } from "../../reducers/settings";
-import { isLockedSelector } from "../../reducers/application";
-import { unlock, lock } from "../../actions/application";
 
 import auth from "./auth";
 import { withReboot } from "../Reboot";
@@ -38,19 +36,13 @@ import KeyboardView from "../../components/KeyboardView";
 
 const mapStateToProps = createStructuredSelector({
   privacy: privacySelector,
-  isLocked: isLockedSelector,
 });
-
-const mapDispatchToProps: Object = {
-  unlock,
-  lock,
-};
 
 type State = {
   passwordError: ?Error,
   biometricsError: ?Error,
   password: string,
-  appState: ?string,
+  passwordFocused: boolean,
   isLocked: boolean,
   isModalOpened: boolean,
   secureTextEntry: boolean,
@@ -58,10 +50,7 @@ type State = {
 
 type Props = {
   privacy: Privacy,
-  isLocked: boolean,
-  children: State => *,
-  unlock: () => void,
-  lock: () => void,
+  children: *,
   reboot: (?boolean) => *,
   t: T,
 };
@@ -72,60 +61,48 @@ class AuthPass extends PureComponent<Props, State> {
     biometricsError: null,
     password: "",
     passwordFocused: false,
-    appState: AppState.currentState,
-    isLocked: this.props.isLocked,
+    isLocked: !!this.props.privacy,
     isModalOpened: false,
     secureTextEntry: true,
   };
 
   focusValue = new Animated.Value(0);
 
-  componentDidMount() {
-    AppState.addEventListener("change", this.handleAppStateChange);
-  }
-
-  componentWillUnmount() {
-    AppState.removeEventListener("change", this.handleAppStateChange);
-  }
-
-  handleAppStateChange = nextAppState => {
-    const { privacy, lock, unlock } = this.props;
-    const { appState } = this.state;
-    if (
-      appState &&
-      appState.match(/active/) &&
-      nextAppState.match(/background/)
-    ) {
-      this.setState({ biometricsError: null });
-      privacy.authSecurityEnabled && lock(); // eslint-disable-line
-    } else if (
-      appState &&
-      appState.match(/background/) &&
-      nextAppState === "active"
-    ) {
-      if (privacy.biometricsEnabled) {
-        auth("Please authenticate to Ledger Live app")
-          .then(() => {
-            unlock();
-          })
-          .catch(error => {
-            this.setState({ biometricsError: error });
-          });
-      }
-    }
-    this.setState({ appState: nextAppState });
-  };
-
   onHardReset = () => this.props.reboot(true);
 
-  async load() {
-    const { unlock } = this.props;
+  componentDidMount() {
+    this.auth();
+  }
+
+  unlock = () => {
+    this.setState({
+      passwordError: null,
+      biometricsError: null,
+      password: "",
+      passwordFocused: false,
+      isLocked: false,
+      isModalOpened: false,
+    });
+  };
+
+  auth = () => {
+    const { privacy } = this.props;
+    if (privacy.biometricsEnabled) {
+      auth("Please authenticate to Ledger Live app")
+        .then(this.unlock)
+        .catch(error => {
+          this.setState({ biometricsError: error });
+        });
+    }
+  };
+
+  onSubmit = async () => {
     const { password } = this.state;
+    if (!password) return;
     try {
       const credentials = await Keychain.getGenericPassword();
       if (credentials && credentials.password === password) {
-        this.setState({ biometricsError: null, password: "" });
-        unlock();
+        this.unlock();
       } else {
         credentials
           ? this.setState({ passwordError: new PasswordIncorrectError() })
@@ -135,21 +112,19 @@ class AuthPass extends PureComponent<Props, State> {
       console.log("could not load credentials"); // eslint-disable-line
       this.setState({ passwordError: err });
     }
-  }
-
-  onSubmit = () => {
-    if (this.state.password) {
-      this.load();
-    }
   };
 
   onChange = (password: string) => {
     this.setState({ password, passwordError: null });
   };
 
-  onRequestClose = () => this.setState({ isModalOpened: false });
+  onRequestClose = () => {
+    this.setState({ isModalOpened: false });
+  };
 
-  onPress = () => this.setState({ isModalOpened: true });
+  onPress = () => {
+    this.setState({ isModalOpened: true });
+  };
 
   toggleSecureTextEntry = () => {
     const { secureTextEntry } = this.state;
@@ -173,12 +148,13 @@ class AuthPass extends PureComponent<Props, State> {
   };
 
   render() {
-    const { children, isLocked, t, privacy } = this.props;
+    const { children, t, privacy } = this.props;
     const {
       passwordError,
       biometricsError,
       isModalOpened,
       secureTextEntry,
+      isLocked,
     } = this.state;
     if (isLocked) {
       // TODO put this in a component & split into subcomponents
@@ -187,32 +163,26 @@ class AuthPass extends PureComponent<Props, State> {
           <KeyboardView>
             <View style={{ flex: 1 }} />
             <View style={styles.body}>
-              <View>
-                <View style={styles.logoCenter}>
-                  {biometricsError ? (
-                    <FailBiometrics privacy={privacy} />
-                  ) : (
-                    <View>
-                      <View style={{ alignSelf: "center" }}>
-                        <Image
-                          source={require("../../images/logo_small.png")}
-                        />
-                      </View>
-                      <View style={styles.textContainer}>
-                        <LText semiBold secondary style={styles.title}>
-                          {t("auth.unlock.title")}
-                        </LText>
-                        <LText style={styles.description}>
-                          {t("auth.unlock.desc")}
-                        </LText>
-                      </View>
-                    </View>
-                  )}
-                </View>
+              <View style={styles.header}>
+                {biometricsError ? (
+                  <FailBiometrics privacy={privacy} />
+                ) : (
+                  <View>
+                    <Image
+                      style={styles.logo}
+                      source={require("../../images/logo_small.png")}
+                    />
+                    <LText semiBold secondary style={styles.title}>
+                      {t("auth.unlock.title")}
+                    </LText>
+                    <LText style={styles.description}>
+                      {t("auth.unlock.desc")}
+                    </LText>
+                  </View>
+                )}
               </View>
               <View style={styles.inputWrapper}>
                 <PasswordInput
-                  withBorder
                   error={passwordError}
                   onChange={this.onChange}
                   onSubmit={this.onSubmit}
@@ -240,7 +210,7 @@ class AuthPass extends PureComponent<Props, State> {
                   />
                 </Animated.View>
                 <Touchable style={styles.forgot} onPress={this.onPress}>
-                  <LText style={styles.link}>
+                  <LText semiBold style={styles.link}>
                     {t("auth.unlock.forgotPassword")}
                   </LText>
                 </Touchable>
@@ -260,15 +230,12 @@ class AuthPass extends PureComponent<Props, State> {
         </SafeAreaView>
       );
     }
-    return children(this.state);
+    return children;
   }
 }
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps),
   translate(),
 )(withReboot(AuthPass));
 
@@ -278,17 +245,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   body: {},
-  textContainer: {
-    marginVertical: 8,
+  header: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 32,
+    marginBottom: 24,
+  },
+  logo: {
+    alignSelf: "center",
+  },
+  title: {
+    fontSize: 20,
+    textAlign: "center",
+    marginVertical: 16,
+    color: colors.darkBlue,
   },
   description: {
     color: colors.grey,
     textAlign: "center",
-  },
-  title: {
-    fontSize: 16,
-    textAlign: "center",
-    marginVertical: 16,
   },
   errorStyle: {
     color: "red",
@@ -320,13 +294,10 @@ const styles = StyleSheet.create({
   resetButtonTitle: {
     color: colors.white,
   },
-  logoCenter: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 32,
-  },
   link: {
     color: colors.live,
+    fontSize: 14,
+    lineHeight: 21,
     marginTop: 16,
     textAlign: "center",
   },
