@@ -372,6 +372,7 @@ const BaseOnboarding = createStackNavigator(
     Onboarding,
     ImportAccounts,
     PairDevices,
+    PasswordFlow,
   },
   {
     mode: "modal",

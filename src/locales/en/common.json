@@ -369,6 +369,7 @@
     },
     "stepPassword": {
       "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
+      "descConfigured": "Password lock successfully enabled.",
       "setPassword": "Set password"
     },
     "stepShareData": {},

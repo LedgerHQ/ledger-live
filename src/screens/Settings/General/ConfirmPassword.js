@@ -60,6 +60,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
   onChange = (confirmPassword: string) => {
     this.setState({ confirmPassword, passwordError: null });
   };
+
   async save() {
     const { password, biometricsType } = this.state;
     const { setPrivacy, navigation } = this.props;
@@ -70,16 +71,17 @@ class ConfirmPassword extends PureComponent<Props, State> {
         authSecurityEnabled: true,
         biometricsType,
       });
-      // TODO: implement dynamic navigation so it works for the Onboarding too.
-      navigation.navigate("GeneralSettings");
+      navigation.dangerouslyGetParent().goBack();
     } catch (err) {
       console.log("could not save credentials"); // eslint-disable-line
     }
   }
+
   toggleSecureTextEntry = () => {
     const { secureTextEntry } = this.state;
     this.setState({ secureTextEntry: !secureTextEntry });
   };
+
   onSubmit = () => {
     if (this.state.password === this.state.confirmPassword) {
       this.save();
@@ -89,6 +91,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
       });
     }
   };
+
   render() {
     const { t } = this.props;
     const { passwordError, secureTextEntry } = this.state;
