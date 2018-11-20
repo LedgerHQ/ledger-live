@@ -99,7 +99,8 @@ class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
 
 const styles = StyleSheet.create({
   hero: {
-    paddingVertical: 60,
+    paddingTop: 15,
+    paddingBottom: 60,
     backgroundColor: colors.lightGrey,
     alignItems: "center",
   },
