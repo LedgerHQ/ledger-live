@@ -2,6 +2,7 @@ export { default as aeternity } from "./aeternity";
 export { default as ark } from "./ark";
 export { default as bitcloud } from "./bitcloud";
 export { default as bitcoin } from "./bitcoin";
+export { default as bitcore } from "./bitcore";
 export { default as bitsend } from "./bitsend";
 export { default as clubcoin } from "./clubcoin";
 export { default as dascoin } from "./dascoin";

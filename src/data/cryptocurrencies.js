@@ -388,6 +388,49 @@ const cryptocurrenciesById = {
       }
     ]
   },
+  bitcore: {
+    id: "bitcore",
+    forkedFrom: "bitcoin",
+    coinType: 160,
+    name: "BitCore",
+    managerAppName: "BitCore",
+    ticker: "BTX",
+    scheme: "btx",
+    color: "#fb2d84",
+    family: "bitcoin",
+    ledgerExplorerId: "btx",
+    blockAvgTime: 2.5 * 60,
+    bitcoinLikeInfo: {
+      P2PKH: 3,
+      P2SH: 125
+    },
+    units: [
+      {
+        name: "bitcore",
+        code: "BTX",
+        symbol: "Ƀ",
+        magnitude: 8
+      },
+      {
+        name: "mBTX",
+        code: "mBTX",
+        symbol: "Ƀ",
+        magnitude: 5
+      },
+      {
+        name: "uBTX",
+        code: "uBTX",
+        symbol: "Ƀ",
+        magnitude: 2
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        symbol: "Ƀ",
+        magnitude: 0
+      }
+    ]
+  },
   bitsend: {
     id: "bitsend",
     coinType: 91,

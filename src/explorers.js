@@ -17,6 +17,7 @@ export const defaultExplorers: CryptoCurrencyConfig<Explorer> = {
   bitcoin_private: hash => `https://explorer.btcprivate.org/tx/${hash}`,
   bitcoin_testnet: hash => `https://testnet.blockchain.info/tx/${hash}`,
   bitcoin: hash => `https://blockchain.info/tx/${hash}`,
+  bitcore: hash => `https://insight.bitcore.cc/tx/${hash}`,
   bitsend: hash => `https://chainz.cryptoid.info/bsd/tx.dws?${hash}.htm`,
   callisto: () => null,
   clubcoin: hash => `https://chainz.cryptoid.info/club/tx.dws?${hash}.htm`,
