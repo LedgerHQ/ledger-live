@@ -2,73 +2,33 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
-import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  SafeAreaView,
-  AppState,
-  Image,
-  Animated,
-} from "react-native";
-import * as Keychain from "react-native-keychain";
-import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
-import LText from "../../components/LText";
-import TranslatedError from "../../components/TranslatedError";
 import { privacySelector } from "../../reducers/settings";
 
 import auth from "./auth";
-import { withReboot } from "../Reboot";
-
-import colors from "../../colors";
-import Button from "../../components/Button";
-import type { T } from "../../types/common";
 import type { Privacy } from "../../reducers/settings";
-import FailBiometrics from "./FailBiometrics";
-import PoweredByLedger from "../../screens/Settings/PoweredByLedger";
-import BottomModal from "../../components/BottomModal";
-import HardResetModal from "../../components/HardResetModal";
-import Touchable from "../../components/Touchable";
-import PasswordInput from "../../components/PasswordInput";
-import KeyboardView from "../../components/KeyboardView";
+import AuthScreen from "./AuthScreen";
 
 const mapStateToProps = createStructuredSelector({
   privacy: privacySelector,
 });
 
 type State = {
-  passwordError: ?Error,
-  biometricsError: ?Error,
-  password: string,
-  passwordFocused: boolean,
   isLocked: boolean,
-  isModalOpened: boolean,
-  secureTextEntry: boolean,
+  biometricsError: ?Error,
 };
 
 type Props = {
+  t: *,
   privacy: Privacy,
   children: *,
-  reboot: (?boolean) => *,
-  t: T,
 };
 
 class AuthPass extends PureComponent<Props, State> {
   state = {
-    passwordError: null,
-    biometricsError: null,
-    password: "",
-    passwordFocused: false,
     isLocked: !!this.props.privacy,
-    isModalOpened: false,
-    secureTextEntry: true,
+    biometricsError: null,
   };
-
-  focusValue = new Animated.Value(0);
-
-  onHardReset = () => this.props.reboot(true);
 
   componentDidMount() {
     this.auth();
@@ -76,229 +36,38 @@ class AuthPass extends PureComponent<Props, State> {
 
   unlock = () => {
     this.setState({
-      passwordError: null,
-      biometricsError: null,
-      password: "",
-      passwordFocused: false,
       isLocked: false,
-      isModalOpened: false,
+      biometricsError: null,
     });
   };
 
   auth = () => {
-    const { privacy } = this.props;
-    if (privacy.biometricsEnabled) {
-      auth("Please authenticate to Ledger Live app")
+    const { privacy, t } = this.props;
+    const { isLocked } = this.state;
+    if (isLocked && privacy.biometricsEnabled) {
+      auth(t("auth.unlock.biometricsTitle"))
         .then(this.unlock)
         .catch(error => {
-          this.setState({ biometricsError: error });
+          this.setState({
+            biometricsError: error,
+          });
         });
     }
   };
-
-  onSubmit = async () => {
-    const { password } = this.state;
-    if (!password) return;
-    try {
-      const credentials = await Keychain.getGenericPassword();
-      if (credentials && credentials.password === password) {
-        this.unlock();
-      } else {
-        credentials
-          ? this.setState({ passwordError: new PasswordIncorrectError() })
-          : console.log("no credentials stored"); // eslint-disable-line
-      }
-    } catch (err) {
-      console.log("could not load credentials"); // eslint-disable-line
-      this.setState({ passwordError: err });
-    }
-  };
-
-  onChange = (password: string) => {
-    this.setState({ password, passwordError: null });
-  };
-
-  onRequestClose = () => {
-    this.setState({ isModalOpened: false });
-  };
-
-  onPress = () => {
-    this.setState({ isModalOpened: true });
-  };
-
-  toggleSecureTextEntry = () => {
-    const { secureTextEntry } = this.state;
-    this.setState({ secureTextEntry: !secureTextEntry });
-  };
-
-  onFocus = () => {
-    Animated.timing(this.focusValue, {
-      toValue: 1,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  onBlur = () => {
-    Animated.timing(this.focusValue, {
-      toValue: 0,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
-  };
-
   render() {
-    const { children, t, privacy } = this.props;
-    const {
-      passwordError,
-      biometricsError,
-      isModalOpened,
-      secureTextEntry,
-      isLocked,
-    } = this.state;
+    const { children, privacy } = this.props;
+    const { isLocked, biometricsError } = this.state;
     if (isLocked) {
-      // TODO put this in a component & split into subcomponents
       return (
-        <SafeAreaView style={styles.root}>
-          <KeyboardView>
-            <View style={{ flex: 1 }} />
-            <View style={styles.body}>
-              <View style={styles.header}>
-                {biometricsError ? (
-                  <FailBiometrics privacy={privacy} />
-                ) : (
-                  <View>
-                    <Image
-                      style={styles.logo}
-                      source={require("../../images/logo_small.png")}
-                    />
-                    <LText semiBold secondary style={styles.title}>
-                      {t("auth.unlock.title")}
-                    </LText>
-                    <LText style={styles.description}>
-                      {t("auth.unlock.desc")}
-                    </LText>
-                  </View>
-                )}
-              </View>
-              <View style={styles.inputWrapper}>
-                <PasswordInput
-                  error={passwordError}
-                  onChange={this.onChange}
-                  onSubmit={this.onSubmit}
-                  toggleSecureTextEntry={this.toggleSecureTextEntry}
-                  secureTextEntry={secureTextEntry}
-                  placeholder={t("auth.unlock.inputPlaceholder")}
-                  onFocus={this.onFocus}
-                  onBlur={this.onBlur}
-                />
-              </View>
-              {passwordError && (
-                <LText style={styles.errorStyle}>
-                  <TranslatedError error={passwordError} />
-                </LText>
-              )}
-              <View>
-                <Animated.View style={{ opacity: this.focusValue }}>
-                  <Button
-                    title={t("auth.unlock.login")}
-                    type="primary"
-                    onPress={this.onSubmit}
-                    containerStyle={styles.buttonContainer}
-                    titleStyle={styles.buttonTitle}
-                    disabled={!!passwordError}
-                  />
-                </Animated.View>
-                <Touchable style={styles.forgot} onPress={this.onPress}>
-                  <LText semiBold style={styles.link}>
-                    {t("auth.unlock.forgotPassword")}
-                  </LText>
-                </Touchable>
-              </View>
-            </View>
-            <View style={{ flex: 1 }} />
-          </KeyboardView>
-          <View style={styles.footer}>
-            <PoweredByLedger />
-          </View>
-          <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
-            <HardResetModal
-              onRequestClose={this.onRequestClose}
-              onHardReset={this.onHardReset}
-            />
-          </BottomModal>
-        </SafeAreaView>
+        <AuthScreen
+          biometricsError={biometricsError}
+          privacy={privacy}
+          unlock={this.unlock}
+        />
       );
     }
     return children;
   }
 }
 
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(withReboot(AuthPass));
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.lightGrey,
-  },
-  body: {},
-  header: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 32,
-    marginBottom: 24,
-  },
-  logo: {
-    alignSelf: "center",
-  },
-  title: {
-    fontSize: 20,
-    textAlign: "center",
-    marginVertical: 16,
-    color: colors.darkBlue,
-  },
-  description: {
-    color: colors.grey,
-    textAlign: "center",
-  },
-  errorStyle: {
-    color: "red",
-    marginBottom: 16,
-    paddingHorizontal: 16,
-  },
-  buttonContainer: {
-    marginHorizontal: 16,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  inputWrapper: {
-    marginHorizontal: 16,
-  },
-  footer: {
-    paddingBottom: 16,
-  },
-  forgot: {
-    position: "absolute",
-    width: "100%",
-    top: 0,
-    zIndex: -1,
-  },
-  resetButtonBg: {
-    marginTop: 8,
-    backgroundColor: colors.alert,
-  },
-  resetButtonTitle: {
-    color: colors.white,
-  },
-  link: {
-    color: colors.live,
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 16,
-    textAlign: "center",
-  },
-});
+export default translate()(connect(mapStateToProps)(AuthPass));

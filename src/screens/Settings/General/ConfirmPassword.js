@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { ScrollView, View, StyleSheet, SafeAreaView } from "react-native";
+import { View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import * as Keychain from "react-native-keychain";
 import { connect } from "react-redux";

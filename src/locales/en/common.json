@@ -282,6 +282,7 @@
       }
     },
     "unlock": {
+      "biometricsTitle": "Please authenticate to Ledger Live app",
       "title": "Welcome back",
       "desc": "Enter your password to continue",
       "inputPlaceholder": "Type your password",

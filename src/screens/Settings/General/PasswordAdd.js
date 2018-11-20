@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { ScrollView, View, StyleSheet, SafeAreaView } from "react-native";
+import { View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
