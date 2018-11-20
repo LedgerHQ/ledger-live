@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     marginVertical: 16,
     fontSize: 14,
+    lineHeight: 21,
     color: colors.darkBlue,
   },
   modalDesc: {
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   },
   modalBtn: {
     alignSelf: "stretch",
-    marginTop: 16,
+    marginTop: 24,
   },
 });
 

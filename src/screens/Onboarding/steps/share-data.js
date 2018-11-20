@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-
+import { Trans } from "react-i18next";
 import Button from "../../../components/Button";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
@@ -15,7 +15,13 @@ import type { OnboardingStepProps } from "../types";
 class OnboardingStepShareData extends Component<OnboardingStepProps> {
   Footer = () => {
     const { next } = this.props;
-    return <Button type="primary" title="Next" onPress={next} />;
+    return (
+      <Button
+        type="primary"
+        title={<Trans i18nKey="common.continue" />}
+        onPress={next}
+      />
+    );
   };
 
   render() {

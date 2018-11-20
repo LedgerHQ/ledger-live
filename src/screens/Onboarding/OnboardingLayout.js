@@ -52,7 +52,12 @@ export default class OnboardingLayout extends PureComponent<Props> {
         <Fragment>
           <View>{inner}</View>
           {Footer && (
-            <View style={styles.centeredFooter}>
+            <View
+              style={[
+                styles.centeredFooter,
+                borderedFooter && styles.borderedFooter,
+              ]}
+            >
               <Footer />
             </View>
           )}
@@ -159,7 +164,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
   },
 });

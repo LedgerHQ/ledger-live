@@ -9,6 +9,7 @@ import LText from "../../components/LText";
 import IconArrowLeft from "../../icons/ArrowLeft";
 import { withOnboardingContext } from "./onboardingContext";
 import STEPS_BY_MODE from "./steps";
+import { deviceNames } from "../../wording";
 
 import type { OnboardingStepProps } from "./types";
 
@@ -43,7 +44,7 @@ class OnboardingHeader extends PureComponent<Props> {
           </TouchableOpacity>
           {withSkip && (
             <TouchableOpacity onPress={next} hitSlop={hitSlop}>
-              <LText style={styles.skip} tertiary semiBold>
+              <LText style={styles.skip} semiBold>
                 {t("common.skip")}
               </LText>
             </TouchableOpacity>
@@ -53,7 +54,7 @@ class OnboardingHeader extends PureComponent<Props> {
           {stepMsg}
         </LText>
         <LText secondary semiBold style={styles.title}>
-          {t(`onboarding.stepsTitles.${stepId}`)}
+          {t(`onboarding.stepsTitles.${stepId}`, deviceNames.nanoX)}
         </LText>
       </View>
     );
@@ -69,7 +70,6 @@ const styles = StyleSheet.create({
     width: 32,
     borderRadius: 16,
     backgroundColor: colors.lightFog,
-    marginBottom: 16,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -85,6 +85,8 @@ const styles = StyleSheet.create({
   headerHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 24,
   },
   skip: {
     color: colors.grey,

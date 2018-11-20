@@ -309,17 +309,17 @@
     "stepsTitles": {
       "OnboardingStepChooseDevice": "Choose your device",
       "OnboardingStepSetupPin": "Choose your PIN code",
-      "OnboardingStepWriteRecovery": "Write recovery phrase",
+      "OnboardingStepWriteRecovery": "Save recovery phrase",
       "OnboardingStepSecurityChecklist": "Security checklist",
-      "OnboardingStepPairNew": "Pair a new device",
+      "OnboardingStepPairNew": "Pair your {{fullDeviceName}}",
       "OnboardingStepPassword": "Password lock",
       "OnboardingStepScanQR": "Import desktop accounts",
-      "OnboardingStepShareData": "Share data"
+      "OnboardingStepShareData": "Analytics and bug reports"
     },
     "stepWelcome": {
       "title": "Welcome to Ledger Live",
-      "desc": "Easily manage crypto secured by your {{fullDeviceName}}. Anywhere you go.",
-      "start": "Start using Ledger Live",
+      "desc": "Easily manage crypto secured by your {{fullDeviceName}}. Everywhere you go.",
+      "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}"
     },
@@ -338,15 +338,23 @@
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}}.",
-      "step2": "Press both buttons to choose <1><1>Setup as new device</1></1>",
-      "step2-restore": "Press both buttons to choose <1><1>Restore from recovery phrase</1></1>",
+      "step2": "Press both buttons to choose <1><1>Setup as new device.</1></1>",
+      "step2-restore": "Press both buttons to choose <1><1>Restore from recovery phrase.</1></1>",
       "step3": "Press left or right button to select a digit. Press both to validate.",
-      "step4": "Select ✓ to confirm your PIN code.\nSelect 🔙 to erase a digit."
+      "step4prefix": "Select ",
+      "step4suffix1": " to confirm your PIN code.",
+      "step4suffix2": " to erase a digit."
     },
     "stepWriteRecovery": {
       "step1": "Write <1><1>Word #1</1></1> in position 1 on a blank recovery sheet",
       "step2": "Press the right button to continue and write down all 24 words.",
       "step3": "Confirm your recovery phrase: select and validate each word by pressing both buttons."
+    },
+    "stepWriteRecoveryRestore": {
+      "step1": "Choose the length of your recovery phrase.",
+      "step2": "Enter the first letters of <1><1>Word #1</1></1> until suggested words appear.",
+      "step3": "Choose <1><1>Word #1</1></1> from the suggested words by pressing both buttons.",
+      "step4": "Repeat the process until the last word."
     },
     "stepSecurityChecklist": {
       "pinCode": {
@@ -358,13 +366,9 @@
         "error": "Never use a device supplied with a recovery phrase. Please contact us when in doubt."
       }
     },
-    "stepPairNew": {
-      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
-      "pairNew": "Pair new device"
-    },
     "stepPassword": {
       "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
-      "setPassword": "Set a password"
+      "setPassword": "Set password"
     },
     "stepShareData": {},
     "stepFinish": {
@@ -405,7 +409,7 @@
     }
   },
   "addAccountsModal": {
-    "ctaAdd": "Add accounts",
+    "ctaAdd": "Import accounts",
     "ctaImport": "Import desktop accounts"
   },
   "time": {
@@ -544,7 +548,7 @@
       "exchangeHeader": "Exchange",
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red.",
-      "reportErrors": "Report bugs",
+      "reportErrors": "Bug reports",
       "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in the Manager and enable testnet apps.",
@@ -553,14 +557,15 @@
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger understand how to improve user experience",
+        "bullet0": "Clicks",
         "bullet1": "In-app page visits",
-        "bullet2": "Actions: send, receive, lock, etc.",
-        "bullet3": "Redirections to webpages",
-        "bullet4": "Overall and page session duration",
-        "bullet5": "Type of Ledger device",
-        "bullet6": "Scrolled to end of page",
-        "bullet7": "Device firmware and app versions",
-        "bullet8": "Number of accounts, currencies and operations"
+        "bullet2": "Redirection to webpage",
+        "bullet3": "Actions: send, receive, lock, etc.",
+        "bullet4": "End of page scroll",
+        "bullet5": "App (un)installation and version",
+        "bullet6": "Number of accounts, currencies and operations",
+        "bullet7": "Overall and page session duration",
+        "bullet8": "Ledger device type and firmware"
       },
       "technicalData": "Technical data",
       "technicalDataDesc": "Ledger will automatically collect fully anonymized technical data to help improve user experience.",
@@ -568,10 +573,7 @@
         "title": "Technical data",
         "desc": "Ledger will automatically collect fully anonymized technical data to help improve user experience",
         "bullet1": "Anonymous unique application ID",
-        "bullet2": "OS name and version",
-        "bullet3": "Ledger Live version",
-        "bullet4": "Application language or region",
-        "bullet5": "OS language and region"
+        "bullet2": "Ledger Live version, OS region, language and region"
       },
       "termsOfUse": "Terms of use",
       "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1>."
@@ -732,8 +734,9 @@
     "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one."
   },
   "SelectDevice": {
+    "title": "Choose your device",
     "deviceNotFoundPairNewDevice": "Pair a new device",
-    "headerDescription": "Turn on your Nano X and the bluetooth on your phone",
+    "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
     "steps": {
       "connecting": {
         "title": "Connecting “{{fullDeviceName}}”",

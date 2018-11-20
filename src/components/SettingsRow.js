@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Touchable from "./Touchable";
 import LText from "./LText";
 import colors from "../colors";
@@ -38,6 +38,27 @@ export default class SettingsRow extends Component<{
       borderTop,
       noTextDesc,
     } = this.props;
+
+    let title$ = (
+      <View style={styles.titleContainer}>
+        <LText
+          semiBold={selected !== false}
+          style={[styles.titleStyle, titleStyle]}
+        >
+          {title}
+        </LText>
+        {!!onHelpPress && (
+          <View style={styles.helpIcon}>
+            <IconHelp size={16} color={colors.grey} />
+          </View>
+        )}
+      </View>
+    );
+
+    if (onHelpPress) {
+      title$ = <Touchable onPress={onHelpPress}>{title$}</Touchable>;
+    }
+
     return (
       <Touchable
         onPress={onPress}
@@ -50,19 +71,7 @@ export default class SettingsRow extends Component<{
       >
         {iconLeft && <View style={styles.iconLeft}>{iconLeft}</View>}
         <View style={styles.textBlock}>
-          <View style={styles.titleContainer}>
-            <LText
-              semiBold={selected !== false}
-              style={[styles.titleStyle, titleStyle]}
-            >
-              {title}
-            </LText>
-            {!!onHelpPress && (
-              <TouchableOpacity style={styles.helpIcon} onPress={onHelpPress}>
-                <IconHelp size={16} color={colors.grey} />
-              </TouchableOpacity>
-            )}
-          </View>
+          {title$}
           {desc &&
             !noTextDesc && <LText style={styles.description}>{desc}</LText>}
           {desc && noTextDesc && desc}
@@ -118,9 +127,15 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     fontSize: 16,
+    lineHeight: 24,
     color: colors.darkBlue,
   },
-  description: { color: colors.grey, paddingTop: 5, fontSize: 14 },
+  description: {
+    color: colors.grey,
+    paddingTop: 5,
+    fontSize: 14,
+    lineHeight: 21,
+  },
   iconRightContainer: {
     marginLeft: 4,
   },
