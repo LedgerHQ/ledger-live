@@ -7,6 +7,7 @@ import i18next from "i18next";
 import type { Privacy } from "../../../reducers/settings";
 import type { T } from "../../../types/common";
 import Button from "../../../components/Button";
+import KeyboardView from "../../../components/KeyboardView";
 import PasswordInput from "../../../components/PasswordInput";
 
 type Props = {
@@ -32,10 +33,12 @@ class PasswordAdd extends PureComponent<Props, State> {
   onChange = (password: string) => {
     this.setState({ password });
   };
+
   toggleSecureTextEntry = () => {
     const { secureTextEntry } = this.state;
     this.setState({ secureTextEntry: !secureTextEntry });
   };
+
   onSubmit = () => {
     const { navigation } = this.props;
     const { password } = this.state;
@@ -47,8 +50,9 @@ class PasswordAdd extends PureComponent<Props, State> {
     const { secureTextEntry } = this.state;
     return (
       <SafeAreaView style={styles.root}>
-        <ScrollView contentContainerStyle={styles.root}>
+        <KeyboardView>
           <PasswordInput
+            autoFocus
             onChange={this.onChange}
             onSubmit={this.onSubmit}
             toggleSecureTextEntry={this.toggleSecureTextEntry}
@@ -60,11 +64,11 @@ class PasswordAdd extends PureComponent<Props, State> {
               title={t("common.confirm")}
               type="primary"
               onPress={this.onSubmit}
-              containerStyle={[styles.buttonContainer]}
-              titleStyle={[styles.buttonTitle]}
+              containerStyle={styles.buttonContainer}
+              titleStyle={styles.buttonTitle}
             />
           </View>
-        </ScrollView>
+        </KeyboardView>
       </SafeAreaView>
     );
   }

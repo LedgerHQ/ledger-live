@@ -318,6 +318,18 @@ AccountSettings.navigationOptions = {
   header: null,
 };
 
+const PasswordFlow = createStackNavigator(
+  {
+    PasswordAdd,
+    ConfirmPassword,
+  },
+  closableStackNavigatorConfig,
+);
+
+PasswordFlow.navigationOptions = {
+  header: null,
+};
+
 const BaseNavigator = createStackNavigator(
   {
     Main,
@@ -332,8 +344,7 @@ const BaseNavigator = createStackNavigator(
     PairDevices,
     // $FlowFixMe non-sense error
     EditDeviceName,
-    PasswordAdd,
-    ConfirmPassword,
+    PasswordFlow,
   },
   {
     mode: "modal",

@@ -289,8 +289,8 @@
       "forgotPassword": "Forgot password"
     },
     "addPassword": {
-      "placeholder": "Enter your password",
-      "title": "Password Lock",
+      "placeholder": "Choose your password",
+      "title": "Password Lock"
     },
     "confirmPassword": {
       "title": "Confirm Password",

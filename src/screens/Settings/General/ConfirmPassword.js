@@ -13,6 +13,7 @@ import type { Privacy } from "../../../reducers/settings";
 import type { T } from "../../../types/common";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
+import KeyboardView from "../../../components/KeyboardView";
 import TranslatedError from "../../../components/TranslatedError";
 import PasswordInput from "../../../components/PasswordInput";
 import colors from "../../../colors";
@@ -92,9 +93,11 @@ class ConfirmPassword extends PureComponent<Props, State> {
     const { t } = this.props;
     const { passwordError, secureTextEntry } = this.state;
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.root}>
+      <SafeAreaView style={styles.root}>
+        <KeyboardView>
           <PasswordInput
+            autoFocus
+            error={passwordError}
             onChange={this.onChange}
             onSubmit={this.onSubmit}
             toggleSecureTextEntry={this.toggleSecureTextEntry}
@@ -117,7 +120,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
               disabled={!!passwordError}
             />
           </View>
-        </ScrollView>
+        </KeyboardView>
       </SafeAreaView>
     );
   }

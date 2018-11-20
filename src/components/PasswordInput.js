@@ -3,6 +3,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import Touchable from "./Touchable";
+import { getFontStyle } from "./LText";
 import colors from "../colors";
 
 type Props = {
@@ -11,28 +12,46 @@ type Props = {
   onSubmit: string => void,
   toggleSecureTextEntry: () => void,
   placeholder: string,
+  autoFocus?: boolean,
+  withBorder?: boolean,
+  onFocus?: *,
+  onBlur?: *,
+  error?: ?Error,
 };
 
 class PasswordInput extends PureComponent<Props> {
   render() {
     const {
+      autoFocus,
+      error,
       secureTextEntry,
       onChange,
       onSubmit,
       toggleSecureTextEntry,
       placeholder,
+      withBorder,
+      onFocus,
+      onBlur,
     } = this.props;
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, withBorder && styles.withBorder]}>
         <TextInput
-          autoFocus
-          style={[styles.input]}
+          autoFocus={autoFocus}
+          style={[
+            styles.input,
+            getFontStyle({ semiBold: true }),
+            { color: error ? colors.alert : colors.darkBlue },
+          ]}
           placeholder={placeholder}
-          placeholderTextColor={colors.lightFog}
+          placeholderTextColor={error ? colors.alert : colors.lightFog}
           returnKeyType="done"
           onChangeText={onChange}
           onSubmitEditing={onSubmit}
           secureTextEntry={secureTextEntry}
+          textContentType="password"
+          autoCorrect={false}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
         {secureTextEntry ? (
           <Touchable style={styles.iconInput} onPress={toggleSecureTextEntry}>
@@ -52,12 +71,19 @@ export default PasswordInput;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    backgroundColor: colors.white,
+    borderRadius: 4,
+    marginBottom: 16,
+  },
+  withBorder: {
+    borderWidth: 1,
+    borderColor: colors.lightFog,
   },
   input: {
-    fontSize: 20,
-    marginHorizontal: 16,
-    paddingVertical: 24,
+    fontSize: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    flex: 1,
   },
   iconInput: {
     justifyContent: "center",
