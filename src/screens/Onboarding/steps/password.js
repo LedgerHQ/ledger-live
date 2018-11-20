@@ -36,7 +36,7 @@ class OnboardingStepPassword extends Component<OnboardingStepProps> {
         withSkip
       >
         <View style={styles.hero}>{illustration}</View>
-        <LText style={styles.desc} semiBold>
+        <LText style={styles.desc}>
           <Trans i18nKey="onboarding.stepPassword.desc" />
         </LText>
       </OnboardingLayout>
@@ -52,8 +52,10 @@ const styles = StyleSheet.create({
   },
   desc: {
     textAlign: "center",
-    color: colors.darkBlue,
-    fontSize: 16,
+    color: colors.smoke,
+    fontSize: 14,
+    lineHeight: 21,
+    paddingHorizontal: 24,
   },
 });
 

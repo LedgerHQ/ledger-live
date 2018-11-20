@@ -48,24 +48,6 @@ class TechnicalDataRow extends PureComponent<Props, State> {
                 <Trans i18nKey="settings.display.technicalDataModal.bullet2" />
               ),
             },
-            {
-              key: "bullet3",
-              val: (
-                <Trans i18nKey="settings.display.technicalDataModal.bullet3" />
-              ),
-            },
-            {
-              key: "bullet4",
-              val: (
-                <Trans i18nKey="settings.display.technicalDataModal.bullet4" />
-              ),
-            },
-            {
-              key: "bullet5",
-              val: (
-                <Trans i18nKey="settings.display.technicalDataModal.bullet5" />
-              ),
-            },
           ]}
         />
       </Fragment>

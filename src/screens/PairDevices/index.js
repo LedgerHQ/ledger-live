@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
+import i18next from "i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
@@ -46,7 +47,7 @@ type State = {
 
 class PairDevices extends Component<Props, State> {
   static navigationOptions = {
-    title: "Choose your device",
+    title: i18next.t("SelectDevice.title"),
   };
 
   state = {

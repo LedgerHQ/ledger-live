@@ -1,20 +1,17 @@
 // @flow
 
-import React, { Component, PureComponent } from "react";
+import React, { Component } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
+import { StyleSheet, TouchableOpacity, Linking } from "react-native";
 
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import Rounded from "../../../components/Rounded";
-import Circle from "../../../components/Circle";
+import SelectDevice from "../../../components/SelectDevice";
 import IconExternalLink from "../../../icons/ExternalLink";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
-import colors, { rgba } from "../../../colors";
+import colors from "../../../colors";
 import { urls } from "../../../config/urls";
-import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
 
@@ -50,69 +47,21 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
         Footer={this.Footer}
         borderedFooter
       >
-        <View style={styles.hero}>
-          <Rounded bg={colors.pillActiveBackground}>
-            <Icon name="bluetooth" color={colors.live} size={28} />
-          </Rounded>
-        </View>
-        <LText semiBold style={styles.desc}>
-          <Trans
-            i18nKey="onboarding.stepPairNew.desc"
-            values={deviceNames.nanoX}
+        <SelectDevice onSelect={this.props.next} />
+        {__DEV__ ? (
+          <Button
+            type="lightSecondary"
+            title="(DEV) skip this step"
+            containerStyle={{ marginTop: 24 }}
+            onPress={this.props.next}
           />
-        </LText>
-        <Cta onPress={this.pairNew} />
-        <Button
-          type="secondary"
-          title="skip this step"
-          containerStyle={{ marginTop: 24 }}
-          onPress={this.props.next}
-        />
+        ) : null}
       </OnboardingLayout>
     );
   }
 }
 
-class Cta extends PureComponent<{ onPress: () => any }> {
-  render() {
-    const { onPress } = this.props;
-    return (
-      <TouchableOpacity style={styles.cta} onPress={onPress}>
-        <Circle size={32} bg={rgba(colors.live, 0.1)}>
-          <Icon name="plus" color={colors.live} size={16} />
-        </Circle>
-        <LText style={styles.ctaText} semiBold>
-          <Trans i18nKey="onboarding.stepPairNew.pairNew" />
-        </LText>
-      </TouchableOpacity>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
-  hero: {
-    paddingVertical: 24,
-    alignItems: "center",
-  },
-  desc: {
-    textAlign: "center",
-    lineHeight: 21,
-    marginHorizontal: 16,
-    marginBottom: 32,
-  },
-  cta: {
-    borderWidth: 1,
-    borderColor: colors.fog,
-    padding: 16,
-    borderRadius: 4,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  ctaText: {
-    marginLeft: 16,
-    color: colors.live,
-    fontSize: 16,
-  },
   footer: {
     alignItems: "center",
     justifyContent: "center",

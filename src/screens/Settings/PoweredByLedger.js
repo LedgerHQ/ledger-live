@@ -16,7 +16,7 @@ class PoweredByLedger extends Component<{
       <View style={styles.container}>
         <LText style={styles.textStyle}>{t("common.poweredBy")}</LText>
         <View style={styles.iconStyle}>
-          <LedgerLogoRec height={17} width={68} color={colors.darkBlue} />
+          <LedgerLogoRec height={17} width={68} color={colors.grey} />
         </View>
       </View>
     );
@@ -30,9 +30,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   textStyle: {
-    opacity: 0.3,
     justifyContent: "center",
-    color: colors.darkBlue,
+    color: colors.grey,
+    fontSize: 12,
   },
   iconStyle: {
     marginLeft: 5,
