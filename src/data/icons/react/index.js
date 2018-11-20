@@ -1,4 +1,5 @@
 export { default as ark } from "./ark";
+export { default as bitcloud } from "./bitcloud";
 export { default as bitcoin } from "./bitcoin";
 export { default as bitsend } from "./bitsend";
 export { default as clubcoin } from "./clubcoin";
