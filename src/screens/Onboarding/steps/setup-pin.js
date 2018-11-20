@@ -16,29 +16,46 @@ import colors from "../../../colors";
 import { deviceNames } from "../../../wording";
 
 import type { OnboardingStepProps } from "../types";
+import PinModal from "../../../modals/Pin";
 
-// TODO missing feature Pin code – Warning
-
-class OnboardingStepSetupPin extends Component<OnboardingStepProps> {
-  Footer = () => {
-    const { next } = this.props;
-    return (
-      <Button
-        type="primary"
-        title={<Trans i18nKey="common.continue" />}
-        onPress={next}
-      />
-    );
+class OnboardingStepSetupPin extends Component<
+  OnboardingStepProps,
+  { isModalOpened: boolean },
+> {
+  state = {
+    isModalOpened: false,
   };
 
+  showModal = () => {
+    this.setState({ isModalOpened: true });
+  };
+
+  hideModal = () => {
+    this.setState({ isModalOpened: false });
+  };
+
+  Footer = () => (
+    <Button
+      type="primary"
+      title={<Trans i18nKey="common.continue" />}
+      onPress={this.showModal}
+    />
+  );
+
   render() {
-    const { mode } = this.props;
+    const { mode, next } = this.props;
+    const { isModalOpened } = this.state;
     return (
       <OnboardingLayout
         header="OnboardingStepSetupPin"
         Footer={this.Footer}
         noHorizontalPadding
       >
+        <PinModal
+          isOpened={isModalOpened}
+          onAccept={next}
+          onClose={this.hideModal}
+        />
         <View style={styles.hero}>
           <DeviceNanoAction screen="pin" />
         </View>

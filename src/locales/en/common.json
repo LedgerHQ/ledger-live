@@ -312,12 +312,23 @@
       "step3": "Press left or right button to select a digit. Press both to validate.",
       "step4prefix": "Select ",
       "step4suffix1": " to confirm your PIN code.",
-      "step4suffix2": " to erase a digit."
+      "step4suffix2": " to erase a digit.",
+      "modal" : {
+        "step1": "Always choose <1><1>your own</1></1> PIN code",
+        "step2": "Use 8 digits for optimal security",
+        "step3": "Never use a device supplied with a PIN code or a recovery phrase"
+      }
     },
     "stepWriteRecovery": {
       "step1": "Write <1><1>Word #1</1></1> in position 1 on a blank recovery sheet",
       "step2": "Press the right button to continue and write down all 24 words.",
-      "step3": "Confirm your recovery phrase: select and validate each word by pressing both buttons."
+      "step3": "Confirm your recovery phrase: select and validate each word by pressing both buttons.",
+      "modal": {
+        "step1": "Carefully secure your 24-word recovery phrase out of sight.",
+        "step2": "Make sure you are the sole holder of your recovery phrase.",
+        "step3": "Ledger does not keep any backup of your recovery phrase.",
+        "step4": "Never use a device supplied with a recovery phrase or a PIN code."
+      }
     },
     "stepWriteRecoveryRestore": {
       "step1": "Choose the length of your recovery phrase.",

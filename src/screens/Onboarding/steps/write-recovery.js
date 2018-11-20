@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
 import Button from "../../../components/Button";
+import RecoveryPhraseModal from "../../../modals/RecoveryPhrase";
 import LText from "../../../components/LText";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
@@ -14,28 +15,43 @@ import RecoveryPhrase from "../assets/RecoveryPhrase";
 
 import type { OnboardingStepProps } from "../types";
 
-// TODO missing feature Seed Warning Box
-
-class OnboardingStepWriteRecovery extends Component<OnboardingStepProps> {
-  Footer = () => {
-    const { next } = this.props;
-    return (
-      <Button
-        type="primary"
-        title={<Trans i18nKey="common.continue" />}
-        onPress={next}
-      />
-    );
+class OnboardingStepWriteRecovery extends Component<
+  OnboardingStepProps,
+  { isModalOpened: boolean },
+> {
+  state = {
+    isModalOpened: false,
+  };
+  showModal = () => {
+    this.setState({ isModalOpened: true });
+  };
+  hideModal = () => {
+    this.setState({ isModalOpened: false });
   };
 
+  Footer = () => (
+    <Button
+      type="primary"
+      title={<Trans i18nKey="common.continue" />}
+      onPress={this.showModal}
+    />
+  );
+
   render() {
-    const { mode } = this.props;
+    const { mode, next } = this.props;
+    const { isModalOpened } = this.state;
+
     return (
       <OnboardingLayout
         header="OnboardingStepWriteRecovery"
         Footer={this.Footer}
         noHorizontalPadding
       >
+        <RecoveryPhraseModal
+          isOpened={isModalOpened}
+          onAccept={next}
+          onClose={this.hideModal}
+        />
         <View style={styles.hero}>
           <RecoveryPhrase />
         </View>
