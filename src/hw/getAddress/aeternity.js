@@ -11,6 +11,6 @@ export default async (
   verify: boolean
 ) => {
   const ae = new Ae(transport);
-  const address = await ae.getAddress(+accountIndex, verify);
+  const address = await ae.getAddress(parseInt(accountIndex, 10), verify);
   return { path: accountIndex, address, publicKey: "" };
 };
