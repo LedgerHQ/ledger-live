@@ -348,15 +348,25 @@ const Onboarding = createStackNavigator({
   OnboardingStepPassword,
   OnboardingStepShareData,
   OnboardingStepFinish,
-  ImportAccounts,
-  PairDevices,
 });
 
 Onboarding.navigationOptions = { header: null };
 
+const BaseOnboarding = createStackNavigator(
+  {
+    Onboarding,
+    ImportAccounts,
+    PairDevices,
+  },
+  {
+    mode: "modal",
+    ...closableStackNavigatorConfig,
+  },
+);
+
 export const RootNavigator = createSwitchNavigator({
   BaseNavigator,
-  Onboarding,
+  BaseOnboarding,
 });
 
 RootNavigator.navigationOptions = { header: null };
