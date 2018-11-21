@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 24,
-    color: colors.black,
+    color: colors.smoke,
     fontSize: 14,
     lineHeight: 21,
     textAlign: "center",

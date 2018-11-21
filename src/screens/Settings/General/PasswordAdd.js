@@ -30,16 +30,19 @@ class PasswordAdd extends PureComponent<Props, State> {
   onSubmit = () => {
     const { navigation } = this.props;
     const { password } = this.state;
+    if (!password) return;
     navigation.navigate("ConfirmPassword", { password });
   };
 
   render() {
     const { t } = this.props;
+    const { password } = this.state;
     return (
       <PasswordForm
         placeholder={t("auth.addPassword.placeholder")}
         onChange={this.onChange}
         onSubmit={this.onSubmit}
+        value={password}
       />
     );
   }

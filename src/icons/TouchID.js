@@ -9,7 +9,7 @@ type Props = {
 
 export default function TouchID({ size, color }: Props) {
   return (
-    <Svg width={size} height={size}>
+    <Svg viewBox="0 0 80 80" width={size} height={size}>
       <G fill="none" fill-rule="evenodd">
         <Circle
           cx="40"

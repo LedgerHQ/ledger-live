@@ -41,6 +41,7 @@ class PasswordRemove extends PureComponent<Props, State> {
 
   async submit() {
     const { confirmPassword } = this.state;
+    if (!confirmPassword) return;
     const { disablePrivacy, navigation } = this.props;
     try {
       const credentials = await Keychain.getGenericPassword();
@@ -63,13 +64,14 @@ class PasswordRemove extends PureComponent<Props, State> {
 
   render() {
     const { t } = this.props;
-    const { error } = this.state;
+    const { error, confirmPassword } = this.state;
     return (
       <PasswordForm
         placeholder={t("auth.confirmPassword.placeholder")}
         onChange={this.onChange}
         onSubmit={this.onSubmit}
         error={error}
+        value={confirmPassword}
       />
     );
   }

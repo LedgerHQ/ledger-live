@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
+import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "./Touchable";
 import { getFontStyle } from "./LText";
 import colors from "../colors";
@@ -41,9 +41,10 @@ class PasswordInput extends PureComponent<Props> {
             styles.input,
             getFontStyle({ semiBold: true }),
             { color: error ? colors.alert : colors.darkBlue },
+            inline && styles.inlineTextInput,
           ]}
           placeholder={placeholder}
-          placeholderTextColor={error ? colors.alert : colors.lightFog}
+          placeholderTextColor={error ? colors.alert : colors.fog}
           returnKeyType="done"
           onChangeText={onChange}
           onSubmitEditing={onSubmit}
@@ -56,7 +57,7 @@ class PasswordInput extends PureComponent<Props> {
         {secureTextEntry ? (
           <Touchable style={styles.iconInput} onPress={toggleSecureTextEntry}>
             <Icon
-              name="eye-slash"
+              name="eye-off"
               size={16}
               color={inline ? colors.grey : colors.fog}
             />
@@ -87,10 +88,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.lightFog,
   },
+  inlineTextInput: {
+    fontSize: 20,
+  },
   input: {
-    fontSize: 16,
+    fontSize: 14,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    height: 48,
     flex: 1,
   },
   iconInput: {

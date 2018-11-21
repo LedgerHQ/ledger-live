@@ -5,34 +5,24 @@ import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import type { Privacy } from "../../reducers/settings";
 import colors from "../../colors";
-import TouchID from "../../icons/TouchID";
-import FaceID from "../../icons/FaceID";
-import Fingerprint from "../../icons/Fingerprint";
+import BiometricsIcon from "../../components/BiometricsIcon";
 
 type Props = {
   privacy: Privacy,
 };
 
 class FailBiometrics extends Component<Props> {
-  iconSwitch = () => {
-    const { privacy } = this.props;
-    switch (privacy.biometricsType) {
-      case "TouchID":
-        return <TouchID color={colors.alert} size={80} />;
-      case "FaceID":
-        return <FaceID color={colors.alert} size={80} />;
-      case "Fingerprint":
-        return <Fingerprint color={colors.alert} size={80} />;
-      default:
-        return null;
-    }
-  };
-
   render() {
     const { privacy } = this.props;
     return (
       <View>
-        <View style={styles.iconStyle}>{this.iconSwitch()}</View>
+        <View style={styles.iconStyle}>
+          <BiometricsIcon
+            biometricsType={privacy.biometricsType}
+            color={colors.alert}
+            size={80}
+          />
+        </View>
         <View style={styles.textContainer}>
           <LText semiBold secondary style={styles.title}>
             <Trans
@@ -60,9 +50,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textContainer: {
-    marginVertical: 16,
+    marginTop: 16,
   },
   description: {
+    fontSize: 14,
     color: colors.grey,
     textAlign: "center",
   },

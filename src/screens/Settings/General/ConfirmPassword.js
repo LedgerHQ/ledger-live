@@ -69,6 +69,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
   }
 
   onSubmit = () => {
+    if (!this.state.password) return;
     if (this.state.password === this.state.confirmPassword) {
       this.save();
     } else {
@@ -80,13 +81,14 @@ class ConfirmPassword extends PureComponent<Props, State> {
 
   render() {
     const { t } = this.props;
-    const { error } = this.state;
+    const { error, confirmPassword } = this.state;
     return (
       <PasswordForm
         placeholder={t("auth.confirmPassword.placeholder")}
         onChange={this.onChange}
         onSubmit={this.onSubmit}
         error={error}
+        value={confirmPassword}
       />
     );
   }

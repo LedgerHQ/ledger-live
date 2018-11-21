@@ -11,6 +11,7 @@ import { privacySelector } from "../../../reducers/settings";
 import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
+import BiometricsIcon from "../../../components/BiometricsIcon";
 import BiometricsRow from "../../Settings/General/BiometricsRow";
 import colors from "../../../colors";
 import OnboardingLayout from "../OnboardingLayout";
@@ -62,7 +63,7 @@ class OnboardingStepPassword extends Component<
       <OnboardingLayout
         header="OnboardingStepPassword"
         Footer={this.Footer}
-        withSkip
+        withSkip={!privacy}
       >
         <View style={styles.hero}>
           {illustration}
@@ -77,7 +78,19 @@ class OnboardingStepPassword extends Component<
             }
           />
         </LText>
-        {privacy ? <BiometricsRow /> : null}
+        {privacy && privacy.biometricsType ? (
+          <View style={styles.box}>
+            <BiometricsRow
+              iconLeft={
+                <BiometricsIcon
+                  biometricsType={privacy.biometricsType}
+                  size={40}
+                  color={colors.live}
+                />
+              }
+            />
+          </View>
+        ) : null}
       </OnboardingLayout>
     );
   }
@@ -86,7 +99,7 @@ class OnboardingStepPassword extends Component<
 const styles = StyleSheet.create({
   hero: {
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 16, // less padding because shadow of the logo
     alignSelf: "center",
   },
   success: {
@@ -101,6 +114,11 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     paddingHorizontal: 24,
     marginBottom: 48,
+  },
+  box: {
+    borderColor: colors.lightFog,
+    borderWidth: 1,
+    borderRadius: 4,
   },
 });
 

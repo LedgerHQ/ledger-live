@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { translate, Trans } from "react-i18next";
-import { View, StyleSheet, SafeAreaView, Image, Animated } from "react-native";
+import { View, StyleSheet, SafeAreaView, Image } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
 import type { T } from "../../types/common";
@@ -56,25 +56,22 @@ class NormalHeader extends PureComponent<{}> {
 
 class FormFooter extends PureComponent<*> {
   render() {
-    const { focusValue, onSubmit, passwordError, onPress } = this.props;
-    return (
-      <View>
-        <Animated.View style={{ opacity: focusValue }}>
-          <Button
-            title={<Trans i18nKey="auth.unlock.login" />}
-            type="primary"
-            onPress={onSubmit}
-            containerStyle={styles.buttonContainer}
-            titleStyle={styles.buttonTitle}
-            disabled={passwordError}
-          />
-        </Animated.View>
-        <Touchable style={styles.forgot} onPress={onPress}>
-          <LText semiBold style={styles.link}>
-            <Trans i18nKey="auth.unlock.forgotPassword" />
-          </LText>
-        </Touchable>
-      </View>
+    const { inputFocused, onSubmit, passwordError, onPress } = this.props;
+    return inputFocused ? (
+      <Button
+        title={<Trans i18nKey="auth.unlock.login" />}
+        type="primary"
+        onPress={onSubmit}
+        containerStyle={styles.buttonContainer}
+        titleStyle={styles.buttonTitle}
+        disabled={passwordError}
+      />
+    ) : (
+      <Touchable style={styles.forgot} onPress={onPress}>
+        <LText semiBold style={styles.link}>
+          <Trans i18nKey="auth.unlock.forgotPassword" />
+        </LText>
+      </Touchable>
     );
   }
 }
@@ -87,8 +84,6 @@ class AuthScreen extends PureComponent<Props, State> {
     isModalOpened: false,
     secureTextEntry: true,
   };
-
-  focusValue = new Animated.Value(0);
 
   onHardReset = () => {
     this.props.reboot(true);
@@ -148,24 +143,21 @@ class AuthScreen extends PureComponent<Props, State> {
   };
 
   onFocus = () => {
-    Animated.timing(this.focusValue, {
-      toValue: 1,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
+    this.setState({ passwordFocused: true });
   };
 
   onBlur = () => {
-    Animated.timing(this.focusValue, {
-      toValue: 0,
-      duration: 100,
-      useNativeDriver: true,
-    }).start();
+    this.setState({ passwordFocused: false });
   };
 
   render() {
     const { t, privacy, biometricsError } = this.props;
-    const { passwordError, isModalOpened, secureTextEntry } = this.state;
+    const {
+      passwordError,
+      isModalOpened,
+      secureTextEntry,
+      passwordFocused,
+    } = this.state;
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView>
@@ -200,7 +192,7 @@ class AuthScreen extends PureComponent<Props, State> {
             )}
 
             <FormFooter
-              focusValue={this.focusValue}
+              inputFocused={passwordFocused}
               onSubmit={this.onSubmit}
               passwordError={passwordError}
               onPress={this.onPress}
@@ -269,12 +261,7 @@ const styles = StyleSheet.create({
   footer: {
     paddingBottom: 16,
   },
-  forgot: {
-    position: "absolute",
-    width: "100%",
-    top: 0,
-    zIndex: -1,
-  },
+  forgot: {},
   resetButtonBg: {
     marginTop: 8,
     backgroundColor: colors.alert,

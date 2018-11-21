@@ -56,12 +56,7 @@ export type SettingsState = {
 const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
-  privacy: {
-    authSecurityEnabled: false,
-    value: null,
-    biometricsEnabled: false,
-    biometricsType: null,
-  },
+  privacy: null,
   reportErrorsEnabled: false,
   developerModeEnabled: false,
   analyticsEnabled: false,

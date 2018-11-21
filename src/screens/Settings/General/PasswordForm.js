@@ -16,6 +16,7 @@ type Props = {
   onSubmit: () => void,
   error?: ?Error,
   placeholder: string,
+  value: string,
 };
 
 type State = {
@@ -33,7 +34,7 @@ class PasswordForm extends PureComponent<Props, State> {
   };
 
   render() {
-    const { t, onChange, onSubmit, error, placeholder } = this.props;
+    const { t, onChange, onSubmit, error, placeholder, value } = this.props;
     const { secureTextEntry } = this.state;
     return (
       <SafeAreaView style={styles.root}>
@@ -61,7 +62,7 @@ class PasswordForm extends PureComponent<Props, State> {
               containerStyle={styles.buttonContainer}
               titleStyle={styles.buttonTitle}
               secureTextEntry={secureTextEntry}
-              disabled={!!error}
+              disabled={!!error || value.length === 0}
             />
           </View>
         </KeyboardView>

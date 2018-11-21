@@ -14,6 +14,7 @@ import SettingsRow from "../../../components/SettingsRow";
 type Props = {
   privacy: ?Privacy,
   setPrivacyBiometrics: boolean => *,
+  iconLeft: *,
 };
 type State = {
   validationPending: boolean,
@@ -33,6 +34,7 @@ class BiometricsRow extends Component<Props, State> {
   };
 
   onValueChange = async (biometricsEnabled: boolean) => {
+    if (this.state.validationPending) return;
     if (biometricsEnabled) {
       this.setState({ validationPending: true });
       let success = false;
@@ -57,13 +59,14 @@ class BiometricsRow extends Component<Props, State> {
   };
 
   render() {
-    const { privacy } = this.props;
+    const { privacy, iconLeft } = this.props;
     const { validationPending } = this.state;
     if (!privacy) return null;
     return (
       <Fragment>
         {privacy.biometricsType && (
           <SettingsRow
+            iconLeft={iconLeft}
             title={
               <Trans
                 i18nKey="auth.enableBiometrics.title"

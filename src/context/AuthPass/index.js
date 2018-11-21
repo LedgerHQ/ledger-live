@@ -26,10 +26,13 @@ type Props = {
   children: *,
 };
 
+// as we needs to be resilient to reboots (not showing unlock again after a reboot)
+// we need to store this global variable to know if we need to isLocked initially
+let wasUnlocked = false;
+
 class AuthPass extends PureComponent<Props, State> {
   state = {
-    // TODO isLocked needs to be resilient to reboots and needs to live at another level
-    isLocked: !!this.props.privacy,
+    isLocked: !!this.props.privacy && !wasUnlocked,
     biometricsError: null,
   };
 
@@ -52,9 +55,7 @@ class AuthPass extends PureComponent<Props, State> {
   timeout: *;
   handleAppStateChange = appState => {
     clearTimeout(this.timeout);
-    if (appState === "active") {
-      this.auth();
-    } else {
+    if (appState === "background") {
       this.timeout = setTimeout(() => {
         if (!this.state.isLocked) {
           this.lock();
@@ -88,6 +89,7 @@ class AuthPass extends PureComponent<Props, State> {
   // lock the app
   lock = () => {
     if (!this.props.privacy) return;
+    wasUnlocked = false;
     this.setState({
       isLocked: true,
       biometricsError: null,
@@ -96,6 +98,7 @@ class AuthPass extends PureComponent<Props, State> {
 
   // unlock the app
   unlock = () => {
+    wasUnlocked = true;
     this.setState({
       isLocked: false,
       biometricsError: null,
