@@ -294,11 +294,8 @@
       "placeholder": "Confirm your password"
     },
     "enableBiometrics": {
-      "title": "Enable {{biometricsType}}",
-      "desc": "Use {{biometricsType}} to open your app",
-      "confirm": {
-        "desc": "Please authenticate to Ledger Live app"
-      }
+      "title": "{{biometricsType}}",
+      "desc": "Unlock with {{biometricsType}}"
     }
   },
   "reset": {
