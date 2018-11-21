@@ -11,7 +11,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import StepHeader from "../../components/StepHeader";
-import Stepper from "../../components/Stepper";
 import SelectDevice from "../../components/SelectDevice";
 import Button from "../../components/Button";
 import {
@@ -57,7 +56,6 @@ class ConnectDevice extends Component<Props> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={3} currentStep={2} />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[

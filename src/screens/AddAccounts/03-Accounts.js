@@ -15,7 +15,6 @@ import { accountsSelector } from "../../reducers/accounts";
 import { getCurrencyBridge } from "../../bridge";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import SelectableAccountsList from "../../components/SelectableAccountsList";
 import LiveLogo from "../../icons/LiveLogoIcon";
@@ -236,7 +235,6 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <PreventNativeBack />
-        <Stepper nbSteps={4} currentStep={3} />
         <ScrollView style={styles.inner}>
           {regularAccounts.length > 0 ? (
             <SelectableAccountsList
