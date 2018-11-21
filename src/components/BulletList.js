@@ -5,6 +5,7 @@ import { View, StyleSheet, Animated } from "react-native";
 
 import LText from "./LText";
 import colors from "../colors";
+import ArrowRight from "../icons/ArrowRight";
 
 // TODO fade in animation
 
@@ -20,7 +21,13 @@ export class BulletItem extends PureComponent<{
   value: React$Node | (() => React$Node),
   index: number,
   animated?: boolean,
+  itemStyle?: {},
+  Bullet: React$ComponentType<*>,
 }> {
+  static defaultProps = {
+    Bullet,
+  };
+
   opacity = new Animated.Value(this.props.animated ? 0 : 1);
 
   componentDidMount() {
@@ -35,12 +42,13 @@ export class BulletItem extends PureComponent<{
   }
 
   render() {
-    const { index, value } = this.props;
+    const { index, value, Bullet, itemStyle } = this.props;
     const { opacity } = this;
+
     return (
       <Animated.View style={[styles.item, { opacity }]}>
         <Bullet>{index + 1}</Bullet>
-        <View style={styles.textContainer}>
+        <View style={itemStyle || styles.textContainer}>
           {typeof value === "function" ? (
             value()
           ) : (
@@ -48,27 +56,6 @@ export class BulletItem extends PureComponent<{
           )}
         </View>
       </Animated.View>
-    );
-  }
-}
-
-class BulletList extends PureComponent<{
-  list: *,
-  animated?: boolean,
-}> {
-  render() {
-    const { list, animated } = this.props;
-    return (
-      <View>
-        {list.map((value, index) => (
-          <BulletItem
-            animated={animated}
-            key={index}
-            index={index}
-            value={value}
-          />
-        ))}
-      </View>
     );
   }
 }
@@ -81,6 +68,44 @@ export class Bullet extends PureComponent<{ children: *, big?: boolean }> {
         <LText style={[styles.number, big && styles.numberBig]} tertiary>
           {children}
         </LText>
+      </View>
+    );
+  }
+}
+
+export class BulletChevron extends PureComponent<{}> {
+  render() {
+    return (
+      <View style={styles.chevron}>
+        <ArrowRight size={16} color={colors.grey} />
+      </View>
+    );
+  }
+}
+
+class BulletList extends PureComponent<{
+  list: *,
+  animated?: boolean,
+  Bullet: React$ComponentType<*>,
+  itemStyle?: {},
+}> {
+  static defaultProps = {
+    Bullet,
+  };
+  render() {
+    const { list, animated, Bullet, itemStyle } = this.props;
+    return (
+      <View>
+        {list.map((value, index) => (
+          <BulletItem
+            itemStyle={itemStyle}
+            Bullet={Bullet}
+            animated={animated}
+            key={index}
+            index={index}
+            value={value}
+          />
+        ))}
       </View>
     );
   }
@@ -112,6 +137,7 @@ const styles = StyleSheet.create({
   numberBig: {
     fontSize: 16,
   },
+  chevron: { alignSelf: "flex-start", paddingTop: 2 },
   textContainer: {
     flexShrink: 1,
     flexGrow: 1,
