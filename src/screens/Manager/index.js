@@ -14,6 +14,7 @@ import RemoveDeviceButton from "../../components/SelectDevice/RemoveDeviceButton
 import colors from "../../colors";
 import ToggleManagerEdition from "./ToggleManagerEdition";
 import manager from "../../logic/manager";
+import TrackPage from "../../analytics/TrackPage";
 
 class Manager extends Component<
   {
@@ -87,6 +88,7 @@ class Manager extends Component<
     const editMode = this.props.navigation.getParam("editMode");
     return (
       <View style={styles.root}>
+        <TrackPage category="Manager" />
         <SelectDevice
           onSelect={this.onSelect}
           editMode={editMode}

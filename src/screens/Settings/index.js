@@ -24,6 +24,7 @@ import LiveLogoIcon from "../../icons/LiveLogoIcon";
 import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
+import TrackPage from "../../analytics/TrackPage";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -78,6 +79,7 @@ class Settings extends Component<Props, *> {
     const { debugVisible } = this.state;
     return (
       <ScrollView>
+        <TrackPage category="Settings" />
         <View style={styles.root}>
           <SettingsCard
             title={t("settings.display.title")}

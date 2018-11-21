@@ -1,7 +1,7 @@
 // @flow
 import "../shim";
 import "./polyfill"; /* eslint-disable import/first */
-import React, { Component } from "react";
+import React, { Fragment, Component } from "react";
 import { StyleSheet, View } from "react-native";
 // import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
@@ -23,6 +23,7 @@ import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import AppStateListener from "./components/AppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
+import HookAnalytics from "./analytics/HookAnalytics";
 
 // useScreens(); // FIXME this is not working properly when using react-native-modal inside Send flow
 
@@ -108,21 +109,24 @@ export default class Root extends Component<{}, { appState: * }> {
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
-          {ready =>
+          {(ready, store) =>
             ready ? (
-              <AuthPass>
-                <LocaleProvider>
-                  <BridgeSyncProvider>
-                    <CounterValues.PollingProvider>
-                      <ButtonUseTouchable.Provider value={true}>
-                        <OnboardingContextProvider>
-                          <App />
-                        </OnboardingContextProvider>
-                      </ButtonUseTouchable.Provider>
-                    </CounterValues.PollingProvider>
-                  </BridgeSyncProvider>
-                </LocaleProvider>
-              </AuthPass>
+              <Fragment>
+                <HookAnalytics store={store} />
+                <AuthPass>
+                  <LocaleProvider>
+                    <BridgeSyncProvider>
+                      <CounterValues.PollingProvider>
+                        <ButtonUseTouchable.Provider value={true}>
+                          <OnboardingContextProvider>
+                            <App />
+                          </OnboardingContextProvider>
+                        </ButtonUseTouchable.Provider>
+                      </CounterValues.PollingProvider>
+                    </BridgeSyncProvider>
+                  </LocaleProvider>
+                </AuthPass>
+              </Fragment>
             ) : (
               <LoadingApp />
             )

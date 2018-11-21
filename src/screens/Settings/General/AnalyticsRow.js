@@ -10,6 +10,7 @@ import { setAnalytics } from "../../../actions/settings";
 import { analyticsEnabledSelector } from "../../../reducers/settings";
 import InfoModal from "../../../components/InfoModal";
 import colors from "../../../colors";
+import Track from "../../../analytics/Track";
 
 type Props = {
   analyticsEnabled: boolean,
@@ -45,6 +46,11 @@ class AnalyticsRow extends PureComponent<Props, State> {
     const { isOpened } = this.state;
     return (
       <Fragment>
+        <Track
+          event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"}
+          mandatory
+          onUpdate
+        />
         <SettingsRow
           title={<Trans i18nKey="settings.display.analytics" />}
           desc={<Trans i18nKey="settings.display.analyticsDesc" />}

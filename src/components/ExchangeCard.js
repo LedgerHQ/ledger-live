@@ -8,15 +8,17 @@ import Button from "./Button";
 import type { T } from "../types/common";
 import LText from "./LText";
 import Card from "./Card";
+import { track } from "../analytics";
 
 type Props = {
-  card: Object,
+  card: *,
   t: T,
 };
 
 export default class ExchangeCard extends Component<Props> {
   onClick = () => {
     const { card } = this.props;
+    track("OpenExchange", { exchange: card.id, exchangeUrl: card.url });
     Linking.openURL(card.url).catch(err =>
       console.error("An error occurred", err),
     );
