@@ -92,9 +92,10 @@ class ReceiveConfirmation extends Component<Props, State> {
         true,
       );
       this.setState({ verified: true });
-      navigation.setParams({ allowNavigation: true });
     } catch (error) {
       this.setState({ error, isModalOpened: true });
+    } finally {
+      navigation.setParams({ allowNavigation: true });
     }
     await transport.close();
   };
