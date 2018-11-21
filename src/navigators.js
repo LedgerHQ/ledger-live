@@ -144,6 +144,7 @@ const ManagerMain = createMaterialTopTabNavigator(
       },
       style: {
         backgroundColor: colors.white,
+        ...styles.header,
       },
       indicatorStyle: {
         backgroundColor: colors.live,
@@ -154,6 +155,7 @@ const ManagerMain = createMaterialTopTabNavigator(
 
 ManagerMain.navigationOptions = {
   title: "Manager",
+  headerStyle: styles.headerNoShadow,
 };
 
 const ManagerStack = createStackNavigator(
@@ -167,7 +169,7 @@ const ManagerStack = createStackNavigator(
     ...stackNavigatorConfig,
     navigationOptions: {
       ...stackNavigatorConfig.navigationOptions,
-      headerStyle: styles.headerNoShadow,
+      headerStyle: styles.header,
     },
   },
 );

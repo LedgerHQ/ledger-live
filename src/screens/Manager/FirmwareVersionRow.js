@@ -23,7 +23,7 @@ class FirmwareVersionRow extends PureComponent<Props> {
         compact
         bottom
       >
-        <LText semiBold numberOfLines={1} style={styles.version}>
+        <LText numberOfLines={1} style={styles.version}>
           {deviceInfo.seVersion}
         </LText>
       </Row>

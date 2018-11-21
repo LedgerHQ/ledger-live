@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingTop: 16,
-    marginBottom: 16,
+    paddingBottom: 16,
   },
 });
 

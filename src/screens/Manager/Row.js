@@ -11,6 +11,7 @@ export default class SettingsRow extends Component<{
   titleStyle?: *,
   arrowRight?: boolean,
   alignedTop?: boolean,
+  iconLeft?: React$Node,
   top?: boolean,
   bottom?: boolean,
   compact?: boolean,
@@ -27,6 +28,7 @@ export default class SettingsRow extends Component<{
       top,
       bottom,
       compact,
+      iconLeft,
     } = this.props;
     return (
       <Touchable
@@ -46,6 +48,7 @@ export default class SettingsRow extends Component<{
             bottom && styles.cleanBottom,
           ]}
         >
+          {iconLeft || null}
           <View style={styles.textBlock}>
             <LText semiBold style={[styles.titleStyle, titleStyle]}>
               {title}

@@ -58,11 +58,13 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     fontSize: 16,
     color: colors.darkBlue,
+    textAlign: "center",
   },
   description: {
     fontSize: 14,
     color: colors.grey,
     paddingHorizontal: 40,
+    textAlign: "center",
   },
 });
 
