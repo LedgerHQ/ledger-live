@@ -5,15 +5,15 @@ import { Switch, Alert } from "react-native";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
-import { setPrivacy } from "../../../actions/settings";
+import { setPrivacyBiometrics } from "../../../actions/settings";
 import { privacySelector } from "../../../reducers/settings";
 import type { Privacy } from "../../../reducers/settings";
 import auth from "../../../context/AuthPass/auth";
 import SettingsRow from "../../../components/SettingsRow";
 
 type Props = {
-  privacy: Privacy,
-  setPrivacy: ($Shape<Privacy>) => void,
+  privacy: ?Privacy,
+  setPrivacyBiometrics: boolean => *,
 };
 type State = {
   validationPending: boolean,
@@ -24,7 +24,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = {
-  setPrivacy,
+  setPrivacyBiometrics,
 };
 
 class BiometricsRow extends Component<Props, State> {
@@ -53,14 +53,13 @@ class BiometricsRow extends Component<Props, State> {
         return;
       }
     }
-    this.props.setPrivacy({
-      biometricsEnabled,
-    });
+    this.props.setPrivacyBiometrics(biometricsEnabled);
   };
 
   render() {
     const { privacy } = this.props;
     const { validationPending } = this.state;
+    if (!privacy) return null;
     return (
       <Fragment>
         {privacy.biometricsType && (

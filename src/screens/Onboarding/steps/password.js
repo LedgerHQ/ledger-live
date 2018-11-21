@@ -31,7 +31,7 @@ export const Success = () => (
 
 class OnboardingStepPassword extends Component<
   OnboardingStepProps & {
-    privacy: Privacy,
+    privacy: ?Privacy,
   },
 > {
   navigateToPassword = () => {
@@ -41,7 +41,7 @@ class OnboardingStepPassword extends Component<
   Footer = () => {
     const { next, privacy } = this.props;
 
-    return privacy.authSecurityEnabled ? (
+    return privacy ? (
       <Button
         type="primary"
         title={<Trans i18nKey="common.continue" />}
@@ -66,18 +66,18 @@ class OnboardingStepPassword extends Component<
       >
         <View style={styles.hero}>
           {illustration}
-          {privacy.authSecurityEnabled ? <Success /> : null}
+          {privacy ? <Success /> : null}
         </View>
         <LText style={styles.desc}>
           <Trans
             i18nKey={
-              privacy.authSecurityEnabled
+              privacy
                 ? "onboarding.stepPassword.descConfigured"
                 : "onboarding.stepPassword.desc"
             }
           />
         </LText>
-        {privacy.authSecurityEnabled ? <BiometricsRow /> : null}
+        {privacy ? <BiometricsRow /> : null}
       </OnboardingLayout>
     );
   }

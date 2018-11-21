@@ -4,7 +4,7 @@ import { createStructuredSelector } from "reselect";
 import { Switch } from "react-native";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
-import { setPrivacy } from "../../../actions/settings";
+import { disablePrivacy } from "../../../actions/settings";
 import { privacySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
@@ -12,8 +12,8 @@ import type { Privacy } from "../../../reducers/settings";
 import BiometricsRow from "./BiometricsRow";
 
 type Props = {
-  privacy: Privacy,
-  setPrivacy: ($Shape<Privacy>) => void,
+  privacy: ?Privacy,
+  disablePrivacy: ($Shape<Privacy>) => void,
   navigation: *,
   t: T,
 };
@@ -23,19 +23,18 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = {
-  setPrivacy,
+  disablePrivacy,
 };
 
 class AuthSecurityToggle extends Component<Props> {
   onValueChange = (authSecurityEnabled: boolean) => {
-    const { navigation, setPrivacy } = this.props;
+    const { navigation, disablePrivacy } = this.props;
     if (authSecurityEnabled) {
       return navigation.navigate("PasswordAdd");
+    } else {
+      // TODO instead we need to confirm we want to disable privacy
+      return disablePrivacy();
     }
-    return setPrivacy({
-      authSecurityEnabled,
-      biometricsEnabled: false,
-    });
   };
 
   render() {
@@ -47,12 +46,9 @@ class AuthSecurityToggle extends Component<Props> {
           desc={<Trans i18nKey="settings.display.passwordDesc" />}
           alignedTop
         >
-          <Switch
-            value={privacy.authSecurityEnabled}
-            onValueChange={this.onValueChange}
-          />
+          <Switch value={!!privacy} onValueChange={this.onValueChange} />
         </SettingsRow>
-        {privacy.authSecurityEnabled && <BiometricsRow />}
+        {privacy ? <BiometricsRow /> : null}
       </Fragment>
     );
   }

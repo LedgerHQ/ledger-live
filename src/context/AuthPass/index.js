@@ -22,15 +22,22 @@ type State = {
 
 type Props = {
   t: *,
-  privacy: Privacy,
+  privacy: ?Privacy,
   children: *,
 };
 
 class AuthPass extends PureComponent<Props, State> {
   state = {
-    isLocked: this.props.privacy.authSecurityEnabled,
+    isLocked: !!this.props.privacy,
     biometricsError: null,
   };
+
+  static getDerivedStateFromProps({ privacy }, { isLocked }) {
+    if (isLocked && !privacy) {
+      return { isLocked: false };
+    }
+    return null;
+  }
 
   componentWillUnmount() {
     AppState.removeEventListener("change", this.handleAppStateChange);
@@ -60,7 +67,7 @@ class AuthPass extends PureComponent<Props, State> {
   auth = () => {
     const { privacy, t } = this.props;
     const { isLocked } = this.state;
-    if (isLocked && privacy.biometricsEnabled) {
+    if (isLocked && privacy && privacy.biometricsEnabled) {
       if (this.authPending) return;
       this.authPending = true;
       auth(t("auth.unlock.biometricsTitle"))
@@ -97,7 +104,7 @@ class AuthPass extends PureComponent<Props, State> {
   render() {
     const { children, privacy } = this.props;
     const { isLocked, biometricsError } = this.state;
-    if (isLocked) {
+    if (isLocked && privacy) {
       return (
         <AuthScreen
           biometricsError={biometricsError}

@@ -1,6 +1,7 @@
 // @flow
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { Privacy } from "../reducers/settings";
 
 export type CurrencySettings = {
   confirmationsNb: number,
@@ -20,9 +21,18 @@ export const setExchangePairsAction: SetExchangePairs = pairs => ({
   pairs,
 });
 
-export const setPrivacy = (privacy: *) => ({
+export const setPrivacy = (privacy: Privacy) => ({
   type: "SETTINGS_SET_PRIVACY",
   privacy,
+});
+
+export const disablePrivacy = () => ({
+  type: "SETTINGS_DISABLE_PRIVACY",
+});
+
+export const setPrivacyBiometrics = (enabled: boolean) => ({
+  type: "SETTINGS_SET_PRIVACY_BIOMETRICS",
+  enabled,
 });
 
 export const setCountervalue = (counterValue: string) => ({

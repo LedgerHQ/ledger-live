@@ -30,18 +30,20 @@ export const timeRangeDaysByKey = {
 };
 
 export type TimeRange = $Keys<typeof timeRangeDaysByKey>;
+
 export type Privacy = {
-  authSecurityEnabled: boolean,
-  value: ?string,
-  biometricsEnabled: boolean,
+  // when we set the privacy, we also retrieve the biometricsType info
   biometricsType: ?string,
+  // this tells if the biometrics was enabled by user yet
+  biometricsEnabled: boolean,
 };
+
 export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
   reportErrorsEnabled: boolean,
   analyticsEnabled: boolean,
-  privacy: Privacy,
+  privacy: ?Privacy,
   currenciesSettings: {
     [currencyId: string]: CurrencySettings,
   },
@@ -98,10 +100,20 @@ const handlers: Object = {
   }),
   SETTINGS_SET_PRIVACY: (state: SettingsState, { privacy }) => ({
     ...state,
+    privacy,
+  }),
+
+  SETTINGS_SET_PRIVACY_BIOMETRICS: (state: SettingsState, { enabled }) => ({
+    ...state,
     privacy: {
       ...state.privacy,
-      ...privacy,
+      biometricsEnabled: enabled,
     },
+  }),
+
+  SETTINGS_DISABLE_PRIVACY: (state: SettingsState) => ({
+    ...state,
+    privacy: null,
   }),
 
   SETTINGS_SET_REPORT_ERRORS: (

@@ -12,7 +12,6 @@ import PasswordInput from "../../../components/PasswordInput";
 
 type Props = {
   t: T,
-  setPrivacy: ($Shape<Privacy>) => void,
   navigation: NavigationScreenProp<{ goBack: () => void }>,
 };
 type State = {

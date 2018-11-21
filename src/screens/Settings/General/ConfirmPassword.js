@@ -20,7 +20,7 @@ import colors from "../../../colors";
 
 type Props = {
   t: T,
-  setPrivacy: ($Shape<Privacy>) => void,
+  setPrivacy: Privacy => *,
   navigation: NavigationScreenProp<{ goBack: () => void }>,
 };
 type State = {
@@ -67,9 +67,8 @@ class ConfirmPassword extends PureComponent<Props, State> {
     try {
       await Keychain.setGenericPassword("ledger", password);
       setPrivacy({
-        value: password,
-        authSecurityEnabled: true,
         biometricsType,
+        biometricsEnabled: false,
       });
       navigation.dangerouslyGetParent().goBack();
     } catch (err) {
