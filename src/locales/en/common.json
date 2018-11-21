@@ -501,7 +501,7 @@
       "delete": {
         "title": "Delete Account",
         "desc": "Stored data will be deleted",
-        "confirmationDesc": "Are you sure you want to delete <1><0>{{accountName}}</0></1> account"
+        "confirmationDesc": "Are you sure you want to delete <1><0>{{accountName}}</0></1> account?"
       },
       "archive": {
         "title": "Archive Account",

@@ -52,11 +52,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   scrollView: {
-    paddingHorizontal: 16,
     paddingTop: 24,
     flex: 1,
   },
   body: {
+    overflow: "visible",
+    paddingHorizontal: 16,
     paddingBottom: 64,
   },
   list: {

@@ -47,8 +47,7 @@ class AddAccountsSuccess extends Component<Props, State> {
           <Trans i18nKey="addAccounts.imported" />
         </LText>
         <LText style={styles.desc}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit praesent sit
-          amet sagittis
+          <Trans i18nKey="addAccounts.success.desc" />
         </LText>
         <View style={styles.buttonsContainer}>
           <Button
@@ -59,7 +58,7 @@ class AddAccountsSuccess extends Component<Props, State> {
           />
           <Button
             onPress={this.secondaryCTA}
-            type="lightSecondary"
+            type="tertiary"
             title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
           />
         </View>
@@ -125,7 +124,8 @@ const styles = StyleSheet.create({
   },
   desc: {
     marginTop: 16,
-    marginBottom: 16,
+    marginBottom: 32,
+    marginHorizontal: 8,
     textAlign: "center",
     fontSize: 14,
     color: colors.grey,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   button: {
-    marginBottom: 10,
+    marginBottom: 16,
   },
 });
 

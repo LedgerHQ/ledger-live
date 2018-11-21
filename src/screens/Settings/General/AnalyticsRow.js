@@ -50,6 +50,7 @@ class AnalyticsRow extends PureComponent<Props, State> {
           desc={<Trans i18nKey="settings.display.analyticsDesc" />}
           onPress={null}
           onHelpPress={this.onOpen}
+          alignedTop
         >
           <Switch value={analyticsEnabled} onValueChange={setAnalytics} />
         </SettingsRow>
