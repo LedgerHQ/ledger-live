@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import { AndroidBackHandler } from "react-navigation-backhandler";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -12,6 +11,7 @@ import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import StepHeader from "../../components/StepHeader";
+import PreventNativeBack from "../../components/PreventNativeBack";
 
 import colors from "../../colors";
 import ValidateOnDevice from "./ValidateOnDevice";
@@ -89,20 +89,16 @@ class Validation extends Component<Props, State> {
   render() {
     const { signed } = this.state;
     return (
-      <AndroidBackHandler
-        // Disabling Android back button when navigation not allowed
-        onBackPress={() => true}
-      >
-        <View style={styles.root}>
-          {signed ? (
-            <View style={styles.center}>
-              <ActivityIndicator size="large" />
-            </View>
-          ) : (
-            <ValidateOnDevice action={this.sign} />
-          )}
-        </View>
-      </AndroidBackHandler>
+      <View style={styles.root}>
+        <PreventNativeBack />
+        {signed ? (
+          <View style={styles.center}>
+            <ActivityIndicator size="large" />
+          </View>
+        ) : (
+          <ValidateOnDevice action={this.sign} />
+        )}
+      </View>
     );
   }
 }
