@@ -28,6 +28,7 @@ type Props = {
 
 class AuthPass extends PureComponent<Props, State> {
   state = {
+    // TODO isLocked needs to be resilient to reboots and needs to live at another level
     isLocked: !!this.props.privacy,
     biometricsError: null,
   };

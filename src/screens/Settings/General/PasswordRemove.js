@@ -7,75 +7,58 @@ import { compose } from "redux";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/live-common/lib/errors";
-import { setPrivacy } from "../../../actions/settings";
-import type { Privacy } from "../../../reducers/settings";
+import { disablePrivacy } from "../../../actions/settings";
 import type { T } from "../../../types/common";
 import PasswordForm from "./PasswordForm";
 
 type Props = {
   t: T,
-  setPrivacy: Privacy => *,
+  disablePrivacy(): () => *,
   navigation: NavigationScreenProp<{}>,
 };
 type State = {
-  password: string,
-  confirmPassword: string,
   error: ?Error,
-  biometricsType?: string,
+  confirmPassword: string,
 };
 
 const mapDispatchToProps = {
-  setPrivacy,
+  disablePrivacy,
 };
 
-class ConfirmPassword extends PureComponent<Props, State> {
+class PasswordRemove extends PureComponent<Props, State> {
   static navigationOptions = {
     title: i18next.t("auth.confirmPassword.title"),
   };
 
-  componentDidMount() {
-    Keychain.getSupportedBiometryType().then(biometricsType => {
-      this.setState({ biometricsType });
-    });
-  }
-
-  constructor({ navigation }) {
-    super();
-    const password = navigation.getParam("password");
-    this.state = {
-      password,
-      confirmPassword: "",
-      error: null,
-    };
-  }
+  state = {
+    error: null,
+    confirmPassword: "",
+  };
 
   onChange = (confirmPassword: string) => {
     this.setState({ confirmPassword, error: null });
   };
 
-  async save() {
-    const { password, biometricsType } = this.state;
-    const { setPrivacy, navigation } = this.props;
+  async submit() {
+    const { confirmPassword } = this.state;
+    const { disablePrivacy, navigation } = this.props;
     try {
-      await Keychain.setGenericPassword("ledger", password);
-      setPrivacy({
-        biometricsType,
-        biometricsEnabled: false,
-      });
+      const credentials = await Keychain.getGenericPassword();
+      if (credentials) {
+        if (credentials.password !== confirmPassword) {
+          throw new PasswordsDontMatchError();
+        }
+        await Keychain.resetGenericPassword();
+      }
+      disablePrivacy();
       navigation.dangerouslyGetParent().goBack();
-    } catch (err) {
-      console.log("could not save credentials"); // eslint-disable-line
+    } catch (error) {
+      this.setState({ error });
     }
   }
 
   onSubmit = () => {
-    if (this.state.password === this.state.confirmPassword) {
-      this.save();
-    } else {
-      this.setState({
-        error: new PasswordsDontMatchError(),
-      });
-    }
+    this.submit();
   };
 
   render() {
@@ -98,4 +81,4 @@ export default compose(
     mapDispatchToProps,
   ),
   translate(),
-)(ConfirmPassword);
+)(PasswordRemove);

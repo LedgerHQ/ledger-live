@@ -1,11 +1,15 @@
 // @flow
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
-import type { Privacy } from "../reducers/settings";
 
 export type CurrencySettings = {
   confirmationsNb: number,
   exchange: ?*,
+};
+
+type Privacy = {
+  biometricsType: ?string,
+  biometricsEnabled: boolean,
 };
 
 type SetExchangePairs = (

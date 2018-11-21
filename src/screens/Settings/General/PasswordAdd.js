@@ -1,14 +1,10 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
-import type { Privacy } from "../../../reducers/settings";
 import type { T } from "../../../types/common";
-import Button from "../../../components/Button";
-import KeyboardView from "../../../components/KeyboardView";
-import PasswordInput from "../../../components/PasswordInput";
+import PasswordForm from "./PasswordForm";
 
 type Props = {
   t: T,
@@ -16,7 +12,6 @@ type Props = {
 };
 type State = {
   password: string,
-  secureTextEntry: boolean,
 };
 
 class PasswordAdd extends PureComponent<Props, State> {
@@ -26,16 +21,10 @@ class PasswordAdd extends PureComponent<Props, State> {
 
   state = {
     password: "",
-    secureTextEntry: true,
   };
 
   onChange = (password: string) => {
     this.setState({ password });
-  };
-
-  toggleSecureTextEntry = () => {
-    const { secureTextEntry } = this.state;
-    this.setState({ secureTextEntry: !secureTextEntry });
   };
 
   onSubmit = () => {
@@ -46,50 +35,14 @@ class PasswordAdd extends PureComponent<Props, State> {
 
   render() {
     const { t } = this.props;
-    const { secureTextEntry } = this.state;
     return (
-      <SafeAreaView style={styles.root}>
-        <KeyboardView>
-          <PasswordInput
-            inline
-            autoFocus
-            onChange={this.onChange}
-            onSubmit={this.onSubmit}
-            toggleSecureTextEntry={this.toggleSecureTextEntry}
-            secureTextEntry={secureTextEntry}
-            placeholder={t("auth.addPassword.placeholder")}
-          />
-          <View style={styles.flex}>
-            <Button
-              title={t("common.confirm")}
-              type="primary"
-              onPress={this.onSubmit}
-              containerStyle={styles.buttonContainer}
-              titleStyle={styles.buttonTitle}
-            />
-          </View>
-        </KeyboardView>
-      </SafeAreaView>
+      <PasswordForm
+        placeholder={t("auth.addPassword.placeholder")}
+        onChange={this.onChange}
+        onSubmit={this.onSubmit}
+      />
     );
   }
 }
 
 export default translate()(PasswordAdd);
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  buttonContainer: {
-    marginHorizontal: 16,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  flex: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    paddingBottom: 16,
-  },
-});
