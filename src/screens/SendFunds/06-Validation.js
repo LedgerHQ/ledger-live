@@ -44,6 +44,7 @@ class Validation extends Component<Props, State> {
     ),
     headerLeft: null,
     headerRight: null,
+    gesturesEnabled: false,
   };
 
   state = {

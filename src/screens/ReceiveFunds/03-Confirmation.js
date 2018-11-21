@@ -56,6 +56,7 @@ class ReceiveConfirmation extends Component<Props, State> {
     if (!navigation.getParam("allowNavigation")) {
       options.headerLeft = null;
       options.headerRight = null;
+      options.gesturesEnabled = false;
     }
 
     return options;
