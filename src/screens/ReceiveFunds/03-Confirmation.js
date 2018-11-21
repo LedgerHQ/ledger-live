@@ -6,6 +6,7 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { translate, Trans } from "react-i18next";
+import { AndroidBackHandler } from "react-navigation-backhandler";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
@@ -30,6 +31,7 @@ type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
     deviceId: string,
+    allowNavigation?: boolean,
   },
 }>;
 
@@ -46,8 +48,17 @@ type State = {
 };
 
 class ReceiveConfirmation extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: <StepHeader title="Receive" subtitle="3 of 3" />,
+  static navigationOptions = ({ navigation }) => {
+    const options: any = {
+      headerTitle: <StepHeader title="Receive" subtitle="3 of 3" />,
+    };
+
+    if (!navigation.getParam("allowNavigation")) {
+      options.headerLeft = null;
+      options.headerRight = null;
+    }
+
+    return options;
   };
 
   state = {
@@ -58,12 +69,18 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const deviceId = this.props.navigation.getParam("deviceId");
-    if (deviceId) this.verifyOnDevice(deviceId);
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+
+    if (deviceId) {
+      this.verifyOnDevice(deviceId);
+    } else {
+      navigation.setParams({ allowNavigation: true });
+    }
   }
 
   verifyOnDevice = async (deviceId: string) => {
-    const { account } = this.props;
+    const { account, navigation } = this.props;
 
     const transport = await open(deviceId);
     try {
@@ -74,6 +91,7 @@ class ReceiveConfirmation extends Component<Props, State> {
         true,
       );
       this.setState({ verified: true });
+      navigation.setParams({ allowNavigation: true });
     } catch (error) {
       this.setState({ error, isModalOpened: true });
     }
@@ -111,103 +129,108 @@ class ReceiveConfirmation extends Component<Props, State> {
     const unsafe = !navigation.getParam("deviceId");
 
     return (
-      <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={3} currentStep={3} />
-        <View style={styles.container}>
-          <View style={styles.qrWrapper}>
-            <QRCode size={width / 2 - 30} value={account.freshAddress} />
-          </View>
-          <View>
-            <LText style={styles.addressTitle}>Address for account</LText>
-          </View>
-          <View>
-            <LText semiBold style={styles.addressTitleBold}>
-              {account.name}
-            </LText>
-          </View>
-          <View style={styles.address}>
-            <DisplayAddress
-              address={account.freshAddress}
-              verified={verified}
-            />
-          </View>
-        </View>
-        <View style={styles.bottomContainer}>
-          <VerifyAddressDisclaimer
-            unsafe={unsafe}
-            verified={verified}
-            text={
-              unsafe ? (
-                <Trans
-                  i18nKey="transfer.receive.verifySkipped"
-                  values={{
-                    accountType: account.currency.managerAppName,
-                  }}
-                />
-              ) : verified ? (
-                <Trans i18nKey="transfer.receive.verified" />
-              ) : (
-                <Trans
-                  i18nKey="transfer.receive.verifyPending"
-                  values={{
-                    accountType: account.currency.managerAppName,
-                  }}
-                />
-              )
-            }
-          />
-        </View>
-        {verified && (
-          <View style={styles.footer}>
-            <Button
-              containerStyle={styles.button}
-              onPress={this.onDone}
-              type="secondary"
-              title={<Trans i18nKey="common.done" />}
-            />
-            <Button
-              containerStyle={styles.button}
-              type="primary"
-              title={<Trans i18nKey="transfer.receive.verifyAgain" />}
-              onPress={this.onRetry}
-            />
-          </View>
-        )}
-        <BottomModal isOpened={isModalOpened} onModalHide={onModalHide}>
-          {error ? (
-            <View style={styles.modal}>
-              <View style={styles.modalBody}>
-                <View style={styles.modalIcon}>
-                  <DeviceNanoAction error={error} />
-                </View>
-                <LText secondary semiBold style={styles.modalTitle}>
-                  <TranslatedError error={error} />
-                </LText>
-                <LText style={styles.modalDescription}>
-                  <TranslatedError error={error} field="description" />
-                </LText>
-              </View>
-              <View style={styles.buttonsContainer}>
-                <Button
-                  type="secondary"
-                  title={<Trans i18nKey="common.contactUs" />}
-                  containerStyle={styles.button}
-                  onPress={() => {}} // TODO do something
-                />
-                <Button
-                  type="primary"
-                  title={<Trans i18nKey="common.retry" />}
-                  containerStyle={styles.button}
-                  onPress={this.onRetry}
-                />
-              </View>
+      <AndroidBackHandler
+        // Disabling Android back button when navigation not allowed
+        onBackPress={() => !navigation.getParam("allowNavigation")}
+      >
+        <SafeAreaView style={styles.root}>
+          <Stepper nbSteps={3} currentStep={3} />
+          <View style={styles.container}>
+            <View style={styles.qrWrapper}>
+              <QRCode size={width / 2 - 30} value={account.freshAddress} />
             </View>
-          ) : null}
-          <Touchable style={styles.close} onPress={this.onModalClose}>
-            <Close color={colors.fog} size={20} />
-          </Touchable>
-        </BottomModal>
-      </SafeAreaView>
+            <View>
+              <LText style={styles.addressTitle}>Address for account</LText>
+            </View>
+            <View>
+              <LText semiBold style={styles.addressTitleBold}>
+                {account.name}
+              </LText>
+            </View>
+            <View style={styles.address}>
+              <DisplayAddress
+                address={account.freshAddress}
+                verified={verified}
+              />
+            </View>
+          </View>
+          <View style={styles.bottomContainer}>
+            <VerifyAddressDisclaimer
+              unsafe={unsafe}
+              verified={verified}
+              text={
+                unsafe ? (
+                  <Trans
+                    i18nKey="transfer.receive.verifySkipped"
+                    values={{
+                      accountType: account.currency.managerAppName,
+                    }}
+                  />
+                ) : verified ? (
+                  <Trans i18nKey="transfer.receive.verified" />
+                ) : (
+                  <Trans
+                    i18nKey="transfer.receive.verifyPending"
+                    values={{
+                      accountType: account.currency.managerAppName,
+                    }}
+                  />
+                )
+              }
+            />
+          </View>
+          {verified && (
+            <View style={styles.footer}>
+              <Button
+                containerStyle={styles.button}
+                onPress={this.onDone}
+                type="secondary"
+                title={<Trans i18nKey="common.done" />}
+              />
+              <Button
+                containerStyle={styles.button}
+                type="primary"
+                title={<Trans i18nKey="transfer.receive.verifyAgain" />}
+                onPress={this.onRetry}
+              />
+            </View>
+          )}
+          <BottomModal isOpened={isModalOpened} onModalHide={onModalHide}>
+            {error ? (
+              <View style={styles.modal}>
+                <View style={styles.modalBody}>
+                  <View style={styles.modalIcon}>
+                    <DeviceNanoAction error={error} />
+                  </View>
+                  <LText secondary semiBold style={styles.modalTitle}>
+                    <TranslatedError error={error} />
+                  </LText>
+                  <LText style={styles.modalDescription}>
+                    <TranslatedError error={error} field="description" />
+                  </LText>
+                </View>
+                <View style={styles.buttonsContainer}>
+                  <Button
+                    type="secondary"
+                    title={<Trans i18nKey="common.contactUs" />}
+                    containerStyle={styles.button}
+                    onPress={() => {}} // TODO do something
+                  />
+                  <Button
+                    type="primary"
+                    title={<Trans i18nKey="common.retry" />}
+                    containerStyle={styles.button}
+                    onPress={this.onRetry}
+                  />
+                </View>
+              </View>
+            ) : null}
+            <Touchable style={styles.close} onPress={this.onModalClose}>
+              <Close color={colors.fog} size={20} />
+            </Touchable>
+          </BottomModal>
+        </SafeAreaView>
+      </AndroidBackHandler>
     );
   }
 }

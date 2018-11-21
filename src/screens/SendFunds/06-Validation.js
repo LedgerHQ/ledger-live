@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
+import { AndroidBackHandler } from "react-navigation-backhandler";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -41,6 +42,8 @@ class Validation extends Component<Props, State> {
         })}
       />
     ),
+    headerLeft: null,
+    headerRight: null,
   };
 
   state = {
@@ -85,15 +88,20 @@ class Validation extends Component<Props, State> {
   render() {
     const { signed } = this.state;
     return (
-      <View style={styles.root}>
-        {signed ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" />
-          </View>
-        ) : (
-          <ValidateOnDevice action={this.sign} />
-        )}
-      </View>
+      <AndroidBackHandler
+        // Disabling Android back button when navigation not allowed
+        onBackPress={() => true}
+      >
+        <View style={styles.root}>
+          {signed ? (
+            <View style={styles.center}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : (
+            <ValidateOnDevice action={this.sign} />
+          )}
+        </View>
+      </AndroidBackHandler>
     );
   }
 }
