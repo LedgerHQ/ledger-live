@@ -113,7 +113,7 @@ async function send(characteristic, apdu, termination) {
   for (const chunk of chunks) {
     if (terminated) return;
     const message = chunk.toString("base64");
-    logSubject.next({ type: "ble-frame-out", message });
+    logSubject.next({ type: "ble-frame-out", message: chunk.toString("hex") });
     await characteristic.writeWithResponse(message);
   }
 }
