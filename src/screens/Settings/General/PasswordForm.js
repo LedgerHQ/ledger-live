@@ -39,16 +39,18 @@ class PasswordForm extends PureComponent<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView>
-          <PasswordInput
-            inline
-            autoFocus
-            error={error}
-            onChange={onChange}
-            onSubmit={onSubmit}
-            toggleSecureTextEntry={this.toggleSecureTextEntry}
-            secureTextEntry={secureTextEntry}
-            placeholder={placeholder}
-          />
+          <View style={styles.body}>
+            <PasswordInput
+              inline
+              autoFocus
+              error={error}
+              onChange={onChange}
+              onSubmit={onSubmit}
+              toggleSecureTextEntry={this.toggleSecureTextEntry}
+              secureTextEntry={secureTextEntry}
+              placeholder={placeholder}
+            />
+          </View>
           {error && (
             <LText style={styles.errorStyle}>
               <TranslatedError error={error} />
@@ -76,6 +78,9 @@ export default translate()(PasswordForm);
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  body: {
+    paddingVertical: 24,
   },
   buttonContainer: {
     marginHorizontal: 16,
