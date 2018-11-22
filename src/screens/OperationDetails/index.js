@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";

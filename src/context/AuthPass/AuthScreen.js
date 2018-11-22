@@ -1,7 +1,8 @@
 // @flow
 import React, { PureComponent } from "react";
 import { translate, Trans } from "react-i18next";
-import { View, StyleSheet, SafeAreaView, Image } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import * as Keychain from "react-native-keychain";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
 import type { T } from "../../types/common";

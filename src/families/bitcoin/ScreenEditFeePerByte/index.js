@@ -1,12 +1,12 @@
 // @flow
 import React, { Component } from "react";
 import {
-  SafeAreaView,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
 import { compose } from "redux";

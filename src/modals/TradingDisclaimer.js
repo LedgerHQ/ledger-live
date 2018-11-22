@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { Image, View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { translate } from "react-i18next";
 import Button from "../components/Button";
 import LText from "../components/LText";
@@ -9,6 +10,8 @@ import type { T } from "../types/common";
 import BottomModal from "../components/BottomModal";
 import type { Props as ModalProps } from "../components/BottomModal";
 import colors from "../colors";
+
+const forceInset = { bottom: "always" };
 
 type Props = ModalProps & {
   t: T,
@@ -20,27 +23,29 @@ class TradingDisclaimer extends Component<Props> {
 
     return (
       <BottomModal style={styles.root} isOpened={isOpened} onClose={onClose}>
-        <Image
-          style={styles.image}
-          source={require("../images/shield-blue.png")}
-        />
-        <LText semiBold style={styles.title}>
-          {t("portfolio.tradingDisclaimer.title")}
-        </LText>
-        <LText style={styles.text}>
-          {t("portfolio.tradingDisclaimer.text1")}
-        </LText>
-        <LText style={{ ...styles.text, marginTop: 16 }}>
-          {t("portfolio.tradingDisclaimer.text2")}
-        </LText>
-        <View style={{ marginTop: 24, flexDirection: "row" }}>
-          <Button
-            type="primary"
-            containerStyle={styles.buttonContainer}
-            title={t("common.gotit")}
-            onPress={onClose}
+        <SafeAreaView forceInset={forceInset}>
+          <Image
+            style={styles.image}
+            source={require("../images/shield-blue.png")}
           />
-        </View>
+          <LText semiBold style={styles.title}>
+            {t("portfolio.tradingDisclaimer.title")}
+          </LText>
+          <LText style={styles.text}>
+            {t("portfolio.tradingDisclaimer.text1")}
+          </LText>
+          <LText style={{ ...styles.text, marginTop: 16 }}>
+            {t("portfolio.tradingDisclaimer.text2")}
+          </LText>
+          <View style={{ marginTop: 24, flexDirection: "row" }}>
+            <Button
+              type="primary"
+              containerStyle={styles.buttonContainer}
+              title={t("common.gotit")}
+              onPress={onClose}
+            />
+          </View>
+        </SafeAreaView>
       </BottomModal>
     );
   }

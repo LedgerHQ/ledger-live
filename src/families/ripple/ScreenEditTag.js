@@ -1,12 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  TextInput,
-  SafeAreaView,
-} from "react-native";
+import { ScrollView, View, StyleSheet, TextInput } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";

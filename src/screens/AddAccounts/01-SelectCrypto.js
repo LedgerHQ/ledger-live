@@ -2,7 +2,8 @@
 
 import React, { Component } from "react";
 import { translate, Trans } from "react-i18next";
-import { SafeAreaView, StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";

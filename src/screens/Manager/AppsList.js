@@ -159,6 +159,7 @@ class ManagerAppsList extends Component<
             onClose={this.onActionClose}
             deviceId={deviceId}
             targetId={deviceInfo.targetId}
+            isOpened={!!action}
           />
         ) : null}
       </View>

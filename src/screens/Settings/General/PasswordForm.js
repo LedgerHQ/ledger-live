@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { translate } from "react-i18next";
 import type { T } from "../../../types/common";
 import Button from "../../../components/Button";

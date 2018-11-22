@@ -5,9 +5,9 @@ import {
   View,
   StyleSheet,
   TextInput,
-  SafeAreaView,
   Keyboard,
 } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";

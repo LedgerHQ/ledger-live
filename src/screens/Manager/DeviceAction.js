@@ -5,7 +5,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
-import { withNavigation } from "react-navigation";
+import { withNavigation, SafeAreaView } from "react-navigation";
 
 import { removeKnownDevice } from "../../actions/ble";
 import { delay } from "../../logic/promise";
@@ -19,6 +19,8 @@ import Space from "../../components/Space";
 import { deviceNames } from "../../wording";
 
 import colors from "../../colors";
+
+const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: *,
@@ -52,7 +54,7 @@ class DeviceAction extends PureComponent<Props, State> {
 
     return (
       <BottomModal isOpened={opened} onClose={onClose}>
-        <View style={styles.root}>
+        <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
             <LText secondary semiBold style={styles.title}>
               <Trans i18nKey="manager.unpair.title" />
@@ -79,7 +81,7 @@ class DeviceAction extends PureComponent<Props, State> {
               containerStyle={styles.button}
             />
           </View>
-        </View>
+        </SafeAreaView>
         <Touchable style={styles.close} onPress={onClose}>
           <Close color={colors.fog} size={20} />
         </Touchable>

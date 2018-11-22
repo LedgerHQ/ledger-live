@@ -3,13 +3,8 @@
 import React, { Component } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import {
-  View,
-  StyleSheet,
-  SectionList,
-  Animated,
-  SafeAreaView,
-} from "react-native";
+import { View, StyleSheet, SectionList, Animated } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { translate } from "react-i18next";
 import Config from "react-native-config";
 

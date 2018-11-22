@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
+import { SafeAreaView } from "react-navigation";
 import type { ApplicationVersion } from "../../types/manager";
 import install from "../../logic/hw/installApp";
 import uninstall from "../../logic/hw/uninstallApp";
@@ -25,6 +26,8 @@ const hwCallPerType = {
   uninstall,
 };
 
+const forceInset = { bottom: "always" };
+
 class AppAction extends PureComponent<
   {
     action: {
@@ -34,6 +37,7 @@ class AppAction extends PureComponent<
     targetId: *,
     deviceId: string,
     onClose: () => void,
+    isOpened: boolean,
   },
   {
     pending: boolean,
@@ -71,7 +75,7 @@ class AppAction extends PureComponent<
   }
 
   render() {
-    const { action, onClose } = this.props;
+    const { action, onClose, isOpened } = this.props;
     const { pending, error } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
 
@@ -101,8 +105,8 @@ class AppAction extends PureComponent<
     );
 
     return (
-      <BottomModal isOpened onClose={onClose}>
-        <View style={styles.root}>
+      <BottomModal isOpened={isOpened} onClose={onClose}>
+        <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
             <View style={styles.headIcon}>
               {icon}
@@ -131,7 +135,7 @@ class AppAction extends PureComponent<
             disabled={pending}
             title={buttonTitle}
           />
-        </View>
+        </SafeAreaView>
         <Touchable style={styles.close} onPress={onClose}>
           <Close color={colors.fog} size={20} />
         </Touchable>
