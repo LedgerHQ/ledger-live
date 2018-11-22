@@ -6,7 +6,6 @@ import { BleManager } from "react-native-ble-plx";
 import { logSubject } from "./debug";
 
 const ServiceUuid = "d973f2e0-b19e-11e2-9e96-0800200c9a66";
-const RenameCharacteristicUuid = "d973f2e3-b19e-11e2-9e96-0800200c9a66";
 const WriteCharacteristicUuid = "d973f2e2-b19e-11e2-9e96-0800200c9a66";
 const NotifyCharacteristicUuid = "d973f2e1-b19e-11e2-9e96-0800200c9a66";
 const MaxChunkBytes = 20;
@@ -117,6 +116,8 @@ async function send(characteristic, apdu, termination) {
     await characteristic.writeWithResponse(message);
   }
 }
+
+let id = 0;
 
 /**
  * react-native bluetooth BLE implementation
@@ -229,11 +230,8 @@ export default class BluetoothTransport extends Transport<Device | string> {
     }
     let writeC;
     let notifyC;
-    let renameC;
     for (const c of characteristics) {
-      if (c.uuid === RenameCharacteristicUuid) {
-        renameC = c;
-      } else if (c.uuid === WriteCharacteristicUuid) {
+      if (c.uuid === WriteCharacteristicUuid) {
         writeC = c;
       } else if (c.uuid === NotifyCharacteristicUuid) {
         notifyC = c;
@@ -264,7 +262,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
       );
     }
 
-    return new BluetoothTransport(device, writeC, notifyC, renameC);
+    return new BluetoothTransport(device, writeC, notifyC);
   }
 
   device: Device;
@@ -273,26 +271,30 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
   notifyCharacteristic: Characteristic;
 
-  renameCharacteristic: Characteristic;
-
   constructor(
     device: Device,
     writeCharacteristic: Characteristic,
     notifyCharacteristic: Characteristic,
-    renameCharacteristic: Characteristic,
   ) {
     super();
+    this.id = ++id;
     this.device = device;
     this.writeCharacteristic = writeCharacteristic;
     this.notifyCharacteristic = notifyCharacteristic;
-    this.renameCharacteristic = renameCharacteristic;
-    device.onDisconnected(e => {
+    this.disconnectedSub = device.onDisconnected(e => {
       if (this.debug) {
         console.log("BLE disconnect", this.device); // eslint-disable-line
       }
       this.emit("disconnect", e);
+      if (this.disconnectedSub) {
+        this.disconnectedSub.remove();
+        this.disconnectedSub = null;
+      }
     });
+    console.log("BleTransport(" + this.id + ") opened");
   }
+
+  disconnectedSub: *;
 
   busy = false;
 
@@ -335,6 +337,11 @@ export default class BluetoothTransport extends Transport<Device | string> {
   setScrambleKey() {}
 
   close(): Promise<void> {
+    if (this.disconnectedSub) {
+      this.disconnectedSub.remove();
+      this.disconnectedSub = null;
+    }
+    console.log("BleTransport(" + this.id + ") close");
     // we don't want to actually close the device. TODO: we might want to stop all exchanges
     return Promise.resolve();
   }
