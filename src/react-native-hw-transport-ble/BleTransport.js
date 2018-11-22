@@ -189,9 +189,11 @@ export default class BluetoothTransport extends Transport<Device | string> {
         }, true);
       });
 
+      /*
       const devices = await manager.devices([deviceOrId]);
       console.log(`${devices.length} devices`); // eslint-disable-line no-console
       [device] = devices;
+      */
 
       if (!device) {
         const connectedDevices = await manager.connectedDevices([ServiceUuid]);
@@ -203,6 +205,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
         [device] = connectedDevicesFiltered;
       }
 
+      /*
       if (device) {
         const isDeviceConnected = await manager.isDeviceConnected(deviceOrId);
         console.log(`isDeviceConnected=${isDeviceConnected}`); // eslint-disable-line no-console
@@ -210,6 +213,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
           device = null;
         }
       }
+      */
 
       if (!device) {
         console.log("Last chance, we attempt to connectToDevice"); // eslint-disable-line no-console
@@ -218,12 +222,18 @@ export default class BluetoothTransport extends Transport<Device | string> {
     } else {
       device = deviceOrId;
     }
-
+    /*
+    console.log("isConnected?");
     if (!(await device.isConnected())) {
+      console.log("nope! connecting...");
       await device.connect();
     }
+    */
+
+    console.log("discoverAllServicesAndCharacteristics");
     await device.discoverAllServicesAndCharacteristics();
 
+    console.log("characteristicsForService");
     const characteristics = await device.characteristicsForService(ServiceUuid);
     if (!characteristics) {
       throw new TransportError("service not found", "BLEServiceNotFound");
