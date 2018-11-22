@@ -90,10 +90,13 @@ class AuthPass extends PureComponent<Props, State> {
   lock = () => {
     if (!this.props.privacy) return;
     wasUnlocked = false;
-    this.setState({
-      isLocked: true,
-      biometricsError: null,
-    });
+    this.setState(
+      {
+        isLocked: true,
+        biometricsError: null,
+      },
+      () => this.auth(),
+    );
   };
 
   // unlock the app
