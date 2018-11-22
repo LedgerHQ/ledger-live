@@ -202,7 +202,10 @@ class AuthScreen extends PureComponent<Props, State> {
           <View style={{ flex: 1 }} />
         </KeyboardView>
 
-        <View style={styles.footer}>
+        <View
+          style={[styles.footer, { opacity: passwordFocused ? 0 : 1 }]}
+          pointerEvents="none"
+        >
           <PoweredByLedger />
         </View>
 
