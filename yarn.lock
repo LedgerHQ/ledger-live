@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@aeternity/ledger-app-api@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@aeternity/ledger-app-api/-/ledger-app-api-0.0.4.tgz#79d253b46cc6b0b18ef7cb57c3684bbe7e723c51"
+  integrity sha512-aXvCJX9fdT/EJbRKBdc2mu8fvvWu80A8JyFdfvS4bsaDOGjBaIfFFYbEpxaXef8TBE5zV8u7RN1PaXDPGeDUZg==
+  dependencies:
+    "@ledgerhq/hw-transport" "^4.21.0"
+
 "@babel/code-frame@7.0.0-beta.44":
   version "7.0.0-beta.44"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.44.tgz#2a02643368de80916162be70865c97774f3adbd9"
@@ -786,18 +793,19 @@
     axios "^0.18.0"
     ws "^6.1.0"
 
-"@ledgerhq/hw-transport@^4.24.0":
+"@ledgerhq/hw-transport@^4.21.0", "@ledgerhq/hw-transport@^4.24.0":
   version "4.24.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.24.0.tgz#8def925d8c2e1f73d15128d9e27ead729870be58"
   integrity sha512-L34TG1Ss7goRB+5BxtvBwUuu0CmDSIxS33oUqkpEy6rCs31k7XicV48iUGAnRnt8hNY2DvJ9WFyaOroUE9h6wQ==
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@^4.4.3":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.4.3.tgz#02d488707b1bb3a929f63b321513080f986a8526"
-  integrity sha512-LoBHvTwCZeaBJs4/3T+s9nve9nhdq6go1FXuXUP2cQ8U/TxWi1lbvsQkhsfa0f7HNpO/VlwoSaal/Trw9xXbVA==
+"@ledgerhq/live-common@^4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.5.1.tgz#9a4672877113a93d739a6d465c5edfe5b006dbc8"
+  integrity sha512-c6bbi6n1EWz8Z9DNiABgBGBg+vxd03CXOEpgu0AXH1XNBCPt8NTFaAa5CCcjXAptM6RPQhe/PtEGb/OXJ/kGFA==
   dependencies:
+    "@aeternity/ledger-app-api" "0.0.4"
     "@ledgerhq/hw-app-btc" "^4.24.0"
     "@ledgerhq/hw-app-eth" "^4.24.0"
     "@ledgerhq/hw-app-xrp" "^4.24.0"
