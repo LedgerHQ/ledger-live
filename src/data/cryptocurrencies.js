@@ -1776,8 +1776,8 @@ for (let id in cryptocurrenciesById) {
   const c = cryptocurrenciesById[id];
   cryptocurrenciesById[c.id] = c;
   cryptocurrenciesByScheme[c.scheme] = c;
-  cryptocurrenciesByTicker[c.ticker] = c;
   if (!c.isTestnetFor) {
+    cryptocurrenciesByTicker[c.ticker] = c;
     prodCryptoArray.push(c);
   }
   cryptocurrenciesArray.push(c);
