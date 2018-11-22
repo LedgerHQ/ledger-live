@@ -3,9 +3,9 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 
+import Icon from "react-native-vector-icons/dist/Feather";
 import LText from "./LText";
 import colors from "../colors";
-import ArrowRight from "../icons/ArrowRight";
 
 // TODO fade in animation
 
@@ -27,7 +27,6 @@ export class BulletItem extends PureComponent<{
   static defaultProps = {
     Bullet,
   };
-
   opacity = new Animated.Value(this.props.animated ? 0 : 1);
 
   componentDidMount() {
@@ -77,7 +76,7 @@ export class BulletChevron extends PureComponent<{}> {
   render() {
     return (
       <View style={styles.chevron}>
-        <ArrowRight size={16} color={colors.grey} />
+        <Icon size={16} name="chevron-right" color={colors.grey} />
       </View>
     );
   }
