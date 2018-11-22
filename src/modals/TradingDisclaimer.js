@@ -30,7 +30,7 @@ class TradingDisclaimer extends Component<Props> {
         <LText style={styles.text}>
           {t("portfolio.tradingDisclaimer.text1")}
         </LText>
-        <LText style={{ ...styles.text, marginTop: 28 }}>
+        <LText style={{ ...styles.text, marginTop: 16 }}>
           {t("portfolio.tradingDisclaimer.text2")}
         </LText>
         <View style={{ marginTop: 24, flexDirection: "row" }}>
@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    marginTop: 17,
-    marginBottom: 24,
+    marginTop: 16,
+    marginBottom: 16,
   },
   buttonContainer: {
     flexGrow: 1,
@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     lineHeight: 21,
-    textAlign: "center",
     color: colors.grey,
   },
   title: {
