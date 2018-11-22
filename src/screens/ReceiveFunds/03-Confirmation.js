@@ -14,7 +14,6 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { open } from "../../logic/hw";
 
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
@@ -112,7 +111,6 @@ class ReceiveConfirmation extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={3} currentStep={3} />
         <View style={styles.container}>
           <View style={styles.qrWrapper}>
             <QRCode size={width / 2 - 30} value={account.freshAddress} />
