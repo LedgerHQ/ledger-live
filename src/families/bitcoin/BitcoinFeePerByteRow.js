@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { Trans, translate } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -11,6 +11,7 @@ import { getAccountBridge } from "../../bridge";
 import type { Transaction } from "../../bridge/RNLibcoreAccountBridge";
 import Touchable from "../../components/Touchable";
 import ExternalLink from "../../icons/ExternalLink";
+import { urls } from "../../config/urls";
 
 type Props = {
   account: Account,
@@ -26,7 +27,13 @@ class BitcoinFeePerByteRow extends Component<Props> {
       transaction,
     });
   };
-  extraInfoFees = () => {};
+
+  extraInfoFees = () => {
+    Linking.openURL(urls.feesMoreInfo).catch(err =>
+      console.error("An error occurred", err),
+    );
+  };
+
   render() {
     const { account, transaction } = this.props;
     const bridge = getAccountBridge(account);
