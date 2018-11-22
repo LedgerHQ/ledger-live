@@ -24,7 +24,7 @@ class GeneralSettings extends PureComponent<{
       <ScrollView contentContainerStyle={styles.root}>
         <CountervalueSettingsRow navigation={navigation} />
         <RateProviderSettingsRow navigation={navigation} />
-        <AuthSecurityToggle />
+        <AuthSecurityToggle navigation={navigation} />
         <ReportErrorsRow />
         <DeveloperModeRow />
         <AnalyticsRow />

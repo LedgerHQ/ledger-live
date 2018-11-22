@@ -77,6 +77,10 @@
       "title": "Invalid endpoint",
       "description": "Please provide a valid endpoint"
     },
+    "Touch ID Error": {
+      "title": "Biometric authentication failed",
+      "description": "Please use your password or reset the app"
+    },
     "Error": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
@@ -164,7 +168,7 @@
       "description": "Please try again"
     },
     "PasswordsDontMatch": {
-      "title": "Passwords don't match",
+      "title": "The password you entered does not match",
       "description": "Please try again"
     },
     "SelectExchangesLoadError": {
@@ -263,11 +267,35 @@
   },
   "auth": {
     "failed": {
+      "biometrics": {
+        "title": "{{biometricsType}} unlock failed",
+        "description": "Enter your password to continue"
+      },
       "title": "Authentication failed",
       "buttons": {
         "tryAgain": "Try again",
         "reset": "Reset"
       }
+    },
+    "unlock": {
+      "biometricsTitle": "Please authenticate to Ledger Live app",
+      "title": "Welcome back",
+      "desc": "Enter your password to continue",
+      "inputPlaceholder": "Type your password",
+      "login": "Log in",
+      "forgotPassword": "Forgot password?"
+    },
+    "addPassword": {
+      "placeholder": "Choose your password",
+      "title": "Password Lock"
+    },
+    "confirmPassword": {
+      "title": "Confirm Password",
+      "placeholder": "Confirm your password"
+    },
+    "enableBiometrics": {
+      "title": "{{biometricsType}}",
+      "desc": "Unlock with {{biometricsType}}"
     }
   },
   "reset": {
@@ -348,6 +376,7 @@
     },
     "stepPassword": {
       "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
+      "descConfigured": "Password lock successfully enabled",
       "setPassword": "Set password"
     },
     "stepShareData": {},

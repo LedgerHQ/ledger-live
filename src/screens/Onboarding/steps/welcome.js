@@ -67,7 +67,7 @@ class OnboardingStepWelcome extends Component<Props> {
             style={styles.buyTouch}
             hitSlop={hitSlop}
           >
-            <LText style={[styles.subText, styles.buy]}>
+            <LText semiBold style={[styles.subText, styles.buy]}>
               <Trans
                 i18nKey="onboarding.stepWelcome.buy"
                 values={deviceNames.nanoX}
@@ -102,10 +102,11 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 14,
+    color: colors.grey,
   },
   footer: {},
   buy: {
-    marginHorizontal: 5,
+    marginLeft: 5,
     color: colors.live,
   },
   buyTouch: {

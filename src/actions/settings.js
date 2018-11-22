@@ -7,6 +7,11 @@ export type CurrencySettings = {
   exchange: ?*,
 };
 
+type Privacy = {
+  biometricsType: ?string,
+  biometricsEnabled: boolean,
+};
+
 type SetExchangePairs = (
   Array<{
     from: Currency,
@@ -20,9 +25,18 @@ export const setExchangePairsAction: SetExchangePairs = pairs => ({
   pairs,
 });
 
-export const setAuthSecurity = (authSecurityEnabled: boolean) => ({
-  type: "SETTINGS_SET_AUTH_SECURITY",
-  authSecurityEnabled,
+export const setPrivacy = (privacy: Privacy) => ({
+  type: "SETTINGS_SET_PRIVACY",
+  privacy,
+});
+
+export const disablePrivacy = () => ({
+  type: "SETTINGS_DISABLE_PRIVACY",
+});
+
+export const setPrivacyBiometrics = (enabled: boolean) => ({
+  type: "SETTINGS_SET_PRIVACY_BIOMETRICS",
+  enabled,
 });
 
 export const setCountervalue = (counterValue: string) => ({
