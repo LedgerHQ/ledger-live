@@ -719,7 +719,7 @@
     "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
     "steps": {
       "connecting": {
-        "title": "Connecting “{{fullDeviceName}}”",
+        "title": "Connecting “{{deviceName}}”",
         "description": "Don't forget to turn on your device and enter your PIN to unlock it"
       },
       "genuineCheck": {

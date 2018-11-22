@@ -105,10 +105,9 @@ class SelectDevice extends Component<
   render() {
     const { knownDevices, steps, editMode, onStepEntered } = this.props;
     const { devices, connecting, connectingId } = this.state;
-    const connectingDevice = devices.find(d => d.id === connectingId);
 
-    // $FlowFixMe
     const data = devices.concat(knownDevices);
+    const connectingDevice = data.find(d => d.id === connectingId);
 
     return (
       <Fragment>
