@@ -70,17 +70,19 @@ class FirmwareVersionRow extends PureComponent<Props, State> {
   };
 
   render() {
-    const { deviceInfo } = this.props;
     const { latestFirmware } = this.state;
     if (!latestFirmware) {
       return null;
     }
+
     return (
       <View style={styles.root}>
         <LText semiBold numberOfLines={1} style={styles.title}>
           <Trans
             i18nKey="FirmwareUpdateRow.title"
-            values={{ version: deviceInfo.seVersion }}
+            values={{
+              version: manager.getFirmwareVersion(latestFirmware),
+            }}
           />
         </LText>
         <Button
