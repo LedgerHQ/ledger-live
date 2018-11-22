@@ -13,7 +13,8 @@ type Props = {
   last?: boolean,
   value: BigNumber,
   isSelected: boolean,
-  onPress: BigNumber => void,
+  itemKey: string,
+  onPress: (BigNumber, string) => void,
 };
 
 type State = {
@@ -27,8 +28,8 @@ class FeesRow extends Component<Props, State> {
   };
 
   onPress = () => {
-    const { value, onPress } = this.props;
-    onPress(value);
+    const { value, onPress, itemKey } = this.props;
+    onPress(value, itemKey);
   };
 
   render() {
