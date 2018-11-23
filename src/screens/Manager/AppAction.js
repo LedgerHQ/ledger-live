@@ -154,12 +154,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20,
+    paddingTop: 32,
+    paddingBottom: 20,
   },
   close: {
     position: "absolute",
-    right: 10,
-    top: 10,
+    right: 16,
+    top: 16,
   },
   headIcon: {
     padding: 10,

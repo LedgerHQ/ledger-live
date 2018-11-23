@@ -59,7 +59,6 @@ export const RenderStep = ({
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
-    minHeight: 280,
     paddingHorizontal: 20,
   },
   body: {
@@ -67,7 +66,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 40,
     paddingBottom: 20,
   },
   retryButton: {

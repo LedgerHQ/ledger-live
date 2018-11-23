@@ -19,6 +19,7 @@ import Space from "../../components/Space";
 import { deviceNames } from "../../wording";
 
 import colors from "../../colors";
+import Trash from "../../icons/Trash";
 
 const forceInset = { bottom: "always" };
 
@@ -56,6 +57,9 @@ class DeviceAction extends PureComponent<Props, State> {
       <BottomModal isOpened={opened} onClose={onClose}>
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
+            <View style={styles.headIcon}>
+              <Trash size={24} color={colors.alert} />
+            </View>
             <LText secondary semiBold style={styles.title}>
               <Trans i18nKey="manager.unpair.title" />
             </LText>
@@ -93,28 +97,28 @@ class DeviceAction extends PureComponent<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
-    minHeight: 250,
     paddingHorizontal: 20,
   },
   body: {
-    flex: 1,
     flexDirection: "column",
     alignSelf: "center",
-    justifyContent: "space-around",
+    justifyContent: "center",
     alignItems: "center",
-    paddingTop: 24,
+    paddingTop: 32,
     paddingBottom: 20,
   },
   close: {
     position: "absolute",
-    right: 10,
-    top: 10,
+    right: 16,
+    top: 16,
   },
   headIcon: {
-    padding: 10,
-    position: "relative",
+    padding: 16,
+    borderRadius: 50,
+    backgroundColor: colors.lightAlert,
   },
   title: {
+    paddingVertical: 20,
     paddingHorizontal: 40,
     lineHeight: 26,
     fontSize: 16,
@@ -128,7 +132,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   buttons: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

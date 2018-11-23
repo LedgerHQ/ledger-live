@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: colors.darkBlue,
+    paddingVertical: 0,
     ...getFontStyle({ secondary: true, semiBold: true }),
   },
 });
