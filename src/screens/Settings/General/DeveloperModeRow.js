@@ -28,6 +28,7 @@ class DeveloperModeRow extends PureComponent<Props> {
         title={<Trans i18nKey="settings.display.developerMode" />}
         desc={<Trans i18nKey="settings.display.developerModeDesc" />}
         onPress={null}
+        alignedTop
         {...props}
       >
         <Switch value={developerModeEnabled} onValueChange={setDeveloperMode} />

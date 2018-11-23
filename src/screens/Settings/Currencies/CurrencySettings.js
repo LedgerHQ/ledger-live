@@ -104,6 +104,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
               currencyTicker: currency.ticker,
             })}
             onPress={currencySettings.exchange ? this.goToExchange : null}
+            alignedTop
           >
             <LText semiBold style={styles.currencyExchange}>
               {currencySettings.exchange}

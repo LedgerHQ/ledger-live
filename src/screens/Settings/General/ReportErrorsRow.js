@@ -28,6 +28,7 @@ class ReportErrorsRow extends PureComponent<Props> {
         title={<Trans i18nKey="settings.display.reportErrors" />}
         desc={<Trans i18nKey="settings.display.reportErrorsDesc" />}
         onPress={null}
+        alignedTop
         {...props}
       >
         <Switch value={reportErrorsEnabled} onValueChange={setReportErrors} />

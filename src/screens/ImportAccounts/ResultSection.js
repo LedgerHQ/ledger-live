@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     color: colors.grey,
     fontSize: 14,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 24,
+    paddingBottom: 16,
   },
 });
 

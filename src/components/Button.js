@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderRadius: 4,
   },
 
