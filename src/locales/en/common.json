@@ -413,13 +413,14 @@
       "title": "Add accounts to your portfolio",
       "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
       "buttons": {
-        "import": "Add accounts"
+        "import": "Add accounts",
+        "manager": "Open Manager"
       }
     },
     "tradingDisclaimer": {
       "title": "Trade Safely",
       "text1": "Before sending and receiving crypto assets, educate yourself to make informed decisions. Crypto assets are volatile and the prices can go up and down. Carefully evaluate your trading goals and the financial risk you are willing to take.",
-      "text2": "Please beware that Ledger does not provide financial, tax, or legal advice. You should take such decisions on your own or rely on opinions of licensed experts.",
+      "text2": "Please beware that Ledger does not provide financial, tax, or legal advice. You should take such decisions on your own or rely on opinions of licensed experts."
     }
   },
   "addAccountsModal": {
