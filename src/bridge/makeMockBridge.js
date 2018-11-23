@@ -17,7 +17,7 @@ const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
 const defaultOpts = {
   transactionsSizeTarget: 100,
   extraInitialTransactionProps: () => null,
-  checkValidTransaction: () => Promise.resolve(),
+  checkValidTransaction: () => Promise.resolve(null),
   getTotalSpent: (a, t) => Promise.resolve(t.amount),
   getMaxAmount: a => Promise.resolve(a.balance),
 };
@@ -95,8 +95,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
 
   const fetchTransactionNetworkInfo = () => Promise.resolve({});
 
-  const applyTransactionNetworkInfo = () => (account, transaction) =>
-    transaction;
+  const applyTransactionNetworkInfo = (account, transaction) => transaction;
 
   const getTransactionNetworkInfo = () => ({});
 

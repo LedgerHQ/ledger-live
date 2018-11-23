@@ -41,8 +41,9 @@ type Props = {
 
 type State = {
   transaction: *,
-  networkInfoError: ?Error,
-  notEnoughBalanceError: ?Error,
+  syncNetworkInfoError: ?Error,
+  syncTotalSpentError: ?Error,
+  syncValidTransactionError: ?Error,
   txValidationWarning: ?Error,
   totalSpent: ?BigNumber,
   leaving: boolean,
@@ -69,27 +70,14 @@ class SendAmount extends Component<Props, State> {
     const transaction = navigation.getParam("transaction");
     this.state = {
       transaction,
-      networkInfoError: null,
-      notEnoughBalanceError: null,
+      syncNetworkInfoError: null,
+      syncTotalSpentError: null,
+      syncValidTransactionError: null,
       txValidationWarning: null,
       totalSpent: null,
       leaving: false,
     };
   }
-
-  setError = (e: Error) => {
-    if (e instanceof NotEnoughBalance) {
-      this.setState(old => {
-        if (similarError(old.notEnoughBalanceError, e)) return null;
-        return { notEnoughBalanceError: e };
-      });
-    } else if (this.state.notEnoughBalanceError) {
-      this.setState(old => {
-        if (!old.notEnoughBalanceError) return null;
-        return { notEnoughBalanceError: null };
-      });
-    }
-  };
 
   componentDidMount() {
     this.validate();
@@ -112,26 +100,26 @@ class SendAmount extends Component<Props, State> {
     const bridge = getAccountBridge(account);
     if (
       !bridge.getTransactionNetworkInfo(account, this.state.transaction) &&
-      !this.state.networkInfoError
+      !this.state.syncNetworkInfoError
     ) {
       try {
         this.networkInfoPending = true;
         const networkInfo = await bridge.fetchTransactionNetworkInfo(account);
         if (!this.networkInfoPending) return;
         this.setState(({ transaction }, { account }) => ({
-          networkInfoError: null,
+          syncNetworkInfoError: null,
           transaction: getAccountBridge(account).applyTransactionNetworkInfo(
             account,
             transaction,
             networkInfo,
           ),
         }));
-      } catch (networkInfoError) {
-        this.setState(oldState => {
-          if (similarError(oldState.networkInfoError, networkInfoError)) {
+      } catch (syncNetworkInfoError) {
+        if (!this.networkInfoPending) return;
+        this.setState(old => {
+          if (similarError(old.syncNetworkInfoError, syncNetworkInfoError))
             return null;
-          }
-          return { networkInfoError };
+          return { syncNetworkInfoError };
         });
       } finally {
         this.networkInfoPending = false;
@@ -150,16 +138,23 @@ class SendAmount extends Component<Props, State> {
       if (nonce !== this.nonceTotalSpent) return;
 
       this.setState(old => {
-        if (old.totalSpent && totalSpent && totalSpent.eq(old.totalSpent)) {
+        if (
+          !old.syncTotalSpentError &&
+          old.totalSpent &&
+          totalSpent &&
+          totalSpent.eq(old.totalSpent)
+        ) {
           return null;
         }
-        return { totalSpent };
+        return { totalSpent, syncTotalSpentError: null };
       });
-    } catch (e) {
+    } catch (syncTotalSpentError) {
       if (nonce !== this.nonceTotalSpent) return;
-
-      // FIXME potential race condition we should separate the different error and make sure it's set to null in normal case
-      this.setError(e);
+      this.setState(old => {
+        if (similarError(old.syncTotalSpentError, syncTotalSpentError))
+          return null;
+        return { syncTotalSpentError };
+      });
     }
   };
 
@@ -177,20 +172,26 @@ class SendAmount extends Component<Props, State> {
       if (nonce !== this.nonceValidTransaction) return;
 
       this.setState(old => {
-        if (!old.notEnoughBalanceError) {
-          if (similarError(old.txValidationWarning, txValidationWarning)) {
-            return null;
-          }
+        if (
+          !old.syncValidTransactionError &&
+          similarError(old.txValidationWarning, txValidationWarning)
+        ) {
+          return null;
         }
         return {
           txValidationWarning,
-          notEnoughBalanceError: null,
+          syncValidTransactionError: null,
         };
       });
-    } catch (e) {
+    } catch (syncValidTransactionError) {
       if (nonce !== this.nonceValidTransaction) return;
-
-      this.setError(e);
+      this.setState(old => {
+        if (
+          similarError(old.syncValidTransactionError, syncValidTransactionError)
+        )
+          return null;
+        return { syncValidTransactionError };
+      });
     }
   };
 
@@ -206,7 +207,11 @@ class SendAmount extends Component<Props, State> {
   };
 
   onNetworkInfoRetry = () => {
-    this.setState({ networkInfoError: null });
+    this.setState({
+      syncNetworkInfoError: null,
+      syncTotalSpentError: null,
+      syncValidTransactionError: null,
+    });
   };
 
   onChange = (amount: BigNumber) => {
@@ -238,25 +243,31 @@ class SendAmount extends Component<Props, State> {
     const { account } = this.props;
     const {
       transaction,
-      notEnoughBalanceError,
-      networkInfoError,
-      txValidationWarning,
+      syncNetworkInfoError,
+      syncValidTransactionError,
+      syncTotalSpentError,
       totalSpent,
       leaving,
     } = this.state;
     const bridge = getAccountBridge(account);
     const amount = bridge.getTransactionAmount(account, transaction);
     const networkInfo = bridge.getTransactionNetworkInfo(account, transaction);
-    const pending = !networkInfo && !networkInfoError;
+    const pending = !networkInfo && !syncNetworkInfoError;
+
+    const error =
+      syncNetworkInfoError || syncValidTransactionError || syncTotalSpentError;
+
+    const notEnoughBalanceError =
+      error instanceof NotEnoughBalance ? error : null;
+
+    const criticalError = notEnoughBalanceError ? null : error;
 
     const canNext: boolean =
+      !!networkInfo &&
+      !error &&
       !!totalSpent &&
-      !notEnoughBalanceError &&
-      !networkInfoError &&
-      txValidationWarning === null &&
-      !transaction.amount.isZero() &&
       totalSpent.gt(0) &&
-      !!networkInfo;
+      !transaction.amount.isZero();
 
     return (
       <>
@@ -308,7 +319,8 @@ class SendAmount extends Component<Props, State> {
         </SafeAreaView>
 
         <GenericErrorBottomModal
-          error={leaving ? null : networkInfoError}
+          error={leaving ? null : criticalError}
+          onClose={this.onNetworkInfoRetry}
           footerButtons={
             <>
               <CancelButton

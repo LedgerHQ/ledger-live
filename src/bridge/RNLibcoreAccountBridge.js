@@ -1,10 +1,10 @@
 // @flow
 import invariant from "invariant";
-import LRU from "lru-cache";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/live-common/lib/errors";
 
 import type { AccountBridge } from "./types";
+import { makeLRUCache } from "../logic/cache";
 
 import { getFeeItems } from "../api/FeesBitcoin";
 import type { FeeItems } from "../api/FeesBitcoin";
@@ -32,17 +32,13 @@ const serializeTransaction = t => {
 
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
-const recipientValidLRU = LRU({ max: 100 });
-
-const checkValidRecipient = (currency, recipient) => {
-  const key = `${currency.id}_${recipient}`;
-  let promise = recipientValidLRU.get(key);
-  if (promise) return promise;
-  if (!recipient) return Promise.resolve(null);
-  promise = isValidRecipient({ currency, recipient });
-  recipientValidLRU.set(key, promise);
-  return promise;
-};
+const checkValidRecipient = makeLRUCache(
+  (currency, recipient) => {
+    if (!recipient) return Promise.resolve(null);
+    return isValidRecipient({ currency, recipient });
+  },
+  (currency, recipient) => `${currency.id}_${recipient}`,
+);
 
 const createTransaction = () => ({
   amount: BigNumber(0),
@@ -122,27 +118,19 @@ const addPendingOperation = (account, optimisticOperation) => ({
   pendingOperations: [...account.pendingOperations, optimisticOperation],
 });
 
-const feesLRU = LRU({ max: 100 });
-
-const getFeesKey = (a, t) =>
-  `${a.id}_${a.blockHeight || 0}_${t.amount.toString()}_${t.recipient}_${
-    t.feePerByte ? t.feePerByte.toString() : ""
-  }`;
-
-const getFees = async (a, t) => {
-  await checkValidRecipient(a.currency, t.recipient);
-
-  const key = getFeesKey(a, t);
-  let promise = feesLRU.get(key);
-  if (promise) return promise;
-
-  promise = getFeesForTransaction({
-    account: a,
-    transaction: serializeTransaction(t),
-  });
-  feesLRU.set(key, promise);
-  return promise;
-};
+const getFees = makeLRUCache(
+  async (a, t) => {
+    await checkValidRecipient(a.currency, t.recipient);
+    return getFeesForTransaction({
+      account: a,
+      transaction: serializeTransaction(t),
+    });
+  },
+  (a, t) =>
+    `${a.id}_${a.blockHeight || 0}_${t.amount.toString()}_${t.recipient}_${
+      t.feePerByte ? t.feePerByte.toString() : ""
+    }`,
+);
 
 const checkValidTransaction = async (a, t) =>
   // $FlowFixMe
@@ -155,14 +143,10 @@ const checkValidTransaction = async (a, t) =>
 const getTotalSpent = async (a, t) =>
   t.amount.isZero()
     ? Promise.resolve(BigNumber(0))
-    : getFees(a, t)
-        .then(totalFees => t.amount.plus(totalFees || 0))
-        .catch(() => BigNumber(0));
+    : getFees(a, t).then(totalFees => t.amount.plus(totalFees || 0));
 
 const getMaxAmount = async (a, t) =>
-  getFees(a, t)
-    .catch(() => BigNumber(0))
-    .then(totalFees => a.balance.minus(totalFees || 0));
+  getFees(a, t).then(totalFees => a.balance.minus(totalFees || 0));
 
 const bridge: AccountBridge<Transaction> = {
   startSync,
