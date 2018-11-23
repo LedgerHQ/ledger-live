@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component } from "react";
-import { SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";

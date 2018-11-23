@@ -1,8 +1,11 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import LText from "./LText";
 import colors from "../colors";
+
+const forceInset = { bottom: "always" };
 
 export default class ModalBottomAction extends Component<{
   icon: *,
@@ -13,7 +16,7 @@ export default class ModalBottomAction extends Component<{
   render() {
     const { icon, title, description, footer } = this.props;
     return (
-      <View style={styles.root}>
+      <SafeAreaView forceInset={forceInset} style={styles.root}>
         <View style={styles.icon}>{icon}</View>
         <View style={styles.body}>
           {title && (
@@ -24,7 +27,7 @@ export default class ModalBottomAction extends Component<{
           <LText style={styles.description}>{description}</LText>
           <View style={styles.footer}>{footer}</View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }

@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, SafeAreaView, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";

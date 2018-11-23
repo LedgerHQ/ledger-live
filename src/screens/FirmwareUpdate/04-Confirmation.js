@@ -1,7 +1,8 @@
 /* @flow */
 /* eslint-disable no-console */
 import React, { Component } from "react";
-import { View, SafeAreaView, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 

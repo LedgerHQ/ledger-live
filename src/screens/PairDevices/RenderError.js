@@ -1,13 +1,8 @@
 // @flow
 
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Linking,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { Trans } from "react-i18next";

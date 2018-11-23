@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import i18next from "i18next";
 import { createStructuredSelector } from "reselect";

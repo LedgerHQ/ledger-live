@@ -2,7 +2,8 @@
 
 import React, { Component } from "react";
 import { translate } from "react-i18next";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 

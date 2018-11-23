@@ -1,12 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import {
-  View,
-  SafeAreaView,
-  StyleSheet,
-  TextInput,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, TextInput, Platform } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
