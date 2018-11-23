@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
   image: {
     marginTop: 16,
     marginBottom: 16,
+    alignSelf: "center",
   },
   buttonContainer: {
     flexGrow: 1,
