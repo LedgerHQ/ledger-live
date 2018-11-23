@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, createRef } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
@@ -75,6 +75,12 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   componentWillUnmount() {
     this.stopSubscription(false);
   }
+
+  handleContentSizeChange = () => {
+    if (this.scrollView.current) {
+      this.scrollView.current.scrollToEnd({ animated: true });
+    }
+  };
 
   startSubscription = () => {
     const { navigation } = this.props;
@@ -222,6 +228,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     );
   };
 
+  scrollView = createRef();
+
   render() {
     const { selectedIds, status, scannedAccounts, error } = this.state;
     const newAccounts = this.getNewAccounts();
@@ -236,7 +244,12 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <PreventNativeBack />
-        <ScrollView style={styles.inner}>
+        <ScrollView
+          style={styles.inner}
+          contentContainerStyle={styles.innerContent}
+          ref={this.scrollView}
+          onContentSizeChange={this.handleContentSizeChange}
+        >
           {regularAccounts.length > 0 ? (
             <SelectableAccountsList
               header={<Trans i18nKey="addAccounts.sections.accountsToImport" />}
@@ -381,8 +394,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   inner: {
-    flex: 1,
     paddingTop: 24,
+  },
+  innerContent: {
+    paddingBottom: 24,
   },
   descText: {
     paddingHorizontal: 16,
