@@ -72,9 +72,14 @@ class SendSelectRecipient extends Component<Props, State> {
   componentDidMount() {
     const { account } = this.props;
     const bridge = getAccountBridge(account);
-    bridge.fetchTransactionNetworkInfo(account).then(networkInfo => {
-      this.preloadedNetworkInfo = networkInfo;
-    });
+    bridge.fetchTransactionNetworkInfo(account).then(
+      networkInfo => {
+        this.preloadedNetworkInfo = networkInfo;
+      },
+      () => {
+        // error not handled here
+      },
+    );
   }
 
   componentWillUnmount() {
