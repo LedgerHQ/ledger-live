@@ -50,6 +50,7 @@ class OnboardingStepSetupPin extends Component<
         header="OnboardingStepSetupPin"
         Footer={this.Footer}
         noHorizontalPadding
+        withNeedHelp
       >
         <PinModal
           isOpened={isModalOpened}

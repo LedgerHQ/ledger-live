@@ -2,12 +2,18 @@
 
 import React, { Component, PureComponent } from "react";
 import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
+import { createStructuredSelector } from "reselect";
+import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
+import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 import OnboardingLayout from "../OnboardingLayout";
 import OnboardingStepWelcome from "./welcome";
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
+import Circle from "../../../components/Circle";
+import Close from "../../../icons/Close";
 import { withOnboardingContext } from "../onboardingContext";
 import IconImport from "../../../icons/Import";
 import IconCheck from "../../../icons/Check";
@@ -20,7 +26,24 @@ import { deviceNames } from "../../../wording";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
-class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
+const CloseOnboarding = ({ navigation }: *) => (
+  <Touchable
+    style={styles.close}
+    onPress={() => {
+      navigation.navigate("HelpSettings");
+    }}
+  >
+    <Circle size={28} bg={colors.lightFog}>
+      <Close size={14} color={colors.grey} />
+    </Circle>
+  </Touchable>
+);
+
+class OnboardingStepGetStarted extends Component<
+  OnboardingStepProps & {
+    hasCompletedOnboarding: boolean,
+  },
+> {
   onInitialized = async () => {
     await this.props.setOnboardingMode("alreadyInitialized");
     this.props.next();
@@ -45,7 +68,7 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
   onWelcome = () => this.props.setShowWelcome(false);
 
   render() {
-    const { showWelcome } = this.props;
+    const { showWelcome, hasCompletedOnboarding, navigation } = this.props;
 
     if (showWelcome) {
       return (
@@ -55,6 +78,9 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
 
     return (
       <OnboardingLayout isFull>
+        {hasCompletedOnboarding ? (
+          <CloseOnboarding navigation={navigation} />
+        ) : null}
         <LText style={styles.title} secondary semiBold>
           <Trans i18nKey="onboarding.stepGetStarted.title" />
         </LText>
@@ -121,6 +147,11 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     marginVertical: 32,
   },
+  close: {
+    position: "absolute",
+    right: 16,
+    top: 16,
+  },
   row: {
     paddingHorizontal: 16,
     paddingVertical: 24,
@@ -141,4 +172,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStepGetStarted);
+export default connect(
+  createStructuredSelector({
+    hasCompletedOnboarding: hasCompletedOnboardingSelector,
+  }),
+)(withOnboardingContext(OnboardingStepGetStarted));

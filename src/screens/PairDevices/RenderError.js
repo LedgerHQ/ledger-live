@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
@@ -11,12 +11,11 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import TranslatedError from "../../components/TranslatedError";
 import BluetoothScanning from "../../components/BluetoothScanning";
+import HelpLink from "../../components/HelpLink";
 import Circle from "../../components/Circle";
 import IconArrowRight from "../../icons/ArrowRight";
 import { PairingFailed, GenuineCheckFailed } from "../../errors";
 import colors from "../../colors";
-import { urls } from "../../config/urls";
-import Help from "../../icons/Help";
 
 type Props = {
   error: Error,
@@ -41,19 +40,6 @@ const GenericErrorHeader = () => (
 );
 
 const PairingFailure = () => <BluetoothScanning isError />;
-
-const HelpLink = () => (
-  <TouchableOpacity
-    style={styles.linkContainer}
-    hitSlop={hitSlop}
-    onPress={() => Linking.openURL(urls.faq)}
-  >
-    <Help size={16} color={colors.live} />
-    <LText style={styles.linkText} semiBold>
-      <Trans i18nKey="common.needHelp" />
-    </LText>
-  </TouchableOpacity>
-);
 
 class RenderError extends Component<Props> {
   render() {
@@ -108,12 +94,12 @@ class RenderError extends Component<Props> {
               <IconArrowRight size={16} color={colors.live} />
             </TouchableOpacity>
           ) : (
-            <HelpLink />
+            <HelpLink style={styles.linkContainer} />
           )}
         </View>
         {status === "genuinecheck" ? (
           <View style={styles.footer}>
-            <HelpLink />
+            <HelpLink style={styles.linkContainer} />
           </View>
         ) : null}
       </SafeAreaView>
