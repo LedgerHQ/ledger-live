@@ -6,6 +6,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { updateAccountWithUpdater } from "../../actions/accounts";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -17,6 +18,7 @@ import ValidateOnDevice from "./ValidateOnDevice";
 
 type Props = {
   account: Account,
+  updateAccountWithUpdater: (string, (Account) => Account) => void,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -24,6 +26,10 @@ type Props = {
       transaction: *,
     },
   }>,
+};
+
+const mapDispatchToProps = {
+  updateAccountWithUpdater,
 };
 
 type State = {
@@ -52,10 +58,12 @@ class Validation extends Component<Props, State> {
   }
 
   sign() {
-    const { account, navigation } = this.props;
+    const { account, navigation, updateAccountWithUpdater } = this.props;
     const deviceId = navigation.getParam("deviceId");
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
+    const { addPendingOperation } = bridge;
+
     bridge.signAndBroadcast(account, transaction, deviceId).subscribe({
       next: e => {
         switch (e.type) {
@@ -68,6 +76,13 @@ class Validation extends Component<Props, State> {
               ...navigation.state.params,
               result: e.operation,
             });
+
+            if (addPendingOperation) {
+              updateAccountWithUpdater(account.id, account =>
+                addPendingOperation(account, e.operation),
+              );
+            }
+
             break;
           default:
         }
@@ -115,4 +130,7 @@ const mapStateToProps = (state, props) => ({
   account: accountScreenSelector(state, props),
 });
 
-export default connect(mapStateToProps)(translate()(Validation));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(translate()(Validation));

@@ -144,7 +144,6 @@ class AccountScreen extends PureComponent<Props, State> {
   render() {
     const { account, navigation } = this.props;
     const { opCount } = this.state;
-
     if (!account) return null;
 
     if (isAccountEmpty(account)) {
