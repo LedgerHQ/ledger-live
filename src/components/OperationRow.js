@@ -64,16 +64,21 @@ class OperationRow extends PureComponent<Props, *> {
 
     return (
       <View>
-        <RectButton
-          onPress={this.goToOperationDetails}
-          style={[styles.root, isOptimistic ? styles.optimistic : null]}
-        >
-          {multipleAccounts ? (
-            <CurrencyIcon size={20} currency={account.currency} />
-          ) : (
-            <OperationIcon size={16} containerSize={28} type={operation.type} />
-          )}
-          <View style={styles.wrapper}>
+        <RectButton onPress={this.goToOperationDetails} style={styles.root}>
+          <View style={isOptimistic ? styles.optimistic : null}>
+            {multipleAccounts ? (
+              <CurrencyIcon size={20} currency={account.currency} />
+            ) : (
+              <OperationIcon
+                size={16}
+                containerSize={28}
+                type={operation.type}
+              />
+            )}
+          </View>
+          <View
+            style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}
+          >
             <View style={styles.body}>
               <LText
                 numberOfLines={1}
