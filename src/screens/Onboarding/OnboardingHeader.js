@@ -27,7 +27,6 @@ const hitSlop = {
 };
 
 class OnboardingHeader extends PureComponent<Props> {
-  onNeedHelp = () => {};
 
   render() {
     const { mode, stepId, prev, t, withSkip, withNeedHelp, next } = this.props;
