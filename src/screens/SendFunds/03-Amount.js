@@ -14,7 +14,6 @@ import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { NotEnoughBalance } from "@ledgerhq/live-common/lib/errors";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -254,17 +253,13 @@ class SendAmount extends Component<Props, State> {
     const networkInfo = bridge.getTransactionNetworkInfo(account, transaction);
     const pending = !networkInfo && !syncNetworkInfoError;
 
-    const error =
-      syncNetworkInfoError || syncValidTransactionError || syncTotalSpentError;
-
-    const notEnoughBalanceError =
-      error instanceof NotEnoughBalance ? error : null;
-
-    const criticalError = notEnoughBalanceError ? null : error;
+    const inlinedError = syncValidTransactionError || syncTotalSpentError;
+    const criticalError = syncNetworkInfoError;
 
     const canNext: boolean =
       !!networkInfo &&
-      !error &&
+      !criticalError &&
+      !inlinedError &&
       !!totalSpent &&
       totalSpent.gt(0) &&
       !transaction.amount.isZero();
@@ -280,7 +275,7 @@ class SendAmount extends Component<Props, State> {
                   onChange={this.onChange}
                   currency={account.unit.code}
                   value={amount}
-                  error={notEnoughBalanceError}
+                  error={inlinedError}
                 />
 
                 <View style={styles.bottomWrapper}>
