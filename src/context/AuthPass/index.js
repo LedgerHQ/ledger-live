@@ -97,6 +97,7 @@ class AuthPass extends PureComponent<Props, State> {
         <AuthScreen
           biometricsError={biometricsError}
           privacy={privacy}
+          lock={this.lock}
           unlock={this.unlock}
         />
       );

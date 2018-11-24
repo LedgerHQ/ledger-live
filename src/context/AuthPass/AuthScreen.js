@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { translate, Trans } from "react-i18next";
-import { View, StyleSheet, Image } from "react-native";
+import { Keyboard, View, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import * as Keychain from "react-native-keychain";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
@@ -31,6 +31,7 @@ type State = {
 type Props = {
   privacy: Privacy,
   unlock: () => void,
+  lock: () => void,
   biometricsError: ?Error,
   reboot: (?boolean) => *,
   t: T,
@@ -57,7 +58,13 @@ class NormalHeader extends PureComponent<{}> {
 
 class FormFooter extends PureComponent<*> {
   render() {
-    const { inputFocused, onSubmit, passwordError, onPress } = this.props;
+    const {
+      inputFocused,
+      passwordEmpty,
+      onSubmit,
+      passwordError,
+      onPress,
+    } = this.props;
     return inputFocused ? (
       <Button
         title={<Trans i18nKey="auth.unlock.login" />}
@@ -65,7 +72,7 @@ class FormFooter extends PureComponent<*> {
         onPress={onSubmit}
         containerStyle={styles.buttonContainer}
         titleStyle={styles.buttonTitle}
-        disabled={passwordError}
+        disabled={passwordError || passwordEmpty}
       />
     ) : (
       <Touchable style={styles.forgot} onPress={onPress}>
@@ -78,6 +85,8 @@ class FormFooter extends PureComponent<*> {
 }
 
 class AuthScreen extends PureComponent<Props, State> {
+  keyboardDidHideListener;
+
   state = {
     passwordError: null,
     password: "",
@@ -85,6 +94,17 @@ class AuthScreen extends PureComponent<Props, State> {
     isModalOpened: false,
     secureTextEntry: true,
   };
+
+  componentWillMount() {
+    this.keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      Keyboard.dismiss,
+    );
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidHideListener.remove();
+  }
 
   onHardReset = () => {
     this.props.reboot(true);
@@ -112,13 +132,16 @@ class AuthScreen extends PureComponent<Props, State> {
         unlock();
       } else {
         credentials
-          ? this.setState({ passwordError: new PasswordIncorrectError() })
+          ? this.setState({
+              passwordError: new PasswordIncorrectError(),
+              password: "",
+            })
           : console.log("no credentials stored"); // eslint-disable-line
       }
     } catch (err) {
       if (id !== this.submitId) return;
       console.log("could not load credentials"); // eslint-disable-line
-      this.setState({ passwordError: err });
+      this.setState({ passwordError: err, password: "" });
     }
   };
 
@@ -152,7 +175,7 @@ class AuthScreen extends PureComponent<Props, State> {
   };
 
   render() {
-    const { t, privacy, biometricsError } = this.props;
+    const { t, privacy, biometricsError, lock } = this.props;
     const {
       passwordError,
       isModalOpened,
@@ -167,7 +190,7 @@ class AuthScreen extends PureComponent<Props, State> {
           <View style={styles.body}>
             <View style={styles.header}>
               {biometricsError ? (
-                <FailBiometrics privacy={privacy} />
+                <FailBiometrics lock={lock} privacy={privacy} />
               ) : (
                 <NormalHeader />
               )}
@@ -183,6 +206,7 @@ class AuthScreen extends PureComponent<Props, State> {
                 placeholder={t("auth.unlock.inputPlaceholder")}
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
+                password={this.state.password}
               />
             </View>
 
@@ -196,6 +220,7 @@ class AuthScreen extends PureComponent<Props, State> {
               inputFocused={passwordFocused}
               onSubmit={this.onSubmit}
               passwordError={passwordError}
+              passwordEmpty={!this.state.password}
               onPress={this.onPress}
             />
           </View>
@@ -203,12 +228,11 @@ class AuthScreen extends PureComponent<Props, State> {
           <View style={{ flex: 1 }} />
         </KeyboardView>
 
-        <View
-          style={[styles.footer, { opacity: passwordFocused ? 0 : 1 }]}
-          pointerEvents="none"
-        >
-          <PoweredByLedger />
-        </View>
+        {!passwordFocused && (
+          <View style={styles.footer} pointerEvents="none">
+            <PoweredByLedger />
+          </View>
+        )}
 
         <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
           <HardResetModal

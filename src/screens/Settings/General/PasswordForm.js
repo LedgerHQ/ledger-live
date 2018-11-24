@@ -50,6 +50,7 @@ class PasswordForm extends PureComponent<Props, State> {
               toggleSecureTextEntry={this.toggleSecureTextEntry}
               secureTextEntry={secureTextEntry}
               placeholder={placeholder}
+              password={value}
             />
           </View>
           {error && (
