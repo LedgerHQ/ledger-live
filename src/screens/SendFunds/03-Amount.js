@@ -253,8 +253,10 @@ class SendAmount extends Component<Props, State> {
     const networkInfo = bridge.getTransactionNetworkInfo(account, transaction);
     const pending = !networkInfo && !syncNetworkInfoError;
 
-    const inlinedError = syncValidTransactionError || syncTotalSpentError;
     const criticalError = syncNetworkInfoError;
+    const inlinedError = criticalError
+      ? null
+      : syncValidTransactionError || syncTotalSpentError;
 
     const canNext: boolean =
       !!networkInfo &&

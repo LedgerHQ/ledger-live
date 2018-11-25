@@ -90,7 +90,7 @@
       "description": "Try setting a custom fee (status: {{status}})"
     },
     "FeeNotLoaded": {
-      "title": "Couldn’t load fee rates. Please set manual fees"
+      "title": "Couldn’t load fee rates"
     },
     "GenuineCheckFailed": {
       "title": "Genuine check failed",
@@ -341,7 +341,7 @@
       "step4prefix": "Select ",
       "step4suffix1": " to confirm your PIN code.",
       "step4suffix2": " to erase a digit.",
-      "modal" : {
+      "modal": {
         "step1": "Always choose <1><1>your own</1></1> PIN code",
         "step2": "Use 8 digits for optimal security",
         "step3": "Never use a device supplied with a PIN code or a recovery phrase"
