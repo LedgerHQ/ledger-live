@@ -14,7 +14,9 @@ class PoweredByLedger extends Component<{
     const { t } = this.props;
     return (
       <View style={styles.container}>
-        <LText style={styles.textStyle}>{t("common.poweredBy")}</LText>
+        <LText secondary semiBold style={styles.textStyle}>
+          {t("common.poweredBy")}
+        </LText>
         <View style={styles.iconStyle}>
           <LedgerLogoRec height={17} width={68} color={colors.grey} />
         </View>

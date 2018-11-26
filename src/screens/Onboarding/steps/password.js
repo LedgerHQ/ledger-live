@@ -5,10 +5,8 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
 import { createStructuredSelector } from "reselect";
-import Icon from "react-native-vector-icons/dist/Feather";
 import type { Privacy } from "../../../reducers/settings";
 import { privacySelector } from "../../../reducers/settings";
-import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import BiometricsIcon from "../../../components/BiometricsIcon";
@@ -24,9 +22,7 @@ const illustration = (
 
 export const Success = () => (
   <View style={styles.success}>
-    <Circle size={24} bg={colors.green}>
-      <Icon size={16} color={colors.white} name="check" />
-    </Circle>
+    <Image source={require("../assets/success.png")} />
   </View>
 );
 
@@ -104,8 +100,8 @@ const styles = StyleSheet.create({
   },
   success: {
     position: "absolute",
-    top: 24,
-    right: 4,
+    top: 16,
+    right: 2,
   },
   desc: {
     textAlign: "center",

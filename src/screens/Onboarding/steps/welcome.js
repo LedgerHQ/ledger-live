@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: 16,
   },
 });
 

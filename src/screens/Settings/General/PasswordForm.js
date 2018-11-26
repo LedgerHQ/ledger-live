@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    paddingVertical: 24,
+    paddingVertical: 8,
   },
   buttonContainer: {
     marginHorizontal: 16,
