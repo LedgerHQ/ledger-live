@@ -94,6 +94,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
         <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <CurrencyInput
+              style={{ flex: 1 }}
               autoFocus
               unit={feeCustomUnit}
               value={fee}

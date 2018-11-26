@@ -68,9 +68,9 @@ type Props = {
   subMagnitude: number,
   allowZero: boolean,
   renderRight?: any,
-  renderError?: any,
-  hasError: boolean,
+  hasError?: boolean,
   autoFocus?: boolean,
+  style?: *,
 };
 
 type State = {
@@ -157,18 +157,18 @@ class CurrencyInput extends PureComponent<Props, State> {
 
   render() {
     const {
+      style,
       showAllDigits,
       unit,
       subMagnitude,
       isActive,
       renderRight,
-      renderError,
       hasError,
       autoFocus,
     } = this.props;
     const { displayValue } = this.state;
     return (
-      <View style={styles.wrapper}>
+      <View style={[styles.wrapper, style]}>
         <TextInput
           style={[
             styles.input,
@@ -190,25 +190,15 @@ class CurrencyInput extends PureComponent<Props, State> {
           blurOnSubmit
         />
         {renderRight}
-        {hasError && renderError ? (
-          <View style={styles.absolute}>{renderError}</View>
-        ) : null}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  absolute: {
-    position: "absolute",
-    paddingVertical: 8,
-    height: 30,
-    bottom: -30,
-  },
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
   },
   input: {
     flex: 1,
