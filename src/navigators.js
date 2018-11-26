@@ -238,6 +238,7 @@ const ReceiveFunds = createStackNavigator(
 );
 ReceiveFunds.navigationOptions = {
   header: null,
+  gesturesEnabled: false,
 };
 
 const addAccountsNavigatorConfig = {
@@ -289,6 +290,7 @@ const SendFunds = createStackNavigator(
 
 SendFunds.navigationOptions = {
   header: null,
+  gesturesEnabled: false,
 };
 
 const FirmwareUpdate = createStackNavigator(
