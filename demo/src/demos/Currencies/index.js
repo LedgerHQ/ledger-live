@@ -92,7 +92,9 @@ class Crypto extends Component<*> {
             crypto.bitcoinLikeInfo &&
               "bitcoinLikeInfo=" + JSON.stringify(crypto.bitcoinLikeInfo),
             crypto.ethereumLikeInfo &&
-              "ethereumLikeInfo=" + JSON.stringify(crypto.ethereumLikeInfo)
+              "ethereumLikeInfo=" + JSON.stringify(crypto.ethereumLikeInfo),
+            "units are " +
+              crypto.units.map(u => u.code + "(^" + u.magnitude + ")").join(" ")
           ]
             .filter(o => o)
             .join(", ")}
