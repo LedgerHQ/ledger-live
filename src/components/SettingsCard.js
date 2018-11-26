@@ -68,5 +68,6 @@ const styles = StyleSheet.create({
   desc: {
     color: colors.grey,
     fontSize: 14,
+    lineHeight: 21,
   },
 });

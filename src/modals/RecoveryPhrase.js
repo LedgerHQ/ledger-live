@@ -81,9 +81,9 @@ const styles = StyleSheet.create({
   image: {
     alignSelf: "center",
     marginTop: 16,
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  buttonWrapper: { marginTop: 24, flexDirection: "row" },
+  buttonWrapper: { marginTop: 16, flexDirection: "row" },
   buttonContainer: {
     flexGrow: 1,
     paddingTop: 24,
@@ -93,6 +93,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     color: colors.grey,
-    marginTop: 8,
   },
 });

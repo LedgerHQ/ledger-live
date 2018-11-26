@@ -47,57 +47,64 @@ class OperationRow extends PureComponent<Props, *> {
       );
     const isOptimistic = operation.blockHeight === null;
     return (
-      <RectButton
-        onPress={this.goToOperationDetails}
-        style={[styles.root, isOptimistic ? styles.optimistic : null]}
-      >
-        {multipleAccounts ? (
-          <CurrencyIcon size={20} currency={account.currency} />
-        ) : (
-          <OperationIcon size={16} containerSize={28} type={operation.type} />
-        )}
-        <View style={[styles.body, styles.bodyLeft]}>
-          <LText
-            numberOfLines={1}
-            semiBold
-            ellipsizeMode="tail"
-            style={styles.topLine}
-          >
-            {multipleAccounts ? account.name : text}
-          </LText>
-          <LText numberOfLines={1} style={styles.bottomLine}>
-            {text} <OperationRowDate date={operation.date} />
-          </LText>
-        </View>
-        <View style={[styles.body, styles.bodyRight]}>
-          <LText
-            tertiary
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={[styles.topLine, { color: valueColor }]}
-          >
-            <CurrencyUnitValue
-              showCode
-              unit={account.unit}
-              value={amount}
-              alwaysShowSign
-            />
-          </LText>
-          <LText
-            tertiary
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.bottomLine}
-          >
-            <CounterValue
-              showCode
-              currency={account.currency}
-              value={amount}
-              alwaysShowSign
-            />
-          </LText>
-        </View>
-      </RectButton>
+      <View>
+        <RectButton
+          onPress={this.goToOperationDetails}
+          style={[styles.root, isOptimistic ? styles.optimistic : null]}
+        >
+          {multipleAccounts ? (
+            <CurrencyIcon size={20} currency={account.currency} />
+          ) : (
+            <OperationIcon size={16} containerSize={28} type={operation.type} />
+          )}
+          <View style={styles.wrapper}>
+            <View style={styles.body}>
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="tail"
+                style={[styles.bodyLeft, styles.topRow]}
+              >
+                {multipleAccounts ? account.name : text}
+              </LText>
+              <LText
+                tertiary
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
+              >
+                <CurrencyUnitValue
+                  showCode
+                  unit={account.unit}
+                  value={amount}
+                  alwaysShowSign
+                />
+              </LText>
+            </View>
+            <View style={styles.body}>
+              <LText
+                numberOfLines={1}
+                style={[styles.bodyLeft, styles.bottomRow]}
+              >
+                {text} <OperationRowDate date={operation.date} />
+              </LText>
+              <LText
+                tertiary
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={[styles.bottomRow, styles.bodyRight]}
+              >
+                <CounterValue
+                  showCode
+                  currency={account.currency}
+                  value={amount}
+                  alwaysShowSign
+                />
+              </LText>
+            </View>
+          </View>
+        </RectButton>
+      </View>
     );
   }
 }
@@ -112,12 +119,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
   },
+  wrapper: { flex: 1, flexDirection: "column", marginHorizontal: 10 },
+  body: {
+    flexDirection: "row",
+    flex: 1,
+  },
+  topRow: {
+    color: colors.smoke,
+    fontSize: 14,
+    lineHeight: 17,
+    height: 18,
+  },
+  bottomRow: {
+    color: colors.grey,
+    fontSize: 14,
+    lineHeight: 17,
+    height: 18,
+  },
   optimistic: {
     opacity: 0.5,
-  },
-  body: {
-    flexDirection: "column",
-    marginHorizontal: 10,
   },
   bodyLeft: {
     flexGrow: 1,
@@ -125,17 +145,5 @@ const styles = StyleSheet.create({
   },
   bodyRight: {
     alignItems: "flex-end",
-  },
-  topLine: {
-    fontSize: 14,
-    lineHeight: 17,
-    height: 18,
-    color: colors.smoke,
-  },
-  bottomLine: {
-    fontSize: 14,
-    lineHeight: 17,
-    height: 18,
-    color: colors.grey,
   },
 });

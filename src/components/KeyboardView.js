@@ -9,7 +9,9 @@ type Props = {
 
 class KeyboardView extends PureComponent<Props> {
   static defaultProps = {
-    style: {},
+    style: {
+      flex: 1,
+    },
   };
 
   render(): React$Node {

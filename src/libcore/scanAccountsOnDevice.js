@@ -21,7 +21,6 @@ import { shouldShowNewAccount } from "../cryptocurrencies";
 import { syncCoreAccount } from "./syncAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { createAccountFromDevice } from "./createAccountFromDevice";
-import { getValue } from "./specific";
 
 export const scanAccountsOnDevice = (
   currency: CryptoCurrency,
@@ -76,9 +75,6 @@ export const scanAccountsOnDevice = (
             derivationMode,
           });
 
-          const accountsCount = getValue(
-            await core.coreWallet.getAccountCount(wallet),
-          );
           const onAccountScanned = account => o.next(account);
 
           // recursively scan all accounts on device on the given app
@@ -88,7 +84,6 @@ export const scanAccountsOnDevice = (
             wallet,
             hwApp,
             currency,
-            accountsCount,
             accountIndex: 0,
             onAccountScanned,
             seedIdentifier,
@@ -118,7 +113,6 @@ async function scanNextAccount(props: {
   wallet: *,
   hwApp: *,
   currency: CryptoCurrency,
-  accountsCount: number,
   accountIndex: number,
   onAccountScanned: Account => *,
   seedIdentifier: string,
@@ -131,7 +125,6 @@ async function scanNextAccount(props: {
     wallet,
     hwApp,
     currency,
-    accountsCount,
     accountIndex,
     onAccountScanned,
     seedIdentifier,
@@ -140,13 +133,12 @@ async function scanNextAccount(props: {
     isUnsubscribed,
   } = props;
 
-  // create account only if account has not been scanned yet
-  // if it has already been created, we just need to get it, and sync it
-  const hasBeenScanned = accountIndex < accountsCount;
-
-  const coreAccount = hasBeenScanned
-    ? await core.coreWallet.getAccount(wallet, accountIndex)
-    : await createAccountFromDevice({ core, wallet, hwApp });
+  let coreAccount;
+  try {
+    coreAccount = await core.coreWallet.getAccount(wallet, accountIndex);
+  } catch (err) {
+    coreAccount = await createAccountFromDevice({ core, wallet, hwApp });
+  }
 
   if (isUnsubscribed()) return;
 

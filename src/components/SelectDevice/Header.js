@@ -34,13 +34,14 @@ class ScanningFooter extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   root: {
-    paddingVertical: 24,
+    paddingTop: 24,
+    paddingBottom: 32,
     flexDirection: "column",
     alignItems: "center",
   },
   text: {
     marginTop: 24,
-    color: colors.black,
+    color: colors.smoke,
     fontSize: 14,
     lineHeight: 21,
     textAlign: "center",

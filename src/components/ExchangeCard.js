@@ -31,13 +31,11 @@ export default class ExchangeCard extends Component<Props> {
     return (
       <Card style={styles.cardStyle}>
         <View style={styles.cardTextBlock}>
-          {logo}
-          <LText secondary style={styles.description}>
-            {t(`exchange.${id}`)}
-          </LText>
+          <View style={styles.logoContainer}>{logo}</View>
+          <LText style={styles.description}>{t(`exchange.${id}`)}</LText>
           <View>
             <Button
-              type="primary"
+              type="tertiary"
               title={<Trans i18nKey="exchange.visit" />}
               onPress={this.onClick}
             />
@@ -73,6 +71,9 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  logoContainer: {
+    alignItems: "center",
+  },
   cardTextBlock: {
     flexDirection: "column",
     flex: 1,
@@ -86,6 +87,7 @@ const styles = StyleSheet.create({
   description: {
     color: colors.grey,
     fontSize: 14,
+    lineHeight: 21,
     marginBottom: 24,
     marginTop: 24,
   },

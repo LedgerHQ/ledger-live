@@ -77,6 +77,10 @@
       "title": "Invalid endpoint",
       "description": "Please provide a valid endpoint"
     },
+    "Touch ID Error": {
+      "title": "Biometric authentication failed",
+      "description": "Please use your password or reset the app"
+    },
     "Error": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
@@ -164,7 +168,7 @@
       "description": "Please try again"
     },
     "PasswordsDontMatch": {
-      "title": "Passwords don't match",
+      "title": "The password you entered does not match",
       "description": "Please try again"
     },
     "SelectExchangesLoadError": {
@@ -263,11 +267,35 @@
   },
   "auth": {
     "failed": {
+      "biometrics": {
+        "title": "{{biometricsType}} unlock failed",
+        "description": "Enter your password to continue"
+      },
       "title": "Authentication failed",
       "buttons": {
         "tryAgain": "Try again",
         "reset": "Reset"
       }
+    },
+    "unlock": {
+      "biometricsTitle": "Please authenticate to Ledger Live app",
+      "title": "Welcome back",
+      "desc": "Enter your password to continue",
+      "inputPlaceholder": "Type your password",
+      "login": "Log in",
+      "forgotPassword": "Forgot password?"
+    },
+    "addPassword": {
+      "placeholder": "Choose your password",
+      "title": "Password Lock"
+    },
+    "confirmPassword": {
+      "title": "Confirm Password",
+      "placeholder": "Confirm your password"
+    },
+    "enableBiometrics": {
+      "title": "{{biometricsType}}",
+      "desc": "Unlock with {{biometricsType}}"
     }
   },
   "reset": {
@@ -348,6 +376,7 @@
     },
     "stepPassword": {
       "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
+      "descConfigured": "Password lock successfully enabled",
       "setPassword": "Set password"
     },
     "stepShareData": {},
@@ -384,8 +413,14 @@
       "title": "Add accounts to your portfolio",
       "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
       "buttons": {
-        "import": "Add accounts"
+        "import": "Add accounts",
+        "manager": "Open Manager"
       }
+    },
+    "tradingDisclaimer": {
+      "title": "Trade Safely",
+      "text1": "Before sending and receiving crypto assets, educate yourself to make informed decisions. Crypto assets are volatile and the prices can go up and down. Carefully evaluate your trading goals and the financial risk you are willing to take.",
+      "text2": "Please beware that Ledger does not provide financial, tax, or legal advice. You should take such decisions on your own or rely on opinions of licensed experts."
     }
   },
   "addAccountsModal": {
@@ -467,7 +502,7 @@
       "delete": {
         "title": "Delete Account",
         "desc": "Stored data will be deleted",
-        "confirmationDesc": "Are you sure you want to delete <1><0>{{accountName}}</0></1> account"
+        "confirmationDesc": "Are you sure you want to delete <1><0>{{accountName}}</0></1> account?"
       },
       "archive": {
         "title": "Archive Account",
@@ -719,7 +754,7 @@
     "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
     "steps": {
       "connecting": {
-        "title": "Connecting “{{fullDeviceName}}”",
+        "title": "Connecting “{{deviceName}}”",
         "description": "Don't forget to turn on your device and enter your PIN to unlock it"
       },
       "genuineCheck": {

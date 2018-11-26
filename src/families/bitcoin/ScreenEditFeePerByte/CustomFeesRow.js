@@ -22,7 +22,6 @@ type State = {
 
 class FeesRow extends Component<Props, State> {
   static defaultProps = {
-    link: "",
     last: false,
   };
 

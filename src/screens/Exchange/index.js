@@ -2,7 +2,8 @@
 
 import React, { Component } from "react";
 import { Trans, translate } from "react-i18next";
-import { SafeAreaView, ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { T } from "../../types/common";
 import ExchangeCard from "../../components/ExchangeCard";
@@ -51,11 +52,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   scrollView: {
-    paddingHorizontal: 16,
     paddingTop: 24,
     flex: 1,
   },
   body: {
+    overflow: "visible",
+    paddingHorizontal: 16,
     paddingBottom: 64,
   },
   list: {

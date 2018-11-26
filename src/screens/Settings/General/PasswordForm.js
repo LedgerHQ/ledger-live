@@ -1,0 +1,103 @@
+/* @flow */
+import React, { PureComponent } from "react";
+import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
+import { translate } from "react-i18next";
+import type { T } from "../../../types/common";
+import Button from "../../../components/Button";
+import LText from "../../../components/LText";
+import KeyboardView from "../../../components/KeyboardView";
+import TranslatedError from "../../../components/TranslatedError";
+import PasswordInput from "../../../components/PasswordInput";
+import colors from "../../../colors";
+
+type Props = {
+  t: T,
+  onChange: string => void,
+  onSubmit: () => void,
+  error?: ?Error,
+  placeholder: string,
+  value: string,
+};
+
+type State = {
+  secureTextEntry: boolean,
+};
+
+class PasswordForm extends PureComponent<Props, State> {
+  state = {
+    secureTextEntry: true,
+  };
+
+  toggleSecureTextEntry = () => {
+    const { secureTextEntry } = this.state;
+    this.setState({ secureTextEntry: !secureTextEntry });
+  };
+
+  render() {
+    const { t, onChange, onSubmit, error, placeholder, value } = this.props;
+    const { secureTextEntry } = this.state;
+    return (
+      <SafeAreaView style={styles.root}>
+        <KeyboardView>
+          <View style={styles.body}>
+            <PasswordInput
+              inline
+              autoFocus
+              error={error}
+              onChange={onChange}
+              onSubmit={onSubmit}
+              toggleSecureTextEntry={this.toggleSecureTextEntry}
+              secureTextEntry={secureTextEntry}
+              placeholder={placeholder}
+            />
+          </View>
+          {error && (
+            <LText style={styles.errorStyle}>
+              <TranslatedError error={error} />
+            </LText>
+          )}
+          <View style={styles.footer}>
+            <Button
+              title={t("common.confirm")}
+              type="primary"
+              onPress={onSubmit}
+              containerStyle={styles.buttonContainer}
+              titleStyle={styles.buttonTitle}
+              secureTextEntry={secureTextEntry}
+              disabled={!!error || value.length === 0}
+            />
+          </View>
+        </KeyboardView>
+      </SafeAreaView>
+    );
+  }
+}
+
+export default translate()(PasswordForm);
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  body: {
+    paddingVertical: 24,
+  },
+  buttonContainer: {
+    marginHorizontal: 16,
+  },
+  buttonTitle: {
+    fontSize: 16,
+  },
+  footer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    paddingBottom: 16,
+  },
+  errorStyle: {
+    color: colors.alert,
+    marginHorizontal: 16,
+    fontSize: 12,
+  },
+});

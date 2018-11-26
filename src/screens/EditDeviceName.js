@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { Buffer } from "buffer";
-import { TextInput, View, StyleSheet } from "react-native";
+import { TextInput, View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
@@ -85,44 +85,46 @@ class EditDeviceName extends PureComponent<
     const deviceId = navigation.getParam("deviceId");
     const remainingCount = MAX_DEVICE_NAME - Buffer.from(name).length;
     return (
-      <KeyboardView style={styles.root}>
-        <View style={styles.body}>
-          <TextInput
-            value={name}
-            onChangeText={this.onChangeText}
-            maxLength={MAX_DEVICE_NAME}
-            autoFocus
-            autoCorrect
-            selectTextOnFocus
-            clearButtonMode="always"
-            placeholder="Satoshi Nakamoto"
-            returnKeyType="done"
-            style={[getFontStyle({ semiBold: true }), styles.input]}
-          />
-          <LText style={styles.remainingText}>
-            <Trans
-              i18nKey="EditDeviceName.charactersRemaining"
-              values={{ remainingCount }}
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardView style={styles.root}>
+          <View style={styles.body}>
+            <TextInput
+              value={name}
+              onChangeText={this.onChangeText}
+              maxLength={MAX_DEVICE_NAME}
+              autoFocus
+              autoCorrect={false}
+              selectTextOnFocus
+              blurOnSubmit={false}
+              clearButtonMode="always"
+              placeholder="Satoshi Nakamoto"
+              style={[getFontStyle({ semiBold: true }), styles.input]}
             />
-          </LText>
-        </View>
-        <View style={styles.footer}>
-          {error ? <FooterError error={error} /> : null}
-          <Button
-            type="primary"
-            title={<Trans i18nKey="EditDeviceName.action" />}
-            onPress={this.onSubmit}
-          />
-        </View>
+            <LText style={styles.remainingText}>
+              <Trans
+                i18nKey="EditDeviceName.charactersRemaining"
+                values={{ remainingCount }}
+              />
+            </LText>
+          </View>
+          <View style={styles.footer}>
+            {error ? <FooterError error={error} /> : null}
+            <Button
+              type="primary"
+              title={<Trans i18nKey="EditDeviceName.action" />}
+              onPress={this.onSubmit}
+            />
+          </View>
 
-        <DeviceJob
-          deviceName={name}
-          deviceId={connecting ? deviceId : null}
-          onCancel={this.onCancel}
-          onDone={this.onDone}
-          steps={[connectingStep, editDeviceName(name)]}
-        />
-      </KeyboardView>
+          <DeviceJob
+            deviceName={name}
+            deviceId={connecting ? deviceId : null}
+            onCancel={this.onCancel}
+            onDone={this.onDone}
+            steps={[connectingStep, editDeviceName(name)]}
+          />
+        </KeyboardView>
+      </SafeAreaView>
     );
   }
 }

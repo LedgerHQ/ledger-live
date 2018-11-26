@@ -1,13 +1,14 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, createRef } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { translate, Trans } from "react-i18next";
-import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { addAccount } from "../../actions/accounts";
@@ -15,7 +16,6 @@ import { accountsSelector } from "../../reducers/accounts";
 import { getCurrencyBridge } from "../../bridge";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import SelectableAccountsList from "../../components/SelectableAccountsList";
 import LiveLogo from "../../icons/LiveLogoIcon";
@@ -75,6 +75,12 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   componentWillUnmount() {
     this.stopSubscription(false);
   }
+
+  handleContentSizeChange = () => {
+    if (this.scrollView.current) {
+      this.scrollView.current.scrollToEnd({ animated: true });
+    }
+  };
 
   startSubscription = () => {
     const { navigation } = this.props;
@@ -222,6 +228,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     );
   };
 
+  scrollView = createRef();
+
   render() {
     const { selectedIds, status, scannedAccounts, error } = this.state;
     const newAccounts = this.getNewAccounts();
@@ -236,8 +244,12 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <PreventNativeBack />
-        <Stepper nbSteps={4} currentStep={3} />
-        <ScrollView style={styles.inner}>
+        <ScrollView
+          style={styles.inner}
+          contentContainerStyle={styles.innerContent}
+          ref={this.scrollView}
+          onContentSizeChange={this.handleContentSizeChange}
+        >
           {regularAccounts.length > 0 ? (
             <SelectableAccountsList
               header={<Trans i18nKey="addAccounts.sections.accountsToImport" />}
@@ -382,8 +394,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   inner: {
-    flex: 1,
     paddingTop: 24,
+  },
+  innerContent: {
+    paddingBottom: 24,
   },
   descText: {
     paddingHorizontal: 16,

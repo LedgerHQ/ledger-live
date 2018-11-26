@@ -1,7 +1,8 @@
 /* @flow */
 /* eslint-disable no-console */
 import React, { Component } from "react";
-import { View, SafeAreaView, Dimensions, StyleSheet } from "react-native";
+import { View, Dimensions, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { from, of } from "rxjs";
 import { mergeMap, delay, catchError, throwError } from "rxjs/operators";

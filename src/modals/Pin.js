@@ -42,7 +42,9 @@ class PinModal extends Component<Props> {
               <BulletItemText style={styles.text}>
                 <Trans i18nKey="onboarding.stepSetupPin.modal.step1">
                   {"text"}
-                  <LText semiBold>bold text</LText>
+                  <LText semiBold style={styles.textBlue}>
+                    bold text
+                  </LText>
                   {"text"}
                 </Trans>
               </BulletItemText>,
@@ -83,9 +85,9 @@ const styles = StyleSheet.create({
   image: {
     alignSelf: "center",
     marginTop: 16,
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  buttonWrapper: { marginTop: 24, flexDirection: "row" },
+  buttonWrapper: { marginTop: 16, flexDirection: "row" },
   buttonContainer: {
     flexGrow: 1,
     paddingTop: 24,
@@ -95,6 +97,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     color: colors.grey,
-    marginTop: 8,
   },
+  textBlue: { color: colors.darkBlue },
 });

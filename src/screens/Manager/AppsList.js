@@ -159,6 +159,7 @@ class ManagerAppsList extends Component<
             onClose={this.onActionClose}
             deviceId={deviceId}
             targetId={deviceInfo.targetId}
+            isOpened={!!action}
           />
         ) : null}
       </View>
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingTop: 16,
-    marginBottom: 16,
+    paddingBottom: 16,
   },
 });
 

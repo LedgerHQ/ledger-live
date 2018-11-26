@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, SafeAreaView, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -10,7 +11,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 
@@ -52,7 +52,6 @@ class ReceiveFunds extends Component<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView style={{ flex: 1 }}>
-          <Stepper nbSteps={3} currentStep={1} />
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               keys={SEARCH_KEYS}

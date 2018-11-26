@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 48,
+    paddingBottom: 24,
   },
   deviceName: {
     fontSize: 22,
