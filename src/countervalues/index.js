@@ -230,6 +230,71 @@ function createCounterValues<State>({
       .join("|")
   );
 
+  const MAXIMUM_RATIO_EXTREME_VARIATION = 1000;
+
+  const isCleanHistodays = (
+    h: mixed,
+    from: string,
+    to: string,
+    exchange: string
+  ): boolean => {
+    if (!h || typeof h !== "object") return false;
+    const map = h;
+    let min = Infinity;
+    let max = 0;
+    for (const k in map) {
+      const v = map[k];
+      if (typeof v !== "number") {
+        return false;
+      }
+      min = Math.min(v, min);
+      max = Math.max(v, max);
+    }
+    const minMaxRatio = max / min;
+    const invalidRatio =
+      minMaxRatio <= 0 || !isFinite(minMaxRatio) || isNaN(minMaxRatio);
+    const accept =
+      !invalidRatio && minMaxRatio < MAXIMUM_RATIO_EXTREME_VARIATION;
+    if (!accept && log) {
+      log(`invalid data detected for ${from}-${to}-${exchange}`, {
+        min,
+        max,
+        h
+      });
+    }
+    return accept;
+  };
+
+  const evictBadRates = (input: mixed): RatesMap => {
+    const out = {};
+    if (input && typeof input === "object") {
+      const rates = input;
+      for (const to in rates) {
+        const ratesEntry = rates[to];
+        if (ratesEntry && typeof ratesEntry === "object") {
+          const ratesTo = ratesEntry;
+          const out2 = {};
+          for (const from in ratesTo) {
+            const ratesEntry2 = ratesTo[from];
+            if (ratesEntry2 && typeof ratesEntry2 === "object") {
+              const ratesFrom = ratesEntry2;
+              const out3 = {};
+              for (const exchange in ratesFrom) {
+                const hist = ratesFrom[exchange];
+                if (isCleanHistodays(hist, from, to, exchange)) {
+                  out3[exchange] = hist;
+                }
+              }
+              out2[from] = out3;
+            }
+          }
+          out[to] = out2;
+        }
+      }
+    }
+    return out;
+  };
+
   const importAction = (data: mixed) => (dispatch: Dispatch<*>) => {
     if (
       typeof data !== "object" ||
@@ -241,7 +306,8 @@ function createCounterValues<State>({
     ) {
       return;
     }
-    dispatch({ type: IMPORT, rates: data.rates });
+    const rates = evictBadRates(data.rates);
+    dispatch({ type: IMPORT, rates });
   };
 
   const defaultAfterDay = maximumDays
