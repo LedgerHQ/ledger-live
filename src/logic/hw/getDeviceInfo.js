@@ -1,7 +1,8 @@
 // @flow
+/* eslint-disable no-bitwise */
 
 import type Transport from "@ledgerhq/hw-transport";
-import { FORCE_PROVIDER } from "react-native-config";
+import Config from "react-native-config";
 import getFirmwareInfo from "./getFirmwareInfo";
 import type { DeviceInfo } from "../../types/manager";
 
@@ -22,13 +23,14 @@ export default async (transport: Transport<*>): Promise<DeviceInfo> => {
     [];
   const isOSU = typeof parsedVersion[5] !== "undefined";
   const providerName = parsedVersion[4] || "";
-  const providerId = FORCE_PROVIDER || PROVIDERS[providerName];
-  const isBootloader = targetId === 0x01000001;
+  const providerId = Config.FORCE_PROVIDER || PROVIDERS[providerName];
+  const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
   const majMin = parsedVersion[1];
   const patch = parsedVersion[2] || ".0";
-  const fullVersion = `${majMin}${patch}${
-    providerName ? `-${providerName}` : ""
-  }`;
+  const fullVersion =
+    targetId === 0x33000004
+      ? "1.0"
+      : `${majMin}${patch}${providerName ? `-${providerName}` : ""}`;
   return {
     targetId,
     seVersion: majMin + patch,

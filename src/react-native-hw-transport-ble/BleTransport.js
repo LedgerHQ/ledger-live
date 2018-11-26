@@ -1,5 +1,6 @@
 // @flow
 /* eslint-disable prefer-template */
+/* eslint-disable no-console */
 
 import Transport, { TransportError } from "@ledgerhq/hw-transport";
 import { BleManager } from "react-native-ble-plx";
@@ -231,13 +232,12 @@ export default class BluetoothTransport extends Transport<Device | string> {
     } else {
       device = deviceOrId;
     }
-    /*
+
     console.log("isConnected?");
     if (!(await device.isConnected())) {
       console.log("nope! connecting...");
       await device.connect();
     }
-    */
 
     console.log("discoverAllServicesAndCharacteristics");
     await device.discoverAllServicesAndCharacteristics();
@@ -312,7 +312,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
         this.disconnectedSub = null;
       }
     });
-    console.log("BleTransport(" + this.id + ") opened");
+    console.log("BleTransport(" + String(this.id) + ") opened");
   }
 
   disconnectedSub: *;
@@ -362,7 +362,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
       this.disconnectedSub.remove();
       this.disconnectedSub = null;
     }
-    console.log("BleTransport(" + this.id + ") close");
+    console.log("BleTransport(" + String(this.id) + ") close");
     // we don't want to actually close the device. TODO: we might want to stop all exchanges
     return Promise.resolve();
   }
