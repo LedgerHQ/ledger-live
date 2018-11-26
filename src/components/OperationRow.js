@@ -23,6 +23,7 @@ type Props = {
   account: Account,
   navigation: *,
   multipleAccounts?: boolean,
+  isLast: boolean,
 };
 
 class OperationRow extends PureComponent<Props, *> {
@@ -38,9 +39,9 @@ class OperationRow extends PureComponent<Props, *> {
   };
 
   render() {
-    const { operation, account, multipleAccounts } = this.props;
+    const { operation, account, multipleAccounts, isLast } = this.props;
     const amount = getOperationAmountNumber(operation);
-    const valueColor = amount.isNegative() ? colors.smoke : colors.green;
+    const valueColor = amount.isNegative() ? colors.darkBlue : colors.green;
     const text =
       operation.type === "IN" ? (
         <Trans i18nKey="common.received" />
@@ -63,8 +64,8 @@ class OperationRow extends PureComponent<Props, *> {
     );
 
     return (
-      <View>
-        <RectButton onPress={this.goToOperationDetails} style={styles.root}>
+      <View style={[styles.root, isLast ? styles.last : null]}>
+        <RectButton onPress={this.goToOperationDetails} style={styles.button}>
           <View style={isOptimistic ? styles.optimistic : null}>
             {multipleAccounts ? (
               <CurrencyIcon size={20} currency={account.currency} />
@@ -150,28 +151,39 @@ export default OperationRow;
 
 const styles = StyleSheet.create({
   root: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
     backgroundColor: colors.white,
     alignItems: "center",
     flexDirection: "row",
+    borderBottomWidth: 2,
+    borderBottomColor: colors.lightGrey,
   },
-  wrapper: { flex: 1, flexDirection: "column", marginHorizontal: 10 },
+  last: {
+    borderBottomWidth: 0,
+  },
+  button: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  wrapper: {
+    flex: 1,
+    flexDirection: "column",
+    marginLeft: 16,
+    marginRight: 10,
+  },
   body: {
     flexDirection: "row",
     flex: 1,
   },
   topRow: {
-    color: colors.smoke,
+    color: colors.darkBlue,
     fontSize: 14,
-    lineHeight: 17,
-    height: 18,
+    marginBottom: 2,
   },
   bottomRow: {
     color: colors.grey,
     fontSize: 14,
-    lineHeight: 17,
-    height: 18,
   },
   optimistic: {
     opacity: 0.5,

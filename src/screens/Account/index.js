@@ -3,6 +3,7 @@
 import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { StyleSheet, SectionList, View, Animated } from "react-native";
+import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -60,9 +61,16 @@ class AccountScreen extends PureComponent<Props, State> {
 
   keyExtractor = (item: Operation) => item.id;
 
-  renderItem = ({ item }: { item: Operation }) => {
+  renderItem = ({
+    item,
+    index,
+    section,
+  }: {
+    item: Operation,
+    index: number,
+    section: SectionBase<*>,
+  }) => {
     const { account, navigation } = this.props;
-
     if (!account) return null;
 
     return (
@@ -70,6 +78,7 @@ class AccountScreen extends PureComponent<Props, State> {
         operation={item}
         account={account}
         navigation={navigation}
+        isLast={section.data.length - 1 === index}
       />
     );
   };
@@ -210,6 +219,7 @@ const styles = StyleSheet.create({
   },
   balanceText: {
     fontSize: 22,
+    paddingBottom: 4,
     color: colors.darkBlue,
   },
   balanceSubText: {

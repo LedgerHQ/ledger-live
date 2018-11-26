@@ -502,9 +502,10 @@
         "desc": "The API node to use"
       },
       "delete": {
-        "title": "Delete Account",
-        "desc": "Stored data will be deleted",
-        "confirmationDesc": "Are you sure you want to delete <1><0>{{accountName}}</0></1> account?"
+        "title": "Remove account from portfolio",
+        "desc": "The stored data will be removed",
+        "confirmationTitle": "Are you sure?",
+        "confirmationDesc": "Deleting an account does not affect your crypto assets. Accounts can always be re-added."
       },
       "archive": {
         "title": "Archive Account",
@@ -544,9 +545,9 @@
     },
     "row": {
       "syncPending": "Synchronizing...",
-      "upToDate": "Up to date",
+      "upToDate": "Synchronized",
       "error": "Error",
-      "queued": "In queue"
+      "queued": "Awaiting"
     }
   },
   "settings": {

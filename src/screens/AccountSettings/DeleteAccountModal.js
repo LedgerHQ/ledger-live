@@ -3,7 +3,6 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import LText from "../../components/LText";
 import Circle from "../../components/Circle";
 import Trash from "../../icons/Trash";
 import colors from "../../colors";
@@ -18,24 +17,18 @@ type Props = {
 
 class DeleteAccountModal extends PureComponent<Props> {
   render() {
-    const { account, onRequestClose, deleteAccount } = this.props;
+    const { onRequestClose, deleteAccount } = this.props;
 
     return (
       <ModalBottomAction
-        title={null}
+        title={<Trans i18nKey="account.settings.delete.confirmationTitle" />}
         icon={
           <Circle bg={colors.lightAlert} size={56}>
             <Trash size={24} color={colors.alert} />
           </Circle>
         }
         description={
-          <Trans i18nKey="common:account.settings.delete.confirmationDesc">
-            {"Are you sure you want to delete "}
-            <LText semiBold style={styles.accountName}>
-              {account.name}
-            </LText>
-            {"account"}
-          </Trans>
+          <Trans i18nKey="account.settings.delete.confirmationDesc" />
         }
         footer={
           <View style={styles.footerContainer}>

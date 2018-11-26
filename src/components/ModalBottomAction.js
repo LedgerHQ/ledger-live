@@ -18,12 +18,12 @@ export default class ModalBottomAction extends Component<{
     return (
       <SafeAreaView forceInset={forceInset} style={styles.root}>
         <View style={styles.icon}>{icon}</View>
+        {title ? (
+          <LText semiBold style={styles.title}>
+            {title}
+          </LText>
+        ) : null}
         <View style={styles.body}>
-          {title && (
-            <LText bold style={styles.title}>
-              {title}
-            </LText>
-          )}
           <LText style={styles.description}>{description}</LText>
           <View style={styles.footer}>{footer}</View>
         </View>
@@ -45,9 +45,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   title: {
-    marginTop: 16,
+    marginBottom: 16,
     textAlign: "center",
-    fontSize: 14,
+    fontSize: 16,
   },
   description: {
     fontSize: 14,

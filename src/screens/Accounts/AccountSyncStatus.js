@@ -12,8 +12,8 @@ class StatusQueued extends PureComponent<{}> {
   render() {
     return (
       <View style={styles.root}>
-        <LText secondary style={styles.pendingText}>
-          <Icon name="clock" size={14} color={colors.grey} />{" "}
+        <Icon name="clock" size={14} color={colors.grey} />
+        <LText secondary semiBold style={styles.pendingText}>
           <Trans i18nKey="accounts.row.queued" />
         </LText>
       </View>
@@ -28,7 +28,7 @@ class StatusSynchronizing extends PureComponent<{}> {
         <Spinning>
           <LiveLogo size={14} color={colors.grey} />
         </Spinning>
-        <LText secondary style={styles.pendingText}>
+        <LText secondary semiBold style={styles.pendingText}>
           <Trans i18nKey="accounts.row.syncPending" />
         </LText>
       </View>
@@ -41,7 +41,7 @@ class StatusUpToDate extends PureComponent<{}> {
     return (
       <View style={styles.root}>
         <Icon size={14} color={colors.green} name="check-circle" />
-        <LText secondary style={styles.upToDateText}>
+        <LText secondary semiBold style={styles.upToDateText}>
           <Trans i18nKey="accounts.row.upToDate" />
         </LText>
       </View>
@@ -54,7 +54,7 @@ class StatusError extends PureComponent<{}> {
     return (
       <View style={styles.root}>
         <Icon size={14} color={colors.alert} name="x-circle" />
-        <LText secondary style={styles.errorText}>
+        <LText secondary semiBold style={styles.errorText}>
           <Trans i18nKey="accounts.row.error" />
         </LText>
       </View>
