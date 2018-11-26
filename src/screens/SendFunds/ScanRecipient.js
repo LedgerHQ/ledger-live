@@ -78,7 +78,7 @@ class ScanRecipient extends PureComponent<Props, State> {
   onResult = (result: string) => {
     const { account } = this.props;
     const bridge = getAccountBridge(account);
-    const { amount, address, currency, ...rest } = decodeURIScheme(result);
+    const { amount, address, ...rest } = decodeURIScheme(result);
     let t = bridge.createTransaction(account);
     t = bridge.editTransactionRecipient(account, t, address);
     if (amount) {
@@ -89,8 +89,7 @@ class ScanRecipient extends PureComponent<Props, State> {
       t,
     );
 
-    // $FlowFixMe
-    this.props.navigation.replace("SendSelectRecipient", {
+    this.props.navigation.navigate("SendSelectRecipient", {
       accountId: account.id,
       transaction: t,
     });
