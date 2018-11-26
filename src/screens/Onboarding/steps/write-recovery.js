@@ -46,6 +46,7 @@ class OnboardingStepWriteRecovery extends Component<
         header="OnboardingStepWriteRecovery"
         Footer={this.Footer}
         noHorizontalPadding
+        withNeedHelp
       >
         <RecoveryPhraseModal
           isOpened={isModalOpened}

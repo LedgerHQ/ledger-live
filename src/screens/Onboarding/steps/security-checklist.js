@@ -103,6 +103,7 @@ class OnboardingStepSecurityChecklist extends Component<
         Footer={this.Footer}
         noHorizontalPadding
         noScroll
+        withNeedHelp
       >
         <ScrollView
           ref={this.scrollView}

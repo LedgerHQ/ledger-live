@@ -42,7 +42,11 @@ class OnboardingStepScanQR extends Component<Props> {
 
   render() {
     return (
-      <OnboardingLayout header="OnboardingStepScanQR" Footer={this.Footer}>
+      <OnboardingLayout
+        header="OnboardingStepScanQR"
+        Footer={this.Footer}
+        withNeedHelp
+      >
         <View style={styles.hero}>
           <ScanIllustration />
         </View>

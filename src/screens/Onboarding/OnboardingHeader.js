@@ -7,15 +7,16 @@ import { withNavigation } from "react-navigation";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import IconArrowLeft from "../../icons/ArrowLeft";
+import HelpLink from "../../components/HelpLink";
 import { withOnboardingContext } from "./onboardingContext";
 import STEPS_BY_MODE from "./steps";
 import { deviceNames } from "../../wording";
-
 import type { OnboardingStepProps } from "./types";
 
 type Props = OnboardingStepProps & {
   stepId: string,
   withSkip?: boolean,
+  withNeedHelp?: boolean,
 };
 
 const hitSlop = {
@@ -27,7 +28,7 @@ const hitSlop = {
 
 class OnboardingHeader extends PureComponent<Props> {
   render() {
-    const { mode, stepId, prev, t, withSkip, next } = this.props;
+    const { mode, stepId, prev, t, withSkip, withNeedHelp, next } = this.props;
     const steps = STEPS_BY_MODE[mode];
     const visibleSteps = steps.filter(s => !s.isGhost);
     const indexInSteps = visibleSteps.findIndex(s => s.id === stepId);
@@ -49,6 +50,7 @@ class OnboardingHeader extends PureComponent<Props> {
               </LText>
             </TouchableOpacity>
           )}
+          {withNeedHelp && <HelpLink />}
         </View>
         <LText semiBold style={styles.steps}>
           {stepMsg}
@@ -90,6 +92,11 @@ const styles = StyleSheet.create({
   },
   skip: {
     color: colors.grey,
+    fontSize: 16,
+  },
+  needHelp: {
+    marginLeft: 4,
+    color: colors.live,
     fontSize: 16,
   },
 });
