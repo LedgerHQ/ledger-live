@@ -138,6 +138,7 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
 
     async function finish() {
       interrupted = true;
+      // TODO add a delay
       if (ws.readyState !== 1) return;
       ws.close();
       if (currentDeviceJob) {
