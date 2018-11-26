@@ -118,6 +118,7 @@ async function send(characteristic, apdu, termination) {
 }
 
 let id = 0;
+const devicesCache = {};
 
 /**
  * react-native bluetooth BLE implementation
@@ -179,33 +180,40 @@ export default class BluetoothTransport extends Transport<Device | string> {
     let device;
     if (typeof deviceOrId === "string") {
       console.log(`deviceId=${deviceOrId}`); // eslint-disable-line no-console
-      const manager = new BleManager();
-      await new Promise(success => {
-        const stateSub = manager.onStateChange(state => {
-          if (state === "PoweredOn") {
-            stateSub.remove();
-            success();
-          }
-        }, true);
-      });
 
-      /*
+      if (devicesCache[deviceOrId]) {
+        console.log("Device in cache, using that."); // eslint-disable-line no-console
+        device = devicesCache[deviceOrId];
+      } else {
+        const manager = new BleManager();
+        await new Promise(success => {
+          const stateSub = manager.onStateChange(state => {
+            if (state === "PoweredOn") {
+              stateSub.remove();
+              success();
+            }
+          }, true);
+        });
+
+        /*
       const devices = await manager.devices([deviceOrId]);
       console.log(`${devices.length} devices`); // eslint-disable-line no-console
       [device] = devices;
       */
 
-      if (!device) {
-        const connectedDevices = await manager.connectedDevices([ServiceUuid]);
-        console.log(`${connectedDevices.length} connectedDevices`); // eslint-disable-line no-console
-        const connectedDevicesFiltered = connectedDevices.filter(
-          d => d.id === deviceOrId,
-        );
-        console.log(`${connectedDevicesFiltered.length} connectedDFiltered`); // eslint-disable-line no-console
-        [device] = connectedDevicesFiltered;
-      }
+        if (!device) {
+          const connectedDevices = await manager.connectedDevices([
+            ServiceUuid,
+          ]);
+          console.log(`${connectedDevices.length} connectedDevices`); // eslint-disable-line no-console
+          const connectedDevicesFiltered = connectedDevices.filter(
+            d => d.id === deviceOrId,
+          );
+          console.log(`${connectedDevicesFiltered.length} connectedDFiltered`); // eslint-disable-line no-console
+          [device] = connectedDevicesFiltered;
+        }
 
-      /*
+        /*
       if (device) {
         const isDeviceConnected = await manager.isDeviceConnected(deviceOrId);
         console.log(`isDeviceConnected=${isDeviceConnected}`); // eslint-disable-line no-console
@@ -215,9 +223,10 @@ export default class BluetoothTransport extends Transport<Device | string> {
       }
       */
 
-      if (!device) {
-        console.log("Last chance, we attempt to connectToDevice"); // eslint-disable-line no-console
-        device = await manager.connectToDevice(deviceOrId);
+        if (!device) {
+          console.log("Last chance, we attempt to connectToDevice"); // eslint-disable-line no-console
+          device = await manager.connectToDevice(deviceOrId);
+        }
       }
     } else {
       device = deviceOrId;
@@ -271,6 +280,8 @@ export default class BluetoothTransport extends Transport<Device | string> {
         "BLEChracteristicInvalid",
       );
     }
+
+    devicesCache[device.id] = device;
 
     return new BluetoothTransport(device, writeC, notifyC);
   }
