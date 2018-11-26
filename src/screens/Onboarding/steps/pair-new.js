@@ -7,7 +7,6 @@ import Button from "../../../components/Button";
 import SelectDevice from "../../../components/SelectDevice";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
-import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 
 import type { OnboardingStepProps } from "../types";
