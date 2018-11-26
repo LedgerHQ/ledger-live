@@ -91,50 +91,44 @@ class AmountInput extends Component<Props, OwnState> {
     return (
       <View style={styles.container}>
         <View style={styles.wrapper}>
-          <View style={styles.inputWrapper}>
-            <CurrencyInput
-              isActive={isLeft}
-              onFocus={this.onFocusLeft}
-              onChange={this.onChangeLeft}
-              unit={account.unit}
-              value={value}
-              renderRight={
-                <LText
-                  style={[styles.currency, isLeft ? styles.active : null]}
-                  tertiary
-                >
-                  {currency}
-                </LText>
-              }
-              renderError={
-                <LText style={styles.error} tertiary>
-                  <TranslatedError error={error} />
-                </LText>
-              }
-              hasError={!!error}
-            />
-          </View>
+          <CurrencyInput
+            isActive={isLeft}
+            onFocus={this.onFocusLeft}
+            onChange={this.onChangeLeft}
+            unit={account.unit}
+            value={value}
+            renderRight={
+              <LText
+                style={[styles.currency, isLeft ? styles.active : null]}
+                tertiary
+              >
+                {currency}
+              </LText>
+            }
+            hasError={!!error}
+          />
+          <LText style={styles.error} numberOfLines={2}>
+            <TranslatedError error={error} />
+          </LText>
         </View>
         <CounterValuesSeparator />
         <View style={styles.wrapper}>
-          <View style={styles.inputWrapper}>
-            <CurrencyInput
-              isActive={!isLeft}
-              onFocus={this.onFocusRight}
-              onChange={this.onChangeRight}
-              unit={rightUnit}
-              value={right}
-              showAllDigits
-              renderRight={
-                <LText
-                  style={[styles.currency, !isLeft ? styles.active : null]}
-                  tertiary
-                >
-                  {rightUnit.code}
-                </LText>
-              }
-            />
-          </View>
+          <CurrencyInput
+            isActive={!isLeft}
+            onFocus={this.onFocusRight}
+            onChange={this.onChangeRight}
+            unit={rightUnit}
+            value={right}
+            showAllDigits
+            renderRight={
+              <LText
+                style={[styles.currency, !isLeft ? styles.active : null]}
+                tertiary
+              >
+                {rightUnit.code}
+              </LText>
+            }
+          />
         </View>
       </View>
     );
@@ -149,12 +143,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "flex-start",
-  },
-  inputWrapper: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "center",
   },
   currency: {
     fontSize: 24,
@@ -166,10 +155,6 @@ const styles = StyleSheet.create({
   error: {
     color: colors.alert,
     fontSize: 14,
-  },
-  errorText: {
-    fontSize: 14,
-    flex: 1,
   },
 });
 
