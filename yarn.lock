@@ -7241,10 +7241,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-ble-plx@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-0.10.0.tgz#261b076e9bde540a2670a7fe0436a811a924040d"
-  integrity sha512-i4mJz8CUzwkSzhNwqexwl3a3DE/+6ly6ynmvfYSEjTYj/HyArxkqOte5vALI4TqqP7G6jx4kDPHiWyZ/ggRYuA==
+react-native-ble-plx@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.1.tgz#6ab5f3a5f9937b6a6410929dc222368f6e4dd1de"
+  integrity sha512-bC8yAVg0WuuMdEIr+kIHs8nd4leHyUvrYILBBOlcsggmNvgFDC8iXqEAvjpeRXMrqPVjPhft2EtFAQlEfjWvdA==
 
 react-native-camera@1.2.0:
   version "1.2.0"
