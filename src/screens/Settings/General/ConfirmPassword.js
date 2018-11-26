@@ -75,6 +75,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
     } else {
       this.setState({
         error: new PasswordsDontMatchError(),
+        confirmPassword: "",
       });
     }
   };

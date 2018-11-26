@@ -17,9 +17,23 @@ type Props = {
   onFocus?: *,
   onBlur?: *,
   error?: ?Error,
+  password?: string,
 };
 
-class PasswordInput extends PureComponent<Props> {
+class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
+  state = { isFocused: false };
+
+  onFocus = () => {
+    const { onFocus } = this.props;
+    this.setState({ isFocused: true });
+    onFocus && onFocus();
+  };
+  onBlur = () => {
+    const { onBlur } = this.props;
+    this.setState({ isFocused: false });
+    onBlur && onBlur();
+  };
+
   render() {
     const {
       autoFocus,
@@ -30,11 +44,26 @@ class PasswordInput extends PureComponent<Props> {
       toggleSecureTextEntry,
       placeholder,
       inline,
-      onFocus,
-      onBlur,
+      password,
     } = this.props;
+
+    let borderColorOverride = {};
+    if (!inline && this.state.isFocused) {
+      if (error) {
+        borderColorOverride = { borderColor: colors.alert };
+      } else {
+        borderColorOverride = { borderColor: colors.live };
+      }
+    }
+
     return (
-      <View style={[styles.container, !inline && styles.nonInlineContainer]}>
+      <View
+        style={[
+          styles.container,
+          !inline && styles.nonInlineContainer,
+          borderColorOverride,
+        ]}
+      >
         <TextInput
           autoFocus={autoFocus}
           style={[
@@ -51,8 +80,9 @@ class PasswordInput extends PureComponent<Props> {
           secureTextEntry={secureTextEntry}
           textContentType="password"
           autoCorrect={false}
-          onFocus={onFocus}
-          onBlur={onBlur}
+          onFocus={this.onFocus}
+          onBlur={this.onBlur}
+          value={password}
         />
         {secureTextEntry ? (
           <Touchable style={styles.iconInput} onPress={toggleSecureTextEntry}>

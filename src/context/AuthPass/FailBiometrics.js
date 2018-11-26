@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import type { Privacy } from "../../reducers/settings";
@@ -9,20 +9,23 @@ import BiometricsIcon from "../../components/BiometricsIcon";
 
 type Props = {
   privacy: Privacy,
+  lock: () => void,
 };
 
 class FailBiometrics extends Component<Props> {
   render() {
-    const { privacy } = this.props;
+    const { privacy, lock } = this.props;
     return (
       <View>
-        <View style={styles.iconStyle}>
-          <BiometricsIcon
-            biometricsType={privacy.biometricsType}
-            color={colors.alert}
-            size={80}
-          />
-        </View>
+        <TouchableWithoutFeedback onPress={lock}>
+          <View style={styles.iconStyle}>
+            <BiometricsIcon
+              biometricsType={privacy.biometricsType}
+              color={colors.alert}
+              size={80}
+            />
+          </View>
+        </TouchableWithoutFeedback>
         <View style={styles.textContainer}>
           <LText semiBold secondary style={styles.title}>
             <Trans

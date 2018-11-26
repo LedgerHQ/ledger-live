@@ -54,7 +54,7 @@ class PasswordRemove extends PureComponent<Props, State> {
       disablePrivacy();
       navigation.dangerouslyGetParent().goBack();
     } catch (error) {
-      this.setState({ error });
+      this.setState({ error, confirmPassword: "" });
     }
   }
 
