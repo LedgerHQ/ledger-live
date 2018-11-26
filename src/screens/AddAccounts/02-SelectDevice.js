@@ -2,13 +2,13 @@
 
 import React, { Component } from "react";
 import { translate } from "react-i18next";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 
 import colors from "../../colors";
@@ -39,7 +39,6 @@ class AddAccountsSelectDevice extends Component<Props, State> {
     const currency = navigation.getParam("currency");
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={4} currentStep={2} />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[connectingStep, currencyApp(currency)]}

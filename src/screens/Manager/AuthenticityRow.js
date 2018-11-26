@@ -17,7 +17,7 @@ class AuthenticityRow extends PureComponent<Props> {
     return (
       <Row title={<Trans i18nKey="AuthenticityRow.title" />} compact>
         <View style={styles.container}>
-          <LText semiBold numberOfLines={1} style={styles.version}>
+          <LText numberOfLines={1} style={styles.version}>
             <Trans i18nKey="AuthenticityRow.subtitle" />
           </LText>
           <View style={styles.iconContainer}>

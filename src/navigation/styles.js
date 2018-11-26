@@ -23,6 +23,7 @@ if (Platform.OS === "ios") {
   headerStyle = {
     height: 48 + statusBarPadding,
     paddingTop: statusBarPadding,
+    elevation: 0,
   };
   headerStyleShadow = {
     elevation: 1,

@@ -1,8 +1,8 @@
 // @flow
 import invariant from "invariant";
-import LRU from "lru-cache";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { FeeEstimationFailed } from "@ledgerhq/live-common/lib/errors";
+import { makeLRUCache } from "../logic/cache";
 import { blockchainBaseURL } from "./Ledger";
 import network from "./network";
 
@@ -10,26 +10,20 @@ export type Fees = {
   [_: string]: number,
 };
 
-const cache = LRU({
-  maxAge: 10 * 60 * 1000,
-});
-
-export const getEstimatedFees = async (
-  currency: CryptoCurrency,
-): Promise<Fees> => {
-  const key = currency.id;
-  let promise = cache.get(key);
-  if (promise) return promise.then(r => r.data);
-  const baseURL = blockchainBaseURL(currency);
-  invariant(baseURL, `Fees for ${currency.id} are not supported`);
-  promise = network({ method: "GET", url: `${baseURL}/fees` });
-  cache.set(key, promise);
-  const { data, status } = await promise;
-  if (status < 200 || status >= 300) cache.del(key);
-  if (data) {
-    return data;
-  }
-  throw new FeeEstimationFailed(`FeeEstimationFailed ${status}`, {
-    httpStatus: status,
-  });
-};
+export const getEstimatedFees = makeLRUCache(
+  async (currency: CryptoCurrency): Promise<Fees> => {
+    const baseURL = blockchainBaseURL(currency);
+    invariant(baseURL, `Fees for ${currency.id} are not supported`);
+    const { data, status } = await network({
+      method: "GET",
+      url: `${baseURL}/fees`,
+    });
+    if (data) {
+      return data;
+    }
+    throw new FeeEstimationFailed(`FeeEstimationFailed ${status}`, {
+      httpStatus: status,
+    });
+  },
+  c => c.id,
+);

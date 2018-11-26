@@ -31,6 +31,7 @@ class OnboardingStepShareData extends Component<OnboardingStepProps> {
         Footer={this.Footer}
         noHorizontalPadding
         noTopPadding
+        withNeedHelp
       >
         <AnalyticsRow />
         <ReportErrorsRow borderTop />

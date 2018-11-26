@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component } from "react";
-import { SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
@@ -15,7 +16,6 @@ import colors from "../../colors";
 import { open } from "../../logic/hw";
 
 import PreventNativeBack from "../../components/PreventNativeBack";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
@@ -134,7 +134,6 @@ class ReceiveConfirmation extends Component<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         {allowNavigation ? null : <PreventNativeBack />}
-        <Stepper nbSteps={3} currentStep={3} />
         <View style={styles.container}>
           <View style={styles.qrWrapper}>
             <QRCode size={width / 2 - 30} value={account.freshAddress} />

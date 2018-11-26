@@ -59,12 +59,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    minHeight: 280,
   },
   close: {
     position: "absolute",
-    right: 10,
-    top: 10,
+    right: 16,
+    top: 16,
   },
   headIcon: {
     padding: 10,

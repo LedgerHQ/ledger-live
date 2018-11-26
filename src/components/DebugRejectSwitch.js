@@ -1,12 +1,8 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { Subject, merge, Observable } from "rxjs";
 import Config from "react-native-config";
 

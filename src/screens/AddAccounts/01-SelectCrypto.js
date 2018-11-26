@@ -2,7 +2,8 @@
 
 import React, { Component } from "react";
 import { translate, Trans } from "react-i18next";
-import { SafeAreaView, StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
@@ -11,7 +12,6 @@ import { connect } from "react-redux";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
@@ -74,7 +74,6 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={4} currentStep={1} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar

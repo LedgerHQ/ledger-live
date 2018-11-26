@@ -31,7 +31,9 @@ class DeleteAccountModal extends PureComponent<Props> {
         description={
           <Trans i18nKey="common:account.settings.delete.confirmationDesc">
             {"Are you sure you want to delete "}
-            <LText bold>{account.name}</LText>
+            <LText semiBold style={styles.accountName}>
+              {account.name}
+            </LText>
             {"account"}
           </Trans>
         }
@@ -47,7 +49,7 @@ class DeleteAccountModal extends PureComponent<Props> {
               type="alert"
               title={<Trans i18nKey="common.delete" />}
               onPress={deleteAccount}
-              containerStyle={styles.buttonContainer}
+              containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
             />
           </View>
         }
@@ -59,11 +61,17 @@ class DeleteAccountModal extends PureComponent<Props> {
 export default DeleteAccountModal;
 
 const styles = StyleSheet.create({
+  accountName: {
+    color: colors.darkBlue,
+  },
   footerContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
   },
   buttonContainer: {
-    width: 136,
+    flexGrow: 1,
+  },
+  buttonMarginLeft: {
+    marginLeft: 16,
   },
 });

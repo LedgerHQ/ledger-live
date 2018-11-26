@@ -74,7 +74,7 @@ class DeviceNameRow extends PureComponent<Props, State> {
     return (
       <Row
         title={<Trans i18nKey="DeviceNameRow.title" />}
-        arrowRight
+        arrowRight={!!deviceName}
         alignedTop
         onPress={this.onPress}
         compact
@@ -86,7 +86,6 @@ class DeviceNameRow extends PureComponent<Props, State> {
           </LText>
         ) : (
           <LText
-            semiBold
             numberOfLines={1}
             ellipsizeMode="tail"
             style={styles.accountName}

@@ -15,8 +15,6 @@ import ButtonUseTouchable from "./context/ButtonUseTouchable";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
-import AuthFailedApp from "./components/AuthFailedApp";
-import AuthPendingApp from "./components/AuthPendingApp";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
@@ -85,7 +83,7 @@ class App extends Component<*> {
   }
 }
 
-export default class Root extends Component<{}, {}> {
+export default class Root extends Component<{}, { appState: * }> {
   initTimeout: *;
 
   componentWillUnmount() {
@@ -113,25 +111,17 @@ export default class Root extends Component<{}, {}> {
           {ready =>
             ready ? (
               <AuthPass>
-                {state =>
-                  state.pending ? (
-                    <AuthPendingApp />
-                  ) : !state.success ? (
-                    <AuthFailedApp />
-                  ) : (
-                    <LocaleProvider>
-                      <BridgeSyncProvider>
-                        <CounterValues.PollingProvider>
-                          <ButtonUseTouchable.Provider value={true}>
-                            <OnboardingContextProvider>
-                              <App />
-                            </OnboardingContextProvider>
-                          </ButtonUseTouchable.Provider>
-                        </CounterValues.PollingProvider>
-                      </BridgeSyncProvider>
-                    </LocaleProvider>
-                  )
-                }
+                <LocaleProvider>
+                  <BridgeSyncProvider>
+                    <CounterValues.PollingProvider>
+                      <ButtonUseTouchable.Provider value={true}>
+                        <OnboardingContextProvider>
+                          <App />
+                        </OnboardingContextProvider>
+                      </ButtonUseTouchable.Provider>
+                    </CounterValues.PollingProvider>
+                  </BridgeSyncProvider>
+                </LocaleProvider>
               </AuthPass>
             ) : (
               <LoadingApp />

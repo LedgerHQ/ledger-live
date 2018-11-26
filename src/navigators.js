@@ -30,6 +30,9 @@ import OnboardingStepScanQR from "./screens/Onboarding/steps/scan-qr";
 import OnboardingStepFinish from "./screens/Onboarding/steps/finish";
 import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
 import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
+import PasswordAdd from "./screens/Settings/General/PasswordAdd";
+import PasswordRemove from "./screens/Settings/General/PasswordRemove";
+import ConfirmPassword from "./screens/Settings/General/ConfirmPassword";
 import GeneralSettings from "./screens/Settings/General";
 import AboutSettings from "./screens/Settings/About";
 import HelpSettings from "./screens/Settings/Help";
@@ -144,6 +147,7 @@ const ManagerMain = createMaterialTopTabNavigator(
       },
       style: {
         backgroundColor: colors.white,
+        ...styles.header,
       },
       indicatorStyle: {
         backgroundColor: colors.live,
@@ -154,6 +158,7 @@ const ManagerMain = createMaterialTopTabNavigator(
 
 ManagerMain.navigationOptions = {
   title: "Manager",
+  headerStyle: styles.headerNoShadow,
 };
 
 const ManagerStack = createStackNavigator(
@@ -167,7 +172,7 @@ const ManagerStack = createStackNavigator(
     ...stackNavigatorConfig,
     navigationOptions: {
       ...stackNavigatorConfig.navigationOptions,
-      headerStyle: styles.headerNoShadow,
+      headerStyle: styles.header,
     },
   },
 );
@@ -316,6 +321,29 @@ AccountSettings.navigationOptions = {
   header: null,
 };
 
+const PasswordAddFlow = createStackNavigator(
+  {
+    PasswordAdd,
+    ConfirmPassword,
+  },
+  closableStackNavigatorConfig,
+);
+
+PasswordAddFlow.navigationOptions = {
+  header: null,
+};
+
+const PasswordModifyFlow = createStackNavigator(
+  {
+    PasswordRemove,
+  },
+  closableStackNavigatorConfig,
+);
+
+PasswordModifyFlow.navigationOptions = {
+  header: null,
+};
+
 const BaseNavigator = createStackNavigator(
   {
     Main,
@@ -330,6 +358,8 @@ const BaseNavigator = createStackNavigator(
     PairDevices,
     // $FlowFixMe non-sense error
     EditDeviceName,
+    PasswordAddFlow,
+    PasswordModifyFlow,
   },
   {
     mode: "modal",
@@ -357,6 +387,8 @@ const BaseOnboarding = createStackNavigator(
     Onboarding,
     ImportAccounts,
     PairDevices,
+    PasswordAddFlow,
+    PasswordModifyFlow,
   },
   {
     mode: "modal",

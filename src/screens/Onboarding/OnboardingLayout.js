@@ -1,13 +1,8 @@
 // @flow
 
 import React, { PureComponent, Fragment } from "react";
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  View,
-  ScrollView,
-} from "react-native";
+import { StatusBar, StyleSheet, View, ScrollView } from "react-native";
+import { SafeAreaView } from "react-navigation";
 
 import colors from "../../colors";
 import OnboardingHeader from "./OnboardingHeader";
@@ -26,6 +21,7 @@ type Props = Container & {
   borderedFooter?: boolean,
   header?: string,
   withSkip?: boolean,
+  withNeedHelp?: boolean,
   Footer?: React$ComponentType<*>,
 };
 
@@ -41,6 +37,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
       noTopPadding,
       borderedFooter,
       style,
+      withNeedHelp,
       withSkip,
       noScroll,
     } = this.props;
@@ -80,7 +77,11 @@ export default class OnboardingLayout extends PureComponent<Props> {
     if (header) {
       inner = (
         <Fragment>
-          <OnboardingHeader stepId={header} withSkip={withSkip} />
+          <OnboardingHeader
+            stepId={header}
+            withSkip={withSkip}
+            withNeedHelp={withNeedHelp}
+          />
           <OnboardingInner
             noHorizontalPadding={noHorizontalPadding}
             noTopPadding={noTopPadding}

@@ -46,6 +46,8 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
         header="OnboardingStepPairNew"
         Footer={this.Footer}
         borderedFooter
+        noHorizontalPadding
+        withNeedHelp
       >
         <SelectDevice onSelect={this.props.next} />
         {__DEV__ ? (
