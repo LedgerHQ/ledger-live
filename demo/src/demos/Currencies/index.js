@@ -30,6 +30,16 @@ const CryptoCell = styled.div`
   margin: 10px;
 `;
 
+const Problem = styled.div`
+  width: 50px;
+  color: red;
+  text-decoration: underline;
+`;
+const NoProblem = styled.div`
+  width: 50px;
+  color: green;
+`;
+
 const CryptoName = styled.div`
   padding: 6px;
   font-size: 14px;
@@ -64,8 +74,25 @@ class Crypto extends Component<*> {
   render() {
     const { crypto } = this.props;
     const Icon = getCryptoCurrencyIcon(crypto);
+    const validationErrors = [
+      Icon ? null : "icon is missing",
+      crypto.family === "bitcoin" && !crypto.bitcoinLikeInfo
+        ? "bitcoin family coins must provide bitcoinLikeInfo"
+        : null,
+      crypto.family === "ethereum" && !crypto.ethereumLikeInfo
+        ? "ethereum family coins must provide ethereumLikeInfo"
+        : null,
+      crypto.units.length === 0
+        ? "at least one unit must be provided in units"
+        : null
+    ].filter(o => o);
     return (
       <CryptoCell color={crypto.color}>
+        {validationErrors.length ? (
+          <Problem title={validationErrors.join("\n")}>KO</Problem>
+        ) : (
+          <NoProblem>OK</NoProblem>
+        )}
         <IconWrapper size={60} bg={crypto.color} color="white">
           {Icon ? <Icon size={30} /> : <AltIcon>{crypto.ticker}</AltIcon>}
         </IconWrapper>
