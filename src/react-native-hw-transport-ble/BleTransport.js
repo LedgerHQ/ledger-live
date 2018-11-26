@@ -286,6 +286,8 @@ export default class BluetoothTransport extends Transport<Device | string> {
     return new BluetoothTransport(device, writeC, notifyC);
   }
 
+  id: number;
+
   device: Device;
 
   writeCharacteristic: Characteristic;
