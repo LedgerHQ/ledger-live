@@ -15,6 +15,8 @@ import OperationIcon from "./OperationIcon";
 
 import colors from "../colors";
 import OperationRowDate from "./OperationRowDate";
+import LiveLogo from "../icons/LiveLogoIcon";
+import Spinning from "./Spinning";
 
 type Props = {
   operation: Operation,
@@ -46,18 +48,37 @@ class OperationRow extends PureComponent<Props, *> {
         <Trans i18nKey="common.sent" />
       );
     const isOptimistic = operation.blockHeight === null;
+    const spinner = (
+      <View
+        style={{
+          height: 14,
+          marginRight: 4,
+          justifyContent: "center",
+        }}
+      >
+        <Spinning>
+          <LiveLogo color={colors.grey} size={10} />
+        </Spinning>
+      </View>
+    );
+
     return (
       <View>
-        <RectButton
-          onPress={this.goToOperationDetails}
-          style={[styles.root, isOptimistic ? styles.optimistic : null]}
-        >
-          {multipleAccounts ? (
-            <CurrencyIcon size={20} currency={account.currency} />
-          ) : (
-            <OperationIcon size={16} containerSize={28} type={operation.type} />
-          )}
-          <View style={styles.wrapper}>
+        <RectButton onPress={this.goToOperationDetails} style={styles.root}>
+          <View style={isOptimistic ? styles.optimistic : null}>
+            {multipleAccounts ? (
+              <CurrencyIcon size={20} currency={account.currency} />
+            ) : (
+              <OperationIcon
+                size={16}
+                containerSize={28}
+                type={operation.type}
+              />
+            )}
+          </View>
+          <View
+            style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}
+          >
             <View style={styles.body}>
               <LText
                 numberOfLines={1}
@@ -82,12 +103,28 @@ class OperationRow extends PureComponent<Props, *> {
               </LText>
             </View>
             <View style={styles.body}>
-              <LText
-                numberOfLines={1}
-                style={[styles.bodyLeft, styles.bottomRow]}
-              >
-                {text} <OperationRowDate date={operation.date} />
-              </LText>
+              {isOptimistic && spinner}
+              {isOptimistic ? (
+                <LText
+                  numberOfLines={1}
+                  style={[styles.bodyLeft, styles.bottomRow]}
+                >
+                  <Trans
+                    i18nKey={
+                      amount.isNegative()
+                        ? "operationDetails.sending"
+                        : "operationDetails.receiving"
+                    }
+                  />
+                </LText>
+              ) : (
+                <LText
+                  numberOfLines={1}
+                  style={[styles.bodyLeft, styles.bottomRow]}
+                >
+                  {text} <OperationRowDate date={operation.date} />
+                </LText>
+              )}
               <LText
                 tertiary
                 numberOfLines={1}

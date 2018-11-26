@@ -463,7 +463,9 @@
     "viewOperation": "View in explorer",
     "seeAll": "See all",
     "seeLess": "See less",
-    "viewInExplorer": "View in explorer"
+    "viewInExplorer": "View in explorer",
+    "sending": "Sending...",
+    "receiving": "Receiving..."
   },
   "operationList": {
     "noOperations": "No Operations",
