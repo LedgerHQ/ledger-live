@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   steps: {
     color: colors.grey,
-    fontSize: 12,
+    fontSize: 14,
   },
   title: {
     color: colors.darkBlue,

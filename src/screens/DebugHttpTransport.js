@@ -65,7 +65,6 @@ class DebugHttpTransport extends Component<
                 autoFocus
                 autoCorrect
                 selectTextOnFocus
-                keyboardType="numeric"
                 clearButtonMode="always"
                 placeholder="192.168.0.1"
                 returnKeyType="done"

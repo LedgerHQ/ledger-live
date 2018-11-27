@@ -51,9 +51,11 @@ class LogItem extends Component<{ log: Log }> {
           padding: 5,
           borderBottomWidth: 1,
           borderBottomColor: colors.lightFog,
+          flexDirection: "row",
         }}
       >
-        <LText style={{ fontSize: 10 }}>{text}</LText>
+        <LText style={{ fontSize: 10, flex: 1 }}>{text}</LText>
+        <LText style={{ fontSize: 8 }}>{log.date.toISOString()}</LText>
       </View>
     );
   }
