@@ -47,6 +47,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
       keyExtractor={this.keyExtractor}
       showsVerticalScrollIndicator={false}
       keyboardDismissMode="on-drag"
+      contentContainerStyle={styles.list}
     />
   );
 
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    paddingTop: 8,
+    paddingBottom: 32,
   },
   emptyResults: {
     flex: 1,
