@@ -12,6 +12,7 @@ import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import StepHeader from "../../components/StepHeader";
+import PreventNativeBack from "../../components/PreventNativeBack";
 
 import colors from "../../colors";
 import ValidateOnDevice from "./ValidateOnDevice";
@@ -47,6 +48,9 @@ class Validation extends Component<Props, State> {
         })}
       />
     ),
+    headerLeft: null,
+    headerRight: null,
+    gesturesEnabled: false,
   };
 
   state = {
@@ -54,6 +58,9 @@ class Validation extends Component<Props, State> {
   };
 
   componentDidMount() {
+    this.props.navigation
+      .dangerouslyGetParent()
+      .setParams({ allowNavigation: false });
     this.sign();
   }
 
@@ -101,6 +108,7 @@ class Validation extends Component<Props, State> {
     const { signed } = this.state;
     return (
       <View style={styles.root}>
+        <PreventNativeBack />
         {signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
@@ -110,6 +118,12 @@ class Validation extends Component<Props, State> {
         )}
       </View>
     );
+  }
+
+  componentWillUnmount() {
+    this.props.navigation
+      .dangerouslyGetParent()
+      .setParams({ allowNavigation: true });
   }
 }
 

@@ -15,6 +15,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { open } from "../../logic/hw";
 
+import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
@@ -30,6 +31,7 @@ type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
     deviceId: string,
+    allowNavigation?: boolean,
   },
 }>;
 
@@ -46,8 +48,18 @@ type State = {
 };
 
 class ReceiveConfirmation extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: <StepHeader title="Receive" subtitle="3 of 3" />,
+  static navigationOptions = ({ navigation }) => {
+    const options: any = {
+      headerTitle: <StepHeader title="Receive" subtitle="3 of 3" />,
+    };
+
+    if (!navigation.getParam("allowNavigation")) {
+      options.headerLeft = null;
+      options.headerRight = null;
+      options.gesturesEnabled = false;
+    }
+
+    return options;
   };
 
   state = {
@@ -58,12 +70,19 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const deviceId = this.props.navigation.getParam("deviceId");
-    if (deviceId) this.verifyOnDevice(deviceId);
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+
+    if (deviceId) {
+      this.verifyOnDevice(deviceId);
+      navigation.dangerouslyGetParent().setParams({ allowNavigation: false });
+    } else {
+      navigation.setParams({ allowNavigation: true });
+    }
   }
 
   verifyOnDevice = async (deviceId: string) => {
-    const { account } = this.props;
+    const { account, navigation } = this.props;
 
     const transport = await open(deviceId);
     try {
@@ -76,6 +95,9 @@ class ReceiveConfirmation extends Component<Props, State> {
       this.setState({ verified: true });
     } catch (error) {
       this.setState({ error, isModalOpened: true });
+    } finally {
+      navigation.setParams({ allowNavigation: true });
+      navigation.dangerouslyGetParent().setParams({ allowNavigation: true });
     }
     await transport.close();
   };
@@ -109,9 +131,11 @@ class ReceiveConfirmation extends Component<Props, State> {
     const { verified, error, isModalOpened, onModalHide } = this.state;
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
+    const allowNavigation = navigation.getParam("allowNavigation");
 
     return (
       <SafeAreaView style={styles.root}>
+        {allowNavigation ? null : <PreventNativeBack />}
         <View style={styles.container}>
           <View style={styles.qrWrapper}>
             <QRCode size={width / 2 - 30} value={account.freshAddress} />
