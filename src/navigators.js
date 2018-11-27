@@ -7,6 +7,7 @@ import {
   createSwitchNavigator,
 } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
+import { Platform } from "react-native";
 import colors from "./colors";
 import PortfolioIcon from "./icons/Portfolio";
 import SettingsIcon from "./icons/Settings";
@@ -238,7 +239,10 @@ const ReceiveFunds = createStackNavigator(
 );
 ReceiveFunds.navigationOptions = ({ navigation }) => ({
   header: null,
-  gesturesEnabled: navigation.getParam("allowNavigation", true),
+  gesturesEnabled:
+    Platform.OS === "ios"
+      ? navigation.getParam("allowNavigation", true)
+      : false,
 });
 
 const addAccountsNavigatorConfig = {
@@ -290,7 +294,10 @@ const SendFunds = createStackNavigator(
 
 SendFunds.navigationOptions = ({ navigation }) => ({
   header: null,
-  gesturesEnabled: navigation.getParam("allowNavigation", true),
+  gesturesEnabled:
+    Platform.OS === "ios"
+      ? navigation.getParam("allowNavigation", true)
+      : false,
 });
 
 const FirmwareUpdate = createStackNavigator(
