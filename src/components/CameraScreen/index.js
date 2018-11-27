@@ -92,6 +92,8 @@ const styles = StyleSheet.create({
   },
   topCell: {
     paddingTop: 64,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   progressText: {
     color: colors.white,

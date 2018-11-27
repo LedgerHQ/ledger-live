@@ -58,7 +58,7 @@ class AddAccountsSuccess extends Component<Props, State> {
           />
           <Button
             onPress={this.secondaryCTA}
-            type="tertiary"
+            type="lightSecondary"
             title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
           />
         </View>

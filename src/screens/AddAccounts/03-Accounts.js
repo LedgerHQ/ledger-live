@@ -403,6 +403,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
     textAlign: "center",
+    color: colors.smoke,
   },
   scanLoadingRoot: {
     flexDirection: "row",

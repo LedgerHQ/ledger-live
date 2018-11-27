@@ -74,13 +74,13 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     lineHeight: 21,
-    color: colors.grey,
+    color: colors.smoke,
   },
   title: {
     textAlign: "center",
     color: colors.darkBlue,
     fontSize: 16,
-    lineHeight: 17,
+    lineHeight: 24,
     marginBottom: 16,
   },
 });

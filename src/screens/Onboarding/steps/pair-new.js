@@ -32,6 +32,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
         Footer={this.Footer}
         borderedFooter
         noHorizontalPadding
+        noTopPadding
         withNeedHelp
       >
         <SelectDevice onSelect={this.props.next} />
