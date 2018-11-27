@@ -58,6 +58,9 @@ class Validation extends Component<Props, State> {
   };
 
   componentDidMount() {
+    this.props.navigation
+      .dangerouslyGetParent()
+      .setParams({ allowNavigation: false });
     this.sign();
   }
 
@@ -115,6 +118,12 @@ class Validation extends Component<Props, State> {
         )}
       </View>
     );
+  }
+
+  componentWillUnmount() {
+    this.props.navigation
+      .dangerouslyGetParent()
+      .setParams({ allowNavigation: true });
   }
 }
 

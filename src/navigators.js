@@ -236,10 +236,10 @@ const ReceiveFunds = createStackNavigator(
     ...closableStackNavigatorConfig,
   },
 );
-ReceiveFunds.navigationOptions = {
+ReceiveFunds.navigationOptions = ({ navigation }) => ({
   header: null,
-  gesturesEnabled: false,
-};
+  gesturesEnabled: navigation.getParam("allowNavigation", true),
+});
 
 const addAccountsNavigatorConfig = {
   ...closableStackNavigatorConfig,
@@ -288,10 +288,10 @@ const SendFunds = createStackNavigator(
   closableStackNavigatorConfig,
 );
 
-SendFunds.navigationOptions = {
+SendFunds.navigationOptions = ({ navigation }) => ({
   header: null,
-  gesturesEnabled: false,
-};
+  gesturesEnabled: navigation.getParam("allowNavigation", true),
+});
 
 const FirmwareUpdate = createStackNavigator(
   {

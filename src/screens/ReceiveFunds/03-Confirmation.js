@@ -75,6 +75,7 @@ class ReceiveConfirmation extends Component<Props, State> {
 
     if (deviceId) {
       this.verifyOnDevice(deviceId);
+      navigation.dangerouslyGetParent().setParams({ allowNavigation: false });
     } else {
       navigation.setParams({ allowNavigation: true });
     }
@@ -96,6 +97,7 @@ class ReceiveConfirmation extends Component<Props, State> {
       this.setState({ error, isModalOpened: true });
     } finally {
       navigation.setParams({ allowNavigation: true });
+      navigation.dangerouslyGetParent().setParams({ allowNavigation: true });
     }
     await transport.close();
   };
