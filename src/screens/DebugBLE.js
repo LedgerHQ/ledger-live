@@ -12,7 +12,6 @@ import {
 import { from } from "rxjs";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import throttle from "lodash/throttle";
 import type { NavigationScreenProp } from "react-navigation";
 import { knownDevicesSelector } from "../reducers/ble";
 import LText from "../components/LText";
@@ -115,7 +114,6 @@ class DebugBLE extends Component<
   };
 
   onAPDUChange = (apdu: string) => {
-    const c = [];
     this.setState({
       apdu,
     });
