@@ -34,6 +34,7 @@
     "flowtype/space-after-type-colon": 0,
     "no-return-assign": 0,
     "no-shadow": 0,
+    "prefer-template": 0,
     "no-unused-expressions": 0,
     "no-plusplus": 0,
     "no-nested-ternary": 0,
