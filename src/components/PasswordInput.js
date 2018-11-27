@@ -69,7 +69,6 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
           style={[
             styles.input,
             getFontStyle({ semiBold: true }),
-            { color: error ? colors.alert : colors.darkBlue },
             inline && styles.inlineTextInput,
           ]}
           placeholder={placeholder}
@@ -87,7 +86,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
         {secureTextEntry ? (
           <Touchable style={styles.iconInput} onPress={toggleSecureTextEntry}>
             <Icon
-              name="eye-off"
+              name="eye"
               size={16}
               color={inline ? colors.grey : colors.fog}
             />
@@ -95,7 +94,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
         ) : (
           <Touchable style={styles.iconInput} onPress={toggleSecureTextEntry}>
             <Icon
-              name="eye"
+              name="eye-off"
               size={16}
               color={inline ? colors.grey : colors.fog}
             />
@@ -122,7 +121,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   input: {
-    fontSize: 14,
+    fontSize: 16,
     paddingHorizontal: 16,
     height: 48,
     flex: 1,
