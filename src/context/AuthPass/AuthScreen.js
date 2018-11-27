@@ -1,7 +1,13 @@
 // @flow
 import React, { PureComponent } from "react";
 import { translate, Trans } from "react-i18next";
-import { Keyboard, View, StyleSheet, Image } from "react-native";
+import {
+  TouchableWithoutFeedback,
+  Keyboard,
+  View,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 import * as Keychain from "react-native-keychain";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
@@ -183,64 +189,64 @@ class AuthScreen extends PureComponent<Props, State> {
       passwordFocused,
     } = this.state;
     return (
-      <SafeAreaView style={styles.root}>
-        <KeyboardView>
-          <View style={{ flex: 1 }} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.root}>
+          <KeyboardView>
+            <View style={{ flex: 1 }} />
 
-          <View style={styles.body}>
-            <View style={styles.header}>
-              {biometricsError ? (
-                <FailBiometrics lock={lock} privacy={privacy} />
-              ) : (
-                <NormalHeader />
+            <View style={styles.body}>
+              <View style={styles.header}>
+                {biometricsError ? (
+                  <FailBiometrics lock={lock} privacy={privacy} />
+                ) : (
+                  <NormalHeader />
+                )}
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <PasswordInput
+                  error={passwordError}
+                  onChange={this.onChange}
+                  onSubmit={this.onSubmit}
+                  toggleSecureTextEntry={this.toggleSecureTextEntry}
+                  secureTextEntry={secureTextEntry}
+                  placeholder={t("auth.unlock.inputPlaceholder")}
+                  onFocus={this.onFocus}
+                  onBlur={this.onBlur}
+                  password={this.state.password}
+                />
+              </View>
+
+              {passwordError && (
+                <LText style={styles.errorStyle}>
+                  <TranslatedError error={passwordError} />
+                </LText>
               )}
-            </View>
 
-            <View style={styles.inputWrapper}>
-              <PasswordInput
-                error={passwordError}
-                onChange={this.onChange}
+              <FormFooter
+                inputFocused={passwordFocused}
                 onSubmit={this.onSubmit}
-                toggleSecureTextEntry={this.toggleSecureTextEntry}
-                secureTextEntry={secureTextEntry}
-                placeholder={t("auth.unlock.inputPlaceholder")}
-                onFocus={this.onFocus}
-                onBlur={this.onBlur}
-                password={this.state.password}
+                passwordError={passwordError}
+                passwordEmpty={!this.state.password}
+                onPress={this.onPress}
               />
             </View>
 
-            {passwordError && (
-              <LText style={styles.errorStyle}>
-                <TranslatedError error={passwordError} />
-              </LText>
-            )}
-
-            <FormFooter
-              inputFocused={passwordFocused}
-              onSubmit={this.onSubmit}
-              passwordError={passwordError}
-              passwordEmpty={!this.state.password}
-              onPress={this.onPress}
+            <View style={{ flex: 1 }} />
+          </KeyboardView>
+          {!passwordFocused && (
+            <View style={styles.footer} pointerEvents="none">
+              <PoweredByLedger />
+            </View>
+          )}
+          <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+            <HardResetModal
+              onRequestClose={this.onRequestClose}
+              onHardReset={this.onHardReset}
             />
-          </View>
-
-          <View style={{ flex: 1 }} />
-        </KeyboardView>
-
-        {!passwordFocused && (
-          <View style={styles.footer} pointerEvents="none">
-            <PoweredByLedger />
-          </View>
-        )}
-
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
-          <HardResetModal
-            onRequestClose={this.onRequestClose}
-            onHardReset={this.onHardReset}
-          />
-        </BottomModal>
-      </SafeAreaView>
+          </BottomModal>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     );
   }
 }
