@@ -125,6 +125,7 @@
     "timers-browserify": "^1.0.1",
     "tty-browserify": "0.0.0",
     "url": "^0.11.0",
+    "uuid": "^3.3.2",
     "vm-browserify": "0.0.4"
   },
   "devDependencies": {
