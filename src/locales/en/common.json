@@ -757,7 +757,7 @@
   "SelectDevice": {
     "title": "Choose your device",
     "deviceNotFoundPairNewDevice": "Pair a new device",
-    "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
+    "headerDescription": "Make sure Bluetooth is enabled on your phone and {{fullDeviceName}}",
     "steps": {
       "connecting": {
         "title": "Connecting “{{deviceName}}”",
@@ -810,12 +810,12 @@
       "accept": "Please don’t turn off your {{deviceName}} and allow <1><0>Ledger Manager</0></1>"
     },
     "ScanningHeader": {
-      "title": "We are searching for Nano X",
-      "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
+      "title": "Looking for devices",
+      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
     },
     "ScanningTimeout": {
       "title": "Oops, no device found",
-      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
+      "desc": "Make sure Bluetooth is enabled on your phone and {{fullDeviceName}}"
     },
     "bypassGenuine": "Use anyway"
   },
