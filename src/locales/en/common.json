@@ -30,6 +30,10 @@
       "title": "An account name is required",
       "description": "Please provide an account name"
     },
+    "BluetoothRequired": {
+      "title": "Oops, Bluetooth disabled",
+      "description": "Please enable Bluetooth in your phone Settings. ({{state}} state)"
+    },
     "BtcUnmatchedApp": {
       "title": "That's the wrong app",
       "description": "Open the ‘{{managerAppName}}’ app on your device"

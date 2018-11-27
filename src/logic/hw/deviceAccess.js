@@ -8,6 +8,7 @@ import {
   CantOpenDevice,
   UpdateYourApp,
 } from "@ledgerhq/live-common/lib/errors";
+import { BluetoothRequired } from "../../errors";
 import { open } from ".";
 
 const transportCleanup = (transport: Transport<*>) => <T>(
@@ -44,6 +45,7 @@ export const withDevice = (deviceId: string) => <T>(
   defer(() =>
     from(
       open(deviceId).catch(e => {
+        if (e.name === "BluetoothRequired") throw e;
         throw new CantOpenDevice(e.message);
       }),
     ),
@@ -54,6 +56,7 @@ export const withDevice = (deviceId: string) => <T>(
 export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof WrongDeviceForAccount) return false;
   if (err instanceof CantOpenDevice) return false;
+  if (err instanceof BluetoothRequired) return false;
   if (err instanceof UpdateYourApp) return false;
   return true;
 };
