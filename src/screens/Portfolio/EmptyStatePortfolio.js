@@ -92,8 +92,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   desc: {
+    fontSize: 14,
+    lineHeight: 21,
     color: colors.grey,
-    marginHorizontal: 16,
     textAlign: "center",
     marginBottom: 32,
   },

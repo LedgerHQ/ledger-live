@@ -50,7 +50,7 @@ class OnboardingStepScanQR extends Component<Props> {
         <View style={styles.hero}>
           <ScanIllustration />
         </View>
-        <View style={styles.titleContainer}>
+        <View>
           <LText style={styles.title}>
             <Trans i18nKey="onboarding.stepScanQR.title">
               {"text"}
@@ -73,13 +73,9 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 24,
   },
-  titleContainer: {
-    paddingHorizontal: 16,
-  },
   title: {
     alignSelf: "center",
-    width: 300,
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 24,
     color: colors.smoke,
     textAlign: "center",

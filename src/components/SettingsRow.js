@@ -76,7 +76,9 @@ export default class SettingsRow extends Component<{
             !noTextDesc && <LText style={styles.description}>{desc}</LText>}
           {desc && noTextDesc && desc}
         </View>
-        <View style={styles.rightBlock}>
+        <View
+          style={[styles.rightBlock, alignedTop && styles.rightBlockTopPadded]}
+        >
           {children}
           {arrowRight ? (
             <View style={styles.iconRightContainer}>
@@ -105,6 +107,9 @@ const styles = StyleSheet.create({
   },
   rootAlignedTop: {
     alignItems: "flex-start",
+  },
+  rightBlockTopPadded: {
+    marginTop: 3,
   },
   rootCompact: {
     paddingVertical: 16,

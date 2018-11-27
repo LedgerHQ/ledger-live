@@ -18,6 +18,7 @@ class ConfigureDeviceRow extends PureComponent<OnboardingStepProps> {
         desc={<Trans i18nKey="settings.help.configureDeviceDesc" />}
         arrowRight
         onPress={this.onPress}
+        alignedTop
       />
     );
   }

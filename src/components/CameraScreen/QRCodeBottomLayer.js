@@ -39,14 +39,15 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    lineHeight: 32,
+    lineHeight: 24,
     textAlign: "center",
     color: colors.white,
   },
   centered: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    paddingTop: 8,
+    paddingHorizontal: 16,
   },
 });
 
