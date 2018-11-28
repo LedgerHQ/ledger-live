@@ -74,9 +74,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
             return withDevice(deviceId)(transport =>
               installFinalFirmware(transport),
             ).pipe(
-              tap(res =>
-                console.log(`CheckId: final firmware installed ${res}`),
-              ),
+              tap(res => console.log("CheckId: final firmware installed", res)),
               mergeMap(() => of("FirmwareUpdateConfirmation")),
             );
           }
@@ -89,7 +87,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
           return withDevice(deviceId)(transport =>
             installOsuFirmware(transport, deviceInfo.targetId, latestFirmware),
           ).pipe(
-            tap(res => console.log(`CheckId: OSU firmware installed ${res}`)),
+            tap(res => console.log("CheckId: OSU firmware installed", res)),
             mergeMap(() => {
               if (latestFirmware && latestFirmware.shouldFlashMcu) {
                 return of("FirmwareUpdateMCU");
@@ -100,7 +98,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
                 installFinalFirmware(transport),
               ).pipe(
                 tap(res =>
-                  console.log(`CheckId: final firmware installed (2) ${res}`),
+                  console.log("CheckId: final firmware installed (2)", res),
                 ),
                 mergeMap(() => of("FirmwareUpdateConfirmation")),
               );

@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/live-common/lib/errors";
 import type Transport from "@ledgerhq/live-common";
 import { throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError, filter, last, map } from "rxjs/operators";
 import { createDeviceSocket } from "./socket";
 import network from "./network";
 import { MANAGER_API_BASE, BASE_SOCKET_URL } from "../constants";
@@ -248,6 +248,10 @@ const API = {
         pathname: `${BASE_SOCKET_URL}/genuine`,
         query: { targetId, perso },
       }),
+    ).pipe(
+      last(),
+      filter(o => o.type === "result"),
+      map(o => o.payload || ""),
     ),
 
   installMcu: (
@@ -261,7 +265,10 @@ const API = {
         pathname: `${BASE_SOCKET_URL}/mcu`,
         query: { targetId, version },
       }),
-    ).pipe(remapSocketError(context)),
+    ).pipe(
+      remapSocketError(context),
+      last(), // not yet using the events
+    ),
 };
 
 export default API;
