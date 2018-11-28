@@ -131,6 +131,12 @@ class Button extends PureComponent<
       ...otherProps
     } = this.props;
 
+    if (__DEV__ && "style" in otherProps) {
+      console.warn(
+        "Button props 'style' must not be used. Use 'containerStyle' instead.",
+      );
+    }
+
     const { pending, anim } = this.state;
     const isDisabled = disabled || !onPress || pending;
 
