@@ -186,6 +186,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
     transportsCache[transport.id] = transport;
     const disconnectedSub = device.onDisconnected(e => {
+      transport.notYetDisconnected = false;
       disconnectedSub.remove();
       delete transportsCache[transport.id];
       if (verboseLog) {
@@ -212,6 +213,8 @@ export default class BluetoothTransport extends Transport<Device | string> {
   notifyCharacteristic: Characteristic;
 
   notifyObservable: Observable<Buffer>;
+
+  notYetDisconnected = true;
 
   constructor(
     device: Device,
@@ -266,6 +269,10 @@ export default class BluetoothTransport extends Transport<Device | string> {
       return data;
     } catch (e) {
       logSubject.next({ type: "ble-error", message: String(e) });
+      if (this.notYetDisconnected) {
+        // in such case we will always disconnect because something is bad.
+        await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
+      }
       throw e;
     } finally {
       if (resolveBusy) resolveBusy();
