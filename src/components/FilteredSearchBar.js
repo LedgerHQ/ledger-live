@@ -88,7 +88,6 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             placeholderTextColor={colors.grey}
             style={styles.input}
             value={query}
-            noSuggestions
             ref={this.input}
           />
           {query ? <InputResetCross onPress={this.clear} /> : null}

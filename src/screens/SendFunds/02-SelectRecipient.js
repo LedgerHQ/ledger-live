@@ -215,7 +215,6 @@ class SendSelectRecipient extends Component<Props, State> {
                 multiline
                 blurOnSubmit
                 autoCapitalize="none"
-                noSuggestions
               />
               {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>

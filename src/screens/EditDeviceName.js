@@ -99,7 +99,6 @@ class EditDeviceName extends PureComponent<
               clearButtonMode="always"
               placeholder="Satoshi Nakamoto"
               style={[getFontStyle({ semiBold: true }), styles.input]}
-              noSuggestions
             />
             <LText style={styles.remainingText}>
               <Trans

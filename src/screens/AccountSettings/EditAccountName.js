@@ -73,7 +73,6 @@ class EditAccountName extends PureComponent<Props, State> {
               maxLength={20}
               onChangeText={accountName => this.setState({ accountName })}
               onSubmitEditing={this.onNameEndEditing}
-              noSuggestions
             />
             <View style={styles.flex}>
               <Button
