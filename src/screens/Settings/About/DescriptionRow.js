@@ -4,6 +4,7 @@ import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
+import { deviceNames } from "../../../wording";
 
 class DescriptionRow extends PureComponent<*> {
   render() {
@@ -11,7 +12,10 @@ class DescriptionRow extends PureComponent<*> {
       <View style={styles.descriptionContainer}>
         <Image source={require("../../../images/logo_small.png")} />
         <LText style={styles.description}>
-          <Trans i18nKey="settings.about.appDescription" />
+          <Trans
+            i18nKey="settings.about.appDescription"
+            values={deviceNames.nanoX}
+          />
         </LText>
       </View>
     );

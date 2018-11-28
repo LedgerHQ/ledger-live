@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 import LText from "../../components/LText";
+import { deviceNames } from "../../wording";
 
 class PendingPairing extends PureComponent<*> {
   render() {
@@ -15,7 +16,10 @@ class PendingPairing extends PureComponent<*> {
           <Trans i18nKey="PairDevices.Pairing.title" />
         </LText>
         <LText style={styles.subtitle}>
-          <Trans i18nKey="PairDevices.Pairing.subtitle" />
+          <Trans
+            i18nKey="PairDevices.Pairing.subtitle"
+            values={deviceNames.nanoX}
+          />
         </LText>
       </Fragment>
     );
