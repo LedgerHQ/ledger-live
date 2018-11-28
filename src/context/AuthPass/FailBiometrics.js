@@ -21,6 +21,7 @@ class FailBiometrics extends Component<Props> {
           <View style={styles.iconStyle}>
             <BiometricsIcon
               biometricsType={privacy.biometricsType}
+              failed={true}
               color={colors.alert}
               size={80}
             />
