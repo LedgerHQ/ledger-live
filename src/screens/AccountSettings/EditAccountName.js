@@ -12,6 +12,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
+import { getFontStyle } from "../../components/LText";
 
 import colors from "../../colors";
 
@@ -61,7 +62,7 @@ class EditAccountName extends PureComponent<Props, State> {
     const { account } = this.props;
 
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeArea}>
         <KeyboardView style={styles.body}>
           <ScrollView contentContainerStyle={styles.root}>
             <TextInput
@@ -72,6 +73,7 @@ class EditAccountName extends PureComponent<Props, State> {
               maxLength={20}
               onChangeText={accountName => this.setState({ accountName })}
               onSubmitEditing={this.onNameEndEditing}
+              clearButtonMode="while-editing"
             />
             <View style={styles.flex}>
               <Button
@@ -100,6 +102,10 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
   body: {
     flexDirection: "column",
     flex: 1,
@@ -107,7 +113,10 @@ const styles = StyleSheet.create({
   },
   textInputAS: {
     padding: 16,
-    fontSize: 16,
+    marginRight: 8,
+    fontSize: 20,
+    color: colors.darkBlue,
+    ...getFontStyle({ semiBold: true }),
   },
   buttonContainer: {
     marginHorizontal: 16,

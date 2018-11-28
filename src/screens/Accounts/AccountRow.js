@@ -64,7 +64,7 @@ class AccountRow extends PureComponent<Props> {
               />
             </LText>
             <View style={styles.balanceCounterContainer}>
-              <LText tertiary style={styles.balanceCounterText}>
+              <LText tertiary semiBold style={styles.balanceCounterText}>
                 <CounterValue
                   showCode
                   currency={account.currency}
@@ -87,12 +87,13 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingHorizontal: 16,
+    paddingVertical: 18,
     flexDirection: "row",
     alignItems: "center",
-    height: 72,
+
     overflow: "visible",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightFog,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.lightGrey,
   },
   innerContainerLast: {
     borderBottomWidth: 0,
@@ -105,8 +106,8 @@ const styles = StyleSheet.create({
   },
   accountNameText: {
     color: colors.darkBlue,
-    fontSize: 14,
-    marginBottom: 5,
+    fontSize: 16,
+    marginBottom: 4,
   },
   balanceContainer: {
     marginLeft: 16,
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   },
   balanceCounterText: {
     fontSize: 14,
-    color: colors.smoke,
+    color: colors.grey,
   },
   tickError: {
     backgroundColor: colors.alert,

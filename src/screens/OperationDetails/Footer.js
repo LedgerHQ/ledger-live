@@ -27,7 +27,7 @@ class Footer extends PureComponent<Props, *> {
           >
             <View style={{ flexDirection: "row" }}>
               <ExternalLink color={colors.live} size={20} />
-              <LText style={{ color: colors.live, marginLeft: 8 }}>
+              <LText semiBold style={{ color: colors.live, marginLeft: 8 }}>
                 <Trans i18nKey="operationDetails.viewInExplorer" />
               </LText>
             </View>
