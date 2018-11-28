@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
+    minHeight: 48,
   },
   title: {
     fontSize: 16,
