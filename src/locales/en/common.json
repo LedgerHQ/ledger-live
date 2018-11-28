@@ -23,7 +23,8 @@
     "poweredBy": "Powered by ",
     "received": "Received",
     "sent": "Sent",
-    "or": "OR"
+    "or": "OR",
+    "rename": "Rename"
   },
   "errors": {
     "AccountNameRequired": {
@@ -233,10 +234,10 @@
     }
   },
   "bluetooth": {
-    "required": "Bluetooth required",
+    "required": "Oops, Bluetooth disabled",
     "locationRequiredTitle": "Location is required for Bluetooth LE",
     "locationRequiredMessage": "On Android, location permission is required to be able to list Bluetooth LE devices.",
-    "checkEnabled": "It seems bluetooth is disabled on your mobile. Go to settings and enable bluetooth to pair a {{fullDeviceName}}"
+    "checkEnabled": "Please enable Bluetooth in your phone settings"
   },
   "location": {
     "required": "Location required",
@@ -761,7 +762,7 @@
     "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one."
   },
   "SelectDevice": {
-    "title": "Choose your device",
+    "title": "Pair new device",
     "deviceNotFoundPairNewDevice": "Pair a new device",
     "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
     "steps": {
@@ -797,27 +798,27 @@
     }
   },
   "EditDeviceName": {
-    "title": "Edit Device Name",
+    "title": "Rename device",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "action": "Change name"
+    "action": "Confirm"
   },
   "PairDevices": {
     "Paired": {
-      "title": "{{fullDeviceName}} paired with success!",
-      "desc": "You can now use your {{fullDeviceName}} on your Ledger Live mobile App to <1><0>send & receive funds</0></1>. You can also mange your device on the <1><1>Manager</1></1> section",
+      "title": "Pairing successful",
+      "desc": "Your Ledger Nano X is ready to use with Ledger Live",
       "action": "Continue"
     },
     "Pairing": {
-      "title": "Pairing...",
-      "subtitle": "Please don’t turn off your {{fullDeviceName}}. Follow screen instructions."
+      "title": "Pairing",
+      "subtitle": "Please follow the instructions on your Ledger Nano X"
     },
     "GenuineCheck": {
       "title": "Genuine check",
-      "accept": "Please don’t turn off your {{deviceName}} and allow <1><0>Ledger Manager</0></1>"
+      "accept": "Please don’t turn off your Nano X and allow <1><0>Ledger Manager</0></1>"
     },
     "ScanningHeader": {
-      "title": "We are searching for {{fullDeviceName}}",
-      "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
+      "title": "Looking for devices",
+      "desc": "Please make sure your Ledger Nano X is unlocked with Bluetooth enabled"
     },
     "ScanningTimeout": {
       "title": "Oops, no device found",
@@ -826,10 +827,10 @@
     "bypassGenuine": "Use anyway"
   },
   "DeviceItemSummary": {
-    "genuine": "Your device is genuine"
+    "genuine": "Device is Genuine"
   },
   "DeviceNameRow": {
-    "title": "Device Name",
+    "title": "Name",
     "action": "Get device name"
   },
   "UnpairDevice": {

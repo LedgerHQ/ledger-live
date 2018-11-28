@@ -86,7 +86,7 @@ class EditDeviceName extends PureComponent<
     const deviceId = navigation.getParam("deviceId");
     const remainingCount = MAX_DEVICE_NAME - Buffer.from(name).length;
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safearea}>
         <KeyboardView style={styles.root}>
           <View style={styles.body}>
             <TextInput
@@ -132,20 +132,25 @@ class EditDeviceName extends PureComponent<
 export default translate()(EditDeviceName);
 
 const styles = StyleSheet.create({
+  safearea: {
+    backgroundColor: colors.white,
+    flex: 1,
+  },
   root: {
     flex: 1,
   },
   body: {
     flex: 1,
-    padding: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
   },
   input: {
-    fontSize: 22,
+    fontSize: 24,
   },
   remainingText: {
     color: colors.grey,
     fontSize: 14,
-    marginTop: 4,
+    marginTop: 10,
   },
   error: {
     alignSelf: "center",

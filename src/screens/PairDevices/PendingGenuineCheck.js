@@ -7,7 +7,6 @@ import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 
 import colors from "../../colors";
-import { deviceNames } from "../../wording";
 
 const { width } = Dimensions.get("window");
 
@@ -22,11 +21,8 @@ class PendingGenuineCheck extends PureComponent<*> {
           <Trans i18nKey="PairDevices.GenuineCheck.title" />
         </LText>
         <LText style={styles.subtitle}>
-          <Trans
-            i18nKey="PairDevices.GenuineCheck.accept"
-            values={deviceNames.nanoX}
-          >
-            Make sure your Nano X is on Dashboard and accept
+          <Trans i18nKey="PairDevices.GenuineCheck.accept">
+            Please don’t turn off your Nano X and allow
             <LText bold>Ledger Manager</LText>
           </Trans>
         </LText>
@@ -51,7 +47,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 16,
     textAlign: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     lineHeight: 21,
     color: colors.smoke,
   },

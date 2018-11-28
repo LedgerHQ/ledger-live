@@ -34,7 +34,7 @@ const hitSlop = {
 const GenericErrorHeader = () => (
   <Circle bg={colors.lightAlert} size={80}>
     <LText>
-      <Icon name="alert-triangle" size={32} color={colors.alert} />
+      <Icon name="alert-triangle" size={40} color={colors.alert} />
     </LText>
   </Circle>
 );
@@ -65,10 +65,10 @@ class RenderError extends Component<Props> {
     const Header = status === "pairing" ? PairingFailure : GenericErrorHeader;
 
     return (
-      <SafeAreaView style={styles.root}>
+      <View style={styles.root}>
         <View style={styles.body}>
           <Header />
-          <LText semiBold style={styles.title}>
+          <LText semiBold secondary style={styles.title}>
             <TranslatedError error={primaryError} />
           </LText>
           <LText style={styles.description}>
@@ -99,10 +99,10 @@ class RenderError extends Component<Props> {
         </View>
         {status === "genuinecheck" ? (
           <View style={styles.footer}>
-            <HelpLink style={styles.linkContainer} />
+            <HelpLink style={styles.linkContainerGenuine} />
           </View>
         ) : null}
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -129,10 +129,11 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 16,
+    paddingHorizontal: 24,
     textAlign: "center",
     fontSize: 14,
     lineHeight: 21,
-    color: colors.grey,
+    color: colors.smoke,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -147,12 +148,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
   },
+  linkContainerGenuine: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
   linkText: {
     color: colors.live,
     marginLeft: 6,
   },
   footer: {
     height: 48,
+    alignItems: "center",
+    justifyContent: "center",
     borderTopWidth: 1,
     borderColor: colors.lightFog,
   },
