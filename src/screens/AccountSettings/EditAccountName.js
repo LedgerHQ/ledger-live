@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { ScrollView, View, StyleSheet, TextInput } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -11,6 +11,7 @@ import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import Button from "../../components/Button";
+import TextInput from "../../components/TextInput";
 import KeyboardView from "../../components/KeyboardView";
 import { getFontStyle } from "../../components/LText";
 
