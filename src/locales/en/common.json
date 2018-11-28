@@ -236,7 +236,7 @@
     "required": "Bluetooth required",
     "locationRequiredTitle": "Location is required for Bluetooth LE",
     "locationRequiredMessage": "On Android, location permission is required to be able to list Bluetooth LE devices.",
-    "checkEnabled": "It seems bluetooth is disabled on your mobile. Go to settings and enable bluetooth to pair a Nano X"
+    "checkEnabled": "It seems bluetooth is disabled on your mobile. Go to settings and enable bluetooth to pair a {{fullDeviceName}}"
   },
   "location": {
     "required": "Location required",
@@ -612,7 +612,7 @@
     "about": {
       "title": "About",
       "desc": "App information, terms and conditions, and privacy policy.",
-      "appDescription": "The perfect companion for your Ledger Nano X. Add new crypto assets and check your balance in just a few taps.",
+      "appDescription": "The perfect companion for your {{fullDeviceName}}. Add new crypto assets and check your balance in just a few taps.",
       "appVersion": "Version",
       "termsConditions": "Terms and conditions",
       "termsConditionsDesc": "By using Ledger Live you are deemed to have accepted our terms and conditions.",
@@ -710,7 +710,7 @@
       "validateGasLimit": "Validate Gas Limit"
     },
     "validation": {
-      "title": "Please verify all transaction details on your Ledger Nano X",
+      "title": "Please verify all transaction details on your {{fullDeviceName}}",
       "message": "Confirm the transaction on your device to securely sign it",
       "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
@@ -797,20 +797,20 @@
   },
   "PairDevices": {
     "Paired": {
-      "title": "Nano X paired with success!",
-      "desc": "You can now use your Nano X on your Ledger Live mobile App to <1><0>send & receive funds</0></1>. You can also mange your device on the <1><1>Manager</1></1> section",
+      "title": "{{fullDeviceName}} paired with success!",
+      "desc": "You can now use your {{fullDeviceName}} on your Ledger Live mobile App to <1><0>send & receive funds</0></1>. You can also mange your device on the <1><1>Manager</1></1> section",
       "action": "Continue"
     },
     "Pairing": {
       "title": "Pairing...",
-      "subtitle": "Please don’t turn off your Nano X. Follow screen instructions."
+      "subtitle": "Please don’t turn off your {{fullDeviceName}}. Follow screen instructions."
     },
     "GenuineCheck": {
       "title": "Genuine check",
       "accept": "Please don’t turn off your {{deviceName}} and allow <1><0>Ledger Manager</0></1>"
     },
     "ScanningHeader": {
-      "title": "We are searching for Nano X",
+      "title": "We are searching for {{fullDeviceName}}",
       "desc": "Please be sure power is on, you have enter your PIN and bluetooth is enabled"
     },
     "ScanningTimeout": {

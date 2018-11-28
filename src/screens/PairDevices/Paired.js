@@ -10,6 +10,7 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import PairingSuccess from "../../icons/PairingSuccess";
 import DeviceItemSummary from "../../components/DeviceItemSummary";
+import { deviceNames } from "../../wording";
 
 class Paired extends PureComponent<{
   deviceId: string,
@@ -32,10 +33,13 @@ class Paired extends PureComponent<{
         <View style={styles.root}>
           <PairingSuccess />
           <LText secondary semiBold style={styles.title}>
-            <Trans i18nKey="PairDevices.Paired.title" />
+            <Trans
+              i18nKey="PairDevices.Paired.title"
+              values={deviceNames.nanoX}
+            />
           </LText>
           <LText style={styles.description}>
-            <Trans i18nKey="PairDevices.Paired.desc">
+            <Trans i18nKey="PairDevices.Paired.desc" values={deviceNames.nanoX}>
               {"You can now use your Nano X on you Ledger Live mobile App to "}
               <LText semiBold>send & receive funds</LText>
               {". You can also mange your device on the "}
