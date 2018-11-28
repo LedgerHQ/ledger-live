@@ -82,17 +82,9 @@ class DebugBLE extends Component<
     loopMode: boolean,
   },
 > {
-  static navigationOptions = ({ navigation }) => ({
+  static navigationOptions = {
     title: "Debug BLE",
-    headerRight: (
-      <Button
-        containerStyle={{ width: 80 }}
-        type="lightSecondary"
-        title="Options"
-        onPress={() => navigation.navigate("DebugBLEOptions")}
-      />
-    ),
-  });
+  };
 
   state = {
     logs: [],
