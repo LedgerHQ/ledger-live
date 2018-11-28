@@ -97,7 +97,7 @@ class Manager extends Component<
         />
         <RemoveDeviceButton
           show={editMode}
-          devices={this.state.toForget}
+          deviceIds={this.state.toForget}
           reset={this.onResetToForget}
         />
       </View>
