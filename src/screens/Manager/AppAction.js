@@ -28,14 +28,15 @@ class PendingProgress extends PureComponent<{
 }> {
   render() {
     const { progress } = this.props;
+    // TODO figure out a smooth transition
     return (
       <View style={progressStyles.centered}>
         <ProgressCircle
-          progress={progress}
+          progress={0.15 + 0.85 * progress}
           color={colors.live}
           borderWidth={0}
-          thickness={3}
-          size={20}
+          thickness={3.6}
+          size={22}
           strokeCap="round"
         />
       </View>
