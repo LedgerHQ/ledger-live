@@ -4,16 +4,12 @@ import Config from "react-native-config";
 
 import App from "./src";
 
-if (Config.SENTRY_DSN) {
+if (Config.SENTRY_DSN && !__DEV__) {
   Sentry.config(Config.SENTRY_DSN, {
     autoBreadcrumbs: {
       xhr: false,
     },
   }).install();
-
-  Sentry.setTagsContext({
-    environment: __DEV__ ? "development" : "production",
-  });
 
   Sentry.setUserContext({
     ip_address: null,
