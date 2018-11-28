@@ -10,6 +10,7 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import PairingSuccess from "../../icons/PairingSuccess";
 import DeviceItemSummary from "../../components/DeviceItemSummary";
+import { deviceNames } from "../../wording";
 
 class Paired extends PureComponent<{
   deviceId: string,
@@ -30,25 +31,24 @@ class Paired extends PureComponent<{
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.root}>
-          <PairingSuccess />
-          <LText secondary semiBold style={styles.title}>
-            <Trans i18nKey="PairDevices.Paired.title" />
-          </LText>
-          <LText style={styles.description}>
-            <Trans i18nKey="PairDevices.Paired.desc">
-              {"You can now use your Nano X on you Ledger Live mobile App to "}
-              <LText semiBold>send & receive funds</LText>
-              {". You can also mange your device on the "}
-              <LText semiBold>Manager</LText>
-              {" section"}
-            </Trans>
-          </LText>
-          <View style={styles.fullContainer}>
-            <DeviceItemSummary
-              deviceId={deviceId}
-              genuine
-              onEdit={this.onEdit}
-            />
+          <View style={styles.body}>
+            <PairingSuccess />
+            <LText secondary semiBold style={styles.title}>
+              <Trans i18nKey="PairDevices.Paired.title" />
+            </LText>
+            <LText style={styles.description}>
+              <Trans
+                i18nKey="PairDevices.Paired.desc"
+                values={deviceNames.nanoX}
+              />
+            </LText>
+            <View style={styles.fullContainer}>
+              <DeviceItemSummary
+                deviceId={deviceId}
+                genuine
+                onEdit={this.onEdit}
+              />
+            </View>
           </View>
           <View style={[styles.fullContainer, styles.buttonContainer]}>
             <Button
@@ -66,9 +66,13 @@ class Paired extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    flexDirection: "column",
+    padding: 20,
+  },
+  body: {
+    flex: 1,
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 38,
+    justifyContent: "center",
   },
   fullContainer: {
     width: "100%",
