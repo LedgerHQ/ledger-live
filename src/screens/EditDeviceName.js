@@ -2,13 +2,14 @@
 
 import React, { PureComponent } from "react";
 import { Buffer } from "buffer";
-import { TextInput, View, StyleSheet, SafeAreaView } from "react-native";
+import { View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import colors from "../colors";
 import Button from "../components/Button";
+import TextInput from "../components/TextInput";
 import LText, { getFontStyle } from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
 import KeyboardView from "../components/KeyboardView";
@@ -93,12 +94,12 @@ class EditDeviceName extends PureComponent<
               onChangeText={this.onChangeText}
               maxLength={MAX_DEVICE_NAME}
               autoFocus
-              autoCorrect={false}
               selectTextOnFocus
               blurOnSubmit={false}
               clearButtonMode="always"
               placeholder="Satoshi Nakamoto"
               style={[getFontStyle({ semiBold: true }), styles.input]}
+              noSuggestions
             />
             <LText style={styles.remainingText}>
               <Trans

@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet, TextInput, Platform } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -24,6 +24,7 @@ import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import TranslatedError from "../../components/TranslatedError";
 import InputResetCross from "../../components/InputResetCross";
+import TextInput from "../../components/TextInput";
 import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
 
@@ -214,7 +215,7 @@ class SendSelectRecipient extends Component<Props, State> {
                 multiline
                 blurOnSubmit
                 autoCapitalize="none"
-                autoCorrect={false}
+                noSuggestions
               />
               {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>
