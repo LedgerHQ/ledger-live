@@ -827,6 +827,12 @@
     "title": "Device Name",
     "action": "Get device name"
   },
+  "UnpairDevice": {
+    "button": {
+      "title": "Delete {{nbDevices}} device",
+      "title_plural": "Delete {{nbDevices}} devices"
+    }
+  },
   "manager": {
     "appList": {
       "loading": "Loading apps..."
