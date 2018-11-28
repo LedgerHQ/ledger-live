@@ -11,10 +11,11 @@ import DeviceJob from "../DeviceJob";
 import type { Step } from "../DeviceJob/types";
 import Header from "./Header";
 import Footer from "./Footer";
-import RemoveDeviceButton from "./RemoveDeviceButton";
 
 type Props = {
+  onForgetSelect?: (deviceId: string) => any,
   onSelect: (deviceId: string, meta: Object) => void,
+  selectedIds?: string[],
   steps: Step[],
   editMode?: boolean,
   // connect-ed
@@ -35,7 +36,6 @@ type State = {
   scanning: boolean,
   connecting: boolean,
   connectingId: ?string,
-  toForget: Array<string>,
 };
 
 class SelectDevice extends Component<Props, State> {
@@ -48,7 +48,6 @@ class SelectDevice extends Component<Props, State> {
     scanning: true,
     connecting: false,
     connectingId: null,
-    toForget: [],
   };
 
   listingSubscription: *;
@@ -72,33 +71,9 @@ class SelectDevice extends Component<Props, State> {
     });
   }
 
-  componentDidUpdate({ editMode: prevEditMode }: Props) {
-    const { editMode } = this.props;
-    if (prevEditMode && !editMode) {
-      this.onResetToForget();
-    }
-  }
-
   componentWillUnmount() {
     this.listingSubscription.unsubscribe();
   }
-
-  onForgetSelect = ({ id }) => {
-    this.setState(state => {
-      const newToForget = state.toForget.includes(id)
-        ? state.toForget.filter(d => d !== id)
-        : [...state.toForget, id];
-
-      return {
-        ...state,
-        toForget: newToForget,
-      };
-    });
-  };
-
-  onResetToForget = () => {
-    this.setState(state => ({ ...state, toForget: [] }));
-  };
 
   onSelect = ({ id }) => {
     this.setState({ connecting: true, connectingId: id });
@@ -119,8 +94,14 @@ class SelectDevice extends Component<Props, State> {
       key={item.id}
       device={item}
       onSelect={this.onSelect}
-      onForgetSelect={this.props.editMode ? this.onForgetSelect : undefined}
-      selected={this.state.toForget.includes(item.id)}
+      onForgetSelect={
+        this.props.editMode ? this.props.onForgetSelect : undefined
+      }
+      selected={
+        this.props.selectedIds
+          ? this.props.selectedIds.includes(item.id)
+          : undefined
+      }
       {...item}
     />
   );
@@ -152,11 +133,6 @@ class SelectDevice extends Component<Props, State> {
           onStepEntered={onStepEntered}
           onDone={this.onDone}
           editMode={editMode}
-        />
-        <RemoveDeviceButton
-          show={editMode}
-          devices={this.state.toForget}
-          reset={this.onResetToForget}
         />
       </Fragment>
     );
