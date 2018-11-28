@@ -2,12 +2,11 @@
 import React, { Component, Fragment } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { translate } from "react-i18next";
+import { Trans, translate } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
-import Touchable from "../../components/Touchable";
 import EthereumGasLimit from "./SendRowGasLimit";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
@@ -54,11 +53,12 @@ class EthereumFeeRow extends Component<Props> {
     return (
       <Fragment>
         <SummaryRow
-          title={t("send.fees.title")}
+          onPress={this.extraInfoFees}
+          title={<Trans i18nKey="send.fees.title" />}
           additionalInfo={
-            <Touchable onPress={this.extraInfoFees}>
+            <View>
               <ExternalLink size={12} color={colors.grey} />
-            </Touchable>
+            </View>
           }
         >
           <View style={{ alignItems: "flex-end" }}>

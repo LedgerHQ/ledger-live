@@ -8,7 +8,6 @@ import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
-import Touchable from "../../components/Touchable";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
@@ -39,7 +38,7 @@ class RippleFeeRow extends Component<Props> {
   };
 
   render() {
-    const { account, transaction, t } = this.props;
+    const { account, transaction } = this.props;
     const bridge = getAccountBridge(account);
     const fee = bridge.getTransactionExtra(account, transaction, "fee");
     const feeCustomUnit = bridge.getTransactionExtra(
@@ -49,11 +48,12 @@ class RippleFeeRow extends Component<Props> {
     );
     return (
       <SummaryRow
-        title={t("send.fees.title")}
+        onPress={this.extraInfoFees}
+        title={<Trans i18nKey="send.fees.title" />}
         additionalInfo={
-          <Touchable onPress={this.extraInfoFees}>
+          <View>
             <ExternalLink size={12} color={colors.grey} />
-          </Touchable>
+          </View>
         }
       >
         <View style={{ alignItems: "flex-end" }}>
