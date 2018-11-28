@@ -11,6 +11,10 @@ if (Config.SENTRY_DSN) {
     },
   }).install();
 
+  Sentry.setTagsContext({
+    environment: __DEV__ ? "development" : "production",
+  });
+
   Sentry.setUserContext({
     ip_address: null,
   });
