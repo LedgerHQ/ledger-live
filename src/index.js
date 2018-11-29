@@ -24,6 +24,7 @@ import AppStateListener from "./components/AppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 import HookAnalytics from "./analytics/HookAnalytics";
+import HookSentry from "./components/HookSentry";
 
 // useScreens(); // FIXME this is not working properly when using react-native-modal inside Send flow
 
@@ -112,6 +113,7 @@ export default class Root extends Component<{}, { appState: * }> {
           {(ready, store) =>
             ready ? (
               <Fragment>
+                <HookSentry />
                 <HookAnalytics store={store} />
                 <AuthPass>
                   <LocaleProvider>

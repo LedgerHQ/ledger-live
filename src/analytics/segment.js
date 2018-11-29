@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 
 import uuid from "uuid/v4";
+import { Sentry } from "react-native-sentry";
 import Config from "react-native-config";
 import { Platform } from "react-native";
 import analytics from "@segment/analytics-react-native";
@@ -74,6 +75,12 @@ export const track = (
   properties: ?Object,
   mandatory: ?boolean,
 ) => {
+  Sentry.captureBreadcrumb({
+    message: event,
+    category: "track",
+    data: properties,
+  });
+
   if (
     !storeInstance ||
     (!mandatory && !analyticsEnabledSelector(storeInstance.getState()))
@@ -89,6 +96,11 @@ export const track = (
 };
 
 export const page = (category: string, name: ?string, properties: ?Object) => {
+  Sentry.captureBreadcrumb({
+    message: category + (name ? " " + name : ""),
+    category: "page",
+    data: properties,
+  });
   if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
     return;
   }
