@@ -2,11 +2,13 @@
 
 import React, { PureComponent } from "react";
 import { Buffer } from "buffer";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import { Keyboard, View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { compose } from "redux";
+import connect from "react-redux/es/connect/connect";
 import colors from "../colors";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
@@ -15,6 +17,7 @@ import TranslatedError from "../components/TranslatedError";
 import KeyboardView from "../components/KeyboardView";
 import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
 import DeviceJob from "../components/DeviceJob";
+import { saveBleDeviceName } from "../actions/ble";
 
 const MAX_DEVICE_NAME = 32;
 
@@ -29,6 +32,9 @@ class FooterError extends PureComponent<{ error: Error }> {
     );
   }
 }
+const mapDispatchToProps = {
+  saveBleDeviceName,
+};
 
 class EditDeviceName extends PureComponent<
   {
@@ -39,6 +45,7 @@ class EditDeviceName extends PureComponent<
       },
     }>,
     deviceName: string,
+    saveBleDeviceName: Function,
   },
   {
     name: string,
@@ -63,10 +70,16 @@ class EditDeviceName extends PureComponent<
     this.setState({ name });
   };
 
+  waitForKeyboardToHide = () => {
+    this.setState({ connecting: true });
+    Keyboard.addListener("keyboardDidHide", this.waitForKeyboardToHide);
+  };
+
   onSubmit = async () => {
     const { name } = this.state;
     if (this.initialName !== name) {
-      this.setState({ connecting: true });
+      Keyboard.addListener("keyboardDidHide", this.waitForKeyboardToHide);
+      Keyboard.dismiss();
     } else {
       this.props.navigation.goBack();
     }
@@ -77,6 +90,8 @@ class EditDeviceName extends PureComponent<
   };
 
   onDone = () => {
+    const { saveBleDeviceName, navigation } = this.props;
+    saveBleDeviceName(navigation.getParam("deviceId"), this.state.name);
     this.props.navigation.goBack();
   };
 
@@ -129,7 +144,13 @@ class EditDeviceName extends PureComponent<
   }
 }
 
-export default translate()(EditDeviceName);
+export default compose(
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
+  translate(),
+)(EditDeviceName);
 
 const styles = StyleSheet.create({
   root: {
