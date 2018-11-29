@@ -28,15 +28,16 @@ class PendingPairing extends PureComponent<*> {
 
 const styles = StyleSheet.create({
   title: {
-    marginTop: 16,
+    marginTop: 32,
     fontSize: 18,
     color: colors.darkBlue,
   },
   subtitle: {
     fontSize: 14,
-    marginTop: 8,
+    marginTop: 16,
     textAlign: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
+    color: colors.smoke,
   },
 });
 

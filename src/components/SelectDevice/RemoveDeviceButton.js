@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
-import { StyleSheet, TouchableOpacity, Animated } from "react-native";
+import { StyleSheet, Animated } from "react-native";
 import { SafeAreaView, withNavigation } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { compose } from "redux";
@@ -10,8 +10,7 @@ import { disconnect } from "../../logic/hw";
 import { removeKnownDevices } from "../../actions/ble";
 
 import Trash from "../../icons/Trash";
-import colors from "../../colors";
-import LText from "../LText/index";
+import Button from "../Button";
 
 const AnimatedSafeView = Animated.createAnimatedComponent(SafeAreaView);
 
@@ -96,15 +95,13 @@ class RemoveDeviceButton extends PureComponent<Props> {
 
     return (
       <AnimatedSafeView style={[styles.root, anim]} forceInset={forceInset}>
-        <TouchableOpacity
-          style={[styles.button, count > 0 ? styles.active : null]}
+        <Button
+          type="alert"
+          IconLeft={Trash}
+          title={text}
           onPress={this.onPress}
-        >
-          <Trash size={16} color={colors.white} />
-          <LText semiBold style={styles.text}>
-            {text}
-          </LText>
-        </TouchableOpacity>
+          disabled={count === 0}
+        />
       </AnimatedSafeView>
     );
   }
@@ -117,22 +114,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: -100,
     paddingHorizontal: 16,
-  },
-  button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 20,
-    backgroundColor: colors.grey,
-    borderRadius: 4,
-  },
-  active: {
-    backgroundColor: colors.alert,
-  },
-  text: {
-    paddingLeft: 8,
-    fontSize: 16,
-    color: colors.white,
+    paddingBottom: 16,
   },
 });
 
