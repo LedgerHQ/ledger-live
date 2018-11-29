@@ -72,7 +72,7 @@ class EditDeviceName extends PureComponent<
 
   waitForKeyboardToHide = () => {
     this.setState({ connecting: true });
-    Keyboard.addListener("keyboardDidHide", this.waitForKeyboardToHide);
+    Keyboard.removeListener("keyboardDidHide", this.waitForKeyboardToHide);
   };
 
   onSubmit = async () => {
