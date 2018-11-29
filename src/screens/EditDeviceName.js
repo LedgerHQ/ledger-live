@@ -8,7 +8,7 @@ import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { compose } from "redux";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import colors from "../colors";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
