@@ -4,6 +4,7 @@ import type { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import type { State } from "../reducers";
+import Placeholder from "./Placeholder";
 
 import {
   counterValueCurrencySelector,
@@ -23,6 +24,13 @@ type OwnProps = {
   date?: Date,
 
   value: BigNumber,
+
+  // display grey placeholder if no value
+  withPlaceholder?: boolean,
+  placeholderProps?: mixed,
+  // as we can't render View inside Text, provide ability to pass
+  // wrapper component from outside
+  Wrapper?: React$ComponentType<*>,
 };
 
 type Props = OwnProps & {
@@ -54,17 +62,33 @@ const mapStateToProps = (state: State, props: OwnProps) => {
 
 class CounterValue extends Component<Props> {
   render() {
-    const { value, counterValueCurrency, date, ...props } = this.props;
-    if (!value) {
-      return null;
-    }
-    return (
+    const {
+      value,
+      counterValueCurrency,
+      date,
+      withPlaceholder,
+      placeholderProps,
+      Wrapper,
+      ...props
+    } = this.props;
+
+    const inner = (
       <CurrencyUnitValue
         {...props}
         unit={counterValueCurrency.units[0]}
         value={value}
       />
     );
+
+    if (!value) {
+      return withPlaceholder ? <Placeholder {...placeholderProps} /> : null;
+    }
+
+    if (Wrapper) {
+      return <Wrapper>{inner}</Wrapper>;
+    }
+
+    return inner;
   }
 }
 
