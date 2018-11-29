@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import i18next from "i18next";
 import { connect } from "react-redux";
 import Config from "react-native-config";
