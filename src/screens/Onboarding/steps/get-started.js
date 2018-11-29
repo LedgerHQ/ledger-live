@@ -1,7 +1,13 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Linking,
+  BackHandler,
+} from "react-native";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
@@ -44,6 +50,23 @@ class OnboardingStepGetStarted extends Component<
     hasCompletedOnboarding: boolean,
   },
 > {
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+  }
+
+  handleBackButton = () => {
+    const { navigation, hasCompletedOnboarding } = this.props;
+    if (hasCompletedOnboarding) {
+      navigation.navigate("HelpSettings");
+      return true;
+    }
+    return false;
+  };
+
   onInitialized = async () => {
     await this.props.setOnboardingMode("alreadyInitialized");
     this.props.next();
