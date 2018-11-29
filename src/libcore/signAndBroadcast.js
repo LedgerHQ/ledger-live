@@ -117,6 +117,9 @@ async function signTransaction({
     if (blockHeight >= 419200) {
       additionals.push("sapling");
     }
+  } else if (currency.id === "decred") {
+    expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
+    additionals.push("decred");
   }
 
   const rawInputs = await core.coreBitcoinLikeTransaction.getInputs(
@@ -138,6 +141,7 @@ async function signTransaction({
         currency.supportsSegwit,
         hasTimestamp,
         hasExtraData,
+        additionals,
       );
 
       const outputIndex = (await core.coreBitcoinLikeInput.getPreviousOutputIndex(
