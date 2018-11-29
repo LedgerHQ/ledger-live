@@ -45,7 +45,7 @@ class EditDeviceName extends PureComponent<
       },
     }>,
     deviceName: string,
-    saveBleDeviceName: Function,
+    saveBleDeviceName: (string, string) => *,
   },
   {
     name: string,
