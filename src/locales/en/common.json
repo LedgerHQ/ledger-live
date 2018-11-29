@@ -798,8 +798,13 @@
   },
   "PairDevices": {
     "Paired": {
+      "title": "{{fullDeviceName}} paired with success!",
       "desc": "Your {{fullDeviceName}} is ready to use with Ledger Live",
       "action": "Continue"
+    },
+    "Pairing": {
+      "title": "Pairing...",
+      "subtitle": "Please don’t turn off your {{fullDeviceName}}. Follow screen instructions."
     },
     "GenuineCheck": {
       "title": "Genuine check",
