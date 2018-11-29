@@ -758,7 +758,7 @@
   "SelectDevice": {
     "title": "Choose your device",
     "deviceNotFoundPairNewDevice": "Pair a new device",
-    "headerDescription": "Make sure Bluetooth is enabled on your phone and {{fullDeviceName}}",
+    "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
     "steps": {
       "connecting": {
         "title": "Connecting “{{deviceName}}”",
@@ -811,7 +811,7 @@
     },
     "ScanningTimeout": {
       "title": "Oops, no device found",
-      "desc": "Make sure Bluetooth is enabled on your phone and {{fullDeviceName}}"
+      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
     },
     "bypassGenuine": "Use anyway"
   },
