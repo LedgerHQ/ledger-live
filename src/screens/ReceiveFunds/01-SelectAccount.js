@@ -1,5 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
+import i18next from "i18next";
 import { View, StyleSheet, FlatList } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -30,7 +31,15 @@ type State = {};
 
 class ReceiveFunds extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Receive funds" subtitle="1 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("transfer.receive.title")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "1",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
 
   renderItem = ({ item }: { item: Account }) => (

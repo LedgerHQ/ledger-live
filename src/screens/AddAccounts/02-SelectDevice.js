@@ -6,6 +6,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import i18next from "i18next";
 
 import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
@@ -25,7 +26,15 @@ type State = {};
 
 class AddAccountsSelectDevice extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="step 2 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("common.device")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "2",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
 
   onSelectDevice = (deviceId: string) => {
