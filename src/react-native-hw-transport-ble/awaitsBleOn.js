@@ -1,6 +1,6 @@
 // @flow
 
-import { verboseLog } from "./debug";
+import { logSubject } from "./debug";
 import { BluetoothRequired } from "../errors";
 import timer from "../timer";
 import type { BleManager } from "./types";
@@ -12,7 +12,7 @@ export const awaitsBleOn = (bleManager: BleManager, ms: number = 3000) =>
 
     const stateSub = bleManager.onStateChange(state => {
       lastState = state;
-      if (verboseLog) verboseLog(`ble state -> ${state}`);
+      logSubject.next({ type: "verbose", message: `ble state -> ${state}` });
       if (state === "PoweredOn") {
         if (done) return;
         removeTimeout();

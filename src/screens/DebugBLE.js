@@ -1,15 +1,15 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import {
   FlatList,
   StyleSheet,
   TextInput,
   View,
-  Clipboard,
   ToastAndroid,
   Switch,
 } from "react-native";
+import uuid from "uuid/v4";
 import { from, of } from "rxjs";
 import { concatMap, bufferTime } from "rxjs/operators";
 import { connect } from "react-redux";
@@ -32,10 +32,18 @@ const styles = StyleSheet.create({
   },
 });
 
+const mapLogToColor = (log: Log) => {
+  if (log.type.includes("error")) return colors.alert;
+  if (log.type === "verbose") return colors.grey;
+  if (log.type.includes("ble-frame")) return colors.live;
+  if (log.type.includes("ble-apdu")) return colors.success;
+  return colors.darkBlue;
+};
+
 const mapLogToText = (log: Log) => {
   switch (log.type) {
     case "ble-apdu-in":
-      return "";
+      return `<= ${String(log.message)}`;
 
     case "ble-frame-in":
       return `<=  ${String(log.message)}`;
@@ -44,17 +52,18 @@ const mapLogToText = (log: Log) => {
       return `=>  ${String(log.message)}`;
 
     case "ble-apdu-out":
-      return "DONE";
+      return `=> ${String(log.message)}`;
 
     default:
       return log.message;
   }
 };
 
-class LogItem extends Component<{ log: Log }> {
+class LogItem extends PureComponent<{ log: Log }> {
   render() {
     const { log } = this.props;
     const text = mapLogToText(log);
+    const color = mapLogToColor(log);
     return (
       <View
         style={{
@@ -64,8 +73,13 @@ class LogItem extends Component<{ log: Log }> {
           flexDirection: "row",
         }}
       >
-        <LText style={{ fontSize: 10, flex: 1 }}>{text}</LText>
-        <LText style={{ fontSize: 8 }}>{log.date.toISOString()}</LText>
+        <LText style={{ fontSize: 10, flex: 1, color }}>{text}</LText>
+        <LText style={{ marginRight: 5, fontSize: 8 }}>
+          {log.date
+            .toISOString()
+            .split("T")[1]
+            .replace("Z", "")}
+        </LText>
       </View>
     );
   }
@@ -107,7 +121,7 @@ class DebugBLE extends Component<
     if (this.sub) this.sub.unsubscribe();
   }
 
-  keyExtractor = (item: Log) => String(item.id);
+  keyExtractor = (item: Log) => item.id;
 
   renderItem = ({ item }: { item: Log }) => (
     <View style={{ transform: [{ scaleY: -1 }] }}>
@@ -115,10 +129,16 @@ class DebugBLE extends Component<
     </View>
   );
 
-  copy = () => {
-    const content = this.state.logs.map(mapLogToText).join("\n");
-    Clipboard.setString(content);
-    ToastAndroid.show("logs copied!", ToastAndroid.SHORT);
+  addError = (error: Error, ctx: string) => {
+    const date = new Date();
+    this.setState(({ logs }) => ({
+      logs: logs.concat({
+        id: uuid(),
+        type: "error",
+        message: "@" + ctx + ": " + error.message,
+        date,
+      }),
+    }));
   };
 
   onAPDUChange = (apdu: string) => {
@@ -144,19 +164,26 @@ class DebugBLE extends Component<
           return of(null);
         }),
       );
-
-    await step().toPromise();
+    try {
+      await step().toPromise();
+    } catch (error) {
+      this.addError(error, "send");
+    }
   };
 
   inferMTU = async () => {
     const {
       devices: [device],
     } = this.props;
-    const mtu = await withDevice(device.id)(t =>
-      // $FlowFixMe bro i know
-      from(t.inferMTU()),
-    ).toPromise();
-    ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
+    try {
+      const mtu = await withDevice(device.id)(t =>
+        // $FlowFixMe bro i know
+        from(t.inferMTU()),
+      ).toPromise();
+      ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
+    } catch (error) {
+      this.addError(error, "inferMTU");
+    }
   };
 
   currentConnectionPriority = "Balanced";
@@ -170,28 +197,40 @@ class DebugBLE extends Component<
         (choices.indexOf(this.currentConnectionPriority) + 1) % choices.length
       ];
     this.currentConnectionPriority = nextPriority;
-    await withDevice(device.id)(t =>
-      // $FlowFixMe bro i know
-      from(t.requestConnectionPriority(nextPriority)),
-    ).toPromise();
-    ToastAndroid.show(
-      "connection priority set to " + nextPriority,
-      ToastAndroid.SHORT,
-    );
+    try {
+      await withDevice(device.id)(t =>
+        // $FlowFixMe bro i know
+        from(t.requestConnectionPriority(nextPriority)),
+      ).toPromise();
+      ToastAndroid.show(
+        "connection priority set to " + nextPriority,
+        ToastAndroid.SHORT,
+      );
+    } catch (error) {
+      this.addError(error, "changePrio");
+    }
   };
 
   connect = async () => {
     const {
       devices: [device],
     } = this.props;
-    await withDevice(device.id)(() => from([{}])).toPromise();
+    try {
+      await withDevice(device.id)(() => from([{}])).toPromise();
+    } catch (error) {
+      this.addError(error, "connect");
+    }
   };
 
   disconnect = async () => {
     const {
       devices: [device],
     } = this.props;
-    await disconnect(device.id);
+    try {
+      await disconnect(device.id);
+    } catch (error) {
+      this.addError(error, "disconnect");
+    }
   };
 
   onLoopMode = () => {
@@ -209,22 +248,6 @@ class DebugBLE extends Component<
     const { logs, loopMode } = this.state;
     return (
       <KeyboardView style={{ flex: 1 }}>
-        <View
-          style={{
-            padding: 5,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <LText bold>BLE Framing logs</LText>
-          <Button
-            containerStyle={{ width: 100 }}
-            type="lightSecondary"
-            title="Copy"
-            onPress={this.copy}
-          />
-        </View>
         <FlatList
           style={{ flex: 1, transform: [{ scaleY: -1 }] }}
           data={logs.slice().reverse()}
@@ -232,86 +255,91 @@ class DebugBLE extends Component<
           keyExtractor={this.keyExtractor}
           contentContainerStyle={styles.root}
         />
-        <View
-          style={{
-            padding: 8,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextInput
-            style={{
-              flex: 1,
-              backgroundColor: "white",
-              borderWidth: 1,
-              borderColor: "#eee",
-              marginRight: 8,
-              padding: 12,
-            }}
-            selectTextOnFocus
-            placeholder="E0D2000000"
-            onFocus={this.onLoopModeOff}
-            onChangeText={this.onAPDUChange}
-            value={this.state.apdu}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            onSubmitEditing={this.send}
-          />
-          <Button
-            containerStyle={{ width: 60 }}
-            type="lightSecondary"
-            title="Send"
-            onPress={this.send}
-          />
-          <Switch value={loopMode} onValueChange={this.onLoopMode} />
-        </View>
 
-        <View
-          style={{
-            padding: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.lightFog,
-            flexDirection: "row",
-          }}
-        >
+        {device ? (
           <View
             style={{
-              flexDirection: "column",
-              flex: 1,
-              justifyContent: "space-around",
+              padding: 8,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <LText style={{ fontSize: 12 }}>{device.id}</LText>
-            <LText bold style={{ fontSize: 12 }}>
-              {device.name}
-            </LText>
+            <TextInput
+              style={{
+                flex: 1,
+                backgroundColor: "white",
+                borderWidth: 1,
+                borderColor: "#eee",
+                marginRight: 8,
+                padding: 12,
+              }}
+              selectTextOnFocus
+              placeholder="E0D2000000"
+              onFocus={this.onLoopModeOff}
+              onChangeText={this.onAPDUChange}
+              value={this.state.apdu}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              onSubmitEditing={this.send}
+            />
+            <Button
+              containerStyle={{ width: 60 }}
+              type="lightSecondary"
+              title="Send"
+              onPress={this.send}
+            />
+            <Switch value={loopMode} onValueChange={this.onLoopMode} />
           </View>
-          <Button
-            containerStyle={{ width: 60, marginRight: 8 }}
-            type="lightSecondary"
-            title="change prio"
-            onPress={this.toggleConnectionPriority}
-          />
-          <Button
-            containerStyle={{ width: 60, marginRight: 8 }}
-            type="lightSecondary"
-            title="infer MTU"
-            onPress={this.inferMTU}
-          />
-          <Button
-            containerStyle={{ width: 40, marginRight: 8 }}
-            type="primary"
-            title="CO"
-            onPress={this.connect}
-          />
-          <Button
-            containerStyle={{ width: 40 }}
-            type="primary"
-            title="DI"
-            onPress={this.disconnect}
-          />
-        </View>
+        ) : null}
+
+        {device ? (
+          <View
+            style={{
+              padding: 10,
+              borderBottomWidth: 1,
+              borderBottomColor: colors.lightFog,
+              flexDirection: "row",
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "column",
+                flex: 1,
+                justifyContent: "space-around",
+              }}
+            >
+              <LText style={{ fontSize: 10 }}>{device.id}</LText>
+              <LText bold style={{ fontSize: 12 }}>
+                {device.name}
+              </LText>
+            </View>
+            <Button
+              containerStyle={{ width: 56, marginRight: 8 }}
+              type="lightSecondary"
+              title="change prio"
+              onPress={this.toggleConnectionPriority}
+            />
+            <Button
+              containerStyle={{ width: 50, marginRight: 8 }}
+              type="lightSecondary"
+              title="infer MTU"
+              onPress={this.inferMTU}
+            />
+            <Button
+              containerStyle={{ width: 38, marginRight: 8 }}
+              type="primary"
+              title="CO"
+              onPress={this.connect}
+            />
+            <Button
+              containerStyle={{ width: 38 }}
+              type="primary"
+              title="DI"
+              onPress={this.disconnect}
+            />
+          </View>
+        ) : null}
       </KeyboardView>
     );
   }
