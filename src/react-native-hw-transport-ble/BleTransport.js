@@ -13,6 +13,7 @@ import { sendAPDU } from "./sendAPDU";
 import { receiveAPDU } from "./receiveAPDU";
 import { monitorCharacteristic } from "./monitorCharacteristic";
 import { awaitsBleOn } from "./awaitsBleOn";
+import getMTU from "../logic/hw/getMTU";
 
 const ServiceUuid = "d973f2e0-b19e-11e2-9e96-0800200c9a66";
 const WriteCharacteristicUuid = "d973f2e2-b19e-11e2-9e96-0800200c9a66";
@@ -287,8 +288,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
   async inferMTU() {
     let { mtu } = this.device;
     if (mtu === 23) {
-      // do an apdu because it's likely device.mtu this failed to be retrieved.
-      mtu = 23; // TODO
+      mtu = await getMTU(this);
     }
     const mtuSize = mtu - 3;
     logSubject.next({
