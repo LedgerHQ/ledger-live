@@ -381,7 +381,12 @@
     "stepPassword": {
       "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
       "descConfigured": "Password lock successfully enabled",
-      "setPassword": "Set password"
+      "setPassword": "Set password",
+      "modal": {
+        "step1":"Make sure to remember your password. Do not share it.",
+        "step2":"Losing your password requires resetting Ledger Live and re-adding accounts.",
+        "step3":"Resetting Ledger Live does not affect your crypto assets."
+      }
     },
     "stepShareData": {},
     "stepFinish": {
