@@ -16,15 +16,15 @@ export type Device = {
   name: string,
 };
 
-type Props<T> = {
-  device: T,
+type Props = {
+  device: Device,
   name: string,
   id: string,
   disabled?: boolean,
   withArrow?: boolean,
   description?: string,
-  onSelect?: T => any,
-  onForgetSelect?: T => any,
+  onSelect?: Device => any,
+  onForgetSelect?: string => any,
   selected?: boolean,
 };
 
@@ -32,7 +32,7 @@ const iconByFamily = {
   httpdebug: "terminal",
 };
 
-export default class DeviceItem<T> extends PureComponent<Props<T>> {
+export default class DeviceItem extends PureComponent<Props> {
   onPress = () => {
     const { device, onSelect } = this.props;
     invariant(onSelect, "onSelect required");
@@ -42,7 +42,7 @@ export default class DeviceItem<T> extends PureComponent<Props<T>> {
   onForget = () => {
     const { device, onForgetSelect } = this.props;
     invariant(onForgetSelect, "onForget required");
-    return onForgetSelect(device);
+    return onForgetSelect(device.id);
   };
 
   render() {

@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
-
+import { disconnect } from "../../logic/hw";
 import { removeKnownDevices } from "../../actions/ble";
 
 import Trash from "../../icons/Trash";
@@ -17,13 +17,11 @@ const AnimatedSafeView = Animated.createAnimatedComponent(SafeAreaView);
 
 const forceInset = { bottom: "always" };
 
-type Device = string;
-
 type Props = {
   navigation: NavigationScreenProp<*>,
   show: boolean,
-  devices: Array<Device>,
-  removeKnownDevices: (devicesId: Array<Device>) => void,
+  deviceIds: string[],
+  removeKnownDevices: (deviceIds: string[]) => void,
   reset: () => void,
 };
 
@@ -60,15 +58,18 @@ class RemoveDeviceButton extends PureComponent<Props> {
     }
   }
 
-  onPress = () => {
-    this.props.removeKnownDevices(this.props.devices);
+  onPress = async () => {
+    this.props.removeKnownDevices(this.props.deviceIds);
     this.props.reset();
     this.hideButton();
+    await Promise.all(
+      this.props.deviceIds.map(id => disconnect(id).catch(() => {})),
+    );
   };
 
   render() {
-    const { devices } = this.props;
-    const count = devices.length;
+    const { deviceIds } = this.props;
+    const count = deviceIds.length;
 
     const anim = {
       transform: [

@@ -10,17 +10,49 @@ import {
   genuineCheck,
 } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
+import RemoveDeviceButton from "../../components/SelectDevice/RemoveDeviceButton";
 import colors from "../../colors";
 import ToggleManagerEdition from "./ToggleManagerEdition";
 import manager from "../../logic/manager";
 
-class Manager extends Component<{
-  navigation: NavigationScreenProp<*>,
-  isFocused: boolean,
-}> {
+class Manager extends Component<
+  {
+    navigation: NavigationScreenProp<*>,
+    isFocused: boolean,
+  },
+  {
+    toForget: string[],
+  },
+> {
   static navigationOptions = {
     title: "Manager",
     headerRight: <ToggleManagerEdition />,
+  };
+
+  static getDerivedStateFromProps({ navigation }, { toForget }) {
+    if (toForget.length > 0 && !navigation.getParam("editMode")) {
+      return {
+        toForget: [],
+      };
+    }
+    return null;
+  }
+
+  state = {
+    toForget: [],
+  };
+
+  onForgetSelect = (id: string) => {
+    this.setState(state => {
+      const toForget = state.toForget.includes(id)
+        ? state.toForget.filter(d => d !== id)
+        : [...state.toForget, id];
+      return { toForget };
+    });
+  };
+
+  onResetToForget = () => {
+    this.setState({ toForget: [] });
   };
 
   onSelect = (deviceId: string, meta: Object) => {
@@ -60,6 +92,13 @@ class Manager extends Component<{
           editMode={editMode}
           steps={[connectingStep, dashboard, genuineCheck]}
           onStepEntered={this.onStepEntered}
+          onForgetSelect={this.onForgetSelect}
+          selectedIds={this.state.toForget}
+        />
+        <RemoveDeviceButton
+          show={editMode}
+          deviceIds={this.state.toForget}
+          reset={this.onResetToForget}
         />
       </View>
     );
