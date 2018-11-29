@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from "react";
+import i18next from "i18next";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -35,7 +36,15 @@ type Props = {
 
 class ConnectDevice extends Component<Props> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="2 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("common.device")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "2",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
 
   onSelectDevice = (deviceId: string) => {

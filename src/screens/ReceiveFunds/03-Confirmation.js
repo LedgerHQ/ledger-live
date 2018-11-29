@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
+import i18next from "i18next";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -50,7 +51,15 @@ type State = {
 class ReceiveConfirmation extends Component<Props, State> {
   static navigationOptions = ({ navigation }) => {
     const options: any = {
-      headerTitle: <StepHeader title="Receive" subtitle="3 of 3" />,
+      headerTitle: (
+        <StepHeader
+          title={i18next.t("account.receive")}
+          subtitle={i18next.t("send.stepperHeader.stepRange", {
+            currentStep: "3",
+            totalSteps: "3",
+          })}
+        />
+      ),
     };
 
     if (!navigation.getParam("allowNavigation")) {
