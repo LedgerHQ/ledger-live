@@ -9,7 +9,6 @@ import LText from "../../components/LText";
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
 import type { Transaction } from "../../bridge/RNLibcoreAccountBridge";
-import Touchable from "../../components/Touchable";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
@@ -39,11 +38,12 @@ class BitcoinFeePerByteRow extends Component<Props> {
     const bridge = getAccountBridge(account);
     return (
       <SummaryRow
+        onPress={this.extraInfoFees}
         title={<Trans i18nKey="send.fees.title" />}
         additionalInfo={
-          <Touchable onPress={this.extraInfoFees}>
+          <View>
             <ExternalLink size={12} color={colors.grey} />
-          </Touchable>
+          </View>
         }
       >
         <View style={{ alignItems: "flex-end" }}>

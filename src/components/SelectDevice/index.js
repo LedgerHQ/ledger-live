@@ -12,30 +12,33 @@ import type { Step } from "../DeviceJob/types";
 import Header from "./Header";
 import Footer from "./Footer";
 
-class SelectDevice extends Component<
-  {
-    onSelect: (deviceId: string, meta: Object) => void,
-    steps: Step[],
-    editMode?: boolean,
-    // connect-ed
-    knownDevices: Array<{
-      id: string,
-      name: string,
-    }>,
-    removeKnownDevice: string => *,
-    onStepEntered?: (number, Object) => void,
-  },
-  {
-    devices: Array<{
-      id: string,
-      name: string,
-      family: string,
-    }>,
-    scanning: boolean,
-    connecting: boolean,
-    connectingId: ?string,
-  },
-> {
+type Props = {
+  onForgetSelect?: (deviceId: string) => any,
+  onSelect: (deviceId: string, meta: Object) => void,
+  selectedIds?: string[],
+  steps: Step[],
+  editMode?: boolean,
+  // connect-ed
+  knownDevices: Array<{
+    id: string,
+    name: string,
+  }>,
+  removeKnownDevice: string => *,
+  onStepEntered?: (number, Object) => void,
+};
+
+type State = {
+  devices: Array<{
+    id: string,
+    name: string,
+    family: string,
+  }>,
+  scanning: boolean,
+  connecting: boolean,
+  connectingId: ?string,
+};
+
+class SelectDevice extends Component<Props, State> {
   static defaultProps = {
     steps: [],
   };
@@ -72,10 +75,6 @@ class SelectDevice extends Component<
     this.listingSubscription.unsubscribe();
   }
 
-  onForget = async ({ id }) => {
-    this.props.removeKnownDevice(id);
-  };
-
   onSelect = ({ id }) => {
     this.setState({ connecting: true, connectingId: id });
   };
@@ -95,7 +94,14 @@ class SelectDevice extends Component<
       key={item.id}
       device={item}
       onSelect={this.onSelect}
-      onForget={this.props.editMode ? this.onForget : undefined}
+      onForgetSelect={
+        this.props.editMode ? this.props.onForgetSelect : undefined
+      }
+      selected={
+        this.props.selectedIds
+          ? this.props.selectedIds.includes(item.id)
+          : undefined
+      }
       {...item}
     />
   );
@@ -116,7 +122,7 @@ class SelectDevice extends Component<
           data={data}
           renderItem={this.renderItem}
           ListHeaderComponent={Header}
-          ListFooterComponent={Footer}
+          ListFooterComponent={editMode ? null : Footer}
           keyExtractor={this.keyExtractor}
         />
         <DeviceJob

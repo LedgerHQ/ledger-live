@@ -61,6 +61,7 @@ class EditAccountUnits extends PureComponent<Props> {
                 <SettingsRow
                   title={item.code}
                   selected={account.unit.code === item.code}
+                  compact
                 />
               </Touchable>
             )}

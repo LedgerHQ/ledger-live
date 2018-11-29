@@ -16,7 +16,7 @@ export const getValue = (obj: any) => obj;
 export const getBlockHeightForAccount = async (core: *, coreAccount: *) => {
   const coreBlock = await core.coreAccount.getLastBlock(coreAccount);
   const blockHeightRes = await core.coreBlock.getHeight(coreBlock);
-  return blockHeightRes;
+  return blockHeightRes.value;
 };
 
 /* eslint-disable */

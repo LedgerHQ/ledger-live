@@ -178,11 +178,12 @@ const ManagerStack = createStackNavigator(
   },
 );
 
-ManagerStack.navigationOptions = {
+ManagerStack.navigationOptions = ({ navigation }) => ({
   tabBarIcon: (props: *) => (
     <TabIcon Icon={ManagerIcon} i18nKey="tabs.manager" {...props} />
   ),
-};
+  tabBarVisible: !navigation.getParam("editMode"),
+});
 
 const AccountsStack = createStackNavigator(
   {

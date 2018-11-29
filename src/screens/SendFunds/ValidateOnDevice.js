@@ -8,6 +8,7 @@ import colors from "../../colors";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
+import { deviceNames } from "../../wording";
 
 type Props = {
   action: () => void,
@@ -24,7 +25,10 @@ class ValidateOnDevice extends PureComponent<Props> {
             </View>
             <View style={styles.titleContainer}>
               <LText secondary semiBold style={styles.title}>
-                <Trans i18nKey="send.validation.title" />
+                <Trans
+                  i18nKey="send.validation.title"
+                  values={deviceNames.nanoX}
+                />
               </LText>
             </View>
             <View style={styles.messageContainer}>

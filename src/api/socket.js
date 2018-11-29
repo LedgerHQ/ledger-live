@@ -14,11 +14,28 @@ import {
 
 const log = __DEV__ ? (...arg) => console.log(...arg) : noop; // eslint-disable-line no-console
 
+export type SocketEvent =
+  | {
+      type: "bulk-progress",
+      progress: number,
+    }
+  | {
+      type: "result",
+      payload: string,
+    }
+  | {
+      type: "exchange",
+      nonce: number,
+    };
+
 /**
  * use Ledger WebSocket API to exchange data with the device
  * Returns an Observable of the final result
  */
-export const createDeviceSocket = (transport: Transport<*>, url: string) =>
+export const createDeviceSocket = (
+  transport: Transport<*>,
+  url: string,
+): Observable<SocketEvent> =>
   Observable.create(o => {
     let ws;
     let lastMessage: ?string;
@@ -44,7 +61,7 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
 
     ws.onclose = () => {
       log("CLOSE");
-      o.next(lastMessage || "");
+      o.next({ type: "result", payload: lastMessage || "" });
       o.complete();
     };
 
@@ -64,6 +81,7 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
         const { data, nonce } = input;
         const r: Buffer = await transport.exchange(Buffer.from(data, "hex"));
         if (interrupted) return;
+        o.next({ type: "exchange", nonce });
         const status = r.slice(r.length - 2);
         const buffer = r.slice(0, r.length - 2);
         const strStatus = status.toString("hex");
@@ -77,14 +95,17 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
       bulk: async input => {
         const { data, nonce } = input;
 
+        o.next({ type: "bulk-progress", progress: 0 });
+
         // Execute all apdus and collect last status
         let lastStatus = null;
-        for (const apdu of data) {
+        for (let i = 0; i < data.length; i++) {
+          const apdu = data[i];
           const r: Buffer = await transport.exchange(Buffer.from(apdu, "hex"));
           lastStatus = r.slice(r.length - 2);
-
           if (lastStatus.toString("hex") !== "9000") break;
           if (interrupted) return;
+          o.next({ type: "bulk-progress", progress: (i + 1) / data.length });
         }
 
         if (!lastStatus) {

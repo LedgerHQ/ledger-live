@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     fontSize: 16,
-    lineHeight: 24,
     color: colors.darkBlue,
   },
   description: {

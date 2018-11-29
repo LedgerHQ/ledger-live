@@ -27,6 +27,10 @@ const handlers: Object = {
     knownDevices: state.knownDevices.filter(d => d.id !== deviceId),
   }),
 
+  BLE_REMOVE_DEVICES: (state: BleState, { ids }: { ids: string[] }) => ({
+    knownDevices: state.knownDevices.filter(d => !ids.includes(d.id)),
+  }),
+
   BLE_IMPORT: (state: BleState, { ble }: { ble: BleState }) => ({
     ...state,
     ...ble,

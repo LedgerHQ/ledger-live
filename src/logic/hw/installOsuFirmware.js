@@ -1,6 +1,7 @@
 // @flow
 import type Transport from "@ledgerhq/hw-transport";
 import type { Observable } from "rxjs";
+import { last } from "rxjs/operators";
 import type { Firmware } from "../../types/manager";
 import ManagerAPI from "../../api/Manager";
 
@@ -15,5 +16,5 @@ export default (
     firmwareKey: firmware.firmware_key,
   };
   delete params.shouldFlashMcu;
-  return ManagerAPI.install(transport, "firmware", params);
+  return ManagerAPI.install(transport, "firmware", params).pipe(last());
 };

@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, SectionList, Animated } from "react-native";
+import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { SafeAreaView } from "react-navigation";
 import { translate } from "react-i18next";
 import Config from "react-native-config";
@@ -106,7 +107,15 @@ class Portfolio extends Component<
     <GraphCardContainer summary={this.props.summary} />
   );
 
-  renderItem = ({ item }: { item: Operation }) => {
+  renderItem = ({
+    item,
+    index,
+    section,
+  }: {
+    item: Operation,
+    index: number,
+    section: SectionBase<*>,
+  }) => {
     const account = this.props.accounts.find(a => a.id === item.accountId);
 
     if (!account) return null;
@@ -117,6 +126,7 @@ class Portfolio extends Component<
         account={account}
         navigation={this.props.navigation}
         multipleAccounts
+        isLast={section.data.length - 1 === index}
       />
     );
   };

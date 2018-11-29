@@ -7,6 +7,11 @@ export const removeKnownDevice = (deviceId: string) => ({
   deviceId,
 });
 
+export const removeKnownDevices = (ids: string[]) => ({
+  type: "BLE_REMOVE_DEVICES",
+  ids,
+});
+
 export const addKnownDevice = (device: DeviceLike) => ({
   type: "BLE_ADD_DEVICE",
   device,
