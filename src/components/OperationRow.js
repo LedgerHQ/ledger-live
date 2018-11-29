@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   body: {
+    alignItems: "center",
     flexDirection: "row",
     flex: 1,
   },
