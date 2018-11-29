@@ -17,7 +17,7 @@ const RefreshAccounts = withNavigationFocus(({ isFocused, isOpened }) => (
   />
 ));
 
-class AddAccount extends PureComponent<{}, { isOpened: boolean }> {
+class AccountOrder extends PureComponent<{}, { isOpened: boolean }> {
   state = {
     isOpened: false,
   };
@@ -38,4 +38,4 @@ class AddAccount extends PureComponent<{}, { isOpened: boolean }> {
   }
 }
 
-export default AddAccount;
+export default AccountOrder;

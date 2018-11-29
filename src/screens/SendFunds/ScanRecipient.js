@@ -89,8 +89,7 @@ class ScanRecipient extends PureComponent<Props, State> {
       t,
     );
 
-    // $FlowFixMe
-    this.props.navigation.replace("SendSelectRecipient", {
+    this.props.navigation.navigate("SendSelectRecipient", {
       accountId: account.id,
       transaction: t,
     });

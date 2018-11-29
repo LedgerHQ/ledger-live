@@ -44,7 +44,7 @@ export default StyleSheet.create({
     ...headerStyle,
   },
   bottomTabBar: {
-    height: 48,
+    height: 56,
     borderTopColor: colors.lightFog,
     backgroundColor: colors.white,
   },

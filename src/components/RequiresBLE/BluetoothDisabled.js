@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 import LText from "../LText";
 import BluetoothDisabledImage from "./assets/BluetoothDisabledImage";
 import colors from "../../colors";
+import { deviceNames } from "../../wording";
 
 export default class BluetoothDisabled extends PureComponent<{}> {
   render() {
@@ -20,7 +21,10 @@ export default class BluetoothDisabled extends PureComponent<{}> {
         </View>
         <View style={styles.desc}>
           <LText style={styles.descFont}>
-            <Trans i18nKey="bluetooth.checkEnabled" />
+            <Trans
+              i18nKey="bluetooth.checkEnabled"
+              values={deviceNames.nanoX}
+            />
           </LText>
         </View>
       </View>

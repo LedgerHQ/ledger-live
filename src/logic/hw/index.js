@@ -14,6 +14,7 @@ import BluetoothTransport from "../../react-native-hw-transport-ble";
 
 const observables = [];
 const openHandlers: Array<(string) => ?Promise<Transport<*>>> = [];
+const disconnectHandlers: Array<(string) => ?Promise<void>> = [];
 
 // Add support of HID
 const hidObservable = Observable.create(o => HIDTransport.listen(o)).pipe(
@@ -81,6 +82,10 @@ openHandlers.push(id =>
   // $FlowFixMe subtyping god help me
   BluetoothTransport.open(id),
 );
+disconnectHandlers.push(id =>
+  // $FlowFixMe subtyping god help me
+  BluetoothTransport.disconnect(id),
+);
 
 export const open = (deviceId: string): Promise<Transport<*>> => {
   for (let i = 0; i < openHandlers.length; i++) {
@@ -97,4 +102,17 @@ export const open = (deviceId: string): Promise<Transport<*>> => {
     }
   }
   return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));
+};
+
+export const disconnect = (deviceId: string): Promise<void> => {
+  for (let i = 0; i < disconnectHandlers.length; i++) {
+    const dis = disconnectHandlers[i];
+    const p = dis(deviceId);
+    if (p) {
+      return p;
+    }
+  }
+  return Promise.reject(
+    new Error(`Can't find handler to disconnect ${deviceId}`),
+  );
 };

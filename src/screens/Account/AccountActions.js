@@ -44,7 +44,7 @@ class AccountActions extends PureComponent<Props> {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingHorizontal: 16,
   },
   btn1: {

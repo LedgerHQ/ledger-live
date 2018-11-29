@@ -1,10 +1,11 @@
 // @flow
 import React, { PureComponent, Fragment } from "react";
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { translate } from "react-i18next";
 
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
+import TextInput from "./TextInput";
 import InputResetCross from "./InputResetCross";
 import getFontStyle from "./LText/getFontStyle";
 
@@ -88,7 +89,6 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             style={styles.input}
             value={query}
             ref={this.input}
-            autoCorrect={false}
           />
           {query ? <InputResetCross onPress={this.clear} /> : null}
         </TouchableOpacity>

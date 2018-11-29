@@ -236,7 +236,7 @@
     "required": "Bluetooth required",
     "locationRequiredTitle": "Location is required for Bluetooth LE",
     "locationRequiredMessage": "On Android, location permission is required to be able to list Bluetooth LE devices.",
-    "checkEnabled": "It seems bluetooth is disabled on your mobile. Go to settings and enable bluetooth to pair a Nano X"
+    "checkEnabled": "It seems bluetooth is disabled on your mobile. Go to settings and enable bluetooth to pair a {{fullDeviceName}}"
   },
   "location": {
     "required": "Location required",
@@ -506,9 +506,10 @@
         "desc": "The API node to use"
       },
       "delete": {
-        "title": "Delete Account",
-        "desc": "Stored data will be deleted",
-        "confirmationDesc": "Are you sure you want to delete <1><0>{{accountName}}</0></1> account?"
+        "title": "Remove account from portfolio",
+        "desc": "The stored data will be removed",
+        "confirmationTitle": "Are you sure?",
+        "confirmationDesc": "Deleting an account does not affect your crypto assets. Accounts can always be re-added."
       },
       "archive": {
         "title": "Archive Account",
@@ -548,9 +549,9 @@
     },
     "row": {
       "syncPending": "Synchronizing...",
-      "upToDate": "Up to date",
+      "upToDate": "Synchronized",
       "error": "Error",
-      "queued": "In queue"
+      "queued": "Awaiting"
     }
   },
   "settings": {
@@ -612,7 +613,7 @@
     "about": {
       "title": "About",
       "desc": "App information, terms and conditions, and privacy policy.",
-      "appDescription": "The perfect companion for your Ledger Nano X. Add new crypto assets and check your balance in just a few taps.",
+      "appDescription": "The perfect companion for your {{fullDeviceName}}. Add new crypto assets and check your balance in just a few taps.",
       "appVersion": "Version",
       "termsConditions": "Terms and conditions",
       "termsConditionsDesc": "By using Ledger Live you are deemed to have accepted our terms and conditions.",
@@ -710,7 +711,7 @@
       "validateGasLimit": "Validate Gas Limit"
     },
     "validation": {
-      "title": "Please verify all transaction details on your Ledger Nano X",
+      "title": "Please verify all transaction details on your {{fullDeviceName}}",
       "message": "Confirm the transaction on your device to securely sign it",
       "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
@@ -797,13 +798,8 @@
   },
   "PairDevices": {
     "Paired": {
-      "title": "Pairing successful",
       "desc": "Your {{fullDeviceName}} is ready to use with Ledger Live",
       "action": "Continue"
-    },
-    "Pairing": {
-      "title": "Pairing...",
-      "subtitle": "Please don’t turn off your Nano X. Follow screen instructions."
     },
     "GenuineCheck": {
       "title": "Genuine check",
@@ -825,6 +821,12 @@
   "DeviceNameRow": {
     "title": "Device Name",
     "action": "Get device name"
+  },
+  "UnpairDevice": {
+    "button": {
+      "title": "Delete {{nbDevices}} device",
+      "title_plural": "Delete {{nbDevices}} devices"
+    }
   },
   "manager": {
     "appList": {
