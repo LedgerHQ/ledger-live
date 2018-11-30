@@ -79,6 +79,7 @@ export const track = (
     message: event,
     category: "track",
     data: properties,
+    level: "debug",
   });
 
   if (
@@ -100,10 +101,12 @@ export const screen = (
   name: ?string,
   properties: ?Object,
 ) => {
+  const title = category + (name ? " " + name : "");
   Sentry.captureBreadcrumb({
-    message: category + (name ? " " + name : ""),
+    message: title,
     category: "screen",
     data: properties,
+    level: "info",
   });
   if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
     return;
@@ -111,7 +114,7 @@ export const screen = (
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, properties);
   if (!token) return;
-  analytics.screen(category, name, {
+  analytics.screen(title, {
     ...extraProperties(storeInstance),
     ...properties,
   });

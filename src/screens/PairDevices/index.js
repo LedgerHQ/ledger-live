@@ -84,7 +84,7 @@ class PairDevices extends Component<Props, State> {
       if (Config.DEBUG_BLE) transport.setDebugMode(true);
       try {
         const deviceInfo = await getDeviceInfo(transport);
-        console.log({ deviceInfo }); // eslint-disable-line
+        if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
 
         this.setState({ device, status: "genuinecheck" });
         const observable = genuineCheck(transport, deviceInfo).pipe(

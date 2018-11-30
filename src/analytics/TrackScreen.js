@@ -20,6 +20,8 @@ class TrackScreen extends PureComponent<{
   }
   record() {
     const { category, name, isFocused, ...properties } = this.props;
+    // $FlowFixMe
+    delete properties.navigation;
     screen(category, name, properties);
   }
   render() {
