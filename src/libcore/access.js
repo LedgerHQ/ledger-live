@@ -1,3 +1,4 @@
+// @flow
 import { createInstance, getNativeModule } from "./specific";
 
 let core;
@@ -6,7 +7,53 @@ let corePromise;
 let walletPoolInstance;
 let threadDispatcher;
 
-export default async () => {
+let libcoreJobsCounter = 0;
+
+const GC_DELAY = 1000;
+
+let lastFlush = Promise.resolve();
+let flushTimeout = null;
+
+function flush(core) {
+  lastFlush = Promise.all([
+    core.coreHttpClient.flush(),
+    core.coreWebSocketClient.flush(),
+    core.corePathResolver.flush(),
+    core.coreLogPrinter.flush(),
+    core.coreRandomNumberGenerator.flush(),
+    core.coreDynamicObject.flush(),
+    core.coreDatabaseBackend.flush(),
+  ]).catch(e => console.error("libcore-flush-fail", e));
+}
+
+export async function withLibcore<R>(job: (core: *) => Promise<R>): Promise<R> {
+  libcoreJobsCounter++;
+  let core;
+  try {
+    if (flushTimeout) {
+      // there is a new job so we must not do the GC yet.
+      clearTimeout(flushTimeout);
+      flushTimeout = null;
+    }
+    core = await load();
+    await lastFlush; // wait previous flush before starting anything
+    const res = await job(core);
+    return res;
+  } finally {
+    libcoreJobsCounter--;
+    if (core && libcoreJobsCounter === 0) {
+      flushTimeout = setTimeout(flush.bind(null, core), GC_DELAY);
+    }
+  }
+}
+
+type Fn<A, R> = (...args: A) => Promise<R>;
+
+export const withLibcoreF = <A: Array<any>, R>(
+  job: (core: *) => Fn<A, R>,
+): Fn<A, R> => (...args) => withLibcore(core => job(core)(...args));
+
+async function load() {
   if (core) {
     return core;
   }
@@ -15,21 +62,12 @@ export default async () => {
   }
   core = await corePromise;
   return core;
-};
+}
 
 async function loadCore() {
-  const core = {
+  const core: any = {
     getPoolInstance: () => walletPoolInstance,
     getThreadDispatcher: () => threadDispatcher,
-    flush: async () => {
-      await core.coreHttpClient.flush();
-      await core.coreWebSocketClient.flush();
-      await core.corePathResolver.flush();
-      await core.coreLogPrinter.flush();
-      await core.coreRandomNumberGenerator.flush();
-      await core.coreDynamicObject.flush();
-      await core.coreDatabaseBackend.flush();
-    },
   };
 
   const modules = [
