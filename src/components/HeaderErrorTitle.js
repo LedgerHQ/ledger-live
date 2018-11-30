@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
   root: {
     marginHorizontal: 16,
     justifyContent: "center",
-    minHeight: 48,
   },
   title: {
     fontSize: 16,
