@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import GenericErrorView from "../../components/GenericErrorView";
 import Button from "../../components/Button";
 import NeedHelp from "../../components/NeedHelp";
@@ -42,7 +42,7 @@ class FirmwareUpdateFailure extends Component<Props, State> {
     const error = navigation.getParam("error");
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="FirmwareUpdate" name="Failure" />
+        <TrackScreen category="FirmwareUpdate" name="Failure" />
         <View style={styles.body}>
           <GenericErrorView error={error} />
           <Button

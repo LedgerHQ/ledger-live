@@ -10,7 +10,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import TrackPage from "../../analytics/TrackPage";
+import TrackScreen from "../../analytics/TrackScreen";
 
 import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
@@ -59,7 +59,7 @@ class Accounts extends Component<Props> {
     if (accounts.length === 0) {
       return (
         <Fragment>
-          <TrackPage category="Accounts" accountsLength={0} />
+          <TrackScreen category="Accounts" accountsLength={0} />
           <NoAccounts navigation={navigation} />
         </Fragment>
       );
@@ -67,7 +67,7 @@ class Accounts extends Component<Props> {
 
     return (
       <Fragment>
-        <TrackPage category="Accounts" accountsLength={accounts.length} />
+        <TrackScreen category="Accounts" accountsLength={accounts.length} />
         <List
           data={accounts}
           renderItem={this.renderItem}

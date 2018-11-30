@@ -3,7 +3,7 @@ import React, { PureComponent } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
 import i18next from "i18next";
 import { translate } from "react-i18next";
-import { TrackPage } from "../../../analytics";
+import { TrackScreen } from "../../../analytics";
 import AppVersionRow from "./AppVersionRow";
 import LiveReviewRow from "./LiveReviewRow";
 import PrivacyPolicyRow from "./PrivacyPolicyRow";
@@ -18,7 +18,7 @@ class About extends PureComponent<*, *> {
   render() {
     return (
       <ScrollView contentContainerStyle={styles.root}>
-        <TrackPage category="Settings" name="About" />
+        <TrackScreen category="Settings" name="About" />
         <DescriptionRow />
         <AppVersionRow />
         <TermsConditionsRow />

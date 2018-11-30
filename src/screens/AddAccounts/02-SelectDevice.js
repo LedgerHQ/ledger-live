@@ -9,7 +9,7 @@ import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import i18next from "i18next";
 
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
 import StepHeader from "../../components/StepHeader";
@@ -48,7 +48,7 @@ class AddAccountsSelectDevice extends Component<Props, State> {
     const currency = navigation.getParam("currency");
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="AddAccounts" name="SelectDevice" />
+        <TrackScreen category="AddAccounts" name="SelectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[connectingStep, currencyApp(currency)]}

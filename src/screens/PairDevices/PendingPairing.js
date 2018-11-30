@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import { deviceNames } from "../../wording";
 
@@ -13,7 +13,7 @@ class PendingPairing extends PureComponent<*> {
   render() {
     return (
       <Fragment>
-        <TrackPage category="PairDevices" name="PendingPairing" />
+        <TrackScreen category="PairDevices" name="PendingPairing" />
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="PairDevices.Pairing.title" />
         </LText>

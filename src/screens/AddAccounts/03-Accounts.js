@@ -16,7 +16,7 @@ import { addAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import { getCurrencyBridge } from "../../bridge";
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
@@ -252,7 +252,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="AddAccounts" name="Accounts" />
+        <TrackScreen category="AddAccounts" name="Accounts" />
         <PreventNativeBack />
         <ScrollView
           style={styles.inner}

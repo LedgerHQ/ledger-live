@@ -11,7 +11,7 @@ import LText from "../../components/LText";
 import colors from "../../colors";
 import exchanges from "../../config/exchange";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
-import TrackPage from "../../analytics/TrackPage";
+import TrackScreen from "../../analytics/TrackScreen";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -29,7 +29,7 @@ class ExchangeScreen extends Component<Props> {
       <SafeAreaView
         style={[styles.root, { paddingTop: extraStatusBarPadding }]}
       >
-        <TrackPage category="Exchange" />
+        <TrackScreen category="Exchange" />
         <ScrollView style={styles.scrollView}>
           <View style={styles.body}>
             <LText secondary style={styles.title} bold>

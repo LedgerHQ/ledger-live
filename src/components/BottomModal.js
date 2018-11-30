@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
-import TrackPage from "../analytics/TrackPage";
+import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
@@ -37,7 +37,7 @@ class BottomModal extends Component<Props> {
           {...rest}
         >
           <View style={[styles.modal, style]}>
-            {isOpened ? <TrackPage category={id} /> : null}
+            {isOpened ? <TrackScreen category={id} /> : null}
             <StyledStatusBar
               backgroundColor={
                 Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"

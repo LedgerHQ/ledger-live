@@ -1,9 +1,9 @@
 // @flow
 import { PureComponent } from "react";
 import { withNavigationFocus } from "react-navigation";
-import { page } from "./segment";
+import { screen } from "./segment";
 
-class TrackPage extends PureComponent<{
+class TrackScreen extends PureComponent<{
   category: string,
   name?: string,
   isFocused: boolean,
@@ -20,11 +20,11 @@ class TrackPage extends PureComponent<{
   }
   record() {
     const { category, name, isFocused, ...properties } = this.props;
-    page(category, name, properties);
+    screen(category, name, properties);
   }
   render() {
     return null;
   }
 }
 
-export default withNavigationFocus(TrackPage);
+export default withNavigationFocus(TrackScreen);

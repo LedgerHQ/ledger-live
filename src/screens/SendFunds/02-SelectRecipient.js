@@ -16,7 +16,7 @@ import type { T } from "../../types/common";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { getAccountBridge } from "../../bridge";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -178,7 +178,7 @@ class SendSelectRecipient extends Component<Props, State> {
     const { account, t } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="SendFunds" name="SelectRecipient" />
+        <TrackScreen category="SendFunds" name="SelectRecipient" />
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>

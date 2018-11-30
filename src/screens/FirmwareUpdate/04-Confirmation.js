@@ -5,7 +5,7 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 
 import GenericSuccessView from "../../components/GenericSuccessView";
 import Button from "../../components/Button";
@@ -35,7 +35,7 @@ class FirmwareUpdateConfirmation extends Component<Props, State> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="FirmwareUpdate" name="Confirmation" />
+        <TrackScreen category="FirmwareUpdate" name="Confirmation" />
         <View style={styles.body}>
           <GenericSuccessView
             title={<Trans i18nKey="FirmwareUpdateConfirmation.title" />}

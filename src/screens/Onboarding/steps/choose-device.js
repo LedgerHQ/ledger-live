@@ -4,7 +4,7 @@ import React, { Component, PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
-import { TrackPage } from "../../../analytics";
+import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import Button from "../../../components/Button";
@@ -49,7 +49,7 @@ class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
     };
     return (
       <OnboardingLayout header="OnboardingStepChooseDevice">
-        <TrackPage category="Onboarding" name="Device" />
+        <TrackScreen category="Onboarding" name="Device" />
         <DeviceItem
           event="OnboardingDevice"
           eventProperties={{ product: "NanoX" }}

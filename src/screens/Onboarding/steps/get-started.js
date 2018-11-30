@@ -8,7 +8,7 @@ import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
 import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
-import { TrackPage } from "../../../analytics";
+import { TrackScreen } from "../../../analytics";
 import OnboardingLayout from "../OnboardingLayout";
 import OnboardingStepWelcome from "./welcome";
 import LText from "../../../components/LText";
@@ -97,7 +97,7 @@ class OnboardingStepGetStarted extends Component<
 
     return (
       <OnboardingLayout isFull>
-        <TrackPage category="Onboarding" name="GetStarted" />
+        <TrackScreen category="Onboarding" name="GetStarted" />
         {hasCompletedOnboarding ? (
           <CloseOnboarding navigation={navigation} />
         ) : null}

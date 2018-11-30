@@ -9,7 +9,7 @@ import type { DeviceInfo, ApplicationVersion } from "../../types/manager";
 import manager from "../../logic/manager";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import LText from "../../components/LText";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 
 import AppsListPending from "./AppsListPending";
 import AppsListError from "./AppsListError";
@@ -141,7 +141,7 @@ class ManagerAppsList extends Component<
     const deviceId = navigation.getParam("deviceId");
     return (
       <View style={styles.root}>
-        <TrackPage category="Manager" name="AppsList" />
+        <TrackScreen category="Manager" name="AppsList" />
         {pending ? (
           <AppsListPending />
         ) : error ? (

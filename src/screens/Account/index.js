@@ -11,7 +11,7 @@ import { translate } from "react-i18next";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
@@ -157,7 +157,7 @@ class AccountScreen extends PureComponent<Props, State> {
     if (!account) return null;
 
     const analytics = (
-      <TrackPage
+      <TrackScreen
         category="Account"
         currency={account.currency.id}
         operationsSize={account.operations.length}

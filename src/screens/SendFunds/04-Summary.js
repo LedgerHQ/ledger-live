@@ -12,7 +12,7 @@ import type { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
@@ -143,7 +143,7 @@ class SendSummary extends Component<
 
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="SendFunds" name="Summary" />
+        <TrackScreen category="SendFunds" name="Summary" />
         <ScrollView style={styles.body}>
           <SummaryFromSection account={account} />
           <VerticalConnector />

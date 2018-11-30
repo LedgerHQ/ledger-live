@@ -11,7 +11,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
@@ -60,7 +60,7 @@ class ReceiveFunds extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="ReceiveFunds" name="SelectAccount" />
+        <TrackScreen category="ReceiveFunds" name="SelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar

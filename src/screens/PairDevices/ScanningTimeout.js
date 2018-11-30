@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import colors from "../../colors";
 import { urls } from "../../config/urls";
 import { deviceNames } from "../../wording";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
@@ -23,7 +23,7 @@ class ScanningTimeout extends Component<Props> {
     const { onRetry } = this.props;
     return (
       <View style={styles.root}>
-        <TrackPage category="PairDevices" name="ScanningTimeout" />
+        <TrackScreen category="PairDevices" name="ScanningTimeout" />
         <View style={styles.body}>
           <Circle bg={colors.lightAlert} size={80}>
             <NanoX color={colors.alert} width={11} height={48} />

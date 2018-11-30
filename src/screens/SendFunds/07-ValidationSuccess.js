@@ -7,7 +7,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "./ValideSuccess";
@@ -51,7 +51,7 @@ class ValidationSuccess extends Component<Props> {
   render() {
     return (
       <View style={styles.root}>
-        <TrackPage category="SendFunds" name="ValidationSuccess" />
+        <TrackScreen category="SendFunds" name="ValidationSuccess" />
         <PreventNativeBack />
         <ValidateSuccess
           onClose={this.dismiss}

@@ -1,6 +1,6 @@
 // @flow
 import Track from "./Track";
-import TrackPage from "./TrackPage";
+import TrackScreen from "./TrackScreen";
 
 export * from "./segment";
-export { Track, TrackPage };
+export { Track, TrackScreen };

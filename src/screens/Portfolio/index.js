@@ -38,7 +38,7 @@ import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
 import TradingDisclaimer from "../../modals/TradingDisclaimer";
-import TrackPage from "../../analytics/TrackPage";
+import TrackScreen from "../../analytics/TrackScreen";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
@@ -160,7 +160,7 @@ class Portfolio extends Component<
     if (accounts.length === 0) {
       return (
         <View style={styles.root}>
-          <TrackPage category="Portfolio" accountsLength={0} />
+          <TrackScreen category="Portfolio" accountsLength={0} />
           <EmptyStatePortfolio navigation={navigation} />
           {disclaimer}
         </View>
@@ -176,7 +176,7 @@ class Portfolio extends Component<
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
         <StickyHeader scrollY={scrollY} summary={summary} />
         <SyncBackground />
-        <TrackPage category="Portfolio" accountsLength={accounts.length} />
+        <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
         <SafeAreaView style={styles.inner}>
           <List

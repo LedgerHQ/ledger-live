@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { Image, View, StyleSheet } from "react-native";
 
-import { TrackPage } from "../../../analytics";
+import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -36,7 +36,7 @@ class OnboardingStepFinish extends Component<Props> {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "white" }}>
-        <TrackPage category="Onboarding" name="Finish" />
+        <TrackScreen category="Onboarding" name="Finish" />
         <View style={styles.confettiContainer} pointerEvents="none">
           <ConfettiParty emit={false} />
         </View>

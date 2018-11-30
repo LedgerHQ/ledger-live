@@ -16,7 +16,7 @@ import { supportsExistingAccount } from "../../cryptocurrencies";
 import { importDesktopSettings } from "../../actions/settings";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import Button from "../../components/Button";
@@ -224,7 +224,7 @@ class DisplayResult extends Component<Props, State> {
 
     return (
       <View style={styles.root}>
-        <TrackPage category="ImportAccounts" name="DisplayResult" />
+        <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
         {items.length ? (
           <Fragment>

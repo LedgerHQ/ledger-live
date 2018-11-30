@@ -14,7 +14,7 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import FallBackCamera from "./FallBackCamera";
@@ -127,7 +127,7 @@ class Scan extends PureComponent<
 
     return (
       <View style={styles.root} onLayout={this.setDimensions}>
-        <TrackPage category="ImportAccounts" name="Scan" />
+        <TrackScreen category="ImportAccounts" name="Scan" />
         <StyledStatusBar barStyle="light-content" />
         <RNCamera
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR

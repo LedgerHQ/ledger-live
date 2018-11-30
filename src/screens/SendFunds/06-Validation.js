@@ -11,7 +11,7 @@ import { updateAccountWithUpdater } from "../../actions/accounts";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import PreventNativeBack from "../../components/PreventNativeBack";
@@ -112,7 +112,7 @@ class Validation extends Component<Props, State> {
     const { signed } = this.state;
     return (
       <View style={styles.root}>
-        <TrackPage category="SendFunds" name="Validation" signed={signed} />
+        <TrackScreen category="SendFunds" name="Validation" signed={signed} />
         <PreventNativeBack />
         {signed ? (
           <View style={styles.center}>

@@ -15,7 +15,7 @@ import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import { open } from "../../logic/hw";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
@@ -144,7 +144,7 @@ class ReceiveConfirmation extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage
+        <TrackScreen
           category="ReceiveFunds"
           name="Confirmation"
           unsafe={unsafe}

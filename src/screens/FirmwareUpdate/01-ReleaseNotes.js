@@ -7,7 +7,7 @@ import Markdown from "react-native-easy-markdown";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import manager from "../../logic/manager";
 import type { Firmware } from "../../types/manager";
 import Button from "../../components/Button";
@@ -46,7 +46,7 @@ class FirmwareUpdateReleaseNotes extends Component<Props, State> {
     const version = manager.getFirmwareVersion(latestFirmware);
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="FirmwareUpdate" name="ReleaseNotes" />
+        <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
         <ScrollView style={styles.body} contentContainerStyle={styles.content}>
           <LText style={styles.intro}>
             <Trans

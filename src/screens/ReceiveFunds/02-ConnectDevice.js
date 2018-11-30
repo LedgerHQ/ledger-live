@@ -12,7 +12,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import StepHeader from "../../components/StepHeader";
 import SelectDevice from "../../components/SelectDevice";
 import Button from "../../components/Button";
@@ -65,7 +65,7 @@ class ConnectDevice extends Component<Props> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <TrackPage category="ReceiveFunds" name="ConnectDevice" />
+        <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[

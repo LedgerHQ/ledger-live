@@ -95,18 +95,23 @@ export const track = (
   });
 };
 
-export const page = (category: string, name: ?string, properties: ?Object) => {
+export const screen = (
+  category: string,
+  name: ?string,
+  properties: ?Object,
+) => {
   Sentry.captureBreadcrumb({
     message: category + (name ? " " + name : ""),
-    category: "page",
+    category: "screen",
     data: properties,
   });
   if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
     return;
   }
-  if (ANALYTICS_LOGS) console.log("analytics:page", category, name, properties);
+  if (ANALYTICS_LOGS)
+    console.log("analytics:screen", category, name, properties);
   if (!token) return;
-  analytics.page(category, name, {
+  analytics.screen(category, name, {
     ...extraProperties(storeInstance),
     ...properties,
   });

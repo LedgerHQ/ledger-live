@@ -7,7 +7,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 import colors, { rgba } from "../../colors";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import IconCheck from "../../icons/Check";
@@ -42,7 +42,7 @@ class AddAccountsSuccess extends Component<Props, State> {
     const currency = navigation.getParam("currency");
     return (
       <View style={styles.root}>
-        <TrackPage category="AddAccounts" name="Success" />
+        <TrackScreen category="AddAccounts" name="Success" />
         <CurrencySuccess currency={currency} />
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="addAccounts.imported" />

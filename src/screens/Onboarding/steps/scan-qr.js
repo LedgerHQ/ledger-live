@@ -5,7 +5,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 
-import { TrackPage } from "../../../analytics";
+import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -49,7 +49,7 @@ class OnboardingStepScanQR extends Component<Props> {
         Footer={this.Footer}
         withNeedHelp
       >
-        <TrackPage category="Onboarding" name="ScanQR" />
+        <TrackScreen category="Onboarding" name="ScanQR" />
         <View style={styles.hero}>
           <ScanIllustration />
         </View>

@@ -9,7 +9,7 @@ import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { TrackPage } from "../../analytics";
+import { TrackScreen } from "../../analytics";
 import DeviceItem from "../../components/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 
@@ -97,7 +97,7 @@ class Scanning extends Component<Props, State> {
     const { devices } = this.state;
     return (
       <Fragment>
-        <TrackPage category="PairDevices" name="Scanning" />
+        <TrackScreen category="PairDevices" name="Scanning" />
         <FlatList
           style={styles.list}
           data={devices}
