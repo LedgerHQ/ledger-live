@@ -2,11 +2,13 @@
 
 import React, { PureComponent } from "react";
 import { Buffer } from "buffer";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import { Keyboard, View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import colors from "../colors";
 import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
@@ -16,6 +18,7 @@ import TranslatedError from "../components/TranslatedError";
 import KeyboardView from "../components/KeyboardView";
 import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
 import DeviceJob from "../components/DeviceJob";
+import { saveBleDeviceName } from "../actions/ble";
 
 const MAX_DEVICE_NAME = 32;
 
@@ -30,6 +33,9 @@ class FooterError extends PureComponent<{ error: Error }> {
     );
   }
 }
+const mapDispatchToProps = {
+  saveBleDeviceName,
+};
 
 class EditDeviceName extends PureComponent<
   {
@@ -40,6 +46,7 @@ class EditDeviceName extends PureComponent<
       },
     }>,
     deviceName: string,
+    saveBleDeviceName: (string, string) => *,
   },
   {
     name: string,
@@ -67,7 +74,8 @@ class EditDeviceName extends PureComponent<
   onSubmit = async () => {
     const { name } = this.state;
     if (this.initialName !== name) {
-      this.setState({ connecting: true });
+      Keyboard.dismiss();
+      setTimeout(() => this.setState({ connecting: true }), 800);
     } else {
       this.props.navigation.goBack();
     }
@@ -78,6 +86,8 @@ class EditDeviceName extends PureComponent<
   };
 
   onDone = () => {
+    const { saveBleDeviceName, navigation } = this.props;
+    saveBleDeviceName(navigation.getParam("deviceId"), this.state.name);
     this.props.navigation.goBack();
   };
 
@@ -132,7 +142,13 @@ class EditDeviceName extends PureComponent<
   }
 }
 
-export default translate()(EditDeviceName);
+export default compose(
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
+  translate(),
+)(EditDeviceName);
 
 const styles = StyleSheet.create({
   safearea: {
