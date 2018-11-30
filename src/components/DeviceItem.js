@@ -115,9 +115,17 @@ export default class DeviceItem extends PureComponent<Props> {
     );
 
     if (onSelect && !disabled && !onForgetSelect) {
-      res = <Touchable onPress={this.onPress}>{res}</Touchable>;
+      res = (
+        <Touchable event="DeviceItemEnter" onPress={this.onPress}>
+          {res}
+        </Touchable>
+      );
     } else if (onForgetSelect) {
-      res = <Touchable onPress={this.onForget}>{res}</Touchable>;
+      res = (
+        <Touchable event="DeviceItemForget" onPress={this.onForget}>
+          {res}
+        </Touchable>
+      );
     }
 
     return (

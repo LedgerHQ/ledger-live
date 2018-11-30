@@ -17,6 +17,7 @@ class OnboardingStepShareData extends Component<OnboardingStepProps> {
     const { next } = this.props;
     return (
       <Button
+        event="OnboardingShareDataContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
         onPress={next}

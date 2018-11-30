@@ -59,6 +59,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
             </Circle>
           }
           onPress={this.onPress}
+          event="ClearCache"
         />
         <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
           <ModalBottomAction
@@ -76,6 +77,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
                   title={<Trans i18nKey="common.cancel" />}
                   onPress={this.onRequestClose}
                   containerStyle={styles.buttonContainer}
+                  event="CancelClearCache"
                 />
                 <Button
                   type="primary"
@@ -85,6 +87,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
                     styles.buttonContainer,
                     styles.buttonMarginLeft,
                   ]}
+                  event="DoClearCache"
                 />
               </View>
             }

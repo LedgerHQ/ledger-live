@@ -29,7 +29,7 @@ class Transfer extends Component<
     const { isModalOpened } = this.state;
     return (
       <Fragment>
-        <Touchable hitSlop={hitSlop} onPress={this.openModal}>
+        <Touchable event="Transfer" hitSlop={hitSlop} onPress={this.openModal}>
           {/* $FlowFixMe */}
           <TabIcon
             Icon={TransferIcon}

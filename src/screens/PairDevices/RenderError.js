@@ -76,6 +76,7 @@ class RenderError extends Component<Props> {
           </LText>
           <View style={styles.buttonContainer}>
             <Button
+              event="PairDevicesRetry"
               type="primary"
               title={<Trans i18nKey="common.retry" />}
               onPress={onRetry}

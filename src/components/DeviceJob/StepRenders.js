@@ -9,6 +9,7 @@ import Button from "../Button";
 
 export const ErrorFooterGeneric = ({ onRetry }: { onRetry: () => void }) => (
   <Button
+    event="DeviceJobErrorRetry"
     type="secondary"
     title={<Trans i18nKey="common.retry" />}
     containerStyle={styles.retryButton}

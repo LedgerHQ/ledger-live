@@ -26,6 +26,7 @@ const mapDispatchToProps = {
 class OnboardingStepScanQR extends Component<Props> {
   Footer = () => (
     <Button
+      event="OnboardingScanQR"
       type="primary"
       title={<Trans i18nKey="onboarding.stepScanQR.cta" />}
       onPress={this.navigateToQR}

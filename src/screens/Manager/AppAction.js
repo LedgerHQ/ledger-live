@@ -183,13 +183,18 @@ class AppAction extends PureComponent<
             ) : null}
           </View>
           <Button
+            event="ManagerAppActionDone"
             type="primary"
             onPress={onClose}
             disabled={pending}
             title={buttonTitle}
           />
         </SafeAreaView>
-        <Touchable style={styles.close} onPress={onClose}>
+        <Touchable
+          event="ManagerAppActionClose"
+          style={styles.close}
+          onPress={onClose}
+        >
           <Close color={colors.fog} size={20} />
         </Touchable>
       </BottomModal>

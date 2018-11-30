@@ -170,6 +170,7 @@ class SendSummary extends Component<
             <TranslatedError error={error} />
           </LText>
           <Button
+            event="SummaryContinue"
             type="primary"
             title="Continue"
             containerStyle={styles.continueButton}

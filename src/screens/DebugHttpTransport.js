@@ -72,6 +72,7 @@ class DebugHttpTransport extends Component<
               />
               <View style={styles.buttonContainer}>
                 <Button
+                  event="DebugHttpTransportAdd"
                   type="primary"
                   title="Add"
                   containerStyle={styles.continueButton}

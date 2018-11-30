@@ -46,6 +46,7 @@ class ScanningTimeout extends Component<Props> {
 
           <View style={styles.buttonContainer}>
             <Button
+              event="PairDevicesTimeoutRetry"
               type="primary"
               title={<Trans i18nKey="common.retry" />}
               onPress={onRetry}

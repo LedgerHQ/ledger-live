@@ -11,6 +11,7 @@ const ImportAccountsButton = ({
   navigation: *,
 }) => (
   <Button
+    event="ImportAccounts"
     type="primary"
     title={title}
     onPress={() => navigation.navigate("ImportAccounts")}

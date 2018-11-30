@@ -39,6 +39,7 @@ class BitcoinFeePerByteRow extends Component<Props> {
     return (
       <SummaryRow
         onPress={this.extraInfoFees}
+        event="SummaryBitcoinInfoFees"
         title={<Trans i18nKey="send.fees.title" />}
         additionalInfo={
           <View>

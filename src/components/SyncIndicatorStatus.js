@@ -9,7 +9,7 @@ export default class SyncIndicatorStatus extends Component<*> {
   render() {
     const { isUpToDate, onPress } = this.props;
     return (
-      <Touchable onPress={onPress}>
+      <Touchable event="SyncIndicatorStatus" onPress={onPress}>
         <LText style={styles.text}>
           {isUpToDate ? "Up to date" : "Outdated"}
         </LText>

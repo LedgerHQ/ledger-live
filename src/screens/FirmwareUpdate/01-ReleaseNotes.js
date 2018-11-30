@@ -68,6 +68,7 @@ class FirmwareUpdateReleaseNotes extends Component<Props, State> {
         </ScrollView>
         <View style={styles.footer}>
           <Button
+            event="FirmwareUpdateReleaseNotesContinue"
             type="primary"
             onPress={this.onNext}
             title={<Trans i18nKey="FirmwareUpdateReleaseNotes.action" />}

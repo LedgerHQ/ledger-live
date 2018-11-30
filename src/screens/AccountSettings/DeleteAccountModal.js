@@ -33,12 +33,14 @@ class DeleteAccountModal extends PureComponent<Props> {
         footer={
           <View style={styles.footerContainer}>
             <Button
+              event="DeleteAccountCancel"
               type="secondary"
               title={<Trans i18nKey="common.cancel" />}
               onPress={onRequestClose}
               containerStyle={styles.buttonContainer}
             />
             <Button
+              event="DeleteAccount"
               type="alert"
               title={<Trans i18nKey="common.delete" />}
               onPress={deleteAccount}

@@ -24,7 +24,11 @@ class GenericErrorButtonModal extends PureComponent<{
               <View style={styles.buttonsContainer}>{footerButtons}</View>
             ) : null}
             {onClose ? (
-              <Touchable style={styles.close} onPress={onClose}>
+              <Touchable
+                event="BottomModalErrorClose"
+                style={styles.close}
+                onPress={onClose}
+              >
                 <Close color={colors.fog} size={20} />
               </Touchable>
             ) : null}

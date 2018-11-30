@@ -43,18 +43,21 @@ class CreateModal extends Component<Props> {
     return (
       <BottomModal isOpened={isOpened} onClose={onClose}>
         <BottomModalChoice
+          event="TransferSend"
           title={t("transfer.send.title")}
           description={t("transfer.send.desc")}
           onPress={accountsCount > 0 ? this.onSendFunds : null}
           Icon={IconSend}
         />
         <BottomModalChoice
+          event="TransferReceive"
           title={t("transfer.receive.title")}
           description={t("transfer.receive.desc")}
           onPress={accountsCount > 0 ? this.onReceiveFunds : null}
           Icon={IconReceive}
         />
         <BottomModalChoice
+          event="TransferExchange"
           title={t("transfer.exchange.title")}
           description={t("transfer.exchange.desc")}
           Icon={IconExchange}

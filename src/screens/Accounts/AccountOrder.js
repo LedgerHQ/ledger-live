@@ -29,7 +29,11 @@ class AccountOrder extends PureComponent<{}, { isOpened: boolean }> {
   render() {
     const { isOpened } = this.state;
     return (
-      <Touchable style={{ marginHorizontal: 16 }} onPress={this.onPress}>
+      <Touchable
+        event="AccountOrderOpen"
+        style={{ marginHorizontal: 16 }}
+        onPress={this.onPress}
+      >
         <Icon name="sliders" color={colors.grey} size={20} />
         <RefreshAccounts isOpened={isOpened} />
         <AccountOrderModal isOpened={isOpened} onClose={this.onClose} />

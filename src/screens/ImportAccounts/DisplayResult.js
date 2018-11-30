@@ -240,6 +240,7 @@ class DisplayResult extends Component<Props, State> {
             />
             <View style={styles.footer}>
               <Button
+                event="ImportAccountsContinue"
                 type="primary"
                 title={<Trans i18nKey="common.continue" />}
                 onPress={this.onImport}
@@ -255,6 +256,7 @@ class DisplayResult extends Component<Props, State> {
             </View>
             <View style={styles.footer}>
               <Button
+                event="ImportAccountsDone"
                 type="primary"
                 title={<Trans i18nKey="common.done" />}
                 onPress={this.close}

@@ -45,24 +45,28 @@ class DebugBLE extends Component<
     return (
       <View style={styles.root}>
         <Button
+          event="DebugCrashJS"
           type="primary"
           title="JS Crash"
           onPress={this.jsCrash}
           containerStyle={styles.buttonStyle}
         />
         <Button
+          event="DebugCrashNative"
           type="primary"
           title="Native Crash"
           onPress={this.nativeCrash}
           containerStyle={styles.buttonStyle}
         />
         <Button
+          event="DebugCrashLibcore"
           type="primary"
           title="Libcore Crash"
           onPress={this.libcoreCrash}
           containerStyle={styles.buttonStyle}
         />
         <Button
+          event="DebugCrashRender"
           type="primary"
           title="Render crashing component"
           onPress={this.displayRenderCrash}

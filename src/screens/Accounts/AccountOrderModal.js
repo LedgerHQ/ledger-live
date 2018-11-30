@@ -29,7 +29,12 @@ class AccountOrderModal extends Component<{
           <OrderOption id="balance" />
           <OrderOption id="name" />
           <View style={styles.buttonContainer}>
-            <Button type="primary" onPress={onClose} title="Done" />
+            <Button
+              event="AccountOrderModalDone"
+              type="primary"
+              onPress={onClose}
+              title="Done"
+            />
           </View>
         </SafeAreaView>
       </BottomModal>

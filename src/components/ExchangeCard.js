@@ -8,7 +8,6 @@ import Button from "./Button";
 import type { T } from "../types/common";
 import LText from "./LText";
 import Card from "./Card";
-import { track } from "../analytics";
 
 type Props = {
   card: *,
@@ -18,7 +17,6 @@ type Props = {
 export default class ExchangeCard extends Component<Props> {
   onClick = () => {
     const { card } = this.props;
-    track("OpenExchange", { exchange: card.id, exchangeUrl: card.url });
     Linking.openURL(card.url).catch(err =>
       console.error("An error occurred", err),
     );
@@ -26,7 +24,7 @@ export default class ExchangeCard extends Component<Props> {
 
   render() {
     const {
-      card: { logo, id },
+      card: { logo, url, id },
       t,
     } = this.props;
 
@@ -37,6 +35,8 @@ export default class ExchangeCard extends Component<Props> {
           <LText style={styles.description}>{t(`exchange.${id}`)}</LText>
           <View>
             <Button
+              event="OpenExchange"
+              eventProperties={{ exchange: id, exchangeUrl: url }}
               type="tertiary"
               title={<Trans i18nKey="exchange.visit" />}
               onPress={this.onClick}

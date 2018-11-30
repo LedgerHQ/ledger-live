@@ -39,6 +39,8 @@ class AppRow extends PureComponent<{
         </View>
         {manager.canHandleInstall(app) ? (
           <Button
+            event="ManagerAppInstall"
+            eventProperties={{ appName: app.name }}
             type="tertiary"
             onPress={this.onInstall}
             containerStyle={[styles.button, styles.btnSpace]}
@@ -47,6 +49,8 @@ class AppRow extends PureComponent<{
           />
         ) : null}
         <Button
+          event="ManagerAppUninstall"
+          eventProperties={{ appName: app.name }}
           type="secondary"
           onPress={this.onUninstall}
           containerStyle={styles.button}

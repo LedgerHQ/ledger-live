@@ -21,14 +21,25 @@ export default class BottomModalChoice extends PureComponent<{
   Icon: React$ComponentType<*>,
   title: string,
   description?: string,
+  event: string,
+  eventProperties?: Object,
 }> {
   render() {
-    const { Icon, title, description, onPress } = this.props;
+    const {
+      Icon,
+      title,
+      description,
+      onPress,
+      event,
+      eventProperties,
+    } = this.props;
     return (
       <Touchable
         onPress={onPress}
         style={[styles.root, !onPress && styles.disabled]}
         hitSlop={hitSlop}
+        event={event}
+        eventProperties={eventProperties}
       >
         <View style={styles.left}>{Icon && <IconWrapper Icon={Icon} />}</View>
         <View style={styles.body}>

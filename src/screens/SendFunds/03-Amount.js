@@ -296,6 +296,7 @@ class SendAmount extends Component<Props, State> {
                   </LText>
                   <View style={styles.continueWrapper}>
                     <Button
+                      event="SendAmountContinue"
                       type="primary"
                       title={
                         !pending ? (

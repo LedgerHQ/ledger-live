@@ -34,6 +34,7 @@ export default class DataList extends PureComponent<Props, State> {
           {title && <LText style={styles.sectionTitle}>{title}</LText>}
           {shouldShowMore && (
             <Touchable
+              event="OperationDetailsShowMore"
               onPress={() => {
                 this.toggleShowAll();
               }}

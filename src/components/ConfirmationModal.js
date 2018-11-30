@@ -44,12 +44,14 @@ class ConfirmationModal extends PureComponent<Props> {
         <LText style={styles.confirmationDesc}>{confirmationDesc}</LText>
         <View style={styles.confirmationFooter}>
           <Button
+            event="ConfirmationModalCancel"
             containerStyle={styles.confirmationButton}
             type="secondary"
             title="Cancel"
             onPress={onClose}
           />
           <Button
+            event="ConfirmationModalConfirm"
             containerStyle={[
               styles.confirmationButton,
               styles.confirmationLastButton,

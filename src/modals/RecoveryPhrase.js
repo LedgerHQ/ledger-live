@@ -55,6 +55,7 @@ class RecoveryPhraseModal extends Component<Props> {
         </View>
         <View style={styles.buttonWrapper}>
           <Button
+            event="RecoveryPhraseGotIt"
             type="primary"
             containerStyle={styles.buttonContainer}
             title={<Trans i18nKey="common.gotit" />}

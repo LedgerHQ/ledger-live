@@ -59,6 +59,7 @@ class PinModal extends Component<Props> {
         </View>
         <View style={styles.buttonWrapper}>
           <Button
+            event="PinGotIt"
             type="primary"
             containerStyle={styles.buttonContainer}
             title={<Trans i18nKey="common.gotit" />}

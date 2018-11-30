@@ -21,6 +21,8 @@ export default class SettingsRow extends Component<{
   children: React$Node,
   borderTop?: boolean,
   noTextDesc?: boolean,
+  event?: string,
+  eventProperties?: Object,
 }> {
   render() {
     const {
@@ -37,6 +39,8 @@ export default class SettingsRow extends Component<{
       selected,
       borderTop,
       noTextDesc,
+      event,
+      eventProperties,
     } = this.props;
 
     let title$ = (
@@ -68,6 +72,8 @@ export default class SettingsRow extends Component<{
           compact && styles.rootCompact,
           borderTop && styles.borderTop,
         ]}
+        event={event}
+        eventProperties={eventProperties}
       >
         {iconLeft && <View style={styles.iconLeft}>{iconLeft}</View>}
         <View style={styles.textBlock}>

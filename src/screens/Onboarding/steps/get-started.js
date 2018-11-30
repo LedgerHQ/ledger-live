@@ -28,6 +28,7 @@ const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
 const CloseOnboarding = ({ navigation }: *) => (
   <Touchable
+    event="OnboardingClose"
     style={styles.close}
     onPress={() => {
       navigation.navigate("HelpSettings");

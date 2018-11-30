@@ -36,6 +36,7 @@ class OnboardingStepSetupPin extends Component<
 
   Footer = () => (
     <Button
+      event="OnboardingPinContinue"
       type="primary"
       title={<Trans i18nKey="common.continue" />}
       onPress={this.showModal}

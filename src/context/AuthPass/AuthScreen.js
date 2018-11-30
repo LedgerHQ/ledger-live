@@ -74,6 +74,7 @@ class FormFooter extends PureComponent<*> {
     return inputFocused ? (
       <TouchableWithoutFeedback>
         <Button
+          event="SubmitUnlock"
           title={<Trans i18nKey="auth.unlock.login" />}
           type="primary"
           onPress={onSubmit}
@@ -83,7 +84,7 @@ class FormFooter extends PureComponent<*> {
         />
       </TouchableWithoutFeedback>
     ) : (
-      <Touchable style={styles.forgot} onPress={onPress}>
+      <Touchable event="ForgetPassword" style={styles.forgot} onPress={onPress}>
         <LText semiBold style={styles.link}>
           <Trans i18nKey="auth.unlock.forgotPassword" />
         </LText>

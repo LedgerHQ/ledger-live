@@ -47,6 +47,7 @@ class OnboardingStepFinish extends Component<Props> {
             <Trans i18nKey="onboarding.stepFinish.desc" />
           </LText>
           <Button
+            event="OnboardingFinish"
             type="primary"
             title={<Trans i18nKey="onboarding.stepFinish.cta" />}
             onPress={this.onFinish}

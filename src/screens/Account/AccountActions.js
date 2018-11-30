@@ -19,6 +19,7 @@ class AccountActions extends PureComponent<Props> {
     return (
       <View style={styles.root}>
         <Button
+          event="AccountSend"
           type="primary"
           IconLeft={IconSend}
           onPress={() =>
@@ -28,6 +29,7 @@ class AccountActions extends PureComponent<Props> {
           containerStyle={styles.btn1}
         />
         <Button
+          event="AccountReceive"
           type="primary"
           IconLeft={IconReceive}
           onPress={() =>

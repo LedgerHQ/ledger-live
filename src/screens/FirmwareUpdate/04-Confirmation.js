@@ -42,6 +42,7 @@ class FirmwareUpdateConfirmation extends Component<Props, State> {
             }
           />
           <Button
+            event="FirmwareUpdateDone"
             type="primary"
             onPress={this.onClose}
             title={<Trans i18nKey="common.close" />}

@@ -40,12 +40,14 @@ class OnboardingStepPassword extends Component<
 
     return privacy ? (
       <Button
+        event="OnboardingPasswordContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
         onPress={next}
       />
     ) : (
       <Button
+        event="OnboardingPasswordSetup"
         type="primary"
         title={<Trans i18nKey="onboarding.stepPassword.setPassword" />}
         onPress={this.navigateToPassword}

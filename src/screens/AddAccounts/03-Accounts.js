@@ -344,6 +344,7 @@ class Footer extends PureComponent<{
       <View style={styles.footer}>
         {isScanning ? (
           <Button
+            event="AddAccountsStopScan"
             type="tertiary"
             title={<Trans i18nKey="addAccounts.stopScanning" />}
             onPress={onStop}
@@ -351,18 +352,21 @@ class Footer extends PureComponent<{
           />
         ) : canRetry ? (
           <Button
+            event="AddAccountsRetryScan"
             type="primary"
             title={<Trans i18nKey="addAccounts.retryScanning" />}
             onPress={onRetry}
           />
         ) : canDone ? (
           <Button
+            event="AddAccountsDone"
             type="primary"
             title={<Trans i18nKey="addAccounts.done" />}
             onPress={onDone}
           />
         ) : (
           <Button
+            event="AddAccountsSelected"
             type="primary"
             title={<Trans i18nKey="addAccounts.finalCta" />}
             onPress={isDisabled ? undefined : onContinue}

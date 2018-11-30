@@ -40,11 +40,13 @@ class AddAccountsModal extends PureComponent<Props> {
       <BottomModal isOpened={isOpened} onClose={onClose}>
         <SafeAreaView forceInset={forceInset}>
           <BottomModalChoice
+            event="AddAccountWithDevice"
             title={t("addAccountsModal.ctaAdd")}
             onPress={this.onClickAdd}
             Icon={IconPlus}
           />
           <BottomModalChoice
+            event="AddAccountWithQR"
             title={t("addAccountsModal.ctaImport")}
             onPress={this.onClickImport}
             Icon={IconQr}

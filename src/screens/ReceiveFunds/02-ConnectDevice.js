@@ -67,6 +67,7 @@ class ConnectDevice extends Component<Props> {
         />
         <View style={styles.footer}>
           <Button
+            event="ReceiveWithoutDevice"
             type="secondary"
             title={<Trans i18nKey="transfer.receive.withoutDevice" />}
             onPress={this.onSkipDevice}

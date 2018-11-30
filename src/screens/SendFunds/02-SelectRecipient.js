@@ -185,6 +185,7 @@ class SendSelectRecipient extends Component<Props, State> {
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Button
+              event="SendRecipientQR"
               type="tertiary"
               title={<Trans i18nKey="send.recipient.scan" />}
               IconLeft={IconQRCode}
@@ -232,6 +233,7 @@ class SendSelectRecipient extends Component<Props, State> {
           </View>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button
+              event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
               onPress={this.onPressContinue}

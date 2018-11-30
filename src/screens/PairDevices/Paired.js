@@ -56,6 +56,7 @@ class Paired extends PureComponent<{
           </View>
           <View style={[styles.fullContainer, styles.buttonContainer]}>
             <Button
+              event="PairDevicesContinue"
               type="primary"
               title={<Trans i18nKey="PairDevices.Paired.action" />}
               onPress={onContinue}

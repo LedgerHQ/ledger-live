@@ -42,7 +42,7 @@ class DeviceItemSummary extends PureComponent<Props> {
             </View>
           ) : null}
         </View>
-        <Touchable onPress={onEdit}>
+        <Touchable event="DeviceItemEdit" onPress={onEdit}>
           <LText numberOfLines={1} style={styles.editText}>
             <Trans i18nKey="common.edit" />
           </LText>

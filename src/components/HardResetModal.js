@@ -29,12 +29,14 @@ class HardResetModal extends PureComponent<Props> {
         footer={
           <View style={styles.footerContainer}>
             <Button
+              event="HardResetModalCancel"
               type="secondary"
               title={<Trans i18nKey="common.cancel" />}
               onPress={onRequestClose}
               containerStyle={styles.buttonContainer}
             />
             <Button
+              event="HardResetModalAction"
               type="alert"
               title={<Trans i18nKey="reset.button" />}
               onPress={onHardReset}

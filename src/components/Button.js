@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import LText from "./LText";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
+import { track } from "../analytics";
 
 import colors from "../colors";
 
@@ -39,6 +40,9 @@ type BaseProps = {
   titleStyle?: *,
   IconLeft?: *,
   disabled?: boolean,
+  // for analytics
+  event: string,
+  eventProperties?: Object,
 };
 
 type Props = BaseProps & {
@@ -75,10 +79,14 @@ class Button extends PureComponent<
   }
 
   onPress = async () => {
-    if (!this.props.onPress) return;
+    const { onPress, event, eventProperties } = this.props;
+    if (!onPress) return;
+    if (event) {
+      track(event, eventProperties);
+    }
     let isPromise;
     try {
-      const res = this.props.onPress();
+      const res = onPress();
       isPromise = !!res && !!res.then;
       if (isPromise) {
         // it's a promise, we will use pending/spinnerOn state

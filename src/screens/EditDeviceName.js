@@ -110,6 +110,7 @@ class EditDeviceName extends PureComponent<
           <View style={styles.footer}>
             {error ? <FooterError error={error} /> : null}
             <Button
+              event="EditDeviceNameSubmit"
               type="primary"
               title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={this.onSubmit}

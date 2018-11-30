@@ -19,7 +19,7 @@ class TrackPage extends PureComponent<{
     }
   }
   record() {
-    const { category, name, ...properties } = this.props;
+    const { category, name, isFocused, ...properties } = this.props;
     page(category, name, properties);
   }
   render() {

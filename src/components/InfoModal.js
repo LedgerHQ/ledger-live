@@ -43,6 +43,7 @@ class InfoModal extends PureComponent<Props> {
           ))}
         </View>
         <Button
+          event="InfoModalGotIt"
           type="primary"
           title={<Trans i18nKey="common.gotit" />}
           containerStyle={styles.modalBtn}

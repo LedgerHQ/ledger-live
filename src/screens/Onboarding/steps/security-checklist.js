@@ -47,6 +47,7 @@ class OnboardingStepSecurityChecklist extends Component<
     if (hidden) return null;
     return (
       <Button
+        event="OnboardingSecurityContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
         onPress={next}
@@ -162,12 +163,14 @@ class OnboardingStepSecurityChecklist extends Component<
           </LText>
           <View style={styles.modalActions}>
             <Button
+              event="OnboardingSecurityReset"
               containerStyle={styles.modalAction}
               type="secondary"
               onPress={this.resetAnswer}
               title={<Trans i18nKey="common.back" />}
             />
             <Button
+              event="OnboardingSecurityContactUs"
               containerStyle={styles.modalAction}
               type="primary"
               onPress={this.contactSupport}

@@ -51,12 +51,14 @@ class AddAccountsSuccess extends Component<Props, State> {
         </LText>
         <View style={styles.buttonsContainer}>
           <Button
+            event="AddAccountsAgain"
             containerStyle={styles.button}
             type="primary"
             title={<Trans i18nKey="addAccounts.success.cta" />}
             onPress={this.primaryCTA}
           />
           <Button
+            event="AddAccountsDone"
             onPress={this.secondaryCTA}
             type="lightSecondary"
             title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}

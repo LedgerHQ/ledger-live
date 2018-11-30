@@ -72,6 +72,7 @@ class DeviceAction extends PureComponent<Props, State> {
           </View>
           <View style={styles.buttons}>
             <Button
+              event="ManagerUnpairCancel"
               type="secondary"
               onPress={onClose}
               title={<Trans i18nKey="common.cancel" />}
@@ -79,6 +80,7 @@ class DeviceAction extends PureComponent<Props, State> {
             />
             <Space w={16} />
             <Button
+              event="ManagerUnpairContinue"
               type="alert"
               onPress={this.unpair}
               title={<Trans i18nKey="manager.unpair.button" />}
@@ -86,7 +88,11 @@ class DeviceAction extends PureComponent<Props, State> {
             />
           </View>
         </SafeAreaView>
-        <Touchable style={styles.close} onPress={onClose}>
+        <Touchable
+          event="ManagerUnpairClose"
+          style={styles.close}
+          onPress={onClose}
+        >
           <Close color={colors.fog} size={20} />
         </Touchable>
       </BottomModal>

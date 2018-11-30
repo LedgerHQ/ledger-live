@@ -31,12 +31,14 @@ class ValidateSuccess extends PureComponent<Props> {
         </View>
         <View style={styles.actionContainer}>
           <Button
+            event="SendSuccessClose"
             title={<Trans i18nKey="common.close" />}
             type="secondary"
             containerStyle={{ flex: 1, marginRight: 16 }}
             onPress={onClose}
           />
           <Button
+            event="SendSuccessViewDetails"
             title={<Trans i18nKey="send.validation.button.details" />}
             type="primary"
             containerStyle={{ flex: 1 }}

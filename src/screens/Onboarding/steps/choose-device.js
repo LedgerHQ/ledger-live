@@ -1,10 +1,11 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import { TouchableOpacity, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 import Button from "../../../components/Button";
 import BottomModal from "../../../components/BottomModal";
 import OnboardingLayout from "../OnboardingLayout";
@@ -48,17 +49,23 @@ class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
     return (
       <OnboardingLayout header="OnboardingStepChooseDevice">
         <DeviceItem
+          event="OnboardingDevice"
+          eventProperties={{ product: "NanoX" }}
           title={deviceNames.nanoX.fullDeviceName}
           onPress={next}
           Icon={NanoSVertical}
         />
         <DeviceItem
+          event="OnboardingDevice"
+          eventProperties={{ product: "NanoS" }}
           title={deviceNames.nanoS.fullDeviceName}
           desc={<Trans i18nKey="onboarding.stepChooseDevice.desktopOnly" />}
           onPress={this.openForNanoS}
           Icon={NanoXVertical}
         />
         <DeviceItem
+          event="OnboardingDevice"
+          eventProperties={{ product: "Blue" }}
           title={deviceNames.blue.fullDeviceName}
           desc={<Trans i18nKey="onboarding.stepChooseDevice.desktopOnly" />}
           onPress={this.openForBlue}
@@ -79,12 +86,14 @@ class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
           </LText>
           <View style={styles.modalActions}>
             <Button
+              event="OnboardingDeviceBack"
               type="secondary"
               title={<Trans i18nKey="common.back" />}
               onPress={this.close}
               containerStyle={styles.modalAction}
             />
             <Button
+              event="OnboardingDeviceScanQR"
               type="primary"
               title={<Trans i18nKey="addAccountsModal.ctaAdd" />}
               onPress={this.scanQR}
@@ -102,19 +111,26 @@ type DeviceItemProps = {
   desc?: React$Element<*>,
   onPress?: () => void,
   Icon: React$ComponentType<*>,
+  event: *,
+  eventProperties: *,
 };
 
 class DeviceItem extends PureComponent<DeviceItemProps> {
   render() {
-    const { title, desc, onPress, Icon } = this.props;
+    const { title, desc, onPress, Icon, event, eventProperties } = this.props;
     return (
-      <TouchableOpacity onPress={onPress} style={styles.deviceItem}>
+      <Touchable
+        onPress={onPress}
+        style={styles.deviceItem}
+        event={event}
+        eventProperties={eventProperties}
+      >
         <Icon />
         <LText semiBold style={styles.deviceTitle}>
           {title}
         </LText>
         {desc && <LText style={styles.deviceDesc}>{desc}</LText>}
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

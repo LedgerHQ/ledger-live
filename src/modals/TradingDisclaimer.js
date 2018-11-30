@@ -39,6 +39,7 @@ class TradingDisclaimer extends Component<Props> {
           </LText>
           <View style={{ marginTop: 24, flexDirection: "row" }}>
             <Button
+              event="TradingDisclaimerGotIt"
               type="primary"
               containerStyle={styles.buttonContainer}
               title={t("common.gotit")}

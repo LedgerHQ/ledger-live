@@ -15,6 +15,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
   Footer = () =>
     __DEV__ ? (
       <Button
+        event="OnboardingPairSkip"
         type="lightSecondary"
         title="(DEV) skip this step"
         onPress={this.props.next}

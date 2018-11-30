@@ -31,6 +31,7 @@ class OnboardingStepWriteRecovery extends Component<
 
   Footer = () => (
     <Button
+      event="OnboardingRecoveryContinue"
       type="primary"
       title={<Trans i18nKey="common.continue" />}
       onPress={this.showModal}

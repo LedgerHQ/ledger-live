@@ -23,7 +23,11 @@ class ScanningFooter extends PureComponent<Props> {
   render() {
     return (
       <View style={styles.root}>
-        <Touchable style={styles.inner} onPress={this.onPress}>
+        <Touchable
+          event="SelectDevicePairNew"
+          style={styles.inner}
+          onPress={this.onPress}
+        >
           <Circle bg={colors.pillActiveBackground} size={32}>
             <Icon name="plus" color={colors.live} size={20} />
           </Circle>

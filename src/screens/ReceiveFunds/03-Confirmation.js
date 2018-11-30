@@ -183,12 +183,14 @@ class ReceiveConfirmation extends Component<Props, State> {
         {verified && (
           <View style={styles.footer}>
             <Button
+              event="ReceiveDone"
               containerStyle={styles.button}
               onPress={this.onDone}
               type="secondary"
               title={<Trans i18nKey="common.done" />}
             />
             <Button
+              event="ReceiveVerifyAgain"
               containerStyle={styles.button}
               type="primary"
               title={<Trans i18nKey="transfer.receive.verifyAgain" />}
@@ -212,12 +214,14 @@ class ReceiveConfirmation extends Component<Props, State> {
               </View>
               <View style={styles.buttonsContainer}>
                 <Button
+                  event="ReceiveContactUs"
                   type="secondary"
                   title={<Trans i18nKey="common.contactUs" />}
                   containerStyle={styles.button}
                   onPress={() => {}} // TODO do something
                 />
                 <Button
+                  event="ReceiveRetry"
                   type="primary"
                   title={<Trans i18nKey="common.retry" />}
                   containerStyle={styles.button}
@@ -226,7 +230,11 @@ class ReceiveConfirmation extends Component<Props, State> {
               </View>
             </View>
           ) : null}
-          <Touchable style={styles.close} onPress={this.onModalClose}>
+          <Touchable
+            event="ReceiveClose"
+            style={styles.close}
+            onPress={this.onModalClose}
+          >
             <Close color={colors.fog} size={20} />
           </Touchable>
         </BottomModal>

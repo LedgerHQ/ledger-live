@@ -97,6 +97,7 @@ class RippleEditTag extends PureComponent<Props, State> {
 
             <View style={styles.flex}>
               <Button
+                event="RippleEditTag"
                 type="primary"
                 title={t("send.summary.validateTag")}
                 onPress={this.onValidateText}

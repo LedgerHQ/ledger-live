@@ -87,6 +87,7 @@ class FirmwareVersionRow extends PureComponent<Props, State> {
         </LText>
         <Button
           type="primary"
+          event="FirmwareUpdate"
           title={<Trans i18nKey="FirmwareUpdateRow.action" />}
           onPress={this.onUpdatePress}
         />

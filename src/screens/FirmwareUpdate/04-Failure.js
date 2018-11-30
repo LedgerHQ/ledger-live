@@ -44,12 +44,14 @@ class FirmwareUpdateFailure extends Component<Props, State> {
         <View style={styles.body}>
           <GenericErrorView error={error} />
           <Button
+            event="FirmwareUpdateFailureRetry"
             type="primary"
             onPress={this.onRetry}
             title={<Trans i18nKey="common.retry" />}
             containerStyle={styles.button}
           />
           <Button
+            event="FirmwareUpdateFailureClose"
             type="lightSecondary"
             onPress={this.onClose}
             title={<Trans i18nKey="common.close" />}
