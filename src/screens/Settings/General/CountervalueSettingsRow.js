@@ -22,6 +22,7 @@ class CountervalueSettingsRow extends PureComponent<{
     const { navigation, counterValueCurrency } = this.props;
     return (
       <SettingsRow
+        event="CountervalueSettingsRow"
         title={<Trans i18nKey="settings.display.counterValue" />}
         desc={<Trans i18nKey="settings.display.counterValueDesc" />}
         arrowRight

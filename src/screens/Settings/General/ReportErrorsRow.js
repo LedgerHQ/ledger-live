@@ -25,6 +25,7 @@ class ReportErrorsRow extends PureComponent<Props> {
     const { reportErrorsEnabled, setReportErrors, ...props } = this.props;
     return (
       <SettingsRow
+        event="ReportErrorsRow"
         title={<Trans i18nKey="settings.display.reportErrors" />}
         desc={<Trans i18nKey="settings.display.reportErrorsDesc" />}
         onPress={null}

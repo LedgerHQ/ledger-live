@@ -32,6 +32,7 @@ class RateProviderSettingsRow extends PureComponent<{
     } = this.props;
     return (
       <SettingsRow
+        event="RateProviderSettingsRow"
         title={<Trans i18nKey="settings.display.exchange" />}
         desc={
           <Trans

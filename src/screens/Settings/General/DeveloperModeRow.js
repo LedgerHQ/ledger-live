@@ -26,6 +26,7 @@ class DeveloperModeRow extends PureComponent<Props> {
     const { developerModeEnabled, setDeveloperMode, ...props } = this.props;
     return (
       <SettingsRow
+        event="DeveloperModeRow"
         title={<Trans i18nKey="settings.display.developerMode" />}
         desc={<Trans i18nKey="settings.display.developerModeDesc" />}
         onPress={null}

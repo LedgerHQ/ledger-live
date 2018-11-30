@@ -21,6 +21,8 @@ const mapDispatchToProps = {
 };
 
 const Screen = makeGenericSelectScreen({
+  id: "CounterValueSettingsSelect",
+  itemEventProperties: item => ({ countervalue: item.value }),
   title: i18next.t("settings.display.counterValue"),
   keyExtractor: item => item.value,
   formatItem: item => item.label,

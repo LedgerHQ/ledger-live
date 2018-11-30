@@ -19,6 +19,7 @@ class AccountNameRow extends PureComponent<Props> {
 
     return (
       <SettingsRow
+        event="AccountNameRow"
         title={<Trans i18nKey="account.settings.accountName.title" />}
         desc={<Trans i18nKey="account.settings.accountName.desc" />}
         arrowRight

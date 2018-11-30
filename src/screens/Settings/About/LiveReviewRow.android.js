@@ -11,6 +11,7 @@ class LiveReviewRow extends PureComponent<*> {
   render() {
     return (
       <SettingsRow
+        event="LiveReviewRow"
         title={<Trans i18nKey="settings.about.liveReview.title" />}
         desc={<Trans i18nKey="settings.about.liveReview.android" />}
         iconLeft={

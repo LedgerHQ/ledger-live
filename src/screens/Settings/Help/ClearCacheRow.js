@@ -51,6 +51,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
     return (
       <Fragment>
         <SettingsRow
+          event="ClearCacheRow"
           title={<Trans i18nKey="settings.help.clearCache" />}
           desc={<Trans i18nKey="settings.help.clearCacheDesc" />}
           iconLeft={
@@ -59,7 +60,6 @@ class ClearCacheRow extends PureComponent<Props, State> {
             </Circle>
           }
           onPress={this.onPress}
-          event="ClearCache"
         />
         <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
           <ModalBottomAction

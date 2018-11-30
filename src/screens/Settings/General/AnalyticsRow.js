@@ -52,6 +52,7 @@ class AnalyticsRow extends PureComponent<Props, State> {
           onUpdate
         />
         <SettingsRow
+          event="AnalyticsRow"
           title={<Trans i18nKey="settings.display.analytics" />}
           desc={<Trans i18nKey="settings.display.analyticsDesc" />}
           onPress={null}

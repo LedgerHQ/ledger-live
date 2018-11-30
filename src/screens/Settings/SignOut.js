@@ -28,7 +28,7 @@ class SignOut extends Component<{ reboot: (?boolean) => *, t: T }> {
     const { t } = this.props;
     return (
       <View style={styles.root}>
-        <SettingsRow onPress={this.onSignOut} center>
+        <SettingsRow event="SignOutRow" onPress={this.onSignOut} center>
           <Text style={styles.signOutText}>{t("common.common.signOut")}</Text>
         </SettingsRow>
       </View>

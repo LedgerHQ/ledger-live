@@ -11,6 +11,7 @@ class PrivacyPolicyRow extends PureComponent<*> {
   render() {
     return (
       <SettingsRow
+        event="PrivacyPolicyRow"
         title={<Trans i18nKey="settings.about.privacyPolicy" />}
         desc={<Trans i18nKey="settings.about.privacyPolicyDesc" />}
         onPress={() =>

@@ -96,6 +96,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
       <View style={styles.root}>
         {currency !== intermediaryCurrency && (
           <SettingsRow
+            event="CurrencyExchange"
             arrowRight={currencySettings.exchange}
             title={t("settings.currencies.rateProvider", {
               currencyTicker: currency.ticker,
@@ -114,6 +115,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
         {defaults.confirmationsNb && (
           <View style={styles.sliderContainer}>
             <SettingsRow
+              event="CurrencyConfirmationsNb"
               title={t("settings.currencies.confirmationNb")}
               desc={t("settings.currencies.confirmationNbDesc")}
               onPress={null}

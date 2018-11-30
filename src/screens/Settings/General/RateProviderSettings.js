@@ -55,6 +55,8 @@ const mapDispatchToProps = {
 };
 
 const Screen = makeGenericSelectScreen({
+  id: "RateProviderSettingsSelect",
+  itemEventProperties: item => ({ exchange: item.id }),
   title: i18next.t("settings.display.exchangeHeader"),
   keyExtractor: item => item.id,
   formatItem: item => item.name,

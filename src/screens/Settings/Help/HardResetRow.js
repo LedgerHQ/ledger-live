@@ -33,6 +33,7 @@ class HardResetRow extends PureComponent<Props, State> {
     return (
       <Fragment>
         <SettingsRow
+          event="HardResetRow"
           title={<Trans i18nKey="settings.help.hardReset" />}
           titleStyle={{ color: colors.alert }}
           desc={<Trans i18nKey="settings.help.hardResetDesc" />}
