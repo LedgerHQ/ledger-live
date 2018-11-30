@@ -16,7 +16,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 
 import { open } from "../logic/hw";
-import loadLibcore from "./load";
+import { withLibcoreF } from "./access";
 import { shouldShowNewAccount } from "../cryptocurrencies";
 import { syncCoreAccount } from "./syncAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
@@ -31,13 +31,10 @@ export const scanAccountsOnDevice = (
     const unsubscribe = () => (finished = true);
     const isUnsubscribed = () => finished;
 
-    async function main() {
+    const main = withLibcoreF(core => async () => {
       let transport;
       try {
         transport = await open(deviceId);
-        if (isUnsubscribed()) return;
-
-        const core = await loadLibcore();
         if (isUnsubscribed()) return;
 
         const derivationModes = getDerivationModesForCurrency(currency);
@@ -100,7 +97,7 @@ export const scanAccountsOnDevice = (
       if (transport) {
         await transport.close();
       }
-    }
+    });
 
     main();
 
