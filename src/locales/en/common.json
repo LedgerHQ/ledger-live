@@ -164,7 +164,7 @@
       "description": "Make sure the account to debit has sufficient balance"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
-      "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
+      "title": "Minimum of {{minimalAmount}} required to activate recipient address"
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",
