@@ -4,6 +4,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { ScrollView, View, StyleSheet } from "react-native";
 import i18next from "i18next";
 import { translate } from "react-i18next";
+import { TrackScreen } from "../../../analytics";
 import LedgerSupportRow from "./LedgerSupportRow";
 import ClearCacheRow from "./ClearCacheRow";
 import HardResetRow from "./HardResetRow";
@@ -19,6 +20,7 @@ class HelpSettings extends PureComponent<{
   render() {
     return (
       <ScrollView contentContainerStyle={styles.root}>
+        <TrackScreen category="Settings" name="Help" />
         <LedgerSupportRow />
         <ConfigureDeviceRow navigation={this.props.navigation} />
         <View style={styles.container}>

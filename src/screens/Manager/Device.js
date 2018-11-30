@@ -13,6 +13,7 @@ import Circle from "../../components/Circle";
 import colors from "../../colors";
 import manager from "../../logic/manager";
 import { deviceNames } from "../../wording";
+import { TrackScreen } from "../../analytics";
 
 import DeviceNameRow from "./DeviceNameRow";
 import FirmwareVersionRow from "./FirmwareVersionRow";
@@ -89,6 +90,7 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
 
     return (
       <ScrollView style={styles.root} contentContainerStyle={styles.container}>
+        <TrackScreen category="Manager" name="Device" />
         <View style={styles.device}>
           <DeviceNano />
           <LText secondary semiBold style={styles.deviceName}>

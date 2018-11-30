@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { StyleSheet, SectionList, View, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
@@ -11,6 +11,7 @@ import { translate } from "react-i18next";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
+import { TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
@@ -155,8 +156,21 @@ class AccountScreen extends PureComponent<Props, State> {
     const { opCount } = this.state;
     if (!account) return null;
 
+    const analytics = (
+      <TrackScreen
+        category="Account"
+        currency={account.currency.id}
+        operationsSize={account.operations.length}
+      />
+    );
+
     if (isAccountEmpty(account)) {
-      return <EmptyStateAccount account={account} navigation={navigation} />;
+      return (
+        <Fragment>
+          {analytics}
+          <EmptyStateAccount account={account} navigation={navigation} />
+        </Fragment>
+      );
     }
 
     const { sections, completed } = groupAccountOperationsByDay(
@@ -166,6 +180,7 @@ class AccountScreen extends PureComponent<Props, State> {
 
     return (
       <View style={styles.root}>
+        {analytics}
         <List
           ref={this.ref}
           sections={sections}

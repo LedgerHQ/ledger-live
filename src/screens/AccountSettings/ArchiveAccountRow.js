@@ -12,6 +12,7 @@ class ArchiveAccountRow extends PureComponent<Props> {
   render() {
     return (
       <SettingsRow
+        event="ArchiveAccountRow"
         title={<Trans i18nKey="account.settings.archive.title" />}
         desc={<Trans i18nKey="account.settings.archive.desc" />}
         iconLeft={

@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { accountsSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "../../../analytics";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import OpenDebugBLE from "./OpenDebugBLE";
@@ -26,6 +27,7 @@ class DebugSettings extends PureComponent<{
     const { accounts } = this.props;
     return (
       <ScrollView contentContainerStyle={styles.root}>
+        <TrackScreen category="Settings" name="Debug" />
         {config.BRIDGESTREAM_DATA ? (
           // $FlowFixMe
           <ImportBridgeStreamData

@@ -15,7 +15,7 @@ class SyncIndicatorError extends Component<Props> {
   render() {
     const { onPress } = this.props;
     return (
-      <Touchable onPress={onPress}>
+      <Touchable event="SyncIndicatorError" onPress={onPress}>
         <LText style={styles.text}>
           <Trans i18nKey="sync.error" />
         </LText>

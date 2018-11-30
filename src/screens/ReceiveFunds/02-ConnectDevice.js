@@ -11,7 +11,8 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import StepHeader from "../../components/StepHeader";
 import SelectDevice from "../../components/SelectDevice";
 import Button from "../../components/Button";
@@ -20,8 +21,6 @@ import {
   accountApp,
   receiveVerifyStep,
 } from "../../components/DeviceJob/steps";
-
-import colors from "../../colors";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -66,6 +65,7 @@ class ConnectDevice extends Component<Props> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[
@@ -76,6 +76,7 @@ class ConnectDevice extends Component<Props> {
         />
         <View style={styles.footer}>
           <Button
+            event="ReceiveWithoutDevice"
             type="secondary"
             title={<Trans i18nKey="transfer.receive.withoutDevice" />}
             onPress={this.onSkipDevice}

@@ -1,8 +1,9 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { TouchableOpacity, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
+import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 import colors, { rgba } from "../../colors";
 import IconCheck from "../../icons/Check";
@@ -11,13 +12,17 @@ type Props = {
   onPress: () => void,
   isChecked?: boolean,
   children: *,
+  event: string,
+  eventProperties?: Object,
 };
 
 class OnboardingChoice extends PureComponent<Props> {
   render() {
-    const { onPress, children, isChecked } = this.props;
+    const { onPress, children, isChecked, event, eventProperties } = this.props;
     return (
-      <TouchableOpacity
+      <Touchable
+        event={event}
+        eventProperties={eventProperties}
         onPress={onPress}
         style={[styles.root, isChecked && styles.rootChecked]}
       >
@@ -34,7 +39,7 @@ class OnboardingChoice extends PureComponent<Props> {
             <IconCheck size={16} color={colors.live} />
           </View>
         )}
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }

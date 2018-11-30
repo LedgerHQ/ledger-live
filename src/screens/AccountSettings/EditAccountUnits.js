@@ -54,6 +54,11 @@ class EditAccountUnits extends PureComponent<Props> {
             keyExtractor={this.keyExtractor}
             renderItem={({ item }) => (
               <Touchable
+                event="EditAccountUnits"
+                eventProperties={{
+                  currency: account.currency.id,
+                  unit: item.code,
+                }}
                 onPress={() => {
                   this.updateAccount(item);
                 }}

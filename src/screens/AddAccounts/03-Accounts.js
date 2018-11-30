@@ -15,6 +15,8 @@ import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { addAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import { getCurrencyBridge } from "../../bridge";
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
@@ -24,8 +26,6 @@ import IconPause from "../../icons/Pause";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
 import AddAccountsError from "./AddAccountsError";
-
-import colors from "../../colors";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -252,6 +252,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="AddAccounts" name="Accounts" />
         <PreventNativeBack />
         <ScrollView
           style={styles.inner}
@@ -353,6 +354,7 @@ class Footer extends PureComponent<{
       <View style={styles.footer}>
         {isScanning ? (
           <Button
+            event="AddAccountsStopScan"
             type="tertiary"
             title={<Trans i18nKey="addAccounts.stopScanning" />}
             onPress={onStop}
@@ -360,18 +362,21 @@ class Footer extends PureComponent<{
           />
         ) : canRetry ? (
           <Button
+            event="AddAccountsRetryScan"
             type="primary"
             title={<Trans i18nKey="addAccounts.retryScanning" />}
             onPress={onRetry}
           />
         ) : canDone ? (
           <Button
+            event="AddAccountsDone"
             type="primary"
             title={<Trans i18nKey="addAccounts.done" />}
             onPress={onDone}
           />
         ) : (
           <Button
+            event="AddAccountsSelected"
             type="primary"
             title={<Trans i18nKey="addAccounts.finalCta" />}
             onPress={isDisabled ? undefined : onContinue}

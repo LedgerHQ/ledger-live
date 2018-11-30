@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
+import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import DeviceIconBack from "../../../components/DeviceIconBack";
@@ -36,6 +37,7 @@ class OnboardingStepSetupPin extends Component<
 
   Footer = () => (
     <Button
+      event="OnboardingPinContinue"
       type="primary"
       title={<Trans i18nKey="common.continue" />}
       onPress={this.showModal}
@@ -52,6 +54,7 @@ class OnboardingStepSetupPin extends Component<
         noHorizontalPadding
         withNeedHelp
       >
+        <TrackScreen category="Onboarding" name="Pin" />
         <PinModal
           isOpened={isModalOpened}
           onAccept={next}

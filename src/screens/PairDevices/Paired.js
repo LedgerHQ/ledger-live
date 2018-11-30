@@ -6,6 +6,7 @@ import { withNavigation } from "react-navigation";
 import { Trans } from "react-i18next";
 
 import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import InfoIcon from "../../components/InfoIcon";
 import Check from "../../icons/Check";
@@ -32,6 +33,7 @@ class Paired extends PureComponent<{
     const { deviceId, onContinue } = this.props;
     return (
       <View style={styles.root}>
+        <TrackScreen category="PairDevices" name="Paired" />
         <View style={styles.container}>
           <InfoIcon
             bg={colors.pillActiveBackground}
@@ -59,6 +61,7 @@ class Paired extends PureComponent<{
         </View>
         <View style={styles.fullContainer}>
           <Button
+            event="PairDevicesContinue"
             type="primary"
             title={<Trans i18nKey="PairDevices.Paired.action" />}
             onPress={onContinue}

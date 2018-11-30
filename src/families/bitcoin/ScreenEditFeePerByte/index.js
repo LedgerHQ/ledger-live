@@ -134,6 +134,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
               />
               <View style={styles.buttonContainer}>
                 <Button
+                  event="BitcoinEditFeePerByteContinue"
                   type="primary"
                   title={<Trans i18nKey="send.fees.validate" />}
                   containerStyle={styles.continueButton}

@@ -12,10 +12,10 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
+import { open } from "../../logic/hw";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { open } from "../../logic/hw";
-
+import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
@@ -144,6 +144,12 @@ class ReceiveConfirmation extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen
+          category="ReceiveFunds"
+          name="Confirmation"
+          unsafe={unsafe}
+          verified={verified}
+        />
         {allowNavigation ? null : <PreventNativeBack />}
         <View style={styles.container}>
           <View style={styles.qrWrapper}>
@@ -192,12 +198,14 @@ class ReceiveConfirmation extends Component<Props, State> {
         {verified && (
           <View style={styles.footer}>
             <Button
+              event="ReceiveDone"
               containerStyle={styles.button}
               onPress={this.onDone}
               type="secondary"
               title={<Trans i18nKey="common.done" />}
             />
             <Button
+              event="ReceiveVerifyAgain"
               containerStyle={styles.button}
               type="primary"
               title={<Trans i18nKey="transfer.receive.verifyAgain" />}
@@ -205,7 +213,11 @@ class ReceiveConfirmation extends Component<Props, State> {
             />
           </View>
         )}
-        <BottomModal isOpened={isModalOpened} onModalHide={onModalHide}>
+        <BottomModal
+          id="ReceiveConfirmationModal"
+          isOpened={isModalOpened}
+          onModalHide={onModalHide}
+        >
           {error ? (
             <View style={styles.modal}>
               <View style={styles.modalBody}>
@@ -221,12 +233,14 @@ class ReceiveConfirmation extends Component<Props, State> {
               </View>
               <View style={styles.buttonsContainer}>
                 <Button
+                  event="ReceiveContactUs"
                   type="secondary"
                   title={<Trans i18nKey="common.contactUs" />}
                   containerStyle={styles.button}
                   onPress={() => {}} // TODO do something
                 />
                 <Button
+                  event="ReceiveRetry"
                   type="primary"
                   title={<Trans i18nKey="common.retry" />}
                   containerStyle={styles.button}
@@ -235,7 +249,11 @@ class ReceiveConfirmation extends Component<Props, State> {
               </View>
             </View>
           ) : null}
-          <Touchable style={styles.close} onPress={this.onModalClose}>
+          <Touchable
+            event="ReceiveClose"
+            style={styles.close}
+            onPress={this.onModalClose}
+          >
             <Close color={colors.fog} size={20} />
           </Touchable>
         </BottomModal>

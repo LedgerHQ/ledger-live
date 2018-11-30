@@ -51,6 +51,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
     return (
       <Fragment>
         <SettingsRow
+          event="ClearCacheRow"
           title={<Trans i18nKey="settings.help.clearCache" />}
           desc={<Trans i18nKey="settings.help.clearCacheDesc" />}
           iconLeft={
@@ -60,7 +61,11 @@ class ClearCacheRow extends PureComponent<Props, State> {
           }
           onPress={this.onPress}
         />
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="ClearCacheRow"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <ModalBottomAction
             title={null}
             icon={
@@ -76,6 +81,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
                   title={<Trans i18nKey="common.cancel" />}
                   onPress={this.onRequestClose}
                   containerStyle={styles.buttonContainer}
+                  event="CancelClearCache"
                 />
                 <Button
                   type="primary"
@@ -85,6 +91,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
                     styles.buttonContainer,
                     styles.buttonMarginLeft,
                   ]}
+                  event="DoClearCache"
                 />
               </View>
             }

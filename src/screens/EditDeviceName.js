@@ -8,6 +8,7 @@ import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import colors from "../colors";
+import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
 import LText, { getFontStyle } from "../components/LText";
@@ -87,6 +88,7 @@ class EditDeviceName extends PureComponent<
     const remainingCount = MAX_DEVICE_NAME - Buffer.from(name).length;
     return (
       <SafeAreaView style={styles.safearea}>
+        <TrackScreen category="EditDeviceName" />
         <KeyboardView style={styles.root}>
           <View style={styles.body}>
             <TextInput
@@ -110,6 +112,7 @@ class EditDeviceName extends PureComponent<
           <View style={styles.footer}>
             {error ? <FooterError error={error} /> : null}
             <Button
+              event="EditDeviceNameSubmit"
               type="primary"
               title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={this.onSubmit}

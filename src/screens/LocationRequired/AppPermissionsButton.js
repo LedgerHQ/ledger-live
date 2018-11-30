@@ -52,6 +52,7 @@ export default class AppPermissionsButton extends PureComponent<
   render() {
     return (
       <Button
+        event="LocationPermissionOpenSettings"
         type="primary"
         title={<Trans i18nKey="permissions.open" />}
         onPress={this.openAppSettings}

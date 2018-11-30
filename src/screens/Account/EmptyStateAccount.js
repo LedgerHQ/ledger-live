@@ -37,6 +37,7 @@ class EmptyStateAccount extends PureComponent<{
             </Trans>
           </LText>
           <Button
+            event="AccountEmptyStateReceive"
             type="primary"
             title={<Trans i18nKey="account.emptyState.buttons.receiveFunds" />}
             onPress={this.goToReceiveFunds}

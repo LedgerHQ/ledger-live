@@ -11,11 +11,10 @@ import { updateAccountWithUpdater } from "../../actions/accounts";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import { TrackScreen } from "../../analytics";
+import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import PreventNativeBack from "../../components/PreventNativeBack";
-
-import colors from "../../colors";
 import ValidateOnDevice from "./ValidateOnDevice";
 
 type Props = {
@@ -113,6 +112,7 @@ class Validation extends Component<Props, State> {
     const { signed } = this.state;
     return (
       <View style={styles.root}>
+        <TrackScreen category="SendFunds" name="Validation" signed={signed} />
         <PreventNativeBack />
         {signed ? (
           <View style={styles.center}>

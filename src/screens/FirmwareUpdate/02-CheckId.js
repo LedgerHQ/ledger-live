@@ -8,6 +8,7 @@ import { from, of } from "rxjs";
 import { mergeMap, tap } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 
+import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import installFinalFirmware from "../../logic/hw/installFinalFirmware";
@@ -132,6 +133,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const windowWidth = Dimensions.get("window").width;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="FirmwareUpdate" name="CheckId" />
         {installing ? (
           <Installing />
         ) : (

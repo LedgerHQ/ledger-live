@@ -6,6 +6,8 @@ if [ -e node_modules/react-native-camera/ios/FaceDetector ] ; then
 fi
 cp node_modules/react-native-camera/postinstall_project/projectWithoutFaceDetection.pbxproj node_modules/react-native-camera/ios/RNCamera.xcodeproj/project.pbxproj
 
+cp node_modules_patches/segment_react_native/project.pbxproj node_modules/\@segment/analytics-react-native/ios/RNAnalytics.xcodeproj/project.pbxproj
+
 rn-nodeify --hack
 
 # Create the dev .env file with APP_NAME if it doesn't exist

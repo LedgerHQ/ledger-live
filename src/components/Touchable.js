@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { TouchableOpacity } from "react-native";
+import { track } from "../analytics";
 
 const defaultHitSlop = {
   // default & can be overrided by rest
@@ -19,6 +20,8 @@ export default class Touchable extends Component<
     // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
     onPress: ?() => ?Promise<any>,
     children: *,
+    event: string,
+    eventProperties?: Object,
   },
   {
     pending: boolean,
@@ -29,9 +32,12 @@ export default class Touchable extends Component<
   };
 
   onPress = async () => {
-    const { onPress } = this.props;
+    const { onPress, event, eventProperties } = this.props;
     if (!onPress) return;
     try {
+      if (event) {
+        track(event, eventProperties);
+      }
       const res = onPress();
       if (res && res.then) {
         // it's a promise, we will use pending/spinnerOn state
@@ -44,7 +50,7 @@ export default class Touchable extends Component<
   };
 
   render() {
-    const { onPress, children, ...rest } = this.props;
+    const { onPress, children, event, eventProperties, ...rest } = this.props;
     const { pending } = this.state;
     const disabled = !onPress || pending;
     return (

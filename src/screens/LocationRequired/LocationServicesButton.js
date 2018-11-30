@@ -24,6 +24,7 @@ export default class LocationServicesButton extends PureComponent<{
   render() {
     return (
       <Button
+        event="LocationServiceOpenSettings"
         type="primary"
         title={<Trans i18nKey="location.open" />}
         onPress={this.openLocationServicesSetting}

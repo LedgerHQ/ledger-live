@@ -10,12 +10,13 @@ type Props = {
   onPress: () => void,
 };
 
-class ArchiveAccountRow extends PureComponent<Props> {
+class DeleteAccountRow extends PureComponent<Props> {
   render() {
     const { onPress } = this.props;
 
     return (
       <SettingsRow
+        event="DeleteAccountRow"
         title={<Trans i18nKey="account.settings.delete.title" />}
         desc={<Trans i18nKey="account.settings.delete.desc" />}
         iconLeft={
@@ -30,4 +31,4 @@ class ArchiveAccountRow extends PureComponent<Props> {
   }
 }
 
-export default ArchiveAccountRow;
+export default DeleteAccountRow;

@@ -4,11 +4,13 @@ import React, { Component } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
+import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 
 export type Props = {
+  id: string,
   isOpened: boolean,
   onClose: () => *,
   children?: *,
@@ -20,7 +22,7 @@ class BottomModal extends Component<Props> {
     onClose: () => {},
   };
   render() {
-    const { isOpened, onClose, children, style, ...rest } = this.props;
+    const { isOpened, onClose, children, style, id, ...rest } = this.props;
     return (
       <ButtonUseTouchable.Provider value={true}>
         <ReactNativeModal
@@ -35,6 +37,7 @@ class BottomModal extends Component<Props> {
           {...rest}
         >
           <View style={[styles.modal, style]}>
+            {isOpened ? <TrackScreen category={id} /> : null}
             <StyledStatusBar
               backgroundColor={
                 Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"

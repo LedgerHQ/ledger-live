@@ -45,12 +45,14 @@ class EmptyStatePortfolio extends PureComponent<Props, State> {
             {<Trans i18nKey="portfolio.emptyState.desc" />}
           </LText>
           <Button
+            event="PortfolioEmptyToManager"
             type="primary"
             title={<Trans i18nKey="portfolio.emptyState.buttons.manager" />}
             onPress={this.navigateToManager}
             containerStyle={[styles.buttonFull, styles.primaryCTA]}
           />
           <Button
+            event="PortfolioEmptyToImport"
             type="lightSecondary"
             title={<Trans i18nKey="portfolio.emptyState.buttons.import" />}
             onPress={this.openAddModal}

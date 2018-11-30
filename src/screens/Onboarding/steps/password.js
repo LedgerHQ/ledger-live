@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
 import { createStructuredSelector } from "reselect";
+import { TrackScreen } from "../../../analytics";
 import type { Privacy } from "../../../reducers/settings";
 import { privacySelector } from "../../../reducers/settings";
 import LText from "../../../components/LText";
@@ -54,12 +55,14 @@ class OnboardingStepPassword extends Component<
 
     return privacy ? (
       <Button
+        event="OnboardingPasswordContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
         onPress={this.showModal}
       />
     ) : (
       <Button
+        event="OnboardingPasswordSetup"
         type="primary"
         title={<Trans i18nKey="onboarding.stepPassword.setPassword" />}
         onPress={this.navigateToPassword}
@@ -77,6 +80,7 @@ class OnboardingStepPassword extends Component<
         Footer={this.Footer}
         withSkip={!privacy}
       >
+        <TrackScreen category="Onboarding" name="Password" />
         <PasslockDisclaimerModal
           isOpened={isModalOpened}
           onAccept={next}

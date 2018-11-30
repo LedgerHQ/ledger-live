@@ -286,6 +286,7 @@ class DebugBLE extends Component<
             <Button
               containerStyle={{ width: 60 }}
               type="lightSecondary"
+              event="DebugBLESend"
               title="Send"
               onPress={this.send}
             />
@@ -316,23 +317,27 @@ class DebugBLE extends Component<
             </View>
             <Button
               containerStyle={{ width: 56, marginRight: 8 }}
+              event="DebugBLEPRIO"
               type="lightSecondary"
               title="change prio"
               onPress={this.toggleConnectionPriority}
             />
             <Button
               containerStyle={{ width: 50, marginRight: 8 }}
+              event="DebugBLEMTU"
               type="lightSecondary"
               title="infer MTU"
               onPress={this.inferMTU}
             />
             <Button
               containerStyle={{ width: 38, marginRight: 8 }}
+              event="DebugBLECO"
               type="primary"
               title="CO"
               onPress={this.connect}
             />
             <Button
+              event="DebugBLEDI"
               containerStyle={{ width: 38 }}
               type="primary"
               title="DI"

@@ -31,7 +31,7 @@ class SelectDeviceConnectModal extends PureComponent<{
     } = this.props;
 
     return (
-      <BottomModal isOpened={isOpened} onClose={onClose}>
+      <BottomModal id="DeviceJobModal" isOpened={isOpened} onClose={onClose}>
         {error ? (
           <RenderError
             error={error}
@@ -45,7 +45,11 @@ class SelectDeviceConnectModal extends PureComponent<{
             onDone={onStepDone}
           />
         )}
-        <Touchable style={styles.close} onPress={onClose}>
+        <Touchable
+          event="DeviceJobClose"
+          style={styles.close}
+          onPress={onClose}
+        >
           <Close color={colors.fog} size={20} />
         </Touchable>
       </BottomModal>

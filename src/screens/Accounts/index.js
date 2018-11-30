@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -10,6 +10,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import TrackScreen from "../../analytics/TrackScreen";
 
 import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
@@ -56,17 +57,25 @@ class Accounts extends Component<Props> {
     const { accounts, navigation } = this.props;
 
     if (accounts.length === 0) {
-      return <NoAccounts navigation={navigation} />;
+      return (
+        <Fragment>
+          <TrackScreen category="Accounts" accountsLength={0} />
+          <NoAccounts navigation={navigation} />
+        </Fragment>
+      );
     }
 
     return (
-      <List
-        data={accounts}
-        renderItem={this.renderItem}
-        keyExtractor={this.keyExtractor}
-        style={styles.list}
-        contentContainerStyle={styles.contentContainer}
-      />
+      <Fragment>
+        <TrackScreen category="Accounts" accountsLength={accounts.length} />
+        <List
+          data={accounts}
+          renderItem={this.renderItem}
+          keyExtractor={this.keyExtractor}
+          style={styles.list}
+          contentContainerStyle={styles.contentContainer}
+        />
+      </Fragment>
     );
   }
 }

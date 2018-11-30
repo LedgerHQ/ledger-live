@@ -19,6 +19,7 @@ type BulletItem = {
 };
 
 type Props = ModalProps & {
+  id: string,
   title: string | React$Element<*>,
   desc: string | React$Element<*>,
   bullets: BulletItem[],
@@ -27,9 +28,14 @@ type Props = ModalProps & {
 
 class InfoModal extends PureComponent<Props> {
   render() {
-    const { isOpened, onClose, title, desc, bullets, Icon } = this.props;
+    const { isOpened, onClose, id, title, desc, bullets, Icon } = this.props;
     return (
-      <BottomModal isOpened={isOpened} onClose={onClose} style={styles.modal}>
+      <BottomModal
+        id={id}
+        isOpened={isOpened}
+        onClose={onClose}
+        style={styles.modal}
+      >
         <Circle bg={rgba(colors.live, 0.1)} size={56}>
           {Icon ? <Icon /> : <IconHelp size={24} color={colors.live} />}
         </Circle>
@@ -43,6 +49,7 @@ class InfoModal extends PureComponent<Props> {
           ))}
         </View>
         <Button
+          event="InfoModalGotIt"
           type="primary"
           title={<Trans i18nKey="common.gotit" />}
           containerStyle={styles.modalBtn}

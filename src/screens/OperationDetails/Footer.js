@@ -19,6 +19,7 @@ class Footer extends PureComponent<Props, *> {
       <View style={styles.footer}>
         <View style={{ justifyContent: "center" }}>
           <Touchable
+            event="OperationDetailsViewExplorer"
             onPress={() =>
               Linking.openURL(url).catch(err =>
                 console.error("An error occurred", err),

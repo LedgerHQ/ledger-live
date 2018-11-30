@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
+import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
@@ -17,6 +18,7 @@ class OnboardingStepShareData extends Component<OnboardingStepProps> {
     const { next } = this.props;
     return (
       <Button
+        event="OnboardingShareDataContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
         onPress={next}
@@ -33,6 +35,7 @@ class OnboardingStepShareData extends Component<OnboardingStepProps> {
         noTopPadding
         withNeedHelp
       >
+        <TrackScreen category="Onboarding" name="ShareData" />
         <AnalyticsRow />
         <ReportErrorsRow borderTop />
         <TechnicalDataRow borderTop />

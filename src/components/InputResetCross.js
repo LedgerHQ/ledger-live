@@ -1,7 +1,8 @@
 // @flow
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 
+import Touchable from "./Touchable";
 import Close from "../icons/Close";
 import colors from "../colors";
 
@@ -11,11 +12,11 @@ type Props = {
 };
 
 const InputResetCross = ({ onPress, style }: Props) => (
-  <TouchableOpacity onPress={onPress} style={style}>
+  <Touchable event="ResetInput" onPress={onPress} style={style}>
     <View style={styles.container}>
       <Close color={colors.white} size={12} />
     </View>
-  </TouchableOpacity>
+  </Touchable>
 );
 
 const styles = StyleSheet.create({

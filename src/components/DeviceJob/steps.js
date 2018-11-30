@@ -227,6 +227,7 @@ export const receiveVerifyStep: Account => Step = account => ({
       }
     >
       <Button
+        event="DeviceJobDone"
         type="primary"
         onPress={onDone}
         title={<Trans i18nKey="SelectDevice.steps.receiveVerify.action" />}

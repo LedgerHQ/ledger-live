@@ -23,13 +23,18 @@ class AccountOrderModal extends Component<{
   render() {
     const { onClose, isOpened, t } = this.props;
     return (
-      <BottomModal onClose={onClose} isOpened={isOpened}>
+      <BottomModal id="AccountOrderModal" onClose={onClose} isOpened={isOpened}>
         <SafeAreaView forceInset={forceInset}>
           <MenuTitle>{t("common:common.sortBy")}</MenuTitle>
           <OrderOption id="balance" />
           <OrderOption id="name" />
           <View style={styles.buttonContainer}>
-            <Button type="primary" onPress={onClose} title="Done" />
+            <Button
+              event="AccountOrderModalDone"
+              type="primary"
+              onPress={onClose}
+              title="Done"
+            />
           </View>
         </SafeAreaView>
       </BottomModal>

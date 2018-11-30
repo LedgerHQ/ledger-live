@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from "react-native";
 
+import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
 import BottomModal from "../../../components/BottomModal";
 import Button from "../../../components/Button";
@@ -47,6 +48,7 @@ class OnboardingStepSecurityChecklist extends Component<
     if (hidden) return null;
     return (
       <Button
+        event="OnboardingSecurityContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
         onPress={next}
@@ -105,6 +107,7 @@ class OnboardingStepSecurityChecklist extends Component<
         noScroll
         withNeedHelp
       >
+        <TrackScreen category="Onboarding" name="Security" />
         <ScrollView
           ref={this.scrollView}
           horizontal
@@ -118,12 +121,14 @@ class OnboardingStepSecurityChecklist extends Component<
               <Trans i18nKey="onboarding.stepSecurityChecklist.pinCode.title" />
             </LText>
             <OnboardingChoice
+              event="OnboardingPinYes"
               isChecked={pinCode === true}
               onPress={this.answerYepPinCode}
             >
               <Trans i18nKey="common.yes" />
             </OnboardingChoice>
             <OnboardingChoice
+              event="OnboardingPinNo"
               isChecked={pinCode === false}
               onPress={this.answerNopePinCode}
             >
@@ -136,12 +141,14 @@ class OnboardingStepSecurityChecklist extends Component<
               <Trans i18nKey="onboarding.stepSecurityChecklist.recoveryPhrase.title" />
             </LText>
             <OnboardingChoice
+              event="OnboardingRecoveryYes"
               isChecked={recoveryPhrase === true}
               onPress={this.answerYepRecovery}
             >
               <Trans i18nKey="common.yes" />
             </OnboardingChoice>
             <OnboardingChoice
+              event="OnboardingRecoveryNo"
               isChecked={recoveryPhrase === false}
               onPress={this.answerNopeRecovery}
             >
@@ -149,7 +156,11 @@ class OnboardingStepSecurityChecklist extends Component<
             </OnboardingChoice>
           </View>
         </ScrollView>
-        <BottomModal isOpened={isErrorModalOpened} onClose={this.resetAnswer}>
+        <BottomModal
+          id="SecurityModal"
+          isOpened={isErrorModalOpened}
+          onClose={this.resetAnswer}
+        >
           <View style={styles.modalIconContainer}>
             <Circle bg={rgba(colors.alert, 0.1)} size={56}>
               <IconWarning size={24} color={colors.alert} />
@@ -162,12 +173,14 @@ class OnboardingStepSecurityChecklist extends Component<
           </LText>
           <View style={styles.modalActions}>
             <Button
+              event="OnboardingSecurityReset"
               containerStyle={styles.modalAction}
               type="secondary"
               onPress={this.resetAnswer}
               title={<Trans i18nKey="common.back" />}
             />
             <Button
+              event="OnboardingSecurityContactUs"
               containerStyle={styles.modalAction}
               type="primary"
               onPress={this.contactSupport}

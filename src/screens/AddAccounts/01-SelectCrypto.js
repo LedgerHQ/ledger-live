@@ -11,7 +11,7 @@ import i18next from "i18next";
 
 import { connect } from "react-redux";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
-
+import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
@@ -83,6 +83,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="AddAccounts" name="SelectCrypto" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar

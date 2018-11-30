@@ -25,6 +25,7 @@ class FallbackCameraBody extends Component<Props> {
           </LText>
           <LText style={styles.desc}>{description}</LText>
           <Button
+            event="CameraOpenSettings"
             type="primary"
             title={buttonTitle}
             onPress={onPress}
