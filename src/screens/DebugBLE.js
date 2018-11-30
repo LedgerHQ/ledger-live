@@ -42,16 +42,16 @@ const mapLogToColor = (log: Log) => {
 
 const mapLogToText = (log: Log) => {
   switch (log.type) {
-    case "ble-apdu-in":
+    case "ble-apdu-read":
       return `<= ${String(log.message)}`;
 
-    case "ble-frame-in":
+    case "ble-frame-read":
       return `<=  ${String(log.message)}`;
 
-    case "ble-frame-out":
+    case "ble-frame-write":
       return `=>  ${String(log.message)}`;
 
-    case "ble-apdu-out":
+    case "ble-apdu-write":
       return `=> ${String(log.message)}`;
 
     default:

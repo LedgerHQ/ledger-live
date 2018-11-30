@@ -2,8 +2,7 @@
 
 import uuid from "uuid/v4";
 import { Observable } from "rxjs";
-import { logSubject } from "./debug";
-import type { BleManager, Characteristic } from "./types";
+import type { BleManager } from "./types";
 
 const TagId = 0x05;
 
@@ -24,7 +23,7 @@ function chunkBuffer(
 
 export const sendAPDU = (
   bleManager: BleManager,
-  characteristic: Characteristic,
+  write: (Buffer, ?string) => Promise<void>,
   apdu: Buffer,
   mtuSize: number,
 ) => {
@@ -47,12 +46,7 @@ export const sendAPDU = (
     async function main() {
       for (const chunk of chunks) {
         if (terminated) return;
-        const message = chunk.toString("base64");
-        logSubject.next({
-          type: "ble-frame-out",
-          message: chunk.toString("hex"),
-        });
-        await characteristic.writeWithResponse(message, txId);
+        await write(chunk, txId);
       }
       terminated = true;
     }
