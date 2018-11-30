@@ -44,7 +44,11 @@ class HardResetRow extends PureComponent<Props, State> {
           }
           onPress={this.onPress}
         />
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="HardResetModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <HardResetModal
             onRequestClose={this.onRequestClose}
             onHardReset={this.onHardReset}

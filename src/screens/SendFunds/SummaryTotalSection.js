@@ -72,7 +72,11 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             </LText>
           </View>
         </SummaryRow>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="SummaryTotalModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <ModalBottomAction
             title={<Trans i18nKey="send.summary.infoTotalTitle" />}
             icon={

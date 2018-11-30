@@ -62,6 +62,7 @@ class AnalyticsRow extends PureComponent<Props, State> {
           <Switch value={analyticsEnabled} onValueChange={setAnalytics} />
         </SettingsRow>
         <InfoModal
+          id="AnalyticsModal"
           Icon={IconActivity}
           isOpened={isOpened}
           onClose={this.onClose}

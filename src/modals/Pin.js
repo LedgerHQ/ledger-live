@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { Trans, translate } from "react-i18next";
 import { Image, View, StyleSheet } from "react-native";
 import BottomModal from "../components/BottomModal";
-import type { Props as ModalProps } from "../components/BottomModal";
 import Button from "../components/Button";
 import colors from "../colors";
 import BulletList, {
@@ -13,7 +12,7 @@ import BulletList, {
 } from "../components/BulletList";
 import LText from "../components/LText";
 
-type Props = { ...$Exact<ModalProps>, onAccept: () => * };
+type Props = { onClose: *, isOpened: *, onAccept: () => * };
 
 class PinModal extends Component<Props> {
   static defaultProps = {
@@ -29,7 +28,12 @@ class PinModal extends Component<Props> {
   render() {
     const { onClose, isOpened } = this.props;
     return (
-      <BottomModal style={styles.root} isOpened={isOpened} onClose={onClose}>
+      <BottomModal
+        id="PinModal"
+        style={styles.root}
+        isOpened={isOpened}
+        onClose={onClose}
+      >
         <Image
           style={styles.image}
           source={require("../images/shield-red.png")}

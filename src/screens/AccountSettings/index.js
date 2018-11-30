@@ -78,7 +78,11 @@ class AccountSettings extends PureComponent<Props, State> {
         <View style={styles.sectionRow}>
           <DeleteAccountRow onPress={this.onPress} />
         </View>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="DeleteAccountModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <DeleteAccountModal
             onRequestClose={this.onRequestClose}
             deleteAccount={this.deleteAccount}

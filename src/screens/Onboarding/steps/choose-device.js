@@ -73,7 +73,11 @@ class OnboardingStepChooseDevice extends Component<OnboardingStepProps, State> {
           onPress={this.openForBlue}
           Icon={Blue}
         />
-        <BottomModal isOpened={isModalOpened} onClose={this.close}>
+        <BottomModal
+          id="ChooseDeviceFallbackModal"
+          isOpened={isModalOpened}
+          onClose={this.close}
+        >
           <LText style={styles.modalTitle} semiBold>
             <Trans
               i18nKey="onboarding.stepChooseDevice.fallbackTitle"

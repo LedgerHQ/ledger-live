@@ -126,7 +126,11 @@ class EditFeeUnit extends PureComponent<Props, State> {
             />
           </View>
         </View>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="EditFeeUnitModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <View style={styles.editFeesUnitsModalTitleRow}>
             <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
               {t("send.fees.edit.title")}

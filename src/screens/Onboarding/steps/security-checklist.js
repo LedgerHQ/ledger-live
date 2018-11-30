@@ -156,7 +156,11 @@ class OnboardingStepSecurityChecklist extends Component<
             </OnboardingChoice>
           </View>
         </ScrollView>
-        <BottomModal isOpened={isErrorModalOpened} onClose={this.resetAnswer}>
+        <BottomModal
+          id="SecurityModal"
+          isOpened={isErrorModalOpened}
+          onClose={this.resetAnswer}
+        >
           <View style={styles.modalIconContainer}>
             <Circle bg={rgba(colors.alert, 0.1)} size={56}>
               <IconWarning size={24} color={colors.alert} />

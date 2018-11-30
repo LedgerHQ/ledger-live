@@ -32,6 +32,7 @@ class TechnicalDataRow extends PureComponent<Props, State> {
           {...props}
         />
         <InfoModal
+          id="TechnicalDataModal"
           isOpened={isOpened}
           onClose={this.onClose}
           title={<Trans i18nKey="settings.display.technicalDataModal.title" />}

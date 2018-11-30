@@ -15,6 +15,7 @@ type Props = {
   account: Account,
 };
 
+// FIXME this is not a modal \o/
 class DeleteAccountModal extends PureComponent<Props> {
   render() {
     const { onRequestClose, deleteAccount } = this.props;

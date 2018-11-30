@@ -213,7 +213,11 @@ class ReceiveConfirmation extends Component<Props, State> {
             />
           </View>
         )}
-        <BottomModal isOpened={isModalOpened} onModalHide={onModalHide}>
+        <BottomModal
+          id="ReceiveConfirmationModal"
+          isOpened={isModalOpened}
+          onModalHide={onModalHide}
+        >
           {error ? (
             <View style={styles.modal}>
               <View style={styles.modalBody}>

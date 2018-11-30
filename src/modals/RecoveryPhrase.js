@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { Trans, translate } from "react-i18next";
 import { Image, View, StyleSheet } from "react-native";
 import BottomModal from "../components/BottomModal";
-import type { Props as ModalProps } from "../components/BottomModal";
 import Button from "../components/Button";
 import colors from "../colors";
 import BulletList, {
@@ -12,7 +11,7 @@ import BulletList, {
   BulletItemText,
 } from "../components/BulletList";
 
-type Props = { ...$Exact<ModalProps>, onAccept: () => * };
+type Props = { isOpened: *, onClose: *, onAccept: () => * };
 
 class RecoveryPhraseModal extends Component<Props> {
   static defaultProps = {
@@ -28,7 +27,12 @@ class RecoveryPhraseModal extends Component<Props> {
   render() {
     const { onClose, isOpened } = this.props;
     return (
-      <BottomModal style={styles.root} isOpened={isOpened} onClose={onClose}>
+      <BottomModal
+        id="RecoveryPhraseModal"
+        style={styles.root}
+        isOpened={isOpened}
+        onClose={onClose}
+      >
         <Image
           style={styles.image}
           source={require("../images/shield-red.png")}

@@ -54,7 +54,7 @@ class DeviceAction extends PureComponent<Props, State> {
     const { onClose, opened } = this.props;
 
     return (
-      <BottomModal isOpened={opened} onClose={onClose}>
+      <BottomModal id="UnpairModal" isOpened={opened} onClose={onClose}>
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
             <View style={styles.headIcon}>

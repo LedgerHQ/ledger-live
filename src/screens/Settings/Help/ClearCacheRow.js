@@ -61,7 +61,11 @@ class ClearCacheRow extends PureComponent<Props, State> {
           }
           onPress={this.onPress}
         />
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="ClearCacheRow"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <ModalBottomAction
             title={null}
             icon={

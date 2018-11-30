@@ -14,6 +14,8 @@ type Props = {
   onRequestClose: () => void,
   onHardReset: () => void,
 };
+
+// FIXME this is not a modal \o/
 class HardResetModal extends PureComponent<Props> {
   render() {
     const { onRequestClose, onHardReset } = this.props;

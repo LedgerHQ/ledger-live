@@ -8,12 +8,13 @@ import Button from "../components/Button";
 import LText from "../components/LText";
 import type { T } from "../types/common";
 import BottomModal from "../components/BottomModal";
-import type { Props as ModalProps } from "../components/BottomModal";
 import colors from "../colors";
 
 const forceInset = { bottom: "always" };
 
-type Props = ModalProps & {
+type Props = {
+  onClose: *,
+  isOpened: *,
   t: T,
 };
 
@@ -22,7 +23,12 @@ class TradingDisclaimer extends Component<Props> {
     const { onClose, isOpened, t } = this.props;
 
     return (
-      <BottomModal style={styles.root} isOpened={isOpened} onClose={onClose}>
+      <BottomModal
+        id="TradingDisclaimerModal"
+        style={styles.root}
+        isOpened={isOpened}
+        onClose={onClose}
+      >
         <SafeAreaView forceInset={forceInset}>
           <Image
             style={styles.image}

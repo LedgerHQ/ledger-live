@@ -41,7 +41,7 @@ class CreateModal extends Component<Props> {
   render() {
     const { onClose, isOpened, accountsCount, t } = this.props;
     return (
-      <BottomModal isOpened={isOpened} onClose={onClose}>
+      <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
         <BottomModalChoice
           event="TransferSend"
           title={t("transfer.send.title")}
