@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     lineHeight: 21,
-    color: colors.grey,
+    color: colors.smoke,
   },
   buttonContainer: {
     flexDirection: "row",

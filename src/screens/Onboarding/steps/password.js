@@ -15,6 +15,7 @@ import colors from "../../../colors";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import type { OnboardingStepProps } from "../types";
+import PasslockDisclaimerModal from "../../../modals/PasslockDisclaimerModal";
 
 const illustration = (
   <Image source={require("../assets/password-illustration.png")} />
@@ -30,20 +31,33 @@ class OnboardingStepPassword extends Component<
   OnboardingStepProps & {
     privacy: ?Privacy,
   },
+  { isModalOpened: boolean },
 > {
+  state = {
+    isModalOpened: false,
+  };
+
+  showModal = () => {
+    this.setState({ isModalOpened: true });
+  };
+
+  hideModal = () => {
+    this.setState({ isModalOpened: false });
+  };
+
   navigateToPassword = () => {
     this.props.navigation.navigate("PasswordAdd");
   };
 
   Footer = () => {
-    const { next, privacy } = this.props;
+    const { privacy } = this.props;
 
     return privacy ? (
       <Button
         event="OnboardingPasswordContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
-        onPress={next}
+        onPress={this.showModal}
       />
     ) : (
       <Button
@@ -56,13 +70,20 @@ class OnboardingStepPassword extends Component<
   };
 
   render() {
-    const { privacy } = this.props;
+    const { privacy, next } = this.props;
+    const { isModalOpened } = this.state;
+
     return (
       <OnboardingLayout
         header="OnboardingStepPassword"
         Footer={this.Footer}
         withSkip={!privacy}
       >
+        <PasslockDisclaimerModal
+          isOpened={isModalOpened}
+          onAccept={next}
+          onClose={this.hideModal}
+        />
         <View style={styles.hero}>
           {illustration}
           {privacy ? <Success /> : null}

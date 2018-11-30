@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    paddingVertical: 20,
+    paddingVertical: 16,
   },
   device: {
     flexDirection: "column",
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   deviceName: {
-    fontSize: 22,
+    fontSize: 24,
     color: colors.darkBlue,
     paddingTop: 24,
   },

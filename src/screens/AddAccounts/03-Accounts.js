@@ -3,6 +3,7 @@
 import React, { PureComponent, createRef } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import i18next from "i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
@@ -56,7 +57,15 @@ const mapDispatchToProps = {
 
 class AddAccountsAccounts extends PureComponent<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("tabs.accounts")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "3",
+          totalSteps: "3",
+        })}
+      />
+    ),
     gesturesEnabled: false,
   };
 

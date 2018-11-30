@@ -43,7 +43,8 @@ class ConnectDevice extends Component<Props> {
 
   onSelectDevice = (deviceId: string) => {
     const { navigation } = this.props;
-    navigation.navigate("SendValidation", {
+    // $FlowFixMe
+    navigation.replace("SendValidation", {
       ...navigation.state.params,
       deviceId,
     });

@@ -21,7 +21,7 @@ type State = {
   step: string,
 };
 
-class FirmwareVersionRow extends PureComponent<Props, State> {
+class FirmwareUpdateRow extends PureComponent<Props, State> {
   state = {
     visibleFirmwareModal: false,
     latestFirmware: null,
@@ -96,18 +96,18 @@ class FirmwareVersionRow extends PureComponent<Props, State> {
   }
 }
 
-export default withNavigation(FirmwareVersionRow);
+export default withNavigation(FirmwareUpdateRow);
 
 const styles = StyleSheet.create({
   root: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     alignSelf: "stretch",
     flexDirection: "column",
   },
   title: {
     color: colors.live,
     fontSize: 14,
-    padding: 20,
+    padding: 16,
     alignSelf: "center",
   },
   button: {},

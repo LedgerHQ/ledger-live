@@ -2,15 +2,17 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { withNavigation, SafeAreaView } from "react-navigation";
+import { withNavigation } from "react-navigation";
 import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 import LText from "../../components/LText";
+import InfoIcon from "../../components/InfoIcon";
+import Check from "../../icons/Check";
 import Button from "../../components/Button";
-import PairingSuccess from "../../icons/PairingSuccess";
 import DeviceItemSummary from "../../components/DeviceItemSummary";
 import { deviceNames } from "../../wording";
+import NanoX from "../../icons/NanoX";
 
 class Paired extends PureComponent<{
   deviceId: string,
@@ -29,9 +31,15 @@ class Paired extends PureComponent<{
   render() {
     const { deviceId, onContinue } = this.props;
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.root}>
-          <PairingSuccess />
+      <View style={styles.root}>
+        <View style={styles.container}>
+          <InfoIcon
+            bg={colors.pillActiveBackground}
+            floatingIcon={<Check color={colors.white} size={16} />}
+            floatingBg={colors.green}
+          >
+            <NanoX size={48} color={colors.live} />
+          </InfoIcon>
           <LText secondary semiBold style={styles.title}>
             <Trans
               i18nKey="PairDevices.Paired.title"
@@ -39,13 +47,7 @@ class Paired extends PureComponent<{
             />
           </LText>
           <LText style={styles.description}>
-            <Trans i18nKey="PairDevices.Paired.desc" values={deviceNames.nanoX}>
-              {"You can now use your Nano X on you Ledger Live mobile App to "}
-              <LText semiBold>send & receive funds</LText>
-              {". You can also mange your device on the "}
-              <LText semiBold>Manager</LText>
-              {" section"}
-            </Trans>
+            <Trans i18nKey="PairDevices.Paired.desc" />
           </LText>
           <View style={styles.fullContainer}>
             <DeviceItemSummary
@@ -54,16 +56,16 @@ class Paired extends PureComponent<{
               onEdit={this.onEdit}
             />
           </View>
-          <View style={[styles.fullContainer, styles.buttonContainer]}>
-            <Button
-              event="PairDevicesContinue"
-              type="primary"
-              title={<Trans i18nKey="PairDevices.Paired.action" />}
-              onPress={onContinue}
-            />
-          </View>
         </View>
-      </SafeAreaView>
+        <View style={styles.fullContainer}>
+          <Button
+            event="PairDevicesContinue"
+            type="primary"
+            title={<Trans i18nKey="PairDevices.Paired.action" />}
+            onPress={onContinue}
+          />
+        </View>
+      </View>
     );
   }
 }
@@ -71,28 +73,27 @@ class Paired extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 38,
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   fullContainer: {
     width: "100%",
   },
-  buttonContainer: {
-    marginTop: "auto",
-  },
   title: {
-    marginTop: 24,
+    marginTop: 32,
     fontSize: 18,
     color: colors.darkBlue,
   },
   description: {
-    marginTop: 8,
+    marginTop: 16,
     marginBottom: 40,
     textAlign: "center",
-    fontSize: 14,
     paddingHorizontal: 40,
-    color: colors.grey,
+    color: colors.smoke,
   },
 });
 
