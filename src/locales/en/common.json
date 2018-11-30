@@ -42,8 +42,8 @@
       "description": "Open the ‘{{managerAppName}}’ app on your device"
     },
     "CantOpenDevice": {
-      "title": "Oops, couldn’t connect to device",
-      "description": "Device detected but connection failed. Please retry and get help if the problem persists."
+      "title": "Sorry, connection failed",
+      "description": "Your Ledger Nano X should be unlocked and within range"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR-code: auto-verification not supported by this address"
@@ -386,9 +386,9 @@
       "descConfigured": "Password lock successfully enabled",
       "setPassword": "Set password",
       "modal": {
-        "step1":"Make sure to remember your password. Do not share it.",
-        "step2":"Losing your password requires resetting Ledger Live and re-adding accounts.",
-        "step3":"Resetting Ledger Live does not affect your crypto assets."
+        "step1": "Make sure to remember your password. Do not share it.",
+        "step2": "Losing your password requires resetting Ledger Live and re-adding accounts.",
+        "step3": "Resetting Ledger Live does not affect your crypto assets."
       }
     },
     "stepShareData": {},
@@ -659,13 +659,16 @@
     },
     "receive": {
       "title": "Receive funds",
-      "desc": "Recieve crypto assets",
-      "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
-      "verifyPending": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
-      "verified": "You have verified your receive address on your Ledger Device.",
-      "verifyAgain": "Verify again",
+      "desc": "Receive crypto assets",
+      "headerTitle": "Select account",
+      "titleDevice": "Connect device",
+      "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security",
+      "verifyPending": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
+      "verified": "Address confirmed, please re-verify it if you copy/paste or scan the QRCode",
+      "verifyAgain": "Re-verify",
       "noAccount": "No account found",
-      "withoutDevice": "Don't have my device"
+      "withoutDevice": "Don't have my device",
+      "address": "Address for account"
     },
     "exchange": {
       "title": "Exchange",
@@ -769,8 +772,8 @@
     "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
     "steps": {
       "connecting": {
-        "title": "Connecting “{{deviceName}}”",
-        "description": "Don't forget to turn on your device and enter your PIN to unlock it"
+        "title": "Connecting {{deviceName}}",
+        "description": "Please make sure your Ledger Nano X is unlocked and within range"
       },
       "genuineCheck": {
         "title": "Allow Ledger Manager on your {{fullDeviceName}}"
@@ -783,13 +786,12 @@
         "description": "On your device, open the app {{managerAppName}}."
       },
       "accountApp": {
-        "title": "Open app {{managerAppName}}...",
-        "description": "On your device associated to account ‘{{accountName}}’, open the app {{managerAppName}}."
+        "title": "Open the {{managerAppName}} app"
       },
       "receiveVerify": {
         "title": "Verify address on device",
-        "description": "A <1><0>{{currencyName}}</0></1> address <3><0>will be displayed</0></3> on your device. Carefully verify that it matches the address on your phone.",
-        "action": "Ok, I'm ready"
+        "description": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
+        "action": "Verify"
       },
       "getDeviceName": {
         "title": "Press both buttons to allow get device name"

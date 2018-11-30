@@ -23,7 +23,6 @@ import Button from "../../components/Button";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import TranslatedError from "../../components/TranslatedError";
-import InputResetCross from "../../components/InputResetCross";
 import TextInput from "../../components/TextInput";
 import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
@@ -215,8 +214,8 @@ class SendSelectRecipient extends Component<Props, State> {
                 multiline
                 blurOnSubmit
                 autoCapitalize="none"
+                clearButtonMode="always"
               />
-              {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>
             {!!address &&
               addressStatus !== "valid" && (

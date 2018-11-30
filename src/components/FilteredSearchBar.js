@@ -6,7 +6,6 @@ import { translate } from "react-i18next";
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
 import TextInput from "./TextInput";
-import InputResetCross from "./InputResetCross";
 import getFontStyle from "./LText/getFontStyle";
 
 import colors from "../colors";
@@ -50,13 +49,6 @@ class FilteredSearchBar extends PureComponent<Props, State> {
     }
   };
 
-  clear = () => {
-    if (this.input.current) {
-      this.input.current.clear();
-    }
-    this.onChange("");
-  };
-
   render() {
     const {
       keys,
@@ -71,7 +63,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
     return (
       <Fragment>
         <TouchableOpacity
-          onPress={this.focusInput}
+          onPress={query ? null : this.focusInput}
           style={[styles.wrapper, inputWrapperStyle]}
         >
           <View style={styles.iconContainer}>
@@ -89,8 +81,8 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             style={styles.input}
             value={query}
             ref={this.input}
+            clearButtonMode="always"
           />
-          {query ? <InputResetCross onPress={this.clear} /> : null}
         </TouchableOpacity>
         <Search
           fuseOptions={{
@@ -111,7 +103,8 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
   },
   iconContainer: {
     marginRight: 8,
