@@ -314,6 +314,7 @@
       "OnboardingStepChooseDevice": "Choose your device",
       "OnboardingStepSetupPin": "Choose your PIN code",
       "OnboardingStepWriteRecovery": "Save recovery phrase",
+      "OnboardingStepWriteRecoveryRestore": "Enter recovery phrase",
       "OnboardingStepSecurityChecklist": "Security checklist",
       "OnboardingStepPairNew": "Pair your {{fullDeviceName}}",
       "OnboardingStepPassword": "Password lock",
@@ -366,10 +367,11 @@
       }
     },
     "stepWriteRecoveryRestore": {
-      "step1": "Choose the length of your recovery phrase.",
-      "step2": "Enter the first letters of <1><1>Word #1</1></1> until suggested words appear.",
-      "step3": "Choose <1><1>Word #1</1></1> from the suggested words by pressing both buttons.",
-      "step4": "Repeat the process until the last word."
+      "step1": "Take out your Recovery sheet.",
+      "step2": "Choose the length of your recovery phrase.",
+      "step3": "Enter the first letters of <1><1>Word #1</1></1> until suggested words appear.",
+      "step4": "Choose <1><1>Word #1</1></1> from the suggested words by pressing both buttons.",
+      "step5": "Repeat the process until the last word."
     },
     "stepSecurityChecklist": {
       "pinCode": {

@@ -33,6 +33,12 @@ class OnboardingHeader extends PureComponent<Props> {
     const visibleSteps = steps.filter(s => !s.isGhost);
     const indexInSteps = visibleSteps.findIndex(s => s.id === stepId);
     const stepMsg = `${indexInSteps + 1} of ${visibleSteps.length}`; // TODO translate
+
+    let stepIdOverride = stepId;
+    if (mode === "restore" && stepId === "OnboardingStepWriteRecovery") {
+      stepIdOverride = "OnboardingStepWriteRecoveryRestore";
+    }
+
     return (
       <View style={styles.root}>
         <View style={styles.headerHeader}>
@@ -56,7 +62,7 @@ class OnboardingHeader extends PureComponent<Props> {
           {stepMsg}
         </LText>
         <LText secondary semiBold style={styles.title}>
-          {t(`onboarding.stepsTitles.${stepId}`, deviceNames.nanoX)}
+          {t(`onboarding.stepsTitles.${stepIdOverride}`, deviceNames.nanoX)}
         </LText>
       </View>
     );

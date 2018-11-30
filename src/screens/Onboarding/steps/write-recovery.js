@@ -63,13 +63,7 @@ class OnboardingStepWriteRecovery extends Component<
               mode === "restore"
                 ? [
                     <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step1" />,
-                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step2">
-                      {"text"}
-                      <LText semiBold style={{ color: colors.darkBlue }}>
-                        bold text
-                      </LText>
-                      {"text"}
-                    </Trans>,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step2" />,
                     <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step3">
                       {"text"}
                       <LText semiBold style={{ color: colors.darkBlue }}>
@@ -77,7 +71,14 @@ class OnboardingStepWriteRecovery extends Component<
                       </LText>
                       {"text"}
                     </Trans>,
-                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step4" />,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step4">
+                      {"text"}
+                      <LText semiBold style={{ color: colors.darkBlue }}>
+                        bold text
+                      </LText>
+                      {"text"}
+                    </Trans>,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step5" />,
                   ]
                 : [
                     <Trans i18nKey="onboarding.stepWriteRecovery.step1">
