@@ -2,7 +2,13 @@
 
 import React, { Component } from "react";
 import i18next from "i18next";
-import { View, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Linking,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
@@ -27,6 +33,8 @@ import Close from "../../icons/Close";
 import Touchable from "../../components/Touchable";
 import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
+import CurrencyIcon from "../../components/CurrencyIcon";
+import { urls } from "../../config/urls";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -151,50 +159,71 @@ class ReceiveConfirmation extends Component<Props, State> {
           verified={verified}
         />
         {allowNavigation ? null : <PreventNativeBack />}
-        <View style={styles.container}>
-          <View style={styles.qrWrapper}>
-            <QRCode size={width / 2 - 30} value={account.freshAddress} />
+        <ScrollView style={{ flex: 1 }}>
+          <View style={styles.container}>
+            <View style={styles.qrWrapper}>
+              <QRCode size={width / 2 - 30} value={account.freshAddress} />
+            </View>
+            <View>
+              <LText style={styles.addressTitle}>
+                <Trans i18nKey="transfer.receive.address" />
+              </LText>
+            </View>
+            <View style={styles.addressWrapper}>
+              <CurrencyIcon currency={account.currency} size={24} />
+              <LText semiBold style={styles.addressTitleBold}>
+                {account.name}
+              </LText>
+            </View>
+            <View style={styles.address}>
+              <DisplayAddress
+                address={account.freshAddress}
+                verified={verified}
+              />
+            </View>
           </View>
-          <View>
-            <LText style={styles.addressTitle}>Address for account</LText>
-          </View>
-          <View>
-            <LText semiBold style={styles.addressTitleBold}>
-              {account.name}
-            </LText>
-          </View>
-          <View style={styles.address}>
-            <DisplayAddress
-              address={account.freshAddress}
+          <View style={styles.bottomContainer}>
+            <VerifyAddressDisclaimer
+              unsafe={unsafe}
               verified={verified}
+              action={
+                verified ? (
+                  <Touchable
+                    event="ReceiveVerifyTransactionHelp"
+                    onPress={() =>
+                      Linking.openURL(urls.verifyTransactionDetails).catch(
+                        err => console.error("An error occurred", err),
+                      )
+                    }
+                  >
+                    <LText semiBold style={styles.learnmore}>
+                      Learn More
+                    </LText>
+                  </Touchable>
+                ) : null
+              }
+              text={
+                unsafe ? (
+                  <Trans
+                    i18nKey="transfer.receive.verifySkipped"
+                    values={{
+                      accountType: account.currency.managerAppName,
+                    }}
+                  />
+                ) : verified ? (
+                  <Trans i18nKey="transfer.receive.verified" />
+                ) : (
+                  <Trans
+                    i18nKey="transfer.receive.verifyPending"
+                    values={{
+                      currencyName: account.currency.managerAppName,
+                    }}
+                  />
+                )
+              }
             />
           </View>
-        </View>
-        <View style={styles.bottomContainer}>
-          <VerifyAddressDisclaimer
-            unsafe={unsafe}
-            verified={verified}
-            text={
-              unsafe ? (
-                <Trans
-                  i18nKey="transfer.receive.verifySkipped"
-                  values={{
-                    accountType: account.currency.managerAppName,
-                  }}
-                />
-              ) : verified ? (
-                <Trans i18nKey="transfer.receive.verified" />
-              ) : (
-                <Trans
-                  i18nKey="transfer.receive.verifyPending"
-                  values={{
-                    accountType: account.currency.managerAppName,
-                  }}
-                />
-              )
-            }
-          />
-        </View>
+        </ScrollView>
         {verified && (
           <View style={styles.footer}>
             <Button
@@ -202,11 +231,11 @@ class ReceiveConfirmation extends Component<Props, State> {
               containerStyle={styles.button}
               onPress={this.onDone}
               type="secondary"
-              title={<Trans i18nKey="common.done" />}
+              title={<Trans i18nKey="common.close" />}
             />
             <Button
               event="ReceiveVerifyAgain"
-              containerStyle={styles.button}
+              containerStyle={styles.bigButton}
               type="primary"
               title={<Trans i18nKey="transfer.receive.verifyAgain" />}
               onPress={this.onRetry}
@@ -243,7 +272,7 @@ class ReceiveConfirmation extends Component<Props, State> {
                   event="ReceiveRetry"
                   type="primary"
                   title={<Trans i18nKey="common.retry" />}
-                  containerStyle={styles.button}
+                  containerStyle={styles.bigButton}
                   onPress={this.onRetry}
                 />
               </View>
@@ -275,6 +304,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     padding: 16,
+    paddingTop: 32,
   },
   qrWrapper: {
     borderWidth: 1,
@@ -293,12 +323,17 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   addressTitleBold: {
-    paddingTop: 4,
+    paddingLeft: 8,
     fontSize: 16,
     color: colors.darkBlue,
   },
+  addressWrapper: {
+    paddingTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+  },
   address: {
-    paddingTop: 25,
+    paddingTop: 24,
   },
   modal: {
     flexDirection: "column",
@@ -334,15 +369,27 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     marginHorizontal: 8,
   },
+  bigButton: {
+    flexGrow: 2,
+    marginHorizontal: 8,
+  },
   footer: {
     flexDirection: "row",
     marginBottom: 16,
-    marginHorizontal: 8,
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
   close: {
     position: "absolute",
     right: 10,
     top: 10,
+  },
+  learnmore: {
+    color: colors.live,
+    paddingLeft: 8,
+    paddingTop: 4,
   },
 });
 

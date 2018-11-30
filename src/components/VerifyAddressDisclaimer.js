@@ -14,6 +14,7 @@ type Props = {
   text: React$Node,
   unsafe?: boolean,
   verified?: boolean,
+  action?: React$Node,
 };
 
 class VerifyAddressDisclaimer extends PureComponent<Props> {
@@ -23,19 +24,30 @@ class VerifyAddressDisclaimer extends PureComponent<Props> {
   };
 
   render() {
-    const { unsafe, verified, text } = this.props;
+    const { unsafe, verified, text, action } = this.props;
 
     return (
       <View
-        style={[styles.wrapper, unsafe ? styles.wrapperWarning : undefined]}
+        style={[
+          styles.wrapper,
+          unsafe ? styles.wrapperWarning : undefined,
+          verified ? styles.wrapperVerified : null,
+        ]}
       >
         <Image
           source={unsafe ? shieldWarning : verified ? shieldCheckmark : shield}
         />
         <View style={styles.textWrapper}>
-          <LText style={[styles.text, unsafe ? styles.textWarning : undefined]}>
+          <LText
+            style={[
+              styles.text,
+              unsafe ? styles.textWarning : undefined,
+              verified ? styles.textVerified : null,
+            ]}
+          >
             {text}
           </LText>
+          {action || null}
         </View>
       </View>
     );
@@ -44,9 +56,9 @@ class VerifyAddressDisclaimer extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 16,
+    padding: 12,
     borderRadius: 4,
-    backgroundColor: colors.lightGrey,
+    backgroundColor: colors.pillActiveBackground,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -54,17 +66,24 @@ const styles = StyleSheet.create({
     borderColor: colors.alert,
     backgroundColor: colors.lightAlert,
   },
+  wrapperVerified: {
+    borderColor: colors.green,
+    backgroundColor: colors.lightGrey,
+  },
   textWrapper: {
     flex: 1,
   },
   text: {
-    fontSize: 12,
-    color: colors.grey,
-    lineHeight: 18,
-    paddingLeft: 16,
+    fontSize: 14,
+    color: colors.live,
+    lineHeight: 21,
+    paddingLeft: 8,
   },
   textWarning: {
     color: colors.alert,
+  },
+  textVerified: {
+    color: colors.grey,
   },
 });
 

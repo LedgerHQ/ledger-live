@@ -33,7 +33,7 @@ class ReceiveFunds extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
       <StepHeader
-        title={i18next.t("transfer.receive.title")}
+        title={i18next.t("transfer.receive.headerTitle")}
         subtitle={i18next.t("send.stepperHeader.stepRange", {
           currentStep: "1",
           totalSteps: "3",

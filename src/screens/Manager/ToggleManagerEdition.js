@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
   text: {
     color: colors.live,
     fontSize: 16,
-    padding: 10,
+    padding: 16,
   },
 });

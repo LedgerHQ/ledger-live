@@ -7,4 +7,6 @@ export const urls = {
   buyNanoX: "https://www.ledger.com/products/ledger-nano-x",
   feesMoreInfo:
     "https://support.ledgerwallet.com/hc/en-us/articles/360006535873",
+  verifyTransactionDetails:
+    "https://support.ledgerwallet.com/hc/en-us/articles/360006433934",
 };

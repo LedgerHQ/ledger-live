@@ -37,7 +37,7 @@ class ConnectDevice extends Component<Props> {
   static navigationOptions = {
     headerTitle: (
       <StepHeader
-        title={i18next.t("common.device")}
+        title={i18next.t("transfer.receive.titleDevice")}
         subtitle={i18next.t("send.stepperHeader.stepRange", {
           currentStep: "2",
           totalSteps: "3",
@@ -77,7 +77,7 @@ class ConnectDevice extends Component<Props> {
         <View style={styles.footer}>
           <Button
             event="ReceiveWithoutDevice"
-            type="secondary"
+            type="lightSecondary"
             title={<Trans i18nKey="transfer.receive.withoutDevice" />}
             onPress={this.onSkipDevice}
           />
@@ -93,7 +93,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   footer: {
-    padding: 10,
+    padding: 4,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
 });
 
