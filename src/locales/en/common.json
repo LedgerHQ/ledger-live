@@ -219,11 +219,11 @@
       "description": "Please retry or contact Ledger Support in case of doubt."
     },
     "WebsocketConnectionError": {
-      "title": "Sorry, try again (websocket error).",
+      "title": "Sorry, please try again with a better network connection",
       "description": null
     },
     "WebsocketConnectionFailed": {
-      "title": "Sorry, try again (websocket failed).",
+      "title": "Sorry, please try again with a better network connection",
       "description": null
     },
     "WrongDeviceForAccount": {
