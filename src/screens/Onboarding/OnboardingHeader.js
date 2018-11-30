@@ -1,10 +1,11 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 
 import colors from "../../colors";
+import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 import IconArrowLeft from "../../icons/ArrowLeft";
 import HelpLink from "../../components/HelpLink";
@@ -36,19 +37,20 @@ class OnboardingHeader extends PureComponent<Props> {
     return (
       <View style={styles.root}>
         <View style={styles.headerHeader}>
-          <TouchableOpacity
+          <Touchable
+            event="OnboardingBack"
             style={styles.arrow}
             onPress={prev}
             hitSlop={hitSlop}
           >
             <IconArrowLeft size={16} color={colors.grey} />
-          </TouchableOpacity>
+          </Touchable>
           {withSkip && (
-            <TouchableOpacity onPress={next} hitSlop={hitSlop}>
+            <Touchable event="OnboardingSkip" onPress={next} hitSlop={hitSlop}>
               <LText style={styles.skip} semiBold>
                 {t("common.skip")}
               </LText>
-            </TouchableOpacity>
+            </Touchable>
           )}
           {withNeedHelp && <HelpLink />}
         </View>

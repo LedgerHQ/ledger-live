@@ -52,6 +52,7 @@ class PasslockDisclaimerModal extends Component<Props> {
         </View>
         <View style={styles.buttonWrapper}>
           <Button
+            event="PasslockDisclaimerModalGotIt"
             type="primary"
             containerStyle={styles.buttonContainer}
             title={<Trans i18nKey="common.gotit" />}

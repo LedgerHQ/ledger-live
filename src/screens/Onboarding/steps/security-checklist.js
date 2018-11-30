@@ -119,12 +119,14 @@ class OnboardingStepSecurityChecklist extends Component<
               <Trans i18nKey="onboarding.stepSecurityChecklist.pinCode.title" />
             </LText>
             <OnboardingChoice
+              event="OnboardingPinYes"
               isChecked={pinCode === true}
               onPress={this.answerYepPinCode}
             >
               <Trans i18nKey="common.yes" />
             </OnboardingChoice>
             <OnboardingChoice
+              event="OnboardingPinNo"
               isChecked={pinCode === false}
               onPress={this.answerNopePinCode}
             >
@@ -137,12 +139,14 @@ class OnboardingStepSecurityChecklist extends Component<
               <Trans i18nKey="onboarding.stepSecurityChecklist.recoveryPhrase.title" />
             </LText>
             <OnboardingChoice
+              event="OnboardingRecoveryYes"
               isChecked={recoveryPhrase === true}
               onPress={this.answerYepRecovery}
             >
               <Trans i18nKey="common.yes" />
             </OnboardingChoice>
             <OnboardingChoice
+              event="OnboardingRecoveryNo"
               isChecked={recoveryPhrase === false}
               onPress={this.answerNopeRecovery}
             >

@@ -96,6 +96,7 @@ class RemoveDeviceButton extends PureComponent<Props> {
     return (
       <AnimatedSafeView style={[styles.root, anim]} forceInset={forceInset}>
         <Button
+          event="RemoveDeviceButton"
           type="alert"
           IconLeft={Trash}
           title={text}

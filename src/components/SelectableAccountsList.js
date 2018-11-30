@@ -4,6 +4,7 @@ import React, { PureComponent, Component } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { track } from "../analytics";
 import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
 import LText from "./LText";
@@ -37,11 +38,13 @@ class SelectableAccountsList extends Component<ListProps> {
 
   onSelectAll = () => {
     const { onSelectAll, accounts } = this.props;
+    track("SelectAllAccounts");
     onSelectAll && onSelectAll(accounts);
   };
 
   onUnselectAll = () => {
     const { onUnselectAll, accounts } = this.props;
+    track("UnselectAllAccounts");
     onUnselectAll && onUnselectAll(accounts);
   };
 
@@ -91,7 +94,8 @@ class SelectableAccount extends PureComponent<{
   isSelected?: boolean,
 }> {
   onPress = () => {
-    const { onPress, account } = this.props;
+    const { onPress, account, isSelected } = this.props;
+    track(isSelected ? "UnselectAccount" : "SelectAccount");
     if (onPress) onPress(account);
   };
 

@@ -1,11 +1,12 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { Trans } from "react-i18next";
 import LocationRequired from "../LocationRequired";
+import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import TranslatedError from "../../components/TranslatedError";
@@ -83,7 +84,8 @@ class RenderError extends Component<Props> {
             />
           </View>
           {status === "genuinecheck" ? (
-            <TouchableOpacity
+            <Touchable
+              event="PairDevicesBypassGenuine"
               onPress={onBypassGenuine}
               hitSlop={hitSlop}
               style={styles.linkContainer}
@@ -92,7 +94,7 @@ class RenderError extends Component<Props> {
                 <Trans i18nKey="PairDevices.bypassGenuine" />{" "}
               </LText>
               <IconArrowRight size={16} color={colors.live} />
-            </TouchableOpacity>
+            </Touchable>
           ) : (
             <HelpLink style={styles.linkContainer} />
           )}

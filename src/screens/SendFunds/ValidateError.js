@@ -22,6 +22,7 @@ class ValidatError extends PureComponent<Props> {
         <View style={styles.container}>
           <GenericErrorView error={error} />
           <ExternalLink
+            event="ContactUsLink"
             text={<Trans i18nKey="common.contactUs" />}
             onPress={onContactUs}
           />

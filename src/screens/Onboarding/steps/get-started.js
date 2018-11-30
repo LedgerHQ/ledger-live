@@ -1,13 +1,7 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Linking,
-  BackHandler,
-} from "react-native";
+import { StyleSheet, View, Linking, BackHandler } from "react-native";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
@@ -109,26 +103,31 @@ class OnboardingStepGetStarted extends Component<
           <Trans i18nKey="onboarding.stepGetStarted.title" />
         </LText>
         <Row
+          id="import"
           Icon={IconImport}
           label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
           onPress={this.onImport}
         />
         <Row
+          id="initialize"
           Icon={IconPlus}
           label={<Trans i18nKey="onboarding.stepGetStarted.initialize" />}
           onPress={this.onInit}
         />
         <Row
+          id="restore"
           Icon={IconRestore}
           label={<Trans i18nKey="onboarding.stepGetStarted.restore" />}
           onPress={this.onRestore}
         />
         <Row
+          id="initialized"
           Icon={IconCheck}
           label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
           onPress={this.onInitialized}
         />
         <Row
+          id="buy"
           Icon={IconTruck}
           label={
             <Trans
@@ -147,20 +146,26 @@ type RowProps = {
   Icon: React$ComponentType<*>,
   label: string | React$Element<*>,
   onPress: () => any,
+  id: string,
 };
 
 class Row extends PureComponent<RowProps> {
   render() {
-    const { onPress, label, Icon } = this.props;
+    const { onPress, label, Icon, id } = this.props;
     return (
-      <TouchableOpacity onPress={onPress} style={styles.row}>
+      <Touchable
+        event="OnboardingGetStartedChoice"
+        eventProperties={{ id }}
+        onPress={onPress}
+        style={styles.row}
+      >
         <View style={styles.rowIcon}>
           {Icon && <Icon size={16} color={colors.live} />}
         </View>
         <LText style={styles.label} semiBold>
           {label}
         </LText>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }
