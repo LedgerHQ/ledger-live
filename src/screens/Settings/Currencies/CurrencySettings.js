@@ -95,7 +95,11 @@ class EachCurrencySettings extends Component<Props, LocalState> {
     const { value } = this.state;
     return (
       <View style={styles.root}>
-        <TrackScreen category="Settings" name="Currency" currency={currency.id} />
+        <TrackScreen
+          category="Settings"
+          name="Currency"
+          currency={currency.id}
+        />
         {currency !== intermediaryCurrency && (
           <SettingsRow
             event="CurrencyExchange"
