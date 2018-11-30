@@ -70,16 +70,11 @@ class EditDeviceName extends PureComponent<
     this.setState({ name });
   };
 
-  waitForKeyboardToHide = () => {
-    this.setState({ connecting: true });
-    Keyboard.removeListener("keyboardDidHide", this.waitForKeyboardToHide);
-  };
-
   onSubmit = async () => {
     const { name } = this.state;
     if (this.initialName !== name) {
-      Keyboard.addListener("keyboardDidHide", this.waitForKeyboardToHide);
       Keyboard.dismiss();
+      setTimeout(() => this.setState({ connecting: true }), 800);
     } else {
       this.props.navigation.goBack();
     }
