@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
 import { createStructuredSelector } from "reselect";
+import { TrackPage } from "../../../analytics";
 import type { Privacy } from "../../../reducers/settings";
 import { privacySelector } from "../../../reducers/settings";
 import LText from "../../../components/LText";
@@ -79,6 +80,7 @@ class OnboardingStepPassword extends Component<
         Footer={this.Footer}
         withSkip={!privacy}
       >
+        <TrackPage category="Onboarding" name="Password" />
         <PasslockDisclaimerModal
           isOpened={isModalOpened}
           onAccept={next}

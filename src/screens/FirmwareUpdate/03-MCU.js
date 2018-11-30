@@ -8,6 +8,7 @@ import { from, of } from "rxjs";
 import { mergeMap, delay, catchError, throwError } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
+import { TrackPage } from "../../analytics";
 import installMcu from "../../logic/hw/installMcu";
 import installFinalFirmware from "../../logic/hw/installFinalFirmware";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
@@ -110,6 +111,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const windowWidth = Dimensions.get("window").width;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackPage category="FirmwareUpdate" name="MCU" />
         {installing ? (
           <Installing />
         ) : (

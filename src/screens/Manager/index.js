@@ -15,6 +15,7 @@ import colors from "../../colors";
 import ToggleManagerEdition from "./ToggleManagerEdition";
 import manager from "../../logic/manager";
 import TrackPage from "../../analytics/TrackPage";
+import { track } from "../../analytics";
 
 class Manager extends Component<
   {
@@ -57,6 +58,12 @@ class Manager extends Component<
   };
 
   onSelect = (deviceId: string, meta: Object) => {
+    const { fullVersion, seVersion, mcuVersion } = meta.deviceInfo;
+    track("ManagerDeviceEntered", {
+      fullVersion,
+      seVersion,
+      mcuVersion,
+    });
     this.props.navigation.navigate("ManagerMain", {
       deviceId,
       meta,
@@ -88,7 +95,7 @@ class Manager extends Component<
     const editMode = this.props.navigation.getParam("editMode");
     return (
       <View style={styles.root}>
-        <TrackPage category="Manager" />
+        <TrackPage category="Manager" name="SelectDevice" />
         <SelectDevice
           onSelect={this.onSelect}
           editMode={editMode}

@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
+import { TrackPage } from "../../../analytics";
 import Button from "../../../components/Button";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
@@ -34,6 +35,7 @@ class OnboardingStepShareData extends Component<OnboardingStepProps> {
         noTopPadding
         withNeedHelp
       >
+        <TrackPage category="Onboarding" name="ShareData" />
         <AnalyticsRow />
         <ReportErrorsRow borderTop />
         <TechnicalDataRow borderTop />

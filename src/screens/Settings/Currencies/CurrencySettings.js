@@ -18,6 +18,7 @@ import type { State } from "../../../reducers";
 import type { T } from "../../../types/common";
 import { updateCurrencySettings } from "../../../actions/settings";
 import colors from "../../../colors";
+import { TrackPage } from "../../../analytics";
 import { currencySettingsDefaults } from "../../../helpers/CurrencySettingsDefaults";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 
@@ -94,6 +95,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
     const { value } = this.state;
     return (
       <View style={styles.root}>
+        <TrackPage category="Settings" name="Currency" currency={currency.id} />
         {currency !== intermediaryCurrency && (
           <SettingsRow
             event="CurrencyExchange"

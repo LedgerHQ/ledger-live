@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import i18next from "i18next";
 import { translate } from "react-i18next";
+import { TrackPage } from "../../../analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import RateProviderSettingsRow from "./RateProviderSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
@@ -22,6 +23,7 @@ class GeneralSettings extends PureComponent<{
     const { navigation } = this.props;
     return (
       <ScrollView contentContainerStyle={styles.root}>
+        <TrackPage category="Settings" name="General" />
         <CountervalueSettingsRow navigation={navigation} />
         <RateProviderSettingsRow navigation={navigation} />
         <AuthSecurityToggle navigation={navigation} />

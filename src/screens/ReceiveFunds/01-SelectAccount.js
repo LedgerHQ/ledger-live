@@ -9,14 +9,14 @@ import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { accountsSelector } from "../../reducers/accounts";
+import colors from "../../colors";
+import { TrackPage } from "../../analytics";
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
-
-import { accountsSelector } from "../../reducers/accounts";
-import colors from "../../colors";
 
 const SEARCH_KEYS = ["name", "unit.code"];
 
@@ -60,6 +60,7 @@ class ReceiveFunds extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackPage category="ReceiveFunds" name="SelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar

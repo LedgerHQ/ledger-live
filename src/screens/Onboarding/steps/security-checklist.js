@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from "react-native";
 
+import { TrackPage } from "../../../analytics";
 import LText from "../../../components/LText";
 import BottomModal from "../../../components/BottomModal";
 import Button from "../../../components/Button";
@@ -106,6 +107,7 @@ class OnboardingStepSecurityChecklist extends Component<
         noScroll
         withNeedHelp
       >
+        <TrackPage category="Onboarding" name="Security" />
         <ScrollView
           ref={this.scrollView}
           horizontal

@@ -15,9 +15,9 @@ import Icon from "react-native-vector-icons/dist/FontAwesome";
 import type { T } from "../../types/common";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
 import { getAccountBridge } from "../../bridge";
-
+import { TrackPage } from "../../analytics";
+import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import StepHeader from "../../components/StepHeader";
@@ -27,8 +27,6 @@ import InputResetCross from "../../components/InputResetCross";
 import TextInput from "../../components/TextInput";
 import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
-
-import colors from "../../colors";
 
 type Props = {
   account: Account,
@@ -180,6 +178,7 @@ class SendSelectRecipient extends Component<Props, State> {
     const { account, t } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackPage category="SendFunds" name="SelectRecipient" />
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>

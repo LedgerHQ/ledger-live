@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
+import { TrackPage } from "../../../analytics";
 import Button from "../../../components/Button";
 import RecoveryPhraseModal from "../../../modals/RecoveryPhrase";
 import LText from "../../../components/LText";
@@ -49,6 +50,7 @@ class OnboardingStepWriteRecovery extends Component<
         noHorizontalPadding
         withNeedHelp
       >
+        <TrackPage category="Onboarding" name="Recovery" />
         <RecoveryPhraseModal
           isOpened={isModalOpened}
           onAccept={next}

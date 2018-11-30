@@ -15,6 +15,8 @@ import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { addAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import { getCurrencyBridge } from "../../bridge";
+import colors from "../../colors";
+import { TrackPage } from "../../analytics";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
@@ -24,8 +26,6 @@ import IconPause from "../../icons/Pause";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
 import AddAccountsError from "./AddAccountsError";
-
-import colors from "../../colors";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -252,6 +252,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
+        <TrackPage category="AddAccounts" name="Accounts" />
         <PreventNativeBack />
         <ScrollView
           style={styles.inner}

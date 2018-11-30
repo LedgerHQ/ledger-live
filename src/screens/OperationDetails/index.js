@@ -9,6 +9,7 @@ import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { getAccountOperationExplorer } from "@ledgerhq/live-common/lib/explorers";
 import type { NavigationScreenProp } from "react-navigation";
 import { accountScreenSelector } from "../../reducers/accounts";
+import { TrackPage } from "../../analytics";
 import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
@@ -35,6 +36,7 @@ class OperationDetails extends PureComponent<Props, *> {
     const url = getAccountOperationExplorer(account, operation);
     return (
       <SafeAreaView style={styles.container}>
+        <TrackPage category="OperationDetails" />
         <ScrollView>
           <View style={styles.root}>
             <Content

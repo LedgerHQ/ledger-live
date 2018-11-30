@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, Linking, Image } from "react-native";
 import { Trans } from "react-i18next";
 
+import { TrackPage } from "../../../analytics";
 import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -38,6 +39,7 @@ class OnboardingStepWelcome extends Component<Props> {
     const { onWelcomed } = this.props;
     return (
       <OnboardingLayout isCentered borderedFooter={false} Footer={this.Footer}>
+        <TrackPage category="Onboarding" name="Welcome" />
         <View style={styles.logo}>{logo}</View>
         <LText style={styles.title} secondary semiBold>
           <Trans i18nKey="onboarding.stepWelcome.title" />

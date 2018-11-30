@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { Linking } from "react-native";
 
+import { TrackPage } from "../../../analytics";
 import Button from "../../../components/Button";
 import SelectDevice from "../../../components/SelectDevice";
 import OnboardingLayout from "../OnboardingLayout";
@@ -36,6 +37,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
         noTopPadding
         withNeedHelp
       >
+        <TrackPage category="Onboarding" name="PairNew" />
         <SelectDevice onSelect={this.props.next} />
       </OnboardingLayout>
     );

@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
+import { TrackPage } from "../../../analytics";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import DeviceIconBack from "../../../components/DeviceIconBack";
@@ -53,6 +54,7 @@ class OnboardingStepSetupPin extends Component<
         noHorizontalPadding
         withNeedHelp
       >
+        <TrackPage category="Onboarding" name="Pin" />
         <PinModal
           isOpened={isModalOpened}
           onAccept={next}

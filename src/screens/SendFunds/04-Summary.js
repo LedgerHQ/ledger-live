@@ -9,9 +9,10 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { BigNumber } from "bignumber.js";
 
+import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
-
 import colors from "../../colors";
+import { TrackPage } from "../../analytics";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
@@ -23,8 +24,6 @@ import SendRowsCustom from "../../families/SendRowsCustom";
 import SendRowsFee from "../../families/SendRowsFee";
 import SummaryTotalSection from "./SummaryTotalSection";
 import StepHeader from "../../components/StepHeader";
-
-import { getAccountBridge } from "../../bridge";
 
 // TODO put this somewhere
 const similarError = (a, b) =>
@@ -144,6 +143,7 @@ class SendSummary extends Component<
 
     return (
       <SafeAreaView style={styles.root}>
+        <TrackPage category="SendFunds" name="Summary" />
         <ScrollView style={styles.body}>
           <SummaryFromSection account={account} />
           <VerticalConnector />

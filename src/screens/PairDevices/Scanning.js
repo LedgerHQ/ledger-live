@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -9,6 +9,7 @@ import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
 import TransportBLE from "../../react-native-hw-transport-ble";
+import { TrackPage } from "../../analytics";
 import DeviceItem from "../../components/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 
@@ -95,13 +96,16 @@ class Scanning extends Component<Props, State> {
   render() {
     const { devices } = this.state;
     return (
-      <FlatList
-        style={styles.list}
-        data={devices}
-        renderItem={this.renderItem}
-        keyExtractor={this.keyExtractor}
-        ListHeaderComponent={this.ListHeader}
-      />
+      <Fragment>
+        <TrackPage category="PairDevices" name="Scanning" />
+        <FlatList
+          style={styles.list}
+          data={devices}
+          renderItem={this.renderItem}
+          keyExtractor={this.keyExtractor}
+          ListHeaderComponent={this.ListHeader}
+        />
+      </Fragment>
     );
   }
 }
