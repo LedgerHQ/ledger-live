@@ -1,6 +1,0 @@
-framework module Analytics {
-  umbrella header "Analytics.h"
-
-  export *
-  module * { export * }
-}
