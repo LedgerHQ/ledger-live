@@ -5,6 +5,7 @@ import { Switch, Alert } from "react-native";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
+import type { T } from "../../../types/common";
 import { setPrivacyBiometrics } from "../../../actions/settings";
 import { privacySelector } from "../../../reducers/settings";
 import type { Privacy } from "../../../reducers/settings";
@@ -15,6 +16,7 @@ type Props = {
   privacy: ?Privacy,
   setPrivacyBiometrics: boolean => *,
   iconLeft: *,
+  t: T,
 };
 type State = {
   validationPending: boolean,
@@ -34,23 +36,22 @@ class BiometricsRow extends Component<Props, State> {
   };
 
   onValueChange = async (biometricsEnabled: boolean) => {
+    const { t } = this.props;
     if (this.state.validationPending) return;
     if (biometricsEnabled) {
       this.setState({ validationPending: true });
       let success = false;
       let error;
       try {
-        success = await auth("Please authenticate to Ledger Live app");
+        success = await auth(t("auth.failed.biometrics.authenticate"));
       } catch (e) {
         error = e;
       }
       this.setState({ validationPending: false });
       if (!success) {
         Alert.alert(
-          "Authentication failed",
-          `Auth Security was not enabled because your phone failed to authenticate.\n${String(
-            error || "",
-          )}`,
+          t("auth.failed.title"),
+          `${t("auth.failed.denied")}\n${String(error || "")}`,
         );
         return;
       }

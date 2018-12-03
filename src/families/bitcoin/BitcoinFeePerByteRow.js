@@ -49,11 +49,14 @@ class BitcoinFeePerByteRow extends Component<Props> {
       >
         <View style={{ alignItems: "flex-end" }}>
           <View style={styles.accountContainer}>
-            <LText style={styles.valueText}>{`${bridge.getTransactionExtra(
-              account,
-              transaction,
-              "feePerByte",
-            )} sat/bytes`}</LText>
+            <LText style={styles.valueText}>
+              {`${bridge.getTransactionExtra(
+                account,
+                transaction,
+                "feePerByte",
+              )} `}
+              <Trans i18nKey="common.satPerByte" />
+            </LText>
 
             <LText style={styles.link} onPress={this.openFees}>
               <Trans i18nKey="common.edit" />

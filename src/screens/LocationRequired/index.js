@@ -28,9 +28,8 @@ class LocationRequired extends PureComponent<{
           <LText style={styles.desc}>
             <Trans i18nKey="location.disabled" />
           </LText>
-          <LText style={styles.desc}>
-            Lorem Elsass ipsum Racing. hopla Verdammi purus lotto-owe Huguette
-            sit schnaps porta placerat Pfourtz !
+          <LText semiBold style={[styles.desc, styles.descPadding]}>
+            <Trans i18nKey="location.noInfos" />
           </LText>
         </View>
         <View style={styles.buttonWrapper}>
@@ -62,6 +61,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
     paddingHorizontal: 20,
+  },
+  descPadding: {
+    marginTop: 24,
   },
   buttonWrapper: {
     alignSelf: "stretch",

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { withNavigation } from "react-navigation";
+import { withNavigation, SafeAreaView } from "react-navigation";
 import { translate } from "react-i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -20,6 +20,8 @@ type Props = ModalProps & {
   t: T,
   accountsCount: number,
 };
+
+const forceInset = { bottom: "always" };
 
 class CreateModal extends Component<Props> {
   onNavigate = (routeName: string, key: string) => {
@@ -42,27 +44,29 @@ class CreateModal extends Component<Props> {
     const { onClose, isOpened, accountsCount, t } = this.props;
     return (
       <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
-        <BottomModalChoice
-          event="TransferSend"
-          title={t("transfer.send.title")}
-          description={t("transfer.send.desc")}
-          onPress={accountsCount > 0 ? this.onSendFunds : null}
-          Icon={IconSend}
-        />
-        <BottomModalChoice
-          event="TransferReceive"
-          title={t("transfer.receive.title")}
-          description={t("transfer.receive.desc")}
-          onPress={accountsCount > 0 ? this.onReceiveFunds : null}
-          Icon={IconReceive}
-        />
-        <BottomModalChoice
-          event="TransferExchange"
-          title={t("transfer.exchange.title")}
-          description={t("transfer.exchange.desc")}
-          Icon={IconExchange}
-          onPress={this.onExchange}
-        />
+        <SafeAreaView forceInset={forceInset}>
+          <BottomModalChoice
+            event="TransferSend"
+            title={t("transfer.send.title")}
+            description={t("transfer.send.desc")}
+            onPress={accountsCount > 0 ? this.onSendFunds : null}
+            Icon={IconSend}
+          />
+          <BottomModalChoice
+            event="TransferReceive"
+            title={t("transfer.receive.title")}
+            description={t("transfer.receive.desc")}
+            onPress={accountsCount > 0 ? this.onReceiveFunds : null}
+            Icon={IconReceive}
+          />
+          <BottomModalChoice
+            event="TransferExchange"
+            title={t("transfer.exchange.title")}
+            description={t("transfer.exchange.desc")}
+            Icon={IconExchange}
+            onPress={this.onExchange}
+          />
+        </SafeAreaView>
       </BottomModal>
     );
   }

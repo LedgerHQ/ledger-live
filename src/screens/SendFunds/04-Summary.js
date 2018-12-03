@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -172,7 +172,7 @@ class SendSummary extends Component<
           <Button
             event="SummaryContinue"
             type="primary"
-            title="Continue"
+            title={<Trans i18nKey="common.continue" />}
             containerStyle={styles.continueButton}
             onPress={this.onContinue}
             disabled={!totalSpent || !!error}

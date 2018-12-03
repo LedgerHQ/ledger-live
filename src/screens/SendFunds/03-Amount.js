@@ -285,7 +285,7 @@ class SendAmount extends Component<Props, State> {
                 <View style={styles.bottomWrapper}>
                   <LText style={styles.available}>
                     <Trans i18nKey="send.amount.available">
-                      You have
+                      {"text"}
                       <LText tertiary style={styles.availableAmount}>
                         <CurrencyUnitValue
                           showCode
@@ -293,7 +293,7 @@ class SendAmount extends Component<Props, State> {
                           value={account.balance}
                         />
                       </LText>
-                      available
+                      {"text"}
                     </Trans>
                   </LText>
                   <View style={styles.continueWrapper}>
@@ -301,11 +301,13 @@ class SendAmount extends Component<Props, State> {
                       event="SendAmountContinue"
                       type="primary"
                       title={
-                        !pending ? (
-                          <Trans i18nKey="common.continue" />
-                        ) : (
-                          <Trans i18nKey="send.amount.loadingNetwork" />
-                        )
+                        <Trans
+                          i18nKey={
+                            !pending
+                              ? "common.continue"
+                              : "send.amount.loadingNetwork"
+                          }
+                        />
                       }
                       onPress={this.navigate}
                       disabled={!canNext}

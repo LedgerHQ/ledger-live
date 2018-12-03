@@ -22,6 +22,7 @@ import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
   NotEnoughBalance,
   InvalidAddress,
+  FeeNotLoaded,
 } from "@ledgerhq/live-common/lib/errors";
 import { open } from "../logic/hw";
 import {
@@ -31,10 +32,7 @@ import {
   parseAPICurrencyObject,
   formatAPICurrencyXRP,
 } from "../api/Ripple";
-import {
-  FeeNotLoaded,
-  NotEnoughBalanceBecauseDestinationNotCreated,
-} from "../errors";
+import { NotEnoughBalanceBecauseDestinationNotCreated } from "../errors";
 import type { CurrencyBridge, AccountBridge } from "./types";
 import signTransaction from "../logic/hw/signTransaction";
 

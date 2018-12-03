@@ -4,6 +4,7 @@ import { View, StyleSheet, Image } from "react-native";
 import { withNavigationFocus } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
+import i18next from "i18next";
 import {
   connectingStep,
   dashboard,
@@ -27,7 +28,7 @@ class Manager extends Component<
   },
 > {
   static navigationOptions = {
-    title: "Manager",
+    title: i18next.t("manager.title"),
     headerRight: <ToggleManagerEdition />,
   };
 

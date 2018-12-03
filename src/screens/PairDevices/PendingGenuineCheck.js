@@ -24,8 +24,8 @@ class PendingGenuineCheck extends PureComponent<*> {
         </LText>
         <LText style={styles.subtitle}>
           <Trans i18nKey="PairDevices.GenuineCheck.accept">
-            Please don’t turn off your Nano X and allow
-            <LText bold>Ledger Manager</LText>
+            {"text"}
+            <LText bold>bold</LText>
           </Trans>
         </LText>
       </View>

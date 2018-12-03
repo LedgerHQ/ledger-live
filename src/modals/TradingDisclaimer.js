@@ -3,10 +3,9 @@
 import React, { Component } from "react";
 import { Image, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import Button from "../components/Button";
 import LText from "../components/LText";
-import type { T } from "../types/common";
 import BottomModal from "../components/BottomModal";
 import colors from "../colors";
 
@@ -15,12 +14,11 @@ const forceInset = { bottom: "always" };
 type Props = {
   onClose: *,
   isOpened: *,
-  t: T,
 };
 
 class TradingDisclaimer extends Component<Props> {
   render() {
-    const { onClose, isOpened, t } = this.props;
+    const { onClose, isOpened } = this.props;
 
     return (
       <BottomModal
@@ -35,20 +33,20 @@ class TradingDisclaimer extends Component<Props> {
             source={require("../images/shield-blue.png")}
           />
           <LText semiBold style={styles.title}>
-            {t("portfolio.tradingDisclaimer.title")}
+            <Trans i18nKey="portfolio.tradingDisclaimer.title" />
           </LText>
           <LText style={styles.text}>
-            {t("portfolio.tradingDisclaimer.text1")}
+            <Trans i18nKey="portfolio.tradingDisclaimer.text1" />
           </LText>
           <LText style={{ ...styles.text, marginTop: 16 }}>
-            {t("portfolio.tradingDisclaimer.text2")}
+            <Trans i18nKey="portfolio.tradingDisclaimer.text2" />
           </LText>
           <View style={{ marginTop: 24, flexDirection: "row" }}>
             <Button
               event="TradingDisclaimerGotIt"
               type="primary"
               containerStyle={styles.buttonContainer}
-              title={t("common.gotit")}
+              title={<Trans i18nKey="common.gotit" />}
               onPress={onClose}
             />
           </View>
@@ -58,7 +56,7 @@ class TradingDisclaimer extends Component<Props> {
   }
 }
 
-export default translate()(TradingDisclaimer);
+export default TradingDisclaimer;
 
 const styles = StyleSheet.create({
   root: {

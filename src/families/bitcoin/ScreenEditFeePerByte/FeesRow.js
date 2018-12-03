@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from "react";
+import { Trans } from "react-i18next";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { BigNumber } from "bignumber.js";
 
@@ -54,10 +55,10 @@ class FeesRow extends Component<Props, State> {
             </LText>
           </View>
           <View>
-            <LText
-              style={styles.text}
-              semiBold={isSelected}
-            >{`${value.toString()} Sat/bytes`}</LText>
+            <LText style={styles.text} semiBold={isSelected}>
+              {`${value.toString()} `}
+              <Trans i18nKey="common.satPerByte" />
+            </LText>
           </View>
         </View>
       </TouchableOpacity>

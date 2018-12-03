@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
+import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -45,7 +46,7 @@ class ManagerAppsList extends Component<
   },
 > {
   static navigationOptions = {
-    title: "App catalog",
+    title: i18next.t("manager.appList.title"),
   };
 
   state = {

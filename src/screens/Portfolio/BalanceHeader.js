@@ -2,19 +2,19 @@
 
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-class BalanceHeader extends PureComponent<{ summary: *, t: * }> {
+class BalanceHeader extends PureComponent<{ summary: * }> {
   render() {
-    const { summary, t } = this.props;
+    const { summary } = this.props;
     return (
       <View style={styles.content}>
         <LText secondary semiBold style={styles.labelText}>
-          {t("common:portfolio.totalBalance")}
+          <Trans i18nKey="portfolio.totalBalance" />
         </LText>
         <Space h={5} />
         <LText tertiary style={styles.balanceText}>
@@ -45,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(BalanceHeader);
+export default BalanceHeader;

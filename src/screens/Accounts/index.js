@@ -5,6 +5,7 @@ import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
+import i18next from "i18next";
 import { compose } from "redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
@@ -20,7 +21,7 @@ import AddAccount from "./AddAccount";
 const List = globalSyncRefreshControl(FlatList);
 
 const navigationOptions = {
-  title: "Accounts",
+  title: i18next.t("accounts.title"),
   headerLeft: <AccountOrder />,
   headerRight: <AddAccount />,
   tabBarIcon: ({ tintColor }: { tintColor: string }) => (
