@@ -11,6 +11,7 @@ import {
   DeviceSocketNoBulkStatus,
   DeviceSocketNoHandler,
 } from "@ledgerhq/live-common/lib/errors";
+import { cancelDeviceAction } from "../logic/hw/deviceAccess";
 
 const log = __DEV__ ? (...arg) => console.log(...arg) : noop; // eslint-disable-line no-console
 
@@ -40,7 +41,7 @@ export const createDeviceSocket = (
     let ws;
     let lastMessage: ?string;
     let interrupted = false;
-    let currentDeviceJob: ?Promise<any>;
+    let terminated = false;
 
     try {
       ws = new global.WebSocket(url);
@@ -55,11 +56,13 @@ export const createDeviceSocket = (
     };
 
     ws.onerror = e => {
+      terminated = true;
       log("ERROR", { message: e.message, stack: e.stack });
       o.error(new WebsocketConnectionError(e.message, { url }));
     };
 
     ws.onclose = () => {
+      terminated = true;
       log("CLOSE");
       o.next({ type: "result", payload: lastMessage || "" });
       o.complete();
@@ -154,22 +157,17 @@ export const createDeviceSocket = (
     };
 
     ws.onmessage = rawMsg => {
-      currentDeviceJob = stackMessage(rawMsg);
+      stackMessage(rawMsg).catch(e => {
+        o.error(e);
+      });
     };
 
-    async function finish() {
-      interrupted = true;
-      // TODO add a delay
-      if (ws.readyState !== 1) return;
-      ws.close();
-      if (currentDeviceJob) {
-        // make sure we wait latest stuff
-        await currentDeviceJob.catch(() => {});
-      }
-      await transport.send(0, 0, 0, 0).catch(() => {}); // send a dummy event just to reset the device state
-    }
-
     return () => {
-      finish();
+      interrupted = true;
+      if (ws.readyState !== 1) return;
+      if (!terminated) {
+        cancelDeviceAction(transport);
+      }
+      ws.close();
     };
   });
