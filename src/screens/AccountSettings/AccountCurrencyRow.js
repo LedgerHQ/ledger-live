@@ -15,6 +15,7 @@ class AccountCurrencyRow extends PureComponent<Props> {
     const { currency } = this.props;
     return (
       <SettingsRow
+        event="AccountCurrencyRow"
         title={<Trans i18nKey="account.settings.currency.title" />}
         desc={`${currency.name} (${currency.ticker})`}
         key={currency.id}

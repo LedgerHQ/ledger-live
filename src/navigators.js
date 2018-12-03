@@ -37,7 +37,10 @@ import ConfirmPassword from "./screens/Settings/General/ConfirmPassword";
 import GeneralSettings from "./screens/Settings/General";
 import AboutSettings from "./screens/Settings/About";
 import HelpSettings from "./screens/Settings/Help";
-import DebugSettings from "./screens/Settings/Debug";
+import DebugSettings, {
+  DebugDevices,
+  DebugMocks,
+} from "./screens/Settings/Debug";
 import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
 import Manager from "./screens/Manager";
@@ -67,6 +70,7 @@ import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
 import DebugBLE from "./screens/DebugBLE";
+import DebugBLEBenchmark from "./screens/DebugBLEBenchmark";
 import DebugCrash from "./screens/DebugCrash";
 import DebugHttpTransport from "./screens/DebugHttpTransport";
 import DebugIcons from "./screens/DebugIcons";
@@ -109,7 +113,13 @@ const SettingsStack = createStackNavigator(
     // $FlowFixMe
     DebugSettings,
     // $FlowFixMe
+    DebugDevices,
+    // $FlowFixMe
+    DebugMocks,
+    // $FlowFixMe
     DebugBLE,
+    // $FlowFixMe
+    DebugBLEBenchmark,
     // $FlowFixMe
     DebugCrash,
     // $FlowFixMe

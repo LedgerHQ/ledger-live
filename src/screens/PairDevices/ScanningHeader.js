@@ -44,19 +44,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   TitleContainer: {
-    marginTop: 24,
+    marginTop: 32,
   },
   TitleText: {
     color: colors.darkBlue,
     fontSize: 18,
   },
   SubtitleContainer: {
-    marginTop: 8,
-    paddingHorizontal: 20,
+    marginTop: 16,
+    paddingHorizontal: 24,
   },
   SubtitleText: {
     textAlign: "center",
     fontSize: 14,
-    color: colors.grey,
+    color: colors.smoke,
   },
 });

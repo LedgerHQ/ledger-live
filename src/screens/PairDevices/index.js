@@ -1,13 +1,14 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import i18next from "i18next";
 import { connect } from "react-redux";
 import Config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
+import { SafeAreaView } from "react-navigation";
 import { timeout } from "rxjs/operators/timeout";
 import TransportBLE from "../../react-native-hw-transport-ble";
 
@@ -83,7 +84,7 @@ class PairDevices extends Component<Props, State> {
       if (Config.DEBUG_BLE) transport.setDebugMode(true);
       try {
         const deviceInfo = await getDeviceInfo(transport);
-        console.log({ deviceInfo }); // eslint-disable-line
+        if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
 
         this.setState({ device, status: "genuinecheck" });
         const observable = genuineCheck(transport, deviceInfo).pipe(
@@ -171,9 +172,11 @@ class PairDevices extends Component<Props, State> {
   }
 }
 
+const forceInset = { bottom: "always" };
+
 class Screen extends Component<Props, State> {
   static navigationOptions = {
-    title: "Choose your device",
+    title: i18next.t("SelectDevice.title"),
     headerLeft: null,
   };
 
@@ -181,9 +184,9 @@ class Screen extends Component<Props, State> {
     return (
       // $FlowFixMe
       <RequiresBLE>
-        <View style={styles.root}>
+        <SafeAreaView forceInset={forceInset} style={styles.root}>
           <PairDevices {...this.props} />
-        </View>
+        </SafeAreaView>
       </RequiresBLE>
     );
   }

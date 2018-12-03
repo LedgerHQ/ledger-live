@@ -18,6 +18,7 @@ class AccountUnitsRow extends PureComponent<Props> {
 
     return (
       <SettingsRow
+        event="AccountUnitsRow"
         title={<Trans i18nKey="account.settings.unit.title" />}
         desc={<Trans i18nKey="account.settings.unit.desc" />}
         arrowRight

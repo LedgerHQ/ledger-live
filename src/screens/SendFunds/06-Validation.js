@@ -5,16 +5,16 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
+import { UserRefusedOnDevice } from "@ledgerhq/live-common/lib/errors";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import { TrackScreen } from "../../analytics";
+import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import PreventNativeBack from "../../components/PreventNativeBack";
-
-import colors from "../../colors";
 import ValidateOnDevice from "./ValidateOnDevice";
 
 type Props = {
@@ -94,7 +94,11 @@ class Validation extends Component<Props, State> {
           default:
         }
       },
-      error: error => {
+      error: e => {
+        let error = e;
+        if (e && e.statusCode === 0x6985) {
+          error = new UserRefusedOnDevice();
+        }
         // $FlowFixMe
         navigation.replace("SendValidationError", {
           ...navigation.state.params,
@@ -108,6 +112,7 @@ class Validation extends Component<Props, State> {
     const { signed } = this.state;
     return (
       <View style={styles.root}>
+        <TrackScreen category="SendFunds" name="Validation" signed={signed} />
         <PreventNativeBack />
         {signed ? (
           <View style={styles.center}>

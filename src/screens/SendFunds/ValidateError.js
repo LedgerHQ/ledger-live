@@ -22,18 +22,21 @@ class ValidatError extends PureComponent<Props> {
         <View style={styles.container}>
           <GenericErrorView error={error} />
           <ExternalLink
+            event="ContactUsLink"
             text={<Trans i18nKey="common.contactUs" />}
             onPress={onContactUs}
           />
         </View>
         <View style={styles.actionContainer}>
           <Button
+            event="SendErrorClose"
             title={<Trans i18nKey="common.close" />}
             type="secondary"
             containerStyle={{ flex: 1, marginRight: 16 }}
             onPress={onClose}
           />
           <Button
+            event="SendErrorRetry"
             title={<Trans i18nKey="send.validation.button.retry" />}
             type="primary"
             containerStyle={{ flex: 1 }}

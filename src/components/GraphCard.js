@@ -21,6 +21,7 @@ import Pills from "./Pills";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import Placeholder from "./Placeholder";
 
 import type { Item } from "./Graph";
 
@@ -58,6 +59,7 @@ class GraphCard extends PureComponent<Props, State> {
     const { summary, renderTitle, useCounterValue } = this.props;
 
     const {
+      isAvailable,
       accounts,
       balanceHistory,
       balanceStart,
@@ -74,6 +76,7 @@ class GraphCard extends PureComponent<Props, State> {
     return (
       <Card style={styles.root}>
         <GraphCardHeader
+          isLoading={!isAvailable}
           from={balanceStart}
           to={balanceEnd}
           hoveredItem={hoveredItem}
@@ -81,16 +84,18 @@ class GraphCard extends PureComponent<Props, State> {
           renderTitle={renderTitle}
         />
         <Graph
-          isInteractive
+          isInteractive={isAvailable}
+          isLoading={!isAvailable}
           height={100}
           width={Dimensions.get("window").width - 40}
-          color={graphColor}
+          color={isAvailable ? graphColor : colors.grey}
           data={balanceHistory}
           onItemHover={this.onItemHover}
           useCounterValue={useCounterValue}
         />
         <View style={styles.pillsContainer}>
           <Pills
+            isDisabled={!isAvailable}
             value={selectedTimeRange}
             onChange={this.onTimeRangeChange}
             items={this.timeRangeItems}
@@ -102,6 +107,7 @@ class GraphCard extends PureComponent<Props, State> {
 }
 
 class GraphCardHeader extends PureComponent<{
+  isLoading: boolean,
   from: Item,
   to: Item,
   unit: Unit,
@@ -109,12 +115,14 @@ class GraphCardHeader extends PureComponent<{
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 }> {
   render() {
-    const { unit, from, to, hoveredItem, renderTitle } = this.props;
+    const { unit, from, to, hoveredItem, renderTitle, isLoading } = this.props;
     const item = hoveredItem || to;
     return (
       <Fragment>
         <View style={styles.balanceTextContainer}>
-          {renderTitle ? (
+          {isLoading ? (
+            <Placeholder width={228} containerHeight={27} />
+          ) : renderTitle ? (
             renderTitle({ counterValueUnit: unit, item })
           ) : (
             <LText tertiary style={styles.balanceText}>
@@ -123,7 +131,16 @@ class GraphCardHeader extends PureComponent<{
           )}
         </View>
         <View style={styles.subtitleContainer}>
-          {hoveredItem ? (
+          {isLoading ? (
+            <Fragment>
+              <Placeholder
+                width={50}
+                containerHeight={19}
+                style={{ marginRight: 10 }}
+              />
+              <Placeholder width={50} containerHeight={19} />
+            </Fragment>
+          ) : hoveredItem ? (
             <LText>
               <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
             </LText>
@@ -165,6 +182,7 @@ const styles = StyleSheet.create({
   balanceTextContainer: {
     marginBottom: 5,
     alignItems: "center",
+    justifyContent: "center",
   },
   balanceText: {
     fontSize: 22,
@@ -173,6 +191,7 @@ const styles = StyleSheet.create({
   subtitleContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
   pillsContainer: {

@@ -5,6 +5,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 
+import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -26,6 +27,7 @@ const mapDispatchToProps = {
 class OnboardingStepScanQR extends Component<Props> {
   Footer = () => (
     <Button
+      event="OnboardingScanQR"
       type="primary"
       title={<Trans i18nKey="onboarding.stepScanQR.cta" />}
       onPress={this.navigateToQR}
@@ -47,6 +49,7 @@ class OnboardingStepScanQR extends Component<Props> {
         Footer={this.Footer}
         withNeedHelp
       >
+        <TrackScreen category="Onboarding" name="ScanQR" />
         <View style={styles.hero}>
           <ScanIllustration />
         </View>

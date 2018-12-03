@@ -6,12 +6,12 @@ import { StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
+import colors, { rgba } from "../../colors";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import IconCheck from "../../icons/Check";
 import CurrencyIcon from "../../components/CurrencyIcon";
-
-import colors, { rgba } from "../../colors";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -42,6 +42,7 @@ class AddAccountsSuccess extends Component<Props, State> {
     const currency = navigation.getParam("currency");
     return (
       <View style={styles.root}>
+        <TrackScreen category="AddAccounts" name="Success" />
         <CurrencySuccess currency={currency} />
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="addAccounts.imported" />
@@ -51,12 +52,14 @@ class AddAccountsSuccess extends Component<Props, State> {
         </LText>
         <View style={styles.buttonsContainer}>
           <Button
+            event="AddAccountsAgain"
             containerStyle={styles.button}
             type="primary"
             title={<Trans i18nKey="addAccounts.success.cta" />}
             onPress={this.primaryCTA}
           />
           <Button
+            event="AddAccountsDone"
             onPress={this.secondaryCTA}
             type="lightSecondary"
             title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}

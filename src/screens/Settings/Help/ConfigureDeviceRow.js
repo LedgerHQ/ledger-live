@@ -14,6 +14,7 @@ class ConfigureDeviceRow extends PureComponent<OnboardingStepProps> {
   render() {
     return (
       <SettingsRow
+        event="ConfigureDeviceRow"
         title={<Trans i18nKey="settings.help.configureDevice" />}
         desc={<Trans i18nKey="settings.help.configureDeviceDesc" />}
         arrowRight

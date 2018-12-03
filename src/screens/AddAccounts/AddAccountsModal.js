@@ -37,14 +37,16 @@ class AddAccountsModal extends PureComponent<Props> {
   render() {
     const { isOpened, onClose, t } = this.props;
     return (
-      <BottomModal isOpened={isOpened} onClose={onClose}>
+      <BottomModal id="AddAccountsModal" isOpened={isOpened} onClose={onClose}>
         <SafeAreaView forceInset={forceInset}>
           <BottomModalChoice
+            event="AddAccountWithDevice"
             title={t("addAccountsModal.ctaAdd")}
             onPress={this.onClickAdd}
             Icon={IconPlus}
           />
           <BottomModalChoice
+            event="AddAccountWithQR"
             title={t("addAccountsModal.ctaImport")}
             onPress={this.onClickImport}
             Icon={IconQr}

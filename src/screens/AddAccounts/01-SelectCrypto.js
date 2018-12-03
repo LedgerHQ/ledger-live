@@ -7,10 +7,11 @@ import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
+import i18next from "i18next";
 
 import { connect } from "react-redux";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
-
+import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
@@ -37,7 +38,15 @@ type State = {};
 
 class AddAccountsSelectCrypto extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Crypto asset" subtitle="step 1 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("common.cryptoAsset")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "1",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
 
   cryptocurrencies = listCryptoCurrencies(this.props.developerModeEnabled);
@@ -74,6 +83,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="AddAccounts" name="SelectCrypto" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar

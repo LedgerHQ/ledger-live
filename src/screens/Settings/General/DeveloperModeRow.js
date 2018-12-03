@@ -7,6 +7,7 @@ import { createStructuredSelector } from "reselect";
 import SettingsRow from "../../../components/SettingsRow";
 import { setDeveloperMode } from "../../../actions/settings";
 import { developerModeEnabledSelector } from "../../../reducers/settings";
+import Track from "../../../analytics/Track";
 
 type Props = {
   developerModeEnabled: boolean,
@@ -25,12 +26,17 @@ class DeveloperModeRow extends PureComponent<Props> {
     const { developerModeEnabled, setDeveloperMode, ...props } = this.props;
     return (
       <SettingsRow
+        event="DeveloperModeRow"
         title={<Trans i18nKey="settings.display.developerMode" />}
         desc={<Trans i18nKey="settings.display.developerModeDesc" />}
         onPress={null}
         alignedTop
         {...props}
       >
+        <Track
+          event={developerModeEnabled ? "EnableDevMode" : "DisableDevMode"}
+          onUpdate
+        />
         <Switch value={developerModeEnabled} onValueChange={setDeveloperMode} />
       </SettingsRow>
     );

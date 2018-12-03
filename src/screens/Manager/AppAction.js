@@ -151,7 +151,11 @@ class AppAction extends PureComponent<
     );
 
     return (
-      <BottomModal isOpened={isOpened} onClose={onClose}>
+      <BottomModal
+        id={action.type + "AppActionModal"}
+        isOpened={isOpened}
+        onClose={onClose}
+      >
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
             <View style={styles.headIcon}>
@@ -183,13 +187,18 @@ class AppAction extends PureComponent<
             ) : null}
           </View>
           <Button
+            event="ManagerAppActionDone"
             type="primary"
             onPress={onClose}
             disabled={pending}
             title={buttonTitle}
           />
         </SafeAreaView>
-        <Touchable style={styles.close} onPress={onClose}>
+        <Touchable
+          event="ManagerAppActionClose"
+          style={styles.close}
+          onPress={onClose}
+        >
           <Close color={colors.fog} size={20} />
         </Touchable>
       </BottomModal>

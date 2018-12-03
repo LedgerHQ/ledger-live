@@ -20,13 +20,7 @@ class DisplayAddress extends PureComponent<Props> {
     const { address, verified } = this.props;
     return (
       <View style={[styles.container, verified ? styles.verified : undefined]}>
-        <LText
-          numberOfLines={1}
-          ellipsizeMode="middle"
-          bold
-          style={styles.text}
-          selectable={!verified}
-        >
+        <LText numberOfLines={2} bold style={styles.text} selectable>
           {address}
         </LText>
       </View>
@@ -45,6 +39,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: colors.darkBlue,
+    textAlign: "center",
   },
   verified: {
     borderColor: colors.success,

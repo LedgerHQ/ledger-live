@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { Linking } from "react-native";
 
+import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import SelectDevice from "../../../components/SelectDevice";
 import OnboardingLayout from "../OnboardingLayout";
@@ -15,6 +16,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
   Footer = () =>
     __DEV__ ? (
       <Button
+        event="OnboardingPairSkip"
         type="lightSecondary"
         title="(DEV) skip this step"
         onPress={this.props.next}
@@ -35,6 +37,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
         noTopPadding
         withNeedHelp
       >
+        <TrackScreen category="Onboarding" name="PairNew" />
         <SelectDevice onSelect={this.props.next} />
       </OnboardingLayout>
     );

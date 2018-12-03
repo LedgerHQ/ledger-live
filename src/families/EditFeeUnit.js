@@ -100,7 +100,11 @@ class EditFeeUnit extends PureComponent<Props, State> {
               value={fee}
               onChange={this.onChange}
             />
-            <Touchable onPress={this.onPress} style={styles.unitContainer}>
+            <Touchable
+              event="EditFeeUnitOpen"
+              onPress={this.onPress}
+              style={styles.unitContainer}
+            >
               <View style={styles.unitSelectRow}>
                 <LText secondary semiBold style={styles.unitStyle}>
                   {feeCustomUnit.code}
@@ -113,6 +117,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
           </View>
           <View style={styles.buttonContainer}>
             <Button
+              event="EditFeeUnitConfirm"
               type="primary"
               title={t("common.confirm")}
               containerStyle={styles.continueButton}
@@ -121,12 +126,17 @@ class EditFeeUnit extends PureComponent<Props, State> {
             />
           </View>
         </View>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="EditFeeUnitModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <View style={styles.editFeesUnitsModalTitleRow}>
             <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
               {t("send.fees.edit.title")}
             </LText>
             <Touchable
+              event="EditFeeUnitClose"
               style={{ position: "absolute", top: 2, right: 16 }}
               onPress={this.onRequestClose}
             >
@@ -139,6 +149,8 @@ class EditFeeUnit extends PureComponent<Props, State> {
             extraData={feeCustomUnit}
             renderItem={({ item }) => (
               <Touchable
+                event="EditFeeUnit"
+                eventProperties={{ unit: item.code }}
                 onPress={() => {
                   this.updateTransaction(item);
                 }}

@@ -11,6 +11,7 @@ import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import BottomModal from "../../components/BottomModal";
+import { TrackScreen } from "../../analytics";
 
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
@@ -65,6 +66,7 @@ class AccountSettings extends PureComponent<Props, State> {
     if (!account) return null;
     return (
       <Fragment>
+        <TrackScreen category="AccountSettings" />
         <View style={styles.sectionRow}>
           <AccountNameRow account={account} navigation={navigation} />
           <AccountUnitsRow account={account} navigation={navigation} />
@@ -76,7 +78,11 @@ class AccountSettings extends PureComponent<Props, State> {
         <View style={styles.sectionRow}>
           <DeleteAccountRow onPress={this.onPress} />
         </View>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="DeleteAccountModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <DeleteAccountModal
             onRequestClose={this.onRequestClose}
             deleteAccount={this.deleteAccount}

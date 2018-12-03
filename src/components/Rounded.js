@@ -19,8 +19,8 @@ class Rounded extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   root: {
-    width: 56,
-    height: 56,
+    width: 64,
+    height: 64,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",

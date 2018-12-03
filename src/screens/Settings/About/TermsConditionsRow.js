@@ -11,6 +11,7 @@ class TermsConditionsRow extends PureComponent<*> {
   render() {
     return (
       <SettingsRow
+        event="TermsConditionsRow"
         title={<Trans i18nKey="settings.about.termsConditions" />}
         desc={<Trans i18nKey="settings.about.termsConditionsDesc" />}
         onPress={() =>

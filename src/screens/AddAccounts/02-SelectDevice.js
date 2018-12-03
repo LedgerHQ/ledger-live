@@ -6,12 +6,13 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import i18next from "i18next";
 
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
 import StepHeader from "../../components/StepHeader";
-
-import colors from "../../colors";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -25,7 +26,15 @@ type State = {};
 
 class AddAccountsSelectDevice extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="step 2 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("common.device")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "2",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
 
   onSelectDevice = (deviceId: string) => {
@@ -39,6 +48,7 @@ class AddAccountsSelectDevice extends Component<Props, State> {
     const currency = navigation.getParam("currency");
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="AddAccounts" name="SelectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[connectingStep, currencyApp(currency)]}

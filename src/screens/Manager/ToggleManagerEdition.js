@@ -39,7 +39,11 @@ class ToggleManagerEdition extends Component<Props> {
     const { navigation, knownDevices } = this.props;
     const editMode = !navigation.getParam("editMode");
     return knownDevices.length > 0 ? (
-      <Touchable onPress={this.onPress}>
+      <Touchable
+        event="ManagerToggleEdit"
+        eventProperties={{ editMode }}
+        onPress={this.onPress}
+      >
         <LText secondary semiBold style={styles.text}>
           <Trans i18nKey={`common.${editMode ? "edit" : "cancel"}`} />
         </LText>
@@ -58,6 +62,6 @@ const styles = StyleSheet.create({
   text: {
     color: colors.live,
     fontSize: 16,
-    padding: 10,
+    padding: 16,
   },
 });

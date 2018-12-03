@@ -15,20 +15,17 @@ import Icon from "react-native-vector-icons/dist/FontAwesome";
 import type { T } from "../../types/common";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
 import { getAccountBridge } from "../../bridge";
-
+import { TrackScreen } from "../../analytics";
+import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import TranslatedError from "../../components/TranslatedError";
-import InputResetCross from "../../components/InputResetCross";
 import TextInput from "../../components/TextInput";
 import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
-
-import colors from "../../colors";
 
 type Props = {
   account: Account,
@@ -180,11 +177,13 @@ class SendSelectRecipient extends Component<Props, State> {
     const { account, t } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="SendFunds" name="SelectRecipient" />
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Button
+              event="SendRecipientQR"
               type="tertiary"
               title={<Trans i18nKey="send.recipient.scan" />}
               IconLeft={IconQRCode}
@@ -215,8 +214,8 @@ class SendSelectRecipient extends Component<Props, State> {
                 multiline
                 blurOnSubmit
                 autoCapitalize="none"
+                clearButtonMode="always"
               />
-              {address ? <InputResetCross onPress={this.clear} /> : null}
             </View>
             {!!address &&
               addressStatus !== "valid" && (
@@ -232,6 +231,7 @@ class SendSelectRecipient extends Component<Props, State> {
           </View>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button
+              event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
               onPress={this.onPressContinue}

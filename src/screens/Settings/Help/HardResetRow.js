@@ -33,6 +33,7 @@ class HardResetRow extends PureComponent<Props, State> {
     return (
       <Fragment>
         <SettingsRow
+          event="HardResetRow"
           title={<Trans i18nKey="settings.help.hardReset" />}
           titleStyle={{ color: colors.alert }}
           desc={<Trans i18nKey="settings.help.hardResetDesc" />}
@@ -43,7 +44,11 @@ class HardResetRow extends PureComponent<Props, State> {
           }
           onPress={this.onPress}
         />
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="HardResetModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <HardResetModal
             onRequestClose={this.onRequestClose}
             onHardReset={this.onHardReset}

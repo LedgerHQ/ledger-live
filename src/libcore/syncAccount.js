@@ -1,7 +1,7 @@
 // @flow
 
 import { Observable, from } from "rxjs";
-import { mergeMap, map } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { getWalletName } from "@ledgerhq/live-common/lib/account";
 import type {
   Account,
@@ -10,7 +10,7 @@ import type {
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
 import { SyncError } from "../errors";
-import load from "./load";
+import { withLibcore } from "./access";
 import { createInstance } from "./specific";
 import { buildAccount } from "./buildAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
@@ -21,11 +21,9 @@ const OperationOrderKey = {
   date: 0,
 };
 
-async function getCoreObjects(account: Account) {
+async function getCoreObjects(core, account: Account) {
   const walletName = getWalletName(account);
   const { currency, derivationMode, index, xpub } = account;
-
-  const core = await load();
 
   const coreWallet = await getOrCreateWallet({
     core,
@@ -41,7 +39,7 @@ async function getCoreObjects(account: Account) {
     xpub,
   });
 
-  return { core, coreWallet, coreAccount, walletName };
+  return { coreWallet, coreAccount, walletName };
 }
 
 export function syncAccount(
@@ -53,34 +51,35 @@ export function syncAccount(
     currency,
     operations: existingOperations,
   } = account;
-  return from(getCoreObjects(account)).pipe(
-    mergeMap(({ core, coreWallet, coreAccount, walletName }) =>
-      from(
-        syncCoreAccount({
-          core,
-          coreWallet,
-          coreAccount,
-          walletName,
-          currency,
-          accountIndex: account.index,
-          derivationMode,
-          seedIdentifier,
-          existingOperations,
-        }),
-      ).pipe(
-        map(syncedAccount => initialAccount => ({
-          ...initialAccount,
-          id: syncedAccount.id,
-          freshAddress: syncedAccount.freshAddress,
-          freshAddressPath: syncedAccount.freshAddressPath,
-          balance: syncedAccount.balance,
-          blockHeight: syncedAccount.blockHeight,
-          lastSyncDate: new Date(),
-          operations: syncedAccount.operations,
-          pendingOperations: [],
-        })),
+  return from(
+    withLibcore(core =>
+      getCoreObjects(core, account).then(
+        ({ coreWallet, coreAccount, walletName }) =>
+          syncCoreAccount({
+            core,
+            coreWallet,
+            coreAccount,
+            walletName,
+            currency,
+            accountIndex: account.index,
+            derivationMode,
+            seedIdentifier,
+            existingOperations,
+          }),
       ),
     ),
+  ).pipe(
+    map(syncedAccount => initialAccount => ({
+      ...initialAccount,
+      id: syncedAccount.id,
+      freshAddress: syncedAccount.freshAddress,
+      freshAddressPath: syncedAccount.freshAddressPath,
+      balance: syncedAccount.balance,
+      blockHeight: syncedAccount.blockHeight,
+      lastSyncDate: new Date(),
+      operations: syncedAccount.operations,
+      pendingOperations: [],
+    })),
   );
 }
 
@@ -136,8 +135,6 @@ export async function syncCoreAccount({
     seedIdentifier,
     existingOperations,
   });
-
-  await core.flush();
 
   return account;
 }

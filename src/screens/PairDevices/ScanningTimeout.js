@@ -1,11 +1,13 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
+import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import colors from "../../colors";
 import { urls } from "../../config/urls";
 import { deviceNames } from "../../wording";
+import { TrackScreen } from "../../analytics";
+import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import Circle from "../../components/Circle";
@@ -16,18 +18,12 @@ type Props = {
   onRetry: () => void,
 };
 
-const hitSlop = {
-  top: 16,
-  left: 16,
-  right: 16,
-  bottom: 16,
-};
-
 class ScanningTimeout extends Component<Props> {
   render() {
     const { onRetry } = this.props;
     return (
       <View style={styles.root}>
+        <TrackScreen category="PairDevices" name="ScanningTimeout" />
         <View style={styles.body}>
           <Circle bg={colors.lightAlert} size={80}>
             <NanoX color={colors.alert} width={11} height={48} />
@@ -46,22 +42,23 @@ class ScanningTimeout extends Component<Props> {
 
           <View style={styles.buttonContainer}>
             <Button
+              event="PairDevicesTimeoutRetry"
               type="primary"
               title={<Trans i18nKey="common.retry" />}
               onPress={onRetry}
               containerStyle={[styles.button]}
             />
           </View>
-          <TouchableOpacity
+          <Touchable
+            event="NeedHelp"
             style={styles.helpContainer}
-            hitSlop={hitSlop}
             onPress={() => Linking.openURL(urls.faq)}
           >
             <Help size={16} color={colors.live} />
             <LText style={styles.helpText} semiBold>
               <Trans i18nKey="common.needHelp" />
             </LText>
-          </TouchableOpacity>
+          </Touchable>
         </View>
       </View>
     );
@@ -93,7 +90,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     lineHeight: 21,
-    color: colors.grey,
+    color: colors.smoke,
   },
   buttonContainer: {
     flexDirection: "row",

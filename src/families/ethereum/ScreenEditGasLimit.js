@@ -91,6 +91,7 @@ class EthereumEditGasLimit extends PureComponent<Props, State> {
 
             <View style={styles.flex}>
               <Button
+                event="EthereumSetGasLimit"
                 type="primary"
                 title={t("send.summary.validateGasLimit")}
                 onPress={this.onValidateText}

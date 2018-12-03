@@ -66,6 +66,7 @@ class BiometricsRow extends Component<Props, State> {
       <Fragment>
         {privacy.biometricsType && (
           <SettingsRow
+            event="BiometricsRow"
             iconLeft={iconLeft}
             title={
               <Trans

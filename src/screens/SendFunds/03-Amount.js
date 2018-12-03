@@ -18,7 +18,8 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
-import LText from "../../components/LText/index";
+import { TrackScreen } from "../../analytics";
+import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Button from "../../components/Button";
 import StepHeader from "../../components/StepHeader";
@@ -268,6 +269,7 @@ class SendAmount extends Component<Props, State> {
 
     return (
       <>
+        <TrackScreen category="SendFunds" name="Amount" />
         <SafeAreaView style={styles.root}>
           <KeyboardView style={styles.container}>
             <TouchableWithoutFeedback onPress={this.blur}>
@@ -296,6 +298,7 @@ class SendAmount extends Component<Props, State> {
                   </LText>
                   <View style={styles.continueWrapper}>
                     <Button
+                      event="SendAmountContinue"
                       type="primary"
                       title={
                         !pending ? (

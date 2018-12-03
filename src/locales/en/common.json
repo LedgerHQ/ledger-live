@@ -14,6 +14,8 @@
     "signOut": "Sign Out",
     "search": "Search",
     "contactUs": "Contact us",
+    "device": "Device",
+    "cryptoAsset": "Crypto asset",
     "skip": "Skip",
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Need help?",
@@ -23,7 +25,8 @@
     "poweredBy": "Powered by ",
     "received": "Received",
     "sent": "Sent",
-    "or": "OR"
+    "or": "OR",
+    "rename": "Rename"
   },
   "errors": {
     "AccountNameRequired": {
@@ -39,8 +42,8 @@
       "description": "Open the ‘{{managerAppName}}’ app on your device"
     },
     "CantOpenDevice": {
-      "title": "Oops, couldn’t connect to device",
-      "description": "Device detected but connection failed. Please retry and get help if the problem persists."
+      "title": "Sorry, connection failed",
+      "description": "Your Ledger Nano X should be unlocked and within range"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR-code: auto-verification not supported by this address"
@@ -161,7 +164,7 @@
       "description": "Make sure the account to debit has sufficient balance"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
-      "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
+      "title": "Minimum of {{minimalAmount}} required to activate recipient address"
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",
@@ -216,12 +219,12 @@
       "description": "Please retry or contact Ledger Support in case of doubt."
     },
     "WebsocketConnectionError": {
-      "title": "Sorry, try again (websocket error).",
-      "description": null
+      "title": "Sorry, connection failed",
+      "description": "Please try again with a better network connection (websocket error)"
     },
     "WebsocketConnectionFailed": {
-      "title": "Sorry, try again (websocket failed).",
-      "description": null
+      "title": "Sorry, connection failed",
+      "description": "Please try again with a better network connection (websocket failed)"
     },
     "WrongDeviceForAccount": {
       "title": "Oops, wrong device for ‘{{accountName}}’.",
@@ -233,10 +236,10 @@
     }
   },
   "bluetooth": {
-    "required": "Bluetooth required",
+    "required": "Oops, Bluetooth disabled",
     "locationRequiredTitle": "Location is required for Bluetooth LE",
     "locationRequiredMessage": "On Android, location permission is required to be able to list Bluetooth LE devices.",
-    "checkEnabled": "It seems bluetooth is disabled on your mobile. Go to settings and enable bluetooth to pair a {{fullDeviceName}}"
+    "checkEnabled": "Please enable Bluetooth in your phone settings"
   },
   "location": {
     "required": "Location required",
@@ -311,6 +314,7 @@
       "OnboardingStepChooseDevice": "Choose your device",
       "OnboardingStepSetupPin": "Choose your PIN code",
       "OnboardingStepWriteRecovery": "Save recovery phrase",
+      "OnboardingStepWriteRecoveryRestore": "Enter recovery phrase",
       "OnboardingStepSecurityChecklist": "Security checklist",
       "OnboardingStepPairNew": "Pair your {{fullDeviceName}}",
       "OnboardingStepPassword": "Password lock",
@@ -363,10 +367,11 @@
       }
     },
     "stepWriteRecoveryRestore": {
-      "step1": "Choose the length of your recovery phrase.",
-      "step2": "Enter the first letters of <1><1>Word #1</1></1> until suggested words appear.",
-      "step3": "Choose <1><1>Word #1</1></1> from the suggested words by pressing both buttons.",
-      "step4": "Repeat the process until the last word."
+      "step1": "Take out your Recovery sheet.",
+      "step2": "Choose the length of your recovery phrase.",
+      "step3": "Enter the first letters of <1><1>Word #1</1></1> until suggested words appear.",
+      "step4": "Choose <1><1>Word #1</1></1> from the suggested words by pressing both buttons.",
+      "step5": "Repeat the process until the last word."
     },
     "stepSecurityChecklist": {
       "pinCode": {
@@ -381,7 +386,12 @@
     "stepPassword": {
       "desc": "Set a password to prevent unauthorized access to Ledger Live data on your phone.",
       "descConfigured": "Password lock successfully enabled",
-      "setPassword": "Set password"
+      "setPassword": "Set password",
+      "modal": {
+        "step1": "Make sure to remember your password. Do not share it.",
+        "step2": "Losing your password requires resetting Ledger Live and re-adding accounts.",
+        "step3": "Resetting Ledger Live does not affect your crypto assets."
+      }
     },
     "stepShareData": {},
     "stepFinish": {
@@ -651,13 +661,16 @@
     },
     "receive": {
       "title": "Receive funds",
-      "desc": "Recieve crypto assets",
-      "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
-      "verifyPending": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security.",
-      "verified": "You have verified your receive address on your Ledger Device.",
-      "verifyAgain": "Verify again",
+      "desc": "Receive crypto assets",
+      "headerTitle": "Select account",
+      "titleDevice": "Connect device",
+      "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security",
+      "verifyPending": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
+      "verified": "Address confirmed, please re-verify it if you copy/paste or scan the QRCode",
+      "verifyAgain": "Re-verify",
       "noAccount": "No account found",
-      "withoutDevice": "Don't have my device"
+      "withoutDevice": "Don't have my device",
+      "address": "Address for account"
     },
     "exchange": {
       "title": "Exchange",
@@ -756,13 +769,13 @@
     "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one."
   },
   "SelectDevice": {
-    "title": "Choose your device",
+    "title": "Pair new device",
     "deviceNotFoundPairNewDevice": "Pair a new device",
     "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
     "steps": {
       "connecting": {
-        "title": "Connecting “{{deviceName}}”",
-        "description": "Don't forget to turn on your device and enter your PIN to unlock it"
+        "title": "Connecting {{deviceName}}",
+        "description": "Please make sure your Ledger Nano X is unlocked and within range"
       },
       "genuineCheck": {
         "title": "Allow Ledger Manager on your {{fullDeviceName}}"
@@ -775,13 +788,12 @@
         "description": "On your device, open the app {{managerAppName}}."
       },
       "accountApp": {
-        "title": "Open app {{managerAppName}}...",
-        "description": "On your device associated to account ‘{{accountName}}’, open the app {{managerAppName}}."
+        "title": "Open the {{managerAppName}} app"
       },
       "receiveVerify": {
         "title": "Verify address on device",
-        "description": "A <1><0>{{currencyName}}</0></1> address <3><0>will be displayed</0></3> on your device. Carefully verify that it matches the address on your phone.",
-        "action": "Ok, I'm ready"
+        "description": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
+        "action": "Verify"
       },
       "getDeviceName": {
         "title": "Press both buttons to allow get device name"
@@ -792,23 +804,23 @@
     }
   },
   "EditDeviceName": {
-    "title": "Edit Device Name",
+    "title": "Rename device",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "action": "Change name"
+    "action": "Confirm"
   },
   "PairDevices": {
     "Paired": {
-      "title": "{{fullDeviceName}} paired with success!",
+      "title": "Pairing successful",
       "desc": "Your {{fullDeviceName}} is ready to use with Ledger Live",
       "action": "Continue"
     },
     "Pairing": {
-      "title": "Pairing...",
-      "subtitle": "Please don’t turn off your {{fullDeviceName}}. Follow screen instructions."
+      "title": "Pairing",
+      "subtitle": "Please follow the instructions on your Ledger Nano X"
     },
     "GenuineCheck": {
       "title": "Genuine check",
-      "accept": "Please don’t turn off your {{deviceName}} and allow <1><0>Ledger Manager</0></1>"
+      "accept": "Please don’t turn off your Nano X and allow <1><0>Ledger Manager</0></1>"
     },
     "ScanningHeader": {
       "title": "Looking for devices",
@@ -824,7 +836,7 @@
     "genuine": "Genuine"
   },
   "DeviceNameRow": {
-    "title": "Device Name",
+    "title": "Name",
     "action": "Get device name"
   },
   "UnpairDevice": {

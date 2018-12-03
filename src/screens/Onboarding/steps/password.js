@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
 import { createStructuredSelector } from "reselect";
+import { TrackScreen } from "../../../analytics";
 import type { Privacy } from "../../../reducers/settings";
 import { privacySelector } from "../../../reducers/settings";
 import LText from "../../../components/LText";
@@ -15,6 +16,7 @@ import colors from "../../../colors";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import type { OnboardingStepProps } from "../types";
+import PasslockDisclaimerModal from "../../../modals/PasslockDisclaimerModal";
 
 const illustration = (
   <Image source={require("../assets/password-illustration.png")} />
@@ -30,22 +32,37 @@ class OnboardingStepPassword extends Component<
   OnboardingStepProps & {
     privacy: ?Privacy,
   },
+  { isModalOpened: boolean },
 > {
+  state = {
+    isModalOpened: false,
+  };
+
+  showModal = () => {
+    this.setState({ isModalOpened: true });
+  };
+
+  hideModal = () => {
+    this.setState({ isModalOpened: false });
+  };
+
   navigateToPassword = () => {
     this.props.navigation.navigate("PasswordAdd");
   };
 
   Footer = () => {
-    const { next, privacy } = this.props;
+    const { privacy } = this.props;
 
     return privacy ? (
       <Button
+        event="OnboardingPasswordContinue"
         type="primary"
         title={<Trans i18nKey="common.continue" />}
-        onPress={next}
+        onPress={this.showModal}
       />
     ) : (
       <Button
+        event="OnboardingPasswordSetup"
         type="primary"
         title={<Trans i18nKey="onboarding.stepPassword.setPassword" />}
         onPress={this.navigateToPassword}
@@ -54,13 +71,21 @@ class OnboardingStepPassword extends Component<
   };
 
   render() {
-    const { privacy } = this.props;
+    const { privacy, next } = this.props;
+    const { isModalOpened } = this.state;
+
     return (
       <OnboardingLayout
         header="OnboardingStepPassword"
         Footer={this.Footer}
         withSkip={!privacy}
       >
+        <TrackScreen category="Onboarding" name="Password" />
+        <PasslockDisclaimerModal
+          isOpened={isModalOpened}
+          onAccept={next}
+          onClose={this.hideModal}
+        />
         <View style={styles.hero}>
           {illustration}
           {privacy ? <Success /> : null}

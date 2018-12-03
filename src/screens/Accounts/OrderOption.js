@@ -67,6 +67,8 @@ class OrderOption extends Component<{
     const isDesc = orderAccounts.endsWith("|desc");
     return (
       <Touchable
+        event="AccountOrderOption"
+        eventProperties={{ accountOrderId: id, accountOrderDesc: isDesc }}
         style={[styles.root, selected && styles.rootSelected]}
         onPress={this.onPress}
       >

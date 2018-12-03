@@ -4,6 +4,7 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";
+import { track } from "../../analytics";
 
 const selectableModes = ["create", "patch"];
 
@@ -15,6 +16,7 @@ export default class DisplayResultItem extends Component<{
   onSwitch: (boolean, Account) => void,
 }> {
   onSwitch = () => {
+    track(this.props.checked ? "AccountSwitchOff" : "AccountSwitchOn");
     this.props.onSwitch(!this.props.checked, this.props.account);
   };
 

@@ -15,12 +15,10 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
 import { withDevice, withDevicePolling } from "../../logic/hw/deviceAccess";
-import colors from "../../colors";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
-import LText from "../LText";
 import getDeviceNameTransport from "../../logic/hw/getDeviceName";
 import editDeviceNameTransport from "../../logic/hw/editDeviceName";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
@@ -160,16 +158,6 @@ export const accountApp: Account => Step = account => ({
           }}
         />
       }
-      description={
-        <Trans
-          i18nKey="SelectDevice.steps.accountApp.description"
-          values={{
-            managerAppName: account.currency.managerAppName,
-            currencyName: account.currency.name,
-            accountName: account.name,
-          }}
-        />
-      }
     />
   ),
   run: (deviceId, meta) =>
@@ -214,19 +202,12 @@ export const receiveVerifyStep: Account => Step = account => ({
           i18nKey="SelectDevice.steps.receiveVerify.description"
           values={{
             currencyName: account.currency.name,
-            accountName: account.name,
           }}
-        >
-          A {account.currency.name} address
-          <LText semiBold style={{ color: colors.darkBlue }}>
-            will be displayed
-          </LText>{" "}
-          on your device. Carefully verify that it matches the address on your
-          phone.
-        </Trans>
+        />
       }
     >
       <Button
+        event="DeviceJobDone"
         type="primary"
         onPress={onDone}
         title={<Trans i18nKey="SelectDevice.steps.receiveVerify.action" />}

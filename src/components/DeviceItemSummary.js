@@ -36,15 +36,15 @@ class DeviceItemSummary extends PureComponent<Props> {
                 <Trans i18nKey="DeviceItemSummary.genuine" />
                 {"  "}
               </LText>
-              <Circle bg={colors.live} size={16}>
-                <Icon name="check" size={10} color={colors.white} />
+              <Circle bg={colors.live} size={20}>
+                <Icon name="check" size={14} color={colors.white} />
               </Circle>
             </View>
           ) : null}
         </View>
-        <Touchable onPress={onEdit}>
-          <LText numberOfLines={1} style={styles.editText}>
-            <Trans i18nKey="common.edit" />
+        <Touchable event="DeviceItemEdit" onPress={onEdit}>
+          <LText bold numberOfLines={1} style={styles.editText}>
+            <Trans i18nKey="common.rename" />
           </LText>
         </Touchable>
       </View>
@@ -79,18 +79,19 @@ const styles = StyleSheet.create({
     marginLeft: 24,
   },
   deviceNameText: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.darkBlue,
   },
   genuine: {
+    paddingTop: 4,
     flexDirection: "row",
+    alignItems: "center",
   },
   genuineText: {
-    fontSize: 12,
-    color: colors.grey,
+    fontSize: 14,
+    color: colors.smoke,
   },
   editText: {
     color: colors.live,
-    textDecorationLine: "underline",
   },
 });

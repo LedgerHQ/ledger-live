@@ -7,7 +7,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import ValidateError from "./ValidateError";
 
@@ -54,6 +54,7 @@ class ValidationError extends Component<Props> {
 
     return (
       <View style={styles.root}>
+        <TrackScreen category="SendFunds" name="ValidationError" />
         <ValidateError
           error={error}
           onRetry={this.retry}

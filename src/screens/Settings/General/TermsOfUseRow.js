@@ -14,6 +14,7 @@ class TermsOfUseRow extends PureComponent<{}> {
   render() {
     return (
       <SettingsRow
+        event="TermsOfUseRow"
         title={<Trans i18nKey="settings.display.termsOfUse" />}
         desc={
           <Trans i18nKey="settings.display.termsOfUseDesc">

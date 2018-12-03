@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
+import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import RecoveryPhraseModal from "../../../modals/RecoveryPhrase";
 import LText from "../../../components/LText";
@@ -31,6 +32,7 @@ class OnboardingStepWriteRecovery extends Component<
 
   Footer = () => (
     <Button
+      event="OnboardingRecoveryContinue"
       type="primary"
       title={<Trans i18nKey="common.continue" />}
       onPress={this.showModal}
@@ -48,6 +50,7 @@ class OnboardingStepWriteRecovery extends Component<
         noHorizontalPadding
         withNeedHelp
       >
+        <TrackScreen category="Onboarding" name="Recovery" />
         <RecoveryPhraseModal
           isOpened={isModalOpened}
           onAccept={next}
@@ -63,13 +66,7 @@ class OnboardingStepWriteRecovery extends Component<
               mode === "restore"
                 ? [
                     <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step1" />,
-                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step2">
-                      {"text"}
-                      <LText semiBold style={{ color: colors.darkBlue }}>
-                        bold text
-                      </LText>
-                      {"text"}
-                    </Trans>,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step2" />,
                     <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step3">
                       {"text"}
                       <LText semiBold style={{ color: colors.darkBlue }}>
@@ -77,7 +74,14 @@ class OnboardingStepWriteRecovery extends Component<
                       </LText>
                       {"text"}
                     </Trans>,
-                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step4" />,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step4">
+                      {"text"}
+                      <LText semiBold style={{ color: colors.darkBlue }}>
+                        bold text
+                      </LText>
+                      {"text"}
+                    </Trans>,
+                    <Trans i18nKey="onboarding.stepWriteRecoveryRestore.step5" />,
                   ]
                 : [
                     <Trans i18nKey="onboarding.stepWriteRecovery.step1">

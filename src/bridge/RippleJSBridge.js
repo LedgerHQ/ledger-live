@@ -649,7 +649,7 @@ export const accountBridge: AccountBridge<Transaction> = {
         if (t.amount.lt(reserveBaseXRP)) {
           const f = formatAPICurrencyXRP(reserveBaseXRP);
           throw new NotEnoughBalanceBecauseDestinationNotCreated("", {
-            minimalAmount: `${f.currency} ${f.value}`,
+            minimalAmount: `${f.currency} ${BigNumber(f.value).toFixed()}`,
           });
         }
       }

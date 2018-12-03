@@ -25,12 +25,14 @@ class TechnicalDataRow extends PureComponent<Props, State> {
     return (
       <Fragment>
         <SettingsRow
+          event="TechnicalDataRow"
           title={<Trans i18nKey="settings.display.technicalData" />}
           desc={<Trans i18nKey="settings.display.technicalDataDesc" />}
           onHelpPress={this.onOpen}
           {...props}
         />
         <InfoModal
+          id="TechnicalDataModal"
           isOpened={isOpened}
           onClose={this.onClose}
           title={<Trans i18nKey="settings.display.technicalDataModal.title" />}

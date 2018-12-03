@@ -1,5 +1,5 @@
-// flow-typed signature: 40484b19d2628f374771aedbad05ea10
-// flow-typed version: 83d99d0280/react-navigation_v2.x.x/flow_>=v0.60.x
+// flow-typed signature: b2bc08d27563408c62c035fef1caf007
+// flow-typed version: a04a34281b/react-navigation_v2.x.x/flow_>=v0.60.x
 
 // @flow
 
@@ -536,16 +536,28 @@ declare module 'react-navigation' {
       eventName: string,
       callback: NavigationEventCallback
     ) => NavigationEventSubscription,
-    getParam: <ParamName>(
+    getParam: <ParamName: string>(
       paramName: ParamName,
-      fallback?: $ElementType<$PropertyType<{|
-        ...{| params: {| [ParamName]: void |} |},
-        ...$Exact<S>,
-      |}, 'params'>, ParamName>,
-    ) => $ElementType<$PropertyType<{|
-      ...{| params: {| [ParamName]: void |} |},
-      ...$Exact<S>,
-    |}, 'params'>, ParamName>,
+      fallback?: $ElementType<
+        $PropertyType<
+          {|
+            ...{| params: {| [ParamName]: void |} |},
+            ...$Exact<S>,
+          |},
+          'params'
+        >,
+        ParamName
+      >
+    ) => $ElementType<
+      $PropertyType<
+        {|
+          ...{| params: {| [ParamName]: void |} |},
+          ...$Exact<S>,
+        |},
+        'params'
+      >,
+      ParamName
+    >,
     dangerouslyGetParent: () => NavigationScreenProp<*>,
     isFocused: () => boolean,
     // Shared action creators that exist for all routers
@@ -613,7 +625,7 @@ declare module 'react-navigation' {
     State: NavigationState,
     Options: {},
     Props: {}
-  > = React$ComponentType<{
+  > = React$StatelessFunctionalComponent<{
     ...Props,
     ...NavigationContainerProps<State, Options>,
   }> &
@@ -1216,6 +1228,6 @@ declare module 'react-navigation' {
     dispatch: NavigationDispatch,
     actionSubscribers: Set<NavigationEventCallback>,
     getScreenProps: () => {},
-    getCurrentNavigation: () => NavigationScreenProp<State>
+    getCurrentNavigation: () => ?NavigationScreenProp<State>
   ): NavigationScreenProp<State>;
 }

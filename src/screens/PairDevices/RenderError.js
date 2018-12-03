@@ -1,12 +1,13 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { StyleSheet, View } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { Trans } from "react-i18next";
 import LocationRequired from "../LocationRequired";
+import { TrackScreen } from "../../analytics";
+import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import TranslatedError from "../../components/TranslatedError";
@@ -34,7 +35,7 @@ const hitSlop = {
 const GenericErrorHeader = () => (
   <Circle bg={colors.lightAlert} size={80}>
     <LText>
-      <Icon name="alert-triangle" size={32} color={colors.alert} />
+      <Icon name="alert-triangle" size={40} color={colors.alert} />
     </LText>
   </Circle>
 );
@@ -65,10 +66,11 @@ class RenderError extends Component<Props> {
     const Header = status === "pairing" ? PairingFailure : GenericErrorHeader;
 
     return (
-      <SafeAreaView style={styles.root}>
+      <View style={styles.root}>
+        <TrackScreen category="PairDevices" name="Error" />
         <View style={styles.body}>
           <Header />
-          <LText semiBold style={styles.title}>
+          <LText semiBold secondary style={styles.title}>
             <TranslatedError error={primaryError} />
           </LText>
           <LText style={styles.description}>
@@ -76,6 +78,7 @@ class RenderError extends Component<Props> {
           </LText>
           <View style={styles.buttonContainer}>
             <Button
+              event="PairDevicesRetry"
               type="primary"
               title={<Trans i18nKey="common.retry" />}
               onPress={onRetry}
@@ -83,7 +86,8 @@ class RenderError extends Component<Props> {
             />
           </View>
           {status === "genuinecheck" ? (
-            <TouchableOpacity
+            <Touchable
+              event="PairDevicesBypassGenuine"
               onPress={onBypassGenuine}
               hitSlop={hitSlop}
               style={styles.linkContainer}
@@ -92,17 +96,17 @@ class RenderError extends Component<Props> {
                 <Trans i18nKey="PairDevices.bypassGenuine" />{" "}
               </LText>
               <IconArrowRight size={16} color={colors.live} />
-            </TouchableOpacity>
+            </Touchable>
           ) : (
             <HelpLink style={styles.linkContainer} />
           )}
         </View>
         {status === "genuinecheck" ? (
           <View style={styles.footer}>
-            <HelpLink style={styles.linkContainer} />
+            <HelpLink style={styles.linkContainerGenuine} />
           </View>
         ) : null}
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -129,10 +133,11 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 16,
+    paddingHorizontal: 24,
     textAlign: "center",
     fontSize: 14,
     lineHeight: 21,
-    color: colors.grey,
+    color: colors.smoke,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -147,12 +152,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
   },
+  linkContainerGenuine: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
   linkText: {
     color: colors.live,
     marginLeft: 6,
   },
   footer: {
     height: 48,
+    alignItems: "center",
+    justifyContent: "center",
     borderTopWidth: 1,
     borderColor: colors.lightFog,
   },

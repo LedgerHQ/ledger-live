@@ -11,6 +11,7 @@ class LedgerSupportRow extends PureComponent<*> {
   render() {
     return (
       <SettingsRow
+        event="LedgerSupportRow"
         title={<Trans i18nKey="settings.help.support" />}
         desc={<Trans i18nKey="settings.help.supportDesc" />}
         onPress={() =>

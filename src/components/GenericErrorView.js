@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
     alignItems: "center",
-    marginVertical: 30,
+    marginVertical: 24,
   },
   headIcon: {
     padding: 10,
@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: colors.grey,
-    paddingHorizontal: 40,
+    color: colors.smoke,
+    paddingHorizontal: 24,
     textAlign: "center",
   },
 });

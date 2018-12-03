@@ -12,7 +12,10 @@ class AppVersionRow extends PureComponent<*> {
     const { appVersion, buildVersion } = VersionNumber;
     const version = `${appVersion || ""} (${buildVersion || ""})`;
     return (
-      <SettingsRow title={<Trans i18nKey="settings.about.appVersion" />}>
+      <SettingsRow
+        event="AppVersionRow"
+        title={<Trans i18nKey="settings.about.appVersion" />}
+      >
         <View style={styles.inner}>
           <LText semiBold style={styles.versionText}>
             {version}

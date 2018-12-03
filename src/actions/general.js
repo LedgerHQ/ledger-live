@@ -57,5 +57,6 @@ export const cleanCache = () => async (dispatch: *) => {
   dispatch({ type: "CLEAN_CACHE" });
   dispatch({ type: "LEDGER_CV:WIPE" });
   await delay(100);
+  // TODO we must wait the sync to finish / stop it otherwise there can be dereferenced pointer issue.
   flushAll();
 };

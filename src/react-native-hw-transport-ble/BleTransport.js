@@ -3,8 +3,16 @@
 
 import Transport, { TransportError } from "@ledgerhq/hw-transport";
 import { BleManager, ConnectionPriority } from "react-native-ble-plx";
-import { Observable, merge } from "rxjs";
-import { share } from "rxjs/operators";
+import Config from "react-native-config";
+import { Observable, defer, merge, from } from "rxjs";
+import {
+  share,
+  ignoreElements,
+  first,
+  map,
+  tap,
+  timeout,
+} from "rxjs/operators";
 import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
 import { logSubject } from "./debug";
 
@@ -13,7 +21,6 @@ import { sendAPDU } from "./sendAPDU";
 import { receiveAPDU } from "./receiveAPDU";
 import { monitorCharacteristic } from "./monitorCharacteristic";
 import { awaitsBleOn } from "./awaitsBleOn";
-import getMTU from "../logic/hw/getMTU";
 
 const ServiceUuid = "d973f2e0-b19e-11e2-9e96-0800200c9a66";
 const WriteCharacteristicUuid = "d973f2e2-b19e-11e2-9e96-0800200c9a66";
@@ -25,6 +32,8 @@ const connectOptions = {
 
 const transportsCache = {};
 const bleManager = new BleManager();
+
+if (Config.BLE_LOG_LEVEL) bleManager.setLogLevel(Config.BLE_LOG_LEVEL);
 
 /**
  * react-native bluetooth BLE implementation
@@ -181,11 +190,24 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
     logSubject.next({ type: "verbose", message: `device.mtu=${device.mtu}` });
 
-    const transport = new BluetoothTransport(device, writeC, notifyC);
+    const notifyObservable = monitorCharacteristic(notifyC).pipe(
+      tap(value => {
+        logSubject.next({
+          type: "ble-frame-read",
+          message: value.toString("hex"),
+        });
+      }),
+      share(),
+    );
+
+    const notif = notifyObservable.subscribe();
+
+    const transport = new BluetoothTransport(device, writeC, notifyObservable);
 
     transportsCache[transport.id] = transport;
     const disconnectedSub = device.onDisconnected(e => {
       transport.notYetDisconnected = false;
+      notif.unsubscribe();
       disconnectedSub.remove();
       delete transportsCache[transport.id];
       logSubject.next({
@@ -194,6 +216,9 @@ export default class BluetoothTransport extends Transport<Device | string> {
       });
       transport.emit("disconnect", e);
     });
+
+    // TODO when firmware is ready:
+    // await transport.inferMTU();
 
     return transport;
   }
@@ -210,8 +235,6 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
   writeCharacteristic: Characteristic;
 
-  notifyCharacteristic: Characteristic;
-
   notifyObservable: Observable<Buffer>;
 
   notYetDisconnected = true;
@@ -219,16 +242,12 @@ export default class BluetoothTransport extends Transport<Device | string> {
   constructor(
     device: Device,
     writeCharacteristic: Characteristic,
-    notifyCharacteristic: Characteristic,
+    notifyObservable: Observable<Buffer>,
   ) {
     super();
     this.id = device.id;
     this.device = device;
     this.writeCharacteristic = writeCharacteristic;
-    this.notifyCharacteristic = notifyCharacteristic;
-    const notifyObservable = monitorCharacteristic(notifyCharacteristic).pipe(
-      share(),
-    );
     this.notifyObservable = notifyObservable;
     logSubject.next({
       type: "verbose",
@@ -236,67 +255,71 @@ export default class BluetoothTransport extends Transport<Device | string> {
     });
   }
 
-  busy: ?Promise<void>;
+  exchange = (apdu: Buffer): Promise<Buffer> =>
+    this.atomic(async () => {
+      try {
+        const { debug } = this;
 
-  async exchange(apdu: Buffer): Promise<Buffer> {
-    if (this.busy) {
-      throw new TransportError(
-        "exchange() race condition",
-        "ExchangeRaceCondition",
-      );
-    }
-    let resolveBusy;
-    const busyPromise = new Promise(r => {
-      resolveBusy = r;
+        const msgIn = apdu.toString("hex");
+        if (debug) debug(`=> ${msgIn}`); // eslint-disable-line no-console
+        logSubject.next({ type: "ble-apdu-write", message: msgIn });
+
+        const data = await merge(
+          this.notifyObservable.pipe(receiveAPDU),
+          sendAPDU(bleManager, this.write, apdu, this.mtuSize),
+        ).toPromise();
+
+        const msgOut = data.toString("hex");
+        logSubject.next({ type: "ble-apdu-read", message: msgOut });
+        if (debug) debug(`<= ${msgOut}`); // eslint-disable-line no-console
+
+        return data;
+      } catch (e) {
+        logSubject.next({ type: "ble-error", message: String(e) });
+        if (this.notYetDisconnected) {
+          // in such case we will always disconnect because something is bad.
+          await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
+        }
+        throw e;
+      }
     });
-    this.busy = busyPromise;
-    let receiving;
-    try {
-      const { debug } = this;
 
-      const msgIn = apdu.toString("hex");
-      if (debug) debug(`=> ${msgIn}`); // eslint-disable-line no-console
-      logSubject.next({ type: "ble-apdu-in", message: msgIn });
-
-      const data = await merge(
-        this.notifyObservable.pipe(receiveAPDU),
-        sendAPDU(bleManager, this.writeCharacteristic, apdu, this.mtuSize),
-      ).toPromise();
-
-      const msgOut = data.toString("hex");
-      logSubject.next({ type: "ble-apdu-out", message: msgOut });
-      if (debug) debug(`<= ${msgOut}`); // eslint-disable-line no-console
-
-      return data;
-    } catch (e) {
-      logSubject.next({ type: "ble-error", message: String(e) });
-      if (this.notYetDisconnected) {
-        // in such case we will always disconnect because something is bad.
-        await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
-      }
-      throw e;
-    } finally {
-      if (resolveBusy) resolveBusy();
-      this.busy = null;
-      if (receiving) {
-        receiving.subscription.remove();
-      }
-    }
-  }
-
-  // TODO when do we need to call this?
+  // TODO we probably will do this at end of open
   async inferMTU() {
     let { mtu } = this.device;
-    if (mtu === 23) {
-      mtu = await getMTU(this);
+    if (mtu <= 23) {
+      await this.atomic(async () => {
+        try {
+          mtu =
+            (await merge(
+              this.notifyObservable.pipe(
+                first(buffer => buffer.readUInt8(0) === 0x08),
+                map(buffer => buffer.readUInt8(5)),
+                timeout(30000),
+              ),
+              defer(() =>
+                from(this.write(Buffer.from([0x08, 0, 0, 0, 0]))),
+              ).pipe(ignoreElements()),
+            ).toPromise()) + 3;
+        } catch (e) {
+          await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
+          throw e;
+        }
+      });
     }
-    const mtuSize = mtu - 3;
-    logSubject.next({
-      type: "verbose",
-      message: `BleTransport(${String(this.id)}) mtu set to ${String(mtuSize)}`,
-    });
-    this.mtuSize = mtuSize;
-    return mtuSize;
+
+    if (mtu > 23) {
+      const mtuSize = mtu - 3;
+      logSubject.next({
+        type: "verbose",
+        message: `BleTransport(${String(this.id)}) mtu set to ${String(
+          mtuSize,
+        )}`,
+      });
+      this.mtuSize = mtuSize;
+    }
+
+    return this.mtuSize;
   }
 
   async requestConnectionPriority(
@@ -309,8 +332,35 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
   setScrambleKey() {}
 
-  // TODO when we remove a device globally, we need to disconnect it.
-  // so we need a new api for this.
+  write = async (buffer: Buffer, txid?: ?string) => {
+    logSubject.next({
+      type: "ble-frame-write",
+      message: buffer.toString("hex"),
+    });
+    await this.writeCharacteristic.writeWithResponse(
+      buffer.toString("base64"),
+      txid,
+    );
+  };
+
+  busy: ?Promise<void>;
+  atomic = async <R>(f: () => Promise<R>): Promise<R> => {
+    if (this.busy) {
+      throw new TransportError("BLE Transport race condition", "RaceCondition");
+    }
+    let resolveBusy;
+    const busyPromise = new Promise(r => {
+      resolveBusy = r;
+    });
+    this.busy = busyPromise;
+    try {
+      const res = await f();
+      return res;
+    } finally {
+      if (resolveBusy) resolveBusy();
+      this.busy = null;
+    }
+  };
 
   async close() {
     if (this.busy) {

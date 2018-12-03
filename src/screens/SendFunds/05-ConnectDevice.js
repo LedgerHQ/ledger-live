@@ -12,11 +12,11 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import StepHeader from "../../components/StepHeader";
 import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
-
-import colors from "../../colors";
 
 type Props = {
   account: Account,
@@ -43,7 +43,8 @@ class ConnectDevice extends Component<Props> {
 
   onSelectDevice = (deviceId: string) => {
     const { navigation } = this.props;
-    navigation.navigate("SendValidation", {
+    // $FlowFixMe
+    navigation.replace("SendValidation", {
       ...navigation.state.params,
       deviceId,
     });
@@ -53,6 +54,7 @@ class ConnectDevice extends Component<Props> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="SendFunds" name="ConnectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[connectingStep, accountApp(account)]}

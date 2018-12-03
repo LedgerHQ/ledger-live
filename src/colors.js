@@ -45,4 +45,5 @@ export default {
   pillForeground: "#999999",
   pillActiveBackground: rgba("#6490f1", 0.1),
   pillActiveForeground: "#6490f1",
+  pillActiveDisabledForeground: "#999999",
 };

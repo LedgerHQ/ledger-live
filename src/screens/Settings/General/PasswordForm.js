@@ -60,6 +60,7 @@ class PasswordForm extends PureComponent<Props, State> {
           )}
           <View style={styles.footer}>
             <Button
+              event="SubmitPassword"
               title={t("common.confirm")}
               type="primary"
               onPress={onSubmit}

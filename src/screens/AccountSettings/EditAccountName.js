@@ -78,6 +78,7 @@ class EditAccountName extends PureComponent<Props, State> {
             />
             <View style={styles.flex}>
               <Button
+                event="EditAccountNameApply"
                 type="primary"
                 title={<Trans i18nKey="common.apply" />}
                 onPress={this.onNameEndEditing}

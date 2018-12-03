@@ -26,6 +26,11 @@ type Props = {
   isLast: boolean,
 };
 
+const placeholderProps = {
+  width: 40,
+  containerHeight: 20,
+};
+
 class OperationRow extends PureComponent<Props, *> {
   static defaultProps = {
     displayCurrencyLogo: false,
@@ -126,19 +131,17 @@ class OperationRow extends PureComponent<Props, *> {
                   {text} <OperationRowDate date={operation.date} />
                 </LText>
               )}
-              <LText
-                tertiary
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={[styles.bottomRow, styles.bodyRight]}
-              >
+              <View style={styles.bodyRight}>
                 <CounterValue
                   showCode
                   currency={account.currency}
                   value={amount}
                   alwaysShowSign
+                  withPlaceholder
+                  placeholderProps={placeholderProps}
+                  Wrapper={OpCounterValue}
                 />
-              </LText>
+              </View>
             </View>
           </View>
         </RectButton>
@@ -146,6 +149,17 @@ class OperationRow extends PureComponent<Props, *> {
     );
   }
 }
+
+const OpCounterValue = ({ children }: { children: * }) => (
+  <LText
+    tertiary
+    numberOfLines={1}
+    ellipsizeMode="tail"
+    style={styles.bottomRow}
+  >
+    {children}
+  </LText>
+);
 
 export default OperationRow;
 
@@ -173,6 +187,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   body: {
+    alignItems: "center",
     flexDirection: "row",
     flex: 1,
   },
@@ -193,6 +208,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   bodyRight: {
+    height: 20,
     alignItems: "flex-end",
   },
 });

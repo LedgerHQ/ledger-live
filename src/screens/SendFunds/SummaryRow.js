@@ -13,13 +13,21 @@ type Props = {
   additionalInfo?: *,
   children: React$Node,
   onPress?: () => void,
+  event?: string,
 };
 
 type State = {};
 
 class SummaryRow extends Component<Props, State> {
   render(): React$Node {
-    const { title, children, titleProps, additionalInfo, onPress } = this.props;
+    const {
+      title,
+      children,
+      titleProps,
+      additionalInfo,
+      onPress,
+      event,
+    } = this.props;
     const titleContainer = (
       <View style={styles.titleContainer}>
         <LText style={[styles.title]} {...titleProps}>
@@ -33,7 +41,9 @@ class SummaryRow extends Component<Props, State> {
     return (
       <View style={[styles.root]}>
         {onPress ? (
-          <Touchable onPress={onPress}>{titleContainer}</Touchable>
+          <Touchable event={event || "SummaryRow"} onPress={onPress}>
+            {titleContainer}
+          </Touchable>
         ) : (
           titleContainer
         )}

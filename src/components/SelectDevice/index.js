@@ -3,8 +3,9 @@ import React, { Component, Fragment } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { devicesObservable } from "../../logic/hw";
+import { getDevicesObservable } from "../../logic/hw";
 import { knownDevicesSelector } from "../../reducers/ble";
+import { experimentalUSBEnabledSelector } from "../../reducers/settings";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
 import DeviceJob from "../DeviceJob";
@@ -19,6 +20,7 @@ type Props = {
   steps: Step[],
   editMode?: boolean,
   // connect-ed
+  experimentalUSBEnabled: boolean,
   knownDevices: Array<{
     id: string,
     name: string,
@@ -53,7 +55,30 @@ class SelectDevice extends Component<Props, State> {
   listingSubscription: *;
 
   componentDidMount() {
-    this.listingSubscription = devicesObservable.subscribe({
+    this.observe();
+  }
+
+  componentDidUpdate({ experimentalUSBEnabled, knownDevices }) {
+    if (
+      this.props.experimentalUSBEnabled !== experimentalUSBEnabled ||
+      this.props.knownDevices !== knownDevices
+    ) {
+      this.observe();
+    }
+  }
+
+  componentWillUnmount() {
+    this.listingSubscription.unsubscribe();
+  }
+
+  observe() {
+    if (this.listingSubscription) {
+      this.listingSubscription.unsubscribe();
+      this.setState({ devices: [] });
+    }
+    this.listingSubscription = getDevicesObservable({
+      usb: this.props.experimentalUSBEnabled,
+    }).subscribe({
       complete: () => {
         this.setState({ scanning: false });
       },
@@ -69,10 +94,6 @@ class SelectDevice extends Component<Props, State> {
               : devices.filter(d => d.id !== e.id),
         })),
     });
-  }
-
-  componentWillUnmount() {
-    this.listingSubscription.unsubscribe();
   }
 
   onSelect = ({ id }) => {
@@ -148,6 +169,7 @@ const styles = StyleSheet.create({
 export default connect(
   createStructuredSelector({
     knownDevices: knownDevicesSelector,
+    experimentalUSBEnabled: experimentalUSBEnabledSelector,
   }),
   {
     removeKnownDevice,

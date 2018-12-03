@@ -2,14 +2,18 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { Trans } from "react-i18next";
 import GenericSuccessView from "../GenericSuccessView";
 import GenericErrorView from "../GenericErrorView";
 import Button from "../Button";
 
+const forceInset = { bottom: "always" };
+
 export const ErrorFooterGeneric = ({ onRetry }: { onRetry: () => void }) => (
   <Button
-    type="secondary"
+    event="DeviceJobErrorRetry"
+    type="primary"
     title={<Trans i18nKey="common.retry" />}
     containerStyle={styles.retryButton}
     onPress={onRetry}
@@ -25,12 +29,12 @@ export const RenderError = ({
   onRetry: () => void,
   Footer: React$ComponentType<{ onRetry: () => void }>,
 }) => (
-  <View style={styles.root}>
+  <SafeAreaView forceInset={forceInset} style={styles.root}>
     <View style={styles.body}>
       <GenericErrorView error={error} />
     </View>
     <Footer onRetry={onRetry} />
-  </View>
+  </SafeAreaView>
 );
 
 RenderError.defaultProps = {
@@ -48,25 +52,25 @@ export const RenderStep = ({
   description?: React$Node,
   children?: React$Node,
 }) => (
-  <View style={styles.root}>
+  <SafeAreaView forceInset={forceInset} style={styles.root}>
     <View style={styles.body}>
       <GenericSuccessView icon={icon} title={title} description={description} />
     </View>
     {children}
-  </View>
+  </SafeAreaView>
 );
 
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   body: {
     flexDirection: "column",
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 20,
+    paddingBottom: 16,
   },
   retryButton: {
     alignSelf: "stretch",

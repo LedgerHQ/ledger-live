@@ -42,13 +42,13 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
     alignItems: "center",
-    marginVertical: 30,
+    marginVertical: 24,
   },
   headIcon: {
     padding: 10,
   },
   title: {
-    paddingVertical: 20,
+    paddingVertical: 16,
     paddingHorizontal: 40,
     lineHeight: 26,
     fontSize: 16,
@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: colors.grey,
-    paddingHorizontal: 40,
+    color: colors.smoke,
+    paddingHorizontal: 16,
     textAlign: "center",
   },
 });

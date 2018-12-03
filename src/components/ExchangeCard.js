@@ -10,7 +10,7 @@ import LText from "./LText";
 import Card from "./Card";
 
 type Props = {
-  card: Object,
+  card: *,
   t: T,
 };
 
@@ -24,7 +24,7 @@ export default class ExchangeCard extends Component<Props> {
 
   render() {
     const {
-      card: { logo, id },
+      card: { logo, url, id },
       t,
     } = this.props;
 
@@ -35,6 +35,8 @@ export default class ExchangeCard extends Component<Props> {
           <LText style={styles.description}>{t(`exchange.${id}`)}</LText>
           <View>
             <Button
+              event="OpenExchange"
+              eventProperties={{ exchange: id, exchangeUrl: url }}
               type="tertiary"
               title={<Trans i18nKey="exchange.visit" />}
               onPress={this.onClick}

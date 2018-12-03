@@ -1,7 +1,14 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import i18next from "i18next";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Linking,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
@@ -11,10 +18,10 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
+import { open } from "../../logic/hw";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { open } from "../../logic/hw";
-
+import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
@@ -26,6 +33,8 @@ import Close from "../../icons/Close";
 import Touchable from "../../components/Touchable";
 import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
+import CurrencyIcon from "../../components/CurrencyIcon";
+import { urls } from "../../config/urls";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -50,7 +59,15 @@ type State = {
 class ReceiveConfirmation extends Component<Props, State> {
   static navigationOptions = ({ navigation }) => {
     const options: any = {
-      headerTitle: <StepHeader title="Receive" subtitle="3 of 3" />,
+      headerTitle: (
+        <StepHeader
+          title={i18next.t("account.receive")}
+          subtitle={i18next.t("send.stepperHeader.stepRange", {
+            currentStep: "3",
+            totalSteps: "3",
+          })}
+        />
+      ),
     };
 
     if (!navigation.getParam("allowNavigation")) {
@@ -135,68 +152,101 @@ class ReceiveConfirmation extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen
+          category="ReceiveFunds"
+          name="Confirmation"
+          unsafe={unsafe}
+          verified={verified}
+        />
         {allowNavigation ? null : <PreventNativeBack />}
-        <View style={styles.container}>
-          <View style={styles.qrWrapper}>
-            <QRCode size={width / 2 - 30} value={account.freshAddress} />
+        <ScrollView style={{ flex: 1 }}>
+          <View style={styles.container}>
+            <View style={styles.qrWrapper}>
+              <QRCode size={width / 2 - 30} value={account.freshAddress} />
+            </View>
+            <View>
+              <LText style={styles.addressTitle}>
+                <Trans i18nKey="transfer.receive.address" />
+              </LText>
+            </View>
+            <View style={styles.addressWrapper}>
+              <CurrencyIcon currency={account.currency} size={24} />
+              <LText semiBold style={styles.addressTitleBold}>
+                {account.name}
+              </LText>
+            </View>
+            <View style={styles.address}>
+              <DisplayAddress
+                address={account.freshAddress}
+                verified={verified}
+              />
+            </View>
           </View>
-          <View>
-            <LText style={styles.addressTitle}>Address for account</LText>
-          </View>
-          <View>
-            <LText semiBold style={styles.addressTitleBold}>
-              {account.name}
-            </LText>
-          </View>
-          <View style={styles.address}>
-            <DisplayAddress
-              address={account.freshAddress}
+          <View style={styles.bottomContainer}>
+            <VerifyAddressDisclaimer
+              unsafe={unsafe}
               verified={verified}
+              action={
+                verified ? (
+                  <Touchable
+                    event="ReceiveVerifyTransactionHelp"
+                    onPress={() =>
+                      Linking.openURL(urls.verifyTransactionDetails).catch(
+                        err => console.error("An error occurred", err),
+                      )
+                    }
+                  >
+                    <LText semiBold style={styles.learnmore}>
+                      Learn More
+                    </LText>
+                  </Touchable>
+                ) : null
+              }
+              text={
+                unsafe ? (
+                  <Trans
+                    i18nKey="transfer.receive.verifySkipped"
+                    values={{
+                      accountType: account.currency.managerAppName,
+                    }}
+                  />
+                ) : verified ? (
+                  <Trans i18nKey="transfer.receive.verified" />
+                ) : (
+                  <Trans
+                    i18nKey="transfer.receive.verifyPending"
+                    values={{
+                      currencyName: account.currency.managerAppName,
+                    }}
+                  />
+                )
+              }
             />
           </View>
-        </View>
-        <View style={styles.bottomContainer}>
-          <VerifyAddressDisclaimer
-            unsafe={unsafe}
-            verified={verified}
-            text={
-              unsafe ? (
-                <Trans
-                  i18nKey="transfer.receive.verifySkipped"
-                  values={{
-                    accountType: account.currency.managerAppName,
-                  }}
-                />
-              ) : verified ? (
-                <Trans i18nKey="transfer.receive.verified" />
-              ) : (
-                <Trans
-                  i18nKey="transfer.receive.verifyPending"
-                  values={{
-                    accountType: account.currency.managerAppName,
-                  }}
-                />
-              )
-            }
-          />
-        </View>
+        </ScrollView>
         {verified && (
           <View style={styles.footer}>
             <Button
+              event="ReceiveDone"
               containerStyle={styles.button}
               onPress={this.onDone}
               type="secondary"
-              title={<Trans i18nKey="common.done" />}
+              title={<Trans i18nKey="common.close" />}
             />
             <Button
-              containerStyle={styles.button}
+              event="ReceiveVerifyAgain"
+              containerStyle={styles.bigButton}
               type="primary"
               title={<Trans i18nKey="transfer.receive.verifyAgain" />}
               onPress={this.onRetry}
             />
           </View>
         )}
-        <BottomModal isOpened={isModalOpened} onModalHide={onModalHide}>
+        <BottomModal
+          id="ReceiveConfirmationModal"
+          isOpened={isModalOpened}
+          onModalHide={onModalHide}
+        >
           {error ? (
             <View style={styles.modal}>
               <View style={styles.modalBody}>
@@ -212,21 +262,27 @@ class ReceiveConfirmation extends Component<Props, State> {
               </View>
               <View style={styles.buttonsContainer}>
                 <Button
+                  event="ReceiveContactUs"
                   type="secondary"
                   title={<Trans i18nKey="common.contactUs" />}
                   containerStyle={styles.button}
                   onPress={() => {}} // TODO do something
                 />
                 <Button
+                  event="ReceiveRetry"
                   type="primary"
                   title={<Trans i18nKey="common.retry" />}
-                  containerStyle={styles.button}
+                  containerStyle={styles.bigButton}
                   onPress={this.onRetry}
                 />
               </View>
             </View>
           ) : null}
-          <Touchable style={styles.close} onPress={this.onModalClose}>
+          <Touchable
+            event="ReceiveClose"
+            style={styles.close}
+            onPress={this.onModalClose}
+          >
             <Close color={colors.fog} size={20} />
           </Touchable>
         </BottomModal>
@@ -248,6 +304,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     padding: 16,
+    paddingTop: 32,
   },
   qrWrapper: {
     borderWidth: 1,
@@ -266,12 +323,17 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   addressTitleBold: {
-    paddingTop: 4,
+    paddingLeft: 8,
     fontSize: 16,
     color: colors.darkBlue,
   },
+  addressWrapper: {
+    paddingTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+  },
   address: {
-    paddingTop: 25,
+    paddingTop: 24,
   },
   modal: {
     flexDirection: "column",
@@ -307,15 +369,27 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     marginHorizontal: 8,
   },
+  bigButton: {
+    flexGrow: 2,
+    marginHorizontal: 8,
+  },
   footer: {
     flexDirection: "row",
     marginBottom: 16,
-    marginHorizontal: 8,
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
   close: {
     position: "absolute",
     right: 10,
     top: 10,
+  },
+  learnmore: {
+    color: colors.live,
+    paddingLeft: 8,
+    paddingTop: 4,
   },
 });
 

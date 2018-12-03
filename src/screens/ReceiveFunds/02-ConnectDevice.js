@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from "react";
+import i18next from "i18next";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -10,7 +11,8 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import StepHeader from "../../components/StepHeader";
 import SelectDevice from "../../components/SelectDevice";
 import Button from "../../components/Button";
@@ -19,8 +21,6 @@ import {
   accountApp,
   receiveVerifyStep,
 } from "../../components/DeviceJob/steps";
-
-import colors from "../../colors";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -35,7 +35,15 @@ type Props = {
 
 class ConnectDevice extends Component<Props> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="2 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("transfer.receive.titleDevice")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "2",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
 
   onSelectDevice = (deviceId: string) => {
@@ -57,6 +65,7 @@ class ConnectDevice extends Component<Props> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[
@@ -67,7 +76,8 @@ class ConnectDevice extends Component<Props> {
         />
         <View style={styles.footer}>
           <Button
-            type="secondary"
+            event="ReceiveWithoutDevice"
+            type="lightSecondary"
             title={<Trans i18nKey="transfer.receive.withoutDevice" />}
             onPress={this.onSkipDevice}
           />
@@ -83,7 +93,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   footer: {
-    padding: 10,
+    padding: 4,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
 });
 

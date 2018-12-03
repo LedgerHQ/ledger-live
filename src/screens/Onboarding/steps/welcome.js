@@ -1,15 +1,11 @@
 // @flow
 
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Linking,
-  Image,
-} from "react-native";
+import { StyleSheet, View, Linking, Image } from "react-native";
 import { Trans } from "react-i18next";
 
+import { TrackScreen } from "../../../analytics";
+import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import OnboardingLayout from "../OnboardingLayout";
@@ -43,6 +39,7 @@ class OnboardingStepWelcome extends Component<Props> {
     const { onWelcomed } = this.props;
     return (
       <OnboardingLayout isCentered borderedFooter={false} Footer={this.Footer}>
+        <TrackScreen category="Onboarding" name="Welcome" />
         <View style={styles.logo}>{logo}</View>
         <LText style={styles.title} secondary semiBold>
           <Trans i18nKey="onboarding.stepWelcome.title" />
@@ -54,6 +51,7 @@ class OnboardingStepWelcome extends Component<Props> {
           />
         </LText>
         <Button
+          event="OnboardingWelcomeContinue"
           type="primary"
           title={<Trans i18nKey="onboarding.stepWelcome.start" />}
           onPress={onWelcomed}
@@ -62,7 +60,8 @@ class OnboardingStepWelcome extends Component<Props> {
           <LText style={styles.subText}>
             <Trans i18nKey="onboarding.stepWelcome.noDevice" />
           </LText>
-          <TouchableOpacity
+          <Touchable
+            event="WelcomeBuy"
             onPress={this.buy}
             style={styles.buyTouch}
             hitSlop={hitSlop}
@@ -74,7 +73,7 @@ class OnboardingStepWelcome extends Component<Props> {
               />
             </LText>
             <IconArrowRight size={16} color={colors.live} />
-          </TouchableOpacity>
+          </Touchable>
         </View>
       </OnboardingLayout>
     );

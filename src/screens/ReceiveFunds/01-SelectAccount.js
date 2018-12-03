@@ -1,5 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
+import i18next from "i18next";
 import { View, StyleSheet, FlatList } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -8,14 +9,14 @@ import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { accountsSelector } from "../../reducers/accounts";
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
-
-import { accountsSelector } from "../../reducers/accounts";
-import colors from "../../colors";
 
 const SEARCH_KEYS = ["name", "unit.code"];
 
@@ -30,7 +31,15 @@ type State = {};
 
 class ReceiveFunds extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Receive funds" subtitle="1 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("transfer.receive.headerTitle")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "1",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
 
   renderItem = ({ item }: { item: Account }) => (
@@ -51,6 +60,7 @@ class ReceiveFunds extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
+        <TrackScreen category="ReceiveFunds" name="SelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar

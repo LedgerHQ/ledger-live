@@ -18,6 +18,7 @@ import type { State } from "../../../reducers";
 import type { T } from "../../../types/common";
 import { updateCurrencySettings } from "../../../actions/settings";
 import colors from "../../../colors";
+import { TrackScreen } from "../../../analytics";
 import { currencySettingsDefaults } from "../../../helpers/CurrencySettingsDefaults";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 
@@ -94,8 +95,14 @@ class EachCurrencySettings extends Component<Props, LocalState> {
     const { value } = this.state;
     return (
       <View style={styles.root}>
+        <TrackScreen
+          category="Settings"
+          name="Currency"
+          currency={currency.id}
+        />
         {currency !== intermediaryCurrency && (
           <SettingsRow
+            event="CurrencyExchange"
             arrowRight={currencySettings.exchange}
             title={t("settings.currencies.rateProvider", {
               currencyTicker: currency.ticker,
@@ -114,6 +121,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
         {defaults.confirmationsNb && (
           <View style={styles.sliderContainer}>
             <SettingsRow
+              event="CurrencyConfirmationsNb"
               title={t("settings.currencies.confirmationNb")}
               desc={t("settings.currencies.confirmationNbDesc")}
               onPress={null}

@@ -21,7 +21,7 @@ class AuthenticityRow extends PureComponent<Props> {
             <Trans i18nKey="AuthenticityRow.subtitle" />
           </LText>
           <View style={styles.iconContainer}>
-            <Check size={8} color={colors.white} />
+            <Check size={12} color={colors.white} />
           </View>
         </View>
       </Row>
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginLeft: 12,
     padding: 4,
-    borderRadius: 20,
+    borderRadius: 50,
     backgroundColor: colors.live,
   },
 });

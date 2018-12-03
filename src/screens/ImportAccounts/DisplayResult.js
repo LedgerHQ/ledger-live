@@ -11,11 +11,12 @@ import type { Result } from "@ledgerhq/live-common/lib/cross";
 import { accountDataToAccount } from "@ledgerhq/live-common/lib/cross";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
+
 import { supportsExistingAccount } from "../../cryptocurrencies";
 import { importDesktopSettings } from "../../actions/settings";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
-
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import Button from "../../components/Button";
@@ -223,6 +224,7 @@ class DisplayResult extends Component<Props, State> {
 
     return (
       <View style={styles.root}>
+        <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
         {items.length ? (
           <Fragment>
@@ -240,6 +242,7 @@ class DisplayResult extends Component<Props, State> {
             />
             <View style={styles.footer}>
               <Button
+                event="ImportAccountsContinue"
                 type="primary"
                 title={<Trans i18nKey="common.continue" />}
                 onPress={this.onImport}
@@ -255,6 +258,7 @@ class DisplayResult extends Component<Props, State> {
             </View>
             <View style={styles.footer}>
               <Button
+                event="ImportAccountsDone"
                 type="primary"
                 title={<Trans i18nKey="common.done" />}
                 onPress={this.close}

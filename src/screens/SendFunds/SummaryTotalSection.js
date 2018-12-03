@@ -48,7 +48,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
         <SummaryRow
           title={<Trans i18nKey="send.summary.total" />}
           additionalInfo={
-            <Touchable onPress={this.onPress}>
+            <Touchable onPress={this.onPress} event="SummaryTotalInfo">
               <Icon name="info-circle" size={12} color={colors.fog} />
             </Touchable>
           }
@@ -72,7 +72,11 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             </LText>
           </View>
         </SummaryRow>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="SummaryTotalModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <ModalBottomAction
             title={<Trans i18nKey="send.summary.infoTotalTitle" />}
             icon={
@@ -84,6 +88,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             footer={
               <View>
                 <Button
+                  event="SummaryTotalInfoClose"
                   type="primary"
                   title={<Trans i18nKey="common.close" />}
                   onPress={this.onRequestClose}

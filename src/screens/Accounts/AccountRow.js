@@ -28,6 +28,11 @@ type Props = {
   isLast: boolean,
 };
 
+const placeholderProps = {
+  width: 40,
+  containerHeight: 20,
+};
+
 const TICK_W = 6;
 const TICK_H = 20;
 
@@ -64,13 +69,14 @@ class AccountRow extends PureComponent<Props> {
               />
             </LText>
             <View style={styles.balanceCounterContainer}>
-              <LText tertiary semiBold style={styles.balanceCounterText}>
-                <CounterValue
-                  showCode
-                  currency={account.currency}
-                  value={account.balance}
-                />
-              </LText>
+              <CounterValue
+                showCode
+                currency={account.currency}
+                value={account.balance}
+                withPlaceholder
+                placeholderProps={placeholderProps}
+                Wrapper={AccountCv}
+              />
             </View>
           </View>
         </View>
@@ -78,6 +84,12 @@ class AccountRow extends PureComponent<Props> {
     );
   }
 }
+
+const AccountCv = ({ children }: { children: * }) => (
+  <LText tertiary semiBold style={styles.balanceCounterText}>
+    {children}
+  </LText>
+);
 
 export default connect(mapStateToProps)(AccountRow);
 
@@ -119,6 +131,7 @@ const styles = StyleSheet.create({
   },
   balanceCounterContainer: {
     marginTop: 5,
+    height: 20,
   },
   balanceCounterText: {
     fontSize: 14,
