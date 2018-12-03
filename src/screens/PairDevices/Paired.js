@@ -49,7 +49,10 @@ class Paired extends PureComponent<{
             />
           </LText>
           <LText style={styles.description}>
-            <Trans i18nKey="PairDevices.Paired.desc" />
+            <Trans
+              i18nKey="PairDevices.Paired.desc"
+              values={deviceNames.nanoX}
+            />
           </LText>
           <View style={styles.fullContainer}>
             <DeviceItemSummary
@@ -75,7 +78,7 @@ class Paired extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingHorizontal: 16,
+    padding: 16,
   },
   container: {
     flex: 1,
