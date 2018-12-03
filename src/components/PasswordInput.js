@@ -74,6 +74,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
           placeholder={placeholder}
           placeholderTextColor={error ? colors.alert : colors.fog}
           returnKeyType="done"
+          blurOnSubmit={false}
           onChangeText={onChange}
           onSubmitEditing={onSubmit}
           secureTextEntry={secureTextEntry}
