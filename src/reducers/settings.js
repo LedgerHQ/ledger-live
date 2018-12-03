@@ -52,6 +52,7 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean,
   hasAcceptedTradingWarning: boolean,
   developerModeEnabled: boolean,
+  experimentalUSBEnabled: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -66,6 +67,7 @@ const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasAcceptedTradingWarning: false,
+  experimentalUSBEnabled: false,
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -194,6 +196,11 @@ const handlers: Object = {
     ...state,
     hasAcceptedTradingWarning: true,
   }),
+
+  SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state, action) => ({
+    ...state,
+    experimentalUSBEnabled: action.enabled,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -250,6 +257,11 @@ export const developerModeEnabledSelector = createSelector(
 export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
+);
+
+export const experimentalUSBEnabledSelector = createSelector(
+  storeSelector,
+  s => s.experimentalUSBEnabled,
 );
 
 export const currencySettingsForAccountSelector = (

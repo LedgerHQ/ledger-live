@@ -69,6 +69,11 @@ export const setAnalytics = (analyticsEnabled: boolean) => ({
   analyticsEnabled,
 });
 
+export const setExperimentalUSBSupport = (enabled: boolean) => ({
+  type: "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
+  enabled,
+});
+
 export const setOrderAccounts = (orderAccounts: string) => ({
   type: "SETTINGS_SET_ORDER_ACCOUNTS",
   orderAccounts,

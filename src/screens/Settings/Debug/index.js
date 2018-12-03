@@ -7,27 +7,28 @@ import config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { accountsSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
+import SettingsRow from "../../../components/SettingsRow";
+import SelectDevice from "../../../components/SelectDevice";
+
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
-import OpenDebugBLE from "./OpenDebugBLE";
+import ConfigUSBDeviceSupport from "./ConfigUSBDeviceSupport";
 import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
-import BenchmarkQRStream from "./BenchmarkQRStream";
 
-class DebugSettings extends PureComponent<{
+class DebugMocks_ extends PureComponent<{
   accounts: *,
   navigation: NavigationScreenProp<*>,
 }> {
   static navigationOptions = {
-    title: "Debug",
+    title: "Mock & Test",
   };
 
   render() {
     const { accounts } = this.props;
     return (
       <ScrollView contentContainerStyle={styles.root}>
-        <TrackScreen category="Settings" name="Debug" />
         {config.BRIDGESTREAM_DATA ? (
           // $FlowFixMe
           <ImportBridgeStreamData
@@ -38,9 +39,6 @@ class DebugSettings extends PureComponent<{
         {accounts.length === 0 ? (
           <GenerateMockAccounts title="Generate 10 mock Accounts" count={10} />
         ) : null}
-        <OpenDebugBLE />
-        <BenchmarkQRStream />
-        <OpenDebugHttpTransport />
         <OpenDebugCrash />
         <OpenDebugIcons />
       </ScrollView>
@@ -48,15 +46,67 @@ class DebugSettings extends PureComponent<{
   }
 }
 
+export const DebugMocks = connect(
+  createStructuredSelector({
+    accounts: accountsSelector,
+  }),
+)(DebugMocks_);
+
+export class DebugDevices extends PureComponent<{
+  navigation: NavigationScreenProp<*>,
+}> {
+  static navigationOptions = {
+    title: "Debug Devices",
+  };
+
+  onSelect = (deviceId: string) => {
+    this.props.navigation.navigate("DebugBLE", { deviceId });
+  };
+
+  render() {
+    return (
+      <ScrollView contentContainerStyle={styles.root}>
+        <OpenDebugHttpTransport />
+        <ConfigUSBDeviceSupport />
+        <SelectDevice onSelect={this.onSelect} />
+      </ScrollView>
+    );
+  }
+}
+
+class DebugSettings extends PureComponent<{
+  navigation: NavigationScreenProp<*>,
+}> {
+  static navigationOptions = {
+    title: "Debug",
+  };
+
+  render() {
+    const { navigation } = this.props;
+    return (
+      <ScrollView contentContainerStyle={styles.root}>
+        <TrackScreen category="Settings" name="Debug" />
+        <SettingsRow
+          title="Mock & Test"
+          onPress={() => navigation.navigate("DebugMocks")}
+        />
+        <SettingsRow
+          title="Debug Devices"
+          onPress={() => navigation.navigate("DebugDevices")}
+        />
+      </ScrollView>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
-  root: { paddingTop: 16, paddingBottom: 64 },
+  root: {
+    paddingTop: 16,
+    paddingBottom: 64,
+  },
   container: {
     marginTop: 16,
   },
 });
 
-export default connect(
-  createStructuredSelector({
-    accounts: accountsSelector,
-  }),
-)(DebugSettings);
+export default DebugSettings;
