@@ -3,6 +3,7 @@
 
 import Transport, { TransportError } from "@ledgerhq/hw-transport";
 import { BleManager, ConnectionPriority } from "react-native-ble-plx";
+import Config from "react-native-config";
 import { Observable, defer, merge, from } from "rxjs";
 import {
   share,
@@ -31,6 +32,8 @@ const connectOptions = {
 
 const transportsCache = {};
 const bleManager = new BleManager();
+
+if (Config.BLE_LOG_LEVEL) bleManager.setLogLevel(Config.BLE_LOG_LEVEL);
 
 /**
  * react-native bluetooth BLE implementation
@@ -187,11 +190,24 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
     logSubject.next({ type: "verbose", message: `device.mtu=${device.mtu}` });
 
-    const transport = new BluetoothTransport(device, writeC, notifyC);
+    const notifyObservable = monitorCharacteristic(notifyC).pipe(
+      tap(value => {
+        logSubject.next({
+          type: "ble-frame-read",
+          message: value.toString("hex"),
+        });
+      }),
+      share(),
+    );
+
+    const notif = notifyObservable.subscribe();
+
+    const transport = new BluetoothTransport(device, writeC, notifyObservable);
 
     transportsCache[transport.id] = transport;
     const disconnectedSub = device.onDisconnected(e => {
       transport.notYetDisconnected = false;
+      notif.unsubscribe();
       disconnectedSub.remove();
       delete transportsCache[transport.id];
       logSubject.next({
@@ -219,8 +235,6 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
   writeCharacteristic: Characteristic;
 
-  notifyCharacteristic: Characteristic;
-
   notifyObservable: Observable<Buffer>;
 
   notYetDisconnected = true;
@@ -228,22 +242,12 @@ export default class BluetoothTransport extends Transport<Device | string> {
   constructor(
     device: Device,
     writeCharacteristic: Characteristic,
-    notifyCharacteristic: Characteristic,
+    notifyObservable: Observable<Buffer>,
   ) {
     super();
     this.id = device.id;
     this.device = device;
     this.writeCharacteristic = writeCharacteristic;
-    this.notifyCharacteristic = notifyCharacteristic;
-    const notifyObservable = monitorCharacteristic(notifyCharacteristic).pipe(
-      tap(value => {
-        logSubject.next({
-          type: "ble-frame-read",
-          message: value.toString("hex"),
-        });
-      }),
-      share(),
-    );
     this.notifyObservable = notifyObservable;
     logSubject.next({
       type: "verbose",
@@ -286,16 +290,17 @@ export default class BluetoothTransport extends Transport<Device | string> {
     if (mtu <= 23) {
       await this.atomic(async () => {
         try {
-          mtu = await merge(
-            this.notifyObservable.pipe(
-              first(buffer => buffer.readUInt8(0) === 0x08),
-              map(buffer => buffer.readUInt8(5)),
-              timeout(30000),
-            ),
-            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(
-              ignoreElements(),
-            ),
-          ).toPromise();
+          mtu =
+            (await merge(
+              this.notifyObservable.pipe(
+                first(buffer => buffer.readUInt8(0) === 0x08),
+                map(buffer => buffer.readUInt8(5)),
+                timeout(30000),
+              ),
+              defer(() =>
+                from(this.write(Buffer.from([0x08, 0, 0, 0, 0]))),
+              ).pipe(ignoreElements()),
+            ).toPromise()) + 3;
         } catch (e) {
           await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
           throw e;
