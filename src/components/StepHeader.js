@@ -16,9 +16,7 @@ class StepHeader extends PureComponent<Props> {
     const { title, subtitle } = this.props;
     return (
       <View style={styles.root}>
-        <LText tertiary style={styles.subtitle}>
-          {subtitle}
-        </LText>
+        <LText style={styles.subtitle}>{subtitle}</LText>
         <LText secondary semiBold style={styles.title}>
           {title}
         </LText>
