@@ -4,8 +4,8 @@ import {
   NetworkDown,
 } from "@ledgerhq/live-common/lib/errors";
 
-export function remapLibcoreErrors(error: Error, fallbackError?: Error): Error {
-  if (!error || !error.name) return fallbackError || error;
+export function remapLibcoreErrors(error: Error): Error {
+  if (!error || !error.name) return error;
   // in the current effort of remapping libcore errors, we're console.logging it
   if (__DEV__) console.log("remapLibcoreErrors", { error }); // eslint-disable-line no-console
   const msg = error.message;
@@ -18,5 +18,12 @@ export function remapLibcoreErrors(error: Error, fallbackError?: Error): Error {
     return new NetworkDown();
   }
 
-  return fallbackError || error;
+  // Attempt to recover the human readable error from a verbose iOS trace
+  const pattern = /NS[\w]+Error.+Code.+"([\w .]+)"/;
+  const match = pattern.exec(msg);
+  if (match && match[1] !== "(null)") {
+    return new Error(match[1]);
+  }
+
+  return error;
 }

@@ -122,7 +122,8 @@ export async function syncCoreAccount({
     );
     coreOperations = await core.coreOperationQuery.execute(sortedQuery);
   } catch (e) {
-    throw remapLibcoreErrors(e, new SyncError(e));
+    const mappedError = remapLibcoreErrors(e);
+    throw mappedError === e ? new SyncError(e) : mappedError;
   }
 
   const account = await buildAccount({
