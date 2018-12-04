@@ -9,9 +9,9 @@ import colors from "../colors";
 
 type Props = {
   style?: *,
-  children: string,
+  children: string | React$Element<*>,
   string: string, // String to be copied
-  replacement?: string, // String to display in place of children on copy
+  replacement?: string | React$Element<*>, // String to display in place of children on copy
 };
 
 type State = {
