@@ -36,15 +36,20 @@ export function getBalanceHistory(
 ): BalanceHistory {
   const history = [];
   let { balance } = account;
+  const operationsLength = account.operations.length;
   let i = 0; // index of operation
   let t = new Date();
   history.unshift({ date: t, value: balance });
   t = new Date(startOfDay(t) - 1); // end of yesterday
   for (let d = daysCount - 1; d > 0; d--) {
     // accumulate operations after time t
-    while (i < account.operations.length && account.operations[i].date > t) {
+    while (i < operationsLength && account.operations[i].date > t) {
       balance = balance.minus(getOperationAmountNumber(account.operations[i]));
       i++;
+    }
+    if (i === operationsLength) {
+      // When there is no more operation, we consider we reached ZERO to avoid invalid assumption that balance was already available.
+      balance = BigNumber(0);
     }
     history.unshift({ date: t, value: BigNumber.max(balance, 0) });
     t = new Date(t - 24 * 60 * 60 * 1000);
