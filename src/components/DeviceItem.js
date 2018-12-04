@@ -22,7 +22,7 @@ type Props = {
   id: string,
   disabled?: boolean,
   withArrow?: boolean,
-  description?: string,
+  description?: React$Node,
   onSelect?: Device => any,
   onForgetSelect?: string => any,
   selected?: boolean,

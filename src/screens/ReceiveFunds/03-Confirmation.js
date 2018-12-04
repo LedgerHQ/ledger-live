@@ -197,7 +197,7 @@ class ReceiveConfirmation extends Component<Props, State> {
                     }
                   >
                     <LText semiBold style={styles.learnmore}>
-                      Learn More
+                      <Trans i18nKey="common.learnMore" />
                     </LText>
                   </Touchable>
                 ) : null

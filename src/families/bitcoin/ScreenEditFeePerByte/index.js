@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
+import i18next from "i18next";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
@@ -41,7 +42,7 @@ type State = {
 
 class BitcoinEditFeePerByte extends Component<Props, State> {
   static navigationOptions = {
-    title: "Edit fees",
+    title: i18next.t("transfer.fees.title"),
   };
 
   items: Array<*>;

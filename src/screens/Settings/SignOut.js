@@ -14,14 +14,11 @@ class SignOut extends Component<{ reboot: (?boolean) => *, t: T }> {
   };
 
   onSignOut = () => {
-    Alert.alert(
-      "Are you sure you want to sign out?",
-      "All accounts data will be removed from your phone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Sign me out", onPress: this.onResetAll },
-      ],
-    );
+    const { t } = this.props;
+    Alert.alert(t("signout.confirm"), t("signout.disclaimer"), [
+      { text: t("common.cancel"), style: "cancel" },
+      { text: t("signout.action"), onPress: this.onResetAll },
+    ]);
   };
 
   render() {

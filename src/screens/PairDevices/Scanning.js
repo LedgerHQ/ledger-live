@@ -3,6 +3,7 @@
 import React, { Component, Fragment } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { Observable } from "rxjs";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
@@ -86,7 +87,9 @@ class Scanning extends Component<Props, State> {
         id={item.id}
         onSelect={this.props.onSelect}
         disabled={!!knownDevice}
-        description={knownDevice ? "Already paired" : ""}
+        description={
+          knownDevice ? <Trans i18nKey="PairDevices.alreadyPaired" /> : ""
+        }
       />
     );
   };

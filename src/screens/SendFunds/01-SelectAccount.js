@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import i18next from "i18next";
+import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountsSelector } from "../../reducers/accounts";
@@ -65,7 +66,9 @@ class SendFundsSelectAccount extends Component<Props, State> {
 
   renderEmptySearch = () => (
     <View style={styles.emptyResults}>
-      <LText style={styles.emptyText}>No account found</LText>
+      <LText style={styles.emptyText}>
+        <Trans i18nKey="transfer.receive.noAccount" />
+      </LText>
     </View>
   );
 
@@ -127,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(SendFundsSelectAccount);
+export default translate()(connect(mapStateToProps)(SendFundsSelectAccount));

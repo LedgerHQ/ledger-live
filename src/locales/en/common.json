@@ -26,7 +26,13 @@
     "received": "Received",
     "sent": "Sent",
     "or": "OR",
-    "rename": "Rename"
+    "rename": "Rename",
+    "learnMore": "Learn more",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "upToDate": "Up to date",
+    "outdated": "Outdated",
+    "satPerByte": "sat/bytes"
   },
   "errors": {
     "AccountNameRequired": {
@@ -244,7 +250,8 @@
   "location": {
     "required": "Location required",
     "open": "Open location settings",
-    "disabled": "It seems location detection is disabled on your mobile. Go to settings and enable location to activate bluetooth."
+    "disabled": "Enable Location in Settings. Ledger Live requires location services to pair your device.",
+    "noInfos": "Ledger does not use your location information."
   },
   "permissions": {
     "open": "Open app permissions"
@@ -274,12 +281,19 @@
     "thorswap": "ThorSwap is an instant, safe and fair crypto asset market powered by decentralized atomic swap technologies. It is the most convenient way to start trading, no registration or KYC for small amount transcations.",
     "changenow": "ChangeNOW is one of the leading custody-free instant exchange services."
   },
+  "signout": {
+    "confirm": "Are you sure you want to sign out?",
+    "disclaimer": "All accounts data will be removed from your phone.",
+    "action": "Sign me out"
+  },
   "auth": {
     "failed": {
       "biometrics": {
         "title": "{{biometricsType}} unlock failed",
-        "description": "Enter your password to continue"
+        "description": "Enter your password to continue",
+        "authenticate": "Please authenticate to Ledger Live app"
       },
+      "denied": "Auth Security was not enabled because your phone failed to authenticate.",
       "title": "Authentication failed",
       "buttons": {
         "tryAgain": "Try again",
@@ -556,6 +570,7 @@
     }
   },
   "accounts": {
+    "title": "Accounts",
     "importNotification": {
       "message": "Your accounts have successfully been imported!"
     },
@@ -660,6 +675,9 @@
     "send": {
       "title": "Send funds",
       "desc": "Send your funds"
+    },
+    "fees": {
+      "title": "Edit fees"
     },
     "receive": {
       "title": "Receive funds",
@@ -832,7 +850,8 @@
       "title": "Oops, no device found",
       "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
     },
-    "bypassGenuine": "Use anyway"
+    "bypassGenuine": "Use anyway",
+    "alreadyPaired": "Already paired"
   },
   "DeviceItemSummary": {
     "genuine": "Genuine"
@@ -848,7 +867,9 @@
     }
   },
   "manager": {
+    "title": "Manager",
     "appList": {
+      "title": "App catalog",
       "loading": "Loading apps..."
     },
     "unpair": {
