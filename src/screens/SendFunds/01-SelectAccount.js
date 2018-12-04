@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   searchContainer: {
-    paddingTop: 18,
+    paddingTop: 16,
     flex: 1,
   },
   list: {

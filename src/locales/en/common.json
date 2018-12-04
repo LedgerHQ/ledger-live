@@ -290,7 +290,7 @@
       "desc": "Enter your password to continue",
       "inputPlaceholder": "Type your password",
       "login": "Log in",
-      "forgotPassword": "Forgot password?"
+      "forgotPassword": "I lost my password"
     },
     "addPassword": {
       "placeholder": "Choose your password",
