@@ -19,7 +19,7 @@ type BulletItem = {
 };
 
 type Props = ModalProps & {
-  id: string,
+  id?: string,
   title: string | React$Element<*>,
   desc: string | React$Element<*>,
   bullets: BulletItem[],

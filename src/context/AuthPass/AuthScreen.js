@@ -229,11 +229,7 @@ class AuthScreen extends PureComponent<Props, State> {
               <PoweredByLedger />
             </View>
           )}
-          <BottomModal
-            id="AuthScreenHardResetModal"
-            isOpened={isModalOpened}
-            onClose={this.onRequestClose}
-          >
+          <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
             <HardResetModal
               onRequestClose={this.onRequestClose}
               onHardReset={this.onHardReset}
