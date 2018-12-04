@@ -23,6 +23,7 @@ import {
   NotEnoughBalance,
   InvalidAddress,
   FeeNotLoaded,
+  NetworkDown,
 } from "@ledgerhq/live-common/lib/errors";
 import { open } from "../logic/hw";
 import {
@@ -294,6 +295,20 @@ const recipientIsNew = async (endpointConfig, recipient) => {
   }
 };
 
+// FIXME this could be cleaner
+const remapError = error => {
+  const msg = error.message;
+
+  if (
+    msg.includes("Unable to resolve host") ||
+    msg.includes("Network is down")
+  ) {
+    return new NetworkDown();
+  }
+
+  return error;
+};
+
 const cacheRecipientsNew = {};
 const cachedRecipientIsNew = (endpointConfig, recipient) => {
   if (recipient in cacheRecipientsNew) return cacheRecipientsNew[recipient];
@@ -533,7 +548,7 @@ export const accountBridge: AccountBridge<Transaction> = {
 
           o.complete();
         } catch (e) {
-          o.error(e);
+          o.error(remapError(e));
         } finally {
           api.disconnect();
         }
@@ -568,6 +583,8 @@ export const accountBridge: AccountBridge<Transaction> = {
       return {
         serverFee,
       };
+    } catch (e) {
+      throw remapError(e);
     } finally {
       api.disconnect();
     }

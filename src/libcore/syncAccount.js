@@ -15,6 +15,7 @@ import { createInstance } from "./specific";
 import { buildAccount } from "./buildAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
+import { remapLibcoreErrors } from "./errors";
 
 // FIXME how to get that
 const OperationOrderKey = {
@@ -102,16 +103,16 @@ export async function syncCoreAccount({
   seedIdentifier: string,
   existingOperations: Operation[],
 }): Promise<Account> {
-  const eventReceiver = await createInstance(core.coreEventReceiver);
-  const eventBus = await core.coreAccount.synchronize(coreAccount);
-  const serialContext = await core.coreThreadDispatcher.getMainExecutionContext(
-    core.getThreadDispatcher(),
-  );
-  await core.coreEventBus.subscribe(eventBus, serialContext, eventReceiver);
-
   let coreOperations;
-
   try {
+    const eventReceiver = await createInstance(core.coreEventReceiver);
+    const eventBus = await core.coreAccount.synchronize(coreAccount);
+    const serialContext = await core.coreThreadDispatcher.getMainExecutionContext(
+      core.getThreadDispatcher(),
+    );
+
+    await core.coreEventBus.subscribe(eventBus, serialContext, eventReceiver);
+
     const query = await core.coreAccount.queryOperations(coreAccount);
     const completedQuery = await core.coreOperationQuery.complete(query);
     const sortedQuery = await core.coreOperationQuery.addOrder(
@@ -121,7 +122,7 @@ export async function syncCoreAccount({
     );
     coreOperations = await core.coreOperationQuery.execute(sortedQuery);
   } catch (e) {
-    throw new SyncError(e.message); // todo more precision needed
+    throw remapLibcoreErrors(e, new SyncError(e));
   }
 
   const account = await buildAccount({
