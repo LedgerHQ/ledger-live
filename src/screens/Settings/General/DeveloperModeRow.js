@@ -37,7 +37,11 @@ class DeveloperModeRow extends PureComponent<Props> {
           event={developerModeEnabled ? "EnableDevMode" : "DisableDevMode"}
           onUpdate
         />
-        <Switch value={developerModeEnabled} onValueChange={setDeveloperMode} />
+        <Switch
+          style={{ opacity: 0.99 }}
+          value={developerModeEnabled}
+          onValueChange={setDeveloperMode}
+        />
       </SettingsRow>
     );
   }
