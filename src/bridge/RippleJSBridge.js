@@ -483,7 +483,11 @@ export const accountBridge: AccountBridge<Transaction> = {
           if (finished) return;
 
           if (!info) {
-            // account does not exist, we have nothing to sync
+            // account does not exist, we have nothing to sync but to update the last sync date
+            o.next(a => ({
+              ...a,
+              lastSyncDate: new Date(),
+            }));
             o.complete();
             return;
           }
@@ -493,8 +497,6 @@ export const accountBridge: AccountBridge<Transaction> = {
             !balance.isNaN() && balance.isFinite(),
             `Ripple: invalid balance=${balance.toString()} for address ${freshAddress}`,
           );
-
-          o.next(a => ({ ...a, balance }));
 
           const transactions = await api.getTransactions(freshAddress, {
             minLedgerVersion: Math.max(
@@ -521,6 +523,7 @@ export const accountBridge: AccountBridge<Transaction> = {
             );
             return {
               ...a,
+              balance,
               operations,
               pendingOperations,
               blockHeight: maxLedgerVersion,
