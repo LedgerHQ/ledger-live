@@ -46,8 +46,6 @@ class App extends Component<*> {
   render() {
     return (
       <View style={styles.root}>
-        <StyledStatusBar />
-
         <DBSave
           dbKey="countervalues"
           throttle={2000}
@@ -113,6 +111,7 @@ export default class Root extends Component<{}, { appState: * }> {
           {(ready, store) =>
             ready ? (
               <Fragment>
+                <StyledStatusBar />
                 <HookSentry />
                 <HookAnalytics store={store} />
                 <AuthPass>

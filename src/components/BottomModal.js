@@ -10,7 +10,7 @@ import colors from "../colors";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 
 export type Props = {
-  id: string,
+  id?: string,
   isOpened: boolean,
   onClose: () => *,
   children?: *,
@@ -37,7 +37,7 @@ class BottomModal extends Component<Props> {
           {...rest}
         >
           <View style={[styles.modal, style]}>
-            {isOpened ? <TrackScreen category={id} /> : null}
+            {isOpened && id ? <TrackScreen category={id} /> : null}
             <StyledStatusBar
               backgroundColor={
                 Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
