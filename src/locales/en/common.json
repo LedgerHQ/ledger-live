@@ -670,7 +670,9 @@
       "verifyAgain": "Re-verify",
       "noAccount": "No account found",
       "withoutDevice": "Don't have my device",
-      "address": "Address for account"
+      "address": "Address for account",
+      "copyAddress": "Copy address",
+      "addressCopied": "Address copied!"
     },
     "exchange": {
       "title": "Exchange",
