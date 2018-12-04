@@ -70,7 +70,9 @@ class LogItem extends PureComponent<{ log: Log }> {
           flexDirection: "row",
         }}
       >
-        <LText style={{ fontSize: 10, flex: 1, color }}>{text}</LText>
+        <LText selectable style={{ fontSize: 10, flex: 1, color }}>
+          {text}
+        </LText>
         <LText style={{ marginRight: 5, fontSize: 8 }}>
           {log.date
             .toISOString()
