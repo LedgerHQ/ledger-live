@@ -7,7 +7,9 @@ import CoinmamaLogo from "../icons/logos/coinmama";
 import ChangellyLogo from "../icons/logos/changelly";
 import CoinhouseLogo from "../icons/logos/coinhouse";
 import GenesisLogo from "../icons/logos/genesis";
-import KyberLogo from "../icons/logos/kyber";
+import KyberLogo from "../icons/logos/kyberswap";
+import ThorSwap from "../icons/logos/thorswap";
+import ChangeNow from "../icons/logos/changenow";
 import SimplexLogo from "../icons/logos/simplex";
 import PaybisLogo from "../icons/logos/paybis";
 import LunoLogo from "../icons/logos/luno";
@@ -64,10 +66,23 @@ export default shuffle([
     logo: <GenesisLogo />,
   },
   {
-    key: "kyber",
-    id: "kyber",
+    key: "kyberswap",
+    id: "kyberswap",
     url:
       "http://kyber.network/swap?ref=0xE2D8481eeF31CDA994833974FFfEccd576f8D71E",
-    logo: <KyberLogo />,
+    logo: <KyberLogo width={160} />,
+  },
+  {
+    key: "changenow",
+    id: "changenow",
+    url: "https://changenow.io?link_id=80ab1d8ad846e7",
+    logo: <ChangeNow width={160} />,
+  },
+  {
+    key: "thorswap",
+    id: "thorswap",
+    url:
+      "https://www.thorswap.com/?utm_source=Wallet&utm_medium=ledger&utm_campaign=EmbedLink&utm_content=Link1",
+    logo: <ThorSwap width={160} />,
   },
 ]);
