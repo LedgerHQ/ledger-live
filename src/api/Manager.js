@@ -230,25 +230,24 @@ const API = {
   ),
 
   install: (transport: Transport<*>, context: string, params: *) =>
-    createDeviceSocket(
-      transport,
-      URL.format({
+    createDeviceSocket(transport, {
+      url: URL.format({
         pathname: `${BASE_SOCKET_URL}/install`,
         query: params,
       }),
-    ).pipe(remapSocketError(context)),
+      ignoreWebsocketErrorDuringBulk: true,
+    }).pipe(remapSocketError(context)),
 
   genuineCheck: (
     transport: Transport<*>,
     { targetId, perso }: { targetId: *, perso: * },
   ) =>
-    createDeviceSocket(
-      transport,
-      URL.format({
+    createDeviceSocket(transport, {
+      url: URL.format({
         pathname: `${BASE_SOCKET_URL}/genuine`,
         query: { targetId, perso },
       }),
-    ).pipe(
+    }).pipe(
       last(),
       filter(o => o.type === "result"),
       map(o => o.payload || ""),
@@ -259,13 +258,13 @@ const API = {
     context: string,
     { targetId, version }: { targetId: *, version: * },
   ) =>
-    createDeviceSocket(
-      transport,
-      URL.format({
+    createDeviceSocket(transport, {
+      url: URL.format({
         pathname: `${BASE_SOCKET_URL}/mcu`,
         query: { targetId, version },
       }),
-    ).pipe(
+      ignoreWebsocketErrorDuringBulk: true,
+    }).pipe(
       remapSocketError(context),
       last(), // not yet using the events
     ),

@@ -35,13 +35,22 @@ export type SocketEvent =
  */
 export const createDeviceSocket = (
   transport: Transport<*>,
-  url: string,
+  {
+    url,
+    ignoreWebsocketErrorDuringBulk,
+  }: {
+    url: string,
+    // ignoreWebsocketErrorDuringBulk is a workaround to continue bulk even if the ws connection is termined
+    // the WS connection can be terminated typically because ws timeout
+    ignoreWebsocketErrorDuringBulk?: boolean,
+  },
 ): Observable<SocketEvent> =>
   Observable.create(o => {
     let ws;
     let lastMessage: ?string;
     let interrupted = false;
     let terminated = false;
+    let inBulk = false;
 
     try {
       ws = new global.WebSocket(url);
@@ -56,16 +65,20 @@ export const createDeviceSocket = (
     };
 
     ws.onerror = e => {
-      terminated = true;
       log("ERROR", { message: e.message, stack: e.stack });
-      o.error(new WebsocketConnectionError(e.message, { url }));
+      if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
+        terminated = true;
+        o.error(new WebsocketConnectionError(e.message, { url }));
+      }
     };
 
     ws.onclose = () => {
-      terminated = true;
       log("CLOSE");
-      o.next({ type: "result", payload: lastMessage || "" });
-      o.complete();
+      if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
+        terminated = true;
+        o.next({ type: "result", payload: lastMessage || "" });
+        o.complete();
+      }
     };
 
     const send = (nonce, response, data) => {
@@ -96,32 +109,48 @@ export const createDeviceSocket = (
       },
 
       bulk: async input => {
-        const { data, nonce } = input;
+        inBulk = true;
+        try {
+          const { data, nonce } = input;
 
-        o.next({ type: "bulk-progress", progress: 0 });
+          o.next({ type: "bulk-progress", progress: 0 });
 
-        // Execute all apdus and collect last status
-        let lastStatus = null;
-        for (let i = 0; i < data.length; i++) {
-          const apdu = data[i];
-          const r: Buffer = await transport.exchange(Buffer.from(apdu, "hex"));
-          lastStatus = r.slice(r.length - 2);
-          if (lastStatus.toString("hex") !== "9000") break;
-          if (interrupted) return;
-          o.next({ type: "bulk-progress", progress: (i + 1) / data.length });
+          // Execute all apdus and collect last status
+          let lastStatus = null;
+          for (let i = 0; i < data.length; i++) {
+            const apdu = data[i];
+            const r: Buffer = await transport.exchange(
+              Buffer.from(apdu, "hex"),
+            );
+            lastStatus = r.slice(r.length - 2);
+            if (lastStatus.toString("hex") !== "9000") break;
+            if (interrupted) return;
+            o.next({ type: "bulk-progress", progress: (i + 1) / data.length });
+          }
+
+          if (!lastStatus) {
+            throw new DeviceSocketNoBulkStatus();
+          }
+
+          const strStatus = lastStatus.toString("hex");
+
+          if (ignoreWebsocketErrorDuringBulk && ws.readyState !== 1) {
+            terminated = true;
+            o.next({
+              type: "result",
+              payload: lastStatus ? lastStatus.toString("hex") : "",
+            });
+            o.complete();
+          } else {
+            send(
+              nonce,
+              strStatus === "9000" ? "success" : "error",
+              strStatus === "9000" ? "" : strStatus,
+            );
+          }
+        } finally {
+          inBulk = false;
         }
-
-        if (!lastStatus) {
-          throw new DeviceSocketNoBulkStatus();
-        }
-
-        const strStatus = lastStatus.toString("hex");
-
-        send(
-          nonce,
-          strStatus === "9000" ? "success" : "error",
-          strStatus === "9000" ? "" : strStatus,
-        );
       },
 
       success: msg => {
@@ -164,10 +193,10 @@ export const createDeviceSocket = (
 
     return () => {
       interrupted = true;
-      if (ws.readyState !== 1) return;
       if (!terminated) {
         cancelDeviceAction(transport);
       }
+      if (ws.readyState !== 1) return;
       ws.close();
     };
   });
