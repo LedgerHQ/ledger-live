@@ -27,6 +27,10 @@ export const sanitizeValueString = (
         display += c;
       }
     } else if (decimals === -1 && (c === "," || c === ".")) {
+      if (unit.magnitude === 0) {
+        // in this specific case, we will never allow commas
+        return { display, value };
+      }
       if (i === 0) display = "0";
       decimals = 0;
       display += ".";

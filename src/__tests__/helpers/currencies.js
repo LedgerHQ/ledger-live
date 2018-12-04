@@ -438,7 +438,9 @@ test("decodeURIScheme", () => {
 });
 
 test("sanitizeValueString", () => {
-  const btcUnit = getCryptoCurrencyById("bitcoin").units[0];
+  const bitcoin = getCryptoCurrencyById("bitcoin");
+  const btcUnit = bitcoin.units[0];
+  const satUnit = bitcoin.units[bitcoin.units.length - 1];
   expect(sanitizeValueString(btcUnit, "")).toMatchObject({
     display: ""
   });
@@ -475,5 +477,9 @@ test("sanitizeValueString", () => {
   expect(sanitizeValueString(btcUnit, "13.")).toMatchObject({
     display: "13.",
     value: "1300000000"
+  });
+  expect(sanitizeValueString(satUnit, "13.")).toMatchObject({
+    display: "13",
+    value: "13"
   });
 });
