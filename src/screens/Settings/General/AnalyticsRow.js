@@ -59,7 +59,11 @@ class AnalyticsRow extends PureComponent<Props, State> {
           onHelpPress={this.onOpen}
           alignedTop
         >
-          <Switch value={analyticsEnabled} onValueChange={setAnalytics} />
+          <Switch
+            style={{ opacity: 0.99 }}
+            value={analyticsEnabled}
+            onValueChange={setAnalytics}
+          />
         </SettingsRow>
         <InfoModal
           id="AnalyticsModal"

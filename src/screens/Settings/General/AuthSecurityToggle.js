@@ -40,7 +40,11 @@ class AuthSecurityToggle extends Component<Props> {
           desc={<Trans i18nKey="settings.display.passwordDesc" />}
           alignedTop
         >
-          <Switch value={!!privacy} onValueChange={this.onValueChange} />
+          <Switch
+            style={{ opacity: 0.99 }}
+            value={!!privacy}
+            onValueChange={this.onValueChange}
+          />
         </SettingsRow>
         {privacy ? <BiometricsRow /> : null}
       </Fragment>

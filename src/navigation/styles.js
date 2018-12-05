@@ -26,7 +26,8 @@ if (Platform.OS === "ios") {
     elevation: 0,
   };
   headerStyleShadow = {
-    elevation: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightFog,
   };
 }
 
