@@ -52,6 +52,7 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean,
   hasAcceptedTradingWarning: boolean,
   developerModeEnabled: boolean,
+  readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
 };
 
@@ -67,6 +68,7 @@ const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasAcceptedTradingWarning: false,
+  readOnlyModeEnabled: true,
   experimentalUSBEnabled: false,
 };
 
@@ -197,6 +199,11 @@ const handlers: Object = {
     hasAcceptedTradingWarning: true,
   }),
 
+  SETTINGS_SET_READONLY_MODE: (state, action) => ({
+    ...state,
+    readOnlyModeEnabled: action.enabled,
+  }),
+
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state, action) => ({
     ...state,
     experimentalUSBEnabled: action.enabled,
@@ -285,5 +292,8 @@ export const hasCompletedOnboardingSelector = (state: State) =>
 
 export const hasAcceptedTradingWarningSelector = (state: State) =>
   state.settings.hasAcceptedTradingWarning;
+
+export const readOnlyModeEnabledSelector = (state: State) =>
+  state.settings.readOnlyModeEnabled;
 
 export default handleActions(handlers, INITIAL_STATE);

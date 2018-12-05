@@ -425,7 +425,8 @@
     "accounts": "Accounts",
     "transfer": "Transfer",
     "manager": "Manager",
-    "settings": "Settings"
+    "settings": "Settings",
+    "nanoX": "Nano X"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -601,6 +602,8 @@
       "reportErrorsDesc": "Automatically send reports to help Ledger fix bugs.",
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in the Manager and enable testnet apps.",
+      "readOnlyMode": "ReadOnly mode",
+      "readOnlyModeDesc": "Toggle readonly mode for testing, relaunch to refresh topbar",
       "analytics": "Analytics",
       "analyticsDesc": "Enable analytics to help Ledger understand how to improve user experience.",
       "analyticsModal": {
@@ -681,6 +684,7 @@
     },
     "receive": {
       "title": "Receive funds",
+      "titleReadOnly": "Are you completely sure?",
       "desc": "Receive crypto assets",
       "headerTitle": "Select account",
       "titleDevice": "Connect device",
@@ -868,6 +872,9 @@
   },
   "manager": {
     "title": "Manager",
+    "nanoX": {
+      "title": "Nano X"
+    },
     "appList": {
       "title": "App catalog",
       "loading": "Loading apps..."

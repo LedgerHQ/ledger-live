@@ -14,14 +14,21 @@ import type { T } from "../types/common";
 import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
 import type { Props as ModalProps } from "../components/BottomModal";
+import { readOnlyModeEnabledSelector } from "../reducers/settings";
 
 type Props = ModalProps & {
   navigation: *,
   t: T,
   accountsCount: number,
+  readOnlyModeEnabled: boolean,
 };
 
 const forceInset = { bottom: "always" };
+
+const mapStateToProps = createStructuredSelector({
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+  accountsCount: accountsCountSelector,
+});
 
 class CreateModal extends Component<Props> {
   onNavigate = (routeName: string, key: string) => {
@@ -41,17 +48,25 @@ class CreateModal extends Component<Props> {
   onExchange = () => this.onNavigate("Transfer", "transfer");
 
   render() {
-    const { onClose, isOpened, accountsCount, t } = this.props;
+    const {
+      readOnlyModeEnabled,
+      onClose,
+      isOpened,
+      accountsCount,
+      t,
+    } = this.props;
     return (
       <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
         <SafeAreaView forceInset={forceInset}>
-          <BottomModalChoice
-            event="TransferSend"
-            title={t("transfer.send.title")}
-            description={t("transfer.send.desc")}
-            onPress={accountsCount > 0 ? this.onSendFunds : null}
-            Icon={IconSend}
-          />
+          {!readOnlyModeEnabled && (
+            <BottomModalChoice
+              event="TransferSend"
+              title={t("transfer.send.title")}
+              description={t("transfer.send.desc")}
+              onPress={accountsCount > 0 ? this.onSendFunds : null}
+              Icon={IconSend}
+            />
+          )}
           <BottomModalChoice
             event="TransferReceive"
             title={t("transfer.receive.title")}
@@ -73,11 +88,5 @@ class CreateModal extends Component<Props> {
 }
 
 export default translate()(
-  withNavigation(
-    connect(
-      createStructuredSelector({
-        accountsCount: accountsCountSelector,
-      }),
-    )(CreateModal),
-  ),
+  withNavigation(connect(mapStateToProps)(CreateModal)),
 );
