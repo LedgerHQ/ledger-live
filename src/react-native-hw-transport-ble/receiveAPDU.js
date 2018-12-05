@@ -3,6 +3,7 @@
 import { TransportError } from "@ledgerhq/hw-transport";
 import { Observable } from "rxjs";
 import { DisconnectedDevice } from "@ledgerhq/live-common/lib/errors";
+import { logSubject } from "./debug";
 
 const TagId = 0x05;
 
@@ -21,6 +22,10 @@ export const receiveAPDU = (
         sub.unsubscribe();
       },
       error: e => {
+        logSubject.next({
+          type: "ble-error",
+          message: "in receiveAPDU " + String(e),
+        });
         o.error(e);
         sub.unsubscribe();
       },

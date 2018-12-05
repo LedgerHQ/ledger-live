@@ -287,7 +287,10 @@ export default class BluetoothTransport extends Transport<Device | string> {
 
         return data;
       } catch (e) {
-        logSubject.next({ type: "ble-error", message: String(e) });
+        logSubject.next({
+          type: "ble-error",
+          message: "exchange got " + String(e),
+        });
         if (this.notYetDisconnected) {
           // in such case we will always disconnect because something is bad.
           await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
@@ -314,6 +317,10 @@ export default class BluetoothTransport extends Transport<Device | string> {
               ).pipe(ignoreElements()),
             ).toPromise()) + 3;
         } catch (e) {
+          logSubject.next({
+            type: "ble-error",
+            message: "inferMTU got " + String(e),
+          });
           await bleManager.cancelDeviceConnection(this.id).catch(() => {}); // but we ignore if disconnect worked.
           throw e;
         }

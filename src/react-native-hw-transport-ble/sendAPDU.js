@@ -3,6 +3,7 @@
 import uuid from "uuid/v4";
 import { Observable } from "rxjs";
 import type { BleManager } from "./types";
+import { logSubject } from "./debug";
 
 const TagId = 0x05;
 
@@ -48,20 +49,29 @@ export const sendAPDU = (
         if (terminated) return;
         await write(chunk, txId);
       }
-      terminated = true;
     }
 
     main().then(
       () => {
+        terminated = true;
         o.complete();
       },
       e => {
+        terminated = true;
+        logSubject.next({
+          type: "ble-error",
+          message: "sendAPDU failure " + String(e),
+        });
         o.error(e);
       },
     );
 
     const unsubscribe = () => {
       if (!terminated) {
+        logSubject.next({
+          type: "verbose",
+          message: "sendAPDU interruption",
+        });
         terminated = true;
         bleManager.cancelTransaction(txId);
       }
