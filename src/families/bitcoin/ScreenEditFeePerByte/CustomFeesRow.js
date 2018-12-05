@@ -3,11 +3,18 @@ import React, { Component } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { BigNumber } from "bignumber.js";
+import {
+  sanitizeValueString,
+  getCryptoCurrencyById,
+} from "@ledgerhq/live-common/lib/currencies";
 
 import LText from "../../../components/LText/index";
 import Check from "../../../icons/Check";
 
 import colors from "../../../colors";
+
+const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
+const satoshiUnit = bitcoinCurrency.units[bitcoinCurrency.units.length - 1];
 
 type Props = {
   title: React$Node,
@@ -32,9 +39,10 @@ class FeesRow extends Component<Props, State> {
 
   input = React.createRef();
 
-  onChangeText = (fees: string) => {
+  onChangeText = (text: string) => {
     const { onPress } = this.props;
-    this.setState({ fees }, () => onPress(BigNumber(fees)));
+    const fees = sanitizeValueString(satoshiUnit, text);
+    this.setState({ fees: fees.display }, () => onPress(BigNumber(fees.value)));
   };
 
   onPress = () => {
