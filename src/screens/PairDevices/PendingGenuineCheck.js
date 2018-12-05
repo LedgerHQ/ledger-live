@@ -25,7 +25,7 @@ class PendingGenuineCheck extends PureComponent<*> {
         <LText style={styles.subtitle}>
           <Trans i18nKey="PairDevices.GenuineCheck.accept">
             {"text"}
-            <LText bold>bold</LText>
+            <LText bold>bold text</LText>
           </Trans>
         </LText>
       </View>

@@ -842,7 +842,7 @@
     },
     "GenuineCheck": {
       "title": "Genuine check",
-      "accept": "Please don’t turn off your Nano X and allow <1><0>Ledger Manager</0></1>"
+      "accept": "Please don’t turn off your Nano X and allow <1>Ledger Manager</1>"
     },
     "ScanningHeader": {
       "title": "Looking for devices",
