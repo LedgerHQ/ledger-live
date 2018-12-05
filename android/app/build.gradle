@@ -178,6 +178,7 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':react-native-extra-dimensions-android')
     compile project(':@segment_analytics-react-native')
     compile project(':react-native-keychain')
     compile project(':react-native-android-location-services-dialog-box')
