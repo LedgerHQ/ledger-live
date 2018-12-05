@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
+import ReactNativeModal from "react-native-modal";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
@@ -30,10 +31,12 @@ import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 import BottomModal from "../../components/BottomModal";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import Close from "../../icons/Close";
+import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
 import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
+import CopyLink from "../../components/CopyLink";
 import { urls } from "../../config/urls";
 
 type Navigation = NavigationScreenProp<{
@@ -54,6 +57,7 @@ type State = {
   isModalOpened: boolean,
   onModalHide: Function,
   error: ?Error,
+  zoom: boolean,
 };
 
 class ReceiveConfirmation extends Component<Props, State> {
@@ -84,6 +88,7 @@ class ReceiveConfirmation extends Component<Props, State> {
     isModalOpened: false,
     onModalHide: () => {},
     error: null,
+    zoom: false,
   };
 
   componentDidMount() {
@@ -137,6 +142,14 @@ class ReceiveConfirmation extends Component<Props, State> {
     });
   };
 
+  onZoom = () => {
+    const { zoom } = this.state;
+
+    this.setState({
+      zoom: !zoom,
+    });
+  };
+
   onDone = () => {
     if (this.props.navigation.dismiss) {
       this.props.navigation.dismiss();
@@ -145,10 +158,11 @@ class ReceiveConfirmation extends Component<Props, State> {
 
   render(): React$Node {
     const { account, navigation } = this.props;
-    const { verified, error, isModalOpened, onModalHide } = this.state;
+    const { verified, error, isModalOpened, onModalHide, zoom } = this.state;
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
     const allowNavigation = navigation.getParam("allowNavigation");
+    const QRSize = Math.round(width / 1.8 - 16);
 
     return (
       <SafeAreaView style={styles.root}>
@@ -159,18 +173,26 @@ class ReceiveConfirmation extends Component<Props, State> {
           verified={verified}
         />
         {allowNavigation ? null : <PreventNativeBack />}
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.root}>
           <View style={styles.container}>
-            <View style={styles.qrWrapper}>
-              <QRCode size={width / 2 - 30} value={account.freshAddress} />
-            </View>
+            <Touchable event="QRZoom" onPress={this.onZoom}>
+              {width < 350 ? (
+                <View style={[styles.qrWrapper, styles.qrWrapperSmall]}>
+                  <QRcodeZoom size={72} />
+                </View>
+              ) : (
+                <View style={styles.qrWrapper}>
+                  <QRCode size={QRSize} value={account.freshAddress} ecl="H" />
+                </View>
+              )}
+            </Touchable>
             <View>
               <LText style={styles.addressTitle}>
                 <Trans i18nKey="transfer.receive.address" />
               </LText>
             </View>
             <View style={styles.addressWrapper}>
-              <CurrencyIcon currency={account.currency} size={24} />
+              <CurrencyIcon currency={account.currency} size={20} />
               <LText semiBold style={styles.addressTitleBold}>
                 {account.name}
               </LText>
@@ -180,6 +202,14 @@ class ReceiveConfirmation extends Component<Props, State> {
                 address={account.freshAddress}
                 verified={verified}
               />
+            </View>
+            <View style={styles.copyLink}>
+              <CopyLink
+                string={account.freshAddress}
+                replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
+              >
+                <Trans i18nKey="transfer.receive.copyAddress" />
+              </CopyLink>
             </View>
           </View>
           <View style={styles.bottomContainer}>
@@ -242,6 +272,16 @@ class ReceiveConfirmation extends Component<Props, State> {
             />
           </View>
         )}
+        <ReactNativeModal
+          isVisible={zoom}
+          onBackdropPress={this.onZoom}
+          onBackButtonPress={this.onZoom}
+          useNativeDriver
+        >
+          <View style={styles.qrZoomWrapper}>
+            <QRCode size={width - 66} value={account.freshAddress} ecl="H" />
+          </View>
+        </ReactNativeModal>
         <BottomModal
           id="ReceiveConfirmationModal"
           isOpened={isModalOpened}
@@ -301,15 +341,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 24,
     alignItems: "center",
+    justifyContent: "center",
   },
   bottomContainer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
     paddingTop: 32,
   },
   qrWrapper: {
     borderWidth: 1,
     borderColor: colors.lightFog,
-    padding: 15,
+    padding: 16,
     borderRadius: 4,
     shadowOpacity: 0.03,
     shadowRadius: 8,
@@ -317,8 +359,17 @@ const styles = StyleSheet.create({
       height: 4,
     },
   },
+  qrWrapperSmall: {
+    padding: 8,
+  },
+  qrZoomWrapper: {
+    backgroundColor: colors.white,
+    padding: 16,
+    borderRadius: 4,
+    alignItems: "center",
+  },
   addressTitle: {
-    paddingTop: 24,
+    paddingTop: 16,
     fontSize: 14,
     color: colors.grey,
   },
@@ -328,11 +379,14 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
   },
   addressWrapper: {
-    paddingTop: 16,
+    paddingTop: 8,
     flexDirection: "row",
     alignItems: "center",
   },
   address: {
+    paddingTop: 24,
+  },
+  copyLink: {
     paddingTop: 24,
   },
   modal: {
@@ -378,7 +432,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 8,
     paddingTop: 8,
-    borderTopWidth: 1,
     borderTopColor: colors.lightFog,
   },
   close: {

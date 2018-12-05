@@ -686,11 +686,13 @@
       "titleDevice": "Connect device",
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security",
       "verifyPending": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
-      "verified": "Address confirmed, please re-verify it if you copy/paste or scan the QRCode",
+      "verified": "Address confirmed, re-verify if you copy or scan it.",
       "verifyAgain": "Re-verify",
       "noAccount": "No account found",
       "withoutDevice": "Don't have my device",
-      "address": "Address for account"
+      "address": "Address for account",
+      "copyAddress": "Copy address",
+      "addressCopied": "Address copied!"
     },
     "exchange": {
       "title": "Exchange",
