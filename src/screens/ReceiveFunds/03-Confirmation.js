@@ -162,7 +162,7 @@ class ReceiveConfirmation extends Component<Props, State> {
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
     const allowNavigation = navigation.getParam("allowNavigation");
-    const QRSize = width / 1.8 - 16;
+    const QRSize = Math.round(width / 1.8 - 16);
 
     return (
       <SafeAreaView style={styles.root}>
