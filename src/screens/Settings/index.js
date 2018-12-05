@@ -25,6 +25,7 @@ import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
+import timer from "../../timer";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -61,14 +62,14 @@ class Settings extends Component<Props, *> {
   debugTimeout: *;
 
   onDebugHiddenPress = () => {
-    clearTimeout(this.debugTimeout);
+    if (this.debugTimeout) this.debugTimeout();
     if (this.count++ > 6) {
       this.count = 0;
       this.setState(({ debugVisible }) => ({
         debugVisible: !debugVisible,
       }));
     } else {
-      this.debugTimeout = setTimeout(() => {
+      this.debugTimeout = timer.timeout(() => {
         this.count = 0;
       }, 1000);
     }
