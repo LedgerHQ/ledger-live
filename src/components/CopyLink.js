@@ -23,6 +23,8 @@ class HelpLink extends PureComponent<Props, State> {
     copied: false,
   };
 
+  timeout = null;
+
   onPress = () => {
     const { string } = this.props;
 
@@ -30,7 +32,7 @@ class HelpLink extends PureComponent<Props, State> {
 
     this.setState({ copied: true });
 
-    setTimeout(() => {
+    this.timeout = setTimeout(() => {
       this.setState({ copied: false });
     }, 3000);
   };
@@ -57,6 +59,12 @@ class HelpLink extends PureComponent<Props, State> {
         </LText>
       </Touchable>
     );
+  }
+
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
   }
 }
 
