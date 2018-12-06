@@ -8,6 +8,7 @@ import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
+import dimensions from "../logic/windowDimensions";
 
 export type Props = {
   id?: string,
@@ -29,6 +30,8 @@ class BottomModal extends Component<Props> {
           isVisible={isOpened}
           onBackdropPress={onClose}
           onBackButtonPress={onClose}
+          deviceWidth={dimensions.width}
+          deviceHeight={dimensions.height}
           useNativeDriver
           style={{
             justifyContent: "flex-end",
@@ -58,7 +61,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingTop: 8,
-    paddingBottom: 24,
+    paddingBottom: 74,
+    marginBottom: -50,
   },
 });
 
