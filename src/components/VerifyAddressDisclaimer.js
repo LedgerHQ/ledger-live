@@ -28,23 +28,13 @@ class VerifyAddressDisclaimer extends PureComponent<Props> {
 
     return (
       <View
-        style={[
-          styles.wrapper,
-          unsafe ? styles.wrapperWarning : undefined,
-          verified ? styles.wrapperVerified : null,
-        ]}
+        style={[styles.wrapper, unsafe ? styles.wrapperWarning : undefined]}
       >
         <Image
           source={unsafe ? shieldWarning : verified ? shieldCheckmark : shield}
         />
         <View style={styles.textWrapper}>
-          <LText
-            style={[
-              styles.text,
-              unsafe ? styles.textWarning : undefined,
-              verified ? styles.textVerified : null,
-            ]}
-          >
+          <LText style={[styles.text, unsafe ? styles.textWarning : undefined]}>
             {text}
           </LText>
           {action || null}
@@ -56,9 +46,9 @@ class VerifyAddressDisclaimer extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 12,
+    padding: 10,
     borderRadius: 4,
-    backgroundColor: colors.pillActiveBackground,
+    backgroundColor: colors.lightGrey,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -66,24 +56,17 @@ const styles = StyleSheet.create({
     borderColor: colors.alert,
     backgroundColor: colors.lightAlert,
   },
-  wrapperVerified: {
-    borderColor: colors.green,
-    backgroundColor: colors.lightGrey,
-  },
   textWrapper: {
     flex: 1,
   },
   text: {
     fontSize: 14,
-    color: colors.live,
+    color: colors.grey,
     lineHeight: 21,
     paddingLeft: 8,
   },
   textWarning: {
     color: colors.alert,
-  },
-  textVerified: {
-    color: colors.grey,
   },
 });
 

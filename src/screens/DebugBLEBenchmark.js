@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import { View, Picker, Slider } from "react-native";
+import { View, Slider } from "react-native";
 import { from } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import * as shape from "d3-shape";
@@ -10,6 +10,7 @@ import maxBy from "lodash/maxBy";
 import Svg, { Path } from "react-native-svg";
 import type { NavigationScreenProp } from "react-navigation";
 import LText from "../components/LText";
+import TranslatedError from "../components/TranslatedError";
 import { withDevice } from "../logic/hw/deviceAccess";
 import colors from "../colors";
 
@@ -50,25 +51,16 @@ class Graph extends PureComponent<Props> {
   }
 }
 
-const apdus = {
-  echo: {
-    title: "echo (E0 FF 00 00)",
-    apdu: targetAPDUSize =>
-      Buffer.from([
-        0xe0,
-        0xff,
-        0x00,
-        0x00,
-        targetAPDUSize - 5,
-        ...Array(targetAPDUSize - 5)
-          .fill(0)
-          .map((_, i) => i % 255),
-      ]),
-  },
-  firmware: {
-    title: "firmware (E0 01 00 00)",
-    apdu: _number => Buffer.from([0xe0, 0x01, 0x00, 0x00, 0x00]),
-  },
+const benchmark = ({ inputAPDUSize, outputAPDUSize }) => {
+  const inSize = inputAPDUSize - 5;
+  const head = Buffer.from([0xe0, 0xff, 0x00, 0x00, inSize]);
+  head.writeInt16BE(outputAPDUSize, 2);
+  const data = Buffer.from(
+    Array(inSize)
+      .fill(0)
+      .map((_, i) => i % 255),
+  );
+  return Buffer.concat([head, data]);
 };
 
 const speedStatusSize = 10;
@@ -85,8 +77,9 @@ class DebugBLEBenchmark extends Component<
   {
     exchangeStats: [number, number][],
     speedStats: number[],
-    apdu: $Keys<typeof apdus>,
-    targetAPDUSize: number,
+    inputAPDUSize: number,
+    outputAPDUSize: number,
+    error: ?Error,
   },
 > {
   static navigationOptions = {
@@ -97,8 +90,9 @@ class DebugBLEBenchmark extends Component<
     exchangeStats: [],
     // $FlowFixMe
     speedStats: Array(speedStatusSize).fill(0),
-    apdu: "echo",
-    targetAPDUSize: 50,
+    inputAPDUSize: 100,
+    outputAPDUSize: 100,
+    error: null,
   };
 
   sub: *;
@@ -125,7 +119,7 @@ class DebugBLEBenchmark extends Component<
     const deviceId = navigation.getParam("deviceId");
     this.sub = withDevice(deviceId)(t => {
       const loop = () => {
-        const input = apdus[this.state.apdu].apdu(this.state.targetAPDUSize);
+        const input = benchmark(this.state);
         return from(t.exchange(input)).pipe(
           concatMap(output => {
             const dataExchanged = input.length + output.length;
@@ -160,11 +154,15 @@ class DebugBLEBenchmark extends Component<
         );
       };
       return loop();
-    }).subscribe();
+    }).subscribe({
+      error: error => {
+        this.setState({ error });
+      },
+    });
   };
 
   render() {
-    const { speedStats, targetAPDUSize } = this.state;
+    const { speedStats, inputAPDUSize, outputAPDUSize, error } = this.state;
     const speed = speedStats[speedStats.length - 1] || 0;
 
     return (
@@ -177,34 +175,43 @@ class DebugBLEBenchmark extends Component<
           justifyContent: "center",
         }}
       >
+        <LText style={{ color: "red" }}>
+          <TranslatedError error={error} />
+        </LText>
+
         <Graph width={300} height={200} data={speedStats} />
         <LText bold style={{ fontSize: 20, marginBottom: 10 }}>
           {speed.toFixed(1)} byte/s
         </LText>
 
         <View style={{ padding: 40 }}>
-          <Picker
-            selectedValue={this.state.apdu}
-            style={{ height: 50, width: 200 }}
-            onValueChange={itemValue => this.setState({ apdu: itemValue })}
-          >
-            {Object.keys(apdus).map(key => (
-              <Picker.Item key={key} label={apdus[key].title} value={key} />
-            ))}
-          </Picker>
           <View style={{ flexDirection: "row" }}>
-            <LText>target apdu size</LText>
+            <LText>input apdu size</LText>
             <Slider
               style={{ width: 150 }}
               minimumValue={5}
-              maximumValue={200}
+              maximumValue={260}
               step={1}
-              onValueChange={targetAPDUSize => {
-                this.setState({ targetAPDUSize });
+              onValueChange={inputAPDUSize => {
+                this.setState({ inputAPDUSize });
               }}
-              value={targetAPDUSize}
+              value={inputAPDUSize}
             />
-            <LText bold>{targetAPDUSize}</LText>
+            <LText bold>{inputAPDUSize}</LText>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <LText>output apdu size</LText>
+            <Slider
+              style={{ width: 150 }}
+              minimumValue={5}
+              maximumValue={255}
+              step={1}
+              onValueChange={outputAPDUSize => {
+                this.setState({ outputAPDUSize });
+              }}
+              value={outputAPDUSize}
+            />
+            <LText bold>{outputAPDUSize}</LText>
           </View>
         </View>
       </View>

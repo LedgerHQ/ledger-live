@@ -30,7 +30,7 @@ class DisplayAddress extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 12,
+    padding: 10,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: colors.fog,
