@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
@@ -10,6 +10,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import ValidateError from "./ValidateError";
+import { urls } from "../../config/urls";
 
 type Props = {
   account: Account,
@@ -37,7 +38,7 @@ class ValidationError extends Component<Props> {
   };
 
   contactUs = () => {
-    console.warn("not implemented");
+    Linking.openURL(urls.faq);
   };
 
   retry = () => {
