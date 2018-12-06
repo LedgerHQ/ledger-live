@@ -36,6 +36,7 @@ class HeaderErrorTitle extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     marginHorizontal: 16,
+    paddingRight: 16,
     justifyContent: "center",
   },
   title: {

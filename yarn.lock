@@ -800,10 +800,10 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@^4.5.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.5.1.tgz#9a4672877113a93d739a6d465c5edfe5b006dbc8"
-  integrity sha512-c6bbi6n1EWz8Z9DNiABgBGBg+vxd03CXOEpgu0AXH1XNBCPt8NTFaAa5CCcjXAptM6RPQhe/PtEGb/OXJ/kGFA==
+"@ledgerhq/live-common@^4.7.0":
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.7.0.tgz#bce184c38f5eccc5f465fa2bf00e71034c3a58dd"
+  integrity sha512-QrEwsqeK3luo2FvOySiKkZRM4Ectezzo1NC0RPAALjUM7bjdVtBK2B3zk6lBQ7SqNRflL1JhSO/FTnl06RBDMw==
   dependencies:
     "@aeternity/ledger-app-api" "0.0.4"
     "@ledgerhq/hw-app-btc" "^4.24.0"

@@ -2,48 +2,15 @@
 import React, { PureComponent } from "react";
 import { TextInput, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import {
+  formatCurrencyUnit,
+  sanitizeValueString,
+} from "@ledgerhq/live-common/lib/currencies";
 import noop from "lodash/noop";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import colors from "../colors";
-
-const numbers = "0123456789";
-const sanitizeValueString = (
-  unit: Unit,
-  valueString: string,
-): {
-  display: string,
-  value: string,
-} => {
-  let display = "";
-  let value = "";
-  let decimals = -1;
-  for (let i = 0; i < valueString.length; i++) {
-    const c = valueString[i];
-    if (numbers.indexOf(c) !== -1) {
-      if (decimals >= 0) {
-        decimals++;
-        if (decimals > unit.magnitude) break;
-        value += c;
-        display += c;
-      } else if (value !== "0") {
-        value += c;
-        display += c;
-      }
-    } else if (decimals === -1 && (c === "," || c === ".")) {
-      if (i === 0) display = "0";
-      decimals = 0;
-      display += ".";
-    }
-  }
-  for (let i = Math.max(0, decimals); i < unit.magnitude; ++i) {
-    value += "0";
-  }
-  if (!value) value = "0";
-  return { display, value };
-};
 
 function format(
   unit: Unit,
