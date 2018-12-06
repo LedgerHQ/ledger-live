@@ -58,15 +58,17 @@ class CreateModal extends Component<Props> {
     return (
       <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
         <SafeAreaView forceInset={forceInset}>
-          {!readOnlyModeEnabled && (
-            <BottomModalChoice
-              event="TransferSend"
-              title={t("transfer.send.title")}
-              description={t("transfer.send.desc")}
-              onPress={accountsCount > 0 ? this.onSendFunds : null}
-              Icon={IconSend}
-            />
-          )}
+          <BottomModalChoice
+            event="TransferSend"
+            title={t("transfer.send.title")}
+            description={t("transfer.send.desc")}
+            onPress={
+              accountsCount > 0 && !readOnlyModeEnabled
+                ? this.onSendFunds
+                : null
+            }
+            Icon={IconSend}
+          />
           <BottomModalChoice
             event="TransferReceive"
             title={t("transfer.receive.title")}

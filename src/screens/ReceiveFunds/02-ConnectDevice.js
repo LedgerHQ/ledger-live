@@ -22,7 +22,7 @@ import {
   receiveVerifyStep,
 } from "../../components/DeviceJob/steps";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import LText from "../../components/LText";
+import ReadOnlyWarning from "./ReadOnlyWarning";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -85,19 +85,7 @@ class ConnectDevice extends Component<Props> {
     });
   };
 
-  renderReadOnly = () => (
-    <View style={styles.root}>
-      <TrackScreen category="Manager" name="ScaryWarning" />
-      <LText>Super scary warning</LText>
-      <Button
-        event="AcceptReadOnlyReceiveWarning"
-        type="primary"
-        onPress={this.onSkipDevice}
-      >
-        I accept
-      </Button>
-    </View>
-  );
+  renderReadOnly = () => <ReadOnlyWarning continue={this.onSkipDevice} />;
 
   render() {
     const { readOnlyModeEnabled, account } = this.props;

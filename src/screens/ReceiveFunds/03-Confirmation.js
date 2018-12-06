@@ -35,6 +35,7 @@ import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import { urls } from "../../config/urls";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -47,6 +48,7 @@ type Navigation = NavigationScreenProp<{
 type Props = {
   account: Account,
   navigation: Navigation,
+  readOnlyModeEnabled: boolean,
 };
 
 type State = {
@@ -55,6 +57,11 @@ type State = {
   onModalHide: Function,
   error: ?Error,
 };
+
+const mapStateToProps = createStructuredSelector({
+  account: accountScreenSelector,
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+});
 
 class ReceiveConfirmation extends Component<Props, State> {
   static navigationOptions = ({ navigation }) => {
@@ -144,7 +151,7 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   render(): React$Node {
-    const { account, navigation } = this.props;
+    const { account, navigation, readOnlyModeEnabled } = this.props;
     const { verified, error, isModalOpened, onModalHide } = this.state;
     const { width } = Dimensions.get("window");
     const unsafe = !navigation.getParam("deviceId");
@@ -205,7 +212,11 @@ class ReceiveConfirmation extends Component<Props, State> {
               text={
                 unsafe ? (
                   <Trans
-                    i18nKey="transfer.receive.verifySkipped"
+                    i18nKey={
+                      readOnlyModeEnabled
+                        ? "transfer.receive.readOnly.verify"
+                        : "transfer.receive.verifySkipped"
+                    }
                     values={{
                       accountType: account.currency.managerAppName,
                     }}
@@ -391,10 +402,6 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingTop: 4,
   },
-});
-
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
 });
 
 export default connect(mapStateToProps)(translate()(ReceiveConfirmation));

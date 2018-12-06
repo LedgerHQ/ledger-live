@@ -27,8 +27,8 @@ class DeveloperModeRow extends PureComponent<Props> {
     return (
       <SettingsRow
         event="ReadOnlyModeRow"
-        title={<Trans i18nKey="settings.display.readOnlyMode" />}
-        desc={<Trans i18nKey="settings.display.readOnlyModeDesc" />}
+        title="ReadOnly mode"
+        desc="Toggle readonly mode for testing, relaunch to refresh topbar"
         onPress={null}
         alignedTop
         {...props}

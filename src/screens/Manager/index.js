@@ -20,7 +20,7 @@ import manager from "../../logic/manager";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import LText from "../../components/LText";
+import ReadOnlyNanoX from "./ReadOnlyNanoX";
 
 const mapStateToProps = state => ({
   readOnlyModeEnabled: readOnlyModeEnabledSelector(state),
@@ -118,17 +118,12 @@ class Manager extends Component<
     const { readOnlyModeEnabled } = this.props;
 
     if (readOnlyModeEnabled) {
-      this.props.navigation.setParams({ title: "manager.nanoX.title" });
+      this.props.navigation.setParams({ title: "manager.readOnly.title" });
       this.props.navigation.setParams({ headerRight: null });
     }
   }
 
-  renderReadOnly = () => (
-    <View style={styles.root}>
-      <TrackScreen category="Manager" name="ReadOnlyNanoX" />
-      <LText>Nano X pitch</LText>
-    </View>
-  );
+  renderReadOnly = () => <ReadOnlyNanoX navigation={this.props.navigation} />;
 
   render() {
     const { isFocused, readOnlyModeEnabled } = this.props;

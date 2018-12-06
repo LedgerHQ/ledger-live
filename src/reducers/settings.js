@@ -13,6 +13,7 @@ import type {
   Currency,
   Account,
 } from "@ledgerhq/live-common/lib/types";
+import Config from "react-native-config";
 import type { State } from ".";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 
@@ -68,7 +69,7 @@ const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasAcceptedTradingWarning: false,
-  readOnlyModeEnabled: true,
+  readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
 };
 
