@@ -31,6 +31,12 @@ export default class Touchable extends Component<
     pending: false,
   };
 
+  unmounted = false;
+
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   onPress = async () => {
     const { onPress, event, eventProperties } = this.props;
     if (!onPress) return;
@@ -45,7 +51,9 @@ export default class Touchable extends Component<
         await res;
       }
     } finally {
-      this.setState(({ pending }) => (pending ? { pending: false } : null));
+      if (!this.unmounted) {
+        this.setState(({ pending }) => (pending ? { pending: false } : null));
+      }
     }
   };
 
