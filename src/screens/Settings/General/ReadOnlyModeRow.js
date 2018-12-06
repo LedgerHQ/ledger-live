@@ -1,6 +1,5 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { Switch } from "react-native";
 import { createStructuredSelector } from "reselect";

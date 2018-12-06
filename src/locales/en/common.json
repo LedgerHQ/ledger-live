@@ -694,7 +694,7 @@
       "withoutDevice": "Don't have my device",
       "address": "Address for account",
       "copyAddress": "Copy address",
-      "addressCopied": "Address copied!"
+      "addressCopied": "Address copied!",
       "readOnly":{
         "title":"Receive",
         "text":"Please be careful",
