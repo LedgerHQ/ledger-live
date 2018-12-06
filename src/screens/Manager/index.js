@@ -118,8 +118,10 @@ class Manager extends Component<
     const { readOnlyModeEnabled } = this.props;
 
     if (readOnlyModeEnabled) {
-      this.props.navigation.setParams({ title: "manager.readOnly.title" });
-      this.props.navigation.setParams({ headerRight: null });
+      this.props.navigation.setParams({
+        title: "manager.readOnly.title",
+        headerRight: null,
+      });
     }
   }
 

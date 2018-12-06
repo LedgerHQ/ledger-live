@@ -65,8 +65,8 @@ class ConnectDevice extends Component<Props> {
     if (readOnlyModeEnabled) {
       this.props.navigation.setParams({
         title: "transfer.receive.titleReadOnly",
+        headerRight: null,
       });
-      this.props.navigation.setParams({ headerRight: null });
     }
   }
 

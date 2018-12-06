@@ -11,9 +11,9 @@ const mapStateToProps = state => ({
 class ReadOnlyTab extends Component<
   {
     oni18nKey: string,
-    onIcon: *,
+    OnIcon: React$ComponentType<*>,
     offi18nKey: string,
-    offIcon: *,
+    OffIcon: React$ComponentType<*>,
     tintColor: string,
     focused: boolean,
     readOnlyModeEnabled: boolean,
@@ -23,16 +23,16 @@ class ReadOnlyTab extends Component<
   render() {
     const {
       readOnlyModeEnabled,
-      onIcon,
+      OnIcon,
       focused,
       tintColor,
-      offIcon,
+      OffIcon,
       oni18nKey,
       offi18nKey,
       ...extraProps
     } = this.props;
 
-    const icon = readOnlyModeEnabled ? onIcon : offIcon;
+    const icon = readOnlyModeEnabled ? OnIcon : OffIcon;
     const i18nKey = readOnlyModeEnabled ? oni18nKey : offi18nKey;
 
     return (

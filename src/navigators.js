@@ -194,9 +194,9 @@ const ManagerStack = createStackNavigator(
 ManagerStack.navigationOptions = ({ navigation }) => ({
   tabBarIcon: (props: *) => (
     <ReadOnlyTab
-      onIcon={NanoXIcon}
+      OnIcon={NanoXIcon}
       oni18nKey="tabs.nanoX"
-      offIcon={ManagerIcon}
+      OffIcon={ManagerIcon}
       offi18nKey="tabs.manager"
       {...props}
     />
