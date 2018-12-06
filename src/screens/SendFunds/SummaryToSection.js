@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";
@@ -16,7 +17,7 @@ export default class SummaryToSection extends PureComponent<Props> {
     const { recipient } = this.props;
     return (
       <SummaryRowCustom
-        label="To"
+        label={<Trans i18nKey="send.summary.to" />}
         iconLeft={
           <Circle bg={colors.lightLive} size={34}>
             <QRcode size={16} />

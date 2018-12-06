@@ -1,6 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
+import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
 import colors from "../colors";
@@ -48,7 +49,7 @@ class ConfirmationModal extends PureComponent<Props> {
             event="ConfirmationModalCancel"
             containerStyle={styles.confirmationButton}
             type="secondary"
-            title="Cancel"
+            title={<Trans i18nKey="common.cancel" />}
             onPress={onClose}
           />
           <Button
@@ -58,7 +59,7 @@ class ConfirmationModal extends PureComponent<Props> {
               styles.confirmationLastButton,
             ]}
             type="primary"
-            title="Confirm"
+            title={<Trans i18nKey="common.confirm" />}
             onPress={onConfirm}
           />
         </View>
