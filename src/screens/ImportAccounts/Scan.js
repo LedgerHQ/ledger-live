@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { RNCamera } from "react-native-camera";
 import type { NavigationScreenProp } from "react-navigation";
 import {
@@ -20,15 +20,10 @@ import StyledStatusBar from "../../components/StyledStatusBar";
 import FallBackCamera from "./FallBackCamera";
 import CameraScreen from "../../components/CameraScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-};
-
-const getDimensions = () => {
-  const { width, height } = Dimensions.get("window");
-
-  return { width, height };
 };
 
 class Scan extends PureComponent<
@@ -55,7 +50,7 @@ class Scan extends PureComponent<
   state = {
     progress: 0,
     error: null,
-    ...getDimensions(),
+    ...getWindowDimensions(),
   };
 
   componentDidMount() {
@@ -111,7 +106,7 @@ class Scan extends PureComponent<
   };
 
   setDimensions = () => {
-    const dimensions = getDimensions();
+    const dimensions = getWindowDimensions();
 
     this.setState(dimensions);
   };

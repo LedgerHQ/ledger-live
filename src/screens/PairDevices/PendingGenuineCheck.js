@@ -1,15 +1,16 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 
-const { width } = Dimensions.get("window");
+const { width } = getWindowDimensions();
 
 class PendingGenuineCheck extends PureComponent<*> {
   render() {
