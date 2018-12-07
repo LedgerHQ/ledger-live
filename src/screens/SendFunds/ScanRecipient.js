@@ -92,6 +92,7 @@ class ScanRecipient extends PureComponent<Props, State> {
     this.props.navigation.navigate("SendSelectRecipient", {
       accountId: account.id,
       transaction: t,
+      justScanned: true,
     });
   };
 
