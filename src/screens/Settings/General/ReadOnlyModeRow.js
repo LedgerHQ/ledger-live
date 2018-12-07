@@ -7,10 +7,12 @@ import SettingsRow from "../../../components/SettingsRow";
 import { setReadOnlyMode } from "../../../actions/settings";
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import Track from "../../../analytics/Track";
+import { withReboot } from "../../../context/Reboot";
 
 type Props = {
   readOnlyModeEnabled: boolean,
   setReadOnlyMode: boolean => void,
+  reboot: (?boolean) => *,
 };
 const mapStateToProps = createStructuredSelector({
   readOnlyModeEnabled: readOnlyModeEnabledSelector,
@@ -21,8 +23,14 @@ const mapDispatchToProps = {
 };
 
 class DeveloperModeRow extends PureComponent<Props> {
+  setReadOnlyModeAndReset = async (enabled: boolean) => {
+    const { setReadOnlyMode, reboot } = this.props;
+    await setReadOnlyMode(enabled);
+    reboot();
+  };
+
   render() {
-    const { readOnlyModeEnabled, setReadOnlyMode, ...props } = this.props;
+    const { readOnlyModeEnabled, ...props } = this.props;
     return (
       <SettingsRow
         event="ReadOnlyModeRow"
@@ -38,7 +46,10 @@ class DeveloperModeRow extends PureComponent<Props> {
           }
           onUpdate
         />
-        <Switch value={readOnlyModeEnabled} onValueChange={setReadOnlyMode} />
+        <Switch
+          value={readOnlyModeEnabled}
+          onValueChange={this.setReadOnlyModeAndReset}
+        />
       </SettingsRow>
     );
   }
@@ -47,4 +58,4 @@ class DeveloperModeRow extends PureComponent<Props> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(DeveloperModeRow);
+)(withReboot(DeveloperModeRow));
