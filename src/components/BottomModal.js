@@ -18,6 +18,13 @@ export type Props = {
   style?: *,
 };
 
+// Add some extra padding at the bottom of the modal
+// and make it overflow the bottom of the screen
+// so that the underlying UI doesn't show up
+// when it gets the position wrong and display too high
+// See Jira LL-451 and GitHub #617
+const EXTRA_PADDING_ANDROID_FIX = 50;
+
 class BottomModal extends Component<Props> {
   static defaultProps = {
     onClose: () => {},
@@ -63,8 +70,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingTop: 8,
-    paddingBottom: 74,
-    marginBottom: -50,
+    paddingBottom: 24 + EXTRA_PADDING_ANDROID_FIX,
+    marginBottom: EXTRA_PADDING_ANDROID_FIX * -1,
   },
 });
 
