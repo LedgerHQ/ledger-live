@@ -19,6 +19,7 @@ class TabIcon extends Component<Props> {
       <View style={styles.root}>
         <Icon size={18} color={tintColor} />
         <LText
+          numberOfLines={1}
           semiBold={!focused}
           bold={focused}
           secondary

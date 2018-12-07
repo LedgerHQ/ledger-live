@@ -326,6 +326,7 @@
     "button": "Reset"
   },
   "onboarding": {
+    "stepCount": "{{current}} of {{total}}",
     "stepsTitles": {
       "OnboardingStepChooseDevice": "Choose your device",
       "OnboardingStepSetupPin": "Choose your PIN code",
@@ -500,6 +501,10 @@
   "operationList": {
     "noOperations": "No Operations",
     "noMoreOperations": "No More Operations"
+  },
+  "selectableAccountsList": {
+    "deselectAll": "Deselect all",
+    "selectAll": "Select all"
   },
   "account": {
     "send": "Send",

@@ -33,7 +33,10 @@ class OnboardingHeader extends PureComponent<Props> {
     const steps = STEPS_BY_MODE[mode];
     const visibleSteps = steps.filter(s => !s.isGhost);
     const indexInSteps = visibleSteps.findIndex(s => s.id === stepId);
-    const stepMsg = `${indexInSteps + 1} of ${visibleSteps.length}`; // TODO translate
+    const stepMsg = t("onboarding.stepCount", {
+      current: indexInSteps + 1,
+      total: visibleSteps.length,
+    });
 
     let stepIdOverride = stepId;
     if (mode === "restore" && stepId === "OnboardingStepWriteRecovery") {
