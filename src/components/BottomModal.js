@@ -8,7 +8,7 @@ import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
-import dimensions from "../logic/windowDimensions";
+import getWindowDimensions from "../logic/getWindowDimensions";
 
 export type Props = {
   id?: string,
@@ -24,14 +24,16 @@ class BottomModal extends Component<Props> {
   };
   render() {
     const { isOpened, onClose, children, style, id, ...rest } = this.props;
+    const { width, height } = getWindowDimensions();
+
     return (
       <ButtonUseTouchable.Provider value={true}>
         <ReactNativeModal
           isVisible={isOpened}
           onBackdropPress={onClose}
           onBackButtonPress={onClose}
-          deviceWidth={dimensions.width}
-          deviceHeight={dimensions.height}
+          deviceWidth={width}
+          deviceHeight={height}
           useNativeDriver
           style={{
             justifyContent: "flex-end",
