@@ -24,6 +24,8 @@ type State = {
   secureTextEntry: boolean,
 };
 
+const forceInset = { bottom: "always" };
+
 class PasswordForm extends PureComponent<Props, State> {
   state = {
     secureTextEntry: true,
@@ -38,7 +40,7 @@ class PasswordForm extends PureComponent<Props, State> {
     const { t, onChange, onSubmit, error, placeholder, value } = this.props;
     const { secureTextEntry } = this.state;
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView forceInset={forceInset} style={styles.root}>
         <KeyboardView>
           <View style={styles.body}>
             <PasswordInput
