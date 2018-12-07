@@ -103,6 +103,10 @@ class ReceiveConfirmation extends Component<Props, State> {
     }
   }
 
+  contactUs = () => {
+    Linking.openURL(urls.faq);
+  };
+
   verifyOnDevice = async (deviceId: string) => {
     const { account, navigation } = this.props;
 
@@ -285,6 +289,7 @@ class ReceiveConfirmation extends Component<Props, State> {
         <BottomModal
           id="ReceiveConfirmationModal"
           isOpened={isModalOpened}
+          onClose={this.onModalClose}
           onModalHide={onModalHide}
         >
           {error ? (
@@ -306,7 +311,7 @@ class ReceiveConfirmation extends Component<Props, State> {
                   type="secondary"
                   title={<Trans i18nKey="common.contactUs" />}
                   containerStyle={styles.button}
-                  onPress={() => {}} // TODO do something
+                  onPress={this.contactUs}
                 />
                 <Button
                   event="ReceiveRetry"
