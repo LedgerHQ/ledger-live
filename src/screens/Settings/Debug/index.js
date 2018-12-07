@@ -42,6 +42,7 @@ class DebugMocks_ extends PureComponent<{
         ) : null}
         <OpenDebugCrash />
         <OpenDebugIcons />
+        <ReadOnlyModeRow />
       </ScrollView>
     );
   }
@@ -95,7 +96,6 @@ class DebugSettings extends PureComponent<{
           title="Debug Devices"
           onPress={() => navigation.navigate("DebugDevices")}
         />
-        <ReadOnlyModeRow />
       </ScrollView>
     );
   }
