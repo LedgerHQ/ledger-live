@@ -34,6 +34,7 @@ const mapDispatchToProps = {
 };
 
 type State = {
+  signing: boolean,
   signed: boolean,
 };
 
@@ -54,13 +55,13 @@ class Validation extends Component<Props, State> {
   };
 
   state = {
+    signing: false,
     signed: false,
   };
 
+  sub = null;
+
   componentDidMount() {
-    this.props.navigation
-      .dangerouslyGetParent()
-      .setParams({ allowNavigation: false });
     this.sign();
   }
 
@@ -71,49 +72,57 @@ class Validation extends Component<Props, State> {
     const bridge = getAccountBridge(account);
     const { addPendingOperation } = bridge;
 
-    bridge.signAndBroadcast(account, transaction, deviceId).subscribe({
-      next: e => {
-        switch (e.type) {
-          case "signed":
-            this.setState({ signed: true });
-            break;
-          case "broadcasted":
-            // $FlowFixMe
-            navigation.replace("SendValidationSuccess", {
-              ...navigation.state.params,
-              result: e.operation,
-            });
+    this.sub = bridge
+      .signAndBroadcast(account, transaction, deviceId)
+      .subscribe({
+        next: e => {
+          switch (e.type) {
+            case "signing":
+              this.setState({ signing: true });
+              this.props.navigation
+                .dangerouslyGetParent()
+                .setParams({ allowNavigation: false });
+              break;
+            case "signed":
+              this.setState({ signed: true });
+              break;
+            case "broadcasted":
+              // $FlowFixMe
+              navigation.replace("SendValidationSuccess", {
+                ...navigation.state.params,
+                result: e.operation,
+              });
 
-            if (addPendingOperation) {
-              updateAccountWithUpdater(account.id, account =>
-                addPendingOperation(account, e.operation),
-              );
-            }
+              if (addPendingOperation) {
+                updateAccountWithUpdater(account.id, account =>
+                  addPendingOperation(account, e.operation),
+                );
+              }
 
-            break;
-          default:
-        }
-      },
-      error: e => {
-        let error = e;
-        if (e && e.statusCode === 0x6985) {
-          error = new UserRefusedOnDevice();
-        }
-        // $FlowFixMe
-        navigation.replace("SendValidationError", {
-          ...navigation.state.params,
-          error,
-        });
-      },
-    });
+              break;
+            default:
+          }
+        },
+        error: e => {
+          let error = e;
+          if (e && e.statusCode === 0x6985) {
+            error = new UserRefusedOnDevice();
+          }
+          // $FlowFixMe
+          navigation.replace("SendValidationError", {
+            ...navigation.state.params,
+            error,
+          });
+        },
+      });
   }
 
   render() {
-    const { signed } = this.state;
+    const { signed, signing } = this.state;
     return (
       <View style={styles.root}>
         <TrackScreen category="SendFunds" name="Validation" signed={signed} />
-        <PreventNativeBack />
+        {signing && <PreventNativeBack />}
         {signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
@@ -126,6 +135,9 @@ class Validation extends Component<Props, State> {
   }
 
   componentWillUnmount() {
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
     this.props.navigation
       .dangerouslyGetParent()
       .setParams({ allowNavigation: true });
