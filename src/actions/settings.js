@@ -69,6 +69,11 @@ export const setAnalytics = (analyticsEnabled: boolean) => ({
   analyticsEnabled,
 });
 
+export const setReadOnlyMode = (enabled: boolean) => ({
+  type: "SETTINGS_SET_READONLY_MODE",
+  enabled,
+});
+
 export const setExperimentalUSBSupport = (enabled: boolean) => ({
   type: "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
   enabled,

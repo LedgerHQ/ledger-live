@@ -16,6 +16,7 @@ import ConfigUSBDeviceSupport from "./ConfigUSBDeviceSupport";
 import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
+import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 
 class DebugMocks_ extends PureComponent<{
   accounts: *,
@@ -94,6 +95,7 @@ class DebugSettings extends PureComponent<{
           title="Debug Devices"
           onPress={() => navigation.navigate("DebugDevices")}
         />
+        <ReadOnlyModeRow />
       </ScrollView>
     );
   }

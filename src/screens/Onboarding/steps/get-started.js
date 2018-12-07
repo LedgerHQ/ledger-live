@@ -32,7 +32,7 @@ const CloseOnboarding = ({ navigation }: *) => (
     event="OnboardingClose"
     style={styles.close}
     onPress={() => {
-      navigation.navigate("HelpSettings");
+      navigation.navigate(navigation.getParam("goingBackToScreen"));
     }}
   >
     <Circle size={28} bg={colors.lightFog}>
@@ -57,7 +57,7 @@ class OnboardingStepGetStarted extends Component<
   handleBackButton = () => {
     const { navigation, hasCompletedOnboarding } = this.props;
     if (hasCompletedOnboarding) {
-      navigation.navigate("HelpSettings");
+      navigation.navigate(navigation.getParam("goingBackToScreen"));
       return true;
     }
     return false;

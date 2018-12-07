@@ -12,6 +12,7 @@ import DeviceJob from "../DeviceJob";
 import type { Step } from "../DeviceJob/types";
 import Header from "./Header";
 import Footer from "./Footer";
+import { setReadOnlyMode } from "../../actions/settings";
 
 type Props = {
   onForgetSelect?: (deviceId: string) => any,
@@ -27,6 +28,7 @@ type Props = {
   }>,
   removeKnownDevice: string => *,
   onStepEntered?: (number, Object) => void,
+  setReadOnlyMode: boolean => void,
 };
 
 type State = {
@@ -104,6 +106,9 @@ class SelectDevice extends Component<Props, State> {
     this.setState({ connecting: false }, () => {
       this.props.onSelect(id, meta);
     });
+
+    // Always false until we pair a device?
+    this.props.setReadOnlyMode(false);
   };
 
   onCancel = () => {
@@ -173,5 +178,6 @@ export default connect(
   }),
   {
     removeKnownDevice,
+    setReadOnlyMode,
   },
 )(SelectDevice);
