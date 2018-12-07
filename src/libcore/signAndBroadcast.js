@@ -18,6 +18,7 @@ import {
   libcoreAmountToBigNumber,
   bigNumberToLibcoreAmount,
 } from "./buildBigNumber";
+import type { SignAndBroadcastEvent } from "../bridge/types";
 import { remapLibcoreErrors } from "./errors";
 import { getValue } from "./specific";
 import { withLibcoreF } from "./access";
@@ -41,10 +42,6 @@ type Input = {
   deviceId: string,
 };
 
-type Result =
-  | { type: "signed" }
-  | { type: "broadcasted", operation: Operation };
-
 export default ({
   accountId,
   blockHeight,
@@ -55,7 +52,7 @@ export default ({
   index,
   transaction,
   deviceId,
-}: Input): Observable<Result> =>
+}: Input): Observable<SignAndBroadcastEvent> =>
   Observable.create(o => {
     let unsubscribed = false;
     const currency = getCryptoCurrencyById(currencyId);
@@ -71,6 +68,9 @@ export default ({
       transaction,
       deviceId,
       isCancelled,
+      onSigning: () => {
+        o.next({ type: "signing" });
+      },
       onSigned: () => {
         o.next({ type: "signed" });
       },
@@ -97,6 +97,7 @@ async function signTransaction({
   derivationMode,
   sigHashType,
   hasTimestamp,
+  onSigning,
 }: {
   core: *,
   isCancelled: () => boolean,
@@ -107,6 +108,7 @@ async function signTransaction({
   derivationMode: DerivationMode,
   sigHashType: number,
   hasTimestamp: boolean,
+  onSigning: () => void,
 }) {
   const additionals = [];
   let expiryHeight;
@@ -215,6 +217,8 @@ async function signTransaction({
 
   const lockTime = undefined;
 
+  onSigning();
+
   const signedTransaction = await hwApp.createPaymentTransactionNew(
     inputs,
     associatedKeysets,
@@ -243,6 +247,7 @@ const doSignAndBroadcast = withLibcoreF(
     transaction,
     deviceId,
     isCancelled,
+    onSigning,
     onSigned,
     onOperationBroadcasted,
   }: {
@@ -256,6 +261,7 @@ const doSignAndBroadcast = withLibcoreF(
     transaction: Transaction,
     deviceId: string,
     isCancelled: () => boolean,
+    onSigning: () => void,
     onSigned: () => void,
     onOperationBroadcasted: (optimisticOp: Operation) => void,
   }): Promise<void> => {
@@ -341,8 +347,9 @@ const doSignAndBroadcast = withLibcoreF(
     if (isCancelled()) return;
 
     const transport = await open(deviceId);
-    let signedTransaction;
+    if (isCancelled()) return;
 
+    let signedTransaction;
     try {
       signedTransaction = await signTransaction({
         core,
@@ -354,6 +361,7 @@ const doSignAndBroadcast = withLibcoreF(
         sigHashType: parseInt(sigHashType, 16),
         hasTimestamp,
         derivationMode,
+        onSigning,
       }).catch(e => {
         if (e && e.statusCode === StatusCodes.INCORRECT_P1_P2) {
           throw new UpdateYourApp(`UpdateYourApp ${currency.id}`, currency);

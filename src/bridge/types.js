@@ -19,6 +19,7 @@ import type {
 export type DeviceId = string;
 
 export type SignAndBroadcastEvent =
+  | { type: "signing" }
   | { type: "signed" }
   | { type: "broadcasted", operation: Operation };
 
