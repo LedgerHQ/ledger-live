@@ -1,6 +1,8 @@
 // @flow
 import React, { PureComponent } from "react";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import { KeyboardAvoidingView, Platform, NativeModules } from "react-native";
+
+const { DeviceInfo } = NativeModules;
 
 type Props = {
   style?: *,
@@ -19,7 +21,7 @@ class KeyboardView extends PureComponent<Props> {
     let behavior;
     let keyboardVerticalOffset = 0;
     if (Platform.OS === "ios") {
-      keyboardVerticalOffset = 64;
+      keyboardVerticalOffset = DeviceInfo.isIPhoneX_deprecated ? 88 : 64;
       behavior = "padding";
     }
 
