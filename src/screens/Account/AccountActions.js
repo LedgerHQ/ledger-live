@@ -33,7 +33,7 @@ class AccountActions extends PureComponent<Props> {
               navigation.navigate("SendSelectRecipient", { accountId })
             }
             title={<Trans i18nKey="account.send" />}
-            containerStyle={styles.btn1}
+            containerStyle={[styles.btn, styles.marginRight]}
           />
         )}
         <Button
@@ -44,7 +44,10 @@ class AccountActions extends PureComponent<Props> {
             navigation.navigate("ReceiveConnectDevice", { accountId })
           }
           title={<Trans i18nKey="account.receive" />}
-          containerStyle={styles.btn2}
+          containerStyle={[
+            styles.btn,
+            !readOnlyModeEnabled ? styles.marginLeft : null,
+          ]}
         />
       </View>
     );
@@ -54,16 +57,18 @@ class AccountActions extends PureComponent<Props> {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
-    paddingVertical: 8,
+    paddingTop: 8,
+    paddingBottom: 12,
     paddingHorizontal: 16,
   },
-  btn1: {
+  btn: {
     flex: 1,
+  },
+  marginRight: {
     marginRight: 8,
   },
-  btn2: {
+  marginLeft: {
     marginLeft: 8,
-    flex: 1,
   },
 });
 
