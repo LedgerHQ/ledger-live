@@ -416,6 +416,7 @@ const BaseOnboarding = createStackNavigator(
     Onboarding,
     ImportAccounts,
     PairDevices,
+    EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
   },
