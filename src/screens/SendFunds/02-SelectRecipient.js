@@ -33,6 +33,7 @@ type Props = {
     params: {
       accountId: string,
       transaction: *,
+      justScanned?: boolean,
     },
   }>,
   t: T,
@@ -42,7 +43,6 @@ type State = {
   addressStatus: string,
   address: *,
   error: ?Error,
-  shouldUpdate: boolean,
 };
 
 class SendSelectRecipient extends Component<Props, State> {
@@ -86,16 +86,15 @@ class SendSelectRecipient extends Component<Props, State> {
   }
 
   componentDidUpdate(_, { address: prevAddress }) {
-    // FIXME we should refactor this in a more elegant way
     const { navigation, account } = this.props;
-    const { shouldUpdate } = this.state;
-    if (!shouldUpdate) {
+    if (navigation.getParam("justScanned")) {
+      delete navigation.state.params.justScanned;
       const transaction = navigation.getParam("transaction");
       if (transaction) {
         const bridge = getAccountBridge(account);
         const address = bridge.getTransactionRecipient(account, transaction);
         if (address && prevAddress !== address) {
-          this.onChangeText(address, false);
+          this.onChangeText(address);
         }
       }
     }
@@ -105,7 +104,6 @@ class SendSelectRecipient extends Component<Props, State> {
     addressStatus: "pending",
     address: "",
     error: null,
-    shouldUpdate: false,
   };
 
   input = React.createRef();
@@ -117,8 +115,8 @@ class SendSelectRecipient extends Component<Props, State> {
     this.onChangeText("");
   };
 
-  onChangeText = (address: string, shouldUpdate = true) => {
-    this.setState({ address, shouldUpdate });
+  onChangeText = (address: string) => {
+    this.setState({ address });
     this.validateAddress(address);
   };
 

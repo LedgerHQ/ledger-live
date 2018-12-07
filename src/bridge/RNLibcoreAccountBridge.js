@@ -1,7 +1,7 @@
 // @flow
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { FeeNotLoaded } from "@ledgerhq/live-common/lib/errors";
+import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/live-common/lib/errors";
 
 import type { AccountBridge } from "./types";
 import { makeLRUCache } from "../logic/cache";
@@ -34,7 +34,10 @@ const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
 const checkValidRecipient = makeLRUCache(
   (currency, recipient) => {
-    if (!recipient) return Promise.resolve(null);
+    if (!recipient)
+      return Promise.reject(
+        new InvalidAddress("", { currencyName: currency.name }),
+      );
     return isValidRecipient({ currency, recipient });
   },
   (currency, recipient) => `${currency.id}_${recipient}`,
