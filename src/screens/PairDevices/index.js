@@ -92,6 +92,7 @@ class PairDevices extends Component<Props, State> {
         );
 
         await observable.toPromise();
+        await TransportBLE.disconnect(device.id);
         if (this.unmounted) return;
         this.props.addKnownDevice(device);
         if (this.unmounted) return;
