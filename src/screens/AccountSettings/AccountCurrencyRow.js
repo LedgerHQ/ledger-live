@@ -1,23 +1,22 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import type { NavigationScreenProp } from "react-navigation";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import type { T } from "../../types/common";
 import SettingsRow from "../../components/SettingsRow";
 
 type Props = {
-  t: T,
   navigation: NavigationScreenProp<*>,
   currency: CryptoCurrency,
 };
 
 class AccountCurrencyRow extends PureComponent<Props> {
   render() {
-    const { currency, t } = this.props;
+    const { currency } = this.props;
     return (
       <SettingsRow
-        title={t("common:account.settings.currency.title")}
+        event="AccountCurrencyRow"
+        title={<Trans i18nKey="account.settings.currency.title" />}
         desc={`${currency.name} (${currency.ticker})`}
         key={currency.id}
         arrowRight
@@ -32,4 +31,4 @@ class AccountCurrencyRow extends PureComponent<Props> {
   }
 }
 
-export default translate()(AccountCurrencyRow);
+export default AccountCurrencyRow;

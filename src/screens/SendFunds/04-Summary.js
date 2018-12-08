@@ -1,14 +1,18 @@
 /* @flow */
 import React, { Component } from "react";
-import { ScrollView, View, SafeAreaView, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { translate, Trans } from "react-i18next";
+import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { BigNumber } from "bignumber.js";
 
+import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
-
 import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
@@ -19,10 +23,7 @@ import SummaryAmountSection from "./SummaryAmountSection";
 import SendRowsCustom from "../../families/SendRowsCustom";
 import SendRowsFee from "../../families/SendRowsFee";
 import SummaryTotalSection from "./SummaryTotalSection";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
-
-import { getAccountBridge } from "../../bridge";
 
 // TODO put this somewhere
 const similarError = (a, b) =>
@@ -46,7 +47,15 @@ class SendSummary extends Component<
   },
 > {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Summary" subtitle="step 4 of 6" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("send.stepperHeader.summary")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "4",
+          totalSteps: "6",
+        })}
+      />
+    ),
   };
 
   state = {
@@ -134,7 +143,7 @@ class SendSummary extends Component<
 
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={6} currentStep={4} />
+        <TrackScreen category="SendFunds" name="Summary" />
         <ScrollView style={styles.body}>
           <SummaryFromSection account={account} />
           <VerticalConnector />
@@ -161,8 +170,9 @@ class SendSummary extends Component<
             <TranslatedError error={error} />
           </LText>
           <Button
+            event="SummaryContinue"
             type="primary"
-            title="Continue"
+            title={<Trans i18nKey="common.continue" />}
             containerStyle={styles.continueButton}
             onPress={this.onContinue}
             disabled={!totalSpent || !!error}
@@ -211,7 +221,7 @@ const mapStateToProps = (state, props) => ({
   account: accountScreenSelector(state, props),
 });
 
-export default connect(mapStateToProps)(SendSummary);
+export default connect(mapStateToProps)(translate()(SendSummary));
 
 class VerticalConnector extends Component<*> {
   render() {

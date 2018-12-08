@@ -3,17 +3,15 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
-import type { T } from "../../types/common";
 import colors from "../../colors";
 import LText from "../LText";
 import Circle from "../Circle";
 import Touchable from "../Touchable";
 
 type Props = {
-  t: T,
   navigation: *,
 };
 
@@ -23,15 +21,18 @@ class ScanningFooter extends PureComponent<Props> {
   };
 
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.root}>
-        <Touchable style={styles.inner} onPress={this.onPress}>
+        <Touchable
+          event="SelectDevicePairNew"
+          style={styles.inner}
+          onPress={this.onPress}
+        >
           <Circle bg={colors.pillActiveBackground} size={32}>
             <Icon name="plus" color={colors.live} size={20} />
           </Circle>
           <LText semiBold style={styles.text} numberOfLines={1}>
-            {t("SelectDevice.deviceNotFoundPairNewDevice")}
+            <Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />
           </LText>
         </Touchable>
       </View>
@@ -61,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(withNavigation(ScanningFooter));
+export default withNavigation(ScanningFooter);

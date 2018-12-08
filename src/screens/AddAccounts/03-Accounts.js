@@ -1,20 +1,24 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, createRef } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import i18next from "i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { translate, Trans } from "react-i18next";
-import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { addAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import { getCurrencyBridge } from "../../bridge";
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
-import Stepper from "../../components/Stepper";
+import PreventNativeBack from "../../components/PreventNativeBack";
 import StepHeader from "../../components/StepHeader";
 import SelectableAccountsList from "../../components/SelectableAccountsList";
 import LiveLogo from "../../icons/LiveLogoIcon";
@@ -23,10 +27,7 @@ import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
 import AddAccountsError from "./AddAccountsError";
 
-import colors from "../../colors";
-
 type Props = {
-  t: *,
   navigation: NavigationScreenProp<{
     params: {
       currency: CryptoCurrency,
@@ -56,7 +57,16 @@ const mapDispatchToProps = {
 
 class AddAccountsAccounts extends PureComponent<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Accounts" subtitle="step 3 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("tabs.accounts")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "3",
+          totalSteps: "3",
+        })}
+      />
+    ),
+    gesturesEnabled: false,
   };
 
   state = {
@@ -74,6 +84,12 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   componentWillUnmount() {
     this.stopSubscription(false);
   }
+
+  handleContentSizeChange = () => {
+    if (this.scrollView.current) {
+      this.scrollView.current.scrollToEnd({ animated: true });
+    }
+  };
 
   startSubscription = () => {
     const { navigation } = this.props;
@@ -221,9 +237,10 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     );
   };
 
+  scrollView = createRef();
+
   render() {
     const { selectedIds, status, scannedAccounts, error } = this.state;
-    const { t } = this.props;
     const newAccounts = this.getNewAccounts();
     const regularAccounts = this.getRegularAccounts();
     const existingAccountsFiltered = this.getExistingAccounts();
@@ -232,13 +249,20 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       newAccounts.length === 0;
     const noImportableAccounts =
       regularAccounts.length === 0 && newAccounts.length === 0;
+
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={4} currentStep={3} />
-        <ScrollView style={styles.inner}>
+        <TrackScreen category="AddAccounts" name="Accounts" />
+        <PreventNativeBack />
+        <ScrollView
+          style={styles.inner}
+          contentContainerStyle={styles.innerContent}
+          ref={this.scrollView}
+          onContentSizeChange={this.handleContentSizeChange}
+        >
           {regularAccounts.length > 0 ? (
             <SelectableAccountsList
-              header={t("addAccounts.sections.accountsToImport")}
+              header={<Trans i18nKey="addAccounts.sections.accountsToImport" />}
               accounts={regularAccounts}
               onPressAccount={this.onPressAccount}
               onSelectAll={this.selectAll}
@@ -247,14 +271,13 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             />
           ) : status === "scanning" ? (
             <LText style={styles.descText}>
-              {t("addAccounts.synchronizingDesc")}
+              <Trans i18nKey="addAccounts.synchronizingDesc" />
             </LText>
           ) : null}
-          {status === "scanning" && <ScanLoading t={t} />}
+          {status === "scanning" && <ScanLoading />}
           {status === "error" &&
             error && (
               <AddAccountsError
-                t={t}
                 error={error}
                 style={styles.addAccountsError}
                 onRetry={this.restartSubscription}
@@ -262,7 +285,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             )}
           {(newAccounts.length > 0 || status === "idle") && (
             <SelectableAccountsList
-              header={t("addAccounts.sections.addNewAccount")}
+              header={<Trans i18nKey="addAccounts.sections.addNewAccount" />}
               accounts={newAccounts}
               onPressAccount={this.onPressAccount}
               selectedIds={selectedIds}
@@ -275,35 +298,37 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           )}
           {existingAccountsFiltered.length > 0 && (
             <SelectableAccountsList
-              header={t("addAccounts.sections.existing")}
+              header={<Trans i18nKey="addAccounts.sections.existing" />}
               accounts={existingAccountsFiltered}
               forceSelected
               isDisabled
             />
           )}
         </ScrollView>
-        <Footer
-          t={t}
-          isScanning={status === "scanning"}
-          canRetry={
-            status !== "scanning" && noImportableAccounts && !cantCreateAccount
-          }
-          canDone={
-            status !== "scanning" && cantCreateAccount && noImportableAccounts
-          }
-          onRetry={this.restartSubscription}
-          onStop={this.stopSubscription}
-          onDone={this.quitFlow}
-          onContinue={this.import}
-          isDisabled={selectedIds.length === 0}
-        />
+        {!!scannedAccounts.length && (
+          <Footer
+            isScanning={status === "scanning"}
+            canRetry={
+              status !== "scanning" &&
+              noImportableAccounts &&
+              !cantCreateAccount
+            }
+            canDone={
+              status !== "scanning" && cantCreateAccount && noImportableAccounts
+            }
+            onRetry={this.restartSubscription}
+            onStop={this.stopSubscription}
+            onDone={this.quitFlow}
+            onContinue={this.import}
+            isDisabled={selectedIds.length === 0}
+          />
+        )}
       </SafeAreaView>
     );
   }
 }
 
 class Footer extends PureComponent<{
-  t: *,
   isScanning: boolean,
   canRetry: boolean,
   canDone: boolean,
@@ -323,33 +348,37 @@ class Footer extends PureComponent<{
       canDone,
       onRetry,
       onDone,
-      t,
     } = this.props;
+
     return (
       <View style={styles.footer}>
         {isScanning ? (
           <Button
+            event="AddAccountsStopScan"
             type="tertiary"
-            title={t("addAccounts.stopScanning")}
+            title={<Trans i18nKey="addAccounts.stopScanning" />}
             onPress={onStop}
             IconLeft={IconPause}
           />
         ) : canRetry ? (
           <Button
+            event="AddAccountsRetryScan"
             type="primary"
-            title={t("addAccounts.retryScanning")}
+            title={<Trans i18nKey="addAccounts.retryScanning" />}
             onPress={onRetry}
           />
         ) : canDone ? (
           <Button
+            event="AddAccountsDone"
             type="primary"
-            title={t("addAccounts.done")}
+            title={<Trans i18nKey="addAccounts.done" />}
             onPress={onDone}
           />
         ) : (
           <Button
+            event="AddAccountsSelected"
             type="primary"
-            title={t("addAccounts.finalCta")}
+            title={<Trans i18nKey="addAccounts.finalCta" />}
             onPress={isDisabled ? undefined : onContinue}
           />
         )}
@@ -358,16 +387,15 @@ class Footer extends PureComponent<{
   }
 }
 
-class ScanLoading extends PureComponent<{ t: * }> {
+class ScanLoading extends PureComponent<{}> {
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.scanLoadingRoot}>
         <Spinning>
           <LiveLogo color={colors.grey} size={16} />
         </Spinning>
         <LText semiBold style={styles.scanLoadingText}>
-          {t("addAccounts.synchronizing")}
+          <Trans i18nKey="addAccounts.synchronizing" />
         </LText>
       </View>
     );
@@ -380,13 +408,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   inner: {
-    flex: 1,
     paddingTop: 24,
+  },
+  innerContent: {
+    paddingBottom: 24,
   },
   descText: {
     paddingHorizontal: 16,
     marginBottom: 16,
     textAlign: "center",
+    color: colors.smoke,
   },
   scanLoadingRoot: {
     flexDirection: "row",

@@ -2,26 +2,21 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import LText from "./LText";
 
 import colors from "../colors";
+import Alert from "../icons/Alert";
 
-class ErrorBadge extends PureComponent<{
+type Props = {
   style?: *,
-  children: React$Node,
-}> {
-  static defaultProps = {
-    children: "!",
-  };
+};
 
+class ErrorBadge extends PureComponent<Props> {
   render() {
-    const { style, children } = this.props;
+    const { style } = this.props;
     return (
       <View style={[styles.outer, style]}>
         <View style={styles.inner}>
-          <LText bold style={styles.txt}>
-            {children}
-          </LText>
+          <Alert size={16} color={colors.white} />
         </View>
       </View>
     );

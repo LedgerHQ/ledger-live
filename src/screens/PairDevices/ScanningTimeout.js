@@ -1,54 +1,71 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
-import { translate } from "react-i18next";
-import BluetoothScanning from "../../components/BluetoothScanning";
+import { StyleSheet, View, Linking } from "react-native";
+import { Trans } from "react-i18next";
 import colors from "../../colors";
+import { urls } from "../../config/urls";
+import { deviceNames } from "../../wording";
+import { TrackScreen } from "../../analytics";
+import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
+import Circle from "../../components/Circle";
+import NanoX from "../../icons/NanoX";
+import Help from "../../icons/Help";
 
 type Props = {
   onRetry: () => void,
-  onCancel: () => void,
-  t: *,
 };
 
 class ScanningTimeout extends Component<Props> {
   render() {
-    const { onCancel, onRetry, t } = this.props;
+    const { onRetry } = this.props;
     return (
       <View style={styles.root}>
+        <TrackScreen category="PairDevices" name="ScanningTimeout" />
         <View style={styles.body}>
-          <BluetoothScanning isError />
+          <Circle bg={colors.lightAlert} size={80}>
+            <NanoX color={colors.alert} width={11} height={48} />
+          </Circle>
           <LText secondary semiBold style={styles.titleText}>
-            {t("PairDevices.ScanningTimeout.title")}
+            {<Trans i18nKey="PairDevices.ScanningTimeout.title" />}
           </LText>
           <LText style={styles.SubtitleText}>
-            {t("PairDevices.ScanningTimeout.desc")}
+            {
+              <Trans
+                i18nKey="PairDevices.ScanningTimeout.desc"
+                values={deviceNames.nanoX}
+              />
+            }
           </LText>
-        </View>
 
-        <View style={styles.footer}>
-          <Button
-            type="secondary"
-            title={t("common.cancel")}
-            onPress={onCancel}
-            containerStyle={styles.button}
-          />
-          <Button
-            type="primary"
-            title={t("common.retry")}
-            onPress={onRetry}
-            containerStyle={[styles.button, styles.primaryButton]}
-          />
+          <View style={styles.buttonContainer}>
+            <Button
+              event="PairDevicesTimeoutRetry"
+              type="primary"
+              title={<Trans i18nKey="common.retry" />}
+              onPress={onRetry}
+              containerStyle={[styles.button]}
+            />
+          </View>
+          <Touchable
+            event="NeedHelp"
+            style={styles.helpContainer}
+            onPress={() => Linking.openURL(urls.faq)}
+          >
+            <Help size={16} color={colors.live} />
+            <LText style={styles.helpText} semiBold>
+              <Trans i18nKey="common.needHelp" />
+            </LText>
+          </Touchable>
         </View>
       </View>
     );
   }
 }
 
-export default translate()(ScanningTimeout);
+export default ScanningTimeout;
 
 const styles = StyleSheet.create({
   root: {
@@ -59,26 +76,37 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     flexDirection: "column",
   },
   titleText: {
-    marginTop: 24,
+    marginTop: 32,
+    textAlign: "center",
     color: colors.darkBlue,
     fontSize: 18,
   },
   SubtitleText: {
-    marginTop: 8,
+    marginTop: 16,
     textAlign: "center",
     fontSize: 14,
-    color: colors.grey,
+    lineHeight: 21,
+    color: colors.smoke,
   },
-  footer: {
+  buttonContainer: {
     flexDirection: "row",
+    marginTop: 32,
   },
   button: {
     flex: 1,
   },
-  primaryButton: {
-    marginLeft: 10,
+  helpContainer: {
+    marginTop: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  helpText: {
+    color: colors.live,
+    marginLeft: 6,
   },
 });

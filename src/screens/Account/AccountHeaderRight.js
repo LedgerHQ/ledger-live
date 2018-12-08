@@ -15,6 +15,7 @@ class AccountHeaderRight extends Component<Props> {
 
     return (
       <Touchable
+        event="AccountGoSettings"
         onPress={() => {
           navigation.navigate("AccountSettings", {
             accountId: navigation.state.params.accountId,

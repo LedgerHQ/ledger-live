@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
+import { Trans } from "react-i18next";
 import LText from "./LText";
 import Touchable from "./Touchable";
 
@@ -9,9 +10,9 @@ export default class SyncIndicatorStatus extends Component<*> {
   render() {
     const { isUpToDate, onPress } = this.props;
     return (
-      <Touchable onPress={onPress}>
+      <Touchable event="SyncIndicatorStatus" onPress={onPress}>
         <LText style={styles.text}>
-          {isUpToDate ? "Up to date" : "Outdated"}
+          <Trans i18nKey={`common.${isUpToDate ? "upToDate" : "outdated"}`} />
         </LText>
       </Touchable>
     );

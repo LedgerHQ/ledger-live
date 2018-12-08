@@ -1,19 +1,23 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, SafeAreaView, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
+import i18next from "i18next";
+import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { accountsSelector } from "../../reducers/accounts";
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import Stepper from "../../components/Stepper";
 import AccountCard from "../../components/AccountCard";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 
-import { accountsSelector } from "../../reducers/accounts";
-import colors from "../../colors";
+const SEARCH_KEYS = ["name", "unit.code"];
 
 type Props = {
   accounts: Account[],
@@ -27,7 +31,13 @@ type State = {};
 class SendFundsSelectAccount extends Component<Props, State> {
   static navigationOptions = {
     headerTitle: (
-      <StepHeader title="Select an account" subtitle="step 1 of 6" />
+      <StepHeader
+        title={i18next.t("send.stepperHeader.selectAccount")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "1",
+          totalSteps: "6",
+        })}
+      />
     ),
   };
 
@@ -37,6 +47,8 @@ class SendFundsSelectAccount extends Component<Props, State> {
       renderItem={this.renderItem}
       keyExtractor={this.keyExtractor}
       showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag"
+      contentContainerStyle={styles.list}
     />
   );
 
@@ -54,7 +66,9 @@ class SendFundsSelectAccount extends Component<Props, State> {
 
   renderEmptySearch = () => (
     <View style={styles.emptyResults}>
-      <LText style={styles.emptyText}>No account found</LText>
+      <LText style={styles.emptyText}>
+        <Trans i18nKey="transfer.receive.noAccount" />
+      </LText>
     </View>
   );
 
@@ -64,7 +78,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
     const { accounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper currentStep={1} nbSteps={6} />
+        <TrackScreen category="SendFunds" name="SelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
@@ -72,6 +86,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
               inputWrapperStyle={styles.padding}
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptySearch}
+              keys={SEARCH_KEYS}
             />
           </View>
         </KeyboardView>
@@ -90,11 +105,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   searchContainer: {
-    paddingTop: 18,
+    paddingTop: 16,
     flex: 1,
   },
   list: {
-    paddingTop: 8,
+    paddingBottom: 32,
   },
   emptyResults: {
     flex: 1,
@@ -115,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(SendFundsSelectAccount);
+export default translate()(connect(mapStateToProps)(SendFundsSelectAccount));

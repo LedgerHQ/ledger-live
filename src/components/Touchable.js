@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { TouchableOpacity } from "react-native";
+import { track } from "../analytics";
 
 const defaultHitSlop = {
   // default & can be overrided by rest
@@ -17,8 +18,10 @@ export default class Touchable extends Component<
     // the button will toggle in a pending state and
     // will wait the promise to complete before enabling the button again
     // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
-    onPress: () => ?Promise<any>,
+    onPress: ?() => ?Promise<any>,
     children: *,
+    event: string,
+    eventProperties?: Object,
   },
   {
     pending: boolean,
@@ -28,21 +31,34 @@ export default class Touchable extends Component<
     pending: false,
   };
 
+  unmounted = false;
+
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   onPress = async () => {
+    const { onPress, event, eventProperties } = this.props;
+    if (!onPress) return;
     try {
-      const res = this.props.onPress();
+      if (event) {
+        track(event, eventProperties);
+      }
+      const res = onPress();
       if (res && res.then) {
         // it's a promise, we will use pending/spinnerOn state
         this.setState({ pending: true });
         await res;
       }
     } finally {
-      this.setState(({ pending }) => (pending ? { pending: false } : null));
+      if (!this.unmounted) {
+        this.setState(({ pending }) => (pending ? { pending: false } : null));
+      }
     }
   };
 
   render() {
-    const { onPress, children, ...rest } = this.props;
+    const { onPress, children, event, eventProperties, ...rest } = this.props;
     const { pending } = this.state;
     const disabled = !onPress || pending;
     return (

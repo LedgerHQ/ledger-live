@@ -29,6 +29,7 @@ export default {
   white: "#ffffff",
   green: "rgb(102, 190, 84)",
   black: "#000000",
+  orange: "#ff7701",
 
   /* DERIVATIVES */
   lightLive: "#4b84ff19",
@@ -44,4 +45,5 @@ export default {
   pillForeground: "#999999",
   pillActiveBackground: rgba("#6490f1", 0.1),
   pillActiveForeground: "#6490f1",
+  pillActiveDisabledForeground: "#999999",
 };

@@ -1,8 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
-import type { T } from "../../types/common";
+import { Trans } from "react-i18next";
 
 import colors from "../../colors";
 import CheckCircle from "../../icons/CheckCircle";
@@ -10,14 +9,13 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 
 type Props = {
-  t: T,
   onClose: () => void,
   onViewDetails: () => void,
 };
 
 class ValidateSuccess extends PureComponent<Props> {
   render() {
-    const { t, onClose, onViewDetails } = this.props;
+    const { onClose, onViewDetails } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
@@ -25,19 +23,23 @@ class ValidateSuccess extends PureComponent<Props> {
             <CheckCircle size={40} color={colors.success} />
           </View>
           <LText secondary semiBold style={styles.title}>
-            {t("send.validation.sent")}
+            <Trans i18nKey="send.validation.sent" />
           </LText>
-          <LText style={styles.message}>{t("send.validation.confirm")}</LText>
+          <LText style={styles.message}>
+            <Trans i18nKey="send.validation.confirm" />
+          </LText>
         </View>
         <View style={styles.actionContainer}>
           <Button
-            title={t("common.close")}
+            event="SendSuccessClose"
+            title={<Trans i18nKey="common.close" />}
             type="secondary"
             containerStyle={{ flex: 1, marginRight: 16 }}
             onPress={onClose}
           />
           <Button
-            title={t("send.validation.button.details")}
+            event="SendSuccessViewDetails"
+            title={<Trans i18nKey="send.validation.button.details" />}
             type="primary"
             containerStyle={{ flex: 1 }}
             onPress={onViewDetails}
@@ -84,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(ValidateSuccess);
+export default ValidateSuccess;

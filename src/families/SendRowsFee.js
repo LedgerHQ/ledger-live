@@ -5,11 +5,13 @@ import type { NavigationScreenProp } from "react-navigation";
 
 import bitcoin from "./bitcoin/SendRowsFee";
 import ripple from "./ripple/SendRowsFee";
+import ethereum from "./ethereum/SendRowsFee";
 
 // Update per currency family the rows component for fees if any
 const perFamily: { [_: string]: * } = {
   bitcoin,
   ripple,
+  ethereum,
 };
 
 export default ({

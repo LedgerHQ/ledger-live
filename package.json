@@ -1,6 +1,6 @@
 {
   "name": "ledgerlivemobile",
-  "version": "1.1.1",
+  "version": "1.1.5",
   "private": true,
   "rnpm": {
     "assets": [
@@ -33,15 +33,17 @@
     }
   },
   "dependencies": {
-    "@ledgerhq/hw-app-btc": "^4.27.0",
+    "@ledgerhq/hw-app-btc": "^4.30.0",
     "@ledgerhq/hw-app-eth": "^4.24.0",
     "@ledgerhq/hw-app-xrp": "^4.25.0",
     "@ledgerhq/hw-transport": "^4.24.0",
-    "@ledgerhq/hw-transport-http": "^4.29.0",
-    "@ledgerhq/live-common": "^4.1.4",
+    "@ledgerhq/hw-transport-http": "^4.29.1",
+    "@ledgerhq/live-common": "^4.7.0",
     "@ledgerhq/react-native-hid": "^4.21.0",
-    "@ledgerhq/react-native-ledger-core": "^0.3.30",
+    "@ledgerhq/react-native-ledger-core": "^0.3.35",
     "@ledgerhq/react-native-passcode-auth": "^2.0.0",
+    "@segment/analytics-ios": "github:LedgerHQ/analytics-ios#efb4cd1771dab568422473fd680ffb748b102f07",
+    "@segment/analytics-react-native": "^0.0.1-beta.2",
     "@tradle/react-native-http": "^2.0.0",
     "assert": "^1.4.1",
     "async": "^2.6.1",
@@ -58,6 +60,7 @@
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
     "domain-browser": "^1.1.1",
+    "eip55": "^1.0.3",
     "ethereumjs-tx": "^1.3.7",
     "events": "^1.0.0",
     "fuse.js": "^3.2.1",
@@ -80,11 +83,13 @@
     "react-i18next": "7.10.1",
     "react-native": "0.57.3",
     "react-native-android-location-services-dialog-box": "^2.7.0",
-    "react-native-ble-plx": "^0.10.0",
+    "react-native-ble-plx": "^1.0.1",
     "react-native-camera": "1.2.0",
     "react-native-config": "0.11.5",
     "react-native-crypto": "^2.1.2",
+    "react-native-easy-markdown": "^1.2.0",
     "react-native-gesture-handler": "^1.0.7",
+    "react-native-keychain": "^3.0.0",
     "react-native-level-fs": "^3.0.0",
     "react-native-locale": "0.0.19",
     "react-native-modal": "^6.5.0",
@@ -122,6 +127,7 @@
     "timers-browserify": "^1.0.1",
     "tty-browserify": "0.0.0",
     "url": "^0.11.0",
+    "uuid": "^3.3.2",
     "vm-browserify": "0.0.4"
   },
   "devDependencies": {

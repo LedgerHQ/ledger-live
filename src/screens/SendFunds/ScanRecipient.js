@@ -10,21 +10,19 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { T } from "../../types/common";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { getAccountBridge } from "../../bridge";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import CameraScreen from "../../components/CameraScreen";
 import colors from "../../colors";
-import FallBackCamera from "../ImportAccounts/FallBackCamera";
+import FallBackCamera from "./FallbackCamera/Fallback";
 
 type Props = {
   navigation: NavigationScreenProp<{
     accountId: string,
   }>,
   account: Account,
-  t: T,
 };
 
 type State = {
@@ -91,10 +89,10 @@ class ScanRecipient extends PureComponent<Props, State> {
       t,
     );
 
-    // $FlowFixMe
-    this.props.navigation.replace("SendSelectRecipient", {
+    this.props.navigation.navigate("SendSelectRecipient", {
       accountId: account.id,
       transaction: t,
+      justScanned: true,
     });
   };
 

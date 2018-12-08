@@ -1,12 +1,16 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import i18next from "i18next";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import { translate } from "react-i18next";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { getAccountOperationExplorer } from "@ledgerhq/live-common/lib/explorers";
 import type { NavigationScreenProp } from "react-navigation";
 import { accountScreenSelector } from "../../reducers/accounts";
+import { TrackScreen } from "../../analytics";
 import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
@@ -22,7 +26,7 @@ type Props = {
 };
 class OperationDetails extends PureComponent<Props, *> {
   static navigationOptions = {
-    title: "Operation Details",
+    title: i18next.t("operationDetails.title"),
     headerLeft: null,
   };
 
@@ -33,6 +37,7 @@ class OperationDetails extends PureComponent<Props, *> {
     const url = getAccountOperationExplorer(account, operation);
     return (
       <SafeAreaView style={styles.container}>
+        <TrackScreen category="OperationDetails" />
         <ScrollView>
           <View style={styles.root}>
             <Content
@@ -52,7 +57,7 @@ export default connect(
   createStructuredSelector({
     account: accountScreenSelector,
   }),
-)(OperationDetails);
+)(translate()(OperationDetails));
 
 const styles = StyleSheet.create({
   container: {

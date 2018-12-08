@@ -2,13 +2,14 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { Trans, translate } from "react-i18next";
 import NoLocationImage from "./assets/NoLocationImage";
 import LocationServicesButton from "./LocationServicesButton";
 import AppPermissionsButton from "./AppPermissionsButton";
 import LText from "../../components/LText";
 import colors from "../../colors";
 
-export default class LocationRequired extends PureComponent<{
+class LocationRequired extends PureComponent<{
   onRetry: Function,
   errorType: "disabled" | "unauthorized",
 }> {
@@ -20,17 +21,15 @@ export default class LocationRequired extends PureComponent<{
         <NoLocationImage />
         <View>
           <LText bold secondary style={styles.title}>
-            Location required
+            <Trans i18nKey="location.required" />
           </LText>
         </View>
         <View>
           <LText style={styles.desc}>
-            It seems location detection is disabled on your mobile. Go to
-            settings and enable location to activate bluetooth.
+            <Trans i18nKey="location.disabled" />
           </LText>
-          <LText style={styles.desc}>
-            Lorem Elsass ipsum Racing. hopla Verdammi purus lotto-owe Huguette
-            sit schnaps porta placerat Pfourtz !
+          <LText semiBold style={[styles.desc, styles.descPadding]}>
+            <Trans i18nKey="location.noInfos" />
           </LText>
         </View>
         <View style={styles.buttonWrapper}>
@@ -63,9 +62,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingHorizontal: 20,
   },
+  descPadding: {
+    marginTop: 24,
+  },
   buttonWrapper: {
     alignSelf: "stretch",
     paddingHorizontal: 36,
     marginTop: 24,
   },
 });
+
+export default translate()(LocationRequired);

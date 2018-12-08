@@ -1,24 +1,28 @@
 // @flow
 import React, { Component } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import i18next from "i18next";
+import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { translate, Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 import StepHeader from "../../components/StepHeader";
-import Stepper from "../../components/Stepper";
 import SelectDevice from "../../components/SelectDevice";
 import Button from "../../components/Button";
 import {
   connectingStep,
   accountApp,
   receiveVerifyStep,
-} from "../../components/SelectDevice/steps";
-
-import colors from "../../colors";
+} from "../../components/DeviceJob/steps";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import ReadOnlyWarning from "./ReadOnlyWarning";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -29,12 +33,42 @@ type Navigation = NavigationScreenProp<{
 type Props = {
   account: Account,
   navigation: Navigation,
+  readOnlyModeEnabled: boolean,
 };
 
+const mapStateToProps = createStructuredSelector({
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+  account: accountScreenSelector,
+});
+
 class ConnectDevice extends Component<Props> {
-  static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="2 of 3" />,
+  static navigationOptions = ({ navigation }) => {
+    const { params } = navigation.state;
+    const key = (params && params.title) || "transfer.receive.titleDevice";
+
+    return {
+      headerTitle: (
+        <StepHeader
+          title={i18next.t(key)}
+          subtitle={i18next.t("send.stepperHeader.stepRange", {
+            currentStep: "2",
+            totalSteps: "3",
+          })}
+        />
+      ),
+    };
   };
+
+  componentDidMount() {
+    const { readOnlyModeEnabled } = this.props;
+
+    if (readOnlyModeEnabled) {
+      this.props.navigation.setParams({
+        title: "transfer.receive.titleReadOnly",
+        headerRight: null,
+      });
+    }
+  }
 
   onSelectDevice = (deviceId: string) => {
     const { navigation, account } = this.props;
@@ -51,11 +85,18 @@ class ConnectDevice extends Component<Props> {
     });
   };
 
+  renderReadOnly = () => <ReadOnlyWarning continue={this.onSkipDevice} />;
+
   render() {
-    const { account } = this.props;
+    const { readOnlyModeEnabled, account } = this.props;
+
+    if (readOnlyModeEnabled) {
+      return this.renderReadOnly();
+    }
+
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={3} currentStep={2} />
+        <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[
@@ -66,8 +107,9 @@ class ConnectDevice extends Component<Props> {
         />
         <View style={styles.footer}>
           <Button
-            type="secondary"
-            title="Don't have my device"
+            event="ReceiveWithoutDevice"
+            type="lightSecondary"
+            title={<Trans i18nKey="transfer.receive.withoutDevice" />}
             onPress={this.onSkipDevice}
           />
         </View>
@@ -82,12 +124,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   footer: {
-    padding: 10,
+    padding: 4,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
 });
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
-
-export default connect(mapStateToProps)(ConnectDevice);
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(ConnectDevice);

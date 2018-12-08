@@ -23,7 +23,9 @@ public class MainActivity extends ReactFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SplashScreen.show(this, true);
+        if (!BuildConfig.DEBUG) {
+            SplashScreen.show(this, true);
+        }
         super.onCreate(savedInstanceState);
     }
 

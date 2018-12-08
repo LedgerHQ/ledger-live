@@ -2,28 +2,42 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
+import { Trans } from "react-i18next";
+import Icon from "react-native-vector-icons/dist/Feather";
+import Alert from "../../icons/Alert";
+
 import LText from "../LText";
-import BluetoothDisabledImage from "./assets/BluetoothDisabledImage";
+import InfoIcon from "../InfoIcon";
 import colors from "../../colors";
+import { deviceNames } from "../../wording";
 
 export default class BluetoothDisabled extends PureComponent<{}> {
   render() {
     // NB based on the state we could have different wording?
     return (
-      <View style={styles.container}>
-        <BluetoothDisabledImage />
+      <SafeAreaView style={styles.container}>
+        <InfoIcon
+          bg={colors.pillActiveBackground}
+          floatingIcon={<Alert size={20} color={colors.white} />}
+          floatingBg={colors.alert}
+        >
+          <Icon name="bluetooth" size={40} color={colors.live} />
+        </InfoIcon>
         <View>
-          <LText bold secondary style={styles.titleFont}>
-            Bluetooth required
+          <LText semiBold secondary style={styles.titleFont}>
+            <Trans i18nKey="bluetooth.required" />
           </LText>
         </View>
         <View style={styles.desc}>
           <LText style={styles.descFont}>
-            It seems bluetooth is disabled on your mobile. Go to settings and
-            enable bluetooth to pair a Nano X
+            <Trans
+              i18nKey="bluetooth.checkEnabled"
+              values={deviceNames.nanoX}
+            />
           </LText>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -33,19 +47,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: colors.white,
   },
   titleFont: {
     color: colors.darkBlue,
     fontSize: 18,
-    marginTop: 24,
+    marginTop: 32,
   },
   desc: {
-    paddingHorizontal: 20,
+    marginTop: 16,
+    paddingHorizontal: 24,
   },
   descFont: {
-    color: colors.grey,
+    color: colors.smoke,
     fontSize: 14,
     textAlign: "center",
-    marginTop: 8,
   },
 });

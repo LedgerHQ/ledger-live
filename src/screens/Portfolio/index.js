@@ -3,13 +3,11 @@
 import React, { Component } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import {
-  View,
-  StyleSheet,
-  SectionList,
-  Animated,
-  SafeAreaView,
-} from "react-native";
+import { View, StyleSheet, SectionList, Animated } from "react-native";
+import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import { SafeAreaView } from "react-navigation";
+import { translate } from "react-i18next";
+import Config from "react-native-config";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
@@ -18,13 +16,16 @@ import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/Animat
 import colors from "../../colors";
 
 import { accountsSelector } from "../../reducers/accounts";
-
+import {
+  hasCompletedOnboardingSelector,
+  hasAcceptedTradingWarningSelector,
+} from "../../reducers/settings";
+import { acceptTradingWarning } from "../../actions/settings";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
-import PortfolioIcon from "../../icons/Portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import provideSummary from "../../components/provideSummary";
 
@@ -36,37 +37,40 @@ import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
-import defaultNavigationOptions from "../defaultNavigationOptions";
+import TradingDisclaimer from "../../modals/TradingDisclaimer";
+import TrackScreen from "../../analytics/TrackScreen";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
 
-const navigationOptions = {
-  ...defaultNavigationOptions,
-  tabBarIcon: ({ tintColor }: *) => (
-    <PortfolioIcon size={18} color={tintColor} />
-  ),
-};
-
 const mapStateToProps = state => ({
   accounts: accountsSelector(state),
+  hasCompletedOnboarding: hasCompletedOnboardingSelector(state),
+  hasAcceptedTradingWarning: hasAcceptedTradingWarningSelector(state),
 });
+
+const mapDispatchToProps = {
+  acceptTradingWarning,
+};
 
 class Portfolio extends Component<
   {
+    acceptTradingWarning: () => void,
     accounts: Account[],
     summary: Summary,
     navigation: *,
+    hasCompletedOnboarding: boolean,
+    hasAcceptedTradingWarning: boolean,
   },
   {
     opCount: number,
     scrollY: AnimatedValue,
+    isModalOpened: boolean,
   },
 > {
-  static navigationOptions = navigationOptions;
-
   state = {
     opCount: 50,
+    isModalOpened: !this.props.hasAcceptedTradingWarning,
     scrollY: new Animated.Value(0),
   };
 
@@ -75,6 +79,11 @@ class Portfolio extends Component<
   scrollSub: *;
 
   componentDidMount() {
+    if (!this.props.hasCompletedOnboarding && !Config.SKIP_ONBOARDING) {
+      // TODO: there is probably more elegant way to do that
+      this.props.navigation.navigate("Onboarding");
+      return;
+    }
     this.scrollSub = scrollToTopIntent.subscribe(() => {
       const sectionList = this.ref.current && this.ref.current.getNode();
       if (sectionList) {
@@ -88,7 +97,9 @@ class Portfolio extends Component<
   }
 
   componentWillUnmount() {
-    this.scrollSub.unsubscribe();
+    if (this.scrollSub) {
+      this.scrollSub.unsubscribe();
+    }
   }
 
   keyExtractor = (item: Operation) => item.id;
@@ -97,7 +108,15 @@ class Portfolio extends Component<
     <GraphCardContainer summary={this.props.summary} />
   );
 
-  renderItem = ({ item }: { item: Operation }) => {
+  renderItem = ({
+    item,
+    index,
+    section,
+  }: {
+    item: Operation,
+    index: number,
+    section: SectionBase<*>,
+  }) => {
     const account = this.props.accounts.find(a => a.id === item.accountId);
 
     if (!account) return null;
@@ -108,6 +127,7 @@ class Portfolio extends Component<
         account={account}
         navigation={this.props.navigation}
         multipleAccounts
+        isLast={section.data.length - 1 === index}
       />
     );
   };
@@ -120,14 +140,29 @@ class Portfolio extends Component<
     this.setState(({ opCount }) => ({ opCount: opCount + 50 }));
   };
 
+  onModalClose = () => {
+    this.props.acceptTradingWarning();
+    this.setState({ isModalOpened: false });
+  };
+
   render() {
-    const { summary, accounts, navigation } = this.props;
-    const { opCount, scrollY } = this.state;
+    const {
+      summary,
+      accounts,
+      navigation,
+      hasAcceptedTradingWarning,
+    } = this.props;
+    const { opCount, scrollY, isModalOpened } = this.state;
+    const disclaimer = !hasAcceptedTradingWarning && (
+      <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
+    );
 
     if (accounts.length === 0) {
       return (
         <View style={styles.root}>
+          <TrackScreen category="Portfolio" accountsLength={0} />
           <EmptyStatePortfolio navigation={navigation} />
+          {disclaimer}
         </View>
       );
     }
@@ -141,6 +176,7 @@ class Portfolio extends Component<
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
         <StickyHeader scrollY={scrollY} summary={summary} />
         <SyncBackground />
+        <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
         <SafeAreaView style={styles.inner}>
           <List
@@ -169,14 +205,19 @@ class Portfolio extends Component<
             }
           />
         </SafeAreaView>
+        {disclaimer}
       </View>
     );
   }
 }
 
 export default compose(
-  connect(mapStateToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   provideSummary,
+  translate(),
 )(Portfolio);
 
 const styles = StyleSheet.create({

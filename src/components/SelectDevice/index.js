@@ -1,82 +1,48 @@
 // @flow
-
-// TODO
-// - try to use React Suspense to debounce the UI
-// - implement the auto-retry AND retry mecanism in the steps
-// - integrate the UI
-
 import React, { Component, Fragment } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { Observable, Subject, from } from "rxjs";
-import debounce from "lodash/debounce";
-import { mergeMap, last, tap, filter } from "rxjs/operators";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { devicesObservable } from "../../logic/hw";
+import { getDevicesObservable } from "../../logic/hw";
 import { knownDevicesSelector } from "../../reducers/ble";
+import { experimentalUSBEnabledSelector } from "../../reducers/settings";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
+import DeviceJob from "../DeviceJob";
+import type { Step } from "../DeviceJob/types";
 import Header from "./Header";
 import Footer from "./Footer";
-import SelectDeviceConnectModal from "./SelectDeviceConnectModal";
-import type { Step } from "./types";
+import { setReadOnlyMode } from "../../actions/settings";
 
-const runStep = (
-  step: Step,
-  deviceId: string,
-  meta: Object,
-  onDoneO: Observable<*>,
-): Observable<Object> => step.run(deviceId, meta, onDoneO);
-
-const chainSteps = (
+type Props = {
+  onForgetSelect?: (deviceId: string) => any,
+  onSelect: (deviceId: string, meta: Object) => void,
+  selectedIds?: string[],
   steps: Step[],
-  deviceId: string,
-  onStepEnter: number => void,
-  onDoneO: Observable<number>,
-): Observable<Object> =>
-  steps.reduce(
-    (meta: Observable<*>, step: Step, i: number) =>
-      meta.pipe(
-        tap(() => onStepEnter(i)),
-        mergeMap(meta =>
-          runStep(
-            step,
-            deviceId,
-            meta,
-            onDoneO.pipe(filter(index => index === i)),
-          ),
-        ),
-        last(),
-      ),
-    from([{}]),
-  );
+  editMode?: boolean,
+  // connect-ed
+  experimentalUSBEnabled: boolean,
+  knownDevices: Array<{
+    id: string,
+    name: string,
+  }>,
+  removeKnownDevice: string => *,
+  onStepEntered?: (number, Object) => void,
+  setReadOnlyMode: boolean => void,
+};
 
-class SelectDevice extends Component<
-  {
-    onSelect: (deviceId: string, meta: Object) => void,
-    steps: Step[],
-    editMode?: boolean,
-    // connect-ed
-    knownDevices: Array<{
-      id: string,
-      name: string,
-    }>,
-    removeKnownDevice: string => *,
-  },
-  {
-    devices: Array<{
-      id: string,
-      name: string,
-      family: string,
-    }>,
-    scanning: boolean,
-    connecting: boolean,
-    connectingId: ?string,
-    meta: Object,
-    error: ?Error,
-    stepIndex: number,
-  },
-> {
+type State = {
+  devices: Array<{
+    id: string,
+    name: string,
+    family: string,
+  }>,
+  scanning: boolean,
+  connecting: boolean,
+  connectingId: ?string,
+};
+
+class SelectDevice extends Component<Props, State> {
   static defaultProps = {
     steps: [],
   };
@@ -86,19 +52,35 @@ class SelectDevice extends Component<
     scanning: true,
     connecting: false,
     connectingId: null,
-    stepIndex: 0,
-    error: null,
-    meta: {},
   };
-
-  selectSubscription: *;
 
   listingSubscription: *;
 
-  onDoneSubject = new Subject();
-
   componentDidMount() {
-    this.listingSubscription = devicesObservable.subscribe({
+    this.observe();
+  }
+
+  componentDidUpdate({ experimentalUSBEnabled, knownDevices }) {
+    if (
+      this.props.experimentalUSBEnabled !== experimentalUSBEnabled ||
+      this.props.knownDevices !== knownDevices
+    ) {
+      this.observe();
+    }
+  }
+
+  componentWillUnmount() {
+    this.listingSubscription.unsubscribe();
+  }
+
+  observe() {
+    if (this.listingSubscription) {
+      this.listingSubscription.unsubscribe();
+      this.setState({ devices: [] });
+    }
+    this.listingSubscription = getDevicesObservable({
+      usb: this.props.experimentalUSBEnabled,
+    }).subscribe({
       complete: () => {
         this.setState({ scanning: false });
       },
@@ -116,64 +98,21 @@ class SelectDevice extends Component<
     });
   }
 
-  componentWillUnmount() {
-    this.onStepEntered.cancel();
-    if (this.selectSubscription) this.selectSubscription.unsubscribe();
-    this.listingSubscription.unsubscribe();
-  }
-
-  onForget = async ({ id }) => {
-    this.props.removeKnownDevice(id);
-  };
-
-  onStepEntered = debounce(stepIndex => {
-    this.setState({ stepIndex });
-  }, 500);
-
-  onStepDone = () => {
-    this.onDoneSubject.next(this.state.stepIndex);
-  };
-
   onSelect = ({ id }) => {
-    this.setState({
-      connecting: true,
-      connectingId: id,
-      error: null,
-      stepIndex: 0,
-      meta: {},
-    });
-
-    this.onStepEntered.cancel();
-    if (this.selectSubscription) this.selectSubscription.unsubscribe();
-    this.selectSubscription = chainSteps(
-      this.props.steps,
-      id,
-      this.onStepEntered,
-      this.onDoneSubject,
-    ).subscribe({
-      next: meta => {
-        this.onStepEntered.cancel();
-        this.setState({ connecting: false }, () => {
-          this.props.onSelect(id, meta);
-        });
-      },
-      error: error => {
-        this.setState({ error });
-      },
-    });
+    this.setState({ connecting: true, connectingId: id });
   };
 
-  onRetry = () => {
-    const { connectingId, connecting, error } = this.state;
-    if (connecting && error && connectingId) {
-      this.onSelect({ id: connectingId });
-    }
+  onDone = (id, meta) => {
+    this.setState({ connecting: false }, () => {
+      this.props.onSelect(id, meta);
+    });
+
+    // Always false until we pair a device?
+    this.props.setReadOnlyMode(false);
   };
 
-  onRequestClose = () => {
-    this.onStepEntered.cancel();
-    if (this.selectSubscription) this.selectSubscription.unsubscribe();
-    this.setState({ connecting: false, error: null });
+  onCancel = () => {
+    this.setState({ connecting: false });
   };
 
   renderItem = ({ item }: *) => (
@@ -181,7 +120,14 @@ class SelectDevice extends Component<
       key={item.id}
       device={item}
       onSelect={this.onSelect}
-      onForget={this.props.editMode ? this.onForget : undefined}
+      onForgetSelect={
+        this.props.editMode ? this.props.onForgetSelect : undefined
+      }
+      selected={
+        this.props.selectedIds
+          ? this.props.selectedIds.includes(item.id)
+          : undefined
+      }
       {...item}
     />
   );
@@ -189,13 +135,11 @@ class SelectDevice extends Component<
   keyExtractor = (item: *) => item.id;
 
   render() {
-    const { knownDevices, steps } = this.props;
-    const { devices, connecting, connectingId, stepIndex, error } = this.state;
+    const { knownDevices, steps, editMode, onStepEntered } = this.props;
+    const { devices, connecting, connectingId } = this.state;
 
-    const connectingDevice = devices.find(d => d.id === connectingId);
-
-    // $FlowFixMe
     const data = devices.concat(knownDevices);
+    const connectingDevice = data.find(d => d.id === connectingId);
 
     return (
       <Fragment>
@@ -204,17 +148,17 @@ class SelectDevice extends Component<
           data={data}
           renderItem={this.renderItem}
           ListHeaderComponent={Header}
-          ListFooterComponent={Footer}
+          ListFooterComponent={editMode ? null : Footer}
           keyExtractor={this.keyExtractor}
         />
-        <SelectDeviceConnectModal
+        <DeviceJob
           deviceName={connectingDevice ? connectingDevice.name : ""}
-          isOpened={connecting}
-          onClose={this.onRequestClose}
-          onRetry={this.onRetry}
-          step={steps[stepIndex]}
-          onStepDone={this.onStepDone}
-          error={error}
+          deviceId={connecting && connectingId ? connectingId : null}
+          steps={steps}
+          onCancel={this.onCancel}
+          onStepEntered={onStepEntered}
+          onDone={this.onDone}
+          editMode={editMode}
         />
       </Fragment>
     );
@@ -230,8 +174,10 @@ const styles = StyleSheet.create({
 export default connect(
   createStructuredSelector({
     knownDevices: knownDevicesSelector,
+    experimentalUSBEnabled: experimentalUSBEnabledSelector,
   }),
   {
     removeKnownDevice,
+    setReadOnlyMode,
   },
 )(SelectDevice);

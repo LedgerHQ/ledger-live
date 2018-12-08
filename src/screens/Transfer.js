@@ -1,19 +1,10 @@
 /* @flow */
 import React, { Component, Fragment } from "react";
-import { View, StyleSheet } from "react-native";
 import Touchable from "../components/Touchable";
+import TabIcon from "../components/TabIcon";
 import CreateModal from "../modals/Create";
 import TransferIcon from "../icons/Transfer";
-import defaultNavigationOptions from "./defaultNavigationOptions";
 import ExchangeScreen from "./Exchange";
-
-const styles = StyleSheet.create({
-  root: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 4,
-  },
-});
 
 const hitSlop = {
   top: 10,
@@ -38,10 +29,13 @@ class Transfer extends Component<
     const { isModalOpened } = this.state;
     return (
       <Fragment>
-        <Touchable hitSlop={hitSlop} onPress={this.openModal}>
-          <View style={styles.root}>
-            <TransferIcon size={18} color={this.props.tintColor} />
-          </View>
+        <Touchable event="Transfer" hitSlop={hitSlop} onPress={this.openModal}>
+          {/* $FlowFixMe */}
+          <TabIcon
+            Icon={TransferIcon}
+            i18nKey="tabs.transfer"
+            {...this.props}
+          />
         </Touchable>
         <CreateModal isOpened={isModalOpened} onClose={this.onModalClose} />
       </Fragment>
@@ -51,7 +45,6 @@ class Transfer extends Component<
 
 export default class Create extends Component<*> {
   static navigationOptions = {
-    ...defaultNavigationOptions,
     tabBarIcon: (props: *) => <Transfer {...props} />,
     tabBarOnPress: () => {}, // noop
   };

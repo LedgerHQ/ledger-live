@@ -1,22 +1,19 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { View, Linking, StyleSheet } from "react-native";
 import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 import ExternalLink from "../../../icons/ExternalLink";
 
-class LedgerSupportRow extends PureComponent<{
-  t: T,
-}> {
+class LedgerSupportRow extends PureComponent<*> {
   render() {
-    const { t } = this.props;
     return (
       <SettingsRow
-        title={t("settings.help.support")}
-        desc={t("settings.help.supportDesc")}
+        event="LedgerSupportRow"
+        title={<Trans i18nKey="settings.help.support" />}
+        desc={<Trans i18nKey="settings.help.supportDesc" />}
         onPress={() =>
           Linking.openURL(urls.faq).catch(err =>
             console.error("An error occurred", err),
@@ -36,4 +33,4 @@ const styles = StyleSheet.create({
   externalLinkContainer: { marginRight: 10 },
 });
 
-export default translate()(LedgerSupportRow);
+export default LedgerSupportRow;

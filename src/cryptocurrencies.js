@@ -1,43 +1,56 @@
 // @flow
-import memoize from "lodash/memoize";
-import { listCryptoCurrencies as listCC } from "@ledgerhq/live-common/lib/currencies";
-import type { CryptoCurrencyIds } from "@ledgerhq/live-common/lib/types";
+import type {
+  CryptoCurrencyIds,
+  CryptoCurrency,
+  DerivationMode,
+} from "@ledgerhq/live-common/lib/types";
+import { getFullListSortedCryptoCurrenciesSync } from "./countervalues";
 
 const supported: CryptoCurrencyIds[] = [
-  "bitcoin",
-  // "ethereum",
-  "ripple",
   "bitcoin_cash",
-  "litecoin",
-  "dash",
-  // "ethereum_classic",
-  "qtum",
-  "zcash",
   "bitcoin_gold",
-  "stratis",
-  "dogecoin",
+  "bitcoin_testnet",
+  "bitcoin",
+  "clubcoin",
+  "dash",
+  "decred",
   "digibyte",
+  "dogecoin",
+  "ethereum_classic",
+  "ethereum",
   "hcash",
   "komodo",
-  "pivx",
-  "zencash",
-  "vertcoin",
+  "litecoin",
   "peercoin",
-  "viacoin",
-  "stealthcoin",
+  "pivx",
   "poswallet",
-  "clubcoin",
-  "bitcoin_testnet",
+  "qtum",
+  "ripple",
+  "stealthcoin",
+  "stratis",
+  "vertcoin",
+  "viacoin",
+  "zcash",
+  "zencash",
 ];
 
-export const listCryptoCurrencies = memoize((withDevCrypto?: boolean) =>
-  listCC(withDevCrypto)
-    .filter(c => supported.includes(c.id))
-    .sort((a, b) => a.name.localeCompare(b.name)),
-);
+export const listCryptoCurrencies = (withDevCrypto?: boolean) =>
+  getFullListSortedCryptoCurrenciesSync().filter(
+    c => supported.includes(c.id) && (withDevCrypto || !c.isTestnetFor),
+  );
 
 export const supportsExistingAccount = ({
   currencyId,
 }: {
   currencyId: string,
 }) => listCryptoCurrencies(true).some(c => c.id === currencyId);
+
+const SHOW_LEGACY_NEW_ACCOUNT = false;
+
+export const shouldShowNewAccount = (
+  currency: CryptoCurrency,
+  derivationMode: DerivationMode,
+) =>
+  derivationMode === ""
+    ? !!SHOW_LEGACY_NEW_ACCOUNT || !currency.supportsSegwit
+    : derivationMode === "segwit";

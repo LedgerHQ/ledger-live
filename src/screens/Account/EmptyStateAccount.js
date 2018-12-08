@@ -1,33 +1,31 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import { View, Image, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import colors from "../../colors";
-import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Receive from "../../icons/Receive";
 
 class EmptyStateAccount extends PureComponent<{
-  t: T,
   account: Account,
   navigation: NavigationScreenProp<*>,
 }> {
   goToReceiveFunds = () => {
-    const { navigation } = this.props;
-    navigation.navigate("ReceiveFundsMain");
+    const { navigation, account } = this.props;
+    navigation.navigate("ReceiveConnectDevice", { accountId: account.id });
   };
 
   render() {
-    const { t, account } = this.props;
+    const { account } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.body}>
           <Image source={require("../../images/EmptyStateAccount.png")} />
           <LText secondary semiBold style={styles.title}>
-            {t("common:account.emptyState.title")}
+            <Trans i18nKey="account.emptyState.title" />
           </LText>
           <LText style={styles.desc}>
             <Trans i18nKey="common:account.emptyState.desc">
@@ -39,8 +37,9 @@ class EmptyStateAccount extends PureComponent<{
             </Trans>
           </LText>
           <Button
+            event="AccountEmptyStateReceive"
             type="primary"
-            title={t("common:account.emptyState.buttons.receiveFunds")}
+            title={<Trans i18nKey="account.emptyState.buttons.receiveFunds" />}
             onPress={this.goToReceiveFunds}
             containerStyle={styles.receiveButton}
             iconLeft={Receive}
@@ -51,7 +50,7 @@ class EmptyStateAccount extends PureComponent<{
   }
 }
 
-export default translate()(EmptyStateAccount);
+export default EmptyStateAccount;
 
 const styles = StyleSheet.create({
   root: {

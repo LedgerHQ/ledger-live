@@ -11,7 +11,7 @@ import CurrencyIcon from "./CurrencyIcon";
 type Props = {
   currency: Currency,
   onPress: Currency => void,
-  style: *,
+  style?: *,
 };
 
 class CurrencyRow extends PureComponent<Props> {

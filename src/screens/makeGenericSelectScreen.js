@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+import { track } from "../analytics";
 import SettingsRow from "../components/SettingsRow";
 
 type EntryProps<Item> = {
@@ -12,7 +13,9 @@ type EntryProps<Item> = {
 type EntryComponent<Item> = React$ComponentType<EntryProps<Item>>;
 
 type Opts<Item> = {
-  title: string,
+  id: string,
+  itemEventProperties: Item => ?Object,
+  title: React$Node,
   keyExtractor: Item => string,
   formatItem?: Item => string,
   Entry?: EntryComponent<Item>,
@@ -50,7 +53,7 @@ const styles = StyleSheet.create({
 });
 
 export default <Item>(opts: Opts<Item>) => {
-  const { title, keyExtractor } = opts;
+  const { id, itemEventProperties, title, keyExtractor } = opts;
   const Entry = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<{
@@ -65,6 +68,7 @@ export default <Item>(opts: Opts<Item>) => {
       const { navigation, onValueChange } = this.props;
       onValueChange(item, this.props);
       navigation.goBack();
+      track(id, itemEventProperties(item));
     };
 
     renderItem = ({ item }: { item: Item }) => (

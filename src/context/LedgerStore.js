@@ -27,7 +27,7 @@ const createLedgerStore = () =>
 export default class LedgerStoreProvider extends Component<
   {
     onInitFinished: () => void,
-    children: (ready: boolean) => *,
+    children: (ready: boolean, store: *) => *,
   },
   {
     store: *,
@@ -71,6 +71,6 @@ export default class LedgerStoreProvider extends Component<
   render() {
     const { children } = this.props;
     const { store, ready } = this.state;
-    return <Provider store={store}>{children(ready)}</Provider>;
+    return <Provider store={store}>{children(ready, store)}</Provider>;
   }
 }

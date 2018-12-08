@@ -7,6 +7,11 @@ export type CurrencySettings = {
   exchange: ?*,
 };
 
+type Privacy = {
+  biometricsType: ?string,
+  biometricsEnabled: boolean,
+};
+
 type SetExchangePairs = (
   Array<{
     from: Currency,
@@ -20,9 +25,18 @@ export const setExchangePairsAction: SetExchangePairs = pairs => ({
   pairs,
 });
 
-export const setAuthSecurity = (authSecurityEnabled: boolean) => ({
-  type: "SETTINGS_SET_AUTH_SECURITY",
-  authSecurityEnabled,
+export const setPrivacy = (privacy: Privacy) => ({
+  type: "SETTINGS_SET_PRIVACY",
+  privacy,
+});
+
+export const disablePrivacy = () => ({
+  type: "SETTINGS_DISABLE_PRIVACY",
+});
+
+export const setPrivacyBiometrics = (enabled: boolean) => ({
+  type: "SETTINGS_SET_PRIVACY_BIOMETRICS",
+  enabled,
 });
 
 export const setCountervalue = (counterValue: string) => ({
@@ -45,9 +59,24 @@ export const setReportErrors = (reportErrorsEnabled: boolean) => ({
   reportErrorsEnabled,
 });
 
+export const setDeveloperMode = (developerModeEnabled: boolean) => ({
+  type: "SETTINGS_SET_DEVELOPER_MODE",
+  developerModeEnabled,
+});
+
 export const setAnalytics = (analyticsEnabled: boolean) => ({
   type: "SETTINGS_SET_ANALYTICS",
   analyticsEnabled,
+});
+
+export const setReadOnlyMode = (enabled: boolean) => ({
+  type: "SETTINGS_SET_READONLY_MODE",
+  enabled,
+});
+
+export const setExperimentalUSBSupport = (enabled: boolean) => ({
+  type: "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
+  enabled,
 });
 
 export const setOrderAccounts = (orderAccounts: string) => ({
@@ -67,4 +96,11 @@ export const updateCurrencySettings = (
   type: "UPDATE_CURRENCY_SETTINGS",
   currencyId,
   patch,
+});
+
+export const completeOnboarding = () => ({
+  type: "SETTINGS_COMPLETE_ONBOARDING",
+});
+export const acceptTradingWarning = () => ({
+  type: "SETTINGS_ACCEPT_TRADING_WARNING",
 });

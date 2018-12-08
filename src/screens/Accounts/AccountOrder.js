@@ -17,7 +17,7 @@ const RefreshAccounts = withNavigationFocus(({ isFocused, isOpened }) => (
   />
 ));
 
-class AddAccount extends PureComponent<{}, { isOpened: boolean }> {
+class AccountOrder extends PureComponent<{}, { isOpened: boolean }> {
   state = {
     isOpened: false,
   };
@@ -29,7 +29,11 @@ class AddAccount extends PureComponent<{}, { isOpened: boolean }> {
   render() {
     const { isOpened } = this.state;
     return (
-      <Touchable style={{ marginHorizontal: 16 }} onPress={this.onPress}>
+      <Touchable
+        event="AccountOrderOpen"
+        style={{ marginHorizontal: 16 }}
+        onPress={this.onPress}
+      >
         <Icon name="sliders" color={colors.grey} size={20} />
         <RefreshAccounts isOpened={isOpened} />
         <AccountOrderModal isOpened={isOpened} onClose={this.onClose} />
@@ -38,4 +42,4 @@ class AddAccount extends PureComponent<{}, { isOpened: boolean }> {
   }
 }
 
-export default AddAccount;
+export default AccountOrder;

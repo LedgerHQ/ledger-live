@@ -2,10 +2,9 @@
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SummaryRow from "./SummaryRow";
-import type { T } from "../../types/common";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
@@ -21,14 +20,13 @@ import colors from "../../colors";
 type Props = {
   account: Account,
   amount: *,
-  t: T,
 };
 
 type State = {
   isModalOpened: boolean,
 };
 
-class SummaryToSection extends PureComponent<Props, State> {
+class SummaryTotalSection extends PureComponent<Props, State> {
   state = {
     isModalOpened: false,
   };
@@ -42,15 +40,15 @@ class SummaryToSection extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, amount, t } = this.props;
+    const { account, amount } = this.props;
     const { isModalOpened } = this.state;
 
     return (
       <Fragment>
         <SummaryRow
-          title={t("send.summary.total")}
+          title={<Trans i18nKey="send.summary.total" />}
           additionalInfo={
-            <Touchable onPress={this.onPress}>
+            <Touchable onPress={this.onPress} event="SummaryTotalInfo">
               <Icon name="info-circle" size={12} color={colors.fog} />
             </Touchable>
           }
@@ -69,26 +67,30 @@ class SummaryToSection extends PureComponent<Props, State> {
                 value={amount}
                 currency={account.currency}
                 showCode
-                before="("
-                after=")"
+                before="≈ "
               />
             </LText>
           </View>
         </SummaryRow>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="SummaryTotalModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <ModalBottomAction
-            title={t("send.summary.infoTotalTitle")}
+            title={<Trans i18nKey="send.summary.infoTotalTitle" />}
             icon={
               <Circle bg={colors.lightLive} size={56}>
                 <Info size={16} color={colors.live} />
               </Circle>
             }
-            description={t("send.summary.infoTotalDesc")}
+            description={<Trans i18nKey="send.summary.infoTotalDesc" />}
             footer={
               <View>
                 <Button
+                  event="SummaryTotalInfoClose"
                   type="primary"
-                  title={t("common.close")}
+                  title={<Trans i18nKey="common.close" />}
                   onPress={this.onRequestClose}
                 />
               </View>
@@ -117,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(SummaryToSection);
+export default SummaryTotalSection;

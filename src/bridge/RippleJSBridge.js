@@ -19,6 +19,12 @@ import {
   getNewAccountPlaceholderName,
 } from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import {
+  NotEnoughBalance,
+  InvalidAddress,
+  FeeNotLoaded,
+  NetworkDown,
+} from "@ledgerhq/live-common/lib/errors";
 import { open } from "../logic/hw";
 import {
   apiForEndpointConfig,
@@ -27,11 +33,7 @@ import {
   parseAPICurrencyObject,
   formatAPICurrencyXRP,
 } from "../api/Ripple";
-import {
-  NotEnoughBalance,
-  FeeNotLoaded,
-  NotEnoughBalanceBecauseDestinationNotCreated,
-} from "../errors";
+import { NotEnoughBalanceBecauseDestinationNotCreated } from "../errors";
 import type { CurrencyBridge, AccountBridge } from "./types";
 import signTransaction from "../logic/hw/signTransaction";
 
@@ -120,6 +122,7 @@ async function signAndBroadcast({
           (a.operations.length > 0
             ? a.operations[0].transactionSequenceNumber
             : 0) + a.pendingOperations.length,
+        extra: {},
       });
     }
   } catch (e) {
@@ -146,7 +149,9 @@ function checkValidRecipient(currency, recipient) {
     bs58check.decode(recipient);
     return Promise.resolve(null);
   } catch (e) {
-    return Promise.reject(e);
+    return Promise.reject(
+      new InvalidAddress("", { currencyName: currency.name }),
+    );
   }
 }
 
@@ -246,6 +251,7 @@ const txToOperation = (account: Account) => ({
     recipients: [destination.address],
     date: new Date(timestamp),
     transactionSequenceNumber: sequence,
+    extra: {},
   };
   return op;
 };
@@ -287,6 +293,20 @@ const recipientIsNew = async (endpointConfig, recipient) => {
   } finally {
     api.disconnect();
   }
+};
+
+// FIXME this could be cleaner
+const remapError = error => {
+  const msg = error.message;
+
+  if (
+    msg.includes("Unable to resolve host") ||
+    msg.includes("Network is down")
+  ) {
+    return new NetworkDown();
+  }
+
+  return error;
 };
 
 const cacheRecipientsNew = {};
@@ -478,7 +498,11 @@ export const accountBridge: AccountBridge<Transaction> = {
           if (finished) return;
 
           if (!info) {
-            // account does not exist, we have nothing to sync
+            // account does not exist, we have nothing to sync but to update the last sync date
+            o.next(a => ({
+              ...a,
+              lastSyncDate: new Date(),
+            }));
             o.complete();
             return;
           }
@@ -488,8 +512,6 @@ export const accountBridge: AccountBridge<Transaction> = {
             !balance.isNaN() && balance.isFinite(),
             `Ripple: invalid balance=${balance.toString()} for address ${freshAddress}`,
           );
-
-          o.next(a => ({ ...a, balance }));
 
           const transactions = await api.getTransactions(freshAddress, {
             minLedgerVersion: Math.max(
@@ -516,6 +538,7 @@ export const accountBridge: AccountBridge<Transaction> = {
             );
             return {
               ...a,
+              balance,
               operations,
               pendingOperations,
               blockHeight: maxLedgerVersion,
@@ -525,7 +548,7 @@ export const accountBridge: AccountBridge<Transaction> = {
 
           o.complete();
         } catch (e) {
-          o.error(e);
+          o.error(remapError(e));
         } finally {
           api.disconnect();
         }
@@ -560,6 +583,8 @@ export const accountBridge: AccountBridge<Transaction> = {
       return {
         serverFee,
       };
+    } catch (e) {
+      throw remapError(e);
     } finally {
       api.disconnect();
     }
@@ -642,7 +667,7 @@ export const accountBridge: AccountBridge<Transaction> = {
         if (t.amount.lt(reserveBaseXRP)) {
           const f = formatAPICurrencyXRP(reserveBaseXRP);
           throw new NotEnoughBalanceBecauseDestinationNotCreated("", {
-            minimalAmount: `${f.currency} ${f.value}`,
+            minimalAmount: `${f.currency} ${BigNumber(f.value).toFixed()}`,
           });
         }
       }

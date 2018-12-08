@@ -3,10 +3,10 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
 import colors from "../colors";
-import LText from "./LText";
-import ErrorIcon from "./ErrorIcon";
+import Touchable from "./Touchable";
+import Close from "../icons/Close";
 import BottomModal from "./BottomModal";
-import TranslatedError from "./TranslatedError";
+import GenericErrorView from "./GenericErrorView";
 
 class GenericErrorButtonModal extends PureComponent<{
   error: ?Error,
@@ -16,22 +16,21 @@ class GenericErrorButtonModal extends PureComponent<{
   render() {
     const { error, onClose, footerButtons } = this.props;
     return (
-      <BottomModal isOpened={!!error} onClose={onClose}>
+      <BottomModal id="ErrorModal" isOpened={!!error} onClose={onClose}>
         {error ? (
           <View style={styles.root}>
-            <View style={styles.body}>
-              <View style={styles.headIcon}>
-                <ErrorIcon error={error} />
-              </View>
-              <LText secondary semiBold style={styles.title}>
-                <TranslatedError error={error} />
-              </LText>
-              <LText style={styles.description}>
-                <TranslatedError error={error} field="description" />
-              </LText>
-            </View>
+            <GenericErrorView error={error} />
             {footerButtons ? (
               <View style={styles.buttonsContainer}>{footerButtons}</View>
+            ) : null}
+            {onClose ? (
+              <Touchable
+                event="BottomModalErrorClose"
+                style={styles.close}
+                onPress={onClose}
+              >
+                <Close color={colors.fog} size={20} />
+              </Touchable>
             ) : null}
           </View>
         ) : null}
@@ -46,25 +45,10 @@ const styles = StyleSheet.create({
     minHeight: 280,
     paddingHorizontal: 20,
   },
-  body: {
-    flexDirection: "column",
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  headIcon: {
-    padding: 10,
-  },
-  title: {
-    paddingVertical: 20,
-    fontSize: 16,
-    color: colors.darkBlue,
-  },
-  description: {
-    fontSize: 14,
-    color: colors.grey,
-    paddingHorizontal: 40,
+  close: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
   buttonsContainer: {
     flexDirection: "row",

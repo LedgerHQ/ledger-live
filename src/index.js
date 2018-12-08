@@ -1,7 +1,7 @@
 // @flow
 import "../shim";
 import "./polyfill"; /* eslint-disable import/first */
-import React, { Component } from "react";
+import React, { Fragment, Component } from "react";
 import { StyleSheet, View } from "react-native";
 // import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
@@ -15,8 +15,6 @@ import ButtonUseTouchable from "./context/ButtonUseTouchable";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import { RootNavigator } from "./navigators";
-import AuthFailedApp from "./components/AuthFailedApp";
-import AuthPendingApp from "./components/AuthPendingApp";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
@@ -24,6 +22,9 @@ import DBSave from "./components/DBSave";
 import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import AppStateListener from "./components/AppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
+import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
+import HookAnalytics from "./analytics/HookAnalytics";
+import HookSentry from "./components/HookSentry";
 
 // useScreens(); // FIXME this is not working properly when using react-native-modal inside Send flow
 
@@ -45,8 +46,6 @@ class App extends Component<*> {
   render() {
     return (
       <View style={styles.root}>
-        <StyledStatusBar />
-
         <DBSave
           dbKey="countervalues"
           throttle={2000}
@@ -84,7 +83,7 @@ class App extends Component<*> {
   }
 }
 
-export default class Root extends Component<{}, {}> {
+export default class Root extends Component<{}, { appState: * }> {
   initTimeout: *;
 
   componentWillUnmount() {
@@ -109,27 +108,26 @@ export default class Root extends Component<{}, {}> {
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
-          {ready =>
+          {(ready, store) =>
             ready ? (
-              <AuthPass>
-                {state =>
-                  state.pending ? (
-                    <AuthPendingApp />
-                  ) : !state.success ? (
-                    <AuthFailedApp />
-                  ) : (
-                    <LocaleProvider>
-                      <BridgeSyncProvider>
-                        <CounterValues.PollingProvider>
-                          <ButtonUseTouchable.Provider value={true}>
+              <Fragment>
+                <StyledStatusBar />
+                <HookSentry />
+                <HookAnalytics store={store} />
+                <AuthPass>
+                  <LocaleProvider>
+                    <BridgeSyncProvider>
+                      <CounterValues.PollingProvider>
+                        <ButtonUseTouchable.Provider value={true}>
+                          <OnboardingContextProvider>
                             <App />
-                          </ButtonUseTouchable.Provider>
-                        </CounterValues.PollingProvider>
-                      </BridgeSyncProvider>
-                    </LocaleProvider>
-                  )
-                }
-              </AuthPass>
+                          </OnboardingContextProvider>
+                        </ButtonUseTouchable.Provider>
+                      </CounterValues.PollingProvider>
+                    </BridgeSyncProvider>
+                  </LocaleProvider>
+                </AuthPass>
+              </Fragment>
             ) : (
               <LoadingApp />
             )

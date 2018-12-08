@@ -1,10 +1,14 @@
 // @flow
 
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import i18next from "i18next";
 import { connect } from "react-redux";
+import Config from "react-native-config";
 import { createStructuredSelector } from "reselect";
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
+import { SafeAreaView } from "react-navigation";
 import { timeout } from "rxjs/operators/timeout";
 import TransportBLE from "../../react-native-hw-transport-ble";
 
@@ -12,8 +16,8 @@ import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
-import genuineCheck from "../../logic/hw/genuineCheck";
-import getDeviceName from "../../logic/hw/getDeviceName";
+import genuineCheck from "../../logic/hw/theRealGenuineCheck";
+import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import colors from "../../colors";
 import RequiresBLE from "../../components/RequiresBLE";
 import PendingContainer from "./PendingContainer";
@@ -45,7 +49,7 @@ type State = {
 
 class PairDevices extends Component<Props, State> {
   static navigationOptions = {
-    title: "Choose your device",
+    title: i18next.t("SelectDevice.title"),
   };
 
   state = {
@@ -77,17 +81,18 @@ class PairDevices extends Component<Props, State> {
     try {
       const transport = await TransportBLE.open(device);
       if (this.unmounted) return;
-      if (__DEV__) transport.setDebugMode(true);
+      if (Config.DEBUG_BLE) transport.setDebugMode(true);
       try {
-        // getDeviceName is a dummy apdu to trigger the pairing before the actual genuine check.
-        // we might still want to use its result to make sure the name is in sync!
-        await getDeviceName(transport);
+        const deviceInfo = await getDeviceInfo(transport);
+        if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
+
         this.setState({ device, status: "genuinecheck" });
-        const observable = genuineCheck(transport).pipe(
+        const observable = genuineCheck(transport, deviceInfo).pipe(
           timeout(GENUINE_CHECK_TIMEOUT),
         );
 
         await observable.toPromise();
+        await TransportBLE.disconnect(device.id);
         if (this.unmounted) return;
         this.props.addKnownDevice(device);
         if (this.unmounted) return;
@@ -125,7 +130,6 @@ class PairDevices extends Component<Props, State> {
           status={status}
           error={error}
           onRetry={this.onRetry}
-          onCancel={this.onDone}
           onBypassGenuine={this.onBypassGenuine}
         />
       );
@@ -142,9 +146,7 @@ class PairDevices extends Component<Props, State> {
         );
 
       case "timedout":
-        return (
-          <ScanningTimeout onRetry={this.onRetry} onCancel={this.onDone} />
-        );
+        return <ScanningTimeout onRetry={this.onRetry} />;
 
       case "pairing":
         return (
@@ -154,15 +156,15 @@ class PairDevices extends Component<Props, State> {
         );
 
       case "genuinecheck":
-        return (
-          <PendingContainer>
-            <PendingGenuineCheck />
-          </PendingContainer>
-        );
+        return <PendingGenuineCheck />;
 
       case "paired":
         return device ? (
-          <Paired deviceId={device.id} onContinue={this.onDone} />
+          <Paired
+            deviceName={device.name}
+            deviceId={device.id}
+            onContinue={this.onDone}
+          />
         ) : null;
 
       default:
@@ -171,18 +173,21 @@ class PairDevices extends Component<Props, State> {
   }
 }
 
+const forceInset = { bottom: "always" };
+
 class Screen extends Component<Props, State> {
   static navigationOptions = {
-    title: "Choose your device",
+    title: i18next.t("SelectDevice.title"),
     headerLeft: null,
   };
 
   render() {
     return (
+      // $FlowFixMe
       <RequiresBLE>
-        <View style={styles.root}>
+        <SafeAreaView forceInset={forceInset} style={styles.root}>
           <PairDevices {...this.props} />
-        </View>
+        </SafeAreaView>
       </RequiresBLE>
     );
   }
@@ -195,7 +200,7 @@ export default connect(
   {
     addKnownDevice,
   },
-)(Screen);
+)(translate()(Screen));
 
 const styles = StyleSheet.create({
   root: {

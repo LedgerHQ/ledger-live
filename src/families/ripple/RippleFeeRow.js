@@ -1,14 +1,15 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { translate } from "react-i18next";
+import { Trans, translate } from "react-i18next";
+
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
-import Touchable from "../../components/Touchable";
 import ExternalLink from "../../icons/ExternalLink";
+import { urls } from "../../config/urls";
 
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
@@ -30,10 +31,14 @@ class RippleFeeRow extends Component<Props> {
       transaction,
     });
   };
-  extraInfoFees = () => {};
+  extraInfoFees = () => {
+    Linking.openURL(urls.feesMoreInfo).catch(err =>
+      console.error("An error occurred", err),
+    );
+  };
 
   render() {
-    const { account, transaction, t } = this.props;
+    const { account, transaction } = this.props;
     const bridge = getAccountBridge(account);
     const fee = bridge.getTransactionExtra(account, transaction, "fee");
     const feeCustomUnit = bridge.getTransactionExtra(
@@ -43,11 +48,12 @@ class RippleFeeRow extends Component<Props> {
     );
     return (
       <SummaryRow
-        title={t("send.fees.title")}
+        onPress={this.extraInfoFees}
+        title={<Trans i18nKey="send.fees.title" />}
         additionalInfo={
-          <Touchable onPress={this.extraInfoFees}>
+          <View>
             <ExternalLink size={12} color={colors.grey} />
-          </Touchable>
+          </View>
         }
       >
         <View style={{ alignItems: "flex-end" }}>
@@ -62,16 +68,11 @@ class RippleFeeRow extends Component<Props> {
             ) : null}
 
             <LText style={styles.link} onPress={this.openFees}>
-              {t("common.edit")}
+              <Trans i18nKey="common.edit" />
             </LText>
           </View>
           <LText style={styles.countervalue}>
-            <CounterValue
-              before="("
-              value={fee}
-              after=")"
-              currency={account.currency}
-            />
+            <CounterValue before="≈ " value={fee} currency={account.currency} />
           </LText>
         </View>
       </SummaryRow>
@@ -79,7 +80,6 @@ class RippleFeeRow extends Component<Props> {
   }
 }
 
-export default translate()(RippleFeeRow);
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,
@@ -105,3 +105,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+export default translate()(RippleFeeRow);

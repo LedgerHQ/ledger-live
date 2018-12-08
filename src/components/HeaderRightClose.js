@@ -12,8 +12,8 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   color: string,
   withConfirmation?: boolean,
-  confirmationTitle?: string | React$ComponentType<*>,
-  confirmationDesc?: string | React$ComponentType<*>,
+  confirmationTitle?: React$Node,
+  confirmationDesc?: React$Node,
 };
 
 type State = {
@@ -72,7 +72,11 @@ class HeaderRightClose extends Component<Props, State> {
     } = this.props;
     const { isConfirmationModalOpened, onModalHide } = this.state;
     return (
-      <Touchable onPress={this.onPress} style={{ marginHorizontal: 16 }}>
+      <Touchable
+        event="HeaderRightClose"
+        onPress={this.onPress}
+        style={{ marginHorizontal: 16 }}
+      >
         <CloseIcon size={18} color={this.props.color} />
         {withConfirmation && (
           <ConfirmationModal

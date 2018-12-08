@@ -27,7 +27,11 @@ class AddAccount extends PureComponent<
     const { navigation } = this.props;
     const { isAddModalOpened } = this.state;
     return (
-      <Touchable style={{ marginHorizontal: 16 }} onPress={this.openAddModal}>
+      <Touchable
+        event="OpenAddAccountModal"
+        style={{ marginHorizontal: 16 }}
+        onPress={this.openAddModal}
+      >
         <Icon name="plus" color={colors.grey} size={20} />
         <AddAccountsModal
           navigation={navigation}

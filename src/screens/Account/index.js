@@ -1,14 +1,17 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { StyleSheet, SectionList, View, Animated } from "react-native";
+import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
+import { translate } from "react-i18next";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
+import { TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
@@ -59,9 +62,16 @@ class AccountScreen extends PureComponent<Props, State> {
 
   keyExtractor = (item: Operation) => item.id;
 
-  renderItem = ({ item }: { item: Operation }) => {
+  renderItem = ({
+    item,
+    index,
+    section,
+  }: {
+    item: Operation,
+    index: number,
+    section: SectionBase<*>,
+  }) => {
     const { account, navigation } = this.props;
-
     if (!account) return null;
 
     return (
@@ -69,6 +79,7 @@ class AccountScreen extends PureComponent<Props, State> {
         operation={item}
         account={account}
         navigation={navigation}
+        isLast={section.data.length - 1 === index}
       />
     );
   };
@@ -143,11 +154,23 @@ class AccountScreen extends PureComponent<Props, State> {
   render() {
     const { account, navigation } = this.props;
     const { opCount } = this.state;
-
     if (!account) return null;
 
+    const analytics = (
+      <TrackScreen
+        category="Account"
+        currency={account.currency.id}
+        operationsSize={account.operations.length}
+      />
+    );
+
     if (isAccountEmpty(account)) {
-      return <EmptyStateAccount account={account} navigation={navigation} />;
+      return (
+        <Fragment>
+          {analytics}
+          <EmptyStateAccount account={account} navigation={navigation} />
+        </Fragment>
+      );
     }
 
     const { sections, completed } = groupAccountOperationsByDay(
@@ -157,6 +180,7 @@ class AccountScreen extends PureComponent<Props, State> {
 
     return (
       <View style={styles.root}>
+        {analytics}
         <List
           ref={this.ref}
           sections={sections}
@@ -190,6 +214,7 @@ export default compose(
     }),
   ),
   provideSummary,
+  translate(),
 )(AccountScreen);
 
 const styles = StyleSheet.create({
@@ -209,6 +234,7 @@ const styles = StyleSheet.create({
   },
   balanceText: {
     fontSize: 22,
+    paddingBottom: 4,
     color: colors.darkBlue,
   },
   balanceSubText: {

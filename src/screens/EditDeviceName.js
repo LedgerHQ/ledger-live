@@ -2,20 +2,22 @@
 
 import React, { PureComponent } from "react";
 import { Buffer } from "buffer";
-import { TextInput, View, StyleSheet } from "react-native";
+import { Keyboard, View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import { translate } from "react-i18next";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { translate, Trans } from "react-i18next";
+import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
-import { open } from "../logic/hw";
-import editDeviceName from "../logic/hw/editDeviceName";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import colors from "../colors";
+import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
+import TextInput from "../components/TextInput";
 import LText, { getFontStyle } from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
 import KeyboardView from "../components/KeyboardView";
-import colors from "../colors";
-import { deviceNameByNavigationDeviceIdSelector } from "../reducers/ble";
+import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
+import DeviceJob from "../components/DeviceJob";
 import { saveBleDeviceName } from "../actions/ble";
 
 const MAX_DEVICE_NAME = 32;
@@ -31,29 +33,38 @@ class FooterError extends PureComponent<{ error: Error }> {
     );
   }
 }
+const mapDispatchToProps = {
+  saveBleDeviceName,
+};
 
 class EditDeviceName extends PureComponent<
   {
-    navigation: NavigationScreenProp<*>,
+    navigation: NavigationScreenProp<{
+      params: {
+        deviceId: string,
+        deviceName: string,
+      },
+    }>,
+    deviceName: string,
     saveBleDeviceName: (string, string) => *,
-    name: string,
-    t: *,
   },
   {
     name: string,
     error: ?Error,
+    connecting: boolean,
   },
 > {
   static navigationOptions = {
-    title: "Edit Device Name",
+    title: i18next.t("EditDeviceName.title"),
     headerLeft: null,
   };
 
-  initialName = this.props.name;
+  initialName = this.props.navigation.getParam("deviceName");
 
   state = {
-    name: this.props.name,
+    name: this.initialName,
     error: null,
+    connecting: false,
   };
 
   onChangeText = (name: string) => {
@@ -62,82 +73,103 @@ class EditDeviceName extends PureComponent<
 
   onSubmit = async () => {
     const { name } = this.state;
-    const deviceId = this.props.navigation.getParam("deviceId");
     if (this.initialName !== name) {
-      try {
-        const transport = await open(deviceId);
-        await editDeviceName(transport, name);
-        transport.close();
-        this.props.saveBleDeviceName(deviceId, name);
-      } catch (error) {
-        console.warn(error);
-        this.setState({ error });
-        return;
-      }
+      Keyboard.dismiss();
+      setTimeout(() => this.setState({ connecting: true }), 800);
+    } else {
+      this.props.navigation.goBack();
     }
+  };
+
+  onCancel = () => {
+    this.setState({ connecting: false });
+  };
+
+  onDone = () => {
+    const { saveBleDeviceName, navigation } = this.props;
+    saveBleDeviceName(navigation.getParam("deviceId"), this.state.name);
     this.props.navigation.goBack();
   };
 
   render() {
-    const { name, error } = this.state;
-    const { t } = this.props;
+    const { name, error, connecting } = this.state;
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
     const remainingCount = MAX_DEVICE_NAME - Buffer.from(name).length;
     return (
-      <KeyboardView style={styles.root}>
-        <View style={styles.body}>
-          <TextInput
-            value={name}
-            onChangeText={this.onChangeText}
-            maxLength={MAX_DEVICE_NAME}
-            autoFocus
-            autoCorrect
-            selectTextOnFocus
-            clearButtonMode="always"
-            placeholder={t("EditDeviceName.placeholder")}
-            returnKeyType="done"
-            style={[getFontStyle({ semiBold: true }), styles.input]}
+      <SafeAreaView style={styles.safearea}>
+        <TrackScreen category="EditDeviceName" />
+        <KeyboardView style={styles.root}>
+          <View style={styles.body}>
+            <TextInput
+              value={name}
+              onChangeText={this.onChangeText}
+              maxLength={MAX_DEVICE_NAME}
+              autoFocus
+              selectTextOnFocus
+              blurOnSubmit={false}
+              clearButtonMode="always"
+              placeholder="Satoshi Nakamoto"
+              style={[getFontStyle({ semiBold: true }), styles.input]}
+            />
+            <LText style={styles.remainingText}>
+              <Trans
+                i18nKey="EditDeviceName.charactersRemaining"
+                values={{ remainingCount }}
+              />
+            </LText>
+          </View>
+          <View style={styles.footer}>
+            {error ? <FooterError error={error} /> : null}
+            <Button
+              event="EditDeviceNameSubmit"
+              type="primary"
+              title={<Trans i18nKey="EditDeviceName.action" />}
+              onPress={this.onSubmit}
+            />
+          </View>
+
+          <DeviceJob
+            deviceName={name}
+            deviceId={connecting ? deviceId : null}
+            onCancel={this.onCancel}
+            onDone={this.onDone}
+            steps={[connectingStep, editDeviceName(name)]}
           />
-          <LText style={styles.remainingText}>
-            {t("EditDeviceName.charactersRemaining", { remainingCount })}
-          </LText>
-        </View>
-        <View style={styles.footer}>
-          {error ? <FooterError error={error} /> : null}
-          <Button
-            type="primary"
-            title={t("EditDeviceName.action")}
-            onPress={this.onSubmit}
-          />
-        </View>
-      </KeyboardView>
+        </KeyboardView>
+      </SafeAreaView>
     );
   }
 }
 
-export default connect(
-  createStructuredSelector({
-    name: deviceNameByNavigationDeviceIdSelector,
-  }),
-  {
-    saveBleDeviceName,
-  },
-)(translate()(EditDeviceName));
+export default compose(
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
+  translate(),
+)(EditDeviceName);
 
 const styles = StyleSheet.create({
+  safearea: {
+    backgroundColor: colors.white,
+    flex: 1,
+  },
   root: {
     flex: 1,
   },
   body: {
     flex: 1,
-    padding: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
   },
   input: {
-    fontSize: 22,
+    fontSize: 24,
   },
   remainingText: {
     color: colors.grey,
     fontSize: 14,
-    marginTop: 4,
+    marginTop: 10,
   },
   error: {
     alignSelf: "center",

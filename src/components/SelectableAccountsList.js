@@ -1,9 +1,11 @@
 // @flow
 
 import React, { PureComponent, Component } from "react";
+import { Trans } from "react-i18next";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { track } from "../analytics";
 import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
 import LText from "./LText";
@@ -25,7 +27,7 @@ type ListProps = {
   isDisabled?: boolean,
   forceSelected?: boolean,
   EmptyState?: React$ComponentType<*>,
-  header: string,
+  header: React$Node,
   style?: *,
 };
 
@@ -37,11 +39,13 @@ class SelectableAccountsList extends Component<ListProps> {
 
   onSelectAll = () => {
     const { onSelectAll, accounts } = this.props;
+    track("SelectAllAccounts");
     onSelectAll && onSelectAll(accounts);
   };
 
   onUnselectAll = () => {
     const { onUnselectAll, accounts } = this.props;
+    track("UnselectAllAccounts");
     onUnselectAll && onUnselectAll(accounts);
   };
 
@@ -91,7 +95,8 @@ class SelectableAccount extends PureComponent<{
   isSelected?: boolean,
 }> {
   onPress = () => {
-    const { onPress, account } = this.props;
+    const { onPress, account, isSelected } = this.props;
+    track(isSelected ? "UnselectAccount" : "SelectAccount");
     if (onPress) onPress(account);
   };
 
@@ -123,7 +128,7 @@ class SelectableAccount extends PureComponent<{
 }
 
 class Header extends PureComponent<{
-  text: string,
+  text: React$Node,
   areAllSelected: boolean,
   onSelectAll?: () => void,
   onUnselectAll?: () => void,
@@ -143,7 +148,11 @@ class Header extends PureComponent<{
             hitSlop={selectAllHitSlop}
           >
             <LText style={styles.headerSelectAllText}>
-              {areAllSelected ? "Deselect all" : "Select all"}
+              {areAllSelected ? (
+                <Trans i18nKey="selectableAccountsList.deselectAll" />
+              ) : (
+                <Trans i18nKey="selectableAccountsList.selectAll" />
+              )}
             </LText>
           </TouchableOpacity>
         )}

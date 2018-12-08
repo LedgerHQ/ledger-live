@@ -4,6 +4,7 @@
 
 import React, { Component } from "react";
 import { PermissionsAndroid } from "react-native";
+import { Trans } from "react-i18next";
 import LocationRequired from "../../screens/LocationRequired";
 
 const permission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
@@ -26,9 +27,8 @@ export default class RequiresBLE extends Component<
 
   request = async () => {
     const result = await PermissionsAndroid.request(permission, {
-      title: "Location is required for Bluetooth LE",
-      message:
-        "On Android, location permission is required to be able to list Bluetooth LE devices.",
+      title: <Trans i18nKey="bluetooth.locationRequiredTitle" />,
+      message: <Trans i18nKey="bluetooth.locationRequiredMessage" />,
     });
 
     this.setState({ granted: result === PermissionsAndroid.RESULTS.GRANTED });

@@ -33,6 +33,8 @@ export default (opts: Opts) => {
 
     static list = () => Promise.resolve([]);
 
+    static disconnect = (_id: string) => {};
+
     static listen(observer: *) {
       return Observable.create(observer => {
         let timeout;

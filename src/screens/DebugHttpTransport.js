@@ -7,9 +7,9 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
-  SafeAreaView,
 } from "react-native";
 import { connect } from "react-redux";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { addKnownDevice } from "../actions/ble";
 import colors from "../colors";
@@ -65,7 +65,6 @@ class DebugHttpTransport extends Component<
                 autoFocus
                 autoCorrect
                 selectTextOnFocus
-                keyboardType="numeric"
                 clearButtonMode="always"
                 placeholder="192.168.0.1"
                 returnKeyType="done"
@@ -73,6 +72,7 @@ class DebugHttpTransport extends Component<
               />
               <View style={styles.buttonContainer}>
                 <Button
+                  event="DebugHttpTransportAdd"
                   type="primary"
                   title="Add"
                   containerStyle={styles.continueButton}

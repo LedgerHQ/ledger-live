@@ -14,9 +14,11 @@ class PoweredByLedger extends Component<{
     const { t } = this.props;
     return (
       <View style={styles.container}>
-        <LText style={styles.textStyle}>{t("common.poweredBy")}</LText>
+        <LText secondary semiBold style={styles.textStyle}>
+          {t("common.poweredBy")}
+        </LText>
         <View style={styles.iconStyle}>
-          <LedgerLogoRec height={17} width={68} color={colors.darkBlue} />
+          <LedgerLogoRec height={17} width={68} color={colors.grey} />
         </View>
       </View>
     );
@@ -25,13 +27,14 @@ class PoweredByLedger extends Component<{
 
 const styles = StyleSheet.create({
   container: {
+    paddingVertical: 20,
     flexDirection: "row",
     justifyContent: "center",
   },
   textStyle: {
-    opacity: 0.3,
     justifyContent: "center",
-    color: colors.darkBlue,
+    color: colors.grey,
+    fontSize: 12,
   },
   iconStyle: {
     marginLeft: 5,

@@ -1,22 +1,19 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { View, Linking, StyleSheet } from "react-native";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 import ExternalLink from "../../../icons/ExternalLink";
 
-class TermsConditionsRow extends PureComponent<{
-  t: T,
-}> {
+class TermsConditionsRow extends PureComponent<*> {
   render() {
-    const { t } = this.props;
     return (
       <SettingsRow
-        title={t("settings.about.termsConditions")}
-        desc={t("settings.about.termsConditionsDesc")}
+        event="TermsConditionsRow"
+        title={<Trans i18nKey="settings.about.termsConditions" />}
+        desc={<Trans i18nKey="settings.about.termsConditionsDesc" />}
         onPress={() =>
           Linking.openURL(urls.terms).catch(err =>
             console.error("An error occurred", err),
@@ -36,4 +33,4 @@ const styles = StyleSheet.create({
   externalLinkContainer: { marginHorizontal: 10 },
 });
 
-export default translate()(TermsConditionsRow);
+export default TermsConditionsRow;

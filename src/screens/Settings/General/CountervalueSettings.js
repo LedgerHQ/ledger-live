@@ -1,6 +1,7 @@
 /* @flow */
 import { connect } from "react-redux";
 import { listFiatCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import i18next from "i18next";
 import { setCountervalue } from "../../../actions/settings";
 import { counterValueCurrencySelector } from "../../../reducers/settings";
 import type { State } from "../../../reducers";
@@ -20,7 +21,9 @@ const mapDispatchToProps = {
 };
 
 const Screen = makeGenericSelectScreen({
-  title: "Countervalue",
+  id: "CounterValueSettingsSelect",
+  itemEventProperties: item => ({ countervalue: item.value }),
+  title: i18next.t("settings.display.counterValue"),
   keyExtractor: item => item.value,
   formatItem: item => item.label,
 });

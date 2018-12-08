@@ -1,14 +1,16 @@
 // @flow
 import React, { Component } from "react";
 import {
-  SafeAreaView,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
+import i18next from "i18next";
+import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -35,28 +37,57 @@ type Props = {
 };
 type State = {
   feePerByte: ?BigNumber,
+  focusedItemKey: string,
 };
 
 class BitcoinEditFeePerByte extends Component<Props, State> {
   static navigationOptions = {
-    title: "Edit fees",
+    title: i18next.t("transfer.fees.title"),
   };
+
+  items: Array<*>;
 
   constructor({ account, navigation }) {
     super();
     const bridge = getAccountBridge(account);
-    const transaction = navigation.getParam("transaction");
+    const transaction: Transaction = navigation.getParam("transaction");
+
+    this.items = transaction.networkInfo
+      ? transaction.networkInfo.feeItems.items
+      : [];
+
+    const feePerByte = bridge.getTransactionExtra(
+      account,
+      transaction,
+      "feePerByte",
+    );
+
+    const selectedItem =
+      feePerByte &&
+      this.items.find(
+        item => item.feePerByte && item.feePerByte.eq(feePerByte),
+      );
+
+    const focusedItemKey = selectedItem ? selectedItem.key : "custom";
+
     this.state = {
       feePerByte: bridge.getTransactionExtra(
         account,
         transaction,
         "feePerByte",
       ),
+      focusedItemKey,
     };
   }
 
-  onChangeFeePerByte = (feePerByte: ?BigNumber) =>
-    this.setState({ feePerByte });
+  onChangeCustomFeeRow = (feePerByte: BigNumber) => {
+    this.setState({ feePerByte, focusedItemKey: "custom" });
+  };
+
+  onChangeFeeRow = (feePerByte: ?BigNumber, key: string) => {
+    this.setState({ feePerByte, focusedItemKey: key });
+    Keyboard.dismiss();
+  };
 
   onValidateFees = () => {
     const { navigation, account } = this.props;
@@ -78,40 +109,36 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const { feePerByte } = this.state;
+    const { feePerByte, focusedItemKey } = this.state;
     const transaction: Transaction = navigation.getParam("transaction");
     if (!transaction) return null;
-    const items = transaction.networkInfo
-      ? transaction.networkInfo.feeItems.items
-      : [];
-    const selectedItem =
-      feePerByte &&
-      items.find(item => item.feePerByte && item.feePerByte.eq(feePerByte));
-    const selectedKey = selectedItem ? selectedItem.key : "custom";
+
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ flex: 1 }}>
-              {items.map(item => (
+              {this.items.map(item => (
                 <FeesRow
                   key={item.key}
+                  itemKey={item.key}
                   title={item.label}
                   value={item.feePerByte}
-                  isSelected={item.key === selectedKey}
-                  onPress={this.onChangeFeePerByte}
+                  isSelected={item.key === focusedItemKey}
+                  onPress={this.onChangeFeeRow}
                 />
               ))}
               <CustomFeesRow
                 title={<Trans i18nKey="fees.speed.custom" />}
                 initialValue={feePerByte}
-                onPress={this.onChangeFeePerByte}
-                isSelected={selectedKey === "custom"}
+                onPress={this.onChangeCustomFeeRow}
+                isSelected={focusedItemKey === "custom"}
               />
               <View style={styles.buttonContainer}>
                 <Button
+                  event="BitcoinEditFeePerByteContinue"
                   type="primary"
-                  title="Validate Fees"
+                  title={<Trans i18nKey="send.fees.validate" />}
                   containerStyle={styles.continueButton}
                   onPress={this.onValidateFees}
                 />
@@ -146,4 +173,7 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(translate()(BitcoinEditFeePerByte));
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(BitcoinEditFeePerByte);

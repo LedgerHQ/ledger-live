@@ -4,7 +4,7 @@ import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Dimensions, Platform } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
@@ -21,16 +21,15 @@ import Pills from "./Pills";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import Placeholder from "./Placeholder";
 
 import type { Item } from "./Graph";
-import type { T } from "../types/common";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
 };
 
 type Props = {
-  t: T,
   summary: Summary,
   setSelectedTimeRange: string => void,
   useCounterValue?: boolean,
@@ -47,9 +46,9 @@ class GraphCard extends PureComponent<Props, State> {
   };
 
   timeRangeItems = [
-    { key: "week", label: this.props.t("common:time.week") },
-    { key: "month", label: this.props.t("common:time.month") },
-    { key: "year", label: this.props.t("common:time.year") },
+    { key: "week", label: <Trans i18nKey="common:time.week" /> },
+    { key: "month", label: <Trans i18nKey="common:time.month" /> },
+    { key: "year", label: <Trans i18nKey="common:time.year" /> },
   ];
 
   onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
@@ -60,6 +59,7 @@ class GraphCard extends PureComponent<Props, State> {
     const { summary, renderTitle, useCounterValue } = this.props;
 
     const {
+      isAvailable,
       accounts,
       balanceHistory,
       balanceStart,
@@ -76,6 +76,7 @@ class GraphCard extends PureComponent<Props, State> {
     return (
       <Card style={styles.root}>
         <GraphCardHeader
+          isLoading={!isAvailable}
           from={balanceStart}
           to={balanceEnd}
           hoveredItem={hoveredItem}
@@ -83,16 +84,18 @@ class GraphCard extends PureComponent<Props, State> {
           renderTitle={renderTitle}
         />
         <Graph
-          isInteractive
+          isInteractive={isAvailable}
+          isLoading={!isAvailable}
           height={100}
           width={Dimensions.get("window").width - 40}
-          color={graphColor}
+          color={isAvailable ? graphColor : colors.grey}
           data={balanceHistory}
           onItemHover={this.onItemHover}
           useCounterValue={useCounterValue}
         />
         <View style={styles.pillsContainer}>
           <Pills
+            isDisabled={!isAvailable}
             value={selectedTimeRange}
             onChange={this.onTimeRangeChange}
             items={this.timeRangeItems}
@@ -104,6 +107,7 @@ class GraphCard extends PureComponent<Props, State> {
 }
 
 class GraphCardHeader extends PureComponent<{
+  isLoading: boolean,
   from: Item,
   to: Item,
   unit: Unit,
@@ -111,12 +115,14 @@ class GraphCardHeader extends PureComponent<{
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 }> {
   render() {
-    const { unit, from, to, hoveredItem, renderTitle } = this.props;
+    const { unit, from, to, hoveredItem, renderTitle, isLoading } = this.props;
     const item = hoveredItem || to;
     return (
       <Fragment>
         <View style={styles.balanceTextContainer}>
-          {renderTitle ? (
+          {isLoading ? (
+            <Placeholder width={228} containerHeight={27} />
+          ) : renderTitle ? (
             renderTitle({ counterValueUnit: unit, item })
           ) : (
             <LText tertiary style={styles.balanceText}>
@@ -125,7 +131,16 @@ class GraphCardHeader extends PureComponent<{
           )}
         </View>
         <View style={styles.subtitleContainer}>
-          {hoveredItem ? (
+          {isLoading ? (
+            <Fragment>
+              <Placeholder
+                width={50}
+                containerHeight={19}
+                style={{ marginRight: 10 }}
+              />
+              <Placeholder width={50} containerHeight={19} />
+            </Fragment>
+          ) : hoveredItem ? (
             <LText>
               <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
             </LText>
@@ -167,6 +182,7 @@ const styles = StyleSheet.create({
   balanceTextContainer: {
     marginBottom: 5,
     alignItems: "center",
+    justifyContent: "center",
   },
   balanceText: {
     fontSize: 22,
@@ -175,6 +191,7 @@ const styles = StyleSheet.create({
   subtitleContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
   pillsContainer: {
@@ -191,5 +208,4 @@ export default compose(
     null,
     mapDispatchToProps,
   ),
-  translate(),
 )(GraphCard);

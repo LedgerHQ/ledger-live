@@ -1,35 +1,28 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
+import { Trans } from "react-i18next";
 import colors from "../../../colors";
-import type { T } from "../../../types/common";
 import LText from "../../../components/LText";
-import LedgerLiveLogo from "../../../components/LedgerLiveLogo";
-import LiveLogo from "../../../icons/LiveLogo";
+import { deviceNames } from "../../../wording";
 
-class DescriptionRow extends PureComponent<{
-  t: T,
-}> {
+class DescriptionRow extends PureComponent<*> {
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.descriptionContainer}>
-        <LedgerLiveLogo
-          width={62}
-          height={62}
-          icon={<LiveLogo size={42} color={colors.live} />}
-        />
-
+        <Image source={require("../../../images/logo_small.png")} />
         <LText style={styles.description}>
-          {t("settings.about.appDescription")}
+          <Trans
+            i18nKey="settings.about.appDescription"
+            values={deviceNames.nanoX}
+          />
         </LText>
       </View>
     );
   }
 }
 
-export default translate()(DescriptionRow);
+export default DescriptionRow;
 
 const styles = StyleSheet.create({
   descriptionContainer: {

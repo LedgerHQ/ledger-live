@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import LText from "./LText";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
+import { track } from "../analytics";
 
 import colors from "../colors";
 
@@ -19,7 +20,12 @@ const BUTTON_HEIGHT = 48;
 const ANIM_OFFSET = 20;
 const ANIM_DURATION = 300;
 
-type ButtonType = "primary" | "secondary" | "tertiary" | "alert";
+type ButtonType =
+  | "primary"
+  | "secondary"
+  | "lightSecondary"
+  | "tertiary"
+  | "alert";
 
 type BaseProps = {
   type: ButtonType,
@@ -29,11 +35,14 @@ type BaseProps = {
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
   onPress?: () => ?Promise<any> | any,
   // text of the button
-  title: React$Node,
+  title?: React$Node,
   containerStyle?: *,
   titleStyle?: *,
   IconLeft?: *,
   disabled?: boolean,
+  // for analytics
+  event: string,
+  eventProperties?: Object,
 };
 
 type Props = BaseProps & {
@@ -70,10 +79,14 @@ class Button extends PureComponent<
   }
 
   onPress = async () => {
-    if (!this.props.onPress) return;
+    const { onPress, event, eventProperties } = this.props;
+    if (!onPress) return;
+    if (event) {
+      track(event, eventProperties);
+    }
     let isPromise;
     try {
-      const res = this.props.onPress();
+      const res = onPress();
       isPromise = !!res && !!res.then;
       if (isPromise) {
         // it's a promise, we will use pending/spinnerOn state
@@ -125,6 +138,12 @@ class Button extends PureComponent<
       containerStyle,
       ...otherProps
     } = this.props;
+
+    if (__DEV__ && "style" in otherProps) {
+      console.warn(
+        "Button props 'style' must not be used. Use 'containerStyle' instead.",
+      );
+    }
 
     const { pending, anim } = this.state;
     const isDisabled = disabled || !onPress || pending;
@@ -181,7 +200,11 @@ class Button extends PureComponent<
       },
     ];
 
-    const Container = useTouchable ? TouchableOpacity : RectButton;
+    const Container = useTouchable
+      ? disabled
+        ? View
+        : TouchableOpacity
+      : RectButton;
     const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
 
     return (
@@ -196,13 +219,16 @@ class Button extends PureComponent<
 
         <Animated.View style={titleSliderStyle}>
           {IconLeft ? (
-            <View style={{ marginRight: 10 }}>
+            <View style={title ? { marginRight: 10 } : {}}>
               <IconLeft size={16} color={iconColor} />
             </View>
           ) : null}
-          <LText secondary semiBold style={textStyle}>
-            {title}
-          </LText>
+
+          {title ? (
+            <LText secondary semiBold style={textStyle}>
+              {title}
+            </LText>
+          ) : null}
         </Animated.View>
 
         <Animated.View style={spinnerSliderStyle}>
@@ -242,7 +268,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderRadius: 4,
   },
 
@@ -254,6 +280,9 @@ const styles = StyleSheet.create({
   secondaryContainer: { backgroundColor: "transparent" },
   secondaryTitle: { color: colors.grey },
   secondaryOutlineBorder: { borderColor: colors.fog },
+
+  lightSecondaryContainer: { backgroundColor: "transparent" },
+  lightSecondaryTitle: { color: colors.live },
 
   tertiaryContainer: { backgroundColor: "transparent" },
   tertiaryTitle: { color: colors.live },

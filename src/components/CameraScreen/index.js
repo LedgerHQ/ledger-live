@@ -1,11 +1,14 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import liveCommonPkg from "@ledgerhq/live-common/package.json";
 import { StyleSheet, View } from "react-native";
+import { translate } from "react-i18next";
 
 import colors, { rgba } from "../../colors";
 import QRCodeTopLayer from "./QRCodeTopLayer";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
 import QRCodeRectangleViewport from "./QRCodeRectangleViewport";
+import LText from "../LText";
 
 type Props = {
   width: number,
@@ -34,12 +37,13 @@ class CameraScreen extends PureComponent<Props> {
           viewFinderSize={viewFinderSize}
           progress={progress}
         />
+        <LText style={styles.version}>{liveCommonPkg.version}</LText>
       </View>
     );
   }
 }
 
-export default CameraScreen;
+export default translate()(CameraScreen);
 
 const styles = StyleSheet.create({
   camera: {
@@ -88,9 +92,19 @@ const styles = StyleSheet.create({
   },
   topCell: {
     paddingTop: 64,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   progressText: {
     color: colors.white,
     fontSize: 16,
+  },
+  version: {
+    fontSize: 10,
+    color: colors.white,
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    opacity: 0.4,
   },
 });

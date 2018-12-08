@@ -13,7 +13,9 @@ import Config from "react-native-config";
 import BluetoothTransport from "../../react-native-hw-transport-ble";
 
 const observables = [];
+const usbObservables = [];
 const openHandlers: Array<(string) => ?Promise<Transport<*>>> = [];
+const disconnectHandlers: Array<(string) => ?Promise<void>> = [];
 
 // Add support of HID
 const hidObservable = Observable.create(o => HIDTransport.listen(o)).pipe(
@@ -31,7 +33,14 @@ openHandlers.push(id => {
   }
   return null;
 });
-observables.push(hidObservable);
+disconnectHandlers.push(
+  id =>
+    id.startsWith("usb|")
+      ? Promise.resolve() // nothing to do
+      : null,
+);
+
+usbObservables.push(hidObservable);
 
 // Add dev mode support of an http proxy
 let DebugHttpProxy;
@@ -51,28 +60,40 @@ if (__DEV__ && Config.DEBUG_COMM_HTTP_PROXY) {
   DebugHttpProxy = withStaticURLs([]);
 }
 
-openHandlers.push(id => {
-  if (id.startsWith("httpdebug|")) {
-    // $FlowFixMe wtf
-    return DebugHttpProxy.open(id.slice(10));
-  }
-  return null;
-});
+openHandlers.push(
+  id =>
+    id.startsWith("httpdebug|")
+      ? // $FlowFixMe wtf
+        DebugHttpProxy.open(id.slice(10))
+      : null,
+);
+disconnectHandlers.push(
+  id =>
+    id.startsWith("httpdebug|")
+      ? Promise.resolve() // nothing to do
+      : null,
+);
 
-export const devicesObservable: Observable<{
+export const getDevicesObservable = ({
+  usb,
+}: {
+  usb: boolean,
+}): Observable<{
   type: string,
   id: string,
   name: string,
-}> = merge(
-  ...observables.map(o =>
-    o.pipe(
-      catchError(e => {
-        console.warn(`One Transport provider failed: ${e}`);
-        return empty();
-      }),
+}> =>
+  merge(
+    ...(usb ? usbObservables : []),
+    ...observables.map(o =>
+      o.pipe(
+        catchError(e => {
+          console.warn(`One Transport provider failed: ${e}`);
+          return empty();
+        }),
+      ),
     ),
-  ),
-);
+  );
 
 // Add support of BLE
 // it is always the fallback choice because we always keep raw id in it.
@@ -81,12 +102,37 @@ openHandlers.push(id =>
   // $FlowFixMe subtyping god help me
   BluetoothTransport.open(id),
 );
+disconnectHandlers.push(id =>
+  // $FlowFixMe subtyping god help me
+  BluetoothTransport.disconnect(id),
+);
 
 export const open = (deviceId: string): Promise<Transport<*>> => {
   for (let i = 0; i < openHandlers.length; i++) {
     const open = openHandlers[i];
     const p = open(deviceId);
-    if (p) return p;
+    if (p) {
+      if (__DEV__) {
+        return p.then(p => {
+          p.setDebugMode(true);
+          return p;
+        });
+      }
+      return p;
+    }
   }
   return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));
+};
+
+export const disconnect = (deviceId: string): Promise<void> => {
+  for (let i = 0; i < disconnectHandlers.length; i++) {
+    const dis = disconnectHandlers[i];
+    const p = dis(deviceId);
+    if (p) {
+      return p;
+    }
+  }
+  return Promise.reject(
+    new Error(`Can't find handler to disconnect ${deviceId}`),
+  );
 };

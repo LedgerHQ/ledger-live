@@ -6,9 +6,9 @@ import {
   Animated,
   View,
   TouchableWithoutFeedback,
-  SafeAreaView,
   Platform,
 } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 import type { Summary } from "../../components/provideSummary";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";

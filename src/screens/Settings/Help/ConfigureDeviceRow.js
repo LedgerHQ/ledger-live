@@ -1,22 +1,30 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
+import { withOnboardingContext } from "../../Onboarding/onboardingContext";
+import type { OnboardingStepProps } from "../../Onboarding/types";
 
-class ConfigureDeviceRow extends PureComponent<{
-  t: T,
-}> {
+class ConfigureDeviceRow extends PureComponent<OnboardingStepProps> {
+  onPress = async () => {
+    this.props.setShowWelcome(false);
+    this.props.navigation.navigate("OnboardingStepGetStarted", {
+      goingBackToScreen: "HelpSettings",
+    });
+  };
+
   render() {
-    const { t } = this.props;
     return (
       <SettingsRow
-        title={t("settings.help.configureDevice")}
-        desc={t("settings.help.configureDeviceDesc")}
-        onPress={null}
+        event="ConfigureDeviceRow"
+        title={<Trans i18nKey="settings.help.configureDevice" />}
+        desc={<Trans i18nKey="settings.help.configureDeviceDesc" />}
+        arrowRight
+        onPress={this.onPress}
+        alignedTop
       />
     );
   }
 }
 
-export default translate()(ConfigureDeviceRow);
+export default withOnboardingContext(ConfigureDeviceRow);

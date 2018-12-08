@@ -7,6 +7,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { translate } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../bridge";
+import { getFieldByFamily, editTxFeeByFamily } from "./helpers";
 import type { T } from "../types/common";
 import SettingsRow from "../components/SettingsRow";
 import LText from "../components/LText";
@@ -21,33 +22,40 @@ type Props = {
   account: Account,
   t: T,
   navigation: NavigationScreenProp<*>,
+  field: string,
 };
 
 type State = {
   fee: ?BigNumber,
   isModalOpened: boolean,
+  isValid: boolean,
 };
 
 class EditFeeUnit extends PureComponent<Props, State> {
-  constructor({ account, navigation }) {
+  constructor({ account, navigation, field }) {
     super();
-    const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
     this.state = {
-      fee: bridge.getTransactionExtra(account, transaction, "fee"),
+      fee: getFieldByFamily(account, navigation, field),
       isModalOpened: false,
+      isValid: true,
     };
   }
 
   onRequestClose = () => {
     this.setState({ isModalOpened: false });
   };
+
   onPress = () => {
     this.setState({ isModalOpened: true });
   };
 
   keyExtractor = (item: any) => item.code;
-  onChange = (fee: ?BigNumber) => this.setState({ fee });
+
+  onChange = (fee: ?BigNumber) => {
+    fee && fee.isZero()
+      ? this.setState({ fee, isValid: false })
+      : this.setState({ fee, isValid: true });
+  };
 
   updateTransaction = (item: any) => {
     const { account, navigation } = this.props;
@@ -61,29 +69,23 @@ class EditFeeUnit extends PureComponent<Props, State> {
         item,
       ),
     });
+    this.onRequestClose();
   };
 
   onValidateFees = () => {
-    const { navigation, account } = this.props;
+    const { navigation, account, field } = this.props;
     const { fee } = this.state;
-    const bridge = getAccountBridge(account);
-    const transaction = navigation.getParam("transaction");
     Keyboard.dismiss();
 
     navigation.navigate("SendSummary", {
       accountId: account.id,
-      transaction: bridge.editTransactionExtra(
-        account,
-        transaction,
-        "fee",
-        fee,
-      ),
+      transaction: editTxFeeByFamily(account, navigation, field, fee),
     });
   };
 
   render() {
     const { account, t, navigation } = this.props;
-    const { isModalOpened, fee } = this.state;
+    const { isModalOpened, fee, isValid } = this.state;
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
     const feeCustomUnit =
@@ -94,12 +96,17 @@ class EditFeeUnit extends PureComponent<Props, State> {
         <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <CurrencyInput
+              style={{ flex: 1 }}
               autoFocus
               unit={feeCustomUnit}
               value={fee}
               onChange={this.onChange}
             />
-            <Touchable onPress={this.onPress} style={styles.unitContainer}>
+            <Touchable
+              event="EditFeeUnitOpen"
+              onPress={this.onPress}
+              style={styles.unitContainer}
+            >
               <View style={styles.unitSelectRow}>
                 <LText secondary semiBold style={styles.unitStyle}>
                   {feeCustomUnit.code}
@@ -112,19 +119,26 @@ class EditFeeUnit extends PureComponent<Props, State> {
           </View>
           <View style={styles.buttonContainer}>
             <Button
+              event="EditFeeUnitConfirm"
               type="primary"
               title={t("common.confirm")}
               containerStyle={styles.continueButton}
               onPress={this.onValidateFees}
+              disabled={!isValid}
             />
           </View>
         </View>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <BottomModal
+          id="EditFeeUnitModal"
+          isOpened={isModalOpened}
+          onClose={this.onRequestClose}
+        >
           <View style={styles.editFeesUnitsModalTitleRow}>
             <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
               {t("send.fees.edit.title")}
             </LText>
             <Touchable
+              event="EditFeeUnitClose"
               style={{ position: "absolute", top: 2, right: 16 }}
               onPress={this.onRequestClose}
             >
@@ -137,6 +151,8 @@ class EditFeeUnit extends PureComponent<Props, State> {
             extraData={feeCustomUnit}
             renderItem={({ item }) => (
               <Touchable
+                event="EditFeeUnit"
+                eventProperties={{ unit: item.code }}
                 onPress={() => {
                   this.updateTransaction(item);
                 }}

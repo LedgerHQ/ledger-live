@@ -1,18 +1,26 @@
 // @flow
 import React, { Component } from "react";
+import { Trans } from "react-i18next";
 import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { BigNumber } from "bignumber.js";
+import {
+  sanitizeValueString,
+  getCryptoCurrencyById,
+} from "@ledgerhq/live-common/lib/currencies";
 
 import LText from "../../../components/LText/index";
 import Check from "../../../icons/Check";
 
 import colors from "../../../colors";
 
+const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
+const satoshiUnit = bitcoinCurrency.units[bitcoinCurrency.units.length - 1];
+
 type Props = {
   title: React$Node,
   last?: boolean,
   initialValue: ?BigNumber,
-  onPress: (?BigNumber) => void,
+  onPress: BigNumber => void,
   isSelected: boolean,
 };
 
@@ -22,7 +30,6 @@ type State = {
 
 class FeesRow extends Component<Props, State> {
   static defaultProps = {
-    link: "",
     last: false,
   };
 
@@ -32,14 +39,29 @@ class FeesRow extends Component<Props, State> {
 
   input = React.createRef();
 
-  onChangeText = (fees: string) => {
+  onChangeText = (text: string) => {
     const { onPress } = this.props;
-    this.setState({ fees }, () => onPress(BigNumber(fees)));
+    const fees = sanitizeValueString(satoshiUnit, text);
+    this.setState({ fees: fees.display }, () => {
+      if (fees.value !== "") {
+        onPress(BigNumber(fees.value));
+      } else {
+        onPress(BigNumber(0));
+      }
+    });
   };
 
   onPress = () => {
-    const { onPress } = this.props;
-    onPress(null);
+    const { onPress, initialValue } = this.props;
+    const { fees } = this.state;
+
+    if (fees) {
+      onPress(BigNumber(fees));
+    } else if (initialValue) {
+      onPress(initialValue);
+    } else {
+      onPress(BigNumber(0));
+    }
 
     if (this.input.current) {
       this.input.current.focus();
@@ -81,7 +103,7 @@ class FeesRow extends Component<Props, State> {
               selectTextOnFocus
             />
             <LText style={styles.text} semiBold={isSelected}>
-              Sat/bytes
+              <Trans i18nKey="common.satPerByte" />
             </LText>
           </View>
         </View>

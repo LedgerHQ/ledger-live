@@ -24,6 +24,8 @@ import LiveLogoIcon from "../../icons/LiveLogoIcon";
 import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
+import TrackScreen from "../../analytics/TrackScreen";
+import timer from "../../timer";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,12 +62,15 @@ class Settings extends Component<Props, *> {
   debugTimeout: *;
 
   onDebugHiddenPress = () => {
-    clearTimeout(this.debugTimeout);
+    if (this.debugTimeout) this.debugTimeout();
     if (this.count++ > 6) {
-      this.setState({ debugVisible: true });
+      this.count = 0;
+      this.setState(({ debugVisible }) => ({
+        debugVisible: !debugVisible,
+      }));
     } else {
-      this.debugTimeout = setTimeout(() => {
-        this.count = 1;
+      this.debugTimeout = timer.timeout(() => {
+        this.count = 0;
       }, 1000);
     }
   };
@@ -75,6 +80,7 @@ class Settings extends Component<Props, *> {
     const { debugVisible } = this.state;
     return (
       <ScrollView>
+        <TrackScreen category="Settings" />
         <View style={styles.root}>
           <SettingsCard
             title={t("settings.display.title")}
@@ -109,12 +115,12 @@ class Settings extends Component<Props, *> {
               icon={<Icon name="wind" size={16} color={colors.live} />}
               onClick={() => this.navigateTo("DebugSettings")}
             />
-          ) : (
-            <TouchableWithoutFeedback onPress={this.onDebugHiddenPress}>
-              <View style={{ height: 50 }} />
-            </TouchableWithoutFeedback>
-          )}
-          <PoweredByLedger />
+          ) : null}
+          <TouchableWithoutFeedback onPress={this.onDebugHiddenPress}>
+            <View>
+              <PoweredByLedger />
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </ScrollView>
     );

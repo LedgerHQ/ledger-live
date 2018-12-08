@@ -9,14 +9,14 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Result } from "@ledgerhq/live-common/lib/cross";
 import { accountDataToAccount } from "@ledgerhq/live-common/lib/cross";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
-import type { T } from "../../types/common";
+
 import { supportsExistingAccount } from "../../cryptocurrencies";
 import { importDesktopSettings } from "../../actions/settings";
 import { addAccount, updateAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
-
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import Button from "../../components/Button";
@@ -39,13 +39,13 @@ type Props = {
   navigation: NavigationScreenProp<{
     params: {
       result: Result,
+      onFinish?: (NavigationScreenProp<*>) => void,
     },
   }>,
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
   importDesktopSettings: (*) => void,
-  t: T,
 };
 
 type State = {
@@ -154,6 +154,7 @@ class DisplayResult extends Component<Props, State> {
       navigation,
     } = this.props;
     const { selectedAccounts, items, importSettings } = this.state;
+    const onFinish = navigation.getParam("onFinish");
     this.setState({ importing: true });
     const selectedItems = items.filter(item =>
       selectedAccounts.includes(item.account.id),
@@ -174,7 +175,8 @@ class DisplayResult extends Component<Props, State> {
       importDesktopSettings(navigation.getParam("result").settings);
     }
 
-    navigation.navigate("Accounts");
+    if (onFinish) onFinish(navigation);
+    else navigation.navigate("Accounts");
   };
 
   onSwitchResultItem = (checked: boolean, account: Account) => {
@@ -216,13 +218,13 @@ class DisplayResult extends Component<Props, State> {
   keyExtractor = item => item.account.id;
 
   render() {
-    const { t } = this.props;
     const { items } = this.state;
 
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
       <View style={styles.root}>
+        <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
         {items.length ? (
           <Fragment>
@@ -240,8 +242,9 @@ class DisplayResult extends Component<Props, State> {
             />
             <View style={styles.footer}>
               <Button
+                event="ImportAccountsContinue"
                 type="primary"
-                title={t("common.continue")}
+                title={<Trans i18nKey="common.continue" />}
                 onPress={this.onImport}
               />
             </View>
@@ -250,13 +253,14 @@ class DisplayResult extends Component<Props, State> {
           <Fragment>
             <View style={styles.body}>
               <LText bold style={styles.noAccountText}>
-                {t("account.import.result.noAccounts")}
+                <Trans i18nKey="account.import.result.noAccounts" />
               </LText>
             </View>
             <View style={styles.footer}>
               <Button
+                event="ImportAccountsDone"
                 type="primary"
-                title={t("common.done")}
+                title={<Trans i18nKey="common.done" />}
                 onPress={this.close}
               />
             </View>

@@ -1,40 +1,55 @@
 // @flow
 
 import React, { Component } from "react";
-import { translate } from "react-i18next";
-import { SafeAreaView, StyleSheet, View, FlatList } from "react-native";
+import { translate, Trans } from "react-i18next";
+import { StyleSheet, View, FlatList } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import { createStructuredSelector } from "reselect";
+import i18next from "i18next";
 
+import { connect } from "react-redux";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
-
+import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import Stepper from "../../components/Stepper";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 
 import colors from "../../colors";
-
-// TODO: handle dev crypto currencies (connect to settings...)
-const cryptocurrencies = listCryptoCurrencies();
+import { developerModeEnabledSelector } from "../../reducers/settings";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
 type Props = {
-  t: *,
+  developerModeEnabled: boolean,
   navigation: NavigationScreenProp<{
     params: {},
   }>,
 };
 
+const mapStateToProps = createStructuredSelector({
+  developerModeEnabled: developerModeEnabledSelector,
+});
+
 type State = {};
 
 class AddAccountsSelectCrypto extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Crypto asset" subtitle="step 1 of 3" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("common.cryptoAsset")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "1",
+          totalSteps: "3",
+        })}
+      />
+    ),
   };
+
+  cryptocurrencies = listCryptoCurrencies(this.props.developerModeEnabled);
 
   keyExtractor = currency => currency.id;
 
@@ -42,28 +57,25 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  renderItem = ({ item, index }: { item: Currency, index: number }) => (
-    <CurrencyRow
-      style={
-        index === cryptocurrencies.length - 1 ? styles.lastItem : undefined
-      }
-      currency={item}
-      onPress={this.onPressCurrency}
-    />
+  renderItem = ({ item }: { item: Currency }) => (
+    <CurrencyRow currency={item} onPress={this.onPressCurrency} />
   );
 
-  renderList = (items = cryptocurrencies) => (
+  renderList = items => (
     <FlatList
+      contentContainerStyle={styles.list}
       data={items}
       renderItem={this.renderItem}
       keyExtractor={this.keyExtractor}
+      showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag"
     />
   );
 
   renderEmptyList = () => (
     <View style={styles.emptySearch}>
       <LText style={styles.emptySearchText}>
-        {this.props.t("common.noCryptoFound")}
+        <Trans i18nKey="common.noCryptoFound" />
       </LText>
     </View>
   );
@@ -71,13 +83,13 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper nbSteps={4} currentStep={1} />
+        <TrackScreen category="AddAccounts" name="SelectCrypto" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               keys={SEARCH_KEYS}
               inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-              list={cryptocurrencies}
+              list={this.cryptocurrencies}
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptyList}
             />
@@ -94,10 +106,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   searchContainer: {
+    paddingTop: 16,
     flex: 1,
   },
-  lastItem: {
-    marginBottom: 32,
+  list: {
+    paddingBottom: 32,
   },
   filteredSearchInputWrapperStyle: {
     marginHorizontal: 16,
@@ -110,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(AddAccountsSelectCrypto);
+export default connect(mapStateToProps)(translate()(AddAccountsSelectCrypto));

@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { UserRefusedAddress } from "@ledgerhq/live-common/lib/errors";
 import colors from "../colors";
 import DeviceNanoAction from "../components/DeviceNanoAction";
@@ -18,7 +19,7 @@ class DebugIcons extends Component<{}> {
           <DeviceNanoAction />
           <DeviceNanoAction screen="validation" action />
           <DeviceNanoAction screen="home" />
-          <DeviceNanoAction action powerAction />
+          <DeviceNanoAction powerAction />
           <DeviceNanoAction error={new UserRefusedAddress()} />
           <DeviceNanoAction error={new Error("whatever")} />
         </ScrollView>

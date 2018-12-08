@@ -26,6 +26,8 @@ class CurrenciesList extends PureComponent<Props> {
 
   renderItem = ({ item }) => (
     <SettingsRow
+      event="CurrenciesList"
+      eventProperties={{ currency: item.id }}
       title={`${item.name} (${item.ticker})`}
       iconLeft={<CurrencyIcon size={20} currency={item} />}
       key={item.id}

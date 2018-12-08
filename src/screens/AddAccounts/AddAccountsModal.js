@@ -4,21 +4,32 @@ import React, { PureComponent } from "react";
 import Icon from "react-native-vector-icons/dist/Feather";
 import IconFa from "react-native-vector-icons/dist/FontAwesome";
 import { translate } from "react-i18next";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import colors from "../../colors";
 import BottomModal from "../../components/BottomModal";
 import BottomModalChoice from "../../components/BottomModalChoice";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   isOpened: boolean,
   onClose: () => void,
+  readOnlyModeEnabled: boolean,
   t: *,
 };
 
-const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
-const IconQr = () => <IconFa name="qrcode" color={colors.live} size={16} />;
+const forceInset = { bottom: "always" };
+
+const IconPlus = () => <Icon name="plus" color={colors.live} size={18} />;
+const IconQr = () => <IconFa name="qrcode" color={colors.live} size={18} />;
+
+const mapStateToProps = createStructuredSelector({
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+});
 
 class AddAccountsModal extends PureComponent<Props> {
   onClickAdd = () => {
@@ -32,24 +43,28 @@ class AddAccountsModal extends PureComponent<Props> {
   };
 
   render() {
-    const { isOpened, onClose, t } = this.props;
+    const { readOnlyModeEnabled, isOpened, onClose, t } = this.props;
     return (
-      <BottomModal isOpened={isOpened} onClose={onClose}>
-        <BottomModalChoice
-          title={t("addAccountsModal.ctaAdd")}
-          description={t("addAccountsModal.descAdd")}
-          onPress={this.onClickAdd}
-          Icon={IconPlus}
-        />
-        <BottomModalChoice
-          title={t("addAccountsModal.ctaImport")}
-          description={t("addAccountsModal.descImport")}
-          onPress={this.onClickImport}
-          Icon={IconQr}
-        />
+      <BottomModal id="AddAccountsModal" isOpened={isOpened} onClose={onClose}>
+        <SafeAreaView forceInset={forceInset}>
+          {!readOnlyModeEnabled && (
+            <BottomModalChoice
+              event="AddAccountWithDevice"
+              title={t("addAccountsModal.ctaAdd")}
+              onPress={this.onClickAdd}
+              Icon={IconPlus}
+            />
+          )}
+          <BottomModalChoice
+            event="AddAccountWithQR"
+            title={t("addAccountsModal.ctaImport")}
+            onPress={this.onClickImport}
+            Icon={IconQr}
+          />
+        </SafeAreaView>
       </BottomModal>
     );
   }
 }
 
-export default translate()(AddAccountsModal);
+export default translate()(connect(mapStateToProps)(AddAccountsModal));

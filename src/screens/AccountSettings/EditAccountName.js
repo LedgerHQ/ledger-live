@@ -1,23 +1,20 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  TextInput,
-  SafeAreaView,
-} from "react-native";
+import i18next from "i18next";
+import { ScrollView, View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { translate } from "react-i18next";
+import { Trans, translate } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
-import type { T } from "../../types/common";
 import Button from "../../components/Button";
+import TextInput from "../../components/TextInput";
 import KeyboardView from "../../components/KeyboardView";
+import { getFontStyle } from "../../components/LText";
 
 import colors from "../../colors";
 
@@ -27,7 +24,6 @@ type Props = {
   }>,
   updateAccount: Function,
   account: Account,
-  t: T,
 };
 
 type State = {
@@ -45,7 +41,7 @@ class EditAccountName extends PureComponent<Props, State> {
   };
 
   static navigationOptions = {
-    title: "Account Name",
+    title: i18next.t("account.settings.accountName.title"),
   };
 
   onChangeText = (accountName: string) => {
@@ -65,9 +61,10 @@ class EditAccountName extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, t } = this.props;
+    const { account } = this.props;
+
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeArea}>
         <KeyboardView style={styles.body}>
           <ScrollView contentContainerStyle={styles.root}>
             <TextInput
@@ -78,11 +75,13 @@ class EditAccountName extends PureComponent<Props, State> {
               maxLength={20}
               onChangeText={accountName => this.setState({ accountName })}
               onSubmitEditing={this.onNameEndEditing}
+              clearButtonMode="while-editing"
             />
             <View style={styles.flex}>
               <Button
+                event="EditAccountNameApply"
                 type="primary"
-                title={t("common:common.apply")}
+                title={<Trans i18nKey="common.apply" />}
                 onPress={this.onNameEndEditing}
                 containerStyle={styles.buttonContainer}
               />
@@ -106,6 +105,10 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
   body: {
     flexDirection: "column",
     flex: 1,
@@ -113,7 +116,10 @@ const styles = StyleSheet.create({
   },
   textInputAS: {
     padding: 16,
-    fontSize: 16,
+    marginRight: 8,
+    fontSize: 20,
+    color: colors.darkBlue,
+    ...getFontStyle({ semiBold: true }),
   },
   buttonContainer: {
     marginHorizontal: 16,

@@ -1,23 +1,22 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { translate } from "react-i18next";
 
 import colors from "../colors";
 import LText from "./LText";
 
 type Props = {
-  title: string,
-  subtitle: string,
+  title: React$Node,
+  subtitle: React$Node,
 };
 
 class StepHeader extends PureComponent<Props> {
-  render(): React$Node {
+  render() {
     const { title, subtitle } = this.props;
     return (
       <View style={styles.root}>
-        <LText secondary style={styles.subtitle}>
-          {subtitle}
-        </LText>
+        <LText style={styles.subtitle}>{subtitle}</LText>
         <LText secondary semiBold style={styles.title}>
           {title}
         </LText>
@@ -38,8 +37,7 @@ const styles = StyleSheet.create({
   subtitle: {
     textAlign: "center",
     color: colors.grey,
-    fontSize: 12,
   },
 });
 
-export default StepHeader;
+export default translate()(StepHeader);

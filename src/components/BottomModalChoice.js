@@ -17,21 +17,38 @@ const hitSlop = {
 };
 
 export default class BottomModalChoice extends PureComponent<{
-  onPress: () => void,
+  onPress: ?() => void,
   Icon: React$ComponentType<*>,
   title: string,
-  description: string,
+  description?: string,
+  event: string,
+  eventProperties?: Object,
 }> {
   render() {
-    const { Icon, title, description, onPress } = this.props;
+    const {
+      Icon,
+      title,
+      description,
+      onPress,
+      event,
+      eventProperties,
+    } = this.props;
     return (
-      <Touchable onPress={onPress} style={styles.root} hitSlop={hitSlop}>
+      <Touchable
+        onPress={onPress}
+        style={[styles.root, !onPress && styles.disabled]}
+        hitSlop={hitSlop}
+        event={event}
+        eventProperties={eventProperties}
+      >
         <View style={styles.left}>{Icon && <IconWrapper Icon={Icon} />}</View>
         <View style={styles.body}>
           <LText style={styles.title} semiBold>
             {title}
           </LText>
-          <LText style={styles.description}>{description}</LText>
+          {!!description && (
+            <LText style={styles.description}>{description}</LText>
+          )}
         </View>
       </Touchable>
     );
@@ -55,8 +72,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     alignItems: "center",
   },
+  disabled: {
+    opacity: 0.3,
+  },
   left: {
-    width: 80,
+    paddingLeft: 24,
+    paddingRight: 16,
     alignItems: "center",
     justifyContent: "center",
   },

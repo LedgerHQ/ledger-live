@@ -1,22 +1,22 @@
 // @flow
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { translate } from "react-i18next";
+import i18next from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 
-import StepHeader from "../../components/StepHeader";
-import Stepper from "../../components/Stepper";
-import SelectDevice from "../../components/SelectDevice";
-import {
-  connectingStep,
-  accountApp,
-} from "../../components/SelectDevice/steps";
-
 import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
+import StepHeader from "../../components/StepHeader";
+import SelectDevice from "../../components/SelectDevice";
+import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
 
 type Props = {
   account: Account,
@@ -30,12 +30,21 @@ type Props = {
 
 class ConnectDevice extends Component<Props> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="step 5 of 6" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("send.stepperHeader.connectDevice")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "5",
+          totalSteps: "6",
+        })}
+      />
+    ),
   };
 
   onSelectDevice = (deviceId: string) => {
     const { navigation } = this.props;
-    navigation.navigate("SendValidation", {
+    // $FlowFixMe
+    navigation.replace("SendValidation", {
       ...navigation.state.params,
       deviceId,
     });
@@ -45,7 +54,7 @@ class ConnectDevice extends Component<Props> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <Stepper currentStep={5} nbSteps={6} />
+        <TrackScreen category="SendFunds" name="ConnectDevice" />
         <SelectDevice
           onSelect={this.onSelectDevice}
           steps={[connectingStep, accountApp(account)]}
@@ -66,4 +75,7 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 
-export default connect(mapStateToProps)(ConnectDevice);
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(ConnectDevice);

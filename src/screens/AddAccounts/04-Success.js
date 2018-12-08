@@ -1,20 +1,19 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import { translate } from "react-i18next";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { translate, Trans } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
+import colors, { rgba } from "../../colors";
+import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import IconCheck from "../../icons/Check";
 import CurrencyIcon from "../../components/CurrencyIcon";
 
-import colors, { rgba } from "../../colors";
-
 type Props = {
-  t: *,
   navigation: NavigationScreenProp<{
     params: {
       currency: CryptoCurrency,
@@ -39,32 +38,34 @@ class AddAccountsSuccess extends Component<Props, State> {
   };
 
   render() {
-    const { navigation, t } = this.props;
+    const { navigation } = this.props;
     const currency = navigation.getParam("currency");
     return (
-      <SafeAreaView style={styles.root}>
+      <View style={styles.root}>
+        <TrackScreen category="AddAccounts" name="Success" />
         <CurrencySuccess currency={currency} />
         <LText secondary semiBold style={styles.title}>
-          Accounts imported
+          <Trans i18nKey="addAccounts.imported" />
         </LText>
         <LText style={styles.desc}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit praesent sit
-          amet sagittis
+          <Trans i18nKey="addAccounts.success.desc" />
         </LText>
         <View style={styles.buttonsContainer}>
           <Button
+            event="AddAccountsAgain"
             containerStyle={styles.button}
             type="primary"
-            title={t("addAccounts.success.cta")}
+            title={<Trans i18nKey="addAccounts.success.cta" />}
             onPress={this.primaryCTA}
           />
           <Button
+            event="AddAccountsDone"
             onPress={this.secondaryCTA}
-            type="secondary"
-            title={t("addAccounts.success.secondaryCTA")}
+            type="lightSecondary"
+            title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
           />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -93,7 +94,7 @@ class CurrencySuccess extends PureComponent<{ currency: CryptoCurrency }> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
@@ -126,17 +127,17 @@ const styles = StyleSheet.create({
   },
   desc: {
     marginTop: 16,
-    marginBottom: 16,
-    maxWidth: 350,
+    marginBottom: 32,
+    marginHorizontal: 8,
     textAlign: "center",
     fontSize: 14,
     color: colors.grey,
   },
   buttonsContainer: {
-    width: "100%",
+    alignSelf: "stretch",
   },
   button: {
-    marginBottom: 10,
+    marginBottom: 16,
   },
 });
 

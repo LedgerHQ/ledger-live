@@ -11,17 +11,46 @@ import {
   DeviceSocketNoBulkStatus,
   DeviceSocketNoHandler,
 } from "@ledgerhq/live-common/lib/errors";
+import { cancelDeviceAction } from "../logic/hw/deviceAccess";
 
 const log = __DEV__ ? (...arg) => console.log(...arg) : noop; // eslint-disable-line no-console
+
+export type SocketEvent =
+  | {
+      type: "bulk-progress",
+      progress: number,
+    }
+  | {
+      type: "result",
+      payload: string,
+    }
+  | {
+      type: "exchange",
+      nonce: number,
+    };
 
 /**
  * use Ledger WebSocket API to exchange data with the device
  * Returns an Observable of the final result
  */
-export const createDeviceSocket = (transport: Transport<*>, url: string) =>
+export const createDeviceSocket = (
+  transport: Transport<*>,
+  {
+    url,
+    ignoreWebsocketErrorDuringBulk,
+  }: {
+    url: string,
+    // ignoreWebsocketErrorDuringBulk is a workaround to continue bulk even if the ws connection is termined
+    // the WS connection can be terminated typically because ws timeout
+    ignoreWebsocketErrorDuringBulk?: boolean,
+  },
+): Observable<SocketEvent> =>
   Observable.create(o => {
     let ws;
     let lastMessage: ?string;
+    let interrupted = false;
+    let terminated = false;
+    let inBulk = false;
 
     try {
       ws = new global.WebSocket(url);
@@ -37,13 +66,19 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
 
     ws.onerror = e => {
       log("ERROR", { message: e.message, stack: e.stack });
-      o.error(new WebsocketConnectionError(e.message, { url }));
+      if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
+        terminated = true;
+        o.error(new WebsocketConnectionError(e.message, { url }));
+      }
     };
 
     ws.onclose = () => {
       log("CLOSE");
-      o.next(lastMessage || "");
-      o.complete();
+      if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
+        terminated = true;
+        o.next({ type: "result", payload: lastMessage || "" });
+        o.complete();
+      }
     };
 
     const send = (nonce, response, data) => {
@@ -61,6 +96,8 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
       exchange: async input => {
         const { data, nonce } = input;
         const r: Buffer = await transport.exchange(Buffer.from(data, "hex"));
+        if (interrupted) return;
+        o.next({ type: "exchange", nonce });
         const status = r.slice(r.length - 2);
         const buffer = r.slice(0, r.length - 2);
         const strStatus = status.toString("hex");
@@ -72,28 +109,48 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
       },
 
       bulk: async input => {
-        const { data, nonce } = input;
+        inBulk = true;
+        try {
+          const { data, nonce } = input;
 
-        // Execute all apdus and collect last status
-        let lastStatus = null;
-        for (const apdu of data) {
-          const r: Buffer = await transport.exchange(Buffer.from(apdu, "hex"));
-          lastStatus = r.slice(r.length - 2);
+          o.next({ type: "bulk-progress", progress: 0 });
 
-          if (lastStatus.toString("hex") !== "9000") break;
+          // Execute all apdus and collect last status
+          let lastStatus = null;
+          for (let i = 0; i < data.length; i++) {
+            const apdu = data[i];
+            const r: Buffer = await transport.exchange(
+              Buffer.from(apdu, "hex"),
+            );
+            lastStatus = r.slice(r.length - 2);
+            if (lastStatus.toString("hex") !== "9000") break;
+            if (interrupted) return;
+            o.next({ type: "bulk-progress", progress: (i + 1) / data.length });
+          }
+
+          if (!lastStatus) {
+            throw new DeviceSocketNoBulkStatus();
+          }
+
+          const strStatus = lastStatus.toString("hex");
+
+          if (ignoreWebsocketErrorDuringBulk && ws.readyState !== 1) {
+            terminated = true;
+            o.next({
+              type: "result",
+              payload: lastStatus ? lastStatus.toString("hex") : "",
+            });
+            o.complete();
+          } else {
+            send(
+              nonce,
+              strStatus === "9000" ? "success" : "error",
+              strStatus === "9000" ? "" : strStatus,
+            );
+          }
+        } finally {
+          inBulk = false;
         }
-
-        if (!lastStatus) {
-          throw new DeviceSocketNoBulkStatus();
-        }
-
-        const strStatus = lastStatus.toString("hex");
-
-        send(
-          nonce,
-          strStatus === "9000" ? "success" : "error",
-          strStatus === "9000" ? "" : strStatus,
-        );
       },
 
       success: msg => {
@@ -108,6 +165,7 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
     };
 
     const stackMessage = async e => {
+      if (interrupted) return;
       try {
         const msg = JSON.parse(e.data);
         if (!(msg.query in handlers)) {
@@ -127,14 +185,18 @@ export const createDeviceSocket = (transport: Transport<*>, url: string) =>
       }
     };
 
-    ws.onmessage = async rawMsg => {
-      stackMessage(rawMsg);
+    ws.onmessage = rawMsg => {
+      stackMessage(rawMsg).catch(e => {
+        o.error(e);
+      });
     };
 
     return () => {
-      if (ws.readyState === 1) {
-        lastMessage = null;
-        ws.close();
+      interrupted = true;
+      if (!terminated) {
+        cancelDeviceAction(transport);
       }
+      if (ws.readyState !== 1) return;
+      ws.close();
     };
   });

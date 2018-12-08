@@ -1,15 +1,15 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-
+import { View, StyleSheet } from "react-native";
+import { Trans } from "react-i18next";
 import colors, { rgba } from "../../colors";
+import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 import IconWarning from "../../icons/Warning";
 import TranslatedError from "../../components/TranslatedError";
 
 type Props = {
-  t: *,
   error: Error,
   onRetry: () => void,
   style: *,
@@ -24,7 +24,7 @@ const hitSlop = {
 
 class AddAccountsHeaderError extends PureComponent<Props> {
   render() {
-    const { error, onRetry, style, t } = this.props;
+    const { error, onRetry, style } = this.props;
 
     return (
       <View style={[styles.root, style]}>
@@ -32,11 +32,15 @@ class AddAccountsHeaderError extends PureComponent<Props> {
         <LText semiBold style={[styles.errorText, styles.leftSide]}>
           <TranslatedError error={error} />
         </LText>
-        <TouchableOpacity onPress={onRetry} hitSlop={hitSlop}>
+        <Touchable
+          event="AddAccountsHeaderErrorRetry"
+          onPress={onRetry}
+          hitSlop={hitSlop}
+        >
           <LText semiBold style={styles.errorText}>
-            {t("addAccounts.retry")}
+            <Trans i18nKey="addAccounts.retry" />
           </LText>
-        </TouchableOpacity>
+        </Touchable>
       </View>
     );
   }

@@ -1,24 +1,21 @@
 // @flow
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import LiveLogo from "../icons/LiveLogoIcon";
 import colors from "../colors";
 import LText from "./LText";
 import Spinning from "./Spinning";
 
-class HeaderSynchronizing extends PureComponent<{
-  t: *,
-}> {
+class HeaderSynchronizing extends PureComponent<{}> {
   render() {
-    const { t } = this.props;
     return (
       <View style={styles.root}>
         <Spinning>
           <LiveLogo size={16} color={colors.grey} />
         </Spinning>
         <LText secondary style={styles.title} semiBold numberOfLines={1}>
-          {t("portfolio.syncPending")}
+          <Trans i18nKey="portfolio.syncPending" />
         </LText>
       </View>
     );
@@ -39,4 +36,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(HeaderSynchronizing);
+export default HeaderSynchronizing;

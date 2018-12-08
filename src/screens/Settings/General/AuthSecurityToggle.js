@@ -1,84 +1,55 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { createStructuredSelector } from "reselect";
-import { Switch, Alert } from "react-native";
+import { Switch } from "react-native";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate } from "react-i18next";
-import { setAuthSecurity } from "../../../actions/settings";
-import { authSecurityEnabledSelector } from "../../../reducers/settings";
-import auth from "../../../context/AuthPass/auth";
+import { Trans } from "react-i18next";
+import { privacySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import type { T } from "../../../types/common";
+import type { Privacy } from "../../../reducers/settings";
+import BiometricsRow from "./BiometricsRow";
 
 type Props = {
-  authSecurityEnabled: boolean,
-  setAuthSecurity: boolean => void,
+  privacy: ?Privacy,
+  navigation: *,
   t: T,
-};
-type State = {
-  validationPending: boolean,
 };
 
 const mapStateToProps = createStructuredSelector({
-  authSecurityEnabled: authSecurityEnabledSelector,
+  privacy: privacySelector,
 });
 
-const mapDispatchToProps = {
-  setAuthSecurity,
-};
-
-class AuthSecurityToggle extends Component<Props, State> {
-  state = {
-    validationPending: false,
-  };
-
-  onValueChange = async (authSecurityEnabled: boolean) => {
+class AuthSecurityToggle extends Component<Props> {
+  onValueChange = (authSecurityEnabled: boolean) => {
+    const { navigation } = this.props;
     if (authSecurityEnabled) {
-      this.setState({ validationPending: true });
-      let success = false;
-      let error;
-      try {
-        success = await auth("Please authenticate to enable Auth Security");
-      } catch (e) {
-        error = e;
-      }
-      this.setState({ validationPending: false });
-      if (!success) {
-        Alert.alert(
-          "Authentication failed",
-          `Auth Security was not enabled because your phone failed to authenticate.\n${String(
-            error || "",
-          )}`,
-        );
-        return;
-      }
+      navigation.navigate("PasswordAdd");
+    } else {
+      navigation.navigate("PasswordRemove");
     }
-    this.props.setAuthSecurity(authSecurityEnabled);
   };
 
   render() {
-    const { t, authSecurityEnabled } = this.props;
-    const { validationPending } = this.state;
+    const { privacy } = this.props;
     return (
-      <SettingsRow
-        title={t("common:settings.display.password")}
-        desc={t("common:settings.display.passwordDesc")}
-        alignedTop
-      >
-        <Switch
-          value={authSecurityEnabled || validationPending}
-          onValueChange={this.onValueChange}
-        />
-      </SettingsRow>
+      <Fragment>
+        <SettingsRow
+          event="AuthSecurityToggle"
+          title={<Trans i18nKey="settings.display.password" />}
+          desc={<Trans i18nKey="settings.display.passwordDesc" />}
+          alignedTop
+        >
+          <Switch
+            style={{ opacity: 0.99 }}
+            value={!!privacy}
+            onValueChange={this.onValueChange}
+          />
+        </SettingsRow>
+        {privacy ? <BiometricsRow /> : null}
+      </Fragment>
     );
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(AuthSecurityToggle);
+export default connect(mapStateToProps)(AuthSecurityToggle);

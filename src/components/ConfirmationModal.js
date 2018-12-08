@@ -1,6 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
+import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
 import colors from "../colors";
@@ -12,8 +13,8 @@ type Props = {
   isOpened: boolean,
   onClose: () => void,
   onConfirm: () => void,
-  confirmationTitle: string | React$ComponentType<*>,
-  confirmationDesc: string | React$ComponentType<*>,
+  confirmationTitle: React$Node,
+  confirmationDesc: React$Node,
 };
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -33,6 +34,7 @@ class ConfirmationModal extends PureComponent<Props> {
     } = this.props;
     return (
       <BottomModal
+        id="ConfirmationModal"
         isOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}
@@ -44,18 +46,20 @@ class ConfirmationModal extends PureComponent<Props> {
         <LText style={styles.confirmationDesc}>{confirmationDesc}</LText>
         <View style={styles.confirmationFooter}>
           <Button
+            event="ConfirmationModalCancel"
             containerStyle={styles.confirmationButton}
             type="secondary"
-            title="Cancel"
+            title={<Trans i18nKey="common.cancel" />}
             onPress={onClose}
           />
           <Button
+            event="ConfirmationModalConfirm"
             containerStyle={[
               styles.confirmationButton,
               styles.confirmationLastButton,
             ]}
             type="primary"
-            title="Confirm"
+            title={<Trans i18nKey="common.confirm" />}
             onPress={onConfirm}
           />
         </View>

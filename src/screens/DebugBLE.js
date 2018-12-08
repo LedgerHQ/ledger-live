@@ -1,13 +1,26 @@
 // @flow
 
-import React, { Component } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Observable } from "rxjs";
+import React, { Component, PureComponent } from "react";
+import {
+  FlatList,
+  StyleSheet,
+  TextInput,
+  View,
+  ToastAndroid,
+  Switch,
+} from "react-native";
+import uuid from "uuid/v4";
+import { from } from "rxjs";
+import { bufferTime } from "rxjs/operators";
 import type { NavigationScreenProp } from "react-navigation";
 import LText from "../components/LText";
 import Button from "../components/Button";
-import TransportBLE from "../react-native-hw-transport-ble";
+import KeyboardView from "../components/KeyboardView";
 import colors from "../colors";
+import type { Log } from "../react-native-hw-transport-ble/debug";
+import { logsObservable } from "../react-native-hw-transport-ble/debug";
+import { withDevice } from "../logic/hw/deviceAccess";
+import { disconnect } from "../logic/hw";
 
 const styles = StyleSheet.create({
   root: {
@@ -16,147 +29,325 @@ const styles = StyleSheet.create({
   },
 });
 
-class DeviceItem extends Component<{ device: * }, *> {
-  state = {
-    data: null,
-    error: null,
-  };
+const mapLogToColor = (log: Log) => {
+  if (log.type.includes("error")) return colors.alert;
+  if (log.type === "verbose") return colors.grey;
+  if (log.type.includes("ble-frame")) return colors.live;
+  if (log.type.includes("ble-apdu")) return colors.success;
+  return colors.darkBlue;
+};
 
-  onPress = async () => {
-    this.setState({ data: null, error: null });
-    const { device } = this.props;
-    try {
-      const transport = await TransportBLE.open(device.id);
-      transport.setDebugMode(true);
-      try {
-        const data = await transport.send(0, 0, 0, 0);
-        this.setState({ data });
-      } finally {
-        transport.close();
-      }
-    } catch (error) {
-      this.setState({ error });
-    }
-  };
+const mapLogToText = (log: Log) => {
+  switch (log.type) {
+    case "ble-apdu-read":
+      return `<= ${String(log.message)}`;
 
+    case "ble-frame-read":
+      return `<=  ${String(log.message)}`;
+
+    case "ble-frame-write":
+      return `=>  ${String(log.message)}`;
+
+    case "ble-apdu-write":
+      return `=> ${String(log.message)}`;
+
+    default:
+      return log.message;
+  }
+};
+
+class LogItem extends PureComponent<{ log: Log }> {
   render() {
-    const { device } = this.props;
-    const { data, error } = this.state;
+    const { log } = this.props;
+    const text = mapLogToText(log);
+    const color = mapLogToColor(log);
     return (
       <View
         style={{
-          margin: 5,
           padding: 5,
           borderBottomWidth: 1,
-          borderBottomColor: colors.grey,
+          borderBottomColor: colors.lightFog,
+          flexDirection: "row",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <LText semiBold numberOfLines={1} style={{ fontSize: 14, flex: 2 }}>
-            {device.name}
-          </LText>
-          <Button
-            containerStyle={{ flex: 1 }}
-            type="secondary"
-            title="send APDU"
-            onPress={this.onPress}
-          />
-        </View>
-        {data ? (
-          <LText style={{ color: colors.success }}>
-            {data.toString("hex")}
-          </LText>
-        ) : null}
-        {error ? (
-          <LText style={{ color: colors.alert }}>{String(error)}</LText>
-        ) : null}
+        <LText selectable style={{ fontSize: 10, flex: 1, color }}>
+          {text}
+        </LText>
+        <LText style={{ marginRight: 5, fontSize: 8 }}>
+          {log.date
+            .toISOString()
+            .split("T")[1]
+            .replace("Z", "")}
+        </LText>
       </View>
     );
   }
 }
 
-export default class DebugBLE extends Component<
+class DebugBLE extends Component<
   {
-    navigation: NavigationScreenProp<*>,
+    navigation: NavigationScreenProp<{
+      params: {
+        deviceId: string,
+      },
+    }>,
+    device: *,
   },
   {
-    items: *[],
-    bleError: ?Error,
-    scanning: boolean,
+    logs: Log[],
+    apdu: string,
+    bleframe: string,
+    useBLEframe: boolean,
   },
 > {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }: *) => ({
     title: "Debug BLE",
-  };
+    headerRight: (
+      <Button
+        event="DebugBLEBenchmark"
+        type="lightSecondary"
+        containerStyle={{ width: 100 }}
+        onPress={() =>
+          navigation.navigate("DebugBLEBenchmark", {
+            deviceId: navigation.getParam("deviceId"),
+          })
+        }
+        title="Benchmark"
+      />
+    ),
+  });
 
   state = {
-    items: [],
-    bleError: null,
-    scanning: false,
+    logs: [],
+    apdu: "E0FF0000FE000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfd".toUpperCase(),
+    bleframe: "0800000000",
+    useBLEframe: false,
   };
 
   sub: *;
 
   componentDidMount() {
-    this.startScan();
-  }
-
-  startScan = () => {
-    this.setState({ scanning: true });
-
-    this.sub = Observable.create(TransportBLE.listen).subscribe({
-      complete: () => {
-        this.setState({ scanning: false });
-      },
-      next: e => {
-        if (e.type === "add") {
-          const device = e.descriptor;
-          this.setState(({ items }) => ({
-            // FIXME seems like we have dup. ideally we'll remove them on the listen side!
-            items: items.some(i => i.id === device.id)
-              ? items
-              : items.concat(device),
-          }));
-        }
-      },
-      error: bleError => {
-        this.setState({ bleError, scanning: false });
-      },
+    this.sub = logsObservable.pipe(bufferTime(200)).subscribe(buffer => {
+      this.setState(
+        ({ logs }) =>
+          buffer.length === 0 ? null : { logs: logs.concat(buffer) },
+      );
     });
-  };
+  }
 
   componentWillUnmount() {
     if (this.sub) this.sub.unsubscribe();
   }
 
-  renderItem = ({ item }: { item: * }) => <DeviceItem device={item} />;
+  keyExtractor = (item: Log) => item.id;
 
-  keyExtractor = (item: *) => item.id;
+  renderItem = ({ item }: { item: Log }) => (
+    <View style={{ transform: [{ scaleY: -1 }] }}>
+      <LogItem log={item} />
+    </View>
+  );
 
-  reload = async () => {
-    if (this.sub) this.sub.unsubscribe();
-    this.startScan();
+  addError = (error: Error, ctx: string) => {
+    const date = new Date();
+    this.setState(({ logs }) => ({
+      logs: logs.concat({
+        id: uuid(),
+        type: "error",
+        message: "@" + ctx + ": " + error.message,
+        date,
+      }),
+    }));
+  };
+
+  onBLEframeChange = (bleframe: string) => {
+    this.setState({
+      bleframe,
+    });
+  };
+
+  onAPDUChange = (apdu: string) => {
+    this.setState({
+      apdu,
+    });
+  };
+
+  send = async () => {
+    const { apdu, bleframe, useBLEframe } = this.state;
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    const msg = Buffer.from(useBLEframe ? bleframe : apdu, "hex");
+    try {
+      await withDevice(deviceId)(t =>
+        // $FlowFixMe
+        from(useBLEframe ? t.write(msg) : t.exchange(msg)),
+      ).toPromise();
+    } catch (error) {
+      this.addError(error, "send");
+    }
+  };
+
+  inferMTU = async () => {
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    try {
+      const mtu = await withDevice(deviceId)(t =>
+        // $FlowFixMe bro i know
+        from(t.inferMTU()),
+      ).toPromise();
+      ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
+    } catch (error) {
+      this.addError(error, "inferMTU");
+    }
+  };
+
+  currentConnectionPriority = "Balanced";
+  toggleConnectionPriority = async () => {
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    const choices = ["Balanced", "High", "LowPower"];
+    const nextPriority =
+      choices[
+        (choices.indexOf(this.currentConnectionPriority) + 1) % choices.length
+      ];
+    this.currentConnectionPriority = nextPriority;
+    try {
+      await withDevice(deviceId)(t =>
+        // $FlowFixMe bro i know
+        from(t.requestConnectionPriority(nextPriority)),
+      ).toPromise();
+      ToastAndroid.show(
+        "connection priority set to " + nextPriority,
+        ToastAndroid.SHORT,
+      );
+    } catch (error) {
+      this.addError(error, "changePrio");
+    }
+  };
+
+  connect = async () => {
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    try {
+      await withDevice(deviceId)(() => from([{}])).toPromise();
+    } catch (error) {
+      this.addError(error, "connect");
+    }
+  };
+
+  disconnect = async () => {
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    try {
+      await disconnect(deviceId);
+    } catch (error) {
+      this.addError(error, "disconnect");
+    }
+  };
+
+  onBleFrameChange = () => {
+    this.setState(({ useBLEframe }) => ({ useBLEframe: !useBLEframe }));
   };
 
   render() {
-    const { items, bleError } = this.state;
+    const { navigation } = this.props;
+    const deviceId = navigation.getParam("deviceId");
+    const { logs, useBLEframe } = this.state;
     return (
-      <View style={{ flex: 1 }}>
-        {bleError ? <LText>{bleError.message}</LText> : null}
-        <Button
-          type="primary"
-          title="Re-scan"
-          onPress={this.reload}
-          style={{ margin: 20 }}
-        />
+      <KeyboardView style={{ flex: 1 }}>
         <FlatList
-          style={{ flex: 1 }}
-          data={items}
+          style={{ flex: 1, transform: [{ scaleY: -1 }] }}
+          data={logs.slice().reverse()}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
           contentContainerStyle={styles.root}
         />
-      </View>
+
+        <View
+          style={{
+            padding: 8,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <TextInput
+            style={{
+              flex: 1,
+              backgroundColor: "white",
+              borderWidth: 1,
+              borderColor: "#eee",
+              marginRight: 8,
+              padding: 12,
+            }}
+            selectTextOnFocus
+            placeholder={useBLEframe ? "BLE frame here" : "APDU here"}
+            onChangeText={
+              useBLEframe ? this.onBLEframeChange : this.onAPDUChange
+            }
+            value={useBLEframe ? this.state.bleframe : this.state.apdu}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            onSubmitEditing={this.send}
+          />
+          <Button
+            containerStyle={{ width: 60 }}
+            type="lightSecondary"
+            event="DebugBLESend"
+            title="Send"
+            onPress={this.send}
+          />
+          <Switch value={useBLEframe} onValueChange={this.onBleFrameChange} />
+        </View>
+
+        <View
+          style={{
+            padding: 10,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.lightFog,
+            flexDirection: "row",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "column",
+              flex: 1,
+              justifyContent: "space-around",
+            }}
+          >
+            <LText style={{ fontSize: 10 }}>{deviceId}</LText>
+          </View>
+          <Button
+            containerStyle={{ width: 56, marginRight: 8 }}
+            event="DebugBLEPRIO"
+            type="lightSecondary"
+            title="change prio"
+            onPress={this.toggleConnectionPriority}
+          />
+          <Button
+            containerStyle={{ width: 50, marginRight: 8 }}
+            event="DebugBLEMTU"
+            type="lightSecondary"
+            title="infer MTU"
+            onPress={this.inferMTU}
+          />
+          <Button
+            containerStyle={{ width: 38, marginRight: 8 }}
+            event="DebugBLECO"
+            type="primary"
+            title="CO"
+            onPress={this.connect}
+          />
+          <Button
+            event="DebugBLEDI"
+            containerStyle={{ width: 38 }}
+            type="primary"
+            title="DI"
+            onPress={this.disconnect}
+          />
+        </View>
+      </KeyboardView>
     );
   }
 }
+
+export default DebugBLE;

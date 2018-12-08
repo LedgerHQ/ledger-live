@@ -1,6 +1,7 @@
 // @flow
 
 import React from "react";
+import { Trans, translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 
 import HeaderRightClose from "../../components/HeaderRightClose";
@@ -9,13 +10,19 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
-export default function AddAccountsHeaderRightClose({ navigation }: Props) {
+const routesWithConfirmation = ["AddAccountsAccounts"];
+
+function AddAccountsHeaderRightClose({ navigation }: Props) {
   return (
     <HeaderRightClose
       navigation={navigation}
-      withConfirmation
-      confirmationTitle="Cancel add account"
-      confirmationDesc="You are about to cancel the Add account flow, do you wish to continue?"
+      withConfirmation={routesWithConfirmation.includes(
+        navigation.state.routeName,
+      )}
+      confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.title" />}
+      confirmationDesc={<Trans i18nKey="addAccounts.quitConfirmation.desc" />}
     />
   );
 }
+
+export default translate()(AddAccountsHeaderRightClose);

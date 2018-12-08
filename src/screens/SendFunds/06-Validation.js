@@ -3,19 +3,23 @@ import React, { Component } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
+import { translate } from "react-i18next";
+import i18next from "i18next";
+import { UserRefusedOnDevice } from "@ledgerhq/live-common/lib/errors";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { updateAccountWithUpdater } from "../../actions/accounts";
 
 import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
-
-import Stepper from "../../components/Stepper";
-import StepHeader from "../../components/StepHeader";
-
+import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
+import StepHeader from "../../components/StepHeader";
+import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateOnDevice from "./ValidateOnDevice";
 
 type Props = {
   account: Account,
+  updateAccountWithUpdater: (string, (Account) => Account) => void,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -25,59 +29,100 @@ type Props = {
   }>,
 };
 
+const mapDispatchToProps = {
+  updateAccountWithUpdater,
+};
+
 type State = {
+  signing: boolean,
   signed: boolean,
 };
 
 class Validation extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: <StepHeader title="Device" subtitle="step 6 of 6" />,
+    headerTitle: (
+      <StepHeader
+        title={i18next.t("send.stepperHeader.verification")}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "6",
+          totalSteps: "6",
+        })}
+      />
+    ),
+    headerLeft: null,
+    headerRight: null,
+    gesturesEnabled: false,
   };
 
   state = {
+    signing: false,
     signed: false,
   };
+
+  sub = null;
 
   componentDidMount() {
     this.sign();
   }
 
   sign() {
-    const { account, navigation } = this.props;
+    const { account, navigation, updateAccountWithUpdater } = this.props;
     const deviceId = navigation.getParam("deviceId");
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
-    bridge.signAndBroadcast(account, transaction, deviceId).subscribe({
-      next: e => {
-        switch (e.type) {
-          case "signed":
-            this.setState({ signed: true });
-            break;
-          case "broadcasted":
-            // $FlowFixMe
-            navigation.replace("SendValidationSuccess", {
-              ...navigation.state.params,
-              result: e.operation,
-            });
-            break;
-          default:
-        }
-      },
-      error: error => {
-        // $FlowFixMe
-        navigation.replace("SendValidationError", {
-          ...navigation.state.params,
-          error,
-        });
-      },
-    });
+    const { addPendingOperation } = bridge;
+
+    this.sub = bridge
+      .signAndBroadcast(account, transaction, deviceId)
+      .subscribe({
+        next: e => {
+          switch (e.type) {
+            case "signing":
+              this.setState({ signing: true });
+              this.props.navigation
+                .dangerouslyGetParent()
+                .setParams({ allowNavigation: false });
+              break;
+            case "signed":
+              this.setState({ signed: true });
+              break;
+            case "broadcasted":
+              // $FlowFixMe
+              navigation.replace("SendValidationSuccess", {
+                ...navigation.state.params,
+                result: e.operation,
+              });
+
+              if (addPendingOperation) {
+                updateAccountWithUpdater(account.id, account =>
+                  addPendingOperation(account, e.operation),
+                );
+              }
+
+              break;
+            default:
+          }
+        },
+        error: e => {
+          let error = e;
+          if (e && e.statusCode === 0x6985) {
+            error = new UserRefusedOnDevice();
+          }
+          // $FlowFixMe
+          navigation.replace("SendValidationError", {
+            ...navigation.state.params,
+            error,
+          });
+        },
+      });
   }
 
   render() {
-    const { signed } = this.state;
+    const { signed, signing } = this.state;
     return (
       <View style={styles.root}>
-        <Stepper nbSteps={6} currentStep={6} />
+        <TrackScreen category="SendFunds" name="Validation" signed={signed} />
+        {signing && <PreventNativeBack />}
         {signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
@@ -87,6 +132,15 @@ class Validation extends Component<Props, State> {
         )}
       </View>
     );
+  }
+
+  componentWillUnmount() {
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
+    this.props.navigation
+      .dangerouslyGetParent()
+      .setParams({ allowNavigation: true });
   }
 }
 
@@ -107,4 +161,7 @@ const mapStateToProps = (state, props) => ({
   account: accountScreenSelector(state, props),
 });
 
-export default connect(mapStateToProps)(Validation);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(translate()(Validation));

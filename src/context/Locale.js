@@ -3,14 +3,19 @@ import React, { Component } from "react";
 import i18next from "i18next";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import { reactI18nextModule } from "react-i18next";
-import Locale from "react-native-locale"; // eslint-disable-line import/no-unresolved
-import locales from "../locales";
+import Locale from "react-native-locale";
+import { locales } from "../languages";
 
 export type TranslateFunction = (string, ?Object) => string;
 
 const languageDetector = {
   type: "languageDetector",
-  detect: () => Locale.constants().localeIdentifier.replace("_", "-"),
+  detect: () => {
+    const { localeIdentifier, preferredLanguages } = Locale.constants();
+    const locale =
+      (preferredLanguages && preferredLanguages[0]) || localeIdentifier;
+    return locale.replace("_", "-");
+  },
   init: () => {},
   cacheUserLanguage: () => {},
 };

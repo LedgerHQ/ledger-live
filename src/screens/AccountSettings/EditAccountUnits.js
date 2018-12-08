@@ -9,7 +9,6 @@ import { translate } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
-import type { T } from "../../types/common";
 import SettingsRow from "../../components/SettingsRow";
 import Touchable from "../../components/Touchable";
 
@@ -19,7 +18,6 @@ type Props = {
   }>,
   updateAccount: Function,
   account: Account,
-  t: T,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -56,6 +54,11 @@ class EditAccountUnits extends PureComponent<Props> {
             keyExtractor={this.keyExtractor}
             renderItem={({ item }) => (
               <Touchable
+                event="EditAccountUnits"
+                eventProperties={{
+                  currency: account.currency.id,
+                  unit: item.code,
+                }}
                 onPress={() => {
                   this.updateAccount(item);
                 }}
@@ -63,6 +66,7 @@ class EditAccountUnits extends PureComponent<Props> {
                 <SettingsRow
                   title={item.code}
                   selected={account.unit.code === item.code}
+                  compact
                 />
               </Touchable>
             )}

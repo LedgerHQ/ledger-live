@@ -66,6 +66,11 @@ export const exportSelector = (s: *) => ({
 
 export const accountsSelector = (s: *): Account[] => s.accounts.active;
 
+export const accountsCountSelector = createSelector(
+  accountsSelector,
+  acc => acc.length,
+);
+
 export const currenciesSelector = createSelector(accountsSelector, acc =>
   uniq(acc.map(a => a.currency)),
 );
@@ -85,10 +90,9 @@ export const accountSelector = createSelector(
 const isUpToDateAccount = a => {
   const { lastSyncDate } = a;
   const { blockAvgTime } = a.currency;
-  if (!blockAvgTime) return true;
   const outdated =
     Date.now() - (lastSyncDate || 0) >
-    blockAvgTime * 1000 + UP_TO_DATE_THRESHOLD;
+    (blockAvgTime || 0) * 1000 + UP_TO_DATE_THRESHOLD;
   return !outdated;
 };
 

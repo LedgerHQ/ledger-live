@@ -1,40 +1,58 @@
 // @flow
 import React from "react";
-import { StyleSheet, StatusBar, Platform } from "react-native";
 import {
   createStackNavigator,
   createBottomTabNavigator,
   createMaterialTopTabNavigator,
+  createSwitchNavigator,
 } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
+import { Platform } from "react-native";
 import colors from "./colors";
+import PortfolioIcon from "./icons/Portfolio";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
-import HeaderTitle from "./components/HeaderTitle";
-import HeaderRightClose from "./components/HeaderRightClose";
+import NanoXIcon from "./icons/TabNanoX";
+
 import { getFontStyle } from "./components/LText";
-import HeaderBackImage from "./components/HeaderBackImage";
-import defaultNavigationOptions from "./screens/defaultNavigationOptions";
+import TabIcon from "./components/TabIcon";
 import Portfolio from "./screens/Portfolio";
+import Manager from "./screens/Manager";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
 import Settings from "./screens/Settings";
+import OnboardingStepGetStarted from "./screens/Onboarding/steps/get-started";
+import OnboardingStepChooseDevice from "./screens/Onboarding/steps/choose-device";
+import OnboardingStepSetupPin from "./screens/Onboarding/steps/setup-pin";
+import OnboardingStepWriteRecovery from "./screens/Onboarding/steps/write-recovery";
+import OnboardingStepSecurityChecklist from "./screens/Onboarding/steps/security-checklist";
+import OnboardingStepPairNew from "./screens/Onboarding/steps/pair-new";
+import OnboardingStepPassword from "./screens/Onboarding/steps/password";
+import OnboardingStepShareData from "./screens/Onboarding/steps/share-data";
+import OnboardingStepScanQR from "./screens/Onboarding/steps/scan-qr";
+import OnboardingStepFinish from "./screens/Onboarding/steps/finish";
 import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
 import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
+import PasswordAdd from "./screens/Settings/General/PasswordAdd";
+import PasswordRemove from "./screens/Settings/General/PasswordRemove";
+import ConfirmPassword from "./screens/Settings/General/ConfirmPassword";
 import GeneralSettings from "./screens/Settings/General";
 import AboutSettings from "./screens/Settings/About";
 import HelpSettings from "./screens/Settings/Help";
-import DebugSettings from "./screens/Settings/Debug";
+import DebugSettings, {
+  DebugDevices,
+  DebugMocks,
+} from "./screens/Settings/Debug";
 import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
-import Manager from "./screens/Manager";
 import ManagerAppsList from "./screens/Manager/AppsList";
 import ManagerDevice from "./screens/Manager/Device";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
 import SendFundsMain from "./screens/SendFunds/01-SelectAccount";
+import FallbackCameraSend from "./screens/SendFunds/FallbackCamera/FallbackCameraSend";
 import SendSelectRecipient from "./screens/SendFunds/02-SelectRecipient";
 import ScanRecipient from "./screens/SendFunds/ScanRecipient";
 import SendAmount from "./screens/SendFunds/03-Amount";
@@ -43,21 +61,32 @@ import SendConnectDevice from "./screens/SendFunds/05-ConnectDevice";
 import SendValidation from "./screens/SendFunds/06-Validation";
 import SendValidationSuccess from "./screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "./screens/SendFunds/07-ValidationError";
+import FirmwareUpdateReleaseNotes from "./screens/FirmwareUpdate/01-ReleaseNotes";
+import FirmwareUpdateCheckId from "./screens/FirmwareUpdate/02-CheckId";
+import FirmwareUpdateMCU from "./screens/FirmwareUpdate/03-MCU";
+import FirmwareUpdateConfirmation from "./screens/FirmwareUpdate/04-Confirmation";
+import FirmwareUpdateFailure from "./screens/FirmwareUpdate/04-Failure";
 import OperationDetails from "./screens/OperationDetails";
 import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
-import ScanAccounts from "./screens/ImportAccounts/Scan";
-import DisplayResult from "./screens/ImportAccounts/DisplayResult";
-import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import DebugBLE from "./screens/DebugBLE";
+import DebugBLEBenchmark from "./screens/DebugBLEBenchmark";
 import DebugCrash from "./screens/DebugCrash";
 import DebugHttpTransport from "./screens/DebugHttpTransport";
 import DebugIcons from "./screens/DebugIcons";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
+import ImportAccounts from "./screens/ImportAccounts/importAccountsNavigator";
+import styles from "./navigation/styles";
+import TransparentHeaderNavigationOptions from "./navigation/TransparentHeaderNavigationOptions";
+import {
+  stackNavigatorConfig,
+  closableStackNavigatorConfig,
+  navigationOptions,
+} from "./navigation/navigatorConfig";
 
 // add accounts
 import AddAccountsHeaderRightClose from "./screens/AddAccounts/AddAccountsHeaderRightClose";
@@ -67,86 +96,9 @@ import AddAccountsAccounts from "./screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
 import sendScreens from "./families/sendScreens";
+import ReadOnlyTab from "./components/ReadOnlyTab";
 
 // TODO look into all FlowFixMe
-
-let headerStyle;
-
-if (Platform.OS === "ios") {
-  headerStyle = {
-    height: 48,
-    borderBottomWidth: 0,
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    shadowOffset: {
-      height: 4,
-    },
-  };
-} else {
-  const statusBarPadding = StatusBar.currentHeight;
-
-  headerStyle = {
-    height: 48 + statusBarPadding,
-    paddingTop: statusBarPadding,
-    elevation: 1,
-  };
-}
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.lightGrey,
-  },
-  header: {
-    backgroundColor: colors.white,
-    ...headerStyle,
-  },
-  bottomTabBar: {
-    height: 48,
-    borderTopColor: colors.lightFog,
-    backgroundColor: colors.white,
-  },
-  transparentHeader: {
-    backgroundColor: "transparent",
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  labelStyle: { fontSize: 12 },
-});
-
-const navigationOptions = {
-  headerStyle: styles.header,
-  headerTitle: HeaderTitle,
-  headerBackTitle: null,
-  headerBackImage: HeaderBackImage,
-};
-
-const closableNavigationOptions = ({
-  navigation,
-}: {
-  navigation: NavigationScreenProp<*>,
-}) => ({
-  ...navigationOptions,
-  headerRight: <HeaderRightClose navigation={navigation} />,
-});
-
-const stackNavigatorConfig = {
-  navigationOptions,
-  cardStyle: styles.card,
-  headerLayoutPreset: "center",
-};
-
-const closableStackNavigatorConfig = {
-  ...stackNavigatorConfig,
-  navigationOptions: closableNavigationOptions,
-};
-
-const TransparentHeaderNavigationOptions = {
-  headerTransparent: true,
-  headerStyle: [styles.header, styles.transparentHeader],
-  headerTitle: (props: *) => (
-    <HeaderTitle {...props} style={{ color: colors.white }} />
-  ),
-};
 
 const SettingsStack = createStackNavigator(
   {
@@ -164,7 +116,13 @@ const SettingsStack = createStackNavigator(
     // $FlowFixMe
     DebugSettings,
     // $FlowFixMe
+    DebugDevices,
+    // $FlowFixMe
+    DebugMocks,
+    // $FlowFixMe
     DebugBLE,
+    // $FlowFixMe
+    DebugBLEBenchmark,
     // $FlowFixMe
     DebugCrash,
     // $FlowFixMe
@@ -178,9 +136,8 @@ const SettingsStack = createStackNavigator(
 );
 
 SettingsStack.navigationOptions = {
-  ...defaultNavigationOptions,
-  tabBarIcon: ({ tintColor }: *) => (
-    <SettingsIcon size={18} color={tintColor} />
+  tabBarIcon: (props: *) => (
+    <TabIcon Icon={SettingsIcon} i18nKey="tabs.settings" {...props} />
   ),
 };
 
@@ -204,6 +161,7 @@ const ManagerMain = createMaterialTopTabNavigator(
       },
       style: {
         backgroundColor: colors.white,
+        ...styles.header,
       },
       indicatorStyle: {
         backgroundColor: colors.live,
@@ -214,6 +172,7 @@ const ManagerMain = createMaterialTopTabNavigator(
 
 ManagerMain.navigationOptions = {
   title: "Manager",
+  headerStyle: styles.headerNoShadow,
 };
 
 const ManagerStack = createStackNavigator(
@@ -223,13 +182,27 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     ManagerMain,
   },
-  stackNavigatorConfig,
+  {
+    ...stackNavigatorConfig,
+    navigationOptions: {
+      ...stackNavigatorConfig.navigationOptions,
+      headerStyle: styles.header,
+    },
+  },
 );
 
-ManagerStack.navigationOptions = {
-  ...defaultNavigationOptions,
-  tabBarIcon: ({ tintColor }: *) => <ManagerIcon size={18} color={tintColor} />,
-};
+ManagerStack.navigationOptions = ({ navigation }) => ({
+  tabBarIcon: (props: *) => (
+    <ReadOnlyTab
+      OnIcon={NanoXIcon}
+      oni18nKey="tabs.nanoX"
+      OffIcon={ManagerIcon}
+      offi18nKey="tabs.manager"
+      {...props}
+    />
+  ),
+  tabBarVisible: !navigation.getParam("editMode"),
+});
 
 const AccountsStack = createStackNavigator(
   {
@@ -239,29 +212,35 @@ const AccountsStack = createStackNavigator(
   stackNavigatorConfig,
 );
 AccountsStack.navigationOptions = {
-  ...defaultNavigationOptions,
   header: null,
-  tabBarIcon: ({ tintColor }: *) => (
-    <AccountsIcon size={18} color={tintColor} />
+  tabBarIcon: (props: *) => (
+    <TabIcon Icon={AccountsIcon} i18nKey="tabs.accounts" {...props} />
   ),
 };
 
-const getTabItems = () => {
-  const items: any = {
-    Portfolio,
-    Accounts: AccountsStack,
+const Main = createBottomTabNavigator(
+  {
+    Portfolio: {
+      screen: Portfolio,
+      navigationOptions: {
+        tabBarIcon: (props: *) => (
+          <TabIcon Icon={PortfolioIcon} i18nKey="tabs.portfolio" {...props} />
+        ),
+      },
+    },
+    AccountsStack,
+    // $FlowFixMe
     Transfer,
-    Manager: ManagerStack,
-    Settings: SettingsStack,
-  };
-  return items;
-};
-
-const Main = createBottomTabNavigator(getTabItems(), {
-  tabBarOptions: {
-    style: styles.bottomTabBar,
+    ManagerStack,
+    SettingsStack,
   },
-});
+  {
+    tabBarOptions: {
+      style: styles.bottomTabBar,
+      showLabel: false,
+    },
+  },
+);
 
 Main.navigationOptions = {
   header: null,
@@ -278,9 +257,13 @@ const ReceiveFunds = createStackNavigator(
     ...closableStackNavigatorConfig,
   },
 );
-ReceiveFunds.navigationOptions = {
+ReceiveFunds.navigationOptions = ({ navigation }) => ({
   header: null,
-};
+  gesturesEnabled:
+    Platform.OS === "ios"
+      ? navigation.getParam("allowNavigation", true)
+      : false,
+});
 
 const addAccountsNavigatorConfig = {
   ...closableStackNavigatorConfig,
@@ -323,12 +306,32 @@ const SendFunds = createStackNavigator(
     SendValidation,
     SendValidationSuccess,
     SendValidationError,
+    FallbackCameraSend,
     ...sendScreens,
   },
   closableStackNavigatorConfig,
 );
 
-SendFunds.navigationOptions = {
+SendFunds.navigationOptions = ({ navigation }) => ({
+  header: null,
+  gesturesEnabled:
+    Platform.OS === "ios"
+      ? navigation.getParam("allowNavigation", true)
+      : false,
+});
+
+const FirmwareUpdate = createStackNavigator(
+  {
+    FirmwareUpdateReleaseNotes,
+    FirmwareUpdateCheckId,
+    FirmwareUpdateMCU,
+    FirmwareUpdateConfirmation,
+    FirmwareUpdateFailure,
+  },
+  closableStackNavigatorConfig,
+);
+
+FirmwareUpdate.navigationOptions = {
   header: null,
 };
 
@@ -347,28 +350,36 @@ AccountSettings.navigationOptions = {
   header: null,
 };
 
-const ImportAccounts = createStackNavigator(
+const PasswordAddFlow = createStackNavigator(
   {
-    ScanAccounts: {
-      screen: ScanAccounts,
-      navigationOptions: TransparentHeaderNavigationOptions,
-    },
-    DisplayResult,
-    FallBackCameraScreen,
+    PasswordAdd,
+    ConfirmPassword,
   },
   closableStackNavigatorConfig,
 );
 
-ImportAccounts.navigationOptions = {
+PasswordAddFlow.navigationOptions = {
   header: null,
 };
 
-export const RootNavigator = createStackNavigator(
+const PasswordModifyFlow = createStackNavigator(
+  {
+    PasswordRemove,
+  },
+  closableStackNavigatorConfig,
+);
+
+PasswordModifyFlow.navigationOptions = {
+  header: null,
+};
+
+const BaseNavigator = createStackNavigator(
   {
     Main,
     ReceiveFunds,
     SendFunds,
     AddAccounts,
+    FirmwareUpdate,
     // $FlowFixMe
     OperationDetails,
     AccountSettings,
@@ -376,9 +387,48 @@ export const RootNavigator = createStackNavigator(
     PairDevices,
     // $FlowFixMe non-sense error
     EditDeviceName,
+    PasswordAddFlow,
+    PasswordModifyFlow,
   },
   {
     mode: "modal",
     ...closableStackNavigatorConfig,
   },
 );
+
+const Onboarding = createStackNavigator({
+  OnboardingStepGetStarted,
+  OnboardingStepChooseDevice,
+  OnboardingStepSetupPin,
+  OnboardingStepWriteRecovery,
+  OnboardingStepSecurityChecklist,
+  OnboardingStepPairNew,
+  OnboardingStepScanQR,
+  OnboardingStepPassword,
+  OnboardingStepShareData,
+  OnboardingStepFinish,
+});
+
+Onboarding.navigationOptions = { header: null };
+
+const BaseOnboarding = createStackNavigator(
+  {
+    Onboarding,
+    ImportAccounts,
+    PairDevices,
+    EditDeviceName,
+    PasswordAddFlow,
+    PasswordModifyFlow,
+  },
+  {
+    mode: "modal",
+    ...closableStackNavigatorConfig,
+  },
+);
+
+export const RootNavigator = createSwitchNavigator({
+  BaseNavigator,
+  BaseOnboarding,
+});
+
+RootNavigator.navigationOptions = { header: null };

@@ -2,48 +2,15 @@
 import React, { PureComponent } from "react";
 import { TextInput, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import {
+  formatCurrencyUnit,
+  sanitizeValueString,
+} from "@ledgerhq/live-common/lib/currencies";
 import noop from "lodash/noop";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import colors from "../colors";
-
-const numbers = "0123456789";
-const sanitizeValueString = (
-  unit: Unit,
-  valueString: string,
-): {
-  display: string,
-  value: string,
-} => {
-  let display = "";
-  let value = "";
-  let decimals = -1;
-  for (let i = 0; i < valueString.length; i++) {
-    const c = valueString[i];
-    if (numbers.indexOf(c) !== -1) {
-      if (decimals >= 0) {
-        decimals++;
-        if (decimals > unit.magnitude) break;
-        value += c;
-        display += c;
-      } else if (value !== "0") {
-        value += c;
-        display += c;
-      }
-    } else if (decimals === -1 && (c === "," || c === ".")) {
-      if (i === 0) display = "0";
-      decimals = 0;
-      display += ".";
-    }
-  }
-  for (let i = Math.max(0, decimals); i < unit.magnitude; ++i) {
-    value += "0";
-  }
-  if (!value) value = "0";
-  return { display, value };
-};
 
 function format(
   unit: Unit,
@@ -68,9 +35,9 @@ type Props = {
   subMagnitude: number,
   allowZero: boolean,
   renderRight?: any,
-  renderError?: any,
-  hasError: boolean,
+  hasError?: boolean,
   autoFocus?: boolean,
+  style?: *,
 };
 
 type State = {
@@ -113,10 +80,10 @@ class CurrencyInput extends PureComponent<Props, State> {
     }
   }
 
-  setDisplayValue = () => {
+  setDisplayValue = (isFocused: boolean = false) => {
     const { value, showAllDigits, unit, subMagnitude, allowZero } = this.props;
-    const { isFocused } = this.state;
     this.setState({
+      isFocused,
       displayValue:
         !value || (value.isZero() && !allowZero)
           ? ""
@@ -150,24 +117,25 @@ class CurrencyInput extends PureComponent<Props, State> {
   };
 
   syncInput = ({ isFocused }: { isFocused: boolean }) => {
-    this.setState({ isFocused });
-    this.setDisplayValue();
+    if (isFocused !== this.state.isFocused) {
+      this.setDisplayValue(isFocused);
+    }
   };
 
   render() {
     const {
+      style,
       showAllDigits,
       unit,
       subMagnitude,
       isActive,
       renderRight,
-      renderError,
       hasError,
       autoFocus,
     } = this.props;
     const { displayValue } = this.state;
     return (
-      <View style={styles.wrapper}>
+      <View style={[styles.wrapper, style]}>
         <TextInput
           style={[
             styles.input,
@@ -185,28 +153,19 @@ class CurrencyInput extends PureComponent<Props, State> {
             subMagnitude,
           })}
           keyboardType="numeric"
+          returnKeyType="done"
           blurOnSubmit
         />
         {renderRight}
-        {hasError && renderError ? (
-          <View style={styles.absolute}>{renderError}</View>
-        ) : null}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  absolute: {
-    position: "absolute",
-    paddingVertical: 8,
-    height: 30,
-    bottom: -30,
-  },
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
   },
   input: {
     flex: 1,

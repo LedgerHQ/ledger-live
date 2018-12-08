@@ -1,13 +1,15 @@
 // @flow
 import React, { PureComponent, Fragment } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { translate } from "react-i18next";
 
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
-import InputResetCross from "./InputResetCross";
+import TextInput from "./TextInput";
 import getFontStyle from "./LText/getFontStyle";
 
 import colors from "../colors";
+import type { T } from "../types/common";
 
 type Props = {
   renderList: (list: Array<*>) => React$Node,
@@ -15,6 +17,7 @@ type Props = {
   keys?: Array<string>,
   list: Array<*>,
   inputWrapperStyle?: *,
+  t: T,
 };
 
 type State = {
@@ -40,11 +43,10 @@ class FilteredSearchBar extends PureComponent<Props, State> {
 
   onChange = (text: string) => this.setState({ query: text });
 
-  clear = () => {
+  focusInput = () => {
     if (this.input.current) {
-      this.input.current.clear();
+      this.input.current.focus();
     }
-    this.onChange("");
   };
 
   render() {
@@ -54,30 +56,34 @@ class FilteredSearchBar extends PureComponent<Props, State> {
       list,
       renderEmptySearch,
       inputWrapperStyle,
+      t,
     } = this.props;
     const { query, focused } = this.state;
 
     return (
       <Fragment>
-        <View style={[styles.wrapper, inputWrapperStyle]}>
+        <TouchableOpacity
+          onPress={query ? null : this.focusInput}
+          style={[styles.wrapper, inputWrapperStyle]}
+        >
           <View style={styles.iconContainer}>
             <SearchIcon
-              size={16}
-              color={focused ? colors.darkBlue : colors.fog}
+              size={20}
+              color={focused ? colors.darkBlue : colors.grey}
             />
           </View>
           <TextInput
             onBlur={this.onBlur}
             onFocus={this.onFocus}
             onChangeText={this.onChange}
-            placeholder="Search"
-            placeholderTextColor={colors.fog}
+            placeholder={t("common.search")}
+            placeholderTextColor={colors.grey}
             style={styles.input}
             value={query}
             ref={this.input}
+            clearButtonMode="always"
           />
-          {query ? <InputResetCross onPress={this.clear} /> : null}
-        </View>
+        </TouchableOpacity>
         <Search
           fuseOptions={{
             threshold: 0.1,
@@ -85,7 +91,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
           }}
           value={query}
           items={list}
-          render={items => renderList(items)}
+          render={renderList}
           renderEmptySearch={renderEmptySearch}
         />
       </Fragment>
@@ -97,17 +103,19 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
   },
   iconContainer: {
-    marginRight: 16,
+    marginRight: 8,
   },
   input: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 16,
     color: colors.darkBlue,
+    paddingVertical: 0,
     ...getFontStyle({ secondary: true, semiBold: true }),
   },
 });
 
-export default FilteredSearchBar;
+export default translate()(FilteredSearchBar);

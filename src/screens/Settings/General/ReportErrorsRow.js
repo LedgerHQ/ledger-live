@@ -1,17 +1,14 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import { connect } from "react-redux";
-import { compose } from "redux";
 import { Switch } from "react-native";
 import { createStructuredSelector } from "reselect";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 import { setReportErrors } from "../../../actions/settings";
 import { reportErrorsEnabledSelector } from "../../../reducers/settings";
 
 type Props = {
-  t: T,
   reportErrorsEnabled: boolean,
   setReportErrors: boolean => void,
 };
@@ -25,23 +22,27 @@ const mapDispatchToProps = {
 
 class ReportErrorsRow extends PureComponent<Props> {
   render() {
-    const { t, reportErrorsEnabled, setReportErrors } = this.props;
+    const { reportErrorsEnabled, setReportErrors, ...props } = this.props;
     return (
       <SettingsRow
-        title={t("settings.display.reportErrors")}
-        desc={t("settings.display.reportErrorsDesc")}
+        event="ReportErrorsRow"
+        title={<Trans i18nKey="settings.display.reportErrors" />}
+        desc={<Trans i18nKey="settings.display.reportErrorsDesc" />}
         onPress={null}
+        alignedTop
+        {...props}
       >
-        <Switch value={reportErrorsEnabled} onValueChange={setReportErrors} />
+        <Switch
+          style={{ opacity: 0.99 }}
+          value={reportErrorsEnabled}
+          onValueChange={setReportErrors}
+        />
       </SettingsRow>
     );
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
 )(ReportErrorsRow);

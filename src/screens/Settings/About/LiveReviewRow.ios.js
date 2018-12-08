@@ -1,22 +1,19 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { Linking } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SettingsRow from "../../../components/SettingsRow";
-import type { T } from "../../../types/common";
 import Circle from "../../../components/Circle";
 import colors from "../../../colors";
 
-class LiveReviewRow extends PureComponent<{
-  t: T,
-}> {
+class LiveReviewRow extends PureComponent<*> {
   render() {
-    const { t } = this.props;
     return (
       <SettingsRow
-        title={t("settings.about.liveReview.title")}
-        desc={t("settings.about.liveReview.ios")}
+        event="LiveReviewRow"
+        title={<Trans i18nKey="settings.about.liveReview.title" />}
+        desc={<Trans i18nKey="settings.about.liveReview.ios" />}
         iconLeft={
           <Circle bg={colors.lightLive} size={32}>
             <Icon name="apple" size={16} color={colors.live} />
@@ -32,4 +29,4 @@ class LiveReviewRow extends PureComponent<{
   }
 }
 
-export default translate()(LiveReviewRow);
+export default LiveReviewRow;

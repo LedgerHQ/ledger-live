@@ -13,6 +13,7 @@ import type {
   Currency,
   Account,
 } from "@ledgerhq/live-common/lib/types";
+import Config from "react-native-config";
 import type { State } from ".";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 
@@ -31,28 +32,45 @@ export const timeRangeDaysByKey = {
 
 export type TimeRange = $Keys<typeof timeRangeDaysByKey>;
 
+export type Privacy = {
+  // when we set the privacy, we also retrieve the biometricsType info
+  biometricsType: ?string,
+  // this tells if the biometrics was enabled by user yet
+  biometricsEnabled: boolean,
+};
+
 export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
-  authSecurityEnabled: boolean,
   reportErrorsEnabled: boolean,
   analyticsEnabled: boolean,
+  privacy: ?Privacy,
   currenciesSettings: {
     [currencyId: string]: CurrencySettings,
   },
   selectedTimeRange: TimeRange,
   orderAccounts: string,
+  hasCompletedOnboarding: boolean,
+  hasAcceptedTradingWarning: boolean,
+  developerModeEnabled: boolean,
+  readOnlyModeEnabled: boolean,
+  experimentalUSBEnabled: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
-  authSecurityEnabled: false,
-  reportErrorsEnabled: false,
-  analyticsEnabled: false,
+  privacy: null,
+  reportErrorsEnabled: true,
+  developerModeEnabled: false,
+  analyticsEnabled: true,
   currenciesSettings: {},
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
+  hasCompletedOnboarding: false,
+  hasAcceptedTradingWarning: false,
+  readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
+  experimentalUSBEnabled: false,
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -82,10 +100,23 @@ const handlers: Object = {
       [currencyId]: { ...currenciesSettings[currencyId], ...patch },
     },
   }),
-  SETTINGS_SET_AUTH_SECURITY: (
-    state: SettingsState,
-    { authSecurityEnabled },
-  ) => ({ ...state, authSecurityEnabled }),
+  SETTINGS_SET_PRIVACY: (state: SettingsState, { privacy }) => ({
+    ...state,
+    privacy,
+  }),
+
+  SETTINGS_SET_PRIVACY_BIOMETRICS: (state: SettingsState, { enabled }) => ({
+    ...state,
+    privacy: {
+      ...state.privacy,
+      biometricsEnabled: enabled,
+    },
+  }),
+
+  SETTINGS_DISABLE_PRIVACY: (state: SettingsState) => ({
+    ...state,
+    privacy: null,
+  }),
 
   SETTINGS_SET_REPORT_ERRORS: (
     state: SettingsState,
@@ -93,6 +124,14 @@ const handlers: Object = {
   ) => ({
     ...state,
     reportErrorsEnabled,
+  }),
+
+  SETTINGS_SET_DEVELOPER_MODE: (
+    state: SettingsState,
+    { developerModeEnabled },
+  ) => ({
+    ...state,
+    developerModeEnabled,
   }),
 
   SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
@@ -150,6 +189,26 @@ const handlers: Object = {
     ...state,
     selectedTimeRange,
   }),
+
+  SETTINGS_COMPLETE_ONBOARDING: state => ({
+    ...state,
+    hasCompletedOnboarding: true,
+  }),
+
+  SETTINGS_ACCEPT_TRADING_WARNING: state => ({
+    ...state,
+    hasAcceptedTradingWarning: true,
+  }),
+
+  SETTINGS_SET_READONLY_MODE: (state, action) => ({
+    ...state,
+    readOnlyModeEnabled: action.enabled,
+  }),
+
+  SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state, action) => ({
+    ...state,
+    experimentalUSBEnabled: action.enabled,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -191,19 +250,26 @@ export const currencySettingsSelector = (
   ...state.settings.currenciesSettings[currency.id],
 });
 
-export const authSecurityEnabledSelector = createSelector(
-  storeSelector,
-  s => s.authSecurityEnabled,
-);
+export const privacySelector = createSelector(storeSelector, s => s.privacy);
 
 export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
 );
 
+export const developerModeEnabledSelector = createSelector(
+  storeSelector,
+  s => s.developerModeEnabled,
+);
+
 export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
+);
+
+export const experimentalUSBEnabledSelector = createSelector(
+  storeSelector,
+  s => s.experimentalUSBEnabled,
 );
 
 export const currencySettingsForAccountSelector = (
@@ -221,5 +287,14 @@ export const selectedTimeRangeSelector = (state: State) =>
 
 export const orderAccountsSelector = (state: State) =>
   state.settings.orderAccounts;
+
+export const hasCompletedOnboardingSelector = (state: State) =>
+  state.settings.hasCompletedOnboarding;
+
+export const hasAcceptedTradingWarningSelector = (state: State) =>
+  state.settings.hasAcceptedTradingWarning;
+
+export const readOnlyModeEnabledSelector = (state: State) =>
+  state.settings.readOnlyModeEnabled;
 
 export default handleActions(handlers, INITIAL_STATE);

@@ -9,18 +9,19 @@ import LText from "./LText";
 
 type Item = {
   key: string,
-  label: string,
+  label: *,
 };
 
 type Props = {
   value: string,
   items: Item[],
   onChange: Item => void,
+  isDisabled?: boolean,
 };
 
 class Pills extends Component<Props> {
   render() {
-    const { items, value, onChange } = this.props;
+    const { items, value, onChange, isDisabled } = this.props;
     return (
       <View style={styles.root}>
         {items.map((item, i) => (
@@ -30,6 +31,7 @@ class Pills extends Component<Props> {
             first={i === 0}
             item={item}
             onPress={onChange}
+            isDisabled={isDisabled}
           />
         ))}
       </View>
@@ -42,9 +44,37 @@ class Pill extends PureComponent<{
   first: boolean,
   active: boolean,
   onPress: Item => void,
+  isDisabled?: boolean,
 }> {
   render() {
-    const { item, first, active, onPress } = this.props;
+    const { item, first, active, onPress, isDisabled } = this.props;
+    const inner = (
+      <LText
+        style={[
+          styles.pillText,
+          active && !isDisabled && styles.pillActiveText,
+          active && isDisabled && styles.pillActiveDisabledText,
+        ]}
+        semiBold={active}
+      >
+        {item.label}
+      </LText>
+    );
+
+    if (isDisabled) {
+      return (
+        <View
+          style={[
+            styles.pill,
+            active && styles.pillActiveDisabled,
+            first && styles.pillFirst,
+          ]}
+        >
+          {inner}
+        </View>
+      );
+    }
+
     return (
       <TouchableOpacity
         style={[
@@ -54,12 +84,7 @@ class Pill extends PureComponent<{
         ]}
         onPress={() => onPress(item)}
       >
-        <LText
-          style={[styles.pillText, active && styles.pillActiveText]}
-          semiBold={active}
-        >
-          {item.label}
-        </LText>
+        {inner}
       </TouchableOpacity>
     );
   }
@@ -81,11 +106,17 @@ const styles = StyleSheet.create({
   pillActiveText: {
     color: colors.pillActiveForeground,
   },
+  pillActiveDisabledText: {
+    color: colors.pillActiveDisabledForeground,
+  },
   pillFirst: {
     marginLeft: 0,
   },
   pillActive: {
     backgroundColor: colors.pillActiveBackground,
+  },
+  pillActiveDisabled: {
+    backgroundColor: colors.lightGrey,
   },
 });
 

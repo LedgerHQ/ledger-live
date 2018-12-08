@@ -178,6 +178,8 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':@segment_analytics-react-native')
+    compile project(':react-native-keychain')
     compile project(':react-native-android-location-services-dialog-box')
     compile project(':react-native-randombytes')
     compile project(':react-native-gesture-handler')

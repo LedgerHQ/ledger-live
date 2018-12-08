@@ -1,14 +1,16 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import { connect } from "react-redux";
+import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { accountScreenSelector } from "../../reducers/accounts";
-
+import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import ValidateError from "./ValidateError";
+import { urls } from "../../config/urls";
 
 type Props = {
   account: Account,
@@ -36,7 +38,7 @@ class ValidationError extends Component<Props> {
   };
 
   contactUs = () => {
-    console.warn("not implemented");
+    Linking.openURL(urls.faq);
   };
 
   retry = () => {
@@ -53,6 +55,7 @@ class ValidationError extends Component<Props> {
 
     return (
       <View style={styles.root}>
+        <TrackScreen category="SendFunds" name="ValidationError" />
         <ValidateError
           error={error}
           onRetry={this.retry}
@@ -81,4 +84,4 @@ const mapStateToProps = (state, props) => ({
   account: accountScreenSelector(state, props),
 });
 
-export default connect(mapStateToProps)(ValidationError);
+export default connect(mapStateToProps)(translate()(ValidationError));

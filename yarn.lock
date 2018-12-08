@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@aeternity/ledger-app-api@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@aeternity/ledger-app-api/-/ledger-app-api-0.0.4.tgz#79d253b46cc6b0b18ef7cb57c3684bbe7e723c51"
+  integrity sha512-aXvCJX9fdT/EJbRKBdc2mu8fvvWu80A8JyFdfvS4bsaDOGjBaIfFFYbEpxaXef8TBE5zV8u7RN1PaXDPGeDUZg==
+  dependencies:
+    "@ledgerhq/hw-transport" "^4.21.0"
+
 "@babel/code-frame@7.0.0-beta.44":
   version "7.0.0-beta.44"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.44.tgz#2a02643368de80916162be70865c97774f3adbd9"
@@ -754,10 +761,10 @@
     "@ledgerhq/hw-transport" "^4.24.0"
     create-hash "^1.1.3"
 
-"@ledgerhq/hw-app-btc@^4.27.0":
-  version "4.27.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.27.0.tgz#11fc822bd34a47a39b1a7ae03ced69cf1d432796"
-  integrity sha512-7Ck48wCBb6nd9UXarNeGOsOqbOTi2cs4AxFhbDNrVLvPiBSH0yEiNQEF95J6u5BxKkAdM1GV9LoRumR4KhZGqQ==
+"@ledgerhq/hw-app-btc@^4.30.0":
+  version "4.30.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.30.0.tgz#50cef544c361072ce12b12b1e8166d7a8b0d9dbd"
+  integrity sha512-xVXcI4cvBZiqx2o6fB+3tt0HhzJwGH17EoGP3PRJoFvIRi3Mnf3R0CU5k8Y7xFzISvmBEO2GKcetjg4dfgqDKw==
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
     create-hash "^1.1.3"
@@ -777,38 +784,40 @@
     "@ledgerhq/hw-transport" "^4.24.0"
     bip32-path "0.4.2"
 
-"@ledgerhq/hw-transport-http@^4.29.0":
-  version "4.29.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.29.0.tgz#d8c3b7ea7cb77b1d56d814d0b8ea2eb3f08c626b"
-  integrity sha512-N+VJn77GIBjDB9zbNIrBU5H7eWsG4SoQ6R7LyVfxVJjNuMvYw+0haeLf9jVjWbZmnJJfP+xSFaiZEpXKfUMcjQ==
+"@ledgerhq/hw-transport-http@^4.29.1":
+  version "4.29.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.29.1.tgz#db7179c6e22a994e762ac0f76a0a3aa816baffa6"
+  integrity sha512-RtBCMzVyQhji7kwrOSVsTA7i+tM537pI6vCWwDxOPFSdOTXHC5mVt0qOF3yWwCE6uGtvcC1/z8svUXnD2QbtRA==
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
     axios "^0.18.0"
     ws "^6.1.0"
 
-"@ledgerhq/hw-transport@^4.24.0":
+"@ledgerhq/hw-transport@^4.21.0", "@ledgerhq/hw-transport@^4.24.0":
   version "4.24.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.24.0.tgz#8def925d8c2e1f73d15128d9e27ead729870be58"
   integrity sha512-L34TG1Ss7goRB+5BxtvBwUuu0CmDSIxS33oUqkpEy6rCs31k7XicV48iUGAnRnt8hNY2DvJ9WFyaOroUE9h6wQ==
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@^4.1.4":
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.1.4.tgz#571eddf2913dd8ce9b68787eb10bfdf4b09b743d"
-  integrity sha512-JTs6kGvAkb17mGROn1Pi5UQAsTObPW7z/q1OQJzdCMwzORQMeoSrygLaUJhf3EG3O9VHUIoka5PI+0bosNc+5A==
+"@ledgerhq/live-common@^4.7.0":
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.7.0.tgz#bce184c38f5eccc5f465fa2bf00e71034c3a58dd"
+  integrity sha512-QrEwsqeK3luo2FvOySiKkZRM4Ectezzo1NC0RPAALjUM7bjdVtBK2B3zk6lBQ7SqNRflL1JhSO/FTnl06RBDMw==
   dependencies:
+    "@aeternity/ledger-app-api" "0.0.4"
     "@ledgerhq/hw-app-btc" "^4.24.0"
     "@ledgerhq/hw-app-eth" "^4.24.0"
     "@ledgerhq/hw-app-xrp" "^4.24.0"
     "@ledgerhq/hw-transport" "^4.24.0"
     bignumber.js "^7.2.1"
+    compressjs gre/compressjs#hermit
     eip55 "^1.0.3"
     invariant "^2.2.2"
     lodash "^4.17.4"
-    node-lzw "^0.3.1"
     numeral "^2.0.6"
     prando "^3.0.1"
+    react "*"
     react-i18next "^8.0.7"
     react-redux "^5.0.7"
     redux "^4.0.0"
@@ -821,10 +830,10 @@
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
 
-"@ledgerhq/react-native-ledger-core@^0.3.30":
-  version "0.3.30"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.30.tgz#d7af9771648f4b9381d6400af3bc1154e5fa9139"
-  integrity sha512-20BRCboVMwedxnAnyNHOnwSgWMAjcQk+WU/62y9eahEUSUt32XfE/VFjaWGnWJt0EgA94/Td/ZUj2e7rkwWl8g==
+"@ledgerhq/react-native-ledger-core@^0.3.35":
+  version "0.3.35"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.35.tgz#45287072956c96f9dc4d989101616769b3f31765"
+  integrity sha512-XI/RLUzxJrYb1d20Cl3qNT+fJe8pYY1gpmqJLO9yWTv8Z9Fn5suab3PKYBzP2uWrAdsZb2CwA5teIi36f/JQCQ==
 
 "@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"
@@ -844,6 +853,15 @@
     lodash "^4.17.4"
     node-fetch "^2.1.1"
     url-template "^2.0.8"
+
+"@segment/analytics-ios@github:LedgerHQ/analytics-ios#efb4cd1771dab568422473fd680ffb748b102f07":
+  version "0.0.0"
+  resolved "https://codeload.github.com/LedgerHQ/analytics-ios/tar.gz/efb4cd1771dab568422473fd680ffb748b102f07"
+
+"@segment/analytics-react-native@^0.0.1-beta.2":
+  version "0.0.1-beta.2"
+  resolved "https://registry.yarnpkg.com/@segment/analytics-react-native/-/analytics-react-native-0.0.1-beta.2.tgz#d2758daac13b307880121afdbb637f61d0cea326"
+  integrity sha512-PcE6v0CKzCIL8mGSWQa6OyjpjQnvzmnp1+mAVrt73WNWyibODdVoCxICBjxuBSU62wtoVUm4lCanrEtumk48fw==
 
 "@sentry/cli@^1.34.0":
   version "1.35.5"
@@ -2533,6 +2551,13 @@ commander@~2.13.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.13.0.tgz#6964bca67685df7c1f1430c584f07d7597885b9c"
   integrity sha512-MVuS359B+YzaWqjCL/c+22gfryv+mCBPHAv3zyVI2GN8EY6IRP8VwtasXn8jyyhvvq84R4ImN1OKRtcbIasjYA==
 
+commander@~2.8.1:
+  version "2.8.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.8.1.tgz#06be367febfda0c330aa1e2a072d3dc9762425d4"
+  integrity sha1-Br42f+v9oMMwqh4qBy09yXYkJdQ=
+  dependencies:
+    graceful-readlink ">= 1.0.0"
+
 commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
@@ -2567,6 +2592,12 @@ compression@^1.7.1:
     on-headers "~1.0.1"
     safe-buffer "5.1.2"
     vary "~1.1.2"
+
+compressjs@gre/compressjs#hermit:
+  version "1.2.0"
+  resolved "https://codeload.github.com/gre/compressjs/tar.gz/19652f100671e559d7731980c26cd06a7e999b8d"
+  dependencies:
+    commander "~2.8.1"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -4181,6 +4212,11 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.3, graceful-fs@^4.1.6,
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
   integrity sha1-Dovf5NHduIVNZOBOp8AOKgJuVlg=
+
+"graceful-readlink@>= 1.0.0":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
+  integrity sha1-TK+tdrxi8C+gObL5Tpo906ORpyU=
 
 growly@^1.3.0:
   version "1.3.0"
@@ -6303,11 +6339,6 @@ node-int64@^0.4.0:
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
   integrity sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs=
 
-node-lzw@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/node-lzw/-/node-lzw-0.3.1.tgz#f50e37968976aca83320028b91f101df4a436b2d"
-  integrity sha1-9Q43lol2rKgzIAKLkfEB30pDay0=
-
 node-modules-regexp@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/node-modules-regexp/-/node-modules-regexp-1.0.0.tgz#8d9dbe28964a4ac5712e9131642107c71e90ec40"
@@ -7219,10 +7250,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-ble-plx@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-0.10.0.tgz#261b076e9bde540a2670a7fe0436a811a924040d"
-  integrity sha512-i4mJz8CUzwkSzhNwqexwl3a3DE/+6ly6ynmvfYSEjTYj/HyArxkqOte5vALI4TqqP7G6jx4kDPHiWyZ/ggRYuA==
+react-native-ble-plx@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.1.tgz#6ab5f3a5f9937b6a6410929dc222368f6e4dd1de"
+  integrity sha512-bC8yAVg0WuuMdEIr+kIHs8nd4leHyUvrYILBBOlcsggmNvgFDC8iXqEAvjpeRXMrqPVjPhft2EtFAQlEfjWvdA==
 
 react-native-camera@1.2.0:
   version "1.2.0"
@@ -7281,6 +7312,13 @@ react-native-drawer-layout@1.3.2:
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
 
+react-native-easy-markdown@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-easy-markdown/-/react-native-easy-markdown-1.2.0.tgz#e439dbd2ba2b5e4d1b60abb0e8a3458a32b0b46c"
+  integrity sha512-anrGpZZrQeSpOM132EAtMB3L1NKBMTmtZbIvXEAINac+HJcYJUCKEoi/dDoFHYHvtpx6gfGrNgD7K3IQ9l0xxw==
+  dependencies:
+    simple-markdown "^0.1.1"
+
 react-native-gesture-handler@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.7.tgz#86677c709c42d04555210cad9759b09e2c657720"
@@ -7289,6 +7327,11 @@ react-native-gesture-handler@^1.0.7:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
+
+react-native-keychain@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-3.0.0.tgz#29da1dfa43c2581f76bf9420914fd38a1558cf18"
+  integrity sha512-0incABt1+aXsZvG34mDV57KKanSB+iMHmxvWv+N6lgpNLaSoqrCxazjbZdeqD4qJ7Z+Etp5CLf/4v1aI+sNLBw==
 
 react-native-level-fs@^3.0.0:
   version "3.0.1"
@@ -7588,6 +7631,16 @@ react-transform-hmr@^1.0.4:
   dependencies:
     global "^4.3.0"
     react-proxy "^1.1.7"
+
+react@*:
+  version "16.6.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.6.1.tgz#ee2aef4f0a09e494594882029821049772f915fe"
+  integrity sha512-OtawJThYlvRgm9BXK+xTL7BIlDx8vv21j+fbQDjRRUyok6y7NyjlweGorielTahLZHYIdKUoK2Dp9ByVWuMqxw==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.11.0"
 
 react@16.6.0-alpha.8af6728:
   version "16.6.0-alpha.8af6728"
@@ -8208,6 +8261,14 @@ scheduler@^0.10.0-alpha.8af6728:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
+scheduler@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.11.0.tgz#def1f1bfa6550cc57981a87106e65e8aea41a6b5"
+  integrity sha512-MAYbBfmiEHxF0W+c4CxMpEqMYK+rYF584VP/qMKSiHM6lTkBKKYOJaDiSILpJHla6hBOsVd6GucPL46o2Uq3sg==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+
 secp256k1@^3.0.1:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/secp256k1/-/secp256k1-3.5.2.tgz#f95f952057310722184fe9c914e6b71281f2f2ae"
@@ -8345,6 +8406,11 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
+
+simple-markdown@^0.1.1:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/simple-markdown/-/simple-markdown-0.1.2.tgz#3c1510fe40bd9ea067717b8a533c9cf36325b413"
+  integrity sha1-PBUQ/kC9nqBncXuKUzyc82MltBM=
 
 simple-plist@^0.2.1:
   version "0.2.1"
@@ -9086,7 +9152,7 @@ uuid@3.0.1:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
   integrity sha1-ZUS7ot/ajBzxfmKaOjBeK7H+5sE=
 
-uuid@^3.1.0:
+uuid@^3.1.0, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
