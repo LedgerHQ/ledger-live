@@ -119,7 +119,8 @@ const cryptocurrenciesById = {
         code: "AE",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.aepps.com/#/tx/$hash"]
   },
   aion: {
     id: "aion",
@@ -136,7 +137,8 @@ const cryptocurrenciesById = {
         code: "AION",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   akroma: {
     id: "akroma",
@@ -153,7 +155,8 @@ const cryptocurrenciesById = {
         code: "AKA",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://akroma.io/explorer/transaction/$hash"]
   },
   ark: {
     id: "ark",
@@ -170,7 +173,8 @@ const cryptocurrenciesById = {
         code: "ARK",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.ark.io/transaction/$hash"]
   },
   atheios: {
     id: "atheios",
@@ -187,7 +191,8 @@ const cryptocurrenciesById = {
         code: "ATH",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   banano: {
     id: "banano",
@@ -204,7 +209,8 @@ const cryptocurrenciesById = {
         code: "BANANO",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   bitcloud: {
     id: "bitcloud",
@@ -242,7 +248,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://chainz.cryptoid.info/btdx/tx.dws?$hash.htm"]
   },
   bitcoin: {
     id: "bitcoin",
@@ -260,7 +267,8 @@ const cryptocurrenciesById = {
     bitcoinLikeInfo: {
       P2PKH: 0,
       P2SH: 5
-    }
+    },
+    txExplorers: ["https://blockchain.info/tx/$hash"]
   },
   bitcoin_cash: {
     id: "bitcoin_cash",
@@ -303,7 +311,8 @@ const cryptocurrenciesById = {
         symbol: "Ƀ",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://bitcoincash.blockexplorer.com/tx/$hash"]
   },
   bitcoin_gold: {
     id: "bitcoin_gold",
@@ -347,7 +356,8 @@ const cryptocurrenciesById = {
         symbol: "Ƀ",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://btgexplorer.com/tx/$hash"]
   },
   bitcoin_private: {
     id: "bitcoin_private",
@@ -386,7 +396,8 @@ const cryptocurrenciesById = {
         symbol: "Ƀ",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.btcprivate.org/tx/$hash"]
   },
   bitcore: {
     id: "bitcore",
@@ -429,7 +440,8 @@ const cryptocurrenciesById = {
         symbol: "Ƀ",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://insight.bitcore.cc/tx/$hash"]
   },
   bitsend: {
     id: "bitsend",
@@ -467,7 +479,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://chainz.cryptoid.info/bsd/tx.dws?$hash.htm"]
   },
   callisto: {
     id: "callisto",
@@ -484,7 +497,8 @@ const cryptocurrenciesById = {
         code: "CLO",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   clubcoin: {
     id: "clubcoin",
@@ -512,7 +526,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://chainz.cryptoid.info/club/tx.dws?$hash.htm"]
   },
   dash: {
     id: "dash",
@@ -540,7 +555,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.dash.org/tx/$hash"]
   },
   decred: {
     id: "decred",
@@ -575,7 +591,8 @@ const cryptocurrenciesById = {
     bitcoinLikeInfo: {
       P2PKH: 0x073f,
       P2SH: 0x071a
-    }
+    },
+    txExplorers: ["https://mainnet.decred.org/tx/$hash"]
   },
   digibyte: {
     id: "digibyte",
@@ -604,7 +621,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://digiexplorer.info/tx/$hash"]
   },
   dogecoin: {
     id: "dogecoin",
@@ -633,7 +651,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://dogechain.info/tx/$hash"]
   },
   ellaism: {
     id: "ellaism",
@@ -650,7 +669,8 @@ const cryptocurrenciesById = {
         code: "ELLA",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   eos: {
     id: "eos",
@@ -667,7 +687,8 @@ const cryptocurrenciesById = {
         code: "EOS",
         magnitude: 2
       }
-    ]
+    ],
+    txExplorers: []
   },
   eos_classic: {
     id: "eos_classic",
@@ -684,7 +705,8 @@ const cryptocurrenciesById = {
         code: "EOSC",
         magnitude: 2
       }
-    ]
+    ],
+    txExplorers: []
   },
   ethereum: {
     id: "ethereum",
@@ -700,7 +722,8 @@ const cryptocurrenciesById = {
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 1
-    }
+    },
+    txExplorers: ["https://etherscan.io/tx/$hash"]
   },
   ethereum_classic: {
     id: "ethereum_classic",
@@ -716,7 +739,8 @@ const cryptocurrenciesById = {
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 61
-    }
+    },
+    txExplorers: ["https://gastracker.io/tx/$hash"]
   },
   ether1: {
     id: "ether1",
@@ -731,7 +755,8 @@ const cryptocurrenciesById = {
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 1313114
-    }
+    },
+    txExplorers: []
   },
   ethergem: {
     id: "ethergem",
@@ -746,7 +771,8 @@ const cryptocurrenciesById = {
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 1987
-    }
+    },
+    txExplorers: []
   },
   ethersocial: {
     id: "ethersocial",
@@ -761,7 +787,8 @@ const cryptocurrenciesById = {
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 31102
-    }
+    },
+    txExplorers: []
   },
   expanse: {
     id: "expanse",
@@ -778,7 +805,8 @@ const cryptocurrenciesById = {
         code: "EXP",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://gander.tech/tx/$hash"]
   },
   factom: {
     id: "factom",
@@ -795,7 +823,8 @@ const cryptocurrenciesById = {
         code: "FCT",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   game_credits: {
     id: "game_credits",
@@ -816,7 +845,8 @@ const cryptocurrenciesById = {
     bitcoinLikeInfo: {
       P2PKH: 38,
       P2SH: 62
-    }
+    },
+    txExplorers: []
   },
   gochain: {
     id: "gochain",
@@ -833,7 +863,8 @@ const cryptocurrenciesById = {
         code: "GO",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   hcash: {
     id: "hcash",
@@ -861,7 +892,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["http://explorer.h.cash/tx/$hash"]
   },
   icon: {
     id: "icon",
@@ -878,7 +910,8 @@ const cryptocurrenciesById = {
         code: "ICON",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   iota: {
     id: "iota",
@@ -895,7 +928,8 @@ const cryptocurrenciesById = {
         code: "IOTA",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   komodo: {
     id: "komodo",
@@ -923,7 +957,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://kmdexplorer.io/tx/$hash"]
   },
   litecoin: {
     id: "litecoin",
@@ -960,7 +995,8 @@ const cryptocurrenciesById = {
         symbol: "Ł",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://live.blockcypher.com/ltc/tx/$hash"]
   },
   lisk: {
     id: "lisk",
@@ -977,7 +1013,8 @@ const cryptocurrenciesById = {
         code: "LSK",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   mix: {
     id: "mix",
@@ -997,7 +1034,8 @@ const cryptocurrenciesById = {
         code: "MIX",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   megacoin: {
     id: "megacoin",
@@ -1026,7 +1064,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://chainz.cryptoid.info/mec/tx.dws?$hash.htm"]
   },
   monero: {
     id: "monero",
@@ -1043,7 +1082,8 @@ const cryptocurrenciesById = {
         code: "XMR",
         magnitude: 12
       }
-    ]
+    ],
+    txExplorers: ["https://moneroblocks.info/tx/$hash"]
   },
   musicoin: {
     id: "musicoin",
@@ -1063,7 +1103,8 @@ const cryptocurrenciesById = {
         code: "MUSIC",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   nano: {
     id: "nano",
@@ -1080,7 +1121,8 @@ const cryptocurrenciesById = {
         code: "NANO",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://nanoexplorer.io/blocks/$hash"]
   },
   neo: {
     id: "neo",
@@ -1097,7 +1139,8 @@ const cryptocurrenciesById = {
         code: "NEO",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://neotracker.io/tx/$hash"]
   },
   nimiq: {
     id: "nimiq",
@@ -1114,7 +1157,8 @@ const cryptocurrenciesById = {
         code: "NIM",
         magnitude: 5
       }
-    ]
+    ],
+    txExplorers: ["https://nimiq.watch/#$hash"]
   },
   nix: {
     id: "nix",
@@ -1143,7 +1187,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://blockchain.nixplatform.io/tx/$hash"]
   },
   ontology: {
     id: "ontology",
@@ -1160,7 +1205,8 @@ const cryptocurrenciesById = {
         code: "ONT",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.ont.io/transaction/$hash"]
   },
   particl: {
     id: "particl",
@@ -1177,7 +1223,8 @@ const cryptocurrenciesById = {
         code: "PART",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.particl.io/tx/$hash"]
   },
   peercoin: {
     id: "peercoin",
@@ -1205,7 +1252,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.peercoin.net/tx/$hash"]
   },
   pirl: {
     id: "pirl",
@@ -1222,7 +1270,8 @@ const cryptocurrenciesById = {
         code: "PIRL",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://poseidon.pirl.io/explorer/transaction/$hash"]
   },
   pivx: {
     id: "pivx",
@@ -1250,7 +1299,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://chainz.cryptoid.info/pivx/tx.dws?$hash.htm"]
   },
   poa: {
     id: "poa",
@@ -1267,7 +1317,8 @@ const cryptocurrenciesById = {
         code: "POA",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://poaexplorer.com/tx/$hash"]
   },
   poswallet: {
     id: "poswallet",
@@ -1295,7 +1346,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: []
   },
   qtum: {
     id: "qtum",
@@ -1323,7 +1375,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.qtum.org/tx/$hash"]
   },
   ripple: {
     id: "ripple",
@@ -1347,7 +1400,8 @@ const cryptocurrenciesById = {
         magnitude: 0
       }
     ],
-    family: "ripple"
+    family: "ripple",
+    txExplorers: ["https://bithomp.com/explorer/$hash"]
   },
   stakenet: {
     id: "stakenet",
@@ -1376,7 +1430,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://xsnexplorer.io/transactions/$hash"]
   },
   stratis: {
     id: "stratis",
@@ -1404,7 +1459,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://chainz.cryptoid.info/strat/tx.dws?$hash.htm"]
   },
   stealthcoin: {
     id: "stealthcoin",
@@ -1432,7 +1488,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://chain.stealth.org/tx/$hash"]
   },
   stellar: {
     id: "stellar",
@@ -1455,7 +1512,8 @@ const cryptocurrenciesById = {
         code: "stroop",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://stellar.expert/explorer/public/tx/$hash"]
   },
   tezos: {
     id: "tezos",
@@ -1472,7 +1530,8 @@ const cryptocurrenciesById = {
         code: "XTZ",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://tzscan.io/$hash"]
   },
   tron: {
     id: "tron",
@@ -1489,7 +1548,8 @@ const cryptocurrenciesById = {
         code: "TRX",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://tronscan.org/#/transaction/$hash"]
   },
   ubiq: {
     id: "ubiq",
@@ -1536,7 +1596,8 @@ const cryptocurrenciesById = {
         symbol: "Ξ",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://ubiqscan.io/tx/$hash"]
   },
   vechain: {
     id: "vechain",
@@ -1553,7 +1614,8 @@ const cryptocurrenciesById = {
         code: "VET",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://explore.veforge.com/transactions/$hash"]
   },
   vertcoin: {
     id: "vertcoin",
@@ -1582,7 +1644,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://www.coinexplorer.net/VTC/transaction/$hash"]
   },
   viacoin: {
     id: "viacoin",
@@ -1611,7 +1674,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.viacoin.org/tx/$hash"]
   },
   wanchain: {
     id: "wanchain",
@@ -1628,7 +1692,8 @@ const cryptocurrenciesById = {
         code: "WAN",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.wanchain.org/block/trans/$hash"]
   },
   waves: {
     id: "waves",
@@ -1645,7 +1710,8 @@ const cryptocurrenciesById = {
         code: "WAVES",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: []
   },
   zcash: {
     id: "zcash",
@@ -1673,7 +1739,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.zcha.in/transactions/$hash"]
   },
   zcoin: {
     id: "zcoin",
@@ -1690,7 +1757,8 @@ const cryptocurrenciesById = {
         code: "XZC",
         magnitude: 8
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.zcoin.io/tx/$hash"]
   },
   zencash: {
     id: "zencash",
@@ -1718,7 +1786,8 @@ const cryptocurrenciesById = {
         code: "sat",
         magnitude: 0
       }
-    ]
+    ],
+    txExplorers: ["https://explorer.zensystem.io/tx/$hash"]
   },
 
   // Testnets
@@ -1739,7 +1808,8 @@ const cryptocurrenciesById = {
     bitcoinLikeInfo: {
       P2PKH: 111,
       P2SH: 196
-    }
+    },
+    txExplorers: ["https://testnet.blockchain.info/tx/$hash"]
   },
   ethereum_testnet: {
     id: "ethereum_testnet",
@@ -1756,7 +1826,8 @@ const cryptocurrenciesById = {
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 3 // ropsten
-    }
+    },
+    txExplorers: ["https://ropsten.etherscan.io/tx/$hash"]
   }
 };
 
