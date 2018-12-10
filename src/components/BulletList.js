@@ -9,6 +9,19 @@ import colors from "../colors";
 
 // TODO fade in animation
 
+export class Bullet extends PureComponent<{ children: *, big?: boolean }> {
+  render() {
+    const { children, big } = this.props;
+    return (
+      <View style={[styles.bulletContainer, big && styles.bulletContainerBig]}>
+        <LText style={[styles.number, big && styles.numberBig]} tertiary>
+          {children}
+        </LText>
+      </View>
+    );
+  }
+}
+
 export class BulletItemText extends PureComponent<{
   children: React$Node,
 }> {
@@ -55,19 +68,6 @@ export class BulletItem extends PureComponent<{
           )}
         </View>
       </Animated.View>
-    );
-  }
-}
-
-export class Bullet extends PureComponent<{ children: *, big?: boolean }> {
-  render() {
-    const { children, big } = this.props;
-    return (
-      <View style={[styles.bulletContainer, big && styles.bulletContainerBig]}>
-        <LText style={[styles.number, big && styles.numberBig]} tertiary>
-          {children}
-        </LText>
-      </View>
     );
   }
 }

@@ -4,14 +4,13 @@ import React, { Component } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, of } from "rxjs";
-import { mergeMap, tap } from "rxjs/operators";
+import { from, of, concat } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
-import installFinalFirmware from "../../logic/hw/installFinalFirmware";
 import installOsuFirmware from "../../logic/hw/installOsuFirmware";
 import { withDevice } from "../../logic/hw/deviceAccess";
 import manager from "../../logic/manager";
@@ -21,6 +20,11 @@ import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import Installing from "./Installing";
+
+const getDimensions = () => {
+  const { width, height } = Dimensions.get("window");
+  return { width, height };
+};
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -35,11 +39,14 @@ type Props = {
 
 type State = {
   installing: boolean,
+  progress: number,
 };
 
 class FirmwareUpdateCheckId extends Component<Props, State> {
   state = {
     installing: false,
+    progress: 0,
+    ...getDimensions(),
   };
 
   static navigationOptions = {
@@ -62,62 +69,55 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     this.sub = withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
       .pipe(
         mergeMap(deviceInfo => {
-          // if in bootloader we'll directly jump to MCU step
-          if (deviceInfo.isBootloader) {
-            console.log("CheckId: isBootloader");
-            return of("FirmwareUpdateMCU");
+          // if in bootloader or OSU we'll directly jump to MCU step
+          if (deviceInfo.isBootloader || deviceInfo.isOSU) {
+            console.log("CheckId: isBootloader or isOSU");
+            return of({ type: "navigate", to: "FirmwareUpdateMCU" });
           }
 
-          // If in OSU we'll try to install firmware and move on to the rest
-          if (deviceInfo.isOSU) {
-            console.log("CheckId: isOSU");
-            this.setState({ installing: true });
-            return withDevice(deviceId)(transport =>
-              installFinalFirmware(transport),
-            ).pipe(
-              tap(res => console.log("CheckId: final firmware installed", res)),
-              mergeMap(() => of("FirmwareUpdateConfirmation")),
-            );
-          }
-
+          // if there is no latest firmware we'll jump to success screen
           if (!latestFirmware) {
-            return of("FirmwareUpdateConfirmation");
+            return of({
+              type: "navigate",
+              to: "FirmwareUpdateConfirmation",
+            });
           }
+
+          this.setState({ installing: true });
 
           console.log("CheckId: installOsuFirmware");
-          return withDevice(deviceId)(transport =>
-            installOsuFirmware(transport, deviceInfo.targetId, latestFirmware),
-          ).pipe(
-            tap(res => console.log("CheckId: OSU firmware installed", res)),
-            mergeMap(() => {
-              if (latestFirmware && latestFirmware.shouldFlashMcu) {
-                return of("FirmwareUpdateMCU");
-              }
 
-              this.setState({ installing: true });
-              return withDevice(deviceId)(transport =>
-                installFinalFirmware(transport),
-              ).pipe(
-                tap(res =>
-                  console.log("CheckId: final firmware installed (2)", res),
-                ),
-                mergeMap(() => of("FirmwareUpdateConfirmation")),
-              );
-            }),
+          const $next = of({ type: "navigate", to: "FirmwareUpdateMCU" });
+
+          const $install = withDevice(deviceId)(transport =>
+            installOsuFirmware(transport, deviceInfo.targetId, latestFirmware),
           );
+
+          return concat($install, $next);
         }),
       )
       .subscribe({
-        next: screen => {
-          navigation.navigate(screen, {
-            ...navigation.state.params,
-          });
+        next: event => {
+          const { type } = event;
+          if (type === "navigate") {
+            if (navigation.replace) {
+              // $FlowFixMe
+              navigation.replace(event.to, {
+                ...navigation.state.params,
+              });
+            }
+          } else if (type === "bulk-progress") {
+            // $FlowFixMe
+            this.setState({ progress: event.progress || 0 });
+          }
         },
         error: error => {
-          navigation.navigate("FirmwareUpdateFailure", {
-            ...navigation.state.params,
-            error,
-          });
+          if (navigation.replace) {
+            navigation.replace("FirmwareUpdateFailure", {
+              ...navigation.state.params,
+              error,
+            });
+          }
         },
       });
   }
@@ -127,7 +127,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   }
 
   render() {
-    const { installing } = this.state;
+    const { installing, progress } = this.state;
     const { navigation } = this.props;
     const latestFirmware = navigation.getParam("latestFirmware");
     const windowWidth = Dimensions.get("window").width;
@@ -135,7 +135,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
         {installing ? (
-          <Installing />
+          <Installing progress={progress} />
         ) : (
           <View style={styles.body}>
             <View style={styles.device}>

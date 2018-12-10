@@ -8,14 +8,22 @@ import colors from "../../colors";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
+import FirmwareProgress from "./FirmwareProgress";
 
-class Installing extends PureComponent<{}> {
+class Installing extends PureComponent<{
+  progress: number,
+}> {
   render() {
+    const { progress } = this.props;
     return (
       <View style={styles.root}>
-        <Spinning>
-          <LiveLogo color={colors.fog} size={40} />
-        </Spinning>
+        {progress === 0 ? (
+          <Spinning>
+            <LiveLogo color={colors.fog} size={40} />
+          </Spinning>
+        ) : (
+          <FirmwareProgress progress={progress} />
+        )}
         <LText semiBold style={styles.title}>
           <Trans i18nKey="FirmwareUpdate.Installing.title" />
         </LText>

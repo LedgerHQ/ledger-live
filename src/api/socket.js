@@ -27,6 +27,12 @@ export type SocketEvent =
   | {
       type: "exchange",
       nonce: number,
+    }
+  | {
+      type: "opened",
+    }
+  | {
+      type: "closed",
     };
 
 /**
@@ -62,6 +68,7 @@ export const createDeviceSocket = (
 
     ws.onopen = () => {
       log("OPENED", { url });
+      o.next({ type: "opened" });
     };
 
     ws.onerror = e => {
@@ -73,6 +80,7 @@ export const createDeviceSocket = (
     };
 
     ws.onclose = () => {
+      o.next({ type: "closed" });
       log("CLOSE");
       if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
         terminated = true;

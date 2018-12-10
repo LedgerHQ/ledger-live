@@ -4,8 +4,15 @@ import React, { Component } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, of } from "rxjs";
-import { mergeMap, delay, catchError, throwError } from "rxjs/operators";
+import { from, throwError, concat } from "rxjs";
+import {
+  concatMap,
+  delay,
+  catchError,
+  filter,
+  throttleTime,
+  map,
+} from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
 import { TrackScreen } from "../../analytics";
@@ -33,10 +40,11 @@ type Props = {
 
 type State = {
   installing: boolean,
+  progress: number,
 };
 
 const ignoreDeviceDisconnectedError = catchError(
-  e => (e instanceof CantOpenDevice ? of(null) : throwError(e)),
+  e => (e instanceof CantOpenDevice ? from([]) : throwError(e)),
 );
 
 class FirmwareUpdateMCU extends Component<Props, State> {
@@ -52,9 +60,11 @@ class FirmwareUpdateMCU extends Component<Props, State> {
 
   state = {
     installing: false,
+    progress: 0,
   };
 
   sub: *;
+  progress: *;
 
   async componentDidMount() {
     const { navigation } = this.props;
@@ -65,41 +75,57 @@ class FirmwareUpdateMCU extends Component<Props, State> {
         transport => from(getDeviceInfo(transport)),
         () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
       ).pipe(
-        mergeMap(deviceInfo => {
+        concatMap(deviceInfo => {
           console.log({ deviceInfo });
 
           if (!deviceInfo.isBootloader && !deviceInfo.isOSU) {
             // nothing to do, we're done
-            return of(null);
+            return from([]);
           }
+
+          this.setState({ installing: true });
 
           // appropriate script to install
           const install = deviceInfo.isBootloader
             ? installMcu
             : installFinalFirmware;
 
-          this.setState({ installing: true });
-          return withDevice(deviceId)(install).pipe(
-            delay(2000), // we're pausing 2s just for the device to "catch up". usually it reboots / switch mode
+          const $next = loop();
+          const $installation = withDevice(deviceId)(install).pipe(
             ignoreDeviceDisconnectedError, // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
-            mergeMap(loop), // loop again
           );
+
+          const $wait = from([{ type: "wait" }]).pipe(delay(2000));
+          return concat($installation, $wait, $next);
         }),
       );
 
-    this.sub = loop().subscribe({
-      complete: () => {
-        navigation.navigate("FirmwareUpdateConfirmation", {
-          ...navigation.state.params,
-        });
-      },
-      error: error => {
-        navigation.navigate("FirmwareUpdateFailure", {
-          ...navigation.state.params,
-          error,
-        });
-      },
-    });
+    this.sub = loop()
+      .pipe(
+        filter(e => e.type === "bulk-progress" || e.type === "opened"),
+        throttleTime(100),
+        map(e => e.progress || 0),
+      )
+      .subscribe({
+        next: progress => {
+          this.setState({ progress });
+        },
+        complete: () => {
+          if (navigation.replace) {
+            navigation.replace("FirmwareUpdateConfirmation", {
+              ...navigation.state.params,
+            });
+          }
+        },
+        error: error => {
+          if (navigation.replace) {
+            navigation.replace("FirmwareUpdateFailure", {
+              ...navigation.state.params,
+              error,
+            });
+          }
+        },
+      });
   }
 
   componentWillUnmount() {
@@ -107,13 +133,14 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   }
 
   render() {
-    const { installing } = this.state;
-    const windowWidth = Dimensions.get("window").width;
+    const { installing, progress } = this.state;
+    const width = Dimensions.get("window").width;
+
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="MCU" />
         {installing ? (
-          <Installing />
+          <Installing progress={progress} />
         ) : (
           <View style={styles.body}>
             <View style={styles.step}>
@@ -122,7 +149,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
                 value={<Trans i18nKey="FirmwareUpdateMCU.desc1" />}
               />
               <View style={styles.device}>
-                <DeviceNanoAction width={1.2 * windowWidth} />
+                <DeviceNanoAction width={1.2 * width} />
               </View>
             </View>
 
@@ -132,7 +159,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
                 value={<Trans i18nKey="FirmwareUpdateMCU.desc2" />}
               />
               <View style={styles.device}>
-                <DeviceNanoAction powerAction width={1.2 * windowWidth} />
+                <DeviceNanoAction powerAction width={1.2 * width} />
               </View>
             </View>
           </View>

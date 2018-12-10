@@ -30,7 +30,10 @@ class FirmwareUpdateFailure extends Component<Props, State> {
   };
 
   onRetry = () => {
-    this.props.navigation.navigate("FirmwareUpdateCheckId");
+    const { navigation } = this.props;
+    navigation.navigate("FirmwareUpdateMCU", {
+      ...navigation.state.params,
+    });
   };
 
   onClose = () => {

@@ -264,10 +264,7 @@ const API = {
         query: { targetId, version },
       }),
       ignoreWebsocketErrorDuringBulk: true,
-    }).pipe(
-      remapSocketError(context),
-      last(), // not yet using the events
-    ),
+    }).pipe(remapSocketError(context)),
 };
 
 export default API;
