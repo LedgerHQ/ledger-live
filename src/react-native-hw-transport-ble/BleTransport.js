@@ -2,7 +2,11 @@
 /* eslint-disable prefer-template */
 
 import Transport, { TransportError } from "@ledgerhq/hw-transport";
-import { BleManager, ConnectionPriority } from "react-native-ble-plx";
+import {
+  BleManager,
+  ConnectionPriority,
+  BleErrorCode,
+} from "react-native-ble-plx";
 import Config from "react-native-config";
 import { Observable, defer, merge, from } from "rxjs";
 import {
@@ -138,7 +142,15 @@ export default class BluetoothTransport extends Transport<Device | string> {
           type: "verbose",
           message: `connectToDevice(${deviceOrId})`,
         });
-        device = await bleManager.connectToDevice(deviceOrId, connectOptions);
+        try {
+          device = await bleManager.connectToDevice(deviceOrId, connectOptions);
+        } catch (e) {
+          if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+            device = await bleManager.connectToDevice(deviceOrId);
+          } else {
+            throw e;
+          }
+        }
       }
 
       if (!device) {
@@ -153,7 +165,15 @@ export default class BluetoothTransport extends Transport<Device | string> {
         type: "verbose",
         message: "not connected. connecting...",
       });
-      await device.connect(connectOptions);
+      try {
+        await device.connect(connectOptions);
+      } catch (e) {
+        if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+          await device.connect();
+        } else {
+          throw e;
+        }
+      }
     }
 
     await device.discoverAllServicesAndCharacteristics();
