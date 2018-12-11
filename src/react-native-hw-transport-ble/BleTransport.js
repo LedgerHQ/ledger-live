@@ -2,7 +2,11 @@
 /* eslint-disable prefer-template */
 
 import Transport, { TransportError } from "@ledgerhq/hw-transport";
-import { BleManager, ConnectionPriority } from "react-native-ble-plx";
+import {
+  BleManager,
+  ConnectionPriority,
+  BleErrorCode,
+} from "react-native-ble-plx";
 import Config from "react-native-config";
 import { Observable, defer, merge, from } from "rxjs";
 import {
@@ -26,7 +30,7 @@ const ServiceUuid = "d973f2e0-b19e-11e2-9e96-0800200c9a66";
 const WriteCharacteristicUuid = "d973f2e2-b19e-11e2-9e96-0800200c9a66";
 const NotifyCharacteristicUuid = "d973f2e1-b19e-11e2-9e96-0800200c9a66";
 
-const connectOptions = {
+let connectOptions = {
   requestMTU: 156,
 };
 
@@ -138,7 +142,16 @@ export default class BluetoothTransport extends Transport<Device | string> {
           type: "verbose",
           message: `connectToDevice(${deviceOrId})`,
         });
-        device = await bleManager.connectToDevice(deviceOrId, connectOptions);
+        try {
+          device = await bleManager.connectToDevice(deviceOrId, connectOptions);
+        } catch (e) {
+          if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+            connectOptions = {};
+            device = await bleManager.connectToDevice(deviceOrId);
+          } else {
+            throw e;
+          }
+        }
       }
 
       if (!device) {
@@ -153,7 +166,16 @@ export default class BluetoothTransport extends Transport<Device | string> {
         type: "verbose",
         message: "not connected. connecting...",
       });
-      await device.connect(connectOptions);
+      try {
+        await device.connect(connectOptions);
+      } catch (e) {
+        if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+          connectOptions = {};
+          await device.connect();
+        } else {
+          throw e;
+        }
+      }
     }
 
     await device.discoverAllServicesAndCharacteristics();
