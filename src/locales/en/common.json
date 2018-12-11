@@ -908,7 +908,8 @@
     "install": {
       "loading": {
         "title": "Installing {{appName}}",
-        "button": "Installing..."
+        "desc": "The installation of {{appName}} app may take a while, please keep the app open.",
+        "button": "Installing... {{percentage}}%"
       },
       "done": {
         "title": "Successfully installed {{appName}} on your {{fullDeviceName}}"
