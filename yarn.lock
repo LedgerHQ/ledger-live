@@ -823,17 +823,17 @@
     redux "^4.0.0"
     reselect "^3.0.1"
 
-"@ledgerhq/react-native-hid@^4.21.0":
-  version "4.24.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.24.0.tgz#cb1ed0da45206444dbdaa0ff5c24c1542bb16e15"
-  integrity sha512-oFJ3K8dQz4GTAKWcbpguqqN8k64jvV6sys/P/pjLA1y/3iGLt21UL//WDu78hXj8R17dKub8dQH0o5OQxM7eRw==
+"@ledgerhq/react-native-hid@^4.30.2":
+  version "4.30.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.30.2.tgz#f9f289aad546c54ae9940f4d271a935d3b01ae1d"
+  integrity sha512-iLtkgYcN/tmrJcV4AmmGlQ5SeOciZpN2ASWe42104OtCLNgnX+PcO64stnKGI7mUgE5AB6POXD/RAWsmhtDsPQ==
   dependencies:
     "@ledgerhq/hw-transport" "^4.24.0"
 
-"@ledgerhq/react-native-ledger-core@^0.3.35":
-  version "0.3.35"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.35.tgz#45287072956c96f9dc4d989101616769b3f31765"
-  integrity sha512-XI/RLUzxJrYb1d20Cl3qNT+fJe8pYY1gpmqJLO9yWTv8Z9Fn5suab3PKYBzP2uWrAdsZb2CwA5teIi36f/JQCQ==
+"@ledgerhq/react-native-ledger-core@^0.3.40":
+  version "0.3.40"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-0.3.40.tgz#25a223caa45ad1217a6801c1171699b6650acb69"
+  integrity sha512-tHgENe05uIxa/xdDD7GbVx0PeUYJDHOH6nUv4FtSrYdby8r2FsKzZJtqG3tN/Ij3ll/yU1YA/slRehZWgXJptg==
 
 "@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"
