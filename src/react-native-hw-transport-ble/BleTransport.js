@@ -30,7 +30,7 @@ const ServiceUuid = "d973f2e0-b19e-11e2-9e96-0800200c9a66";
 const WriteCharacteristicUuid = "d973f2e2-b19e-11e2-9e96-0800200c9a66";
 const NotifyCharacteristicUuid = "d973f2e1-b19e-11e2-9e96-0800200c9a66";
 
-const connectOptions = {
+let connectOptions = {
   requestMTU: 156,
 };
 
@@ -146,6 +146,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
           device = await bleManager.connectToDevice(deviceOrId, connectOptions);
         } catch (e) {
           if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+            connectOptions = {};
             device = await bleManager.connectToDevice(deviceOrId);
           } else {
             throw e;
@@ -169,6 +170,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
         await device.connect(connectOptions);
       } catch (e) {
         if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+          connectOptions = {};
           await device.connect();
         } else {
           throw e;
