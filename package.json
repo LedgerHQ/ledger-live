@@ -48,7 +48,8 @@
     "react-i18next": "^8.0.7",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "reselect": "^3.0.1"
+    "reselect": "^3.0.1",
+    "rxjs": "^6.3.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
