@@ -104,8 +104,7 @@ async function signAndBroadcast({
       }
 
       const hash = computeBinaryTransactionHash(transaction);
-
-      onOperationBroadcasted({
+      const operation = {
         id: `${a.id}-${hash}-OUT`,
         hash,
         accountId: a.id,
@@ -123,7 +122,12 @@ async function signAndBroadcast({
             ? a.operations[0].transactionSequenceNumber
             : 0) + a.pendingOperations.length,
         extra: {},
-      });
+      };
+
+      if (t.tag) {
+        operation.extra.tag = t.tag;
+      }
+      onOperationBroadcasted(operation);
     }
   } catch (e) {
     if (e && e.name === "RippledError" && e.data.resultMessage) {
@@ -252,8 +256,11 @@ const txToOperation = (account: Account) => ({
     recipients: [destination.address],
     date: new Date(timestamp),
     transactionSequenceNumber: sequence,
-    extra: { tag: destination.tag },
+    extra: {},
   };
+  if (destination.tag) {
+    op.extra.tag = destination.tag;
+  }
   return op;
 };
 
