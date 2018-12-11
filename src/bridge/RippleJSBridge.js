@@ -180,6 +180,7 @@ type Tx = {
         currency: string,
         value: string,
       },
+      tag?: string,
     },
     paths: string,
   },
@@ -251,7 +252,7 @@ const txToOperation = (account: Account) => ({
     recipients: [destination.address],
     date: new Date(timestamp),
     transactionSequenceNumber: sequence,
-    extra: {},
+    extra: { tag: destination.tag },
   };
   return op;
 };
