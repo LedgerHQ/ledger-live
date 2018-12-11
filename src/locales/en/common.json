@@ -497,7 +497,10 @@
     "seeLess": "See less",
     "viewInExplorer": "View in explorer",
     "sending": "Sending...",
-    "receiving": "Receiving..."
+    "receiving": "Receiving...",
+    "extra":{
+      "tag": "Tag"
+    }
   },
   "operationList": {
     "noOperations": "No Operations",
