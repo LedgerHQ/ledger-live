@@ -57,6 +57,7 @@ class BottomModal extends Component<Props> {
               barStyle="light-content"
             />
             {children}
+            <View style={styles.samsungFix} />
           </View>
         </ReactNativeModal>
       </ButtonUseTouchable.Provider>
@@ -70,7 +71,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingTop: 8,
-    paddingBottom: 24 + EXTRA_PADDING_ANDROID_FIX,
+    paddingBottom: 24,
+  },
+  samsungFix: {
+    paddingBottom: EXTRA_PADDING_ANDROID_FIX,
     marginBottom: EXTRA_PADDING_ANDROID_FIX * -1,
   },
 });
