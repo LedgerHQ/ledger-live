@@ -80,8 +80,9 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
     };
   }
 
-  onChangeCustomFeeRow = (feePerByte: ?BigNumber) =>
+  onChangeCustomFeeRow = (feePerByte: BigNumber) => {
     this.setState({ feePerByte, focusedItemKey: "custom" });
+  };
 
   onChangeFeeRow = (feePerByte: ?BigNumber, key: string) => {
     this.setState({ feePerByte, focusedItemKey: key });

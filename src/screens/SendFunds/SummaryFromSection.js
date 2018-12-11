@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";
@@ -18,7 +19,7 @@ export default class SummaryFromSection extends PureComponent<Props> {
     const { account } = this.props;
     return (
       <SummaryRowCustom
-        label="From"
+        label={<Trans i18nKey="send.summary.from" />}
         iconLeft={
           <Circle bg={colors.lightLive} size={34}>
             <Wallet size={16} color={colors.live} />

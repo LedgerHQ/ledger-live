@@ -32,7 +32,11 @@ class ReportErrorsRow extends PureComponent<Props> {
         alignedTop
         {...props}
       >
-        <Switch value={reportErrorsEnabled} onValueChange={setReportErrors} />
+        <Switch
+          style={{ opacity: 0.99 }}
+          value={reportErrorsEnabled}
+          onValueChange={setReportErrors}
+        />
       </SettingsRow>
     );
   }

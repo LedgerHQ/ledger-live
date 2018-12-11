@@ -44,11 +44,13 @@ class EditFeeUnit extends PureComponent<Props, State> {
   onRequestClose = () => {
     this.setState({ isModalOpened: false });
   };
+
   onPress = () => {
     this.setState({ isModalOpened: true });
   };
 
   keyExtractor = (item: any) => item.code;
+
   onChange = (fee: ?BigNumber) => {
     fee && fee.isZero()
       ? this.setState({ fee, isValid: false })

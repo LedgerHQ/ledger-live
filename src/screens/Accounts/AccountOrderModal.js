@@ -2,10 +2,9 @@
 
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { Trans } from "react-i18next";
 
 import { withNavigation, SafeAreaView } from "react-navigation";
-import type { T } from "../../types/common";
 
 import MenuTitle from "../../components/MenuTitle";
 import OrderOption from "./OrderOption";
@@ -18,14 +17,15 @@ class AccountOrderModal extends Component<{
   navigation: *,
   isOpened: boolean,
   onClose: () => void,
-  t: T,
 }> {
   render() {
-    const { onClose, isOpened, t } = this.props;
+    const { onClose, isOpened } = this.props;
     return (
       <BottomModal id="AccountOrderModal" onClose={onClose} isOpened={isOpened}>
         <SafeAreaView forceInset={forceInset}>
-          <MenuTitle>{t("common:common.sortBy")}</MenuTitle>
+          <MenuTitle>
+            <Trans i18nKey="common.sortBy" />
+          </MenuTitle>
           <OrderOption id="balance" />
           <OrderOption id="name" />
           <View style={styles.buttonContainer}>
@@ -33,7 +33,7 @@ class AccountOrderModal extends Component<{
               event="AccountOrderModalDone"
               type="primary"
               onPress={onClose}
-              title="Done"
+              title={<Trans i18nKey="common.done" />}
             />
           </View>
         </SafeAreaView>
@@ -46,4 +46,4 @@ const styles = StyleSheet.create({
   buttonContainer: { paddingHorizontal: 16, marginTop: 16 },
 });
 
-export default translate()(withNavigation(AccountOrderModal));
+export default withNavigation(AccountOrderModal);

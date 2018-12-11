@@ -16,6 +16,7 @@ import ConfigUSBDeviceSupport from "./ConfigUSBDeviceSupport";
 import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
+import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 
 class DebugMocks_ extends PureComponent<{
   accounts: *,
@@ -41,6 +42,7 @@ class DebugMocks_ extends PureComponent<{
         ) : null}
         <OpenDebugCrash />
         <OpenDebugIcons />
+        <ReadOnlyModeRow />
       </ScrollView>
     );
   }

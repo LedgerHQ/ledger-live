@@ -3,31 +3,39 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { withNavigation } from "react-navigation";
+import { createStructuredSelector } from "reselect";
+import connect from "react-redux/es/connect/connect";
 import Button from "../../components/Button";
 import IconSend from "../../icons/Send";
 import IconReceive from "../../icons/Receive";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 type Props = {
   accountId: string,
   navigation: *,
+  readOnlyModeEnabled: boolean,
 };
-
+const mapStateToProps = createStructuredSelector({
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+});
 class AccountActions extends PureComponent<Props> {
   render() {
-    const { navigation, accountId } = this.props;
+    const { readOnlyModeEnabled, navigation, accountId } = this.props;
 
     return (
       <View style={styles.root}>
-        <Button
-          event="AccountSend"
-          type="primary"
-          IconLeft={IconSend}
-          onPress={() =>
-            navigation.navigate("SendSelectRecipient", { accountId })
-          }
-          title={<Trans i18nKey="account.send" />}
-          containerStyle={styles.btn1}
-        />
+        {!readOnlyModeEnabled && (
+          <Button
+            event="AccountSend"
+            type="primary"
+            IconLeft={IconSend}
+            onPress={() =>
+              navigation.navigate("SendSelectRecipient", { accountId })
+            }
+            title={<Trans i18nKey="account.send" />}
+            containerStyle={[styles.btn, styles.marginRight]}
+          />
+        )}
         <Button
           event="AccountReceive"
           type="primary"
@@ -36,7 +44,10 @@ class AccountActions extends PureComponent<Props> {
             navigation.navigate("ReceiveConnectDevice", { accountId })
           }
           title={<Trans i18nKey="account.receive" />}
-          containerStyle={styles.btn2}
+          containerStyle={[
+            styles.btn,
+            !readOnlyModeEnabled ? styles.marginLeft : null,
+          ]}
         />
       </View>
     );
@@ -46,17 +57,19 @@ class AccountActions extends PureComponent<Props> {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
-    paddingVertical: 8,
+    paddingTop: 8,
+    paddingBottom: 12,
     paddingHorizontal: 16,
   },
-  btn1: {
+  btn: {
     flex: 1,
+  },
+  marginRight: {
     marginRight: 8,
   },
-  btn2: {
+  marginLeft: {
     marginLeft: 8,
-    flex: 1,
   },
 });
 
-export default withNavigation(AccountActions);
+export default withNavigation(connect(mapStateToProps)(AccountActions));

@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import i18next from "i18next";
 import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -40,7 +41,7 @@ class EditAccountName extends PureComponent<Props, State> {
   };
 
   static navigationOptions = {
-    title: "Account Name",
+    title: i18next.t("account.settings.accountName.title"),
   };
 
   onChangeText = (accountName: string) => {

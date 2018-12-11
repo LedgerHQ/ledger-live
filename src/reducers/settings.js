@@ -13,6 +13,7 @@ import type {
   Currency,
   Account,
 } from "@ledgerhq/live-common/lib/types";
+import Config from "react-native-config";
 import type { State } from ".";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 
@@ -52,6 +53,7 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean,
   hasAcceptedTradingWarning: boolean,
   developerModeEnabled: boolean,
+  readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
 };
 
@@ -67,6 +69,7 @@ const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasAcceptedTradingWarning: false,
+  readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
 };
 
@@ -197,6 +200,11 @@ const handlers: Object = {
     hasAcceptedTradingWarning: true,
   }),
 
+  SETTINGS_SET_READONLY_MODE: (state, action) => ({
+    ...state,
+    readOnlyModeEnabled: action.enabled,
+  }),
+
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state, action) => ({
     ...state,
     experimentalUSBEnabled: action.enabled,
@@ -285,5 +293,8 @@ export const hasCompletedOnboardingSelector = (state: State) =>
 
 export const hasAcceptedTradingWarningSelector = (state: State) =>
   state.settings.hasAcceptedTradingWarning;
+
+export const readOnlyModeEnabledSelector = (state: State) =>
+  state.settings.readOnlyModeEnabled;
 
 export default handleActions(handlers, INITIAL_STATE);

@@ -1,6 +1,7 @@
 // @flow
 
 import React, { PureComponent, Component } from "react";
+import { Trans } from "react-i18next";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
@@ -147,7 +148,11 @@ class Header extends PureComponent<{
             hitSlop={selectAllHitSlop}
           >
             <LText style={styles.headerSelectAllText}>
-              {areAllSelected ? "Deselect all" : "Select all"}
+              {areAllSelected ? (
+                <Trans i18nKey="selectableAccountsList.deselectAll" />
+              ) : (
+                <Trans i18nKey="selectableAccountsList.selectAll" />
+              )}
             </LText>
           </TouchableOpacity>
         )}

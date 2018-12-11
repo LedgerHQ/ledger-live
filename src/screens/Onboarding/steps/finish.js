@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { Image, View, StyleSheet } from "react-native";
+import { createStructuredSelector } from "reselect";
 
 import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
@@ -15,15 +16,20 @@ import { withOnboardingContext } from "../onboardingContext";
 import colors from "../../../colors";
 
 import type { OnboardingStepProps } from "../types";
+import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 
 type Props = OnboardingStepProps & {
   completeOnboarding: () => void,
+  readOnlyModeEnabled: boolean,
 };
 
 const mapDispatchToProps = {
   completeOnboarding,
 };
 
+const mapStateToProps = createStructuredSelector({
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+});
 const logo = <Image source={require("../../../images/logo.png")} />;
 
 class OnboardingStepFinish extends Component<Props> {
@@ -34,6 +40,7 @@ class OnboardingStepFinish extends Component<Props> {
   };
 
   render() {
+    const { readOnlyModeEnabled } = this.props;
     return (
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <TrackScreen category="Onboarding" name="Finish" />
@@ -45,9 +52,11 @@ class OnboardingStepFinish extends Component<Props> {
           <LText style={styles.title} secondary semiBold>
             <Trans i18nKey="onboarding.stepFinish.title" />
           </LText>
-          <LText style={styles.desc}>
-            <Trans i18nKey="onboarding.stepFinish.desc" />
-          </LText>
+          {!readOnlyModeEnabled && (
+            <LText style={styles.desc}>
+              <Trans i18nKey="onboarding.stepFinish.desc" />
+            </LText>
+          )}
           <Button
             event="OnboardingFinish"
             type="primary"
@@ -88,7 +97,7 @@ const styles = StyleSheet.create({
 
 export default withOnboardingContext(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps,
   )(OnboardingStepFinish),
 );

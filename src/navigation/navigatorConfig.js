@@ -24,26 +24,31 @@ export const stackNavigatorConfig: any = {
 if (Platform.OS === "android") {
   stackNavigatorConfig.transitionConfig = () => ({
     transitionSpec: {
-      duration: 200,
+      duration: 300,
       easing: Easing.out(Easing.poly(4)),
       timing: Animated.timing,
+      useNativeDriver: true,
     },
     screenInterpolator: sceneProps => {
-      const { layout, position, scene } = sceneProps;
-      const { index } = scene;
+      const { position, scene } = sceneProps;
 
-      const height = layout.initHeight;
-      const translateY = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [height, 0, 0],
-      });
-
+      const index = scene.index;
       const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
+        inputRange: [index - 1, index - 0.8, index],
+        outputRange: [0, 0, 1],
+        extrapolate: "clamp",
       });
 
-      return { opacity, transform: [{ translateY }] };
+      const translateY = position.interpolate({
+        inputRange: [index - 1, index],
+        outputRange: [50, 0],
+      });
+      const translateX = 0;
+
+      return {
+        opacity,
+        transform: [{ translateX }, { translateY }],
+      };
     },
   });
 }

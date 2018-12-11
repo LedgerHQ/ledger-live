@@ -13,9 +13,12 @@ import PortfolioIcon from "./icons/Portfolio";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
+import NanoXIcon from "./icons/TabNanoX";
+
 import { getFontStyle } from "./components/LText";
 import TabIcon from "./components/TabIcon";
 import Portfolio from "./screens/Portfolio";
+import Manager from "./screens/Manager";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
 import Settings from "./screens/Settings";
@@ -43,7 +46,6 @@ import DebugSettings, {
 } from "./screens/Settings/Debug";
 import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
-import Manager from "./screens/Manager";
 import ManagerAppsList from "./screens/Manager/AppsList";
 import ManagerDevice from "./screens/Manager/Device";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
@@ -94,6 +96,7 @@ import AddAccountsAccounts from "./screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
 import sendScreens from "./families/sendScreens";
+import ReadOnlyTab from "./components/ReadOnlyTab";
 
 // TODO look into all FlowFixMe
 
@@ -190,7 +193,13 @@ const ManagerStack = createStackNavigator(
 
 ManagerStack.navigationOptions = ({ navigation }) => ({
   tabBarIcon: (props: *) => (
-    <TabIcon Icon={ManagerIcon} i18nKey="tabs.manager" {...props} />
+    <ReadOnlyTab
+      OnIcon={NanoXIcon}
+      oni18nKey="tabs.nanoX"
+      OffIcon={ManagerIcon}
+      offi18nKey="tabs.manager"
+      {...props}
+    />
   ),
   tabBarVisible: !navigation.getParam("editMode"),
 });
@@ -407,6 +416,7 @@ const BaseOnboarding = createStackNavigator(
     Onboarding,
     ImportAccounts,
     PairDevices,
+    EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
   },

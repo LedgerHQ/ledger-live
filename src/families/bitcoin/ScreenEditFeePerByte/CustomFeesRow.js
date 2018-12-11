@@ -20,7 +20,7 @@ type Props = {
   title: React$Node,
   last?: boolean,
   initialValue: ?BigNumber,
-  onPress: (?BigNumber) => void,
+  onPress: BigNumber => void,
   isSelected: boolean,
 };
 
@@ -42,12 +42,26 @@ class FeesRow extends Component<Props, State> {
   onChangeText = (text: string) => {
     const { onPress } = this.props;
     const fees = sanitizeValueString(satoshiUnit, text);
-    this.setState({ fees: fees.display }, () => onPress(BigNumber(fees.value)));
+    this.setState({ fees: fees.display }, () => {
+      if (fees.value !== "") {
+        onPress(BigNumber(fees.value));
+      } else {
+        onPress(BigNumber(0));
+      }
+    });
   };
 
   onPress = () => {
-    const { onPress } = this.props;
-    onPress(null);
+    const { onPress, initialValue } = this.props;
+    const { fees } = this.state;
+
+    if (fees) {
+      onPress(BigNumber(fees));
+    } else if (initialValue) {
+      onPress(initialValue);
+    } else {
+      onPress(BigNumber(0));
+    }
 
     if (this.input.current) {
       this.input.current.focus();

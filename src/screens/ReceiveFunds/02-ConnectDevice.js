@@ -21,6 +21,8 @@ import {
   accountApp,
   receiveVerifyStep,
 } from "../../components/DeviceJob/steps";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import ReadOnlyWarning from "./ReadOnlyWarning";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -31,20 +33,42 @@ type Navigation = NavigationScreenProp<{
 type Props = {
   account: Account,
   navigation: Navigation,
+  readOnlyModeEnabled: boolean,
 };
 
+const mapStateToProps = createStructuredSelector({
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+  account: accountScreenSelector,
+});
+
 class ConnectDevice extends Component<Props> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("transfer.receive.titleDevice")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "2",
-          totalSteps: "3",
-        })}
-      />
-    ),
+  static navigationOptions = ({ navigation }) => {
+    const { params } = navigation.state;
+    const key = (params && params.title) || "transfer.receive.titleDevice";
+
+    return {
+      headerTitle: (
+        <StepHeader
+          title={i18next.t(key)}
+          subtitle={i18next.t("send.stepperHeader.stepRange", {
+            currentStep: "2",
+            totalSteps: "3",
+          })}
+        />
+      ),
+    };
   };
+
+  componentDidMount() {
+    const { readOnlyModeEnabled } = this.props;
+
+    if (readOnlyModeEnabled) {
+      this.props.navigation.setParams({
+        title: "transfer.receive.titleReadOnly",
+        headerRight: null,
+      });
+    }
+  }
 
   onSelectDevice = (deviceId: string) => {
     const { navigation, account } = this.props;
@@ -61,8 +85,15 @@ class ConnectDevice extends Component<Props> {
     });
   };
 
+  renderReadOnly = () => <ReadOnlyWarning continue={this.onSkipDevice} />;
+
   render() {
-    const { account } = this.props;
+    const { readOnlyModeEnabled, account } = this.props;
+
+    if (readOnlyModeEnabled) {
+      return this.renderReadOnly();
+    }
+
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
@@ -97,10 +128,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.lightFog,
   },
-});
-
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
 });
 
 export default compose(

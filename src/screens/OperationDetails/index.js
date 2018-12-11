@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import i18next from "i18next";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -25,7 +26,7 @@ type Props = {
 };
 class OperationDetails extends PureComponent<Props, *> {
   static navigationOptions = {
-    title: "Operation Details",
+    title: i18next.t("operationDetails.title"),
     headerLeft: null,
   };
 

@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import SummaryRow from "./SummaryRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -17,7 +18,7 @@ export default class SummaryAmountSection extends PureComponent<Props> {
   render() {
     const { account, amount } = this.props;
     return (
-      <SummaryRow title="Amount">
+      <SummaryRow title={<Trans i18nKey="send.summary.amount" />}>
         <View style={styles.amountContainer}>
           <LText style={styles.valueText}>
             <CurrencyUnitValue
