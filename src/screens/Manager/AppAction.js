@@ -153,7 +153,8 @@ class AppAction extends PureComponent<
     const buttonTitle = pending ? (
       <Trans
         i18nKey={`AppAction.${path}.button`}
-        values={{ percentage: progressPercentage }}
+        values={{ progressPercentage }}
+        count={progressPercentage + 1}
       />
     ) : (
       <Trans i18nKey="common.close" />
@@ -177,7 +178,7 @@ class AppAction extends PureComponent<
                     <Spinning clockwise>
                       <Image
                         source={spinner}
-                        style={{ width: 24, height: 24 }}
+                        style={{ width: 22, height: 22 }}
                       />
                     </Spinning>
                   )
