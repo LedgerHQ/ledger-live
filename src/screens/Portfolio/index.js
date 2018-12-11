@@ -39,6 +39,7 @@ import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
 import TradingDisclaimer from "../../modals/TradingDisclaimer";
 import TrackScreen from "../../analytics/TrackScreen";
+import NoOpStatePortfolio from "./NoOpStatePortfolio";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
@@ -171,6 +172,15 @@ class Portfolio extends Component<
       accounts,
       opCount,
     );
+
+    if (sections.length === 0) {
+      return (
+        <View style={styles.root}>
+          <TrackScreen category="Portfolio" accountsLength={0} />
+          <NoOpStatePortfolio navigation={navigation} />
+        </View>
+      );
+    }
 
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
