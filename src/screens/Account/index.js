@@ -8,7 +8,10 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
-import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
+import {
+  isAccountEmpty,
+  groupAccountOperationsByDay,
+} from "@ledgerhq/live-common/lib/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -30,6 +33,7 @@ import AccountHeaderRight from "./AccountHeaderRight";
 import AccountHeaderTitle from "./AccountHeaderTitle";
 import AccountActions from "./AccountActions";
 import { scrollToTopIntent } from "./events";
+import NoOperationFooter from "../../components/NoOperationFooter";
 
 type Props = {
   account: Account,
@@ -45,9 +49,6 @@ type State = {
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = accountSyncRefreshControl(AnimatedSectionList);
-
-const isAccountEmpty = (a: Account): boolean =>
-  a.operations.length === 0 && a.balance.isZero();
 
 class AccountScreen extends PureComponent<Props, State> {
   static navigationOptions = ({ navigation }) => ({
@@ -114,37 +115,60 @@ class AccountScreen extends PureComponent<Props, State> {
     // - we can optimize more (e.g. only need to calculate the balance of this account, which is cached btw. no need for countervalues and the more complex algo)
     // - less if logic in graph (we shouldn't have magically guess if it's a "countervalue" mode or a "crypto" one)
     // - the fact we want later to diverge both a bit (graph differ already, and later if we intro the idea to switch between modes)
-    const hasOperations = account.operations.length > 0;
+    const empty = isAccountEmpty(account);
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
-        {hasOperations && (
+        {!empty && (
           <GraphCard
             summary={summary}
             renderTitle={this.renderListHeaderTitle}
           />
         )}
-        {hasOperations && <AccountActions accountId={account.id} />}
+        {!empty && <AccountActions accountId={account.id} />}
       </View>
     );
   };
 
-  ListEmptyComponent = (account, analytics) => {
-    const { navigation } = this.props;
+  ListEmptyComponent = () => {
+    const { account, navigation } = this.props;
+
+    const analytics = (
+      <TrackScreen
+        category="Account"
+        currency={account.currency.id}
+        operationsSize={account.operations.length}
+      />
+    );
+
     return (
-      <Fragment>
-        {analytics}
-        <EmptyStateAccount account={account} navigation={navigation} />
-      </Fragment>
+      isAccountEmpty(account) && (
+        <Fragment>
+          {analytics}
+          <EmptyStateAccount account={account} navigation={navigation} />
+        </Fragment>
+      )
     );
   };
 
-  ListFooterComponent = (completed, sections) =>
-    !completed
-      ? LoadingFooter
-      : sections.length === 0
-        ? null
-        : NoMoreOperationFooter;
+  ListFooterComponent = () => {
+    const { account } = this.props;
+    const { opCount } = this.state;
+
+    const { sections, completed } = groupAccountOperationsByDay(
+      account,
+      opCount,
+    );
+    return !completed ? (
+      <LoadingFooter />
+    ) : sections.length === 0 ? (
+      isAccountEmpty(account) ? null : (
+        <NoOperationFooter />
+      )
+    ) : (
+      <NoMoreOperationFooter />
+    );
+  };
 
   ref = React.createRef();
 
@@ -186,10 +210,7 @@ class AccountScreen extends PureComponent<Props, State> {
       />
     );
 
-    const { sections, completed } = groupAccountOperationsByDay(
-      account,
-      opCount,
-    );
+    const { sections } = groupAccountOperationsByDay(account, opCount);
 
     return (
       <View style={styles.root}>
@@ -199,9 +220,9 @@ class AccountScreen extends PureComponent<Props, State> {
           sections={sections}
           style={styles.sectionList}
           contentContainerStyle={styles.contentContainer}
-          ListFooterComponent={this.ListFooterComponent(completed, sections)}
+          ListFooterComponent={this.ListFooterComponent}
           ListHeaderComponent={this.ListHeaderComponent}
-          ListEmptyComponent={this.ListEmptyComponent(account, analytics)}
+          ListEmptyComponent={this.ListEmptyComponent}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={this.renderSectionHeader}

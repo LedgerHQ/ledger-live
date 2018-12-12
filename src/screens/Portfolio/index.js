@@ -104,20 +104,40 @@ class Portfolio extends Component<
 
   keyExtractor = (item: Operation) => item.id;
 
-  ListHeaderComponent = sections => (
-    <GraphCardContainer
-      summary={this.props.summary}
-      showGreeting={!!sections.length}
-    />
-  );
-  ListFooterComponent = (sections, completed) =>
-    !completed
-      ? LoadingFooter
-      : sections.length === 0
-        ? null
-        : NoMoreOperationFooter;
-  ListEmptyComponent = (sections, accounts) => {
+  ListHeaderComponent = () => {
+    const { accounts } = this.props;
+    const { opCount } = this.state;
+    const { sections } = groupAccountsOperationsByDay(accounts, opCount);
+
+    return (
+      <GraphCardContainer
+        summary={this.props.summary}
+        showGreeting={!!sections.length}
+      />
+    );
+  };
+
+  ListFooterComponent = () => {
+    const { accounts } = this.props;
+    const { opCount } = this.state;
+    const { sections, completed } = groupAccountsOperationsByDay(
+      accounts,
+      opCount,
+    );
+
+    return !completed ? (
+      <LoadingFooter />
+    ) : sections.length === 0 ? null : (
+      <NoMoreOperationFooter />
+    );
+  };
+
+  ListEmptyComponent = () => {
+    const { accounts } = this.props;
+    const { opCount } = this.state;
+    const { sections } = groupAccountsOperationsByDay(accounts, opCount);
     const { navigation } = this.props;
+
     if (accounts.length && !sections.length) {
       return <NoOpStatePortfolio navigation={navigation} />;
     }
@@ -168,10 +188,7 @@ class Portfolio extends Component<
       <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
     );
 
-    const { sections, completed } = groupAccountsOperationsByDay(
-      accounts,
-      opCount,
-    );
+    const { sections } = groupAccountsOperationsByDay(accounts, opCount);
 
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
@@ -196,9 +213,9 @@ class Portfolio extends Component<
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: true },
             )}
-            ListHeaderComponent={this.ListHeaderComponent(sections)}
-            ListFooterComponent={this.ListFooterComponent(sections, completed)}
-            ListEmptyComponent={this.ListEmptyComponent(sections, accounts)}
+            ListHeaderComponent={this.ListHeaderComponent}
+            ListFooterComponent={this.ListFooterComponent}
+            ListEmptyComponent={this.ListEmptyComponent}
           />
         </SafeAreaView>
         {disclaimer}
