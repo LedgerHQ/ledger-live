@@ -42,7 +42,7 @@ class EmptyStateAccount extends PureComponent<{
             title={<Trans i18nKey="account.emptyState.buttons.receiveFunds" />}
             onPress={this.goToReceiveFunds}
             containerStyle={styles.receiveButton}
-            iconLeft={Receive}
+            IconLeft={Receive}
           />
         </View>
       </View>
