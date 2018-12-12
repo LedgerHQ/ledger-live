@@ -23,7 +23,6 @@ import {
 import { acceptTradingWarning } from "../../actions/settings";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
@@ -105,9 +104,25 @@ class Portfolio extends Component<
 
   keyExtractor = (item: Operation) => item.id;
 
-  ListHeaderComponent = () => (
-    <GraphCardContainer summary={this.props.summary} />
+  ListHeaderComponent = sections => (
+    <GraphCardContainer
+      summary={this.props.summary}
+      showGreeting={!!sections.length}
+    />
   );
+  ListFooterComponent = (sections, completed) =>
+    !completed
+      ? LoadingFooter
+      : sections.length === 0
+        ? null
+        : NoMoreOperationFooter;
+  ListEmptyComponent = (sections, accounts) => {
+    const { navigation } = this.props;
+    if (accounts.length && !sections.length) {
+      return <NoOpStatePortfolio navigation={navigation} />;
+    }
+    return <EmptyStatePortfolio navigation={navigation} />;
+  };
 
   renderItem = ({
     item,
@@ -147,40 +162,16 @@ class Portfolio extends Component<
   };
 
   render() {
-    const {
-      summary,
-      accounts,
-      navigation,
-      hasAcceptedTradingWarning,
-    } = this.props;
+    const { summary, accounts, hasAcceptedTradingWarning } = this.props;
     const { opCount, scrollY, isModalOpened } = this.state;
     const disclaimer = !hasAcceptedTradingWarning && (
       <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
     );
 
-    if (accounts.length === 0) {
-      return (
-        <View style={styles.root}>
-          <TrackScreen category="Portfolio" accountsLength={0} />
-          <EmptyStatePortfolio navigation={navigation} />
-          {disclaimer}
-        </View>
-      );
-    }
-
     const { sections, completed } = groupAccountsOperationsByDay(
       accounts,
       opCount,
     );
-
-    if (sections.length === 0) {
-      return (
-        <View style={styles.root}>
-          <TrackScreen category="Portfolio" accountsLength={0} />
-          <NoOpStatePortfolio navigation={navigation} />
-        </View>
-      );
-    }
 
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
@@ -205,14 +196,9 @@ class Portfolio extends Component<
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: true },
             )}
-            ListHeaderComponent={this.ListHeaderComponent}
-            ListFooterComponent={
-              !completed
-                ? LoadingFooter
-                : sections.length === 0
-                  ? NoOperationFooter
-                  : NoMoreOperationFooter
-            }
+            ListHeaderComponent={this.ListHeaderComponent(sections)}
+            ListFooterComponent={this.ListFooterComponent(sections, completed)}
+            ListEmptyComponent={this.ListEmptyComponent(sections, accounts)}
           />
         </SafeAreaView>
         {disclaimer}
@@ -242,6 +228,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
+    flexGrow: 1,
     paddingTop: 16,
     paddingBottom: 64,
   },

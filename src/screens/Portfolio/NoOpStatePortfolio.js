@@ -52,10 +52,12 @@ export default NoOpStatePortfolio;
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
     margin: 16,
+    alignSelf: "center",
+    flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+    alignItems: "center",
   },
   body: {
     alignItems: "center",
