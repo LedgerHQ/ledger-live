@@ -16,7 +16,6 @@ import accountSyncRefreshControl from "../../components/accountSyncRefreshContro
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import NoOperationFooter from "../../components/NoOperationFooter";
 import LText from "../../components/LText";
 import GraphCard from "../../components/GraphCard";
 import LoadingFooter from "../../components/LoadingFooter";
@@ -115,14 +114,37 @@ class AccountScreen extends PureComponent<Props, State> {
     // - we can optimize more (e.g. only need to calculate the balance of this account, which is cached btw. no need for countervalues and the more complex algo)
     // - less if logic in graph (we shouldn't have magically guess if it's a "countervalue" mode or a "crypto" one)
     // - the fact we want later to diverge both a bit (graph differ already, and later if we intro the idea to switch between modes)
+    const hasOperations = account.operations.length > 0;
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
-        <GraphCard summary={summary} renderTitle={this.renderListHeaderTitle} />
-        <AccountActions accountId={account.id} />
+        {hasOperations && (
+          <GraphCard
+            summary={summary}
+            renderTitle={this.renderListHeaderTitle}
+          />
+        )}
+        {hasOperations && <AccountActions accountId={account.id} />}
       </View>
     );
   };
+
+  ListEmptyComponent = (account, analytics) => {
+    const { navigation } = this.props;
+    return (
+      <Fragment>
+        {analytics}
+        <EmptyStateAccount account={account} navigation={navigation} />
+      </Fragment>
+    );
+  };
+
+  ListFooterComponent = (completed, sections) =>
+    !completed
+      ? LoadingFooter
+      : sections.length === 0
+        ? null
+        : NoMoreOperationFooter;
 
   ref = React.createRef();
 
@@ -152,7 +174,7 @@ class AccountScreen extends PureComponent<Props, State> {
   renderSectionHeader = ({ section }) => <SectionHeader section={section} />;
 
   render() {
-    const { account, navigation } = this.props;
+    const { account } = this.props;
     const { opCount } = this.state;
     if (!account) return null;
 
@@ -163,15 +185,6 @@ class AccountScreen extends PureComponent<Props, State> {
         operationsSize={account.operations.length}
       />
     );
-
-    if (isAccountEmpty(account)) {
-      return (
-        <Fragment>
-          {analytics}
-          <EmptyStateAccount account={account} navigation={navigation} />
-        </Fragment>
-      );
-    }
 
     const { sections, completed } = groupAccountOperationsByDay(
       account,
@@ -186,14 +199,9 @@ class AccountScreen extends PureComponent<Props, State> {
           sections={sections}
           style={styles.sectionList}
           contentContainerStyle={styles.contentContainer}
-          ListFooterComponent={
-            !completed
-              ? LoadingFooter
-              : sections.length === 0
-                ? NoOperationFooter
-                : NoMoreOperationFooter
-          }
+          ListFooterComponent={this.ListFooterComponent(completed, sections)}
           ListHeaderComponent={this.ListHeaderComponent}
+          ListEmptyComponent={this.ListEmptyComponent(account, analytics)}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={this.renderSectionHeader}
@@ -243,5 +251,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 64,
+    flexGrow: 1,
   },
 });
