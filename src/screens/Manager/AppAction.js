@@ -34,6 +34,7 @@ class PendingProgress extends PureComponent<{
         <ProgressCircle
           progress={0.15 + 0.85 * progress}
           color={colors.live}
+          unfilledColor={colors.fog}
           borderWidth={0}
           thickness={3.6}
           size={22}
@@ -124,7 +125,7 @@ class AppAction extends PureComponent<
     const { action, onClose, isOpened } = this.props;
     const { pending, error, progress } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
-
+    const progressPercentage = Math.round(progress * 100);
     const icon = error ? (
       <ErrorIcon error={error} />
     ) : (
@@ -142,10 +143,19 @@ class AppAction extends PureComponent<
 
     const description = error ? (
       <TranslatedError error={error} field="description" />
-    ) : null;
+    ) : (
+      <Trans
+        i18nKey={`AppAction.${path}.desc`}
+        values={{ appName: action.app.name }}
+      />
+    );
 
     const buttonTitle = pending ? (
-      <Trans i18nKey={`AppAction.${path}.button`} />
+      <Trans
+        i18nKey={`AppAction.${path}.button`}
+        values={{ progressPercentage }}
+        count={progressPercentage + 1}
+      />
     ) : (
       <Trans i18nKey="common.close" />
     );
@@ -168,7 +178,7 @@ class AppAction extends PureComponent<
                     <Spinning clockwise>
                       <Image
                         source={spinner}
-                        style={{ width: 24, height: 24 }}
+                        style={{ width: 22, height: 22 }}
                       />
                     </Spinning>
                   )
