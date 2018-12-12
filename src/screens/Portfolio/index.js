@@ -10,7 +10,10 @@ import { translate } from "react-i18next";
 import Config from "react-native-config";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
+import {
+  groupAccountsOperationsByDay,
+  isAccountEmpty,
+} from "@ledgerhq/live-common/lib/account";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 
 import colors from "../../colors";
@@ -39,6 +42,7 @@ import SyncBackground from "../../bridge/SyncBackground";
 import TradingDisclaimer from "../../modals/TradingDisclaimer";
 import TrackScreen from "../../analytics/TrackScreen";
 import NoOpStatePortfolio from "./NoOpStatePortfolio";
+import NoOperationFooter from "../../components/NoOperationFooter";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
@@ -106,42 +110,27 @@ class Portfolio extends Component<
 
   ListHeaderComponent = () => {
     const { accounts } = this.props;
-    const { opCount } = this.state;
-    const { sections } = groupAccountsOperationsByDay(accounts, opCount);
 
     return (
       <GraphCardContainer
         summary={this.props.summary}
-        showGreeting={!!sections.length}
+        showGreeting={!accounts.every(isAccountEmpty)}
       />
-    );
-  };
-
-  ListFooterComponent = () => {
-    const { accounts } = this.props;
-    const { opCount } = this.state;
-    const { sections, completed } = groupAccountsOperationsByDay(
-      accounts,
-      opCount,
-    );
-
-    return !completed ? (
-      <LoadingFooter />
-    ) : sections.length === 0 ? null : (
-      <NoMoreOperationFooter />
     );
   };
 
   ListEmptyComponent = () => {
     const { accounts } = this.props;
-    const { opCount } = this.state;
-    const { sections } = groupAccountsOperationsByDay(accounts, opCount);
     const { navigation } = this.props;
 
-    if (accounts.length && !sections.length) {
+    if (accounts.every(isAccountEmpty)) {
       return <NoOpStatePortfolio navigation={navigation} />;
     }
-    return <EmptyStatePortfolio navigation={navigation} />;
+    if (accounts.length === 0) {
+      return <EmptyStatePortfolio navigation={navigation} />;
+    }
+
+    return null;
   };
 
   renderItem = ({
@@ -188,7 +177,10 @@ class Portfolio extends Component<
       <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
     );
 
-    const { sections } = groupAccountsOperationsByDay(accounts, opCount);
+    const { sections, completed } = groupAccountsOperationsByDay(
+      accounts,
+      opCount,
+    );
 
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
@@ -214,7 +206,15 @@ class Portfolio extends Component<
               { useNativeDriver: true },
             )}
             ListHeaderComponent={this.ListHeaderComponent}
-            ListFooterComponent={this.ListFooterComponent}
+            ListFooterComponent={
+              !completed ? (
+                <LoadingFooter />
+              ) : accounts.every(isAccountEmpty) ? null : sections.length ? (
+                <NoOperationFooter />
+              ) : (
+                <NoMoreOperationFooter />
+              )
+            }
             ListEmptyComponent={this.ListEmptyComponent}
           />
         </SafeAreaView>

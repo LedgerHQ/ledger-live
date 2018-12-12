@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { StyleSheet, SectionList, View, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
@@ -132,41 +132,10 @@ class AccountScreen extends PureComponent<Props, State> {
 
   ListEmptyComponent = () => {
     const { account, navigation } = this.props;
-
-    const analytics = (
-      <TrackScreen
-        category="Account"
-        currency={account.currency.id}
-        operationsSize={account.operations.length}
-      />
-    );
-
     return (
       isAccountEmpty(account) && (
-        <Fragment>
-          {analytics}
-          <EmptyStateAccount account={account} navigation={navigation} />
-        </Fragment>
+        <EmptyStateAccount account={account} navigation={navigation} />
       )
-    );
-  };
-
-  ListFooterComponent = () => {
-    const { account } = this.props;
-    const { opCount } = this.state;
-
-    const { sections, completed } = groupAccountOperationsByDay(
-      account,
-      opCount,
-    );
-    return !completed ? (
-      <LoadingFooter />
-    ) : sections.length === 0 ? (
-      isAccountEmpty(account) ? null : (
-        <NoOperationFooter />
-      )
-    ) : (
-      <NoMoreOperationFooter />
     );
   };
 
@@ -210,7 +179,10 @@ class AccountScreen extends PureComponent<Props, State> {
       />
     );
 
-    const { sections } = groupAccountOperationsByDay(account, opCount);
+    const { sections, completed } = groupAccountOperationsByDay(
+      account,
+      opCount,
+    );
 
     return (
       <View style={styles.root}>
@@ -220,7 +192,17 @@ class AccountScreen extends PureComponent<Props, State> {
           sections={sections}
           style={styles.sectionList}
           contentContainerStyle={styles.contentContainer}
-          ListFooterComponent={this.ListFooterComponent}
+          ListFooterComponent={
+            !completed ? (
+              <LoadingFooter />
+            ) : sections.length === 0 ? (
+              isAccountEmpty(account) ? null : (
+                <NoOperationFooter />
+              )
+            ) : (
+              <NoMoreOperationFooter />
+            )
+          }
           ListHeaderComponent={this.ListHeaderComponent}
           ListEmptyComponent={this.ListEmptyComponent}
           keyExtractor={this.keyExtractor}
