@@ -31,7 +31,7 @@ class PortfolioHeader extends Component<{
     } = this.props;
     return pending && !isUpToDate ? (
       <HeaderSynchronizing />
-    ) : !isUpToDate && error ? (
+    ) : error ? (
       <HeaderErrorTitle
         withDescription
         withDetail
