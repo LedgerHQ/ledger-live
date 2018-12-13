@@ -69,9 +69,9 @@ class AccountSyncStatus extends Component<{
 }> {
   render() {
     const { isUpToDateAccount, pending, error } = this.props;
+    if (pending && !isUpToDateAccount) return <StatusSynchronizing />;
+    if (error) return <StatusError />;
     if (isUpToDateAccount) return <StatusUpToDate />;
-    if (!pending && error) return <StatusError />;
-    if (pending) return <StatusSynchronizing />;
     return <StatusQueued />;
   }
 }
