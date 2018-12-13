@@ -449,6 +449,10 @@
         "manager": "Open Manager"
       }
     },
+    "noOpState": {
+      "title": "No operations yet?",
+      "desc": "Simply send some crypto assets to your receiving address and wait for the app to sync"
+    },
     "tradingDisclaimer": {
       "title": "Trade Safely",
       "text1": "Before sending and receiving crypto assets, educate yourself to make informed decisions. Crypto assets are volatile and the prices can go up and down. Carefully evaluate your trading goals and the financial risk you are willing to take.",

@@ -20,12 +20,14 @@ class PortfolioHeader extends Component<{
   nbAccounts: number,
   isUpToDate: boolean,
   globalSyncState: AsyncState,
+  showGreeting: boolean,
   networkError: ?Error,
 }> {
   render() {
     const {
       nbAccounts,
       isUpToDate,
+      showGreeting,
       networkError,
       globalSyncState: { pending, error },
     } = this.props;
@@ -37,9 +39,9 @@ class PortfolioHeader extends Component<{
         withDetail
         error={networkError || error}
       />
-    ) : (
+    ) : showGreeting ? (
       <Greetings nbAccounts={nbAccounts} />
-    );
+    ) : null;
   }
 }
 
