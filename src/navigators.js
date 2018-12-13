@@ -2,10 +2,10 @@
 import React from "react";
 import {
   createStackNavigator,
-  createBottomTabNavigator,
   createMaterialTopTabNavigator,
   createSwitchNavigator,
 } from "react-navigation";
+import { createBottomTabNavigator } from "react-navigation-tabs";
 import type { NavigationScreenProp } from "react-navigation";
 import { Platform } from "react-native";
 import colors from "./colors";
@@ -97,6 +97,7 @@ import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
 import sendScreens from "./families/sendScreens";
 import ReadOnlyTab from "./components/ReadOnlyTab";
+import HiddenTabBarIfKeyboardVisible from "./components/HiddenTabBarIfKeyboardVisible";
 
 // TODO look into all FlowFixMe
 
@@ -239,6 +240,7 @@ const Main = createBottomTabNavigator(
       style: styles.bottomTabBar,
       showLabel: false,
     },
+    tabBarComponent: HiddenTabBarIfKeyboardVisible,
   },
 );
 
