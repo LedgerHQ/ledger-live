@@ -11,7 +11,7 @@ mkdir xliffs
 cd xliffs
 
 for lang in fr es-ES zh-CN ja ko ru; do
-  curl "https://api.crowdin.com/api/project/ledger-live-mobile-private/export-file?file=develop/static/i18n/en/app.json&language=$lang&format=xliff&key=$CROWDIN_TOKEN" > en-$lang.xliff
+  curl "https://api.crowdin.com/api/project/ledger-live-mobile-private/export-file?file=develop/src/locales/en/common.json&language=$lang&format=xliff&key=$CROWDIN_TOKEN" > en-$lang.xliff
 done
 
 zip -r ledger-live-mobile-langs.zip *.xliff
