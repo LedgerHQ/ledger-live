@@ -16,11 +16,11 @@ import {
 import { translate, Trans } from "react-i18next";
 import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
 import { TrackScreen } from "../../analytics";
-import installMcu from "../../logic/hw/installMcu";
+import flash from "../../logic/hw/flash";
 import installFinalFirmware from "../../logic/hw/installFinalFirmware";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import { withDevice, withDevicePolling } from "../../logic/hw/deviceAccess";
-import type { Firmware } from "../../types/manager";
+import type { FinalFirmware } from "../../types/manager";
 import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import StepHeader from "../../components/StepHeader";
@@ -30,7 +30,7 @@ import Installing from "./Installing";
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    latestFirmware: ?Firmware,
+    latestFirmware: FinalFirmware,
   },
 }>;
 
@@ -69,6 +69,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   async componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
+    const latestFirmware = navigation.getParam("latestFirmware");
 
     const loop = () =>
       withDevicePolling(deviceId)(
@@ -87,7 +88,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
 
           // appropriate script to install
           const install = deviceInfo.isBootloader
-            ? installMcu
+            ? flash(latestFirmware)
             : installFinalFirmware;
 
           const $next = loop();

@@ -236,6 +236,10 @@
       "title": "Oops, wrong device for ‘{{accountName}}’.",
       "description": "The connected device is not associated with the account you selected. Please connect the right device."
     },
+    "UnexpectedBootloader": {
+      "title": "Opps, your device should not be in Bootloader mode",
+      "description": "Please restart your device or contact us"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
@@ -502,7 +506,7 @@
     "viewInExplorer": "View in explorer",
     "sending": "Sending...",
     "receiving": "Receiving...",
-    "extra":{
+    "extra": {
       "tag": "Tag"
     }
   },
@@ -707,10 +711,10 @@
       "address": "Address for account",
       "copyAddress": "Copy address",
       "addressCopied": "Address copied!",
-      "readOnly":{
-        "title":"Receive",
-        "text":"Please be careful",
-        "desc":"You are about to generate an address which has not been confirmed on your Ledger device. Please verify it for optimal security.",
+      "readOnly": {
+        "title": "Receive",
+        "text": "Please be careful",
+        "desc": "You are about to generate an address which has not been confirmed on your Ledger device. Please verify it for optimal security.",
         "verify": "Your {{accountType}} address has not been confirmed on your Ledger device. Please verify it for optimal security."
       }
     },

@@ -8,3 +8,6 @@ export const SyncError = createCustomErrorClass("SyncError");
 export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
   "NotEnoughBalanceBecauseDestinationNotCreated",
 );
+export const UnexpectedBootloader = createCustomErrorClass(
+  "UnexpectedBootloader",
+);

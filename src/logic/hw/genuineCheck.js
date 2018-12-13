@@ -3,19 +3,31 @@
 // NB potentially we could emit progress events
 
 import Transport from "@ledgerhq/hw-transport";
-import { Observable } from "rxjs";
-import { delay } from "../promise";
-import { hookRejections } from "../../components/DebugRejectSwitch";
+import { Observable, from } from "rxjs";
+import { switchMap } from "rxjs/operators";
+import type { DeviceInfo } from "../../types/manager";
+import ManagerAPI from "../../api/Manager";
 
-export default (transport: Transport<*>): Observable<void> =>
-  Observable.create(o => {
-    hookRejections(
-      transport
-        .send(0, 0, 0, 0)
-        .catch(() => {})
-        .then(() => delay(2000)),
-    ).then(() => o.complete(), e => o.error(e));
-    return () => {
-      // cancel things
-    };
-  });
+export default (
+  transport: Transport<*>,
+  deviceInfo: DeviceInfo,
+): Observable<*> =>
+  from(
+    ManagerAPI.getDeviceVersion(deviceInfo.targetId, deviceInfo.providerId),
+  ).pipe(
+    switchMap(deviceVersion =>
+      from(
+        ManagerAPI.getCurrentFirmware({
+          deviceId: deviceVersion.id,
+          fullVersion: deviceInfo.fullVersion,
+          provider: deviceInfo.providerId,
+        }),
+      ),
+    ),
+    switchMap(firmware =>
+      ManagerAPI.genuineCheck(transport, {
+        targetId: deviceInfo.targetId,
+        perso: firmware.perso,
+      }),
+    ),
+  );

@@ -25,6 +25,7 @@ import type {
   Application,
   Category,
   Id,
+  McuVersion,
 } from "../types/manager";
 import { makeLRUCache } from "../logic/cache";
 
@@ -162,6 +163,7 @@ const API = {
     a => `${a.version}_${a.deviceId}_${a.provider}`,
   ),
 
+  // DEPRECATED
   getNextMCU: async (bootloaderVersion: string) => {
     const { data }: { data: OsuFirmware | "default" } = await network({
       method: "POST",
@@ -172,6 +174,22 @@ const API = {
     });
     // FIXME: nextVersion will not be able to "default" when
     // Error handling is standardize on the API side
+    if (data === "default" || !data.name) {
+      throw new LatestMCUInstalledError(
+        "there is no next mcu version to install",
+      );
+    }
+    return data;
+  },
+
+  getNextBLVersion: async (
+    mcuversion: string | number,
+  ): Promise<McuVersion> => {
+    const { data }: { data: McuVersion | "default" } = await network({
+      method: "POST",
+      url: `${MANAGER_API_BASE}/mcu_versions/${mcuversion}`,
+    });
+
     if (data === "default" || !data.name) {
       throw new LatestMCUInstalledError(
         "there is no next mcu version to install",
@@ -201,8 +219,8 @@ const API = {
   ),
 
   getFinalFirmwareById: makeLRUCache(
-    async (id: number) => {
-      const { data } = await network({
+    async (id: number): Promise<FinalFirmware> => {
+      const { data }: { data: FinalFirmware } = await network({
         method: "GET",
         url: `${MANAGER_API_BASE}/firmware_final_versions/${id}`,
       });

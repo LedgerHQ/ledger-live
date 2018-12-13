@@ -22,7 +22,7 @@ import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import getDeviceNameTransport from "../../logic/hw/getDeviceName";
 import editDeviceNameTransport from "../../logic/hw/editDeviceName";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
-import doGenuineCheck from "../../logic/hw/theRealGenuineCheck";
+import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
 import { rejectionOp } from "../DebugRejectSwitch";
 import { deviceNames } from "../../wording";
 
@@ -90,7 +90,7 @@ export const genuineCheck: Step = {
   ),
   run: (deviceId, meta) =>
     withDevice(deviceId)(transport =>
-      doGenuineCheck(transport, meta.deviceInfo),
+      checkDeviceForManager(transport, meta.deviceInfo),
     ).pipe(
       map(genuineResult => ({
         ...meta,

@@ -5,6 +5,7 @@
 import type {
   ApplicationVersion,
   DeviceInfo,
+  OsuFirmware,
   Firmware,
 } from "../types/manager";
 import { getFullListSortedCryptoCurrencies } from "../countervalues";
@@ -24,7 +25,7 @@ const CacheAPI = {
     return `https://api.ledgerwallet.com/update/assets/icons/${icn}`;
   },
 
-  getFirmwareVersion: (firmware: Firmware): string =>
+  getFirmwareVersion: (firmware: OsuFirmware): string =>
     firmware.name.replace("-osu", ""),
 
   formatHashName: (input: string): string => {
@@ -62,6 +63,11 @@ const CacheAPI = {
       return null;
     }
 
+    // seFirmwareFinalVersion.mcu_versions[0] query it
+    // mcu => from_bootloader_version
+    // if (current.bootloader === 0.0 && from_bootloader_version === 0.9)
+    // SAME WSS CALL TO INSTALL MCU AND BOOTLOADER
+
     const { next_se_firmware_final_version } = se_firmware_osu_version;
     const seFirmwareFinalVersion = await ManagerAPI.getFinalFirmwareById(
       next_se_firmware_final_version,
@@ -81,12 +87,6 @@ const CacheAPI = {
     }
 
     return { ...se_firmware_osu_version, shouldFlashMcu: false };
-  },
-
-  shouldFlashMcu: async (deviceInfo: DeviceInfo): Promise<boolean> => {
-    if (!deviceInfo.isOSU) return false;
-    const res = await CacheAPI.getLatestFirmwareForDevice(deviceInfo);
-    return res ? res.shouldFlashMcu : false;
   },
 
   // get list of apps for a given deviceInfo
