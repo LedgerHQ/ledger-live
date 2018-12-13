@@ -135,7 +135,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
         {installing ? (
-          <Installing progress={progress} />
+          <Installing progress={progress} installing="osu" />
         ) : (
           <View style={styles.body}>
             <View style={styles.device}>

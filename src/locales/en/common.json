@@ -954,8 +954,14 @@
   "FirmwareUpdate": {
     "title": "Update firmware",
     "Installing": {
-      "title": "Firmware updating...",
+      "title": "{{stepName}}...",
       "subtitle": "If asked on device, please enter your pin code to finish the process"
+    },
+    "steps": {
+      "osu": "Installing OSU",
+      "flash-mcu": "MCU updating",
+      "flash-bootloader": "Bootloader updating",
+      "firmware": "Firmware updating"
     }
   },
   "FirmwareUpdateReleaseNotes": {

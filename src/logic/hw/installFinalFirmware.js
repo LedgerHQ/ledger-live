@@ -1,6 +1,6 @@
 // @flow
 import type Transport from "@ledgerhq/hw-transport";
-import { Observable, from } from "rxjs";
+import { Observable, from, concat, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../../api/Manager";
 import getDeviceInfo from "./getDeviceInfo";
@@ -30,12 +30,18 @@ export default (transport: Transport<*>): Observable<*> =>
         ),
 
         mergeMap(nextFirmware =>
-          ManagerAPI.install(transport, "firmware", {
-            targetId: deviceInfo.targetId,
-            firmware: nextFirmware.firmware,
-            firmwareKey: nextFirmware.firmware_key,
-            perso: nextFirmware.perso,
-          }),
+          concat(
+            of({
+              type: "install",
+              step: "firmware",
+            }),
+            ManagerAPI.install(transport, "firmware", {
+              targetId: deviceInfo.targetId,
+              firmware: nextFirmware.firmware,
+              firmwareKey: nextFirmware.firmware_key,
+              perso: nextFirmware.perso,
+            }),
+          ),
         ),
       ),
     ),

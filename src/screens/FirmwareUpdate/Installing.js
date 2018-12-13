@@ -2,7 +2,7 @@
 
 import { View, StyleSheet } from "react-native";
 import React, { PureComponent } from "react";
-import { Trans } from "react-i18next";
+import { Trans, translate } from "react-i18next";
 
 import colors from "../../colors";
 import LiveLogo from "../../icons/LiveLogoIcon";
@@ -12,20 +12,29 @@ import FirmwareProgress from "./FirmwareProgress";
 
 class Installing extends PureComponent<{
   progress: number,
+  installing: string,
+  t: *,
 }> {
   render() {
-    const { progress } = this.props;
+    const { progress, installing, t } = this.props;
     return (
       <View style={styles.root}>
         {progress === 0 ? (
-          <Spinning>
-            <LiveLogo color={colors.fog} size={40} />
-          </Spinning>
+          <View style={{ padding: 10 }}>
+            <Spinning>
+              <LiveLogo color={colors.fog} size={40} />
+            </Spinning>
+          </View>
         ) : (
-          <FirmwareProgress progress={progress} />
+          <FirmwareProgress progress={progress} size={60} />
         )}
         <LText semiBold style={styles.title}>
-          <Trans i18nKey="FirmwareUpdate.Installing.title" />
+          <Trans
+            i18nKey="FirmwareUpdate.Installing.title"
+            values={{
+              stepName: t(`FirmwareUpdate.steps.${installing}`),
+            }}
+          />
         </LText>
         <LText style={styles.subtitle}>
           <Trans i18nKey="FirmwareUpdate.Installing.subtitle" />
@@ -57,4 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Installing;
+export default translate()(Installing);

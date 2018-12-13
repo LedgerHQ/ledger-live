@@ -4,15 +4,8 @@ import React, { Component } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, throwError, concat } from "rxjs";
-import {
-  concatMap,
-  delay,
-  catchError,
-  filter,
-  throttleTime,
-  map,
-} from "rxjs/operators";
+import { from, throwError, concat, empty } from "rxjs";
+import { tap, concatMap, delay, catchError, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
 import { TrackScreen } from "../../analytics";
@@ -39,7 +32,7 @@ type Props = {
 };
 
 type State = {
-  installing: boolean,
+  installing: ?string,
   progress: number,
 };
 
@@ -59,7 +52,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   };
 
   state = {
-    installing: false,
+    installing: null,
     progress: 0,
   };
 
@@ -71,45 +64,56 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const deviceId = navigation.getParam("deviceId");
     const latestFirmware = navigation.getParam("latestFirmware");
 
-    const loop = () =>
-      withDevicePolling(deviceId)(
-        transport => from(getDeviceInfo(transport)),
-        () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
-      ).pipe(
-        concatMap(deviceInfo => {
-          console.log({ deviceInfo });
+    const withDeviceInfo = withDevicePolling(deviceId)(
+      transport => from(getDeviceInfo(transport)),
+      () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
+    ).pipe(
+      tap(deviceInfo => {
+        console.log({ deviceInfo });
+      }),
+    );
 
-          if (!deviceInfo.isBootloader && !deviceInfo.isOSU) {
-            // nothing to do, we're done
-            return from([]);
-          }
-
-          this.setState({ installing: true });
-
-          // appropriate script to install
-          const install = deviceInfo.isBootloader
-            ? flash(latestFirmware)
-            : installFinalFirmware;
-
-          const $next = loop();
-          const $installation = withDevice(deviceId)(install).pipe(
-            ignoreDeviceDisconnectedError, // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
-          );
-
-          const $wait = from([{ type: "wait" }]).pipe(delay(2000));
-          return concat($installation, $wait, $next);
-        }),
+    const withDeviceInstall = install =>
+      withDevice(deviceId)(install).pipe(
+        ignoreDeviceDisconnectedError, // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
       );
 
-    this.sub = loop()
+    const wait2s = from([{ type: "wait" }]).pipe(delay(2000));
+
+    const bootloaderLoop = withDeviceInfo.pipe(
+      concatMap(
+        deviceInfo =>
+          !deviceInfo.isBootloader
+            ? empty() // we're done
+            : concat(
+                withDeviceInstall(flash(latestFirmware)),
+                wait2s,
+                bootloaderLoop,
+              ),
+      ),
+    );
+
+    const osuLoop = withDeviceInfo.pipe(
+      concatMap(
+        deviceInfo =>
+          !deviceInfo.isOSU
+            ? empty() // we're done
+            : concat(withDeviceInstall(installFinalFirmware), wait2s, osuLoop),
+      ),
+    );
+
+    this.sub = concat(bootloaderLoop, osuLoop)
       .pipe(
-        filter(e => e.type === "bulk-progress" || e.type === "opened"),
-        throttleTime(100),
-        map(e => e.progress || 0),
+        tap(e => console.log(e)),
+        filter(e => e.type === "bulk-progress" || e.type === "install"),
       )
       .subscribe({
-        next: progress => {
-          this.setState({ progress });
+        next: e => {
+          if (e.type === "install") {
+            this.setState({ installing: e.step, progress: 0 });
+          } else {
+            this.setState({ progress: e.progress });
+          }
         },
         complete: () => {
           if (navigation.replace) {
@@ -141,7 +145,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="MCU" />
         {installing ? (
-          <Installing progress={progress} />
+          <Installing progress={progress} installing={installing} />
         ) : (
           <View style={styles.body}>
             <View style={styles.step}>

@@ -1,6 +1,6 @@
 // @flow
 import type Transport from "@ledgerhq/hw-transport";
-import { Observable, from, of } from "rxjs";
+import { Observable, from, of, concat } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../../api/Manager";
 import getDeviceInfo from "./getDeviceInfo";
@@ -20,15 +20,22 @@ export default (nextFirmaware: FinalFirmware) => (
         ? of(blVersionAliases[blVersion])
         : from(ManagerAPI.getNextBLVersion(nextFirmaware.mcu_versions[0]))
       ).pipe(
-        mergeMap(mcuVersion =>
-          ManagerAPI.installMcu(transport, "mcu", {
-            targetId,
-            version:
-              blVersion === mcuVersion.from_bootloader_version
+        mergeMap(mcuVersion => {
+          const shouldFlashMcu =
+            blVersion === mcuVersion.from_bootloader_version;
+          return concat(
+            of({
+              type: "install",
+              step: "flash-" + (shouldFlashMcu ? "mcu" : "bootloader"),
+            }),
+            ManagerAPI.installMcu(transport, "mcu", {
+              targetId,
+              version: shouldFlashMcu
                 ? mcuVersion.name
                 : mcuVersion.from_bootloader_version,
-          }),
-        ),
+            }),
+          );
+        }),
       ),
     ),
   );
