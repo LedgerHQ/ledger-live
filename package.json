@@ -109,6 +109,7 @@
     "react-native-vector-icons": "^5.0.0",
     "react-native-version-number": "^0.3.4",
     "react-navigation": "2.18.0",
+    "react-navigation-tabs": "0.8.4",
     "react-redux": "5.0.7",
     "readable-stream": "1.0.33",
     "redux": "4.0.0",

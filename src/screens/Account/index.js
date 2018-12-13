@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { StyleSheet, SectionList, View, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
@@ -8,7 +8,10 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
-import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
+import {
+  isAccountEmpty,
+  groupAccountOperationsByDay,
+} from "@ledgerhq/live-common/lib/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -16,7 +19,6 @@ import accountSyncRefreshControl from "../../components/accountSyncRefreshContro
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import NoOperationFooter from "../../components/NoOperationFooter";
 import LText from "../../components/LText";
 import LoadingFooter from "../../components/LoadingFooter";
 import colors from "../../colors";
@@ -31,6 +33,7 @@ import AccountHeaderTitle from "./AccountHeaderTitle";
 import AccountActions from "./AccountActions";
 import { scrollToTopIntent } from "./events";
 import AccountGraphCard from "../../components/AccountGraphCard";
+import NoOperationFooter from "../../components/NoOperationFooter";
 
 type Props = {
   account: Account,
@@ -46,9 +49,6 @@ type State = {
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = accountSyncRefreshControl(AnimatedSectionList);
-
-const isAccountEmpty = (a: Account): boolean =>
-  a.operations.length === 0 && a.balance.isZero();
 
 class AccountScreen extends PureComponent<Props, State> {
   static navigationOptions = ({ navigation }) => ({
@@ -116,15 +116,27 @@ class AccountScreen extends PureComponent<Props, State> {
   ListHeaderComponent = () => {
     const { summary, account } = this.props;
     if (!account) return null;
+    const empty = isAccountEmpty(account);
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
-        <AccountGraphCard
-          summary={summary}
-          renderTitle={this.renderListHeaderTitle}
-        />
-        <AccountActions accountId={account.id} />
+        {!empty && (
+          <AccountGraphCard
+            summary={summary}
+            renderTitle={this.renderListHeaderTitle}
+          />
+        )}
+        {!empty && <AccountActions accountId={account.id} />}
       </View>
+    );
+  };
+
+  ListEmptyComponent = () => {
+    const { account, navigation } = this.props;
+    return (
+      isAccountEmpty(account) && (
+        <EmptyStateAccount account={account} navigation={navigation} />
+      )
     );
   };
 
@@ -156,7 +168,7 @@ class AccountScreen extends PureComponent<Props, State> {
   renderSectionHeader = ({ section }) => <SectionHeader section={section} />;
 
   render() {
-    const { account, navigation } = this.props;
+    const { account } = this.props;
     const { opCount } = this.state;
     if (!account) return null;
 
@@ -167,15 +179,6 @@ class AccountScreen extends PureComponent<Props, State> {
         operationsSize={account.operations.length}
       />
     );
-
-    if (isAccountEmpty(account)) {
-      return (
-        <Fragment>
-          {analytics}
-          <EmptyStateAccount account={account} navigation={navigation} />
-        </Fragment>
-      );
-    }
 
     const { sections, completed } = groupAccountOperationsByDay(
       account,
@@ -191,13 +194,18 @@ class AccountScreen extends PureComponent<Props, State> {
           style={styles.sectionList}
           contentContainerStyle={styles.contentContainer}
           ListFooterComponent={
-            !completed
-              ? LoadingFooter
-              : sections.length === 0
-                ? NoOperationFooter
-                : NoMoreOperationFooter
+            !completed ? (
+              <LoadingFooter />
+            ) : sections.length === 0 ? (
+              isAccountEmpty(account) ? null : (
+                <NoOperationFooter />
+              )
+            ) : (
+              <NoMoreOperationFooter />
+            )
           }
           ListHeaderComponent={this.ListHeaderComponent}
+          ListEmptyComponent={this.ListEmptyComponent}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={this.renderSectionHeader}
@@ -247,5 +255,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 64,
+    flexGrow: 1,
   },
 });
