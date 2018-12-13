@@ -20,7 +20,6 @@ import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import LText from "../../components/LText";
-import GraphCard from "../../components/GraphCard";
 import LoadingFooter from "../../components/LoadingFooter";
 import colors from "../../colors";
 import provideSummary from "../../components/provideSummary";
@@ -33,6 +32,7 @@ import AccountHeaderRight from "./AccountHeaderRight";
 import AccountHeaderTitle from "./AccountHeaderTitle";
 import AccountActions from "./AccountActions";
 import { scrollToTopIntent } from "./events";
+import AccountGraphCard from "../../components/AccountGraphCard";
 import NoOperationFooter from "../../components/NoOperationFooter";
 
 type Props = {
@@ -94,33 +94,34 @@ class AccountScreen extends PureComponent<Props, State> {
   }: {
     counterValueUnit: Unit,
     item: Item,
-  }) => (
-    <View style={styles.balanceContainer}>
-      <LText style={styles.balanceText} tertiary>
-        <CurrencyUnitValue
-          unit={this.props.account.unit}
-          value={item.originalValue}
-        />
-      </LText>
-      <LText style={styles.balanceSubText} tertiary>
-        <CurrencyUnitValue unit={counterValueUnit} value={item.value} />
-      </LText>
-    </View>
-  );
+  }) => {
+    const { summary } = this.props;
+    return (
+      <View style={styles.balanceContainer}>
+        <LText style={styles.balanceText} tertiary>
+          <CurrencyUnitValue
+            unit={this.props.account.unit}
+            value={item.originalValue}
+          />
+        </LText>
+        {summary.isAvailable && (
+          <LText style={styles.balanceSubText} tertiary>
+            <CurrencyUnitValue unit={counterValueUnit} value={item.value} />
+          </LText>
+        )}
+      </View>
+    );
+  };
 
   ListHeaderComponent = () => {
     const { summary, account } = this.props;
     if (!account) return null;
-    // TODO: we need to make a different GraphCard for Account screen:
-    // - we can optimize more (e.g. only need to calculate the balance of this account, which is cached btw. no need for countervalues and the more complex algo)
-    // - less if logic in graph (we shouldn't have magically guess if it's a "countervalue" mode or a "crypto" one)
-    // - the fact we want later to diverge both a bit (graph differ already, and later if we intro the idea to switch between modes)
     const empty = isAccountEmpty(account);
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
         {!empty && (
-          <GraphCard
+          <AccountGraphCard
             summary={summary}
             renderTitle={this.renderListHeaderTitle}
           />
