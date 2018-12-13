@@ -247,8 +247,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
       transport.emit("disconnect", e);
     });
 
-    // TODO when firmware is ready:
-    // await transport.inferMTU();
+    await transport.inferMTU();
 
     return transport;
   }
