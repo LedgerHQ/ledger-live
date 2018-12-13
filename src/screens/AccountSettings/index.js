@@ -16,6 +16,7 @@ import { TrackScreen } from "../../analytics";
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
 import AccountCurrencyRow from "./AccountCurrencyRow";
+import AccountNodeRow from "./AccountNodeRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
 
@@ -74,6 +75,9 @@ class AccountSettings extends PureComponent<Props, State> {
             currency={account.currency}
             navigation={navigation}
           />
+          {account.currency.id === "ripple" ? (
+            <AccountNodeRow account={account} navigation={navigation} />
+          ) : null}
         </View>
         <View style={styles.sectionRow}>
           <DeleteAccountRow onPress={this.onPress} />
