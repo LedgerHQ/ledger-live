@@ -51,15 +51,7 @@ export const open = (deviceId: string): Promise<Transport<*>> => {
   for (let i = 0; i < modules.length; i++) {
     const open = modules[i].open;
     const p = open(deviceId);
-    if (p) {
-      if (process.env.NODE_ENV !== "production") {
-        return p.then(p => {
-          p.setDebugMode(true);
-          return p;
-        });
-      }
-      return p;
-    }
+    if (p) return p;
   }
   return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));
 };

@@ -1,7 +1,7 @@
 // @flow
 
 import { Observable, from, throwError, defer, timer } from "rxjs";
-import { retryWhen, mergeMap } from "rxjs/operators";
+import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import type Transport from "@ledgerhq/hw-transport";
 import {
   WrongDeviceForAccount,
@@ -11,9 +11,23 @@ import {
 } from "../errors";
 import { open } from ".";
 
-const transportFinally = (transport: Transport<*>) => <T>(
-  observable: Observable<T>
-): Observable<T> =>
+export type AccessHook = () => () => void;
+
+const accessHooks = [];
+let errorRemapping = e => throwError(errorRemapping(e));
+
+export const addAccessHook = (accessHook: AccessHook) => {
+  accessHooks.push(accessHook);
+};
+
+export const setErrorRemapping = (f: Error => Observable<*>) => {
+  errorRemapping = f;
+};
+
+const transportFinally = (
+  transport: Transport<*>,
+  cleanups: Array<() => void>
+) => <T>(observable: Observable<T>): Observable<T> =>
   Observable.create(o => {
     let done = false;
     const sub = observable.subscribe({
@@ -36,6 +50,7 @@ const transportFinally = (transport: Transport<*>) => <T>(
     return () => {
       sub.unsubscribe();
       if (!done) transport.close();
+      cleanups.forEach(c => c());
     };
   });
 
@@ -53,8 +68,9 @@ export const cancelDeviceAction = (transport: Transport<*>) => {
 export const withDevice = (deviceId: string) => <T>(
   job: (t: Transport<*>) => Observable<T>
 ): Observable<T> =>
-  defer(() =>
-    from(
+  defer(() => {
+    const cleanups = accessHooks.map(hook => hook());
+    return from(
       open(deviceId)
         .then(async transport => {
           if (needsCleanup[identifyTransport(transport)]) {
@@ -67,10 +83,15 @@ export const withDevice = (deviceId: string) => <T>(
           if (e instanceof BluetoothRequired) throw e;
           throw new CantOpenDevice(e.message);
         })
-    )
-  ).pipe(
-    mergeMap(transport => job(transport).pipe(transportFinally(transport)))
-  );
+    ).pipe(
+      mergeMap(transport =>
+        job(transport).pipe(
+          catchError(errorRemapping),
+          transportFinally(transport, cleanups)
+        )
+      )
+    );
+  });
 
 export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof WrongDeviceForAccount) return false;
