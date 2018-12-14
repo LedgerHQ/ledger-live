@@ -97,3 +97,4 @@ export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 // db stuff, no need to translate
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
+export const DBNotReset = createCustomErrorClass("DBNotReset");
