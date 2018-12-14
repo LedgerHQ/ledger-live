@@ -10,6 +10,7 @@ import {
   DeviceSocketNoBulkStatus,
   DeviceSocketNoHandler
 } from "../errors";
+import { cancelDeviceAction } from "../hw/deviceAccess";
 
 export const logSubject = new Subject();
 
@@ -29,6 +30,12 @@ export type SocketEvent =
   | {
       type: "exchange",
       nonce: number
+    }
+  | {
+      type: "opened"
+    }
+  | {
+      type: "closed"
     };
 
 /**
@@ -39,16 +46,12 @@ export const createDeviceSocket = (
   transport: Transport<*>,
   {
     url,
-    ignoreWebsocketErrorDuringBulk,
-    cancelDeviceAction
+    ignoreWebsocketErrorDuringBulk
   }: {
     url: string,
     // ignoreWebsocketErrorDuringBulk is a workaround to continue bulk even if the ws connection is termined
     // the WS connection can be terminated typically because ws timeout
-    ignoreWebsocketErrorDuringBulk?: boolean,
-
-    // if provided, it will be called when there is a need to cleanup the device because it was aborted before finishing
-    cancelDeviceAction?: (Transport<*>) => void
+    ignoreWebsocketErrorDuringBulk?: boolean
   }
 ): Observable<SocketEvent> =>
   Observable.create(o => {
@@ -67,6 +70,7 @@ export const createDeviceSocket = (
     invariant(ws, "websocket is available");
 
     ws.onopen = () => {
+      o.next({ type: "opened" });
       log({ type: "socket-opened", url });
     };
 
@@ -203,7 +207,7 @@ export const createDeviceSocket = (
 
     return () => {
       interrupted = true;
-      if (!terminated && cancelDeviceAction) {
+      if (!terminated) {
         cancelDeviceAction(transport);
       }
       if (ws.readyState !== 1) return;

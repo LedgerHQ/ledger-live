@@ -2,7 +2,12 @@
 /* eslint-disable camelcase */
 // Higher level cache on top of Manager
 
-import type { ApplicationVersion, DeviceInfo, Firmware } from "./types/manager";
+import type {
+  ApplicationVersion,
+  DeviceInfo,
+  Firmware,
+  OsuFirmware
+} from "./types/manager";
 import ManagerAPI from "./api/Manager";
 
 const ICONS_FALLBACK = {
@@ -19,7 +24,7 @@ const CacheAPI = {
     return `https://api.ledgerwallet.com/update/assets/icons/${icn}`;
   },
 
-  getFirmwareVersion: (firmware: Firmware): string =>
+  getFirmwareVersion: (firmware: OsuFirmware): string =>
     firmware.name.replace("-osu", ""),
 
   formatHashName: (input: string): string => {
@@ -76,12 +81,6 @@ const CacheAPI = {
     }
 
     return { ...se_firmware_osu_version, shouldFlashMcu: false };
-  },
-
-  shouldFlashMcu: async (deviceInfo: DeviceInfo): Promise<boolean> => {
-    if (!deviceInfo.isOSU) return false;
-    const res = await CacheAPI.getLatestFirmwareForDevice(deviceInfo);
-    return res ? res.shouldFlashMcu : false;
   },
 
   // get list of apps for a given deviceInfo

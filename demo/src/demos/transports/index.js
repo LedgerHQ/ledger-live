@@ -1,14 +1,9 @@
 // @flow
 import React, { Component } from "react";
-import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
-import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import styled from "styled-components";
-import axios from "axios";
-import { setNetwork } from "@ledgerhq/live-common/lib/network";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-
-setNetwork(axios);
 
 let queue = Promise.resolve();
 const execInQueue = <T>(job: () => Promise<T>) => {
@@ -17,12 +12,7 @@ const execInQueue = <T>(job: () => Promise<T>) => {
   return queue;
 };
 
-const transports = {
-  webusb: TransportWebUSB,
-  ble: TransportWebBLE
-};
-
-const createTransport = transportId => transports[transportId].create();
+const transports = ["webusb", "webble"];
 
 // ~~~ UI ~~~
 
@@ -35,7 +25,7 @@ class SelectTransport extends Component<*> {
       <label>
         Transport:{" "}
         <select onChange={this.onChange} value={this.props.value}>
-          {Object.keys(transports).map(key => (
+          {transports.map(key => (
             <option key={key} value={key}>
               {key}
             </option>
@@ -59,10 +49,8 @@ class GenuineCheckButton extends Component<*, *> {
     this.setState({ running: true, error: null });
     execInQueue(async () => {
       try {
-        const transport = await createTransport(transportId);
-        const deviceInfo = await getDeviceInfo(transport, {
-          forceProvider: 4
-        });
+        const transport = await open(transportId);
+        const deviceInfo = await getDeviceInfo(transport);
         const result = await genuineCheck(transport, deviceInfo).toPromise();
         this.setState({ running: false, error: null, result });
       } catch (error) {

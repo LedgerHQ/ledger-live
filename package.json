@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "@aeternity/ledger-app-api": "0.0.4",
-    "@ledgerhq/hw-app-btc": "^4.24.0",
-    "@ledgerhq/hw-app-eth": "^4.24.0",
-    "@ledgerhq/hw-app-xrp": "^4.24.0",
-    "@ledgerhq/hw-transport": "^4.24.0",
+    "@ledgerhq/hw-app-btc": "^4.32.0",
+    "@ledgerhq/hw-app-eth": "^4.32.0",
+    "@ledgerhq/hw-app-xrp": "^4.32.0",
+    "@ledgerhq/hw-transport": "^4.32.0",
     "bignumber.js": "^7.2.1",
     "compressjs": "gre/compressjs#hermit",
     "eip55": "^1.0.3",
@@ -49,7 +49,8 @@
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "reselect": "^3.0.1",
-    "rxjs": "^6.3.3"
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
