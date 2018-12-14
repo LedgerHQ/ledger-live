@@ -6,6 +6,11 @@ import { catchError } from "rxjs/operators/catchError";
 
 import type Transport from "@ledgerhq/hw-transport";
 
+type Discovery = Observable<{
+  id: string,
+  name: string
+}>;
+
 export type TransportModule = {
   // unique transport name that identify the transport module
   id: string,
@@ -17,10 +22,7 @@ export type TransportModule = {
   // returns falsy if the transport module can't handle this id
   disconnect: (id: string) => ?Promise<void>,
   // optional observable that allows to discover a transport
-  discovery?: Observable<{
-    id: string,
-    name: string
-  }>
+  discovery?: Discovery
 };
 
 const modules: TransportModule[] = [];
@@ -32,13 +34,19 @@ export const registerTransportModule = (module: TransportModule) => {
 export const discoverDevices = (
   accept: (module: TransportModule) => boolean = () => true
 ): Observable<{
-  type: string,
   id: string,
   name: string
-}> =>
-  merge(
-    ...modules.filter(m => m.discovery && accept(m)).map(m =>
-      (m.discovery || empty()).pipe(
+}> => {
+  const all: Discovery[] = [];
+  for (let i = 0; i < modules.length; i++) {
+    const m = modules[i];
+    if (m.discovery && accept(m)) {
+      all.push(m.discovery);
+    }
+  }
+  return merge(
+    ...all.map(o =>
+      o.pipe(
         catchError(e => {
           console.warn(`One Transport provider failed: ${e}`);
           return empty();
@@ -46,6 +54,7 @@ export const discoverDevices = (
       )
     )
   );
+};
 
 export const open = (deviceId: string): Promise<Transport<*>> => {
   for (let i = 0; i < modules.length; i++) {

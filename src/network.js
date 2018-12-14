@@ -1,5 +1,4 @@
 // @flow
-import invariant from "invariant";
 
 let networkFn = null;
 
@@ -8,9 +7,10 @@ export const setNetwork = (fn: *) => {
 };
 
 export default (...args: *) => {
-  invariant(
-    networkFn,
-    "live-common: no network function defined. need to call setNetwork()"
-  );
+  if (!networkFn) {
+    throw new Error(
+      "live-common: no network function defined. need to call setNetwork()"
+    );
+  }
   return networkFn(...args);
 };

@@ -1,4 +1,6 @@
 // @flow
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import axios from "axios";
@@ -10,36 +12,73 @@ setEnv("FORCE_PROVIDER", 4);
 
 setNetwork(axios);
 
+const webusbDevices = {};
+
+// Still a big WIP. not sure how this should work in web paradigm...
+// 'discover' is not practical paradigm, needs to fit the requestDevice paradigm!
+
 registerTransportModule({
   id: "webusb",
+
   open: async (id: string): ?Promise<*> => {
     if (id.startsWith("webusb")) {
-      // TODO this should not call create() because listen() must be not done each time.
-      const t = await TransportWebUSB.create();
+      const existingDevice = webusbDevices[id];
+      const t = await (existingDevice
+        ? TransportWebUSB.open(existingDevice)
+        : TransportWebUSB.create()); // fallback on create() in case discovery not used (we later should backport this in open?)
       t.setDebugMode(true);
       return t;
     }
     return null;
   },
+
   disconnect: id =>
     id.startsWith("webusb")
       ? Promise.resolve() // nothing to do
-      : null
+      : null,
+
+  discovery: Observable.create(TransportWebUSB.listen).pipe(
+    map(usbDevice => {
+      const id = "webusb|" + usbDevice.vendorId + "_" + usbDevice.productId;
+      webusbDevices[id] = usbDevice;
+      return {
+        id,
+        name: usbDevice.productName
+      };
+    })
+  )
 });
+
+const webbleDevices = {};
 
 registerTransportModule({
   id: "webble",
+
   open: async (id: string): ?Promise<*> => {
     if (id.startsWith("webble")) {
-      // TODO this should not call create() because listen() must be not done each time.
-      const t = await TransportWebBLE.create();
+      const existingDevice = webbleDevices[id];
+      const t = await (existingDevice
+        ? TransportWebBLE.open(existingDevice)
+        : TransportWebBLE.create()); // fallback on create() in case discovery not used (we later should backport this in open?)
       t.setDebugMode(true);
       return t;
     }
     return null;
   },
+
   disconnect: id =>
     id.startsWith("webble")
       ? Promise.resolve() // nothing to do
-      : null
+      : null,
+
+  discovery: Observable.create(TransportWebUSB.listen).pipe(
+    map(bleDevice => {
+      const id = "webble|" + bleDevice.id;
+      webbleDevices[id] = bleDevice;
+      return {
+        id,
+        name: bleDevice.name
+      };
+    })
+  )
 });
