@@ -30,9 +30,6 @@ export type SocketEvent =
     }
   | {
       type: "opened",
-    }
-  | {
-      type: "closed",
     };
 
 /**
@@ -80,7 +77,6 @@ export const createDeviceSocket = (
     };
 
     ws.onclose = () => {
-      o.next({ type: "closed" });
       log("CLOSE");
       if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
         terminated = true;

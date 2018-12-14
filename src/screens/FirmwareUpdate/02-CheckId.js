@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, of, concat } from "rxjs";
+import { from, of, empty, concat } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 
@@ -66,62 +66,53 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const deviceId = navigation.getParam("deviceId");
     const latestFirmware = navigation.getParam("latestFirmware");
 
+    if (!latestFirmware) {
+      // if there is no latest firmware we'll jump to success screen
+      navigation.replace("FirmwareUpdateConfirmation", {
+        ...navigation.state.params,
+      });
+      return;
+    }
+
     this.sub = withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
       .pipe(
-        mergeMap(deviceInfo => {
-          // if there is no latest firmware we'll jump to success screen
-          if (!latestFirmware) {
-            return of({
-              type: "navigate",
-              to: "FirmwareUpdateConfirmation",
-            });
-          }
-
-          // if in bootloader or OSU we'll directly jump to MCU step
-          if (deviceInfo.isBootloader || deviceInfo.isOSU) {
-            return of({
-              type: "navigate",
-              to: "FirmwareUpdateMCU",
-            });
-          }
-
-          return concat(
-            of({ type: "installing" }),
-            withDevice(deviceId)(transport =>
-              installOsuFirmware(
-                transport,
-                deviceInfo.targetId,
-                latestFirmware,
-              ),
-            ),
-            of({ type: "navigate", to: "FirmwareUpdateMCU" }),
-          );
-        }),
+        mergeMap(
+          deviceInfo =>
+            // if in bootloader or OSU we'll directly jump to MCU step
+            deviceInfo.isBootloader || deviceInfo.isOSU
+              ? empty()
+              : concat(
+                  of({ type: "installing" }),
+                  withDevice(deviceId)(transport =>
+                    installOsuFirmware(
+                      transport,
+                      deviceInfo.targetId,
+                      latestFirmware,
+                    ),
+                  ),
+                  of({ type: "navigate", to: "FirmwareUpdateMCU" }),
+                ),
+        ),
       )
       .subscribe({
         next: event => {
           const { type } = event;
           if (type === "installing") {
             this.setState({ installing: true });
-          } else if (type === "navigate") {
-            if (navigation.replace) {
-              // $FlowFixMe
-              navigation.replace(event.to, {
-                ...navigation.state.params,
-              });
-            }
           } else if (type === "bulk-progress") {
-            // $FlowFixMe
             this.setState({ progress: event.progress || 0 });
           }
         },
+        complete: () => {
+          navigation.replace("FirmwareUpdateMCU", {
+            ...navigation.state.params,
+          });
+        },
         error: error => {
-          if (navigation.replace) {
-            navigation.replace("FirmwareUpdateFailure", {
-              ...navigation.state.params,
-              error,
-            });
-          }
+          navigation.replace("FirmwareUpdateFailure", {
+            ...navigation.state.params,
+            error,
+          });
         },
       });
   }
