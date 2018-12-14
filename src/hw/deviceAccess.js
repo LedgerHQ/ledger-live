@@ -1,7 +1,22 @@
 // @flow
 
-import { Observable, from, throwError, defer, timer } from "rxjs";
-import { retryWhen, mergeMap, catchError } from "rxjs/operators";
+import {
+  Observable,
+  from,
+  empty,
+  throwError,
+  defer,
+  timer,
+  concat
+} from "rxjs";
+import {
+  retryWhen,
+  mergeMap,
+  ignoreElements,
+  catchError,
+  share,
+  finalize
+} from "rxjs/operators";
 import type Transport from "@ledgerhq/hw-transport";
 import {
   WrongDeviceForAccount,
@@ -10,6 +25,7 @@ import {
   BluetoothRequired
 } from "../errors";
 import { open } from ".";
+import atomic from "../rx-operators/atomic";
 
 export type AccessHook = () => () => void;
 
@@ -69,7 +85,6 @@ export const withDevice = (deviceId: string) => <T>(
   job: (t: Transport<*>) => Observable<T>
 ): Observable<T> =>
   defer(() => {
-    const cleanups = accessHooks.map(hook => hook());
     return from(
       open(deviceId)
         .then(async transport => {
@@ -84,14 +99,15 @@ export const withDevice = (deviceId: string) => <T>(
           throw new CantOpenDevice(e.message);
         })
     ).pipe(
-      mergeMap(transport =>
-        job(transport).pipe(
+      mergeMap(transport => {
+        const cleanups = accessHooks.map(hook => hook());
+        return job(transport).pipe(
           catchError(errorRemapping),
           transportFinally(transport, cleanups)
-        )
-      )
+        );
+      })
     );
-  });
+  }).pipe(atomic);
 
 export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof WrongDeviceForAccount) return false;

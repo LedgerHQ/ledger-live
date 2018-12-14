@@ -12,9 +12,12 @@ setNetwork(axios);
 
 registerTransportModule({
   id: "webusb",
-  open: id => {
+  open: async (id: string): ?Promise<*> => {
     if (id.startsWith("webusb")) {
-      return TransportWebUSB.create();
+      // TODO this should not call create() because listen() must be not done each time.
+      const t = await TransportWebUSB.create();
+      t.setDebugMode(true);
+      return t;
     }
     return null;
   },
@@ -26,9 +29,12 @@ registerTransportModule({
 
 registerTransportModule({
   id: "webble",
-  open: id => {
+  open: async (id: string): ?Promise<*> => {
     if (id.startsWith("webble")) {
-      return TransportWebBLE.create();
+      // TODO this should not call create() because listen() must be not done each time.
+      const t = await TransportWebBLE.create();
+      t.setDebugMode(true);
+      return t;
     }
     return null;
   },

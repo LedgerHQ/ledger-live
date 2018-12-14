@@ -1,16 +1,11 @@
 // @flow
 import React, { Component } from "react";
 import styled from "styled-components";
-import { open } from "@ledgerhq/live-common/lib/hw";
+import { from } from "rxjs";
+import { mergeMap } from "rxjs/operators";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-
-let queue = Promise.resolve();
-const execInQueue = <T>(job: () => Promise<T>) => {
-  const p = queue.then(job);
-  queue = p;
-  return queue;
-};
 
 const transports = ["webusb", "webble"];
 
@@ -46,14 +41,17 @@ class GenuineCheckButton extends Component<*, *> {
   onClick = () => {
     const { transportId } = this.props;
     if (this.state.running) return;
-    this.setState({ running: true, error: null });
-    execInQueue(async () => {
-      try {
-        const transport = await open(transportId);
-        const deviceInfo = await getDeviceInfo(transport);
-        const result = await genuineCheck(transport, deviceInfo).toPromise();
+    this.setState({ running: true, error: null, result: "" });
+
+    withDevice(transportId)(transport =>
+      from(getDeviceInfo(transport)).pipe(
+        mergeMap(deviceInfo => genuineCheck(transport, deviceInfo))
+      )
+    ).subscribe({
+      next: result => {
         this.setState({ running: false, error: null, result });
-      } catch (error) {
+      },
+      error: error => {
         this.setState({ running: false, error, result: "" });
       }
     });
@@ -66,6 +64,7 @@ class GenuineCheckButton extends Component<*, *> {
         <button onClick={this.onClick} disabled={running}>
           Do the Genuine Check
         </button>
+        {running ? <em>...</em> : null}
         <em style={{ color: "red" }}>{error && error.message}</em>
         <strong>{result}</strong>
       </p>

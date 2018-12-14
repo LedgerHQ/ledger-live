@@ -10,7 +10,7 @@ import ManagerAPI from "../api/Manager";
 export default (
   transport: Transport<*>,
   deviceInfo: DeviceInfo
-): Observable<*> =>
+): Observable<string> =>
   from(
     ManagerAPI.getDeviceVersion(deviceInfo.targetId, deviceInfo.providerId)
   ).pipe(
