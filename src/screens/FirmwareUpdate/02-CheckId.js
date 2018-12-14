@@ -90,7 +90,6 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
                       latestFirmware,
                     ),
                   ),
-                  of({ type: "navigate", to: "FirmwareUpdateMCU" }),
                 ),
         ),
       )
