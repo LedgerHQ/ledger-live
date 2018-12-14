@@ -163,25 +163,6 @@ const API = {
     a => `${a.version}_${a.deviceId}_${a.provider}`,
   ),
 
-  // DEPRECATED
-  getNextMCU: async (bootloaderVersion: string) => {
-    const { data }: { data: OsuFirmware | "default" } = await network({
-      method: "POST",
-      url: `${MANAGER_API_BASE}/mcu_versions_bootloader`,
-      data: {
-        bootloader_version: bootloaderVersion,
-      },
-    });
-    // FIXME: nextVersion will not be able to "default" when
-    // Error handling is standardize on the API side
-    if (data === "default" || !data.name) {
-      throw new LatestMCUInstalledError(
-        "there is no next mcu version to install",
-      );
-    }
-    return data;
-  },
-
   getNextBLVersion: async (
     mcuversion: string | number,
   ): Promise<McuVersion> => {

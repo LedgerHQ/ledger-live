@@ -1,7 +1,4 @@
 // @flow
-// Perform a genuine check. error is fails. complete on success.
-// NB potentially we could emit progress events
-
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, of, throwError } from "rxjs";
 import { UnexpectedBootloader } from "../../errors";

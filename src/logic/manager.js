@@ -63,11 +63,6 @@ const CacheAPI = {
       return null;
     }
 
-    // seFirmwareFinalVersion.mcu_versions[0] query it
-    // mcu => from_bootloader_version
-    // if (current.bootloader === 0.0 && from_bootloader_version === 0.9)
-    // SAME WSS CALL TO INSTALL MCU AND BOOTLOADER
-
     const { next_se_firmware_final_version } = se_firmware_osu_version;
     const seFirmwareFinalVersion = await ManagerAPI.getFinalFirmwareById(
       next_se_firmware_final_version,

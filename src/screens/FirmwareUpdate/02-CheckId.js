@@ -69,12 +69,6 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     this.sub = withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
       .pipe(
         mergeMap(deviceInfo => {
-          // if in bootloader or OSU we'll directly jump to MCU step
-          if (deviceInfo.isBootloader || deviceInfo.isOSU) {
-            console.log("CheckId: isBootloader or isOSU");
-            return of({ type: "navigate", to: "FirmwareUpdateMCU" });
-          }
-
           // if there is no latest firmware we'll jump to success screen
           if (!latestFirmware) {
             return of({
@@ -83,23 +77,33 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
             });
           }
 
-          this.setState({ installing: true });
+          // if in bootloader or OSU we'll directly jump to MCU step
+          if (deviceInfo.isBootloader || deviceInfo.isOSU) {
+            return of({
+              type: "navigate",
+              to: "FirmwareUpdateMCU",
+            });
+          }
 
-          console.log("CheckId: installOsuFirmware");
-
-          const $next = of({ type: "navigate", to: "FirmwareUpdateMCU" });
-
-          const $install = withDevice(deviceId)(transport =>
-            installOsuFirmware(transport, deviceInfo.targetId, latestFirmware),
+          return concat(
+            of({ type: "installing" }),
+            withDevice(deviceId)(transport =>
+              installOsuFirmware(
+                transport,
+                deviceInfo.targetId,
+                latestFirmware,
+              ),
+            ),
+            of({ type: "navigate", to: "FirmwareUpdateMCU" }),
           );
-
-          return concat($install, $next);
         }),
       )
       .subscribe({
         next: event => {
           const { type } = event;
-          if (type === "navigate") {
+          if (type === "installing") {
+            this.setState({ installing: true });
+          } else if (type === "navigate") {
             if (navigation.replace) {
               // $FlowFixMe
               navigation.replace(event.to, {
