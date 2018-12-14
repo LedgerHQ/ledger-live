@@ -1,22 +1,7 @@
 // @flow
 
-import {
-  Observable,
-  from,
-  empty,
-  throwError,
-  defer,
-  timer,
-  concat
-} from "rxjs";
-import {
-  retryWhen,
-  mergeMap,
-  ignoreElements,
-  catchError,
-  share,
-  finalize
-} from "rxjs/operators";
+import { Observable, from, throwError, defer, timer } from "rxjs";
+import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import type Transport from "@ledgerhq/hw-transport";
 import {
   WrongDeviceForAccount,
