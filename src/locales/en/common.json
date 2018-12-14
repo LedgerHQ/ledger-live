@@ -685,7 +685,9 @@
       "exportLogs": "Export logs",
       "exportLogsDesc": "Exporting Ledger Live logs may be necessary for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",
-      "hardResetDesc": "Erase all Ledger Live data stored on your phone, including accounts and settings."
+      "hardResetDesc": "Erase all Ledger Live data stored on your phone, including accounts and settings.",
+      "repairDevice": "Repair your Ledger device",
+      "repairDeviceDesc": "If you encountered some issue while updating your device and cannot resume the update process, you can try this option to repair your device"
     }
   },
   "transfer": {
