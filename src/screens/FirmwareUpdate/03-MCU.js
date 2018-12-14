@@ -23,7 +23,7 @@ import Installing from "./Installing";
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    latestFirmware: FinalFirmware,
+    latestFirmware: ?FinalFirmware,
   },
 }>;
 
@@ -140,6 +140,8 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   render() {
     const { installing, progress } = this.state;
     const width = Dimensions.get("window").width;
+
+    console.log("03 mcu");
 
     return (
       <SafeAreaView style={styles.root}>

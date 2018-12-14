@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, of, empty, concat } from "rxjs";
+import { from, empty } from "rxjs";
 import { mergeMap, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 
@@ -20,11 +20,6 @@ import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import Installing from "./Installing";
-
-const getDimensions = () => {
-  const { width, height } = Dimensions.get("window");
-  return { width, height };
-};
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -46,7 +41,6 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   state = {
     installing: false,
     progress: 0,
-    ...getDimensions(),
   };
 
   static navigationOptions = {
@@ -121,6 +115,9 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const { navigation } = this.props;
     const latestFirmware = navigation.getParam("latestFirmware");
     const windowWidth = Dimensions.get("window").width;
+
+    console.log("02 checkId");
+
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="CheckId" />

@@ -19,5 +19,6 @@ export const GET_CALLS_TIMEOUT = 60000;
 export const LEDGER_REST_API_BASE = "https://explorers.api.live.ledger.com";
 export const MANAGER_API_BASE = "https://manager.api.live.ledger.com/api";
 export const BASE_SOCKET_URL = "wss://api.ledgerwallet.com/update";
+// export const BASE_SOCKET_URL = "ws://manager.ledger.fr:3010"; // PROXY FOR SCRIPTRUNNER
 
 export const VIBRATION_PATTERN_ERROR = [0, 150];

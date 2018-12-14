@@ -39,11 +39,6 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
     if (this.unmount) return;
     try {
       if (deviceInfo.isOSU) {
-        navigation.navigate("FirmwareUpdateCheckId", {
-          deviceId,
-          latestFirmware,
-        });
-      } else if (deviceInfo.isBootloader) {
         navigation.navigate("FirmwareUpdateMCU", {
           deviceId,
           latestFirmware,

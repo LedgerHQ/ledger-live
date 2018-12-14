@@ -31,7 +31,7 @@ class FirmwareUpdateFailure extends Component<Props, State> {
 
   onRetry = () => {
     const { navigation } = this.props;
-    navigation.navigate("FirmwareUpdateMCU", {
+    navigation.replace("FirmwareUpdateMCU", {
       ...navigation.state.params,
     });
   };
