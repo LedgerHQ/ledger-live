@@ -5,7 +5,7 @@ import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { from, of, empty, concat } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { mergeMap, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 
 import { TrackScreen } from "../../analytics";
@@ -81,26 +81,22 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
             // if in bootloader or OSU we'll directly jump to MCU step
             deviceInfo.isBootloader || deviceInfo.isOSU
               ? empty()
-              : concat(
-                  of({ type: "installing" }),
-                  withDevice(deviceId)(transport =>
-                    installOsuFirmware(
-                      transport,
-                      deviceInfo.targetId,
-                      latestFirmware,
-                    ),
+              : withDevice(deviceId)(transport =>
+                  installOsuFirmware(
+                    transport,
+                    deviceInfo.targetId,
+                    latestFirmware,
                   ),
                 ),
         ),
       )
+      .pipe(filter(e => e.type === "bulk-progress"))
       .subscribe({
         next: event => {
-          const { type } = event;
-          if (type === "installing") {
-            this.setState({ installing: true });
-          } else if (type === "bulk-progress") {
-            this.setState({ progress: event.progress || 0 });
-          }
+          this.setState({
+            installing: true,
+            progress: event.progress,
+          });
         },
         complete: () => {
           navigation.replace("FirmwareUpdateMCU", {
