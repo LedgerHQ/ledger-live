@@ -3,11 +3,11 @@
 import React, { Component } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { View, StyleSheet, SectionList, Animated } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { SafeAreaView } from "react-navigation";
+// $FlowFixMe
+import { SectionList, SafeAreaView } from "react-navigation";
 import { translate } from "react-i18next";
-import Config from "react-native-config";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import {
@@ -37,7 +37,6 @@ import GraphCardContainer from "./GraphCardContainer";
 import StickyHeader from "./StickyHeader";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
-import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
 import TradingDisclaimer from "../../modals/TradingDisclaimer";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -79,32 +78,6 @@ class Portfolio extends Component<
   };
 
   ref = React.createRef();
-
-  scrollSub: *;
-
-  componentDidMount() {
-    if (!this.props.hasCompletedOnboarding && !Config.SKIP_ONBOARDING) {
-      // TODO: there is probably more elegant way to do that
-      this.props.navigation.navigate("Onboarding");
-      return;
-    }
-    this.scrollSub = scrollToTopIntent.subscribe(() => {
-      const sectionList = this.ref.current && this.ref.current.getNode();
-      if (sectionList) {
-        sectionList.getScrollResponder().scrollTo({
-          x: 0,
-          y: 0,
-          animated: true,
-        });
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    if (this.scrollSub) {
-      this.scrollSub.unsubscribe();
-    }
-  }
 
   keyExtractor = (item: Operation) => item.id;
 
@@ -172,7 +145,12 @@ class Portfolio extends Component<
   };
 
   render() {
-    const { summary, accounts, hasAcceptedTradingWarning } = this.props;
+    const {
+      navigation,
+      summary,
+      accounts,
+      hasAcceptedTradingWarning,
+    } = this.props;
     const { opCount, scrollY, isModalOpened } = this.state;
     const disclaimer = !hasAcceptedTradingWarning && (
       <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
@@ -185,7 +163,11 @@ class Portfolio extends Component<
 
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
-        <StickyHeader scrollY={scrollY} summary={summary} />
+        <StickyHeader
+          navigation={navigation}
+          scrollY={scrollY}
+          summary={summary}
+        />
         <SyncBackground />
         <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 

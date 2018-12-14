@@ -1,7 +1,8 @@
 /* @flow */
 import React, { Component } from "react";
-import { ScrollView, View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { SafeAreaView, ScrollView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";

@@ -5,8 +5,8 @@ import "./polyfill";
 import "./live-common-setup";
 import React, { Fragment, Component } from "react";
 import { StyleSheet, View } from "react-native";
-// import { useScreens } from "react-native-screens";
 import SplashScreen from "react-native-splash-screen";
+import { useScreens } from "react-native-screens"; // eslint-disable-line import/no-unresolved
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
@@ -16,7 +16,6 @@ import RebootProvider from "./context/Reboot";
 import ButtonUseTouchable from "./context/ButtonUseTouchable";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
-import { RootNavigator } from "./navigators";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
@@ -27,9 +26,9 @@ import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
+import AppContainer from "./navigators";
 
-// useScreens(); // FIXME this is not working properly when using react-native-modal inside Send flow
-
+useScreens();
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -77,7 +76,7 @@ class App extends Component<*> {
 
         <SyncNewAccounts priority={5} />
 
-        <RootNavigator />
+        <AppContainer />
 
         <DebugRejectSwitch />
       </View>

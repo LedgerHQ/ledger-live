@@ -1,7 +1,9 @@
 // @flow
 import React, { Component } from "react";
+import { TouchableWithoutFeedback } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import type { NavigationScreenProp } from "react-navigation";
 import type { AsyncState } from "../../reducers/bridgeSync";
 import { globalSyncStateSelector } from "../../reducers/bridgeSync";
 import { isUpToDateSelector } from "../../reducers/accounts";
@@ -22,7 +24,12 @@ class PortfolioHeader extends Component<{
   globalSyncState: AsyncState,
   showGreeting: boolean,
   networkError: ?Error,
+  navigation: { emit: (event: string) => void } & NavigationScreenProp<*>,
 }> {
+  onPress = () => {
+    this.props.navigation.emit("refocus");
+  };
+
   render() {
     const {
       nbAccounts,
@@ -31,17 +38,28 @@ class PortfolioHeader extends Component<{
       networkError,
       globalSyncState: { pending, error },
     } = this.props;
-    return pending && !isUpToDate ? (
-      <HeaderSynchronizing />
-    ) : error ? (
-      <HeaderErrorTitle
-        withDescription
-        withDetail
-        error={networkError || error}
-      />
-    ) : showGreeting ? (
-      <Greetings nbAccounts={nbAccounts} />
-    ) : null;
+
+    const content =
+      pending && !isUpToDate ? (
+        <HeaderSynchronizing />
+      ) : error ? (
+        <HeaderErrorTitle
+          withDescription
+          withDetail
+          error={networkError || error}
+        />
+      ) : showGreeting ? (
+        <Greetings nbAccounts={nbAccounts} />
+      ) : null;
+
+    if (content) {
+      return (
+        <TouchableWithoutFeedback onPress={this.onPress}>
+          {content}
+        </TouchableWithoutFeedback>
+      );
+    }
+    return null;
   }
 }
 

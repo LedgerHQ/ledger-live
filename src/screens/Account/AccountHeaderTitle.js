@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
@@ -17,24 +17,31 @@ const mapStateToProps = createStructuredSelector({
   account: accountScreenSelector,
 });
 class AccountHeaderTitle extends Component<Props> {
+  onPress = () => {
+    // $FlowFixMe flowtyped not up to date
+    this.props.navigation.emit("refocus");
+  };
+
   render() {
     const { account } = this.props;
     if (!account) return null;
     return (
-      <View style={styles.headerContainer}>
-        <View style={styles.iconContainer}>
-          <CurrencyIcon size={18} currency={account.currency} />
+      <TouchableWithoutFeedback onPress={this.onPress}>
+        <View style={styles.headerContainer}>
+          <View style={styles.iconContainer}>
+            <CurrencyIcon size={18} currency={account.currency} />
+          </View>
+          <LText
+            semiBold
+            secondary
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.title}
+          >
+            {account.name}
+          </LText>
         </View>
-        <LText
-          semiBold
-          secondary
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          style={styles.title}
-        >
-          {account.name}
-        </LText>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -48,6 +55,8 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     marginHorizontal: 24,
+    paddingHorizontal: 50,
+    paddingVertical: 5,
   },
   iconContainer: {
     marginRight: 8,

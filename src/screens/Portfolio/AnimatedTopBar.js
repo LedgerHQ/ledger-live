@@ -12,7 +12,6 @@ import { SafeAreaView } from "react-navigation";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 import type { Summary } from "../../components/provideSummary";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
-import { scrollToTopIntent } from "./events";
 import BalanceHeader from "./BalanceHeader";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
@@ -22,9 +21,10 @@ class AnimatedTopBar extends PureComponent<{
   summary: Summary,
   pending: boolean,
   error: ?Error,
+  navigation: *,
 }> {
   onPress = () => {
-    scrollToTopIntent.next();
+    this.props.navigation.emit("refocus");
   };
 
   render() {

@@ -1,7 +1,9 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import i18next from "i18next";
-import { ScrollView, FlatList, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { ScrollView, FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { connect } from "react-redux";

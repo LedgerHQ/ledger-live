@@ -1,7 +1,9 @@
 // @flow
 
 import React, { Component, Fragment } from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet } from "react-native";
+// $FlowFixMe
+import { FlatList } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
@@ -40,8 +42,6 @@ type Props = {
 
 class Accounts extends Component<Props> {
   static navigationOptions = navigationOptions;
-
-  onAddMockAccount = () => {};
 
   renderItem = ({ item, index }: { item: Account, index: number }) => (
     <AccountRow

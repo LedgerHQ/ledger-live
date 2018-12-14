@@ -2,7 +2,9 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import { ScrollView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+// $FlowFixMe
+import { ScrollView } from "react-navigation";
 import config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { accountsSelector } from "../../../reducers/accounts";
