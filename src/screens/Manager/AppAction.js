@@ -32,7 +32,7 @@ class PendingProgress extends PureComponent<{
     return (
       <View style={progressStyles.centered}>
         <ProgressCircle
-          progress={0.15 + 0.85 * progress}
+          progress={progress}
           color={colors.live}
           unfilledColor={colors.fog}
           borderWidth={0}
