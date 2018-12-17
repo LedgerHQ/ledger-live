@@ -123,11 +123,12 @@ class Portfolio extends Component<
     const { accounts } = this.props;
     const { navigation } = this.props;
 
-    if (accounts.every(isAccountEmpty)) {
-      return <NoOpStatePortfolio navigation={navigation} />;
-    }
     if (accounts.length === 0) {
       return <EmptyStatePortfolio navigation={navigation} />;
+    }
+
+    if (accounts.every(isAccountEmpty)) {
+      return <NoOpStatePortfolio navigation={navigation} />;
     }
 
     return null;
@@ -210,9 +211,9 @@ class Portfolio extends Component<
               !completed ? (
                 <LoadingFooter />
               ) : accounts.every(isAccountEmpty) ? null : sections.length ? (
-                <NoOperationFooter />
-              ) : (
                 <NoMoreOperationFooter />
+              ) : (
+                <NoOperationFooter />
               )
             }
             ListEmptyComponent={this.ListEmptyComponent}
