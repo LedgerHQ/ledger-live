@@ -7,9 +7,11 @@ import { compose } from "redux";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/live-common/lib/errors";
+import { Vibration } from "react-native";
 import { disablePrivacy } from "../../../actions/settings";
 import type { T } from "../../../types/common";
 import PasswordForm from "./PasswordForm";
+import { VIBRATION_PATTERN_ERROR } from "../../../constants";
 
 type Props = {
   t: T,
@@ -47,6 +49,7 @@ class PasswordRemove extends PureComponent<Props, State> {
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
         if (credentials.password !== confirmPassword) {
+          Vibration.vibrate(VIBRATION_PATTERN_ERROR);
           throw new PasswordsDontMatchError();
         }
         await Keychain.resetGenericPassword();

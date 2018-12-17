@@ -7,10 +7,12 @@ import { compose } from "redux";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/live-common/lib/errors";
+import { Vibration } from "react-native";
 import { setPrivacy } from "../../../actions/settings";
 import type { Privacy } from "../../../reducers/settings";
 import type { T } from "../../../types/common";
 import PasswordForm from "./PasswordForm";
+import { VIBRATION_PATTERN_ERROR } from "../../../constants";
 
 type Props = {
   t: T,
@@ -73,6 +75,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
     if (this.state.password === this.state.confirmPassword) {
       this.save();
     } else {
+      Vibration.vibrate(VIBRATION_PATTERN_ERROR);
       this.setState({
         error: new PasswordsDontMatchError(),
         confirmPassword: "",
