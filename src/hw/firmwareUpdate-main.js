@@ -1,10 +1,10 @@
 // @flow
-import { from, of, empty, concat, throwError } from "rxjs";
+import { from, of, empty, concat } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
 
 import { CantOpenDevice } from "../errors";
 import type { FinalFirmware } from "../types/manager";
-import { withDevice, withDevicePolling } from "../hw/deviceAccess";
+import { withDevicePolling } from "../hw/deviceAccess";
 import getDeviceInfo from "../hw/getDeviceInfo";
 import flash from "../hw/flash";
 import installFinalFirmware from "../hw/installFinalFirmware";
