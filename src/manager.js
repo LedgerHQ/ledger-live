@@ -5,8 +5,8 @@
 import type {
   ApplicationVersion,
   DeviceInfo,
-  Firmware,
-  OsuFirmware
+  OsuFirmware,
+  FinalFirmware
 } from "./types/manager";
 import ManagerAPI from "./api/Manager";
 
@@ -37,7 +37,10 @@ const CacheAPI = {
 
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo
-  ): Promise<?Firmware> => {
+  ): Promise<?{
+    osu: OsuFirmware,
+    final: FinalFirmware
+  }> => {
     // Get device infos from targetId
     const deviceVersion = await ManagerAPI.getDeviceVersion(
       deviceInfo.targetId,
@@ -52,35 +55,21 @@ const CacheAPI = {
     });
 
     // Fetch next possible firmware
-    const se_firmware_osu_version = await ManagerAPI.getLatestFirmware({
+    const osu = await ManagerAPI.getLatestFirmware({
       current_se_firmware_final_version: seFirmwareVersion.id,
       device_version: deviceVersion.id,
       provider: deviceInfo.providerId
     });
 
-    if (!se_firmware_osu_version) {
+    if (!osu) {
       return null;
     }
 
-    const { next_se_firmware_final_version } = se_firmware_osu_version;
-    const seFirmwareFinalVersion = await ManagerAPI.getFinalFirmwareById(
-      next_se_firmware_final_version
+    const final = await ManagerAPI.getFinalFirmwareById(
+      osu.next_se_firmware_final_version
     );
 
-    const mcus = await ManagerAPI.getMcus();
-
-    const currentMcuVersionId: Array<number> = mcus
-      .filter(mcu => mcu.name === deviceInfo.mcuVersion)
-      .map(mcu => mcu.id);
-
-    if (!seFirmwareFinalVersion.mcu_versions.includes(...currentMcuVersionId)) {
-      return {
-        ...se_firmware_osu_version,
-        shouldFlashMcu: true
-      };
-    }
-
-    return { ...se_firmware_osu_version, shouldFlashMcu: false };
+    return { final, osu };
   },
 
   // get list of apps for a given deviceInfo

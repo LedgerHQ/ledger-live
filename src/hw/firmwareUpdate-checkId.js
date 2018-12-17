@@ -9,7 +9,7 @@ import type { OsuFirmware } from "../types/manager";
 
 const wait3s = of({ type: "wait" }).pipe(delay(3000));
 
-export default (deviceId: string, latestFirmware: OsuFirmware) =>
+export default (deviceId: string, osuFirmware: OsuFirmware) =>
   withDevice(deviceId)(transport => from(getDeviceInfo(transport))).pipe(
     mergeMap(
       deviceInfo =>
@@ -18,11 +18,7 @@ export default (deviceId: string, latestFirmware: OsuFirmware) =>
           ? empty()
           : concat(
               withDevice(deviceId)(transport =>
-                installOsuFirmware(
-                  transport,
-                  deviceInfo.targetId,
-                  latestFirmware
-                )
+                installOsuFirmware(transport, deviceInfo.targetId, osuFirmware)
               ),
               wait3s // the device is likely rebooting now, we give it some time
             )
