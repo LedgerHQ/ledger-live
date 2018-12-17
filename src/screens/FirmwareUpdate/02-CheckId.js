@@ -62,9 +62,11 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
 
     if (!latestFirmware) {
       // if there is no latest firmware we'll jump to success screen
-      navigation.replace("FirmwareUpdateConfirmation", {
-        ...navigation.state.params,
-      });
+      if (navigation.replace) {
+        navigation.replace("FirmwareUpdateConfirmation", {
+          ...navigation.state.params,
+        });
+      }
       return;
     }
 
@@ -93,15 +95,19 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
           });
         },
         complete: () => {
-          navigation.replace("FirmwareUpdateMCU", {
-            ...navigation.state.params,
-          });
+          if (navigation.replace) {
+            navigation.replace("FirmwareUpdateMCU", {
+              ...navigation.state.params,
+            });
+          }
         },
         error: error => {
-          navigation.replace("FirmwareUpdateFailure", {
-            ...navigation.state.params,
-            error,
-          });
+          if (navigation.replace) {
+            navigation.replace("FirmwareUpdateFailure", {
+              ...navigation.state.params,
+              error,
+            });
+          }
         },
       });
   }
@@ -115,8 +121,6 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const { navigation } = this.props;
     const latestFirmware = navigation.getParam("latestFirmware");
     const windowWidth = Dimensions.get("window").width;
-
-    console.log("02 checkId");
 
     return (
       <SafeAreaView style={styles.root}>

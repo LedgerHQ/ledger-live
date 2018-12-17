@@ -10,7 +10,7 @@ type Props = {
 
 class RepairDeviceRow extends PureComponent<Props> {
   onPress = async () => {
-    this.props.navigation.navigate("");
+    this.props.navigation.navigate("RepairDevice");
   };
 
   render() {

@@ -3,7 +3,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { from } from "rxjs";
-import { map, first } from "rxjs/operators";
+import { map, first, last } from "rxjs/operators";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
@@ -28,6 +28,7 @@ import { deviceNames } from "../../wording";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
+import repairDevice from "../../logic/hw/repairDevice";
 
 export const connectingStep: Step = {
   Body: ({ deviceName }: *) => (
@@ -96,6 +97,20 @@ export const genuineCheck: Step = {
         ...meta,
         genuineResult,
       })),
+    ),
+};
+
+export const repairDeviceStep: Step = {
+  Body: () => (
+    <RenderStep
+      icon={<DeviceNanoAction screen="validation" action />} // TODO: Replace with correct Icon and <Trans /> for title prop
+      title="Repair Device Step"
+    />
+  ),
+  run: (deviceId, meta) =>
+    repairDevice(deviceId).pipe(
+      last(),
+      map(() => meta),
     ),
 };
 

@@ -5,7 +5,7 @@ import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { from, throwError, concat, empty } from "rxjs";
-import { tap, concatMap, delay, catchError, filter } from "rxjs/operators";
+import { concatMap, delay, catchError, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
 import { TrackScreen } from "../../analytics";
@@ -57,7 +57,6 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   };
 
   sub: *;
-  progress: *;
 
   async componentDidMount() {
     const { navigation } = this.props;
@@ -67,10 +66,6 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const withDeviceInfo = withDevicePolling(deviceId)(
       transport => from(getDeviceInfo(transport)),
       () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
-    ).pipe(
-      tap(deviceInfo => {
-        console.log({ deviceInfo });
-      }),
     );
 
     const withDeviceInstall = install =>
@@ -103,10 +98,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     );
 
     this.sub = concat(bootloaderLoop, osuLoop)
-      .pipe(
-        tap(e => console.log(e)),
-        filter(e => e.type === "bulk-progress" || e.type === "install"),
-      )
+      .pipe(filter(e => e.type === "bulk-progress" || e.type === "install"))
       .subscribe({
         next: e => {
           if (e.type === "install") {
@@ -140,8 +132,6 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   render() {
     const { installing, progress } = this.state;
     const width = Dimensions.get("window").width;
-
-    console.log("03 mcu");
 
     return (
       <SafeAreaView style={styles.root}>
