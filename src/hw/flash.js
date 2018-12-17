@@ -22,19 +22,19 @@ export default (nextFirmware: FinalFirmware) => (
       ).pipe(
         mergeMap(mcuVersion => {
           let version;
+          let isMCU = false;
           if (typeof mcuVersion === "string") {
             version = mcuVersion;
           } else {
-            const shouldFlashMcu =
-              blVersion === mcuVersion.from_bootloader_version;
-            version = shouldFlashMcu
+            isMCU = blVersion === mcuVersion.from_bootloader_version;
+            version = isMCU
               ? mcuVersion.name
               : mcuVersion.from_bootloader_version;
           }
           return concat(
             of({
               type: "install",
-              step: "flash-" + (shouldFlashMcu ? "mcu" : "bootloader")
+              step: "flash-" + (isMCU ? "mcu" : "bootloader")
             }),
             ManagerAPI.installMcu(transport, "mcu", {
               targetId,
