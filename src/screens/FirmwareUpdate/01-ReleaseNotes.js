@@ -7,9 +7,9 @@ import Markdown from "react-native-easy-markdown";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 
+import type { OsuFirmware, FinalFirmware } from "../../types/manager";
 import { TrackScreen } from "../../analytics";
 import manager from "../../logic/manager";
-import type { Firmware } from "../../types/manager";
 import Button from "../../components/Button";
 import LText, { getFontStyle } from "../../components/LText";
 import colors from "../../colors";
@@ -17,7 +17,8 @@ import colors from "../../colors";
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    latestFirmware: ?Firmware,
+    osu: ?OsuFirmware,
+    final: ?FinalFirmware,
   },
 }>;
 
@@ -41,9 +42,9 @@ class FirmwareUpdateReleaseNotes extends Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const latestFirmware = navigation.getParam("latestFirmware");
-    if (!latestFirmware) return null;
-    const version = manager.getFirmwareVersion(latestFirmware);
+    const osu = navigation.getParam("osu");
+    if (!osu) return null;
+    const version = manager.getFirmwareVersion(osu);
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
@@ -62,9 +63,9 @@ class FirmwareUpdateReleaseNotes extends Component<Props, State> {
               <Trans i18nKey="FirmwareUpdateReleaseNotes.introDescription2" />
             </LText>
           </LText>
-          {latestFirmware.notes ? (
+          {osu.notes ? (
             <View style={styles.markdownSection}>
-              <SafeMarkdown markdown={latestFirmware.notes} />
+              <SafeMarkdown markdown={osu.notes} />
             </View>
           ) : null}
         </ScrollView>

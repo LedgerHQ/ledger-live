@@ -6,7 +6,7 @@ import type {
   ApplicationVersion,
   DeviceInfo,
   OsuFirmware,
-  Firmware,
+  FinalFirmware,
 } from "../types/manager";
 import { getFullListSortedCryptoCurrencies } from "../countervalues";
 import ManagerAPI from "../api/Manager";
@@ -38,7 +38,7 @@ const CacheAPI = {
 
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo,
-  ): Promise<?Firmware> => {
+  ): Promise<?{ osu: OsuFirmware, final: FinalFirmware }> => {
     // Get device infos from targetId
     const deviceVersion = await ManagerAPI.getDeviceVersion(
       deviceInfo.targetId,
@@ -63,25 +63,11 @@ const CacheAPI = {
       return null;
     }
 
-    const { next_se_firmware_final_version } = se_firmware_osu_version;
-    const seFirmwareFinalVersion = await ManagerAPI.getFinalFirmwareById(
-      next_se_firmware_final_version,
+    const se_firmware_final_version = await ManagerAPI.getFinalFirmwareById(
+      se_firmware_osu_version.next_se_firmware_final_version,
     );
 
-    const mcus = await ManagerAPI.getMcus();
-
-    const currentMcuVersionId: Array<number> = mcus
-      .filter(mcu => mcu.name === deviceInfo.mcuVersion)
-      .map(mcu => mcu.id);
-
-    if (!seFirmwareFinalVersion.mcu_versions.includes(...currentMcuVersionId)) {
-      return {
-        ...se_firmware_osu_version,
-        shouldFlashMcu: true,
-      };
-    }
-
-    return { ...se_firmware_osu_version, shouldFlashMcu: false };
+    return { osu: se_firmware_osu_version, final: se_firmware_final_version };
   },
 
   // get list of apps for a given deviceInfo

@@ -13,7 +13,7 @@ import flash from "../../logic/hw/flash";
 import installFinalFirmware from "../../logic/hw/installFinalFirmware";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import { withDevice, withDevicePolling } from "../../logic/hw/deviceAccess";
-import type { FinalFirmware } from "../../types/manager";
+import type { FinalFirmware, OsuFirmware } from "../../types/manager";
 import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import StepHeader from "../../components/StepHeader";
@@ -23,7 +23,8 @@ import Installing from "./Installing";
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    latestFirmware: ?FinalFirmware,
+    osu: ?OsuFirmware,
+    final: ?FinalFirmware,
   },
 }>;
 
@@ -61,7 +62,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   async componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
-    const latestFirmware = navigation.getParam("latestFirmware");
+    const final = navigation.getParam("final");
 
     const withDeviceInfo = withDevicePolling(deviceId)(
       transport => from(getDeviceInfo(transport)),
@@ -80,11 +81,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
         deviceInfo =>
           !deviceInfo.isBootloader
             ? empty() // we're done
-            : concat(
-                withDeviceInstall(flash(latestFirmware)),
-                wait2s,
-                bootloaderLoop,
-              ),
+            : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop),
       ),
     );
 

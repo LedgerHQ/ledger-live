@@ -11,28 +11,24 @@ export default (deviceId: string) => {
     withDevice(deviceId)(transport =>
       from(getDeviceInfo(transport)).pipe(
         concatMap(deviceInfo => {
-
-          const installMcu = (version: string) => ManagerAPI.installMcu(transport, "mcu", {
-            targetId: deviceInfo.targetId,
-            version
-          })
+          const installMcu = (version: string) =>
+            ManagerAPI.installMcu(transport, "mcu", {
+              targetId: deviceInfo.targetId,
+              version,
+            });
 
           if (!deviceInfo.isBootloader) return empty();
 
           if (deviceInfo.rawVersion === "0.9") {
-            return installMcu("1.7")
+            return installMcu("1.7");
           }
 
           if (deviceInfo.rawVersion === "0.6") {
-            return installMcu("1.5")
+            return installMcu("1.5");
           }
 
           if (deviceInfo.rawVersion === "0.0") {
-            return concat(
-              installMcu("0.6"),
-              wait2s,
-              loop(),
-            );
+            return concat(installMcu("0.6"), wait2s, loop());
           }
 
           return empty();

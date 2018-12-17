@@ -8,23 +8,23 @@ import { from, empty } from "rxjs";
 import { mergeMap, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 
+import type { OsuFirmware, FinalFirmware } from "../../types/manager";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import installOsuFirmware from "../../logic/hw/installOsuFirmware";
 import { withDevice } from "../../logic/hw/deviceAccess";
 import manager from "../../logic/manager";
-import type { Firmware } from "../../types/manager";
 import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
-import Installing from "./Installing";
 
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    latestFirmware: ?Firmware,
+    osu: ?OsuFirmware,
+    final: ?FinalFirmware,
   },
 }>;
 
@@ -58,9 +58,9 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
-    const latestFirmware = navigation.getParam("latestFirmware");
+    const osu = navigation.getParam("osu");
 
-    if (!latestFirmware) {
+    if (!osu) {
       // if there is no latest firmware we'll jump to success screen
       if (navigation.replace) {
         navigation.replace("FirmwareUpdateConfirmation", {
@@ -78,11 +78,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
             deviceInfo.isBootloader || deviceInfo.isOSU
               ? empty()
               : withDevice(deviceId)(transport =>
-                  installOsuFirmware(
-                    transport,
-                    deviceInfo.targetId,
-                    latestFirmware,
-                  ),
+                  installOsuFirmware(transport, deviceInfo.targetId, osu),
                 ),
         ),
       )
@@ -117,39 +113,34 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   }
 
   render() {
-    const { installing, progress } = this.state;
     const { navigation } = this.props;
-    const latestFirmware = navigation.getParam("latestFirmware");
+    const osu = navigation.getParam("osu");
     const windowWidth = Dimensions.get("window").width;
 
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
-        {installing ? (
-          <Installing progress={progress} installing="osu" />
-        ) : (
-          <View style={styles.body}>
-            <View style={styles.device}>
-              <DeviceNanoAction
-                powerAction
-                action
-                screen="validation"
-                width={1.2 * windowWidth}
-              />
-            </View>
-            <LText style={styles.description}>
-              <Trans
-                i18nKey="FirmwareUpdateCheckId.description"
-                values={deviceNames.nanoX}
-              />
-            </LText>
-            <View style={[styles.idContainer, { maxWidth: windowWidth - 40 }]}>
-              <LText style={styles.id} bold>
-                {latestFirmware && manager.formatHashName(latestFirmware.hash)}
-              </LText>
-            </View>
+        <View style={styles.body}>
+          <View style={styles.device}>
+            <DeviceNanoAction
+              powerAction
+              action
+              screen="validation"
+              width={1.2 * windowWidth}
+            />
           </View>
-        )}
+          <LText style={styles.description}>
+            <Trans
+              i18nKey="FirmwareUpdateCheckId.description"
+              values={deviceNames.nanoX}
+            />
+          </LText>
+          <View style={[styles.idContainer, { maxWidth: windowWidth - 40 }]}>
+            <LText style={styles.id} bold>
+              {osu && manager.formatHashName(osu.hash)}
+            </LText>
+          </View>
+        </View>
       </SafeAreaView>
     );
   }

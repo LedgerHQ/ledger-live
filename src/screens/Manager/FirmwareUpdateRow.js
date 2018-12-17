@@ -5,7 +5,11 @@ import { StyleSheet, View } from "react-native";
 import { withNavigation } from "react-navigation";
 import LText from "../../components/LText";
 import colors from "../../colors";
-import type { DeviceInfo, Firmware } from "../../types/manager";
+import type {
+  DeviceInfo,
+  OsuFirmware,
+  FinalFirmware,
+} from "../../types/manager";
 import Button from "../../components/Button";
 import manager from "../../logic/manager";
 
@@ -16,7 +20,8 @@ type Props = {
 };
 
 type State = {
-  latestFirmware: ?Firmware,
+  osu: ?OsuFirmware,
+  final: ?FinalFirmware,
   visibleFirmwareModal: boolean,
   step: string,
 };
@@ -24,7 +29,8 @@ type State = {
 class FirmwareUpdateRow extends PureComponent<Props, State> {
   state = {
     visibleFirmwareModal: false,
-    latestFirmware: null,
+    osu: null,
+    final: null,
     step: "",
   };
 
@@ -32,7 +38,7 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
 
   async componentDidMount() {
     const { deviceInfo, deviceId, navigation } = this.props;
-    const latestFirmware = await manager
+    const { osu, final } = await manager
       .getLatestFirmwareForDevice(deviceInfo)
       .catch(() => null);
 
@@ -41,10 +47,11 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
       if (deviceInfo.isOSU) {
         navigation.navigate("FirmwareUpdateMCU", {
           deviceId,
-          latestFirmware,
+          osu,
+          final,
         });
       } else {
-        this.setState({ latestFirmware });
+        this.setState({ osu, final });
       }
     } catch (e) {
       console.warn(e);
@@ -57,16 +64,17 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
 
   onUpdatePress = () => {
     const { navigation, deviceId } = this.props;
-    const { latestFirmware } = this.state;
+    const { osu, final } = this.state;
     navigation.navigate("FirmwareUpdate", {
       deviceId,
-      latestFirmware,
+      osu,
+      final,
     });
   };
 
   render() {
-    const { latestFirmware } = this.state;
-    if (!latestFirmware) {
+    const { osu } = this.state;
+    if (!osu) {
       return null;
     }
 
@@ -76,7 +84,7 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
           <Trans
             i18nKey="FirmwareUpdateRow.title"
             values={{
-              version: manager.getFirmwareVersion(latestFirmware),
+              version: manager.getFirmwareVersion(osu),
             }}
           />
         </LText>

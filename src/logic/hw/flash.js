@@ -11,28 +11,34 @@ const blVersionAliases = {
   "0.0.0": "0.6",
 };
 
-export default (nextFirmaware: FinalFirmware) => (
+export default (nextFirmware: FinalFirmware) => (
   transport: Transport<*>,
 ): Observable<*> =>
   from(getDeviceInfo(transport)).pipe(
     mergeMap(({ seVersion: blVersion, targetId }: DeviceInfo) =>
       (blVersion in blVersionAliases
         ? of(blVersionAliases[blVersion])
-        : from(ManagerAPI.getNextBLVersion(nextFirmaware.mcu_versions[0]))
+        : from(ManagerAPI.getNextBLVersion(nextFirmware.mcu_versions[0]))
       ).pipe(
         mergeMap(mcuVersion => {
-          const shouldFlashMcu =
-            blVersion === mcuVersion.from_bootloader_version;
+          let version;
+          let isMCU = false;
+          if (typeof mcuVersion === "string") {
+            version = mcuVersion;
+          } else {
+            isMCU = blVersion === mcuVersion.from_bootloader_version;
+            version = isMCU
+              ? mcuVersion.name
+              : mcuVersion.from_bootloader_version;
+          }
           return concat(
             of({
               type: "install",
-              step: "flash-" + (shouldFlashMcu ? "mcu" : "bootloader"),
+              step: "flash-" + (isMCU ? "mcu" : "bootloader"),
             }),
             ManagerAPI.installMcu(transport, "mcu", {
               targetId,
-              version: shouldFlashMcu
-                ? mcuVersion.name
-                : mcuVersion.from_bootloader_version,
+              version,
             }),
           );
         }),
