@@ -34,6 +34,7 @@ export default async (transport: Transport<*>): Promise<DeviceInfo> => {
   return {
     targetId,
     seVersion: majMin + patch,
+    rawVersion: majMin,
     isOSU,
     mcuVersion,
     isBootloader,
