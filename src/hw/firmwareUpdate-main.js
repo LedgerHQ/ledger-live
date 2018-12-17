@@ -11,10 +11,6 @@ import installFinalFirmware from "../hw/installFinalFirmware";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
-const ignoreDeviceDisconnectedError = catchError(
-  e => (e instanceof CantOpenDevice ? empty() : throwError(e))
-);
-
 export default (deviceId: string, latestFirmware: FinalFirmware) => {
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
@@ -22,8 +18,9 @@ export default (deviceId: string, latestFirmware: FinalFirmware) => {
   );
 
   const withDeviceInstall = install =>
-    withDevice(deviceId)(install).pipe(
-      ignoreDeviceDisconnectedError // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
+    withDevicePolling(deviceId)(
+      install,
+      e => e instanceof CantOpenDevice // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
     );
 
   const bootloaderLoop = withDeviceInfo.pipe(

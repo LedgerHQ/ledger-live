@@ -1,11 +1,13 @@
 // @flow
-import { from, empty } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { from, of, empty, concat } from "rxjs";
+import { mergeMap, delay } from "rxjs/operators";
 
 import getDeviceInfo from "../hw/getDeviceInfo";
 import installOsuFirmware from "../hw/installOsuFirmware";
 import { withDevice } from "../hw/deviceAccess";
 import type { OsuFirmware } from "../types/manager";
+
+const wait3s = of({ type: "wait" }).pipe(delay(3000));
 
 export default (deviceId: string, latestFirmware: OsuFirmware) =>
   withDevice(deviceId)(transport => from(getDeviceInfo(transport))).pipe(
@@ -14,8 +16,15 @@ export default (deviceId: string, latestFirmware: OsuFirmware) =>
         // if in bootloader or OSU we'll directly jump to MCU step
         deviceInfo.isBootloader || deviceInfo.isOSU
           ? empty()
-          : withDevice(deviceId)(transport =>
-              installOsuFirmware(transport, deviceInfo.targetId, latestFirmware)
+          : concat(
+              withDevice(deviceId)(transport =>
+                installOsuFirmware(
+                  transport,
+                  deviceInfo.targetId,
+                  latestFirmware
+                )
+              ),
+              wait3s // the device is likely rebooting now, we give it some time
             )
     )
   );
