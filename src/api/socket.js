@@ -11,6 +11,7 @@ import {
   DeviceSocketNoHandler
 } from "../errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
+import { createWebSocket } from "../network";
 
 export const logSubject = new Subject();
 
@@ -62,7 +63,7 @@ export const createDeviceSocket = (
     let inBulk = false;
 
     try {
-      ws = new global.WebSocket(url);
+      ws = createWebSocket(url);
     } catch (err) {
       o.error(new WebsocketConnectionFailed(err.message, { url }));
       return () => {};
