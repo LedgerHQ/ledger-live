@@ -21,8 +21,16 @@ export default (nextFirmware: FinalFirmware) => (
         : from(ManagerAPI.getNextBLVersion(nextFirmware.mcu_versions[0]))
       ).pipe(
         mergeMap(mcuVersion => {
-          const shouldFlashMcu =
-            blVersion === mcuVersion.from_bootloader_version;
+          let version;
+          if (typeof mcuVersion === "string") {
+            version = mcuVersion;
+          } else {
+            const shouldFlashMcu =
+              blVersion === mcuVersion.from_bootloader_version;
+            version = shouldFlashMcu
+              ? mcuVersion.name
+              : mcuVersion.from_bootloader_version;
+          }
           return concat(
             of({
               type: "install",
@@ -30,9 +38,7 @@ export default (nextFirmware: FinalFirmware) => (
             }),
             ManagerAPI.installMcu(transport, "mcu", {
               targetId,
-              version: shouldFlashMcu
-                ? mcuVersion.name
-                : mcuVersion.from_bootloader_version
+              version
             })
           );
         })
