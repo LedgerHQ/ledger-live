@@ -4,17 +4,15 @@ import React, { Component } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, empty } from "rxjs";
-import { mergeMap, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
-
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import type { OsuFirmware, FinalFirmware } from "../../types/manager";
+import firmwareUpdatePrepare from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
+import type {
+  OsuFirmware,
+  FinalFirmware,
+} from "@ledgerhq/live-common/lib/types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
-import getDeviceInfo from "../../logic/hw/getDeviceInfo";
-import installOsuFirmware from "../../logic/hw/installOsuFirmware";
-import manager from "../../logic/manager";
 import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
@@ -33,13 +31,11 @@ type Props = {
 };
 
 type State = {
-  installing: boolean,
   progress: number,
 };
 
 class FirmwareUpdateCheckId extends Component<Props, State> {
   state = {
-    installing: false,
     progress: 0,
   };
 
@@ -70,42 +66,26 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
       return;
     }
 
-    this.sub = withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
-      .pipe(
-        mergeMap(
-          deviceInfo =>
-            // if in bootloader or OSU we'll directly jump to MCU step
-            deviceInfo.isBootloader || deviceInfo.isOSU
-              ? empty()
-              : withDevice(deviceId)(transport =>
-                  installOsuFirmware(transport, deviceInfo.targetId, osu),
-                ),
-        ),
-      )
-      .pipe(filter(e => e.type === "bulk-progress"))
-      .subscribe({
-        next: event => {
-          this.setState({
-            installing: true,
-            progress: event.progress,
+    this.sub = firmwareUpdatePrepare(deviceId, osu).subscribe({
+      next: patch => {
+        this.setState(patch);
+      },
+      complete: () => {
+        if (navigation.replace) {
+          navigation.replace("FirmwareUpdateMCU", {
+            ...navigation.state.params,
           });
-        },
-        complete: () => {
-          if (navigation.replace) {
-            navigation.replace("FirmwareUpdateMCU", {
-              ...navigation.state.params,
-            });
-          }
-        },
-        error: error => {
-          if (navigation.replace) {
-            navigation.replace("FirmwareUpdateFailure", {
-              ...navigation.state.params,
-              error,
-            });
-          }
-        },
-      });
+        }
+      },
+      error: error => {
+        if (navigation.replace) {
+          navigation.replace("FirmwareUpdateFailure", {
+            ...navigation.state.params,
+            error,
+          });
+        }
+      },
+    });
   }
 
   componentWillUnmount() {
@@ -116,6 +96,8 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const { navigation } = this.props;
     const osu = navigation.getParam("osu");
     const windowWidth = Dimensions.get("window").width;
+
+    // TODO what to do with the progress state ?
 
     return (
       <SafeAreaView style={styles.root}>

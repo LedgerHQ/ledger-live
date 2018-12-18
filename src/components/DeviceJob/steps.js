@@ -14,21 +14,24 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
-import { withDevice, withDevicePolling } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import {
+  withDevice,
+  withDevicePolling,
+} from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
+import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
+import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
-import getDeviceNameTransport from "../../logic/hw/getDeviceName";
-import editDeviceNameTransport from "../../logic/hw/editDeviceName";
-import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
 import { rejectionOp } from "../DebugRejectSwitch";
 import { deviceNames } from "../../wording";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
-import repairDevice from "../../logic/hw/repairDevice";
 
 export const connectingStep: Step = {
   Body: ({ deviceName }: *) => (
@@ -108,7 +111,7 @@ export const repairDeviceStep: Step = {
     />
   ),
   run: (deviceId, meta) =>
-    repairDevice(deviceId).pipe(
+    firmwareUpdateRepair(deviceId).pipe(
       last(),
       map(() => meta),
     ),

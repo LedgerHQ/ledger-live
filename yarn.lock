@@ -785,17 +785,17 @@
     axios "^0.18.0"
     ws "^6.1.0"
 
-"@ledgerhq/hw-transport@^4.24.0", "@ledgerhq/hw-transport@^4.32.0":
+"@ledgerhq/hw-transport@^4.21.0", "@ledgerhq/hw-transport@^4.24.0", "@ledgerhq/hw-transport@^4.32.0":
   version "4.32.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.32.0.tgz#592b9dc51459cb1cd31ce9444cf943f627bc4beb"
   integrity sha512-Wgsk9UHC4RShqYoDeIEeKgHZOvNCtB0WWIG0xqlVPzS+IcKDkIxtXQw7hTA7GQSuDuGeauVtlbTQ5yat6+2/BA==
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@4.8.0-beta.14":
-  version "4.8.0-beta.14"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.8.0-beta.14.tgz#958bf811b2e1846fd3c218c863b1cfc729c2df19"
-  integrity sha512-gA2fvLbEfbXJ8IFm73Z236J3MrH7XQdFE3m12y3qWNYk4Bd1M1DWpIg4kFNPfxYTVaQ/Os0vJ08BOv9tj5lW9A==
+"@ledgerhq/live-common@4.8.0-beta.15":
+  version "4.8.0-beta.15"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.8.0-beta.15.tgz#598577cf60a270e159845be3c6ec1a578b1b5321"
+  integrity sha512-nL231kKj+7Qi9a5U8JxZb+1wOBdu8oLLtMAXk7Vn+JHwjWC/UZHUucOSUlDQSAePZFeI3xUDmU9YyPmRgW81dg==
   dependencies:
     "@aeternity/ledger-app-api" "0.0.4"
     "@ledgerhq/hw-app-btc" "^4.32.0"

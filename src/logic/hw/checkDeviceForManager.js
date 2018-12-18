@@ -1,16 +1,16 @@
 // @flow
 import Transport from "@ledgerhq/hw-transport";
+import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
+import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { UnexpectedBootloader } from "@ledgerhq/live-common/lib/errors";
 import { Observable, of, throwError } from "rxjs";
-import { UnexpectedBootloader } from "../../errors";
-import type { DeviceInfo } from "../../types/manager";
-import genuineCheck from "./genuineCheck";
 
 export default (
   transport: Transport<*>,
   deviceInfo: DeviceInfo,
 ): Observable<string> =>
   deviceInfo.isOSU
-    ? of("9000")
+    ? of("0000")
     : deviceInfo.isBootloader
       ? throwError(new UnexpectedBootloader())
       : genuineCheck(transport, deviceInfo);

@@ -6,11 +6,11 @@ import {
   genOperation,
 } from "@ledgerhq/live-common/lib/mock/account";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import { SyncError } from "@ledgerhq/live-common/lib/errors";
 import { validateNameEdition } from "@ledgerhq/live-common/lib/account";
 import { BigNumber } from "bignumber.js";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
 import type { AccountBridge, CurrencyBridge } from "./types";
-import { SyncError } from "../errors";
 
 const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
 

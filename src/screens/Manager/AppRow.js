@@ -2,8 +2,8 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
-import type { ApplicationVersion } from "../../types/manager";
-import manager from "../../logic/manager";
+import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
 import colors from "../../colors";
 import Trash from "../../icons/Trash";
 import Import from "../../icons/Import";

@@ -7,9 +7,12 @@ import Markdown from "react-native-easy-markdown";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 
-import type { OsuFirmware, FinalFirmware } from "../../types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
+import type {
+  OsuFirmware,
+  FinalFirmware,
+} from "@ledgerhq/live-common/lib/types/manager";
 import { TrackScreen } from "../../analytics";
-import manager from "../../logic/manager";
 import Button from "../../components/Button";
 import LText, { getFontStyle } from "../../components/LText";
 import colors from "../../colors";

@@ -8,14 +8,14 @@ import type {
   DeviceInfo,
   OsuFirmware,
   FinalFirmware,
-} from "../../types/manager";
+} from "@ledgerhq/live-common/lib/types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNano from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import Circle from "../../components/Circle";
 import colors from "../../colors";
-import manager from "../../logic/manager";
 import { deviceNames } from "../../wording";
 import { TrackScreen } from "../../analytics";
 

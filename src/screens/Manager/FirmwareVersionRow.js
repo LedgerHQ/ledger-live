@@ -3,9 +3,10 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
+import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+
 import LText from "../../components/LText";
 import colors from "../../colors";
-import type { DeviceInfo } from "../../types/manager";
 import Row from "./Row";
 
 type Props = {

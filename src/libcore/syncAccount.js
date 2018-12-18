@@ -9,7 +9,7 @@ import type {
   CryptoCurrency,
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
-import { SyncError } from "../errors";
+import { SyncError } from "@ledgerhq/live-common/lib/errors";
 import { withLibcore } from "./access";
 import { createInstance } from "./specific";
 import { buildAccount } from "./buildAccount";

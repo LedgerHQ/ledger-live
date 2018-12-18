@@ -4,19 +4,13 @@ import React, { Component } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, throwError, concat, empty } from "rxjs";
-import { concatMap, delay, catchError, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
-import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
-import {
-  withDevice,
-  withDevicePolling,
-} from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import firmwareUpdateMain from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
+import type {
+  FinalFirmware,
+  OsuFirmware,
+} from "@ledgerhq/live-common/lib/types/manager";
 import { TrackScreen } from "../../analytics";
-import flash from "../../logic/hw/flash";
-import installFinalFirmware from "../../logic/hw/installFinalFirmware";
-import getDeviceInfo from "../../logic/hw/getDeviceInfo";
-import type { FinalFirmware, OsuFirmware } from "../../types/manager";
 import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import StepHeader from "../../components/StepHeader";
@@ -39,10 +33,6 @@ type State = {
   installing: ?string,
   progress: number,
 };
-
-const ignoreDeviceDisconnectedError = catchError(
-  e => (e instanceof CantOpenDevice ? from([]) : throwError(e)),
-);
 
 class FirmwareUpdateMCU extends Component<Props, State> {
   static navigationOptions = {
@@ -67,62 +57,26 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const deviceId = navigation.getParam("deviceId");
     const final = navigation.getParam("final");
 
-    const withDeviceInfo = withDevicePolling(deviceId)(
-      transport => from(getDeviceInfo(transport)),
-      () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
-    );
-
-    const withDeviceInstall = install =>
-      withDevice(deviceId)(install).pipe(
-        ignoreDeviceDisconnectedError, // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
-      );
-
-    const wait2s = from([{ type: "wait" }]).pipe(delay(2000));
-
-    const bootloaderLoop = withDeviceInfo.pipe(
-      concatMap(
-        deviceInfo =>
-          !deviceInfo.isBootloader || !final
-            ? empty() // we're done
-            : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop),
-      ),
-    );
-
-    const osuLoop = withDeviceInfo.pipe(
-      concatMap(
-        deviceInfo =>
-          !deviceInfo.isOSU
-            ? empty() // we're done
-            : concat(withDeviceInstall(installFinalFirmware), wait2s, osuLoop),
-      ),
-    );
-
-    this.sub = concat(bootloaderLoop, osuLoop)
-      .pipe(filter(e => e.type === "bulk-progress" || e.type === "install"))
-      .subscribe({
-        next: e => {
-          if (e.type === "install") {
-            this.setState({ installing: e.step, progress: 0 });
-          } else {
-            this.setState({ progress: e.progress });
-          }
-        },
-        complete: () => {
-          if (navigation.replace) {
-            navigation.replace("FirmwareUpdateConfirmation", {
-              ...navigation.state.params,
-            });
-          }
-        },
-        error: error => {
-          if (navigation.replace) {
-            navigation.replace("FirmwareUpdateFailure", {
-              ...navigation.state.params,
-              error,
-            });
-          }
-        },
-      });
+    this.sub = firmwareUpdateMain(deviceId, final).subscribe({
+      next: patch => {
+        this.setState(patch);
+      },
+      complete: () => {
+        if (navigation.replace) {
+          navigation.replace("FirmwareUpdateConfirmation", {
+            ...navigation.state.params,
+          });
+        }
+      },
+      error: error => {
+        if (navigation.replace) {
+          navigation.replace("FirmwareUpdateFailure", {
+            ...navigation.state.params,
+            error,
+          });
+        }
+      },
+    });
   }
 
   componentWillUnmount() {

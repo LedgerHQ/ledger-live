@@ -1,7 +1,7 @@
 // @flow
 
+import { BluetoothRequired } from "@ledgerhq/live-common/lib/errors";
 import { logSubject } from "./debug";
-import { BluetoothRequired } from "../errors";
 import timer from "../timer";
 import type { BleManager } from "./types";
 

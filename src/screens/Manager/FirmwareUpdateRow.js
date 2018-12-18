@@ -3,15 +3,15 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { withNavigation } from "react-navigation";
-import LText from "../../components/LText";
-import colors from "../../colors";
 import type {
   DeviceInfo,
   OsuFirmware,
   FinalFirmware,
-} from "../../types/manager";
+} from "@ledgerhq/live-common/lib/types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
+import LText from "../../components/LText";
+import colors from "../../colors";
 import Button from "../../components/Button";
-import manager from "../../logic/manager";
 
 type Props = {
   navigation: *,
