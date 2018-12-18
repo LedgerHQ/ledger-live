@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 
@@ -26,7 +27,7 @@ type State = *;
 
 class RepairDevice extends Component<Props, State> {
   static navigationOptions = {
-    headerTitle: "Repair Device",
+    title: i18next.t("RepairDevice.title"),
   };
 
   goToManager = () => this.props.navigation.navigate("Manager");

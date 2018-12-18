@@ -984,5 +984,8 @@
   "FirmwareUpdateConfirmation": {
     "title": "Firmware updated",
     "description": "Open the Manager to re-install the apps on your device"
+  },
+  "RepairDevice": {
+    "title": "Repair"
   }
 }
