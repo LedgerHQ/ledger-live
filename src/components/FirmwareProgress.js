@@ -3,8 +3,8 @@ import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import ProgressCircle from "react-native-progress/Circle";
 
-import { getFontStyle } from "../../components/LText";
-import colors from "../../colors";
+import { getFontStyle } from "./LText";
+import colors from "../colors";
 
 type Props = {
   progress: number,

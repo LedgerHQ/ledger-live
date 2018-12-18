@@ -3,7 +3,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { from } from "rxjs";
-import { map, first, last } from "rxjs/operators";
+import { map, first } from "rxjs/operators";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
@@ -21,7 +21,6 @@ import {
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
-import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
@@ -100,20 +99,6 @@ export const genuineCheck: Step = {
         ...meta,
         genuineResult,
       })),
-    ),
-};
-
-export const repairDeviceStep: Step = {
-  Body: () => (
-    <RenderStep
-      icon={<DeviceNanoAction screen="validation" action />} // TODO: Replace with correct Icon and <Trans /> for title prop
-      title="Repair Device Step"
-    />
-  ),
-  run: (deviceId, meta) =>
-    firmwareUpdateRepair(deviceId).pipe(
-      last(),
-      map(() => meta),
     ),
 };
 

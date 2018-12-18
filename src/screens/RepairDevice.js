@@ -1,19 +1,21 @@
 // @flow
 import React, { Component } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
+import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 
 import type { T } from "../types/common";
+import Button from "../components/Button";
 import { BulletItem } from "../components/BulletList";
 import DeviceNanoAction from "../components/DeviceNanoAction";
 import SelectDevice from "../components/SelectDevice";
-import {
-  connectingStep,
-  repairDeviceStep,
-} from "../components/DeviceJob/steps";
+import GenericErrorView from "../components/GenericErrorView";
+import Installing from "../components/Installing";
+
+import { connectingStep } from "../components/DeviceJob/steps";
 import { TrackScreen } from "../analytics";
 import colors from "../colors";
 
@@ -23,22 +25,67 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   t: T,
 };
-type State = *;
+type State = {
+  ready: boolean,
+  error: ?Error,
+  progress: number,
+  selected: boolean,
+};
 
 class RepairDevice extends Component<Props, State> {
+  state = {
+    error: null,
+    progress: 0,
+    ready: false,
+    selected: false,
+  };
+
   static navigationOptions = {
     title: i18next.t("RepairDevice.title"),
   };
 
-  goToManager = () => this.props.navigation.navigate("Manager");
+  componentDidMount() {
+    if (this.sub) this.sub.unsubscribe();
+  }
+
+  onReady = () => {
+    this.setState({ ready: true });
+  };
+
+  onSelectDevice = deviceId => {
+    this.setState({ selected: true });
+    this.sub = firmwareUpdateRepair(deviceId).subscribe({
+      next: patch => {
+        this.setState(patch);
+      },
+      complete: () => {
+        this.props.navigation.goBack();
+        this.props.navigation.navigate("Manager");
+      },
+      error: error => {
+        this.setState({ error });
+      },
+    });
+  };
+
+  sub: *;
 
   render() {
+    const { ready, progress, error, selected } = this.state;
     const width = Dimensions.get("window").width;
 
-    return (
-      <SafeAreaView forceInset={forceInset} style={styles.root}>
-        <TrackScreen category="Settings" name="RepairDevice" />
-        <View style={styles.body}>
+    let body = null;
+
+    if (error) {
+      body = <GenericErrorView error={error} />;
+    } else if (selected) {
+      body = <Installing progress={progress} installing="flash-bootloader" />;
+    } else if (ready) {
+      body = (
+        <ScrollView
+          style={styles.body}
+          contentContainerStyle={styles.bodyContent}
+        >
           <View style={styles.step}>
             <BulletItem
               index={0}
@@ -58,11 +105,25 @@ class RepairDevice extends Component<Props, State> {
               <DeviceNanoAction powerAction width={1.2 * width} />
             </View>
           </View>
-        </View>
-        <SelectDevice
-          onSelect={this.goToManager}
-          steps={[connectingStep, repairDeviceStep]}
-        />
+
+          <Button
+            type="primary"
+            event="RepairDeviceReady"
+            onPress={this.onReady}
+            title={<Trans i18nKey="RepairDevice.action" />}
+          />
+        </ScrollView>
+      );
+    } else {
+      body = (
+        <SelectDevice onSelect={this.onSelectDevice} steps={[connectingStep]} />
+      );
+    }
+
+    return (
+      <SafeAreaView forceInset={forceInset} style={styles.root}>
+        <TrackScreen category="Settings" name="RepairDevice" />
+        {body}
       </SafeAreaView>
     );
   }
@@ -72,13 +133,17 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+    justifyContent: "center",
   },
   body: {
-    padding: 20,
     flex: 1,
   },
+  bodyContent: {
+    padding: 16,
+    alignItems: "stretch",
+  },
   step: {
-    flex: 1,
+    marginBottom: 32,
     justifyContent: "center",
     position: "relative",
   },

@@ -4,10 +4,10 @@ import { View, StyleSheet } from "react-native";
 import React, { PureComponent } from "react";
 import { Trans, translate } from "react-i18next";
 
-import colors from "../../colors";
-import LiveLogo from "../../icons/LiveLogoIcon";
-import Spinning from "../../components/Spinning";
-import LText from "../../components/LText";
+import colors from "../colors";
+import LiveLogo from "../icons/LiveLogoIcon";
+import Spinning from "./Spinning";
+import LText from "./LText";
 import FirmwareProgress from "./FirmwareProgress";
 
 class Installing extends PureComponent<{

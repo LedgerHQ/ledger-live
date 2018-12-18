@@ -15,7 +15,7 @@ import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import StepHeader from "../../components/StepHeader";
 import { BulletItem } from "../../components/BulletList";
-import Installing from "./Installing";
+import Installing from "../../components/Installing";
 
 type Navigation = NavigationScreenProp<{
   params: {

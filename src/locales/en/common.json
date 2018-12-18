@@ -986,6 +986,7 @@
     "description": "Open the Manager to re-install the apps on your device"
   },
   "RepairDevice": {
-    "title": "Repair"
+    "title": "Repair",
+    "action": "My device is ready"
   }
 }
