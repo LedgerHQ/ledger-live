@@ -11,7 +11,8 @@ export default (
 ): Observable<*> => {
   const params = {
     targetId,
-    ...firmware,
+    firmware: firmware.firmware,
+    perso: firmware.perso,
     firmwareKey: firmware.firmware_key
   };
   return ManagerAPI.install(transport, "firmware", params);
