@@ -14,7 +14,7 @@ import { open } from ".";
 export type AccessHook = () => () => void;
 
 const accessHooks = [];
-let errorRemapping = e => throwError(errorRemapping(e));
+let errorRemapping = e => throwError(e);
 
 export const addAccessHook = (accessHook: AccessHook) => {
   accessHooks.push(accessHook);
