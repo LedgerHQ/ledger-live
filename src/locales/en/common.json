@@ -963,6 +963,7 @@
       "osu": "Installing OSU",
       "flash-mcu": "MCU updating",
       "flash-bootloader": "Bootloader updating",
+      "flash": "Flashing your device",
       "firmware": "Firmware updating"
     }
   },

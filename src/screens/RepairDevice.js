@@ -79,7 +79,7 @@ class RepairDevice extends Component<Props, State> {
     if (error) {
       body = <GenericErrorView error={error} />;
     } else if (selected) {
-      body = <Installing progress={progress} installing="flash-bootloader" />;
+      body = <Installing progress={progress} installing="flash" />;
     } else if (ready) {
       body = (
         <ScrollView
