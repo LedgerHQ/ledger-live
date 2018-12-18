@@ -66,33 +66,36 @@ export const cancelDeviceAction = (transport: Transport<*>) => {
   needsCleanup[identifyTransport(transport)] = true;
 };
 
-export const withDevice = (deviceId: string) => <T>(
-  job: (t: Transport<*>) => Observable<T>
-): Observable<T> =>
-  defer(() => {
-    return from(
-      open(deviceId)
-        .then(async transport => {
-          if (needsCleanup[identifyTransport(transport)]) {
-            delete needsCleanup[identifyTransport(transport)];
-            await transport.send(0, 0, 0, 0).catch(() => {});
-          }
-          return transport;
+const deviceQueues = {};
+
+export const withDevice = (deviceId: string) => {
+  const deviceQueue = deviceQueues[deviceId] || (deviceQueues[deviceId] = []);
+  return <T>(job: (t: Transport<*>) => Observable<T>): Observable<T> =>
+    defer(() => {
+      return from(
+        open(deviceId)
+          .then(async transport => {
+            if (needsCleanup[identifyTransport(transport)]) {
+              delete needsCleanup[identifyTransport(transport)];
+              await transport.send(0, 0, 0, 0).catch(() => {});
+            }
+            return transport;
+          })
+          .catch(e => {
+            if (e instanceof BluetoothRequired) throw e;
+            throw new CantOpenDevice(e.message);
+          })
+      ).pipe(
+        mergeMap(transport => {
+          const cleanups = accessHooks.map(hook => hook());
+          return job(transport).pipe(
+            catchError(errorRemapping),
+            transportFinally(transport, cleanups)
+          );
         })
-        .catch(e => {
-          if (e instanceof BluetoothRequired) throw e;
-          throw new CantOpenDevice(e.message);
-        })
-    ).pipe(
-      mergeMap(transport => {
-        const cleanups = accessHooks.map(hook => hook());
-        return job(transport).pipe(
-          catchError(errorRemapping),
-          transportFinally(transport, cleanups)
-        );
-      })
-    );
-  }).pipe(atomic);
+      );
+    }).pipe(atomic(deviceQueue));
+};
 
 export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof WrongDeviceForAccount) return false;

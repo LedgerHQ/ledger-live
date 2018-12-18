@@ -1,6 +1,6 @@
 // @flow
-import { from, of, empty, concat } from "rxjs";
-import { mergeMap, delay } from "rxjs/operators";
+import { Observable, from, of, empty, concat } from "rxjs";
+import { mergeMap, delay, filter, map, throttleTime } from "rxjs/operators";
 
 import getDeviceInfo from "../hw/getDeviceInfo";
 import installOsuFirmware from "../hw/installOsuFirmware";
@@ -9,7 +9,10 @@ import type { OsuFirmware } from "../types/manager";
 
 const wait3s = of({ type: "wait" }).pipe(delay(3000));
 
-export default (deviceId: string, osuFirmware: OsuFirmware) =>
+const checkId = (
+  deviceId: string,
+  osuFirmware: OsuFirmware
+): Observable<{ progress: number }> =>
   withDevice(deviceId)(transport => from(getDeviceInfo(transport))).pipe(
     mergeMap(
       deviceInfo =>
@@ -22,5 +25,11 @@ export default (deviceId: string, osuFirmware: OsuFirmware) =>
               ),
               wait3s // the device is likely rebooting now, we give it some time
             )
-    )
+    ),
+
+    filter(e => e.type === "bulk-progress"),
+    map(e => ({ progress: e.progress })),
+    throttleTime(100)
   );
+
+export default checkId;

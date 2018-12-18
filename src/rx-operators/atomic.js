@@ -2,8 +2,9 @@
 
 import { Observable } from "rxjs";
 
-export default <T>(input: Observable<T>): Observable<T> => {
-  const queue = [];
+export default (queue: Array<*> = []) => <T>(
+  input: Observable<T>
+): Observable<T> => {
   const next = () => {
     const f = queue.pop();
     if (f) f();

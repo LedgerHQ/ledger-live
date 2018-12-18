@@ -1,6 +1,13 @@
 // @flow
-import { from, of, empty, concat } from "rxjs";
-import { concatMap, delay } from "rxjs/operators";
+import { Observable, from, of, empty, concat } from "rxjs";
+import {
+  concatMap,
+  delay,
+  scan,
+  filter,
+  distinctUntilChanged,
+  throttleTime
+} from "rxjs/operators";
 
 import { CantOpenDevice } from "../errors";
 import type { FinalFirmware } from "../types/manager";
@@ -11,7 +18,15 @@ import installFinalFirmware from "../hw/installFinalFirmware";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
-export default (deviceId: string, finalFirmware: FinalFirmware) => {
+type Res = {
+  installing: ?string,
+  progress: number
+};
+
+const main = (
+  deviceId: string,
+  finalFirmware: FinalFirmware
+): Observable<Res> => {
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
     () => true // accept all errors. we're waiting forever condition that make getDeviceInfo work
@@ -51,5 +66,23 @@ export default (deviceId: string, finalFirmware: FinalFirmware) => {
     )
   );
 
-  return concat(bootloaderLoop, osuLoop);
+  // $FlowFixMe
+  return concat(bootloaderLoop, osuLoop).pipe(
+    scan(
+      (acc: Res, e): Res => {
+        if (e.type === "install") {
+          // $FlowFixMe
+          return { installing: e.step, progress: 0 };
+        } else if (e.type === "bulk-progress") {
+          return { ...acc, progress: e.progress };
+        }
+        return acc;
+      },
+      { progress: 0, installing: null }
+    ),
+    distinctUntilChanged(),
+    throttleTime(100)
+  );
 };
+
+export default main;

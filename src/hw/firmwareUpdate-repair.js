@@ -1,6 +1,6 @@
 // @flow
-import { from, of, empty, concat } from "rxjs";
-import { concatMap, delay } from "rxjs/operators";
+import { Observable, from, of, empty, concat } from "rxjs";
+import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
 
 import { CantOpenDevice } from "../errors";
 import ManagerAPI from "../api/Manager";
@@ -9,7 +9,7 @@ import getDeviceInfo from "../hw/getDeviceInfo";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
-export default (deviceId: string) => {
+const repair = (deviceId: string): Observable<{ progress: number }> => {
   const loop = () =>
     withDevicePolling(deviceId)(
       transport =>
@@ -41,5 +41,11 @@ export default (deviceId: string) => {
       e => e instanceof CantOpenDevice // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
     );
 
-  return loop();
+  return loop().pipe(
+    filter(e => e.type === "bulk-progress"),
+    map(e => ({ progress: e.progress })),
+    throttleTime(100)
+  );
 };
+
+export default repair;
