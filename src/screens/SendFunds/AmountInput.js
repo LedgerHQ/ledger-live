@@ -27,6 +27,7 @@ type OwnProps = {
   value: BigNumber,
   onChange: BigNumber => void,
   error?: Error,
+  autoFocus: boolean,
 };
 
 type Props = OwnProps & {
@@ -93,6 +94,7 @@ class AmountInput extends Component<Props, OwnState> {
         <View style={styles.wrapper}>
           <CurrencyInput
             isActive={isLeft}
+            autoFocus
             onFocus={this.onFocusLeft}
             onChange={this.onChangeLeft}
             unit={account.unit}
@@ -138,10 +140,9 @@ class AmountInput extends Component<Props, OwnState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
   },
   wrapper: {
-    flex: 1,
+    minHeight: 100,
     flexDirection: "column",
     justifyContent: "center",
   },

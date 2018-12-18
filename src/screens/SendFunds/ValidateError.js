@@ -5,43 +5,39 @@ import { Trans } from "react-i18next";
 
 import GenericErrorView from "../../components/GenericErrorView";
 import Button from "../../components/Button";
-import ExternalLink from "../../components/ExternalLink";
+import NeedHelp from "../../components/NeedHelp";
+import colors from "../../colors";
 
 type Props = {
   error: Error,
-  onContactUs: () => void,
   onClose: () => void,
   onRetry: () => void,
 };
 
-class ValidatError extends PureComponent<Props> {
+class ValidateError extends PureComponent<Props> {
   render() {
-    const { error, onContactUs, onClose, onRetry } = this.props;
+    const { error, onClose, onRetry } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
           <GenericErrorView error={error} />
-          <ExternalLink
-            event="ContactUsLink"
-            text={<Trans i18nKey="common.contactUs" />}
-            onPress={onContactUs}
-          />
-        </View>
-        <View style={styles.actionContainer}>
-          <Button
-            event="SendErrorClose"
-            title={<Trans i18nKey="common.close" />}
-            type="secondary"
-            containerStyle={{ flex: 1, marginRight: 16 }}
-            onPress={onClose}
-          />
           <Button
             event="SendErrorRetry"
             title={<Trans i18nKey="send.validation.button.retry" />}
             type="primary"
-            containerStyle={{ flex: 1 }}
+            containerStyle={styles.button}
             onPress={onRetry}
           />
+          <Button
+            event="SendErrorClose"
+            title={<Trans i18nKey="common.close" />}
+            type="lightSecondary"
+            containerStyle={styles.button}
+            onPress={onClose}
+          />
+        </View>
+        <View style={styles.footer}>
+          <NeedHelp />
         </View>
       </View>
     );
@@ -51,18 +47,24 @@ class ValidatError extends PureComponent<Props> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
+    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
+    padding: 20,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
-  actionContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  button: {
+    alignSelf: "stretch",
+    marginTop: 16,
+  },
+  footer: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderColor: colors.lightFog,
   },
 });
 
-export default ValidatError;
+export default ValidateError;

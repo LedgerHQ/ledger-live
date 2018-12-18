@@ -299,18 +299,12 @@ const SendFunds = createStackNavigator(
   {
     SendFundsMain,
     SendSelectRecipient,
-    ScanRecipient: {
-      screen: ScanRecipient,
-      navigationOptions: TransparentHeaderNavigationOptions,
-    },
     SendAmount,
     SendSummary,
     SendConnectDevice,
     SendValidation,
     SendValidationSuccess,
     SendValidationError,
-    FallbackCameraSend,
-    ...sendScreens,
   },
   closableStackNavigatorConfig,
 );
@@ -393,6 +387,12 @@ const BaseNavigator = createStackNavigator(
     EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
+    ScanRecipient: {
+      screen: ScanRecipient,
+      navigationOptions: TransparentHeaderNavigationOptions,
+    },
+    FallbackCameraSend,
+    ...sendScreens,
   },
   {
     mode: "modal",

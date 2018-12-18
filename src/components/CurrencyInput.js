@@ -137,6 +137,7 @@ class CurrencyInput extends PureComponent<Props, State> {
     return (
       <View style={[styles.wrapper, style]}>
         <TextInput
+          hitSlop={{ top: 20, bottom: 20 }}
           style={[
             styles.input,
             isActive ? styles.active : null,

@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { ScrollView, View, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -179,54 +179,59 @@ class SendSelectRecipient extends Component<Props, State> {
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>
-          <View style={styles.container}>
-            <Button
-              event="SendRecipientQR"
-              type="tertiary"
-              title={<Trans i18nKey="send.recipient.scan" />}
-              IconLeft={IconQRCode}
-              onPress={this.onPressScan}
-            />
-          </View>
-          <View style={styles.container}>
-            <View style={styles.separatorContainer}>
-              <View style={styles.separatorLine} />
-              <LText style={styles.separatorText}>
-                {<Trans i18nKey="common.or" />}
-              </LText>
-              <View style={styles.separatorLine} />
-            </View>
-            <View style={styles.inputWrapper}>
-              {/* make this a recipient component */}
-              <TextInput
-                placeholder={t("send.recipient.input")}
-                placeholderTextColor={colors.fog}
-                style={[
-                  styles.addressInput,
-                  addressStatus === "invalid" && styles.invalidAddressInput,
-                  addressStatus === "warning" && styles.warning,
-                ]}
-                onChangeText={this.onChangeText}
-                value={address}
-                ref={this.input}
-                multiline
-                blurOnSubmit
-                autoCapitalize="none"
-                clearButtonMode="always"
+          <ScrollView>
+            <View style={styles.container}>
+              <Button
+                event="SendRecipientQR"
+                type="tertiary"
+                title={<Trans i18nKey="send.recipient.scan" />}
+                IconLeft={IconQRCode}
+                onPress={this.onPressScan}
               />
             </View>
-            {!!address &&
-              addressStatus !== "valid" && (
-                <LText
-                  style={[
-                    styles.warningBox,
-                    addressStatus === "invalid" ? styles.error : styles.warning,
-                  ]}
-                >
-                  <TranslatedError error={error} />
+            <View style={styles.container}>
+              <View style={styles.separatorContainer}>
+                <View style={styles.separatorLine} />
+                <LText style={styles.separatorText}>
+                  {<Trans i18nKey="common.or" />}
                 </LText>
-              )}
-          </View>
+                <View style={styles.separatorLine} />
+              </View>
+              <View style={styles.inputWrapper}>
+                {/* make this a recipient component */}
+                <TextInput
+                  forwardRef={React.createRef()}
+                  placeholder={t("send.recipient.input")}
+                  placeholderTextColor={colors.fog}
+                  style={[
+                    styles.addressInput,
+                    addressStatus === "invalid" && styles.invalidAddressInput,
+                    addressStatus === "warning" && styles.warning,
+                  ]}
+                  multiline
+                  onChangeText={this.onChangeText}
+                  value={address}
+                  ref={this.input}
+                  blurOnSubmit
+                  autoCapitalize="none"
+                  clearButtonMode="always"
+                />
+              </View>
+              {!!address &&
+                addressStatus !== "valid" && (
+                  <LText
+                    style={[
+                      styles.warningBox,
+                      addressStatus === "invalid"
+                        ? styles.error
+                        : styles.warning,
+                    ]}
+                  >
+                    <TranslatedError error={error} />
+                  </LText>
+                )}
+            </View>
+          </ScrollView>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button
               event="SendRecipientContinue"
@@ -274,15 +279,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
-  addressTitle: {
-    color: colors.grey,
-    marginBottom: 6,
-  },
   addressInput: {
     flex: 1,
-    fontSize: 20,
     marginTop: 16,
     color: colors.darkBlue,
+    ...Platform.select({
+      android: {
+        fontFamily: "OpenSans",
+      },
+      ios: {
+        fontFamily: "Open Sans",
+      },
+    }),
+    fontSize: 20,
+    fontWeight: "600",
   },
   invalidAddressInput: {
     color: colors.alert,
@@ -304,16 +314,6 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  closeContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: 12,
-    height: 12,
-    borderRadius: 12,
-    backgroundColor: colors.fog,
-    marginLeft: 6,
-    marginBottom: 6,
   },
 });
 

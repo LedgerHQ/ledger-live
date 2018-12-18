@@ -42,7 +42,8 @@ type State = {
 
 class BitcoinEditFeePerByte extends Component<Props, State> {
   static navigationOptions = {
-    title: i18next.t("transfer.fees.title"),
+    title: i18next.t("operationDetails.title"),
+    headerLeft: null,
   };
 
   items: Array<*>;
