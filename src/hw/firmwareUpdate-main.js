@@ -24,7 +24,8 @@ type Res = {
 
 const main = (
   deviceId: string,
-  finalFirmware: FinalFirmware
+  // if finalFirmware is not provided in context, we are recovering a OSU case
+  finalFirmware: ?FinalFirmware
 ): Observable<Res> => {
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
@@ -40,7 +41,7 @@ const main = (
   const bootloaderLoop = withDeviceInfo.pipe(
     concatMap(
       deviceInfo =>
-        !deviceInfo.isBootloader
+        !deviceInfo.isBootloader || !finalFirmware
           ? empty()
           : concat(
               of({ type: "deviceInfo", deviceInfo }),
