@@ -792,10 +792,10 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@4.8.0-beta.15":
-  version "4.8.0-beta.15"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.8.0-beta.15.tgz#598577cf60a270e159845be3c6ec1a578b1b5321"
-  integrity sha512-nL231kKj+7Qi9a5U8JxZb+1wOBdu8oLLtMAXk7Vn+JHwjWC/UZHUucOSUlDQSAePZFeI3xUDmU9YyPmRgW81dg==
+"@ledgerhq/live-common@4.8.0-beta.16":
+  version "4.8.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.8.0-beta.16.tgz#cd9939be8b1cf446d71a990ad92e2de208683778"
+  integrity sha512-BS+M/qRB6cwSPhAQAuHg83TGv0nkp3UDoF7OF3r3GONHQvDqVVxQ44T03YuGMdFkZpk51u8t3DKHuDZe9klP5g==
   dependencies:
     "@aeternity/ledger-app-api" "0.0.4"
     "@ledgerhq/hw-app-btc" "^4.32.0"
