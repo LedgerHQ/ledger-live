@@ -42,6 +42,7 @@ registerTransportModule({
       const id = "webusb|" + usbDevice.vendorId + "_" + usbDevice.productId;
       webusbDevices[id] = usbDevice;
       return {
+        type: "add",
         id,
         name: usbDevice.productName
       };
@@ -76,6 +77,7 @@ registerTransportModule({
       const id = "webble|" + bleDevice.id;
       webbleDevices[id] = bleDevice;
       return {
+        type: "add",
         id,
         name: bleDevice.name
       };

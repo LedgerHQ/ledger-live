@@ -7,6 +7,7 @@ import { catchError } from "rxjs/operators/catchError";
 import type Transport from "@ledgerhq/hw-transport";
 
 type Discovery = Observable<{
+  type: "add" | "remove",
   id: string,
   name: string
 }>;
