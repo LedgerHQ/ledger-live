@@ -17,6 +17,9 @@ import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
+import LiveLogo from "../../icons/LiveLogoIcon";
+import Spinning from "../../components/Spinning";
+import FirmwareProgress from "../../components/FirmwareProgress";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -94,10 +97,9 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
+    const { progress } = this.state;
     const osu = navigation.getParam("osu");
     const windowWidth = Dimensions.get("window").width;
-
-    // TODO what to do with the progress state ?
 
     return (
       <SafeAreaView style={styles.root}>
@@ -122,6 +124,18 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
               {osu && manager.formatHashName(osu.hash)}
             </LText>
           </View>
+
+          <View style={styles.footer}>
+            {progress === 0 ? (
+              <View style={{ padding: 10 }}>
+                <Spinning>
+                  <LiveLogo color={colors.fog} size={40} />
+                </Spinning>
+              </View>
+            ) : (
+              <FirmwareProgress progress={progress} size={60} />
+            )}
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -137,6 +151,9 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
     alignItems: "center",
+  },
+  footer: {
+    paddingTop: 50,
   },
   device: {
     left: "25%",
