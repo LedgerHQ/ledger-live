@@ -23,7 +23,7 @@ export type Props = {
 // so that the underlying UI doesn't show up
 // when it gets the position wrong and display too high
 // See Jira LL-451 and GitHub #617
-const EXTRA_PADDING_ANDROID_FIX = 50;
+const EXTRA_PADDING_SAMSUNG_FIX = 100;
 
 class BottomModal extends Component<Props> {
   static defaultProps = {
@@ -48,16 +48,17 @@ class BottomModal extends Component<Props> {
           }}
           {...rest}
         >
-          <View style={[styles.modal, style]}>
-            {isOpened && id ? <TrackScreen category={id} /> : null}
-            <StyledStatusBar
-              backgroundColor={
-                Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
-              }
-              barStyle="light-content"
-            />
-            {children}
-            <View style={styles.samsungFix} />
+          <View style={styles.modal}>
+            <View style={style}>
+              {isOpened && id ? <TrackScreen category={id} /> : null}
+              <StyledStatusBar
+                backgroundColor={
+                  Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
+                }
+                barStyle="light-content"
+              />
+              {children}
+            </View>
           </View>
         </ReactNativeModal>
       </ButtonUseTouchable.Provider>
@@ -71,11 +72,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingTop: 8,
-    paddingBottom: 24,
-  },
-  samsungFix: {
-    paddingBottom: EXTRA_PADDING_ANDROID_FIX,
-    marginBottom: EXTRA_PADDING_ANDROID_FIX * -1,
+    paddingBottom: EXTRA_PADDING_SAMSUNG_FIX + 24,
+    marginBottom: EXTRA_PADDING_SAMSUNG_FIX * -1,
   },
 });
 
