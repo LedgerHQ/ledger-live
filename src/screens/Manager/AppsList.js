@@ -6,7 +6,10 @@ import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import type { DeviceInfo, ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
+import type {
+  DeviceInfo,
+  ApplicationVersion,
+} from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import LText from "../../components/LText";
