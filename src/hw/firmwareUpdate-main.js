@@ -4,7 +4,6 @@ import {
   concatMap,
   delay,
   scan,
-  filter,
   distinctUntilChanged,
   throttleTime
 } from "rxjs/operators";
