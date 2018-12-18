@@ -8,11 +8,14 @@ import { from, throwError, concat, empty } from "rxjs";
 import { concatMap, delay, catchError, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 import { CantOpenDevice } from "@ledgerhq/live-common/lib/errors";
+import {
+  withDevice,
+  withDevicePolling,
+} from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { TrackScreen } from "../../analytics";
 import flash from "../../logic/hw/flash";
 import installFinalFirmware from "../../logic/hw/installFinalFirmware";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
-import { withDevice, withDevicePolling } from "../../logic/hw/deviceAccess";
 import type { FinalFirmware, OsuFirmware } from "../../types/manager";
 import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
@@ -79,7 +82,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const bootloaderLoop = withDeviceInfo.pipe(
       concatMap(
         deviceInfo =>
-          !deviceInfo.isBootloader
+          !deviceInfo.isBootloader || !final
             ? empty() // we're done
             : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop),
       ),

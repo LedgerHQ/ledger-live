@@ -14,7 +14,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
-import { withDevice, withDevicePolling } from "../../logic/hw/deviceAccess";
+import { withDevice, withDevicePolling } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";

@@ -1,8 +1,8 @@
 // @flow
 import { from, of, empty, concat } from "rxjs";
 import { concatMap, delay } from "rxjs/operators";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import ManagerAPI from "../../api/Manager";
-import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));

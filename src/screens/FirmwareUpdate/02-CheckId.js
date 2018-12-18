@@ -8,12 +8,12 @@ import { from, empty } from "rxjs";
 import { mergeMap, filter } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
 
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import type { OsuFirmware, FinalFirmware } from "../../types/manager";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
 import getDeviceInfo from "../../logic/hw/getDeviceInfo";
 import installOsuFirmware from "../../logic/hw/installOsuFirmware";
-import { withDevice } from "../../logic/hw/deviceAccess";
 import manager from "../../logic/manager";
 import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";

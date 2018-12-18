@@ -25,7 +25,7 @@ import {
   FeeNotLoaded,
   NetworkDown,
 } from "@ledgerhq/live-common/lib/errors";
-import { open } from "../logic/hw";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import {
   apiForEndpointConfig,
   defaultEndpoint,

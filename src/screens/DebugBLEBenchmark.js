@@ -9,9 +9,9 @@ import * as scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import Svg, { Path } from "react-native-svg";
 import type { NavigationScreenProp } from "react-navigation";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import LText from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
-import { withDevice } from "../logic/hw/deviceAccess";
 import colors from "../colors";
 
 type Props = {

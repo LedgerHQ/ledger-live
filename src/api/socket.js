@@ -11,7 +11,7 @@ import {
   DeviceSocketNoBulkStatus,
   DeviceSocketNoHandler,
 } from "@ledgerhq/live-common/lib/errors";
-import { cancelDeviceAction } from "../logic/hw/deviceAccess";
+import { cancelDeviceAction } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 
 const log = __DEV__ ? (...arg) => console.log(...arg) : noop; // eslint-disable-line no-console
 
