@@ -10,7 +10,6 @@ import {
   BluetoothRequired
 } from "../errors";
 import { open } from ".";
-import atomic from "../rx-operators/atomic";
 
 export type AccessHook = () => () => void;
 
@@ -68,34 +67,47 @@ export const cancelDeviceAction = (transport: Transport<*>) => {
 
 const deviceQueues = {};
 
-export const withDevice = (deviceId: string) => {
-  const deviceQueue = deviceQueues[deviceId] || (deviceQueues[deviceId] = []);
-  return <T>(job: (t: Transport<*>) => Observable<T>): Observable<T> =>
-    defer(() => {
-      return from(
-        open(deviceId)
-          .then(async transport => {
-            if (needsCleanup[identifyTransport(transport)]) {
-              delete needsCleanup[identifyTransport(transport)];
-              await transport.send(0, 0, 0, 0).catch(() => {});
-            }
-            return transport;
-          })
-          .catch(e => {
-            if (e instanceof BluetoothRequired) throw e;
-            throw new CantOpenDevice(e.message);
-          })
-      ).pipe(
-        mergeMap(transport => {
-          const cleanups = accessHooks.map(hook => hook());
-          return job(transport).pipe(
-            catchError(errorRemapping),
-            transportFinally(transport, cleanups)
-          );
+export const withDevice = (deviceId: string) => <T>(
+  job: (t: Transport<*>) => Observable<T>
+): Observable<T> =>
+  defer(() => {
+    // we get the current exec queue related to deviceId
+    const deviceQueue = deviceQueues[deviceId] || Promise.resolve();
+
+    // when we'll finish all the current job, we'll call finish
+    let finish;
+    // this new promise is the next exec queue
+    deviceQueues[deviceId] = new Promise(resolve => {
+      finish = resolve;
+    });
+
+    return from(
+      // for any new job, we'll now wait the exec queue to be available
+      deviceQueue
+        .then(() => open(deviceId)) // open the transport
+        .then(async transport => {
+          if (needsCleanup[identifyTransport(transport)]) {
+            delete needsCleanup[identifyTransport(transport)];
+            await transport.send(0, 0, 0, 0).catch(() => {});
+          }
+          return transport;
         })
-      );
-    }).pipe(atomic(deviceQueue));
-};
+        .catch(e => {
+          finish();
+          if (e instanceof BluetoothRequired) throw e;
+          throw new CantOpenDevice(e.message);
+        })
+    ).pipe(
+      mergeMap(transport => {
+        const cleanups = accessHooks.map(hook => hook());
+        return job(transport).pipe(
+          catchError(errorRemapping),
+          // close the transport and clean up everything
+          transportFinally(transport, [...cleanups, finish])
+        );
+      })
+    );
+  });
 
 export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof WrongDeviceForAccount) return false;
