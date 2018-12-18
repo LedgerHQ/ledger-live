@@ -449,6 +449,10 @@
         "manager": "Open Manager"
       }
     },
+    "noOpState": {
+      "title": "No operations yet?",
+      "desc": "Simply send some crypto assets to your receiving address and wait for the app to sync"
+    },
     "tradingDisclaimer": {
       "title": "Trade Safely",
       "text1": "Before sending and receiving crypto assets, educate yourself to make informed decisions. Crypto assets are volatile and the prices can go up and down. Carefully evaluate your trading goals and the financial risk you are willing to take.",
@@ -497,7 +501,10 @@
     "seeLess": "See less",
     "viewInExplorer": "View in explorer",
     "sending": "Sending...",
-    "receiving": "Receiving..."
+    "receiving": "Receiving...",
+    "extra":{
+      "tag": "Tag"
+    }
   },
   "operationList": {
     "noOperations": "No Operations",
@@ -908,7 +915,9 @@
     "install": {
       "loading": {
         "title": "Installing {{appName}}",
-        "button": "Installing..."
+        "desc": "The installation of {{appName}} app may take a while, please keep the app open.",
+        "button": "Installing...",
+        "button_plural": "Installing... {{progressPercentage}}%"
       },
       "done": {
         "title": "Successfully installed {{appName}} on your {{fullDeviceName}}"

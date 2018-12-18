@@ -8,6 +8,7 @@ import type { BehaviorAction } from "../bridge/BridgeSyncContext";
 import type { AsyncState } from "../reducers/bridgeSync";
 import { accountSyncStateSelector } from "../reducers/bridgeSync";
 import { BridgeSyncConsumer } from "../bridge/BridgeSyncContext";
+import CounterValues from "../countervalues";
 
 const mapStateToProps = createStructuredSelector({
   accountSyncState: accountSyncStateSelector,
@@ -24,11 +25,16 @@ const Connector = (Decorated: React$ComponentType<any>) => {
       {setSyncBehavior => {
         const isPending = accountSyncState.pending;
         return (
-          <Decorated
-            isPending={isPending}
-            setSyncBehavior={setSyncBehavior}
-            {...rest}
-          />
+          <CounterValues.PollingConsumer>
+            {cvPolling => (
+              <Decorated
+                cvPoll={cvPolling.poll}
+                isPending={isPending}
+                setSyncBehavior={setSyncBehavior}
+                {...rest}
+              />
+            )}
+          </CounterValues.PollingConsumer>
         );
       }}
     </BridgeSyncConsumer>
@@ -69,6 +75,7 @@ export default (ScrollListLike: any) => {
 
     onPress = () => {
       const { setSyncBehavior, accountId } = this.props;
+      this.props.cvPoll();
       setSyncBehavior({
         type: "SYNC_ONE_ACCOUNT",
         accountId,

@@ -5,10 +5,16 @@ import type { Summary } from "../../components/provideSummary";
 import GraphCard from "../../components/GraphCard";
 import Header from "./Header";
 
-const GraphCardContainer = ({ summary }: { summary: Summary }) => (
+const GraphCardContainer = ({
+  summary,
+  showGreeting,
+}: {
+  summary: Summary,
+  showGreeting: boolean,
+}) => (
   <View>
-    <Header nbAccounts={summary.accounts.length} />
-    <GraphCard summary={summary} useCounterValue />
+    <Header nbAccounts={summary.accounts.length} showGreeting={showGreeting} />
+    {showGreeting && <GraphCard summary={summary} useCounterValue />}
   </View>
 );
 
