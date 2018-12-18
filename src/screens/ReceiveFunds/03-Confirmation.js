@@ -407,14 +407,13 @@ const styles = StyleSheet.create({
   },
   modal: {
     flexDirection: "column",
-    minHeight: 350,
   },
   modalBody: {
     alignItems: "center",
     paddingHorizontal: 16,
   },
   modalIcon: {
-    paddingTop: 60,
+    paddingTop: 20,
   },
   modalTitle: {
     paddingTop: 40,
@@ -424,6 +423,7 @@ const styles = StyleSheet.create({
   },
   modalDescription: {
     paddingTop: 16,
+    marginBottom: 40,
     fontSize: 14,
     color: colors.grey,
     paddingHorizontal: 40,
