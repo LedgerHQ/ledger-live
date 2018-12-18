@@ -1,4 +1,6 @@
 // @flow
+import { ignoreElements } from "rxjs/operators";
+
 import type Transport from "@ledgerhq/hw-transport";
 import type { Observable } from "rxjs";
 import type { ApplicationVersion } from "../types/manager";
@@ -16,5 +18,5 @@ export default function uninstallApp(
     firmware: app.delete,
     firmwareKey: app.delete_key,
     hash: app.hash
-  });
+  }).pipe(ignoreElements());
 }
