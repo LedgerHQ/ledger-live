@@ -58,8 +58,10 @@ export const getFeesForTransaction = withLibcoreF(
         BigNumber(transaction.feePerByte),
       );
 
+      const isPartial = true;
       const transactionBuilder = await core.coreBitcoinLikeAccount.buildTransaction(
         bitcoinLikeAccount,
+        isPartial,
       );
 
       const isValid = await isValidRecipient({

@@ -302,8 +302,10 @@ const doSignAndBroadcast = withLibcoreF(
       feePerByte,
     );
     if (isCancelled()) return;
+    const isPartial = false;
     const transactionBuilder = await core.coreBitcoinLikeAccount.buildTransaction(
       bitcoinLikeAccount,
+      isPartial,
     );
     if (isCancelled()) return;
 
