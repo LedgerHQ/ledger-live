@@ -38,7 +38,7 @@
     "@ledgerhq/hw-app-xrp": "^4.25.0",
     "@ledgerhq/hw-transport": "^4.24.0",
     "@ledgerhq/hw-transport-http": "^4.29.1",
-    "@ledgerhq/live-common": "4.8.0-beta.18",
+    "@ledgerhq/live-common": "4.8.0-beta.21",
     "@ledgerhq/react-native-hid": "^4.30.2",
     "@ledgerhq/react-native-ledger-core": "^0.3.43",
     "@ledgerhq/react-native-passcode-auth": "^2.0.0",
