@@ -44,7 +44,6 @@ const main = (
         !deviceInfo.isBootloader || !finalFirmware
           ? empty()
           : concat(
-              of({ type: "deviceInfo", deviceInfo }),
               withDeviceInstall(flash(finalFirmware)),
               wait2s,
               bootloaderLoop
@@ -52,22 +51,15 @@ const main = (
     )
   );
 
-  const osuLoop = withDeviceInfo.pipe(
+  const finalStep = withDeviceInfo.pipe(
     concatMap(
       deviceInfo =>
-        !deviceInfo.isOSU
-          ? empty()
-          : concat(
-              of({ type: "deviceInfo", deviceInfo }),
-              withDeviceInstall(installFinalFirmware),
-              wait2s,
-              osuLoop
-            )
+        !deviceInfo.isOSU ? empty() : withDeviceInstall(installFinalFirmware)
     )
   );
 
   // $FlowFixMe
-  return concat(bootloaderLoop, osuLoop).pipe(
+  return concat(bootloaderLoop, finalStep).pipe(
     scan(
       (acc: Res, e): Res => {
         if (e.type === "install") {
