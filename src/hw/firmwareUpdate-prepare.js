@@ -7,7 +7,7 @@ import installOsuFirmware from "../hw/installOsuFirmware";
 import { withDevice } from "../hw/deviceAccess";
 import type { OsuFirmware } from "../types/manager";
 
-const wait3s = of({ type: "wait" }).pipe(delay(3000));
+const waitEnd = of({ type: "wait" }).pipe(delay(1000));
 
 const checkId = (
   deviceId: string,
@@ -23,7 +23,7 @@ const checkId = (
               withDevice(deviceId)(transport =>
                 installOsuFirmware(transport, deviceInfo.targetId, osuFirmware)
               ),
-              wait3s // the device is likely rebooting now, we give it some time
+              waitEnd // the device is likely rebooting now, we give it some time
             )
     ),
 
