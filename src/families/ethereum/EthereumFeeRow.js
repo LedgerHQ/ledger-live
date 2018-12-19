@@ -15,7 +15,6 @@ import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
 import type { T } from "../../types/common";
 import type { Transaction } from "../../bridge/EthereumJSBridge";
-import { track } from "../../analytics";
 
 type Props = {
   account: Account,
@@ -27,7 +26,6 @@ type Props = {
 class EthereumFeeRow extends Component<Props> {
   openFees = () => {
     const { account, navigation, transaction } = this.props;
-    track("SendChangeCustomFeesETH");
     navigation.navigate("EthereumEditFee", {
       accountId: account.id,
       transaction,

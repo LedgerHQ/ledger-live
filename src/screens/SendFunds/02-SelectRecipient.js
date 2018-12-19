@@ -138,7 +138,6 @@ class SendSelectRecipient extends Component<Props, State> {
 
   onPressScan = () => {
     const { navigation } = this.props;
-    track("SendRecipientScan");
     navigation.navigate("ScanRecipient", {
       accountId: navigation.getParam("accountId"),
     });
