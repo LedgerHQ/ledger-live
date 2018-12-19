@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable no-console */
 import React, { Component } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { from, of } from "rxjs";
@@ -21,6 +21,7 @@ import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import Installing from "./Installing";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -130,7 +131,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const { installing } = this.state;
     const { navigation } = this.props;
     const latestFirmware = navigation.getParam("latestFirmware");
-    const windowWidth = Dimensions.get("window").width;
+    const windowWidth = getWindowDimensions().width;
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="CheckId" />

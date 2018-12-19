@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable no-console */
 import React, { Component } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { from, of } from "rxjs";
@@ -18,6 +18,7 @@ import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import StepHeader from "../../components/StepHeader";
 import { BulletItem } from "../../components/BulletList";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "./Installing";
 
 type Navigation = NavigationScreenProp<{
@@ -108,7 +109,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
 
   render() {
     const { installing } = this.state;
-    const windowWidth = Dimensions.get("window").width;
+    const windowWidth = getWindowDimensions().width;
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="MCU" />

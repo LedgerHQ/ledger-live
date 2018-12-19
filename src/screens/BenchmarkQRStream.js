@@ -1,16 +1,12 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { RNCamera } from "react-native-camera";
 import type { NavigationScreenProp } from "react-navigation";
 import LText from "../components/LText";
 import colors, { rgba } from "../colors";
-
-const getDimensions = () => {
-  const { width, height } = Dimensions.get("window");
-  return { width, height };
-};
+import getWindowDimensions from "../logic/getWindowDimensions";
 
 export default class BenchmarkQRStream extends PureComponent<
   {
@@ -23,7 +19,7 @@ export default class BenchmarkQRStream extends PureComponent<
   };
 
   state = {
-    ...getDimensions(),
+    ...getWindowDimensions(),
     benchmarks: [],
     end: false,
   };
