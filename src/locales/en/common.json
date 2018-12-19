@@ -759,7 +759,7 @@
       "total": "Total",
       "amount": "Amount",
       "from": "From",
-      "to": "to",
+      "to": "To",
       "infoTotalTitle": "Total to spend",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas Limit",

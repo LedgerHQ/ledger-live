@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, Linking } from "react-native";
 import LText from "./LText";
 import Touchable from "./Touchable";
-import IconExternalLink from "../icons/ExternalLink";
+import IconHelp from "../icons/Help";
 import colors from "../colors";
 import { urls } from "../config/urls";
 
@@ -17,10 +17,10 @@ export default class NeedHelp extends PureComponent<{}> {
         style={styles.footer}
         onPress={() => Linking.openURL(urls.faq)}
       >
+        <IconHelp size={16} color={colors.live} />
         <LText style={styles.footerText} semiBold>
           <Trans i18nKey="common.needHelp" />
         </LText>
-        <IconExternalLink size={16} color={colors.live} />
       </Touchable>
     );
   }
@@ -34,6 +34,6 @@ const styles = StyleSheet.create({
   },
   footerText: {
     color: colors.live,
-    marginRight: 8,
+    marginLeft: 8,
   },
 });

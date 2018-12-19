@@ -17,13 +17,6 @@ export default class CounterValuesSeparator extends PureComponent<{}> {
 }
 
 const styles = StyleSheet.create({
-  iconWrapper: {
-    borderColor: colors.live,
-    borderWidth: 1,
-    borderRadius: 50,
-    padding: 7,
-    marginHorizontal: 16,
-  },
   separator: {
     flexDirection: "row",
     justifyContent: "space-between",
