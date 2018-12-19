@@ -7,16 +7,19 @@ import {
   WebsocketConnectionError,
   WebsocketConnectionFailed,
   DeviceSocketFail,
-  DeviceSocketNoBulkStatus,
-  DeviceSocketNoHandler
+  DeviceSocketNoBulkStatus
 } from "../errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { createWebSocket } from "../network";
 
-export const logSubject = new Subject();
+const logsSubject = new Subject();
+const warningsSubject = new Subject();
+
+export const logs: Observable<*> = logsSubject.asObservable();
+export const warnings: Observable<string> = warningsSubject.asObservable();
 
 const log = (obj: *) => {
-  logSubject.next(obj);
+  logsSubject.next(obj);
 };
 
 export type SocketEvent =
@@ -27,6 +30,10 @@ export type SocketEvent =
   | {
       type: "result",
       payload: string
+    }
+  | {
+      type: "warning",
+      message: string
     }
   | {
       type: "exchange",
@@ -172,6 +179,15 @@ export const createDeviceSocket = (
       error: msg => {
         log({ type: "socket-message-error", message: msg.data });
         throw new DeviceSocketFail(msg.data, { url });
+      },
+
+      warning: (msg: { data: string }) => {
+        log({ type: "socket-message-warning", message: msg.data });
+        o.next({
+          type: "warning",
+          message: msg.data
+        });
+        warningsSubject.next(msg.data);
       }
     };
 
@@ -179,16 +195,14 @@ export const createDeviceSocket = (
       if (interrupted) return;
       try {
         const msg = JSON.parse(e.data);
-        if (!(msg.query in handlers)) {
-          throw new DeviceSocketNoHandler(
-            `Cannot handle msg of type ${msg.query}`,
-            {
-              query: msg.query,
-              url
-            }
-          );
-        }
         log({ type: "socket-receive", msg });
+        if (!(msg.query in handlers)) {
+          console.warn(`Cannot handle msg of type ${msg.query}`, {
+            query: msg.query,
+            url
+          });
+          return;
+        }
         await handlers[msg.query](msg);
       } catch (err) {
         log({
