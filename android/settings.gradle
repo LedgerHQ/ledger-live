@@ -1,4 +1,6 @@
 rootProject.name = 'ledgerlivemobile'
+include ':react-native-extra-dimensions-android'
+project(':react-native-extra-dimensions-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-extra-dimensions-android/android')
 include ':@segment_analytics-react-native'
 project(':@segment_analytics-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/@segment/analytics-react-native/android')
 include ':react-native-keychain'

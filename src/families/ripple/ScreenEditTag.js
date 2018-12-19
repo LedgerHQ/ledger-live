@@ -37,6 +37,7 @@ const uint32maxPlus1 = BigNumber(2).pow(32);
 class RippleEditTag extends PureComponent<Props, State> {
   static navigationOptions = {
     title: i18next.t("send.summary.tag"),
+    headerLeft: null,
   };
 
   onTagFieldFocus = () => track("SendTagFieldFocusedXRP");

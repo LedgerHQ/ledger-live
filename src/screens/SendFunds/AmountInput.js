@@ -144,10 +144,9 @@ class AmountInput extends Component<Props, OwnState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
   },
   wrapper: {
-    flex: 1,
+    minHeight: 100,
     flexDirection: "column",
     justifyContent: "center",
   },

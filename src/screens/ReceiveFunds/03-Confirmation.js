@@ -2,13 +2,7 @@
 
 import React, { Component } from "react";
 import i18next from "i18next";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Linking,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Linking, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
@@ -20,6 +14,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
 import { open } from "../../logic/hw";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -170,7 +165,7 @@ class ReceiveConfirmation extends Component<Props, State> {
   render(): React$Node {
     const { account, navigation, readOnlyModeEnabled } = this.props;
     const { verified, error, isModalOpened, onModalHide, zoom } = this.state;
-    const { width } = Dimensions.get("window");
+    const { width } = getWindowDimensions();
     const unsafe = !navigation.getParam("deviceId");
     const allowNavigation = navigation.getParam("allowNavigation");
     const QRSize = Math.round(width / 1.8 - 16);
@@ -407,14 +402,13 @@ const styles = StyleSheet.create({
   },
   modal: {
     flexDirection: "column",
-    minHeight: 350,
   },
   modalBody: {
     alignItems: "center",
     paddingHorizontal: 16,
   },
   modalIcon: {
-    paddingTop: 60,
+    paddingTop: 20,
   },
   modalTitle: {
     paddingTop: 40,
@@ -424,6 +418,7 @@ const styles = StyleSheet.create({
   },
   modalDescription: {
     paddingTop: 16,
+    marginBottom: 40,
     fontSize: 14,
     color: colors.grey,
     paddingHorizontal: 40,

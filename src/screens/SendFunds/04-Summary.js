@@ -153,6 +153,7 @@ class SendSummary extends Component<
             account={account}
             navigation={navigation}
           />
+          <SectionSeparator />
           <SummaryAmountSection account={account} amount={amount} />
           <SendRowsFee
             account={account}
@@ -209,8 +210,8 @@ const styles = StyleSheet.create({
   },
   verticalConnector: {
     position: "absolute",
-    borderLeftWidth: 1,
-    borderColor: colors.lightLive,
+    borderLeftWidth: 2,
+    borderColor: colors.lightFog,
     height: 20,
     top: 60,
     left: 32,

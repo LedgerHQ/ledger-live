@@ -40,6 +40,7 @@ type State = {
 class EthereumEditGasLimit extends PureComponent<Props, State> {
   static navigationOptions = {
     title: i18next.t("send.summary.gasLimit"),
+    headerLeft: null,
   };
 
   constructor({ account, navigation }) {

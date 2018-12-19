@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactApplication;
+import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
 import com.segment.analytics.reactnative.core.RNAnalyticsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
@@ -50,6 +51,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ExtraDimensionsPackage(),
             new RNAnalyticsPackage(),
             new KeychainPackage(),
             new LocationServicesDialogBoxPackage(),

@@ -359,14 +359,6 @@ const styles = StyleSheet.create({
   availableAmount: {
     color: colors.darkBlue,
   },
-  countervaluesWrapper: {
-    paddingTop: 24,
-    paddingBottom: 32,
-  },
-  countervaluesText: {
-    color: colors.grey,
-    fontSize: 20,
-  },
   bottomWrapper: {
     flex: 1,
     flexGrow: 1,

@@ -9,7 +9,6 @@ import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import { getAccountBridge } from "../../bridge";
 import colors from "../../colors";
-import SectionSeparator from "../../screens/SendFunds/SectionSeparator";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 
 type Props = {
@@ -45,7 +44,6 @@ class RippleTagRow extends PureComponent<Props, State> {
             </LText>
           </View>
         </SummaryRow>
-        <SectionSeparator />
       </View>
     );
   }

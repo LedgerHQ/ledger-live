@@ -52,7 +52,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
               <Icon name="info-circle" size={12} color={colors.fog} />
             </Touchable>
           }
-          titleProps={{ bold: true, style: styles.title }}
+          titleProps={{ semiBold: true, style: styles.title }}
         >
           <View style={styles.summary}>
             <LText semiBold style={styles.summaryValueText}>
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   title: {
-    color: colors.black,
+    color: colors.darkBlue,
   },
   summaryValueText: {
     fontSize: 18,

@@ -8,6 +8,7 @@ import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
+import getWindowDimensions from "../logic/getWindowDimensions";
 
 export type Props = {
   id?: string,
@@ -17,18 +18,29 @@ export type Props = {
   style?: *,
 };
 
+// Add some extra padding at the bottom of the modal
+// and make it overflow the bottom of the screen
+// so that the underlying UI doesn't show up
+// when it gets the position wrong and display too high
+// See Jira LL-451 and GitHub #617
+const EXTRA_PADDING_SAMSUNG_FIX = 100;
+
 class BottomModal extends Component<Props> {
   static defaultProps = {
     onClose: () => {},
   };
   render() {
     const { isOpened, onClose, children, style, id, ...rest } = this.props;
+    const { width, height } = getWindowDimensions();
+
     return (
       <ButtonUseTouchable.Provider value={true}>
         <ReactNativeModal
           isVisible={isOpened}
           onBackdropPress={onClose}
           onBackButtonPress={onClose}
+          deviceWidth={width}
+          deviceHeight={height}
           useNativeDriver
           style={{
             justifyContent: "flex-end",
@@ -36,15 +48,17 @@ class BottomModal extends Component<Props> {
           }}
           {...rest}
         >
-          <View style={[styles.modal, style]}>
-            {isOpened && id ? <TrackScreen category={id} /> : null}
-            <StyledStatusBar
-              backgroundColor={
-                Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
-              }
-              barStyle="light-content"
-            />
-            {children}
+          <View style={styles.modal}>
+            <View style={style}>
+              {isOpened && id ? <TrackScreen category={id} /> : null}
+              <StyledStatusBar
+                backgroundColor={
+                  Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
+                }
+                barStyle="light-content"
+              />
+              {children}
+            </View>
           </View>
         </ReactNativeModal>
       </ButtonUseTouchable.Provider>
@@ -58,7 +72,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingTop: 8,
-    paddingBottom: 24,
+    paddingBottom: EXTRA_PADDING_SAMSUNG_FIX + 24,
+    marginBottom: EXTRA_PADDING_SAMSUNG_FIX * -1,
   },
 });
 

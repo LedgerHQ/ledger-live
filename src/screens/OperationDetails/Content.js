@@ -168,7 +168,7 @@ class Content extends PureComponent<Props, *> {
           />
         </View>
         {Object.entries(extra).map(([key, value]) => (
-          <View style={styles.section}>
+          <View style={styles.section} key={key}>
             <LText style={styles.sectionTitle}>
               <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
             </LText>
