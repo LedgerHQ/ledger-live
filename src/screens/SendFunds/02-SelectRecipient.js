@@ -18,7 +18,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { getAccountBridge } from "../../bridge";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
-import LText from "../../components/LText";
+import LText, { getFontStyle } from "../../components/LText";
 import Button from "../../components/Button";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
@@ -179,58 +179,51 @@ class SendSelectRecipient extends Component<Props, State> {
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>
-          <ScrollView>
-            <View style={styles.container}>
-              <Button
-                event="SendRecipientQR"
-                type="tertiary"
-                title={<Trans i18nKey="send.recipient.scan" />}
-                IconLeft={IconQRCode}
-                onPress={this.onPressScan}
+          <ScrollView style={styles.container}>
+            <Button
+              event="SendRecipientQR"
+              type="tertiary"
+              title={<Trans i18nKey="send.recipient.scan" />}
+              IconLeft={IconQRCode}
+              onPress={this.onPressScan}
+            />
+            <View style={styles.separatorContainer}>
+              <View style={styles.separatorLine} />
+              <LText style={styles.separatorText}>
+                {<Trans i18nKey="common.or" />}
+              </LText>
+              <View style={styles.separatorLine} />
+            </View>
+            <View style={styles.inputWrapper}>
+              {/* make this a recipient component */}
+              <TextInput
+                placeholder={t("send.recipient.input")}
+                placeholderTextColor={colors.fog}
+                style={[
+                  styles.addressInput,
+                  addressStatus === "invalid" && styles.invalidAddressInput,
+                  addressStatus === "warning" && styles.warning,
+                ]}
+                multiline
+                onChangeText={this.onChangeText}
+                value={address}
+                ref={this.input}
+                blurOnSubmit
+                autoCapitalize="none"
+                clearButtonMode="always"
               />
             </View>
-            <View style={styles.container}>
-              <View style={styles.separatorContainer}>
-                <View style={styles.separatorLine} />
-                <LText style={styles.separatorText}>
-                  {<Trans i18nKey="common.or" />}
-                </LText>
-                <View style={styles.separatorLine} />
-              </View>
-              <View style={styles.inputWrapper}>
-                {/* make this a recipient component */}
-                <TextInput
-                  forwardRef={React.createRef()}
-                  placeholder={t("send.recipient.input")}
-                  placeholderTextColor={colors.fog}
+            {!!address &&
+              addressStatus !== "valid" && (
+                <LText
                   style={[
-                    styles.addressInput,
-                    addressStatus === "invalid" && styles.invalidAddressInput,
-                    addressStatus === "warning" && styles.warning,
+                    styles.warningBox,
+                    addressStatus === "invalid" ? styles.error : styles.warning,
                   ]}
-                  multiline
-                  onChangeText={this.onChangeText}
-                  value={address}
-                  ref={this.input}
-                  blurOnSubmit
-                  autoCapitalize="none"
-                  clearButtonMode="always"
-                />
-              </View>
-              {!!address &&
-                addressStatus !== "valid" && (
-                  <LText
-                    style={[
-                      styles.warningBox,
-                      addressStatus === "invalid"
-                        ? styles.error
-                        : styles.warning,
-                    ]}
-                  >
-                    <TranslatedError error={error} />
-                  </LText>
-                )}
-            </View>
+                >
+                  <TranslatedError error={error} />
+                </LText>
+              )}
           </ScrollView>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button
@@ -263,6 +256,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   separatorContainer: {
+    marginTop: 32,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -283,16 +277,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 16,
     color: colors.darkBlue,
-    ...Platform.select({
-      android: {
-        fontFamily: "OpenSans",
-      },
-      ios: {
-        fontFamily: "Open Sans",
-      },
-    }),
+    ...getFontStyle({ semiBold: true }),
     fontSize: 20,
-    fontWeight: "600",
   },
   invalidAddressInput: {
     color: colors.alert,
