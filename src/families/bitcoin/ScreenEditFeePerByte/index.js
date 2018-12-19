@@ -25,6 +25,7 @@ import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
 import FeesRow from "./FeesRow";
 import CustomFeesRow from "./CustomFeesRow";
+import { track } from "../../../analytics";
 
 type Props = {
   account: Account,
@@ -82,6 +83,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
 
   onChangeCustomFeeRow = (feePerByte: BigNumber) => {
     this.setState({ feePerByte, focusedItemKey: "custom" });
+    track("SendChangeCustomFees");
   };
 
   onChangeFeeRow = (feePerByte: ?BigNumber, key: string) => {

@@ -10,6 +10,7 @@ import { getAccountBridge } from "../../bridge";
 import colors from "../../colors";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import type { Transaction } from "../../bridge/EthereumJSBridge";
+import { track } from "../../analytics";
 
 type Props = {
   account: Account,
@@ -24,6 +25,7 @@ type State = {
 class EthereumGasLimit extends PureComponent<Props, State> {
   editGasLimit = () => {
     const { account, navigation, transaction } = this.props;
+    track("SendChangeCustomGasLimit");
     navigation.navigate("EthereumEditGasLimit", {
       accountId: account.id,
       transaction,

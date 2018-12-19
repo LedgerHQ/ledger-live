@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { Account, Currency } from "@ledgerhq/live-common/lib/types";
-
+import { track } from "../../analytics";
 import {
   counterValueCurrencySelector,
   currencySettingsSelector,
@@ -30,20 +30,20 @@ type OwnProps = {
 };
 
 type Props = OwnProps & {
-  rightCurrency: Currency,
+  fiatCurrency: Currency,
   getCounterValue: BigNumber => ?BigNumber,
   getReverseCounterValue: BigNumber => ?BigNumber,
 };
 
 type OwnState = {
-  active: "left" | "right",
+  active: "crypto" | "fiat",
 };
 
 class AmountInput extends Component<Props, OwnState> {
   input = React.createRef();
 
   state = {
-    active: "left",
+    active: "crypto",
   };
 
   componentDidMount() {
@@ -52,54 +52,60 @@ class AmountInput extends Component<Props, OwnState> {
     }
   }
 
-  handleAmountChange = (changeField: "left" | "right") => (
+  handleAmountChange = (changeField: "crypto" | "fiat") => (
     value: BigNumber,
   ) => {
     const { getReverseCounterValue, onChange } = this.props;
-    if (changeField === "left") {
+    if (changeField === "crypto") {
       onChange(value);
     } else {
-      const leftVal = getReverseCounterValue(value) || BigNumber(0);
-      onChange(leftVal);
+      const cryptoVal = getReverseCounterValue(value) || BigNumber(0);
+      onChange(cryptoVal);
     }
   };
 
-  onChangeLeft = this.handleAmountChange("left");
+  onCryptoFieldChange = this.handleAmountChange("crypto");
 
-  onChangeRight = this.handleAmountChange("right");
+  onFiatFieldChange = this.handleAmountChange("fiat");
 
-  onFocus = (direction: "left" | "right") => () =>
+  onFocus = (direction: "crypto" | "fiat") => () => {
     this.setState({ active: direction });
+    track(
+      direction === "crypto"
+        ? "SendAmountCryptoFocused"
+        : "SendAmountFiatFocused",
+    );
+  };
 
-  onFocusLeft = this.onFocus("left");
+  onCryptoFieldFocus = this.onFocus("crypto");
 
-  onFocusRight = this.onFocus("right");
+  onFiatFieldFocus = this.onFocus("fiat");
 
   render() {
     const { active } = this.state;
     const {
       currency,
       value,
-      rightCurrency,
+      fiatCurrency,
       getCounterValue,
       account,
       error,
     } = this.props;
-    const isLeft = active === "left";
-    const right = value ? getCounterValue(value) : BigNumber(0);
-    const rightUnit = rightCurrency.units[0];
+    const isCrypto = active === "crypto";
+    const fiat = value ? getCounterValue(value) : BigNumber(0);
+    const rightUnit = fiatCurrency.units[0];
     return (
       <View style={styles.container}>
         <View style={styles.wrapper}>
           <CurrencyInput
-            isActive={isLeft}
-            onFocus={this.onFocusLeft}
-            onChange={this.onChangeLeft}
+            isActive={isCrypto}
+            onFocus={this.onCryptoFieldFocus}
+            onChange={this.onCryptoFieldChange}
             unit={account.unit}
             value={value}
             renderRight={
               <LText
-                style={[styles.currency, isLeft ? styles.active : null]}
+                style={[styles.currency, isCrypto ? styles.active : null]}
                 tertiary
               >
                 {currency}
@@ -114,15 +120,15 @@ class AmountInput extends Component<Props, OwnState> {
         <CounterValuesSeparator />
         <View style={styles.wrapper}>
           <CurrencyInput
-            isActive={!isLeft}
-            onFocus={this.onFocusRight}
-            onChange={this.onChangeRight}
+            isActive={!isCrypto}
+            onFocus={this.onFiatFieldFocus}
+            onChange={this.onFiatFieldChange}
             unit={rightUnit}
-            value={right}
+            value={fiat}
             showAllDigits
             renderRight={
               <LText
-                style={[styles.currency, !isLeft ? styles.active : null]}
+                style={[styles.currency, !isCrypto ? styles.active : null]}
                 tertiary
               >
                 {rightUnit.code}
@@ -189,7 +195,7 @@ const mapStateToProps = (state: State, props: OwnProps) => {
     });
 
   return {
-    rightCurrency: counterValueCurrency,
+    fiatCurrency: counterValueCurrency,
     getCounterValue,
     getReverseCounterValue,
   };

@@ -15,6 +15,7 @@ import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
 import type { Transaction } from "../../bridge/RippleJSBridge";
 import type { T } from "../../types/common";
+import { track } from "../../analytics";
 
 type Props = {
   account: Account,
@@ -26,6 +27,7 @@ type Props = {
 class RippleFeeRow extends Component<Props> {
   openFees = () => {
     const { account, navigation, transaction } = this.props;
+    track("SendChangeCustomFeesXRP");
     navigation.navigate("RippleEditFee", {
       accountId: account.id,
       transaction,

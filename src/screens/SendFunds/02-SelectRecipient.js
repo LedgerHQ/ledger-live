@@ -16,7 +16,7 @@ import type { T } from "../../types/common";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { getAccountBridge } from "../../bridge";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -138,6 +138,7 @@ class SendSelectRecipient extends Component<Props, State> {
 
   onPressScan = () => {
     const { navigation } = this.props;
+    track("SendRecipientScan");
     navigation.navigate("ScanRecipient", {
       accountId: navigation.getParam("accountId"),
     });
@@ -169,6 +170,8 @@ class SendSelectRecipient extends Component<Props, State> {
       transaction,
     });
   };
+
+  onRecipientFieldFocus = () => track("SendRecipientFieldFocused");
 
   render() {
     const { address, error, addressStatus } = this.state;
@@ -206,6 +209,7 @@ class SendSelectRecipient extends Component<Props, State> {
                   addressStatus === "invalid" && styles.invalidAddressInput,
                   addressStatus === "warning" && styles.warning,
                 ]}
+                onFocus={this.onRecipientFieldFocus}
                 onChangeText={this.onChangeText}
                 value={address}
                 ref={this.input}
