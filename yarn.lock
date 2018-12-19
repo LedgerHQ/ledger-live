@@ -7314,6 +7314,11 @@ react-native-easy-markdown@^1.2.0:
   dependencies:
     simple-markdown "^0.1.1"
 
+react-native-extra-dimensions-android@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-0.22.0.tgz#4b09ba19f52c5181efe37965a2c34cadfa05fb61"
+  integrity sha512-92ppYjXLId5dgjji7glG96CLkGWF/uH96w/hdoM1Je6cFPMqXbVLadHNCH/Edk2i1AySY7qObZXYJD7buWnhlg==
+
 react-native-gesture-handler@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.7.tgz#86677c709c42d04555210cad9759b09e2c657720"
@@ -7341,10 +7346,10 @@ react-native-locale@0.0.19:
   resolved "https://registry.yarnpkg.com/react-native-locale/-/react-native-locale-0.0.19.tgz#336842dfb97510a539f98a39331fb7430acdc498"
   integrity sha512-US+249Sl2PhFcM0k/yU7RFwK8eiU0Qh8vHTZGF4xw5VnhJyDu2oOn3x8Gshb4X+Xyx9AxSTkib280QROnjPFzQ==
 
-react-native-modal@^6.5.0:
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-6.5.0.tgz#46220b2289a41597d344c1db17454611b426a758"
-  integrity sha512-ewchdETAGd32xLGLK93NETEGkRcePtN7ZwjmLSQnNW1Zd0SRUYE8NqftjamPyfKvK0i2DZjX4YAghGZTqaRUbA==
+react-native-modal@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-7.0.1.tgz#120df1966f5da96e9d89bf384f22b79ab6ca97b1"
+  integrity sha512-I/BZ4ZkVLjD/wApvSjqp/w9+J100czFNGB+SNm3oYHKAfPfm5g1OoB9UQT6DvChmG4TiVX8kiDXTm8FNrbkWpQ==
   dependencies:
     prop-types "^15.6.1"
     react-native-animatable "^1.2.4"

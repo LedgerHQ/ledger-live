@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
@@ -120,7 +121,7 @@ class Validation extends Component<Props, State> {
   render() {
     const { signed, signing } = this.state;
     return (
-      <View style={styles.root}>
+      <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="Validation" signed={signed} />
         {signing && <PreventNativeBack />}
         {signed ? (
@@ -130,7 +131,7 @@ class Validation extends Component<Props, State> {
         ) : (
           <ValidateOnDevice action={this.sign} />
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 

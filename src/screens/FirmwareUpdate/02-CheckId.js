@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable no-console */
 import React, { Component } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
@@ -20,6 +20,7 @@ import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 import FirmwareProgress from "../../components/FirmwareProgress";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -99,7 +100,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const { navigation } = this.props;
     const { progress } = this.state;
     const osu = navigation.getParam("osu");
-    const windowWidth = Dimensions.get("window").width;
+    const windowWidth = getWindowDimensions().width;
 
     return (
       <SafeAreaView style={styles.root}>

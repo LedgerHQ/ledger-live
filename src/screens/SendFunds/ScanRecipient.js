@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { RNCamera } from "react-native-camera";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -17,6 +17,7 @@ import StyledStatusBar from "../../components/StyledStatusBar";
 import CameraScreen from "../../components/CameraScreen";
 import colors from "../../colors";
 import FallBackCamera from "./FallbackCamera/Fallback";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -28,12 +29,6 @@ type Props = {
 type State = {
   width: number,
   height: number,
-};
-
-const getDimensions = () => {
-  const { width, height } = Dimensions.get("window");
-
-  return { width, height };
 };
 
 class ScanRecipient extends PureComponent<Props, State> {
@@ -54,7 +49,7 @@ class ScanRecipient extends PureComponent<Props, State> {
   });
 
   state = {
-    ...getDimensions(),
+    ...getWindowDimensions(),
   };
 
   lastData: ?string = null;
@@ -97,7 +92,7 @@ class ScanRecipient extends PureComponent<Props, State> {
   };
 
   setDimensions = () => {
-    const dimensions = getDimensions();
+    const dimensions = getWindowDimensions();
 
     this.setState(dimensions);
   };

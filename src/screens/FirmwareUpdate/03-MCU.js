@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable no-console */
 import React, { Component } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
@@ -15,6 +15,7 @@ import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import StepHeader from "../../components/StepHeader";
 import { BulletItem } from "../../components/BulletList";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "../../components/Installing";
 
 type Navigation = NavigationScreenProp<{
@@ -85,7 +86,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
 
   render() {
     const { installing, progress } = this.state;
-    const width = Dimensions.get("window").width;
+    const { width } = getWindowDimensions();
 
     return (
       <SafeAreaView style={styles.root}>
