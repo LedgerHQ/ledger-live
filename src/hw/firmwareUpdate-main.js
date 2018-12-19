@@ -24,7 +24,7 @@ type Res = {
 
 const main = (
   deviceId: string,
-  { final, osu, shouldFlashMCU }: FirmwareUpdateContext
+  { final, shouldFlashMCU }: FirmwareUpdateContext
 ): Observable<Res> => {
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),

@@ -6,7 +6,6 @@ import type {
   ApplicationVersion,
   DeviceInfo,
   OsuFirmware,
-  FinalFirmware,
   FirmwareUpdateContext
 } from "./types/manager";
 import ManagerAPI from "./api/Manager";

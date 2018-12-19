@@ -11,7 +11,7 @@ const waitEnd = of({ type: "wait" }).pipe(delay(1000));
 
 const checkId = (
   deviceId: string,
-  { final, osu, shouldFlashMCU }: FirmwareUpdateContext
+  { osu }: FirmwareUpdateContext
 ): Observable<{ progress: number }> =>
   withDevice(deviceId)(transport => from(getDeviceInfo(transport))).pipe(
     mergeMap(
