@@ -89,6 +89,12 @@ export type FinalFirmware = BaseFirmware & {
   application_versions: Array<Id>
 };
 
+export type FirmwareUpdateContext = {
+  osu: OsuFirmware,
+  final: FinalFirmware,
+  shouldFlashMCU: boolean
+};
+
 export type ApplicationVersion = {
   id: Id,
   name: string,

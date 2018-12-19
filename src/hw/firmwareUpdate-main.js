@@ -9,7 +9,7 @@ import {
 } from "rxjs/operators";
 
 import { CantOpenDevice } from "../errors";
-import type { FinalFirmware } from "../types/manager";
+import type { FirmwareUpdateContext } from "../types/manager";
 import { withDevicePolling } from "../hw/deviceAccess";
 import getDeviceInfo from "../hw/getDeviceInfo";
 import flash from "../hw/flash";
@@ -24,8 +24,7 @@ type Res = {
 
 const main = (
   deviceId: string,
-  // if finalFirmware is not provided in context, we are recovering a OSU case
-  finalFirmware: ?FinalFirmware
+  { final, osu, shouldFlashMCU }: FirmwareUpdateContext
 ): Observable<Res> => {
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
@@ -38,16 +37,19 @@ const main = (
       e => e instanceof CantOpenDevice // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
     );
 
+  const waitForBootloader = withDeviceInfo.pipe(
+    concatMap(
+      deviceInfo =>
+        deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
+    )
+  );
+
   const bootloaderLoop = withDeviceInfo.pipe(
     concatMap(
       deviceInfo =>
-        !deviceInfo.isBootloader || !finalFirmware
+        !deviceInfo.isBootloader
           ? empty()
-          : concat(
-              withDeviceInstall(flash(finalFirmware)),
-              wait2s,
-              bootloaderLoop
-            )
+          : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop)
     )
   );
 
@@ -58,8 +60,12 @@ const main = (
     )
   );
 
-  // $FlowFixMe
-  return concat(bootloaderLoop, finalStep).pipe(
+  const all = shouldFlashMCU
+    ? concat(waitForBootloader, bootloaderLoop, finalStep)
+    : finalStep;
+
+  // $FlowFixMe something wrong with the flow def of scan()
+  return all.pipe(
     scan(
       (acc: Res, e): Res => {
         if (e.type === "install") {

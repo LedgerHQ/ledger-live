@@ -6,7 +6,8 @@ import type {
   ApplicationVersion,
   DeviceInfo,
   OsuFirmware,
-  FinalFirmware
+  FinalFirmware,
+  FirmwareUpdateContext
 } from "./types/manager";
 import ManagerAPI from "./api/Manager";
 
@@ -37,10 +38,9 @@ const CacheAPI = {
 
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo
-  ): Promise<?{
-    osu: OsuFirmware,
-    final: FinalFirmware
-  }> => {
+  ): Promise<?FirmwareUpdateContext> => {
+    const mcusPromise = ManagerAPI.getMcus();
+
     // Get device infos from targetId
     const deviceVersion = await ManagerAPI.getDeviceVersion(
       deviceInfo.targetId,
@@ -69,7 +69,25 @@ const CacheAPI = {
       osu.next_se_firmware_final_version
     );
 
-    return { final, osu };
+    const mcus = await mcusPromise;
+
+    /*
+    const currentMcuVersionId: Array<number> = mcus
+      .filter(mcu => mcu.name === deviceInfo.mcuVersion)
+      .map(mcu => mcu.id);
+    // WAT WAT WAT there is no way this code can work if there is more then 1 items.. includes takes one param !!!
+    const shouldFlashMCU = !final.mcu_versions.includes(...currentMcuVersionId);
+    */
+
+    // UNTESTED CODE PLEASE CONFIRM IF ACTUAL BEHAVIOR
+    const currentMcuVersion = mcus.find(
+      mcu => mcu.name === deviceInfo.mcuVersion
+    );
+    const shouldFlashMCU = !currentMcuVersion
+      ? false
+      : !final.mcu_versions.includes(currentMcuVersion.id);
+
+    return { final, osu, shouldFlashMCU };
   },
 
   // get list of apps for a given deviceInfo

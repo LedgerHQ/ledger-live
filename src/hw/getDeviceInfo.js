@@ -6,7 +6,7 @@ import getFirmwareInfo from "./getFirmwareInfo";
 import type { DeviceInfo } from "../types/manager";
 import { getEnv } from "../env";
 
-const PROVIDERS = {
+const PROVIDERS: { [_: string]: number } = {
   "": 1,
   das: 2,
   club: 3,
