@@ -39,7 +39,7 @@ class RippleEditTag extends PureComponent<Props, State> {
     title: i18next.t("send.summary.tag"),
   };
 
-  onTagFieldFocus = () => track("SendTagXRPFieldFocused");
+  onTagFieldFocus = () => track("SendTagFieldFocusedXRP");
 
   constructor({ account, navigation }) {
     super();
