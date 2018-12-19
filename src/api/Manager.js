@@ -176,7 +176,7 @@ const API = {
     mcuversion: string | number
   ): Promise<McuVersion> => {
     const { data }: { data: McuVersion | "default" } = await network({
-      method: "POST",
+      method: "GET",
       url: URL.format({
         pathname: `${MANAGER_API_BASE}/mcu_versions/${mcuversion}`,
         query: { livecommonversion }
