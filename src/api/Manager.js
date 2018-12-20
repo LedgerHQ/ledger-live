@@ -154,7 +154,7 @@ const API = {
       version: string,
       deviceId: string | number,
       provider: number
-    }): Promise<*> => {
+    }): Promise<OsuFirmware> => {
       const { data } = await network({
         method: "POST",
         url: URL.format({

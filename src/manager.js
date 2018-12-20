@@ -46,19 +46,29 @@ const CacheAPI = {
       deviceInfo.providerId
     );
 
-    // Get firmware infos with firmware name and device version
-    const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
-      fullVersion: deviceInfo.fullVersion,
-      deviceId: deviceVersion.id,
-      provider: deviceInfo.providerId
-    });
+    let osu;
 
-    // Fetch next possible firmware
-    const osu = await ManagerAPI.getLatestFirmware({
-      current_se_firmware_final_version: seFirmwareVersion.id,
-      device_version: deviceVersion.id,
-      provider: deviceInfo.providerId
-    });
+    if (deviceInfo.isOSU) {
+      osu = await ManagerAPI.getCurrentOSU({
+        deviceId: deviceVersion.id,
+        provider: deviceInfo.providerId,
+        version: deviceInfo.seVersion
+      });
+    } else {
+      // Get firmware infos with firmware name and device version
+      const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
+        fullVersion: deviceInfo.fullVersion,
+        deviceId: deviceVersion.id,
+        provider: deviceInfo.providerId
+      });
+
+      // Fetch next possible firmware
+      osu = await ManagerAPI.getLatestFirmware({
+        current_se_firmware_final_version: seFirmwareVersion.id,
+        device_version: deviceVersion.id,
+        provider: deviceInfo.providerId
+      });
+    }
 
     if (!osu) {
       return null;
@@ -70,15 +80,6 @@ const CacheAPI = {
 
     const mcus = await mcusPromise;
 
-    /*
-    const currentMcuVersionId: Array<number> = mcus
-      .filter(mcu => mcu.name === deviceInfo.mcuVersion)
-      .map(mcu => mcu.id);
-    // WAT WAT WAT there is no way this code can work if there is more then 1 items.. includes takes one param !!!
-    const shouldFlashMCU = !final.mcu_versions.includes(...currentMcuVersionId);
-    */
-
-    // UNTESTED CODE PLEASE CONFIRM IF ACTUAL BEHAVIOR
     const currentMcuVersion = mcus.find(
       mcu => mcu.name === deviceInfo.mcuVersion
     );
