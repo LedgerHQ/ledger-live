@@ -40,7 +40,7 @@
     "@ledgerhq/hw-transport-http": "^4.29.1",
     "@ledgerhq/live-common": "^4.7.0",
     "@ledgerhq/react-native-hid": "^4.30.2",
-    "@ledgerhq/react-native-ledger-core": "^0.3.43",
+    "@ledgerhq/react-native-ledger-core": "^0.3.44",
     "@ledgerhq/react-native-passcode-auth": "^2.0.0",
     "@segment/analytics-ios": "github:LedgerHQ/analytics-ios#efb4cd1771dab568422473fd680ffb748b102f07",
     "@segment/analytics-react-native": "^0.0.1-beta.2",
