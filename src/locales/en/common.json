@@ -396,7 +396,7 @@
         "error": "Never use a device supplied with a PIN code. Please contact us when in doubt."
       },
       "recoveryPhrase": {
-        "title": "Did you choose your recovery phrase by yourself?",
+        "title": "Did you save your recovery phrase by yourself?",
         "error": "Never use a device supplied with a recovery phrase. Please contact us when in doubt."
       }
     },
