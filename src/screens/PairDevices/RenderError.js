@@ -5,6 +5,10 @@ import { StyleSheet, View } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { Trans } from "react-i18next";
+import {
+  PairingFailed,
+  GenuineCheckFailed,
+} from "@ledgerhq/live-common/lib/errors";
 import LocationRequired from "../LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
@@ -15,7 +19,6 @@ import BluetoothScanning from "../../components/BluetoothScanning";
 import HelpLink from "../../components/HelpLink";
 import Circle from "../../components/Circle";
 import IconArrowRight from "../../icons/ArrowRight";
-import { PairingFailed, GenuineCheckFailed } from "../../errors";
 import colors from "../../colors";
 
 type Props = {

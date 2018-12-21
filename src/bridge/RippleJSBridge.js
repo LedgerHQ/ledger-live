@@ -20,12 +20,13 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
+  NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughBalance,
   InvalidAddress,
   FeeNotLoaded,
   NetworkDown,
 } from "@ledgerhq/live-common/lib/errors";
-import { open } from "../logic/hw";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import {
   apiForEndpointConfig,
   defaultEndpoint,
@@ -33,7 +34,6 @@ import {
   parseAPICurrencyObject,
   formatAPICurrencyXRP,
 } from "../api/Ripple";
-import { NotEnoughBalanceBecauseDestinationNotCreated } from "../errors";
 import type { CurrencyBridge, AccountBridge } from "./types";
 import signTransaction from "../logic/hw/signTransaction";
 

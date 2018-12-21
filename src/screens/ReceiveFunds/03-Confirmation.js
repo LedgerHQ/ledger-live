@@ -13,7 +13,7 @@ import ReactNativeModal from "react-native-modal";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
-import { open } from "../../logic/hw";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";

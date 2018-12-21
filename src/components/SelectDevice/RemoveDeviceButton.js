@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
-import { disconnect } from "../../logic/hw";
+import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import { removeKnownDevices } from "../../actions/ble";
 
 import Trash from "../../icons/Trash";

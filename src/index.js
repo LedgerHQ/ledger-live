@@ -1,6 +1,8 @@
 // @flow
+/* eslint-disable import/first */
 import "../shim";
-import "./polyfill"; /* eslint-disable import/first */
+import "./polyfill";
+import "./live-common-setup";
 import React, { Fragment, Component } from "react";
 import { StyleSheet, View } from "react-native";
 // import { useScreens } from "react-native-screens";

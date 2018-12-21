@@ -4,11 +4,10 @@ import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
 import ProgressCircle from "react-native-progress/Circle";
-import { throttleTime, filter, map } from "rxjs/operators";
-import type { ApplicationVersion } from "../../types/manager";
-import install from "../../logic/hw/installApp";
-import uninstall from "../../logic/hw/uninstallApp";
-import { withDevice } from "../../logic/hw/deviceAccess";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
+import install from "@ledgerhq/live-common/lib/hw/installApp";
+import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
 import BottomModal from "../../components/BottomModal";
 import Close from "../../icons/Close";
 import Button from "../../components/Button";
@@ -98,23 +97,17 @@ class AppAction extends PureComponent<
     const hwCall = hwCallPerType[type];
     this.sub = withDevice(deviceId)(transport =>
       hwCall(transport, targetId, app),
-    )
-      .pipe(
-        filter(e => e.type === "bulk-progress"), // only bulk progress interests the UI
-        throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
-        map(e => e.progress), // extract a stream of progress percentage
-      )
-      .subscribe({
-        next: progress => {
-          this.setState({ progress });
-        },
-        complete: () => {
-          this.setState({ pending: false, error: null });
-        },
-        error: error => {
-          this.setState({ pending: false, error });
-        },
-      });
+    ).subscribe({
+      next: patch => {
+        this.setState(patch);
+      },
+      complete: () => {
+        this.setState({ pending: false, error: null });
+      },
+      error: error => {
+        this.setState({ pending: false, error });
+      },
+    });
   }
 
   componentWillUnmount() {

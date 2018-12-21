@@ -4,14 +4,18 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
-import type { DeviceInfo } from "../../types/manager";
+import type {
+  DeviceInfo,
+  OsuFirmware,
+  FinalFirmware,
+} from "@ledgerhq/live-common/lib/types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNano from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import Circle from "../../components/Circle";
 import colors from "../../colors";
-import manager from "../../logic/manager";
 import { deviceNames } from "../../wording";
 import { TrackScreen } from "../../analytics";
 
@@ -33,21 +37,30 @@ type Props = {
   }>,
 };
 
-class DeviceLabel extends Component<
-  Props & { tintColor: string },
-  { haveUpdate: boolean },
-> {
+type State = {
+  haveUpdate: boolean,
+  osu: ?OsuFirmware,
+  final: ?FinalFirmware,
+};
+
+class DeviceLabel extends Component<Props & { tintColor: string }, State> {
   state = {
     haveUpdate: false,
+    osu: null,
+    final: null,
   };
 
   async componentDidMount() {
     const { navigation } = this.props;
     const { deviceInfo } = navigation.getParam("meta");
-    const latestFirmware = await manager
+    const { osu, final } = await manager
       .getLatestFirmwareForDevice(deviceInfo)
       .catch(() => null);
-    this.setState({ haveUpdate: !!latestFirmware });
+    this.setState({
+      haveUpdate: !!osu,
+      osu,
+      final,
+    });
   }
 
   render() {

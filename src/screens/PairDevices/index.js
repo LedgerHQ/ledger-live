@@ -10,14 +10,14 @@ import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
 import { timeout } from "rxjs/operators/timeout";
+import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import TransportBLE from "../../react-native-hw-transport-ble";
 
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
-import genuineCheck from "../../logic/hw/theRealGenuineCheck";
-import getDeviceInfo from "../../logic/hw/getDeviceInfo";
+import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
 import colors from "../../colors";
 import RequiresBLE from "../../components/RequiresBLE";
 import PendingContainer from "./PendingContainer";
@@ -87,7 +87,7 @@ class PairDevices extends Component<Props, State> {
         if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
 
         this.setState({ device, status: "genuinecheck" });
-        const observable = genuineCheck(transport, deviceInfo).pipe(
+        const observable = checkDeviceForManager(transport, deviceInfo).pipe(
           timeout(GENUINE_CHECK_TIMEOUT),
         );
 

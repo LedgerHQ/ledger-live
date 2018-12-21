@@ -3,7 +3,7 @@ import React, { Component, Fragment } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { getDevicesObservable } from "../../logic/hw";
+import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { experimentalUSBEnabledSelector } from "../../reducers/settings";
 import { removeKnownDevice } from "../../actions/ble";
@@ -78,8 +78,13 @@ class SelectDevice extends Component<Props, State> {
       this.listingSubscription.unsubscribe();
       this.setState({ devices: [] });
     }
-    this.listingSubscription = getDevicesObservable({
-      usb: this.props.experimentalUSBEnabled,
+    this.listingSubscription = discoverDevices(m => {
+      switch (m.id) {
+        case "usb":
+          return this.props.experimentalUSBEnabled;
+        default:
+          return true;
+      }
     }).subscribe({
       complete: () => {
         this.setState({ scanning: false });
