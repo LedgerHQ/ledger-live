@@ -16,7 +16,7 @@ import type { T } from "../../types/common";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { getAccountBridge } from "../../bridge";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import LText, { getFontStyle } from "../../components/LText";
 import Button from "../../components/Button";
@@ -170,6 +170,8 @@ class SendSelectRecipient extends Component<Props, State> {
     });
   };
 
+  onRecipientFieldFocus = () => track("SendRecipientFieldFocused");
+
   render() {
     const { address, error, addressStatus } = this.state;
     const { account, t } = this.props;
@@ -204,6 +206,7 @@ class SendSelectRecipient extends Component<Props, State> {
                   addressStatus === "invalid" && styles.invalidAddressInput,
                   addressStatus === "warning" && styles.warning,
                 ]}
+                onFocus={this.onRecipientFieldFocus}
                 multiline
                 onChangeText={this.onChangeText}
                 value={address}

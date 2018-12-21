@@ -17,6 +17,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
 import type { T } from "../../types/common";
+import { track } from "../../analytics";
 
 type Props = {
   account: Account,
@@ -38,6 +39,8 @@ class RippleEditTag extends PureComponent<Props, State> {
     title: i18next.t("send.summary.tag"),
     headerLeft: null,
   };
+
+  onTagFieldFocus = () => track("SendTagFieldFocusedXRP");
 
   constructor({ account, navigation }) {
     super();
@@ -93,6 +96,7 @@ class RippleEditTag extends PureComponent<Props, State> {
               keyboardType="numeric"
               returnKeyType="done"
               onChangeText={this.onChangeTag}
+              onFocus={this.onTagFieldFocus}
               onSubmitEditing={this.onValidateText}
             />
 
