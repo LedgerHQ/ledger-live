@@ -6,10 +6,7 @@ import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import firmwareUpdateMain from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
-import type {
-  FinalFirmware,
-  OsuFirmware,
-} from "@ledgerhq/live-common/lib/types/manager";
+import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
@@ -21,8 +18,7 @@ import Installing from "../../components/Installing";
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    osu: ?OsuFirmware,
-    final: ?FinalFirmware,
+    firmware: FirmwareUpdateContext,
   },
 }>;
 
@@ -56,9 +52,9 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   async componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
-    const final = navigation.getParam("final");
+    const firmware = navigation.getParam("firmware");
 
-    this.sub = firmwareUpdateMain(deviceId, final).subscribe({
+    this.sub = firmwareUpdateMain(deviceId, firmware).subscribe({
       next: patch => {
         this.setState(patch);
       },

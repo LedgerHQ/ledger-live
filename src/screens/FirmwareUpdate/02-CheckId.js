@@ -6,10 +6,7 @@ import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
-import type {
-  OsuFirmware,
-  FinalFirmware,
-} from "@ledgerhq/live-common/lib/types/manager";
+import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
@@ -25,8 +22,7 @@ import getWindowDimensions from "../../logic/getWindowDimensions";
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    osu: ?OsuFirmware,
-    final: ?FinalFirmware,
+    firmware: FirmwareUpdateContext,
   },
 }>;
 
@@ -58,9 +54,9 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
-    const osu = navigation.getParam("osu");
+    const firmware = navigation.getParam("firmware");
 
-    if (!osu) {
+    if (!firmware) {
       // if there is no latest firmware we'll jump to success screen
       if (navigation.replace) {
         navigation.replace("FirmwareUpdateConfirmation", {
@@ -70,7 +66,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
       return;
     }
 
-    this.sub = firmwareUpdatePrepare(deviceId, osu).subscribe({
+    this.sub = firmwareUpdatePrepare(deviceId, firmware).subscribe({
       next: patch => {
         this.setState(patch);
       },
@@ -99,7 +95,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const { progress } = this.state;
-    const osu = navigation.getParam("osu");
+    const { osu } = navigation.getParam("firmware");
     const windowWidth = getWindowDimensions().width;
 
     return (
