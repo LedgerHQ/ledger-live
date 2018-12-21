@@ -13,6 +13,7 @@ import type {
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
 import { getWalletName } from "@ledgerhq/live-common/lib/account";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import {
   libcoreAmountToBigNumber,
@@ -22,7 +23,6 @@ import type { SignAndBroadcastEvent } from "../bridge/types";
 import { remapLibcoreErrors } from "./errors";
 import { getValue } from "./specific";
 import { withLibcoreF } from "./access";
-import { open } from "../logic/hw";
 
 type Transaction = {
   amount: BigNumber,
@@ -302,8 +302,10 @@ const doSignAndBroadcast = withLibcoreF(
       feePerByte,
     );
     if (isCancelled()) return;
+    const isPartial = false;
     const transactionBuilder = await core.coreBitcoinLikeAccount.buildTransaction(
       bitcoinLikeAccount,
+      isPartial,
     );
     if (isCancelled()) return;
 

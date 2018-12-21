@@ -2,10 +2,10 @@
 import React from "react";
 import {
   createStackNavigator,
-  createBottomTabNavigator,
   createMaterialTopTabNavigator,
   createSwitchNavigator,
 } from "react-navigation";
+import { createBottomTabNavigator } from "react-navigation-tabs";
 import type { NavigationScreenProp } from "react-navigation";
 import { Platform } from "react-native";
 import colors from "./colors";
@@ -71,6 +71,8 @@ import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
+import EditAccountNode from "./screens/AccountSettings/EditAccountNode";
+import RepairDevice from "./screens/RepairDevice";
 import DebugBLE from "./screens/DebugBLE";
 import DebugBLEBenchmark from "./screens/DebugBLEBenchmark";
 import DebugCrash from "./screens/DebugCrash";
@@ -97,6 +99,7 @@ import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
 import sendScreens from "./families/sendScreens";
 import ReadOnlyTab from "./components/ReadOnlyTab";
+import HiddenTabBarIfKeyboardVisible from "./components/HiddenTabBarIfKeyboardVisible";
 
 // TODO look into all FlowFixMe
 
@@ -113,6 +116,7 @@ const SettingsStack = createStackNavigator(
     HelpSettings,
     CurrenciesList,
     CurrencySettings,
+    RepairDevice,
     // $FlowFixMe
     DebugSettings,
     // $FlowFixMe
@@ -239,6 +243,7 @@ const Main = createBottomTabNavigator(
       style: styles.bottomTabBar,
       showLabel: false,
     },
+    tabBarComponent: HiddenTabBarIfKeyboardVisible,
   },
 );
 
@@ -296,18 +301,12 @@ const SendFunds = createStackNavigator(
   {
     SendFundsMain,
     SendSelectRecipient,
-    ScanRecipient: {
-      screen: ScanRecipient,
-      navigationOptions: TransparentHeaderNavigationOptions,
-    },
     SendAmount,
     SendSummary,
     SendConnectDevice,
     SendValidation,
     SendValidationSuccess,
     SendValidationError,
-    FallbackCameraSend,
-    ...sendScreens,
   },
   closableStackNavigatorConfig,
 );
@@ -340,6 +339,7 @@ const AccountSettings = createStackNavigator(
     AccountSettingsMain,
     EditAccountUnits,
     EditAccountName,
+    EditAccountNode,
     AccountCurrencySettings: CurrencySettings,
     AccountRateProviderSettings: RateProviderSettings,
   },
@@ -389,6 +389,12 @@ const BaseNavigator = createStackNavigator(
     EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
+    ScanRecipient: {
+      screen: ScanRecipient,
+      navigationOptions: TransparentHeaderNavigationOptions,
+    },
+    FallbackCameraSend,
+    ...sendScreens,
   },
   {
     mode: "modal",

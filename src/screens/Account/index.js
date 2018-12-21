@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { StyleSheet, SectionList, View, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
@@ -8,7 +8,10 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
-import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
+import {
+  isAccountEmpty,
+  groupAccountOperationsByDay,
+} from "@ledgerhq/live-common/lib/account";
 import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -16,9 +19,7 @@ import accountSyncRefreshControl from "../../components/accountSyncRefreshContro
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import NoOperationFooter from "../../components/NoOperationFooter";
 import LText from "../../components/LText";
-import GraphCard from "../../components/GraphCard";
 import LoadingFooter from "../../components/LoadingFooter";
 import colors from "../../colors";
 import provideSummary from "../../components/provideSummary";
@@ -31,6 +32,8 @@ import AccountHeaderRight from "./AccountHeaderRight";
 import AccountHeaderTitle from "./AccountHeaderTitle";
 import AccountActions from "./AccountActions";
 import { scrollToTopIntent } from "./events";
+import AccountGraphCard from "../../components/AccountGraphCard";
+import NoOperationFooter from "../../components/NoOperationFooter";
 
 type Props = {
   account: Account,
@@ -46,9 +49,6 @@ type State = {
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = accountSyncRefreshControl(AnimatedSectionList);
-
-const isAccountEmpty = (a: Account): boolean =>
-  a.operations.length === 0 && a.balance.isZero();
 
 class AccountScreen extends PureComponent<Props, State> {
   static navigationOptions = ({ navigation }) => ({
@@ -94,33 +94,49 @@ class AccountScreen extends PureComponent<Props, State> {
   }: {
     counterValueUnit: Unit,
     item: Item,
-  }) => (
-    <View style={styles.balanceContainer}>
-      <LText style={styles.balanceText} tertiary>
-        <CurrencyUnitValue
-          unit={this.props.account.unit}
-          value={item.originalValue}
-        />
-      </LText>
-      <LText style={styles.balanceSubText} tertiary>
-        <CurrencyUnitValue unit={counterValueUnit} value={item.value} />
-      </LText>
-    </View>
-  );
+  }) => {
+    const { summary } = this.props;
+    return (
+      <View style={styles.balanceContainer}>
+        <LText style={styles.balanceText} tertiary>
+          <CurrencyUnitValue
+            unit={this.props.account.unit}
+            value={item.originalValue}
+          />
+        </LText>
+        {summary.isAvailable && (
+          <LText style={styles.balanceSubText} tertiary>
+            <CurrencyUnitValue unit={counterValueUnit} value={item.value} />
+          </LText>
+        )}
+      </View>
+    );
+  };
 
   ListHeaderComponent = () => {
     const { summary, account } = this.props;
     if (!account) return null;
-    // TODO: we need to make a different GraphCard for Account screen:
-    // - we can optimize more (e.g. only need to calculate the balance of this account, which is cached btw. no need for countervalues and the more complex algo)
-    // - less if logic in graph (we shouldn't have magically guess if it's a "countervalue" mode or a "crypto" one)
-    // - the fact we want later to diverge both a bit (graph differ already, and later if we intro the idea to switch between modes)
+    const empty = isAccountEmpty(account);
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
-        <GraphCard summary={summary} renderTitle={this.renderListHeaderTitle} />
-        <AccountActions accountId={account.id} />
+        {!empty && (
+          <AccountGraphCard
+            summary={summary}
+            renderTitle={this.renderListHeaderTitle}
+          />
+        )}
+        {!empty && <AccountActions accountId={account.id} />}
       </View>
+    );
+  };
+
+  ListEmptyComponent = () => {
+    const { account, navigation } = this.props;
+    return (
+      isAccountEmpty(account) && (
+        <EmptyStateAccount account={account} navigation={navigation} />
+      )
     );
   };
 
@@ -152,7 +168,7 @@ class AccountScreen extends PureComponent<Props, State> {
   renderSectionHeader = ({ section }) => <SectionHeader section={section} />;
 
   render() {
-    const { account, navigation } = this.props;
+    const { account } = this.props;
     const { opCount } = this.state;
     if (!account) return null;
 
@@ -163,15 +179,6 @@ class AccountScreen extends PureComponent<Props, State> {
         operationsSize={account.operations.length}
       />
     );
-
-    if (isAccountEmpty(account)) {
-      return (
-        <Fragment>
-          {analytics}
-          <EmptyStateAccount account={account} navigation={navigation} />
-        </Fragment>
-      );
-    }
 
     const { sections, completed } = groupAccountOperationsByDay(
       account,
@@ -187,13 +194,18 @@ class AccountScreen extends PureComponent<Props, State> {
           style={styles.sectionList}
           contentContainerStyle={styles.contentContainer}
           ListFooterComponent={
-            !completed
-              ? LoadingFooter
-              : sections.length === 0
-                ? NoOperationFooter
-                : NoMoreOperationFooter
+            !completed ? (
+              <LoadingFooter />
+            ) : sections.length === 0 ? (
+              isAccountEmpty(account) ? null : (
+                <NoOperationFooter />
+              )
+            ) : (
+              <NoMoreOperationFooter />
+            )
           }
           ListHeaderComponent={this.ListHeaderComponent}
+          ListEmptyComponent={this.ListEmptyComponent}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           renderSectionHeader={this.renderSectionHeader}
@@ -243,5 +255,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 64,
+    flexGrow: 1,
   },
 });

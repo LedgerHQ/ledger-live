@@ -45,6 +45,7 @@ class Content extends PureComponent<Props, *> {
       : 0;
     const uniqueSenders = uniq(operation.senders);
     const uniqueRecipients = uniq(operation.recipients);
+    const { extra } = operation;
 
     const isConfirmed = confirmations >= currencySettings.confirmationsNb;
     return (
@@ -166,6 +167,16 @@ class Content extends PureComponent<Props, *> {
             }
           />
         </View>
+        {Object.entries(extra).map(([key, value]) => (
+          <View style={styles.section} key={key}>
+            <LText style={styles.sectionTitle}>
+              <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
+            </LText>
+            <LText semiBold selectable>
+              {value}
+            </LText>
+          </View>
+        ))}
       </Fragment>
     );
   }

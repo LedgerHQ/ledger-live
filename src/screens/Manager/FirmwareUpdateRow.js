@@ -3,11 +3,14 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { withNavigation } from "react-navigation";
+import type {
+  DeviceInfo,
+  FirmwareUpdateContext,
+} from "@ledgerhq/live-common/lib/types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
 import LText from "../../components/LText";
 import colors from "../../colors";
-import type { DeviceInfo, Firmware } from "../../types/manager";
 import Button from "../../components/Button";
-import manager from "../../logic/manager";
 
 type Props = {
   navigation: *,
@@ -16,7 +19,7 @@ type Props = {
 };
 
 type State = {
-  latestFirmware: ?Firmware,
+  firmware: ?FirmwareUpdateContext,
   visibleFirmwareModal: boolean,
   step: string,
 };
@@ -24,7 +27,7 @@ type State = {
 class FirmwareUpdateRow extends PureComponent<Props, State> {
   state = {
     visibleFirmwareModal: false,
-    latestFirmware: null,
+    firmware: null,
     step: "",
   };
 
@@ -32,27 +35,16 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
 
   async componentDidMount() {
     const { deviceInfo, deviceId, navigation } = this.props;
-    const latestFirmware = await manager
-      .getLatestFirmwareForDevice(deviceInfo)
-      .catch(() => null);
+    const firmware = await manager.getLatestFirmwareForDevice(deviceInfo);
 
     if (this.unmount) return;
-    try {
-      if (deviceInfo.isOSU) {
-        navigation.navigate("FirmwareUpdateCheckId", {
-          deviceId,
-          latestFirmware,
-        });
-      } else if (deviceInfo.isBootloader) {
-        navigation.navigate("FirmwareUpdateMCU", {
-          deviceId,
-          latestFirmware,
-        });
-      } else {
-        this.setState({ latestFirmware });
-      }
-    } catch (e) {
-      console.warn(e);
+    if (deviceInfo.isOSU) {
+      navigation.navigate("FirmwareUpdateMCU", {
+        deviceId,
+        firmware,
+      });
+    } else {
+      this.setState({ firmware });
     }
   }
 
@@ -62,16 +54,17 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
 
   onUpdatePress = () => {
     const { navigation, deviceId } = this.props;
-    const { latestFirmware } = this.state;
+    const { firmware } = this.state;
+    if (!firmware) return;
     navigation.navigate("FirmwareUpdate", {
       deviceId,
-      latestFirmware,
+      firmware,
     });
   };
 
   render() {
-    const { latestFirmware } = this.state;
-    if (!latestFirmware) {
+    const { firmware } = this.state;
+    if (!firmware) {
       return null;
     }
 
@@ -81,7 +74,7 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
           <Trans
             i18nKey="FirmwareUpdateRow.title"
             values={{
-              version: manager.getFirmwareVersion(latestFirmware),
+              version: manager.getFirmwareVersion(firmware.osu),
             }}
           />
         </LText>

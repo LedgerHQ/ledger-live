@@ -27,7 +27,7 @@ import {
   ETHAddressNonEIP,
   InvalidAddress,
 } from "@ledgerhq/live-common/lib/errors";
-import { open } from "../logic/hw";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import { apiForCurrency } from "../api/Ethereum";
 import { getEstimatedFees } from "../api/Fees";
 import type { Tx } from "../api/Ethereum";

@@ -56,7 +56,7 @@ class SummaryRow extends Component<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     marginLeft: 16,
     paddingRight: 16,

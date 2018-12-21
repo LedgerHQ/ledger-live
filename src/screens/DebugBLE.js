@@ -13,14 +13,14 @@ import uuid from "uuid/v4";
 import { from } from "rxjs";
 import { bufferTime } from "rxjs/operators";
 import type { NavigationScreenProp } from "react-navigation";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import LText from "../components/LText";
 import Button from "../components/Button";
 import KeyboardView from "../components/KeyboardView";
 import colors from "../colors";
 import type { Log } from "../react-native-hw-transport-ble/debug";
 import { logsObservable } from "../react-native-hw-transport-ble/debug";
-import { withDevice } from "../logic/hw/deviceAccess";
-import { disconnect } from "../logic/hw";
 
 const styles = StyleSheet.create({
   root: {

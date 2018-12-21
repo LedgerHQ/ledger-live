@@ -30,6 +30,7 @@ type Props = {
 class EthereumEditFee extends Component<Props> {
   static navigationOptions = {
     title: i18next.t("send.fees.title"),
+    headerLeft: null,
   };
 
   render() {

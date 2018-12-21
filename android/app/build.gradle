@@ -114,8 +114,8 @@ android {
         applicationId "com.ledger.live"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.1.0"
+        versionCode 6
+        versionName "1.1.5"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -178,6 +178,7 @@ configurations.all {
 }
 
 dependencies {
+    compile project(':react-native-extra-dimensions-android')
     compile project(':@segment_analytics-react-native')
     compile project(':react-native-keychain')
     compile project(':react-native-android-location-services-dialog-box')

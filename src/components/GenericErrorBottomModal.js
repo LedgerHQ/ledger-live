@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    paddingHorizontal: 8,
     alignItems: "flex-end",
     flexGrow: 1,
   },

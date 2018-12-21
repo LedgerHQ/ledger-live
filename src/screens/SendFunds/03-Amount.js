@@ -330,7 +330,7 @@ class SendAmount extends Component<Props, State> {
                 onPress={this.onNetworkInfoCancel}
               />
               <RetryButton
-                containerStyle={styles.button}
+                containerStyle={[styles.button, styles.buttonRight]}
                 onPress={this.onNetworkInfoRetry}
               />
             </>
@@ -359,14 +359,6 @@ const styles = StyleSheet.create({
   availableAmount: {
     color: colors.darkBlue,
   },
-  countervaluesWrapper: {
-    paddingTop: 24,
-    paddingBottom: 32,
-  },
-  countervaluesText: {
-    color: colors.grey,
-    fontSize: 20,
-  },
   bottomWrapper: {
     flex: 1,
     flexGrow: 1,
@@ -384,6 +376,9 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
   },
 });
 

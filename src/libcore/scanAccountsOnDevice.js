@@ -15,7 +15,7 @@ import type {
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
 
-import { open } from "../logic/hw";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import { withLibcoreF } from "./access";
 import { shouldShowNewAccount } from "../cryptocurrencies";
 import { syncCoreAccount } from "./syncAccount";

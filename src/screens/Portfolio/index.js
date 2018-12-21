@@ -10,7 +10,10 @@ import { translate } from "react-i18next";
 import Config from "react-native-config";
 
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
+import {
+  groupAccountsOperationsByDay,
+  isAccountEmpty,
+} from "@ledgerhq/live-common/lib/account";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 
 import colors from "../../colors";
@@ -23,7 +26,6 @@ import {
 import { acceptTradingWarning } from "../../actions/settings";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import NoOperationFooter from "../../components/NoOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
@@ -39,6 +41,8 @@ import { scrollToTopIntent } from "./events";
 import SyncBackground from "../../bridge/SyncBackground";
 import TradingDisclaimer from "../../modals/TradingDisclaimer";
 import TrackScreen from "../../analytics/TrackScreen";
+import NoOpStatePortfolio from "./NoOpStatePortfolio";
+import NoOperationFooter from "../../components/NoOperationFooter";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
@@ -104,9 +108,31 @@ class Portfolio extends Component<
 
   keyExtractor = (item: Operation) => item.id;
 
-  ListHeaderComponent = () => (
-    <GraphCardContainer summary={this.props.summary} />
-  );
+  ListHeaderComponent = () => {
+    const { accounts } = this.props;
+
+    return (
+      <GraphCardContainer
+        summary={this.props.summary}
+        showGreeting={!accounts.every(isAccountEmpty)}
+      />
+    );
+  };
+
+  ListEmptyComponent = () => {
+    const { accounts } = this.props;
+    const { navigation } = this.props;
+
+    if (accounts.length === 0) {
+      return <EmptyStatePortfolio navigation={navigation} />;
+    }
+
+    if (accounts.every(isAccountEmpty)) {
+      return <NoOpStatePortfolio navigation={navigation} />;
+    }
+
+    return null;
+  };
 
   renderItem = ({
     item,
@@ -146,26 +172,11 @@ class Portfolio extends Component<
   };
 
   render() {
-    const {
-      summary,
-      accounts,
-      navigation,
-      hasAcceptedTradingWarning,
-    } = this.props;
+    const { summary, accounts, hasAcceptedTradingWarning } = this.props;
     const { opCount, scrollY, isModalOpened } = this.state;
     const disclaimer = !hasAcceptedTradingWarning && (
       <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
     );
-
-    if (accounts.length === 0) {
-      return (
-        <View style={styles.root}>
-          <TrackScreen category="Portfolio" accountsLength={0} />
-          <EmptyStatePortfolio navigation={navigation} />
-          {disclaimer}
-        </View>
-      );
-    }
 
     const { sections, completed } = groupAccountsOperationsByDay(
       accounts,
@@ -197,12 +208,15 @@ class Portfolio extends Component<
             )}
             ListHeaderComponent={this.ListHeaderComponent}
             ListFooterComponent={
-              !completed
-                ? LoadingFooter
-                : sections.length === 0
-                  ? NoOperationFooter
-                  : NoMoreOperationFooter
+              !completed ? (
+                <LoadingFooter />
+              ) : accounts.every(isAccountEmpty) ? null : sections.length ? (
+                <NoMoreOperationFooter />
+              ) : (
+                <NoOperationFooter />
+              )
             }
+            ListEmptyComponent={this.ListEmptyComponent}
           />
         </SafeAreaView>
         {disclaimer}
@@ -232,6 +246,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
+    flexGrow: 1,
     paddingTop: 16,
     paddingBottom: 64,
   },

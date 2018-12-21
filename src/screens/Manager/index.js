@@ -7,6 +7,7 @@ import { translate } from "react-i18next";
 import { connect } from "react-redux";
 import i18next from "i18next";
 import { compose } from "redux";
+import manager from "@ledgerhq/live-common/lib/manager";
 import {
   connectingStep,
   dashboard,
@@ -16,7 +17,6 @@ import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceButton from "../../components/SelectDevice/RemoveDeviceButton";
 import colors from "../../colors";
 import ToggleManagerEdition from "./ToggleManagerEdition";
-import manager from "../../logic/manager";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";

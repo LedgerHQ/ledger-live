@@ -1,31 +1,28 @@
 /* @flow */
 /* eslint-disable no-console */
 import React, { Component } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { from, of } from "rxjs";
-import { mergeMap, tap } from "rxjs/operators";
 import { translate, Trans } from "react-i18next";
-
+import firmwareUpdatePrepare from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
+import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
+import manager from "@ledgerhq/live-common/lib/manager";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
-import getDeviceInfo from "../../logic/hw/getDeviceInfo";
-import installFinalFirmware from "../../logic/hw/installFinalFirmware";
-import installOsuFirmware from "../../logic/hw/installOsuFirmware";
-import { withDevice } from "../../logic/hw/deviceAccess";
-import manager from "../../logic/manager";
-import type { Firmware } from "../../types/manager";
 import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
-import Installing from "./Installing";
+import LiveLogo from "../../icons/LiveLogoIcon";
+import Spinning from "../../components/Spinning";
+import FirmwareProgress from "../../components/FirmwareProgress";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    latestFirmware: ?Firmware,
+    firmware: FirmwareUpdateContext,
   },
 }>;
 
@@ -34,12 +31,12 @@ type Props = {
 };
 
 type State = {
-  installing: boolean,
+  progress: number,
 };
 
 class FirmwareUpdateCheckId extends Component<Props, State> {
   state = {
-    installing: false,
+    progress: 0,
   };
 
   static navigationOptions = {
@@ -57,69 +54,38 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
-    const latestFirmware = navigation.getParam("latestFirmware");
+    const firmware = navigation.getParam("firmware");
 
-    this.sub = withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
-      .pipe(
-        mergeMap(deviceInfo => {
-          // if in bootloader we'll directly jump to MCU step
-          if (deviceInfo.isBootloader) {
-            console.log("CheckId: isBootloader");
-            return of("FirmwareUpdateMCU");
-          }
+    if (!firmware) {
+      // if there is no latest firmware we'll jump to success screen
+      if (navigation.replace) {
+        navigation.replace("FirmwareUpdateConfirmation", {
+          ...navigation.state.params,
+        });
+      }
+      return;
+    }
 
-          // If in OSU we'll try to install firmware and move on to the rest
-          if (deviceInfo.isOSU) {
-            console.log("CheckId: isOSU");
-            this.setState({ installing: true });
-            return withDevice(deviceId)(transport =>
-              installFinalFirmware(transport),
-            ).pipe(
-              tap(res => console.log("CheckId: final firmware installed", res)),
-              mergeMap(() => of("FirmwareUpdateConfirmation")),
-            );
-          }
-
-          if (!latestFirmware) {
-            return of("FirmwareUpdateConfirmation");
-          }
-
-          console.log("CheckId: installOsuFirmware");
-          return withDevice(deviceId)(transport =>
-            installOsuFirmware(transport, deviceInfo.targetId, latestFirmware),
-          ).pipe(
-            tap(res => console.log("CheckId: OSU firmware installed", res)),
-            mergeMap(() => {
-              if (latestFirmware && latestFirmware.shouldFlashMcu) {
-                return of("FirmwareUpdateMCU");
-              }
-
-              this.setState({ installing: true });
-              return withDevice(deviceId)(transport =>
-                installFinalFirmware(transport),
-              ).pipe(
-                tap(res =>
-                  console.log("CheckId: final firmware installed (2)", res),
-                ),
-                mergeMap(() => of("FirmwareUpdateConfirmation")),
-              );
-            }),
-          );
-        }),
-      )
-      .subscribe({
-        next: screen => {
-          navigation.navigate(screen, {
+    this.sub = firmwareUpdatePrepare(deviceId, firmware).subscribe({
+      next: patch => {
+        this.setState(patch);
+      },
+      complete: () => {
+        if (navigation.replace) {
+          navigation.replace("FirmwareUpdateMCU", {
             ...navigation.state.params,
           });
-        },
-        error: error => {
-          navigation.navigate("FirmwareUpdateFailure", {
+        }
+      },
+      error: error => {
+        if (navigation.replace) {
+          navigation.replace("FirmwareUpdateFailure", {
             ...navigation.state.params,
             error,
           });
-        },
-      });
+        }
+      },
+    });
   }
 
   componentWillUnmount() {
@@ -127,38 +93,47 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   }
 
   render() {
-    const { installing } = this.state;
     const { navigation } = this.props;
-    const latestFirmware = navigation.getParam("latestFirmware");
-    const windowWidth = Dimensions.get("window").width;
+    const { progress } = this.state;
+    const { osu } = navigation.getParam("firmware");
+    const windowWidth = getWindowDimensions().width;
+
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
-        {installing ? (
-          <Installing />
-        ) : (
-          <View style={styles.body}>
-            <View style={styles.device}>
-              <DeviceNanoAction
-                powerAction
-                action
-                screen="validation"
-                width={1.2 * windowWidth}
-              />
-            </View>
-            <LText style={styles.description}>
-              <Trans
-                i18nKey="FirmwareUpdateCheckId.description"
-                values={deviceNames.nanoX}
-              />
-            </LText>
-            <View style={[styles.idContainer, { maxWidth: windowWidth - 40 }]}>
-              <LText style={styles.id} bold>
-                {latestFirmware && manager.formatHashName(latestFirmware.hash)}
-              </LText>
-            </View>
+        <View style={styles.body}>
+          <View style={styles.device}>
+            <DeviceNanoAction
+              powerAction
+              action
+              screen="validation"
+              width={1.2 * windowWidth}
+            />
           </View>
-        )}
+          <LText style={styles.description}>
+            <Trans
+              i18nKey="FirmwareUpdateCheckId.description"
+              values={deviceNames.nanoX}
+            />
+          </LText>
+          <View style={[styles.idContainer, { maxWidth: windowWidth - 40 }]}>
+            <LText style={styles.id} bold>
+              {osu && manager.formatHashName(osu.hash)}
+            </LText>
+          </View>
+
+          <View style={styles.footer}>
+            {progress === 0 ? (
+              <View style={{ padding: 10 }}>
+                <Spinning>
+                  <LiveLogo color={colors.fog} size={40} />
+                </Spinning>
+              </View>
+            ) : (
+              <FirmwareProgress progress={progress} size={60} />
+            )}
+          </View>
+        </View>
       </SafeAreaView>
     );
   }
@@ -173,6 +148,9 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
     alignItems: "center",
+  },
+  footer: {
+    paddingTop: 50,
   },
   device: {
     left: "25%",

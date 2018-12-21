@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet, Linking } from "react-native";
+import { StyleSheet, Linking } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
@@ -54,7 +55,7 @@ class ValidationError extends Component<Props> {
     const error = navigation.getParam("error");
 
     return (
-      <View style={styles.root}>
+      <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="ValidationError" />
         <ValidateError
           error={error}
@@ -62,7 +63,7 @@ class ValidationError extends Component<Props> {
           onClose={this.dismiss}
           onContactUs={this.contactUs}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -71,12 +72,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
-  },
-  center: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 

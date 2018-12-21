@@ -2,13 +2,7 @@
 
 import React, { Component, createRef } from "react";
 import { Trans } from "react-i18next";
-import {
-  StyleSheet,
-  View,
-  Linking,
-  ScrollView,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, View, Linking, ScrollView } from "react-native";
 
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
@@ -22,10 +16,11 @@ import { Bullet } from "../../../components/BulletList";
 import colors, { rgba } from "../../../colors";
 import { urls } from "../../../config/urls";
 import IconWarning from "../../../icons/Warning";
+import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 import type { OnboardingStepProps } from "../types";
 
-const windowWidth = Dimensions.get("window").width;
+const windowWidth = getWindowDimensions().width;
 
 type SecurityChecklist = {
   pinCode: ?boolean,

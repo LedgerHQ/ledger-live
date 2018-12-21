@@ -20,12 +20,13 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
+  NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughBalance,
   InvalidAddress,
   FeeNotLoaded,
   NetworkDown,
 } from "@ledgerhq/live-common/lib/errors";
-import { open } from "../logic/hw";
+import { open } from "@ledgerhq/live-common/lib/hw";
 import {
   apiForEndpointConfig,
   defaultEndpoint,
@@ -33,7 +34,6 @@ import {
   parseAPICurrencyObject,
   formatAPICurrencyXRP,
 } from "../api/Ripple";
-import { NotEnoughBalanceBecauseDestinationNotCreated } from "../errors";
 import type { CurrencyBridge, AccountBridge } from "./types";
 import signTransaction from "../logic/hw/signTransaction";
 
@@ -104,8 +104,7 @@ async function signAndBroadcast({
       }
 
       const hash = computeBinaryTransactionHash(transaction);
-
-      onOperationBroadcasted({
+      const operation = {
         id: `${a.id}-${hash}-OUT`,
         hash,
         accountId: a.id,
@@ -123,7 +122,12 @@ async function signAndBroadcast({
             ? a.operations[0].transactionSequenceNumber
             : 0) + a.pendingOperations.length,
         extra: {},
-      });
+      };
+
+      if (t.tag) {
+        operation.extra.tag = t.tag;
+      }
+      onOperationBroadcasted(operation);
     }
   } catch (e) {
     if (e && e.name === "RippledError" && e.data.resultMessage) {
@@ -180,6 +184,7 @@ type Tx = {
         currency: string,
         value: string,
       },
+      tag?: string,
     },
     paths: string,
   },
@@ -253,6 +258,9 @@ const txToOperation = (account: Account) => ({
     transactionSequenceNumber: sequence,
     extra: {},
   };
+  if (destination.tag) {
+    op.extra.tag = destination.tag;
+  }
   return op;
 };
 

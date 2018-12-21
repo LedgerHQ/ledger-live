@@ -4,11 +4,10 @@ import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
 import ProgressCircle from "react-native-progress/Circle";
-import { throttleTime, filter, map } from "rxjs/operators";
-import type { ApplicationVersion } from "../../types/manager";
-import install from "../../logic/hw/installApp";
-import uninstall from "../../logic/hw/uninstallApp";
-import { withDevice } from "../../logic/hw/deviceAccess";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
+import install from "@ledgerhq/live-common/lib/hw/installApp";
+import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
 import BottomModal from "../../components/BottomModal";
 import Close from "../../icons/Close";
 import Button from "../../components/Button";
@@ -32,8 +31,9 @@ class PendingProgress extends PureComponent<{
     return (
       <View style={progressStyles.centered}>
         <ProgressCircle
-          progress={0.15 + 0.85 * progress}
+          progress={progress}
           color={colors.live}
+          unfilledColor={colors.fog}
           borderWidth={0}
           thickness={3.6}
           size={22}
@@ -97,23 +97,17 @@ class AppAction extends PureComponent<
     const hwCall = hwCallPerType[type];
     this.sub = withDevice(deviceId)(transport =>
       hwCall(transport, targetId, app),
-    )
-      .pipe(
-        filter(e => e.type === "bulk-progress"), // only bulk progress interests the UI
-        throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
-        map(e => e.progress), // extract a stream of progress percentage
-      )
-      .subscribe({
-        next: progress => {
-          this.setState({ progress });
-        },
-        complete: () => {
-          this.setState({ pending: false, error: null });
-        },
-        error: error => {
-          this.setState({ pending: false, error });
-        },
-      });
+    ).subscribe({
+      next: patch => {
+        this.setState(patch);
+      },
+      complete: () => {
+        this.setState({ pending: false, error: null });
+      },
+      error: error => {
+        this.setState({ pending: false, error });
+      },
+    });
   }
 
   componentWillUnmount() {
@@ -124,7 +118,7 @@ class AppAction extends PureComponent<
     const { action, onClose, isOpened } = this.props;
     const { pending, error, progress } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
-
+    const progressPercentage = Math.round(progress * 100);
     const icon = error ? (
       <ErrorIcon error={error} />
     ) : (
@@ -142,10 +136,19 @@ class AppAction extends PureComponent<
 
     const description = error ? (
       <TranslatedError error={error} field="description" />
-    ) : null;
+    ) : (
+      <Trans
+        i18nKey={`AppAction.${path}.desc`}
+        values={{ appName: action.app.name }}
+      />
+    );
 
     const buttonTitle = pending ? (
-      <Trans i18nKey={`AppAction.${path}.button`} />
+      <Trans
+        i18nKey={`AppAction.${path}.button`}
+        values={{ progressPercentage }}
+        count={progressPercentage + 1}
+      />
     ) : (
       <Trans i18nKey="common.close" />
     );
@@ -168,7 +171,7 @@ class AppAction extends PureComponent<
                     <Spinning clockwise>
                       <Image
                         source={spinner}
-                        style={{ width: 24, height: 24 }}
+                        style={{ width: 22, height: 22 }}
                       />
                     </Spinning>
                   )

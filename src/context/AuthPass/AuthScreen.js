@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
   Image,
+  Vibration,
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import * as Keychain from "react-native-keychain";
@@ -25,6 +26,7 @@ import PasswordInput from "../../components/PasswordInput";
 import KeyboardView from "../../components/KeyboardView";
 import FailBiometrics from "./FailBiometrics";
 import KeyboardBackgroundDismiss from "../../components/KeyboardBackgroundDismiss";
+import { VIBRATION_PATTERN_ERROR } from "../../constants";
 
 type State = {
   passwordError: ?Error,
@@ -126,13 +128,14 @@ class AuthScreen extends PureComponent<Props, State> {
       if (id !== this.submitId) return;
       if (credentials && credentials.password === password) {
         unlock();
+      } else if (credentials) {
+        Vibration.vibrate(VIBRATION_PATTERN_ERROR);
+        this.setState({
+          passwordError: new PasswordIncorrectError(),
+          password: "",
+        });
       } else {
-        credentials
-          ? this.setState({
-              passwordError: new PasswordIncorrectError(),
-              password: "",
-            })
-          : console.log("no credentials stored"); // eslint-disable-line
+        console.log("no credentials stored"); // eslint-disable-line
       }
     } catch (err) {
       if (id !== this.submitId) return;

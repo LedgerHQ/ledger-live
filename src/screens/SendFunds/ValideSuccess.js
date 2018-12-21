@@ -28,21 +28,19 @@ class ValidateSuccess extends PureComponent<Props> {
           <LText style={styles.message}>
             <Trans i18nKey="send.validation.confirm" />
           </LText>
-        </View>
-        <View style={styles.actionContainer}>
-          <Button
-            event="SendSuccessClose"
-            title={<Trans i18nKey="common.close" />}
-            type="secondary"
-            containerStyle={{ flex: 1, marginRight: 16 }}
-            onPress={onClose}
-          />
           <Button
             event="SendSuccessViewDetails"
             title={<Trans i18nKey="send.validation.button.details" />}
             type="primary"
-            containerStyle={{ flex: 1 }}
+            containerStyle={styles.button}
             onPress={onViewDetails}
+          />
+          <Button
+            event="SendSuccessClose"
+            title={<Trans i18nKey="common.close" />}
+            type="lightSecondary"
+            containerStyle={styles.button}
+            onPress={onClose}
           />
         </View>
       </View>
@@ -68,21 +66,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.translucentGreen,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     color: colors.darkBlue,
     paddingHorizontal: 16,
     paddingBottom: 16,
     textAlign: "center",
   },
+  button: {
+    alignSelf: "stretch",
+    marginTop: 24,
+  },
   message: {
     fontSize: 14,
     paddingHorizontal: 16,
+    marginBottom: 8,
     color: colors.smoke,
     textAlign: "center",
-  },
-  actionContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
 });
 
