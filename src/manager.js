@@ -2,7 +2,12 @@
 /* eslint-disable camelcase */
 // Higher level cache on top of Manager
 
-import type { ApplicationVersion, DeviceInfo, Firmware } from "./types/manager";
+import type {
+  ApplicationVersion,
+  DeviceInfo,
+  OsuFirmware,
+  FirmwareUpdateContext
+} from "./types/manager";
 import ManagerAPI from "./api/Manager";
 
 const ICONS_FALLBACK = {
@@ -19,7 +24,7 @@ const CacheAPI = {
     return `https://api.ledgerwallet.com/update/assets/icons/${icn}`;
   },
 
-  getFirmwareVersion: (firmware: Firmware): string =>
+  getFirmwareVersion: (firmware: OsuFirmware): string =>
     firmware.name.replace("-osu", ""),
 
   formatHashName: (input: string): string => {
@@ -32,56 +37,57 @@ const CacheAPI = {
 
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo
-  ): Promise<?Firmware> => {
+  ): Promise<?FirmwareUpdateContext> => {
+    const mcusPromise = ManagerAPI.getMcus();
+
     // Get device infos from targetId
     const deviceVersion = await ManagerAPI.getDeviceVersion(
       deviceInfo.targetId,
       deviceInfo.providerId
     );
 
-    // Get firmware infos with firmware name and device version
-    const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
-      fullVersion: deviceInfo.fullVersion,
-      deviceId: deviceVersion.id,
-      provider: deviceInfo.providerId
-    });
+    let osu;
 
-    // Fetch next possible firmware
-    const se_firmware_osu_version = await ManagerAPI.getLatestFirmware({
-      current_se_firmware_final_version: seFirmwareVersion.id,
-      device_version: deviceVersion.id,
-      provider: deviceInfo.providerId
-    });
+    if (deviceInfo.isOSU) {
+      osu = await ManagerAPI.getCurrentOSU({
+        deviceId: deviceVersion.id,
+        provider: deviceInfo.providerId,
+        version: deviceInfo.seVersion
+      });
+    } else {
+      // Get firmware infos with firmware name and device version
+      const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
+        fullVersion: deviceInfo.fullVersion,
+        deviceId: deviceVersion.id,
+        provider: deviceInfo.providerId
+      });
 
-    if (!se_firmware_osu_version) {
+      // Fetch next possible firmware
+      osu = await ManagerAPI.getLatestFirmware({
+        current_se_firmware_final_version: seFirmwareVersion.id,
+        device_version: deviceVersion.id,
+        provider: deviceInfo.providerId
+      });
+    }
+
+    if (!osu) {
       return null;
     }
 
-    const { next_se_firmware_final_version } = se_firmware_osu_version;
-    const seFirmwareFinalVersion = await ManagerAPI.getFinalFirmwareById(
-      next_se_firmware_final_version
+    const final = await ManagerAPI.getFinalFirmwareById(
+      osu.next_se_firmware_final_version
     );
 
-    const mcus = await ManagerAPI.getMcus();
+    const mcus = await mcusPromise;
 
-    const currentMcuVersionId: Array<number> = mcus
-      .filter(mcu => mcu.name === deviceInfo.mcuVersion)
-      .map(mcu => mcu.id);
+    const currentMcuVersion = mcus.find(
+      mcu => mcu.name === deviceInfo.mcuVersion
+    );
+    const shouldFlashMCU = !currentMcuVersion
+      ? false
+      : !final.mcu_versions.includes(currentMcuVersion.id);
 
-    if (!seFirmwareFinalVersion.mcu_versions.includes(...currentMcuVersionId)) {
-      return {
-        ...se_firmware_osu_version,
-        shouldFlashMcu: true
-      };
-    }
-
-    return { ...se_firmware_osu_version, shouldFlashMcu: false };
-  },
-
-  shouldFlashMcu: async (deviceInfo: DeviceInfo): Promise<boolean> => {
-    if (!deviceInfo.isOSU) return false;
-    const res = await CacheAPI.getLatestFirmwareForDevice(deviceInfo);
-    return res ? res.shouldFlashMcu : false;
+    return { final, osu, shouldFlashMCU };
   },
 
   // get list of apps for a given deviceInfo

@@ -7,14 +7,19 @@ import {
   WebsocketConnectionError,
   WebsocketConnectionFailed,
   DeviceSocketFail,
-  DeviceSocketNoBulkStatus,
-  DeviceSocketNoHandler
+  DeviceSocketNoBulkStatus
 } from "../errors";
+import { cancelDeviceAction } from "../hw/deviceAccess";
+import { createWebSocket } from "../network";
 
-export const logSubject = new Subject();
+const logsSubject = new Subject();
+const warningsSubject = new Subject();
+
+export const logs: Observable<*> = logsSubject.asObservable();
+export const warnings: Observable<string> = warningsSubject.asObservable();
 
 const log = (obj: *) => {
-  logSubject.next(obj);
+  logsSubject.next(obj);
 };
 
 export type SocketEvent =
@@ -27,8 +32,18 @@ export type SocketEvent =
       payload: string
     }
   | {
+      type: "warning",
+      message: string
+    }
+  | {
       type: "exchange",
       nonce: number
+    }
+  | {
+      type: "opened"
+    }
+  | {
+      type: "closed"
     };
 
 /**
@@ -39,16 +54,12 @@ export const createDeviceSocket = (
   transport: Transport<*>,
   {
     url,
-    ignoreWebsocketErrorDuringBulk,
-    cancelDeviceAction
+    ignoreWebsocketErrorDuringBulk
   }: {
     url: string,
     // ignoreWebsocketErrorDuringBulk is a workaround to continue bulk even if the ws connection is termined
     // the WS connection can be terminated typically because ws timeout
-    ignoreWebsocketErrorDuringBulk?: boolean,
-
-    // if provided, it will be called when there is a need to cleanup the device because it was aborted before finishing
-    cancelDeviceAction?: (Transport<*>) => void
+    ignoreWebsocketErrorDuringBulk?: boolean
   }
 ): Observable<SocketEvent> =>
   Observable.create(o => {
@@ -59,7 +70,7 @@ export const createDeviceSocket = (
     let inBulk = false;
 
     try {
-      ws = new global.WebSocket(url);
+      ws = createWebSocket(url);
     } catch (err) {
       o.error(new WebsocketConnectionFailed(err.message, { url }));
       return () => {};
@@ -67,6 +78,7 @@ export const createDeviceSocket = (
     invariant(ws, "websocket is available");
 
     ws.onopen = () => {
+      o.next({ type: "opened" });
       log({ type: "socket-opened", url });
     };
 
@@ -167,6 +179,15 @@ export const createDeviceSocket = (
       error: msg => {
         log({ type: "socket-message-error", message: msg.data });
         throw new DeviceSocketFail(msg.data, { url });
+      },
+
+      warning: (msg: { data: string }) => {
+        log({ type: "socket-message-warning", message: msg.data });
+        o.next({
+          type: "warning",
+          message: msg.data
+        });
+        warningsSubject.next(msg.data);
       }
     };
 
@@ -174,16 +195,14 @@ export const createDeviceSocket = (
       if (interrupted) return;
       try {
         const msg = JSON.parse(e.data);
-        if (!(msg.query in handlers)) {
-          throw new DeviceSocketNoHandler(
-            `Cannot handle msg of type ${msg.query}`,
-            {
-              query: msg.query,
-              url
-            }
-          );
-        }
         log({ type: "socket-receive", msg });
+        if (!(msg.query in handlers)) {
+          console.warn(`Cannot handle msg of type ${msg.query}`, {
+            query: msg.query,
+            url
+          });
+          return;
+        }
         await handlers[msg.query](msg);
       } catch (err) {
         log({
@@ -203,7 +222,7 @@ export const createDeviceSocket = (
 
     return () => {
       interrupted = true;
-      if (!terminated && cancelDeviceAction) {
+      if (!terminated) {
         cancelDeviceAction(transport);
       }
       if (ws.readyState !== 1) return;

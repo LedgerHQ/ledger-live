@@ -4,8 +4,9 @@
 import type Transport from "@ledgerhq/hw-transport";
 import getFirmwareInfo from "./getFirmwareInfo";
 import type { DeviceInfo } from "../types/manager";
+import { getEnv } from "../env";
 
-const PROVIDERS = {
+const PROVIDERS: { [_: string]: number } = {
   "": 1,
   das: 2,
   club: 3,
@@ -13,10 +14,7 @@ const PROVIDERS = {
   ee: 5
 };
 
-export default async (
-  transport: Transport<*>,
-  { forceProvider }: { forceProvider?: number }
-): Promise<DeviceInfo> => {
+export default async (transport: Transport<*>): Promise<DeviceInfo> => {
   const res = await getFirmwareInfo(transport);
   const { seVersion } = res;
   const { targetId, mcuVersion, flags } = res;
@@ -25,7 +23,7 @@ export default async (
     [];
   const isOSU = typeof parsedVersion[5] !== "undefined";
   const providerName = parsedVersion[4] || "";
-  const providerId = forceProvider || PROVIDERS[providerName];
+  const providerId = getEnv("FORCE_PROVIDER") || PROVIDERS[providerName];
   const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
   const majMin = parsedVersion[1];
   const patch = parsedVersion[2] || ".0";
@@ -36,6 +34,7 @@ export default async (
   return {
     targetId,
     seVersion: majMin + patch,
+    rawVersion: majMin,
     isOSU,
     mcuVersion,
     isBootloader,

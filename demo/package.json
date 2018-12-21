@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ledgerhq/hw-transport-u2f": "^4.24.0",
+    "@ledgerhq/hw-transport": "^4.32.0",
+    "@ledgerhq/hw-transport-u2f": "^4.32.0",
     "@ledgerhq/hw-transport-web-ble": "^4.32.0",
     "@ledgerhq/hw-transport-webusb": "^4.32.0",
     "@ledgerhq/live-common": "file:..",

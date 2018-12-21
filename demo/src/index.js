@@ -1,4 +1,5 @@
 import "babel-polyfill";
+import "./live-common-setup";
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";

@@ -5,6 +5,7 @@ import { createCustomErrorClass } from "./helpers";
 export const AccountNameRequiredError = createCustomErrorClass(
   "AccountNameRequired"
 );
+export const BluetoothRequired = createCustomErrorClass("BluetoothRequired");
 export const BtcUnmatchedApp = createCustomErrorClass("BtcUnmatchedApp");
 export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
 export const DeviceAppVerifyNotSupported = createCustomErrorClass(
@@ -17,9 +18,6 @@ export const DeviceNotGenuineError = createCustomErrorClass("DeviceNotGenuine");
 export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass(
   "DeviceSocketNoBulkStatus"
-);
-export const DeviceSocketNoHandler = createCustomErrorClass(
-  "DeviceSocketNoHandler"
 );
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
@@ -66,6 +64,9 @@ export const PasswordIncorrectError = createCustomErrorClass(
   "PasswordIncorrect"
 );
 export const TimeoutTagged = createCustomErrorClass("TimeoutTagged");
+export const UnexpectedBootloader = createCustomErrorClass(
+  "UnexpectedBootloader"
+);
 export const UpdateYourApp = createCustomErrorClass("UpdateYourApp");
 export const UserRefusedAddress = createCustomErrorClass("UserRefusedAddress");
 export const UserRefusedFirmwareUpdate = createCustomErrorClass(
@@ -86,7 +87,11 @@ export const WrongDeviceForAccount = createCustomErrorClass(
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
 export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
+export const SyncError = createCustomErrorClass("SyncError");
+export const PairingFailed = createCustomErrorClass("PairingFailed");
+export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 
 // db stuff, no need to translate
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
+export const DBNotReset = createCustomErrorClass("DBNotReset");

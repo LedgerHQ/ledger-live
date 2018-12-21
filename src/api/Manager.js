@@ -14,9 +14,10 @@ import {
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError } from "rxjs";
 import { catchError, filter, last, map } from "rxjs/operators";
+import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
 import network from "../network";
-import { MANAGER_API_BASE, BASE_SOCKET_URL } from "../constants";
+import { getEnv } from "../env";
 import type {
   OsuFirmware,
   DeviceVersion,
@@ -24,7 +25,8 @@ import type {
   ApplicationVersion,
   Application,
   Category,
-  Id
+  Id,
+  McuVersion
 } from "../types/manager";
 import { makeLRUCache } from "../cache";
 
@@ -64,7 +66,10 @@ const API = {
     }): Promise<Array<ApplicationVersion>> => {
       const r = await network({
         method: "POST",
-        url: `${MANAGER_API_BASE}/get_apps`,
+        url: URL.format({
+          pathname: `${getEnv("MANAGER_API_BASE")}/get_apps`,
+          query: { livecommonversion }
+        }),
         data: params
       });
       return r.data.application_versions;
@@ -76,7 +81,10 @@ const API = {
   listApps: makeLRUCache(async (): Promise<Array<Application>> => {
     const r = await network({
       method: "GET",
-      url: `${MANAGER_API_BASE}/applications`
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/applications`,
+        query: { livecommonversion }
+      })
     });
     return r.data;
   }, () => ""),
@@ -84,7 +92,10 @@ const API = {
   listCategories: async (): Promise<Array<Category>> => {
     const r = await network({
       method: "GET",
-      url: `${MANAGER_API_BASE}/categories`
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/categories`,
+        query: { livecommonversion }
+      })
     });
     return r.data;
   },
@@ -92,7 +103,10 @@ const API = {
   getMcus: makeLRUCache(async () => {
     const { data } = await network({
       method: "GET",
-      url: `${MANAGER_API_BASE}/mcu_versions`
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/mcu_versions`,
+        query: { livecommonversion }
+      })
     });
     return data;
   }, () => ""),
@@ -116,7 +130,10 @@ const API = {
         }
       } = await network({
         method: "POST",
-        url: `${MANAGER_API_BASE}/get_latest_firmware`,
+        url: URL.format({
+          pathname: `${getEnv("MANAGER_API_BASE")}/get_latest_firmware`,
+          query: { livecommonversion }
+        }),
         data: {
           current_se_firmware_final_version,
           device_version,
@@ -137,10 +154,13 @@ const API = {
       version: string,
       deviceId: string | number,
       provider: number
-    }): Promise<*> => {
+    }): Promise<OsuFirmware> => {
       const { data } = await network({
         method: "POST",
-        url: `${MANAGER_API_BASE}/get_osu_version`,
+        url: URL.format({
+          pathname: `${getEnv("MANAGER_API_BASE")}/get_osu_version`,
+          query: { livecommonversion }
+        }),
         data: {
           device_version: input.deviceId,
           version_name: `${input.version}-osu`,
@@ -152,16 +172,17 @@ const API = {
     a => `${a.version}_${a.deviceId}_${a.provider}`
   ),
 
-  getNextMCU: async (bootloaderVersion: string) => {
-    const { data }: { data: OsuFirmware | "default" } = await network({
-      method: "POST",
-      url: `${MANAGER_API_BASE}/mcu_versions_bootloader`,
-      data: {
-        bootloader_version: bootloaderVersion
-      }
+  getNextBLVersion: async (
+    mcuversion: string | number
+  ): Promise<McuVersion> => {
+    const { data }: { data: McuVersion | "default" } = await network({
+      method: "GET",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/mcu_versions/${mcuversion}`,
+        query: { livecommonversion }
+      })
     });
-    // FIXME: nextVersion will not be able to "default" when
-    // Error handling is standardize on the API side
+
     if (data === "default" || !data.name) {
       throw new LatestMCUInstalledError(
         "there is no next mcu version to install"
@@ -178,7 +199,10 @@ const API = {
     }): Promise<FinalFirmware> => {
       const { data }: { data: FinalFirmware } = await network({
         method: "POST",
-        url: `${MANAGER_API_BASE}/get_firmware_version`,
+        url: URL.format({
+          pathname: `${getEnv("MANAGER_API_BASE")}/get_firmware_version`,
+          query: { livecommonversion }
+        }),
         data: {
           device_version: input.deviceId,
           version_name: input.fullVersion,
@@ -191,10 +215,15 @@ const API = {
   ),
 
   getFinalFirmwareById: makeLRUCache(
-    async (id: number) => {
-      const { data } = await network({
+    async (id: number): Promise<FinalFirmware> => {
+      const { data }: { data: FinalFirmware } = await network({
         method: "GET",
-        url: `${MANAGER_API_BASE}/firmware_final_versions/${id}`
+        url: URL.format({
+          pathname: `${getEnv(
+            "MANAGER_API_BASE"
+          )}/firmware_final_versions/${id}`,
+          query: { livecommonversion }
+        })
       });
       return data;
     },
@@ -208,7 +237,10 @@ const API = {
     ): Promise<DeviceVersion> => {
       const { data }: { data: DeviceVersion } = await network({
         method: "POST",
-        url: `${MANAGER_API_BASE}/get_device_version`,
+        url: URL.format({
+          pathname: `${getEnv("MANAGER_API_BASE")}/get_device_version`,
+          query: { livecommonversion }
+        }),
         data: {
           provider,
           target_id: targetId
@@ -222,8 +254,8 @@ const API = {
   install: (transport: Transport<*>, context: string, params: *) =>
     createDeviceSocket(transport, {
       url: URL.format({
-        pathname: `${BASE_SOCKET_URL}/install`,
-        query: params
+        pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
+        query: { ...params, livecommonversion }
       }),
       ignoreWebsocketErrorDuringBulk: true
     }).pipe(remapSocketError(context)),
@@ -234,8 +266,8 @@ const API = {
   ) =>
     createDeviceSocket(transport, {
       url: URL.format({
-        pathname: `${BASE_SOCKET_URL}/genuine`,
-        query: { targetId, perso }
+        pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
+        query: { targetId, perso, livecommonversion }
       })
     }).pipe(
       last(),
@@ -250,8 +282,8 @@ const API = {
   ) =>
     createDeviceSocket(transport, {
       url: URL.format({
-        pathname: `${BASE_SOCKET_URL}/mcu`,
-        query: { targetId, version }
+        pathname: `${getEnv("BASE_SOCKET_URL")}/mcu`,
+        query: { targetId, version, livecommonversion }
       }),
       ignoreWebsocketErrorDuringBulk: true
     }).pipe(remapSocketError(context))

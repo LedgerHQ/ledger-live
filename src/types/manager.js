@@ -14,6 +14,7 @@ export type LedgerScriptParams = {
 export type DeviceInfo = {
   targetId: string | number,
   seVersion: string,
+  rawVersion: string,
   isBootloader: boolean,
   flags: string,
   mcuVersion: string,
@@ -88,7 +89,11 @@ export type FinalFirmware = BaseFirmware & {
   application_versions: Array<Id>
 };
 
-export type Firmware = OsuFirmware & { shouldFlashMcu: boolean };
+export type FirmwareUpdateContext = {
+  osu: OsuFirmware,
+  final: FinalFirmware,
+  shouldFlashMCU: boolean
+};
 
 export type ApplicationVersion = {
   id: Id,
