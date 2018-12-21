@@ -55,6 +55,7 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
   onUpdatePress = () => {
     const { navigation, deviceId } = this.props;
     const { firmware } = this.state;
+    if (!firmware) return;
     navigation.navigate("FirmwareUpdate", {
       deviceId,
       firmware,

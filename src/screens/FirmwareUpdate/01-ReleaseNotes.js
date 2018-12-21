@@ -8,10 +8,7 @@ import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 
 import manager from "@ledgerhq/live-common/lib/manager";
-import type {
-  OsuFirmware,
-  FinalFirmware,
-} from "@ledgerhq/live-common/lib/types/manager";
+import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import LText, { getFontStyle } from "../../components/LText";
@@ -20,8 +17,7 @@ import colors from "../../colors";
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
-    osu: ?OsuFirmware,
-    final: ?FinalFirmware,
+    firmware: FirmwareUpdateContext,
   },
 }>;
 
@@ -45,8 +41,9 @@ class FirmwareUpdateReleaseNotes extends Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const osu = navigation.getParam("osu");
-    if (!osu) return null;
+    const firmware = navigation.getParam("firmware");
+    if (!firmware) return null;
+    const { osu } = firmware;
     const version = manager.getFirmwareVersion(osu);
     return (
       <SafeAreaView style={styles.root}>
