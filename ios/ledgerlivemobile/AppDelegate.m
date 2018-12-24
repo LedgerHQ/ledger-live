@@ -59,8 +59,6 @@
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-  
-  // fill screen with our own colour
   UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
   UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
   UIImageView *logoView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Blurry"]];
@@ -85,12 +83,9 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-  
-  // grab a reference to our coloured view
   UIView *blurEffectView = [self.window viewWithTag:12345];
   UIView *logoView = [self.window viewWithTag:12346];
   
-  // fade away colour view from main view
   [UIView animateWithDuration:0.5 animations:^{
     blurEffectView.alpha = 0;
     logoView.alpha = 0;
