@@ -8,6 +8,8 @@ import priorityQueue from "async/priorityQueue";
 import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
+import { delay } from "rxjs/operators";
+
 import { updateAccountWithUpdater } from "../actions/accounts";
 import { setAccountSyncState } from "../actions/bridgeSync";
 import {
@@ -16,7 +18,7 @@ import {
 } from "../reducers/bridgeSync";
 import type { BridgeSyncState } from "../reducers/bridgeSync";
 import { accountsSelector, isUpToDateSelector } from "../reducers/accounts";
-import { SYNC_MAX_CONCURRENT } from "../constants";
+import { SYNC_DELAY, SYNC_MAX_CONCURRENT } from "../constants";
 import { getAccountBridge } from ".";
 
 type BridgeSyncProviderProps = {
@@ -81,25 +83,28 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
       this.props.setAccountSyncState(accountId, { pending: true, error: null });
 
       // TODO migrate to the observation mode in future
-      bridge.startSync(account, false).subscribe({
-        next: accountUpdater => {
-          this.props.updateAccountWithUpdater(accountId, accountUpdater);
-        },
-        complete: () => {
-          this.props.setAccountSyncState(accountId, {
-            pending: false,
-            error: null,
-          });
-          next();
-        },
-        error: error => {
-          this.props.setAccountSyncState(accountId, {
-            pending: false,
-            error,
-          });
-          next();
-        },
-      });
+      bridge
+        .startSync(account, false)
+        .pipe(delay(SYNC_DELAY))
+        .subscribe({
+          next: accountUpdater => {
+            this.props.updateAccountWithUpdater(accountId, accountUpdater);
+          },
+          complete: () => {
+            this.props.setAccountSyncState(accountId, {
+              pending: false,
+              error: null,
+            });
+            next();
+          },
+          error: error => {
+            this.props.setAccountSyncState(accountId, {
+              pending: false,
+              error,
+            });
+            next();
+          },
+        });
     };
 
     const syncQueue = priorityQueue(synchronize, SYNC_MAX_CONCURRENT);
