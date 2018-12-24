@@ -53,7 +53,13 @@ class OnboardingStepFinish extends Component<Props> {
         >
           <View style={styles.hero}>{logo}</View>
           <LText style={styles.title} secondary semiBold>
-            <Trans i18nKey="onboarding.stepFinish.title" />
+            <Trans
+              i18nKey={
+                readOnlyModeEnabled
+                  ? "onboarding.stepFinish.readOnlyTitle"
+                  : "onboarding.stepFinish.title"
+              }
+            />
           </LText>
           {!readOnlyModeEnabled && (
             <LText style={styles.desc}>

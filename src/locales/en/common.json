@@ -417,6 +417,7 @@
     "stepShareData": {},
     "stepFinish": {
       "title": "Your device is ready!",
+      "readOnlyTitle": "All set!",
       "desc": "Install some apps on your device and access your portfolio",
       "cta": "Open Ledger Live"
     },
