@@ -39,7 +39,7 @@ class ValidationError extends Component<Props> {
   };
 
   contactUs = () => {
-    Linking.openURL(urls.faq);
+    Linking.openURL(urls.contact);
   };
 
   retry = () => {

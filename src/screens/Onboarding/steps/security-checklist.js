@@ -81,7 +81,7 @@ class OnboardingStepSecurityChecklist extends Component<
     }
   };
 
-  contactSupport = () => Linking.openURL(urls.faq);
+  contactSupport = () => Linking.openURL(urls.contact);
 
   scrollView = createRef();
 
