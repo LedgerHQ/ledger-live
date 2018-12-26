@@ -32,7 +32,8 @@
     "yesterday": "Yesterday",
     "upToDate": "Up to date",
     "outdated": "Outdated",
-    "satPerByte": "sat/bytes"
+    "satPerByte": "sat/bytes",
+    "notAvailable": "Not available"
   },
   "errors": {
     "AccountNameRequired": {
