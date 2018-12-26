@@ -258,7 +258,7 @@ type SortMethod = "name" | "balance";
 const sortMethod: { [_: SortMethod]: (SortAccountsParam) => string[] } = {
   balance: ({ accounts, accountsBtcBalance }) =>
     accounts
-      .map((a, i) => [a.id, accountsBtcBalance[i], a.name])
+      .map((a, i) => [a.id, accountsBtcBalance[i] || BigNumber(-1), a.name])
       .sort((a, b) => {
         const numOrder = a[1].minus(b[1]).toNumber();
         if (numOrder === 0) {
