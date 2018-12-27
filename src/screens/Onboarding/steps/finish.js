@@ -42,15 +42,12 @@ class OnboardingStepFinish extends Component<Props> {
   render() {
     const { readOnlyModeEnabled } = this.props;
     return (
-      <View style={{ flex: 1, backgroundColor: "white" }}>
+      <View style={styles.wrapper}>
         <TrackScreen category="Onboarding" name="Finish" />
         <View style={styles.confettiContainer} pointerEvents="none">
           <ConfettiParty emit={false} />
         </View>
-        <OnboardingLayout
-          isCentered
-          style={{ borderWidth: 1, backgroundColor: "transparent" }}
-        >
+        <OnboardingLayout isCentered style={styles.onboardingLayout}>
           <View style={styles.hero}>{logo}</View>
           <LText style={styles.title} secondary semiBold>
             <Trans
@@ -85,6 +82,7 @@ const styles = StyleSheet.create({
   hero: {
     alignItems: "center",
   },
+  onboardingLayout: { backgroundColor: "transparent" },
   confettiContainer: {
     position: "absolute",
     top: 0,
@@ -92,6 +90,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  wrapper: { flex: 1, backgroundColor: "white" },
   buttonContainer: {
     flexGrow: 1,
   },
