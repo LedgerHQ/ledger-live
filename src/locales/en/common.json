@@ -340,6 +340,7 @@
       "OnboardingStepPairNew": "Pair your {{fullDeviceName}}",
       "OnboardingStepPassword": "Password lock",
       "OnboardingStepScanQR": "Import desktop accounts",
+      "OnboardingStepGetStarted": "Ledger Nano X",
       "OnboardingStepShareData": "Analytics and bug reports"
     },
     "stepWelcome": {
@@ -351,16 +352,23 @@
     },
     "stepGetStarted": {
       "title": "Get started",
+      "withNanoX": "I have a {{fullDeviceName}}",
+      "withoutNanoX": "I don’t have a {{fullDeviceName}}",
       "import": "Import desktop accounts",
       "initialize": "Initialize as a new device",
       "restore": "Restore from a recovery phrase",
       "initialized": "Use initialized device",
-      "buy": "No device? Buy a {{fullDeviceName}}"
+      "buy": "Buy a {{fullDeviceName}}"
     },
     "stepChooseDevice": {
       "desktopOnly": "Desktop app only",
       "fallbackTitle": "Import your {{oldDeviceName}} accounts",
       "fallbackDesc": "You can import your {{oldDeviceName}} accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a {{fullDeviceName}}."
+    },
+    "stepLegacy": {
+      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X",
+      "description": "You can import your accounts from Ledger Live desktop to check your balance on the go. ",
+      "buy": "Buy a Ledger Nano X"
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}}.",

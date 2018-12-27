@@ -12,6 +12,7 @@ import type {
   OnboardingContextType,
   OnboardingContextProviderProps,
   SetOnboardingModeType,
+  SetOnboardingDeviceModelType,
 } from "./types";
 
 const INITIAL_CONTEXT: OnboardingContextType = {
@@ -23,15 +24,17 @@ const INITIAL_CONTEXT: OnboardingContextType = {
   // prop, passed to steps components
   mode: "full",
 
-  // wether or not should "welcome to ledger live" in first step
+  // whether or not should "welcome to ledger live" in first step
   showWelcome: true,
 
+  deviceModel: "nanoX",
   setSecurityKey: noop,
   setShowWelcome: noop,
   resetCurrentStep: noop,
   nextWithNavigation: noop,
   prevWithNavigation: noop,
   setOnboardingMode: noop,
+  setOnboardingDeviceModel: noop,
   syncNavigation: noop,
 };
 
@@ -55,6 +58,7 @@ export class OnboardingContextProvider extends PureComponent<
       nextWithNavigation: this.next,
       prevWithNavigation: this.prev,
       setOnboardingMode: this.setOnboardingMode,
+      setOnboardingDeviceModel: this.setOnboardingDeviceModel,
       syncNavigation: this.syncNavigation,
     };
   }
@@ -79,6 +83,9 @@ export class OnboardingContextProvider extends PureComponent<
   // Replace current steps with steps of given mode
   setOnboardingMode: SetOnboardingModeType = mode =>
     new Promise(resolve => this.setState({ mode }, resolve));
+
+  setOnboardingDeviceModel: SetOnboardingDeviceModelType = deviceModel =>
+    new Promise(resolve => this.setState({ deviceModel }, resolve));
 
   setShowWelcome = (showWelcome: boolean) =>
     new Promise(r => this.setState({ showWelcome }, r));

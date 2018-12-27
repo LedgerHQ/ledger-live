@@ -23,6 +23,7 @@ type Props = Container & {
   withSkip?: boolean,
   withNeedHelp?: boolean,
   Footer?: React$ComponentType<*>,
+  titleOverride?: string,
 };
 
 export default class OnboardingLayout extends PureComponent<Props> {
@@ -40,6 +41,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
       withNeedHelp,
       withSkip,
       noScroll,
+      titleOverride,
     } = this.props;
 
     let inner: React$Node = children;
@@ -81,6 +83,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
             stepId={header}
             withSkip={withSkip}
             withNeedHelp={withNeedHelp}
+            titleOverride={titleOverride}
           />
           <OnboardingInner
             noHorizontalPadding={noHorizontalPadding}

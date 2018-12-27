@@ -1,68 +1,25 @@
 // @flow
-
 import React, { Component, PureComponent } from "react";
-import { StyleSheet, View, Linking, BackHandler } from "react-native";
-import { createStructuredSelector } from "reselect";
-import { connect } from "react-redux";
+import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 
-import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
+import type { OnboardingStepProps } from "../types";
 import { TrackScreen } from "../../../analytics";
 import OnboardingLayout from "../OnboardingLayout";
-import OnboardingStepWelcome from "./welcome";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
-import Circle from "../../../components/Circle";
-import Close from "../../../icons/Close";
 import { withOnboardingContext } from "../onboardingContext";
 import IconImport from "../../../icons/Import";
 import IconCheck from "../../../icons/Check";
 import IconRestore from "../../../icons/History";
-import IconTruck from "../../../icons/Truck";
 import colors from "../../../colors";
-import type { OnboardingStepProps } from "../types";
 import { urls } from "../../../config/urls";
 import { deviceNames } from "../../../wording";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
-const CloseOnboarding = ({ navigation }: *) => (
-  <Touchable
-    event="OnboardingClose"
-    style={styles.close}
-    onPress={() => {
-      navigation.navigate(navigation.getParam("goingBackToScreen"));
-    }}
-  >
-    <Circle size={28} bg={colors.lightFog}>
-      <Close size={14} color={colors.grey} />
-    </Circle>
-  </Touchable>
-);
-
-class OnboardingStepGetStarted extends Component<
-  OnboardingStepProps & {
-    hasCompletedOnboarding: boolean,
-  },
-> {
-  componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
-  }
-
-  handleBackButton = () => {
-    const { navigation, hasCompletedOnboarding } = this.props;
-    if (hasCompletedOnboarding) {
-      navigation.navigate(navigation.getParam("goingBackToScreen"));
-      return true;
-    }
-    return false;
-  };
-
+class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
   onInitialized = async () => {
     await this.props.setOnboardingMode("alreadyInitialized");
     this.props.next();
@@ -83,33 +40,17 @@ class OnboardingStepGetStarted extends Component<
     this.props.next();
   };
 
-  onBuy = () => Linking.openURL(urls.buyNanoX);
-  onWelcome = () => this.props.setShowWelcome(false);
-
   render() {
-    const { showWelcome, hasCompletedOnboarding, navigation } = this.props;
-
-    if (showWelcome) {
-      return (
-        <OnboardingStepWelcome {...this.props} onWelcomed={this.onWelcome} />
-      );
-    }
-
     return (
-      <OnboardingLayout isFull>
+      <OnboardingLayout header="OnboardingStepGetStarted">
         <TrackScreen category="Onboarding" name="GetStarted" />
-        {hasCompletedOnboarding ? (
-          <CloseOnboarding navigation={navigation} />
-        ) : null}
-        <LText style={styles.title} secondary semiBold>
-          <Trans i18nKey="onboarding.stepGetStarted.title" />
+
+        <LText style={styles.subtitle} secondary semiBold>
+          <Trans
+            i18nKey="onboarding.stepGetStarted.withNanoX"
+            values={deviceNames.nanoX}
+          />
         </LText>
-        <Row
-          id="import"
-          Icon={IconImport}
-          label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
-          onPress={this.onImport}
-        />
         <Row
           id="initialize"
           Icon={IconPlus}
@@ -128,17 +69,32 @@ class OnboardingStepGetStarted extends Component<
           label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
           onPress={this.onInitialized}
         />
+
+        <LText style={[styles.subtitle, styles.extraMargin]} secondary semiBold>
+          <Trans
+            i18nKey="onboarding.stepGetStarted.withoutNanoX"
+            values={deviceNames.nanoX}
+          />
+        </LText>
         <Row
-          id="buy"
-          Icon={IconTruck}
-          label={
+          id="import"
+          Icon={IconImport}
+          label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
+          onPress={this.onImport}
+        />
+        <Touchable
+          event="BuyNanoX"
+          style={styles.footer}
+          onPress={() => Linking.openURL(urls.buyNanoX)}
+        >
+          <LText style={styles.footerText} semiBold>
             <Trans
               i18nKey="onboarding.stepGetStarted.buy"
               values={deviceNames.nanoX}
             />
-          }
-          onPress={this.onBuy}
-        />
+          </LText>
+          <Icon size={16} name="chevron-right" color={colors.live} />
+        </Touchable>
       </OnboardingLayout>
     );
   }
@@ -178,10 +134,14 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     marginVertical: 32,
   },
-  close: {
-    position: "absolute",
-    right: 16,
-    top: 16,
+  subtitle: {
+    marginHorizontal: 1,
+    fontSize: 14,
+    color: colors.smoke,
+    marginBottom: 16,
+  },
+  extraMargin: {
+    marginTop: 32,
   },
   row: {
     paddingHorizontal: 16,
@@ -201,10 +161,16 @@ const styles = StyleSheet.create({
     width: 16,
     marginRight: 16,
   },
+  footer: {
+    marginTop: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  footerText: {
+    fontSize: 14,
+    color: colors.live,
+  },
 });
 
-export default connect(
-  createStructuredSelector({
-    hasCompletedOnboarding: hasCompletedOnboardingSelector,
-  }),
-)(withOnboardingContext(OnboardingStepGetStarted));
+export default withOnboardingContext(OnboardingStepGetStarted);
