@@ -100,14 +100,14 @@ class OnboardingStepChooseDevice extends Component<
           eventProperties={{ product: "NanoX" }}
           title={deviceNames.nanoX.fullDeviceName}
           onPress={this.chooseNanoX}
-          Icon={NanoSVertical}
+          Icon={NanoXVertical}
         />
         <DeviceItem
           event="OnboardingDevice"
           eventProperties={{ product: "NanoS" }}
           title={deviceNames.nanoS.fullDeviceName}
           onPress={this.chooseNanoS}
-          Icon={NanoXVertical}
+          Icon={NanoSVertical}
         />
         <DeviceItem
           event="OnboardingDevice"
@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 36,
     margin: 16,
+    marginLeft: 0,
   },
   deviceItem: {
     paddingVertical: 24,

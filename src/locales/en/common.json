@@ -352,13 +352,10 @@
     },
     "stepGetStarted": {
       "title": "Get started",
-      "withNanoX": "I have a {{fullDeviceName}}",
-      "withoutNanoX": "I don’t have a {{fullDeviceName}}",
       "import": "Import desktop accounts",
       "initialize": "Initialize as a new device",
       "restore": "Restore from a recovery phrase",
-      "initialized": "Use initialized device",
-      "buy": "Buy a {{fullDeviceName}}"
+      "initialized": "Use initialized device"
     },
     "stepChooseDevice": {
       "desktopOnly": "Desktop app only",

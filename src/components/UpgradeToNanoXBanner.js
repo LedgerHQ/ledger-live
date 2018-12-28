@@ -6,9 +6,9 @@ import { Trans } from "react-i18next";
 import colors from "../colors";
 
 import LText from "./LText";
-import SmallNanoX from "../icons/SmallNanoX";
 import IconArrowRight from "../icons/ArrowRight";
 import Touchable from "./Touchable";
+import NanoXVertical from "../screens/Onboarding/assets/NanoXVertical";
 
 type Props = {
   action?: () => *,
@@ -27,7 +27,7 @@ class UpgradeToNanoXBanner extends PureComponent<Props> {
 
     return (
       <View style={styles.wrapper}>
-        <SmallNanoX style={styles.icon} />
+        <NanoXVertical style={styles.icon} size={56} />
         <View style={styles.textWrapper}>
           <LText style={styles.text}>
             <Trans i18nKey="onboarding.stepLegacy.bannerDescription" />
@@ -60,7 +60,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    paddingHorizontal: 24,
+    marginRight: 20,
+    marginLeft: 16,
   },
   textWrapper: {
     flex: 1,
