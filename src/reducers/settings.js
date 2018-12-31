@@ -52,6 +52,7 @@ export type SettingsState = {
   orderAccounts: string,
   hasCompletedOnboarding: boolean,
   hasAcceptedTradingWarning: boolean,
+  hasInstalledAnyApp: boolean,
   developerModeEnabled: boolean,
   readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
@@ -69,6 +70,7 @@ const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasAcceptedTradingWarning: false,
+  hasInstalledAnyApp: false,
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
 };
@@ -200,6 +202,11 @@ const handlers: Object = {
     hasAcceptedTradingWarning: true,
   }),
 
+  SETTINGS_INSTALL_ANY_APP: state => ({
+    ...state,
+    hasInstalledAnyApp: true,
+  }),
+
   SETTINGS_SET_READONLY_MODE: (state, action) => ({
     ...state,
     readOnlyModeEnabled: action.enabled,
@@ -293,6 +300,9 @@ export const hasCompletedOnboardingSelector = (state: State) =>
 
 export const hasAcceptedTradingWarningSelector = (state: State) =>
   state.settings.hasAcceptedTradingWarning;
+
+export const hasInstalledAnyAppSelector = (state: State) =>
+  state.settings.hasInstalledAnyApp;
 
 export const readOnlyModeEnabledSelector = (state: State) =>
   state.settings.readOnlyModeEnabled;

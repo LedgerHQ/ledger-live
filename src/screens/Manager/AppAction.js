@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
@@ -21,6 +22,7 @@ import Spinning from "../../components/Spinning";
 import { deviceNames } from "../../wording";
 import colors from "../../colors";
 import AppIcon from "./AppIcon";
+import { installAnyApp } from "../../actions/settings";
 
 class PendingProgress extends PureComponent<{
   progress: number,
@@ -62,6 +64,9 @@ const hwCallPerType = {
 };
 
 const forceInset = { bottom: "always" };
+const mapDispatchToProps = {
+  installAnyApp,
+};
 
 class AppAction extends PureComponent<
   {
@@ -73,6 +78,7 @@ class AppAction extends PureComponent<
     deviceId: string,
     onClose: () => void,
     isOpened: boolean,
+    installAnyApp: () => void,
   },
   {
     pending: boolean,
@@ -93,6 +99,7 @@ class AppAction extends PureComponent<
       deviceId,
       targetId,
       action: { type, app },
+      installAnyApp,
     } = this.props;
     const hwCall = hwCallPerType[type];
     this.sub = withDevice(deviceId)(transport =>
@@ -103,6 +110,7 @@ class AppAction extends PureComponent<
       },
       complete: () => {
         this.setState({ pending: false, error: null });
+        installAnyApp();
       },
       error: error => {
         this.setState({ pending: false, error });
@@ -266,4 +274,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppAction;
+export default connect(
+  null,
+  mapDispatchToProps,
+)(AppAction);

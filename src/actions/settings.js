@@ -104,3 +104,6 @@ export const completeOnboarding = () => ({
 export const acceptTradingWarning = () => ({
   type: "SETTINGS_ACCEPT_TRADING_WARNING",
 });
+export const installAnyApp = () => ({
+  type: "SETTINGS_INSTALL_ANY_APP",
+});
