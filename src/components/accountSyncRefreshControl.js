@@ -9,6 +9,7 @@ import type { AsyncState } from "../reducers/bridgeSync";
 import { accountSyncStateSelector } from "../reducers/bridgeSync";
 import { BridgeSyncConsumer } from "../bridge/BridgeSyncContext";
 import CounterValues from "../countervalues";
+import { SYNC_DELAY } from "../constants";
 
 const mapStateToProps = createStructuredSelector({
   accountSyncState: accountSyncStateSelector,
@@ -84,7 +85,7 @@ export default (ScrollListLike: any) => {
       this.setState({ lastClickTime: Date.now(), refreshing: true }, () => {
         this.timeout = setTimeout(() => {
           this.setState({ refreshing: false });
-        }, 100);
+        }, SYNC_DELAY);
       });
     };
 
