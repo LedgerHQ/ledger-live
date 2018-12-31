@@ -42,27 +42,36 @@ class OnboardingStepFinish extends Component<Props> {
   render() {
     const { readOnlyModeEnabled } = this.props;
     return (
-      <View style={{ flex: 1, backgroundColor: "white" }}>
+      <View style={styles.wrapper}>
         <TrackScreen category="Onboarding" name="Finish" />
         <View style={styles.confettiContainer} pointerEvents="none">
           <ConfettiParty emit={false} />
         </View>
-        <OnboardingLayout isCentered style={{ backgroundColor: "transparent" }}>
+        <OnboardingLayout isCentered style={styles.onboardingLayout}>
           <View style={styles.hero}>{logo}</View>
           <LText style={styles.title} secondary semiBold>
-            <Trans i18nKey="onboarding.stepFinish.title" />
+            <Trans
+              i18nKey={
+                readOnlyModeEnabled
+                  ? "onboarding.stepFinish.readOnlyTitle"
+                  : "onboarding.stepFinish.title"
+              }
+            />
           </LText>
           {!readOnlyModeEnabled && (
             <LText style={styles.desc}>
               <Trans i18nKey="onboarding.stepFinish.desc" />
             </LText>
           )}
-          <Button
-            event="OnboardingFinish"
-            type="primary"
-            title={<Trans i18nKey="onboarding.stepFinish.cta" />}
-            onPress={this.onFinish}
-          />
+          <View style={styles.buttonWrapper}>
+            <Button
+              event="OnboardingFinish"
+              type="primary"
+              containerStyle={styles.buttonContainer}
+              title={<Trans i18nKey="onboarding.stepFinish.cta" />}
+              onPress={this.onFinish}
+            />
+          </View>
         </OnboardingLayout>
       </View>
     );
@@ -73,12 +82,21 @@ const styles = StyleSheet.create({
   hero: {
     alignItems: "center",
   },
+  onboardingLayout: { backgroundColor: "transparent" },
   confettiContainer: {
     position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     height: "100%",
+  },
+  wrapper: { flex: 1, backgroundColor: "white" },
+  buttonContainer: {
+    flexGrow: 1,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    width: "100%",
   },
   title: {
     marginTop: 24,
