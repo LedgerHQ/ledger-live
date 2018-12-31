@@ -193,19 +193,14 @@ class AppAction extends PureComponent<
           <View style={styles.buttonsContainer}>
             <Button
               event="ManagerAppActionDone"
-              type={
-                error || (!pending && action.type === "uninstall")
-                  ? "primary"
-                  : "secondary"
-              }
+              type={error ? "primary" : "secondary"}
               containerStyle={styles.button}
               onPress={onClose}
               disabled={pending}
               title={buttonTitle}
             />
             {!error &&
-              !pending &&
-              action.type === "install" && (
+              !pending && (
                 <Button
                   event="ManagerAppActionDoneGoToAccounts"
                   type="primary"
