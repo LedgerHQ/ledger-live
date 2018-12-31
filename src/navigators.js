@@ -165,7 +165,7 @@ const ManagerMain = createMaterialTopTabNavigator(
       },
       style: {
         backgroundColor: colors.white,
-        ...styles.header,
+        height: 48,
       },
       indicatorStyle: {
         backgroundColor: colors.live,
