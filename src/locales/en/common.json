@@ -928,7 +928,8 @@
         "button_plural": "Installing... {{progressPercentage}}%"
       },
       "done": {
-        "title": "Successfully installed {{appName}} on your {{fullDeviceName}}"
+        "title": "Successfully installed {{appName}} on your {{fullDeviceName}}",
+        "accounts": "Go to accounts"
       }
     },
     "uninstall": {

@@ -99,6 +99,11 @@ class ManagerAppsList extends Component<
     this.setState({ action: null });
   };
 
+  onActionOpenAccounts = () => {
+    const { navigation } = this.props;
+    this.setState({ action: null }, () => navigation.navigate("Accounts"));
+  };
+
   onInstall = (app: ApplicationVersion) => {
     this.setState({
       action: { type: "install", app },
@@ -163,6 +168,7 @@ class ManagerAppsList extends Component<
             key={actionKey(action)}
             action={action}
             onClose={this.onActionClose}
+            onOpenAccounts={this.onActionOpenAccounts}
             deviceId={deviceId}
             targetId={deviceInfo.targetId}
             isOpened={!!action}
