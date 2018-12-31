@@ -106,7 +106,7 @@ class ReceiveConfirmation extends Component<Props, State> {
   }
 
   contactUs = () => {
-    Linking.openURL(urls.faq);
+    Linking.openURL(urls.contact);
   };
 
   verifyOnDevice = async (deviceId: string) => {
