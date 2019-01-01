@@ -804,9 +804,9 @@
       "existing": "Existing accounts"
     },
     "success": {
-      "desc": "Add more accounts or view your current ones",
-      "cta": "Add more accounts",
-      "secondaryCTA": "Go to accounts"
+      "desc": "View your accounts or add more of them",
+      "secondaryCTA": "Add more accounts",
+      "cta": "Go to accounts"
     },
     "stopScanning": "Stop scanning",
     "retryScanning": "Retry scanning",

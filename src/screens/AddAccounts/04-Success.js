@@ -6,6 +6,7 @@ import { StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
+import Icon from "react-native-vector-icons/dist/Feather";
 import colors, { rgba } from "../../colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -24,17 +25,19 @@ type Props = {
 
 type State = {};
 
+const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
+
 class AddAccountsSuccess extends Component<Props, State> {
   static navigationOptions = {
     header: null,
   };
 
   primaryCTA = () => {
-    this.props.navigation.navigate("AddAccountsSelectCrypto");
+    this.props.navigation.navigate("Accounts");
   };
 
   secondaryCTA = () => {
-    this.props.navigation.navigate("Accounts");
+    this.props.navigation.navigate("AddAccountsSelectCrypto");
   };
 
   render() {
@@ -52,14 +55,15 @@ class AddAccountsSuccess extends Component<Props, State> {
         </LText>
         <View style={styles.buttonsContainer}>
           <Button
-            event="AddAccountsAgain"
+            event="AddAccountsDone"
             containerStyle={styles.button}
             type="primary"
             title={<Trans i18nKey="addAccounts.success.cta" />}
             onPress={this.primaryCTA}
           />
           <Button
-            event="AddAccountsDone"
+            event="AddAccountsAgain"
+            IconLeft={IconPlus}
             onPress={this.secondaryCTA}
             type="lightSecondary"
             title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
@@ -122,13 +126,13 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 32,
-    fontSize: 16,
+    fontSize: 18,
     color: colors.darkBlue,
   },
   desc: {
     marginTop: 16,
     marginBottom: 32,
-    marginHorizontal: 8,
+    marginHorizontal: 32,
     textAlign: "center",
     fontSize: 14,
     color: colors.grey,
