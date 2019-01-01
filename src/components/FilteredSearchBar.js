@@ -79,6 +79,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             placeholder={t("common.search")}
             placeholderTextColor={colors.grey}
             style={styles.input}
+            containerStyle={styles.inputContainer}
             value={query}
             ref={this.input}
             clearButtonMode="always"
@@ -115,6 +116,9 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     paddingVertical: 0,
     ...getFontStyle({ secondary: true, semiBold: true }),
+  },
+  inputContainer: {
+    flex: 1,
   },
 });
 

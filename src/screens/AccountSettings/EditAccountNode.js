@@ -113,7 +113,10 @@ class EditAccountNode extends PureComponent<Props, State> {
     return (
       <SafeAreaView style={styles.safeArea}>
         <KeyboardView style={styles.body}>
-          <ScrollView contentContainerStyle={styles.root}>
+          <ScrollView
+            contentContainerStyle={styles.root}
+            keyboardShouldPersistTaps="handled"
+          >
             <TextInput
               autoFocus
               style={styles.textInputAS}
