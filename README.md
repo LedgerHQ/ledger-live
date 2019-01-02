@@ -84,6 +84,26 @@ cp .env.staging .env
   - if you miss a certificate problem, please contact gre.
 - commit the Info.plist but NOT the ledgerlivemobile.xcodeproj changes.
 
+### Release on Android playstore
+
+Before the release, you need to manually update the `android/app/build.gradle` and:
+
+- increment versionCode
+- set the correct versionName (that is same as the package.json)
+
+**Then to build it:**
+
+You need to have access to the Android Console.
+You also need to have our Android Keystore certificate.
+
+Then, you can run:
+
+```
+ANDROID_KEYSTORE=_path_to_jks_file_ yarn android:release
+```
+
+it will tell you where the build is, yo can then go to Android Console and upload it.
+
 ## Troubleshooting
 
 ### XCode 10
