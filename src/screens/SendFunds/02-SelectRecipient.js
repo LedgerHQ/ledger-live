@@ -213,6 +213,7 @@ class SendSelectRecipient extends Component<Props, State> {
                 onChangeText={this.onChangeText}
                 value={address}
                 ref={this.input}
+                multiline
                 blurOnSubmit
                 autoCapitalize="none"
                 clearButtonMode="always"
