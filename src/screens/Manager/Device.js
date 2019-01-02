@@ -53,9 +53,9 @@ class DeviceLabel extends Component<Props & { tintColor: string }, State> {
   async componentDidMount() {
     const { navigation } = this.props;
     const { deviceInfo } = navigation.getParam("meta");
-    const { osu, final } = await manager
-      .getLatestFirmwareForDevice(deviceInfo)
-      .catch(() => null);
+    const firmware = await manager.getLatestFirmwareForDevice(deviceInfo);
+    if (!firmware) return;
+    const { osu, final } = firmware;
     this.setState({
       haveUpdate: !!osu,
       osu,
