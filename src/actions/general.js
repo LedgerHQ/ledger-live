@@ -37,17 +37,14 @@ const selectAccountsBalanceAndOrder = createStructuredSelector({
 
 export const refreshAccountsOrdering = () => (dispatch: *, getState: *) => {
   const all = selectAccountsBalanceAndOrder(getState());
-  const allRatesAvailable = all.accountsBtcBalance.every(b => !!b);
-  if (allRatesAvailable) {
-    const payload = sortAccounts(all);
-    if (!payload) return;
-    const accounts = accountsSelector(getState()).map(a => a.id);
-    if (!isEqual(accounts, payload)) {
-      dispatch({
-        type: "REORDER_ACCOUNTS",
-        payload,
-      });
-    }
+  const payload = sortAccounts(all);
+  if (!payload) return;
+  const accounts = accountsSelector(getState()).map(a => a.id);
+  if (!isEqual(accounts, payload)) {
+    dispatch({
+      type: "REORDER_ACCOUNTS",
+      payload,
+    });
   }
 };
 

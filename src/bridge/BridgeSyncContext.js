@@ -8,6 +8,7 @@ import priorityQueue from "async/priorityQueue";
 import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
+
 import { updateAccountWithUpdater } from "../actions/accounts";
 import { setAccountSyncState } from "../actions/bridgeSync";
 import {
@@ -103,7 +104,6 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
     };
 
     const syncQueue = priorityQueue(synchronize, SYNC_MAX_CONCURRENT);
-
     let skipUnderPriority: number = -1;
 
     const schedule = (_ids: string[], priority: number) => {

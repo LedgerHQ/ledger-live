@@ -32,7 +32,8 @@
     "yesterday": "Yesterday",
     "upToDate": "Up to date",
     "outdated": "Outdated",
-    "satPerByte": "sat/bytes"
+    "satPerByte": "sat/bytes",
+    "notAvailable": "Not available"
   },
   "errors": {
     "AccountNameRequired": {
@@ -340,6 +341,7 @@
       "OnboardingStepPairNew": "Pair your {{fullDeviceName}}",
       "OnboardingStepPassword": "Password lock",
       "OnboardingStepScanQR": "Import desktop accounts",
+      "OnboardingStepGetStarted": "Ledger Nano X",
       "OnboardingStepShareData": "Analytics and bug reports"
     },
     "stepWelcome": {
@@ -354,13 +356,17 @@
       "import": "Import desktop accounts",
       "initialize": "Initialize as a new device",
       "restore": "Restore from a recovery phrase",
-      "initialized": "Use initialized device",
-      "buy": "No device? Buy a {{fullDeviceName}}"
+      "initialized": "Use initialized device"
     },
     "stepChooseDevice": {
       "desktopOnly": "Desktop app only",
       "fallbackTitle": "Import your {{oldDeviceName}} accounts",
       "fallbackDesc": "You can import your {{oldDeviceName}} accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a {{fullDeviceName}}."
+    },
+    "stepLegacy": {
+      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X",
+      "description": "You can import your accounts from Ledger Live desktop to check your balance on the go. ",
+      "buy": "Buy a Ledger Nano X"
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}}.",
@@ -417,6 +423,7 @@
     "stepShareData": {},
     "stepFinish": {
       "title": "Your device is ready!",
+      "readOnlyTitle": "All set!",
       "desc": "Install some apps on your device and access your portfolio",
       "cta": "Open Ledger Live"
     },
@@ -448,6 +455,7 @@
     "emptyState": {
       "title": "Add accounts to your portfolio",
       "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
+      "descWithApp": "Add accounts once you've installed apps on your device in Manager",
       "buttons": {
         "import": "Add accounts",
         "manager": "Open Manager"
@@ -460,7 +468,7 @@
     "tradingDisclaimer": {
       "title": "Trade Safely",
       "text1": "Before sending and receiving crypto assets, educate yourself to make informed decisions. Crypto assets are volatile and the prices can go up and down. Carefully evaluate your trading goals and the financial risk you are willing to take.",
-      "text2": "Please beware that Ledger does not provide financial, tax, or legal advice. You should take such decisions on your own or rely on opinions of licensed experts."
+      "text2": "Please be aware that Ledger does not provide financial, tax, or legal advice. You should take such decisions on your own or rely on opinions of licensed experts."
     }
   },
   "addAccountsModal": {
@@ -802,9 +810,9 @@
       "existing": "Existing accounts"
     },
     "success": {
-      "desc": "Add more accounts or view your current ones",
-      "cta": "Add more accounts",
-      "secondaryCTA": "Go to accounts"
+      "desc": "View your accounts or add more of them",
+      "secondaryCTA": "Add more accounts",
+      "cta": "Go to accounts"
     },
     "stopScanning": "Stop scanning",
     "retryScanning": "Retry scanning",
@@ -926,7 +934,8 @@
         "button_plural": "Installing... {{progressPercentage}}%"
       },
       "done": {
-        "title": "Successfully installed {{appName}} on your {{fullDeviceName}}"
+        "title": "Successfully installed {{appName}} on your {{fullDeviceName}}",
+        "accounts": "Go to accounts"
       }
     },
     "uninstall": {

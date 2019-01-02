@@ -7,12 +7,14 @@ type StepsByMode = {
   alreadyInitialized: Step[],
   qrcode: Step[],
   restore: Step[],
+  legacyNanoS: Step[],
+  legacyBlue: Step[],
 };
 
 const steps: StepsByMode = {
   full: [
-    { id: "OnboardingStepGetStarted", isGhost: true },
-    { id: "OnboardingStepChooseDevice" },
+    { id: "OnboardingStepChooseDevice", isGhost: true },
+    { id: "OnboardingStepGetStarted" },
     { id: "OnboardingStepSetupPin" },
     { id: "OnboardingStepWriteRecovery" },
     { id: "OnboardingStepSecurityChecklist" },
@@ -21,9 +23,25 @@ const steps: StepsByMode = {
     { id: "OnboardingStepShareData" },
     { id: "OnboardingStepFinish", isGhost: true },
   ],
+  legacyBlue: [
+    { id: "OnboardingStepChooseDevice", isGhost: true },
+    { id: "OnboardingStepLegacy" },
+    { id: "OnboardingStepScanQR" },
+    { id: "OnboardingStepPassword" },
+    { id: "OnboardingStepShareData" },
+    { id: "OnboardingStepFinish", isGhost: true },
+  ],
+  legacyNanoS: [
+    { id: "OnboardingStepChooseDevice", isGhost: true },
+    { id: "OnboardingStepLegacy" },
+    { id: "OnboardingStepScanQR" },
+    { id: "OnboardingStepPassword" },
+    { id: "OnboardingStepShareData" },
+    { id: "OnboardingStepFinish", isGhost: true },
+  ],
   restore: [
-    { id: "OnboardingStepGetStarted", isGhost: true },
-    { id: "OnboardingStepChooseDevice" },
+    { id: "OnboardingStepChooseDevice", isGhost: true },
+    { id: "OnboardingStepGetStarted" },
     { id: "OnboardingStepSetupPin" },
     { id: "OnboardingStepWriteRecovery" },
     { id: "OnboardingStepSecurityChecklist" },
@@ -33,8 +51,8 @@ const steps: StepsByMode = {
     { id: "OnboardingStepFinish", isGhost: true },
   ],
   alreadyInitialized: [
-    { id: "OnboardingStepGetStarted", isGhost: true },
-    { id: "OnboardingStepChooseDevice" },
+    { id: "OnboardingStepChooseDevice", isGhost: true },
+    { id: "OnboardingStepGetStarted" },
     { id: "OnboardingStepSecurityChecklist" },
     { id: "OnboardingStepPairNew" },
     { id: "OnboardingStepPassword" },
@@ -42,7 +60,8 @@ const steps: StepsByMode = {
     { id: "OnboardingStepFinish", isGhost: true },
   ],
   qrcode: [
-    { id: "OnboardingStepGetStarted", isGhost: true },
+    { id: "OnboardingStepChooseDevice", isGhost: true },
+    { id: "OnboardingStepGetStarted" },
     { id: "OnboardingStepScanQR" },
     { id: "OnboardingStepPassword" },
     { id: "OnboardingStepShareData" },

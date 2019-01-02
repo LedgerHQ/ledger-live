@@ -1,64 +1,53 @@
 // @flow
-import React, { Component, PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/Feather";
 
-import type { OnboardingStepProps } from "../types";
+import React, { Component, PureComponent } from "react";
+import { StyleSheet, View, Linking } from "react-native";
+import { Trans } from "react-i18next";
+
 import { TrackScreen } from "../../../analytics";
 import OnboardingLayout from "../OnboardingLayout";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import { withOnboardingContext } from "../onboardingContext";
-import IconCheck from "../../../icons/Check";
-import IconRestore from "../../../icons/History";
+import IconImport from "../../../icons/Import";
 import colors from "../../../colors";
+import type { OnboardingStepProps } from "../types";
+import { urls } from "../../../config/urls";
+import { deviceNames } from "../../../wording";
+import UpgradeToNanoXBanner from "../../../components/UpgradeToNanoXBanner";
 
-const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
-
-class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
-  onInitialized = async () => {
-    await this.props.setOnboardingMode("alreadyInitialized");
-    this.props.next();
-  };
-
-  onInit = async () => {
-    await this.props.setOnboardingMode("full");
-    this.props.next();
-  };
-
+class OnboardingStepLegacy extends Component<OnboardingStepProps> {
   onImport = async () => {
-    await this.props.setOnboardingMode("qrcode");
     this.props.next();
   };
 
-  onRestore = async () => {
-    await this.props.setOnboardingMode("restore");
-    this.props.next();
-  };
+  onBuy = () => Linking.openURL(urls.buyNanoX);
+
+  Footer = () => <UpgradeToNanoXBanner action={this.onBuy} />;
 
   render() {
+    const { deviceModel } = this.props;
+    const title =
+      deviceModel === "blue"
+        ? deviceNames.blue.fullDeviceName
+        : deviceNames.nanoS.fullDeviceName;
+
     return (
-      <OnboardingLayout header="OnboardingStepGetStarted">
+      <OnboardingLayout
+        header="OnboardingStepLegacy"
+        Footer={this.Footer}
+        titleOverride={title}
+      >
         <TrackScreen category="Onboarding" name="GetStarted" />
         <Row
-          id="initialize"
-          Icon={IconPlus}
-          label={<Trans i18nKey="onboarding.stepGetStarted.initialize" />}
-          onPress={this.onInit}
+          id="import"
+          Icon={IconImport}
+          label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
+          onPress={this.onImport}
         />
-        <Row
-          id="restore"
-          Icon={IconRestore}
-          label={<Trans i18nKey="onboarding.stepGetStarted.restore" />}
-          onPress={this.onRestore}
-        />
-        <Row
-          id="initialized"
-          Icon={IconCheck}
-          label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
-          onPress={this.onInitialized}
-        />
+        <LText style={styles.description}>
+          <Trans i18nKey="onboarding.stepLegacy.description" />
+        </LText>
       </OnboardingLayout>
     );
   }
@@ -98,14 +87,16 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     marginVertical: 32,
   },
-  subtitle: {
-    marginHorizontal: 1,
+  close: {
+    position: "absolute",
+    right: 16,
+    top: 16,
+  },
+  description: {
+    marginTop: 40,
     fontSize: 14,
     color: colors.smoke,
-    marginBottom: 16,
-  },
-  extraMargin: {
-    marginTop: 32,
+    textAlign: "center",
   },
   row: {
     paddingHorizontal: 16,
@@ -125,16 +116,6 @@ const styles = StyleSheet.create({
     width: 16,
     marginRight: 16,
   },
-  footer: {
-    marginTop: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-  },
-  footerText: {
-    fontSize: 14,
-    color: colors.live,
-  },
 });
 
-export default withOnboardingContext(OnboardingStepGetStarted);
+export default withOnboardingContext(OnboardingStepLegacy);

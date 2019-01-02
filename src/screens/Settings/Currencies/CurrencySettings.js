@@ -114,7 +114,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
             alignedTop
           >
             <LText semiBold style={styles.currencyExchange}>
-              {currencySettings.exchange}
+              {currencySettings.exchange || t("common.notAvailable")}
             </LText>
           </SettingsRow>
         )}

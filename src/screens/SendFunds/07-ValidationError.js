@@ -39,15 +39,12 @@ class ValidationError extends Component<Props> {
   };
 
   contactUs = () => {
-    Linking.openURL(urls.faq);
+    Linking.openURL(urls.contact);
   };
 
   retry = () => {
     const { navigation } = this.props;
-    // $FlowFixMe
-    navigation.replace("SendSummary", {
-      ...navigation.state.params,
-    });
+    navigation.goBack();
   };
 
   render() {

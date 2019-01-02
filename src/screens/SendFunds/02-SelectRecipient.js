@@ -181,7 +181,10 @@ class SendSelectRecipient extends Component<Props, State> {
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>
-          <ScrollView style={styles.container}>
+          <ScrollView
+            style={styles.container}
+            keyboardShouldPersistTaps="handled"
+          >
             <Button
               event="SendRecipientQR"
               type="tertiary"
@@ -207,7 +210,6 @@ class SendSelectRecipient extends Component<Props, State> {
                   addressStatus === "warning" && styles.warning,
                 ]}
                 onFocus={this.onRecipientFieldFocus}
-                multiline
                 onChangeText={this.onChangeText}
                 value={address}
                 ref={this.input}
@@ -278,10 +280,10 @@ const styles = StyleSheet.create({
   },
   addressInput: {
     flex: 1,
-    marginTop: 16,
     color: colors.darkBlue,
     ...getFontStyle({ semiBold: true }),
     fontSize: 20,
+    paddingVertical: 16,
   },
   invalidAddressInput: {
     color: colors.alert,

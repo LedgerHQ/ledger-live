@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
@@ -8,6 +9,7 @@ import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import install from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
+import { createStructuredSelector } from "reselect";
 import BottomModal from "../../components/BottomModal";
 import Close from "../../icons/Close";
 import Button from "../../components/Button";
@@ -21,6 +23,8 @@ import Spinning from "../../components/Spinning";
 import { deviceNames } from "../../wording";
 import colors from "../../colors";
 import AppIcon from "./AppIcon";
+import { installAppFirstTime } from "../../actions/settings";
+import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 
 class PendingProgress extends PureComponent<{
   progress: number,
@@ -62,6 +66,12 @@ const hwCallPerType = {
 };
 
 const forceInset = { bottom: "always" };
+const mapDispatchToProps = {
+  installAppFirstTime,
+};
+const mapStateToProps = createStructuredSelector({
+  hasInstalledAnyApp: hasInstalledAnyAppSelector,
+});
 
 class AppAction extends PureComponent<
   {
@@ -72,7 +82,10 @@ class AppAction extends PureComponent<
     targetId: *,
     deviceId: string,
     onClose: () => void,
+    onOpenAccounts: () => void,
     isOpened: boolean,
+    installAppFirstTime: () => void,
+    hasInstalledAnyApp: boolean,
   },
   {
     pending: boolean,
@@ -93,6 +106,8 @@ class AppAction extends PureComponent<
       deviceId,
       targetId,
       action: { type, app },
+      installAppFirstTime,
+      hasInstalledAnyApp,
     } = this.props;
     const hwCall = hwCallPerType[type];
     this.sub = withDevice(deviceId)(transport =>
@@ -103,6 +118,7 @@ class AppAction extends PureComponent<
       },
       complete: () => {
         this.setState({ pending: false, error: null });
+        if (!hasInstalledAnyApp) installAppFirstTime();
       },
       error: error => {
         this.setState({ pending: false, error });
@@ -115,7 +131,7 @@ class AppAction extends PureComponent<
   }
 
   render() {
-    const { action, onClose, isOpened } = this.props;
+    const { action, onOpenAccounts, onClose, isOpened } = this.props;
     const { pending, error, progress } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
     const progressPercentage = Math.round(progress * 100);
@@ -189,13 +205,27 @@ class AppAction extends PureComponent<
               <LText style={styles.description}>{description}</LText>
             ) : null}
           </View>
-          <Button
-            event="ManagerAppActionDone"
-            type="primary"
-            onPress={onClose}
-            disabled={pending}
-            title={buttonTitle}
-          />
+          <View style={styles.buttonsContainer}>
+            <Button
+              event="ManagerAppActionDone"
+              type={error ? "primary" : "secondary"}
+              containerStyle={styles.button}
+              onPress={onClose}
+              disabled={pending}
+              title={buttonTitle}
+            />
+            {!error &&
+              !pending && (
+                <Button
+                  event="ManagerAppActionDoneGoToAccounts"
+                  type="primary"
+                  containerStyle={[styles.button, styles.buttonRight]}
+                  onPress={onOpenAccounts}
+                  disabled={pending}
+                  title={<Trans i18nKey="AppAction.install.done.accounts" />}
+                />
+              )}
+          </View>
         </SafeAreaView>
         <Touchable
           event="ManagerAppActionClose"
@@ -245,8 +275,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     textAlign: "center",
   },
-  retryButton: {
-    alignSelf: "stretch",
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
+    flex: 2,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    flexGrow: 1,
   },
   loaderWrapper: {
     position: "absolute",
@@ -266,4 +306,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppAction;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppAction);

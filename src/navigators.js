@@ -24,6 +24,7 @@ import Account from "./screens/Account";
 import Settings from "./screens/Settings";
 import OnboardingStepGetStarted from "./screens/Onboarding/steps/get-started";
 import OnboardingStepChooseDevice from "./screens/Onboarding/steps/choose-device";
+import OnboardingStepLegacy from "./screens/Onboarding/steps/legacy";
 import OnboardingStepSetupPin from "./screens/Onboarding/steps/setup-pin";
 import OnboardingStepWriteRecovery from "./screens/Onboarding/steps/write-recovery";
 import OnboardingStepSecurityChecklist from "./screens/Onboarding/steps/security-checklist";
@@ -165,7 +166,7 @@ const ManagerMain = createMaterialTopTabNavigator(
       },
       style: {
         backgroundColor: colors.white,
-        ...styles.header,
+        height: 48,
       },
       indicatorStyle: {
         backgroundColor: colors.live,
@@ -403,8 +404,9 @@ const BaseNavigator = createStackNavigator(
 );
 
 const Onboarding = createStackNavigator({
-  OnboardingStepGetStarted,
   OnboardingStepChooseDevice,
+  OnboardingStepLegacy,
+  OnboardingStepGetStarted,
   OnboardingStepSetupPin,
   OnboardingStepWriteRecovery,
   OnboardingStepSecurityChecklist,

@@ -20,6 +20,7 @@ import AppsListError from "./AppsListError";
 import AppRow from "./AppRow";
 import AppAction from "./AppAction";
 import { developerModeEnabledSelector } from "../../reducers/settings";
+import { getFullListSortedCryptoCurrencies } from "../../countervalues";
 
 const actionKey = action => `${action.app.id}_${action.type}`;
 
@@ -78,7 +79,11 @@ class ManagerAppsList extends Component<
       const { navigation, developerModeEnabled } = this.props;
       const { deviceInfo } = navigation.getParam("meta");
 
-      const apps = await manager.getAppsList(deviceInfo, developerModeEnabled);
+      const apps = await manager.getAppsList(
+        deviceInfo,
+        developerModeEnabled,
+        getFullListSortedCryptoCurrencies,
+      );
 
       if (this.unmount) return;
       this.setState({
@@ -97,6 +102,11 @@ class ManagerAppsList extends Component<
 
   onActionClose = () => {
     this.setState({ action: null });
+  };
+
+  onActionOpenAccounts = () => {
+    const { navigation } = this.props;
+    this.setState({ action: null }, () => navigation.navigate("Accounts"));
   };
 
   onInstall = (app: ApplicationVersion) => {
@@ -163,6 +173,7 @@ class ManagerAppsList extends Component<
             key={actionKey(action)}
             action={action}
             onClose={this.onActionClose}
+            onOpenAccounts={this.onActionOpenAccounts}
             deviceId={deviceId}
             targetId={deviceInfo.targetId}
             isOpened={!!action}
