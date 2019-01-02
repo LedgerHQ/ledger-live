@@ -3,9 +3,19 @@
 import React from "react";
 import Svg, { Path, G, Ellipse } from "react-native-svg";
 
-export default function NanoXVertical() {
+type Props = {
+  size?: number,
+  style?: *,
+};
+
+export default function NanoXVertical({ size, style }: Props) {
   return (
-    <Svg width="13" height="72" viewBox="0 0 13 72">
+    <Svg
+      width={(size && (size / 72) * 13) || 13}
+      height={size || 72}
+      viewBox="0 0 13 72"
+      style={style}
+    >
       <G fill="none" fillRule="evenodd">
         <Path
           fill="#1D2028"
@@ -22,7 +32,7 @@ export default function NanoXVertical() {
           fill="#FFF"
           stroke="#6490F1"
           strokeWidth=".5"
-          d="M3.92 4.364a.55.55 0 0 0-.55.55v21.017c0 .303.246.55.55.55h4.64a.55.55 0 0 0 .55-.55V4.914a.55.55 0 0 0-.55-.55H3.92z"
+          d="M3.92 12.25a.55.55 0 0 0-.55.55v13.13c0 .304.246.55.55.55h4.64a.55.55 0 0 0 .55-.55V12.8a.55.55 0 0 0-.55-.55H3.92z"
         />
         <Path
           fill="#FFF"
@@ -35,7 +45,16 @@ export default function NanoXVertical() {
           cy="37.029"
           fill="#FFF"
           stroke="#6490F1"
-          stroke-width=".5"
+          strokeWidth=".5"
+          rx="2.87"
+          ry="2.836"
+        />
+        <Ellipse
+          cx="6.24"
+          cy="6.029"
+          fill="#FFF"
+          stroke="#6490F1"
+          strokeWidth=".5"
           rx="2.87"
           ry="2.836"
         />

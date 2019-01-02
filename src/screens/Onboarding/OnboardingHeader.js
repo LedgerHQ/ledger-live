@@ -18,6 +18,7 @@ type Props = OnboardingStepProps & {
   stepId: string,
   withSkip?: boolean,
   withNeedHelp?: boolean,
+  titleOverride?: string,
 };
 
 const hitSlop = {
@@ -29,7 +30,16 @@ const hitSlop = {
 
 class OnboardingHeader extends PureComponent<Props> {
   render() {
-    const { mode, stepId, prev, t, withSkip, withNeedHelp, next } = this.props;
+    const {
+      mode,
+      stepId,
+      prev,
+      t,
+      withSkip,
+      withNeedHelp,
+      next,
+      titleOverride,
+    } = this.props;
     const steps = STEPS_BY_MODE[mode];
     const visibleSteps = steps.filter(s => !s.isGhost);
     const indexInSteps = visibleSteps.findIndex(s => s.id === stepId);
@@ -67,7 +77,8 @@ class OnboardingHeader extends PureComponent<Props> {
           {stepMsg}
         </LText>
         <LText secondary semiBold style={styles.title}>
-          {t(`onboarding.stepsTitles.${stepIdOverride}`, deviceNames.nanoX)}
+          {titleOverride ||
+            t(`onboarding.stepsTitles.${stepIdOverride}`, deviceNames.nanoX)}
         </LText>
       </View>
     );

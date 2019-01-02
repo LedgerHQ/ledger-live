@@ -14,6 +14,7 @@ export type OnboardingContextType = {
 
   // list of the currently active steps
   mode: OnboardingMode,
+  deviceModel: DeviceNames,
 
   showWelcome: boolean,
   setShowWelcome: boolean => Promise<void>,
@@ -21,6 +22,8 @@ export type OnboardingContextType = {
   // allow to change the steps on the fly
   // e.g: skip (& hide) steps if device is already initialized
   setOnboardingMode: SetOnboardingModeType | Noop,
+
+  setOnboardingDeviceModel: SetOnboardingDeviceModelType | Noop,
 
   // change screen to prev/next, sync navigation & state
   nextWithNavigation: StepNavigateType,
@@ -38,10 +41,18 @@ export type OnboardingStepProps = OnboardingContextType & {
 };
 
 export type SetOnboardingModeType = OnboardingMode => Promise<void>;
+export type SetOnboardingDeviceModelType = DeviceNames => Promise<void>;
 
 export type OnboardingContextProviderProps = { children: * };
 
-type OnboardingMode = "full" | "alreadyInitialized" | "qrcode" | "restore";
+type OnboardingMode =
+  | "full"
+  | "alreadyInitialized"
+  | "qrcode"
+  | "restore"
+  | "legacyNanoS"
+  | "legacyBlue";
+type DeviceNames = "nanoS" | "nanoX" | "blue";
 
 type StepNavigateType = (NavigationScreenProp<*>) => void;
 type Noop = any => any;

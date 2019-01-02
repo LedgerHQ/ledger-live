@@ -22,7 +22,7 @@ export default function NanoSVertical() {
           fill="#FFF"
           stroke="#6490F1"
           strokeWidth=".5"
-          d="M3.92 12.25a.55.55 0 0 0-.55.55v13.13c0 .304.246.55.55.55h4.64a.55.55 0 0 0 .55-.55V12.8a.55.55 0 0 0-.55-.55H3.92z"
+          d="M3.92 4.364a.55.55 0 0 0-.55.55v21.017c0 .303.246.55.55.55h4.64a.55.55 0 0 0 .55-.55V4.914a.55.55 0 0 0-.55-.55H3.92z"
         />
         <Path
           fill="#FFF"
@@ -33,15 +33,6 @@ export default function NanoSVertical() {
         <Ellipse
           cx="6.24"
           cy="37.029"
-          fill="#FFF"
-          stroke="#6490F1"
-          strokeWidth=".5"
-          rx="2.87"
-          ry="2.836"
-        />
-        <Ellipse
-          cx="6.24"
-          cy="6.029"
           fill="#FFF"
           stroke="#6490F1"
           strokeWidth=".5"
