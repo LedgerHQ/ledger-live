@@ -6,7 +6,7 @@ import {
   TextInput as ReactNativeTextInput,
   StyleSheet,
 } from "react-native";
-import CloseIcon from "../icons/Close";
+import Icon from "react-native-vector-icons/dist/Ionicons";
 import colors from "../colors";
 import Touchable from "./Touchable";
 
@@ -97,9 +97,7 @@ class TextInput extends PureComponent<*, State> {
             event="TextInputClearValue"
             onPress={this.clearInput}
           >
-            <View style={styles.clear}>
-              <CloseIcon color={colors.white} size={10} />
-            </View>
+            <Icon name="ios-close-circle" color={colors.clear} size={20} />
           </Touchable>
         )}
       </View>
@@ -111,17 +109,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
   },
-  clear: {
-    borderRadius: 10,
-    backgroundColor: colors.clear,
-    padding: 3,
-  },
   clearWrapper: {
     position: "absolute",
     right: 0,
     top: 0,
     bottom: 0,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
   },
