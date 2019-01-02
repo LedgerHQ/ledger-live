@@ -1,7 +1,12 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
 import { Trans } from "react-i18next";
+import { createStructuredSelector } from "reselect";
+import { connect } from "react-redux";
+import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import colors from "../../../colors";
+import { knownDevicesSelector } from "../../../reducers/ble";
+import type { DeviceLike } from "../../../reducers/ble";
 import { withReboot } from "../../../context/Reboot";
 import SettingsRow from "../../../components/SettingsRow";
 import BottomModal from "../../../components/BottomModal";
@@ -11,6 +16,7 @@ import Trash from "../../../icons/Trash";
 
 type Props = {
   reboot: (?boolean) => *,
+  knownDevices: DeviceLike[],
 };
 
 type State = {
@@ -25,7 +31,12 @@ class HardResetRow extends PureComponent<Props, State> {
 
   onPress = () => this.setState({ isModalOpened: true });
 
-  onHardReset = () => this.props.reboot(true);
+  onHardReset = async () => {
+    await Promise.all(
+      this.props.knownDevices.map(d => disconnect(d.id).catch(() => {})),
+    );
+    return this.props.reboot(true);
+  };
 
   render() {
     const { isModalOpened } = this.state;
@@ -59,4 +70,8 @@ class HardResetRow extends PureComponent<Props, State> {
   }
 }
 
-export default withReboot(HardResetRow);
+export default connect(
+  createStructuredSelector({
+    knownDevices: knownDevicesSelector,
+  }),
+)(withReboot(HardResetRow));

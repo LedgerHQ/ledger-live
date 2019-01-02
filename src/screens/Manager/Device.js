@@ -116,7 +116,11 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
         <UnpairRow onPress={this.open} deviceId={deviceId} />
-        <DeviceAction opened={this.state.opened} onClose={this.close} />
+        <DeviceAction
+          opened={this.state.opened}
+          onClose={this.close}
+          deviceId={deviceId}
+        />
       </ScrollView>
     );
   }

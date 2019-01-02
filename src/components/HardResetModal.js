@@ -12,7 +12,7 @@ import Circle from "./Circle";
 
 type Props = {
   onRequestClose: () => void,
-  onHardReset: () => void,
+  onHardReset: () => *,
 };
 
 // FIXME this is not a modal \o/
