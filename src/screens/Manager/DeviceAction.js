@@ -6,6 +6,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { withNavigation, SafeAreaView } from "react-navigation";
+import { disconnect } from "@ledgerhq/live-common/lib/hw";
 
 import { removeKnownDevice } from "../../actions/ble";
 import { delay } from "../../logic/promise";
@@ -46,7 +47,7 @@ class DeviceAction extends PureComponent<Props, State> {
     const { deviceId, navigation, onClose, removeKnownDevice } = this.props;
     removeKnownDevice(deviceId);
     onClose();
-    await delay(163);
+    await Promise.all([disconnect(deviceId).catch(() => {}), delay(100)]);
     navigation.navigate("Manager");
   };
 
