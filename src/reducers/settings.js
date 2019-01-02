@@ -202,7 +202,7 @@ const handlers: Object = {
     hasAcceptedTradingWarning: true,
   }),
 
-  SETTINGS_INSTALL_ANY_APP: state => ({
+  SETTINGS_INSTALL_APP_FIRST_TIME: state => ({
     ...state,
     hasInstalledAnyApp: true,
   }),

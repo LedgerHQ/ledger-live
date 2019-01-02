@@ -9,6 +9,7 @@ import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import install from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
+import { createStructuredSelector } from "reselect";
 import BottomModal from "../../components/BottomModal";
 import Close from "../../icons/Close";
 import Button from "../../components/Button";
@@ -22,7 +23,8 @@ import Spinning from "../../components/Spinning";
 import { deviceNames } from "../../wording";
 import colors from "../../colors";
 import AppIcon from "./AppIcon";
-import { installAnyApp } from "../../actions/settings";
+import { installAppFirstTime } from "../../actions/settings";
+import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 
 class PendingProgress extends PureComponent<{
   progress: number,
@@ -65,8 +67,11 @@ const hwCallPerType = {
 
 const forceInset = { bottom: "always" };
 const mapDispatchToProps = {
-  installAnyApp,
+  installAppFirstTime,
 };
+const mapStateToProps = createStructuredSelector({
+  hasInstalledAnyApp: hasInstalledAnyAppSelector,
+});
 
 class AppAction extends PureComponent<
   {
@@ -78,7 +83,8 @@ class AppAction extends PureComponent<
     deviceId: string,
     onClose: () => void,
     isOpened: boolean,
-    installAnyApp: () => void,
+    installAppFirstTime: () => void,
+    hasInstalledAnyApp: boolean,
   },
   {
     pending: boolean,
@@ -99,7 +105,8 @@ class AppAction extends PureComponent<
       deviceId,
       targetId,
       action: { type, app },
-      installAnyApp,
+      installAppFirstTime,
+      hasInstalledAnyApp,
     } = this.props;
     const hwCall = hwCallPerType[type];
     this.sub = withDevice(deviceId)(transport =>
@@ -110,7 +117,7 @@ class AppAction extends PureComponent<
       },
       complete: () => {
         this.setState({ pending: false, error: null });
-        installAnyApp();
+        if (!hasInstalledAnyApp) installAppFirstTime();
       },
       error: error => {
         this.setState({ pending: false, error });
@@ -275,6 +282,6 @@ const styles = StyleSheet.create({
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(AppAction);
