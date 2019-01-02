@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   View,
-  TextInput,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
@@ -14,6 +13,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { addKnownDevice } from "../actions/ble";
 import colors from "../colors";
 import { getFontStyle } from "../components/LText";
+import TextInput from "../components/TextInput";
 import KeyboardView from "../components/KeyboardView";
 import Button from "../components/Button";
 
