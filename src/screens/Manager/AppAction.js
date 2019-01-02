@@ -72,6 +72,7 @@ class AppAction extends PureComponent<
     targetId: *,
     deviceId: string,
     onClose: () => void,
+    onOpenAccounts: () => void,
     isOpened: boolean,
   },
   {
@@ -115,7 +116,7 @@ class AppAction extends PureComponent<
   }
 
   render() {
-    const { action, onClose, isOpened } = this.props;
+    const { action, onOpenAccounts, onClose, isOpened } = this.props;
     const { pending, error, progress } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
     const progressPercentage = Math.round(progress * 100);
@@ -189,13 +190,27 @@ class AppAction extends PureComponent<
               <LText style={styles.description}>{description}</LText>
             ) : null}
           </View>
-          <Button
-            event="ManagerAppActionDone"
-            type="primary"
-            onPress={onClose}
-            disabled={pending}
-            title={buttonTitle}
-          />
+          <View style={styles.buttonsContainer}>
+            <Button
+              event="ManagerAppActionDone"
+              type={error ? "primary" : "secondary"}
+              containerStyle={styles.button}
+              onPress={onClose}
+              disabled={pending}
+              title={buttonTitle}
+            />
+            {!error &&
+              !pending && (
+                <Button
+                  event="ManagerAppActionDoneGoToAccounts"
+                  type="primary"
+                  containerStyle={[styles.button, styles.buttonRight]}
+                  onPress={onOpenAccounts}
+                  disabled={pending}
+                  title={<Trans i18nKey="AppAction.install.done.accounts" />}
+                />
+              )}
+          </View>
         </SafeAreaView>
         <Touchable
           event="ManagerAppActionClose"
@@ -245,8 +260,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     textAlign: "center",
   },
-  retryButton: {
-    alignSelf: "stretch",
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
+    flex: 2,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    flexGrow: 1,
   },
   loaderWrapper: {
     position: "absolute",
