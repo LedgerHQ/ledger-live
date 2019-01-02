@@ -1,5 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
+import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
@@ -8,6 +9,7 @@ import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import install from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
+import { createStructuredSelector } from "reselect";
 import BottomModal from "../../components/BottomModal";
 import Close from "../../icons/Close";
 import Button from "../../components/Button";
@@ -21,6 +23,8 @@ import Spinning from "../../components/Spinning";
 import { deviceNames } from "../../wording";
 import colors from "../../colors";
 import AppIcon from "./AppIcon";
+import { installAppFirstTime } from "../../actions/settings";
+import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 
 class PendingProgress extends PureComponent<{
   progress: number,
@@ -62,6 +66,12 @@ const hwCallPerType = {
 };
 
 const forceInset = { bottom: "always" };
+const mapDispatchToProps = {
+  installAppFirstTime,
+};
+const mapStateToProps = createStructuredSelector({
+  hasInstalledAnyApp: hasInstalledAnyAppSelector,
+});
 
 class AppAction extends PureComponent<
   {
@@ -74,6 +84,8 @@ class AppAction extends PureComponent<
     onClose: () => void,
     onOpenAccounts: () => void,
     isOpened: boolean,
+    installAppFirstTime: () => void,
+    hasInstalledAnyApp: boolean,
   },
   {
     pending: boolean,
@@ -94,6 +106,8 @@ class AppAction extends PureComponent<
       deviceId,
       targetId,
       action: { type, app },
+      installAppFirstTime,
+      hasInstalledAnyApp,
     } = this.props;
     const hwCall = hwCallPerType[type];
     this.sub = withDevice(deviceId)(transport =>
@@ -104,6 +118,7 @@ class AppAction extends PureComponent<
       },
       complete: () => {
         this.setState({ pending: false, error: null });
+        if (!hasInstalledAnyApp) installAppFirstTime();
       },
       error: error => {
         this.setState({ pending: false, error });
@@ -291,4 +306,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppAction;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppAction);

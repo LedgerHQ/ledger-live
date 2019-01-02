@@ -455,6 +455,7 @@
     "emptyState": {
       "title": "Add accounts to your portfolio",
       "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
+      "descWithApp": "Add accounts once you've installed apps on your device in Manager",
       "buttons": {
         "import": "Add accounts",
         "manager": "Open Manager"
