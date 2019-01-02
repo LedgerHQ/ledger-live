@@ -97,7 +97,7 @@ class TextInput extends PureComponent<*, State> {
             event="TextInputClearValue"
             onPress={this.clearInput}
           >
-            <Icon name="ios-close-circle" color={colors.clear} size={20} />
+            <Icon name="ios-close-circle" color={colors.grey} size={20} />
           </Touchable>
         )}
       </View>

@@ -25,7 +25,6 @@ export default {
   darkBlue: "#142533",
   smoke: "#666666",
   grey: "#999999",
-  clear: "#C7C7C7",
   fog: "#D8D8D8",
   white: "#ffffff",
   green: "rgb(102, 190, 84)",
