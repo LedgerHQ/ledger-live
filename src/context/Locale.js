@@ -14,7 +14,7 @@ const languageDetector = {
     const { localeIdentifier, preferredLanguages } = Locale.constants();
     const locale =
       (preferredLanguages && preferredLanguages[0]) || localeIdentifier;
-    const matches = locale.match(/([a-z]+_[A-Z]+).*/);
+    const matches = locale.match(/([a-z]{2,4}[-_]([A-Z]{2,4}|[0-9]{3}))/);
     return (matches && matches[1].replace("_", "-")) || "en-US";
   },
   init: () => {},
