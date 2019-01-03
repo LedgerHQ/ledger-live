@@ -21,8 +21,12 @@ class TextInput extends PureComponent<*, State> {
 
     this.state = {
       focused: false,
-      value: this.props.value || "",
+      value: this.props.value || this.props.defaultValue || "",
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.value });
   }
 
   onFocus = () => {
@@ -110,10 +114,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   clearWrapper: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
