@@ -543,7 +543,8 @@
       "advancedLogs": "Advanced logs",
       "accountName": {
         "title": "Account name",
-        "desc": "Describe this account"
+        "desc": "Describe this account",
+        "placeholder": "Account Name"
       },
       "unit": {
         "title": "Unit",
