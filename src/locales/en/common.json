@@ -834,7 +834,7 @@
         "description": "Please make sure your Ledger Nano X is unlocked and within range"
       },
       "genuineCheck": {
-        "title": "Allow Ledger Manager on your {{fullDeviceName}}"
+        "title": "Allow Ledger Manager on your {{fullDeviceName}} or wait"
       },
       "dashboard": {
         "title": "Navigate to dashboard on your {{fullDeviceName}}"
