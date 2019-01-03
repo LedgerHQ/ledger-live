@@ -135,6 +135,8 @@ class AppAction extends PureComponent<
     const { pending, error, progress } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
     const progressPercentage = Math.round(progress * 100);
+    const installing = action.type === "install";
+
     const icon = error ? (
       <ErrorIcon error={error} />
     ) : (
@@ -208,14 +210,17 @@ class AppAction extends PureComponent<
           <View style={styles.buttonsContainer}>
             <Button
               event="ManagerAppActionDone"
-              type={error ? "primary" : "secondary"}
+              type={
+                error || (!pending && !installing) ? "primary" : "secondary"
+              }
               containerStyle={styles.button}
               onPress={onClose}
               disabled={pending}
               title={buttonTitle}
             />
             {!error &&
-              !pending && (
+              !pending &&
+              installing && (
                 <Button
                   event="ManagerAppActionDoneGoToAccounts"
                   type="primary"
