@@ -784,6 +784,7 @@
       "message": "Confirm the transaction on your device to securely sign it",
       "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
+      "amount": "Amount",
       "confirm": "Your account balance will update once the blockchain has confirmed the transaction",
       "button": {
         "details": "View details",
