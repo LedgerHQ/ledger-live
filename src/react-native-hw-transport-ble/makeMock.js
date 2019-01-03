@@ -33,7 +33,7 @@ export default (opts: Opts) => {
 
     static list = () => Promise.resolve([]);
 
-    static disconnect = (_id: string) => {};
+    static disconnect = (_id: string) => Promise.resolve();
 
     static listen(observer: *) {
       return Observable.create(observer => {
