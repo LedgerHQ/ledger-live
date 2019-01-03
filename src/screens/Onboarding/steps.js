@@ -69,4 +69,15 @@ const steps: StepsByMode = {
   ],
 };
 
-export default steps;
+export default (mode: string, firstTimeOnboarding: boolean) =>
+  steps[mode].filter(step => {
+    if (!firstTimeOnboarding) {
+      if (
+        step.id === "OnboardingStepPassword" ||
+        step.id === "OnboardingStepShareData"
+      )
+        return false;
+    }
+
+    return true;
+  });

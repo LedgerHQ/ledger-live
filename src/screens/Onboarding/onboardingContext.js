@@ -6,7 +6,7 @@ import noop from "lodash/noop";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 
-import STEPS_BY_MODE from "./steps";
+import getStep from "./steps";
 
 import type {
   OnboardingContextType,
@@ -66,17 +66,17 @@ export class OnboardingContextProvider extends PureComponent<
   // Navigate to next step
   // we may want to handle onboarding finish here (e.g update settings)
   next = (navigation: NavigationScreenProp<*>) => {
-    const { mode } = this.state;
+    const { mode, showWelcome } = this.state;
     const currentStep = navigation.state.routeName;
-    const steps = STEPS_BY_MODE[mode];
+    const steps = getStep(mode, showWelcome);
     this.navigate(navigation, steps.findIndex(s => s.id === currentStep) + 1);
   };
 
   // Navigate to previous step
   prev = (navigation: NavigationScreenProp<*>) => {
-    const { mode } = this.state;
+    const { mode, showWelcome } = this.state;
     const currentStep = navigation.state.routeName;
-    const steps = STEPS_BY_MODE[mode];
+    const steps = getStep(mode, showWelcome);
     this.navigate(navigation, steps.findIndex(s => s.id === currentStep) - 1);
   };
 
@@ -91,8 +91,8 @@ export class OnboardingContextProvider extends PureComponent<
     new Promise(r => this.setState({ showWelcome }, r));
 
   navigate = (navigation: NavigationScreenProp<*>, index: number) => {
-    const { mode } = this.state;
-    const steps = STEPS_BY_MODE[mode];
+    const { mode, showWelcome } = this.state;
+    const steps = getStep(mode, showWelcome);
     if (index === -1 || index === steps.length) return;
     const currentStep = steps[index].id;
     this.setState({ currentStep });
@@ -110,8 +110,8 @@ export class OnboardingContextProvider extends PureComponent<
 
   resetCurrentStep = () =>
     new Promise(resolve => {
-      const { mode } = this.state;
-      const steps = STEPS_BY_MODE[mode];
+      const { mode, showWelcome } = this.state;
+      const steps = getStep(mode, showWelcome);
       this.setState({ currentStep: steps[0].id }, resolve);
     });
 
