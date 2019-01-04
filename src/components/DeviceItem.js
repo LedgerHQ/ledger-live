@@ -151,7 +151,8 @@ const styles = StyleSheet.create({
   root: {
     height: 64,
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingLeft: 24,
+    paddingRight: 8,
     borderColor: colors.fog,
     borderWidth: 1,
     borderRadius: 4,

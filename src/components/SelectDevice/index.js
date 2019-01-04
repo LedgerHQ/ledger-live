@@ -29,6 +29,7 @@ type Props = {
   removeKnownDevice: string => *,
   onStepEntered?: (number, Object) => void,
   setReadOnlyMode: boolean => void,
+  onboarding?: boolean,
 };
 
 type State = {
@@ -125,6 +126,7 @@ class SelectDevice extends Component<Props, State> {
       key={item.id}
       device={item}
       onSelect={this.onSelect}
+      withArrow={!!this.props.onboarding}
       onForgetSelect={
         this.props.editMode ? this.props.onForgetSelect : undefined
       }
