@@ -6,6 +6,7 @@ import Currencies from "./Currencies";
 import bridgestream from "./bridgestream";
 import qrstreambenchmark from "./qrstreambenchmark";
 import transports from "./transports";
+import qrledger from "./qrledger";
 
 export default {
   CountervalueDirect,
@@ -15,5 +16,6 @@ export default {
   Currencies,
   bridgestream,
   qrstreambenchmark,
-  transports
+  transports,
+  qrledger
 };

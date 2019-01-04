@@ -15,15 +15,21 @@ class Dashboard extends Component {
   render() {
     return (
       <div style={{ width: 600, margin: "40px auto", fontSize: "32px" }}>
-        {Object.keys(Demos).map(key => {
-          const Demo = Demos[key];
-          const { url, title } = Demo.demo;
-          return (
-            <Link key={key} to={url} style={{ display: "block", padding: 20 }}>
-              {title}
-            </Link>
-          );
-        })}
+        {Object.keys(Demos)
+          .filter(key => !Demos[key].demo.hidden)
+          .map(key => {
+            const Demo = Demos[key];
+            const { url, title } = Demo.demo;
+            return (
+              <Link
+                key={key}
+                to={url}
+                style={{ display: "block", padding: 20 }}
+              >
+                {title}
+              </Link>
+            );
+          })}
         <footer style={{ fontSize: "16px" }}>
           @ledgerhq/live-common {version}
         </footer>
