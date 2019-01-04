@@ -65,12 +65,12 @@ class QRCodeEntry extends Component<*> {
   render() {
     const { entry, width } = this.props;
     return (
-      <div className="printbreakinside">
+      <div className="printbreakinside" style={{ display: "inline-block" }}>
         <h1
           style={{
             display: "block",
             textAlign: "center",
-            fontSize: Math.round(width / 20) + "px",
+            fontSize: Math.round(width / 15) + "px",
             color: "#000"
           }}
         >
@@ -138,14 +138,7 @@ class BridgeStream extends Component<*, *> {
     const { error, data, width } = this.state;
     if (data) {
       return (
-        <div
-          id="qrcodes"
-          style={{
-            flexDirection: "row",
-            display: "flex",
-            flexWrap: "wrap"
-          }}
-        >
+        <div>
           {data.map((entry, i) => (
             <QRCodeEntry key={i} width={width} entry={entry} />
           ))}

@@ -2,10 +2,12 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  position: relative;
 }
 
 @media print {
   .printbreakinside {
+    position: relative;
     page-break-inside: avoid;
   }
 }
