@@ -472,8 +472,8 @@
     }
   },
   "addAccountsModal": {
-    "ctaAdd": "Import accounts",
-    "ctaImport": "Import desktop accounts"
+    "ctaAdd": "Add accounts",
+    "ctaImport": "Import accounts"
   },
   "time": {
     "day": "Day",
