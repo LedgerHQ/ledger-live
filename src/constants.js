@@ -12,7 +12,7 @@ export const MAX_ACCOUNT_NAME_SIZE = 50;
 
 export const BLE_SCANNING_NOTHING_TIMEOUT = 30 * 1000;
 
-export const GENUINE_CHECK_TIMEOUT = 60 * 1000;
+export const GENUINE_CHECK_TIMEOUT = 120 * 1000;
 
 export const GET_CALLS_RETRY = 3;
 export const GET_CALLS_TIMEOUT = 60000;
