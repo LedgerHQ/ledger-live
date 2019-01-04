@@ -842,12 +842,12 @@
         "title": "Navigate to dashboard on your {{fullDeviceName}}"
       },
       "currencyApp": {
-        "title": "Open the {{managerAppName}} app",
-        "description": "on your {{fullDeviceName}}"
+        "title": "Open the {{managerAppName}} app on your {{fullDeviceName}}",
+        "description": ""
       },
       "accountApp": {
-        "title": "Open the {{managerAppName}} app",
-        "description": "on your {{fullDeviceName}}"
+        "title": "Open the {{managerAppName}} app on your {{fullDeviceName}}",
+        "description": ""
       },
       "receiveVerify": {
         "title": "Verify address on device",
