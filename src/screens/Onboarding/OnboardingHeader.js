@@ -39,9 +39,9 @@ class OnboardingHeader extends PureComponent<Props> {
       withNeedHelp,
       next,
       titleOverride,
-      showWelcome,
+      firstTimeOnboarding,
     } = this.props;
-    const steps = getStep(mode, showWelcome);
+    const steps = getStep(mode, firstTimeOnboarding);
     const visibleSteps = steps.filter(s => !s.isGhost);
     const indexInSteps = visibleSteps.findIndex(s => s.id === stepId);
     const stepMsg = t("onboarding.stepCount", {

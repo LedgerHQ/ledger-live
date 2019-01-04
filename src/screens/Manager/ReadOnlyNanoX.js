@@ -23,6 +23,7 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
   buy = () => Linking.openURL(urls.buyNanoX);
   onboarding = async () => {
     this.props.setShowWelcome(false);
+    this.props.setFirstTimeOnboarding(false);
     this.props.navigation.navigate("OnboardingStepChooseDevice", {
       goingBackToScreen: "Manager",
       autoJumpToNanoX: true,

@@ -8,6 +8,7 @@ import type { OnboardingStepProps } from "../../Onboarding/types";
 class ConfigureDeviceRow extends PureComponent<OnboardingStepProps> {
   onPress = async () => {
     this.props.setShowWelcome(false);
+    this.props.setFirstTimeOnboarding(false);
     this.props.navigation.navigate("OnboardingStepChooseDevice", {
       goingBackToScreen: "HelpSettings",
     });
