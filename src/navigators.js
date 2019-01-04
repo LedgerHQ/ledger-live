@@ -109,11 +109,8 @@ const SettingsStack = createStackNavigator(
     Settings,
     CountervalueSettings,
     RateProviderSettings,
-    // $FlowFixMe
     GeneralSettings,
-    // $FlowFixMe
     AboutSettings,
-    // $FlowFixMe
     HelpSettings,
     CurrenciesList,
     CurrencySettings,
@@ -122,15 +119,12 @@ const SettingsStack = createStackNavigator(
     DebugSettings,
     // $FlowFixMe
     DebugDevices,
-    // $FlowFixMe
     DebugMocks,
-    // $FlowFixMe
     DebugBLE,
     // $FlowFixMe
     DebugBLEBenchmark,
     // $FlowFixMe
     DebugCrash,
-    // $FlowFixMe
     DebugHttpTransport,
     // $FlowFixMe
     DebugIcons,
@@ -148,9 +142,7 @@ SettingsStack.navigationOptions = {
 
 const ManagerMain = createMaterialTopTabNavigator(
   {
-    // $FlowFixMe
     ManagerAppsList,
-    // $FlowFixMe
     ManagerDevice,
   },
   {
@@ -182,9 +174,7 @@ ManagerMain.navigationOptions = {
 
 const ManagerStack = createStackNavigator(
   {
-    // $FlowFixMe
     Manager,
-    // $FlowFixMe
     ManagerMain,
   },
   {
@@ -234,7 +224,6 @@ const Main = createBottomTabNavigator(
       },
     },
     AccountsStack,
-    // $FlowFixMe
     Transfer,
     ManagerStack,
     SettingsStack,
@@ -381,12 +370,10 @@ const BaseNavigator = createStackNavigator(
     SendFunds,
     AddAccounts,
     FirmwareUpdate,
-    // $FlowFixMe
     OperationDetails,
     AccountSettings,
     ImportAccounts,
     PairDevices,
-    // $FlowFixMe non-sense error
     EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
