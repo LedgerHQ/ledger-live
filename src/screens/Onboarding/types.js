@@ -19,6 +19,9 @@ export type OnboardingContextType = {
   showWelcome: boolean,
   setShowWelcome: boolean => Promise<void>,
 
+  firstTimeOnboarding: boolean,
+  setFirstTimeOnboarding: boolean => Promise<void>,
+
   // allow to change the steps on the fly
   // e.g: skip (& hide) steps if device is already initialized
   setOnboardingMode: SetOnboardingModeType | Noop,

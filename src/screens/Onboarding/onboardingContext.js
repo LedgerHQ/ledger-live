@@ -2,7 +2,6 @@
 
 import React, { createContext, PureComponent } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
-import noop from "lodash/noop";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 
@@ -15,7 +14,7 @@ import type {
   SetOnboardingDeviceModelType,
 } from "./types";
 
-const INITIAL_CONTEXT: OnboardingContextType = {
+const INITIAL_CONTEXT: $Shape<OnboardingContextType> = {
   // We assume onboarding always starts at this step
   // in the future we could allow to init with custom value
   currentStep: "OnboardingStepGetStarted",
@@ -27,18 +26,14 @@ const INITIAL_CONTEXT: OnboardingContextType = {
   // whether or not should "welcome to ledger live" in first step
   showWelcome: true,
 
+  firstTimeOnboarding: true,
+
   deviceModel: "nanoX",
-  setSecurityKey: noop,
-  setShowWelcome: noop,
-  resetCurrentStep: noop,
-  nextWithNavigation: noop,
-  prevWithNavigation: noop,
-  setOnboardingMode: noop,
-  setOnboardingDeviceModel: noop,
-  syncNavigation: noop,
 };
 
 const OnboardingContext = createContext(INITIAL_CONTEXT);
+
+const getStepForState = state => getStep(state.mode, state.firstTimeOnboarding);
 
 // Provide each step screen a set of props used
 // in various ways: display the total number of steps,
@@ -60,23 +55,22 @@ export class OnboardingContextProvider extends PureComponent<
       setOnboardingMode: this.setOnboardingMode,
       setOnboardingDeviceModel: this.setOnboardingDeviceModel,
       syncNavigation: this.syncNavigation,
+      setFirstTimeOnboarding: this.setFirstTimeOnboarding,
     };
   }
 
   // Navigate to next step
   // we may want to handle onboarding finish here (e.g update settings)
   next = (navigation: NavigationScreenProp<*>) => {
-    const { mode, showWelcome } = this.state;
     const currentStep = navigation.state.routeName;
-    const steps = getStep(mode, showWelcome);
+    const steps = getStepForState(this.state);
     this.navigate(navigation, steps.findIndex(s => s.id === currentStep) + 1);
   };
 
   // Navigate to previous step
   prev = (navigation: NavigationScreenProp<*>) => {
-    const { mode, showWelcome } = this.state;
     const currentStep = navigation.state.routeName;
-    const steps = getStep(mode, showWelcome);
+    const steps = getStepForState(this.state);
     this.navigate(navigation, steps.findIndex(s => s.id === currentStep) - 1);
   };
 
@@ -90,9 +84,11 @@ export class OnboardingContextProvider extends PureComponent<
   setShowWelcome = (showWelcome: boolean) =>
     new Promise(r => this.setState({ showWelcome }, r));
 
+  setFirstTimeOnboarding = (firstTimeOnboarding: boolean) =>
+    new Promise(r => this.setState({ firstTimeOnboarding }, r));
+
   navigate = (navigation: NavigationScreenProp<*>, index: number) => {
-    const { mode, showWelcome } = this.state;
-    const steps = getStep(mode, showWelcome);
+    const steps = getStepForState(this.state);
     if (index === -1 || index === steps.length) return;
     const currentStep = steps[index].id;
     this.setState({ currentStep });
@@ -110,9 +106,12 @@ export class OnboardingContextProvider extends PureComponent<
 
   resetCurrentStep = () =>
     new Promise(resolve => {
-      const { mode, showWelcome } = this.state;
-      const steps = getStep(mode, showWelcome);
-      this.setState({ currentStep: steps[0].id }, resolve);
+      this.setState(
+        state => ({
+          currentStep: getStepForState(state)[0].id,
+        }),
+        resolve,
+      );
     });
 
   render() {
