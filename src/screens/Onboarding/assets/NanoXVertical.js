@@ -18,10 +18,6 @@ export default function NanoXVertical({ size, style }: Props) {
     >
       <G fill="none" fillRule="evenodd">
         <Path
-          fill="#1D2028"
-          d="M12.48 4.114a.52.52 0 0 1 .52.52V7.71a.52.52 0 1 1-1.04 0V4.634a.52.52 0 0 1 .52-.52zM12.48 17.486a.52.52 0 0 1 .52.52v3.074a.52.52 0 1 1-1.04 0v-3.074a.52.52 0 0 1 .52-.52z"
-        />
-        <Path
           fill="#6490F1"
           fillOpacity=".1"
           stroke="#1D2028"
