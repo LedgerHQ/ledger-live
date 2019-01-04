@@ -97,6 +97,7 @@ class FeesRow extends Component<Props, State> {
                 styles.textInput,
                 isSelected ? styles.textInputSelected : null,
               ]}
+              onFocus={this.onPress}
               onChangeText={this.onChangeText}
               value={this.state.fees && isSelected ? `${this.state.fees}` : ""}
               keyboardType="numeric"
