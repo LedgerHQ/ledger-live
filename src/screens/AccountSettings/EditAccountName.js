@@ -74,7 +74,6 @@ class EditAccountName extends PureComponent<Props, State> {
               autoFocus
               style={styles.textInputAS}
               defaultValue={account.name}
-              value={this.state.accountName}
               returnKeyType="done"
               maxLength={20}
               onChangeText={accountName => this.setState({ accountName })}
@@ -124,7 +123,6 @@ const styles = StyleSheet.create({
   textInputAS: {
     padding: 16,
     fontSize: 20,
-    flex: 1,
     color: colors.darkBlue,
     ...getFontStyle({ semiBold: true }),
   },

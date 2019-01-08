@@ -28,7 +28,11 @@ class TextInput extends PureComponent<*, State> {
 
   componentWillReceiveProps(nextProps) {
     if (this.updated) {
-      this.setState({ value: nextProps.value });
+      if (this.props.value) {
+        this.setState({ value: nextProps.value });
+      } else if (this.state.value === undefined && this.props.defaultValue) {
+        this.setState({ value: this.props.defaultValue });
+      }
     } else {
       this.setState({ value: nextProps.value || nextProps.defaultValue });
     }
@@ -71,6 +75,7 @@ class TextInput extends PureComponent<*, State> {
       containerStyle,
       withSuggestions,
       innerRef,
+      style,
       defaultValue,
       clearButtonMode, // Don't pass this down to use our own impl
       ...otherProps
@@ -94,6 +99,7 @@ class TextInput extends PureComponent<*, State> {
       <View style={[styles.container, containerStyle]}>
         <ReactNativeTextInput
           ref={innerRef}
+          style={[{ flex: 1 }, style]}
           {...otherProps}
           onBlur={this.onBlur}
           onFocus={this.onFocus}

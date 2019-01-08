@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
     padding: 16,
     marginRight: 8,
     fontSize: 20,
-    flex: 1,
     color: colors.darkBlue,
     ...getFontStyle({ semiBold: true }),
   },

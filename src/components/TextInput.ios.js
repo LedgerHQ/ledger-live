@@ -7,11 +7,18 @@ class TextInput extends PureComponent<*> {
   render() {
     const {
       containerStyle, // Needed to pass flow, since we call the native TextInput
+      withSuggestions,
       innerRef,
       ...otherProps
     } = this.props;
 
-    return <ReactNativeTextInput ref={innerRef} {...otherProps} />;
+    const flags = {};
+
+    if (!withSuggestions) {
+      flags.autoCorrect = false;
+    }
+
+    return <ReactNativeTextInput ref={innerRef} {...otherProps} {...flags} />;
   }
 }
 
