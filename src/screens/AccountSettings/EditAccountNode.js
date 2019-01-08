@@ -133,6 +133,11 @@ class EditAccountNode extends PureComponent<Props, State> {
                   bridge.getDefaultEndpointConfig()) ||
                 ""
               }
+              placeholder={
+                (bridge.getDefaultEndpointConfig &&
+                  bridge.getDefaultEndpointConfig()) ||
+                ""
+              }
               returnKeyType="done"
               onChangeText={accountNode =>
                 this.setState({ accountNode, error: null })
