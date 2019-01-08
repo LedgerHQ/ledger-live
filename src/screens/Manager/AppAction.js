@@ -118,7 +118,7 @@ class AppAction extends PureComponent<
       },
       complete: () => {
         this.setState({ pending: false, error: null });
-        if (!hasInstalledAnyApp) installAppFirstTime();
+        if (!hasInstalledAnyApp && type === "install") installAppFirstTime();
       },
       error: error => {
         this.setState({ pending: false, error });
