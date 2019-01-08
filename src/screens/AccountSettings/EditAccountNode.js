@@ -21,15 +21,22 @@ import { getAccountBridge } from "../../bridge";
 
 import colors from "../../colors";
 
-class FooterError extends PureComponent<{ error: Error }> {
+class ValidationError extends PureComponent<{ error: Error }> {
   render() {
     const { error } = this.props;
 
     return (
-      <LText style={styles.error} numberOfLines={2}>
-        <Icon color={colors.alert} size={16} name="alert-triangle" />{" "}
-        <TranslatedError error={error} />
-      </LText>
+      <View style={styles.errorWrapper}>
+        <Icon
+          style={styles.errorIcon}
+          color={colors.alert}
+          size={16}
+          name="alert-triangle"
+        />
+        <LText style={styles.error} numberOfLines={2}>
+          <TranslatedError error={error} />
+        </LText>
+      </View>
     );
   }
 }
@@ -134,8 +141,8 @@ class EditAccountNode extends PureComponent<Props, State> {
               clearButtonMode="while-editing"
               keyboardType="url"
             />
+            {error ? <ValidationError error={error} /> : null}
             <View style={styles.flex}>
-              {error ? <FooterError error={error} /> : null}
               <Button
                 event="EditAccountNodeApply"
                 type="primary"
@@ -188,10 +195,19 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingBottom: 16,
   },
+  errorWrapper: {
+    marginHorizontal: 16,
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  errorIcon: {
+    alignSelf: "center",
+    marginRight: 8,
+  },
   error: {
     alignSelf: "center",
     color: colors.alert,
     fontSize: 14,
-    marginBottom: 10,
+    flex: 1,
   },
 });
