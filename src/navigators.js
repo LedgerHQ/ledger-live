@@ -106,6 +106,7 @@ import DebugStore from "./screens/DebugStore";
 import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen.ios";
+import OnboardingOrNavigator from "./screens/OnboardingOrNavigator";
 
 // TODO look into all FlowFixMe
 
@@ -446,6 +447,7 @@ const BaseOnboarding = createStackNavigator(
 );
 
 const RootNavigator = createSwitchNavigator({
+  OnboardingOrNavigator,
   BaseNavigator,
   BaseOnboarding,
 });
