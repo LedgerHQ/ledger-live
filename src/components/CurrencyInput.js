@@ -144,6 +144,7 @@ class CurrencyInput extends PureComponent<Props, State> {
             hasError ? styles.error : null,
           ]}
           onChangeText={this.handleChange}
+          autoCorrect={false}
           value={displayValue}
           autoFocus={autoFocus}
           onFocus={this.handleFocus}
@@ -154,7 +155,6 @@ class CurrencyInput extends PureComponent<Props, State> {
             subMagnitude,
           })}
           keyboardType="numeric"
-          returnKeyType="done"
           blurOnSubmit
         />
         {renderRight}
