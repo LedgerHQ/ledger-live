@@ -46,7 +46,10 @@ class CollapsibleThingy extends PureComponent<
               {isObject ? (
                 isOpen && <CollapsibleThingy obj={value} depth={depth + 1} />
               ) : (
-                <Text selectable style={styles.value}>{`(${typeof value}) ${value}`}</Text>
+                <Text
+                  selectable
+                  style={styles.value}
+                >{`(${typeof value}) ${value}`}</Text>
               )}
             </View>
           );
