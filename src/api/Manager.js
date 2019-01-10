@@ -48,7 +48,7 @@ const remapSocketError = (context?: string) =>
       case "6a84":
         return throwError(new ManagerNotEnoughSpaceError());
       case "6a85":
-        if (context === "firmware") {
+        if (context === "firmware" || context === "mcu") {
           return throwError(new UserRefusedFirmwareUpdate());
         }
         return throwError(new ManagerNotEnoughSpaceError());
