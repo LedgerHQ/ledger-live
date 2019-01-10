@@ -17,6 +17,7 @@ import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
+import OpenDebugStore from "./OpenDebugStore";
 
 class DebugMocks_ extends PureComponent<{
   accounts: *,
@@ -41,6 +42,7 @@ class DebugMocks_ extends PureComponent<{
           <GenerateMockAccounts title="Generate 10 mock Accounts" count={10} />
         ) : null}
         <OpenDebugCrash />
+        <OpenDebugStore />
         <OpenDebugIcons />
         <ReadOnlyModeRow />
       </ScrollView>
