@@ -52,6 +52,11 @@ const remapSocketError = (context?: string) =>
           return throwError(new UserRefusedFirmwareUpdate());
         }
         return throwError(new ManagerNotEnoughSpaceError());
+      case "6985":
+        if (context === "firmware" || context === "mcu") {
+          return throwError(new UserRefusedFirmwareUpdate());
+        }
+        return throwError(new ManagerNotEnoughSpaceError());
       default:
         return throwError(e);
     }
