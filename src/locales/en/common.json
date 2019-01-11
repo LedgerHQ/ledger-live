@@ -584,7 +584,7 @@
         "alreadyImported": "Already imported",
         "noAccounts": "Nothing to import",
         "unsupported": "Unsupported",
-        "settings": "Settings",
+        "settings": "App settings",
         "includeGeneralSettings": "Import desktop settings"
       },
       "fallback": {
