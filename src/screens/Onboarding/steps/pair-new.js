@@ -38,7 +38,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
         withNeedHelp
       >
         <TrackScreen category="Onboarding" name="PairNew" />
-        <SelectDevice onSelect={this.props.next} />
+        <SelectDevice onboarding onSelect={this.props.next} />
       </OnboardingLayout>
     );
   }

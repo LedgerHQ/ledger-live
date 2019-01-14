@@ -120,6 +120,8 @@ class Validation extends Component<Props, State> {
 
   render() {
     const { signed, signing } = this.state;
+    const { navigation, account } = this.props;
+    const transaction = navigation.getParam("transaction");
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="Validation" signed={signed} />
@@ -129,7 +131,11 @@ class Validation extends Component<Props, State> {
             <ActivityIndicator size="large" />
           </View>
         ) : (
-          <ValidateOnDevice action={this.sign} />
+          <ValidateOnDevice
+            account={account}
+            transaction={transaction}
+            action={this.sign}
+          />
         )}
       </SafeAreaView>
     );

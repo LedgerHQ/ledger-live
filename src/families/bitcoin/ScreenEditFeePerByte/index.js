@@ -116,6 +116,8 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
     const transaction: Transaction = navigation.getParam("transaction");
     if (!transaction) return null;
 
+    const isCustom = focusedItemKey === "custom";
+
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView style={styles.container}>
@@ -132,10 +134,10 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
                 />
               ))}
               <CustomFeesRow
+                initialValue={isCustom ? feePerByte : null}
                 title={<Trans i18nKey="fees.speed.custom" />}
-                initialValue={feePerByte}
                 onPress={this.onChangeCustomFeeRow}
-                isSelected={focusedItemKey === "custom"}
+                isSelected={isCustom}
               />
               <View style={styles.buttonContainer}>
                 <Button

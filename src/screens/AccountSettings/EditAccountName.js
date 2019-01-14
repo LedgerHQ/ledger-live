@@ -79,6 +79,9 @@ class EditAccountName extends PureComponent<Props, State> {
               onChangeText={accountName => this.setState({ accountName })}
               onSubmitEditing={this.onNameEndEditing}
               clearButtonMode="while-editing"
+              placeholder={i18next.t(
+                "account.settings.accountName.placeholder",
+              )}
             />
             <View style={styles.flex}>
               <Button
@@ -119,7 +122,6 @@ const styles = StyleSheet.create({
   },
   textInputAS: {
     padding: 16,
-    marginRight: 8,
     fontSize: 20,
     color: colors.darkBlue,
     ...getFontStyle({ semiBold: true }),

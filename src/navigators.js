@@ -101,6 +101,7 @@ import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 import sendScreens from "./families/sendScreens";
 import ReadOnlyTab from "./components/ReadOnlyTab";
 import HiddenTabBarIfKeyboardVisible from "./components/HiddenTabBarIfKeyboardVisible";
+import DebugStore from "./screens/DebugStore";
 
 // TODO look into all FlowFixMe
 
@@ -109,11 +110,8 @@ const SettingsStack = createStackNavigator(
     Settings,
     CountervalueSettings,
     RateProviderSettings,
-    // $FlowFixMe
     GeneralSettings,
-    // $FlowFixMe
     AboutSettings,
-    // $FlowFixMe
     HelpSettings,
     CurrenciesList,
     CurrencySettings,
@@ -122,15 +120,13 @@ const SettingsStack = createStackNavigator(
     DebugSettings,
     // $FlowFixMe
     DebugDevices,
-    // $FlowFixMe
     DebugMocks,
-    // $FlowFixMe
     DebugBLE,
     // $FlowFixMe
     DebugBLEBenchmark,
     // $FlowFixMe
     DebugCrash,
-    // $FlowFixMe
+    DebugStore,
     DebugHttpTransport,
     // $FlowFixMe
     DebugIcons,
@@ -148,9 +144,7 @@ SettingsStack.navigationOptions = {
 
 const ManagerMain = createMaterialTopTabNavigator(
   {
-    // $FlowFixMe
     ManagerAppsList,
-    // $FlowFixMe
     ManagerDevice,
   },
   {
@@ -182,9 +176,7 @@ ManagerMain.navigationOptions = {
 
 const ManagerStack = createStackNavigator(
   {
-    // $FlowFixMe
     Manager,
-    // $FlowFixMe
     ManagerMain,
   },
   {
@@ -234,7 +226,6 @@ const Main = createBottomTabNavigator(
       },
     },
     AccountsStack,
-    // $FlowFixMe
     Transfer,
     ManagerStack,
     SettingsStack,
@@ -381,12 +372,10 @@ const BaseNavigator = createStackNavigator(
     SendFunds,
     AddAccounts,
     FirmwareUpdate,
-    // $FlowFixMe
     OperationDetails,
     AccountSettings,
     ImportAccounts,
     PairDevices,
-    // $FlowFixMe non-sense error
     EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,

@@ -10,7 +10,9 @@ import { urls } from "../../../config/urls";
 import colors from "../../../colors";
 
 class TermsOfUseRow extends PureComponent<{}> {
-  onLink = () => Linking.openURL(urls.terms);
+  termsLink = () => Linking.openURL(urls.terms);
+  privacyPolicyLink = () => Linking.openURL(urls.privacyPolicy);
+
   render() {
     return (
       <SettingsRow
@@ -19,7 +21,15 @@ class TermsOfUseRow extends PureComponent<{}> {
         desc={
           <Trans i18nKey="settings.display.termsOfUseDesc">
             {"text"}
-            <LText onPress={this.onLink} style={styles.link} semiBold>
+            <LText onPress={this.termsLink} style={styles.link} semiBold>
+              {"text"}
+            </LText>
+            {"text"}
+            <LText
+              onPress={this.privacyPolicyLink}
+              style={styles.link}
+              semiBold
+            >
               {"text"}
             </LText>
             {"text"}

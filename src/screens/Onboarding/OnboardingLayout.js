@@ -104,7 +104,10 @@ export default class OnboardingLayout extends PureComponent<Props> {
     }
 
     return (
-      <SafeAreaView style={[styles.root, isCentered && styles.centered, style]}>
+      <SafeAreaView
+        forceInset={{ bottom: "always", top: "always" }}
+        style={[styles.root, isCentered && styles.centered, style]}
+      >
         {inner}
       </SafeAreaView>
     );

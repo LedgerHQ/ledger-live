@@ -14,7 +14,10 @@ const languageDetector = {
     const { localeIdentifier, preferredLanguages } = Locale.constants();
     const locale =
       (preferredLanguages && preferredLanguages[0]) || localeIdentifier;
-    return locale.replace("_", "-");
+    const matches = locale.match(/([a-z]{2,4}[-_]([A-Z]{2,4}|[0-9]{3}))/);
+    const lang = (matches && matches[1].replace("_", "-")) || "en-US";
+    console.log("Language detected is " + lang); // eslint-disable-line no-console
+    return lang;
   },
   init: () => {},
   cacheUserLanguage: () => {},

@@ -16,13 +16,30 @@ type State = {
 };
 
 class TextInput extends PureComponent<*, State> {
+  updated = false;
+
   constructor(props) {
     super(props);
-
     this.state = {
       focused: false,
-      value: this.props.value || "",
+      value: "",
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.updated) {
+      if (this.props.value) {
+        this.setState({ value: nextProps.value });
+      } else if (this.state.value === undefined && this.props.defaultValue) {
+        this.setState({ value: this.props.defaultValue });
+      }
+    } else {
+      this.setState({ value: nextProps.value || nextProps.defaultValue });
+    }
+  }
+
+  componentWillUpdate() {
+    this.updated = true;
   }
 
   onFocus = () => {
@@ -50,10 +67,7 @@ class TextInput extends PureComponent<*, State> {
     this.setState({ value: "", focused: true });
     if (this.props.onInputCleared) {
       this.props.onInputCleared();
-    } else if (this.props.onChangeText) {
-      this.props.onChangeText("");
     }
-    return true;
   };
 
   render() {
@@ -61,6 +75,8 @@ class TextInput extends PureComponent<*, State> {
       containerStyle,
       withSuggestions,
       innerRef,
+      style,
+      defaultValue,
       clearButtonMode, // Don't pass this down to use our own impl
       ...otherProps
     } = this.props;
@@ -77,12 +93,13 @@ class TextInput extends PureComponent<*, State> {
       !!value &&
       ((focused && clearButtonMode === "while-editing") ||
         clearButtonMode === "always");
-
     // {...otherProps} needs to come first to allow an override.
+
     return (
       <View style={[styles.container, containerStyle]}>
         <ReactNativeTextInput
           ref={innerRef}
+          style={[{ flex: 1 }, style]}
           {...otherProps}
           onBlur={this.onBlur}
           onFocus={this.onFocus}
@@ -110,11 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   clearWrapper: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
-    paddingHorizontal: 10,
+    padding: 10,
     alignItems: "center",
     justifyContent: "center",
   },

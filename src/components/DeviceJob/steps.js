@@ -21,13 +21,13 @@ import {
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
+import { deviceNames } from "../../wording";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
 import { rejectionOp } from "../DebugRejectSwitch";
-import { deviceNames } from "../../wording";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
@@ -110,6 +110,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
         <Trans
           i18nKey="SelectDevice.steps.currencyApp.title"
           values={{
+            ...deviceNames.nanoX,
             managerAppName: currency.managerAppName,
             currencyName: currency.name,
           }}
@@ -119,6 +120,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
         <Trans
           i18nKey="SelectDevice.steps.currencyApp.description"
           values={{
+            ...deviceNames.nanoX,
             managerAppName: currency.managerAppName,
             currencyName: currency.name,
           }}
@@ -155,6 +157,18 @@ export const accountApp: Account => Step = account => ({
         <Trans
           i18nKey="SelectDevice.steps.accountApp.title"
           values={{
+            ...deviceNames.nanoX,
+            managerAppName: account.currency.managerAppName,
+            currencyName: account.currency.name,
+            accountName: account.name,
+          }}
+        />
+      }
+      description={
+        <Trans
+          i18nKey="SelectDevice.steps.accountApp.description"
+          values={{
+            ...deviceNames.nanoX,
             managerAppName: account.currency.managerAppName,
             currencyName: account.currency.name,
             accountName: account.name,

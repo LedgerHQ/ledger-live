@@ -72,9 +72,20 @@ export default class BluetoothTransport extends Transport<Device | string> {
       type: "verbose",
       message: `listen...`,
     });
-    const stateSub = bleManager.onStateChange(state => {
+    let unsubscribed;
+
+    const stateSub = bleManager.onStateChange(async state => {
       if (state === "PoweredOn") {
         stateSub.remove();
+
+        const devices = await bleManager.connectedDevices([ServiceUuid]);
+        if (unsubscribed) return;
+
+        await Promise.all(
+          devices.map(d => BluetoothTransport.disconnect(d.id).catch(() => {})),
+        );
+        if (unsubscribed) return;
+
         bleManager.startDeviceScan([ServiceUuid], null, (bleError, device) => {
           if (bleError) {
             observer.error(bleError);
@@ -86,6 +97,7 @@ export default class BluetoothTransport extends Transport<Device | string> {
       }
     }, true);
     const unsubscribe = () => {
+      unsubscribed = true;
       bleManager.stopDeviceScan();
       stateSub.remove();
       logSubject.next({

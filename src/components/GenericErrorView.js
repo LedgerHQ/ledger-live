@@ -26,11 +26,17 @@ class GenericErrorRendering extends PureComponent<{
             <ErrorIcon error={error} />
           </View>
         ) : null}
-        <LText secondary semiBold style={styles.title} numberOfLines={3}>
+        <LText
+          selectable
+          secondary
+          semiBold
+          style={styles.title}
+          numberOfLines={3}
+        >
           <TranslatedError error={error} />
         </LText>
         {withDescription ? (
-          <LText style={styles.description} numberOfLines={6}>
+          <LText selectable style={styles.description} numberOfLines={6}>
             <TranslatedError error={error} field="description" />
           </LText>
         ) : null}
