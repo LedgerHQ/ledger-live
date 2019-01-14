@@ -38,21 +38,25 @@ public class MainActivity extends ReactFragmentActivity {
          * text.
          */
         final ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-        clipboard.addPrimaryClipChangedListener( new ClipboardManager.OnPrimaryClipChangedListener() {
-            boolean breakLoop = false;
-            public void onPrimaryClipChanged() {
-                if(breakLoop){
-                    breakLoop = false;
-                    return;
+        if(clipboard != null){
+            clipboard.addPrimaryClipChangedListener( new ClipboardManager.OnPrimaryClipChangedListener() {
+                boolean breakLoop = false;
+                public void onPrimaryClipChanged() {
+                    if(breakLoop){
+                        breakLoop = false;
+                        return;
+                    }
+                    if (clipboard.hasPrimaryClip()) {
+                        ClipData clipData = clipboard.getPrimaryClip();
+                        ClipData.Item item = clipData.getItemAt(0);
+                        ClipData clip = ClipData.newPlainText("overriden text", item.coerceToText(MainActivity.this).toString());
+                        breakLoop = true;
+                        clipboard.setPrimaryClip(clip);
+                    }
                 }
+            });
+        }
 
-                ClipData clipData = clipboard.getPrimaryClip();
-                ClipData.Item item = clipData.getItemAt(0);
-                ClipData clip = ClipData.newPlainText("overriden text", item.coerceToText(MainActivity.this).toString());
-                breakLoop = true;
-                clipboard.setPrimaryClip(clip);
-            }
-        });
     }
 
     @Override
