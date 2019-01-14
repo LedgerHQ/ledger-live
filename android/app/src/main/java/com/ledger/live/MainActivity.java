@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.facebook.react.ReactFragmentActivity;
 
@@ -52,6 +53,18 @@ public class MainActivity extends ReactFragmentActivity {
                 clipboard.setPrimaryClip(clip);
             }
         });
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     @Override
