@@ -67,6 +67,10 @@
       "title": "Possibly not genuine",
       "description": "Request Ledger Support assistance."
     },
+    "DeviceOnDashboardExpected": {
+      "title": "Return to Dashboard",
+      "description": "Please navigate back to Dashboard on your device"
+    },
     "DeviceSocketFail": {
       "title": "Oops, try again",
       "description": "Some connection failed, so please try again."
