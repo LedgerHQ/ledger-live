@@ -9,7 +9,8 @@ import {
   ManagerNotEnoughSpaceError,
   ManagerAppAlreadyInstalledError,
   ManagerAppRelyOnBTCError,
-  ManagerUninstallBTCDep
+  ManagerUninstallBTCDep,
+  DeviceOnDashboardExpected
 } from "../errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError } from "rxjs";
@@ -33,6 +34,10 @@ import { makeLRUCache } from "../cache";
 const remapSocketError = (context?: string) =>
   catchError((e: Error) => {
     if (!e || !e.message) return throwError(e);
+    if (e.message.startsWith("invalid literal")) {
+      // hack to detect the case you're not in good condition (not in dashboard)
+      return throwError(new DeviceOnDashboardExpected());
+    }
     const status = e.message.slice(e.message.length - 4);
     switch (status) {
       case "6a80":
