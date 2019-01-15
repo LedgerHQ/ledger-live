@@ -65,7 +65,10 @@ class QRCodeEntry extends Component<*> {
   render() {
     const { entry, width } = this.props;
     return (
-      <div className="printbreakinside" style={{ display: "inline-block" }}>
+      <div
+        className="printbreakinside"
+        style={{ display: "inline-block", textAlign: "center" }}
+      >
         <h1
           style={{
             display: "block",
@@ -80,8 +83,10 @@ class QRCodeEntry extends Component<*> {
           style={{
             fontFamily: "monospace",
             textAlign: "center",
-            fontSize: Math.round(width / 30) + "px",
-            color: "#666"
+            fontSize: Math.round(width / 15) + "px",
+            color: "#666",
+            maxWidth: width,
+            wordBreak: "break-all"
           }}
         >
           {entry.address}

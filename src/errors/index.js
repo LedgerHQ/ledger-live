@@ -15,6 +15,9 @@ export const DeviceGenuineSocketEarlyClose = createCustomErrorClass(
   "DeviceGenuineSocketEarlyClose"
 );
 export const DeviceNotGenuineError = createCustomErrorClass("DeviceNotGenuine");
+export const DeviceOnDashboardExpected = createCustomErrorClass(
+  "DeviceOnDashboardExpected"
+);
 export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass(
   "DeviceSocketNoBulkStatus"
