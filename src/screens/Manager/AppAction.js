@@ -1,4 +1,5 @@
 /* @flow */
+import { of } from "rxjs";
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet, Image } from "react-native";
@@ -130,8 +131,18 @@ class AppAction extends PureComponent<
     if (this.sub) this.sub.unsubscribe();
   }
 
+  onClose = () => {
+    if (this.state.pending) {
+      if (this.sub) this.sub.unsubscribe();
+      // need to flush if it's still pending
+      // FIXME this should be a flush(deviceId) on live-common. It also could be smarter without need to open().
+      withDevice(this.props.deviceId)(() => of(null)).toPromise();
+    }
+    this.props.onClose();
+  };
+
   render() {
-    const { action, onOpenAccounts, onClose, isOpened } = this.props;
+    const { action, onOpenAccounts, isOpened } = this.props;
     const { pending, error, progress } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
     const progressPercentage = Math.round(progress * 100);
@@ -175,7 +186,7 @@ class AppAction extends PureComponent<
       <BottomModal
         id={action.type + "AppActionModal"}
         isOpened={isOpened}
-        onClose={onClose}
+        onClose={this.onClose}
       >
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
@@ -214,7 +225,7 @@ class AppAction extends PureComponent<
                 error || (!pending && !installing) ? "primary" : "secondary"
               }
               containerStyle={styles.button}
-              onPress={onClose}
+              onPress={this.onClose}
               disabled={pending}
               title={buttonTitle}
             />
@@ -235,7 +246,7 @@ class AppAction extends PureComponent<
         <Touchable
           event="ManagerAppActionClose"
           style={styles.close}
-          onPress={onClose}
+          onPress={this.onClose}
         >
           <Close color={colors.fog} size={20} />
         </Touchable>
