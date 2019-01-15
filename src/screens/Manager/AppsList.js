@@ -66,11 +66,19 @@ class ManagerAppsList extends Component<
     this.fetchAppList();
   }
 
-  componentWillUnmount() {
-    this.unmount = true;
+  componentDidUpdate({ developerModeEnabled }) {
+    if (developerModeEnabled !== this.props.developerModeEnabled) {
+      this.fetchAppList();
+    }
   }
 
+  componentWillUnmount() {
+    this.fetchAppId++;
+  }
+
+  fetchAppId = 0;
   fetchAppList = async () => {
+    const id = ++this.fetchAppId;
     this.setState(old => {
       if (old.pending) return null;
       return { pending: true, error: null };
@@ -84,15 +92,14 @@ class ManagerAppsList extends Component<
         developerModeEnabled,
         getFullListSortedCryptoCurrencies,
       );
-
-      if (this.unmount) return;
+      if (id !== this.fetchAppId) return;
       this.setState({
         error: null,
         pending: false,
         apps,
       });
     } catch (error) {
-      if (this.unmount) return;
+      if (id !== this.fetchAppId) return;
       this.setState({
         pending: false,
         error,
