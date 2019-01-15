@@ -36,8 +36,15 @@ export type SocketEvent =
       message: string
     }
   | {
+      type: "exchange-before",
+      nonce: number,
+      apdu: Buffer
+    }
+  | {
       type: "exchange",
-      nonce: number
+      nonce: number,
+      apdu: Buffer,
+      data: Buffer
     }
   | {
       type: "opened"
@@ -112,17 +119,19 @@ export const createDeviceSocket = (
 
     const handlers = {
       exchange: async input => {
-        const { data, nonce } = input;
-        const r: Buffer = await transport.exchange(Buffer.from(data, "hex"));
+        const { nonce } = input;
+        const apdu = Buffer.from(input.data, "hex");
+        o.next({ type: "exchange-before", nonce, apdu });
+        const r: Buffer = await transport.exchange(apdu);
         if (interrupted) return;
-        o.next({ type: "exchange", nonce });
         const status = r.slice(r.length - 2);
-        const buffer = r.slice(0, r.length - 2);
+        const data = r.slice(0, r.length - 2);
+        o.next({ type: "exchange", nonce, apdu, status, data });
         const strStatus = status.toString("hex");
         send(
           nonce,
           strStatus === "9000" ? "success" : "error",
-          buffer.toString("hex")
+          data.toString("hex")
         );
       },
 
