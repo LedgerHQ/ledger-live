@@ -30,8 +30,8 @@ type Props = {
   navigation: NavigationScreenProp<{
     params: {
       deviceId: string,
-      deviceName: string,
       meta: {
+        deviceName: string,
         deviceInfo: DeviceInfo,
       },
     },
@@ -100,7 +100,6 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
 
   render() {
     const deviceId = this.props.navigation.getParam("deviceId");
-    const deviceName = this.props.navigation.getParam("deviceName");
     const meta = this.props.navigation.getParam("meta");
 
     return (
@@ -113,7 +112,7 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
           </LText>
           <FirmwareUpdateRow deviceInfo={meta.deviceInfo} deviceId={deviceId} />
         </View>
-        <DeviceNameRow deviceId={deviceId} deviceName={deviceName} />
+        <DeviceNameRow deviceId={deviceId} deviceName={meta.deviceName} />
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
