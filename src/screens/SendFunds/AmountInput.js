@@ -4,6 +4,8 @@ import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { Account, Currency } from "@ledgerhq/live-common/lib/types";
+import { translate } from "react-i18next";
+import { compose } from "redux";
 import { track } from "../../analytics";
 import {
   counterValueCurrencySelector,
@@ -20,6 +22,7 @@ import colors from "../../colors";
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
+import type { T } from "../../types/common";
 
 type OwnProps = {
   account: Account,
@@ -31,6 +34,8 @@ type OwnProps = {
 
 type Props = OwnProps & {
   fiatCurrency: Currency,
+  hasRateProvider: boolean,
+  t: T,
   getCounterValue: BigNumber => ?BigNumber,
   getReverseCounterValue: BigNumber => ?BigNumber,
 };
@@ -84,12 +89,14 @@ class AmountInput extends Component<Props, OwnState> {
   render() {
     const { active } = this.state;
     const {
+      t,
       currency,
       value,
       fiatCurrency,
       getCounterValue,
       account,
       error,
+      hasRateProvider,
     } = this.props;
     const isCrypto = active === "crypto";
     const fiat = value ? getCounterValue(value) : BigNumber(0);
@@ -124,7 +131,11 @@ class AmountInput extends Component<Props, OwnState> {
             onFocus={this.onFiatFieldFocus}
             onChange={this.onFiatFieldChange}
             unit={rightUnit}
-            value={fiat}
+            value={hasRateProvider ? fiat : null}
+            placeholder={
+              !hasRateProvider ? t("send.amount.noRateProvider") : undefined
+            }
+            editable={hasRateProvider}
             showAllDigits
             renderRight={
               <LText
@@ -195,9 +206,13 @@ const mapStateToProps = (state: State, props: OwnProps) => {
 
   return {
     fiatCurrency: counterValueCurrency,
+    hasRateProvider: !!fromExchange,
     getCounterValue,
     getReverseCounterValue,
   };
 };
 
-export default connect(mapStateToProps)(AmountInput);
+export default compose(
+  connect(mapStateToProps),
+  translate(),
+)(AmountInput);

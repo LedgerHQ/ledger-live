@@ -767,7 +767,8 @@
     },
     "amount": {
       "available": "<1><0>{{amount}}</></> available",
-      "loadingNetwork": "Loading Network fees..."
+      "loadingNetwork": "Loading Network fees...",
+      "noRateProvider": "Not available"
     },
     "summary": {
       "tag": "Tag (Optional)",
