@@ -126,6 +126,7 @@ class EditDeviceName extends PureComponent<
               type="primary"
               title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={this.onSubmit}
+              disabled={!name}
             />
           </View>
 
