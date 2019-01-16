@@ -206,7 +206,7 @@ const mapStateToProps = (state: State, props: OwnProps) => {
 
   return {
     fiatCurrency: counterValueCurrency,
-    hasRateProvider: !!fromExchange,
+    hasRateProvider: !!fromExchange || currency.id === "bitcoin",
     getCounterValue,
     getReverseCounterValue,
   };
