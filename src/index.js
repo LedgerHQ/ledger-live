@@ -6,7 +6,6 @@ import "./live-common-setup";
 import React, { Fragment, Component } from "react";
 import { StyleSheet, View } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import { useScreens } from "react-native-screens"; // eslint-disable-line import/no-unresolved
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
@@ -28,7 +27,7 @@ import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import AppContainer from "./navigators";
 
-useScreens();
+// useScreens();
 const styles = StyleSheet.create({
   root: {
     flex: 1,
