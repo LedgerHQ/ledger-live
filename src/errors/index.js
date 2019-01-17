@@ -32,6 +32,7 @@ export const InvalidAddress = createCustomErrorClass("InvalidAddress");
 export const LatestMCUInstalledError = createCustomErrorClass(
   "LatestMCUInstalledError"
 );
+export const UnknownMCU = createCustomErrorClass("UnknownMCU");
 export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
 export const LedgerAPIErrorWithMessage = createCustomErrorClass(
   "LedgerAPIErrorWithMessage"
