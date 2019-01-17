@@ -27,6 +27,10 @@ const repair = (deviceId: string): Observable<{ progress: number }> => {
               return installMcu("1.7");
             }
 
+            if (deviceInfo.rawVersion === "0.7") {
+              return installMcu("1.6");
+            }
+
             if (deviceInfo.rawVersion === "0.6") {
               return installMcu("1.5");
             }
