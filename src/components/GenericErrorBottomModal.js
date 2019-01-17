@@ -8,7 +8,7 @@ import Close from "../icons/Close";
 import BottomModal from "./BottomModal";
 import GenericErrorView from "./GenericErrorView";
 
-class GenericErrorButtonModal extends PureComponent<{
+class GenericErrorBottomModal extends PureComponent<{
   error: ?Error,
   onClose?: () => void,
   footerButtons?: React$Node,
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GenericErrorButtonModal;
+export default GenericErrorBottomModal;
