@@ -34,7 +34,6 @@ type OwnProps = {
 
 type Props = OwnProps & {
   fiatCurrency: Currency,
-  hasRateProvider: boolean,
   t: T,
   getCounterValue: BigNumber => ?BigNumber,
   getReverseCounterValue: BigNumber => ?BigNumber,
@@ -96,7 +95,6 @@ class AmountInput extends Component<Props, OwnState> {
       getCounterValue,
       account,
       error,
-      hasRateProvider,
     } = this.props;
     const isCrypto = active === "crypto";
     const fiat = value ? getCounterValue(value) : BigNumber(0);
@@ -131,11 +129,9 @@ class AmountInput extends Component<Props, OwnState> {
             onFocus={this.onFiatFieldFocus}
             onChange={this.onFiatFieldChange}
             unit={rightUnit}
-            value={hasRateProvider ? fiat : null}
-            placeholder={
-              !hasRateProvider ? t("send.amount.noRateProvider") : undefined
-            }
-            editable={hasRateProvider}
+            value={value ? fiat : null}
+            placeholder={!fiat ? t("send.amount.noRateProvider") : undefined}
+            editable={!!fiat}
             showAllDigits
             renderRight={
               <LText
@@ -206,7 +202,6 @@ const mapStateToProps = (state: State, props: OwnProps) => {
 
   return {
     fiatCurrency: counterValueCurrency,
-    hasRateProvider: !!fromExchange || currency.id === "bitcoin",
     getCounterValue,
     getReverseCounterValue,
   };
