@@ -68,7 +68,11 @@ class EditDeviceName extends PureComponent<
   };
 
   onChangeText = (name: string) => {
-    this.setState({ name: name || "" });
+    this.setState({ name });
+  };
+
+  onInputCleared = () => {
+    this.setState({ name: "" });
   };
 
   onSubmit = async () => {
@@ -104,7 +108,7 @@ class EditDeviceName extends PureComponent<
             <TextInput
               value={name}
               onChangeText={this.onChangeText}
-              onInputCleared={this.onChangeText}
+              onInputCleared={this.onInputCleared}
               maxLength={MAX_DEVICE_NAME}
               autoFocus
               selectTextOnFocus
