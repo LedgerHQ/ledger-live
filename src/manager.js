@@ -9,6 +9,7 @@ import type {
   FirmwareUpdateContext
 } from "./types/manager";
 import ManagerAPI from "./api/Manager";
+import { UnknownMCU } from "./errors";
 
 const ICONS_FALLBACK = {
   bitcoin_testnet: "bitcoin"
@@ -83,9 +84,10 @@ const CacheAPI = {
     const currentMcuVersion = mcus.find(
       mcu => mcu.name === deviceInfo.mcuVersion
     );
-    const shouldFlashMCU = !currentMcuVersion
-      ? false
-      : !final.mcu_versions.includes(currentMcuVersion.id);
+
+    if (!currentMcuVersion) throw new UnknownMCU();
+
+    const shouldFlashMCU = !final.mcu_versions.includes(currentMcuVersion.id);
 
     return { final, osu, shouldFlashMCU };
   },
