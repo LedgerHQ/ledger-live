@@ -14,9 +14,14 @@ class GenericErrorBottomModal extends PureComponent<{
   footerButtons?: React$Node,
 }> {
   render() {
-    const { error, onClose, footerButtons } = this.props;
+    const { error, onClose, footerButtons, ...otherProps } = this.props;
     return (
-      <BottomModal id="ErrorModal" isOpened={!!error} onClose={onClose}>
+      <BottomModal
+        id="ErrorModal"
+        isOpened={!!error}
+        onClose={onClose}
+        {...otherProps}
+      >
         {error ? (
           <View style={styles.root}>
             <GenericErrorView error={error} />
