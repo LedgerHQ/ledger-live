@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   dataRowValue: {
     color: colors.darkBlue,
-    fontSize: 16,
+    fontSize: 14,
     flex: 1,
     textAlign: "right",
   },
