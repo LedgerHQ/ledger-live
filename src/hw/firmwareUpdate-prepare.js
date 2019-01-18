@@ -1,11 +1,12 @@
 // @flow
-import { Observable, from, of, empty, concat } from "rxjs";
+import { Observable, from, of, concat, throwError } from "rxjs";
 import { mergeMap, delay, filter, map, throttleTime } from "rxjs/operators";
 
 import getDeviceInfo from "../hw/getDeviceInfo";
 import installOsuFirmware from "../hw/installOsuFirmware";
 import { withDevice } from "../hw/deviceAccess";
 import type { FirmwareUpdateContext } from "../types/manager";
+import { DeviceOnDashboardExpected } from "../errors";
 
 const waitEnd = of({ type: "wait" }).pipe(delay(1000));
 
@@ -18,7 +19,7 @@ const checkId = (
       deviceInfo =>
         // if in bootloader or OSU we'll directly jump to MCU step
         deviceInfo.isBootloader || deviceInfo.isOSU
-          ? empty()
+          ? throwError(new DeviceOnDashboardExpected())
           : concat(
               withDevice(deviceId)(transport =>
                 installOsuFirmware(transport, deviceInfo.targetId, osu)
