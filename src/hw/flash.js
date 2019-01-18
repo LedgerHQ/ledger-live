@@ -31,6 +31,12 @@ export default (finalFirmware: FinalFirmware) => (
               ? mcuVersion.name
               : mcuVersion.from_bootloader_version;
           }
+
+          version = version
+            .split(".")
+            .slice(0, 2)
+            .join(".");
+
           return concat(
             of({
               type: "install",
