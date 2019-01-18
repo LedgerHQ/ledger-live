@@ -9,7 +9,7 @@ import getDeviceInfo from "../hw/getDeviceInfo";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
-const repair = (deviceId: string): Observable<{ progress: number }> => {
+const repair = (deviceId: string, forceMCU: ?string): Observable<{ progress: number }> => {
   const loop = () =>
     withDevicePolling(deviceId)(
       transport =>
@@ -22,6 +22,8 @@ const repair = (deviceId: string): Observable<{ progress: number }> => {
               });
 
             if (!deviceInfo.isBootloader) return empty();
+            
+            if (forceMCU) return installMcu(forceMCU);
 
             if (deviceInfo.rawVersion === "0.9") {
               return installMcu("1.7");
