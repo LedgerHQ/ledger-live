@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "../../types";
-import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "../../errors";
+import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "@ledgerhq/errors";
 
 import aeternity from "./aeternity";
 import bitcoin from "./btc";

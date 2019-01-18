@@ -11,7 +11,7 @@ import {
   ManagerAppRelyOnBTCError,
   ManagerUninstallBTCDep,
   DeviceOnDashboardExpected
-} from "../errors";
+} from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError } from "rxjs";
 import { catchError, filter, last, map } from "rxjs/operators";

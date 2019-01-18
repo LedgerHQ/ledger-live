@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@aeternity/ledger-app-api": "0.0.4",
+    "@ledgerhq/errors": "^4.32.0",
     "@ledgerhq/hw-app-btc": "^4.32.0",
     "@ledgerhq/hw-app-eth": "^4.32.0",
     "@ledgerhq/hw-app-xrp": "^4.32.0",

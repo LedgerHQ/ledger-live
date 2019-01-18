@@ -8,7 +8,7 @@ import {
   CantOpenDevice,
   UpdateYourApp,
   BluetoothRequired
-} from "../errors";
+} from "@ledgerhq/errors";
 import { open } from ".";
 
 export type AccessHook = () => () => void;
