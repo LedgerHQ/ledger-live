@@ -10,7 +10,7 @@ import getDeviceInfo from "../hw/getDeviceInfo";
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
 const repair = (deviceId: string, forceMCU: ?string): Observable<{ progress: number }> => {
-  const loop = () =>
+  const loop = (forceMCU: ?string) =>
     withDevicePolling(deviceId)(
       transport =>
         from(getDeviceInfo(transport)).pipe(
@@ -23,7 +23,7 @@ const repair = (deviceId: string, forceMCU: ?string): Observable<{ progress: num
 
             if (!deviceInfo.isBootloader) return empty();
             
-            if (forceMCU) return installMcu(forceMCU);
+            if (forceMCU) return concat(installMcu(forceMCU), wait2s, loop());
 
             if (deviceInfo.rawVersion === "0.9") {
               return installMcu("1.7");
@@ -51,7 +51,7 @@ const repair = (deviceId: string, forceMCU: ?string): Observable<{ progress: num
       e => e instanceof CantOpenDevice // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
     );
 
-  return loop().pipe(
+  return loop(forceMCU).pipe(
     filter(e => e.type === "bulk-progress"),
     map(e => ({ progress: e.progress })),
     throttleTime(100)
