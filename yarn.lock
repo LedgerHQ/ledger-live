@@ -7,7 +7,7 @@
   resolved "https://registry.yarnpkg.com/@aeternity/ledger-app-api/-/ledger-app-api-0.0.4.tgz#79d253b46cc6b0b18ef7cb57c3684bbe7e723c51"
   integrity sha512-aXvCJX9fdT/EJbRKBdc2mu8fvvWu80A8JyFdfvS4bsaDOGjBaIfFFYbEpxaXef8TBE5zV8u7RN1PaXDPGeDUZg==
   dependencies:
-    "@ledgerhq/hw-transport" "^4.32.0"
+    "@ledgerhq/hw-transport" "^4.21.0"
 
 "@babel/code-frame@7.0.0-beta.44":
   version "7.0.0-beta.44"
@@ -736,6 +736,11 @@
     lodash "^4.17.5"
     to-fast-properties "^2.0.0"
 
+"@ledgerhq/errors@^4.32.0":
+  version "4.33.7"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.33.7.tgz#b78becd20e8a68f7115ad0986fa357a8adddf6b7"
+  integrity sha512-1vKWcttI5NHpT6rMKKuxWPAjfwDgfgUTf/AyNAT5KXHlhiLvqnA3NDCdNUVadajVNKSa/s1u1ZWKismtbfePzg==
+
 "@ledgerhq/hw-app-btc@^4.32.0":
   version "4.32.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.32.0.tgz#e883dcaa3ebb4aca1e2cb27acfc47b8db4e85f3f"
@@ -759,7 +764,7 @@
     "@ledgerhq/hw-transport" "^4.32.0"
     bip32-path "0.4.2"
 
-"@ledgerhq/hw-transport@^4.32.0":
+"@ledgerhq/hw-transport@^4.21.0", "@ledgerhq/hw-transport@^4.32.0":
   version "4.32.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.32.0.tgz#592b9dc51459cb1cd31ce9444cf943f627bc4beb"
   integrity sha512-Wgsk9UHC4RShqYoDeIEeKgHZOvNCtB0WWIG0xqlVPzS+IcKDkIxtXQw7hTA7GQSuDuGeauVtlbTQ5yat6+2/BA==

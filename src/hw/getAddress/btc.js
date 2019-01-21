@@ -3,7 +3,7 @@
 import type { CryptoCurrency } from "../../types";
 import Btc from "@ledgerhq/hw-app-btc";
 import type Transport from "@ledgerhq/hw-transport";
-import { BtcUnmatchedApp, UpdateYourApp } from "../../errors";
+import { BtcUnmatchedApp, UpdateYourApp } from "@ledgerhq/errors";
 import getBitcoinLikeInfo from "../getBitcoinLikeInfo";
 
 const oldP2SH = {

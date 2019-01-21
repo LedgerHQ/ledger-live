@@ -8,7 +8,7 @@ import {
   throttleTime
 } from "rxjs/operators";
 
-import { CantOpenDevice } from "../errors";
+import { CantOpenDevice } from "@ledgerhq/errors";
 import type { FirmwareUpdateContext } from "../types/manager";
 import { withDevicePolling } from "../hw/deviceAccess";
 import getDeviceInfo from "../hw/getDeviceInfo";

@@ -6,7 +6,7 @@ import getDeviceInfo from "../hw/getDeviceInfo";
 import installOsuFirmware from "../hw/installOsuFirmware";
 import { withDevice } from "../hw/deviceAccess";
 import type { FirmwareUpdateContext } from "../types/manager";
-import { DeviceOnDashboardExpected } from "../errors";
+import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
 
 const waitEnd = of({ type: "wait" }).pipe(delay(1000));
 

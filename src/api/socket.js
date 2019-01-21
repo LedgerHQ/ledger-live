@@ -8,7 +8,7 @@ import {
   WebsocketConnectionFailed,
   DeviceSocketFail,
   DeviceSocketNoBulkStatus
-} from "../errors";
+} from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { createWebSocket } from "../network";
 
