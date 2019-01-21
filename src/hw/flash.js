@@ -15,27 +15,25 @@ export default (finalFirmware: FinalFirmware) => (
   transport: Transport<*>
 ): Observable<*> =>
   from(getDeviceInfo(transport)).pipe(
-    mergeMap(({ seVersion: blVersion, targetId }: DeviceInfo) =>
+    mergeMap(({ rawVersion: blVersion, targetId }: DeviceInfo) =>
       (blVersion in blVersionAliases
         ? of(blVersionAliases[blVersion])
         : from(ManagerAPI.getNextBLVersion(finalFirmware.mcu_versions[0]))
       ).pipe(
         mergeMap(mcuVersion => {
           let version;
+          let mcuFromBootloader = mcuVersion.from_bootloader_version
+            .split(".")
+            .slice(0, 2)
+            .join(".");
+
           let isMCU = false;
           if (typeof mcuVersion === "string") {
             version = mcuVersion;
           } else {
-            isMCU = blVersion === mcuVersion.from_bootloader_version;
-            version = isMCU
-              ? mcuVersion.name
-              : mcuVersion.from_bootloader_version;
+            isMCU = blVersion === mcuFromBootloader;
+            version = isMCU ? mcuVersion.name : mcuFromBootloader;
           }
-
-          version = version
-            .split(".")
-            .slice(0, 2)
-            .join(".");
 
           return concat(
             of({
