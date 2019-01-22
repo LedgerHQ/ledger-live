@@ -8,7 +8,6 @@ import {
   throttleTime,
 } from "rxjs/operators";
 
-import { CantOpenDevice } from "@ledgerhq/errors";
 import ManagerAPI from "../api/Manager";
 import { withDevicePolling } from "../hw/deviceAccess";
 import getDeviceInfo from "../hw/getDeviceInfo";
