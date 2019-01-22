@@ -1,12 +1,6 @@
 // @flow
 import { Observable, from, of, empty, concat } from "rxjs";
-import {
-  concatMap,
-  delay,
-  filter,
-  map,
-  throttleTime,
-} from "rxjs/operators";
+import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
 
 import ManagerAPI from "../api/Manager";
 import { withDevicePolling } from "../hw/deviceAccess";
@@ -58,15 +52,19 @@ const repair = (
 
             switch (deviceInfo.rawVersion) {
               case "0.0":
+              case "0.0.0":
                 return concat(installMcu("0.6"), wait2s, loop());
 
               case "0.6":
+              case "0.6.0":
                 return installMcu("1.5");
 
               case "0.7":
+              case "0.7.0":
                 return installMcu("1.6");
 
               case "0.9":
+              case "0.9.0":
                 return installMcu("1.7");
 
               default:
