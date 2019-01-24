@@ -112,6 +112,7 @@ android {
 
     defaultConfig {
         applicationId "com.ledger.live"
+        multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 10
