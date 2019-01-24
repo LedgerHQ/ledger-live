@@ -31,6 +31,10 @@ const modes = Object.freeze({
     isNonIterable: true,
     overridesDerivation: "44'/60'/14'/5'/16"
   },
+  // MetaMask style
+  ethMM: {
+    overridesDerivation: "44'/60'/0'/0/<account>"
+  },
   // chrome ripple legacy derivations
   rip: {
     isNonIterable: true,
@@ -63,8 +67,8 @@ const modes = Object.freeze({
 (modes: { [_: DerivationMode]: ModeSpec });
 
 const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
-  ethereum: ["ethM", "ethW1", "ethW2"],
-  ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2"],
+  ethereum: ["ethM", "ethW1", "ethW2", "ethMM"],
+  ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2", "ethMM"],
   ripple: ["rip", "rip2"]
 };
 
