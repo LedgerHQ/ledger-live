@@ -16,7 +16,11 @@ class DebugLottie extends Component<{}> {
   render() {
     return (
       <SafeAreaView forceInset={forceInset} style={styles.root}>
-        <LottieView source={require("../animations/pairing.json")} autoPlay />
+        <LottieView
+          source={require("../animations/pairing.json")}
+          imageAssetsFolder="lottie/pairing"
+          autoPlay
+        />
       </SafeAreaView>
     );
   }
