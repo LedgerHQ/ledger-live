@@ -995,7 +995,7 @@
   "FirmwareUpdateMCU": {
     "title": "Restart device",
     "desc1": "Unplug your device from your computer",
-    "desc2": "Press and hold left button and plug your device until the processing screen appears"
+    "desc2": "Press and hold left button and plug your device until the bootloader screen appears"
   },
   "FirmwareUpdateConfirmation": {
     "title": "Firmware updated",
