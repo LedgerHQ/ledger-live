@@ -18,6 +18,7 @@ import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import OpenDebugStore from "./OpenDebugStore";
+import OpenLottie from "./OpenDebugLottie";
 
 class DebugMocks_ extends PureComponent<{
   accounts: *,
@@ -44,6 +45,7 @@ class DebugMocks_ extends PureComponent<{
         <OpenDebugCrash />
         <OpenDebugStore />
         <OpenDebugIcons />
+        <OpenLottie />
         <ReadOnlyModeRow />
       </ScrollView>
     );
