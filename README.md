@@ -2,7 +2,7 @@
 
 - Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live-desktop)
 
-> Ledger Live is a mobile companion for Ledger Hardware wallets. It allows to manage crypto assets (Bitcoin, Ethereum, Ripple and many others) securely. Available for iOS and Android.
+> Ledger Live is a mobile companion for Ledger Hardware wallets. It allows to manage crypto assets (Bitcoin, Ethereum, Ripple and many others) securely. Available for [iOS](https://itunes.apple.com/fr/app/id1361671700) and [Android](https://play.google.com/store/apps/details?id=com.google.android.apps.live).
 
 ![](https://user-images.githubusercontent.com/211411/51758554-42edb980-20c6-11e9-89f0-308949a760d6.png)
 
