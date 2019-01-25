@@ -8,7 +8,7 @@
 
 ## Architecture
 
-Ledger Live (mobile) is a native mobile application built with React Native, React, Redux, RxJS,.. and some native libraries. The architecture is analog to the [desktop application](<](https://github.com/LedgerHQ/ledger-live-desktop)>) and also use our C++ library, the [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core) to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-react-native-bindings). It communicates in Bluetooth to the brand new [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) to manager applications and firmware, verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live-common).
+Ledger Live (mobile) is a native mobile application built with React Native, React, Redux, RxJS,.. and some native libraries. The architecture is analog to the [desktop application](https://github.com/LedgerHQ/ledger-live-desktop) and also use our C++ library, the [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core) to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-react-native-bindings). It communicates in Bluetooth to the brand new [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) to manager applications and firmware, verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live-common).
 
 ![](https://user-images.githubusercontent.com/211411/51758555-43865000-20c6-11e9-8ac9-06787ebb49eb.png)
 
