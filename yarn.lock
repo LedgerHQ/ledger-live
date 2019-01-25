@@ -753,6 +753,11 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@ledgerhq/errors@^4.32.0":
+  version "4.33.7"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.33.7.tgz#b78becd20e8a68f7115ad0986fa357a8adddf6b7"
+  integrity sha512-1vKWcttI5NHpT6rMKKuxWPAjfwDgfgUTf/AyNAT5KXHlhiLvqnA3NDCdNUVadajVNKSa/s1u1ZWKismtbfePzg==
+
 "@ledgerhq/hw-app-btc@^4.30.0", "@ledgerhq/hw-app-btc@^4.32.0":
   version "4.32.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.32.0.tgz#e883dcaa3ebb4aca1e2cb27acfc47b8db4e85f3f"
@@ -792,12 +797,13 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@^4.9.0":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.9.0.tgz#4dcd0fec5ea6ccb46f8142fcbdf017cd5a9c0266"
-  integrity sha512-+NU46IDFHYO1kE5pNoQRjnGwxJ2s5wUl4Rvx2IH0kBlVkR9qGDfkXXxtaVDZRyqVP20nSqj8R5AU3szDLsOq2g==
+"@ledgerhq/live-common@4.14.0":
+  version "4.14.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.14.0.tgz#56ecac0a21f0d77a66a57d5ce9e2159b426e0ec7"
+  integrity sha512-oKvb/QZrG2XzVvq/IM+73lyw33VlyDu03hmYFCR48U2DGao/SCFOH8J0vQZK/U9VTSqpnC8mEZKQhNOQkf5hoA==
   dependencies:
     "@aeternity/ledger-app-api" "0.0.4"
+    "@ledgerhq/errors" "^4.32.0"
     "@ledgerhq/hw-app-btc" "^4.32.0"
     "@ledgerhq/hw-app-eth" "^4.32.0"
     "@ledgerhq/hw-app-xrp" "^4.32.0"
