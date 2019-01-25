@@ -9,7 +9,8 @@ import {
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
-  isIterableDerivationMode
+  isIterableDerivationMode,
+  derivationModeSupportsIndex
 } from "@ledgerhq/live-common/lib/derivation";
 import CurrencySelect from "./CurrencySelect";
 
@@ -104,6 +105,7 @@ class CurrencyDerivations extends Component<*, *> {
           .fill(null)
           .map((_, index) =>
             getDerivationModesForCurrency(currency)
+              .filter(mode => derivationModeSupportsIndex(mode, index))
               .filter(mode => index === 0 || isIterableDerivationMode(mode))
               .map(derivationMode => (
                 <CurrencyDerivation

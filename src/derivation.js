@@ -8,7 +8,8 @@ export type ModeSpec = {
   isNonIterable?: boolean,
   overridesDerivation?: string,
   isSegwit?: boolean,
-  isUnsplit?: boolean
+  isUnsplit?: boolean,
+  skipFirst?: true
 };
 
 export type DerivationMode = $Keys<typeof modes>;
@@ -30,6 +31,11 @@ const modes = Object.freeze({
   ethW2: {
     isNonIterable: true,
     overridesDerivation: "44'/60'/14'/5'/16"
+  },
+  // MetaMask style
+  ethMM: {
+    overridesDerivation: "44'/60'/0'/0/<account>",
+    skipFirst: true // already included in the normal bip44
   },
   // chrome ripple legacy derivations
   rip: {
@@ -63,8 +69,8 @@ const modes = Object.freeze({
 (modes: { [_: DerivationMode]: ModeSpec });
 
 const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
-  ethereum: ["ethM", "ethW1", "ethW2"],
-  ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2"],
+  ethereum: ["ethM", "ethW1", "ethW2", "ethMM"],
+  ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2", "ethMM"],
   ripple: ["rip", "rip2"]
 };
 
@@ -93,6 +99,15 @@ export const isUnsplitDerivationMode = (
 export const isIterableDerivationMode = (
   derivationMode: DerivationMode
 ): boolean => !modes[derivationMode].isNonIterable;
+
+export const derivationModeSupportsIndex = (
+  derivationMode: DerivationMode,
+  index: number
+): boolean => {
+  const mode = modes[derivationMode];
+  if (mode.skipFirst && index === 0) return false;
+  return true;
+};
 
 /**
  * return a ledger-lib-core compatible DerivationScheme format
