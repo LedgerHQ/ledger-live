@@ -50,6 +50,11 @@ subprojects {
             android {
                 compileSdkVersion 27
                 buildToolsVersion '27.0.3'
+
+                compileOptions {
+                    sourceCompatibility 1.8
+                    targetCompatibility 1.8
+                }
             }
         }
     }

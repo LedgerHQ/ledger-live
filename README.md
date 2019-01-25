@@ -1,6 +1,18 @@
 # ledger-live-mobile
 
-Mobile application for the Ledger Wallet
+- Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live-desktop)
+
+> Ledger Live is a mobile companion for Ledger Hardware wallets. It allows to manage crypto assets (Bitcoin, Ethereum, Ripple and many others) securely. Available for [iOS](https://itunes.apple.com/fr/app/id1361671700) and [Android](https://play.google.com/store/apps/details?id=com.google.android.apps.live).
+
+![](https://user-images.githubusercontent.com/211411/51758554-42edb980-20c6-11e9-89f0-308949a760d6.png)
+
+## Architecture
+
+Ledger Live (mobile) is a native mobile application built with React Native, React, Redux, RxJS,.. and some native libraries. The architecture is analog to the [desktop application](https://github.com/LedgerHQ/ledger-live-desktop) and also use our C++ library, the [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core) to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-react-native-bindings). It communicates in Bluetooth to the brand new [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) to manager applications and firmware, verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live-common).
+
+![](https://user-images.githubusercontent.com/211411/51758555-43865000-20c6-11e9-8ac9-06787ebb49eb.png)
+
+# Developing on ledger-live-mobile
 
 ## Pre-requisite
 
@@ -31,13 +43,13 @@ Sometimes you may need to reset or clear the React Native packager's cache. To d
 yarn start -- --reset-cache
 ```
 
-#### `yarn test`
+### `yarn test`
 
-#### `yarn run ios`
+### `yarn run ios`
 
 or `open ios/ledgerlivemobile.xcodproj`
 
-#### `yarn run android`
+### `yarn run android`
 
 or open `android/` in Android Studio.
 
@@ -65,44 +77,6 @@ yarn sync-flowtyped
 ```
 yarn sync-locales
 ```
-
-### Release on testflight
-
-currently it is manually done with XCode.
-
-save your own .env somewhere and do:
-
-```
-cp .env.staging .env
-```
-
-- go to XCode.
-- manually increment the Build number in ledgerlivemobile Target.
-- go to Build Phases, expand Copy Files and remove ledger-core.framework from the list.
-- select Generic iOS Device target and do a Product > Archive.
-- The Archives window will open, click on Distribute App and follow the steps.
-  - if you miss a certificate problem, please contact gre.
-- commit the Info.plist but NOT the ledgerlivemobile.xcodeproj changes.
-
-### Release on Android playstore
-
-Before the release, you need to manually update the `android/app/build.gradle` and:
-
-- increment versionCode
-- set the correct versionName (that is same as the package.json)
-
-**Then to build it:**
-
-You need to have access to the Android Console.
-You also need to have our Android Keystore certificate.
-
-Then, you can run:
-
-```
-ANDROID_KEYSTORE=_path_to_jks_file_ yarn android:release
-```
-
-it will tell you where the build is, yo can then go to Android Console and upload it.
 
 ## Troubleshooting
 
