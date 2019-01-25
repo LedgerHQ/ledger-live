@@ -14,9 +14,9 @@ Ledger Live (mobile) is a native mobile application built with React Native, Rea
 
 ---
 
-## Developing on ledger-live-mobile
+# Developing on ledger-live-mobile
 
-### Pre-requisite
+## Pre-requisite
 
 - Node LTS version
 - Yarn 1.10.1 or above
@@ -29,13 +29,13 @@ Ledger Live (mobile) is a native mobile application built with React Native, Rea
 
 - Android studio
 
-### Scripts
+## Scripts
 
-#### `yarn install`
+### `yarn install`
 
 install dependencies.
 
-#### `yarn start`
+### `yarn start`
 
 Runs your app in development mode.
 
@@ -45,17 +45,17 @@ Sometimes you may need to reset or clear the React Native packager's cache. To d
 yarn start -- --reset-cache
 ```
 
-#### `yarn test`
+### `yarn test`
 
-#### `yarn run ios`
+### `yarn run ios`
 
 or `open ios/ledgerlivemobile.xcodproj`
 
-#### `yarn run android`
+### `yarn run android`
 
 or open `android/` in Android Studio.
 
-### Environment variables
+## Environment variables
 
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively
 
@@ -66,15 +66,15 @@ DEBUG_RNDEBUGGER=1          # enable react native debugger
 DISABLE_READ_ONLY=1         # disables readonly mode by default
 ```
 
-### Maintenance
+## Maintenance
 
-#### Refresh the flow-typed from flow-typed Github
+### Refresh the flow-typed from flow-typed Github
 
 ```
 yarn sync-flowtyped
 ```
 
-#### Refresh the languages (if we add new languages)
+### Refresh the languages (if we add new languages)
 
 ```
 yarn sync-locales
