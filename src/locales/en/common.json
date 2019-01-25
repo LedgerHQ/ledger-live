@@ -432,7 +432,7 @@
       "cta": "Open Ledger Live"
     },
     "stepScanQR": {
-      "title": "Please go to <1>Settings > General > Export accounts</1> in the desktop app and scan the QR code",
+      "title": "Please go to <1>Settings > Export accounts</1> in the desktop app and scan the QR code",
       "cta": "Scan QR code"
     }
   },
