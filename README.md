@@ -12,8 +12,6 @@ Ledger Live (mobile) is a native mobile application built with React Native, Rea
 
 ![](https://user-images.githubusercontent.com/211411/51758555-43865000-20c6-11e9-8ac9-06787ebb49eb.png)
 
----
-
 # Developing on ledger-live-mobile
 
 ## Pre-requisite
