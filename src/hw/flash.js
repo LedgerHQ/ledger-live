@@ -4,7 +4,7 @@ import { Observable, from, of, concat } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import getDeviceInfo from "./getDeviceInfo";
-import type { FinalFirmware, DeviceInfo } from "../types/manager";
+import type { FinalFirmware, DeviceInfo, McuVersion } from "../types/manager";
 
 const blVersionAliases = {
   "0.0": "0.6",
@@ -20,17 +20,17 @@ export default (finalFirmware: FinalFirmware) => (
         ? of(blVersionAliases[blVersion])
         : from(ManagerAPI.getNextBLVersion(finalFirmware.mcu_versions[0]))
       ).pipe(
-        mergeMap(mcuVersion => {
+        mergeMap((mcuVersion: McuVersion | string) => {
           let version;
-          let mcuFromBootloader = mcuVersion.from_bootloader_version
-            .split(".")
-            .slice(0, 2)
-            .join(".");
 
           let isMCU = false;
           if (typeof mcuVersion === "string") {
             version = mcuVersion;
           } else {
+            let mcuFromBootloader = (mcuVersion.from_bootloader_version || "")
+              .split(".")
+              .slice(0, 2)
+              .join(".");
             isMCU = blVersion === mcuFromBootloader;
             version = isMCU ? mcuVersion.name : mcuFromBootloader;
           }
