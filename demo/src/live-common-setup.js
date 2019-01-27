@@ -20,14 +20,18 @@ const webusbDevices = {};
 registerTransportModule({
   id: "webusb",
 
-  open: async (id: string): ?Promise<*> => {
+  // $FlowFixMe
+  open: (id: string): ?Promise<*> => {
     if (id.startsWith("webusb")) {
       const existingDevice = webusbDevices[id];
-      const t = await (existingDevice
+      return (existingDevice
         ? TransportWebUSB.open(existingDevice)
-        : TransportWebUSB.create()); // fallback on create() in case discovery not used (we later should backport this in open?)
-      t.setDebugMode(true);
-      return t;
+        : TransportWebUSB.create()
+      ).then(t => {
+        // fallback on create() in case discovery not used (we later should backport this in open?)
+        t.setDebugMode(true);
+        return t;
+      });
     }
     return null;
   },
@@ -55,14 +59,18 @@ const webbleDevices = {};
 registerTransportModule({
   id: "webble",
 
-  open: async (id: string): ?Promise<*> => {
+  // $FlowFixMe
+  open: (id: string): ?Promise<*> => {
     if (id.startsWith("webble")) {
       const existingDevice = webbleDevices[id];
-      const t = await (existingDevice
+      return (existingDevice
         ? TransportWebBLE.open(existingDevice)
-        : TransportWebBLE.create()); // fallback on create() in case discovery not used (we later should backport this in open?)
-      t.setDebugMode(true);
-      return t;
+        : TransportWebBLE.create()
+      ).then(t => {
+        // fallback on create() in case discovery not used (we later should backport this in open?)
+        t.setDebugMode(true);
+        return t;
+      });
     }
     return null;
   },

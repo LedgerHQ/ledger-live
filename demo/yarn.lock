@@ -846,6 +846,11 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
+"@ledgerhq/errors@^4.32.0":
+  version "4.35.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.35.0.tgz#07487da41f61eb524a885734c721cd4f80a0b5ef"
+  integrity sha512-m0khXj7evq0pCyEuZUs0X2U7bLAYyxDzAAhJjdNNBbYirWjgkzTywQCId3N2euLkE70DVbo3/hFBuS9W39DPuw==
+
 "@ledgerhq/hw-app-btc@^4.32.0":
   version "4.32.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.32.0.tgz#e883dcaa3ebb4aca1e2cb27acfc47b8db4e85f3f"
@@ -907,9 +912,10 @@
     events "^3.0.0"
 
 "@ledgerhq/live-common@file:..":
-  version "4.7.0"
+  version "4.14.1"
   dependencies:
     "@aeternity/ledger-app-api" "0.0.4"
+    "@ledgerhq/errors" "^4.32.0"
     "@ledgerhq/hw-app-btc" "^4.32.0"
     "@ledgerhq/hw-app-eth" "^4.32.0"
     "@ledgerhq/hw-app-xrp" "^4.32.0"
