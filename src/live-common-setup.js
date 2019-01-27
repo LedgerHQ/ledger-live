@@ -71,6 +71,7 @@ registerTransportModule(httpdebug);
 
 registerTransportModule({
   id: "ble",
+  // $FlowFixMe
   open: id => BluetoothTransport.open(id),
   disconnect: id => BluetoothTransport.disconnect(id),
 });
