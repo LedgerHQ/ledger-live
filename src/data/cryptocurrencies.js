@@ -1811,18 +1811,18 @@ const cryptocurrenciesById = {
     },
     txExplorers: ["https://testnet.blockchain.info/tx/$hash"]
   },
-  ethereum_testnet: {
-    id: "ethereum_testnet",
+  ethereum_ropsten: {
+    id: "ethereum_ropsten",
     coinType: 1,
-    name: "Ethereum Testnet",
+    name: "Ethereum Ropsten",
     managerAppName: "Ethereum",
     ticker: "ETH",
-    scheme: "ethereum_testnet",
+    scheme: "ethereum_ropsten",
     color: "#00ff00",
     units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
     isTestnetFor: "ethereum",
     family: "ethereum",
-    ledgerExplorerId: "eth_testnet",
+    ledgerExplorerId: "eth_ropsten",
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 3 // ropsten
