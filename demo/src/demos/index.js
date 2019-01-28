@@ -7,6 +7,7 @@ import bridgestream from "./bridgestream";
 import qrstreambenchmark from "./qrstreambenchmark";
 import transports from "./transports";
 import qrledger from "./qrledger";
+import explorers from "./explorers";
 
 export default {
   CountervalueDirect,
@@ -17,5 +18,6 @@ export default {
   bridgestream,
   qrstreambenchmark,
   transports,
-  qrledger
+  qrledger,
+  explorers
 };
