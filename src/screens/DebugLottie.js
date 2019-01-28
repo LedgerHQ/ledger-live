@@ -13,7 +13,7 @@ const forceInset = { bottom: "always" };
 const anims = {
   pairing: {
     anim: require("../animations/pairing.json"),
-    imageAssetsFolder: "lottie/pairing",
+    imageAssetsFolder: undefined,
   },
   line: {
     anim: require("../animations/line.json"),
