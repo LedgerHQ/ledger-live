@@ -62,31 +62,27 @@ const Checks = styled.div`
   justify-content: flex-end;
 `;
 
-const getMillisSinceBlock = async ({ ledgerExplorerId }) => {
+const checkCoinExplorer = async ({ ledgerExplorerId }) => {
   const url = `//api.ledgerwallet.com/blockchain/v2/${ledgerExplorerId}/blocks/current`;
   const r = await fetch(url);
-  if (r.status !== 200) throw new Error("HTTP " + r.status);
+  if (r.status !== 200) {
+    throw new Error("HTTP " + r.status);
+  }
   const json = await r.json();
   if (typeof json !== "object" || !json || typeof json.time !== "string") {
     throw new Error("Invalid blocks/current");
   }
-  return { time: json.time, millis: new Date() - new Date(json.time) };
+  if (new Date() - new Date(json.time) > 60 * 60 * 1000) {
+    throw new Error("outdated " + timeago(json.time));
+  }
 };
 
 class TimeState extends PureComponent<*, *> {
   render() {
-    const { time, error } = this.props;
-    const loading = time.millis === 0;
-    const hasError = !!error || time.millis > 60 * 60 * 1000;
+    const { loading, error } = this.props;
     return (
-      <TimeContainer title={time.time} loading={loading} hasError={hasError}>
-        {loading
-          ? "..."
-          : hasError
-            ? error
-              ? error.message
-              : timeago(time.time)
-            : "OK"}
+      <TimeContainer loading={loading} hasError={!!error}>
+        {loading ? "..." : error ? error.message : "OK"}
       </TimeContainer>
     );
   }
@@ -94,21 +90,22 @@ class TimeState extends PureComponent<*, *> {
 
 class ExplorerRow extends PureComponent<*, *> {
   state = {
-    times: Array(5).fill({ error: null, time: 0 })
+    times: Array(5).fill({ error: null, loading: true })
   };
 
   async componentDidMount() {
     const { currency } = this.props;
     for (let i = 0; i < 5; i++) {
-      let time = 0;
       let error = null;
       try {
-        time = await getMillisSinceBlock(currency);
+        await checkCoinExplorer(currency);
       } catch (e) {
         error = e;
       }
       this.setState(({ times }) => ({
-        times: times.map((v, index) => (i === index ? { time, error } : v))
+        times: times.map(
+          (v, index) => (i === index ? { loading: false, error } : v)
+        )
       }));
     }
   }
