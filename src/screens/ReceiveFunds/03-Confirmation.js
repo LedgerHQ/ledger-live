@@ -217,7 +217,7 @@ class ReceiveConfirmation extends Component<Props, State> {
               >
                 <Trans i18nKey="transfer.receive.copyAddress" />
               </CopyLink>
-              <ShareLink string={account.freshAddress}>
+              <ShareLink value={account.freshAddress}>
                 <Trans i18nKey="transfer.receive.shareAddress" />
               </ShareLink>
             </View>

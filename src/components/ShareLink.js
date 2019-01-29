@@ -8,26 +8,25 @@ import LText from "./LText";
 import colors from "../colors";
 
 type Props = {
-  style?: *,
-  children: string | React$Element<*>,
-  string: string, // String to be shared
+  children: React$Node,
+  value: string, // String to be shared
 };
 
 class ShareLink extends PureComponent<Props> {
   onPress = async () => {
-    const { string } = this.props;
+    const { value } = this.props;
     await Share.share({
-      message: string,
+      message: value,
     });
   };
 
   render() {
-    const { style, children } = this.props;
+    const { children } = this.props;
 
     return (
       <Touchable
         event="ShareLink"
-        style={[styles.linkContainer, style]}
+        style={styles.linkContainer}
         onPress={this.onPress}
       >
         <Icon name="share" size={16} color={colors.live} />
