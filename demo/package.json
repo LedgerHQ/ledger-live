@@ -27,6 +27,7 @@
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
     "styled-components": "^3.4.10",
+    "timeago.js": "^4.0.0-beta.2",
     "victory": "^0.26.0"
   },
   "scripts": {
