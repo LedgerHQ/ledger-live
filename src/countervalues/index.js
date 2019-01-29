@@ -2,6 +2,7 @@
 import { BigNumber } from "bignumber.js";
 // $FlowFixMe no idea what's going on here
 import React, { Component } from "react";
+import invariant from "invariant";
 import throttle from "lodash/throttle";
 import merge from "lodash/merge";
 import { connect } from "react-redux";
@@ -431,6 +432,15 @@ function createCounterValues<State>({
       method: "GET",
       url: getAPIBaseURL() + "/exchanges/" + from.ticker + "/" + to.ticker
     });
+    invariant(
+      typeof data === "object" && Array.isArray(data),
+      "fetchExchangesForPair: array expected"
+    );
+    invariant(
+      data.length === 0 ||
+        (typeof data[0] === "object" && typeof data.id === "string"),
+      "fetchExchangesForPair: array of exchanges expected"
+    );
     return data;
   };
 
@@ -439,6 +449,14 @@ function createCounterValues<State>({
       method: "GET",
       url: getAPIBaseURL() + "/tickers"
     });
+    invariant(
+      typeof data === "object" && Array.isArray(data),
+      "fetchTickersByMarketcap: array expected"
+    );
+    invariant(
+      data.length === 0 || typeof data[0] === "string",
+      "fetchTickersByMarketcap: array of strings expected"
+    );
     return data;
   };
 
