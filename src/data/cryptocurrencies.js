@@ -722,8 +722,10 @@ const cryptocurrenciesById = {
     color: "#0ebdcd",
     units: ethereumUnits("ether", "ETH"),
     family: "ethereum",
-    ledgerExplorerId: "eth-mainnet",
-    ledgerExplorerVersion: "v3",
+    // ledgerExplorerId: "eth-mainnet",
+    // ledgerExplorerVersion: "v3",
+    ledgerExplorerId: "eth",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 1
