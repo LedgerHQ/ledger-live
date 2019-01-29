@@ -19,6 +19,7 @@
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
+    "ci": "yarn check --integrity && yarn lint && yarn flow && yarn prettier && yarn test",
     "test": "true",
     "sync-flowtyped": "flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh"
