@@ -11,7 +11,7 @@
  * ticker: check this is the one used in exchanges (BTW our countervalues api will only support the new coin until we do a redeployment to support it (whitelist))
  * scheme is generally the id
  * color: is the dominant color of the currency logo, we will color the logo svg with it.
- * ledgerExplorerId: if any, is Ledger's internal explorer id (backend explorer team).
+ * ledgerExplorerId and ledgerExplorerVersion: only set it if it exists, is Ledger's internal explorer id (backend explorer team).
  * managerAppName: if any, is the exact name of the related Ledger's app in LL Manager.
  * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
@@ -262,6 +262,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     family: "bitcoin",
     ledgerExplorerId: "btc",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0,
@@ -280,6 +281,7 @@ const cryptocurrenciesById = {
     color: "#3ca569",
     family: "bitcoin",
     ledgerExplorerId: "abc",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0,
@@ -325,6 +327,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     family: "bitcoin",
     ledgerExplorerId: "btg",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 38,
@@ -506,6 +509,7 @@ const cryptocurrenciesById = {
     color: "#000000", // FIXME
     family: "bitcoin",
     ledgerExplorerId: "club",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 140,
     bitcoinLikeInfo: {
       P2PKH: 28,
@@ -535,6 +539,7 @@ const cryptocurrenciesById = {
     color: "#0e76aa",
     family: "bitcoin",
     ledgerExplorerId: "dash",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 76,
@@ -583,6 +588,7 @@ const cryptocurrenciesById = {
     ],
     family: "bitcoin",
     ledgerExplorerId: "dcr",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 0x073f,
@@ -601,6 +607,7 @@ const cryptocurrenciesById = {
     family: "bitcoin",
     supportsSegwit: true,
     ledgerExplorerId: "dgb",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 30,
@@ -630,6 +637,7 @@ const cryptocurrenciesById = {
     color: "#65d196",
     family: "bitcoin",
     ledgerExplorerId: "doge",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 30,
@@ -714,7 +722,8 @@ const cryptocurrenciesById = {
     color: "#0ebdcd",
     units: ethereumUnits("ether", "ETH"),
     family: "ethereum",
-    ledgerExplorerId: "eth",
+    ledgerExplorerId: "eth-mainnet",
+    ledgerExplorerVersion: "v3",
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 1
@@ -732,6 +741,7 @@ const cryptocurrenciesById = {
     units: ethereumUnits("ETC", "ETC"),
     family: "ethereum",
     ledgerExplorerId: "ethc",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 61
@@ -872,6 +882,7 @@ const cryptocurrenciesById = {
     color: "#56438c",
     family: "bitcoin",
     ledgerExplorerId: "hsr",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 40,
@@ -937,6 +948,7 @@ const cryptocurrenciesById = {
     color: "#326464",
     family: "bitcoin",
     ledgerExplorerId: "kmd",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 60,
@@ -967,6 +979,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     family: "bitcoin",
     ledgerExplorerId: "ltc",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 5 * 60,
     bitcoinLikeInfo: {
       P2PKH: 48,
@@ -1230,6 +1243,7 @@ const cryptocurrenciesById = {
     color: "#3cb054",
     family: "bitcoin",
     ledgerExplorerId: "ppc",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 450,
     bitcoinLikeInfo: {
       P2PKH: 55,
@@ -1277,6 +1291,7 @@ const cryptocurrenciesById = {
     color: "#46385d",
     family: "bitcoin",
     ledgerExplorerId: "pivx",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 30,
@@ -1324,6 +1339,7 @@ const cryptocurrenciesById = {
     color: "#000000", // FIXME
     family: "bitcoin",
     ledgerExplorerId: "posw",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 55,
@@ -1353,6 +1369,7 @@ const cryptocurrenciesById = {
     color: "#2e9ad0",
     family: "bitcoin",
     ledgerExplorerId: "qtum",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 2 * 60,
     bitcoinLikeInfo: {
       P2PKH: 58,
@@ -1408,6 +1425,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     family: "bitcoin",
     ledgerExplorerId: "xsn",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 76,
@@ -1437,6 +1455,7 @@ const cryptocurrenciesById = {
     color: "#1382c6",
     family: "bitcoin",
     ledgerExplorerId: "strat",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 63,
@@ -1466,6 +1485,7 @@ const cryptocurrenciesById = {
     color: "#000000",
     family: "bitcoin",
     ledgerExplorerId: "xst",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 62,
@@ -1621,6 +1641,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     family: "bitcoin",
     ledgerExplorerId: "vtc",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 71,
@@ -1651,6 +1672,7 @@ const cryptocurrenciesById = {
     supportsSegwit: true,
     family: "bitcoin",
     ledgerExplorerId: "via",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 24,
     bitcoinLikeInfo: {
       P2PKH: 71,
@@ -1716,6 +1738,7 @@ const cryptocurrenciesById = {
     color: "#3790ca",
     family: "bitcoin",
     ledgerExplorerId: "zec",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 0x1cb8,
@@ -1763,6 +1786,7 @@ const cryptocurrenciesById = {
     color: "#152f5c",
     family: "bitcoin",
     ledgerExplorerId: "zen",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 0x2089,
@@ -1797,6 +1821,7 @@ const cryptocurrenciesById = {
     isTestnetFor: "bitcoin",
     family: "bitcoin",
     ledgerExplorerId: "btc_testnet",
+    ledgerExplorerVersion: "v2",
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
       P2PKH: 111,
@@ -1815,7 +1840,8 @@ const cryptocurrenciesById = {
     units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
     isTestnetFor: "ethereum",
     family: "ethereum",
-    ledgerExplorerId: "eth_ropsten",
+    ledgerExplorerId: "eth-ropsten",
+    ledgerExplorerVersion: "v3",
     blockAvgTime: 15,
     ethereumLikeInfo: {
       chainId: 3 // ropsten
