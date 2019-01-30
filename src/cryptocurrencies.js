@@ -30,6 +30,7 @@ const supported: CryptoCurrencyIds[] = [
   "stratis",
   "vertcoin",
   "viacoin",
+  "stakenet",
   "zcash",
   "zencash",
 ];

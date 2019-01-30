@@ -19,6 +19,7 @@
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
+    "ci": "yarn check --integrity && yarn lint && yarn flow && yarn prettier && yarn test",
     "test": "true",
     "sync-flowtyped": "flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh"
@@ -33,7 +34,7 @@
     }
   },
   "dependencies": {
-    "@ledgerhq/hw-app-btc": "^4.30.0",
+    "@ledgerhq/hw-app-btc": "^4.34.0",
     "@ledgerhq/hw-app-eth": "^4.24.0",
     "@ledgerhq/hw-app-xrp": "^4.25.0",
     "@ledgerhq/hw-transport": "^4.24.0",
@@ -41,7 +42,7 @@
     "@ledgerhq/live-common": "4.14.0",
     "@ledgerhq/react-native-hid": "^4.30.2",
     "@ledgerhq/react-native-hw-transport-ble": "4.35.0",
-    "@ledgerhq/react-native-ledger-core": "^0.3.44",
+    "@ledgerhq/react-native-ledger-core": "^0.3.45",
     "@ledgerhq/react-native-passcode-auth": "^2.0.0",
     "@segment/analytics-ios": "github:LedgerHQ/analytics-ios#efb4cd1771dab568422473fd680ffb748b102f07",
     "@segment/analytics-react-native": "^0.0.1-beta.2",
