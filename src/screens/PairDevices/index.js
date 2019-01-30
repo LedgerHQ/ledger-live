@@ -79,6 +79,7 @@ class PairDevices extends Component<Props, State> {
   onSelect = async (device: Device) => {
     this.setState({ device, status: "pairing" });
     try {
+      // $FlowFixMe
       const transport = await TransportBLE.open(device);
       if (this.unmounted) return;
       if (Config.DEBUG_BLE) transport.setDebugMode(true);
