@@ -70,6 +70,7 @@ class EditAccountNode extends PureComponent<Props, State> {
 
   static navigationOptions = {
     title: i18next.t("account.settings.endpointConfig.title"),
+    headerRight: null,
   };
 
   onChangeText = (accountNode: string) => {

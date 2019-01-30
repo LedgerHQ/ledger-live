@@ -552,6 +552,9 @@
         "desc": "Describe this account",
         "placeholder": "Account Name"
       },
+      "accountUnits": {
+        "title": "Edit Units"
+      },
       "unit": {
         "title": "Unit",
         "desc": "Choose the unit to display"
