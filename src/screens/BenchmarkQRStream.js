@@ -86,6 +86,7 @@ export default class BenchmarkQRStream extends PureComponent<
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
           onBarCodeRead={this.onBarCodeRead}
           ratio="16:9"
+          captureAudio={false}
           style={[styles.camera, cameraDimensions]}
         >
           <View style={wrapperStyle}>
