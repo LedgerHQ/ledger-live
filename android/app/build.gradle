@@ -172,7 +172,7 @@ configurations.all {
     resolutionStrategy {
         eachDependency { DependencyResolveDetails details ->
             if (details.requested.name == 'android-jsc') {
-                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r224109'
+                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r236355'
             }
         }
     }

@@ -113,6 +113,7 @@ class ScanRecipient extends PureComponent<Props, State> {
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
           onBarCodeRead={this.onBarCodeRead}
           ratio="16:9"
+          captureAudio={false}
           style={[styles.camera, cameraDimensions]}
           notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >

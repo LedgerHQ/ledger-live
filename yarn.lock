@@ -5377,10 +5377,10 @@ jsbn@~0.1.0:
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
   integrity sha1-peZUwuWi3rXyAdls77yoDA7y9RM=
 
-jsc-android@^224109.1.0:
-  version "224109.1.0"
-  resolved "https://registry.yarnpkg.com/jsc-android/-/jsc-android-224109.1.0.tgz#9749ec92f1e284b3c09befe7c47cc6e60b1f0cdf"
-  integrity sha512-mhALFynePc/wJsUt9BJuH13mSK/dGWtBO/pcYwVV1I0A7iduyqy3fSoAt1b0yI+/B3TzlGyue/gqjPxsqG1HRQ==
+jsc-android@^236355.1.1:
+  version "236355.1.1"
+  resolved "https://registry.yarnpkg.com/jsc-android/-/jsc-android-236355.1.1.tgz#43e153b722e3c60dd0595be4e7430baf65e67c9c"
+  integrity sha512-2py4f0McZIl/oH6AzPj1Ebutc58fyeLvwq6gyVYp1RsWr4qeLNHAPfW3kmfeVMz44oUBJMQ0lECZg9n4KBhHbQ==
 
 jsdom@^11.5.1:
   version "11.12.0"
@@ -5765,7 +5765,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
-lodash@4.17.10, lodash@^4.0.0, lodash@^4.13.1, lodash@^4.16.6, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1:
+lodash@4.17.10, lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
   integrity sha512-UejweD1pDoXu+AD825lWwp4ZGtSwgnpZxb3JDViD7StjQz+Nb/6l093lx4OQ0foGWNRoc19mWy7BzL+UAK2iVg==
@@ -5775,7 +5775,7 @@ lodash@^3.10.0:
   resolved "http://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
   integrity sha1-W/Rejkm6QYnhfUgnid/RW9FAt7Y=
 
-lodash@^4.12.0:
+lodash@^4.12.0, lodash@^4.17.4:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -7307,13 +7307,12 @@ react-native-ble-plx@^1.0.1:
   resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.1.tgz#6ab5f3a5f9937b6a6410929dc222368f6e4dd1de"
   integrity sha512-bC8yAVg0WuuMdEIr+kIHs8nd4leHyUvrYILBBOlcsggmNvgFDC8iXqEAvjpeRXMrqPVjPhft2EtFAQlEfjWvdA==
 
-react-native-camera@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-1.2.0.tgz#fa93b39726d15bdbb02fac06f4a23957b0be403a"
-  integrity sha512-LGYvSRtnjV43X75vaHM8KYXvMzIcFav1DsOXY4S6WLBZcyg9SD9MPE/etVCup+33BlNcE8yqd3r/cM4aCH0PcA==
+react-native-camera@1.9.2:
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-1.9.2.tgz#c5c458dbf05ce7d7e3e9c5f1a53c600569fb78ff"
+  integrity sha512-5hdFgU0F0DozcI4eDPfMqhwPf+TSnBfxi/4+pk6R8MpiP2VDMMn3qDZQ6pIk7VdKepC/KUmcJTvIdpwISRxSFg==
   dependencies:
-    lodash "^4.17.4"
-    prop-types "^15.5.10"
+    prop-types "^15.6.2"
 
 react-native-config@0.11.5:
   version "0.11.5"
@@ -7376,10 +7375,10 @@ react-native-extra-dimensions-android@^0.22.0:
   resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-0.22.0.tgz#4b09ba19f52c5181efe37965a2c34cadfa05fb61"
   integrity sha512-92ppYjXLId5dgjji7glG96CLkGWF/uH96w/hdoM1Je6cFPMqXbVLadHNCH/Edk2i1AySY7qObZXYJD7buWnhlg==
 
-react-native-gesture-handler@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.7.tgz#86677c709c42d04555210cad9759b09e2c657720"
-  integrity sha512-lu4RizR3iBJ6qq8UfcHQKbf+HaiQHMGaQPSMSy8i7ij6tsOxatKuzxuEZRMblQ2Ma7op4CpfssD29yo1AjI7PQ==
+react-native-gesture-handler@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.15.tgz#7e0d0a457820a3c9325a3d492daaed14400508a6"
+  integrity sha512-BePn+YOKcspHb1xPkUdJs+H6jiaECrT2c98txADBYWHwuUeundE+uUJG0r3FQLFvM2MoGeiJeD96sePzk+WSvQ==
   dependencies:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
@@ -7483,14 +7482,12 @@ react-native-splash-screen@3.1.1:
   resolved "https://registry.yarnpkg.com/react-native-splash-screen/-/react-native-splash-screen-3.1.1.tgz#1a4e46c9fdce53ff52af2a2cb4181788c4e30b30"
   integrity sha512-PU2YocOSGbLjL9Vgcq/cwMNuHHKNjjuPpa1IPMuWo+6EB/fSZ5VOmxSa7+eucQe3631s3NhGuk3eHKahU03a4Q==
 
-react-native-svg@6.5.2:
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-6.5.2.tgz#1105896b8873b0856821b18daa0c6898cea6c00c"
-  integrity sha512-r9SXx/AOzlo/jkahAo9WjNTRJ+A2lDHE3yS3WtgZ4Gzqqyxb3L6LpuAG02x1TaKEowdTEG3r6u7vhnCZON8N/A==
+react-native-svg@9.0.6:
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-9.0.6.tgz#e51d880b830e60f835a1e321040503128a2f941b"
+  integrity sha512-oCPl7HPH0yuBva9HZ+TssHS4iVWAGylBffSOwGYN7Kq2zatXeTMfEFyW7JzWMqdGYAFrPldoTtEp9w0vZ3LTLQ==
   dependencies:
     color "^2.0.1"
-    lodash "^4.16.6"
-    pegjs "^0.10.0"
 
 react-native-tab-view@^0.0.77:
   version "0.0.77"
