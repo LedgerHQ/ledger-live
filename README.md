@@ -62,6 +62,7 @@ DEBUG_COMM_HTTP_PROXY=http://localhost:8435   # enable a dev mode to use the dev
 BRIDGESTREAM_DATA=...       # come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning
 DEBUG_RNDEBUGGER=1          # enable react native debugger
 DISABLE_READ_ONLY=1         # disables readonly mode by default
+EXPERIMENTAL_WS_EXPORT=1    # enables the websocket experimental import
 ```
 
 ## Maintenance

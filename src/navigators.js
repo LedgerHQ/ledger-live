@@ -103,6 +103,7 @@ import sendScreens from "./families/sendScreens";
 import ReadOnlyTab from "./components/ReadOnlyTab";
 import HiddenTabBarIfKeyboardVisible from "./components/HiddenTabBarIfKeyboardVisible";
 import DebugStore from "./screens/DebugStore";
+import DebugWSImport from "./screens/DebugWSImport";
 
 // TODO look into all FlowFixMe
 
@@ -133,6 +134,7 @@ const SettingsStack = createStackNavigator(
     DebugIcons,
     // $FlowFixMe
     DebugLottie,
+    DebugWSImport,
     // $FlowFixMe
     BenchmarkQRStream,
   },
