@@ -134,6 +134,7 @@ const SettingsStack = createStackNavigator(
     DebugIcons,
     // $FlowFixMe
     DebugLottie,
+    // $FlowFixMe
     DebugWSImport,
     // $FlowFixMe
     BenchmarkQRStream,
