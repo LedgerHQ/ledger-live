@@ -60,6 +60,9 @@ const Screen = makeGenericSelectScreen({
   title: i18next.t("settings.display.exchangeHeader"),
   keyExtractor: item => item.id,
   formatItem: item => item.name,
+  navigationOptions: {
+    headerRight: null,
+  },
 });
 
 export default injectItems(

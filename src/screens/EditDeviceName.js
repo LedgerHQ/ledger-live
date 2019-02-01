@@ -71,6 +71,10 @@ class EditDeviceName extends PureComponent<
     this.setState({ name });
   };
 
+  onInputCleared = () => {
+    this.setState({ name: "" });
+  };
+
   onSubmit = async () => {
     const { name } = this.state;
     if (this.initialName !== name) {
@@ -104,6 +108,7 @@ class EditDeviceName extends PureComponent<
             <TextInput
               value={name}
               onChangeText={this.onChangeText}
+              onInputCleared={this.onInputCleared}
               maxLength={MAX_DEVICE_NAME}
               autoFocus
               selectTextOnFocus
@@ -126,6 +131,7 @@ class EditDeviceName extends PureComponent<
               type="primary"
               title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={this.onSubmit}
+              disabled={!name}
             />
           </View>
 

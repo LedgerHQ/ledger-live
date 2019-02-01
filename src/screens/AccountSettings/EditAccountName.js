@@ -42,6 +42,7 @@ class EditAccountName extends PureComponent<Props, State> {
 
   static navigationOptions = {
     title: i18next.t("account.settings.accountName.title"),
+    headerRight: null,
   };
 
   onChangeText = (accountName: string) => {

@@ -2,6 +2,8 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import { BigNumber } from "bignumber.js";
+import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import colors from "../../colors";
 
@@ -20,11 +22,65 @@ type Props = {
 };
 const { width } = getWindowDimensions();
 
-class ValidateOnDevice extends PureComponent<Props> {
+class DataRow extends PureComponent<{
+  label: *,
+  value: BigNumber,
+  unit: Unit,
+}> {
   render() {
+    const { label, value, unit } = this.props;
+    return (
+      <View style={styles.dataRow}>
+        <LText numberOfLines={1} style={styles.dataRowLabel}>
+          {label}
+        </LText>
+        <LText tertiary style={styles.dataRowValue}>
+          <CurrencyUnitValue unit={unit} value={value} disableRounding />
+        </LText>
+      </View>
+    );
+  }
+}
+
+class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
+  state = {
+    total: null,
+  };
+
+  componentDidMount() {
+    this.syncTotal();
+  }
+
+  componentDidUpdate({ account, transaction }: Props) {
+    if (
+      account !== this.props.account ||
+      transaction !== this.props.transaction
+    ) {
+      this.syncTotal();
+    }
+  }
+
+  componentWillUnmount() {
+    this.syncTotalId++;
+  }
+
+  syncTotalId = 0;
+  syncTotal = async () => {
+    const id = ++this.syncTotalId;
     const { transaction, account } = this.props;
     const bridge = getAccountBridge(account);
+    const total = await bridge.getTotalSpent(account, transaction);
+    if (id === this.syncTotalId) {
+      this.setState({ total });
+    }
+  };
+
+  render() {
+    const { transaction, account } = this.props;
+    const { total } = this.state;
+    const bridge = getAccountBridge(account);
     const amount = bridge.getTransactionAmount(account, transaction);
+    const fees = total ? total.minus(amount) : BigNumber(0);
 
     return (
       <View style={styles.root}>
@@ -41,19 +97,17 @@ class ValidateOnDevice extends PureComponent<Props> {
             </LText>
           </View>
 
-          <View style={styles.transactionDataWrapper}>
-            <View style={styles.transactionDataRow}>
-              <LText style={styles.label}>
-                <Trans i18nKey="send.validation.amount" />
-              </LText>
-              <LText tertiary style={styles.value}>
-                <CurrencyUnitValue
-                  unit={account.unit}
-                  value={amount}
-                  disableRounding
-                />
-              </LText>
-            </View>
+          <View style={styles.dataRows}>
+            <DataRow
+              label={<Trans i18nKey="send.validation.amount" />}
+              unit={account.unit}
+              value={amount}
+            />
+            <DataRow
+              label={<Trans i18nKey="send.validation.fees" />}
+              unit={account.unit}
+              value={fees}
+            />
           </View>
         </View>
 
@@ -70,28 +124,28 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  transactionDataWrapper: {
+  dataRows: {
     marginVertical: 24,
+    alignSelf: "stretch",
+  },
+  dataRow: {
     padding: 12,
-    paddingBottom: 2,
     borderRadius: 4,
     backgroundColor: colors.lightGrey,
-    flexDirection: "column",
     alignItems: "center",
-  },
-  transactionDataRow: {
     flexDirection: "row",
-    marginBottom: 8,
   },
-  label: {
+  dataRowLabel: {
     color: colors.grey,
-    flex: 1,
     textAlign: "left",
     fontSize: 14,
+    paddingRight: 16,
   },
-  value: {
+  dataRowValue: {
     color: colors.darkBlue,
-    fontSize: 16,
+    fontSize: 14,
+    flex: 1,
+    textAlign: "right",
   },
   container: {
     flex: 1,

@@ -8,6 +8,7 @@ import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -82,7 +83,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
-              list={accounts}
+              list={accounts.filter(account => !isAccountEmpty(account))}
               inputWrapperStyle={styles.padding}
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptySearch}

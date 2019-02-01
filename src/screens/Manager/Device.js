@@ -31,6 +31,7 @@ type Props = {
     params: {
       deviceId: string,
       meta: {
+        deviceName: string,
         deviceInfo: DeviceInfo,
       },
     },
@@ -111,7 +112,10 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
           </LText>
           <FirmwareUpdateRow deviceInfo={meta.deviceInfo} deviceId={deviceId} />
         </View>
-        <DeviceNameRow deviceId={deviceId} />
+        <DeviceNameRow
+          deviceId={deviceId}
+          initialDeviceName={meta.deviceName}
+        />
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />

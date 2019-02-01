@@ -14,6 +14,8 @@ import SimplexLogo from "../icons/logos/simplex";
 import PaybisLogo from "../icons/logos/paybis";
 import LunoLogo from "../icons/logos/luno";
 import ShapeShiftLogo from "../icons/logos/shapeshift";
+import Coinberry from "../icons/logos/coinberry";
+import BtcDirect from "../icons/logos/btcdirect";
 
 export default shuffle([
   {
@@ -84,5 +86,17 @@ export default shuffle([
     url:
       "https://www.thorswap.com/?utm_source=Wallet&utm_medium=ledger&utm_campaign=EmbedLink&utm_content=Link1",
     logo: <ThorSwap width={160} />,
+  },
+  {
+    key: "coinberry",
+    id: "coinberry",
+    url: "https://www.coinberry.com/?utm_source=ledger",
+    logo: <Coinberry width={150} />,
+  },
+  {
+    key: "btcDirect",
+    id: "btcDirect",
+    url: "https://btcdirect.eu/en-gb?partnerId=261",
+    logo: <BtcDirect width={150} />,
   },
 ]);
