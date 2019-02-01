@@ -8,8 +8,9 @@ import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { translate, Trans } from "react-i18next";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { StyleSheet, View } from "react-native";
+// $FlowFixMe
+import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { addAccount } from "../../actions/accounts";

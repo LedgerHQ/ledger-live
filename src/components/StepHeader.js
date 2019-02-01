@@ -1,26 +1,36 @@
 // @flow
 import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
+import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 
+import { withNavigation } from "react-navigation";
+import type { NavigationScreenProp } from "react-navigation";
+import { compose } from "redux";
 import colors from "../colors";
 import LText from "./LText";
 
 type Props = {
   title: React$Node,
   subtitle: React$Node,
+  navigation: { emit: (event: string) => void } & NavigationScreenProp<*>,
 };
 
 class StepHeader extends PureComponent<Props> {
+  onPress = () => {
+    this.props.navigation.emit("refocus");
+  };
+
   render() {
     const { title, subtitle } = this.props;
     return (
-      <View style={styles.root}>
-        <LText style={styles.subtitle}>{subtitle}</LText>
-        <LText secondary semiBold style={styles.title}>
-          {title}
-        </LText>
-      </View>
+      <TouchableWithoutFeedback onPress={this.onPress}>
+        <View style={styles.root}>
+          <LText style={styles.subtitle}>{subtitle}</LText>
+          <LText secondary semiBold style={styles.title}>
+            {title}
+          </LText>
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -40,4 +50,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(StepHeader);
+export default compose(
+  withNavigation,
+  translate(),
+)(StepHeader);

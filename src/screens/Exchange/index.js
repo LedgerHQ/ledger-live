@@ -2,8 +2,9 @@
 
 import React, { Component } from "react";
 import { Trans, translate } from "react-i18next";
-import { ScrollView, View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { T } from "../../types/common";
 import ExchangeCard from "../../components/ExchangeCard";
