@@ -925,7 +925,7 @@
   dependencies:
     "@types/node" "*"
 
-"@yarnpkg/lockfile@^1.0.0":
+"@yarnpkg/lockfile@^1.0.0", "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
   integrity sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==
@@ -2546,6 +2546,11 @@ combined-stream@1.0.6, combined-stream@~1.0.5:
   integrity sha1-cj599ugBrFYTETp+RFqbactjKBg=
   dependencies:
     delayed-stream "~1.0.0"
+
+commander@^2.10.0:
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
+  integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
 
 commander@^2.11.0:
   version "2.16.0"
@@ -9657,3 +9662,12 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+yarn-deduplicate@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/yarn-deduplicate/-/yarn-deduplicate-1.1.0.tgz#bdfdcc5a2473556c0232996424dfe039293f2f44"
+  integrity sha512-YTZzmzzUgDK7IllsKxgnTQ7zAGbTVnj3bnH3nxoqZ2dE0IY7NpaFpFYXR+BuBeDtxIgMhwJJvH1LTWm3k3fWpg==
+  dependencies:
+    "@yarnpkg/lockfile" "^1.1.0"
+    commander "^2.10.0"
+    semver "^5.3.0"

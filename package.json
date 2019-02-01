@@ -19,7 +19,7 @@
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
-    "ci": "yarn check --integrity && yarn lint && yarn flow && yarn prettier && yarn test",
+    "ci": "yarn check --integrity && ./scripts/check-no-dups.sh && yarn lint && yarn flow && prettier -l src/**/*.js && yarn test",
     "test": "true",
     "sync-flowtyped": "flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh"
@@ -152,7 +152,8 @@
     "prettier": "^1.11.1",
     "react-native-debugger-open": "^0.3.17",
     "react-test-renderer": "16.6.0-alpha.8af6728",
-    "rn-nodeify": "tradle/rn-nodeify"
+    "rn-nodeify": "tradle/rn-nodeify",
+    "yarn-deduplicate": "^1.1.0"
   },
   "react-native": {
     "zlib": "browserify-zlib",
