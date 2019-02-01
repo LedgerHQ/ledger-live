@@ -40,6 +40,7 @@ export type CryptoCurrency = CurrencyCommon & {
   color: string,
   family: string,
   ledgerExplorerId?: string,
+  ledgerExplorerVersion?: string,
   blockAvgTime?: number, // in seconds
   supportsSegwit?: boolean,
   // if defined this coin is a testnet for another crypto (id)};
