@@ -14,7 +14,7 @@ import Row from "./Row";
 type Props = {
   navigation: *,
   deviceId: string,
-  deviceName: string,
+  initialDeviceName: string,
   savedName: string,
   saveBleDeviceName: (string, string) => *,
 };
@@ -24,14 +24,15 @@ class DeviceNameRow extends PureComponent<Props> {
     this.sync();
   }
 
-  componentDidUpdate() {
-    this.sync();
-  }
-
   sync() {
-    const { deviceName, savedName, deviceId, saveBleDeviceName } = this.props;
-    if (deviceName && deviceName !== savedName) {
-      saveBleDeviceName(deviceId, deviceName);
+    const {
+      initialDeviceName,
+      savedName,
+      deviceId,
+      saveBleDeviceName,
+    } = this.props;
+    if (initialDeviceName && initialDeviceName !== savedName) {
+      saveBleDeviceName(deviceId, initialDeviceName);
     }
   }
 

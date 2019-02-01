@@ -288,7 +288,9 @@
     "genesis": "Genesis is an institutional trading firm offering liquidity and borrow for digital currencies, including bitcoin, bitcoin cash, ethereum, ethereum classic, litecoin, and XRP.",
     "kyberswap": "Fast, simple and secure token swap platform. Powered by Kyber Network's on-chain liquidity protocol.",
     "thorswap": "ThorSwap is an instant, safe and fair crypto asset market powered by decentralized atomic swap technologies. It is the most convenient way to start trading, no registration or KYC for small amount transcations.",
-    "changenow": "ChangeNOW is one of the leading custody-free instant exchange services."
+    "changenow": "ChangeNOW is one of the leading custody-free instant exchange services.",
+    "coinberry": "Coinberry is the most trusted crypto platform in Canada with better-than-bank security, best-in-class user interface and No Fee funding & withdraw. Pre-register to get early access to our platform if you are not a Canadian citizen.",
+    "btcDirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot"
   },
   "signout": {
     "confirm": "Are you sure you want to sign out?",
@@ -432,8 +434,8 @@
       "cta": "Open Ledger Live"
     },
     "stepScanQR": {
-      "title": "Please go to <1>Settings > Export accounts</1> in the desktop app and scan the QR code",
-      "cta": "Scan QR code"
+      "title": "Please go to <1>Settings > Export accounts > Export</1> in the desktop app and scan the LiveQR code",
+      "cta": "Scan LiveQR code"
     }
   },
   "tabs": {
@@ -550,6 +552,9 @@
         "desc": "Describe this account",
         "placeholder": "Account Name"
       },
+      "accountUnits": {
+        "title": "Edit Units"
+      },
       "unit": {
         "title": "Unit",
         "desc": "Choose the unit to display"
@@ -574,12 +579,12 @@
     },
     "import": {
       "scan": {
-        "title": "Scan QR Code",
+        "title": "Scan LiveQR code",
         "descTop": {
-          "line1": "Please open Ledger Live desktop and go to",
-          "line2": "Settings > Mobile > Export"
+          "line1": "In Ledger Live desktop, go to",
+          "line2": "Settings > Export accounts > Export"
         },
-        "descBottom": "Please put the QR code within the square"
+        "descBottom": "Please put the LiveQR code within the square"
       },
       "result": {
         "title": "Select accounts",
