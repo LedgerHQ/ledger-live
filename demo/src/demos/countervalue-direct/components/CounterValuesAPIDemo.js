@@ -16,7 +16,8 @@ import { CircularProgress } from "material-ui/Progress";
 import Typography from "material-ui/Typography";
 import {
   listFiatCurrencies,
-  listCryptoCurrencies
+  listCryptoCurrencies,
+  listTokens
 } from "@ledgerhq/live-common/lib/currencies";
 import CurrencySelect from "./CurrencySelect";
 import ExchangeSelect from "./ExchangeSelect";
@@ -29,10 +30,13 @@ import type { State } from "../reducers/markets";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import CounterValues from "../countervalues";
 
-const fromCurrencyList: Currency[] = listCryptoCurrencies().map(a => a);
-const toCurrencyList: Currency[] = listCryptoCurrencies().concat(
-  listFiatCurrencies()
+const fromCurrencyList: Currency[] = listCryptoCurrencies().concat(
+  listTokens()
 );
+
+const toCurrencyList: Currency[] = listCryptoCurrencies()
+  .concat(listFiatCurrencies())
+  .concat(listTokens());
 
 const styles = theme => ({
   root: {

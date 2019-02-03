@@ -20,6 +20,15 @@ import {
   findCryptoCurrencyByTicker
 } from "../data/cryptocurrencies";
 
+import {
+  listTokens,
+  listTokensForCryptoCurrency,
+  findTokenByTicker,
+  findTokenById,
+  hasTokenId,
+  getTokenById
+} from "../data/tokens";
+
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 
 import { chopCurrencyUnitDecimals } from "./chopCurrencyUnitDecimals";
@@ -34,7 +43,9 @@ import { formatShort } from "./formatShort";
 import { valueFromUnit } from "./valueFromUnit";
 
 const findCurrencyByTicker = (ticker: string): ?Currency =>
-  findCryptoCurrencyByTicker(ticker) || findFiatCurrencyByTicker(ticker);
+  findCryptoCurrencyByTicker(ticker) ||
+  findFiatCurrencyByTicker(ticker) ||
+  findTokenByTicker(ticker);
 
 export {
   listFiatCurrencies,
@@ -46,6 +57,12 @@ export {
   findCryptoCurrencyByScheme,
   findFiatCurrencyByTicker,
   hasFiatCurrencyTicker,
+  listTokens,
+  listTokensForCryptoCurrency,
+  findTokenByTicker,
+  findTokenById,
+  hasTokenId,
+  getTokenById,
   parseCurrencyUnit,
   chopCurrencyUnitDecimals,
   formatCurrencyUnit,

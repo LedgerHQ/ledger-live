@@ -7,7 +7,9 @@ type CurrencyCommon = {
   ticker: string,
   // all units of a currency (e.g. Bitcoin have bitcoin, mBTC, bit, satoshi)
   // by convention, [0] is the default and have "highest" magnitude
-  units: Unit[]
+  units: Unit[],
+  // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
+  symbol?: string
 };
 
 export type Unit = {
@@ -17,10 +19,18 @@ export type Unit = {
   code: string,
   // number of digits after the '.'
   magnitude: number,
-  // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
-  symbol?: string,
   // should it always print all digits even if they are 0 (usually: true for fiats, false for cryptos)
   showAllDigits?: boolean
+};
+
+export type TokenCurrency = CurrencyCommon & {
+  id: string,
+  ledgerSignature: string,
+  contractAddress: string,
+  // the currency it belongs to. e.g. 'ethereum'
+  parentCurrency: string,
+  // the type of token in the blockchain it belongs. e.g. 'erc20'
+  tokenType: string
 };
 
 export type FiatCurrency = CurrencyCommon;
@@ -56,4 +66,4 @@ export type CryptoCurrency = CurrencyCommon & {
   txExplorers: string[]
 };
 
-export type Currency = Currency | CryptoCurrency;
+export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;

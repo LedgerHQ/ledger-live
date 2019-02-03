@@ -2,6 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import {
+  listTokens,
   listFiatCurrencies,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
@@ -16,6 +17,9 @@ import {
   encodeURIScheme,
   sanitizeValueString
 } from "../../currencies";
+
+import "../../load/tokens/ethereum/erc20"
+
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
@@ -70,11 +74,31 @@ test("fiats list elements are correct", () => {
     expect(typeof unit.code).toBe("string");
     expect(unit.name).toBeTruthy();
     expect(typeof unit.name).toBe("string");
-    expect(unit.symbol).toBeTruthy();
-    expect(typeof unit.symbol).toBe("string");
     expect(unit.magnitude).toBeGreaterThan(-1);
     expect(typeof unit.magnitude).toBe("number");
     tickers[fiat.ticker] = unit;
+  }
+});
+
+test("tokens are correct", () => {
+  expect(listTokens().length).toBeGreaterThan(0)
+  for (const token of listTokens()) {
+    expect(token.ticker).toBeTruthy();
+    expect(typeof token.id).toBe("string");
+    expect(typeof token.name).toBe("string");
+    expect(typeof token.ledgerSignature).toBe("string");
+    expect(typeof token.tokenType).toBe("string");
+    expect(typeof token.parentCurrency).toBe("string");
+    expect(hasCryptoCurrencyId(token.parentCurrency)).toBe(true);
+    expect(typeof token.ticker).toBe("string");
+    expect(token.units.length).toBeGreaterThan(0);
+    const unit = token.units[0];
+    expect(unit.code).toBeTruthy();
+    expect(typeof unit.code).toBe("string");
+    expect(unit.name).toBeTruthy();
+    expect(typeof unit.name).toBe("string");
+    expect(unit.magnitude).toBeGreaterThan(-1);
+    expect(typeof unit.magnitude).toBe("number");
   }
 });
 
@@ -93,11 +117,9 @@ test("fiats list is sorted by ticker", () => {
 
 test("can get fiat by coin type", () => {
   expect(getFiatCurrencyByTicker("USD").units[0]).toMatchObject({
-    symbol: "$",
     magnitude: 2
   });
   expect(getFiatCurrencyByTicker("EUR").units[0]).toMatchObject({
-    symbol: "€",
     magnitude: 2
   });
   // this is not a fiat \o/

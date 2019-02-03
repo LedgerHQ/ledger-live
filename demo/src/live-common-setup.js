@@ -8,6 +8,8 @@ import { setNetwork } from "@ledgerhq/live-common/lib/network";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 
+import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
+
 setEnv("FORCE_PROVIDER", 4);
 
 setNetwork(axios);

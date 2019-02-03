@@ -3,6 +3,7 @@
 import type {
   Currency,
   Unit,
+  TokenCurrency,
   FiatCurrency,
   CryptoCurrency
 } from "./currencies";
@@ -39,7 +40,7 @@ export type { Account, AccountRaw };
 import type { Operation, OperationRaw, OperationType } from "./operation";
 export type { Operation, OperationRaw, OperationType };
 
-export type { Currency, Unit, FiatCurrency, CryptoCurrency };
+export type { TokenCurrency, Currency, Unit, FiatCurrency, CryptoCurrency };
 
 /**
  * Other stuff

@@ -1,5 +1,5 @@
 // @flow
-import type { Currency } from "../types";
+import type { CryptoCurrency } from "../types";
 
 const ledgerExplorersByVersion = {
   v2: "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
@@ -9,7 +9,7 @@ const ledgerExplorersByVersion = {
 export const blockchainBaseURL = ({
   ledgerExplorerId,
   ledgerExplorerVersion
-}: Currency): ?string =>
+}: CryptoCurrency): ?string =>
   ledgerExplorerId && ledgerExplorerVersion
     ? (ledgerExplorersByVersion[ledgerExplorerVersion] || "").replace(
         "$ledgerExplorerId",

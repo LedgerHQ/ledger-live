@@ -6,7 +6,7 @@ import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
 import type { Currency, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 function inferCrypto(currency: Currency): ?CryptoCurrency {
-  if ("id" in currency) {
+  if ("coinType" in currency) {
     return currency;
   }
 }
