@@ -47,25 +47,21 @@ const bitcoinUnits: Unit[] = [
   {
     name: "bitcoin",
     code: "BTC",
-    symbol: "Ƀ",
     magnitude: 8
   },
   {
     name: "mBTC",
     code: "mBTC",
-    symbol: "Ƀ",
     magnitude: 5
   },
   {
     name: "bit",
     code: "bit",
-    symbol: "Ƀ",
     magnitude: 2
   },
   {
     name: "satoshi",
     code: "sat",
-    symbol: "Ƀ",
     magnitude: 0
   }
 ];
@@ -74,31 +70,26 @@ const ethereumUnits = (name, code) => [
   {
     name,
     code,
-    symbol: "Ξ",
     magnitude: 18
   },
   {
     name: "Gwei",
     code: "Gwei",
-    symbol: "Ξ",
     magnitude: 9
   },
   {
     name: "Mwei",
     code: "Mwei",
-    symbol: "Ξ",
     magnitude: 6
   },
   {
     name: "Kwei",
     code: "Kwei",
-    symbol: "Ξ",
     magnitude: 3
   },
   {
     name: "wei",
     code: "wei",
-    symbol: "Ξ",
     magnitude: 0
   }
 ];
@@ -258,6 +249,7 @@ const cryptocurrenciesById = {
     ticker: "BTC",
     scheme: "bitcoin",
     color: "#ffae35",
+    symbol: "Ƀ",
     units: bitcoinUnits,
     supportsSegwit: true,
     family: "bitcoin",
@@ -291,25 +283,21 @@ const cryptocurrenciesById = {
       {
         name: "bitcoin cash",
         code: "BCH",
-        symbol: "Ƀ",
         magnitude: 8
       },
       {
         name: "mBCH",
         code: "mBCH",
-        symbol: "Ƀ",
         magnitude: 5
       },
       {
         name: "bit",
         code: "bit",
-        symbol: "Ƀ",
         magnitude: 2
       },
       {
         name: "satoshi",
         code: "sat",
-        symbol: "Ƀ",
         magnitude: 0
       }
     ],
@@ -337,25 +325,21 @@ const cryptocurrenciesById = {
       {
         name: "bitcoin gold",
         code: "BTG",
-        symbol: "Ƀ",
         magnitude: 8
       },
       {
         name: "mBTG",
         code: "mBTG",
-        symbol: "Ƀ",
         magnitude: 5
       },
       {
         name: "bit",
         code: "bit",
-        symbol: "Ƀ",
         magnitude: 2
       },
       {
         name: "satoshi",
         code: "sat",
-        symbol: "Ƀ",
         magnitude: 0
       }
     ],
@@ -376,25 +360,21 @@ const cryptocurrenciesById = {
       {
         name: "bitcoin private",
         code: "BTCP",
-        symbol: "Ƀ",
         magnitude: 8
       },
       {
         name: "mBTCP",
         code: "mBTCP",
-        symbol: "Ƀ",
         magnitude: 5
       },
       {
         name: "bit",
         code: "bit",
-        symbol: "Ƀ",
         magnitude: 2
       },
       {
         name: "satoshi",
         code: "sat",
-        symbol: "Ƀ",
         magnitude: 0
       }
     ],
@@ -419,25 +399,21 @@ const cryptocurrenciesById = {
       {
         name: "bitcore",
         code: "BTX",
-        symbol: "Ƀ",
         magnitude: 8
       },
       {
         name: "mBTX",
         code: "mBTX",
-        symbol: "Ƀ",
         magnitude: 5
       },
       {
         name: "uBTX",
         code: "uBTX",
-        symbol: "Ƀ",
         magnitude: 2
       },
       {
         name: "satoshi",
         code: "sat",
-        symbol: "Ƀ",
         magnitude: 0
       }
     ],
@@ -571,13 +547,11 @@ const cryptocurrenciesById = {
       {
         name: "decred",
         code: "DCR",
-        symbol: "DCR",
         magnitude: 8
       },
       {
         name: "milli-decred",
         code: "mDCR",
-        symbol: "mDCR",
         magnitude: 5
       },
       {
@@ -643,11 +617,11 @@ const cryptocurrenciesById = {
       P2PKH: 30,
       P2SH: 22
     },
+    symbol: "Ð",
     units: [
       {
         name: "dogecoin",
         code: "DOGE",
-        symbol: "Ð",
         magnitude: 8
       },
       {
@@ -720,6 +694,7 @@ const cryptocurrenciesById = {
     ticker: "ETH",
     scheme: "ethereum",
     color: "#0ebdcd",
+    symbol: "Ξ",
     units: ethereumUnits("ether", "ETH"),
     family: "ethereum",
     // ledgerExplorerId: "eth-mainnet",
@@ -987,23 +962,21 @@ const cryptocurrenciesById = {
       P2PKH: 48,
       P2SH: 50
     },
+    symbol: "Ł",
     units: [
       {
         name: "litecoin",
         code: "LTC",
-        symbol: "Ł",
         magnitude: 8
       },
       {
         name: "mLTC",
         code: "mLTC",
-        symbol: "Ł",
         magnitude: 5
       },
       {
         name: "litoshi",
         code: "litoshi",
-        symbol: "Ł",
         magnitude: 0
       }
     ],
@@ -1403,13 +1376,11 @@ const cryptocurrenciesById = {
       {
         name: "XRP",
         code: "XRP",
-        symbol: "XRP",
         magnitude: 6
       },
       {
         name: "drop",
         code: "drop",
-        symbol: "drop",
         magnitude: 0
       }
     ],
@@ -1520,7 +1491,6 @@ const cryptocurrenciesById = {
       {
         name: "Lumen",
         code: "XLM",
-        symbol: "XLM",
         magnitude: 7
       },
       {
@@ -1584,31 +1554,26 @@ const cryptocurrenciesById = {
       {
         name: "ubiq",
         code: "UBQ",
-        symbol: "Ξ",
         magnitude: 18
       },
       {
         name: "Gwei",
         code: "Gwei",
-        symbol: "Ξ",
         magnitude: 9
       },
       {
         name: "Mwei",
         code: "Mwei",
-        symbol: "Ξ",
         magnitude: 6
       },
       {
         name: "Kwei",
         code: "Kwei",
-        symbol: "Ξ",
         magnitude: 3
       },
       {
         name: "wei",
         code: "wei",
-        symbol: "Ξ",
         magnitude: 0
       }
     ],
@@ -1818,6 +1783,7 @@ const cryptocurrenciesById = {
     ticker: "BTC",
     scheme: "testnet",
     color: "#00ff00",
+    symbol: "Ƀ",
     units: bitcoinUnits.map(makeTestnetUnit),
     supportsSegwit: true,
     isTestnetFor: "bitcoin",
