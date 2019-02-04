@@ -1,9 +1,11 @@
 // @flow
 import React, { PureComponent } from "react";
+import { AppState } from "react-native";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { privacySelector } from "../../reducers/settings";
+import { AUTOLOCK_TIMEOUT } from "../../constants";
 
 import auth from "./auth";
 import type { Privacy } from "../../reducers/settings";
@@ -43,7 +45,28 @@ class AuthPass extends PureComponent<Props, State> {
 
   componentDidMount() {
     this.auth();
+    AppState.addEventListener("change", this.handleAppStateChange);
   }
+
+  timeout: *;
+  appInBg: number;
+
+  handleAppStateChange = appState => {
+    clearTimeout(this.timeout);
+    if (appState === "background") {
+      this.appInBg = Date.now();
+      this.timeout = setTimeout(() => {
+        if (!this.state.isLocked) {
+          this.lock();
+        }
+      }, AUTOLOCK_TIMEOUT);
+    } else if (
+      appState === "active" &&
+      this.appInBg + AUTOLOCK_TIMEOUT < Date.now()
+    ) {
+      this.lock();
+    }
+  };
 
   // auth: try to auth with biometrics and fallback on password
   authPending = false;

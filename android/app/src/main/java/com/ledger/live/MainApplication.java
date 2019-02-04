@@ -4,13 +4,14 @@ import android.app.Application;
 
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactApplication;
+import com.airbnb.android.react.lottie.LottiePackage;
 import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
 import com.segment.analytics.reactnative.core.RNAnalyticsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.opensettings.OpenSettingsPackage;
-import com.swmansion.rnscreens.RNScreenPackage;
+import com.swmansion.rnscreens.RNScreensPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.horcrux.svg.SvgPackage;
 import com.ledgerwallet.hid.ReactHIDPackage;
@@ -51,13 +52,14 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new LottiePackage(),
             new ExtraDimensionsPackage(),
             new RNAnalyticsPackage(),
             new KeychainPackage(),
             new LocationServicesDialogBoxPackage(),
             new RNGestureHandlerPackage(),
             new OpenSettingsPackage(),
-            new RNScreenPackage(),
+            new RNScreensPackage(),
             new ReactNativeConfigPackage(),
             new SvgPackage(),
             new ReactHIDPackage(),

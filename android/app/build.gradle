@@ -112,10 +112,11 @@ android {
 
     defaultConfig {
         applicationId "com.ledger.live"
+        multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "1.1.10"
+        versionCode 11
+        versionName "1.1.11"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -171,13 +172,14 @@ configurations.all {
     resolutionStrategy {
         eachDependency { DependencyResolveDetails details ->
             if (details.requested.name == 'android-jsc') {
-                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r224109'
+                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r236355'
             }
         }
     }
 }
 
 dependencies {
+    compile project(':lottie-react-native')
     compile project(':react-native-extra-dimensions-android')
     compile project(':@segment_analytics-react-native')
     compile project(':react-native-keychain')

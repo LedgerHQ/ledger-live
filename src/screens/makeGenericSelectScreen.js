@@ -1,6 +1,8 @@
 /* @flow */
 import React, { Component } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+// $FlowFixMe
+import { FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { track } from "../analytics";
 import SettingsRow from "../components/SettingsRow";
@@ -19,6 +21,7 @@ type Opts<Item> = {
   keyExtractor: Item => string,
   formatItem?: Item => string,
   Entry?: EntryComponent<Item>,
+  navigationOptions?: Object,
   // TODO in future: searchable: boolean
 };
 
@@ -53,7 +56,13 @@ const styles = StyleSheet.create({
 });
 
 export default <Item>(opts: Opts<Item>) => {
-  const { id, itemEventProperties, title, keyExtractor } = opts;
+  const {
+    id,
+    itemEventProperties,
+    title,
+    keyExtractor,
+    navigationOptions = {},
+  } = opts;
   const Entry = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<{
@@ -62,7 +71,7 @@ export default <Item>(opts: Opts<Item>) => {
     onValueChange: (Item, *) => void,
     navigation: NavigationScreenProp<*>,
   }> {
-    static navigationOptions = { title };
+    static navigationOptions = { title, ...navigationOptions };
 
     onPress = (item: Item) => {
       const { navigation, onValueChange } = this.props;

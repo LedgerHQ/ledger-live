@@ -1,6 +1,8 @@
 // @flow
 import React, { Component, Fragment } from "react";
-import { View, SectionList, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { SectionList } from "react-navigation";
 import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";

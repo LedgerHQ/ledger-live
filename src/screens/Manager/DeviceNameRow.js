@@ -7,100 +7,61 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import colors from "../../colors";
 import { deviceNameByDeviceIdSelector } from "../../reducers/ble";
-import {
-  connectingStep,
-  getDeviceName,
-} from "../../components/DeviceJob/steps";
-import DeviceJob from "../../components/DeviceJob";
+import { saveBleDeviceName } from "../../actions/ble";
 import LText from "../../components/LText";
 import Row from "./Row";
 
 type Props = {
   navigation: *,
   deviceId: string,
+  initialDeviceName: string,
   savedName: string,
+  saveBleDeviceName: (string, string) => *,
 };
 
-type State = {
-  lastSavedDeviceName: string,
-  deviceName: ?string,
-  connecting: boolean,
-};
+class DeviceNameRow extends PureComponent<Props> {
+  componentDidMount() {
+    this.sync();
+  }
 
-class DeviceNameRow extends PureComponent<Props, State> {
-  state = {
-    lastSavedDeviceName: this.props.savedName,
-    deviceName: null,
-    connecting: false,
-  };
-
-  static getDerivedStateFromProps(
-    { savedName }: Props,
-    { deviceName, lastSavedDeviceName }: State,
-  ) {
-    if (deviceName !== null && savedName !== lastSavedDeviceName) {
-      return {
-        deviceName: savedName,
-        lastSavedDeviceName: savedName,
-      };
+  sync() {
+    const {
+      initialDeviceName,
+      savedName,
+      deviceId,
+      saveBleDeviceName,
+    } = this.props;
+    if (initialDeviceName && initialDeviceName !== savedName) {
+      saveBleDeviceName(deviceId, initialDeviceName);
     }
-    return null;
   }
 
   onPress = () => {
-    const { navigation, deviceId } = this.props;
-    const { deviceName } = this.state;
-    if (deviceName !== null) {
-      navigation.navigate("EditDeviceName", {
-        deviceId,
-        deviceName,
-      });
-    } else {
-      this.setState({ connecting: true });
-    }
-  };
-
-  onCancel = () => {
-    this.setState({ connecting: false });
-  };
-
-  onDone = (deviceId, { deviceName }) => {
-    this.setState({ connecting: false, deviceName });
+    const { navigation, deviceId, savedName } = this.props;
+    navigation.navigate("EditDeviceName", {
+      deviceId,
+      deviceName: savedName,
+    });
   };
 
   render() {
-    const { deviceId } = this.props;
-    const { deviceName, connecting } = this.state;
+    const { savedName } = this.props;
     return (
       <Row
         title={<Trans i18nKey="DeviceNameRow.title" />}
-        arrowRight={!!deviceName}
+        arrowRight
         alignedTop
         onPress={this.onPress}
         compact
         top
       >
-        {deviceName === null ? (
-          <LText semiBold numberOfLines={1} style={styles.action}>
-            <Trans i18nKey="DeviceNameRow.action" />
-          </LText>
-        ) : (
-          <LText
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.accountName}
-          >
-            {deviceName}
-          </LText>
-        )}
-
-        <DeviceJob
-          deviceName={deviceName}
-          deviceId={connecting ? deviceId : null}
-          onCancel={this.onCancel}
-          onDone={this.onDone}
-          steps={[connectingStep, getDeviceName]}
-        />
+        <LText
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={styles.accountName}
+        >
+          {savedName}
+        </LText>
       </Row>
     );
   }
@@ -110,6 +71,7 @@ export default connect(
   createStructuredSelector({
     savedName: deviceNameByDeviceIdSelector,
   }),
+  { saveBleDeviceName },
 )(withNavigation(DeviceNameRow));
 
 const styles = StyleSheet.create({

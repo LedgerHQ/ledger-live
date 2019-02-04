@@ -15,12 +15,12 @@ import { bufferTime } from "rxjs/operators";
 import type { NavigationScreenProp } from "react-navigation";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
+import type { Log } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
+import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
 import LText from "../components/LText";
 import Button from "../components/Button";
 import KeyboardView from "../components/KeyboardView";
 import colors from "../colors";
-import type { Log } from "../react-native-hw-transport-ble/debug";
-import { logsObservable } from "../react-native-hw-transport-ble/debug";
 
 const styles = StyleSheet.create({
   root: {

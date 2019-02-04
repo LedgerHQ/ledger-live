@@ -37,6 +37,8 @@ type Props = {
   renderRight?: any,
   hasError?: boolean,
   autoFocus?: boolean,
+  editable: boolean,
+  placeholder?: string,
   style?: *,
 };
 
@@ -56,6 +58,7 @@ class CurrencyInput extends PureComponent<Props, State> {
     isActive: false,
     hasError: false,
     autoFocus: false,
+    editable: true,
   };
 
   state = {
@@ -132,6 +135,8 @@ class CurrencyInput extends PureComponent<Props, State> {
       renderRight,
       hasError,
       autoFocus,
+      editable,
+      placeholder,
     } = this.props;
     const { displayValue } = this.state;
     return (
@@ -143,17 +148,21 @@ class CurrencyInput extends PureComponent<Props, State> {
             isActive ? styles.active : null,
             hasError ? styles.error : null,
           ]}
+          editable={editable}
           onChangeText={this.handleChange}
           autoCorrect={false}
           value={displayValue}
           autoFocus={autoFocus}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
-          placeholder={format(unit, BigNumber(0), {
-            isFocused: false,
-            showAllDigits,
-            subMagnitude,
-          })}
+          placeholder={
+            placeholder ||
+            format(unit, BigNumber(0), {
+              isFocused: false,
+              showAllDigits,
+              subMagnitude,
+            })
+          }
           keyboardType="numeric"
           blurOnSubmit
         />

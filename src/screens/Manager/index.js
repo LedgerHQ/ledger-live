@@ -12,6 +12,7 @@ import {
   connectingStep,
   dashboard,
   genuineCheck,
+  getDeviceName,
 } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceButton from "../../components/SelectDevice/RemoveDeviceButton";
@@ -142,7 +143,7 @@ class Manager extends Component<
         <SelectDevice
           onSelect={this.onSelect}
           editMode={editMode}
-          steps={[connectingStep, dashboard, genuineCheck]}
+          steps={[connectingStep, dashboard, genuineCheck, getDeviceName]}
           onStepEntered={this.onStepEntered}
           onForgetSelect={this.onForgetSelect}
           selectedIds={this.state.toForget}
