@@ -47,12 +47,6 @@
 		8883689AB6244426A9E1C1C0 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 603D0C57D1C8456C82B34496 /* Entypo.ttf */; };
 		8F3AB69021F8C163005F3E8C /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F3AB68421F8BE9A005F3E8C /* Lottie.framework */; };
 		8F3AB69121F8C163005F3E8C /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8F3AB68421F8BE9A005F3E8C /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8F54FD9E21F8CD3B00020537 /* img_2.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F54FD5821F8CD3A00020537 /* img_2.png */; };
-		8F54FD9F21F8CD3B00020537 /* img_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F54FD9921F8CD3A00020537 /* img_1.png */; };
-		8F54FDA021F8CD3B00020537 /* img_0.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F54FD9A21F8CD3A00020537 /* img_0.png */; };
-		8F54FDA121F8CD3B00020537 /* img_4.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F54FD9B21F8CD3A00020537 /* img_4.png */; };
-		8F54FDA221F8CD3B00020537 /* img_5.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F54FD9C21F8CD3A00020537 /* img_5.png */; };
-		8F54FDA321F8CD3B00020537 /* img_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F54FD9D21F8CD3A00020537 /* img_3.png */; };
 		8FAD0C08211D977700531995 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FAD0BFA211D977700531995 /* Octicons.ttf */; };
 		8FAD0C09211D977700531995 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FAD0BFB211D977700531995 /* Feather.ttf */; };
 		8FAD0C0A211D977700531995 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FAD0BFC211D977700531995 /* Entypo.ttf */; };
@@ -689,12 +683,6 @@
 		84C89018552347C5B535B6A3 /* libRNKeychain.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNKeychain.a; sourceTree = "<group>"; };
 		887CA7F3B5FF4445BB1C5960 /* libRNLibLedgerCore.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNLibLedgerCore.a; sourceTree = "<group>"; };
 		88F6163E74364066BC1A5713 /* libReact Native Open Settings.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libReact Native Open Settings.a"; sourceTree = "<group>"; };
-		8F54FD5821F8CD3A00020537 /* img_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = img_2.png; path = ../src/animations/images/img_2.png; sourceTree = "<group>"; };
-		8F54FD9921F8CD3A00020537 /* img_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = img_1.png; path = ../src/animations/images/img_1.png; sourceTree = "<group>"; };
-		8F54FD9A21F8CD3A00020537 /* img_0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = img_0.png; path = ../src/animations/images/img_0.png; sourceTree = "<group>"; };
-		8F54FD9B21F8CD3A00020537 /* img_4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = img_4.png; path = ../src/animations/images/img_4.png; sourceTree = "<group>"; };
-		8F54FD9C21F8CD3A00020537 /* img_5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = img_5.png; path = ../src/animations/images/img_5.png; sourceTree = "<group>"; };
-		8F54FD9D21F8CD3A00020537 /* img_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = img_3.png; path = ../src/animations/images/img_3.png; sourceTree = "<group>"; };
 		8FAD0BFA211D977700531995 /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
 		8FAD0BFB211D977700531995 /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
 		8FAD0BFC211D977700531995 /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
@@ -1082,12 +1070,6 @@
 		3F0372EE9483431D91FAB7D5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				8F54FD9A21F8CD3A00020537 /* img_0.png */,
-				8F54FD9921F8CD3A00020537 /* img_1.png */,
-				8F54FD5821F8CD3A00020537 /* img_2.png */,
-				8F54FD9D21F8CD3A00020537 /* img_3.png */,
-				8F54FD9B21F8CD3A00020537 /* img_4.png */,
-				8F54FD9C21F8CD3A00020537 /* img_5.png */,
 				8FAD0BF9211D977700531995 /* Fonts */,
 				CE7E1D553FBD49E0A85347D3 /* MuseoSans-Bold.otf */,
 				3263CCC7104E4B86AC2ADDB4 /* MuseoSans-Regular.otf */,
@@ -2006,14 +1988,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F54FDA121F8CD3B00020537 /* img_4.png in Resources */,
-				8F54FDA021F8CD3B00020537 /* img_0.png in Resources */,
 				8FAD0C08211D977700531995 /* Octicons.ttf in Resources */,
 				8FAD0C0A211D977700531995 /* Entypo.ttf in Resources */,
 				8FAD0C09211D977700531995 /* Feather.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				8F54FD9F21F8CD3B00020537 /* img_1.png in Resources */,
 				8FAD0C0B211D977700531995 /* FontAwesome5_Brands.ttf in Resources */,
 				8FAD0C10211D977700531995 /* FontAwesome5_Regular.ttf in Resources */,
 				8FAD0C0D211D977700531995 /* Foundation.ttf in Resources */,
@@ -2029,8 +2008,6 @@
 				AA971EB1796D4FD797316C3D /* OpenSans-Regular.ttf in Resources */,
 				381DCCBE6BFC414E8DC790E4 /* OpenSans-SemiBold.ttf in Resources */,
 				8FAD0C11211D977700531995 /* FontAwesome.ttf in Resources */,
-				8F54FDA221F8CD3B00020537 /* img_5.png in Resources */,
-				8F54FDA321F8CD3B00020537 /* img_3.png in Resources */,
 				8FAD0C15211D977700531995 /* MaterialIcons.ttf in Resources */,
 				4DDC6F48AE30467DB99F9225 /* Rubik-Regular.ttf in Resources */,
 				8FAD0C0F211D977700531995 /* FontAwesome5_Solid.ttf in Resources */,
@@ -2043,7 +2020,6 @@
 				7E87C9D031974B438C0F01F2 /* FontAwesome5_Solid.ttf in Resources */,
 				FEA0D6AE27DE42709BBB7FC7 /* Foundation.ttf in Resources */,
 				1567834D541F4AA88ED0C16C /* Ionicons.ttf in Resources */,
-				8F54FD9E21F8CD3B00020537 /* img_2.png in Resources */,
 				5A696D83ABD443C98CC17ECB /* MaterialCommunityIcons.ttf in Resources */,
 				66BAE44DC0E24A36AE0245DE /* MaterialIcons.ttf in Resources */,
 				D38D9E8A1BA34222AFFD6469 /* Octicons.ttf in Resources */,
@@ -2067,7 +2043,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n\n# Setup nvm and set node\n[ -z \"$NVM_DIR\" ] && export NVM_DIR=\"$HOME/.nvm\"\n\nif [[ -s \"$HOME/.nvm/nvm.sh\" ]]; then\n. \"$HOME/.nvm/nvm.sh\"\nelif [[ -x \"$(command -v brew)\" && -s \"$(brew --prefix nvm)/nvm.sh\" ]]; then\n. \"$(brew --prefix nvm)/nvm.sh\"\nfi\n\n# Set up the nodenv node version manager if present\nif [[ -x \"$HOME/.nodenv/bin/nodenv\" ]]; then\neval \"$(\"$HOME/.nodenv/bin/nodenv\" init -)\"\nfi\n\n[ -z \"$NODE_BINARY\" ] && export NODE_BINARY=\"node\"\n\n$NODE_BINARY ../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		C5DD91777D904DF2BEB7E83C /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2081,7 +2057,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
+			shellScript = "# First set the path to sentry.properties\nexport SENTRY_PROPERTIES=sentry.properties\n\n# Setup nvm and set node\n[ -z \"$NVM_DIR\" ] && export NVM_DIR=\"$HOME/.nvm\"\n\nif [[ -s \"$HOME/.nvm/nvm.sh\" ]]; then\n. \"$HOME/.nvm/nvm.sh\"\nelif [[ -x \"$(command -v brew)\" && -s \"$(brew --prefix nvm)/nvm.sh\" ]]; then\n. \"$(brew --prefix nvm)/nvm.sh\"\nfi\n\n# Set up the nodenv node version manager if present\nif [[ -x \"$HOME/.nodenv/bin/nodenv\" ]]; then\neval \"$(\"$HOME/.nodenv/bin/nodenv\" init -)\"\nfi\n\n[ -z \"$NODE_BINARY\" ] && export NODE_BINARY=\"node\"\n\n$NODE_BINARY ../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

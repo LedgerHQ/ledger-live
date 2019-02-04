@@ -4,6 +4,7 @@ import {
   createStackNavigator,
   createMaterialTopTabNavigator,
   createSwitchNavigator,
+  createAppContainer,
 } from "react-navigation";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import type { NavigationScreenProp } from "react-navigation";
@@ -83,13 +84,12 @@ import DebugLottie from "./screens/DebugLottie.js";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
-import ImportAccounts from "./screens/ImportAccounts/importAccountsNavigator";
 import styles from "./navigation/styles";
 import TransparentHeaderNavigationOptions from "./navigation/TransparentHeaderNavigationOptions";
 import {
   stackNavigatorConfig,
   closableStackNavigatorConfig,
-  navigationOptions,
+  defaultNavigationOptions,
 } from "./navigation/navigatorConfig";
 
 // add accounts
@@ -104,6 +104,10 @@ import ReadOnlyTab from "./components/ReadOnlyTab";
 import HiddenTabBarIfKeyboardVisible from "./components/HiddenTabBarIfKeyboardVisible";
 import DebugStore from "./screens/DebugStore";
 import DebugWSImport from "./screens/DebugWSImport";
+import ScanAccounts from "./screens/ImportAccounts/Scan";
+import DisplayResult from "./screens/ImportAccounts/DisplayResult";
+import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen.ios";
+import OnboardingOrNavigator from "./screens/OnboardingOrNavigator";
 
 // TODO look into all FlowFixMe
 
@@ -187,8 +191,8 @@ const ManagerStack = createStackNavigator(
   },
   {
     ...stackNavigatorConfig,
-    navigationOptions: {
-      ...stackNavigatorConfig.navigationOptions,
+    defaultNavigationOptions: {
+      ...stackNavigatorConfig.defaultNavigationOptions,
       headerStyle: styles.header,
     },
   },
@@ -271,12 +275,12 @@ ReceiveFunds.navigationOptions = ({ navigation }) => ({
 const addAccountsNavigatorConfig = {
   ...closableStackNavigatorConfig,
   headerMode: "float",
-  navigationOptions: ({
+  defaultNavigationOptions: ({
     navigation,
   }: {
     navigation: NavigationScreenProp<*>,
   }) => ({
-    ...navigationOptions,
+    ...defaultNavigationOptions,
     headerRight: <AddAccountsHeaderRightClose navigation={navigation} />,
   }),
 };
@@ -345,6 +349,22 @@ const AccountSettings = createStackNavigator(
 );
 
 AccountSettings.navigationOptions = {
+  header: null,
+};
+
+const ImportAccounts = createStackNavigator(
+  {
+    ScanAccounts: {
+      screen: ScanAccounts,
+      navigationOptions: TransparentHeaderNavigationOptions,
+    },
+    DisplayResult,
+    FallBackCameraScreen,
+  },
+  closableStackNavigatorConfig,
+);
+
+ImportAccounts.navigationOptions = {
   header: null,
 };
 
@@ -429,9 +449,13 @@ const BaseOnboarding = createStackNavigator(
   },
 );
 
-export const RootNavigator = createSwitchNavigator({
+const RootNavigator = createSwitchNavigator({
+  OnboardingOrNavigator,
   BaseNavigator,
   BaseOnboarding,
 });
 
 RootNavigator.navigationOptions = { header: null };
+
+const AppContainer = createAppContainer(RootNavigator);
+export default AppContainer;

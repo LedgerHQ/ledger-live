@@ -1,7 +1,8 @@
 /* @flow */
 import React, { Component, PureComponent } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import Markdown from "react-native-easy-markdown";
 import { translate, Trans } from "react-i18next";

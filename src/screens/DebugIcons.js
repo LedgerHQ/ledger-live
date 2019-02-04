@@ -1,8 +1,9 @@
 // @flow
 
 import React, { Component } from "react";
-import { StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { StyleSheet } from "react-native";
+// $FlowFixMe
+import { SafeAreaView, ScrollView } from "react-navigation";
 import { UserRefusedAddress } from "@ledgerhq/live-common/lib/errors";
 import colors from "../colors";
 import DeviceNanoAction from "../components/DeviceNanoAction";

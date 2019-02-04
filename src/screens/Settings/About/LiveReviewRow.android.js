@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SettingsRow from "../../../components/SettingsRow";
 import Circle from "../../../components/Circle";
 import colors from "../../../colors";
+import { urls } from "../../../config/urls";
 
 class LiveReviewRow extends PureComponent<*> {
   render() {
@@ -20,9 +21,7 @@ class LiveReviewRow extends PureComponent<*> {
           </Circle>
         }
         onPress={() => {
-          Linking.openURL(
-            `https://play.google.com/store/apps/details?id=com.google.android.apps.live`,
-          );
+          Linking.openURL(urls.playstore);
         }}
       />
     );

@@ -1,7 +1,9 @@
 /* @flow */
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
+// $FlowFixMe
+import { ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import type {
@@ -112,7 +114,10 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
           </LText>
           <FirmwareUpdateRow deviceInfo={meta.deviceInfo} deviceId={deviceId} />
         </View>
-        <DeviceNameRow deviceId={deviceId} deviceName={meta.deviceName} />
+        <DeviceNameRow
+          deviceId={deviceId}
+          initialDeviceName={meta.deviceName}
+        />
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />

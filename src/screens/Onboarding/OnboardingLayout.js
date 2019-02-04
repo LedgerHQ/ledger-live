@@ -1,8 +1,9 @@
 // @flow
 
 import React, { PureComponent, Fragment } from "react";
-import { StatusBar, StyleSheet, View, ScrollView } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { StatusBar, StyleSheet, View } from "react-native";
+// $FlowFixMe
+import { ScrollView, SafeAreaView } from "react-navigation";
 
 import colors from "../../colors";
 import OnboardingHeader from "./OnboardingHeader";

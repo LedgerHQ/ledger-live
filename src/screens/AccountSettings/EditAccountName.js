@@ -1,8 +1,9 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import i18next from "i18next";
-import { ScrollView, View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { connect } from "react-redux";
@@ -42,6 +43,7 @@ class EditAccountName extends PureComponent<Props, State> {
 
   static navigationOptions = {
     title: i18next.t("account.settings.accountName.title"),
+    headerRight: null,
   };
 
   onChangeText = (accountName: string) => {

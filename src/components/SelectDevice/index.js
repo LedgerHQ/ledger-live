@@ -1,6 +1,8 @@
 // @flow
 import React, { Component, Fragment } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+// $FlowFixMe
+import { FlatList } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
@@ -81,7 +83,7 @@ class SelectDevice extends Component<Props, State> {
     }
     this.listingSubscription = discoverDevices(m => {
       switch (m.id) {
-        case "usb":
+        case "hid":
           return this.props.experimentalUSBEnabled;
         default:
           return true;

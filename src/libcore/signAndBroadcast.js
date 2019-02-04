@@ -114,7 +114,7 @@ async function signTransaction({
   let expiryHeight;
   if (currency.id === "bitcoin_cash" || currency.id === "bitcoin_gold")
     additionals.push("bip143");
-  if (currency.id === "zcash") {
+  if (currency.id === "zcash" || currency.id === "komodo") {
     expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
     if (blockHeight >= 419200) {
       additionals.push("sapling");
@@ -129,7 +129,7 @@ async function signTransaction({
   );
   if (isCancelled()) return;
 
-  const hasExtraData = currency.id === "zcash";
+  const hasExtraData = currency.id === "zcash" || currency.id === "komodo";
 
   // TODO handle isCancelled
 

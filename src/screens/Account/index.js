@@ -2,7 +2,9 @@
 
 import React, { PureComponent } from "react";
 import { compose } from "redux";
-import { StyleSheet, SectionList, View, Animated } from "react-native";
+import { StyleSheet, View, Animated } from "react-native";
+// $FlowFixMe
+import { SectionList } from "react-navigation";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
@@ -31,14 +33,13 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import AccountHeaderRight from "./AccountHeaderRight";
 import AccountHeaderTitle from "./AccountHeaderTitle";
 import AccountActions from "./AccountActions";
-import { scrollToTopIntent } from "./events";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import NoOperationFooter from "../../components/NoOperationFooter";
 
 type Props = {
   account: Account,
   summary: Summary,
-  navigation: NavigationScreenProp<{
+  navigation: { emit: (event: string) => void } & NavigationScreenProp<{
     accountId: string,
   }>,
 };
@@ -142,27 +143,8 @@ class AccountScreen extends PureComponent<Props, State> {
 
   ref = React.createRef();
 
-  componentDidMount() {
-    this.scrollSub = scrollToTopIntent.subscribe(() => {
-      const sectionList = this.ref.current;
-      if (sectionList) {
-        sectionList.getScrollResponder().scrollTo({
-          x: 0,
-          y: 0,
-          animated: true,
-        });
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.scrollSub.unsubscribe();
-  }
-
-  scrollSub: *;
-
   onPress = () => {
-    scrollToTopIntent.next();
+    this.props.navigation.emit("refocus");
   };
 
   renderSectionHeader = ({ section }) => <SectionHeader section={section} />;

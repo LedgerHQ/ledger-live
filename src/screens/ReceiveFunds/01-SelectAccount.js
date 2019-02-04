@@ -1,8 +1,9 @@
 /* @flow */
 import React, { Component } from "react";
 import i18next from "i18next";
-import { View, StyleSheet, FlatList } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { SafeAreaView, FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";

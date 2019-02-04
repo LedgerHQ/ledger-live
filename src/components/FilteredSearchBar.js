@@ -78,7 +78,6 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             onBlur={this.onBlur}
             onFocus={this.onFocus}
             onChangeText={this.onChange}
-            onSubmitEditing={this.clear}
             onInputCleared={this.clear}
             placeholder={t("common.search")}
             placeholderTextColor={colors.grey}

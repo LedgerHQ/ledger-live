@@ -1,7 +1,9 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import type { NavigationScreenProp } from "react-navigation";
-import { ScrollView, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { ScrollView } from "react-navigation";
 import i18next from "i18next";
 import { translate } from "react-i18next";
 import { TrackScreen } from "../../../analytics";
