@@ -109,7 +109,7 @@ export interface AccountBridge<Transaction> {
   checkValidRecipient(
     currency: Currency,
     recipient: string,
-    origin?: string,
+    source?: string,
   ): Promise<?Error>;
 
   // Validates that the transaction is ready to be performed with all information provided and correct.
