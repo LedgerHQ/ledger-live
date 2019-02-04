@@ -86,7 +86,7 @@
     "react-i18next": "7.10.1",
     "react-native": "0.57.3",
     "react-native-android-location-services-dialog-box": "^2.7.0",
-    "react-native-ble-plx": "^1.0.1",
+    "react-native-ble-plx": "^1.0.2",
     "react-native-camera": "1.9.2",
     "react-native-config": "0.11.5",
     "react-native-crypto": "^2.1.2",
