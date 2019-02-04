@@ -32,6 +32,7 @@ import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
+import ShareLink from "../../components/ShareLink";
 import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
@@ -216,6 +217,9 @@ class ReceiveConfirmation extends Component<Props, State> {
               >
                 <Trans i18nKey="transfer.receive.copyAddress" />
               </CopyLink>
+              <ShareLink value={account.freshAddress}>
+                <Trans i18nKey="transfer.receive.shareAddress" />
+              </ShareLink>
             </View>
           </View>
           <View style={styles.bottomContainer}>
@@ -399,6 +403,9 @@ const styles = StyleSheet.create({
   },
   copyLink: {
     paddingTop: 24,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignSelf: "stretch",
   },
   modal: {
     flexDirection: "column",
