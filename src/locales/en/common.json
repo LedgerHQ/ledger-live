@@ -121,6 +121,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address!"
     },
+    "InvalidAddressBecauseDestinationIsAlsoSource": {
+      "title": "Destination and origin accounts can't be the same"
+    },
     "InvalidRecipient": { "title": "Invalid recipient" },
     "LatestMCUInstalledError": {
       "title": "Oops, nothing to update",
