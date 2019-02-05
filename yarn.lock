@@ -7307,10 +7307,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-ble-plx@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.1.tgz#6ab5f3a5f9937b6a6410929dc222368f6e4dd1de"
-  integrity sha512-bC8yAVg0WuuMdEIr+kIHs8nd4leHyUvrYILBBOlcsggmNvgFDC8iXqEAvjpeRXMrqPVjPhft2EtFAQlEfjWvdA==
+react-native-ble-plx@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.2.tgz#0ced1a7c12aa93623ea86f4e439008c51cb478fb"
+  integrity sha512-0q94XF0ZNnC2z34AZNg3cgjgnBNtSGKtfIMlwncLz3zW19rW6JFQnFmYHVTVAEO2uiyhW2j9dw1IR6Pjym13VQ==
 
 react-native-camera@1.9.2:
   version "1.9.2"
@@ -7361,16 +7361,7 @@ react-native-extra-dimensions-android@^0.22.0:
   resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-0.22.0.tgz#4b09ba19f52c5181efe37965a2c34cadfa05fb61"
   integrity sha512-92ppYjXLId5dgjji7glG96CLkGWF/uH96w/hdoM1Je6cFPMqXbVLadHNCH/Edk2i1AySY7qObZXYJD7buWnhlg==
 
-react-native-gesture-handler@^1.0.0:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.12.tgz#99a22f90212df299245357dbd3a9a01c788f310b"
-  integrity sha512-Qp5FjRmqUFeCevSu2IYQG1Xw+YXZ9YOzqze/ZxaIvWzYAoKsRchlgHhNoxvCqElp/befrnVFIjAEQyUxcmBKJw==
-  dependencies:
-    hoist-non-react-statics "^2.3.1"
-    invariant "^2.2.2"
-    prop-types "^15.5.10"
-
-react-native-gesture-handler@^1.0.15:
+react-native-gesture-handler@^1.0.0, react-native-gesture-handler@^1.0.15:
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.15.tgz#7e0d0a457820a3c9325a3d492daaed14400508a6"
   integrity sha512-BePn+YOKcspHb1xPkUdJs+H6jiaECrT2c98txADBYWHwuUeundE+uUJG0r3FQLFvM2MoGeiJeD96sePzk+WSvQ==
