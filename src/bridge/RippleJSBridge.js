@@ -26,7 +26,8 @@ import {
   InvalidAddress,
   FeeNotLoaded,
   NetworkDown,
-} from "@ledgerhq/live-common/lib/errors";
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/errors";
 import { open } from "@ledgerhq/live-common/lib/hw";
 import {
   apiForEndpointConfig,
@@ -151,9 +152,7 @@ function isRecipientValid(recipient) {
 
 function checkValidRecipient(currency, recipient, source) {
   if (source === recipient) {
-    return Promise.reject(
-      new Error("InvalidAddressBecauseDestinationIsAlsoSource"),
-    );
+    return Promise.reject(new InvalidAddressBecauseDestinationIsAlsoSource());
   }
 
   try {

@@ -34,6 +34,7 @@
     }
   },
   "dependencies": {
+    "@ledgerhq/errors": "^4.35.1",
     "@ledgerhq/hw-app-btc": "^4.34.0",
     "@ledgerhq/hw-app-eth": "^4.24.0",
     "@ledgerhq/hw-app-xrp": "^4.25.0",
