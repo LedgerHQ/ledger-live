@@ -83,7 +83,7 @@ class SelectDevice extends Component<Props, State> {
     }
     this.listingSubscription = discoverDevices(m => {
       switch (m.id) {
-        case "usb":
+        case "hid":
           return this.props.experimentalUSBEnabled;
         default:
           return true;

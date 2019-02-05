@@ -103,6 +103,7 @@ import sendScreens from "./families/sendScreens";
 import ReadOnlyTab from "./components/ReadOnlyTab";
 import HiddenTabBarIfKeyboardVisible from "./components/HiddenTabBarIfKeyboardVisible";
 import DebugStore from "./screens/DebugStore";
+import DebugWSImport from "./screens/DebugWSImport";
 import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen.ios";
@@ -137,6 +138,8 @@ const SettingsStack = createStackNavigator(
     DebugIcons,
     // $FlowFixMe
     DebugLottie,
+    // $FlowFixMe
+    DebugWSImport,
     // $FlowFixMe
     BenchmarkQRStream,
   },

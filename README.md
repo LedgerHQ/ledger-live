@@ -2,7 +2,7 @@
 
 - Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live-desktop)
 
-> Ledger Live is a mobile companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live mobile is available for [iOS](https://itunes.apple.com/fr/app/id1361671700) and [Android](https://play.google.com/store/apps/details?id=com.google.android.apps.live).
+> Ledger Live is a mobile companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live mobile is available for [iOS](https://itunes.apple.com/fr/app/id1361671700) and [Android](https://play.google.com/store/apps/details?id=com.ledger.live).
 
 ![](https://user-images.githubusercontent.com/211411/51758554-42edb980-20c6-11e9-89f0-308949a760d6.png)
 
@@ -62,6 +62,7 @@ DEBUG_COMM_HTTP_PROXY=http://localhost:8435   # enable a dev mode to use the dev
 BRIDGESTREAM_DATA=...       # come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning
 DEBUG_RNDEBUGGER=1          # enable react native debugger
 DISABLE_READ_ONLY=1         # disables readonly mode by default
+EXPERIMENTAL_WS_EXPORT=1    # enables the websocket experimental import
 ```
 
 ## Maintenance

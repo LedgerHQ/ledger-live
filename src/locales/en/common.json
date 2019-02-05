@@ -728,6 +728,7 @@
       "withoutDevice": "Don't have your device?",
       "address": "Address for account",
       "copyAddress": "Copy address",
+      "shareAddress": "Share address",
       "addressCopied": "Address copied!",
       "readOnly": {
         "title": "Receive",
