@@ -678,9 +678,6 @@ export const accountBridge: AccountBridge<Transaction> = {
     const r = await getServerInfo(a.endpointConfig);
     const reserveBaseXRP = parseAPIValue(r.validatedLedger.reserveBaseXRP);
     if (t.recipient) {
-      if (a.freshAddress === t.recipient) {
-        throw new Error("wadus");
-      }
       if (await cachedRecipientIsNew(a.endpointConfig, t.recipient)) {
         if (t.amount.lt(reserveBaseXRP)) {
           const f = formatAPICurrencyXRP(reserveBaseXRP);
