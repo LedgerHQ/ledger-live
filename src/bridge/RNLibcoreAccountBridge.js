@@ -2,12 +2,12 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/live-common/lib/errors";
+import { getFeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
+import type { FeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
 
 import type { AccountBridge } from "./types";
 import { makeLRUCache } from "../logic/cache";
 
-import { getFeeItems } from "../api/FeesBitcoin";
-import type { FeeItems } from "../api/FeesBitcoin";
 import { syncAccount } from "../libcore/syncAccount";
 import { isValidRecipient } from "../libcore/isValidRecipient";
 import { getFeesForTransaction } from "../libcore/getFeesForTransaction";
