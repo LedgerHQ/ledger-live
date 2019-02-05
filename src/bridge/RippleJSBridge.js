@@ -27,7 +27,8 @@ import {
   InvalidAddress,
   FeeNotLoaded,
   NetworkDown,
-} from "@ledgerhq/live-common/lib/errors";
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/errors";
 import { open } from "@ledgerhq/live-common/lib/hw";
 import {
   apiForEndpointConfig,
@@ -150,13 +151,17 @@ function isRecipientValid(recipient) {
   }
 }
 
-function checkValidRecipient(currency, recipient) {
+function checkValidRecipient(account, recipient) {
+  if (account.freshAddress === recipient) {
+    return Promise.reject(new InvalidAddressBecauseDestinationIsAlsoSource());
+  }
+
   try {
     bs58check.decode(recipient);
     return Promise.resolve(null);
   } catch (e) {
     return Promise.reject(
-      new InvalidAddress("", { currencyName: currency.name }),
+      new InvalidAddress("", { currencyName: account.currency.name }),
     );
   }
 }

@@ -462,10 +462,12 @@ export const accountBridge: AccountBridge<Transaction> = {
         : null),
   }),
 
-  checkValidRecipient: (currency, recipient) =>
-    isRecipientValid(currency, recipient)
-      ? Promise.resolve(getRecipientWarning(currency, recipient))
-      : Promise.reject(new InvalidAddress("", { currencyName: currency.name })),
+  checkValidRecipient: (account, recipient) =>
+    isRecipientValid(account.currency, recipient)
+      ? Promise.resolve(getRecipientWarning(account.currency, recipient))
+      : Promise.reject(
+          new InvalidAddress("", { currencyName: account.currency.name }),
+        ),
 
   createTransaction: () => ({
     amount: BigNumber(0),
