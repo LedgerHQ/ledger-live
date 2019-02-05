@@ -2,7 +2,7 @@
 
 // FIXME NB: goal for "bridge/" folder is to be moved to live-common and used by desktop again!
 
-import type { Currency, Account } from "@ledgerhq/live-common/lib/types";
+import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import type { CurrencyBridge, AccountBridge } from "./types";
 import {
   makeMockCurrencyBridge,
@@ -18,7 +18,7 @@ import * as EthereumBridge from "./EthereumJSBridge";
 const mockCurrencyBridge = makeMockCurrencyBridge();
 const mockAccountBridge = makeMockAccountBridge();
 
-export const getCurrencyBridge = (currency: Currency): CurrencyBridge => {
+export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   switch (currency.family) {
     case "ripple":
       return RippleBridge.currencyBridge;

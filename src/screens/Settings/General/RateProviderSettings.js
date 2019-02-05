@@ -29,7 +29,7 @@ const injectItems = C => {
 
     async componentWillMount() {
       const { from, to } = extractFromTo(this.props);
-      const exchanges = await getExchanges(from, to);
+      const exchanges = from && to ? await getExchanges(from, to) : [];
       this.setState({ items: exchanges });
     }
 
