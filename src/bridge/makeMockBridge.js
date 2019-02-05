@@ -82,7 +82,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
       };
     });
 
-  const checkValidRecipient = (currency, recipient) =>
+  const checkValidRecipient = (account, recipient) =>
     recipient.length > 0
       ? Promise.resolve(null)
       : Promise.reject(new Error("invalid recipient"));

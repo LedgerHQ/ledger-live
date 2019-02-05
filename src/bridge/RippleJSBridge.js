@@ -150,8 +150,8 @@ function isRecipientValid(recipient) {
   }
 }
 
-function checkValidRecipient(currency, recipient, source) {
-  if (source === recipient) {
+function checkValidRecipient(account, recipient) {
+  if (account.freshAddress === recipient) {
     return Promise.reject(new InvalidAddressBecauseDestinationIsAlsoSource());
   }
 
@@ -160,7 +160,7 @@ function checkValidRecipient(currency, recipient, source) {
     return Promise.resolve(null);
   } catch (e) {
     return Promise.reject(
-      new InvalidAddress("", { currencyName: currency.name }),
+      new InvalidAddress("", { currencyName: account.currency.name }),
     );
   }
 }

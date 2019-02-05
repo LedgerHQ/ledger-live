@@ -106,11 +106,7 @@ export interface AccountBridge<Transaction> {
   // - if promise is successful with null, all is fine
   // - if promise is successful with an error object, it's a warning to display
   // - if promise is unsuccessful, it's an error
-  checkValidRecipient(
-    currency: Currency,
-    recipient: string,
-    source?: string,
-  ): Promise<?Error>;
+  checkValidRecipient(account: Account, recipient: string): Promise<?Error>;
 
   // Validates that the transaction is ready to be performed with all information provided and correct.
   // - if promise is successful with null, it means transaction can be performed

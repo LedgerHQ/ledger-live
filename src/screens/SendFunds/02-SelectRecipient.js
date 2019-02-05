@@ -124,11 +124,7 @@ class SendSelectRecipient extends Component<Props, State> {
     const { account } = this.props;
     const bridge = getAccountBridge(account);
     try {
-      const res = await bridge.checkValidRecipient(
-        account.currency,
-        address,
-        account.freshAddress,
-      );
+      const res = await bridge.checkValidRecipient(account, address);
       if (this.unmounted) return;
       if (!res) this.setState({ addressStatus: "valid", error: null });
       else this.setState({ addressStatus: "warning", error: res });

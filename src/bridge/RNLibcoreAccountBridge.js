@@ -33,12 +33,12 @@ const serializeTransaction = t => {
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
 const checkValidRecipient = makeLRUCache(
-  (currency, recipient) => {
+  (account, recipient) => {
     if (!recipient)
       return Promise.reject(
-        new InvalidAddress("", { currencyName: currency.name }),
+        new InvalidAddress("", { currencyName: account.currency.name }),
       );
-    return isValidRecipient({ currency, recipient });
+    return isValidRecipient({ currency: account.currency, recipient });
   },
   (currency, recipient) => `${currency.id}_${recipient}`,
 );
@@ -123,7 +123,7 @@ const addPendingOperation = (account, optimisticOperation) => ({
 
 const getFees = makeLRUCache(
   async (a, t) => {
-    await checkValidRecipient(a.currency, t.recipient);
+    await checkValidRecipient(a, t.recipient);
     return getFeesForTransaction({
       account: a,
       transaction: serializeTransaction(t),
