@@ -797,10 +797,10 @@
   dependencies:
     events "^3.0.0"
 
-"@ledgerhq/live-common@4.14.0":
-  version "4.14.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.14.0.tgz#56ecac0a21f0d77a66a57d5ce9e2159b426e0ec7"
-  integrity sha512-oKvb/QZrG2XzVvq/IM+73lyw33VlyDu03hmYFCR48U2DGao/SCFOH8J0vQZK/U9VTSqpnC8mEZKQhNOQkf5hoA==
+"@ledgerhq/live-common@4.15.0":
+  version "4.15.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.15.0.tgz#bcfe696f73c8ab95e2bf5e302a5e981860d3405a"
+  integrity sha512-6KWA1OWCx9WZ3cpW4GxKZQ11OT6GWQEeE1Y3t1tvNpnmNi/1mt1hsaQsRR+QeTOS6wmq8y5XgnMSH8hvvmxhJQ==
   dependencies:
     "@aeternity/ledger-app-api" "0.0.4"
     "@ledgerhq/errors" "^4.32.0"
@@ -7265,19 +7265,10 @@ react-devtools-core@^3.4.0:
     shell-quote "^1.6.1"
     ws "^3.3.1"
 
-react-i18next@7.10.1:
-  version "7.10.1"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-7.10.1.tgz#9e119c15970eb401b9ef178336a2e09dd120bb15"
-  integrity sha512-Kk3fXyjmZa0JXsDRDsyCSDVnjW2L2rDP+PDaTbmxdIwa8M6Yr4A33HHrdCBUyTK0LDZUYm47aRR9iRmWlT9xDQ==
-  dependencies:
-    hoist-non-react-statics "^2.3.1"
-    html-parse-stringify2 "2.0.1"
-    prop-types "^15.6.0"
-
-react-i18next@^8.0.7:
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-8.0.7.tgz#9e6ffdaa01f4454ba216fa50377a7c2ba6f1e662"
-  integrity sha512-oJDVe5X8QK72NYYH7/VQtopONZPcNiarlWdVuCSkn9PucQCEAOf/yRt0V2LdjC4nBY48Y20/540glwR1nlE9gA==
+react-i18next@8, react-i18next@^8.0.7:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-8.4.0.tgz#e9f0c5b9938b155eaa6051360614719c08cae72f"
+  integrity sha512-zIO/bc1L0UUGdaws2y40cTiSQHuQud5e9SSodYM6MTzhJTI3iayxCCdgvotblOLM4taOD77Ct2/fUbheQIhyeg==
   dependencies:
     "@babel/runtime" "^7.1.2"
     create-react-context "0.2.3"
@@ -7316,10 +7307,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-ble-plx@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.1.tgz#6ab5f3a5f9937b6a6410929dc222368f6e4dd1de"
-  integrity sha512-bC8yAVg0WuuMdEIr+kIHs8nd4leHyUvrYILBBOlcsggmNvgFDC8iXqEAvjpeRXMrqPVjPhft2EtFAQlEfjWvdA==
+react-native-ble-plx@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.2.tgz#0ced1a7c12aa93623ea86f4e439008c51cb478fb"
+  integrity sha512-0q94XF0ZNnC2z34AZNg3cgjgnBNtSGKtfIMlwncLz3zW19rW6JFQnFmYHVTVAEO2uiyhW2j9dw1IR6Pjym13VQ==
 
 react-native-camera@1.9.2:
   version "1.9.2"

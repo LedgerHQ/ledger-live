@@ -12,7 +12,7 @@ import type { BigNumber } from "bignumber.js";
 import type {
   Account,
   Operation,
-  Currency,
+  CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
 
 // unique identifier of a device. it will depends on the underlying implementation.
@@ -26,7 +26,7 @@ export type SignAndBroadcastEvent =
 // Abstraction related to a currency
 export interface CurrencyBridge {
   scanAccountsOnDevice(
-    currency: Currency,
+    currency: CryptoCurrency,
     deviceId: DeviceId,
   ): Observable<Account>;
 }

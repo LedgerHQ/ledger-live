@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
 import i18next from "i18next";
 
@@ -54,11 +54,11 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
 
   keyExtractor = currency => currency.id;
 
-  onPressCurrency = (currency: Currency) => {
+  onPressCurrency = (currency: CryptoCurrency) => {
     this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  renderItem = ({ item }: { item: Currency }) => (
+  renderItem = ({ item }: { item: CryptoCurrency }) => (
     <CurrencyRow currency={item} onPress={this.onPressCurrency} />
   );
 

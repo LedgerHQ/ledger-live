@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { translate } from "react-i18next";
 import { View, Slider, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
@@ -28,7 +28,7 @@ type Props = {
   updateCurrencySettings: Function,
   t: T,
   defaults: *,
-  currency: Currency,
+  currency: CryptoCurrency,
 };
 type LocalState = {
   value: number,
@@ -217,7 +217,7 @@ export function CustomCurrencyHeader({
   currency,
   t,
 }: {
-  currency: Currency,
+  currency: CryptoCurrency,
   t: T,
 }) {
   return (

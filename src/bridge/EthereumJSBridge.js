@@ -29,9 +29,9 @@ import {
   InvalidAddress,
 } from "@ledgerhq/live-common/lib/errors";
 import { open } from "@ledgerhq/live-common/lib/hw";
-import { apiForCurrency } from "../api/Ethereum";
-import { getEstimatedFees } from "../api/Fees";
-import type { Tx } from "../api/Ethereum";
+import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
+import { getEstimatedFees } from "@ledgerhq/live-common/lib/api/Fees";
+import type { Tx } from "@ledgerhq/live-common/lib/api/Ethereum";
 import signTransaction from "../logic/hw/signTransaction";
 import type { CurrencyBridge, AccountBridge } from "./types";
 
