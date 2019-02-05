@@ -22,7 +22,6 @@ import spinner from "../../images/spinner.png";
 import Check from "../../icons/Check";
 import Spinning from "../../components/Spinning";
 import { deviceNames } from "../../wording";
-import { delay } from "../../logic/promise";
 import colors from "../../colors";
 import AppIcon from "./AppIcon";
 import { installAppFirstTime } from "../../actions/settings";
@@ -137,9 +136,7 @@ class AppAction extends PureComponent<
       if (this.sub) this.sub.unsubscribe();
       // need to flush if it's still pending
       // FIXME this should be a flush(deviceId) on live-common. It also could be smarter without need to open().
-      delay(500).then(() =>
-        withDevice(this.props.deviceId)(() => of(null)).toPromise(),
-      );
+      withDevice(this.props.deviceId)(() => of(null)).toPromise();
     }
     this.props.onClose();
   };
