@@ -2,12 +2,12 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/live-common/lib/errors";
+import { getFeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
+import type { FeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
 
 import type { AccountBridge } from "./types";
 import { makeLRUCache } from "../logic/cache";
 
-import { getFeeItems } from "../api/FeesBitcoin";
-import type { FeeItems } from "../api/FeesBitcoin";
 import { syncAccount } from "../libcore/syncAccount";
 import { isValidRecipient } from "../libcore/isValidRecipient";
 import { getFeesForTransaction } from "../libcore/getFeesForTransaction";
@@ -33,12 +33,12 @@ const serializeTransaction = t => {
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
 const checkValidRecipient = makeLRUCache(
-  (currency, recipient) => {
+  (account, recipient) => {
     if (!recipient)
       return Promise.reject(
-        new InvalidAddress("", { currencyName: currency.name }),
+        new InvalidAddress("", { currencyName: account.currency.name }),
       );
-    return isValidRecipient({ currency, recipient });
+    return isValidRecipient({ currency: account.currency, recipient });
   },
   (currency, recipient) => `${currency.id}_${recipient}`,
 );
@@ -123,7 +123,7 @@ const addPendingOperation = (account, optimisticOperation) => ({
 
 const getFees = makeLRUCache(
   async (a, t) => {
-    await checkValidRecipient(a.currency, t.recipient);
+    await checkValidRecipient(a, t.recipient);
     return getFeesForTransaction({
       account: a,
       transaction: serializeTransaction(t),

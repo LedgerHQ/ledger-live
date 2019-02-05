@@ -4,6 +4,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
+import { RippleAPI } from "ripple-lib";
 import bs58check from "ripple-bs58check";
 import { computeBinaryTransactionHash } from "ripple-hashes";
 import throttle from "lodash/throttle";
@@ -26,7 +27,8 @@ import {
   InvalidAddress,
   FeeNotLoaded,
   NetworkDown,
-} from "@ledgerhq/live-common/lib/errors";
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/errors";
 import { open } from "@ledgerhq/live-common/lib/hw";
 import {
   apiForEndpointConfig,
@@ -34,7 +36,7 @@ import {
   parseAPIValue,
   parseAPICurrencyObject,
   formatAPICurrencyXRP,
-} from "../api/Ripple";
+} from "@ledgerhq/live-common/lib/api/Ripple";
 import type { CurrencyBridge, AccountBridge } from "./types";
 import signTransaction from "../logic/hw/signTransaction";
 
@@ -55,7 +57,7 @@ async function signAndBroadcast({
   onSigned,
   onOperationBroadcasted,
 }) {
-  const api = apiForEndpointConfig(a.endpointConfig);
+  const api = apiForEndpointConfig(RippleAPI, a.endpointConfig);
   const { fee } = t;
   if (!fee) throw new FeeNotLoaded();
   try {
@@ -149,13 +151,17 @@ function isRecipientValid(recipient) {
   }
 }
 
-function checkValidRecipient(currency, recipient) {
+function checkValidRecipient(account, recipient) {
+  if (account.freshAddress === recipient) {
+    return Promise.reject(new InvalidAddressBecauseDestinationIsAlsoSource());
+  }
+
   try {
     bs58check.decode(recipient);
     return Promise.resolve(null);
   } catch (e) {
     return Promise.reject(
-      new InvalidAddress("", { currencyName: currency.name }),
+      new InvalidAddress("", { currencyName: account.currency.name }),
     );
   }
 }
@@ -269,7 +275,7 @@ const getServerInfo = (map => endpointConfig => {
   if (!endpointConfig) endpointConfig = "";
   if (map[endpointConfig]) return map[endpointConfig]();
   const f = throttle(async () => {
-    const api = apiForEndpointConfig(endpointConfig);
+    const api = apiForEndpointConfig(RippleAPI, endpointConfig);
     try {
       await api.connect();
       const res = await api.getServerInfo();
@@ -287,7 +293,7 @@ const getServerInfo = (map => endpointConfig => {
 
 const recipientIsNew = async (endpointConfig, recipient) => {
   if (!isRecipientValid(recipient)) return false;
-  const api = apiForEndpointConfig(endpointConfig);
+  const api = apiForEndpointConfig(RippleAPI, endpointConfig);
   try {
     await api.connect();
     try {
@@ -336,7 +342,7 @@ export const currencyBridge: CurrencyBridge = {
       };
 
       async function main() {
-        const api = apiForEndpointConfig();
+        const api = apiForEndpointConfig(RippleAPI);
         let transport;
         try {
           transport = await open(deviceId);
@@ -487,7 +493,7 @@ export const accountBridge: AccountBridge<Transaction> = {
       };
 
       async function main() {
-        const api = apiForEndpointConfig(endpointConfig);
+        const api = apiForEndpointConfig(RippleAPI, endpointConfig);
         try {
           await api.connect();
           if (finished) return;
@@ -585,7 +591,7 @@ export const accountBridge: AccountBridge<Transaction> = {
   }),
 
   fetchTransactionNetworkInfo: async account => {
-    const api = apiForEndpointConfig(account.endpointConfig);
+    const api = apiForEndpointConfig(RippleAPI, account.endpointConfig);
     try {
       await api.connect();
       const info = await api.getServerInfo();
@@ -741,7 +747,7 @@ export const accountBridge: AccountBridge<Transaction> = {
   getDefaultEndpointConfig: () => defaultEndpoint,
 
   validateEndpointConfig: async endpointConfig => {
-    const api = apiForEndpointConfig(endpointConfig);
+    const api = apiForEndpointConfig(RippleAPI, endpointConfig);
     await api.connect();
   },
 };

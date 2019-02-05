@@ -29,9 +29,9 @@ import {
   InvalidAddress,
 } from "@ledgerhq/live-common/lib/errors";
 import { open } from "@ledgerhq/live-common/lib/hw";
-import { apiForCurrency } from "../api/Ethereum";
-import { getEstimatedFees } from "../api/Fees";
-import type { Tx } from "../api/Ethereum";
+import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
+import { getEstimatedFees } from "@ledgerhq/live-common/lib/api/Fees";
+import type { Tx } from "@ledgerhq/live-common/lib/api/Ethereum";
 import signTransaction from "../logic/hw/signTransaction";
 import type { CurrencyBridge, AccountBridge } from "./types";
 
@@ -462,10 +462,12 @@ export const accountBridge: AccountBridge<Transaction> = {
         : null),
   }),
 
-  checkValidRecipient: (currency, recipient) =>
-    isRecipientValid(currency, recipient)
-      ? Promise.resolve(getRecipientWarning(currency, recipient))
-      : Promise.reject(new InvalidAddress("", { currencyName: currency.name })),
+  checkValidRecipient: (account, recipient) =>
+    isRecipientValid(account.currency, recipient)
+      ? Promise.resolve(getRecipientWarning(account.currency, recipient))
+      : Promise.reject(
+          new InvalidAddress("", { currencyName: account.currency.name }),
+        ),
 
   createTransaction: () => ({
     amount: BigNumber(0),
