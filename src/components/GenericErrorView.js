@@ -9,6 +9,10 @@ import TranslatedError from "./TranslatedError";
 
 class GenericErrorRendering extends PureComponent<{
   error: Error,
+  // sometimes we want to "hide" the technical error into a category
+  // for instance, for Genuine check we want to express "Genuine check failed" because "<actual error>"
+  // in such case, the outerError is GenuineCheckFailed and the actual error is still error
+  outerError?: ?Error,
   withDescription: boolean,
   withIcon: boolean,
 }> {
@@ -18,12 +22,14 @@ class GenericErrorRendering extends PureComponent<{
   };
 
   render() {
-    const { error, withDescription, withIcon } = this.props;
+    const { error, outerError, withDescription, withIcon } = this.props;
+    const titleError = outerError || error;
+    const subtitleError = outerError ? error : null;
     return (
       <View style={styles.root}>
         {withIcon ? (
           <View style={styles.headIcon}>
-            <ErrorIcon error={error} />
+            <ErrorIcon error={titleError} />
           </View>
         ) : null}
         <LText
@@ -33,8 +39,19 @@ class GenericErrorRendering extends PureComponent<{
           style={styles.title}
           numberOfLines={3}
         >
-          <TranslatedError error={error} />
+          <TranslatedError error={titleError} />
         </LText>
+        {subtitleError ? (
+          <LText
+            selectable
+            secondary
+            semiBold
+            style={styles.subtitle}
+            numberOfLines={3}
+          >
+            <TranslatedError error={subtitleError} />
+          </LText>
+        ) : null}
         {withDescription ? (
           <LText selectable style={styles.description} numberOfLines={6}>
             <TranslatedError error={error} field="description" />
@@ -62,8 +79,19 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
     textAlign: "center",
   },
+  subtitle: {
+    marginTop: -20,
+    paddingBottom: 20,
+    paddingHorizontal: 40,
+    fontSize: 14,
+    lineHeight: 21,
+    color: colors.alert,
+    textAlign: "center",
+  },
+
   description: {
     fontSize: 14,
+    lineHeight: 21,
     color: colors.smoke,
     paddingHorizontal: 24,
     textAlign: "center",
