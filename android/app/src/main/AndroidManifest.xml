@@ -42,6 +42,11 @@
             <category android:name="android.intent.category.BROWSABLE"/>
             <data android:scheme="ledgerhq"/>
         </intent-filter>
+        <intent-filter>
+            <!-- http://developer.android.com/guide/topics/connectivity/usb/accessory.html -->
+            <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+        </intent-filter>
+        <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
