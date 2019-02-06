@@ -134,7 +134,7 @@
       "description": "Interacting with Ledger's API server went wrong. Please retry."
     },
     "LedgerAPIErrorWithMessage": {
-      "title": "Oops, {{message}}",
+      "title": "{{message}}",
       "description": "Please retry or contact Ledger Support."
     },
     "LedgerAPINotAvailable": {
