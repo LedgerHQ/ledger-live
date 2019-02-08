@@ -27,10 +27,9 @@ export default async (transport: Transport<*>): Promise<DeviceInfo> => {
   const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
   const majMin = parsedVersion[1];
   const patch = parsedVersion[2] || ".0";
-  const fullVersion =
-    targetId === 0x33000004
-      ? "1.0"
-      : `${majMin}${patch}${providerName ? `-${providerName}` : ""}`;
+  const fullVersion = `${majMin}${patch}${
+    providerName ? `-${providerName}` : ""
+  }`;
   return {
     targetId,
     seVersion: majMin + patch,
