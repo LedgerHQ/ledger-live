@@ -24,33 +24,37 @@ export const setErrorRemapping = (f: Error => Observable<*>) => {
   errorRemapping = f;
 };
 
+const never = new Promise(() => {});
+
 const transportFinally = (
   transport: Transport<*>,
   cleanups: Array<() => void>
 ) => <T>(observable: Observable<T>): Observable<T> =>
   Observable.create(o => {
     let done = false;
+    const finalize = () => {
+      if (done) return never;
+      done = true;
+      return transport
+        .close()
+        .catch(() => {})
+        .then(() => {
+          cleanups.forEach(c => c());
+        });
+    };
+
     const sub = observable.subscribe({
       next: e => o.next(e),
       complete: () => {
-        done = true;
-        transport
-          .close()
-          .catch(() => {})
-          .then(() => o.complete());
+        finalize().then(() => o.complete());
       },
       error: e => {
-        done = true;
-        transport
-          .close()
-          .catch(() => {})
-          .then(() => o.error(e));
+        finalize().then(() => o.error(e));
       }
     });
     return () => {
       sub.unsubscribe();
-      if (!done) transport.close();
-      cleanups.forEach(c => c());
+      finalize();
     };
   });
 
