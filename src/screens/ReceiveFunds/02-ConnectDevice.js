@@ -87,7 +87,12 @@ class ConnectDevice extends Component<Props> {
   };
 
   renderReadOnly = () => <ReadOnlyWarning continue={this.onSkipDevice} />;
-  renderNotSyncedOnly = () => <NotSyncedWarning continue={this.onSkipDevice} />;
+  renderNotSyncedOnly = () => (
+    <NotSyncedWarning
+      continue={this.onSkipDevice}
+      accountId={this.props.account.id}
+    />
+  );
 
   render() {
     const { readOnlyModeEnabled, account } = this.props;
