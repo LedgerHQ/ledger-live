@@ -84,8 +84,12 @@
       "description": "Some connection failed, so please try again."
     },
     "DisconnectedDevice": {
-      "title": "Oops, device was disconnected",
-      "description": "The connection to the device was lost, so please try again."
+      "title": "Oops, device disconnected",
+      "description": "The connection to the device was lost, please try again"
+    },
+    "DisconnectedDeviceDuringOperation": {
+      "title": "Oops, device disconnected",
+      "description": "The connection to the device was lost during an operation, please try again"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",

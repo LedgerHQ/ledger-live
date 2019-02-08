@@ -29,15 +29,13 @@ class ScanningTimeout extends Component<Props> {
             <NanoX color={colors.alert} width={11} height={48} />
           </Circle>
           <LText secondary semiBold style={styles.titleText}>
-            {<Trans i18nKey="PairDevices.ScanningTimeout.title" />}
+            <Trans i18nKey="PairDevices.ScanningTimeout.title" />
           </LText>
           <LText style={styles.SubtitleText}>
-            {
-              <Trans
-                i18nKey="PairDevices.ScanningTimeout.desc"
-                values={deviceNames.nanoX}
-              />
-            }
+            <Trans
+              i18nKey="PairDevices.ScanningTimeout.desc"
+              values={deviceNames.nanoX}
+            />
           </LText>
 
           <View style={styles.buttonContainer}>
