@@ -220,7 +220,7 @@ class DisplayResult extends Component<Props, State> {
   ListEmptyComponent = () => (
     <View>
       <ResultSection mode="empty" />
-      <LText>
+      <LText style={styles.emptyNotice}>
         <Trans i18nKey="account.import.result.descEmpty">
           <LText semiBold>
             {"No accounts"}
@@ -260,7 +260,7 @@ class DisplayResult extends Component<Props, State> {
               <Button
                 event="ImportAccountsContinue"
                 type="primary"
-                title={<Trans i18nKey="common.continue" />}
+                title={<Trans i18nKey="common.import" />}
                 onPress={this.onImport}
               />
             </View>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   body: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
     flex: 1,
   },
   footer: {
@@ -306,6 +306,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  emptyNotice: {
+    marginLeft: 8,
   },
   noAccountText: {
     flex: 1,

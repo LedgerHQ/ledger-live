@@ -31,6 +31,10 @@ class DisplayResultSettingsSection extends PureComponent<{
 const styles = StyleSheet.create({
   root: {},
   row: {
+    backgroundColor: colors.lightGrey,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+
     paddingVertical: 10,
     flexDirection: "row",
     alignItems: "center",

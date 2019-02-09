@@ -33,7 +33,8 @@
     "upToDate": "Up to date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
-    "notAvailable": "Not available"
+    "notAvailable": "Not available",
+    "import": "Import"
   },
   "errors": {
     "AccountNameRequired": {
@@ -594,7 +595,7 @@
         "descBottom": "Please put the LiveQR code within the square"
       },
       "result": {
-        "title": "Select accounts",
+        "title": "Import accounts",
         "newAccounts": "New accounts",
         "updatedAccounts": "Updated accounts",
         "empty": "Add a new account",

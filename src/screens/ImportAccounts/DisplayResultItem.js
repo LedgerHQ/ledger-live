@@ -28,7 +28,7 @@ export default class DisplayResultItem extends Component<{
         onPress={importing ? undefined : this.onSwitch}
         style={[styles.root, { opacity: selectable ? 1 : 0.5 }]}
       >
-        <AccountCard account={account} />
+        <AccountCard account={account} style={styles.card}/>
         {!selectable ? null : (
           <CheckBox isChecked={checked} style={styles.marginLeft} />
         )}
@@ -42,5 +42,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  marginLeft: { marginLeft: 16 },
+  card: {
+    marginLeft:8
+  },
+  marginLeft: { marginLeft: 24 },
 });
