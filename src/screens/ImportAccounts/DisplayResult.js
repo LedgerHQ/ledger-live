@@ -217,6 +217,20 @@ class DisplayResult extends Component<Props, State> {
     />
   );
 
+  ListEmptyComponent = () => (
+    <View>
+      <ResultSection mode="empty" />
+      <LText>
+        <Trans i18nKey="account.import.result.descEmpty">
+          <LText semiBold>
+            {"No accounts"}
+          </LText>
+          {"found on your desktop app, please try again or continue the onboarding."}
+        </Trans>
+      </LText>
+    </View>
+  );
+
   keyExtractor = item => item.account.id;
 
   render() {
@@ -228,7 +242,6 @@ class DisplayResult extends Component<Props, State> {
       <View style={styles.root}>
         <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
-        {items.length ? (
           <Fragment>
             <SectionList
               style={styles.body}
@@ -236,6 +249,7 @@ class DisplayResult extends Component<Props, State> {
               renderItem={this.renderItem}
               renderSectionHeader={this.renderSectionHeader}
               ListFooterComponent={this.ListFooterComponent}
+              ListEmptyComponent={this.ListEmptyComponent}
               keyExtractor={this.keyExtractor}
               sections={Object.keys(itemsGroupedByMode).map(mode => ({
                 mode,
@@ -251,23 +265,6 @@ class DisplayResult extends Component<Props, State> {
               />
             </View>
           </Fragment>
-        ) : (
-          <Fragment>
-            <View style={styles.body}>
-              <LText bold style={styles.noAccountText}>
-                <Trans i18nKey="account.import.result.noAccounts" />
-              </LText>
-            </View>
-            <View style={styles.footer}>
-              <Button
-                event="ImportAccountsDone"
-                type="primary"
-                title={<Trans i18nKey="common.done" />}
-                onPress={this.close}
-              />
-            </View>
-          </Fragment>
-        )}
       </View>
     );
   }

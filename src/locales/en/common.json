@@ -597,6 +597,8 @@
         "title": "Select accounts",
         "newAccounts": "New accounts",
         "updatedAccounts": "Updated accounts",
+        "empty": "Add a new account",
+        "descEmpty": "<0><0>No accounts</0></0> were found. Please try again or go back to the onboarding",
         "alreadyImported": "Already imported",
         "noAccounts": "Nothing to import",
         "unsupported": "Unsupported",

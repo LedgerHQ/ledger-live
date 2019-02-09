@@ -16,6 +16,9 @@ class ResultSection extends PureComponent<{ mode: string }> {
       case "patch":
         text = <Trans i18nKey="account.import.result.updatedAccounts" />;
         break;
+      case "empty":
+        text = <Trans i18nKey="account.import.result.empty" />;
+        break
       case "id":
         text = <Trans i18nKey="account.import.result.alreadyImported" />;
         break;
