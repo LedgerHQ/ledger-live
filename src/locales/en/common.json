@@ -737,6 +737,10 @@
       "copyAddress": "Copy address",
       "shareAddress": "Share address",
       "addressCopied": "Address copied!",
+      "notSynced": {
+        "text": "Synchronizing",
+        "desc": "This may take a while if you have many transactions or a slow internet connection"
+      },
       "readOnly": {
         "title": "Receive",
         "text": "Please be careful",
