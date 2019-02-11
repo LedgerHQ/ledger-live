@@ -26,7 +26,9 @@ import LiveLogo from "../../icons/LiveLogoIcon";
 import IconPause from "../../icons/Pause";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
-import AddAccountsError from "./AddAccountsError";
+import RetryButton from "../../components/RetryButton";
+import CancelButton from "../../components/CancelButton";
+import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -39,13 +41,12 @@ type Props = {
   existingAccounts: Account[],
 };
 
-type Status = "idle" | "scanning" | "error";
-
 type State = {
-  status: Status,
+  scanning: boolean,
   error: ?Error,
   scannedAccounts: Account[],
   selectedIds: string[],
+  cancelled: boolean,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -72,10 +73,11 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
   state = {
     // we assume status is scanning at beginning bcause we start sync at mount
-    status: "scanning",
+    scanning: true,
     error: null,
     scannedAccounts: [],
     selectedIds: [],
+    cancelled: false,
   };
 
   componentDidMount() {
@@ -112,17 +114,18 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             }
             return patch;
           }),
-        complete: () => this.setState({ status: "idle" }),
-        error: error => this.setState({ status: "error", error }),
+        complete: () => this.setState({ scanning: false }),
+        error: error => this.setState({ error }),
       });
   };
 
   restartSubscription = () => {
     this.setState({
-      status: "scanning",
+      scanning: true,
       scannedAccounts: [],
       selectedIds: [],
       error: null,
+      cancelled: false,
     });
     this.startSubscription();
   };
@@ -132,7 +135,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       this.scanSubscription.unsubscribe();
       this.scanSubscription = null;
       if (syncUI) {
-        this.setState({ status: "idle" });
+        this.setState({ scanning: false });
       }
     }
   };
@@ -238,10 +241,26 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     );
   };
 
+  onCancel = () => {
+    this.setState({
+      error: null,
+      cancelled: true,
+    });
+  };
+
+  onModalHide = () => {
+    const { cancelled } = this.state;
+    const { navigation } = this.props;
+
+    if (cancelled && navigation.dismiss) {
+      navigation.dismiss();
+    }
+  };
+
   scrollView = createRef();
 
   render() {
-    const { selectedIds, status, scannedAccounts, error } = this.state;
+    const { selectedIds, scanning, scannedAccounts, error } = this.state;
     const newAccounts = this.getNewAccounts();
     const regularAccounts = this.getRegularAccounts();
     const existingAccountsFiltered = this.getExistingAccounts();
@@ -270,21 +289,13 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
               onUnselectAll={this.unselectAll}
               selectedIds={selectedIds}
             />
-          ) : status === "scanning" ? (
+          ) : scanning ? (
             <LText style={styles.descText}>
               <Trans i18nKey="addAccounts.synchronizingDesc" />
             </LText>
           ) : null}
-          {status === "scanning" && <ScanLoading />}
-          {status === "error" &&
-            error && (
-              <AddAccountsError
-                error={error}
-                style={styles.addAccountsError}
-                onRetry={this.restartSubscription}
-              />
-            )}
-          {(newAccounts.length > 0 || status === "idle") && (
+          {scanning && <ScanLoading />}
+          {(newAccounts.length > 0 || !scanning) && (
             <SelectableAccountsList
               header={<Trans i18nKey="addAccounts.sections.addNewAccount" />}
               accounts={newAccounts}
@@ -308,15 +319,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
         </ScrollView>
         {!!scannedAccounts.length && (
           <Footer
-            isScanning={status === "scanning"}
-            canRetry={
-              status !== "scanning" &&
-              noImportableAccounts &&
-              !cantCreateAccount
-            }
-            canDone={
-              status !== "scanning" && cantCreateAccount && noImportableAccounts
-            }
+            isScanning={scanning}
+            canRetry={!scanning && noImportableAccounts && !cantCreateAccount}
+            canDone={!scanning && cantCreateAccount && noImportableAccounts}
             onRetry={this.restartSubscription}
             onStop={this.stopSubscription}
             onDone={this.quitFlow}
@@ -324,6 +329,22 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             isDisabled={selectedIds.length === 0}
           />
         )}
+        <GenericErrorBottomModal
+          error={error}
+          onModalHide={this.onModalHide}
+          footerButtons={
+            <>
+              <CancelButton
+                containerStyle={styles.button}
+                onPress={this.onCancel}
+              />
+              <RetryButton
+                containerStyle={[styles.button, styles.buttonRight]}
+                onPress={this.restartSubscription}
+              />
+            </>
+          }
+        />
       </SafeAreaView>
     );
   }
@@ -445,6 +466,13 @@ const styles = StyleSheet.create({
   addAccountsError: {
     marginHorizontal: 16,
     marginBottom: 16,
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
   },
 });
 

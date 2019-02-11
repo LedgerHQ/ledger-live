@@ -21,6 +21,7 @@ import { shouldShowNewAccount } from "../cryptocurrencies";
 import { syncCoreAccount } from "./syncAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { createAccountFromDevice } from "./createAccountFromDevice";
+import { remapLibcoreErrors } from "./errors";
 
 export const scanAccountsOnDevice = (
   currency: CryptoCurrency,
@@ -91,7 +92,9 @@ export const scanAccountsOnDevice = (
         }
         o.complete();
       } catch (e) {
-        o.error(e);
+        const mappedError = remapLibcoreErrors(e);
+
+        o.error(mappedError);
       }
 
       if (transport) {

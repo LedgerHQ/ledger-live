@@ -3,7 +3,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
-import Icon from "react-native-vector-icons/dist/Feather";
 import { Trans } from "react-i18next";
 import {
   PairingFailed,
@@ -14,10 +13,8 @@ import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import TranslatedError from "../../components/TranslatedError";
-import BluetoothScanning from "../../components/BluetoothScanning";
+import GenericErrorView from "../../components/GenericErrorView";
 import HelpLink from "../../components/HelpLink";
-import Circle from "../../components/Circle";
 import IconArrowRight from "../../icons/ArrowRight";
 import colors from "../../colors";
 
@@ -35,16 +32,6 @@ const hitSlop = {
   bottom: 16,
 };
 
-const GenericErrorHeader = () => (
-  <Circle bg={colors.lightAlert} size={80}>
-    <LText>
-      <Icon name="alert-triangle" size={40} color={colors.alert} />
-    </LText>
-  </Circle>
-);
-
-const PairingFailure = () => <BluetoothScanning isError />;
-
 class RenderError extends Component<Props> {
   render() {
     const { error, status, onBypassGenuine, onRetry } = this.props;
@@ -59,26 +46,25 @@ class RenderError extends Component<Props> {
       return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
     }
 
-    const primaryError =
-      status === "pairing"
-        ? new PairingFailed()
-        : status === "genuinecheck"
-          ? new GenuineCheckFailed()
-          : error;
+    const isPairingStatus = status === "pairing";
+    const isGenuineCheckStatus = status === "genuinecheck";
 
-    const Header = status === "pairing" ? PairingFailure : GenericErrorHeader;
+    const outerError = isPairingStatus
+      ? new PairingFailed()
+      : isGenuineCheckStatus
+        ? new GenuineCheckFailed()
+        : null;
 
     return (
       <View style={styles.root}>
         <TrackScreen category="PairDevices" name="Error" />
         <View style={styles.body}>
-          <Header />
-          <LText semiBold secondary style={styles.title}>
-            <TranslatedError error={primaryError} />
-          </LText>
-          <LText style={styles.description}>
-            <TranslatedError error={primaryError} field="description" />
-          </LText>
+          <GenericErrorView
+            error={error}
+            outerError={outerError}
+            withDescription
+            withIcon
+          />
           <View style={styles.buttonContainer}>
             <Button
               event="PairDevicesRetry"
@@ -88,7 +74,7 @@ class RenderError extends Component<Props> {
               containerStyle={styles.button}
             />
           </View>
-          {status === "genuinecheck" ? (
+          {isGenuineCheckStatus ? (
             <Touchable
               event="PairDevicesBypassGenuine"
               onPress={onBypassGenuine}
@@ -104,7 +90,7 @@ class RenderError extends Component<Props> {
             <HelpLink style={styles.linkContainer} />
           )}
         </View>
-        {status === "genuinecheck" ? (
+        {isGenuineCheckStatus ? (
           <View style={styles.footer}>
             <HelpLink style={styles.linkContainerGenuine} />
           </View>
