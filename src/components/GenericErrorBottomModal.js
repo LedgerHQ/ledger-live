@@ -8,15 +8,20 @@ import Close from "../icons/Close";
 import BottomModal from "./BottomModal";
 import GenericErrorView from "./GenericErrorView";
 
-class GenericErrorButtonModal extends PureComponent<{
+class GenericErrorBottomModal extends PureComponent<{
   error: ?Error,
   onClose?: () => void,
   footerButtons?: React$Node,
 }> {
   render() {
-    const { error, onClose, footerButtons } = this.props;
+    const { error, onClose, footerButtons, ...otherProps } = this.props;
     return (
-      <BottomModal id="ErrorModal" isOpened={!!error} onClose={onClose}>
+      <BottomModal
+        id="ErrorModal"
+        isOpened={!!error}
+        onClose={onClose}
+        {...otherProps}
+      >
         {error ? (
           <View style={styles.root}>
             <GenericErrorView error={error} />
@@ -54,7 +59,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     flexGrow: 1,
+    paddingTop: 16,
   },
 });
 
-export default GenericErrorButtonModal;
+export default GenericErrorBottomModal;

@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/live-common/lib/errors";
 
 export function remapLibcoreErrors(error: Error): Error {
-  if (!error || !error.name) return error;
+  if (!error || !error.message) return error;
   // in the current effort of remapping libcore errors, we're console.logging it
   if (__DEV__) console.log("remapLibcoreErrors", { error }); // eslint-disable-line no-console
   const msg = error.message;
@@ -14,7 +14,12 @@ export function remapLibcoreErrors(error: Error): Error {
     return new NotEnoughBalance();
   }
 
-  if (msg.includes("The Internet connection appears to be offline")) {
+  if (
+    msg.includes("The Internet connection appears to be offline") ||
+    msg.includes(
+      '"explorers.api.live.ledger.com": No address associated with hostname',
+    )
+  ) {
     return new NetworkDown();
   }
 
