@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import type { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
 import type { State } from "../reducers";
 import Placeholder from "./Placeholder";
 
@@ -18,7 +18,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 
 type OwnProps = {
   // wich market to query
-  currency: Currency,
+  currency: CryptoCurrency,
 
   // when? if not given: take latest
   date?: Date,

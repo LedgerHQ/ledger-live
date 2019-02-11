@@ -23,6 +23,7 @@ import {
 } from "../../components/DeviceJob/steps";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
+import NotSyncedWarning from "./NotSyncedWarning";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -86,12 +87,22 @@ class ConnectDevice extends Component<Props> {
   };
 
   renderReadOnly = () => <ReadOnlyWarning continue={this.onSkipDevice} />;
+  renderNotSyncedOnly = () => (
+    <NotSyncedWarning
+      continue={this.onSkipDevice}
+      accountId={this.props.account.id}
+    />
+  );
 
   render() {
     const { readOnlyModeEnabled, account } = this.props;
 
     if (readOnlyModeEnabled) {
       return this.renderReadOnly();
+    }
+
+    if (!account.freshAddress) {
+      return this.renderNotSyncedOnly();
     }
 
     return (

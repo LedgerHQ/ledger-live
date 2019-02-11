@@ -1,6 +1,8 @@
 /* @flow */
 import React, { Component } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+// $FlowFixMe
+import { FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { track } from "../analytics";
 import SettingsRow from "../components/SettingsRow";

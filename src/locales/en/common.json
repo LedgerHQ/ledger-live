@@ -84,8 +84,12 @@
       "description": "Some connection failed, so please try again."
     },
     "DisconnectedDevice": {
-      "title": "Oops, device was disconnected",
-      "description": "The connection to the device was lost, so please try again."
+      "title": "Oops, device disconnected",
+      "description": "The connection to the device was lost, please try again"
+    },
+    "DisconnectedDeviceDuringOperation": {
+      "title": "Oops, device disconnected",
+      "description": "The connection to the device was lost during an operation, please try again"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",
@@ -121,6 +125,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address!"
     },
+    "InvalidAddressBecauseDestinationIsAlsoSource": {
+      "title": "Destination and source accounts can't be the same"
+    },
     "InvalidRecipient": { "title": "Invalid recipient" },
     "LatestMCUInstalledError": {
       "title": "Oops, nothing to update",
@@ -131,7 +138,7 @@
       "description": "Interacting with Ledger's API server went wrong. Please retry."
     },
     "LedgerAPIErrorWithMessage": {
-      "title": "Oops, {{message}}",
+      "title": "{{message}}",
       "description": "Please retry or contact Ledger Support."
     },
     "LedgerAPINotAvailable": {
@@ -728,7 +735,12 @@
       "withoutDevice": "Don't have your device?",
       "address": "Address for account",
       "copyAddress": "Copy address",
+      "shareAddress": "Share address",
       "addressCopied": "Address copied!",
+      "notSynced": {
+        "text": "Synchronizing",
+        "desc": "This may take a while if you have many transactions or a slow internet connection"
+      },
       "readOnly": {
         "title": "Receive",
         "text": "Please be careful",

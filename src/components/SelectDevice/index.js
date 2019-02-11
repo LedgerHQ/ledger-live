@@ -1,11 +1,13 @@
 // @flow
 import React, { Component, Fragment } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+// $FlowFixMe
+import { FlatList } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
+import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { knownDevicesSelector } from "../../reducers/ble";
-import { experimentalUSBEnabledSelector } from "../../reducers/settings";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
 import DeviceJob from "../DeviceJob";
@@ -21,7 +23,6 @@ type Props = {
   steps: Step[],
   editMode?: boolean,
   // connect-ed
-  experimentalUSBEnabled: boolean,
   knownDevices: Array<{
     id: string,
     name: string,
@@ -30,6 +31,7 @@ type Props = {
   onStepEntered?: (number, Object) => void,
   setReadOnlyMode: boolean => void,
   onboarding?: boolean,
+  filter: TransportModule => boolean,
 };
 
 type State = {
@@ -46,6 +48,7 @@ type State = {
 class SelectDevice extends Component<Props, State> {
   static defaultProps = {
     steps: [],
+    filter: () => true,
   };
 
   state = {
@@ -61,11 +64,8 @@ class SelectDevice extends Component<Props, State> {
     this.observe();
   }
 
-  componentDidUpdate({ experimentalUSBEnabled, knownDevices }) {
-    if (
-      this.props.experimentalUSBEnabled !== experimentalUSBEnabled ||
-      this.props.knownDevices !== knownDevices
-    ) {
+  componentDidUpdate({ knownDevices }) {
+    if (this.props.knownDevices !== knownDevices) {
       this.observe();
     }
   }
@@ -79,14 +79,7 @@ class SelectDevice extends Component<Props, State> {
       this.listingSubscription.unsubscribe();
       this.setState({ devices: [] });
     }
-    this.listingSubscription = discoverDevices(m => {
-      switch (m.id) {
-        case "hid":
-          return this.props.experimentalUSBEnabled;
-        default:
-          return true;
-      }
-    }).subscribe({
+    this.listingSubscription = discoverDevices(this.props.filter).subscribe({
       complete: () => {
         this.setState({ scanning: false });
       },
@@ -181,7 +174,6 @@ const styles = StyleSheet.create({
 export default connect(
   createStructuredSelector({
     knownDevices: knownDevicesSelector,
-    experimentalUSBEnabled: experimentalUSBEnabledSelector,
   }),
   {
     removeKnownDevice,

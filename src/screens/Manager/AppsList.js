@@ -1,6 +1,8 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { FlatList } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";

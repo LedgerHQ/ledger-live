@@ -12,7 +12,7 @@ import type { BigNumber } from "bignumber.js";
 import type {
   Account,
   Operation,
-  Currency,
+  CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
 
 // unique identifier of a device. it will depends on the underlying implementation.
@@ -26,7 +26,7 @@ export type SignAndBroadcastEvent =
 // Abstraction related to a currency
 export interface CurrencyBridge {
   scanAccountsOnDevice(
-    currency: Currency,
+    currency: CryptoCurrency,
     deviceId: DeviceId,
   ): Observable<Account>;
 }
@@ -106,7 +106,7 @@ export interface AccountBridge<Transaction> {
   // - if promise is successful with null, all is fine
   // - if promise is successful with an error object, it's a warning to display
   // - if promise is unsuccessful, it's an error
-  checkValidRecipient(currency: Currency, recipient: string): Promise<?Error>;
+  checkValidRecipient(account: Account, recipient: string): Promise<?Error>;
 
   // Validates that the transaction is ready to be performed with all information provided and correct.
   // - if promise is successful with null, it means transaction can be performed

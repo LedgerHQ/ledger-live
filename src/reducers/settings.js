@@ -76,7 +76,8 @@ const INITIAL_STATE: SettingsState = {
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
-  return "id" in c ? c : null;
+  // $FlowFixMe
+  return "coinType" in c ? c : null;
 }
 
 const handlers: Object = {
@@ -250,7 +251,7 @@ const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = c
 
 export const currencySettingsSelector = (
   state: State,
-  { currency }: { currency: Currency },
+  { currency }: { currency: CryptoCurrency },
 ) => ({
   exchange: null,
   ...defaultCurrencySettingsForCurrency(currency),

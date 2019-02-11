@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import i18next from "i18next";
+// $FlowFixMe
 import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";

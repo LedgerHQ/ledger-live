@@ -18,7 +18,7 @@ type State = {
   copied: boolean,
 };
 
-class HelpLink extends PureComponent<Props, State> {
+class CopyLink extends PureComponent<Props, State> {
   state = {
     copied: false,
   };
@@ -68,7 +68,7 @@ class HelpLink extends PureComponent<Props, State> {
   }
 }
 
-export default HelpLink;
+export default CopyLink;
 
 const styles = StyleSheet.create({
   linkContainer: {
