@@ -52,7 +52,12 @@ class AccountRow extends PureComponent<Props> {
         >
           <CurrencyIcon size={24} currency={account.currency} />
           <View style={styles.inner}>
-            <LText semiBold numberOfLines={1} style={styles.accountNameText}>
+            <LText
+              semiBold
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              style={styles.accountNameText}
+            >
               {account.name}
             </LText>
             <AccountSyncStatus

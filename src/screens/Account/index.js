@@ -3,7 +3,6 @@
 import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { StyleSheet, View, Animated } from "react-native";
-// $FlowFixMe
 import { SectionList } from "react-navigation";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { connect } from "react-redux";
