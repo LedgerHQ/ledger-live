@@ -438,7 +438,7 @@ function createCounterValues<State>({
     );
     invariant(
       data.length === 0 ||
-        (typeof data[0] === "object" && typeof data.id === "string"),
+        (typeof data[0] === "object" && typeof data[0].id === "string"),
       "fetchExchangesForPair: array of exchanges expected"
     );
     return data;
