@@ -99,7 +99,6 @@ class PairDevices extends Component<Props, State> {
         this.setState({ status: "paired" });
       } finally {
         transport.close();
-        await TransportBLE.disconnect(device.id).catch(() => {});
       }
     } catch (error) {
       if (this.unmounted) return;
