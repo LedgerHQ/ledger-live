@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     marginHorizontal: 24,
-    paddingHorizontal: 50,
     paddingVertical: 5,
   },
   iconContainer: {
