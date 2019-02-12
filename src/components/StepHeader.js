@@ -44,12 +44,12 @@ class StepHeader extends PureComponent<Props> {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
-    flex:1,
+    flex: 1,
     paddingVertical: 5,
   },
   title: {
     textAlign: "center",
-    flexGrow:1,
+    flexGrow: 1,
     color: colors.darkBlue,
     fontSize: 16,
   },
