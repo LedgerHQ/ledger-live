@@ -123,9 +123,10 @@ const styles = StyleSheet.create({
   textBlock: {
     paddingRight: 16,
     flexGrow: 1,
-    flexShrink: 1,
+    flexShrink: 0,
   },
   rightBlock: {
+    flexShrink: 1,
     flexDirection: "row",
     alignItems: "center",
   },

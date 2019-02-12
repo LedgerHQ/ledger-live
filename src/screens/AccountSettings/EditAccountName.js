@@ -19,6 +19,8 @@ import { getFontStyle } from "../../components/LText";
 
 import colors from "../../colors";
 
+export const MAX_ACCOUNT_NAME_LENGHT = 50;
+
 type Props = {
   navigation: NavigationScreenProp<{
     accountId: string,
@@ -77,7 +79,7 @@ class EditAccountName extends PureComponent<Props, State> {
               style={styles.textInputAS}
               defaultValue={account.name}
               returnKeyType="done"
-              maxLength={20}
+              maxLength={MAX_ACCOUNT_NAME_LENGHT}
               onChangeText={accountName => this.setState({ accountName })}
               onSubmitEditing={this.onNameEndEditing}
               clearButtonMode="while-editing"
