@@ -724,7 +724,7 @@
     },
     "receive": {
       "title": "Receive",
-      "titleReadOnly": "Are you completely sure?",
+      "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security",

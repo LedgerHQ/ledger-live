@@ -26,7 +26,13 @@ class StepHeader extends PureComponent<Props> {
       <TouchableWithoutFeedback onPress={this.onPress}>
         <View style={styles.root}>
           <LText style={styles.subtitle}>{subtitle}</LText>
-          <LText secondary semiBold style={styles.title}>
+          <LText
+            semiBold
+            secondary
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.title}
+          >
             {title}
           </LText>
         </View>
@@ -37,10 +43,13 @@ class StepHeader extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   root: {
+    flexDirection: "column",
     flex: 1,
+    paddingVertical: 5,
   },
   title: {
     textAlign: "center",
+    flexGrow: 1,
     color: colors.darkBlue,
     fontSize: 16,
   },
