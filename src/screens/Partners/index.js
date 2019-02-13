@@ -5,7 +5,7 @@ import { Trans, translate } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
-import { mobilePartners } from "@ledgerhq/live-common/lib/partners";
+import partners from "@ledgerhq/live-common/lib/partners/reactNative";
 import type { NavigationScreenProp } from "react-navigation";
 import type { T } from "../../types/common";
 import PartnerCard from "../../components/PartnerCard";
@@ -40,7 +40,7 @@ class ExchangeScreen extends Component<Props> {
             <LText secondary style={styles.description} numberOfLines={2}>
               <Trans i18nKey="partners.subtitle" />
             </LText>
-            {mobilePartners.map(card => (
+            {partners.map(card => (
               <PartnerCard icon={card.Logo} key={card.id} t={t} card={card} />
             ))}
           </View>
