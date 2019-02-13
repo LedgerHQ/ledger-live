@@ -1,5 +1,4 @@
 //@flow
-import shuffle from "lodash/shuffle";
 
 import bitpanda from "./bitpanda";
 import btcdirect from "./btcdirect";
@@ -17,9 +16,7 @@ import simplex from "./simplex";
 import taxtoken from "./taxtoken";
 import thorswap from "./thorswap";
 
-import partners from "src/partners";
-
-const reactCards = {
+export default {
   bitpanda: bitpanda,
   btcdirect: btcdirect,
   changelly: changelly,
@@ -36,7 +33,3 @@ const reactCards = {
   taxtoken: taxtoken,
   thorswap: thorswap
 };
-
-export default shuffle(
-  partners.map(({ id, url }) => ({ Logo: reactCards[id], id, url }))
-);

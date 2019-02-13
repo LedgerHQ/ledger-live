@@ -81,21 +81,13 @@ const convert = (svg, options, outputFile) => {
   });
 };
 
-const indexTemplate = (partners) => `
-//@flow
-import shuffle from "lodash/shuffle";
+const indexTemplate = (partners) => `//@flow
 
 ${partners.map(partner=>`import ${partner} from "./${partner}";`).join("\n")}
 
-import partners from "src/partners";
-
-const reactCards = {
+export default {
 ${partners.map(partner=>`\t${partner}: ${partner},`).join("\n")}
 };
-
-export default shuffle(
-  partners.map(({ id, url }) => ({ Logo: reactCards[id], id, url }))
-);
 `;
 
 
