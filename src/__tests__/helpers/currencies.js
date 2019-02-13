@@ -18,8 +18,7 @@ import {
   sanitizeValueString
 } from "../../currencies";
 
-import "../../load/tokens/ethereum/erc20"
-
+import "../../load/tokens/ethereum/erc20";
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
@@ -81,7 +80,7 @@ test("fiats list elements are correct", () => {
 });
 
 test("tokens are correct", () => {
-  expect(listTokens().length).toBeGreaterThan(0)
+  expect(listTokens().length).toBeGreaterThan(0);
   for (const token of listTokens()) {
     expect(token.ticker).toBeTruthy();
     expect(typeof token.id).toBe("string");
