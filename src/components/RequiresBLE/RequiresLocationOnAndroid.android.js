@@ -4,12 +4,11 @@
 
 import React, { Component } from "react";
 import { PermissionsAndroid } from "react-native";
-import { Trans } from "react-i18next";
 import LocationRequired from "../../screens/LocationRequired";
 
 const permission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
 
-export default class RequiresBLE extends Component<
+class RequiresBLE extends Component<
   {
     children: *,
   },
@@ -26,10 +25,7 @@ export default class RequiresBLE extends Component<
   }
 
   request = async () => {
-    const result = await PermissionsAndroid.request(permission, {
-      title: <Trans i18nKey="bluetooth.locationRequiredTitle" />,
-      message: <Trans i18nKey="bluetooth.locationRequiredMessage" />,
-    });
+    const result = await PermissionsAndroid.request(permission);
 
     this.setState({ granted: result === PermissionsAndroid.RESULTS.GRANTED });
   };
@@ -51,3 +47,5 @@ export default class RequiresBLE extends Component<
     return <LocationRequired errorType="unauthorized" onRetry={this.retry} />;
   }
 }
+
+export default RequiresBLE;

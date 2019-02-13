@@ -19,6 +19,7 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
 import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
 import colors from "../../colors";
+import { delay } from "../../logic/promise";
 import RequiresBLE from "../../components/RequiresBLE";
 import PendingContainer from "./PendingContainer";
 import PendingPairing from "./PendingPairing";
@@ -100,6 +101,7 @@ class PairDevices extends Component<Props, State> {
       } finally {
         transport.close();
         await TransportBLE.disconnect(device.id).catch(() => {});
+        await delay(500);
       }
     } catch (error) {
       if (this.unmounted) return;
