@@ -1,11 +1,14 @@
-// @flow
-
-import Svg, { Path, G } from "react-native-svg";
+//@flow
 import React from "react";
+import Svg, { G, Path } from "react-native-svg";
 
-const PayBis = ({ width = 150 }: { width?: number }) => (
-  <Svg width={width} height={(width * 57) / 150}>
-    <G fill="none" fillRule="evenodd">
+type Props = {
+  width: number
+};
+
+const Paybis = ({ width = 150 }: Props) => (
+  <Svg viewBox="0 0 150 57" width={width} height={(width / 150) * 57}>
+    <G fill="none">
       <Path d="M18.615 13.763h24.359V38.91h-24.36z" />
       <Path
         fill="#424644"
@@ -39,4 +42,4 @@ const PayBis = ({ width = 150 }: { width?: number }) => (
     </G>
   </Svg>
 );
-export default PayBis;
+export default Paybis;
