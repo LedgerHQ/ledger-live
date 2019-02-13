@@ -11,13 +11,18 @@ import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import BluetoothTransport, {
   setReconnectionConfig,
 } from "@ledgerhq/react-native-hw-transport-ble";
+import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
 
 import network from "./api/network";
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
+if (Config.DEBUG_BLE)
+  logsObservable.subscribe(e => {
+    console.log(e.type + ": " + e.message); // eslint-disable-line no-console
+  });
 
 // Disabling the reconnection of BLE pairing because we handle it ourself
-setReconnectionConfig(null);
+// setReconnectionConfig(null);
 
 setNetwork(network);
 setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);

@@ -751,10 +751,10 @@
     "@ledgerhq/devices" "^4.38.0"
     "@ledgerhq/hw-transport" "^4.38.0"
 
-"@ledgerhq/react-native-hw-transport-ble@4.38.4":
-  version "4.38.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-4.38.4.tgz#dfbea9080ddc02f2108ac16f0b0782148adfbaef"
-  integrity sha512-RQQkI4NOknFWVl0vyZJLzZAPS/t2dO1U2ElOsInwqCYBE530cmGAbzOlrpFqXOhGvO5EIe3C/br0QEa+X5eR8w==
+"@ledgerhq/react-native-hw-transport-ble@4.38.5":
+  version "4.38.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hw-transport-ble/-/react-native-hw-transport-ble-4.38.5.tgz#039680d294c5ff7f434e85b03a405065abf2c50e"
+  integrity sha512-RZHZT0SU1EiITH9/yO+jSM+glMQRfkU43lwpZCSDgWywWA2nDBPXaBgb+2G37D2MjO+JPiQ2AdU/NqhYcZcLKA==
   dependencies:
     "@ledgerhq/devices" "^4.38.0"
     "@ledgerhq/errors" "^4.38.0"
