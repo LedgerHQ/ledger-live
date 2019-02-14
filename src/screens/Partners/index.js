@@ -5,12 +5,12 @@ import { Trans, translate } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
+import partners from "@ledgerhq/live-common/lib/partners/reactNative";
 import type { NavigationScreenProp } from "react-navigation";
 import type { T } from "../../types/common";
-import ExchangeCard from "../../components/ExchangeCard";
+import PartnerCard from "../../components/PartnerCard";
 import LText from "../../components/LText";
 import colors from "../../colors";
-import exchanges from "../../config/exchange";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 
@@ -26,21 +26,22 @@ class ExchangeScreen extends Component<Props> {
 
   render() {
     const { t } = this.props;
+
     return (
       <SafeAreaView
         style={[styles.root, { paddingTop: extraStatusBarPadding }]}
       >
-        <TrackScreen category="Exchange" />
+        <TrackScreen category="Partners" />
         <ScrollView style={styles.scrollView}>
           <View style={styles.body}>
             <LText secondary style={styles.title} bold>
-              <Trans i18nKey="exchange.title" />
+              <Trans i18nKey="partners.title" />
             </LText>
             <LText secondary style={styles.description} numberOfLines={2}>
-              <Trans i18nKey="exchange.subtitle" />
+              <Trans i18nKey="partners.subtitle" />
             </LText>
-            {exchanges.map(card => (
-              <ExchangeCard icon={card.icon} key={card.key} t={t} card={card} />
+            {partners.map(card => (
+              <PartnerCard icon={card.Logo} key={card.id} t={t} card={card} />
             ))}
           </View>
         </ScrollView>

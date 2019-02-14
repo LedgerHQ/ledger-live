@@ -14,7 +14,7 @@ type Props = {
   t: T,
 };
 
-export default class ExchangeCard extends Component<Props> {
+export default class PartnerCard extends Component<Props> {
   onClick = () => {
     const { card } = this.props;
     Linking.openURL(card.url).catch(err =>
@@ -24,21 +24,23 @@ export default class ExchangeCard extends Component<Props> {
 
   render() {
     const {
-      card: { logo, url, id },
+      card: { Logo, url, id },
       t,
     } = this.props;
 
     return (
       <Card style={styles.cardStyle}>
         <View style={styles.cardTextBlock}>
-          <View style={styles.logoContainer}>{logo}</View>
-          <LText style={styles.description}>{t(`exchange.${id}`)}</LText>
+          <View style={styles.logoContainer}>
+            <Logo />
+          </View>
+          <LText style={styles.description}>{t(`partners.${id}`)}</LText>
           <View>
             <Button
-              event="OpenExchange"
-              eventProperties={{ exchange: id, exchangeUrl: url }}
+              event="OpenPartner"
+              eventProperties={{ partner: id, partnerUrl: url }}
               type="tertiary"
-              title={<Trans i18nKey="exchange.visit" />}
+              title={<Trans i18nKey="partners.visit" />}
               onPress={this.onClick}
             />
           </View>
