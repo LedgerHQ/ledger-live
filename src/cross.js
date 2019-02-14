@@ -28,7 +28,8 @@ export type Settings = {
   counterValueExchange?: ?string,
   currenciesSettings: {
     [_: CryptoCurrencyIds]: CryptoSettings
-  }
+  },
+  developerMode?: boolean
 };
 
 export type DataIn = {
