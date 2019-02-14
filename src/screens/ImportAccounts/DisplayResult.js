@@ -1,8 +1,9 @@
 // @flow
 import React, { Component, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
+
 // $FlowFixMe
-import { SectionList } from "react-navigation";
+import { HeaderBackButton, SectionList } from "react-navigation";
 import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
@@ -26,6 +27,7 @@ import StyledStatusBar from "../../components/StyledStatusBar";
 import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
+import HeaderBackImage from "../../components/HeaderBackImage";
 
 type Item = {
   // current account, might be partially completed as sync happen in background
@@ -64,6 +66,15 @@ const itemModeDisplaySort = {
   unsupported: 4,
 };
 
+const BackButton = ({ navigation }: { navigation: NavigationScreenProp }) => (
+  <HeaderBackButton
+    tintColor={colors.grey}
+    onPress={() => navigation.replace("ScanAccounts")}
+  >
+    <HeaderBackImage />
+  </HeaderBackButton>
+);
+
 class DisplayResult extends Component<Props, State> {
   state = {
     selectedAccounts: [],
@@ -78,9 +89,14 @@ class DisplayResult extends Component<Props, State> {
     this.unmounted = true;
   }
 
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }) => ({
     title: i18next.t("account.import.result.title"),
-    headerLeft: null,
+    headerLeft: <BackButton navigation={navigation} />,
+  });
+
+  onRetry = () => {
+    const { navigation } = this.props;
+    navigation.replace("ScanAccounts");
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -143,7 +159,6 @@ class DisplayResult extends Component<Props, State> {
 
   close = () => {
     const { navigation } = this.props;
-
     // $FlowFixMe
     navigation.dismiss();
   };
@@ -222,10 +237,10 @@ class DisplayResult extends Component<Props, State> {
       <ResultSection mode="empty" />
       <LText style={styles.emptyNotice}>
         <Trans i18nKey="account.import.result.descEmpty">
-          <LText semiBold>
-            {"No accounts"}
-          </LText>
-          {"found on your desktop app, please try again or continue the onboarding."}
+          <LText semiBold>No accounts</LText>
+          {
+            "found on your desktop app, please try again or continue the onboarding."
+          }
         </Trans>
       </LText>
     </View>
@@ -242,29 +257,37 @@ class DisplayResult extends Component<Props, State> {
       <View style={styles.root}>
         <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
-          <Fragment>
-            <SectionList
-              style={styles.body}
-              contentContainerStyle={styles.list}
-              renderItem={this.renderItem}
-              renderSectionHeader={this.renderSectionHeader}
-              ListFooterComponent={this.ListFooterComponent}
-              ListEmptyComponent={this.ListEmptyComponent}
-              keyExtractor={this.keyExtractor}
-              sections={Object.keys(itemsGroupedByMode).map(mode => ({
-                mode,
-                data: itemsGroupedByMode[mode],
-              }))}
+        <Fragment>
+          <SectionList
+            style={styles.body}
+            contentContainerStyle={styles.list}
+            renderItem={this.renderItem}
+            renderSectionHeader={this.renderSectionHeader}
+            ListFooterComponent={this.ListFooterComponent}
+            ListEmptyComponent={this.ListEmptyComponent}
+            keyExtractor={this.keyExtractor}
+            sections={Object.keys(itemsGroupedByMode).map(mode => ({
+              mode,
+              data: itemsGroupedByMode[mode],
+            }))}
+          />
+          <View style={styles.footer}>
+            <Button
+              event="ImportAccountsRetry"
+              containerStyle={[styles.button, styles.retry]}
+              type="secondary"
+              title={<Trans i18nKey="common.retry" />}
+              onPress={this.onRetry}
             />
-            <View style={styles.footer}>
-              <Button
-                event="ImportAccountsContinue"
-                type="primary"
-                title={<Trans i18nKey="common.import" />}
-                onPress={this.onImport}
-              />
-            </View>
-          </Fragment>
+            <Button
+              event="ImportAccountsContinue"
+              containerStyle={styles.button}
+              type="primary"
+              title={<Trans i18nKey="common.import" />}
+              onPress={this.onImport}
+            />
+          </View>
+        </Fragment>
       </View>
     );
   }
@@ -296,6 +319,13 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 20,
+    flexDirection: "row",
+  },
+  button: {
+    flex: 1,
+  },
+  retry: {
+    marginRight: 8,
   },
   list: {
     paddingBottom: 40,
