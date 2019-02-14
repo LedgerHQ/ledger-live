@@ -12,6 +12,7 @@ import Touchable from "./Touchable";
 import LText from "./LText";
 import colors from "../colors";
 import IconNanoX from "../icons/NanoX";
+import Alert from "../icons/Alert";
 
 type Props = {
   deviceId: string,
@@ -36,11 +37,26 @@ class DeviceItemSummary extends PureComponent<Props> {
                 <Trans i18nKey="DeviceItemSummary.genuine" />
                 {"  "}
               </LText>
-              <Circle bg={colors.live} size={20}>
-                <Icon name="check" size={14} color={colors.white} />
+              <Circle bg={colors.live} size={14}>
+                <Icon name="check" size={10} color={colors.white} />
               </Circle>
             </View>
-          ) : null}
+          ) : (
+            <View style={styles.genuine}>
+              <LText
+                numberOfLines={1}
+                style={[styles.genuineText, styles.genuineFailed]}
+              >
+                <Trans i18nKey="DeviceItemSummary.genuineFailed">
+                  {"Genuine check "}
+                  <LText semiBold>failed</LText>
+                </Trans>
+              </LText>
+              <Circle bg={colors.yellow} size={14}>
+                <Alert size={10} color={colors.white} />
+              </Circle>
+            </View>
+          )}
         </View>
         <Touchable event="DeviceItemEdit" onPress={onEdit}>
           <LText bold numberOfLines={1} style={styles.editText}>
@@ -91,7 +107,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.smoke,
   },
+  genuineFailed: {
+    marginRight: 6,
+  },
   editText: {
     color: colors.live,
+    fontSize: 14,
   },
 });

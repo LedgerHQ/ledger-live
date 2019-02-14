@@ -20,6 +20,7 @@ class Paired extends PureComponent<{
   deviceName: string,
   onContinue: () => *,
   navigation: *,
+  genuine: boolean,
 }> {
   onEdit = () => {
     const { deviceId, deviceName, navigation } = this.props;
@@ -30,7 +31,7 @@ class Paired extends PureComponent<{
   };
 
   render() {
-    const { deviceId, onContinue } = this.props;
+    const { deviceId, onContinue, genuine } = this.props;
     return (
       <View style={styles.root}>
         <TrackScreen category="PairDevices" name="Paired" />
@@ -57,7 +58,7 @@ class Paired extends PureComponent<{
           <View style={styles.fullContainer}>
             <DeviceItemSummary
               deviceId={deviceId}
-              genuine
+              genuine={genuine}
               onEdit={this.onEdit}
             />
           </View>

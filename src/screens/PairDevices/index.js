@@ -46,6 +46,7 @@ type State = {
   status: Status,
   device: ?Device,
   error: ?Error,
+  skipCheck: boolean,
 };
 
 class PairDevices extends Component<Props, State> {
@@ -57,6 +58,7 @@ class PairDevices extends Component<Props, State> {
     status: "scanning",
     device: null,
     error: null,
+    skipCheck: false,
   };
 
   unmounted = false;
@@ -114,7 +116,7 @@ class PairDevices extends Component<Props, State> {
     const { device } = this.state;
     if (device) {
       this.props.addKnownDevice(device);
-      this.setState({ status: "paired", error: null });
+      this.setState({ status: "paired", error: null, skipCheck: true });
     } else {
       this.setState({ status: "scanning", error: null, device: null });
     }
@@ -125,7 +127,7 @@ class PairDevices extends Component<Props, State> {
   };
 
   render() {
-    const { error, status, device } = this.state;
+    const { error, status, device, skipCheck } = this.state;
 
     if (error) {
       return (
@@ -166,6 +168,7 @@ class PairDevices extends Component<Props, State> {
           <Paired
             deviceName={device.name}
             deviceId={device.id}
+            genuine={!skipCheck}
             onContinue={this.onDone}
           />
         ) : null;
