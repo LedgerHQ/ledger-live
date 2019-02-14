@@ -913,7 +913,8 @@
     "alreadyPaired": "Already paired"
   },
   "DeviceItemSummary": {
-    "genuine": "Genuine"
+    "genuine": "Genuine",
+    "genuineFailed": "Genuine check <1><0>failed</0></1>"
   },
   "DeviceNameRow": {
     "title": "Name",
