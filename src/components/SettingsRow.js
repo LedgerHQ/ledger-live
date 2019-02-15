@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   textBlock: {
+    marginRight: "auto",
     paddingRight: 16,
     flexShrink: 1,
   },
