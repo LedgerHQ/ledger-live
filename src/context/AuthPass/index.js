@@ -18,6 +18,7 @@ const mapStateToProps = createStructuredSelector({
 type State = {
   isLocked: boolean,
   biometricsError: ?Error,
+  appState: string,
 };
 
 type Props = {
@@ -34,6 +35,7 @@ class AuthPass extends PureComponent<Props, State> {
   state = {
     isLocked: !!this.props.privacy && !wasUnlocked,
     biometricsError: null,
+    appState: AppState.currentState || "",
   };
 
   static getDerivedStateFromProps({ privacy }, { isLocked }) {
@@ -48,24 +50,20 @@ class AuthPass extends PureComponent<Props, State> {
     AppState.addEventListener("change", this.handleAppStateChange);
   }
 
-  timeout: *;
   appInBg: number;
 
-  handleAppStateChange = appState => {
-    clearTimeout(this.timeout);
-    if (appState === "background") {
-      this.appInBg = Date.now();
-      this.timeout = setTimeout(() => {
-        if (!this.state.isLocked) {
-          this.lock();
-        }
-      }, AUTOLOCK_TIMEOUT);
-    } else if (
-      appState === "active" &&
+  handleAppStateChange = nextAppState => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === "active" &&
       this.appInBg + AUTOLOCK_TIMEOUT < Date.now()
     ) {
       this.lock();
+      this.appInBg = Date.now();
+    } else if (nextAppState === "background") {
+      this.appInBg = Date.now();
     }
+    this.setState({ appState: nextAppState });
   };
 
   // auth: try to auth with biometrics and fallback on password
