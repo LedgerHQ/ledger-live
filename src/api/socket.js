@@ -75,6 +75,7 @@ export const createDeviceSocket = (
     let interrupted = false;
     let terminated = false;
     let inBulk = false;
+    let ignoreError = false;
 
     try {
       ws = createWebSocket(url);
@@ -90,6 +91,7 @@ export const createDeviceSocket = (
     };
 
     ws.onerror = e => {
+      if (ignoreError) return;
       log({ type: "socket-error", message: e.message, stack: e.stack });
       if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
         terminated = true;
@@ -182,6 +184,7 @@ export const createDeviceSocket = (
 
       success: msg => {
         lastMessage = msg.data || msg.result;
+        ignoreError = true;
         ws.close();
       },
 
