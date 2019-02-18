@@ -33,7 +33,8 @@
     "upToDate": "Up to date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
-    "notAvailable": "Not available"
+    "notAvailable": "Not available",
+    "import": "Import"
   },
   "errors": {
     "AccountNameRequired": {
@@ -601,9 +602,11 @@
         "descBottom": "Please put the LiveQR code within the square"
       },
       "result": {
-        "title": "Select accounts",
+        "title": "Import accounts",
         "newAccounts": "New accounts",
         "updatedAccounts": "Updated accounts",
+        "empty": "Add a new account",
+        "descEmpty": "<0><0>No accounts</0></0> were found. Please try again or go back to the onboarding",
         "alreadyImported": "Already imported",
         "noAccounts": "Nothing to import",
         "unsupported": "Unsupported",
