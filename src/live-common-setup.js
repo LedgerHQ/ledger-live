@@ -5,6 +5,7 @@ import { map } from "rxjs/operators/map";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { setNetwork } from "@ledgerhq/live-common/lib/network";
+import { logs } from "@ledgerhq/live-common/lib/api/socket";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
@@ -12,6 +13,12 @@ import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
 
 import network from "./api/network";
+
+if (Config.DEBUG_SOCKET) {
+  logs.subscribe(e => {
+    console.log(e); // eslint-disable-line no-console
+  });
+}
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
 if (Config.DEBUG_BLE)

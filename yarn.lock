@@ -807,10 +807,10 @@
     "@ledgerhq/errors" "^4.38.0"
     events "^3.0.0"
 
-"@ledgerhq/live-common@4.18.0":
-  version "4.18.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.18.0.tgz#0e087e18ec147feaebfaf66e6346138b4a7e4fd2"
-  integrity sha512-hcIzeuw96T2eYm13KYatg32zNyl5o16yyJrc+C+xB5mG0FeL6zSAEvodLsLqVIeJ22YXl5lVAlx8y4VVI0AseA==
+"@ledgerhq/live-common@4.19.0":
+  version "4.19.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.19.0.tgz#c813a4ca0e25e4939bb0108cc905a74037007a3c"
+  integrity sha512-X4WcP1GYNbVWehXOmwdOPxRSCCHdoii87j+6IPf+GfnfYicJSoYI1EEMvu3wi2+d1J/nGqwCpvQvsuDoJgobZw==
   dependencies:
     "@aeternity/ledger-app-api" "0.0.4"
     "@ledgerhq/errors" "^4.32.0"
