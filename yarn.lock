@@ -760,10 +760,10 @@
   dependencies:
     "@ledgerhq/errors" "^4.38.0"
 
-"@ledgerhq/errors@4.38.0", "@ledgerhq/errors@^4.32.0", "@ledgerhq/errors@^4.38.0":
-  version "4.38.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.38.0.tgz#5260118b2cb1069f706d9316bf6f2ee1f6935f43"
-  integrity sha512-ZVpwiQV4y6OqMcOhZ7xQR37xpZdYGXnZftlYtT9muzXrak/HPHc19oPpwiuqKmHAbgfio6qEVk9Lp3yWLY9bPQ==
+"@ledgerhq/errors@4.39.0", "@ledgerhq/errors@^4.32.0", "@ledgerhq/errors@^4.38.0":
+  version "4.39.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.39.0.tgz#10b9889f78df94ce36a4b34d9a3a45aac77be0e9"
+  integrity sha512-kBr2rnoYDACRCxTLtEufE4oCvYj6vx2oFWVVjwskBxYsF5LC9R8Mbg5C4GgvDweiWW4Io8HA9p9jCsOfdCDygg==
 
 "@ledgerhq/hw-app-btc@4.38.0", "@ledgerhq/hw-app-btc@^4.32.0":
   version "4.38.0"

@@ -1,7 +1,13 @@
 // @flow
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
-import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+} from "react-native";
 import { BigNumber } from "bignumber.js";
 import {
   sanitizeValueString,
@@ -9,8 +15,8 @@ import {
 } from "@ledgerhq/live-common/lib/currencies";
 
 import LText from "../../../components/LText/index";
-import Check from "../../../icons/Check";
 
+import Check from "../../../icons/Check";
 import colors from "../../../colors";
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
@@ -22,6 +28,7 @@ type Props = {
   initialValue: ?BigNumber,
   onPress: BigNumber => void,
   isSelected: boolean,
+  isValid?: boolean,
 };
 
 type State = {
@@ -31,6 +38,7 @@ type State = {
 class FeesRow extends Component<Props, State> {
   static defaultProps = {
     last: false,
+    isValid: true,
   };
 
   state = {
@@ -69,7 +77,7 @@ class FeesRow extends Component<Props, State> {
   };
 
   render() {
-    const { title, last, isSelected } = this.props;
+    const { title, last, isSelected, isValid } = this.props;
 
     return (
       <TouchableOpacity onPress={this.onPress}>
@@ -88,6 +96,9 @@ class FeesRow extends Component<Props, State> {
               style={[styles.title, isSelected ? styles.titleSelected : null]}
             >
               {title}
+            </LText>
+            <LText secondary style={isValid ? styles.warning : styles.error}>
+              <Trans i18nKey="send.fees.required" />
             </LText>
           </View>
           <View style={styles.inputContainer}>
@@ -119,7 +130,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 16,
     paddingRight: 16,
-    paddingVertical: 16,
+    ...Platform.select({
+      ios: {
+        paddingVertical: 16,
+      },
+    }),
     borderBottomColor: colors.lightFog,
     borderBottomWidth: 1,
   },
@@ -128,9 +143,15 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "column",
+    alignItems: "flex-start",
     marginRight: 24,
+  },
+  error: {
+    color: colors.alert,
+  },
+  warning: {
+    color: colors.grey,
   },
   title: {
     fontSize: 14,
@@ -158,9 +179,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     fontSize: 14,
-    marginRight: 6,
     color: colors.darkBlue,
     textAlign: "right",
+    ...Platform.select({
+      ios: {
+        marginRight: 6,
+      },
+    }),
   },
   textInputSelected: {
     fontWeight: "600",

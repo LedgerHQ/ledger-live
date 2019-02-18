@@ -115,6 +115,9 @@
     "FeeNotLoaded": {
       "title": "Couldn’t load fee rates"
     },
+    "FeeRequired": {
+      "title": "Fees are required"
+    },
     "GenuineCheckFailed": {
       "title": "Genuine check failed",
       "description": "Something went wrong. Please try again or contact Ledger Support when in doubt."
@@ -821,7 +824,8 @@
     },
     "fees": {
       "title": "Network fees",
-      "validate": "Validate fees",
+      "validate": "Confirm",
+      "required": "Fees are required",
       "edit": {
         "title": "Choose Unit"
       }
