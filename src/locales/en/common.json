@@ -964,7 +964,7 @@
     "install": {
       "loading": {
         "title": "Installing {{appName}}",
-        "desc": "The installation of {{appName}} app may take a while, please keep the app open.",
+        "desc": "Please wait while the {{appName}} app is installed",
         "button": "Installing...",
         "button_plural": "Installing... {{progressPercentage}}%"
       },
