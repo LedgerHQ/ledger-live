@@ -14,13 +14,13 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { BigNumber } from "bignumber.js";
 
+import { BigNumber } from "bignumber.js";
 import colors from "../../../colors";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { getAccountBridge } from "../../../bridge";
-import type { Transaction } from "../../../bridge/RNLibcoreAccountBridge";
 
+import type { Transaction } from "../../../bridge/RNLibcoreAccountBridge";
 import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
 import FeesRow from "./FeesRow";
@@ -39,6 +39,7 @@ type Props = {
 type State = {
   feePerByte: ?BigNumber,
   focusedItemKey: string,
+  error?: boolean,
 };
 
 class BitcoinEditFeePerByte extends Component<Props, State> {
@@ -46,6 +47,8 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
     title: i18next.t("operationDetails.title"),
     headerLeft: null,
   };
+
+  static default;
 
   items: Array<*>;
 
@@ -83,12 +86,16 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
   }
 
   onChangeCustomFeeRow = (feePerByte: BigNumber) => {
-    this.setState({ feePerByte, focusedItemKey: "custom" });
+    this.setState({
+      feePerByte,
+      focusedItemKey: "custom",
+      error: !feePerByte.isGreaterThan(0),
+    });
     track("SendChangeCustomFees");
   };
 
   onChangeFeeRow = (feePerByte: ?BigNumber, key: string) => {
-    this.setState({ feePerByte, focusedItemKey: key });
+    this.setState({ feePerByte, focusedItemKey: key, error: undefined });
     Keyboard.dismiss();
   };
 
@@ -112,7 +119,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const { feePerByte, focusedItemKey } = this.state;
+    const { feePerByte, focusedItemKey, error } = this.state;
     const transaction: Transaction = navigation.getParam("transaction");
     if (!transaction) return null;
 
@@ -136,6 +143,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
               <CustomFeesRow
                 initialValue={isCustom ? feePerByte : null}
                 title={<Trans i18nKey="fees.speed.custom" />}
+                isValid={!error}
                 onPress={this.onChangeCustomFeeRow}
                 isSelected={isCustom}
               />
@@ -143,6 +151,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
                 <Button
                   event="BitcoinEditFeePerByteContinue"
                   type="primary"
+                  disabled={!!error}
                   title={<Trans i18nKey="send.fees.validate" />}
                   containerStyle={styles.continueButton}
                   onPress={this.onValidateFees}
@@ -162,6 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   buttonContainer: {
+    flexDirection: "column",
     flex: 1,
     padding: 16,
     justifyContent: "flex-end",
@@ -171,6 +181,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  error: {
+    alignSelf: "center",
+    color: colors.alert,
+    fontSize: 14,
+    marginBottom: 8,
   },
 });
 

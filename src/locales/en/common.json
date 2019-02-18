@@ -33,7 +33,8 @@
     "upToDate": "Up to date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
-    "notAvailable": "Not available"
+    "notAvailable": "Not available",
+    "import": "Import"
   },
   "errors": {
     "AccountNameRequired": {
@@ -113,6 +114,9 @@
     },
     "FeeNotLoaded": {
       "title": "Couldn’t load fee rates"
+    },
+    "FeeRequired": {
+      "title": "Fees are required"
     },
     "GenuineCheckFailed": {
       "title": "Genuine check failed",
@@ -281,23 +285,27 @@
       "blockCount": "{{blockCount}} blocks"
     }
   },
-  "exchange": {
+  "partners": {
     "title": "Trade & Exchange",
     "subtitle": "Try a few services we've selected",
     "visit": "Visit website",
-    "coinhouse": "Coinhouse is a trusted platform for individuals and institutional investors looking to analyze, acquire, sell and securely store crypto assets.",
+
+    "btcdirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot",
     "changelly": "Changelly is a popular instant crypto asset exchange with 100+ coins and tokens listed.",
+    "changenow": "ChangeNOW is one of the leading custody-free instant exchange services",
+    "coinberry": "Coinberry is the most trusted crypto platform in Canada with better-than-bank security, best-in-class user interface and No Fee funding & withdraw. Pre-register to get early access to our platform if you are not a Canadian citizen.",
+    "coinhouse": "Coinhouse is a trusted platform for individuals and institutional investors looking to analyze, acquire, sell and securely store crypto assets.",
     "coinmama": "Coinmama is a financial service that makes it fast, safe and fun to buy digital assets, anywhere in the world.",
-    "simplex": "Simplex is a EU licensed financial institution, providing a fraudless credit card payment solution.",
-    "paybis": "it is safe and easy to Buy Bitcoin with credit card from PayBis. Service operates in US, Canada, Germany, Russia and Saudi Arabia.",
-    "luno": "Luno makes it safe and easy to buy, store and learn about cryptocurrencies like Bitcoin and Ethereum.",
-    "shapeshift": "ShapeShift is an online marketplace where users can buy and sell digital assets. It is a fast and secure way for the world to buy and sell digital assets, with no lengthy signup process, no counterparty risk, and no friction.",
     "genesis": "Genesis is an institutional trading firm offering liquidity and borrow for digital currencies, including bitcoin, bitcoin cash, ethereum, ethereum classic, litecoin, and XRP.",
     "kyberswap": "Fast, simple and secure token swap platform. Powered by Kyber Network's on-chain liquidity protocol.",
-    "thorswap": "ThorSwap is an instant, safe and fair crypto asset market powered by decentralized atomic swap technologies. It is the most convenient way to start trading, no registration or KYC for small amount transcations.",
-    "changenow": "ChangeNOW is one of the leading custody-free instant exchange services.",
-    "coinberry": "Coinberry is the most trusted crypto platform in Canada with better-than-bank security, best-in-class user interface and No Fee funding & withdraw. Pre-register to get early access to our platform if you are not a Canadian citizen.",
-    "btcDirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot"
+    "luno": "Luno makes it safe and easy to buy, store and learn about cryptocurrencies like Bitcoin and Ethereum",
+    "paybis": "it is safe and easy to Buy Bitcoin with credit card from PayBis. Service operates in US, Canada, Germany, Russia and Saudi Arabia.",
+    "shapeshift": "ShapeShift is an online marketplace where users can buy and sell digital assets. It is a fast and secure way for the world to buy and sell digital assets, with no lengthy signup process, no counterparty risk, and no friction.",
+    "simplex": "Simplex is a EU licensed financial institution, providing a fraudless credit card payment solution.",
+    "taxtoken": "Automated cryptocurrency tax and cost basis software for US citizens.",
+    "thorswap": "ThorSwap is an instant, safe and fair crypto asset market powered by decentralized atomic swap technologies. It is the most convenient way to start trading, no registration or KYC for small amount transactions.",
+    "bitpanda": "Bitpanda is Europe’s leading retail broker for buying and selling Bitcoin, Ethereum, IOTA and many more. Deposit money using your credit card, SOFORT-Transfer, NETELLER, and other options.",
+    "exmo": "Founded in 2013 and based in London, Kiev, Barcelona, and Moscow, EXMO is #1 exchange in Eastern Europe, and one of the world's largest global exchanges in volume and liquidity."
   },
   "signout": {
     "confirm": "Are you sure you want to sign out?",
@@ -594,9 +602,11 @@
         "descBottom": "Please put the LiveQR code within the square"
       },
       "result": {
-        "title": "Select accounts",
+        "title": "Import accounts",
         "newAccounts": "New accounts",
         "updatedAccounts": "Updated accounts",
+        "empty": "Add a new account",
+        "descEmpty": "<0><0>No accounts</0></0> were found. Please try again or go back to the onboarding",
         "alreadyImported": "Already imported",
         "noAccounts": "Nothing to import",
         "unsupported": "Unsupported",
@@ -814,7 +824,8 @@
     },
     "fees": {
       "title": "Network fees",
-      "validate": "Validate fees",
+      "validate": "Confirm",
+      "required": "Fees are required",
       "edit": {
         "title": "Choose Unit"
       }
@@ -913,7 +924,8 @@
     "alreadyPaired": "Already paired"
   },
   "DeviceItemSummary": {
-    "genuine": "Genuine"
+    "genuine": "Genuine",
+    "genuineFailed": "Genuine check <1><0>failed</0></1>"
   },
   "DeviceNameRow": {
     "title": "Name",
@@ -952,7 +964,7 @@
     "install": {
       "loading": {
         "title": "Installing {{appName}}",
-        "desc": "The installation of {{appName}} app may take a while, please keep the app open.",
+        "desc": "Please wait while the {{appName}} app is installed",
         "button": "Installing...",
         "button_plural": "Installing... {{progressPercentage}}%"
       },

@@ -82,7 +82,7 @@ class RenderError extends Component<Props> {
               style={styles.linkContainer}
             >
               <LText style={styles.linkText} semiBold>
-                <Trans i18nKey="PairDevices.bypassGenuine" />{" "}
+                <Trans i18nKey="common.skip" />{" "}
               </LText>
               <IconArrowRight size={16} color={colors.live} />
             </Touchable>

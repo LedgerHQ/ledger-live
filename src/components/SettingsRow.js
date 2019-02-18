@@ -76,7 +76,7 @@ export default class SettingsRow extends Component<{
         eventProperties={eventProperties}
       >
         {iconLeft && <View style={styles.iconLeft}>{iconLeft}</View>}
-        <View style={styles.textBlock}>
+        <View style={[styles.textBlock, { marginLeft: iconLeft ? 0 : 16 }]}>
           {title$}
           {desc &&
             !noTextDesc && <LText style={styles.description}>{desc}</LText>}
@@ -105,11 +105,10 @@ const styles = StyleSheet.create({
   root: {
     minHeight: 50,
     flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
     paddingVertical: 24,
     backgroundColor: "white",
     marginBottom: 2,
+    justifyContent: "space-between",
   },
   rootAlignedTop: {
     alignItems: "flex-start",
@@ -121,13 +120,17 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   textBlock: {
+    marginRight: "auto",
     paddingRight: 16,
-    flexGrow: 1,
     flexShrink: 1,
   },
   rightBlock: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
+    flexShrink: 0,
+    maxWidth: "50%",
+    marginRight: 16,
   },
   titleContainer: {
     flexDirection: "row",
@@ -151,6 +154,7 @@ const styles = StyleSheet.create({
   },
   iconLeft: {
     paddingRight: 16,
+    marginLeft: 16,
   },
   iconLeftContainer: {
     marginRight: 8,
