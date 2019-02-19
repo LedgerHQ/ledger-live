@@ -21,6 +21,7 @@ import OpenDebugIcons from "./OpenDebugIcons";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenLottie from "./OpenDebugLottie";
+import SkipLock from "../../../components/behaviour/SkipLock";
 
 class DebugMocks_ extends PureComponent<{
   accounts: *,
@@ -49,6 +50,7 @@ class DebugMocks_ extends PureComponent<{
         <OpenDebugIcons />
         <OpenLottie />
         <ReadOnlyModeRow />
+        <SkipLock />
       </ScrollView>
     );
   }

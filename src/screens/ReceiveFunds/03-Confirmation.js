@@ -35,6 +35,7 @@ import CopyLink from "../../components/CopyLink";
 import ShareLink from "../../components/ShareLink";
 import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import SkipLock from "../../components/behaviour/SkipLock";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -179,7 +180,12 @@ class ReceiveConfirmation extends Component<Props, State> {
           unsafe={unsafe}
           verified={verified}
         />
-        {allowNavigation ? null : <PreventNativeBack />}
+        {allowNavigation ? null : (
+          <>
+            <PreventNativeBack />
+            <SkipLock />
+          </>
+        )}
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.root}>
           <View style={styles.container}>
             <Touchable event="QRZoom" onPress={this.onZoom}>
