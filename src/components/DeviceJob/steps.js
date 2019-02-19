@@ -21,12 +21,12 @@ import {
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
+import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import { deviceNames } from "../../wording";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
-import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
 import { rejectionOp } from "../DebugRejectSwitch";
 
 import type { Step } from "./types";

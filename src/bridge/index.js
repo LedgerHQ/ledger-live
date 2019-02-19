@@ -3,17 +3,19 @@
 // FIXME NB: goal for "bridge/" folder is to be moved to live-common and used by desktop again!
 
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
-import type { CurrencyBridge, AccountBridge } from "./types";
+import * as RippleBridge from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
+import * as EthereumBridge from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
+import type {
+  CurrencyBridge,
+  AccountBridge,
+} from "@ledgerhq/live-common/lib/bridge/types";
 import {
   makeMockCurrencyBridge,
   makeMockAccountBridge,
-} from "./makeMockBridge";
+} from "@ledgerhq/live-common/lib/bridge/makeMockBridge";
 
 import RNLibcoreAccountBridge from "./RNLibcoreAccountBridge";
 import RNLibcoreCurrencyBridge from "./RNLibcoreCurrencyBridge";
-
-import * as RippleBridge from "./RippleJSBridge";
-import * as EthereumBridge from "./EthereumJSBridge";
 
 const mockCurrencyBridge = makeMockCurrencyBridge();
 const mockAccountBridge = makeMockAccountBridge();

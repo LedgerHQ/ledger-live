@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { Trans, translate } from "react-i18next";
+import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
 
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -13,7 +14,6 @@ import { urls } from "../../config/urls";
 
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
-import type { Transaction } from "../../bridge/RippleJSBridge";
 import type { T } from "../../types/common";
 
 type Props = {

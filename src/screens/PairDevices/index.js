@@ -11,13 +11,13 @@ import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
 import { timeout } from "rxjs/operators/timeout";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import TransportBLE from "../../react-native-hw-transport-ble";
 
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
-import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
 import colors from "../../colors";
 import { delay } from "../../logic/promise";
 import RequiresBLE from "../../components/RequiresBLE";
@@ -82,7 +82,6 @@ class PairDevices extends Component<Props, State> {
   onSelect = async (device: Device) => {
     this.setState({ device, status: "pairing" });
     try {
-      // $FlowFixMe
       const transport = await TransportBLE.open(device);
       if (this.unmounted) return;
       if (Config.DEBUG_BLE) transport.setDebugMode(true);
