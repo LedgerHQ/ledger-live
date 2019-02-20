@@ -72,6 +72,7 @@
 		B91C45DF21665C1200E250AB /* ledger-core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DE21665C1200E250AB /* ledger-core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B91C45E021665C3B00E250AB /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DE21665C1200E250AB /* ledger-core.framework */; };
 		B91C46CD216812DE00E250AB /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DB2166562200E250AB /* ledger-core.framework */; };
+		B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = B91C45DB2166562200E250AB /* ledger-core.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B9E5B9A72153F4490053D868 /* libRNLibLedgerCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34A272772152A95200B97A07 /* libRNLibLedgerCore.a */; };
 		BF09D4F4214BF73D0040397B /* libReactNativeConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34BE1FF120092032009E8710 /* libReactNativeConfig.a */; };
 		BF09D4F5214BF7460040397B /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34654386200E4A94008E3CDD /* libRNSVG.a */; };
@@ -612,6 +613,7 @@
 			dstPath = x86_64;
 			dstSubfolderSpec = 10;
 			files = (
+				B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
