@@ -2,17 +2,14 @@
 import React, { PureComponent } from "react";
 import { withNavigationFocus } from "react-navigation";
 
-export const SkipLockContext = React.createContext({
-  skipLockCount: 0,
-  setEnabled: (_: boolean) => {},
-});
+export const SkipLockContext = React.createContext((_: boolean) => {});
 
 class SkipLock extends PureComponent<*> {
   render() {
     return (
       <SkipLockContext.Consumer>
-        {context => (
-          <SkipLockInner setEnabled={context.setEnabled} {...this.props} />
+        {setEnabled => (
+          <SkipLockInner setEnabled={setEnabled} {...this.props} />
         )}
       </SkipLockContext.Consumer>
     );
@@ -26,7 +23,7 @@ class SkipLockInner extends PureComponent<{
   lastValue = false;
 
   componentDidMount() {
-    this.report(true);
+    this.report(this.props.isFocused);
   }
 
   componentDidUpdate() {

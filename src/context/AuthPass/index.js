@@ -124,7 +124,7 @@ class AuthPass extends PureComponent<Props, State> {
 
   render() {
     const { children, privacy } = this.props;
-    const { isLocked, biometricsError, skipLockCount, setEnabled } = this.state;
+    const { isLocked, biometricsError, setEnabled } = this.state;
     if (isLocked && privacy) {
       return (
         <AuthScreen
@@ -135,9 +135,8 @@ class AuthPass extends PureComponent<Props, State> {
         />
       );
     }
-    const contextValue = { skipLockCount, setEnabled };
     return (
-      <SkipLockContext.Provider value={contextValue}>
+      <SkipLockContext.Provider value={setEnabled}>
         {children}
       </SkipLockContext.Provider>
     );
