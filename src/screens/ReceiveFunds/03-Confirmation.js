@@ -14,6 +14,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
 import { open } from "@ledgerhq/live-common/lib/hw";
+import Sentry from "react-native-sentry";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -123,6 +124,7 @@ class ReceiveConfirmation extends Component<Props, State> {
       );
       this.setState({ verified: true });
     } catch (error) {
+      Sentry.captureException(error);
       this.setState({ error, isModalOpened: true });
     } finally {
       navigation.setParams({ allowNavigation: true });
@@ -231,9 +233,7 @@ class ReceiveConfirmation extends Component<Props, State> {
                   <Touchable
                     event="ReceiveVerifyTransactionHelp"
                     onPress={() =>
-                      Linking.openURL(urls.verifyTransactionDetails).catch(
-                        err => console.error("An error occurred", err),
-                      )
+                      Linking.openURL(urls.verifyTransactionDetails)
                     }
                   >
                     <LText semiBold style={styles.learnmore}>

@@ -14,11 +14,7 @@ class LedgerSupportRow extends PureComponent<*> {
         event="LedgerSupportRow"
         title={<Trans i18nKey="settings.help.support" />}
         desc={<Trans i18nKey="settings.help.supportDesc" />}
-        onPress={() =>
-          Linking.openURL(urls.faq).catch(err =>
-            console.error("An error occurred", err),
-          )
-        }
+        onPress={() => Linking.openURL(urls.faq)}
         alignedTop
       >
         <View style={styles.externalLinkContainer}>

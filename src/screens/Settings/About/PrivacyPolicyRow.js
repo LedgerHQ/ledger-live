@@ -14,11 +14,7 @@ class PrivacyPolicyRow extends PureComponent<*> {
         event="PrivacyPolicyRow"
         title={<Trans i18nKey="settings.about.privacyPolicy" />}
         desc={<Trans i18nKey="settings.about.privacyPolicyDesc" />}
-        onPress={() =>
-          Linking.openURL(urls.privacyPolicy).catch(err =>
-            console.error("An error occurred", err),
-          )
-        }
+        onPress={() => Linking.openURL(urls.privacyPolicy)}
         alignedTop
       >
         <View style={styles.externalLinkContainer}>
