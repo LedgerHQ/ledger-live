@@ -94,7 +94,7 @@ const ethereumUnits = (name, code) => [
   }
 ];
 
-const cryptocurrenciesById = {
+const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
   aeternity: {
     id: "aeternity",
     coinType: 457,
@@ -877,7 +877,10 @@ const cryptocurrenciesById = {
         magnitude: 0
       }
     ],
-    txExplorers: ["http://explorer.h.cash/tx/$hash"]
+    txExplorers: ["http://explorer.h.cash/tx/$hash"],
+    terminated: {
+      url: "#"
+    }
   },
   icon: {
     id: "icon",
@@ -1332,7 +1335,10 @@ const cryptocurrenciesById = {
         magnitude: 0
       }
     ],
-    txExplorers: []
+    txExplorers: [],
+    terminated: {
+      url: "#"
+    }
   },
   qtum: {
     id: "qtum",
