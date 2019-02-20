@@ -24,5 +24,8 @@ yarn-error.log*
 flow-typed/
 flow-coverage
 
+# Generated icons
 src/data/icons/react
 src/data/icons/reactNative
+src/partners/icons/react
+src/partners/icons/reactNative
