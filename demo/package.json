@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-transport": "^4.32.0",
-    "@ledgerhq/hw-transport-u2f": "^4.32.0",
-    "@ledgerhq/hw-transport-web-ble": "^4.32.0",
-    "@ledgerhq/hw-transport-webusb": "^4.32.0",
+    "@ledgerhq/hw-transport-u2f": "^4.39.0",
+    "@ledgerhq/hw-transport-web-ble": "^4.39.0",
+    "@ledgerhq/hw-transport-webusb": "^4.39.0",
     "@ledgerhq/live-common": "file:..",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",

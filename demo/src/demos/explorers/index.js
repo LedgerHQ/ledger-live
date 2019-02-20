@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { format as timeago } from "timeago.js";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
+import { blockchainBaseURL } from "@ledgerhq/live-common/lib/api/Ledger";
 
 const Main = styled.div`
   max-width: 600px;
@@ -62,8 +63,8 @@ const Checks = styled.div`
   justify-content: flex-end;
 `;
 
-const checkCoinExplorer = async ({ ledgerExplorerId }) => {
-  const url = `//api.ledgerwallet.com/blockchain/v2/${ledgerExplorerId}/blocks/current`;
+const checkCoinExplorer = async currency => {
+  const url = `${blockchainBaseURL(currency)}/blocks/current`;
   const r = await fetch(url);
   if (r.status !== 200) {
     throw new Error("HTTP " + r.status);
@@ -131,12 +132,12 @@ class ExplorerRow extends PureComponent<*, *> {
 
 class Explorers extends Component<*> {
   render() {
-    const coins = listCryptoCurrencies();
+    const coins = listCryptoCurrencies(true);
     return (
       <Main>
-        {coins.filter(c => c.ledgerExplorerId).map(c => (
-          <ExplorerRow currency={c} key={c.id} />
-        ))}
+        {coins
+          .filter(c => c.ledgerExplorerId)
+          .map(c => <ExplorerRow currency={c} key={c.id} />)}
       </Main>
     );
   }
