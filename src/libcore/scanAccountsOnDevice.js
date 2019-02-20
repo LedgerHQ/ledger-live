@@ -94,7 +94,7 @@ export const scanAccountsOnDevice = (
         o.complete();
       } catch (e) {
         const mappedError = remapLibcoreErrors(e);
-        Sentry.captureException(mappedError);
+        Sentry.captureException(e);
         o.error(mappedError);
       }
 

@@ -109,9 +109,10 @@ class Validation extends Component<Props, State> {
           let error = e;
           if (e && e.statusCode === 0x6985) {
             error = new UserRefusedOnDevice();
+          } else {
+            Sentry.captureException(error);
           }
 
-          Sentry.captureException(error);
           // $FlowFixMe
           navigation.replace("SendValidationError", {
             ...navigation.state.params,
