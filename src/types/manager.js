@@ -139,3 +139,15 @@ export type Category = {
   date_creation: string,
   date_last_modified: string
 };
+
+export type GenuineCheckEvent =
+  | {
+      type: "result",
+      payload: string
+    }
+  | {
+      type: "allow-manager-requested"
+    }
+  | {
+      type: "allow-manager-accepted"
+    };
