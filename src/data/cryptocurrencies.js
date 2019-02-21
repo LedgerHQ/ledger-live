@@ -16,7 +16,7 @@
  * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
  * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
- *
+ * terminated: Present when we no longer support this specific coin.
  * Specific cases:
  *
  * if it's a testnet coin, use isTestnetFor field. testnet MUST only be added if we actually support it at ledger (in our explorer api)
@@ -877,10 +877,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["http://explorer.h.cash/tx/$hash"],
-    terminated: {
-      url: "#"
-    }
+    txExplorers: ["http://explorer.h.cash/tx/$hash"]
   },
   icon: {
     id: "icon",
@@ -1335,10 +1332,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: [],
-    terminated: {
-      url: "#"
-    }
+    txExplorers: []
   },
   qtum: {
     id: "qtum",
