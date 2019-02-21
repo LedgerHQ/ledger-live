@@ -65,7 +65,7 @@ export type CryptoCurrency = CurrencyCommon & {
   },
   txExplorers: string[],
   terminated?: {
-    url: string
+    link: string
   }
 };
 
