@@ -16,7 +16,7 @@
  * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
  * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
- *
+ * terminated: Present when we no longer support this specific coin.
  * Specific cases:
  *
  * if it's a testnet coin, use isTestnetFor field. testnet MUST only be added if we actually support it at ledger (in our explorer api)
@@ -94,7 +94,7 @@ const ethereumUnits = (name, code) => [
   }
 ];
 
-const cryptocurrenciesById = {
+const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
   aeternity: {
     id: "aeternity",
     coinType: 457,
@@ -877,7 +877,11 @@ const cryptocurrenciesById = {
         magnitude: 0
       }
     ],
-    txExplorers: ["http://explorer.h.cash/tx/$hash"]
+    txExplorers: ["http://explorer.h.cash/tx/$hash"],
+    terminated: {
+      link:
+        "https://support.ledger.com/hc/en-us/articles/115003917133"
+    }
   },
   icon: {
     id: "icon",
@@ -1332,7 +1336,11 @@ const cryptocurrenciesById = {
         magnitude: 0
       }
     ],
-    txExplorers: []
+    txExplorers: [],
+    terminated: {
+      link:
+        "https://support.ledger.com/hc/en-us/articles/115005175309"
+    }
   },
   qtum: {
     id: "qtum",

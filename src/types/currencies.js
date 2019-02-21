@@ -63,7 +63,10 @@ export type CryptoCurrency = CurrencyCommon & {
   ethereumLikeInfo?: {
     chainId: number
   },
-  txExplorers: string[]
+  txExplorers: string[],
+  terminated?: {
+    link: string
+  }
 };
 
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;
