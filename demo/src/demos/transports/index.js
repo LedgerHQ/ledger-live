@@ -18,7 +18,7 @@ class SelectTransport extends Component<*> {
   render() {
     return (
       <label>
-        Transport:{" "}<br/>
+        Transport: <br />
         <select onChange={this.onChange} value={this.props.value}>
           {transports.map(key => (
             <option key={key} value={key}>
@@ -31,7 +31,7 @@ class SelectTransport extends Component<*> {
   }
 }
 
-class ArbitraryAPDU extends Component<*,*> {
+class ArbitraryAPDU extends Component<*, *> {
   state = {
     apdu: "",
     error: "",
@@ -40,7 +40,7 @@ class ArbitraryAPDU extends Component<*,*> {
   };
 
   onClear = () => {
-    this.setState({log:[]});
+    this.setState({ log: [] });
   };
 
   onClick = () => {
@@ -57,7 +57,11 @@ class ArbitraryAPDU extends Component<*,*> {
     ).subscribe({
       next: result => {
         this.setState(prevState => ({
-          log: [...prevState.log, `<= ${result.toString("hex")}`,`<= ${result}`]
+          log: [
+            ...prevState.log,
+            `<= ${result.toString("hex")}`,
+            `<= ${result}`
+          ]
         }));
         this.setState({ running: false, error: null, result });
       },
@@ -70,58 +74,76 @@ class ArbitraryAPDU extends Component<*,*> {
         this.setState({ running: false, error, result: "" });
       }
     });
-  }
+  };
 
-  onChange = (event) => {
-    this.setState({apdu:event.target.value});
-  }
+  onChange = event => {
+    this.setState({ apdu: event.target.value });
+  };
 
   render() {
     const { running } = this.state;
     return (
       <RightBar>
-      <div><textarea style={{width:"100%"}} onChange={this.onChange} value={this.state.apdu} disabled={running} placeholder={"APDU"}/></div>
-      <div>
-        <button onClick={this.onClick} disabled={running} >Run APDU</button>
-        <button onClick={this.onClear}>Clear log</button>
-      </div>
-      <div>
-        <Log>
-          {this.state.log.map(val=><pre>{val}</pre>)}
-        </Log>
-      </div>
+        <div>
+          <textarea
+            style={{ width: "100%" }}
+            onChange={this.onChange}
+            value={this.state.apdu}
+            disabled={running}
+            placeholder={"APDU"}
+          />
+        </div>
+        <div>
+          <button onClick={this.onClick} disabled={running}>
+            Run APDU
+          </button>
+          <button onClick={this.onClear}>Clear log</button>
+        </div>
+        <div>
+          <Log>
+            {this.state.log.map(val => (
+              <pre key={val}>{val}</pre>
+            ))}
+          </Log>
+        </div>
       </RightBar>
     );
   }
 }
 
-class TextToData extends Component<*>{
+class TextToData extends Component<*> {
   /**
    * The data we pass to the dongle follows something like {length}{hexData}
    * This is a little utility to convert raw text to/from that format
    */
   state = {
-    value: "",
+    value: ""
   };
 
   toData = () => {
     const hexString = Buffer.from(this.state.value).toString("hex");
-    const contentLength = `${hexString.length/2}`.padStart(2,"0");
-    this.setState({value:contentLength+hexString});
-  }
+    const contentLength = `${hexString.length / 2}`.padStart(2, "0");
+    this.setState({ value: contentLength + hexString });
+  };
 
   toText = () => {
-    this.setState({value:Buffer.from(this.state.value.substr(2)).toString()});
-  }
+    this.setState({
+      value: Buffer.from(this.state.value.substr(2)).toString()
+    });
+  };
 
   render() {
     return (
       <div>
-        <input type="text" onChange={(event)=>this.setState({value:event.target.value})} value={this.state.value}/>
+        <input
+          type="text"
+          onChange={event => this.setState({ value: event.target.value })}
+          value={this.state.value}
+        />
         <button onClick={this.toData}>ToData</button>
         <button onClick={this.toText}>ToText</button>
       </div>
-    )
+    );
   }
 }
 class GenuineCheckButton extends Component<*, *> {
@@ -142,6 +164,7 @@ class GenuineCheckButton extends Component<*, *> {
       )
     ).subscribe({
       next: result => {
+        console.log(result);
         this.setState({ running: false, error: null, result });
       },
       error: error => {
@@ -159,7 +182,7 @@ class GenuineCheckButton extends Component<*, *> {
         </button>
         {running ? <em>...</em> : null}
         <em style={{ color: "red" }}>{error && error.message}</em>
-        <strong>{result}</strong>
+        <strong>{result.payload || result.type}</strong>
       </p>
     );
   }
@@ -170,21 +193,21 @@ const Main = styled.div`
   display:flex;
   padding: 40px;
   flex-shrink:1
-  border-right:1px dashed gray; 
+  border-right:1px dashed gray;
 `;
 
 const Wrapper = styled.div`
-  flex-direction:row;
-  display:flex;
+  flex-direction: row;
+  display: flex;
 `;
 const RightBar = styled.div`
   padding: 40px;
-  flex:1;
+  flex: 1;
 `;
 const Log = styled.div`
-  flex-grow:1;
-  paddint:16px;
-  background:#f3f3f3
+  flex-grow: 1;
+  paddint: 16px;
+  background: #f3f3f3;
 `;
 
 class Transports extends Component<*, *> {
@@ -209,10 +232,10 @@ class Transports extends Component<*, *> {
           <h1>APDU</h1>
           <SelectTransport value={transportId} onChange={this.onTransportId} />
           <h3>Tools</h3>
-          <TextToData/>
+          <TextToData />
           <GenuineCheckButton transportId={transportId} />
         </Main>
-        <ArbitraryAPDU transportId={transportId}/>
+        <ArbitraryAPDU transportId={transportId} />
       </Wrapper>
     );
   }
