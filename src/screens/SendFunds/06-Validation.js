@@ -8,6 +8,7 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/live-common/lib/errors";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import Sentry from "react-native-sentry";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 
 import { getAccountBridge } from "../../bridge";
@@ -108,7 +109,10 @@ class Validation extends Component<Props, State> {
           let error = e;
           if (e && e.statusCode === 0x6985) {
             error = new UserRefusedOnDevice();
+          } else {
+            Sentry.captureException(error);
           }
+
           // $FlowFixMe
           navigation.replace("SendValidationError", {
             ...navigation.state.params,

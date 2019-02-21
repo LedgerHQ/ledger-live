@@ -14,11 +14,7 @@ class TermsConditionsRow extends PureComponent<*> {
         event="TermsConditionsRow"
         title={<Trans i18nKey="settings.about.termsConditions" />}
         desc={<Trans i18nKey="settings.about.termsConditionsDesc" />}
-        onPress={() =>
-          Linking.openURL(urls.terms).catch(err =>
-            console.error("An error occurred", err),
-          )
-        }
+        onPress={() => Linking.openURL(urls.terms)}
         alignedTop
       >
         <View style={styles.externalLinkContainer}>

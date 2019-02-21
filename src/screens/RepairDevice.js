@@ -7,6 +7,7 @@ import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 
+import Sentry from "react-native-sentry";
 import type { T } from "../types/common";
 import Button from "../components/Button";
 import { BulletItem } from "../components/BulletList";
@@ -63,6 +64,7 @@ class RepairDevice extends Component<Props, State> {
         this.props.navigation.navigate("Manager");
       },
       error: error => {
+        Sentry.captureException(error);
         this.setState({ error });
       },
     });

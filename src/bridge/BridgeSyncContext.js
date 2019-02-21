@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
 
+import { Sentry } from "react-native-sentry";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import { setAccountSyncState } from "../actions/bridgeSync";
 import {
@@ -94,6 +95,7 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
           next();
         },
         error: error => {
+          Sentry.captureException(error);
           this.props.setAccountSyncState(accountId, {
             pending: false,
             error,

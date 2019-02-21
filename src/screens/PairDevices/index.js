@@ -11,6 +11,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
 import { timeout } from "rxjs/operators/timeout";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import Sentry from "react-native-sentry";
 import TransportBLE from "../../react-native-hw-transport-ble";
 
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
@@ -76,6 +77,7 @@ class PairDevices extends Component<Props, State> {
   };
 
   onError = (error: Error) => {
+    Sentry.captureException(error);
     this.setState({ error });
   };
 
