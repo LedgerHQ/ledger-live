@@ -10,7 +10,7 @@ export default (
   deviceInfo: DeviceInfo
 ): Observable<string> =>
   deviceInfo.isOSU
-    ? of("9000")
+    ? of("0000")
     : deviceInfo.isBootloader
       ? throwError(new UnexpectedBootloader())
       : genuineCheck(transport, deviceInfo);
