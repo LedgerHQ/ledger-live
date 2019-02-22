@@ -9,6 +9,7 @@ import LiveLogo from "../icons/LiveLogoIcon";
 import Spinning from "./Spinning";
 import LText from "./LText";
 import FirmwareProgress from "./FirmwareProgress";
+import SkipLock from "./behaviour/SkipLock";
 
 class Installing extends PureComponent<{
   progress: number,
@@ -19,6 +20,7 @@ class Installing extends PureComponent<{
     const { progress, installing, t } = this.props;
     return (
       <View style={styles.root}>
+        <SkipLock />
         {progress === 0 ? (
           <View style={{ padding: 10 }}>
             <Spinning>

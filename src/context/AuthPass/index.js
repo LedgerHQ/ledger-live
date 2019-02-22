@@ -5,8 +5,8 @@ import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { privacySelector } from "../../reducers/settings";
+import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
-
 import auth from "./auth";
 import type { Privacy } from "../../reducers/settings";
 import AuthScreen from "./AuthScreen";
@@ -19,6 +19,8 @@ type State = {
   isLocked: boolean,
   biometricsError: ?Error,
   appState: string,
+  skipLockCount: number,
+  setEnabled: (enabled: boolean) => void,
 };
 
 type Props = {
@@ -32,10 +34,19 @@ type Props = {
 let wasUnlocked = false;
 
 class AuthPass extends PureComponent<Props, State> {
+  setEnabled = (enabled: boolean) => {
+    this.setState(prevState => ({
+      skipLockCount: prevState.skipLockCount + (enabled ? 1 : -1),
+    }));
+  };
+
   state = {
     isLocked: !!this.props.privacy && !wasUnlocked,
     biometricsError: null,
     appState: AppState.currentState || "",
+
+    skipLockCount: 0,
+    setEnabled: this.setEnabled,
   };
 
   static getDerivedStateFromProps({ privacy }, { isLocked }) {
@@ -60,7 +71,10 @@ class AuthPass extends PureComponent<Props, State> {
     ) {
       this.lock();
       this.appInBg = Date.now();
-    } else if (nextAppState === "background") {
+    } else if (
+      nextAppState === "background" ||
+      this.state.appState === "active"
+    ) {
       this.appInBg = Date.now();
     }
     this.setState({ appState: nextAppState });
@@ -90,7 +104,8 @@ class AuthPass extends PureComponent<Props, State> {
 
   // lock the app
   lock = () => {
-    if (!this.props.privacy) return;
+    if (!this.props.privacy || this.state.skipLockCount) return;
+
     wasUnlocked = false;
     this.setState(
       {
@@ -112,7 +127,7 @@ class AuthPass extends PureComponent<Props, State> {
 
   render() {
     const { children, privacy } = this.props;
-    const { isLocked, biometricsError } = this.state;
+    const { isLocked, biometricsError, setEnabled } = this.state;
     if (isLocked && privacy) {
       return (
         <AuthScreen
@@ -123,7 +138,11 @@ class AuthPass extends PureComponent<Props, State> {
         />
       );
     }
-    return children;
+    return (
+      <SkipLockContext.Provider value={setEnabled}>
+        {children}
+      </SkipLockContext.Provider>
+    );
   }
 }
 

@@ -18,6 +18,7 @@ import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateOnDevice from "./ValidateOnDevice";
+import SkipLock from "../../components/behaviour/SkipLock";
 
 type Props = {
   account: Account,
@@ -129,7 +130,13 @@ class Validation extends Component<Props, State> {
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="Validation" signed={signed} />
-        {signing && <PreventNativeBack />}
+        {signing && (
+          <>
+            <PreventNativeBack />
+            <SkipLock />
+          </>
+        )}
+
         {signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
