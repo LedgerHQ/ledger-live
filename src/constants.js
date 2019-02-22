@@ -17,7 +17,7 @@ export const GENUINE_CHECK_TIMEOUT = 120 * 1000;
 export const GET_CALLS_RETRY = 3;
 export const GET_CALLS_TIMEOUT = 60000;
 
-export const AUTOLOCK_TIMEOUT = 60000;
+export const AUTOLOCK_TIMEOUT = 6000;
 
 export const LEDGER_REST_API_BASE = "https://explorers.api.live.ledger.com";
 

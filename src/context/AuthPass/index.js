@@ -71,7 +71,10 @@ class AuthPass extends PureComponent<Props, State> {
     ) {
       this.lock();
       this.appInBg = Date.now();
-    } else if (nextAppState === "background") {
+    } else if (
+      nextAppState === "background" ||
+      this.state.appState === "active"
+    ) {
       this.appInBg = Date.now();
     }
     this.setState({ appState: nextAppState });
