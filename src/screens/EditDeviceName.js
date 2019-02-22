@@ -66,9 +66,10 @@ class EditDeviceName extends PureComponent<
     error: null,
     connecting: false,
   };
+  invalidCharacters = /[^\x00-\x7F]/g;
 
   onChangeText = (name: string) => {
-    this.setState({ name });
+    this.setState({ name: name.replace(this.invalidCharacters, "") });
   };
 
   onInputCleared = () => {

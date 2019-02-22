@@ -33,6 +33,7 @@
     "lines-between-class-members": 0,
     "flowtype/space-after-type-colon": 0,
     "no-continue": 0,
+    "no-control-regex": 0,
     "no-return-assign": 0,
     "no-shadow": 0,
     "prefer-template": 0,
