@@ -9,6 +9,7 @@ import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import { DeviceNameInvalid } from "@ledgerhq/errors";
 import colors from "../colors";
 import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
@@ -66,14 +67,24 @@ class EditDeviceName extends PureComponent<
     error: null,
     connecting: false,
   };
-  invalidCharacters = /[^\x00-\x7F]/g;
 
   onChangeText = (name: string) => {
-    this.setState({ name: name.replace(this.invalidCharacters, "") });
+    this.setState({ name }, this.validate);
   };
 
   onInputCleared = () => {
     this.setState({ name: "" });
+  };
+
+  validate = () => {
+    this.setState(prevState => {
+      const invalidCharacters = prevState.name.replace(/[\x00-\x7F]*/g, "");
+      return {
+        error: invalidCharacters
+          ? new DeviceNameInvalid("", { invalidCharacters })
+          : undefined,
+      };
+    });
   };
 
   onSubmit = async () => {
@@ -132,7 +143,7 @@ class EditDeviceName extends PureComponent<
               type="primary"
               title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={this.onSubmit}
-              disabled={!name}
+              disabled={!name || error}
             />
           </View>
 

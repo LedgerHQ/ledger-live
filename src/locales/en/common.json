@@ -68,6 +68,9 @@
       "title": "Possibly not genuine",
       "description": "Request Ledger Support assistance."
     },
+    "DeviceNameInvalid": {
+      "title": "Please choose a device name without '{{invalidCharacters}}'"
+    },
     "DeviceOnDashboardExpected": {
       "title": "Return to Dashboard",
       "description": "Please navigate back to Dashboard on your device"
