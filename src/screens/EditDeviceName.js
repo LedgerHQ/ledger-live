@@ -111,7 +111,7 @@ class EditDeviceName extends PureComponent<
     const { name, error, connecting } = this.state;
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
-    const remainingCount = MAX_DEVICE_NAME - Buffer.from(name).length;
+    const remainingCount = MAX_DEVICE_NAME - name.length;
     return (
       <SafeAreaView style={styles.safearea}>
         <TrackScreen category="EditDeviceName" />
