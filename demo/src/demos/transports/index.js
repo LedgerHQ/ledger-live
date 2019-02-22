@@ -70,7 +70,6 @@ class ArbitraryAPDU extends Component<*, *> {
           log: [...prevState.log, "<!= Error"]
         }));
 
-        console.log(error);
         this.setState({ running: false, error, result: "" });
       }
     });
@@ -164,7 +163,6 @@ class GenuineCheckButton extends Component<*, *> {
       )
     ).subscribe({
       next: result => {
-        console.log(result);
         this.setState({ running: false, error: null, result });
       },
       error: error => {

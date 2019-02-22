@@ -286,7 +286,7 @@ const API = {
       Observable.create(o => {
         let timeout;
         let requested;
-        input.subscribe({
+        const sub = input.subscribe({
           complete: () => {
             o.complete();
           },
@@ -314,6 +314,8 @@ const API = {
             }
           }
         });
+
+        return sub;
       })
     ),
 
