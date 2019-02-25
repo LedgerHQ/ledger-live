@@ -91,7 +91,7 @@
     "react-native-config": "0.11.5",
     "react-native-crypto": "^2.1.2",
     "react-native-easy-markdown": "^1.2.0",
-    "react-native-extra-dimensions-android": "^0.22.0",
+    "react-native-extra-dimensions-android": "^1.2.1",
     "react-native-gesture-handler": "^1.0.15",
     "react-native-keychain": "^3.0.0",
     "react-native-level-fs": "^3.0.0",
