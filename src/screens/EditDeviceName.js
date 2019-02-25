@@ -90,7 +90,14 @@ class EditDeviceName extends PureComponent<
     const { name } = this.state;
     if (this.initialName !== name) {
       Keyboard.dismiss();
-      setTimeout(() => this.setState({ connecting: true }), 800);
+      setTimeout(
+        () =>
+          this.setState(prevState => ({
+            name: prevState.name.trim(),
+            connecting: true,
+          })),
+        800,
+      );
     } else {
       this.props.navigation.goBack();
     }
