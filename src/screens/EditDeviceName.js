@@ -1,7 +1,6 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { Buffer } from "buffer";
 import { Keyboard, View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
@@ -143,7 +142,7 @@ class EditDeviceName extends PureComponent<
               type="primary"
               title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={this.onSubmit}
-              disabled={!name || error}
+              disabled={!name || !!error}
             />
           </View>
 
