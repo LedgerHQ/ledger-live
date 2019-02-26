@@ -7052,10 +7052,10 @@ react-native-easy-markdown@^1.2.0:
   dependencies:
     simple-markdown "^0.1.1"
 
-react-native-extra-dimensions-android@^0.22.0:
-  version "0.22.0"
-  resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-0.22.0.tgz#4b09ba19f52c5181efe37965a2c34cadfa05fb61"
-  integrity sha512-92ppYjXLId5dgjji7glG96CLkGWF/uH96w/hdoM1Je6cFPMqXbVLadHNCH/Edk2i1AySY7qObZXYJD7buWnhlg==
+react-native-extra-dimensions-android@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-1.2.1.tgz#52ae629610f0f4b6d3a50739e0742780dc3ec216"
+  integrity sha512-AMG8qBShir1M+73tWSjV8mnud7UurFO5IsH/iYCLryM2hIhbLXFbnLH/tvrPPi4MFNWr1d7MTIhFNjb7I851sA==
 
 react-native-gesture-handler@^1.0.15, react-native-gesture-handler@~1.0.14:
   version "1.0.15"

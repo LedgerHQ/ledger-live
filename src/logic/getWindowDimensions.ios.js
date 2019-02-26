@@ -5,3 +5,5 @@ export default () => {
 
   return { width, height };
 };
+
+export const softMenuBarHeight = () => 0;
