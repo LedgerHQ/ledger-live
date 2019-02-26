@@ -55,7 +55,7 @@ const RightX = () => (
   />
 );
 
-class DeviceNanoAction extends PureComponent<{
+class DeviceNanoXAction extends PureComponent<{
   powerAction?: boolean,
   action?: boolean,
   screen?: "validation" | "home" | "pin",
@@ -178,4 +178,4 @@ class DeviceNanoAction extends PureComponent<{
   }
 }
 
-export default DeviceNanoAction;
+export default DeviceNanoXAction;
