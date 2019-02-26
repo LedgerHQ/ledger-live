@@ -3,15 +3,20 @@ package com.ledger.live;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.facebook.react.ReactFragmentActivity;
 
 import org.devio.rn.splashscreen.SplashScreen;
+
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+
+import java.util.Locale;
 
 
 public class MainActivity extends ReactFragmentActivity {
@@ -38,11 +43,12 @@ public class MainActivity extends ReactFragmentActivity {
          * text.
          */
         final ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-        if(clipboard != null){
-            clipboard.addPrimaryClipChangedListener( new ClipboardManager.OnPrimaryClipChangedListener() {
+        if (clipboard != null) {
+            clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
                 boolean breakLoop = false;
+
                 public void onPrimaryClipChanged() {
-                    if(breakLoop){
+                    if (breakLoop) {
                         breakLoop = false;
                         return;
                     }
@@ -60,15 +66,28 @@ public class MainActivity extends ReactFragmentActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+
+        /*
+         * Override the detected language to english if it's a RTL language.
+         * TODO if we ever support a RTL language we'd have to take it into account here.
+         */
+        Configuration config = getBaseContext().getResources().getConfiguration();
+        if (config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+            Locale locale = new Locale("en");
+            Locale.setDefault(locale);
+            config.setLocale(locale);
+            getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        }
+
     }
 
     @Override
