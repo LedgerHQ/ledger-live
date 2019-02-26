@@ -10,7 +10,7 @@ import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/mana
 import Sentry from "react-native-sentry";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
+import DeviceNanoXAction from "../../components/DeviceNanoXAction";
 import StepHeader from "../../components/StepHeader";
 import { BulletItem } from "../../components/BulletList";
 import getWindowDimensions from "../../logic/getWindowDimensions";
@@ -99,7 +99,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
                 value={<Trans i18nKey="FirmwareUpdateMCU.desc1" />}
               />
               <View style={styles.device}>
-                <DeviceNanoAction width={1.2 * width} />
+                <DeviceNanoXAction width={1.2 * width} />
               </View>
             </View>
 
@@ -109,7 +109,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
                 value={<Trans i18nKey="FirmwareUpdateMCU.desc2" />}
               />
               <View style={styles.device}>
-                <DeviceNanoAction powerAction width={1.2 * width} />
+                <DeviceNanoXAction powerAction width={1.2 * width} />
               </View>
             </View>
           </View>

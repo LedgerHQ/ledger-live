@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { UserRefusedAddress } from "@ledgerhq/live-common/lib/errors";
 import colors from "../colors";
-import DeviceNanoAction from "../components/DeviceNanoAction";
+import DeviceNanoXAction from "../components/DeviceNanoXAction";
 
 class DebugIcons extends Component<{}> {
   static navigationOptions = {
@@ -17,12 +17,12 @@ class DebugIcons extends Component<{}> {
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView>
-          <DeviceNanoAction />
-          <DeviceNanoAction screen="validation" action />
-          <DeviceNanoAction screen="home" />
-          <DeviceNanoAction powerAction />
-          <DeviceNanoAction error={new UserRefusedAddress()} />
-          <DeviceNanoAction error={new Error("whatever")} />
+          <DeviceNanoXAction />
+          <DeviceNanoXAction screen="validation" action />
+          <DeviceNanoXAction screen="home" />
+          <DeviceNanoXAction powerAction />
+          <DeviceNanoXAction error={new UserRefusedAddress()} />
+          <DeviceNanoXAction error={new Error("whatever")} />
         </ScrollView>
       </SafeAreaView>
     );

@@ -23,7 +23,7 @@ import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
 import { deviceNames } from "../../wording";
 import BluetoothScanning from "../BluetoothScanning";
-import DeviceNanoAction from "../DeviceNanoAction";
+import DeviceNanoXAction from "../DeviceNanoXAction";
 import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import checkDeviceForManager from "../../logic/hw/checkDeviceForManager";
@@ -58,7 +58,7 @@ export const connectingStep: Step = {
 export const dashboard: Step = {
   Body: () => (
     <RenderStep
-      icon={<DeviceNanoAction screen="home" />}
+      icon={<DeviceNanoXAction screen="home" />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.dashboard.title"
@@ -82,7 +82,7 @@ export const dashboard: Step = {
 export const genuineCheck: Step = {
   Body: () => (
     <RenderStep
-      icon={<DeviceNanoAction screen="validation" action />}
+      icon={<DeviceNanoXAction screen="validation" action />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.genuineCheck.title"
@@ -204,7 +204,7 @@ export const accountApp: Account => Step = account => ({
 export const receiveVerifyStep: Account => Step = account => ({
   Body: ({ onDone }: *) => (
     <RenderStep
-      icon={<DeviceNanoAction width={240} screen="validation" />}
+      icon={<DeviceNanoXAction width={240} screen="validation" />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.receiveVerify.title"
@@ -243,7 +243,7 @@ export const getDeviceName: Step = {
   Body: () => (
     <RenderStep
       icon={
-        <DeviceNanoAction width={240} powerAction action screen="validation" />
+        <DeviceNanoXAction width={240} powerAction action screen="validation" />
       }
       title={<Trans i18nKey="SelectDevice.steps.getDeviceName.title" />}
     />
@@ -264,7 +264,7 @@ export const editDeviceName: string => Step = deviceName => ({
   Body: () => (
     <RenderStep
       icon={
-        <DeviceNanoAction width={240} powerAction action screen="validation" />
+        <DeviceNanoXAction width={240} powerAction action screen="validation" />
       }
       title={<Trans i18nKey="SelectDevice.steps.editDeviceName.title" />}
     />

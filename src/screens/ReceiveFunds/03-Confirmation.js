@@ -25,7 +25,7 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 import BottomModal from "../../components/BottomModal";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
+import DeviceNanoXAction from "../../components/DeviceNanoXAction";
 import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
@@ -312,7 +312,7 @@ class ReceiveConfirmation extends Component<Props, State> {
             <View style={styles.modal}>
               <View style={styles.modalBody}>
                 <View style={styles.modalIcon}>
-                  <DeviceNanoAction error={error} />
+                  <DeviceNanoXAction error={error} />
                 </View>
                 <LText secondary semiBold style={styles.modalTitle}>
                   <TranslatedError error={error} />

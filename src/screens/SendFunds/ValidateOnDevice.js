@@ -8,7 +8,7 @@ import type { Unit } from "@ledgerhq/live-common/lib/types";
 import colors from "../../colors";
 
 import LText from "../../components/LText";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
+import DeviceNanoXAction from "../../components/DeviceNanoXAction";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 import { deviceNames } from "../../wording";
 import { getAccountBridge } from "../../bridge";
@@ -86,7 +86,7 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
       <View style={styles.root}>
         <View style={styles.innerContainer}>
           <View style={styles.picture}>
-            <DeviceNanoAction action width={width * 0.8} screen="validation" />
+            <DeviceNanoXAction action width={width * 0.8} screen="validation" />
           </View>
           <View style={styles.titleContainer}>
             <LText secondary semiBold style={styles.title}>

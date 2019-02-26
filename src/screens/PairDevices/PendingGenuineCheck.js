@@ -7,7 +7,7 @@ import { Trans } from "react-i18next";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import getWindowDimensions from "../../logic/getWindowDimensions";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
+import DeviceNanoXAction from "../../components/DeviceNanoXAction";
 import LText from "../../components/LText";
 
 const { width } = getWindowDimensions();
@@ -18,7 +18,7 @@ class PendingGenuineCheck extends PureComponent<*> {
       <View style={styles.root}>
         <TrackScreen category="PairDevices" name="PendingGenuineCheck" />
         <View style={styles.nano}>
-          <DeviceNanoAction action screen="validation" width={width} />
+          <DeviceNanoXAction action screen="validation" width={width} />
         </View>
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="PairDevices.GenuineCheck.title" />

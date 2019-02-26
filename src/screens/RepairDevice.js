@@ -11,7 +11,7 @@ import Sentry from "react-native-sentry";
 import type { T } from "../types/common";
 import Button from "../components/Button";
 import { BulletItem } from "../components/BulletList";
-import DeviceNanoAction from "../components/DeviceNanoAction";
+import DeviceNanoXAction from "../components/DeviceNanoXAction";
 import SelectDevice from "../components/SelectDevice";
 import GenericErrorView from "../components/GenericErrorView";
 import Installing from "../components/Installing";
@@ -94,7 +94,7 @@ class RepairDevice extends Component<Props, State> {
               value={<Trans i18nKey="FirmwareUpdateMCU.desc1" />}
             />
             <View style={styles.device}>
-              <DeviceNanoAction width={1.2 * width} />
+              <DeviceNanoXAction width={1.2 * width} />
             </View>
           </View>
 
@@ -104,7 +104,7 @@ class RepairDevice extends Component<Props, State> {
               value={<Trans i18nKey="FirmwareUpdateMCU.desc2" />}
             />
             <View style={styles.device}>
-              <DeviceNanoAction powerAction width={1.2 * width} />
+              <DeviceNanoXAction powerAction width={1.2 * width} />
             </View>
           </View>
 
