@@ -20,7 +20,7 @@ class DeviceNanoSAction extends PureComponent<{
   error?: Error,
 }> {
   static defaultProps = {
-    width: 300,
+    width: 350,
   };
 
   render() {
@@ -29,22 +29,12 @@ class DeviceNanoSAction extends PureComponent<{
     const color = error ? "#EA2E49" : "#6490F1";
     const isRefusal = error && error.name.startsWith("UserRefused");
 
-    let usbNewSize = 100;
-
-    if (connected) {
-      const widthPercent = width / 286;
-      usbNewSize = 100 * widthPercent;
-    }
+    const newWidth = width * (width / 286);
 
     return (
-      <Svg
-        width={width}
-        height={(width * 87) / 386}
-        viewBox={`0 0 ${connected ? 386 : 286} 87`}
-        marginRight={connected ? `${(100 / 386) * 100}%` : "0%"}
-      >
+      <Svg width={newWidth} height={(newWidth * 87) / 486} viewBox="0 0 486 87">
         <G fill="none" fillRule="evenodd">
-          <G transform={`translate(${connected ? 100 : 0} 45)`}>
+          <G transform="translate(100 45)">
             <Rect
               width="271.606"
               height="39.606"

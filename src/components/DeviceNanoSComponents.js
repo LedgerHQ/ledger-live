@@ -13,8 +13,8 @@ import {
   Use,
 } from "react-native-svg";
 
-export const LeftHint = ({ connected = false }: { connected: boolean }) => (
-  <G transform={`translate(${connected ? 120 : 20})`}>
+export const LeftHint = () => (
+  <G transform="translate(120)">
     <Circle
       cx="5"
       cy="66"
@@ -37,8 +37,8 @@ export const LeftHint = ({ connected = false }: { connected: boolean }) => (
   </G>
 );
 
-export const RightHint = ({ connected = false }: { connected: boolean }) => (
-  <G transform={`translate(${connected ? 230 : 130})`}>
+export const RightHint = () => (
+  <G transform="translate(230)">
     <Circle
       cx="5"
       cy="66"
@@ -64,11 +64,9 @@ export const RightHint = ({ connected = false }: { connected: boolean }) => (
 export const Hints = ({
   action,
   color,
-  connected = false,
 }: {
   action: "both" | "left" | "right",
   color: string,
-  connected: boolean,
 }) => (
   <>
     <Defs>
@@ -79,13 +77,13 @@ export const Hints = ({
     </Defs>
     {action === "both" ? (
       <>
-        <LeftHint connected={connected} />
-        <RightHint connected={connected} />
+        <LeftHint />
+        <RightHint />
       </>
     ) : action === "left" ? (
-      <LeftHint connected={connected} />
+      <LeftHint />
     ) : action === "right" ? (
-      <RightHint connected={connected} />
+      <RightHint />
     ) : null}
   </>
 );
@@ -115,13 +113,11 @@ export const Usb = () => (
 export const EmptyScreen = ({
   color,
   children = null,
-  connected = false,
 }: {
   color: string,
   children?: Rect.Node,
-  connected: boolean,
 }) => (
-  <G transform={`translate(${connected ? 142 : 42} 51)`}>
+  <G transform="translate(142 51)">
     <Rect
       width="65"
       height="29"
@@ -137,13 +133,7 @@ export const EmptyScreen = ({
   </G>
 );
 
-export const ValidationScreen = ({
-  color,
-  connected = false,
-}: {
-  color: string,
-  connected: boolean,
-}) => (
+export const ValidationScreen = ({ color }: { color: string }) => (
   <>
     <Defs>
       <Path
@@ -151,7 +141,7 @@ export const ValidationScreen = ({
         d="M13.62 2.608l-8.22 8.22-3.02-3.02a.375.375 0 0 0-.53 0l-.884.884a.375.375 0 0 0 0 .53l4.169 4.17a.375.375 0 0 0 .53 0l9.37-9.37a.375.375 0 0 0 0-.53l-.884-.884a.375.375 0 0 0-.53 0z"
       />
     </Defs>
-    <EmptyScreen color={color} connected={connected}>
+    <EmptyScreen color={color}>
       <G transform="translate(25 7)">
         <Mask id="d" fill="#fff">
           <Use xlinkHref="#validate" />
@@ -165,14 +155,8 @@ export const ValidationScreen = ({
   </>
 );
 
-export const PinScreen = ({
-  color,
-  connected = false,
-}: {
-  color: string,
-  connected: boolean,
-}) => (
-  <EmptyScreen color={color} connected={connected}>
+export const PinScreen = ({ color }: { color: string }) => (
+  <EmptyScreen color={color}>
     <G transform="translate(13 11)">
       <Rect width="40" height="8" fill={color} fillRule="nonzero" rx=".8" />
       <Path
@@ -183,13 +167,7 @@ export const PinScreen = ({
   </EmptyScreen>
 );
 
-export const HomeScreen = ({
-  color,
-  connected = false,
-}: {
-  color: string,
-  connected: boolean,
-}) => (
+export const HomeScreen = ({ color }: { color: string }) => (
   <>
     <Defs>
       <Path
@@ -197,7 +175,7 @@ export const HomeScreen = ({
         d="M2.75 6.367v6.966c0 .322.261.584.583.584h9.334a.583.583 0 0 0 .583-.584V6.367L8 2.283 2.75 6.367zm-1.21-.959l6-4.667a.75.75 0 0 1 .92 0l6 4.667a.75.75 0 0 1 .29.592v7.333c0 1.15-.933 2.084-2.083 2.084H3.333a2.083 2.083 0 0 1-2.083-2.084V6a.75.75 0 0 1 .29-.592zM6.75 8.75v5.917a.75.75 0 0 1-1.5 0V8A.75.75 0 0 1 6 7.25h4a.75.75 0 0 1 .75.75v6.667a.75.75 0 0 1-1.5 0V8.75h-2.5z"
       />
     </Defs>
-    <EmptyScreen color={color} connected={connected}>
+    <EmptyScreen color={color}>
       <G transform="translate(25 7)">
         <Mask id="f" fill="#fff">
           <Use xlinkHref="#home" />
@@ -213,11 +191,9 @@ export const HomeScreen = ({
 export const ErrorScreen = ({
   color,
   rejected = false,
-  connected = false,
 }: {
   color: string,
   rejected?: boolean,
-  connected: boolean,
 }) => (
   <>
     <Defs>
@@ -238,7 +214,7 @@ export const ErrorScreen = ({
         d="M7.029 6l3.38-3.38a.312.312 0 0 0 0-.441l-.588-.587a.312.312 0 0 0-.441 0L6 4.972l-3.38-3.38a.312.312 0 0 0-.441 0l-.587.587a.312.312 0 0 0 0 .441L4.972 6l-3.38 3.38a.312.312 0 0 0 0 .441l.587.587c.122.123.32.123.441 0L6 7.028l3.38 3.38c.122.123.32.123.441 0l.587-.587a.312.312 0 0 0 0-.441L7.028 6z"
       />
     </Defs>
-    <EmptyScreen color={color} connected={connected}>
+    <EmptyScreen color={color}>
       {rejected ? (
         <G transform="translate(25 7)">
           <Mask id="cross-mask" fill="#fff">
@@ -250,7 +226,7 @@ export const ErrorScreen = ({
         </G>
       ) : null}
     </EmptyScreen>
-    <G transform={`translate(${connected ? 354 : 254} 32)`}>
+    <G transform="translate(354 32)">
       <Path
         fill="#FFF"
         fillRule="nonzero"
@@ -265,7 +241,7 @@ export const ErrorScreen = ({
       </G>
     </G>
     {rejected ? (
-      <G transform={`translate(${connected ? 364 : 264} 42)`}>
+      <G transform="translate(364 42)">
         <Mask id="smallcross-mask" fill="#fff">
           <Use xlinkHref="#smallcross" />
         </Mask>
@@ -274,7 +250,7 @@ export const ErrorScreen = ({
         </G>
       </G>
     ) : (
-      <G transform={`translate(${connected ? 362 : 262} 40)`}>
+      <G transform="translate(362 40)">
         <Mask id="exclamation-mask" fill="#fff">
           <Use xlinkHref="#exclamation" />
         </Mask>

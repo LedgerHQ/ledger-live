@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { UserRefusedAddress } from "@ledgerhq/live-common/lib/errors";
 import colors from "../colors";
-// import DeviceNanoXAction from "../components/DeviceNanoXAction";
+import DeviceNanoXAction from "../components/DeviceNanoXAction";
 import DeviceNanoSAction from "../components/DeviceNanoSAction";
 
 class DebugIcons extends Component<{}> {
