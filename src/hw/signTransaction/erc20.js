@@ -1,49 +1,57 @@
 // @flow
 import invariant from "invariant";
+import { Buffer } from "buffer";
+import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
 import Eth from "@ledgerhq/hw-app-eth";
 import type Transport from "@ledgerhq/hw-transport";
-import type { CryptoCurrency } from "../../types";
 import EthereumTx from "ethereumjs-tx";
+import { getCryptoCurrencyById } from "../../currencies";
+import type { TokenCurrency } from "../../types";
+import { getNetworkId } from "./ethereum";
 
-// see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
-export function getNetworkId(currency: CryptoCurrency): ?number {
-  switch (currency.id) {
-    case "ethereum":
-      return 1;
-    case "ethereum_classic":
-      return 61;
-    case "ethereum_classic_ropsten":
-      return 62;
-    case "ethereum_ropsten":
-      return 3;
-    default:
-      return null;
-  }
-}
+const transferMethodID = Buffer.from("a9059cbb", "hex");
+const ethereum = getCryptoCurrencyById("ethereum");
 
 export default async (
-  currency: CryptoCurrency,
+  token: TokenCurrency,
   transport: Transport<*>,
   path: string,
   t: {
     nonce: string,
     recipient: string,
-    // these are in hexa string format (e.g. '0xABCDEF')
     gasPrice: string,
     gasLimit: string,
     amount: string
   }
 ) => {
-  // First, we need to create a partial tx and send to the device
+  const tokenInfo = byContractAddress(token.contractAddress);
+  invariant(
+    tokenInfo,
+    `contract ${token.contractAddress} data for ${token.id} ERC20 not found`
+  );
 
-  const chainId = getNetworkId(currency);
-  invariant(chainId, `chainId not found for currency ${currency.name}`);
+  const chainId = getNetworkId(ethereum);
+  invariant(chainId, `chainId not found for currency ${ethereum.name}`);
+  const to256 = Buffer.concat([
+    Buffer.alloc(12),
+    Buffer.from(t.recipient.replace(/^0x/g, ""), "hex")
+  ]);
+  invariant(to256.length === 32, "recipient is invalid");
+  const amountHex = t.amount.replace(/^0x/g, "");
+  const amount = Buffer.from(
+    amountHex.length % 2 === 0 ? amountHex : "0" + amountHex,
+    "hex"
+  );
+  const amount256 = Buffer.concat([Buffer.alloc(32 - amount.length), amount]);
+
+  const data = Buffer.concat([transferMethodID, to256, amount256]);
   const tx = new EthereumTx({
     nonce: t.nonce,
     gasPrice: t.gasPrice,
     gasLimit: t.gasLimit,
-    to: t.recipient,
-    value: t.amount,
+    to: token.contractAddress,
+    value: 0x00,
+    data: "0x" + data.toString("hex"),
     chainId
   });
   tx.raw[6] = Buffer.from([chainId]); // v
@@ -51,6 +59,7 @@ export default async (
   tx.raw[8] = Buffer.from([]); // s
 
   const eth = new Eth(transport);
+  await eth.provideERC20TokenInformation(tokenInfo);
   const result = await eth.signTransaction(
     path,
     tx.serialize().toString("hex")

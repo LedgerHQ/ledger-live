@@ -9,6 +9,7 @@ import transports from "./transports";
 import qrledger from "./qrledger";
 import explorers from "./explorers";
 import Partners from "./Partners";
+import erc20 from "./erc20";
 
 export default {
   CountervalueDirect,
@@ -21,5 +22,6 @@ export default {
   qrstreambenchmark,
   transports,
   qrledger,
-  explorers
+  explorers,
+  erc20
 };

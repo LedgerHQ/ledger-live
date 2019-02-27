@@ -1,9 +1,10 @@
 // @flow
 import type { CryptoCurrency } from "../types";
+import { getEnv } from "../env";
 
-const ledgerExplorersByVersion = {
-  v2: "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
-  v3: "http://$ledgerExplorerId.explorers.prod.aws.ledger.fr/blockchain/v3"
+const ledgerExplorersByVersionEnv = {
+  v2: "EXPLORER_V2",
+  v3: "EXPLORER_V3"
 };
 
 export const blockchainBaseURL = ({
@@ -11,8 +12,7 @@ export const blockchainBaseURL = ({
   ledgerExplorerVersion
 }: CryptoCurrency): ?string =>
   ledgerExplorerId && ledgerExplorerVersion
-    ? (ledgerExplorersByVersion[ledgerExplorerVersion] || "").replace(
-        "$ledgerExplorerId",
-        ledgerExplorerId
-      )
+    ? (
+        getEnv(ledgerExplorersByVersionEnv[ledgerExplorerVersion]) || ""
+      ).replace("$ledgerExplorerId", ledgerExplorerId)
     : null;
