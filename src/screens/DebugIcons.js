@@ -2,12 +2,10 @@
 
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { UserRefusedAddress } from "@ledgerhq/live-common/lib/errors";
 import colors from "../colors";
-import DeviceNanoXAction from "../components/DeviceNanoXAction";
-import DeviceNanoSAction from "../components/DeviceNanoSAction";
+import DeviceNanoAction from "../components/DeviceNanoAction";
 
 class DebugIcons extends Component<{}> {
   static navigationOptions = {
@@ -18,21 +16,57 @@ class DebugIcons extends Component<{}> {
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.scrollView}>
-          {/* <DeviceNanoXAction />
-          <DeviceNanoXAction screen="validation" action />
-          <DeviceNanoXAction screen="home" />
-          <DeviceNanoXAction powerAction />
-          <DeviceNanoXAction error={new UserRefusedAddress()} />
-          <DeviceNanoXAction error={new Error("whatever")} /> */}
+          <DeviceNanoAction width={250} />
+          <DeviceNanoAction width={250} action="both" screen="validation" />
+          <DeviceNanoAction width={250} screen="home" />
+          <DeviceNanoAction
+            width={250}
+            action="left"
+            screen="empty"
+            connected
+          />
+          <DeviceNanoAction width={250} action="right" screen="pin" />
+          <DeviceNanoAction width={250} error={new UserRefusedAddress()} />
+          <DeviceNanoAction width={250} error={new Error("wahtevr")} />
+          <DeviceNanoAction width={250} connected />
 
-          <DeviceNanoSAction />
-          <DeviceNanoSAction error={new UserRefusedAddress()} />
-          <DeviceNanoSAction error={new Error("wahtevr")} />
-          <DeviceNanoSAction action="both" screen="validation" connected />
-          <DeviceNanoSAction action="left" screen="empty" connected />
-          <DeviceNanoSAction screen="home" />
-          <DeviceNanoSAction action="right" screen="pin" />
-          <DeviceNanoSAction connected />
+          <DeviceNanoAction width={250} modelId="nanoS" />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            error={new Error("wahtevr")}
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            error={new UserRefusedAddress()}
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            action="both"
+            screen="validation"
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            action="left"
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            screen="home"
+            action="right"
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            screen="pin"
+          />
         </ScrollView>
       </SafeAreaView>
     );

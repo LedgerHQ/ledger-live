@@ -8,7 +8,7 @@ import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import DeviceIconBack from "../../../components/DeviceIconBack";
-import DeviceNanoXAction from "../../../components/DeviceNanoXAction";
+import DeviceNanoAction from "../../../components/DeviceNanoAction";
 import DeviceIconCheck from "../../../components/DeviceIconCheck";
 import BulletList, { BulletItemText } from "../../../components/BulletList";
 import OnboardingLayout from "../OnboardingLayout";
@@ -61,7 +61,7 @@ class OnboardingStepSetupPin extends Component<
           onClose={this.hideModal}
         />
         <View style={styles.hero}>
-          <DeviceNanoXAction screen="pin" />
+          <DeviceNanoAction screen="pin" />
         </View>
         <View style={styles.wrapper}>
           <BulletList

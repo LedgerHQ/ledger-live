@@ -13,7 +13,7 @@ import { deviceNames } from "../../wording";
 import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText";
-import DeviceNanoXAction from "../../components/DeviceNanoXAction";
+import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 import FirmwareProgress from "../../components/FirmwareProgress";
@@ -103,9 +103,8 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
         <View style={styles.body}>
           <View style={styles.device}>
-            <DeviceNanoXAction
-              powerAction
-              action
+            <DeviceNanoAction
+              action="both"
               screen="validation"
               width={1.2 * windowWidth}
             />

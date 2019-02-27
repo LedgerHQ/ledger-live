@@ -3,12 +3,11 @@ import React, { PureComponent } from "react";
 import Svg, { Rect, G, Path, Circle } from "react-native-svg";
 
 import {
-  Hints,
   Usb,
+  Hints,
   ValidationScreen,
-  EmptyScreen,
-  PinScreen,
   HomeScreen,
+  PinScreen,
   ErrorScreen,
 } from "./DeviceNanoSComponents";
 
@@ -20,7 +19,7 @@ class DeviceNanoSAction extends PureComponent<{
   error?: Error,
 }> {
   static defaultProps = {
-    width: 350,
+    width: 272,
   };
 
   render() {
@@ -29,81 +28,82 @@ class DeviceNanoSAction extends PureComponent<{
     const color = error ? "#EA2E49" : "#6490F1";
     const isRefusal = error && error.name.startsWith("UserRefused");
 
-    const newWidth = width * (width / 286);
+    const newWidth = (width * 474) / 274;
 
     return (
-      <Svg width={newWidth} height={(newWidth * 87) / 486} viewBox="0 0 486 87">
-        <G fill="none" fillRule="evenodd">
-          <G transform="translate(100 45)">
-            <Rect
-              width="271.606"
-              height="39.606"
-              x="1.197"
-              y="1.197"
-              fill={color}
-              fillOpacity=".12"
-              stroke="#142533"
-              strokeWidth="2.394"
-              rx="6.227"
-            />
-            <Path
-              fill="#FFF"
-              stroke="#142533"
-              strokeWidth="2.394"
-              d="M135 1.197c-10.937 0-19.803 8.866-19.803 19.803 0 10.937 8.866 19.803 19.803 19.803h135A2.803 2.803 0 0 0 272.803 38V4A2.803 2.803 0 0 0 270 1.197H135z"
-            />
-            <Circle
-              cx="135"
-              cy="21"
-              r="10.5"
-              stroke="#142533"
-              strokeLinejoin="square"
-            />
-            <Circle cx="135" cy="21" r="11.5" stroke="#D8D8D8" />
-            <G>
-              <Circle
-                cx="25"
-                cy="21"
-                r="10.5"
-                stroke="#142533"
-                strokeLinejoin="square"
-              />
-              <Circle
-                cx="25"
-                cy="21"
-                r="11.5"
-                stroke={color}
-                strokeOpacity=".2"
-              />
-            </G>
-          </G>
+      <Svg width={newWidth} height={(newWidth * 80) / 474} viewBox="0 0 474 80">
+        <G fill="none" fillRule="evenodd" transform="translate(100 38)">
+          <Rect
+            width="271.606"
+            height="39.606"
+            x="1.197"
+            y="1.197"
+            fill={color}
+            fillOpacity=".12"
+            stroke="#142533"
+            strokeWidth="2.394"
+            rx="4"
+          />
+          <Path
+            fill="#FFF"
+            stroke="#142533"
+            strokeWidth="2.394"
+            d="M135 1.197c-10.937 0-19.803 8.866-19.803 19.803 0 10.937 8.866 19.803 19.803 19.803h135A2.803 2.803 0 0 0 272.803 38V4A2.803 2.803 0 0 0 270 1.197H135z"
+          />
+          <Circle
+            cx="135"
+            cy="21"
+            r="10.5"
+            stroke="#142533"
+            strokeLinejoin="square"
+          />
+          <Circle cx="135" cy="21" r="11.5" stroke="#D8D8D8" />
+          <Rect
+            width="65"
+            height="23"
+            x="24.5"
+            y="9.5"
+            fill="#FFF"
+            fillRule="nonzero"
+            stroke={color}
+            rx="2"
+          />
+          <Rect
+            width="17"
+            height="4"
+            x="18"
+            y="-2"
+            fill="#142533"
+            fillRule="nonzero"
+            rx="1"
+          />
+          <Rect
+            width="17"
+            height="4"
+            x="80"
+            y="-2"
+            fill="#142533"
+            fillRule="nonzero"
+            rx="1"
+          />
+
           {/* displays usb cable */}
           {connected ? <Usb /> : null}
 
           {/* displays action button */}
-          {action ? (
-            <Hints action={action} color={color} connected={connected} />
-          ) : null}
+          {action ? <Hints action={action} color={color} /> : null}
 
           {/* displays screen type */}
-          {screen === "empty" ? (
-            <EmptyScreen color={color} connected={connected} />
-          ) : screen === "home" ? (
-            <HomeScreen color={color} connected={connected} />
-          ) : screen === "pin" ? (
-            <PinScreen color={color} connected={connected} />
+          {screen === "home" ? (
+            <HomeScreen color={color} />
           ) : screen === "validation" ? (
-            <ValidationScreen color={color} connected={connected} />
+            <ValidationScreen />
+          ) : screen === "pin" ? (
+            <PinScreen color={color} />
           ) : null}
 
           {/* displays error */}
-          {error ? (
-            <ErrorScreen
-              rejected={isRefusal}
-              color={color}
-              connected={connected}
-            />
-          ) : null}
+          {error ? <ErrorScreen rejected={isRefusal} color={color} /> : null}
         </G>
       </Svg>
     );
