@@ -12,7 +12,7 @@ import Button from "../../../components/Button";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import colors from "../../../colors";
-import ScanIllustration from "../assets/ImportDesktopAccounts";
+import ScanIllustration from "../../../icons/ImportDesktopAccounts";
 
 import type { OnboardingStepProps } from "../types";
 

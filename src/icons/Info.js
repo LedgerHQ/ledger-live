@@ -7,7 +7,7 @@ type Props = {
   color: string,
 };
 
-export default function Info({ size, color }: Props) {
+export default function Info({ size = 24, color }: Props) {
   return (
     <Svg viewBox="0 0 24 24" width={size} height={size} color={color}>
       <Path

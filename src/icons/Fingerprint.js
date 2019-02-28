@@ -7,7 +7,7 @@ type Props = {
   color: string,
 };
 
-export default function Fingerprint({ size, color }: Props) {
+export default function Fingerprint({ size = 80, color }: Props) {
   return (
     <Svg viewBox="0 0 80 80" width={size} height={size}>
       <G fill={color} fillRule="evenodd">
