@@ -104,7 +104,7 @@ class RepairDevice extends Component<Props, State> {
               value={<Trans i18nKey="FirmwareUpdateMCU.desc2" />}
             />
             <View style={styles.device}>
-              <DeviceNanoAction powerAction width={1.2 * width} />
+              <DeviceNanoAction action="left" width={1.2 * width} />
             </View>
           </View>
 

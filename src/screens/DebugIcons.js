@@ -2,7 +2,6 @@
 
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { UserRefusedAddress } from "@ledgerhq/live-common/lib/errors";
 import colors from "../colors";
@@ -16,13 +15,58 @@ class DebugIcons extends Component<{}> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
-        <ScrollView>
-          <DeviceNanoAction />
-          <DeviceNanoAction screen="validation" action />
-          <DeviceNanoAction screen="home" />
-          <DeviceNanoAction powerAction />
-          <DeviceNanoAction error={new UserRefusedAddress()} />
-          <DeviceNanoAction error={new Error("whatever")} />
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <DeviceNanoAction width={250} />
+          <DeviceNanoAction width={250} action="both" screen="validation" />
+          <DeviceNanoAction width={250} screen="home" />
+          <DeviceNanoAction
+            width={250}
+            action="left"
+            screen="empty"
+            connected
+          />
+          <DeviceNanoAction width={250} action="right" screen="pin" />
+          <DeviceNanoAction width={250} error={new UserRefusedAddress()} />
+          <DeviceNanoAction width={250} error={new Error("wahtevr")} />
+          <DeviceNanoAction width={250} connected />
+
+          <DeviceNanoAction width={250} modelId="nanoS" />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            error={new Error("wahtevr")}
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            error={new UserRefusedAddress()}
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            action="both"
+            screen="validation"
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            action="left"
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            screen="home"
+            action="right"
+          />
+          <DeviceNanoAction
+            width={250}
+            modelId="nanoS"
+            connected
+            screen="pin"
+          />
         </ScrollView>
       </SafeAreaView>
     );
@@ -33,6 +77,9 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  scrollView: {
+    alignItems: "center",
   },
 });
 

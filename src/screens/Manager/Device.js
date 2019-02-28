@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
-// $FlowFixMe
 import { ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
@@ -13,7 +12,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { removeKnownDevice } from "../../actions/ble";
-import DeviceNano from "../../components/DeviceNanoAction";
+import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import Circle from "../../components/Circle";
@@ -108,7 +107,7 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
       <ScrollView style={styles.root} contentContainerStyle={styles.container}>
         <TrackScreen category="Manager" name="Device" />
         <View style={styles.device}>
-          <DeviceNano />
+          <DeviceNanoAction />
           <LText secondary semiBold style={styles.deviceName}>
             {deviceNames.nanoX.fullDeviceName}
           </LText>
