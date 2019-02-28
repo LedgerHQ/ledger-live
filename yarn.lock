@@ -7769,7 +7769,7 @@ ripple-binary-codec@0.2.0, ripple-binary-codec@^0.2.0:
     lodash "^4.12.0"
     ripple-address-codec "^2.0.1"
 
-ripple-binary-codec@^0.1.0, ripple-binary-codec@^0.1.13:
+ripple-binary-codec@^0.1.0:
   version "0.1.14"
   resolved "https://registry.yarnpkg.com/ripple-binary-codec/-/ripple-binary-codec-0.1.14.tgz#4163573dd5a9cb36409313fc6c4c548d025d6a6e"
   integrity sha512-HkQ0LEeD2NPGuF+vSg4RSCo+fF0+kQH0zyUoyC5PR+Xqn8jN28EVpbX0b7wzWpeX2pPaWDA0HcDf7Lv4BYezAA==
@@ -7826,24 +7826,6 @@ ripple-lib-transactionparser@0.7.1:
   dependencies:
     bignumber.js "^4.1.0"
     lodash "^4.17.4"
-
-ripple-lib@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/ripple-lib/-/ripple-lib-1.0.1.tgz#4fcd9904fa03c7366a76d54c5474a0111f4a4b53"
-  integrity sha512-1Z9RWBPVp0P2gqroZXbJ7JgVaA0u1U58OSR3OvcD1sybNSpLAyghi8JC9VAaSm/wZlshQ9+lVGRWCMAH8JA0Aw==
-  dependencies:
-    "@types/lodash" "^4.14.85"
-    "@types/ws" "^3.2.0"
-    bignumber.js "^4.1.0"
-    https-proxy-agent "2.2.1"
-    jsonschema "1.2.2"
-    lodash "^4.17.4"
-    ripple-address-codec "^2.0.1"
-    ripple-binary-codec "^0.1.13"
-    ripple-hashes "^0.3.1"
-    ripple-keypairs "^0.10.1"
-    ripple-lib-transactionparser "0.7.1"
-    ws "^3.3.1"
 
 ripple-lib@^1.1.2:
   version "1.1.2"

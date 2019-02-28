@@ -4,8 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/live-common/lib/errors";
 import { getFeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
 import type { FeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
-
-import type { AccountBridge } from "./types";
+import type { AccountBridge } from "@ledgerhq/live-common/lib/bridge/types";
 import { makeLRUCache } from "../logic/cache";
 
 import { syncAccount } from "../libcore/syncAccount";
@@ -136,7 +135,6 @@ const getFees = makeLRUCache(
 );
 
 const checkValidTransaction = async (a, t) =>
-  // $FlowFixMe
   !t.feePerByte
     ? Promise.reject(new FeeNotLoaded())
     : !t.amount

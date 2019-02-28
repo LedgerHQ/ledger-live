@@ -15,6 +15,7 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
 import { getAccountBridge } from "../../bridge";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
@@ -22,7 +23,6 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
 import type { T } from "../../types/common";
-import type { Transaction } from "../../bridge/EthereumJSBridge";
 
 type Props = {
   account: Account,

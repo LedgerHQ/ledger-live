@@ -1,8 +1,8 @@
 /* @flow */
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Transaction } from "../../bridge/RippleJSBridge";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
 
 import SendRowTag from "./SendRowTag";
 
