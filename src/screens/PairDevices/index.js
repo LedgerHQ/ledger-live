@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import i18next from "i18next";
 import { connect } from "react-redux";
+import Sentry from "react-native-sentry";
 import Config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
@@ -76,6 +77,7 @@ class PairDevices extends Component<Props, State> {
   };
 
   onError = (error: Error) => {
+    Sentry.captureException(error);
     this.setState({ error });
   };
 

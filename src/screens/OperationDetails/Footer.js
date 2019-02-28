@@ -11,10 +11,7 @@ type Props = {
 };
 
 class Footer extends PureComponent<Props, *> {
-  onPress = () =>
-    Linking.openURL(this.props.url).catch(err =>
-      console.error("An error occurred", err),
-    );
+  onPress = () => Linking.openURL(this.props.url);
 
   render() {
     return (

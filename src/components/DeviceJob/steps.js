@@ -82,7 +82,7 @@ export const dashboard: Step = {
 export const genuineCheck: Step = {
   Body: () => (
     <RenderStep
-      icon={<DeviceNanoAction screen="validation" action />}
+      icon={<DeviceNanoAction screen="validation" action="both" />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.genuineCheck.title"
@@ -242,9 +242,7 @@ export const receiveVerifyStep: Account => Step = account => ({
 export const getDeviceName: Step = {
   Body: () => (
     <RenderStep
-      icon={
-        <DeviceNanoAction width={240} powerAction action screen="validation" />
-      }
+      icon={<DeviceNanoAction width={240} action="both" screen="validation" />}
       title={<Trans i18nKey="SelectDevice.steps.getDeviceName.title" />}
     />
   ),
@@ -263,9 +261,7 @@ export const getDeviceName: Step = {
 export const editDeviceName: string => Step = deviceName => ({
   Body: () => (
     <RenderStep
-      icon={
-        <DeviceNanoAction width={240} powerAction action screen="validation" />
-      }
+      icon={<DeviceNanoAction width={240} action="both" screen="validation" />}
       title={<Trans i18nKey="SelectDevice.steps.editDeviceName.title" />}
     />
   ),

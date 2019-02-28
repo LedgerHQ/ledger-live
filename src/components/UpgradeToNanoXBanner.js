@@ -8,7 +8,7 @@ import colors from "../colors";
 import LText from "./LText";
 import IconArrowRight from "../icons/ArrowRight";
 import Touchable from "./Touchable";
-import NanoXVertical from "../screens/Onboarding/assets/NanoXVertical";
+import NanoXVertical from "../icons/NanoXVertical";
 
 type Props = {
   action?: () => *,

@@ -18,9 +18,11 @@ import ConfigUSBDeviceSupport from "./ConfigUSBDeviceSupport";
 import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
+import OpenDebugSVG from "./OpenDebugSVG";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenLottie from "./OpenDebugLottie";
+import SkipLock from "../../../components/behaviour/SkipLock";
 
 class DebugMocks_ extends PureComponent<{
   accounts: *,
@@ -48,7 +50,9 @@ class DebugMocks_ extends PureComponent<{
         <OpenDebugStore />
         <OpenDebugIcons />
         <OpenLottie />
+        <OpenDebugSVG />
         <ReadOnlyModeRow />
+        <SkipLock />
       </ScrollView>
     );
   }

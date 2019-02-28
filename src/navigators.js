@@ -81,6 +81,7 @@ import DebugCrash from "./screens/DebugCrash";
 import DebugHttpTransport from "./screens/DebugHttpTransport";
 import DebugIcons from "./screens/DebugIcons";
 import DebugLottie from "./screens/DebugLottie.js";
+import DebugSVG from "./screens/DebugSVG";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
@@ -138,6 +139,8 @@ const SettingsStack = createStackNavigator(
     DebugIcons,
     // $FlowFixMe
     DebugLottie,
+    // $FlowFixMe
+    DebugSVG,
     // $FlowFixMe
     DebugWSImport,
     // $FlowFixMe

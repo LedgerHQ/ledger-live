@@ -104,8 +104,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
         <View style={styles.body}>
           <View style={styles.device}>
             <DeviceNanoAction
-              powerAction
-              action
+              action="both"
               screen="validation"
               width={1.2 * windowWidth}
             />

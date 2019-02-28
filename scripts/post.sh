@@ -8,6 +8,8 @@ cp node_modules/react-native-camera/postinstall_project/projectWithoutFaceDetect
 
 rm -f 'node_modules/@segment/analytics-ios/.clang-format'
 
+patch --forward -i scripts/rnc-RNCameraManager.patch node_modules/react-native-camera/ios/RN/RNCameraManager.m
+
 rn-nodeify --hack
 
 # Create the dev .env file with APP_NAME if it doesn't exist

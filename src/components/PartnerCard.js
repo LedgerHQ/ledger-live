@@ -15,12 +15,7 @@ type Props = {
 };
 
 export default class PartnerCard extends Component<Props> {
-  onClick = () => {
-    const { card } = this.props;
-    Linking.openURL(card.url).catch(err =>
-      console.error("An error occurred", err),
-    );
-  };
+  onClick = () => Linking.openURL(this.props.card.url);
 
   render() {
     const {

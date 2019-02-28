@@ -13,6 +13,7 @@ import type {
   ApplicationVersion,
 } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
+import Sentry from "react-native-sentry";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import LText from "../../components/LText";
 import { TrackScreen } from "../../analytics";
@@ -101,6 +102,7 @@ class ManagerAppsList extends Component<
         apps,
       });
     } catch (error) {
+      Sentry.captureException(error);
       if (id !== this.fetchAppId) return;
       this.setState({
         pending: false,

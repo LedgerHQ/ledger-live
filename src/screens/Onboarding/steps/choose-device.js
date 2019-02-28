@@ -11,9 +11,9 @@ import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
-import NanoSVertical from "../assets/NanoSVertical";
-import NanoXVertical from "../assets/NanoXVertical";
-import Blue from "../assets/Blue";
+import NanoSVertical from "../../../icons/NanoSVertical";
+import NanoXVertical from "../../../icons/NanoXVertical";
+import Blue from "../../../icons/Blue";
 import colors from "../../../colors";
 import { deviceNames } from "../../../wording";
 

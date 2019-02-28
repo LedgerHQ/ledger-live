@@ -14,6 +14,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
 import { open } from "@ledgerhq/live-common/lib/hw";
+import Sentry from "react-native-sentry";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -35,6 +36,7 @@ import CopyLink from "../../components/CopyLink";
 import ShareLink from "../../components/ShareLink";
 import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import SkipLock from "../../components/behaviour/SkipLock";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -123,6 +125,7 @@ class ReceiveConfirmation extends Component<Props, State> {
       );
       this.setState({ verified: true });
     } catch (error) {
+      Sentry.captureException(error);
       this.setState({ error, isModalOpened: true });
     } finally {
       navigation.setParams({ allowNavigation: true });
@@ -179,7 +182,12 @@ class ReceiveConfirmation extends Component<Props, State> {
           unsafe={unsafe}
           verified={verified}
         />
-        {allowNavigation ? null : <PreventNativeBack />}
+        {allowNavigation ? null : (
+          <>
+            <PreventNativeBack />
+            <SkipLock />
+          </>
+        )}
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.root}>
           <View style={styles.container}>
             <Touchable event="QRZoom" onPress={this.onZoom}>
@@ -231,9 +239,7 @@ class ReceiveConfirmation extends Component<Props, State> {
                   <Touchable
                     event="ReceiveVerifyTransactionHelp"
                     onPress={() =>
-                      Linking.openURL(urls.verifyTransactionDetails).catch(
-                        err => console.error("An error occurred", err),
-                      )
+                      Linking.openURL(urls.verifyTransactionDetails)
                     }
                   >
                     <LText semiBold style={styles.learnmore}>

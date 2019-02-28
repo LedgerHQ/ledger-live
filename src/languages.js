@@ -5,7 +5,8 @@ import allLocales from "./locales";
 const prodStableLanguages = ["en"];
 
 const l = {};
-Object.keys(allLocales).forEach(key => {
+export const localeIds: string[] = Object.keys(allLocales);
+localeIds.forEach(key => {
   if (Config.LEDGER_DEBUG_ALL_LANGS || prodStableLanguages.includes(key)) {
     l[key] = allLocales[key];
   }

@@ -6,7 +6,7 @@ type Props = {
   size: number,
 };
 
-export default function Wallet({ size }: Props) {
+export default function Wallet({ size = 16 }: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
       <G fill="none" transform="translate(.5 .5)">

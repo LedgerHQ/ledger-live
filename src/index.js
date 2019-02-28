@@ -6,6 +6,7 @@ import "./live-common-setup";
 import React, { Fragment, Component } from "react";
 import { StyleSheet, View } from "react-native";
 import SplashScreen from "react-native-splash-screen";
+import Sentry from "react-native-sentry";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
@@ -91,6 +92,7 @@ export default class Root extends Component<{}, { appState: * }> {
   }
 
   componentDidCatch(e: *) {
+    Sentry.captureException(e);
     console.error(e);
     throw e;
   }

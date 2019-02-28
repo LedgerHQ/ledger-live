@@ -7,6 +7,7 @@ import colors, { rgba } from "../../colors";
 
 import LText from "../LText";
 import QrCodeProgressBar from "./QRCodeProgressBar";
+import { softMenuBarHeight } from "../../logic/getWindowDimensions";
 
 type Props = {
   progress?: number,
@@ -36,6 +37,7 @@ const styles = StyleSheet.create({
   darken: {
     backgroundColor: rgba(colors.darkBlue, 0.4),
     flexGrow: 1,
+    paddingBottom: softMenuBarHeight(),
   },
   text: {
     fontSize: 16,

@@ -11,7 +11,13 @@ type Props = {
   style?: *,
 };
 
-export default function NanoX({ size, width, height, color, style }: Props) {
+export default function NanoX({
+  size,
+  width = 8,
+  height = 36,
+  color,
+  style,
+}: Props) {
   return (
     <Svg
       width={width || size}

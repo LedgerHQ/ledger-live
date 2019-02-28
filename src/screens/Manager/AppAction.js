@@ -27,6 +27,7 @@ import colors from "../../colors";
 import AppIcon from "./AppIcon";
 import { installAppFirstTime } from "../../actions/settings";
 import { hasInstalledAnyAppSelector } from "../../reducers/settings";
+import SkipLock from "../../components/behaviour/SkipLock";
 
 class PendingProgress extends PureComponent<{
   progress: number,
@@ -196,6 +197,7 @@ class AppAction extends PureComponent<
             <View style={styles.headIcon}>
               {icon}
               <View style={styles.loaderWrapper}>
+                {pending && <SkipLock />}
                 {pending ? (
                   progress ? (
                     <PendingProgress progress={progress} />
