@@ -12,7 +12,7 @@ import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import colors from "../../../colors";
 import BulletList from "../../../components/BulletList";
-import RecoveryPhrase from "../assets/RecoveryPhrase";
+import RecoveryPhrase from "../../../icons/RecoveryPhrase";
 
 import type { OnboardingStepProps } from "../types";
 
