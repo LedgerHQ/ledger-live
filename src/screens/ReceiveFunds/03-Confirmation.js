@@ -14,7 +14,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 
 import { open } from "@ledgerhq/live-common/lib/hw";
-import Sentry from "react-native-sentry";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -37,6 +36,7 @@ import ShareLink from "../../components/ShareLink";
 import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
+import logger from "../../logger";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -125,7 +125,7 @@ class ReceiveConfirmation extends Component<Props, State> {
       );
       this.setState({ verified: true });
     } catch (error) {
-      Sentry.captureException(error);
+      logger.critical(error);
       this.setState({ error, isModalOpened: true });
     } finally {
       navigation.setParams({ allowNavigation: true });

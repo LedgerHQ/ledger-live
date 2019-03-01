@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import i18next from "i18next";
 import { connect } from "react-redux";
-import Sentry from "react-native-sentry";
 import Config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
@@ -13,8 +12,8 @@ import { SafeAreaView } from "react-navigation";
 import { timeout } from "rxjs/operators/timeout";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
+import logger from "../../logger";
 import TransportBLE from "../../react-native-hw-transport-ble";
-
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -77,7 +76,7 @@ class PairDevices extends Component<Props, State> {
   };
 
   onError = (error: Error) => {
-    Sentry.captureException(error);
+    logger.critical(error);
     this.setState({ error });
   };
 

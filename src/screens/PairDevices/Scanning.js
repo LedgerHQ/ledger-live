@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { Observable } from "rxjs";
-import Sentry from "react-native-sentry";
+import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
@@ -69,7 +69,7 @@ class Scanning extends Component<Props, State> {
         }
       },
       error: error => {
-        Sentry.captureException(error);
+        logger.critical(error);
         this.props.onError(error);
       },
     });

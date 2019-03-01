@@ -4,7 +4,6 @@ import { BigNumber } from "bignumber.js";
 import { getWalletName } from "@ledgerhq/live-common/lib/account";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { InvalidAddress } from "@ledgerhq/live-common/lib/errors";
-import { Sentry } from "react-native-sentry";
 import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
 import { getOrCreateWallet } from "./getOrCreateWallet";
@@ -14,6 +13,7 @@ import {
   bigNumberToLibcoreAmount,
 } from "./buildBigNumber";
 import { isValidRecipient } from "./isValidRecipient";
+import logger from "../logger";
 
 export const getFeesForTransaction = withLibcoreF(
   core => async ({
@@ -99,9 +99,7 @@ export const getFeesForTransaction = withLibcoreF(
       let fees = await libcoreAmountToBigNumber(core, feesAmount);
       if (fees.isLessThan(0)) {
         fees = BigNumber(0);
-        Sentry.captureException(
-          new Error("fee is negative for " + currency.name),
-        );
+        logger.critical(new Error("fee is negative for " + currency.name));
       }
       return fees;
     } catch (error) {
