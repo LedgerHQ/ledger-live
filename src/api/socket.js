@@ -25,7 +25,9 @@ const log = (obj: *) => {
 export type SocketEvent =
   | {
       type: "bulk-progress",
-      progress: number
+      progress: number,
+      index: number,
+      total: number
     }
   | {
       type: "result",
@@ -142,7 +144,12 @@ export const createDeviceSocket = (
         try {
           const { data, nonce } = input;
 
-          o.next({ type: "bulk-progress", progress: 0 });
+          o.next({
+            type: "bulk-progress",
+            progress: 0,
+            index: 0,
+            total: data.length
+          });
 
           // Execute all apdus and collect last status
           let lastStatus = null;
@@ -154,7 +161,12 @@ export const createDeviceSocket = (
             lastStatus = r.slice(r.length - 2);
             if (lastStatus.toString("hex") !== "9000") break;
             if (interrupted) return;
-            o.next({ type: "bulk-progress", progress: (i + 1) / data.length });
+            o.next({
+              type: "bulk-progress",
+              progress: (i + 1) / data.length,
+              index: i + 1,
+              total: data.length
+            });
           }
 
           if (!lastStatus) {
