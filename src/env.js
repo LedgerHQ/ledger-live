@@ -6,7 +6,11 @@ const env = {
   FORCE_PROVIDER: 0, // in zero case, we will not force provider. otherwise you can force one.
   LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
   MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",
-  BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update"
+  BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
+  EXPLORER_V2:
+    "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
+  EXPLORER_V3:
+    "http://$ledgerExplorerId.explorers.prod.aws.ledger.fr/blockchain/v3"
 };
 
 export type EnvName = $Keys<typeof env>;

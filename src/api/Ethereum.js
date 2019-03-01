@@ -93,6 +93,14 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return data[0].nonce;
     },
 
+    async estimateGasLimitForERC20(address) {
+      const { data } = await network({
+        method: "GET",
+        url: `${baseURL}/addresses/${address}/estimate-gas-limit`
+      });
+      return data.estimated_gas_limit;
+    },
+
     async broadcastTransaction(tx) {
       const { data } = await network({
         method: "POST",
