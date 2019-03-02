@@ -8,7 +8,6 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/live-common/lib/errors";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import Sentry from "react-native-sentry";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 
 import { getAccountBridge } from "../../bridge";
@@ -19,6 +18,7 @@ import StepHeader from "../../components/StepHeader";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateOnDevice from "./ValidateOnDevice";
 import SkipLock from "../../components/behaviour/SkipLock";
+import logger from "../../logger";
 
 type Props = {
   account: Account,
@@ -111,7 +111,7 @@ class Validation extends Component<Props, State> {
           if (e && e.statusCode === 0x6985) {
             error = new UserRefusedOnDevice();
           } else {
-            Sentry.captureException(error);
+            logger.critical(error);
           }
 
           // $FlowFixMe

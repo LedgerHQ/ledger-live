@@ -6,7 +6,7 @@ if [ -e node_modules/react-native-camera/ios/FaceDetector ] ; then
 fi
 cp node_modules/react-native-camera/postinstall_project/projectWithoutFaceDetection.pbxproj node_modules/react-native-camera/ios/RNCamera.xcodeproj/project.pbxproj
 
-rm -f 'node_modules/@segment/analytics-ios/.clang-format'
+rm -f 'node_modules/@segment/analytics-ios/.clang-format' 'third-party/glog-0.3.5/test-driver'
 
 patch --forward -i scripts/rnc-RNCameraManager.patch node_modules/react-native-camera/ios/RN/RNCameraManager.m
 

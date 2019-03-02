@@ -7,7 +7,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import firmwareUpdateMain from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
-import Sentry from "react-native-sentry";
+import logger from "../../logger";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
@@ -67,7 +67,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
         }
       },
       error: error => {
-        Sentry.captureException(error);
+        logger.critical(error);
         if (navigation.replace) {
           navigation.replace("FirmwareUpdateFailure", {
             ...navigation.state.params,
