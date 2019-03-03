@@ -211,10 +211,8 @@ export function makeMockCurrencyBridge(opts?: Opts): CurrencyBridge {
 
       job();
 
-      return {
-        unsubscribe() {
-          unsubscribed = true;
-        }
+      return () => {
+        unsubscribed = true;
       };
     });
 

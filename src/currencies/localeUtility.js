@@ -2,8 +2,8 @@
 
 import memoize from "lodash/memoize";
 
-export const getFragPositions = memoize(
-  (locale: string): Array<*> => {
+export const getFragPositions: (locale: string) => Array<*> = memoize(
+  locale => {
     const res = (-1).toLocaleString(locale, {
       currency: "USD",
       style: "currency"
@@ -38,24 +38,24 @@ export const getFragPositions = memoize(
 );
 
 // returns decimal and thousands separator
-export const getSeparators = memoize(
-  (
-    locale: string
-  ): {
-    decimal: ?string,
-    thousands: ?string // FIXME rename to group
-  } => {
-    const res = (10000.2).toLocaleString(locale);
-    let decimal, thousands;
-    for (let i = 0; i < res.length; i++) {
-      const c = res[i];
-      if (/[0-9]/.test(c)) continue;
-      if (!thousands) {
-        thousands = c;
-      } else {
-        decimal = c;
-      }
+// FIXME: rename thousands to group
+export type GetSeparators = (
+  locale: string
+) => {
+  decimal: ?string,
+  thousands: ?string
+};
+export const getSeparators: GetSeparators = memoize(locale => {
+  const res = (10000.2).toLocaleString(locale);
+  let decimal, thousands;
+  for (let i = 0; i < res.length; i++) {
+    const c = res[i];
+    if (/[0-9]/.test(c)) continue;
+    if (!thousands) {
+      thousands = c;
+    } else {
+      decimal = c;
     }
-    return { decimal, thousands };
   }
-);
+  return { decimal, thousands };
+});

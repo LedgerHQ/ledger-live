@@ -1,6 +1,6 @@
 // @flow
 
-import { Observable, from, throwError, defer, timer } from "rxjs";
+import { Observable, throwError, timer } from "rxjs";
 import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import type Transport from "@ledgerhq/hw-transport";
 import {
@@ -156,4 +156,5 @@ export const retryWhileErrors = (acceptError: Error => boolean) => (
 export const withDevicePolling = (deviceId: string) => <T>(
   job: (Transport<*>) => Observable<T>,
   acceptError: Error => boolean = genericCanRetryOnError
-) => withDevice(deviceId)(job).pipe(retryWhen(retryWhileErrors(acceptError)));
+): Observable<T> =>
+  withDevice(deviceId)(job).pipe(retryWhen(retryWhileErrors(acceptError)));
