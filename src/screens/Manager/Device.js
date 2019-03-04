@@ -115,10 +115,12 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
             deviceId={meta.deviceId}
           />
         </View>
-        <DeviceNameRow
-          deviceId={meta.deviceId}
-          initialDeviceName={meta.deviceName}
-        />
+        {meta.wired ? null : (
+          <DeviceNameRow
+            deviceId={meta.deviceId}
+            initialDeviceName={meta.deviceName}
+          />
+        )}
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
