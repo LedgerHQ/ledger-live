@@ -53,9 +53,9 @@ class RepairDevice extends Component<Props, State> {
     this.setState({ ready: true });
   };
 
-  onSelectDevice = deviceId => {
+  onSelectDevice = meta => {
     this.setState({ selected: true });
-    this.sub = firmwareUpdateRepair(deviceId).subscribe({
+    this.sub = firmwareUpdateRepair(meta.deviceId).subscribe({
       next: patch => {
         this.setState(patch);
       },

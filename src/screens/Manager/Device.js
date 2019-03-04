@@ -100,31 +100,33 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
   close = () => this.setState({ opened: false });
 
   render() {
-    const deviceId = this.props.navigation.getParam("deviceId");
     const meta = this.props.navigation.getParam("meta");
 
     return (
       <ScrollView style={styles.root} contentContainerStyle={styles.container}>
         <TrackScreen category="Manager" name="Device" />
         <View style={styles.device}>
-          <DeviceNanoAction />
+          <DeviceNanoAction modelId={meta.modelId} wired={meta.wired} />
           <LText secondary semiBold style={styles.deviceName}>
             {deviceNames.nanoX.fullDeviceName}
           </LText>
-          <FirmwareUpdateRow deviceInfo={meta.deviceInfo} deviceId={deviceId} />
+          <FirmwareUpdateRow
+            deviceInfo={meta.deviceInfo}
+            deviceId={meta.deviceId}
+          />
         </View>
         <DeviceNameRow
-          deviceId={deviceId}
+          deviceId={meta.deviceId}
           initialDeviceName={meta.deviceName}
         />
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
-        <UnpairRow onPress={this.open} deviceId={deviceId} />
+        <UnpairRow onPress={this.open} deviceId={meta.deviceId} />
         <DeviceAction
           opened={this.state.opened}
           onClose={this.close}
-          deviceId={deviceId}
+          deviceId={meta.deviceId}
         />
       </ScrollView>
     );

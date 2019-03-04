@@ -17,8 +17,10 @@ import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
   action: () => void,
+  modelId: *,
   transaction: *,
   account: *,
+  wired: boolean,
 };
 const { width } = getWindowDimensions();
 
@@ -76,7 +78,7 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
   };
 
   render() {
-    const { transaction, account } = this.props;
+    const { transaction, account, modelId, wired } = this.props;
     const { total } = this.state;
     const bridge = getAccountBridge(account);
     const amount = bridge.getTransactionAmount(account, transaction);
@@ -87,6 +89,8 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
         <View style={styles.innerContainer}>
           <View style={styles.picture}>
             <DeviceNanoAction
+              modelId={modelId}
+              wired={wired}
               action="both"
               width={width * 0.8}
               screen="validation"

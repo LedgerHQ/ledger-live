@@ -19,6 +19,7 @@ import KeyboardView from "../components/KeyboardView";
 import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
 import DeviceJob from "../components/DeviceJob";
 import { saveBleDeviceName } from "../actions/ble";
+import type { DeviceMeta } from "../components/DeviceJob/types";
 
 const MAX_DEVICE_NAME = 32;
 
@@ -51,7 +52,7 @@ class EditDeviceName extends PureComponent<
   {
     name: string,
     error: ?Error,
-    connecting: boolean,
+    connecting: ?DeviceMeta,
   },
 > {
   static navigationOptions = {
@@ -64,7 +65,7 @@ class EditDeviceName extends PureComponent<
   state = {
     name: this.initialName,
     error: null,
-    connecting: false,
+    connecting: null,
   };
 
   onChangeText = (name: string) => {
@@ -94,7 +95,12 @@ class EditDeviceName extends PureComponent<
         () =>
           this.setState(prevState => ({
             name: prevState.name.trim(),
-            connecting: true,
+            connecting: {
+              deviceId: this.props.navigation.getParam("deviceId"),
+              deviceName: prevState.name.trim(),
+              modelId: "nanoX",
+              wired: false,
+            },
           })),
         800,
       );
@@ -104,7 +110,7 @@ class EditDeviceName extends PureComponent<
   };
 
   onCancel = () => {
-    this.setState({ connecting: false });
+    this.setState({ connecting: null });
   };
 
   onDone = () => {
@@ -115,8 +121,6 @@ class EditDeviceName extends PureComponent<
 
   render() {
     const { name, error, connecting } = this.state;
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
     const remainingCount = MAX_DEVICE_NAME - name.length;
     return (
       <SafeAreaView style={styles.safearea}>
@@ -154,8 +158,7 @@ class EditDeviceName extends PureComponent<
           </View>
 
           <DeviceJob
-            deviceName={name}
-            deviceId={connecting ? deviceId : null}
+            meta={connecting}
             onCancel={this.onCancel}
             onDone={this.onDone}
             steps={[connectingStep, editDeviceName(name)]}

@@ -71,8 +71,8 @@ export class DebugDevices extends PureComponent<{
     title: "Debug Devices",
   };
 
-  onSelect = (deviceId: string) => {
-    this.props.navigation.navigate("DebugBLE", { deviceId });
+  onSelect = (meta: *) => {
+    this.props.navigation.navigate("DebugBLE", meta);
   };
 
   render() {

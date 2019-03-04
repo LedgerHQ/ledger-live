@@ -83,7 +83,7 @@ class Manager extends Component<
     this.setState({ toForget: [] });
   };
 
-  onSelect = (deviceId: string, meta: Object) => {
+  onSelect = (meta: Object) => {
     const { fullVersion, seVersion, mcuVersion } = meta.deviceInfo;
     track("ManagerDeviceEntered", {
       fullVersion,
@@ -91,7 +91,6 @@ class Manager extends Component<
       mcuVersion,
     });
     this.props.navigation.navigate("ManagerMain", {
-      deviceId,
       meta,
     });
   };

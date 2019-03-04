@@ -71,11 +71,11 @@ class ConnectDevice extends Component<Props> {
     }
   }
 
-  onSelectDevice = (deviceId: string) => {
+  onSelectDevice = (meta: *) => {
     const { navigation, account } = this.props;
     navigation.navigate("ReceiveConfirmation", {
       accountId: account.id,
-      deviceId,
+      ...meta,
     });
   };
 

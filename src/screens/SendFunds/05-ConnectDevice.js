@@ -41,12 +41,12 @@ class ConnectDevice extends Component<Props> {
     ),
   };
 
-  onSelectDevice = (deviceId: string) => {
+  onSelectDevice = (meta: *) => {
     const { navigation } = this.props;
     // $FlowFixMe
     navigation.replace("SendValidation", {
       ...navigation.state.params,
-      deviceId,
+      ...meta,
     });
   };
 

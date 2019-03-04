@@ -3,14 +3,19 @@ import React, { PureComponent } from "react";
 import DeviceNanoXAction from "./DeviceNanoXAction";
 import DeviceNanoSAction from "./DeviceNanoSAction";
 
-class DeviceNanoAction extends PureComponent<{
-  connected?: boolean,
+export type PropsExceptModelId = {
+  wired?: boolean,
   action?: "left" | "both" | "right",
   screen?: "validation" | "home" | "pin" | "empty",
   width: number,
   error?: Error,
-  modelId?: "nanoS" | "nanoX",
-}> {
+};
+
+type Props = PropsExceptModelId & {
+  modelId?: "nanoS" | "nanoX" | "blue",
+};
+
+class DeviceNanoAction extends PureComponent<Props> {
   static defaultProps = {
     width: 272,
     modelId: "nanoX",

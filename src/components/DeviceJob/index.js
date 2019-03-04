@@ -5,18 +5,17 @@ import { Observable, Subject, from } from "rxjs";
 import debounce from "lodash/debounce";
 import { mergeMap, last, tap, filter } from "rxjs/operators";
 import StepRunnerModal from "./StepRunnerModal";
-import type { Step } from "./types";
+import type { Step, DeviceMeta } from "./types";
 
 const runStep = (
   step: Step,
-  deviceId: string,
   meta: Object,
   onDoneO: Observable<*>,
-): Observable<Object> => step.run(deviceId, meta, onDoneO);
+): Observable<Object> => step.run(meta, onDoneO);
 
 const chainSteps = (
   steps: Step[],
-  deviceId: string,
+  meta: DeviceMeta,
   onStepEnter: (number, Object) => void,
   onDoneO: Observable<number>,
 ): Observable<Object> =>
@@ -25,26 +24,20 @@ const chainSteps = (
       meta.pipe(
         tap(meta => onStepEnter(i, meta)),
         mergeMap(meta =>
-          runStep(
-            step,
-            deviceId,
-            meta,
-            onDoneO.pipe(filter(index => index === i)),
-          ),
+          runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
         ),
         last(),
       ),
-    from([{}]),
+    from([meta]),
   );
 
 class DeviceJob extends Component<
   {
-    // as soon as deviceId is set, the DeviceJob starts
-    deviceId: ?string,
+    // as soon as meta is set, the DeviceJob starts
+    meta: ?DeviceMeta,
     steps: Step[],
-    onDone: (string, Object) => void,
+    onDone: Object => void,
     onCancel: () => void,
-    deviceName: ?string,
     editMode?: boolean,
     onStepEntered?: (number, Object) => void,
   },
@@ -71,17 +64,17 @@ class DeviceJob extends Component<
   onDoneSubject = new Subject();
 
   componentDidMount() {
-    const { deviceId } = this.props;
-    if (deviceId) {
-      this.onStart(deviceId);
+    const { meta } = this.props;
+    if (meta) {
+      this.onStart(meta);
     }
   }
 
   componentDidUpdate(prevProps: *) {
-    const { deviceId } = this.props;
-    if (deviceId !== prevProps.deviceId) {
-      if (deviceId) {
-        this.onStart(deviceId);
+    const { meta } = this.props;
+    if (meta !== prevProps.meta) {
+      if (meta) {
+        this.onStart(meta);
       } else {
         this.debouncedSetStepIndex.cancel();
         if (this.sub) this.sub.unsubscribe();
@@ -108,12 +101,12 @@ class DeviceJob extends Component<
     this.onDoneSubject.next(this.state.stepIndex);
   };
 
-  onStart = (deviceId: string) => {
+  onStart = (meta: DeviceMeta) => {
     this.debouncedSetStepIndex.cancel();
     if (this.sub) this.sub.unsubscribe();
 
     if (this.props.steps.length === 0) {
-      this.props.onDone(deviceId, {});
+      this.props.onDone(meta);
       return;
     }
 
@@ -121,19 +114,19 @@ class DeviceJob extends Component<
       connecting: true,
       error: null,
       stepIndex: 0,
-      meta: {},
+      meta,
     });
 
     this.sub = chainSteps(
       this.props.steps,
-      deviceId,
+      meta,
       this.onStepEntered,
       this.onDoneSubject,
     ).subscribe({
       next: meta => {
         this.debouncedSetStepIndex.cancel();
         this.setState({ connecting: false }, () => {
-          this.props.onDone(deviceId, meta);
+          this.props.onDone(meta);
         });
       },
       error: error => {
@@ -143,10 +136,10 @@ class DeviceJob extends Component<
   };
 
   onRetry = () => {
-    const { deviceId } = this.props;
+    const { meta } = this.props;
     const { connecting, error } = this.state;
-    if (connecting && error && deviceId) {
-      this.onStart(deviceId);
+    if (connecting && error && meta) {
+      this.onStart(meta);
     }
   };
 
@@ -159,10 +152,10 @@ class DeviceJob extends Component<
   };
 
   render() {
-    const { steps, deviceName } = this.props;
+    const { steps, meta } = this.props;
     const { connecting, stepIndex, error } = this.state;
     const step = steps[stepIndex];
-    if (!step) return null;
+    if (!step || !meta) return null;
     return (
       <StepRunnerModal
         isOpened={connecting}
@@ -171,7 +164,7 @@ class DeviceJob extends Component<
         step={step}
         onStepDone={this.onStepDone}
         error={error}
-        deviceName={deviceName}
+        meta={meta}
       />
     );
   }
