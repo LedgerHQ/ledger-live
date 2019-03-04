@@ -7,12 +7,12 @@ import BottomModal from "../BottomModal";
 import Close from "../../icons/Close";
 import Touchable from "../Touchable";
 import colors from "../../colors";
-import type { Step } from "./types";
+import type { Step, DeviceMeta } from "./types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 class SelectDeviceConnectModal extends PureComponent<{
   isOpened: boolean,
-  deviceName: ?string,
+  meta: DeviceMeta,
   onClose: () => void,
   onRetry: () => void,
   onStepDone: () => void,
@@ -21,7 +21,7 @@ class SelectDeviceConnectModal extends PureComponent<{
 }> {
   render() {
     const {
-      deviceName,
+      meta,
       isOpened,
       onClose,
       onRetry,
@@ -39,11 +39,7 @@ class SelectDeviceConnectModal extends PureComponent<{
             Footer={step.ErrorFooter || ErrorFooterGeneric}
           />
         ) : (
-          <step.Body
-            deviceName={deviceName || ""}
-            step={step}
-            onDone={onStepDone}
-          />
+          <step.Body meta={meta} step={step} onDone={onStepDone} />
         )}
         <Touchable
           event="DeviceJobClose"

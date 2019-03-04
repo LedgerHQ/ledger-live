@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet, Image, Platform } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { withNavigationFocus } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -97,7 +97,7 @@ class ChooseDevice extends Component<
     this.setState({ toForget: [] });
   };
 
-  onSelect = (deviceId: string, meta: Object) => {
+  onSelect = (meta: Object) => {
     const { fullVersion, seVersion, mcuVersion } = meta.deviceInfo;
     track("ManagerDeviceEntered", {
       fullVersion,
@@ -105,7 +105,6 @@ class ChooseDevice extends Component<
       mcuVersion,
     });
     this.props.navigation.navigate("ManagerMain", {
-      deviceId,
       meta,
     });
   };
@@ -187,28 +186,24 @@ class ChooseDevice extends Component<
           reset={this.onResetToForget}
         />
 
-        {Platform.OS === "android" && (
-          <>
-            {hasDevices ? (
-              <LText semiBold style={styles.section}>
-                <Trans i18nKey="common.usb" />
-              </LText>
-            ) : (
-              <SectionSeparator style={styles.or} text="OR" />
-            )}
-
-            <SelectDevice
-              showKnownDevices={false}
-              onSelect={this.onSelect}
-              editMode={editMode}
-              steps={[connectingStep, dashboard, genuineCheck, getDeviceName]}
-              onStepEntered={this.onStepEntered}
-              onForgetSelect={this.onForgetSelect}
-              selectedIds={this.state.toForget}
-              ListEmptyComponent={USBEmpty}
-            />
-          </>
+        {hasDevices ? (
+          <LText semiBold style={styles.section}>
+            <Trans i18nKey="common.usb" />
+          </LText>
+        ) : (
+          <SectionSeparator style={styles.or} text="OR" />
         )}
+
+        <SelectDevice
+          showKnownDevices={false}
+          onSelect={this.onSelect}
+          editMode={editMode}
+          steps={[connectingStep, dashboard, genuineCheck, getDeviceName]}
+          onStepEntered={this.onStepEntered}
+          onForgetSelect={this.onForgetSelect}
+          selectedIds={this.state.toForget}
+          ListEmptyComponent={USBEmpty}
+        />
       </View>
     );
   }

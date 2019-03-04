@@ -59,12 +59,4 @@ export const deviceNameByDeviceIdSelector = (
   return d ? d.name : "";
 };
 
-export const deviceNameByNavigationDeviceIdSelector = (
-  s: State,
-  { navigation }: { navigation: * },
-) =>
-  deviceNameByDeviceIdSelector(s, {
-    deviceId: navigation.getParam("deviceId"),
-  });
-
 export default handleActions(handlers, initialState);

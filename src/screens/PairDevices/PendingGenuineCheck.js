@@ -18,7 +18,12 @@ class PendingGenuineCheck extends PureComponent<*> {
       <View style={styles.root}>
         <TrackScreen category="PairDevices" name="PendingGenuineCheck" />
         <View style={styles.nano}>
-          <DeviceNanoAction action="both" screen="validation" width={width} />
+          <DeviceNanoAction
+            modelId="nanoX"
+            action="both"
+            screen="validation"
+            width={width}
+          />
         </View>
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="PairDevices.GenuineCheck.title" />

@@ -33,13 +33,13 @@ import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
 
 export const connectingStep: Step = {
-  Body: ({ deviceName }: *) => (
+  Body: ({ meta }: *) => (
     <RenderStep
       icon={<BluetoothScanning isAnimated />}
       title={
         <Trans
           i18nKey="SelectDevice.steps.connecting.title"
-          values={{ deviceName }}
+          values={{ deviceName: meta.deviceName }}
         />
       }
       description={
@@ -47,8 +47,8 @@ export const connectingStep: Step = {
       }
     />
   ),
-  run: deviceId =>
-    withDevice(deviceId)(() => from([{}])).pipe(
+  run: meta =>
+    withDevice(meta.deviceId)(() => from([meta])).pipe(
       rejectionOp(() => new CantOpenDevice()),
     ),
 };
@@ -56,9 +56,15 @@ export const connectingStep: Step = {
 // TODO genuine step
 
 export const dashboard: Step = {
-  Body: () => (
+  Body: ({ meta }: *) => (
     <RenderStep
-      icon={<DeviceNanoAction screen="home" />}
+      icon={
+        <DeviceNanoAction
+          screen="home"
+          modelId={meta.modelId}
+          wired={meta.wired}
+        />
+      }
       title={
         <Trans
           i18nKey="SelectDevice.steps.dashboard.title"
@@ -67,8 +73,8 @@ export const dashboard: Step = {
       }
     />
   ),
-  run: (deviceId, meta) =>
-    withDevicePolling(deviceId)(transport =>
+  run: meta =>
+    withDevicePolling(meta.deviceId)(transport =>
       from(getDeviceInfo(transport)),
     ).pipe(
       map(deviceInfo => ({
@@ -80,9 +86,16 @@ export const dashboard: Step = {
 };
 
 export const genuineCheck: Step = {
-  Body: () => (
+  Body: ({ meta }: *) => (
     <RenderStep
-      icon={<DeviceNanoAction screen="validation" action="both" />}
+      icon={
+        <DeviceNanoAction
+          screen="validation"
+          action="both"
+          modelId={meta.modelId}
+          wired={meta.wired}
+        />
+      }
       title={
         <Trans
           i18nKey="SelectDevice.steps.genuineCheck.title"
@@ -91,8 +104,8 @@ export const genuineCheck: Step = {
       }
     />
   ),
-  run: (deviceId, meta) =>
-    withDevice(deviceId)(transport =>
+  run: meta =>
+    withDevice(meta.deviceId)(transport =>
       checkDeviceForManager(transport, meta.deviceInfo),
     ).pipe(
       map(genuineResult => ({
@@ -128,8 +141,8 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
       }
     />
   ),
-  run: (deviceId, meta) =>
-    withDevicePolling(deviceId)(transport =>
+  run: meta =>
+    withDevicePolling(meta.deviceId)(transport =>
       from(
         getAddress(
           transport,
@@ -177,8 +190,8 @@ export const accountApp: Account => Step = account => ({
       }
     />
   ),
-  run: (deviceId, meta) =>
-    withDevicePolling(deviceId)(transport =>
+  run: meta =>
+    withDevicePolling(meta.deviceId)(transport =>
       from(
         getAddress(transport, account.currency, account.freshAddressPath).then(
           addressInfo => {
@@ -202,9 +215,16 @@ export const accountApp: Account => Step = account => ({
 });
 
 export const receiveVerifyStep: Account => Step = account => ({
-  Body: ({ onDone }: *) => (
+  Body: ({ onDone, meta }: *) => (
     <RenderStep
-      icon={<DeviceNanoAction width={240} screen="validation" />}
+      icon={
+        <DeviceNanoAction
+          width={240}
+          screen="validation"
+          modelId={meta.modelId}
+          wired={meta.wired}
+        />
+      }
       title={
         <Trans
           i18nKey="SelectDevice.steps.receiveVerify.title"
@@ -232,7 +252,7 @@ export const receiveVerifyStep: Account => Step = account => ({
     </RenderStep>
   ),
   // pass as soon as you tap onDone
-  run: (deviceId, meta, onDoneO) =>
+  run: (meta, onDoneO) =>
     onDoneO.pipe(
       map(() => meta),
       first(),
@@ -240,15 +260,23 @@ export const receiveVerifyStep: Account => Step = account => ({
 });
 
 export const getDeviceName: Step = {
-  Body: () => (
+  Body: ({ meta }: *) => (
     <RenderStep
-      icon={<DeviceNanoAction width={240} action="both" screen="validation" />}
+      icon={
+        <DeviceNanoAction
+          width={240}
+          action="both"
+          screen="validation"
+          modelId={meta.modelId}
+          wired={meta.wired}
+        />
+      }
       title={<Trans i18nKey="SelectDevice.steps.getDeviceName.title" />}
     />
   ),
 
-  run: (deviceId, meta) =>
-    withDevice(deviceId)(transport =>
+  run: meta =>
+    withDevice(meta.deviceId)(transport =>
       from(
         getDeviceNameTransport(transport).then(deviceName => ({
           ...meta,
@@ -259,15 +287,23 @@ export const getDeviceName: Step = {
 };
 
 export const editDeviceName: string => Step = deviceName => ({
-  Body: () => (
+  Body: ({ meta }: *) => (
     <RenderStep
-      icon={<DeviceNanoAction width={240} action="both" screen="validation" />}
+      icon={
+        <DeviceNanoAction
+          width={240}
+          action="both"
+          screen="validation"
+          modelId={meta.modelId}
+          wired={meta.wired}
+        />
+      }
       title={<Trans i18nKey="SelectDevice.steps.editDeviceName.title" />}
     />
   ),
 
-  run: (deviceId, meta) =>
-    withDevice(deviceId)(transport =>
+  run: meta =>
+    withDevice(meta.deviceId)(transport =>
       from(editDeviceNameTransport(transport, deviceName).then(() => meta)),
     ),
 });

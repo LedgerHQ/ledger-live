@@ -42,6 +42,7 @@ type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
     deviceId: string,
+    modelId: string,
     allowNavigation?: boolean,
   },
 }>;
@@ -312,7 +313,11 @@ class ReceiveConfirmation extends Component<Props, State> {
             <View style={styles.modal}>
               <View style={styles.modalBody}>
                 <View style={styles.modalIcon}>
-                  <DeviceNanoAction error={error} />
+                  <DeviceNanoAction
+                    modelId={navigation.getParam("modelId")}
+                    wired={navigation.getParam("wired")}
+                    error={error}
+                  />
                 </View>
                 <LText secondary semiBold style={styles.modalTitle}>
                   <TranslatedError error={error} />
