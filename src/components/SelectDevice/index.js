@@ -26,7 +26,7 @@ type Props = {
   onSelect: (meta: DeviceMeta) => void,
   steps?: Step[],
   // TODO suggest to rename it to `Placeholder`
-  ListEmptyComponent: *,
+  ListEmptyComponent?: *,
   // TODO we need to remove the concept of editMode and selectedIds
   selectedIds?: string[],
   editMode?: boolean,
