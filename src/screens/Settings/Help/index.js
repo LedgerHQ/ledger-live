@@ -11,7 +11,6 @@ import LedgerSupportRow from "./LedgerSupportRow";
 import ClearCacheRow from "./ClearCacheRow";
 import HardResetRow from "./HardResetRow";
 import ConfigureDeviceRow from "./ConfigureDeviceRow";
-import RepairDeviceRow from "./RepairDeviceRow";
 
 class HelpSettings extends PureComponent<{
   navigation: NavigationScreenProp<*>,
@@ -26,7 +25,6 @@ class HelpSettings extends PureComponent<{
         <TrackScreen category="Settings" name="Help" />
         <LedgerSupportRow />
         <ConfigureDeviceRow navigation={this.props.navigation} />
-        <RepairDeviceRow navigation={this.props.navigation} />
         <View style={styles.container}>
           <ClearCacheRow />
           <HardResetRow />
