@@ -8,7 +8,7 @@ import { Trans, translate } from "react-i18next";
 import i18next from "i18next";
 import { compose } from "redux";
 import manager from "@ledgerhq/live-common/lib/manager";
-import Icon from "react-native-vector-icons/dist/Feather";
+import { removeKnownDevice } from "../../actions/ble";
 import {
   connectingStep,
   dashboard,
@@ -16,28 +16,16 @@ import {
   getDeviceName,
 } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
-import RemoveDeviceButton from "../../components/SelectDevice/RemoveDeviceButton";
+import type { DeviceMeta } from "../../components/DeviceJob/types";
 import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
 import LText from "../../components/LText";
-import Circle from "../../components/Circle";
-import Touchable from "../../components/Touchable";
-import { knownDevicesSelector } from "../../reducers/ble";
+import Button from "../../components/Button";
 import type { DeviceLike } from "../../reducers/ble";
-import SectionSeparator from "../../components/SectionSeparator";
-import USBEmpty from "../../components/SelectDevice/USBEmpty";
-import BluetoothEmpty from "../../components/SelectDevice/BluetoothEmpty";
-
-const IconPlus = () => (
-  <Circle bg={colors.live} size={14}>
-    <Icon name="plus" size={10} color={colors.white} />
-  </Circle>
-);
-
-const mapStateToProps = state => ({
-  knownDevices: knownDevicesSelector(state),
-});
+import Trash from "../../icons/Trash";
+import BottomModal from "../../components/BottomModal";
+import ModalBottomAction from "../../components/ModalBottomAction";
 
 class ChooseDevice extends Component<
   {
@@ -45,9 +33,10 @@ class ChooseDevice extends Component<
     isFocused: boolean,
     readOnlyModeEnabled: boolean,
     knownDevices: DeviceLike[],
+    removeKnownDevice: string => void,
   },
   {
-    toForget: string[],
+    showMenu: boolean,
   },
 > {
   static navigationOptions = ({ navigation }) => {
@@ -66,35 +55,19 @@ class ChooseDevice extends Component<
     };
   };
 
-  static getDerivedStateFromProps({ navigation }, { toForget }) {
-    if (toForget.length > 0 && !navigation.getParam("editMode")) {
-      return {
-        toForget: [],
-      };
-    }
-    return null;
-  }
-
   state = {
-    toForget: [],
+    showMenu: false,
   };
 
-  onPairNewDevice = () => {
-    const { navigation } = this.props;
-    navigation.navigate("PairDevices");
+  chosenDevice: DeviceMeta;
+
+  onShowMenu = (device: DeviceMeta) => {
+    this.chosenDevice = device;
+    this.setState({ showMenu: true });
   };
 
-  onForgetSelect = (id: string) => {
-    this.setState(state => {
-      const toForget = state.toForget.includes(id)
-        ? state.toForget.filter(d => d !== id)
-        : [...state.toForget, id];
-      return { toForget };
-    });
-  };
-
-  onResetToForget = () => {
-    this.setState({ toForget: [] });
+  onHideMenu = () => {
+    this.setState({ showMenu: false });
   };
 
   onSelect = (meta: Object) => {
@@ -128,6 +101,12 @@ class ChooseDevice extends Component<
     }
   };
 
+  unpair = async () => {
+    const { removeKnownDevice } = this.props;
+    removeKnownDevice(this.chosenDevice.deviceId);
+    this.onHideMenu();
+  };
+
   componentDidMount() {
     const { readOnlyModeEnabled } = this.props;
 
@@ -140,12 +119,11 @@ class ChooseDevice extends Component<
   }
 
   render() {
-    const { isFocused, knownDevices } = this.props;
-    const hasDevices = knownDevices.length > 0;
+    const { isFocused } = this.props;
+    const { showMenu } = this.state;
 
     if (!isFocused) return null;
 
-    const editMode = this.props.navigation.getParam("editMode");
     return (
       <View style={styles.root}>
         <TrackScreen category="Manager" name="ChooseDevice" />
@@ -153,57 +131,36 @@ class ChooseDevice extends Component<
           <Trans i18nKey="manager.connect" />
         </LText>
 
-        {hasDevices && (
-          <Touchable
-            event="PairNewDevice"
-            style={styles.bluetoothHeader}
-            onPress={this.onPairNewDevice}
+        <SelectDevice
+          onSelect={this.onSelect}
+          steps={[connectingStep, dashboard, genuineCheck, getDeviceName]}
+          onStepEntered={this.onStepEntered}
+          onBluetoothDeviceAction={this.onShowMenu}
+        />
+
+        {this.chosenDevice && (
+          <BottomModal
+            id="DeviceItemModal"
+            isOpened={showMenu}
+            onClose={this.onHideMenu}
           >
-            <LText semiBold style={styles.section}>
-              <Trans i18nKey="common.bluetooth" />
-            </LText>
-            <View style={styles.addContainer}>
-              <LText semiBold style={styles.add}>
-                <Trans i18nKey="common.add" />
-              </LText>
-              <IconPlus />
-            </View>
-          </Touchable>
+            <ModalBottomAction
+              title={this.chosenDevice.deviceName}
+              footer={
+                <View style={styles.footerContainer}>
+                  <Button
+                    event="HardResetModalAction"
+                    type="alert"
+                    IconLeft={Trash}
+                    title={<Trans i18nKey="common.forgetDevice" />}
+                    onPress={this.unpair}
+                    containerStyle={styles.buttonContainer}
+                  />
+                </View>
+              }
+            />
+          </BottomModal>
         )}
-        <SelectDevice
-          showDiscoveredDevices={false}
-          onSelect={this.onSelect}
-          editMode={editMode}
-          steps={[connectingStep, dashboard, genuineCheck, getDeviceName]}
-          onStepEntered={this.onStepEntered}
-          onForgetSelect={this.onForgetSelect}
-          selectedIds={this.state.toForget}
-          ListEmptyComponent={BluetoothEmpty}
-        />
-        <RemoveDeviceButton
-          show={editMode}
-          deviceIds={this.state.toForget}
-          reset={this.onResetToForget}
-        />
-
-        {hasDevices ? (
-          <LText semiBold style={styles.section}>
-            <Trans i18nKey="common.usb" />
-          </LText>
-        ) : (
-          <SectionSeparator style={styles.or} text="OR" />
-        )}
-
-        <SelectDevice
-          showKnownDevices={false}
-          onSelect={this.onSelect}
-          editMode={editMode}
-          steps={[connectingStep, dashboard, genuineCheck, getDeviceName]}
-          onStepEntered={this.onStepEntered}
-          onForgetSelect={this.onForgetSelect}
-          selectedIds={this.state.toForget}
-          ListEmptyComponent={USBEmpty}
-        />
       </View>
     );
   }
@@ -243,9 +200,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
   },
+  footerContainer: {
+    flexDirection: "row",
+  },
+  buttonContainer: {
+    flex: 1,
+  },
+  buttonMarginLeft: {
+    marginLeft: 16,
+  },
 });
 
 export default compose(
   translate(),
-  connect(mapStateToProps),
+  connect(
+    null,
+    { removeKnownDevice },
+  ),
 )(withNavigationFocus(ChooseDevice));

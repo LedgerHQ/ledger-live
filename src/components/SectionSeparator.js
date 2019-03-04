@@ -8,7 +8,7 @@ import LText from "./LText";
 type Props = {
   thin?: boolean,
   lineColor?: string,
-  text?: string,
+  text?: React$Node,
   textStyle?: string,
   style?: {},
 };

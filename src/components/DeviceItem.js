@@ -11,6 +11,7 @@ import IconNanoX from "../icons/NanoX";
 import IconArrowRight from "../icons/ArrowRight";
 import USB from "../icons/USB";
 import Ellipsis from "../icons/Ellipsis";
+import type { DeviceMeta } from "./DeviceJob/types";
 
 export type Device = {
   id: string,
@@ -25,7 +26,7 @@ type Props = {
   withArrow?: boolean,
   description?: React$Node,
   onSelect?: Device => any,
-  onShowMenuSelect?: string => any,
+  onBluetoothDeviceAction?: DeviceMeta => any,
 };
 
 const iconByFamily = {
@@ -47,18 +48,18 @@ export default class DeviceItem extends PureComponent<Props> {
     return onSelect(device);
   };
 
-  onForget = () => {
-    const { device, onShowMenuSelect } = this.props;
-    invariant(onShowMenuSelect, "onForget required");
-    return onShowMenuSelect(device.id);
-  };
-
   render() {
-    const { name, id, disabled, description, withArrow } = this.props;
+    const {
+      name,
+      id,
+      disabled,
+      description,
+      withArrow,
+      onBluetoothDeviceAction,
+    } = this.props;
 
     const family = id.split("|")[0];
     const CustomIcon = family && iconByFamily[family];
-
     return (
       <View style={styles.outer}>
         <View style={styles.inner}>
@@ -100,8 +101,19 @@ export default class DeviceItem extends PureComponent<Props> {
                 ) : null}
               </View>
               {!withArrow &&
-                family !== "usb" && (
-                  <Touchable event="DeviceItemForget" onPress={this.onForget}>
+                family !== "usb" &&
+                !!onBluetoothDeviceAction && (
+                  <Touchable
+                    event="DeviceItemForget"
+                    onPress={() =>
+                      onBluetoothDeviceAction({
+                        deviceId: id,
+                        deviceName: name,
+                        modelId: "nanoX",
+                        wired: false,
+                      })
+                    }
+                  >
                     <Ellipsis />
                   </Touchable>
                 )}
