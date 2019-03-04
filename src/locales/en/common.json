@@ -34,7 +34,11 @@
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
     "notAvailable": "Not available",
-    "import": "Import"
+    "import": "Import",
+    "bluetooth": "Bluetooth",
+    "usb": "USB",
+    "add": "Add",
+    "forgetDevice": "Forget device"
   },
   "errors": {
     "AccountNameRequired": {
@@ -862,8 +866,9 @@
   },
   "SelectDevice": {
     "title": "Pair new device",
-    "deviceNotFoundPairNewDevice": "Pair new device",
+    "deviceNotFoundPairNewDevice": "Pair new Ledger Nano X",
     "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
+    "usb": "To use USB, just plug and enter your PIN Code on your device",
     "steps": {
       "connecting": {
         "title": "Connecting {{deviceName}}",
@@ -942,6 +947,7 @@
   },
   "manager": {
     "title": "Manager",
+    "connect": "Connect your device",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",

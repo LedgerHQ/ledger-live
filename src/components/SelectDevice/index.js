@@ -1,20 +1,23 @@
 // @flow
-import React, { Component, Fragment } from "react";
-import { StyleSheet } from "react-native";
+import React, { Component } from "react";
+import { StyleSheet, View } from "react-native";
 // $FlowFixMe
 import { FlatList } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
+import { Trans } from "react-i18next";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
 import DeviceJob from "../DeviceJob";
 import type { Step } from "../DeviceJob/types";
-import Header from "./Header";
-import Footer from "./Footer";
 import { setReadOnlyMode } from "../../actions/settings";
+import BottomModal from "../BottomModal";
+import Button from "../Button";
+import ModalBottomAction from "../ModalBottomAction";
+import Trash from "../../icons/Trash";
 
 type Props = {
   onForgetSelect?: (deviceId: string) => any,
@@ -22,6 +25,9 @@ type Props = {
   selectedIds?: string[],
   steps: Step[],
   editMode?: boolean,
+  showDiscoveredDevices: boolean,
+  showKnownDevices: boolean,
+  ListEmptyComponent: *,
   // connect-ed
   knownDevices: Array<{
     id: string,
@@ -43,12 +49,15 @@ type State = {
   scanning: boolean,
   connecting: boolean,
   connectingId: ?string,
+  showMenu: boolean,
 };
 
 class SelectDevice extends Component<Props, State> {
   static defaultProps = {
     steps: [],
     filter: () => true,
+    showDiscoveredDevices: true,
+    showKnownDevices: true,
   };
 
   state = {
@@ -56,6 +65,7 @@ class SelectDevice extends Component<Props, State> {
     scanning: true,
     connecting: false,
     connectingId: null,
+    showMenu: false,
   };
 
   listingSubscription: *;
@@ -71,30 +81,35 @@ class SelectDevice extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.listingSubscription.unsubscribe();
+    if (this.listingSubscription) {
+      this.listingSubscription.unsubscribe();
+    }
   }
 
   observe() {
+    const { showDiscoveredDevices } = this.props;
     if (this.listingSubscription) {
       this.listingSubscription.unsubscribe();
       this.setState({ devices: [] });
     }
-    this.listingSubscription = discoverDevices(this.props.filter).subscribe({
-      complete: () => {
-        this.setState({ scanning: false });
-      },
-      next: e =>
-        this.setState(({ devices }) => ({
-          devices:
-            e.type === "add"
-              ? devices.concat({
-                  id: e.id,
-                  name: e.name,
-                  family: e.family,
-                })
-              : devices.filter(d => d.id !== e.id),
-        })),
-    });
+    this.listingSubscription =
+      showDiscoveredDevices &&
+      discoverDevices(this.props.filter).subscribe({
+        complete: () => {
+          this.setState({ scanning: false });
+        },
+        next: e =>
+          this.setState(({ devices }) => ({
+            devices:
+              e.type === "add"
+                ? devices.concat({
+                    id: e.id,
+                    name: e.name,
+                    family: e.family,
+                  })
+                : devices.filter(d => d.id !== e.id),
+          })),
+      });
   }
 
   onSelect = ({ id }) => {
@@ -114,20 +129,21 @@ class SelectDevice extends Component<Props, State> {
     this.setState({ connecting: false });
   };
 
+  onShowMenu = () => {
+    this.setState({ showMenu: true });
+  };
+
+  onHideMenu = () => {
+    this.setState({ showMenu: false });
+  };
+
   renderItem = ({ item }: *) => (
     <DeviceItem
       key={item.id}
       device={item}
       onSelect={this.onSelect}
       withArrow={!!this.props.onboarding}
-      onForgetSelect={
-        this.props.editMode ? this.props.onForgetSelect : undefined
-      }
-      selected={
-        this.props.selectedIds
-          ? this.props.selectedIds.includes(item.id)
-          : undefined
-      }
+      onShowMenuSelect={this.onShowMenu}
       {...item}
     />
   );
@@ -135,20 +151,25 @@ class SelectDevice extends Component<Props, State> {
   keyExtractor = (item: *) => item.id;
 
   render() {
-    const { knownDevices, steps, editMode, onStepEntered } = this.props;
-    const { devices, connecting, connectingId } = this.state;
+    const {
+      showKnownDevices,
+      ListEmptyComponent,
+      knownDevices,
+      steps,
+      editMode,
+      onStepEntered,
+    } = this.props;
 
-    const data = devices.concat(knownDevices);
+    const { devices, connecting, connectingId, showMenu } = this.state;
+    const data = devices.concat(showKnownDevices ? knownDevices : []);
     const connectingDevice = data.find(d => d.id === connectingId);
 
     return (
-      <Fragment>
+      <View>
         <FlatList
-          contentContainerStyle={styles.root}
           data={data}
           renderItem={this.renderItem}
-          ListHeaderComponent={Header}
-          ListFooterComponent={editMode ? null : Footer}
+          ListEmptyComponent={ListEmptyComponent || View}
           keyExtractor={this.keyExtractor}
         />
         <DeviceJob
@@ -160,17 +181,44 @@ class SelectDevice extends Component<Props, State> {
           onDone={this.onDone}
           editMode={editMode}
         />
-      </Fragment>
+        {showMenu && (
+          <BottomModal
+            id="DeviceItemModal"
+            isOpened={showMenu}
+            onClose={this.onHideMenu}
+          >
+            <ModalBottomAction
+              title="NO NAME YET" // FIXME get the name from @gre refactor
+              footer={
+                <View style={styles.footerContainer}>
+                  <Button
+                    event="HardResetModalAction"
+                    type="alert"
+                    IconLeft={Trash}
+                    title={<Trans i18nKey="common.forgetDevice" />}
+                    onPress={() => null}
+                    containerStyle={styles.buttonContainer}
+                  />
+                </View>
+              }
+            />
+          </BottomModal>
+        )}
+      </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
-  root: {
-    padding: 16,
+  footerContainer: {
+    flexDirection: "row",
+  },
+  buttonContainer: {
+    flex: 1,
+  },
+  buttonMarginLeft: {
+    marginLeft: 16,
   },
 });
-
 export default connect(
   createStructuredSelector({
     knownDevices: knownDevicesSelector,
