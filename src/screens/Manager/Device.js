@@ -11,6 +11,7 @@ import type {
   FinalFirmware,
 } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
@@ -25,7 +26,6 @@ import FirmwareUpdateRow from "./FirmwareUpdateRow";
 import AuthenticityRow from "./AuthenticityRow";
 import UnpairRow from "./UnpairRow";
 import DeviceAction from "./DeviceAction";
-import { getDeviceModel } from "@ledgerhq/devices";
 
 type Props = {
   navigation: NavigationScreenProp<{
