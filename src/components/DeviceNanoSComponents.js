@@ -102,19 +102,17 @@ export const Usb = () => (
 );
 
 export const ValidationScreen = () => (
-  <>
-    <G transform="translate(49 13)">
-      <Mask id="validate-mask" fill="#fff">
-        <Path
-          id="validate"
-          d="M13.62 2.608l-8.22 8.22-3.02-3.02a.375.375 0 0 0-.53 0l-.884.884a.375.375 0 0 0 0 .53l4.169 4.17a.375.375 0 0 0 .53 0l9.37-9.37a.375.375 0 0 0 0-.53l-.884-.884a.375.375 0 0 0-.53 0z"
-        />
-      </Mask>
-      <G fill="#66BE54" mask="url(#validate-mask)">
-        <Path d="M0 0h16v16H0z" />
-      </G>
+  <G transform="translate(49 13)">
+    <Mask id="validate-mask" fill="#fff">
+      <Path
+        id="validate"
+        d="M13.62 2.608l-8.22 8.22-3.02-3.02a.375.375 0 0 0-.53 0l-.884.884a.375.375 0 0 0 0 .53l4.169 4.17a.375.375 0 0 0 .53 0l9.37-9.37a.375.375 0 0 0 0-.53l-.884-.884a.375.375 0 0 0-.53 0z"
+      />
+    </Mask>
+    <G fill="#66BE54" mask="url(#validate-mask)">
+      <Path d="M0 0h16v16H0z" />
     </G>
-  </>
+  </G>
 );
 
 export const PinScreen = ({ color }: { color: string }) => (
@@ -128,19 +126,17 @@ export const PinScreen = ({ color }: { color: string }) => (
 );
 
 export const HomeScreen = ({ color }: { color: string }) => (
-  <>
-    <G transform="translate(49 13)">
-      <Mask id="home-mask" fill="#fff">
-        <Path
-          id="home"
-          d="M2.75 6.367v6.966c0 .322.261.584.583.584h9.334a.583.583 0 0 0 .583-.584V6.367L8 2.283 2.75 6.367zm-1.21-.959l6-4.667a.75.75 0 0 1 .92 0l6 4.667a.75.75 0 0 1 .29.592v7.333c0 1.15-.933 2.084-2.083 2.084H3.333a2.083 2.083 0 0 1-2.083-2.084V6a.75.75 0 0 1 .29-.592zM6.75 8.75v5.917a.75.75 0 0 1-1.5 0V8A.75.75 0 0 1 6 7.25h4a.75.75 0 0 1 .75.75v6.667a.75.75 0 0 1-1.5 0V8.75h-2.5z"
-        />
-      </Mask>
-      <G fill={color} mask="url(#home-mask)">
-        <Path d="M0 0h16v16H0z" />
-      </G>
+  <G transform="translate(49 13)">
+    <Mask id="home-mask" fill="#fff">
+      <Path
+        id="home"
+        d="M2.75 6.367v6.966c0 .322.261.584.583.584h9.334a.583.583 0 0 0 .583-.584V6.367L8 2.283 2.75 6.367zm-1.21-.959l6-4.667a.75.75 0 0 1 .92 0l6 4.667a.75.75 0 0 1 .29.592v7.333c0 1.15-.933 2.084-2.083 2.084H3.333a2.083 2.083 0 0 1-2.083-2.084V6a.75.75 0 0 1 .29-.592zM6.75 8.75v5.917a.75.75 0 0 1-1.5 0V8A.75.75 0 0 1 6 7.25h4a.75.75 0 0 1 .75.75v6.667a.75.75 0 0 1-1.5 0V8.75h-2.5z"
+      />
+    </Mask>
+    <G fill={color} mask="url(#home-mask)">
+      <Path d="M0 0h16v16H0z" />
     </G>
-  </>
+  </G>
 );
 
 export const ErrorScreen = ({
