@@ -10,7 +10,6 @@ import type {
 import manager from "@ledgerhq/live-common/lib/manager";
 import LText from "../../components/LText";
 import colors from "../../colors";
-import Button from "../../components/Button";
 
 type Props = {
   navigation: *,
