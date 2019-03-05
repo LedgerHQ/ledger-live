@@ -5,7 +5,7 @@ import DeviceNanoSAction from "./DeviceNanoSAction";
 
 export type PropsExceptModelId = {
   wired?: boolean,
-  action?: "left" | "both" | "right",
+  action?: "left" | "accept",
   screen?: "validation" | "home" | "pin" | "empty",
   width: number,
   error?: Error,

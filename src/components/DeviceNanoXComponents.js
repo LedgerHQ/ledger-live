@@ -64,7 +64,7 @@ export const Hints = ({
   action,
   color,
 }: {
-  action: "both" | "left" | "right",
+  action: "accept" | "left",
   color: string,
 }) => (
   <>
@@ -74,15 +74,13 @@ export const Hints = ({
         <Stop offset="100%" stopColor={color} />
       </LinearGradient>
     </Defs>
-    {action === "both" ? (
+    {action === "accept" ? (
       <>
         <LeftHint />
         <RightHint />
       </>
     ) : action === "left" ? (
       <LeftHint />
-    ) : action === "right" ? (
-      <RightHint />
     ) : null}
   </>
 );

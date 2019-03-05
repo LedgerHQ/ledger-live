@@ -102,7 +102,7 @@ export const genuineCheck: Step = {
         icon={
           <DeviceNanoAction
             screen="validation"
-            action="both"
+            action="accept"
             modelId={meta.modelId}
             wired={meta.wired}
           />
@@ -290,7 +290,7 @@ export const getDeviceName: Step = {
       icon={
         <DeviceNanoAction
           width={240}
-          action="both"
+          action="accept"
           screen="validation"
           modelId={meta.modelId}
           wired={meta.wired}
@@ -317,7 +317,7 @@ export const editDeviceName: string => Step = deviceName => ({
       icon={
         <DeviceNanoAction
           width={240}
-          action="both"
+          action="accept"
           screen="validation"
           modelId={meta.modelId}
           wired={meta.wired}

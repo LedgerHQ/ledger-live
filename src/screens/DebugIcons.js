@@ -17,10 +17,10 @@ class DebugIcons extends Component<{}> {
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <DeviceNanoAction width={250} />
-          <DeviceNanoAction width={250} action="both" screen="validation" />
+          <DeviceNanoAction width={250} action="accept" screen="validation" />
           <DeviceNanoAction width={250} screen="home" />
           <DeviceNanoAction width={250} action="left" screen="empty" wired />
-          <DeviceNanoAction width={250} action="right" screen="pin" />
+          <DeviceNanoAction width={250} action="accept" screen="pin" />
           <DeviceNanoAction width={250} error={new UserRefusedAddress()} />
           <DeviceNanoAction width={250} error={new Error("wahtevr")} />
           <DeviceNanoAction width={250} wired />
@@ -40,7 +40,7 @@ class DebugIcons extends Component<{}> {
             width={250}
             modelId="nanoS"
             wired
-            action="both"
+            action="accept"
             screen="validation"
           />
           <DeviceNanoAction width={250} modelId="nanoS" wired action="left" />
@@ -49,7 +49,7 @@ class DebugIcons extends Component<{}> {
             modelId="nanoS"
             wired
             screen="home"
-            action="right"
+            action="accept"
           />
           <DeviceNanoAction width={250} modelId="nanoS" wired screen="pin" />
         </ScrollView>

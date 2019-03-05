@@ -91,7 +91,7 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
             <DeviceNanoAction
               modelId={modelId}
               wired={wired}
-              action="both"
+              action="accept"
               width={width * 0.8}
               screen="validation"
             />

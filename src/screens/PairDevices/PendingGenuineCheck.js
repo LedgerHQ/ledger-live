@@ -20,7 +20,7 @@ class PendingGenuineCheck extends PureComponent<*> {
         <View style={styles.nano}>
           <DeviceNanoAction
             modelId="nanoX"
-            action="both"
+            action="accept"
             screen="validation"
             width={width}
           />

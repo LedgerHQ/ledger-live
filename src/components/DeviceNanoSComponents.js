@@ -57,7 +57,7 @@ export const Hints = ({
   action,
   color,
 }: {
-  action: "both" | "left" | "right",
+  action: "accept" | "left",
   color: string,
 }) => (
   <>
@@ -67,13 +67,10 @@ export const Hints = ({
         <Stop offset="100%" stopColor={color} />
       </LinearGradient>
     </Defs>
-    {action === "both" ? (
-      // NB this does not exist. FIXME semantic should be improved. there is no need to 3 states?
+    {action === "accept" ? (
       <RightHint color={color} />
     ) : action === "left" ? (
       <LeftHint color={color} />
-    ) : action === "right" ? (
-      <RightHint color={color} />
     ) : null}
   </>
 );
