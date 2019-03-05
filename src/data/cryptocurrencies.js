@@ -1846,11 +1846,24 @@ for (let id in cryptocurrenciesById) {
   }
   cryptocurrenciesArray.push(c);
 }
+const cryptocurrenciesArrayWithoutTerminated = cryptocurrenciesArray.filter(
+  c => !c.terminated
+);
+const prodCryptoArrayWithoutTerminated = prodCryptoArray.filter(
+  c => !c.terminated
+);
 
 export function listCryptoCurrencies(
-  withDevCrypto: boolean = false
+  withDevCrypto: boolean = false,
+  withTerminated: boolean = false
 ): CryptoCurrency[] {
-  return withDevCrypto ? cryptocurrenciesArray : prodCryptoArray;
+  return withTerminated
+    ? withDevCrypto
+      ? cryptocurrenciesArray
+      : prodCryptoArray
+    : withDevCrypto
+    ? cryptocurrenciesArrayWithoutTerminated
+    : prodCryptoArrayWithoutTerminated;
 }
 
 export function findCryptoCurrencyByScheme(scheme: string): ?CryptoCurrency {
