@@ -44,11 +44,7 @@ type OwnProps = Props & {
 };
 
 type State = {
-  devices: Array<{
-    id: string,
-    name: string,
-    modelId: ?string,
-  }>,
+  devices: Array<DeviceMeta>,
   scanning: boolean,
   connecting: ?DeviceMeta,
   showMenu: boolean,
@@ -131,37 +127,21 @@ class SelectDevice extends Component<OwnProps, State> {
           devices:
             e.type === "add"
               ? devices.concat({
-                  id: e.id,
-                  name: e.name,
-                  modelId: e.deviceModel && e.deviceModel.id,
+                  deviceId: e.id,
+                  deviceName: e.name || "",
+                  modelId:
+                    (e.deviceModel && e.deviceModel.id) ||
+                    (Config.FALLBACK_DEVICE_MODEL_ID || "nanoX"),
+                  wired: e.id.startsWith("httpdebug|")
+                    ? Config.FALLBACK_DEVICE_WIRED === "YES"
+                    : e.id.startsWith("usb|"),
                 })
-              : devices.filter(d => d.id !== e.id),
+              : devices.filter(d => d.deviceId !== e.id),
         })),
     });
   }
 
-  onSelect = ({ id, modelId, name }) => {
-    let connecting = null;
-    if (id.startsWith("httpdebug|")) {
-      /*
-     * This allow to define these env to override the behavior
-     * FALLBACK_DEVICE_MODEL_ID=nanoS
-     * FALLBACK_DEVICE_WIRED=YES
-     */
-      connecting = {
-        deviceId: id,
-        modelId: modelId || (Config.FALLBACK_DEVICE_MODEL_ID || "nanoX"),
-        deviceName: name || "",
-        wired: Config.FALLBACK_DEVICE_WIRED === "YES",
-      };
-    } else {
-      connecting = {
-        deviceId: id,
-        modelId: modelId || "nanoX",
-        deviceName: name || "",
-        wired: id.startsWith("usb|"),
-      };
-    }
+  onSelect = (connecting: DeviceMeta) => {
     this.setState({ connecting });
   };
 
@@ -185,8 +165,8 @@ class SelectDevice extends Component<OwnProps, State> {
 
   renderItem = (item: *) => (
     <DeviceItem
-      key={item.id}
-      device={item}
+      key={item.deviceId}
+      deviceMeta={item}
       onSelect={this.onSelect}
       withArrow={!!this.props.onboarding}
       onBluetoothDeviceAction={this.props.onBluetoothDeviceAction}
@@ -200,15 +180,20 @@ class SelectDevice extends Component<OwnProps, State> {
     const { knownDevices, steps, onStepEntered } = this.props;
     const { devices, connecting } = this.state;
 
-    const [ble, other] = devices
-      .concat(knownDevices)
-      .reduce(
-        ([ble, other], device) =>
-          device.id.includes("|")
-            ? [ble, [...other, device]]
-            : [[...ble, device], other],
-        [[], []],
-      );
+    const all: DeviceMeta[] = devices.concat(
+      knownDevices.map(d => ({
+        deviceId: d.id,
+        deviceName: d.name || "",
+        wired: false,
+        modelId: "nanoX",
+      })),
+    );
+
+    const [ble, other] = all.reduce(
+      ([ble, other], device) =>
+        device.wired ? [ble, [...other, device]] : [[...ble, device], other],
+      [[], []],
+    );
 
     return (
       <View>

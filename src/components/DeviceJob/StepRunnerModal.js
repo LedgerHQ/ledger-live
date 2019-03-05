@@ -11,8 +11,7 @@ import type { Step, DeviceMeta } from "./types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 class SelectDeviceConnectModal extends PureComponent<{
-  isOpened: boolean,
-  meta: DeviceMeta,
+  meta: ?DeviceMeta,
   onClose: () => void,
   onRetry: () => void,
   onStepDone: () => void,
@@ -20,27 +19,19 @@ class SelectDeviceConnectModal extends PureComponent<{
   error: ?Error,
 }> {
   render() {
-    const {
-      meta,
-      isOpened,
-      onClose,
-      onRetry,
-      onStepDone,
-      error,
-      step,
-    } = this.props;
+    const { meta, onClose, onRetry, onStepDone, error, step } = this.props;
 
     return (
-      <BottomModal id="DeviceJobModal" isOpened={isOpened} onClose={onClose}>
+      <BottomModal id="DeviceJobModal" isOpened={!!meta} onClose={onClose}>
         {error ? (
           <RenderError
             error={error}
             onRetry={onRetry}
             Footer={step.ErrorFooter || ErrorFooterGeneric}
           />
-        ) : (
+        ) : meta ? (
           <step.Body meta={meta} step={step} onDone={onStepDone} />
-        )}
+        ) : null}
         <Touchable
           event="DeviceJobClose"
           style={styles.close}

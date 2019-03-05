@@ -13,23 +13,50 @@ const runStep = (
   onDoneO: Observable<*>,
 ): Observable<Object> => step.run(meta, onDoneO);
 
+type StepEvent =
+  | { type: "step", step: number, meta: Object }
+  | { type: "meta", meta: Object };
+
 const chainSteps = (
   steps: Step[],
+  // meta is an object we accumulates over time to update the UI and yield the result of everything.
   meta: DeviceMeta,
-  onStepEnter: (number, Object) => void,
   onDoneO: Observable<number>,
-): Observable<Object> =>
-  steps.reduce(
-    (meta: Observable<*>, step: Step, i: number) =>
-      meta.pipe(
-        tap(meta => onStepEnter(i, meta)),
-        mergeMap(meta =>
-          runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
-        ),
-        last(),
-      ),
-    from([meta]),
-  );
+): Observable<StepEvent> =>
+  Observable.create(o => {
+    const sub = steps
+      .reduce(
+        (meta: Observable<*>, step: Step, i: number) =>
+          meta.pipe(
+            tap(meta => {
+              // we emit entering a new step
+              o.next({ type: "step", step: i, meta });
+            }),
+            mergeMap(meta =>
+              // for a given step, we chain the previous step result in. we also provide events of onDone taps (allow to interrupt the UI).
+              runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
+            ),
+            tap(meta => {
+              // we need to emit globally the meta incremental updates
+              o.next({ type: "meta", meta });
+            }),
+            last(), // at the end, we only care about the last meta
+          ),
+        from([meta]),
+      )
+      .subscribe({
+        complete: () => {
+          o.complete();
+        },
+        error: e => {
+          o.error(e);
+        },
+      });
+
+    return () => {
+      sub.unsubscribe();
+    };
+  });
 
 class DeviceJob extends Component<
   {
@@ -42,8 +69,7 @@ class DeviceJob extends Component<
     onStepEntered?: (number, Object) => void,
   },
   {
-    connecting: boolean,
-    meta: Object,
+    meta: ?Object,
     error: ?Error,
     stepIndex: number,
   },
@@ -53,10 +79,9 @@ class DeviceJob extends Component<
   };
 
   state = {
-    connecting: false,
     stepIndex: 0,
     error: null,
-    meta: {},
+    meta: null,
   };
 
   sub: *;
@@ -91,19 +116,15 @@ class DeviceJob extends Component<
     this.setState({ stepIndex });
   }, 500);
 
-  onStepEntered = (stepIndex: number, meta: Object) => {
-    this.debouncedSetStepIndex(stepIndex);
-    const { onStepEntered } = this.props;
-    if (onStepEntered) onStepEntered(stepIndex, meta);
-  };
-
   onStepDone = () => {
     this.onDoneSubject.next(this.state.stepIndex);
   };
 
-  onStart = (meta: DeviceMeta) => {
+  onStart = (metaInput: DeviceMeta) => {
     this.debouncedSetStepIndex.cancel();
     if (this.sub) this.sub.unsubscribe();
+
+    let meta = metaInput;
 
     if (this.props.steps.length === 0) {
       this.props.onDone(meta);
@@ -111,34 +132,39 @@ class DeviceJob extends Component<
     }
 
     this.setState({
-      connecting: true,
       error: null,
       stepIndex: 0,
       meta,
     });
 
-    this.sub = chainSteps(
-      this.props.steps,
-      meta,
-      this.onStepEntered,
-      this.onDoneSubject,
-    ).subscribe({
-      next: meta => {
-        this.debouncedSetStepIndex.cancel();
-        this.setState({ connecting: false }, () => {
-          this.props.onDone(meta);
-        });
+    this.sub = chainSteps(this.props.steps, meta, this.onDoneSubject).subscribe(
+      {
+        complete: () => {
+          this.debouncedSetStepIndex.cancel();
+          this.setState({ meta: null }, () => {
+            this.props.onDone(meta);
+          });
+        },
+        next: e => {
+          meta = e.meta;
+          this.setState({ meta }); // refresh the UI
+          if (e.type === "step") {
+            this.debouncedSetStepIndex(e.step);
+            const { onStepEntered } = this.props;
+            if (onStepEntered) onStepEntered(e.step, e.meta);
+          }
+        },
+        error: error => {
+          this.setState({ error });
+        },
       },
-      error: error => {
-        this.setState({ error });
-      },
-    });
+    );
   };
 
   onRetry = () => {
     const { meta } = this.props;
-    const { connecting, error } = this.state;
-    if (connecting && error && meta) {
+    const { error } = this.state;
+    if (error && meta) {
       this.onStart(meta);
     }
   };
@@ -146,19 +172,18 @@ class DeviceJob extends Component<
   onClose = () => {
     this.debouncedSetStepIndex.cancel();
     if (this.sub) this.sub.unsubscribe();
-    this.setState({ connecting: false, error: null }, () => {
+    this.setState({ meta: null, error: null }, () => {
       this.props.onCancel();
     });
   };
 
   render() {
-    const { steps, meta } = this.props;
-    const { connecting, stepIndex, error } = this.state;
+    const { steps } = this.props;
+    const { stepIndex, error, meta } = this.state;
     const step = steps[stepIndex];
-    if (!step || !meta) return null;
+    if (!step) return null;
     return (
       <StepRunnerModal
-        isOpened={connecting}
         onClose={this.onClose}
         onRetry={this.onRetry}
         step={step}

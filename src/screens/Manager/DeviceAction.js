@@ -7,6 +7,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { withNavigation, SafeAreaView } from "react-navigation";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import { removeKnownDevice } from "../../actions/ble";
 import { delay } from "../../logic/promise";
@@ -17,7 +18,6 @@ import Button from "../../components/Button";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import Space from "../../components/Space";
-import { deviceNames } from "../../wording";
 
 import colors from "../../colors";
 import Trash from "../../icons/Trash";
@@ -27,6 +27,7 @@ const forceInset = { bottom: "always" };
 type Props = {
   navigation: *,
   deviceId: string,
+  modelId: string,
   onClose: () => void,
   opened: boolean,
   removeKnownDevice: string => void,
@@ -52,7 +53,7 @@ class DeviceAction extends PureComponent<Props, State> {
   };
 
   render() {
-    const { onClose, opened } = this.props;
+    const { onClose, opened, modelId } = this.props;
 
     return (
       <BottomModal id="UnpairModal" isOpened={opened} onClose={onClose}>
@@ -67,7 +68,7 @@ class DeviceAction extends PureComponent<Props, State> {
             <LText style={styles.description}>
               <Trans
                 i18nKey="manager.unpair.description"
-                values={deviceNames.nanoX}
+                values={getDeviceModel(modelId)}
               />
             </LText>
           </View>

@@ -32,11 +32,13 @@ type Props = {
 
 type State = {
   progress: number,
+  displayedOnDevice: boolean,
 };
 
 class FirmwareUpdateCheckId extends Component<Props, State> {
   state = {
     progress: 0,
+    displayedOnDevice: false,
   };
 
   static navigationOptions = {

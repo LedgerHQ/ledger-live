@@ -235,6 +235,9 @@
       "title": "App update required",
       "description": "Uninstall and reinstall the {{managerAppName}} app in the Manager"
     },
+    "UserRefusedAllowManager": {
+      "title": "Allow Manager refused on device"
+    },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
       "description": "Please try again or contact Ledger Support when in doubt"
@@ -817,7 +820,7 @@
       "validateGasLimit": "Validate Gas Limit"
     },
     "validation": {
-      "title": "Please verify all transaction details on your {{fullDeviceName}}",
+      "title": "Please verify all transaction details on your {{productName}}",
       "message": "Confirm the transaction on your device to securely sign it",
       "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
@@ -867,7 +870,7 @@
   "SelectDevice": {
     "title": "Pair new device",
     "deviceNotFoundPairNewDevice": "Pair new Ledger Nano X",
-    "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
+    "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
     "usb": "To use USB, just plug and enter your PIN Code on your device",
     "steps": {
       "connecting": {
@@ -875,17 +878,20 @@
         "description": "Please make sure your Ledger Nano X is unlocked and within range"
       },
       "genuineCheck": {
-        "title": "Allow Ledger Manager on your {{fullDeviceName}} or wait"
+        "title": "Allow Ledger Manager on your {{productName}}"
+      },
+      "genuineCheckPending": {
+        "title": "Checking the device is genuine..."
       },
       "dashboard": {
-        "title": "Navigate to dashboard on your {{fullDeviceName}}"
+        "title": "Navigate to dashboard on your {{productName}}"
       },
       "currencyApp": {
-        "title": "Open the {{managerAppName}} app on your {{fullDeviceName}}",
+        "title": "Open the {{managerAppName}} app on your {{productName}}",
         "description": ""
       },
       "accountApp": {
-        "title": "Open the {{managerAppName}} app on your {{fullDeviceName}}",
+        "title": "Open the {{managerAppName}} app on your {{productName}}",
         "description": ""
       },
       "receiveVerify": {
@@ -909,7 +915,7 @@
   "PairDevices": {
     "Paired": {
       "title": "Pairing successful",
-      "desc": "Your {{fullDeviceName}} is ready to use with Ledger Live",
+      "desc": "Your {{productName}} is ready to use with Ledger Live",
       "action": "Continue"
     },
     "Pairing": {
@@ -922,11 +928,11 @@
     },
     "ScanningHeader": {
       "title": "Looking for devices",
-      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
+      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
     },
     "ScanningTimeout": {
       "title": "Oops, no device found",
-      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
+      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
     },
     "bypassGenuine": "Use anyway",
     "alreadyPaired": "Already paired"
@@ -962,7 +968,7 @@
     },
     "unpair": {
       "title": "Unpair device",
-      "description": "Are you sure? You can pair your {{fullDeviceName}} again at any time.",
+      "description": "Are you sure? You can pair your {{productName}} again at any time.",
       "button": "Unpair"
     }
   },
@@ -978,7 +984,7 @@
         "button_plural": "Installing... {{progressPercentage}}%"
       },
       "done": {
-        "title": "Successfully installed {{appName}} on your {{fullDeviceName}}",
+        "title": "Successfully installed {{appName}} on your {{productName}}",
         "accounts": "Go to accounts"
       }
     },
@@ -988,7 +994,7 @@
         "button": "Uninstalling..."
       },
       "done": {
-        "title": "Successfully uninstalled {{appName}} on your {{fullDeviceName}}"
+        "title": "Successfully uninstalled {{appName}} on your {{productName}}"
       }
     }
   },

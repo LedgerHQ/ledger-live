@@ -12,7 +12,7 @@ export type DeviceMeta = {
 // meta object are accumulated over steps
 export type Step = {
   Body: React$ComponentType<{
-    meta: DeviceMeta,
+    meta: DeviceMeta & Object,
     onDone: () => void,
   }>,
 

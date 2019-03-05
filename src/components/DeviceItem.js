@@ -13,19 +13,12 @@ import USB from "../icons/USB";
 import Ellipsis from "../icons/Ellipsis";
 import type { DeviceMeta } from "./DeviceJob/types";
 
-export type Device = {
-  id: string,
-  name: string,
-};
-
 type Props = {
-  device: Device,
-  name: string,
-  id: string,
+  deviceMeta: DeviceMeta,
   disabled?: boolean,
   withArrow?: boolean,
   description?: React$Node,
-  onSelect?: Device => any,
+  onSelect?: DeviceMeta => any,
   onBluetoothDeviceAction?: DeviceMeta => any,
 };
 
@@ -43,22 +36,21 @@ const iconByFamily = {
 
 export default class DeviceItem extends PureComponent<Props> {
   onPress = () => {
-    const { device, onSelect } = this.props;
+    const { deviceMeta, onSelect } = this.props;
     invariant(onSelect, "onSelect required");
-    return onSelect(device);
+    return onSelect(deviceMeta);
   };
 
   render() {
     const {
-      name,
-      id,
+      deviceMeta,
       disabled,
       description,
       withArrow,
       onBluetoothDeviceAction,
     } = this.props;
 
-    const family = id.split("|")[0];
+    const family = deviceMeta.deviceId.split("|")[0];
     const CustomIcon = family && iconByFamily[family];
     return (
       <View style={styles.outer}>
@@ -86,7 +78,7 @@ export default class DeviceItem extends PureComponent<Props> {
                     disabled && styles.deviceNameTextDisabled,
                   ]}
                 >
-                  {name}
+                  {deviceMeta.deviceName}
                 </LText>
                 {description ? (
                   <LText
@@ -105,14 +97,7 @@ export default class DeviceItem extends PureComponent<Props> {
                 !!onBluetoothDeviceAction && (
                   <Touchable
                     event="DeviceItemForget"
-                    onPress={() =>
-                      onBluetoothDeviceAction({
-                        deviceId: id,
-                        deviceName: name,
-                        modelId: "nanoX",
-                        wired: false,
-                      })
-                    }
+                    onPress={() => onBluetoothDeviceAction(deviceMeta)}
                   >
                     <Ellipsis />
                   </Touchable>

@@ -162,7 +162,7 @@ class ManagerAppsList extends Component<
   render() {
     const { navigation } = this.props;
     const { apps, pending, error, action } = this.state;
-    const { deviceId, deviceInfo } = navigation.getParam("meta");
+    const { deviceId, deviceInfo, modelId } = navigation.getParam("meta");
     return (
       <View style={styles.root}>
         <TrackScreen category="Manager" name="AppsList" />
@@ -185,6 +185,7 @@ class ManagerAppsList extends Component<
             onClose={this.onActionClose}
             onOpenAccounts={this.onActionOpenAccounts}
             deviceId={deviceId}
+            modeiId={modelId}
             targetId={deviceInfo.targetId}
             isOpened={!!action}
           />
