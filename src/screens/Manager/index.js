@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { withNavigationFocus } from "react-navigation";
+import { withNavigationFocus, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { Trans, translate } from "react-i18next";
@@ -155,7 +155,7 @@ class ChooseDevice extends Component<
     if (!isFocused) return null;
 
     return (
-      <View style={styles.root}>
+      <ScrollView style={styles.root}>
         <TrackScreen category="Manager" name="ChooseDevice" />
         <LText semiBold style={styles.title}>
           <Trans i18nKey="manager.connect" />
@@ -176,7 +176,7 @@ class ChooseDevice extends Component<
             deviceName={this.chosenDevice.deviceName}
           />
         )}
-      </View>
+      </ScrollView>
     );
   }
 }

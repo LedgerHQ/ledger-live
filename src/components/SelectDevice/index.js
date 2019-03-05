@@ -8,7 +8,7 @@ import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import { Trans } from "react-i18next";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import Icon from "react-native-vector-icons/dist/Feather";
-import { ScrollView, withNavigation } from "react-navigation";
+import { withNavigation } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { removeKnownDevice } from "../../actions/ble";
@@ -203,7 +203,7 @@ class SelectDevice extends Component<OwnProps, State> {
     const hasUSBSection = Platform.OS === "android" || other.length > 0;
 
     return (
-      <ScrollView style={styles.scrollview}>
+      <View>
         {ble.length === 0 ? (
           <BluetoothEmpty />
         ) : (
@@ -223,7 +223,7 @@ class SelectDevice extends Component<OwnProps, State> {
           onDone={this.onDone}
           editMode={false}
         />
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -257,9 +257,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-  },
-  scrollview: {
-    flex: 1,
   },
   or: {
     marginVertical: 30,
