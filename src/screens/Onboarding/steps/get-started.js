@@ -54,7 +54,7 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
     return (
       <OnboardingLayout
         header="OnboardingStepGetStarted"
-        Footer={showAd ? this.Footer : null}
+        Footer={showAd ? this.Footer : undefined}
         titleOverride={title}
       >
         <TrackScreen category="Onboarding" name="GetStarted" />

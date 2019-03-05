@@ -47,6 +47,7 @@ type State = {
   device: ?Device,
   error: ?Error,
   skipCheck: boolean,
+  genuineAskedOnDevice: boolean,
 };
 
 class PairDevices extends Component<Props, State> {
@@ -108,8 +109,8 @@ class PairDevices extends Component<Props, State> {
                 genuineAskedOnDevice: e.type === "allow-manager-requested",
               });
             },
-            complete: resolve,
-            error: reject,
+            complete: () => resolve(),
+            error: e => reject(e),
           });
 
         await genuineCheckPromise;
