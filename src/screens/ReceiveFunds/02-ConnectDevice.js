@@ -132,6 +132,7 @@ class ConnectDevice extends Component<Props> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    padding: 16,
     backgroundColor: colors.white,
   },
   footer: {

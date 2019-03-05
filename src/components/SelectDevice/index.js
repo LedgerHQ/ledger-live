@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -22,6 +22,7 @@ import LText from "../LText";
 import Touchable from "../Touchable";
 import colors from "../../colors";
 import Circle from "../Circle";
+import SectionSeparator from "../SectionSeparator";
 
 type Props = {
   onBluetoothDeviceAction?: (device: DeviceMeta) => any,
@@ -78,6 +79,10 @@ const USBHeader = () => (
   <LText semiBold style={styles.section}>
     <Trans i18nKey="common.usb" />
   </LText>
+);
+
+const ORBar = () => (
+  <SectionSeparator style={styles.or} text={<Trans i18nKey="common.or" />} />
 );
 
 class SelectDevice extends Component<OwnProps, State> {
@@ -195,6 +200,8 @@ class SelectDevice extends Component<OwnProps, State> {
       [[], []],
     );
 
+    const hasUSBSection = Platform.OS === "android" || other.length > 0;
+
     return (
       <ScrollView style={styles.scrollview}>
         {ble.length === 0 ? (
@@ -203,9 +210,9 @@ class SelectDevice extends Component<OwnProps, State> {
           <View>
             <BluetoothHeader onPairNewDevice={this.onPairNewDevice} />
             {ble.map(this.renderItem)}
-            <USBHeader />
           </View>
         )}
+        {hasUSBSection && (ble.length === 0 ? <ORBar /> : <USBHeader />)}
         {other.length === 0 ? <USBEmpty /> : other.map(this.renderItem)}
 
         <DeviceJob
@@ -253,5 +260,8 @@ const styles = StyleSheet.create({
   },
   scrollview: {
     flex: 1,
+  },
+  or: {
+    marginVertical: 30,
   },
 });

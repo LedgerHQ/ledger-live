@@ -60,6 +60,7 @@ class AddAccountsSelectDevice extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   root: {
+    padding: 16,
     flex: 1,
     backgroundColor: colors.white,
   },
