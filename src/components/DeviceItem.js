@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   iconWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    width: 10,
+    width: 15,
   },
   inner: {
     flex: 1,

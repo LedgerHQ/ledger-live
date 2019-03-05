@@ -27,6 +27,36 @@ import Trash from "../../icons/Trash";
 import BottomModal from "../../components/BottomModal";
 import ModalBottomAction from "../../components/ModalBottomAction";
 
+const UnpairDeviceModal = ({
+  onHideMenu,
+  unPair,
+  open,
+  deviceName,
+}: {
+  onHideMenu: () => *,
+  unPair: () => *,
+  open: boolean,
+  deviceName: string,
+}) => (
+  <BottomModal id="DeviceItemModal" isOpened={open} onClose={onHideMenu}>
+    <ModalBottomAction
+      title={deviceName}
+      footer={
+        <View style={styles.footerContainer}>
+          <Button
+            event="HardResetModalAction"
+            type="alert"
+            IconLeft={Trash}
+            title={<Trans i18nKey="common.forgetDevice" />}
+            onPress={unPair}
+            containerStyle={styles.buttonContainer}
+          />
+        </View>
+      }
+    />
+  </BottomModal>
+);
+
 class ChooseDevice extends Component<
   {
     navigation: NavigationScreenProp<*>,
@@ -139,27 +169,12 @@ class ChooseDevice extends Component<
         />
 
         {this.chosenDevice && (
-          <BottomModal
-            id="DeviceItemModal"
-            isOpened={showMenu}
-            onClose={this.onHideMenu}
-          >
-            <ModalBottomAction
-              title={this.chosenDevice.deviceName}
-              footer={
-                <View style={styles.footerContainer}>
-                  <Button
-                    event="HardResetModalAction"
-                    type="alert"
-                    IconLeft={Trash}
-                    title={<Trans i18nKey="common.forgetDevice" />}
-                    onPress={this.unpair}
-                    containerStyle={styles.buttonContainer}
-                  />
-                </View>
-              }
-            />
-          </BottomModal>
+          <UnpairDeviceModal
+            onHideMenu={this.onHideMenu}
+            open={showMenu}
+            unPair={this.unpair}
+            deviceName={this.chosenDevice.deviceName}
+          />
         )}
       </View>
     );

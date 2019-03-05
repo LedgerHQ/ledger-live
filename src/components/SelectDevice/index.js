@@ -60,6 +60,30 @@ const IconPlus = () => (
   </Circle>
 );
 
+const BluetoothHeader = ({ onPairNewDevice }: { onPairNewDevice: () => * }) => (
+  <Touchable
+    event="PairNewDevice"
+    style={styles.bluetoothHeader}
+    onPress={onPairNewDevice}
+  >
+    <LText semiBold style={styles.section}>
+      <Trans i18nKey="common.bluetooth" />
+    </LText>
+    <View style={styles.addContainer}>
+      <LText semiBold style={styles.add}>
+        <Trans i18nKey="common.add" />
+      </LText>
+      <IconPlus />
+    </View>
+  </Touchable>
+);
+
+const USBHeader = () => (
+  <LText semiBold style={styles.section}>
+    <Trans i18nKey="common.usb" />
+  </LText>
+);
+
 class SelectDevice extends Component<OwnProps, State> {
   static defaultProps = {
     steps: [],
@@ -192,28 +216,13 @@ class SelectDevice extends Component<OwnProps, State> {
           <BluetoothEmpty />
         ) : (
           <View>
-            <Touchable
-              event="PairNewDevice"
-              style={styles.bluetoothHeader}
-              onPress={this.onPairNewDevice}
-            >
-              <LText semiBold style={styles.section}>
-                <Trans i18nKey="common.bluetooth" />
-              </LText>
-              <View style={styles.addContainer}>
-                <LText semiBold style={styles.add}>
-                  <Trans i18nKey="common.add" />
-                </LText>
-                <IconPlus />
-              </View>
-            </Touchable>
+            <BluetoothHeader onPairNewDevice={this.onPairNewDevice} />
             {ble.map(this.renderItem)}
-            <LText semiBold style={styles.section}>
-              <Trans i18nKey="common.usb" />
-            </LText>
+            <USBHeader />
           </View>
         )}
         {other.length === 0 ? <USBEmpty /> : other.map(this.renderItem)}
+
         <DeviceJob
           meta={connecting}
           steps={steps}
