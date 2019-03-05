@@ -1525,6 +1525,28 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     txExplorers: ["https://tzscan.io/$hash"]
   },
+  tomo: {
+    id: "tomo",
+    coinType: 889,
+    name: "TomoChain",
+    managerAppName: "TomoChain",
+    ticker: "TOMO",
+    scheme: "tomo",
+    color: "#FF9933",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 88
+    },
+    blockAvgTime: 2,
+    units: [
+      {
+        name: "TOMO",
+        code: "TOMO",
+        magnitude: 8
+      }
+    ],
+    txExplorers: ["https://scan.tomochain.com/txs/$hash"]
+  },
   tron: {
     id: "tron",
     coinType: 195,
