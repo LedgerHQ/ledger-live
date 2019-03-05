@@ -9,7 +9,7 @@ import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
-import { timeout, last } from "rxjs/operators";
+import { timeout } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import logger from "../../logger";
@@ -28,7 +28,6 @@ import Paired from "./Paired";
 import Scanning from "./Scanning";
 import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
-import { reject } from "rsvp";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
