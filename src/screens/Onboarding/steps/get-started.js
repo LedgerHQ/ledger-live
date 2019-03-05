@@ -1,6 +1,6 @@
 // @flow
 import React, { Component, PureComponent } from "react";
-import { StyleSheet, View, Linking } from "react-native";
+import { StyleSheet, View, Linking, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -50,6 +50,7 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
     const deviceModel = getDeviceModel(deviceModelId);
     const title = deviceModel.productName;
     const showAd = deviceModelId !== "nanoX";
+
     return (
       <OnboardingLayout
         header="OnboardingStepGetStarted"
@@ -63,24 +64,32 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
           label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
           onPress={this.onImport}
         />
-        <Row
-          id="initialize"
-          Icon={IconPlus}
-          label={<Trans i18nKey="onboarding.stepGetStarted.initialize" />}
-          onPress={this.onInit}
-        />
-        <Row
-          id="restore"
-          Icon={IconRestore}
-          label={<Trans i18nKey="onboarding.stepGetStarted.restore" />}
-          onPress={this.onRestore}
-        />
-        <Row
-          id="initialized"
-          Icon={IconCheck}
-          label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
-          onPress={this.onInitialized}
-        />
+        {deviceModelId === "nanoX" || Platform.OS === "android" ? (
+          <>
+            <Row
+              id="initialize"
+              Icon={IconPlus}
+              label={<Trans i18nKey="onboarding.stepGetStarted.initialize" />}
+              onPress={this.onInit}
+            />
+            <Row
+              id="restore"
+              Icon={IconRestore}
+              label={<Trans i18nKey="onboarding.stepGetStarted.restore" />}
+              onPress={this.onRestore}
+            />
+            <Row
+              id="initialized"
+              Icon={IconCheck}
+              label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
+              onPress={this.onInitialized}
+            />
+          </>
+        ) : (
+          <LText style={styles.description}>
+            <Trans i18nKey="onboarding.stepLegacy.description" />
+          </LText>
+        )}
       </OnboardingLayout>
     );
   }
@@ -156,6 +165,12 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     color: colors.live,
+  },
+  description: {
+    marginTop: 40,
+    fontSize: 14,
+    color: colors.smoke,
+    textAlign: "center",
   },
 });
 

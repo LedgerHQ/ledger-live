@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import i18next from "i18next";
-import { View, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -108,14 +108,19 @@ class ConnectDevice extends Component<Props> {
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
-        <SelectDevice
-          onSelect={this.onSelectDevice}
-          steps={[
-            connectingStep,
-            accountApp(account),
-            receiveVerifyStep(account),
-          ]}
-        />
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice
+            onSelect={this.onSelectDevice}
+            steps={[
+              connectingStep,
+              accountApp(account),
+              receiveVerifyStep(account),
+            ]}
+          />
+        </ScrollView>
         <View style={styles.footer}>
           <Button
             event="ReceiveWithoutDevice"
@@ -132,8 +137,13 @@ class ConnectDevice extends Component<Props> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
     backgroundColor: colors.white,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContainer: {
+    padding: 16,
   },
   footer: {
     padding: 4,
