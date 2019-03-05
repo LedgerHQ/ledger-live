@@ -87,9 +87,13 @@ class Scanning extends Component<Props, State> {
     return (
       <DeviceItem
         device={item}
-        name={item.name}
-        id={item.id}
-        onSelect={this.props.onSelect}
+        deviceMeta={{
+          deviceId: item.id,
+          deviceName: item.name,
+          wired: false,
+          modelId: "nanoX",
+        }}
+        onSelect={() => this.props.onSelect(item)}
         disabled={!!knownDevice}
         description={
           knownDevice ? <Trans i18nKey="PairDevices.alreadyPaired" /> : ""

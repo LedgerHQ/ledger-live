@@ -3,9 +3,9 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
+import { getDeviceModel } from "@ledgerhq/devices";
 import colors from "../../colors";
 import { urls } from "../../config/urls";
-import { deviceNames } from "../../wording";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
@@ -34,7 +34,7 @@ class ScanningTimeout extends Component<Props> {
           <LText style={styles.SubtitleText}>
             <Trans
               i18nKey="PairDevices.ScanningTimeout.desc"
-              values={deviceNames.nanoX}
+              values={getDeviceModel("nanoX")}
             />
           </LText>
 

@@ -9,7 +9,7 @@ import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
-import { timeout } from "rxjs/operators/timeout";
+import { timeout, last } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import logger from "../../logger";
@@ -93,6 +93,7 @@ class PairDevices extends Component<Props, State> {
         this.setState({ device, status: "genuinecheck" });
         const observable = checkDeviceForManager(transport, deviceInfo).pipe(
           timeout(GENUINE_CHECK_TIMEOUT),
+          last(),
         );
 
         await observable.toPromise();

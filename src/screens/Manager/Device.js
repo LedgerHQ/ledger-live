@@ -17,7 +17,6 @@ import LText from "../../components/LText";
 import Space from "../../components/Space";
 import Circle from "../../components/Circle";
 import colors from "../../colors";
-import { deviceNames } from "../../wording";
 import { TrackScreen } from "../../analytics";
 
 import DeviceNameRow from "./DeviceNameRow";
@@ -26,6 +25,7 @@ import FirmwareUpdateRow from "./FirmwareUpdateRow";
 import AuthenticityRow from "./AuthenticityRow";
 import UnpairRow from "./UnpairRow";
 import DeviceAction from "./DeviceAction";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -108,7 +108,7 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
         <View style={styles.device}>
           <DeviceNanoAction modelId={meta.modelId} wired={meta.wired} />
           <LText secondary semiBold style={styles.deviceName}>
-            {deviceNames.nanoX.fullDeviceName}
+            {getDeviceModel(meta.modelId).productName}
           </LText>
           <FirmwareUpdateRow
             deviceInfo={meta.deviceInfo}
@@ -129,6 +129,7 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
           opened={this.state.opened}
           onClose={this.close}
           deviceId={meta.deviceId}
+          modelId={meta.modelId}
         />
       </ScrollView>
     );
