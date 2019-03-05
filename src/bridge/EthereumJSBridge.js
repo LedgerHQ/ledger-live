@@ -540,8 +540,8 @@ export const accountBridge: AccountBridge<Transaction> = {
     !t.gasPrice
       ? Promise.reject(new FeeNotLoaded())
       : t.amount.isLessThanOrEqualTo(a.balance)
-        ? Promise.resolve(null)
-        : Promise.reject(new NotEnoughBalance()),
+      ? Promise.resolve(null)
+      : Promise.reject(new NotEnoughBalance()),
 
   getTotalSpent: (a, t) =>
     t.amount.isGreaterThan(0) &&

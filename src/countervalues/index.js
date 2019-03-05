@@ -224,11 +224,13 @@ function createCounterValues<State>({
     }
   );
 
-  const pairsKeySelector = createSelector(pairsSelector, pairs =>
-    pairs
-      .map(p => `${p.from.ticker}-${p.to.ticker}-${p.exchange || ""}`)
-      .sort()
-      .join("|")
+  const pairsKeySelector = createSelector(
+    pairsSelector,
+    pairs =>
+      pairs
+        .map(p => `${p.from.ticker}-${p.to.ticker}-${p.exchange || ""}`)
+        .sort()
+        .join("|")
   );
 
   const MAXIMUM_RATIO_EXTREME_VARIATION = 1000;

@@ -281,7 +281,7 @@ const install = (
 const genuineCheck = (
   transport: Transport<*>,
   { targetId, perso }: { targetId: *, perso: * }
-): Observable<*> =>
+): Observable<GenuineCheckEvent> =>
   createDeviceSocket(transport, {
     url: URL.format({
       pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,

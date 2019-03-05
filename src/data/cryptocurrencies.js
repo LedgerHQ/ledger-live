@@ -879,8 +879,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     txExplorers: ["http://explorer.h.cash/tx/$hash"],
     terminated: {
-      link:
-        "https://support.ledger.com/hc/en-us/articles/115003917133"
+      link: "https://support.ledger.com/hc/en-us/articles/115003917133"
     }
   },
   icon: {
@@ -1338,8 +1337,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     txExplorers: [],
     terminated: {
-      link:
-        "https://support.ledger.com/hc/en-us/articles/115005175309"
+      link: "https://support.ledger.com/hc/en-us/articles/115005175309"
     }
   },
   qtum: {
