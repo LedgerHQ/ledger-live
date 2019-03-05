@@ -1,83 +1,25 @@
 // @flow
-
 import type { Step } from "./types";
 
-type StepsByMode = {
-  full: Step[],
-  alreadyInitialized: Step[],
-  qrcode: Step[],
-  restore: Step[],
-  legacyNanoS: Step[],
-  legacyBlue: Step[],
-};
-
-const steps: StepsByMode = {
-  full: [
+export default (mode: string, firstTimeOnboarding: boolean): Step[] => {
+  const steps = [
     { id: "OnboardingStepChooseDevice", isGhost: true },
     { id: "OnboardingStepGetStarted" },
-    { id: "OnboardingStepSetupPin" },
-    { id: "OnboardingStepWriteRecovery" },
-    { id: "OnboardingStepSecurityChecklist" },
-    { id: "OnboardingStepPairNew" },
-    { id: "OnboardingStepPassword" },
-    { id: "OnboardingStepShareData" },
-    { id: "OnboardingStepFinish", isGhost: true },
-  ],
-  legacyBlue: [
-    { id: "OnboardingStepChooseDevice", isGhost: true },
-    { id: "OnboardingStepLegacy" },
-    { id: "OnboardingStepScanQR" },
-    { id: "OnboardingStepPassword" },
-    { id: "OnboardingStepShareData" },
-    { id: "OnboardingStepFinish", isGhost: true },
-  ],
-  legacyNanoS: [
-    { id: "OnboardingStepChooseDevice", isGhost: true },
-    { id: "OnboardingStepLegacy" },
-    { id: "OnboardingStepScanQR" },
-    { id: "OnboardingStepPassword" },
-    { id: "OnboardingStepShareData" },
-    { id: "OnboardingStepFinish", isGhost: true },
-  ],
-  restore: [
-    { id: "OnboardingStepChooseDevice", isGhost: true },
-    { id: "OnboardingStepGetStarted" },
-    { id: "OnboardingStepSetupPin" },
-    { id: "OnboardingStepWriteRecovery" },
-    { id: "OnboardingStepSecurityChecklist" },
-    { id: "OnboardingStepPairNew" },
-    { id: "OnboardingStepPassword" },
-    { id: "OnboardingStepShareData" },
-    { id: "OnboardingStepFinish", isGhost: true },
-  ],
-  alreadyInitialized: [
-    { id: "OnboardingStepChooseDevice", isGhost: true },
-    { id: "OnboardingStepGetStarted" },
-    { id: "OnboardingStepSecurityChecklist" },
-    { id: "OnboardingStepPairNew" },
-    { id: "OnboardingStepPassword" },
-    { id: "OnboardingStepShareData" },
-    { id: "OnboardingStepFinish", isGhost: true },
-  ],
-  qrcode: [
-    { id: "OnboardingStepChooseDevice", isGhost: true },
-    { id: "OnboardingStepGetStarted" },
-    { id: "OnboardingStepScanQR" },
-    { id: "OnboardingStepPassword" },
-    { id: "OnboardingStepShareData" },
-    { id: "OnboardingStepFinish", isGhost: true },
-  ],
-};
-
-export default (mode: string, firstTimeOnboarding: boolean) =>
-  steps[mode].filter(step => {
-    if (!firstTimeOnboarding) {
-      if (
-        step.id === "OnboardingStepPassword" ||
-        step.id === "OnboardingStepShareData"
-      )
-        return false;
+  ];
+  if (mode === "qr") {
+    steps.push({ id: "OnboardingStepScanQR" });
+  } else {
+    if (mode === "full" || mode === "restore") {
+      steps.push({ id: "OnboardingStepSetupPin" });
+      steps.push({ id: "OnboardingStepWriteRecovery" });
     }
-
-    return true;
-  });
+    steps.push({ id: "OnboardingStepSecurityChecklist" });
+    steps.push({ id: "OnboardingStepPairNew" });
+  }
+  if (firstTimeOnboarding) {
+    steps.push({ id: "OnboardingStepPassword" });
+    steps.push({ id: "OnboardingStepShareData" });
+  }
+  steps.push({ id: "OnboardingStepFinish", isGhost: true });
+  return steps;
+};

@@ -64,17 +64,14 @@ class OnboardingStepChooseDevice extends Component<
 
   onWelcome = () => this.props.setShowWelcome(false);
   chooseNanoX = async () => {
-    await this.props.setOnboardingMode("full");
     await this.props.setOnboardingDeviceModel("nanoX");
     this.props.next();
   };
   chooseNanoS = async () => {
-    await this.props.setOnboardingMode("legacyNanoS");
     await this.props.setOnboardingDeviceModel("nanoS");
     this.props.next();
   };
   chooseBlue = async () => {
-    await this.props.setOnboardingMode("legacyBlue");
     await this.props.setOnboardingDeviceModel("blue");
     this.props.next();
   };
