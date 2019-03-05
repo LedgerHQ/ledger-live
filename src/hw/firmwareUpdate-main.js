@@ -38,25 +38,22 @@ const main = (
     );
 
   const waitForBootloader = withDeviceInfo.pipe(
-    concatMap(
-      deviceInfo =>
-        deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
+    concatMap(deviceInfo =>
+      deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
     )
   );
 
   const bootloaderLoop = withDeviceInfo.pipe(
-    concatMap(
-      deviceInfo =>
-        !deviceInfo.isBootloader
-          ? empty()
-          : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop)
+    concatMap(deviceInfo =>
+      !deviceInfo.isBootloader
+        ? empty()
+        : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop)
     )
   );
 
   const finalStep = withDeviceInfo.pipe(
-    concatMap(
-      deviceInfo =>
-        !deviceInfo.isOSU ? empty() : withDeviceInstall(installFinalFirmware)
+    concatMap(deviceInfo =>
+      !deviceInfo.isOSU ? empty() : withDeviceInstall(installFinalFirmware)
     )
   );
 

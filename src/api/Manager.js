@@ -3,18 +3,19 @@
 
 import URL from "url";
 import {
+  DeviceOnDashboardExpected,
   LatestMCUInstalledError,
-  ManagerDeviceLockedError,
-  UserRefusedFirmwareUpdate,
-  ManagerNotEnoughSpaceError,
   ManagerAppAlreadyInstalledError,
   ManagerAppRelyOnBTCError,
+  ManagerDeviceLockedError,
+  ManagerNotEnoughSpaceError,
   ManagerUninstallBTCDep,
-  DeviceOnDashboardExpected
+  UserRefusedAllowManager,
+  UserRefusedFirmwareUpdate
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
-import { catchError, filter, last, map } from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
 import network from "../network";
@@ -27,9 +28,12 @@ import type {
   Application,
   Category,
   Id,
-  McuVersion
+  McuVersion,
+  GenuineCheckEvent
 } from "../types/manager";
 import { makeLRUCache } from "../cache";
+
+const ALLOW_MANAGER_APDU_DEBOUNCE = 500;
 
 const remapSocketError = (context?: string) =>
   catchError((e: Error) => {
@@ -278,16 +282,50 @@ const install = (
 const genuineCheck = (
   transport: Transport<*>,
   { targetId, perso }: { targetId: *, perso: * }
-): Observable<*> =>
+): Observable<GenuineCheckEvent> =>
   createDeviceSocket(transport, {
     url: URL.format({
       pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
       query: { targetId, perso, livecommonversion }
     })
-  }).pipe(
-    last(),
-    filter(o => o.type === "result"),
-    map(o => o.payload || "")
+  }).pipe(input =>
+    Observable.create(o => {
+      let timeout;
+      let requested;
+      const sub = input.subscribe({
+        complete: () => {
+          o.complete();
+        },
+        error: e => {
+          o.error(e);
+        },
+        next: e => {
+          if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+          }
+          if (e.type === "result") {
+            o.next(e);
+          } else if (e.nonce === 3) {
+            if (e.type === "exchange-before") {
+              timeout = setTimeout(() => {
+                o.next({ type: "allow-manager-requested" });
+                requested = true;
+              }, ALLOW_MANAGER_APDU_DEBOUNCE);
+            } else if (e.type === "exchange") {
+              if (e.status.toString("hex") === "6985") {
+                o.error(new UserRefusedAllowManager());
+                return;
+              }
+              if (requested) {
+                o.next({ type: "allow-manager-accepted" });
+              }
+            }
+          }
+        }
+      });
+      return sub;
+    })
   );
 
 const installMcu = (

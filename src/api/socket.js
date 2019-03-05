@@ -46,7 +46,8 @@ export type SocketEvent =
       type: "exchange",
       nonce: number,
       apdu: Buffer,
-      data: Buffer
+      data: Buffer,
+      status: Buffer
     }
   | {
       type: "opened"
