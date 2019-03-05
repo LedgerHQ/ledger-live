@@ -1009,7 +1009,8 @@
     "title": "Firmware version"
   },
   "FirmwareUpdateRow": {
-    "title": "Firmware version {{version}} is available",
+    "title": "Firmware version {{version}} is available.",
+    "subtitle": "Please connect your device to the Ledger Live Desktop app to update it.",
     "action": "Update"
   },
   "FirmwareUpdate": {
