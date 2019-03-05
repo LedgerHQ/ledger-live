@@ -3,14 +3,15 @@
 
 import URL from "url";
 import {
+  DeviceOnDashboardExpected,
   LatestMCUInstalledError,
-  ManagerDeviceLockedError,
-  UserRefusedFirmwareUpdate,
-  ManagerNotEnoughSpaceError,
   ManagerAppAlreadyInstalledError,
   ManagerAppRelyOnBTCError,
+  ManagerDeviceLockedError,
+  ManagerNotEnoughSpaceError,
   ManagerUninstallBTCDep,
-  DeviceOnDashboardExpected
+  UserRefusedAllowManager,
+  UserRefusedFirmwareUpdate
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
@@ -312,6 +313,10 @@ const genuineCheck = (
                 requested = true;
               }, ALLOW_MANAGER_APDU_DEBOUNCE);
             } else if (e.type === "exchange") {
+              if (e.status.toString("hex") === "6985") {
+                o.error(new UserRefusedAllowManager());
+                return;
+              }
               if (requested) {
                 o.next({ type: "allow-manager-accepted" });
               }
