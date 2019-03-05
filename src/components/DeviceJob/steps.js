@@ -23,7 +23,7 @@ import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
-import type { GenuineCheckEvent } from "@ledgerhq/live-common/lib//types/manager";
+import type { GenuineCheckEvent } from "@ledgerhq/live-common/lib/types/manager";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Spinning from "../Spinning";
