@@ -10,8 +10,10 @@ export type Fees = {
   [_: string]: number
 };
 
-export const getEstimatedFees = makeLRUCache(
-  async (currency: CryptoCurrency): Promise<Fees> => {
+export const getEstimatedFees: (
+  currency: CryptoCurrency
+) => Promise<Fees> = makeLRUCache(
+  async currency => {
     const baseURL = blockchainBaseURL(currency);
     invariant(baseURL, `Fees for ${currency.id} are not supported`);
     const { data, status } = await network({

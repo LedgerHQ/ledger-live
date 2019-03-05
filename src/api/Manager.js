@@ -70,28 +70,28 @@ const remapSocketError = (context?: string) =>
     }
   });
 
-const API = {
-  applicationsByDevice: makeLRUCache(
-    async (params: {
-      provider: number,
-      current_se_firmware_final_version: Id,
-      device_version: Id
-    }): Promise<Array<ApplicationVersion>> => {
-      const r = await network({
-        method: "POST",
-        url: URL.format({
-          pathname: `${getEnv("MANAGER_API_BASE")}/get_apps`,
-          query: { livecommonversion }
-        }),
-        data: params
-      });
-      return r.data.application_versions;
-    },
-    p =>
-      `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`
-  ),
+const applicationsByDevice: (params: {
+  provider: number,
+  current_se_firmware_final_version: Id,
+  device_version: Id
+}) => Promise<Array<ApplicationVersion>> = makeLRUCache(
+  async params => {
+    const r = await network({
+      method: "POST",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/get_apps`,
+        query: { livecommonversion }
+      }),
+      data: params
+    });
+    return r.data.application_versions;
+  },
+  p =>
+    `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`
+);
 
-  listApps: makeLRUCache(async (): Promise<Array<Application>> => {
+const listApps: () => Promise<Array<Application>> = makeLRUCache(
+  async () => {
     const r = await network({
       method: "GET",
       url: URL.format({
@@ -100,20 +100,23 @@ const API = {
       })
     });
     return r.data;
-  }, () => ""),
-
-  listCategories: async (): Promise<Array<Category>> => {
-    const r = await network({
-      method: "GET",
-      url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/categories`,
-        query: { livecommonversion }
-      })
-    });
-    return r.data;
   },
+  () => ""
+);
 
-  getMcus: makeLRUCache(async () => {
+const listCategories = async (): Promise<Array<Category>> => {
+  const r = await network({
+    method: "GET",
+    url: URL.format({
+      pathname: `${getEnv("MANAGER_API_BASE")}/categories`,
+      query: { livecommonversion }
+    })
+  });
+  return r.data;
+};
+
+const getMcus: () => Promise<*> = makeLRUCache(
+  async () => {
     const { data } = await network({
       method: "GET",
       url: URL.format({
@@ -122,215 +125,231 @@ const API = {
       })
     });
     return data;
-  }, () => ""),
+  },
+  () => ""
+);
 
-  getLatestFirmware: makeLRUCache(
-    async ({
-      current_se_firmware_final_version,
-      device_version,
-      provider
+const getLatestFirmware: ({
+  current_se_firmware_final_version: Id,
+  device_version: Id,
+  provider: number
+}) => Promise<?OsuFirmware> = makeLRUCache(
+  async ({ current_se_firmware_final_version, device_version, provider }) => {
+    const {
+      data
     }: {
-      current_se_firmware_final_version: Id,
-      device_version: Id,
-      provider: number
-    }): Promise<?OsuFirmware> => {
-      const {
-        data
-      }: {
-        data: {
-          result: string,
-          se_firmware_osu_version: OsuFirmware
-        }
-      } = await network({
-        method: "POST",
-        url: URL.format({
-          pathname: `${getEnv("MANAGER_API_BASE")}/get_latest_firmware`,
-          query: { livecommonversion }
-        }),
-        data: {
-          current_se_firmware_final_version,
-          device_version,
-          provider
-        }
-      });
-      if (data.result === "null") {
-        return null;
+      data: {
+        result: string,
+        se_firmware_osu_version: OsuFirmware
       }
-      return data.se_firmware_osu_version;
-    },
-    a =>
-      `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`
-  ),
+    } = await network({
+      method: "POST",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/get_latest_firmware`,
+        query: { livecommonversion }
+      }),
+      data: {
+        current_se_firmware_final_version,
+        device_version,
+        provider
+      }
+    });
+    if (data.result === "null") {
+      return null;
+    }
+    return data.se_firmware_osu_version;
+  },
+  a =>
+    `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`
+);
 
-  getCurrentOSU: makeLRUCache(
-    async (input: {
-      version: string,
-      deviceId: string | number,
-      provider: number
-    }): Promise<OsuFirmware> => {
-      const { data } = await network({
-        method: "POST",
-        url: URL.format({
-          pathname: `${getEnv("MANAGER_API_BASE")}/get_osu_version`,
-          query: { livecommonversion }
-        }),
-        data: {
-          device_version: input.deviceId,
-          version_name: `${input.version}-osu`,
-          provider: input.provider
-        }
-      });
-      return data;
-    },
-    a => `${a.version}_${a.deviceId}_${a.provider}`
-  ),
+const getCurrentOSU: (input: {
+  version: string,
+  deviceId: string | number,
+  provider: number
+}) => Promise<OsuFirmware> = makeLRUCache(
+  async input => {
+    const { data } = await network({
+      method: "POST",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/get_osu_version`,
+        query: { livecommonversion }
+      }),
+      data: {
+        device_version: input.deviceId,
+        version_name: `${input.version}-osu`,
+        provider: input.provider
+      }
+    });
+    return data;
+  },
+  a => `${a.version}_${a.deviceId}_${a.provider}`
+);
 
-  getNextBLVersion: async (
-    mcuversion: string | number
-  ): Promise<McuVersion> => {
-    const { data }: { data: McuVersion | "default" } = await network({
+const getNextBLVersion = async (
+  mcuversion: string | number
+): Promise<McuVersion> => {
+  const { data }: { data: McuVersion | "default" } = await network({
+    method: "GET",
+    url: URL.format({
+      pathname: `${getEnv("MANAGER_API_BASE")}/mcu_versions/${mcuversion}`,
+      query: { livecommonversion }
+    })
+  });
+
+  if (data === "default" || !data.name) {
+    throw new LatestMCUInstalledError(
+      "there is no next mcu version to install"
+    );
+  }
+  return data;
+};
+
+const getCurrentFirmware: (input: {
+  fullVersion: string,
+  deviceId: string | number,
+  provider: number
+}) => Promise<FinalFirmware> = makeLRUCache(
+  async input => {
+    const { data }: { data: FinalFirmware } = await network({
+      method: "POST",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/get_firmware_version`,
+        query: { livecommonversion }
+      }),
+      data: {
+        device_version: input.deviceId,
+        version_name: input.fullVersion,
+        provider: input.provider
+      }
+    });
+    return data;
+  },
+  a => `${a.fullVersion}_${a.deviceId}_${a.provider}`
+);
+
+const getFinalFirmwareById: (
+  id: number
+) => Promise<FinalFirmware> = makeLRUCache(
+  async id => {
+    const { data }: { data: FinalFirmware } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/mcu_versions/${mcuversion}`,
+        pathname: `${getEnv("MANAGER_API_BASE")}/firmware_final_versions/${id}`,
         query: { livecommonversion }
       })
     });
-
-    if (data === "default" || !data.name) {
-      throw new LatestMCUInstalledError(
-        "there is no next mcu version to install"
-      );
-    }
     return data;
   },
+  id => String(id)
+);
 
-  getCurrentFirmware: makeLRUCache(
-    async (input: {
-      fullVersion: string,
-      deviceId: string | number,
-      provider: number
-    }): Promise<FinalFirmware> => {
-      const { data }: { data: FinalFirmware } = await network({
-        method: "POST",
-        url: URL.format({
-          pathname: `${getEnv("MANAGER_API_BASE")}/get_firmware_version`,
-          query: { livecommonversion }
-        }),
-        data: {
-          device_version: input.deviceId,
-          version_name: input.fullVersion,
-          provider: input.provider
-        }
-      });
-      return data;
-    },
-    a => `${a.fullVersion}_${a.deviceId}_${a.provider}`
-  ),
-
-  getFinalFirmwareById: makeLRUCache(
-    async (id: number): Promise<FinalFirmware> => {
-      const { data }: { data: FinalFirmware } = await network({
-        method: "GET",
-        url: URL.format({
-          pathname: `${getEnv(
-            "MANAGER_API_BASE"
-          )}/firmware_final_versions/${id}`,
-          query: { livecommonversion }
-        })
-      });
-      return data;
-    },
-    id => String(id)
-  ),
-
-  getDeviceVersion: makeLRUCache(
-    async (
-      targetId: string | number,
-      provider: number
-    ): Promise<DeviceVersion> => {
-      const { data }: { data: DeviceVersion } = await network({
-        method: "POST",
-        url: URL.format({
-          pathname: `${getEnv("MANAGER_API_BASE")}/get_device_version`,
-          query: { livecommonversion }
-        }),
-        data: {
-          provider,
-          target_id: targetId
-        }
-      });
-      return data;
-    },
-    (targetId, provider) => `${targetId}_${provider}`
-  ),
-
-  install: (transport: Transport<*>, context: string, params: *) =>
-    createDeviceSocket(transport, {
+const getDeviceVersion: (
+  targetId: string | number,
+  provider: number
+) => Promise<DeviceVersion> = makeLRUCache(
+  async (targetId, provider) => {
+    const { data }: { data: DeviceVersion } = await network({
+      method: "POST",
       url: URL.format({
-        pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
-        query: { ...params, livecommonversion }
+        pathname: `${getEnv("MANAGER_API_BASE")}/get_device_version`,
+        query: { livecommonversion }
       }),
-      ignoreWebsocketErrorDuringBulk: true
-    }).pipe(remapSocketError(context)),
+      data: {
+        provider,
+        target_id: targetId
+      }
+    });
+    return data;
+  },
+  (targetId, provider) => `${targetId}_${provider}`
+);
 
-  genuineCheck: (
-    transport: Transport<*>,
-    { targetId, perso }: { targetId: *, perso: * }
-  ): Observable<GenuineCheckEvent> =>
-    createDeviceSocket(transport, {
-      url: URL.format({
-        pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
-        query: { targetId, perso, livecommonversion }
-      })
-    }).pipe(input =>
-      Observable.create(o => {
-        let timeout;
-        let requested;
-        const sub = input.subscribe({
-          complete: () => {
-            o.complete();
-          },
-          error: e => {
-            o.error(e);
-          },
-          next: e => {
-            if (timeout) {
-              clearTimeout(timeout);
-              timeout = null;
-            }
-            if (e.type === "result") {
-              o.next(e);
-            } else if (e.nonce === 3) {
-              if (e.type === "exchange-before") {
-                timeout = setTimeout(() => {
-                  o.next({ type: "allow-manager-requested" });
-                  requested = true;
-                }, ALLOW_MANAGER_APDU_DEBOUNCE);
-              } else if (e.type === "exchange") {
-                if (requested) {
-                  o.next({ type: "allow-manager-accepted" });
-                }
+const install = (
+  transport: Transport<*>,
+  context: string,
+  params: *
+): Observable<*> =>
+  createDeviceSocket(transport, {
+    url: URL.format({
+      pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
+      query: { ...params, livecommonversion }
+    }),
+    ignoreWebsocketErrorDuringBulk: true
+  }).pipe(remapSocketError(context));
+
+const genuineCheck = (
+  transport: Transport<*>,
+  { targetId, perso }: { targetId: *, perso: * }
+): Observable<*> =>
+  createDeviceSocket(transport, {
+    url: URL.format({
+      pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
+      query: { targetId, perso, livecommonversion }
+    })
+  }).pipe(input =>
+    Observable.create(o => {
+      let timeout;
+      let requested;
+      const sub = input.subscribe({
+        complete: () => {
+          o.complete();
+        },
+        error: e => {
+          o.error(e);
+        },
+        next: e => {
+          if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+          }
+          if (e.type === "result") {
+            o.next(e);
+          } else if (e.nonce === 3) {
+            if (e.type === "exchange-before") {
+              timeout = setTimeout(() => {
+                o.next({ type: "allow-manager-requested" });
+                requested = true;
+              }, ALLOW_MANAGER_APDU_DEBOUNCE);
+            } else if (e.type === "exchange") {
+              if (requested) {
+                o.next({ type: "allow-manager-accepted" });
               }
             }
           }
-        });
+        }
+      });
+      return sub;
+    })
+  );
 
-        return sub;
-      })
-    ),
+const installMcu = (
+  transport: Transport<*>,
+  context: string,
+  { targetId, version }: { targetId: *, version: * }
+): Observable<*> =>
+  createDeviceSocket(transport, {
+    url: URL.format({
+      pathname: `${getEnv("BASE_SOCKET_URL")}/mcu`,
+      query: { targetId, version, livecommonversion }
+    }),
+    ignoreWebsocketErrorDuringBulk: true
+  }).pipe(remapSocketError(context));
 
-  installMcu: (
-    transport: Transport<*>,
-    context: string,
-    { targetId, version }: { targetId: *, version: * }
-  ) =>
-    createDeviceSocket(transport, {
-      url: URL.format({
-        pathname: `${getEnv("BASE_SOCKET_URL")}/mcu`,
-        query: { targetId, version, livecommonversion }
-      }),
-      ignoreWebsocketErrorDuringBulk: true
-    }).pipe(remapSocketError(context))
+const API = {
+  applicationsByDevice,
+  listApps,
+  listCategories,
+  getMcus,
+  getLatestFirmware,
+  getCurrentOSU,
+  getNextBLVersion,
+  getCurrentFirmware,
+  getFinalFirmwareById,
+  getDeviceVersion,
+  install,
+  genuineCheck,
+  installMcu
 };
 
 export default API;
