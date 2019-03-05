@@ -14,7 +14,7 @@ type Pair = {
 
 export const genDateRange = ({ dateFrom, dateTo, rate }: Pair): Histodays => {
   const histodays = {};
-  for (let d = dateFrom; d < dateTo; d += 24 * 60 * 60 * 1000) {
+  for (let d = dateFrom.getTime(); d < dateTo; d += 24 * 60 * 60 * 1000) {
     const day = new Date(d);
     histodays[formatCounterValueDay(day)] = rate(new Date(d));
   }

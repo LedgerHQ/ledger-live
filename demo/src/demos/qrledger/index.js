@@ -100,6 +100,7 @@ class QRCodeEntry extends Component<*> {
         >
           <QRCode size={width} data={entry.address} />
           <img
+            alt=""
             src="/ledger_icon.svg"
             style={{
               width: width / 4,
