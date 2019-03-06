@@ -124,7 +124,9 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
-        <UnpairRow onPress={this.open} deviceId={meta.deviceId} />
+        {meta.wired ? null : (
+          <UnpairRow onPress={this.open} deviceId={meta.deviceId} />
+        )}
         <DeviceAction
           opened={this.state.opened}
           onClose={this.close}
