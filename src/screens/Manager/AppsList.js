@@ -185,7 +185,7 @@ class ManagerAppsList extends Component<
             onClose={this.onActionClose}
             onOpenAccounts={this.onActionOpenAccounts}
             deviceId={deviceId}
-            modeiId={modelId}
+            modelId={modelId}
             targetId={deviceInfo.targetId}
             isOpened={!!action}
           />

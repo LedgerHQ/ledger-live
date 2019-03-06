@@ -5,7 +5,6 @@ import { map } from "rxjs/operators/map";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { setNetwork } from "@ledgerhq/live-common/lib/network";
-import { identifyUSBProductId } from "@ledgerhq/devices";
 import { logs } from "@ledgerhq/live-common/lib/api/socket";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
@@ -46,11 +45,11 @@ registerTransportModule({
       ? Promise.resolve() // nothing to do
       : null,
   discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
-    map(({ type, descriptor }) => {
-      const product = identifyUSBProductId(descriptor.productId);
-      const name = (product && product.productName) || "USB device";
+    map(({ type, descriptor, deviceModel }) => {
+      const name = deviceModel.productName;
       return {
         type,
+        deviceModel,
         id: `usb|${JSON.stringify(descriptor)}`,
         name,
       };
