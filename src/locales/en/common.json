@@ -881,7 +881,7 @@
         "title": "Allow Ledger Manager on your {{productName}}"
       },
       "genuineCheckPending": {
-        "title": "Checking the device is genuine..."
+        "title": "Checking device authenticity..."
       },
       "dashboard": {
         "title": "Navigate to dashboard on your {{productName}}"
