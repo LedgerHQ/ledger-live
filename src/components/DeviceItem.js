@@ -9,128 +9,105 @@ import LText from "./LText";
 import colors from "../colors";
 import IconNanoX from "../icons/NanoX";
 import IconArrowRight from "../icons/ArrowRight";
-import Check from "../icons/Check";
-
-export type Device = {
-  id: string,
-  name: string,
-};
+import USB from "../icons/USB";
+import Ellipsis from "../icons/Ellipsis";
+import type { DeviceMeta } from "./DeviceJob/types";
 
 type Props = {
-  device: Device,
-  name: string,
-  id: string,
+  deviceMeta: DeviceMeta,
   disabled?: boolean,
   withArrow?: boolean,
   description?: React$Node,
-  onSelect?: Device => any,
-  onForgetSelect?: string => any,
-  selected?: boolean,
+  onSelect?: DeviceMeta => any,
+  onBluetoothDeviceAction?: DeviceMeta => any,
 };
 
 const iconByFamily = {
-  httpdebug: "terminal",
+  httpdebug: () => (
+    <Icon
+      style={styles.specialIcon}
+      name="terminal"
+      size={16}
+      color={colors.darkBlue}
+    />
+  ),
+  usb: () => <USB color={colors.darkBlue} />,
 };
 
 export default class DeviceItem extends PureComponent<Props> {
   onPress = () => {
-    const { device, onSelect } = this.props;
+    const { deviceMeta, onSelect } = this.props;
     invariant(onSelect, "onSelect required");
-    return onSelect(device);
-  };
-
-  onForget = () => {
-    const { device, onForgetSelect } = this.props;
-    invariant(onForgetSelect, "onForget required");
-    return onForgetSelect(device.id);
+    return onSelect(deviceMeta);
   };
 
   render() {
     const {
-      name,
-      id,
+      deviceMeta,
       disabled,
-      onSelect,
       description,
-      onForgetSelect,
       withArrow,
-      selected,
+      onBluetoothDeviceAction,
     } = this.props;
 
-    const family = id.split("|")[0];
-    const iconName = family && iconByFamily[family];
-
-    const edit = selected ? (
-      <View style={styles.selectedIconWrapper}>
-        <Check size={16} color={colors.white} />
-      </View>
-    ) : (
-      <View style={styles.selectIconPlaceHolder} />
-    );
-
-    let res = (
-      <View style={[styles.root, disabled && styles.rootDisabled]}>
-        <IconNanoX
-          color={colors.darkBlue}
-          height={36}
-          width={8}
-          style={disabled ? styles.deviceIconDisabled : undefined}
-        />
-        {!iconName ? null : (
-          <Icon
-            style={styles.specialIcon}
-            name={iconName}
-            size={16}
-            color={colors.darkBlue}
-          />
-        )}
-        <View style={styles.content}>
-          <LText
-            bold
-            numberOfLines={1}
-            style={[
-              styles.deviceNameText,
-              disabled && styles.deviceNameTextDisabled,
-            ]}
-          >
-            {name}
-          </LText>
-          {description ? (
-            <LText
-              numberOfLines={1}
-              style={[
-                styles.descriptionText,
-                disabled && styles.descriptionTextDisabled,
-              ]}
-            >
-              {description}
-            </LText>
-          ) : null}
-        </View>
-        {onForgetSelect ? edit : null}
-        {withArrow && !disabled ? (
-          <IconArrowRight size={16} color={colors.grey} />
-        ) : null}
-      </View>
-    );
-
-    if (onSelect && !disabled && !onForgetSelect) {
-      res = (
-        <Touchable event="DeviceItemEnter" onPress={this.onPress}>
-          {res}
-        </Touchable>
-      );
-    } else if (onForgetSelect) {
-      res = (
-        <Touchable event="DeviceItemForget" onPress={this.onForget}>
-          {res}
-        </Touchable>
-      );
-    }
-
+    const family = deviceMeta.deviceId.split("|")[0];
+    const CustomIcon = family && iconByFamily[family];
     return (
       <View style={styles.outer}>
-        <View style={styles.inner}>{res}</View>
+        <View style={styles.inner}>
+          <Touchable event="DeviceItemEnter" onPress={this.onPress}>
+            <View style={[styles.root, disabled && styles.rootDisabled]}>
+              <View style={styles.iconWrapper}>
+                {CustomIcon ? (
+                  <CustomIcon />
+                ) : (
+                  <IconNanoX
+                    color={colors.darkBlue}
+                    height={36}
+                    width={8}
+                    style={disabled ? styles.deviceIconDisabled : undefined}
+                  />
+                )}
+              </View>
+              <View style={styles.content}>
+                <LText
+                  bold
+                  numberOfLines={1}
+                  style={[
+                    styles.deviceNameText,
+                    disabled && styles.deviceNameTextDisabled,
+                  ]}
+                >
+                  {deviceMeta.deviceName}
+                </LText>
+                {description ? (
+                  <LText
+                    numberOfLines={1}
+                    style={[
+                      styles.descriptionText,
+                      disabled && styles.descriptionTextDisabled,
+                    ]}
+                  >
+                    {description}
+                  </LText>
+                ) : null}
+              </View>
+              {!withArrow &&
+                family !== "usb" &&
+                !!onBluetoothDeviceAction && (
+                  <Touchable
+                    event="DeviceItemForget"
+                    onPress={() => onBluetoothDeviceAction(deviceMeta)}
+                  >
+                    <Ellipsis />
+                  </Touchable>
+                )}
+              {withArrow && !disabled ? (
+                <IconArrowRight size={16} color={colors.grey} />
+              ) : null}
+            </View>
+          </Touchable>
+        </View>
       </View>
     );
   }
@@ -142,6 +119,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  iconWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 15,
+  },
   inner: {
     flex: 1,
   },
@@ -150,9 +132,7 @@ const styles = StyleSheet.create({
   },
   root: {
     height: 64,
-    paddingVertical: 14,
-    paddingLeft: 24,
-    paddingRight: 8,
+    padding: 16,
     borderColor: colors.fog,
     borderWidth: 1,
     borderRadius: 4,

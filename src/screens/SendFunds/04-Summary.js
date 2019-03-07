@@ -19,12 +19,12 @@ import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
 import SummaryFromSection from "./SummaryFromSection";
 import SummaryToSection from "./SummaryToSection";
-import SectionSeparator from "./SectionSeparator";
 import SummaryAmountSection from "./SummaryAmountSection";
 import SendRowsCustom from "../../families/SendRowsCustom";
 import SendRowsFee from "../../families/SendRowsFee";
 import SummaryTotalSection from "./SummaryTotalSection";
 import StepHeader from "../../components/StepHeader";
+import SectionSeparator from "../../components/SectionSeparator";
 
 // TODO put this somewhere
 const similarError = (a, b) =>
@@ -154,14 +154,14 @@ class SendSummary extends Component<
             account={account}
             navigation={navigation}
           />
-          <SectionSeparator />
+          <SectionSeparator lineColor={colors.lightFog} />
           <SummaryAmountSection account={account} amount={amount} />
           <SendRowsFee
             account={account}
             transaction={transaction}
             navigation={navigation}
           />
-          <SectionSeparator />
+          <SectionSeparator lineColor={colors.lightFog} />
           <SummaryTotalSection
             account={account}
             amount={totalSpent || amount}
@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
+    paddingHorizontal: 16,
   },
   footer: {
     flexDirection: "column",
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     borderColor: colors.lightFog,
     height: 20,
     top: 60,
-    left: 32,
+    left: 16,
   },
 });
 

@@ -11,6 +11,7 @@ import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager
 import install from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
 import { createStructuredSelector } from "reselect";
+import { getDeviceModel } from "@ledgerhq/devices";
 import BottomModal from "../../components/BottomModal";
 import Close from "../../icons/Close";
 import Button from "../../components/Button";
@@ -21,7 +22,6 @@ import TranslatedError from "../../components/TranslatedError";
 import spinner from "../../images/spinner.png";
 import Check from "../../icons/Check";
 import Spinning from "../../components/Spinning";
-import { deviceNames } from "../../wording";
 import { delay } from "../../logic/promise";
 import colors from "../../colors";
 import AppIcon from "./AppIcon";
@@ -84,6 +84,7 @@ class AppAction extends PureComponent<
     },
     targetId: *,
     deviceId: string,
+    modelId: string,
     onClose: () => void,
     onOpenAccounts: () => void,
     isOpened: boolean,
@@ -146,7 +147,7 @@ class AppAction extends PureComponent<
   };
 
   render() {
-    const { action, onOpenAccounts, isOpened } = this.props;
+    const { modelId, action, onOpenAccounts, isOpened } = this.props;
     const { pending, error, progress } = this.state;
     const path = `${action.type}.${pending ? "loading" : "done"}`;
     const progressPercentage = Math.round(progress * 100);
@@ -163,7 +164,10 @@ class AppAction extends PureComponent<
     ) : (
       <Trans
         i18nKey={`AppAction.${path}.title`}
-        values={{ ...deviceNames.nanoX, appName: action.app.name }}
+        values={{
+          productName: getDeviceModel(modelId).productName,
+          appName: action.app.name,
+        }}
       />
     );
 

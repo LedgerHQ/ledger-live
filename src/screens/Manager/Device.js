@@ -11,13 +11,13 @@ import type {
   FinalFirmware,
 } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import Circle from "../../components/Circle";
 import colors from "../../colors";
-import { deviceNames } from "../../wording";
 import { TrackScreen } from "../../analytics";
 
 import DeviceNameRow from "./DeviceNameRow";
@@ -100,31 +100,38 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
   close = () => this.setState({ opened: false });
 
   render() {
-    const deviceId = this.props.navigation.getParam("deviceId");
     const meta = this.props.navigation.getParam("meta");
 
     return (
       <ScrollView style={styles.root} contentContainerStyle={styles.container}>
         <TrackScreen category="Manager" name="Device" />
         <View style={styles.device}>
-          <DeviceNanoAction />
+          <DeviceNanoAction modelId={meta.modelId} wired={meta.wired} />
           <LText secondary semiBold style={styles.deviceName}>
-            {deviceNames.nanoX.fullDeviceName}
+            {getDeviceModel(meta.modelId).productName}
           </LText>
-          <FirmwareUpdateRow deviceInfo={meta.deviceInfo} deviceId={deviceId} />
+          <FirmwareUpdateRow
+            deviceInfo={meta.deviceInfo}
+            deviceId={meta.deviceId}
+          />
         </View>
-        <DeviceNameRow
-          deviceId={deviceId}
-          initialDeviceName={meta.deviceName}
-        />
+        {meta.wired ? null : (
+          <DeviceNameRow
+            deviceId={meta.deviceId}
+            initialDeviceName={meta.deviceName}
+          />
+        )}
         <AuthenticityRow />
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
-        <UnpairRow onPress={this.open} deviceId={deviceId} />
+        {meta.wired ? null : (
+          <UnpairRow onPress={this.open} deviceId={meta.deviceId} />
+        )}
         <DeviceAction
           opened={this.state.opened}
           onClose={this.close}
-          deviceId={deviceId}
+          deviceId={meta.deviceId}
+          modelId={meta.modelId}
         />
       </ScrollView>
     );

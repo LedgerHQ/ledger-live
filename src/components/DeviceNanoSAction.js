@@ -12,8 +12,8 @@ import {
 } from "./DeviceNanoSComponents";
 
 class DeviceNanoSAction extends PureComponent<{
-  connected?: boolean,
-  action?: "left" | "both" | "right",
+  wired?: boolean,
+  action?: "left" | "accept",
   screen?: "validation" | "home" | "pin" | "empty",
   width: number,
   error?: Error,
@@ -23,7 +23,7 @@ class DeviceNanoSAction extends PureComponent<{
   };
 
   render() {
-    const { action, screen, error, width, connected } = this.props;
+    const { action, screen, error, width, wired } = this.props;
 
     const color = error ? "#EA2E49" : "#6490F1";
     const isRefusal = error && error.name.startsWith("UserRefused");
@@ -88,7 +88,7 @@ class DeviceNanoSAction extends PureComponent<{
           />
 
           {/* displays usb cable */}
-          {connected ? <Usb /> : null}
+          {wired ? <Usb /> : null}
 
           {/* displays action button */}
           {action ? <Hints action={action} color={color} /> : null}

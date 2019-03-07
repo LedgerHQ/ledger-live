@@ -27,24 +27,17 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
 
   pairNew = () => this.props.navigation.navigate("PairDevices");
 
-  filterDeviceModule = m => m.id === "ble";
-
   render() {
     return (
       <OnboardingLayout
         header="OnboardingStepPairNew"
         Footer={this.Footer}
         borderedFooter
-        noHorizontalPadding
         noTopPadding
         withNeedHelp
       >
         <TrackScreen category="Onboarding" name="PairNew" />
-        <SelectDevice
-          filter={this.filterDeviceModule}
-          onboarding
-          onSelect={this.props.next}
-        />
+        <SelectDevice onboarding onSelect={this.props.next} />
       </OnboardingLayout>
     );
   }

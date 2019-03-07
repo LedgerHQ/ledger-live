@@ -14,7 +14,7 @@ export type OnboardingContextType = {
 
   // list of the currently active steps
   mode: OnboardingMode,
-  deviceModel: DeviceNames,
+  deviceModelId: DeviceNames,
 
   showWelcome: boolean,
   setShowWelcome: boolean => Promise<void>,
@@ -48,13 +48,8 @@ export type SetOnboardingDeviceModelType = DeviceNames => Promise<void>;
 
 export type OnboardingContextProviderProps = { children: * };
 
-type OnboardingMode =
-  | "full"
-  | "alreadyInitialized"
-  | "qrcode"
-  | "restore"
-  | "legacyNanoS"
-  | "legacyBlue";
+type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
+
 type DeviceNames = "nanoS" | "nanoX" | "blue";
 
 type StepNavigateType = (NavigationScreenProp<*>) => void;

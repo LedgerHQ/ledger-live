@@ -1,6 +1,7 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
+import { Platform } from "react-native";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
@@ -306,6 +307,6 @@ export const hasInstalledAnyAppSelector = (state: State) =>
   state.settings.hasInstalledAnyApp;
 
 export const readOnlyModeEnabledSelector = (state: State) =>
-  state.settings.readOnlyModeEnabled;
+  Platform.OS === "android" && state.settings.readOnlyModeEnabled;
 
 export default handleActions(handlers, INITIAL_STATE);

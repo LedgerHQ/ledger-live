@@ -4,21 +4,23 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import colors from "../../colors";
 
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
-import { deviceNames } from "../../wording";
 import { getAccountBridge } from "../../bridge";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
   action: () => void,
+  modelId: *,
   transaction: *,
   account: *,
+  wired: boolean,
 };
 const { width } = getWindowDimensions();
 
@@ -76,7 +78,7 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
   };
 
   render() {
-    const { transaction, account } = this.props;
+    const { transaction, account, modelId, wired } = this.props;
     const { total } = this.state;
     const bridge = getAccountBridge(account);
     const amount = bridge.getTransactionAmount(account, transaction);
@@ -87,7 +89,9 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
         <View style={styles.innerContainer}>
           <View style={styles.picture}>
             <DeviceNanoAction
-              action="both"
+              modelId={modelId}
+              wired={wired}
+              action="accept"
               width={width * 0.8}
               screen="validation"
             />
@@ -96,7 +100,7 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
             <LText secondary semiBold style={styles.title}>
               <Trans
                 i18nKey="send.validation.title"
-                values={deviceNames.nanoX}
+                values={getDeviceModel(modelId)}
               />
             </LText>
           </View>

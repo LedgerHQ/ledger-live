@@ -45,7 +45,7 @@ class OnboardingStepSetupPin extends Component<
   );
 
   render() {
-    const { mode, next } = this.props;
+    const { mode, next, deviceModelId } = this.props;
     const { isModalOpened } = this.state;
     return (
       <OnboardingLayout
@@ -61,7 +61,11 @@ class OnboardingStepSetupPin extends Component<
           onClose={this.hideModal}
         />
         <View style={styles.hero}>
-          <DeviceNanoAction screen="pin" />
+          <DeviceNanoAction
+            modelId={deviceModelId}
+            wired={deviceModelId === "nanoS"} // tradeoff in this onboarding that we don't save the info that NanoX might be on USB^^
+            screen="pin"
+          />
         </View>
         <View style={styles.wrapper}>
           <BulletList

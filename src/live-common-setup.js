@@ -13,6 +13,7 @@ import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
 
 import network from "./api/network";
+import { retry } from "./logic/promise";
 
 if (Config.DEBUG_SOCKET) {
   logs.subscribe(e => {
@@ -33,23 +34,30 @@ setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
 
 registerTransportModule({
   id: "hid",
-  open: id => {
+
+  // prettier-ignore
+  // $FlowFixMe
+  open: async id => { // eslint-disable-line consistent-return
     if (id.startsWith("usb|")) {
-      const json = JSON.parse(id.slice(4));
-      return HIDTransport.open(json);
+      const devicePath = JSON.parse(id.slice(4));
+      return retry(() => HIDTransport.open(devicePath), { maxRetry: 2 });
     }
-    return null;
   },
+
   disconnect: id =>
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
   discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
-    map(({ type, descriptor }) => ({
-      type,
-      id: `usb|${JSON.stringify(descriptor)}`,
-      name: "USB device",
-    })),
+    map(({ type, descriptor, deviceModel }) => {
+      const name = deviceModel.productName;
+      return {
+        type,
+        deviceModel,
+        id: `usb|${JSON.stringify(descriptor)}`,
+        name,
+      };
+    }),
   ),
 });
 

@@ -1,61 +1,103 @@
 // @flow
-import React, { Component, Fragment } from "react";
-import { StyleSheet } from "react-native";
-// $FlowFixMe
-import { FlatList } from "react-navigation";
+import React, { Component } from "react";
+import { StyleSheet, View, Platform } from "react-native";
+import Config from "react-native-config";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
+import { Trans } from "react-i18next";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
+import Icon from "react-native-vector-icons/dist/Feather";
+import { withNavigation } from "react-navigation";
+import type { NavigationScreenProp } from "react-navigation";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
 import DeviceJob from "../DeviceJob";
-import type { Step } from "../DeviceJob/types";
-import Header from "./Header";
-import Footer from "./Footer";
+import type { Step, DeviceMeta } from "../DeviceJob/types";
 import { setReadOnlyMode } from "../../actions/settings";
+import BluetoothEmpty from "./BluetoothEmpty";
+import USBEmpty from "./USBEmpty";
+import LText from "../LText";
+import Touchable from "../Touchable";
+import colors from "../../colors";
+import Circle from "../Circle";
+import SectionSeparator from "../SectionSeparator";
 
 type Props = {
-  onForgetSelect?: (deviceId: string) => any,
-  onSelect: (deviceId: string, meta: Object) => void,
-  selectedIds?: string[],
-  steps: Step[],
-  editMode?: boolean,
-  // connect-ed
+  onBluetoothDeviceAction?: (device: DeviceMeta) => any,
+  onSelect: (meta: DeviceMeta) => void,
+  steps?: Step[],
+  onStepEntered?: (number, Object) => void,
+  onboarding?: boolean,
+  filter?: TransportModule => boolean,
+  navigation: NavigationScreenProp<*>,
+};
+
+type OwnProps = Props & {
   knownDevices: Array<{
     id: string,
     name: string,
   }>,
   removeKnownDevice: string => *,
-  onStepEntered?: (number, Object) => void,
+  onBluetoothDeviceAction: DeviceMeta => any,
   setReadOnlyMode: boolean => void,
-  onboarding?: boolean,
-  filter: TransportModule => boolean,
 };
 
 type State = {
-  devices: Array<{
-    id: string,
-    name: string,
-    family: string,
-  }>,
+  devices: Array<DeviceMeta>,
   scanning: boolean,
-  connecting: boolean,
-  connectingId: ?string,
+  connecting: ?DeviceMeta,
+  showMenu: boolean,
 };
 
-class SelectDevice extends Component<Props, State> {
+const IconPlus = () => (
+  <Circle bg={colors.live} size={14}>
+    <Icon name="plus" size={10} color={colors.white} />
+  </Circle>
+);
+
+const BluetoothHeader = ({ onPairNewDevice }: { onPairNewDevice: () => * }) => (
+  <Touchable
+    event="PairNewDevice"
+    style={styles.bluetoothHeader}
+    onPress={onPairNewDevice}
+  >
+    <LText semiBold style={styles.section}>
+      <Trans i18nKey="common.bluetooth" />
+    </LText>
+    <View style={styles.addContainer}>
+      <LText semiBold style={styles.add}>
+        <Trans i18nKey="common.add" />
+      </LText>
+      <IconPlus />
+    </View>
+  </Touchable>
+);
+
+const USBHeader = () => (
+  <LText semiBold style={styles.section}>
+    <Trans i18nKey="common.usb" />
+  </LText>
+);
+
+const ORBar = () => (
+  <SectionSeparator style={styles.or} text={<Trans i18nKey="common.or" />} />
+);
+
+class SelectDevice extends Component<OwnProps, State> {
   static defaultProps = {
     steps: [],
     filter: () => true,
+    showDiscoveredDevices: true,
+    showKnownDevices: true,
   };
 
   state = {
     devices: [],
     scanning: true,
-    connecting: false,
-    connectingId: null,
+    connecting: null,
+    showMenu: false,
   };
 
   listingSubscription: *;
@@ -71,7 +113,9 @@ class SelectDevice extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.listingSubscription.unsubscribe();
+    if (this.listingSubscription) {
+      this.listingSubscription.unsubscribe();
+    }
   }
 
   observe() {
@@ -88,22 +132,27 @@ class SelectDevice extends Component<Props, State> {
           devices:
             e.type === "add"
               ? devices.concat({
-                  id: e.id,
-                  name: e.name,
-                  family: e.family,
+                  deviceId: e.id,
+                  deviceName: e.name || "",
+                  modelId:
+                    (e.deviceModel && e.deviceModel.id) ||
+                    (Config.FALLBACK_DEVICE_MODEL_ID || "nanoX"),
+                  wired: e.id.startsWith("httpdebug|")
+                    ? Config.FALLBACK_DEVICE_WIRED === "YES"
+                    : e.id.startsWith("usb|"),
                 })
-              : devices.filter(d => d.id !== e.id),
+              : devices.filter(d => d.deviceId !== e.id),
         })),
     });
   }
 
-  onSelect = ({ id }) => {
-    this.setState({ connecting: true, connectingId: id });
+  onSelect = (connecting: DeviceMeta) => {
+    this.setState({ connecting });
   };
 
-  onDone = (id, meta) => {
-    this.setState({ connecting: false }, () => {
-      this.props.onSelect(id, meta);
+  onDone = info => {
+    this.setState({ connecting: null }, () => {
+      this.props.onSelect(info);
     });
 
     // Always false until we pair a device?
@@ -111,23 +160,21 @@ class SelectDevice extends Component<Props, State> {
   };
 
   onCancel = () => {
-    this.setState({ connecting: false });
+    this.setState({ connecting: null });
   };
 
-  renderItem = ({ item }: *) => (
+  onPairNewDevice = () => {
+    const { navigation } = this.props;
+    navigation.navigate("PairDevices");
+  };
+
+  renderItem = (item: *) => (
     <DeviceItem
-      key={item.id}
-      device={item}
+      key={item.deviceId}
+      deviceMeta={item}
       onSelect={this.onSelect}
       withArrow={!!this.props.onboarding}
-      onForgetSelect={
-        this.props.editMode ? this.props.onForgetSelect : undefined
-      }
-      selected={
-        this.props.selectedIds
-          ? this.props.selectedIds.includes(item.id)
-          : undefined
-      }
+      onBluetoothDeviceAction={this.props.onBluetoothDeviceAction}
       {...item}
     />
   );
@@ -135,41 +182,51 @@ class SelectDevice extends Component<Props, State> {
   keyExtractor = (item: *) => item.id;
 
   render() {
-    const { knownDevices, steps, editMode, onStepEntered } = this.props;
-    const { devices, connecting, connectingId } = this.state;
+    const { knownDevices, steps, onStepEntered } = this.props;
+    const { devices, connecting } = this.state;
 
-    const data = devices.concat(knownDevices);
-    const connectingDevice = data.find(d => d.id === connectingId);
+    const all: DeviceMeta[] = devices.concat(
+      knownDevices.map(d => ({
+        deviceId: d.id,
+        deviceName: d.name || "",
+        wired: false,
+        modelId: "nanoX",
+      })),
+    );
+
+    const [ble, other] = all.reduce(
+      ([ble, other], device) =>
+        device.wired ? [ble, [...other, device]] : [[...ble, device], other],
+      [[], []],
+    );
+
+    const hasUSBSection = Platform.OS === "android" || other.length > 0;
 
     return (
-      <Fragment>
-        <FlatList
-          contentContainerStyle={styles.root}
-          data={data}
-          renderItem={this.renderItem}
-          ListHeaderComponent={Header}
-          ListFooterComponent={editMode ? null : Footer}
-          keyExtractor={this.keyExtractor}
-        />
+      <View>
+        {ble.length === 0 ? (
+          <BluetoothEmpty />
+        ) : (
+          <View>
+            <BluetoothHeader onPairNewDevice={this.onPairNewDevice} />
+            {ble.map(this.renderItem)}
+          </View>
+        )}
+        {hasUSBSection && (ble.length === 0 ? <ORBar /> : <USBHeader />)}
+        {other.length === 0 ? <USBEmpty /> : other.map(this.renderItem)}
+
         <DeviceJob
-          deviceName={connectingDevice ? connectingDevice.name : ""}
-          deviceId={connecting && connectingId ? connectingId : null}
+          meta={connecting}
           steps={steps}
           onCancel={this.onCancel}
           onStepEntered={onStepEntered}
           onDone={this.onDone}
-          editMode={editMode}
+          editMode={false}
         />
-      </Fragment>
+      </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  root: {
-    padding: 16,
-  },
-});
 
 export default connect(
   createStructuredSelector({
@@ -179,4 +236,29 @@ export default connect(
     removeKnownDevice,
     setReadOnlyMode,
   },
-)(SelectDevice);
+)(withNavigation(SelectDevice));
+
+const styles = StyleSheet.create({
+  section: {
+    fontSize: 14,
+    lineHeight: 21,
+    marginBottom: 12,
+    color: colors.grey,
+  },
+  addContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  add: {
+    marginRight: 8,
+    color: colors.live,
+  },
+  bluetoothHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  or: {
+    marginVertical: 30,
+  },
+});

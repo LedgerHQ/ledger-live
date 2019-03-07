@@ -27,6 +27,7 @@ type Props = {
     params: {
       accountId: string,
       deviceId: string,
+      modelId: string,
       transaction: *,
     },
   }>,
@@ -127,6 +128,8 @@ class Validation extends Component<Props, State> {
     const { signed, signing } = this.state;
     const { navigation, account } = this.props;
     const transaction = navigation.getParam("transaction");
+    const modelId = navigation.getParam("modelId");
+    const wired = navigation.getParam("wired");
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="Validation" signed={signed} />
@@ -143,6 +146,8 @@ class Validation extends Component<Props, State> {
           </View>
         ) : (
           <ValidateOnDevice
+            wired={wired}
+            modelId={modelId}
             account={account}
             transaction={transaction}
             action={this.sign}

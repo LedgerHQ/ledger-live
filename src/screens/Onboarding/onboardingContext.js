@@ -28,7 +28,7 @@ const INITIAL_CONTEXT: $Shape<OnboardingContextType> = {
 
   firstTimeOnboarding: true,
 
-  deviceModel: "nanoX",
+  deviceModelId: "nanoX",
 };
 
 const OnboardingContext = createContext(INITIAL_CONTEXT);
@@ -64,22 +64,24 @@ export class OnboardingContextProvider extends PureComponent<
   next = (navigation: NavigationScreenProp<*>) => {
     const currentStep = navigation.state.routeName;
     const steps = getStepForState(this.state);
-    this.navigate(navigation, steps.findIndex(s => s.id === currentStep) + 1);
+    const i = steps.findIndex(s => s.id === currentStep) + 1;
+    this.navigate(navigation, i);
   };
 
   // Navigate to previous step
   prev = (navigation: NavigationScreenProp<*>) => {
     const currentStep = navigation.state.routeName;
     const steps = getStepForState(this.state);
-    this.navigate(navigation, steps.findIndex(s => s.id === currentStep) - 1);
+    const i = steps.findIndex(s => s.id === currentStep) - 1;
+    this.navigate(navigation, i);
   };
 
   // Replace current steps with steps of given mode
   setOnboardingMode: SetOnboardingModeType = mode =>
     new Promise(resolve => this.setState({ mode }, resolve));
 
-  setOnboardingDeviceModel: SetOnboardingDeviceModelType = deviceModel =>
-    new Promise(resolve => this.setState({ deviceModel }, resolve));
+  setOnboardingDeviceModel: SetOnboardingDeviceModelType = deviceModelId =>
+    new Promise(resolve => this.setState({ deviceModelId }, resolve));
 
   setShowWelcome = (showWelcome: boolean) =>
     new Promise(r => this.setState({ showWelcome }, r));

@@ -39,6 +39,7 @@ type BaseProps = {
   containerStyle?: *,
   titleStyle?: *,
   IconLeft?: *,
+  IconRight?: *,
   disabled?: boolean,
   // for analytics
   event: string,
@@ -131,6 +132,7 @@ class Button extends PureComponent<
       onPress,
       titleStyle,
       IconLeft,
+      IconRight,
       disabled,
       type,
       useTouchable,
@@ -228,6 +230,12 @@ class Button extends PureComponent<
             <LText secondary semiBold style={textStyle}>
               {title}
             </LText>
+          ) : null}
+
+          {IconRight ? (
+            <View style={title ? { marginRight: 10 } : {}}>
+              <IconRight size={16} color={iconColor} />
+            </View>
           ) : null}
         </Animated.View>
 

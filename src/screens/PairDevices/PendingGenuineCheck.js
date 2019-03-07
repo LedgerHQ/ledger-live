@@ -8,18 +8,31 @@ import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
+import { PendingSpinner } from "./PendingContainer";
 import LText from "../../components/LText";
 
 const { width } = getWindowDimensions();
 
-class PendingGenuineCheck extends PureComponent<*> {
+class PendingGenuineCheck extends PureComponent<{
+  genuineAskedOnDevice: boolean,
+}> {
   render() {
+    const { genuineAskedOnDevice } = this.props;
     return (
       <View style={styles.root}>
         <TrackScreen category="PairDevices" name="PendingGenuineCheck" />
-        <View style={styles.nano}>
-          <DeviceNanoAction action="both" screen="validation" width={width} />
-        </View>
+        {genuineAskedOnDevice ? (
+          <View style={styles.nano}>
+            <DeviceNanoAction
+              modelId="nanoX"
+              action="accept"
+              screen="validation"
+              width={width}
+            />
+          </View>
+        ) : (
+          <PendingSpinner />
+        )}
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="PairDevices.GenuineCheck.title" />
         </LText>

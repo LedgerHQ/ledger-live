@@ -17,18 +17,13 @@ class DebugIcons extends Component<{}> {
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <DeviceNanoAction width={250} />
-          <DeviceNanoAction width={250} action="both" screen="validation" />
+          <DeviceNanoAction width={250} action="accept" screen="validation" />
           <DeviceNanoAction width={250} screen="home" />
-          <DeviceNanoAction
-            width={250}
-            action="left"
-            screen="empty"
-            connected
-          />
-          <DeviceNanoAction width={250} action="right" screen="pin" />
+          <DeviceNanoAction width={250} action="left" screen="empty" wired />
+          <DeviceNanoAction width={250} action="accept" screen="pin" />
           <DeviceNanoAction width={250} error={new UserRefusedAddress()} />
           <DeviceNanoAction width={250} error={new Error("wahtevr")} />
-          <DeviceNanoAction width={250} connected />
+          <DeviceNanoAction width={250} wired />
 
           <DeviceNanoAction width={250} modelId="nanoS" />
           <DeviceNanoAction
@@ -44,29 +39,19 @@ class DebugIcons extends Component<{}> {
           <DeviceNanoAction
             width={250}
             modelId="nanoS"
-            connected
-            action="both"
+            wired
+            action="accept"
             screen="validation"
           />
+          <DeviceNanoAction width={250} modelId="nanoS" wired action="left" />
           <DeviceNanoAction
             width={250}
             modelId="nanoS"
-            connected
-            action="left"
-          />
-          <DeviceNanoAction
-            width={250}
-            modelId="nanoS"
-            connected
+            wired
             screen="home"
-            action="right"
+            action="accept"
           />
-          <DeviceNanoAction
-            width={250}
-            modelId="nanoS"
-            connected
-            screen="pin"
-          />
+          <DeviceNanoAction width={250} modelId="nanoS" wired screen="pin" />
         </ScrollView>
       </SafeAreaView>
     );

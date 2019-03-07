@@ -9,7 +9,7 @@ import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
-import { timeout } from "rxjs/operators/timeout";
+import { timeout } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import logger from "../../logger";
@@ -47,6 +47,7 @@ type State = {
   device: ?Device,
   error: ?Error,
   skipCheck: boolean,
+  genuineAskedOnDevice: boolean,
 };
 
 class PairDevices extends Component<Props, State> {
@@ -59,6 +60,7 @@ class PairDevices extends Component<Props, State> {
     device: null,
     error: null,
     skipCheck: false,
+    genuineAskedOnDevice: false,
   };
 
   unmounted = false;
@@ -81,7 +83,7 @@ class PairDevices extends Component<Props, State> {
   };
 
   onSelect = async (device: Device) => {
-    this.setState({ device, status: "pairing" });
+    this.setState({ device, status: "pairing", genuineAskedOnDevice: false });
     try {
       const transport = await TransportBLE.open(device);
       if (this.unmounted) return;
@@ -91,11 +93,27 @@ class PairDevices extends Component<Props, State> {
         if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
 
         this.setState({ device, status: "genuinecheck" });
-        const observable = checkDeviceForManager(transport, deviceInfo).pipe(
-          timeout(GENUINE_CHECK_TIMEOUT),
-        );
+        let resolve;
+        let reject;
+        const genuineCheckPromise = new Promise((success, error) => {
+          resolve = success;
+          reject = error;
+        });
 
-        await observable.toPromise();
+        checkDeviceForManager(transport, deviceInfo)
+          .pipe(timeout(GENUINE_CHECK_TIMEOUT))
+          .subscribe({
+            next: e => {
+              if (e.type === "result") return;
+              this.setState({
+                genuineAskedOnDevice: e.type === "allow-manager-requested",
+              });
+            },
+            complete: () => resolve(),
+            error: e => reject(e),
+          });
+
+        await genuineCheckPromise;
         if (this.unmounted) return;
         this.props.addKnownDevice(device);
         if (this.unmounted) return;
@@ -127,7 +145,13 @@ class PairDevices extends Component<Props, State> {
   };
 
   render() {
-    const { error, status, device, skipCheck } = this.state;
+    const {
+      error,
+      status,
+      device,
+      skipCheck,
+      genuineAskedOnDevice,
+    } = this.state;
 
     if (error) {
       return (
@@ -161,7 +185,9 @@ class PairDevices extends Component<Props, State> {
         );
 
       case "genuinecheck":
-        return <PendingGenuineCheck />;
+        return (
+          <PendingGenuineCheck genuineAskedOnDevice={genuineAskedOnDevice} />
+        );
 
       case "paired":
         return device ? (

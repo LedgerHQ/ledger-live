@@ -10,7 +10,6 @@ import {
   Path,
   Circle,
   Mask,
-  Use,
 } from "react-native-svg";
 
 export const LeftHint = () => (
@@ -65,7 +64,7 @@ export const Hints = ({
   action,
   color,
 }: {
-  action: "both" | "left" | "right",
+  action: "accept" | "left",
   color: string,
 }) => (
   <>
@@ -75,15 +74,13 @@ export const Hints = ({
         <Stop offset="100%" stopColor={color} />
       </LinearGradient>
     </Defs>
-    {action === "both" ? (
+    {action === "accept" ? (
       <>
         <LeftHint />
         <RightHint />
       </>
     ) : action === "left" ? (
       <LeftHint />
-    ) : action === "right" ? (
-      <RightHint />
     ) : null}
   </>
 );
@@ -96,15 +93,19 @@ export const Usb = () => (
         <Stop offset="100%" stopColor="#142533" />
       </LinearGradient>
     </Defs>
-    <G strokeWidth="2" transform="translate(0, 45)">
+    <G transform="translate(2, 45)" fillRule="nonzero">
       <Path
-        stroke="url(#usb)"
-        d="M10 53h.778L10 52.222V52l-.111.111L9.778 52v.222L9 53h.778v48H9l.778.778V102l.11-.111L10 102v-.222l.778-.778H10V53zm6.222 0H17l-.778-.778V52l-.11.111L16 52v.222l-.778.778H16v48h-.778l.778.778V102l.111-.111.111.111v-.222L17 101h-.778V53z"
-        transform="matrix(0 -1 -1 0 102 34)"
+        fill="url(#usb)"
+        d="M10.778 52H9v2h1.778v-2zm0 0h-.89.89zm0 50v-2H9v2h1.778zM9 52h1.778v50H9V52zm7.111 0H17v2h-1.778v-2H17h-.889zM17 102v-2h-1.778v2H17zm-1.778-50H17v50h-1.778V52z"
+        transform="matrix(0 -1 -1 0 100 34)"
       />
       <Path
-        stroke="#142533"
-        d="M63 26H49.2a.2.2 0 0 1-.2-.2v-9.6c0-.11.09-.2.2-.2H63v10zM101 31.6a1.4 1.4 0 0 1-1.4 1.4H69.2a6.2 6.2 0 0 1-6.2-6.2V15.2A6.2 6.2 0 0 1 69.2 9h30.4a1.4 1.4 0 0 1 1.4 1.4v21.2z"
+        fill="#142533"
+        d="M60 25H48v-8h12v8zm2 2V15H47.2a1.2 1.2 0 0 0-1.2 1.2v9.6a1.2 1.2 0 0 0 1.2 1.2H62z"
+      />
+      <Path
+        fill="#142533"
+        d="M98 31.6a.4.4 0 0 1-.4.4H67.2a5.2 5.2 0 0 1-5.2-5.2V15.2a5.2 5.2 0 0 1 5.2-5.2h30.4c.22 0 .4.18.4.4v21.2zm2 0V10.4A2.4 2.4 0 0 0 97.6 8H67.2a7.2 7.2 0 0 0-7.2 7.2v11.6a7.2 7.2 0 0 0 7.2 7.2h30.4a2.4 2.4 0 0 0 2.4-2.4z"
       />
     </G>
   </>
@@ -134,25 +135,19 @@ export const EmptyScreen = ({
 );
 
 export const ValidationScreen = ({ color }: { color: string }) => (
-  <>
-    <Defs>
-      <Path
-        id="validate"
-        d="M13.62 2.608l-8.22 8.22-3.02-3.02a.375.375 0 0 0-.53 0l-.884.884a.375.375 0 0 0 0 .53l4.169 4.17a.375.375 0 0 0 .53 0l9.37-9.37a.375.375 0 0 0 0-.53l-.884-.884a.375.375 0 0 0-.53 0z"
-      />
-    </Defs>
-    <EmptyScreen color={color}>
-      <G transform="translate(25 7)">
-        <Mask id="d" fill="#fff">
-          <Use xlinkHref="#validate" />
-        </Mask>
-        <Use fill="#142533" xlinkHref="#c" />
-        <G fill="#66BE54" mask="url(#d)">
-          <Path d="M0 0h16v16H0z" />
-        </G>
+  <EmptyScreen color={color}>
+    <G transform="translate(25 7)">
+      <Mask id="d" fill="#fff">
+        <Path
+          id="validate"
+          d="M13.62 2.608l-8.22 8.22-3.02-3.02a.375.375 0 0 0-.53 0l-.884.884a.375.375 0 0 0 0 .53l4.169 4.17a.375.375 0 0 0 .53 0l9.37-9.37a.375.375 0 0 0 0-.53l-.884-.884a.375.375 0 0 0-.53 0z"
+        />
+      </Mask>
+      <G fill="#66BE54" mask="url(#d)">
+        <Path d="M0 0h16v16H0z" />
       </G>
-    </EmptyScreen>
-  </>
+    </G>
+  </EmptyScreen>
 );
 
 export const PinScreen = ({ color }: { color: string }) => (
@@ -168,24 +163,19 @@ export const PinScreen = ({ color }: { color: string }) => (
 );
 
 export const HomeScreen = ({ color }: { color: string }) => (
-  <>
-    <Defs>
-      <Path
-        id="home"
-        d="M2.75 6.367v6.966c0 .322.261.584.583.584h9.334a.583.583 0 0 0 .583-.584V6.367L8 2.283 2.75 6.367zm-1.21-.959l6-4.667a.75.75 0 0 1 .92 0l6 4.667a.75.75 0 0 1 .29.592v7.333c0 1.15-.933 2.084-2.083 2.084H3.333a2.083 2.083 0 0 1-2.083-2.084V6a.75.75 0 0 1 .29-.592zM6.75 8.75v5.917a.75.75 0 0 1-1.5 0V8A.75.75 0 0 1 6 7.25h4a.75.75 0 0 1 .75.75v6.667a.75.75 0 0 1-1.5 0V8.75h-2.5z"
-      />
-    </Defs>
-    <EmptyScreen color={color}>
-      <G transform="translate(25 7)">
-        <Mask id="f" fill="#fff">
-          <Use xlinkHref="#home" />
-        </Mask>
-        <G fill={color} mask="url(#f)">
-          <Path d="M0 0h16v16H0z" />
-        </G>
+  <EmptyScreen color={color}>
+    <G transform="translate(25 7)">
+      <Mask id="f" fill="#fff">
+        <Path
+          id="home"
+          d="M2.75 6.367v6.966c0 .322.261.584.583.584h9.334a.583.583 0 0 0 .583-.584V6.367L8 2.283 2.75 6.367zm-1.21-.959l6-4.667a.75.75 0 0 1 .92 0l6 4.667a.75.75 0 0 1 .29.592v7.333c0 1.15-.933 2.084-2.083 2.084H3.333a2.083 2.083 0 0 1-2.083-2.084V6a.75.75 0 0 1 .29-.592zM6.75 8.75v5.917a.75.75 0 0 1-1.5 0V8A.75.75 0 0 1 6 7.25h4a.75.75 0 0 1 .75.75v6.667a.75.75 0 0 1-1.5 0V8.75h-2.5z"
+        />
+      </Mask>
+      <G fill={color} mask="url(#f)">
+        <Path d="M0 0h16v16H0z" />
       </G>
-    </EmptyScreen>
-  </>
+    </G>
+  </EmptyScreen>
 );
 
 export const ErrorScreen = ({
@@ -196,29 +186,14 @@ export const ErrorScreen = ({
   rejected?: boolean,
 }) => (
   <>
-    <Defs>
-      <Path
-        id="cross"
-        d="M9.372 8l4.506-4.506a.416.416 0 0 0 0-.59l-.783-.782a.416.416 0 0 0-.589 0L8 6.628 3.494 2.122a.416.416 0 0 0-.59 0l-.782.783a.416.416 0 0 0 0 .589L6.628 8l-4.506 4.506a.416.416 0 0 0 0 .59l.783.782a.416.416 0 0 0 .589 0L8 9.372l4.506 4.506a.416.416 0 0 0 .59 0l.782-.783a.416.416 0 0 0 0-.589L9.372 8z"
-      />
-      <Path
-        id="circle"
-        d="M16 28c6.627 0 12-5.373 12-12S22.627 4 16 4 4 9.373 4 16s5.373 12 12 12z"
-      />
-      <Path
-        id="exclamation"
-        d="M8 2a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm0 12a1.2 1.2 0 1 1 0-2.4A1.2 1.2 0 0 1 8 14z"
-      />
-      <Path
-        id="smallcross"
-        d="M7.029 6l3.38-3.38a.312.312 0 0 0 0-.441l-.588-.587a.312.312 0 0 0-.441 0L6 4.972l-3.38-3.38a.312.312 0 0 0-.441 0l-.587.587a.312.312 0 0 0 0 .441L4.972 6l-3.38 3.38a.312.312 0 0 0 0 .441l.587.587c.122.123.32.123.441 0L6 7.028l3.38 3.38c.122.123.32.123.441 0l.587-.587a.312.312 0 0 0 0-.441L7.028 6z"
-      />
-    </Defs>
     <EmptyScreen color={color}>
       {rejected ? (
         <G transform="translate(25 7)">
           <Mask id="cross-mask" fill="#fff">
-            <Use xlinkHref="#cross" />
+            <Path
+              id="cross"
+              d="M9.372 8l4.506-4.506a.416.416 0 0 0 0-.59l-.783-.782a.416.416 0 0 0-.589 0L8 6.628 3.494 2.122a.416.416 0 0 0-.59 0l-.782.783a.416.416 0 0 0 0 .589L6.628 8l-4.506 4.506a.416.416 0 0 0 0 .59l.783.782a.416.416 0 0 0 .589 0L8 9.372l4.506 4.506a.416.416 0 0 0 .59 0l.782-.783a.416.416 0 0 0 0-.589L9.372 8z"
+            />
           </Mask>
           <G fill={color} mask="url(#cross-mask)">
             <Path d="M0 0h16v16H0z" />
@@ -233,9 +208,11 @@ export const ErrorScreen = ({
         d="M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16z"
       />
       <Mask id="circle-mask" fill="#fff">
-        <Use xlinkHref="#circle" />
+        <Path
+          id="circle"
+          d="M16 28c6.627 0 12-5.373 12-12S22.627 4 16 4 4 9.373 4 16s5.373 12 12 12z"
+        />
       </Mask>
-      <Use fill="#FFF" fillRule="nonzero" xlinkHref="#circle" />
       <G fill={color} mask="url(#circle-mask)">
         <Path d="M0 0h32v32H0z" />
       </G>
@@ -243,7 +220,10 @@ export const ErrorScreen = ({
     {rejected ? (
       <G transform="translate(364 42)">
         <Mask id="smallcross-mask" fill="#fff">
-          <Use xlinkHref="#smallcross" />
+          <Path
+            id="smallcross"
+            d="M7.029 6l3.38-3.38a.312.312 0 0 0 0-.441l-.588-.587a.312.312 0 0 0-.441 0L6 4.972l-3.38-3.38a.312.312 0 0 0-.441 0l-.587.587a.312.312 0 0 0 0 .441L4.972 6l-3.38 3.38a.312.312 0 0 0 0 .441l.587.587c.122.123.32.123.441 0L6 7.028l3.38 3.38c.122.123.32.123.441 0l.587-.587a.312.312 0 0 0 0-.441L7.028 6z"
+          />
         </Mask>
         <G fill="#FFF" mask="url(#smallcross-mask)">
           <Path d="M0 0h11.5v11.5H0z" />
@@ -252,9 +232,16 @@ export const ErrorScreen = ({
     ) : (
       <G transform="translate(362 40)">
         <Mask id="exclamation-mask" fill="#fff">
-          <Use xlinkHref="#exclamation" />
+          <Path
+            id="exclamation"
+            d="M8 2a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm0 12a1.2 1.2 0 1 1 0-2.4A1.2 1.2 0 0 1 8 14z"
+          />
         </Mask>
-        <Use fill="#FFF" xlinkHref="#exclamation" />
+        <Path
+          fill="#FFF"
+          id="exclamation"
+          d="M8 2a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm0 12a1.2 1.2 0 1 1 0-2.4A1.2 1.2 0 0 1 8 14z"
+        />
         <G fill="#FFF" mask="url(#exclamation-mask)">
           <Path d="M0 0h16v16H0z" />
         </G>

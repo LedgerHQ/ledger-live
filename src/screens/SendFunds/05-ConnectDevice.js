@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -41,12 +41,12 @@ class ConnectDevice extends Component<Props> {
     ),
   };
 
-  onSelectDevice = (deviceId: string) => {
+  onSelectDevice = (meta: *) => {
     const { navigation } = this.props;
     // $FlowFixMe
     navigation.replace("SendValidation", {
       ...navigation.state.params,
-      deviceId,
+      ...meta,
     });
   };
 
@@ -54,11 +54,16 @@ class ConnectDevice extends Component<Props> {
     const { account } = this.props;
     return (
       <SafeAreaView style={styles.root}>
-        <TrackScreen category="SendFunds" name="ConnectDevice" />
-        <SelectDevice
-          onSelect={this.onSelectDevice}
-          steps={[connectingStep, accountApp(account)]}
-        />
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <TrackScreen category="SendFunds" name="ConnectDevice" />
+          <SelectDevice
+            onSelect={this.onSelectDevice}
+            steps={[connectingStep, accountApp(account)]}
+          />
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -68,6 +73,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContainer: {
+    padding: 16,
   },
 });
 

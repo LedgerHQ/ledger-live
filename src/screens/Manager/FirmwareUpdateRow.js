@@ -10,7 +10,6 @@ import type {
 import manager from "@ledgerhq/live-common/lib/manager";
 import LText from "../../components/LText";
 import colors from "../../colors";
-import Button from "../../components/Button";
 
 type Props = {
   navigation: *,
@@ -78,12 +77,14 @@ class FirmwareUpdateRow extends PureComponent<Props, State> {
             }}
           />
         </LText>
-        <Button
-          type="primary"
-          event="FirmwareUpdate"
-          title={<Trans i18nKey="FirmwareUpdateRow.action" />}
-          onPress={this.onUpdatePress}
-        />
+        <LText style={styles.subtitle}>
+          <Trans
+            i18nKey="FirmwareUpdateRow.subtitle"
+            values={{
+              version: manager.getFirmwareVersion(firmware.osu),
+            }}
+          />
+        </LText>
       </View>
     );
   }
@@ -93,15 +94,21 @@ export default withNavigation(FirmwareUpdateRow);
 
 const styles = StyleSheet.create({
   root: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
     alignSelf: "stretch",
     flexDirection: "column",
   },
   title: {
     color: colors.live,
     fontSize: 14,
-    padding: 16,
     alignSelf: "center",
+  },
+  subtitle: {
+    color: colors.live,
+    fontSize: 14,
+    alignSelf: "center",
+    textAlign: "center",
   },
   button: {},
 });
