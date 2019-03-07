@@ -35,6 +35,11 @@ export type TokenCurrency = CurrencyCommon & {
 
 export type FiatCurrency = CurrencyCommon;
 
+export type ExplorerView = {
+  tx?: string,
+  address?: string
+};
+
 export type CryptoCurrency = CurrencyCommon & {
   // unique internal id of a crypto currency
   id: string,
@@ -63,7 +68,7 @@ export type CryptoCurrency = CurrencyCommon & {
   ethereumLikeInfo?: {
     chainId: number
   },
-  txExplorers: string[],
+  explorerViews: ExplorerView[],
   terminated?: {
     link: string
   }
