@@ -4,7 +4,7 @@ export default [
   {
     id: "bitpanda",
     url:
-      "https://www.thorswap.com/?utm_source=Wallet&utm_medium=ledger&utm_campaign=EmbedLink&utm_content=Link1"
+      "https://www.bitpanda.com/?ref=619506638974149182"
   },
   {
     id: "btcdirect",
@@ -34,7 +34,7 @@ export default [
   {
     id: "exmo",
     url:
-      "https://www.thorswap.com/?utm_source=Wallet&utm_medium=ledger&utm_campaign=EmbedLink&utm_content=Link1"
+      "https://exmo.com/?ref=1604207"
   },
   {
     id: "kyberswap",
