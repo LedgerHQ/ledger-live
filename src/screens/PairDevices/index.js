@@ -21,7 +21,6 @@ import type { DeviceLike } from "../../reducers/ble";
 import colors from "../../colors";
 import { delay } from "../../logic/promise";
 import RequiresBLE from "../../components/RequiresBLE";
-import PendingContainer from "./PendingContainer";
 import PendingPairing from "./PendingPairing";
 import PendingGenuineCheck from "./PendingGenuineCheck";
 import Paired from "./Paired";
@@ -178,11 +177,7 @@ class PairDevices extends Component<Props, State> {
         return <ScanningTimeout onRetry={this.onRetry} />;
 
       case "pairing":
-        return (
-          <PendingContainer>
-            <PendingPairing />
-          </PendingContainer>
-        );
+        return <PendingPairing />;
 
       case "genuinecheck":
         return (

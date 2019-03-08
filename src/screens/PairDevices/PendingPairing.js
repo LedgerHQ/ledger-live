@@ -1,45 +1,60 @@
 // @flow
 
-import React, { Fragment, PureComponent } from "react";
-import { StyleSheet } from "react-native";
+import React, { PureComponent } from "react";
+import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-
-import colors from "../../colors";
+import LottieView from "lottie-react-native";
+import { getDeviceModel } from "@ledgerhq/devices";
+import getWindowDimensions from "../../logic/getWindowDimensions";
+import BulletList from "../../components/BulletList";
 import { TrackScreen } from "../../analytics";
-import LText from "../../components/LText";
-import { deviceNames } from "../../wording";
 
 class PendingPairing extends PureComponent<*> {
   render() {
+    const deviceWording = getDeviceModel("nanoX");
     return (
-      <Fragment>
+      <View style={styles.root}>
         <TrackScreen category="PairDevices" name="PendingPairing" />
-        <LText secondary semiBold style={styles.title}>
-          <Trans i18nKey="PairDevices.Pairing.title" />
-        </LText>
-        <LText style={styles.subtitle}>
-          <Trans
-            i18nKey="PairDevices.Pairing.subtitle"
-            values={deviceNames.nanoX}
+        <LottieView
+          style={styles.anim}
+          source={require("../../animations/pairing.json")}
+          autoPlay
+          loop
+        />
+        <View style={styles.list}>
+          <BulletList
+            animated
+            list={[
+              <Trans
+                i18nKey="PairDevices.Pairing.step1"
+                values={deviceWording}
+              />,
+              <Trans
+                i18nKey="PairDevices.Pairing.step2"
+                values={deviceWording}
+              />,
+            ]}
           />
-        </LText>
-      </Fragment>
+        </View>
+      </View>
     );
   }
 }
 
+const padding = 16;
+
 const styles = StyleSheet.create({
-  title: {
-    marginTop: 32,
-    fontSize: 18,
-    color: colors.darkBlue,
+  root: {
+    flex: 1,
+    padding,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  subtitle: {
-    fontSize: 14,
-    marginTop: 16,
-    textAlign: "center",
-    paddingHorizontal: 24,
-    color: colors.smoke,
+  anim: {
+    width: getWindowDimensions().width - 2 * padding,
+  },
+  list: {
+    padding: 16,
   },
 });
 
