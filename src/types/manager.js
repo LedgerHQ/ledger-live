@@ -16,12 +16,14 @@ export type DeviceInfo = {
   seVersion: string,
   rawVersion: string,
   isBootloader: boolean,
-  flags: string,
+  flags: Buffer,
   mcuVersion: string,
   isOSU: boolean,
   providerName: string,
   providerId: number,
-  fullVersion: string
+  fullVersion: string,
+  managerAllowed: boolean,
+  pinValidated: boolean
 };
 
 export type DeviceVersion = {

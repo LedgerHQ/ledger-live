@@ -14,6 +14,9 @@ const PROVIDERS: { [_: string]: number } = {
   ee: 5
 };
 
+const ManagerAllowedFlag = 0x08;
+const PinValidatedFlag = 0x80;
+
 export default async (transport: Transport<*>): Promise<DeviceInfo> => {
   const res = await getFirmwareInfo(transport);
   const { seVersion } = res;
@@ -30,6 +33,9 @@ export default async (transport: Transport<*>): Promise<DeviceInfo> => {
   const fullVersion = `${majMin}${patch}${
     providerName ? `-${providerName}` : ""
   }`;
+  const flag = flags.length > 0 ? flags[0] : 0;
+  const managerAllowed = !!(flag & ManagerAllowedFlag);
+  const pinValidated = !!(flag & PinValidatedFlag);
   return {
     targetId,
     seVersion: majMin + patch,
@@ -40,6 +46,8 @@ export default async (transport: Transport<*>): Promise<DeviceInfo> => {
     providerName,
     providerId,
     flags,
+    managerAllowed,
+    pinValidated,
     fullVersion
   };
 };

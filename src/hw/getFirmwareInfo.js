@@ -6,7 +6,7 @@ import Transport from "@ledgerhq/hw-transport";
 export type FirmwareInfo = {
   targetId: number,
   seVersion: string,
-  flags: string,
+  flags: Buffer,
   mcuVersion: string
 };
 
@@ -26,7 +26,7 @@ export default async function getFirmwareInfo(
   const flagsLength = data[5 + seVersionLength];
   const flags = Buffer.from(
     data.slice(5 + seVersionLength + 1, 5 + seVersionLength + 1 + flagsLength)
-  ).toString();
+  );
 
   const mcuVersionLength = data[5 + seVersionLength + 1 + flagsLength];
   let mcuVersion = Buffer.from(
@@ -44,7 +44,7 @@ export default async function getFirmwareInfo(
     return {
       targetId,
       seVersion: "0.0.0",
-      flags: "",
+      flags: Buffer.allocUnsafeSlow(0),
       mcuVersion: ""
     };
   }
