@@ -919,8 +919,8 @@
       "action": "Continue"
     },
     "Pairing": {
-      "title": "Pairing",
-      "subtitle": "Please follow the instructions on your Ledger Nano X"
+      "step1": "Validate on your phone if the code matches with your {{productName}}",
+      "step2": "Validate on your {{productName}} by pressing both buttons"
     },
     "GenuineCheck": {
       "title": "Genuine check",
