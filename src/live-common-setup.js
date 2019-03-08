@@ -36,8 +36,7 @@ registerTransportModule({
   id: "hid",
 
   // prettier-ignore
-  // $FlowFixMe
-  open: async id => { // eslint-disable-line consistent-return
+  open: id => { // eslint-disable-line consistent-return
     if (id.startsWith("usb|")) {
       const devicePath = JSON.parse(id.slice(4));
       return retry(() => HIDTransport.open(devicePath), { maxRetry: 2 });
@@ -91,7 +90,6 @@ registerTransportModule(httpdebug);
 
 registerTransportModule({
   id: "ble",
-  // $FlowFixMe
   open: id => BluetoothTransport.open(id),
   disconnect: id => BluetoothTransport.disconnect(id),
 });
