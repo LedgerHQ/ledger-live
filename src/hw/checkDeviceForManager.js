@@ -9,7 +9,7 @@ export default (
   transport: Transport<*>,
   deviceInfo: DeviceInfo
 ): Observable<GenuineCheckEvent> =>
-  deviceInfo.isOSU
+  deviceInfo.isOSU || deviceInfo.managerAllowed
     ? of({ type: "result", payload: "0000" })
     : deviceInfo.isBootloader
     ? throwError(new UnexpectedBootloader())
