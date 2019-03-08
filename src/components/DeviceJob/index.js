@@ -114,7 +114,7 @@ class DeviceJob extends Component<
 
   debouncedSetStepIndex = debounce(stepIndex => {
     this.setState({ stepIndex });
-  }, 500);
+  }, 1000);
 
   onStepDone = () => {
     this.onDoneSubject.next(this.state.stepIndex);
