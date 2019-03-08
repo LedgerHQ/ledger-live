@@ -25,7 +25,7 @@ const AccountField = ({ value, onChange, autoFocus }: Props) => {
       type="text"
       placeholder="ETH derivation path"
       value={value}
-      onChange={onChange}
+      onChange={e => onChange(e.target.value)}
       autoFocus={autoFocus}
     />
   );
