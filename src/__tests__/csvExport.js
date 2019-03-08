@@ -1,15 +1,17 @@
 // @flow
 
 import { genAccount } from "../mock/account";
-import { listCryptoCurrencies } from "../currencies";
+import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 
 test("export CSV", () => {
   expect(
     accountsOpToCSV(
-      listCryptoCurrencies().map(currency =>
-        genAccount(`${currency.id}_export`)
-      )
+      [
+        getCryptoCurrencyById("bitcoin"),
+        getCryptoCurrencyById("ethereum"),
+        getCryptoCurrencyById("ripple")
+      ].map(currency => genAccount(`${currency.id}_export`))
     )
   ).toMatchSnapshot();
 });

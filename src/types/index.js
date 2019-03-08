@@ -5,7 +5,8 @@ import type {
   Unit,
   TokenCurrency,
   FiatCurrency,
-  CryptoCurrency
+  CryptoCurrency,
+  ExplorerView
 } from "./currencies";
 
 import type {
@@ -40,7 +41,14 @@ export type { Account, AccountRaw };
 import type { Operation, OperationRaw, OperationType } from "./operation";
 export type { Operation, OperationRaw, OperationType };
 
-export type { TokenCurrency, Currency, Unit, FiatCurrency, CryptoCurrency };
+export type {
+  TokenCurrency,
+  Currency,
+  Unit,
+  FiatCurrency,
+  CryptoCurrency,
+  ExplorerView
+};
 
 /**
  * Other stuff
