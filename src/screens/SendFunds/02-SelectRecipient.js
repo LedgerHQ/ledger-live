@@ -120,15 +120,18 @@ class SendSelectRecipient extends Component<Props, State> {
     this.validateAddress(address);
   };
 
+  nonceValidateAddress = 0;
   validateAddress = async (address: string) => {
+    const nonce = ++this.nonceValidateAddress;
     const { account } = this.props;
     const bridge = getAccountBridge(account);
     try {
       const res = await bridge.checkValidRecipient(account, address);
-      if (this.unmounted) return;
+      if (this.unmounted || nonce !== this.nonceValidateAddress) return;
       if (!res) this.setState({ addressStatus: "valid", error: null });
       else this.setState({ addressStatus: "warning", error: res });
     } catch (e) {
+      if (this.unmounted || nonce !== this.nonceValidateAddress) return;
       this.setState({
         addressStatus: "invalid",
         error: e,
