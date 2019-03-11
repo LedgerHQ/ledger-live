@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Image, Linking } from "react-native";
+import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -11,6 +11,8 @@ import Button from "../../components/Button";
 import { urls } from "../../config/urls";
 import { withOnboardingContext } from "../Onboarding/onboardingContext";
 import type { OnboardingStepProps } from "../Onboarding/types";
+import DeviceNanoAction from "../../components/DeviceNanoAction";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
 const hitSlop = {
   top: 16,
@@ -18,6 +20,8 @@ const hitSlop = {
   right: 16,
   bottom: 16,
 };
+
+const { width } = getWindowDimensions();
 
 class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
   buy = () => Linking.openURL(urls.buyNanoX);
@@ -35,8 +39,9 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
       <View style={styles.root}>
         <TrackScreen category="Manager" name="ReadOnlyNanoX" />
         <View style={styles.image}>
-          <Image source={require("../../images/nanoXHorizontalBig.png")} />
+          <DeviceNanoAction screen="empty" width={width * 0.8} />
         </View>
+
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="manager.readOnly.question" />
         </LText>
@@ -112,7 +117,6 @@ const styles = StyleSheet.create({
   image: {
     marginBottom: 32,
     marginHorizontal: 7,
-    justifyContent: "center",
   },
   subText: {
     fontSize: 14,

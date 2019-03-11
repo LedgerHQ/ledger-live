@@ -8,6 +8,7 @@ import { Trans, translate } from "react-i18next";
 import i18next from "i18next";
 import { compose } from "redux";
 import manager from "@ledgerhq/live-common/lib/manager";
+import { createStructuredSelector } from "reselect";
 import { removeKnownDevice } from "../../actions/ble";
 import {
   connectingStep,
@@ -26,6 +27,8 @@ import type { DeviceLike } from "../../reducers/ble";
 import Trash from "../../icons/Trash";
 import BottomModal from "../../components/BottomModal";
 import ModalBottomAction from "../../components/ModalBottomAction";
+import ReadOnlyNanoX from "./ReadOnlyNanoX";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 const UnpairDeviceModal = ({
   onHideMenu,
@@ -56,6 +59,10 @@ const UnpairDeviceModal = ({
     />
   </BottomModal>
 );
+
+const mapStateToProps = createStructuredSelector({
+  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+});
 
 class ChooseDevice extends Component<
   {
@@ -149,10 +156,14 @@ class ChooseDevice extends Component<
   }
 
   render() {
-    const { isFocused } = this.props;
+    const { isFocused, readOnlyModeEnabled } = this.props;
     const { showMenu } = this.state;
 
     if (!isFocused) return null;
+
+    if (readOnlyModeEnabled) {
+      return <ReadOnlyNanoX navigation={this.props.navigation} />;
+    }
 
     return (
       <ScrollView style={styles.root}>
@@ -229,7 +240,7 @@ const styles = StyleSheet.create({
 export default compose(
   translate(),
   connect(
-    null,
+    mapStateToProps,
     { removeKnownDevice },
   ),
 )(withNavigationFocus(ChooseDevice));
