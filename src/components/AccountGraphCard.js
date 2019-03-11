@@ -87,7 +87,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
           isInteractive={isAvailable}
           isLoading={!isAvailable}
           height={100}
-          width={Dimensions.get("window").width - 40}
+          width={Dimensions.get("window").width - 32}
           color={isAvailable ? graphColor : colors.grey}
           data={balanceHistory}
           onItemHover={this.onItemHover}
