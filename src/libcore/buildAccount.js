@@ -220,10 +220,14 @@ export async function buildOperation({
   const id = `${accountId}-${hash}-${type}`;
 
   const coreValue = await core.coreOperation.getAmount(coreOperation);
-  const value = await libcoreAmountToBigNumber(core, coreValue);
+  let value = await libcoreAmountToBigNumber(core, coreValue);
 
   const coreFee = await core.coreOperation.getFees(coreOperation);
   const fee = await libcoreAmountToBigNumber(core, coreFee);
+
+  if (type === "OUT") {
+    value = value.plus(fee);
+  }
 
   // if tx is pending, libcore returns null (not wrapped with `value`)
   const blockHeightRes = await core.coreOperation.getBlockHeight(coreOperation);
