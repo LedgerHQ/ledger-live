@@ -307,6 +307,6 @@ export const hasInstalledAnyAppSelector = (state: State) =>
   state.settings.hasInstalledAnyApp;
 
 export const readOnlyModeEnabledSelector = (state: State) =>
-  Platform.OS === "android" && state.settings.readOnlyModeEnabled;
+  Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
 
 export default handleActions(handlers, INITIAL_STATE);
