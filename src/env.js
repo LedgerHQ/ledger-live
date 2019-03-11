@@ -3,6 +3,7 @@
 
 // initialized with default values
 const env = {
+  WITH_DEVICE_POLLING_DELAY: 500,
   FORCE_PROVIDER: 0, // in zero case, we will not force provider. otherwise you can force one.
   LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
   MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",

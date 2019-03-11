@@ -9,6 +9,7 @@ import {
   UpdateYourApp,
   BluetoothRequired
 } from "@ledgerhq/errors";
+import { getEnv } from "../env";
 import { open } from ".";
 
 export type AccessHook = () => () => void;
@@ -149,7 +150,7 @@ export const retryWhileErrors = (acceptError: Error => boolean) => (
       if (!acceptError(error)) {
         return throwError(error);
       }
-      return timer(200);
+      return timer(getEnv("WITH_DEVICE_POLLING_DELAY"));
     })
   );
 
