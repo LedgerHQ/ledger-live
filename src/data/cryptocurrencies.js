@@ -30,10 +30,6 @@
  * there is a folder src/data/icons/svg/ that will contain all coin icons.
  * Either add one by respecting the other icons convention, or ask us and we will have our design team doing it.
  *
- * ~~ also ~~
- *
- * Once added here, you also need to update CryptoCurrencyConfig in `src/explorers.js`.
- *
  */
 
 import type { CryptoCurrency, Unit } from "../types";
@@ -111,7 +107,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.aepps.com/#/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.aepps.com/#/tx/$hash"
+      }
+    ]
   },
   aion: {
     id: "aion",
@@ -129,7 +129,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   akroma: {
     id: "akroma",
@@ -147,7 +147,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://akroma.io/explorer/transaction/$hash"]
+    explorerViews: [
+      {
+        tx: "https://akroma.io/explorer/transaction/$hash"
+      }
+    ]
   },
   ark: {
     id: "ark",
@@ -165,7 +169,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://explorer.ark.io/transaction/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.ark.io/transaction/$hash"
+      }
+    ]
   },
   atheios: {
     id: "atheios",
@@ -183,7 +191,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   banano: {
     id: "banano",
@@ -201,7 +209,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   bitcloud: {
     id: "bitcloud",
@@ -239,7 +247,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://chainz.cryptoid.info/btdx/tx.dws?$hash.htm"]
+    explorerViews: [
+      {
+        tx: "https://chainz.cryptoid.info/btdx/tx.dws?$hash.htm"
+      }
+    ]
   },
   bitcoin: {
     id: "bitcoin",
@@ -260,7 +272,16 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       P2PKH: 0,
       P2SH: 5
     },
-    txExplorers: ["https://blockchain.info/tx/$hash"]
+    explorerViews: [
+      {
+        address: "https://blockstream.info/address/$address",
+        tx: "https://blockstream.info/tx/$hash"
+      },
+      {
+        address: "https://www.blockchain.com/btc/address/$address",
+        tx: "https://blockchain.info/btc/tx/$hash"
+      }
+    ]
   },
   bitcoin_cash: {
     id: "bitcoin_cash",
@@ -301,7 +322,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://bitcoincash.blockexplorer.com/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://bitcoincash.blockexplorer.com/tx/$hash",
+        address: "https://bitcoincash.blockexplorer.com/address/$address"
+      }
+    ]
   },
   bitcoin_gold: {
     id: "bitcoin_gold",
@@ -343,7 +369,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://btgexplorer.com/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://btgexplorer.com/tx/$hash",
+        address: "https://btgexplorer.com/address/$address"
+      }
+    ]
   },
   bitcoin_private: {
     id: "bitcoin_private",
@@ -378,7 +409,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.btcprivate.org/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.btcprivate.org/tx/$hash",
+        address: "https://explorer.btcprivate.org/address/$address"
+      }
+    ]
   },
   bitcore: {
     id: "bitcore",
@@ -417,7 +453,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://insight.bitcore.cc/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://insight.bitcore.cc/tx/$hash"
+      }
+    ]
   },
   bitsend: {
     id: "bitsend",
@@ -455,7 +495,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://chainz.cryptoid.info/bsd/tx.dws?$hash.htm"]
+    explorerViews: [
+      {
+        tx: "https://chainz.cryptoid.info/bsd/tx.dws?$hash.htm"
+      }
+    ]
   },
   callisto: {
     id: "callisto",
@@ -473,7 +517,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   clubcoin: {
     id: "clubcoin",
@@ -503,7 +547,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://chainz.cryptoid.info/club/tx.dws?$hash.htm"]
+    explorerViews: [
+      {
+        tx: "https://chainz.cryptoid.info/club/tx.dws?$hash.htm"
+      }
+    ]
   },
   dash: {
     id: "dash",
@@ -533,7 +581,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.dash.org/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.dash.org/tx/$hash",
+        address: "https://explorer.dash.org/address/$address"
+      }
+    ]
   },
   decred: {
     id: "decred",
@@ -568,7 +621,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       P2PKH: 0x073f,
       P2SH: 0x071a
     },
-    txExplorers: ["https://mainnet.decred.org/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://mainnet.decred.org/tx/$hash",
+        address: "https://mainnet.decred.org/address/$address"
+      }
+    ]
   },
   digibyte: {
     id: "digibyte",
@@ -599,7 +657,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://digiexplorer.info/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://digiexplorer.info/tx/$hash",
+        address: "https://digiexplorer.info/address/$address"
+      }
+    ]
   },
   dogecoin: {
     id: "dogecoin",
@@ -630,7 +693,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://dogechain.info/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://dogechain.info/tx/$hash",
+        address: "https://dogechain.info/address/$address"
+      }
+    ]
   },
   ellaism: {
     id: "ellaism",
@@ -648,7 +716,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   eos: {
     id: "eos",
@@ -666,7 +734,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 2
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   eos_classic: {
     id: "eos_classic",
@@ -684,7 +752,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 2
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   ethereum: {
     id: "ethereum",
@@ -705,7 +773,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ethereumLikeInfo: {
       chainId: 1
     },
-    txExplorers: ["https://etherscan.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://etherscan.io/tx/$hash",
+        address: "https://etherscan.io/address/$address"
+      }
+    ]
   },
   ethereum_classic: {
     id: "ethereum_classic",
@@ -723,7 +796,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ethereumLikeInfo: {
       chainId: 61
     },
-    txExplorers: ["https://gastracker.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://gastracker.io/tx/$hash",
+        address: "https://gastracker.io/address/$address"
+      }
+    ]
   },
   ether1: {
     id: "ether1",
@@ -739,7 +817,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ethereumLikeInfo: {
       chainId: 1313114
     },
-    txExplorers: []
+    explorerViews: []
   },
   ethergem: {
     id: "ethergem",
@@ -755,7 +833,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ethereumLikeInfo: {
       chainId: 1987
     },
-    txExplorers: []
+    explorerViews: []
   },
   ethersocial: {
     id: "ethersocial",
@@ -771,7 +849,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ethereumLikeInfo: {
       chainId: 31102
     },
-    txExplorers: []
+    explorerViews: []
   },
   expanse: {
     id: "expanse",
@@ -789,7 +867,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://gander.tech/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://gander.tech/tx/$hash"
+      }
+    ]
   },
   factom: {
     id: "factom",
@@ -807,7 +889,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   game_credits: {
     id: "game_credits",
@@ -829,7 +911,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       P2PKH: 38,
       P2SH: 62
     },
-    txExplorers: []
+    explorerViews: []
   },
   gochain: {
     id: "gochain",
@@ -847,7 +929,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   hcash: {
     id: "hcash",
@@ -877,7 +959,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["http://explorer.h.cash/tx/$hash"],
+    explorerViews: [],
     terminated: {
       link: "https://support.ledger.com/hc/en-us/articles/115003917133"
     }
@@ -898,7 +980,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   iota: {
     id: "iota",
@@ -916,7 +998,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   komodo: {
     id: "komodo",
@@ -946,7 +1028,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://kmdexplorer.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://kmdexplorer.io/tx/$hash",
+        address: "https://kmdexplorer.io/address/$address"
+      }
+    ]
   },
   litecoin: {
     id: "litecoin",
@@ -983,7 +1070,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://live.blockcypher.com/ltc/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://live.blockcypher.com/ltc/tx/$hash",
+        address: "https://live.blockcypher.com/ltc/address/$address"
+      }
+    ]
   },
   lisk: {
     id: "lisk",
@@ -1001,7 +1093,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   mix: {
     id: "mix",
@@ -1022,7 +1114,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   megacoin: {
     id: "megacoin",
@@ -1051,7 +1143,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://chainz.cryptoid.info/mec/tx.dws?$hash.htm"]
+    explorerViews: [
+      {
+        tx: "https://chainz.cryptoid.info/mec/tx.dws?$hash.htm"
+      }
+    ]
   },
   monero: {
     id: "monero",
@@ -1069,7 +1165,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 12
       }
     ],
-    txExplorers: ["https://moneroblocks.info/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://moneroblocks.info/tx/$hash"
+      }
+    ]
   },
   musicoin: {
     id: "musicoin",
@@ -1090,7 +1190,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   nano: {
     id: "nano",
@@ -1108,7 +1208,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://nanoexplorer.io/blocks/$hash"]
+    explorerViews: [
+      {
+        tx: "https://nanoexplorer.io/blocks/$hash"
+      }
+    ]
   },
   neo: {
     id: "neo",
@@ -1126,7 +1230,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://neotracker.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://neotracker.io/tx/$hash"
+      }
+    ]
   },
   nimiq: {
     id: "nimiq",
@@ -1144,7 +1252,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 5
       }
     ],
-    txExplorers: ["https://nimiq.watch/#$hash"]
+    explorerViews: [
+      {
+        tx: "https://nimiq.watch/#$hash"
+      }
+    ]
   },
   nix: {
     id: "nix",
@@ -1173,7 +1285,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://blockchain.nixplatform.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://blockchain.nixplatform.io/tx/$hash"
+      }
+    ]
   },
   ontology: {
     id: "ontology",
@@ -1191,7 +1307,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://explorer.ont.io/transaction/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.ont.io/transaction/$hash"
+      }
+    ]
   },
   particl: {
     id: "particl",
@@ -1209,7 +1329,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://explorer.particl.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.particl.io/tx/$hash"
+      }
+    ]
   },
   peercoin: {
     id: "peercoin",
@@ -1239,7 +1363,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.peercoin.net/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.peercoin.net/tx/$hash",
+        address: "https://explorer.peercoin.net/address/$address"
+      }
+    ]
   },
   pirl: {
     id: "pirl",
@@ -1257,7 +1386,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://poseidon.pirl.io/explorer/transaction/$hash"]
+    explorerViews: [
+      {
+        tx: "https://poseidon.pirl.io/explorer/transaction/$hash"
+      }
+    ]
   },
   pivx: {
     id: "pivx",
@@ -1287,7 +1420,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://chainz.cryptoid.info/pivx/tx.dws?$hash.htm"]
+    explorerViews: [
+      {
+        tx: "https://chainz.cryptoid.info/pivx/tx.dws?$hash.htm",
+        address: "https://chainz.cryptoid.info/pivx/address.dws?$address.htm"
+      }
+    ]
   },
   poa: {
     id: "poa",
@@ -1305,7 +1443,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://poaexplorer.com/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://poaexplorer.com/tx/$hash"
+      }
+    ]
   },
   poswallet: {
     id: "poswallet",
@@ -1335,7 +1477,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: [],
+    explorerViews: [],
     terminated: {
       link: "https://support.ledger.com/hc/en-us/articles/115005175309"
     }
@@ -1368,7 +1510,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.qtum.org/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.qtum.org/tx/$hash",
+        address: "https://explorer.qtum.org/address/$address"
+      }
+    ]
   },
   ripple: {
     id: "ripple",
@@ -1391,7 +1538,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       }
     ],
     family: "ripple",
-    txExplorers: ["https://bithomp.com/explorer/$hash"]
+    explorerViews: [
+      {
+        tx: "https://bithomp.com/explorer/$hash",
+        address: "https://bithomp.com/explorer/$address"
+      }
+    ]
   },
   stakenet: {
     id: "stakenet",
@@ -1422,7 +1574,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://xsnexplorer.io/transactions/$hash"]
+    explorerViews: [
+      {
+        tx: "https://xsnexplorer.io/transactions/$hash",
+        address: "https://xsnexplorer.io/addresses/$address"
+      }
+    ]
   },
   stratis: {
     id: "stratis",
@@ -1452,7 +1609,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://chainz.cryptoid.info/strat/tx.dws?$hash.htm"]
+    explorerViews: [
+      {
+        tx: "https://chainz.cryptoid.info/strat/tx.dws?$hash.htm",
+        address: "https://chainz.cryptoid.info/strat/address.dws?$address.htm"
+      }
+    ]
   },
   stealthcoin: {
     id: "stealthcoin",
@@ -1482,7 +1644,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://chain.stealth.org/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://chain.stealth.org/tx/$hash",
+        address: "https://chain.stealth.org/address/$address"
+      }
+    ]
   },
   stellar: {
     id: "stellar",
@@ -1505,7 +1672,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://stellar.expert/explorer/public/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://stellar.expert/explorer/public/tx/$hash"
+      }
+    ]
   },
   tezos: {
     id: "tezos",
@@ -1523,7 +1694,37 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://tzscan.io/$hash"]
+    explorerViews: [
+      {
+        tx: "https://tzscan.io/$hash"
+      }
+    ]
+  },
+  tomo: {
+    id: "tomo",
+    coinType: 889,
+    name: "TomoChain",
+    managerAppName: "TomoChain",
+    ticker: "TOMO",
+    scheme: "tomo",
+    color: "#FF9933",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 88
+    },
+    blockAvgTime: 2,
+    units: [
+      {
+        name: "TOMO",
+        code: "TOMO",
+        magnitude: 8
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://scan.tomochain.com/txs/$hash"
+      }
+    ]
   },
   tron: {
     id: "tron",
@@ -1541,7 +1742,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://tronscan.org/#/transaction/$hash"]
+    explorerViews: [
+      {
+        tx: "https://tronscan.org/#/transaction/$hash"
+      }
+    ]
   },
   ubiq: {
     id: "ubiq",
@@ -1583,7 +1788,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://ubiqscan.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://ubiqscan.io/tx/$hash"
+      }
+    ]
   },
   vechain: {
     id: "vechain",
@@ -1601,7 +1810,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://explore.veforge.com/transactions/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explore.veforge.com/transactions/$hash"
+      }
+    ]
   },
   vertcoin: {
     id: "vertcoin",
@@ -1632,7 +1845,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://www.coinexplorer.net/VTC/transaction/$hash"]
+    explorerViews: [
+      {
+        tx: "https://www.coinexplorer.net/VTC/transaction/$hash",
+        address: "https://www.coinexplorer.net/VTC/address/$address"
+      }
+    ]
   },
   viacoin: {
     id: "viacoin",
@@ -1663,7 +1881,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.viacoin.org/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.viacoin.org/tx/$hash",
+        address: "https://explorer.viacoin.org/address/$address"
+      }
+    ]
   },
   wanchain: {
     id: "wanchain",
@@ -1681,7 +1904,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://explorer.wanchain.org/block/trans/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.wanchain.org/block/trans/$hash"
+      }
+    ]
   },
   waves: {
     id: "waves",
@@ -1699,7 +1926,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: []
+    explorerViews: []
   },
   zcash: {
     id: "zcash",
@@ -1729,7 +1956,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.zcha.in/transactions/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.zcha.in/transactions/$hash",
+        address: "https://explorer.zcha.in/accounts/$address"
+      }
+    ]
   },
   zcoin: {
     id: "zcoin",
@@ -1747,7 +1979,11 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 8
       }
     ],
-    txExplorers: ["https://explorer.zcoin.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.zcoin.io/tx/$hash"
+      }
+    ]
   },
   zencash: {
     id: "zencash",
@@ -1777,7 +2013,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
         magnitude: 0
       }
     ],
-    txExplorers: ["https://explorer.zensystem.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://explorer.zensystem.io/tx/$hash",
+        address: "https://explorer.zensystem.io/address/$address"
+      }
+    ]
   },
 
   // Testnets
@@ -1801,7 +2042,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       P2PKH: 111,
       P2SH: 196
     },
-    txExplorers: ["https://testnet.blockchain.info/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://testnet.blockchain.info/tx/$hash",
+        address: "https://testnet.blockchain.info/address/$address"
+      }
+    ]
   },
   ethereum_ropsten: {
     id: "ethereum_ropsten",
@@ -1820,7 +2066,12 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ethereumLikeInfo: {
       chainId: 3 // ropsten
     },
-    txExplorers: ["https://ropsten.etherscan.io/tx/$hash"]
+    explorerViews: [
+      {
+        tx: "https://ropsten.etherscan.io/tx/$hash",
+        address: "https://ropsten.etherscan.io/address/$address"
+      }
+    ]
   }
 };
 

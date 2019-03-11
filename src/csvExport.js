@@ -36,6 +36,10 @@ const fields: Field[] = [
   {
     title: "Account Name",
     cell: account => account.name
+  },
+  {
+    title: "Account id", // xpub or address
+    cell: account => account.xpub || account.freshAddress
   }
 ];
 
