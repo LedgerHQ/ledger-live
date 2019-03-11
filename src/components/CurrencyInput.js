@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontFamily: "Rubik",
+    paddingRight: 8,
     fontSize: 24,
     color: colors.darkBlue,
   },
