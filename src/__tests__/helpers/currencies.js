@@ -51,6 +51,13 @@ test("all cryptocurrencies match (by reference) the one you get by id", () => {
   }
 });
 
+test("there is no testnet or terminated coin by default", () => {
+  for (let c of listCryptoCurrencies()) {
+    expect(!c.terminated).toBe(true);
+    expect(!c.isTestnetFor).toBe(true);
+  }
+});
+
 test("all cryptocurrencies have at least one unit", () => {
   for (let c of listCryptoCurrencies()) {
     expect(c.units.length).toBeGreaterThan(0);
