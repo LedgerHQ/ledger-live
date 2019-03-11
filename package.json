@@ -32,11 +32,11 @@
     "react": "*"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^4.43.0",
-    "@ledgerhq/hw-app-btc": "^4.43.0",
-    "@ledgerhq/hw-app-eth": "^4.43.0",
-    "@ledgerhq/hw-app-xrp": "^4.43.0",
-    "@ledgerhq/hw-transport": "^4.43.0",
+    "@ledgerhq/errors": "^4.44.0",
+    "@ledgerhq/hw-app-btc": "^4.44.2",
+    "@ledgerhq/hw-app-eth": "^4.44.2",
+    "@ledgerhq/hw-app-xrp": "^4.44.2",
+    "@ledgerhq/hw-transport": "^4.44.2",
     "bignumber.js": "^7.2.1",
     "compressjs": "gre/compressjs#hermit",
     "eip55": "^1.0.3",
