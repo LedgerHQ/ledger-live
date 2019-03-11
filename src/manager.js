@@ -8,6 +8,7 @@ import type {
   OsuFirmware,
   FirmwareUpdateContext
 } from "./types/manager";
+import { listCryptoCurrencies } from "./currencies";
 import ManagerAPI from "./api/Manager";
 import { UnknownMCU } from "./errors";
 
@@ -16,6 +17,14 @@ const ICONS_FALLBACK = {
 };
 
 const oldAppsInstallDisabled = ["ZenCash", "Ripple"];
+const canHandleInstall = (app: ApplicationVersion) =>
+  !oldAppsInstallDisabled.includes(app.name) &&
+  !listCryptoCurrencies(true, true).some(
+    coin =>
+      coin.managerAppName &&
+      coin.terminated &&
+      coin.managerAppName.toLowerCase() === app.name.toLowerCase()
+  );
 
 const CacheAPI = {
   // TODO: Move to new ManagerAPI
@@ -33,8 +42,7 @@ const CacheAPI = {
     return hash.length > 8 ? `${hash.slice(0, 4)}...${hash.substr(-4)}` : hash;
   },
 
-  canHandleInstall: (app: ApplicationVersion) =>
-    !oldAppsInstallDisabled.includes(app.name),
+  canHandleInstall,
 
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo
