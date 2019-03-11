@@ -40,7 +40,7 @@ const mapDispatchToProps = {
 };
 class EditAccountName extends PureComponent<Props, State> {
   state = {
-    accountName: "",
+    accountName: this.props.account.name,
   };
 
   static navigationOptions = {
