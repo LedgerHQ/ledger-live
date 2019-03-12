@@ -38,7 +38,10 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "forgetDevice": "Forget device"
+    "forgetDevice": "Forget device",
+    "sync": {
+      "ago": "Synchronized {{time}}"
+    }
   },
   "errors": {
     "AccountNameRequired": {
@@ -600,6 +603,10 @@
       "archive": {
         "title": "Archive Account",
         "desc": "This account will be archived"
+      },
+      "advanced": {
+        "title": "Advanced Logs",
+        "desc": ""
       }
     },
     "import": {
