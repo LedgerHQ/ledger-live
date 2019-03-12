@@ -14,7 +14,7 @@ const getFontStyle = ({
     : tertiary
       ? "Rubik"
       : monospace
-        ? "monospace"
+        ? "Menlo"
         : "Open Sans";
   let fontWeight;
   if (semiBold) {
