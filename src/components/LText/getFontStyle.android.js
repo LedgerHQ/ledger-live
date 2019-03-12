@@ -24,6 +24,6 @@ export default ({
     weight = "Regular";
   }
 
-  const fontFamily = monospace ? "monospace" : `${family}-${weight}`;
+  const fontFamily = monospace ? family : `${family}-${weight}`;
   return { fontFamily, fontWeight: "normal" };
 };
