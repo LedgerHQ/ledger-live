@@ -108,6 +108,7 @@ import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen.ios";
 import OnboardingOrNavigator from "./screens/OnboardingOrNavigator";
+import AdvancedLogs from "./screens/AccountSettings/AdvancedLogs";
 
 // TODO look into all FlowFixMe
 
@@ -344,6 +345,7 @@ const AccountSettings = createStackNavigator(
     EditAccountUnits,
     EditAccountName,
     EditAccountNode,
+    AdvancedLogs,
     AccountCurrencySettings: CurrencySettings,
     AccountRateProviderSettings: RateProviderSettings,
   },

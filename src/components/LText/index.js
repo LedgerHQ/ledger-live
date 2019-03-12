@@ -10,6 +10,7 @@ export type Opts = {
   semiBold?: boolean,
   secondary?: boolean,
   tertiary?: boolean,
+  monospace?: boolean
 };
 
 export type Res = {
