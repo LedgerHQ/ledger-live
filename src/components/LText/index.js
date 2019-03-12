@@ -10,6 +10,7 @@ export type Opts = {
   semiBold?: boolean,
   secondary?: boolean,
   tertiary?: boolean,
+  monospace?: boolean,
 };
 
 export type Res = {
@@ -45,13 +46,17 @@ export default class LText extends Component<*> {
       semiBold,
       secondary,
       tertiary,
+      monospace,
       style,
       ...newProps
     } = this.props;
     return (
       <Text
         {...newProps}
-        style={[style, getFontStyle({ bold, semiBold, secondary, tertiary })]}
+        style={[
+          style,
+          getFontStyle({ bold, semiBold, secondary, tertiary, monospace }),
+        ]}
       />
     );
   }

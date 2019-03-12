@@ -38,7 +38,10 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "forgetDevice": "Forget device"
+    "forgetDevice": "Forget device",
+    "sync": {
+      "ago": "Synchronized {{time}}"
+    }
   },
   "errors": {
     "AccountNameRequired": {
@@ -600,6 +603,10 @@
       "archive": {
         "title": "Archive Account",
         "desc": "This account will be archived"
+      },
+      "advanced": {
+        "title": "Advanced Logs",
+        "desc": ""
       }
     },
     "import": {
@@ -781,6 +788,8 @@
   },
   "send": {
     "scan": {
+      "title": "Scan QR code",
+      "descBottom": "Please put the QR code within the square",
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",

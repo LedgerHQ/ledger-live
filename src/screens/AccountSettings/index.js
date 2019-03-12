@@ -19,6 +19,7 @@ import AccountCurrencyRow from "./AccountCurrencyRow";
 import AccountNodeRow from "./AccountNodeRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
+import AccountAdvancedLogsRow from "./AccountAdvancedLogsRow";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -78,6 +79,7 @@ class AccountSettings extends PureComponent<Props, State> {
           {account.currency.id === "ripple" ? (
             <AccountNodeRow account={account} navigation={navigation} />
           ) : null}
+          <AccountAdvancedLogsRow account={account} navigation={navigation} />
         </View>
         <View style={styles.sectionRow}>
           <DeleteAccountRow onPress={this.onPress} />
