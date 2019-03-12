@@ -38,9 +38,10 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = {
   updateAccount,
 };
+
 class EditAccountName extends PureComponent<Props, State> {
   state = {
-    accountName: this.props.account.name,
+    accountName: "",
   };
 
   static navigationOptions = {

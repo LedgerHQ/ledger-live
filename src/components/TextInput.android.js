@@ -16,30 +16,19 @@ type State = {
 };
 
 class TextInput extends PureComponent<*, State> {
-  updated = false;
-
   constructor(props) {
     super(props);
     this.state = {
-      focused: false,
-      value: "",
+      focused: this.props.autoFocus || false,
+      value: this.props.defaultValue || "",
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.updated) {
-      if (this.props.value) {
-        this.setState({ value: nextProps.value });
-      } else if (this.state.value === undefined && this.props.defaultValue) {
-        this.setState({ value: this.props.defaultValue });
-      }
-    } else {
-      this.setState({ value: nextProps.value || nextProps.defaultValue });
+  static getDerivedStateFromProps(props, state) {
+    if (props.value !== undefined && props.value !== state.value) {
+      return { value: props.value };
     }
-  }
-
-  componentWillUpdate() {
-    this.updated = true;
+    return null;
   }
 
   onFocus = () => {
