@@ -373,6 +373,7 @@
       "OnboardingStepWriteRecoveryRestore": "Enter recovery phrase",
       "OnboardingStepSecurityChecklist": "Security checklist",
       "OnboardingStepPairNew": "Pair your {{fullDeviceName}}",
+      "OnboardingStepConnectNew": "Connect your device",
       "OnboardingStepPassword": "Password lock",
       "OnboardingStepScanQR": "Import desktop accounts",
       "OnboardingStepGetStarted": "Ledger Nano X",
@@ -380,7 +381,7 @@
     },
     "stepWelcome": {
       "title": "Welcome to Ledger Live",
-      "desc": "Easily manage crypto secured by your {{fullDeviceName}}. Everywhere you go.",
+      "desc": "Easily manage crypto secured by your Ledger device. Everywhere you go.",
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}"
@@ -404,6 +405,7 @@
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
+      "step1-nanoS": "Connect your {{fullDeviceName}} to your phone using an OTG cable.",
       "step2": "Press both buttons to choose <1><1>Setup as new device.</1></1>",
       "step2-restore": "Press both buttons to choose <1><1>Restore from recovery phrase.</1></1>",
       "step3": "Press left or right button to select a digit. Press both to validate.",
@@ -755,7 +757,7 @@
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security",
-      "verifyPending": "Verify the {{currencyName}} address above matches the one on your device",
+      "verifyPending": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
       "verified": "Address confirmed, re-verify if you copy or scan it.",
       "verifyAgain": "Re-verify",
       "noAccount": "No account found",

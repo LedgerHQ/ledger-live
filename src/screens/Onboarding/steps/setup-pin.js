@@ -47,6 +47,8 @@ class OnboardingStepSetupPin extends Component<
   render() {
     const { mode, next, deviceModelId } = this.props;
     const { isModalOpened } = this.state;
+
+    const isNanoS = deviceModelId === "nanoS";
     return (
       <OnboardingLayout
         header="OnboardingStepSetupPin"
@@ -63,7 +65,7 @@ class OnboardingStepSetupPin extends Component<
         <View style={styles.hero}>
           <DeviceNanoAction
             modelId={deviceModelId}
-            wired={deviceModelId === "nanoS"} // tradeoff in this onboarding that we don't save the info that NanoX might be on USB^^
+            wired={isNanoS} // tradeoff in this onboarding that we don't save the info that NanoX might be on USB^^
             screen="pin"
           />
         </View>
@@ -72,8 +74,10 @@ class OnboardingStepSetupPin extends Component<
             animated
             list={[
               <Trans
-                i18nKey="onboarding.stepSetupPin.step1"
-                values={deviceNames.nanoX}
+                i18nKey={`onboarding.stepSetupPin.step1${
+                  isNanoS ? "-nanoS" : ""
+                }`}
+                values={isNanoS ? deviceNames.nanoS : deviceNames.nanoX}
               />,
               <Trans
                 i18nKey={

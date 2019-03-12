@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
   line: {
     backgroundColor: colors.fog,
-    height: 2,
+    height: 1,
     flexGrow: 1,
   },
   thin: {

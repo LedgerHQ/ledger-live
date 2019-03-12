@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, Image } from "react-native";
 import Config from "react-native-config";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -30,6 +30,7 @@ type Props = {
   steps?: Step[],
   onStepEntered?: (number, Object) => void,
   onboarding?: boolean,
+  isNanoS?: boolean,
   filter?: TransportModule => boolean,
   navigation: NavigationScreenProp<*>,
 };
@@ -79,6 +80,12 @@ const USBHeader = () => (
   <LText semiBold style={styles.section}>
     <Trans i18nKey="common.usb" />
   </LText>
+);
+
+const UsbPlaceholder = () => (
+  <View style={styles.usbContainer}>
+    <Image source={require("../../images/connect-nanos-mobile.png")} />
+  </View>
 );
 
 const ORBar = () => (
@@ -182,7 +189,13 @@ class SelectDevice extends Component<OwnProps, State> {
   keyExtractor = (item: *) => item.id;
 
   render() {
-    const { knownDevices, steps, onStepEntered } = this.props;
+    const {
+      knownDevices,
+      steps,
+      onStepEntered,
+      isNanoS,
+      onboarding,
+    } = this.props;
     const { devices, connecting } = this.state;
 
     const all: DeviceMeta[] = devices.concat(
@@ -201,10 +214,13 @@ class SelectDevice extends Component<OwnProps, State> {
     );
 
     const hasUSBSection = Platform.OS === "android" || other.length > 0;
+    const isNanoSOnOnboarding = isNanoS && onboarding;
 
     return (
       <View>
-        {ble.length === 0 ? (
+        {isNanoS && onboarding ? (
+          <UsbPlaceholder />
+        ) : ble.length === 0 ? (
           <BluetoothEmpty />
         ) : (
           <View>
@@ -212,7 +228,9 @@ class SelectDevice extends Component<OwnProps, State> {
             {ble.map(this.renderItem)}
           </View>
         )}
-        {hasUSBSection && (ble.length === 0 ? <ORBar /> : <USBHeader />)}
+        {hasUSBSection &&
+          !isNanoSOnOnboarding &&
+          (ble.length === 0 ? <ORBar /> : <USBHeader />)}
         {other.length === 0 ? <USBEmpty /> : other.map(this.renderItem)}
 
         <DeviceJob
@@ -259,6 +277,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   or: {
+    marginVertical: 30,
+  },
+  usbContainer: {
+    alignItems: "center",
     marginVertical: 30,
   },
 });
