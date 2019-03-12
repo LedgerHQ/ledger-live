@@ -12,16 +12,24 @@ import { softMenuBarHeight } from "../../logic/getWindowDimensions";
 type Props = {
   progress?: number,
   viewFinderSize: number,
+  liveQrCode?: boolean,
 };
 
 class QrCodeBottomLayer extends PureComponent<Props> {
+
   render() {
-    const { progress, viewFinderSize } = this.props;
+    const { progress, viewFinderSize, liveQrCode } = this.props;
     return (
       <View style={[styles.darken, styles.centered]}>
         <View style={styles.centered}>
           <LText semibold style={styles.text}>
-            <Trans i18nKey="account.import.scan.descBottom" />
+            <Trans
+              i18nKey={
+                liveQrCode
+                  ? "account.import.scan.descBottom"
+                  : "send.scan.descBottom"
+              }
+            />
           </LText>
         </View>
         <QrCodeProgressBar
