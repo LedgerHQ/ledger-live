@@ -781,6 +781,8 @@
   },
   "send": {
     "scan": {
+      "title": "Scan QR code",
+      "descBottom": "Please put the QR code within the square",
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",

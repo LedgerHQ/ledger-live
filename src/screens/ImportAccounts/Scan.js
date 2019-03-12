@@ -132,7 +132,7 @@ class Scan extends PureComponent<
           style={[styles.camera, cameraDimensions]}
           notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >
-          <CameraScreen width={width} height={height} progress={progress} />
+          <CameraScreen liveQrCode width={width} height={height} progress={progress} />
         </RNCamera>
         <GenericErrorBottomModal error={error} onClose={this.onCloseError} />
       </View>

@@ -14,11 +14,12 @@ type Props = {
   width: number,
   height: number,
   progress?: number,
+  liveQrCode?: boolean
 };
 
 class CameraScreen extends PureComponent<Props> {
   render() {
-    const { width, height, progress } = this.props;
+    const { width, height, progress, liveQrCode } = this.props;
 
     // Make the viewfinder borders 2/3 of the screen shortest border
     const viewFinderSize = (width > height ? height : width) * (2 / 3);
@@ -36,6 +37,7 @@ class CameraScreen extends PureComponent<Props> {
         <QRCodeBottomLayer
           viewFinderSize={viewFinderSize}
           progress={progress}
+          liveQrCode={liveQrCode}
         />
         <LText style={styles.version}>{liveCommonPkg.version}</LText>
       </View>
