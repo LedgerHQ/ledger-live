@@ -3,17 +3,14 @@
 import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { View, StyleSheet, Dimensions, Platform } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { Trans } from "react-i18next";
-
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import type { Summary } from "./provideSummary";
-
 import colors from "../colors";
-
+import getWindowDimensions from "../logic/getWindowDimensions";
 import { setSelectedTimeRange } from "../actions/settings";
-
 import Delta from "./Delta";
 import FormatDate from "./FormatDate";
 import Graph from "./Graph";
@@ -87,7 +84,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
           isInteractive={isAvailable}
           isLoading={!isAvailable}
           height={100}
-          width={Dimensions.get("window").width - 32}
+          width={getWindowDimensions().width - 32}
           color={isAvailable ? graphColor : colors.grey}
           data={balanceHistory}
           onItemHover={this.onItemHover}
