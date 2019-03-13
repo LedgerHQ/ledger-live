@@ -830,12 +830,13 @@
     rxjs "^6.3.3"
     rxjs-compat "^6.3.3"
 
-"@ledgerhq/react-native-hid@4.45.0":
-  version "4.45.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.45.0.tgz#bad298eb48de4426f22779ce01c72bd1fc6c5a9d"
-  integrity sha512-9Zg7aIWhRUKIoK7e4lvR2gw2QsoytDWDsUp5ZvL8IHt4AQobKxjyCXs0AZyue/Gx34mN/5PUPGaxlPxZHo1Nsg==
+"@ledgerhq/react-native-hid@4.45.1":
+  version "4.45.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.45.1.tgz#f58ed5c5d5673a6a2a02369682ce3781234b72d9"
+  integrity sha512-Iq2CqQA1Ox8cWiS3aRDddcLrlriuSrq2EX90tj8Pi7RpcRXy2MfEwxlWsD7EOyccqGQz+mvG40UqB8gATZYUkA==
   dependencies:
     "@ledgerhq/devices" "^4.45.0"
+    "@ledgerhq/errors" "^4.45.0"
     "@ledgerhq/hw-transport" "^4.45.0"
     rxjs "^6.4.0"
 
