@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import i18next from "i18next";
+import { from } from "rxjs";
 import { View, StyleSheet, Linking, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -12,8 +13,8 @@ import type { NavigationScreenProp } from "react-navigation";
 import ReactNativeModal from "react-native-modal";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 
-import { open } from "@ledgerhq/live-common/lib/hw";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -97,16 +98,22 @@ class ReceiveConfirmation extends Component<Props, State> {
     zoom: false,
   };
 
+  sub: *;
+
   componentDidMount() {
     const { navigation } = this.props;
     const deviceId = navigation.getParam("deviceId");
 
     if (deviceId) {
-      this.verifyOnDevice(deviceId);
       navigation.dangerouslyGetParent().setParams({ allowNavigation: false });
+      this.verifyOnDevice(deviceId);
     } else {
       navigation.setParams({ allowNavigation: true });
     }
+  }
+
+  componentWillUnmount() {
+    if (this.sub) this.sub.unsubscribe();
   }
 
   contactUs = () => {
@@ -116,23 +123,25 @@ class ReceiveConfirmation extends Component<Props, State> {
   verifyOnDevice = async (deviceId: string) => {
     const { account, navigation } = this.props;
 
-    const transport = await open(deviceId);
-    try {
-      await getAddress(
-        transport,
-        account.currency,
-        account.freshAddressPath,
-        true,
-      );
-      this.setState({ verified: true });
-    } catch (error) {
-      logger.critical(error);
-      this.setState({ error, isModalOpened: true });
-    } finally {
-      navigation.setParams({ allowNavigation: true });
-      navigation.dangerouslyGetParent().setParams({ allowNavigation: true });
-    }
-    await transport.close();
+    this.sub = withDevice(deviceId)(transport =>
+      from(
+        getAddress(transport, account.currency, account.freshAddressPath, true),
+      ),
+    ).subscribe({
+      complete: () => {
+        this.setState({ verified: true });
+        navigation.setParams({ allowNavigation: true });
+        navigation.dangerouslyGetParent().setParams({ allowNavigation: true });
+      },
+      error: error => {
+        if (error && error.name !== "UserRefusedAddress") {
+          logger.critical(error);
+        }
+        this.setState({ error, isModalOpened: true });
+        navigation.setParams({ allowNavigation: true });
+        navigation.dangerouslyGetParent().setParams({ allowNavigation: true });
+      },
+    });
   };
 
   onRetry = () => {

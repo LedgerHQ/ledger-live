@@ -34,7 +34,14 @@
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
     "notAvailable": "Not available",
-    "import": "Import"
+    "import": "Import",
+    "bluetooth": "Bluetooth",
+    "usb": "USB",
+    "add": "Add",
+    "forgetDevice": "Forget device",
+    "sync": {
+      "ago": "Synchronized {{time}}"
+    }
   },
   "errors": {
     "AccountNameRequired": {
@@ -135,9 +142,7 @@
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts can't be the same"
     },
-    "InvalidRecipient": {
-      "title": "Invalid recipient"
-    },
+    "InvalidRecipient": { "title": "Invalid recipient" },
     "LatestMCUInstalledError": {
       "title": "Oops, nothing to update",
       "description": "Needlessly tried to update the device microcontroller. Contact Ledger Support if there's a problem with your device."
@@ -233,6 +238,9 @@
       "title": "App update required",
       "description": "Uninstall and reinstall the {{managerAppName}} app in the Manager"
     },
+    "UserRefusedAllowManager": {
+      "title": "Manager refused on device"
+    },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
       "description": "Please try again or contact Ledger Support when in doubt"
@@ -294,6 +302,7 @@
     "title": "Trade & Exchange",
     "subtitle": "Try a few services we've selected",
     "visit": "Visit website",
+
     "btcdirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot",
     "changelly": "Changelly is a popular instant crypto asset exchange with 100+ coins and tokens listed.",
     "changenow": "ChangeNOW is one of the leading custody-free instant exchange services",
@@ -390,7 +399,7 @@
     },
     "stepLegacy": {
       "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X",
-      "description": "You can import your accounts from Ledger Live desktop to check your balance on the go. ",
+      "description": "You can import your accounts from Ledger Live desktop to check your balance on the go.",
       "buy": "Buy a Ledger Nano X"
     },
     "stepSetupPin": {
@@ -445,9 +454,7 @@
         "step3": "Resetting Ledger Live does not affect your crypto assets."
       }
     },
-    "stepShareData": {
-
-    },
+    "stepShareData": {},
     "stepFinish": {
       "title": "Your device is ready!",
       "readOnlyTitle": "All set!",
@@ -596,6 +603,10 @@
       "archive": {
         "title": "Archive Account",
         "desc": "This account will be archived"
+      },
+      "advanced": {
+        "title": "Advanced Logs",
+        "desc": ""
       }
     },
     "import": {
@@ -777,6 +788,8 @@
   },
   "send": {
     "scan": {
+      "title": "Scan QR code",
+      "descBottom": "Please put the QR code within the square",
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",
@@ -816,7 +829,7 @@
       "validateGasLimit": "Validate Gas Limit"
     },
     "validation": {
-      "title": "Please verify all transaction details on your {{fullDeviceName}}",
+      "title": "Please verify all transaction details on your {{productName}}",
       "message": "Confirm the transaction on your device to securely sign it",
       "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
@@ -865,25 +878,29 @@
   },
   "SelectDevice": {
     "title": "Pair new device",
-    "deviceNotFoundPairNewDevice": "Pair new device",
-    "headerDescription": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled",
+    "deviceNotFoundPairNewDevice": "Pair new Ledger Nano X",
+    "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
+    "usb": "To use USB, just plug and enter your PIN Code on your device",
     "steps": {
       "connecting": {
         "title": "Connecting {{deviceName}}",
         "description": "Please make sure your Ledger Nano X is unlocked and within range"
       },
       "genuineCheck": {
-        "title": "Allow Ledger Manager on your {{fullDeviceName}} or wait"
+        "title": "Allow Ledger Manager on your {{productName}}"
+      },
+      "genuineCheckPending": {
+        "title": "Checking device authenticity..."
       },
       "dashboard": {
-        "title": "Navigate to dashboard on your {{fullDeviceName}}"
+        "title": "Navigate to dashboard on your {{productName}}"
       },
       "currencyApp": {
-        "title": "Open the {{managerAppName}} app on your {{fullDeviceName}}",
+        "title": "Open the {{managerAppName}} app on your {{productName}}",
         "description": ""
       },
       "accountApp": {
-        "title": "Open the {{managerAppName}} app on your {{fullDeviceName}}",
+        "title": "Open the {{managerAppName}} app on your {{productName}}",
         "description": ""
       },
       "receiveVerify": {
@@ -907,12 +924,12 @@
   "PairDevices": {
     "Paired": {
       "title": "Pairing successful",
-      "desc": "Your {{fullDeviceName}} is ready to use with Ledger Live",
+      "desc": "Your {{productName}} is ready to use with Ledger Live",
       "action": "Continue"
     },
     "Pairing": {
-      "title": "Pairing",
-      "subtitle": "Please follow the instructions on your Ledger Nano X"
+      "step1": "Validate on your phone if the code matches with your {{productName}}",
+      "step2": "Validate on your {{productName}} by pressing both buttons"
     },
     "GenuineCheck": {
       "title": "Genuine check",
@@ -920,11 +937,11 @@
     },
     "ScanningHeader": {
       "title": "Looking for devices",
-      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
+      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
     },
     "ScanningTimeout": {
       "title": "Oops, no device found",
-      "desc": "Please make sure your {{fullDeviceName}} is unlocked with Bluetooth enabled"
+      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
     },
     "bypassGenuine": "Use anyway",
     "alreadyPaired": "Already paired"
@@ -945,6 +962,7 @@
   },
   "manager": {
     "title": "Manager",
+    "connect": "Connect your device",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",
@@ -959,7 +977,7 @@
     },
     "unpair": {
       "title": "Unpair device",
-      "description": "Are you sure? You can pair your {{fullDeviceName}} again at any time.",
+      "description": "Are you sure? You can pair your {{productName}} again at any time.",
       "button": "Unpair"
     }
   },
@@ -975,7 +993,7 @@
         "button_plural": "Installing... {{progressPercentage}}%"
       },
       "done": {
-        "title": "Successfully installed {{appName}} on your {{fullDeviceName}}",
+        "title": "Successfully installed {{appName}} on your {{productName}}",
         "accounts": "Go to accounts"
       }
     },
@@ -985,7 +1003,7 @@
         "button": "Uninstalling..."
       },
       "done": {
-        "title": "Successfully uninstalled {{appName}} on your {{fullDeviceName}}"
+        "title": "Successfully uninstalled {{appName}} on your {{productName}}"
       }
     }
   },
@@ -1000,7 +1018,8 @@
     "title": "Firmware version"
   },
   "FirmwareUpdateRow": {
-    "title": "Firmware version {{version}} is available",
+    "title": "Firmware version {{version}} available",
+    "subtitle": "Please use Ledger Live Desktop to update",
     "action": "Update"
   },
   "FirmwareUpdate": {

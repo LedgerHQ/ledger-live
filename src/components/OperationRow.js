@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   bodyRight: {
+    paddingLeft: 4,
     height: 20,
     alignItems: "flex-end",
   },

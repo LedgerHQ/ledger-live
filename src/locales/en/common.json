@@ -245,6 +245,10 @@
       "title": "Receive address rejected",
       "description": "Please try again or contact Ledger Support when in doubt"
     },
+    "UserRefusedDeviceNameChange": {
+      "title": "Rename canceled on device",
+      "description": "Try again and allow renaming on your device"
+    },
     "UserRefusedFirmwareUpdate": {
       "title": "Firmware update refused on device",
       "description": "Please retry or contact Ledger Support"
