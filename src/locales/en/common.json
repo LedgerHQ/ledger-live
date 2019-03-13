@@ -914,8 +914,8 @@
       },
       "receiveVerify": {
         "title": "Verify address on device",
-        "description": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
-        "action": "Verify"
+        "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device",
+        "action": "Continue"
       },
       "getDeviceName": {
         "title": "Press both buttons to allow get device name"
