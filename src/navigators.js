@@ -106,7 +106,7 @@ import DebugStore from "./screens/DebugStore";
 import DebugWSImport from "./screens/DebugWSImport";
 import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
-import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen.ios";
+import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import OnboardingOrNavigator from "./screens/OnboardingOrNavigator";
 import AdvancedLogs from "./screens/AccountSettings/AdvancedLogs";
 
