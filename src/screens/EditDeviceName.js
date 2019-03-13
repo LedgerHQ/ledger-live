@@ -158,6 +158,7 @@ class EditDeviceName extends PureComponent<
           </View>
 
           <DeviceJob
+            deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
             meta={connecting}
             onCancel={this.onCancel}
             onDone={this.onDone}

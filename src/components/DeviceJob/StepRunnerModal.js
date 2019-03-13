@@ -8,6 +8,7 @@ import Close from "../../icons/Close";
 import Touchable from "../Touchable";
 import colors from "../../colors";
 import type { Step, DeviceMeta } from "./types";
+import type { DeviceNames } from "../../screens/Onboarding/types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 class SelectDeviceConnectModal extends PureComponent<{
@@ -17,6 +18,7 @@ class SelectDeviceConnectModal extends PureComponent<{
   onStepDone: () => void,
   step: Step,
   error: ?Error,
+  deviceModelId: DeviceNames,
 }> {
   render() {
     const { meta, onClose, onRetry, onStepDone, error, step } = this.props;

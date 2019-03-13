@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, Image } from "react-native";
 import Config from "react-native-config";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -23,14 +23,17 @@ import Touchable from "../Touchable";
 import colors from "../../colors";
 import Circle from "../Circle";
 import SectionSeparator from "../SectionSeparator";
+import type { DeviceNames } from "../../screens/Onboarding/types";
 
 type Props = {
   onBluetoothDeviceAction?: (device: DeviceMeta) => any,
   onSelect: (meta: DeviceMeta) => void,
   steps?: Step[],
   onStepEntered?: (number, Object) => void,
-  onboarding?: boolean,
+  withArrows?: boolean,
+  usbOnly?: boolean,
   filter?: TransportModule => boolean,
+  deviceModelId: DeviceNames,
   navigation: NavigationScreenProp<*>,
 };
 
@@ -81,8 +84,18 @@ const USBHeader = () => (
   </LText>
 );
 
+const UsbPlaceholder = () => (
+  <View style={styles.usbContainer}>
+    <Image source={require("../../images/connect-nanos-mobile.png")} />
+  </View>
+);
+
 const ORBar = () => (
-  <SectionSeparator style={styles.or} text={<Trans i18nKey="common.or" />} />
+  <SectionSeparator
+    thin
+    style={styles.or}
+    text={<Trans i18nKey="common.or" />}
+  />
 );
 
 class SelectDevice extends Component<OwnProps, State> {
@@ -173,7 +186,7 @@ class SelectDevice extends Component<OwnProps, State> {
       key={item.deviceId}
       deviceMeta={item}
       onSelect={this.onSelect}
-      withArrow={!!this.props.onboarding}
+      withArrow={!!this.props.withArrows}
       onBluetoothDeviceAction={this.props.onBluetoothDeviceAction}
       {...item}
     />
@@ -182,7 +195,14 @@ class SelectDevice extends Component<OwnProps, State> {
   keyExtractor = (item: *) => item.id;
 
   render() {
-    const { knownDevices, steps, onStepEntered } = this.props;
+    const {
+      knownDevices,
+      steps,
+      onStepEntered,
+      usbOnly,
+      withArrows,
+      deviceModelId,
+    } = this.props;
     const { devices, connecting } = this.state;
 
     const all: DeviceMeta[] = devices.concat(
@@ -204,7 +224,9 @@ class SelectDevice extends Component<OwnProps, State> {
 
     return (
       <View>
-        {ble.length === 0 ? (
+        {usbOnly && withArrows ? (
+          <UsbPlaceholder />
+        ) : ble.length === 0 ? (
           <BluetoothEmpty />
         ) : (
           <View>
@@ -212,7 +234,9 @@ class SelectDevice extends Component<OwnProps, State> {
             {ble.map(this.renderItem)}
           </View>
         )}
-        {hasUSBSection && (ble.length === 0 ? <ORBar /> : <USBHeader />)}
+        {hasUSBSection &&
+          !usbOnly &&
+          (ble.length === 0 ? <ORBar /> : <USBHeader />)}
         {other.length === 0 ? <USBEmpty /> : other.map(this.renderItem)}
 
         <DeviceJob
@@ -222,6 +246,7 @@ class SelectDevice extends Component<OwnProps, State> {
           onStepEntered={onStepEntered}
           onDone={this.onDone}
           editMode={false}
+          deviceModelId={deviceModelId}
         />
       </View>
     );
@@ -259,6 +284,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   or: {
+    marginVertical: 30,
+  },
+  usbContainer: {
+    alignItems: "center",
     marginVertical: 30,
   },
 });

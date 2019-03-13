@@ -50,7 +50,7 @@ export type OnboardingContextProviderProps = { children: * };
 
 type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
 
-type DeviceNames = "nanoS" | "nanoX" | "blue";
+export type DeviceNames = "nanoS" | "nanoX" | "blue";
 
 type StepNavigateType = (NavigationScreenProp<*>) => void;
 type Noop = any => any;
