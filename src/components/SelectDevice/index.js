@@ -23,15 +23,17 @@ import Touchable from "../Touchable";
 import colors from "../../colors";
 import Circle from "../Circle";
 import SectionSeparator from "../SectionSeparator";
+import type { DeviceNames } from "../../screens/Onboarding/types";
 
 type Props = {
   onBluetoothDeviceAction?: (device: DeviceMeta) => any,
   onSelect: (meta: DeviceMeta) => void,
   steps?: Step[],
   onStepEntered?: (number, Object) => void,
-  onboarding?: boolean,
-  isNanoS?: boolean,
+  withArrows?: boolean,
+  usbOnly?: boolean,
   filter?: TransportModule => boolean,
+  deviceModelId: DeviceNames,
   navigation: NavigationScreenProp<*>,
 };
 
@@ -89,7 +91,11 @@ const UsbPlaceholder = () => (
 );
 
 const ORBar = () => (
-  <SectionSeparator style={styles.or} text={<Trans i18nKey="common.or" />} />
+  <SectionSeparator
+    thin
+    style={styles.or}
+    text={<Trans i18nKey="common.or" />}
+  />
 );
 
 class SelectDevice extends Component<OwnProps, State> {
@@ -180,7 +186,7 @@ class SelectDevice extends Component<OwnProps, State> {
       key={item.deviceId}
       deviceMeta={item}
       onSelect={this.onSelect}
-      withArrow={!!this.props.onboarding}
+      withArrow={!!this.props.withArrows}
       onBluetoothDeviceAction={this.props.onBluetoothDeviceAction}
       {...item}
     />
@@ -193,8 +199,9 @@ class SelectDevice extends Component<OwnProps, State> {
       knownDevices,
       steps,
       onStepEntered,
-      isNanoS,
-      onboarding,
+      usbOnly,
+      withArrows,
+      deviceModelId,
     } = this.props;
     const { devices, connecting } = this.state;
 
@@ -214,11 +221,10 @@ class SelectDevice extends Component<OwnProps, State> {
     );
 
     const hasUSBSection = Platform.OS === "android" || other.length > 0;
-    const isNanoSOnOnboarding = isNanoS && onboarding;
 
     return (
       <View>
-        {isNanoS && onboarding ? (
+        {usbOnly && withArrows ? (
           <UsbPlaceholder />
         ) : ble.length === 0 ? (
           <BluetoothEmpty />
@@ -229,7 +235,7 @@ class SelectDevice extends Component<OwnProps, State> {
           </View>
         )}
         {hasUSBSection &&
-          !isNanoSOnOnboarding &&
+          !usbOnly &&
           (ble.length === 0 ? <ORBar /> : <USBHeader />)}
         {other.length === 0 ? <USBEmpty /> : other.map(this.renderItem)}
 
@@ -240,6 +246,7 @@ class SelectDevice extends Component<OwnProps, State> {
           onStepEntered={onStepEntered}
           onDone={this.onDone}
           editMode={false}
+          deviceModelId={deviceModelId}
         />
       </View>
     );

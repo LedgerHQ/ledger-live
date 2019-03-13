@@ -29,7 +29,8 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
 
   render() {
     const { deviceModelId, t } = this.props;
-    const isNanoS = deviceModelId === "nanoS";
+    const usbOnly = ["nanoS", "blue"].includes(deviceModelId);
+
     return (
       <OnboardingLayout
         header="OnboardingStepPairNew"
@@ -38,13 +39,18 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
         noTopPadding
         withNeedHelp
         titleOverride={
-          isNanoS
+          usbOnly
             ? t(`onboarding.stepsTitles.OnboardingStepConnectNew`)
             : undefined
         }
       >
         <TrackScreen category="Onboarding" name="PairNew" />
-        <SelectDevice onboarding isNanoS={isNanoS} onSelect={this.props.next} />
+        <SelectDevice
+          withArrows
+          usbOnly={usbOnly}
+          deviceModelId={deviceModelId}
+          onSelect={this.props.next}
+        />
       </OnboardingLayout>
     );
   }

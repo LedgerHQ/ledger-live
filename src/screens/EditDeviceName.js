@@ -158,6 +158,7 @@ class EditDeviceName extends PureComponent<
           </View>
 
           <DeviceJob
+            deviceModelId="nanoX" // TODO: @gre use deviceModelId to contextualize the messages in the bottom modal
             meta={connecting}
             onCancel={this.onCancel}
             onDone={this.onDone}

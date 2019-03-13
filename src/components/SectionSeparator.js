@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, PixelRatio } from "react-native";
 import colors from "../colors";
 import LText from "./LText";
 
@@ -46,10 +46,10 @@ const styles = StyleSheet.create({
   },
   line: {
     backgroundColor: colors.fog,
-    height: 1,
+    height: 2 / PixelRatio.get(),
     flexGrow: 1,
   },
   thin: {
-    height: 1,
+    height: 1 / PixelRatio.get(),
   },
 });

@@ -6,6 +6,7 @@ import debounce from "lodash/debounce";
 import { mergeMap, last, tap, filter } from "rxjs/operators";
 import StepRunnerModal from "./StepRunnerModal";
 import type { Step, DeviceMeta } from "./types";
+import type { DeviceNames } from "../../screens/Onboarding/types";
 
 const runStep = (
   step: Step,
@@ -66,6 +67,7 @@ class DeviceJob extends Component<
     onDone: Object => void,
     onCancel: () => void,
     editMode?: boolean,
+    deviceModelId: DeviceNames,
     onStepEntered?: (number, Object) => void,
   },
   {
@@ -178,7 +180,7 @@ class DeviceJob extends Component<
   };
 
   render() {
-    const { steps } = this.props;
+    const { steps, deviceModelId } = this.props;
     const { stepIndex, error, meta } = this.state;
     const step = steps[stepIndex];
     if (!step) return null;
@@ -190,6 +192,7 @@ class DeviceJob extends Component<
         onStepDone={this.onStepDone}
         error={error}
         meta={meta}
+        deviceModelId={deviceModelId}
       />
     );
   }
