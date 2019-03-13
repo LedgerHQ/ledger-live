@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 import {
@@ -48,6 +48,11 @@ const AmountField = ({ unit, value, autoFocus, onChange }: Props) => {
   });
   const initialText = value.isZero() ? "" : formatted;
   const [text, setText] = useState(initialText);
+  useEffect(() => {
+    if (!isFocused) {
+      setText(initialText);
+    }
+  }, [initialText, isFocused]);
 
   return (
     <Container>

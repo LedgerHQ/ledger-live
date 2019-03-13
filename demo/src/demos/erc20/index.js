@@ -54,14 +54,11 @@ const SendToken = ({ token }: { token: CurrencyToken }) => {
   const [error, setError] = useState(null);
   const [signed, setSigned] = useState(null);
 
-  useEffect(
-    () => {
-      api.estimateGasLimitForERC20(token.contractAddress).then(value => {
-        setGasLimit(BigNumber(value));
-      });
-    },
-    [token]
-  );
+  useEffect(() => {
+    api.estimateGasLimitForERC20(token.contractAddress).then(value => {
+      setGasLimit(BigNumber(value));
+    });
+  }, [token]);
 
   const disabled = !address || !amount || amount.isZero();
 
