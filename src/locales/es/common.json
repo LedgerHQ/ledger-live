@@ -142,7 +142,9 @@
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts can't be the same"
     },
-    "InvalidRecipient": { "title": "Invalid recipient" },
+    "InvalidRecipient": {
+      "title": "Invalid recipient"
+    },
     "LatestMCUInstalledError": {
       "title": "Oops, nothing to update",
       "description": "Needlessly tried to update the device microcontroller. Contact Ledger Support if there's a problem with your device."
@@ -306,7 +308,6 @@
     "title": "Trade & Exchange",
     "subtitle": "Try a few services we've selected",
     "visit": "Visit website",
-
     "btcdirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot",
     "changelly": "Changelly is a popular instant crypto asset exchange with 100+ coins and tokens listed.",
     "changenow": "ChangeNOW is one of the leading custody-free instant exchange services",
@@ -460,7 +461,9 @@
         "step3": "Resetting Ledger Live does not affect your crypto assets."
       }
     },
-    "stepShareData": {},
+    "stepShareData": {
+
+    },
     "stepFinish": {
       "title": "Your device is ready!",
       "readOnlyTitle": "All set!",
@@ -914,8 +917,8 @@
       },
       "receiveVerify": {
         "title": "Verify address on device",
-        "description": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
-        "action": "Verify"
+        "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device",
+        "action": "Continue"
       },
       "getDeviceName": {
         "title": "Press both buttons to allow get device name"
