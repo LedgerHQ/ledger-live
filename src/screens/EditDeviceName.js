@@ -158,7 +158,7 @@ class EditDeviceName extends PureComponent<
           </View>
 
           <DeviceJob
-            deviceModelId="nanoX" // TODO: @gre use deviceModelId to contextualize the messages in the bottom modal
+            deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
             meta={connecting}
             onCancel={this.onCancel}
             onDone={this.onDone}

@@ -886,7 +886,10 @@
     "steps": {
       "connecting": {
         "title": "Connecting {{deviceName}}",
-        "description": "Please make sure your Ledger Nano X is unlocked and within range"
+        "description": {
+          "ble": "Please make sure your {{productName}} is unlocked and within range",
+          "usb": "Please make sure your {{productName}} is unlocked"
+        }
       },
       "genuineCheck": {
         "title": "Allow Ledger Manager on your {{productName}}"
@@ -907,7 +910,7 @@
       },
       "receiveVerify": {
         "title": "Verify address on device",
-        "description": "Verify the {{currencyName}} address above matches the one on your device",
+        "description": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
         "action": "Verify"
       },
       "getDeviceName": {

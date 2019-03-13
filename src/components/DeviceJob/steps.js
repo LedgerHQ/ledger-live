@@ -45,20 +45,34 @@ const inferWordingValues = meta => {
 };
 
 export const connectingStep: Step = {
-  Body: ({ meta }: *) => (
-    <RenderStep
-      icon={<BluetoothScanning isAnimated />}
-      title={
-        <Trans
-          i18nKey="SelectDevice.steps.connecting.title"
-          values={inferWordingValues(meta)}
-        />
-      }
-      description={
-        <Trans i18nKey="SelectDevice.steps.connecting.description" />
-      }
-    />
-  ),
+  Body: ({ meta }: *) => {
+    const usbOnly = meta.modelId !== "nanoX";
+    return (
+      <RenderStep
+        icon={
+          usbOnly ? (
+            <DeviceNanoAction modelId={meta.modelId} wired={meta.wired} />
+          ) : (
+            <BluetoothScanning isAnimated />
+          )
+        }
+        title={
+          <Trans
+            i18nKey="SelectDevice.steps.connecting.title"
+            values={inferWordingValues(meta)}
+          />
+        }
+        description={
+          <Trans
+            i18nKey={`SelectDevice.steps.connecting.description.${
+              !usbOnly ? "ble" : "usb"
+            }`}
+            values={inferWordingValues(meta)}
+          />
+        }
+      />
+    );
+  },
   run: meta =>
     withDevice(meta.deviceId)(() => from([meta])).pipe(
       rejectionOp(() => new CantOpenDevice()),
