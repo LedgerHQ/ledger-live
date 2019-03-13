@@ -16,7 +16,6 @@ type Props = {
 };
 
 class QrCodeBottomLayer extends PureComponent<Props> {
-
   render() {
     const { progress, viewFinderSize, liveQrCode } = this.props;
     return (

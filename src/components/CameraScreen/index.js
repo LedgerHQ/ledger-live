@@ -14,7 +14,7 @@ type Props = {
   width: number,
   height: number,
   progress?: number,
-  liveQrCode?: boolean
+  liveQrCode?: boolean,
 };
 
 class CameraScreen extends PureComponent<Props> {
