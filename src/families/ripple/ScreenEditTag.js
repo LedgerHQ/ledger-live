@@ -90,6 +90,7 @@ class RippleEditTag extends PureComponent<Props, State> {
             keyboardShouldPersistTaps="always"
           >
             <TextInput
+              allowFontScaling={false}
               autoFocus
               style={styles.textInputAS}
               defaultValue={tag ? tag.toString() : ""}

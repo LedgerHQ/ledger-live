@@ -162,6 +162,7 @@ const ManagerMain = createMaterialTopTabNavigator(
   },
   {
     tabBarOptions: {
+      allowFontScaling: false,
       activeTintColor: colors.live,
       inactiveTintColor: colors.grey,
       upperCaseLabel: false,

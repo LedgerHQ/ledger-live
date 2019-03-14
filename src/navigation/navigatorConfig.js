@@ -12,6 +12,7 @@ export const defaultNavigationOptions = {
   headerTitle: HeaderTitle,
   headerBackTitle: null,
   headerBackImage: HeaderBackImage,
+  headerTitleAllowFontScaling: false,
 };
 
 export const stackNavigatorConfig = {

@@ -18,7 +18,14 @@ class TextInput extends PureComponent<*> {
       flags.autoCorrect = false;
     }
 
-    return <ReactNativeTextInput ref={innerRef} {...otherProps} {...flags} />;
+    return (
+      <ReactNativeTextInput
+        ref={innerRef}
+        allowFontScaling={false}
+        {...otherProps}
+        {...flags}
+      />
+    );
   }
 }
 
