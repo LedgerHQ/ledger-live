@@ -39,13 +39,13 @@ export const getOrCreateWallet = atomicQueue(
       });
 
       if (isSegwitDerivationMode(derivationMode)) {
-        core.coreDynamicObject.putString(
+        await core.coreDynamicObject.putString(
           config,
           "KEYCHAIN_ENGINE",
           "BIP49_P2SH",
         );
       }
-      core.coreDynamicObject.putString(
+      await core.coreDynamicObject.putString(
         config,
         "KEYCHAIN_DERIVATION_SCHEME",
         derivationScheme,
