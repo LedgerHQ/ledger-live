@@ -1,6 +1,8 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+// $FlowFixMe
+import { ScrollView } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -67,7 +69,7 @@ class AccountSettings extends PureComponent<Props, State> {
 
     if (!account) return null;
     return (
-      <Fragment>
+      <ScrollView>
         <TrackScreen category="AccountSettings" />
         <View style={styles.sectionRow}>
           <AccountNameRow account={account} navigation={navigation} />
@@ -95,7 +97,7 @@ class AccountSettings extends PureComponent<Props, State> {
             account={account}
           />
         </BottomModal>
-      </Fragment>
+      </ScrollView>
     );
   }
 }
