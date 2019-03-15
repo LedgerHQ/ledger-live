@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 
 const el = () => (
   <Text
+    allowFontScaling={false}
     style={{
       padding: 60,
       opacity: 0.5,

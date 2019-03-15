@@ -65,6 +65,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
         ]}
       >
         <TextInput
+          allowFontScaling={false}
           autoFocus={autoFocus}
           style={[
             styles.input,

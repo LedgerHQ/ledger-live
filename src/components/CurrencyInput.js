@@ -142,6 +142,7 @@ class CurrencyInput extends PureComponent<Props, State> {
     return (
       <View style={[styles.wrapper, style]}>
         <TextInput
+          allowFontScaling={false}
           hitSlop={{ top: 20, bottom: 20 }}
           style={[
             styles.input,

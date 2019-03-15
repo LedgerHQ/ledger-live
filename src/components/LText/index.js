@@ -52,6 +52,7 @@ export default class LText extends Component<*> {
     } = this.props;
     return (
       <Text
+        allowFontScaling={false}
         {...newProps}
         style={[
           style,
