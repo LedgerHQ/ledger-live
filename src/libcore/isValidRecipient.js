@@ -13,12 +13,8 @@ export const isValidRecipient = withLibcoreF(
     recipient: string,
   }): Promise<?Error> => {
     const poolInstance = core.getPoolInstance();
-    const currencyCore = await core.coreWalletPool.getCurrency(
-      poolInstance,
-      currency.id,
-    );
-    const addr = core.coreAddress;
-    const { value } = await addr.isValid(recipient, currencyCore);
+    const currencyCore = await poolInstance.getCurrency(currency.id);
+    const value = await core.Address.isValid(recipient, currencyCore);
     if (value) {
       return Promise.resolve(null);
     }

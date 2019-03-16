@@ -41,11 +41,9 @@ export const getFeesForTransaction = withLibcoreF(
         xpub,
       });
 
-      const bitcoinLikeAccount = await core.coreAccount.asBitcoinLikeAccount(
-        coreAccount,
-      );
+      const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
 
-      const walletCurrency = await core.coreWallet.getCurrency(coreWallet);
+      const walletCurrency = await coreWallet.getCurrency();
 
       const amount = await bigNumberToLibcoreAmount(
         core,
@@ -60,8 +58,7 @@ export const getFeesForTransaction = withLibcoreF(
       );
 
       const isPartial = true;
-      const transactionBuilder = await core.coreBitcoinLikeAccount.buildTransaction(
-        bitcoinLikeAccount,
+      const transactionBuilder = await bitcoinLikeAccount.buildTransaction(
         isPartial,
       );
 
@@ -74,27 +71,16 @@ export const getFeesForTransaction = withLibcoreF(
         throw new InvalidAddress("", { currencyName: currency.name });
       }
 
-      await core.coreBitcoinLikeTransactionBuilder.sendToAddress(
-        transactionBuilder,
-        amount,
-        transaction.recipient,
-      );
+      await transactionBuilder.sendToAddress(amount, transaction.recipient);
+      await transactionBuilder.pickInputs(0, 0xffffff);
+      await transactionBuilder.setFeesPerByte(feesPerByte);
 
-      await core.coreBitcoinLikeTransactionBuilder.pickInputs(
-        transactionBuilder,
-        0,
-        0xffffff,
-      );
+      const builded = await transactionBuilder.build();
 
-      await core.coreBitcoinLikeTransactionBuilder.setFeesPerByte(
-        transactionBuilder,
-        feesPerByte,
-      );
-
-      const builded = await core.coreBitcoinLikeTransactionBuilder.build(
-        transactionBuilder,
-      );
-      const feesAmount = await core.coreBitcoinLikeTransaction.getFees(builded);
+      const feesAmount = await builded.getFees();
+      if (!feesAmount) {
+        throw new Error("getFeesForTransaction: fees should not be undefined");
+      }
 
       let fees = await libcoreAmountToBigNumber(core, feesAmount);
       if (fees.isLessThan(0)) {

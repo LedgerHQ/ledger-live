@@ -1,34 +1,21 @@
 // @flow
-
-import { getValue } from "./specific";
+import type { Core, CoreWallet } from "./types";
 
 export async function createAccountFromDevice({
   core,
   wallet,
   hwApp,
 }: {
-  core: *,
-  wallet: *,
+  core: Core,
+  wallet: CoreWallet,
   hwApp: *,
 }) {
-  const accountCreationInfos = await core.coreWallet.getNextAccountCreationInfo(
-    wallet,
-  );
-  const chainCodes = getValue(
-    await core.coreAccountCreationInfo.getChainCodes(accountCreationInfos),
-  );
-  const publicKeys = getValue(
-    await core.coreAccountCreationInfo.getPublicKeys(accountCreationInfos),
-  );
-  const index = (await core.coreAccountCreationInfo.getIndex(
-    accountCreationInfos,
-  )).value;
-  const derivations = getValue(
-    await core.coreAccountCreationInfo.getDerivations(accountCreationInfos),
-  );
-  const owners = getValue(
-    await core.coreAccountCreationInfo.getOwners(accountCreationInfos),
-  );
+  const accountCreationInfos = await wallet.getNextAccountCreationInfo();
+  const chainCodes = await accountCreationInfos.getChainCodes();
+  const publicKeys = await accountCreationInfos.getPublicKeys();
+  const index = await accountCreationInfos.getIndex();
+  const derivations = await accountCreationInfos.getDerivations();
+  const owners = await accountCreationInfos.getOwners();
 
   await derivations.reduce(
     (promise, derivation) =>
@@ -42,7 +29,7 @@ export async function createAccountFromDevice({
     Promise.resolve(),
   );
 
-  const newAccountCreationInfos = await core.coreAccountCreationInfo.init(
+  const newAccountCreationInfos = await core.AccountCreationInfo.init(
     index,
     owners,
     derivations,
@@ -50,5 +37,5 @@ export async function createAccountFromDevice({
     chainCodes,
   );
 
-  return core.coreWallet.newAccountWithInfo(wallet, newAccountCreationInfos);
+  return wallet.newAccountWithInfo(newAccountCreationInfos);
 }

@@ -9,6 +9,7 @@ import type {
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
 import { atomicQueue } from "../logic/promise";
+import type { Core, CoreWallet } from "./types";
 
 export const getOrCreateWallet = atomicQueue(
   async ({
@@ -17,21 +18,18 @@ export const getOrCreateWallet = atomicQueue(
     currency,
     derivationMode,
   }: {
-    core: *,
+    core: Core,
     walletName: string,
     currency: CryptoCurrency,
     derivationMode: DerivationMode,
-  }) => {
+  }): Promise<CoreWallet> => {
     const poolInstance = core.getPoolInstance();
     let wallet;
     try {
-      wallet = await core.coreWalletPool.getWallet(poolInstance, walletName);
+      wallet = await poolInstance.getWallet(walletName);
     } catch (err) {
-      const currencyCore = await core.coreWalletPool.getCurrency(
-        poolInstance,
-        currency.id,
-      );
-      const config = await core.coreDynamicObject.newInstance();
+      const currencyCore = await poolInstance.getCurrency(currency.id);
+      const config = await core.DynamicObject.newInstance();
 
       const derivationScheme = getDerivationScheme({
         currency,
@@ -39,20 +37,11 @@ export const getOrCreateWallet = atomicQueue(
       });
 
       if (isSegwitDerivationMode(derivationMode)) {
-        core.coreDynamicObject.putString(
-          config,
-          "KEYCHAIN_ENGINE",
-          "BIP49_P2SH",
-        );
+        await config.putString("KEYCHAIN_ENGINE", "BIP49_P2SH");
       }
-      core.coreDynamicObject.putString(
-        config,
-        "KEYCHAIN_DERIVATION_SCHEME",
-        derivationScheme,
-      );
+      await config.putString("KEYCHAIN_DERIVATION_SCHEME", derivationScheme);
 
-      wallet = await core.coreWalletPool.createWallet(
-        poolInstance,
+      wallet = await poolInstance.createWallet(
         walletName,
         currencyCore,
         config,
@@ -60,5 +49,5 @@ export const getOrCreateWallet = atomicQueue(
     }
     return wallet;
   },
-  ({ walletName }) => walletName,
+  ({ walletName }: { walletName: string }) => walletName,
 );
