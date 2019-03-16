@@ -5,7 +5,7 @@ import "./polyfill";
 import "./live-common-setup";
 import "./libcore/react-native";
 import React, { Fragment, Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import logger from "./logger";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
@@ -35,6 +35,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+// Fixme until third parties address this themselves
+// $FlowFixMe
+Text.defaultProps = Text.defaultProps || {};
+// $FlowFixMe
+Text.defaultProps.allowFontScaling = false;
 
 class App extends Component<*> {
   hasCountervaluesChanged = (a, b) => a.countervalues !== b.countervalues;

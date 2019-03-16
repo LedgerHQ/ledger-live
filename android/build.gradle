@@ -2,11 +2,11 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "27.0.3"
+        buildToolsVersion = "28.0.3"
         minSdkVersion = 24
-        compileSdkVersion = 27
+        compileSdkVersion = 28
         targetSdkVersion = 26
-        supportLibVersion = "27.1.1"
+        supportLibVersion = "28.0.3"
     }
     repositories {
         jcenter()
@@ -48,8 +48,8 @@ subprojects {
     afterEvaluate {project ->
         if (project.hasProperty("android")) {
             android {
-                compileSdkVersion 27
-                buildToolsVersion '27.0.3'
+                compileSdkVersion 28
+                buildToolsVersion '28.0.3'
 
                 compileOptions {
                     sourceCompatibility 1.8

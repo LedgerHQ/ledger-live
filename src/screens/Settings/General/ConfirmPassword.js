@@ -37,7 +37,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
 
   componentDidMount() {
     Keychain.getSupportedBiometryType().then(biometricsType => {
-      this.setState({ biometricsType });
+      if (biometricsType) this.setState({ biometricsType });
     });
   }
 

@@ -43,7 +43,7 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
       nextAppState === "active" &&
       openSettingsPressed
     ) {
-      navigation.replace("SendFundsMain");
+      navigation.replace("SendFunds");
     }
     this.setState({ appState: nextAppState });
   };

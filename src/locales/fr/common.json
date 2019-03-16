@@ -4,7 +4,7 @@
     "apply": "Apply",
     "back": "Back",
     "delete": "Delete",
-    "yes": "Yes",
+    "yes": "Oui",
     "no": "No",
     "gotit": "Got it",
     "continue": "Continue",
@@ -142,7 +142,9 @@
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts can't be the same"
     },
-    "InvalidRecipient": { "title": "Invalid recipient" },
+    "InvalidRecipient": {
+      "title": "Invalid recipient"
+    },
     "LatestMCUInstalledError": {
       "title": "Oops, nothing to update",
       "description": "Needlessly tried to update the device microcontroller. Contact Ledger Support if there's a problem with your device."
@@ -245,6 +247,10 @@
       "title": "Receive address rejected",
       "description": "Please try again or contact Ledger Support when in doubt"
     },
+    "UserRefusedDeviceNameChange": {
+      "title": "Rename canceled on device",
+      "description": "Try again and allow renaming on your device"
+    },
     "UserRefusedFirmwareUpdate": {
       "title": "Firmware update refused on device",
       "description": "Please retry or contact Ledger Support"
@@ -302,7 +308,6 @@
     "title": "Trade & Exchange",
     "subtitle": "Try a few services we've selected",
     "visit": "Visit website",
-
     "btcdirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot",
     "changelly": "Changelly is a popular instant crypto asset exchange with 100+ coins and tokens listed.",
     "changenow": "ChangeNOW is one of the leading custody-free instant exchange services",
@@ -373,6 +378,7 @@
       "OnboardingStepWriteRecoveryRestore": "Enter recovery phrase",
       "OnboardingStepSecurityChecklist": "Security checklist",
       "OnboardingStepPairNew": "Pair your {{fullDeviceName}}",
+      "OnboardingStepConnectNew": "Connect your device",
       "OnboardingStepPassword": "Password lock",
       "OnboardingStepScanQR": "Import desktop accounts",
       "OnboardingStepGetStarted": "Ledger Nano X",
@@ -380,7 +386,7 @@
     },
     "stepWelcome": {
       "title": "Welcome to Ledger Live",
-      "desc": "Easily manage crypto secured by your {{fullDeviceName}}. Everywhere you go.",
+      "desc": "Easily manage crypto secured by your Ledger device. Everywhere you go.",
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}"
@@ -404,6 +410,7 @@
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
+      "step1-nanoS": "Connect your {{fullDeviceName}} to your phone using an OTG cable.",
       "step2": "Press both buttons to choose <1><1>Setup as new device.</1></1>",
       "step2-restore": "Press both buttons to choose <1><1>Restore from recovery phrase.</1></1>",
       "step3": "Press left or right button to select a digit. Press both to validate.",
@@ -454,7 +461,9 @@
         "step3": "Resetting Ledger Live does not affect your crypto assets."
       }
     },
-    "stepShareData": {},
+    "stepShareData": {
+
+    },
     "stepFinish": {
       "title": "Your device is ready!",
       "readOnlyTitle": "All set!",
@@ -480,9 +489,9 @@
     "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
     "greeting": {
-      "morning": "Good morning",
-      "evening": "Good evening",
-      "afternoon": "Good afternoon"
+      "morning": "Bonjour",
+      "evening": "Bonsoir",
+      "afternoon": "Bonjour"
     },
     "summary": "Here's the summary of your account",
     "summary_plural": "Your {{count}} accounts are synchronized.",
@@ -755,7 +764,7 @@
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
       "verifySkipped": "Your receive address has not been confirmed on your Ledger device. Please verify your {{accountType}} address for optimal security",
-      "verifyPending": "Verify the {{currencyName}} address above matches the one on your device",
+      "verifyPending": "Please verify that the {{currencyName}} address shown on your device matches the one on your phone",
       "verified": "Address confirmed, re-verify if you copy or scan it.",
       "verifyAgain": "Re-verify",
       "noAccount": "No account found",
@@ -884,7 +893,10 @@
     "steps": {
       "connecting": {
         "title": "Connecting {{deviceName}}",
-        "description": "Please make sure your Ledger Nano X is unlocked and within range"
+        "description": {
+          "ble": "Please make sure your {{productName}} is unlocked and within range",
+          "usb": "Please make sure your {{productName}} is unlocked"
+        }
       },
       "genuineCheck": {
         "title": "Allow Ledger Manager on your {{productName}}"
@@ -905,8 +917,8 @@
       },
       "receiveVerify": {
         "title": "Verify address on device",
-        "description": "Verify the {{currencyName}} address above matches the one on your device",
-        "action": "Verify"
+        "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device",
+        "action": "Continue"
       },
       "getDeviceName": {
         "title": "Press both buttons to allow get device name"
