@@ -1,5 +1,4 @@
 // @flow
-import invariant from "invariant";
 import { getNativeModule } from "./specific";
 import type { Core, CoreStatics } from "../types";
 
