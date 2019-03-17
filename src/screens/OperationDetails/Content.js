@@ -123,18 +123,18 @@ class Content extends PureComponent<Props, *> {
           </LText>
           {operation.fee ? (
             <View>
-            <LText semiBold>
+              <LText semiBold>
                 <CurrencyUnitValue
                   showCode
                   unit={account.unit}
                   value={operation.fee}
                 />
               </LText>
-              <LText>
+              <LText tertiary style={styles.feeCounterValue}>
                 <CounterValue
-                showCode
-                currency={account.currency}
-                value={operation.fee}
+                  showCode
+                  currency={account.currency}
+                  value={operation.fee}
                 />
               </LText>
             </View>
@@ -216,6 +216,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.grey,
     marginBottom: 16,
+  },
+  feeCounterValue: {
+    color: colors.grey,
   },
   confirmationContainer: {
     flexDirection: "row",
