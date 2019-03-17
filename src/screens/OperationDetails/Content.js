@@ -122,13 +122,22 @@ class Content extends PureComponent<Props, *> {
             <Trans i18nKey="operationDetails.fees" />
           </LText>
           {operation.fee ? (
+            <View>
             <LText semiBold>
-              <CurrencyUnitValue
+                <CurrencyUnitValue
+                  showCode
+                  unit={account.unit}
+                  value={operation.fee}
+                />
+              </LText>
+              <LText>
+                <CounterValue
                 showCode
-                unit={account.unit}
+                currency={account.currency}
                 value={operation.fee}
-              />
-            </LText>
+                />
+              </LText>
+            </View>
           ) : (
             <LText semiBold>
               <Trans i18nKey="operationDetails.noFees" />
