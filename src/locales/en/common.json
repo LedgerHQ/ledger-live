@@ -971,7 +971,7 @@
   },
   "manager": {
     "title": "Manager",
-    "connect": "Connect your device",
+    "connect": "Select your device",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",
