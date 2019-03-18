@@ -1,47 +1,42 @@
 // @flow
-import { getValue } from "./specific";
 import { atomicQueue } from "../logic/promise";
+import type { Core, CoreWallet } from "./types";
 
 export const getOrCreateAccount = atomicQueue(
-  async ({ core, coreWallet, xpub, index }) => {
+  async ({
+    core,
+    coreWallet,
+    xpub,
+    index,
+  }: {
+    core: Core,
+    coreWallet: CoreWallet,
+    xpub: ?string,
+    index: number,
+  }) => {
     let coreAccount;
     try {
-      coreAccount = await core.coreWallet.getAccount(coreWallet, index);
+      coreAccount = await coreWallet.getAccount(index);
     } catch (err) {
-      const extendedInfos = await core.coreWallet.getExtendedKeyAccountCreationInfo(
-        coreWallet,
+      const extendedInfos = await coreWallet.getExtendedKeyAccountCreationInfo(
         index,
       );
 
-      const infosIndex = (await core.coreExtendedKeyAccountCreationInfo.getIndex(
-        extendedInfos,
-      )).value; // TODO get rid of .value
+      const infosIndex = await extendedInfos.getIndex();
+      const extendedKeys = await extendedInfos.getExtendedKeys();
+      const owners = await extendedInfos.getOwners();
+      const derivations = await extendedInfos.getDerivations();
 
-      const extendedKeys = getValue(
-        await core.coreExtendedKeyAccountCreationInfo.getExtendedKeys(
-          extendedInfos,
-        ),
-      );
-      const owners = getValue(
-        await core.coreExtendedKeyAccountCreationInfo.getOwners(extendedInfos),
-      );
-      const derivations = getValue(
-        await core.coreExtendedKeyAccountCreationInfo.getDerivations(
-          extendedInfos,
-        ),
-      );
+      if (xpub) extendedKeys.push(xpub);
 
-      extendedKeys.push(xpub);
-
-      const newExtendedKeys = await core.coreExtendedKeyAccountCreationInfo.init(
+      const newExtendedKeys = await core.ExtendedKeyAccountCreationInfo.init(
         infosIndex,
         owners,
         derivations,
         extendedKeys,
       );
 
-      coreAccount = await core.coreWallet.newAccountWithExtendedKeyInfo(
-        coreWallet,
+      coreAccount = await coreWallet.newAccountWithExtendedKeyInfo(
         newExtendedKeys,
       );
     }

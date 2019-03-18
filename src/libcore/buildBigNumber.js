@@ -1,20 +1,21 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
+import type { Core, CoreCurrency, CoreAmount } from "./types";
 
 export async function bigNumberToLibcoreAmount(
-  core: *,
-  walletCurrency: *,
+  core: Core,
+  walletCurrency: CoreCurrency,
   amount: BigNumber,
 ) {
-  return core.coreAmount.fromHex(walletCurrency, amount.toString(16));
+  return core.Amount.fromHex(walletCurrency, amount.toString(16));
 }
 
 export async function libcoreAmountToBigNumber(
-  core: *,
-  amountInstance: string,
+  core: Core, // TODO drop this param
+  amountInstance: CoreAmount,
 ): Promise<BigNumber> {
-  const coreBigInt = await core.coreAmount.toBigInt(amountInstance);
-  const { value } = await core.coreBigInt.toString(coreBigInt, 10);
+  const coreBigInt = await amountInstance.toBigInt();
+  const value = await coreBigInt.toString(10);
   return BigNumber(value);
 }

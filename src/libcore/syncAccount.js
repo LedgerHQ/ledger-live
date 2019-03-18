@@ -11,7 +11,6 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { SyncError } from "@ledgerhq/live-common/lib/errors";
 import { withLibcore } from "./access";
-import { createInstance } from "./specific";
 import { buildAccount } from "./buildAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
@@ -105,25 +104,24 @@ export async function syncCoreAccount({
 }): Promise<Account> {
   let coreOperations;
   try {
-    const eventReceiver = await createInstance(core.coreEventReceiver);
-    const eventBus = await core.coreAccount.synchronize(coreAccount);
-    const serialContext = await core.coreThreadDispatcher.getMainExecutionContext(
-      core.getThreadDispatcher(),
-    );
+    // TODO integrating desktop code back in to handle events!
+    const eventReceiver = await core.EventReceiver.newInstance();
+    const eventBus = await coreAccount.synchronize();
+    const serialContext = await core
+      .getThreadDispatcher()
+      .getMainExecutionContext();
 
-    await core.coreEventBus.subscribe(eventBus, serialContext, eventReceiver);
+    await eventBus.subscribe(serialContext, eventReceiver);
 
-    const query = await core.coreAccount.queryOperations(coreAccount);
-    const completedQuery = await core.coreOperationQuery.complete(query);
-    const sortedQuery = await core.coreOperationQuery.addOrder(
-      completedQuery,
+    const query = await coreAccount.queryOperations();
+    const completedQuery = await query.complete();
+    const sortedQuery = await completedQuery.addOrder(
       OperationOrderKey.date,
       false,
     );
-    coreOperations = await core.coreOperationQuery.execute(sortedQuery);
+    coreOperations = await sortedQuery.execute();
   } catch (e) {
-    const mappedError = remapLibcoreErrors(e);
-    throw mappedError === e ? new SyncError(e) : mappedError;
+    throw remapLibcoreErrors(new SyncError(e.message));
   }
 
   const account = await buildAccount({

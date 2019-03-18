@@ -23,6 +23,7 @@ import { syncCoreAccount } from "./syncAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { createAccountFromDevice } from "./createAccountFromDevice";
 import { remapLibcoreErrors } from "./errors";
+import type { Core, CoreWallet } from "./types";
 
 export const scanAccountsOnDevice = (
   currency: CryptoCurrency,
@@ -93,9 +94,8 @@ export const scanAccountsOnDevice = (
         }
         o.complete();
       } catch (e) {
-        const mappedError = remapLibcoreErrors(e);
         logger.critical(e);
-        o.error(mappedError);
+        o.error(remapLibcoreErrors(e));
       }
 
       if (transport) {
@@ -110,8 +110,8 @@ export const scanAccountsOnDevice = (
 
 // FIXME move this code not in src/libcore
 async function scanNextAccount(props: {
-  core: *,
-  wallet: *,
+  core: Core,
+  wallet: CoreWallet,
   hwApp: *,
   currency: CryptoCurrency,
   accountIndex: number,
@@ -136,7 +136,7 @@ async function scanNextAccount(props: {
 
   let coreAccount;
   try {
-    coreAccount = await core.coreWallet.getAccount(wallet, accountIndex);
+    coreAccount = await wallet.getAccount(accountIndex);
   } catch (err) {
     coreAccount = await createAccountFromDevice({ core, wallet, hwApp });
   }

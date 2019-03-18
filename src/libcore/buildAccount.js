@@ -12,12 +12,8 @@ import type {
   CryptoCurrency,
   DerivationMode,
 } from "@ledgerhq/live-common/lib/types";
-import {
-  getValue,
-  getBlockHeightForAccount,
-  getOperationDate,
-} from "./specific";
 import { libcoreAmountToBigNumber } from "./buildBigNumber";
+import type { Core, CoreWallet, CoreAccount, CoreOperation } from "./types";
 
 const OperationTypeMap = {
   "0": "OUT",
@@ -48,43 +44,39 @@ export async function buildAccount({
   seedIdentifier,
   existingOperations,
 }: {
-  core: *,
-  coreWallet: *,
-  coreAccount: *,
-  coreOperations: *,
+  core: Core,
+  coreWallet: CoreWallet,
+  coreAccount: CoreAccount,
+  coreOperations: CoreOperation[],
   currency: CryptoCurrency,
   accountIndex: number,
   derivationMode: DerivationMode,
   seedIdentifier: string,
   existingOperations: Operation[],
 }) {
-  const nativeBalance = await core.coreAccount.getBalance(coreAccount);
+  const nativeBalance = await coreAccount.getBalance();
 
   const balance = await libcoreAmountToBigNumber(core, nativeBalance);
 
-  const coreAccountCreationInfo = await core.coreWallet.getAccountCreationInfo(
-    coreWallet,
+  const coreAccountCreationInfo = await coreWallet.getAccountCreationInfo(
     accountIndex,
   );
 
-  const derivations = getValue(
-    await core.coreAccountCreationInfo.getDerivations(coreAccountCreationInfo),
-  );
+  const derivations = await coreAccountCreationInfo.getDerivations();
 
   const [, accountPath] = derivations;
 
-  const blockHeight = await getBlockHeightForAccount(core, coreAccount);
+  const coreBlock = await coreAccount.getLastBlock();
+  const blockHeight = await coreBlock.getHeight();
 
-  const [coreFreshAddress] = await core.coreAccount.getFreshPublicAddresses(
-    coreAccount,
-  );
-  const [
-    { value: freshAddressStr },
-    { value: freshAddressPath },
-  ] = await Promise.all([
-    core.coreAddress.toString(coreFreshAddress),
-    core.coreAddress.getDerivationPath(coreFreshAddress),
+  const freshAddresses = await coreAccount.getFreshPublicAddresses();
+  const [coreFreshAddress] = freshAddresses;
+  if (!coreFreshAddress) throw new Error("expected at least one fresh address");
+  const [freshAddressStr, freshAddressPath] = await Promise.all([
+    coreFreshAddress.toString(),
+    coreFreshAddress.getDerivationPath(),
   ]);
+  if (!freshAddressPath) throw new Error("expected freshAddressPath");
   const freshAddress = {
     str: freshAddressStr,
     path: `${accountPath}/${freshAddressPath}`,
@@ -104,7 +96,7 @@ export async function buildAccount({
         });
 
   // retrieve xpub
-  const { value: xpub } = await core.coreAccount.getRestoreKey(coreAccount);
+  const xpub = await coreAccount.getRestoreKey();
 
   const accountId = encodeAccountId({
     type: "libcore",
@@ -200,45 +192,36 @@ export async function buildOperation({
   coreOperation,
   accountId,
 }: {
-  core: *,
-  coreOperation: *,
+  core: Core,
+  coreOperation: CoreOperation,
   accountId: string,
 }) {
-  const bitcoinLikeOperation = await core.coreOperation.asBitcoinLikeOperation(
-    coreOperation,
-  );
-  const bitcoinLikeTransaction = await core.coreBitcoinLikeOperation.getTransaction(
-    bitcoinLikeOperation,
-  );
-  const { value: hash } = await core.coreBitcoinLikeTransaction.getHash(
-    bitcoinLikeTransaction,
-  );
-  const { value: operationType } = await core.coreOperation.getOperationType(
-    coreOperation,
-  );
+  const bitcoinLikeOperation = await coreOperation.asBitcoinLikeOperation();
+  const bitcoinLikeTransaction = await bitcoinLikeOperation.getTransaction();
+  const hash = await bitcoinLikeTransaction.getHash();
+  const operationType = await coreOperation.getOperationType();
   const type = OperationTypeMap[operationType];
   const id = `${accountId}-${hash}-${type}`;
 
-  const coreValue = await core.coreOperation.getAmount(coreOperation);
+  const coreValue = await coreOperation.getAmount();
   let value = await libcoreAmountToBigNumber(core, coreValue);
 
-  const coreFee = await core.coreOperation.getFees(coreOperation);
+  const coreFee = await coreOperation.getFees();
+  if (!coreFee) throw new Error("fees should not be null");
   const fee = await libcoreAmountToBigNumber(core, coreFee);
 
   if (type === "OUT") {
     value = value.plus(fee);
   }
 
-  // if tx is pending, libcore returns null (not wrapped with `value`)
-  const blockHeightRes = await core.coreOperation.getBlockHeight(coreOperation);
-  const blockHeight = blockHeightRes ? blockHeightRes.value : null;
+  const blockHeight = await coreOperation.getBlockHeight();
 
-  const [{ value: recipients }, { value: senders }] = await Promise.all([
-    core.coreOperation.getRecipients(coreOperation),
-    core.coreOperation.getSenders(coreOperation),
+  const [recipients, senders] = await Promise.all([
+    coreOperation.getRecipients(),
+    coreOperation.getSenders(),
   ]);
 
-  const date = await getOperationDate(core, coreOperation);
+  const date = new Date(await coreOperation.getDate());
 
   const op: $Exact<Operation> = {
     id,
