@@ -1,12 +1,13 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import { withNavigation } from "react-navigation";
 
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import Touchable from "../Touchable";
 import colors from "../../colors";
 import LText from "../LText";
 import Circle from "../Circle";
@@ -19,7 +20,7 @@ type Props = {
 class PairNewDeviceButton extends PureComponent<Props> {
   render() {
     return (
-      <TouchableOpacity event="AddDevice" onPress={this.props.onPress}>
+      <Touchable event="AddDevice" onPress={this.props.onPress}>
         <View style={styles.root}>
           <Circle bg={colors.pillActiveBackground} size={30}>
             <Icon name="plus" size={20} color={colors.pillActiveForeground} />
@@ -28,7 +29,7 @@ class PairNewDeviceButton extends PureComponent<Props> {
             <Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />
           </LText>
         </View>
-      </TouchableOpacity>
+      </Touchable>
     );
   }
 }
