@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-common",
-  "version": "4.29.1",
+  "version": "4.29.2",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -34,7 +34,7 @@
   "dependencies": {
     "@ledgerhq/errors": "^4.46.0",
     "@ledgerhq/hw-app-btc": "^4.46.0",
-    "@ledgerhq/hw-app-eth": "^4.46.0",
+    "@ledgerhq/hw-app-eth": "^4.46.1",
     "@ledgerhq/hw-app-xrp": "^4.46.0",
     "@ledgerhq/hw-transport": "^4.46.0",
     "bignumber.js": "^7.2.1",
