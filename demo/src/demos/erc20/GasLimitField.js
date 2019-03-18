@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 
@@ -36,14 +36,11 @@ type Props = {
 
 const AmountField = ({ value, autoFocus, onChange }: Props) => {
   const formatted = value.toString();
-  const initialText = value.isZero() ? "" : formatted;
-  const [text, setText] = useState(initialText);
-
   return (
     <Container>
       <Input
         type="text"
-        value={text}
+        value={value.isZero() ? "" : formatted}
         placeholder={formatted}
         autoFocus={autoFocus}
         onChange={e => {
@@ -51,7 +48,6 @@ const AmountField = ({ value, autoFocus, onChange }: Props) => {
           if (!value || !value.isEqualTo(r)) {
             onChange(r);
           }
-          setText(value.toString());
         }}
       />
       <Desc>Gas limit</Desc>

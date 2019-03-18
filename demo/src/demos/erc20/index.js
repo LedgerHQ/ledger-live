@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
+import TransportU2F from "@ledgerhq/hw-transport-u2f";
 import styled from "styled-components";
 import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
@@ -54,14 +54,11 @@ const SendToken = ({ token }: { token: CurrencyToken }) => {
   const [error, setError] = useState(null);
   const [signed, setSigned] = useState(null);
 
-  useEffect(
-    () => {
-      api.estimateGasLimitForERC20(token.contractAddress).then(value => {
-        setGasLimit(BigNumber(value));
-      });
-    },
-    [token]
-  );
+  useEffect(() => {
+    api.estimateGasLimitForERC20(token.contractAddress).then(value => {
+      setGasLimit(BigNumber(value));
+    });
+  }, [token]);
 
   const disabled = !address || !amount || amount.isZero();
 
@@ -100,7 +97,7 @@ const SendToken = ({ token }: { token: CurrencyToken }) => {
             onClick={() => {
               setError(null);
               Promise.all([
-                TransportWebUSB.create(),
+                TransportU2F.create(),
                 api.getAccountNonce(address)
               ])
                 .then(([t, nonce]) =>
