@@ -215,7 +215,7 @@ class SelectDevice extends Component<OwnProps, State> {
           <View>
             <BluetoothHeader />
             {ble.map(this.renderItem)}
-            <PairNewDeviceButton onPress={this.onPairNewDevice}/>
+            <PairNewDeviceButton onPress={this.onPairNewDevice} />
           </View>
         )}
         {hasUSBSection &&
