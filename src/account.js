@@ -19,6 +19,7 @@ import {
   isUnsplitDerivationMode,
   asDerivationMode
 } from "./derivation";
+import { getEnv } from "./env";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
@@ -287,3 +288,11 @@ export function sortAccounts(param: SortAccountsParam) {
   }
   return null;
 }
+
+export const shouldShowNewAccount = (
+  currency: CryptoCurrency,
+  derivationMode: DerivationMode
+) =>
+  derivationMode === ""
+    ? !!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || !currency.supportsSegwit
+    : derivationMode === "segwit";
