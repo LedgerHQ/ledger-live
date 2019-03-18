@@ -627,6 +627,7 @@
 			dstPath = x86_64;
 			dstSubfolderSpec = 10;
 			files = (
+				B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
