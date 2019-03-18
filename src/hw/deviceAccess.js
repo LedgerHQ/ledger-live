@@ -52,7 +52,6 @@ const transportFinally = (cleanup: () => Promise<void>) => <T>(
     };
   });
 
-// $FlowFixMe
 const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
 
 const needsCleanup = {};
