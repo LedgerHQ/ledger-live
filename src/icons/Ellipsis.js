@@ -9,11 +9,18 @@ type Props = {
 
 export default function Ellipsis({ size = 16, color = "#142533" }: Props) {
   return (
-    <Svg viewBox="0 0 31 31" width={size} height={size} >
-      <G fill="none" fillOpacity="0" fillRule="evenodd" stroke={color} strokeWidth="3" transform="translate(0 12)">
-        <Circle cx="4.5" cy="4.5" r="3"/>
-        <Circle cx="15.5" cy="4.5" r="3"/>
-        <Circle cx="26.5" cy="4.5" r="3"/>
+    <Svg viewBox="0 0 31 31" width={size} height={size}>
+      <G
+        fill="none"
+        fillOpacity="0"
+        fillRule="evenodd"
+        stroke={color}
+        strokeWidth="3"
+        transform="translate(0 12)"
+      >
+        <Circle cx="4.5" cy="4.5" r="3" />
+        <Circle cx="15.5" cy="4.5" r="3" />
+        <Circle cx="26.5" cy="4.5" r="3" />
       </G>
     </Svg>
   );
