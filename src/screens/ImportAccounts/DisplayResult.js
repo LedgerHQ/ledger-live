@@ -15,6 +15,7 @@ import { accountDataToAccount } from "@ledgerhq/live-common/lib/cross";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 
+import logger from "../../logger";
 import { supportsExistingAccount } from "../../cryptocurrencies";
 import { importDesktopSettings } from "../../actions/settings";
 import { addAccount, updateAccount } from "../../actions/accounts";
@@ -133,7 +134,7 @@ class DisplayResult extends Component<Props, State> {
                 : "unsupported",
             };
           } catch (e) {
-            console.warn(e);
+            logger.critical(e);
             return null;
           }
         },

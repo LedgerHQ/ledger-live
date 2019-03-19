@@ -45,10 +45,7 @@ class OnboardingStepWelcome extends Component<Props> {
           <Trans i18nKey="onboarding.stepWelcome.title" />
         </LText>
         <LText style={styles.subTitle}>
-          <Trans
-            i18nKey="onboarding.stepWelcome.desc"
-            values={deviceNames.nanoX}
-          />
+          <Trans i18nKey="onboarding.stepWelcome.desc" />
         </LText>
         <Button
           event="OnboardingWelcomeContinue"

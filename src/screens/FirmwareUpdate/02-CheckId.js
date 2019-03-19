@@ -32,11 +32,13 @@ type Props = {
 
 type State = {
   progress: number,
+  displayedOnDevice: boolean,
 };
 
 class FirmwareUpdateCheckId extends Component<Props, State> {
   state = {
     progress: 0,
+    displayedOnDevice: false,
   };
 
   static navigationOptions = {
@@ -104,8 +106,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
         <View style={styles.body}>
           <View style={styles.device}>
             <DeviceNanoAction
-              powerAction
-              action
+              action="accept"
               screen="validation"
               width={1.2 * windowWidth}
             />

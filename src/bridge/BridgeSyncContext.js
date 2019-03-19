@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
 
+import logger from "../logger";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import { setAccountSyncState } from "../actions/bridgeSync";
 import {
@@ -94,6 +95,7 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
           next();
         },
         error: error => {
+          logger.critical(error);
           this.props.setAccountSyncState(accountId, {
             pending: false,
             error,

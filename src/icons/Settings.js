@@ -7,7 +7,7 @@ type Props = {
   color: string,
 };
 
-export default function SettingsIcon({ size, color }: Props) {
+export default function SettingsIcon({ size = 16, color }: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
       <Path

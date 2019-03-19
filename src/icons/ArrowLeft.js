@@ -7,7 +7,7 @@ type Props = {
   color: string,
 };
 
-export default function ArrowLeft({ size, color }: Props) {
+export default function ArrowLeft({ size = 16, color }: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
       <Path

@@ -3,9 +3,9 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import { getDeviceModel } from "@ledgerhq/devices";
 import LText from "../../components/LText";
 import BluetoothScanning from "../../components/BluetoothScanning";
-import { deviceNames } from "../../wording";
 import colors from "../../colors";
 
 type Props = {};
@@ -19,7 +19,7 @@ class ScanningHeader extends PureComponent<Props> {
           <LText secondary semiBold style={styles.TitleText}>
             <Trans
               i18nKey="PairDevices.ScanningHeader.title"
-              values={deviceNames.nanoX}
+              values={getDeviceModel("nanoX")}
             />
           </LText>
         </View>
@@ -27,7 +27,7 @@ class ScanningHeader extends PureComponent<Props> {
           <LText style={styles.SubtitleText}>
             <Trans
               i18nKey="PairDevices.ScanningHeader.desc"
-              values={deviceNames.nanoX}
+              values={getDeviceModel("nanoX")}
             />
           </LText>
         </View>

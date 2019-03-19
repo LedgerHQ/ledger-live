@@ -1,8 +1,9 @@
 // @flow
 import React, { Component, PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Linking, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import type { OnboardingStepProps } from "../types";
 import { TrackScreen } from "../../../analytics";
@@ -10,13 +11,21 @@ import OnboardingLayout from "../OnboardingLayout";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import { withOnboardingContext } from "../onboardingContext";
+import IconImport from "../../../icons/Import";
 import IconCheck from "../../../icons/Check";
 import IconRestore from "../../../icons/History";
 import colors from "../../../colors";
+import { urls } from "../../../config/urls";
+import UpgradeToNanoXBanner from "../../../components/UpgradeToNanoXBanner";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
 class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
+  onImport = async () => {
+    await this.props.setOnboardingMode("qr");
+    this.props.next();
+  };
+
   onInitialized = async () => {
     await this.props.setOnboardingMode("alreadyInitialized");
     this.props.next();
@@ -27,38 +36,60 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
     this.props.next();
   };
 
-  onImport = async () => {
-    await this.props.setOnboardingMode("qrcode");
-    this.props.next();
-  };
-
   onRestore = async () => {
     await this.props.setOnboardingMode("restore");
     this.props.next();
   };
 
+  onBuy = () => Linking.openURL(urls.buyNanoX);
+
+  Footer = () => <UpgradeToNanoXBanner action={this.onBuy} />;
+
   render() {
+    const { deviceModelId } = this.props;
+    const deviceModel = getDeviceModel(deviceModelId);
+    const title = deviceModel.productName;
+    const showAd = deviceModelId !== "nanoX";
+
     return (
-      <OnboardingLayout header="OnboardingStepGetStarted">
+      <OnboardingLayout
+        header="OnboardingStepGetStarted"
+        Footer={showAd ? this.Footer : undefined}
+        titleOverride={title}
+      >
         <TrackScreen category="Onboarding" name="GetStarted" />
         <Row
-          id="initialize"
-          Icon={IconPlus}
-          label={<Trans i18nKey="onboarding.stepGetStarted.initialize" />}
-          onPress={this.onInit}
+          id="import"
+          Icon={IconImport}
+          label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
+          onPress={this.onImport}
         />
-        <Row
-          id="restore"
-          Icon={IconRestore}
-          label={<Trans i18nKey="onboarding.stepGetStarted.restore" />}
-          onPress={this.onRestore}
-        />
-        <Row
-          id="initialized"
-          Icon={IconCheck}
-          label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
-          onPress={this.onInitialized}
-        />
+        {deviceModelId === "nanoX" || Platform.OS === "android" ? (
+          <>
+            <Row
+              id="initialize"
+              Icon={IconPlus}
+              label={<Trans i18nKey="onboarding.stepGetStarted.initialize" />}
+              onPress={this.onInit}
+            />
+            <Row
+              id="restore"
+              Icon={IconRestore}
+              label={<Trans i18nKey="onboarding.stepGetStarted.restore" />}
+              onPress={this.onRestore}
+            />
+            <Row
+              id="initialized"
+              Icon={IconCheck}
+              label={<Trans i18nKey="onboarding.stepGetStarted.initialized" />}
+              onPress={this.onInitialized}
+            />
+          </>
+        ) : (
+          <LText style={styles.description}>
+            <Trans i18nKey="onboarding.stepLegacy.description" />
+          </LText>
+        )}
       </OnboardingLayout>
     );
   }
@@ -134,6 +165,12 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     color: colors.live,
+  },
+  description: {
+    marginTop: 40,
+    fontSize: 14,
+    color: colors.smoke,
+    textAlign: "center",
   },
 });
 

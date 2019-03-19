@@ -4,8 +4,8 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { getDeviceModel } from "@ledgerhq/devices";
 
-import { deviceNames } from "../../wording";
 import colors from "../../colors";
 import Rounded from "../Rounded";
 import LText from "../LText";
@@ -24,7 +24,7 @@ class ScanningFooter extends PureComponent<Props> {
         <LText style={styles.text}>
           <Trans
             i18nKey="SelectDevice.headerDescription"
-            values={deviceNames.nanoX}
+            values={getDeviceModel("nanoX")}
           />
         </LText>
       </View>

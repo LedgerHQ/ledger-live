@@ -7,10 +7,10 @@ import i18next from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
 
 import colors from "../../colors";
 import { accountScreenSelector } from "../../reducers/accounts";
-import type { Transaction } from "../../bridge/RippleJSBridge";
 import type { T } from "../../types/common";
 
 import KeyboardView from "../../components/KeyboardView";

@@ -28,9 +28,7 @@ class BitcoinFeePerByteRow extends Component<Props> {
   };
 
   extraInfoFees = () => {
-    Linking.openURL(urls.feesMoreInfo).catch(err =>
-      console.error("An error occurred", err),
-    );
+    Linking.openURL(urls.feesMoreInfo);
   };
 
   render() {

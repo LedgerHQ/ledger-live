@@ -7,6 +7,7 @@ import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 
+import logger from "../logger";
 import type { T } from "../types/common";
 import Button from "../components/Button";
 import { BulletItem } from "../components/BulletList";
@@ -52,9 +53,9 @@ class RepairDevice extends Component<Props, State> {
     this.setState({ ready: true });
   };
 
-  onSelectDevice = deviceId => {
+  onSelectDevice = meta => {
     this.setState({ selected: true });
-    this.sub = firmwareUpdateRepair(deviceId).subscribe({
+    this.sub = firmwareUpdateRepair(meta.deviceId).subscribe({
       next: patch => {
         this.setState(patch);
       },
@@ -63,6 +64,7 @@ class RepairDevice extends Component<Props, State> {
         this.props.navigation.navigate("Manager");
       },
       error: error => {
+        logger.critical(error);
         this.setState({ error });
       },
     });
@@ -102,7 +104,7 @@ class RepairDevice extends Component<Props, State> {
               value={<Trans i18nKey="FirmwareUpdateMCU.desc2" />}
             />
             <View style={styles.device}>
-              <DeviceNanoAction powerAction width={1.2 * width} />
+              <DeviceNanoAction action="left" width={1.2 * width} />
             </View>
           </View>
 

@@ -7,7 +7,7 @@ type Props = {
   color: string,
 };
 
-export default function CheckCircle({ size, color, ...props }: Props) {
+export default function CheckCircle({ size = 37, color, ...props }: Props) {
   return (
     <Svg viewBox="0 0 37.084 37.084" width={size} height={size} {...props}>
       <G transform="translate(-1.458 -1.4491)" fillRule="evenodd">

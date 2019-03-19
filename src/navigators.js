@@ -25,7 +25,6 @@ import Account from "./screens/Account";
 import Settings from "./screens/Settings";
 import OnboardingStepGetStarted from "./screens/Onboarding/steps/get-started";
 import OnboardingStepChooseDevice from "./screens/Onboarding/steps/choose-device";
-import OnboardingStepLegacy from "./screens/Onboarding/steps/legacy";
 import OnboardingStepSetupPin from "./screens/Onboarding/steps/setup-pin";
 import OnboardingStepWriteRecovery from "./screens/Onboarding/steps/write-recovery";
 import OnboardingStepSecurityChecklist from "./screens/Onboarding/steps/security-checklist";
@@ -81,6 +80,7 @@ import DebugCrash from "./screens/DebugCrash";
 import DebugHttpTransport from "./screens/DebugHttpTransport";
 import DebugIcons from "./screens/DebugIcons";
 import DebugLottie from "./screens/DebugLottie.js";
+import DebugSVG from "./screens/DebugSVG";
 import BenchmarkQRStream from "./screens/BenchmarkQRStream";
 import EditDeviceName from "./screens/EditDeviceName";
 import PairDevices from "./screens/PairDevices";
@@ -106,8 +106,9 @@ import DebugStore from "./screens/DebugStore";
 import DebugWSImport from "./screens/DebugWSImport";
 import ScanAccounts from "./screens/ImportAccounts/Scan";
 import DisplayResult from "./screens/ImportAccounts/DisplayResult";
-import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen.ios";
+import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import OnboardingOrNavigator from "./screens/OnboardingOrNavigator";
+import AdvancedLogs from "./screens/AccountSettings/AdvancedLogs";
 
 // TODO look into all FlowFixMe
 
@@ -138,6 +139,8 @@ const SettingsStack = createStackNavigator(
     DebugIcons,
     // $FlowFixMe
     DebugLottie,
+    // $FlowFixMe
+    DebugSVG,
     // $FlowFixMe
     DebugWSImport,
     // $FlowFixMe
@@ -342,6 +345,7 @@ const AccountSettings = createStackNavigator(
     EditAccountUnits,
     EditAccountName,
     EditAccountNode,
+    AdvancedLogs,
     AccountCurrencySettings: CurrencySettings,
     AccountRateProviderSettings: RateProviderSettings,
   },
@@ -420,7 +424,6 @@ const BaseNavigator = createStackNavigator(
 
 const Onboarding = createStackNavigator({
   OnboardingStepChooseDevice,
-  OnboardingStepLegacy,
   OnboardingStepGetStarted,
   OnboardingStepSetupPin,
   OnboardingStepWriteRecovery,

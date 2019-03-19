@@ -27,7 +27,6 @@ export default class SummaryRowCustom extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
-    paddingHorizontal: 16,
     paddingVertical: 16,
     // NOTE: temp solution
     width: getWindowDimensions().width - 48,

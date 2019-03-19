@@ -29,6 +29,7 @@ const i18n = i18next
   .init({
     fallbackLng: "en",
     resources: locales,
+    whitelist: Object.keys(locales),
     ns: ["common"],
     defaultNS: "common",
     interpolation: {

@@ -2,7 +2,6 @@
 
 import React, { PureComponent, Fragment } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
-// $FlowFixMe
 import { ScrollView, SafeAreaView } from "react-navigation";
 
 import colors from "../../colors";
@@ -25,6 +24,7 @@ type Props = Container & {
   withNeedHelp?: boolean,
   Footer?: React$ComponentType<*>,
   titleOverride?: string,
+  isNanoS?: boolean,
 };
 
 export default class OnboardingLayout extends PureComponent<Props> {

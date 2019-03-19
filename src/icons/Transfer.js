@@ -7,7 +7,7 @@ type Props = {
   color: string,
 };
 
-export default function TransferIcon({ size, color }: Props) {
+export default function TransferIcon({ size = 16, color }: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
       <G transform="rotate(90 7.5 8.5)">

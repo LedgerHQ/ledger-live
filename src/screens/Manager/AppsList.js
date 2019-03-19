@@ -13,6 +13,7 @@ import type {
   ApplicationVersion,
 } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
+import logger from "../../logger";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import LText from "../../components/LText";
 import { TrackScreen } from "../../analytics";
@@ -101,6 +102,7 @@ class ManagerAppsList extends Component<
         apps,
       });
     } catch (error) {
+      logger.critical(error);
       if (id !== this.fetchAppId) return;
       this.setState({
         pending: false,
@@ -160,8 +162,7 @@ class ManagerAppsList extends Component<
   render() {
     const { navigation } = this.props;
     const { apps, pending, error, action } = this.state;
-    const { deviceInfo } = navigation.getParam("meta");
-    const deviceId = navigation.getParam("deviceId");
+    const { deviceId, deviceInfo, modelId } = navigation.getParam("meta");
     return (
       <View style={styles.root}>
         <TrackScreen category="Manager" name="AppsList" />
@@ -184,6 +185,7 @@ class ManagerAppsList extends Component<
             onClose={this.onActionClose}
             onOpenAccounts={this.onActionOpenAccounts}
             deviceId={deviceId}
+            modelId={modelId}
             targetId={deviceInfo.targetId}
             isOpened={!!action}
           />

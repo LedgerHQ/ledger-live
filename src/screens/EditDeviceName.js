@@ -1,7 +1,6 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { Buffer } from "buffer";
 import { Keyboard, View, StyleSheet, SafeAreaView } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
@@ -9,6 +8,7 @@ import i18next from "i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import { DeviceNameInvalid } from "@ledgerhq/errors";
 import colors from "../colors";
 import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
@@ -19,6 +19,7 @@ import KeyboardView from "../components/KeyboardView";
 import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
 import DeviceJob from "../components/DeviceJob";
 import { saveBleDeviceName } from "../actions/ble";
+import type { DeviceMeta } from "../components/DeviceJob/types";
 
 const MAX_DEVICE_NAME = 32;
 
@@ -51,7 +52,7 @@ class EditDeviceName extends PureComponent<
   {
     name: string,
     error: ?Error,
-    connecting: boolean,
+    connecting: ?DeviceMeta,
   },
 > {
   static navigationOptions = {
@@ -64,29 +65,52 @@ class EditDeviceName extends PureComponent<
   state = {
     name: this.initialName,
     error: null,
-    connecting: false,
+    connecting: null,
   };
 
   onChangeText = (name: string) => {
-    this.setState({ name });
+    this.setState({ name }, this.validate);
   };
 
   onInputCleared = () => {
     this.setState({ name: "" });
   };
 
+  validate = () => {
+    this.setState(prevState => {
+      const invalidCharacters = prevState.name.replace(/[\x00-\x7F]*/g, "");
+      return {
+        error: invalidCharacters
+          ? new DeviceNameInvalid("", { invalidCharacters })
+          : undefined,
+      };
+    });
+  };
+
   onSubmit = async () => {
     const { name } = this.state;
     if (this.initialName !== name) {
       Keyboard.dismiss();
-      setTimeout(() => this.setState({ connecting: true }), 800);
+      setTimeout(
+        () =>
+          this.setState(prevState => ({
+            name: prevState.name.trim(),
+            connecting: {
+              deviceId: this.props.navigation.getParam("deviceId"),
+              deviceName: prevState.name.trim(),
+              modelId: "nanoX",
+              wired: false,
+            },
+          })),
+        800,
+      );
     } else {
       this.props.navigation.goBack();
     }
   };
 
   onCancel = () => {
-    this.setState({ connecting: false });
+    this.setState({ connecting: null });
   };
 
   onDone = () => {
@@ -97,9 +121,7 @@ class EditDeviceName extends PureComponent<
 
   render() {
     const { name, error, connecting } = this.state;
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
-    const remainingCount = MAX_DEVICE_NAME - Buffer.from(name).length;
+    const remainingCount = MAX_DEVICE_NAME - name.length;
     return (
       <SafeAreaView style={styles.safearea}>
         <TrackScreen category="EditDeviceName" />
@@ -131,13 +153,13 @@ class EditDeviceName extends PureComponent<
               type="primary"
               title={<Trans i18nKey="EditDeviceName.action" />}
               onPress={this.onSubmit}
-              disabled={!name}
+              disabled={!name.trim() || !!error}
             />
           </View>
 
           <DeviceJob
-            deviceName={name}
-            deviceId={connecting ? deviceId : null}
+            deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
+            meta={connecting}
             onCancel={this.onCancel}
             onDone={this.onDone}
             steps={[connectingStep, editDeviceName(name)]}

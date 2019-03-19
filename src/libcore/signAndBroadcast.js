@@ -14,12 +14,12 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { getWalletName } from "@ledgerhq/live-common/lib/account";
 import { open } from "@ledgerhq/live-common/lib/hw";
+import type { SignAndBroadcastEvent } from "@ledgerhq/live-common/lib/bridge/types";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import {
   libcoreAmountToBigNumber,
   bigNumberToLibcoreAmount,
 } from "./buildBigNumber";
-import type { SignAndBroadcastEvent } from "../bridge/types";
 import { remapLibcoreErrors } from "./errors";
 import { getValue } from "./specific";
 import { withLibcoreF } from "./access";

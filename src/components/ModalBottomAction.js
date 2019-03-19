@@ -8,23 +8,25 @@ import colors from "../colors";
 const forceInset = { bottom: "always" };
 
 export default class ModalBottomAction extends Component<{
-  icon: *,
-  title: *,
-  description: *,
+  icon?: *,
+  title?: *,
+  description?: *,
   footer: *,
 }> {
   render() {
     const { icon, title, description, footer } = this.props;
     return (
       <SafeAreaView forceInset={forceInset} style={styles.root}>
-        <View style={styles.icon}>{icon}</View>
+        {icon && <View style={styles.icon}>{icon}</View>}
         {title ? (
           <LText semiBold style={styles.title}>
             {title}
           </LText>
         ) : null}
         <View style={styles.body}>
-          <LText style={styles.description}>{description}</LText>
+          {description && (
+            <LText style={styles.description}>{description}</LText>
+          )}
           <View style={styles.footer}>{footer}</View>
         </View>
       </SafeAreaView>

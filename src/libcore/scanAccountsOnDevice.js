@@ -16,6 +16,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 
 import { open } from "@ledgerhq/live-common/lib/hw";
+import logger from "../logger";
 import { withLibcoreF } from "./access";
 import { shouldShowNewAccount } from "../cryptocurrencies";
 import { syncCoreAccount } from "./syncAccount";
@@ -93,7 +94,7 @@ export const scanAccountsOnDevice = (
         o.complete();
       } catch (e) {
         const mappedError = remapLibcoreErrors(e);
-
+        logger.critical(e);
         o.error(mappedError);
       }
 

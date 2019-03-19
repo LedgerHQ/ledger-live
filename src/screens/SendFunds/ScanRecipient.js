@@ -37,7 +37,7 @@ class ScanRecipient extends PureComponent<Props, State> {
   }: {
     navigation: NavigationScreenProp<*>,
   }) => ({
-    title: i18next.t("account.import.scan.title"),
+    title: i18next.t("send.scan.title"),
     headerRight: (
       <HeaderRightClose
         navigation={navigation}

@@ -11,9 +11,9 @@ import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
-import NanoSVertical from "../assets/NanoSVertical";
-import NanoXVertical from "../assets/NanoXVertical";
-import Blue from "../assets/Blue";
+import NanoSVertical from "../../../icons/NanoSVertical";
+import NanoXVertical from "../../../icons/NanoXVertical";
+import Blue from "../../../icons/Blue";
 import colors from "../../../colors";
 import { deviceNames } from "../../../wording";
 
@@ -64,17 +64,14 @@ class OnboardingStepChooseDevice extends Component<
 
   onWelcome = () => this.props.setShowWelcome(false);
   chooseNanoX = async () => {
-    await this.props.setOnboardingMode("full");
     await this.props.setOnboardingDeviceModel("nanoX");
     this.props.next();
   };
   chooseNanoS = async () => {
-    await this.props.setOnboardingMode("legacyNanoS");
     await this.props.setOnboardingDeviceModel("nanoS");
     this.props.next();
   };
   chooseBlue = async () => {
-    await this.props.setOnboardingMode("legacyBlue");
     await this.props.setOnboardingDeviceModel("blue");
     this.props.next();
   };

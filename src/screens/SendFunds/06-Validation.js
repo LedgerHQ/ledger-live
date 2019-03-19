@@ -17,6 +17,8 @@ import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateOnDevice from "./ValidateOnDevice";
+import SkipLock from "../../components/behaviour/SkipLock";
+import logger from "../../logger";
 
 type Props = {
   account: Account,
@@ -25,6 +27,7 @@ type Props = {
     params: {
       accountId: string,
       deviceId: string,
+      modelId: string,
       transaction: *,
     },
   }>,
@@ -108,7 +111,10 @@ class Validation extends Component<Props, State> {
           let error = e;
           if (e && e.statusCode === 0x6985) {
             error = new UserRefusedOnDevice();
+          } else {
+            logger.critical(error);
           }
+
           // $FlowFixMe
           navigation.replace("SendValidationError", {
             ...navigation.state.params,
@@ -122,16 +128,26 @@ class Validation extends Component<Props, State> {
     const { signed, signing } = this.state;
     const { navigation, account } = this.props;
     const transaction = navigation.getParam("transaction");
+    const modelId = navigation.getParam("modelId");
+    const wired = navigation.getParam("wired");
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="Validation" signed={signed} />
-        {signing && <PreventNativeBack />}
+        {signing && (
+          <>
+            <PreventNativeBack />
+            <SkipLock />
+          </>
+        )}
+
         {signed ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
           </View>
         ) : (
           <ValidateOnDevice
+            wired={wired}
+            modelId={modelId}
             account={account}
             transaction={transaction}
             action={this.sign}

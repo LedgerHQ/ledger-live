@@ -27,22 +27,28 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
 
   pairNew = () => this.props.navigation.navigate("PairDevices");
 
-  filterDeviceModule = m => m.id === "ble";
-
   render() {
+    const { deviceModelId, t } = this.props;
+    const usbOnly = ["nanoS", "blue"].includes(deviceModelId);
+
     return (
       <OnboardingLayout
         header="OnboardingStepPairNew"
         Footer={this.Footer}
         borderedFooter
-        noHorizontalPadding
         noTopPadding
         withNeedHelp
+        titleOverride={
+          usbOnly
+            ? t(`onboarding.stepsTitles.OnboardingStepConnectNew`)
+            : undefined
+        }
       >
         <TrackScreen category="Onboarding" name="PairNew" />
         <SelectDevice
-          filter={this.filterDeviceModule}
-          onboarding
+          withArrows
+          usbOnly={usbOnly}
+          deviceModelId={deviceModelId}
           onSelect={this.props.next}
         />
       </OnboardingLayout>

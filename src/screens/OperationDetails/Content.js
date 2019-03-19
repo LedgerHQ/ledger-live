@@ -8,6 +8,7 @@ import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Trans } from "react-i18next";
+import { localeIds } from "../../languages";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -107,7 +108,7 @@ class Content extends PureComponent<Props, *> {
             <Trans i18nKey="operationDetails.date" />
           </LText>
           <LText semiBold>
-            {operation.date.toLocaleDateString([], {
+            {operation.date.toLocaleDateString(localeIds, {
               year: "numeric",
               month: "long",
               day: "numeric",

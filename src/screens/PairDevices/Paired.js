@@ -4,6 +4,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { Trans } from "react-i18next";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -12,7 +13,6 @@ import InfoIcon from "../../components/InfoIcon";
 import Check from "../../icons/Check";
 import Button from "../../components/Button";
 import DeviceItemSummary from "../../components/DeviceItemSummary";
-import { deviceNames } from "../../wording";
 import NanoX from "../../icons/NanoX";
 
 class Paired extends PureComponent<{
@@ -46,13 +46,13 @@ class Paired extends PureComponent<{
           <LText secondary semiBold style={styles.title}>
             <Trans
               i18nKey="PairDevices.Paired.title"
-              values={deviceNames.nanoX}
+              values={getDeviceModel("nanoX")}
             />
           </LText>
           <LText style={styles.description}>
             <Trans
               i18nKey="PairDevices.Paired.desc"
-              values={deviceNames.nanoX}
+              values={getDeviceModel("nanoX")}
             />
           </LText>
           <View style={styles.fullContainer}>

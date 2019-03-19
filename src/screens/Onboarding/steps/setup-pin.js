@@ -7,9 +7,9 @@ import { View, StyleSheet } from "react-native";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
-import DeviceIconBack from "../../../components/DeviceIconBack";
+import DeviceIconBack from "../../../icons/DeviceIconBack";
 import DeviceNanoAction from "../../../components/DeviceNanoAction";
-import DeviceIconCheck from "../../../components/DeviceIconCheck";
+import DeviceIconCheck from "../../../icons/DeviceIconCheck";
 import BulletList, { BulletItemText } from "../../../components/BulletList";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
@@ -45,8 +45,10 @@ class OnboardingStepSetupPin extends Component<
   );
 
   render() {
-    const { mode, next } = this.props;
+    const { mode, next, deviceModelId } = this.props;
     const { isModalOpened } = this.state;
+
+    const isNanoS = deviceModelId === "nanoS";
     return (
       <OnboardingLayout
         header="OnboardingStepSetupPin"
@@ -61,15 +63,21 @@ class OnboardingStepSetupPin extends Component<
           onClose={this.hideModal}
         />
         <View style={styles.hero}>
-          <DeviceNanoAction screen="pin" />
+          <DeviceNanoAction
+            modelId={deviceModelId}
+            wired={isNanoS} // tradeoff in this onboarding that we don't save the info that NanoX might be on USB^^
+            screen="pin"
+          />
         </View>
         <View style={styles.wrapper}>
           <BulletList
             animated
             list={[
               <Trans
-                i18nKey="onboarding.stepSetupPin.step1"
-                values={deviceNames.nanoX}
+                i18nKey={`onboarding.stepSetupPin.step1${
+                  isNanoS ? "-nanoS" : ""
+                }`}
+                values={isNanoS ? deviceNames.nanoS : deviceNames.nanoX}
               />,
               <Trans
                 i18nKey={

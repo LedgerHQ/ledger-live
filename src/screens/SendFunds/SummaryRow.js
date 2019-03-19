@@ -58,8 +58,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    marginLeft: 16,
-    paddingRight: 16,
     paddingVertical: 16,
   },
 

@@ -7,7 +7,7 @@ type Props = {
   color: string,
 };
 
-export default function TouchID({ size, color }: Props) {
+export default function TouchID({ size = 16, color }: Props) {
   return (
     <Svg viewBox="0 0 80 80" width={size} height={size}>
       <G fill="none" fill-rule="evenodd">

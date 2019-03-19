@@ -1,8 +1,9 @@
 /* @flow */
 import React, { Component, Fragment } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { Account } from "@ledgerhq/live-common/lib/types";
 import { Trans, translate } from "react-i18next";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -14,7 +15,6 @@ import { urls } from "../../config/urls";
 import colors from "../../colors";
 import { getAccountBridge } from "../../bridge";
 import type { T } from "../../types/common";
-import type { Transaction } from "../../bridge/EthereumJSBridge";
 
 type Props = {
   account: Account,
@@ -32,9 +32,7 @@ class EthereumFeeRow extends Component<Props> {
     });
   };
   extraInfoFees = () => {
-    Linking.openURL(urls.feesMoreInfo).catch(err =>
-      console.error("An error occurred", err),
-    );
+    Linking.openURL(urls.feesMoreInfo);
   };
 
   render() {
