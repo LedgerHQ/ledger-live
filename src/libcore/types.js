@@ -11,30 +11,30 @@ declare class CoreWalletPool {
     threadDispatcher: CoreThreadDispatcher,
     rng: CoreRandomNumberGenerator,
     backend: CoreDatabaseBackend,
-    walletDynObject: CoreDynamicObject,
+    walletDynObject: CoreDynamicObject
   ): Promise<CoreWalletPool>;
   getWallet(name: string): Promise<CoreWallet>;
   getCurrency(id: string): Promise<CoreCurrency>;
   createWallet(
     walletName: string,
     currency: CoreCurrency,
-    config: CoreDynamicObject,
+    config: CoreDynamicObject
   ): Promise<CoreWallet>;
 }
 
 declare class CoreWallet {
   getAccountCreationInfo(
-    accountIndex: number,
+    accountIndex: number
   ): Promise<CoreAccountCreationInfo>;
   getNextAccountCreationInfo(): Promise<CoreAccountCreationInfo>;
   newAccountWithInfo(info: CoreAccountCreationInfo): Promise<CoreAccount>;
   getCurrency(): Promise<CoreCurrency>;
   getAccount(index: number): Promise<CoreAccount>;
   getExtendedKeyAccountCreationInfo(
-    index: number,
+    index: number
   ): Promise<CoreExtendedKeyAccountCreationInfo>;
   newAccountWithExtendedKeyInfo(
-    keys: CoreExtendedKeyAccountCreationInfo,
+    keys: CoreExtendedKeyAccountCreationInfo
   ): Promise<CoreAccount>;
 }
 
@@ -156,7 +156,7 @@ declare class CoreBitcoinLikeTransactionBuilder {
 
 declare class CoreBitcoinLikeAccount {
   buildTransaction(
-    isPartial: boolean,
+    isPartial: boolean
   ): Promise<CoreBitcoinLikeTransactionBuilder>;
   broadcastRawTransaction(signed: string): Promise<string>;
 }
@@ -173,7 +173,7 @@ declare class CoreAccountCreationInfo {
     owners: string[],
     derivations: string[],
     publicKeys: string[],
-    chainCodes: string[],
+    chainCodes: string[]
   ): Promise<CoreAccountCreationInfo>;
   getDerivations(): Promise<string[]>;
   getChainCodes(): Promise<string[]>;
@@ -192,7 +192,7 @@ declare class CoreExtendedKeyAccountCreationInfo {
     index: number,
     owners: string[],
     derivations: string[],
-    extendedKeys: string[],
+    extendedKeys: string[]
   ): Promise<CoreExtendedKeyAccountCreationInfo>;
   getIndex(): Promise<number>;
   getExtendedKeys(): Promise<string[]>;
@@ -216,7 +216,7 @@ declare class CoreThreadDispatcher {
 declare class CoreEventBus {
   subscribe(
     serialContext: CoreSerialContext,
-    eventReceiver: CoreEventReceiver,
+    eventReceiver: CoreEventReceiver
   ): Promise<void>;
 }
 
@@ -295,5 +295,5 @@ export type {
   CoreThreadDispatcher,
   CoreWallet,
   CoreWalletPool,
-  CoreWebSocketClient,
+  CoreWebSocketClient
 };

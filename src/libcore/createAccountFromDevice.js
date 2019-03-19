@@ -4,11 +4,11 @@ import type { Core, CoreWallet } from "./types";
 export async function createAccountFromDevice({
   core,
   wallet,
-  hwApp,
+  hwApp
 }: {
   core: Core,
   wallet: CoreWallet,
-  hwApp: *,
+  hwApp: *
 }) {
   const accountCreationInfos = await wallet.getNextAccountCreationInfo();
   const chainCodes = await accountCreationInfos.getChainCodes();
@@ -21,12 +21,12 @@ export async function createAccountFromDevice({
     (promise, derivation) =>
       promise.then(async () => {
         const { publicKey, chainCode } = await hwApp.getWalletPublicKey(
-          derivation,
+          derivation
         );
         publicKeys.push(publicKey);
         chainCodes.push(chainCode);
       }),
-    Promise.resolve(),
+    Promise.resolve()
   );
 
   const newAccountCreationInfos = await core.AccountCreationInfo.init(
@@ -34,7 +34,7 @@ export async function createAccountFromDevice({
     owners,
     derivations,
     publicKeys,
-    chainCodes,
+    chainCodes
   );
 
   return wallet.newAccountWithInfo(newAccountCreationInfos);

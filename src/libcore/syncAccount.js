@@ -1,6 +1,6 @@
 // @flow
 
-import { Observable, from } from "rxjs";
+import { Observable, from, defer } from "rxjs";
 import { map } from "rxjs/operators";
 import { getWalletName } from "../account";
 import type {
@@ -51,21 +51,23 @@ export function syncAccount(
     currency,
     operations: existingOperations
   } = account;
-  return from(
-    withLibcore(core =>
-      getCoreObjects(core, account).then(
-        ({ coreWallet, coreAccount, walletName }) =>
-          syncCoreAccount({
-            core,
-            coreWallet,
-            coreAccount,
-            walletName,
-            currency,
-            accountIndex: account.index,
-            derivationMode,
-            seedIdentifier,
-            existingOperations
-          })
+  return defer(() =>
+    from(
+      withLibcore(core =>
+        getCoreObjects(core, account).then(
+          ({ coreWallet, coreAccount, walletName }) =>
+            syncCoreAccount({
+              core,
+              coreWallet,
+              coreAccount,
+              walletName,
+              currency,
+              accountIndex: account.index,
+              derivationMode,
+              seedIdentifier,
+              existingOperations
+            })
+        )
       )
     )
   ).pipe(
