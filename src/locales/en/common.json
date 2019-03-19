@@ -884,7 +884,7 @@
   },
   "SelectDevice": {
     "title": "Pair new device",
-    "deviceNotFoundPairNewDevice": "Pair new Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Add new Ledger Nano X",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
     "usb": "To use USB, just plug and enter your PIN Code on your device",
     "steps": {
