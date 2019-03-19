@@ -770,15 +770,15 @@
       "noAccount": "No account found",
       "withoutDevice": "Don't have your device?",
       "address": "Address for account",
-      "copyAddress": "Copy address",
-      "shareAddress": "Share address",
-      "addressCopied": "Address copied!",
+      "copyAddress": "Copier l'adresse",
+      "shareAddress": "Partager l'adresse",
+      "addressCopied": "Adresse copiée!",
       "notSynced": {
-        "text": "Synchronizing",
+        "text": "Synchronisation",
         "desc": "This may take a while if you have many transactions or a slow internet connection"
       },
       "readOnly": {
-        "title": "Receive",
+        "title": "Recevoir",
         "text": "Please be careful",
         "desc": "You are about to generate an address which has not been confirmed on your Ledger device. Please verify it for optimal security.",
         "verify": "Your {{accountType}} address has not been confirmed on your Ledger device. Please verify it for optimal security."
@@ -823,13 +823,13 @@
     "amount": {
       "available": "<1><0>{{amount}}</></> available",
       "loadingNetwork": "Loading Network fees...",
-      "noRateProvider": "Not available"
+      "noRateProvider": "Indisponible"
     },
     "summary": {
       "tag": "Tag (Optional)",
       "validateTag": "Validate Tag",
       "total": "Total",
-      "amount": "Amount",
+      "amount": "Montant",
       "from": "From",
       "to": "To",
       "infoTotalTitle": "Total to spend",
@@ -842,17 +842,17 @@
       "message": "Confirm the transaction on your device to securely sign it",
       "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
-      "amount": "Amount",
-      "fees": "Fees",
-      "confirm": "Your account balance will update once the blockchain has confirmed the transaction",
+      "amount": "Montant",
+      "fees": "Frais",
+      "confirm": "Le solde de votre compte sera actualisé dès que la blockchain aura confirmé la transaction",
       "button": {
-        "details": "View details",
-        "retry": "Retry"
+        "details": "Voir les détails",
+        "retry": "Réessayer"
       }
     },
     "fees": {
       "title": "Network fees",
-      "validate": "Confirm",
+      "validate": "Confirmer",
       "required": "Fees are required",
       "edit": {
         "title": "Choose Unit"
@@ -873,7 +873,7 @@
     "success": {
       "desc": "View your accounts or add more of them",
       "secondaryCTA": "Add more accounts",
-      "cta": "Go to accounts"
+      "cta": "Accéder aux comptes"
     },
     "stopScanning": "Stop scanning",
     "retryScanning": "Retry scanning",
@@ -944,16 +944,16 @@
       "step2": "Validate on your {{productName}} by pressing both buttons"
     },
     "GenuineCheck": {
-      "title": "Genuine check",
+      "title": "Contrôle d'authenticité",
       "accept": "Please don’t turn off your Nano X and allow <1>Ledger Manager</1>"
     },
     "ScanningHeader": {
       "title": "Looking for devices",
-      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
+      "desc": "Veuillez vous assurer que votre {{productName}} est déverrouillé avec Bluetooth activé"
     },
     "ScanningTimeout": {
       "title": "Oops, no device found",
-      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
+      "desc": "Veuillez vous assurer que votre {{productName}} est déverrouillé avec Bluetooth activé"
     },
     "bypassGenuine": "Use anyway",
     "alreadyPaired": "Already paired"
@@ -963,7 +963,7 @@
     "genuineFailed": "Genuine check <1><0>failed</0></1>"
   },
   "DeviceNameRow": {
-    "title": "Name",
+    "title": "Nom",
     "action": "Get device name"
   },
   "UnpairDevice": {
@@ -981,11 +981,11 @@
       "question": "Got your Ledger Nano X?",
       "button": "Start Nano X onboarding",
       "noDevice": "No device?",
-      "buy": "Buy a Ledger Nano X"
+      "buy": "Acheter un Ledger Nano X"
     },
     "appList": {
       "title": "App catalog",
-      "loading": "Loading apps..."
+      "loading": "Chargement des applis..."
     },
     "unpair": {
       "title": "Unpair device",
@@ -1001,12 +1001,12 @@
       "loading": {
         "title": "Installing {{appName}}",
         "desc": "Please wait while the {{appName}} app is installed",
-        "button": "Installing...",
-        "button_plural": "Installing... {{progressPercentage}}%"
+        "button": "Installation ...",
+        "button_plural": "Installation... {{progressPercentage}}%"
       },
       "done": {
         "title": "Successfully installed {{appName}} on your {{productName}}",
-        "accounts": "Go to accounts"
+        "accounts": "Accéder aux comptes"
       }
     },
     "uninstall": {
@@ -1060,7 +1060,7 @@
   },
   "FirmwareUpdateMCU": {
     "title": "Restart device",
-    "desc1": "Unplug your device from your computer",
+    "desc1": "Débranchez votre appareil de votre ordinateur",
     "desc2": "Press and hold left button and plug your device until the bootloader screen appears"
   },
   "FirmwareUpdateConfirmation": {
