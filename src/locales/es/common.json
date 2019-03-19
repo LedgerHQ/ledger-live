@@ -610,7 +610,7 @@
         "confirmationDesc": "Deleting an account does not affect your crypto assets. Accounts can always be re-added."
       },
       "archive": {
-        "title": "Archive Account",
+        "title": "Archivar cuenta",
         "desc": "This account will be archived"
       },
       "advanced": {
