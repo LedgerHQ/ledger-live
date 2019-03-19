@@ -694,20 +694,20 @@
         "bullet7": "Overall and page session duration",
         "bullet8": "Ledger device type and firmware"
       },
-      "technicalData": "Technical data",
+      "technicalData": "Données techniques",
       "technicalDataDesc": "Ledger will automatically collect fully anonymized technical data to help improve user experience.",
       "technicalDataModal": {
-        "title": "Technical data",
+        "title": "Données techniques",
         "desc": "Ledger will automatically collect fully anonymized technical data to help improve user experience",
         "bullet1": "Anonymous unique application ID",
         "bullet2": "Ledger Live version, OS region, language and region"
       },
-      "termsOfUse": "Terms of use",
+      "termsOfUse": "Conditions d’utilisation",
       "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1> and <3>Privacy Policy</3>."
     },
     "currencies": {
-      "header": "Currencies",
-      "title": "Currencies",
+      "header": "Devises",
+      "title": "Devises",
       "desc": "Set rate provider and number of confirmations per crypto.",
       "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
@@ -716,16 +716,16 @@
       "currencySettingsTitle": "{{currencyName}} Settings"
     },
     "about": {
-      "title": "About",
+      "title": "A propos",
       "desc": "App information, terms and conditions, and privacy policy.",
       "appDescription": "The perfect companion for your {{fullDeviceName}}. Add new crypto assets and check your balance in just a few taps.",
       "appVersion": "Version",
-      "termsConditions": "Terms and conditions",
+      "termsConditions": "Conditions générales",
       "termsConditionsDesc": "By using Ledger Live you are deemed to have accepted our terms and conditions.",
-      "privacyPolicy": "Privacy policy",
+      "privacyPolicy": "Politique de confidentialité",
       "privacyPolicyDesc": "Learn what personal data we collect, why and how we use it.",
       "liveReview": {
-        "title": "Rate the app!",
+        "title": "Noter l'application !",
         "ios": "Review in the App Store",
         "android": "Review in the Google Play store"
       }
