@@ -95,8 +95,7 @@ async function signTransaction({
   coreTransaction,
   derivationMode,
   sigHashType,
-  hasTimestamp,
-  onSigning
+  hasTimestamp
 }: {
   isCancelled: () => boolean,
   hwApp: Btc,
@@ -105,8 +104,7 @@ async function signTransaction({
   coreTransaction: CoreBitcoinLikeTransaction,
   derivationMode: DerivationMode,
   sigHashType: number,
-  hasTimestamp: boolean,
-  onSigning: () => void
+  hasTimestamp: boolean
 }) {
   const additionals = [];
   let expiryHeight;
