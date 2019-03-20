@@ -52,13 +52,13 @@ export default class DataList extends PureComponent<Props, State> {
           )}
         </View>
         {(shouldShowMore ? data.slice(0, numToShow) : data).map(line => (
-          <LText semiBold selectable key={line}>
+          <LText style={styles.value} semiBold selectable key={line}>
             {line}
           </LText>
         ))}
         {showAll &&
           data.slice(numToShow).map(line => (
-            <LText semiBold selectable key={line}>
+            <LText style={styles.value} semiBold selectable key={line}>
               {line}
             </LText>
           ))}
@@ -73,5 +73,8 @@ const styles = StyleSheet.create({
     color: colors.grey,
     marginBottom: 8,
     marginRight: 8,
+  },
+  value: {
+    color: colors.darkBlue,
   },
 });
