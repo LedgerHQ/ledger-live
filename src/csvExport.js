@@ -8,6 +8,8 @@ type Field = {
   cell: (Account, Operation) => string
 };
 
+const newLine = "\r\n";
+
 const fields: Field[] = [
   {
     title: "Operation Date",
@@ -53,7 +55,7 @@ const accountsRows = (accounts: Account[]) =>
 
 export const accountsOpToCSV = (accounts: Account[]) =>
   fields.map(field => field.title).join(",") +
-  "\n" +
+  newLine +
   accountsRows(accounts)
-    .map(row => row.map(value => value.replace(/,/g, "")).join(","))
-    .join("\n");
+    .map(row => row.map(value => value.replace(/,\n\r/g, "")).join(","))
+    .join(newLine);
