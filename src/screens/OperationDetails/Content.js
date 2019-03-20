@@ -72,6 +72,8 @@ class Content extends PureComponent<Props, *> {
               alwaysShowSign
               currency={account.currency}
               value={amount}
+              date={operation.date}
+              subMagnitude={1}
             />
           </LText>
           <View style={styles.confirmationContainer}>
@@ -101,13 +103,15 @@ class Content extends PureComponent<Props, *> {
           <LText style={styles.sectionTitle}>
             <Trans i18nKey="operationDetails.account" />
           </LText>
-          <LText semiBold>{account.name}</LText>
+          <LText style={styles.sectionValue} semiBold>
+            {account.name}
+          </LText>
         </RectButton>
         <View style={styles.section}>
           <LText style={styles.sectionTitle}>
             <Trans i18nKey="operationDetails.date" />
           </LText>
-          <LText semiBold>
+          <LText style={styles.sectionValue} semiBold>
             {operation.date.toLocaleDateString(localeIds, {
               year: "numeric",
               month: "long",
@@ -122,15 +126,30 @@ class Content extends PureComponent<Props, *> {
             <Trans i18nKey="operationDetails.fees" />
           </LText>
           {operation.fee ? (
-            <LText semiBold>
-              <CurrencyUnitValue
-                showCode
-                unit={account.unit}
-                value={operation.fee}
-              />
-            </LText>
+            <View style={styles.feeValueContainer}>
+              <LText style={styles.sectionValue} semiBold>
+                <CurrencyUnitValue
+                  showCode
+                  unit={account.unit}
+                  value={operation.fee}
+                />
+              </LText>
+              <LText style={styles.feeCounterValue} semiBold>
+                ≈
+              </LText>
+              <LText style={styles.feeCounterValue} semiBold>
+                <CounterValue
+                  showCode
+                  showAllDigits={true}
+                  date={operation.date}
+                  subMagnitude={1}
+                  currency={account.currency}
+                  value={operation.fee}
+                />
+              </LText>
+            </View>
           ) : (
-            <LText semiBold>
+            <LText style={styles.sectionValue} semiBold>
               <Trans i18nKey="operationDetails.noFees" />
             </LText>
           )}
@@ -139,7 +158,7 @@ class Content extends PureComponent<Props, *> {
           <LText style={styles.sectionTitle}>
             <Trans i18nKey="operationDetails.identifier" />
           </LText>
-          <LText semiBold selectable>
+          <LText style={styles.sectionValue} semiBold selectable>
             {operation.hash}
           </LText>
         </View>
@@ -198,6 +217,18 @@ const styles = StyleSheet.create({
   icon: {
     marginBottom: 16,
   },
+  feeValueContainer: {
+    flexDirection: "row",
+  },
+  feeSeparator: {
+    marginHorizontal: 16,
+    color: colors.smoke,
+  },
+  feeCounterValue: {
+    marginLeft: 16,
+    color: colors.smoke,
+  },
+
   currencyUnitValue: {
     fontSize: 20,
     marginBottom: 8,
@@ -205,7 +236,7 @@ const styles = StyleSheet.create({
   },
   counterValue: {
     fontSize: 14,
-    color: colors.grey,
+    color: colors.smoke,
     marginBottom: 16,
   },
   confirmationContainer: {
@@ -218,11 +249,15 @@ const styles = StyleSheet.create({
   },
   section: {
     padding: 16,
+    color: colors.darkBlue,
   },
   sectionTitle: {
     fontSize: 14,
     color: colors.grey,
     marginBottom: 8,
+  },
+  sectionValue: {
+    color: colors.darkBlue,
   },
   bulletPoint: {
     borderRadius: 50,
