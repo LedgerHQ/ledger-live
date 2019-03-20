@@ -230,14 +230,17 @@ class ReceiveConfirmation extends Component<Props, State> {
             </View>
             <View style={styles.copyLink}>
               <CopyLink
+                style={styles.copyShare}
                 string={account.freshAddress}
                 replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
               >
                 <Trans i18nKey="transfer.receive.copyAddress" />
               </CopyLink>
-              <ShareLink value={account.freshAddress}>
-                <Trans i18nKey="transfer.receive.shareAddress" />
-              </ShareLink>
+              <View style={styles.copyShare}>
+                <ShareLink value={account.freshAddress}>
+                  <Trans i18nKey="transfer.receive.shareAddress" />
+                </ShareLink>
+              </View>
             </View>
           </View>
           <View style={styles.bottomContainer}>
@@ -424,8 +427,11 @@ const styles = StyleSheet.create({
   copyLink: {
     paddingTop: 24,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignSelf: "stretch",
+  },
+  copyShare: {
+    paddingHorizontal: 12,
   },
   modal: {
     flexDirection: "column",
