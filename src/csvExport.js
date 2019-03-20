@@ -32,6 +32,14 @@ const fields: Field[] = [
       })
   },
   {
+    title: "Operation Fees",
+    cell: (account, op) =>
+      formatCurrencyUnit(account.currency.units[0], op.fee, {
+        disableRounding: true,
+        useGrouping: false
+      })
+  },
+  {
     title: "Operation Hash",
     cell: (_, op) => op.hash
   },
