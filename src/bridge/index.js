@@ -34,13 +34,17 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
 };
 
 export const getAccountBridge = (account: Account): AccountBridge<any> => {
+  // $FlowFixMe i don't get where it fails
   if (account.id.startsWith("mock")) return mockAccountBridge;
   switch (account.currency.family) {
     case "ripple":
+      // $FlowFixMe i don't get where it fails
       return RippleBridge.accountBridge;
     case "ethereum":
+      // $FlowFixMe i don't get where it fails
       return EthereumBridge.accountBridge;
     default:
+      // $FlowFixMe i don't get where it fails
       return RNLibcoreAccountBridge;
   }
 };

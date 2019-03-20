@@ -5,12 +5,11 @@ import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/live-common/lib/errors";
 import { getFeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
 import type { FeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
 import type { AccountBridge } from "@ledgerhq/live-common/lib/bridge/types";
-import { makeLRUCache } from "../logic/cache";
-
-import { syncAccount } from "../libcore/syncAccount";
-import { isValidRecipient } from "../libcore/isValidRecipient";
-import { getFeesForTransaction } from "../libcore/getFeesForTransaction";
-import libcoreSignAndBroadcast from "../libcore/signAndBroadcast";
+import { syncAccount } from "@ledgerhq/live-common/lib/libcore/syncAccount";
+import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
+import { getFeesForTransaction } from "@ledgerhq/live-common/lib/libcore/getFeesForTransaction";
+import libcoreSignAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBroadcast";
+import { makeLRUCache } from "@ledgerhq/live-common/lib/cache";
 
 export type Transaction = {
   amount: BigNumber,
