@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import { withNavigation, SafeAreaView } from "react-navigation";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import { getDeviceModel } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/devices";
 
 import { removeKnownDevice } from "../../actions/ble";
 import { delay } from "../../logic/promise";
@@ -27,7 +28,7 @@ const forceInset = { bottom: "always" };
 type Props = {
   navigation: *,
   deviceId: string,
-  modelId: string,
+  modelId: DeviceModelId,
   onClose: () => void,
   opened: boolean,
   removeKnownDevice: string => void,

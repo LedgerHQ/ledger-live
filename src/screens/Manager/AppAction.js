@@ -7,6 +7,7 @@ import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
 import ProgressCircle from "react-native-progress/Circle";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import install from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
@@ -84,7 +85,7 @@ class AppAction extends PureComponent<
     },
     targetId: *,
     deviceId: string,
-    modelId: string,
+    modelId: DeviceModelId,
     onClose: () => void,
     onOpenAccounts: () => void,
     isOpened: boolean,
