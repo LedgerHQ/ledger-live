@@ -7,7 +7,8 @@ import {
   WebsocketConnectionError,
   WebsocketConnectionFailed,
   DeviceSocketFail,
-  DeviceSocketNoBulkStatus
+  DeviceSocketNoBulkStatus,
+  DisconnectedDeviceDuringOperation
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { createWebSocket } from "../network";
@@ -79,6 +80,12 @@ export const createDeviceSocket = (
     let terminated = false;
     let inBulk = false;
     let ignoreError = false;
+
+    const onDisconnect = e => {
+      transport.off("disconnect", onDisconnect);
+      o.error(new DisconnectedDeviceDuringOperation((e && e.message) || ""));
+    };
+    transport.on("disconnect", onDisconnect);
 
     try {
       ws = createWebSocket(url);
