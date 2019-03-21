@@ -3,8 +3,9 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { Subject, merge, Observable } from "rxjs";
+import { Subject, Observable, throwError } from "rxjs";
 import Config from "react-native-config";
+import { flatMap } from "rxjs/operators";
 
 export const rejections = new Subject();
 
@@ -19,14 +20,14 @@ export const rejectionOp = (createError: () => Error = defaultErrorCreator) => <
   !Config.DEBUG_REJECT_SWITCH
     ? observable
     : Observable.create(o => {
-        merge(
-          observable,
-          Observable.create(o => {
-            rejections.subscribe(() => {
-              o.error(createError());
-            });
-          }),
-        ).subscribe(o);
+        const s = observable.subscribe(o);
+        const s2 = rejections
+          .pipe(flatMap(() => throwError(createError())))
+          .subscribe(o);
+        return () => {
+          s.unsubscribe();
+          s2.unsubscribe();
+        };
       });
 
 // usage: hookRejections(promise)

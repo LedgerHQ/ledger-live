@@ -35,6 +35,8 @@ export default (opts: Opts) => {
 
     static disconnect = (_id: string) => Promise.resolve();
 
+    static setLogLevel = (_param: string) => {};
+
     static listen(observer: *) {
       return Observable.create(observer => {
         let timeout;
