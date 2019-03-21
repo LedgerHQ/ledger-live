@@ -1,6 +1,9 @@
 // @flow
+import type {
+  Core,
+  CoreStatics,
+} from "@ledgerhq/live-common/lib/libcore/types";
 import { getNativeModule } from "./specific";
-import type { Core, CoreStatics } from "../types";
 
 export async function loadCore(): Promise<Core> {
   // Abstract out the libcore interface into a higher level API.

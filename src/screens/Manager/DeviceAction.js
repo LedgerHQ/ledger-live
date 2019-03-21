@@ -9,9 +9,9 @@ import { withNavigation, SafeAreaView } from "react-navigation";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { delay } from "@ledgerhq/live-common/lib/promise";
 
 import { removeKnownDevice } from "../../actions/ble";
-import { delay } from "../../logic/promise";
 import Close from "../../icons/Close";
 
 import BottomModal from "../../components/BottomModal";

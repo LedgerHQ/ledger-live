@@ -3,7 +3,7 @@
 import "../shim";
 import "./polyfill";
 import "./live-common-setup";
-import "./libcore/react-native";
+import "./implement-react-native-libcore";
 import React, { Fragment, Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";

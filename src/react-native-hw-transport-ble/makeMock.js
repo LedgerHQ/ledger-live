@@ -2,7 +2,7 @@
 
 import Transport from "@ledgerhq/hw-transport";
 import { from, Observable } from "rxjs";
-import { delay } from "../logic/promise";
+import { delay } from "@ledgerhq/live-common/lib/promise";
 import type { ApduMock } from "../logic/createAPDUMock";
 import { hookRejections, rejectionOp } from "../components/DebugRejectSwitch";
 
