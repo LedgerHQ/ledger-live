@@ -1,14 +1,16 @@
 // @flow
+import Btc from "@ledgerhq/hw-app-btc";
+import Transport from "@ledgerhq/hw-transport";
 import type { Core, CoreWallet } from "./types";
 
 export async function createAccountFromDevice({
   core,
   wallet,
-  hwApp
+  transport
 }: {
   core: Core,
   wallet: CoreWallet,
-  hwApp: *
+  transport: Transport<*>
 }) {
   const accountCreationInfos = await wallet.getNextAccountCreationInfo();
   const chainCodes = await accountCreationInfos.getChainCodes();
@@ -16,6 +18,8 @@ export async function createAccountFromDevice({
   const index = await accountCreationInfos.getIndex();
   const derivations = await accountCreationInfos.getDerivations();
   const owners = await accountCreationInfos.getOwners();
+
+  const hwApp = new Btc(transport);
 
   await derivations.reduce(
     (promise, derivation) =>

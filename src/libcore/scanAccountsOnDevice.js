@@ -1,7 +1,7 @@
 // @flow
 
 import { Observable } from "rxjs";
-import Btc from "@ledgerhq/hw-app-btc";
+import Transport from "@ledgerhq/hw-transport";
 import { getCryptoCurrencyById } from "../currencies";
 import {
   getDerivationModesForCurrency,
@@ -49,7 +49,7 @@ export const scanAccountsOnDevice = (
             : currency;
           const path = `${isSegwit ? "49" : "44"}'/${coinType}'`;
 
-          const hwApp = new Btc(transport);
+          // const hwApp = new Btc(transport);
           const { publicKey: seedIdentifier } = await getAddress(
             transport,
             currency,
@@ -78,7 +78,7 @@ export const scanAccountsOnDevice = (
           await scanNextAccount({
             core,
             wallet,
-            hwApp,
+            transport,
             currency,
             accountIndex: 0,
             onAccountScanned,
@@ -107,7 +107,7 @@ export const scanAccountsOnDevice = (
 async function scanNextAccount(props: {
   core: Core,
   wallet: CoreWallet,
-  hwApp: *,
+  transport: Transport<*>,
   currency: CryptoCurrency,
   accountIndex: number,
   onAccountScanned: Account => *,
@@ -119,7 +119,7 @@ async function scanNextAccount(props: {
   const {
     core,
     wallet,
-    hwApp,
+    transport,
     currency,
     accountIndex,
     onAccountScanned,
@@ -133,7 +133,7 @@ async function scanNextAccount(props: {
   try {
     coreAccount = await wallet.getAccount(accountIndex);
   } catch (err) {
-    coreAccount = await createAccountFromDevice({ core, wallet, hwApp });
+    coreAccount = await createAccountFromDevice({ core, wallet, transport });
   }
 
   if (isUnsubscribed()) return;
