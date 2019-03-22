@@ -12,6 +12,7 @@ import { getWalletName } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
 
 import { open } from "../hw";
+import getAddress from "../hw/getAddress";
 import { withLibcoreF } from "./access";
 import { shouldShowNewAccount } from "../account";
 import { syncCoreAccount } from "./syncAccount";
@@ -49,10 +50,10 @@ export const scanAccountsOnDevice = (
           const path = `${isSegwit ? "49" : "44"}'/${coinType}'`;
 
           const hwApp = new Btc(transport);
-          const { publicKey: seedIdentifier } = await hwApp.getWalletPublicKey(
-            path,
-            false,
-            isSegwit
+          const { publicKey: seedIdentifier } = await getAddress(
+            transport,
+            currency,
+            path
           );
 
           if (isUnsubscribed()) return;
