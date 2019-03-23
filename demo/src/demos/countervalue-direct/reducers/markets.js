@@ -1,7 +1,8 @@
 // @flow
 import {
   getCryptoCurrencyById,
-  getFiatCurrencyByTicker
+  getFiatCurrencyByTicker,
+  listCryptoCurrencies
 } from "@ledgerhq/live-common/lib/currencies";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createSelector } from "reselect";
@@ -12,14 +13,16 @@ export type State = Array<{
   exchange: ?string
 }>;
 
+const bitcoin = getCryptoCurrencyById("bitcoin");
+
 const initialState: State = [
   {
-    from: getCryptoCurrencyById("bitcoin"),
+    from: bitcoin,
     to: getFiatCurrencyByTicker("USD"),
     exchange: "KRAKEN"
   },
   {
-    from: getCryptoCurrencyById("bitcoin"),
+    from: bitcoin,
     to: getFiatCurrencyByTicker("EUR"),
     exchange: null
   },
@@ -32,7 +35,12 @@ const initialState: State = [
     from: getCryptoCurrencyById("litecoin"),
     to: getCryptoCurrencyById("bitcoin"),
     exchange: null
-  }
+  },
+  ...listCryptoCurrencies().map(from => ({
+    from,
+    to: bitcoin,
+    exchange: null
+  }))
 ];
 
 const reducers = {
@@ -64,12 +72,15 @@ export default (state: State = initialState, action: *) => {
 
 export const marketsSelector = (state: *): State => state.markets;
 
-export const pairsSelector = createSelector(marketsSelector, (state: State) => {
-  const array = [];
-  for (const { from, to, exchange } of state) {
-    if (from && to) {
-      array.push({ from, to, exchange });
+export const pairsSelector = createSelector(
+  marketsSelector,
+  (state: State) => {
+    const array = [];
+    for (const { from, to, exchange } of state) {
+      if (from && to) {
+        array.push({ from, to, exchange });
+      }
     }
+    return array;
   }
-  return array;
-});
+);
