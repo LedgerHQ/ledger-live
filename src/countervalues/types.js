@@ -49,16 +49,18 @@ export type CounterValuesState = {
   rates: RatesMap
 };
 
+export type Network = ({
+  method: string,
+  url: string,
+  data?: any,
+  timeout?: number,
+  headers?: Object
+}) => Promise<{ data: any }>;
+
 export type Input<State> = {
   // Provide a fetch-like (or axios like) method
   // you can literally just give axios or fetch
-  network: ({
-    method: string,
-    url: string,
-    data?: any,
-    timeout?: number,
-    headers?: Object
-  }) => Promise<{ data: any }>,
+  network: Network,
 
   log?: (...args: *) => void,
 
@@ -98,7 +100,20 @@ export type Input<State> = {
   addExtraPollingHooks?: (
     schedulePoll: (ms: number) => void,
     cancelPoll: () => void
-  ) => () => void
+  ) => () => void,
+
+  getDailyRatesImplementation?: (
+    network: Network,
+    getAPIBaseURL: () => string,
+    pairs: PollAPIPair[]
+  ) => Promise<mixed>
+};
+
+export type PollAPIPair = {
+  from: string,
+  to: string,
+  exchange?: string,
+  afterDay?: string
 };
 
 export type Exchange = {
