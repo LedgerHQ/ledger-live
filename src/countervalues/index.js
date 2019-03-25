@@ -17,8 +17,10 @@ import type {
   PairOptExchange,
   PairConversion,
   Exchange,
-  RatesMap
+  RatesMap,
+  PollAPIPair
 } from "./types";
+import network from "../network";
 
 type PollingProviderOwnProps = {
   children: React$Element<*>,
@@ -28,13 +30,6 @@ type PollingProviderOwnProps = {
   poll: () => *,
   wipe: () => *,
   pairsKey: string
-};
-
-type PollAPIPair = {
-  from: string,
-  to: string,
-  exchange?: string,
-  afterDay?: string
 };
 
 const POLL = "LEDGER_CV:POLL";
@@ -60,6 +55,44 @@ const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
 export const formatCounterValueDay = (d: Date) =>
   `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`;
 
+// This do one big query to fetch everything
+export const getDailyRatesAllInOnce = async (
+  getAPIBaseURL: () => string,
+  pairs: PollAPIPair[]
+) => {
+  const { data }: { data: mixed } = await network({
+    method: "POST",
+    url: getAPIBaseURL() + "/rates/daily",
+    data: {
+      pairs
+    }
+  });
+  return data;
+};
+
+// This do one query per rate (lighter query)
+export const getDailyRatesSplitPerRate = async (
+  getAPIBaseURL: () => string,
+  pairs: PollAPIPair[]
+) => {
+  const url = getAPIBaseURL() + "/rates/daily";
+  const all = await Promise.all(
+    pairs.map(pair =>
+      network({
+        method: "POST",
+        url,
+        data: { pairs: [pair] }
+      })
+        .then(r => ({ error: null, result: r.data }))
+        .catch(error => ({ result: null, error }))
+    )
+  );
+  const errors = all.map(o => o.error).filter(e => e);
+  const results = all.map(o => o.result).filter(r => r);
+  if (results.length === 0 && errors.length > 0) throw errors[0];
+  return merge({}, ...results);
+};
+
 function createCounterValues<State>({
   getAPIBaseURL,
   storeSelector,
@@ -68,9 +101,12 @@ function createCounterValues<State>({
   maximumDays,
   addExtraPollingHooks,
   log,
-  network
+  getDailyRatesImplementation
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
+
+  const getDailyRates =
+    getDailyRatesImplementation || getDailyRatesSplitPerRate;
 
   const pairOptExchangeExtractor = (
     _store,
@@ -348,13 +384,7 @@ function createCounterValues<State>({
       pairs.push(pair);
     });
     if (pairs.length === 0) return;
-    const { data }: { data: mixed } = await network({
-      method: "POST",
-      url: getAPIBaseURL() + "/rates/daily",
-      data: {
-        pairs
-      }
-    });
+    const data = await getDailyRates(getAPIBaseURL, pairs);
     if (data && typeof data === "object") {
       const ev: PollAction = { type: POLL, data };
       dispatch(ev);

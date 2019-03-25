@@ -50,16 +50,6 @@ export type CounterValuesState = {
 };
 
 export type Input<State> = {
-  // Provide a fetch-like (or axios like) method
-  // you can literally just give axios or fetch
-  network: ({
-    method: string,
-    url: string,
-    data?: any,
-    timeout?: number,
-    headers?: Object
-  }) => Promise<{ data: any }>,
-
   log?: (...args: *) => void,
 
   // example: () => "http://localhost:8088"
@@ -98,7 +88,19 @@ export type Input<State> = {
   addExtraPollingHooks?: (
     schedulePoll: (ms: number) => void,
     cancelPoll: () => void
-  ) => () => void
+  ) => () => void,
+
+  getDailyRatesImplementation?: (
+    getAPIBaseURL: () => string,
+    pairs: PollAPIPair[]
+  ) => Promise<mixed>
+};
+
+export type PollAPIPair = {
+  from: string,
+  to: string,
+  exchange?: string,
+  afterDay?: string
 };
 
 export type Exchange = {
