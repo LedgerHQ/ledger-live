@@ -16,6 +16,7 @@ export default class SettingsRow extends Component<{
   selected?: boolean,
   arrowRight?: boolean,
   iconLeft?: *,
+  centeredIcon?: boolean,
   alignedTop?: boolean,
   compact?: boolean,
   children: React$Node,
@@ -34,6 +35,7 @@ export default class SettingsRow extends Component<{
       desc,
       arrowRight,
       iconLeft,
+      centeredIcon,
       alignedTop,
       compact,
       selected,
@@ -75,7 +77,11 @@ export default class SettingsRow extends Component<{
         event={event}
         eventProperties={eventProperties}
       >
-        {iconLeft && <View style={styles.iconLeft}>{iconLeft}</View>}
+        {iconLeft && (
+          <View style={[styles.iconLeft, centeredIcon && styles.centeredIcon]}>
+            {iconLeft}
+          </View>
+        )}
         <View style={[styles.textBlock, { marginLeft: iconLeft ? 0 : 16 }]}>
           {title$}
           {desc &&
@@ -155,6 +161,9 @@ const styles = StyleSheet.create({
   iconLeft: {
     paddingRight: 16,
     marginLeft: 16,
+  },
+  centeredIcon: {
+    justifyContent: "center",
   },
   iconLeftContainer: {
     marginRight: 8,
