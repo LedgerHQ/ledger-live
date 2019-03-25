@@ -49,7 +49,6 @@ export const scanAccountsOnDevice = (
             : currency;
           const path = `${isSegwit ? "49" : "44"}'/${coinType}'`;
 
-          // const hwApp = new Btc(transport);
           const { publicKey: seedIdentifier } = await getAddress(
             transport,
             currency,
