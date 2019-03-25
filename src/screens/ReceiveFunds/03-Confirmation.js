@@ -2,7 +2,8 @@
 
 import React, { Component } from "react";
 import i18next from "i18next";
-import { from } from "rxjs";
+import { from, of } from "rxjs";
+import { delay } from "rxjs/operators";
 import { View, StyleSheet, Linking, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -38,6 +39,7 @@ import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
+import { rejectionOp } from "../../components/DebugRejectSwitch";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -124,6 +126,9 @@ class ReceiveConfirmation extends Component<Props, State> {
     const { account, navigation } = this.props;
 
     this.sub = withDevice(deviceId)(transport =>
+      account.id.startsWith("mock")
+        ? of({}).pipe(delay(1000), rejectionOp())
+        :
       from(
         getAddress(transport, account.currency, account.freshAddressPath, true),
       ),
