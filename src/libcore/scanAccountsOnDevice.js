@@ -1,7 +1,7 @@
 // @flow
 
 import { Observable } from "rxjs";
-import Btc from "@ledgerhq/hw-app-btc";
+import Transport from "@ledgerhq/hw-transport";
 import { getCryptoCurrencyById } from "../currencies";
 import {
   getDerivationModesForCurrency,
@@ -12,6 +12,7 @@ import { getWalletName } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
 
 import { open } from "../hw";
+import getAddress from "../hw/getAddress";
 import { withLibcoreF } from "./access";
 import { shouldShowNewAccount } from "../account";
 import { syncCoreAccount } from "./syncAccount";
@@ -48,11 +49,10 @@ export const scanAccountsOnDevice = (
             : currency;
           const path = `${isSegwit ? "49" : "44"}'/${coinType}'`;
 
-          const hwApp = new Btc(transport);
-          const { publicKey: seedIdentifier } = await hwApp.getWalletPublicKey(
-            path,
-            false,
-            isSegwit
+          const { publicKey: seedIdentifier } = await getAddress(
+            transport,
+            currency,
+            path
           );
 
           if (isUnsubscribed()) return;
@@ -77,7 +77,7 @@ export const scanAccountsOnDevice = (
           await scanNextAccount({
             core,
             wallet,
-            hwApp,
+            transport,
             currency,
             accountIndex: 0,
             onAccountScanned,
@@ -106,7 +106,7 @@ export const scanAccountsOnDevice = (
 async function scanNextAccount(props: {
   core: Core,
   wallet: CoreWallet,
-  hwApp: *,
+  transport: Transport<*>,
   currency: CryptoCurrency,
   accountIndex: number,
   onAccountScanned: Account => *,
@@ -118,7 +118,7 @@ async function scanNextAccount(props: {
   const {
     core,
     wallet,
-    hwApp,
+    transport,
     currency,
     accountIndex,
     onAccountScanned,
@@ -132,7 +132,7 @@ async function scanNextAccount(props: {
   try {
     coreAccount = await wallet.getAccount(accountIndex);
   } catch (err) {
-    coreAccount = await createAccountFromDevice({ core, wallet, hwApp });
+    coreAccount = await createAccountFromDevice({ core, wallet, transport });
   }
 
   if (isUnsubscribed()) return;
