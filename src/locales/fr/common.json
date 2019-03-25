@@ -709,7 +709,7 @@
       "header": "Devises",
       "title": "Devises",
       "desc": "Set rate provider and number of confirmations per crypto.",
-      "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
+      "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
