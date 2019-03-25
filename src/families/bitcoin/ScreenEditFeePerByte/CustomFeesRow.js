@@ -53,7 +53,8 @@ class FeesRow extends Component<Props, State> {
     const fees = sanitizeValueString(satoshiUnit, text);
 
     if (BigNumber(fees.value).gt(CUSTOM_FEES_CAP)) {
-      [fees.value, fees.display] = [`${CUSTOM_FEES_CAP}`, `${CUSTOM_FEES_CAP}`];
+      fees.value = `${CUSTOM_FEES_CAP}`;
+      fees.display = `${CUSTOM_FEES_CAP}`;
     }
 
     this.setState({ fees: fees.display }, () => {
