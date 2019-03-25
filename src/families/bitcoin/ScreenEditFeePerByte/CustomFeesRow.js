@@ -18,6 +18,7 @@ import LText from "../../../components/LText/index";
 
 import Check from "../../../icons/Check";
 import colors from "../../../colors";
+import { CUSTOM_FEES_CAP } from "../../../constants";
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const satoshiUnit = bitcoinCurrency.units[bitcoinCurrency.units.length - 1];
@@ -50,6 +51,11 @@ class FeesRow extends Component<Props, State> {
   onChangeText = (text: string) => {
     const { onPress } = this.props;
     const fees = sanitizeValueString(satoshiUnit, text);
+
+    if (BigNumber(fees.value).gt(CUSTOM_FEES_CAP)) {
+      [fees.value, fees.display] = [`${CUSTOM_FEES_CAP}`, `${CUSTOM_FEES_CAP}`];
+    }
+
     this.setState({ fees: fees.display }, () => {
       if (fees.value !== "") {
         onPress(BigNumber(fees.value));
