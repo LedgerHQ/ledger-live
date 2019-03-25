@@ -11,6 +11,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
 import { timeout } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import { delay } from "@ledgerhq/live-common/lib/promise";
 import logger from "../../logger";
@@ -44,6 +45,7 @@ type Status = "scanning" | "pairing" | "genuinecheck" | "paired" | "timedout";
 type State = {
   status: Status,
   device: ?Device,
+  name: ?string,
   error: ?Error,
   skipCheck: boolean,
   genuineAskedOnDevice: boolean,
@@ -57,6 +59,7 @@ class PairDevices extends Component<Props, State> {
   state = {
     status: "scanning",
     device: null,
+    name: null,
     error: null,
     skipCheck: false,
     genuineAskedOnDevice: false,
@@ -90,6 +93,7 @@ class PairDevices extends Component<Props, State> {
       try {
         const deviceInfo = await getDeviceInfo(transport);
         if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
+        if (this.unmounted) return;
 
         this.setState({ device, status: "genuinecheck" });
         let resolve;
@@ -114,7 +118,11 @@ class PairDevices extends Component<Props, State> {
 
         await genuineCheckPromise;
         if (this.unmounted) return;
-        this.props.addKnownDevice(device);
+
+        const name = await getDeviceName(transport);
+        if (this.unmounted) return;
+
+        this.props.addKnownDevice({ id: device.id, name });
         if (this.unmounted) return;
         this.setState({ status: "paired" });
       } finally {
@@ -130,9 +138,9 @@ class PairDevices extends Component<Props, State> {
   };
 
   onBypassGenuine = () => {
-    const { device } = this.state;
+    const { device, name } = this.state;
     if (device) {
-      this.props.addKnownDevice(device);
+      this.props.addKnownDevice({ id: device.id, name: name || device.name });
       this.setState({ status: "paired", error: null, skipCheck: true });
     } else {
       this.setState({ status: "scanning", error: null, device: null });
