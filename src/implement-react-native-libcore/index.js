@@ -1,6 +1,6 @@
 // @flow
-import { setLoadCoreImplementation } from "../access";
-import { setRemapLibcoreErrorsImplementation } from "../errors";
+import { setLoadCoreImplementation } from "@ledgerhq/live-common/lib/libcore/access";
+import { setRemapLibcoreErrorsImplementation } from "@ledgerhq/live-common/lib/libcore/errors";
 import { loadCore } from "./loadCoreImpl";
 import { remapLibcoreErrors } from "./errorsImpl";
 

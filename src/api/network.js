@@ -5,9 +5,11 @@ import {
   LedgerAPIError,
   NetworkDown,
 } from "@ledgerhq/live-common/lib/errors";
+import { retry } from "@ledgerhq/live-common/lib/promise";
 import { GET_CALLS_RETRY, GET_CALLS_TIMEOUT } from "../constants";
-import { retry } from "../logic/promise";
 import anonymizer from "../logic/anonymizer";
+
+// TODO move to last desktop iteration
 
 const userFriendlyError = <A>(p: Promise<A>, { url, method }): Promise<A> =>
   p.catch(error => {

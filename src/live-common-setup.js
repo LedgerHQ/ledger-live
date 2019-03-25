@@ -6,6 +6,7 @@ import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { setNetwork } from "@ledgerhq/live-common/lib/network";
 import { logs } from "@ledgerhq/live-common/lib/api/socket";
+import { retry } from "@ledgerhq/live-common/lib/promise";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
@@ -13,7 +14,6 @@ import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debu
 import BluetoothTransport from "./react-native-hw-transport-ble";
 
 import network from "./api/network";
-import { retry } from "./logic/promise";
 
 if (Config.DEBUG_SOCKET) {
   logs.subscribe(e => {

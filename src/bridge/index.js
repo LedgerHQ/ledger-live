@@ -3,6 +3,7 @@
 // FIXME NB: goal for "bridge/" folder is to be moved to live-common and used by desktop again!
 
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
+import Config from "react-native-config";
 import * as RippleBridge from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
 import * as EthereumBridge from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
 import type {
@@ -21,6 +22,7 @@ const mockCurrencyBridge = makeMockCurrencyBridge();
 const mockAccountBridge = makeMockAccountBridge();
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+  if (Config.MOCK) return mockCurrencyBridge;
   switch (currency.family) {
     case "ripple":
       return RippleBridge.currencyBridge;
@@ -34,13 +36,17 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
 };
 
 export const getAccountBridge = (account: Account): AccountBridge<any> => {
+  // $FlowFixMe i don't get where it fails
   if (account.id.startsWith("mock")) return mockAccountBridge;
   switch (account.currency.family) {
     case "ripple":
+      // $FlowFixMe i don't get where it fails
       return RippleBridge.accountBridge;
     case "ethereum":
+      // $FlowFixMe i don't get where it fails
       return EthereumBridge.accountBridge;
     default:
+      // $FlowFixMe i don't get where it fails
       return RNLibcoreAccountBridge;
   }
 };
