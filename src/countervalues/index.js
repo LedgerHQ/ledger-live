@@ -20,6 +20,7 @@ import type {
   RatesMap,
   PollAPIPair
 } from "./types";
+import network from "../network";
 
 type PollingProviderOwnProps = {
   children: React$Element<*>,
@@ -56,7 +57,6 @@ export const formatCounterValueDay = (d: Date) =>
 
 // This do one big query to fetch everything
 export const getDailyRatesAllInOnce = async (
-  network: *,
   getAPIBaseURL: () => string,
   pairs: PollAPIPair[]
 ) => {
@@ -72,7 +72,6 @@ export const getDailyRatesAllInOnce = async (
 
 // This do one query per rate (lighter query)
 export const getDailyRatesSplitPerRate = async (
-  network: *,
   getAPIBaseURL: () => string,
   pairs: PollAPIPair[]
 ) => {
@@ -102,7 +101,6 @@ function createCounterValues<State>({
   maximumDays,
   addExtraPollingHooks,
   log,
-  network,
   getDailyRatesImplementation
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
@@ -386,7 +384,7 @@ function createCounterValues<State>({
       pairs.push(pair);
     });
     if (pairs.length === 0) return;
-    const data = await getDailyRates(network, getAPIBaseURL, pairs);
+    const data = await getDailyRates(getAPIBaseURL, pairs);
     if (data && typeof data === "object") {
       const ev: PollAction = { type: POLL, data };
       dispatch(ev);
