@@ -1,7 +1,12 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Dimensions,
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { Subject, Observable, throwError } from "rxjs";
 import Config from "react-native-config";
@@ -54,10 +59,12 @@ export default class DebugRejectSwitch extends PureComponent<{}> {
 
   render() {
     if (!Config.DEBUG_REJECT_SWITCH) return null;
+    const height = Dimensions.get("window").height;
+
     return (
       <SafeAreaView>
         <TouchableWithoutFeedback onPress={this.onPress}>
-          <View style={styles.root} />
+          <View style={[styles.root, { bottom: height / 2 }]} />
         </TouchableWithoutFeedback>
       </SafeAreaView>
     );
@@ -72,7 +79,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 25,
     borderWidth: 1,
-    borderColor: "rgba(200,0,0,0.1)",
+    borderColor: "rgba(200,0,0,0.2)",
     zIndex: 999,
   },
 });
