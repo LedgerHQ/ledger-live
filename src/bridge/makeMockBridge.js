@@ -24,7 +24,7 @@ const defaultOpts = {
     gasLimit: BigNumber(10),
     feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
     tag: undefined,
-    networkInfo: null,
+    networkInfo: null
   }),
   getTotalSpent: (a, t) => Promise.resolve(t.amount),
   checkValidTransaction: () => Promise.resolve(null),
@@ -148,6 +148,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
         timeout = setTimeout(() => {
           const rng = new Prando();
           const op = genOperation(
+            account,
             account,
             account.operations,
             account.currency,

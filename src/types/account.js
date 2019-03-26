@@ -1,7 +1,7 @@
 // @flow
 
 import type { BigNumber } from "bignumber.js";
-import type { CryptoCurrency, Unit } from "./currencies";
+import type { CryptoCurrency, TokenCurrency, Unit } from "./currencies";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "../derivation";
 
@@ -67,7 +67,23 @@ export type Account = {
   lastSyncDate: Date,
 
   // A configuration for the endpoint to use. (usecase: Ripple node)
-  endpointConfig?: ?string
+  endpointConfig?: ?string,
+
+  tokenAccounts?: TokenAccount[]
+};
+
+export type TokenAccount = {
+  id: string,
+  token: TokenCurrency,
+  operations: Operation[],
+  balance: BigNumber
+};
+
+export type TokenAccountRaw = {
+  id: string,
+  tokenId: string,
+  operations: OperationRaw[],
+  balance: string
 };
 
 export type AccountRaw = {
@@ -87,5 +103,6 @@ export type AccountRaw = {
   pendingOperations: OperationRaw[],
   unitMagnitude: number,
   lastSyncDate: string,
-  endpointConfig?: ?string
+  endpointConfig?: ?string,
+  tokenAccounts?: TokenAccountRaw[]
 };

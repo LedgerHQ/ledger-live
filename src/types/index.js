@@ -21,22 +21,13 @@ export type { DerivationMode };
 
 export type { CryptoCurrencyConfig, CryptoCurrencyObjMap, CryptoCurrencyIds };
 
-/**
- *
- *                            Common models types
- *                            ===================
- *
- * Reference types to inspire from as this will comes from the libcore:
- * https://github.com/KhalilBellakrid/lib-ledger-core/tree/develop/core/src/api
- *
- * NB some bug in documentation w\ flowtypes https://github.com/documentationjs/documentation/issues/742
- * ^as soon as fixed, will use /** in the types properties to export doc
- *
- */
-
-import type { BigNumber } from "bignumber.js";
-import type { Account, AccountRaw } from "./account";
-export type { Account, AccountRaw };
+import type {
+  Account,
+  AccountRaw,
+  TokenAccount,
+  TokenAccountRaw
+} from "./account";
+export type { Account, AccountRaw, TokenAccount, TokenAccountRaw };
 
 import type { Operation, OperationRaw, OperationType } from "./operation";
 export type { Operation, OperationRaw, OperationType };
@@ -48,6 +39,19 @@ export type {
   FiatCurrency,
   CryptoCurrency,
   ExplorerView
+};
+
+import type {
+  BalanceHistoryWithCountervalue,
+  BalanceHistory,
+  PortfolioRange,
+  Portfolio
+} from "./portfolio";
+export type {
+  BalanceHistory,
+  BalanceHistoryWithCountervalue,
+  PortfolioRange,
+  Portfolio
 };
 
 /**
@@ -74,8 +78,3 @@ export type DailyOperations = {
   // Is the sections complete? means there is no more operations to pull
   completed: boolean
 };
-
-export type BalanceHistory = Array<{
-  date: Date,
-  value: BigNumber
-}>;
