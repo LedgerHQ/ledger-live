@@ -8,14 +8,26 @@ import { SyncError } from "../errors";
 import { validateNameEdition } from "../account";
 import type { Operation } from "../types";
 import type { AccountBridge, CurrencyBridge } from "./types";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+import { getFeeItems } from "../api/FeesBitcoin";
+import { getEstimatedFees } from "../api/Fees";
+import { getCryptoCurrencyById } from "../data/cryptocurrencies";
 
 const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
 
 const defaultOpts = {
   transactionsSizeTarget: 100,
-  extraInitialTransactionProps: () => null,
-  checkValidTransaction: () => Promise.resolve(null),
+  extraInitialTransactionProps: () => ({
+    feePerByte: 10,
+    fee: BigNumber(10),
+    gasPrice: BigNumber(10),
+    gasLimit: BigNumber(10),
+    feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
+    tag: undefined,
+    networkInfo: null,
+  }),
   getTotalSpent: (a, t) => Promise.resolve(t.amount),
+  checkValidTransaction: () => Promise.resolve(null),
   getMaxAmount: a => Promise.resolve(a.balance)
 };
 
@@ -24,15 +36,17 @@ const delay = ms => new Promise(success => setTimeout(success, ms));
 type Opts = *;
 
 export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
-  const {
-    extraInitialTransactionProps,
-    getTotalSpent,
-    getMaxAmount,
-    checkValidTransaction
-  } = {
+  const { extraInitialTransactionProps, getTotalSpent, getMaxAmount } = {
     ...defaultOpts,
     ...opts
   };
+
+  const checkValidTransaction = async (a, t) => {
+    if (t.amount.isGreaterThan(a.balance)) throw new NotEnoughBalance();
+    return null;
+  };
+
+  const getTransactionExtra = (a, t, field) => t[field];
 
   const broadcasted: { [_: string]: Operation[] } = {};
 
@@ -80,7 +94,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     });
 
   const checkValidRecipient = (account, recipient) =>
-    recipient.length > 0
+    recipient.length > 3
       ? Promise.resolve(null)
       : Promise.reject(new Error("invalid recipient"));
 
@@ -90,11 +104,24 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
     ...extraInitialTransactionProps()
   });
 
-  const fetchTransactionNetworkInfo = () => Promise.resolve({});
+  const fetchTransactionNetworkInfo = async ({ currency }) => {
+    if (currency.id === "ripple") return { serverFee: 10 };
+    if (currency.id === "ethereum" || currency.id === "ethereum_classic") {
+      const serverFees = await getEstimatedFees(currency);
+      return { serverFees };
+    }
+    const feeItems = await getFeeItems(currency);
+    return { feeItems };
+  };
 
-  const applyTransactionNetworkInfo = (account, transaction) => transaction;
+  const applyTransactionNetworkInfo = (account, transaction, networkInfo) => ({
+    ...transaction,
+    networkInfo,
+    fee: transaction.fee || networkInfo.serverFee
+  });
 
-  const getTransactionNetworkInfo = () => ({});
+  const getTransactionNetworkInfo = (account, transaction) =>
+    transaction.networkInfo;
 
   const editTransactionAmount = (account, t, amount) => ({
     ...t,
@@ -109,9 +136,10 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
 
   const getTransactionRecipient = (a, t) => t.recipient;
 
-  const editTransactionExtra = (account, t) => t;
-
-  const getTransactionExtra = () => undefined;
+  const editTransactionExtra = (a, t, field, value) => ({
+    ...t,
+    [field]: value
+  });
 
   const signAndBroadcast = (account, t, _deviceId) =>
     Observable.create(o => {
@@ -190,19 +218,25 @@ export function makeMockCurrencyBridge(opts?: Opts): CurrencyBridge {
         }
         const nbAccountToGen = 3;
         for (let i = 0; i < nbAccountToGen && !unsubscribed; i++) {
+          const isLast = i === 2;
           await delay(500);
           const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${i}`, {
-            operationsSize: transactionsSizeTarget,
+            operationsSize: isLast ? 0 : transactionsSizeTarget,
             currency
           });
           account.unit = currency.units[0];
           account.index = i;
-          account.operations = account.operations.map(operation => ({
-            ...operation,
-            date: substractOneYear(operation.date)
-          }));
+          account.operations = isLast
+            ? []
+            : account.operations.map(operation => ({
+                ...operation,
+                date: substractOneYear(operation.date)
+              }));
           account.name = "";
           account.name = validateNameEdition(account);
+          if (isLast) {
+            account.balance = BigNumber(0);
+          }
 
           if (!unsubscribed) o.next(account);
         }
