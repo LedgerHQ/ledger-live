@@ -134,6 +134,7 @@ class OperationRow extends PureComponent<Props, *> {
               <View style={styles.bodyRight}>
                 <CounterValue
                   showCode
+                  date={operation.date}
                   currency={account.currency}
                   value={amount}
                   alwaysShowSign

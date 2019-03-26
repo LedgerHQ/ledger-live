@@ -9,6 +9,7 @@ export const SYNC_DELAY = 2500;
 export const UP_TO_DATE_THRESHOLD = SYNC_ALL_INTERVAL;
 
 export const MAX_ACCOUNT_NAME_SIZE = 50;
+export const CUSTOM_FEES_CAP = 100000;
 
 export const BLE_SCANNING_NOTHING_TIMEOUT = 30 * 1000;
 
