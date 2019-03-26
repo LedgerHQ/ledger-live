@@ -69,6 +69,7 @@ class BiometricsRow extends Component<Props, State> {
           <SettingsRow
             event="BiometricsRow"
             iconLeft={iconLeft}
+            centeredIcon
             title={
               <Trans
                 i18nKey="auth.enableBiometrics.title"
