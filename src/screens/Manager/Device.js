@@ -24,8 +24,8 @@ import DeviceNameRow from "./DeviceNameRow";
 import FirmwareVersionRow from "./FirmwareVersionRow";
 import FirmwareUpdateRow from "./FirmwareUpdateRow";
 import AuthenticityRow from "./AuthenticityRow";
-import UnpairRow from "./UnpairRow";
-import DeviceAction from "./DeviceAction";
+import RemoveRow from "./RemoveRow";
+import DeviceRemoveAction from "./DeviceRemoveAction";
 
 type Props = {
   navigation: NavigationScreenProp<{
@@ -125,9 +125,9 @@ class ManagerDevice extends Component<Props, { opened: boolean }> {
         <FirmwareVersionRow deviceInfo={meta.deviceInfo} />
         <Space h={16} />
         {meta.wired ? null : (
-          <UnpairRow onPress={this.open} deviceId={meta.deviceId} />
+          <RemoveRow onPress={this.open} deviceId={meta.deviceId} />
         )}
-        <DeviceAction
+        <DeviceRemoveAction
           opened={this.state.opened}
           onClose={this.close}
           deviceId={meta.deviceId}

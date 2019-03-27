@@ -87,7 +87,7 @@ class RemoveDeviceButton extends PureComponent<Props> {
         <Trans i18nKey="common.delete" />
       ) : (
         <Trans
-          i18nKey="UnpairDevice.button.title"
+          i18nKey="RemoveDevice.button.title"
           values={{ nbDevices: count }}
           count={count}
         />

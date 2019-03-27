@@ -11,7 +11,7 @@ type Props = {
   onPress: () => void,
 };
 
-class UnpairRow extends PureComponent<Props> {
+class RemoveRow extends PureComponent<Props> {
   render() {
     return (
       <Row
@@ -20,7 +20,7 @@ class UnpairRow extends PureComponent<Props> {
             <Trash color={colors.alert} size={16} />
           </View>
         }
-        title={<Trans i18nKey="UnpairRow.title" />}
+        title={<Trans i18nKey="RemoveRow.title" />}
         titleStyle={styles.title}
         onPress={this.props.onPress}
         compact
@@ -31,7 +31,7 @@ class UnpairRow extends PureComponent<Props> {
   }
 }
 
-export default UnpairRow;
+export default RemoveRow;
 
 const styles = StyleSheet.create({
   title: {
