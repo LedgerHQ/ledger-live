@@ -404,9 +404,9 @@
       "fallbackDesc": "You can import your {{oldDeviceName}} accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a {{fullDeviceName}}."
     },
     "stepLegacy": {
-      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X",
+      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a {{productName}}",
       "description": "You can import your accounts from Ledger Live desktop to check your balance on the go.",
-      "buy": "Buy a Ledger Nano X"
+      "buy": "Buy a {{productName}}"
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
@@ -1070,5 +1070,8 @@
   "RepairDevice": {
     "title": "Repair",
     "action": "My device is ready"
+  },
+  "StepLegacyModal": {
+    "description": "Imported accounts only synchronize with the blockchain. Ledger Live does not synchronize accounts between mobile and desktop."
   }
 }
