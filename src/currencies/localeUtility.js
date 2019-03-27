@@ -4,6 +4,7 @@ import memoize from "lodash/memoize";
 
 export const getFragPositions: (locale: string) => Array<*> = memoize(
   locale => {
+    const oneChar = (1).toLocaleString(locale)[0];
     const res = (-1).toLocaleString(locale, {
       currency: "USD",
       style: "currency"
@@ -25,7 +26,7 @@ export const getFragPositions: (locale: string) => Array<*> = memoize(
       } else if (c === "-") {
         frags.push("sign");
         mandatoryFrags++;
-      } else if (c === "1") {
+      } else if (c === oneChar) {
         frags.push("value");
         mandatoryFrags++;
       } else if (/\s/.test(c)) {
