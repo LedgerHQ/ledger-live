@@ -3,6 +3,7 @@ import React, { Component, PureComponent } from "react";
 import { StyleSheet, View, Linking, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import FontAwesome from "react-native-vector-icons/dist/FontAwesome";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import type { OnboardingStepProps } from "../types";
@@ -17,10 +18,15 @@ import IconRestore from "../../../icons/History";
 import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 import UpgradeToNanoXBanner from "../../../components/UpgradeToNanoXBanner";
+import StepLegacyModal from "../../../modals/StepLegacyModal";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
-class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
+class OnboardingStepGetStarted extends Component<OnboardingStepProps, *> {
+  state = {
+    modalVisible: false,
+  };
+
   onImport = async () => {
     await this.props.setOnboardingMode("qr");
     this.props.next();
@@ -45,7 +51,16 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
 
   Footer = () => <UpgradeToNanoXBanner action={this.onBuy} />;
 
+  enableModal = () => {
+    this.setState({ modalVisible: true });
+  };
+
+  quitModal = () => {
+    this.setState({ modalVisible: false });
+  };
+
   render() {
+    const { modalVisible } = this.state;
     const { deviceModelId } = this.props;
     const deviceModel = getDeviceModel(deviceModelId);
     const title = deviceModel.productName;
@@ -86,10 +101,14 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps> {
             />
           </>
         ) : (
-          <LText style={styles.description}>
-            <Trans i18nKey="onboarding.stepLegacy.description" />
-          </LText>
+          <Touchable event="StepLegacyOpenModal" onPress={this.enableModal}>
+            <LText style={styles.description}>
+              <Trans i18nKey="onboarding.stepLegacy.description" />{" "}
+              <FontAwesome name="info-circle" size={14} color={colors.fog} />
+            </LText>
+          </Touchable>
         )}
+        <StepLegacyModal isOpened={modalVisible} onClose={this.quitModal} />
       </OnboardingLayout>
     );
   }
@@ -168,7 +187,9 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 40,
+    padding: 16,
     fontSize: 14,
+    lineHeight: 21,
     color: colors.smoke,
     textAlign: "center",
   },

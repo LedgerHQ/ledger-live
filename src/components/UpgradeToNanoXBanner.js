@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import { Trans } from "react-i18next";
 import colors from "../colors";
@@ -30,7 +31,10 @@ class UpgradeToNanoXBanner extends PureComponent<Props> {
         <NanoXVertical style={styles.icon} size={56} />
         <View style={styles.textWrapper}>
           <LText style={styles.text}>
-            <Trans i18nKey="onboarding.stepLegacy.bannerDescription" />
+            <Trans
+              i18nKey="onboarding.stepLegacy.bannerDescription"
+              values={getDeviceModel("nanoX")}
+            />
           </LText>
 
           <Touchable
@@ -40,7 +44,10 @@ class UpgradeToNanoXBanner extends PureComponent<Props> {
             hitSlop={hitSlop}
           >
             <LText semiBold style={[styles.subText, styles.buy]}>
-              <Trans i18nKey="onboarding.stepLegacy.buy" />
+              <Trans
+                i18nKey="onboarding.stepLegacy.buy"
+                values={getDeviceModel("nanoX")}
+              />
             </LText>
             <IconArrowRight size={16} color={colors.live} />
           </Touchable>
