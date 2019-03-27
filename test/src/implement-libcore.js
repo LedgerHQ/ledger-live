@@ -406,6 +406,7 @@ const loadCore = (): Promise<Core> => {
 
   // define the static methods
 
+  statics.LedgerCore.newInstance = () => new statics.LedgerCore();
   statics.DynamicObject.newInstance = () => new statics.DynamicObject();
   statics.Address.isValid = (...args) =>
     new statics.Address(...args).isValid(...args);
