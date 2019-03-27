@@ -38,7 +38,7 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "forgetDevice": "Forget device",
+    "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
     }
@@ -966,10 +966,10 @@
     "title": "Name",
     "action": "Get device name"
   },
-  "UnpairDevice": {
+  "RemoveDevice": {
     "button": {
-      "title": "Delete {{nbDevices}} device",
-      "title_plural": "Delete {{nbDevices}} devices"
+      "title": "Remove {{nbDevices}} device",
+      "title_plural": "Remove {{nbDevices}} devices"
     }
   },
   "manager": {
@@ -987,10 +987,10 @@
       "title": "App catalog",
       "loading": "Loading apps..."
     },
-    "unpair": {
-      "title": "Unpair device",
-      "description": "Are you sure? You can pair your {{productName}} again at any time.",
-      "button": "Unpair"
+    "remove": {
+      "title": "Remove device",
+      "description": "Are you sure? You can add your {{productName}} again at any time.",
+      "button": "Remove"
     }
   },
   "ManagerDevice": {
@@ -1023,8 +1023,8 @@
     "title": "Authenticity",
     "subtitle": "Genuine"
   },
-  "UnpairRow": {
-    "title": "Unpair device"
+  "RemoveRow": {
+    "title": "Remove device"
   },
   "FirmwareVersionRow": {
     "title": "Firmware version"
