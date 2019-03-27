@@ -10,8 +10,8 @@ import { retry } from "@ledgerhq/live-common/lib/promise";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
-import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
+import BluetoothTransport from "./react-native-hw-transport-ble";
 
 import network from "./api/network";
 
