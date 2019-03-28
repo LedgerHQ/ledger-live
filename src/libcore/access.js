@@ -1,5 +1,7 @@
 // @flow
 import type { Core } from "./types";
+import { Subject, Observable } from "rxjs";
+import { map, distinctUntilChanged } from "rxjs/operators";
 
 const GC_DELAY = 1000;
 
@@ -8,6 +10,11 @@ let corePromise: ?Promise<Core>;
 let libcoreJobsCounter = 0;
 let lastFlush: Promise<void> = Promise.resolve();
 let flushTimeout = null;
+const libcoreJobsCounterSubject: Subject<number> = new Subject();
+export const libcoreJobBusy: Observable<boolean> = libcoreJobsCounterSubject.pipe(
+  map(v => v > 0),
+  distinctUntilChanged()
+);
 
 function flush(core: Core) {
   lastFlush = core.flush().catch(e => console.error("libcore-flush-fail", e));
@@ -17,6 +24,7 @@ export async function withLibcore<R>(
   job: (core: Core) => Promise<R>
 ): Promise<R> {
   libcoreJobsCounter++;
+  libcoreJobsCounterSubject.next(libcoreJobsCounter);
   let c: ?Core;
   try {
     if (flushTimeout) {
@@ -30,6 +38,7 @@ export async function withLibcore<R>(
     return res;
   } finally {
     libcoreJobsCounter--;
+    libcoreJobsCounterSubject.next(libcoreJobsCounter);
     if (c && libcoreJobsCounter === 0) {
       flushTimeout = setTimeout(flush.bind(null, c), GC_DELAY);
     }

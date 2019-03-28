@@ -6,14 +6,14 @@ import type { Core, CoreCurrency, CoreAmount } from "./types";
 export async function bigNumberToLibcoreAmount(
   core: Core,
   walletCurrency: CoreCurrency,
-  amount: BigNumber,
+  amount: BigNumber
 ) {
   return core.Amount.fromHex(walletCurrency, amount.toString(16));
 }
 
 export async function libcoreAmountToBigNumber(
   core: Core, // TODO drop this param
-  amountInstance: CoreAmount,
+  amountInstance: CoreAmount
 ): Promise<BigNumber> {
   const coreBigInt = await amountInstance.toBigInt();
   const value = await coreBigInt.toString(10);

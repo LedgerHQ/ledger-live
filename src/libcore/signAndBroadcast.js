@@ -25,9 +25,9 @@ import type {
 } from "./types";
 
 type Transaction = {
-  amount: BigNumber,
+  amount: BigNumber | string,
   recipient: string,
-  feePerByte: ?BigNumber
+  feePerByte: ?(BigNumber | string)
 };
 
 type Input = {
@@ -282,13 +282,13 @@ const doSignAndBroadcast = withLibcoreF(
     const amount = await bigNumberToLibcoreAmount(
       core,
       coreWalletCurrency,
-      transaction.amount
+      BigNumber(transaction.amount)
     );
     if (isCancelled()) return;
     const fees = await bigNumberToLibcoreAmount(
       core,
       coreWalletCurrency,
-      feePerByte
+      BigNumber(feePerByte)
     );
     if (isCancelled()) return;
     const isPartial = false;

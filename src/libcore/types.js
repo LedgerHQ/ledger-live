@@ -20,6 +20,7 @@ declare class CoreWalletPool {
     currency: CoreCurrency,
     config: CoreDynamicObject
   ): Promise<CoreWallet>;
+  freshResetAll(): Promise<void>;
 }
 
 declare class CoreWallet {
@@ -62,6 +63,12 @@ declare class CoreOperation {
 declare class CoreCurrency {
   // prettier-ignore
   getBitcoinLikeNetworkParameters (): Promise<CoreBitcoinLikeNetworkParameters>
+}
+
+declare class CoreLedgerCore {
+  static newInstance(): Promise<CoreLedgerCore>;
+  getStringVersion(): Promise<string>;
+  getIntVersion(): Promise<number>;
 }
 
 declare class CoreDatabaseBackend {
@@ -252,6 +259,7 @@ export interface CoreStatics {
   EventReceiver: Class<CoreEventReceiver>;
   ExtendedKeyAccountCreationInfo: Class<CoreExtendedKeyAccountCreationInfo>;
   HttpClient: Class<CoreHttpClient>;
+  LedgerCore: Class<CoreLedgerCore>;
   LogPrinter: Class<CoreLogPrinter>;
   Operation: Class<CoreOperation>;
   OperationQuery: Class<CoreOperationQuery>;
@@ -286,6 +294,7 @@ export type {
   CoreEventReceiver,
   CoreExtendedKeyAccountCreationInfo,
   CoreHttpClient,
+  CoreLedgerCore,
   CoreLogPrinter,
   CoreOperation,
   CoreOperationQuery,
