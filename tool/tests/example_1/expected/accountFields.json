@@ -1,0 +1,14 @@
+{
+  "name": "Bitcoin",
+  "xpub": "xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj",
+  "seedIdentifier": "xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj",
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "derivationMode": "",
+  "index": 0,
+  "freshAddress": "1NtocLbFFPYPNGeEsDn2CYY4GbfLGLpTFr",
+  "freshAddressPath": "44'/0'/0'/0/15",
+  "pendingOperations": [],
+  "currencyId": "bitcoin",
+  "unitMagnitude": 8,
+  "balance": "0"
+}

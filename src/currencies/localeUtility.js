@@ -1,4 +1,4 @@
-//@flow
+// @flow
 
 import memoize from "lodash/memoize";
 
@@ -48,7 +48,8 @@ export type GetSeparators = (
 };
 export const getSeparators: GetSeparators = memoize(locale => {
   const res = (10000.2).toLocaleString(locale);
-  let decimal, thousands;
+  let decimal;
+  let thousands;
   for (let i = 0; i < res.length; i++) {
     const c = res[i];
     if (/[0-9]/.test(c)) continue;

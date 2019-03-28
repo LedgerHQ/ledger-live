@@ -1,4 +1,5 @@
-//@flow
+// @flow
+
 import { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
 import type { Currency } from "../types";
 
@@ -15,6 +16,7 @@ import {
   listCryptoCurrencies,
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
+  findCryptoCurrency,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByTicker
@@ -25,6 +27,7 @@ import {
   listTokensForCryptoCurrency,
   findTokenByTicker,
   findTokenById,
+  findTokenByAddress,
   hasTokenId,
   getTokenById
 } from "../data/tokens";
@@ -52,6 +55,7 @@ export {
   listCryptoCurrencies,
   getFiatCurrencyByTicker,
   findCurrencyByTicker,
+  findCryptoCurrency,
   findCryptoCurrencyById,
   findCryptoCurrencyByTicker,
   findCryptoCurrencyByScheme,
@@ -59,6 +63,7 @@ export {
   hasFiatCurrencyTicker,
   listTokens,
   listTokensForCryptoCurrency,
+  findTokenByAddress,
   findTokenByTicker,
   findTokenById,
   hasTokenId,

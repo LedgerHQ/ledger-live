@@ -1,7 +1,7 @@
 // @flow
 
 let networkFn: ?Function = null;
-let WebSocket: ?Function = global.WebSocket;
+let WebSocket: ?Function = global.WebSocket; // eslint-disable-line
 
 export const setNetwork = (fn: *) => {
   networkFn = fn;

@@ -6,97 +6,22 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type {
   Account,
+  AccountRaw,
+  TokenAccount,
+  TokenAccountRaw,
   AccountIdParams,
   Operation,
-  BalanceHistory,
+  OperationRaw,
   DailyOperations,
   CryptoCurrency,
   DerivationMode
 } from "./types";
-import { getOperationAmountNumber } from "./operation";
-import {
-  isSegwitDerivationMode,
-  isUnsplitDerivationMode,
-  asDerivationMode
-} from "./derivation";
+import { asDerivationMode, getTagDerivationMode } from "./derivation";
+import { getCryptoCurrencyById, getTokenById } from "./currencies";
 import { getEnv } from "./env";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
-}
-
-/**
- * generate an array of {daysCount} datapoints, one per day,
- * for the balance history of an account.
- * The last item of the array is the balance available right now.
- * @memberof account
- */
-export function getBalanceHistory(
-  account: Account,
-  daysCount: number
-): BalanceHistory {
-  const history = [];
-  let { balance } = account;
-  const operationsLength = account.operations.length;
-  let i = 0; // index of operation
-  let t = new Date();
-  history.unshift({ date: t, value: balance });
-  t = new Date(startOfDay(t) - 1); // end of yesterday
-  for (let d = daysCount - 1; d > 0; d--) {
-    // accumulate operations after time t
-    while (i < operationsLength && account.operations[i].date > t) {
-      balance = balance.minus(getOperationAmountNumber(account.operations[i]));
-      i++;
-    }
-    if (i === operationsLength) {
-      // When there is no more operation, we consider we reached ZERO to avoid invalid assumption that balance was already available.
-      balance = BigNumber(0);
-    }
-    history.unshift({ date: t, value: BigNumber.max(balance, 0) });
-    t = new Date(t - 24 * 60 * 60 * 1000);
-  }
-  return history;
-}
-
-/**
- * calculate the total balance history for all accounts in a reference fiat unit
- * and using a CalculateCounterValue function (see countervalue helper)
- * NB the last item of the array is actually the current total balance.
- * @memberof account
- */
-export function getBalanceHistorySum(
-  accounts: Account[],
-  daysCount: number,
-  // for a given account, calculate the countervalue of a value at given date.
-  calculateAccountCounterValue: (Account, BigNumber, Date) => BigNumber
-): BalanceHistory {
-  if (typeof calculateAccountCounterValue !== "function") {
-    throw new Error(
-      "getBalanceHistorySum signature has changed, please port the code"
-    );
-  }
-  if (accounts.length === 0) {
-    const now = Date.now();
-    const zeros: BigNumber[] = Array(daysCount).fill(BigNumber(0));
-    return zeros.map((value, i) => ({
-      date: new Date(now - 24 * 60 * 60 * 1000 * (daysCount - i - 1)),
-      value
-    }));
-  }
-  return accounts
-    .map(account => {
-      const history = getBalanceHistory(account, daysCount);
-      return history.map(h => ({
-        date: h.date,
-        value: calculateAccountCounterValue(account, h.value, h.date)
-      }));
-    })
-    .reduce((acc, history) =>
-      acc.map((a, i) => ({
-        date: a.date,
-        value: a.value.plus(history[i].value)
-      }))
-    );
 }
 
 const emptyDailyOperations = { sections: [], completed: true };
@@ -213,8 +138,6 @@ export function getWalletName({
 
 const MAX_ACCOUNT_NAME_SIZE = 50;
 
-const alwaysSuffixLegacyExcept = ["", "segwit", "segwit_unsplit", "unsplit"];
-
 export const getAccountPlaceholderName = ({
   currency,
   index,
@@ -223,13 +146,10 @@ export const getAccountPlaceholderName = ({
   currency: CryptoCurrency,
   index: number,
   derivationMode: DerivationMode
-}) =>
-  `${currency.name} ${index + 1}${
-    (!isSegwitDerivationMode(derivationMode) && currency.supportsSegwit) ||
-    !alwaysSuffixLegacyExcept.includes(derivationMode)
-      ? " (legacy)"
-      : ""
-  }${isUnsplitDerivationMode(derivationMode) ? " (unsplit)" : ""}`;
+}) => {
+  const tag = getTagDerivationMode(currency, derivationMode);
+  return `${currency.name} ${index + 1}${tag ? ` (${tag})` : ""}`;
+};
 
 // An account is empty if there is no operations AND balance is zero.
 // balance can be non-zero in edgecases, for instance:
@@ -295,4 +215,100 @@ export const shouldShowNewAccount = (
 ) =>
   derivationMode === ""
     ? !!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || !currency.supportsSegwit
-    : derivationMode === "segwit";
+    : derivationMode === "segwit" || derivationMode === "native_segwit";
+
+export const toOperationRaw = ({
+  date,
+  value,
+  fee,
+  ...op
+}: Operation): OperationRaw => ({
+  ...op,
+  date: date.toISOString(),
+  value: value.toString(),
+  fee: fee.toString()
+});
+
+export const fromOperationRaw = (
+  { date, value, fee, extra, ...op }: OperationRaw,
+  accountId: string
+): Operation => ({
+  ...op,
+  accountId,
+  date: new Date(date),
+  value: BigNumber(value),
+  fee: BigNumber(fee),
+  extra: extra || {}
+});
+
+export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
+  const { id, tokenId, operations, balance } = raw;
+  const token = getTokenById(tokenId);
+  const convertOperation = op => fromOperationRaw(op, id);
+  return {
+    id,
+    token,
+    balance: BigNumber(balance),
+    operations: operations.map(convertOperation)
+  };
+}
+
+export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
+  const { id, token, operations, balance } = raw;
+  return {
+    id,
+    tokenId: token.id,
+    balance: balance.toString(),
+    operations: operations.map(toOperationRaw)
+  };
+}
+
+export function fromAccountRaw(rawAccount: AccountRaw): Account {
+  const {
+    currencyId,
+    unitMagnitude,
+    operations,
+    pendingOperations,
+    lastSyncDate,
+    balance,
+    tokenAccounts,
+    ...acc
+  } = rawAccount;
+  const currency = getCryptoCurrencyById(currencyId);
+  const unit =
+    currency.units.find(u => u.magnitude === unitMagnitude) ||
+    currency.units[0];
+  const convertOperation = op => fromOperationRaw(op, acc.id);
+  return {
+    ...acc,
+    balance: BigNumber(balance),
+    operations: operations.map(convertOperation),
+    pendingOperations: pendingOperations.map(convertOperation),
+    unit,
+    currency,
+    lastSyncDate: new Date(lastSyncDate),
+    tokenAccounts: tokenAccounts && tokenAccounts.map(fromTokenAccountRaw)
+  };
+}
+
+export function toAccountRaw({
+  currency,
+  operations,
+  pendingOperations,
+  unit,
+  lastSyncDate,
+  balance,
+  tokenAccounts,
+  ...acc
+}: Account): AccountRaw {
+  return {
+    ...acc,
+    operations: operations.map(toOperationRaw),
+    pendingOperations: pendingOperations.map(toOperationRaw),
+    currencyId: currency.id,
+    unitMagnitude: unit.magnitude,
+    lastSyncDate: lastSyncDate.toISOString(),
+    balance: balance.toString(),
+    tokenAccounts: tokenAccounts && tokenAccounts.map(toTokenAccountRaw)
+  };
+}

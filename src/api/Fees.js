@@ -1,7 +1,7 @@
 // @flow
 import invariant from "invariant";
+import { FeeEstimationFailed } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "../types";
-import { FeeEstimationFailed } from "../errors";
 import { makeLRUCache } from "../cache";
 import { blockchainBaseURL } from "./Ledger";
 import network from "../network";

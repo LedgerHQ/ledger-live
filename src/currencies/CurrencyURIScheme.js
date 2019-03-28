@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
 import type { CryptoCurrency } from "../types";

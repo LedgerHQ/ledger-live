@@ -37,7 +37,7 @@ export const getFeeItems = async (
     const feePerByte = BigNumber(Math.ceil(fees[key] / 1000));
     const blockCount = parseInt(key, 10);
     if (blockCount === defaultBlockCount) defaultFeePerByte = feePerByte;
-    if (!isNaN(blockCount) && !feePerByte.isNaN()) {
+    if (!Number.isNaN(blockCount) && !feePerByte.isNaN()) {
       items.push({
         key,
         label: labels[blockCount] || (

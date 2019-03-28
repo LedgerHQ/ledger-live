@@ -2,24 +2,53 @@
 
 import { BigNumber } from "bignumber.js";
 import { getWalletName } from "../account";
-import type { Account } from "../types";
-import { InvalidAddress } from "../errors";
+import type { Account, TokenAccount } from "../types";
 import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
-import {
-  libcoreAmountToBigNumber,
-  bigNumberToLibcoreAmount
-} from "./buildBigNumber";
-import { isValidRecipient } from "./isValidRecipient";
+import { libcoreAmountToBigNumber } from "./buildBigNumber";
+import * as buildTransaction from "./buildTransaction";
+import type { Transaction } from "./buildTransaction";
 
-type F = ({ account: Account, transaction: * }) => Promise<BigNumber>;
+export type Input = {
+  account: Account,
+  tokenAccount?: ?TokenAccount,
+  transaction: Transaction
+};
+
+type F = Input => Promise<BigNumber>;
+
+// NB might regroup later by family
+
+async function bitcoin(arg: *) {
+  const builded = await buildTransaction.bitcoin(arg);
+  if (!builded) return;
+  const feesAmount = await builded.getFees();
+  if (!feesAmount) {
+    throw new Error("getFeesForTransaction: fees should not be undefined");
+  }
+  const fees = await libcoreAmountToBigNumber(feesAmount);
+  return fees;
+}
+
+async function ethereum(arg: *) {
+  const builded = await buildTransaction.ethereum(arg);
+  if (!builded) return;
+  const gasPrice = await libcoreAmountToBigNumber(await builded.getGasPrice());
+  const gasLimit = await libcoreAmountToBigNumber(await builded.getGasLimit());
+  return gasPrice.times(gasLimit);
+}
+
+const byFamily = {
+  bitcoin,
+  ethereum
+};
 
 export const getFeesForTransaction: F = withLibcoreF(
-  core => async ({ account, transaction }) => {
+  core => async ({ account, tokenAccount, transaction }) => {
     try {
-      const { derivationMode, currency, xpub, index } = account;
+      const { derivationMode, currency } = account;
       const walletName = getWalletName(account);
 
       const coreWallet = await getOrCreateWallet({
@@ -32,53 +61,24 @@ export const getFeesForTransaction: F = withLibcoreF(
       const coreAccount = await getOrCreateAccount({
         core,
         coreWallet,
-        index,
-        xpub
+        account
       });
 
-      const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
+      const coreCurrency = await coreWallet.getCurrency();
 
-      const walletCurrency = await coreWallet.getCurrency();
-
-      const amount = await bigNumberToLibcoreAmount(
+      const f = byFamily[currency.family];
+      if (!f) throw new Error("currency " + currency.id + " not supported");
+      let fees = await f({
+        account,
+        tokenAccount,
         core,
-        walletCurrency,
-        BigNumber(transaction.amount)
-      );
-
-      const feesPerByte = await bigNumberToLibcoreAmount(
-        core,
-        walletCurrency,
-        BigNumber(transaction.feePerByte)
-      );
-
-      const isPartial = true;
-      const transactionBuilder = await bitcoinLikeAccount.buildTransaction(
-        isPartial
-      );
-
-      const isValid = await isValidRecipient({
-        currency: account.currency,
-        recipient: transaction.recipient
+        coreAccount,
+        coreCurrency,
+        transaction,
+        isPartial: true,
+        isCancelled: () => false
       });
-
-      if (isValid !== null) {
-        throw new InvalidAddress("", { currencyName: currency.name });
-      }
-
-      await transactionBuilder.sendToAddress(amount, transaction.recipient);
-      await transactionBuilder.pickInputs(0, 0xffffff);
-      await transactionBuilder.setFeesPerByte(feesPerByte);
-
-      const builded = await transactionBuilder.build();
-
-      const feesAmount = await builded.getFees();
-      if (!feesAmount) {
-        throw new Error("getFeesForTransaction: fees should not be undefined");
-      }
-
-      let fees = await libcoreAmountToBigNumber(core, feesAmount);
-      if (fees.isLessThan(0)) {
+      if (!fees || fees.isLessThan(0)) {
         fees = BigNumber(0);
       }
       return fees;

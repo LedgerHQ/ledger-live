@@ -3,11 +3,11 @@
 import { Subject } from "rxjs";
 
 const intParser = (v: mixed): ?number => {
-  if (!isNaN(v)) return parseInt(v, 10);
+  if (!Number.isNaN(v)) return parseInt(v, 10);
 };
 
 const floatParser = (v: mixed): ?number => {
-  if (!isNaN(v)) return parseFloat(v);
+  if (!Number.isNaN(v)) return parseFloat(v);
 };
 
 const boolParser = (v: mixed): ?boolean => {
@@ -21,6 +21,8 @@ const stringParser = (v: mixed): ?string =>
 // This define the available environments
 const envParsers = {
   MANAGER_DEV_MODE: boolParser,
+  SCAN_FOR_INVALID_PATHS: boolParser,
+  EXPERIMENTAL_NATIVE_SEGWIT: boolParser,
   SHOW_LEGACY_NEW_ACCOUNT: boolParser,
   WITH_DEVICE_POLLING_DELAY: floatParser,
   FORCE_PROVIDER: intParser,
@@ -33,12 +35,16 @@ const envParsers = {
   EXPERIMENTAL_USB: boolParser,
   SYNC_MAX_CONCURRENT: intParser,
   MOCK: boolParser,
-  LEDGER_DEBUG_ALL_LANGS: boolParser
+  LEDGER_DEBUG_ALL_LANGS: boolParser,
+  LIBCORE_PASSWORD: stringParser,
+  DISABLE_TRANSACTION_BROADCAST: boolParser
 };
 
 // This define the default values
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   MANAGER_DEV_MODE: false,
+  SCAN_FOR_INVALID_PATHS: false,
+  EXPERIMENTAL_NATIVE_SEGWIT: false,
   SHOW_LEGACY_NEW_ACCOUNT: false,
   WITH_DEVICE_POLLING_DELAY: 500,
   FORCE_PROVIDER: 1,
@@ -53,7 +59,9 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   EXPERIMENTAL_USB: false,
   SYNC_MAX_CONCURRENT: 4,
   MOCK: false,
-  LEDGER_DEBUG_ALL_LANGS: false
+  LEDGER_DEBUG_ALL_LANGS: false,
+  LIBCORE_PASSWORD: "",
+  DISABLE_TRANSACTION_BROADCAST: false
 };
 
 // private local state
@@ -66,20 +74,17 @@ export const getAllEnvNames = (): EnvName[] => Object.keys(env);
 export const getAllEnvs = (): Env => ({ ...env });
 
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
-export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> => {
+export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> =>
   // $FlowFixMe flow don't seem to type proof it
-  return env[name];
-};
+  env[name];
 
-export const getEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> => {
+export const getEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> =>
   // $FlowFixMe flow don't seem to type proof it
-  return defaults[name];
-};
+  defaults[name];
 
-export const isEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> => {
+export const isEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> =>
   // $FlowFixMe flow don't seem to type proof it
-  return env[name] === defaults[name];
-};
+  env[name] === defaults[name];
 
 export const changes: Subject<{
   name: EnvName,
@@ -93,7 +98,7 @@ export const setEnv = <Name: EnvName>(name: Name, value: EnvValue<Name>) => {
   if (oldValue !== value) {
     // $FlowFixMe flow don't seem to type proof it
     env[name] = value;
-    // $FlowFixMe flow don’t seem to type proof it
+    // $FlowFixMe
     changes.next({ name, value, oldValue });
   }
 };

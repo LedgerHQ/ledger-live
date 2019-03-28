@@ -7,7 +7,7 @@
           "browsers": ["last 2 versions"],
           "node": "current"
         },
-	"forceAllTransforms": true
+        "forceAllTransforms": true
       }
     ],
     "flow",

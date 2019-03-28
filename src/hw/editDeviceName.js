@@ -1,7 +1,6 @@
 // @flow
 import Transport from "@ledgerhq/hw-transport";
-import { StatusCodes } from "@ledgerhq/errors";
-import { UserRefusedDeviceNameChange } from "@ledgerhq/errors";
+import { StatusCodes, UserRefusedDeviceNameChange } from "@ledgerhq/errors";
 
 export default async (transport: Transport<*>, name: string): Promise<void> => {
   await transport.send(0xe0, 0xd4, 0x00, 0x00, Buffer.from(name)).catch(e => {

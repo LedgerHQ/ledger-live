@@ -1,7 +1,7 @@
-//@flow
+// @flow
+import numeral from "numeral";
 import { BigNumber } from "bignumber.js";
 import type { Unit } from "../types";
-import numeral from "numeral";
 import { formatCurrencyUnit } from "./formatCurrencyUnit";
 
 /**

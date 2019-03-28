@@ -1,0 +1,1080 @@
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-02573206984464eb1f005530e842b5795f8ba80fd42d51813933c65f186a62fe-OUT",
+  "type": "OUT",
+  "senders": [
+    "1GxBuBZvoWrGLn8rXW2WGTnbcfvDim8aFt",
+    "1JiKcV8nCzy9ZoMPNSBfyEfT1C4EKsnTEz",
+    "154sdLJ64yL17oYGASEYm8HPBMSwvCLc3Y",
+    "1HhgQxZym48ZLiFRttUdMc4GjqDw5m3swP",
+    "1e3Q4XiZ9GhLRsUXPnBCEMd83RFj56BEt"
+  ],
+  "recipients": [
+    "1FVc8ULpJDN2VwWNT31oXNbY3aUsNBYCRp"
+  ],
+  "blockHeight": 427854,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "02573206984464eb1f005530e842b5795f8ba80fd42d51813933c65f186a62fe",
+  "value": "12820",
+  "fee": "6000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-034bf3a97e7185086924909c0eb1e83daf26791ae64f8eacf8dcf0072d00fbea-OUT",
+  "type": "OUT",
+  "senders": [
+    "1J3J6EvPrv8q6AC3VCjWV45Uf3nssNMRtH",
+    "1J3J6EvPrv8q6AC3VCjWV45Uf3nssNMRtH",
+    "13vKxXzHXXd8HquAYdpkJoi9ULVXUgfpS5",
+    "1M21Wx1nGrHMPaz52N2En7c624nzL4MYTk"
+  ],
+  "recipients": [
+    "19AVq5t6W9GPSzmmA4xYcHFXUYEioMo1sV"
+  ],
+  "blockHeight": 341617,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "034bf3a97e7185086924909c0eb1e83daf26791ae64f8eacf8dcf0072d00fbea",
+  "value": "207000",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-07598e75e94a27a8399c55b00a27d49bef8969389f071ae26d037c369efdea5c-OUT",
+  "type": "OUT",
+  "senders": [
+    "1DUrqK4hj6vNNUTWXADpbqyjVWUYFD7xTZ"
+  ],
+  "recipients": [
+    "3K5MSucbSj2u7Q1m2JXnKXcoySXUJf83hq"
+  ],
+  "blockHeight": 526559,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "07598e75e94a27a8399c55b00a27d49bef8969389f071ae26d037c369efdea5c",
+  "value": "131070",
+  "fee": "11232"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-081616e810a4fed1286b22573da389990427c762280bcae549b8946e37d60a4b-IN",
+  "type": "IN",
+  "senders": [
+    "16fnykmLwpL3Tf7Nse4MxoB7G1t4EpsPNc"
+  ],
+  "recipients": [
+    "1Gka4JdwhLxRwXaC6oLNH4YuEogeeSwqW7"
+  ],
+  "blockHeight": 427566,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "081616e810a4fed1286b22573da389990427c762280bcae549b8946e37d60a4b",
+  "value": "278090",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-0892fc66c0a51b59840f8f3e3ca96cde4c5cc088f2d194d78ad65e07d2d7f421-OUT",
+  "type": "OUT",
+  "senders": [
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA"
+  ],
+  "recipients": [
+    "12wBNnixDMhAHgsYhfbnMW77ZjoQWD8Zx3",
+    "1CQH7Hp9nNQVDcKtFVwbA8tqPMNWDBvqE3"
+  ],
+  "blockHeight": 333443,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "0892fc66c0a51b59840f8f3e3ca96cde4c5cc088f2d194d78ad65e07d2d7f421",
+  "value": "130000",
+  "fee": "1000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-15219eccc814af32bf4e2a3ef5ed698a26b130cd15d924972c0adcbbc7be6d76-IN",
+  "type": "IN",
+  "senders": [
+    "12SyNjqZbgWeLYsvGWbUd1LJUXiLZsX7fZ"
+  ],
+  "recipients": [
+    "144gUAoVG1aRpYxQMySn3zZtPVYPiJuYYq",
+    "143GBLfwMbv6aJavYYKqWJY5PZ7PyMtWuQ"
+  ],
+  "blockHeight": 541378,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "15219eccc814af32bf4e2a3ef5ed698a26b130cd15d924972c0adcbbc7be6d76",
+  "value": "16000",
+  "fee": "2712"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-15e7cf0ff164bb294e1a976fdef26149ea28f0db8a417d2f5214dd37c2da6296-IN",
+  "type": "IN",
+  "senders": [
+    "12qXU1zQ8pQuRS6p1k9Wc8sSDyPhPtsZe2",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "15e7cf0ff164bb294e1a976fdef26149ea28f0db8a417d2f5214dd37c2da6296",
+  "value": "200000",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-15e7cf0ff164bb294e1a976fdef26149ea28f0db8a417d2f5214dd37c2da6296-OUT",
+  "type": "OUT",
+  "senders": [
+    "12qXU1zQ8pQuRS6p1k9Wc8sSDyPhPtsZe2",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "15e7cf0ff164bb294e1a976fdef26149ea28f0db8a417d2f5214dd37c2da6296",
+  "value": "213090",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-19658e1b006757a1f4300256b987007c0799ac5318657c528d6571d2cf36d83a-IN",
+  "type": "IN",
+  "senders": [
+    "1Gka4JdwhLxRwXaC6oLNH4YuEogeeSwqW7"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "19658e1b006757a1f4300256b987007c0799ac5318657c528d6571d2cf36d83a",
+  "value": "100000",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-19658e1b006757a1f4300256b987007c0799ac5318657c528d6571d2cf36d83a-OUT",
+  "type": "OUT",
+  "senders": [
+    "1Gka4JdwhLxRwXaC6oLNH4YuEogeeSwqW7"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "19658e1b006757a1f4300256b987007c0799ac5318657c528d6571d2cf36d83a",
+  "value": "107910",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-1efd4fb221a669fd2e3374ce1299fccec32f15524190f387a28d1f2ad904b9a4-IN",
+  "type": "IN",
+  "senders": [
+    "1B1wDxGPrfqWSi4qvQvaPdunD6kon3CeDG"
+  ],
+  "recipients": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "1efd4fb221a669fd2e3374ce1299fccec32f15524190f387a28d1f2ad904b9a4",
+  "value": "100000",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-1efd4fb221a669fd2e3374ce1299fccec32f15524190f387a28d1f2ad904b9a4-OUT",
+  "type": "OUT",
+  "senders": [
+    "1B1wDxGPrfqWSi4qvQvaPdunD6kon3CeDG"
+  ],
+  "recipients": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "1efd4fb221a669fd2e3374ce1299fccec32f15524190f387a28d1f2ad904b9a4",
+  "value": "107910",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-226a267701ccf308aed00835e5c0a7121ba781a0abfddaa6f10914e841a11217-IN",
+  "type": "IN",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "226a267701ccf308aed00835e5c0a7121ba781a0abfddaa6f10914e841a11217",
+  "value": "200000",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-226a267701ccf308aed00835e5c0a7121ba781a0abfddaa6f10914e841a11217-OUT",
+  "type": "OUT",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "226a267701ccf308aed00835e5c0a7121ba781a0abfddaa6f10914e841a11217",
+  "value": "207910",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-255b2fb1a1e28525d4d1b7a44c0538a064f2320b3149fa0fcfb31f2b511dc4fe-OUT",
+  "type": "OUT",
+  "senders": [
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA"
+  ],
+  "recipients": [
+    "1CQH7Hp9nNQVDcKtFVwbA8tqPMNWDBvqE3"
+  ],
+  "blockHeight": 334586,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "255b2fb1a1e28525d4d1b7a44c0538a064f2320b3149fa0fcfb31f2b511dc4fe",
+  "value": "111000",
+  "fee": "1000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-2c312153a752e7e3f011ceefe977400212b548773dc53eb617feec8e2025e313-IN",
+  "type": "IN",
+  "senders": [
+    "1F1yohSMP4TBgeJNKPWCSeLDjCRgDCAXsf"
+  ],
+  "recipients": [
+    "1Bsv7mspy7do7hL6gNRhurusW5yiYqmnsH",
+    "13Pq1oT21tEGrBdWDbnJg31PS5cjpZwKwJ"
+  ],
+  "blockHeight": 542409,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "2c312153a752e7e3f011ceefe977400212b548773dc53eb617feec8e2025e313",
+  "value": "90000",
+  "fee": "2260"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-2d37562f17d3976aee8a64e67125b0d6350bb10394c4d443d34b4c30b4c10b28-IN",
+  "type": "IN",
+  "senders": [
+    "1DTxdeWvLfzgAkCNRNVkPRrfECxUvqsK5F"
+  ],
+  "recipients": [
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA",
+    "1DTxdeWvLfzgAkCNRNVkPRrfECxUvqsK5F"
+  ],
+  "blockHeight": 329395,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "2d37562f17d3976aee8a64e67125b0d6350bb10394c4d443d34b4c30b4c10b28",
+  "value": "130000",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-522630d953a54f321edf68e55d8505f8ef0a70e0d9e86fc51686ab66fbc8749f-OUT",
+  "type": "OUT",
+  "senders": [
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA"
+  ],
+  "recipients": [
+    "1BitcoinEaterAddressDontSendf59kuE"
+  ],
+  "blockHeight": 332496,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "522630d953a54f321edf68e55d8505f8ef0a70e0d9e86fc51686ab66fbc8749f",
+  "value": "20000",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-523ad79b96a14a6779d388346679dc8adba69dca7a4d61b3894d08383c2db492-IN",
+  "type": "IN",
+  "senders": [
+    "12qXU1zQ8pQuRS6p1k9Wc8sSDyPhPtsZe2",
+    "1GxBuBZvoWrGLn8rXW2WGTnbcfvDim8aFt",
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "recipients": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "523ad79b96a14a6779d388346679dc8adba69dca7a4d61b3894d08383c2db492",
+  "value": "100000",
+  "fee": "18270"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-523ad79b96a14a6779d388346679dc8adba69dca7a4d61b3894d08383c2db492-OUT",
+  "type": "OUT",
+  "senders": [
+    "12qXU1zQ8pQuRS6p1k9Wc8sSDyPhPtsZe2",
+    "1GxBuBZvoWrGLn8rXW2WGTnbcfvDim8aFt",
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "recipients": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "523ad79b96a14a6779d388346679dc8adba69dca7a4d61b3894d08383c2db492",
+  "value": "118270",
+  "fee": "18270"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-62223061f7cb9c052ecc6d9d3aa7f905c2b0f4901e7a505747a01641722de42e-OUT",
+  "type": "OUT",
+  "senders": [
+    "19Lf9XiMvigo6ePi3hUe7TNQHeWMWSBPj2"
+  ],
+  "recipients": [
+    "1FuG75nNbYtemH8kLD4pPUyJn89Finckb9"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "62223061f7cb9c052ecc6d9d3aa7f905c2b0f4901e7a505747a01641722de42e",
+  "value": "17910",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-643bc5aaa2767cabd7e07527af4734de1ccd13701dab188738bf5027e406c53a-IN",
+  "type": "IN",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "643bc5aaa2767cabd7e07527af4734de1ccd13701dab188738bf5027e406c53a",
+  "value": "190000",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-643bc5aaa2767cabd7e07527af4734de1ccd13701dab188738bf5027e406c53a-OUT",
+  "type": "OUT",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "643bc5aaa2767cabd7e07527af4734de1ccd13701dab188738bf5027e406c53a",
+  "value": "197910",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-7446e1ec478c2fe5012cbac6426c3254bae2dfd82e8612302b093772a3f78180-IN",
+  "type": "IN",
+  "senders": [
+    "3B2KVTF9wkufvdT5Tf13V2zVA1sUL2Do24",
+    "3D3anNPHEmGkXDTygdH3hvmHTob8Yk6qQQ"
+  ],
+  "recipients": [
+    "1DUrqK4hj6vNNUTWXADpbqyjVWUYFD7xTZ",
+    "37SPNktYVKMZKKsnABfq8CVKK3iXyhEyMA"
+  ],
+  "blockHeight": 526559,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "7446e1ec478c2fe5012cbac6426c3254bae2dfd82e8612302b093772a3f78180",
+  "value": "131070",
+  "fee": "990"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-74f90104ca8a02c7bd4ffb96aadd4cca0b8250b48ab26b0dba0e3bf42b05c1f9-IN",
+  "type": "IN",
+  "senders": [
+    "16HBKhLAkBRFsnxTLLUix5vzJ2tGa1HqKk",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "74f90104ca8a02c7bd4ffb96aadd4cca0b8250b48ab26b0dba0e3bf42b05c1f9",
+  "value": "200000",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-74f90104ca8a02c7bd4ffb96aadd4cca0b8250b48ab26b0dba0e3bf42b05c1f9-OUT",
+  "type": "OUT",
+  "senders": [
+    "16HBKhLAkBRFsnxTLLUix5vzJ2tGa1HqKk",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "74f90104ca8a02c7bd4ffb96aadd4cca0b8250b48ab26b0dba0e3bf42b05c1f9",
+  "value": "213090",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-762ff05a44abf82ea3be797e3ba7701f2f077f29bcd1eab89d6a38914a8b70d4-IN",
+  "type": "IN",
+  "senders": [
+    "14J5pE6wL1RrdDEXDF7YBQEC6Xv2u2PFgy"
+  ],
+  "recipients": [
+    "1MNF5RSaabFwcbtJirJwKnDytsXXEsVsNb",
+    "18hmJcFALzjH2scMBZEsCqk6xKGNHXsugY"
+  ],
+  "blockHeight": 343278,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "762ff05a44abf82ea3be797e3ba7701f2f077f29bcd1eab89d6a38914a8b70d4",
+  "value": "16924",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-7651784427d903792fb3fd8e649f8e0aa1afd4f645504442d1f09fae41d87574-IN",
+  "type": "IN",
+  "senders": [
+    "19g4Y5c8UQjXNr1jUaxDGAwCJvVR2GvZvm"
+  ],
+  "recipients": [
+    "1MVGa13XFvvpKGZdX389iU8b3qwtmAyrsJ",
+    "14GoiT88544wRZXnYDVsZvQgiUwvk2w2rA"
+  ],
+  "blockHeight": 344436,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "7651784427d903792fb3fd8e649f8e0aa1afd4f645504442d1f09fae41d87574",
+  "value": "10000",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-78aacf484f74e9880fb6158d8f4da2759ce1ee17513196dde0d584cc7fbbebb3-IN",
+  "type": "IN",
+  "senders": [
+    "1Pn3VjzeGEhjVSDTVaY7h5yK1VrGem6Km6"
+  ],
+  "recipients": [
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA",
+    "1DTxdeWvLfzgAkCNRNVkPRrfECxUvqsK5F"
+  ],
+  "blockHeight": 329412,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "78aacf484f74e9880fb6158d8f4da2759ce1ee17513196dde0d584cc7fbbebb3",
+  "value": "130000",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-7d35464c8dc0aeadfd97be6475b6d1c6b8982d0127c237ccc0d91579a6f64de2-OUT",
+  "type": "OUT",
+  "senders": [
+    "1JLvy1tbH1ztV3txZYJfdzke9gmtyRYJw9"
+  ],
+  "recipients": [
+    "1CfaunqrVpcXmpLheUVWeSP1KPsKDha1Nb"
+  ],
+  "blockHeight": 543931,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "7d35464c8dc0aeadfd97be6475b6d1c6b8982d0127c237ccc0d91579a6f64de2",
+  "value": "20000",
+  "fee": "6480"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-7ef8f3d70d4c152285ba68e804e7c91545dacc42c2f11d14ab697ca9bec757b5-OUT",
+  "type": "OUT",
+  "senders": [
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA"
+  ],
+  "recipients": [
+    "1AhN6rPdrMuKBGFDKR1k9A8SCLYaNgXhty"
+  ],
+  "blockHeight": 330568,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "7ef8f3d70d4c152285ba68e804e7c91545dacc42c2f11d14ab697ca9bec757b5",
+  "value": "101000",
+  "fee": "1000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-80a43d60a5cd11ee388b9345a085e28075ac4f3aee2cf78e743cc30c6819c441-IN",
+  "type": "IN",
+  "senders": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "recipients": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "80a43d60a5cd11ee388b9345a085e28075ac4f3aee2cf78e743cc30c6819c441",
+  "value": "90000",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-80a43d60a5cd11ee388b9345a085e28075ac4f3aee2cf78e743cc30c6819c441-OUT",
+  "type": "OUT",
+  "senders": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "recipients": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "80a43d60a5cd11ee388b9345a085e28075ac4f3aee2cf78e743cc30c6819c441",
+  "value": "97910",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-80a9028e0b62738cf530692e6e5211c2b1f05a9a7d237ba9562a0f99abb5f7e2-IN",
+  "type": "IN",
+  "senders": [
+    "32SfQrZLg41YtY1BdmW9BeUCtMmX3nRMJN"
+  ],
+  "recipients": [
+    "146emAmGumhnsT9nPCALU2JWeS4koxfFRB",
+    "3QAXfCXAWLhLQfFZ15mAUB7ytxaTStYcvk"
+  ],
+  "blockHeight": 526585,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "80a9028e0b62738cf530692e6e5211c2b1f05a9a7d237ba9562a0f99abb5f7e2",
+  "value": "13178",
+  "fee": "976"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-8e7f101fd730cf6fd4e2436f71730c4290b8b3cb5d8d9e03c94f920a332bf26f-OUT",
+  "type": "OUT",
+  "senders": [
+    "1Bsv7mspy7do7hL6gNRhurusW5yiYqmnsH"
+  ],
+  "recipients": [
+    "1CfaunqrVpcXmpLheUVWeSP1KPsKDha1Nb"
+  ],
+  "blockHeight": 542409,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "8e7f101fd730cf6fd4e2436f71730c4290b8b3cb5d8d9e03c94f920a332bf26f",
+  "value": "90000",
+  "fee": "7760"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-92ad8cdad3a71f113a29a8031f84f320ce2e1032f09ac900f624e5a78266db50-OUT",
+  "type": "OUT",
+  "senders": [
+    "144gUAoVG1aRpYxQMySn3zZtPVYPiJuYYq"
+  ],
+  "recipients": [
+    "1CfaunqrVpcXmpLheUVWeSP1KPsKDha1Nb"
+  ],
+  "blockHeight": 541378,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "92ad8cdad3a71f113a29a8031f84f320ce2e1032f09ac900f624e5a78266db50",
+  "value": "16000",
+  "fee": "1536"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-9c7ac461276685f0b51548496bbea904deb5828d0a6dd9a11333823e8f1c69ea-IN",
+  "type": "IN",
+  "senders": [
+    "12RwCfAz8zsKMDwStBQXJEUCuA2GiP8oJM"
+  ],
+  "recipients": [
+    "1B1wDxGPrfqWSi4qvQvaPdunD6kon3CeDG",
+    "1HNxVbfyJha9m5ZyB85k3LVMxpy2bLRCZN"
+  ],
+  "blockHeight": 567483,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "9c7ac461276685f0b51548496bbea904deb5828d0a6dd9a11333823e8f1c69ea",
+  "value": "600",
+  "fee": "678"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-9cb9b5e5aa9b891f041437181ba00de70c33b0b5f33190bcff8e82e537341148-OUT",
+  "type": "OUT",
+  "senders": [
+    "1MVGa13XFvvpKGZdX389iU8b3qwtmAyrsJ"
+  ],
+  "recipients": [
+    "1PbwJLp6DKc1DzqTx1VmYBQmMfcvFs5YKb"
+  ],
+  "blockHeight": 347286,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "9cb9b5e5aa9b891f041437181ba00de70c33b0b5f33190bcff8e82e537341148",
+  "value": "10000",
+  "fee": "1000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-a1954a1f64dbc58b66fccbf9bdd82ea91569b1ac93753aae0101b124cbb29707-OUT",
+  "type": "OUT",
+  "senders": [
+    "1Jvsixwb9y4WTn9zEbhb7ykhcwZ5LAjBFy"
+  ],
+  "recipients": [
+    "1CfaunqrVpcXmpLheUVWeSP1KPsKDha1Nb"
+  ],
+  "blockHeight": 541104,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "a1954a1f64dbc58b66fccbf9bdd82ea91569b1ac93753aae0101b124cbb29707",
+  "value": "100000",
+  "fee": "4560"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-a2ad416a568515c4e1d051875eac0c21f10e8027c31e74cd237e213c7e779109-OUT",
+  "type": "OUT",
+  "senders": [
+    "146emAmGumhnsT9nPCALU2JWeS4koxfFRB"
+  ],
+  "recipients": [
+    "17WRjamox6VhTUaHsTWfFnMNDYHvwCtWio"
+  ],
+  "blockHeight": 526585,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "a2ad416a568515c4e1d051875eac0c21f10e8027c31e74cd237e213c7e779109",
+  "value": "13178",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-ab2651099a28dbf689f4c1cf74a506dc64148a8c3a933b99d78aab52a01d3f70-OUT",
+  "type": "OUT",
+  "senders": [
+    "1B1wDxGPrfqWSi4qvQvaPdunD6kon3CeDG"
+  ],
+  "recipients": [
+    "bc1qeeskpmdyr56059v3a5azj7nh2g5vn9k7kaegnm"
+  ],
+  "blockHeight": 567572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "ab2651099a28dbf689f4c1cf74a506dc64148a8c3a933b99d78aab52a01d3f70",
+  "value": "600",
+  "fee": "188"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-ac11f7ba0902a345abbf9c444772d7d8bb3d312c08fe79dac1400397c8e13e33-IN",
+  "type": "IN",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto",
+    "1DzVLMA4HzjXPAr6aZoaacDPHXXntsZ2zL"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "ac11f7ba0902a345abbf9c444772d7d8bb3d312c08fe79dac1400397c8e13e33",
+  "value": "200000",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-ac11f7ba0902a345abbf9c444772d7d8bb3d312c08fe79dac1400397c8e13e33-OUT",
+  "type": "OUT",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto",
+    "1DzVLMA4HzjXPAr6aZoaacDPHXXntsZ2zL"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "ac11f7ba0902a345abbf9c444772d7d8bb3d312c08fe79dac1400397c8e13e33",
+  "value": "213090",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-ac37542b2fc8840e2278c5ed6c005fb91c6917d0dbb36d7d61f3c1630a2a313e-IN",
+  "type": "IN",
+  "senders": [
+    "1CvKjcHGcWmBLbFuL6891De5mFAY4v4m7z",
+    "1e3Q4XiZ9GhLRsUXPnBCEMd83RFj56BEt",
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o"
+  ],
+  "recipients": [
+    "1B1wDxGPrfqWSi4qvQvaPdunD6kon3CeDG"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "ac37542b2fc8840e2278c5ed6c005fb91c6917d0dbb36d7d61f3c1630a2a313e",
+  "value": "120000",
+  "fee": "18270"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-ac37542b2fc8840e2278c5ed6c005fb91c6917d0dbb36d7d61f3c1630a2a313e-OUT",
+  "type": "OUT",
+  "senders": [
+    "1CvKjcHGcWmBLbFuL6891De5mFAY4v4m7z",
+    "1e3Q4XiZ9GhLRsUXPnBCEMd83RFj56BEt",
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o"
+  ],
+  "recipients": [
+    "1B1wDxGPrfqWSi4qvQvaPdunD6kon3CeDG"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "ac37542b2fc8840e2278c5ed6c005fb91c6917d0dbb36d7d61f3c1630a2a313e",
+  "value": "138270",
+  "fee": "18270"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-b6e4fe35c91b4fa1cbb3c2aa60ee8375bc523009c40848956a50ca1910f9fd9f-OUT",
+  "type": "OUT",
+  "senders": [
+    "1BMZTqDtNogSEs1oZoGxRqfR6jS2tVxvHX"
+  ],
+  "recipients": [
+    "3AdkWezoZmiNh8VYLXiGFtn1cjKLYDEu7M"
+  ],
+  "blockHeight": 427604,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "b6e4fe35c91b4fa1cbb3c2aa60ee8375bc523009c40848956a50ca1910f9fd9f",
+  "value": "90000",
+  "fee": "18000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-bbcd80db32bcd7a4005f94ff30e857ad6e54a38d65d1b704fa20add94922f6cc-IN",
+  "type": "IN",
+  "senders": [
+    "1P7U2qp3bkpfCchpcgbqJvK8hm52nq7k22",
+    "1HWtpg1LS6ndMSjEDzZJUznq6NtrowLGBb"
+  ],
+  "recipients": [
+    "1JLvy1tbH1ztV3txZYJfdzke9gmtyRYJw9",
+    "12D8G4UJWqvkuwJ9zw4dSqG7gde7Hmf7Sv"
+  ],
+  "blockHeight": 543931,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "bbcd80db32bcd7a4005f94ff30e857ad6e54a38d65d1b704fa20add94922f6cc",
+  "value": "20000",
+  "fee": "7106"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-be443ef0b78d98719741ce9f4811c152dc8644b9beb50b5713a257d8d2acd1ee-IN",
+  "type": "IN",
+  "senders": [
+    "1DzVLMA4HzjXPAr6aZoaacDPHXXntsZ2zL",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "be443ef0b78d98719741ce9f4811c152dc8644b9beb50b5713a257d8d2acd1ee",
+  "value": "244000",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-be443ef0b78d98719741ce9f4811c152dc8644b9beb50b5713a257d8d2acd1ee-OUT",
+  "type": "OUT",
+  "senders": [
+    "1DzVLMA4HzjXPAr6aZoaacDPHXXntsZ2zL",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427567,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "be443ef0b78d98719741ce9f4811c152dc8644b9beb50b5713a257d8d2acd1ee",
+  "value": "257090",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-c7befaae8e60f3c5b5c9a6d26adc053393526a0569b87881db181d8a935641fd-IN",
+  "type": "IN",
+  "senders": [
+    "19Lf9XiMvigo6ePi3hUe7TNQHeWMWSBPj2"
+  ],
+  "recipients": [
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "c7befaae8e60f3c5b5c9a6d26adc053393526a0569b87881db181d8a935641fd",
+  "value": "100000",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-c7befaae8e60f3c5b5c9a6d26adc053393526a0569b87881db181d8a935641fd-OUT",
+  "type": "OUT",
+  "senders": [
+    "19Lf9XiMvigo6ePi3hUe7TNQHeWMWSBPj2"
+  ],
+  "recipients": [
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "c7befaae8e60f3c5b5c9a6d26adc053393526a0569b87881db181d8a935641fd",
+  "value": "107910",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-d6f136091b72cb4fcacce00c76cf6244c184f5654e4c554926bc2de072fc5def-IN",
+  "type": "IN",
+  "senders": [
+    "1DTxdeWvLfzgAkCNRNVkPRrfECxUvqsK5F"
+  ],
+  "recipients": [
+    "1Ak8PffB2meyfYnbXZR9EGfLfFZVpzJvQP",
+    "1DTxdeWvLfzgAkCNRNVkPRrfECxUvqsK5F"
+  ],
+  "blockHeight": 329241,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "d6f136091b72cb4fcacce00c76cf6244c184f5654e4c554926bc2de072fc5def",
+  "value": "130000",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-d9f76c1c2338eb2010255c16e7cbdf72c1263e81c08a465b5d1d76a36d9980dc-IN",
+  "type": "IN",
+  "senders": [
+    "1DTxdeWvLfzgAkCNRNVkPRrfECxUvqsK5F"
+  ],
+  "recipients": [
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA",
+    "1DTxdeWvLfzgAkCNRNVkPRrfECxUvqsK5F"
+  ],
+  "blockHeight": 330863,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "d9f76c1c2338eb2010255c16e7cbdf72c1263e81c08a465b5d1d76a36d9980dc",
+  "value": "150000",
+  "fee": "10000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-ddf793869ba325d06882b78a8c599ef8d512d01d716a8fdd30e51a9e268d6820-IN",
+  "type": "IN",
+  "senders": [
+    "15FSKJYDDFzsbPAxVX6RaEswoRon9He6Nc"
+  ],
+  "recipients": [
+    "1K47dfy7224ay3icqt4feqwPDujn7kf9W2",
+    "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA"
+  ],
+  "blockHeight": 329232,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "ddf793869ba325d06882b78a8c599ef8d512d01d716a8fdd30e51a9e268d6820",
+  "value": "130000",
+  "fee": "1000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-decb378bf9c7274ec4cb2a59a33e68c51cc5b5baab0d30f3ca87982a85bde396-IN",
+  "type": "IN",
+  "senders": [
+    "1MwByEaAmNd6yDnxaUn5wfYGwoAVveU2hX",
+    "18DAL997nDSWxntoHTaSk7989EQfyZ1SBJ"
+  ],
+  "recipients": [
+    "1Jvsixwb9y4WTn9zEbhb7ykhcwZ5LAjBFy",
+    "1ButjiRcBBKPGQSXKPNFLwppNhwWc8HFKg"
+  ],
+  "blockHeight": 541104,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "decb378bf9c7274ec4cb2a59a33e68c51cc5b5baab0d30f3ca87982a85bde396",
+  "value": "100000",
+  "fee": "4114"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-ec603d2e334a4b6770d009a80afde644f3825e3beff6dfa4d86794f26f9d3e34-OUT",
+  "type": "OUT",
+  "senders": [
+    "1MNF5RSaabFwcbtJirJwKnDytsXXEsVsNb"
+  ],
+  "recipients": [
+    "12FCW1ZsJj7a8WP2KSFj9NshngmvPfstwH"
+  ],
+  "blockHeight": 343868,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "ec603d2e334a4b6770d009a80afde644f3825e3beff6dfa4d86794f26f9d3e34",
+  "value": "16924",
+  "fee": "1000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-f0ac3836d27b29141a197ecd517678202a385d8429fffec97f04bca4149c47e6-OUT",
+  "type": "OUT",
+  "senders": [
+    "1Ak8PffB2meyfYnbXZR9EGfLfFZVpzJvQP"
+  ],
+  "recipients": [
+    "1AhN6rPdrMuKBGFDKR1k9A8SCLYaNgXhty"
+  ],
+  "blockHeight": 330584,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "f0ac3836d27b29141a197ecd517678202a385d8429fffec97f04bca4149c47e6",
+  "value": "101000",
+  "fee": "1000"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-f6bb5effa3f17850709cb0b14b9e72c5137af5cf305fcdac713421901dd96dda-IN",
+  "type": "IN",
+  "senders": [
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "f6bb5effa3f17850709cb0b14b9e72c5137af5cf305fcdac713421901dd96dda",
+  "value": "100000",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-f6bb5effa3f17850709cb0b14b9e72c5137af5cf305fcdac713421901dd96dda-OUT",
+  "type": "OUT",
+  "senders": [
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o",
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "1GuMEkKyqqRz3jKZJPNxZNoJv72rRDm88o"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "f6bb5effa3f17850709cb0b14b9e72c5137af5cf305fcdac713421901dd96dda",
+  "value": "113090",
+  "fee": "13090"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-fbbd8d0552180b88f8457d979e340d94f7448da41a441833a2cc2dd9c2d50dc6-IN",
+  "type": "IN",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "fbbd8d0552180b88f8457d979e340d94f7448da41a441833a2cc2dd9c2d50dc6",
+  "value": "30000",
+  "fee": "7910"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:-fbbd8d0552180b88f8457d979e340d94f7448da41a441833a2cc2dd9c2d50dc6-OUT",
+  "type": "OUT",
+  "senders": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "recipients": [
+    "19a7HGg32ecPQo49rDeM2NSFJHPqrwSJto"
+  ],
+  "blockHeight": 427572,
+  "blockHash": null,
+  "accountId": "libcore:1:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj:",
+  "extra": {},
+  "hash": "fbbd8d0552180b88f8457d979e340d94f7448da41a441833a2cc2dd9c2d50dc6",
+  "value": "37910",
+  "fee": "7910"
+}

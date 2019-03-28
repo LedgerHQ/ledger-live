@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import type { Unit } from "../types";
 
 // remove the extra decimals that can't be represented in unit
@@ -11,10 +11,10 @@ export const chopCurrencyUnitDecimals = (
   unit: Unit,
   valueString: string
 ): string => {
-  let str = "",
-    decimals = -1;
+  let str = "";
+  let decimals = -1;
   for (let i = 0; i < valueString.length; i++) {
-    let c = valueString[i];
+    const c = valueString[i];
     if (decimals >= 0 && /[0-9]/.test(c)) {
       decimals++;
       if (decimals > unit.magnitude) {

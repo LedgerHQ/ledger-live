@@ -1,17 +1,27 @@
 // @flow
-import Btc from "@ledgerhq/hw-app-btc";
+import invariant from "invariant";
 import Transport from "@ledgerhq/hw-transport";
-import type { Core, CoreWallet } from "./types";
+import type { Core, CoreWallet, CoreAccount } from "./types";
+import type { CryptoCurrency } from "../types";
+import type { DerivationMode } from "../derivation";
+import getAddress from "../hw/getAddress";
 
-export async function createAccountFromDevice({
-  core,
-  wallet,
-  transport
-}: {
+type F = ({
   core: Core,
   wallet: CoreWallet,
-  transport: Transport<*>
-}) {
+  transport: Transport<*>,
+  currency: CryptoCurrency,
+  index: number,
+  derivationMode: DerivationMode
+}) => Promise<CoreAccount>;
+
+export const createAccountFromDevice: F = async ({
+  core,
+  wallet,
+  transport,
+  currency,
+  derivationMode
+}) => {
   const accountCreationInfos = await wallet.getNextAccountCreationInfo();
   const chainCodes = await accountCreationInfos.getChainCodes();
   const publicKeys = await accountCreationInfos.getPublicKeys();
@@ -19,14 +29,17 @@ export async function createAccountFromDevice({
   const derivations = await accountCreationInfos.getDerivations();
   const owners = await accountCreationInfos.getOwners();
 
-  const hwApp = new Btc(transport);
-
   await derivations.reduce(
     (promise, derivation) =>
       promise.then(async () => {
-        const { publicKey, chainCode } = await hwApp.getWalletPublicKey(
-          derivation
-        );
+        const { publicKey, chainCode } = await getAddress(transport, {
+          currency,
+          path: derivation,
+          derivationMode,
+          askChainCode: true,
+          skipAppFailSafeCheck: true
+        });
+        invariant(chainCode, "createAccountFromDevice: chainCode is required");
         publicKeys.push(publicKey);
         chainCodes.push(chainCode);
       }),
@@ -40,6 +53,6 @@ export async function createAccountFromDevice({
     publicKeys,
     chainCodes
   );
-
-  return wallet.newAccountWithInfo(newAccountCreationInfos);
-}
+  const account = await wallet.newAccountWithInfo(newAccountCreationInfos);
+  return account;
+};

@@ -1,11 +1,10 @@
 // @flow
 import invariant from "invariant";
-import type Transport from "@ledgerhq/hw-transport";
-import type { CryptoCurrency } from "../../types";
 import {
   DeviceAppVerifyNotSupported,
   UserRefusedAddress
 } from "@ledgerhq/errors";
+import type { Resolver } from "./types";
 
 import bitcoin from "./btc";
 import ethereum from "./ethereum";
@@ -17,15 +16,11 @@ export const perFamily: { [_: string]: Resolver } = {
   ripple
 };
 
-export default (
-  transport: Transport<*>,
-  currency: CryptoCurrency,
-  path: string,
-  verify: boolean = false
-): Promise<Result> => {
+const dispatch: Resolver = (transport, opts) => {
+  const { currency, verify } = opts;
   const getAddress = perFamily[currency.family];
   invariant(getAddress, `getAddress is not implemented for ${currency.id}`);
-  return getAddress(transport, currency, path, verify).catch(e => {
+  return getAddress(transport, opts).catch(e => {
     if (e && e.name === "TransportStatusError") {
       if (e.statusCode === 0x6b00 && verify) {
         throw new DeviceAppVerifyNotSupported();
@@ -38,15 +33,4 @@ export default (
   });
 };
 
-type Result = {
-  address: string,
-  path: string,
-  publicKey: string
-};
-
-type Resolver = (
-  transport: Transport<*>,
-  currency: CryptoCurrency,
-  path: string,
-  verify: boolean
-) => Promise<Result>;
+export default dispatch;

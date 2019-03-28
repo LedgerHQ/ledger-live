@@ -132,22 +132,23 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
     };
     accountCVstableCache[stableHash] = stable;
     return stable;
-  } else {
-    const lastStable = last(stable.history);
-    if (lastPoint.countervalue.eq(lastStable.countervalue)) {
-      return stable;
-    }
-    const copy = {
-      ...stable,
-      history: stable.history.slice(0, -1).concat(lastPoint)
-    };
-    accountCVstableCache[stableHash] = copy;
-    return copy;
   }
+
+  const lastStable = last(stable.history);
+  if (lastPoint.countervalue.eq(lastStable.countervalue)) {
+    return stable;
+  }
+  const copy = {
+    ...stable,
+    history: stable.history.slice(0, -1).concat(lastPoint)
+  };
+  accountCVstableCache[stableHash] = copy;
+  return copy;
 };
 
 export const getBalanceHistoryWithCountervalue = getBHWCV;
 
+const portfolioMemo: { [_: *]: Portfolio } = {};
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
@@ -159,32 +160,77 @@ export function getPortfolio(
   range: PortfolioRange,
   calc: (Account, BigNumber, Date) => ?BigNumber
 ): Portfolio {
-  const balanceHistory = getDates(range).map(date => ({ date, value: ZERO }));
   const availableAccounts = [];
   const unavailableAccounts = [];
+  const histories = [];
 
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
     const r = getBalanceHistoryWithCountervalue(account, range, calc);
     if (r.countervalueAvailable) {
       availableAccounts.push(account);
-      for (let j = 0; j < r.history.length; j++) {
-        const res = balanceHistory[j];
-        res.value = res.value.plus(r.history[j].countervalue);
-      }
+      histories.push(r.history);
     } else {
       unavailableAccounts.push(account);
     }
   }
+
   const unavailableCurrencies = [
     ...new Set(unavailableAccounts.map(a => a.currency))
   ];
-  return {
+
+  const balanceAvailable =
+    accounts.length === 0 || availableAccounts.length > 0;
+
+  const memo = portfolioMemo[range];
+  if (memo && memo.histories.length === histories.length) {
+    let sameHisto = true;
+    for (let i = 0; i < histories.length; i++) {
+      if (histories[i] !== memo.histories[i]) {
+        sameHisto = false;
+        break;
+      }
+    }
+    if (sameHisto) {
+      if (
+        accounts.length === memo.accounts.length &&
+        availableAccounts.length === memo.availableAccounts.length
+      ) {
+        return memo;
+      }
+      return {
+        balanceHistory: memo.balanceHistory,
+        balanceAvailable,
+        availableAccounts,
+        unavailableCurrencies,
+        accounts,
+        range,
+        histories
+      };
+    }
+  }
+
+  const balanceHistory = getDates(range).map(date => ({ date, value: ZERO }));
+
+  for (let i = 0; i < histories.length; i++) {
+    const history = histories[i];
+    for (let j = 0; j < history.length; j++) {
+      const res = balanceHistory[j];
+      res.value = res.value.plus(history[j].countervalue);
+    }
+  }
+
+  const ret = {
     balanceHistory,
-    balanceAvailable: accounts.length === 0 || availableAccounts.length > 0,
+    balanceAvailable,
     availableAccounts,
     unavailableCurrencies,
     accounts,
-    range
+    range,
+    histories
   };
+
+  portfolioMemo[range] = ret;
+
+  return ret;
 }

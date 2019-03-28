@@ -1,5 +1,5 @@
 import { genAccount } from "../../mock/account";
-import { getBalanceHistory } from "../../account";
+import { getBalanceHistory } from "../../portfolio";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");
@@ -21,7 +21,7 @@ test("allow specifying number of operations", () => {
 test("mock generators don't generate negative balances", () => {
   for (let i = 0; i < 100; i++) {
     const account = genAccount("negative?" + i);
-    const history = getBalanceHistory(account, 300);
+    const history = getBalanceHistory(account, "year");
     const invalidDataPoints = history.filter(h => h.value.isNegative());
     expect(invalidDataPoints).toMatchObject([]);
   }

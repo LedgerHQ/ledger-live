@@ -1,9 +1,9 @@
 // @flow
 import invariant from "invariant";
+import EthereumTx from "ethereumjs-tx";
 import Eth from "@ledgerhq/hw-app-eth";
 import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "../../types";
-import EthereumTx from "ethereumjs-tx";
 
 // see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
 export function getNetworkId(currency: CryptoCurrency): ?number {

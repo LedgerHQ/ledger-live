@@ -1,16 +1,12 @@
 // @flow
 
-import type { CryptoCurrency } from "../../types";
 import Xrp from "@ledgerhq/hw-app-xrp";
-import type Transport from "@ledgerhq/hw-transport";
+import type { Resolver } from "./types";
 
-export default async (
-  transport: Transport<*>,
-  currency: CryptoCurrency,
-  path: string,
-  verify: boolean
-) => {
+const resolver: Resolver = async (transport, { path, verify }) => {
   const xrp = new Xrp(transport);
   const { address, publicKey } = await xrp.getAddress(path, verify);
   return { path, address, publicKey };
 };
+
+export default resolver;

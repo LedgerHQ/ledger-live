@@ -2,14 +2,9 @@
 
 import { Observable, from, defer } from "rxjs";
 import { map } from "rxjs/operators";
+import { SyncError } from "@ledgerhq/errors";
 import { getWalletName } from "../account";
-import type {
-  Account,
-  Operation,
-  CryptoCurrency,
-  DerivationMode
-} from "../types";
-import { SyncError } from "../errors";
+import type { Account, CryptoCurrency, DerivationMode } from "../types";
 import { withLibcore } from "./access";
 import { buildAccount } from "./buildAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
@@ -23,7 +18,7 @@ const OperationOrderKey = {
 
 async function getCoreObjects(core, account: Account) {
   const walletName = getWalletName(account);
-  const { currency, derivationMode, index, xpub } = account;
+  const { currency, derivationMode } = account;
 
   const coreWallet = await getOrCreateWallet({
     core,
@@ -35,54 +30,10 @@ async function getCoreObjects(core, account: Account) {
   const coreAccount = await getOrCreateAccount({
     core,
     coreWallet,
-    index,
-    xpub
+    account
   });
 
   return { coreWallet, coreAccount, walletName };
-}
-
-export function syncAccount(
-  account: Account
-): Observable<(Account) => Account> {
-  const {
-    derivationMode,
-    seedIdentifier,
-    currency,
-    operations: existingOperations
-  } = account;
-  return defer(() =>
-    from(
-      withLibcore(core =>
-        getCoreObjects(core, account).then(
-          ({ coreWallet, coreAccount, walletName }) =>
-            syncCoreAccount({
-              core,
-              coreWallet,
-              coreAccount,
-              walletName,
-              currency,
-              accountIndex: account.index,
-              derivationMode,
-              seedIdentifier,
-              existingOperations
-            })
-        )
-      )
-    )
-  ).pipe(
-    map(syncedAccount => initialAccount => ({
-      ...initialAccount,
-      id: syncedAccount.id,
-      freshAddress: syncedAccount.freshAddress,
-      freshAddressPath: syncedAccount.freshAddressPath,
-      balance: syncedAccount.balance,
-      blockHeight: syncedAccount.blockHeight,
-      lastSyncDate: new Date(),
-      operations: syncedAccount.operations,
-      pendingOperations: []
-    }))
-  );
 }
 
 export async function syncCoreAccount({
@@ -93,7 +44,7 @@ export async function syncCoreAccount({
   accountIndex,
   derivationMode,
   seedIdentifier,
-  existingOperations
+  existingAccount
 }: {
   core: *,
   coreWallet: *,
@@ -102,11 +53,10 @@ export async function syncCoreAccount({
   accountIndex: number,
   derivationMode: DerivationMode,
   seedIdentifier: string,
-  existingOperations: Operation[]
+  existingAccount?: ?Account
 }): Promise<Account> {
   let coreOperations;
   try {
-    // TODO integrating desktop code back in to handle events!
     const eventReceiver = await core.EventReceiver.newInstance();
     const eventBus = await coreAccount.synchronize();
     const serialContext = await core
@@ -127,7 +77,6 @@ export async function syncCoreAccount({
   }
 
   const account = await buildAccount({
-    core,
     coreWallet,
     coreAccount,
     coreOperations,
@@ -135,8 +84,47 @@ export async function syncCoreAccount({
     accountIndex,
     derivationMode,
     seedIdentifier,
-    existingOperations
+    existingAccount
   });
 
   return account;
+}
+
+export function syncAccount(
+  account: Account
+): Observable<(Account) => Account> {
+  const { derivationMode, seedIdentifier, currency } = account;
+  return defer(() =>
+    from(
+      withLibcore(core =>
+        getCoreObjects(core, account).then(
+          ({ coreWallet, coreAccount, walletName }) =>
+            syncCoreAccount({
+              core,
+              coreWallet,
+              coreAccount,
+              walletName,
+              currency,
+              accountIndex: account.index,
+              derivationMode,
+              seedIdentifier,
+              account
+            })
+        )
+      )
+    )
+  ).pipe(
+    map(syncedAccount => initialAccount => ({
+      ...initialAccount,
+      id: syncedAccount.id,
+      freshAddress: syncedAccount.freshAddress,
+      freshAddressPath: syncedAccount.freshAddressPath,
+      balance: syncedAccount.balance,
+      blockHeight: syncedAccount.blockHeight,
+      lastSyncDate: new Date(),
+      operations: syncedAccount.operations,
+      tokenAccounts: syncedAccount.tokenAccounts,
+      pendingOperations: []
+    }))
+  );
 }

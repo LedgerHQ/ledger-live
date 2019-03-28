@@ -1,0 +1,31 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~/ledgerjs
+  docker:
+    - image: circleci/node:8-stretch-browsers
+
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y libudev-dev libusb-1.0-0-dev jq
+      - run:
+          name: Install latest yarn
+          command: |
+            curl -sS http://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - ;
+            echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list ;
+            sudo apt-get update && sudo apt-get install yarn
+            sudo rm /usr/local/bin/yarn # remove docker yarn
+      - checkout
+      - restore_cache:
+          keys:
+            - v12-yarn-packages-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - save_cache:
+          key: v12-yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run: yarn ci
+      - run: yarn link && cd tool && yarn && yarn link @ledgerhq/live-common && yarn build && yarn link && yarn test

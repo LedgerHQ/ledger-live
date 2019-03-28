@@ -1,7 +1,7 @@
 // @flow
 
+import { InvalidAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "../types";
-import { InvalidAddress } from "../errors";
 import { withLibcoreF } from "./access";
 
 type F = ({

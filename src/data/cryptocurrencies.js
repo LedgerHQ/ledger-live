@@ -1,4 +1,4 @@
-//@flow
+// @flow
 /**
  * To add a new coin in live-common,
  * You need to add the coin in the following cryptocurrenciesById map.
@@ -263,6 +263,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     symbol: "Ƀ",
     units: bitcoinUnits,
     supportsSegwit: true,
+    supportsNativeSegwit: true,
     family: "bitcoin",
     blockAvgTime: 15 * 60,
     bitcoinLikeInfo: {
@@ -2032,7 +2033,7 @@ const cryptocurrenciesByScheme: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesByTicker: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesArray = [];
 const prodCryptoArray = [];
-for (let id in cryptocurrenciesById) {
+for (const id in cryptocurrenciesById) {
   const c = cryptocurrenciesById[id];
   cryptocurrenciesById[c.id] = c;
   cryptocurrenciesByScheme[c.scheme] = c;
@@ -2060,6 +2061,10 @@ export function listCryptoCurrencies(
     : withDevCrypto
     ? cryptocurrenciesArrayWithoutTerminated
     : prodCryptoArrayWithoutTerminated;
+}
+
+export function findCryptoCurrency(f: CryptoCurrency => boolean) {
+  return cryptocurrenciesArray.find(f);
 }
 
 export function findCryptoCurrencyByScheme(scheme: string): ?CryptoCurrency {

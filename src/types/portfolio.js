@@ -21,7 +21,8 @@ export type Portfolio = {
   availableAccounts: Account[],
   unavailableCurrencies: CryptoCurrency[],
   accounts: Account[],
-  range: PortfolioRange
+  range: PortfolioRange,
+  histories: BalanceHistoryWithCountervalue[]
 };
 
 export type PortfolioRange = "year" | "month" | "week";

@@ -1,6 +1,6 @@
 // @flow
 
-import LRU from "lru-cache";
+import LRU from "lru-cache"; // eslint-disable-line
 
 export const makeLRUCache = <A: Array<*>, T>(
   f: (...args: A) => Promise<T>,

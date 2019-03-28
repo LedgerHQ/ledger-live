@@ -27,7 +27,7 @@ export default (finalFirmware: FinalFirmware) => (
           if (typeof mcuVersion === "string") {
             version = mcuVersion;
           } else {
-            let mcuFromBootloader = (mcuVersion.from_bootloader_version || "")
+            const mcuFromBootloader = (mcuVersion.from_bootloader_version || "")
               .split(".")
               .slice(0, 2)
               .join(".");

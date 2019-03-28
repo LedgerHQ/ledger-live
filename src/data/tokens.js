@@ -35,6 +35,7 @@ const tokensArray: TokenCurrency[] = [];
 const tokensByCryptoCurrency: { [_: string]: TokenCurrency[] } = {};
 const tokensById: { [_: string]: TokenCurrency } = {};
 const tokensByTicker: { [_: string]: TokenCurrency } = {};
+const tokensByAddress: { [_: string]: TokenCurrency } = {};
 
 export function add(type: string, list: any[]) {
   const converter = converters[type];
@@ -46,6 +47,7 @@ export function add(type: string, list: any[]) {
     tokensArray.push(token);
     tokensById[token.id] = token;
     tokensByTicker[token.ticker] = token;
+    tokensByAddress[token.contractAddress.toLowerCase()] = token;
     const { parentCurrency } = token;
     if (!(parentCurrency in tokensByCryptoCurrency)) {
       tokensByCryptoCurrency[parentCurrency] = [];
@@ -70,6 +72,10 @@ export function findTokenByTicker(ticker: string): ?TokenCurrency {
 
 export function findTokenById(id: string): ?TokenCurrency {
   return tokensById[id];
+}
+
+export function findTokenByAddress(address: string): ?TokenCurrency {
+  return tokensByAddress[address.toLowerCase()];
 }
 
 export const hasTokenId = (id: string): boolean => id in tokensById;
