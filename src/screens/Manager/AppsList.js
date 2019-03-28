@@ -99,7 +99,9 @@ class ManagerAppsList extends Component<
       const cryptos = listCryptoCurrencies(true);
 
       const withTickers = apps.map(app => {
-        const maybeCrypto = cryptos.find(c => c.managerAppName === app.name);
+        const maybeCrypto = cryptos.find(
+          c => c.managerAppName.toLowerCase() === app.name.toLowerCase(),
+        );
         const ticker = maybeCrypto ? maybeCrypto.ticker : "";
 
         return {
