@@ -250,6 +250,12 @@ const Main = createBottomTabNavigator(
       showLabel: false,
     },
     tabBarComponent: HiddenTabBarIfKeyboardVisible,
+    defaultNavigationOptions: {
+      tabBarOnPress: ({ navigation, defaultHandler }) => {
+        defaultHandler();
+        navigation.emit("refocus");
+      },
+    },
   },
 );
 
