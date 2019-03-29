@@ -23,6 +23,7 @@ import type {
   CoreBitcoinLikeInput,
   CoreBitcoinLikeOutput
 } from "./types";
+import { log } from "../logs";
 
 type Transaction = {
   amount: BigNumber | string,
@@ -130,6 +131,7 @@ async function signTransaction({
   const inputs = await Promise.all(
     rawInputs.map(async input => {
       const hexPreviousTransaction = await input.getPreviousTransaction();
+      log("libcore", "splitTransaction " + String(hexPreviousTransaction));
       const previousTransaction = hwApp.splitTransaction(
         hexPreviousTransaction,
         currency.supportsSegwit,
@@ -348,9 +350,11 @@ const doSignAndBroadcast = withLibcoreF(
 
     onSigned();
 
+    log("libcore", "signed transaction " + String(signTransaction));
     const txHash = await bitcoinLikeAccount.broadcastRawTransaction(
       signedTransaction
     );
+    log("libcore", "broadcasted to " + String(txHash));
     if (isCancelled()) return;
 
     const sendersInput = await builded.getInputs();

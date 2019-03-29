@@ -11,6 +11,7 @@ import {
 import { getWalletName } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
 
+import { log } from "../logs";
 import { open } from "../hw";
 import getAddress from "../hw/getAddress";
 import { withLibcoreF } from "./access";
@@ -102,7 +103,8 @@ export const scanAccountsOnDevice = (
     return unsubscribe;
   });
 
-// FIXME move this code not in src/libcore
+// FIXME should refactor this code into same approach of XRP/ETH impl
+
 async function scanNextAccount(props: {
   core: Core,
   wallet: CoreWallet,
@@ -151,8 +153,21 @@ async function scanNextAccount(props: {
   if (isUnsubscribed()) return;
 
   const isEmpty = account.operations.length === 0;
+  const shouldSkip = isEmpty && !showNewAccount;
 
-  if (!isEmpty || showNewAccount) {
+  log(
+    "libcore",
+    `scanning ${currency.id} ${derivationMode ||
+      "default"}@${accountIndex}: resulted of ${
+      account && !shouldSkip
+        ? `Account with ${account.operations.length} txs (xpub ${String(
+            account.xpub
+          )}, fresh ${account.freshAddressPath} ${account.freshAddress})`
+        : "no account"
+    }. ${isEmpty ? "ALL SCANNED" : ""}`
+  );
+
+  if (!shouldSkip) {
     onAccountScanned(account);
   }
 
