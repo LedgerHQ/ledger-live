@@ -14,7 +14,7 @@ import type { T } from "../types/common";
 type Props = {
   renderList: (list: Array<*>) => React$Node,
   renderEmptySearch: () => React$Node,
-  keys?: Array<string>,
+  keys?: string[],
   list: Array<*>,
   inputWrapperStyle?: *,
   t: T,
