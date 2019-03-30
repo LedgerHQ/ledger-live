@@ -3,9 +3,18 @@
  * @flow
  */
 import { BigNumber } from "bignumber.js";
-import { listCryptoCurrencies } from "../currencies";
+import {
+  listCryptoCurrencies,
+  listTokensForCryptoCurrency
+} from "../currencies";
 import Prando from "prando";
-import type { Account, Operation, CryptoCurrency } from "../types";
+import type {
+  TokenAccount,
+  Account,
+  Operation,
+  CryptoCurrency,
+  TokenCurrency
+} from "../types";
 import { getOperationAmountNumber } from "../operation";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 
@@ -47,8 +56,11 @@ export function genHex(length: number, rng: Prando) {
 /**
  * @memberof mock/account
  */
-export function genAddress(currency: CryptoCurrency, rng: Prando) {
-  if (currency.id === "ethereum" || currency.id === "ethereum_classic") {
+export function genAddress(
+  currency: CryptoCurrency | TokenCurrency,
+  rng: Prando
+) {
+  if (currency.id.startsWith("ethereum")) {
     return `0x${genHex(40, rng)}`;
   }
   return genBitcoinAddressLike(rng);
@@ -59,9 +71,10 @@ export function genAddress(currency: CryptoCurrency, rng: Prando) {
  * @memberof mock/account
  */
 export function genOperation(
-  account: Account,
+  superAccount: Account,
+  account: Account | TokenAccount,
   ops: *,
-  currency: CryptoCurrency,
+  currency: CryptoCurrency | TokenCurrency,
   rng: Prando
 ): $Exact<Operation> {
   const lastOp = ops[ops.length - 1];
@@ -90,7 +103,8 @@ export function genOperation(
     senders: [type !== "IN" ? genAddress(currency, rng) : address],
     recipients: [type === "IN" ? genAddress(currency, rng) : address],
     blockHash: genHex(64, rng),
-    blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000),
+    blockHeight:
+      superAccount.blockHeight - Math.floor((Date.now() - date) / 900000),
     accountId: account.id,
     date,
     extra: {}
@@ -110,7 +124,7 @@ export function genAddingOperationsInAccount(
   copy.operations = Array(count)
     .fill(null)
     .reduce(ops => {
-      const op = genOperation(copy, ops, copy.currency, rng);
+      const op = genOperation(copy, copy, ops, copy.currency, rng);
       return ops.concat(op);
     }, copy.operations);
   copy.balance = ensureNoNegative(copy.operations);
@@ -126,6 +140,31 @@ type GenAccountOptions = {
   currency?: CryptoCurrency
 };
 
+function genTokenAccount(
+  id: number | string,
+  account: Account
+): $Exact<TokenAccount> {
+  const rng = new Prando(id);
+  const tokens = listTokensForCryptoCurrency(account.currency);
+  const token = rng.nextArrayItem(tokens);
+  const tokenAccount = {
+    id: `mock:1:${account.id}:${id}`,
+    token,
+    operations: [],
+    balance: BigNumber(0)
+  };
+
+  const operationsSize = rng.nextInt(1, 200);
+  tokenAccount.operations = Array(operationsSize)
+    .fill(null)
+    .reduce((ops: Operation[]) => {
+      const op = genOperation(account, tokenAccount, ops, token, rng);
+      return ops.concat(op);
+    }, []);
+  tokenAccount.balance = ensureNoNegative(tokenAccount.operations);
+  return tokenAccount;
+}
+
 export function genAccount(
   id: number | string,
   opts: GenAccountOptions = {}
@@ -134,7 +173,7 @@ export function genAccount(
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
-  const account = {
+  const account: $Exact<Account> = {
     id: `mock:1:${currency.id}:${id}:`,
     seedIdentifier: "mock",
     derivationMode: "",
@@ -155,10 +194,17 @@ export function genAccount(
     lastSyncDate: new Date()
   };
 
+  if (currency.id === "ethereum") {
+    const tokenCount = rng.nextInt(0, 8);
+    account.tokenAccounts = Array(tokenCount).map((_, i) =>
+      genTokenAccount(id + "_" + i, account)
+    );
+  }
+
   account.operations = Array(operationsSize)
     .fill(null)
     .reduce((ops: Operation[]) => {
-      const op = genOperation(account, ops, currency, rng);
+      const op = genOperation(account, account, ops, currency, rng);
       return ops.concat(op);
     }, []);
 
