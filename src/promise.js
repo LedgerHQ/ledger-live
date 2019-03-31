@@ -6,15 +6,15 @@ export const delay = (ms: number): Promise<void> =>
 const defaults = {
   maxRetry: 4,
   interval: 300,
-  intervalMultiplicator: 1.5,
+  intervalMultiplicator: 1.5
 };
 export function retry<A>(
   f: () => Promise<A>,
-  options?: $Shape<typeof defaults>,
+  options?: $Shape<typeof defaults>
 ): Promise<A> {
   const { maxRetry, interval, intervalMultiplicator } = {
     ...defaults,
-    ...options,
+    ...options
   };
 
   return rec(maxRetry, interval);
@@ -27,8 +27,8 @@ export function retry<A>(
     // In case of failure, wait the interval, retry the action
     return result.catch(() =>
       delay(interval).then(() =>
-        rec(remainingTry - 1, interval * intervalMultiplicator),
-      ),
+        rec(remainingTry - 1, interval * intervalMultiplicator)
+      )
     );
   }
 }
@@ -37,7 +37,7 @@ type Job<R, A> = (...args: A) => Promise<R>;
 
 export const atomicQueue = <R, A: Array<*>>(
   job: Job<R, A>,
-  queueIdentifier: (...args: A) => string = () => "",
+  queueIdentifier: (...args: A) => string = () => ""
 ): Job<R, A> => {
   const queues = {};
   return (...args) => {

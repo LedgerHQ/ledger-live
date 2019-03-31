@@ -24,9 +24,8 @@ const repair = (
   );
 
   const waitForBootloader = withDeviceInfo.pipe(
-    concatMap(
-      deviceInfo =>
-        deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
+    concatMap(deviceInfo =>
+      deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
     )
   );
 

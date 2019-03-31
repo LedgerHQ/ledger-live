@@ -593,5 +593,10 @@ export const accountBridge: AccountBridge<Transaction> = {
         o => o.transactionSequenceNumber === operation.transactionSequenceNumber
       )
     )
-  })
+  }),
+
+  estimateGasLimit: (account, address) => {
+    const api = apiForCurrency(account.currency);
+    return api.estimateGasLimitForERC20(address);
+  }
 };
