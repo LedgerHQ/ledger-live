@@ -1,8 +1,42 @@
 // @flow
 // set and get environment & config variables
 
+type ExtractEnvValue = <V>((string) => ?V) => V;
+
+type Env = typeof envParsers;
+export type EnvName = $Keys<Env>;
+
+const intParser = (v: string): ?number => {
+  if (!isNaN(v)) return parseInt(v, 10);
+};
+
+const floatParser = (v: string): ?number => {
+  if (!isNaN(v)) return parseFloat(v);
+};
+
+const boolParser = (v: string): ?boolean => {
+  return !(v === "0" || v === "false");
+};
+
+const stringParser = (v: string): ?string => v;
+
+// For each
+const envParsers = {
+  MANAGER_DEV_MODE: boolParser,
+  SHOW_LEGACY_NEW_ACCOUNT: boolParser,
+  WITH_DEVICE_POLLING_DELAY: floatParser,
+  FORCE_PROVIDER: intParser,
+  LEDGER_REST_API_BASE: stringParser,
+  MANAGER_API_BASE: stringParser,
+  BASE_SOCKET_URL: stringParser,
+  EXPLORER_V2: stringParser,
+  EXPLORER_V3: stringParser,
+  EXPERIMENTAL_EXPLORERS: boolParser
+};
+
 // initialized with default values
-const env = {
+const env: $ObjMap<Env, ExtractEnvValue> = {
+  MANAGER_DEV_MODE: false,
   SHOW_LEGACY_NEW_ACCOUNT: false,
   WITH_DEVICE_POLLING_DELAY: 500,
   FORCE_PROVIDER: 0, // in zero case, we will not force provider. otherwise you can force one.
@@ -16,7 +50,6 @@ const env = {
   EXPERIMENTAL_EXPLORERS: false
 };
 
-export type EnvName = $Keys<typeof env>;
 export type EnvValue<Name> = $ElementType<typeof env, Name>;
 
 // implementation can override the defaults typically at boot of the app but potentially over time
@@ -29,4 +62,20 @@ export const setEnv = <Name: EnvName>(name: Name, value: EnvValue<Name>) => {
 export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> => {
   // $FlowFixMe flow don't seem to type proof it
   return env[name];
+};
+
+export const setEnvUnsafe = <Name: EnvName>(
+  name: Name,
+  unsafeValue: string
+): boolean => {
+  const parser = envParsers[name];
+  if (!parser) return false;
+  const value = parser(unsafeValue);
+  if (value === undefined || value === null) {
+    console.warn(`Invalid ENV value for ${name}`);
+    return false;
+  }
+  // $FlowFixMe
+  setEnv(name, value);
+  return true;
 };
