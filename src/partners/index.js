@@ -3,8 +3,7 @@
 export default [
   {
     id: "bitpanda",
-    url:
-      "https://www.bitpanda.com/?ref=619506638974149182"
+    url: "https://www.bitpanda.com/?ref=619506638974149182"
   },
   {
     id: "btcdirect",
@@ -33,8 +32,7 @@ export default [
   },
   {
     id: "exmo",
-    url:
-      "https://exmo.com/?ref=1604207"
+    url: "https://exmo.com/?ref=1604207"
   },
   {
     id: "kyberswap",

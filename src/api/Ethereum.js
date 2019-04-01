@@ -4,6 +4,7 @@ import type { CryptoCurrency } from "../types";
 import { LedgerAPINotAvailable } from "../errors";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
+import { getCurrencyExplorer } from "../explorers";
 
 export type Block = { height: number }; // TODO more fields actually
 
@@ -39,7 +40,8 @@ export type API = {
   getCurrentBlock: () => Promise<Block>,
   getAccountNonce: (address: string) => Promise<number>,
   broadcastTransaction: (signedTransaction: string) => Promise<string>,
-  getAccountBalance: (address: string) => Promise<BigNumber>
+  getAccountBalance: (address: string) => Promise<BigNumber>,
+  estimateGasLimitForERC20: (address: string) => Promise<number>
 };
 
 export const apiForCurrency = (currency: CryptoCurrency): API => {
@@ -55,7 +57,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         method: "GET",
         url: `${baseURL}/addresses/${address}/transactions`,
         params:
-          currency.ledgerExplorerVersion === "v2"
+          getCurrencyExplorer(currency).version === "v2"
             ? {
                 blockHash,
                 noToken: 1
@@ -68,7 +70,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
               }
       });
       // v3 have a bug that still includes the tx of the paginated block_hash, we're cleaning it up
-      if (blockHash && currency.ledgerExplorerVersion === "v3") {
+      if (blockHash && getCurrencyExplorer(currency).version === "v3") {
         data = {
           ...data,
           txs: data.txs.filter(tx => !tx.block || tx.block.hash !== blockHash)
@@ -94,6 +96,8 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     },
 
     async estimateGasLimitForERC20(address) {
+      if (getCurrencyExplorer(currency).version === "v2") return 21000;
+
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/addresses/${address}/estimate-gas-limit`

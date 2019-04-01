@@ -36,8 +36,6 @@ const Footer = styled.div`
 // copy of ethereum with a custom API
 const ethereum = {
   ...getCryptoCurrencyById("ethereum"),
-  ledgerExplorerId: "eth-mainnet",
-  ledgerExplorerVersion: "v3"
 };
 setEnv(
   "EXPLORER_V3",
