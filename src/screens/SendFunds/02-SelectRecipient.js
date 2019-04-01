@@ -10,10 +10,10 @@ import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import throttle from "lodash/throttle";
+import { BigNumber } from "bignumber.js";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 
 import type { T } from "../../types/common";
-
 import { accountScreenSelector } from "../../reducers/accounts";
 import { getAccountBridge } from "../../bridge";
 import { track, TrackScreen } from "../../analytics";
@@ -150,6 +150,7 @@ class SendSelectRecipient extends Component<Props, State> {
     const { account, navigation } = this.props;
     const { address } = this.state;
     const bridge = getAccountBridge(account);
+
     let transaction =
       navigation.getParam("transaction") || bridge.createTransaction(account);
 
@@ -164,6 +165,17 @@ class SendSelectRecipient extends Component<Props, State> {
         account,
         transaction,
         this.preloadedNetworkInfo,
+      );
+    }
+
+    // $FlowFixMe
+    if (bridge.estimateGasLimit) {
+      const gasLimit = await bridge.estimateGasLimit(account, address);
+      transaction = bridge.editTransactionExtra(
+        account,
+        transaction,
+        "gasLimit",
+        BigNumber(gasLimit),
       );
     }
 
