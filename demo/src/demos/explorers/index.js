@@ -5,6 +5,7 @@ import { format as timeago } from "timeago.js";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
 import { blockchainBaseURL } from "@ledgerhq/live-common/lib/api/Ledger";
+import { getCurrencyExplorer, hasCurrencyExplorer } from "@ledgerhq/live-common/lib/explorers";
 
 const Main = styled.div`
   max-width: 600px;
@@ -119,7 +120,7 @@ class ExplorerRow extends PureComponent<*, *> {
         <IconWrapper size={60} bg={currency.color} color="white">
           {Icon ? <Icon size={30} /> : <AltIcon>{currency.ticker}</AltIcon>}
         </IconWrapper>
-        <CryptoName>{currency.ledgerExplorerId}</CryptoName>
+        <CryptoName>{getCurrencyExplorer(currency).version}</CryptoName>
         <Checks>
           {this.state.times.map(({ time, error }, i) => (
             <TimeState key={i} time={time} error={error} />
@@ -136,7 +137,7 @@ class Explorers extends Component<*> {
     return (
       <Main>
         {coins
-          .filter(c => c.ledgerExplorerId)
+          .filter(c => hasCurrencyExplorer(c))
           .map(c => <ExplorerRow currency={c} key={c.id} />)}
       </Main>
     );

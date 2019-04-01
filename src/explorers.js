@@ -43,21 +43,10 @@ export const getCurrencyExplorer = (currency: CryptoCurrency) => {
   );
 
   const experimentalExplorers = getEnv("EXPERIMENTAL_EXPLORERS");
-  const currencyExplorerOverride = getEnv(
-    // $FlowFixMe
-    `${currency.id.toUpperCase()}_EXPLORER`
-  );
   let explorerKey = "default";
 
-  if (experimentalExplorers) {
-    if (
-      currencyExplorerOverride &&
-      ledgerExplorers[currency.id][currencyExplorerOverride]
-    ) {
-      explorerKey = currencyExplorerOverride;
-    } else if (ledgerExplorers[currency.id]["experimental"]) {
+  if (experimentalExplorers && ledgerExplorers[currency.id]["experimental"]) {
       explorerKey = "experimental";
-    }
   }
 
   return ledgerExplorers[currency.id][explorerKey];
