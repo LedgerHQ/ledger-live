@@ -12,9 +12,9 @@ import libcoreSignAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBr
 import { makeLRUCache } from "@ledgerhq/live-common/lib/cache";
 
 export type Transaction = {
-  amount: BigNumber,
+  amount: BigNumber | string,
   recipient: string,
-  feePerByte: ?BigNumber,
+  feePerByte: ?(BigNumber | string),
   networkInfo: ?{ feeItems: FeeItems },
 };
 
@@ -68,7 +68,7 @@ const editTransactionAmount = (account, t, amount) => ({
   amount,
 });
 
-const getTransactionAmount = (a, t) => t.amount;
+const getTransactionAmount = (a, t) => BigNumber(t.amount);
 
 const editTransactionRecipient = (account, t, recipient) => ({
   ...t,
@@ -141,9 +141,9 @@ const checkValidTransaction = async (a, t) =>
       : getFees(a, t).then(() => null);
 
 const getTotalSpent = async (a, t) =>
-  t.amount.isZero()
+  BigNumber(t.amount).isZero()
     ? Promise.resolve(BigNumber(0))
-    : getFees(a, t).then(totalFees => t.amount.plus(totalFees || 0));
+    : getFees(a, t).then(totalFees => BigNumber(t.amount).plus(totalFees || 0));
 
 const getMaxAmount = async (a, t) =>
   getFees(a, t).then(totalFees => a.balance.minus(totalFees || 0));

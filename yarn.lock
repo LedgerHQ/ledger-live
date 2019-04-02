@@ -800,10 +800,10 @@
     "@ledgerhq/errors" "^4.48.0"
     events "^3.0.0"
 
-"@ledgerhq/live-common@4.36.1":
-  version "4.36.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.36.1.tgz#fc77a8064d10c9adc0d16d467d616b6f73e180ae"
-  integrity sha512-lwr/LsF3NTMFwtbkMSbQRFytpPEej2e79QVabGUUtU/oAxHcZuSzUGDcoj5J25V5POnLyzmAQdlA4ls7YSLOcQ==
+"@ledgerhq/live-common@4.38.1":
+  version "4.38.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-4.38.1.tgz#63b0ec60ecd1a44b7c1ecbe5b9d03845629723ca"
+  integrity sha512-H/PYqM+fhT/gxARqNsIGRoVZTn1ocG3e33ydbygHM5RAFNkK8Mj3LRUN6aPm0Ic6UkbxGnp/wCuU6LCi0nxTYg==
   dependencies:
     "@ledgerhq/errors" "^4.48.0"
     "@ledgerhq/hw-app-btc" "^4.48.0"

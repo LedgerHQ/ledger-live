@@ -31,6 +31,7 @@ const accountModel: DataModel<AccountRaw, Account> = createDataModel({
       pendingOperations,
       lastSyncDate,
       balance,
+      tokenAccounts,
       ...acc
     } = rawAccount;
     const currency = getCryptoCurrencyById(currencyId);
@@ -62,6 +63,7 @@ const accountModel: DataModel<AccountRaw, Account> = createDataModel({
     unit,
     lastSyncDate,
     balance,
+    tokenAccounts,
     ...acc
   }: Account): AccountRaw => {
     const convertOperation = ({ date, value, fee, ...op }) => ({
