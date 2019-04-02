@@ -22,11 +22,12 @@ export default async (transport: Transport<*>): Promise<DeviceInfo> => {
   const { seVersion } = res;
   const { targetId, mcuVersion, flags } = res;
   const parsedVersion =
-    seVersion.match(/([0-9]+.[0-9])+(.[0-9]+)?((?!-osu)-([a-z]+))?(-osu)?/) ||
-    [];
+    seVersion.match(
+      /([0-9]+.[0-9])+(.[0-9]+)?((?!-osu)-([a-zA-Z0-9]+))?(-osu)?/
+    ) || [];
   const isOSU = typeof parsedVersion[5] !== "undefined";
   const providerName = parsedVersion[4] || "";
-  const providerId = getEnv("FORCE_PROVIDER") || PROVIDERS[providerName];
+  const providerId = getEnv("FORCE_PROVIDER") || PROVIDERS[providerName] || 1;
   const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
   const majMin = parsedVersion[1];
   const patch = parsedVersion[2] || ".0";
@@ -43,7 +44,6 @@ export default async (transport: Transport<*>): Promise<DeviceInfo> => {
     isOSU,
     mcuVersion,
     isBootloader,
-    providerName,
     providerId,
     flags,
     managerAllowed,

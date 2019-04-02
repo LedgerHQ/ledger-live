@@ -19,7 +19,6 @@ export type DeviceInfo = {
   flags: Buffer,
   mcuVersion: string,
   isOSU: boolean,
-  providerName: string,
   providerId: number,
   fullVersion: string,
   managerAllowed: boolean,
