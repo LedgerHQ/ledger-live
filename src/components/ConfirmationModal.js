@@ -4,7 +4,7 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 
-import colors from "../colors";
+import colors, { rgba } from "../colors";
 import BottomModal from "./BottomModal";
 import LText from "./LText";
 import Button from "./Button";
@@ -12,15 +12,18 @@ import Button from "./Button";
 type Props = {
   isOpened: boolean,
   onClose: () => void,
-  onConfirm: () => void,
-  confirmationTitle: React$Node,
-  confirmationDesc: React$Node,
+  onConfirm: () => *,
+  confirmationTitle?: React$Node,
+  confirmationDesc?: React$Node,
+  Icon?: React$ComponentType<*>,
+  confirmButtonText?: React$Node,
+  rejectButtonText?: React$Node,
+  alert: boolean,
 };
 
 class ConfirmationModal extends PureComponent<Props> {
   static defaultProps = {
-    confirmationTitle: "Are you sure?",
-    confirmationDesc: "Please confirm you want to close",
+    alert: false,
   };
 
   render() {
@@ -29,7 +32,11 @@ class ConfirmationModal extends PureComponent<Props> {
       onClose,
       confirmationTitle,
       confirmationDesc,
+      confirmButtonText,
+      rejectButtonText,
       onConfirm,
+      Icon,
+      alert,
       ...rest
     } = this.props;
     return (
@@ -40,16 +47,25 @@ class ConfirmationModal extends PureComponent<Props> {
         style={styles.confirmationModal}
         {...rest}
       >
-        <LText semiBold style={styles.confirmationTitle}>
-          {confirmationTitle}
-        </LText>
-        <LText style={styles.confirmationDesc}>{confirmationDesc}</LText>
+        {Icon && (
+          <View style={styles.icon}>
+            <Icon size={24} />
+          </View>
+        )}
+        {confirmationTitle && (
+          <LText semiBold style={styles.confirmationTitle}>
+            {confirmationTitle}
+          </LText>
+        )}
+        {confirmationDesc && (
+          <LText style={styles.confirmationDesc}>{confirmationDesc}</LText>
+        )}
         <View style={styles.confirmationFooter}>
           <Button
             event="ConfirmationModalCancel"
             containerStyle={styles.confirmationButton}
             type="secondary"
-            title={<Trans i18nKey="common.cancel" />}
+            title={rejectButtonText || <Trans i18nKey="common.cancel" />}
             onPress={onClose}
           />
           <Button
@@ -58,8 +74,8 @@ class ConfirmationModal extends PureComponent<Props> {
               styles.confirmationButton,
               styles.confirmationLastButton,
             ]}
-            type="primary"
-            title={<Trans i18nKey="common.confirm" />}
+            type={alert ? "alert" : "primary"}
+            title={confirmButtonText || <Trans i18nKey="common.confirm" />}
             onPress={onConfirm}
           />
         </View>
@@ -93,6 +109,15 @@ const styles = StyleSheet.create({
   },
   confirmationLastButton: {
     marginLeft: 16,
+  },
+  icon: {
+    alignSelf: "center",
+    backgroundColor: rgba(colors.alert, 0.08),
+    width: 56,
+    borderRadius: 28,
+    height: 56,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
