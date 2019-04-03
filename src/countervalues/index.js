@@ -1,10 +1,10 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-// $FlowFixMe no idea what's going on here
 import React, { Component } from "react";
 import invariant from "invariant";
 import throttle from "lodash/throttle";
 import merge from "lodash/merge";
+import chunk from "lodash/chunk";
 import { connect } from "react-redux";
 import { createSelector, createStructuredSelector } from "reselect";
 import type { Dispatch } from "redux";
@@ -70,19 +70,14 @@ export const getDailyRatesAllInOnce = async (
   return data;
 };
 
-// This do one query per rate (lighter query)
-export const getDailyRatesSplitPerRate = async (
+export const getDailyRatesBatched = (batchSize: number) => async (
   getAPIBaseURL: () => string,
   pairs: PollAPIPair[]
 ) => {
   const url = getAPIBaseURL() + "/rates/daily";
   const all = await Promise.all(
-    pairs.map(pair =>
-      network({
-        method: "POST",
-        url,
-        data: { pairs: [pair] }
-      })
+    chunk(pairs, batchSize).map(pairs =>
+      network({ method: "POST", url, data: { pairs } })
         .then(r => ({ error: null, result: r.data }))
         .catch(error => ({ result: null, error }))
     )
@@ -92,6 +87,9 @@ export const getDailyRatesSplitPerRate = async (
   if (results.length === 0 && errors.length > 0) throw errors[0];
   return merge({}, ...results);
 };
+
+// This do one query per rate (lighter query)
+export const getDailyRatesSplitPerRate = getDailyRatesBatched(1);
 
 function createCounterValues<State>({
   getAPIBaseURL,
@@ -105,8 +103,7 @@ function createCounterValues<State>({
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
 
-  const getDailyRates =
-    getDailyRatesImplementation || getDailyRatesSplitPerRate;
+  const getDailyRates = getDailyRatesImplementation || getDailyRatesBatched(10);
 
   const pairOptExchangeExtractor = (
     _store,
