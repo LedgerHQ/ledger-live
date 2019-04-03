@@ -1,6 +1,7 @@
 // @flow
 import React from "react";
 import Svg, { Defs, Mask, Use, Path, G } from "react-native-svg";
+import colors from "../colors";
 
 type Props = {
   size: number,
@@ -9,7 +10,7 @@ type Props = {
 
 export default function ExclamationCircle({
   size = 16,
-  color = "#EA2E49",
+  color = colors.alert,
 }: Props) {
   return (
     <Svg viewBox="0 0 24 24" width={size} height={size}>

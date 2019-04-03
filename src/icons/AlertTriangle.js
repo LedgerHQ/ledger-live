@@ -1,13 +1,17 @@
 // @flow
 import React from "react";
 import Svg, { Path, G } from "react-native-svg";
+import colors from "../colors";
 
 type Props = {
   size: number,
   color: string,
 };
 
-export default function AlertTriangle({ size = 16, color }: Props) {
+export default function AlertTriangle({
+  size = 16,
+  color = colors.alert,
+}: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
       <G

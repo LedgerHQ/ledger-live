@@ -25,7 +25,7 @@ import SendRowsFee from "../../families/SendRowsFee";
 import SummaryTotalSection from "./SummaryTotalSection";
 import StepHeader from "../../components/StepHeader";
 import SectionSeparator from "../../components/SectionSeparator";
-import ExclamationCircle from "../../icons/ExclamationCircle";
+import AlertTriangle from "../../icons/AlertTriangle";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
 // TODO put this somewhere
@@ -47,7 +47,7 @@ class SendSummary extends Component<
   {
     totalSpent: ?BigNumber,
     error: ?Error,
-    highFeesOpen: boolean
+    highFeesOpen: boolean,
   },
 > {
   static navigationOptions = {
@@ -216,10 +216,9 @@ class SendSummary extends Component<
         </View>
         <ConfirmationModal
           isOpened={highFeesOpen}
-          alert
           onClose={this.onRejectFees}
           onConfirm={this.onAcceptFees}
-          Icon={ExclamationCircle}
+          Icon={AlertTriangle}
           confirmationDesc={
             <Trans i18nKey="send.highFeeModal">
               {"text"}
