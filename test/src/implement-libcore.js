@@ -273,7 +273,7 @@ const loadCore = (): Promise<Core> => {
         index,
         owners,
         derivations,
-        extendedKeys: extendedKeys.map(hexToBytes)
+        extendedKeys
       });
     }
     getIndex() {
@@ -281,7 +281,7 @@ const loadCore = (): Promise<Core> => {
     }
     index: *;
     getExtendedKeys() {
-      return this.extendedKeys.map(bytesToHex);
+      return this.extendedKeys;
     }
     extendedKeys: *;
     getOwners() {
