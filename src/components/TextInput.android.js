@@ -5,6 +5,7 @@ import {
   View,
   TextInput as ReactNativeTextInput,
   StyleSheet,
+  PixelRatio,
 } from "react-native";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 import colors from "../colors";
@@ -84,17 +85,24 @@ class TextInput extends PureComponent<*, State> {
         clearButtonMode === "always");
     // {...otherProps} needs to come first to allow an override.
 
+    // Preprocess the font size to override system scaling
+    const overrideFontScaling = { fontSize: 20 / PixelRatio.getFontScale() };
+    if (style && style.fontSize) {
+      overrideFontScaling.fontSize = style.fontSize / PixelRatio.getFontScale();
+    }
+
     return (
       <View style={[styles.container, containerStyle]}>
         <ReactNativeTextInput
           ref={innerRef}
-          style={[{ flex: 1 }, style]}
+          style={[{ flex: 1 }, style, overrideFontScaling]}
           {...otherProps}
           onBlur={this.onBlur}
           onFocus={this.onFocus}
           onChangeText={this.onChangeText}
           autoFocus={focused}
           value={value}
+          allowFontScaling={false}
           {...flags}
         />
         {!!shouldShowClearButton && (

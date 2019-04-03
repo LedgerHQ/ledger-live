@@ -2,7 +2,8 @@
 
 import React, { Component } from "react";
 import i18next from "i18next";
-import { from } from "rxjs";
+import { from, of } from "rxjs";
+import { delay } from "rxjs/operators";
 import { View, StyleSheet, Linking, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { createStructuredSelector } from "reselect";
@@ -38,6 +39,7 @@ import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
+import { rejectionOp } from "../../components/DebugRejectSwitch";
 
 type Navigation = NavigationScreenProp<{
   params: {
@@ -124,6 +126,9 @@ class ReceiveConfirmation extends Component<Props, State> {
     const { account, navigation } = this.props;
 
     this.sub = withDevice(deviceId)(transport =>
+      account.id.startsWith("mock")
+        ? of({}).pipe(delay(1000), rejectionOp())
+        :
       from(
         getAddress(transport, account.currency, account.freshAddressPath, true),
       ),
@@ -230,14 +235,17 @@ class ReceiveConfirmation extends Component<Props, State> {
             </View>
             <View style={styles.copyLink}>
               <CopyLink
+                style={styles.copyShare}
                 string={account.freshAddress}
                 replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
               >
                 <Trans i18nKey="transfer.receive.copyAddress" />
               </CopyLink>
-              <ShareLink value={account.freshAddress}>
-                <Trans i18nKey="transfer.receive.shareAddress" />
-              </ShareLink>
+              <View style={styles.copyShare}>
+                <ShareLink value={account.freshAddress}>
+                  <Trans i18nKey="transfer.receive.shareAddress" />
+                </ShareLink>
+              </View>
             </View>
           </View>
           <View style={styles.bottomContainer}>
@@ -424,8 +432,11 @@ const styles = StyleSheet.create({
   copyLink: {
     paddingTop: 24,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignSelf: "stretch",
+  },
+  copyShare: {
+    paddingHorizontal: 12,
   },
   modal: {
     flexDirection: "column",

@@ -1,6 +1,6 @@
 {
   "common": {
-    "cancel": "Cancel",
+    "cancel": "Annuler",
     "apply": "Apply",
     "back": "Back",
     "delete": "Delete",
@@ -14,22 +14,22 @@
     "signOut": "Sign Out",
     "search": "Search",
     "contactUs": "Contact us",
-    "device": "Device",
-    "cryptoAsset": "Crypto asset",
+    "device": "Appareil",
+    "cryptoAsset": "Crypto-actif",
     "skip": "Skip",
     "noCryptoFound": "No crypto assets found",
-    "needHelp": "Need help?",
+    "needHelp": "Besoin d’aide ?",
     "edit": "Edit",
-    "close": "Close",
-    "confirm": "Confirm",
+    "close": "Fermer",
+    "confirm": "Confirmer",
     "poweredBy": "Powered by ",
-    "received": "Received",
-    "sent": "Sent",
+    "received": "Reçu",
+    "sent": "Envoyé",
     "or": "OR",
-    "rename": "Rename",
-    "learnMore": "Learn more",
-    "today": "Today",
-    "yesterday": "Yesterday",
+    "rename": "Renommer",
+    "learnMore": "En savoir plus",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
     "upToDate": "Up to date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
@@ -38,7 +38,7 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "forgetDevice": "Forget device",
+    "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
     }
@@ -49,22 +49,22 @@
       "description": "Please provide an account name"
     },
     "BluetoothRequired": {
-      "title": "Oops, Bluetooth disabled",
-      "description": "Please enable Bluetooth in your phone Settings. ({{state}} state)"
+      "title": "Oups, Bluetooth désactivé",
+      "description": "Veuillez activer Bluetooth dans vos paramètres de téléphone. ({{state}} état)"
     },
     "BtcUnmatchedApp": {
       "title": "That's the wrong app",
       "description": "Open the ‘{{managerAppName}}’ app on your device"
     },
     "CantOpenDevice": {
-      "title": "Sorry, connection failed",
-      "description": "Your Ledger Nano X should be unlocked and within range"
+      "title": "Désolé, échec de la connexion",
+      "description": "Votre Ledger Nano X doit être déverrouillé et à portée"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR-code: auto-verification not supported by this address"
     },
     "DeviceAppVerifyNotSupported": {
-      "title": "Open Manager to update this App",
+      "title": "Ouvrez le Manager pour mettre à jour cette application.",
       "description": "The app verification is not supported"
     },
     "DeviceGenuineSocketEarlyClose": {
@@ -404,9 +404,9 @@
       "fallbackDesc": "You can import your {{oldDeviceName}} accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a {{fullDeviceName}}."
     },
     "stepLegacy": {
-      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X",
+      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a {{productName}}",
       "description": "You can import your accounts from Ledger Live desktop to check your balance on the go.",
-      "buy": "Buy a Ledger Nano X"
+      "buy": "Buy a {{productName}}"
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
@@ -486,8 +486,8 @@
   "portfolio": {
     "totalBalance": "Total balance",
     "syncError": "Sync error",
-    "syncFailed": "Synchronization failed",
-    "syncPending": "Synchronizing...",
+    "syncFailed": "La synchronisation a échouée",
+    "syncPending": "Synchronisation...",
     "greeting": {
       "morning": "Bonjour",
       "evening": "Bonsoir",
@@ -496,61 +496,61 @@
     "summary": "Here's the summary of your account",
     "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {
-      "title": "Add accounts to your portfolio",
-      "desc": "Open the Manager to install apps on your Ledger device before you start adding accounts to your portfolio",
+      "title": "Ajouter des comptes à votre portefeuille",
+      "desc": "Ouvrez le Manager pour installer des apps sur votre appareil Ledger avant de commencer à ajouter des comptes à votre portefeuille",
       "descWithApp": "Add accounts once you've installed apps on your device in Manager",
       "buttons": {
-        "import": "Add accounts",
-        "manager": "Open Manager"
+        "import": "Ajouter des comptes",
+        "manager": "Ouvrir le Manager"
       }
     },
     "noOpState": {
-      "title": "No operations yet?",
+      "title": "Pas encore d'opérations ?",
       "desc": "Simply send some crypto assets to your receiving address and wait for the app to sync"
     },
     "tradingDisclaimer": {
       "title": "Trade Safely",
-      "text1": "Before sending and receiving crypto assets, educate yourself to make informed decisions. Crypto assets are volatile and the prices can go up and down. Carefully evaluate your trading goals and the financial risk you are willing to take.",
-      "text2": "Please be aware that Ledger does not provide financial, tax, or legal advice. You should take such decisions on your own or rely on opinions of licensed experts."
+      "text1": "Avant d’envoyer et de recevoir des crypto-actifs, renseignez-vous afin de prendre des décisions éclairées. Les crypto-actifs sont volatiles et les prix peuvent monter ou baisser. Évaluez attentivement vos objectifs de trading et les risques financiers que vous êtes prêt à prendre.",
+      "text2": "Veuillez noter que Ledger ne fournit aucun conseil financier, fiscal ou juridique. Vous devriez prendre de telles décisions par vous-même ou vous appuyer sur les conseils d'experts agréés."
     }
   },
   "addAccountsModal": {
-    "ctaAdd": "Add accounts",
+    "ctaAdd": "Ajouter des comptes",
     "ctaImport": "Import desktop accounts"
   },
   "time": {
-    "day": "Day",
-    "week": "Week",
-    "month": "Month",
-    "year": "Year",
+    "day": "Jour",
+    "week": "Semaine",
+    "month": "Mois",
+    "year": "Année",
     "since": {
-      "day": "past day",
-      "week": "past week",
-      "month": "past month",
-      "year": "past year"
+      "day": "hier",
+      "week": "semaine dernière",
+      "month": "mois dernier",
+      "year": "année dernière"
     }
   },
   "orderOption": {
     "label": {
-      "balance": "Balance",
-      "name": "Name"
+      "balance": "Solde",
+      "name": "Nom"
     },
     "ordering": {
-      "asc": "Ascending",
-      "desc": "Descending"
+      "asc": "Croissant",
+      "desc": "Décroissant"
     }
   },
   "operationDetails": {
-    "title": "Operation details",
-    "account": "Account",
+    "title": "Détails de l'opération",
+    "account": "Compte",
     "date": "Date",
     "confirmed": "Confirmed",
     "notConfirmed": "Not confirmed",
-    "fees": "Fees",
-    "noFees": "No fee",
-    "from": "From ({{count}})",
-    "to": "To ({{count}})",
-    "identifier": "Transaction ID",
+    "fees": "Frais",
+    "noFees": "Aucun frais",
+    "from": "De ({{count}})",
+    "to": "À ({{count}})",
+    "identifier": "Numéro de transaction",
     "viewOperation": "View in explorer",
     "seeAll": "See all",
     "seeLess": "See less",
@@ -605,13 +605,13 @@
       },
       "delete": {
         "title": "Remove account from portfolio",
-        "desc": "The stored data will be removed",
-        "confirmationTitle": "Are you sure?",
+        "desc": "Les données enregistrés seront supprimés",
+        "confirmationTitle": "Êtes-vous sûr ?",
         "confirmationDesc": "Deleting an account does not affect your crypto assets. Accounts can always be re-added."
       },
       "archive": {
-        "title": "Archive Account",
-        "desc": "This account will be archived"
+        "title": "Archiver le compte",
+        "desc": "Ce compte sera archivé"
       },
       "advanced": {
         "title": "Advanced Logs",
@@ -625,15 +625,15 @@
           "line1": "In Ledger Live desktop, go to",
           "line2": "Settings > Export accounts > Export"
         },
-        "descBottom": "Please put the LiveQR code within the square"
+        "descBottom": "Veuillez aligner le QR code avec le carré"
       },
       "result": {
-        "title": "Import accounts",
-        "newAccounts": "New accounts",
-        "updatedAccounts": "Updated accounts",
-        "empty": "Add a new account",
+        "title": "Importer des comptes",
+        "newAccounts": "Nouveaux comptes",
+        "updatedAccounts": "Comptes mis à jour",
+        "empty": "Ajouter un nouveau compte",
         "descEmpty": "<0><0>No accounts</0></0> were found. Please try again or go back to the onboarding",
-        "alreadyImported": "Already imported",
+        "alreadyImported": "Déjà importé",
         "noAccounts": "Nothing to import",
         "unsupported": "Unsupported",
         "settings": "App settings",
@@ -694,38 +694,38 @@
         "bullet7": "Overall and page session duration",
         "bullet8": "Ledger device type and firmware"
       },
-      "technicalData": "Technical data",
+      "technicalData": "Données techniques",
       "technicalDataDesc": "Ledger will automatically collect fully anonymized technical data to help improve user experience.",
       "technicalDataModal": {
-        "title": "Technical data",
+        "title": "Données techniques",
         "desc": "Ledger will automatically collect fully anonymized technical data to help improve user experience",
         "bullet1": "Anonymous unique application ID",
         "bullet2": "Ledger Live version, OS region, language and region"
       },
-      "termsOfUse": "Terms of use",
+      "termsOfUse": "Conditions d’utilisation",
       "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1> and <3>Privacy Policy</3>."
     },
     "currencies": {
-      "header": "Currencies",
-      "title": "Currencies",
+      "header": "Devises",
+      "title": "Devises",
       "desc": "Set rate provider and number of confirmations per crypto.",
-      "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
+      "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings"
     },
     "about": {
-      "title": "About",
+      "title": "A propos",
       "desc": "App information, terms and conditions, and privacy policy.",
       "appDescription": "The perfect companion for your {{fullDeviceName}}. Add new crypto assets and check your balance in just a few taps.",
       "appVersion": "Version",
-      "termsConditions": "Terms and conditions",
+      "termsConditions": "Conditions générales",
       "termsConditionsDesc": "By using Ledger Live you are deemed to have accepted our terms and conditions.",
-      "privacyPolicy": "Privacy policy",
+      "privacyPolicy": "Politique de confidentialité",
       "privacyPolicyDesc": "Learn what personal data we collect, why and how we use it.",
       "liveReview": {
-        "title": "Rate the app!",
+        "title": "Noter l'application !",
         "ios": "Review in the App Store",
         "android": "Review in the Google Play store"
       }
@@ -770,15 +770,15 @@
       "noAccount": "No account found",
       "withoutDevice": "Don't have your device?",
       "address": "Address for account",
-      "copyAddress": "Copy address",
-      "shareAddress": "Share address",
-      "addressCopied": "Address copied!",
+      "copyAddress": "Copier l'adresse",
+      "shareAddress": "Partager l'adresse",
+      "addressCopied": "Adresse copiée!",
       "notSynced": {
-        "text": "Synchronizing",
+        "text": "Synchronisation",
         "desc": "This may take a while if you have many transactions or a slow internet connection"
       },
       "readOnly": {
-        "title": "Receive",
+        "title": "Recevoir",
         "text": "Please be careful",
         "desc": "You are about to generate an address which has not been confirmed on your Ledger device. Please verify it for optimal security.",
         "verify": "Your {{accountType}} address has not been confirmed on your Ledger device. Please verify it for optimal security."
@@ -823,13 +823,13 @@
     "amount": {
       "available": "<1><0>{{amount}}</></> available",
       "loadingNetwork": "Loading Network fees...",
-      "noRateProvider": "Not available"
+      "noRateProvider": "Indisponible"
     },
     "summary": {
       "tag": "Tag (Optional)",
       "validateTag": "Validate Tag",
       "total": "Total",
-      "amount": "Amount",
+      "amount": "Montant",
       "from": "From",
       "to": "To",
       "infoTotalTitle": "Total to spend",
@@ -842,17 +842,17 @@
       "message": "Confirm the transaction on your device to securely sign it",
       "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
-      "amount": "Amount",
-      "fees": "Fees",
-      "confirm": "Your account balance will update once the blockchain has confirmed the transaction",
+      "amount": "Montant",
+      "fees": "Frais",
+      "confirm": "Le solde de votre compte sera actualisé dès que la blockchain aura confirmé la transaction",
       "button": {
-        "details": "View details",
-        "retry": "Retry"
+        "details": "Voir les détails",
+        "retry": "Réessayer"
       }
     },
     "fees": {
       "title": "Network fees",
-      "validate": "Confirm",
+      "validate": "Confirmer",
       "required": "Fees are required",
       "edit": {
         "title": "Choose Unit"
@@ -873,7 +873,7 @@
     "success": {
       "desc": "View your accounts or add more of them",
       "secondaryCTA": "Add more accounts",
-      "cta": "Go to accounts"
+      "cta": "Accéder aux comptes"
     },
     "stopScanning": "Stop scanning",
     "retryScanning": "Retry scanning",
@@ -887,7 +887,7 @@
   },
   "SelectDevice": {
     "title": "Pair new device",
-    "deviceNotFoundPairNewDevice": "Pair new Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Add new Ledger Nano X",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
     "usb": "To use USB, just plug and enter your PIN Code on your device",
     "steps": {
@@ -944,16 +944,16 @@
       "step2": "Validate on your {{productName}} by pressing both buttons"
     },
     "GenuineCheck": {
-      "title": "Genuine check",
+      "title": "Contrôle d'authenticité",
       "accept": "Please don’t turn off your Nano X and allow <1>Ledger Manager</1>"
     },
     "ScanningHeader": {
       "title": "Looking for devices",
-      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
+      "desc": "Veuillez vous assurer que votre {{productName}} est déverrouillé avec Bluetooth activé"
     },
     "ScanningTimeout": {
       "title": "Oops, no device found",
-      "desc": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
+      "desc": "Veuillez vous assurer que votre {{productName}} est déverrouillé avec Bluetooth activé"
     },
     "bypassGenuine": "Use anyway",
     "alreadyPaired": "Already paired"
@@ -963,34 +963,34 @@
     "genuineFailed": "Genuine check <1><0>failed</0></1>"
   },
   "DeviceNameRow": {
-    "title": "Name",
+    "title": "Nom",
     "action": "Get device name"
   },
-  "UnpairDevice": {
+  "RemoveDevice": {
     "button": {
-      "title": "Delete {{nbDevices}} device",
-      "title_plural": "Delete {{nbDevices}} devices"
+      "title": "Remove {{nbDevices}} device",
+      "title_plural": "Remove {{nbDevices}} devices"
     }
   },
   "manager": {
     "title": "Manager",
-    "connect": "Connect your device",
+    "connect": "Select your device",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",
       "question": "Got your Ledger Nano X?",
       "button": "Start Nano X onboarding",
       "noDevice": "No device?",
-      "buy": "Buy a Ledger Nano X"
+      "buy": "Acheter un Ledger Nano X"
     },
     "appList": {
       "title": "App catalog",
-      "loading": "Loading apps..."
+      "loading": "Chargement des applis..."
     },
-    "unpair": {
-      "title": "Unpair device",
-      "description": "Are you sure? You can pair your {{productName}} again at any time.",
-      "button": "Unpair"
+    "remove": {
+      "title": "Remove device",
+      "description": "Are you sure? You can add your {{productName}} again at any time.",
+      "button": "Remove"
     }
   },
   "ManagerDevice": {
@@ -1001,12 +1001,12 @@
       "loading": {
         "title": "Installing {{appName}}",
         "desc": "Please wait while the {{appName}} app is installed",
-        "button": "Installing...",
-        "button_plural": "Installing... {{progressPercentage}}%"
+        "button": "Installation ...",
+        "button_plural": "Installation... {{progressPercentage}}%"
       },
       "done": {
         "title": "Successfully installed {{appName}} on your {{productName}}",
-        "accounts": "Go to accounts"
+        "accounts": "Accéder aux comptes"
       }
     },
     "uninstall": {
@@ -1023,8 +1023,8 @@
     "title": "Authenticity",
     "subtitle": "Genuine"
   },
-  "UnpairRow": {
-    "title": "Unpair device"
+  "RemoveRow": {
+    "title": "Remove device"
   },
   "FirmwareVersionRow": {
     "title": "Firmware version"
@@ -1032,7 +1032,7 @@
   "FirmwareUpdateRow": {
     "title": "Firmware version {{version}} available",
     "subtitle": "Please use Ledger Live Desktop to update",
-    "action": "Update"
+    "action": "Mise à jour"
   },
   "FirmwareUpdate": {
     "title": "Update firmware",
@@ -1060,7 +1060,7 @@
   },
   "FirmwareUpdateMCU": {
     "title": "Restart device",
-    "desc1": "Unplug your device from your computer",
+    "desc1": "Débranchez votre appareil de votre ordinateur",
     "desc2": "Press and hold left button and plug your device until the bootloader screen appears"
   },
   "FirmwareUpdateConfirmation": {
@@ -1070,5 +1070,8 @@
   "RepairDevice": {
     "title": "Repair",
     "action": "My device is ready"
+  },
+  "StepLegacyModal": {
+    "description": "Imported accounts only synchronize with the blockchain. Ledger Live does not synchronize accounts between mobile and desktop."
   }
 }

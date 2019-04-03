@@ -8,6 +8,7 @@ import { Trans, translate } from "react-i18next";
 import i18next from "i18next";
 import { compose } from "redux";
 import manager from "@ledgerhq/live-common/lib/manager";
+import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import { createStructuredSelector } from "reselect";
 import { removeKnownDevice } from "../../actions/ble";
 import {
@@ -30,14 +31,14 @@ import ModalBottomAction from "../../components/ModalBottomAction";
 import ReadOnlyNanoX from "./ReadOnlyNanoX";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
-const UnpairDeviceModal = ({
+const RemoveDeviceModal = ({
   onHideMenu,
-  unPair,
+  remove,
   open,
   deviceName,
 }: {
   onHideMenu: () => *,
-  unPair: () => *,
+  remove: () => *,
   open: boolean,
   deviceName: string,
 }) => (
@@ -51,7 +52,7 @@ const UnpairDeviceModal = ({
             type="alert"
             IconLeft={Trash}
             title={<Trans i18nKey="common.forgetDevice" />}
-            onPress={unPair}
+            onPress={remove}
             containerStyle={styles.buttonContainer}
           />
         </View>
@@ -138,9 +139,10 @@ class ChooseDevice extends Component<
     }
   };
 
-  unpair = async () => {
+  remove = async () => {
     const { removeKnownDevice } = this.props;
     removeKnownDevice(this.chosenDevice.deviceId);
+    await disconnect(this.chosenDevice.deviceId).catch(() => {});
     this.onHideMenu();
   };
 
@@ -180,10 +182,10 @@ class ChooseDevice extends Component<
         />
 
         {this.chosenDevice && (
-          <UnpairDeviceModal
+          <RemoveDeviceModal
             onHideMenu={this.onHideMenu}
             open={showMenu}
-            unPair={this.unpair}
+            remove={this.remove}
             deviceName={this.chosenDevice.deviceName}
           />
         )}

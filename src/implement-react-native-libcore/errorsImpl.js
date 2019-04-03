@@ -14,6 +14,8 @@ export function remapLibcoreErrors(error: Error): Error {
     return new NotEnoughBalance();
   }
 
+  // TODO the part below this line is RN specifics, we'll need to move out
+
   if (
     msg.includes("The Internet connection appears to be offline") ||
     msg.includes(

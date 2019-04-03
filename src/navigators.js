@@ -162,6 +162,7 @@ const ManagerMain = createMaterialTopTabNavigator(
   },
   {
     tabBarOptions: {
+      allowFontScaling: false,
       activeTintColor: colors.live,
       inactiveTintColor: colors.grey,
       upperCaseLabel: false,
@@ -249,6 +250,12 @@ const Main = createBottomTabNavigator(
       showLabel: false,
     },
     tabBarComponent: HiddenTabBarIfKeyboardVisible,
+    defaultNavigationOptions: {
+      tabBarOnPress: ({ navigation, defaultHandler }) => {
+        defaultHandler();
+        navigation.emit("refocus");
+      },
+    },
   },
 );
 

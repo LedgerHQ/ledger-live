@@ -5,8 +5,6 @@ import { StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import { Sentry } from "react-native-sentry";
 
-import { withLibcore } from "../libcore/access";
-
 import Button from "../components/Button";
 
 class DebugBLE extends Component<
@@ -28,9 +26,6 @@ class DebugBLE extends Component<
   jsCrash = () => {
     throw new Error("DEBUG jsCrash");
   };
-
-  libcoreCrash = () =>
-    withLibcore(core => core.coreWalletPool.getWallet(null, null));
 
   nativeCrash = () => {
     Sentry.nativeCrash();
@@ -54,13 +49,6 @@ class DebugBLE extends Component<
           type="primary"
           title="Native Crash"
           onPress={this.nativeCrash}
-          containerStyle={styles.buttonStyle}
-        />
-        <Button
-          event="DebugCrashLibcore"
-          type="primary"
-          title="Libcore Crash"
-          onPress={this.libcoreCrash}
           containerStyle={styles.buttonStyle}
         />
         <Button

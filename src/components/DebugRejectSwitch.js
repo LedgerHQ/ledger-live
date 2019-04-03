@@ -1,10 +1,12 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { Subject, merge, Observable } from "rxjs";
+import { Subject, Observable, throwError } from "rxjs";
 import Config from "react-native-config";
+import { flatMap } from "rxjs/operators";
+import LText from "./LText";
 
 export const rejections = new Subject();
 
@@ -16,17 +18,17 @@ export const rejectionOp = (createError: () => Error = defaultErrorCreator) => <
 >(
   observable: Observable<T>,
 ): Observable<T> =>
-  !Config.DEBUG_REJECT_SWITCH
+  !Config.MOCK
     ? observable
     : Observable.create(o => {
-        merge(
-          observable,
-          Observable.create(o => {
-            rejections.subscribe(() => {
-              o.error(createError());
-            });
-          }),
-        ).subscribe(o);
+        const s = observable.subscribe(o);
+        const s2 = rejections
+          .pipe(flatMap(() => throwError(createError())))
+          .subscribe(o);
+        return () => {
+          s.unsubscribe();
+          s2.unsubscribe();
+        };
       });
 
 // usage: hookRejections(promise)
@@ -34,7 +36,7 @@ export const hookRejections = <T>(
   p: Promise<T>,
   createError: () => Error = defaultErrorCreator,
 ): Promise<T> =>
-  !Config.DEBUG_REJECT_SWITCH
+  !Config.MOCK
     ? p
     : Promise.race([
         p,
@@ -52,12 +54,16 @@ export default class DebugRejectSwitch extends PureComponent<{}> {
   };
 
   render() {
-    if (!Config.DEBUG_REJECT_SWITCH) return null;
+    if (!Config.MOCK) return null;
     return (
       <SafeAreaView>
-        <TouchableWithoutFeedback onPress={this.onPress}>
-          <View style={styles.root} />
-        </TouchableWithoutFeedback>
+        <TouchableOpacity onPress={this.onPress}>
+          <View style={styles.root}>
+            <LText bold style={styles.text}>
+              {[..."STOP"].join("\n")}
+            </LText>
+          </View>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -66,12 +72,17 @@ export default class DebugRejectSwitch extends PureComponent<{}> {
 const styles = StyleSheet.create({
   root: {
     position: "absolute",
-    right: 0,
-    bottom: 50,
-    height: 40,
-    width: 25,
-    borderWidth: 1,
-    borderColor: "rgba(200,0,0,0.1)",
+    left: 0,
+    bottom: 80,
+    width: 30,
+    backgroundColor: "red",
     zIndex: 999,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  text: {
+    color: "white",
+    textAlign: "center",
+    paddingVertical: 10,
   },
 });

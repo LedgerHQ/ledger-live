@@ -1,7 +1,7 @@
 // @flow
 
 import { Buffer } from "buffer";
-import { delay } from "./promise";
+import { delay } from "@ledgerhq/live-common/lib/promise";
 
 export type ApduMock = {
   exchange: Buffer => Promise<Buffer>,
@@ -33,6 +33,14 @@ export default (arg: {
     const data = input.slice(5, 5 + dataLength);
 
     switch (clains) {
+      case "e001": {
+        // get device info
+        // answer from a nano s 1.5.5 that have allowed manager
+        return Buffer.from(
+          "3110000405312e352e3504ae00000004312e37002013fe17e06cf2f710d33328aa46d1053f8fadd48dcaeca2c5512dd79e2158d5779000",
+          "hex",
+        );
+      }
       case "e0d2": {
         // get name
         return Buffer.concat([
@@ -72,7 +80,7 @@ export default (arg: {
   }
 
   async function close() {
-    return Promise.resolve();
+    return delay(100);
   }
 
   return { exchange, close };

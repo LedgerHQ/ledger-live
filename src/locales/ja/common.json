@@ -38,7 +38,7 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "forgetDevice": "Forget device",
+    "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
     }
@@ -404,9 +404,9 @@
       "fallbackDesc": "You can import your {{oldDeviceName}} accounts from Ledger Live desktop to check your balance on the go. To manage secure transactions everywhere you go, consider upgrading to a {{fullDeviceName}}."
     },
     "stepLegacy": {
-      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a Ledger Nano X",
+      "bannerDescription": "To manage secure transactions everywhere you go, consider upgrading to a {{productName}}",
       "description": "You can import your accounts from Ledger Live desktop to check your balance on the go.",
-      "buy": "Buy a Ledger Nano X"
+      "buy": "Buy a {{productName}}"
     },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
@@ -709,7 +709,7 @@
       "header": "Currencies",
       "title": "Currencies",
       "desc": "Set rate provider and number of confirmations per crypto.",
-      "rateProvider": "Rate Provider ({{currencyTicker}}-> BTC)",
+      "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
@@ -887,7 +887,7 @@
   },
   "SelectDevice": {
     "title": "Pair new device",
-    "deviceNotFoundPairNewDevice": "Pair new Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Add new Ledger Nano X",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
     "usb": "To use USB, just plug and enter your PIN Code on your device",
     "steps": {
@@ -966,15 +966,15 @@
     "title": "Name",
     "action": "Get device name"
   },
-  "UnpairDevice": {
+  "RemoveDevice": {
     "button": {
-      "title": "Delete {{nbDevices}} device",
-      "title_plural": "Delete {{nbDevices}} devices"
+      "title": "Remove {{nbDevices}} device",
+      "title_plural": "Remove {{nbDevices}} devices"
     }
   },
   "manager": {
     "title": "Manager",
-    "connect": "Connect your device",
+    "connect": "Select your device",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",
@@ -987,10 +987,10 @@
       "title": "App catalog",
       "loading": "Loading apps..."
     },
-    "unpair": {
-      "title": "Unpair device",
-      "description": "Are you sure? You can pair your {{productName}} again at any time.",
-      "button": "Unpair"
+    "remove": {
+      "title": "Remove device",
+      "description": "Are you sure? You can add your {{productName}} again at any time.",
+      "button": "Remove"
     }
   },
   "ManagerDevice": {
@@ -1023,8 +1023,8 @@
     "title": "Authenticity",
     "subtitle": "Genuine"
   },
-  "UnpairRow": {
-    "title": "Unpair device"
+  "RemoveRow": {
+    "title": "Remove device"
   },
   "FirmwareVersionRow": {
     "title": "Firmware version"
@@ -1070,5 +1070,8 @@
   "RepairDevice": {
     "title": "Repair",
     "action": "My device is ready"
+  },
+  "StepLegacyModal": {
+    "description": "Imported accounts only synchronize with the blockchain. Ledger Live does not synchronize accounts between mobile and desktop."
   }
 }

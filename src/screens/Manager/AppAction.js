@@ -7,9 +7,11 @@ import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
 import ProgressCircle from "react-native-progress/Circle";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import install from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstall from "@ledgerhq/live-common/lib/hw/uninstallApp";
+import { delay } from "@ledgerhq/live-common/lib/promise";
 import { createStructuredSelector } from "reselect";
 import { getDeviceModel } from "@ledgerhq/devices";
 import BottomModal from "../../components/BottomModal";
@@ -22,7 +24,6 @@ import TranslatedError from "../../components/TranslatedError";
 import spinner from "../../images/spinner.png";
 import Check from "../../icons/Check";
 import Spinning from "../../components/Spinning";
-import { delay } from "../../logic/promise";
 import colors from "../../colors";
 import AppIcon from "./AppIcon";
 import { installAppFirstTime } from "../../actions/settings";
@@ -84,7 +85,7 @@ class AppAction extends PureComponent<
     },
     targetId: *,
     deviceId: string,
-    modelId: string,
+    modelId: DeviceModelId,
     onClose: () => void,
     onOpenAccounts: () => void,
     isOpened: boolean,

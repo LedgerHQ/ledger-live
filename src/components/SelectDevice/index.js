@@ -7,7 +7,6 @@ import { createStructuredSelector } from "reselect";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import { Trans } from "react-i18next";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
-import Icon from "react-native-vector-icons/dist/Feather";
 import { withNavigation } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -19,11 +18,10 @@ import { setReadOnlyMode } from "../../actions/settings";
 import BluetoothEmpty from "./BluetoothEmpty";
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
-import Touchable from "../Touchable";
 import colors from "../../colors";
-import Circle from "../Circle";
 import SectionSeparator from "../SectionSeparator";
 import type { DeviceNames } from "../../screens/Onboarding/types";
+import PairNewDeviceButton from "./PairNewDeviceButton";
 
 type Props = {
   onBluetoothDeviceAction?: (device: DeviceMeta) => any,
@@ -54,28 +52,12 @@ type State = {
   showMenu: boolean,
 };
 
-const IconPlus = () => (
-  <Circle bg={colors.live} size={14}>
-    <Icon name="plus" size={10} color={colors.white} />
-  </Circle>
-);
-
-const BluetoothHeader = ({ onPairNewDevice }: { onPairNewDevice: () => * }) => (
-  <Touchable
-    event="PairNewDevice"
-    style={styles.bluetoothHeader}
-    onPress={onPairNewDevice}
-  >
+const BluetoothHeader = () => (
+  <View style={styles.bluetoothHeader}>
     <LText semiBold style={styles.section}>
       <Trans i18nKey="common.bluetooth" />
     </LText>
-    <View style={styles.addContainer}>
-      <LText semiBold style={styles.add}>
-        <Trans i18nKey="common.add" />
-      </LText>
-      <IconPlus />
-    </View>
-  </Touchable>
+  </View>
 );
 
 const USBHeader = () => (
@@ -84,6 +66,7 @@ const USBHeader = () => (
   </LText>
 );
 
+// Fixme Use the illustration instead of the png
 const UsbPlaceholder = () => (
   <View style={styles.usbContainer}>
     <Image source={require("../../images/connect-nanos-mobile.png")} />
@@ -230,8 +213,9 @@ class SelectDevice extends Component<OwnProps, State> {
           <BluetoothEmpty />
         ) : (
           <View>
-            <BluetoothHeader onPairNewDevice={this.onPairNewDevice} />
+            <BluetoothHeader />
             {ble.map(this.renderItem)}
+            <PairNewDeviceButton onPress={this.onPairNewDevice} />
           </View>
         )}
         {hasUSBSection &&

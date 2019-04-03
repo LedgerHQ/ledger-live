@@ -1,5 +1,4 @@
 /* @flow */
-// TODO name of this component is weird. i suggest DeviceUnpairModal
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
@@ -8,9 +7,10 @@ import { connect } from "react-redux";
 import { withNavigation, SafeAreaView } from "react-navigation";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import { getDeviceModel } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/devices";
+import { delay } from "@ledgerhq/live-common/lib/promise";
 
 import { removeKnownDevice } from "../../actions/ble";
-import { delay } from "../../logic/promise";
 import Close from "../../icons/Close";
 
 import BottomModal from "../../components/BottomModal";
@@ -27,7 +27,7 @@ const forceInset = { bottom: "always" };
 type Props = {
   navigation: *,
   deviceId: string,
-  modelId: string,
+  modelId: DeviceModelId,
   onClose: () => void,
   opened: boolean,
   removeKnownDevice: string => void,
@@ -38,13 +38,13 @@ type State = {
   error: ?Error,
 };
 
-class DeviceAction extends PureComponent<Props, State> {
+class DeviceRemoveAction extends PureComponent<Props, State> {
   state = {
     pending: true,
     error: null,
   };
 
-  unpair = async () => {
+  remove = async () => {
     const { deviceId, navigation, onClose, removeKnownDevice } = this.props;
     removeKnownDevice(deviceId);
     onClose();
@@ -56,25 +56,25 @@ class DeviceAction extends PureComponent<Props, State> {
     const { onClose, opened, modelId } = this.props;
 
     return (
-      <BottomModal id="UnpairModal" isOpened={opened} onClose={onClose}>
+      <BottomModal id="RemoveModal" isOpened={opened} onClose={onClose}>
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
             <View style={styles.headIcon}>
               <Trash size={24} color={colors.alert} />
             </View>
             <LText secondary semiBold style={styles.title}>
-              <Trans i18nKey="manager.unpair.title" />
+              <Trans i18nKey="manager.remove.title" />
             </LText>
             <LText style={styles.description}>
               <Trans
-                i18nKey="manager.unpair.description"
+                i18nKey="manager.remove.description"
                 values={getDeviceModel(modelId)}
               />
             </LText>
           </View>
           <View style={styles.buttons}>
             <Button
-              event="ManagerUnpairCancel"
+              event="ManagerRemoveCancel"
               type="secondary"
               onPress={onClose}
               title={<Trans i18nKey="common.cancel" />}
@@ -82,16 +82,16 @@ class DeviceAction extends PureComponent<Props, State> {
             />
             <Space w={16} />
             <Button
-              event="ManagerUnpairContinue"
+              event="ManagerRemoveContinue"
               type="alert"
-              onPress={this.unpair}
-              title={<Trans i18nKey="manager.unpair.button" />}
+              onPress={this.remove}
+              title={<Trans i18nKey="manager.remove.button" />}
               containerStyle={styles.button}
             />
           </View>
         </SafeAreaView>
         <Touchable
-          event="ManagerUnpairClose"
+          event="ManagerRemoveClose"
           style={styles.close}
           onPress={onClose}
         >
@@ -152,4 +152,4 @@ const styles = StyleSheet.create({
 export default connect(
   null,
   { removeKnownDevice },
-)(withNavigation(DeviceAction));
+)(withNavigation(DeviceRemoveAction));

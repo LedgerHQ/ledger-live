@@ -10,9 +10,16 @@ import Svg, {
   Use,
   Rect,
 } from "react-native-svg";
+import getWindowDimensions from "../logic/getWindowDimensions";
 
+const { width } = getWindowDimensions();
 const ConnectNanoXIllustration = props => (
-  <Svg width={194} height={149} {...props}>
+  <Svg
+    width={width * 0.7}
+    height={((width * 0.7) / 194) * 149}
+    viewBox="0 0 194 149"
+    {...props}
+  >
     <Defs>
       <Path
         id="prefix__a"

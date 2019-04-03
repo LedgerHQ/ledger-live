@@ -31,6 +31,7 @@ type OwnProps = {
   // as we can't render View inside Text, provide ability to pass
   // wrapper component from outside
   Wrapper?: React$ComponentType<*>,
+  subMagnitude?: number,
 };
 
 type Props = OwnProps & {
@@ -40,7 +41,7 @@ type Props = OwnProps & {
 };
 
 const mapStateToProps = (state: State, props: OwnProps) => {
-  const { currency, value, date } = props;
+  const { currency, value, date, subMagnitude } = props;
   const counterValueCurrency = counterValueCurrencySelector(state);
   const fromExchange = currencySettingsSelector(state, { currency }).exchange;
   const toExchange = counterValueExchangeSelector(state);
@@ -52,6 +53,7 @@ const mapStateToProps = (state: State, props: OwnProps) => {
     to: counterValueCurrency,
     value,
     date,
+    disableRounding: !!subMagnitude,
   });
 
   return {

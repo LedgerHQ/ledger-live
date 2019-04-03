@@ -185,14 +185,21 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
   run: meta =>
     withDevicePolling(meta.deviceId)(transport =>
       from(
-        getAddress(
-          transport,
-          currency,
-          runDerivationScheme(
-            getDerivationScheme({ currency, derivationMode: "" }),
-            currency,
-          ),
-        ),
+        meta.deviceId.startsWith("mock")
+          ? [
+              {
+                ...meta,
+                addressInfo: { address: "" },
+              },
+            ]
+          : getAddress(
+              transport,
+              currency,
+              runDerivationScheme(
+                getDerivationScheme({ currency, derivationMode: "" }),
+                currency,
+              ),
+            ),
       ),
     ).pipe(
       map(addressInfo => ({
@@ -232,19 +239,28 @@ export const accountApp: Account => Step = account => ({
   run: meta =>
     withDevicePolling(meta.deviceId)(transport =>
       from(
-        getAddress(transport, account.currency, account.freshAddressPath).then(
-          addressInfo => {
-            if (addressInfo.address !== account.freshAddress) {
-              throw new WrongDeviceForAccount("WrongDeviceForAccount", {
-                accountName: account.name,
-              });
-            }
-            return {
-              ...meta,
-              addressInfo,
-            };
-          },
-        ),
+        account.id.startsWith("mock")
+          ? [
+              {
+                ...meta,
+                addressInfo: { address: account.freshAddress },
+              },
+            ]
+          : getAddress(
+              transport,
+              account.currency,
+              account.freshAddressPath,
+            ).then(addressInfo => {
+              if (addressInfo.address !== account.freshAddress) {
+                throw new WrongDeviceForAccount("WrongDeviceForAccount", {
+                  accountName: account.name,
+                });
+              }
+              return {
+                ...meta,
+                addressInfo,
+              };
+            }),
       ),
     ).pipe(
       rejectionOp(

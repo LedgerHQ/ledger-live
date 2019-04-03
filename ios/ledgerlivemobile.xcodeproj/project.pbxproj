@@ -73,6 +73,7 @@
 		B91C45E021665C3B00E250AB /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DE21665C1200E250AB /* ledger-core.framework */; };
 		B91C46CD216812DE00E250AB /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DB2166562200E250AB /* ledger-core.framework */; };
 		B9E5B9A72153F4490053D868 /* libRNLibLedgerCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34A272772152A95200B97A07 /* libRNLibLedgerCore.a */; };
+		B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = B91C45DB2166562200E250AB /* ledger-core.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BF09D4F4214BF73D0040397B /* libReactNativeConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34BE1FF120092032009E8710 /* libReactNativeConfig.a */; };
 		BF09D4F5214BF7460040397B /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34654386200E4A94008E3CDD /* libRNSVG.a */; };
 		BF09D4F6214BF7500040397B /* libRCTLocale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34AB90C12046C203008783DA /* libRCTLocale.a */; };
@@ -597,6 +598,13 @@
 			remoteGlobalIDString = 274692C321B4414400BF91A8;
 			remoteInfo = "RNSentry-tvOS";
 		};
+		F8A31E45223A3BDF00F81049 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64C6A31B337D471B93E32DCD /* RNSentry.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 274692C321B4414400BF91A8;
+			remoteInfo = "RNSentry-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -619,6 +627,7 @@
 			dstPath = x86_64;
 			dstSubfolderSpec = 10;
 			files = (
+				B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;

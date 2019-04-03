@@ -37,11 +37,13 @@ const i18n = i18next
     },
   });
 
-const LocaleContext = React.createContext({
+const getState = i18n => ({
   i18n,
   t: i18n.getFixedT(),
-  locale: i18n.language,
+  locale: i18n.languages[0],
 });
+
+const LocaleContext = React.createContext(getState(i18n));
 
 type State = {
   i18n: *,
@@ -55,19 +57,11 @@ export default class LocaleProvider extends React.Component<
   },
   State,
 > {
-  state = {
-    i18n,
-    t: i18n.getFixedT(),
-    locale: i18n.language,
-  };
+  state = getState(i18n);
 
   componentDidMount() {
-    i18next.on("languageChanged", locale => {
-      this.setState({
-        i18n,
-        t: i18n.getFixedT(locale),
-        locale: i18n.language,
-      });
+    i18next.on("languageChanged", () => {
+      this.setState(getState(i18n));
     });
   }
 

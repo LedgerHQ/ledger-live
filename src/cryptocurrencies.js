@@ -46,6 +46,7 @@ export const supportsExistingAccount = ({
   currencyId: string,
 }) => listCryptoCurrencies(true).some(c => c.id === currencyId);
 
+// TODO move to live-common with a new env
 const SHOW_LEGACY_NEW_ACCOUNT = false;
 
 export const shouldShowNewAccount = (

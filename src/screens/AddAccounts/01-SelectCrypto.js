@@ -3,7 +3,6 @@
 import React, { Component } from "react";
 import { translate, Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-// $FlowFixMe
 import { SafeAreaView, FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";

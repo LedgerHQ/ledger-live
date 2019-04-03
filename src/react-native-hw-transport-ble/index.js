@@ -7,7 +7,7 @@ import createAPDUMock from "../logic/createAPDUMock";
 
 const names = {};
 
-const transport = Config.MOCK_BLE
+const transport = Config.MOCK
   ? makeMock({
       createTransportDeviceMock: (id, name) => {
         names[id] = name;

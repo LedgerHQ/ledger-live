@@ -214,6 +214,7 @@ class SendSelectRecipient extends Component<Props, State> {
                 ]}
                 onFocus={this.onRecipientFieldFocus}
                 onChangeText={this.onChangeText}
+                onInputCleared={this.clear}
                 value={address}
                 ref={this.input}
                 multiline

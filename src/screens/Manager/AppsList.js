@@ -1,7 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-// $FlowFixMe
 import { FlatList } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
@@ -24,6 +23,7 @@ import AppRow from "./AppRow";
 import AppAction from "./AppAction";
 import { developerModeEnabledSelector } from "../../reducers/settings";
 import { getFullListSortedCryptoCurrencies } from "../../countervalues";
+import { listCryptoCurrencies } from "../../cryptocurrencies";
 
 const actionKey = action => `${action.app.id}_${action.type}`;
 
@@ -95,11 +95,26 @@ class ManagerAppsList extends Component<
         developerModeEnabled,
         getFullListSortedCryptoCurrencies,
       );
+
+      const cryptos = listCryptoCurrencies(true);
+
+      const withTickers = apps.map(app => {
+        const maybeCrypto = cryptos.find(
+          c => c.managerAppName.toLowerCase() === app.name.toLowerCase(),
+        );
+        const ticker = maybeCrypto ? maybeCrypto.ticker : "";
+
+        return {
+          ...app,
+          ticker,
+        };
+      });
+
       if (id !== this.fetchAppId) return;
       this.setState({
         error: null,
         pending: false,
-        apps,
+        apps: withTickers,
       });
     } catch (error) {
       logger.critical(error);
@@ -176,6 +191,7 @@ class ManagerAppsList extends Component<
             renderList={this.renderList}
             renderEmptySearch={this.renderEmptySearch}
             inputWrapperStyle={styles.inputWrapper}
+            keys={["name", "ticker"]}
           />
         )}
         {action ? (

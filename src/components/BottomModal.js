@@ -9,6 +9,7 @@ import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import getWindowDimensions from "../logic/getWindowDimensions";
+import DebugRejectSwitch from "./DebugRejectSwitch";
 
 export type Props = {
   id?: string,
@@ -60,6 +61,7 @@ class BottomModal extends Component<Props> {
               {children}
             </View>
           </View>
+          <DebugRejectSwitch />
         </ReactNativeModal>
       </ButtonUseTouchable.Provider>
     );
