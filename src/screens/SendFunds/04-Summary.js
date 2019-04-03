@@ -25,6 +25,8 @@ import SendRowsFee from "../../families/SendRowsFee";
 import SummaryTotalSection from "./SummaryTotalSection";
 import StepHeader from "../../components/StepHeader";
 import SectionSeparator from "../../components/SectionSeparator";
+import AlertTriangle from "../../icons/AlertTriangle";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 // TODO put this somewhere
 const similarError = (a, b) =>
@@ -45,6 +47,7 @@ class SendSummary extends Component<
   {
     totalSpent: ?BigNumber,
     error: ?Error,
+    highFeesOpen: boolean,
   },
 > {
   static navigationOptions = {
@@ -62,6 +65,7 @@ class SendSummary extends Component<
   state = {
     totalSpent: null,
     error: null, // TODO use error somewhere!
+    highFeesOpen: false,
   };
 
   componentDidMount() {
@@ -89,6 +93,19 @@ class SendSummary extends Component<
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
     await bridge.checkValidTransaction(account, transaction);
+
+    if (bridge && account && transaction) {
+      const totalSpent = await bridge.getTotalSpent(account, transaction);
+      if (
+        totalSpent
+          .minus(transaction.amount)
+          .times(10)
+          .gt(transaction.amount)
+      ) {
+        this.setState({ highFeesOpen: true });
+        return;
+      }
+    }
     navigation.navigate("SendConnectDevice", {
       accountId: account.id,
       transaction,
@@ -134,8 +151,25 @@ class SendSummary extends Component<
     }
   };
 
+  onAcceptFees = async () => {
+    const { account, navigation } = this.props;
+    const transaction = navigation.getParam("transaction");
+    const bridge = getAccountBridge(account);
+    await bridge.checkValidTransaction(account, transaction);
+
+    navigation.navigate("SendConnectDevice", {
+      accountId: account.id,
+      transaction,
+    });
+    this.setState({ highFeesOpen: false });
+  };
+
+  onRejectFees = () => {
+    this.setState({ highFeesOpen: false });
+  };
+
   render() {
-    const { totalSpent, error } = this.state;
+    const { totalSpent, error, highFeesOpen } = this.state;
     const { account, navigation } = this.props;
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
@@ -180,6 +214,19 @@ class SendSummary extends Component<
             disabled={!totalSpent || !!error}
           />
         </View>
+        <ConfirmationModal
+          isOpened={highFeesOpen}
+          onClose={this.onRejectFees}
+          onConfirm={this.onAcceptFees}
+          Icon={AlertTriangle}
+          confirmationDesc={
+            <Trans i18nKey="send.highFeeModal">
+              {"text"}
+              <LText bold>bold text</LText>
+            </Trans>
+          }
+          confirmButtonText={<Trans i18nKey="common.continue" />}
+        />
       </SafeAreaView>
     );
   }
