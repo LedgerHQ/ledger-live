@@ -1,26 +1,24 @@
 // @flow
 // set and get environment & config variables
+import { Subject } from "rxjs";
 
-type ExtractEnvValue = <V>((string) => ?V) => V;
-
-type Env = typeof envParsers;
-export type EnvName = $Keys<Env>;
-
-const intParser = (v: string): ?number => {
+const intParser = (v: mixed): ?number => {
   if (!isNaN(v)) return parseInt(v, 10);
 };
 
-const floatParser = (v: string): ?number => {
+const floatParser = (v: mixed): ?number => {
   if (!isNaN(v)) return parseFloat(v);
 };
 
-const boolParser = (v: string): ?boolean => {
+const boolParser = (v: mixed): ?boolean => {
+  if (typeof v === "boolean") return v;
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: string): ?string => v;
+const stringParser = (v: mixed): ?string =>
+  typeof v === "string" ? v : undefined;
 
-// For each
+// This define the available environments
 const envParsers = {
   MANAGER_DEV_MODE: boolParser,
   SHOW_LEGACY_NEW_ACCOUNT: boolParser,
@@ -34,8 +32,8 @@ const envParsers = {
   EXPERIMENTAL_EXPLORERS: boolParser
 };
 
-// initialized with default values
-const env: $ObjMap<Env, ExtractEnvValue> = {
+// This define the default values
+const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   MANAGER_DEV_MODE: false,
   SHOW_LEGACY_NEW_ACCOUNT: false,
   WITH_DEVICE_POLLING_DELAY: 500,
@@ -50,13 +48,14 @@ const env: $ObjMap<Env, ExtractEnvValue> = {
   EXPERIMENTAL_EXPLORERS: false
 };
 
-export type EnvValue<Name> = $ElementType<typeof env, Name>;
-
-// implementation can override the defaults typically at boot of the app but potentially over time
-export const setEnv = <Name: EnvName>(name: Name, value: EnvValue<Name>) => {
-  // $FlowFixMe flow don't seem to type proof it
-  env[name] = value;
+// private local state
+const env: $ObjMap<EnvParsers, ExtractEnvValue> = {
+  ...defaults
 };
+
+export const getAllEnvNames = (): EnvName[] => Object.keys(env);
+
+export const getAllEnvs = (): Env => Object.freeze(env);
 
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
 export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> => {
@@ -64,18 +63,49 @@ export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> => {
   return env[name];
 };
 
-export const setEnvUnsafe = <Name: EnvName>(
-  name: Name,
-  unsafeValue: string
-): boolean => {
+export const getEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> => {
+  // $FlowFixMe flow don't seem to type proof it
+  return defaults[name];
+};
+
+export const isEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> => {
+  // $FlowFixMe flow don't seem to type proof it
+  return env[name] === defaults[name];
+};
+
+export const changes: Subject<{
+  name: EnvName,
+  value: EnvValue<*>,
+  oldValue: EnvValue<*>
+}> = new Subject();
+
+// change one environment
+export const setEnv = <Name: EnvName>(name: Name, value: EnvValue<Name>) => {
+  const oldValue = env[name];
+  if (oldValue !== value) {
+    // $FlowFixMe flow don't seem to type proof it
+    env[name] = value;
+    // $FlowFixMe flow don't seem to type proof it
+    changes.next({ name, value, oldValue });
+  }
+};
+
+// change one environment with safety. returns true if it succeed
+export const setEnvUnsafe = (name: string, unsafeValue: mixed): boolean => {
+  if (!(name in envParsers)) return false;
   const parser = envParsers[name];
-  if (!parser) return false;
   const value = parser(unsafeValue);
   if (value === undefined || value === null) {
     console.warn(`Invalid ENV value for ${name}`);
     return false;
   }
-  // $FlowFixMe
+  // $FlowFixMe flow don't seem to type proof it
   setEnv(name, value);
   return true;
 };
+
+type ExtractEnvValue = <V>((mixed) => ?V) => V;
+type EnvParsers = typeof envParsers;
+type Env = typeof env;
+export type EnvValue<Name> = $ElementType<Env, Name>;
+export type EnvName = $Keys<EnvParsers>;
