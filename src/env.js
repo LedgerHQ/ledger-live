@@ -55,7 +55,7 @@ const env: $ObjMap<EnvParsers, ExtractEnvValue> = {
 
 export const getAllEnvNames = (): EnvName[] => Object.keys(env);
 
-export const getAllEnvs = (): Env => Object.freeze({ ...env });
+export const getAllEnvs = (): Env => ({ ...env });
 
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
 export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> => {
@@ -85,6 +85,7 @@ export const setEnv = <Name: EnvName>(name: Name, value: EnvValue<Name>) => {
   if (oldValue !== value) {
     // $FlowFixMe flow don't seem to type proof it
     env[name] = value;
+    // $FlowFixMe flow don’t seem to type proof it
     changes.next({ name, value, oldValue });
   }
 };
