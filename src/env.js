@@ -37,7 +37,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   MANAGER_DEV_MODE: false,
   SHOW_LEGACY_NEW_ACCOUNT: false,
   WITH_DEVICE_POLLING_DELAY: 500,
-  FORCE_PROVIDER: 0, // in zero case, we will not force provider. otherwise you can force one.
+  FORCE_PROVIDER: 1,
   LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
   MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
@@ -55,7 +55,7 @@ const env: $ObjMap<EnvParsers, ExtractEnvValue> = {
 
 export const getAllEnvNames = (): EnvName[] => Object.keys(env);
 
-export const getAllEnvs = (): Env => Object.freeze(env);
+export const getAllEnvs = (): Env => ({ ...env });
 
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
 export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> => {
@@ -85,7 +85,7 @@ export const setEnv = <Name: EnvName>(name: Name, value: EnvValue<Name>) => {
   if (oldValue !== value) {
     // $FlowFixMe flow don't seem to type proof it
     env[name] = value;
-    // $FlowFixMe flow don't seem to type proof it
+    // $FlowFixMe flow don’t seem to type proof it
     changes.next({ name, value, oldValue });
   }
 };
