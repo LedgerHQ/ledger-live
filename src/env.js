@@ -37,7 +37,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   MANAGER_DEV_MODE: false,
   SHOW_LEGACY_NEW_ACCOUNT: false,
   WITH_DEVICE_POLLING_DELAY: 500,
-  FORCE_PROVIDER: 0, // in zero case, we will not force provider. otherwise you can force one.
+  FORCE_PROVIDER: 1,
   LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
   MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
