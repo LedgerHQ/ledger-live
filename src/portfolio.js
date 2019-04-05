@@ -4,6 +4,7 @@
  */
 import { BigNumber } from "bignumber.js";
 import memoize from "lodash/memoize";
+import last from "lodash/last";
 import type {
   Account,
   BalanceHistory,
@@ -109,7 +110,7 @@ type GetBalanceHistoryWithCountervalue = (
 const accountRateHashCVStable = (account, r, cvRef) =>
   `${accountRateHash(account, r)}_${cvRef ? cvRef.toString() : "none"}`;
 
-const stableCache = {};
+const accountCVstableCache = {};
 const HIGH_VALUE = BigNumber("10000000000000000");
 const ZERO = BigNumber(0);
 
@@ -122,15 +123,27 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
     countervalue: (cvRef && calc(account, p.value, p.date)) || ZERO
   });
   const stableHash = accountRateHashCVStable(account, r, cvRef);
-  let stablePoints = stableCache[stableHash];
-  if (!stablePoints) {
-    stablePoints = histo.slice(0, -1).map(mapFn);
-    stableCache[stableHash] = stablePoints;
+  let stable = accountCVstableCache[stableHash];
+  const lastPoint = mapFn(histo[histo.length - 1]);
+  if (!stable) {
+    stable = {
+      history: histo.map(mapFn),
+      countervalueAvailable: !!cvRef
+    };
+    accountCVstableCache[stableHash] = stable;
+    return stable;
+  } else {
+    const lastStable = last(stable.history);
+    if (lastPoint.countervalue.eq(lastStable.countervalue)) {
+      return stable;
+    }
+    const copy = {
+      ...stable,
+      history: stable.history.slice(0, -1).concat(lastStable)
+    };
+    accountCVstableCache[stableHash] = copy;
+    return copy;
   }
-  return {
-    history: stablePoints.concat(mapFn(histo[histo.length - 1])),
-    countervalueAvailable: !!cvRef
-  };
 };
 
 export const getBalanceHistoryWithCountervalue = getBHWCV;

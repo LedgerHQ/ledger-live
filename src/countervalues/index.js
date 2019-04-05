@@ -1,5 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+// $FlowFixMe
 import React, { Component } from "react";
 import invariant from "invariant";
 import throttle from "lodash/throttle";
