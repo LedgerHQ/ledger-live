@@ -139,7 +139,7 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
     }
     const copy = {
       ...stable,
-      history: stable.history.slice(0, -1).concat(lastStable)
+      history: stable.history.slice(0, -1).concat(lastPoint)
     };
     accountCVstableCache[stableHash] = copy;
     return copy;
