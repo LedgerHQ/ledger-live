@@ -29,7 +29,8 @@ const envParsers = {
   BASE_SOCKET_URL: stringParser,
   EXPLORER_V2: stringParser,
   EXPLORER_V3: stringParser,
-  EXPERIMENTAL_EXPLORERS: boolParser
+  EXPERIMENTAL_EXPLORERS: boolParser,
+  EXPERIMENTAL_USB: boolParser
 };
 
 // This define the default values
@@ -45,7 +46,8 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
     "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
   EXPLORER_V3:
     "http://$ledgerExplorerId.explorers.prod.aws.ledger.fr/blockchain/v3",
-  EXPERIMENTAL_EXPLORERS: false
+  EXPERIMENTAL_EXPLORERS: false,
+  EXPERIMENTAL_USB: false
 };
 
 // private local state
