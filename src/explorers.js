@@ -46,7 +46,7 @@ export const getCurrencyExplorer = (currency: CryptoCurrency) => {
   let explorerKey = "default";
 
   if (experimentalExplorers && ledgerExplorers[currency.id]["experimental"]) {
-      explorerKey = "experimental";
+    explorerKey = "experimental";
   }
 
   return ledgerExplorers[currency.id][explorerKey];
