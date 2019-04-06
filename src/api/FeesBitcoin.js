@@ -1,4 +1,6 @@
 // @flow
+
+// $FlowFixMe (breaks on user land side!)
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
