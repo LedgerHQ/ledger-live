@@ -405,9 +405,7 @@ export async function loadCore(): Promise<Core> {
       },
     },
     methods: {
-      getIndex: {
-        returns: "ExtendedKeyAccountCreationInfo",
-      },
+      getIndex: {},
       getExtendedKeys: {},
       getOwners: {},
       getDerivations: {},
