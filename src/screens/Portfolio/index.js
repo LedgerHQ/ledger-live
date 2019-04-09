@@ -1,15 +1,19 @@
 // @flow
 
 import React, { Component } from "react";
-import { compose } from "redux";
+import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { View, StyleSheet, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import type {
+  Account,
+  Operation,
+  Portfolio,
+  Currency,
+} from "@ledgerhq/live-common/lib/types";
 // $FlowFixMe
 import { SectionList, SafeAreaView } from "react-navigation";
 import { translate } from "react-i18next";
-
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import {
   groupAccountsOperationsByDay,
   isAccountEmpty,
@@ -22,16 +26,15 @@ import { accountsSelector } from "../../reducers/accounts";
 import {
   hasCompletedOnboardingSelector,
   hasAcceptedTradingWarningSelector,
+  counterValueCurrencySelector,
 } from "../../reducers/settings";
 import { acceptTradingWarning } from "../../actions/settings";
+import { portfolioSelector } from "../../actions/portfolio";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import OperationRow from "../../components/OperationRow";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import provideSummary from "../../components/provideSummary";
-
-import type { Summary } from "../../components/provideSummary";
 
 import GraphCardContainer from "./GraphCardContainer";
 import StickyHeader from "./StickyHeader";
@@ -46,24 +49,27 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
 
-const mapStateToProps = state => ({
-  accounts: accountsSelector(state),
-  hasCompletedOnboarding: hasCompletedOnboardingSelector(state),
-  hasAcceptedTradingWarning: hasAcceptedTradingWarningSelector(state),
+const mapStateToProps = createStructuredSelector({
+  accounts: accountsSelector,
+  hasCompletedOnboarding: hasCompletedOnboardingSelector,
+  hasAcceptedTradingWarning: hasAcceptedTradingWarningSelector,
+  counterValueCurrency: counterValueCurrencySelector,
+  portfolio: portfolioSelector,
 });
 
 const mapDispatchToProps = {
   acceptTradingWarning,
 };
 
-class Portfolio extends Component<
+class PortfolioScreen extends Component<
   {
     acceptTradingWarning: () => void,
     accounts: Account[],
-    summary: Summary,
+    portfolio: Portfolio,
     navigation: *,
     hasCompletedOnboarding: boolean,
     hasAcceptedTradingWarning: boolean,
+    counterValueCurrency: Currency,
   },
   {
     opCount: number,
@@ -82,11 +88,12 @@ class Portfolio extends Component<
   keyExtractor = (item: Operation) => item.id;
 
   ListHeaderComponent = () => {
-    const { accounts } = this.props;
+    const { accounts, counterValueCurrency } = this.props;
 
     return (
       <GraphCardContainer
-        summary={this.props.summary}
+        counterValueCurrency={counterValueCurrency}
+        portfolio={this.props.portfolio}
         showGreeting={!accounts.every(isAccountEmpty)}
       />
     );
@@ -147,8 +154,9 @@ class Portfolio extends Component<
   render() {
     const {
       navigation,
-      summary,
       accounts,
+      portfolio,
+      counterValueCurrency,
       hasAcceptedTradingWarning,
     } = this.props;
     const { opCount, scrollY, isModalOpened } = this.state;
@@ -166,7 +174,8 @@ class Portfolio extends Component<
         <StickyHeader
           navigation={navigation}
           scrollY={scrollY}
-          summary={summary}
+          portfolio={portfolio}
+          counterValueCurrency={counterValueCurrency}
         />
         <SyncBackground />
         <TrackScreen category="Portfolio" accountsLength={accounts.length} />
@@ -207,14 +216,12 @@ class Portfolio extends Component<
   }
 }
 
-export default compose(
+export default translate()(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-  ),
-  provideSummary,
-  translate(),
-)(Portfolio);
+  )(PortfolioScreen),
+);
 
 const styles = StyleSheet.create({
   root: {

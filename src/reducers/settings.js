@@ -57,6 +57,7 @@ export type SettingsState = {
   developerModeEnabled: boolean,
   readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
+  countervalueFirst: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -74,6 +75,7 @@ const INITIAL_STATE: SettingsState = {
   hasInstalledAnyApp: false,
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
+  countervalueFirst: false,
 };
 
 function asCryptoCurrency(c: Currency): ?CryptoCurrency {
@@ -218,6 +220,11 @@ const handlers: Object = {
     ...state,
     experimentalUSBEnabled: action.enabled,
   }),
+
+  SETTINGS_SWITCH_COUNTERVALUE_FIRST: state => ({
+    ...state,
+    countervalueFirst: !state.countervalueFirst,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -305,6 +312,9 @@ export const hasAcceptedTradingWarningSelector = (state: State) =>
 
 export const hasInstalledAnyAppSelector = (state: State) =>
   state.settings.hasInstalledAnyApp;
+
+export const countervalueFirstSelector = (state: State) =>
+  state.settings.countervalueFirst;
 
 export const readOnlyModeEnabledSelector = (state: State) =>
   Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
