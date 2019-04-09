@@ -55,7 +55,10 @@ export default class DeviceItem extends PureComponent<Props> {
     return (
       <View style={styles.outer}>
         <View style={styles.inner}>
-          <Touchable event="DeviceItemEnter" onPress={this.onPress}>
+          <Touchable
+            event="DeviceItemEnter"
+            onPress={disabled ? undefined : this.onPress}
+          >
             <View style={[styles.root, disabled && styles.rootDisabled]}>
               <View style={styles.iconWrapper}>
                 {CustomIcon ? (
