@@ -867,9 +867,9 @@
     },
     "imported": "Accounts successfully added",
     "sections": {
-      "accountsToImport": "Accounts to import",
-      "addNewAccount": "Add a new account",
-      "existing": "Existing accounts"
+      "accountsToImport": "Add existing account",
+      "addNewAccount": "Add new account",
+      "existing": "Accounts already in portfolio"
     },
     "success": {
       "desc": "View your accounts or add more of them",
