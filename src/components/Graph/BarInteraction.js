@@ -2,7 +2,6 @@
 
 import React, { Component } from "react";
 import * as array from "d3-array";
-import { BigNumber } from "bignumber.js";
 import { View } from "react-native";
 import Svg, { G } from "react-native-svg";
 import {
@@ -10,21 +9,15 @@ import {
   State,
   LongPressGestureHandler,
 } from "react-native-gesture-handler";
-
+import type { Item, ItemArray } from "./types";
 import Bar from "./Bar";
-
-export type Item = {
-  date: Date,
-  value: BigNumber,
-  originalValue: BigNumber,
-};
 
 type Props = {
   width: number,
   height: number,
-  data: Item[],
+  data: ItemArray,
   color: string,
-  useCounterValue: boolean,
+  mapValue: Item => number,
   onItemHover?: (?Item) => void,
   children: *,
   x: *,
@@ -48,7 +41,7 @@ export default class BarInteraction extends Component<
   };
 
   collectHovered = (xPos: number) => {
-    const { data, onItemHover, useCounterValue, x, y } = this.props;
+    const { data, onItemHover, mapValue, x, y } = this.props;
     const x0 = Math.round(xPos);
     const hoveredDate = x.invert(x0);
     const i = bisectDate(data, hoveredDate, 1);
@@ -58,7 +51,7 @@ export default class BarInteraction extends Component<
     const xRight = x(d1.date);
     const d = Math.abs(x0 - xLeft) < Math.abs(x0 - xRight) ? d0 : d1;
     if (onItemHover) onItemHover(d);
-    const value = (useCounterValue ? d.value : d.originalValue).toNumber();
+    const value = mapValue(d);
     return {
       barOffsetX: x(d.date),
       barOffsetY: y(value),
@@ -87,6 +80,7 @@ export default class BarInteraction extends Component<
 
   onPanGestureEvent = (e: *) => {
     const r = this.collectHovered(e.nativeEvent.x);
+    if (!r) return;
     this.setState(oldState => {
       if (
         oldState.barOffsetX === r.barOffsetX &&

@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import type { Portfolio, Currency } from "@ledgerhq/live-common/lib/types";
 import AnimatedTopBar from "./AnimatedTopBar";
 import { isUpToDateSelector } from "../../reducers/accounts";
 import { globalSyncStateSelector } from "../../reducers/bridgeSync";
@@ -16,7 +17,8 @@ const mapStateToProps = createStructuredSelector({
 });
 
 class StickyHeader extends Component<{
-  summary: *,
+  portfolio: Portfolio,
+  counterValueCurrency: Currency,
   scrollY: *,
   isUpToDate: boolean,
   globalSyncState: AsyncState,
@@ -30,7 +32,8 @@ class StickyHeader extends Component<{
   render() {
     const {
       scrollY,
-      summary,
+      counterValueCurrency,
+      portfolio,
       networkError,
       globalSyncState,
       isUpToDate,
@@ -39,8 +42,9 @@ class StickyHeader extends Component<{
     return (
       <AnimatedTopBar
         scrollY={scrollY}
-        summary={summary}
+        portfolio={portfolio}
         navigation={navigation}
+        counterValueCurrency={counterValueCurrency}
         pending={globalSyncState.pending && !isUpToDate}
         error={
           isUpToDate || !globalSyncState.error

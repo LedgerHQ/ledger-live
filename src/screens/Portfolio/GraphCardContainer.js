@@ -1,20 +1,30 @@
 // @flow
 import React from "react";
 import { View } from "react-native";
-import type { Summary } from "../../components/provideSummary";
+import type { Portfolio, Currency } from "@ledgerhq/live-common/lib/types";
 import GraphCard from "../../components/GraphCard";
 import Header from "./Header";
 
 const GraphCardContainer = ({
-  summary,
+  portfolio,
   showGreeting,
+  counterValueCurrency,
 }: {
-  summary: Summary,
+  portfolio: Portfolio,
   showGreeting: boolean,
+  counterValueCurrency: Currency,
 }) => (
   <View>
-    <Header nbAccounts={summary.accounts.length} showGreeting={showGreeting} />
-    {showGreeting && <GraphCard summary={summary} useCounterValue />}
+    <Header
+      nbAccounts={portfolio.accounts.length}
+      showGreeting={showGreeting}
+    />
+    {showGreeting && (
+      <GraphCard
+        counterValueCurrency={counterValueCurrency}
+        portfolio={portfolio}
+      />
+    )}
   </View>
 );
 

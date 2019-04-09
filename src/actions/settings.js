@@ -107,3 +107,7 @@ export const acceptTradingWarning = () => ({
 export const installAppFirstTime = () => ({
   type: "SETTINGS_INSTALL_APP_FIRST_TIME",
 });
+
+export const switchCountervalueFirst = () => ({
+  type: "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
+});

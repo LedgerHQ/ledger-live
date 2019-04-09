@@ -1,19 +1,31 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { compose } from "redux";
 import { StyleSheet, View, Animated } from "react-native";
 import { SectionList } from "react-navigation";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import {
   isAccountEmpty,
   groupAccountOperationsByDay,
 } from "@ledgerhq/live-common/lib/account";
-import type { Account, Operation, Unit } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  Currency,
+  Operation,
+  Unit,
+  BalanceHistoryWithCountervalue,
+  PortfolioRange,
+} from "@ledgerhq/live-common/lib/types";
+import { switchCountervalueFirst } from "../../actions/settings";
+import { balanceHistoryWithCountervalueSelector } from "../../actions/portfolio";
+import {
+  selectedTimeRangeSelector,
+  counterValueCurrencySelector,
+  countervalueFirstSelector,
+} from "../../reducers/settings";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
@@ -23,10 +35,7 @@ import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import LText from "../../components/LText";
 import LoadingFooter from "../../components/LoadingFooter";
 import colors from "../../colors";
-import provideSummary from "../../components/provideSummary";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import type { Item } from "../../components/Graph";
-import type { Summary } from "../../components/provideSummary";
 import Header from "./Header";
 import EmptyStateAccount from "./EmptyStateAccount";
 import AccountHeaderRight from "./AccountHeaderRight";
@@ -34,10 +43,17 @@ import AccountHeaderTitle from "./AccountHeaderTitle";
 import AccountActions from "./AccountActions";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import NoOperationFooter from "../../components/NoOperationFooter";
+import Touchable from "../../components/Touchable";
+import type { Item } from "../../components/Graph/types";
 
 type Props = {
+  useCounterValue: boolean,
+  switchCountervalueFirst: () => *,
   account: Account,
-  summary: Summary,
+  range: PortfolioRange,
+  history: BalanceHistoryWithCountervalue,
+  counterValueCurrency: Currency,
+  countervalueAvailable: boolean,
   navigation: { emit: (event: string) => void } & NavigationScreenProp<{
     accountId: string,
   }>,
@@ -88,33 +104,63 @@ class AccountScreen extends PureComponent<Props, State> {
     this.setState(({ opCount }) => ({ opCount: opCount + 50 }));
   };
 
+  onSwitchAccountCurrency = () => {
+    this.props.switchCountervalueFirst();
+  };
+
   renderListHeaderTitle = ({
+    useCounterValue,
+    cryptoCurrencyUnit,
     counterValueUnit,
     item,
   }: {
+    useCounterValue: boolean,
+    cryptoCurrencyUnit: Unit,
     counterValueUnit: Unit,
     item: Item,
   }) => {
-    const { summary } = this.props;
+    const { countervalueAvailable } = this.props;
+    const items = [
+      { unit: cryptoCurrencyUnit, value: item.value },
+      item.countervalue
+        ? { unit: counterValueUnit, value: item.countervalue }
+        : null,
+    ];
+    if (useCounterValue && countervalueAvailable && item.countervalue) {
+      items.reverse();
+    }
+
     return (
-      <View style={styles.balanceContainer}>
-        <LText style={styles.balanceText} tertiary>
-          <CurrencyUnitValue
-            unit={this.props.account.unit}
-            value={item.originalValue}
-          />
-        </LText>
-        {summary.isAvailable && (
-          <LText style={styles.balanceSubText} tertiary>
-            <CurrencyUnitValue unit={counterValueUnit} value={item.value} />
-          </LText>
-        )}
-      </View>
+      <Touchable
+        event="SwitchAccountCurrency"
+        eventProperties={{ useCounterValue }}
+        onPress={this.onSwitchAccountCurrency}
+      >
+        <View style={styles.balanceContainer}>
+          {items[0] ? (
+            <LText style={styles.balanceText} tertiary>
+              <CurrencyUnitValue {...items[0]} />
+            </LText>
+          ) : null}
+          {items[1] ? (
+            <LText style={styles.balanceSubText} tertiary>
+              <CurrencyUnitValue {...items[1]} />
+            </LText>
+          ) : null}
+        </View>
+      </Touchable>
     );
   };
 
   ListHeaderComponent = () => {
-    const { summary, account } = this.props;
+    const {
+      history,
+      useCounterValue,
+      counterValueCurrency,
+      countervalueAvailable,
+      range,
+      account,
+    } = this.props;
     if (!account) return null;
     const empty = isAccountEmpty(account);
     return (
@@ -122,7 +168,13 @@ class AccountScreen extends PureComponent<Props, State> {
         <Header accountId={account.id} />
         {!empty && (
           <AccountGraphCard
-            summary={summary}
+            account={account}
+            range={range}
+            unit={account.unit}
+            history={history}
+            useCounterValue={useCounterValue}
+            countervalueAvailable={countervalueAvailable}
+            counterValueCurrency={counterValueCurrency}
             renderTitle={this.renderListHeaderTitle}
           />
         )}
@@ -200,15 +252,30 @@ class AccountScreen extends PureComponent<Props, State> {
   }
 }
 
-export default compose(
+export default translate()(
   connect(
-    createStructuredSelector({
-      account: accountScreenSelector,
-    }),
-  ),
-  provideSummary,
-  translate(),
-)(AccountScreen);
+    (state, props) => {
+      const range = selectedTimeRangeSelector(state);
+      const counterValueCurrency = counterValueCurrencySelector(state);
+      const useCounterValue = countervalueFirstSelector(state);
+      const account = accountScreenSelector(state, props);
+      const balanceHistoryWithCountervalue = balanceHistoryWithCountervalueSelector(
+        state,
+        { account },
+      );
+      return {
+        ...balanceHistoryWithCountervalue,
+        useCounterValue,
+        counterValueCurrency,
+        range,
+        account,
+      };
+    },
+    {
+      switchCountervalueFirst,
+    },
+  )(AccountScreen),
+);
 
 const styles = StyleSheet.create({
   root: {

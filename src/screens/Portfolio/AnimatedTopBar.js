@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
-import type { Summary } from "../../components/provideSummary";
+import type { Portfolio, Currency } from "@ledgerhq/live-common/lib/types";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import BalanceHeader from "./BalanceHeader";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
@@ -18,7 +18,8 @@ import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 
 class AnimatedTopBar extends PureComponent<{
   scrollY: AnimatedValue,
-  summary: Summary,
+  portfolio: Portfolio,
+  counterValueCurrency: Currency,
   pending: boolean,
   error: ?Error,
   navigation: *,
@@ -28,7 +29,13 @@ class AnimatedTopBar extends PureComponent<{
   };
 
   render() {
-    const { scrollY, summary, pending, error } = this.props;
+    const {
+      scrollY,
+      portfolio,
+      counterValueCurrency,
+      pending,
+      error,
+    } = this.props;
 
     const opacity = scrollY.interpolate({
       inputRange: [90, 150],
@@ -50,7 +57,10 @@ class AnimatedTopBar extends PureComponent<{
                   <HeaderErrorTitle error={error} />
                 </View>
               ) : (
-                <BalanceHeader summary={summary} />
+                <BalanceHeader
+                  counterValueCurrency={counterValueCurrency}
+                  portfolio={portfolio}
+                />
               )}
             </SafeAreaView>
           </View>
