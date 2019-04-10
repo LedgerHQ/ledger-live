@@ -4,7 +4,6 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
-// $FlowFixMe
 import { ScrollView } from "react-navigation";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Config from "react-native-config";
@@ -18,6 +17,7 @@ import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
 import Assets from "../../icons/Assets";
 import LiveLogoIcon from "../../icons/LiveLogoIcon";
+import Atom from "../../icons/Atom";
 import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
@@ -104,6 +104,12 @@ class Settings extends Component<Props, *> {
             desc={t("settings.help.desc")}
             icon={<Help size={16} color={colors.live} />}
             onClick={() => this.navigateTo("HelpSettings")}
+          />
+          <SettingsCard
+            title={t("settings.experimental.title")}
+            desc={t("settings.experimental.desc")}
+            icon={<Atom size={16} color={colors.live} />}
+            onClick={() => this.navigateTo("ExperimentalSettings")}
           />
           {debugVisible ? (
             <SettingsCard
