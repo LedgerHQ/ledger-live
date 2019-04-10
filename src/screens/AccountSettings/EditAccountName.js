@@ -23,7 +23,9 @@ export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
 type Props = {
   navigation: NavigationScreenProp<{
-    accountId: string,
+    accountId?: string,
+    accountName?: string,
+    onAccountNameChange?: string => void,
   }>,
   updateAccount: Function,
   account: Account,
@@ -56,17 +58,32 @@ class EditAccountName extends PureComponent<Props, State> {
   onNameEndEditing = () => {
     const { updateAccount, account, navigation } = this.props;
     const { accountName } = this.state;
+    const {
+      onAccountNameChange,
+      account: accountFromAdd,
+    } = this.props.navigation.state.params;
+
+    const isImportingAccounts = !!accountFromAdd;
+
     if (accountName.length) {
-      updateAccount({
-        ...account,
-        name: accountName,
-      });
+      if (isImportingAccounts) {
+        onAccountNameChange(accountName, accountFromAdd);
+      } else {
+        updateAccount({
+          ...account,
+          name: accountName,
+        });
+      }
+      navigation.goBack();
     }
-    navigation.goBack();
   };
 
   render() {
     const { account } = this.props;
+    const { accountName } = this.state;
+    const { account: accountFromAdd } = this.props.navigation.state.params;
+
+    const initialAccountName = account ? account.name : accountFromAdd.name;
 
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -78,7 +95,7 @@ class EditAccountName extends PureComponent<Props, State> {
             <TextInput
               autoFocus
               style={styles.textInputAS}
-              defaultValue={account.name}
+              defaultValue={initialAccountName}
               returnKeyType="done"
               maxLength={MAX_ACCOUNT_NAME_LENGHT}
               onChangeText={accountName => this.setState({ accountName })}
@@ -94,6 +111,7 @@ class EditAccountName extends PureComponent<Props, State> {
                 type="primary"
                 title={<Trans i18nKey="common.apply" />}
                 onPress={this.onNameEndEditing}
+                disabled={!accountName.length}
                 containerStyle={styles.buttonContainer}
               />
             </View>
