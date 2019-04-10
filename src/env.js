@@ -30,7 +30,10 @@ const envParsers = {
   EXPLORER_V2: stringParser,
   EXPLORER_V3: stringParser,
   EXPERIMENTAL_EXPLORERS: boolParser,
-  EXPERIMENTAL_USB: boolParser
+  EXPERIMENTAL_USB: boolParser,
+  SYNC_MAX_CONCURRENT: intParser,
+  MOCK: boolParser,
+  LEDGER_DEBUG_ALL_LANGS: boolParser
 };
 
 // This define the default values
@@ -47,7 +50,10 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   EXPLORER_V3:
     "http://$ledgerExplorerId.explorers.prod.aws.ledger.fr/blockchain/v3",
   EXPERIMENTAL_EXPLORERS: false,
-  EXPERIMENTAL_USB: false
+  EXPERIMENTAL_USB: false,
+  SYNC_MAX_CONCURRENT: 4,
+  MOCK: false,
+  LEDGER_DEBUG_ALL_LANGS: false
 };
 
 // private local state
