@@ -32,7 +32,7 @@
     "react": "*"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^4.48.0",
+    "@ledgerhq/errors": "^4.50.0",
     "@ledgerhq/hw-app-btc": "^4.48.0",
     "@ledgerhq/hw-app-eth": "^4.48.0",
     "@ledgerhq/hw-app-xrp": "^4.48.0",

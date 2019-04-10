@@ -7,12 +7,23 @@ import {
   WrongDeviceForAccount,
   CantOpenDevice,
   UpdateYourApp,
-  BluetoothRequired
+  BluetoothRequired,
+  FirmwareOrAppUpdateRequired,
+  TransportStatusError
 } from "@ledgerhq/errors";
 import { getEnv } from "../env";
 import { open } from ".";
 
 export type AccessHook = () => () => void;
+
+const initialErrorRemapping = error =>
+  throwError(
+    error &&
+      error instanceof TransportStatusError &&
+      error.statusCode === 0x6b00
+      ? new FirmwareOrAppUpdateRequired(error.message)
+      : error
+  );
 
 const accessHooks = [];
 let errorRemapping = e => throwError(e);
@@ -120,6 +131,7 @@ export const withDevice = (deviceId: string) => <T>(
         const cleanups = accessHooks.map(hook => hook());
         sub = job(transport)
           .pipe(
+            catchError(initialErrorRemapping),
             catchError(errorRemapping),
             // close the transport and clean up everything
             transportFinally(() => finalize(transport, [...cleanups, finish]))
@@ -139,6 +151,7 @@ export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof CantOpenDevice) return false;
   if (err instanceof BluetoothRequired) return false;
   if (err instanceof UpdateYourApp) return false;
+  if (err instanceof FirmwareOrAppUpdateRequired) return false;
   return true;
 };
 
