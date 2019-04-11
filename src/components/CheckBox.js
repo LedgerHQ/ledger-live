@@ -14,6 +14,13 @@ type Props = {
   style: *,
 };
 
+const checkBoxHitSlop = {
+  top: 16,
+  left: 16,
+  right: 16,
+  bottom: 16,
+};
+
 export default class CheckBox extends PureComponent<Props> {
   onPress = () => {
     if (!this.props.onChange) return;
@@ -37,7 +44,11 @@ export default class CheckBox extends PureComponent<Props> {
 
     if (onChange && !disabled) {
       return (
-        <TouchableOpacity {...commonProps} onPress={this.onPress}>
+        <TouchableOpacity
+          {...commonProps}
+          onPress={this.onPress}
+          hitSlop={checkBoxHitSlop}
+        >
           {body}
         </TouchableOpacity>
       );
