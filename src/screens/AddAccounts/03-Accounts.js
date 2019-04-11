@@ -72,7 +72,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   };
 
   state = {
-    // we assume status is scanning at beginning bcause we start sync at mount
+    // we assume status is scanning at beginning because we start sync at mount
     scanning: true,
     error: null,
     scannedAccounts: [],
@@ -205,7 +205,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const { navigation } = this.props;
     const currency = navigation.getParam("currency");
     return (
-      <LText>
+      <LText style={styles.paddingHorizontal}>
         <Trans i18nKey="addAccounts.noAccountToCreate">
           {"PLACEHOLDER-1"}
           <LText semiBold>{currency.name}</LText>
@@ -231,7 +231,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       return null;
     }
     return (
-      <LText>
+      <LText style={styles.paddingHorizontal}>
         <Trans i18nKey="addAccounts.cantCreateAccount">
           {"PLACEHOLDER-1"}
           <LText semiBold>{correspondingAccount.name}</LText>
@@ -255,6 +255,15 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     if (cancelled && navigation.dismiss) {
       navigation.dismiss();
     }
+  };
+
+  onAccountNameChange = (name: string, changedAccount: Account) => {
+    this.setState(prevState => ({
+      scannedAccounts: prevState.scannedAccounts.map(
+        account =>
+          account.id === changedAccount.id ? { ...account, name } : account,
+      ),
+    }));
   };
 
   scrollView = createRef();
@@ -282,7 +291,10 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
         >
           {regularAccounts.length > 0 ? (
             <SelectableAccountsList
+              showHint={true}
               header={<Trans i18nKey="addAccounts.sections.accountsToImport" />}
+              onAccountNameChange={this.onAccountNameChange}
+              index={0}
               accounts={regularAccounts}
               onPressAccount={this.onPressAccount}
               onSelectAll={this.selectAll}
@@ -298,6 +310,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           {(newAccounts.length > 0 || !scanning) && (
             <SelectableAccountsList
               header={<Trans i18nKey="addAccounts.sections.addNewAccount" />}
+              onAccountNameChange={this.onAccountNameChange}
+              index={1}
+              showHint={regularAccounts.length === 0}
               accounts={newAccounts}
               onPressAccount={this.onPressAccount}
               selectedIds={selectedIds}
@@ -311,6 +326,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           {existingAccountsFiltered.length > 0 && (
             <SelectableAccountsList
               header={<Trans i18nKey="addAccounts.sections.existing" />}
+              index={2}
               accounts={existingAccountsFiltered}
               forceSelected
               isDisabled
@@ -428,6 +444,9 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  paddingHorizontal: {
+    paddingHorizontal: 16,
   },
   inner: {
     paddingTop: 24,

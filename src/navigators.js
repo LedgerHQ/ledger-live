@@ -301,6 +301,7 @@ const AddAccounts = createStackNavigator(
     AddAccountsSelectDevice,
     AddAccountsAccounts,
     AddAccountsSuccess,
+    EditAccountName,
   },
   addAccountsNavigatorConfig,
 );
