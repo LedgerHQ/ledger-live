@@ -128,6 +128,10 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "FirmwareOrAppUpdateRequired": {
+      "title": "Firmware or app update required",
+      "description": "Please use the Manager to uninstall all apps and check if a firmware update is available before reinstalling them"
+    },
     "GenuineCheckFailed": {
       "title": "Genuine check failed",
       "description": "Something went wrong. Please try again or contact Ledger Support when in doubt."
