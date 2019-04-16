@@ -4,10 +4,7 @@ import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import { Trans } from "react-i18next";
-import {
-  PairingFailed,
-  GenuineCheckFailed,
-} from "@ledgerhq/live-common/lib/errors";
+import { PairingFailed, GenuineCheckFailed } from "@ledgerhq/errors";
 import LocationRequired from "../LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";

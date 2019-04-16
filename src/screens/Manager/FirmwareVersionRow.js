@@ -25,7 +25,7 @@ class FirmwareVersionRow extends PureComponent<Props> {
         bottom
       >
         <LText numberOfLines={1} style={styles.version}>
-          {deviceInfo.seVersion}
+          {deviceInfo.version}
         </LText>
       </Row>
     );

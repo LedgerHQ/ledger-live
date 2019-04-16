@@ -4,7 +4,7 @@ import {
   LedgerAPIErrorWithMessage,
   LedgerAPIError,
   NetworkDown,
-} from "@ledgerhq/live-common/lib/errors";
+} from "@ledgerhq/errors";
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import { GET_CALLS_RETRY, GET_CALLS_TIMEOUT } from "../constants";
 import anonymizer from "../logic/anonymizer";

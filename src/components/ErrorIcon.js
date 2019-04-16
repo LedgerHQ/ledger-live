@@ -6,7 +6,7 @@ import {
   CantOpenDevice,
   WrongDeviceForAccount,
   PairingFailed,
-} from "@ledgerhq/live-common/lib/errors";
+} from "@ledgerhq/errors";
 import Rounded from "./Rounded";
 import IconNanoX from "../icons/NanoX";
 import ErrorBadge from "./ErrorBadge";

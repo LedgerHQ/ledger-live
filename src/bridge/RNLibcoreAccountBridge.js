@@ -1,7 +1,7 @@
 // @flow
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/live-common/lib/errors";
+import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/errors";
 import { getFeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
 import type { FeeItems } from "@ledgerhq/live-common/lib/api/FeesBitcoin";
 import type { AccountBridge } from "@ledgerhq/live-common/lib/bridge/types";
@@ -18,15 +18,11 @@ export type Transaction = {
   networkInfo: ?{ feeItems: FeeItems },
 };
 
-const serializeTransaction = t => {
-  // FIXME there is literally no need for serializeTransaction in mobile context
-  const { feePerByte } = t;
-  return {
-    recipient: t.recipient,
-    amount: t.amount.toString(),
-    feePerByte: (feePerByte && feePerByte.toString()) || "0",
-  };
-};
+const asLibcoreTransaction = ({ amount, recipient, feePerByte }) => ({
+  amount,
+  recipient,
+  feePerByte,
+});
 
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
@@ -103,14 +99,8 @@ const getTransactionExtra = (a, t, field) => {
 
 const signAndBroadcast = (account, transaction, deviceId) =>
   libcoreSignAndBroadcast({
-    accountId: account.id,
-    blockHeight: account.blockHeight,
-    currencyId: account.currency.id,
-    derivationMode: account.derivationMode,
-    seedIdentifier: account.seedIdentifier,
-    xpub: account.xpub || "",
-    index: account.index,
-    transaction,
+    account,
+    transaction: asLibcoreTransaction(transaction),
     deviceId,
   });
 
@@ -124,7 +114,7 @@ const getFees = makeLRUCache(
     await checkValidRecipient(a, t.recipient);
     return getFeesForTransaction({
       account: a,
-      transaction: serializeTransaction(t),
+      transaction: asLibcoreTransaction(t),
     });
   },
   (a, t) =>
