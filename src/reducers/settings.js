@@ -54,7 +54,6 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean,
   hasAcceptedTradingWarning: boolean,
   hasInstalledAnyApp: boolean,
-  developerModeEnabled: boolean,
   readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
@@ -65,7 +64,6 @@ const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  developerModeEnabled: false,
   analyticsEnabled: true,
   currenciesSettings: {},
   selectedTimeRange: "month",
@@ -130,14 +128,6 @@ const handlers: Object = {
   ) => ({
     ...state,
     reportErrorsEnabled,
-  }),
-
-  SETTINGS_SET_DEVELOPER_MODE: (
-    state: SettingsState,
-    { developerModeEnabled },
-  ) => ({
-    ...state,
-    developerModeEnabled,
   }),
 
   SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
@@ -271,11 +261,6 @@ export const privacySelector = createSelector(storeSelector, s => s.privacy);
 export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
-);
-
-export const developerModeEnabledSelector = createSelector(
-  storeSelector,
-  s => s.developerModeEnabled,
 );
 
 export const analyticsEnabledSelector = createSelector(

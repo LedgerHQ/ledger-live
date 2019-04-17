@@ -59,11 +59,6 @@ export const setReportErrors = (reportErrorsEnabled: boolean) => ({
   reportErrorsEnabled,
 });
 
-export const setDeveloperMode = (developerModeEnabled: boolean) => ({
-  type: "SETTINGS_SET_DEVELOPER_MODE",
-  developerModeEnabled,
-});
-
 export const setAnalytics = (analyticsEnabled: boolean) => ({
   type: "SETTINGS_SET_ANALYTICS",
   analyticsEnabled,

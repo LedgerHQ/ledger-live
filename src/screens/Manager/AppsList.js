@@ -4,15 +4,16 @@ import { View, StyleSheet } from "react-native";
 import { FlatList } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
+import manager from "@ledgerhq/live-common/lib/manager";
+import { compose } from "redux";
 import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import type {
   DeviceInfo,
   ApplicationVersion,
 } from "@ledgerhq/live-common/lib/types/manager";
-import manager from "@ledgerhq/live-common/lib/manager";
+
 import logger from "../../logger";
+import withEnv from "../../logic/withEnv";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import LText from "../../components/LText";
 import { TrackScreen } from "../../analytics";
@@ -21,7 +22,6 @@ import AppsListPending from "./AppsListPending";
 import AppsListError from "./AppsListError";
 import AppRow from "./AppRow";
 import AppAction from "./AppAction";
-import { developerModeEnabledSelector } from "../../reducers/settings";
 import { getFullListSortedCryptoCurrencies } from "../../countervalues";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 
@@ -36,22 +36,17 @@ type Props = {
       },
     },
   }>,
-  developerModeEnabled: boolean,
+  devMode: boolean,
 };
 
-const mapStateToProps = createStructuredSelector({
-  developerModeEnabled: developerModeEnabledSelector,
-});
+type State = {
+  apps: ApplicationVersion[],
+  pending: boolean,
+  error: ?Error,
+  action: ?{ type: "install" | "uninstall", app: ApplicationVersion },
+};
 
-class ManagerAppsList extends Component<
-  Props,
-  {
-    apps: ApplicationVersion[],
-    pending: boolean,
-    error: ?Error,
-    action: ?{ type: "install" | "uninstall", app: ApplicationVersion },
-  },
-> {
+class ManagerAppsList extends Component<Props, State> {
   static navigationOptions = {
     title: i18next.t("manager.appList.title"),
   };
@@ -69,8 +64,8 @@ class ManagerAppsList extends Component<
     this.fetchAppList();
   }
 
-  componentDidUpdate({ developerModeEnabled }) {
-    if (developerModeEnabled !== this.props.developerModeEnabled) {
+  componentDidUpdate({ devMode }) {
+    if (devMode !== this.props.devMode) {
       this.fetchAppList();
     }
   }
@@ -87,12 +82,12 @@ class ManagerAppsList extends Component<
       return { pending: true, error: null };
     });
     try {
-      const { navigation, developerModeEnabled } = this.props;
+      const { navigation, devMode } = this.props;
       const { deviceInfo } = navigation.getParam("meta");
 
       const apps = await manager.getAppsList(
         deviceInfo,
-        developerModeEnabled,
+        devMode,
         getFullListSortedCryptoCurrencies,
       );
 
@@ -225,4 +220,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(connect(mapStateToProps)(ManagerAppsList));
+const enhancer = compose(
+  withEnv("MANAGER_DEV_MODE", "devMode"),
+  translate(),
+);
+
+export default enhancer(ManagerAppsList);
