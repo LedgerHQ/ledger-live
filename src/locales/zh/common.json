@@ -128,6 +128,10 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "FirmwareOrAppUpdateRequired": {
+      "title": "Firmware or app update required",
+      "description": "Please use the Manager to uninstall all apps and check if a firmware update is available before reinstalling them"
+    },
     "GenuineCheckFailed": {
       "title": "Genuine check failed",
       "description": "Something went wrong. Please try again or contact Ledger Support when in doubt."
@@ -749,6 +753,11 @@
       "hardResetDesc": "Erase all Ledger Live data stored on your phone, including accounts and settings.",
       "repairDevice": "Repair your Ledger device",
       "repairDeviceDesc": "If you encountered some issue while updating your device and cannot resume the update process, you can try this option to repair your device"
+    },
+    "experimental": {
+      "title": "Experimental features",
+      "desc": "Try out experimental features and let us know what you think",
+      "disclaimer": "These are experimental features we provide on an “as is” basis for our community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk. Your crypto assets remain secured by your Ledger hardware wallet."
     }
   },
   "transfer": {
