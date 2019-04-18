@@ -80,7 +80,7 @@ export const getDailyRatesImplementation = (
     const outputDays = {};
     const baseRate = baseMockBTCRates[from] || fallbackRate;
     const todayDate = new Date(todayTimestamp);
-    let date = new Date();
+    const date = new Date();
 
     for (
       date.setTime(todayTimestamp), date.setFullYear(date.getFullYear() - 3);
@@ -96,16 +96,16 @@ export const getDailyRatesImplementation = (
     return outputDays;
   };
 
-  return pairs.reduce((rates, pair) => {
-    if (pair.from === "BTC") return rates;
+  return pairs.reduce((acc, pair) => {
+    if (pair.from === "BTC") return acc;
     switch (pair.exchange) {
       case "bad":
         break;
       case "ugly":
-        rates.BTC[pair.from] = { ugly: { latest: 0 } };
+        acc.BTC[pair.from] = { ugly: { latest: 0 } };
         break;
       default:
-        rates.BTC[pair.from] = {
+        acc.BTC[pair.from] = {
           [pair.exchange || "fallback"]: {
             ...buildDays(pair.from)
           }

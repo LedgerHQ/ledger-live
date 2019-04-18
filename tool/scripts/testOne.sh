@@ -30,9 +30,11 @@ if [ "$opt" == "-u" ]; then
   mkdir -p expected
   cp ./output/* ./expected/
 fi
-diff ./output ./expected
-if [ $? -ne 0 ]; then
-  echo "Unexpected result."
-  exit 1
+if [ -d "./expected" ]; then
+  diff ./output ./expected
+  if [ $? -ne 0 ]; then
+    echo "Unexpected result."
+    exit 1
+  fi
 fi
 echo
