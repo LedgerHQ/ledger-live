@@ -43,7 +43,7 @@ export const getDailyRatesImplementation = (
     BTC: {}
   };
 
-  // For pairs not reflected here we will be falling back on 1  ¯\_(ツ)_/¯
+  const fallbackRate = 0;
   const baseMockBTCRates = {
     BCH: 0.06102,
     BTG: 0.003239,
@@ -78,7 +78,7 @@ export const getDailyRatesImplementation = (
 
   const buildDays = from => {
     const outputDays = {};
-    const baseRate = baseMockBTCRates[from] || 1;
+    const baseRate = baseMockBTCRates[from] || fallbackRate;
     const todayDate = new Date(todayTimestamp);
     let date = new Date();
 
