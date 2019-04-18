@@ -155,6 +155,7 @@ export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof BluetoothRequired) return false;
   if (err instanceof UpdateYourApp) return false;
   if (err instanceof FirmwareOrAppUpdateRequired) return false;
+  if (err instanceof DeviceHalted) return false;
   return true;
 };
 
