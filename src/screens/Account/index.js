@@ -255,10 +255,11 @@ class AccountScreen extends PureComponent<Props, State> {
 export default translate()(
   connect(
     (state, props) => {
+      const account = accountScreenSelector(state, props);
+      if (!account) return {};
       const range = selectedTimeRangeSelector(state);
       const counterValueCurrency = counterValueCurrencySelector(state);
       const useCounterValue = countervalueFirstSelector(state);
-      const account = accountScreenSelector(state, props);
       const balanceHistoryWithCountervalue = balanceHistoryWithCountervalueSelector(
         state,
         { account },
