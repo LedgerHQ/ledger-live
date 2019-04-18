@@ -41,6 +41,7 @@ import ConfirmPassword from "./screens/Settings/General/ConfirmPassword";
 import GeneralSettings from "./screens/Settings/General";
 import AboutSettings from "./screens/Settings/About";
 import HelpSettings from "./screens/Settings/Help";
+import ExperimentalSettings from "./screens/Settings/Experimental";
 import DebugSettings, {
   DebugDevices,
   DebugMocks,
@@ -123,27 +124,19 @@ const SettingsStack = createStackNavigator(
     CurrenciesList,
     CurrencySettings,
     RepairDevice,
-    // $FlowFixMe
+    ExperimentalSettings,
     DebugSettings,
-    // $FlowFixMe
     DebugDevices,
     DebugMocks,
     DebugBLE,
-    // $FlowFixMe
     DebugBLEBenchmark,
-    // $FlowFixMe
     DebugCrash,
     DebugStore,
     DebugHttpTransport,
-    // $FlowFixMe
     DebugIcons,
-    // $FlowFixMe
     DebugLottie,
-    // $FlowFixMe
     DebugSVG,
-    // $FlowFixMe
     DebugWSImport,
-    // $FlowFixMe
     BenchmarkQRStream,
   },
   stackNavigatorConfig,
@@ -301,6 +294,7 @@ const AddAccounts = createStackNavigator(
     AddAccountsSelectDevice,
     AddAccountsAccounts,
     AddAccountsSuccess,
+    EditAccountName,
   },
   addAccountsNavigatorConfig,
 );

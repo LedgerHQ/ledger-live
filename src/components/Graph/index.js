@@ -4,30 +4,25 @@
 // - render something else for non countervalues available case
 
 import React, { PureComponent } from "react";
-import * as shape from "d3-shape";
-import * as scale from "d3-scale";
-import { BigNumber } from "bignumber.js";
+import * as d3shape from "d3-shape";
+import * as d3scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import Svg, { Path, Defs } from "react-native-svg";
 
 import colors from "../../colors";
 import DefGraph from "./DefGrad";
 import BarInteraction from "./BarInteraction";
-
-export type Item = {
-  date: Date,
-  value: BigNumber,
-  originalValue: BigNumber,
-};
+import type { Item, ItemArray } from "./types";
 
 type Props = {
   width: number,
   height: number,
-  data: Item[],
+  data: ItemArray,
   color: string,
   isInteractive: boolean,
-  useCounterValue: boolean,
   onItemHover?: (?Item) => void,
+  mapValue: Item => number,
+  shape: string,
 };
 
 const STROKE_WIDTH = 2;
@@ -39,6 +34,7 @@ export default class Graph extends PureComponent<Props> {
     color: colors.live,
     isInteractive: false,
     useCounterValue: false,
+    shape: "curveLinear",
   };
 
   render() {
@@ -48,38 +44,35 @@ export default class Graph extends PureComponent<Props> {
       data,
       color,
       isInteractive,
-      useCounterValue,
+      mapValue,
       onItemHover,
+      shape,
     } = this.props;
 
-    const maxY = useCounterValue
-      ? maxBy(data, d => d.value.toNumber()).value.toNumber()
-      : maxBy(data, d => d.originalValue.toNumber()).originalValue.toNumber();
+    const maxY = mapValue(maxBy(data, mapValue));
 
-    const yExtractor = useCounterValue
-      ? d => y(d.value.toNumber())
-      : d => y(d.originalValue.toNumber());
+    const yExtractor = d => y(mapValue(d));
 
-    const curve = useCounterValue ? shape.curveLinear : shape.curveStepBefore;
+    const curve = d3shape[shape];
 
-    const x = scale
+    const x = d3scale
       .scaleTime()
       .range([0, width])
       .domain([data[0].date, data[data.length - 1].date]);
 
-    const y = scale
+    const y = d3scale
       .scaleLinear()
       .range([height - STROKE_WIDTH, STROKE_WIDTH + FOCUS_RADIUS])
       .domain([0, maxY]);
 
-    const area = shape
+    const area = d3shape
       .area()
       .x(d => x(d.date))
       .y0(y(0))
       .y1(yExtractor)
       .curve(curve)(data);
 
-    const line = shape
+    const line = d3shape
       .line()
       .x(d => x(d.date))
       .y(yExtractor)
@@ -101,7 +94,7 @@ export default class Graph extends PureComponent<Props> {
         height={height}
         data={data}
         color={color}
-        useCounterValue={useCounterValue}
+        mapValue={mapValue}
         onItemHover={onItemHover}
         x={x}
         y={y}

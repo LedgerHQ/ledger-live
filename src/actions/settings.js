@@ -59,11 +59,6 @@ export const setReportErrors = (reportErrorsEnabled: boolean) => ({
   reportErrorsEnabled,
 });
 
-export const setDeveloperMode = (developerModeEnabled: boolean) => ({
-  type: "SETTINGS_SET_DEVELOPER_MODE",
-  developerModeEnabled,
-});
-
 export const setAnalytics = (analyticsEnabled: boolean) => ({
   type: "SETTINGS_SET_ANALYTICS",
   analyticsEnabled,
@@ -106,4 +101,8 @@ export const acceptTradingWarning = () => ({
 });
 export const installAppFirstTime = () => ({
   type: "SETTINGS_INSTALL_APP_FIRST_TIME",
+});
+
+export const switchCountervalueFirst = () => ({
+  type: "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
 });

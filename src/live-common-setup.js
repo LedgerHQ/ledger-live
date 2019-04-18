@@ -14,6 +14,7 @@ import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debu
 import BluetoothTransport from "./react-native-hw-transport-ble";
 
 import network from "./api/network";
+import "./experimental";
 
 if (Config.DEBUG_SOCKET) {
   logs.subscribe(e => {

@@ -2,14 +2,25 @@
 
 import React, { PureComponent, Component } from "react";
 import { Trans } from "react-i18next";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Animated,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  PanResponder,
+} from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-
+import { withNavigation } from "react-navigation";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import type { NavigationScreenProp } from "react-navigation";
 import { track } from "../analytics";
 import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
 import LText from "./LText";
+import swipedAccountSubject from "../screens/AddAccounts/swipedAccountSubject";
 import colors from "../colors";
+import Button from "./Button";
+import TouchHintCircle from "./TouchHintCircle";
 
 const selectAllHitSlop = {
   top: 16,
@@ -19,6 +30,7 @@ const selectAllHitSlop = {
 };
 
 type ListProps = {
+  navigation: NavigationScreenProp<*>,
   accounts: Account[],
   onPressAccount?: Account => void,
   onSelectAll?: (Account[]) => void,
@@ -29,12 +41,17 @@ type ListProps = {
   EmptyState?: React$ComponentType<*>,
   header: React$Node,
   style?: *,
+  index: number,
+  showHint: boolean,
+  onAccountNameChange: (name: string, changedAccount: Account) => void,
 };
 
 class SelectableAccountsList extends Component<ListProps> {
   static defaultProps = {
     selectedIds: [],
     isDisabled: false,
+    showHint: false,
+    index: -1,
   };
 
   onSelectAll = () => {
@@ -60,6 +77,10 @@ class SelectableAccountsList extends Component<ListProps> {
       forceSelected,
       EmptyState,
       header,
+      showHint,
+      index,
+      navigation,
+      onAccountNameChange,
       style,
     } = this.props;
     const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
@@ -73,10 +94,15 @@ class SelectableAccountsList extends Component<ListProps> {
             onUnselectAll={onUnselectAll ? this.onUnselectAll : undefined}
           />
         )}
-        {accounts.map(account => (
+        {accounts.map((account, rowIndex) => (
           <SelectableAccount
+            navigation={navigation}
+            showHint={!rowIndex && showHint}
+            rowIndex={rowIndex}
+            listIndex={index}
             key={account.id}
             account={account}
+            onAccountNameChange={onAccountNameChange}
             isSelected={forceSelected || selectedIds.indexOf(account.id) > -1}
             isDisabled={isDisabled}
             onPress={onPressAccount}
@@ -88,20 +114,107 @@ class SelectableAccountsList extends Component<ListProps> {
   }
 }
 
-class SelectableAccount extends PureComponent<{
-  account: Account,
-  onPress?: Account => void,
-  isDisabled?: boolean,
-  isSelected?: boolean,
-}> {
+class SelectableAccount extends PureComponent<
+  {
+    account: Account,
+    onPress?: Account => void,
+    isDisabled?: boolean,
+    isSelected?: boolean,
+    showHint: boolean,
+    rowIndex: number,
+    listIndex: number,
+    navigation: NavigationScreenProp<*>,
+    onAccountNameChange: (name: string, changedAccount: Account) => void,
+  },
+  { stopAnimation: boolean },
+> {
+  state = {
+    stopAnimation: false,
+  };
   onPress = () => {
     const { onPress, account, isSelected } = this.props;
     track(isSelected ? "UnselectAccount" : "SelectAccount");
     if (onPress) onPress(account);
   };
 
+  panResponder: PanResponder;
+  swipeableRow: Swipeable;
+
+  updateRef = ref => {
+    if (ref) this.swipeableRow = ref;
+  };
+
+  renderLeftActions = (progress, dragX) => {
+    const translateX = dragX.interpolate({
+      inputRange: [0, 1000],
+      outputRange: [-112, 888],
+    });
+
+    return (
+      <Animated.View
+        style={[
+          styles.leftAction,
+          { transform: [{ translateX }] },
+          { marginLeft: 12 },
+        ]}
+      >
+        <Button
+          event="HardResetModalAction"
+          type="primary"
+          title="Edit Name"
+          onPress={this.editAccountName}
+          containerStyle={styles.buttonContainer}
+        />
+      </Animated.View>
+    );
+  };
+
+  editAccountName = () => {
+    const { account, navigation, onAccountNameChange } = this.props;
+    swipedAccountSubject.next({ row: -1, list: -1 });
+    navigation.navigate("EditAccountName", {
+      onAccountNameChange,
+      account,
+    });
+  };
+
+  componentDidMount() {
+    swipedAccountSubject.subscribe(msg => {
+      const { row, list } = msg;
+      this.setState({ stopAnimation: true });
+      if (
+        this.swipeableRow &&
+        (row !== this.props.rowIndex || list !== this.props.listIndex)
+      ) {
+        this.swipeableRow.close();
+      }
+    });
+  }
+
+  constructor(props) {
+    super(props);
+    const { rowIndex, listIndex } = this.props;
+    this.panResponder = PanResponder.create({
+      // Ask to be the responder:
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => false,
+      onMoveShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponderCapture: () => false,
+
+      onPanResponderGrant: () => {
+        if (swipedAccountSubject) {
+          this.setState({ stopAnimation: true });
+          swipedAccountSubject.next({ rowIndex, listIndex });
+        }
+      },
+
+      onShouldBlockNativeResponder: () => false,
+    });
+  }
+
   render() {
-    const { isDisabled, isSelected, account } = this.props;
+    const { showHint, isDisabled, isSelected, account } = this.props;
+    const { stopAnimation } = this.state;
     const inner = (
       <View
         style={[
@@ -112,6 +225,7 @@ class SelectableAccount extends PureComponent<{
         <AccountCard account={account} />
         {!isDisabled && (
           <CheckBox
+            onChange={this.onPress ? this.onPress : undefined}
             isChecked={!!isSelected}
             style={styles.selectableAccountCheckbox}
           />
@@ -119,10 +233,26 @@ class SelectableAccount extends PureComponent<{
       </View>
     );
     if (isDisabled) return inner;
+
     return (
-      <TouchableOpacity onPress={isDisabled ? undefined : this.onPress}>
-        {inner}
-      </TouchableOpacity>
+      <View {...this.panResponder.panHandlers}>
+        <Swipeable
+          ref={this.updateRef}
+          friction={2}
+          leftThreshold={50}
+          renderLeftActions={this.renderLeftActions}
+          style={{ backgroundColor: "#ffffff" }}
+        >
+          {inner}
+          {showHint && (
+            <TouchHintCircle
+              stopAnimation={stopAnimation}
+              visible={showHint}
+              style={styles.pulsatingCircle}
+            />
+          )}
+        </Swipeable>
+      </View>
     );
   }
 }
@@ -163,10 +293,10 @@ class Header extends PureComponent<{
 
 const styles = StyleSheet.create({
   root: {
-    paddingHorizontal: 16,
     marginBottom: 24,
   },
   selectableAccountRoot: {
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -177,6 +307,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   listHeader: {
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     paddingBottom: 16,
@@ -193,6 +324,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.grey,
   },
+  leftAction: {
+    width: 100,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  pulsatingCircle: {
+    position: "absolute",
+    left: 8,
+    top: 0,
+    bottom: 0,
+  },
+  buttonContainer: {
+    flex: 1,
+  },
 });
 
-export default SelectableAccountsList;
+export default withNavigation(SelectableAccountsList);

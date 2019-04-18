@@ -1,5 +1,5 @@
-// flow-typed signature: 1bc98c6c1fbfef19647934b13aa3505e
-// flow-typed version: b43dff3e0e/numeral_v2.x.x/flow_>=v0.25.x
+// flow-typed signature: b274c26891998a79187f137d3721e5ee
+// flow-typed version: 04792633f2/numeral_v2.x.x/flow_>=v0.25.x
 
 
 declare interface NumeralJSLocale {
@@ -42,8 +42,8 @@ declare interface Numeral {
     /**
      * Registers a language definition or a custom format definition.
      * @param what Allowed values are: either 'format' or 'locale'
-     * @param key The key of the registerd type, e.g. 'de' for a german locale definition
-     * @param value The locale definition or the format definitiion
+     * @param key The key of the registered type, e.g. 'de' for a german locale definition
+     * @param value The locale definition or the format definition
      */
     register(
         what: RegisterType,

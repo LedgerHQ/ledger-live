@@ -119,7 +119,7 @@ class PairDevices extends Component<Props, State> {
         await genuineCheckPromise;
         if (this.unmounted) return;
 
-        const name = await getDeviceName(transport);
+        const name = await getDeviceName(transport) || device.name;
         if (this.unmounted) return;
 
         this.props.addKnownDevice({ id: device.id, name });

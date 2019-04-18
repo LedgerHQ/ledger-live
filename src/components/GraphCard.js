@@ -5,17 +5,14 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
 import { Trans } from "react-i18next";
-
-import type { Unit } from "@ledgerhq/live-common/lib/types";
-
-import type { Summary } from "./provideSummary";
-
+import type {
+  Portfolio,
+  Currency,
+  Unit,
+} from "@ledgerhq/live-common/lib/types";
 import colors from "../colors";
-
 import { setSelectedTimeRange } from "../actions/settings";
-
 import getWindowDimensions from "../logic/getWindowDimensions";
-
 import Delta from "./Delta";
 import FormatDate from "./FormatDate";
 import Graph from "./Graph";
@@ -24,16 +21,16 @@ import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
-
-import type { Item } from "./Graph";
+import type { Item } from "./Graph/types";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
 };
 
 type Props = {
-  summary: Summary,
+  portfolio: Portfolio,
   setSelectedTimeRange: string => void,
+  counterValueCurrency: Currency,
   useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 };
@@ -57,20 +54,19 @@ class GraphCard extends PureComponent<Props, State> {
 
   onItemHover = hoveredItem => this.setState({ hoveredItem });
 
-  render() {
-    const { summary, renderTitle, useCounterValue } = this.props;
+  mapGraphValue = d => d.value.toNumber();
 
-    const {
-      isAvailable,
-      accounts,
-      balanceHistory,
-      balanceStart,
-      balanceEnd,
-      selectedTimeRange,
-      counterValueCurrency,
-    } = summary;
+  render() {
+    const { portfolio, renderTitle, counterValueCurrency } = this.props;
 
     const { hoveredItem } = this.state;
+
+    const range = portfolio.range;
+    const isAvailable = portfolio.balanceAvailable;
+    const accounts = portfolio.accounts;
+    const balanceHistory = portfolio.balanceHistory;
+    const start = portfolio.balanceHistory[0];
+    const end = portfolio.balanceHistory[portfolio.balanceHistory.length - 1];
 
     const graphColor =
       accounts.length === 1 ? accounts[0].currency.color : undefined;
@@ -79,8 +75,8 @@ class GraphCard extends PureComponent<Props, State> {
       <Card style={styles.root}>
         <GraphCardHeader
           isLoading={!isAvailable}
-          from={balanceStart}
-          to={balanceEnd}
+          from={start}
+          to={end}
           hoveredItem={hoveredItem}
           unit={counterValueCurrency.units[0]}
           renderTitle={renderTitle}
@@ -93,12 +89,12 @@ class GraphCard extends PureComponent<Props, State> {
           color={isAvailable ? graphColor : colors.grey}
           data={balanceHistory}
           onItemHover={this.onItemHover}
-          useCounterValue={useCounterValue}
+          mapValue={this.mapGraphValue}
         />
         <View style={styles.pillsContainer}>
           <Pills
             isDisabled={!isAvailable}
-            value={selectedTimeRange}
+            value={range}
             onChange={this.onTimeRangeChange}
             items={this.timeRangeItems}
           />
