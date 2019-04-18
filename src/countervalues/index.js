@@ -100,7 +100,9 @@ function createCounterValues<State>({
   maximumDays,
   addExtraPollingHooks,
   log,
-  getDailyRatesImplementation
+  getDailyRatesImplementation,
+  fetchExchangesForPairImplementation,
+  fetchTickersByMarketcapImplementation
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
 
@@ -457,38 +459,42 @@ function createCounterValues<State>({
     }
   };
 
-  const fetchExchangesForPair = async (from, to): Promise<Exchange[]> => {
-    const { data } = await network({
-      method: "GET",
-      url: getAPIBaseURL() + "/exchanges/" + from.ticker + "/" + to.ticker
+  const fetchExchangesForPair =
+    fetchExchangesForPairImplementation ||
+    (async (from, to): Promise<Exchange[]> => {
+      const { data } = await network({
+        method: "GET",
+        url: getAPIBaseURL() + "/exchanges/" + from.ticker + "/" + to.ticker
+      });
+      invariant(
+        typeof data === "object" && Array.isArray(data),
+        "fetchExchangesForPair: array expected"
+      );
+      invariant(
+        data.length === 0 ||
+          (typeof data[0] === "object" && typeof data[0].id === "string"),
+        "fetchExchangesForPair: array of exchanges expected"
+      );
+      return data;
     });
-    invariant(
-      typeof data === "object" && Array.isArray(data),
-      "fetchExchangesForPair: array expected"
-    );
-    invariant(
-      data.length === 0 ||
-        (typeof data[0] === "object" && typeof data[0].id === "string"),
-      "fetchExchangesForPair: array of exchanges expected"
-    );
-    return data;
-  };
 
-  const fetchTickersByMarketcap = async (): Promise<string[]> => {
-    const { data } = await network({
-      method: "GET",
-      url: getAPIBaseURL() + "/tickers"
+  const fetchTickersByMarketcap =
+    fetchTickersByMarketcapImplementation ||
+    (async (): Promise<string[]> => {
+      const { data } = await network({
+        method: "GET",
+        url: getAPIBaseURL() + "/tickers"
+      });
+      invariant(
+        typeof data === "object" && Array.isArray(data),
+        "fetchTickersByMarketcap: array expected"
+      );
+      invariant(
+        data.length === 0 || typeof data[0] === "string",
+        "fetchTickersByMarketcap: array of strings expected"
+      );
+      return data;
     });
-    invariant(
-      typeof data === "object" && Array.isArray(data),
-      "fetchTickersByMarketcap: array expected"
-    );
-    invariant(
-      data.length === 0 || typeof data[0] === "string",
-      "fetchTickersByMarketcap: array of strings expected"
-    );
-    return data;
-  };
 
   // $FlowFixMe can't wait flow implement createContext
   const PollingContext = React.createContext(() => {});

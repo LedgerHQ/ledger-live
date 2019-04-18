@@ -93,7 +93,9 @@ export type Input<State> = {
   getDailyRatesImplementation?: (
     getAPIBaseURL: () => string,
     pairs: PollAPIPair[]
-  ) => Promise<mixed>
+  ) => Promise<mixed>,
+  fetchExchangesForPairImplementation?: () => Promise<Exchange[]>,
+  fetchTickersByMarketcapImplementation?: () => Promise<string[]>
 };
 
 export type PollAPIPair = {
