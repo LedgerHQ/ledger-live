@@ -9,7 +9,8 @@ import {
   UpdateYourApp,
   BluetoothRequired,
   FirmwareOrAppUpdateRequired,
-  TransportStatusError
+  TransportStatusError,
+  DeviceHalted
 } from "@ledgerhq/errors";
 import { getEnv } from "../env";
 import { open } from ".";
@@ -20,7 +21,9 @@ const initialErrorRemapping = error =>
   throwError(
     error &&
       error instanceof TransportStatusError &&
-      error.statusCode === 0x6b00
+      error.statusCode === 0x6faa
+      ? new DeviceHalted(error.message)
+      : error.statusCode === 0x6b00
       ? new FirmwareOrAppUpdateRequired(error.message)
       : error
   );
