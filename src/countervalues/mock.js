@@ -116,10 +116,16 @@ export const getDailyRatesImplementation = (
   }, rates);
 };
 
+/**
+ * [good]: Will return deterministic rates for the past 3 years for the pair
+ * [ugly]: Will respond, but return 0 as the latest rate.
+ * [bad]: Will not return anything for the pair.
+ */
 export const fetchExchangesForPairImplementation = async () => [
   { id: "good", name: "good", website: "#" },
   { id: "ugly", name: "ugly", website: "#" },
   { id: "bad", name: "bad", website: "#" }
 ];
-export const fetchTickersByMarketcapImplementation = async ():Promise<string[]> =>
-  listCryptoCurrencies().map(c => c.ticker);
+export const fetchTickersByMarketcapImplementation = async (): Promise<
+  string[]
+> => listCryptoCurrencies().map(c => c.ticker);

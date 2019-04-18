@@ -94,8 +94,8 @@ export type Input<State> = {
     getAPIBaseURL: () => string,
     pairs: PollAPIPair[]
   ) => Promise<mixed>,
-  fetchExchangesForPairImplementation?: ()=>  Promise<Exchange[]>,
-  fetchTickersByMarketcapImplementation?: ()=> Promise<string[]>
+  fetchExchangesForPairImplementation?: () => Promise<Exchange[]>,
+  fetchTickersByMarketcapImplementation?: () => Promise<string[]>
 };
 
 export type PollAPIPair = {
