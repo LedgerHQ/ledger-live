@@ -7,15 +7,14 @@ import getDeviceInfo from "./getDeviceInfo";
 import type { FinalFirmware, DeviceInfo, McuVersion } from "../types/manager";
 
 const blVersionAliases = {
-  "0.0": "0.6",
-  "0.0.0": "0.6"
+  "0.0": "0.6"
 };
 
 export default (finalFirmware: FinalFirmware) => (
   transport: Transport<*>
 ): Observable<*> =>
   from(getDeviceInfo(transport)).pipe(
-    mergeMap(({ rawVersion: blVersion, targetId }: DeviceInfo) =>
+    mergeMap(({ majMin: blVersion, targetId }: DeviceInfo) =>
       (blVersion in blVersionAliases
         ? of(blVersionAliases[blVersion])
         : from(ManagerAPI.getNextBLVersion(finalFirmware.mcu_versions[0]))

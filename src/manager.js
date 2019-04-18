@@ -61,12 +61,12 @@ const CacheAPI = {
       osu = await ManagerAPI.getCurrentOSU({
         deviceId: deviceVersion.id,
         provider: deviceInfo.providerId,
-        version: deviceInfo.seVersion
+        version: deviceInfo.version
       });
     } else {
       // Get firmware infos with firmware name and device version
       const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
-        fullVersion: deviceInfo.fullVersion,
+        version: deviceInfo.version,
         deviceId: deviceVersion.id,
         provider: deviceInfo.providerId
       });
@@ -117,7 +117,7 @@ const CacheAPI = {
     const firmwareDataP = deviceVersionP.then(deviceVersion =>
       ManagerAPI.getCurrentFirmware({
         deviceId: deviceVersion.id,
-        fullVersion: deviceInfo.fullVersion,
+        version: deviceInfo.version,
         provider: deviceInfo.providerId
       })
     );

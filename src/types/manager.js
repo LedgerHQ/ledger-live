@@ -12,15 +12,13 @@ export type LedgerScriptParams = {
 };
 
 export type DeviceInfo = {
-  targetId: string | number,
-  seVersion: string,
-  rawVersion: string,
+  mcuVersion: string, // the raw mcu version
+  version: string, // the version part, without the -osu
+  majMin: string, // the x.y part of the x.y.z-v version
+  targetId: string | number, // a technical id
   isBootloader: boolean,
-  flags: Buffer,
-  mcuVersion: string,
   isOSU: boolean,
   providerId: number,
-  fullVersion: string,
   managerAllowed: boolean,
   pinValidated: boolean
 };

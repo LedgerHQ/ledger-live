@@ -1,6 +1,6 @@
 // @flow
-// Perform a genuine check. error is fails. complete on success.
 
+import invariant from "invariant";
 import Transport from "@ledgerhq/hw-transport";
 
 export type FirmwareInfo = {
@@ -13,7 +13,7 @@ export type FirmwareInfo = {
 /**
  * Retrieve targetId and firmware version from device
  */
-export default async function getFirmwareInfo(
+export default async function getVersion(
   transport: Transport<*>
 ): Promise<FirmwareInfo> {
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00);
@@ -40,14 +40,7 @@ export default async function getFirmwareInfo(
   }
   mcuVersion = mcuVersion.toString();
 
-  if (!seVersionLength) {
-    return {
-      targetId,
-      seVersion: "0.0.0",
-      flags: Buffer.allocUnsafeSlow(0),
-      mcuVersion: ""
-    };
-  }
+  invariant(seVersionLength, "invalid getVersion payload");
 
   return { targetId, seVersion, flags, mcuVersion };
 }

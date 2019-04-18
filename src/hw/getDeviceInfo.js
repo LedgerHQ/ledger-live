@@ -2,7 +2,7 @@
 /* eslint-disable no-bitwise */
 
 import type Transport from "@ledgerhq/hw-transport";
-import getFirmwareInfo from "./getFirmwareInfo";
+import getVersion from "./getVersion";
 import type { DeviceInfo } from "../types/manager";
 import { getEnv } from "../env";
 
@@ -17,37 +17,30 @@ const PROVIDERS: { [_: string]: number } = {
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 
-export default async (transport: Transport<*>): Promise<DeviceInfo> => {
-  const res = await getFirmwareInfo(transport);
+export default async function getDeviceInfo(
+  transport: Transport<*>
+): Promise<DeviceInfo> {
+  const res = await getVersion(transport);
   const { seVersion } = res;
   const { targetId, mcuVersion, flags } = res;
-  const parsedVersion =
-    seVersion.match(
-      /([0-9]+.[0-9])+(.[0-9]+)?((?!-osu)-([a-zA-Z0-9]+))?(-osu)?/
-    ) || [];
-  const isOSU = typeof parsedVersion[5] !== "undefined";
-  const providerName = parsedVersion[4] || "";
+  const isOSU = seVersion.includes("-osu");
+  const version = seVersion.replace("-osu", "");
+  const m = seVersion.match(/([0-9]+.[0-9])+(.[0-9]+)?(-([a-zA-Z0-9]+))?/);
+  const [, majMin, , providerName] = m || [];
   const providerId = getEnv("FORCE_PROVIDER") || PROVIDERS[providerName] || 1;
   const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
-  const majMin = parsedVersion[1];
-  const patch = parsedVersion[2] || ".0";
-  const fullVersion = `${majMin}${patch}${
-    providerName ? `-${providerName}` : ""
-  }`;
   const flag = flags.length > 0 ? flags[0] : 0;
   const managerAllowed = !!(flag & ManagerAllowedFlag);
   const pinValidated = !!(flag & PinValidatedFlag);
   return {
-    targetId,
-    seVersion: majMin + patch,
-    rawVersion: majMin,
-    isOSU,
+    version,
     mcuVersion,
-    isBootloader,
+    majMin,
     providerId,
-    flags,
+    targetId,
+    isOSU,
+    isBootloader,
     managerAllowed,
-    pinValidated,
-    fullVersion
+    pinValidated
   };
-};
+}

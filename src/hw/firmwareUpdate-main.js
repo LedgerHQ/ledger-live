@@ -1,5 +1,5 @@
 // @flow
-import { Observable, from, of, empty, concat } from "rxjs";
+import { Observable, from, of, empty, concat, throwError } from "rxjs";
 import {
   concatMap,
   delay,
@@ -7,8 +7,7 @@ import {
   distinctUntilChanged,
   throttleTime
 } from "rxjs/operators";
-
-import { CantOpenDevice } from "@ledgerhq/errors";
+import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
 import type { FirmwareUpdateContext } from "../types/manager";
 import { withDevicePolling } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
@@ -53,7 +52,9 @@ const main = (
 
   const finalStep = withDeviceInfo.pipe(
     concatMap(deviceInfo =>
-      !deviceInfo.isOSU ? empty() : withDeviceInstall(installFinalFirmware)
+      !deviceInfo.isOSU
+        ? throwError(new DeviceInOSUExpected())
+        : withDeviceInstall(installFinalFirmware)
     )
   );
 

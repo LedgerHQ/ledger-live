@@ -49,18 +49,14 @@ const repair = (
           return concat(installMcu(forceMCU), wait2s, loop());
         }
 
-        switch (deviceInfo.rawVersion) {
+        switch (deviceInfo.majMin) {
           case "0.0":
-          case "0.0.0":
             return concat(installMcu("0.6"), wait2s, loop());
           case "0.6":
-          case "0.6.0":
             return installMcu("1.5");
           case "0.7":
-          case "0.7.0":
             return installMcu("1.6");
           case "0.9":
-          case "0.9.0":
             return installMcu("1.7");
           default:
             return empty();

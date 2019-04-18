@@ -7,8 +7,8 @@
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
   "dependencies": {
-    "@ledgerhq/hw-transport-http": "^4.50.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.50.0",
+    "@ledgerhq/hw-transport-http": "^4.52.0",
+    "@ledgerhq/hw-transport-node-hid": "^4.52.0",
     "@ledgerhq/ledger-core": "2.2.1-rc",
     "@ledgerhq/live-common": "5.0.0-alpha.11",
     "axios": "^0.18.0",
@@ -29,7 +29,7 @@
     "testOne": "./scripts/testOne.sh"
   },
   "devDependencies": {
-    "@ledgerhq/hw-http-proxy-devserver": "^4.51.1",
+    "@ledgerhq/hw-http-proxy-devserver": "^4.52.2",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.7.1",
