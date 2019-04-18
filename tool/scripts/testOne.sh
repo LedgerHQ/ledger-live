@@ -21,7 +21,7 @@ mkdir output
 echo "Running test $name..."
 bash ./test.sh
 echo "done."
-sleep 1
+sleep 2
 if kill -0 $PID 2> /dev/null; then
   curl -XPOST http://localhost:8435/end
 fi

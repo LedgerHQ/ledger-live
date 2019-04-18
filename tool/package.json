@@ -9,7 +9,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport-http": "^4.53.0",
     "@ledgerhq/hw-transport-node-hid": "^4.53.0",
-    "@ledgerhq/ledger-core": "^2.2.1-rc",
+    "@ledgerhq/ledger-core": "^2.3.0-beta.0",
     "@ledgerhq/live-common": "5.0.0-alpha.13",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
