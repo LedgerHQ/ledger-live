@@ -218,22 +218,22 @@
   dependencies:
     "@ledgerhq/errors" "^4.52.0"
 
-"@ledgerhq/devices@^4.53.0":
-  version "4.53.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-4.53.0.tgz#bff6a9a4bdc1a7b4899aeeadb74f25b426760e9f"
-  integrity sha512-/JMsT72h1YsmG+rZ0FkJvdA3kBNc8ag49n9dETxoKtbVpk0yiOMWVRpUdlqKmiSCgFfCsyojlvDHYkVAHge9ZQ==
+"@ledgerhq/devices@^4.54.0":
+  version "4.54.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-4.54.0.tgz#6345f6c0e6cf8fc16ac1a476df610e69d273cd76"
+  integrity sha512-v6E4PK6bej/CmMSMVasFWWy1iyh42XaHmUpp5i992/n+PiVQQL5qnQlgXpCq2ZoFinfpnFc7y2lv3qSxAqQimQ==
   dependencies:
-    "@ledgerhq/errors" "^4.53.0"
+    "@ledgerhq/errors" "^4.54.0"
 
 "@ledgerhq/errors@^4.52.0":
   version "4.52.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.52.0.tgz#b62a2201587beeaaf96c51c821f12a1403228ab4"
   integrity sha512-bDUK+j33kZtInTm6OH7BotgXoRJVl0+Vb/YOr61lpl+gdwIdiQWv2gCBpTLjlHk3YAMuyPn/gcfhnYrmnElHZQ==
 
-"@ledgerhq/errors@^4.53.0":
-  version "4.53.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.53.0.tgz#cb0ed539538ecb63b7b801479f2ce4324032b920"
-  integrity sha512-G/V4OHff/KTC+XC7Y4BbPGlEiVFXUdzgR/cdvj9laYKjZ6rsWe60cv4sT8lN6/8pBBvwpiC1oVsSrspuElX7Eg==
+"@ledgerhq/errors@^4.54.0":
+  version "4.54.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.54.0.tgz#e0655188714ca3750d3964faa0f01ebf76ecd455"
+  integrity sha512-BbAiJHzw/EtIp/HBhDUTbAGj+1cYGGmnrlXSccIxt/MFwcgrX2KgPFbTIAiJJYmPkUSdY4eucyrB9YohzfGCkw==
 
 "@ledgerhq/hw-app-btc@^4.52.0":
   version "4.52.0"
@@ -258,13 +258,13 @@
     "@ledgerhq/hw-transport" "^4.52.0"
     bip32-path "0.4.2"
 
-"@ledgerhq/hw-http-proxy-devserver@^4.53.0":
-  version "4.53.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-http-proxy-devserver/-/hw-http-proxy-devserver-4.53.0.tgz#bc2123f4413b92b0174012b6cc85b507e253ae1c"
-  integrity sha512-UY0LDSw0E5DxDLEyirdZ/J+OiiHd9Llk7X70R1dAIoyp14viGXKzBAuvPljuYRRYUVLYCOcidI4/YLoI3xkNAg==
+"@ledgerhq/hw-http-proxy-devserver@^4.54.0":
+  version "4.54.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-http-proxy-devserver/-/hw-http-proxy-devserver-4.54.0.tgz#74b4acc161b5b3368b62710f472e482fe0fcd5bc"
+  integrity sha512-oeaaeU4cXmdlMim1NcGUyHgXKxkRuCFVA/fDmlkJphcaKriLkvKd8yvGcUFfTaiILahOpodjUKWQBQbUPWJe6Q==
   dependencies:
-    "@ledgerhq/hw-transport-mocker" "^4.53.0"
-    "@ledgerhq/hw-transport-node-hid" "^4.53.0"
+    "@ledgerhq/hw-transport-mocker" "^4.54.0"
+    "@ledgerhq/hw-transport-node-hid" "^4.54.0"
     babel-polyfill "^6.26.0"
     body-parser "^1.18.3"
     command-line-args "^5.1.1"
@@ -272,13 +272,13 @@
     express "^4.16.4"
     ws "^6.1.4"
 
-"@ledgerhq/hw-transport-http@^4.53.0":
-  version "4.53.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.53.0.tgz#58649f096e11d69599f8773a8c443311d9db9e19"
-  integrity sha512-koqdtcK9QA7LtMRRqTFZfCQlsf2MFJ6Hkn/IztO2e02jMBPt+yLlLKEJa8YV4enZ6h1bTmECUFBdbI2ZVfTORg==
+"@ledgerhq/hw-transport-http@^4.54.0":
+  version "4.54.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-http/-/hw-transport-http-4.54.0.tgz#14673422510d3e0f7de97e84a0ee909d529ba71e"
+  integrity sha512-XHTM2/OiDqT9lSGqX3ZxzyKHqBMnmFE3XjKB9ZHVmltoS8Vqo+szmQv3BCotMIw4wAHMyKrx92tZOrM9RLr2vA==
   dependencies:
-    "@ledgerhq/errors" "^4.53.0"
-    "@ledgerhq/hw-transport" "^4.53.0"
+    "@ledgerhq/errors" "^4.54.0"
+    "@ledgerhq/hw-transport" "^4.54.0"
     axios "^0.18.0"
     ws "^6.1.4"
 
@@ -289,21 +289,21 @@
   dependencies:
     "@ledgerhq/hw-transport" "^4.52.0"
 
-"@ledgerhq/hw-transport-mocker@^4.53.0":
-  version "4.53.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-mocker/-/hw-transport-mocker-4.53.0.tgz#226ec435fece55d9b9bf5faf5bb8f2ba9a9bb84a"
-  integrity sha512-gMb4G6ANhRZslQ3Pq8NHN7gVHgoUS9Tc4t/LNzkNYssXpLgLbU8qcp9x4UChH4OXlG+CIFyl+Dat94h++bjdpQ==
+"@ledgerhq/hw-transport-mocker@^4.54.0":
+  version "4.54.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-mocker/-/hw-transport-mocker-4.54.0.tgz#2bd8532a44bcf1731c726d83bb37af3a052d7557"
+  integrity sha512-zMjxxVyjwzAhEzm0ft53cWHtpKTSL9qZ1TOZExIi8xK8ABNbHnTt3PyJ43YSx94ZsnRzT4d/xEzp5hoq5azUBA==
   dependencies:
-    "@ledgerhq/hw-transport" "^4.53.0"
+    "@ledgerhq/hw-transport" "^4.54.0"
 
-"@ledgerhq/hw-transport-node-hid@^4.53.0":
-  version "4.53.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-4.53.0.tgz#1fdbfaf1b72ec2bf1fb14ce6d20d0d5491b42cab"
-  integrity sha512-1bM1hNwULZK522Z+E4qxf3KLVFO0X5lFcnXWXuZbXF72StuD6gxEYft1E9R+7iTyuvNM5muxCmMz8yVGNEsnmg==
+"@ledgerhq/hw-transport-node-hid@^4.54.0":
+  version "4.54.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-4.54.0.tgz#6cc71be527fb011daf8d716fe18936637408bb89"
+  integrity sha512-xJrKTsSL2BRdQ+DJMoB67rFr2mUolDcIDg2H2MX1gMBPYR9HmZs433S3qd8yW+CELTbDp6pQoEIEDUGU7ore/g==
   dependencies:
-    "@ledgerhq/devices" "^4.53.0"
-    "@ledgerhq/errors" "^4.53.0"
-    "@ledgerhq/hw-transport" "^4.53.0"
+    "@ledgerhq/devices" "^4.54.0"
+    "@ledgerhq/errors" "^4.54.0"
+    "@ledgerhq/hw-transport" "^4.54.0"
     lodash "^4.17.11"
     node-hid "^0.7.7"
     usb "^1.5.0"
@@ -317,13 +317,13 @@
     "@ledgerhq/errors" "^4.52.0"
     events "^3.0.0"
 
-"@ledgerhq/hw-transport@^4.53.0":
-  version "4.53.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.53.0.tgz#7e0a222a1621aa565dad84a551eb50fb2d5d528b"
-  integrity sha512-24t0FD/hhlNEPuMcOS0ht+xGuRxItouaYyANoCkqNNMLxrk3IvHYlQA/JNxuWNzE/rvkwt10oPAlpAfhQFwycA==
+"@ledgerhq/hw-transport@^4.54.0":
+  version "4.54.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.54.0.tgz#befa14a4a3ba5810ca6b7ffbd6b94bce861ddf88"
+  integrity sha512-9UCr35O0Fn7ib0R9BsgY9jXHL/bGCQF66GYOD2GCwLWDVnK5eVewS6J+ljxhWOIsV75OcqJtylRO0mAGOD6tWg==
   dependencies:
-    "@ledgerhq/devices" "^4.53.0"
-    "@ledgerhq/errors" "^4.53.0"
+    "@ledgerhq/devices" "^4.54.0"
+    "@ledgerhq/errors" "^4.54.0"
     events "^3.0.0"
 
 "@ledgerhq/ledger-core@^2.2.1-rc":

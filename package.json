@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "5.0.0-alpha.16",
+  "version": "5.0.0-alpha.17",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -37,12 +37,12 @@
     "react": "*"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^4.53.0",
-    "@ledgerhq/hw-app-btc": "^4.53.0",
-    "@ledgerhq/hw-app-eth": "4.53.0",
-    "@ledgerhq/hw-app-xrp": "^4.53.0",
-    "@ledgerhq/hw-transport": "^4.53.0",
-    "@ledgerhq/hw-transport-mocker": "^4.53.0",
+    "@ledgerhq/errors": "^4.54.0",
+    "@ledgerhq/hw-app-btc": "^4.54.0",
+    "@ledgerhq/hw-app-eth": "4.54.0",
+    "@ledgerhq/hw-app-xrp": "^4.54.0",
+    "@ledgerhq/hw-transport": "^4.54.0",
+    "@ledgerhq/hw-transport-mocker": "^4.54.0",
     "bignumber.js": "^8.1.1",
     "compressjs": "gre/compressjs#hermit",
     "eip55": "^1.0.3",
