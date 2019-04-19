@@ -14,6 +14,7 @@ import manager from "@ledgerhq/live-common/lib/manager";
 import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
 import openApp from "@ledgerhq/live-common/lib/hw/openApp";
 import quitApp from "@ledgerhq/live-common/lib/hw/quitApp";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";
@@ -170,6 +171,16 @@ const all = {
               ? JSON.stringify(list)
               : list.map(item => `- ${item.name} ${item.version}`).join("\n")
           )
+        )
+      )
+  },
+
+  genuineCheck: {
+    args: [deviceOpt],
+    job: ({ device }) =>
+      withDevice(device || "")(t =>
+        from(getDeviceInfo(t)).pipe(
+          mergeMap(deviceInfo => genuineCheck(t, deviceInfo))
         )
       )
   },

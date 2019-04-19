@@ -26,7 +26,8 @@
     "build": "babel --ignore __tests__ -sd lib src",
     "watch": "babel -wsd lib src",
     "test": "./scripts/tests.sh",
-    "testOne": "./scripts/testOne.sh"
+    "testOne": "./scripts/testOne.sh",
+    "createTest": "./scripts/createTest.sh"
   },
   "devDependencies": {
     "@ledgerhq/hw-http-proxy-devserver": "^4.54.0",
