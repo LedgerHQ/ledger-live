@@ -1,15 +1,11 @@
 // @flow
-
-// $FlowFixMe (breaks on user land side!)
-import React from "react";
 import { BigNumber } from "bignumber.js";
-import { Trans } from "react-i18next";
 import type { CryptoCurrency } from "../types";
 import { getEstimatedFees } from "./Fees";
 
 export type FeeItem = {
   key: string,
-  label: React$Node,
+  speed: string,
   blockCount: number,
   feePerByte: BigNumber
 };
@@ -19,10 +15,10 @@ export type FeeItems = {
   defaultFeePerByte: BigNumber
 };
 
-export const labels = {
-  "1": <Trans i18nKey="fees.speed.high" />,
-  "3": <Trans i18nKey="fees.speed.standard" />,
-  "6": <Trans i18nKey="fees.speed.low" />
+export const speeds = {
+  "1": "high",
+  "3": "standard",
+  "6": "low"
 };
 
 export const defaultBlockCount = 3;
@@ -37,12 +33,14 @@ export const getFeeItems = async (
     const feePerByte = BigNumber(Math.ceil(fees[key] / 1000));
     const blockCount = parseInt(key, 10);
     if (blockCount === defaultBlockCount) defaultFeePerByte = feePerByte;
-    if (!Number.isNaN(blockCount) && !feePerByte.isNaN()) {
+    if (
+      !Number.isNaN(blockCount) &&
+      !feePerByte.isNaN() &&
+      blockCount in speeds
+    ) {
       items.push({
         key,
-        label: labels[blockCount] || (
-          <Trans i18nKey="fees.speed.blocks" values={{ blockCount }} />
-        ),
+        speed: speeds[blockCount],
         blockCount,
         feePerByte
       });
