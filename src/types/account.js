@@ -5,6 +5,13 @@ import type { CryptoCurrency, TokenCurrency, Unit } from "./currencies";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "../derivation";
 
+export type TokenAccount = {
+  id: string,
+  token: TokenCurrency,
+  operations: Operation[],
+  balance: BigNumber
+};
+
 export type Account = {
   // unique account identifier
   id: string,
@@ -70,13 +77,6 @@ export type Account = {
   endpointConfig?: ?string,
 
   tokenAccounts?: TokenAccount[]
-};
-
-export type TokenAccount = {
-  id: string,
-  token: TokenCurrency,
-  operations: Operation[],
-  balance: BigNumber
 };
 
 export type TokenAccountRaw = {

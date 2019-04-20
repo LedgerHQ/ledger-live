@@ -8,6 +8,12 @@ import uniqBy from "lodash/uniqBy";
 import invariant from "invariant";
 import eip55 from "eip55";
 import {
+  NotEnoughBalance,
+  FeeNotLoaded,
+  ETHAddressNonEIP,
+  InvalidAddress
+} from "@ledgerhq/errors";
+import {
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
@@ -22,12 +28,6 @@ import {
 import { getCryptoCurrencyById } from "../currencies";
 import type { Account, Operation, Unit } from "../types";
 import getAddress from "../hw/getAddress";
-import {
-  NotEnoughBalance,
-  FeeNotLoaded,
-  ETHAddressNonEIP,
-  InvalidAddress
-} from "../errors";
 import { open } from "../hw";
 import { apiForCurrency } from "../api/Ethereum";
 import { getEstimatedFees } from "../api/Fees";
@@ -287,7 +287,6 @@ export const currencyBridge: CurrencyBridge = {
           lastSyncDate: new Date()
         };
         for (let i = 0; i < 50; i++) {
-          const api = apiForCurrency(account.currency);
           const last = txs[txs.length - 1];
           if (!last) break;
           const { block } = last;
@@ -328,11 +327,11 @@ export const currencyBridge: CurrencyBridge = {
                   account: index
                 }
               );
-              const res = await getAddress(
-                transport,
+              const res = await getAddress(transport, {
                 currency,
-                freshAddressPath
-              );
+                path: freshAddressPath,
+                derivationMode
+              });
               const r = await stepAddress(
                 index,
                 res,
@@ -388,9 +387,9 @@ export const accountBridge: AccountBridge<Transaction> = {
           if (block.height === blockHeight) {
             o.complete();
           } else {
-            const filterConfirmedOperations = o =>
-              o.blockHeight &&
-              blockHeight - o.blockHeight > SAFE_REORG_THRESHOLD;
+            const filterConfirmedOperations = op =>
+              op.blockHeight &&
+              blockHeight - op.blockHeight > SAFE_REORG_THRESHOLD;
 
             operations = operations.filter(filterConfirmedOperations);
             const blockHash =
@@ -414,17 +413,17 @@ export const accountBridge: AccountBridge<Transaction> = {
             o.next(a => {
               const currentOps = a.operations.filter(filterConfirmedOperations);
               const newOps = flatMap(txs, txToOps(a));
-              const operations = mergeOps(currentOps, newOps);
+              const ops = mergeOps(currentOps, newOps);
               const pendingOperations = a.pendingOperations.filter(
-                o =>
-                  o.transactionSequenceNumber &&
-                  o.transactionSequenceNumber >= nonce &&
-                  !operations.some(op => o.hash === op.hash)
+                op =>
+                  op.transactionSequenceNumber &&
+                  op.transactionSequenceNumber >= nonce &&
+                  !operations.some(op2 => op2.hash === op.hash)
               );
               return {
                 ...a,
                 pendingOperations,
-                operations,
+                operations: ops,
                 balance,
                 blockHeight: block.height,
                 lastSyncDate: new Date()

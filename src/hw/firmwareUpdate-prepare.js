@@ -1,12 +1,12 @@
 // @flow
 import { Observable, from, of, concat, throwError } from "rxjs";
 import { mergeMap, delay, filter, map } from "rxjs/operators";
-
-import getDeviceInfo from "../hw/getDeviceInfo";
-import installOsuFirmware from "../hw/installOsuFirmware";
-import { withDevice } from "../hw/deviceAccess";
-import type { FirmwareUpdateContext } from "../types/manager";
 import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
+
+import getDeviceInfo from "./getDeviceInfo";
+import installOsuFirmware from "./installOsuFirmware";
+import { withDevice } from "./deviceAccess";
+import type { FirmwareUpdateContext } from "../types/manager";
 
 const waitEnd = of({ type: "wait" }).pipe(delay(1000));
 

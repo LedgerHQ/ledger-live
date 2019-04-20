@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import { BigNumber } from "bignumber.js";
 import type { Unit } from "../types";
 import { getFragPositions } from "./localeUtility";
@@ -97,17 +97,17 @@ export function formatCurrencyUnitFragment(
   };
 
   const frags = [];
-  let nonSepIndex = -1,
-    sepConsumed = true;
+  let nonSepIndex = -1;
+  let sepConsumed = true;
   getFragPositions(locale).forEach(kind => {
-    const value = fragValueByKind[kind];
-    if (!value) return;
+    const v = fragValueByKind[kind];
+    if (!v) return;
     const isSep = kind === "separator";
     if (sepConsumed && isSep) return;
     sepConsumed = isSep;
     if (!isSep) nonSepIndex = frags.length;
     // $FlowFixMe
-    frags.push({ kind, value });
+    frags.push({ kind, value: v });
   });
   frags.splice(nonSepIndex + 1); // remove extra space at the end
   return frags;

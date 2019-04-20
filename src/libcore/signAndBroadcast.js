@@ -1,242 +1,128 @@
 // @flow
 
+import { Observable, from } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import { StatusCodes } from "@ledgerhq/hw-transport";
-import Btc from "@ledgerhq/hw-app-btc";
-import { Observable } from "rxjs";
-import { isSegwitDerivationMode } from "../derivation";
-import { FeeNotLoaded, UpdateYourApp } from "../errors";
-import { getCryptoCurrencyById } from "../currencies";
-import type { Operation, CryptoCurrency, DerivationMode } from "../types";
+import { UpdateYourApp } from "@ledgerhq/errors";
+import type { Account, Operation, TokenAccount } from "../types";
 import { getWalletName } from "../account";
-import { open } from "../hw";
+import { withDevice } from "../hw/deviceAccess";
+import { log } from "../logs";
 import type { SignAndBroadcastEvent } from "../bridge/types";
 import { getOrCreateWallet } from "./getOrCreateWallet";
-import {
-  libcoreAmountToBigNumber,
-  bigNumberToLibcoreAmount
-} from "./buildBigNumber";
+import { libcoreAmountToBigNumber } from "./buildBigNumber";
 import { remapLibcoreErrors } from "./errors";
 import { withLibcoreF } from "./access";
-import type {
-  CoreBitcoinLikeTransaction,
-  CoreBitcoinLikeInput,
-  CoreBitcoinLikeOutput
-} from "./types";
-import { log } from "../logs";
+import signTransaction from "./signTransaction";
+import buildTransaction from "./buildTransaction";
+import { getEnv } from "../env";
+import type { Transaction } from "./buildTransaction";
 
-type Transaction = {
-  amount: BigNumber | string,
-  recipient: string,
-  feePerByte: ?(BigNumber | string)
-};
-
-type Input = {
-  accountId: string,
-  blockHeight: number,
-  currencyId: string,
-  derivationMode: DerivationMode,
-  seedIdentifier: string,
-  xpub: string,
-  index: number,
+export type Input = {
+  // the account to use for the transaction
+  account: Account,
+  // tokenAccount if provided will use this account instead and account is just the parent
+  tokenAccount?: ?TokenAccount,
+  // all data of the transaction
   transaction: Transaction,
+  // device identified to sign the transaction with
   deviceId: string
 };
 
-export default ({
-  accountId,
-  blockHeight,
-  currencyId,
-  derivationMode,
-  seedIdentifier,
-  xpub,
-  index,
-  transaction,
-  deviceId
-}: Input): Observable<SignAndBroadcastEvent> =>
-  Observable.create(o => {
-    let unsubscribed = false;
-    const currency = getCryptoCurrencyById(currencyId);
-    const isCancelled = () => unsubscribed;
-    doSignAndBroadcast({
-      accountId,
-      currency,
-      blockHeight,
-      derivationMode,
-      seedIdentifier,
-      xpub,
-      index,
-      transaction,
-      deviceId,
-      isCancelled,
-      onSigning: () => {
-        o.next({ type: "signing" });
-      },
-      onSigned: () => {
-        o.next({ type: "signed" });
-      },
-      onOperationBroadcasted: operation => {
-        o.next({
-          type: "broadcasted",
-          operation
-        });
-      }
-    }).then(() => o.complete(), e => o.error(remapLibcoreErrors(e)));
-
-    return () => {
-      unsubscribed = true;
-    };
-  });
-
-async function signTransaction({
-  isCancelled,
-  hwApp,
-  currency,
-  blockHeight,
-  coreTransaction,
-  derivationMode,
-  sigHashType,
-  hasTimestamp
-}: {
-  isCancelled: () => boolean,
-  hwApp: Btc,
-  currency: CryptoCurrency,
-  blockHeight: number,
-  coreTransaction: CoreBitcoinLikeTransaction,
-  derivationMode: DerivationMode,
-  sigHashType: number,
-  hasTimestamp: boolean
+async function bitcoin({
+  account: { id: accountId },
+  signedTransaction,
+  builded,
+  coreAccount,
+  transaction
 }) {
-  const additionals = [];
-  let expiryHeight;
-  if (currency.id === "bitcoin_cash" || currency.id === "bitcoin_gold")
-    additionals.push("bip143");
-  if (currency.id === "zcash" || currency.id === "komodo") {
-    expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
-    if (blockHeight >= 419200) {
-      additionals.push("sapling");
-    }
-  } else if (currency.id === "decred") {
-    expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
-    additionals.push("decred");
+  const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
+
+  const txHash = getEnv("DISABLE_TRANSACTION_BROADCAST")
+    ? ""
+    : await bitcoinLikeAccount.broadcastRawTransaction(signedTransaction);
+
+  const sendersInput = await builded.getInputs();
+  const senders = (await Promise.all(
+    sendersInput.map(senderInput => senderInput.getAddress())
+  )).filter(Boolean);
+
+  const recipientsOutput = await builded.getOutputs();
+  const recipients = (await Promise.all(
+    recipientsOutput.map(recipientOutput => recipientOutput.getAddress())
+  )).filter(Boolean);
+
+  const coreAmountFees = await builded.getFees();
+  if (!coreAmountFees) {
+    throw new Error("signAndBroadcast: fees should not be undefined");
   }
+  const fee = await libcoreAmountToBigNumber(coreAmountFees);
 
-  const rawInputs: CoreBitcoinLikeInput[] = await coreTransaction.getInputs();
-  if (isCancelled()) return;
+  // NB we don't check isCancelled() because the broadcast is not cancellable now!
+  const op: $Exact<Operation> = {
+    id: `${accountId}-${txHash}-OUT`,
+    hash: txHash,
+    type: "OUT",
+    value: BigNumber(transaction.amount).plus(fee),
+    fee,
+    blockHash: null,
+    blockHeight: null,
+    senders,
+    recipients,
+    accountId,
+    date: new Date(),
+    extra: {}
+  };
 
-  const hasExtraData = currency.id === "zcash" || currency.id === "komodo";
-
-  // TODO handle isCancelled
-
-  const inputs = await Promise.all(
-    rawInputs.map(async input => {
-      const hexPreviousTransaction = await input.getPreviousTransaction();
-      log("libcore", "splitTransaction " + String(hexPreviousTransaction));
-      const previousTransaction = hwApp.splitTransaction(
-        hexPreviousTransaction,
-        currency.supportsSegwit,
-        hasTimestamp,
-        hasExtraData,
-        additionals
-      );
-
-      const outputIndex = await input.getPreviousOutputIndex();
-
-      const sequence = await input.getSequence();
-
-      return [
-        previousTransaction,
-        outputIndex,
-        undefined, // we don't use that TODO: document
-        sequence // 0xffffffff,
-      ];
-    })
-  );
-  if (isCancelled()) return;
-
-  const associatedKeysets = await Promise.all(
-    rawInputs.map(async input => {
-      const derivationPaths = await input.getDerivationPath();
-      const [first] = derivationPaths;
-      if (!first) throw new Error("unexpected empty derivationPaths");
-      const r = await first.toString();
-      return r;
-    })
-  );
-  if (isCancelled()) return;
-
-  const outputs: CoreBitcoinLikeOutput[] = await coreTransaction.getOutputs();
-  if (isCancelled()) return;
-
-  let changePath;
-
-  for (const o of outputs) {
-    const derivationPath = await o.getDerivationPath();
-    if (isCancelled()) return;
-
-    if (derivationPath) {
-      const isDerivationPathNull = await derivationPath.isNull();
-      if (!isDerivationPathNull) {
-        const strDerivationPath = await derivationPath.toString();
-        if (isCancelled()) return;
-
-        const derivationArr = strDerivationPath.split("/");
-        if (derivationArr[derivationArr.length - 2] === "1") {
-          changePath = strDerivationPath;
-          break;
-        }
-      }
-    }
-  }
-
-  const outputScriptHex = await coreTransaction.serializeOutputs();
-  if (isCancelled()) return;
-
-  const initialTimestamp = hasTimestamp
-    ? await coreTransaction.getTimestamp()
-    : undefined;
-  if (isCancelled()) return;
-
-  // FIXME
-  // should be `transaction.getLockTime()` as soon as lock time is
-  // handled by libcore (actually: it always returns a default value
-  // and that caused issue with zcash (see #904))
-  let lockTime;
-
-  // Set lockTime for Komodo to enable reward claiming on UTXOs created by
-  // Ledger Live. We should only set this if the currency is Komodo and
-  // lockTime isn't already defined.
-  if (currency.id === "komodo" && lockTime === undefined) {
-    const unixtime = Math.floor(Date.now() / 1000);
-    lockTime = unixtime - 777;
-  }
-
-  const signedTransaction = await hwApp.createPaymentTransactionNew(
-    // $FlowFixMe not sure what's wrong
-    inputs,
-    associatedKeysets,
-    changePath,
-    outputScriptHex,
-    lockTime,
-    sigHashType,
-    isSegwitDerivationMode(derivationMode),
-    initialTimestamp || undefined,
-    additionals,
-    expiryHeight
-  );
-
-  return signedTransaction; // eslint-disable-line
+  return op;
 }
+
+async function ethereum({
+  account: { id: accountId, freshAddress },
+  signedTransaction,
+  builded,
+  coreAccount,
+  transaction
+}) {
+  const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
+
+  const txHash = getEnv("DISABLE_TRANSACTION_BROADCAST")
+    ? ""
+    : await ethereumLikeAccount.broadcastRawTransaction(signedTransaction);
+  const senders = [freshAddress];
+  const receiver = await builded.getReceiver();
+  const recipients = [await receiver.toEIP55()];
+  const gasPrice = await libcoreAmountToBigNumber(await builded.getGasPrice());
+  const gasLimit = await libcoreAmountToBigNumber(await builded.getGasLimit());
+  const fee = gasPrice.times(gasLimit);
+
+  const op: $Exact<Operation> = {
+    id: `${accountId}-${txHash}-OUT`,
+    hash: txHash,
+    type: "OUT",
+    value: BigNumber(transaction.amount).plus(fee),
+    fee,
+    blockHash: null,
+    blockHeight: null,
+    senders,
+    recipients,
+    accountId,
+    date: new Date(),
+    extra: {}
+  };
+
+  return op;
+}
+
+const byFamily = {
+  bitcoin,
+  ethereum
+};
 
 const doSignAndBroadcast = withLibcoreF(
   core => async ({
-    accountId,
-    derivationMode,
-    blockHeight,
-    seedIdentifier,
-    currency,
-    xpub,
-    index,
+    account,
+    tokenAccount,
     transaction,
     deviceId,
     isCancelled,
@@ -244,23 +130,17 @@ const doSignAndBroadcast = withLibcoreF(
     onSigned,
     onOperationBroadcasted
   }: {
-    accountId: string,
-    derivationMode: DerivationMode,
-    seedIdentifier: string,
-    blockHeight: number,
-    currency: CryptoCurrency,
-    xpub: string,
-    index: number,
+    account: Account,
+    tokenAccount: ?TokenAccount,
     transaction: Transaction,
     deviceId: string,
     isCancelled: () => boolean,
     onSigning: () => void,
-    onSigned: () => void,
+    onSigned: string => void,
     onOperationBroadcasted: (optimisticOp: Operation) => void
   }): Promise<void> => {
-    const { feePerByte } = transaction;
-    if (!feePerByte) throw FeeNotLoaded();
     if (isCancelled()) return;
+    const { currency, derivationMode, seedIdentifier, index } = account;
 
     const walletName = getWalletName({
       currency,
@@ -277,127 +157,103 @@ const doSignAndBroadcast = withLibcoreF(
     if (isCancelled()) return;
     const coreAccount = await coreWallet.getAccount(index);
     if (isCancelled()) return;
-    const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
+    const coreCurrency = await coreWallet.getCurrency();
     if (isCancelled()) return;
-    const coreWalletCurrency = await coreWallet.getCurrency();
-    if (isCancelled()) return;
-    const amount = await bigNumberToLibcoreAmount(
+
+    const builded = await buildTransaction({
+      account,
+      tokenAccount,
       core,
-      coreWalletCurrency,
-      BigNumber(transaction.amount)
-    );
-    if (isCancelled()) return;
-    const fees = await bigNumberToLibcoreAmount(
-      core,
-      coreWalletCurrency,
-      BigNumber(feePerByte)
-    );
-    if (isCancelled()) return;
-    const isPartial = false;
-    const transactionBuilder = await bitcoinLikeAccount.buildTransaction(
-      isPartial
-    );
-    if (isCancelled()) return;
+      coreCurrency,
+      coreAccount,
+      transaction,
+      isPartial: false,
+      isCancelled
+    });
 
-    await transactionBuilder.sendToAddress(amount, transaction.recipient);
-    if (isCancelled()) return;
+    if (isCancelled() || !builded) return;
 
-    await transactionBuilder.pickInputs(0, 0xffffff);
-    if (isCancelled()) return;
+    const signedTransaction = await withDevice(deviceId)(transport =>
+      from(
+        signTransaction({
+          account,
+          tokenAccount,
+          isCancelled,
+          transport,
+          currency,
+          derivationMode,
+          coreCurrency,
+          coreTransaction: builded,
+          onSigning
+        }).catch(e => {
+          if (e && e.statusCode === StatusCodes.INCORRECT_P1_P2) {
+            throw new UpdateYourApp(`UpdateYourApp ${currency.id}`, currency);
+          }
+          throw e;
+        })
+      )
+    ).toPromise();
 
-    await transactionBuilder.setFeesPerByte(fees);
-    if (isCancelled()) return;
-
-    const builded = await transactionBuilder.build();
-    if (isCancelled()) return;
-
-    const networkParams = await coreWalletCurrency.getBitcoinLikeNetworkParameters();
-    if (isCancelled()) return;
-
-    const sigHashType = await networkParams.getSigHash();
-    if (isCancelled()) return;
-
-    const hasTimestamp = await networkParams.getUsesTimestampedTransaction();
-    if (isCancelled()) return;
-
-    const transport = await open(deviceId);
-    if (isCancelled()) return;
-
-    let signedTransaction;
-    try {
-      signedTransaction = await signTransaction({
-        isCancelled,
-        hwApp: new Btc(transport),
-        currency,
-        blockHeight,
-        coreTransaction: builded,
-        sigHashType: parseInt(sigHashType, 16),
-        hasTimestamp,
-        derivationMode,
-        onSigning
-      }).catch(e => {
-        if (e && e.statusCode === StatusCodes.INCORRECT_P1_P2) {
-          throw new UpdateYourApp(`UpdateYourApp ${currency.id}`, currency);
-        }
-        throw e;
-      });
-    } finally {
-      transport.close();
-    }
     if (isCancelled()) return;
 
     if (!signedTransaction) return;
 
-    onSigned();
+    onSigned(signedTransaction);
 
-    log("libcore", "signed transaction " + String(signTransaction));
-    const txHash = await bitcoinLikeAccount.broadcastRawTransaction(
-      signedTransaction
-    );
-    log("libcore", "broadcasted to " + String(txHash));
-    if (isCancelled()) return;
-
-    const sendersInput = await builded.getInputs();
-    if (isCancelled()) return;
-
-    const senders = (await Promise.all(
-      sendersInput.map(senderInput => senderInput.getAddress())
-    )).filter(Boolean);
-    if (isCancelled()) return;
-
-    const recipientsOutput = await builded.getOutputs();
-    if (isCancelled()) return;
-
-    const recipients = (await Promise.all(
-      recipientsOutput.map(recipientOutput => recipientOutput.getAddress())
-    )).filter(Boolean);
-    if (isCancelled()) return;
-
-    const coreAmountFees = await builded.getFees();
-    if (isCancelled()) return;
-    if (!coreAmountFees) {
-      throw new Error("signAndBroadcast: fees should not be undefined");
+    const f = byFamily[account.currency.family];
+    if (!f) {
+      throw new Error(
+        "signAndBroadcast does not support currency " + account.currency.id
+      );
     }
 
-    const fee = await libcoreAmountToBigNumber(core, coreAmountFees);
-    if (isCancelled()) return;
+    const op = await f({
+      account,
+      tokenAccount,
+      signedTransaction,
+      builded,
+      coreAccount,
+      transaction
+    });
 
-    // NB we don't check isCancelled() because the broadcast is not cancellable now!
-    const op: $Exact<Operation> = {
-      id: `${xpub}-${txHash}-OUT`,
-      hash: txHash,
-      type: "OUT",
-      value: BigNumber(transaction.amount).plus(fee),
-      fee,
-      blockHash: null,
-      blockHeight: null,
-      senders,
-      recipients,
-      accountId,
-      date: new Date(),
-      extra: {}
-    };
+    if (!op) return;
 
     onOperationBroadcasted(op);
   }
 );
+
+export default ({
+  account,
+  tokenAccount,
+  transaction,
+  deviceId
+}: Input): Observable<SignAndBroadcastEvent> =>
+  Observable.create(o => {
+    let unsubscribed = false;
+    const isCancelled = () => unsubscribed;
+    doSignAndBroadcast({
+      account,
+      tokenAccount,
+      transaction,
+      deviceId,
+      isCancelled,
+      onSigning: () => {
+        o.next({ type: "signing" });
+      },
+      onSigned: signedTransaction => {
+        log("libcore", "signed transaction " + String(signedTransaction));
+        o.next({ type: "signed" });
+      },
+      onOperationBroadcasted: operation => {
+        log("libcore", "broadcasted to " + String(operation.hash));
+        o.next({
+          type: "broadcasted",
+          operation
+        });
+      }
+    }).then(() => o.complete(), e => o.error(remapLibcoreErrors(e)));
+
+    return () => {
+      unsubscribed = true;
+    };
+  });

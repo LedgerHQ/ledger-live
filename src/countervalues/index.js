@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable no-param-reassign */
 import { BigNumber } from "bignumber.js";
 // $FlowFixMe
 import React, { Component } from "react";
@@ -73,11 +74,11 @@ export const getDailyRatesAllInOnce = async (
 
 export const getDailyRatesBatched = (batchSize: number) => async (
   getAPIBaseURL: () => string,
-  pairs: PollAPIPair[]
+  allPairs: PollAPIPair[]
 ) => {
   const url = getAPIBaseURL() + "/rates/daily";
   const all = await Promise.all(
-    chunk(pairs, batchSize).map(pairs =>
+    chunk(allPairs, batchSize).map(pairs =>
       network({ method: "POST", url, data: { pairs } })
         .then(r => ({ error: null, result: r.data }))
         .catch(error => ({ result: null, error }))
@@ -291,7 +292,9 @@ function createCounterValues<State>({
     }
     const minMaxRatio = max / min;
     const invalidRatio =
-      minMaxRatio <= 0 || !isFinite(minMaxRatio) || isNaN(minMaxRatio);
+      minMaxRatio <= 0 ||
+      !Number.isFinite(minMaxRatio) ||
+      Number.isNaN(minMaxRatio);
     const accept =
       !invalidRatio && minMaxRatio < MAXIMUM_RATIO_EXTREME_VARIATION;
     if (!accept && log) {
@@ -407,7 +410,7 @@ function createCounterValues<State>({
         const availableExchanges: string[] = Object.keys(b);
         const fallback = availableExchanges[0] || null;
         if (!exchange || !availableExchanges.includes(exchange)) {
-          log &&
+          if (log)
             log(
               `${from}/${to}: ${
                 exchange
@@ -573,7 +576,7 @@ function createCounterValues<State>({
 
     componentDidUpdate(prevProps) {
       if (prevProps.pairsKey !== this.props.pairsKey) {
-        log &&
+        if (log)
           log(
             `pairsKey changed:\n    ${prevProps.pairsKey}\n => ${
               this.props.pairsKey

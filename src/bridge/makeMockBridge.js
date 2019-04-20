@@ -2,13 +2,12 @@
 import Prando from "prando";
 import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
+import { SyncError, NotEnoughBalance } from "@ledgerhq/errors";
 import { genAccount, genOperation } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
-import { SyncError } from "../errors";
 import { validateNameEdition } from "../account";
 import type { Operation } from "../types";
 import type { AccountBridge, CurrencyBridge } from "./types";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import { getFeeItems } from "../api/FeesBitcoin";
 import { getEstimatedFees } from "../api/Fees";
 import { getCryptoCurrencyById } from "../data/cryptocurrencies";

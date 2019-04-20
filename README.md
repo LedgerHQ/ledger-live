@@ -1,6 +1,6 @@
 # ledger-wallet-common
 
-Common ground for the Ledger Wallet apps
+Common ground for the Ledger Live apps
 
 ## Install
 

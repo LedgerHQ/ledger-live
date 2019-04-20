@@ -207,7 +207,7 @@ const getNextBLVersion = async (
 };
 
 const getCurrentFirmware: (input: {
-  fullVersion: string,
+  version: string,
   deviceId: string | number,
   provider: number
 }) => Promise<FinalFirmware> = makeLRUCache(
@@ -220,13 +220,13 @@ const getCurrentFirmware: (input: {
       }),
       data: {
         device_version: input.deviceId,
-        version_name: input.fullVersion,
+        version_name: input.version,
         provider: input.provider
       }
     });
     return data;
   },
-  a => `${a.fullVersion}_${a.deviceId}_${a.provider}`
+  a => `${a.version}_${a.deviceId}_${a.provider}`
 );
 
 const getFinalFirmwareById: (

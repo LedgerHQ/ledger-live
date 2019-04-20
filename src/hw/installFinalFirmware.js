@@ -15,7 +15,7 @@ export default (transport: Transport<*>): Observable<*> =>
           from(
             ManagerAPI.getCurrentOSU({
               deviceId: device.id,
-              version: deviceInfo.fullVersion,
+              version: deviceInfo.version,
               provider: deviceInfo.providerId
             })
           )

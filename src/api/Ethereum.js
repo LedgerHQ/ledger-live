@@ -1,7 +1,7 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+import { LedgerAPINotAvailable } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "../types";
-import { LedgerAPINotAvailable } from "../errors";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
 import { getCurrencyExplorer } from "../explorers";

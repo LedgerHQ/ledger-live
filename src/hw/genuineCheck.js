@@ -18,7 +18,7 @@ export default (
       from(
         ManagerAPI.getCurrentFirmware({
           deviceId: deviceVersion.id,
-          fullVersion: deviceInfo.fullVersion,
+          version: deviceInfo.version,
           provider: deviceInfo.providerId
         })
       )

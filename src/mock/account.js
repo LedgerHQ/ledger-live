@@ -2,12 +2,12 @@
  * @module mock/account
  * @flow
  */
+import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import {
   listCryptoCurrencies,
   listTokensForCryptoCurrency
 } from "../currencies";
-import Prando from "prando";
 import type {
   TokenAccount,
   Account,
@@ -17,6 +17,23 @@ import type {
 } from "../types";
 import { getOperationAmountNumber } from "../operation";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
+
+function ensureNoNegative(operations) {
+  let total = BigNumber(0);
+  for (let i = operations.length - 1; i >= 0; i--) {
+    const op = operations[i];
+    const amount = getOperationAmountNumber(op);
+    if (total.plus(amount).isNegative()) {
+      if (op.type === "IN") {
+        op.type = "OUT";
+      } else if (op.type === "OUT") {
+        op.type = "IN";
+      }
+    }
+    total = total.plus(getOperationAmountNumber(op));
+  }
+  return total;
+}
 
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
 const tickerApproxMarketPrice = {
@@ -91,7 +108,7 @@ export function genOperation(
           tickerApproxMarketPrice.BTC)
     )
   );
-  if (isNaN(value)) {
+  if (Number.isNaN(value)) {
     throw new Error("invalid amount generated for " + currency.id);
   }
   return {
@@ -210,21 +227,4 @@ export function genAccount(
 
   account.balance = ensureNoNegative(account.operations);
   return account;
-}
-
-function ensureNoNegative(operations) {
-  let total = BigNumber(0);
-  for (let i = operations.length - 1; i >= 0; i--) {
-    const op = operations[i];
-    const amount = getOperationAmountNumber(op);
-    if (total.plus(amount).isNegative()) {
-      if (op.type === "IN") {
-        op.type = "OUT";
-      } else if (op.type === "OUT") {
-        op.type = "IN";
-      }
-    }
-    total = total.plus(getOperationAmountNumber(op));
-  }
-  return total;
 }

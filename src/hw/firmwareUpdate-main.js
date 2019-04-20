@@ -1,5 +1,5 @@
 // @flow
-import { Observable, from, of, empty, concat } from "rxjs";
+import { Observable, from, of, empty, concat, throwError } from "rxjs";
 import {
   concatMap,
   delay,
@@ -7,13 +7,12 @@ import {
   distinctUntilChanged,
   throttleTime
 } from "rxjs/operators";
-
-import { CantOpenDevice } from "@ledgerhq/errors";
+import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
 import type { FirmwareUpdateContext } from "../types/manager";
-import { withDevicePolling } from "../hw/deviceAccess";
-import getDeviceInfo from "../hw/getDeviceInfo";
-import flash from "../hw/flash";
-import installFinalFirmware from "../hw/installFinalFirmware";
+import { withDevicePolling } from "./deviceAccess";
+import getDeviceInfo from "./getDeviceInfo";
+import flash from "./flash";
+import installFinalFirmware from "./installFinalFirmware";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
@@ -53,7 +52,9 @@ const main = (
 
   const finalStep = withDeviceInfo.pipe(
     concatMap(deviceInfo =>
-      !deviceInfo.isOSU ? empty() : withDeviceInstall(installFinalFirmware)
+      !deviceInfo.isOSU
+        ? throwError(new DeviceInOSUExpected())
+        : withDeviceInstall(installFinalFirmware)
     )
   );
 
@@ -61,14 +62,13 @@ const main = (
     ? concat(waitForBootloader, bootloaderLoop, finalStep)
     : finalStep;
 
-  // $FlowFixMe something wrong with the flow def of scan()
   return all.pipe(
     scan(
-      (acc: Res, e): Res => {
+      (acc: Res, e: *): Res => {
         if (e.type === "install") {
-          // $FlowFixMe
           return { installing: e.step, progress: 0 };
-        } else if (e.type === "bulk-progress") {
+        }
+        if (e.type === "bulk-progress") {
           return { ...acc, progress: e.progress };
         }
         return acc;

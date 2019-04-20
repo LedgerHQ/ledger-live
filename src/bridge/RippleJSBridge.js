@@ -245,7 +245,7 @@ const txToOperation = (account: Account) => ({
     : BigNumber(0);
   const feeValue = parseAPIValue(fee);
   if (type === "OUT") {
-    if (!isNaN(feeValue)) {
+    if (!Number.isNaN(feeValue)) {
       value = value.plus(feeValue);
     }
   }
@@ -327,10 +327,8 @@ const remapError = error => {
 const cacheRecipientsNew = {};
 const cachedRecipientIsNew = (endpointConfig, recipient) => {
   if (recipient in cacheRecipientsNew) return cacheRecipientsNew[recipient];
-  return (cacheRecipientsNew[recipient] = recipientIsNew(
-    endpointConfig,
-    recipient
-  ));
+  cacheRecipientsNew[recipient] = recipientIsNew(endpointConfig, recipient);
+  return cacheRecipientsNew[recipient];
 };
 
 export const currencyBridge: CurrencyBridge = {
@@ -369,11 +367,11 @@ export const currencyBridge: CurrencyBridge = {
                 }
               );
 
-              const { address } = await getAddress(
-                transport,
+              const { address } = await getAddress(transport, {
                 currency,
-                freshAddressPath
-              );
+                path: freshAddressPath,
+                derivationMode
+              });
 
               if (finished) return;
 
@@ -545,12 +543,12 @@ export const accountBridge: AccountBridge<Transaction> = {
             const operations = mergeOps(a.operations, newOps);
             const [last] = operations;
             const pendingOperations = a.pendingOperations.filter(
-              o =>
-                !operations.some(op => o.hash === op.hash) &&
+              oo =>
+                !operations.some(op => oo.hash === op.hash) &&
                 last &&
                 last.transactionSequenceNumber &&
-                o.transactionSequenceNumber &&
-                o.transactionSequenceNumber > last.transactionSequenceNumber
+                oo.transactionSequenceNumber &&
+                oo.transactionSequenceNumber > last.transactionSequenceNumber
             );
             return {
               ...a,

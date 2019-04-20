@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import TransportU2F from "@ledgerhq/hw-transport-u2f";
+import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import styled from "styled-components";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getAccountPlaceholderName } from "@ledgerhq/live-common/lib/account";
@@ -18,6 +18,7 @@ const Main = styled.div`
   padding: 40px;
 `;
 
+let transportGlobalP;
 let queue = Promise.resolve();
 const execInQueue = <T>(job: () => Promise<T>) => {
   const p = queue.then(job);
@@ -40,17 +41,19 @@ class CurrencyDerivation extends Component<*, *> {
     execInQueue(async () => {
       const { derivationMode, currency, index: account } = this.props;
       try {
-        const transport = await TransportU2F.create();
-        const { address, path } = await getAddress(
-          transport,
+        const p = transportGlobalP || TransportWebUSB.create();
+        transportGlobalP = p;
+        const transport = await p;
+        const { address, path } = await getAddress(transport, {
           currency,
-          runDerivationScheme(
+          path: runDerivationScheme(
             getDerivationScheme({ currency, derivationMode }),
             currency,
             { account }
           ),
+          derivationMode,
           verify
-        );
+        });
         this.setState({ address, path });
       } catch (error) {
         this.setState({ error });
@@ -140,11 +143,10 @@ class Derivations extends Component<*, *> {
     const { currency } = this.state;
     const currencies = listCryptoCurrencies(true)
       .filter(a => perFamily[a.family])
-      .sort(
-        (a, b) =>
-          a.family === b.family
-            ? a.name.localeCompare(b.name)
-            : a.family.localeCompare(b.family)
+      .sort((a, b) =>
+        a.family === b.family
+          ? a.name.localeCompare(b.name)
+          : a.family.localeCompare(b.family)
       );
     return (
       <Main>

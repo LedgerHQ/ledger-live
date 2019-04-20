@@ -1,7 +1,7 @@
 // @flow
-import type { Core } from "./types";
 import { Subject, Observable } from "rxjs";
 import { map, distinctUntilChanged } from "rxjs/operators";
+import type { Core } from "./types";
 
 const GC_DELAY = 1000;
 
@@ -16,8 +16,8 @@ export const libcoreJobBusy: Observable<boolean> = libcoreJobsCounterSubject.pip
   distinctUntilChanged()
 );
 
-function flush(core: Core) {
-  lastFlush = core.flush().catch(e => console.error("libcore-flush-fail", e));
+function flush(c: Core) {
+  lastFlush = c.flush().catch(e => console.error("libcore-flush-fail", e));
 }
 
 export async function withLibcore<R>(
@@ -49,7 +49,7 @@ type Fn<A, R> = (...args: A) => Promise<R>;
 
 export const withLibcoreF = <A: Array<any>, R>(
   job: (core: Core) => Fn<A, R>
-): Fn<A, R> => (...args) => withLibcore(core => job(core)(...args));
+): Fn<A, R> => (...args) => withLibcore(c => job(c)(...args));
 
 let loadCoreImpl: ?() => Promise<Core>;
 

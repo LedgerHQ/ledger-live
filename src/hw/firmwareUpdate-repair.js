@@ -3,8 +3,8 @@ import { Observable, from, of, empty, concat } from "rxjs";
 import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
 
 import ManagerAPI from "../api/Manager";
-import { withDevicePolling, withDevice } from "../hw/deviceAccess";
-import getDeviceInfo from "../hw/getDeviceInfo";
+import { withDevicePolling, withDevice } from "./deviceAccess";
+import getDeviceInfo from "./getDeviceInfo";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
@@ -16,7 +16,7 @@ export const forceRepairChoices = [
 
 const repair = (
   deviceId: string,
-  forceMCU: ?string
+  forceMCU_: ?string
 ): Observable<{ progress: number }> => {
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
@@ -49,18 +49,14 @@ const repair = (
           return concat(installMcu(forceMCU), wait2s, loop());
         }
 
-        switch (deviceInfo.rawVersion) {
+        switch (deviceInfo.majMin) {
           case "0.0":
-          case "0.0.0":
             return concat(installMcu("0.6"), wait2s, loop());
           case "0.6":
-          case "0.6.0":
             return installMcu("1.5");
           case "0.7":
-          case "0.7.0":
             return installMcu("1.6");
           case "0.9":
-          case "0.9.0":
             return installMcu("1.7");
           default:
             return empty();
@@ -69,7 +65,7 @@ const repair = (
     );
 
   // TODO ideally we should race waitForBootloader with an event "display-bootloader-reboot", it should be a delayed event that is not emitted if waitForBootloader is fast enough..
-  return concat(waitForBootloader, loop(forceMCU)).pipe(
+  return concat(waitForBootloader, loop(forceMCU_)).pipe(
     filter(e => e.type === "bulk-progress"),
     map(e => ({ progress: e.progress })),
     throttleTime(100)

@@ -1,1 +1,6 @@
 src/__tests__
+src/partners/icons/*/*.js
+src/data/icons
+
+src/libcore/types.js
+src/libcore/platforms/*.js

@@ -1,7 +1,7 @@
 // @flow
 
-import type { Account, CryptoCurrency, Operation, ExplorerView } from "./types";
 import invariant from "invariant";
+import type { Account, CryptoCurrency, Operation, ExplorerView } from "./types";
 import { getEnv } from "./env";
 
 export const getDefaultExplorerView = (
@@ -32,187 +32,67 @@ export const getAccountOperationExplorer = (
     operation.hash
   );
 
-export const hasCurrencyExplorer = (currency: CryptoCurrency): boolean => {
-  return !!ledgerExplorers[currency.id];
+type LedgerExplorer = {
+  version: string,
+  id: string
 };
 
-export const getCurrencyExplorer = (currency: CryptoCurrency) => {
-  invariant(
-    typeof ledgerExplorers[currency.id] === "object",
-    `ledgerExplorers: we have no record of a ledger explorer for ${currency.id}`
-  );
-
-  const experimentalExplorers = getEnv("EXPERIMENTAL_EXPLORERS");
-  let explorerKey = "default";
-
-  if (experimentalExplorers && ledgerExplorers[currency.id]["experimental"]) {
-    explorerKey = "experimental";
-  }
-
-  return ledgerExplorers[currency.id][explorerKey];
+export const findCurrencyExplorer = (
+  currency: CryptoCurrency
+): ?LedgerExplorer => {
+  const exp = getEnv("EXPERIMENTAL_EXPLORERS");
+  const version = exp ? "v3" : "v2";
+  const id = (exp ? ledgerExplorersV3 : ledgerExplorersV2)[currency.id];
+  return id ? { id, version } : null;
 };
 
-const ledgerExplorers = {
-  bitcoin: {
-    default: {
-      id: "btc",
-      version: "v2"
-    }
-  },
-  bitcoin_cash: {
-    default: {
-      id: "abc",
-      version: "v2"
-    }
-  },
-  bitcoin_gold: {
-    default: {
-      id: "btg",
-      version: "v2"
-    }
-  },
-  clubcoin: {
-    default: {
-      id: "club",
-      version: "v2"
-    }
-  },
-  dash: {
-    default: {
-      id: "dash",
-      version: "v2"
-    }
-  },
-  decred: {
-    default: {
-      id: "dcr",
-      version: "v2"
-    }
-  },
-  digibyte: {
-    default: {
-      id: "dgb",
-      version: "v2"
-    }
-  },
-  dogecoin: {
-    default: {
-      id: "doge",
-      version: "v2"
-    }
-  },
-  ethereum: {
-    default: {
-      id: "eth",
-      version: "v2"
-    },
-    experimental: {
-      id: "eth-mainnet",
-      version: "v3"
-    }
-  },
-  ethereum_classic: {
-    default: {
-      id: "ethc",
-      version: "v2"
-    }
-  },
-  hcash: {
-    default: {
-      id: "hsr",
-      version: "v2"
-    }
-  },
-  komodo: {
-    default: {
-      id: "kmd",
-      version: "v2"
-    }
-  },
-  litecoin: {
-    default: {
-      id: "ltc",
-      version: "v2"
-    }
-  },
-  peercoin: {
-    default: {
-      id: "ppc",
-      version: "v2"
-    }
-  },
-  pivx: {
-    default: {
-      id: "pivx",
-      version: "v2"
-    }
-  },
-  poswallet: {
-    default: {
-      id: "posw",
-      version: "v2"
-    }
-  },
-  qtum: {
-    default: {
-      id: "qtum",
-      version: "v2"
-    }
-  },
-  stakenet: {
-    default: {
-      id: "xsn",
-      version: "v2"
-    }
-  },
-  stratis: {
-    default: {
-      id: "strat",
-      version: "v2"
-    }
-  },
-  stealthcoin: {
-    default: {
-      id: "xst",
-      version: "v2"
-    }
-  },
-  vertcoin: {
-    default: {
-      id: "vtc",
-      version: "v2"
-    }
-  },
-  viacoin: {
-    default: {
-      id: "via",
-      version: "v2"
-    }
-  },
-  zcash: {
-    default: {
-      id: "zec",
-      version: "v2"
-    }
-  },
-  zencash: {
-    default: {
-      id: "zen",
-      version: "v2"
-    }
-  },
+export const hasCurrencyExplorer = (currency: CryptoCurrency): boolean =>
+  !!findCurrencyExplorer(currency);
 
-  // Testnets
-  bitcoin_testnet: {
-    default: {
-      id: "btc_testnet",
-      version: "v2"
-    }
-  },
-  ethereum_ropsten: {
-    default: {
-      id: "eth-ropsten",
-      version: "v3"
-    }
-  }
+export const getCurrencyExplorer = (
+  currency: CryptoCurrency
+): LedgerExplorer => {
+  const res = findCurrencyExplorer(currency);
+  invariant(res, `no Ledger explorer for ${currency.id}`);
+  return res;
+};
+
+const ledgerExplorersV3 = {
+  bitcoin: "btc",
+  bitcoin_cash: "abc",
+  bitcoin_gold: "btg",
+  clubcoin: "club",
+  dash: "dash",
+  decred: "dcr",
+  digibyte: "dgb",
+  dogecoin: "doge",
+  ethereum: "eth-mainnet",
+  ethereum_classic: "ethc",
+  hcash: "hsr",
+  komodo: "kmd",
+  litecoin: "ltc",
+  peercoin: "ppc",
+  pivx: "pivx",
+  poswallet: "posw",
+  qtum: "qtum",
+  stakenet: "xsn",
+  stratis: "strat",
+  stealthcoin: "xst",
+  vertcoin: "vtc",
+  viacoin: "via",
+  zcash: "zec",
+  zencash: "zen",
+  bitcoin_testnet: "btc_testnet",
+  ethereum_ropsten: "eth-ropsten"
+};
+
+// overrides the id used
+const ledgerExplorersV2overrides = {
+  ethereum: "eth",
+  ethereum_ropsten: null
+};
+
+const ledgerExplorersV2 = {
+  ...ledgerExplorersV3,
+  ...ledgerExplorersV2overrides
 };

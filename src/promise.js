@@ -17,20 +17,18 @@ export function retry<A>(
     ...options
   };
 
-  return rec(maxRetry, interval);
-
-  function rec(remainingTry, interval) {
+  function rec(remainingTry, i) {
     const result = f();
     if (remainingTry <= 0) {
       return result;
     }
     // In case of failure, wait the interval, retry the action
     return result.catch(() =>
-      delay(interval).then(() =>
-        rec(remainingTry - 1, interval * intervalMultiplicator)
-      )
+      delay(i).then(() => rec(remainingTry - 1, i * intervalMultiplicator))
     );
   }
+
+  return rec(maxRetry, interval);
 }
 
 type Job<R, A> = (...args: A) => Promise<R>;

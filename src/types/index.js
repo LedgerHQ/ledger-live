@@ -17,19 +17,28 @@ import type {
 
 import type { DerivationMode } from "../derivation";
 
-export type { DerivationMode };
-
-export type { CryptoCurrencyConfig, CryptoCurrencyObjMap, CryptoCurrencyIds };
-
 import type {
   Account,
   AccountRaw,
   TokenAccount,
   TokenAccountRaw
 } from "./account";
-export type { Account, AccountRaw, TokenAccount, TokenAccountRaw };
 
 import type { Operation, OperationRaw, OperationType } from "./operation";
+
+import type {
+  BalanceHistoryWithCountervalue,
+  BalanceHistory,
+  PortfolioRange,
+  Portfolio
+} from "./portfolio";
+
+export type { DerivationMode };
+
+export type { CryptoCurrencyConfig, CryptoCurrencyObjMap, CryptoCurrencyIds };
+
+export type { Account, AccountRaw, TokenAccount, TokenAccountRaw };
+
 export type { Operation, OperationRaw, OperationType };
 
 export type {
@@ -41,12 +50,6 @@ export type {
   ExplorerView
 };
 
-import type {
-  BalanceHistoryWithCountervalue,
-  BalanceHistory,
-  PortfolioRange,
-  Portfolio
-} from "./portfolio";
 export type {
   BalanceHistory,
   BalanceHistoryWithCountervalue,

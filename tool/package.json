@@ -1,0 +1,41 @@
+{
+  "name": "ledger-live",
+  "version": "5.0.0-alpha.13",
+  "description": "ledger-live CLI version",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/LedgerHQ/ledger-live-common"
+  },
+  "dependencies": {
+    "@ledgerhq/hw-transport-http": "^4.54.0",
+    "@ledgerhq/hw-transport-node-hid": "^4.54.0",
+    "@ledgerhq/ledger-core": "^2.2.1-rc",
+    "@ledgerhq/live-common": "5.0.0-alpha.13",
+    "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
+    "bignumber.js": "^8.1.1",
+    "command-line-args": "^5.1.1",
+    "flow-bin": "^0.97.0",
+    "rxjs": "^6.4.0",
+    "ws": "^6.2.1"
+  },
+  "bin": {
+    "ledger-live": "./cli.js"
+  },
+  "scripts": {
+    "build": "babel --ignore __tests__ -sd lib src",
+    "watch": "babel -wsd lib src",
+    "test": "./scripts/tests.sh",
+    "testOne": "./scripts/testOne.sh",
+    "createTest": "./scripts/createTest.sh"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-http-proxy-devserver": "^4.54.0",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.7.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}

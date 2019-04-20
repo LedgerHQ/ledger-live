@@ -59,8 +59,8 @@ export const discoverDevices = (
 
 export const open = (deviceId: string): Promise<Transport<*>> => {
   for (let i = 0; i < modules.length; i++) {
-    const open = modules[i].open;
-    const p = open(deviceId);
+    const m = modules[i];
+    const p = m.open(deviceId);
     if (p) return p;
   }
   return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));

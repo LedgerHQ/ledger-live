@@ -8,12 +8,19 @@ const ledgerExplorersByVersionEnv = {
   v3: "EXPLORER_V3"
 };
 
-export const blockchainBaseURL = (currency: CryptoCurrency): ?string => {
+export const blockchainBaseURL = (currency: CryptoCurrency): string => {
   const { id, version } = getCurrencyExplorer(currency);
-  return id
-    ? (getEnv(ledgerExplorersByVersionEnv[version]) || "").replace(
-        "$ledgerExplorerId",
-        id
-      )
-    : null;
+  return (getEnv(ledgerExplorersByVersionEnv[version]) || "").replace(
+    "$ledgerExplorerId",
+    id
+  );
+};
+
+export const blockchainExplorerEndpoint = (
+  currency: CryptoCurrency
+): string => {
+  const { id, version } = getCurrencyExplorer(currency);
+  return (getEnv(ledgerExplorersByVersionEnv[version]) || "")
+    .replace("$ledgerExplorerId", id)
+    .split("/blockchain")[0]; // FIXME BIG HACK
 };

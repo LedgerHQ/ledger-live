@@ -29,3 +29,6 @@ src/data/icons/react
 src/data/icons/reactNative
 src/partners/icons/react
 src/partners/icons/reactNative
+
+
+tool/tests/*/output
