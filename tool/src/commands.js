@@ -1,15 +1,18 @@
 // @flow
 
-import { from } from "rxjs";
-import { map, mergeMap, ignoreElements, switchMap } from "rxjs/operators";
+import { from, of, concat } from "rxjs";
+import {
+  map,
+  mergeMap,
+  ignoreElements,
+  switchMap,
+  concatMap
+} from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
 import signAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBroadcast";
 import { getFeesForTransaction } from "@ledgerhq/live-common/lib/libcore/getFeesForTransaction";
-import {
-  getCryptoCurrencyById,
-  formatCurrencyUnit
-} from "@ledgerhq/live-common/lib/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
@@ -20,8 +23,15 @@ import quitApp from "@ledgerhq/live-common/lib/hw/quitApp";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/lib/hw/uninstallApp";
 import accountFormatters from "./accountFormatters";
-import { scan, scanCommonOpts, currencyOpt, deviceOpt } from "./scan";
+import {
+  scan,
+  scanCommonOpts,
+  currencyOpt,
+  deviceOpt,
+  inferCurrency
+} from "./scan";
 import { inferTransaction, inferTransactionOpts } from "./transaction";
+import getAddress from "../../lib/hw/getAddress";
 
 const all = {
   libcoreVersion: {
@@ -53,6 +63,7 @@ const all = {
   },
 
   validRecipient: {
+    description: "Validate a recipient address",
     args: [
       {
         name: "recipient",
@@ -60,20 +71,27 @@ const all = {
         type: String,
         desc: "the address to validate"
       },
-      currencyOpt
+      currencyOpt,
+      deviceOpt
     ],
-    job: ({ currency, recipient }) =>
-      isValidRecipient({
-        currency: getCryptoCurrencyById(currency || "bitcoin"),
-        recipient
-      }).then(
-        warning =>
-          warning ? { type: "warning", warning } : { type: "success" },
-        error => ({ type: "error", error: error.message })
-      )
+    job: arg =>
+      inferCurrency(arg)
+        .toPromise()
+        .then(currency =>
+          isValidRecipient({
+            currency,
+            recipient: arg.recipient
+          })
+        )
+        .then(
+          warning =>
+            warning ? { type: "warning", warning } : { type: "success" },
+          error => ({ type: "error", error: error.message })
+        )
   },
 
   sync: {
+    description: "Synchronize accounts with blockchain",
     args: [
       ...scanCommonOpts,
       {
@@ -93,6 +111,7 @@ const all = {
   },
 
   send: {
+    description: "Send cryptoassets",
     args: [
       ...scanCommonOpts,
       ...inferTransactionOpts,
@@ -122,11 +141,31 @@ const all = {
   },
 
   receive: {
+    description:
+      "Display receive address for each individual accounts and verify on device",
     args: [...scanCommonOpts],
-    job: opts => scan(opts).pipe(map(account => account.freshAddress))
+    job: opts =>
+      scan(opts).pipe(
+        concatMap(account =>
+          concat(
+            of(account.freshAddress),
+            withDevice(opts.device || "")(t =>
+              from(
+                getAddress(t, {
+                  currency: account.currency,
+                  derivationMode: account.derivationMode,
+                  path: account.freshAddressPath,
+                  verify: true
+                })
+              )
+            ).pipe(ignoreElements())
+          )
+        )
+      )
   },
 
   feesForTransaction: {
+    description: "Calculate how much fees a given transaction is going to cost",
     args: [...scanCommonOpts, ...inferTransactionOpts],
     job: opts =>
       scan(opts).pipe(
@@ -150,7 +189,8 @@ const all = {
       )
   },
 
-  listApps: {
+  managerListApps: {
+    description: "List apps that can be installed on the device",
     args: [
       deviceOpt,
       {
@@ -176,6 +216,7 @@ const all = {
   },
 
   genuineCheck: {
+    description: "Perform a genuine check with Ledger's HSM",
     args: [deviceOpt],
     job: ({ device }) =>
       withDevice(device || "")(t =>
@@ -186,6 +227,7 @@ const all = {
   },
 
   app: {
+    description: "Manage Ledger device's apps",
     args: [
       deviceOpt,
       {

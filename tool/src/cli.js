@@ -17,11 +17,14 @@ const mainOptions = commandLineArgs(
 );
 
 if (mainOptions.help || !mainOptions.command) {
+  console.log("Ledger Live ~~~ https://github.com/LedgerHQ/ledger-live-common");
+  console.log("");
   console.log("Usage: ledger-live <command> ...");
   console.log("");
   for (const k in commands) {
     const cmd = commands[k];
-    console.log(`ledger-live ${k}`);
+    console.log(`~~~ ${cmd.description || k} ~~~`);
+    console.log(`Usage: ledger-live ${k}`);
     for (const opt of cmd.args) {
       let str = `  --${opt.name}`;
       if (opt.alias) {
@@ -37,7 +40,25 @@ if (mainOptions.help || !mainOptions.command) {
     }
     console.log("");
   }
-
+  console.log("");
+  console.log("                ````                    ");
+  console.log("           `.--:::::                    ");
+  console.log("        `.-:::::::::       ````         ");
+  console.log("       .://///:-..``     `-/+++/-`      ");
+  console.log("     `://///-`           -++++++o/.     ");
+  console.log("    `/+++/:`            -+++++osss+`    ");
+  console.log("   `:++++:`            ./++++-/osss/`   ");
+  console.log("   .+++++`             `-://- .ooooo.   ");
+  console.log("   -+ooo/`                ``  `/oooo-   ");
+  console.log("   .oooo+` .::-.`             `+++++.   ");
+  console.log("   `+oooo:./+++/.             -++++/`   ");
+  console.log("    -ossso+++++:`            -/+++/.    ");
+  console.log("     -ooo+++++:`           .://///.     ");
+  console.log("      ./+++++/`       ``.-://///:`      ");
+  console.log("        `---.`      -:::::///:-.        ");
+  console.log("                    :::::::-.`          ");
+  console.log("                    ....``              ");
+  console.log("");
   console.log(
     "Please be advised this software is experimental and shall not create any obligation for Ledger to continue to develop, offer, support or repair any of its features. The software is provided “as is.” Ledger shall not be liable for any damages whatsoever including loss of profits or data, business interruption arising from using the software."
   );

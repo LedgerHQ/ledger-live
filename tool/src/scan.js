@@ -2,18 +2,20 @@
 
 import fs from "fs";
 import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
-import { skip, take, reduce } from "rxjs/operators";
+import { Observable, from, defer } from "rxjs";
+import { skip, take, reduce, mergeMap } from "rxjs/operators";
 import { fromAccountRaw } from "@ledgerhq/live-common/lib/account";
 import { syncAccount } from "@ledgerhq/live-common/lib/libcore/syncAccount";
 import { scanAccountsOnDevice } from "@ledgerhq/live-common/lib/libcore/scanAccountsOnDevice";
 import { findCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
+import { withDevice } from "../../lib/hw/deviceAccess";
 
 export const deviceOpt = {
   name: "device",
   type: String,
-  descOpt: "optional usb path",
-  desc: "use a device"
+  descOpt: "usb path",
+  desc: "provide a specific HID path of a device"
 };
 
 export const currencyOpt = {
@@ -21,7 +23,7 @@ export const currencyOpt = {
   alias: "c",
   type: String,
   desc:
-    "Identifier of a currency (ledger convention is lowercase/underscore of the currency name)"
+    "Currency name or ticker. If not provided, it will be inferred from the device."
 };
 
 export const scanCommonOpts = [
@@ -29,13 +31,13 @@ export const scanCommonOpts = [
   {
     name: "xpub",
     type: String,
-    desc: "instead of using a device, use this xpub"
+    desc: "use an xpub (alternatively to --device)"
   },
   {
     name: "file",
     type: String,
     typeDesc: "filename",
-    desc: "instead of using a device, use a file. '-' for stdin"
+    desc: "use a JSON account file or '-' for stdin (alternatively to --device)"
   },
   currencyOpt,
   {
@@ -60,87 +62,112 @@ export const scanCommonOpts = [
   }
 ];
 
-export function scan({ device, xpub, file, currency, scheme, index, length }) {
-  // TODO currency should be made more optional:
-  // - with device it can be inferred with getAppAndVersion
-  // - with file, we can find it in the account object
-  const cur = findCryptoCurrency(c => {
-    const search = (currency || "bitcoin").replace(/ /, "").toLowerCase();
+const getCurrencyByKeyword = keyword => {
+  const r = findCryptoCurrency(c => {
+    const search = keyword.replace(/ /, "").toLowerCase();
     return (
       c.id === search ||
       c.name.replace(/ /, "").toLowerCase() === search ||
+      (c.managerAppName &&
+        c.managerAppName.replace(/ /, "").toLowerCase() === search) ||
       c.ticker.toLowerCase() === search
     );
   });
-  if (typeof xpub === "string") {
-    const account: Account = {
-      name: cur.name,
-      xpub,
-      seedIdentifier: xpub,
-      id: `libcore:1:bitcoin:${xpub}:`,
-      derivationMode: "",
-      currency: cur,
-      unit: cur.units[0],
-      index: 0,
-      freshAddress: "",
-      freshAddressPath: "44'/0'/0'/0/0",
-      lastSyncDate: new Date(0),
-      blockHeight: 0,
-      balance: new BigNumber(0),
-      operations: [],
-      pendingOperations: []
-    };
-    return syncAccount(account).pipe(
-      reduce((a: Account, f: *) => f(a), account)
-    );
+  if (!r) {
+    throw new Error("currency '" + keyword + "' not found");
   }
+  return r;
+};
 
-  if (typeof file === "string") {
-    return Observable.create(o => {
-      let sub;
-      let closed;
-
-      const readStream =
-        file === "-" ? process.stdin : fs.createReadStream(file);
-
-      const chunks = [];
-      readStream.on("data", chunk => {
-        chunks.push(chunk);
-      });
-
-      readStream.on("close", () => {
-        try {
-          if (closed) return;
-          const account = fromAccountRaw(
-            JSON.parse(Buffer.concat(chunks).toString("ascii"))
-          );
-          sub = syncAccount(account)
-            .pipe(reduce((a, f) => f(a), account))
-            .subscribe(o);
-        } catch (e) {
-          o.error(e);
-        }
-      });
-
-      readStream.on("error", err => {
-        o.error(err);
-      });
-
-      return () => {
-        closed = true;
-        if (sub) sub.unsubscribe();
-      };
-    });
+export const inferCurrency = ({ device, currency }) => {
+  if (currency) {
+    return defer(() => getCurrencyByKeyword(currency));
   }
+  return withDevice(device)(t =>
+    from(
+      getAppAndVersion(t).then(
+        r => getCurrencyByKeyword(r.name),
+        () => undefined
+      )
+    )
+  );
+};
 
-  if (device !== undefined) {
-    return scanAccountsOnDevice(cur, device || "", mode =>
-      typeof scheme === "string" ? scheme.indexOf(mode) > -1 : true
-    ).pipe(
-      skip(index || 0),
-      take(length === undefined ? (index !== undefined ? 1 : Infinity) : length)
-    );
-  }
+export function scan(arg) {
+  const { device, xpub, file, scheme, index, length } = arg;
+  return inferCurrency(arg).pipe(
+    mergeMap(cur => {
+      if (!cur) throw new Error("--currency is required");
 
-  throw new Error("missing one of parameter: --device or --xpub or --file");
+      if (typeof xpub === "string") {
+        const account: Account = {
+          name: cur.name,
+          xpub,
+          seedIdentifier: xpub,
+          id: `libcore:1:bitcoin:${xpub}:`,
+          derivationMode: "",
+          currency: cur,
+          unit: cur.units[0],
+          index: 0,
+          freshAddress: "",
+          freshAddressPath: "44'/0'/0'/0/0",
+          lastSyncDate: new Date(0),
+          blockHeight: 0,
+          balance: new BigNumber(0),
+          operations: [],
+          pendingOperations: []
+        };
+        return syncAccount(account).pipe(
+          reduce((a: Account, f: *) => f(a), account)
+        );
+      }
+
+      if (typeof file === "string") {
+        return Observable.create(o => {
+          let sub;
+          let closed;
+
+          const readStream =
+            file === "-" ? process.stdin : fs.createReadStream(file);
+
+          const chunks = [];
+          readStream.on("data", chunk => {
+            chunks.push(chunk);
+          });
+
+          readStream.on("close", () => {
+            try {
+              if (closed) return;
+              const account = fromAccountRaw(
+                JSON.parse(Buffer.concat(chunks).toString("ascii"))
+              );
+              sub = syncAccount(account)
+                .pipe(reduce((a, f) => f(a), account))
+                .subscribe(o);
+            } catch (e) {
+              o.error(e);
+            }
+          });
+
+          readStream.on("error", err => {
+            o.error(err);
+          });
+
+          return () => {
+            closed = true;
+            if (sub) sub.unsubscribe();
+          };
+        });
+      }
+
+      return scanAccountsOnDevice(cur, device || "", mode =>
+        typeof scheme === "string" ? scheme.indexOf(mode) > -1 : true
+      ).pipe(
+        skip(index || 0),
+        take(
+          length === undefined ? (index !== undefined ? 1 : Infinity) : length
+        )
+      );
+    })
+  );
 }

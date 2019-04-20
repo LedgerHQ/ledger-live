@@ -4,11 +4,9 @@ import { toAccountRaw } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
 export default {
-  default: account => account,
-
   json: account => JSON.stringify(toAccountRaw(account)),
 
-  summary: account =>
+  default: account =>
     "(" +
     (account.derivationMode || "bip44") +
     "#" +
