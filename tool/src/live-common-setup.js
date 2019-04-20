@@ -55,7 +55,7 @@ if (!process.env.CI) {
     open: devicePath =>
       // $FlowFixMe
       retry(() => TransportNodeHid.open(devicePath), {
-        maxRetry: 2
+        maxRetry: 5 // YOLO
       }).then(t => {
         if (process.env.VERBOSE) t.setDebugMode(true);
         return t;

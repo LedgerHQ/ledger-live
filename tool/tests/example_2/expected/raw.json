@@ -7,16 +7,20 @@
     "id": "libcore:1:bitcoin:xpub6CPQEufkhLbLEpN5zecgHJhZEAyew1BLnGai3bpS61BbygeJ9YbG9YXyWrWMGrqV1QzqEAHcSazyXdhffZe9H8oRgshy4J8rXHa5QkpFqo3:segwit--OUT",
     "hash": "",
     "type": "OUT",
-    "value": "100244",
-    "fee": "244",
+    "value": "100588",
+    "fee": "588",
     "blockHash": null,
     "blockHeight": null,
     "senders": [
-      "3B97m7jVp7oZvqN45W1gT3KfBr32xYJFiB"
+      "3LjNMNMy4ko86G8aSCS3R8rhA111knnLUB",
+      "3Ai9kukGiPEW7fFK2wfm7ETmzT82281N8A",
+      "37WLhLXZ5e2VFkrNoZ2tS6sN4kb8dfxq1H",
+      "3CpD7B8UsfEEFHChXwp5QvdEcExJeCNeU8",
+      "3Lwow5TkvBitqzku2AYiAWnjUmYgSiY4dA"
     ],
     "recipients": [
-      "38kR7X5paSu5etiwrK7UDY1Tmt1G8UuLEU",
-      "38m4x2Fgc15u6TGpmhN9LrGkpdVkQmH8M3"
+      "3C9t3VpapmnSkhc5AgYNx73tX4XgfiVbyk",
+      "3JD1EcH3xqWLYy7Pbhwz4Yv8czR35CmAC9"
     ],
     "accountId": "libcore:1:bitcoin:xpub6CPQEufkhLbLEpN5zecgHJhZEAyew1BLnGai3bpS61BbygeJ9YbG9YXyWrWMGrqV1QzqEAHcSazyXdhffZe9H8oRgshy4J8rXHa5QkpFqo3:segwit",
     "extra": {}
