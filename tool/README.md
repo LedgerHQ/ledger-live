@@ -42,6 +42,7 @@ ledger-live send
   --gasPrice <String>: how much gasPrice in WEI unit! default is 1000000000
   --gasLimit <String>: how much gasLimit. default is estimated with the recipient
   --token (-t) <String>: use an token account children of the account
+  --format (-f) <default | json>: how to display the data
 
 ledger-live receive
   --device <String>: use a device
@@ -72,6 +73,9 @@ ledger-live feesForTransaction
 ledger-live listApps
   --device <String>: use a device
   --format (-f) <raw | json | default>
+
+ledger-live genuineCheck
+  --device <String>: use a device
 
 ledger-live app
   --device <String>: use a device
