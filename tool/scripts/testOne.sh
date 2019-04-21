@@ -16,7 +16,10 @@ export DEBUG_COMM_HTTP_PROXY=ws://localhost:8435
 touch apdu.snapshot.log
 ledger-hw-http-proxy-devserver -f apdu.snapshot.log &
 PID=$!
-rm -rf ./output/ ./dbdata/
+rm -rf output/ dbdata/
+if [ "$opt" == "-u" ]; then
+  rm -rf expected/
+fi
 mkdir output
 echo "Running test $name..."
 bash ./test.sh
