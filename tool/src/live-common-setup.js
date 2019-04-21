@@ -32,7 +32,7 @@ setWebSocketImplementation(WebSocket);
 
 implementLibcore({
   lib: require("@ledgerhq/ledger-core"), // eslint-disable-line global-require
-  dbPath: "./dbdata",
+  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
   logger
 });
 

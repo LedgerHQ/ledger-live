@@ -1,15 +1,15 @@
 // @flow
 
-import fs from "fs";
 import { BigNumber } from "bignumber.js";
-import { Observable, from, defer } from "rxjs";
-import { skip, take, reduce, mergeMap } from "rxjs/operators";
+import { from, defer, of } from "rxjs";
+import { skip, take, reduce, mergeMap, map, concatMap } from "rxjs/operators";
 import { fromAccountRaw } from "@ledgerhq/live-common/lib/account";
 import { syncAccount } from "@ledgerhq/live-common/lib/libcore/syncAccount";
 import { scanAccountsOnDevice } from "@ledgerhq/live-common/lib/libcore/scanAccountsOnDevice";
 import { findCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import { withDevice } from "../../lib/hw/deviceAccess";
+import { jsonFromFile } from "./stream";
 
 export const deviceOpt = {
   name: "device",
@@ -79,9 +79,12 @@ const getCurrencyByKeyword = keyword => {
   return r;
 };
 
-export const inferCurrency = ({ device, currency }) => {
+export const inferCurrency = ({ device, currency, file, xpub }) => {
   if (currency) {
-    return defer(() => getCurrencyByKeyword(currency));
+    return defer(() => of(getCurrencyByKeyword(currency)));
+  }
+  if (file || xpub) {
+    return of(undefined);
   }
   return withDevice(device)(t =>
     from(
@@ -95,6 +98,15 @@ export const inferCurrency = ({ device, currency }) => {
 
 export function scan(arg) {
   const { device, xpub, file, scheme, index, length } = arg;
+  if (typeof file === "string") {
+    return jsonFromFile(file).pipe(
+      map(fromAccountRaw),
+      concatMap(account =>
+        syncAccount(account).pipe(reduce((a, f) => f(a), account))
+      )
+    );
+  }
+
   return inferCurrency(arg).pipe(
     mergeMap(cur => {
       if (!cur) throw new Error("--currency is required");
@@ -122,52 +134,11 @@ export function scan(arg) {
         );
       }
 
-      if (typeof file === "string") {
-        return Observable.create(o => {
-          let sub;
-          let closed;
-
-          const readStream =
-            file === "-" ? process.stdin : fs.createReadStream(file);
-
-          const chunks = [];
-          readStream.on("data", chunk => {
-            chunks.push(chunk);
-          });
-
-          readStream.on("close", () => {
-            try {
-              if (closed) return;
-              const account = fromAccountRaw(
-                JSON.parse(Buffer.concat(chunks).toString("ascii"))
-              );
-              sub = syncAccount(account)
-                .pipe(reduce((a, f) => f(a), account))
-                .subscribe(o);
-            } catch (e) {
-              o.error(e);
-            }
-          });
-
-          readStream.on("error", err => {
-            o.error(err);
-          });
-
-          return () => {
-            closed = true;
-            if (sub) sub.unsubscribe();
-          };
-        });
-      }
-
       return scanAccountsOnDevice(cur, device || "", mode =>
-        typeof scheme === "string" ? scheme.indexOf(mode) > -1 : true
-      ).pipe(
-        skip(index || 0),
-        take(
-          length === undefined ? (index !== undefined ? 1 : Infinity) : length
-        )
+        scheme !== undefined ? scheme === mode : true
       );
-    })
+    }),
+    skip(index || 0),
+    take(length === undefined ? (index !== undefined ? 1 : Infinity) : length)
   );
 }

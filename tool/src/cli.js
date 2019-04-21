@@ -17,24 +17,24 @@ const mainOptions = commandLineArgs(
 );
 
 if (mainOptions.help || !mainOptions.command) {
-  console.log("Ledger Live ~~~ https://github.com/LedgerHQ/ledger-live-common");
+  console.log("Ledger Live @ https://github.com/LedgerHQ/ledger-live-common");
   console.log("");
   console.log("Usage: ledger-live <command> ...");
   console.log("");
   for (const k in commands) {
     const cmd = commands[k];
-    console.log(`~~~ ${cmd.description || k} ~~~`);
-    console.log(`Usage: ledger-live ${k}`);
+    console.log(
+      `Usage: ledger-live ${k} `.padEnd(30) +
+        (cmd.description ? `# ${cmd.description}` : "")
+    );
     for (const opt of cmd.args) {
-      let str = `  --${opt.name}`;
-      if (opt.alias) {
-        str += ` (-${opt.alias})`;
-      }
+      let str = opt.alias ? ` -${opt.alias}, ` : "     ";
+      str += `--${opt.name}`;
       if ((opt.type && opt.type !== Boolean) || opt.typeDesc) {
         str += ` <${opt.typeDesc || opt.type.name}>`;
       }
       if (opt.desc) {
-        str += `: ${opt.desc}`;
+        str = str.padEnd(30) + `: ${opt.desc}`;
       }
       console.log(str);
     }
