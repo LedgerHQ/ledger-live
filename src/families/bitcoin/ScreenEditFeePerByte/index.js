@@ -134,7 +134,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
                 <FeesRow
                   key={item.key}
                   itemKey={item.key}
-                  title={item.label}
+                  title={<Trans i18nKey={`fees.speed.${item.speed}`} />}
                   value={item.feePerByte}
                   isSelected={item.key === focusedItemKey}
                   onPress={this.onChangeFeeRow}

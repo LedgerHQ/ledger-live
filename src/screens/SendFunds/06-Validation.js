@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
-import { UserRefusedOnDevice } from "@ledgerhq/live-common/lib/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 

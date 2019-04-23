@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView, ScrollView } from "react-navigation";
-import { UserRefusedAddress } from "@ledgerhq/live-common/lib/errors";
+import { UserRefusedAddress } from "@ledgerhq/errors";
 import colors from "../colors";
 import DeviceNanoAction from "../components/DeviceNanoAction";
 

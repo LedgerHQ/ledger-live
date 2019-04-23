@@ -30,24 +30,8 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
-    title: "Dev mode",
-    description: "enables developer apps in manager",
-  },
-  {
-    shadow: true,
-    type: "toggle",
-    name: "EXPERIMENTAL_EXPLORERS",
-    title: "Experimental explorers",
-    description: "switch to the new version of explorers",
-  },
-  {
-    shadow: true,
-    type: "toggle",
-    name: "FORCE_PROVIDER",
-    valueOn: 4,
-    valueOff: 1,
-    title: "Manager test app provider=4",
-    description: "enables yet `unreleased` apps in manager",
+    title: "Developer mode",
+    description: "Show developer and testnet apps in the Manager.",
   },
 ];
 

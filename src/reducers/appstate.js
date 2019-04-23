@@ -2,7 +2,7 @@
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
-import { NetworkDown } from "@ledgerhq/live-common/lib/errors";
+import { NetworkDown } from "@ledgerhq/errors";
 import type { State } from ".";
 
 export type AsyncState = {

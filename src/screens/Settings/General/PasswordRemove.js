@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
 import i18next from "i18next";
-import { PasswordsDontMatchError } from "@ledgerhq/live-common/lib/errors";
+import { PasswordsDontMatchError } from "@ledgerhq/errors";
 import { Vibration } from "react-native";
 import { disablePrivacy } from "../../../actions/settings";
 import type { T } from "../../../types/common";

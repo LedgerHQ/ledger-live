@@ -71,6 +71,10 @@
       "title": "Sorry, try again (genuine-close)",
       "description": null
     },
+    "DeviceHalted": {
+      "title": "Please restart your Ledger device and retry",
+      "description": "An unexpected error occurred, so please try again"
+    },
     "DeviceNotGenuine": {
       "title": "Possibly not genuine",
       "description": "Request Ledger Support assistance."

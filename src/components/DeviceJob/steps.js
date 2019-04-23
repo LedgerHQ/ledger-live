@@ -7,10 +7,7 @@ import { map, first } from "rxjs/operators";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
-import {
-  WrongDeviceForAccount,
-  CantOpenDevice,
-} from "@ledgerhq/live-common/lib/errors";
+import { WrongDeviceForAccount, CantOpenDevice } from "@ledgerhq/errors";
 import {
   getDerivationScheme,
   runDerivationScheme,
@@ -192,14 +189,14 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
                 addressInfo: { address: "" },
               },
             ]
-          : getAddress(
-              transport,
+          : getAddress(transport, {
               currency,
-              runDerivationScheme(
+              derivationMode: "",
+              path: runDerivationScheme(
                 getDerivationScheme({ currency, derivationMode: "" }),
                 currency,
               ),
-            ),
+            }),
       ),
     ).pipe(
       map(addressInfo => ({
@@ -246,11 +243,11 @@ export const accountApp: Account => Step = account => ({
                 addressInfo: { address: account.freshAddress },
               },
             ]
-          : getAddress(
-              transport,
-              account.currency,
-              account.freshAddressPath,
-            ).then(addressInfo => {
+          : getAddress(transport, {
+              derivationMode: account.derivationMode,
+              currency: account.currency,
+              path: account.freshAddressPath,
+            }).then(addressInfo => {
               if (addressInfo.address !== account.freshAddress) {
                 throw new WrongDeviceForAccount("WrongDeviceForAccount", {
                   accountName: account.name,
