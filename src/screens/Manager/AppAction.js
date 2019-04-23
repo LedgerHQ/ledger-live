@@ -192,11 +192,7 @@ class AppAction extends PureComponent<
     );
 
     return (
-      <BottomModal
-        id={action.type + "AppActionModal"}
-        isOpened={isOpened}
-        onClose={this.onClose}
-      >
+      <BottomModal id={action.type + "AppActionModal"} isOpened={isOpened}>
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
             <View style={styles.headIcon}>
