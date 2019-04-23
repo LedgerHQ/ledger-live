@@ -133,12 +133,12 @@ class ReceiveConfirmation extends Component<Props, State> {
               rejectionOp(),
             )
           : from(
-              getAddress(
-                transport,
-                account.currency,
-                account.freshAddressPath,
-                true,
-              ),
+              getAddress(transport, {
+                derivationMode: account.derivationMode,
+                currency: account.currency,
+                path: account.freshAddressPath,
+                verify: true,
+              }),
             ),
     ).subscribe({
       complete: () => {

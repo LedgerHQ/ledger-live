@@ -1,8 +1,5 @@
 // @flow
-import { setLoadCoreImplementation } from "@ledgerhq/live-common/lib/libcore/access";
-import { setRemapLibcoreErrorsImplementation } from "@ledgerhq/live-common/lib/libcore/errors";
-import { loadCore } from "./loadCoreImpl";
-import { remapLibcoreErrors } from "./errorsImpl";
+import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/react-native";
+import { getNativeModule } from "./specific";
 
-setLoadCoreImplementation(loadCore);
-setRemapLibcoreErrorsImplementation(remapLibcoreErrors);
+implementLibcore({ getNativeModule });

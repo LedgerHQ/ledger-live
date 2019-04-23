@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import * as Keychain from "react-native-keychain";
-import { PasswordIncorrectError } from "@ledgerhq/live-common/lib/errors";
+import { PasswordIncorrectError } from "@ledgerhq/errors";
 import type { T } from "../../types/common";
 import type { Privacy } from "../../reducers/settings";
 import { withReboot } from "../Reboot";

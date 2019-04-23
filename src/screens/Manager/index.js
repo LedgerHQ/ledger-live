@@ -109,10 +109,9 @@ class ChooseDevice extends Component<
   };
 
   onSelect = (meta: Object) => {
-    const { fullVersion, seVersion, mcuVersion } = meta.deviceInfo;
+    const { version, mcuVersion } = meta.deviceInfo;
     track("ManagerDeviceEntered", {
-      fullVersion,
-      seVersion,
+      version,
       mcuVersion,
     });
     this.props.navigation.navigate("ManagerMain", {

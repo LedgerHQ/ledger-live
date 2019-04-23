@@ -22,6 +22,8 @@
 ; Ignore metro
 .*/node_modules/metro/.*
 
+.*/node_modules/@ledgerhq/live-common/src/__tests__/.*
+
 .*/TcpSocket.js
 .*/TcpServer.js
 
