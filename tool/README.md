@@ -2,9 +2,7 @@
 
 > Please be advised this software is experimental and shall not create any obligation for Ledger to continue to develop, offer, support or repair any of its features. The software is provided “as is.” Ledger shall not be liable for any damages whatsoever including loss of profits or data, business interruption arising from using the software.
 
-`````
-Ledger Live @ https://github.com/LedgerHQ/ledger-live-common
-
+```
 Usage: ledger-live <command> ...
 
 Usage: ledger-live version
@@ -133,4 +131,4 @@ Usage: ledger-live send       # Send crypto-assets
                     :::::::-.`
                     ....``
 
-`````
+```
