@@ -57,10 +57,12 @@ class Content extends PureComponent<Props, *> {
           </View>
           <LText
             tertiary
+            numberOfLines={1}
             style={[styles.currencyUnitValue, { color: valueColor }]}
           >
             <CurrencyUnitValue
               showCode
+              showAllDigits={true}
               unit={account.unit}
               value={amount}
               alwaysShowSign
@@ -230,6 +232,7 @@ const styles = StyleSheet.create({
   },
 
   currencyUnitValue: {
+    paddingHorizontal: 8,
     fontSize: 20,
     marginBottom: 8,
     color: colors.smoke,
