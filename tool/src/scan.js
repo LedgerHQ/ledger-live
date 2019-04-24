@@ -8,7 +8,7 @@ import { syncAccount } from "@ledgerhq/live-common/lib/libcore/syncAccount";
 import { scanAccountsOnDevice } from "@ledgerhq/live-common/lib/libcore/scanAccountsOnDevice";
 import { findCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
-import { withDevice } from "../../lib/hw/deviceAccess";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { jsonFromFile } from "./stream";
 
 export const deviceOpt = {
