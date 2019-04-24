@@ -6,8 +6,8 @@ const inferParentCurrency = common =>
   common.blockchain_name === "foundation"
     ? "ethereum"
     : common.blockchain_name === "ropsten"
-      ? "ethereum_ropsten"
-      : null;
+    ? "ethereum_ropsten"
+    : null;
 
 module.exports = {
   path: "tokens/ethereum/erc20",
@@ -51,23 +51,23 @@ module.exports = {
         invariant(
           contractAddress.length === 42 &&
             contractAddress.match(/^0x[0-9a-fA-F]+$/g),
-          "contractAddress is eth address"
+          "contractAddress is not eth address"
         );
         invariant(typeof ticker === "string" && ticker, "ticker is required");
         invariant(
           ticker.match(/^[0-9A-Z]+$/g),
-          "ticker alphanum uppercase expected"
+          "ticker '%s' alphanum uppercase expected",
+          ticker
         );
         invariant(
           typeof magnitude === "number" &&
-            isFinite(magnitude) &&
+            Number.isFinite(magnitude) &&
             magnitude >= 0 &&
             magnitude % 1 === 0,
           "magnitude expected positive integer"
         );
       } catch (e) {
-        console.error("Validate error for '" + ticker + "' ERC20: " + e);
-        console.log({ ticker, common, ledgerSignature });
+        console.error("erc20 " + id + ": " + e);
         return null;
       }
       return [

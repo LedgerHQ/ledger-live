@@ -16,8 +16,10 @@
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
     "flow": "flow src",
-    "test": "TZ=America/New_York jest src",
-    "ci": "yarn flow-typed && yarn lint && yarn flow && yarn test"
+    "test": "cross-env TZ=America/New_York jest src",
+    "ci-lint": "yarn lint && yarn flow",
+    "ci-test-common": "yarn test",
+    "ci-test-tool": "yarn link && cd tool && yarn && yarn link @ledgerhq/live-common && yarn build && yarn link && yarn test"
   },
   "files": [
     "lib",
@@ -63,6 +65,7 @@
     "rxjs-compat": "^6.3.3"
   },
   "devDependencies": {
+    "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.0.1",
@@ -70,6 +73,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.1.0",
