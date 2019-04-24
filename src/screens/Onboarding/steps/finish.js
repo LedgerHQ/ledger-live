@@ -45,7 +45,7 @@ class OnboardingStepFinish extends Component<Props> {
       <View style={styles.wrapper}>
         <TrackScreen category="Onboarding" name="Finish" />
         <View style={styles.confettiContainer} pointerEvents="none">
-          <ConfettiParty emit={false} />
+          <ConfettiParty />
         </View>
         <OnboardingLayout isCentered style={styles.onboardingLayout}>
           <View style={styles.hero}>{logo}</View>
