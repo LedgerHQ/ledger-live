@@ -1,8 +1,9 @@
 // @flow
 /* eslint-disable global-require */
 
-import { from, of, concat } from "rxjs";
+import { from, of, concat, empty, Observable } from "rxjs";
 import { map, mergeMap, ignoreElements, concatMap } from "rxjs/operators";
+import qrcode from "qrcode-terminal";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
 import signAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBroadcast";
@@ -33,6 +34,14 @@ import {
 import { inferTransaction, inferTransactionOpts } from "./transaction";
 import getAddress from "../../lib/hw/getAddress";
 import { apdusFromFile } from "./stream";
+
+const asQR = str =>
+  Observable.create(o =>
+    qrcode.generate(str, r => {
+      o.next(r);
+      o.complete();
+    })
+  );
 
 const all = {
   version: {
@@ -359,12 +368,20 @@ const all = {
 
   receive: {
     description: "Receive crypto-assets (verify on device)",
-    args: [...scanCommonOpts],
+    args: [
+      ...scanCommonOpts,
+      {
+        name: "qr",
+        type: Boolean,
+        desc: "also display a QR Code"
+      }
+    ],
     job: opts =>
       scan(opts).pipe(
         concatMap(account =>
           concat(
             of(account.freshAddress),
+            opts.qr ? asQR(account.freshAddress) : empty(),
             withDevice(opts.device || "")(t =>
               from(
                 getAddress(t, {

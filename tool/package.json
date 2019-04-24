@@ -16,6 +16,7 @@
     "bignumber.js": "^8.1.1",
     "command-line-args": "^5.1.1",
     "flow-bin": "^0.97.0",
+    "qrcode-terminal": "^0.12.0",
     "rxjs": "^6.4.0",
     "ws": "^6.2.1"
   },
