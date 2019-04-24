@@ -1,42 +1,52 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View } from "react-native";
+import type { Operation, OperationType } from "@ledgerhq/live-common/lib/types";
 
-import type { OperationType } from "@ledgerhq/live-common/lib/types";
+import { connect } from "react-redux";
 
-import ReceiveIcon from "../icons/Receive";
-import SendIcon from "../icons/Send";
-import Circle from "./Circle";
-
-import colors from "../colors";
+import ReceiveConfirmedIcon from "../icons/ReceiveConfirmed";
+import ReceiveUnconfirmedIcon from "../icons/ReceiveUnconfirmed";
+import SendConfirmedIcon from "../icons/SendConfirmed";
+import SendUnconfirmedIcon from "../icons/SendUnconfirmed";
+import { currencySettingsForAccountSelector } from "../reducers/settings";
 
 type Props = {
   type: OperationType,
   size: number,
-  containerSize: number,
+  confirmed: boolean,
+  operation: Operation,
 };
 
-export default class OperationIcon extends PureComponent<Props> {
+class OperationIcon extends PureComponent<Props> {
+  static defaultProps = {
+    confirmed: false,
+  };
+
+  icons = {
+    OUT: [SendUnconfirmedIcon, SendConfirmedIcon],
+    IN: [ReceiveUnconfirmedIcon, ReceiveConfirmedIcon],
+  };
+
   render() {
-    const { type, size, containerSize } = this.props;
-    let icon;
-    let bgColor;
+    const { type, size, confirmed } = this.props;
+    const Icon = this.icons[type][confirmed ? 1 : 0];
 
-    if (type === "IN") {
-      icon = <ReceiveIcon size={size} color={colors.green} />;
-      bgColor = colors.translucentGreen;
-    } else {
-      icon = <SendIcon size={size} color={colors.grey} />;
-      bgColor = colors.translucentGrey;
-    }
-
-    return (
-      <View>
-        <Circle bg={bgColor} size={containerSize}>
-          {icon}
-        </Circle>
-      </View>
-    );
+    return <Icon size={size} />;
   }
 }
+
+export default connect((state, props) => {
+  const {
+    account,
+    operation: { blockHeight, type },
+  } = props;
+  const confirmations = blockHeight ? account.blockHeight - blockHeight : 0;
+
+  return {
+    type,
+    confirmed:
+      confirmations >=
+      currencySettingsForAccountSelector(state, props).confirmationsNb,
+  };
+})(OperationIcon);

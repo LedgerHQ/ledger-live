@@ -11,8 +11,8 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
-import OperationIcon from "./OperationIcon";
 
+import OperationIcon from "./OperationIcon";
 import colors from "../colors";
 import OperationRowDate from "./OperationRowDate";
 import LiveLogo from "../icons/LiveLogoIcon";
@@ -47,6 +47,7 @@ class OperationRow extends PureComponent<Props, *> {
     const { operation, account, multipleAccounts, isLast } = this.props;
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.darkBlue : colors.green;
+
     const text =
       operation.type === "IN" ? (
         <Trans i18nKey="common.received" />
@@ -75,11 +76,13 @@ class OperationRow extends PureComponent<Props, *> {
             {multipleAccounts ? (
               <CurrencyIcon size={20} currency={account.currency} />
             ) : (
-              <OperationIcon
-                size={16}
-                containerSize={28}
-                type={operation.type}
-              />
+              <View>
+                <OperationIcon
+                  size={28}
+                  operation={operation}
+                  account={account}
+                />
+              </View>
             )}
           </View>
           <View
