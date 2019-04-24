@@ -7,11 +7,8 @@ export default {
   json: account => JSON.stringify(toAccountRaw(account)),
 
   default: account =>
-    "(" +
-    (account.derivationMode || "bip44") +
-    "#" +
-    account.index +
-    ") " +
+    account.name +
+    ": " +
     formatCurrencyUnit(account.unit, account.balance, { showCode: true }) +
     " (" +
     account.operations.length +
@@ -19,6 +16,10 @@ export default {
     account.freshAddress +
     " on " +
     account.freshAddressPath +
+    ") (" +
+    (account.derivationMode || "bip44") +
+    "#" +
+    account.index +
     ")" +
     (account.tokenAccounts || [])
       .map(
