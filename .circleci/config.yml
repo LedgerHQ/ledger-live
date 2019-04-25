@@ -24,6 +24,13 @@ jobs:
     docker:
       - image: circleci/node:8-stretch-browsers
     steps:
+      - run:
+          name: Install GCC 7
+          command: |
+            echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" | sudo tee /etc/apt/sources.list.d/gcc7.list ;
+            sudo apt-get update
+            sudo apt-get install -t testing g++-7
+            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 700 --slave /usr/bin/g++ g++ /usr/bin/g++-7
       - run: sudo apt-get update
       - run: sudo apt-get install -y libudev-dev libusb-1.0-0-dev jq
       - run:
