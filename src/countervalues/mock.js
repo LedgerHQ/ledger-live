@@ -37,7 +37,7 @@ export const genStoreState = (pairs: Pair[]): CounterValuesState => {
 export const getDailyRatesImplementation = (
   getAPIBaseURL: () => string,
   pairs: PollAPIPair[]
-) => {
+): Promise<mixed> => {
   const rates = {
     USD: { BTC: { SIMEX: { latest: 0.00521587214628 } } },
     BTC: {}
@@ -93,7 +93,7 @@ export const getDailyRatesImplementation = (
         0
       );
     }
-    return outputDays;
+    return Promise.resolve(outputDays);
   };
 
   return pairs.reduce((acc, pair) => {
