@@ -3,6 +3,7 @@ import type { CounterValuesState, Histodays, PollAPIPair } from "./types";
 import type { Currency } from "../types";
 import { formatCounterValueDay } from ".";
 import { listCryptoCurrencies } from "../currencies";
+import { delay } from "../promise";
 
 type Pair = {
   from: Currency,
@@ -34,7 +35,7 @@ export const genStoreState = (pairs: Pair[]): CounterValuesState => {
   return state;
 };
 
-export const getDailyRatesImplementation = (
+export const getDailyRatesImplementation = async (
   getAPIBaseURL: () => string,
   pairs: PollAPIPair[]
 ) => {
@@ -93,8 +94,10 @@ export const getDailyRatesImplementation = (
         0
       );
     }
-    return outputDays;
+    return Promise.resolve(outputDays);
   };
+
+  await delay(100);
 
   return pairs.reduce((acc, pair) => {
     if (pair.from === "BTC") return acc;
@@ -121,11 +124,18 @@ export const getDailyRatesImplementation = (
  * [ugly]: Will respond, but return 0 as the latest rate.
  * [bad]: Will not return anything for the pair.
  */
-export const fetchExchangesForPairImplementation = async () => [
-  { id: "good", name: "good", website: "#" },
-  { id: "ugly", name: "ugly", website: "#" },
-  { id: "bad", name: "bad", website: "#" }
-];
+export const fetchExchangesForPairImplementation = async () => {
+  await delay(100);
+  return [
+    { id: "good", name: "good", website: "#" },
+    { id: "ugly", name: "ugly", website: "#" },
+    { id: "bad", name: "bad", website: "#" }
+  ];
+};
+
 export const fetchTickersByMarketcapImplementation = async (): Promise<
   string[]
-> => listCryptoCurrencies().map(c => c.ticker);
+> => {
+  await delay(100);
+  return listCryptoCurrencies().map(c => c.ticker);
+};

@@ -174,7 +174,7 @@ const all = {
     job: ({ device, format }) =>
       withDevice(device || "")(t =>
         from(getDeviceInfo(t)).pipe(
-          mergeMap(deviceInfo => from(manager.getAppsList(deviceInfo))),
+          mergeMap(deviceInfo => from(manager.getAppsList(deviceInfo, true))),
           map(list =>
             format === "raw"
               ? list
@@ -229,7 +229,7 @@ const all = {
           ? from(openApp(t, open))
           : from(getDeviceInfo(t)).pipe(
               mergeMap(deviceInfo =>
-                from(manager.getAppsList(deviceInfo)).pipe(
+                from(manager.getAppsList(deviceInfo, true)).pipe(
                   mergeMap(list => {
                     const cmd = uninstall ? uninstallApp : installApp;
                     const { targetId } = deviceInfo;
