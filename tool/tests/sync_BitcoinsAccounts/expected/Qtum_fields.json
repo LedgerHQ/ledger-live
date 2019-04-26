@@ -1,0 +1,56 @@
+{
+  "id": "libcore:1:qtum:xpub6D8bWvy66e4C5NkN2GpwVzVvgwNokusJg4hBQQxfmbMXeReXCiMFGRNxU4painaZ3mT4zazpti42EgnZ4Lfe2UHmTBVuq1CsPiGcUwzbHEb:",
+  "seedIdentifier": "04ef47ed070ebea8b71322b2adde5c71b41b696ae159471643f6912cace2a151aa29596afbe8bf2ca250819c68f8156293ab3504c613e1d472ad92401392ba1704",
+  "xpub": "xpub6D8bWvy66e4C5NkN2GpwVzVvgwNokusJg4hBQQxfmbMXeReXCiMFGRNxU4painaZ3mT4zazpti42EgnZ4Lfe2UHmTBVuq1CsPiGcUwzbHEb",
+  "derivationMode": "",
+  "index": 0,
+  "freshAddress": "QZnSJvwhoy1HJG4QCCGGJEJY6S8HkSUp1H",
+  "freshAddressPath": "44'/88'/0'/0/15",
+  "name": "Qtum 1",
+  "pendingOperations": [],
+  "currencyId": "qtum",
+  "unitMagnitude": 8,
+  "balance": "0"
+}
+{
+  "id": "libcore:1:qtum:xpub6D8bWvy66e4C6CndMhczEKCBZJL2FJARZgN6v3zjr5bBE3JBsPfA4pDajMHkQwmwu7uUsAZ8YL6fRLX6cr9L52u4qzz9MErrbKbE4Qka53R:",
+  "seedIdentifier": "04ef47ed070ebea8b71322b2adde5c71b41b696ae159471643f6912cace2a151aa29596afbe8bf2ca250819c68f8156293ab3504c613e1d472ad92401392ba1704",
+  "xpub": "xpub6D8bWvy66e4C6CndMhczEKCBZJL2FJARZgN6v3zjr5bBE3JBsPfA4pDajMHkQwmwu7uUsAZ8YL6fRLX6cr9L52u4qzz9MErrbKbE4Qka53R",
+  "derivationMode": "",
+  "index": 1,
+  "freshAddress": "QixUhrE98WwqR1Ubf5rj58RaNsKxNj9hZu",
+  "freshAddressPath": "44'/88'/1'/0/17",
+  "name": "Qtum 2",
+  "pendingOperations": [],
+  "currencyId": "qtum",
+  "unitMagnitude": 8,
+  "balance": "1003320"
+}
+{
+  "id": "libcore:1:qtum:xpub6D8bWvy66e4C9h73ttch7nYxBMXDdHCZKKsRAxGKRLvDqCsDK6G4gbmaXSQaTR6sQHZXh5FupZwrEQMC2EzZCFjVq2EqrNKdgdUXqiGxiuv:",
+  "seedIdentifier": "04ef47ed070ebea8b71322b2adde5c71b41b696ae159471643f6912cace2a151aa29596afbe8bf2ca250819c68f8156293ab3504c613e1d472ad92401392ba1704",
+  "xpub": "xpub6D8bWvy66e4C9h73ttch7nYxBMXDdHCZKKsRAxGKRLvDqCsDK6G4gbmaXSQaTR6sQHZXh5FupZwrEQMC2EzZCFjVq2EqrNKdgdUXqiGxiuv",
+  "derivationMode": "",
+  "index": 2,
+  "freshAddress": "QU2fczjs5MHdiKXBRPrFdrX5cNjEBoXntr",
+  "freshAddressPath": "44'/88'/2'/0/1",
+  "name": "Qtum 3",
+  "pendingOperations": [],
+  "currencyId": "qtum",
+  "unitMagnitude": 8,
+  "balance": "0"
+}
+{
+  "id": "libcore:1:qtum:xpub6D8bWvy66e4CBH1XXMVabY6TRCLKEzQVLThRdSrAm39i9giTHg7XhVjnun5ggBT6DzXnjXKZGDrVPbRLRwZFjmvUZupWiwJA42MujXJCRXP:",
+  "seedIdentifier": "04ef47ed070ebea8b71322b2adde5c71b41b696ae159471643f6912cace2a151aa29596afbe8bf2ca250819c68f8156293ab3504c613e1d472ad92401392ba1704",
+  "xpub": "xpub6D8bWvy66e4CBH1XXMVabY6TRCLKEzQVLThRdSrAm39i9giTHg7XhVjnun5ggBT6DzXnjXKZGDrVPbRLRwZFjmvUZupWiwJA42MujXJCRXP",
+  "derivationMode": "",
+  "index": 3,
+  "freshAddress": "QcD3kWugBFhrAJRvdHy66edekVDqZVmZPz",
+  "freshAddressPath": "44'/88'/3'/0/0",
+  "name": "Qtum 4",
+  "pendingOperations": [],
+  "currencyId": "qtum",
+  "unitMagnitude": 8,
+  "balance": "0"
+}
