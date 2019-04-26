@@ -162,6 +162,7 @@ declare class CoreEthereumLikeTransaction {
   getSender(): Promise<CoreEthereumLikeAddress>;
   serialize(): Promise<string>;
   setSignature(string, string, string): Promise<void>;
+  getStatus(): Promise<number>;
 }
 
 declare class CoreBitcoinLikeOperation {
@@ -676,7 +677,8 @@ export const reflect = (declare: (string, Spec) => void) => {
       serialize: { returns: "hex" },
       setSignature: {
         params: ["hex", "hex", "hex"]
-      }
+      },
+      getStatus: {}
     }
   });
 
