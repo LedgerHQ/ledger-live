@@ -53,7 +53,7 @@ class Content extends PureComponent<Props, *> {
       <Fragment>
         <View style={styles.header}>
           <View style={styles.icon}>
-            <OperationIcon size={20} containerSize={40} type={operation.type} />
+            <OperationIcon size={40} operation={operation} account={account} />
           </View>
           <LText
             tertiary
