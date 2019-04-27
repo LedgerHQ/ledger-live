@@ -1,0 +1,24 @@
+{
+  "type": "signed"
+}
+{
+  "type": "broadcasted",
+  "operation": {
+    "id": "libcore:1:bitcoin_testnet:tpubDDdmJz3PJBUuxHUvJtepcFd196tcCoazhXk31C78D3cv7Unn3NaiC8bJAb4dQF1xRiFuyfoZnqJu5W7tReJD5ag7ZLMGuZ8RamZrXbGugya:segwit--OUT",
+    "hash": "",
+    "type": "OUT",
+    "value": "5128454",
+    "fee": "2440",
+    "blockHash": null,
+    "blockHeight": null,
+    "senders": [
+      "2N4QKoGXBFgjvyzQfo8eNjp7YfytNdm545T"
+    ],
+    "recipients": [
+      "mvjr4nKe1GCwMot76tbdncyRK65hTqkZA1",
+      "2NAtA1EtNtyde7Z9AJKZqnYkCkHnNEgLQkQ"
+    ],
+    "accountId": "libcore:1:bitcoin_testnet:tpubDDdmJz3PJBUuxHUvJtepcFd196tcCoazhXk31C78D3cv7Unn3NaiC8bJAb4dQF1xRiFuyfoZnqJu5W7tReJD5ag7ZLMGuZ8RamZrXbGugya:segwit",
+    "extra": {}
+  }
+}

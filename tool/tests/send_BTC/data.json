@@ -1,0 +1,29 @@
+[
+    {
+            "type":"legacyToSegwit",
+            "currency": "bitcoin_testnet",
+            "scheme": "",
+            "index":0,
+            "amount": 0.0489271342,
+            "fees": 2,
+            "recipient":"2MvNCaYo4ajYKv36xLjUx1aiHGS8FyWQRxA"
+    },
+    {
+            "type":"segwitToSegwit",
+            "currency": "bitcoin_testnet",
+            "scheme": "segwit",
+            "index":0,
+            "amount": 0.052125487,
+            "fees": 2,
+            "recipient":"2N4QKoGXBFgjvyzQfo8eNjp7YfytNdm545T"
+    },
+    {
+            "type":"segwitToLegacy",
+            "currency": "bitcoin_testnet",
+            "scheme": "segwit",
+            "index":1,
+            "amount": 0.05126014,
+            "fees": 1,
+            "recipient":"mvjr4nKe1GCwMot76tbdncyRK65hTqkZA1"
+    }
+]
