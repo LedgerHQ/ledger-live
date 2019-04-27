@@ -12,8 +12,13 @@ const OperationTypeMap = {
 async function ethereum({ coreOperation }) {
   const ethereumLikeOperation = await coreOperation.asEthereumLikeOperation();
   const ethereumLikeTransaction = await ethereumLikeOperation.getTransaction();
+  const status = await ethereumLikeTransaction.getStatus();
   const hash = await ethereumLikeTransaction.getHash();
-  return { hash };
+  const out: $Shape<Operation> = { hash };
+  if (status === 0) {
+    out.hasFailed = true;
+  }
+  return out;
 }
 
 async function bitcoin({ coreOperation }) {

@@ -12,6 +12,7 @@ export type ModeSpec = {
   isSegwit?: boolean, // TODO drop
   isUnsplit?: boolean, // TODO drop
   skipFirst?: true,
+  overridesCoinType?: number, // force a given cointype
   purpose?: number,
   isInvalid?: boolean, // invalid means it's not a path we ever supported. some users fall into this and we support scanning for them in SCAN_FOR_INVALID_PATHS is set.
   tag?: string,
@@ -57,6 +58,19 @@ const modes = Object.freeze({
     isNonIterable: true,
     overridesDerivation: "44'/144'/14'/5'/16",
     isInvalid: true
+  },
+  // chrome app and LL wrongly used to derivate vertcoin on 128
+  vertcoin_128: {
+    tag: "legacy",
+    overridesCoinType: 128
+  },
+  vertcoin_128_segwit: {
+    tag: "legacy",
+    overridesCoinType: 128,
+    isSegwit: true,
+    purpose: 49,
+    keychainEngine: "BIP49_P2SH",
+    addressFormat: "p2sh"
   },
   // MEW legacy derivation for eth
   etcM: {
@@ -109,6 +123,7 @@ const modes = Object.freeze({
 (modes: { [_: DerivationMode]: ModeSpec }); // eslint-disable-line
 
 const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
+  vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   ethereum: ["ethM", "ethW1", "ethW2", "ethMM"],
   ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2", "ethMM"],
   ripple: ["rip", "rip2"]
@@ -183,6 +198,10 @@ export const derivationModeSupportsIndex = (
   return true;
 };
 
+const currencyForceCoinType = {
+  vertcoin: true
+};
+
 /**
  * return a ledger-lib-core compatible DerivationScheme format
  * for a given currency and derivationMode (you can pass an Account because same shape)
@@ -194,13 +213,14 @@ export const getDerivationScheme = ({
   derivationMode: DerivationMode,
   currency: CryptoCurrency
 }): string => {
-  const { overridesDerivation } = modes[derivationMode];
+  const { overridesDerivation, overridesCoinType } = modes[derivationMode];
   if (overridesDerivation) return overridesDerivation;
   const splitFrom =
     isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
-    : "<coin_type>";
+    : overridesCoinType ||
+      (currencyForceCoinType ? currency.coinType : "<coin_type>");
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };

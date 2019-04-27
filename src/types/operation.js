@@ -46,7 +46,10 @@ export type Operation = {
   date: Date,
 
   // Extra crypto specific fields
-  extra: Object
+  extra: Object,
+
+  // Has the transaction actually failed? (some blockchain like ethereum will have failed tx appearing)
+  hasFailed?: boolean
 };
 
 export type OperationRaw = {
@@ -61,6 +64,7 @@ export type OperationRaw = {
   blockHash: ?string,
   transactionSequenceNumber?: number,
   accountId: string,
+  hasFailed?: boolean,
   // --------------------------------------------- specific operation raw fields
   date: string,
   extra: Object // would be a serializable version of the extra
