@@ -7,12 +7,16 @@
     "id": "libcore:1:bitcoin_testnet:tpubDDdmJz3PJBUusyoWzcpXtpc1NxsY7928qEfGBw1ibyvCLaoTnziH9dTbWuEKSBHd4LzqMAiVx3oRTkNgCL9rDFQFBrSk8Zs4LL6AwkKgq7Z:segwit--OUT",
     "hash": "",
     "type": "OUT",
-    "value": "5214989",
-    "fee": "2440",
+    "value": "55225429",
+    "fee": "5880",
     "blockHash": null,
     "blockHeight": null,
     "senders": [
-      "2N7uqEVvgkKsh7LUXdwjD8S1Puidq6ELrir"
+      "2N7uqEVvgkKsh7LUXdwjD8S1Puidq6ELrir",
+      "2N1e92qciqHwmXbQQPFyVQktBgkrt1TxdNa",
+      "2MvNCaYo4ajYKv36xLjUx1aiHGS8FyWQRxA",
+      "2MzytMcG6mfUQg2duYGBLiS6wRfTnq3N6nS",
+      "2Myt1WfYHsVGNiTbdRaTz9zoHhBBbkzuSjH"
     ],
     "recipients": [
       "2N4QKoGXBFgjvyzQfo8eNjp7YfytNdm545T",

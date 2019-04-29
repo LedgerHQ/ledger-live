@@ -1,0 +1,82 @@
+[
+    {
+        "type":"legacyToSegwit",
+        "currency": "bitcoin_testnet",
+        "schemeSender": "",
+        "indexSender":0,
+        "amount": 0.0489271342,
+        "fees": 2,
+        "recipientScheme":"segwit",
+        "recipientIndex":0
+    },
+    {
+        "type":"segwitToSegwit",
+        "currency": "bitcoin_testnet",
+        "schemeSender": "segwit",
+        "indexSender":0,
+        "amount": 0.052195487,
+        "fees": 2,
+        "recipientScheme":"segwit",
+        "recipientIndex":1
+    },
+    {
+        "type":"segwitToLegacy",
+        "currency": "bitcoin_testnet",
+        "schemeSender": "segwit",
+        "indexSender":1,
+        "amount": 0.06378,
+        "fees": 1,
+        "recipientScheme":"",
+        "recipientIndex":1
+    },
+    {
+        "type":"bip44",
+        "currency": "Horizen",
+        "schemeSender": "",
+        "indexSender":0,
+        "amount": 1.00234,
+        "fees": 1,
+        "recipientScheme":"",
+        "recipientIndex":1   
+    },
+    {
+        "type":"bip44",
+        "currency": "Decred",
+        "schemeSender": "",
+        "indexSender":1,
+        "amount": 0.0579805,
+        "fees": 1,
+        "recipientScheme":"",
+        "recipientIndex":0
+    },
+    {
+        "type":"bip44",
+        "currency": "Zcash",
+        "schemeSender": "",
+        "indexSender":0,
+        "amount": 0.095147,
+        "fees": 1,
+        "recipientScheme":"",
+        "recipientIndex":1
+    },
+    {
+        "type":"bip44",
+        "currency": "Komodo",
+        "schemeSender": "",
+        "indexSender":0,
+        "amount": 0.095147,
+        "fees": 2,
+        "recipientScheme":"",
+        "recipientIndex":1
+    },
+    {
+        "type":"bip44",
+        "currency": "Stealth",
+        "schemeSender": "",
+        "indexSender":0,
+        "amount": 52.843,
+        "fees": 3,
+        "recipientScheme":"",
+        "recipientIndex":1
+    }
+]
