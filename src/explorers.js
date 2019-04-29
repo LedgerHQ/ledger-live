@@ -41,9 +41,11 @@ export const findCurrencyExplorer = (
   currency: CryptoCurrency
 ): ?LedgerExplorer => {
   const exp = getEnv("EXPERIMENTAL_EXPLORERS");
-  const version = exp ? "v3" : "v2";
-  const id = (exp ? ledgerExplorersV3 : ledgerExplorersV2)[currency.id];
-  return id ? { id, version } : null;
+  if (exp && currency.id in ledgerExplorersV3) {
+    return { id: ledgerExplorersV3[currency.id], version: "v3" };
+  }
+  const id = ledgerExplorersV2[currency.id];
+  return id ? { id, version: "v2" } : null;
 };
 
 export const hasCurrencyExplorer = (currency: CryptoCurrency): boolean =>
@@ -57,7 +59,7 @@ export const getCurrencyExplorer = (
   return res;
 };
 
-const ledgerExplorersV3 = {
+const ledgerExplorersV2 = {
   bitcoin: "btc",
   bitcoin_cash: "abc",
   bitcoin_gold: "btg",
@@ -66,7 +68,7 @@ const ledgerExplorersV3 = {
   decred: "dcr",
   digibyte: "dgb",
   dogecoin: "doge",
-  ethereum: "eth-mainnet",
+  ethereum: "eth",
   ethereum_classic: "ethc",
   hcash: "hsr",
   komodo: "kmd",
@@ -82,17 +84,10 @@ const ledgerExplorersV3 = {
   viacoin: "via",
   zcash: "zec",
   zencash: "zen",
-  bitcoin_testnet: "btc_testnet",
+  bitcoin_testnet: "btc_testnet"
+};
+
+const ledgerExplorersV3 = {
+  ethereum: "eth-mainnet",
   ethereum_ropsten: "eth-ropsten"
-};
-
-// overrides the id used
-const ledgerExplorersV2overrides = {
-  ethereum: "eth",
-  ethereum_ropsten: null
-};
-
-const ledgerExplorersV2 = {
-  ...ledgerExplorersV3,
-  ...ledgerExplorersV2overrides
 };
