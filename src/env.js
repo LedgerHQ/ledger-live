@@ -37,7 +37,8 @@ const envParsers = {
   MOCK: boolParser,
   LEDGER_DEBUG_ALL_LANGS: boolParser,
   LIBCORE_PASSWORD: stringParser,
-  DISABLE_TRANSACTION_BROADCAST: boolParser
+  DISABLE_TRANSACTION_BROADCAST: boolParser,
+  DEBUG_ALL_LANGS: boolParser
 };
 
 // This define the default values
@@ -61,7 +62,8 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   MOCK: false,
   LEDGER_DEBUG_ALL_LANGS: false,
   LIBCORE_PASSWORD: "",
-  DISABLE_TRANSACTION_BROADCAST: false
+  DISABLE_TRANSACTION_BROADCAST: false,
+  DEBUG_ALL_LANGS: false
 };
 
 // private local state
