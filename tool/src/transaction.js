@@ -109,7 +109,7 @@ export async function inferTransaction(account, opts) {
     }
   }
 
-  if ("gasLimit" in res.transaction) {
+  if (!("gasLimit" in res.transaction)) {
     res.transaction.gasLimit = await apiForCurrency(
       account.currency
     ).estimateGasLimitForERC20(res.transaction.recipient);
