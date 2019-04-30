@@ -20,6 +20,10 @@ const perFamily: { [_: string]: * } = {
   ripple
 };
 
+console.warn(
+  "Usage of debugAppInfosForCurrency is deprecated. Prefer getAppAndVersion"
+);
+
 const proxy: Resolver = (transport, currency) => {
   const getAddress = perFamily[currency.family];
   invariant(getAddress, `getAddress not implemented for ${currency.id}`);
