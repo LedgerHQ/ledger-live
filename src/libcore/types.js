@@ -437,6 +437,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       }
     },
     methods: {
+      updateWalletConfig: {
+        params: [null, "DynamicObject"],
+      },
       getWallet: {
         returns: "Wallet"
       },
