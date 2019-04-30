@@ -1,7 +1,7 @@
 // @flow
 
 import Xrp from "@ledgerhq/hw-app-xrp";
-import type { Resolver } from "./types";
+import type { Resolver } from "../../hw/getAddress/types";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   const xrp = new Xrp(transport);

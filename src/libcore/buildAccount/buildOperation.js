@@ -3,34 +3,11 @@
 import type { Operation, CryptoCurrency } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import type { CoreOperation } from "../types";
+import perFamily from "../../generated/libcore-buildOperation";
 
 const OperationTypeMap = {
   "0": "OUT",
   "1": "IN"
-};
-
-async function ethereum({ coreOperation }) {
-  const ethereumLikeOperation = await coreOperation.asEthereumLikeOperation();
-  const ethereumLikeTransaction = await ethereumLikeOperation.getTransaction();
-  const status = await ethereumLikeTransaction.getStatus();
-  const hash = await ethereumLikeTransaction.getHash();
-  const out: $Shape<Operation> = { hash };
-  if (status === 0) {
-    out.hasFailed = true;
-  }
-  return out;
-}
-
-async function bitcoin({ coreOperation }) {
-  const bitcoinLikeOperation = await coreOperation.asBitcoinLikeOperation();
-  const bitcoinLikeTransaction = await bitcoinLikeOperation.getTransaction();
-  const hash = await bitcoinLikeTransaction.getHash();
-  return { hash };
-}
-
-const perFamily = {
-  bitcoin,
-  ethereum
 };
 
 export async function buildOperation(arg: {

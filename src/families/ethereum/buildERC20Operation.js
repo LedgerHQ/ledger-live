@@ -2,8 +2,8 @@
 
 import { BigNumber } from "bignumber.js";
 import type { Operation, TokenCurrency } from "../../types";
-import { libcoreBigIntToBigNumber } from "../buildBigNumber";
-import type { CoreERC20LikeOperation } from "../types";
+import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
+import type { CoreERC20LikeOperation } from "../../libcore/types";
 
 const OperationTypeMap = {
   "0": "OUT",
