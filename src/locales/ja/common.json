@@ -374,7 +374,7 @@
     }
   },
   "reset": {
-    "description": "To remove Ledger Live app data including accounts and settings, please uninstall and reinstall it"
+    "description": "Please uninstall and reinstall the app from your phone to remove Ledger Live data, including accounts and settings."
   },
   "onboarding": {
     "stepCount": "{{current}} of {{total}}",
