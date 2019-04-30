@@ -6,7 +6,9 @@ import { getCryptoCurrencyById } from "../currencies";
 import {
   getDerivationModesForCurrency,
   isUnsplitDerivationMode,
-  getPurposeDerivationMode
+  getPurposeDerivationMode,
+  derivationModeSupportsIndex,
+  isIterableDerivationMode
 } from "../derivation";
 import { getWalletName, shouldShowNewAccount } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
@@ -74,7 +76,9 @@ async function scanNextAccount(props: {
   if (isUnsubscribed()) return;
 
   const isEmpty = account.operations.length === 0;
-  const shouldSkip = isEmpty && !showNewAccount;
+  const shouldSkip =
+    (isEmpty && !showNewAccount) ||
+    !derivationModeSupportsIndex(derivationMode, accountIndex);
 
   log(
     "libcore",
@@ -92,7 +96,7 @@ async function scanNextAccount(props: {
     onAccountScanned(account);
   }
 
-  if (!isEmpty) {
+  if (!isEmpty && isIterableDerivationMode(derivationMode)) {
     await scanNextAccount({ ...props, accountIndex: accountIndex + 1 });
   }
 }
