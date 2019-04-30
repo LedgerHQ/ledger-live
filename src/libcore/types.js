@@ -18,6 +18,10 @@ declare class CoreWalletPool {
   ): Promise<CoreWalletPool>;
   getWallet(name: string): Promise<CoreWallet>;
   getCurrency(id: string): Promise<CoreCurrency>;
+  updateWalletConfig(
+    walletName: string,
+    config: CoreDynamicObject
+  ): Promise<void>;
   createWallet(
     walletName: string,
     currency: CoreCurrency,
