@@ -1,0 +1,31 @@
+{
+  "type": "signed"
+}
+{
+  "type": "broadcasted",
+  "operation": {
+    "id": "libcore:1:zencash:xpub6D5t3ggLE75WMZywf9sHZtBZcgdQTvVorb4U6YiYBSZrWiPZsB7JjjyMfyM7KiSQMwc87BLZSi8wXgoRvMZHVACMF7CBE3B77NN314ZKWuA:--OUT",
+    "hash": "",
+    "type": "OUT",
+    "value": "160041620",
+    "fee": "12620",
+    "blockHash": null,
+    "blockHeight": null,
+    "senders": [
+      "znT3v9vhcEaosguemw17PQUAx69mbtDLRmS",
+      "znZxSEPkX7P4AoxLpBwkF7WN7fqPGvWvBwJ",
+      "znc9ZUZjzzk6zxab3RAAPYGPZzYunYaBHNB",
+      "znmpjkURVLM9PCp2fTQqeJ6ottNEBTWEmwn",
+      "znhwL5cqTjDVV4NgixnRnUMAi7LmvUYSBXj",
+      "zngKa1or2FZP3q8R8UWS1PyYQHCUJoaeYvM",
+      "zngSqCUCHPwZCZT7ThURo2HsJwCtXiYCXtY",
+      "znhbvN1DSSjPuWiADY1FD58AmHGdnfyudHY"
+    ],
+    "recipients": [
+      "znk6FUFcwgoYCbNmXZGv1txEFhibhRFhrYC",
+      "znev27K8UT7sYKJKVVMqCUYB2Gq67Bea2WN"
+    ],
+    "accountId": "libcore:1:zencash:xpub6D5t3ggLE75WMZywf9sHZtBZcgdQTvVorb4U6YiYBSZrWiPZsB7JjjyMfyM7KiSQMwc87BLZSi8wXgoRvMZHVACMF7CBE3B77NN314ZKWuA:",
+    "extra": {}
+  }
+}

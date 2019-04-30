@@ -1,0 +1,18 @@
+[
+    {
+        "type":"test_1",
+        "currency": "horizen",
+        "indexSender":1,
+        "amount": 1.60029,
+        "fees": 1,
+        "recipientAddress": "znk6FUFcwgoYCbNmXZGv1txEFhibhRFhrYC"
+    },
+    {
+        "type":"test_2",
+        "currency": "horizen",
+        "indexSender":0,
+        "amount": 1.6003,
+        "fees": 1,
+        "recipientAddress": "znkxthFZkiZavT1rjVd7ts9C6ubc2AA5YUz"
+    }
+]
