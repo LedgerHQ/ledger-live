@@ -4,7 +4,7 @@ import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import styled from "styled-components";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getAccountPlaceholderName } from "@ledgerhq/live-common/lib/account";
-import getAddress, { perFamily } from "@ledgerhq/live-common/lib/hw/getAddress";
+import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
@@ -141,13 +141,11 @@ class Derivations extends Component<*, *> {
 
   render() {
     const { currency } = this.state;
-    const currencies = listCryptoCurrencies(true)
-      .filter(a => perFamily[a.family])
-      .sort((a, b) =>
-        a.family === b.family
-          ? a.name.localeCompare(b.name)
-          : a.family.localeCompare(b.family)
-      );
+    const currencies = listCryptoCurrencies(true).sort((a, b) =>
+      a.family === b.family
+        ? a.name.localeCompare(b.name)
+        : a.family.localeCompare(b.family)
+    );
     return (
       <Main>
         <div style={{ textAlign: "center" }}>
