@@ -54,7 +54,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   EXPLORER_V2:
     "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
   EXPLORER_V3:
-    "http://$ledgerExplorerId.explorers.prod.aws.ledger.fr/blockchain/v3",
+    "http://$ledgerExplorerId.explorers.dev.aws.ledger.fr/blockchain/v3",
   EXPERIMENTAL_EXPLORERS: false,
   EXPERIMENTAL_LANGUAGES: false,
   EXPERIMENTAL_USB: false,
