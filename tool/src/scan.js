@@ -79,6 +79,17 @@ const getCurrencyByKeyword = keyword => {
   return r;
 };
 
+export const inferManagerApp = keyword => {
+  try {
+    const currency = getCurrencyByKeyword(keyword);
+    if (!currency || !currency.managerAppName) return keyword;
+    return currency.managerAppName;
+  }
+  catch (e) {
+    return keyword;
+  }
+}
+
 export const inferCurrency = ({ device, currency, file, xpub }) => {
   if (currency) {
     return defer(() => of(getCurrencyByKeyword(currency)));

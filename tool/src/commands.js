@@ -29,7 +29,8 @@ import {
   scanCommonOpts,
   currencyOpt,
   deviceOpt,
-  inferCurrency
+  inferCurrency,
+  inferManagerApp
 } from "./scan";
 import { inferTransaction, inferTransactionOpts } from "./transaction";
 import getAddress from "../../lib/hw/getAddress";
@@ -226,7 +227,7 @@ const all = {
         quit
           ? from(quitApp(t))
           : open
-          ? from(openApp(t, open))
+          ? from(openApp(t, inferManagerApp(open)))
           : from(getDeviceInfo(t)).pipe(
               mergeMap(deviceInfo =>
                 from(manager.getAppsList(deviceInfo, true)).pipe(
