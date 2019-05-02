@@ -4,3 +4,4 @@ src/data/icons
 
 src/libcore/types.js
 src/libcore/platforms/*.js
+src/generated

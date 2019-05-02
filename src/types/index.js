@@ -1,5 +1,7 @@
 // @flow
 
+import type { BigNumber } from "bignumber.js";
+
 import type {
   Currency,
   Unit,
@@ -80,4 +82,15 @@ export type DailyOperations = {
   sections: DailyOperationsSection[],
   // Is the sections complete? means there is no more operations to pull
   completed: boolean
+};
+
+export type Transaction = {
+  recipient: string,
+  amount: ?(BigNumber | string),
+  useAllAmount?: boolean,
+  // bitcoin
+  feePerByte?: ?(BigNumber | string),
+  // ethereum
+  gasPrice?: BigNumber | string,
+  gasLimit?: BigNumber | string
 };

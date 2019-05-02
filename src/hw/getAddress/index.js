@@ -5,16 +5,7 @@ import {
   UserRefusedAddress
 } from "@ledgerhq/errors";
 import type { Resolver } from "./types";
-
-import bitcoin from "./btc";
-import ethereum from "./ethereum";
-import ripple from "./ripple";
-
-export const perFamily: { [_: string]: Resolver } = {
-  bitcoin,
-  ethereum,
-  ripple
-};
+import perFamily from "../../generated/hw-getAddress";
 
 const dispatch: Resolver = (transport, opts) => {
   const { currency, verify } = opts;

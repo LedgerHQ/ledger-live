@@ -2,14 +2,12 @@
 
 import { BigNumber } from "bignumber.js";
 import { getWalletName } from "../account";
-import type { Account, TokenAccount } from "../types";
+import type { Account, TokenAccount, Transaction } from "../types";
 import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
-import { libcoreAmountToBigNumber } from "./buildBigNumber";
-import * as buildTransaction from "./buildTransaction";
-import type { Transaction } from "./buildTransaction";
+import byFamily from "../generated/libcore-getFeesForTransaction";
 
 export type Input = {
   account: Account,
@@ -18,32 +16,6 @@ export type Input = {
 };
 
 type F = Input => Promise<BigNumber>;
-
-// NB might regroup later by family
-
-async function bitcoin(arg: *) {
-  const builded = await buildTransaction.bitcoin(arg);
-  if (!builded) return;
-  const feesAmount = await builded.getFees();
-  if (!feesAmount) {
-    throw new Error("getFeesForTransaction: fees should not be undefined");
-  }
-  const fees = await libcoreAmountToBigNumber(feesAmount);
-  return fees;
-}
-
-async function ethereum(arg: *) {
-  const builded = await buildTransaction.ethereum(arg);
-  if (!builded) return;
-  const gasPrice = await libcoreAmountToBigNumber(await builded.getGasPrice());
-  const gasLimit = await libcoreAmountToBigNumber(await builded.getGasLimit());
-  return gasPrice.times(gasLimit);
-}
-
-const byFamily = {
-  bitcoin,
-  ethereum
-};
 
 export const getFeesForTransaction: F = withLibcoreF(
   core => async ({ account, tokenAccount, transaction }) => {

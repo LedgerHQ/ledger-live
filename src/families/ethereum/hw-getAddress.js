@@ -2,7 +2,7 @@
 
 import Eth from "@ledgerhq/hw-app-eth";
 import eip55 from "eip55";
-import type { Resolver } from "./types";
+import type { Resolver } from "../../hw/getAddress/types";
 
 const resolver: Resolver = async (
   transport,

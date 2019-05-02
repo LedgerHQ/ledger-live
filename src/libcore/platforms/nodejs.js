@@ -416,7 +416,10 @@ export default ({
   const remapLibcoreErrors = (input: Error) => {
     const e: mixed = input;
     if (e && typeof e === "object") {
-      if (typeof e.code === "number" && e.code === 52) {
+      if (
+        typeof e.code === "number" &&
+        e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS
+      ) {
         return new NotEnoughBalance();
       }
     }

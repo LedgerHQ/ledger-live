@@ -1,22 +1,19 @@
 // @flow
 
 import { Observable, from } from "rxjs";
-import { BigNumber } from "bignumber.js";
 import { StatusCodes } from "@ledgerhq/hw-transport";
 import { UpdateYourApp } from "@ledgerhq/errors";
-import type { Account, Operation, TokenAccount } from "../types";
+import type { Account, Operation, TokenAccount, Transaction } from "../types";
 import { getWalletName } from "../account";
 import { withDevice } from "../hw/deviceAccess";
 import { log } from "../logs";
 import type { SignAndBroadcastEvent } from "../bridge/types";
 import { getOrCreateWallet } from "./getOrCreateWallet";
-import { libcoreAmountToBigNumber } from "./buildBigNumber";
 import { remapLibcoreErrors } from "./errors";
 import { withLibcoreF } from "./access";
 import signTransaction from "./signTransaction";
 import buildTransaction from "./buildTransaction";
-import { getEnv } from "../env";
-import type { Transaction } from "./buildTransaction";
+import byFamily from "../generated/libcore-signAndBroadcast";
 
 export type Input = {
   // the account to use for the transaction
@@ -27,96 +24,6 @@ export type Input = {
   transaction: Transaction,
   // device identified to sign the transaction with
   deviceId: string
-};
-
-async function bitcoin({
-  account: { id: accountId },
-  signedTransaction,
-  builded,
-  coreAccount,
-  transaction
-}) {
-  const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
-
-  const txHash = getEnv("DISABLE_TRANSACTION_BROADCAST")
-    ? ""
-    : await bitcoinLikeAccount.broadcastRawTransaction(signedTransaction);
-
-  const sendersInput = await builded.getInputs();
-  const senders = (await Promise.all(
-    sendersInput.map(senderInput => senderInput.getAddress())
-  )).filter(Boolean);
-
-  const recipientsOutput = await builded.getOutputs();
-  const recipients = (await Promise.all(
-    recipientsOutput.map(recipientOutput => recipientOutput.getAddress())
-  )).filter(Boolean);
-
-  const coreAmountFees = await builded.getFees();
-  if (!coreAmountFees) {
-    throw new Error("signAndBroadcast: fees should not be undefined");
-  }
-  const fee = await libcoreAmountToBigNumber(coreAmountFees);
-
-  // NB we don't check isCancelled() because the broadcast is not cancellable now!
-  const op: $Exact<Operation> = {
-    id: `${accountId}-${txHash}-OUT`,
-    hash: txHash,
-    type: "OUT",
-    value: BigNumber(transaction.amount).plus(fee),
-    fee,
-    blockHash: null,
-    blockHeight: null,
-    senders,
-    recipients,
-    accountId,
-    date: new Date(),
-    extra: {}
-  };
-
-  return op;
-}
-
-async function ethereum({
-  account: { id: accountId, freshAddress },
-  signedTransaction,
-  builded,
-  coreAccount,
-  transaction
-}) {
-  const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
-
-  const txHash = getEnv("DISABLE_TRANSACTION_BROADCAST")
-    ? ""
-    : await ethereumLikeAccount.broadcastRawTransaction(signedTransaction);
-  const senders = [freshAddress];
-  const receiver = await builded.getReceiver();
-  const recipients = [await receiver.toEIP55()];
-  const gasPrice = await libcoreAmountToBigNumber(await builded.getGasPrice());
-  const gasLimit = await libcoreAmountToBigNumber(await builded.getGasLimit());
-  const fee = gasPrice.times(gasLimit);
-
-  const op: $Exact<Operation> = {
-    id: `${accountId}-${txHash}-OUT`,
-    hash: txHash,
-    type: "OUT",
-    value: BigNumber(transaction.amount).plus(fee),
-    fee,
-    blockHash: null,
-    blockHeight: null,
-    senders,
-    recipients,
-    accountId,
-    date: new Date(),
-    extra: {}
-  };
-
-  return op;
-}
-
-const byFamily = {
-  bitcoin,
-  ethereum
 };
 
 const doSignAndBroadcast = withLibcoreF(

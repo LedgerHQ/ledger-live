@@ -3,9 +3,9 @@
 import invariant from "invariant";
 import Btc from "@ledgerhq/hw-app-btc";
 import { BtcUnmatchedApp, UpdateYourApp } from "@ledgerhq/errors";
-import getBitcoinLikeInfo from "../getBitcoinLikeInfo";
+import getBitcoinLikeInfo from "../../hw/getBitcoinLikeInfo";
 import { getAddressFormatDerivationMode } from "../../derivation";
-import type { Resolver } from "./types";
+import type { Resolver } from "../../hw/getAddress/types";
 import { log } from "../../logs";
 
 const oldP2SH = {
