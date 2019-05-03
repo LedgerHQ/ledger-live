@@ -5,5 +5,7 @@ cd $(dirname $0)/../tests
 
 
 for td in *; do
-  bash $PWD/../scripts/testOne.sh $td $1
+  if [ -f ./$td/test.sh ]; then
+    bash $PWD/../scripts/testOne.sh $td $1
+  fi
 done
