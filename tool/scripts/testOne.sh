@@ -2,10 +2,10 @@
 
 name=$1
 opt=$2
-cwd=$(pwd)
+cwd=`dirname "$(realpath $0)"`
 
 ledger-live () {
-  $cwd/cli.js "$@"
+  $cwd/../cli.js "$@"
 }
 
 set -e
