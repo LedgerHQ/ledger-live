@@ -282,11 +282,11 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   return {
     ...acc,
     balance: BigNumber(balance),
-    operations: operations.map(convertOperation),
-    pendingOperations: pendingOperations.map(convertOperation),
+    operations: (operations || []).map(convertOperation),
+    pendingOperations: (pendingOperations || []).map(convertOperation),
     unit,
     currency,
-    lastSyncDate: new Date(lastSyncDate),
+    lastSyncDate: new Date(lastSyncDate || 0),
     tokenAccounts: tokenAccounts && tokenAccounts.map(fromTokenAccountRaw)
   };
 }
