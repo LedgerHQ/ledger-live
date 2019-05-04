@@ -8,7 +8,8 @@ import {
   isUnsplitDerivationMode,
   getPurposeDerivationMode,
   derivationModeSupportsIndex,
-  isIterableDerivationMode
+  isIterableDerivationMode,
+  getMandatoryEmptyAccountSkip
 } from "../derivation";
 import { getWalletName, shouldShowNewAccount } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
@@ -32,7 +33,8 @@ async function scanNextAccount(props: {
   seedIdentifier: string,
   derivationMode: DerivationMode,
   showNewAccount: boolean,
-  isUnsubscribed: () => boolean
+  isUnsubscribed: () => boolean,
+  emptyCount?: number
 }) {
   const {
     core,
@@ -96,8 +98,17 @@ async function scanNextAccount(props: {
     onAccountScanned(account);
   }
 
-  if (!isEmpty && isIterableDerivationMode(derivationMode)) {
-    await scanNextAccount({ ...props, accountIndex: accountIndex + 1 });
+  const emptyCount = props.emptyCount || 0;
+  const shouldIter = isEmpty
+    ? emptyCount < getMandatoryEmptyAccountSkip(derivationMode)
+    : isIterableDerivationMode(derivationMode);
+
+  if (shouldIter) {
+    await scanNextAccount({
+      ...props,
+      accountIndex: accountIndex + 1,
+      emptyCount: isEmpty ? emptyCount + 1 : 0
+    });
   }
 }
 
