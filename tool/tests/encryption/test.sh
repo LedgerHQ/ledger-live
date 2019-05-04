@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# set -e
 echo "ENCRYPTION IS LIKELY TO FAIL, IGNORING ERRORS FOR NOW"
+# Unsetting the -e flag set by parent
+set +e
 
 ledger-live sync -c bitcoin --xpub xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj -f json | jq '.operations[] | length' >> output/res
 
@@ -32,5 +33,8 @@ LIBCORE_PASSWORD=mistake ledger-live sync -c bitcoin --xpub xpub6BosfCnifzxcFwrS
 echo "check encrypted data can be descripted later"
 
 LIBCORE_PASSWORD=foo ledger-live sync -c bitcoin --xpub xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj -f json | jq '.operations[] | length' >> output/res
+
+# restore -e flag
+set -e
 
 true

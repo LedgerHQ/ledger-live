@@ -2,6 +2,11 @@
 
 name=$1
 opt=$2
+cwd=`dirname $0`
+
+ledger-live () {
+  $cwd/../cli.js "$@"
+}
 
 set -e
 cd $(dirname $0)/../tests/$name
@@ -22,7 +27,7 @@ if [ "$opt" == "-u" ]; then
 fi
 mkdir output
 echo "Running test $name..."
-bash ./test.sh
+source ./test.sh
 echo "done."
 sleep 2
 if kill -0 $PID 2> /dev/null; then
