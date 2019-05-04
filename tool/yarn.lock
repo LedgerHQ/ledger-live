@@ -223,6 +223,11 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.54.0.tgz#e0655188714ca3750d3964faa0f01ebf76ecd455"
   integrity sha512-BbAiJHzw/EtIp/HBhDUTbAGj+1cYGGmnrlXSccIxt/MFwcgrX2KgPFbTIAiJJYmPkUSdY4eucyrB9YohzfGCkw==
 
+"@ledgerhq/errors@^4.55.0":
+  version "4.55.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.55.0.tgz#5fbef730abbcf3fd8a37838f37a08eada11720fd"
+  integrity sha512-XzygAQYafn7Bqj52WT2cCtNdS7CfcEd8f2e5KOxll0eYgT9ZgAHpdQUZvRAxmgeP+007zO4lseJ2bSdWbxb/rw==
+
 "@ledgerhq/hw-app-btc@^4.54.0":
   version "4.54.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.54.0.tgz#664d4b7778c96befdbe58cc6f76246ff4ee388f9"
