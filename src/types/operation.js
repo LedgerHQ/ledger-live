@@ -49,7 +49,11 @@ export type Operation = {
   extra: Object,
 
   // Has the transaction actually failed? (some blockchain like ethereum will have failed tx appearing)
-  hasFailed?: boolean
+  hasFailed?: boolean,
+
+  // in context of accounts that can have tokens, an operation can contains itself operations
+  // these are not in raw at all because they are meant to be rebuilt from the references
+  subOperations?: Operation[]
 };
 
 export type OperationRaw = {

@@ -1,7 +1,8 @@
 // @flow
 
-import type { Operation, CryptoCurrency } from "../../types";
+import type { Operation, CryptoCurrency, TokenAccount } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
+import { inferSubOperations } from "../../account";
 import type { CoreOperation } from "../types";
 import perFamily from "../../generated/libcore-buildOperation";
 
@@ -13,9 +14,10 @@ const OperationTypeMap = {
 export async function buildOperation(arg: {
   coreOperation: CoreOperation,
   accountId: string,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
+  contextualTokenAccounts?: ?(TokenAccount[])
 }) {
-  const { coreOperation, accountId, currency } = arg;
+  const { coreOperation, accountId, currency, contextualTokenAccounts } = arg;
   const buildOp = perFamily[currency.family];
   if (!buildOp) {
     throw new Error(currency.family + " family not supported");
@@ -24,6 +26,7 @@ export async function buildOperation(arg: {
 
   const operationType = await coreOperation.getOperationType();
   const type = OperationTypeMap[operationType];
+  if (!type) return null; // "none" types are ignored
   const id = `${accountId}-${rest.hash}-${type}`;
 
   const coreValue = await coreOperation.getAmount();
@@ -58,6 +61,9 @@ export async function buildOperation(arg: {
     accountId,
     date,
     extra: {},
+    subOperations: contextualTokenAccounts
+      ? inferSubOperations(rest.hash, contextualTokenAccounts)
+      : undefined,
     ...rest
   };
 

@@ -92,6 +92,13 @@ export async function buildAccount({
     derivationMode
   });
 
+  const tokenAccounts = await buildTokenAccounts({
+    currency,
+    coreAccount,
+    accountId,
+    existingAccount
+  });
+
   const operations = await minimalOperationsBuilder(
     (existingAccount && existingAccount.operations) || [],
     coreOperations,
@@ -99,16 +106,10 @@ export async function buildAccount({
       buildOperation({
         coreOperation,
         accountId,
-        currency
+        currency,
+        contextualTokenAccounts: tokenAccounts
       })
   );
-
-  const tokenAccounts = await buildTokenAccounts({
-    currency,
-    coreAccount,
-    accountId,
-    existingAccount
-  });
 
   const account: $Exact<Account> = {
     id: accountId,

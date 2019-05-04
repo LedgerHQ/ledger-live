@@ -20,7 +20,7 @@ function findExistingOp(ops, op) {
 export async function minimalOperationsBuilder<CO>(
   existingOperations: Operation[],
   coreOperations: CO[],
-  buildOp: (coreOperation: CO) => Promise<Operation>
+  buildOp: (coreOperation: CO) => Promise<?Operation>
 ): Promise<Operation[]> {
   // build operations with the minimal diff & call to libcore possible
   let operations = [];
@@ -30,6 +30,7 @@ export async function minimalOperationsBuilder<CO>(
   for (let i = coreOperations.length - 1; i >= 0; i--) {
     const coreOperation = coreOperations[i];
     const newOp = await buildOp(coreOperation);
+    if (!newOp) continue;
     const existingOp = findExistingOp(existingOps, newOp);
 
     if (existingOp && !immutableOpCmpDoneOnce) {

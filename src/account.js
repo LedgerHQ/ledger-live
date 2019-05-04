@@ -217,6 +217,23 @@ export const shouldShowNewAccount = (
     ? !!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || !currency.supportsSegwit
     : derivationMode === "segwit" || derivationMode === "native_segwit";
 
+export const inferSubOperations = (
+  txHash: string,
+  tokenAccounts: TokenAccount[]
+): Operation[] => {
+  const all = [];
+  for (let i = 0; i < tokenAccounts.length; i++) {
+    const ta = tokenAccounts[i];
+    for (let j = 0; j < ta.operations.length; j++) {
+      const op = ta.operations[j];
+      if (op.hash === txHash) {
+        all.push(op);
+      }
+    }
+  }
+  return all;
+};
+
 export const toOperationRaw = ({
   date,
   value,
@@ -231,14 +248,18 @@ export const toOperationRaw = ({
 
 export const fromOperationRaw = (
   { date, value, fee, extra, ...op }: OperationRaw,
-  accountId: string
+  accountId: string,
+  tokenAccounts?: ?(TokenAccount[])
 ): Operation => ({
   ...op,
   accountId,
   date: new Date(date),
   value: BigNumber(value),
   fee: BigNumber(fee),
-  extra: extra || {}
+  extra: extra || {},
+  subOperations: tokenAccounts
+    ? inferSubOperations(op.hash, tokenAccounts)
+    : undefined
 });
 
 export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
@@ -271,14 +292,16 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     pendingOperations,
     lastSyncDate,
     balance,
-    tokenAccounts,
+    tokenAccounts: tokenAccountsRaw,
     ...acc
   } = rawAccount;
+  const tokenAccounts =
+    tokenAccountsRaw && tokenAccountsRaw.map(fromTokenAccountRaw);
   const currency = getCryptoCurrencyById(currencyId);
   const unit =
     currency.units.find(u => u.magnitude === unitMagnitude) ||
     currency.units[0];
-  const convertOperation = op => fromOperationRaw(op, acc.id);
+  const convertOperation = op => fromOperationRaw(op, acc.id, tokenAccounts);
   return {
     ...acc,
     balance: BigNumber(balance),
@@ -287,7 +310,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     unit,
     currency,
     lastSyncDate: new Date(lastSyncDate || 0),
-    tokenAccounts: tokenAccounts && tokenAccounts.map(fromTokenAccountRaw)
+    tokenAccounts
   };
 }
 
@@ -299,6 +322,7 @@ export function toAccountRaw({
   lastSyncDate,
   balance,
   tokenAccounts,
+  subOperations, // eslint-disable-line
   ...acc
 }: Account): AccountRaw {
   return {
