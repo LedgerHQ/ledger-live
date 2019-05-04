@@ -9,7 +9,6 @@ import {
 import type { Account, CryptoCurrency, DerivationMode } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import type { CoreWallet, CoreAccount, CoreOperation } from "../types";
-import { log } from "../../logs";
 import { buildOperation } from "./buildOperation";
 import { minimalOperationsBuilder } from "../reconciliation";
 import { buildTokenAccounts } from "./buildTokenAccounts";
@@ -53,19 +52,9 @@ export async function buildAccount({
     coreFreshAddress.toString(),
     coreFreshAddress.getDerivationPath()
   ]);
-  if (!freshAddressPath) {
-    log(
-      "libcore",
-      "freshAddressPath=" +
-        String(freshAddressPath) +
-        " freshAddress=" +
-        String(freshAddressStr)
-    );
-    throw new Error("expected freshAddressPath");
-  }
   const freshAddress = {
     str: freshAddressStr,
-    path: `${accountPath}/${freshAddressPath}`
+    path: freshAddressPath ? `${accountPath}/${freshAddressPath}` : accountPath
   };
 
   const name =

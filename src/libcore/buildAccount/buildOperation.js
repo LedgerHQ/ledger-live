@@ -22,12 +22,10 @@ export async function buildOperation(arg: {
   if (!buildOp) {
     throw new Error(currency.family + " family not supported");
   }
-  const rest = await buildOp(arg);
 
   const operationType = await coreOperation.getOperationType();
   const type = OperationTypeMap[operationType];
   if (!type) return null; // "none" types are ignored
-  const id = `${accountId}-${rest.hash}-${type}`;
 
   const coreValue = await coreOperation.getAmount();
   let value = await libcoreAmountToBigNumber(coreValue);
@@ -48,6 +46,9 @@ export async function buildOperation(arg: {
   ]);
 
   const date = new Date(await coreOperation.getDate());
+
+  const rest = await buildOp(arg);
+  const id = `${accountId}-${rest.hash}-${type}`;
 
   const op: $Exact<Operation> = {
     id,
