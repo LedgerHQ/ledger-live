@@ -1,6 +1,5 @@
 // @flow
 
-import invariant from "invariant";
 import Transport from "@ledgerhq/hw-transport";
 
 export type FirmwareInfo = {
@@ -40,7 +39,15 @@ export default async function getVersion(
   }
   mcuVersion = mcuVersion.toString();
 
-  invariant(seVersionLength, "invalid getVersion payload");
+  if (!seVersionLength) {
+    // To support old firmware like bootloader of 1.3.1
+    return {
+      targetId,
+      seVersion: "0.0.0",
+      flags: Buffer.allocUnsafeSlow(0),
+      mcuVersion: ""
+    };
+  }
 
   return { targetId, seVersion, flags, mcuVersion };
 }
