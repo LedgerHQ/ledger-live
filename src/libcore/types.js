@@ -64,6 +64,7 @@ declare class CoreOperation {
   getDate(): Promise<string>;
   asBitcoinLikeOperation(): Promise<CoreBitcoinLikeOperation>;
   asEthereumLikeOperation(): Promise<CoreEthereumLikeOperation>;
+  asRippleLikeOperation(): Promise<CoreRippleLikeOperation>;
   getOperationType(): Promise<OperationType>;
   getAmount(): Promise<CoreAmount>;
   getFees(): Promise<?CoreAmount>;
@@ -153,6 +154,30 @@ declare class CoreBitcoinLikeTransaction {
   getTimestamp(): Promise<?number>;
 }
 
+declare class CoreBitcoinLikeOperation {
+  getTransaction(): Promise<CoreBitcoinLikeTransaction>;
+}
+
+declare class CoreBitcoinLikeTransactionBuilder {
+  wipeToAddress(address: string): Promise<void>;
+  sendToAddress(amount: CoreAmount, recipient: string): Promise<void>;
+  pickInputs(number, number): Promise<void>;
+  setFeesPerByte(feesPerByte: CoreAmount): Promise<void>;
+  build(): Promise<CoreBitcoinLikeTransaction>;
+}
+
+declare class CoreBitcoinLikeAccount {
+  buildTransaction(
+    isPartial: boolean
+  ): Promise<CoreBitcoinLikeTransactionBuilder>;
+  broadcastRawTransaction(signed: string): Promise<string>;
+}
+
+declare class CoreBitcoinLikeNetworkParameters {
+  getSigHash(): Promise<string>;
+  getUsesTimestampedTransaction(): Promise<boolean>;
+}
+
 declare class CoreEthereumLikeAddress {
   toEIP55(): Promise<string>;
 }
@@ -169,28 +194,8 @@ declare class CoreEthereumLikeTransaction {
   getStatus(): Promise<number>;
 }
 
-declare class CoreBitcoinLikeOperation {
-  getTransaction(): Promise<CoreBitcoinLikeTransaction>;
-}
-
 declare class CoreEthereumLikeOperation {
   getTransaction(): Promise<CoreEthereumLikeTransaction>;
-}
-
-export type OperationType = 0 | 1;
-
-declare class CoreAddress {
-  static isValid(recipient: string, currency: CoreCurrency): Promise<boolean>;
-  toString(): Promise<string>;
-  getDerivationPath(): Promise<?string>;
-}
-
-declare class CoreBitcoinLikeTransactionBuilder {
-  wipeToAddress(address: string): Promise<void>;
-  sendToAddress(amount: CoreAmount, recipient: string): Promise<void>;
-  pickInputs(number, number): Promise<void>;
-  setFeesPerByte(feesPerByte: CoreAmount): Promise<void>;
-  build(): Promise<CoreBitcoinLikeTransaction>;
 }
 
 declare class CoreEthereumLikeTransactionBuilder {
@@ -200,13 +205,6 @@ declare class CoreEthereumLikeTransactionBuilder {
   setGasLimit(gasLimit: CoreAmount): Promise<void>;
   setInputData(data: string): Promise<void>;
   build(): Promise<CoreEthereumLikeTransaction>;
-}
-
-declare class CoreBitcoinLikeAccount {
-  buildTransaction(
-    isPartial: boolean
-  ): Promise<CoreBitcoinLikeTransactionBuilder>;
-  broadcastRawTransaction(signed: string): Promise<string>;
 }
 
 declare class CoreEthereumLikeAccount {
@@ -239,6 +237,44 @@ declare class CoreERC20LikeOperation {
   getStatus(): Promise<number>;
 }
 
+declare class CoreRippleLikeAddress {
+  toBase58(): Promise<string>;
+}
+
+declare class CoreRippleLikeTransaction {
+  getHash(): Promise<string>;
+  getFees(): Promise<CoreAmount>;
+  getReceiver(): Promise<CoreRippleLikeAddress>;
+  getSender(): Promise<CoreRippleLikeAddress>;
+  serialize(): Promise<string>;
+  setSignature(string, string): Promise<void>;
+  setDERSignature(string): Promise<void>;
+}
+
+declare class CoreRippleLikeOperation {
+  getTransaction(): Promise<CoreRippleLikeTransaction>;
+}
+
+declare class CoreRippleLikeTransactionBuilder {
+  wipeToAddress(address: string): Promise<void>;
+  sendToAddress(amount: CoreAmount, recipient: string): Promise<void>;
+  setFees(fees: CoreAmount): Promise<void>;
+  build(): Promise<CoreRippleLikeTransaction>;
+}
+
+declare class CoreRippleLikeAccount {
+  buildTransaction(): Promise<CoreRippleLikeTransactionBuilder>;
+  broadcastRawTransaction(signed: string): Promise<string>;
+}
+
+export type OperationType = 0 | 1;
+
+declare class CoreAddress {
+  static isValid(recipient: string, currency: CoreCurrency): Promise<boolean>;
+  toString(): Promise<string>;
+  getDerivationPath(): Promise<?string>;
+}
+
 declare class CoreOperationQuery {
   complete(): Promise<CoreOperationQuery>;
   addOrder(number, boolean): Promise<CoreOperationQuery>;
@@ -259,12 +295,6 @@ declare class CoreAccountCreationInfo {
   getOwners(): Promise<string[]>;
   getIndex(): Promise<number>;
 }
-
-declare class CoreBitcoinLikeNetworkParameters {
-  getSigHash(): Promise<string>;
-  getUsesTimestampedTransaction(): Promise<boolean>;
-}
-
 declare class CoreExtendedKeyAccountCreationInfo {
   static init(
     index: number,
@@ -314,19 +344,29 @@ export interface CoreStatics {
   Address: Class<CoreAddress>;
   Amount: Class<CoreAmount>;
   BigInt: Class<CoreBigInt>;
+
   BitcoinLikeAccount: Class<CoreBitcoinLikeAccount>;
   BitcoinLikeInput: Class<CoreBitcoinLikeInput>;
   BitcoinLikeNetworkParameters: Class<CoreBitcoinLikeNetworkParameters>;
   BitcoinLikeOperation: Class<CoreBitcoinLikeOperation>;
-  EthereumLikeOperation: Class<CoreEthereumLikeOperation>;
   BitcoinLikeOutput: Class<CoreBitcoinLikeOutput>;
   BitcoinLikeTransaction: Class<CoreBitcoinLikeTransaction>;
-  EthereumLikeAddress: Class<CoreEthereumLikeAddress>;
-  EthereumLikeTransaction: Class<CoreBitcoinLikeTransaction>;
   BitcoinLikeTransactionBuilder: Class<CoreBitcoinLikeTransactionBuilder>;
+
+  EthereumLikeOperation: Class<CoreEthereumLikeOperation>;
+  EthereumLikeAddress: Class<CoreEthereumLikeAddress>;
+  EthereumLikeTransaction: Class<CoreEthereumLikeTransaction>;
   EthereumLikeAccount: Class<CoreEthereumLikeAccount>;
   EthereumLikeTransactionBuilder: Class<CoreEthereumLikeTransactionBuilder>;
   EthereumLikeTransaction: Class<CoreEthereumLikeTransaction>;
+
+  RippleLikeOperation: Class<CoreRippleLikeOperation>;
+  RippleLikeAddress: Class<CoreRippleLikeAddress>;
+  RippleLikeTransaction: Class<CoreRippleLikeTransaction>;
+  RippleLikeAccount: Class<CoreRippleLikeAccount>;
+  RippleLikeTransactionBuilder: Class<CoreRippleLikeTransactionBuilder>;
+  RippleLikeTransaction: Class<CoreRippleLikeTransaction>;
+
   ERC20LikeAccount: Class<CoreERC20LikeAccount>;
   ERC20LikeOperation: Class<CoreERC20LikeOperation>;
   ERC20Token: Class<CoreERC20Token>;
@@ -358,20 +398,29 @@ export type {
   CoreAddress,
   CoreAmount,
   CoreBigInt,
+  // bitcoin
   CoreBitcoinLikeAccount,
   CoreBitcoinLikeInput,
   CoreBitcoinLikeNetworkParameters,
   CoreBitcoinLikeOperation,
-  CoreEthereumLikeOperation,
   CoreBitcoinLikeOutput,
   CoreBitcoinLikeTransaction,
   CoreBitcoinLikeTransactionBuilder,
+  //ethereum
+  CoreEthereumLikeOperation,
   CoreEthereumLikeAccount,
   CoreEthereumLikeTransaction,
   CoreEthereumLikeTransactionBuilder,
   CoreERC20LikeAccount,
   CoreERC20LikeOperation,
   CoreERC20Token,
+  // ripple
+  CoreRippleLikeAccount,
+  CoreRippleLikeAddress,
+  CoreRippleLikeOperation,
+  CoreRippleLikeTransaction,
+  CoreRippleLikeTransactionBuilder,
+  // ...
   CoreBlock,
   CoreCurrency,
   CoreDatabaseBackend,
@@ -438,7 +487,7 @@ export const reflect = (declare: (string, Spec) => void) => {
     },
     methods: {
       updateWalletConfig: {
-        params: [null, "DynamicObject"],
+        params: [null, "DynamicObject"]
       },
       getWallet: {
         returns: "Wallet"
@@ -621,33 +670,6 @@ export const reflect = (declare: (string, Spec) => void) => {
     }
   });
 
-  declare("EthereumLikeOperation", {
-    methods: {
-      getTransaction: {
-        returns: "EthereumLikeTransaction"
-      }
-    }
-  });
-
-  declare("EthereumLikeAddress", {
-    methods: {
-      toEIP55: {}
-    }
-  });
-
-  declare("Address", {
-    statics: {
-      isValid: {
-        params: [null, "Currency"],
-        njsBuggyMethodIsNotStatic: true
-      }
-    },
-    methods: {
-      toString: {},
-      getDerivationPath: {}
-    }
-  });
-
   declare("BitcoinLikeTransactionBuilder", {
     methods: {
       wipeToAddress: {},
@@ -670,6 +692,33 @@ export const reflect = (declare: (string, Spec) => void) => {
       broadcastRawTransaction: {
         params: ["hex"]
       }
+    }
+  });
+
+  declare("BitcoinLikeNetworkParameters", {
+    njsUsesPlainObject: true,
+    methods: {
+      getSigHash: {
+        returns: "hex",
+        njsField: "SigHash"
+      },
+      getUsesTimestampedTransaction: {
+        njsField: "UsesTimestampedTransaction"
+      }
+    }
+  });
+
+  declare("EthereumLikeOperation", {
+    methods: {
+      getTransaction: {
+        returns: "EthereumLikeTransaction"
+      }
+    }
+  });
+
+  declare("EthereumLikeAddress", {
+    methods: {
+      toEIP55: {}
     }
   });
 
@@ -710,6 +759,122 @@ export const reflect = (declare: (string, Spec) => void) => {
     }
   });
 
+  declare("EthereumLikeAccount", {
+    methods: {
+      buildTransaction: {
+        returns: "EthereumLikeTransactionBuilder"
+      },
+      broadcastRawTransaction: {
+        params: ["hex"]
+      },
+      getERC20Accounts: {
+        returns: ["ERC20LikeAccount"]
+      }
+    }
+  });
+
+  declare("ERC20LikeAccount", {
+    methods: {
+      getBalance: { returns: "BigInt" },
+      getAddress: {},
+      getToken: { returns: "ERC20Token" },
+      getOperations: { returns: ["ERC20LikeOperation"] }
+    }
+  });
+
+  declare("ERC20LikeOperation", {
+    methods: {
+      getHash: {},
+      getGasPrice: { returns: "BigInt" },
+      getGasLimit: { returns: "BigInt" },
+      getUsedGas: { returns: "BigInt" },
+      getSender: {},
+      getReceiver: {},
+      getValue: { returns: "BigInt" },
+      getTime: {},
+      getOperationType: { returns: "OperationType" },
+      getStatus: {}
+    }
+  });
+
+  declare("ERC20Token", {
+    njsUsesPlainObject: true,
+    methods: {
+      getContractAddress: {
+        njsField: "contractAddress"
+      }
+    }
+  });
+
+  declare("RippleLikeAddress", {
+    methods: {
+      toBase58: {}
+    }
+  });
+
+  declare("RippleLikeOperation", {
+    methods: {
+      getTransaction: {
+        returns: "RippleLikeTransaction"
+      }
+    }
+  });
+
+  declare("RippleLikeTransaction", {
+    methods: {
+      getHash: {},
+      getFees: { returns: "Amount" },
+      getReceiver: { returns: "RippleLikeAddress" },
+      getSender: { returns: "RippleLikeAddress" },
+      serialize: { returns: "hex" },
+      setSignature: {
+        params: ["hex", "hex"]
+      },
+      setDERSignature: {
+        params: ["hex"]
+      }
+    }
+  });
+
+  declare("RippleLikeTransactionBuilder", {
+    methods: {
+      wipeToAddress: {},
+      sendToAddress: {
+        params: ["Amount"]
+      },
+      setFees: {
+        params: ["Amount"]
+      },
+      build: {
+        returns: "RippleLikeTransaction"
+      }
+    }
+  });
+
+  declare("RippleLikeAccount", {
+    methods: {
+      buildTransaction: {
+        returns: "RippleLikeTransactionBuilder"
+      },
+      broadcastRawTransaction: {
+        params: ["hex"]
+      }
+    }
+  });
+
+  declare("Address", {
+    statics: {
+      isValid: {
+        params: [null, "Currency"],
+        njsBuggyMethodIsNotStatic: true
+      }
+    },
+    methods: {
+      toString: {},
+      getDerivationPath: {}
+    }
+  });
+
   declare("OperationQuery", {
     methods: {
       complete: { returns: "OperationQuery" },
@@ -741,19 +906,6 @@ export const reflect = (declare: (string, Spec) => void) => {
       getPublicKeys: { njsField: "publicKeys", returns: ["hex"] },
       getOwners: { njsField: "owners" },
       getIndex: { njsField: "index" }
-    }
-  });
-
-  declare("BitcoinLikeNetworkParameters", {
-    njsUsesPlainObject: true,
-    methods: {
-      getSigHash: {
-        returns: "hex",
-        njsField: "SigHash"
-      },
-      getUsesTimestampedTransaction: {
-        njsField: "UsesTimestampedTransaction"
-      }
     }
   });
 
@@ -874,53 +1026,6 @@ export const reflect = (declare: (string, Spec) => void) => {
       flush: {},
       getSqlite3Backend: {
         returns: "DatabaseBackend"
-      }
-    }
-  });
-
-  declare("EthereumLikeAccount", {
-    methods: {
-      buildTransaction: {
-        returns: "EthereumLikeTransactionBuilder"
-      },
-      broadcastRawTransaction: {
-        params: ["hex"]
-      },
-      getERC20Accounts: {
-        returns: ["ERC20LikeAccount"]
-      }
-    }
-  });
-
-  declare("ERC20LikeAccount", {
-    methods: {
-      getBalance: { returns: "BigInt" },
-      getAddress: {},
-      getToken: { returns: "ERC20Token" },
-      getOperations: { returns: ["ERC20LikeOperation"] }
-    }
-  });
-
-  declare("ERC20LikeOperation", {
-    methods: {
-      getHash: {},
-      getGasPrice: { returns: "BigInt" },
-      getGasLimit: { returns: "BigInt" },
-      getUsedGas: { returns: "BigInt" },
-      getSender: {},
-      getReceiver: {},
-      getValue: { returns: "BigInt" },
-      getTime: {},
-      getOperationType: { returns: "OperationType" },
-      getStatus: {}
-    }
-  });
-
-  declare("ERC20Token", {
-    njsUsesPlainObject: true,
-    methods: {
-      getContractAddress: {
-        njsField: "contractAddress"
       }
     }
   });

@@ -78,7 +78,7 @@ from(cmd.job(options)).subscribe({
     if (log !== undefined) console.log(log);
   },
   error: error => {
-    const e = deserializeError(error);
+    const e = error instanceof Error ? error : deserializeError(error);
     if (process.env.VERBOSE) console.error(e);
     else console.error(String(e.message || e));
     process.exit(1);

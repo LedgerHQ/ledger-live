@@ -4,7 +4,7 @@ import { getKeychainEngine, getDerivationScheme } from "../derivation";
 import type { CryptoCurrency, DerivationMode } from "../types";
 import { atomicQueue } from "../promise";
 import type { Core, CoreWallet } from "./types";
-import { getCurrencyExplorer } from "../explorers";
+import { findCurrencyExplorer } from "../explorers";
 import { blockchainExplorerEndpoint } from "../api/Ledger";
 
 type F = ({
@@ -19,26 +19,26 @@ export const getOrCreateWallet: F = atomicQueue(
     const poolInstance = core.getPoolInstance();
     let wallet;
 
-    const ledgerExplorer = getCurrencyExplorer(currency);
-    const endpoint = blockchainExplorerEndpoint(currency);
-    const derivationScheme = getDerivationScheme({
-      currency,
-      derivationMode
-    });
     const keychainEngine = getKeychainEngine(derivationMode);
-
     const config = await core.DynamicObject.newInstance();
     if (keychainEngine) {
       await config.putString("KEYCHAIN_ENGINE", keychainEngine);
     }
+
+    const derivationScheme = getDerivationScheme({ currency, derivationMode });
     await config.putString("KEYCHAIN_DERIVATION_SCHEME", derivationScheme);
-    if (endpoint) {
-      await config.putString("BLOCKCHAIN_EXPLORER_API_ENDPOINT", endpoint);
+
+    const ledgerExplorer = findCurrencyExplorer(currency);
+    if (ledgerExplorer) {
+      const endpoint = blockchainExplorerEndpoint(currency);
+      if (endpoint) {
+        await config.putString("BLOCKCHAIN_EXPLORER_API_ENDPOINT", endpoint);
+      }
+      await config.putString(
+        "BLOCKCHAIN_EXPLORER_VERSION",
+        ledgerExplorer.version
+      );
     }
-    await config.putString(
-      "BLOCKCHAIN_EXPLORER_VERSION",
-      ledgerExplorer.version
-    );
 
     try {
       // check if wallet exists yet
