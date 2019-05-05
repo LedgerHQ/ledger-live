@@ -5,10 +5,8 @@ import Eth from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
 import type { CryptoCurrency, Account, TokenAccount } from "../../types";
-import type {
-  CoreCurrency,
-  CoreEthereumLikeTransaction
-} from "../../libcore/types";
+import type { CoreCurrency } from "../../libcore/types";
+import type { CoreEthereumLikeTransaction } from "./types";
 
 export async function ethereumSignTransaction({
   transport,

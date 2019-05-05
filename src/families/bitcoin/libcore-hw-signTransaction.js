@@ -4,12 +4,13 @@ import Btc from "@ledgerhq/hw-app-btc";
 import Transport from "@ledgerhq/hw-transport";
 import { isSegwitDerivationMode } from "../../derivation";
 import type { CryptoCurrency, DerivationMode, Account } from "../../types";
+import type { CoreCurrency } from "../../libcore/types";
 import type {
-  CoreCurrency,
   CoreBitcoinLikeTransaction,
   CoreBitcoinLikeInput,
   CoreBitcoinLikeOutput
-} from "../../libcore/types";
+} from "./types";
+
 import { log } from "../../logs";
 
 export async function bitcoinSignTransaction({

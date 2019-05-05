@@ -6,12 +6,8 @@ import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/errors";
 import type { TokenAccount, Account, Transaction } from "../../types";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
-import type {
-  Core,
-  CoreCurrency,
-  CoreAccount,
-  CoreEthereumLikeTransaction
-} from "../../libcore/types";
+import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
+import type { CoreEthereumLikeTransaction } from "./types";
 
 const ethereumTransferMethodID = Buffer.from("a9059cbb", "hex");
 

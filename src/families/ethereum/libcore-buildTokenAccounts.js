@@ -1,11 +1,8 @@
 // @flow
 
 import type { TokenAccount, Account } from "../../types";
-import type {
-  CoreAccount,
-  CoreEthereumLikeAccount,
-  CoreERC20LikeAccount
-} from "../../libcore/types";
+import type { CoreAccount } from "../../libcore/types";
+import type { CoreEthereumLikeAccount, CoreERC20LikeAccount } from "./types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 import { minimalOperationsBuilder } from "../../libcore/reconciliation";
 import { buildERC20Operation } from "./buildERC20Operation";
