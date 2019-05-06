@@ -16,7 +16,11 @@ import type {
   TokenCurrency
 } from "../types";
 import { getOperationAmountNumber } from "../operation";
+import { inferSubOperations } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
+
+// if you use the mock, we need this
+import "../load/tokens/ethereum/erc20";
 
 function ensureNoNegative(operations) {
   let total = BigNumber(0);
@@ -91,34 +95,37 @@ export function genOperation(
   superAccount: Account,
   account: Account | TokenAccount,
   ops: *,
-  currency: CryptoCurrency | TokenCurrency,
   rng: Prando
 ): $Exact<Operation> {
+  // $FlowFixMe
+  const ticker = account.token ? account.token.ticker : account.currency.ticker;
   const lastOp = ops[ops.length - 1];
   const date = new Date(
     (lastOp ? lastOp.date : Date.now()) -
       rng.nextInt(0, 100000000 * rng.next() * rng.next())
   );
-  const address = genAddress(currency, rng);
+  const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
   const value = BigNumber(
     Math.floor(
       rng.nextInt(0, 100000 * rng.next() * rng.next()) /
-        (tickerApproxMarketPrice[currency.ticker] ||
-          tickerApproxMarketPrice.BTC)
+        (tickerApproxMarketPrice[ticker] || tickerApproxMarketPrice.BTC)
     )
   );
   if (Number.isNaN(value)) {
-    throw new Error("invalid amount generated for " + currency.id);
+    throw new Error("invalid amount generated for " + ticker);
   }
-  return {
+  const hash = genHex(64, rng);
+  const op: $Exact<Operation> = {
     id: String(`mock_op_${ops.length}_${account.id}`),
-    hash: genHex(64, rng),
+    hash,
     type,
     value,
     fee: BigNumber(Math.round(value.toNumber() * 0.01)),
-    senders: [type !== "IN" ? genAddress(currency, rng) : address],
-    recipients: [type === "IN" ? genAddress(currency, rng) : address],
+    senders: [type !== "IN" ? genAddress(superAccount.currency, rng) : address],
+    recipients: [
+      type === "IN" ? genAddress(superAccount.currency, rng) : address
+    ],
     blockHash: genHex(64, rng),
     blockHeight:
       superAccount.blockHeight - Math.floor((Date.now() - date) / 900000),
@@ -126,6 +133,15 @@ export function genOperation(
     date,
     extra: {}
   };
+
+  // $FlowFixMe wtf
+  const { tokenAccounts } = account;
+  if (tokenAccounts) {
+    // TODO make sure tokenAccounts sometimes reuse an existing op hash from main account
+    op.subOperations = inferSubOperations(hash, tokenAccounts);
+  }
+
+  return op;
 }
 
 /**
@@ -141,7 +157,7 @@ export function genAddingOperationsInAccount(
   copy.operations = Array(count)
     .fill(null)
     .reduce(ops => {
-      const op = genOperation(copy, copy, ops, copy.currency, rng);
+      const op = genOperation(copy, copy, ops, rng);
       return ops.concat(op);
     }, copy.operations);
   copy.balance = ensureNoNegative(copy.operations);
@@ -175,7 +191,7 @@ function genTokenAccount(
   tokenAccount.operations = Array(operationsSize)
     .fill(null)
     .reduce((ops: Operation[]) => {
-      const op = genOperation(account, tokenAccount, ops, token, rng);
+      const op = genOperation(account, tokenAccount, ops, rng);
       return ops.concat(op);
     }, []);
   tokenAccount.balance = ensureNoNegative(tokenAccount.operations);
@@ -213,15 +229,15 @@ export function genAccount(
 
   if (currency.id === "ethereum") {
     const tokenCount = rng.nextInt(0, 8);
-    account.tokenAccounts = Array(tokenCount).map((_, i) =>
-      genTokenAccount(id + "_" + i, account)
-    );
+    account.tokenAccounts = Array(tokenCount)
+      .fill(null)
+      .map((_, i) => genTokenAccount(id + "_" + i, account));
   }
 
   account.operations = Array(operationsSize)
     .fill(null)
     .reduce((ops: Operation[]) => {
-      const op = genOperation(account, account, ops, currency, rng);
+      const op = genOperation(account, account, ops, rng);
       return ops.concat(op);
     }, []);
 

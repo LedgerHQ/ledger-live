@@ -238,6 +238,7 @@ export const toOperationRaw = ({
   date,
   value,
   fee,
+  subOperations, // eslint-disable-line
   ...op
 }: Operation): OperationRaw => ({
   ...op,
@@ -250,17 +251,22 @@ export const fromOperationRaw = (
   { date, value, fee, extra, ...op }: OperationRaw,
   accountId: string,
   tokenAccounts?: ?(TokenAccount[])
-): Operation => ({
-  ...op,
-  accountId,
-  date: new Date(date),
-  value: BigNumber(value),
-  fee: BigNumber(fee),
-  extra: extra || {},
-  subOperations: tokenAccounts
-    ? inferSubOperations(op.hash, tokenAccounts)
-    : undefined
-});
+): Operation => {
+  const res: $Exact<Operation> = {
+    ...op,
+    accountId,
+    date: new Date(date),
+    value: BigNumber(value),
+    fee: BigNumber(fee),
+    extra: extra || {}
+  };
+
+  if (tokenAccounts) {
+    res.subOperations = inferSubOperations(op.hash, tokenAccounts);
+  }
+
+  return res;
+};
 
 export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
   const { id, tokenId, operations, balance } = raw;
@@ -286,35 +292,78 @@ export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
 
 export function fromAccountRaw(rawAccount: AccountRaw): Account {
   const {
+    id,
+    seedIdentifier,
+    derivationMode,
+    index,
+    xpub,
+    freshAddress,
+    freshAddressPath,
+    name,
+    blockHeight,
+    endpointConfig,
     currencyId,
     unitMagnitude,
     operations,
     pendingOperations,
     lastSyncDate,
     balance,
-    tokenAccounts: tokenAccountsRaw,
-    ...acc
+    tokenAccounts: tokenAccountsRaw
   } = rawAccount;
+
   const tokenAccounts =
     tokenAccountsRaw && tokenAccountsRaw.map(fromTokenAccountRaw);
+
   const currency = getCryptoCurrencyById(currencyId);
+
   const unit =
     currency.units.find(u => u.magnitude === unitMagnitude) ||
     currency.units[0];
-  const convertOperation = op => fromOperationRaw(op, acc.id, tokenAccounts);
-  return {
-    ...acc,
+
+  const convertOperation = op => fromOperationRaw(op, id, tokenAccounts);
+
+  const res: $Exact<Account> = {
+    id,
+    seedIdentifier,
+    derivationMode,
+    index,
+    freshAddress,
+    freshAddressPath,
+    name,
+    blockHeight,
     balance: BigNumber(balance),
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     unit,
     currency,
-    lastSyncDate: new Date(lastSyncDate || 0),
-    tokenAccounts
+    lastSyncDate: new Date(lastSyncDate || 0)
   };
+
+  if (xpub) {
+    res.xpub = xpub;
+  }
+
+  if (endpointConfig) {
+    res.endpointConfig = endpointConfig;
+  }
+
+  if (tokenAccounts) {
+    res.tokenAccounts = tokenAccounts;
+  }
+
+  return res;
 }
 
 export function toAccountRaw({
+  id,
+  seedIdentifier,
+  xpub,
+  name,
+  derivationMode,
+  index,
+  freshAddress,
+  freshAddressPath,
+  blockHeight,
   currency,
   operations,
   pendingOperations,
@@ -322,17 +371,32 @@ export function toAccountRaw({
   lastSyncDate,
   balance,
   tokenAccounts,
-  subOperations, // eslint-disable-line
-  ...acc
+  endpointConfig
 }: Account): AccountRaw {
-  return {
-    ...acc,
+  const res: $Exact<AccountRaw> = {
+    id,
+    seedIdentifier,
+    name,
+    derivationMode,
+    index,
+    freshAddress,
+    freshAddressPath,
+    blockHeight,
     operations: operations.map(toOperationRaw),
     pendingOperations: pendingOperations.map(toOperationRaw),
     currencyId: currency.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
-    balance: balance.toString(),
-    tokenAccounts: tokenAccounts && tokenAccounts.map(toTokenAccountRaw)
+    balance: balance.toString()
   };
+  if (endpointConfig) {
+    res.endpointConfig = endpointConfig;
+  }
+  if (xpub) {
+    res.xpub = xpub;
+  }
+  if (tokenAccounts) {
+    res.tokenAccounts = tokenAccounts.map(toTokenAccountRaw);
+  }
+  return res;
 }

@@ -327,6 +327,7 @@ Object {
           "senders": Array [
             "0x92F67F89BF21F8C929FE056F73C22B2608C1B926",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "442112461206669800",
         },
@@ -381,6 +382,7 @@ Object {
           "senders": Array [
             "0x539B00E201E5DFB3EEA12C41FE8C33B4A9B9E448",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "508477548086195",
         },
@@ -399,6 +401,7 @@ Object {
           "senders": Array [
             "0x26A467FCFDCF47FAAD33F1870E548BB49A10B4F3",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "5978994617151474",
         },
@@ -453,6 +456,7 @@ Object {
           "senders": Array [
             "0x5ED3A682D08FFC2E72B0FC703B4FB5F89D5EEE8D",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "121105324987288060",
         },
@@ -651,6 +655,7 @@ Object {
           "senders": Array [
             "0xBA37D71E3FD964A9BD0643848FFE1FF7C0C3339F",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "377500745182613570",
         },
@@ -903,6 +908,7 @@ Object {
           "senders": Array [
             "0xE26ABD58CB3BA22EB66B34784400E3FF9A80F1DE",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "48620973822173130",
         },
@@ -1083,6 +1089,7 @@ Object {
           "senders": Array [
             "0xA7DC69B2648EF1320B8BD24971953CE93E1D61D0",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "47305945680570900",
         },
@@ -1502,6 +1509,7 @@ Object {
           "senders": Array [
             "0x113A95038DAD43BC082A3F3073853D8BB0B282D2",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "240089071239457860",
         },
@@ -1574,6 +1582,7 @@ Object {
           "senders": Array [
             "0xE03E7CAFBFFC716813035886EFE791E27205DFAF",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "158837865796994720",
         },
@@ -1610,6 +1619,7 @@ Object {
           "senders": Array [
             "0x3504D6EE247092ED8A206D803FB4146607FA37B5",
           ],
+          "subOperations": Array [],
           "type": "OUT",
           "value": "138866971753195520",
         },
@@ -1646,6 +1656,7 @@ Object {
           "senders": Array [
             "0x27F3FB2EEBDFCC1C693E416E8E0A1468E050069D",
           ],
+          "subOperations": Array [],
           "type": "IN",
           "value": "377535812599722940",
         },
@@ -1808,6 +1819,7 @@ Object {
           "senders": Array [
             "0x7A4EE50450B011671C13E14D73EAD8DEFA49711B",
           ],
+          "subOperations": Array [],
           "type": "OUT",
           "value": "160117826521487550",
         },

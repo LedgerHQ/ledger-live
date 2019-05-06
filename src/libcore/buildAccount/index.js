@@ -10,8 +10,8 @@ import type { Account, CryptoCurrency, DerivationMode } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import type { CoreWallet, CoreAccount, CoreOperation } from "../types";
 import { buildOperation } from "./buildOperation";
-import { minimalOperationsBuilder } from "../reconciliation";
 import { buildTokenAccounts } from "./buildTokenAccounts";
+import { minimalOperationsBuilder } from "../../reconciliation";
 
 export async function buildAccount({
   coreWallet,

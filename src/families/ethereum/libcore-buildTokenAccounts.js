@@ -4,7 +4,7 @@ import type { TokenAccount, Account } from "../../types";
 import type { CoreAccount } from "../../libcore/types";
 import type { CoreEthereumLikeAccount, CoreERC20LikeAccount } from "./types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
-import { minimalOperationsBuilder } from "../../libcore/reconciliation";
+import { minimalOperationsBuilder } from "../../reconciliation";
 import { buildERC20Operation } from "./buildERC20Operation";
 import { findTokenByAddress } from "../../currencies";
 
@@ -18,7 +18,6 @@ async function buildERC20TokenAccount({
     await coreTokenAccount.getBalance()
   );
   const coreOperations = await coreTokenAccount.getOperations();
-
   const id = parentAccountId + "|" + token.id;
 
   const operations = await minimalOperationsBuilder(

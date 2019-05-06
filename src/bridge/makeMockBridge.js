@@ -146,13 +146,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
         o.next({ type: "signed" });
         timeout = setTimeout(() => {
           const rng = new Prando();
-          const op = genOperation(
-            account,
-            account,
-            account.operations,
-            account.currency,
-            rng
-          );
+          const op = genOperation(account, account, account.operations, rng);
           op.type = "OUT";
           op.value = t.amount;
           op.blockHash = null;
