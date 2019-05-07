@@ -62,7 +62,7 @@ class Content extends PureComponent<Props, *> {
           >
             <CurrencyUnitValue
               showCode
-              showAllDigits={true}
+              disableRounding={true}
               unit={account.unit}
               value={amount}
               alwaysShowSign
@@ -142,7 +142,7 @@ class Content extends PureComponent<Props, *> {
               <LText style={styles.feeCounterValue} semiBold>
                 <CounterValue
                   showCode
-                  showAllDigits={true}
+                  disableRounding={true}
                   date={operation.date}
                   subMagnitude={1}
                   currency={account.currency}
