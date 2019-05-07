@@ -18,7 +18,7 @@ import NanoX from "../../icons/NanoX";
 class Paired extends PureComponent<{
   deviceId: string,
   deviceName: string,
-  onContinue: () => *,
+  onContinue: (deviceId: string) => *,
   navigation: *,
   genuine: boolean,
 }> {
@@ -30,8 +30,12 @@ class Paired extends PureComponent<{
     });
   };
 
+  onContinue = () => {
+    this.props.onContinue(this.props.deviceId);
+  };
+
   render() {
-    const { deviceId, onContinue, genuine } = this.props;
+    const { deviceId, genuine } = this.props;
     return (
       <View style={styles.root}>
         <TrackScreen category="PairDevices" name="Paired" />
@@ -68,7 +72,7 @@ class Paired extends PureComponent<{
             event="PairDevicesContinue"
             type="primary"
             title={<Trans i18nKey="PairDevices.Paired.action" />}
-            onPress={onContinue}
+            onPress={this.onContinue}
           />
         </View>
       </View>
