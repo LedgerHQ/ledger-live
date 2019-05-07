@@ -197,6 +197,41 @@ const sortMethod: { [_: SortMethod]: (SortAccountsParam) => string[] } = {
       .map(a => a.id)
 };
 
+export const reorderTokenAccountsByCountervalues = (rates: {
+  [ticker: string]: number // rates by ticker (on the same countervalue reference)
+}) => (tokenAccounts: TokenAccount[]): TokenAccount[] => {
+  const meta = tokenAccounts
+    .map((ta, index) => ({
+      price: ta.balance.times(rates[ta.token.ticker] || 0).toNumber(),
+      ticker: ta.token.ticker,
+      index
+    }))
+    .sort((a, b) => {
+      if (a.price === b.price) {
+        return a.ticker.localeCompare(b.ticker);
+      }
+      return b.price - a.price;
+    });
+  if (meta.every((m, i) => m.index === i)) {
+    // account ordering is preserved, we keep the same array reference (this should happen most of the time)
+    return tokenAccounts;
+  }
+  // otherwise, need to reorder
+  return meta.map(m => tokenAccounts[m.index]);
+};
+
+// high level utility that uses reorderTokenAccountsByCountervalues and keep reference if unchanged
+export const reorderAccountByCountervalues = (rates: {
+  [ticker: string]: number // rates by ticker (on the same countervalue reference)
+}) => (account: Account): Account => {
+  if (!account.tokenAccounts) return account;
+  const tokenAccounts = reorderTokenAccountsByCountervalues(rates)(
+    account.tokenAccounts
+  );
+  if (tokenAccounts === account.tokenAccounts) return account;
+  return { ...account, tokenAccounts };
+};
+
 export function sortAccounts(param: SortAccountsParam) {
   const [order, sort] = param.orderAccounts.split("|");
   if (order === "name" || order === "balance") {

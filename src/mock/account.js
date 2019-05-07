@@ -170,7 +170,8 @@ export function genAddingOperationsInAccount(
  */
 type GenAccountOptions = {
   operationsSize?: number,
-  currency?: CryptoCurrency
+  currency?: CryptoCurrency,
+  tokenAccountsCount?: number
 };
 
 function genTokenAccount(
@@ -228,7 +229,7 @@ export function genAccount(
   };
 
   if (currency.id === "ethereum") {
-    const tokenCount = rng.nextInt(0, 8);
+    const tokenCount = opts.tokenAccountsCount || rng.nextInt(0, 8);
     account.tokenAccounts = Array(tokenCount)
       .fill(null)
       .map((_, i) => genTokenAccount(id + "_" + i, account));
