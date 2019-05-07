@@ -1,16 +1,20 @@
 // @flow
 
 import type { Unit } from "../types/currencies";
+import { getSeparators } from "./localeUtility";
 
 const numbers = "0123456789";
 
 export const sanitizeValueString = (
   unit: Unit,
-  valueString: string
+  valueString: string,
+  locale?: string
 ): {
   display: string,
   value: string
 } => {
+  const s = getSeparators(locale || "en-US");
+  const dot = s.decimal || ".";
   let display = "";
   let value = "";
   let decimals = -1;
@@ -33,7 +37,7 @@ export const sanitizeValueString = (
       }
       if (i === 0) display = "0";
       decimals = 0;
-      display += ".";
+      display += dot;
     }
   }
   for (let i = Math.max(0, decimals); i < unit.magnitude; ++i) {
