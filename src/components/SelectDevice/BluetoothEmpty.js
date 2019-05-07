@@ -2,22 +2,15 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { withNavigation } from "react-navigation";
-
 import { Trans } from "react-i18next";
 import ConnectNanoXIllustration from "../../icons/ConnectNanoXIllustration";
 import Button from "../Button";
 
 type Props = {
-  navigation: *,
+  onPairNewDevice: () => void,
 };
 
 class BluetoothEmpty extends PureComponent<Props> {
-  onPairNewDevice = () => {
-    const { navigation } = this.props;
-    navigation.navigate("PairDevices");
-  };
-
   render() {
     return (
       <View>
@@ -26,7 +19,7 @@ class BluetoothEmpty extends PureComponent<Props> {
           event="PairDevice"
           type="primary"
           title={<Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />}
-          onPress={this.onPairNewDevice}
+          onPress={this.props.onPairNewDevice}
         />
       </View>
     );
@@ -40,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withNavigation(BluetoothEmpty);
+export default BluetoothEmpty;
