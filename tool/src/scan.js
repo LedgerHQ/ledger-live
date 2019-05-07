@@ -84,11 +84,10 @@ export const inferManagerApp = keyword => {
     const currency = getCurrencyByKeyword(keyword);
     if (!currency || !currency.managerAppName) return keyword;
     return currency.managerAppName;
-  }
-  catch (e) {
+  } catch (e) {
     return keyword;
   }
-}
+};
 
 export const inferCurrency = ({ device, currency, file, xpub }) => {
   if (currency) {
@@ -123,17 +122,18 @@ export function scan(arg) {
       if (!cur) throw new Error("--currency is required");
 
       if (typeof xpub === "string") {
+        const derivationMode = scheme || "";
         const account: Account = {
           name: cur.name,
           xpub,
           seedIdentifier: xpub,
-          id: `libcore:1:bitcoin:${xpub}:`,
-          derivationMode: "",
+          id: `libcore:1:bitcoin:${xpub}:${derivationMode}`,
+          derivationMode,
           currency: cur,
           unit: cur.units[0],
           index: 0,
           freshAddress: "",
-          freshAddressPath: "44'/0'/0'/0/0",
+          freshAddressPath: "",
           lastSyncDate: new Date(0),
           blockHeight: 0,
           balance: new BigNumber(0),
