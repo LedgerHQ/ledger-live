@@ -39,7 +39,8 @@ class FirmwareUpdateFailure extends Component<Props, State> {
   };
 
   onClose = () => {
-    this.props.navigation.dangerouslyGetParent().goBack();
+    const n = this.props.navigation.dangerouslyGetParent();
+    if (n) n.goBack();
   };
 
   render() {

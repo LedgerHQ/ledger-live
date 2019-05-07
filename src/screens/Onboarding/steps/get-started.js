@@ -132,7 +132,7 @@ class Row extends PureComponent<RowProps> {
         style={styles.row}
       >
         <View style={styles.rowIcon}>
-          {Icon && <Icon size={16} color={colors.live} />}
+          {Icon ? <Icon size={16} color={colors.live} /> : null}
         </View>
         <LText style={styles.label} semiBold>
           {label}

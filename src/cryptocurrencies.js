@@ -35,7 +35,9 @@ const supported: CryptoCurrencyIds[] = [
   "zencash",
 ];
 
-export const listCryptoCurrencies = (withDevCrypto?: boolean) =>
+export const listCryptoCurrencies = (
+  withDevCrypto?: boolean,
+): CryptoCurrency[] =>
   getFullListSortedCryptoCurrenciesSync().filter(
     c => supported.includes(c.id) && (withDevCrypto || !c.isTestnetFor),
   );

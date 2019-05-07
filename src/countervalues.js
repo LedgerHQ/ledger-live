@@ -1,6 +1,7 @@
 // @flow
 /* eslint import/no-cycle: 0 */
-import { AppState, NetInfo } from "react-native";
+import { AppState } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
 import { createSelector } from "reselect";
 import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
@@ -87,6 +88,7 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
   };
 };
 
+// $FlowFixMe
 const CounterValues = createCounterValues({
   log: __DEV__
     ? (...args) => console.log("CounterValues:", ...args) // eslint-disable-line no-console

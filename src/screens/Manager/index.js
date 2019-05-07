@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet, Image } from "react-native";
+// $FlowFixMe
 import { withNavigationFocus, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";

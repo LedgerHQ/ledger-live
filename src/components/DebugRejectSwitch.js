@@ -8,7 +8,7 @@ import Config from "react-native-config";
 import { flatMap } from "rxjs/operators";
 import LText from "./LText";
 
-export const rejections = new Subject();
+export const rejections: Subject<void> = new Subject();
 
 const defaultErrorCreator = () => new Error("DebugRejectSwitch");
 

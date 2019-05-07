@@ -31,7 +31,8 @@ class ToggleManagerEdition extends Component<Props> {
     const editMode = !navigation.getParam("editMode");
     navigation.setParams({ editMode });
     if (editMode) {
-      navigation.dangerouslyGetParent().setParams({ editMode });
+      const n = navigation.dangerouslyGetParent();
+      if (n) n.setParams({ editMode });
     }
   };
 

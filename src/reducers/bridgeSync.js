@@ -49,6 +49,7 @@ export const accountSyncStateSelector = (
   o: { accountId: string },
 ): AsyncState => syncStateLocalSelector(bridgeSyncSelector(s), o);
 
+// $FlowFixMe
 export const globalSyncStateSelector = createSelector(
   accountsSelector,
   bridgeSyncSelector,

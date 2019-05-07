@@ -40,13 +40,15 @@ type Item = {
   mode: "create" | "patch" | "id" | "unsupported",
 };
 
+type Nav = NavigationScreenProp<{
+  params: {
+    result: Result,
+    onFinish?: (NavigationScreenProp<*>) => void,
+  },
+}>;
+
 type Props = {
-  navigation: NavigationScreenProp<{
-    params: {
-      result: Result,
-      onFinish?: (NavigationScreenProp<*>) => void,
-    },
-  }>,
+  navigation: Nav,
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
@@ -67,10 +69,12 @@ const itemModeDisplaySort = {
   unsupported: 4,
 };
 
-const BackButton = ({ navigation }: { navigation: NavigationScreenProp }) => (
+const BackButton = ({ navigation }: { navigation: Nav }) => (
   <HeaderBackButton
     tintColor={colors.grey}
-    onPress={() => navigation.replace("ScanAccounts")}
+    onPress={() => {
+      if (navigation.replace) navigation.replace("ScanAccounts");
+    }}
   >
     <HeaderBackImage />
   </HeaderBackButton>
@@ -97,7 +101,7 @@ class DisplayResult extends Component<Props, State> {
 
   onRetry = () => {
     const { navigation } = this.props;
-    navigation.replace("ScanAccounts");
+    if (navigation.replace) navigation.replace("ScanAccounts");
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {

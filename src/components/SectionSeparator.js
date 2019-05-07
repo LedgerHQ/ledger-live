@@ -10,7 +10,7 @@ type Props = {
   lineColor?: string,
   text?: React$Node,
   textStyle?: string,
-  style?: {},
+  style?: *,
 };
 
 export default class SectionSeparator extends Component<Props> {

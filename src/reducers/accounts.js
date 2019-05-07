@@ -66,21 +66,25 @@ export const exportSelector = (s: *) => ({
 
 export const accountsSelector = (s: *): Account[] => s.accounts.active;
 
+// $FlowFixMe
 export const accountsCountSelector = createSelector(
   accountsSelector,
   acc => acc.length,
 );
 
+// $FlowFixMe
 export const currenciesSelector = createSelector(accountsSelector, acc =>
   uniq(acc.map(a => a.currency)),
 );
 
+// $FlowFixMe
 export const accountScreenSelector = createSelector(
   accountsSelector,
   (_, { navigation }) => navigation.state.params.accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 
+// $FlowFixMe
 export const accountSelector = createSelector(
   accountsSelector,
   (_, { accountId }) => accountId,
@@ -96,11 +100,13 @@ const isUpToDateAccount = a => {
   return !outdated;
 };
 
+// $FlowFixMe
 export const isUpToDateAccountSelector = createSelector(
   accountSelector,
   isUpToDateAccount,
 );
 
+// $FlowFixMe
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.every(isUpToDateAccount),
 );

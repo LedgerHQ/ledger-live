@@ -27,8 +27,10 @@ import type { T } from "../../types/common";
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    transaction: Transaction,
+    params: {
+      accountId: string,
+      transaction: Transaction,
+    },
   }>,
   t: T,
 };

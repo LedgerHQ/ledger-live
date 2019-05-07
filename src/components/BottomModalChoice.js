@@ -41,7 +41,9 @@ export default class BottomModalChoice extends PureComponent<{
         event={event}
         eventProperties={eventProperties}
       >
-        <View style={styles.left}>{Icon && <IconWrapper Icon={Icon} />}</View>
+        <View style={styles.left}>
+          {Icon ? <IconWrapper Icon={Icon} /> : null}
+        </View>
         <View style={styles.body}>
           <LText style={styles.title} semiBold>
             {title}

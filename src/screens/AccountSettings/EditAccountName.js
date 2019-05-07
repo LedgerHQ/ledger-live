@@ -23,9 +23,12 @@ export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
 type Props = {
   navigation: NavigationScreenProp<{
-    accountId?: string,
-    accountName?: string,
-    onAccountNameChange?: string => void,
+    params: {
+      account: *,
+      accountId?: string,
+      accountName?: string,
+      onAccountNameChange: (string, *) => void,
+    },
   }>,
   updateAccount: Function,
   account: Account,

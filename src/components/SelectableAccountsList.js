@@ -43,7 +43,7 @@ type ListProps = {
   style?: *,
   index: number,
   showHint: boolean,
-  onAccountNameChange: (name: string, changedAccount: Account) => void,
+  onAccountNameChange?: (name: string, changedAccount: Account) => void,
 };
 
 class SelectableAccountsList extends Component<ListProps> {
@@ -86,14 +86,14 @@ class SelectableAccountsList extends Component<ListProps> {
     const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
     return (
       <View style={[styles.root, style]}>
-        {header && (
+        {header ? (
           <Header
             text={header}
             areAllSelected={areAllSelected}
             onSelectAll={onSelectAll ? this.onSelectAll : undefined}
             onUnselectAll={onUnselectAll ? this.onUnselectAll : undefined}
           />
-        )}
+        ) : null}
         {accounts.map((account, rowIndex) => (
           <SelectableAccount
             navigation={navigation}
@@ -108,7 +108,7 @@ class SelectableAccountsList extends Component<ListProps> {
             onPress={onPressAccount}
           />
         ))}
-        {accounts.length === 0 && EmptyState && <EmptyState />}
+        {accounts.length === 0 && EmptyState ? <EmptyState /> : null}
       </View>
     );
   }
@@ -124,7 +124,7 @@ class SelectableAccount extends PureComponent<
     rowIndex: number,
     listIndex: number,
     navigation: NavigationScreenProp<*>,
-    onAccountNameChange: (name: string, changedAccount: Account) => void,
+    onAccountNameChange?: (name: string, changedAccount: Account) => void,
   },
   { stopAnimation: boolean },
 > {
@@ -137,7 +137,7 @@ class SelectableAccount extends PureComponent<
     if (onPress) onPress(account);
   };
 
-  panResponder: PanResponder;
+  panResponder: *;
   swipeableRow: Swipeable;
 
   updateRef = ref => {
@@ -171,6 +171,7 @@ class SelectableAccount extends PureComponent<
 
   editAccountName = () => {
     const { account, navigation, onAccountNameChange } = this.props;
+    if (!onAccountNameChange) return;
     swipedAccountSubject.next({ row: -1, list: -1 });
     navigation.navigate("EditAccountName", {
       onAccountNameChange,

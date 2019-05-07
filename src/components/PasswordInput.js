@@ -9,7 +9,7 @@ import colors from "../colors";
 type Props = {
   secureTextEntry: boolean,
   onChange: string => void,
-  onSubmit: string => void,
+  onSubmit: () => void,
   toggleSecureTextEntry: () => void,
   placeholder: string,
   autoFocus?: boolean,

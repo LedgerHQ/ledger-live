@@ -28,7 +28,8 @@ class RemoveDeviceButton extends PureComponent<Props> {
   opacity: * = new Animated.Value(0);
 
   toggleEditMode = () => {
-    this.props.navigation.dangerouslyGetParent().setParams({ editMode: false });
+    const n = this.props.navigation.dangerouslyGetParent();
+    if (n) n.setParams({ editMode: false });
     this.props.navigation.setParams({ editMode: false });
   };
 

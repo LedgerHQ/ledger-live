@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
+// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -22,8 +23,10 @@ import { track } from "../../analytics";
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    transaction: Transaction,
+    params: {
+      accountId: string,
+      transaction: Transaction,
+    },
   }>,
   t: T,
 };

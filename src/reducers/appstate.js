@@ -32,6 +32,7 @@ export const isConnectedSelector = (state: State) => state.appstate.isConnected;
 
 const globalNetworkDown = new NetworkDown();
 
+// $FlowFixMe
 export const networkErrorSelector = createSelector(
   isConnectedSelector,
   isConnected => (!isConnected ? globalNetworkDown : null),

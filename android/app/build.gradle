@@ -109,7 +109,11 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+
+     compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "com.ledger.live"
@@ -167,45 +171,45 @@ android {
             }
         }
     }
-}
 
-configurations.all {
-    resolutionStrategy {
-        eachDependency { DependencyResolveDetails details ->
-            if (details.requested.name == 'android-jsc') {
-                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r236355'
-            }
-        }
+    // As required by https://github.com/react-native-community/jsc-android-buildscripts#for-react-native-version-059
+    packagingOptions {
+        pickFirst '**/libjsc.so'
+        pickFirst '**/libc++_shared.so'
     }
 }
 
 dependencies {
-    compile project(':lottie-react-native')
-    compile project(':react-native-extra-dimensions-android')
-    compile project(':@segment_analytics-react-native')
-    compile project(':react-native-keychain')
-    compile project(':react-native-android-location-services-dialog-box')
-    compile project(':react-native-randombytes')
-    compile project(':react-native-gesture-handler')
-    compile project(':react-native-open-settings')
-    compile project(':react-native-screens')
-    compile project(':react-native-config')
-    compile project(':react-native-svg')
-    compile project(':@ledgerhq_react-native-hid')
-    compile project(':react-native-locale')
-    compile project(':react-native-sentry')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-touch-id')
-    compile project(':react-native-ble-plx')
-    compile (project(':react-native-camera')) {
+    // Make sure to keep android-jsc as the first
+    implementation "org.webkit:android-jsc-intl:r241213"
+    implementation project(':react-native-vector-icons')
+    implementation project(':@react-native-community_netinfo')
+    implementation project(':lottie-react-native')
+    implementation project(':react-native-extra-dimensions-android')
+    implementation project(':@segment_analytics-react-native')
+    implementation project(':react-native-keychain')
+    implementation project(':react-native-android-location-services-dialog-box')
+    implementation project(':react-native-randombytes')
+    implementation project(':react-native-gesture-handler')
+    implementation project(':react-native-open-settings')
+    implementation project(':react-native-screens')
+    implementation project(':react-native-config')
+    implementation project(':react-native-svg')
+    implementation project(':@ledgerhq_react-native-hid')
+    implementation project(':react-native-locale')
+    implementation project(':react-native-sentry')
+    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-touch-id')
+    implementation project(':react-native-ble-plx')
+    implementation (project(':react-native-camera')) {
         exclude group: "com.google.android.gms"
-        compile 'com.android.support:exifinterface:27.+'
-        compile ('com.google.android.gms:play-services-vision:12.0.1') {
+        implementation 'com.android.support:exifinterface:27.+'
+        implementation ('com.google.android.gms:play-services-vision:12.0.1') {
             force = true
         }
     }
-    compile project(':react-native-version-number')
-    compile project(':react-native-ledger-core')
+    implementation project(':react-native-version-number')
+    implementation project(':react-native-ledger-core')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules

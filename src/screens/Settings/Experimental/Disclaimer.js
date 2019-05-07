@@ -1,5 +1,4 @@
 // @flow
-// $FlowFixMe
 import React, { memo } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
@@ -47,4 +46,5 @@ const styles = StyleSheet.create({
   },
 });
 
+// $FlowFixMe
 export default memo(Disclaimer);

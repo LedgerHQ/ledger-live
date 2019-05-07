@@ -224,6 +224,7 @@ export const exportSelector = storeSelector;
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
+// $FlowFixMe
 export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
@@ -232,6 +233,7 @@ export const counterValueCurrencySelector = createSelector(
 const counterValueExchangeLocalSelector = (s: SettingsState) =>
   s.counterValueExchange;
 
+// $FlowFixMe
 export const counterValueExchangeSelector = createSelector(
   storeSelector,
   counterValueExchangeLocalSelector,
@@ -256,18 +258,22 @@ export const currencySettingsSelector = (
   ...state.settings.currenciesSettings[currency.id],
 });
 
+// $FlowFixMe
 export const privacySelector = createSelector(storeSelector, s => s.privacy);
 
+// $FlowFixMe
 export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
 );
 
+// $FlowFixMe
 export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
 );
 
+// $FlowFixMe
 export const experimentalUSBEnabledSelector = createSelector(
   storeSelector,
   s => s.experimentalUSBEnabled,
@@ -278,6 +284,7 @@ export const currencySettingsForAccountSelector = (
   { account }: { account: Account },
 ) => currencySettingsSelector(s, { currency: account.currency });
 
+// $FlowFixMe
 export const exchangeSettingsForAccountSelector = createSelector(
   currencySettingsForAccountSelector,
   settings => settings.exchange,

@@ -31,6 +31,7 @@ const INITIAL_CONTEXT: $Shape<OnboardingContextType> = {
   deviceModelId: "nanoX",
 };
 
+// $FlowFixMe
 const OnboardingContext = createContext(INITIAL_CONTEXT);
 
 const getStepForState = state => getStep(state.mode, state.firstTimeOnboarding);
@@ -83,10 +84,10 @@ export class OnboardingContextProvider extends PureComponent<
   setOnboardingDeviceModel: SetOnboardingDeviceModelType = deviceModelId =>
     new Promise(resolve => this.setState({ deviceModelId }, resolve));
 
-  setShowWelcome = (showWelcome: boolean) =>
+  setShowWelcome = (showWelcome: boolean): Promise<void> =>
     new Promise(r => this.setState({ showWelcome }, r));
 
-  setFirstTimeOnboarding = (firstTimeOnboarding: boolean) =>
+  setFirstTimeOnboarding = (firstTimeOnboarding: boolean): Promise<void> =>
     new Promise(r => this.setState({ firstTimeOnboarding }, r));
 
   navigate = (navigation: NavigationScreenProp<*>, index: number) => {
@@ -106,7 +107,7 @@ export class OnboardingContextProvider extends PureComponent<
     }
   };
 
-  resetCurrentStep = () =>
+  resetCurrentStep = (): Promise<void> =>
     new Promise(resolve => {
       this.setState(
         state => ({

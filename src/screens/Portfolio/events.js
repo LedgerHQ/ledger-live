@@ -2,4 +2,4 @@
 
 import { Subject } from "rxjs";
 
-export const scrollToTopIntent = new Subject();
+export const scrollToTopIntent: Subject<*> = new Subject();

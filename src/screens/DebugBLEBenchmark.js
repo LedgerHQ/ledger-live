@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component, PureComponent } from "react";
-import { View, Slider } from "react-native";
+import { View } from "react-native";
+import Slider from "react-native-slider";
 import { from } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import * as shape from "d3-shape";

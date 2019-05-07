@@ -14,7 +14,10 @@ class Placeholder extends PureComponent<{
     const { width, containerHeight, style } = this.props;
     return (
       <View
-        style={[styles.root, containerHeight && { height: containerHeight }]}
+        style={[
+          styles.root,
+          containerHeight ? { height: containerHeight } : null,
+        ]}
       >
         <View style={[styles.inner, { width: width || 100 }, style]} />
       </View>

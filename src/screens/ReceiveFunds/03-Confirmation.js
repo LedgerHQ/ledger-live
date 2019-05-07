@@ -15,6 +15,7 @@ import ReactNativeModal from "react-native-modal";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import type { DeviceModelId } from "@ledgerhq/devices";
 
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -45,7 +46,8 @@ type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
     deviceId: string,
-    modelId: string,
+    modelId: DeviceModelId,
+    wired: boolean,
     allowNavigation?: boolean,
   },
 }>;
@@ -70,7 +72,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 class ReceiveConfirmation extends Component<Props, State> {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = ({ navigation }: { navigation: Navigation }) => {
     const options: any = {
       headerTitle: (
         <StepHeader
@@ -107,7 +109,8 @@ class ReceiveConfirmation extends Component<Props, State> {
     const deviceId = navigation.getParam("deviceId");
 
     if (deviceId) {
-      navigation.dangerouslyGetParent().setParams({ allowNavigation: false });
+      const n = navigation.dangerouslyGetParent();
+      if (n) n.setParams({ allowNavigation: false });
       this.verifyOnDevice(deviceId);
     } else {
       navigation.setParams({ allowNavigation: true });
@@ -144,7 +147,8 @@ class ReceiveConfirmation extends Component<Props, State> {
       complete: () => {
         this.setState({ verified: true });
         navigation.setParams({ allowNavigation: true });
-        navigation.dangerouslyGetParent().setParams({ allowNavigation: true });
+        const n = navigation.dangerouslyGetParent();
+        if (n) n.setParams({ allowNavigation: true });
       },
       error: error => {
         if (error && error.name !== "UserRefusedAddress") {
@@ -152,7 +156,8 @@ class ReceiveConfirmation extends Component<Props, State> {
         }
         this.setState({ error, isModalOpened: true });
         navigation.setParams({ allowNavigation: true });
-        navigation.dangerouslyGetParent().setParams({ allowNavigation: true });
+        const n = navigation.dangerouslyGetParent();
+        if (n) n.setParams({ allowNavigation: true });
       },
     });
   };
@@ -189,7 +194,7 @@ class ReceiveConfirmation extends Component<Props, State> {
     }
   };
 
-  render(): React$Node {
+  render() {
     const { account, navigation, readOnlyModeEnabled } = this.props;
     const { verified, error, isModalOpened, onModalHide, zoom } = this.state;
     const { width } = getWindowDimensions();
