@@ -40,7 +40,7 @@ if (process.env.DEBUG_COMM_HTTP_PROXY) {
   const Tr = createTransportHttp(process.env.DEBUG_COMM_HTTP_PROXY.split("|"));
   registerTransportModule({
     id: "http",
-    open: () => retry(()=>Tr.create()),
+    open: () => retry(() => Tr.create(3000, 5000)),
     disconnect: () => Promise.resolve()
   });
 }

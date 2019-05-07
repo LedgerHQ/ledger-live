@@ -4,6 +4,7 @@
 import "babel-polyfill";
 import "./live-common-setup";
 
+import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
 import commands from "./commands";
@@ -76,7 +77,8 @@ from(cmd.job(options)).subscribe({
   next: log => {
     if (log !== undefined) console.log(log);
   },
-  error: e => {
+  error: error => {
+    const e = error instanceof Error ? error : deserializeError(error);
     if (process.env.VERBOSE) console.error(e);
     else console.error(String(e.message || e));
     process.exit(1);

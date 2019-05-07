@@ -9,10 +9,9 @@ import {
 import type { Account, CryptoCurrency, DerivationMode } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import type { CoreWallet, CoreAccount, CoreOperation } from "../types";
-import { log } from "../../logs";
 import { buildOperation } from "./buildOperation";
-import { minimalOperationsBuilder } from "../reconciliation";
 import { buildTokenAccounts } from "./buildTokenAccounts";
+import { minimalOperationsBuilder } from "../../reconciliation";
 
 export async function buildAccount({
   coreWallet,
@@ -53,19 +52,9 @@ export async function buildAccount({
     coreFreshAddress.toString(),
     coreFreshAddress.getDerivationPath()
   ]);
-  if (!freshAddressPath) {
-    log(
-      "libcore",
-      "freshAddressPath=" +
-        String(freshAddressPath) +
-        " freshAddress=" +
-        String(freshAddressStr)
-    );
-    throw new Error("expected freshAddressPath");
-  }
   const freshAddress = {
     str: freshAddressStr,
-    path: `${accountPath}/${freshAddressPath}`
+    path: freshAddressPath ? `${accountPath}/${freshAddressPath}` : accountPath
   };
 
   const name =
@@ -92,6 +81,13 @@ export async function buildAccount({
     derivationMode
   });
 
+  const tokenAccounts = await buildTokenAccounts({
+    currency,
+    coreAccount,
+    accountId,
+    existingAccount
+  });
+
   const operations = await minimalOperationsBuilder(
     (existingAccount && existingAccount.operations) || [],
     coreOperations,
@@ -99,16 +95,10 @@ export async function buildAccount({
       buildOperation({
         coreOperation,
         accountId,
-        currency
+        currency,
+        contextualTokenAccounts: tokenAccounts
       })
   );
-
-  const tokenAccounts = await buildTokenAccounts({
-    currency,
-    coreAccount,
-    accountId,
-    existingAccount
-  });
 
   const account: $Exact<Account> = {
     id: accountId,

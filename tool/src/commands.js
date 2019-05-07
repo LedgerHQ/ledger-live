@@ -201,13 +201,15 @@ const all = {
         name: "install",
         alias: "i",
         type: String,
-        desc: "install an application by its name"
+        desc: "install an application by its name",
+        multiple: true
       },
       {
         name: "uninstall",
         alias: "u",
         type: String,
-        desc: "uninstall an application by its name"
+        desc: "uninstall an application by its name",
+        multiple: true
       },
       {
         name: "open",
@@ -223,37 +225,50 @@ const all = {
       }
     ],
     job: ({ device, verbose, install, uninstall, open, quit }) =>
-      withDevice(device || "")(t =>
-        quit
-          ? from(quitApp(t))
-          : open
-          ? from(openApp(t, inferManagerApp(open)))
-          : from(getDeviceInfo(t)).pipe(
-              mergeMap(deviceInfo =>
-                from(manager.getAppsList(deviceInfo, true)).pipe(
-                  mergeMap(list => {
-                    const cmd = uninstall ? uninstallApp : installApp;
+      withDevice(device || "")(t => {
+        if (quit) return from(quitApp(t));
+        if (open) return from(openApp(t, inferManagerApp(open)));
+
+        return from(getDeviceInfo(t)).pipe(
+          mergeMap(deviceInfo =>
+            from(manager.getAppsList(deviceInfo, true)).pipe(
+              mergeMap(list =>
+                concat(
+                  ...(uninstall || []).map(application => {
                     const { targetId } = deviceInfo;
-                    const application = install || uninstall;
-                    if (!application) {
-                      throw new Error("--install or --uninstall required");
-                    }
                     const app = list.find(
                       item =>
-                        item.name.toLowerCase() === application.toLowerCase()
+                        item.name.toLowerCase() ===
+                        inferManagerApp(application).toLowerCase()
                     );
                     if (!app) {
                       throw new Error(
                         "application '" + application + "' not found"
                       );
                     }
-                    return cmd(t, targetId, app);
+                    return uninstallApp(t, targetId, app);
+                  }),
+                  ...(install || []).map(application => {
+                    const { targetId } = deviceInfo;
+                    const app = list.find(
+                      item =>
+                        item.name.toLowerCase() ===
+                        inferManagerApp(application).toLowerCase()
+                    );
+                    if (!app) {
+                      throw new Error(
+                        "application '" + application + "' not found"
+                      );
+                    }
+                    return installApp(t, targetId, app);
                   })
                 )
-              ),
-              verbose ? map(a => a) : ignoreElements()
+              )
             )
-      )
+          ),
+          verbose ? map(a => a) : ignoreElements()
+        );
+      })
   },
 
   validRecipient: {

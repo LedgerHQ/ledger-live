@@ -7,6 +7,7 @@
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
   "dependencies": {
+    "@ledgerhq/errors": "^4.55.0",
     "@ledgerhq/hw-transport-http": "^4.54.0",
     "@ledgerhq/hw-transport-node-hid": "^4.54.0",
     "@ledgerhq/ledger-core": "^2.3.0-beta.5",

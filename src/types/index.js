@@ -1,7 +1,5 @@
 // @flow
 
-import type { BigNumber } from "bignumber.js";
-
 import type {
   Currency,
   Unit,
@@ -35,28 +33,31 @@ import type {
   Portfolio
 } from "./portfolio";
 
-export type { DerivationMode };
-
-export type { CryptoCurrencyConfig, CryptoCurrencyObjMap, CryptoCurrencyIds };
-
-export type { Account, AccountRaw, TokenAccount, TokenAccountRaw };
-
-export type { Operation, OperationRaw, OperationType };
+import type { Transaction } from "./transaction";
 
 export type {
+  DerivationMode,
+  CryptoCurrencyConfig,
+  CryptoCurrencyObjMap,
+  CryptoCurrencyIds,
+  Account,
+  AccountRaw,
+  TokenAccount,
+  TokenAccountRaw,
+  Operation,
+  OperationRaw,
+  OperationType,
   TokenCurrency,
   Currency,
   Unit,
   FiatCurrency,
   CryptoCurrency,
-  ExplorerView
-};
-
-export type {
+  ExplorerView,
   BalanceHistory,
   BalanceHistoryWithCountervalue,
   PortfolioRange,
-  Portfolio
+  Portfolio,
+  Transaction
 };
 
 /**
@@ -82,15 +83,4 @@ export type DailyOperations = {
   sections: DailyOperationsSection[],
   // Is the sections complete? means there is no more operations to pull
   completed: boolean
-};
-
-export type Transaction = {
-  recipient: string,
-  amount: ?(BigNumber | string),
-  useAllAmount?: boolean,
-  // bitcoin
-  feePerByte?: ?(BigNumber | string),
-  // ethereum
-  gasPrice?: BigNumber | string,
-  gasLimit?: BigNumber | string
 };

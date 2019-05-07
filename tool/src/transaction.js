@@ -4,6 +4,18 @@ import { BigNumber } from "bignumber.js";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
 
+const inferAmount = ({ units }, str) => {
+  const lowerCase = str.toLowerCase();
+  for (let i = 0; i < units.length; i++) {
+    const unit = units[i];
+    const code = unit.code.toLowerCase();
+    if (lowerCase.includes(code)) {
+      return parseCurrencyUnit(unit, lowerCase.replace(code, ""));
+    }
+  }
+  return parseCurrencyUnit(units[0], str);
+};
+
 export const inferTransactionOpts = [
   {
     name: "self-transaction",
@@ -29,7 +41,8 @@ export const inferTransactionOpts = [
   {
     name: "gasPrice",
     type: String,
-    desc: "how much gasPrice in WEI unit! default is 1000000000"
+    desc:
+      "how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)"
   },
   {
     name: "gasLimit",
@@ -53,9 +66,7 @@ export async function inferTransaction(account, opts) {
         }
       : account.currency.family === "ethereum"
       ? {
-          gasPrice: new BigNumber(
-            opts.gasPrice === undefined ? 1000000000 : opts.gasPrice
-          ),
+          gasPrice: inferAmount(account.currency, opts.gasPrice || "2gwei"),
           gasLimit: new BigNumber(
             opts.gasLimit === undefined ? 0 : opts.gasLimit
           )
@@ -72,8 +83,8 @@ export async function inferTransaction(account, opts) {
     res = {
       transaction: {
         amount: opts.amount
-          ? parseCurrencyUnit(account.unit, opts.amount)
-          : parseCurrencyUnit(account.unit, "0.001"),
+          ? inferAmount(account.currency, opts.amount)
+          : inferAmount(account.currency, "0.001"),
         recipient: account.freshAddress,
         ...tShared
       }
@@ -86,7 +97,7 @@ export async function inferTransaction(account, opts) {
       transaction: {
         amount: tShared.useAllAmount
           ? BigNumber(0)
-          : parseCurrencyUnit(account.unit, opts.amount),
+          : inferAmount(account.currency, opts.amount),
         recipient: opts.recipient,
         ...tShared
       }

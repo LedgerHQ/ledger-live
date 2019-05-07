@@ -2,6 +2,7 @@ src/__tests__
 src/partners/icons/*/*.js
 src/data/icons
 
-src/libcore/types.js
+src/libcore/types/*.js
+src/families/*/types.js
 src/libcore/platforms/*.js
 src/generated

@@ -5,12 +5,8 @@ import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/errors";
 import type { Account, Transaction } from "../../types";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
-import type {
-  Core,
-  CoreCurrency,
-  CoreAccount,
-  CoreBitcoinLikeTransaction
-} from "../../libcore/types";
+import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
+import type { CoreBitcoinLikeTransaction } from "./types";
 
 async function bitcoinBuildTransaction({
   account,
