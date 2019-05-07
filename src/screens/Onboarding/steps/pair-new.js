@@ -50,6 +50,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
           usbOnly={usbOnly}
           deviceModelId={deviceModelId}
           onSelect={this.props.next}
+          autoSelectOnAdd
         />
       </OnboardingLayout>
     );

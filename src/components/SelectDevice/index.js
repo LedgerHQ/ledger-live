@@ -33,6 +33,7 @@ type Props = {
   filter?: TransportModule => boolean,
   deviceModelId: DeviceNames,
   navigation: NavigationScreenProp<*>,
+  autoSelectOnAdd?: boolean,
 };
 
 type OwnProps = Props & {
@@ -81,12 +82,23 @@ const ORBar = () => (
   />
 );
 
+const getAll = ({ knownDevices }, { devices }) =>
+  devices.concat(
+    knownDevices.map(d => ({
+      deviceId: d.id,
+      deviceName: d.name || "",
+      wired: false,
+      modelId: "nanoX",
+    })),
+  );
+
 class SelectDevice extends Component<OwnProps, State> {
   static defaultProps = {
     steps: [],
     filter: () => true,
     showDiscoveredDevices: true,
     showKnownDevices: true,
+    autoSelectOnAdd: false,
   };
 
   state = {
@@ -160,8 +172,21 @@ class SelectDevice extends Component<OwnProps, State> {
   };
 
   onPairNewDevice = () => {
-    const { navigation } = this.props;
-    navigation.navigate("PairDevices");
+    const { navigation, autoSelectOnAdd } = this.props;
+    let opts;
+    if (autoSelectOnAdd) {
+      opts = {
+        onDone: deviceId => {
+          const device = getAll(this.props, this.state).find(
+            d => d.deviceId === deviceId,
+          );
+          if (device) {
+            this.onSelect(device);
+          }
+        },
+      };
+    }
+    navigation.navigate("PairDevices", opts);
   };
 
   renderItem = (item: *) => (
@@ -179,23 +204,15 @@ class SelectDevice extends Component<OwnProps, State> {
 
   render() {
     const {
-      knownDevices,
       steps,
       onStepEntered,
       usbOnly,
       withArrows,
       deviceModelId,
     } = this.props;
-    const { devices, connecting } = this.state;
+    const { connecting } = this.state;
 
-    const all: DeviceMeta[] = devices.concat(
-      knownDevices.map(d => ({
-        deviceId: d.id,
-        deviceName: d.name || "",
-        wired: false,
-        modelId: "nanoX",
-      })),
-    );
+    const all: DeviceMeta[] = getAll(this.props, this.state);
 
     const [ble, other] = all.reduce(
       ([ble, other], device) =>
@@ -210,7 +227,7 @@ class SelectDevice extends Component<OwnProps, State> {
         {usbOnly && withArrows ? (
           <UsbPlaceholder />
         ) : ble.length === 0 ? (
-          <BluetoothEmpty />
+          <BluetoothEmpty onPairNewDevice={this.onPairNewDevice} />
         ) : (
           <View>
             <BluetoothHeader />
