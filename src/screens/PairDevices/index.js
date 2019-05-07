@@ -30,7 +30,11 @@ import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: NavigationScreenProp<{
+    params: {
+      onDone?: (deviceId: string) => void,
+    },
+  }>,
   knownDevices: DeviceLike[],
   addKnownDevice: DeviceLike => *,
 };
@@ -147,8 +151,13 @@ class PairDevices extends Component<Props, State> {
     }
   };
 
-  onDone = () => {
-    this.props.navigation.goBack();
+  onDone = (deviceId: string) => {
+    const { navigation } = this.props;
+    const onDone = navigation.getParam("onDone");
+    navigation.goBack();
+    if (onDone) {
+      onDone(deviceId);
+    }
   };
 
   render() {
