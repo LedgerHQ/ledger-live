@@ -1,14 +1,24 @@
 // @flow
 /* eslint-disable global-require */
 
-import { from, of, concat, empty, Observable } from "rxjs";
-import { map, mergeMap, ignoreElements, concatMap } from "rxjs/operators";
+import { from, of, concat, empty, Observable, interval } from "rxjs";
+import {
+  map,
+  reduce,
+  mergeMap,
+  ignoreElements,
+  concatMap,
+  shareReplay,
+  tap
+} from "rxjs/operators";
 import qrcode from "qrcode-terminal";
+import { dataToFrames } from "qrloop/exporter";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
 import signAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBroadcast";
 import { getFeesForTransaction } from "@ledgerhq/live-common/lib/libcore/getFeesForTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { encode } from "@ledgerhq/live-common/lib/cross";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
@@ -114,6 +124,31 @@ const all = {
       withDevice(device || "")(t =>
         apdusFromFile(file || "-").pipe(concatMap(apdu => t.exchange(apdu)))
       ).pipe(map(res => res.toString("hex")))
+  },
+
+  liveQR: {
+    description: "Show Live QR Code to export to mobile",
+    args: [...scanCommonOpts],
+    job: opts =>
+      scan(opts).pipe(
+        reduce((accounts, account) => accounts.concat(account), []),
+        mergeMap(accounts => {
+          const data = encode({
+            accounts,
+            settings: { currenciesSettings: {} },
+            exporterName: "ledger-live-cli",
+            exporterVersion: "0.0.0"
+          });
+          const frames = dataToFrames(data, 80, 4);
+          const qrObservables = frames.map(str =>
+            asQR(str).pipe(shareReplay())
+          );
+          return interval(300).pipe(
+            mergeMap(i => qrObservables[i % qrObservables.length])
+          );
+        }),
+        tap(() => console.clear()) // eslint-disable-line no-console
+      )
   },
 
   genuineCheck: {

@@ -31,7 +31,8 @@ export const scanCommonOpts = [
   {
     name: "xpub",
     type: String,
-    desc: "use an xpub (alternatively to --device)"
+    desc: "use an xpub (alternatively to --device)",
+    multiple: true
   },
   {
     name: "file",
@@ -107,7 +108,7 @@ export const inferCurrency = ({ device, currency, file, xpub }) => {
 };
 
 export function scan(arg) {
-  const { device, xpub, file, scheme, index, length } = arg;
+  const { device, xpub: xpubArray, file, scheme, index, length } = arg;
   if (typeof file === "string") {
     return jsonFromFile(file).pipe(
       map(fromAccountRaw),
@@ -121,27 +122,35 @@ export function scan(arg) {
     mergeMap(cur => {
       if (!cur) throw new Error("--currency is required");
 
-      if (typeof xpub === "string") {
+      if (xpubArray) {
         const derivationMode = scheme || "";
-        const account: Account = {
-          name: cur.name,
-          xpub,
-          seedIdentifier: xpub,
-          id: `libcore:1:bitcoin:${xpub}:${derivationMode}`,
-          derivationMode,
-          currency: cur,
-          unit: cur.units[0],
-          index: 0,
-          freshAddress: "",
-          freshAddressPath: "",
-          lastSyncDate: new Date(0),
-          blockHeight: 0,
-          balance: new BigNumber(0),
-          operations: [],
-          pendingOperations: []
-        };
-        return syncAccount(account).pipe(
-          reduce((a: Account, f: *) => f(a), account)
+        return from(
+          xpubArray.map(xpub => {
+            const account: Account = {
+              name: cur.name,
+              xpub,
+              seedIdentifier: xpub,
+              id: `libcore:1:bitcoin:${xpub}:${derivationMode}`,
+              derivationMode,
+              currency: cur,
+              unit: cur.units[0],
+              index: 0,
+              freshAddress: "",
+              freshAddressPath: "",
+              lastSyncDate: new Date(0),
+              blockHeight: 0,
+              balance: new BigNumber(0),
+              operations: [],
+              pendingOperations: []
+            };
+            return account;
+          })
+        ).pipe(
+          concatMap(account =>
+            syncAccount(account).pipe(
+              reduce((a: Account, f: *) => f(a), account)
+            )
+          )
         );
       }
 
