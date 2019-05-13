@@ -5,13 +5,20 @@ import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
+import {
+  mcuOutdated,
+  mcuNotGenuine,
+  followDeviceRepair,
+  followDeviceUpdate
+} from "../deviceWordings";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
-export const forceRepairChoices = [
-  { value: undefined, label: "generic" },
-  { value: "0.7", label: "mcuNotGenuine" },
-  { value: "0.9", label: "followDeviceRepair" }
+export const repairChoices = [
+  { id: "mcuOutdated", label: mcuOutdated, forceMCU: "0.7" },
+  { id: "mcuNotGenuine", label: mcuNotGenuine, forceMCU: "0.7" },
+  { id: "followDeviceRepair", label: followDeviceRepair, forceMCU: "0.9" },
+  { id: "followDeviceUpdate", label: followDeviceUpdate, forceMCU: "0.9" }
 ];
 
 const repair = (
