@@ -37,7 +37,8 @@ const envParsers = {
   SYNC_MAX_CONCURRENT: intParser,
   MOCK: boolParser,
   LIBCORE_PASSWORD: stringParser,
-  DISABLE_TRANSACTION_BROADCAST: boolParser
+  DISABLE_TRANSACTION_BROADCAST: boolParser,
+  DEVICE_PROXY_URL: stringParser
 };
 
 // This define the default values
@@ -61,7 +62,8 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   SYNC_MAX_CONCURRENT: 4,
   MOCK: false,
   LIBCORE_PASSWORD: "",
-  DISABLE_TRANSACTION_BROADCAST: false
+  DISABLE_TRANSACTION_BROADCAST: false,
+  DEVICE_PROXY_URL: ""
 };
 
 // private local state
