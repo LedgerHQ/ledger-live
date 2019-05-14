@@ -478,7 +478,7 @@
       "cta": "Open Ledger Live"
     },
     "stepScanQR": {
-      "title": "Please go to <1>Settings > Export accounts > Export</1> in the desktop app and scan the LiveQR code",
+      "title": "Please go to <1>Settings > Accounts > Export accounts > Export</1> in the desktop app and scan the LiveQR code",
       "cta": "Scan LiveQR code"
     }
   },
@@ -630,7 +630,7 @@
         "title": "Scan LiveQR code",
         "descTop": {
           "line1": "In Ledger Live desktop, go to",
-          "line2": "Settings > Export accounts > Export"
+          "line2": "Settings > Accounts > Export accounts > Export"
         },
         "descBottom": "Veuillez aligner le QR code avec le carré"
       },
