@@ -998,7 +998,8 @@
     },
     "appList": {
       "title": "App catalog",
-      "loading": "Chargement des applis..."
+      "loading": "Chargement des applis...",
+      "noApps": "No apps found"
     },
     "remove": {
       "title": "Remove device",
