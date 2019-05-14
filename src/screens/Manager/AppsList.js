@@ -166,7 +166,7 @@ class ManagerAppsList extends Component<Props, State> {
 
   renderEmptySearch = () => (
     <View>
-      <LText>No apps found</LText>
+      <LText>{i18next.t("manager.appList.noapps")}</LText>
     </View>
   );
 
