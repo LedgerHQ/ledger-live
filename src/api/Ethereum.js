@@ -26,7 +26,8 @@ export type Tx = {
     height: number,
     time: string
   },
-  confirmations: number
+  confirmations: number,
+  status: number
 };
 
 export type API = {
