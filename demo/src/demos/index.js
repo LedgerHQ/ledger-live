@@ -8,6 +8,7 @@ import qrstreambenchmark from "./qrstreambenchmark";
 import transports from "./transports";
 import qrledger from "./qrledger";
 import explorers from "./explorers";
+import apps from "./apps";
 import Partners from "./Partners";
 import erc20 from "./erc20";
 
@@ -23,5 +24,6 @@ export default {
   transports,
   qrledger,
   explorers,
-  erc20
+  erc20,
+  apps
 };
