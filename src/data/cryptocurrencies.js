@@ -1053,7 +1053,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     id: "lisk",
     coinType: 134,
     name: "lisk",
-    managerAppName: "lisk",
+    managerAppName: "Lisk",
     ticker: "LSK",
     scheme: "lisk",
     color: "#16213D",
