@@ -550,6 +550,7 @@
     "date": "Date",
     "confirmed": "Confirmed",
     "notConfirmed": "Not confirmed",
+    "failed": "Failed",
     "fees": "Fees",
     "noFees": "No fee",
     "from": "From ({{count}})",

@@ -9,6 +9,7 @@ import ReceiveConfirmedIcon from "../icons/ReceiveConfirmed";
 import ReceiveUnconfirmedIcon from "../icons/ReceiveUnconfirmed";
 import SendConfirmedIcon from "../icons/SendConfirmed";
 import SendUnconfirmedIcon from "../icons/SendUnconfirmed";
+import SendFailed from "../icons/SendFailed";
 import { currencySettingsForAccountSelector } from "../reducers/settings";
 
 type Props = {
@@ -24,13 +25,20 @@ class OperationIcon extends PureComponent<Props> {
   };
 
   icons = {
-    OUT: [SendUnconfirmedIcon, SendConfirmedIcon],
+    OUT: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
     IN: [ReceiveUnconfirmedIcon, ReceiveConfirmedIcon],
   };
 
   render() {
-    const { type, size, confirmed } = this.props;
-    const Icon = this.icons[type][confirmed ? 1 : 0];
+    const {
+      type,
+      size,
+      confirmed,
+      operation: { hasFailed },
+    } = this.props;
+    const Icon = this.icons[type][hasFailed ? 2 : confirmed ? 1 : 0];
+
+    if (!Icon) return null;
 
     return <Icon size={size} />;
   }
