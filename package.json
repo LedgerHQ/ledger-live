@@ -68,7 +68,7 @@
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^23.0.1",
+    "babel-jest": "^24.8.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
@@ -82,11 +82,11 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
     "flow-bin": "^0.98.1",
-    "flow-copy-source": "^2.0.4",
+    "flow-copy-source": "^2.0.6",
     "flow-typed": "^2.5.1",
     "glob": "^7.1.4",
-    "jest": "^23.1.0",
-    "prettier": "^1.13.4",
+    "jest": "^24.8.0",
+    "prettier": "^1.17.1",
     "svgr": "^1.10.0",
     "timemachine": "^0.3.0"
   }
