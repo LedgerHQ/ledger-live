@@ -59,14 +59,8 @@ const AltIcon = styled.div`
   font-size: 24px;
 `;
 
-const CoinPreview = ({
-  coin,
-  title
-}: {
-  coin: CryptoCurrency,
-  title?: string
-}) => {
-  const text = title || coin.managerAppName;
+const CoinPreview = ({ coin }: { coin: CryptoCurrency }) => {
+  const text = coin.managerAppName;
   const Icon = getCryptoCurrencyIcon(coin);
   return (
     <CoinContainer>
@@ -78,10 +72,6 @@ const CoinPreview = ({
   );
 };
 
-const AppWithCoinPreview = ({ coin, app }: *) => {
-  return <CoinPreview coin={coin} title={`${app.name} ${app.version}`} />;
-};
-
 const AppPreview = ({ app }: *) => {
   return (
     <CoinContainer>
@@ -89,6 +79,10 @@ const AppPreview = ({ app }: *) => {
       <CryptoName>{`${app.name} ${app.version}`}</CryptoName>
     </CoinContainer>
   );
+};
+
+const AppWithCoinPreview = ({ app }: *) => {
+  return <AppPreview app={app} />;
 };
 
 const choices = [
@@ -122,14 +116,22 @@ const choices = [
   }
 ];
 
+const providers = [
+  { label: "production (provider 1)", value: 1 },
+  { label: "beta (provider 4)", value: 4 }
+];
+
 const Apps = () => {
   const [apps, setApps] = useState([]);
   const [choice, setChoice] = useState(choices[0]);
+  const [provider, setProvider] = useState(providers[0]);
 
   useEffect(() => {
     setApps([]);
-    manager.getAppsList(choice.deviceInfo).then(setApps);
-  }, [choice]);
+    manager
+      .getAppsList({ ...choice.deviceInfo, providerId: provider.value })
+      .then(setApps);
+  }, [choice, provider]);
 
   const unknownApps = [];
   const knownAppsWithCoin = [];
@@ -158,10 +160,21 @@ const Apps = () => {
   return (
     <Container>
       <h1>Manager apps for device</h1>
+
       <Select
         value={choice}
         options={choices}
         onChange={setChoice}
+        getOptionLabel={c => c.label}
+        getOptionValue={c => c.label}
+      />
+
+      <p />
+
+      <Select
+        value={provider}
+        options={providers}
+        onChange={setProvider}
         getOptionLabel={c => c.label}
         getOptionValue={c => c.label}
       />

@@ -495,6 +495,24 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       }
     ]
   },
+  bnb: {
+    id: "bnb",
+    coinType: 714,
+    name: "BNB",
+    managerAppName: "Binance Chain",
+    ticker: "BNB",
+    scheme: "bnb",
+    color: "#F0B90A",
+    family: "bnb",
+    units: [
+      {
+        name: "BNB",
+        code: "BNB",
+        magnitude: 8
+      }
+    ],
+    explorerViews: []
+  },
   callisto: {
     id: "callisto",
     coinType: 820,
@@ -512,6 +530,35 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       }
     ],
     explorerViews: []
+  },
+  cardano: {
+    id: "cardano",
+    coinType: 1815,
+    name: "Cardano",
+    managerAppName: "Cardano ADA",
+    ticker: "ADA",
+    scheme: "cardano",
+    color: "#0A1D2C",
+    family: "cardano",
+    blockAvgTime: 20,
+    units: [
+      {
+        name: "ada",
+        code: "ADA",
+        magnitude: 6
+      },
+      {
+        name: "Lovelace",
+        code: "Lovelace",
+        magnitude: 0
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://cardanoexplorer.com/tx/$hash",
+        address: "https://cardanoexplorer.com/address/$address"
+      }
+    ]
   },
   clubcoin: {
     id: "clubcoin",
@@ -613,6 +660,32 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       {
         tx: "https://mainnet.decred.org/tx/$hash",
         address: "https://mainnet.decred.org/address/$address"
+      }
+    ]
+  },
+  dexon: {
+    id: "dexon",
+    coinType: 237,
+    name: "DEXON",
+    managerAppName: "DEXON",
+    ticker: "DXN",
+    scheme: "dexon",
+    color: "#000000",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 237
+    },
+    units: [
+      {
+        name: "dexon",
+        code: "DXN",
+        magnitude: 6
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://dexonscan.app/transaction/$hash",
+        address: "https://dexonscan.app/address/$address"
       }
     ]
   },
@@ -869,6 +942,24 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     explorerViews: []
   },
+  fic: {
+    id: "fic",
+    coinType: 5248,
+    name: "FIC",
+    managerAppName: "FIC",
+    ticker: "FIC",
+    scheme: "fic",
+    color: "#5157D8",
+    family: "fic",
+    units: [
+      {
+        name: "FIC",
+        code: "FIC",
+        magnitude: 8
+      }
+    ],
+    explorerViews: []
+  },
   game_credits: {
     id: "game_credits",
     coinType: 101,
@@ -909,6 +1000,29 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     explorerViews: []
   },
+  groestlcoin: {
+    id: "groestcoin",
+    coinType: 17,
+    name: "Groestlcoin",
+    managerAppName: "Groestlcoin",
+    ticker: "GRS",
+    scheme: "groestcoin",
+    color: "#0299C0",
+    family: "groestcoin",
+    blockAvgTime: 60,
+    units: [
+      {
+        name: "GRS",
+        code: "GRS",
+        magnitude: 8
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://chainz.cryptoid.info/grs/tx.dws?$hash.htm"
+      }
+    ]
+  },
   hcash: {
     id: "hcash",
     coinType: 171,
@@ -939,6 +1053,56 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     terminated: {
       link: "https://support.ledger.com/hc/en-us/articles/115003917133"
     }
+  },
+  hpb: {
+    id: "hpb",
+    coinType: 269,
+    name: "High Performance Blockchain",
+    managerAppName: "HPB",
+    ticker: "HPB",
+    scheme: "hpb",
+    color: "#3B3BE2",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 269
+    },
+    units: [
+      {
+        name: "hpb",
+        code: "HPB",
+        magnitude: 18
+      }
+    ],
+    blockAvgTime: 6,
+    explorerViews: [
+      {
+        tx: "https://hpbscan.org/tx/$hash",
+        address: "https://hpbscan.org/address/$address"
+      }
+    ]
+  },
+  hycon: {
+    id: "hycon",
+    coinType: 1397,
+    name: "Hycon",
+    managerAppName: "Hycon",
+    ticker: "HYC",
+    scheme: "hycon",
+    color: "#00B3FF",
+    family: "hycon",
+    units: [
+      {
+        name: "HYCON",
+        code: "HYCON",
+        magnitude: 8
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.hycon.io/tx/$hash",
+        address: "https://explorer.hycon.io/address/$address"
+      }
+    ]
   },
   icon: {
     id: "icon",
@@ -975,6 +1139,31 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       }
     ],
     explorerViews: []
+  },
+  kin: {
+    id: "kin",
+    coinType: 2017,
+    name: "Kin",
+    managerAppName: "Kin",
+    ticker: "KIN",
+    scheme: "kin",
+    color: "#0C4DD6",
+    family: "stellar",
+    units: [
+      {
+        name: "KIN",
+        code: "KIN",
+        magnitude: 5
+      }
+    ],
+    explorerViews: [
+      {
+        tx:
+          "https://www.kin.org/blockchainInfoPage/?&dataType=public&header=Transaction&id=$hash",
+        address:
+          "https://www.kin.org/blockchainAccount/?&dataType=public&header=accountID&id=$address"
+      }
+    ]
   },
   komodo: {
     id: "komodo",
@@ -1263,6 +1452,24 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       }
     ]
   },
+  nos: {
+    id: "nos",
+    name: "NOS",
+    coinType: 229,
+    managerAppName: "NOS",
+    ticker: "NOS",
+    scheme: "nos",
+    color: "#2B92D3",
+    family: "nano",
+    units: [
+      {
+        name: "NOS",
+        code: "NOS",
+        magnitude: 8
+      }
+    ],
+    explorerViews: []
+  },
   ontology: {
     id: "ontology",
     coinType: 1024,
@@ -1448,6 +1655,30 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       link: "https://support.ledger.com/hc/en-us/articles/115005175309"
     }
   },
+  qrl: {
+    id: "qrl",
+    coinType: 238,
+    name: "QRL",
+    ticker: "QRL",
+    managerAppName: "QRL",
+    scheme: "qrl",
+    color: "#1D2951",
+    family: "qrl",
+    blockAvgTime: 60,
+    units: [
+      {
+        name: "QRL",
+        code: "QRL",
+        magnitude: 8
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.theqrl.org/tx/$hash",
+        address: "https://explorer.theqrl.org/a/$address"
+      }
+    ]
+  },
   qtum: {
     id: "qtum",
     coinType: 88,
@@ -1506,6 +1737,56 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       {
         tx: "https://bithomp.com/explorer/$hash",
         address: "https://bithomp.com/explorer/$address"
+      }
+    ]
+  },
+  rise: {
+    id: "rise",
+    coinType: 1120,
+    name: "Rise",
+    managerAppName: "Rise",
+    ticker: "RISE",
+    scheme: "rise",
+    color: "#FC1E4F",
+    family: "rise",
+    blockAvgTime: 30,
+    units: [
+      {
+        name: "RISE",
+        code: "RISE",
+        magnitude: 8
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.rise.vision/tx/$hash",
+        address: "https://explorer.rise.vision/tx/$address"
+      }
+    ]
+  },
+  reosc: {
+    id: "reosc",
+    coinType: 2894,
+    name: "REOSC",
+    managerAppName: "REOSC",
+    ticker: "REOSC",
+    scheme: "reosc",
+    color: "#0E00FF",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 2894
+    },
+    units: [
+      {
+        name: "REOSC",
+        code: "REOSC",
+        magnitude: 16
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.reosc.io/tx/$hash",
+        address: "https://explorer.reosc.io/addr/$address"
       }
     ]
   },
@@ -1912,6 +2193,39 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       {
         tx: "https://explorer.zcha.in/transactions/$hash",
         address: "https://explorer.zcha.in/accounts/$address"
+      }
+    ]
+  },
+  zclassic: {
+    id: "zclassic",
+    coinType: 147,
+    name: "ZClassic",
+    managerAppName: "ZClassic",
+    ticker: "ZCL",
+    scheme: "zclassic",
+    color: "#CF6031",
+    family: "bitcoin",
+    blockAvgTime: 150,
+    bitcoinLikeInfo: {
+      P2PKH: 0x1cb8,
+      P2SH: 0x1cbd
+    },
+    units: [
+      {
+        name: "zclassic",
+        code: "ZCL",
+        magnitude: 8
+      },
+      {
+        name: "satoshi",
+        code: "sat",
+        magnitude: 0
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://zcl.tokenview.com/en/tx/$hash",
+        address: "https://zcl.tokenview.com/en/address/$address"
       }
     ]
   },
