@@ -313,3 +313,25 @@ test("nanoS 1.4.2 BL", async () => {
     targetId: 16777217
   });
 });
+
+test("nanoS das", async () => {
+  const Transport = createTransportReplayer(
+    RecordStore.fromString(`
+        => e001000000
+        <= 3110000309312e342e322d64617304a600000004312e350020f52add41aaa8c065df5a412af1e8c57fe589b85469133cb9c7e0ccd5c81b57859000
+        `)
+  );
+  const t = await Transport.create();
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    isBootloader: false,
+    isOSU: false,
+    majMin: "1.4",
+    managerAllowed: false,
+    mcuVersion: "1.5",
+    pinValidated: true,
+    providerId: 2,
+    targetId: 823132163,
+    version: "1.4.2-das"
+  });
+});
