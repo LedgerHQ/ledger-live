@@ -26,11 +26,12 @@
     "ledger-live": "./cli.js"
   },
   "files": [
+    "cli.js",
     "lib"
   ],
   "scripts": {
     "build": "babel --ignore __tests__ -sd lib src",
-    "prepublish": "yarn build",
+    "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",
     "test": "./scripts/tests.sh",
     "testOne": "./scripts/testOne.sh",
