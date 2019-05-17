@@ -26,8 +26,12 @@ export default async function getDeviceInfo(
   const isOSU = seVersion.includes("-osu");
   const version = seVersion.replace("-osu", "");
   const m = seVersion.match(/([0-9]+.[0-9])+(.[0-9]+)?(-(.*))?/);
-  const [, majMin, , providerName] = m || [];
-  const providerId = getEnv("FORCE_PROVIDER") || PROVIDERS[providerName] || 1;
+  const [, majMin, , , providerName] = m || [];
+  const forceProvider = getEnv("FORCE_PROVIDER");
+  const providerId =
+    forceProvider && forceProvider !== 1
+      ? forceProvider
+      : PROVIDERS[providerName] || 1;
   const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
   const flag = flags.length > 0 ? flags[0] : 0;
   const managerAllowed = !!(flag & ManagerAllowedFlag);
