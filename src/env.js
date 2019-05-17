@@ -38,7 +38,8 @@ const envParsers = {
   MOCK: boolParser,
   LIBCORE_PASSWORD: stringParser,
   DISABLE_TRANSACTION_BROADCAST: boolParser,
-  DEVICE_PROXY_URL: stringParser
+  DEVICE_PROXY_URL: stringParser,
+  EXPERIMENTAL_BLE: stringParser
 };
 
 // This define the default values
@@ -63,7 +64,8 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   MOCK: false,
   LIBCORE_PASSWORD: "",
   DISABLE_TRANSACTION_BROADCAST: false,
-  DEVICE_PROXY_URL: ""
+  DEVICE_PROXY_URL: "",
+  EXPERIMENTAL_BLE: ""
 };
 
 // private local state
