@@ -39,7 +39,7 @@ const envParsers = {
   LIBCORE_PASSWORD: stringParser,
   DISABLE_TRANSACTION_BROADCAST: boolParser,
   DEVICE_PROXY_URL: stringParser,
-  EXPERIMENTAL_BLE: stringParser
+  EXPERIMENTAL_BLE: boolParser
 };
 
 // This define the default values
@@ -65,7 +65,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   LIBCORE_PASSWORD: "",
   DISABLE_TRANSACTION_BROADCAST: false,
   DEVICE_PROXY_URL: "",
-  EXPERIMENTAL_BLE: ""
+  EXPERIMENTAL_BLE: false
 };
 
 // private local state
