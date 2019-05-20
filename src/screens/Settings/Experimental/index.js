@@ -28,11 +28,10 @@ class ExperimentalSettings extends PureComponent<{
         <TrackScreen category="Settings" name="Experimental" />
         <View style={styles.container}>
           <Disclaimer />
-          {experimentalFeatures.map(
-            feat =>
-              !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
-                <FeatureRow key={feat.name} feature={feat} />
-              ) : null,
+          {experimentalFeatures.map(feat =>
+            !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
+              <FeatureRow key={feat.name} feature={feat} />
+            ) : null,
           )}
         </View>
       </ScrollView>

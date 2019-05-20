@@ -40,8 +40,8 @@ const handlers: Object = {
     state: BleState,
     { deviceId, name }: { deviceId: string, name: string },
   ) => ({
-    knownDevices: state.knownDevices.map(
-      d => (d.id === deviceId ? { ...d, name } : d),
+    knownDevices: state.knownDevices.map(d =>
+      d.id === deviceId ? { ...d, name } : d,
     ),
   }),
 };

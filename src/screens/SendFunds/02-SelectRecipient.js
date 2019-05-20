@@ -235,17 +235,16 @@ class SendSelectRecipient extends Component<Props, State> {
                 clearButtonMode="always"
               />
             </View>
-            {!!address &&
-              addressStatus !== "valid" && (
-                <LText
-                  style={[
-                    styles.warningBox,
-                    addressStatus === "invalid" ? styles.error : styles.warning,
-                  ]}
-                >
-                  <TranslatedError error={error} />
-                </LText>
-              )}
+            {!!address && addressStatus !== "valid" && (
+              <LText
+                style={[
+                  styles.warningBox,
+                  addressStatus === "invalid" ? styles.error : styles.warning,
+                ]}
+              >
+                <TranslatedError error={error} />
+              </LText>
+            )}
           </ScrollView>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button

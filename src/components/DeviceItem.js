@@ -95,16 +95,14 @@ export default class DeviceItem extends PureComponent<Props> {
                   </LText>
                 ) : null}
               </View>
-              {!withArrow &&
-                family !== "usb" &&
-                !!onBluetoothDeviceAction && (
-                  <Touchable
-                    event="DeviceItemForget"
-                    onPress={() => onBluetoothDeviceAction(deviceMeta)}
-                  >
-                    <Ellipsis />
-                  </Touchable>
-                )}
+              {!withArrow && family !== "usb" && !!onBluetoothDeviceAction && (
+                <Touchable
+                  event="DeviceItemForget"
+                  onPress={() => onBluetoothDeviceAction(deviceMeta)}
+                >
+                  <Ellipsis />
+                </Touchable>
+              )}
               {withArrow && !disabled ? (
                 <IconArrowRight size={16} color={colors.grey} />
               ) : null}
