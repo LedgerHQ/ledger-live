@@ -159,7 +159,7 @@ class SelectableAccount extends PureComponent<
         ]}
       >
         <Button
-          event="HardResetModalAction"
+          event="EditAccountNameFromSlideAction"
           type="primary"
           title="Edit Name"
           onPress={this.editAccountName}
