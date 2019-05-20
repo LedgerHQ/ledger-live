@@ -18,10 +18,6 @@ export default [
     url: "https://changenow.io?link_id=80ab1d8ad846e7"
   },
   {
-    id: "coinberry",
-    url: "https://www.coinberry.com/?utm_source=ledger"
-  },
-  {
     id: "coinhouse",
     url:
       "https://www.coinhouse.com/r/157530?utm_source=legderlive&utm_medium=referral"
