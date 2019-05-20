@@ -329,9 +329,9 @@
     events "^3.0.0"
 
 "@ledgerhq/ledger-core@^2.3.0-beta.5":
-  version "2.3.0-beta.5"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-2.3.0-beta.5.tgz#e2b301ae2900462807be94e69d3c496ffb24e7c0"
-  integrity sha512-TnHVz6k8JoAZrOoCOGE5z4nFXmujeGpJV+tT83nOpmCZphwgCKTq1uGZE8Y4+sy0iigubzBRQQwccLj7V5/g7Q==
+  version "2.3.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-2.3.0-beta.6.tgz#38d64910eb9a3cfad457d1169345740d12c67a97"
+  integrity sha512-xvuc80A/zvgy0+OMzumN7toOAvaQlHGJUD3F/72vO8H+l8pNGm9IZuhaMa4qJb4hv3YZCo6d0ZZywk/+2mm1mQ==
   dependencies:
     bindings "^1.3.0"
     nan "^2.6.2"
