@@ -11,6 +11,7 @@
     "postinstall": "./scripts/post.sh",
     "start": "react-native start",
     "android": "react-native run-android",
+    "android:clean": "$ANDROID_HOME/platform-tools/adb shell pm clear com.ledger.live && react-native run-android",
     "android:staging": "cd android && ./gradlew assembleStagingRelease",
     "android:mock": "cd android && ENVFILE=.env.mock ./gradlew assembleStagingRelease",
     "android:release": "./scripts/android-release.sh",
