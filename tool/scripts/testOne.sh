@@ -4,9 +4,9 @@ name=$1
 opt=$2
 cwd=`dirname $0`
 
-ledger-live () {
-  $cwd/../cli.js "$@"
-}
+# ledger-live () {
+#  $cwd/../cli.js "$@"
+# }
 
 set -e
 cd $(dirname $0)/../tests/$name
