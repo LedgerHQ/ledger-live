@@ -7,7 +7,7 @@ type Props = {
   height?: number,
   color?: string,
 };
-const USB = function Truck({
+export default function USB({
   width = 15,
   height = 32,
   color = "#6490F1",
@@ -20,6 +20,4 @@ const USB = function Truck({
       />
     </Svg>
   );
-};
-
-export default USB;
+}
