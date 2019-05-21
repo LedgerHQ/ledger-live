@@ -282,7 +282,6 @@ export type Spec = {
 export const reflect = (declare: (string, Spec) => void) => {
   declare("WalletPool", {
     statics: {
-      freshResetAll: {},
       newInstance: {
         params: [
           null,
@@ -300,6 +299,7 @@ export const reflect = (declare: (string, Spec) => void) => {
       }
     },
     methods: {
+      freshResetAll: {},
       updateWalletConfig: {
         params: [null, "DynamicObject"]
       },
