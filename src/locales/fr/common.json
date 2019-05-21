@@ -553,6 +553,7 @@
     "date": "Date",
     "confirmed": "Confirmed",
     "notConfirmed": "Not confirmed",
+    "failed": "Failed",
     "fees": "Frais",
     "noFees": "Aucun frais",
     "from": "De ({{count}})",
