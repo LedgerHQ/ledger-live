@@ -5,6 +5,9 @@ import { View, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -14,19 +17,21 @@ import Check from "../../icons/Check";
 import Button from "../../components/Button";
 import DeviceItemSummary from "../../components/DeviceItemSummary";
 import NanoX from "../../icons/NanoX";
+import { deviceNameByDeviceIdSelector } from "../../reducers/ble";
 
 class Paired extends PureComponent<{
   deviceId: string,
   deviceName: string,
+  name?: string,
   onContinue: (deviceId: string) => *,
   navigation: *,
   genuine: boolean,
 }> {
   onEdit = () => {
-    const { deviceId, deviceName, navigation } = this.props;
+    const { deviceId, name, deviceName, navigation } = this.props;
     navigation.navigate("EditDeviceName", {
       deviceId,
-      deviceName,
+      deviceName: name || deviceName,
     });
   };
 
@@ -107,4 +112,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withNavigation(Paired);
+export default compose(
+  connect(
+    createStructuredSelector({
+      name: deviceNameByDeviceIdSelector,
+    }),
+  ),
+  withNavigation,
+)(Paired);
