@@ -6,6 +6,7 @@ import {
   CantOpenDevice,
   WrongDeviceForAccount,
   PairingFailed,
+  UserRefusedAllowManager,
 } from "@ledgerhq/errors";
 import Rounded from "./Rounded";
 import IconNanoX from "../icons/NanoX";
@@ -13,6 +14,7 @@ import ErrorBadge from "./ErrorBadge";
 import Circle from "./Circle";
 import colors, { lighten } from "../colors";
 import BluetoothScanning from "./BluetoothScanning";
+import ErrorCrossBadge from "./ErrorCrossBadge";
 
 type Props = {
   error: ?Error,
@@ -26,6 +28,15 @@ class ErrorIcon extends PureComponent<Props> {
       // this case should not happen (it is supposed to be a ?Error)
       console.error(`ErrorIcon invalid usage: ${String(error)}`);
       return null;
+    }
+
+    if (error instanceof UserRefusedAllowManager) {
+      return (
+        <Rounded bg={colors.pillActiveBackground}>
+          <IconNanoX color={colors.live} height={36} width={8} />
+          <ErrorCrossBadge style={styles.badge} />
+        </Rounded>
+      );
     }
 
     if (error instanceof PairingFailed) {

@@ -28,7 +28,7 @@ class SelectDeviceConnectModal extends PureComponent<{
         id="DeviceJobModal"
         isOpened={!!meta}
         onClose={onClose}
-        preventBackdropClick
+        preventBackdropClick={error ? undefined : true}
       >
         {error ? (
           <RenderError

@@ -29,7 +29,7 @@ class GenericErrorRendering extends PureComponent<{
       <View style={styles.root}>
         {withIcon ? (
           <View style={styles.headIcon}>
-            <ErrorIcon error={titleError} />
+            <ErrorIcon error={error} />
           </View>
         ) : null}
         <LText
