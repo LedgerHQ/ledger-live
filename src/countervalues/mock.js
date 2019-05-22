@@ -35,6 +35,30 @@ export const genStoreState = (pairs: Pair[]): CounterValuesState => {
   return state;
 };
 
+export const baseMockBTCRates = {
+  BCH: 0.06102,
+  BTG: 0.003239,
+  DASH: 0.02314614,
+  DCR: 0.004706,
+  DGB: 0.00000249,
+  DOGE: 5.392e-7,
+  ETH: 3.1983e-12,
+  ETC: 1.203e-13,
+  ZEN: 0.00135623,
+  KMD: 0.0002006,
+  LTC: 0.015603,
+  PPC: 0.011236,
+  PIVX: 0.0001792,
+  QTUM: 0.00055208,
+  XSN: 0.0000241,
+  XST: 0.0021319999999999998,
+  STRAT: 0.0002083,
+  VTC: 0.00009569,
+  VIA: 0.0001065,
+  XRP: 0.006208,
+  ZEC: 0.0133534
+};
+
 export const getDailyRatesImplementation = async (
   getAPIBaseURL: () => string,
   pairs: PollAPIPair[]
@@ -45,29 +69,6 @@ export const getDailyRatesImplementation = async (
   };
 
   const fallbackRate = 0;
-  const baseMockBTCRates = {
-    BCH: 0.06102,
-    BTG: 0.003239,
-    DASH: 0.02314614,
-    DCR: 0.004706,
-    DGB: 0.00000249,
-    DOGE: 5.392e-7,
-    ETH: 3.1983e-12,
-    ETC: 1.203e-13,
-    ZEN: 0.00135623,
-    KMD: 0.0002006,
-    LTC: 0.015603,
-    PPC: 0.011236,
-    PIVX: 0.0001792,
-    QTUM: 0.00055208,
-    XSN: 0.0000241,
-    XST: 0.0021319999999999998,
-    STRAT: 0.0002083,
-    VTC: 0.00009569,
-    VIA: 0.0001065,
-    XRP: 0.006208,
-    ZEC: 0.0133534
-  };
 
   const arbitraryRateEpoch = 1555452000000; // 17th April 2019 00:00
   const todayTimestamp = new Date().setHours(0, 0, 0, 0);

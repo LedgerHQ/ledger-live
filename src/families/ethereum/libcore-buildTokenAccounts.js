@@ -31,6 +31,7 @@ async function buildERC20TokenAccount({
       })
   );
 
+  // TODO keep reference if no operation have changed, nor id/token/balance
   const tokenAccount: $Exact<TokenAccount> = {
     id,
     token,
@@ -53,15 +54,23 @@ async function ethereumBuildTokenAccounts({
   const tokenAccounts = [];
   const ethAccount: CoreEthereumLikeAccount = await coreAccount.asEthereumLikeAccount();
   const coreTAS: CoreERC20LikeAccount[] = await ethAccount.getERC20Accounts();
+
+  const existingAccountByTicker = {}; // used for fast lookup
+  const existingAccountTickers = []; // used to keep track of ordering
+  if (existingAccount && existingAccount.tokenAccounts) {
+    for (const existingTokenAccount of existingAccount.tokenAccounts) {
+      const { ticker } = existingTokenAccount.token;
+      existingAccountTickers.push(ticker);
+      existingAccountByTicker[ticker] = existingTokenAccount;
+    }
+  }
+
   for (const coreTA of coreTAS) {
     const coreToken = await coreTA.getToken();
     const contractAddress = await coreToken.getContractAddress();
     const token = findTokenByAddress(contractAddress);
     if (token) {
-      const existingTokenAccount =
-        existingAccount &&
-        existingAccount.tokenAccounts &&
-        existingAccount.tokenAccounts.find(a => a.token === token);
+      const existingTokenAccount = existingAccountByTicker[token.ticker];
       const tokenAccount = await buildERC20TokenAccount({
         parentAccountId: accountId,
         existingTokenAccount,
@@ -71,6 +80,17 @@ async function ethereumBuildTokenAccounts({
       tokenAccounts.push(tokenAccount);
     }
   }
+
+  // Preserve order of tokenAccounts from the existing token accounts
+  tokenAccounts.sort((a, b) => {
+    const i = existingAccountTickers.indexOf(a.token.ticker);
+    const j = existingAccountTickers.indexOf(b.token.ticker);
+    if (i === j) return 0;
+    if (i < 0) return 1;
+    if (j < 0) return -1;
+    return i - j;
+  });
+
   return tokenAccounts;
 }
 

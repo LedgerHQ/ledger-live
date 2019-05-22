@@ -5,9 +5,11 @@ import {
   getDates,
   getBalanceHistory,
   getBalanceHistoryWithCountervalue,
-  getPortfolio
+  getPortfolio,
+  getAssetsDistribution
 } from "../portfolio";
 import { genAccount } from "../mock/account";
+import { baseMockBTCRates } from "../countervalues/mock";
 
 test("getBalanceHistory(*,month) returns an array of 30 items", () => {
   const history = getBalanceHistory(genAccount("seed_1"), "month");
@@ -160,4 +162,53 @@ test("getPortfolio with lot of accounts", () => {
     (account, value, date) => value // using identity, at any time, 1 token = 1 USD
   );
   expect(portfolio.balanceHistory).toMatchSnapshot();
+});
+
+test("getAssetsDistribution 1", () => {
+  const assetsDistribution = getAssetsDistribution(
+    Array(40)
+      .fill(null)
+      .map((_, i) => genAccount("gad1_" + i)),
+    (currency, value) => {
+      const rate = baseMockBTCRates[currency.ticker];
+      if (rate) return value.times(rate);
+    }
+  );
+  expect(assetsDistribution.isAvailable).toBe(true);
+  expect(assetsDistribution.showFirst).toBe(6);
+  expect(
+    assetsDistribution.list.reduce((sum, o) => sum + o.distribution, 0)
+  ).toBeCloseTo(1);
+  expect(
+    assetsDistribution.list.map(o => [
+      o.currency.ticker,
+      o.amount,
+      o.countervalue,
+      o.distribution
+    ])
+  ).toMatchSnapshot();
+});
+
+test("getAssetsDistribution mult", () => {
+  for (let i = 0; i < 100; i++) {
+    const assetsDistribution = getAssetsDistribution(
+      Array(i)
+        .fill(null)
+        .map((_, j) => genAccount("gad_" + i + "_" + j)),
+      (currency, value) => {
+        const rate = baseMockBTCRates[currency.ticker];
+        if (rate) return value.times(rate);
+      }
+    );
+    if (assetsDistribution.isAvailable) {
+      expect(assetsDistribution.showFirst).toBeLessThanOrEqual(
+        assetsDistribution.list.length
+      );
+      expect(
+        assetsDistribution.list.reduce((sum, o) => sum + o.distribution, 0)
+      ).toBeCloseTo(1);
+    } else {
+      expect(assetsDistribution.list.length).toBe(0);
+    }
+  }
 });
