@@ -190,11 +190,12 @@ test("getAssetsDistribution 1", () => {
 });
 
 test("getAssetsDistribution mult", () => {
+  const accounts = Array(100)
+    .fill(null)
+    .map((_, j) => genAccount("gadm_" + j));
   for (let i = 0; i < 100; i++) {
     const assetsDistribution = getAssetsDistribution(
-      Array(i)
-        .fill(null)
-        .map((_, j) => genAccount("gad_" + i + "_" + j)),
+      accounts.slice(0, i),
       (currency, value) => {
         const rate = baseMockBTCRates[currency.ticker];
         if (rate) return value.times(rate);
