@@ -11,6 +11,10 @@ import {
 import { genAccount } from "../mock/account";
 import { baseMockBTCRates } from "../countervalues/mock";
 
+const accounts = Array(100)
+  .fill(null)
+  .map((_, j) => genAccount("portfolio_" + j));
+
 test("getBalanceHistory(*,month) returns an array of 30 items", () => {
   const history = getBalanceHistory(genAccount("seed_1"), "month");
   expect(history).toBeInstanceOf(Array);
@@ -155,9 +159,7 @@ test("getPortfolio calculateCounterValue can complete fails", () => {
 
 test("getPortfolio with lot of accounts", () => {
   const portfolio = getPortfolio(
-    Array(60)
-      .fill(null)
-      .map((_, i) => genAccount("mult" + i)),
+    accounts,
     "week",
     (account, value, date) => value // using identity, at any time, 1 token = 1 USD
   );
@@ -166,9 +168,7 @@ test("getPortfolio with lot of accounts", () => {
 
 test("getAssetsDistribution 1", () => {
   const assetsDistribution = getAssetsDistribution(
-    Array(40)
-      .fill(null)
-      .map((_, i) => genAccount("gad1_" + i)),
+    accounts,
     (currency, value) => {
       const rate = baseMockBTCRates[currency.ticker];
       if (rate) return value.times(rate);
@@ -190,10 +190,7 @@ test("getAssetsDistribution 1", () => {
 });
 
 test("getAssetsDistribution mult", () => {
-  const accounts = Array(100)
-    .fill(null)
-    .map((_, j) => genAccount("gadm_" + j));
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < accounts.length; i++) {
     const assetsDistribution = getAssetsDistribution(
       accounts.slice(0, i),
       (currency, value) => {
