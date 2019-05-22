@@ -26,14 +26,9 @@ registerTransportModule({
   open: (id: string): ?Promise<*> => {
     if (id.startsWith("webusb")) {
       const existingDevice = webusbDevices[id];
-      return (existingDevice
+      return existingDevice
         ? TransportWebUSB.open(existingDevice)
-        : TransportWebUSB.create()
-      ).then(t => {
-        // fallback on create() in case discovery not used (we later should backport this in open?)
-        t.setDebugMode(true);
-        return t;
-      });
+        : TransportWebUSB.create();
     }
     return null;
   },
@@ -65,14 +60,9 @@ registerTransportModule({
   open: (id: string): ?Promise<*> => {
     if (id.startsWith("webble")) {
       const existingDevice = webbleDevices[id];
-      return (existingDevice
+      return existingDevice
         ? TransportWebBLE.open(existingDevice)
-        : TransportWebBLE.create()
-      ).then(t => {
-        // fallback on create() in case discovery not used (we later should backport this in open?)
-        t.setDebugMode(true);
-        return t;
-      });
+        : TransportWebBLE.create();
     }
     return null;
   },

@@ -7,10 +7,10 @@ import {
   setNetwork,
   setWebSocketImplementation
 } from "@ledgerhq/live-common/lib/network";
+import { listen } from "@ledgerhq/logs";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import { retry } from "@ledgerhq/live-common/lib/promise";
-import { logsObservable } from "@ledgerhq/live-common/lib/logs";
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
 
@@ -21,9 +21,7 @@ const logger = process.env.VERBOSE
   : undefined;
 
 if (logger) {
-  logsObservable.subscribe(log =>
-    logger("live-common:" + log.type, log.message)
-  );
+  listen(log => logger(log.type, log.message));
 }
 
 setNetwork(axios);
@@ -56,9 +54,6 @@ if (!process.env.CI) {
       // $FlowFixMe
       retry(() => TransportNodeHid.open(devicePath), {
         maxRetry: 5 // YOLO
-      }).then(t => {
-        if (process.env.VERBOSE) t.setDebugMode(true);
-        return t;
       }),
     disconnect: () => Promise.resolve()
   });
