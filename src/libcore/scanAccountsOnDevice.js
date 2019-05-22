@@ -2,6 +2,7 @@
 
 import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
+import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "../currencies";
 import {
   getDerivationModesForCurrency,
@@ -13,7 +14,6 @@ import {
 } from "../derivation";
 import { getWalletName, shouldShowNewAccount } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
-import { log } from "../logs";
 import { open } from "../hw";
 import getAddress from "../hw/getAddress";
 import { withLibcoreF } from "./access";
