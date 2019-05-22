@@ -30,7 +30,8 @@ class RateProviderSettingsRow extends PureComponent<{
       counterValueExchange,
       counterValueCurrency,
     } = this.props;
-    return (
+    return counterValueCurrency.ticker ===
+      intermediaryCurrency.ticker ? null : (
       <SettingsRow
         event="RateProviderSettingsRow"
         title={<Trans i18nKey="settings.display.exchange" />}
