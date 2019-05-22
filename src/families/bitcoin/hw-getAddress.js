@@ -2,11 +2,11 @@
 
 import invariant from "invariant";
 import Btc from "@ledgerhq/hw-app-btc";
+import { log } from "@ledgerhq/logs";
 import { BtcUnmatchedApp, UpdateYourApp } from "@ledgerhq/errors";
 import getBitcoinLikeInfo from "../../hw/getBitcoinLikeInfo";
 import { getAddressFormatDerivationMode } from "../../derivation";
 import type { Resolver } from "../../hw/getAddress/types";
-import { log } from "../../logs";
 
 const oldP2SH = {
   digibyte: 5

@@ -1,6 +1,7 @@
 // @flow
 
 import Btc from "@ledgerhq/hw-app-btc";
+import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import { isSegwitDerivationMode } from "../../derivation";
 import type { CryptoCurrency, DerivationMode, Account } from "../../types";
@@ -10,8 +11,6 @@ import type {
   CoreBitcoinLikeInput,
   CoreBitcoinLikeOutput
 } from "./types";
-
-import { log } from "../../logs";
 
 export async function bitcoinSignTransaction({
   account,
