@@ -30,7 +30,8 @@ import type {
   BalanceHistoryWithCountervalue,
   BalanceHistory,
   PortfolioRange,
-  Portfolio
+  Portfolio,
+  AssetsDistribution
 } from "./portfolio";
 
 import type { Transaction } from "./transaction";
@@ -57,7 +58,8 @@ export type {
   BalanceHistoryWithCountervalue,
   PortfolioRange,
   Portfolio,
-  Transaction
+  Transaction,
+  AssetsDistribution
 };
 
 /**

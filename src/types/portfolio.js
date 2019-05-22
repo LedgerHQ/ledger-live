@@ -2,7 +2,7 @@
 
 import type { BigNumber } from "bignumber.js";
 import type { Account } from "./account";
-import type { CryptoCurrency } from "./currencies";
+import type { CryptoCurrency, TokenCurrency } from "./currencies";
 
 export type BalanceHistory = Array<{
   date: Date,
@@ -26,3 +26,17 @@ export type Portfolio = {
 };
 
 export type PortfolioRange = "year" | "month" | "week";
+
+export type AssetsDistribution = {
+  // if not available, we would not display anything
+  isAvailable: boolean,
+  // a sorted list of assets with data
+  list: Array<{
+    currency: CryptoCurrency | TokenCurrency,
+    distribution: number, // % of the total (normalized in 0-1)
+    amount: BigNumber,
+    countervalue: BigNumber // countervalue of the amount that was calculated based of the rate provided
+  }>,
+  // number of accounts to show first (before the see all)
+  showFirst: number
+};

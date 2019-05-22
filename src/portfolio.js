@@ -10,7 +10,9 @@ import type {
   BalanceHistory,
   BalanceHistoryWithCountervalue,
   PortfolioRange,
-  Portfolio
+  Portfolio,
+  AssetsDistribution,
+  Currency
 } from "./types";
 import { getOperationAmountNumber } from "./operation";
 
@@ -233,4 +235,81 @@ export function getPortfolio(
   portfolioMemo[range] = ret;
 
   return ret;
+}
+
+const defaultAssetsDistribution = {
+  minShowFirst: 1,
+  maxShowFirst: 6,
+  showFirstThreshold: 0.95
+};
+
+type AssetsDistributionOpts = typeof defaultAssetsDistribution;
+
+export function getAssetsDistribution(
+  // TODO we could have caches in the future
+  accounts: Account[],
+  calculateCountervalue: (currency: Currency, value: BigNumber) => ?BigNumber,
+  opts?: AssetsDistributionOpts
+): AssetsDistribution {
+  const { minShowFirst, maxShowFirst, showFirstThreshold } = {
+    ...defaultAssetsDistribution,
+    ...opts
+  };
+  let sum = BigNumber(0);
+  const tickerBalances = {};
+  const tickerCurrencies = {};
+  for (let i = 0; i < accounts.length; i++) {
+    const account = accounts[i];
+    const ticker = account.currency.ticker;
+    tickerCurrencies[ticker] = account.currency;
+    tickerBalances[ticker] = (tickerBalances[ticker] || BigNumber(0)).plus(
+      account.balance
+    );
+  }
+
+  const tickerCountervalues = {};
+  for (const ticker in tickerBalances) {
+    const countervalue = calculateCountervalue(
+      tickerCurrencies[ticker],
+      tickerBalances[ticker]
+    );
+    if (countervalue) {
+      tickerCountervalues[ticker] = countervalue;
+      sum = sum.plus(countervalue);
+    }
+  }
+
+  if (sum.eq(0)) {
+    return { isAvailable: false, list: [], showFirst: 0 };
+  }
+
+  const list = Object.keys(tickerCurrencies)
+    .map(ticker => {
+      const currency = tickerCurrencies[ticker];
+      const amount = tickerBalances[ticker];
+      const countervalue = tickerCountervalues[ticker] || BigNumber(0);
+      return {
+        currency,
+        countervalue,
+        amount,
+        distribution: countervalue.div(sum).toNumber()
+      };
+    })
+    .sort((a, b) => {
+      const diff = b.countervalue.minus(a.countervalue).toNumber();
+      if (diff === 0) return a.currency.name.localeCompare(b.currency.name);
+      return diff;
+    });
+
+  let i;
+  let acc = 0;
+  for (i = 0; i < maxShowFirst && i < list.length; i++) {
+    if (acc > showFirstThreshold) {
+      break;
+    }
+    acc += list[i].distribution;
+  }
+  const showFirst = Math.max(minShowFirst, i);
+
+  return { isAvailable: true, list, showFirst };
 }
