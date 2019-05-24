@@ -52,6 +52,8 @@ export async function bitcoinSignTransaction({
   } else if (currency.id === "decred") {
     expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
     additionals.push("decred");
+  } else if (currency.id === "stealthcoin") {
+    additionals.push("stealthcoin");
   }
 
   const rawInputs: CoreBitcoinLikeInput[] = await coreTransaction.getInputs();
@@ -65,10 +67,12 @@ export async function bitcoinSignTransaction({
     rawInputs.map(async input => {
       const hexPreviousTransaction = await input.getPreviousTransaction();
       log("libcore", "splitTransaction " + String(hexPreviousTransaction));
+      // v1 of XST txs have timestamp but not v2
+      const inputHasTimestamp = (currency.id === "stealthcoin" && hexPreviousTransaction.slice(0, 2) === "01") || hasTimestamp;
       const previousTransaction = hwApp.splitTransaction(
         hexPreviousTransaction,
         currency.supportsSegwit,
-        hasTimestamp,
+        inputHasTimestamp,
         hasExtraData,
         additionals
       );
