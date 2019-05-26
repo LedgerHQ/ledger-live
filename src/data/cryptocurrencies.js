@@ -320,8 +320,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     explorerViews: [
       {
-        tx: "https://bitcoincash.blockexplorer.com/tx/$hash",
-        address: "https://bitcoincash.blockexplorer.com/address/$address"
+        tx: "https://blockchair.com/bitcoin-cash/transaction/$hash",
+        address: "https://blockchair.com/bitcoin-cash/address/$address"
       }
     ]
   },
