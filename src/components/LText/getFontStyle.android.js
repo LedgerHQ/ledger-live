@@ -11,10 +11,10 @@ export default ({
   const family = secondary
     ? "MuseoSans"
     : tertiary
-      ? "Rubik"
-      : monospace
-        ? "monospace"
-        : "OpenSans";
+    ? "Rubik"
+    : monospace
+    ? "monospace"
+    : "OpenSans";
   let weight;
   if (semiBold) {
     weight = "SemiBold";

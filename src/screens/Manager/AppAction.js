@@ -235,18 +235,16 @@ class AppAction extends PureComponent<
               disabled={pending}
               title={buttonTitle}
             />
-            {!error &&
-              !pending &&
-              installing && (
-                <Button
-                  event="ManagerAppActionDoneGoToAccounts"
-                  type="primary"
-                  containerStyle={[styles.button, styles.buttonRight]}
-                  onPress={onOpenAccounts}
-                  disabled={pending}
-                  title={<Trans i18nKey="AppAction.install.done.accounts" />}
-                />
-              )}
+            {!error && !pending && installing && (
+              <Button
+                event="ManagerAppActionDoneGoToAccounts"
+                type="primary"
+                containerStyle={[styles.button, styles.buttonRight]}
+                onPress={onOpenAccounts}
+                disabled={pending}
+                title={<Trans i18nKey="AppAction.install.done.accounts" />}
+              />
+            )}
           </View>
         </SafeAreaView>
         <Touchable

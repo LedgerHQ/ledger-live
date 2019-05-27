@@ -73,8 +73,9 @@ export const accountsCountSelector = createSelector(
 );
 
 // $FlowFixMe
-export const currenciesSelector = createSelector(accountsSelector, acc =>
-  uniq(acc.map(a => a.currency)),
+export const currenciesSelector = createSelector(
+  accountsSelector,
+  acc => uniq(acc.map(a => a.currency)),
 );
 
 // $FlowFixMe
@@ -107,8 +108,9 @@ export const isUpToDateAccountSelector = createSelector(
 );
 
 // $FlowFixMe
-export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
-  accounts.every(isUpToDateAccount),
+export const isUpToDateSelector = createSelector(
+  accountsSelector,
+  accounts => accounts.every(isUpToDateAccount),
 );
 
 export default handleActions(handlers, initialState);

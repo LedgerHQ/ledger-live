@@ -91,8 +91,8 @@ class OnboardingStepSecurityChecklist extends Component<
       pinCode === false
         ? "pinCode"
         : recoveryPhrase === false
-          ? "recoveryPhrase"
-          : "";
+        ? "recoveryPhrase"
+        : "";
     const isErrorModalOpened = !!subErr;
     return (
       <OnboardingLayout

@@ -10,17 +10,23 @@ import {
   Switch,
 } from "react-native";
 import uuid from "uuid/v4";
-import { from } from "rxjs";
-import { bufferTime } from "rxjs/operators";
+import { from, Observable } from "rxjs";
+import { listen } from "@ledgerhq/logs";
+import type { Log } from "@ledgerhq/logs";
+import { bufferTime, shareReplay } from "rxjs/operators";
 import type { NavigationScreenProp } from "react-navigation";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
-import type { Log } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
-import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
 import LText from "../components/LText";
 import Button from "../components/Button";
 import KeyboardView from "../components/KeyboardView";
 import colors from "../colors";
+
+const logsObservable = Observable.create(o => listen(log => o.next(log))).pipe(
+  shareReplay(1000),
+);
+
+logsObservable.subscribe();
 
 const styles = StyleSheet.create({
   root: {
@@ -32,29 +38,12 @@ const styles = StyleSheet.create({
 const mapLogToColor = (log: Log) => {
   if (log.type.includes("error")) return colors.alert;
   if (log.type === "verbose") return colors.grey;
-  if (log.type.includes("ble-frame")) return colors.live;
-  if (log.type.includes("ble-apdu")) return colors.success;
+  if (log.type.includes("frame")) return colors.live;
+  if (log.type.includes("apdu")) return colors.success;
   return colors.darkBlue;
 };
 
-const mapLogToText = (log: Log) => {
-  switch (log.type) {
-    case "ble-apdu-read":
-      return `<= ${String(log.message)}`;
-
-    case "ble-frame-read":
-      return `<=  ${String(log.message)}`;
-
-    case "ble-frame-write":
-      return `=>  ${String(log.message)}`;
-
-    case "ble-apdu-write":
-      return `=> ${String(log.message)}`;
-
-    default:
-      return log.message;
-  }
-};
+const mapLogToText = (log: Log) => log.message;
 
 class LogItem extends PureComponent<{ log: Log }> {
   render() {
@@ -128,9 +117,8 @@ class DebugBLE extends Component<
 
   componentDidMount() {
     this.sub = logsObservable.pipe(bufferTime(200)).subscribe(buffer => {
-      this.setState(
-        ({ logs }) =>
-          buffer.length === 0 ? null : { logs: logs.concat(buffer) },
+      this.setState(({ logs }) =>
+        buffer.length === 0 ? null : { logs: logs.concat(buffer) },
       );
     });
   }

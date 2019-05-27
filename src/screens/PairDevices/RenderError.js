@@ -49,8 +49,8 @@ class RenderError extends Component<Props> {
     const outerError = isPairingStatus
       ? new PairingFailed()
       : isGenuineCheckStatus
-        ? new GenuineCheckFailed()
-        : null;
+      ? new GenuineCheckFailed()
+      : null;
 
     return (
       <View style={styles.root}>

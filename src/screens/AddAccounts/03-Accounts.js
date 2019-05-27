@@ -259,9 +259,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
   onAccountNameChange = (name: string, changedAccount: Account) => {
     this.setState(prevState => ({
-      scannedAccounts: prevState.scannedAccounts.map(
-        account =>
-          account.id === changedAccount.id ? { ...account, name } : account,
+      scannedAccounts: prevState.scannedAccounts.map(account =>
+        account.id === changedAccount.id ? { ...account, name } : account,
       ),
     }));
   };

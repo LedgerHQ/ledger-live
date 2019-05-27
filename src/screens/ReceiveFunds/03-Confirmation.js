@@ -128,21 +128,20 @@ class ReceiveConfirmation extends Component<Props, State> {
   verifyOnDevice = async (deviceId: string) => {
     const { account, navigation } = this.props;
 
-    this.sub = withDevice(deviceId)(
-      transport =>
-        account.id.startsWith("mock")
-          ? of({}).pipe(
-              delay(1000),
-              rejectionOp(),
-            )
-          : from(
-              getAddress(transport, {
-                derivationMode: account.derivationMode,
-                currency: account.currency,
-                path: account.freshAddressPath,
-                verify: true,
-              }),
-            ),
+    this.sub = withDevice(deviceId)(transport =>
+      account.id.startsWith("mock")
+        ? of({}).pipe(
+            delay(1000),
+            rejectionOp(),
+          )
+        : from(
+            getAddress(transport, {
+              derivationMode: account.derivationMode,
+              currency: account.currency,
+              path: account.freshAddressPath,
+              verify: true,
+            }),
+          ),
     ).subscribe({
       complete: () => {
         this.setState({ verified: true });

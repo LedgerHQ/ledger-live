@@ -127,8 +127,8 @@ const checkValidTransaction = async (a, t) =>
   !t.feePerByte
     ? Promise.reject(new FeeNotLoaded())
     : !t.amount
-      ? Promise.resolve(null)
-      : getFees(a, t).then(() => null);
+    ? Promise.resolve(null)
+    : getFees(a, t).then(() => null);
 
 const getTotalSpent = async (a, t) =>
   BigNumber(t.amount).isZero()
