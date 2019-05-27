@@ -111,14 +111,16 @@ export const accountDataToAccount = ({
   derivationMode,
   seedIdentifier
 }: AccountData): Account => {
-  const { xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
+  const { type, xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
   const currency = getCryptoCurrencyById(currencyId);
   let xpub = "";
   let freshAddress = "";
   let freshAddressPath = "";
-  if (currency.family === "bitcoin") {
+  if (type === "libcore") {
+    // in libcore implementation, xpubOrAddress field in the xpub
     xpub = xpubOrAddress;
   } else {
+    // otherwise, it's the freshAddress
     freshAddress = xpubOrAddress;
     freshAddressPath = runDerivationScheme(
       getDerivationScheme({ currency, derivationMode }),
