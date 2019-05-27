@@ -55,6 +55,9 @@ export async function bitcoinSignTransaction({
   } else if (currency.id === "stealthcoin") {
     additionals.push("stealthcoin");
   }
+  if (account.derivationMode === "native_segwit") {
+    additionals.push("bech32");
+  }
 
   const rawInputs: CoreBitcoinLikeInput[] = await coreTransaction.getInputs();
   if (isCancelled()) return;
@@ -68,7 +71,10 @@ export async function bitcoinSignTransaction({
       const hexPreviousTransaction = await input.getPreviousTransaction();
       log("libcore", "splitTransaction " + String(hexPreviousTransaction));
       // v1 of XST txs have timestamp but not v2
-      const inputHasTimestamp = (currency.id === "stealthcoin" && hexPreviousTransaction.slice(0, 2) === "01") || hasTimestamp;
+      const inputHasTimestamp =
+        (currency.id === "stealthcoin" &&
+          hexPreviousTransaction.slice(0, 2) === "01") ||
+        hasTimestamp;
       const previousTransaction = hwApp.splitTransaction(
         hexPreviousTransaction,
         currency.supportsSegwit,
