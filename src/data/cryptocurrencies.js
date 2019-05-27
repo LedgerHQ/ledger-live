@@ -2297,6 +2297,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     symbol: "Ƀ",
     units: bitcoinUnits.map(makeTestnetUnit),
     supportsSegwit: true,
+    supportsNativeSegwit: true,
     isTestnetFor: "bitcoin",
     family: "bitcoin",
     blockAvgTime: 15 * 60,
