@@ -85,7 +85,8 @@ const modes = Object.freeze({
     purpose: 84,
     keychainEngine: "BIP173_P2WPKH",
     addressFormat: "bech32",
-    tag: "native segwit"
+    tag: "native segwit",
+    isSegwit: true
   },
   segwit: {
     isSegwit: true,
