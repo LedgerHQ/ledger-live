@@ -38,5 +38,7 @@ export type AssetsDistribution = {
     countervalue: BigNumber // countervalue of the amount that was calculated based of the rate provided
   }>,
   // number of accounts to show first (before the see all)
-  showFirst: number
+  showFirst: number,
+  // sum of all countervalues
+  sum: BigNumber
 };

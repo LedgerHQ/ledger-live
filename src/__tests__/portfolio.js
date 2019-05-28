@@ -1,5 +1,6 @@
 // @flow
 import flatMap from "lodash/flatMap";
+import { BigNumber } from "bignumber.js";
 import { getFiatCurrencyByTicker } from "../currencies";
 import {
   getDates,
@@ -199,6 +200,11 @@ test("getAssetsDistribution mult", () => {
       }
     );
     if (assetsDistribution.isAvailable) {
+      expect(assetsDistribution.sum.toString()).toBe(
+        assetsDistribution.list
+          .reduce((sum, o) => sum.plus(o.countervalue), BigNumber(0))
+          .toString()
+      );
       expect(assetsDistribution.showFirst).toBeLessThanOrEqual(
         assetsDistribution.list.length
       );

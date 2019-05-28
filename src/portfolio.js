@@ -280,7 +280,7 @@ export function getAssetsDistribution(
   }
 
   if (sum.eq(0)) {
-    return { isAvailable: false, list: [], showFirst: 0 };
+    return { isAvailable: false, list: [], showFirst: 0, sum };
   }
 
   const list = Object.keys(tickerCurrencies)
@@ -311,5 +311,5 @@ export function getAssetsDistribution(
   }
   const showFirst = Math.max(minShowFirst, i);
 
-  return { isAvailable: true, list, showFirst };
+  return { isAvailable: true, list, showFirst, sum };
 }
