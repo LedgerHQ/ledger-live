@@ -17,10 +17,10 @@ const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
 const defaultOpts = {
   transactionsSizeTarget: 100,
   extraInitialTransactionProps: () => ({
-    feePerByte: 10,
+    feePerByte: BigNumber(10),
     fee: BigNumber(10),
-    gasPrice: BigNumber(10),
-    gasLimit: BigNumber(10),
+    gasPrice: BigNumber(10000000000),
+    gasLimit: BigNumber(21000),
     feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
     tag: undefined,
     networkInfo: null
