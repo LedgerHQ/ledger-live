@@ -3,11 +3,10 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import LText from "./LText";
 
 type Props = {
-  currency: CryptoCurrency,
+  currency: *,
   size: number,
   color?: string,
 };

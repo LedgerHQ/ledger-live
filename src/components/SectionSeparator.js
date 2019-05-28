@@ -25,7 +25,7 @@ export default class SectionSeparator extends Component<Props> {
       <View style={[styles.root, style]}>
         <View style={lineStyle} />
         {text && (
-          <LText semibold style={[styles.text, textStyle]}>
+          <LText semiBold style={[styles.text, textStyle]}>
             {text}
           </LText>
         )}

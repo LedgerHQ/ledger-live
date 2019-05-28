@@ -16,14 +16,34 @@ import BalanceHeader from "./BalanceHeader";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 
-class AnimatedTopBar extends PureComponent<{
-  scrollY: AnimatedValue,
-  portfolio: Portfolio,
-  counterValueCurrency: Currency,
-  pending: boolean,
-  error: ?Error,
-  navigation: *,
-}> {
+class AnimatedTopBar extends PureComponent<
+  {
+    scrollY: AnimatedValue,
+    portfolio: Portfolio,
+    counterValueCurrency: Currency,
+    pending: boolean,
+    error: ?Error,
+    navigation: *,
+  },
+  { ignorePointerEvents: boolean },
+> {
+  state = {
+    ignorePointerEvents: true,
+  };
+  componentDidMount() {
+    this.props.scrollY.addListener(({ value }) =>
+      this.setState(prevState => {
+        const ignorePointerEvents = value < 90;
+        if (ignorePointerEvents === prevState.ignorePointerEvents) return null;
+        return { ignorePointerEvents };
+      }),
+    );
+  }
+
+  componentWillUnmount() {
+    this.props.scrollY.removeAllListeners();
+  }
+
   onPress = () => {
     this.props.navigation.emit("refocus");
   };
@@ -36,7 +56,7 @@ class AnimatedTopBar extends PureComponent<{
       pending,
       error,
     } = this.props;
-
+    const { ignorePointerEvents } = this.state;
     const opacity = scrollY.interpolate({
       inputRange: [90, 150],
       outputRange: [0, 1],
@@ -44,8 +64,11 @@ class AnimatedTopBar extends PureComponent<{
     });
 
     return (
-      <TouchableWithoutFeedback onPress={this.onPress}>
-        <Animated.View style={[styles.root, { opacity }]}>
+      <Animated.View
+        pointerEvents={ignorePointerEvents ? "none" : "auto"}
+        style={[styles.root, { opacity }]}
+      >
+        <TouchableWithoutFeedback onPress={this.onPress}>
           <View style={[styles.outer, { paddingTop: extraStatusBarPadding }]}>
             <SafeAreaView>
               {pending ? (
@@ -64,8 +87,8 @@ class AnimatedTopBar extends PureComponent<{
               )}
             </SafeAreaView>
           </View>
-        </Animated.View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </Animated.View>
     );
   }
 }

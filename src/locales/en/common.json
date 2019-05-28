@@ -665,6 +665,12 @@
       "queued": "Awaiting"
     }
   },
+  "distribution": {
+    "header": "Assets distribution",
+    "list": "Assets distribution",
+    "assets": "assets",
+    "total": "Total balance:"
+  },
   "settings": {
     "header": "Settings",
     "display": {
