@@ -396,6 +396,7 @@ export const currencyBridge: CurrencyBridge = {
                 // we are generating a new account locally
                 if (derivationMode === "") {
                   o.next({
+                    type: "Account",
                     id: accountId,
                     seedIdentifier: freshAddress,
                     derivationMode,
@@ -435,6 +436,7 @@ export const currencyBridge: CurrencyBridge = {
               if (finished) return;
 
               const account: $Exact<Account> = {
+                type: "Account",
                 id: accountId,
                 seedIdentifier: freshAddress,
                 derivationMode,

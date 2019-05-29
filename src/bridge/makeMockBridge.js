@@ -28,7 +28,8 @@ export const defaultGetFees = (a: Account, t: *) => {
 };
 
 const defaultOpts = {
-  // TODO some opts?
+  transactionsSizeTarget: 100,
+  scanAccountDeviceSuccessRate: 1
 };
 
 const delay = ms => new Promise(success => setTimeout(success, ms));
@@ -201,7 +202,7 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
 }
 
 export function makeMockCurrencyBridge(opts?: Opts): CurrencyBridge {
-  const { transactionsSizeTarget, scanAccountDeviceSuccessRate } = {
+  const { scanAccountDeviceSuccessRate, transactionsSizeTarget } = {
     ...defaultOpts,
     ...opts
   };

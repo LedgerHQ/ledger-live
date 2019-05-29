@@ -130,6 +130,7 @@ export const accountDataToAccount = ({
   }
 
   const account: $Exact<Account> = {
+    type: "Account",
     id,
     derivationMode,
     seedIdentifier,

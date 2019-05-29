@@ -6,6 +6,7 @@ import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "../derivation";
 
 export type TokenAccount = {
+  type: "TokenAccount",
   id: string,
   token: TokenCurrency,
   operations: Operation[],
@@ -13,6 +14,7 @@ export type TokenAccount = {
 };
 
 export type Account = {
+  type: "Account",
   // unique account identifier
   id: string,
 

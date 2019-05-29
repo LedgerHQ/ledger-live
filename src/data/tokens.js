@@ -9,7 +9,8 @@ const convertERC20 = ([
   name,
   ledgerSignature,
   contractAddress
-]) => ({
+]): TokenCurrency => ({
+  type: "TokenCurrency",
   id: "ethereum/erc20/" + token,
   ledgerSignature,
   contractAddress,

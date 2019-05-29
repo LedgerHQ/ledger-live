@@ -311,6 +311,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
   const token = getTokenById(tokenId);
   const convertOperation = op => fromOperationRaw(op, id);
   return {
+    type: "TokenAccount",
     id,
     token,
     balance: BigNumber(balance),
@@ -361,6 +362,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   const convertOperation = op => fromOperationRaw(op, id, tokenAccounts);
 
   const res: $Exact<Account> = {
+    type: "Account",
     id,
     seedIdentifier,
     derivationMode,
@@ -443,7 +445,7 @@ export function canBeMigrated(account: Account) {
   const { type, currencyId } = decodeAccountId(account.id);
   // at the moment migrations requires experimental libcore
   if (!getEnv("EXPERIMENTAL_LIBCORE")) return false;
-  return type === "ethereumjs" && currencyId === "ethereum";
+  return type === "ethereumjs" && currencyId === "ethereum"; // TODO remove currencyId match
 }
 
 // attempt to find an account in scanned accounts that satisfy a migration

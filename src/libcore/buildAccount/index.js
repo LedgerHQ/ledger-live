@@ -101,6 +101,7 @@ export async function buildAccount({
   );
 
   const account: $Exact<Account> = {
+    type: "Account",
     id: accountId,
     seedIdentifier,
     xpub,

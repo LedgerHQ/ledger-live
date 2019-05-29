@@ -97,8 +97,10 @@ export function genOperation(
   ops: *,
   rng: Prando
 ): $Exact<Operation> {
-  // $FlowFixMe
-  const ticker = account.token ? account.token.ticker : account.currency.ticker;
+  const ticker =
+    account.type === "TokenAccount"
+      ? account.token.ticker
+      : account.currency.ticker;
   const lastOp = ops[ops.length - 1];
   const date = new Date(
     (lastOp ? lastOp.date : Date.now()) -
@@ -134,11 +136,12 @@ export function genOperation(
     extra: {}
   };
 
-  // $FlowFixMe wtf
-  const { tokenAccounts } = account;
-  if (tokenAccounts) {
-    // TODO make sure tokenAccounts sometimes reuse an existing op hash from main account
-    op.subOperations = inferSubOperations(hash, tokenAccounts);
+  if (account.type === "Account") {
+    const { tokenAccounts } = account;
+    if (tokenAccounts) {
+      // TODO make sure tokenAccounts sometimes reuse an existing op hash from main account
+      op.subOperations = inferSubOperations(hash, tokenAccounts);
+    }
   }
 
   return op;
@@ -182,6 +185,7 @@ function genTokenAccount(
   const tokens = listTokensForCryptoCurrency(account.currency);
   const token = rng.nextArrayItem(tokens);
   const tokenAccount = {
+    type: "TokenAccount",
     id: `mock:1:${account.id}:${id}`,
     token,
     operations: [],
@@ -208,6 +212,7 @@ export function genAccount(
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
   const account: $Exact<Account> = {
+    type: "Account",
     id: `mock:1:${currency.id}:${id}:`,
     seedIdentifier: "mock",
     derivationMode: "",
