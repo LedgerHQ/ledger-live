@@ -1,6 +1,6 @@
 #!/bin/bash
 
-c="Bitcoin"
+c="Stealth"
 
 ledger-live app -o "$c"
 

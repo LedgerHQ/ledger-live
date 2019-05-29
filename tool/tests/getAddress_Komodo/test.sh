@@ -1,6 +1,6 @@
 #!/bin/bash
 
-c="Bitcoin"
+c="Komodo"
 
 ledger-live app -o "$c"
 

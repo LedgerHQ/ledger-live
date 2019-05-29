@@ -1,6 +1,6 @@
 #!/bin/bash
 
-c="Bitcoin"
+c="Ethereum"
 
 ledger-live app -o "$c"
 

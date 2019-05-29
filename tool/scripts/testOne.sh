@@ -17,7 +17,7 @@ curl -XPOST http://localhost:8435/end 2> /dev/null || true # make sure all is ki
 ledger-live proxy -f apdu.snapshot.log $opt &
 PID=$!
 rm -rf output/ dbdata/
-if [ "$opt" == "-u" ]; then
+if [ "$opt" == "--record" ]; then
   rm -rf expected/
 fi
 mkdir output
@@ -32,9 +32,9 @@ if kill -0 $PID 2> /dev/null; then
   curl -XPOST http://localhost:8435/end
 fi
 wait
-if [ "$opt" == "-u" ]; then
+if [ "$opt" == "--record" ]; then
   mkdir -p expected
-  cp ./output/* ./expected/
+  cp -r ./output/* ./expected/
 fi
 if [ -d "./expected" ]; then
   diff ./output ./expected

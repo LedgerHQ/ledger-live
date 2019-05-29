@@ -1,0 +1,42 @@
+
+13CpyBt4mXRPz9cVda4dABNrNA47EhBe32
+{ address: '13CpyBt4mXRPz9cVda4dABNrNA47EhBe32',
+  path: '44\'/0\'/0\'/0/70',
+  publicKey: '040689d1dc42263cb46e90ef8c6c9f54939e9f8d3e2b1c5b0084dafb20fd6c2b6864e80f9e925a158a72ccf38c49664a8522c94715efd8bf06cd4ce2225373015a',
+  chainCode: '2089520555da4f0b0ce543f40ec13462063b848280f60d439459daa19a897901' }
+segwit
+3BNCgkXmt1TqYTjeR5GESjQSq8octYRD9H
+{ address: '3BNCgkXmt1TqYTjeR5GESjQSq8octYRD9H',
+  path: '49\'/0\'/0\'/0/30',
+  publicKey: '046ef2f8f0df73c87fd6b38eb95fa10610736f7bb05f1db0a135fc7a51ade8fc6ac40a4ec2388d74af0173db69c62cbb0d5f005b27c43cfffaa416de3c8cc881ff',
+  chainCode: '813898e93c9c3f1f15eb948c21de80373204a1ec7ff3d019b5a9f47d59939bf2' }
+segwit
+34N7XoKANmM66ZQDyQf2j8hPaTo6v5X8eA
+{ address: '34N7XoKANmM66ZQDyQf2j8hPaTo6v5X8eA',
+  path: '49\'/0\'/1\'/0/131',
+  publicKey: '04580a6242b123a329f09c09c132eda45be32ed29183c15d6bee09b46a78355424a65598470c0bb71859c7267d100fa8fed1a1dc447ecaa95e31831af7f68b8136',
+  chainCode: 'e88d87097f704d18fc2b40cc1ff3311cf1d266ae9f757dc1c7fc9a160db9259b' }
+segwit
+38pozD9N9Sb4a2vJVvn1VsTESwhxvvTYDS
+{ address: '38pozD9N9Sb4a2vJVvn1VsTESwhxvvTYDS',
+  path: '49\'/0\'/2\'/0/1',
+  publicKey: '04de998e9d0bb4678fa939d7cbf8e4029b6f5c0f0f9234c24b04963d831fb5bca453a921529f4405d8a2a4c70ef27da92430382c8b20d48f94a98f1e29e119ca56',
+  chainCode: 'feef2f12230df6951acc31a9631022c96d8bdd7fcb8933a22131b9297f38866d' }
+segwit
+32zC2Vt63WJttvkvtYtHEJFh2gjZRi1K29
+{ address: '32zC2Vt63WJttvkvtYtHEJFh2gjZRi1K29',
+  path: '49\'/0\'/3\'/0/0',
+  publicKey: '04896afd07965d70dee740231c9ffaf6f85ec1ec3c2a1d689afdf129a89b2a836032326dde08d09682a3272c0aa982bfd7c0f19b749e8e3dc6c1281456387e101b',
+  chainCode: '5797e5f5c00156e884330136402a8bc2c84073ce33892b0cfbf08722043d14fa' }
+native_segwit
+bc1qexdgyeu0pf8xv5wjl3h4x8t6jze8ld59nut3l2
+{ address: 'bc1qexdgyeu0pf8xv5wjl3h4x8t6jze8ld59nut3l2',
+  path: '84\'/0\'/0\'/0/16',
+  publicKey: '04d88a5352ffe6be82c3a6300215d1170933d1241fc836aafe1a84f8f7e8723bec10f97089f1339f83eddb20f812281674c37512769fc807dda9932b128b8947c6',
+  chainCode: 'd9db20af112c47ccc463f16f421cd5ad862d84b57fc2bf615fa6dc907d4e61d5' }
+native_segwit
+bc1q5rz9qj6dfme42fhygnuvxc9p6hgqgwn0nl48zj
+{ address: 'bc1q5rz9qj6dfme42fhygnuvxc9p6hgqgwn0nl48zj',
+  path: '84\'/0\'/1\'/0/0',
+  publicKey: '047f05312c087d1afe3e934e79e62b79a0348cf3c4784f5a212d94c2123f47bed9235e7c30e1094ec5fb7b6a40ed4a8d17b7277f0af3f59d3554ef542f528043a2',
+  chainCode: 'd8b592b5ae910c1fd11f554eab60d834a20c9fe370b0f4b8a013475cf9411164' }

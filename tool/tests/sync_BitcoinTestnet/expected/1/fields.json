@@ -1,0 +1,56 @@
+{
+  "id": "libcore:1:bitcoin_testnet:tpubDD6rAArmjSTWvJyReoUoAsXjC7znrUv3XxJYrjyCBC5akCAjAJZu3yM4JZ4CPAQq44jacb27S8FtqwZWEkXoDMZeAtRP3ePSvrinWjazGZ8:",
+  "seedIdentifier": "04d61aa426e340c98213383a1858e45b5091950e31704c2eeceac20c380774e3c0cc3958d9f22a0844adee56d4756ab3d47b644c7bdabb9634ae865b1487dd53d2",
+  "name": "Bitcoin Testnet 1 (legacy)",
+  "derivationMode": "",
+  "index": 0,
+  "freshAddress": "mkdpWGrPpNqysJJ72ye8FZ7XywJn7WCLqR",
+  "freshAddressPath": "44'/1'/0'/0/26",
+  "pendingOperations": [],
+  "currencyId": "bitcoin_testnet",
+  "unitMagnitude": 8,
+  "balance": "276154734",
+  "xpub": "tpubDD6rAArmjSTWvJyReoUoAsXjC7znrUv3XxJYrjyCBC5akCAjAJZu3yM4JZ4CPAQq44jacb27S8FtqwZWEkXoDMZeAtRP3ePSvrinWjazGZ8"
+}
+{
+  "id": "libcore:1:bitcoin_testnet:tpubDDdmJz3PJBUusyoWzcpXtpc1NxsY7928qEfGBw1ibyvCLaoTnziH9dTbWuEKSBHd4LzqMAiVx3oRTkNgCL9rDFQFBrSk8Zs4LL6AwkKgq7Z:segwit",
+  "seedIdentifier": "04203a4fde0fd61a351fc16aad8048980d696154d58fe4ee7df2752eea6c64cfe61c2149c9020a6fc0e5966151bd26e1ded87836754f26e491ae9338c50a392407",
+  "name": "Bitcoin Testnet 1 (segwit)",
+  "derivationMode": "segwit",
+  "index": 0,
+  "freshAddress": "2MtDVceeyg8hwv4regwYdFS3Vee3UWaikwq",
+  "freshAddressPath": "49'/1'/0'/0/19",
+  "pendingOperations": [],
+  "currencyId": "bitcoin_testnet",
+  "unitMagnitude": 8,
+  "balance": "299715437",
+  "xpub": "tpubDDdmJz3PJBUusyoWzcpXtpc1NxsY7928qEfGBw1ibyvCLaoTnziH9dTbWuEKSBHd4LzqMAiVx3oRTkNgCL9rDFQFBrSk8Zs4LL6AwkKgq7Z"
+}
+{
+  "id": "libcore:1:bitcoin_testnet:tpubDDdmJz3PJBUuxHUvJtepcFd196tcCoazhXk31C78D3cv7Unn3NaiC8bJAb4dQF1xRiFuyfoZnqJu5W7tReJD5ag7ZLMGuZ8RamZrXbGugya:segwit",
+  "seedIdentifier": "04203a4fde0fd61a351fc16aad8048980d696154d58fe4ee7df2752eea6c64cfe61c2149c9020a6fc0e5966151bd26e1ded87836754f26e491ae9338c50a392407",
+  "name": "Bitcoin Testnet 2 (segwit)",
+  "derivationMode": "segwit",
+  "index": 1,
+  "freshAddress": "2MtPYgdDKiH9cSkhgrCBxjhtzvMav6tQEEk",
+  "freshAddressPath": "49'/1'/1'/0/10",
+  "pendingOperations": [],
+  "currencyId": "bitcoin_testnet",
+  "unitMagnitude": 8,
+  "balance": "0",
+  "xpub": "tpubDDdmJz3PJBUuxHUvJtepcFd196tcCoazhXk31C78D3cv7Unn3NaiC8bJAb4dQF1xRiFuyfoZnqJu5W7tReJD5ag7ZLMGuZ8RamZrXbGugya"
+}
+{
+  "id": "libcore:1:bitcoin_testnet:tpubDDdmJz3PJBUuxu9BV6J6v3xMAwM9WxQN4RfTRjdKNmvYN2AXbcYhE1r6YuNSLjaZS7W3cGWb1RABNVuz27EciKRCPKYKH1fHVjfuoL5hq1J:segwit",
+  "seedIdentifier": "04203a4fde0fd61a351fc16aad8048980d696154d58fe4ee7df2752eea6c64cfe61c2149c9020a6fc0e5966151bd26e1ded87836754f26e491ae9338c50a392407",
+  "name": "Bitcoin Testnet 3 (segwit)",
+  "derivationMode": "segwit",
+  "index": 2,
+  "freshAddress": "2N9uCsDi1C6eHCzMdWtdyMDsCubKmZQJC6B",
+  "freshAddressPath": "49'/1'/2'/0/0",
+  "pendingOperations": [],
+  "currencyId": "bitcoin_testnet",
+  "unitMagnitude": 8,
+  "balance": "0",
+  "xpub": "tpubDDdmJz3PJBUuxu9BV6J6v3xMAwM9WxQN4RfTRjdKNmvYN2AXbcYhE1r6YuNSLjaZS7W3cGWb1RABNVuz27EciKRCPKYKH1fHVjfuoL5hq1J"
+}

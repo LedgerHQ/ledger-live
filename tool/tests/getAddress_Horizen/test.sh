@@ -1,6 +1,6 @@
 #!/bin/bash
 
-c="Bitcoin"
+c="Horizen"
 
 ledger-live app -o "$c"
 

@@ -1,70 +1,98 @@
 {
   "id": "libcore:1:bitcoin:xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC:",
   "seedIdentifier": "04b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a",
-  "xpub": "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC",
+  "name": "Bitcoin 1 (legacy)",
   "derivationMode": "",
   "index": 0,
-  "freshAddress": "13i8TXNaTkt8977FPGjFUP7GPDL2pa8zko",
-  "freshAddressPath": "44'/0'/0'/0/67",
-  "name": "Bitcoin 1 (legacy)",
+  "freshAddress": "13CpyBt4mXRPz9cVda4dABNrNA47EhBe32",
+  "freshAddressPath": "44'/0'/0'/0/70",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "0"
+  "balance": "547",
+  "xpub": "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC"
 }
 {
   "id": "libcore:1:bitcoin:xpub6BuPGsUw1Aaz92W5AjsuwjHYbjUKG8Xw4HEuQ2XzYSZWa8CZ4Hkhh6pBeZx2iSVuK7LZk4VKFytXuNNEPHbiuyYyXyDCiusnQ56Aoghhrcs:segwit",
   "seedIdentifier": "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-  "xpub": "xpub6BuPGsUw1Aaz92W5AjsuwjHYbjUKG8Xw4HEuQ2XzYSZWa8CZ4Hkhh6pBeZx2iSVuK7LZk4VKFytXuNNEPHbiuyYyXyDCiusnQ56Aoghhrcs",
+  "name": "Bitcoin 1 (segwit)",
   "derivationMode": "segwit",
   "index": 0,
   "freshAddress": "3BNCgkXmt1TqYTjeR5GESjQSq8octYRD9H",
   "freshAddressPath": "49'/0'/0'/0/30",
-  "name": "Bitcoin 1 (segwit)",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "0"
+  "balance": "0",
+  "xpub": "xpub6BuPGsUw1Aaz92W5AjsuwjHYbjUKG8Xw4HEuQ2XzYSZWa8CZ4Hkhh6pBeZx2iSVuK7LZk4VKFytXuNNEPHbiuyYyXyDCiusnQ56Aoghhrcs"
 }
 {
   "id": "libcore:1:bitcoin:xpub6BuPGsUw1AazBjooDr9dHzVm5hwQCQbEtreXX6hjAA5ahJdPNHuJkn8t3nR9e9rNQ8rqboGdnWkrcwmxp9Cvd2u7zEURkQVnnWQHJFcFiMV:segwit",
   "seedIdentifier": "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-  "xpub": "xpub6BuPGsUw1AazBjooDr9dHzVm5hwQCQbEtreXX6hjAA5ahJdPNHuJkn8t3nR9e9rNQ8rqboGdnWkrcwmxp9Cvd2u7zEURkQVnnWQHJFcFiMV",
+  "name": "Bitcoin 2 (segwit)",
   "derivationMode": "segwit",
   "index": 1,
-  "freshAddress": "3K74o5igfazWm4WQFHcScDdRPxeexS5xHy",
-  "freshAddressPath": "49'/0'/1'/0/128",
-  "name": "Bitcoin 2 (segwit)",
+  "freshAddress": "34N7XoKANmM66ZQDyQf2j8hPaTo6v5X8eA",
+  "freshAddressPath": "49'/0'/1'/0/131",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "838"
+  "balance": "550",
+  "xpub": "xpub6BuPGsUw1AazBjooDr9dHzVm5hwQCQbEtreXX6hjAA5ahJdPNHuJkn8t3nR9e9rNQ8rqboGdnWkrcwmxp9Cvd2u7zEURkQVnnWQHJFcFiMV"
 }
 {
   "id": "libcore:1:bitcoin:xpub6BuPGsUw1AazDdNDNVPgRY1EYbM1xMxPdbrh8AD7ChSQKgECTEnVukh216M3Xz8f1VzNtJ7xCKMzbgFP7DFEMT2PVV8EbYkekVfY5Y9TTKh:segwit",
   "seedIdentifier": "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-  "xpub": "xpub6BuPGsUw1AazDdNDNVPgRY1EYbM1xMxPdbrh8AD7ChSQKgECTEnVukh216M3Xz8f1VzNtJ7xCKMzbgFP7DFEMT2PVV8EbYkekVfY5Y9TTKh",
+  "name": "Bitcoin 3 (segwit)",
   "derivationMode": "segwit",
   "index": 2,
   "freshAddress": "38pozD9N9Sb4a2vJVvn1VsTESwhxvvTYDS",
   "freshAddressPath": "49'/0'/2'/0/1",
-  "name": "Bitcoin 3 (segwit)",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "0"
+  "balance": "0",
+  "xpub": "xpub6BuPGsUw1AazDdNDNVPgRY1EYbM1xMxPdbrh8AD7ChSQKgECTEnVukh216M3Xz8f1VzNtJ7xCKMzbgFP7DFEMT2PVV8EbYkekVfY5Y9TTKh"
 }
 {
   "id": "libcore:1:bitcoin:xpub6BuPGsUw1AazGkZvYGrhFX2t3Ag42rEgtPndss4r2cp5jyhSqdFouRERCUFXLUeEC5DpPBYw14Lt7Vjq4Vs8SzDWteTgSgdN5SMowDzAh78:segwit",
   "seedIdentifier": "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-  "xpub": "xpub6BuPGsUw1AazGkZvYGrhFX2t3Ag42rEgtPndss4r2cp5jyhSqdFouRERCUFXLUeEC5DpPBYw14Lt7Vjq4Vs8SzDWteTgSgdN5SMowDzAh78",
+  "name": "Bitcoin 4 (segwit)",
   "derivationMode": "segwit",
   "index": 3,
   "freshAddress": "32zC2Vt63WJttvkvtYtHEJFh2gjZRi1K29",
   "freshAddressPath": "49'/0'/3'/0/0",
-  "name": "Bitcoin 4 (segwit)",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "0"
+  "balance": "0",
+  "xpub": "xpub6BuPGsUw1AazGkZvYGrhFX2t3Ag42rEgtPndss4r2cp5jyhSqdFouRERCUFXLUeEC5DpPBYw14Lt7Vjq4Vs8SzDWteTgSgdN5SMowDzAh78"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK:native_segwit",
+  "seedIdentifier": "04c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b125",
+  "name": "Bitcoin 1 (native segwit)",
+  "derivationMode": "native_segwit",
+  "index": 0,
+  "freshAddress": "bc1qexdgyeu0pf8xv5wjl3h4x8t6jze8ld59nut3l2",
+  "freshAddressPath": "84'/0'/0'/0/16",
+  "pendingOperations": [],
+  "currencyId": "bitcoin",
+  "unitMagnitude": 8,
+  "balance": "880",
+  "xpub": "xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK"
+}
+{
+  "id": "libcore:1:bitcoin:xpub6DVfEXXjv6nstPop8K6CPPiRp4fPJhGWYP7RBJ7BakvUhpkibRqTs6zhos3jQKD9bQWNecHyDN2YEr9EcPHfZ3W6vyBL12ouogv5rVNtGdy:native_segwit",
+  "seedIdentifier": "04c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b125",
+  "name": "Bitcoin 2 (native segwit)",
+  "derivationMode": "native_segwit",
+  "index": 1,
+  "freshAddress": "bc1q5rz9qj6dfme42fhygnuvxc9p6hgqgwn0nl48zj",
+  "freshAddressPath": "84'/0'/1'/0/0",
+  "pendingOperations": [],
+  "currencyId": "bitcoin",
+  "unitMagnitude": 8,
+  "balance": "0",
+  "xpub": "xpub6DVfEXXjv6nstPop8K6CPPiRp4fPJhGWYP7RBJ7BakvUhpkibRqTs6zhos3jQKD9bQWNecHyDN2YEr9EcPHfZ3W6vyBL12ouogv5rVNtGdy"
 }

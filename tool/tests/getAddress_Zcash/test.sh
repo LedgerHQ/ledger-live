@@ -1,6 +1,6 @@
 #!/bin/bash
 
-c="Bitcoin"
+c="ZCash"
 
 ledger-live app -o "$c"
 
