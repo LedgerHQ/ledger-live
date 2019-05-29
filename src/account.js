@@ -511,11 +511,7 @@ export function groupAddAccounts(
       if (empty) {
         alreadyEmptyAccount = existingAccount;
       }
-      if (canBeMigrated(existingAccount)) {
-        migrateAccounts.push(existingAccount);
-      } else {
-        importedAccounts.push(existingAccount);
-      }
+      importedAccounts.push(existingAccount);
     } else if (empty) {
       creatableAccounts.push(acc);
     } else {
