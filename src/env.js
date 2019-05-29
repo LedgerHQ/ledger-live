@@ -28,6 +28,7 @@ const envParsers = {
   EXPERIMENTAL_LANGUAGES: boolParser,
   EXPERIMENTAL_LIBCORE: boolParser,
   EXPERIMENTAL_NATIVE_SEGWIT: boolParser,
+  EXPERIMENTAL_SEND_MAX: boolParser,
   EXPERIMENTAL_USB: boolParser,
   EXPLORER_V2: stringParser,
   EXPLORER_V3: stringParser,
@@ -53,6 +54,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   EXPERIMENTAL_LANGUAGES: false,
   EXPERIMENTAL_LIBCORE: false,
   EXPERIMENTAL_NATIVE_SEGWIT: false,
+  EXPERIMENTAL_SEND_MAX: false,
   EXPERIMENTAL_USB: false,
   EXPLORER_V2:
     "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
