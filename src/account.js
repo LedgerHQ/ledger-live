@@ -490,9 +490,15 @@ export function groupAddAccounts(
 
   const scannedAccountsWithoutMigrate = [...scannedAccounts];
   existingAccounts.forEach(existingAccount => {
-    const migrate = findAccountMigration(existingAccount, scannedAccounts);
+    const migrate = findAccountMigration(
+      existingAccount,
+      scannedAccountsWithoutMigrate
+    );
     if (migrate) {
-      migrateAccounts.push(migrate);
+      migrateAccounts.push({
+        ...migrate,
+        name: existingAccount.name
+      });
       const index = scannedAccountsWithoutMigrate.indexOf(migrate);
       if (index !== -1) {
         scannedAccountsWithoutMigrate[index] =
