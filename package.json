@@ -1,6 +1,6 @@
 {
   "name": "ledgerlivemobile",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "private": true,
   "rnpm": {
     "assets": [
@@ -11,12 +11,16 @@
     "postinstall": "./scripts/post.sh",
     "start": "react-native start",
     "android": "react-native run-android",
+    "android:internal": "bundle exec fastlane android beta",
+    "android:waldo": "bundle exec fastlane android upload_waldo --env mock",
     "android:clean": "$ANDROID_HOME/platform-tools/adb shell pm clear com.ledger.live && react-native run-android",
     "android:staging": "cd android && ./gradlew assembleStagingRelease",
     "android:mock": "cd android && ENVFILE=.env.mock ./gradlew assembleStagingRelease",
     "android:release": "./scripts/android-release.sh",
     "android:install": "./scripts/install-and-run-apk.sh",
     "ios": "react-native run-ios",
+    "ios:internal": "bundle exec fastlane ios beta --env production",
+    "ios:waldo": "bundle exec fastlane ios upload_waldo --env mock",
     "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Release",
     "staging-android": "yarn android:staging && yarn android:install",
     "mock-android": "yarn android:mock && yarn android:install",
@@ -26,7 +30,9 @@
     "test": "yarn check --integrity && ./scripts/check-no-dups.sh && yarn lint && yarn flow && prettier -l src/**/*.js",
     "sync-flowtyped": "flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
-    "debugSVG": "sh scripts/debugsvg.sh | node_modules/.bin/prettier --parser flow > src/screens/DebugSVG.js"
+    "debugSVG": "sh scripts/debugsvg.sh | node_modules/.bin/prettier --parser flow > src/screens/DebugSVG.js",
+    "internal": "bash ./scripts/internal-beta.sh",
+    "waldo": "bash ./scripts/deploy-to-waldo.sh"
   },
   "jest": {
     "preset": "react-native",

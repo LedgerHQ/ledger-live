@@ -4,7 +4,6 @@ project.ext.envConfigFiles = [
     debug: ".env",
     release: ".env.production",
     stagingrelease: ".env.staging",
-    mock: ".env.mock",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -120,8 +119,8 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 19
-        versionName "1.2.2"
+        versionCode 21
+        versionName "1.3.0"
         resValue "string", "build_config_package", "com.ledger.live"
     }
     splits {
