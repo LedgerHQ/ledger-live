@@ -30,7 +30,7 @@ export function inferDynamicRange(
   const targetMin = amount.times(minMult);
   const targetMax = amount.times(maxMult);
   const step = findBestRangeStep(targetMin, targetMax, targetSteps);
-  if (Number.isNaN(step) || step <= 0) {
+  if (Number.isNaN(step) || step.lte(0)) {
     throw new Error("inferDynamicRange: invalid parameters");
   }
   const initial = stepping(amount, step, BigNumber.ROUND_HALF_UP);

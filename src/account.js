@@ -487,7 +487,24 @@ export function groupAddAccounts(
   const creatableAccounts = [];
   const migrateAccounts = [];
   let alreadyEmptyAccount;
-  scannedAccounts.forEach(acc => {
+
+  const scannedAccountsWithoutMigrate = [...scannedAccounts];
+  existingAccounts.forEach(existingAccount => {
+    const migrate = findAccountMigration(existingAccount, scannedAccounts);
+    if (migrate) {
+      migrateAccounts.push(migrate);
+      const index = scannedAccountsWithoutMigrate.indexOf(migrate);
+      if (index !== -1) {
+        scannedAccountsWithoutMigrate[index] =
+          scannedAccountsWithoutMigrate[
+            scannedAccountsWithoutMigrate.length - 1
+          ];
+        scannedAccountsWithoutMigrate.pop();
+      }
+    }
+  });
+
+  scannedAccountsWithoutMigrate.forEach(acc => {
     const existingAccount = existingAccounts.find(a => a.id === acc.id);
     const empty = isAccountEmpty(acc);
     if (existingAccount) {
@@ -601,7 +618,7 @@ export function addAccounts({
 
   // apply the renaming
   return newAccounts.map(a => {
-    const name = renamings[a.id];
+    const name = validateNameEdition(a, renamings[a.id]);
     if (name) return { ...a, name };
     return a;
   });
