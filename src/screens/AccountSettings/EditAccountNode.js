@@ -6,6 +6,7 @@ import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { Trans, translate } from "react-i18next";
@@ -18,7 +19,6 @@ import TextInput from "../../components/TextInput";
 import KeyboardView from "../../components/KeyboardView";
 import LText, { getFontStyle } from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
-import { getAccountBridge } from "../../bridge";
 
 import colors from "../../colors";
 

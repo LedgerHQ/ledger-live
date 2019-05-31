@@ -14,10 +14,10 @@ import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { getAccountBridge } from "../../bridge";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

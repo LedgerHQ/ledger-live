@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import colors from "../../colors";
@@ -11,7 +12,6 @@ import colors from "../../colors";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
-import { getAccountBridge } from "../../bridge";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 

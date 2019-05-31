@@ -4,6 +4,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import { Trans, translate } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -13,7 +14,6 @@ import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
 import colors from "../../colors";
-import { getAccountBridge } from "../../bridge";
 import type { T } from "../../types/common";
 
 type Props = {
