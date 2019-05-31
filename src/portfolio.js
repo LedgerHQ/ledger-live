@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 import memoize from "lodash/memoize";
 import last from "lodash/last";
 import type {
+  TokenAccount,
   Account,
   BalanceHistory,
   BalanceHistoryWithCountervalue,
@@ -54,7 +55,7 @@ export function getDates(r: PortfolioRange): Date[] {
 }
 
 type GetBalanceHistory = (
-  account: Account,
+  account: Account | TokenAccount,
   r: PortfolioRange
 ) => BalanceHistory;
 
@@ -100,10 +101,13 @@ export const getBalanceHistory: GetBalanceHistory = memoize(
 );
 
 type GetBalanceHistoryWithCountervalue = (
-  account: Account,
+  account: Account | TokenAccount,
   r: PortfolioRange,
-  // todo switch Account to TokenCurrency | CryptoCurrency
-  calculateAccountCounterValue: (Account, BigNumber, Date) => ?BigNumber
+  calculateAccountCounterValue: (
+    TokenCurrency | CryptoCurrency,
+    BigNumber,
+    Date
+  ) => ?BigNumber
 ) => {
   history: BalanceHistoryWithCountervalue,
   countervalueAvailable: boolean
@@ -120,11 +124,12 @@ const ZERO = BigNumber(0);
 
 const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
   const histo = getBalanceHistory(account, r);
+  const cur = account.type === "Account" ? account.currency : account.token;
   // pick a stable countervalue point in time to hash for the cache
-  const cvRef = calc(account, HIGH_VALUE, histo[0].date);
+  const cvRef = calc(cur, HIGH_VALUE, histo[0].date);
   const mapFn = p => ({
     ...p,
-    countervalue: (cvRef && calc(account, p.value, p.date)) || ZERO
+    countervalue: (cvRef && calc(cur, p.value, p.date)) || ZERO
   });
   const stableHash = accountRateHashCVStable(account, r, cvRef);
   let stable = accountCVstableCache[stableHash];
@@ -152,6 +157,21 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
 
 export const getBalanceHistoryWithCountervalue = getBHWCV;
 
+export function flattenAccounts(
+  topAccounts: Account[]
+): (Account | TokenAccount)[] {
+  const accounts = [];
+  for (let i = 0; i < topAccounts.length; i++) {
+    const account = topAccounts[i];
+    accounts.push(account);
+    const tokenAccounts = account.tokenAccounts || [];
+    for (let j = 0; j < tokenAccounts.length; j++) {
+      accounts.push(tokenAccounts[j]);
+    }
+  }
+  return accounts;
+}
+
 const portfolioMemo: { [_: *]: Portfolio } = {};
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
@@ -160,11 +180,11 @@ const portfolioMemo: { [_: *]: Portfolio } = {};
  * @memberof account
  */
 export function getPortfolio(
-  accounts: Account[],
+  topAccounts: Account[],
   range: PortfolioRange,
-  // TODO change Account to TokenCurrency | CryptoCurrency
-  calc: (Account, BigNumber, Date) => ?BigNumber
+  calc: (TokenCurrency | CryptoCurrency, BigNumber, Date) => ?BigNumber
 ): Portfolio {
+  const accounts = flattenAccounts(topAccounts);
   const availableAccounts = [];
   const unavailableAccounts = [];
   const histories = [];
@@ -181,7 +201,11 @@ export function getPortfolio(
   }
 
   const unavailableCurrencies = [
-    ...new Set(unavailableAccounts.map(a => a.currency))
+    ...new Set(
+      unavailableAccounts.map(a =>
+        a.type === "Account" ? a.currency : a.token
+      )
+    )
   ];
 
   const balanceAvailable =
@@ -261,7 +285,7 @@ const previousDistributionCache = {
 };
 
 export function getAssetsDistribution(
-  accounts: Account[],
+  topAccounts: Account[],
   calculateCountervalue: (
     currency: TokenCurrency | CryptoCurrency,
     value: BigNumber
@@ -275,22 +299,15 @@ export function getAssetsDistribution(
   let sum = BigNumber(0);
   const tickerBalances = {};
   const tickerCurrencies = {};
+  const accounts = flattenAccounts(topAccounts);
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
-    const ticker = account.currency.ticker;
-    tickerCurrencies[ticker] = account.currency;
+    const cur = account.type === "Account" ? account.currency : account.token;
+    const ticker = cur.ticker;
+    tickerCurrencies[ticker] = cur;
     tickerBalances[ticker] = (tickerBalances[ticker] || BigNumber(0)).plus(
       account.balance
     );
-    const tokenAccounts = account.tokenAccounts || [];
-    for (let j = 0; j < tokenAccounts.length; j++) {
-      const tokenAccount = tokenAccounts[j];
-      const tokenTicker = tokenAccount.token.ticker;
-      tickerCurrencies[tokenTicker] = tokenAccount.token;
-      tickerBalances[tokenTicker] = (
-        tickerBalances[tokenTicker] || BigNumber(0)
-      ).plus(tokenAccount.balance);
-    }
   }
 
   const tickerCountervalues = {};

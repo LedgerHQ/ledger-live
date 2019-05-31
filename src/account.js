@@ -33,7 +33,7 @@ const emptyDailyOperations = { sections: [], completed: true };
  * @memberof account
  */
 export function groupAccountsOperationsByDay(
-  accounts: Account[],
+  accounts: (Account | TokenAccount)[],
   count: number
 ): DailyOperations {
   // Track indexes of account.operations[] for each account
@@ -45,17 +45,20 @@ export function groupAccountsOperationsByDay(
     let bestOp: ?Operation;
     let bestOpInfo = { accountI: 0, fromPending: false };
     for (let i = 0; i < accounts.length; i++) {
+      const account = accounts[i];
       // look in operations
-      const op = accounts[i].operations[indexes[i]];
+      const op = account.operations[indexes[i]];
       if (op && (!bestOp || op.date > bestOp.date)) {
         bestOp = op;
         bestOpInfo = { accountI: i, fromPending: false };
       }
       // look in pending operations
-      const opP = accounts[i].pendingOperations[indexesPending[i]];
-      if (opP && (!bestOp || opP.date > bestOp.date)) {
-        bestOp = opP;
-        bestOpInfo = { accountI: i, fromPending: true };
+      if (account.type === "Account") {
+        const opP = account.pendingOperations[indexesPending[i]];
+        if (opP && (!bestOp || opP.date > bestOp.date)) {
+          bestOp = opP;
+          bestOpInfo = { accountI: i, fromPending: true };
+        }
       }
     }
     if (bestOp) {
@@ -95,7 +98,7 @@ export function groupAccountsOperationsByDay(
  * @memberof account
  */
 export function groupAccountOperationsByDay(
-  account: Account,
+  account: Account | TokenAccount,
   count: number
 ): DailyOperations {
   return groupAccountsOperationsByDay([account], count);
@@ -159,7 +162,7 @@ export const getAccountPlaceholderName = ({
 // - Ethereum contract only funds (api limitations)
 // - Ripple node that don't show all ledgers and if you have very old txs
 
-export const isAccountEmpty = (a: Account): boolean =>
+export const isAccountEmpty = (a: Account | TokenAccount): boolean =>
   a.operations.length === 0 && a.balance.isZero();
 
 export const getNewAccountPlaceholderName = getAccountPlaceholderName; // same naming
