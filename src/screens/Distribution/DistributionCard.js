@@ -23,18 +23,25 @@ export type DistributionItem = {
 
 type Props = {
   item: DistributionItem,
+  highlighting: boolean,
 };
 
 class DistributionCard extends PureComponent<Props> {
+  static defaultProps = {
+    highlighting: false,
+  };
+
   render() {
     const {
       item: { currency, amount, distribution },
+      highlighting,
     } = this.props;
     // $FlowFixMe
     const color = currency.color || colors.live;
     const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
+
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, highlighting ? { borderColor: color } : {}]}>
         <View style={styles.currencyLogo}>
           <CurrencyIcon size={18} currency={currency} />
         </View>
@@ -72,7 +79,9 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 7,
+    borderColor: "white",
+    borderWidth: 1,
   },
   rightContainer: {
     flexDirection: "column",

@@ -667,7 +667,7 @@
   },
   "distribution": {
     "header": "Assets distribution",
-    "list": "Assets distribution",
+    "list": "Assets distribution ({{count}})",
     "assets": "assets",
     "total": "Total balance:"
   },

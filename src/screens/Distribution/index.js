@@ -4,7 +4,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 
 import { Trans, translate } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { TouchableOpacity, View, StyleSheet, Platform } from "react-native";
 // $FlowFixMe
 import { FlatList, SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -62,26 +62,50 @@ const mapStateToProps = createStructuredSelector({
 });
 
 class Distribution extends PureComponent<Props, *> {
+  state = {
+    highlight: -1,
+  };
+  flatListRef: *;
+
   static navigationOptions = {
     title: i18next.t("distribution.header"),
     headerLeft: null,
   };
 
-  renderItem = ({ item }: { item: DistributionItem }) => (
-    <DistributionCard item={item} />
+  renderItem = ({ item, index }: { item: DistributionItem, index: number }) => (
+    <TouchableOpacity onPress={() => this.selectedKey(index)}>
+      <DistributionCard
+        item={item}
+        selectedKey={this.selectedKey}
+        highlighting={index === this.state.highlight}
+      />
+    </TouchableOpacity>
   );
+
+  selectedKey = index => {
+    this.setState({ highlight: index });
+    if (typeof index === "number") {
+      this.flatListRef.scrollToIndex({ index }, true);
+    }
+  };
 
   keyExtractor = item => item.id;
 
   ListHeaderComponent = () => {
     const { counterValueCurrency, distribution } = this.props;
+    const { highlight } = this.state;
 
     return (
       <View>
         <View style={styles.header}>
           <View style={styles.chartWrapper}>
-            <RingChart data={distribution.list} />
-            <View style={styles.assetWrapper}>
+            <RingChart
+              side={180}
+              selectedKey={this.selectedKey}
+              highlight={highlight}
+              data={distribution.list}
+            />
+            <View style={styles.assetWrapper} pointerEvents="none">
               <LText tertiary style={styles.assetCount}>
                 {distribution.list.length}
               </LText>
@@ -103,7 +127,11 @@ class Distribution extends PureComponent<Props, *> {
           </View>
         </View>
         <LText bold secondary style={styles.distributionTitle}>
-          <Trans i18nKey="distribution.list" />
+          <Trans
+            i18nKey="distribution.list"
+            count={distribution.list.length}
+            values={{ count: distribution.list.length }}
+          />
         </LText>
       </View>
     );
@@ -112,12 +140,16 @@ class Distribution extends PureComponent<Props, *> {
   render() {
     const { distribution } = this.props;
 
+    const Header = this.ListHeaderComponent;
     return (
       <SafeAreaView style={styles.wrapper}>
         <TrackScreen category="Distribution" />
+        <Header />
         <List
+          forwardedRef={ref => {
+            this.flatListRef = ref;
+          }}
           data={distribution.list}
-          ListHeaderComponent={this.ListHeaderComponent}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
           contentContainerStyle={styles.root}
@@ -138,6 +170,7 @@ const styles = StyleSheet.create({
   },
   root: {
     padding: 16,
+    paddingTop: 0,
     backgroundColor: colors.lightGrey,
     paddingBottom: 16,
   },
@@ -145,22 +178,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: colors.darkBlue,
-    marginBottom: 16,
+    marginLeft: 16,
+    marginTop: 8,
+    marginBottom: 8,
   },
   header: {
     backgroundColor: colors.white,
     borderRadius: 4,
     paddingHorizontal: 16,
-    paddingVertical: 34,
-    marginBottom: 24,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    margin: 16,
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowOpacity: 0.03,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 4,
+        },
+      },
+    }),
   },
   chartWrapper: {
-    height: 116,
-    width: 116,
-    marginRight: 15,
+    height: 180,
+    width: 180,
+    marginRight: 0,
   },
 
   assetWrapper: {
