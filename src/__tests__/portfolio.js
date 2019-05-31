@@ -191,14 +191,22 @@ test("getAssetsDistribution 1", () => {
 });
 
 test("getAssetsDistribution mult", () => {
+  const calc = (currency, value) => {
+    const rate = baseMockBTCRates[currency.ticker];
+    if (rate) return value.times(rate);
+  };
+
   for (let i = 0; i < accounts.length; i++) {
     const assetsDistribution = getAssetsDistribution(
       accounts.slice(0, i),
-      (currency, value) => {
-        const rate = baseMockBTCRates[currency.ticker];
-        if (rate) return value.times(rate);
-      }
+      calc
     );
+
+    // identity cached by ref
+    expect(getAssetsDistribution(accounts.slice(0, i), calc)).toBe(
+      assetsDistribution
+    );
+
     if (assetsDistribution.isAvailable) {
       expect(assetsDistribution.sum.toString()).toBe(
         assetsDistribution.list

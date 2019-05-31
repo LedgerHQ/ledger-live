@@ -12,7 +12,8 @@ import type {
   PortfolioRange,
   Portfolio,
   AssetsDistribution,
-  Currency
+  TokenCurrency,
+  CryptoCurrency
 } from "./types";
 import { getOperationAmountNumber } from "./operation";
 
@@ -101,6 +102,7 @@ export const getBalanceHistory: GetBalanceHistory = memoize(
 type GetBalanceHistoryWithCountervalue = (
   account: Account,
   r: PortfolioRange,
+  // todo switch Account to TokenCurrency | CryptoCurrency
   calculateAccountCounterValue: (Account, BigNumber, Date) => ?BigNumber
 ) => {
   history: BalanceHistoryWithCountervalue,
@@ -160,6 +162,7 @@ const portfolioMemo: { [_: *]: Portfolio } = {};
 export function getPortfolio(
   accounts: Account[],
   range: PortfolioRange,
+  // TODO change Account to TokenCurrency | CryptoCurrency
   calc: (Account, BigNumber, Date) => ?BigNumber
 ): Portfolio {
   const availableAccounts = [];
@@ -245,10 +248,24 @@ const defaultAssetsDistribution = {
 
 type AssetsDistributionOpts = typeof defaultAssetsDistribution;
 
+const assetsDistributionNotAvailable: AssetsDistribution = {
+  isAvailable: false,
+  list: [],
+  showFirst: 0,
+  sum: BigNumber(0)
+};
+
+const previousDistributionCache = {
+  hash: "",
+  data: assetsDistributionNotAvailable
+};
+
 export function getAssetsDistribution(
-  // TODO we could have caches in the future
   accounts: Account[],
-  calculateCountervalue: (currency: Currency, value: BigNumber) => ?BigNumber,
+  calculateCountervalue: (
+    currency: TokenCurrency | CryptoCurrency,
+    value: BigNumber
+  ) => ?BigNumber,
   opts?: AssetsDistributionOpts
 ): AssetsDistribution {
   const { minShowFirst, maxShowFirst, showFirstThreshold } = {
@@ -265,6 +282,15 @@ export function getAssetsDistribution(
     tickerBalances[ticker] = (tickerBalances[ticker] || BigNumber(0)).plus(
       account.balance
     );
+    const tokenAccounts = account.tokenAccounts || [];
+    for (let j = 0; j < tokenAccounts.length; j++) {
+      const tokenAccount = tokenAccounts[j];
+      const tokenTicker = tokenAccount.token.ticker;
+      tickerCurrencies[tokenTicker] = tokenAccount.token;
+      tickerBalances[tokenTicker] = (
+        tickerBalances[tokenTicker] || BigNumber(0)
+      ).plus(tokenAccount.balance);
+    }
   }
 
   const tickerCountervalues = {};
@@ -280,10 +306,17 @@ export function getAssetsDistribution(
   }
 
   if (sum.eq(0)) {
-    return { isAvailable: false, list: [], showFirst: 0, sum };
+    return assetsDistributionNotAvailable;
   }
 
-  const list = Object.keys(tickerCurrencies)
+  const tickerCurrenciesKeys = Object.keys(tickerCurrencies);
+
+  const hash = `${tickerCurrenciesKeys.length}_${sum.toString()}`;
+  if (hash === previousDistributionCache.hash) {
+    return previousDistributionCache.data;
+  }
+
+  const list = tickerCurrenciesKeys
     .map(ticker => {
       const currency = tickerCurrencies[ticker];
       const amount = tickerBalances[ticker];
@@ -311,5 +344,8 @@ export function getAssetsDistribution(
   }
   const showFirst = Math.max(minShowFirst, i);
 
-  return { isAvailable: true, list, showFirst, sum };
+  const data = { isAvailable: true, list, showFirst, sum };
+  previousDistributionCache.hash = hash;
+  previousDistributionCache.data = data;
+  return data;
 }
