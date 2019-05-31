@@ -14,6 +14,7 @@ import { isValidRecipient } from "../libcore/isValidRecipient";
 import { getFeesForTransaction } from "../libcore/getFeesForTransaction";
 import libcoreSignAndBroadcast from "../libcore/signAndBroadcast";
 import { makeLRUCache } from "../cache";
+import { apiForCurrency } from "../api/Ethereum";
 
 export type Transaction = {
   recipient: string,
@@ -175,6 +176,11 @@ const getTotalSpent = (a, t) =>
 const getMaxAmount = async (a, t) =>
   getFees(a, t).then(totalFees => a.balance.minus(totalFees || 0));
 
+const estimateGasLimit = (account, address) => {
+  const api = apiForCurrency(account.currency);
+  return api.estimateGasLimitForERC20(address);
+};
+
 const bridge: AccountBridge<Transaction> = {
   startSync,
   checkValidRecipient,
@@ -192,7 +198,8 @@ const bridge: AccountBridge<Transaction> = {
   getTotalSpent,
   getMaxAmount,
   signAndBroadcast,
-  addPendingOperation
+  addPendingOperation,
+  estimateGasLimit
 };
 
 export default bridge;
