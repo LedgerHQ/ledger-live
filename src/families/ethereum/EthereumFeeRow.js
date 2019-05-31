@@ -43,6 +43,11 @@ class EthereumFeeRow extends Component<Props> {
       transaction,
       "gasPrice",
     );
+    const gasLimit = bridge.getTransactionExtra(
+      account,
+      transaction,
+      "gasLimit",
+    );
     const feeCustomUnit = bridge.getTransactionExtra(
       account,
       transaction,
@@ -77,7 +82,7 @@ class EthereumFeeRow extends Component<Props> {
             <LText style={styles.countervalue}>
               <CounterValue
                 before="≈ "
-                value={gasPrice}
+                value={gasPrice.times(gasLimit)}
                 currency={account.currency}
               />
             </LText>
