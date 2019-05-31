@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { PanResponder, View } from "react-native";
+import type { PressEvent } from "react-native/Libraries/Types/CoreEventTypes";
 import * as d3shape from "d3-shape";
 import Svg, { Path, G, Circle } from "react-native-svg";
 import colors from "../../colors";
@@ -9,71 +10,75 @@ import type { DistributionItem } from "./DistributionCard";
 
 type Props = {
   data: Array<DistributionItem>,
-  side: number,
-  style?: *,
-  selectedKey: number => void,
-  highlight?: number,
+  size: number,
+  onHighlightChange: number => void,
+  highlight: number,
 };
 
 class RingChart extends PureComponent<Props> {
   static defaultProps = {
-    data: [],
+    highlight: -1,
   };
 
   panResponder: *;
   arcGenerator = d3shape.arc();
   offsetX = 0;
   offsetY = 0;
-  highlight = -1;
   paths: * = {};
 
   constructor(props: Props) {
     super(props);
-    const { highlight, side, selectedKey, data } = this.props;
-
-    if (highlight) {
-      this.highlight = highlight;
-    }
-
     this.panResponder = PanResponder.create({
       onPanResponderGrant: event => {
         this.offsetX = event.nativeEvent.pageX - event.nativeEvent.locationX;
         this.offsetY = event.nativeEvent.pageY - event.nativeEvent.locationY;
+        this.findHighlightedArc(event);
       },
       onStartShouldSetPanResponder: () => true,
       onStartShouldSetPanResponderCapture: () => false,
       onMoveShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponderCapture: () => false,
-
-      onPanResponderMove: event => {
-        const x = event.nativeEvent.pageX - this.offsetX;
-        const y = event.nativeEvent.pageY - this.offsetY;
-
-        const y0 = side / 2;
-        const x0 = side / 2;
-        let rad = Math.atan2(y - y0, x - x0);
-        rad =
-          ((rad > 0 ? rad : 2 * Math.PI + rad) + 1.5707963268) % (2 * Math.PI);
-
-        let highlight = this.highlight;
-        for (let i = 0; i < this.paths.items.length; i++) {
-          if (this.paths.items[i].endAngle > rad) {
-            highlight = i;
-            break;
-          }
-        }
-        if (this.highlight !== highlight) {
-          selectedKey(highlight);
-        }
-      },
+      onPanResponderMove: this.findHighlightedArc,
 
       onShouldBlockNativeResponder: () => false,
     });
+    this.generatePaths();
+  }
+
+  findHighlightedArc = (event: PressEvent) => {
+    const { size, onHighlightChange } = this.props;
+    const x = event.nativeEvent.pageX - this.offsetX;
+    const y = event.nativeEvent.pageY - this.offsetY;
+
+    const y0 = size / 2;
+    const x0 = size / 2;
+    let rad = Math.atan2(y - y0, x - x0);
+    rad = (2.5 * Math.PI + rad) % (2 * Math.PI);
+
+    let highlight = this.props.highlight;
+    for (let i = 0; i < this.paths.items.length; i++) {
+      if (this.paths.items[i].endAngle > rad) {
+        highlight = i;
+        break;
+      }
+    }
+
+    if (highlight !== this.props.highlight) {
+      onHighlightChange(highlight);
+    }
+  };
+
+  generatePaths = () => {
+    const { data } = this.props;
     this.paths = data.reduce(this.reducer, {
       items: [],
       highlightedItems: [],
       angle: 0,
     });
+  };
+
+  componentDidUpdate() {
+    this.generatePaths();
   }
 
   reducer = (data: *, item: DistributionItem, index: number) => {
@@ -113,25 +118,24 @@ class RingChart extends PureComponent<Props> {
   };
 
   render() {
-    const { style, highlight } = this.props;
+    const { highlight, size } = this.props;
     return (
-      <View style={style} {...this.panResponder.panHandlers}>
-        <Svg width="100%" height="100%" viewBox="0 0 100 100">
-          <G transform="translate(50, 50)">
-            {this.paths &&
-              this.paths.items.map(({ pathData, color, id }, i) => (
-                <Path
-                  key={id}
-                  stroke={colors.white}
-                  strokeWidth={0.5}
-                  fill={color}
-                  d={
-                    i === highlight
-                      ? this.paths.highlightedItems[i].pathData
-                      : pathData
-                  }
-                />
-              ))}
+      <View {...this.panResponder.panHandlers}>
+        <Svg width={size} height={size} viewBox="0 0 76 76">
+          <G transform="translate(38, 38)">
+            {this.paths.items.map(({ pathData, color, id }, i) => (
+              <Path
+                key={id}
+                stroke={colors.white}
+                strokeWidth={0.5}
+                fill={color}
+                d={
+                  i === highlight
+                    ? this.paths.highlightedItems[i].pathData
+                    : pathData
+                }
+              />
+            ))}
             <Circle cx={0} cy={0} r="26" fill="#fff" />
           </G>
         </Svg>

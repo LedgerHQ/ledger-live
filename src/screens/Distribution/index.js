@@ -4,7 +4,13 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 
 import { Trans, translate } from "react-i18next";
-import { TouchableOpacity, View, StyleSheet, Platform } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Platform,
+  Dimensions,
+} from "react-native";
 // $FlowFixMe
 import { FlatList, SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -73,20 +79,17 @@ class Distribution extends PureComponent<Props, *> {
   };
 
   renderItem = ({ item, index }: { item: DistributionItem, index: number }) => (
-    <TouchableOpacity onPress={() => this.selectedKey(index)}>
+    <TouchableOpacity onPress={() => this.onHighlightChange(index)}>
       <DistributionCard
         item={item}
-        selectedKey={this.selectedKey}
         highlighting={index === this.state.highlight}
       />
     </TouchableOpacity>
   );
 
-  selectedKey = index => {
+  onHighlightChange = index => {
     this.setState({ highlight: index });
-    if (typeof index === "number") {
-      this.flatListRef.scrollToIndex({ index }, true);
-    }
+    this.flatListRef.scrollToIndex({ index }, true);
   };
 
   keyExtractor = item => item.id;
@@ -94,14 +97,14 @@ class Distribution extends PureComponent<Props, *> {
   ListHeaderComponent = () => {
     const { counterValueCurrency, distribution } = this.props;
     const { highlight } = this.state;
-
+    const size = Dimensions.get("window").width / 3;
     return (
       <View>
         <View style={styles.header}>
-          <View style={styles.chartWrapper}>
+          <View style={[styles.chartWrapper, { height: size }]}>
             <RingChart
-              side={180}
-              selectedKey={this.selectedKey}
+              size={size}
+              onHighlightChange={this.onHighlightChange}
               highlight={highlight}
               data={distribution.list}
             />
@@ -114,7 +117,7 @@ class Distribution extends PureComponent<Props, *> {
               </LText>
             </View>
           </View>
-          <View>
+          <View style={styles.total}>
             <LText tertiary style={styles.label}>
               <Trans i18nKey="distribution.total" />
             </LText>
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: colors.white,
     borderRadius: 4,
-    paddingHorizontal: 16,
+    padding: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -204,9 +207,8 @@ const styles = StyleSheet.create({
     }),
   },
   chartWrapper: {
-    height: 180,
-    width: 180,
-    marginRight: 0,
+    marginRight: 4,
+    justifyContent: "flex-end",
   },
 
   assetWrapper: {
@@ -235,5 +237,10 @@ const styles = StyleSheet.create({
   amount: {
     fontSize: 22,
     color: colors.darkBlue,
+  },
+
+  total: {
+    alignItems: "flex-start",
+    marginLeft: 4,
   },
 });
