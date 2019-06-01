@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 import "babel-polyfill";
-import "./live-common-setup";
+import { closeAllDevices } from "./live-common-setup";
 
 import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
@@ -83,5 +83,7 @@ from(cmd.job(options)).subscribe({
     else console.error(String(e.message || e));
     process.exit(1);
   },
-  complete: () => {}
+  complete: () => {
+    closeAllDevices();
+  }
 });
