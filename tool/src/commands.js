@@ -35,6 +35,7 @@ import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-p
 import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 import repairFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 import accountFormatters from "./accountFormatters";
+import proxy from "./proxy";
 import {
   scan,
   scanCommonOpts,
@@ -93,6 +94,8 @@ const all = {
           .changePassword(getEnv("LIBCORE_PASSWORD"), password || "")
       )
   },
+
+  proxy,
 
   discoverDevices: {
     args: [

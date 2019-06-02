@@ -1,7 +1,8 @@
 #!/bin/bash
 
 name=$1
-opt=$2
+shift
+opt=$@
 cwd=`dirname $0`
 
 # ledger-live () {
@@ -11,22 +12,19 @@ cwd=`dirname $0`
 set -e
 cd $(dirname $0)/../tests/$name
 
-if [ "$opt" == "-u" ]; then
-  export RECORD_APDU_TO_FILE=1
-fi
-
-export DISABLE_TRANSACTION_BROADCAST=1
-export DEBUG_COMM_HTTP_PROXY=ws://localhost:8435
-
 touch apdu.snapshot.log
-ledger-hw-http-proxy-devserver -f apdu.snapshot.log &
+curl -XPOST http://localhost:8435/end 2> /dev/null || true # make sure all is killed
+ledger-live proxy -f apdu.snapshot.log $opt &
 PID=$!
 rm -rf output/ dbdata/
 if [ "$opt" == "-u" ]; then
   rm -rf expected/
 fi
 mkdir output
+
 echo "Running test $name..."
+export DISABLE_TRANSACTION_BROADCAST=1
+export DEVICE_PROXY_URL=ws://localhost:8435
 source ./test.sh
 echo "done."
 sleep 2

@@ -39,8 +39,8 @@ implementLibcore({
   logger
 });
 
-if (process.env.DEBUG_COMM_HTTP_PROXY) {
-  const Tr = createTransportHttp(process.env.DEBUG_COMM_HTTP_PROXY.split("|"));
+if (process.env.DEVICE_PROXY_URL) {
+  const Tr = createTransportHttp(process.env.DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
     open: () => retry(() => Tr.create(3000, 5000)),
