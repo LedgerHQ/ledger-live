@@ -175,4 +175,7 @@ export const withDevicePolling = (deviceId: string) => <T>(
   job: (Transport<*>) => Observable<T>,
   acceptError: Error => boolean = genericCanRetryOnError
 ): Observable<T> =>
-  withDevice(deviceId)(job).pipe(retryWhen(retryWhileErrors(acceptError)));
+  withDevice(deviceId)(job).pipe(
+    // $FlowFixMe
+    retryWhen(retryWhileErrors(acceptError))
+  );
