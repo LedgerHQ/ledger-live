@@ -56,7 +56,7 @@ test("reorderTokenAccountsByCountervalues", () => {
     WEB: 1
   };
   const reordered = reorderTokenAccountsByCountervalues(tickers)(
-    account.tokenAccounts
+    account.tokenAccounts || []
   );
   expect(reordered.map(ta => ta.token.ticker)).toMatchSnapshot();
   expect(reorderTokenAccountsByCountervalues(tickers)(reordered)).toBe(
@@ -74,7 +74,9 @@ test("reorderAccountByCountervalues", () => {
     WEB: 1
   };
   const reordered = reorderAccountByCountervalues(tickers)(account);
-  expect(reordered.tokenAccounts.map(ta => ta.token.ticker)).toMatchSnapshot();
+  expect(
+    (reordered.tokenAccounts || []).map(ta => ta.token.ticker)
+  ).toMatchSnapshot();
   expect(reorderAccountByCountervalues(tickers)(reordered)).toBe(reordered);
 });
 

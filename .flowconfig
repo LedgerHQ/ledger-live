@@ -1,7 +1,6 @@
 [ignore]
 <PROJECT_ROOT>/demo
 <PROJECT_ROOT>/tool
-<PROJECT_ROOT>/src/__tests__
 <PROJECT_ROOT>/scripts
 
 [include]

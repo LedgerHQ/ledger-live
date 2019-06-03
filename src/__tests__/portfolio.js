@@ -117,7 +117,7 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
 
 test("getPortfolio with twice same account will double the amounts", () => {
   const account = genAccount("seed_5", { tokenAccountsCount: 0 });
-  const history = getBalanceHistory(account, "week", { tokenAccountsCount: 0 });
+  const history = getBalanceHistory(account, "week");
   const allHistory = getPortfolio(
     [account, account],
     "week",
@@ -222,7 +222,7 @@ test("getAssetsDistribution mult", () => {
     if (assetsDistribution.isAvailable) {
       expect(assetsDistribution.sum.toString()).toBe(
         assetsDistribution.list
-          .reduce((sum, o) => sum.plus(o.countervalue), BigNumber(0))
+          .reduce((sum: BigNumber, o) => sum.plus(o.countervalue), BigNumber(0))
           .toString()
       );
       expect(assetsDistribution.showFirst).toBeLessThanOrEqual(
