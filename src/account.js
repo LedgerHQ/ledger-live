@@ -22,6 +22,7 @@ import type {
 import { asDerivationMode, getTagDerivationMode } from "./derivation";
 import { getCryptoCurrencyById, getTokenById } from "./currencies";
 import { getEnv } from "./env";
+import { flattenAccounts } from "./portfolio";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
@@ -33,9 +34,12 @@ const emptyDailyOperations = { sections: [], completed: true };
  * @memberof account
  */
 export function groupAccountsOperationsByDay(
-  accounts: (Account | TokenAccount)[],
-  count: number
+  inputAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[],
+  { count, withTokenAccounts }: { count: number, withTokenAccounts: boolean }
 ): DailyOperations {
+  const accounts = withTokenAccounts
+    ? flattenAccounts(inputAccounts)
+    : inputAccounts;
   // Track indexes of account.operations[] for each account
   const indexes: number[] = Array(accounts.length).fill(0);
   // Track indexes of account.pendingOperations[] for each account
@@ -99,9 +103,10 @@ export function groupAccountsOperationsByDay(
  */
 export function groupAccountOperationsByDay(
   account: Account | TokenAccount,
-  count: number
+  arg: { count: number, withTokenAccounts: boolean }
 ): DailyOperations {
-  return groupAccountsOperationsByDay([account], count);
+  const accounts: (Account | TokenAccount)[] = [account];
+  return groupAccountsOperationsByDay(accounts, arg);
 }
 
 export function encodeAccountId({
