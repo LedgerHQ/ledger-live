@@ -21,7 +21,6 @@ yarn-error.log*
 # git mergetool
 *.orig
 
-flow-typed/
 flow-coverage
 
 # Generated icons

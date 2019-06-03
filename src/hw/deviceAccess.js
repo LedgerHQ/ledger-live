@@ -66,7 +66,6 @@ const transportFinally = (cleanup: () => Promise<void>) => <T>(
     };
   });
 
-// $FlowFixMe
 const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
 
 const needsCleanup = {};
@@ -137,6 +136,7 @@ export const withDevice = (deviceId: string) => <T>(
             catchError(initialErrorRemapping),
             catchError(errorRemapping),
             // close the transport and clean up everything
+            // $FlowFixMe
             transportFinally(() => finalize(transport, [...cleanups, finish]))
           )
           .subscribe(o);
