@@ -62,12 +62,12 @@
     "ripple-binary-codec": "^0.2.0",
     "ripple-bs58check": "^2.0.2",
     "ripple-hashes": "^0.3.1",
-    "ripple-lib": "^1.1.2",
+    "ripple-lib": "^1.2.3",
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2"
   },
   "devDependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "23",
