@@ -30,12 +30,17 @@ function startOfDay(t) {
 
 const emptyDailyOperations = { sections: [], completed: true };
 
+type GroupOpsByDayOpts = {
+  count: number,
+  withTokenAccounts?: boolean
+};
+
 /**
  * @memberof account
  */
 export function groupAccountsOperationsByDay(
   inputAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[],
-  { count, withTokenAccounts }: { count: number, withTokenAccounts: boolean }
+  { count, withTokenAccounts }: GroupOpsByDayOpts
 ): DailyOperations {
   const accounts = withTokenAccounts
     ? flattenAccounts(inputAccounts)
@@ -103,7 +108,7 @@ export function groupAccountsOperationsByDay(
  */
 export function groupAccountOperationsByDay(
   account: Account | TokenAccount,
-  arg: { count: number, withTokenAccounts: boolean }
+  arg: GroupOpsByDayOpts
 ): DailyOperations {
   const accounts: (Account | TokenAccount)[] = [account];
   return groupAccountsOperationsByDay(accounts, arg);
