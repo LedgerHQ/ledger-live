@@ -249,7 +249,8 @@
       "description": "Uninstall and reinstall the {{managerAppName}} app in the Manager"
     },
     "UserRefusedAllowManager": {
-      "title": "Manager refused on device"
+      "title": "Manager refused on device",
+      "description": "You need to allow the manager on your device in order to access it, please try again"
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
@@ -666,6 +667,12 @@
       "error": "Error",
       "queued": "Awaiting"
     }
+  },
+  "distribution": {
+    "header": "Assets distribution",
+    "list": "Assets distribution ({{count}})",
+    "assets": "assets",
+    "total": "Total balance:"
   },
   "settings": {
     "header": "Settings",
