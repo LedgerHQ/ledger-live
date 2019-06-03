@@ -25,10 +25,7 @@ class QrCodeProgressBar extends PureComponent<Props> {
           thickness={progress ? 4 : 0}
           size={viewFinderSize / 4}
           strokeCap="round"
-          textStyle={[
-            styles.progressText,
-            getFontStyle({ tertiary: true, semiBold: true }),
-          ]}
+          textStyle={[styles.progressText, getFontStyle({ tertiary: true })]}
         />
       </View>
     ) : null;

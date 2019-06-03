@@ -21,7 +21,7 @@ class QrCodeBottomLayer extends PureComponent<Props> {
     return (
       <View style={[styles.darken, styles.centered]}>
         <View style={styles.centered}>
-          <LText semibold style={styles.text}>
+          <LText semiBold style={styles.text}>
             <Trans
               i18nKey={
                 liveQrCode

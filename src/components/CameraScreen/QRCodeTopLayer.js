@@ -9,7 +9,7 @@ import LText from "../LText";
 
 const QRCodeTopLayer = () => (
   <>
-    <LText semibold style={styles.text}>
+    <LText semiBold style={styles.text}>
       <Trans i18nKey="account.import.scan.descTop.line1" />
     </LText>
     <LText bold style={styles.text}>
