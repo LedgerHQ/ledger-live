@@ -17,6 +17,7 @@ import type {
   CryptoCurrency
 } from "./types";
 import { getOperationAmountNumber } from "./operation";
+import { flattenAccounts } from "./account";
 
 const dayIncrement = 24 * 60 * 60 * 1000;
 
@@ -156,23 +157,6 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
 };
 
 export const getBalanceHistoryWithCountervalue = getBHWCV;
-
-export function flattenAccounts(
-  topAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[]
-): (Account | TokenAccount)[] {
-  const accounts = [];
-  for (let i = 0; i < topAccounts.length; i++) {
-    const account = topAccounts[i];
-    accounts.push(account);
-    if (account.type === "Account") {
-      const tokenAccounts = account.tokenAccounts || [];
-      for (let j = 0; j < tokenAccounts.length; j++) {
-        accounts.push(tokenAccounts[j]);
-      }
-    }
-  }
-  return accounts;
-}
 
 const portfolioMemo: { [_: *]: Portfolio } = {};
 /**

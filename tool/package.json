@@ -13,7 +13,7 @@
     "@ledgerhq/hw-transport-node-ble": "^4.61.0",
     "@ledgerhq/hw-transport-node-hid": "^4.61.0",
     "@ledgerhq/ledger-core": "^2.3.0-beta.8",
-    "@ledgerhq/live-common": "^5.13.0-alpha.13",
+    "@ledgerhq/live-common": "^5.13.0-alpha.18",
     "@ledgerhq/logs": "^4.61.0",
     "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",

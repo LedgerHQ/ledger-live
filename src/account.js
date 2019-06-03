@@ -22,7 +22,6 @@ import type {
 import { asDerivationMode, getTagDerivationMode } from "./derivation";
 import { getCryptoCurrencyById, getTokenById } from "./currencies";
 import { getEnv } from "./env";
-import { flattenAccounts } from "./portfolio";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
@@ -452,6 +451,23 @@ export function toAccountRaw({
     res.tokenAccounts = tokenAccounts.map(toTokenAccountRaw);
   }
   return res;
+}
+
+export function flattenAccounts(
+  topAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[]
+): (Account | TokenAccount)[] {
+  const accounts = [];
+  for (let i = 0; i < topAccounts.length; i++) {
+    const account = topAccounts[i];
+    accounts.push(account);
+    if (account.type === "Account") {
+      const tokenAccounts = account.tokenAccounts || [];
+      for (let j = 0; j < tokenAccounts.length; j++) {
+        accounts.push(tokenAccounts[j]);
+      }
+    }
+  }
+  return accounts;
 }
 
 export function canBeMigrated(account: Account) {
