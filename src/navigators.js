@@ -110,6 +110,7 @@ import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import OnboardingOrNavigator from "./screens/OnboardingOrNavigator";
 import AdvancedLogs from "./screens/AccountSettings/AdvancedLogs";
+import Distribution from "./screens/Distribution";
 
 // TODO look into all FlowFixMe
 
@@ -442,6 +443,8 @@ const BaseNavigator = createStackNavigator(
     EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
+    // $FlowFixMe
+    Distribution,
     ScanRecipient: {
       // $FlowFixMe
       screen: ScanRecipient,
