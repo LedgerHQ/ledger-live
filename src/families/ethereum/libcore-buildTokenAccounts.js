@@ -18,7 +18,7 @@ async function buildERC20TokenAccount({
     await coreTokenAccount.getBalance()
   );
   const coreOperations = await coreTokenAccount.getOperations();
-  const id = parentAccountId + "|" + token.id;
+  const id = parentAccountId + "+" + token.contractAddress;
 
   const operations = await minimalOperationsBuilder(
     (existingTokenAccount && existingTokenAccount.operations) || [],
