@@ -6,7 +6,7 @@ import { SyncError, NotEnoughBalance } from "@ledgerhq/errors";
 import { genAccount, genOperation } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";
-import type { Operation } from "../types";
+import type { Operation, Account } from "../types";
 import type { AccountBridge, CurrencyBridge } from "./types";
 import { getFeeItems } from "../api/FeesBitcoin";
 import { getEstimatedFees } from "../api/Fees";
@@ -14,31 +14,34 @@ import { getCryptoCurrencyById } from "../data/cryptocurrencies";
 
 const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
 
+export const defaultGetFees = (a: Account, t: *) => {
+  switch (a.currency.family) {
+    case "ethereum":
+      return t.gasPrice.times(t.gasLimit);
+    case "bitcoin":
+      return t.feePerByte.times(250);
+    case "ripple":
+      return t.fee;
+    default:
+      return BigNumber(0);
+  }
+};
+
 const defaultOpts = {
   transactionsSizeTarget: 100,
-  extraInitialTransactionProps: () => ({
-    feePerByte: 10,
-    fee: BigNumber(10),
-    gasPrice: BigNumber(10),
-    gasLimit: BigNumber(10),
-    feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
-    tag: undefined,
-    networkInfo: null
-  }),
-  getTotalSpent: (a, t) => Promise.resolve(t.amount),
-  checkValidTransaction: () => Promise.resolve(null),
-  getMaxAmount: a => Promise.resolve(a.balance)
+  scanAccountDeviceSuccessRate: 1
 };
 
 const delay = ms => new Promise(success => setTimeout(success, ms));
 
-type Opts = *;
+type Opts = typeof defaultOpts;
 
-export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
-  const { extraInitialTransactionProps, getTotalSpent, getMaxAmount } = {
-    ...defaultOpts,
-    ...opts
-  };
+export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
+  const getTotalSpent = (a, t) =>
+    Promise.resolve(t.amount.plus(defaultGetFees(a, t)));
+
+  const getMaxAmount = (a, t) =>
+    Promise.resolve(a.balance.minus(defaultGetFees(a, t)));
 
   const checkValidTransaction = async (a, t) => {
     if (t.amount.isGreaterThan(a.balance)) throw new NotEnoughBalance();
@@ -100,7 +103,13 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
   const createTransaction = () => ({
     amount: BigNumber(0),
     recipient: "",
-    ...extraInitialTransactionProps()
+    feePerByte: BigNumber(10),
+    fee: BigNumber(10),
+    gasPrice: BigNumber(10000000000),
+    gasLimit: BigNumber(21000),
+    feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
+    tag: undefined,
+    networkInfo: null
   });
 
   const fetchTransactionNetworkInfo = async ({ currency }) => {
@@ -193,7 +202,7 @@ export function makeMockAccountBridge(opts?: Opts): AccountBridge<*> {
 }
 
 export function makeMockCurrencyBridge(opts?: Opts): CurrencyBridge {
-  const { transactionsSizeTarget, scanAccountDeviceSuccessRate } = {
+  const { scanAccountDeviceSuccessRate, transactionsSizeTarget } = {
     ...defaultOpts,
     ...opts
   };

@@ -3,6 +3,7 @@
 > Please be advised this software is experimental and shall not create any obligation for Ledger to continue to develop, offer, support or repair any of its features. The software is provided “as is.” Ledger shall not be liable for any damages whatsoever including loss of profits or data, business interruption arising from using the software.
 
 ```
+
 Ledger Live @ https://github.com/LedgerHQ/ledger-live-common
 
 Usage: ledger-live <command> ...
@@ -13,6 +14,18 @@ Usage: ledger-live libcoreReset
 
 Usage: ledger-live libcoreSetPassword
      --password <String>      : the new password
+
+Usage: ledger-live proxy
+     --device <String>        : provide a specific HID path of a device
+ -f, --file <String>          : in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU.
+ -v, --verbose                : verbose mode
+ -s, --silent                 : do not output the proxy logs
+ -p, --port <String>          : specify the http port to use (default: 8435)
+ -r, --record                 : see the description of --file
+
+Usage: ledger-live discoverDevices
+ -m, --module <String>        : filter a specific module (either hid | ble)
+ -i, --interactive            : interactive mode that accumulate the events instead of showing them
 
 Usage: ledger-live deviceVersion
      --device <String>        : provide a specific HID path of a device
@@ -124,10 +137,9 @@ Usage: ledger-live send       # Send crypto-assets
  -t, --token <String>         : use an token account children of the account
  -f, --format <default | json>: how to display the data
 
-
-                ````
+                ``
            `.--:::::
-        `.-:::::::::       ````
+        `.-:::::::::        ` `
        .://///:-..``     `-/+++/-`
      `://///-`           -++++++o/.
     `/+++/:`            -+++++osss+`

@@ -2,11 +2,10 @@
 /* eslint-disable no-console */
 
 import "babel-polyfill";
-import "./live-common-setup";
-
 import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
+import { closeAllDevices } from "./live-common-setup";
 import commands from "./commands";
 
 const mainOptions = commandLineArgs(
@@ -83,5 +82,7 @@ from(cmd.job(options)).subscribe({
     else console.error(String(e.message || e));
     process.exit(1);
   },
-  complete: () => {}
+  complete: () => {
+    closeAllDevices();
+  }
 });

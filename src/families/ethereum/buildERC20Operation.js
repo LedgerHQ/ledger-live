@@ -1,6 +1,5 @@
 // @flow
 
-import { BigNumber } from "bignumber.js";
 import type { Operation, TokenCurrency } from "../../types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 import type { CoreERC20LikeOperation } from "./types";
@@ -26,13 +25,19 @@ export async function buildERC20Operation(arg: {
   const coreValue = await coreOperation.getValue();
   let value = await libcoreBigIntToBigNumber(coreValue);
 
-  const fee = BigNumber(0); // FIXME need a getFees() in ETH CoreAmount
+  const usedGas = await libcoreBigIntToBigNumber(
+    await coreOperation.getUsedGas()
+  );
+  const gasPrice = await libcoreBigIntToBigNumber(
+    await coreOperation.getGasPrice()
+  );
+  const fee = usedGas.times(gasPrice);
 
   if (type === "OUT") {
     value = value.plus(fee);
   }
 
-  const blockHeight = 0; // FIXME no way to get blockHeight ?!
+  const blockHeight = await coreOperation.getBlockHeight();
 
   const receiver = await coreOperation.getReceiver();
   const sender = await coreOperation.getSender();

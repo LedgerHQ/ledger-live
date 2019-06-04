@@ -5,6 +5,7 @@ import type { FiatCurrency } from "../types";
 function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {
   // for now, we only create one unit, in the future we will allow more
   return {
+    type: "FiatCurrency",
     ticker,
     name,
     symbol: defaultSymbol,

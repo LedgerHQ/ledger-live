@@ -240,6 +240,7 @@ export const currencyBridge: CurrencyBridge = {
             if (newAccountCount === 0) {
               // first zero account will emit one account as opportunity to create a new account..
               const account: $Exact<Account> = {
+                type: "Account",
                 id: accountId,
                 seedIdentifier: freshAddress,
                 freshAddress,
@@ -272,6 +273,7 @@ export const currencyBridge: CurrencyBridge = {
         }
 
         const account: $Exact<Account> = {
+          type: "Account",
           id: accountId,
           seedIdentifier: freshAddress,
           freshAddress,

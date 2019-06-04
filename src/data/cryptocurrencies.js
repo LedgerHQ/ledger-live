@@ -91,6 +91,7 @@ const ethereumUnits = (name, code) => [
 
 const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
   aeternity: {
+    type: "CryptoCurrency",
     id: "aeternity",
     coinType: 457,
     name: "æternity",
@@ -113,6 +114,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   aion: {
+    type: "CryptoCurrency",
     id: "aion",
     coinType: 425,
     name: "Aion",
@@ -131,6 +133,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   akroma: {
+    type: "CryptoCurrency",
     id: "akroma",
     coinType: 200625,
     name: "Akroma",
@@ -153,6 +156,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   ark: {
+    type: "CryptoCurrency",
     id: "ark",
     coinType: 111,
     name: "Ark",
@@ -175,6 +179,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   atheios: {
+    type: "CryptoCurrency",
     id: "atheios",
     coinType: 1620,
     name: "Atheios",
@@ -193,6 +198,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   banano: {
+    type: "CryptoCurrency",
     id: "banano",
     coinType: 198,
     name: "Banano",
@@ -211,6 +217,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   bitcloud: {
+    type: "CryptoCurrency",
     id: "bitcloud",
     coinType: 218,
     name: "BitCloud",
@@ -253,6 +260,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   bitcoin: {
+    type: "CryptoCurrency",
     id: "bitcoin",
     coinType: 0,
     name: "Bitcoin",
@@ -282,6 +290,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   bitcoin_cash: {
+    type: "CryptoCurrency",
     id: "bitcoin_cash",
     forkedFrom: "bitcoin",
     coinType: 145,
@@ -326,6 +335,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   bitcoin_gold: {
+    type: "CryptoCurrency",
     id: "bitcoin_gold",
     forkedFrom: "bitcoin",
     coinType: 156,
@@ -371,6 +381,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   bitcoin_private: {
+    type: "CryptoCurrency",
     id: "bitcoin_private",
     forkedFrom: "bitcoin",
     coinType: 183,
@@ -411,6 +422,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   bitcore: {
+    type: "CryptoCurrency",
     id: "bitcore",
     forkedFrom: "bitcoin",
     coinType: 160,
@@ -454,6 +466,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   bitsend: {
+    type: "CryptoCurrency",
     id: "bitsend",
     coinType: 91,
     name: "BitSend",
@@ -496,6 +509,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   bnb: {
+    type: "CryptoCurrency",
     id: "bnb",
     coinType: 714,
     name: "BNB",
@@ -514,6 +528,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   callisto: {
+    type: "CryptoCurrency",
     id: "callisto",
     coinType: 820,
     name: "Callisto",
@@ -532,6 +547,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   cardano: {
+    type: "CryptoCurrency",
     id: "cardano",
     coinType: 1815,
     name: "Cardano",
@@ -561,6 +577,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   clubcoin: {
+    type: "CryptoCurrency",
     id: "clubcoin",
     coinType: 79,
     name: "Clubcoin",
@@ -593,6 +610,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   dash: {
+    type: "CryptoCurrency",
     id: "dash",
     coinType: 5,
     name: "Dash",
@@ -626,6 +644,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   decred: {
+    type: "CryptoCurrency",
     id: "decred",
     coinType: 42,
     name: "Decred",
@@ -664,6 +683,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   dexon: {
+    type: "CryptoCurrency",
     id: "dexon",
     coinType: 237,
     name: "DEXON",
@@ -690,6 +710,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   digibyte: {
+    type: "CryptoCurrency",
     id: "digibyte",
     coinType: 20,
     name: "DigiByte",
@@ -724,6 +745,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   dogecoin: {
+    type: "CryptoCurrency",
     id: "dogecoin",
     coinType: 3,
     name: "Dogecoin",
@@ -758,6 +780,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   ellaism: {
+    type: "CryptoCurrency",
     id: "ellaism",
     coinType: 163,
     name: "Ellaism",
@@ -776,6 +799,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   eos: {
+    type: "CryptoCurrency",
     id: "eos",
     coinType: 194,
     name: "EOS",
@@ -794,6 +818,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   eos_classic: {
+    type: "CryptoCurrency",
     id: "eos_classic",
     coinType: 2018,
     name: "EOSC",
@@ -812,6 +837,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   ethereum: {
+    type: "CryptoCurrency",
     id: "ethereum",
     coinType: 60,
     name: "Ethereum",
@@ -834,6 +860,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   ethereum_classic: {
+    type: "CryptoCurrency",
     id: "ethereum_classic",
     coinType: 61,
     name: "Ethereum Classic",
@@ -855,6 +882,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   ether1: {
+    type: "CryptoCurrency",
     id: "ether1",
     coinType: 61,
     name: "Ether1",
@@ -871,6 +899,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   ethergem: {
+    type: "CryptoCurrency",
     id: "ethergem",
     coinType: 61,
     name: "EtherGem",
@@ -887,6 +916,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   ethersocial: {
+    type: "CryptoCurrency",
     id: "ethersocial",
     coinType: 61,
     name: "Ethersocial",
@@ -903,6 +933,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   expanse: {
+    type: "CryptoCurrency",
     id: "expanse",
     coinType: 40,
     name: "Expanse",
@@ -925,6 +956,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   factom: {
+    type: "CryptoCurrency",
     id: "factom",
     coinType: 131,
     name: "Factom",
@@ -943,6 +975,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   fic: {
+    type: "CryptoCurrency",
     id: "fic",
     coinType: 5248,
     name: "FIC",
@@ -961,6 +994,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   game_credits: {
+    type: "CryptoCurrency",
     id: "game_credits",
     coinType: 101,
     name: "GameCredits",
@@ -983,6 +1017,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   gochain: {
+    type: "CryptoCurrency",
     id: "gochain",
     coinType: 6060,
     name: "GoChain",
@@ -1001,6 +1036,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   groestlcoin: {
+    type: "CryptoCurrency",
     id: "groestcoin",
     coinType: 17,
     name: "Groestlcoin",
@@ -1024,6 +1060,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   hcash: {
+    type: "CryptoCurrency",
     id: "hcash",
     coinType: 171,
     name: "Hcash",
@@ -1055,6 +1092,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     }
   },
   hpb: {
+    type: "CryptoCurrency",
     id: "hpb",
     coinType: 269,
     name: "High Performance Blockchain",
@@ -1082,6 +1120,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   hycon: {
+    type: "CryptoCurrency",
     id: "hycon",
     coinType: 1397,
     name: "Hycon",
@@ -1105,6 +1144,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   icon: {
+    type: "CryptoCurrency",
     id: "icon",
     coinType: 4801368,
     name: "ICON",
@@ -1123,6 +1163,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   iota: {
+    type: "CryptoCurrency",
     id: "iota",
     coinType: 4218,
     name: "IOTA",
@@ -1141,6 +1182,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   kin: {
+    type: "CryptoCurrency",
     id: "kin",
     coinType: 2017,
     name: "Kin",
@@ -1166,6 +1208,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   komodo: {
+    type: "CryptoCurrency",
     id: "komodo",
     coinType: 141,
     name: "Komodo",
@@ -1199,6 +1242,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   litecoin: {
+    type: "CryptoCurrency",
     id: "litecoin",
     coinType: 2,
     name: "Litecoin",
@@ -1239,6 +1283,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   lisk: {
+    type: "CryptoCurrency",
     id: "lisk",
     coinType: 134,
     name: "lisk",
@@ -1257,6 +1302,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   mix: {
+    type: "CryptoCurrency",
     id: "mix",
     coinType: 76,
     name: "MIX Blockchain",
@@ -1278,6 +1324,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   megacoin: {
+    type: "CryptoCurrency",
     id: "megacoin",
     forkedFrom: "bitcoin",
     coinType: 217,
@@ -1311,6 +1358,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   monero: {
+    type: "CryptoCurrency",
     id: "monero",
     coinType: 128,
     name: "Monero",
@@ -1333,6 +1381,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   musicoin: {
+    type: "CryptoCurrency",
     id: "musicoin",
     coinType: 184,
     name: "Musicoin",
@@ -1354,6 +1403,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   nano: {
+    type: "CryptoCurrency",
     id: "nano",
     coinType: 165,
     name: "Nano",
@@ -1376,6 +1426,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   neo: {
+    type: "CryptoCurrency",
     id: "neo",
     coinType: 888,
     name: "Neo",
@@ -1398,6 +1449,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   nimiq: {
+    type: "CryptoCurrency",
     id: "nimiq",
     coinType: 242,
     name: "Nimiq",
@@ -1420,6 +1472,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   nix: {
+    type: "CryptoCurrency",
     id: "nix",
     coinType: 400,
     name: "Nix",
@@ -1453,6 +1506,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   nos: {
+    type: "CryptoCurrency",
     id: "nos",
     name: "NOS",
     coinType: 229,
@@ -1471,6 +1525,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   ontology: {
+    type: "CryptoCurrency",
     id: "ontology",
     coinType: 1024,
     name: "Ontology",
@@ -1493,6 +1548,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   particl: {
+    type: "CryptoCurrency",
     id: "particl",
     coinType: 44,
     name: "Particl",
@@ -1515,6 +1571,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   peercoin: {
+    type: "CryptoCurrency",
     id: "peercoin",
     coinType: 6,
     name: "Peercoin",
@@ -1548,6 +1605,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   pirl: {
+    type: "CryptoCurrency",
     id: "pirl",
     coinType: 164,
     name: "Pirl",
@@ -1570,6 +1628,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   pivx: {
+    type: "CryptoCurrency",
     id: "pivx",
     coinType: 77,
     name: "PivX",
@@ -1603,6 +1662,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   poa: {
+    type: "CryptoCurrency",
     id: "poa",
     coinType: 178,
     name: "POA",
@@ -1625,6 +1685,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   poswallet: {
+    type: "CryptoCurrency",
     id: "poswallet",
     coinType: 47,
     name: "PosW",
@@ -1656,6 +1717,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     }
   },
   qrl: {
+    type: "CryptoCurrency",
     id: "qrl",
     coinType: 238,
     name: "QRL",
@@ -1680,6 +1742,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   qtum: {
+    type: "CryptoCurrency",
     id: "qtum",
     coinType: 88,
     name: "Qtum",
@@ -1713,6 +1776,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   ripple: {
+    type: "CryptoCurrency",
     id: "ripple",
     coinType: 144,
     name: "XRP",
@@ -1741,6 +1805,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   rise: {
+    type: "CryptoCurrency",
     id: "rise",
     coinType: 1120,
     name: "Rise",
@@ -1765,6 +1830,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   reosc: {
+    type: "CryptoCurrency",
     id: "reosc",
     coinType: 2894,
     name: "REOSC",
@@ -1791,6 +1857,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   stakenet: {
+    type: "CryptoCurrency",
     id: "stakenet",
     coinType: 384,
     name: "Stakenet",
@@ -1825,6 +1892,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   stratis: {
+    type: "CryptoCurrency",
     id: "stratis",
     coinType: 105,
     name: "Stratis",
@@ -1858,6 +1926,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   stealthcoin: {
+    type: "CryptoCurrency",
     id: "stealthcoin",
     coinType: 125,
     name: "Stealth",
@@ -1891,6 +1960,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   stellar: {
+    type: "CryptoCurrency",
     id: "stellar",
     coinType: 148,
     name: "Stellar",
@@ -1918,6 +1988,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   tezos: {
+    type: "CryptoCurrency",
     id: "tezos",
     coinType: 1729,
     name: "Tezos",
@@ -1940,6 +2011,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   tomo: {
+    type: "CryptoCurrency",
     id: "tomo",
     coinType: 889,
     name: "TomoChain",
@@ -1966,6 +2038,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   tron: {
+    type: "CryptoCurrency",
     id: "tron",
     coinType: 195,
     name: "Tron",
@@ -1988,6 +2061,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   ubiq: {
+    type: "CryptoCurrency",
     id: "ubiq",
     coinType: 108,
     name: "Ubiq",
@@ -2034,6 +2108,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   vechain: {
+    type: "CryptoCurrency",
     id: "vechain",
     coinType: 818,
     name: "VeChain",
@@ -2056,6 +2131,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   vertcoin: {
+    type: "CryptoCurrency",
     id: "vertcoin",
     coinType: 28,
     name: "Vertcoin",
@@ -2090,6 +2166,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   viacoin: {
+    type: "CryptoCurrency",
     id: "viacoin",
     coinType: 14,
     name: "Viacoin",
@@ -2124,6 +2201,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   wanchain: {
+    type: "CryptoCurrency",
     id: "wanchain",
     coinType: 5718350,
     name: "Wanchain",
@@ -2146,6 +2224,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   waves: {
+    type: "CryptoCurrency",
     id: "waves",
     coinType: 5741564,
     name: "Waves",
@@ -2164,6 +2243,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: []
   },
   zcash: {
+    type: "CryptoCurrency",
     id: "zcash",
     coinType: 133,
     name: "Zcash",
@@ -2197,6 +2277,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   zclassic: {
+    type: "CryptoCurrency",
     id: "zclassic",
     coinType: 147,
     name: "ZClassic",
@@ -2230,6 +2311,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   zcoin: {
+    type: "CryptoCurrency",
     id: "zcoin",
     coinType: 136,
     name: "ZCoin",
@@ -2252,6 +2334,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   zencash: {
+    type: "CryptoCurrency",
     id: "zencash",
     coinType: 121,
     name: "Horizen",
@@ -2287,6 +2370,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
 
   // Testnets
   bitcoin_testnet: {
+    type: "CryptoCurrency",
     id: "bitcoin_testnet",
     coinType: 1,
     name: "Bitcoin Testnet",
@@ -2313,6 +2397,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ]
   },
   ethereum_ropsten: {
+    type: "CryptoCurrency",
     id: "ethereum_ropsten",
     coinType: 1,
     name: "Ethereum Ropsten",

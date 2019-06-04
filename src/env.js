@@ -20,52 +20,56 @@ const stringParser = (v: mixed): ?string =>
 
 // This define the available environments
 const envParsers = {
-  MANAGER_DEV_MODE: boolParser,
-  SCAN_FOR_INVALID_PATHS: boolParser,
-  EXPERIMENTAL_NATIVE_SEGWIT: boolParser,
-  SHOW_LEGACY_NEW_ACCOUNT: boolParser,
-  WITH_DEVICE_POLLING_DELAY: floatParser,
-  FORCE_PROVIDER: intParser,
-  LEDGER_REST_API_BASE: stringParser,
-  MANAGER_API_BASE: stringParser,
   BASE_SOCKET_URL: stringParser,
-  EXPLORER_V2: stringParser,
-  EXPLORER_V3: stringParser,
+  DEVICE_PROXY_URL: stringParser,
+  DISABLE_TRANSACTION_BROADCAST: boolParser,
+  EXPERIMENTAL_BLE: boolParser,
   EXPERIMENTAL_EXPLORERS: boolParser,
   EXPERIMENTAL_LANGUAGES: boolParser,
+  EXPERIMENTAL_LIBCORE: boolParser,
+  EXPERIMENTAL_NATIVE_SEGWIT: boolParser,
+  EXPERIMENTAL_SEND_MAX: boolParser,
   EXPERIMENTAL_USB: boolParser,
-  SYNC_MAX_CONCURRENT: intParser,
-  MOCK: boolParser,
+  EXPLORER_V2: stringParser,
+  EXPLORER_V3: stringParser,
+  FORCE_PROVIDER: intParser,
+  LEDGER_REST_API_BASE: stringParser,
   LIBCORE_PASSWORD: stringParser,
-  DISABLE_TRANSACTION_BROADCAST: boolParser,
-  DEVICE_PROXY_URL: stringParser,
-  EXPERIMENTAL_BLE: boolParser
+  MANAGER_API_BASE: stringParser,
+  MANAGER_DEV_MODE: boolParser,
+  MOCK: boolParser,
+  SCAN_FOR_INVALID_PATHS: boolParser,
+  SHOW_LEGACY_NEW_ACCOUNT: boolParser,
+  SYNC_MAX_CONCURRENT: intParser,
+  WITH_DEVICE_POLLING_DELAY: floatParser
 };
 
 // This define the default values
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
-  MANAGER_DEV_MODE: false,
-  SCAN_FOR_INVALID_PATHS: false,
-  EXPERIMENTAL_NATIVE_SEGWIT: false,
-  SHOW_LEGACY_NEW_ACCOUNT: false,
-  WITH_DEVICE_POLLING_DELAY: 500,
-  FORCE_PROVIDER: 1,
-  LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
-  MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
+  DEVICE_PROXY_URL: "",
+  DISABLE_TRANSACTION_BROADCAST: false,
+  EXPERIMENTAL_BLE: false,
+  EXPERIMENTAL_EXPLORERS: false,
+  EXPERIMENTAL_LANGUAGES: false,
+  EXPERIMENTAL_LIBCORE: false,
+  EXPERIMENTAL_NATIVE_SEGWIT: false,
+  EXPERIMENTAL_SEND_MAX: false,
+  EXPERIMENTAL_USB: false,
   EXPLORER_V2:
     "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
   EXPLORER_V3:
-    "http://$ledgerExplorerId.explorers.dev.aws.ledger.fr/blockchain/v3",
-  EXPERIMENTAL_EXPLORERS: false,
-  EXPERIMENTAL_LANGUAGES: false,
-  EXPERIMENTAL_USB: false,
-  SYNC_MAX_CONCURRENT: 4,
-  MOCK: false,
+    "https://$ledgerExplorerId.explorers.prod.aws.ledger.fr/blockchain/v3",
+  FORCE_PROVIDER: 1,
+  LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
   LIBCORE_PASSWORD: "",
-  DISABLE_TRANSACTION_BROADCAST: false,
-  DEVICE_PROXY_URL: "",
-  EXPERIMENTAL_BLE: false
+  MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",
+  MANAGER_DEV_MODE: false,
+  MOCK: false,
+  SCAN_FOR_INVALID_PATHS: false,
+  SHOW_LEGACY_NEW_ACCOUNT: false,
+  SYNC_MAX_CONCURRENT: 4,
+  WITH_DEVICE_POLLING_DELAY: 500
 };
 
 // private local state

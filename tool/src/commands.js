@@ -9,7 +9,8 @@ import {
   ignoreElements,
   concatMap,
   shareReplay,
-  tap
+  tap,
+  scan as rxScan
 } from "rxjs/operators";
 import qrcode from "qrcode-terminal";
 import { dataToFrames } from "qrloop/exporter";
@@ -34,6 +35,7 @@ import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-p
 import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 import repairFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 import accountFormatters from "./accountFormatters";
+import proxy from "./proxy";
 import {
   scan,
   scanCommonOpts,
@@ -45,6 +47,7 @@ import {
 import { inferTransaction, inferTransactionOpts } from "./transaction";
 import getAddress from "../../lib/hw/getAddress";
 import { apdusFromFile } from "./stream";
+import { discoverDevices } from "../../lib/hw";
 
 const asQR = str =>
   Observable.create(o =>
@@ -90,6 +93,64 @@ const all = {
           .getPoolInstance()
           .changePassword(getEnv("LIBCORE_PASSWORD"), password || "")
       )
+  },
+
+  proxy,
+
+  discoverDevices: {
+    args: [
+      {
+        name: "module",
+        alias: "m",
+        type: String,
+        desc: "filter a specific module (either hid | ble)"
+      },
+      {
+        name: "interactive",
+        alias: "i",
+        type: Boolean,
+        desc:
+          "interactive mode that accumulate the events instead of showing them"
+      }
+    ],
+    job: ({ module, interactive }) => {
+      const events = discoverDevices(m =>
+        !module ? true : module.split(",").includes(m.id)
+      );
+      if (!interactive) return events;
+      return events
+        .pipe(
+          rxScan((acc, value) => {
+            let copy;
+            if (value.type === "remove") {
+              copy = acc.filter(a => a.id === value.id);
+            } else {
+              const existing = acc.find(o => o.id === value.id);
+              if (existing) {
+                const i = acc.indexOf(existing);
+                copy = [...acc];
+                if (value.name) {
+                  copy[i] = value;
+                }
+              } else {
+                copy = acc.concat({ id: value.id, name: value.name });
+              }
+            }
+            return copy;
+          }, [])
+        )
+        .pipe(
+          tap(() => {
+            // eslint-disable-next-line no-console
+            console.clear();
+          }),
+          map(acc =>
+            acc
+              .map(o => `${(o.name || "(no name)").padEnd(40)} ${o.id}`)
+              .join("\n")
+          )
+        );
+    }
   },
 
   deviceVersion: {

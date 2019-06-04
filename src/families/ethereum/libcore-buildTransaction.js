@@ -2,7 +2,8 @@
 
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/errors";
+import eip55 from "eip55";
+import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { TokenAccount, Account, Transaction } from "../../types";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
@@ -31,14 +32,12 @@ export async function ethereumBuildTransaction({
 }): Promise<?CoreEthereumLikeTransaction> {
   const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
 
-  const isValid = await isValidRecipient({
+  await isValidRecipient({
     currency: account.currency,
     recipient: transaction.recipient
   });
 
-  if (isValid !== null) {
-    throw new InvalidAddress("", { currencyName: account.currency.name });
-  }
+  const recipient = eip55.encode(transaction.recipient);
 
   const { gasPrice, gasLimit } = transaction;
   if (!gasPrice || !gasLimit) throw new FeeNotLoaded();
@@ -69,7 +68,7 @@ export async function ethereumBuildTransaction({
     }
     const to256 = Buffer.concat([
       Buffer.alloc(12),
-      Buffer.from(transaction.recipient.replace("0x", ""), "hex")
+      Buffer.from(recipient.replace("0x", ""), "hex")
     ]);
     invariant(to256.length === 32, "recipient is invalid");
     const amountHex = amount.toString(16);
@@ -93,7 +92,7 @@ export async function ethereumBuildTransaction({
     await transactionBuilder.sendToAddress(zeroAmount, token.contractAddress);
   } else {
     if (transaction.useAllAmount) {
-      await transactionBuilder.wipeToAddress(transaction.recipient);
+      await transactionBuilder.wipeToAddress(recipient);
       if (isCancelled()) return;
     } else {
       if (!transaction.amount) throw new Error("amount is missing");
@@ -103,7 +102,7 @@ export async function ethereumBuildTransaction({
         BigNumber(transaction.amount)
       );
       if (isCancelled()) return;
-      await transactionBuilder.sendToAddress(amount, transaction.recipient);
+      await transactionBuilder.sendToAddress(amount, recipient);
       if (isCancelled()) return;
     }
   }

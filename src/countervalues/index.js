@@ -93,7 +93,12 @@ export const getDailyRatesBatched = (batchSize: number) => async (
 // This do one query per rate (lighter query)
 export const getDailyRatesSplitPerRate = getDailyRatesBatched(1);
 
+export const defaultTickerAliases = {
+  WETH: "ETH"
+};
+
 function createCounterValues<State>({
+  tickerAliases,
   getAPIBaseURL,
   storeSelector,
   pairsSelector,
@@ -106,6 +111,8 @@ function createCounterValues<State>({
   fetchTickersByMarketcapImplementation
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
+
+  const aliases = tickerAliases || defaultTickerAliases;
 
   const getDailyRates = getDailyRatesImplementation || getDailyRatesBatched(10);
 
@@ -138,14 +145,16 @@ function createCounterValues<State>({
 
   const dateExtractor = (_, { date }: { date?: Date }) => date;
 
+  const currencyTicker = c => aliases[c.ticker] || c.ticker;
+
   function lenseRatesInMap(
     rates: RatesMap,
     { from, to, exchange }
   ): ?Histodays {
     if (!exchange) return;
-    const a = rates[to.ticker];
+    const a = rates[currencyTicker(to)];
     if (!a) return;
-    const b = a[from.ticker];
+    const b = a[currencyTicker(from)];
     if (!b) return;
     return b[exchange];
   }
@@ -156,15 +165,17 @@ function createCounterValues<State>({
     map: Histodays
   ) {
     if (!exchange) return;
-    if (!rates[to.ticker]) rates[to.ticker] = {};
-    const a = rates[to.ticker];
-    if (!a[from.ticker]) a[from.ticker] = {};
-    const b = a[from.ticker];
+    const toTicker = currencyTicker(to);
+    if (!rates[toTicker]) rates[toTicker] = {};
+    const a = rates[toTicker];
+    const fromTicker = currencyTicker(from);
+    if (!a[fromTicker]) a[fromTicker] = {};
+    const b = a[fromTicker];
     b[exchange] = map;
   }
 
   const getRate = (store, pair, date) => {
-    if (pair.from.ticker === pair.to.ticker) return 1;
+    if (currencyTicker(pair.from) === currencyTicker(pair.to)) return 1;
     const rates = lenseRatesInMap(store.rates, pair);
     return (
       rates && ((date && rates[formatCounterValueDay(date)]) || rates.latest)
@@ -265,7 +276,11 @@ function createCounterValues<State>({
     pairsSelector,
     pairs =>
       pairs
-        .map(p => `${p.from.ticker}-${p.to.ticker}-${p.exchange || ""}`)
+        .map(
+          p =>
+            `${currencyTicker(p.from)}-${currencyTicker(p.to)}-${p.exchange ||
+              ""}`
+        )
         .sort()
         .join("|")
   );
@@ -365,10 +380,12 @@ function createCounterValues<State>({
     const pairs = [];
     const dedupKeys = {};
     userPairs.forEach(p => {
-      const key = `${p.from.ticker}|${p.to.ticker}|${p.exchange || ""}`;
+      const fromTicker = currencyTicker(p.from);
+      const toTicker = currencyTicker(p.to);
+      const key = `${fromTicker}|${toTicker}|${p.exchange || ""}`;
       if (key in dedupKeys) return;
       dedupKeys[key] = 1;
-      const pair: PollAPIPair = { from: p.from.ticker, to: p.to.ticker };
+      const pair: PollAPIPair = { from: fromTicker, to: toTicker };
       if (defaultAfterDay) {
         pair.afterDay = defaultAfterDay;
       }
@@ -398,21 +415,19 @@ function createCounterValues<State>({
       // and asking with different exchanges will prevent to happen (over times, as arbitrary fallback can change)
       const pairsToUpdate = [];
       userPairs.forEach(pair => {
-        const {
-          exchange,
-          to: { ticker: to },
-          from: { ticker: from }
-        } = pair;
-        const a = data[to] || {};
+        const { exchange } = pair;
+        const toTicker = currencyTicker(pair.to);
+        const fromTicker = currencyTicker(pair.from);
+        const a = data[toTicker] || {};
         if (typeof a !== "object") return;
-        const b = a[from] || {};
+        const b = a[fromTicker] || {};
         if (typeof b !== "object") return;
         const availableExchanges: string[] = Object.keys(b);
         const fallback = availableExchanges[0] || null;
         if (!exchange || !availableExchanges.includes(exchange)) {
           if (log)
             log(
-              `${from}/${to}: ${
+              `${fromTicker}/${toTicker}: ${
                 exchange
                   ? `exchange ${exchange} no longer in countervalue API`
                   : "no exchange defined yet"
@@ -467,7 +482,12 @@ function createCounterValues<State>({
     (async (from, to): Promise<Exchange[]> => {
       const { data } = await network({
         method: "GET",
-        url: getAPIBaseURL() + "/exchanges/" + from.ticker + "/" + to.ticker
+        url:
+          getAPIBaseURL() +
+          "/exchanges/" +
+          currencyTicker(from) +
+          "/" +
+          currencyTicker(to)
       });
       invariant(
         typeof data === "object" && Array.isArray(data),

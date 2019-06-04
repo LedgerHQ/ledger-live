@@ -24,6 +24,7 @@ type CurrencyCommon = {
 };
 
 export type TokenCurrency = CurrencyCommon & {
+  type: "TokenCurrency",
   id: string,
   ledgerSignature: string,
   contractAddress: string,
@@ -33,7 +34,9 @@ export type TokenCurrency = CurrencyCommon & {
   tokenType: string
 };
 
-export type FiatCurrency = CurrencyCommon;
+export type FiatCurrency = CurrencyCommon & {
+  type: "FiatCurrency"
+};
 
 export type ExplorerView = {
   tx?: string,
@@ -41,6 +44,7 @@ export type ExplorerView = {
 };
 
 export type CryptoCurrency = CurrencyCommon & {
+  type: "CryptoCurrency",
   // unique internal id of a crypto currency
   id: string,
   // define if a crypto is a fork from another coin. helps dealing with split/unsplit

@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import axios from "axios";
 import WebSocket from "ws";
+import { Observable } from "rxjs";
 import { setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import {
   setNetwork,
@@ -9,10 +10,14 @@ import {
 } from "@ledgerhq/live-common/lib/network";
 import { listen } from "@ledgerhq/logs";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
-import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
+import {
+  registerTransportModule,
+  disconnect
+} from "@ledgerhq/live-common/lib/hw";
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
+import { first, switchMap, map } from "rxjs/operators";
 
 for (const k in process.env) setEnvUnsafe(k, process.env[k]);
 
@@ -34,8 +39,8 @@ implementLibcore({
   logger
 });
 
-if (process.env.DEBUG_COMM_HTTP_PROXY) {
-  const Tr = createTransportHttp(process.env.DEBUG_COMM_HTTP_PROXY.split("|"));
+if (process.env.DEVICE_PROXY_URL) {
+  const Tr = createTransportHttp(process.env.DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
     open: () => retry(() => Tr.create(3000, 5000)),
@@ -43,7 +48,56 @@ if (process.env.DEBUG_COMM_HTTP_PROXY) {
   });
 }
 
+const cacheBle = {};
+
 if (!process.env.CI) {
+  const {
+    default: TransportNodeBle
+    // eslint-disable-next-line global-require
+  } = require("@ledgerhq/hw-transport-node-ble");
+  const openBleByQuery = async query => {
+    const [, q] = query.match(/^ble:?(.*)/);
+    if (cacheBle[query]) return cacheBle[query];
+    const t = await (!q
+      ? TransportNodeBle.create()
+      : Observable.create(TransportNodeBle.listen)
+          .pipe(
+            first(
+              e =>
+                (e.device.name || "").toLowerCase().includes(q.toLowerCase()) ||
+                e.device.id.toLowerCase() === q.toLowerCase()
+            ),
+            switchMap(e => TransportNodeBle.open(e.descriptor))
+          )
+          .toPromise());
+    cacheBle[query] = t;
+    t.on("disconnect", () => {
+      delete cacheBle[query];
+    });
+    return t;
+  };
+  registerTransportModule({
+    id: "ble",
+    open: query => {
+      if (query.startsWith("ble")) {
+        return openBleByQuery(query);
+      }
+    },
+    discovery: Observable.create(TransportNodeBle.listen).pipe(
+      map(e => ({
+        type: e.type,
+        id: "ble:" + e.device.id,
+        name: e.device.name || ""
+      }))
+    ),
+    disconnect: query =>
+      query.startsWith("ble")
+        ? cacheBle[query]
+          ? TransportNodeBle.disconnect(cacheBle[query].id)
+          : Promise.resolve()
+        : null
+  });
+
   const {
     default: TransportNodeHid
     // eslint-disable-next-line global-require
@@ -55,6 +109,17 @@ if (!process.env.CI) {
       retry(() => TransportNodeHid.open(devicePath), {
         maxRetry: 5 // YOLO
       }),
+    discovery: Observable.create(TransportNodeHid.listen).pipe(
+      map(e => ({
+        type: e.type,
+        id: e.device.path,
+        name: e.device.deviceName || ""
+      }))
+    ),
     disconnect: () => Promise.resolve()
   });
+}
+
+export function closeAllDevices() {
+  Object.keys(cacheBle).forEach(disconnect);
 }

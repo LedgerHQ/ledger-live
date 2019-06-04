@@ -3,7 +3,7 @@
 set -e
 cd $(dirname $0)
 
-targets="hw-getAddress libcore-buildOperation libcore-buildTransaction libcore-hw-signTransaction libcore-signAndBroadcast libcore-buildTokenAccounts libcore-getFeesForTransaction"
+targets="customAddressValidation hw-getAddress libcore-buildOperation libcore-buildTransaction libcore-hw-signTransaction libcore-signAndBroadcast libcore-buildTokenAccounts libcore-getFeesForTransaction"
 
 cd ../src
 

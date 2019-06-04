@@ -97,8 +97,10 @@ export function genOperation(
   ops: *,
   rng: Prando
 ): $Exact<Operation> {
-  // $FlowFixMe
-  const ticker = account.token ? account.token.ticker : account.currency.ticker;
+  const ticker =
+    account.type === "TokenAccount"
+      ? account.token.ticker
+      : account.currency.ticker;
   const lastOp = ops[ops.length - 1];
   const date = new Date(
     (lastOp ? lastOp.date : Date.now()) -
@@ -134,11 +136,12 @@ export function genOperation(
     extra: {}
   };
 
-  // $FlowFixMe wtf
-  const { tokenAccounts } = account;
-  if (tokenAccounts) {
-    // TODO make sure tokenAccounts sometimes reuse an existing op hash from main account
-    op.subOperations = inferSubOperations(hash, tokenAccounts);
+  if (account.type === "Account") {
+    const { tokenAccounts } = account;
+    if (tokenAccounts) {
+      // TODO make sure tokenAccounts sometimes reuse an existing op hash from main account
+      op.subOperations = inferSubOperations(hash, tokenAccounts);
+    }
   }
 
   return op;
@@ -175,14 +178,16 @@ type GenAccountOptions = {
 };
 
 function genTokenAccount(
-  id: number | string,
+  index: number,
   account: Account
 ): $Exact<TokenAccount> {
-  const rng = new Prando(id);
+  const rng = new Prando(account.id + "|" + index);
   const tokens = listTokensForCryptoCurrency(account.currency);
   const token = rng.nextArrayItem(tokens);
   const tokenAccount = {
-    id: `mock:1:${account.id}:${id}`,
+    type: "TokenAccount",
+    id: account.id + "|" + index,
+    parentId: account.id,
     token,
     operations: [],
     balance: BigNumber(0)
@@ -208,6 +213,7 @@ export function genAccount(
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
   const account: $Exact<Account> = {
+    type: "Account",
     id: `mock:1:${currency.id}:${id}:`,
     seedIdentifier: "mock",
     derivationMode: "",
@@ -229,10 +235,13 @@ export function genAccount(
   };
 
   if (currency.id === "ethereum") {
-    const tokenCount = opts.tokenAccountsCount || rng.nextInt(0, 8);
+    const tokenCount =
+      typeof opts.tokenAccountsCount === "number"
+        ? opts.tokenAccountsCount
+        : rng.nextInt(0, 8);
     account.tokenAccounts = Array(tokenCount)
       .fill(null)
-      .map((_, i) => genTokenAccount(id + "_" + i, account));
+      .map((_, i) => genTokenAccount(i, account));
   }
 
   account.operations = Array(operationsSize)

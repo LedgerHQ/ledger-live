@@ -1,7 +1,7 @@
 // @flow
 
 import type { BigNumber } from "bignumber.js";
-import type { Account } from "./account";
+import type { TokenAccount, Account } from "./account";
 import type { CryptoCurrency, TokenCurrency } from "./currencies";
 
 export type BalanceHistory = Array<{
@@ -18,9 +18,9 @@ export type BalanceHistoryWithCountervalue = Array<{
 export type Portfolio = {
   balanceHistory: BalanceHistory,
   balanceAvailable: boolean,
-  availableAccounts: Account[],
-  unavailableCurrencies: CryptoCurrency[],
-  accounts: Account[],
+  availableAccounts: (Account | TokenAccount)[],
+  unavailableCurrencies: (CryptoCurrency | TokenCurrency)[],
+  accounts: (Account | TokenAccount)[],
   range: PortfolioRange,
   histories: BalanceHistoryWithCountervalue[]
 };

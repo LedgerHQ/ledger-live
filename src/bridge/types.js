@@ -143,4 +143,10 @@ export interface AccountBridge<Transaction> {
   // this allow to customize it from UI. there is a default endpoint and a way to validate a new one.
   getDefaultEndpointConfig?: () => string;
   validateEndpointConfig?: (endpointConfig: string) => Promise<void>;
+
+  // TODO we need a better paradigm for this
+  estimateGasLimit?: (
+    account: Account,
+    address: string
+  ) => Promise<number | BigNumber>; // TODO drop number support
 }

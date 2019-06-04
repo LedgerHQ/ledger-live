@@ -288,6 +288,7 @@ const genuineCheck = (
       pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
       query: { targetId, perso, livecommonversion }
     })
+    // $FlowFixMe
   }).pipe(input =>
     Observable.create(o => {
       let timeout;

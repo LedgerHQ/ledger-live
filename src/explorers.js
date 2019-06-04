@@ -1,7 +1,7 @@
 // @flow
 
 import invariant from "invariant";
-import type { Account, CryptoCurrency, Operation, ExplorerView } from "./types";
+import type { CryptoCurrency, ExplorerView } from "./types";
 import { getEnv } from "./env";
 
 export const getDefaultExplorerView = (
@@ -21,16 +21,6 @@ export const getAddressExplorer = (
   explorerView &&
   explorerView.address &&
   explorerView.address.replace("$address", address);
-
-// NB deprecated & should be replaced by using directly the other functions
-export const getAccountOperationExplorer = (
-  account: Account,
-  operation: Operation
-): ?string =>
-  getTransactionExplorer(
-    getDefaultExplorerView(account.currency),
-    operation.hash
-  );
 
 type LedgerExplorer = {
   version: string,

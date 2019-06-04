@@ -97,7 +97,7 @@ export const inferCurrency = ({ device, currency, file, xpub }) => {
   if (file || xpub) {
     return of(undefined);
   }
-  return withDevice(device)(t =>
+  return withDevice(device || "")(t =>
     from(
       getAppAndVersion(t).then(
         r => getCurrencyByKeyword(r.name),

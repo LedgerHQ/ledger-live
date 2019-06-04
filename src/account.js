@@ -2,6 +2,9 @@
  * @flow
  * @module account
  */
+
+// TODO split into folder & subfiles
+
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type {
@@ -26,13 +29,21 @@ function startOfDay(t) {
 
 const emptyDailyOperations = { sections: [], completed: true };
 
+type GroupOpsByDayOpts = {
+  count: number,
+  withTokenAccounts?: boolean
+};
+
 /**
  * @memberof account
  */
 export function groupAccountsOperationsByDay(
-  accounts: Account[],
-  count: number
+  inputAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[],
+  { count, withTokenAccounts }: GroupOpsByDayOpts
 ): DailyOperations {
+  const accounts = withTokenAccounts
+    ? flattenAccounts(inputAccounts)
+    : inputAccounts;
   // Track indexes of account.operations[] for each account
   const indexes: number[] = Array(accounts.length).fill(0);
   // Track indexes of account.pendingOperations[] for each account
@@ -42,17 +53,20 @@ export function groupAccountsOperationsByDay(
     let bestOp: ?Operation;
     let bestOpInfo = { accountI: 0, fromPending: false };
     for (let i = 0; i < accounts.length; i++) {
+      const account = accounts[i];
       // look in operations
-      const op = accounts[i].operations[indexes[i]];
+      const op = account.operations[indexes[i]];
       if (op && (!bestOp || op.date > bestOp.date)) {
         bestOp = op;
         bestOpInfo = { accountI: i, fromPending: false };
       }
       // look in pending operations
-      const opP = accounts[i].pendingOperations[indexesPending[i]];
-      if (opP && (!bestOp || opP.date > bestOp.date)) {
-        bestOp = opP;
-        bestOpInfo = { accountI: i, fromPending: true };
+      if (account.type === "Account") {
+        const opP = account.pendingOperations[indexesPending[i]];
+        if (opP && (!bestOp || opP.date > bestOp.date)) {
+          bestOp = opP;
+          bestOpInfo = { accountI: i, fromPending: true };
+        }
       }
     }
     if (bestOp) {
@@ -92,10 +106,11 @@ export function groupAccountsOperationsByDay(
  * @memberof account
  */
 export function groupAccountOperationsByDay(
-  account: Account,
-  count: number
+  account: Account | TokenAccount,
+  arg: GroupOpsByDayOpts
 ): DailyOperations {
-  return groupAccountsOperationsByDay([account], count);
+  const accounts: (Account | TokenAccount)[] = [account];
+  return groupAccountsOperationsByDay(accounts, arg);
 }
 
 export function encodeAccountId({
@@ -156,7 +171,7 @@ export const getAccountPlaceholderName = ({
 // - Ethereum contract only funds (api limitations)
 // - Ripple node that don't show all ledgers and if you have very old txs
 
-export const isAccountEmpty = (a: Account): boolean =>
+export const isAccountEmpty = (a: Account | TokenAccount): boolean =>
   a.operations.length === 0 && a.balance.isZero();
 
 export const getNewAccountPlaceholderName = getAccountPlaceholderName; // same naming
@@ -304,11 +319,13 @@ export const fromOperationRaw = (
 };
 
 export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
-  const { id, tokenId, operations, balance } = raw;
+  const { id, parentId, tokenId, operations, balance } = raw;
   const token = getTokenById(tokenId);
   const convertOperation = op => fromOperationRaw(op, id);
   return {
+    type: "TokenAccount",
     id,
+    parentId,
     token,
     balance: BigNumber(balance),
     operations: operations.map(convertOperation)
@@ -316,9 +333,10 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
 }
 
 export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
-  const { id, token, operations, balance } = raw;
+  const { id, parentId, token, operations, balance } = raw;
   return {
     id,
+    parentId,
     tokenId: token.id,
     balance: balance.toString(),
     operations: operations.map(toOperationRaw)
@@ -358,6 +376,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   const convertOperation = op => fromOperationRaw(op, id, tokenAccounts);
 
   const res: $Exact<Account> = {
+    type: "Account",
     id,
     seedIdentifier,
     derivationMode,
@@ -434,4 +453,226 @@ export function toAccountRaw({
     res.tokenAccounts = tokenAccounts.map(toTokenAccountRaw);
   }
   return res;
+}
+
+// clear account to a bare minimal version that can be restored via sync
+// will preserve the balance to avoid user panic
+export function clearAccount<T: Account | TokenAccount>(account: T): T {
+  if (account.type === "TokenAccount") {
+    return {
+      ...account,
+      operations: []
+    };
+  }
+
+  return {
+    ...account,
+    lastSyncDate: new Date(0),
+    operations: [],
+    pendingOperations: [],
+    tokenAccounts:
+      account.tokenAccounts && account.tokenAccounts.map(clearAccount)
+  };
+}
+
+export function flattenAccounts(
+  topAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[]
+): (Account | TokenAccount)[] {
+  const accounts = [];
+  for (let i = 0; i < topAccounts.length; i++) {
+    const account = topAccounts[i];
+    accounts.push(account);
+    if (account.type === "Account") {
+      const tokenAccounts = account.tokenAccounts || [];
+      for (let j = 0; j < tokenAccounts.length; j++) {
+        accounts.push(tokenAccounts[j]);
+      }
+    }
+  }
+  return accounts;
+}
+
+export function canBeMigrated(account: Account) {
+  const { type, currencyId } = decodeAccountId(account.id);
+  // at the moment migrations requires experimental libcore
+  if (!getEnv("EXPERIMENTAL_LIBCORE")) return false;
+  return type === "ethereumjs" && currencyId === "ethereum"; // TODO remove currencyId match
+}
+
+// attempt to find an account in scanned accounts that satisfy a migration
+export function findAccountMigration(
+  account: Account,
+  scannedAccounts: Account[]
+): ?Account {
+  if (!canBeMigrated(account)) return;
+  const { type } = decodeAccountId(account.id);
+  if (type === "ethereumjs") {
+    return scannedAccounts.find(a => a.freshAddress === account.freshAddress);
+  }
+}
+
+export type AddAccountsSection = {
+  id: string,
+  selectable: boolean,
+  defaultSelected: boolean,
+  data: Account[]
+};
+
+export type AddAccountsSectionResult = {
+  sections: AddAccountsSection[],
+  alreadyEmptyAccount: ?Account
+};
+
+/**
+ * logic that for the Add Accounts sectioned list
+ */
+export function groupAddAccounts(
+  existingAccounts: Account[],
+  scannedAccounts: Account[],
+  context: {
+    scanning: boolean
+  }
+): AddAccountsSectionResult {
+  const importedAccounts = [];
+  const importableAccounts = [];
+  const creatableAccounts = [];
+  const migrateAccounts = [];
+  let alreadyEmptyAccount;
+
+  const scannedAccountsWithoutMigrate = [...scannedAccounts];
+  existingAccounts.forEach(existingAccount => {
+    const migrate = findAccountMigration(
+      existingAccount,
+      scannedAccountsWithoutMigrate
+    );
+    if (migrate) {
+      migrateAccounts.push({
+        ...migrate,
+        name: existingAccount.name
+      });
+      const index = scannedAccountsWithoutMigrate.indexOf(migrate);
+      if (index !== -1) {
+        scannedAccountsWithoutMigrate[index] =
+          scannedAccountsWithoutMigrate[
+            scannedAccountsWithoutMigrate.length - 1
+          ];
+        scannedAccountsWithoutMigrate.pop();
+      }
+    }
+  });
+
+  scannedAccountsWithoutMigrate.forEach(acc => {
+    const existingAccount = existingAccounts.find(a => a.id === acc.id);
+    const empty = isAccountEmpty(acc);
+    if (existingAccount) {
+      if (empty) {
+        alreadyEmptyAccount = existingAccount;
+      }
+      importedAccounts.push(existingAccount);
+    } else if (empty) {
+      creatableAccounts.push(acc);
+    } else {
+      importableAccounts.push(acc);
+    }
+  });
+
+  const sections = [];
+
+  if (importableAccounts.length) {
+    sections.push({
+      id: "importable",
+      selectable: true,
+      defaultSelected: true,
+      data: importableAccounts
+    });
+  }
+  if (migrateAccounts.length) {
+    sections.push({
+      id: "migrate",
+      selectable: true,
+      defaultSelected: true,
+      data: migrateAccounts
+    });
+  }
+  if (!context.scanning || creatableAccounts.length) {
+    // NB if data is empty, need to do custom placeholder that depends on alreadyEmptyAccount
+    sections.push({
+      id: "creatable",
+      selectable: true,
+      defaultSelected: false,
+      data: creatableAccounts
+    });
+  }
+
+  if (importedAccounts.length) {
+    sections.push({
+      id: "imported",
+      selectable: false,
+      defaultSelected: false,
+      data: importedAccounts
+    });
+  }
+
+  return {
+    sections,
+    alreadyEmptyAccount
+  };
+}
+
+export type AddAccountsProps = {
+  existingAccounts: Account[],
+  scannedAccounts: Account[],
+  selectedIds: string[],
+  renamings: { [_: string]: string }
+};
+
+export function addAccounts({
+  scannedAccounts,
+  existingAccounts,
+  selectedIds,
+  renamings
+}: AddAccountsProps): Account[] {
+  const newAccounts = [];
+
+  // scanned accounts that was selected
+  const selected = scannedAccounts.filter(a => selectedIds.includes(a.id));
+
+  // we'll search for potential migration and append to newAccounts
+  existingAccounts.forEach(existing => {
+    const migration = findAccountMigration(existing, selected);
+    if (migration) {
+      if (!newAccounts.includes(migration)) {
+        newAccounts.push(migration);
+        const index = selected.indexOf(migration);
+        if (index !== -1) {
+          selected[index] = selected[selected.length - 1];
+          selected.pop();
+        }
+      }
+    } else {
+      // we'll try to find an updated version of the existing account as opportunity to refresh the operations
+      const update = selected.find(a => a.id === existing.id);
+      if (update) {
+        // preserve existing name
+        newAccounts.push({ ...update, name: existing.name });
+      } else {
+        newAccounts.push(existing);
+      }
+    }
+  });
+
+  // append the new accounts
+  selected.forEach(acc => {
+    const alreadyThere = newAccounts.find(a => a.id === acc.id);
+    if (!alreadyThere) {
+      newAccounts.push(acc);
+    }
+  });
+
+  // apply the renaming
+  return newAccounts.map(a => {
+    const name = validateNameEdition(a, renamings[a.id]);
+    if (name) return { ...a, name };
+    return a;
+  });
 }

@@ -45,6 +45,8 @@ import { formatShort } from "./formatShort";
 
 import { valueFromUnit } from "./valueFromUnit";
 
+import { getCurrencyColor } from "./color";
+
 const findCurrencyByTicker = (ticker: string): ?Currency =>
   findCryptoCurrencyByTicker(ticker) ||
   findFiatCurrencyByTicker(ticker) ||
@@ -78,5 +80,6 @@ export {
   encodeURIScheme,
   decodeURIScheme,
   valueFromUnit,
-  sanitizeValueString
+  sanitizeValueString,
+  getCurrencyColor
 };
