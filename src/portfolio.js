@@ -283,27 +283,27 @@ export function getAssetsDistribution(
     ...opts
   };
   let sum = BigNumber(0);
-  const tickerBalances = {};
-  const tickerCurrencies = {};
+  const idBalances = {};
+  const idCurrencies = {};
   const accounts = flattenAccounts(topAccounts);
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
     const cur = account.type === "Account" ? account.currency : account.token;
-    const ticker = cur.ticker;
-    tickerCurrencies[ticker] = cur;
-    tickerBalances[ticker] = (tickerBalances[ticker] || BigNumber(0)).plus(
+    const id = cur.id;
+    idCurrencies[id] = cur;
+    idBalances[id] = (idBalances[id] || BigNumber(0)).plus(
       account.balance
     );
   }
 
-  const tickerCountervalues = {};
-  for (const ticker in tickerBalances) {
+  const idCountervalues = {};
+  for (const id in idBalances) {
     const countervalue = calculateCountervalue(
-      tickerCurrencies[ticker],
-      tickerBalances[ticker]
+      idCurrencies[id],
+      idBalances[id]
     );
     if (countervalue) {
-      tickerCountervalues[ticker] = countervalue;
+      idCountervalues[id] = countervalue;
       sum = sum.plus(countervalue);
     }
   }
@@ -312,18 +312,18 @@ export function getAssetsDistribution(
     return assetsDistributionNotAvailable;
   }
 
-  const tickerCurrenciesKeys = Object.keys(tickerCurrencies);
+  const idCurrenciesKeys = Object.keys(idCurrencies);
 
-  const hash = `${tickerCurrenciesKeys.length}_${sum.toString()}`;
+  const hash = `${idCurrenciesKeys.length}_${sum.toString()}`;
   if (hash === previousDistributionCache.hash) {
     return previousDistributionCache.data;
   }
 
-  const list = tickerCurrenciesKeys
-    .map(ticker => {
-      const currency = tickerCurrencies[ticker];
-      const amount = tickerBalances[ticker];
-      const countervalue = tickerCountervalues[ticker] || BigNumber(0);
+  const list = idCurrenciesKeys
+    .map(id => {
+      const currency = idCurrencies[id];
+      const amount = idBalances[id];
+      const countervalue = idCountervalues[id] || BigNumber(0);
       return {
         currency,
         countervalue,
