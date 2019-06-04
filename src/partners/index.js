@@ -27,10 +27,6 @@ export default [
     url: "http://go.coinmama.com/visit/?bta=51801&nci=5343"
   },
   {
-    id: "exmo",
-    url: "https://exmo.com/?ref=1604207"
-  },
-  {
     id: "kyberswap",
     url:
       "http://kyber.network/swap?ref=0xE2D8481eeF31CDA994833974FFfEccd576f8D71E"
@@ -54,10 +50,5 @@ export default [
   {
     id: "taxtoken",
     url: "https://taxtoken.go2cloud.org/aff_c?offer_id=1&aff_id=1001"
-  },
-  {
-    id: "thorswap",
-    url:
-      "https://www.thorswap.com/?utm_source=Wallet&utm_medium=ledger&utm_campaign=EmbedLink&utm_content=Link1"
   }
 ];
