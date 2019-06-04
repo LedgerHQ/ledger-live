@@ -64,6 +64,7 @@ declare class CoreERC20LikeOperation {
   getTime(): Promise<string>;
   getOperationType(): Promise<OperationType>;
   getStatus(): Promise<number>;
+  getBlockHeight(): Promise<?number>;
 }
 
 export type CoreStatics = {
@@ -184,7 +185,8 @@ export const reflect = (declare: (string, Spec) => void) => {
       getValue: { returns: "BigInt" },
       getTime: {},
       getOperationType: { returns: "OperationType" },
-      getStatus: {}
+      getStatus: {},
+      getBlockHeight: {}
     }
   });
 
