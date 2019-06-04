@@ -455,6 +455,26 @@ export function toAccountRaw({
   return res;
 }
 
+// clear account to a bare minimal version that can be restored via sync
+// will preserve the balance to avoid user panic
+export function clearAccount<T: Account | TokenAccount>(account: T): T {
+  if (account.type === "TokenAccount") {
+    return {
+      ...account,
+      operations: []
+    };
+  }
+
+  return {
+    ...account,
+    lastSyncDate: new Date(0),
+    operations: [],
+    pendingOperations: [],
+    tokenAccounts:
+      account.tokenAccounts && account.tokenAccounts.map(clearAccount)
+  };
+}
+
 export function flattenAccounts(
   topAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[]
 ): (Account | TokenAccount)[] {
