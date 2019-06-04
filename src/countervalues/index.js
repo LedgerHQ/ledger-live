@@ -415,21 +415,19 @@ function createCounterValues<State>({
       // and asking with different exchanges will prevent to happen (over times, as arbitrary fallback can change)
       const pairsToUpdate = [];
       userPairs.forEach(pair => {
-        const {
-          exchange,
-          to: { ticker: to },
-          from: { ticker: from }
-        } = pair;
-        const a = data[to] || {};
+        const { exchange } = pair;
+        const toTicker = currencyTicker(pair.to);
+        const fromTicker = currencyTicker(pair.from);
+        const a = data[toTicker] || {};
         if (typeof a !== "object") return;
-        const b = a[from] || {};
+        const b = a[fromTicker] || {};
         if (typeof b !== "object") return;
         const availableExchanges: string[] = Object.keys(b);
         const fallback = availableExchanges[0] || null;
         if (!exchange || !availableExchanges.includes(exchange)) {
           if (log)
             log(
-              `${from}/${to}: ${
+              `${fromTicker}/${toTicker}: ${
                 exchange
                   ? `exchange ${exchange} no longer in countervalue API`
                   : "no exchange defined yet"
