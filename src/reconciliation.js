@@ -162,7 +162,6 @@ export function patchAccount(
       updatedRaw.tokenAccounts.length !== existingTokenAccounts.length;
     tokenAccounts = updatedRaw.tokenAccounts.map(ta => {
       const existing = existingTokenAccounts.find(t => t.id === ta.id);
-      if (!existing) return fromTokenAccountRaw(ta);
       const patched = patchTokenAccount(existing, ta);
       if (patched !== existing) {
         tokenAccountsChanged = true;
@@ -240,11 +239,12 @@ export function patchAccount(
 }
 
 export function patchTokenAccount(
-  account: TokenAccount,
+  account: ?TokenAccount,
   updatedRaw: TokenAccountRaw
 ): TokenAccount {
   // id can change after a sync typically if changing the version or filling more info. in that case we consider all changes.
-  if (account.id !== updatedRaw.id) return fromTokenAccountRaw(updatedRaw);
+  if (!account || account.id !== updatedRaw.id)
+    return fromTokenAccountRaw(updatedRaw);
 
   const operations = patchOperations(
     account.operations,
