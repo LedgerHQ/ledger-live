@@ -319,12 +319,13 @@ export const fromOperationRaw = (
 };
 
 export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
-  const { id, tokenId, operations, balance } = raw;
+  const { id, parentId, tokenId, operations, balance } = raw;
   const token = getTokenById(tokenId);
   const convertOperation = op => fromOperationRaw(op, id);
   return {
     type: "TokenAccount",
     id,
+    parentId,
     token,
     balance: BigNumber(balance),
     operations: operations.map(convertOperation)
@@ -332,9 +333,10 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
 }
 
 export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
-  const { id, token, operations, balance } = raw;
+  const { id, parentId, token, operations, balance } = raw;
   return {
     id,
+    parentId,
     tokenId: token.id,
     balance: balance.toString(),
     operations: operations.map(toOperationRaw)

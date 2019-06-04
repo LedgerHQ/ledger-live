@@ -2030,30 +2030,30 @@ Object {
 
 exports[`reorderAccountByCountervalues 1`] = `
 Array [
-  "ALCO",
-  "BKX",
-  "CLB",
-  "DDF",
-  "GCU",
-  "NCC",
-  "NPER",
-  "PMA",
-  "TALAO",
-  "WABI",
+  "NEXO",
+  "ATH",
+  "B2BX",
+  "CC3",
+  "DTT",
+  "GZB",
+  "INRM",
+  "PTT",
+  "SYN",
+  "WIN",
 ]
 `;
 
 exports[`reorderTokenAccountsByCountervalues 1`] = `
 Array [
-  "NEXO",
-  "WEB",
-  "AST",
-  "B2BX",
-  "CC3",
-  "DIP",
-  "GLA",
-  "INSTAR",
-  "XCHF",
-  "XET",
+  "0XBTC",
+  "CAT",
+  "DAN",
+  "DGX",
+  "GNO",
+  "IMT",
+  "KEY",
+  "MOZO",
+  "TBC2",
+  "WHO",
 ]
 `;

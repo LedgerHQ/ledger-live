@@ -8,6 +8,8 @@ import type { DerivationMode } from "../derivation";
 export type TokenAccount = {
   type: "TokenAccount",
   id: string,
+  // id of the parent account this token accuont belongs to
+  parentId: string,
   token: TokenCurrency,
   operations: Operation[],
   balance: BigNumber
@@ -83,6 +85,7 @@ export type Account = {
 
 export type TokenAccountRaw = {
   id: string,
+  parentId: string,
   tokenId: string,
   operations: OperationRaw[],
   balance: string

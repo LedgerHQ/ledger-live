@@ -35,6 +35,7 @@ async function buildERC20TokenAccount({
   const tokenAccount: $Exact<TokenAccount> = {
     type: "TokenAccount",
     id,
+    parentId: parentAccountId,
     token,
     operations,
     balance

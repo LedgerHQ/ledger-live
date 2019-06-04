@@ -178,15 +178,16 @@ type GenAccountOptions = {
 };
 
 function genTokenAccount(
-  id: number | string,
+  index: number,
   account: Account
 ): $Exact<TokenAccount> {
-  const rng = new Prando(id);
+  const rng = new Prando(account.id + "|" + index);
   const tokens = listTokensForCryptoCurrency(account.currency);
   const token = rng.nextArrayItem(tokens);
   const tokenAccount = {
     type: "TokenAccount",
-    id: `mock:1:${account.id}:${id}`,
+    id: account.id + "|" + index,
+    parentId: account.id,
     token,
     operations: [],
     balance: BigNumber(0)
@@ -240,7 +241,7 @@ export function genAccount(
         : rng.nextInt(0, 8);
     account.tokenAccounts = Array(tokenCount)
       .fill(null)
-      .map((_, i) => genTokenAccount(id + "_" + i, account));
+      .map((_, i) => genTokenAccount(i, account));
   }
 
   account.operations = Array(operationsSize)
