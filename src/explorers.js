@@ -31,11 +31,17 @@ export const findCurrencyExplorer = (
   currency: CryptoCurrency
 ): ?LedgerExplorer => {
   const exp = getEnv("EXPERIMENTAL_EXPLORERS");
-  if (exp && currency.id in ledgerExplorersV3) {
-    return { id: ledgerExplorersV3[currency.id], version: "v3" };
+  const idV2 = ledgerExplorersV2[currency.id];
+  const idV3 = ledgerExplorersV3[currency.id];
+  if (exp && idV3) {
+    return { id: idV3, version: "v3" };
   }
-  const id = ledgerExplorersV2[currency.id];
-  return id ? { id, version: "v2" } : null;
+  if (idV2) {
+    return { id: idV2, version: "v2" };
+  }
+  if (idV3) {
+    return { id: idV3, version: "v3" };
+  }
 };
 
 export const hasCurrencyExplorer = (currency: CryptoCurrency): boolean =>
@@ -59,7 +65,7 @@ const ledgerExplorersV2 = {
   digibyte: "dgb",
   dogecoin: "doge",
   ethereum: "eth",
-  ethereum_classic: "ethc",
+  // ethereum_classic: "ethc", // libcore dropped support of this
   hcash: "hsr",
   komodo: "kmd",
   litecoin: "ltc",
@@ -79,5 +85,6 @@ const ledgerExplorersV2 = {
 
 const ledgerExplorersV3 = {
   ethereum: "eth-mainnet",
-  ethereum_ropsten: "eth-ropsten"
+  ethereum_ropsten: "eth-ropsten",
+  ethereum_classic: "eth-classic"
 };
