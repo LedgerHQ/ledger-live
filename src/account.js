@@ -113,6 +113,15 @@ export function groupAccountOperationsByDay(
   return groupAccountsOperationsByDay(accounts, arg);
 }
 
+function ensureNoColon(value: string, ctx: string): string {
+  invariant(
+    !value.includes(":"),
+    "AccountId '%s' component must not use colon",
+    ctx
+  );
+  return value;
+}
+
 export function encodeAccountId({
   type,
   version,
@@ -120,7 +129,13 @@ export function encodeAccountId({
   xpubOrAddress,
   derivationMode
 }: AccountIdParams) {
-  return `${type}:${version}:${currencyId}:${xpubOrAddress}:${derivationMode}`;
+  return `${ensureNoColon(type, "type")}:${ensureNoColon(
+    version,
+    "version"
+  )}:${ensureNoColon(currencyId, "currencyId")}:${ensureNoColon(
+    xpubOrAddress,
+    "xpubOrAddress"
+  )}:${ensureNoColon(derivationMode, "derivationMode")}`;
 }
 
 export function decodeAccountId(accountId: string): AccountIdParams {
