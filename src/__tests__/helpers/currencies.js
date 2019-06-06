@@ -94,8 +94,8 @@ test("tokens are correct", () => {
     expect(typeof token.name).toBe("string");
     expect(typeof token.ledgerSignature).toBe("string");
     expect(typeof token.tokenType).toBe("string");
-    expect(typeof token.parentCurrency).toBe("string");
-    expect(hasCryptoCurrencyId(token.parentCurrency)).toBe(true);
+    expect(typeof token.parentCurrency).toBe("object");
+    expect(hasCryptoCurrencyId(token.parentCurrency.id)).toBe(true);
     expect(typeof token.ticker).toBe("string");
     expect(token.units.length).toBeGreaterThan(0);
     const unit = token.units[0];

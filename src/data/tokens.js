@@ -1,8 +1,9 @@
 // @flow
 import type { TokenCurrency, CryptoCurrency } from "../types";
+import { getCryptoCurrencyById } from "../currencies";
 
 const convertERC20 = ([
-  parentCurrency,
+  parentCurrencyId,
   token,
   ticker,
   magnitude,
@@ -14,7 +15,7 @@ const convertERC20 = ([
   id: "ethereum/erc20/" + token,
   ledgerSignature,
   contractAddress,
-  parentCurrency,
+  parentCurrency: getCryptoCurrencyById(parentCurrencyId),
   tokenType: "erc20",
   name,
   ticker,
@@ -50,10 +51,10 @@ export function add(type: string, list: any[]) {
     tokensByTicker[token.ticker] = token;
     tokensByAddress[token.contractAddress.toLowerCase()] = token;
     const { parentCurrency } = token;
-    if (!(parentCurrency in tokensByCryptoCurrency)) {
-      tokensByCryptoCurrency[parentCurrency] = [];
+    if (!(parentCurrency.id in tokensByCryptoCurrency)) {
+      tokensByCryptoCurrency[parentCurrency.id] = [];
     }
-    tokensByCryptoCurrency[parentCurrency].push(token);
+    tokensByCryptoCurrency[parentCurrency.id].push(token);
   });
 }
 
