@@ -31,7 +31,6 @@ async function buildERC20TokenAccount({
       })
   );
 
-  // TODO keep reference if no operation have changed, nor id/token/balance
   const tokenAccount: $Exact<TokenAccount> = {
     type: "TokenAccount",
     id,

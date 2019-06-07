@@ -1,5 +1,6 @@
 // @flow
 // libcore reconciliation by the React definition. https://reactjs.org/docs/reconciliation.html
+// TODO move to account/
 
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
@@ -243,8 +244,13 @@ export function patchTokenAccount(
   updatedRaw: TokenAccountRaw
 ): TokenAccount {
   // id can change after a sync typically if changing the version or filling more info. in that case we consider all changes.
-  if (!account || account.id !== updatedRaw.id)
+  if (
+    !account ||
+    account.id !== updatedRaw.id ||
+    account.parentId !== updatedRaw.parentId
+  ) {
     return fromTokenAccountRaw(updatedRaw);
+  }
 
   const operations = patchOperations(
     account.operations,
