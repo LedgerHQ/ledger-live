@@ -81,7 +81,11 @@ export function genAddress(
   currency: CryptoCurrency | TokenCurrency,
   rng: Prando
 ) {
-  if (currency.id.startsWith("ethereum")) {
+  if (
+    currency.type === "CryptoCurrency"
+      ? currency.family === "ethereum" // all eth family
+      : currency.id.startsWith("ethereum") // erc20 case
+  ) {
     return `0x${genHex(40, rng)}`;
   }
   return genBitcoinAddressLike(rng);
@@ -234,7 +238,7 @@ export function genAccount(
     lastSyncDate: new Date()
   };
 
-  if (currency.id === "ethereum") {
+  if (currency.family === "ethereum") {
     const tokenCount =
       typeof opts.tokenAccountsCount === "number"
         ? opts.tokenAccountsCount

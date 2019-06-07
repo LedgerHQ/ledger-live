@@ -114,7 +114,7 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
 
   const fetchTransactionNetworkInfo = async ({ currency }) => {
     if (currency.id === "ripple") return { serverFee: 10 };
-    if (currency.id === "ethereum" || currency.id === "ethereum_classic") {
+    if (currency.family === "ethereum") {
       const serverFees = await getEstimatedFees(currency);
       return { serverFees };
     }

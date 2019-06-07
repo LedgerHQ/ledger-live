@@ -14,10 +14,10 @@ export const shouldShowNewAccount = (
     : derivationMode === "segwit" || derivationMode === "native_segwit";
 
 export function canBeMigrated(account: Account) {
-  const { type, currencyId } = decodeAccountId(account.id);
+  const { type } = decodeAccountId(account.id);
   // at the moment migrations requires experimental libcore
   if (!getEnv("EXPERIMENTAL_LIBCORE")) return false;
-  return type === "ethereumjs" && currencyId === "ethereum"; // TODO remove currencyId match
+  return type === "ethereumjs";
 }
 
 // attempt to find an account in scanned accounts that satisfy a migration
