@@ -1,6 +1,9 @@
 // @flow
 import type { TokenCurrency, CryptoCurrency } from "../types";
-import { getCryptoCurrencyById } from "../currencies";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyByTicker
+} from "./cryptocurrencies";
 
 const convertERC20 = ([
   parentCurrencyId,
@@ -19,6 +22,7 @@ const convertERC20 = ([
   tokenType: "erc20",
   name,
   ticker,
+  disableCountervalue: !!findCryptoCurrencyByTicker(ticker), // if it collides, disable
   units: [
     {
       name,
