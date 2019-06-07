@@ -17,224 +17,236 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
-export default ({
-  lib,
-  logger,
-  dbPath
-}: {
-  // the actual @ledgerhq/ledger-core lib
+export default (arg: {
+  // the actual @ledgerhq/ledger-core lib or a function that returns it
   lib: any,
   dbPath: string,
   logger: ?(level: string, ...args: any) => void
 }) => {
-  const MAX_RANDOM = 2684869021;
-
-  const lcore = new lib.NJSLedgerCore();
-  const stringVersion = lcore.getStringVersion();
-  const sqlitePrefix = `v${stringVersion.split(".")[0]}`;
-
-  const hexToBytes = str =>
-    Array.from(Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex"));
-  const bytesToHex = buf => Buffer.from(buf).toString("hex");
-
-  const bytesArrayToString = (bytesArray = []) =>
-    Buffer.from(bytesArray).toString();
-
-  const stringToBytesArray = str => Array.from(Buffer.from(str));
-
-  const NJSExecutionContextImpl = {
-    execute: runnable => {
-      try {
-        const runFunction = () => runnable.run();
-        setImmediate(runFunction);
-      } catch (e) {
-        if (logger) logger("Error", e);
-      }
-    },
-    delay: (runnable, ms) => setTimeout(() => runnable.run(), ms)
+  let lib;
+  const lazyLoad = () => {
+    if (lib) return;
+    if (typeof arg.lib === "function") {
+      lib = arg.lib();
+    } else {
+      lib = arg.lib;
+    }
   };
-
-  const ThreadContexts = {};
-
-  const getSerialExecutionContext = name => {
-    let currentContext = ThreadContexts[name];
-    if (!currentContext) {
-      currentContext = new lib.NJSExecutionContext(NJSExecutionContextImpl);
-      ThreadContexts[name] = currentContext;
-    }
-    return currentContext;
-  };
-
-  const getMainExecutionContext = () => getSerialExecutionContext("main");
-
-  const NJSThreadDispatcher = new lib.NJSThreadDispatcher({
-    contexts: ThreadContexts,
-    getThreadPoolExecutionContext: name => getSerialExecutionContext(name),
-    getMainExecutionContext,
-    getSerialExecutionContext,
-    newLock: () => {
-      if (logger) {
-        logger("Warn", "libcore NJSThreadDispatcher: newLock: Not implemented");
-      }
-    }
-  });
-
-  NJSThreadDispatcher.getMainExecutionContext = getMainExecutionContext;
-
-  function createHttpConnection(res, err) {
-    if (!res) {
-      return null;
-    }
-    const headersMap = new Map();
-    Object.keys(res.headers).forEach(key => {
-      if (typeof res.headers[key] === "string") {
-        headersMap.set(key, res.headers[key]);
-      }
-    });
-    const NJSHttpUrlConnectionImpl = {
-      getStatusCode: () => Number(res.status),
-      getStatusText: () => res.statusText,
-      getHeaders: () => headersMap,
-      readBody: () => ({
-        error: err ? { code: 0, message: "something went wrong" } : null,
-        data: stringToBytesArray(JSON.stringify(res.data))
-      })
-    };
-    return new lib.NJSHttpUrlConnection(NJSHttpUrlConnectionImpl);
-  }
-
-  const NJSHttpClient = new lib.NJSHttpClient({
-    execute: async r => {
-      const method = r.getMethod();
-      const headersMap = r.getHeaders();
-      let data = r.getBody();
-      if (Array.isArray(data)) {
-        if (data.length === 0) {
-          data = null;
-        } else {
-          const dataStr = bytesArrayToString(data);
-          try {
-            data = JSON.parse(dataStr);
-          } catch (e) {
-            // not a json !?
-          }
-        }
-      }
-      const url = r.getUrl();
-      const headers = {};
-      headersMap.forEach((v, k) => {
-        headers[k] = v;
-      });
-      let res;
-      const param: Object = {
-        method: lib.METHODS[method],
-        url,
-        headers
-      };
-      if (data) {
-        param.data = data;
-      }
-      try {
-        res = await network(param);
-        const urlConnection = createHttpConnection(res);
-        r.complete(urlConnection, null);
-      } catch (err) {
-        const urlConnection = createHttpConnection(res, err.message);
-        r.complete(urlConnection, {
-          code: 0,
-          message: JSON.stringify(serializeError(err))
-        });
-      }
-    }
-  });
-
-  const NJSWebSocketClient = new lib.NJSWebSocketClient({
-    connect: (url, connection) => {
-      connection.OnConnect();
-    },
-    send: (connection, data) => {
-      connection.OnMessage(data);
-    },
-    disconnect: connection => {
-      connection.OnClose();
-    }
-  });
-
-  const NJSLogPrinter = new lib.NJSLogPrinter({
-    context: {},
-    printError: message => logger && logger("Error", message),
-    printInfo: message => logger && logger("Info", message),
-    printDebug: message => logger && logger("Debug", message),
-    printWarning: message => logger && logger("Warning", message),
-    printApdu: message => logger && logger("Apdu", message),
-    printCriticalError: message => logger && logger("CriticalError", message),
-    getContext: () => new lib.NJSExecutionContext(NJSExecutionContextImpl)
-  });
-
-  const NJSRandomNumberGenerator = new lib.NJSRandomNumberGenerator({
-    getRandomBytes: size =>
-      Array.from(Buffer.from(crypto.randomBytes(size), "hex")),
-    getRandomInt: () => Math.random() * MAX_RANDOM,
-    getRandomLong: () => Math.random() * MAX_RANDOM * MAX_RANDOM
-  });
-
-  const NJSDatabaseBackend = new lib.NJSDatabaseBackend();
-  const NJSDynamicObject = new lib.NJSDynamicObject();
-
-  let walletPoolInstance = null;
-
-  const instanciateWalletPool = o => {
-    try {
-      fs.mkdirSync(o.dbPath);
-    } catch (err) {
-      if (err.code !== "EEXIST") {
-        throw err;
-      }
-    }
-
-    const NJSPathResolver = new lib.NJSPathResolver({
-      resolveLogFilePath: pathToResolve => {
-        const hash = pathToResolve.replace(/\//g, "__");
-        return path.resolve(dbPath, `./log_file_${sqlitePrefix}_${hash}`);
-      },
-      resolvePreferencesPath: pathToResolve => {
-        const hash = pathToResolve.replace(/\//g, "__");
-        return path.resolve(dbPath, `./preferences_${sqlitePrefix}_${hash}`);
-      },
-      resolveDatabasePath: pathToResolve => {
-        const hash = pathToResolve.replace(/\//g, "__");
-        return path.resolve(dbPath, `./database_${sqlitePrefix}_${hash}`);
-      }
-    });
-
-    walletPoolInstance = new lib.NJSWalletPool(
-      "ledgerlive",
-      getEnv("LIBCORE_PASSWORD"),
-      NJSHttpClient,
-      NJSWebSocketClient,
-      NJSPathResolver,
-      NJSLogPrinter,
-      NJSThreadDispatcher,
-      NJSRandomNumberGenerator,
-      NJSDatabaseBackend,
-      NJSDynamicObject
-    );
-
-    return walletPoolInstance;
-  };
-
-  const getPoolInstance = () => {
-    if (!walletPoolInstance) {
-      instanciateWalletPool({
-        // sqlite files will be located in the app local data folder
-        dbPath
-      });
-    }
-    invariant(walletPoolInstance, "can't initialize walletPoolInstance");
-    return walletPoolInstance;
-  };
+  const { dbPath, logger } = arg;
 
   const loadCore = (): Promise<Core> => {
+    lazyLoad();
+
+    const MAX_RANDOM = 2684869021;
+
+    const lcore = new lib.NJSLedgerCore();
+    const stringVersion = lcore.getStringVersion();
+    const sqlitePrefix = `v${stringVersion.split(".")[0]}`;
+
+    const hexToBytes = str =>
+      Array.from(Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex"));
+    const bytesToHex = buf => Buffer.from(buf).toString("hex");
+
+    const bytesArrayToString = (bytesArray = []) =>
+      Buffer.from(bytesArray).toString();
+
+    const stringToBytesArray = str => Array.from(Buffer.from(str));
+
+    const NJSExecutionContextImpl = {
+      execute: runnable => {
+        try {
+          const runFunction = () => runnable.run();
+          setImmediate(runFunction);
+        } catch (e) {
+          if (logger) logger("Error", e);
+        }
+      },
+      delay: (runnable, ms) => setTimeout(() => runnable.run(), ms)
+    };
+
+    const ThreadContexts = {};
+
+    const getSerialExecutionContext = name => {
+      let currentContext = ThreadContexts[name];
+      if (!currentContext) {
+        currentContext = new lib.NJSExecutionContext(NJSExecutionContextImpl);
+        ThreadContexts[name] = currentContext;
+      }
+      return currentContext;
+    };
+
+    const getMainExecutionContext = () => getSerialExecutionContext("main");
+
+    const NJSThreadDispatcher = new lib.NJSThreadDispatcher({
+      contexts: ThreadContexts,
+      getThreadPoolExecutionContext: name => getSerialExecutionContext(name),
+      getMainExecutionContext,
+      getSerialExecutionContext,
+      newLock: () => {
+        if (logger) {
+          logger(
+            "Warn",
+            "libcore NJSThreadDispatcher: newLock: Not implemented"
+          );
+        }
+      }
+    });
+
+    NJSThreadDispatcher.getMainExecutionContext = getMainExecutionContext;
+
+    function createHttpConnection(res, err) {
+      if (!res) {
+        return null;
+      }
+      const headersMap = new Map();
+      Object.keys(res.headers).forEach(key => {
+        if (typeof res.headers[key] === "string") {
+          headersMap.set(key, res.headers[key]);
+        }
+      });
+      const NJSHttpUrlConnectionImpl = {
+        getStatusCode: () => Number(res.status),
+        getStatusText: () => res.statusText,
+        getHeaders: () => headersMap,
+        readBody: () => ({
+          error: err ? { code: 0, message: "something went wrong" } : null,
+          data: stringToBytesArray(JSON.stringify(res.data))
+        })
+      };
+      return new lib.NJSHttpUrlConnection(NJSHttpUrlConnectionImpl);
+    }
+
+    const NJSHttpClient = new lib.NJSHttpClient({
+      execute: async r => {
+        const method = r.getMethod();
+        const headersMap = r.getHeaders();
+        let data = r.getBody();
+        if (Array.isArray(data)) {
+          if (data.length === 0) {
+            data = null;
+          } else {
+            const dataStr = bytesArrayToString(data);
+            try {
+              data = JSON.parse(dataStr);
+            } catch (e) {
+              // not a json !?
+            }
+          }
+        }
+        const url = r.getUrl();
+        const headers = {};
+        headersMap.forEach((v, k) => {
+          headers[k] = v;
+        });
+        let res;
+        const param: Object = {
+          method: lib.METHODS[method],
+          url,
+          headers
+        };
+        if (data) {
+          param.data = data;
+        }
+        try {
+          res = await network(param);
+          const urlConnection = createHttpConnection(res);
+          r.complete(urlConnection, null);
+        } catch (err) {
+          const urlConnection = createHttpConnection(res, err.message);
+          r.complete(urlConnection, {
+            code: 0,
+            message: JSON.stringify(serializeError(err))
+          });
+        }
+      }
+    });
+
+    const NJSWebSocketClient = new lib.NJSWebSocketClient({
+      connect: (url, connection) => {
+        connection.OnConnect();
+      },
+      send: (connection, data) => {
+        connection.OnMessage(data);
+      },
+      disconnect: connection => {
+        connection.OnClose();
+      }
+    });
+
+    const NJSLogPrinter = new lib.NJSLogPrinter({
+      context: {},
+      printError: message => logger && logger("Error", message),
+      printInfo: message => logger && logger("Info", message),
+      printDebug: message => logger && logger("Debug", message),
+      printWarning: message => logger && logger("Warning", message),
+      printApdu: message => logger && logger("Apdu", message),
+      printCriticalError: message => logger && logger("CriticalError", message),
+      getContext: () => new lib.NJSExecutionContext(NJSExecutionContextImpl)
+    });
+
+    const NJSRandomNumberGenerator = new lib.NJSRandomNumberGenerator({
+      getRandomBytes: size =>
+        Array.from(Buffer.from(crypto.randomBytes(size), "hex")),
+      getRandomInt: () => Math.random() * MAX_RANDOM,
+      getRandomLong: () => Math.random() * MAX_RANDOM * MAX_RANDOM
+    });
+
+    const NJSDatabaseBackend = new lib.NJSDatabaseBackend();
+    const NJSDynamicObject = new lib.NJSDynamicObject();
+
+    let walletPoolInstance = null;
+
+    const instanciateWalletPool = o => {
+      try {
+        fs.mkdirSync(o.dbPath);
+      } catch (err) {
+        if (err.code !== "EEXIST") {
+          throw err;
+        }
+      }
+
+      const NJSPathResolver = new lib.NJSPathResolver({
+        resolveLogFilePath: pathToResolve => {
+          const hash = pathToResolve.replace(/\//g, "__");
+          return path.resolve(dbPath, `./log_file_${sqlitePrefix}_${hash}`);
+        },
+        resolvePreferencesPath: pathToResolve => {
+          const hash = pathToResolve.replace(/\//g, "__");
+          return path.resolve(dbPath, `./preferences_${sqlitePrefix}_${hash}`);
+        },
+        resolveDatabasePath: pathToResolve => {
+          const hash = pathToResolve.replace(/\//g, "__");
+          return path.resolve(dbPath, `./database_${sqlitePrefix}_${hash}`);
+        }
+      });
+
+      walletPoolInstance = new lib.NJSWalletPool(
+        "ledgerlive",
+        getEnv("LIBCORE_PASSWORD"),
+        NJSHttpClient,
+        NJSWebSocketClient,
+        NJSPathResolver,
+        NJSLogPrinter,
+        NJSThreadDispatcher,
+        NJSRandomNumberGenerator,
+        NJSDatabaseBackend,
+        NJSDynamicObject
+      );
+
+      return walletPoolInstance;
+    };
+
+    const getPoolInstance = () => {
+      if (!walletPoolInstance) {
+        instanciateWalletPool({
+          // sqlite files will be located in the app local data folder
+          dbPath
+        });
+      }
+      invariant(walletPoolInstance, "can't initialize walletPoolInstance");
+      return walletPoolInstance;
+    };
+
     const mappings = {};
     Object.keys(lib).forEach(k => {
       if (k.startsWith("NJS")) {
@@ -414,6 +426,7 @@ export default ({
   };
 
   const remapLibcoreErrors = (input: Error) => {
+    lazyLoad();
     const e: mixed = input;
     if (e && typeof e === "object") {
       if (
