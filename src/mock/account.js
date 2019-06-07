@@ -238,7 +238,7 @@ export function genAccount(
     lastSyncDate: new Date()
   };
 
-  if (currency.family === "ethereum") {
+  if (currency.id === "ethereum" || currency.id === "ethereum_ropsten") {
     const tokenCount =
       typeof opts.tokenAccountsCount === "number"
         ? opts.tokenAccountsCount
