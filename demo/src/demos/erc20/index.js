@@ -35,12 +35,8 @@ const Footer = styled.div`
 
 // copy of ethereum with a custom API
 const ethereum = {
-  ...getCryptoCurrencyById("ethereum"),
+  ...getCryptoCurrencyById("ethereum")
 };
-setEnv(
-  "EXPLORER_V3",
-  "http://$ledgerExplorerId.explorers.dev.aws.ledger.fr/blockchain/v3"
-);
 const api = apiForCurrency(ethereum);
 
 const SendToken = ({ token }: { token: CurrencyToken }) => {
@@ -94,10 +90,7 @@ const SendToken = ({ token }: { token: CurrencyToken }) => {
             disabled={disabled}
             onClick={() => {
               setError(null);
-              Promise.all([
-                TransportU2F.create(),
-                api.getAccountNonce(address)
-              ])
+              Promise.all([TransportU2F.create(), api.getAccountNonce(address)])
                 .then(([t, nonce]) =>
                   signERC20Transaction(token, t, derivationPath, {
                     nonce,

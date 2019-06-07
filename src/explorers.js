@@ -84,7 +84,7 @@ const ledgerExplorersV2 = {
 };
 
 const ledgerExplorersV3 = {
-  ethereum: "eth-mainnet",
-  ethereum_ropsten: "eth-ropsten",
+  ethereum: "eth",
+  ethereum_ropsten: "eth_ropsten",
   ethereum_classic: "eth-classic"
 };

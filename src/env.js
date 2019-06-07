@@ -30,8 +30,7 @@ const envParsers = {
   EXPERIMENTAL_NATIVE_SEGWIT: boolParser,
   EXPERIMENTAL_SEND_MAX: boolParser,
   EXPERIMENTAL_USB: boolParser,
-  EXPLORER_V2: stringParser,
-  EXPLORER_V3: stringParser,
+  EXPLORER: stringParser,
   FORCE_PROVIDER: intParser,
   LEDGER_REST_API_BASE: stringParser,
   LIBCORE_PASSWORD: stringParser,
@@ -56,10 +55,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   EXPERIMENTAL_NATIVE_SEGWIT: false,
   EXPERIMENTAL_SEND_MAX: false,
   EXPERIMENTAL_USB: false,
-  EXPLORER_V2:
-    "https://explorers.api.live.ledger.com/blockchain/v2/$ledgerExplorerId",
-  EXPLORER_V3:
-    "https://$ledgerExplorerId.explorers.prod.aws.ledger.fr/blockchain/v3",
+  EXPLORER: "https://explorers.api.live.ledger.com",
   FORCE_PROVIDER: 1,
   LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
   LIBCORE_PASSWORD: "",
