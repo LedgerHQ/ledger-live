@@ -86,5 +86,5 @@ const ledgerExplorersV2 = {
 const ledgerExplorersV3 = {
   ethereum: "eth",
   ethereum_ropsten: "eth_ropsten",
-  ethereum_classic: "eth-classic"
+  ethereum_classic: "etc"
 };
