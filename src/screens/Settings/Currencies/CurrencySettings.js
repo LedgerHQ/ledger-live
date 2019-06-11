@@ -89,7 +89,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
   updateSettings = () => {
     const { value } = this.state;
     const { updateCurrencySettings, currency } = this.props;
-    updateCurrencySettings(currency.id, { confirmationsNb: value });
+    updateCurrencySettings(currency.ticker, { confirmationsNb: value });
   };
 
   render() {
