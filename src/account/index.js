@@ -3,7 +3,13 @@ import type {
   AddAccountsSection,
   AddAccountsSectionResult
 } from "./addAccounts";
-import { isAccountEmpty, clearAccount, flattenAccounts } from "./helpers";
+import {
+  getMainAccount,
+  getAccountCurrency,
+  isAccountEmpty,
+  clearAccount,
+  flattenAccounts
+} from "./helpers";
 import {
   shouldShowNewAccount,
   canBeMigrated,
@@ -43,6 +49,8 @@ import {
 export type { AddAccountsSection, AddAccountsSectionResult };
 
 export {
+  getMainAccount,
+  getAccountCurrency,
   isAccountEmpty,
   clearAccount,
   flattenAccounts,

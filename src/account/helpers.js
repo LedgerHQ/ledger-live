@@ -1,5 +1,21 @@
 // @flow
+import invariant from "invariant";
 import type { Account, TokenAccount } from "../types";
+
+// by convention, a main account is the top level account
+// in case of an Account is the account itself
+// in case of a TokenAccount it's the parentAccount
+export const getMainAccount = (
+  account: Account | TokenAccount,
+  parentAccount: ?Account
+): Account => {
+  const mainAccount = account.type === "Account" ? account : parentAccount;
+  invariant(mainAccount, "an account is expected");
+  return mainAccount;
+};
+
+export const getAccountCurrency = (account: Account | TokenAccount) =>
+  account.type === "Account" ? account.currency : account.token;
 
 export const isAccountEmpty = (a: Account | TokenAccount): boolean =>
   a.operations.length === 0 && a.balance.isZero();
