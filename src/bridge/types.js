@@ -9,7 +9,12 @@
 
 import type { Observable } from "rxjs";
 import type { BigNumber } from "bignumber.js";
-import type { Account, Operation, CryptoCurrency } from "../types";
+import type {
+  TokenAccount,
+  Account,
+  Operation,
+  CryptoCurrency
+} from "../types";
 
 // unique identifier of a device. it will depends on the underlying implementation.
 export type DeviceId = string;
@@ -64,6 +69,15 @@ export interface AccountBridge<Transaction> {
     account: Account,
     transaction: Transaction
   ): ?Object;
+
+  // For doing token account transactions, everything remain the same except
+  // you need to build Transaction with a contextual TokenAccount
+  // otherwise, all reference to Account remains the mainAccount
+  setTokenAccount?: (
+    account: Account,
+    transaction: Transaction,
+    tokenAccount: ?TokenAccount
+  ) => Transaction;
 
   editTransactionAmount(
     account: Account,
