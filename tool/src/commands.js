@@ -21,6 +21,7 @@ import { getFeesForTransaction } from "@ledgerhq/live-common/lib/libcore/getFees
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { encode } from "@ledgerhq/live-common/lib/cross";
 import manager from "@ledgerhq/live-common/lib/manager";
+import { asDerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
@@ -418,9 +419,7 @@ const all = {
           if (!arg.path) {
             throw new Error("--path is required");
           }
-          if (!arg.derivationMode) {
-            throw new Error("--derivationMode is required");
-          }
+          asDerivationMode(arg.derivationMode);
           return withDevice(arg.device || "")(t =>
             from(
               getAddress(t, {
