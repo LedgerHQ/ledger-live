@@ -346,10 +346,10 @@
     bindings "^1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@^6.3.0":
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-6.3.0.tgz#d508211d6a78bf4555433d6127b0287041013661"
-  integrity sha512-qNd/eiAzX61rJsue9K0CJweFxbtmhcSDOk8HaauyMSdRgxhjtPg4eAggjYkfojOGKK98eSJtPeEzaeTlEcBrYg==
+"@ledgerhq/live-common@^6.4.1":
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-6.4.1.tgz#9246aa248ad40f5c656640677a78f1770141fbf1"
+  integrity sha512-f8GUmYzluFkEiAfRjuKmcY2KtPMZDXLrk14nCF/J6ImZtNrTlbIeoFtp/YoVCELHVNcloPIktKWc04zbCDwwLQ==
   dependencies:
     "@ledgerhq/errors" "4.61.0"
     "@ledgerhq/hw-app-btc" "4.61.0"
@@ -374,7 +374,7 @@
     ripple-binary-codec "^0.2.0"
     ripple-bs58check "^2.0.2"
     ripple-hashes "^0.3.1"
-    ripple-lib "^1.2.3"
+    ripple-lib "^1.2.4"
     rxjs "^6.5.2"
     rxjs-compat "^6.5.2"
 
@@ -2485,10 +2485,10 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-flow-bin@^0.100.0:
-  version "0.100.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.100.0.tgz#729902726658cfa0a81425d6401f9625cf9f5534"
-  integrity sha512-jcethhgrslBJukH7Z7883ohFFpzLrdsOEwHxvn5NwuTWbNaE71GAl55/PEBRJwYpDvYkRlqgcNkANTv0x5XjqA==
+flow-bin@^0.101.0:
+  version "0.101.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.101.0.tgz#c56fa0afb9c151eeba7954136e9066d408691063"
+  integrity sha512-2xriPEOSrGQklAArNw1ixoIUiLTWhIquYV26WqnxEu7IcXWgoZUcfJXufG9kIvrNbdwCNd5RBjTwbB0p6L6XaA==
 
 flow-typed@^2.5.1:
   version "2.5.1"
@@ -4540,10 +4540,10 @@ ripple-lib-transactionparser@0.7.1:
     bignumber.js "^4.1.0"
     lodash "^4.17.4"
 
-ripple-lib@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/ripple-lib/-/ripple-lib-1.2.3.tgz#0f3ee301fbc66e5fcd2045f25ed7f181541b346a"
-  integrity sha512-5UdVwviXAqfVfxn6xoEe5nePMl8QwsOV0UdVxuEfHGQ6DQUs8qfb2LGcvCXY/nLpKvkBwFqcQJP9BMc3CEng6Q==
+ripple-lib@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/ripple-lib/-/ripple-lib-1.2.4.tgz#834c318aae1a255beb9a57bc2b36a08cf9226019"
+  integrity sha512-hmlj+AIisg4XuSS4ee4uhB9Glc/kM02ZNfl7KF336NDPu81vhqJuR8pikSGwJ/Ay7wIVrP9ny1zR/6FI6lZTZg==
   dependencies:
     "@types/lodash" "^4.14.85"
     "@types/ws" "^3.2.0"
