@@ -15,13 +15,20 @@ export type Transaction = {
   amount: BigNumber | string,
   recipient: string,
   feePerByte: ?(BigNumber | string),
-  networkInfo: ?{ feeItems: FeeItems }
+  networkInfo: ?{ feeItems: FeeItems },
+  useAllAmount?: boolean
 };
 
-const asLibcoreTransaction = ({ amount, recipient, feePerByte }) => ({
+const asLibcoreTransaction = ({
   amount,
   recipient,
-  feePerByte
+  feePerByte,
+  useAllAmount
+}) => ({
+  amount,
+  recipient,
+  feePerByte,
+  useAllAmount
 });
 
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
@@ -41,7 +48,8 @@ const createTransaction = () => ({
   amount: BigNumber(0),
   recipient: "",
   feePerByte: undefined,
-  networkInfo: null
+  networkInfo: null,
+  useAllAmount: false
 });
 
 const fetchTransactionNetworkInfo = async ({ currency }) => {
@@ -81,7 +89,12 @@ const editTransactionExtra = (a, t, field, value) => {
         "editTransactionExtra(a,t,'feePerByte',value): BigNumber value expected"
       );
       return { ...t, feePerByte: value };
-
+    case "useAllAmount":
+      invariant(
+        typeof value === "boolean",
+        "editTransactionExtra(a,t,'useAllAmount',value): boolean value expected"
+      );
+      return { ...t, useAllAmount: value };
     default:
       return t;
   }
@@ -91,7 +104,8 @@ const getTransactionExtra = (a, t, field) => {
   switch (field) {
     case "feePerByte":
       return t.feePerByte;
-
+    case "useAllAmount":
+      return t.useAllAmount;
     default:
       return undefined;
   }
@@ -131,9 +145,13 @@ const checkValidTransaction = async (a, t) =>
     : getFees(a, t).then(() => null);
 
 const getTotalSpent = async (a, t) =>
-  BigNumber(t.amount).isZero()
+  t.useAllAmount
+    ? a.balance
+    : !t.amount || BigNumber(t.amount).isZero()
     ? Promise.resolve(BigNumber(0))
-    : getFees(a, t).then(totalFees => BigNumber(t.amount).plus(totalFees || 0));
+    : getFees(a, t).then(totalFees =>
+        BigNumber(t.amount || "0").plus(totalFees || 0)
+      );
 
 const getMaxAmount = async (a, t) =>
   getFees(a, t).then(totalFees => a.balance.minus(totalFees || 0));
