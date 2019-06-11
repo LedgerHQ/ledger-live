@@ -229,9 +229,7 @@ export const currencyBridge: CurrencyBridge = {
         if (finished) return { complete: true };
 
         const freshAddress = address;
-        const accountId = `ethereumjs:2:${
-          currency.id
-        }:${address}:${derivationMode}`;
+        const accountId = `ethereumjs:2:${currency.id}:${address}:${derivationMode}`;
 
         if (txs.length === 0 && balance.isZero()) {
           // this is an empty account

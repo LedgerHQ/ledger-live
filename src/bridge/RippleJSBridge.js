@@ -375,9 +375,7 @@ export const currencyBridge: CurrencyBridge = {
 
               if (finished) return;
 
-              const accountId = `ripplejs:2:${
-                currency.id
-              }:${address}:${derivationMode}`;
+              const accountId = `ripplejs:2:${currency.id}:${address}:${derivationMode}`;
 
               let info;
               try {

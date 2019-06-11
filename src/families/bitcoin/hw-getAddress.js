@@ -44,9 +44,7 @@ const resolver: Resolver = async (
         ) {
           log(
             "hw",
-            `getAddress ${
-              currency.id
-            } app is outdated. P2SH=${P2SH} P2PKH=${P2PKH}`
+            `getAddress ${currency.id} app is outdated. P2SH=${P2SH} P2PKH=${P2PKH}`
           );
           throw new UpdateYourApp(`UpdateYourApp ${currency.id}`, currency);
         }
@@ -61,9 +59,7 @@ const resolver: Resolver = async (
 
   log(
     "hw",
-    `getAddress ${
-      currency.id
-    } path=${path} address=${bitcoinAddress} publicKey=${publicKey} chainCode=${chainCode}`
+    `getAddress ${currency.id} path=${path} address=${bitcoinAddress} publicKey=${publicKey} chainCode=${chainCode}`
   );
   return { address: bitcoinAddress, path, publicKey, chainCode };
 };
