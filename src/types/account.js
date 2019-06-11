@@ -80,6 +80,17 @@ export type Account = {
   // A configuration for the endpoint to use. (usecase: Ripple node)
   endpointConfig?: ?string,
 
+  // An account can have sub accounts, in that case they are called "token accounts".
+  // tokenAccounts are tokens among a blockchain of the parent account currency, attached to that same parent account.
+  // CONVENTION:
+  // a TokenAccount is living inside an Account but is not an entity on its own,
+  // therefore, there is no .parentAccount in it, which will means you will need to always have a tuple of (parentAccount, account)
+  // we will use the naming (parentAccount, account) everywhere because a token account is not enough and you need the full context with this tuple.
+  // These are two valid examples:
+  // I'm inside a ZRX token account of Ethereum 1: { parentAccount: Ethereum 1, account: ZRX }
+  // I'm just inside the Ethereum 1: { account: Ethereum 1, parentAccount: undefined }
+  // "account" is the primary account that you use/select/view. It is a `Account | TokenAccount`.
+  // "parentAccount", if available, is the contextual account. It is a `?Account`.
   tokenAccounts?: TokenAccount[]
 };
 
