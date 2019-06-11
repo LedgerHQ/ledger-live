@@ -291,9 +291,7 @@ export function getAssetsDistribution(
     const cur = account.type === "Account" ? account.currency : account.token;
     const id = cur.id;
     idCurrencies[id] = cur;
-    idBalances[id] = (idBalances[id] || BigNumber(0)).plus(
-      account.balance
-    );
+    idBalances[id] = (idBalances[id] || BigNumber(0)).plus(account.balance);
   }
 
   const idCountervalues = {};
