@@ -2,7 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import { getWalletName } from "../account";
-import type { Account, TokenAccount, Transaction } from "../types";
+import type { Account, Transaction } from "../types";
 import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
 import { getOrCreateWallet } from "./getOrCreateWallet";
@@ -11,14 +11,13 @@ import byFamily from "../generated/libcore-getFeesForTransaction";
 
 export type Input = {
   account: Account,
-  tokenAccount?: ?TokenAccount,
   transaction: Transaction
 };
 
 type F = Input => Promise<BigNumber>;
 
 export const getFeesForTransaction: F = withLibcoreF(
-  core => async ({ account, tokenAccount, transaction }) => {
+  core => async ({ account, transaction }) => {
     try {
       const { derivationMode, currency } = account;
       const walletName = getWalletName(account);
@@ -42,7 +41,6 @@ export const getFeesForTransaction: F = withLibcoreF(
       if (!f) throw new Error("currency " + currency.id + " not supported");
       let fees = await f({
         account,
-        tokenAccount,
         core,
         coreAccount,
         coreCurrency,

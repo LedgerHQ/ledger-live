@@ -4,7 +4,7 @@ import { Observable, from } from "rxjs";
 import { StatusCodes } from "@ledgerhq/hw-transport";
 import { UpdateYourApp } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { Account, Operation, TokenAccount, Transaction } from "../types";
+import type { Account, Operation, Transaction } from "../types";
 import { getWalletName } from "../account";
 import { withDevice } from "../hw/deviceAccess";
 import type { SignAndBroadcastEvent } from "../bridge/types";
@@ -18,8 +18,6 @@ import byFamily from "../generated/libcore-signAndBroadcast";
 export type Input = {
   // the account to use for the transaction
   account: Account,
-  // tokenAccount if provided will use this account instead and account is just the parent
-  tokenAccount?: ?TokenAccount,
   // all data of the transaction
   transaction: Transaction,
   // device identified to sign the transaction with
@@ -29,7 +27,6 @@ export type Input = {
 const doSignAndBroadcast = withLibcoreF(
   core => async ({
     account,
-    tokenAccount,
     transaction,
     deviceId,
     isCancelled,
@@ -38,7 +35,6 @@ const doSignAndBroadcast = withLibcoreF(
     onOperationBroadcasted
   }: {
     account: Account,
-    tokenAccount: ?TokenAccount,
     transaction: Transaction,
     deviceId: string,
     isCancelled: () => boolean,
@@ -69,7 +65,6 @@ const doSignAndBroadcast = withLibcoreF(
 
     const builded = await buildTransaction({
       account,
-      tokenAccount,
       core,
       coreCurrency,
       coreAccount,
@@ -84,7 +79,7 @@ const doSignAndBroadcast = withLibcoreF(
       from(
         signTransaction({
           account,
-          tokenAccount,
+          tokenAccountId: transaction.tokenAccountId,
           isCancelled,
           transport,
           currency,
@@ -116,7 +111,6 @@ const doSignAndBroadcast = withLibcoreF(
 
     const op = await f({
       account,
-      tokenAccount,
       signedTransaction,
       builded,
       coreAccount,
@@ -131,7 +125,6 @@ const doSignAndBroadcast = withLibcoreF(
 
 export default ({
   account,
-  tokenAccount,
   transaction,
   deviceId
 }: Input): Observable<SignAndBroadcastEvent> =>
@@ -140,7 +133,6 @@ export default ({
     const isCancelled = () => unsubscribed;
     doSignAndBroadcast({
       account,
-      tokenAccount,
       transaction,
       deviceId,
       isCancelled,

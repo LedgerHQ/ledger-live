@@ -107,17 +107,18 @@ export async function inferTransaction(account, opts) {
   if (opts.token) {
     const tkn = opts.token.toLowerCase();
     const tokenAccounts = account.tokenAccounts || [];
-    res.tokenAccount = tokenAccounts.find(
+    const tokenAccount = tokenAccounts.find(
       t => tkn === t.token.ticker.toLowerCase() || tkn === t.token.id
     );
-    if (!res.tokenAccount) {
+    if (!tokenAccount) {
       throw new Error(
         "token account '" +
           opts.token +
           "' not found. Available: " +
-          tokenAccounts.map(t => t.token.ticket).join(", ")
+          tokenAccounts.map(t => t.token.ticker).join(", ")
       );
     }
+    res.transaction.tokenAccountId = tokenAccount.id;
   }
 
   if (!("gasLimit" in res.transaction)) {

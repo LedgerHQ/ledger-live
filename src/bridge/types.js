@@ -9,12 +9,7 @@
 
 import type { Observable } from "rxjs";
 import type { BigNumber } from "bignumber.js";
-import type {
-  TokenAccount,
-  Account,
-  Operation,
-  CryptoCurrency
-} from "../types";
+import type { Account, Operation, CryptoCurrency } from "../types";
 
 // unique identifier of a device. it will depends on the underlying implementation.
 export type DeviceId = string;
@@ -73,11 +68,13 @@ export interface AccountBridge<Transaction> {
   // For doing token account transactions, everything remain the same except
   // you need to build Transaction with a contextual TokenAccount
   // otherwise, all reference to Account remains the mainAccount
-  setTokenAccount?: (
+  editTokenAccountId?: (
     account: Account,
     transaction: Transaction,
-    tokenAccount: ?TokenAccount
+    tokenAccountId: ?string
   ) => Transaction;
+
+  getTokenAccountId?: (account: Account, transaction: Transaction) => ?string;
 
   editTransactionAmount(
     account: Account,
@@ -159,8 +156,17 @@ export interface AccountBridge<Transaction> {
   validateEndpointConfig?: (endpointConfig: string) => Promise<void>;
 
   // TODO we need a better paradigm for this
+  // DEPRECATED for prepareTransaction
   estimateGasLimit?: (
     account: Account,
     address: string
   ) => Promise<number | BigNumber>; // TODO drop number support
+
+  // prepare the remaining missing part of a transaction and emit it
+  // Beware that transaction can be changed so the point is you can unsubscribe this
+  // typically we use it to fill up the gas limit but more ideas can be unified in this... (like the network info?)
+  prepareTransaction(
+    account: Account,
+    transaction: Transaction
+  ): Promise<Transaction>;
 }

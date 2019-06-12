@@ -156,6 +156,9 @@ const getTotalSpent = async (a, t) =>
 const getMaxAmount = async (a, t) =>
   getFees(a, t).then(totalFees => a.balance.minus(totalFees || 0));
 
+const prepareTransaction = (account, transaction) =>
+  Promise.resolve(transaction);
+
 const bridge: AccountBridge<Transaction> = {
   startSync,
   checkValidRecipient,
@@ -172,6 +175,7 @@ const bridge: AccountBridge<Transaction> = {
   checkValidTransaction,
   getTotalSpent,
   getMaxAmount,
+  prepareTransaction,
   signAndBroadcast,
   addPendingOperation
 };

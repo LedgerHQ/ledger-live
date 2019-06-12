@@ -4,25 +4,29 @@ import invariant from "invariant";
 import Eth from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
-import type { CryptoCurrency, Account, TokenAccount } from "../../types";
+import type { CryptoCurrency, Account } from "../../types";
 import type { CoreCurrency } from "../../libcore/types";
 import type { CoreEthereumLikeTransaction } from "./types";
 
 export async function ethereumSignTransaction({
   transport,
   account,
-  tokenAccount,
-  coreTransaction
+  coreTransaction,
+  tokenAccountId
 }: {
   isCancelled: () => boolean,
   transport: Transport<*>,
   account: Account,
-  tokenAccount: ?TokenAccount,
   currency: CryptoCurrency,
+  tokenAccountId: ?string,
   coreCurrency: CoreCurrency,
   coreTransaction: CoreEthereumLikeTransaction
 }) {
   const hwApp = new Eth(transport);
+  const tokenAccount = tokenAccountId
+    ? account.tokenAccounts &&
+      account.tokenAccounts.find(t => t.id === tokenAccountId)
+    : null;
 
   if (tokenAccount) {
     const { token } = tokenAccount;
