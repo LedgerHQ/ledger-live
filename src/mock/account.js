@@ -194,6 +194,7 @@ function genTokenAccount(
     parentId: account.id,
     token,
     operations: [],
+    pendingOperations: [],
     balance: BigNumber(0)
   };
 

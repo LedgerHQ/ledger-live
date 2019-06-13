@@ -1,6 +1,6 @@
 // @flow
 import invariant from "invariant";
-import type { Account, TokenAccount } from "../types";
+import type { Account, TokenAccount, Operation } from "../types";
 
 // by convention, a main account is the top level account
 // in case of an Account is the account itself
@@ -59,3 +59,35 @@ export function flattenAccounts(
   }
   return accounts;
 }
+
+const appendPendingOp = (ops: Operation[], op: Operation) => {
+  const filtered: Operation[] = ops.filter(
+    o => o.transactionSequenceNumber === op.transactionSequenceNumber
+  );
+  filtered.push(op);
+  return filtered;
+};
+
+export const addPendingOperation = (account: Account, operation: Operation) => {
+  const accountCopy = { ...account };
+  const { subOperations } = operation;
+  const { tokenAccounts } = account;
+  if (subOperations && tokenAccounts) {
+    const taCopy: TokenAccount[] = tokenAccounts.slice(0);
+    subOperations.forEach(op => {
+      const acc = taCopy.find(ta => ta.id === op.accountId);
+      if (acc) {
+        taCopy[taCopy.indexOf(acc)] = {
+          ...acc,
+          pendingOperations: appendPendingOp(acc.pendingOperations, op)
+        };
+      }
+    });
+    accountCopy.tokenAccounts = taCopy;
+  }
+  accountCopy.pendingOperations = appendPendingOp(
+    accountCopy.pendingOperations,
+    operation
+  );
+  return accountCopy;
+};

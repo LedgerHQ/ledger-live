@@ -62,7 +62,7 @@ export const fromOperationRaw = (
 };
 
 export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
-  const { id, parentId, tokenId, operations, balance } = raw;
+  const { id, parentId, tokenId, operations, pendingOperations, balance } = raw;
   const token = getTokenById(tokenId);
   const convertOperation = op => fromOperationRaw(op, id);
   return {
@@ -71,18 +71,20 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     parentId,
     token,
     balance: BigNumber(balance),
-    operations: operations.map(convertOperation)
+    operations: operations.map(convertOperation),
+    pendingOperations: pendingOperations.map(convertOperation)
   };
 }
 
 export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
-  const { id, parentId, token, operations, balance } = raw;
+  const { id, parentId, token, operations, pendingOperations, balance } = raw;
   return {
     id,
     parentId,
     tokenId: token.id,
     balance: balance.toString(),
-    operations: operations.map(toOperationRaw)
+    operations: operations.map(toOperationRaw),
+    pendingOperations: pendingOperations.map(toOperationRaw)
   };
 }
 
