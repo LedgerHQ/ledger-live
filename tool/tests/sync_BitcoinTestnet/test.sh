@@ -1,0 +1,1 @@
+../shared_sync.sh "Bitcoin Testnet"
