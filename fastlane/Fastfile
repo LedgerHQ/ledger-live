@@ -30,6 +30,10 @@ lane :internal_release do
     next
   end
 
+  system "yarn"
+
+  ensure_git_status_clean
+
   Fastlane::LaneManager.cruise_lane('ios', 'beta')
   Fastlane::LaneManager.cruise_lane('android', 'beta')
   Fastlane::LaneManager.cruise_lane('ios', 'upload_waldo')
