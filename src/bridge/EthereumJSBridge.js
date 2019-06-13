@@ -595,6 +595,8 @@ export const accountBridge: AccountBridge<Transaction> = {
     )
   }),
 
+  prepareTransaction: (account, transaction) => Promise.resolve(transaction),
+
   estimateGasLimit: (account, address) => {
     const api = apiForCurrency(account.currency);
     return api.estimateGasLimitForERC20(address);

@@ -37,6 +37,7 @@ async function buildERC20TokenAccount({
     parentId: parentAccountId,
     token,
     operations,
+    pendingOperations: [],
     balance
   };
 

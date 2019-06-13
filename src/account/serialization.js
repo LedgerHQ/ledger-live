@@ -10,18 +10,21 @@ import type {
 } from "../types";
 import { getCryptoCurrencyById, getTokenById } from "../currencies";
 
-export const toOperationRaw = ({
-  date,
-  value,
-  fee,
-  subOperations, // eslint-disable-line
-  ...op
-}: Operation): OperationRaw => ({
-  ...op,
-  date: date.toISOString(),
-  value: value.toString(),
-  fee: fee.toString()
-});
+export const toOperationRaw = (
+  { date, value, fee, subOperations, ...op }: Operation,
+  preserveSubOperation?: boolean
+): OperationRaw => {
+  const copy: $Exact<OperationRaw> = {
+    ...op,
+    date: date.toISOString(),
+    value: value.toString(),
+    fee: fee.toString()
+  };
+  if (subOperations && preserveSubOperation) {
+    copy.subOperations = subOperations.map(o => toOperationRaw(o));
+  }
+  return copy;
+};
 
 export const inferSubOperations = (
   txHash: string,
@@ -41,7 +44,7 @@ export const inferSubOperations = (
 };
 
 export const fromOperationRaw = (
-  { date, value, fee, extra, ...op }: OperationRaw,
+  { date, value, fee, extra, subOperations, ...op }: OperationRaw,
   accountId: string,
   tokenAccounts?: ?(TokenAccount[])
 ): Operation => {
@@ -56,13 +59,17 @@ export const fromOperationRaw = (
 
   if (tokenAccounts) {
     res.subOperations = inferSubOperations(op.hash, tokenAccounts);
+  } else if (subOperations) {
+    res.subOperations = subOperations.map(o =>
+      fromOperationRaw(o, o.accountId)
+    );
   }
 
   return res;
 };
 
 export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
-  const { id, parentId, tokenId, operations, balance } = raw;
+  const { id, parentId, tokenId, operations, pendingOperations, balance } = raw;
   const token = getTokenById(tokenId);
   const convertOperation = op => fromOperationRaw(op, id);
   return {
@@ -71,18 +78,20 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     parentId,
     token,
     balance: BigNumber(balance),
-    operations: operations.map(convertOperation)
+    operations: (operations || []).map(convertOperation),
+    pendingOperations: (pendingOperations || []).map(convertOperation)
   };
 }
 
 export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
-  const { id, parentId, token, operations, balance } = raw;
+  const { id, parentId, token, operations, pendingOperations, balance } = raw;
   return {
     id,
     parentId,
     tokenId: token.id,
     balance: balance.toString(),
-    operations: operations.map(toOperationRaw)
+    operations: operations.map(o => toOperationRaw(o)),
+    pendingOperations: pendingOperations.map(o => toOperationRaw(o))
   };
 }
 
@@ -179,8 +188,8 @@ export function toAccountRaw({
     freshAddress,
     freshAddressPath,
     blockHeight,
-    operations: operations.map(toOperationRaw),
-    pendingOperations: pendingOperations.map(toOperationRaw),
+    operations: operations.map(o => toOperationRaw(o)),
+    pendingOperations: pendingOperations.map(o => toOperationRaw(o)),
     currencyId: currency.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),

@@ -12,6 +12,7 @@ export type TokenAccount = {
   parentId: string,
   token: TokenCurrency,
   operations: Operation[],
+  pendingOperations: Operation[],
   balance: BigNumber
 };
 
@@ -99,6 +100,7 @@ export type TokenAccountRaw = {
   parentId: string,
   tokenId: string,
   operations: OperationRaw[],
+  pendingOperations: OperationRaw[],
   balance: string
 };
 

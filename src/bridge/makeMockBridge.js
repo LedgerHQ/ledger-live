@@ -179,6 +179,9 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
     pendingOperations: [...account.pendingOperations, optimisticOperation]
   });
 
+  const prepareTransaction = (account, transaction) =>
+    Promise.resolve(transaction);
+
   // TODO add optimistic update
   return {
     startSync,
@@ -197,7 +200,8 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
     getTotalSpent,
     getMaxAmount,
     signAndBroadcast,
-    addPendingOperation
+    addPendingOperation,
+    prepareTransaction
   };
 }
 

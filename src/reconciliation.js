@@ -258,6 +258,12 @@ export function patchTokenAccount(
     updatedRaw.id
   );
 
+  const pendingOperations = patchOperations(
+    account.pendingOperations,
+    updatedRaw.pendingOperations,
+    updatedRaw.id
+  );
+
   const next: $Exact<TokenAccount> = {
     ...account
   };
@@ -266,6 +272,11 @@ export function patchTokenAccount(
 
   if (account.operations !== operations) {
     next.operations = operations;
+    changed = true;
+  }
+
+  if (account.pendingOperations !== pendingOperations) {
+    next.pendingOperations = pendingOperations;
     changed = true;
   }
 

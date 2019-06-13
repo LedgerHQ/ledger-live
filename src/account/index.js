@@ -6,9 +6,11 @@ import type {
 import {
   getMainAccount,
   getAccountCurrency,
+  getAccountUnit,
   isAccountEmpty,
   clearAccount,
-  flattenAccounts
+  flattenAccounts,
+  addPendingOperation
 } from "./helpers";
 import {
   shouldShowNewAccount,
@@ -51,6 +53,7 @@ export type { AddAccountsSection, AddAccountsSectionResult };
 export {
   getMainAccount,
   getAccountCurrency,
+  getAccountUnit,
   isAccountEmpty,
   clearAccount,
   flattenAccounts,
@@ -80,5 +83,6 @@ export {
   reorderAccountByCountervalues,
   reorderTokenAccountsByCountervalues,
   groupAccountsOperationsByDay,
-  groupAccountOperationsByDay
+  groupAccountOperationsByDay,
+  addPendingOperation
 };

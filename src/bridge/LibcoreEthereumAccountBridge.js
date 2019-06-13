@@ -6,7 +6,7 @@ import {
   InvalidAddress,
   NotEnoughBalance
 } from "@ledgerhq/errors";
-import type { Unit } from "../types";
+import type { Unit, TokenAccount, Account } from "../types";
 import type { AccountBridge } from "./types";
 import { getEstimatedFees } from "../api/Fees";
 import { syncAccount } from "../libcore/syncAccount";
@@ -22,14 +22,32 @@ export type Transaction = {
   gasPrice: ?BigNumber,
   gasLimit: BigNumber,
   feeCustomUnit: ?Unit,
+  tokenAccountId?: ?string,
+  useAllAmount?: boolean,
   networkInfo: ?{ serverFees: { gas_price: number } }
 };
 
-const asLibcoreTransaction = ({ amount, recipient, gasPrice, gasLimit }) => ({
+const getTransactionAccount = (a, t): Account | TokenAccount => {
+  const { tokenAccountId } = t;
+  return tokenAccountId
+    ? (a.tokenAccounts || []).find(ta => ta.id === tokenAccountId) || a
+    : a;
+};
+
+const asLibcoreTransaction = ({
   amount,
   recipient,
+  gasPrice,
+  tokenAccountId,
+  gasLimit,
+  useAllAmount
+}) => ({
+  amount,
+  recipient,
+  tokenAccountId,
   gasPrice: gasPrice || undefined,
-  gasLimit: gasLimit || undefined
+  gasLimit: gasLimit || undefined,
+  useAllAmount
 });
 
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
@@ -51,7 +69,8 @@ const createTransaction = a => ({
   gasPrice: null,
   gasLimit: BigNumber(0x5208),
   networkInfo: null,
-  feeCustomUnit: a.currency.units[1] || a.currency.units[0]
+  feeCustomUnit: a.currency.units[1] || a.currency.units[0],
+  useAllAmount: false
 });
 
 const fetchTransactionNetworkInfo = async account => {
@@ -85,6 +104,10 @@ const editTransactionRecipient = (account, t, recipient) => ({
   ...t,
   recipient
 });
+
+const editTokenAccountId = (a, t, tokenAccountId) => ({ ...t, tokenAccountId });
+
+const getTokenAccountId = (a, t) => t.tokenAccountId;
 
 const getTransactionRecipient = (a, t) => t.recipient;
 
@@ -165,20 +188,46 @@ const checkValidTransaction = async (a, t) =>
     ? Promise.resolve(null)
     : Promise.reject(new NotEnoughBalance());
 
-const getTotalSpent = (a, t) =>
-  t.amount.isGreaterThan(0) &&
-  t.gasPrice &&
-  t.gasPrice.isGreaterThan(0) &&
-  t.gasLimit.isGreaterThan(0)
-    ? getFees(a, t).then(totalFees => BigNumber(t.amount).plus(totalFees || 0))
-    : Promise.resolve(BigNumber(0));
+const getTotalSpent = (a, t) => {
+  const tAccount = getTransactionAccount(a, t);
+
+  if (t.useAllAmount) {
+    return Promise.resolve(tAccount.balance);
+  }
+
+  const amount = BigNumber(t.amount || "0");
+  if (
+    amount.isZero() ||
+    !t.gasPrice ||
+    t.gasPrice.isZero() ||
+    t.gasLimit.isZero() ||
+    tAccount.type === "TokenAccount"
+  ) {
+    return Promise.resolve(amount);
+  }
+
+  return getFees(a, t).then(totalFees => amount.plus(totalFees || 0));
+};
 
 const getMaxAmount = async (a, t) =>
   getFees(a, t).then(totalFees => a.balance.minus(totalFees || 0));
 
 const estimateGasLimit = (account, address) => {
+  console.warn(
+    "bridge.estimateGasLimit DEPRECATED. use prepareTransaction instead"
+  );
   const api = apiForCurrency(account.currency);
   return api.estimateGasLimitForERC20(address);
+};
+
+const prepareTransaction = (a, t) => {
+  const api = apiForCurrency(a.currency);
+  const tAccount = getTransactionAccount(a, t);
+  const o =
+    tAccount.type === "TokenAccount"
+      ? api.estimateGasLimitForERC20(tAccount.token.contractAddress)
+      : api.estimateGasLimitForERC20(t.recipient);
+  return o.then(gasLimit => ({ ...t, gasLimit: BigNumber(gasLimit) }));
 };
 
 const bridge: AccountBridge<Transaction> = {
@@ -188,6 +237,8 @@ const bridge: AccountBridge<Transaction> = {
   fetchTransactionNetworkInfo,
   getTransactionNetworkInfo,
   applyTransactionNetworkInfo,
+  editTokenAccountId,
+  getTokenAccountId,
   editTransactionAmount,
   getTransactionAmount,
   editTransactionRecipient,
@@ -199,7 +250,8 @@ const bridge: AccountBridge<Transaction> = {
   getMaxAmount,
   signAndBroadcast,
   addPendingOperation,
-  estimateGasLimit
+  estimateGasLimit,
+  prepareTransaction
 };
 
 export default bridge;

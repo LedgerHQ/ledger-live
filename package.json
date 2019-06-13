@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "6.4.1",
+  "version": "6.6.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -62,7 +62,7 @@
     "ripple-binary-codec": "^0.2.0",
     "ripple-bs58check": "^2.0.2",
     "ripple-hashes": "^0.3.1",
-    "ripple-lib": "^1.2.4",
+    "ripple-lib": "1.1.2",
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2"
   },
