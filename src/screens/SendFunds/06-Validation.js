@@ -8,6 +8,7 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -75,7 +76,6 @@ class Validation extends Component<Props, State> {
     const deviceId = navigation.getParam("deviceId");
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
-    const { addPendingOperation } = bridge;
 
     this.sub = bridge
       .signAndBroadcast(account, transaction, deviceId)
@@ -98,11 +98,9 @@ class Validation extends Component<Props, State> {
                 result: e.operation,
               });
 
-              if (addPendingOperation) {
-                updateAccountWithUpdater(account.id, account =>
-                  addPendingOperation(account, e.operation),
-                );
-              }
+              updateAccountWithUpdater(account.id, account =>
+                addPendingOperation(account, e.operation),
+              );
 
               break;
             default:
