@@ -28,7 +28,9 @@ async function ethereum({
     id: `${accountId}-${txHash}-OUT`,
     hash: txHash,
     type: "OUT",
-    value: BigNumber(transaction.amount).plus(fee),
+    value: transaction.tokenAccountId
+      ? fee
+      : BigNumber(transaction.amount).plus(fee),
     fee,
     blockHash: null,
     blockHeight: null,
@@ -38,6 +40,26 @@ async function ethereum({
     date: new Date(),
     extra: {}
   };
+
+  const { tokenAccountId } = transaction;
+  if (tokenAccountId) {
+    op.subOperations = [
+      {
+        id: `${tokenAccountId}-${txHash}-OUT`,
+        hash: txHash,
+        type: "OUT",
+        value: BigNumber(transaction.amount),
+        fee,
+        blockHash: null,
+        blockHeight: null,
+        senders,
+        recipients: [transaction.recipient],
+        accountId: tokenAccountId,
+        date: new Date(),
+        extra: {}
+      }
+    ];
+  }
 
   return op;
 }

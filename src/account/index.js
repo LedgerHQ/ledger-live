@@ -9,7 +9,8 @@ import {
   getAccountUnit,
   isAccountEmpty,
   clearAccount,
-  flattenAccounts
+  flattenAccounts,
+  addPendingOperation
 } from "./helpers";
 import {
   shouldShowNewAccount,
@@ -82,5 +83,6 @@ export {
   reorderAccountByCountervalues,
   reorderTokenAccountsByCountervalues,
   groupAccountsOperationsByDay,
-  groupAccountOperationsByDay
+  groupAccountOperationsByDay,
+  addPendingOperation
 };

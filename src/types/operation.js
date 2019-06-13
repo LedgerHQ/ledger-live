@@ -71,5 +71,6 @@ export type OperationRaw = {
   hasFailed?: boolean,
   // --------------------------------------------- specific operation raw fields
   date: string,
-  extra: Object // would be a serializable version of the extra
+  extra: Object, // would be a serializable version of the extra
+  subOperations?: OperationRaw[]
 };

@@ -144,10 +144,13 @@ export interface AccountBridge<Transaction> {
   // Implement an optimistic response for signAndBroadcast.
   // it should add the operation in account.pendingOperations.
   // if you do implement this, make sure to properly handle cleanup of pendingOperations (likely to do during sync, for instance make sure to clean "zombies" transaction and transaction that actually appear in .operations)
+  // DEPRECATED: use the one exported in lib/account
+  /*
   addPendingOperation?: (
     account: Account,
     optimisticOperation: Operation
   ) => Account;
+  */
 
   // some coins will have a way to configure the API it hits.
   // it is stored in account.endpointConfig
