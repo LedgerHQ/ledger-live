@@ -23,7 +23,7 @@ export async function buildERC20Operation(arg: {
   const id = `${accountId}-${hash}-${type}`;
 
   const coreValue = await coreOperation.getValue();
-  let value = await libcoreBigIntToBigNumber(coreValue);
+  const value = await libcoreBigIntToBigNumber(coreValue);
 
   const usedGas = await libcoreBigIntToBigNumber(
     await coreOperation.getUsedGas()
@@ -32,10 +32,6 @@ export async function buildERC20Operation(arg: {
     await coreOperation.getGasPrice()
   );
   const fee = usedGas.times(gasPrice);
-
-  if (type === "OUT") {
-    value = value.plus(fee);
-  }
 
   const blockHeight = await coreOperation.getBlockHeight();
 
