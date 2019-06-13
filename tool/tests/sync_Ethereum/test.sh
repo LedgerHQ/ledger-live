@@ -1,1 +1,1 @@
-../shared_sync.sh "Ethereum"
+EXPERIMENTAL_LIBCORE=1 EXPERIMENTAL_EXPLORERS=1 ../shared_sync.sh "Ethereum"

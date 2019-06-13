@@ -9315,6 +9315,7 @@
   "recipients": [
     "bc1qtwfaxeznj94x2tvcj5mmu94kvv94eg9c7z4c49"
   ],
+  "blockHeight": 580437,
   "blockHash": null,
   "accountId": "libcore:1:bitcoin:xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK:native_segwit",
   "extra": {},

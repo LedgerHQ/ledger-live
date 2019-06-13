@@ -1,4 +1,5 @@
 #!/bin/bash
+export EXPERIMENTAL_NATIVE_SEGWIT=1
 
 c="Bitcoin"
 
