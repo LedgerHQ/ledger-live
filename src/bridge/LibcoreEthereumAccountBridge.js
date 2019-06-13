@@ -192,7 +192,7 @@ const getTotalSpent = (a, t) => {
   const tAccount = getTransactionAccount(a, t);
 
   if (t.useAllAmount) {
-    return tAccount.balance;
+    return Promise.resolve(tAccount.balance);
   }
 
   const amount = BigNumber(t.amount || "0");
