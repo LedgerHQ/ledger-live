@@ -45,12 +45,10 @@ export function groupAccountsOperationsByDay(
         bestOpInfo = { accountI: i, fromPending: false };
       }
       // look in pending operations
-      if (account.type === "Account") {
-        const opP = account.pendingOperations[indexesPending[i]];
-        if (opP && (!bestOp || opP.date > bestOp.date)) {
-          bestOp = opP;
-          bestOpInfo = { accountI: i, fromPending: true };
-        }
+      const opP = account.pendingOperations[indexesPending[i]];
+      if (opP && (!bestOp || opP.date > bestOp.date)) {
+        bestOp = opP;
+        bestOpInfo = { accountI: i, fromPending: true };
       }
     }
     if (bestOp) {

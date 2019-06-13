@@ -29,7 +29,8 @@ export function clearAccount<T: Account | TokenAccount>(account: T): T {
   if (account.type === "TokenAccount") {
     return {
       ...account,
-      operations: []
+      operations: [],
+      pendingOperations: []
     };
   }
 
