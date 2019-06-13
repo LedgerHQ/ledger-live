@@ -189,7 +189,7 @@ platform :android do
       message: "Bump android version to v#{package["version"]}-#{version_code}"
     )
     add_git_tag(
-      tag: "android-v#{package["version"]}-#{build_number}",
+      tag: "android-v#{package["version"]}-#{version_code}",
       sign: true
     )
     push_to_git_remote
