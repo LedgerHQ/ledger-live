@@ -4,7 +4,7 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { TokenAccount, Account, Transaction } from "../../types";
+import type { Account, Transaction } from "../../types";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
@@ -14,7 +14,6 @@ const ethereumTransferMethodID = Buffer.from("a9059cbb", "hex");
 
 export async function ethereumBuildTransaction({
   account,
-  tokenAccount,
   core,
   coreAccount,
   coreCurrency,
@@ -22,7 +21,6 @@ export async function ethereumBuildTransaction({
   isCancelled
 }: {
   account: Account,
-  tokenAccount: ?TokenAccount,
   core: Core,
   coreAccount: CoreAccount,
   coreCurrency: CoreCurrency,
@@ -30,6 +28,11 @@ export async function ethereumBuildTransaction({
   isPartial: boolean,
   isCancelled: () => boolean
 }): Promise<?CoreEthereumLikeTransaction> {
+  const { tokenAccountId } = transaction;
+  const tokenAccount = tokenAccountId
+    ? account.tokenAccounts &&
+      account.tokenAccounts.find(t => t.id === tokenAccountId)
+    : null;
   const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
 
   await isValidRecipient({

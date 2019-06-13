@@ -741,6 +741,8 @@ export const accountBridge: AccountBridge<Transaction> = {
     )
   }),
 
+  prepareTransaction: (account, transaction) => Promise.resolve(transaction),
+
   getDefaultEndpointConfig: () => defaultEndpoint,
 
   validateEndpointConfig: async endpointConfig => {

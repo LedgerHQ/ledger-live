@@ -17,6 +17,9 @@ export const getMainAccount = (
 export const getAccountCurrency = (account: Account | TokenAccount) =>
   account.type === "Account" ? account.currency : account.token;
 
+export const getAccountUnit = (account: Account | TokenAccount) =>
+  account.type === "Account" ? account.unit : account.token.units[0];
+
 export const isAccountEmpty = (a: Account | TokenAccount): boolean =>
   a.operations.length === 0 && a.balance.isZero();
 

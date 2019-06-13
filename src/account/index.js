@@ -6,6 +6,7 @@ import type {
 import {
   getMainAccount,
   getAccountCurrency,
+  getAccountUnit,
   isAccountEmpty,
   clearAccount,
   flattenAccounts
@@ -51,6 +52,7 @@ export type { AddAccountsSection, AddAccountsSectionResult };
 export {
   getMainAccount,
   getAccountCurrency,
+  getAccountUnit,
   isAccountEmpty,
   clearAccount,
   flattenAccounts,

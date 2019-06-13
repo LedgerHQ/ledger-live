@@ -1,7 +1,7 @@
 // @flow
 
 import Transport from "@ledgerhq/hw-transport";
-import type { CryptoCurrency, Account, TokenAccount } from "../types";
+import type { CryptoCurrency, Account } from "../types";
 import type { CoreCurrency } from "./types";
 import byFamily from "../generated/libcore-hw-signTransaction";
 
@@ -9,7 +9,7 @@ export default (opts: {
   isCancelled: () => boolean,
   transport: Transport<*>,
   account: Account,
-  tokenAccount: ?TokenAccount,
+  tokenAccountId: ?string,
   currency: CryptoCurrency,
   coreCurrency: CoreCurrency,
   coreTransaction: *
