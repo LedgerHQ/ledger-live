@@ -10,10 +10,6 @@
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 #
-# TODO:
-#   - add git health check for branch status
-#   - create flow for android https://gist.github.com/jukben/48a3be83d78c8ea941225eb72e9a9bc5
-#
 
 # Uncomment the line if you want fastlane to automatically update itself
 update_fastlane
@@ -29,11 +25,11 @@ lane :internal_release do
   git_pull
   new_commit = last_git_commit
 
-  
+
   if commit[:commit_hash] == new_commit[:commit_hash]
     next
   end
-  
+
   Fastlane::LaneManager.cruise_lane('ios', 'beta')
   Fastlane::LaneManager.cruise_lane('android', 'beta')
   Fastlane::LaneManager.cruise_lane('ios', 'upload_waldo')
@@ -107,14 +103,15 @@ platform :ios do
     build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
     git_commit(
       path: [
-        "ios/ios/ledgerlivemobile.xcodeproj/project.pbxproj",
+        "ios/ledgerlivemobile.xcodeproj/project.pbxproj",
         "ios/ledgerlivemobile/Info.plist",
         "ios/ledgerlivemobileTests/Info.plist"
       ],
       message: "Bump iOS version to v#{package["version"]}-#{build_number}"
     )
     add_git_tag(
-      tag: "ios-v#{package["version"]}-#{build_number}"
+      tag: "ios-v#{package["version"]}-#{build_number}",
+      sign: true
     )
     push_to_git_remote
   end
@@ -125,7 +122,7 @@ platform :ios do
     build
     upload_beta
   end
-  
+
   desc "rebuild and push to TestFlight"
   lane :redo_beta do
     build
@@ -192,7 +189,8 @@ platform :android do
       message: "Bump android version to v#{package["version"]}-#{version_code}"
     )
     add_git_tag(
-      tag: "android-v#{package["version"]}-#{build_number}"
+      tag: "android-v#{package["version"]}-#{build_number}",
+      sign: true
     )
     push_to_git_remote
   end
