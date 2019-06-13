@@ -71,8 +71,8 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     parentId,
     token,
     balance: BigNumber(balance),
-    operations: operations.map(convertOperation),
-    pendingOperations: pendingOperations.map(convertOperation)
+    operations: (operations || []).map(convertOperation),
+    pendingOperations: (pendingOperations || []).map(convertOperation)
   };
 }
 
