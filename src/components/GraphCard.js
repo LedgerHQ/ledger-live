@@ -10,18 +10,19 @@ import type {
   Currency,
   Unit,
 } from "@ledgerhq/live-common/lib/types";
+import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies/color";
 import colors from "../colors";
 import { setSelectedTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Delta from "./Delta";
 import FormatDate from "./FormatDate";
+import type { Item } from "./Graph/types";
 import Graph from "./Graph";
 import Pills from "./Pills";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
-import type { Item } from "./Graph/types";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
@@ -69,7 +70,13 @@ class GraphCard extends PureComponent<Props, State> {
     const end = portfolio.balanceHistory[portfolio.balanceHistory.length - 1];
 
     const graphColor =
-      accounts.length === 1 ? accounts[0].currency.color : undefined;
+      accounts.length === 1
+        ? getCurrencyColor(
+            accounts[0].type === "Account"
+              ? accounts[0].currency
+              : accounts[0].token,
+          )
+        : undefined;
 
     return (
       <Card style={styles.root}>

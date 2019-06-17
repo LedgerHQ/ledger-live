@@ -5,9 +5,9 @@ import {
 } from "@ledgerhq/live-common/lib/portfolio";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import {
-  exchangeSettingsForAccountSelector,
   counterValueCurrencySelector,
   counterValueExchangeSelector,
+  exchangeSettingsForTickerSelector,
   intermediaryCurrency,
   selectedTimeRangeSelector,
 } from "../reducers/settings";
@@ -26,15 +26,17 @@ export const balanceHistoryWithCountervalueSelector = (
   const range = selectedTimeRangeSelector(state);
   const counterValueCurrency = counterValueCurrencySelector(state);
   const counterValueExchange = counterValueExchangeSelector(state);
-  const accountExchange = exchangeSettingsForAccountSelector(state, {
-    account,
+  const currency =
+    account.type === "Account" ? account.currency : account.ticker;
+  const exchange = exchangeSettingsForTickerSelector(state, {
+    ticker: currency.ticker,
   });
   return getBalanceHistoryWithCountervalue(account, range, (_, value, date) =>
     CounterValues.calculateWithIntermediarySelector(state, {
       value,
       date,
       from: account.currency,
-      fromExchange: accountExchange,
+      fromExchange: exchange,
       intermediary: intermediaryCurrency,
       toExchange: counterValueExchange,
       to: counterValueCurrency,
@@ -47,12 +49,14 @@ export const portfolioSelector = (state: State) => {
   const range = selectedTimeRangeSelector(state);
   const counterValueCurrency = counterValueCurrencySelector(state);
   const counterValueExchange = counterValueExchangeSelector(state);
-  return getPortfolio(accounts, range, (account, value, date) =>
+  return getPortfolio(accounts, range, (currency, value, date) =>
     CounterValues.calculateWithIntermediarySelector(state, {
       value,
       date,
-      from: account.currency,
-      fromExchange: exchangeSettingsForAccountSelector(state, { account }),
+      from: currency,
+      fromExchange: exchangeSettingsForTickerSelector(state, {
+        ticker: currency.ticker,
+      }),
       intermediary: intermediaryCurrency,
       toExchange: counterValueExchange,
       to: counterValueCurrency,

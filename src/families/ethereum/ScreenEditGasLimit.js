@@ -16,7 +16,7 @@ import i18next from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
-import { getAccountBridge } from "../../bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { accountScreenSelector } from "../../reducers/accounts";

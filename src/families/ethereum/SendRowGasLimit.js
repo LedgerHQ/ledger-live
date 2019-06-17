@@ -4,10 +4,10 @@ import { View, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { BigNumber } from "bignumber.js";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";
-import { getAccountBridge } from "../../bridge";
 import colors from "../../colors";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 

@@ -107,42 +107,38 @@ class DisplayResult extends Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const items = nextProps.navigation
       .getParam("result")
-      .accounts.map(
-        (accInput: *): ?Item => {
-          const prevItem = prevState.items.find(
-            item => item.account.id === accInput.id,
-          );
-          if (prevItem) return prevItem;
-          const existingAccount = nextProps.accounts.find(
-            a => a.id === accInput.id,
-          );
-          if (existingAccount) {
-            // only the name is supposed to change. rest is never changing
-            if (existingAccount.name === accInput.name) {
-              return {
-                account: existingAccount,
-                mode: "id",
-              };
-            }
+      .accounts.map((accInput: *): ?Item => {
+        const prevItem = prevState.items.find(
+          item => item.account.id === accInput.id,
+        );
+        if (prevItem) return prevItem;
+        const existingAccount = nextProps.accounts.find(
+          a => a.id === accInput.id,
+        );
+        if (existingAccount) {
+          // only the name is supposed to change. rest is never changing
+          if (existingAccount.name === accInput.name) {
             return {
-              account: { ...existingAccount, name: accInput.name },
-              mode: "patch",
+              account: existingAccount,
+              mode: "id",
             };
           }
-          try {
-            const account = accountDataToAccount(accInput);
-            return {
-              account,
-              mode: supportsExistingAccount(accInput)
-                ? "create"
-                : "unsupported",
-            };
-          } catch (e) {
-            logger.critical(e);
-            return null;
-          }
-        },
-      )
+          return {
+            account: { ...existingAccount, name: accInput.name },
+            mode: "patch",
+          };
+        }
+        try {
+          const account = accountDataToAccount(accInput);
+          return {
+            account,
+            mode: supportsExistingAccount(accInput) ? "create" : "unsupported",
+          };
+        } catch (e) {
+          logger.critical(e);
+          return null;
+        }
+      })
       .filter(Boolean)
       .sort(
         (a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode],

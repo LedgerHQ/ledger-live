@@ -8,7 +8,10 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { getAccountOperationExplorer } from "@ledgerhq/live-common/lib/explorers";
+import {
+  getDefaultExplorerView,
+  getTransactionExplorer,
+} from "@ledgerhq/live-common/lib/explorers";
 import type { NavigationScreenProp } from "react-navigation";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -34,8 +37,12 @@ class OperationDetails extends PureComponent<Props, *> {
   render() {
     const { navigation, account } = this.props;
     const operation = navigation.getParam("operation");
-
-    const url = getAccountOperationExplorer(account, operation);
+    const currency =
+      account.type === "Account" ? account.currency : account.token;
+    const url = getTransactionExplorer(
+      getDefaultExplorerView(currency),
+      operation.hash,
+    );
     return (
       <SafeAreaView style={styles.container}>
         <TrackScreen category="OperationDetails" />

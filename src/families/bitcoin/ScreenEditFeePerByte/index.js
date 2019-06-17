@@ -14,18 +14,19 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import { BigNumber } from "bignumber.js";
 import colors from "../../../colors";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import { getAccountBridge } from "../../../bridge";
 
-import type { Transaction } from "../../../bridge/RNLibcoreAccountBridge";
 import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
 import FeesRow from "./FeesRow";
 import CustomFeesRow from "./CustomFeesRow";
 import { track } from "../../../analytics";
+
+type Transaction = *;
 
 type Props = {
   account: Account,

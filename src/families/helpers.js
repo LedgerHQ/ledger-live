@@ -3,7 +3,7 @@
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "../bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 export const getFieldByFamily = (
   account: Account,

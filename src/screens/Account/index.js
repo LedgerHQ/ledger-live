@@ -214,10 +214,9 @@ class AccountScreen extends PureComponent<Props, State> {
       />
     );
 
-    const { sections, completed } = groupAccountOperationsByDay(
-      account,
-      opCount,
-    );
+    const { sections, completed } = groupAccountOperationsByDay(account, {
+      count: opCount,
+    });
 
     return (
       <View style={styles.root}>
