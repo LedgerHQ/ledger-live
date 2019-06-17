@@ -1,12 +1,15 @@
 // @flow
 
-import type { TokenAccount, Account } from "../../types";
+import type { CryptoCurrency, TokenAccount, Account } from "../../types";
 import type { CoreAccount } from "../../libcore/types";
 import type { CoreEthereumLikeAccount, CoreERC20LikeAccount } from "./types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 import { minimalOperationsBuilder } from "../../reconciliation";
 import { buildERC20Operation } from "./buildERC20Operation";
-import { findTokenByAddress } from "../../currencies";
+import {
+  findTokenByAddress,
+  listTokensForCryptoCurrency
+} from "../../currencies";
 
 async function buildERC20TokenAccount({
   parentAccountId,
@@ -45,14 +48,17 @@ async function buildERC20TokenAccount({
 }
 
 async function ethereumBuildTokenAccounts({
+  currency,
   coreAccount,
   accountId,
   existingAccount
 }: {
+  currency: CryptoCurrency,
   coreAccount: CoreAccount,
   accountId: string,
   existingAccount: ?Account
 }): Promise<?(TokenAccount[])> {
+  if (listTokensForCryptoCurrency(currency).length === 0) return undefined;
   const tokenAccounts = [];
   const ethAccount: CoreEthereumLikeAccount = await coreAccount.asEthereumLikeAccount();
   const coreTAS: CoreERC20LikeAccount[] = await ethAccount.getERC20Accounts();
