@@ -160,7 +160,7 @@ const CacheAPI = {
       );
       if (app) {
         filtered.splice(filtered.indexOf(app), 1);
-        sortedCryptoApps.push(app);
+        sortedCryptoApps.push({ ...app, currency: crypto });
       }
     });
 

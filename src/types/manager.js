@@ -1,4 +1,6 @@
 // @flow
+import type { CryptoCurrency } from "./currencies";
+
 export type Id = number;
 
 export type LedgerScriptParams = {
@@ -114,7 +116,8 @@ export type ApplicationVersion = {
   se_firmware_final_versions: Array<Id>,
   providers: Array<Id>,
   date_creation: string,
-  date_last_modified: string
+  date_last_modified: string,
+  currency?: CryptoCurrency
 };
 
 export type Application = {
