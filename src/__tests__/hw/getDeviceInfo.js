@@ -292,6 +292,28 @@ test("nano x 1.1.6", async () => {
   });
 });
 
+test("nano x 1.2.4-1", async () => {
+  const Transport = createTransportReplayer(
+    RecordStore.fromString(`
+            => e001000000
+            <= 3300000407312e322e342d3104ae00000003322e389000
+            `)
+  );
+  const t = await Transport.create();
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "1.2.4-1",
+    mcuVersion: "2.8",
+    majMin: "1.2",
+    providerId: 1,
+    targetId: 855638020,
+    isOSU: false,
+    isBootloader: false,
+    managerAllowed: true,
+    pinValidated: true
+  });
+});
+
 test("nanoS 1.4.2 BL", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
