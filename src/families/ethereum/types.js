@@ -184,7 +184,7 @@ export const reflect = (declare: (string, Spec) => void) => {
       getReceiver: {},
       getValue: { returns: "BigInt" },
       getTime: {},
-      getOperationType: { returns: "OperationType" },
+      getOperationType: {},
       getStatus: {},
       getBlockHeight: {}
     }
