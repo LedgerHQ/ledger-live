@@ -2,15 +2,18 @@
 import React, { Component } from "react";
 import i18next from "i18next";
 import { View, StyleSheet } from "react-native";
+import { createStructuredSelector } from "reselect";
 // $FlowFixMe
 import { SafeAreaView, FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-
-import { accountsSelector } from "../../reducers/accounts";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import {
+  accountsSelector,
+  flattenAccountsSelector,
+} from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -25,6 +28,7 @@ type Navigation = NavigationScreenProp<{ params: {} }>;
 
 type Props = {
   accounts: Account[],
+  allAccounts: (Account | TokenAccount)[],
   navigation: Navigation,
 };
 
@@ -43,22 +47,32 @@ class ReceiveFunds extends Component<Props, State> {
     ),
   };
 
-  renderItem = ({ item }: { item: Account }) => (
-    <AccountCard
-      account={item}
-      style={styles.card}
-      onPress={() => {
-        this.props.navigation.navigate("ReceiveConnectDevice", {
-          accountId: item.id,
-        });
-      }}
-    />
-  );
+  renderItem = ({ item: account }: { item: Account | TokenAccount }) => {
+    const { accounts } = this.props;
+    const parentAccount =
+      account.type === "TokenAccount"
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
+
+    return (
+      <AccountCard
+        account={account}
+        parentAccount={parentAccount}
+        style={styles.card}
+        onPress={() => {
+          this.props.navigation.navigate("ReceiveConnectDevice", {
+            accountId: account.id,
+            parentId: parentAccount && parentAccount.id,
+          });
+        }}
+      />
+    );
+  };
 
   keyExtractor = item => item.id;
 
   render() {
-    const { accounts } = this.props;
+    const { allAccounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="ReceiveFunds" name="SelectAccount" />
@@ -67,7 +81,7 @@ class ReceiveFunds extends Component<Props, State> {
             <FilteredSearchBar
               keys={SEARCH_KEYS}
               inputWrapperStyle={styles.card}
-              list={accounts}
+              list={allAccounts}
               renderList={items => (
                 <FlatList
                   data={items}
@@ -92,8 +106,9 @@ class ReceiveFunds extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  accounts: accountsSelector(state),
+const mapStateToProps = createStructuredSelector({
+  allAccounts: flattenAccountsSelector,
+  accounts: accountsSelector,
 });
 
 const styles = StyleSheet.create({

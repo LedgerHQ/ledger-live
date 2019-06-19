@@ -4,13 +4,17 @@ import { View, StyleSheet } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
+import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
 
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
-import { accountsSelector } from "../../reducers/accounts";
+import {
+  flattenAccountsSelector,
+  accountsSelector,
+} from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -23,6 +27,7 @@ const SEARCH_KEYS = ["name", "unit.code"];
 
 type Props = {
   accounts: Account[],
+  allAccounts: (Account | TokenAccount)[],
   navigation: NavigationScreenProp<{
     params: {},
   }>,
@@ -54,17 +59,26 @@ class SendFundsSelectAccount extends Component<Props, State> {
     />
   );
 
-  renderItem = ({ item }: { item: Account }) => (
-    <AccountCard
-      account={item}
-      style={styles.cardStyle}
-      onPress={() => {
-        this.props.navigation.navigate("SendSelectRecipient", {
-          accountId: item.id,
-        });
-      }}
-    />
-  );
+  renderItem = ({ item: account }: { item: Account | TokenAccount }) => {
+    const { accounts } = this.props;
+    const parentAccount =
+      account.type === "TokenAccount"
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
+    return (
+      <AccountCard
+        account={account}
+        parentAccount={parentAccount}
+        style={styles.cardStyle}
+        onPress={() => {
+          this.props.navigation.navigate("SendSelectRecipient", {
+            accountId: account.id,
+            parentId: parentAccount && parentAccount.id,
+          });
+        }}
+      />
+    );
+  };
 
   renderEmptySearch = () => (
     <View style={styles.emptyResults}>
@@ -77,14 +91,14 @@ class SendFundsSelectAccount extends Component<Props, State> {
   keyExtractor = item => item.id;
 
   render() {
-    const { accounts } = this.props;
+    const { allAccounts } = this.props;
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="SelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
             <FilteredSearchBar
-              list={accounts.filter(account => !isAccountEmpty(account))}
+              list={allAccounts.filter(account => !isAccountEmpty(account))}
               inputWrapperStyle={styles.padding}
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptySearch}
@@ -97,8 +111,9 @@ class SendFundsSelectAccount extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  accounts: accountsSelector(state),
+const mapStateToProps = createStructuredSelector({
+  allAccounts: flattenAccountsSelector,
+  accounts: accountsSelector,
 });
 
 const styles = StyleSheet.create({

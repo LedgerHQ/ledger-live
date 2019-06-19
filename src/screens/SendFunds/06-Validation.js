@@ -7,12 +7,13 @@ import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { updateAccountWithUpdater } from "../../actions/accounts";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import StepHeader from "../../components/StepHeader";
@@ -22,7 +23,8 @@ import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 
 type Props = {
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
   updateAccountWithUpdater: (string, (Account) => Account) => void,
   navigation: NavigationScreenProp<{
     params: {
@@ -72,13 +74,19 @@ class Validation extends Component<Props, State> {
   }
 
   sign() {
-    const { account, navigation, updateAccountWithUpdater } = this.props;
+    const {
+      account,
+      parentAccount,
+      navigation,
+      updateAccountWithUpdater,
+    } = this.props;
+    if (!account) return;
     const deviceId = navigation.getParam("deviceId");
     const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
-
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
     this.sub = bridge
-      .signAndBroadcast(account, transaction, deviceId)
+      .signAndBroadcast(mainAccount, transaction, deviceId)
       .subscribe({
         next: e => {
           switch (e.type) {
@@ -98,7 +106,7 @@ class Validation extends Component<Props, State> {
                 result: e.operation,
               });
 
-              updateAccountWithUpdater(account.id, account =>
+              updateAccountWithUpdater(mainAccount.id, account =>
                 addPendingOperation(account, e.operation),
               );
 
@@ -125,7 +133,8 @@ class Validation extends Component<Props, State> {
 
   render() {
     const { signed, signing } = this.state;
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+    if (!account) return null;
     const transaction = navigation.getParam("transaction");
     const modelId = navigation.getParam("modelId");
     const wired = navigation.getParam("wired");
@@ -148,6 +157,7 @@ class Validation extends Component<Props, State> {
             wired={wired}
             modelId={modelId}
             account={account}
+            parentAccount={parentAccount}
             transaction={transaction}
             action={this.sign}
           />
@@ -178,9 +188,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state, props) => ({
-  account: accountScreenSelector(state, props),
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default connect(
   mapStateToProps,

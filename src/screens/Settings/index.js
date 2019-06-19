@@ -12,7 +12,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
 import i18next from "i18next";
-import { currenciesSelector } from "../../reducers/accounts";
+import { cryptoCurrenciesSelector } from "../../reducers/accounts";
 import type { T } from "../../types/common";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
@@ -32,7 +32,7 @@ type Props = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  currencies: currenciesSelector,
+  currencies: cryptoCurrenciesSelector,
 });
 class Settings extends Component<Props, *> {
   static navigationOptions = {

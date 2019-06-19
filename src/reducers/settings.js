@@ -13,16 +13,23 @@ import type {
   CryptoCurrency,
   Currency,
   Account,
+  TokenAccount,
 } from "@ledgerhq/live-common/lib/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { State } from ".";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 
-export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
+const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
+export const possibleIntermediaries = [bitcoin, ethereum];
+export const intermediaryCurrency = (from: Currency, _to: Currency) => {
+  if (from === ethereum || from.type === "TokenCurrency") return ethereum;
+  return bitcoin;
+};
 
 export type CurrencySettings = {
   confirmationsNb: number,
-  exchange: ?*,
 };
 
 export const timeRangeDaysByKey = {
@@ -49,6 +56,9 @@ export type SettingsState = {
   currenciesSettings: {
     [ticker: string]: CurrencySettings,
   },
+  pairExchanges: {
+    [pair: string]: ?string,
+  },
   selectedTimeRange: TimeRange,
   orderAccounts: string,
   hasCompletedOnboarding: boolean,
@@ -66,6 +76,7 @@ const INITIAL_STATE: SettingsState = {
   reportErrorsEnabled: true,
   analyticsEnabled: true,
   currenciesSettings: {},
+  pairExchanges: {},
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
@@ -76,10 +87,7 @@ const INITIAL_STATE: SettingsState = {
   countervalueFirst: false,
 };
 
-function asCryptoCurrency(c: Currency): ?CryptoCurrency {
-  // $FlowFixMe
-  return "coinType" in c ? c : null;
-}
+const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
 
 const handlers: Object = {
   SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
@@ -158,22 +166,10 @@ const handlers: Object = {
       }>,
     },
   ) => {
-    const counterValueCurrency = counterValueCurrencyLocalSelector(state);
     const copy = { ...state };
-    copy.currenciesSettings = { ...copy.currenciesSettings };
+    copy.pairExchanges = { ...copy.pairExchanges };
     for (const { to, from, exchange } of pairs) {
-      const fromCrypto = asCryptoCurrency(from);
-      if (fromCrypto && to.ticker === intermediaryCurrency.ticker) {
-        copy.currenciesSettings[fromCrypto.ticker] = {
-          ...copy.currenciesSettings[fromCrypto.ticker],
-          exchange,
-        };
-      } else if (
-        from.ticker === intermediaryCurrency.ticker &&
-        to.ticker === counterValueCurrency.ticker
-      ) {
-        copy.counterValueExchange = exchange;
-      }
+      copy.pairExchanges[pairHash(from, to)] = exchange;
     }
     return copy;
   },
@@ -239,7 +235,7 @@ export const counterValueExchangeSelector = createSelector(
   counterValueExchangeLocalSelector,
 );
 
-const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = crypto => {
+const defaultCurrencySettingsForCurrency: Currency => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb
@@ -252,20 +248,11 @@ const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = c
 // DEPRECATED
 export const currencySettingsSelector = (
   state: State,
-  { currency }: { currency: CryptoCurrency },
+  { currency }: { currency: Currency },
 ) => ({
-  exchange: null,
   ...defaultCurrencySettingsForCurrency(currency),
   ...state.settings.currenciesSettings[currency.ticker],
 });
-
-export const exchangeSettingsForTickerSelector = (
-  state: State,
-  { ticker }: { ticker: string },
-): ?string => {
-  const obj = state.settings.currenciesSettings[ticker];
-  return obj && obj.exchange;
-};
 
 // $FlowFixMe
 export const privacySelector = createSelector(
@@ -293,14 +280,23 @@ export const experimentalUSBEnabledSelector = createSelector(
 
 export const currencySettingsForAccountSelector = (
   s: *,
-  { account }: { account: Account },
-) => currencySettingsSelector(s, { currency: account.currency });
+  { account }: { account: TokenAccount | Account },
+) => currencySettingsSelector(s, { currency: getAccountCurrency(account) });
 
-// $FlowFixMe
-export const exchangeSettingsForAccountSelector = createSelector(
-  currencySettingsForAccountSelector,
-  settings => settings.exchange,
-);
+export const exchangeSettingsForPairSelector = (
+  state: State,
+  { from, to }: { from: Currency, to: Currency },
+): ?string => state.settings.pairExchanges[pairHash(from, to)];
+
+export const confirmationsNbForCurrencySelector = (
+  state: State,
+  { currency }: { currency: CryptoCurrency },
+): number => {
+  const obj = state.settings.currenciesSettings[currency.ticker];
+  if (obj) return obj.confirmationsNb;
+  const defs = currencySettingsDefaults(currency);
+  return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
+};
 
 export const selectedTimeRangeSelector = (state: State) =>
   state.settings.selectedTimeRange;

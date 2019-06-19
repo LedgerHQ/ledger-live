@@ -2,7 +2,8 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
 import accountModel from "../logic/accountModel";
 import { UP_TO_DATE_THRESHOLD } from "../constants";
 
@@ -19,13 +20,11 @@ const handlers: Object = {
   ACCOUNTS_ADD: (s, { account }) => ({
     active: s.active.concat(account),
   }),
-  REORDER_ACCOUNTS: (
+  SET_ACCOUNTS: (
     state: AccountsState,
-    { payload }: { payload: string[] },
+    { payload }: { payload: Account[] },
   ) => ({
-    active: state.active
-      .slice(0)
-      .sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id)),
+    active: payload,
   }),
   UPDATE_ACCOUNT: (
     state: AccountsState,
@@ -67,6 +66,12 @@ export const exportSelector = (s: *) => ({
 export const accountsSelector = (s: *): Account[] => s.accounts.active;
 
 // $FlowFixMe
+export const flattenAccountsSelector = createSelector(
+  accountsSelector,
+  flattenAccounts,
+);
+
+// $FlowFixMe
 export const accountsCountSelector = createSelector(
   accountsSelector,
   acc => acc.length,
@@ -75,14 +80,21 @@ export const accountsCountSelector = createSelector(
 // $FlowFixMe
 export const currenciesSelector = createSelector(
   accountsSelector,
-  acc => uniq(acc.map(a => a.currency)),
+  accounts =>
+    uniq(
+      flattenAccounts(accounts).map(a =>
+        a.type === "Account" ? a.currency : a.token,
+      ),
+    ).sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 // $FlowFixMe
-export const accountScreenSelector = createSelector(
+export const cryptoCurrenciesSelector = createSelector(
   accountsSelector,
-  (_, { navigation }) => navigation.state.params.accountId,
-  (accounts, accountId) => accounts.find(a => a.id === accountId),
+  accounts =>
+    uniq(accounts.map(a => a.currency)).sort((a, b) =>
+      a.name.localeCompare(b.name),
+    ),
 );
 
 // $FlowFixMe
@@ -91,6 +103,31 @@ export const accountSelector = createSelector(
   (_, { accountId }) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
+
+// $FlowFixMe
+export const accountScreenSelector = createSelector(
+  // DEPRECATED
+  accountsSelector,
+  (_, { navigation }) => navigation.state.params.accountId,
+  (accounts, accountId) => accounts.find(a => a.id === accountId),
+);
+
+// FIXME rename to accountScreenSeelctor
+export const accountAndParentScreenSelector = (state: *, { navigation }: *) => {
+  const { accountId, parentId } = navigation.state.params;
+  const parentAccount: ?Account =
+    parentId && accountSelector(state, { accountId: parentId });
+  let account: ?(TokenAccount | Account);
+  if (parentAccount) {
+    const { tokenAccounts } = parentAccount;
+    if (tokenAccounts) {
+      account = tokenAccounts.find(t => t.id === accountId);
+    }
+  } else {
+    account = accountSelector(state, { accountId });
+  }
+  return { parentAccount, account };
+};
 
 const isUpToDateAccount = a => {
   const { lastSyncDate } = a;

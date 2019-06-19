@@ -6,13 +6,18 @@ import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import type {
+  TokenAccount,
   Account,
   Unit,
   BalanceHistoryWithCountervalue,
   Currency,
   PortfolioRange,
 } from "@ledgerhq/live-common/lib/types";
-
+import {
+  getAccountCurrency,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
+import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import colors from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import { setSelectedTimeRange } from "../actions/settings";
@@ -31,7 +36,7 @@ const mapDispatchToProps = {
 };
 
 type Props = {
-  account: Account,
+  account: Account | TokenAccount,
   range: PortfolioRange,
   history: BalanceHistoryWithCountervalue,
   countervalueAvailable: boolean,
@@ -81,7 +86,9 @@ class AccountGraphCard extends PureComponent<Props, State> {
 
     const { hoveredItem } = this.state;
 
-    const graphColor = account.currency.color;
+    const currency = getAccountCurrency(account);
+    const unit = getAccountUnit(account);
+    const graphColor = getCurrencyColor(currency);
 
     return (
       <Card style={styles.root}>
@@ -90,7 +97,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
           from={start}
           to={end}
           hoveredItem={hoveredItem}
-          cryptoCurrencyUnit={account.unit}
+          cryptoCurrencyUnit={unit}
           counterValueUnit={counterValueCurrency.units[0]}
           renderTitle={renderTitle}
           useCounterValue={useCounterValue}

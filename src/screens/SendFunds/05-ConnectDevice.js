@@ -6,12 +6,10 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate } from "react-i18next";
 import i18next from "i18next";
-import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-
-import { accountScreenSelector } from "../../reducers/accounts";
-
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import StepHeader from "../../components/StepHeader";
@@ -19,7 +17,8 @@ import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
 
 type Props = {
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -51,7 +50,9 @@ class ConnectDevice extends Component<Props> {
   };
 
   render() {
-    const { account } = this.props;
+    const { account, parentAccount } = this.props;
+    if (!account) return null;
+    const mainAccount = getMainAccount(account, parentAccount);
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView
@@ -61,7 +62,7 @@ class ConnectDevice extends Component<Props> {
           <TrackScreen category="SendFunds" name="ConnectDevice" />
           <SelectDevice
             onSelect={this.onSelectDevice}
-            steps={[connectingStep, accountApp(account)]}
+            steps={[connectingStep, accountApp(mainAccount)]}
           />
         </ScrollView>
       </SafeAreaView>
@@ -82,9 +83,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default compose(
   connect(mapStateToProps),

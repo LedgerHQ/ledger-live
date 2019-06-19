@@ -1,21 +1,20 @@
 /* @flow */
 import React, { Component } from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
-import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import LText from "../../components/LText";
 import CurrencyIcon from "../../components/CurrencyIcon";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  account: ?Account,
+  account: ?(Account | TokenAccount),
 };
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+const mapStateToProps = accountAndParentScreenSelector;
+
 class AccountHeaderTitle extends Component<Props> {
   onPress = () => {
     // $FlowFixMe flowtyped not up to date
@@ -25,11 +24,13 @@ class AccountHeaderTitle extends Component<Props> {
   render() {
     const { account } = this.props;
     if (!account) return null;
+    const currency = getAccountCurrency(account);
+    const name = account.type === "Account" ? account.name : currency.name;
     return (
       <TouchableWithoutFeedback onPress={this.onPress}>
         <View style={styles.headerContainer}>
           <View style={styles.iconContainer}>
-            <CurrencyIcon size={18} currency={account.currency} />
+            <CurrencyIcon size={18} currency={currency} />
           </View>
           <LText
             semiBold
@@ -38,7 +39,7 @@ class AccountHeaderTitle extends Component<Props> {
             ellipsizeMode="tail"
             style={styles.title}
           >
-            {account.name}
+            {name}
           </LText>
         </View>
       </TouchableWithoutFeedback>

@@ -2,8 +2,17 @@
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  TokenAccount,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import {
+  getMainAccount,
+  getAccountCurrency,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -19,7 +28,8 @@ import colors from "../../colors";
 import DataList from "./DataList";
 
 type Props = {
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   operation: Operation,
   currencySettings: CurrencySettings,
   navigation: *,
@@ -38,11 +48,14 @@ class Content extends PureComponent<Props, *> {
   };
 
   render() {
-    const { account, operation, currencySettings } = this.props;
+    const { account, parentAccount, operation, currencySettings } = this.props;
+    const mainAccount = getMainAccount(account, parentAccount);
+    const unit = getAccountUnit(account);
+    const currency = getAccountCurrency(account);
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.smoke : colors.green;
     const confirmations = operation.blockHeight
-      ? account.blockHeight - operation.blockHeight
+      ? mainAccount.blockHeight - operation.blockHeight
       : 0;
     const uniqueSenders = uniq(operation.senders);
     const uniqueRecipients = uniq(operation.recipients);
@@ -54,7 +67,12 @@ class Content extends PureComponent<Props, *> {
       <Fragment>
         <View style={styles.header}>
           <View style={styles.icon}>
-            <OperationIcon size={40} operation={operation} account={account} />
+            <OperationIcon
+              size={40}
+              operation={operation}
+              account={account}
+              parentAccount={parentAccount}
+            />
           </View>
           <LText
             tertiary
@@ -65,7 +83,7 @@ class Content extends PureComponent<Props, *> {
               <CurrencyUnitValue
                 showCode
                 disableRounding={true}
-                unit={account.unit}
+                unit={unit}
                 value={amount}
                 alwaysShowSign
               />
@@ -76,7 +94,7 @@ class Content extends PureComponent<Props, *> {
               <CounterValue
                 showCode
                 alwaysShowSign
-                currency={account.currency}
+                currency={currency}
                 value={amount}
                 date={operation.date}
                 subMagnitude={1}
@@ -121,7 +139,7 @@ class Content extends PureComponent<Props, *> {
             <Trans i18nKey="operationDetails.account" />
           </LText>
           <LText style={styles.sectionValue} semiBold>
-            {account.name}
+            {account.type === "Account" ? account.name : currency.name}
           </LText>
         </RectButton>
         <View style={styles.section}>
@@ -145,11 +163,7 @@ class Content extends PureComponent<Props, *> {
           {operation.fee ? (
             <View style={styles.feeValueContainer}>
               <LText style={styles.sectionValue} semiBold>
-                <CurrencyUnitValue
-                  showCode
-                  unit={account.unit}
-                  value={operation.fee}
-                />
+                <CurrencyUnitValue showCode unit={unit} value={operation.fee} />
               </LText>
               <LText style={styles.feeCounterValue} semiBold>
                 ≈
@@ -160,7 +174,7 @@ class Content extends PureComponent<Props, *> {
                   disableRounding={true}
                   date={operation.date}
                   subMagnitude={1}
-                  currency={account.currency}
+                  currency={currency}
                   value={operation.fee}
                 />
               </LText>

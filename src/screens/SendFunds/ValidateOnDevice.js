@@ -3,7 +3,15 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/live-common/lib/types";
+import type {
+  Unit,
+  TokenAccount,
+  Account,
+} from "@ledgerhq/live-common/lib/types";
+import {
+  getMainAccount,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getDeviceModel } from "@ledgerhq/devices";
 
@@ -19,7 +27,8 @@ type Props = {
   action: () => void,
   modelId: *,
   transaction: *,
-  account: *,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   wired: boolean,
 };
 const { width } = getWindowDimensions();
@@ -69,19 +78,23 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
   syncTotalId = 0;
   syncTotal = async () => {
     const id = ++this.syncTotalId;
-    const { transaction, account } = this.props;
-    const bridge = getAccountBridge(account);
-    const total = await bridge.getTotalSpent(account, transaction);
+    const { transaction, account, parentAccount } = this.props;
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+    const total = await bridge.getTotalSpent(mainAccount, transaction);
     if (id === this.syncTotalId) {
       this.setState({ total });
     }
   };
 
   render() {
-    const { transaction, account, modelId, wired } = this.props;
+    const { transaction, account, parentAccount, modelId, wired } = this.props;
     const { total } = this.state;
-    const bridge = getAccountBridge(account);
-    const amount = bridge.getTransactionAmount(account, transaction);
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+    const unit = getAccountUnit(account);
+    const amount = bridge.getTransactionAmount(mainAccount, transaction);
+    // FIXME this is not the correct way. we will introduce new concept in the bridge.
     const fees = total ? total.minus(amount) : BigNumber(0);
 
     return (
@@ -108,12 +121,12 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
           <View style={styles.dataRows}>
             <DataRow
               label={<Trans i18nKey="send.validation.amount" />}
-              unit={account.unit}
+              unit={unit}
               value={amount}
             />
             <DataRow
               label={<Trans i18nKey="send.validation.fees" />}
-              unit={account.unit}
+              unit={mainAccount.unit}
               value={fees}
             />
           </View>

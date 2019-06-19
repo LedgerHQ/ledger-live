@@ -16,7 +16,7 @@ import { FlatList, SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import i18next from "i18next";
 import { getAssetsDistribution } from "@ledgerhq/live-common/lib/portfolio";
-import { createStructuredSelector } from "reselect";
+import { createStructuredSelector, createSelector } from "reselect";
 import type { AssetsDistribution } from "@ledgerhq/live-common/lib/types/portfolio";
 import type { Currency } from "@ledgerhq/live-common/lib/types/currencies";
 import type { T } from "../../types/common";
@@ -25,17 +25,12 @@ import { accountsSelector } from "../../reducers/accounts";
 import DistributionCard from "./DistributionCard";
 import LText from "../../components/LText";
 import type { DistributionItem } from "./DistributionCard";
-import {
-  counterValueCurrencySelector,
-  counterValueExchangeSelector,
-  currencySettingsSelector,
-  intermediaryCurrency,
-} from "../../reducers/settings";
-import CounterValues from "../../countervalues";
+import { counterValueCurrencySelector } from "../../reducers/settings";
 import colors from "../../colors";
 import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import { calculateCountervalueSelector } from "../../actions/general";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -44,26 +39,15 @@ type Props = {
   t: T,
 };
 const List = globalSyncRefreshControl(FlatList);
+
+const distributionSelector = createSelector(
+  accountsSelector,
+  calculateCountervalueSelector,
+  getAssetsDistribution,
+);
+
 const mapStateToProps = createStructuredSelector({
-  distribution: state => {
-    const accounts = accountsSelector(state);
-    const counterValueCurrency = counterValueCurrencySelector(state);
-    const toExchange = counterValueExchangeSelector(state);
-    return getAssetsDistribution(accounts, (currency: Currency, value) => {
-      // $FlowFixMe
-      const currencySettings = currencySettingsSelector(state, { currency });
-      const fromExchange = currencySettings.exchange;
-      return CounterValues.calculateWithIntermediarySelector(state, {
-        from: currency,
-        fromExchange,
-        intermediary: intermediaryCurrency,
-        toExchange,
-        to: counterValueCurrency,
-        value,
-        disableRounding: true,
-      });
-    });
-  },
+  distribution: distributionSelector,
   counterValueCurrency: counterValueCurrencySelector,
 });
 

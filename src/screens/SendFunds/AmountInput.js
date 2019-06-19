@@ -3,29 +3,34 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import type { Account, Currency } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  TokenAccount,
+  Currency,
+} from "@ledgerhq/live-common/lib/types";
+import {
+  getAccountUnit,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/lib/account/helpers";
 import { translate } from "react-i18next";
 import { compose } from "redux";
 import { track } from "../../analytics";
 import {
   counterValueCurrencySelector,
-  currencySettingsSelector,
-  counterValueExchangeSelector,
   intermediaryCurrency,
+  exchangeSettingsForPairSelector,
 } from "../../reducers/settings";
 import type { State } from "../../reducers";
-
 import LText from "../../components/LText/index";
 import CounterValues from "../../countervalues";
 import colors from "../../colors";
-
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
 import type { T } from "../../types/common";
 
 type OwnProps = {
-  account: Account,
+  account: Account | TokenAccount,
   currency: string,
   value: BigNumber,
   onChange: BigNumber => void,
@@ -99,6 +104,7 @@ class AmountInput extends Component<Props, OwnState> {
     const isCrypto = active === "crypto";
     const fiat = value ? getCounterValue(value) : BigNumber(0);
     const rightUnit = fiatCurrency.units[0];
+    const unit = getAccountUnit(account);
     return (
       <View style={styles.container}>
         <View style={styles.wrapper}>
@@ -106,7 +112,7 @@ class AmountInput extends Component<Props, OwnState> {
             isActive={isCrypto}
             onFocus={this.onCryptoFieldFocus}
             onChange={this.onCryptoFieldChange}
-            unit={account.unit}
+            unit={unit}
             value={value}
             renderRight={
               <LText
@@ -171,19 +177,24 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state: State, props: OwnProps) => {
-  const {
-    account: { currency },
-  } = props;
-
+  const { account } = props;
+  const currency = getAccountCurrency(account);
   const counterValueCurrency = counterValueCurrencySelector(state);
-  const fromExchange = currencySettingsSelector(state, { currency }).exchange;
-  const toExchange = counterValueExchangeSelector(state);
+  const intermediary = intermediaryCurrency(currency, counterValueCurrency);
+  const fromExchange = exchangeSettingsForPairSelector(state, {
+    from: currency,
+    to: intermediary,
+  });
+  const toExchange = exchangeSettingsForPairSelector(state, {
+    from: intermediary,
+    to: counterValueCurrency,
+  });
 
   const getCounterValue = value =>
     CounterValues.calculateWithIntermediarySelector(state, {
       from: currency,
       fromExchange,
-      intermediary: intermediaryCurrency,
+      intermediary,
       toExchange,
       to: counterValueCurrency,
       value,
@@ -194,7 +205,7 @@ const mapStateToProps = (state: State, props: OwnProps) => {
     CounterValues.reverseWithIntermediarySelector(state, {
       from: currency,
       fromExchange,
-      intermediary: intermediaryCurrency,
+      intermediary,
       toExchange,
       to: counterValueCurrency,
       value,

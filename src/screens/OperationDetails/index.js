@@ -5,22 +5,27 @@ import { View, StyleSheet } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import type {
+  TokenAccount,
+  Account,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
 import {
   getDefaultExplorerView,
   getTransactionExplorer,
 } from "@ledgerhq/live-common/lib/explorers";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import type { NavigationScreenProp } from "react-navigation";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
 
 type Props = {
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -35,12 +40,12 @@ class OperationDetails extends PureComponent<Props, *> {
   };
 
   render() {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+    if (!account) return null;
     const operation = navigation.getParam("operation");
-    const currency =
-      account.type === "Account" ? account.currency : account.token;
+    const mainAccount = getMainAccount(account, parentAccount);
     const url = getTransactionExplorer(
-      getDefaultExplorerView(currency),
+      getDefaultExplorerView(mainAccount.currency),
       operation.hash,
     );
     return (
@@ -50,6 +55,7 @@ class OperationDetails extends PureComponent<Props, *> {
           <View style={styles.root}>
             <Content
               account={account}
+              parentAccount={parentAccount}
               operation={operation}
               navigation={navigation}
             />
@@ -61,11 +67,9 @@ class OperationDetails extends PureComponent<Props, *> {
   }
 }
 
-export default connect(
-  createStructuredSelector({
-    account: accountScreenSelector,
-  }),
-)(translate()(OperationDetails));
+export default connect(accountAndParentScreenSelector)(
+  translate()(OperationDetails),
+);
 
 const styles = StyleSheet.create({
   container: {

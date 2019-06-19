@@ -1,10 +1,14 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import type { Operation, OperationType } from "@ledgerhq/live-common/lib/types";
-
 import { connect } from "react-redux";
-
+import type {
+  Account,
+  TokenAccount,
+  Operation,
+  OperationType,
+} from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import ReceiveConfirmedIcon from "../icons/ReceiveConfirmed";
 import ReceiveUnconfirmedIcon from "../icons/ReceiveUnconfirmed";
 import SendConfirmedIcon from "../icons/SendConfirmed";
@@ -17,6 +21,8 @@ type Props = {
   size: number,
   confirmed: boolean,
   operation: Operation,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
 };
 
 class OperationIcon extends PureComponent<Props> {
@@ -47,10 +53,11 @@ class OperationIcon extends PureComponent<Props> {
 export default connect((state, props) => {
   const {
     account,
+    parentAccount,
     operation: { blockHeight, type },
   } = props;
-  const confirmations = blockHeight ? account.blockHeight - blockHeight : 0;
-
+  const mainAccount = getMainAccount(account, parentAccount);
+  const confirmations = blockHeight ? mainAccount.blockHeight - blockHeight : 0;
   return {
     type,
     confirmed:

@@ -3,19 +3,17 @@ import React, { Component } from "react";
 import { ScrollView, View, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import throttle from "lodash/throttle";
-import { BigNumber } from "bignumber.js";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
-
 import type { T } from "../../types/common";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { track, TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import LText, { getFontStyle } from "../../components/LText";
@@ -28,7 +26,8 @@ import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
 
 type Props = {
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -68,9 +67,11 @@ class SendSelectRecipient extends Component<Props, State> {
   preloadedNetworkInfo: ?Object;
 
   componentDidMount() {
-    const { account } = this.props;
-    const bridge = getAccountBridge(account);
-    bridge.fetchTransactionNetworkInfo(account).then(
+    const { account, parentAccount } = this.props;
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+    bridge.fetchTransactionNetworkInfo(mainAccount).then(
       networkInfo => {
         this.preloadedNetworkInfo = networkInfo;
       },
@@ -86,13 +87,18 @@ class SendSelectRecipient extends Component<Props, State> {
   }
 
   componentDidUpdate(_, { address: prevAddress }) {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+    if (!account) return;
     if (navigation.getParam("justScanned")) {
       delete navigation.state.params.justScanned;
       const transaction = navigation.getParam("transaction");
       if (transaction) {
-        const bridge = getAccountBridge(account);
-        const address = bridge.getTransactionRecipient(account, transaction);
+        const bridge = getAccountBridge(account, parentAccount);
+        const mainAccount = getMainAccount(account, parentAccount);
+        const address = bridge.getTransactionRecipient(
+          mainAccount,
+          transaction,
+        );
         if (address && prevAddress !== address) {
           this.onChangeText(address);
         }
@@ -123,10 +129,12 @@ class SendSelectRecipient extends Component<Props, State> {
   nonceValidateAddress = 0;
   validateAddress = async (address: string) => {
     const nonce = ++this.nonceValidateAddress;
-    const { account } = this.props;
-    const bridge = getAccountBridge(account);
+    const { account, parentAccount } = this.props;
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
     try {
-      const res = await bridge.checkValidRecipient(account, address);
+      const res = await bridge.checkValidRecipient(mainAccount, address);
       if (this.unmounted || nonce !== this.nonceValidateAddress) return;
       if (!res) this.setState({ addressStatus: "valid", error: null });
       else this.setState({ addressStatus: "warning", error: res });
@@ -147,40 +155,42 @@ class SendSelectRecipient extends Component<Props, State> {
   };
 
   onPressContinue = async () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
     const { address } = this.state;
-    const bridge = getAccountBridge(account);
-
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
     let transaction =
-      navigation.getParam("transaction") || bridge.createTransaction(account);
+      navigation.getParam("transaction") ||
+      bridge.createTransaction(mainAccount);
+    const tokenAccountId = account.type === "TokenAccount" && account.id;
+    if (tokenAccountId && bridge.editTokenAccountId) {
+      transaction = bridge.editTokenAccountId(
+        mainAccount,
+        transaction,
+        tokenAccountId,
+      );
+    }
 
     transaction = bridge.editTransactionRecipient(
-      account,
+      mainAccount,
       transaction,
       address,
     );
 
     if (this.preloadedNetworkInfo) {
       transaction = bridge.applyTransactionNetworkInfo(
-        account,
+        mainAccount,
         transaction,
         this.preloadedNetworkInfo,
       );
     }
 
-    // $FlowFixMe
-    if (bridge.estimateGasLimit) {
-      const gasLimit = await bridge.estimateGasLimit(account, address);
-      transaction = bridge.editTransactionExtra(
-        account,
-        transaction,
-        "gasLimit",
-        BigNumber(gasLimit),
-      );
-    }
+    transaction = await bridge.prepareTransaction(mainAccount, transaction);
 
     navigation.navigate("SendAmount", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
     });
   };
@@ -190,6 +200,7 @@ class SendSelectRecipient extends Component<Props, State> {
   render() {
     const { address, error, addressStatus } = this.state;
     const { account, t } = this.props;
+    if (!account) return null;
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="SelectRecipient" />
@@ -324,9 +335,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default compose(
   translate(),

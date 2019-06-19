@@ -8,10 +8,10 @@ import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { BigNumber } from "bignumber.js";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-
-import { accountScreenSelector } from "../../reducers/accounts";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -33,7 +33,8 @@ const similarError = (a, b) =>
   a === b || (a && b && a.name === b.name && a.message === b.message);
 
 type Props = {
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -81,21 +82,25 @@ class SendSummary extends Component<
   }
 
   openFees = () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return;
+    const mainAccount = getMainAccount(account, parentAccount);
     this.props.navigation.navigate("EditFees", {
-      accountId: account.id,
+      accountId: mainAccount.id,
       transaction: navigation.getParam("transaction"),
     });
   };
 
   onContinue = async () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return;
     const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
-    await bridge.checkValidTransaction(account, transaction);
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+    await bridge.checkValidTransaction(mainAccount, transaction);
 
     if (bridge && account && transaction) {
-      const totalSpent = await bridge.getTotalSpent(account, transaction);
+      const totalSpent = await bridge.getTotalSpent(mainAccount, transaction);
       if (
         totalSpent
           .minus(transaction.amount)
@@ -108,6 +113,7 @@ class SendSummary extends Component<
     }
     navigation.navigate("SendConnectDevice", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
     });
   };
@@ -122,15 +128,17 @@ class SendSummary extends Component<
   // React Hooks PLZ. same code as step 3.
   nonceTotalSpent = 0;
   syncTotalSpent = async () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return;
     const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
     const nonce = ++this.nonceTotalSpent;
     try {
-      const totalSpent = await bridge.getTotalSpent(account, transaction);
+      const totalSpent = await bridge.getTotalSpent(mainAccount, transaction);
       if (nonce !== this.nonceTotalSpent) return;
 
-      await bridge.checkValidTransaction(account, transaction);
+      await bridge.checkValidTransaction(mainAccount, transaction);
       if (nonce !== this.nonceTotalSpent) return;
 
       this.setState(old => {
@@ -152,13 +160,16 @@ class SendSummary extends Component<
   };
 
   onAcceptFees = async () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return;
     const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
-    await bridge.checkValidTransaction(account, transaction);
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+    await bridge.checkValidTransaction(mainAccount, transaction);
 
     navigation.navigate("SendConnectDevice", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
     });
     this.setState({ highFeesOpen: false });
@@ -170,34 +181,41 @@ class SendSummary extends Component<
 
   render() {
     const { totalSpent, error, highFeesOpen } = this.state;
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return null;
     const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
-    const amount = bridge.getTransactionAmount(account, transaction);
-    const recipient = bridge.getTransactionRecipient(account, transaction);
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+    const amount = bridge.getTransactionAmount(mainAccount, transaction);
+    const recipient = bridge.getTransactionRecipient(mainAccount, transaction);
 
     return (
       <SafeAreaView style={styles.root}>
         <TrackScreen category="SendFunds" name="Summary" />
         <ScrollView style={styles.body}>
-          <SummaryFromSection account={account} />
+          <SummaryFromSection account={account} parentAccount={parentAccount} />
           <VerticalConnector />
           <SummaryToSection recipient={recipient} />
           <SendRowsCustom
             transaction={transaction}
-            account={account}
+            account={mainAccount}
             navigation={navigation}
           />
           <SectionSeparator lineColor={colors.lightFog} />
-          <SummaryAmountSection account={account} amount={amount} />
-          <SendRowsFee
+          <SummaryAmountSection
             account={account}
+            parentAccount={parentAccount}
+            amount={amount}
+          />
+          <SendRowsFee
+            account={mainAccount}
             transaction={transaction}
             navigation={navigation}
           />
           <SectionSeparator lineColor={colors.lightFog} />
           <SummaryTotalSection
             account={account}
+            parentAccount={parentAccount}
             amount={totalSpent || amount}
           />
         </ScrollView>
@@ -267,9 +285,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state, props) => ({
-  account: accountScreenSelector(state, props),
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default connect(mapStateToProps)(translate()(SendSummary));
 
