@@ -36,6 +36,10 @@ export default [
     url: "http://luno.go2cloud.org/aff_c?offer_id=4&aff_id=1001&source=ledger"
   },
   {
+    id: "ndax",
+    url: "https://ndax.io/signup.html?id=3506&aff=ledgerhq"
+  },
+  {
     id: "paybis",
     url: "https://aff-tracking.paybis.com/click?pid=22&offer_id=1"
   },
