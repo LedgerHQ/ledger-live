@@ -1,8 +1,8 @@
 // @flow
 import { createCustomErrorClass } from "@ledgerhq/errors";
-import type { CryptoCurrency, Account } from "../types";
+import type { CryptoCurrency, Account, TokenAccount } from "../types";
 import type { CurrencyBridge, AccountBridge } from "./types";
-import { decodeAccountId } from "../account";
+import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "../env";
 import * as RippleJSBridge from "./RippleJSBridge";
 import * as EthereumJSBridge from "./EthereumJSBridge";
@@ -34,23 +34,27 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 };
 
-export const getAccountBridge = (account: Account): AccountBridge<any> => {
-  const { type } = decodeAccountId(account.id);
+export const getAccountBridge = (
+  account: Account | TokenAccount,
+  parentAccount: ?Account
+): AccountBridge<any> => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { type } = decodeAccountId(mainAccount.id);
   if (type === "mock") return mockAccountBridge;
   if (type === "libcore") {
-    if (account.currency.family === "ethereum") {
+    if (mainAccount.currency.family === "ethereum") {
       return LibcoreEthereumAccountBridge;
     }
     return LibcoreBitcoinAccountBridge;
   }
-  switch (account.currency.family) {
+  switch (mainAccount.currency.family) {
     case "ripple":
       return RippleJSBridge.accountBridge;
     case "ethereum":
       return EthereumJSBridge.accountBridge;
     default:
       throw new CurrencyNotSupported("currency not supported", {
-        currencyName: account.currency.name
+        currencyName: mainAccount.currency.name
       });
   }
 };
