@@ -34,10 +34,10 @@ lane :internal_release do
 
   ensure_git_status_clean
 
-  Fastlane::LaneManager.cruise_lane('ios', 'beta')
+  Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
   Fastlane::LaneManager.cruise_lane('android', 'beta')
-  Fastlane::LaneManager.cruise_lane('ios', 'upload_waldo')
-  Fastlane::LaneManager.cruise_lane('android', 'upload_waldo')
+  Fastlane::LaneManager.cruise_lane('ios', 'upload_waldo', nil, 'mock')
+  Fastlane::LaneManager.cruise_lane('android', 'upload_waldo', nil, 'mock')
 
 end
 
