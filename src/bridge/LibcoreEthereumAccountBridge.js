@@ -184,7 +184,8 @@ const getFees = makeLRUCache(
 const checkValidTransaction = async (a, t) =>
   !t.gasPrice
     ? Promise.reject(new FeeNotLoaded())
-    : t.amount.isLessThanOrEqualTo(a.balance)
+    : t.useAllAmount ||
+      getMaxAmount(a, t).then(max => t.amount.isLessThanOrEqualTo(max))
     ? Promise.resolve(null)
     : Promise.reject(new NotEnoughBalance());
 
@@ -209,8 +210,15 @@ const getTotalSpent = (a, t) => {
   return getFees(a, t).then(totalFees => amount.plus(totalFees || 0));
 };
 
-const getMaxAmount = async (a, t) =>
-  getFees(a, t).then(totalFees => a.balance.minus(totalFees || 0));
+const getMaxAmount = async (a, t) => {
+  const tAccount = getTransactionAccount(a, t);
+  if (tAccount.type === "TokenAccount") {
+    return Promise.resolve(tAccount.balance);
+  }
+  return getFees(a, t).then(totalFees =>
+    tAccount.balance.minus(totalFees || 0)
+  );
+};
 
 const estimateGasLimit = (account, address) => {
   console.warn(
