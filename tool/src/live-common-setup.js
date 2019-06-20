@@ -41,13 +41,12 @@ if (VERBOSE_FILE) {
   );
 }
 
-if (VERBOSE) {
-  logger.add(
-    new winston.transports.Console({
-      format: winstonFormat
-    })
-  );
-}
+logger.add(
+  new winston.transports.Console({
+    format: winstonFormat,
+    silent: !VERBOSE
+  })
+);
 
 // eslint-disable-next-line no-unused-vars
 listen(({ id, date, type, message, ...rest }) => {
