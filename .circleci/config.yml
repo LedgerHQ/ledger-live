@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run: node -v
       - run: yarn install
-      - run: npm i -g yalc
+      - run: yarn global add yalc
       - run: yarn ci-test-tool
 
   debian:
@@ -43,7 +43,7 @@ jobs:
           key: v12-yarn-packages-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: npm i -g yalc
+      - run: yarn global add yalc
       - run: yarn ci-lint
       - run: yarn ci-test-common
       - run: yarn ci-test-tool
