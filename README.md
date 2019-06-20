@@ -19,14 +19,14 @@ yarn test     # test exclusively live-common
 
 ### `tool` folder is a `ledger-live` command-line
 
-To run it for development and have the latest sourcecode running we can link the @ledgerhq/live-common libarary with a symlink.
+To run it for development and have the latest sourcecode running we need to either copy the lib folder of live-common in tool/node*modules or use something like yalc. \_We used to use yarn link but symlink are not properly working and creating dup issues.*
 You likely want to run `yarn watch` in a terminal and do this in another terminal (from top level):
 
 ```
-yarn link     # link live-common
+yalc publish # link live-common
 cd tool/
 yarn
-yarn link @ledgerhq/live-common
+yalc add @ledgerhq/live-common
 yarn link    # will make ledger-live CLI available
 yarn watch   # incremental build as well
 ```
@@ -52,7 +52,6 @@ git push --tags
 ```
 
 you also likely want to update `tool` and release a new version as well (second commit).
-
 
 ## Adding cryptocurrencies
 
