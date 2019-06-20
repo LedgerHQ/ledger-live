@@ -1,6 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import { getWalletName } from "../account";
 import type { Account, Transaction } from "../types";
 import { withLibcoreF } from "./access";
@@ -48,8 +49,17 @@ export const getFeesForTransaction: F = withLibcoreF(
         isPartial: true,
         isCancelled: () => false
       });
-      if (!fees || fees.isLessThan(0)) {
+      if (!fees) {
         fees = BigNumber(0);
+        log("libcore", "getFeesForTransaction: no fees");
+      } else if (fees.isLessThan(0)) {
+        fees = BigNumber(0);
+        log(
+          "libcore",
+          "getFeesForTransaction: negative fees! " + fees.toString()
+        );
+      } else {
+        log("libcore", "getFeesForTransaction: fees is " + fees.toString());
       }
       return fees;
     } catch (error) {

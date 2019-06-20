@@ -1,4 +1,5 @@
 // @flow
+import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import Transport from "@ledgerhq/hw-transport";
 import type { Core, CoreWallet, CoreAccount } from "./types";
@@ -22,6 +23,10 @@ export const createAccountFromDevice: F = async ({
   currency,
   derivationMode
 }) => {
+  log(
+    "libcore",
+    "createAccountFromDevice " + currency.id + " " + derivationMode
+  );
   const accountCreationInfos = await wallet.getNextAccountCreationInfo();
   const chainCodes = await accountCreationInfos.getChainCodes();
   const publicKeys = await accountCreationInfos.getPublicKeys();

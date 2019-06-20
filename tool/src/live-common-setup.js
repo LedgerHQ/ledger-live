@@ -1,5 +1,6 @@
 // @flow
 /* eslint-disable no-console */
+import winston from "winston";
 import axios from "axios";
 import WebSocket from "ws";
 import { Observable } from "rxjs";
@@ -21,13 +22,40 @@ import { first, switchMap, map } from "rxjs/operators";
 
 for (const k in process.env) setEnvUnsafe(k, process.env[k]);
 
-const logger = process.env.VERBOSE
-  ? (level, ...args) => console.log(level, ...args)
-  : undefined;
+const { VERBOSE, VERBOSE_FILE } = process.env;
 
-if (logger) {
-  listen(log => logger(log.type, log.message));
+const logger = winston.createLogger({
+  level: "debug",
+  transports: []
+});
+
+const winstonFormat = winston.format.simple();
+
+if (VERBOSE_FILE) {
+  logger.add(
+    new winston.transports.File({
+      format: winstonFormat,
+      filename: VERBOSE_FILE,
+      level: "debug"
+    })
+  );
 }
+
+if (VERBOSE) {
+  logger.add(
+    new winston.transports.Console({
+      format: winstonFormat
+    })
+  );
+}
+
+// eslint-disable-next-line no-unused-vars
+listen(({ id, date, type, message, ...rest }) => {
+  logger.log("debug", {
+    message: type + (message ? ": " + message : ""),
+    ...rest
+  });
+});
 
 setNetwork(axios);
 
@@ -35,8 +63,7 @@ setWebSocketImplementation(WebSocket);
 
 implementLibcore({
   lib: () => require("@ledgerhq/ledger-core"), // eslint-disable-line global-require
-  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
-  logger
+  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata"
 });
 
 if (process.env.DEVICE_PROXY_URL) {

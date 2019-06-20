@@ -1,4 +1,5 @@
 // @flow
+import { log } from "@ledgerhq/logs";
 import { Observable, from, of, concat, throwError } from "rxjs";
 import { mergeMap, delay, filter, map } from "rxjs/operators";
 import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
@@ -13,8 +14,9 @@ const waitEnd = of({ type: "wait" }).pipe(delay(1000));
 const checkId = (
   deviceId: string,
   { osu }: FirmwareUpdateContext
-): Observable<{ progress: number, displayedOnDevice: boolean }> =>
-  withDevice(deviceId)(transport => from(getDeviceInfo(transport))).pipe(
+): Observable<{ progress: number, displayedOnDevice: boolean }> => {
+  log("hw", "firmwareUpdate-prepare");
+  return withDevice(deviceId)(transport => from(getDeviceInfo(transport))).pipe(
     mergeMap(deviceInfo =>
       // if in bootloader or OSU we'll directly jump to MCU step
       deviceInfo.isBootloader || deviceInfo.isOSU
@@ -33,5 +35,6 @@ const checkId = (
       displayedOnDevice: e.index >= e.total - 1
     }))
   );
+};
 
 export default checkId;

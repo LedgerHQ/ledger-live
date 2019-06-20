@@ -4,6 +4,7 @@
 /* eslint-disable new-cap */
 
 import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
 import { NotEnoughBalance } from "@ledgerhq/errors/lib";
 import { deserializeError, serializeError } from "@ledgerhq/errors/lib/helpers";
 import { reflect } from "../types";
@@ -20,8 +21,7 @@ const fs = require("fs");
 export default (arg: {
   // the actual @ledgerhq/ledger-core lib or a function that returns it
   lib: any,
-  dbPath: string,
-  logger: ?(level: string, ...args: any) => void
+  dbPath: string
 }) => {
   let lib;
   const lazyLoad = () => {
@@ -32,7 +32,7 @@ export default (arg: {
       lib = arg.lib;
     }
   };
-  const { dbPath, logger } = arg;
+  const { dbPath } = arg;
 
   const loadCore = (): Promise<Core> => {
     lazyLoad();
@@ -58,7 +58,7 @@ export default (arg: {
           const runFunction = () => runnable.run();
           setImmediate(runFunction);
         } catch (e) {
-          if (logger) logger("Error", e);
+          log("libcore-Error", String(e));
         }
       },
       delay: (runnable, ms) => setTimeout(() => runnable.run(), ms)
@@ -83,12 +83,10 @@ export default (arg: {
       getMainExecutionContext,
       getSerialExecutionContext,
       newLock: () => {
-        if (logger) {
-          logger(
-            "Warn",
-            "libcore NJSThreadDispatcher: newLock: Not implemented"
-          );
-        }
+        log(
+          "libcore-Warn",
+          "libcore NJSThreadDispatcher: newLock: Not implemented"
+        );
       }
     });
 
@@ -175,12 +173,12 @@ export default (arg: {
 
     const NJSLogPrinter = new lib.NJSLogPrinter({
       context: {},
-      printError: message => logger && logger("Error", message),
-      printInfo: message => logger && logger("Info", message),
-      printDebug: message => logger && logger("Debug", message),
-      printWarning: message => logger && logger("Warning", message),
-      printApdu: message => logger && logger("Apdu", message),
-      printCriticalError: message => logger && logger("CriticalError", message),
+      printError: message => log("libcore-Error", message),
+      printInfo: message => log("libcore-Info", message),
+      printDebug: message => log("libcore-Debug", message),
+      printWarning: message => log("libcore-Warning", message),
+      printApdu: message => log("libcore-Apdu", message),
+      printCriticalError: message => log("libcore-CriticalError", message),
       getContext: () => new lib.NJSExecutionContext(NJSExecutionContextImpl)
     });
 

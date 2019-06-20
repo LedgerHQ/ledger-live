@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable camelcase */
 
+import { log } from "@ledgerhq/logs";
 import URL from "url";
 import {
   DeviceOnDashboardExpected,
@@ -270,20 +271,23 @@ const install = (
   transport: Transport<*>,
   context: string,
   params: *
-): Observable<*> =>
-  createDeviceSocket(transport, {
+): Observable<*> => {
+  log("manager", "install " + context, params);
+  return createDeviceSocket(transport, {
     url: URL.format({
       pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
       query: { ...params, livecommonversion }
     }),
     ignoreWebsocketErrorDuringBulk: true
   }).pipe(remapSocketError(context));
+};
 
 const genuineCheck = (
   transport: Transport<*>,
   { targetId, perso }: { targetId: *, perso: * }
-): Observable<GenuineCheckEvent> =>
-  createDeviceSocket(transport, {
+): Observable<GenuineCheckEvent> => {
+  log("manager", "genuineCheck", { targetId, perso });
+  return createDeviceSocket(transport, {
     url: URL.format({
       pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
       query: { targetId, perso, livecommonversion }
@@ -328,19 +332,22 @@ const genuineCheck = (
       return sub;
     })
   );
+};
 
 const installMcu = (
   transport: Transport<*>,
   context: string,
   { targetId, version }: { targetId: *, version: * }
-): Observable<*> =>
-  createDeviceSocket(transport, {
+): Observable<*> => {
+  log("manager", "installMCU " + context, { targetId, version });
+  return createDeviceSocket(transport, {
     url: URL.format({
       pathname: `${getEnv("BASE_SOCKET_URL")}/mcu`,
       query: { targetId, version, livecommonversion }
     }),
     ignoreWebsocketErrorDuringBulk: true
   }).pipe(remapSocketError(context));
+};
 
 const API = {
   applicationsByDevice,

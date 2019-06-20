@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable no-bitwise */
 
+import { log } from "@ledgerhq/logs";
 import type Transport from "@ledgerhq/hw-transport";
 import getVersion from "./getVersion";
 import type { DeviceInfo } from "../types/manager";
@@ -36,6 +37,14 @@ export default async function getDeviceInfo(
   const flag = flags.length > 0 ? flags[0] : 0;
   const managerAllowed = !!(flag & ManagerAllowedFlag);
   const pinValidated = !!(flag & PinValidatedFlag);
+  log(
+    "hw",
+    "deviceInfo: se@" +
+      version +
+      " mcu@" +
+      mcuVersion +
+      (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
+  );
   return {
     version,
     mcuVersion,
