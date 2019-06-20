@@ -20,8 +20,11 @@ export const getAccountCurrency = (account: Account | TokenAccount) =>
 export const getAccountUnit = (account: Account | TokenAccount) =>
   account.type === "Account" ? account.unit : account.token.units[0];
 
-export const isAccountEmpty = (a: Account | TokenAccount): boolean =>
-  a.operations.length === 0 && a.balance.isZero();
+export const isAccountEmpty = (a: Account | TokenAccount): boolean => {
+  const hasTokens =
+    a.type === "Account" && a.tokenAccounts && a.tokenAccounts.length;
+  return a.operations.length === 0 && a.balance.isZero() && !hasTokens;
+};
 
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
