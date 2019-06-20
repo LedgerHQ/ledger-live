@@ -1,4 +1,5 @@
 // @flow
+import { log } from "@ledgerhq/logs";
 import { Observable, from, of, empty, concat } from "rxjs";
 import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
 
@@ -25,6 +26,8 @@ const repair = (
   deviceId: string,
   forceMCU_: ?string
 ): Observable<{ progress: number }> => {
+  log("hw", "firmwareUpdate-repair");
+
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
     () => true // accept all errors. we're waiting forever condition that make getDeviceInfo work

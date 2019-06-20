@@ -7,6 +7,7 @@ import {
   distinctUntilChanged,
   throttleTime
 } from "rxjs/operators";
+import { log } from "@ledgerhq/logs";
 import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
 import type { FirmwareUpdateContext } from "../types/manager";
 import { withDevicePolling } from "./deviceAccess";
@@ -25,6 +26,7 @@ const main = (
   deviceId: string,
   { final, shouldFlashMCU }: FirmwareUpdateContext
 ): Observable<Res> => {
+  log("hw", "firmwareUpdate-main started");
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
     () => true // accept all errors. we're waiting forever condition that make getDeviceInfo work
