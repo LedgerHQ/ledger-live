@@ -29,11 +29,12 @@ export async function bitcoinSignTransaction({
   coreTransaction: CoreBitcoinLikeTransaction,
   derivationMode: DerivationMode
 }) {
+  log("hw", `signTransaction ${currency.id} for account ${account.id}`);
+
   const networkParams = await coreCurrency.getBitcoinLikeNetworkParameters();
   if (isCancelled()) return;
 
   const sigHashType = parseInt(await networkParams.getSigHash(), 16);
-
   if (isCancelled()) return;
 
   const hasTimestamp = await networkParams.getUsesTimestampedTransaction();
@@ -67,7 +68,7 @@ export async function bitcoinSignTransaction({
   // TODO handle isCancelled
 
   const inputs = await Promise.all(
-    rawInputs.map(async input => {
+    rawInputs.map(async (input, i) => {
       const hexPreviousTransaction = await input.getPreviousTransaction();
       log("libcore", "splitTransaction " + String(hexPreviousTransaction));
       // v1 of XST txs have timestamp but not v2
@@ -75,6 +76,14 @@ export async function bitcoinSignTransaction({
         (currency.id === "stealthcoin" &&
           hexPreviousTransaction.slice(0, 2) === "01") ||
         hasTimestamp;
+
+      log("hw", `splitTransaction`, {
+        hexPreviousTransaction,
+        supportsSegwit: currency.supportsSegwit,
+        inputHasTimestamp,
+        hasExtraData,
+        additionals
+      });
       const previousTransaction = hwApp.splitTransaction(
         hexPreviousTransaction,
         currency.supportsSegwit,
@@ -87,6 +96,11 @@ export async function bitcoinSignTransaction({
 
       const sequence = await input.getSequence();
 
+      log("libcore", "inputs[" + i + "]", {
+        previousTransaction: JSON.stringify(previousTransaction),
+        outputIndex,
+        sequence
+      });
       return [
         previousTransaction,
         outputIndex,
@@ -154,6 +168,17 @@ export async function bitcoinSignTransaction({
     lockTime = unixtime - 777;
   }
 
+  log("hw", `createPaymentTransactionNew`, {
+    associatedKeysets,
+    changePath,
+    outputScriptHex,
+    lockTime,
+    sigHashType,
+    isSegwit: isSegwitDerivationMode(derivationMode),
+    timestamp: initialTimestamp || undefined,
+    additionals,
+    expiryHeight: expiryHeight && expiryHeight.toString("hex")
+  });
   const signedTransaction = await hwApp.createPaymentTransactionNew(
     // $FlowFixMe not sure what's wrong
     inputs,
