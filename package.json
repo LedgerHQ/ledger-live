@@ -39,12 +39,12 @@
     "react": "*"
   },
   "dependencies": {
-    "@ledgerhq/errors": "4.62.0",
-    "@ledgerhq/hw-app-btc": "4.63.0",
-    "@ledgerhq/hw-app-eth": "4.62.0",
-    "@ledgerhq/hw-app-xrp": "4.62.0",
-    "@ledgerhq/hw-transport": "4.62.0",
-    "@ledgerhq/hw-transport-mocker": "4.62.0",
+    "@ledgerhq/errors": "4.63.2",
+    "@ledgerhq/hw-app-btc": "4.63.2",
+    "@ledgerhq/hw-app-eth": "4.63.2",
+    "@ledgerhq/hw-app-xrp": "4.63.2",
+    "@ledgerhq/hw-transport": "4.63.2",
+    "@ledgerhq/hw-transport-mocker": "4.63.2",
     "@ledgerhq/logs": "4.62.0",
     "bignumber.js": "^9.0.0",
     "compressjs": "gre/compressjs#hermit",
