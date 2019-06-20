@@ -290,8 +290,10 @@ export function getAssetsDistribution(
     const account = accounts[i];
     const cur = account.type === "Account" ? account.currency : account.token;
     const id = cur.id;
-    idCurrencies[id] = cur;
-    idBalances[id] = (idBalances[id] || BigNumber(0)).plus(account.balance);
+    if (account.balance.isGreaterThan(0)) {
+      idCurrencies[id] = cur;
+      idBalances[id] = (idBalances[id] || BigNumber(0)).plus(account.balance);
+    }
   }
 
   const idCountervalues = {};
@@ -306,11 +308,13 @@ export function getAssetsDistribution(
     }
   }
 
-  if (sum.eq(0)) {
+  const idCurrenciesKeys = Object.keys(idCurrencies);
+
+  if (idCurrenciesKeys.length === 0) {
     return assetsDistributionNotAvailable;
   }
 
-  const idCurrenciesKeys = Object.keys(idCurrencies);
+  const isAvailable = !sum.isZero();
 
   const hash = `${idCurrenciesKeys.length}_${sum.toString()}`;
   if (hash === previousDistributionCache.hash) {
@@ -326,7 +330,7 @@ export function getAssetsDistribution(
         currency,
         countervalue,
         amount,
-        distribution: countervalue.div(sum).toNumber()
+        distribution: isAvailable ? countervalue.div(sum).toNumber() : 0
       };
     })
     .sort((a, b) => {
@@ -345,7 +349,7 @@ export function getAssetsDistribution(
   }
   const showFirst = Math.max(minShowFirst, i);
 
-  const data = { isAvailable: true, list, showFirst, sum };
+  const data = { isAvailable, list, showFirst, sum };
   previousDistributionCache.hash = hash;
   previousDistributionCache.data = data;
   return data;
