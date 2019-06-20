@@ -28,7 +28,7 @@ export type Portfolio = {
 export type PortfolioRange = "year" | "month" | "week";
 
 export type AssetsDistribution = {
-  // if not available, we would not display anything
+  // false if no distribution can be done (sum is zero)
   isAvailable: boolean,
   // a sorted list of assets with data
   list: Array<{
