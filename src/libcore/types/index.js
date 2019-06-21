@@ -301,6 +301,8 @@ export const reflect = (declare: (string, Spec) => void) => {
     },
     methods: {
       freshResetAll: {},
+      changePassword: {},
+      getName: {},
       updateWalletConfig: {
         params: [null, "DynamicObject"]
       },
