@@ -17,28 +17,28 @@ const accounts = Array(100)
   .map((_, j) => genAccount("portfolio_" + j));
 
 test("getBalanceHistory(*,month) returns an array of 30 items", () => {
-  const history = getBalanceHistory(genAccount("seed_1"), "month");
+  const { history } = getBalanceHistory(genAccount("seed_1"), "month");
   expect(history).toBeInstanceOf(Array);
   expect(history.length).toBe(30);
   expect(history).toMatchSnapshot();
 });
 
 test("getBalanceHistory(*,year) works as well", () => {
-  const history = getBalanceHistory(genAccount("seed_2"), "year");
+  const { history } = getBalanceHistory(genAccount("seed_2"), "year");
   expect(history).toBeInstanceOf(Array);
   expect(history.length).toBe(365);
   expect(history).toMatchSnapshot();
 });
 
 test("getDates matches getBalanceHistory dates", () => {
-  const history = getBalanceHistory(genAccount("seed_2"), "year");
+  const { history } = getBalanceHistory(genAccount("seed_2"), "year");
   const dates = getDates("year");
   expect(history.map(p => p.date)).toMatchObject(dates);
 });
 
 test("getBalanceHistory last item is now and have an amount equals to account balance", () => {
   const account = genAccount("seed_3");
-  const history = getBalanceHistory(account, "month");
+  const { history } = getBalanceHistory(account, "month");
   expect(history[history.length - 1].date).toMatchObject(new Date());
   expect(history[history.length - 1].value).toBe(account.balance);
   expect(history).toMatchSnapshot();
@@ -46,7 +46,7 @@ test("getBalanceHistory last item is now and have an amount equals to account ba
 
 test("getBalanceHistoryWithCountervalue basic", () => {
   const account = genAccount("bro4", { tokenAccountsCount: 0 });
-  const history = getBalanceHistory(account, "month");
+  const { history } = getBalanceHistory(account, "month");
   const cv = getBalanceHistoryWithCountervalue(
     account,
     "month",
@@ -63,7 +63,7 @@ test("getBalanceHistoryWithCountervalue basic", () => {
 
 test("getPortfolio works with one account and is identically to that account history", () => {
   const account = genAccount("seed_4", { tokenAccountsCount: 0 });
-  const history = getBalanceHistory(account, "week");
+  const { history } = getBalanceHistory(account, "week");
   const portfolio = getPortfolio(
     [account],
     "week",
@@ -77,7 +77,7 @@ test("getPortfolio works with one account and is identically to that account his
 
 test("getBalanceHistoryWithCountervalue to have proper countervalues", () => {
   const account = genAccount("bro1", { tokenAccountsCount: 0 });
-  const history = getBalanceHistory(account, "week");
+  const { history } = getBalanceHistory(account, "week");
   const calc = (account, value, date) => value.times(3);
   const cv = getBalanceHistoryWithCountervalue(account, "week", calc);
   expect(
@@ -104,7 +104,7 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
     currency: getCryptoCurrencyById("ethereum"),
     tokenAccountsCount: 0
   });
-  const history = getBalanceHistory(account, "month");
+  const { history } = getBalanceHistory(account, "month");
   const portfolio = getPortfolio(
     [account, account2],
     "month",
@@ -117,7 +117,7 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
 
 test("getPortfolio with twice same account will double the amounts", () => {
   const account = genAccount("seed_5", { tokenAccountsCount: 0 });
-  const history = getBalanceHistory(account, "week");
+  const { history } = getBalanceHistory(account, "week");
   const allHistory = getPortfolio(
     [account, account],
     "week",
@@ -130,7 +130,7 @@ test("getPortfolio with twice same account will double the amounts", () => {
 
 test("getPortfolio calculateCounterValue is taken into account", () => {
   const account = genAccount("seed_6", { tokenAccountsCount: 0 });
-  const history = getBalanceHistory(account, "month");
+  const { history } = getBalanceHistory(account, "month");
   const portfolio = getPortfolio(
     [account, account],
     "month",
@@ -148,7 +148,7 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
     currency: getCryptoCurrencyById("ethereum"),
     tokenAccountsCount: 0
   });
-  const history = getBalanceHistory(account, "month");
+  const { history } = getBalanceHistory(account, "month");
   const portfolio = getPortfolio(
     [account, account2],
     "month",

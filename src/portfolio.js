@@ -5,19 +5,24 @@
 import { BigNumber } from "bignumber.js";
 import memoize from "lodash/memoize";
 import last from "lodash/last";
+import find from "lodash/find";
 import type {
   TokenAccount,
+  Operation,
   Account,
   BalanceHistory,
-  BalanceHistoryWithCountervalue,
+  AccountPortfolio,
   PortfolioRange,
+  BalanceHistoryWithCountervalue,
   Portfolio,
   AssetsDistribution,
   TokenCurrency,
-  CryptoCurrency
+  CryptoCurrency,
+  ValueChange
 } from "./types";
 import { getOperationAmountNumber } from "./operation";
 import { flattenAccounts } from "./account";
+import { getEnv } from "./env";
 
 const dayIncrement = 24 * 60 * 60 * 1000;
 
@@ -58,7 +63,7 @@ export function getDates(r: PortfolioRange): Date[] {
 type GetBalanceHistory = (
   account: Account | TokenAccount,
   r: PortfolioRange
-) => BalanceHistory;
+) => { history: BalanceHistory, operations: Operation[] };
 
 /**
  * generate an array of {daysCount} datapoints, one per day,
@@ -88,7 +93,7 @@ const getBalanceHistoryImpl: GetBalanceHistory = (account, r) => {
     history.unshift({ date: t, value: BigNumber.max(balance, 0) });
     t = new Date(t - conf.increment);
   }
-  return history;
+  return { history, operations: account.operations.slice(0, i) };
 };
 
 const accountRateHash = (account, r) =>
@@ -109,10 +114,7 @@ type GetBalanceHistoryWithCountervalue = (
     BigNumber,
     Date
   ) => ?BigNumber
-) => {
-  history: BalanceHistoryWithCountervalue,
-  countervalueAvailable: boolean
-};
+) => AccountPortfolio;
 
 // hash the "stable" part of the histo
 // only the latest datapoint is "unstable" meaning it always changes because it's the current date.
@@ -120,25 +122,123 @@ const accountRateHashCVStable = (account, r, cvRef) =>
   `${accountRateHash(account, r)}_${cvRef ? cvRef.toString() : "none"}`;
 
 const accountCVstableCache = {};
-const HIGH_VALUE = BigNumber("10000000000000000");
 const ZERO = BigNumber(0);
 
+const percentageHighThreshold = 100;
+const meaningfulPercentage = (
+  deltaChange: ?BigNumber,
+  balanceDivider: ?BigNumber
+): ?BigNumber => {
+  if (deltaChange && balanceDivider && !balanceDivider.isZero()) {
+    const percent = deltaChange.div(balanceDivider);
+    if (percent.lt(percentageHighThreshold)) {
+      return percent;
+    }
+  }
+};
+
 const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
-  const histo = getBalanceHistory(account, r);
+  const { history, operations } = getBalanceHistory(account, r);
   const cur = account.type === "Account" ? account.currency : account.token;
+  // a high enough value so we can compare if something changes
+  const cacheReferenceValue = BigNumber("10").pow(3 + cur.units[0].magnitude);
   // pick a stable countervalue point in time to hash for the cache
-  const cvRef = calc(cur, HIGH_VALUE, histo[0].date);
+  const cvRef = calc(cur, cacheReferenceValue, history[0].date);
+  const lastPointRef = calc(
+    cur,
+    cacheReferenceValue,
+    history[history.length - 1].date
+  );
   const mapFn = p => ({
     ...p,
     countervalue: (cvRef && calc(cur, p.value, p.date)) || ZERO
   });
   const stableHash = accountRateHashCVStable(account, r, cvRef);
   let stable = accountCVstableCache[stableHash];
-  const lastPoint = mapFn(histo[histo.length - 1]);
+  const lastPoint = mapFn(history[history.length - 1]);
+
+  const calcChanges = (h: BalanceHistoryWithCountervalue) => {
+    if (getEnv("EXPERIMENTAL_ROI_CALCULATION")) {
+      const cryptoChange: ValueChange = {
+        percentage: null,
+        value: BigNumber(0)
+      };
+      const countervalueChange: ValueChange = {
+        percentage: null,
+        value: BigNumber(0)
+      };
+      let countervalueReceiveSum = BigNumber(0);
+      let countervalueSendSum = BigNumber(0);
+      for (let i = 0; i < operations.length; i++) {
+        const op = operations[i];
+        const amount = getOperationAmountNumber(account.operations[i]);
+        if (!amount.isZero()) {
+          cryptoChange.value = cryptoChange.value.plus(amount);
+          const cv = calc(cur, amount, op.date);
+          const cvAtCurrentRate = calc(
+            cur,
+            amount,
+            history[history.length - 1].date
+          );
+          if (cv && cvAtCurrentRate) {
+            if (cv.isPositive()) {
+              countervalueReceiveSum = countervalueReceiveSum.plus(cv);
+            } else {
+              countervalueSendSum = countervalueSendSum.minus(cv);
+            }
+            countervalueChange.value = countervalueChange.value.plus(
+              cvAtCurrentRate.minus(cv)
+            );
+          }
+        }
+      }
+      cryptoChange.percentage = null;
+      countervalueChange.percentage =
+        // in case there were no receive, we just track the market change
+        countervalueReceiveSum.isZero()
+          ? cvRef &&
+            lastPointRef &&
+            meaningfulPercentage(lastPointRef.minus(cvRef), cvRef)
+          : meaningfulPercentage(
+              countervalueChange.value,
+              countervalueReceiveSum
+            );
+      return {
+        cryptoChange,
+        countervalueChange,
+        countervalueReceiveSum,
+        countervalueSendSum
+      };
+    }
+
+    // previous existing implementation here
+    const from = h[0];
+    const to = h[history.length - 1];
+    const fromEffective =
+      find(h, record => record.value.isGreaterThan(0)) || from;
+    return {
+      countervalueReceiveSum: BigNumber(0), // not available here
+      countervalueSendSum: BigNumber(0),
+      cryptoChange: {
+        value: to.value.minus(from.value),
+        percentage: null
+      },
+      countervalueChange: {
+        value: (to.countervalue || ZERO).minus(from.countervalue || ZERO),
+        percentage: meaningfulPercentage(
+          (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
+          fromEffective.countervalue
+        )
+      }
+    };
+  };
+
   if (!stable) {
+    const h = history.map(mapFn);
     stable = {
-      history: histo.map(mapFn),
-      countervalueAvailable: !!cvRef
+      history: h,
+      countervalueAvailable: !!cvRef,
+      ...calcChanges(h)
     };
     accountCVstableCache[stableHash] = stable;
     return stable;
@@ -148,9 +248,11 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
   if (lastPoint.countervalue.eq(lastStable.countervalue)) {
     return stable;
   }
+  const h = stable.history.slice(0, -1).concat(lastPoint);
   const copy = {
     ...stable,
-    history: stable.history.slice(0, -1).concat(lastPoint)
+    history: h,
+    ...calcChanges(h)
   };
   accountCVstableCache[stableHash] = copy;
   return copy;
@@ -174,6 +276,9 @@ export function getPortfolio(
   const availableAccounts = [];
   const unavailableAccounts = [];
   const histories = [];
+  const changes: BigNumber[] = [];
+  const countervalueReceiveSums: BigNumber[] = [];
+  const countervalueSendSums: BigNumber[] = [];
 
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
@@ -181,6 +286,9 @@ export function getPortfolio(
     if (r.countervalueAvailable) {
       availableAccounts.push(account);
       histories.push(r.history);
+      changes.push(r.countervalueChange.value);
+      countervalueReceiveSums.push(r.countervalueReceiveSum);
+      countervalueSendSums.push(r.countervalueSendSum);
     } else {
       unavailableAccounts.push(account);
     }
@@ -220,7 +328,10 @@ export function getPortfolio(
         unavailableCurrencies,
         accounts,
         range,
-        histories
+        histories,
+        countervalueChange: memo.countervalueChange,
+        countervalueReceiveSum: memo.countervalueReceiveSum,
+        countervalueSendSum: memo.countervalueSendSum
       };
     }
   }
@@ -235,6 +346,42 @@ export function getPortfolio(
     }
   }
 
+  const countervalueChangeValue: BigNumber = changes.reduce(
+    (sum, v) => sum.plus(v),
+    BigNumber(0)
+  );
+  const countervalueReceiveSum: BigNumber = countervalueReceiveSums.reduce(
+    (sum, v) => sum.plus(v),
+    BigNumber(0)
+  );
+  const countervalueSendSum: BigNumber = countervalueSendSums.reduce(
+    (sum, v) => sum.plus(v),
+    BigNumber(0)
+  );
+
+  // in case there were no receive, we just track the market change
+  // weighted by the current balances
+  let countervalueChangePercentage;
+  if (getEnv("EXPERIMENTAL_ROI_CALCULATION")) {
+    if (countervalueReceiveSum.isZero()) {
+      countervalueChangePercentage = meaningfulPercentage(
+        countervalueChangeValue,
+        balanceHistory[0].value.add(countervalueSendSum)
+      );
+    } else {
+      countervalueChangePercentage = meaningfulPercentage(
+        countervalueChangeValue,
+        countervalueReceiveSum
+      );
+    }
+  } else {
+    countervalueChangePercentage = meaningfulPercentage(
+      countervalueChangeValue,
+      // in non experimental mode, we were dividing by first point
+      balanceHistory[0].value
+    );
+  }
+
   const ret = {
     balanceHistory,
     balanceAvailable,
@@ -242,7 +389,13 @@ export function getPortfolio(
     unavailableCurrencies,
     accounts,
     range,
-    histories
+    histories,
+    countervalueReceiveSum,
+    countervalueSendSum,
+    countervalueChange: {
+      percentage: countervalueChangePercentage,
+      value: countervalueChangeValue
+    }
   };
 
   portfolioMemo[range] = ret;
