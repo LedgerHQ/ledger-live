@@ -799,10 +799,10 @@
     "@ledgerhq/errors" "^4.63.2"
     events "^3.0.0"
 
-"@ledgerhq/live-common@6.11.0":
-  version "6.11.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-6.11.0.tgz#bdc4b17bd62878cbb32608dd98f714463c874dc1"
-  integrity sha512-AARy4iL5L8n2lBGvMJ62FeN+ckz24MSm0aF/rltB6PP6+rSBODazLmcSRDNKM4mkTF9NI3iufkqirPSI4xGLzQ==
+"@ledgerhq/live-common@6.11.1":
+  version "6.11.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-6.11.1.tgz#69304f8349d902ec3e283185d7540e41f11be5d3"
+  integrity sha512-lOrHiNHMwwfR2GETMcBu6arfpFzMtRcNdKlPQB39EdZWV96RZtbOE8qpDS4fLyDdOOrrcu8j1dv7QPpIdl0Jaw==
   dependencies:
     "@ledgerhq/errors" "4.63.2"
     "@ledgerhq/hw-app-btc" "4.63.2"
