@@ -37,6 +37,7 @@ declare class CoreWalletPool {
   ): Promise<CoreWallet>;
   freshResetAll(): Promise<void>;
   changePassword(oldPassword: string, newPassword: string): Promise<void>;
+  getName(): Promise<string>;
 }
 
 declare class CoreWallet {

@@ -21,7 +21,8 @@ const fs = require("fs");
 export default (arg: {
   // the actual @ledgerhq/ledger-core lib or a function that returns it
   lib: any,
-  dbPath: string
+  dbPath: string,
+  dbPassword?: string
 }) => {
   let lib;
   const lazyLoad = () => {
@@ -33,6 +34,10 @@ export default (arg: {
     }
   };
   const { dbPath } = arg;
+  const dbPassword =
+    typeof arg.dbPassword === "undefined"
+      ? getEnv("LIBCORE_PASSWORD")
+      : arg.dbPassword;
 
   const loadCore = (): Promise<Core> => {
     lazyLoad();
@@ -194,9 +199,9 @@ export default (arg: {
 
     let walletPoolInstance = null;
 
-    const instanciateWalletPool = o => {
+    const instanciateWalletPool = () => {
       try {
-        fs.mkdirSync(o.dbPath);
+        fs.mkdirSync(dbPath);
       } catch (err) {
         if (err.code !== "EEXIST") {
           throw err;
@@ -220,7 +225,7 @@ export default (arg: {
 
       walletPoolInstance = new lib.NJSWalletPool(
         "ledgerlive",
-        getEnv("LIBCORE_PASSWORD"),
+        dbPassword,
         NJSHttpClient,
         NJSWebSocketClient,
         NJSPathResolver,
@@ -236,10 +241,7 @@ export default (arg: {
 
     const getPoolInstance = () => {
       if (!walletPoolInstance) {
-        instanciateWalletPool({
-          // sqlite files will be located in the app local data folder
-          dbPath
-        });
+        instanciateWalletPool();
       }
       invariant(walletPoolInstance, "can't initialize walletPoolInstance");
       return walletPoolInstance;
