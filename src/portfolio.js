@@ -366,7 +366,7 @@ export function getPortfolio(
     if (countervalueReceiveSum.isZero()) {
       countervalueChangePercentage = meaningfulPercentage(
         countervalueChangeValue,
-        balanceHistory[0].value.add(countervalueSendSum)
+        balanceHistory[0].value.plus(countervalueSendSum)
       );
     } else {
       countervalueChangePercentage = meaningfulPercentage(
