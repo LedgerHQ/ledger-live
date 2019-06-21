@@ -18,7 +18,7 @@
     "flow": "flow src",
     "test": "cross-env TZ=America/New_York jest src",
     "ci-lint": "yarn lint && yarn flow",
-    "ci-test-common": "yarn test",
+    "ci-test-common": "yarn test --runInBand",
     "ci-test-tool": "yalc publish && cd tool && yarn && yalc add @ledgerhq/live-common && yarn build && yarn link && yarn test"
   },
   "files": [

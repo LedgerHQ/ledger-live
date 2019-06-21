@@ -15,6 +15,20 @@ export type BalanceHistoryWithCountervalue = Array<{
   countervalue: BigNumber
 }>;
 
+export type ValueChange = {
+  percentage: ?BigNumber, // value from 0 to 1. not defined if not meaningful
+  value: BigNumber // delta of change
+};
+
+export type AccountPortfolio = {
+  history: BalanceHistoryWithCountervalue,
+  countervalueAvailable: boolean,
+  countervalueReceiveSum: BigNumber,
+  countervalueSendSum: BigNumber,
+  cryptoChange: ValueChange, // how much the account changes. value is in the account currency
+  countervalueChange: ValueChange // calculates the ROI. value in the countervalue unit.
+};
+
 export type Portfolio = {
   balanceHistory: BalanceHistory,
   balanceAvailable: boolean,
@@ -22,7 +36,10 @@ export type Portfolio = {
   unavailableCurrencies: (CryptoCurrency | TokenCurrency)[],
   accounts: (Account | TokenAccount)[],
   range: PortfolioRange,
-  histories: BalanceHistoryWithCountervalue[]
+  histories: BalanceHistoryWithCountervalue[],
+  countervalueReceiveSum: BigNumber,
+  countervalueSendSum: BigNumber,
+  countervalueChange: ValueChange // calculates the ROI. value in the countervalue unit.
 };
 
 export type PortfolioRange = "year" | "month" | "week";

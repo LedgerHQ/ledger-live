@@ -27,9 +27,11 @@ import type {
 import type { Operation, OperationRaw, OperationType } from "./operation";
 
 import type {
+  AccountPortfolio,
   BalanceHistoryWithCountervalue,
   BalanceHistory,
   PortfolioRange,
+  ValueChange,
   Portfolio,
   AssetsDistribution
 } from "./portfolio";
@@ -54,6 +56,8 @@ export type {
   FiatCurrency,
   CryptoCurrency,
   ExplorerView,
+  AccountPortfolio,
+  ValueChange,
   BalanceHistory,
   BalanceHistoryWithCountervalue,
   PortfolioRange,
