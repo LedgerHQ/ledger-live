@@ -195,7 +195,7 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
       cryptoChange.percentage = null;
       countervalueChange.percentage =
         // in case there were no receive, we just track the market change
-        countervalueReceiveSum.isZero()
+        countervalueReceiveSum.isZero() && account.operations.length > 0
           ? cvRef &&
             lastPointRef &&
             meaningfulPercentage(lastPointRef.minus(cvRef), cvRef)
