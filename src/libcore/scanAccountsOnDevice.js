@@ -12,7 +12,11 @@ import {
   isIterableDerivationMode,
   getMandatoryEmptyAccountSkip
 } from "../derivation";
-import { getWalletName, shouldShowNewAccount } from "../account";
+import {
+  getWalletName,
+  shouldShowNewAccount,
+  isAccountEmpty
+} from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
 import { open } from "../hw";
 import getAddress from "../hw/getAddress";
@@ -77,7 +81,7 @@ async function scanNextAccount(props: {
 
   if (isUnsubscribed()) return;
 
-  const isEmpty = account.operations.length === 0;
+  const isEmpty = isAccountEmpty(account);
   const shouldSkip =
     (isEmpty && !showNewAccount) ||
     !derivationModeSupportsIndex(derivationMode, accountIndex);
