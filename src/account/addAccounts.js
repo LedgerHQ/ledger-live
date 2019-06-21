@@ -83,7 +83,11 @@ export function groupAddAccounts(
   });
 
   scannedAccountsWithoutMigrate.forEach(acc => {
-    const existingAccount = existingAccounts.find(a => a.id === acc.id);
+    const existingAccount = existingAccounts.find(
+      a =>
+        a.id === acc.id ||
+        (a.freshAddress && a.freshAddress === acc.freshAddress)
+    );
     const empty = isAccountEmpty(acc);
     if (existingAccount) {
       if (empty) {
