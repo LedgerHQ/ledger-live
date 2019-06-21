@@ -21,7 +21,8 @@ const fs = require("fs");
 export default (arg: {
   // the actual @ledgerhq/ledger-core lib or a function that returns it
   lib: any,
-  dbPath: string
+  dbPath: string,
+  dbPassword?: string
 }) => {
   let lib;
   const lazyLoad = () => {
@@ -33,6 +34,10 @@ export default (arg: {
     }
   };
   const { dbPath } = arg;
+  const dbPassword =
+    typeof arg.dbPassword === "undefined"
+      ? getEnv("LIBCORE_PASSWORD")
+      : arg.dbPassword;
 
   const loadCore = (): Promise<Core> => {
     lazyLoad();
@@ -220,7 +225,7 @@ export default (arg: {
 
       walletPoolInstance = new lib.NJSWalletPool(
         "ledgerlive",
-        getEnv("LIBCORE_PASSWORD"),
+        dbPassword,
         NJSHttpClient,
         NJSWebSocketClient,
         NJSPathResolver,
