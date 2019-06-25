@@ -732,15 +732,6 @@ export const accountBridge: AccountBridge<Transaction> = {
       };
     }),
 
-  addPendingOperation: (account, operation) => ({
-    ...account,
-    pendingOperations: [operation].concat(
-      account.pendingOperations.filter(
-        o => o.transactionSequenceNumber === operation.transactionSequenceNumber
-      )
-    )
-  }),
-
   prepareTransaction: (account, transaction) => Promise.resolve(transaction),
 
   getDefaultEndpointConfig: () => defaultEndpoint,

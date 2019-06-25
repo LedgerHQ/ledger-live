@@ -174,11 +174,6 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
       };
     });
 
-  const addPendingOperation = (account, optimisticOperation) => ({
-    ...account,
-    pendingOperations: [...account.pendingOperations, optimisticOperation]
-  });
-
   const prepareTransaction = (account, transaction) =>
     Promise.resolve(transaction);
 
@@ -200,7 +195,6 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
     getTotalSpent,
     getMaxAmount,
     signAndBroadcast,
-    addPendingOperation,
     prepareTransaction
   };
 }

@@ -141,29 +141,11 @@ export interface AccountBridge<Transaction> {
     deviceId: DeviceId
   ): Observable<SignAndBroadcastEvent>;
 
-  // Implement an optimistic response for signAndBroadcast.
-  // it should add the operation in account.pendingOperations.
-  // if you do implement this, make sure to properly handle cleanup of pendingOperations (likely to do during sync, for instance make sure to clean "zombies" transaction and transaction that actually appear in .operations)
-  // DEPRECATED: use the one exported in lib/account
-  /*
-  addPendingOperation?: (
-    account: Account,
-    optimisticOperation: Operation
-  ) => Account;
-  */
-
   // some coins will have a way to configure the API it hits.
   // it is stored in account.endpointConfig
   // this allow to customize it from UI. there is a default endpoint and a way to validate a new one.
   getDefaultEndpointConfig?: () => string;
   validateEndpointConfig?: (endpointConfig: string) => Promise<void>;
-
-  // TODO we need a better paradigm for this
-  // DEPRECATED for prepareTransaction
-  estimateGasLimit?: (
-    account: Account,
-    address: string
-  ) => Promise<number | BigNumber>; // TODO drop number support
 
   // prepare the remaining missing part of a transaction and emit it
   // Beware that transaction can be changed so the point is you can unsubscribe this
