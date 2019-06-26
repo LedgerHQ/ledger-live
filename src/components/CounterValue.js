@@ -4,7 +4,6 @@ import type { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
 import type { State } from "../reducers";
-import Placeholder from "./Placeholder";
 import {
   counterValueCurrencySelector,
   intermediaryCurrency,
@@ -12,6 +11,7 @@ import {
 } from "../reducers/settings";
 import CounterValues from "../countervalues";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import LText from "./LText";
 
 type OwnProps = {
   // wich market to query
@@ -87,7 +87,7 @@ class CounterValue extends Component<Props> {
     );
 
     if (!value) {
-      return withPlaceholder ? <Placeholder {...placeholderProps} /> : null;
+      return withPlaceholder ? <LText style={{ fontSize: 16 }}>-</LText> : null;
     }
 
     if (Wrapper) {
