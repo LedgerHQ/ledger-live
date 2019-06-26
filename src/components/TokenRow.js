@@ -11,7 +11,6 @@ import colors from "../colors";
 
 type Props = {
   account: TokenAccount,
-  nested: boolean,
   onTokenAccountPress: TokenAccount => *,
 };
 
@@ -29,7 +28,7 @@ class TokenRow extends PureComponent<Props> {
     } = this.props;
 
     return (
-      <View style={styles.root}>
+      <View>
         <RectButton onPress={() => onTokenAccountPress(account)}>
           <View accessible style={styles.innerContainer}>
             <CurrencyIcon size={24} currency={token} />
@@ -78,12 +77,9 @@ const AccountCv = ({ children }: { children: * }) => (
 export default TokenRow;
 
 const styles = StyleSheet.create({
-  root: {
-    backgroundColor: colors.white,
-  },
   innerContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     flexDirection: "row",
     alignItems: "center",
     overflow: "visible",

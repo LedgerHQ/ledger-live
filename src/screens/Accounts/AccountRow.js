@@ -33,8 +33,8 @@ type Props = {
 };
 
 type State = {
-  collapsed: boolean
-}
+  collapsed: boolean,
+};
 
 const placeholderProps = {
   width: 40,
@@ -73,7 +73,14 @@ class AccountRow extends PureComponent<Props, State> {
 
     return (
       <View style={styles.root}>
-        <View style={[styles.accountRowCard, { elevation: (account.tokenAccounts && this.state.collapsed) ? 2 : 1 }]}>
+        <View
+          style={[
+            styles.accountRowCard,
+            {
+              elevation: account.tokenAccounts && this.state.collapsed ? 2 : 1,
+            },
+          ]}
+        >
           <RectButton onPress={this.onAccountPress}>
             <View accessible style={styles.innerContainer}>
               <CurrencyIcon size={24} currency={account.currency} />

@@ -577,6 +577,9 @@
     "selectAll": "Select all"
   },
   "account": {
+    "tokens": {
+      "howTo": "To add tokens accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+    },
     "send": "Send",
     "receive": "Receive",
     "lastOperations": "Last operations",
