@@ -26,7 +26,7 @@ export async function getTransactionStatus(
   let maxAmount;
   if (useAllAmount) maxAmount = await bridge.getMaxAmount(account, transaction);
 
-  const estimatedFees = totalSpent - (maxAmount || amount);
+  const estimatedFees = totalSpent.minus(maxAmount || amount);
 
   const showFeeWarning =
     (amount &&
