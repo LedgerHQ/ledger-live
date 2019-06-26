@@ -663,7 +663,9 @@
       "syncPending": "Synchronizing...",
       "upToDate": "Synchronized",
       "error": "Error",
-      "queued": "Awaiting"
+      "queued": "Awaiting",
+      "showTokens": "Show {{length}} tokens",
+      "hideTokens": "Hide tokens"
     }
   },
   "distribution": {

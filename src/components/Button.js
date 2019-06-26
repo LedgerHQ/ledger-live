@@ -232,7 +232,7 @@ class Button extends PureComponent<
           ) : null}
 
           {IconRight ? (
-            <View style={title ? { marginRight: 10 } : {}}>
+            <View style={title ? { marginLeft: 10 } : {}}>
               <IconRight size={16} color={iconColor} />
             </View>
           ) : null}
