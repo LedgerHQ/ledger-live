@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "7.0.0-beta.0",
+  "version": "7.0.0-beta.1",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -78,11 +78,11 @@
     "cross-env": "^5.2.0",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^5.1.0",
+    "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-flowtype": "^3.11.1",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
-    "flow-bin": "^0.101.1",
+    "flow-bin": "^0.102.0",
     "flow-copy-source": "^2.0.6",
     "flow-typed": "^2.5.2",
     "glob": "^7.1.4",
