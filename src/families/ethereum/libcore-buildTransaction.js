@@ -12,6 +12,8 @@ import type { CoreEthereumLikeTransaction } from "./types";
 
 const ethereumTransferMethodID = Buffer.from("a9059cbb", "hex");
 
+const ZERO = BigNumber(0);
+
 export async function ethereumBuildTransaction({
   account,
   core,
@@ -43,7 +45,9 @@ export async function ethereumBuildTransaction({
   const recipient = eip55.encode(transaction.recipient);
 
   const { gasPrice, gasLimit } = transaction;
-  if (!gasPrice || !gasLimit) throw new FeeNotLoaded();
+  if (!gasPrice || !gasLimit || !BigNumber(gasLimit).gt(ZERO)) {
+    throw new FeeNotLoaded();
+  }
 
   const gasPriceAmount = await bigNumberToLibcoreAmount(
     core,
