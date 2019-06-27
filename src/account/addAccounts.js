@@ -30,6 +30,7 @@ export function findAccountMigration(
   if (type === "ethereumjs") {
     return scannedAccounts.find(
       a =>
+        a.id !== account.id && // a migration assume an id changes
         a.currency === account.currency &&
         a.freshAddress === account.freshAddress
     );
