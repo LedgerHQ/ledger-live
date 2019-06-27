@@ -799,10 +799,10 @@
     "@ledgerhq/errors" "^4.63.2"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^7.0.0-beta.2":
-  version "7.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.2.tgz#a3a48459b39db0c9219f5c2cf08e413b00ad9c26"
-  integrity sha512-8P1zI5J7nmKP4ExlDUYSYy8t/i2/MJstomZeq7VnNiP/RhoZ7dUf8WIDUeejItkQetldNaysJkpl3CYkTkwoOQ==
+"@ledgerhq/live-common@^7.0.0-beta.3":
+  version "7.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.3.tgz#1c7fe0adbc8168ecfdc42168b181b991d70d35f5"
+  integrity sha512-WCEZJhs+0vkjZrkQZtNVUQE1UL6u9SR4WKN9v5iOfnzHRKfmrekPL97q/o984tfbhshSHNLbhCKDHKkzl0X8pw==
   dependencies:
     "@ledgerhq/errors" "4.63.2"
     "@ledgerhq/hw-app-btc" "4.63.3"
