@@ -28,7 +28,11 @@ export function findAccountMigration(
   if (!canBeMigrated(account)) return;
   const { type } = decodeAccountId(account.id);
   if (type === "ethereumjs") {
-    return scannedAccounts.find(a => a.freshAddress === account.freshAddress);
+    return scannedAccounts.find(
+      a =>
+        a.currency === account.currency &&
+        a.freshAddress === account.freshAddress
+    );
   }
 }
 
@@ -86,7 +90,9 @@ export function groupAddAccounts(
     const existingAccount = existingAccounts.find(
       a =>
         a.id === acc.id ||
-        (a.freshAddress && a.freshAddress === acc.freshAddress)
+        (a.freshAddress &&
+          a.currency === acc.currency &&
+          a.freshAddress === acc.freshAddress)
     );
     const empty = isAccountEmpty(acc);
     if (existingAccount) {
