@@ -22,8 +22,10 @@ import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
+import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
+import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 
-const SEARCH_KEYS = ["name", "unit.code"];
+const SEARCH_KEYS = ["name", "unit.code", "token.name"];
 
 type Props = {
   accounts: Account[],
@@ -48,35 +50,41 @@ class SendFundsSelectAccount extends Component<Props, State> {
     ),
   };
 
-  renderList = items => (
-    <FlatList
-      data={items}
-      renderItem={this.renderItem}
-      keyExtractor={this.keyExtractor}
-      showsVerticalScrollIndicator={false}
-      keyboardDismissMode="on-drag"
-      contentContainerStyle={styles.list}
-    />
-  );
-
-  renderItem = ({ item: account }: { item: Account | TokenAccount }) => {
+  renderList = items => {
     const { accounts } = this.props;
-    const parentAccount =
-      account.type === "TokenAccount"
-        ? accounts.find(a => a.id === account.parentId)
-        : null;
+    const formatedList = formatSearchResults(items, accounts);
+
     return (
-      <AccountCard
-        account={account}
-        parentAccount={parentAccount}
-        style={styles.cardStyle}
-        onPress={() => {
-          this.props.navigation.navigate("SendSelectRecipient", {
-            accountId: account.id,
-            parentId: parentAccount && parentAccount.id,
-          });
-        }}
+      <FlatList
+        data={formatedList}
+        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={styles.list}
       />
+    );
+  };
+
+  renderItem = ({ item: result }: { item: SearchResult }) => {
+    const { account, match } = result;
+    return (
+      <View
+        style={account.type === "Account" ? undefined : styles.tokenCardStyle}
+      >
+        <AccountCard
+          disabled={!match}
+          account={account}
+          style={styles.cardStyle}
+          onPress={() => {
+            this.props.navigation.navigate("SendSelectRecipient", {
+              accountId: account.id,
+              parentId:
+                account.type === "TokenAccount" ? account.parentId : undefined,
+            });
+          }}
+        />
+      </View>
     );
   };
 
@@ -88,7 +96,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
     </View>
   );
 
-  keyExtractor = item => item.id;
+  keyExtractor = item => item.account.id;
 
   render() {
     const { allAccounts } = this.props;
@@ -120,6 +128,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  tokenCardStyle: {
+    marginLeft: 26,
+    paddingLeft: 7,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.fog,
   },
   searchContainer: {
     paddingTop: 16,
