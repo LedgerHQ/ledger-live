@@ -284,7 +284,8 @@ test("sub magnitude", () => {
       getCryptoCurrencyById("bitcoin").units[0],
       BigNumber(9.123456),
       {
-        subMagnitude: 2
+        subMagnitude: 2,
+        disableRounding: true
       }
     )
   ).toBe("0.0000000912");
@@ -394,6 +395,19 @@ test("formatter can change locale", () => {
   ).toBe("- USD 12,345.67");
 });
 
+test("formatter does not show very small value in rounding mode", () => {
+  expect(
+    formatCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], BigNumber(1))
+  ).toBe("0");
+
+  expect(
+    formatCurrencyUnit(
+      getCryptoCurrencyById("ethereum").units[0],
+      BigNumber(1000)
+    )
+  ).toBe("0");
+});
+
 test("formatShort", () => {
   expect(
     formatShort(getFiatCurrencyByTicker("EUR").units[0], BigNumber(123456789))
@@ -404,7 +418,7 @@ test("formatShort", () => {
 
   expect(
     formatShort(getCryptoCurrencyById("ethereum").units[0], BigNumber(600000))
-  ).toBe("0.0000000000006");
+  ).toBe("0");
 });
 
 test("chopCurrencyUnitDecimals", () => {

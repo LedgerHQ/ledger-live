@@ -75,7 +75,8 @@ export function formatCurrencyUnitFragment(
           // dynamic max number of digits based on the value itself. to only show significant part
           Math.min(
             4 - Math.round(Math.log10(floatValueAbs.toNumber())),
-            magnitude + subMagnitude
+            magnitude + subMagnitude,
+            8
           )
         )
       );
