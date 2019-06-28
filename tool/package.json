@@ -23,6 +23,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "flow-bin": "^0.102.0",
+    "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
     "qrloop": "^0.8.1",
     "rxjs": "^6.5.2",
