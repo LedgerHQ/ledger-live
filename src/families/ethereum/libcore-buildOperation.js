@@ -12,7 +12,8 @@ async function ethereumBuildOperation({
   const ethereumLikeTransaction = await ethereumLikeOperation.getTransaction();
   const status = await ethereumLikeTransaction.getStatus();
   const hash = await ethereumLikeTransaction.getHash();
-  const out: $Shape<Operation> = { hash };
+  const transactionSequenceNumber = await ethereumLikeTransaction.getNonce();
+  const out: $Shape<Operation> = { hash, transactionSequenceNumber };
   if (status === 0) {
     out.hasFailed = true;
   }

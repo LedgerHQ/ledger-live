@@ -399,7 +399,6 @@ test("formatter does not show very small value in rounding mode", () => {
   expect(
     formatCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], BigNumber(1))
   ).toBe("0");
-
   expect(
     formatCurrencyUnit(
       getCryptoCurrencyById("ethereum").units[0],
