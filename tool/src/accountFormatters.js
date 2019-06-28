@@ -1,8 +1,15 @@
 // @flow
 
-import { toAccountRaw } from "@ledgerhq/live-common/lib/account";
+import {
+  toAccountRaw,
+  getAccountCurrency
+} from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+
+// TODO move to live common
+const isSignificantAccount = acc =>
+  acc.balance.gt(10 ** (getAccountCurrency(acc).units[0].magnitude - 6));
 
 const formatOp = unitByAccountId => {
   const format = (op, level = 0) => {
@@ -80,5 +87,10 @@ const cliFormat = (account, summaryOnly) => {
 export default {
   json: account => JSON.stringify(toAccountRaw(account)),
   default: account => cliFormat(account),
-  summary: account => cliFormat(account, true)
+  summary: account => cliFormat(account, true),
+  significantTokenTickers: account =>
+    (account.tokenAccounts || [])
+      .filter(isSignificantAccount)
+      .map(ta => ta.token.ticker)
+      .join("\n")
 };

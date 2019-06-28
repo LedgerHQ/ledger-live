@@ -1,10 +1,16 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
 
-const inferAmount = ({ units }, str) => {
+const inferAmount = (account, str) => {
+  const currency = getAccountCurrency(account);
+  const { units } = currency;
+  if (str.endsWith("%")) {
+    return account.balance.times(0.01 * parseFloat(str.replace("%", ""), 10));
+  }
   const lowerCase = str.toLowerCase();
   for (let i = 0; i < units.length; i++) {
     const unit = units[i];
@@ -66,10 +72,8 @@ export async function inferTransaction(account, opts) {
         }
       : account.currency.family === "ethereum"
       ? {
-          gasPrice: inferAmount(account.currency, opts.gasPrice || "2gwei"),
-          gasLimit: new BigNumber(
-            opts.gasLimit === undefined ? 0 : opts.gasLimit
-          )
+          gasPrice: inferAmount(account, opts.gasPrice || "2gwei"),
+          gasLimit: opts.gasLimit && new BigNumber(opts.gasLimit)
         }
       : null;
 
@@ -79,31 +83,7 @@ export async function inferTransaction(account, opts) {
     tShared.useAllAmount = true;
   }
 
-  if (opts["self-transaction"]) {
-    res = {
-      transaction: {
-        amount: opts.amount
-          ? inferAmount(account.currency, opts.amount)
-          : inferAmount(account.currency, "0.001"),
-        recipient: account.freshAddress,
-        ...tShared
-      }
-    };
-  } else {
-    if (!opts.amount && !tShared.useAllAmount)
-      throw new Error("amount is required");
-    if (!opts.recipient) throw new Error("recipient is required");
-    res = {
-      transaction: {
-        amount: tShared.useAllAmount
-          ? BigNumber(0)
-          : inferAmount(account.currency, opts.amount),
-        recipient: opts.recipient,
-        ...tShared
-      }
-    };
-  }
-
+  let acc;
   if (opts.token) {
     const tkn = opts.token.toLowerCase();
     const tokenAccounts = account.tokenAccounts || [];
@@ -118,13 +98,45 @@ export async function inferTransaction(account, opts) {
           tokenAccounts.map(t => t.token.ticker).join(", ")
       );
     }
-    res.transaction.tokenAccountId = tokenAccount.id;
+    acc = tokenAccount;
+    tShared.tokenAccountId = tokenAccount.id;
+  } else {
+    acc = account;
   }
 
-  if (!("gasLimit" in res.transaction)) {
-    res.transaction.gasLimit = await apiForCurrency(
-      account.currency
-    ).estimateGasLimitForERC20(res.transaction.recipient);
+  if (opts["self-transaction"]) {
+    res = {
+      transaction: {
+        amount: opts.amount
+          ? inferAmount(acc, opts.amount)
+          : inferAmount(acc, "0.001"),
+        recipient: account.freshAddress,
+        ...tShared
+      }
+    };
+  } else {
+    if (!opts.amount && !tShared.useAllAmount)
+      throw new Error("amount is required");
+    if (!opts.recipient) throw new Error("recipient is required");
+    res = {
+      transaction: {
+        amount: tShared.useAllAmount
+          ? BigNumber(0)
+          : inferAmount(acc, opts.amount),
+        recipient: opts.recipient,
+        ...tShared
+      }
+    };
+  }
+
+  if (account.currency.family === "ethereum" && !res.transaction.gasLimit) {
+    res.transaction.gasLimit = BigNumber(
+      await apiForCurrency(account.currency).estimateGasLimitForERC20(
+        acc.type === "TokenAccount"
+          ? acc.token.contractAddress
+          : res.transaction.recipient
+      )
+    );
   }
 
   return res;
