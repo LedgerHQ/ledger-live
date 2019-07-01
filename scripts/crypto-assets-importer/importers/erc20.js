@@ -27,6 +27,7 @@ module.exports = {
       const magnitude = common.decimals;
       const contractAddress = common.contract_address;
       const parentCurrency = inferParentCurrency(common);
+      const disableCountervalue = !!common.disable_countervalue;
       try {
         invariant(
           typeof parentCurrency === "string" && parentCurrency,
@@ -77,7 +78,8 @@ module.exports = {
         magnitude,
         name,
         ledgerSignature,
-        contractAddress
+        contractAddress,
+        disableCountervalue
       ];
     })
 };

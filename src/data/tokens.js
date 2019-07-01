@@ -12,7 +12,8 @@ const convertERC20 = ([
   magnitude,
   name,
   ledgerSignature,
-  contractAddress
+  contractAddress,
+  disableCountervalue
 ]): TokenCurrency => ({
   type: "TokenCurrency",
   id: "ethereum/erc20/" + token,
@@ -22,7 +23,8 @@ const convertERC20 = ([
   tokenType: "erc20",
   name,
   ticker,
-  disableCountervalue: !!findCryptoCurrencyByTicker(ticker), // if it collides, disable
+  disableCountervalue:
+    !!disableCountervalue || !!findCryptoCurrencyByTicker(ticker), // if it collides, disable
   units: [
     {
       name,

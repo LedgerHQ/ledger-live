@@ -33,6 +33,7 @@ axios
           const fiatCollisions = all.filter(
             a =>
               findFiatCurrencyByTicker(a[2]) &&
+              !a[7] &&
               (WARN_IF_COUNTERVALUES
                 ? countervaluesTickers.includes(a[2])
                 : true)
@@ -40,12 +41,14 @@ axios
           const cryptoCollisions = all.filter(
             a =>
               findCryptoCurrencyByTicker(a[2]) &&
+              !a[7] &&
               (WARN_IF_COUNTERVALUES
                 ? countervaluesTickers.includes(a[2])
                 : true)
           );
           const groups = {};
           all.forEach(a => {
+            if (a[7]) return;
             groups[a[2]] = (groups[a[2]] || []).concat([a]);
           });
           const dupTickers = Object.keys(groups).filter(
