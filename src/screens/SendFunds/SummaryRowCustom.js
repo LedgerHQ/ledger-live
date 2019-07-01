@@ -2,7 +2,6 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import LText from "../../components/LText/index";
 import colors from "../../colors";
-import getWindowDimensions from "../../logic/getWindowDimensions";
 
 export default class SummaryRowCustom extends PureComponent<{
   onPress: () => void,
@@ -13,9 +12,9 @@ export default class SummaryRowCustom extends PureComponent<{
   render() {
     const { label, data, iconLeft } = this.props;
     return (
-      <View style={[styles.root]}>
+      <View style={styles.root}>
         <View style={styles.iconLeft}>{iconLeft}</View>
-        <View>
+        <View style={styles.right}>
           <LText style={styles.labelStyle}>{label}</LText>
           {data}
         </View>
@@ -28,8 +27,6 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
     paddingVertical: 16,
-    // NOTE: temp solution
-    width: getWindowDimensions().width - 48,
   },
   labelStyle: {
     fontSize: 16,
@@ -37,5 +34,8 @@ const styles = StyleSheet.create({
   },
   iconLeft: {
     paddingRight: 16,
+  },
+  right: {
+    flex: 1,
   },
 });
