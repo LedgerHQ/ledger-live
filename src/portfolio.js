@@ -275,7 +275,7 @@ export function getPortfolio(
   const accounts = flattenAccounts(topAccounts);
   const availableAccounts = [];
   const unavailableAccounts = [];
-  const histories = [];
+  const histories: BalanceHistoryWithCountervalue[] = [];
   const changes: BigNumber[] = [];
   const countervalueReceiveSums: BigNumber[] = [];
   const countervalueSendSums: BigNumber[] = [];

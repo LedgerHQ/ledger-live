@@ -641,4 +641,14 @@ function createCounterValues<State>({
   };
 }
 
-export default createCounterValues;
+let instance: ?Module<any>;
+
+export const implementCountervalues = <State>(input: Input<State>) => {
+  instance = createCounterValues(input);
+};
+
+export const getCountervalues = () => {
+  const inst = instance;
+  invariant(inst, "implementCountervalues was not yet called");
+  return inst;
+};
