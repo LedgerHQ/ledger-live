@@ -4,6 +4,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
+// $FlowFixMe
 import { ScrollView } from "react-navigation";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Config from "react-native-config";

@@ -110,6 +110,7 @@ import DisplayResult from "./screens/ImportAccounts/DisplayResult";
 import FallBackCameraScreen from "./screens/ImportAccounts/FallBackCameraScreen";
 import OnboardingOrNavigator from "./screens/OnboardingOrNavigator";
 import AdvancedLogs from "./screens/AccountSettings/AdvancedLogs";
+import Distribution from "./screens/Distribution";
 
 // TODO look into all FlowFixMe
 
@@ -118,25 +119,39 @@ const SettingsStack = createStackNavigator(
     Settings,
     CountervalueSettings,
     RateProviderSettings,
+    // $FlowFixMe
     GeneralSettings,
+    // $FlowFixMe
     AboutSettings,
+    // $FlowFixMe
     HelpSettings,
     CurrenciesList,
     CurrencySettings,
+    // $FlowFixMe
     RepairDevice,
+    // $FlowFixMe
     ExperimentalSettings,
+    // $FlowFixMe
     DebugSettings,
+    // $FlowFixMe
     DebugDevices,
     DebugMocks,
     DebugBLE,
+    // $FlowFixMe
     DebugBLEBenchmark,
+    // $FlowFixMe
     DebugCrash,
     DebugStore,
     DebugHttpTransport,
+    // $FlowFixMe
     DebugIcons,
+    // $FlowFixMe
     DebugLottie,
+    // $FlowFixMe
     DebugSVG,
+    // $FlowFixMe
     DebugWSImport,
+    // $FlowFixMe
     BenchmarkQRStream,
   },
   stackNavigatorConfig,
@@ -183,6 +198,7 @@ ManagerMain.navigationOptions = {
 
 const ManagerStack = createStackNavigator(
   {
+    // $FlowFixMe
     Manager,
     ManagerMain,
   },
@@ -211,6 +227,7 @@ ManagerStack.navigationOptions = ({ navigation }) => ({
 const AccountsStack = createStackNavigator(
   {
     Accounts,
+    // $FlowFixMe
     Account,
   },
   stackNavigatorConfig,
@@ -290,9 +307,13 @@ const addAccountsNavigatorConfig = {
 
 const AddAccounts = createStackNavigator(
   {
+    // $FlowFixMe
     AddAccountsSelectCrypto,
+    // $FlowFixMe
     AddAccountsSelectDevice,
+    // $FlowFixMe
     AddAccountsAccounts,
+    // $FlowFixMe
     AddAccountsSuccess,
     EditAccountName,
   },
@@ -305,8 +326,11 @@ AddAccounts.navigationOptions = {
 
 const SendFunds = createStackNavigator(
   {
+    // $FlowFixMe
     SendFundsMain,
+    // $FlowFixMe
     SendSelectRecipient,
+    // $FlowFixMe
     SendAmount,
     SendSummary,
     SendConnectDevice,
@@ -327,10 +351,15 @@ SendFunds.navigationOptions = ({ navigation }) => ({
 
 const FirmwareUpdate = createStackNavigator(
   {
+    // $FlowFixMe
     FirmwareUpdateReleaseNotes,
+    // $FlowFixMe
     FirmwareUpdateCheckId,
+    // $FlowFixMe
     FirmwareUpdateMCU,
+    // $FlowFixMe
     FirmwareUpdateConfirmation,
+    // $FlowFixMe
     FirmwareUpdateFailure,
   },
   closableStackNavigatorConfig,
@@ -360,10 +389,13 @@ AccountSettings.navigationOptions = {
 const ImportAccounts = createStackNavigator(
   {
     ScanAccounts: {
+      // $FlowFixMe
       screen: ScanAccounts,
       navigationOptions: TransparentHeaderNavigationOptions,
     },
+    // $FlowFixMe
     DisplayResult,
+    // $FlowFixMe
     FallBackCameraScreen,
   },
   closableStackNavigatorConfig,
@@ -375,6 +407,7 @@ ImportAccounts.navigationOptions = {
 
 const PasswordAddFlow = createStackNavigator(
   {
+    // $FlowFixMe
     PasswordAdd,
     ConfirmPassword,
   },
@@ -410,10 +443,14 @@ const BaseNavigator = createStackNavigator(
     EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
+    // $FlowFixMe
+    Distribution,
     ScanRecipient: {
+      // $FlowFixMe
       screen: ScanRecipient,
       navigationOptions: TransparentHeaderNavigationOptions,
     },
+    // $FlowFixMe
     FallbackCameraSend,
     ...sendScreens,
   },
@@ -425,14 +462,23 @@ const BaseNavigator = createStackNavigator(
 
 const Onboarding = createStackNavigator({
   OnboardingStepChooseDevice,
+  // $FlowFixMe
   OnboardingStepGetStarted,
+  // $FlowFixMe
   OnboardingStepSetupPin,
+  // $FlowFixMe
   OnboardingStepWriteRecovery,
+  // $FlowFixMe
   OnboardingStepSecurityChecklist,
+  // $FlowFixMe
   OnboardingStepPairNew,
+  // $FlowFixMe
   OnboardingStepScanQR,
+  // $FlowFixMe
   OnboardingStepPassword,
+  // $FlowFixMe
   OnboardingStepShareData,
+  // $FlowFixMe
   OnboardingStepFinish,
 });
 
@@ -461,5 +507,6 @@ const RootNavigator = createSwitchNavigator({
 
 RootNavigator.navigationOptions = { header: null };
 
+// $FlowFixMe
 const AppContainer = createAppContainer(RootNavigator);
 export default AppContainer;

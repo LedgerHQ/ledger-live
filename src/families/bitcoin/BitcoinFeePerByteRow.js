@@ -1,14 +1,13 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { Trans, translate } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 
 import colors from "../../colors";
-import { getAccountBridge } from "../../bridge";
-import type { Transaction } from "../../bridge/RNLibcoreAccountBridge";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 

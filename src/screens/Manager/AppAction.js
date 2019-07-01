@@ -192,7 +192,12 @@ class AppAction extends PureComponent<
     );
 
     return (
-      <BottomModal id={action.type + "AppActionModal"} isOpened={isOpened}>
+      <BottomModal
+        id={action.type + "AppActionModal"}
+        preventBackdropClick={pending}
+        onClose={this.onClose}
+        isOpened={isOpened}
+      >
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <View style={styles.body}>
             <View style={styles.headIcon}>
@@ -235,18 +240,16 @@ class AppAction extends PureComponent<
               disabled={pending}
               title={buttonTitle}
             />
-            {!error &&
-              !pending &&
-              installing && (
-                <Button
-                  event="ManagerAppActionDoneGoToAccounts"
-                  type="primary"
-                  containerStyle={[styles.button, styles.buttonRight]}
-                  onPress={onOpenAccounts}
-                  disabled={pending}
-                  title={<Trans i18nKey="AppAction.install.done.accounts" />}
-                />
-              )}
+            {!error && !pending && installing && (
+              <Button
+                event="ManagerAppActionDoneGoToAccounts"
+                type="primary"
+                containerStyle={[styles.button, styles.buttonRight]}
+                onPress={onOpenAccounts}
+                disabled={pending}
+                title={<Trans i18nKey="AppAction.install.done.accounts" />}
+              />
+            )}
           </View>
         </SafeAreaView>
         <Touchable

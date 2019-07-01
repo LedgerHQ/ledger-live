@@ -25,34 +25,33 @@ const chainSteps = (
   onDoneO: Observable<number>,
 ): Observable<StepEvent> =>
   Observable.create(o => {
-    const sub = steps
-      .reduce(
-        (meta: Observable<*>, step: Step, i: number) =>
-          meta.pipe(
-            tap(meta => {
-              // we emit entering a new step
-              o.next({ type: "step", step: i, meta });
-            }),
-            mergeMap(meta =>
-              // for a given step, we chain the previous step result in. we also provide events of onDone taps (allow to interrupt the UI).
-              runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
-            ),
-            tap(meta => {
-              // we need to emit globally the meta incremental updates
-              o.next({ type: "meta", meta });
-            }),
-            last(), // at the end, we only care about the last meta
+    const obs: Observable<*> = steps.reduce(
+      (meta: Observable<*>, step: Step, i: number) =>
+        meta.pipe(
+          tap(meta => {
+            // we emit entering a new step
+            o.next({ type: "step", step: i, meta });
+          }),
+          mergeMap(meta =>
+            // for a given step, we chain the previous step result in. we also provide events of onDone taps (allow to interrupt the UI).
+            runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
           ),
-        from([meta]),
-      )
-      .subscribe({
-        complete: () => {
-          o.complete();
-        },
-        error: e => {
-          o.error(e);
-        },
-      });
+          tap(meta => {
+            // we need to emit globally the meta incremental updates
+            o.next({ type: "meta", meta });
+          }),
+          last(), // at the end, we only care about the last meta
+        ),
+      from([meta]),
+    );
+    const sub = obs.subscribe({
+      complete: () => {
+        o.complete();
+      },
+      error: e => {
+        o.error(e);
+      },
+    });
 
     return () => {
       sub.unsubscribe();
@@ -88,7 +87,7 @@ class DeviceJob extends Component<
 
   sub: *;
 
-  onDoneSubject = new Subject();
+  onDoneSubject: Subject<number> = new Subject();
 
   componentDidMount() {
     const { meta } = this.props;

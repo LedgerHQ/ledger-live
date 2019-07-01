@@ -8,5 +8,5 @@ import { createContext } from "react";
 //
 // issue has been raised here:
 // https://github.com/kmagiera/react-native-gesture-handler/issues/139
-//
+// $FlowFixMe
 export default createContext(false);

@@ -249,7 +249,8 @@
       "description": "Uninstall and reinstall the {{managerAppName}} app in the Manager"
     },
     "UserRefusedAllowManager": {
-      "title": "Manager refused on device"
+      "title": "Manager refused on device",
+      "description": "You need to allow the manager on your device in order to access it, please try again"
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
@@ -331,7 +332,8 @@
     "taxtoken": "Automated cryptocurrency tax and cost basis software for US citizens.",
     "thorswap": "ThorSwap is an instant, safe and fair crypto asset market powered by decentralized atomic swap technologies. It is the most convenient way to start trading, no registration or KYC for small amount transactions.",
     "bitpanda": "Bitpanda is Europe’s leading retail broker for buying and selling Bitcoin, Ethereum, IOTA and many more. Deposit money using your credit card, SOFORT-Transfer, NETELLER, and other options.",
-    "exmo": "Founded in 2013 and based in London, Kiev, Barcelona, and Moscow, EXMO is #1 exchange in Eastern Europe, and one of the world's largest global exchanges in volume and liquidity."
+    "exmo": "Founded in 2013 and based in London, Kiev, Barcelona, and Moscow, EXMO is #1 exchange in Eastern Europe, and one of the world's largest global exchanges in volume and liquidity.",
+    "ndax": "Canada’s leading cryptocurrency exchange, NDAX provides a regulated, secure and intuitive platform to buy and sell Bitcoin, Litecoin, Ethereum, XRP and other digital assets. Other key features include advanced trading, free deposits, and an institutional-grade custody solution via Ledger Vault."
   },
   "signout": {
     "confirm": "Are you sure you want to sign out?",
@@ -374,8 +376,7 @@
     }
   },
   "reset": {
-    "description": "Reset all Ledger Live data, including accounts and settings? The private keys providing access to your crypto assets remain secure on your device and Recovery sheet.",
-    "button": "Reset"
+    "description": "Please uninstall and reinstall the app from your phone to remove Ledger Live data, including accounts and settings."
   },
   "onboarding": {
     "stepCount": "{{current}} of {{total}}",
@@ -479,7 +480,7 @@
       "cta": "Open Ledger Live"
     },
     "stepScanQR": {
-      "title": "Please go to <1>Settings > Export accounts > Export</1> in the desktop app and scan the LiveQR code",
+      "title": "Please go to <1>Settings > Accounts > Export accounts > Export</1> in the desktop app and scan the LiveQR code",
       "cta": "Scan LiveQR code"
     }
   },
@@ -554,6 +555,7 @@
     "date": "Date",
     "confirmed": "Confirmed",
     "notConfirmed": "Not confirmed",
+    "failed": "Failed",
     "fees": "Fees",
     "noFees": "No fee",
     "from": "From ({{count}})",
@@ -631,7 +633,7 @@
         "title": "Scan LiveQR code",
         "descTop": {
           "line1": "In Ledger Live desktop, go to",
-          "line2": "Settings > Export accounts > Export"
+          "line2": "Settings > Accounts > Export accounts > Export"
         },
         "descBottom": "Please put the LiveQR code within the square"
       },
@@ -666,6 +668,12 @@
       "error": "Error",
       "queued": "Awaiting"
     }
+  },
+  "distribution": {
+    "header": "Assets distribution",
+    "list": "Assets distribution ({{count}})",
+    "assets": "assets",
+    "total": "Total balance:"
   },
   "settings": {
     "header": "Settings",
@@ -999,7 +1007,8 @@
     },
     "appList": {
       "title": "App catalog",
-      "loading": "Loading apps..."
+      "loading": "Loading apps...",
+      "noApps": "No apps found"
     },
     "remove": {
       "title": "Remove device",

@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
     alignItems: "center",
+    marginRight: 8,
   },
   card: {
     marginLeft: 8,

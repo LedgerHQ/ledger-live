@@ -24,7 +24,12 @@ class SelectDeviceConnectModal extends PureComponent<{
     const { meta, onClose, onRetry, onStepDone, error, step } = this.props;
 
     return (
-      <BottomModal id="DeviceJobModal" isOpened={!!meta} onClose={onClose}>
+      <BottomModal
+        id="DeviceJobModal"
+        isOpened={!!meta}
+        onClose={onClose}
+        preventBackdropClick={error ? undefined : true}
+      >
         {error ? (
           <RenderError
             error={error}

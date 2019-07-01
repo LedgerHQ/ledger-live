@@ -13,19 +13,25 @@ const GraphCardContainer = ({
   portfolio: Portfolio,
   showGreeting: boolean,
   counterValueCurrency: Currency,
-}) => (
-  <View>
-    <Header
-      nbAccounts={portfolio.accounts.length}
-      showGreeting={showGreeting}
-    />
-    {showGreeting && (
-      <GraphCard
-        counterValueCurrency={counterValueCurrency}
-        portfolio={portfolio}
+}) => {
+  const showDistribution = portfolio.balanceHistory[
+    portfolio.balanceHistory.length - 1
+  ].value.gt(0);
+  return (
+    <View>
+      <Header
+        nbAccounts={portfolio.accounts.length}
+        showGreeting={showGreeting}
+        showDistribution={showDistribution}
       />
-    )}
-  </View>
-);
+      {showGreeting && (
+        <GraphCard
+          counterValueCurrency={counterValueCurrency}
+          portfolio={portfolio}
+        />
+      )}
+    </View>
+  );
+};
 
 export default GraphCardContainer;

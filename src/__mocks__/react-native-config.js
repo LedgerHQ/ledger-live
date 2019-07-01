@@ -1,3 +1,3 @@
 export default {
-  DEBUG_COMM_HTTP_PROXY: null,
+  DEVICE_PROXY_URL: null,
 };

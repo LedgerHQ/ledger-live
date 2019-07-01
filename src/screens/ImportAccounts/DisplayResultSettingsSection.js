@@ -1,11 +1,12 @@
 // @flow
 import React, { PureComponent } from "react";
-import { Switch, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import ResultSection from "./ResultSection";
+import CheckBox from "../../components/CheckBox";
 
 class DisplayResultSettingsSection extends PureComponent<{
   checked: boolean,
@@ -21,7 +22,7 @@ class DisplayResultSettingsSection extends PureComponent<{
           <LText style={styles.label} semiBold>
             <Trans i18nKey="account.import.result.includeGeneralSettings" />
           </LText>
-          <Switch onValueChange={onSwitch} value={checked} />
+          <CheckBox onChange={onSwitch} isChecked={checked} />
         </View>
       </View>
     );

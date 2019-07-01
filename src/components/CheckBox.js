@@ -11,7 +11,7 @@ type Props = {
   isChecked: boolean,
   onChange?: boolean => void,
   disabled?: boolean,
-  style: *,
+  style?: *,
 };
 
 const checkBoxHitSlop = {
@@ -32,7 +32,7 @@ export default class CheckBox extends PureComponent<Props> {
 
     const body = (
       <IconCheck
-        size={16}
+        size={20}
         color={colors.white}
         style={[!isChecked && styles.invisible]}
       />

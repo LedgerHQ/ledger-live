@@ -1,0 +1,226 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+update_fastlane
+default_platform(:ios)
+package = load_json(json_path: "./package.json")
+
+lane :internal_release do
+  ensure_git_status_clean
+  ensure_git_branch(
+    branch: 'develop'
+  )
+  commit = last_git_commit
+  git_pull
+  new_commit = last_git_commit
+
+
+  if commit[:commit_hash] == new_commit[:commit_hash]
+    next
+  end
+
+  system "yarn"
+
+  ensure_git_status_clean
+
+  Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
+  Fastlane::LaneManager.cruise_lane('android', 'beta')
+  Fastlane::LaneManager.cruise_lane('ios', 'upload_waldo', nil, 'mock')
+  Fastlane::LaneManager.cruise_lane('android', 'upload_waldo', nil, 'mock')
+
+end
+
+platform :ios do
+
+  before_all do
+    set_version_number
+  end
+
+  desc "private: set version number from package.json"
+  private_lane :set_version_number do
+    increment_version_number(
+      version_number: package["version"],
+      xcodeproj: 'ios/ledgerlivemobile.xcodeproj'
+    )
+  end
+
+  desc "private: build the app"
+  private_lane :build do |options|
+    method = (options[:development] ? "development" : "app-store")
+
+    if options[:development]
+      gym(
+        scheme: "ledgerlivemobile",
+        project: "ios/ledgerlivemobile.xcodeproj",
+        output_directory: "./ios",
+        clean: true,
+        export_options: {
+          method: method
+        }
+      )
+    else
+      gym(
+        scheme: "ledgerlivemobile",
+        project: "ios/ledgerlivemobile.xcodeproj",
+        output_directory: "ios",
+        clean: true,
+        export_options: {
+          method: method,
+          provisioningProfiles: {
+            "com.ledger.live": "ledger live"
+          }
+        }
+      )
+    end
+
+  end
+
+  desc "private: upload to Testflight"
+  private_lane :upload_beta do
+    pilot(
+      skip_submission: true,
+      app_identifier: "com.ledger.live",
+      skip_waiting_for_build_processing: true,
+      ipa: 'ios/ledgerlivemobile.ipa'
+    )
+  end
+
+  desc "private: bump build number"
+  private_lane :bump_build_number do
+    increment_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+  end
+
+  desc "private: prepare iOS for internal"
+  private_lane :prepare_ios_internal do
+    bump_build_number
+    build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+    git_commit(
+      path: [
+        "ios/ledgerlivemobile.xcodeproj/project.pbxproj",
+        "ios/ledgerlivemobile/Info.plist",
+        "ios/ledgerlivemobileTests/Info.plist"
+      ],
+      message: "Bump iOS version to v#{package["version"]}-#{build_number}"
+    )
+    add_git_tag(
+      tag: "ios-v#{package["version"]}-#{build_number}",
+      sign: true
+    )
+    push_to_git_remote
+  end
+
+  desc "build and push to TestFlight"
+  lane :beta do
+    prepare_ios_internal
+    build
+    upload_beta
+  end
+
+  desc "rebuild and push to TestFlight"
+  lane :redo_beta do
+    build
+    upload_beta
+  end
+
+  desc "upload to Waldo"
+  lane :upload_waldo do
+    build(development: true)
+    waldo(
+      ipa_path: 'ios/ledgerlivemobile.ipa',
+      upload_token: ENV["WALDO_UPLOAD_TOKEN_IOS"]
+    )
+  end
+end
+
+platform :android do
+
+  before_all do
+    set_version_name
+  end
+
+  desc "private: set version name from package.json"
+  private_lane :set_version_name do
+    version_name = package["version"]
+    android_set_version_name(
+      gradle_file: 'android/app/build.gradle',
+      version_name: version_name,
+    )
+  end
+
+  desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
+  private_lane :build do |options|
+    type = options.fetch(:type, "Release")
+
+    gradle(task: "clean", project_dir: 'android/')
+    gradle(
+      task: "assemble",
+      build_type: type,
+      print_command: false,
+      properties: {
+        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
+        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
+      },
+      project_dir: 'android/'
+    )
+  end
+
+  desc "private: bump version code"
+  private_lane :bump_version_code do
+    android_set_version_code(gradle_file: 'android/app/build.gradle')
+  end
+
+  desc "private: prepare android for internal"
+  private_lane :prepare_android_internal do
+    bump_version_code
+    version_code = android_get_version_code(gradle_file: 'android/app/build.gradle')
+    git_commit(
+      path: [
+        "android/app/build.gradle"
+      ],
+      message: "Bump android version to v#{package["version"]}-#{version_code}"
+    )
+    add_git_tag(
+      tag: "android-v#{package["version"]}-#{version_code}",
+      sign: true
+    )
+    push_to_git_remote
+  end
+
+  desc "build and upload beta to Google Play Store"
+  lane :beta do
+    prepare_android_internal
+    build(type: "Release")
+    upload_to_play_store(
+      track: 'internal',
+      package_name: 'com.ledger.live'
+    )
+  end
+
+  desc "rebuild and upload beta to Google Play Store"
+  lane :redo_beta do
+    build(type: "Release")
+    upload_to_play_store(
+      track: 'internal',
+      package_name: 'com.ledger.live'
+    )
+  end
+
+  desc "upload to Waldo"
+  lane :upload_waldo do
+    build(type: "StagingRelease")
+    waldo(upload_token: ENV["WALDO_UPLOAD_TOKEN_ANDROID"])
+  end
+end

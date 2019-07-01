@@ -47,7 +47,7 @@ export type SettingsState = {
   analyticsEnabled: boolean,
   privacy: ?Privacy,
   currenciesSettings: {
-    [currencyId: string]: CurrencySettings,
+    [ticker: string]: CurrencySettings,
   },
   selectedTimeRange: TimeRange,
   orderAccounts: string,
@@ -96,12 +96,12 @@ const handlers: Object = {
   }),
   UPDATE_CURRENCY_SETTINGS: (
     { currenciesSettings, ...state }: SettingsState,
-    { currencyId, patch },
+    { ticker, patch },
   ) => ({
     ...state,
     currenciesSettings: {
       ...currenciesSettings,
-      [currencyId]: { ...currenciesSettings[currencyId], ...patch },
+      [ticker]: { ...currenciesSettings[ticker], ...patch },
     },
   }),
   SETTINGS_SET_PRIVACY: (state: SettingsState, { privacy }) => ({
@@ -164,8 +164,8 @@ const handlers: Object = {
     for (const { to, from, exchange } of pairs) {
       const fromCrypto = asCryptoCurrency(from);
       if (fromCrypto && to.ticker === intermediaryCurrency.ticker) {
-        copy.currenciesSettings[fromCrypto.id] = {
-          ...copy.currenciesSettings[fromCrypto.id],
+        copy.currenciesSettings[fromCrypto.ticker] = {
+          ...copy.currenciesSettings[fromCrypto.ticker],
           exchange,
         };
       } else if (
@@ -224,6 +224,7 @@ export const exportSelector = storeSelector;
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
+// $FlowFixMe
 export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
@@ -232,6 +233,7 @@ export const counterValueCurrencySelector = createSelector(
 const counterValueExchangeLocalSelector = (s: SettingsState) =>
   s.counterValueExchange;
 
+// $FlowFixMe
 export const counterValueExchangeSelector = createSelector(
   storeSelector,
   counterValueExchangeLocalSelector,
@@ -247,27 +249,43 @@ const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = c
   };
 };
 
+// DEPRECATED
 export const currencySettingsSelector = (
   state: State,
   { currency }: { currency: CryptoCurrency },
 ) => ({
   exchange: null,
   ...defaultCurrencySettingsForCurrency(currency),
-  ...state.settings.currenciesSettings[currency.id],
+  ...state.settings.currenciesSettings[currency.ticker],
 });
 
-export const privacySelector = createSelector(storeSelector, s => s.privacy);
+export const exchangeSettingsForTickerSelector = (
+  state: State,
+  { ticker }: { ticker: string },
+): ?string => {
+  const obj = state.settings.currenciesSettings[ticker];
+  return obj && obj.exchange;
+};
 
+// $FlowFixMe
+export const privacySelector = createSelector(
+  storeSelector,
+  s => s.privacy,
+);
+
+// $FlowFixMe
 export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
 );
 
+// $FlowFixMe
 export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
 );
 
+// $FlowFixMe
 export const experimentalUSBEnabledSelector = createSelector(
   storeSelector,
   s => s.experimentalUSBEnabled,
@@ -278,6 +296,7 @@ export const currencySettingsForAccountSelector = (
   { account }: { account: Account },
 ) => currencySettingsSelector(s, { currency: account.currency });
 
+// $FlowFixMe
 export const exchangeSettingsForAccountSelector = createSelector(
   currencySettingsForAccountSelector,
   settings => settings.exchange,

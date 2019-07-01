@@ -1,10 +1,17 @@
 // @flow
 /* eslint import/no-cycle: 0 */
-import { AppState, NetInfo } from "react-native";
+import { AppState } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
 import { createSelector } from "reselect";
 import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import {
+  fetchExchangesForPairImplementation,
+  fetchTickersByMarketcapImplementation,
+  getDailyRatesImplementation,
+} from "@ledgerhq/live-common/lib/countervalues/mock";
+import Config from "react-native-config";
 import { setExchangePairsAction } from "./actions/settings";
 import { currenciesSelector } from "./reducers/accounts";
 import {
@@ -81,6 +88,7 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
   };
 };
 
+// $FlowFixMe
 const CounterValues = createCounterValues({
   log: __DEV__
     ? (...args) => console.log("CounterValues:", ...args) // eslint-disable-line no-console
@@ -91,6 +99,13 @@ const CounterValues = createCounterValues({
   setExchangePairsAction,
   addExtraPollingHooks,
   network,
+  ...(Config.MOCK
+    ? {
+        getDailyRatesImplementation,
+        fetchExchangesForPairImplementation,
+        fetchTickersByMarketcapImplementation,
+      }
+    : {}),
 });
 
 type PC = Promise<CryptoCurrency[]>;

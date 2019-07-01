@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Animated } from "react-native";
+// $FlowFixMe
 import { SectionList } from "react-navigation";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { connect } from "react-redux";
@@ -213,10 +214,9 @@ class AccountScreen extends PureComponent<Props, State> {
       />
     );
 
-    const { sections, completed } = groupAccountOperationsByDay(
-      account,
-      opCount,
-    );
+    const { sections, completed } = groupAccountOperationsByDay(account, {
+      count: opCount,
+    });
 
     return (
       <View style={styles.root}>

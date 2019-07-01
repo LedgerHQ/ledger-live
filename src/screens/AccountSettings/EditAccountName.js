@@ -23,9 +23,12 @@ export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
 type Props = {
   navigation: NavigationScreenProp<{
-    accountId?: string,
-    accountName?: string,
-    onAccountNameChange?: string => void,
+    params: {
+      account: *,
+      accountId?: string,
+      accountName?: string,
+      onAccountNameChange: (string, *) => void,
+    },
   }>,
   updateAccount: Function,
   account: Account,
@@ -64,14 +67,15 @@ class EditAccountName extends PureComponent<Props, State> {
     } = this.props.navigation.state.params;
 
     const isImportingAccounts = !!accountFromAdd;
+    const cleanAccountName = accountName.trim();
 
-    if (accountName.length) {
+    if (cleanAccountName.length) {
       if (isImportingAccounts) {
-        onAccountNameChange(accountName, accountFromAdd);
+        onAccountNameChange(cleanAccountName, accountFromAdd);
       } else {
         updateAccount({
           ...account,
-          name: accountName,
+          name: cleanAccountName,
         });
       }
       navigation.goBack();
@@ -111,7 +115,7 @@ class EditAccountName extends PureComponent<Props, State> {
                 type="primary"
                 title={<Trans i18nKey="common.apply" />}
                 onPress={this.onNameEndEditing}
-                disabled={!accountName.length}
+                disabled={!accountName.trim().length}
                 containerStyle={styles.buttonContainer}
               />
             </View>

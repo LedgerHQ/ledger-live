@@ -13,9 +13,9 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
+import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { addAccount } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
-import { getCurrencyBridge } from "../../bridge";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -259,9 +259,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
   onAccountNameChange = (name: string, changedAccount: Account) => {
     this.setState(prevState => ({
-      scannedAccounts: prevState.scannedAccounts.map(
-        account =>
-          account.id === changedAccount.id ? { ...account, name } : account,
+      scannedAccounts: prevState.scannedAccounts.map(account =>
+        account.id === changedAccount.id ? { ...account, name } : account,
       ),
     }));
   };

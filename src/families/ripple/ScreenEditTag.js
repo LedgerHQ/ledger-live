@@ -1,6 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
+// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -10,7 +11,7 @@ import i18next from "i18next";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
-import { getAccountBridge } from "../../bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -22,8 +23,10 @@ import { track } from "../../analytics";
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
-    accountId: string,
-    transaction: Transaction,
+    params: {
+      accountId: string,
+      transaction: Transaction,
+    },
   }>,
   t: T,
 };

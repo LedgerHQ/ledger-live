@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
+// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { UserRefusedAddress } from "@ledgerhq/errors";
 import colors from "../colors";

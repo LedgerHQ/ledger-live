@@ -84,8 +84,9 @@ export default class SettingsRow extends Component<{
         )}
         <View style={[styles.textBlock, { marginLeft: iconLeft ? 0 : 16 }]}>
           {title$}
-          {desc &&
-            !noTextDesc && <LText style={styles.description}>{desc}</LText>}
+          {desc && !noTextDesc && (
+            <LText style={styles.description}>{desc}</LText>
+          )}
           {desc && noTextDesc && desc}
         </View>
         <View

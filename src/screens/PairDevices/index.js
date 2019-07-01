@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import i18next from "i18next";
 import { connect } from "react-redux";
-import Config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
@@ -93,7 +92,6 @@ class PairDevices extends Component<Props, State> {
     try {
       const transport = await TransportBLE.open(device);
       if (this.unmounted) return;
-      if (Config.DEBUG_BLE) transport.setDebugMode(true);
       try {
         const deviceInfo = await getDeviceInfo(transport);
         if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
@@ -123,7 +121,7 @@ class PairDevices extends Component<Props, State> {
         await genuineCheckPromise;
         if (this.unmounted) return;
 
-        const name = await getDeviceName(transport) || device.name;
+        const name = (await getDeviceName(transport)) || device.name;
         if (this.unmounted) return;
 
         this.props.addKnownDevice({ id: device.id, name });

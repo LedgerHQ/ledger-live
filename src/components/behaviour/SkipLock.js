@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import { withNavigationFocus } from "react-navigation";
 
+// $FlowFixMe
 export const SkipLockContext = React.createContext((_: boolean) => {});
 
 class SkipLock extends PureComponent<*> {

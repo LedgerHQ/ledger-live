@@ -7,6 +7,7 @@ import React, { Component } from "react";
 import priorityQueue from "async/priorityQueue";
 import { connect } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { createStructuredSelector } from "reselect";
 
 import logger from "../logger";
@@ -19,7 +20,6 @@ import {
 import type { BridgeSyncState } from "../reducers/bridgeSync";
 import { accountsSelector, isUpToDateSelector } from "../reducers/accounts";
 import { SYNC_MAX_CONCURRENT } from "../constants";
-import { getAccountBridge } from ".";
 
 type BridgeSyncProviderProps = {
   children: *,
@@ -47,6 +47,7 @@ export type BehaviorAction =
 
 export type Sync = (action: BehaviorAction) => void;
 
+// $FlowFixMe
 const BridgeSyncContext = React.createContext((_: BehaviorAction) => {});
 
 const mapStateToProps = createStructuredSelector({

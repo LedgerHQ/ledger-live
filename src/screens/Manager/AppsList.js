@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
+// $FlowFixMe
 import { FlatList } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
@@ -33,6 +34,8 @@ type Props = {
       deviceId: string,
       meta: {
         deviceInfo: DeviceInfo,
+        modelId: *,
+        deviceId: *,
       },
     },
   }>,
@@ -163,7 +166,7 @@ class ManagerAppsList extends Component<Props, State> {
 
   renderEmptySearch = () => (
     <View>
-      <LText>No apps found</LText>
+      <LText>{i18next.t("manager.appList.noApps")}</LText>
     </View>
   );
 

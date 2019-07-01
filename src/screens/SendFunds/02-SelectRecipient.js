@@ -9,13 +9,13 @@ import { compose } from "redux";
 import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import throttle from "lodash/throttle";
 import { BigNumber } from "bignumber.js";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 
 import type { T } from "../../types/common";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { getAccountBridge } from "../../bridge";
 import { track, TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import LText, { getFontStyle } from "../../components/LText";
@@ -235,17 +235,16 @@ class SendSelectRecipient extends Component<Props, State> {
                 clearButtonMode="always"
               />
             </View>
-            {!!address &&
-              addressStatus !== "valid" && (
-                <LText
-                  style={[
-                    styles.warningBox,
-                    addressStatus === "invalid" ? styles.error : styles.warning,
-                  ]}
-                >
-                  <TranslatedError error={error} />
-                </LText>
-              )}
+            {!!address && addressStatus !== "valid" && (
+              <LText
+                style={[
+                  styles.warningBox,
+                  addressStatus === "invalid" ? styles.error : styles.warning,
+                ]}
+              >
+                <TranslatedError error={error} />
+              </LText>
+            )}
           </ScrollView>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button

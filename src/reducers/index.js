@@ -24,6 +24,7 @@ export type State = {
   ble: BleState,
 };
 
+// $FlowFixMe
 export default combineReducers({
   accounts,
   countervalues: CounterValues.reducer,

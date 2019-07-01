@@ -8,9 +8,10 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { updateAccountWithUpdater } from "../../actions/accounts";
-
-import { getAccountBridge } from "../../bridge";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
@@ -27,7 +28,8 @@ type Props = {
     params: {
       accountId: string,
       deviceId: string,
-      modelId: string,
+      modelId: DeviceModelId,
+      wired: boolean,
       transaction: *,
     },
   }>,
@@ -74,19 +76,18 @@ class Validation extends Component<Props, State> {
     const deviceId = navigation.getParam("deviceId");
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
-    const { addPendingOperation } = bridge;
 
     this.sub = bridge
       .signAndBroadcast(account, transaction, deviceId)
       .subscribe({
         next: e => {
           switch (e.type) {
-            case "signing":
+            case "signing": {
+              const n = this.props.navigation.dangerouslyGetParent();
               this.setState({ signing: true });
-              this.props.navigation
-                .dangerouslyGetParent()
-                .setParams({ allowNavigation: false });
+              if (n) n.setParams({ allowNavigation: false });
               break;
+            }
             case "signed":
               this.setState({ signed: true });
               break;
@@ -97,11 +98,9 @@ class Validation extends Component<Props, State> {
                 result: e.operation,
               });
 
-              if (addPendingOperation) {
-                updateAccountWithUpdater(account.id, account =>
-                  addPendingOperation(account, e.operation),
-                );
-              }
+              updateAccountWithUpdater(account.id, account =>
+                addPendingOperation(account, e.operation),
+              );
 
               break;
             default:
@@ -161,9 +160,8 @@ class Validation extends Component<Props, State> {
     if (this.sub) {
       this.sub.unsubscribe();
     }
-    this.props.navigation
-      .dangerouslyGetParent()
-      .setParams({ allowNavigation: true });
+    const n = this.props.navigation.dangerouslyGetParent();
+    if (n) n.setParams({ allowNavigation: true });
   }
 }
 

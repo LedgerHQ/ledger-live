@@ -4,8 +4,8 @@ import Svg, { Path, G } from "react-native-svg";
 import colors from "../colors";
 
 type Props = {
-  size: number,
-  color: string,
+  size?: number,
+  color?: string,
 };
 
 export default function AlertTriangle({

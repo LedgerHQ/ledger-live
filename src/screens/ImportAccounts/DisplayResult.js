@@ -40,13 +40,15 @@ type Item = {
   mode: "create" | "patch" | "id" | "unsupported",
 };
 
+type Nav = NavigationScreenProp<{
+  params: {
+    result: Result,
+    onFinish?: (NavigationScreenProp<*>) => void,
+  },
+}>;
+
 type Props = {
-  navigation: NavigationScreenProp<{
-    params: {
-      result: Result,
-      onFinish?: (NavigationScreenProp<*>) => void,
-    },
-  }>,
+  navigation: Nav,
   accounts: Account[],
   addAccount: Account => void,
   updateAccount: ($Shape<Account>) => void,
@@ -67,10 +69,12 @@ const itemModeDisplaySort = {
   unsupported: 4,
 };
 
-const BackButton = ({ navigation }: { navigation: NavigationScreenProp }) => (
+const BackButton = ({ navigation }: { navigation: Nav }) => (
   <HeaderBackButton
     tintColor={colors.grey}
-    onPress={() => navigation.replace("ScanAccounts")}
+    onPress={() => {
+      if (navigation.replace) navigation.replace("ScanAccounts");
+    }}
   >
     <HeaderBackImage />
   </HeaderBackButton>
@@ -97,48 +101,44 @@ class DisplayResult extends Component<Props, State> {
 
   onRetry = () => {
     const { navigation } = this.props;
-    navigation.replace("ScanAccounts");
+    if (navigation.replace) navigation.replace("ScanAccounts");
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const items = nextProps.navigation
       .getParam("result")
-      .accounts.map(
-        (accInput: *): ?Item => {
-          const prevItem = prevState.items.find(
-            item => item.account.id === accInput.id,
-          );
-          if (prevItem) return prevItem;
-          const existingAccount = nextProps.accounts.find(
-            a => a.id === accInput.id,
-          );
-          if (existingAccount) {
-            // only the name is supposed to change. rest is never changing
-            if (existingAccount.name === accInput.name) {
-              return {
-                account: existingAccount,
-                mode: "id",
-              };
-            }
+      .accounts.map((accInput: *): ?Item => {
+        const prevItem = prevState.items.find(
+          item => item.account.id === accInput.id,
+        );
+        if (prevItem) return prevItem;
+        const existingAccount = nextProps.accounts.find(
+          a => a.id === accInput.id,
+        );
+        if (existingAccount) {
+          // only the name is supposed to change. rest is never changing
+          if (existingAccount.name === accInput.name) {
             return {
-              account: { ...existingAccount, name: accInput.name },
-              mode: "patch",
+              account: existingAccount,
+              mode: "id",
             };
           }
-          try {
-            const account = accountDataToAccount(accInput);
-            return {
-              account,
-              mode: supportsExistingAccount(accInput)
-                ? "create"
-                : "unsupported",
-            };
-          } catch (e) {
-            logger.critical(e);
-            return null;
-          }
-        },
-      )
+          return {
+            account: { ...existingAccount, name: accInput.name },
+            mode: "patch",
+          };
+        }
+        try {
+          const account = accountDataToAccount(accInput);
+          return {
+            account,
+            mode: supportsExistingAccount(accInput) ? "create" : "unsupported",
+          };
+        } catch (e) {
+          logger.critical(e);
+          return null;
+        }
+      })
       .filter(Boolean)
       .sort(
         (a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode],

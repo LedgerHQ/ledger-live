@@ -12,10 +12,10 @@ const getFontStyle = ({
   const fontFamily = secondary
     ? "Museo Sans"
     : tertiary
-      ? "Rubik"
-      : monospace
-        ? "Menlo"
-        : "Open Sans";
+    ? "Rubik"
+    : monospace
+    ? "Menlo"
+    : "Open Sans";
   let fontWeight;
   if (semiBold) {
     fontWeight = secondary ? "400" : "600"; // Fix for Museo weights being off by 200;

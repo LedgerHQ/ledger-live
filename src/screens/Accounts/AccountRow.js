@@ -91,7 +91,7 @@ class AccountRow extends PureComponent<Props> {
 }
 
 const AccountCv = ({ children }: { children: * }) => (
-  <LText tertiary semiBold style={styles.balanceCounterText}>
+  <LText tertiary style={styles.balanceCounterText}>
     {children}
   </LText>
 );

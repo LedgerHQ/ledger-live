@@ -110,9 +110,8 @@ class Button extends PureComponent<
       if (isPromise) {
         clearTimeout(this.timeout);
         if (!this.unmounted) {
-          this.setState(
-            ({ pending }) =>
-              pending ? { pending: false, spinnerOn: false } : null,
+          this.setState(({ pending }) =>
+            pending ? { pending: false, spinnerOn: false } : null,
           );
 
           Animated.spring(this.state.anim, {

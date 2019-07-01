@@ -164,10 +164,9 @@ class PortfolioScreen extends Component<
       <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
     );
 
-    const { sections, completed } = groupAccountsOperationsByDay(
-      accounts,
-      opCount,
-    );
+    const { sections, completed } = groupAccountsOperationsByDay(accounts, {
+      count: opCount,
+    });
 
     return (
       <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>

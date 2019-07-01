@@ -17,6 +17,7 @@ export type Props = {
   onClose: () => *,
   children?: *,
   style?: *,
+  preventBackdropClick?: boolean,
 };
 
 // Add some extra padding at the bottom of the modal
@@ -31,15 +32,23 @@ class BottomModal extends Component<Props> {
     onClose: () => {},
   };
   render() {
-    const { isOpened, onClose, children, style, id, ...rest } = this.props;
+    const {
+      isOpened,
+      onClose,
+      children,
+      style,
+      preventBackdropClick,
+      id,
+      ...rest
+    } = this.props;
     const { width, height } = getWindowDimensions();
 
     return (
       <ButtonUseTouchable.Provider value={true}>
         <ReactNativeModal
           isVisible={isOpened}
-          onBackdropPress={onClose}
-          onBackButtonPress={onClose}
+          onBackdropPress={!preventBackdropClick && onClose}
+          onBackButtonPress={!preventBackdropClick && onClose}
           deviceWidth={width}
           deviceHeight={height}
           useNativeDriver

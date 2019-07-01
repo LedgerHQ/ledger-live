@@ -5,7 +5,7 @@ import { TouchableOpacity } from "react-native";
 import { track } from "../analytics";
 
 const defaultHitSlop = {
-  // default & can be overrided by rest
+  // default & can be overridden by rest
   top: 16,
   left: 16,
   right: 16,

@@ -1,6 +1,6 @@
 import { PureComponent } from "react";
 import { connect } from "react-redux";
-import { NetInfo } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
 import { syncIsConnected } from "../actions/appstate";
 
 // goal: hook to global app state events to sync with appstate store

@@ -91,7 +91,7 @@ export default class BenchmarkQRStream extends PureComponent<
         >
           <View style={wrapperStyle}>
             <View style={[styles.darken, styles.centered, styles.topCell]}>
-              <LText semibold style={styles.text}>
+              <LText semiBold style={styles.text}>
                 {"ledger-live-tools.netlify.com/qrstreambenchmark"}
               </LText>
             </View>
@@ -135,7 +135,7 @@ export default class BenchmarkQRStream extends PureComponent<
             </View>
             <View style={[styles.darken, styles.centered]}>
               <View style={styles.centered}>
-                <LText semibold style={styles.text}>
+                <LText semiBold style={styles.text}>
                   {summary}
                 </LText>
               </View>

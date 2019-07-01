@@ -34,7 +34,7 @@ export class BulletItem extends PureComponent<{
   value: React$Node | (() => React$Node),
   index: number,
   animated?: boolean,
-  itemStyle?: {},
+  itemStyle?: *,
   Bullet: React$ComponentType<*>,
 }> {
   static defaultProps = {

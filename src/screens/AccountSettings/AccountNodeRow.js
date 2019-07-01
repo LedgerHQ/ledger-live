@@ -4,8 +4,8 @@ import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import SettingsRow from "../../components/SettingsRow";
-import { getAccountBridge } from "../../bridge";
 import LText from "../../components/LText";
 import colors from "../../colors";
 

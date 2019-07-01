@@ -46,7 +46,7 @@ class FeesRow extends Component<Props, State> {
     fees: (this.props.initialValue || "").toString(),
   };
 
-  input = React.createRef();
+  input: * = React.createRef();
 
   onChangeText = (text: string) => {
     const { onPress } = this.props;

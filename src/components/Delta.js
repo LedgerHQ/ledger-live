@@ -18,7 +18,7 @@ type Props = {
   to: BigNumber,
   percent?: boolean,
   unit?: Unit,
-  style?: mixed,
+  style?: *,
 };
 
 const arrowUp = <IconArrowUp size={12} color={colors.success} />;

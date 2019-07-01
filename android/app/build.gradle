@@ -4,7 +4,6 @@ project.ext.envConfigFiles = [
     debug: ".env",
     release: ".env.production",
     stagingrelease: ".env.staging",
-    mock: ".env.mock",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -100,7 +99,7 @@ apply from: "../../node_modules/react-native-sentry/sentry.gradle"
  * Upload all the APKs to the Play Store and people will download
  * the correct one based on the CPU architecture of their device.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
@@ -109,18 +108,19 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+
+     compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "com.ledger.live"
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 19
-        versionName "1.2.2"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
+        versionCode 25
+        versionName "1.3.0"
         resValue "string", "build_config_package", "com.ledger.live"
     }
     splits {
@@ -128,7 +128,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
     signingConfigs {
@@ -159,7 +159,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -167,45 +167,45 @@ android {
             }
         }
     }
-}
 
-configurations.all {
-    resolutionStrategy {
-        eachDependency { DependencyResolveDetails details ->
-            if (details.requested.name == 'android-jsc') {
-                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r236355'
-            }
-        }
+    // As required by https://github.com/react-native-community/jsc-android-buildscripts#for-react-native-version-059
+    packagingOptions {
+        pickFirst '**/libjsc.so'
+        pickFirst '**/libc++_shared.so'
     }
 }
 
 dependencies {
-    compile project(':lottie-react-native')
-    compile project(':react-native-extra-dimensions-android')
-    compile project(':@segment_analytics-react-native')
-    compile project(':react-native-keychain')
-    compile project(':react-native-android-location-services-dialog-box')
-    compile project(':react-native-randombytes')
-    compile project(':react-native-gesture-handler')
-    compile project(':react-native-open-settings')
-    compile project(':react-native-screens')
-    compile project(':react-native-config')
-    compile project(':react-native-svg')
-    compile project(':@ledgerhq_react-native-hid')
-    compile project(':react-native-locale')
-    compile project(':react-native-sentry')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-touch-id')
-    compile project(':react-native-ble-plx')
-    compile (project(':react-native-camera')) {
+    // Make sure to keep android-jsc as the first
+    implementation "org.webkit:android-jsc-intl:r241213"
+    implementation project(':react-native-vector-icons')
+    implementation project(':@react-native-community_netinfo')
+    implementation project(':lottie-react-native')
+    implementation project(':react-native-extra-dimensions-android')
+    implementation project(':@segment_analytics-react-native')
+    implementation project(':react-native-keychain')
+    implementation project(':react-native-android-location-services-dialog-box')
+    implementation project(':react-native-randombytes')
+    implementation project(':react-native-gesture-handler')
+    implementation project(':react-native-open-settings')
+    implementation project(':react-native-screens')
+    implementation project(':react-native-config')
+    implementation project(':react-native-svg')
+    implementation project(':@ledgerhq_react-native-hid')
+    implementation project(':react-native-locale')
+    implementation project(':react-native-sentry')
+    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-touch-id')
+    implementation project(':react-native-ble-plx')
+    implementation (project(':react-native-camera')) {
         exclude group: "com.google.android.gms"
-        compile 'com.android.support:exifinterface:27.+'
-        compile ('com.google.android.gms:play-services-vision:12.0.1') {
+        implementation 'com.android.support:exifinterface:27.+'
+        implementation ('com.google.android.gms:play-services-vision:12.0.1') {
             force = true
         }
     }
-    compile project(':react-native-version-number')
-    compile project(':react-native-ledger-core')
+    implementation project(':react-native-version-number')
+    implementation project(':react-native-ledger-core')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules

@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
+// $FlowFixMe
 import { ScrollView } from "react-navigation";
 import i18next from "i18next";
 import { translate } from "react-i18next";
@@ -27,11 +28,10 @@ class ExperimentalSettings extends PureComponent<{
         <TrackScreen category="Settings" name="Experimental" />
         <View style={styles.container}>
           <Disclaimer />
-          {experimentalFeatures.map(
-            feat =>
-              !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
-                <FeatureRow key={feat.name} feature={feat} />
-              ) : null,
+          {experimentalFeatures.map(feat =>
+            !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
+              <FeatureRow key={feat.name} feature={feat} />
+            ) : null,
           )}
         </View>
       </ScrollView>

@@ -43,6 +43,7 @@ const getState = i18n => ({
   locale: i18n.languages[0],
 });
 
+// $FlowFixMe
 const LocaleContext = React.createContext(getState(i18n));
 
 type State = {

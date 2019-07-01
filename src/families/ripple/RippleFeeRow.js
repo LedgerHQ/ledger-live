@@ -4,6 +4,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { Trans, translate } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -13,7 +14,6 @@ import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
 import colors from "../../colors";
-import { getAccountBridge } from "../../bridge";
 import type { T } from "../../types/common";
 
 type Props = {

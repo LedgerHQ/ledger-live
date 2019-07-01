@@ -1,4 +1,5 @@
 // @flow
 import { Subject } from "rxjs";
 
-export default new Subject();
+const subject: Subject<*> = new Subject();
+export default subject;

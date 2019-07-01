@@ -63,7 +63,7 @@ export default <Item>(opts: Opts<Item>) => {
     keyExtractor,
     navigationOptions = {},
   } = opts;
-  const Entry = getEntryFromOptions(opts);
+  const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<{
     selectedKey: string,

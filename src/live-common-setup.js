@@ -2,6 +2,7 @@
 import Config from "react-native-config";
 import { Observable } from "rxjs/Observable";
 import { map } from "rxjs/operators/map";
+import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { setNetwork } from "@ledgerhq/live-common/lib/network";
@@ -10,11 +11,16 @@ import { retry } from "@ledgerhq/live-common/lib/promise";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
-import { logsObservable } from "@ledgerhq/react-native-hw-transport-ble/lib/debug";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 
 import network from "./api/network";
 import "./experimental";
+
+if (Config.VERBOSE) {
+  listen(log => {
+    console.log(`${log.type}: ${log.message || ""}`); // eslint-disable-line no-console
+  });
+}
 
 if (Config.DEBUG_SOCKET) {
   logs.subscribe(e => {
@@ -23,10 +29,6 @@ if (Config.DEBUG_SOCKET) {
 }
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
-if (Config.DEBUG_BLE)
-  logsObservable.subscribe(e => {
-    console.log(e.type + ": " + e.message); // eslint-disable-line no-console
-  });
 
 setNetwork(network);
 setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
@@ -73,8 +75,8 @@ const httpdebug: TransportModule = {
       ? Promise.resolve() // nothing to do
       : null,
 };
-if (__DEV__ && Config.DEBUG_COMM_HTTP_PROXY) {
-  DebugHttpProxy = withStaticURLs(Config.DEBUG_COMM_HTTP_PROXY.split("|"));
+if (__DEV__ && Config.DEVICE_PROXY_URL) {
+  DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
   httpdebug.discovery = Observable.create(o => DebugHttpProxy.listen(o)).pipe(
     map(({ type, descriptor }) => ({
       type,
