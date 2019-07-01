@@ -1,11 +1,12 @@
 // @flow
 
-import type { Account, Operation } from "./types";
+import type { Account, TokenAccount, Operation } from "./types";
 import { formatCurrencyUnit } from "./currencies";
+import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 
 type Field = {
   title: string,
-  cell: (Account, Operation) => string
+  cell: (Account | TokenAccount, ?Account, Operation) => string
 };
 
 const newLine = "\r\n";
@@ -13,53 +14,66 @@ const newLine = "\r\n";
 const fields: Field[] = [
   {
     title: "Operation Date",
-    cell: (_, op) => op.date.toISOString()
+    cell: (_account, _parentAccount, op) => op.date.toISOString()
   },
   {
     title: "Currency Ticker",
-    cell: account => account.currency.ticker
+    cell: account => getAccountCurrency(account).ticker
   },
   {
     title: "Operation Type",
-    cell: (_, op) => op.type
+    cell: (_account, _parentAccount, op) => op.type
   },
   {
     title: "Operation Amount",
-    cell: (account, op) =>
-      formatCurrencyUnit(account.currency.units[0], op.value, {
+    cell: (account, parentAccount, op) =>
+      formatCurrencyUnit(getAccountCurrency(account).units[0], op.value, {
         disableRounding: true,
         useGrouping: false
       })
   },
   {
     title: "Operation Fees",
-    cell: (account, op) =>
-      formatCurrencyUnit(account.currency.units[0], op.fee, {
+    cell: (account, parentAccount, op) =>
+      formatCurrencyUnit(getAccountCurrency(account).units[0], op.fee, {
         disableRounding: true,
         useGrouping: false
       })
   },
   {
     title: "Operation Hash",
-    cell: (_, op) => op.hash
+    cell: (_account, _parentAccount, op) => op.hash
   },
   {
     title: "Account Name",
-    cell: account => account.name
+    cell: (account, parentAccount) =>
+      getMainAccount(account, parentAccount).name
   },
   {
-    title: "Account id", // xpub or address
-    cell: account => account.xpub || account.freshAddress
+    title: "Account xpub",
+    cell: (account, parentAccount) => {
+      const main = getMainAccount(account, parentAccount);
+      return main.xpub || main.freshAddress;
+    }
   }
 ];
 
-const accountRows = (account: Account): Array<string[]> =>
+const accountRows = (
+  account: Account | TokenAccount,
+  parentAccount: ?Account
+): Array<string[]> =>
   account.operations.map(operation =>
-    fields.map(field => field.cell(account, operation))
+    fields.map(field => field.cell(account, parentAccount, operation))
   );
 
 const accountsRows = (accounts: Account[]) =>
-  accounts.reduce((acc, account) => acc.concat(accountRows(account)), []);
+  flattenAccounts(accounts).reduce((all, account) => {
+    const parentAccount =
+      account.type === "TokenAccount"
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
+    return all.concat(accountRows(account, parentAccount));
+  }, []);
 
 export const accountsOpToCSV = (accounts: Account[]) =>
   fields.map(field => field.title).join(",") +
