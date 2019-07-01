@@ -5,6 +5,8 @@ import type { Currency } from "../types";
 
 import { sanitizeValueString } from "./sanitizeValueString";
 
+import { sortByMarketcap } from "./sortByMarketcap";
+
 import {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
@@ -53,6 +55,7 @@ const findCurrencyByTicker = (ticker: string): ?Currency =>
   findTokenByTicker(ticker);
 
 export {
+  sortByMarketcap,
   listFiatCurrencies,
   listCryptoCurrencies,
   getFiatCurrencyByTicker,

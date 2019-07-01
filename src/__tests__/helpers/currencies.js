@@ -2,6 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import {
+  sortByMarketcap,
   listTokens,
   listFiatCurrencies,
   listCryptoCurrencies,
@@ -119,6 +120,32 @@ test("fiats list is sorted by ticker", () => {
       .sort((a, b) => (a > b ? 1 : -1))
       .join(",")
   );
+});
+
+test("sort by marketcap", () => {
+  const tokens = listTokens().filter(
+    t => t.ticker === "XST" || t.ticker === "ZRX" || t.ticker === "HOT"
+  );
+  const currencies = listCryptoCurrencies().filter(
+    c => c.ticker === "BTC" || c.ticker === "XST" || c.ticker === "ETH"
+  );
+  expect(
+    sortByMarketcap(currencies.concat(tokens), [
+      "BTC",
+      "ETH",
+      "ZRX",
+      "HOT",
+      "XST"
+    ]).map(c => c.id)
+  ).toMatchObject([
+    "bitcoin",
+    "ethereum",
+    "ethereum/erc20/0x_project",
+    "ethereum/erc20/holotoken",
+    "stealthcoin",
+    "ethereum/erc20/hydro_protocol",
+    "ethereum/erc20/xensor"
+  ]);
 });
 
 test("can get fiat by coin type", () => {
