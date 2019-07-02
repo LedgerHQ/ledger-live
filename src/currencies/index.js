@@ -27,7 +27,10 @@ import {
   findCryptoCurrency,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
-  findCryptoCurrencyByTicker
+  findCryptoCurrencyByTicker,
+  isCurrencySupported,
+  setSupportedCurrencies,
+  listSupportedCurrencies
 } from "../data/cryptocurrencies";
 
 import {
@@ -68,6 +71,9 @@ export {
   useCurrenciesByMarketcap,
   listFiatCurrencies,
   listCryptoCurrencies,
+  setSupportedCurrencies,
+  listSupportedCurrencies,
+  isCurrencySupported,
   getFiatCurrencyByTicker,
   findCurrencyByTicker,
   findCryptoCurrency,
