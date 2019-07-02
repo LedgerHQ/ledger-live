@@ -5,7 +5,13 @@ import type { Currency } from "../types";
 
 import { sanitizeValueString } from "./sanitizeValueString";
 
-import { sortByMarketcap } from "./sortByMarketcap";
+import {
+  sortByMarketcap,
+  getMarketcapTickers,
+  useMarketcapTickers,
+  currenciesByMarketcap,
+  useCurrenciesByMarketcap
+} from "./sortByMarketcap";
 
 import {
   listFiatCurrencies,
@@ -56,6 +62,10 @@ const findCurrencyByTicker = (ticker: string): ?Currency =>
 
 export {
   sortByMarketcap,
+  getMarketcapTickers,
+  useMarketcapTickers,
+  currenciesByMarketcap,
+  useCurrenciesByMarketcap,
   listFiatCurrencies,
   listCryptoCurrencies,
   getFiatCurrencyByTicker,
