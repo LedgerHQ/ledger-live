@@ -346,10 +346,10 @@
     bindings "^1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@^7.0.0-beta.6":
-  version "7.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.6.tgz#bf34d72fb7b16e2a0491c081f096ac822f5e7112"
-  integrity sha512-CxVkvyUEJWcCY2QGDLUndPavkzt/RIV9dRaG46ECesc1udEwyHZinBsBH+b0UqXBHViQufA8AzHXCrBk52v+qw==
+"@ledgerhq/live-common@^7.0.0-beta.10":
+  version "7.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.10.tgz#35dc5003f9f0aedf37321bcc2b05ee8fbec0a295"
+  integrity sha512-RyohCvWxMy26GFjUUlC3IvayGh0T7oN5en1fvcE7ql3u/4ZEr1cfAWX1M+mU/vWcwRbQVrw8ClKht1ifp8/zgA==
   dependencies:
     "@ledgerhq/errors" "4.63.2"
     "@ledgerhq/hw-app-btc" "4.63.3"
