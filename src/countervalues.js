@@ -4,7 +4,10 @@ import { AppState } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
+import {
+  implementCountervalues,
+  getCountervalues,
+} from "@ledgerhq/live-common/lib/countervalues";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import {
@@ -101,7 +104,7 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
 };
 
 // $FlowFixMe
-const CounterValues = createCounterValues({
+implementCountervalues({
   log: __DEV__
     ? (...args) => console.log("CounterValues:", ...args) // eslint-disable-line no-console
     : undefined,
@@ -119,6 +122,8 @@ const CounterValues = createCounterValues({
       }
     : {}),
 });
+
+const CounterValues = getCountervalues();
 
 type PC = Promise<CryptoCurrency[]>;
 

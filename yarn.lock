@@ -799,10 +799,10 @@
     "@ledgerhq/errors" "^4.63.2"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^7.0.0-beta.3":
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.3.tgz#1c7fe0adbc8168ecfdc42168b181b991d70d35f5"
-  integrity sha512-WCEZJhs+0vkjZrkQZtNVUQE1UL6u9SR4WKN9v5iOfnzHRKfmrekPL97q/o984tfbhshSHNLbhCKDHKkzl0X8pw==
+"@ledgerhq/live-common@^7.0.0-beta.10":
+  version "7.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.10.tgz#35dc5003f9f0aedf37321bcc2b05ee8fbec0a295"
+  integrity sha512-RyohCvWxMy26GFjUUlC3IvayGh0T7oN5en1fvcE7ql3u/4ZEr1cfAWX1M+mU/vWcwRbQVrw8ClKht1ifp8/zgA==
   dependencies:
     "@ledgerhq/errors" "4.63.2"
     "@ledgerhq/hw-app-btc" "4.63.3"
@@ -860,10 +860,10 @@
     rxjs "^6.5.2"
     uuid "^3.3.2"
 
-"@ledgerhq/react-native-ledger-core@^3.0.0-beta.3":
-  version "3.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.0.0-beta.3.tgz#4f048d438fe8e43658bf22fb404c871435f0340b"
-  integrity sha512-pT9qoG686fDeWNSBQdXI+m4WA2RtGepNC+poxZ4shAzUKMDopwyeGAmkrBK0wEraTRrp/UPIR/m9m5Nom0iL5w==
+"@ledgerhq/react-native-ledger-core@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.0.0-beta.6.tgz#01dcee2177e2e91aba19768b907cdfd0342d7bad"
+  integrity sha512-HIFyg7urz66z3XD/TTh9pTTutbZYz2rMZ2Zgyf6URxeXpQn5AV35lcx/l08mo8GT51PvHRPAoaVxV33HisRvdQ==
 
 "@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"
