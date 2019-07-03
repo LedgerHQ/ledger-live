@@ -84,9 +84,9 @@ class SendSummary extends Component<
   openFees = () => {
     const { account, parentAccount, navigation } = this.props;
     if (!account) return;
-    const mainAccount = getMainAccount(account, parentAccount);
     this.props.navigation.navigate("EditFees", {
-      accountId: mainAccount.id,
+      accountId: account.id,
+      parentAccount: parentAccount && parentAccount.id,
       transaction: navigation.getParam("transaction"),
     });
   };
@@ -208,7 +208,8 @@ class SendSummary extends Component<
             amount={amount}
           />
           <SendRowsFee
-            account={mainAccount}
+            account={account}
+            parentAccount={parentAccount}
             transaction={transaction}
             navigation={navigation}
           />

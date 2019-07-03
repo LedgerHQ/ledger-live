@@ -2,9 +2,10 @@
 import React, { Component, Fragment } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans, translate } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -13,11 +14,12 @@ import EthereumGasLimit from "./SendRowGasLimit";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
-import colors from "../../colors";
 import type { T } from "../../types/common";
+import colors from "../../colors";
 
 type Props = {
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   transaction: Transaction,
   navigation: *,
   t: T,
@@ -25,9 +27,10 @@ type Props = {
 
 class EthereumFeeRow extends Component<Props> {
   openFees = () => {
-    const { account, navigation, transaction } = this.props;
+    const { account, parentAccount, navigation, transaction } = this.props;
     navigation.navigate("EthereumEditFee", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
     });
   };
@@ -36,20 +39,21 @@ class EthereumFeeRow extends Component<Props> {
   };
 
   render() {
-    const { account, transaction, t, navigation } = this.props;
-    const bridge = getAccountBridge(account);
+    const { account, parentAccount, transaction, t, navigation } = this.props;
+    const mainAccount = getMainAccount(account, parentAccount);
+    const bridge = getAccountBridge(account, parentAccount);
     const gasPrice = bridge.getTransactionExtra(
-      account,
+      mainAccount,
       transaction,
       "gasPrice",
     );
     const gasLimit = bridge.getTransactionExtra(
-      account,
+      mainAccount,
       transaction,
       "gasLimit",
     );
     const feeCustomUnit = bridge.getTransactionExtra(
-      account,
+      mainAccount,
       transaction,
       "feeCustomUnit",
     );
@@ -69,7 +73,7 @@ class EthereumFeeRow extends Component<Props> {
               {gasPrice ? (
                 <LText style={styles.valueText}>
                   <CurrencyUnitValue
-                    unit={feeCustomUnit || account.unit}
+                    unit={feeCustomUnit || mainAccount.unit}
                     value={gasPrice}
                   />
                 </LText>
@@ -83,13 +87,14 @@ class EthereumFeeRow extends Component<Props> {
               <CounterValue
                 before="≈ "
                 value={gasPrice.times(gasLimit)}
-                currency={account.currency}
+                currency={mainAccount.currency}
               />
             </LText>
           </View>
         </SummaryRow>
         <EthereumGasLimit
           account={account}
+          parentAccount={parentAccount}
           navigation={navigation}
           transaction={transaction}
         />

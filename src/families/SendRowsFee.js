@@ -1,7 +1,8 @@
 /* @flow */
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 
 import bitcoin from "./bitcoin/SendRowsFee";
 import ripple from "./ripple/SendRowsFee";
@@ -17,14 +18,22 @@ const perFamily: { [_: string]: * } = {
 export default ({
   transaction,
   account,
+  parentAccount,
   navigation,
 }: {
   transaction: *,
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<*>,
 }) => {
-  const C = perFamily[account.currency.family];
+  const mainAccount = getMainAccount(account, parentAccount);
+  const C = perFamily[mainAccount.currency.family];
   return C ? (
-    <C transaction={transaction} account={account} navigation={navigation} />
+    <C
+      transaction={transaction}
+      account={account}
+      parentAccount={parentAccount}
+      navigation={navigation}
+    />
   ) : null;
 };
