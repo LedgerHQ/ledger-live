@@ -1,7 +1,9 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import type { Operation } from "../../types";
+import type { Operation, Transaction, Account } from "../../types";
+import type { CoreEthereumLikeTransaction } from "./types";
+import type { CoreAccount } from "../../libcore/types";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { getEnv } from "../../env";
 
@@ -11,7 +13,13 @@ async function ethereum({
   builded,
   coreAccount,
   transaction
-}: *) {
+}: {
+  account: Account,
+  signedTransaction: string,
+  builded: CoreEthereumLikeTransaction,
+  coreAccount: CoreAccount,
+  transaction: Transaction
+}) {
   const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
 
   const txHash = getEnv("DISABLE_TRANSACTION_BROADCAST")
@@ -23,10 +31,12 @@ async function ethereum({
   const gasPrice = await libcoreAmountToBigNumber(await builded.getGasPrice());
   const gasLimit = await libcoreAmountToBigNumber(await builded.getGasLimit());
   const fee = gasPrice.times(gasLimit);
+  const transactionSequenceNumber = await builded.getNonce();
 
   const op: $Exact<Operation> = {
     id: `${accountId}-${txHash}-OUT`,
     hash: txHash,
+    transactionSequenceNumber,
     type: "OUT",
     value: transaction.tokenAccountId
       ? fee
@@ -52,6 +62,7 @@ async function ethereum({
       {
         id: `${tokenAccountId}-${txHash}-OUT`,
         hash: txHash,
+        transactionSequenceNumber,
         type: "OUT",
         value:
           transaction.useAllAmount && tokenAccount
