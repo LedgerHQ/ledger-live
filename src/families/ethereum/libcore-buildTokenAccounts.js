@@ -10,6 +10,7 @@ import {
   findTokenByAddress,
   listTokensForCryptoCurrency
 } from "../../currencies";
+import { getEnv } from "../../env";
 
 async function buildERC20TokenAccount({
   parentAccountId,
@@ -20,6 +21,11 @@ async function buildERC20TokenAccount({
   const balance = await libcoreBigIntToBigNumber(
     await coreTokenAccount.getBalance()
   );
+
+  if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS") && balance.isZero()) {
+    return null;
+  }
+
   const coreOperations = await coreTokenAccount.getOperations();
   const id = parentAccountId + "+" + token.contractAddress;
 
@@ -85,7 +91,7 @@ async function ethereumBuildTokenAccounts({
         token,
         coreTokenAccount: coreTA
       });
-      tokenAccounts.push(tokenAccount);
+      if (tokenAccount) tokenAccounts.push(tokenAccount);
     }
   }
 
