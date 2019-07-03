@@ -3,12 +3,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import type BigNumber from "bignumber.js";
 import { createStructuredSelector } from "reselect";
-import CounterValues from "../countervalues";
+import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 
 const mapStateToProps = createStructuredSelector({
-  reversed: CounterValues.reverseSelector
+  reversed: getCountervalues().reverseSelector
 });
 
 class ReversePrice extends Component<{

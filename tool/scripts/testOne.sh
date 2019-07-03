@@ -26,7 +26,7 @@ echo "Running test $name..."
 export DISABLE_TRANSACTION_BROADCAST=1
 export DEVICE_PROXY_URL=ws://localhost:8435
 source ./test.sh
-echo "done."
+echo "$name: done."
 sleep 2
 if kill -0 $PID 2> /dev/null; then
   curl -XPOST http://localhost:8435/end
@@ -39,7 +39,7 @@ fi
 if [ -d "./expected" ]; then
   diff ./output ./expected
   if [ $? -ne 0 ]; then
-    echo "Unexpected result."
+    echo "$name: Unexpected result."
     exit 1
   fi
 fi

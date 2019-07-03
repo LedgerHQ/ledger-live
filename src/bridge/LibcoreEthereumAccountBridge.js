@@ -162,11 +162,6 @@ const signAndBroadcast = (account, transaction, deviceId) =>
     deviceId
   });
 
-const addPendingOperation = (account, optimisticOperation) => ({
-  ...account,
-  pendingOperations: [...account.pendingOperations, optimisticOperation]
-});
-
 const getFees = makeLRUCache(
   async (a, t) => {
     await checkValidRecipient(a, t.recipient);
@@ -220,14 +215,6 @@ const getMaxAmount = async (a, t) => {
   );
 };
 
-const estimateGasLimit = (account, address) => {
-  console.warn(
-    "bridge.estimateGasLimit DEPRECATED. use prepareTransaction instead"
-  );
-  const api = apiForCurrency(account.currency);
-  return api.estimateGasLimitForERC20(address);
-};
-
 const prepareTransaction = (a, t) => {
   const api = apiForCurrency(a.currency);
   const tAccount = getTransactionAccount(a, t);
@@ -257,8 +244,6 @@ const bridge: AccountBridge<Transaction> = {
   getTotalSpent,
   getMaxAmount,
   signAndBroadcast,
-  addPendingOperation,
-  estimateGasLimit,
   prepareTransaction
 };
 

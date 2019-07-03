@@ -2429,6 +2429,9 @@ export type CryptoCurrencyConfig<C> = CryptoCurrencyObjMap<(*) => C>;
 
 export type CryptoCurrencyIds = $Keys<typeof cryptocurrenciesById>;
 
+// set by user side effect to precise which currencies are considered supported (typically by live)
+let userSupportedCurrencies: CryptoCurrency[] = [];
+
 const cryptocurrenciesByScheme: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesByTicker: { [_: string]: CryptoCurrency } = {};
 const cryptocurrenciesArray = [];
@@ -2488,4 +2491,16 @@ export function getCryptoCurrencyById(id: string): CryptoCurrency {
     throw new Error(`currency with id "${id}" not found`);
   }
   return currency;
+}
+
+export function isCurrencySupported(currency: CryptoCurrency) {
+  return userSupportedCurrencies.includes(currency);
+}
+
+export function setSupportedCurrencies(ids: CryptoCurrencyIds[]) {
+  userSupportedCurrencies = ids.map(id => getCryptoCurrencyById(id));
+}
+
+export function listSupportedCurrencies(): CryptoCurrency[] {
+  return userSupportedCurrencies;
 }

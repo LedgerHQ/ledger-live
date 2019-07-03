@@ -5,18 +5,13 @@ module.exports = {
     node: true,
     jest: true
   },
-  extends: [
-    "airbnb",
-    "plugin:react/recommended",
-    "plugin:flowtype/recommended",
-    "prettier"
-  ],
+  extends: ["plugin:flowtype/recommended", "prettier", "prettier/react"],
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly"
   },
   parser: "babel-eslint",
-  plugins: ["flowtype", "react"],
+  plugins: ["flowtype"],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "linebreak-style": ["error", "unix"],
@@ -33,17 +28,11 @@ module.exports = {
     "consistent-return": 0,
     "no-lonely-if": 0,
     "no-use-before-define": 0,
-    "react/jsx-filename-extension": 0,
     "no-nested-ternary": 0,
     "import/no-cycle": 0,
     "no-multi-assign": 0,
     "guard-for-in": 0,
     "no-continue": 0,
-    "react/require-default-props": 0,
-    "react/default-props-match-prop-types": 0,
-    "react/destructuring-assignment": 0,
-    "react/no-unused-state": 0,
-    "react/sort-comp": 0,
     "lines-between-class-members": 0,
     "prefer-destructuring": 0
   }

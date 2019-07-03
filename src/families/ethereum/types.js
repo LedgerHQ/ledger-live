@@ -13,6 +13,7 @@ declare class CoreEthereumLikeAddress {
 
 declare class CoreEthereumLikeTransaction {
   getHash(): Promise<string>;
+  getNonce(): Promise<number>;
   getGasPrice(): Promise<CoreAmount>;
   getGasLimit(): Promise<CoreAmount>;
   getGasUsed(): Promise<CoreAmount>;
@@ -55,6 +56,7 @@ declare class CoreERC20LikeAccount {
 
 declare class CoreERC20LikeOperation {
   getHash(): Promise<string>;
+  getNonce(): Promise<CoreBigInt>;
   getGasPrice(): Promise<CoreBigInt>;
   getGasLimit(): Promise<CoreBigInt>;
   getUsedGas(): Promise<CoreBigInt>;
@@ -117,6 +119,7 @@ export const reflect = (declare: (string, Spec) => void) => {
   declare("EthereumLikeTransaction", {
     methods: {
       getHash: {},
+      getNonce: {},
       getGasPrice: { returns: "Amount" },
       getGasLimit: { returns: "Amount" },
       getGasUsed: { returns: "Amount" },
@@ -177,6 +180,7 @@ export const reflect = (declare: (string, Spec) => void) => {
   declare("ERC20LikeOperation", {
     methods: {
       getHash: {},
+      getNonce: { returns: "BigInt" },
       getGasPrice: { returns: "BigInt" },
       getGasLimit: { returns: "BigInt" },
       getUsedGas: { returns: "BigInt" },

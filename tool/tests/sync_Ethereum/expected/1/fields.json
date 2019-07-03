@@ -16,7 +16,7 @@
       "id": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
       "parentId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM",
       "tokenId": "ethereum/erc20/0x_project",
-      "balance": "-1826560000000000000",
+      "balance": "0",
       "operations": [
         {
           "id": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498-0xdb71e957445c99c51d8c3dacf6bf7b4e7894526504f52f0c3d86746da95cb25f-OUT",
@@ -33,7 +33,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-28T08:22:48.000Z",
-          "value": "123221060000000000",
+          "value": "123000000000000000",
           "fee": "221060000000000"
         },
         {
@@ -69,7 +69,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-27T08:27:22.000Z",
-          "value": "5103716848000000000",
+          "value": "5103420000000000000",
           "fee": "296848000000000"
         },
         {
@@ -87,7 +87,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-27T07:27:55.000Z",
-          "value": "1234519780000000000",
+          "value": "1234000000000000000",
           "fee": "519780000000000"
         },
         {
@@ -105,7 +105,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-27T07:19:23.000Z",
-          "value": "1480420000000000",
+          "value": "1110000000000000",
           "fee": "370420000000000"
         },
         {
@@ -123,7 +123,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-25T07:52:39.000Z",
-          "value": "2234207912000000000",
+          "value": "2234000000000000000",
           "fee": "207912000000000"
         },
         {
@@ -159,7 +159,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-21T09:31:31.000Z",
-          "value": "1123416336000000000",
+          "value": "1123000000000000000",
           "fee": "416336000000000"
         },
         {
@@ -177,7 +177,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-21T09:24:12.000Z",
-          "value": "1000296336000000000",
+          "value": "1000000000000000000",
           "fee": "296336000000000"
         },
         {
@@ -195,7 +195,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-19T12:52:03.000Z",
-          "value": "234074084000000000",
+          "value": "234000000000000000",
           "fee": "74084000000000"
         },
         {
@@ -213,7 +213,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-19T12:46:57.000Z",
-          "value": "234074084000000000",
+          "value": "234000000000000000",
           "fee": "74084000000000"
         },
         {
@@ -231,7 +231,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-19T11:32:52.000Z",
-          "value": "123746848000000000",
+          "value": "123450000000000000",
           "fee": "296848000000000"
         },
         {
@@ -249,7 +249,7 @@
           "accountId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-19T10:46:47.000Z",
-          "value": "234074084000000000",
+          "value": "234000000000000000",
           "fee": "74084000000000"
         },
         {
@@ -288,7 +288,8 @@
           "value": "234560000000000000",
           "fee": "520420000000000"
         }
-      ]
+      ],
+      "pendingOperations": []
     }
   ]
 }
@@ -372,7 +373,7 @@
           "accountId": "libcore:1:ethereum:xpub6BemYiVNp19ZzH73tAbE9guoQcyygwpWgmrch2J2WsbJhxUSnjZXpMnAKru6wXK3AWxU2fywYBCdojmwnFL6qiH3ByqXpDJ2PKGijdaNvAb:+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-19T10:39:48.000Z",
-          "value": "8337036848000000000",
+          "value": "8336860000000000000",
           "fee": "176848000000000"
         },
         {
@@ -390,7 +391,7 @@
           "accountId": "libcore:1:ethereum:xpub6BemYiVNp19ZzH73tAbE9guoQcyygwpWgmrch2J2WsbJhxUSnjZXpMnAKru6wXK3AWxU2fywYBCdojmwnFL6qiH3ByqXpDJ2PKGijdaNvAb:+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-08T14:53:04.000Z",
-          "value": "235080420000000000",
+          "value": "234560000000000000",
           "fee": "520420000000000"
         },
         {
@@ -411,7 +412,8 @@
           "value": "8571420000000000000",
           "fee": "333954000000000"
         }
-      ]
+      ],
+      "pendingOperations": []
     }
   ]
 }
@@ -448,7 +450,7 @@
       "id": "libcore:1:ethereum:xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4:+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
       "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4:",
       "tokenId": "ethereum/erc20/0x_project",
-      "balance": "877000000000000000",
+      "balance": "1000000000000000000",
       "operations": [
         {
           "id": "libcore:1:ethereum:xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4:+0xE41d2489571d322189246DaFA5ebDe1F4699F498-0xdb71e957445c99c51d8c3dacf6bf7b4e7894526504f52f0c3d86746da95cb25f-IN",
@@ -483,7 +485,7 @@
           "accountId": "libcore:1:ethereum:xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4:+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-28T08:19:13.000Z",
-          "value": "123416848000000000",
+          "value": "123000000000000000",
           "fee": "416848000000000"
         },
         {
@@ -501,7 +503,7 @@
           "accountId": "libcore:1:ethereum:xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4:+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
           "extra": {},
           "date": "2019-03-28T08:15:41.000Z",
-          "value": "123296848000000000",
+          "value": "123000000000000000",
           "fee": "296848000000000"
         },
         {
@@ -522,7 +524,8 @@
           "value": "1000000000000000000",
           "fee": "370420000000000"
         }
-      ]
+      ],
+      "pendingOperations": []
     }
   ]
 }

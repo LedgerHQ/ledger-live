@@ -10,6 +10,7 @@ import { buildAccount } from "./buildAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
 import { remapLibcoreErrors } from "./errors";
+import postSyncPatchPerFamily from "../generated/libcore-postSyncPatch";
 
 // FIXME how to get that
 const OperationOrderKey = {
@@ -90,10 +91,15 @@ export async function syncCoreAccount({
   return account;
 }
 
+const defaultPostSyncPatch = (initial: Account, synced: Account): Account =>
+  synced;
+
 export function syncAccount(
   account: Account
 ): Observable<(Account) => Account> {
   const { derivationMode, seedIdentifier, currency } = account;
+  const postSyncPatch =
+    postSyncPatchPerFamily[currency.family] || defaultPostSyncPatch;
   return defer(() =>
     from(
       withLibcore(core =>
@@ -114,17 +120,19 @@ export function syncAccount(
       )
     )
   ).pipe(
-    map(syncedAccount => initialAccount => ({
-      ...initialAccount,
-      id: syncedAccount.id,
-      freshAddress: syncedAccount.freshAddress,
-      freshAddressPath: syncedAccount.freshAddressPath,
-      balance: syncedAccount.balance,
-      blockHeight: syncedAccount.blockHeight,
-      lastSyncDate: new Date(),
-      operations: syncedAccount.operations,
-      tokenAccounts: syncedAccount.tokenAccounts,
-      pendingOperations: []
-    }))
+    map(syncedAccount => initialAccount =>
+      postSyncPatch(initialAccount, {
+        ...initialAccount,
+        id: syncedAccount.id,
+        freshAddress: syncedAccount.freshAddress,
+        freshAddressPath: syncedAccount.freshAddressPath,
+        balance: syncedAccount.balance,
+        blockHeight: syncedAccount.blockHeight,
+        lastSyncDate: new Date(),
+        operations: syncedAccount.operations,
+        tokenAccounts: syncedAccount.tokenAccounts,
+        pendingOperations: []
+      })
+    )
   );
 }

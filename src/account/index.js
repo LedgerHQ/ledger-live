@@ -35,13 +35,10 @@ import {
   validateNameEdition
 } from "./accountName";
 import {
-  sortAccounts,
   sortAccountsComparatorFromOrder,
   comparatorSortAccounts,
   flattenSortAccounts,
-  nestedSortAccounts,
-  reorderAccountByCountervalues,
-  reorderTokenAccountsByCountervalues
+  nestedSortAccounts
 } from "./ordering";
 import {
   groupAccountsOperationsByDay,
@@ -75,13 +72,10 @@ export {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
   validateNameEdition,
-  sortAccounts,
   sortAccountsComparatorFromOrder,
   comparatorSortAccounts,
   flattenSortAccounts,
   nestedSortAccounts,
-  reorderAccountByCountervalues,
-  reorderTokenAccountsByCountervalues,
   groupAccountsOperationsByDay,
   groupAccountOperationsByDay,
   addPendingOperation

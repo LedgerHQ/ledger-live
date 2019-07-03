@@ -4,7 +4,7 @@ import LRU from "lru-cache";
 
 export const makeLRUCache = <A: Array<*>, T>(
   f: (...args: A) => Promise<T>,
-  keyExtractor: (...args: A) => string,
+  keyExtractor: (...args: A) => string = () => "",
   lruOpts: Object = {
     max: 100,
     maxAge: 5 * 60 * 1000

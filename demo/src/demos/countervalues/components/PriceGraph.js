@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { VictoryLine } from "victory";
-import CounterValues from "../countervalues";
+import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -13,7 +13,7 @@ const mapStateToProps = (state, props: *) => {
   const value = BigNumber(10 ** props.from.units[0].magnitude);
   for (let i = 0; i < props.days; i++) {
     const date = new Date(t);
-    const cv = CounterValues.calculateSelector(state, {
+    const cv = getCountervalues().calculateSelector(state, {
       ...props,
       date,
       value

@@ -19,16 +19,16 @@ import {
   listCryptoCurrencies,
   listTokens
 } from "@ledgerhq/live-common/lib/currencies";
+import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import CurrencySelect from "./CurrencySelect";
 import ExchangeSelect from "./ExchangeSelect";
-import { marketsSelector } from "../reducers/markets";
-import { addMarket, setMarket } from "../actions/markets";
+import { marketsSelector } from "../../../reducers/markets";
+import { addMarket, setMarket } from "../../../actions/markets";
 import Price from "./Price";
 import PriceGraph from "./PriceGraph";
 import ReversePrice from "./ReversePrice";
 import type { State } from "../reducers/markets";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
-import CounterValues from "../countervalues";
 
 const fromCurrencyList: Currency[] = listCryptoCurrencies().concat(
   listTokens()
@@ -68,6 +68,7 @@ class App extends Component<{
 }> {
   render() {
     const { classes, markets, setMarket, addMarket } = this.props;
+    const CounterValues = getCountervalues();
     return (
       <div className={classes.root}>
         <AppBar position="static">

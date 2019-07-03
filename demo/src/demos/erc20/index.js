@@ -4,7 +4,6 @@ import { BigNumber } from "bignumber.js";
 import TransportU2F from "@ledgerhq/hw-transport-u2f";
 import styled from "styled-components";
 import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
-import { setEnv } from "@ledgerhq/live-common/lib/env";
 import signERC20Transaction from "@ledgerhq/live-common/lib/hw/signTransaction/erc20";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import type { CurrencyToken } from "@ledgerhq/live-common/lib/types";

@@ -3,13 +3,15 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { listTokens } from "@ledgerhq/live-common/lib/currencies";
 import type { CurrencyToken } from "@ledgerhq/live-common/lib/types";
-import countervalues from "./countervalues";
+import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 
 let tickers;
-const tickersP = countervalues.fetchTickersByMarketcap().then(t => {
-  tickers = t;
-  return t;
-});
+const tickersP = getCountervalues()
+  .fetchTickersByMarketcap()
+  .then(t => {
+    tickers = t;
+    return t;
+  });
 
 const rank = token => {
   const i = tickers.indexOf(token.ticker);

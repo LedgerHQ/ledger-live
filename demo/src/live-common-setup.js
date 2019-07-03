@@ -1,5 +1,6 @@
 // @flow
 import { Observable } from "rxjs";
+import { implementCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import { map } from "rxjs/operators";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
@@ -9,6 +10,9 @@ import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
+
+import { pairsSelector } from "./reducers/markets";
+import { setExchangePairsAction } from "./actions/markets";
 
 setEnv("FORCE_PROVIDER", 4);
 
@@ -83,4 +87,32 @@ registerTransportModule({
       };
     })
   )
+});
+
+// provide a basic mecanism to stop polling when you leave the tab
+// & immediately poll when you come back.
+const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
+  function onWindowBlur() {
+    cancelPoll();
+  }
+  function onWindowFocus() {
+    schedulePoll(1000);
+  }
+  window.addEventListener("blur", onWindowBlur);
+  window.addEventListener("focus", onWindowFocus);
+  return () => {
+    window.removeEventListener("blur", onWindowBlur);
+    window.removeEventListener("focus", onWindowFocus);
+  };
+};
+
+implementCountervalues({
+  network: axios,
+  log: (...args) => console.log(...args), // eslint-disable-line no-console
+  getAPIBaseURL: () => window.LEDGER_CV_API,
+  storeSelector: state => state.countervalues,
+  pairsSelector,
+  setExchangePairsAction,
+  addExtraPollingHooks,
+  maximumDays: 1 // we don't actually need history
 });

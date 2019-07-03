@@ -4,8 +4,7 @@ import { getKeychainEngine, getDerivationScheme } from "../derivation";
 import type { CryptoCurrency, DerivationMode } from "../types";
 import { atomicQueue } from "../promise";
 import type { Core, CoreWallet } from "./types";
-import { findCurrencyExplorer } from "../explorers";
-import { getEnv } from "../env";
+import { findCurrencyExplorer } from "../api/Ledger";
 
 type F = ({
   core: Core,
@@ -30,7 +29,7 @@ export const getOrCreateWallet: F = atomicQueue(
 
     const ledgerExplorer = findCurrencyExplorer(currency);
     if (ledgerExplorer) {
-      const endpoint = getEnv("EXPLORER");
+      const endpoint = ledgerExplorer.endpoint;
       if (endpoint) {
         await config.putString("BLOCKCHAIN_EXPLORER_API_ENDPOINT", endpoint);
       }

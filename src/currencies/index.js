@@ -6,6 +6,14 @@ import type { Currency } from "../types";
 import { sanitizeValueString } from "./sanitizeValueString";
 
 import {
+  sortByMarketcap,
+  getMarketcapTickers,
+  useMarketcapTickers,
+  currenciesByMarketcap,
+  useCurrenciesByMarketcap
+} from "./sortByMarketcap";
+
+import {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
   getFiatCurrencyByTicker,
@@ -19,7 +27,10 @@ import {
   findCryptoCurrency,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
-  findCryptoCurrencyByTicker
+  findCryptoCurrencyByTicker,
+  isCurrencySupported,
+  setSupportedCurrencies,
+  listSupportedCurrencies
 } from "../data/cryptocurrencies";
 
 import {
@@ -53,8 +64,16 @@ const findCurrencyByTicker = (ticker: string): ?Currency =>
   findTokenByTicker(ticker);
 
 export {
+  sortByMarketcap,
+  getMarketcapTickers,
+  useMarketcapTickers,
+  currenciesByMarketcap,
+  useCurrenciesByMarketcap,
   listFiatCurrencies,
   listCryptoCurrencies,
+  setSupportedCurrencies,
+  listSupportedCurrencies,
+  isCurrencySupported,
   getFiatCurrencyByTicker,
   findCurrencyByTicker,
   findCryptoCurrency,

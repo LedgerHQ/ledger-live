@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable global-require */
 
-import { from, of, concat, empty, Observable, interval } from "rxjs";
+import { from, defer, of, concat, empty, Observable, interval } from "rxjs";
 import {
   map,
   reduce,
@@ -45,7 +45,7 @@ import {
   inferCurrency,
   inferManagerApp
 } from "./scan";
-import { inferTransaction, inferTransactionOpts } from "./transaction";
+import { inferTransactions, inferTransactionsOpts } from "./transaction";
 import getAddress from "../../lib/hw/getAddress";
 import { apdusFromFile } from "./stream";
 import { discoverDevices } from "../../lib/hw";
@@ -234,9 +234,7 @@ const all = {
           if (!firmware) return of("already up to date");
           return concat(
             of(
-              `firmware: ${firmware.final.name}\nOSU: ${
-                firmware.osu.name
-              } (hash: ${firmware.osu.hash})`
+              `firmware: ${firmware.final.name}\nOSU: ${firmware.osu.name} (hash: ${firmware.osu.hash})`
             ),
             prepareFirmwareUpdate("", firmware),
             mainFirmwareUpdate("", firmware)
@@ -434,18 +432,28 @@ const all = {
 
   feesForTransaction: {
     description: "Calculate how much fees a given transaction is going to cost",
-    args: [...scanCommonOpts, ...inferTransactionOpts],
+    args: [...scanCommonOpts, ...inferTransactionsOpts],
     job: opts =>
       scan(opts).pipe(
         concatMap((account: Account) =>
-          from(
-            inferTransaction(account, opts).then(inferred =>
-              getFeesForTransaction({
-                ...inferred,
-                account
-              })
-            )
-          ).pipe(
+          from(inferTransactions(account, opts)).pipe(
+            mergeMap(inferred =>
+              inferred.reduce(
+                (acc, t) =>
+                  concat(
+                    acc,
+                    from(
+                      defer(() =>
+                        getFeesForTransaction({
+                          ...t,
+                          account
+                        })
+                      )
+                    )
+                  ),
+                empty()
+              )
+            ),
             map(n =>
               formatCurrencyUnit(account.unit, n, {
                 showCode: true,
@@ -512,7 +520,7 @@ const all = {
     description: "Send crypto-assets",
     args: [
       ...scanCommonOpts,
-      ...inferTransactionOpts,
+      ...inferTransactionsOpts,
       {
         name: "format",
         alias: "f",
@@ -524,13 +532,24 @@ const all = {
     job: opts =>
       scan(opts).pipe(
         concatMap((account: Account) =>
-          from(inferTransaction(account, opts)).pipe(
+          from(inferTransactions(account, opts)).pipe(
             mergeMap(inferred =>
-              signAndBroadcast({
-                ...inferred,
-                account,
-                deviceId: ""
-              })
+              inferred.reduce(
+                (acc, t) =>
+                  concat(
+                    acc,
+                    from(
+                      defer(() =>
+                        signAndBroadcast({
+                          ...t,
+                          account,
+                          deviceId: ""
+                        })
+                      )
+                    )
+                  ),
+                empty()
+              )
             ),
             map(obj => (opts.format === "json" ? JSON.stringify(obj) : obj))
           )

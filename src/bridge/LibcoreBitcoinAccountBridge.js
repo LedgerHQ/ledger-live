@@ -118,11 +118,6 @@ const signAndBroadcast = (account, transaction, deviceId) =>
     deviceId
   });
 
-const addPendingOperation = (account, optimisticOperation) => ({
-  ...account,
-  pendingOperations: [...account.pendingOperations, optimisticOperation]
-});
-
 const getFees = makeLRUCache(
   async (a, t) => {
     await checkValidRecipient(a, t.recipient);
@@ -176,8 +171,7 @@ const bridge: AccountBridge<Transaction> = {
   getTotalSpent,
   getMaxAmount,
   prepareTransaction,
-  signAndBroadcast,
-  addPendingOperation
+  signAndBroadcast
 };
 
 export default bridge;

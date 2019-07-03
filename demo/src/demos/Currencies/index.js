@@ -3,9 +3,11 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
-import countervalues from "./countervalues";
-import { blockchainBaseURL } from "@ledgerhq/live-common/lib/api/Ledger";
-import { hasCurrencyExplorer } from "@ledgerhq/live-common/lib/explorers";
+import {
+  blockchainBaseURL,
+  hasCurrencyExplorer
+} from "@ledgerhq/live-common/lib/api/Ledger";
+import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 
 const Section = styled.div`
   padding: 20px 40px;
@@ -123,8 +125,12 @@ class Crypto extends Component<*> {
             crypto.ethereumLikeInfo &&
               "ethereumLikeInfo=" + JSON.stringify(crypto.ethereumLikeInfo),
             "units are " +
-              crypto.units.map(u => u.code + "(^" + u.magnitude + ")").join(" "),
-            hasCurrencyExplorer(crypto)?"ledger explorer is " + blockchainBaseURL(crypto):"doesn't have ledger explorer"
+              crypto.units
+                .map(u => u.code + "(^" + u.magnitude + ")")
+                .join(" "),
+            hasCurrencyExplorer(crypto)
+              ? "ledger explorer is " + blockchainBaseURL(crypto)
+              : "doesn't have ledger explorer"
           ]
             .filter(o => o)
             .join(", ")}
@@ -145,7 +151,7 @@ class Currencies extends Component<*, *> {
   };
 
   async componentDidMount() {
-    const tickers = await countervalues.fetchTickersByMarketcap();
+    const tickers = await getCountervalues().fetchTickersByMarketcap();
     this.setState({ tickers });
   }
 

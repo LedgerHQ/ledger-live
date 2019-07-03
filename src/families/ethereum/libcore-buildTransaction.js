@@ -3,7 +3,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded, NotEnoughGas, NotEnoughBalance } from "@ledgerhq/errors";
 import type { Account, Transaction } from "../../types";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
@@ -11,6 +11,8 @@ import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
 import type { CoreEthereumLikeTransaction } from "./types";
 
 const ethereumTransferMethodID = Buffer.from("a9059cbb", "hex");
+
+const ZERO = BigNumber(0);
 
 export async function ethereumBuildTransaction({
   account,
@@ -43,7 +45,9 @@ export async function ethereumBuildTransaction({
   const recipient = eip55.encode(transaction.recipient);
 
   const { gasPrice, gasLimit } = transaction;
-  if (!gasPrice || !gasLimit) throw new FeeNotLoaded();
+  if (!gasPrice || !gasLimit || !BigNumber(gasLimit).gt(ZERO)) {
+    throw new FeeNotLoaded();
+  }
 
   const gasPriceAmount = await bigNumberToLibcoreAmount(
     core,
@@ -68,6 +72,9 @@ export async function ethereumBuildTransaction({
     } else {
       if (!transaction.amount) throw new Error("amount is missing");
       amount = BigNumber(transaction.amount);
+      if (amount.gt(tokenAccount.balance)) {
+        throw new NotEnoughBalance();
+      }
     }
     const to256 = Buffer.concat([
       Buffer.alloc(12),
@@ -116,10 +123,18 @@ export async function ethereumBuildTransaction({
   await transactionBuilder.setGasPrice(gasPriceAmount);
   if (isCancelled()) return;
 
-  const builded = await transactionBuilder.build();
-  if (isCancelled()) return;
+  try {
+    const builded = await transactionBuilder.build();
+    if (isCancelled()) return;
 
-  return builded;
+    return builded;
+  } catch (e) {
+    if (tokenAccount && e.message === "Cannot gather enough funds.") {
+      // FIXME e.message usage: we need a universal error code way. not yet the case with diff bindings
+      throw new NotEnoughGas();
+    }
+    throw e;
+  }
 }
 
 export default ethereumBuildTransaction;

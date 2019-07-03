@@ -2,6 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import {
+  sortByMarketcap,
   listTokens,
   listFiatCurrencies,
   listCryptoCurrencies,
@@ -119,6 +120,32 @@ test("fiats list is sorted by ticker", () => {
       .sort((a, b) => (a > b ? 1 : -1))
       .join(",")
   );
+});
+
+test("sort by marketcap", () => {
+  const tokens = listTokens().filter(
+    t => t.ticker === "XST" || t.ticker === "ZRX" || t.ticker === "HOT"
+  );
+  const currencies = listCryptoCurrencies().filter(
+    c => c.ticker === "BTC" || c.ticker === "XST" || c.ticker === "ETH"
+  );
+  expect(
+    sortByMarketcap(currencies.concat(tokens), [
+      "BTC",
+      "ETH",
+      "ZRX",
+      "HOT",
+      "XST"
+    ]).map(c => c.id)
+  ).toMatchObject([
+    "bitcoin",
+    "ethereum",
+    "ethereum/erc20/0x_project",
+    "ethereum/erc20/holotoken",
+    "stealthcoin",
+    "ethereum/erc20/hydro_protocol",
+    "ethereum/erc20/xensor"
+  ]);
 });
 
 test("can get fiat by coin type", () => {
@@ -284,7 +311,8 @@ test("sub magnitude", () => {
       getCryptoCurrencyById("bitcoin").units[0],
       BigNumber(9.123456),
       {
-        subMagnitude: 2
+        subMagnitude: 2,
+        disableRounding: true
       }
     )
   ).toBe("0.0000000912");
@@ -394,6 +422,18 @@ test("formatter can change locale", () => {
   ).toBe("- USD 12,345.67");
 });
 
+test("formatter does not show very small value in rounding mode", () => {
+  expect(
+    formatCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], BigNumber(1))
+  ).toBe("0");
+  expect(
+    formatCurrencyUnit(
+      getCryptoCurrencyById("ethereum").units[0],
+      BigNumber(1000)
+    )
+  ).toBe("0");
+});
+
 test("formatShort", () => {
   expect(
     formatShort(getFiatCurrencyByTicker("EUR").units[0], BigNumber(123456789))
@@ -404,7 +444,7 @@ test("formatShort", () => {
 
   expect(
     formatShort(getCryptoCurrencyById("ethereum").units[0], BigNumber(600000))
-  ).toBe("0.0000000000006");
+  ).toBe("0");
 });
 
 test("chopCurrencyUnitDecimals", () => {

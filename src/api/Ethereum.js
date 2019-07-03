@@ -3,8 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "../types";
 import network from "../network";
-import { blockchainBaseURL } from "./Ledger";
-import { getCurrencyExplorer } from "../explorers";
+import { blockchainBaseURL, getCurrencyExplorer } from "./Ledger";
 
 export type Block = { height: number }; // TODO more fields actually
 

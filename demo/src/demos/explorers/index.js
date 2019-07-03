@@ -4,11 +4,11 @@ import styled from "styled-components";
 import { format as timeago } from "timeago.js";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
-import { blockchainBaseURL } from "@ledgerhq/live-common/lib/api/Ledger";
 import {
+  blockchainBaseURL,
   getCurrencyExplorer,
   hasCurrencyExplorer
-} from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/lib/api/Ledger";
 
 const Main = styled.div`
   max-width: 600px;

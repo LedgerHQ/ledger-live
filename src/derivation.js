@@ -264,7 +264,7 @@ export const getDerivationModesForCurrency = (
   if (currency.supportsSegwit) {
     all.push("segwit");
   }
-  if (currency.supportsNativeSegwit && getEnv("EXPERIMENTAL_NATIVE_SEGWIT")) {
+  if (currency.supportsNativeSegwit) {
     all.push("native_segwit");
   }
   if (currency.id === "aeternity") {
