@@ -13,7 +13,7 @@
     "@ledgerhq/hw-transport-node-ble": "^4.63.2",
     "@ledgerhq/hw-transport-node-hid": "^4.63.2",
     "@ledgerhq/ledger-core": "^3.0.0-beta.6",
-    "@ledgerhq/live-common": "^7.0.0-beta.10",
+    "@ledgerhq/live-common": "^7.0.0",
     "@ledgerhq/logs": "^4.62.0",
     "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
@@ -25,7 +25,7 @@
     "flow-bin": "^0.102.0",
     "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
-    "qrloop": "^0.8.1",
+    "qrloop": "^0.9.0",
     "rxjs": "^6.5.2",
     "winston": "^3.2.1",
     "ws": "^7.0.1"
