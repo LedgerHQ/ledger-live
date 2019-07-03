@@ -972,10 +972,10 @@
     "@ledgerhq/errors" "^4.63.2"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^7.0.0-beta.0":
-  version "7.0.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.0.tgz#428eaa3e2767aa69a7b59d90b448019e8bf287be"
-  integrity sha512-53jzVmB8OQ777gaSloH8xsABc0C0CySzZZTBfdxRP/BbD9bA28O36qsE1LeCyy6+uxp7PyjTOXWgq0BwSd5N5w==
+"@ledgerhq/live-common@^7.0.0-beta.10":
+  version "7.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.0.0-beta.10.tgz#35dc5003f9f0aedf37321bcc2b05ee8fbec0a295"
+  integrity sha512-RyohCvWxMy26GFjUUlC3IvayGh0T7oN5en1fvcE7ql3u/4ZEr1cfAWX1M+mU/vWcwRbQVrw8ClKht1ifp8/zgA==
   dependencies:
     "@ledgerhq/errors" "4.63.2"
     "@ledgerhq/hw-app-btc" "4.63.3"

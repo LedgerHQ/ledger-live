@@ -4,7 +4,7 @@ import { MenuItem } from "material-ui/Menu";
 import Select from "material-ui/Select";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import type { Exchange } from "@ledgerhq/live-common/lib/countervalues/types";
-import CounterValues from "../countervalues";
+import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 
 class ExchangeSelect extends Component<
   {
@@ -53,7 +53,10 @@ class ExchangeSelect extends Component<
     const { _loadId } = this;
     const { from, to } = this.props;
     try {
-      const exchanges = await CounterValues.fetchExchangesForPair(from, to);
+      const exchanges = await getCountervalues().fetchExchangesForPair(
+        from,
+        to
+      );
       if (this._loadId === _loadId) {
         this.setState({ exchanges });
       }

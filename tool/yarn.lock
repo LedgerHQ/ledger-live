@@ -338,10 +338,10 @@
     "@ledgerhq/errors" "^4.63.2"
     events "^3.0.0"
 
-"@ledgerhq/ledger-core@^3.0.0-beta.1":
-  version "3.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-3.0.0-beta.1.tgz#238585c042464225ddf6be0ffa31c115db19f469"
-  integrity sha512-DlLs7j/SBacPUWpjF2InLY7HJTGjWjc7d7TsMwhbWDGvfdiiAi9XDnQFB4iTx36es0PB9s4bDJgwu3tiaiRuNw==
+"@ledgerhq/ledger-core@^3.0.0-beta.6":
+  version "3.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-3.0.0-beta.6.tgz#52ed509fa9556a61015357a6892f33492992874e"
+  integrity sha512-L7wzcCGC8+IlW1w2aOeSkGWXD68km7b278FUxxwYMfv2jaq7B2eWHG4NmbAVcQZVrQ0sATv2F+lSYvYRWQsJTg==
   dependencies:
     bindings "^1.3.0"
     nan "^2.6.2"

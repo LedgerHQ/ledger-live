@@ -7,7 +7,7 @@ import {
   blockchainBaseURL,
   hasCurrencyExplorer
 } from "@ledgerhq/live-common/lib/api/Ledger";
-import countervalues from "./countervalues";
+import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 
 const Section = styled.div`
   padding: 20px 40px;
@@ -151,7 +151,7 @@ class Currencies extends Component<*, *> {
   };
 
   async componentDidMount() {
-    const tickers = await countervalues.fetchTickersByMarketcap();
+    const tickers = await getCountervalues().fetchTickersByMarketcap();
     this.setState({ tickers });
   }
 
