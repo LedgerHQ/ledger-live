@@ -845,7 +845,8 @@
       "input": "Enter address"
     },
     "amount": {
-      "available": "<1><0>{{amount}}</></> available",
+      "available": "Total available",
+      "useMax": "Use max",
       "loadingNetwork": "Loading Network fees...",
       "noRateProvider": "Not available"
     },

@@ -148,6 +148,7 @@ class CurrencyInput extends PureComponent<Props, State> {
             styles.input,
             isActive ? styles.active : null,
             hasError ? styles.error : null,
+            editable ? {} : styles.readOnly,
           ]}
           editable={editable}
           onChangeText={this.handleChange}
@@ -187,6 +188,9 @@ const styles = StyleSheet.create({
   },
   active: {
     fontSize: 32,
+  },
+  readOnly: {
+    color: colors.grey,
   },
   error: {
     color: colors.alert,
