@@ -35,6 +35,8 @@ import uninstallApp from "@ledgerhq/live-common/lib/hw/uninstallApp";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 import repairFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
+import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import accountFormatters from "./accountFormatters";
 import proxy from "./proxy";
 import {
@@ -46,9 +48,7 @@ import {
   inferManagerApp
 } from "./scan";
 import { inferTransactions, inferTransactionsOpts } from "./transaction";
-import getAddress from "../../lib/hw/getAddress";
 import { apdusFromFile } from "./stream";
-import { discoverDevices } from "../../lib/hw";
 
 const asQR = str =>
   Observable.create(o =>
