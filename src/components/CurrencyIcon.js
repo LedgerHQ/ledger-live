@@ -16,20 +16,20 @@ type Props = {
 
 export default class CurrencyIcon extends PureComponent<Props> {
   render() {
-    const { size, currency } = this.props;
+    const { size, currency, color } = this.props;
 
-    const color = getCurrencyColor(currency);
+    const currencyColor = color || getCurrencyColor(currency);
 
     if (currency.type === "TokenCurrency") {
       const dynamicStyle = {
-        backgroundColor: rgba(color, 0.1),
+        backgroundColor: rgba(currencyColor, 0.1),
         width: size,
         height: size,
       };
 
       return (
         <View style={[styles.tokenCurrencyIcon, dynamicStyle]}>
-          <LText semiBold style={{ color, fontSize: size / 2 }}>
+          <LText semiBold style={{ color: currencyColor, fontSize: size / 2 }}>
             {currency.ticker[0]}
           </LText>
         </View>
@@ -46,7 +46,9 @@ export default class CurrencyIcon extends PureComponent<Props> {
         </View>
       );
     }
-    return <IconComponent size={size} color={color || currency.color} />;
+    return (
+      <IconComponent size={size} color={currencyColor || currency.color} />
+    );
   }
 }
 

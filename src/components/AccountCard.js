@@ -14,24 +14,34 @@ import colors from "../colors";
 
 type Props = {
   account: Account | TokenAccount,
-  parentAccount: ?Account,
   onPress?: () => void,
   style?: any,
+  disabled?: boolean,
 };
 
 class AccountCard extends PureComponent<Props> {
   render() {
-    const { onPress, account, style } = this.props;
+    const { onPress, account, style, disabled } = this.props;
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
     return (
-      <Card onPress={onPress} style={[styles.card, style]}>
-        <CurrencyIcon size={20} currency={currency} />
+      <Card
+        onPress={!disabled ? onPress : undefined}
+        style={[styles.card, style]}
+      >
+        <CurrencyIcon
+          color={disabled ? colors.grey : undefined}
+          size={20}
+          currency={currency}
+        />
         <View style={styles.accountName}>
           <LText
             semiBold
             numberOfLines={1}
-            style={styles.accountNameText}
+            style={[
+              styles.accountNameText,
+              { color: disabled ? colors.grey : colors.darkBlue },
+            ]}
             ellipsizeMode="tail"
           >
             {account.type === "Account" ? account.name : currency.name}
@@ -61,7 +71,6 @@ const styles = StyleSheet.create({
   },
   accountNameText: {
     fontSize: 14,
-    color: colors.darkBlue,
   },
   balanceContainer: {
     marginLeft: 16,
