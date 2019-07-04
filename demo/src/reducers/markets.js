@@ -1,8 +1,8 @@
 // @flow
 import {
   getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-  listCryptoCurrencies
+  listSupportedCurrencies,
+  getFiatCurrencyByTicker
 } from "@ledgerhq/live-common/lib/currencies";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { createSelector } from "reselect";
@@ -15,30 +15,10 @@ export type State = Array<{
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 
-const initialState: State = [
-  {
-    from: bitcoin,
-    to: getFiatCurrencyByTicker("USD"),
-    exchange: "KRAKEN"
-  },
-  {
-    from: bitcoin,
-    to: getFiatCurrencyByTicker("EUR"),
-    exchange: null
-  },
-  {
-    from: getCryptoCurrencyById("ripple"),
-    to: getCryptoCurrencyById("ethereum"),
-    exchange: null
-  },
-  {
-    from: getCryptoCurrencyById("litecoin"),
-    to: getCryptoCurrencyById("bitcoin"),
-    exchange: null
-  },
-  ...listCryptoCurrencies().map(from => ({
+const getInitialState = () => [
+  ...listSupportedCurrencies().map(from => ({
     from,
-    to: bitcoin,
+    to: from === bitcoin ? getFiatCurrencyByTicker("USD") : bitcoin,
     exchange: null
   }))
 ];
@@ -65,7 +45,7 @@ const reducers = {
     })
 };
 
-export default (state: State = initialState, action: *) => {
+export default (state: State = getInitialState(), action: *) => {
   const reducer = reducers[action.type];
   return (reducer && reducer(state, action)) || state;
 };

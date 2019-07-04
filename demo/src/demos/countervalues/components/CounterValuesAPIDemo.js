@@ -8,6 +8,7 @@ import Table, {
   TableHead,
   TableRow
 } from "material-ui/Table";
+import TextField from "material-ui/TextField";
 import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
@@ -66,9 +67,13 @@ class App extends Component<{
   addMarket: *,
   setMarket: *
 }> {
+  onChangeCVAPI = e => {
+    window.LEDGER_CV_API = e.target.value;
+  };
   render() {
     const { classes, markets, setMarket, addMarket } = this.props;
     const CounterValues = getCountervalues();
+
     return (
       <div className={classes.root}>
         <AppBar position="static">
@@ -82,6 +87,11 @@ class App extends Component<{
                 >
                   CounterValues API demo
                 </Typography>
+                <TextField
+                  defaultValue={window.LEDGER_CV_API}
+                  onChange={this.onChangeCVAPI}
+                  style={{ width: 400 }}
+                />
                 <Button onClick={polling.wipe} color="inherit">
                   Wipe
                 </Button>

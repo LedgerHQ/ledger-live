@@ -1,6 +1,7 @@
 // @flow
 import { Observable } from "rxjs";
 import { implementCountervalues } from "@ledgerhq/live-common/lib/countervalues";
+import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
 import { map } from "rxjs/operators";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
@@ -17,6 +18,36 @@ import { setExchangePairsAction } from "./actions/markets";
 setEnv("FORCE_PROVIDER", 4);
 
 setNetwork(axios);
+
+setSupportedCurrencies([
+  "bitcoin",
+  "ethereum",
+  "ripple",
+  "bitcoin_cash",
+  "litecoin",
+  "dash",
+  "ethereum_classic",
+  "qtum",
+  "zcash",
+  "bitcoin_gold",
+  "stratis",
+  "dogecoin",
+  "digibyte",
+  "hcash",
+  "komodo",
+  "pivx",
+  "zencash",
+  "vertcoin",
+  "peercoin",
+  "viacoin",
+  "stakenet",
+  "stealthcoin",
+  "poswallet",
+  "clubcoin",
+  "decred",
+  "bitcoin_testnet",
+  "ethereum_ropsten"
+]);
 
 const webusbDevices = {};
 
@@ -113,6 +144,5 @@ implementCountervalues({
   storeSelector: state => state.countervalues,
   pairsSelector,
   setExchangePairsAction,
-  addExtraPollingHooks,
-  maximumDays: 1 // we don't actually need history
+  addExtraPollingHooks
 });
