@@ -162,10 +162,10 @@ class AccountRow extends PureComponent<Props, State> {
           )}
         </View>
         {!!this.state.collapsed &&
-          account.tokenAccounts &&
-          account.tokenAccounts.length && (
-            <View style={styles.tokenAccountIndicator} />
-          )}
+        account.tokenAccounts &&
+        account.tokenAccounts.length ? (
+          <View style={styles.tokenAccountIndicator} />
+        ) : null}
       </View>
     );
   }
