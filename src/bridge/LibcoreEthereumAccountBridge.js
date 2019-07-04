@@ -134,6 +134,13 @@ const editTransactionExtra = (a, t, field, value) => {
       );
       return { ...t, feeCustomUnit: value };
 
+    case "useAllAmount":
+      invariant(
+        typeof value === "boolean",
+        "editTransactionExtra(a,t,'useAllAmount',value): boolean value expected"
+      );
+      return { ...t, useAllAmount: value };
+
     default:
       return t;
   }
@@ -149,6 +156,9 @@ const getTransactionExtra = (a, t, field) => {
 
     case "feeCustomUnit":
       return t.feeCustomUnit;
+
+    case "useAllAmount":
+      return t.useAllAmount;
 
     default:
       return undefined;
