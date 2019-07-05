@@ -28,10 +28,13 @@ export async function buildERC20Operation(arg: {
   const usedGas = await libcoreBigIntToBigNumber(
     await coreOperation.getUsedGas()
   );
+  const gasLimit = await libcoreBigIntToBigNumber(
+    await coreOperation.getGasLimit()
+  );
   const gasPrice = await libcoreBigIntToBigNumber(
     await coreOperation.getGasPrice()
   );
-  const fee = usedGas.times(gasPrice);
+  const fee = (usedGas.gt(0) ? usedGas : gasLimit).times(gasPrice);
 
   const blockHeight = await coreOperation.getBlockHeight();
 
