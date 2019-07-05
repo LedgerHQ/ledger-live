@@ -42,7 +42,7 @@ async function ethereum({
       ? fee
       : transaction.useAllAmount
       ? balance
-      : BigNumber(transaction.amount).plus(fee),
+      : BigNumber(transaction.amount || 0).plus(fee),
     fee,
     blockHash: null,
     blockHeight: null,
@@ -67,7 +67,7 @@ async function ethereum({
         value:
           transaction.useAllAmount && tokenAccount
             ? tokenAccount.balance
-            : BigNumber(transaction.amount),
+            : BigNumber(transaction.amount || 0),
         fee,
         blockHash: null,
         blockHeight: null,

@@ -40,7 +40,8 @@ export async function getTransactionStatus(
       totalSpent
         .minus(maxAmount)
         .times(10)
-        .gt(maxAmount));
+        .gt(maxAmount)) ||
+    false;
 
   return {
     showFeeWarning,

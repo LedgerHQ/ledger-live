@@ -11,6 +11,7 @@ function asString(bn) {
   if (typeof bn === "object" && bn) {
     const obj = {};
     for (let k in bn) {
+      // $FlowFixMe
       obj[k] = asString(bn[k]);
     }
     return obj;
@@ -29,7 +30,7 @@ test("inferDynamicRange", () => {
 
 test("projectRangeIndex", () => {
   expect(
-    asString(projectRangeIndex(inferDynamicRange(BigNumber(0.4)), BigNumber(2)))
+    asString(projectRangeIndex(inferDynamicRange(BigNumber(0.4)), 2))
   ).toMatchSnapshot();
 });
 
