@@ -35,7 +35,7 @@ class EthereumFeeRow extends Component<Props> {
     });
   };
   extraInfoFees = () => {
-    Linking.openURL(urls.feesMoreInfo);
+    Linking.openURL(urls.feesEthereum);
   };
 
   render() {
