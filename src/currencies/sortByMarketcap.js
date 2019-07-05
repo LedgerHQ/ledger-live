@@ -1,5 +1,6 @@
 // @flow
 import type { Currency } from "../types";
+// $FlowFixMe to be figured out
 import { useState, useEffect } from "react";
 import { makeLRUCache } from "../cache";
 import { getCountervalues } from "../countervalues";
