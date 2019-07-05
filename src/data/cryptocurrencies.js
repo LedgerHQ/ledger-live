@@ -855,7 +855,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: [
       {
         tx: "https://etherscan.io/tx/$hash",
-        address: "https://etherscan.io/address/$address"
+        address: "https://etherscan.io/address/$address",
+        token: "https://etherscan.io/token/$contractAddress?a=$address"
       }
     ]
   },
