@@ -38,6 +38,8 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
+    "slow": "slow",
+    "fast": "fast",
     "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
@@ -878,6 +880,8 @@
       "title": "Network fees",
       "validate": "Confirm",
       "required": "Fees are required",
+      "chooseGas": "Choose a gas price",
+      "higherFaster": "Higher gas price means a faster confirmation",
       "edit": {
         "title": "Choose Unit"
       }
