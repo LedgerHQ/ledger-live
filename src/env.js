@@ -20,6 +20,7 @@ const stringParser = (v: mixed): ?string =>
 
 // This define the available environments
 const envParsers = {
+  USER_ID: stringParser,
   BASE_SOCKET_URL: stringParser,
   DEVICE_PROXY_URL: stringParser,
   DISABLE_TRANSACTION_BROADCAST: boolParser,
@@ -46,6 +47,7 @@ const envParsers = {
 
 // This define the default values
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
+  USER_ID: "",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
   DEVICE_PROXY_URL: "",
   DISABLE_TRANSACTION_BROADCAST: false,
