@@ -5936,10 +5936,10 @@ posix-character-classes@^0.1.0:
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
 
-prando@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/prando/-/prando-5.1.0.tgz#f0aab737ba0c356e2f2f9e3088b9118e42b05f51"
-  integrity sha512-UkXcaSqEoMz2S5O/uhb9emINjP1qM9vClszDSPCIVhI7s696tVCNS5qbm5b7qSwMlpLS3rih4NHFZdPzwHTtSQ==
+prando@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/prando/-/prando-5.1.1.tgz#91b0efc6a06ce000a1dd6929306dc6f2c173a842"
+  integrity sha512-KstlnYTOUs+3DJWaVZGmdpBh9Y2fHhPPB+BkxfZ7ZWb8qqUfDxBz/QC4pXNwGEYWtkjMaCuBWDPDUQ5BZQksEA==
 
 prelude-ls@~1.1.2:
   version "1.1.2"
