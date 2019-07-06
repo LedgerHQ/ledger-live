@@ -49,6 +49,7 @@ class SendSummary extends Component<
     totalSpent: ?BigNumber,
     error: ?Error,
     highFeesOpen: boolean,
+    maxAmount: ?BigNumber,
   },
 > {
   static navigationOptions = {
@@ -65,16 +66,19 @@ class SendSummary extends Component<
 
   state = {
     totalSpent: null,
+    maxAmount: null,
     error: null, // TODO use error somewhere!
     highFeesOpen: false,
   };
 
   componentDidMount() {
     this.syncTotalSpent();
+    this.syncMaxAmount();
   }
 
   componentDidUpdate() {
     this.syncTotalSpent();
+    this.syncMaxAmount();
   }
 
   componentWillUnmount() {
@@ -159,6 +163,37 @@ class SendSummary extends Component<
     }
   };
 
+  nonceMaxAmount = 0;
+  syncMaxAmount = async () => {
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+    const transaction = navigation.getParam("transaction");
+    const nonce = ++this.nonceMaxAmount;
+
+    const useAllAmount = bridge.getTransactionExtra(
+      mainAccount,
+      transaction,
+      "useAllAmount",
+    );
+
+    let maxAmount;
+    if (useAllAmount)
+      maxAmount = await bridge.getMaxAmount(mainAccount, transaction);
+    if (nonce !== this.nonceMaxAmount) return;
+
+    this.setState(old => {
+      if (
+        !maxAmount ||
+        (old.maxAmount && maxAmount && maxAmount.eq(old.maxAmount))
+      ) {
+        return null;
+      }
+      return { maxAmount };
+    });
+  };
+
   onAcceptFees = async () => {
     const { account, parentAccount, navigation } = this.props;
     if (!account) return;
@@ -180,7 +215,7 @@ class SendSummary extends Component<
   };
 
   render() {
-    const { totalSpent, error, highFeesOpen } = this.state;
+    const { totalSpent, error, highFeesOpen, maxAmount } = this.state;
     const { account, parentAccount, navigation } = this.props;
     if (!account) return null;
     const transaction = navigation.getParam("transaction");
@@ -188,6 +223,11 @@ class SendSummary extends Component<
     const mainAccount = getMainAccount(account, parentAccount);
     const amount = bridge.getTransactionAmount(mainAccount, transaction);
     const recipient = bridge.getTransactionRecipient(mainAccount, transaction);
+    const useAllAmount = bridge.getTransactionExtra(
+      mainAccount,
+      transaction,
+      "useAllAmount",
+    );
 
     return (
       <SafeAreaView style={styles.root}>
@@ -205,7 +245,7 @@ class SendSummary extends Component<
           <SummaryAmountSection
             account={account}
             parentAccount={parentAccount}
-            amount={amount}
+            amount={(useAllAmount && maxAmount) || amount}
           />
           <SendRowsFee
             account={account}
@@ -286,9 +326,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = accountAndParentScreenSelector;
-
-export default connect(mapStateToProps)(translate()(SendSummary));
+export default connect(accountAndParentScreenSelector)(
+  translate()(SendSummary),
+);
 
 class VerticalConnector extends Component<*> {
   render() {
