@@ -10,7 +10,8 @@ import {
   concatMap,
   shareReplay,
   tap,
-  scan as rxScan
+  scan as rxScan,
+  catchError
 } from "rxjs/operators";
 import qrcode from "qrcode-terminal";
 import { dataToFrames } from "qrloop/exporter";
@@ -527,6 +528,11 @@ const all = {
         type: String,
         typeDesc: "default | json",
         desc: "how to display the data"
+      },
+      {
+        name: "ignore-errors",
+        type: Boolean,
+        desc: "when using multiple transactions, an error won't stop the flow"
       }
     ],
     job: opts =>
@@ -544,7 +550,19 @@ const all = {
                           ...t,
                           account,
                           deviceId: ""
-                        })
+                        }).pipe(
+                          ...(opts["ignore-errors"]
+                            ? [
+                                catchError(e => {
+                                  return of({
+                                    type: "error",
+                                    error: e,
+                                    transaction: t
+                                  });
+                                })
+                              ]
+                            : [])
+                        )
                       )
                     )
                   ),
