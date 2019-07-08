@@ -10,6 +10,7 @@ import type {
   Currency,
   Unit,
 } from "@ledgerhq/live-common/lib/types";
+import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies/color";
 import colors from "../colors";
 import { setSelectedTimeRange } from "../actions/settings";
@@ -60,14 +61,13 @@ class GraphCard extends PureComponent<Props, State> {
   render() {
     const { portfolio, renderTitle, counterValueCurrency } = this.props;
 
+    const { countervalueChange } = portfolio;
     const { hoveredItem } = this.state;
 
     const range = portfolio.range;
     const isAvailable = portfolio.balanceAvailable;
     const accounts = portfolio.accounts;
     const balanceHistory = portfolio.balanceHistory;
-    const start = portfolio.balanceHistory[0];
-    const end = portfolio.balanceHistory[portfolio.balanceHistory.length - 1];
 
     const graphColor =
       accounts.length === 1
@@ -81,10 +81,10 @@ class GraphCard extends PureComponent<Props, State> {
     return (
       <Card style={styles.root}>
         <GraphCardHeader
+          valueChange={countervalueChange}
           isLoading={!isAvailable}
-          from={start}
-          to={end}
           hoveredItem={hoveredItem}
+          to={balanceHistory[balanceHistory.length - 1]}
           unit={counterValueCurrency.units[0]}
           renderTitle={renderTitle}
         />
@@ -113,15 +113,24 @@ class GraphCard extends PureComponent<Props, State> {
 
 class GraphCardHeader extends PureComponent<{
   isLoading: boolean,
-  from: Item,
-  to: Item,
+  valueChange: ValueChange,
   unit: Unit,
+  to: Item,
   hoveredItem: ?Item,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
 }> {
   render() {
-    const { unit, from, to, hoveredItem, renderTitle, isLoading } = this.props;
+    const {
+      unit,
+      valueChange,
+      hoveredItem,
+      renderTitle,
+      isLoading,
+      to,
+    } = this.props;
+
     const item = hoveredItem || to;
+
     return (
       <Fragment>
         <View style={styles.balanceTextContainer}>
@@ -153,11 +162,10 @@ class GraphCardHeader extends PureComponent<{
             <Fragment>
               <Delta
                 percent
-                from={from.value}
-                to={to.value}
+                valueChange={valueChange}
                 style={styles.deltaPercent}
               />
-              <Delta from={from.value} to={to.value} unit={unit} />
+              <Delta valueChange={valueChange} unit={unit} />
             </Fragment>
           )}
         </View>
