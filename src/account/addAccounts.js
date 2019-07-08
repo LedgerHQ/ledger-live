@@ -158,6 +158,11 @@ export type AddAccountsProps = {
   renamings: { [_: string]: string }
 };
 
+const preserveUserData = (update: Account, existing: Account) => ({
+  ...update,
+  name: existing.name
+});
+
 export function addAccounts({
   scannedAccounts,
   existingAccounts,
@@ -173,8 +178,8 @@ export function addAccounts({
   existingAccounts.forEach(existing => {
     const migration = findAccountMigration(existing, selected);
     if (migration) {
-      if (!newAccounts.includes(migration)) {
-        newAccounts.push(migration);
+      if (!newAccounts.some(a => a.id === migration.id)) {
+        newAccounts.push(preserveUserData(migration, existing));
         const index = selected.indexOf(migration);
         if (index !== -1) {
           selected[index] = selected[selected.length - 1];
@@ -186,7 +191,7 @@ export function addAccounts({
       const update = selected.find(a => a.id === existing.id);
       if (update) {
         // preserve existing name
-        newAccounts.push({ ...update, name: existing.name });
+        newAccounts.push(preserveUserData(update, existing));
       } else {
         newAccounts.push(existing);
       }
