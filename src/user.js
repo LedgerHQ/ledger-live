@@ -1,11 +1,9 @@
 // @flow
-import Prando from "prando";
 import { getEnv } from "./env";
+import { sha256 } from "./crypto/sha256";
 
-const hexaChars = "0123456789ABCDEF";
 const userHashesPerUserId = (userId: string) => {
-  const rng = new Prando(userId);
-  const firmwareNonce = rng.nextString(6, hexaChars);
+  const firmwareNonce = sha256(userId + "|firmwareNonce").slice(0, 6);
   return { firmwareNonce };
 };
 
