@@ -41,9 +41,11 @@ const mapStateToProps = createStructuredSelector({
 
 class Content extends PureComponent<Props, *> {
   onPress = () => {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+
     navigation.navigate("Account", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
     });
   };
 
