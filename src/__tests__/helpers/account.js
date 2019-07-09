@@ -6,7 +6,8 @@ import {
 } from "../../currencies";
 import {
   groupAccountOperationsByDay,
-  groupAccountsOperationsByDay
+  groupAccountsOperationsByDay,
+  shortAddressPreview
 } from "../../account";
 import { genAccount } from "../../mock/account";
 
@@ -42,4 +43,13 @@ test("groupAccountsOperationsByDay", () => {
     // $FlowFixMe
     flatMap(res1.sections, s => s.data)
   );
+});
+
+test("shortAddressPreview", () => {
+  expect(
+    shortAddressPreview("0x112233445566778899001234567890aAbBcCdDeEfF")
+  ).toBe("0x112233...cCdDeEfF");
+  expect(
+    shortAddressPreview("0x112233445566778899001234567890aAbBcCdDeEfF", 30)
+  ).toBe("0x11223344556...0aAbBcCdDeEfF");
 });

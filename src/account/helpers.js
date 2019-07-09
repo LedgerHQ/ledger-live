@@ -95,3 +95,10 @@ export const addPendingOperation = (account: Account, operation: Operation) => {
   );
   return accountCopy;
 };
+
+export const shortAddressPreview = (addr: string, target: number = 20) => {
+  const slice = Math.floor((target - 3) / 2);
+  return addr.length < target - 3
+    ? addr
+    : `${addr.slice(0, slice)}...${addr.slice(addr.length - slice)}`;
+};

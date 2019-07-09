@@ -10,7 +10,8 @@ import {
   isAccountEmpty,
   clearAccount,
   flattenAccounts,
-  addPendingOperation
+  addPendingOperation,
+  shortAddressPreview
 } from "./helpers";
 import {
   shouldShowNewAccount,
@@ -78,5 +79,6 @@ export {
   nestedSortAccounts,
   groupAccountsOperationsByDay,
   groupAccountOperationsByDay,
-  addPendingOperation
+  addPendingOperation,
+  shortAddressPreview
 };
