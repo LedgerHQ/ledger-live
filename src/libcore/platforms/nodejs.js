@@ -134,6 +134,7 @@ export default (arg: {
           method: lib.METHODS[method],
           url,
           headers,
+          // the default would parse the request, we want to preserve the string
           transformResponse: data => data
         };
 
