@@ -76,7 +76,7 @@ class Distribution extends PureComponent<Props, *> {
     this.flatListRef.scrollToIndex({ index }, true);
   };
 
-  keyExtractor = item => item.id;
+  keyExtractor = item => item.currency.id;
 
   ListHeaderComponent = () => {
     const { counterValueCurrency, distribution } = this.props;
