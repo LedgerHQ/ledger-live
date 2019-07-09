@@ -113,7 +113,7 @@ export default (arg: {
         getHeaders: () => headersMap,
         readBody: () => ({
           error: err ? { code: 0, message: "something went wrong" } : null,
-          data: stringToBytesArray(JSON.stringify(res.data))
+          data: stringToBytesArray(res.data)
         })
       };
       return new lib.NJSHttpUrlConnection(NJSHttpUrlConnectionImpl);
@@ -123,20 +123,8 @@ export default (arg: {
       execute: async r => {
         const method = r.getMethod();
         const headersMap = r.getHeaders();
-        let data = r.getBody();
-        if (Array.isArray(data)) {
-          if (data.length === 0) {
-            data = null;
-          } else {
-            const dataStr = bytesArrayToString(data);
-            try {
-              data = JSON.parse(dataStr);
-            } catch (e) {
-              // not a json !?
-            }
-          }
-        }
         const url = r.getUrl();
+        let data = r.getBody();
         const headers = {};
         headersMap.forEach((v, k) => {
           headers[k] = v;
@@ -145,10 +133,23 @@ export default (arg: {
         const param: Object = {
           method: lib.METHODS[method],
           url,
-          headers
+          headers,
+          transformResponse: data => data
         };
+
+        if (Array.isArray(data)) {
+          if (data.length === 0) {
+            data = null;
+          } else {
+            // we transform back to a string
+            data = bytesArrayToString(data);
+          }
+        }
         if (data) {
           param.data = data;
+          if (!headers["Content-Type"]) {
+            headers["Content-Type"] = "application/json";
+          }
         }
         try {
           res = await network(param);
