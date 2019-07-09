@@ -8,11 +8,11 @@ import type {
 } from "@ledgerhq/live-common/lib/types/currencies";
 import colors from "../../colors";
 import LText from "../../components/LText";
-import CurrencyIcon from "../../components/CurrencyIcon";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import ProgressBar from "../../components/ProgressBar";
 import CounterValue from "../../components/CounterValue";
 import CurrencyRate from "../../components/CurrencyRate";
+import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency,
@@ -43,7 +43,7 @@ class DistributionCard extends PureComponent<Props> {
     return (
       <View style={[styles.root, highlighting ? { borderColor: color } : {}]}>
         <View style={styles.currencyLogo}>
-          <CurrencyIcon size={18} currency={currency} />
+          <ParentCurrencyIcon currency={currency} size={18} />
         </View>
         <View style={styles.rightContainer}>
           <View style={styles.currencyRow}>

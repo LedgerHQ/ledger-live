@@ -6,8 +6,8 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import LText from "../../components/LText";
-import CurrencyIcon from "../../components/CurrencyIcon";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -30,7 +30,7 @@ class AccountHeaderTitle extends Component<Props> {
       <TouchableWithoutFeedback onPress={this.onPress}>
         <View style={styles.headerContainer}>
           <View style={styles.iconContainer}>
-            <CurrencyIcon size={18} currency={currency} />
+            <ParentCurrencyIcon size={18} currency={currency} />
           </View>
           <LText
             semiBold
