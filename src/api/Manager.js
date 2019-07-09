@@ -9,6 +9,7 @@ import {
   ManagerAppAlreadyInstalledError,
   ManagerAppRelyOnBTCError,
   ManagerDeviceLockedError,
+  ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
   ManagerUninstallBTCDep,
   UserRefusedAllowManager,
@@ -57,6 +58,9 @@ const remapSocketError = (context?: string) =>
         }
         return throwError(new ManagerAppRelyOnBTCError());
       case "6a84":
+        if (context === "firmware" || context === "mcu") {
+          return throwError(new ManagerFirmwareNotEnoughSpaceError());
+        }
         return throwError(new ManagerNotEnoughSpaceError());
       case "6a85":
         if (context === "firmware" || context === "mcu") {
