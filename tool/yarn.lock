@@ -312,10 +312,10 @@
     invariant "^2.2.4"
     rxjs "^6.5.2"
 
-"@ledgerhq/hw-transport-node-hid-noevents@^4.64.1":
-  version "4.64.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid-noevents/-/hw-transport-node-hid-noevents-4.64.1.tgz#88e53ff18401588efbefffae66d068808bdee590"
-  integrity sha512-MbIjWGr9tu/LOJvkIPiIzVJIf34MYU3a2/LB558dBliXZAZv5Qk8Sk92nPJgNLnwIL6pdt1V+ulPi7zV2A23vA==
+"@ledgerhq/hw-transport-node-hid-noevents@^4.65.0":
+  version "4.65.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid-noevents/-/hw-transport-node-hid-noevents-4.65.0.tgz#e7365050870ca96c6af70950cf38d4b66eca2adf"
+  integrity sha512-tAtbnYn/TgIoqWY6gbQUwH4sEOkavq4GVAEmDfTUIZ5kkb8M3NhwstuoLyCm4BeR9zzHqf6MkY9AYVnKSjHZVg==
   dependencies:
     "@ledgerhq/devices" "^4.64.1"
     "@ledgerhq/errors" "^4.64.1"
@@ -323,15 +323,15 @@
     "@ledgerhq/logs" "^4.64.0"
     node-hid "^0.7.9"
 
-"@ledgerhq/hw-transport-node-hid@^4.64.1":
-  version "4.64.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-4.64.1.tgz#ccff688b69a34d99b0febc8d7497d39333765644"
-  integrity sha512-sE9g0QkeVfczzlzx6SlXhntDzOzQly97/RH0OzRHMIF6Kz8zw7Fi4GXyrA7HcXkxUQ7TBCawl7eI2KCDZ3jHCg==
+"@ledgerhq/hw-transport-node-hid@^4.65.1":
+  version "4.65.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-4.65.1.tgz#de40646ea8453fd6e6d1ab3dcb7e51fa377e0847"
+  integrity sha512-5RXHnN69VCdXOXI7nzlSuPo/F0fU4kGEMkB3PiXz+nom/Atv3NdO2YQuKuY0BhEwaShWAHJo0+EXNlpqTgM9kQ==
   dependencies:
     "@ledgerhq/devices" "^4.64.1"
     "@ledgerhq/errors" "^4.64.1"
     "@ledgerhq/hw-transport" "^4.64.1"
-    "@ledgerhq/hw-transport-node-hid-noevents" "^4.64.1"
+    "@ledgerhq/hw-transport-node-hid-noevents" "^4.65.0"
     "@ledgerhq/logs" "^4.64.0"
     lodash "^4.17.11"
     node-hid "^0.7.9"
@@ -354,10 +354,10 @@
     bindings "^1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@7.4.0-beta.1":
-  version "7.4.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.4.0-beta.1.tgz#e0f03d1356c08c6cfe3362bf134f3c6128b7da74"
-  integrity sha512-JkdBIdtE456ooXChdl89zW1iWqljWBZ/FKLWfMFvvqAMmYt9diBhl+WAI+sygRIUSERl+DDH4t2R/3gWnDGOww==
+"@ledgerhq/live-common@7.4.0-beta.2":
+  version "7.4.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.4.0-beta.2.tgz#096b53a7e78b9a54b6e4d9644b8a8bf0e7c6166d"
+  integrity sha512-25DiiXfFsb+B+CvNld/jjNUGJUhUFONuhl+hrEVr/9aKz26GfC500ofxtcdtjpgJazoL7L0ybciIc3bfjQve1A==
   dependencies:
     "@ledgerhq/errors" "4.64.1"
     "@ledgerhq/hw-app-btc" "4.64.1"

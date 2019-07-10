@@ -69,7 +69,8 @@ if (process.env.DEVICE_PROXY_URL) {
   const Tr = createTransportHttp(process.env.DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
-    open: () => retry(() => Tr.create(3000, 5000)),
+    open: () =>
+      retry(() => Tr.create(3000, 5000), { context: "open-http-proxy" }),
     disconnect: () => Promise.resolve()
   });
 }
@@ -133,7 +134,7 @@ if (!process.env.CI) {
     open: devicePath =>
       // $FlowFixMe
       retry(() => TransportNodeHid.open(devicePath), {
-        maxRetry: 5 // YOLO
+        context: "open-hid"
       }),
     discovery: Observable.create(TransportNodeHid.listen).pipe(
       map(e => ({
