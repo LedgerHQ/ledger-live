@@ -580,6 +580,8 @@
   },
   "account": {
     "tokens": {
+      "contractAddress": "Contract address",
+      "viewInExplorer": "View in explorer",
       "howTo": "To add tokens accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
     },
     "send": "Send",
