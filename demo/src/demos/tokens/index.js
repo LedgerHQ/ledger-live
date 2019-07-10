@@ -120,7 +120,7 @@ const Tokens = () => {
   useEffect(() => {
     if (!tickers) return;
     getRates(
-      () => "https://countervalues.api.live.ledger.com",
+      () => window.LEDGER_CV_API,
       uniq(tickers)
         .filter(ticker => tokens.some(t => t.ticker === ticker))
         .map(from => ({
