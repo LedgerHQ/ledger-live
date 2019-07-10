@@ -9,6 +9,7 @@ import explorers from "./explorers";
 import apps from "./apps";
 import Partners from "./Partners";
 import erc20 from "./erc20";
+import tokens from "./tokens";
 
 export default {
   Countervalues,
@@ -21,5 +22,6 @@ export default {
   qrledger,
   explorers,
   erc20,
-  apps
+  apps,
+  tokens
 };
