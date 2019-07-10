@@ -1748,6 +1748,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     coinType: 88,
     name: "Qtum",
     managerAppName: "Qtum",
+    supportsSegwit: true,
     ticker: "QTUM",
     scheme: "qtum",
     color: "#2e9ad0",
