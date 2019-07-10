@@ -1,18 +1,21 @@
 // @flow
 
+import { log } from "@ledgerhq/logs";
+
 export const delay = (ms: number): Promise<void> =>
   new Promise(f => setTimeout(f, ms));
 
 const defaults = {
   maxRetry: 4,
   interval: 300,
-  intervalMultiplicator: 1.5
+  intervalMultiplicator: 1.5,
+  context: ""
 };
 export function retry<A>(
   f: () => Promise<A>,
   options?: $Shape<typeof defaults>
 ): Promise<A> {
-  const { maxRetry, interval, intervalMultiplicator } = {
+  const { maxRetry, interval, intervalMultiplicator, context } = {
     ...defaults,
     ...options
   };
@@ -23,9 +26,15 @@ export function retry<A>(
       return result;
     }
     // In case of failure, wait the interval, retry the action
-    return result.catch(() =>
-      delay(i).then(() => rec(remainingTry - 1, i * intervalMultiplicator))
-    );
+    return result.catch(e => {
+      log(
+        "promise-retry",
+        context + " failed. " + remainingTry + " retry remain. " + String(e)
+      );
+      return delay(i).then(() =>
+        rec(remainingTry - 1, i * intervalMultiplicator)
+      );
+    });
   }
 
   return rec(maxRetry, interval);
