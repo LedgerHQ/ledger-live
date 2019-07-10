@@ -64,21 +64,7 @@ const columns = [
         </div>
       );
     },
-    accessor: token =>
-      token.countervalueStatus +
-      (token.countervalueStatus !== "yes"
-        ? ""
-        : token.loading
-        ? "..."
-        : token.exchange
-        ? " @" +
-          token.exchange +
-          " Ξ" +
-          token.ethValue.toLocaleString("en", {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 8
-          })
-        : " but no exchange")
+    accessor: "countervalueText"
   }
 ];
 
@@ -108,9 +94,25 @@ const Tokens = () => {
         loading = true;
       }
     }
+    const countervalueText =
+      countervalueStatus +
+      (countervalueStatus !== "yes"
+        ? ""
+        : loading
+        ? "..."
+        : exchange
+        ? " @" +
+          exchange +
+          " Ξ" +
+          (ethValue || 0).toLocaleString("en", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 8
+          })
+        : " but no exchange");
     return {
       ...t,
       countervalueStatus,
+      countervalueText,
       ethValue,
       exchange,
       loading
