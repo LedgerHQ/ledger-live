@@ -3,6 +3,7 @@
 import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
+import { TransportStatusError } from "@ledgerhq/errors";
 import { getCryptoCurrencyById } from "../currencies";
 import {
   getDerivationModesForCurrency,
@@ -18,7 +19,7 @@ import {
   isAccountEmpty
 } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
-import { open } from "../hw";
+import { withDevice } from "../hw/deviceAccess";
 import getAddress from "../hw/getAddress";
 import { withLibcoreF } from "./access";
 import { syncCoreAccount } from "./syncAccount";
@@ -57,17 +58,19 @@ async function scanNextAccount(props: {
   try {
     coreAccount = await wallet.getAccount(accountIndex);
   } catch (err) {
+    if (isUnsubscribed()) return;
     coreAccount = await createAccountFromDevice({
       core,
       wallet,
       transport,
       currency,
       index: accountIndex,
-      derivationMode
+      derivationMode,
+      isUnsubscribed
     });
   }
 
-  if (isUnsubscribed()) return;
+  if (isUnsubscribed() || !coreAccount) return;
 
   const account = await syncCoreAccount({
     core,
@@ -121,84 +124,105 @@ export const scanAccountsOnDevice = (
   deviceId: string,
   filterDerivationMode?: DerivationMode => boolean
 ): Observable<Account> =>
-  Observable.create(o => {
-    let finished = false;
-    const unsubscribe = () => {
-      finished = true;
-    };
-    const isUnsubscribed = () => finished;
+  withDevice(deviceId)(transport =>
+    Observable.create(o => {
+      let finished = false;
+      const unsubscribe = () => {
+        finished = true;
+      };
+      const isUnsubscribed = () => finished;
 
-    const main = withLibcoreF(core => async () => {
-      let transport;
-      try {
-        transport = await open(deviceId);
-        if (isUnsubscribed()) return;
+      const main = withLibcoreF(core => async () => {
+        try {
+          let derivationModes = getDerivationModesForCurrency(currency);
+          if (filterDerivationMode) {
+            derivationModes = derivationModes.filter(filterDerivationMode);
+          }
+          for (let i = 0; i < derivationModes.length; i++) {
+            const derivationMode = derivationModes[i];
 
-        let derivationModes = getDerivationModesForCurrency(currency);
-        if (filterDerivationMode) {
-          derivationModes = derivationModes.filter(filterDerivationMode);
+            const unsplitFork = isUnsplitDerivationMode(derivationMode)
+              ? currency.forkedFrom
+              : null;
+            const purpose = getPurposeDerivationMode(derivationMode);
+            const { coinType } = unsplitFork
+              ? getCryptoCurrencyById(unsplitFork)
+              : currency;
+            const path = `${purpose}'/${coinType}'`;
+
+            let result;
+
+            try {
+              result = await getAddress(transport, {
+                currency,
+                path,
+                derivationMode
+              });
+            } catch (e) {
+              // feature detection: some old app will specifically returns this code for segwit case and we ignore it
+              if (
+                derivationMode === "segwit" &&
+                e instanceof TransportStatusError &&
+                e.statusCode === 0x6f04
+              ) {
+                log(
+                  "libcore",
+                  "scanAccountsOnDevice ignore segwit paths because app don't support"
+                );
+              } else {
+                throw e;
+              }
+            }
+
+            if (!result) continue;
+
+            const seedIdentifier = result.publicKey;
+
+            if (isUnsubscribed()) return;
+
+            const walletName = getWalletName({
+              seedIdentifier,
+              currency,
+              derivationMode
+            });
+
+            const wallet = await getOrCreateWallet({
+              core,
+              walletName,
+              currency,
+              derivationMode
+            });
+            if (isUnsubscribed()) return;
+
+            const onAccountScanned = account => o.next(account);
+
+            // recursively scan all accounts on device on the given app
+            // new accounts will be created in sqlite, existing ones will be updated
+            await scanNextAccount({
+              core,
+              wallet,
+              transport,
+              currency,
+              accountIndex: 0,
+              onAccountScanned,
+              seedIdentifier,
+              derivationMode,
+              showNewAccount: shouldShowNewAccount(currency, derivationMode),
+              isUnsubscribed
+            });
+          }
+          o.complete();
+        } catch (e) {
+          o.error(remapLibcoreErrors(e));
         }
-        for (let i = 0; i < derivationModes.length; i++) {
-          const derivationMode = derivationModes[i];
 
-          const unsplitFork = isUnsplitDerivationMode(derivationMode)
-            ? currency.forkedFrom
-            : null;
-          const purpose = getPurposeDerivationMode(derivationMode);
-          const { coinType } = unsplitFork
-            ? getCryptoCurrencyById(unsplitFork)
-            : currency;
-          const path = `${purpose}'/${coinType}'`;
-
-          const { publicKey: seedIdentifier } = await getAddress(transport, {
-            currency,
-            path,
-            derivationMode
-          });
-
-          if (isUnsubscribed()) return;
-
-          const walletName = getWalletName({
-            seedIdentifier,
-            currency,
-            derivationMode
-          });
-
-          const wallet = await getOrCreateWallet({
-            core,
-            walletName,
-            currency,
-            derivationMode
-          });
-
-          const onAccountScanned = account => o.next(account);
-
-          // recursively scan all accounts on device on the given app
-          // new accounts will be created in sqlite, existing ones will be updated
-          await scanNextAccount({
-            core,
-            wallet,
-            transport,
-            currency,
-            accountIndex: 0,
-            onAccountScanned,
-            seedIdentifier,
-            derivationMode,
-            showNewAccount: shouldShowNewAccount(currency, derivationMode),
-            isUnsubscribed
-          });
+        if (transport) {
+          await transport.close();
         }
-        o.complete();
-      } catch (e) {
-        o.error(remapLibcoreErrors(e));
-      }
+      });
 
-      if (transport) {
-        await transport.close();
-      }
-    });
+      main();
 
-    main();
-
-    return unsubscribe;
-  });
+      return unsubscribe;
+    })
+  );

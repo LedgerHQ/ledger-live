@@ -13,30 +13,39 @@ type F = ({
   transport: Transport<*>,
   currency: CryptoCurrency,
   index: number,
-  derivationMode: DerivationMode
-}) => Promise<CoreAccount>;
+  derivationMode: DerivationMode,
+  isUnsubscribed: () => boolean
+}) => Promise<?CoreAccount>;
 
 export const createAccountFromDevice: F = async ({
   core,
   wallet,
   transport,
   currency,
-  derivationMode
+  derivationMode,
+  isUnsubscribed
 }) => {
   log(
     "libcore",
     "createAccountFromDevice " + currency.id + " " + derivationMode
   );
   const accountCreationInfos = await wallet.getNextAccountCreationInfo();
+  if (isUnsubscribed()) return;
   const chainCodes = await accountCreationInfos.getChainCodes();
+  if (isUnsubscribed()) return;
   const publicKeys = await accountCreationInfos.getPublicKeys();
+  if (isUnsubscribed()) return;
   const index = await accountCreationInfos.getIndex();
+  if (isUnsubscribed()) return;
   const derivations = await accountCreationInfos.getDerivations();
+  if (isUnsubscribed()) return;
   const owners = await accountCreationInfos.getOwners();
+  if (isUnsubscribed()) return;
 
   await derivations.reduce(
     (promise, derivation) =>
       promise.then(async () => {
+        if (isUnsubscribed()) return;
         const { publicKey, chainCode } = await getAddress(transport, {
           currency,
           path: derivation,
@@ -50,6 +59,7 @@ export const createAccountFromDevice: F = async ({
       }),
     Promise.resolve()
   );
+  if (isUnsubscribed()) return;
 
   const newAccountCreationInfos = await core.AccountCreationInfo.init(
     index,
@@ -58,6 +68,8 @@ export const createAccountFromDevice: F = async ({
     publicKeys,
     chainCodes
   );
+  if (isUnsubscribed()) return;
+
   const account = await wallet.newAccountWithInfo(newAccountCreationInfos);
   return account;
 };
