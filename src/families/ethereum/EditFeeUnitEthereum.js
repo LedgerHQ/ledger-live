@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   sliderContainer: {
+    flex: 1,
     backgroundColor: "white",
     minHeight: 200,
   },
