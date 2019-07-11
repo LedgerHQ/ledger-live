@@ -4,12 +4,12 @@
   "name": "Bitcoin 1 (legacy)",
   "derivationMode": "",
   "index": 0,
-  "freshAddress": "13CpyBt4mXRPz9cVda4dABNrNA47EhBe32",
-  "freshAddressPath": "44'/0'/0'/0/70",
+  "freshAddress": "1ATftUjdUKXQX6bBPzARUqongDWjNCLMhH",
+  "freshAddressPath": "44'/0'/0'/0/82",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "547",
+  "balance": "2825",
   "xpub": "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC"
 }
 {
@@ -32,12 +32,12 @@
   "name": "Bitcoin 2 (segwit)",
   "derivationMode": "segwit",
   "index": 1,
-  "freshAddress": "34N7XoKANmM66ZQDyQf2j8hPaTo6v5X8eA",
-  "freshAddressPath": "49'/0'/1'/0/131",
+  "freshAddress": "3EkSXnzhhv6JytAZFz5Qqt7rbkaFXEgaLU",
+  "freshAddressPath": "49'/0'/1'/0/134",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "550",
+  "balance": "2803",
   "xpub": "xpub6BuPGsUw1AazBjooDr9dHzVm5hwQCQbEtreXX6hjAA5ahJdPNHuJkn8t3nR9e9rNQ8rqboGdnWkrcwmxp9Cvd2u7zEURkQVnnWQHJFcFiMV"
 }
 {
@@ -74,12 +74,12 @@
   "name": "Bitcoin 1 (native segwit)",
   "derivationMode": "native_segwit",
   "index": 0,
-  "freshAddress": "bc1qexdgyeu0pf8xv5wjl3h4x8t6jze8ld59nut3l2",
-  "freshAddressPath": "84'/0'/0'/0/16",
+  "freshAddress": "bc1qtnegdkuhdd7fk5gcj3raf9jarurn64j73pjfyx",
+  "freshAddressPath": "84'/0'/0'/0/21",
   "pendingOperations": [],
   "currencyId": "bitcoin",
   "unitMagnitude": 8,
-  "balance": "880",
+  "balance": "3156",
   "xpub": "xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK"
 }
 {
