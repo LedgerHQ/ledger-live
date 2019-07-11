@@ -9,7 +9,7 @@ import explorers from "./explorers";
 import apps from "./apps";
 import Partners from "./Partners";
 import erc20 from "./erc20";
-import tokens from "./tokens";
+import assets from "./assets";
 
 export default {
   Countervalues,
@@ -23,5 +23,5 @@ export default {
   explorers,
   erc20,
   apps,
-  tokens
+  assets
 };
