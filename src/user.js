@@ -3,8 +3,8 @@ import { getEnv } from "./env";
 import { sha256 } from "./crypto/sha256";
 
 const userHashesPerUserId = (userId: string) => {
-  const firmwareNonce = sha256(userId + "|firmwareNonce").slice(0, 6);
-  return { firmwareNonce };
+  const firmwareSalt = sha256(userId + "|firmwareSalt").slice(0, 6);
+  return { firmwareSalt };
 };
 
 let cache;

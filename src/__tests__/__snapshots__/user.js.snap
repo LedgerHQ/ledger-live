@@ -2,6 +2,6 @@
 
 exports[`stable user 1`] = `
 Object {
-  "firmwareNonce": "be2700",
+  "firmwareSalt": "544d89",
 }
 `;
