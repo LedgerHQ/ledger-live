@@ -142,7 +142,7 @@ const getLatestFirmware: ({
   provider: number
 }) => Promise<?OsuFirmware> = makeLRUCache(
   async ({ current_se_firmware_final_version, device_version, provider }) => {
-    const nonce = getUserHashes().firmwareNonce;
+    const salt = getUserHashes().firmwareSalt;
     const {
       data
     }: {
@@ -154,7 +154,7 @@ const getLatestFirmware: ({
       method: "POST",
       url: URL.format({
         pathname: `${getEnv("MANAGER_API_BASE")}/get_latest_firmware`,
-        query: { livecommonversion, nonce }
+        query: { livecommonversion, salt }
       }),
       data: {
         current_se_firmware_final_version,
