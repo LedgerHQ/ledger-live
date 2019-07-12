@@ -1,3 +1,4 @@
+require("babel-polyfill");
 const axios = require("axios");
 const invariant = require("invariant");
 const fs = require("fs");
