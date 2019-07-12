@@ -799,10 +799,10 @@
     "@ledgerhq/errors" "^4.66.0"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^7.4.0":
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.4.0.tgz#e49f07ee029e2c2497534dabc6a7f59b972422b8"
-  integrity sha512-h+sRtv53ucXGAK7+zcOomtWinsyhqIiNb+23uzXo+qcS3cKl2snwBvJdUHC9SDmgcnQgUQHSH776ihlLsv8TsA==
+"@ledgerhq/live-common@^7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.5.0.tgz#c62878826e8689a682e5a1cfb5de63cdaf904a87"
+  integrity sha512-M0tvMnKsU/H5XJopkMpRyjiC7hwEAZL3Udyy9JI5gxzTeW8EGsMgp+I5ha8g1amUQucvuvAk9rSWPqMet+tW7g==
   dependencies:
     "@ledgerhq/errors" "4.66.0"
     "@ledgerhq/hw-app-btc" "4.66.0"
@@ -822,7 +822,7 @@
     prando "^5.1.1"
     react "*"
     react-redux "5"
-    redux "^4.0.3"
+    redux "^4.0.4"
     reselect "^4.0.0"
     ripple-binary-codec "^0.2.0"
     ripple-bs58check "^2.0.2"
@@ -7776,7 +7776,7 @@ redux@4.0.1:
     loose-envify "^1.4.0"
     symbol-observable "^1.2.0"
 
-redux@^4.0.3:
+redux@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.0.4.tgz#4ee1aeb164b63d6a1bcc57ae4aa0b6e6fa7a3796"
   integrity sha512-vKv4WdiJxOWKxK0yRoaK3Y4pxxB0ilzVx6dszU2W8wLxlb2yikRph4iV/ymtdJ6ZxpBLFbyrxklnT5yBbQSl3Q==
