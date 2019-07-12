@@ -41,7 +41,7 @@
   "dependencies": {
     "@ledgerhq/errors": "4.66.0",
     "@ledgerhq/hw-app-btc": "4.66.0",
-    "@ledgerhq/hw-app-eth": "4.66.0",
+    "@ledgerhq/hw-app-eth": "4.67.0",
     "@ledgerhq/hw-app-xrp": "4.66.0",
     "@ledgerhq/hw-transport": "4.66.0",
     "@ledgerhq/hw-transport-mocker": "4.66.0",
