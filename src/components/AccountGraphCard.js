@@ -18,6 +18,8 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
+
 import colors from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import { setSelectedTimeRange } from "../actions/settings";
@@ -39,6 +41,7 @@ type Props = {
   account: Account | TokenAccount,
   range: PortfolioRange,
   history: BalanceHistoryWithCountervalue,
+  valueChange: ValueChange,
   countervalueAvailable: boolean,
   counterValueCurrency: Currency,
   setSelectedTimeRange: string => void,
@@ -78,11 +81,10 @@ class AccountGraphCard extends PureComponent<Props, State> {
       counterValueCurrency,
       renderTitle,
       useCounterValue,
+      valueChange,
     } = this.props;
 
     const isAvailable = !useCounterValue || countervalueAvailable;
-    const start = history[0];
-    const end = history[history.length - 1];
 
     const { hoveredItem } = this.state;
 
@@ -94,13 +96,13 @@ class AccountGraphCard extends PureComponent<Props, State> {
       <Card style={styles.root}>
         <GraphCardHeader
           isLoading={!isAvailable}
-          from={start}
-          to={end}
+          to={history[history.length - 1]}
           hoveredItem={hoveredItem}
           cryptoCurrencyUnit={unit}
           counterValueUnit={counterValueCurrency.units[0]}
           renderTitle={renderTitle}
           useCounterValue={useCounterValue}
+          valueChange={valueChange}
         />
         <Graph
           isInteractive={isAvailable}
@@ -130,42 +132,28 @@ class AccountGraphCard extends PureComponent<Props, State> {
 
 class GraphCardHeader extends PureComponent<{
   isLoading: boolean,
-  from: Item,
-  to: Item,
   cryptoCurrencyUnit: Unit,
   counterValueUnit: Unit,
+  to: Item,
   hoveredItem: ?Item,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
   useCounterValue?: boolean,
+  valueChange: ValueChange,
 }> {
   render() {
     const {
       useCounterValue,
       cryptoCurrencyUnit,
       counterValueUnit,
-      from,
       to,
       hoveredItem,
       renderTitle,
       isLoading,
+      valueChange,
     } = this.props;
+
+    const unit = useCounterValue ? counterValueUnit : cryptoCurrencyUnit;
     const item = hoveredItem || to;
-
-    let fromValue;
-    let toValue;
-    let unit;
-
-    if (useCounterValue) {
-      unit = counterValueUnit;
-      // $FlowFixMe
-      fromValue = from.countervalue;
-      // $FlowFixMe
-      toValue = to.countervalue;
-    } else {
-      unit = cryptoCurrencyUnit;
-      fromValue = from.value;
-      toValue = to.value;
-    }
 
     return (
       <Fragment>
@@ -197,15 +185,14 @@ class GraphCardHeader extends PureComponent<{
             <LText>
               <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
             </LText>
-          ) : fromValue && toValue ? (
+          ) : valueChange ? (
             <Fragment>
               <Delta
                 percent
-                from={fromValue}
-                to={toValue}
+                valueChange={valueChange}
                 style={styles.deltaPercent}
               />
-              <Delta from={fromValue} to={toValue} unit={unit} />
+              <Delta valueChange={valueChange} unit={unit} />
             </Fragment>
           ) : null}
         </View>

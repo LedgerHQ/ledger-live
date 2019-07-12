@@ -18,7 +18,6 @@ import type {
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
-import CurrencyIcon from "./CurrencyIcon";
 
 import OperationIcon from "./OperationIcon";
 import colors from "../colors";
@@ -92,18 +91,12 @@ class OperationRow extends PureComponent<Props, *> {
       <View style={[styles.root, isLast ? styles.last : null]}>
         <RectButton onPress={this.goToOperationDetails} style={styles.button}>
           <View style={isOptimistic ? styles.optimistic : null}>
-            {multipleAccounts ? (
-              <CurrencyIcon size={20} currency={currency} />
-            ) : (
-              <View>
-                <OperationIcon
-                  size={28}
-                  operation={operation}
-                  account={account}
-                  parentAccount={parentAccount}
-                />
-              </View>
-            )}
+            <OperationIcon
+              size={28}
+              operation={operation}
+              account={account}
+              parentAccount={parentAccount}
+            />
           </View>
           <View
             style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}

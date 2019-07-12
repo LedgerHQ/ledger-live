@@ -22,6 +22,7 @@ import type {
   BalanceHistoryWithCountervalue,
   PortfolioRange,
 } from "@ledgerhq/live-common/lib/types";
+import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { balanceHistoryWithCountervalueSelector } from "../../actions/portfolio";
 import {
@@ -55,6 +56,8 @@ type Props = {
   switchCountervalueFirst: () => *,
   account: Account | TokenAccount,
   parentAccount: ?Account,
+  countervalueChange: ValueChange,
+  cryptoChange: ValueChange,
   range: PortfolioRange,
   history: BalanceHistoryWithCountervalue,
   counterValueCurrency: Currency,
@@ -177,6 +180,8 @@ class AccountScreen extends PureComponent<Props, State> {
       range,
       account,
       parentAccount,
+      cryptoChange,
+      countervalueChange,
     } = this.props;
     if (!account) return null;
     const empty = isAccountEmpty(account);
@@ -189,6 +194,7 @@ class AccountScreen extends PureComponent<Props, State> {
             range={range}
             history={history}
             useCounterValue={useCounterValue}
+            valueChange={useCounterValue ? countervalueChange : cryptoChange}
             countervalueAvailable={countervalueAvailable}
             counterValueCurrency={counterValueCurrency}
             renderTitle={this.renderListHeaderTitle}

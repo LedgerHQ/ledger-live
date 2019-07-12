@@ -1,10 +1,9 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
 
-import type { Unit } from "@ledgerhq/live-common/lib/types";
+import type { Unit, ValueChange } from "@ledgerhq/live-common/lib/types";
 
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -14,8 +13,7 @@ import IconArrowDown from "../icons/ArrowDown";
 import colors from "../colors";
 
 type Props = {
-  from: BigNumber,
-  to: BigNumber,
+  valueChange: ValueChange,
   percent?: boolean,
   unit?: Unit,
   style?: *,
@@ -26,18 +24,19 @@ const arrowDown = <IconArrowDown size={12} color={colors.alert} />;
 
 export default class Delta extends PureComponent<Props> {
   render() {
-    const { from, to, percent, unit, style } = this.props;
+    const { valueChange, percent, unit, style } = this.props;
 
-    if (percent && from.isEqualTo(0)) {
+    if (
+      percent &&
+      (!valueChange.percentage || valueChange.percentage.isEqualTo(0))
+    ) {
       return null;
     }
 
-    const delta = percent
-      ? to
-          .minus(from)
-          .dividedBy(from)
-          .multipliedBy(100)
-      : to.minus(from);
+    const delta =
+      percent && valueChange.percentage
+        ? valueChange.percentage.multipliedBy(100)
+        : valueChange.value;
 
     if (delta.isNaN()) {
       return null;
