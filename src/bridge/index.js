@@ -27,10 +27,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
       return RippleJSBridge.currencyBridge;
     case "ethereum":
       // ethereum classic not yet stable
-      if (
-        currency.id === "ethereum_classic" ||
-        !getEnv("EXPERIMENTAL_LIBCORE")
-      ) {
+      if (!getEnv("EXPERIMENTAL_LIBCORE")) {
         return EthereumJSBridge.currencyBridge;
       }
       return LibcoreCurrencyBridge;
