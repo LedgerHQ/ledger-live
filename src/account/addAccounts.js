@@ -163,6 +163,29 @@ const preserveUserData = (update: Account, existing: Account) => ({
   name: existing.name
 });
 
+export function migrateAccounts({
+  scannedAccounts,
+  existingAccounts
+}: {
+  scannedAccounts: Account[],
+  existingAccounts: Account[]
+}): Account[] {
+  // subset of scannedAccounts that exists to not add them but just do migration part
+  const subset = [];
+  existingAccounts.forEach(existing => {
+    const migration = findAccountMigration(existing, scannedAccounts);
+    if (migration && !subset.some(a => a.id === migration.id)) {
+      subset.push(migration);
+    }
+  });
+  return addAccounts({
+    scannedAccounts: subset,
+    existingAccounts,
+    selectedIds: subset.map(a => a.id),
+    renamings: {}
+  });
+}
+
 export function addAccounts({
   scannedAccounts,
   existingAccounts,

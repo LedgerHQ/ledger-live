@@ -18,7 +18,8 @@ import {
   canBeMigrated,
   findAccountMigration,
   groupAddAccounts,
-  addAccounts
+  addAccounts,
+  migrateAccounts
 } from "./addAccounts";
 import {
   inferSubOperations,
@@ -60,6 +61,7 @@ export {
   findAccountMigration,
   groupAddAccounts,
   addAccounts,
+  migrateAccounts,
   inferSubOperations,
   toOperationRaw,
   fromOperationRaw,
