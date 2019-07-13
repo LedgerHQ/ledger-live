@@ -10,6 +10,7 @@ import { findCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { jsonFromFile } from "./stream";
+import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
 
 export const deviceOpt = {
   name: "device",
@@ -127,7 +128,12 @@ export function scan(arg) {
         return from(
           xpubArray.map(xpub => {
             const account: Account = {
-              name: cur.name,
+              name:
+                cur.name +
+                " " +
+                (derivationMode || "legacy") +
+                " " +
+                shortAddressPreview(xpub),
               xpub,
               seedIdentifier: xpub,
               id: `libcore:1:bitcoin:${xpub}:${derivationMode}`,
