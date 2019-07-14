@@ -40,6 +40,17 @@ Usage: ledger-live repl       # Low level exchange with the device. Send APDUs f
      --device <String>        : provide a specific HID path of a device
  -f, --file <filename>        : A file can also be provided. By default stdin is used.
 
+Usage: ledger-live liveData   # utility for Ledger Live app.json file
+     --device <String>        : provide a specific HID path of a device
+     --xpub <String>          : use an xpub (alternatively to --device)
+     --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
+ -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -i, --index <Number>         : select the account by index
+ -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
+     --appjson <filename>     : path to a live desktop app.json
+ -a, --add                    : add accounts to live data
+
 Usage: ledger-live liveQR     # Show Live QR Code to export to mobile
      --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device)
@@ -98,6 +109,7 @@ Usage: ledger-live feesForTransaction # Calculate how much fees a given transact
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --gasLimit <String>      : how much gasLimit. default is estimated with the recipient
  -t, --token <String>         : use an token account children of the account
+     --shuffle                : if using multiple token or recipient, order will be randomized
 
 Usage: ledger-live sync       # Synchronize accounts with blockchain
      --device <String>        : provide a specific HID path of a device
@@ -107,7 +119,7 @@ Usage: ledger-live sync       # Synchronize accounts with blockchain
  -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
- -f, --format <json | default | summary>: how to display the data
+ -f, --format <json | default | summary | significantTokenTickers>: how to display the data
 
 Usage: ledger-live receive    # Receive crypto-assets (verify on device)
      --device <String>        : provide a specific HID path of a device
@@ -135,7 +147,10 @@ Usage: ledger-live send       # Send crypto-assets
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --gasLimit <String>      : how much gasLimit. default is estimated with the recipient
  -t, --token <String>         : use an token account children of the account
+     --shuffle                : if using multiple token or recipient, order will be randomized
  -f, --format <default | json>: how to display the data
+     --ignore-errors          : when using multiple transactions, an error won't stop the flow
+
 
                 ``
            `.--:::::
