@@ -706,12 +706,12 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@ledgerhq/compressjs@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/compressjs/-/compressjs-1.3.0.tgz#5b86df2679a2987c83f2884e292ac8e2b76cbf9d"
-  integrity sha512-nPyTyp4rcYi+TJW7crVzqlE3StekpQ3Y53I0CJZAyPXt70lm3+F4s1b29TX39janUdG/2VPgR9NgEbhFtGU/RQ==
+"@ledgerhq/compressjs@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/compressjs/-/compressjs-1.3.1.tgz#ae3f2c69665c6340d0951ab01a927581e4697e16"
+  integrity sha512-rRIBITqUQh4ZG1t6TSStciCAbHk3NWX8WmenE5M5dLadufwzd8SfLWSDrliP+VlLg8ndJyjmpmUWW+O4Zpj10g==
   dependencies:
-    commander "~2.8.1"
+    commander "^2.20.0"
 
 "@ledgerhq/devices@^4.66.0":
   version "4.66.0"
@@ -2417,17 +2417,10 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.11.0, commander@^2.15.1, commander@~2.20.0:
+commander@^2.11.0, commander@^2.15.1, commander@^2.20.0, commander@~2.20.0:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
   integrity sha512-7j2y+40w61zy6YC2iRNpUe/NwhNyoXrYpHMrSunaMG64nRnaf96zO/KMQR4OyN/UnE5KLyEBnKHd4aG3rskjpQ==
-
-commander@~2.8.1:
-  version "2.8.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.8.1.tgz#06be367febfda0c330aa1e2a072d3dc9762425d4"
-  integrity sha1-Br42f+v9oMMwqh4qBy09yXYkJdQ=
-  dependencies:
-    graceful-readlink ">= 1.0.0"
 
 component-emitter@^1.2.1:
   version "1.2.1"
@@ -3735,11 +3728,6 @@ graceful-fs@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.0.tgz#8d8fdc73977cb04104721cb53666c1ca64cd328b"
   integrity sha512-jpSvDPV4Cq/bgtpndIWbI5hmYxhQGHPC4d4cqBPb4DLniCfhJokdXhwhaDuLBGLQdvvRum/UiX6ECVIPvDXqdg==
-
-"graceful-readlink@>= 1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
-  integrity sha1-TK+tdrxi8C+gObL5Tpo906ORpyU=
 
 growly@^1.3.0:
   version "1.3.0"
