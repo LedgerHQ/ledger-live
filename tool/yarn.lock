@@ -242,10 +242,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^12.0.9"
 
-"@ledgerhq/compressjs@1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/compressjs/-/compressjs-1.3.1.tgz#ae3f2c69665c6340d0951ab01a927581e4697e16"
-  integrity sha512-rRIBITqUQh4ZG1t6TSStciCAbHk3NWX8WmenE5M5dLadufwzd8SfLWSDrliP+VlLg8ndJyjmpmUWW+O4Zpj10g==
+"@ledgerhq/compressjs@1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/compressjs/-/compressjs-1.3.2.tgz#22571c51740901c8de20ea302be123e0b96aa8fd"
+  integrity sha512-gonFwAifRkSYDO7rt3NIBlvjvY8Nw+NM6LT1SuOBppuvoKbYtBViNh3EBPbP86+3Y4ux7DLUsNiUlqOgubJsdA==
   dependencies:
     commander "^2.20.0"
 
@@ -361,12 +361,12 @@
     bindings "^1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@7.6.3":
-  version "7.6.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.6.3.tgz#46f1c54c092a5e1045ddc34c54353da361f71b53"
-  integrity sha512-+W28MaGeVIb6pw49znnfz4wwOVFTWy/Pyp7jQPVO5ZnldKY7edX6EcTDwJSZ3NI1ftEkDe9GgZInb3OZNb/JvQ==
+"@ledgerhq/live-common@7.6.4":
+  version "7.6.4"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.6.4.tgz#94a84c505420b48174db519fa2c8c7a45e5f4fa3"
+  integrity sha512-eL/Q1DY1iFOmdOKYKpEfCJ6vSI5vP2kQeAg32iVMByT+pqkf3wHMj36ocL7yJwCk3geutm4dmuZAHZNON/CBjg==
   dependencies:
-    "@ledgerhq/compressjs" "1.3.1"
+    "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/errors" "4.66.0"
     "@ledgerhq/hw-app-btc" "4.66.0"
     "@ledgerhq/hw-app-eth" "4.67.0"
