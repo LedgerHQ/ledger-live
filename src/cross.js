@@ -2,7 +2,7 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 
 import { BigNumber } from "bignumber.js";
-import compressjs from "compressjs";
+import compressjs from "@ledgerhq/compressjs";
 import type { Account, CryptoCurrencyIds, DerivationMode } from "./types";
 import { runDerivationScheme, getDerivationScheme } from "./derivation";
 import { decodeAccountId } from "./account";
