@@ -54,23 +54,23 @@ class DistributionCard extends PureComponent<Props> {
               {<CurrencyUnitValue unit={currency.units[0]} value={amount} />}
             </LText>
           </View>
-          {
-            distribution ? (
-              <Fragment>
-                <View style={styles.rateRow}>
-                  <CurrencyRate currency={currency} />
-                  <LText tertiary style={styles.counterValue}>
-                    <CounterValue currency={currency} value={amount} />
-                  </LText>
-                </View>
-                <View style={styles.distributionRow}>
-                  <ProgressBar progress={percentage} progressColor={color} />
-                  <LText tertiary style={styles.percentage}>{`${percentage}%`}</LText>
-                </View>
-
-              </Fragment>
-            ) : null
-          }
+          {distribution ? (
+            <Fragment>
+              <View style={styles.rateRow}>
+                <CurrencyRate currency={currency} />
+                <LText tertiary style={styles.counterValue}>
+                  <CounterValue currency={currency} value={amount} />
+                </LText>
+              </View>
+              <View style={styles.distributionRow}>
+                <ProgressBar progress={percentage} progressColor={color} />
+                <LText
+                  tertiary
+                  style={styles.percentage}
+                >{`${percentage}%`}</LText>
+              </View>
+            </Fragment>
+          ) : null}
         </View>
       </View>
     );

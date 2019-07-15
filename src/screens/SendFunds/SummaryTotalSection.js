@@ -7,7 +7,6 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 import { Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SummaryRow from "./SummaryRow";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -55,7 +54,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
           title={<Trans i18nKey="send.summary.total" />}
           additionalInfo={
             <Touchable onPress={this.onPress} event="SummaryTotalInfo">
-              <Icon name="info-circle" size={12} color={colors.fog} />
+              <Info size={12} color={colors.grey} />
             </Touchable>
           }
           titleProps={{ semiBold: true, style: styles.title }}
