@@ -74,7 +74,8 @@ export async function syncCoreAccount({
     );
     coreOperations = await sortedQuery.execute();
   } catch (e) {
-    throw remapLibcoreErrors(new SyncError(e.message));
+    if (e.name !== "Error") throw remapLibcoreErrors(e);
+    throw new SyncError(e.message);
   }
 
   const account = await buildAccount({
