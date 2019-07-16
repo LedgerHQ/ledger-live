@@ -2273,8 +2273,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     explorerViews: [
       {
-        tx: "https://explorer.zcha.in/transactions/$hash",
-        address: "https://explorer.zcha.in/accounts/$address"
+        tx: "https://chain.so/tx/ZEC/$hash",
+        address: "https://chain.so/address/ZEC/$address"
       }
     ]
   },
