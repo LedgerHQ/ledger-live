@@ -885,7 +885,8 @@
       "higherFaster": "Higher gas price means a faster confirmation",
       "edit": {
         "title": "Choose Unit"
-      }
+      },
+      "ethTokenNetworkFees": "Network fees for ERC20 token transactions are paid in ETH"
     }
   },
   "addAccounts": {
