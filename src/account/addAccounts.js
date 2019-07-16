@@ -1,4 +1,5 @@
 // @flow
+import uniqBy from "lodash/uniqBy";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
 import { getEnv } from "../env";
 import { validateNameEdition } from "./accountName";
@@ -229,8 +230,8 @@ export function addAccounts({
     }
   });
 
-  // apply the renaming
-  return newAccounts.map(a => {
+  // dedup and apply the renaming
+  return uniqBy(newAccounts, "id").map(a => {
     const name = validateNameEdition(a, renamings[a.id]);
     if (name) return { ...a, name };
     return a;
