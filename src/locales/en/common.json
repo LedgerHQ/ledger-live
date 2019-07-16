@@ -539,13 +539,11 @@
     }
   },
   "orderOption": {
-    "label": {
-      "balance": "Balance",
-      "name": "Name"
-    },
-    "ordering": {
-      "asc": "Ascending",
-      "desc": "Descending"
+    "choices": {
+      "name|asc": "Name A-Z",
+      "name|desc": "Name Z-A",
+      "balance|asc": "Lowest Balance",
+      "balance|desc": "Highest Balance"
     }
   },
   "operationDetails": {

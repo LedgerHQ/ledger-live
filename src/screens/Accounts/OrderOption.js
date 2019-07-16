@@ -1,14 +1,14 @@
 /* @flow */
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/Feather";
 import { refreshAccountsOrdering } from "../../actions/general";
 import { setOrderAccounts } from "../../actions/settings";
 import { orderAccountsSelector } from "../../reducers/settings";
+import Check from "../../icons/Check";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import colors from "../../colors";
@@ -46,49 +46,25 @@ class OrderOption extends Component<{
   refreshAccountsOrdering: () => void,
 }> {
   onPress = () => {
-    const {
-      id,
-      orderAccounts,
-      setOrderAccounts,
-      refreshAccountsOrdering,
-    } = this.props;
-    const selected = orderAccounts.startsWith(id);
-    let isDesc = orderAccounts.endsWith("|desc");
-    if (selected) {
-      isDesc = !isDesc;
-    }
-    setOrderAccounts(`${id}|${isDesc ? "desc" : "asc"}`);
+    const { id, setOrderAccounts, refreshAccountsOrdering } = this.props;
+    setOrderAccounts(`${id}`);
     refreshAccountsOrdering();
   };
 
   render() {
     const { id, orderAccounts } = this.props;
-    const selected = orderAccounts.startsWith(id);
-    const isDesc = orderAccounts.endsWith("|desc");
+    const selected = orderAccounts === id;
     return (
       <Touchable
         event="AccountOrderOption"
-        eventProperties={{ accountOrderId: id, accountOrderDesc: isDesc }}
+        eventProperties={{ accountOrderId: id }}
         style={[styles.root, selected && styles.rootSelected]}
         onPress={this.onPress}
       >
         <LText semiBold style={styles.label}>
-          <Trans i18nKey={`orderOption.label.${id}`} />
+          <Trans i18nKey={`orderOption.choices.${id}`} />
         </LText>
-        {selected ? (
-          <Fragment>
-            <LText semiBold style={styles.order}>
-              <Trans
-                i18nKey={`orderOption.ordering.${isDesc ? "desc" : "asc"}`}
-              />
-            </LText>
-            <Icon
-              name={isDesc ? "arrow-down" : "arrow-up"}
-              color={colors.live}
-              size={16}
-            />
-          </Fragment>
-        ) : null}
+        {selected ? <Check color={colors.live} size={16} /> : null}
       </Touchable>
     );
   }
