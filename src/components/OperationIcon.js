@@ -25,14 +25,15 @@ type Props = {
   parentAccount: ?Account,
 };
 
+const icons = {
+  OUT: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
+  IN: [ReceiveUnconfirmedIcon, ReceiveConfirmedIcon],
+  NONE: [],
+};
+
 class OperationIcon extends PureComponent<Props> {
   static defaultProps = {
     confirmed: false,
-  };
-
-  icons = {
-    OUT: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
-    IN: [ReceiveUnconfirmedIcon, ReceiveConfirmedIcon],
   };
 
   render() {
@@ -42,7 +43,7 @@ class OperationIcon extends PureComponent<Props> {
       confirmed,
       operation: { hasFailed },
     } = this.props;
-    const Icon = this.icons[type][hasFailed ? 2 : confirmed ? 1 : 0];
+    const Icon = icons[type][hasFailed ? 2 : confirmed ? 1 : 0];
 
     if (!Icon) return null;
 

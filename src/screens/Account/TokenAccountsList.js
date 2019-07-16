@@ -99,7 +99,7 @@ const TokenAccountsList = ({
         <TokenRow account={item} onTokenAccountPress={onAccountPress} />
       </Card>
     ),
-    [],
+    [onAccountPress],
   );
   return (
     <View style={styles.tokenList}>

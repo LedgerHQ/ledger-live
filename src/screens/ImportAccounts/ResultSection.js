@@ -13,7 +13,7 @@ class ResultSection extends PureComponent<{ mode: string }> {
       case "create":
         text = <Trans i18nKey="account.import.result.newAccounts" />;
         break;
-      case "patch":
+      case "update":
         text = <Trans i18nKey="account.import.result.updatedAccounts" />;
         break;
       case "empty":

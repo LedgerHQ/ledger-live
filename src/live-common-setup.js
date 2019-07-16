@@ -9,12 +9,41 @@ import { setNetwork } from "@ledgerhq/live-common/lib/network";
 import { logs } from "@ledgerhq/live-common/lib/api/socket";
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
+import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import BluetoothTransport from "./react-native-hw-transport-ble";
-
 import network from "./api/network";
 import "./experimental";
+
+setSupportedCurrencies([
+  "bitcoin_cash",
+  "bitcoin_gold",
+  "bitcoin_testnet",
+  "bitcoin",
+  "clubcoin",
+  "dash",
+  "decred",
+  "digibyte",
+  "dogecoin",
+  "ethereum_classic",
+  "ethereum",
+  "hcash",
+  "komodo",
+  "litecoin",
+  "peercoin",
+  "pivx",
+  "poswallet",
+  "qtum",
+  "ripple",
+  "stealthcoin",
+  "stratis",
+  "vertcoin",
+  "viacoin",
+  "stakenet",
+  "zcash",
+  "zencash",
+]);
 
 if (Config.VERBOSE) {
   listen(log => {
