@@ -2393,8 +2393,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     },
     explorerViews: [
       {
-        tx: "https://testnet.blockchain.info/tx/$hash",
-        address: "https://testnet.blockchain.info/address/$address"
+        tx: "https://live.blockcypher.com/btc-testnet/tx/$hash",
+        address: "https://live.blockcypher.com/btc-testnet/address/$address"
       }
     ]
   },
