@@ -13,4 +13,7 @@ export const urls = {
     "https://support.ledgerwallet.com/hc/en-us/articles/360006535873",
   verifyTransactionDetails:
     "https://support.ledgerwallet.com/hc/en-us/articles/360006433934",
+  errors: {
+    PairingFailed: "https://support.ledger.com/hc/en-us/articles/360025864773",
+  },
 };
