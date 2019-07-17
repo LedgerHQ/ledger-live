@@ -7,6 +7,7 @@ Object {
       "balance": "15710290533550751349",
       "currencyId": "ethereum",
       "derivationMode": "",
+      "freshAddress": "0x8C5FE6AF52E79EC4361B7A12B53356EF5D37C765",
       "id": "mock:1:ethereum:export_0:",
       "index": 1,
       "name": "qfLJHUiyMqUUN",
@@ -16,6 +17,7 @@ Object {
       "balance": "53736258",
       "currencyId": "bitcoin_cash",
       "derivationMode": "",
+      "freshAddress": "1x7aLVWzaGVH8AWQ4aaD2hdcmJW",
       "id": "mock:1:bitcoin_cash:export_1:",
       "index": 1,
       "name": "Y4SYkWgSWIIZptphvAu",
@@ -25,6 +27,7 @@ Object {
       "balance": "128088571428550",
       "currencyId": "dogecoin",
       "derivationMode": "",
+      "freshAddress": "1CWNKLfcukxxXRNRK1DpYwPA6Hb1h",
       "id": "mock:1:dogecoin:export_2:",
       "index": 1,
       "name": "s9dZEiOrwfEPOXbKgNKq88aQZ",
@@ -37,11 +40,13 @@ Object {
   },
   "settings": Object {
     "counterValue": "USD",
-    "counterValueExchange": "KRAKEN",
     "currenciesSettings": Object {
       "bitcoin": Object {
-        "exchange": "KRAKEN",
+        "confirmationsNb": 3,
       },
+    },
+    "pairExchanges": Object {
+      "BTC_USD": "KRAKEN",
     },
   },
 }
