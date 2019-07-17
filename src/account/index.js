@@ -22,6 +22,12 @@ import {
   migrateAccounts
 } from "./addAccounts";
 import {
+  importAccountsMakeItems,
+  importAccountsReduce,
+  type ImportItem,
+  type ImportItemMode
+} from "./importAccounts";
+import {
   inferSubOperations,
   toOperationRaw,
   fromOperationRaw,
@@ -47,7 +53,12 @@ import {
   groupAccountOperationsByDay
 } from "./groupOperations";
 
-export type { AddAccountsSection, AddAccountsSectionResult };
+export type {
+  AddAccountsSection,
+  AddAccountsSectionResult,
+  ImportItem,
+  ImportItemMode
+};
 
 export {
   getMainAccount,
@@ -82,5 +93,7 @@ export {
   groupAccountsOperationsByDay,
   groupAccountOperationsByDay,
   addPendingOperation,
-  shortAddressPreview
+  shortAddressPreview,
+  importAccountsMakeItems,
+  importAccountsReduce
 };

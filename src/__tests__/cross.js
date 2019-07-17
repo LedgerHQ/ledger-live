@@ -42,7 +42,8 @@ test("encode/decode", () => {
   const data = {
     accounts,
     settings: {
-      currenciesSettings: {}
+      currenciesSettings: {},
+      pairExchanges: {}
     },
     exporterName: "test你好👋",
     exporterVersion: "0.0.0"

@@ -11,10 +11,12 @@ test("encode/decode", () => {
     accounts,
     settings: {
       counterValue: "USD",
-      counterValueExchange: "KRAKEN",
+      pairExchanges: {
+        BTC_USD: "KRAKEN"
+      },
       currenciesSettings: {
         bitcoin: {
-          exchange: "KRAKEN"
+          confirmationsNb: 3
         }
       }
     },
@@ -35,10 +37,12 @@ test("encode/decode", () => {
   );
   expect(res.settings).toMatchObject({
     counterValue: "USD",
-    counterValueExchange: "KRAKEN",
+    pairExchanges: {
+      BTC_USD: "KRAKEN"
+    },
     currenciesSettings: {
       bitcoin: {
-        exchange: "KRAKEN"
+        confirmationsNb: 3
       }
     }
   });

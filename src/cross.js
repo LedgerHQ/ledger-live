@@ -3,33 +3,39 @@
 
 import { BigNumber } from "bignumber.js";
 import compressjs from "@ledgerhq/compressjs";
-import type { Account, CryptoCurrencyIds, DerivationMode } from "./types";
-import { runDerivationScheme, getDerivationScheme } from "./derivation";
+import type { Account, CryptoCurrencyIds } from "./types";
+import {
+  runDerivationScheme,
+  getDerivationScheme,
+  asDerivationMode
+} from "./derivation";
 import { decodeAccountId } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
 
 export type AccountData = {
   id: string,
   currencyId: string,
+  freshAddress?: string,
   seedIdentifier: string,
-  derivationMode: DerivationMode,
+  derivationMode: string, // we are unsafe at this stage, validation is done later
   name: string,
   index: number,
   balance: string
 };
 
 export type CryptoSettings = {
-  exchange?: ?string,
   confirmationsNb?: number
 };
 
 export type Settings = {
   counterValue?: string,
-  counterValueExchange?: ?string,
   currenciesSettings: {
     [_: CryptoCurrencyIds]: CryptoSettings
   },
-  developerMode?: boolean
+  pairExchanges: {
+    [_: string]: string
+  },
+  developerModeEnabled?: boolean
 };
 
 export type DataIn = {
@@ -43,13 +49,15 @@ export type DataIn = {
   exporterVersion: string
 };
 
+type Meta = {
+  exporterName: string,
+  exporterVersion: string
+};
+
 export type Result = {
   accounts: AccountData[],
   settings: Settings,
-  meta: {
-    exporterName: string,
-    exporterVersion: string
-  }
+  meta: Meta
 };
 
 export function encode({
@@ -71,12 +79,149 @@ export function encode({
   ).toString("binary");
 }
 
+const asResultMeta = (unsafe: mixed): Meta => {
+  if (typeof unsafe !== "object" || !unsafe) {
+    throw new Error("invalid meta data");
+  }
+  const { exporterName, exporterVersion } = unsafe;
+  if (typeof exporterName !== "string") {
+    throw new Error("invalid meta.exporterName");
+  }
+  if (typeof exporterVersion !== "string") {
+    throw new Error("invalid meta.exporterVersion");
+  }
+  return {
+    exporterName,
+    exporterVersion
+  };
+};
+
+const asResultAccount = (unsafe: mixed): AccountData => {
+  if (typeof unsafe !== "object" || !unsafe) {
+    throw new Error("invalid account data");
+  }
+  const {
+    id,
+    currencyId,
+    freshAddress,
+    seedIdentifier,
+    derivationMode,
+    name,
+    index,
+    balance
+  } = unsafe;
+  if (typeof id !== "string") {
+    throw new Error("invalid account.id");
+  }
+  if (typeof currencyId !== "string") {
+    throw new Error("invalid account.currencyId");
+  }
+  if (typeof seedIdentifier !== "string") {
+    throw new Error("invalid account.seedIdentifier");
+  }
+  if (typeof derivationMode !== "string") {
+    throw new Error("invalid account.derivationMode");
+  }
+  if (typeof name !== "string") {
+    throw new Error("invalid account.name");
+  }
+  if (typeof index !== "number") {
+    throw new Error("invalid account.index");
+  }
+  if (typeof balance !== "string") {
+    throw new Error("invalid account.balance");
+  }
+  const o: AccountData = {
+    id,
+    currencyId,
+    seedIdentifier,
+    derivationMode,
+    name,
+    index,
+    balance
+  };
+  if (typeof freshAddress === "string" && freshAddress) {
+    o.freshAddress = freshAddress;
+  }
+  return o;
+};
+
+const asResultAccounts = (unsafe: mixed): AccountData[] => {
+  if (typeof unsafe !== "object" || !unsafe || !Array.isArray(unsafe)) {
+    throw new Error("invalid accounts data");
+  }
+  return unsafe.map(asResultAccount);
+};
+
+const asCryptoSettings = (unsafe: mixed): CryptoSettings => {
+  if (typeof unsafe !== "object" || !unsafe) {
+    throw new Error("invalid currency settings data");
+  }
+  const { confirmationsNb } = unsafe;
+  if (typeof confirmationsNb === "number") {
+    return { confirmationsNb };
+  }
+  return {};
+};
+
+const asResultSettings = (unsafe: mixed): Settings => {
+  if (typeof unsafe !== "object" || !unsafe) {
+    throw new Error("invalid settings data");
+  }
+  const {
+    counterValue,
+    currenciesSettings,
+    pairExchanges,
+    developerModeEnabled
+  } = unsafe;
+
+  const currenciesSettingsSafe: {
+    [_: CryptoCurrencyIds]: CryptoSettings
+  } = {};
+  if (currenciesSettings && typeof currenciesSettings === "object") {
+    for (let k in currenciesSettings) {
+      currenciesSettingsSafe[k] = asCryptoSettings(currenciesSettings[k]);
+    }
+  }
+  const pairExchangesSafe: {
+    [_: string]: string
+  } = {};
+  if (pairExchanges && typeof pairExchanges === "object") {
+    for (let k in pairExchanges) {
+      const v = pairExchanges[k];
+      if (v && typeof v === "string") {
+        pairExchangesSafe[k] = v;
+      }
+    }
+  }
+
+  const res: Settings = {
+    currenciesSettings: currenciesSettingsSafe,
+    pairExchanges: pairExchangesSafe
+  };
+  if (counterValue && typeof counterValue === "string") {
+    res.counterValue = counterValue;
+  }
+  if (developerModeEnabled && typeof developerModeEnabled === "boolean") {
+    res.developerModeEnabled = developerModeEnabled;
+  }
+  return res;
+};
+
 export function decode(bytes: string): Result {
-  return JSON.parse(
+  const unsafe: mixed = JSON.parse(
     Buffer.from(
       compressjs.Bzip2.decompressFile(Buffer.from(bytes, "binary"))
     ).toString()
   );
+  if (typeof unsafe !== "object" || !unsafe) {
+    throw new Error("invalid data");
+  }
+  return {
+    meta: asResultMeta(unsafe.meta),
+    accounts: asResultAccounts(unsafe.accounts),
+    settings: asResultSettings(unsafe.settings)
+  };
 }
 
 export function accountToAccountData({
@@ -84,6 +229,7 @@ export function accountToAccountData({
   name,
   seedIdentifier,
   derivationMode,
+  freshAddress,
   currency,
   index,
   balance
@@ -93,6 +239,7 @@ export function accountToAccountData({
     name,
     seedIdentifier,
     derivationMode,
+    freshAddress,
     currencyId: currency.id,
     index,
     balance: balance.toString()
@@ -105,23 +252,27 @@ export function accountToAccountData({
 export const accountDataToAccount = ({
   id,
   currencyId,
+  freshAddress: inputFreshAddress,
   name,
   index,
   balance,
-  derivationMode,
+  derivationMode: derivationModeStr,
   seedIdentifier
 }: AccountData): Account => {
   const { type, xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
+  const derivationMode = asDerivationMode(derivationModeStr);
   const currency = getCryptoCurrencyById(currencyId);
   let xpub = "";
-  let freshAddress = "";
+  let freshAddress = inputFreshAddress || "";
   let freshAddressPath = "";
   if (type === "libcore") {
     // in libcore implementation, xpubOrAddress field in the xpub
     xpub = xpubOrAddress;
   } else {
-    // otherwise, it's the freshAddress
-    freshAddress = xpubOrAddress;
+    if (!freshAddress) {
+      // otherwise, it's the freshAddress
+      freshAddress = xpubOrAddress;
+    }
     freshAddressPath = runDerivationScheme(
       getDerivationScheme({ currency, derivationMode }),
       currency,
