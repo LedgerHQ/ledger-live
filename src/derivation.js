@@ -31,33 +31,11 @@ const modes = Object.freeze({
     overridesDerivation: "44'/60'/0'/<account>",
     tag: "legacy"
   },
-  // chrome wallet legacy derivation
-  ethW1: {
-    isNonIterable: true,
-    overridesDerivation: "44'/60'/0'/0'",
-    isInvalid: true
-  },
-  ethW2: {
-    isNonIterable: true,
-    overridesDerivation: "44'/60'/14'/5'/16",
-    isInvalid: true
-  },
   // MetaMask style
   ethMM: {
     overridesDerivation: "44'/60'/0'/0/<account>",
     skipFirst: true, // already included in the normal bip44,
     tag: "metamask"
-  },
-  // chrome ripple legacy derivations
-  rip: {
-    isNonIterable: true,
-    overridesDerivation: "44'/144'/0'/0'",
-    tag: "legacy"
-  },
-  rip2: {
-    isNonIterable: true,
-    overridesDerivation: "44'/144'/14'/5'/16",
-    isInvalid: true
   },
   // chrome app and LL wrongly used to derivate vertcoin on 128
   vertcoin_128: {
@@ -125,9 +103,8 @@ const modes = Object.freeze({
 
 const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
-  ethereum: ["ethM", "ethW1", "ethW2", "ethMM"],
-  ethereum_classic: ["ethM", "etcM", "ethW1", "ethW2", "ethMM"],
-  ripple: ["rip", "rip2"]
+  ethereum: ["ethM", "ethMM"],
+  ethereum_classic: ["ethM", "etcM", "ethMM"]
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {

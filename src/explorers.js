@@ -1,6 +1,11 @@
 // @flow
 
-import type { CryptoCurrency, ExplorerView, TokenAccount, Account } from "./types";
+import type {
+  CryptoCurrency,
+  ExplorerView,
+  TokenAccount,
+  Account
+} from "./types";
 
 export const getDefaultExplorerView = (
   currency: CryptoCurrency
@@ -24,6 +29,9 @@ export const getAccountContractExplorer = (
   explorerView: ?ExplorerView,
   account: TokenAccount,
   parentAccount: Account
-): ?string => explorerView &&
+): ?string =>
+  explorerView &&
   explorerView.token &&
-  explorerView.token.replace("$contractAddress", account.token.contractAddress).replace('$address', parentAccount.freshAddress);
+  explorerView.token
+    .replace("$contractAddress", account.token.contractAddress)
+    .replace("$address", parentAccount.freshAddress);
