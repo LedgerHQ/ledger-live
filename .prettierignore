@@ -1,3 +1,4 @@
 package.json
 src/load
 src/generated
+src/crypto/sha256.js

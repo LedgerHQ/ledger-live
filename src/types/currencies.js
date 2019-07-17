@@ -43,7 +43,7 @@ export type FiatCurrency = CurrencyCommon & {
 export type ExplorerView = {
   tx?: string,
   address?: string,
-  token?: string,
+  token?: string
 };
 
 export type CryptoCurrency = CurrencyCommon & {
