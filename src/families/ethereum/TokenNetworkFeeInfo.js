@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: colors.smoke,
     fontSize: 14,
-    textAlign: "center"
+    textAlign: "center",
   },
   footerContainer: {
     flexDirection: "row",

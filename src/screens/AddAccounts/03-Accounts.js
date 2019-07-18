@@ -7,6 +7,7 @@ import i18next from "i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
+import findLast from "lodash/findLast";
 import { translate, Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 // $FlowFixMe
@@ -57,6 +58,15 @@ const mapDispatchToProps = {
   addAccount,
 };
 
+const getLastNewAccount = scanRecords => {
+  const lastRecord = findLast(
+    scanRecords,
+    record => record.isNewAccount && !record.isAlreadyImported,
+  );
+
+  return lastRecord ? [lastRecord.id] : [];
+};
+
 class AddAccountsAccounts extends PureComponent<Props, State> {
   static navigationOptions = {
     headerTitle: (
@@ -99,19 +109,46 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const currency = navigation.getParam("currency");
     const deviceId = navigation.getParam("deviceId");
     const bridge = getCurrencyBridge(currency);
+    let scanRecords = [];
+    let onlyNewAccounts = true;
 
     this.scanSubscription = bridge
       .scanAccountsOnDevice(currency, deviceId)
       .subscribe({
         next: account =>
-          this.setState(({ scannedAccounts, selectedIds }) => {
+          this.setState(({ scannedAccounts }) => {
+            const isNewAccount = isAccountEmpty(account);
+            const isAlreadyImported = this.isExistingAccount(account);
+
+            // local account meta data for performance issues
+            scanRecords = [
+              ...scanRecords,
+              {
+                isNewAccount,
+                isAlreadyImported,
+                id: account.id,
+              },
+            ];
+
+            // will be set to false if an existing account is found
+            onlyNewAccounts =
+              onlyNewAccounts && (isNewAccount || isAlreadyImported);
+
             const patch = {
               scannedAccounts: [...scannedAccounts, account],
             };
-            if (!isAccountEmpty(account) && !this.isExistingAccount(account)) {
-              // $FlowFixMe
-              patch.selectedIds = [...selectedIds, account.id];
-            }
+            // $FlowFixMe
+            patch.selectedIds = onlyNewAccounts
+              ? getLastNewAccount(scanRecords)
+              : scanRecords.reduce(
+                  (acc, record) => {
+                    if (!record.isNewAccount && !record.isAlreadyImported) {
+                      acc.push(record.id);
+                    }
+                    return acc;
+                  },
+                  [],
+                );
             return patch;
           }),
         complete: () => this.setState({ scanning: false }),
