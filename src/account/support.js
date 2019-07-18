@@ -4,7 +4,7 @@ import type { Account, CryptoCurrency, DerivationMode } from "../types";
 import { getEnv } from "../env";
 import { decodeAccountId } from "./accountId";
 import { getAllDerivationModes } from "../derivation";
-import { findCryptoCurrencyById } from "../currencies";
+import { isCurrencySupported } from "../currencies";
 
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
@@ -45,16 +45,17 @@ export function checkAccountSupported(account: Account): ?Error {
       { reason: account.derivationMode }
     );
   }
-  const { type, currencyId } = decodeAccountId(account.id);
-  const c = findCryptoCurrencyById(currencyId);
-  if (!c) {
-    return new CurrencyNotSupported("currency not supported " + currencyId, {
-      currencyName: currencyId
+
+  if (!isCurrencySupported(account.currency)) {
+    return new CurrencyNotSupported("currency not supported", {
+      currencyName: account.currency.name
     });
   }
+
+  const { type } = decodeAccountId(account.id);
   if (
     type === "libcore" &&
-    c.family === "ethereum" &&
+    account.currency.family === "ethereum" &&
     !getEnv("EXPERIMENTAL_EXPLORERS")
   ) {
     return new AccountNotSupported("experimental explorer required", {

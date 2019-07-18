@@ -3,7 +3,7 @@ import type { Account } from "../types";
 import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
-import { findAccountMigration } from "./support";
+import { findAccountMigration, checkAccountSupported } from "./support";
 import { isCurrencySupported } from "../currencies";
 
 const itemModeDisplaySort = {
@@ -38,6 +38,14 @@ export const importAccountsMakeItems = ({
 
       try {
         const account = accountDataToAccount(accInput);
+        const error = checkAccountSupported(account);
+        if (error) {
+          return {
+            initialAccountId: account.id,
+            account,
+            mode: "unsupported"
+          };
+        }
         const migratableAccount = accounts.find(a =>
           findAccountMigration(a, [account])
         );
@@ -69,7 +77,7 @@ export const importAccountsMakeItems = ({
         return {
           initialAccountId: account.id,
           account,
-          mode: isCurrencySupported(account.currency) ? "create" : "unsupported"
+          mode: "create"
         };
       } catch (e) {
         log("error", String(e));
