@@ -1,5 +1,5 @@
 // @flow
-import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
+import { CurrencyNotSupported } from "@ledgerhq/errors";
 import type { CryptoCurrency, Account, TokenAccount } from "../types";
 import type { CurrencyBridge, AccountBridge } from "./types";
 import { decodeAccountId, getMainAccount } from "../account";
@@ -13,7 +13,7 @@ import {
   makeMockCurrencyBridge,
   makeMockAccountBridge
 } from "./makeMockBridge";
-import { getAllDerivationModes } from "../derivation";
+import { checkAccountSupported } from "../account/support";
 
 const mockCurrencyBridge = makeMockCurrencyBridge();
 const mockAccountBridge = makeMockAccountBridge();
@@ -42,8 +42,9 @@ export const getAccountBridge = (
 ): AccountBridge<any> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { type } = decodeAccountId(mainAccount.id);
-  if (!getAllDerivationModes().includes(mainAccount.derivationMode)) {
-    throw new AccountNotSupported({ reason: mainAccount.derivationMode });
+  const supportedError = checkAccountSupported(mainAccount);
+  if (supportedError) {
+    throw supportedError;
   }
   if (type === "mock") return mockAccountBridge;
   if (type === "libcore") {

@@ -3,7 +3,7 @@ import type { Account } from "../types";
 import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
-import { findAccountMigration } from "./addAccounts";
+import { findAccountMigration } from "./support";
 import { isCurrencySupported } from "../currencies";
 
 const itemModeDisplaySort = {

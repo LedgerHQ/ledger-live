@@ -1,42 +1,9 @@
 // @flow
 import uniqBy from "lodash/uniqBy";
-import type { Account, CryptoCurrency, DerivationMode } from "../types";
-import { getEnv } from "../env";
+import type { Account } from "../types";
 import { validateNameEdition } from "./accountName";
 import { isAccountEmpty } from "./helpers";
-import { decodeAccountId } from "./accountId";
-
-export const shouldShowNewAccount = (
-  currency: CryptoCurrency,
-  derivationMode: DerivationMode
-) =>
-  derivationMode === ""
-    ? !!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || !currency.supportsSegwit
-    : derivationMode === "segwit" || derivationMode === "native_segwit";
-
-export function canBeMigrated(account: Account) {
-  const { type } = decodeAccountId(account.id);
-  // at the moment migrations requires experimental libcore
-  if (!getEnv("EXPERIMENTAL_LIBCORE")) return false;
-  return type === "ethereumjs";
-}
-
-// attempt to find an account in scanned accounts that satisfy a migration
-export function findAccountMigration(
-  account: Account,
-  scannedAccounts: Account[]
-): ?Account {
-  if (!canBeMigrated(account)) return;
-  const { type } = decodeAccountId(account.id);
-  if (type === "ethereumjs") {
-    return scannedAccounts.find(
-      a =>
-        a.id !== account.id && // a migration assume an id changes
-        a.currency === account.currency &&
-        a.freshAddress === account.freshAddress
-    );
-  }
-}
+import { findAccountMigration } from "./support";
 
 export type AddAccountsSection = {
   id: string,

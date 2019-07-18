@@ -13,14 +13,13 @@ import {
   addPendingOperation,
   shortAddressPreview
 } from "./helpers";
+import { groupAddAccounts, addAccounts, migrateAccounts } from "./addAccounts";
 import {
   shouldShowNewAccount,
   canBeMigrated,
   findAccountMigration,
-  groupAddAccounts,
-  addAccounts,
-  migrateAccounts
-} from "./addAccounts";
+  checkAccountSupported
+} from "./support";
 import {
   importAccountsMakeItems,
   importAccountsReduce,
@@ -95,5 +94,6 @@ export {
   addPendingOperation,
   shortAddressPreview,
   importAccountsMakeItems,
-  importAccountsReduce
+  importAccountsReduce,
+  checkAccountSupported
 };
