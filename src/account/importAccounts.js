@@ -4,7 +4,6 @@ import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
 import { findAccountMigration, checkAccountSupported } from "./support";
-import { isCurrencySupported } from "../currencies";
 
 const itemModeDisplaySort = {
   create: 1,
