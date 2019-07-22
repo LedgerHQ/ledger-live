@@ -8,7 +8,11 @@ import type {
   Operation,
   OperationRaw
 } from "../types";
-import { getCryptoCurrencyById, getTokenById } from "../currencies";
+import {
+  getCryptoCurrencyById,
+  getTokenById,
+  findTokenById
+} from "../currencies";
 
 export const toOperationRaw = (
   { date, value, fee, subOperations, ...op }: Operation,
@@ -117,7 +121,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   } = rawAccount;
 
   const tokenAccounts =
-    tokenAccountsRaw && tokenAccountsRaw.map(fromTokenAccountRaw);
+    tokenAccountsRaw &&
+    tokenAccountsRaw
+      .map(ta => {
+        if (findTokenById(ta.tokenId)) {
+          return fromTokenAccountRaw(ta);
+        }
+      })
+      .filter(Boolean);
 
   const currency = getCryptoCurrencyById(currencyId);
 
