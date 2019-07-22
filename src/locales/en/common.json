@@ -564,6 +564,11 @@
     "viewInExplorer": "View in explorer",
     "sending": "Sending...",
     "receiving": "Receiving...",
+    "tokenOperations": "Token transactions",
+    "tokenModal": {
+      "desc": "This operation is related to the following token transactions"
+    },
+    "details": "{{ currency }} details",
     "extra": {
       "tag": "Tag"
     }
