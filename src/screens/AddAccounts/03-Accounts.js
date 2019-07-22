@@ -140,15 +140,12 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             // $FlowFixMe
             patch.selectedIds = onlyNewAccounts
               ? getLastNewAccount(scanRecords)
-              : scanRecords.reduce(
-                  (acc, record) => {
-                    if (!record.isNewAccount && !record.isAlreadyImported) {
-                      acc.push(record.id);
-                    }
-                    return acc;
-                  },
-                  [],
-                );
+              : scanRecords.reduce((acc, record) => {
+                  if (!record.isNewAccount && !record.isAlreadyImported) {
+                    acc.push(record.id);
+                  }
+                  return acc;
+                }, []);
             return patch;
           }),
         complete: () => this.setState({ scanning: false }),
