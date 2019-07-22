@@ -20,7 +20,7 @@ import type {
   CryptoCurrency,
   ValueChange
 } from "./types";
-import { getOperationAmountNumber } from "./operation";
+import { getOperationAmountNumberWithInternals } from "./operation";
 import { flattenAccounts } from "./account";
 import { getEnv } from "./env";
 
@@ -83,7 +83,9 @@ const getBalanceHistoryImpl: GetBalanceHistory = (account, r) => {
   for (let d = conf.count - 1; d > 0; d--) {
     // accumulate operations after time t
     while (i < operationsLength && account.operations[i].date > t) {
-      balance = balance.minus(getOperationAmountNumber(account.operations[i]));
+      balance = balance.minus(
+        getOperationAmountNumberWithInternals(account.operations[i])
+      );
       i++;
     }
     if (i === operationsLength) {
@@ -171,7 +173,9 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
       let countervalueSendSum = BigNumber(0);
       for (let i = 0; i < operations.length; i++) {
         const op = operations[i];
-        const amount = getOperationAmountNumber(account.operations[i]);
+        const amount = getOperationAmountNumberWithInternals(
+          account.operations[i]
+        );
         if (!amount.isZero()) {
           cryptoChange.value = cryptoChange.value.plus(amount);
           const cv = calc(cur, amount, op.date);

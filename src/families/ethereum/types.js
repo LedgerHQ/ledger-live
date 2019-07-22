@@ -24,8 +24,18 @@ declare class CoreEthereumLikeTransaction {
   getStatus(): Promise<number>;
 }
 
+declare class CoreEthereumLikeInternalTransaction {
+  getGasLimit(): Promise<CoreBigInt>;
+  getUsedGas(): Promise<CoreBigInt>;
+  getSender(): Promise<string>;
+  getReceiver(): Promise<string>;
+  getValue(): Promise<CoreBigInt>;
+  getOperationType(): Promise<OperationType>;
+}
+
 declare class CoreEthereumLikeOperation {
   getTransaction(): Promise<CoreEthereumLikeTransaction>;
+  getInternalTransactions(): Promise<CoreEthereumLikeInternalTransaction[]>;
 }
 
 declare class CoreEthereumLikeTransactionBuilder {
@@ -70,6 +80,7 @@ declare class CoreERC20LikeOperation {
 }
 
 export type CoreStatics = {
+  EthereumLikeInternalTransaction: Class<CoreEthereumLikeInternalTransaction>,
   EthereumLikeOperation: Class<CoreEthereumLikeOperation>,
   EthereumLikeAddress: Class<CoreEthereumLikeAddress>,
   EthereumLikeTransaction: Class<CoreEthereumLikeTransaction>,
@@ -83,6 +94,7 @@ export type CoreStatics = {
 
 export type {
   CoreEthereumLikeOperation,
+  CoreEthereumLikeInternalTransaction,
   CoreEthereumLikeAccount,
   CoreEthereumLikeTransaction,
   CoreEthereumLikeTransactionBuilder,
@@ -102,10 +114,24 @@ export type CoreOperationSpecifics = {
 export type CoreCurrencySpecifics = {};
 
 export const reflect = (declare: (string, Spec) => void) => {
+  declare("EthereumLikeInternalTransaction", {
+    methods: {
+      getGasLimit: { returns: "BigInt" },
+      getUsedGas: { returns: "BigInt" },
+      getSender: {},
+      getReceiver: {},
+      getValue: { returns: "BigInt" },
+      getOperationType: {}
+    }
+  });
+
   declare("EthereumLikeOperation", {
     methods: {
       getTransaction: {
         returns: "EthereumLikeTransaction"
+      },
+      getInternalTransactions: {
+        returns: ["EthereumLikeInternalTransaction"]
       }
     }
   });

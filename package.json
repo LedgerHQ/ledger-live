@@ -33,7 +33,10 @@
     "setupFiles": [
       "<rootDir>/jest/globals.js"
     ],
-    "testURL": "http://localhost"
+    "testURL": "http://localhost",
+    "testPathIgnorePatterns": [
+      ".yalc"
+    ]
   },
   "peerDependencies": {
     "react": "*"

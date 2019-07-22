@@ -6,6 +6,7 @@ import type {
   DailyOperations
 } from "../types";
 import { flattenAccounts } from "./helpers";
+import { flattenOperationWithInternals } from "../operation";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
@@ -32,8 +33,8 @@ export function groupAccountsOperationsByDay(
   const indexes: number[] = Array(accounts.length).fill(0);
   // Track indexes of account.pendingOperations[] for each account
   const indexesPending: number[] = Array(accounts.length).fill(0);
-  // Returns the most recent operation from the account with current indexes
-  function getNextOperation(): ?Operation {
+  // Returns the next most recent operation from the account with current indexes
+  function getNext(): ?{ ops: Operation[], date: Date } {
     let bestOp: ?Operation;
     let bestOpInfo = { accountI: 0, fromPending: false };
     for (let i = 0; i < accounts.length; i++) {
@@ -57,29 +58,30 @@ export function groupAccountsOperationsByDay(
       } else {
         indexes[bestOpInfo.accountI]++;
       }
+      const ops = flattenOperationWithInternals(bestOp);
+      return { ops, date: bestOp.date };
     }
-    return bestOp;
   }
 
-  let op = getNextOperation();
-  if (!op) return emptyDailyOperations;
+  let next = getNext();
+  if (!next) return emptyDailyOperations;
   const sections = [];
-  let day = startOfDay(op.date);
-  let data = [];
-  for (let i = 0; i < count && op; i++) {
-    if (op.date < day) {
+  let day = startOfDay(next.date);
+  let data: Operation[] = [];
+  for (let i = 0; i < count && next; i++) {
+    if (next.date < day) {
       sections.push({ day, data });
-      day = startOfDay(op.date);
-      data = [op];
+      day = startOfDay(next.date);
+      data = next.ops;
     } else {
-      data.push(op);
+      data = data.concat(next.ops);
     }
-    op = getNextOperation();
+    next = getNext();
   }
   sections.push({ day, data });
   return {
     sections,
-    completed: !op
+    completed: !next
   };
 }
 

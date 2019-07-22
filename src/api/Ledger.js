@@ -28,7 +28,7 @@ export const findCurrencyExplorer = (
     };
   }
   if (idV2) {
-    return { endpoint: getEnv("EXPLORER"), id: idV2, version: "v2" };
+    return { endpoint: explorer, id: idV2, version: "v2" };
   }
 };
 

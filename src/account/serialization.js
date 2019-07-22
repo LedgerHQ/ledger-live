@@ -15,7 +15,7 @@ import {
 } from "../currencies";
 
 export const toOperationRaw = (
-  { date, value, fee, subOperations, ...op }: Operation,
+  { date, value, fee, subOperations, internalOperations, ...op }: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
   const copy: $Exact<OperationRaw> = {
@@ -26,6 +26,9 @@ export const toOperationRaw = (
   };
   if (subOperations && preserveSubOperation) {
     copy.subOperations = subOperations.map(o => toOperationRaw(o));
+  }
+  if (internalOperations) {
+    copy.internalOperations = internalOperations.map(o => toOperationRaw(o));
   }
   return copy;
 };
@@ -48,7 +51,15 @@ export const inferSubOperations = (
 };
 
 export const fromOperationRaw = (
-  { date, value, fee, extra, subOperations, ...op }: OperationRaw,
+  {
+    date,
+    value,
+    fee,
+    extra,
+    subOperations,
+    internalOperations,
+    ...op
+  }: OperationRaw,
   accountId: string,
   tokenAccounts?: ?(TokenAccount[])
 ): Operation => {
@@ -65,6 +76,12 @@ export const fromOperationRaw = (
     res.subOperations = inferSubOperations(op.hash, tokenAccounts);
   } else if (subOperations) {
     res.subOperations = subOperations.map(o =>
+      fromOperationRaw(o, o.accountId)
+    );
+  }
+
+  if (internalOperations) {
+    res.internalOperations = internalOperations.map(o =>
       fromOperationRaw(o, o.accountId)
     );
   }

@@ -1,9 +1,11 @@
 // @flow
 
+import { BigNumber } from "bignumber.js";
 import {
   toAccountRaw,
   getAccountCurrency
 } from "@ledgerhq/live-common/lib/account";
+import { getOperationAmountNumberWithInternals } from "@ledgerhq/live-common/lib/operation";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 
@@ -27,6 +29,7 @@ const formatOp = unitByAccountId => {
     const extra = level > 0 ? "" : ` ${op.hash}     ${op.date.toGMTString()}`;
     const head = `${(spaces + amount).padEnd(26)} ${extra}`;
     const sub = (op.subOperations || [])
+      .concat(op.internalOperations || [])
       .map(subop => format(subop, level + 1))
       .join("");
     return `\n${head}${sub}`;
@@ -84,10 +87,35 @@ const cliFormat = (account, summaryOnly) => {
   return head + tokens + (summaryOnly ? "" : ops);
 };
 
+const stats = account => {
+  const { tokenAccounts, operations } = account;
+
+  const sumOfAllOpsNumber = operations.reduce(
+    (sum, op) => sum.plus(getOperationAmountNumberWithInternals(op)),
+    BigNumber(0)
+  );
+
+  const sumOfAllOps = formatCurrencyUnit(account.unit, sumOfAllOpsNumber, {
+    showCode: true
+  });
+
+  const balance = formatCurrencyUnit(account.unit, account.balance, {
+    showCode: true
+  });
+
+  return {
+    balance,
+    sumOfAllOps,
+    opsCount: operations.length,
+    tokenAccountsCount: (tokenAccounts || []).length
+  };
+};
+
 export default {
   json: account => JSON.stringify(toAccountRaw(account)),
   default: account => cliFormat(account),
   summary: account => cliFormat(account, true),
+  stats: account => stats(account),
   significantTokenTickers: account =>
     (account.tokenAccounts || [])
       .filter(isSignificantAccount)
