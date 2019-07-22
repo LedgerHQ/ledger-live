@@ -31,6 +31,7 @@ type Props = {
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
+      parentId: string,
       transaction: *,
       justScanned?: boolean,
     },
@@ -151,6 +152,7 @@ class SendSelectRecipient extends Component<Props, State> {
     const { navigation } = this.props;
     navigation.navigate("ScanRecipient", {
       accountId: navigation.getParam("accountId"),
+      parentId: navigation.getParam("parentId"),
     });
   };
 
