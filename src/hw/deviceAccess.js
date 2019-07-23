@@ -5,6 +5,7 @@ import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import type Transport from "@ledgerhq/hw-transport";
 import {
   WrongDeviceForAccount,
+  WrongAppForCurrency,
   CantOpenDevice,
   UpdateYourApp,
   BluetoothRequired,
@@ -150,6 +151,7 @@ export const withDevice = (deviceId: string) => <T>(
   });
 
 export const genericCanRetryOnError = (err: ?Error) => {
+  if (err instanceof WrongAppForCurrency) return false;
   if (err instanceof WrongDeviceForAccount) return false;
   if (err instanceof CantOpenDevice) return false;
   if (err instanceof BluetoothRequired) return false;
