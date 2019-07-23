@@ -377,16 +377,18 @@ class SendAmount extends Component<Props, State> {
                         />
                       </LText>
                     </View>
-                    <View style={styles.availableRight}>
-                      <LText style={styles.maxLabel}>
-                        <Trans i18nKey="send.amount.useMax" />
-                      </LText>
-                      <Switch
-                        style={{ opacity: 0.99 }}
-                        value={useAllAmount}
-                        onValueChange={this.toggleUseAllAmount}
-                      />
-                    </View>
+                    {typeof useAllAmount === "boolean" ? (
+                      <View style={styles.availableRight}>
+                        <LText style={styles.maxLabel}>
+                          <Trans i18nKey="send.amount.useMax" />
+                        </LText>
+                        <Switch
+                          style={{ opacity: 0.99 }}
+                          value={useAllAmount}
+                          onValueChange={this.toggleUseAllAmount}
+                        />
+                      </View>
+                    ) : null}
                   </View>
                   <View style={styles.continueWrapper}>
                     <Button
