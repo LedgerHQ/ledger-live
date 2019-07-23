@@ -46,6 +46,7 @@ import DebugSettings, {
   DebugDevices,
   DebugMocks,
 } from "./screens/Settings/Debug";
+import DebugExport from "./screens/Settings/Debug/ExportAccounts";
 import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
 import ManagerAppsList from "./screens/Manager/AppsList";
@@ -136,6 +137,7 @@ const SettingsStack = createStackNavigator(
     // $FlowFixMe
     DebugDevices,
     DebugMocks,
+    DebugExport,
     DebugBLE,
     // $FlowFixMe
     DebugBLEBenchmark,
