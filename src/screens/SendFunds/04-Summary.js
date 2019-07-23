@@ -97,6 +97,7 @@ class SendSummary extends Component<
 
   onContinue = async () => {
     const { account, parentAccount, navigation } = this.props;
+    const { maxAmount } = this.state;
     if (!account) return;
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account, parentAccount);
@@ -106,10 +107,18 @@ class SendSummary extends Component<
     if (bridge && account && transaction) {
       const totalSpent = await bridge.getTotalSpent(mainAccount, transaction);
       if (
-        totalSpent
-          .minus(transaction.amount)
-          .times(10)
-          .gt(transaction.amount)
+        !parentAccount &&
+        ((transaction.amount.gt(0) &&
+          totalSpent
+            .minus(transaction.amount)
+            .times(10)
+            .gt(transaction.amount)) ||
+          (maxAmount &&
+            maxAmount.gt(0) &&
+            totalSpent
+              .minus(maxAmount)
+              .times(10)
+              .gt(maxAmount)))
       ) {
         this.setState({ highFeesOpen: true });
         return;

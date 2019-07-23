@@ -31,6 +31,12 @@ type Props = {
   parentAccount: ?Account,
   wired: boolean,
 };
+
+type State = {
+  total: ?BigNumber,
+  maxAmount: ?BigNumber,
+};
+
 const { width } = getWindowDimensions();
 
 class DataRow extends PureComponent<{
@@ -53,13 +59,15 @@ class DataRow extends PureComponent<{
   }
 }
 
-class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
+class ValidateOnDevice extends PureComponent<Props, State> {
   state = {
     total: null,
+    maxAmount: null,
   };
 
   componentDidMount() {
     this.syncTotal();
+    this.syncMaxAmount();
   }
 
   componentDidUpdate({ account, transaction }: Props) {
@@ -68,11 +76,13 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
       transaction !== this.props.transaction
     ) {
       this.syncTotal();
+      this.syncMaxAmount();
     }
   }
 
   componentWillUnmount() {
     this.syncTotalId++;
+    this.syncMaxAmountId++;
   }
 
   syncTotalId = 0;
@@ -87,15 +97,57 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
     }
   };
 
+  syncMaxAmountId = 0;
+  syncMaxAmount = async () => {
+    const id = ++this.syncMaxAmountId;
+    const { account, parentAccount, transaction } = this.props;
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
+
+    const useAllAmount = bridge.getTransactionExtra(
+      mainAccount,
+      transaction,
+      "useAllAmount",
+    );
+
+    let maxAmount;
+    if (useAllAmount)
+      maxAmount = await bridge.getMaxAmount(mainAccount, transaction);
+
+    if (id === this.syncMaxAmountId) {
+      this.setState(old => {
+        if (
+          !maxAmount ||
+          (old.maxAmount && maxAmount && maxAmount.eq(old.maxAmount))
+        ) {
+          return null;
+        }
+        return { maxAmount };
+      });
+    }
+  };
+
   render() {
     const { transaction, account, parentAccount, modelId, wired } = this.props;
-    const { total } = this.state;
+    const { total, maxAmount } = this.state;
     const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
     const unit = getAccountUnit(account);
     const amount = bridge.getTransactionAmount(mainAccount, transaction);
+
+    const useAllAmount = bridge.getTransactionExtra(
+      mainAccount,
+      transaction,
+      "useAllAmount",
+    );
+
     // FIXME this is not the correct way. we will introduce new concept in the bridge.
-    const fees = total ? total.minus(amount) : BigNumber(0);
+    const fees = total
+      ? maxAmount && useAllAmount
+        ? total.minus(maxAmount)
+        : total.minus(amount)
+      : BigNumber(0);
 
     return (
       <View style={styles.root}>
@@ -122,7 +174,7 @@ class ValidateOnDevice extends PureComponent<Props, { total: ?BigNumber }> {
             <DataRow
               label={<Trans i18nKey="send.validation.amount" />}
               unit={unit}
-              value={amount}
+              value={useAllAmount && maxAmount ? maxAmount : amount}
             />
             <DataRow
               label={<Trans i18nKey="send.validation.fees" />}
