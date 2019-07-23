@@ -220,7 +220,7 @@ class SendAmount extends Component<Props, State> {
   toggleUseAllAmount = async () => {
     const { account, parentAccount } = this.props;
     if (!account) return;
-    const bridge = getAccountBridge(account);
+    const bridge = getAccountBridge(account, parentAccount);
     const { transaction: currentTransaction } = this.state;
     const nonce = ++this.nonceUseAllAmount;
     const mainAccount = getMainAccount(account, parentAccount);
