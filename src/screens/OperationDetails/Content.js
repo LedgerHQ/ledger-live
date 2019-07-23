@@ -20,12 +20,16 @@ import { Trans } from "react-i18next";
 import { localeIds } from "../../languages";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
+import OperationRow from "../../components/OperationRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
+import Touchable from "../../components/Touchable";
+import Info from "../../icons/Info";
 import type { CurrencySettings } from "../../reducers/settings";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import colors from "../../colors";
 import DataList from "./DataList";
+import Modal from "./Modal";
 
 type Props = {
   account: Account | TokenAccount,
@@ -35,11 +39,19 @@ type Props = {
   navigation: *,
 };
 
+type State = {
+  isModalOpened: boolean,
+};
+
 const mapStateToProps = createStructuredSelector({
   currencySettings: currencySettingsForAccountSelector,
 });
 
-class Content extends PureComponent<Props, *> {
+class Content extends PureComponent<Props, State> {
+  state = {
+    isModalOpened: false,
+  };
+
   onPress = () => {
     const { navigation, account, parentAccount } = this.props;
 
@@ -47,6 +59,14 @@ class Content extends PureComponent<Props, *> {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
     });
+  };
+
+  onPressInfo = () => {
+    this.setState({ isModalOpened: true });
+  };
+
+  onModalClose = () => {
+    this.setState({ isModalOpened: false });
   };
 
   render() {
@@ -63,6 +83,7 @@ class Content extends PureComponent<Props, *> {
     const uniqueRecipients = uniq(operation.recipients);
     const { extra } = operation;
     const { hasFailed } = operation;
+    const subOperations = operation.subOperations || [];
 
     const isConfirmed = confirmations >= currencySettings.confirmationsNb;
     return (
@@ -136,6 +157,51 @@ class Content extends PureComponent<Props, *> {
             )}
           </View>
         </View>
+        {subOperations.length > 0 && account.type === "Account" && (
+          <Fragment>
+            <View style={[styles.section, styles.infoContainer]}>
+              <LText style={styles.sectionSeparator} semiBold>
+                <Trans i18nKey="operationDetails.tokenOperations" />
+              </LText>
+              <Touchable
+                style={styles.info}
+                onPress={this.onPressInfo}
+                event="TokenOperationsInfo"
+              >
+                <Info size={12} color={colors.grey} />
+              </Touchable>
+            </View>
+            {subOperations.map((op, i) => {
+              const opAccount = (account.tokenAccounts || []).find(
+                acc => acc.id === op.accountId,
+              );
+
+              if (!opAccount) return null;
+
+              return (
+                <OperationRow
+                  key={op.id}
+                  operation={op}
+                  parentAccount={account}
+                  account={opAccount}
+                  navigation={this.props.navigation}
+                  multipleAccounts
+                  isLast={subOperations.length - 1 === i}
+                />
+              );
+            })}
+            <View style={styles.section}>
+              <LText style={styles.sectionSeparator} semiBold>
+                <Trans
+                  i18nKey="operationDetails.details"
+                  values={{
+                    currency: account.currency.name || "",
+                  }}
+                />
+              </LText>
+            </View>
+          </Fragment>
+        )}
         <RectButton style={styles.section} onPress={this.onPress}>
           <LText style={styles.sectionTitle}>
             <Trans i18nKey="operationDetails.account" />
@@ -230,6 +296,10 @@ class Content extends PureComponent<Props, *> {
             </LText>
           </View>
         ))}
+        <Modal
+          isOpened={this.state.isModalOpened}
+          onClose={this.onModalClose}
+        />
       </Fragment>
     );
   }
@@ -285,6 +355,13 @@ const styles = StyleSheet.create({
     padding: 16,
     color: colors.darkBlue,
   },
+  info: {
+    marginLeft: 5,
+  },
+  infoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   sectionTitle: {
     fontSize: 14,
     color: colors.grey,
@@ -292,6 +369,9 @@ const styles = StyleSheet.create({
   },
   sectionValue: {
     color: colors.darkBlue,
+  },
+  sectionSeparator: {
+    color: colors.grey,
   },
   bulletPoint: {
     borderRadius: 50,
