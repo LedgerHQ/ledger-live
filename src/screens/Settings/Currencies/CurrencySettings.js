@@ -10,11 +10,7 @@ import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
-import {
-  currencySettingsSelector,
-  intermediaryCurrency,
-} from "../../../reducers/settings";
-import type { CurrencySettings } from "../../../reducers/settings";
+import { confirmationsNbForCurrencySelector } from "../../../reducers/settings";
 import type { State } from "../../../reducers";
 import type { T } from "../../../types/common";
 import { updateCurrencySettings } from "../../../actions/settings";
@@ -24,7 +20,7 @@ import { currencySettingsDefaults } from "../../../helpers/CurrencySettingsDefau
 import CurrencyIcon from "../../../components/CurrencyIcon";
 
 type Props = {
-  currencySettings: CurrencySettings,
+  confirmationsNb: number,
   navigation: NavigationScreenProp<*>,
   updateCurrencySettings: Function,
   t: T,
@@ -42,7 +38,7 @@ const mapStateToProps = (
     props.navigation.state.params.currencyId,
   );
   return {
-    currencySettings: currencySettingsSelector(state, { currency }),
+    confirmationsNb: confirmationsNbForCurrencySelector(state, { currency }),
     defaults: currencySettingsDefaults(currency),
     currency,
   };
@@ -68,23 +64,9 @@ class EachCurrencySettings extends Component<Props, LocalState> {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.currencySettings.confirmationsNb,
+      value: props.confirmationsNb,
     };
   }
-
-  goToExchange = () => {
-    const { navigation, currency, currencySettings } = this.props;
-    const fromAccountSettings = navigation.getParam("fromAccount");
-
-    const to = fromAccountSettings
-      ? "AccountRateProviderSettings"
-      : "RateProviderSettings";
-    navigation.navigate(to, {
-      from: currency.ticker,
-      to: intermediaryCurrency.ticker,
-      selected: currencySettings.exchange,
-    });
-  };
 
   updateSettings = () => {
     const { value } = this.state;
@@ -93,7 +75,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
   };
 
   render() {
-    const { defaults, t, currencySettings, currency } = this.props;
+    const { defaults, t, currency } = this.props;
     const { value } = this.state;
     return (
       <View style={styles.root}>
@@ -102,24 +84,6 @@ class EachCurrencySettings extends Component<Props, LocalState> {
           name="Currency"
           currency={currency.id}
         />
-        {currency !== intermediaryCurrency && (
-          <SettingsRow
-            event="CurrencyExchange"
-            arrowRight={currencySettings.exchange}
-            title={t("settings.currencies.rateProvider", {
-              currencyTicker: currency.ticker,
-            })}
-            desc={t("settings.currencies.rateProviderDesc", {
-              currencyTicker: currency.ticker,
-            })}
-            onPress={currencySettings.exchange ? this.goToExchange : null}
-            alignedTop
-          >
-            <LText semiBold style={styles.currencyExchange}>
-              {currencySettings.exchange || t("common.notAvailable")}
-            </LText>
-          </SettingsRow>
-        )}
         {defaults.confirmationsNb && (
           <View style={styles.sliderContainer}>
             <SettingsRow

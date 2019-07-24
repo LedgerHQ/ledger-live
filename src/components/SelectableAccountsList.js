@@ -223,7 +223,7 @@ class SelectableAccount extends PureComponent<
           isDisabled && styles.selectableAccountRootDisabled,
         ]}
       >
-        <AccountCard account={account} />
+        <AccountCard account={account} parentAccount={null} />
         {!isDisabled && (
           <CheckBox
             onChange={this.onPress ? this.onPress : undefined}

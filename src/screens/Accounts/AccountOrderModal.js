@@ -13,6 +13,8 @@ import Button from "../../components/Button";
 
 const forceInset = { bottom: "always" };
 
+const choices = ["balance|desc", "balance|asc", "name|asc", "name|desc"];
+
 class AccountOrderModal extends Component<{
   navigation: *,
   isOpened: boolean,
@@ -26,8 +28,9 @@ class AccountOrderModal extends Component<{
           <MenuTitle>
             <Trans i18nKey="common.sortBy" />
           </MenuTitle>
-          <OrderOption id="balance" />
-          <OrderOption id="name" />
+          {choices.map(id => (
+            <OrderOption key={id} id={id} />
+          ))}
           <View style={styles.buttonContainer}>
             <Button
               event="AccountOrderModalDone"

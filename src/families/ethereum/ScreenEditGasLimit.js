@@ -13,19 +13,20 @@ import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { translate } from "react-i18next";
 import i18next from "i18next";
-import { createStructuredSelector } from "reselect";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import type { T } from "../../types/common";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
-import { accountScreenSelector } from "../../reducers/accounts";
-
 import colors from "../../colors";
-import type { T } from "../../types/common";
 
 type Props = {
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -45,12 +46,17 @@ class EthereumEditGasLimit extends PureComponent<Props, State> {
     headerLeft: null,
   };
 
-  constructor({ account, navigation }) {
+  constructor({ account, parentAccount, navigation }) {
     super();
-    const bridge = getAccountBridge(account);
+    const mainAccount = getMainAccount(account, parentAccount);
+    const bridge = getAccountBridge(account, parentAccount);
     const transaction = navigation.getParam("transaction");
     this.state = {
-      gasLimit: bridge.getTransactionExtra(account, transaction, "gasLimit"),
+      gasLimit: bridge.getTransactionExtra(
+        mainAccount,
+        transaction,
+        "gasLimit",
+      ),
     };
   }
   onChangeTag = (gasLimit: string) => {
@@ -58,15 +64,17 @@ class EthereumEditGasLimit extends PureComponent<Props, State> {
   };
 
   onValidateText = () => {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
     const { gasLimit } = this.state;
-    const bridge = getAccountBridge(account);
+    const mainAccount = getMainAccount(account, parentAccount);
+    const bridge = getAccountBridge(account, parentAccount);
     const transaction = navigation.getParam("transaction");
     Keyboard.dismiss();
     navigation.navigate("SendSummary", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction: bridge.editTransactionExtra(
-        account,
+        mainAccount,
         transaction,
         "gasLimit",
         BigNumber(gasLimit),
@@ -133,8 +141,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default connect(mapStateToProps)(translate()(EthereumEditGasLimit));

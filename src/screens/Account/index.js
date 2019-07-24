@@ -11,8 +11,10 @@ import { translate } from "react-i18next";
 import {
   isAccountEmpty,
   groupAccountOperationsByDay,
+  getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 import type {
+  TokenAccount,
   Account,
   Currency,
   Operation,
@@ -28,7 +30,7 @@ import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "../../reducers/settings";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import OperationRow from "../../components/OperationRow";
@@ -47,11 +49,13 @@ import AccountGraphCard from "../../components/AccountGraphCard";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import Touchable from "../../components/Touchable";
 import type { Item } from "../../components/Graph/types";
+import TokenAccountsList from "./TokenAccountsList";
 
 type Props = {
   useCounterValue: boolean,
   switchCountervalueFirst: () => *,
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   countervalueChange: ValueChange,
   cryptoChange: ValueChange,
   range: PortfolioRange,
@@ -60,6 +64,7 @@ type Props = {
   countervalueAvailable: boolean,
   navigation: { emit: (event: string) => void } & NavigationScreenProp<{
     accountId: string,
+    parentId?: string,
   }>,
 };
 
@@ -91,13 +96,14 @@ class AccountScreen extends PureComponent<Props, State> {
     index: number,
     section: SectionBase<*>,
   }) => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
     if (!account) return null;
 
     return (
       <OperationRow
         operation={item}
         account={account}
+        parentAccount={parentAccount}
         navigation={navigation}
         isLast={section.data.length - 1 === index}
       />
@@ -160,6 +166,15 @@ class AccountScreen extends PureComponent<Props, State> {
     );
   };
 
+  onAccountPress = (tokenAccount: TokenAccount) => {
+    const { navigation, account } = this.props;
+    // $FlowFixMe
+    navigation.push("Account", {
+      parentId: account.id,
+      accountId: tokenAccount.id,
+    });
+  };
+
   ListHeaderComponent = () => {
     const {
       history,
@@ -168,6 +183,7 @@ class AccountScreen extends PureComponent<Props, State> {
       countervalueAvailable,
       range,
       account,
+      parentAccount,
       cryptoChange,
       countervalueChange,
     } = this.props;
@@ -180,11 +196,10 @@ class AccountScreen extends PureComponent<Props, State> {
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
-        {!empty && (
+        {empty ? null : (
           <AccountGraphCard
             account={account}
             range={range}
-            unit={account.unit}
             history={history}
             useCounterValue={shouldUseCounterValue}
             valueChange={
@@ -195,16 +210,31 @@ class AccountScreen extends PureComponent<Props, State> {
             renderTitle={this.renderListHeaderTitle}
           />
         )}
-        {!empty && <AccountActions accountId={account.id} />}
+        {empty ? null : (
+          <AccountActions
+            accountId={account.id}
+            parentId={parentAccount && parentAccount.id}
+          />
+        )}
+        {account.type === "Account" && account.tokenAccounts ? (
+          <TokenAccountsList
+            onAccountPress={this.onAccountPress}
+            tokenAccounts={account.tokenAccounts}
+          />
+        ) : null}
       </View>
     );
   };
 
   ListEmptyComponent = () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
     return (
       isAccountEmpty(account) && (
-        <EmptyStateAccount account={account} navigation={navigation} />
+        <EmptyStateAccount
+          account={account}
+          parentAccount={parentAccount}
+          navigation={navigation}
+        />
       )
     );
   };
@@ -221,11 +251,12 @@ class AccountScreen extends PureComponent<Props, State> {
     const { account } = this.props;
     const { opCount } = this.state;
     if (!account) return null;
+    const currency = getAccountCurrency(account);
 
     const analytics = (
       <TrackScreen
         category="Account"
-        currency={account.currency.id}
+        currency={currency.id}
         operationsSize={account.operations.length}
       />
     );
@@ -271,14 +302,17 @@ class AccountScreen extends PureComponent<Props, State> {
 export default translate()(
   connect(
     (state, props) => {
-      const account = accountScreenSelector(state, props);
+      const { account, parentAccount } = accountAndParentScreenSelector(
+        state,
+        props,
+      );
       if (!account) return {};
       const range = selectedTimeRangeSelector(state);
       const counterValueCurrency = counterValueCurrencySelector(state);
       const useCounterValue = countervalueFirstSelector(state);
       const balanceHistoryWithCountervalue = balanceHistoryWithCountervalueSelector(
         state,
-        { account },
+        { account, range },
       );
       return {
         ...balanceHistoryWithCountervalue,
@@ -286,6 +320,7 @@ export default translate()(
         counterValueCurrency,
         range,
         account,
+        parentAccount,
       };
     },
     {

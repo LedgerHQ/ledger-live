@@ -1,9 +1,12 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import {
+  getAccountUnit,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/lib/account";
 import { Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SummaryRow from "./SummaryRow";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -18,7 +21,8 @@ import Info from "../../icons/Info";
 import colors from "../../colors";
 
 type Props = {
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   amount: *,
 };
 
@@ -42,30 +46,27 @@ class SummaryTotalSection extends PureComponent<Props, State> {
   render() {
     const { account, amount } = this.props;
     const { isModalOpened } = this.state;
-
+    const unit = getAccountUnit(account);
+    const currency = getAccountCurrency(account);
     return (
       <Fragment>
         <SummaryRow
           title={<Trans i18nKey="send.summary.total" />}
           additionalInfo={
             <Touchable onPress={this.onPress} event="SummaryTotalInfo">
-              <Icon name="info-circle" size={12} color={colors.fog} />
+              <Info size={12} color={colors.grey} />
             </Touchable>
           }
           titleProps={{ semiBold: true, style: styles.title }}
         >
           <View style={styles.summary}>
             <LText semiBold style={styles.summaryValueText}>
-              <CurrencyUnitValue
-                unit={account.unit}
-                value={amount}
-                disableRounding
-              />
+              <CurrencyUnitValue unit={unit} value={amount} disableRounding />
             </LText>
             <LText style={styles.summaryCounterValueText}>
               <CounterValue
                 value={amount}
-                currency={account.currency}
+                currency={currency}
                 showCode
                 before="≈ "
               />

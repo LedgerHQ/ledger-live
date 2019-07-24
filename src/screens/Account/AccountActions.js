@@ -12,6 +12,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 type Props = {
   accountId: string,
+  parentId: ?string,
   navigation: *,
   readOnlyModeEnabled: boolean,
 };
@@ -20,7 +21,7 @@ const mapStateToProps = createStructuredSelector({
 });
 class AccountActions extends PureComponent<Props> {
   render() {
-    const { readOnlyModeEnabled, navigation, accountId } = this.props;
+    const { readOnlyModeEnabled, navigation, accountId, parentId } = this.props;
 
     return (
       <View style={styles.root}>
@@ -30,7 +31,10 @@ class AccountActions extends PureComponent<Props> {
             type="primary"
             IconLeft={IconSend}
             onPress={() =>
-              navigation.navigate("SendSelectRecipient", { accountId })
+              navigation.navigate("SendSelectRecipient", {
+                accountId,
+                parentId,
+              })
             }
             title={<Trans i18nKey="account.send" />}
             containerStyle={[styles.btn, styles.marginRight]}
@@ -41,7 +45,7 @@ class AccountActions extends PureComponent<Props> {
           type="primary"
           IconLeft={IconReceive}
           onPress={() =>
-            navigation.navigate("ReceiveConnectDevice", { accountId })
+            navigation.navigate("ReceiveConnectDevice", { accountId, parentId })
           }
           title={<Trans i18nKey="account.receive" />}
           containerStyle={[

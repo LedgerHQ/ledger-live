@@ -2,8 +2,17 @@
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  TokenAccount,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import {
+  getMainAccount,
+  getAccountCurrency,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -11,50 +20,82 @@ import { Trans } from "react-i18next";
 import { localeIds } from "../../languages";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
+import OperationRow from "../../components/OperationRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
+import Touchable from "../../components/Touchable";
+import Info from "../../icons/Info";
 import type { CurrencySettings } from "../../reducers/settings";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import colors from "../../colors";
 import DataList from "./DataList";
+import Modal from "./Modal";
 
 type Props = {
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   operation: Operation,
   currencySettings: CurrencySettings,
   navigation: *,
+};
+
+type State = {
+  isModalOpened: boolean,
 };
 
 const mapStateToProps = createStructuredSelector({
   currencySettings: currencySettingsForAccountSelector,
 });
 
-class Content extends PureComponent<Props, *> {
+class Content extends PureComponent<Props, State> {
+  state = {
+    isModalOpened: false,
+  };
+
   onPress = () => {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+
     navigation.navigate("Account", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
     });
   };
 
+  onPressInfo = () => {
+    this.setState({ isModalOpened: true });
+  };
+
+  onModalClose = () => {
+    this.setState({ isModalOpened: false });
+  };
+
   render() {
-    const { account, operation, currencySettings } = this.props;
+    const { account, parentAccount, operation, currencySettings } = this.props;
+    const mainAccount = getMainAccount(account, parentAccount);
+    const unit = getAccountUnit(account);
+    const currency = getAccountCurrency(account);
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.smoke : colors.green;
     const confirmations = operation.blockHeight
-      ? account.blockHeight - operation.blockHeight
+      ? mainAccount.blockHeight - operation.blockHeight
       : 0;
     const uniqueSenders = uniq(operation.senders);
     const uniqueRecipients = uniq(operation.recipients);
     const { extra } = operation;
     const { hasFailed } = operation;
+    const subOperations = operation.subOperations || [];
 
     const isConfirmed = confirmations >= currencySettings.confirmationsNb;
     return (
       <Fragment>
         <View style={styles.header}>
           <View style={styles.icon}>
-            <OperationIcon size={40} operation={operation} account={account} />
+            <OperationIcon
+              size={40}
+              operation={operation}
+              account={account}
+              parentAccount={parentAccount}
+            />
           </View>
           <LText
             tertiary
@@ -65,7 +106,7 @@ class Content extends PureComponent<Props, *> {
               <CurrencyUnitValue
                 showCode
                 disableRounding={true}
-                unit={account.unit}
+                unit={unit}
                 value={amount}
                 alwaysShowSign
               />
@@ -76,7 +117,7 @@ class Content extends PureComponent<Props, *> {
               <CounterValue
                 showCode
                 alwaysShowSign
-                currency={account.currency}
+                currency={currency}
                 value={amount}
                 date={operation.date}
                 subMagnitude={1}
@@ -116,12 +157,57 @@ class Content extends PureComponent<Props, *> {
             )}
           </View>
         </View>
+        {subOperations.length > 0 && account.type === "Account" && (
+          <Fragment>
+            <View style={[styles.section, styles.infoContainer]}>
+              <LText style={styles.sectionSeparator} semiBold>
+                <Trans i18nKey="operationDetails.tokenOperations" />
+              </LText>
+              <Touchable
+                style={styles.info}
+                onPress={this.onPressInfo}
+                event="TokenOperationsInfo"
+              >
+                <Info size={12} color={colors.grey} />
+              </Touchable>
+            </View>
+            {subOperations.map((op, i) => {
+              const opAccount = (account.tokenAccounts || []).find(
+                acc => acc.id === op.accountId,
+              );
+
+              if (!opAccount) return null;
+
+              return (
+                <OperationRow
+                  key={op.id}
+                  operation={op}
+                  parentAccount={account}
+                  account={opAccount}
+                  navigation={this.props.navigation}
+                  multipleAccounts
+                  isLast={subOperations.length - 1 === i}
+                />
+              );
+            })}
+            <View style={styles.section}>
+              <LText style={styles.sectionSeparator} semiBold>
+                <Trans
+                  i18nKey="operationDetails.details"
+                  values={{
+                    currency: account.currency.name || "",
+                  }}
+                />
+              </LText>
+            </View>
+          </Fragment>
+        )}
         <RectButton style={styles.section} onPress={this.onPress}>
           <LText style={styles.sectionTitle}>
             <Trans i18nKey="operationDetails.account" />
           </LText>
           <LText style={styles.sectionValue} semiBold>
-            {account.name}
+            {account.type === "Account" ? account.name : currency.name}
           </LText>
         </RectButton>
         <View style={styles.section}>
@@ -145,11 +231,7 @@ class Content extends PureComponent<Props, *> {
           {operation.fee ? (
             <View style={styles.feeValueContainer}>
               <LText style={styles.sectionValue} semiBold>
-                <CurrencyUnitValue
-                  showCode
-                  unit={account.unit}
-                  value={operation.fee}
-                />
+                <CurrencyUnitValue showCode unit={unit} value={operation.fee} />
               </LText>
               <LText style={styles.feeCounterValue} semiBold>
                 ≈
@@ -160,7 +242,7 @@ class Content extends PureComponent<Props, *> {
                   disableRounding={true}
                   date={operation.date}
                   subMagnitude={1}
-                  currency={account.currency}
+                  currency={currency}
                   value={operation.fee}
                 />
               </LText>
@@ -214,6 +296,10 @@ class Content extends PureComponent<Props, *> {
             </LText>
           </View>
         ))}
+        <Modal
+          isOpened={this.state.isModalOpened}
+          onClose={this.onModalClose}
+        />
       </Fragment>
     );
   }
@@ -269,6 +355,13 @@ const styles = StyleSheet.create({
     padding: 16,
     color: colors.darkBlue,
   },
+  info: {
+    marginLeft: 5,
+  },
+  infoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   sectionTitle: {
     fontSize: 14,
     color: colors.grey,
@@ -276,6 +369,9 @@ const styles = StyleSheet.create({
   },
   sectionValue: {
     color: colors.darkBlue,
+  },
+  sectionSeparator: {
+    color: colors.grey,
   },
   bulletPoint: {
     borderRadius: 50,

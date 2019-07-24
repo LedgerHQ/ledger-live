@@ -4,20 +4,20 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import i18next from "i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/bridge/EthereumJSBridge";
 
 import colors from "../../colors";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import type { T } from "../../types/common";
 
 import KeyboardView from "../../components/KeyboardView";
-import EditFeeUnit from "../EditFeeUnit";
+import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 
 type Props = {
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -34,17 +34,17 @@ class EthereumEditFee extends Component<Props> {
   };
 
   render() {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
     const transaction: Transaction = navigation.getParam("transaction");
     if (!transaction) return null;
     return (
       <SafeAreaView style={styles.root}>
         <KeyboardView style={styles.container}>
-          <EditFeeUnit
+          <EditFeeUnitEthereum
             account={account}
+            parentAccount={parentAccount}
             transaction={transaction}
             navigation={navigation}
-            field="gasPrice"
           />
         </KeyboardView>
       </SafeAreaView>
@@ -62,8 +62,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default connect(mapStateToProps)(EthereumEditFee);

@@ -4,8 +4,16 @@ import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { Trans } from "react-i18next";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import {
+  getAccountCurrency,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import type {
+  TokenAccount,
+  Account,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
 
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -19,7 +27,8 @@ import Spinning from "./Spinning";
 
 type Props = {
   operation: Operation,
-  account: Account,
+  parentAccount: ?Account,
+  account: TokenAccount | Account,
   navigation: *,
   multipleAccounts?: boolean,
   isLast: boolean,
@@ -36,16 +45,26 @@ class OperationRow extends PureComponent<Props, *> {
   };
 
   goToOperationDetails = () => {
-    this.props.navigation.navigate("OperationDetails", {
-      accountId: this.props.account.id,
-      operation: this.props.operation,
+    const { navigation, account, parentAccount, operation } = this.props;
+    navigation.navigate("OperationDetails", {
+      accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
+      operation, // FIXME we should pass a operationId instead because data can changes over time.
     });
   };
 
   render() {
-    const { operation, account, multipleAccounts, isLast } = this.props;
+    const {
+      operation,
+      account,
+      parentAccount,
+      multipleAccounts,
+      isLast,
+    } = this.props;
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.darkBlue : colors.green;
+    const currency = getAccountCurrency(account);
+    const unit = getAccountUnit(account);
 
     const text =
       operation.type === "IN" ? (
@@ -72,13 +91,12 @@ class OperationRow extends PureComponent<Props, *> {
       <View style={[styles.root, isLast ? styles.last : null]}>
         <RectButton onPress={this.goToOperationDetails} style={styles.button}>
           <View style={isOptimistic ? styles.optimistic : null}>
-            <View>
-              <OperationIcon
-                size={28}
-                operation={operation}
-                account={account}
-              />
-            </View>
+            <OperationIcon
+              size={28}
+              operation={operation}
+              account={account}
+              parentAccount={parentAccount}
+            />
           </View>
           <View
             style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}
@@ -90,7 +108,11 @@ class OperationRow extends PureComponent<Props, *> {
                 ellipsizeMode="tail"
                 style={[styles.bodyLeft, styles.topRow]}
               >
-                {multipleAccounts ? account.name : text}
+                {multipleAccounts
+                  ? account.type === "TokenAccount"
+                    ? currency.name
+                    : account.name
+                  : text}
               </LText>
               <LText
                 tertiary
@@ -100,7 +122,7 @@ class OperationRow extends PureComponent<Props, *> {
               >
                 <CurrencyUnitValue
                   showCode
-                  unit={account.unit}
+                  unit={unit}
                   value={amount}
                   alwaysShowSign
                 />
@@ -133,7 +155,7 @@ class OperationRow extends PureComponent<Props, *> {
                 <CounterValue
                   showCode
                   date={operation.date}
-                  currency={account.currency}
+                  currency={currency}
                   value={amount}
                   alwaysShowSign
                   withPlaceholder

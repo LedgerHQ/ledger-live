@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
+    flexShrink: 1,
   },
   distributionButton: {
     alignItems: "center",

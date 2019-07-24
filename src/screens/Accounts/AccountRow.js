@@ -1,10 +1,12 @@
 // @flow
-import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { Fragment, PureComponent } from "react";
+import { View, StyleSheet, Platform } from "react-native";
+import { Trans } from "react-i18next";
 import { RectButton } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
@@ -14,6 +16,8 @@ import { isUpToDateAccountSelector } from "../../reducers/accounts";
 import { accountSyncStateSelector } from "../../reducers/bridgeSync";
 import type { AsyncState } from "../../reducers/bridgeSync";
 import AccountSyncStatus from "./AccountSyncStatus";
+import Button from "../../components/Button";
+import TokenRow from "../../components/TokenRow";
 
 const mapStateToProps = createStructuredSelector({
   syncState: accountSyncStateSelector,
@@ -28,6 +32,10 @@ type Props = {
   isLast: boolean,
 };
 
+type State = {
+  collapsed: boolean,
+};
+
 const placeholderProps = {
   width: 40,
   containerHeight: 20,
@@ -36,56 +44,132 @@ const placeholderProps = {
 const TICK_W = 6;
 const TICK_H = 20;
 
-class AccountRow extends PureComponent<Props> {
-  onPress = () => {
+class AccountRow extends PureComponent<Props, State> {
+  state = {
+    collapsed: true,
+  };
+
+  onAccountPress = () => {
     this.props.navigation.navigate("Account", {
       accountId: this.props.account.id,
     });
   };
 
+  onTokenAccountPress = (tokenAccount: TokenAccount) => {
+    this.props.navigation.navigate("Account", {
+      parentId: this.props.account.id,
+      accountId: tokenAccount.id,
+    });
+  };
+
+  onExpandTokenPress = () => {
+    this.setState(s => ({
+      collapsed: !s.collapsed,
+    }));
+  };
+
   render() {
-    const { account, isUpToDateAccount, syncState, isLast } = this.props;
+    const { account, isUpToDateAccount, syncState } = this.props;
+
     return (
-      <RectButton onPress={this.onPress} style={styles.root}>
+      <View style={styles.root}>
         <View
-          style={[styles.innerContainer, isLast && styles.innerContainerLast]}
+          style={[
+            styles.accountRowCard,
+            {
+              elevation: account.tokenAccounts && this.state.collapsed ? 2 : 1,
+            },
+          ]}
         >
-          <CurrencyIcon size={24} currency={account.currency} />
-          <View style={styles.inner}>
-            <LText
-              semiBold
-              numberOfLines={1}
-              ellipsizeMode="middle"
-              style={styles.accountNameText}
-            >
-              {account.name}
-            </LText>
-            <AccountSyncStatus
-              isUpToDateAccount={isUpToDateAccount}
-              {...syncState}
-            />
-          </View>
-          <View style={styles.balanceContainer}>
-            <LText tertiary style={styles.balanceNumText}>
-              <CurrencyUnitValue
-                showCode
-                unit={account.unit}
-                value={account.balance}
-              />
-            </LText>
-            <View style={styles.balanceCounterContainer}>
-              <CounterValue
-                showCode
-                currency={account.currency}
-                value={account.balance}
-                withPlaceholder
-                placeholderProps={placeholderProps}
-                Wrapper={AccountCv}
-              />
+          <RectButton onPress={this.onAccountPress}>
+            <View accessible style={styles.innerContainer}>
+              <CurrencyIcon size={24} currency={account.currency} />
+              <View style={styles.inner}>
+                <LText
+                  semiBold
+                  numberOfLines={1}
+                  ellipsizeMode="middle"
+                  style={styles.accountNameText}
+                >
+                  {account.name}
+                </LText>
+                <AccountSyncStatus
+                  isUpToDateAccount={isUpToDateAccount}
+                  {...syncState}
+                />
+              </View>
+              <View style={styles.balanceContainer}>
+                <LText tertiary style={styles.balanceNumText}>
+                  <CurrencyUnitValue
+                    showCode
+                    unit={account.unit}
+                    value={account.balance}
+                  />
+                </LText>
+                <View style={styles.balanceCounterContainer}>
+                  <CounterValue
+                    showCode
+                    currency={account.currency}
+                    value={account.balance}
+                    withPlaceholder
+                    placeholderProps={placeholderProps}
+                    Wrapper={AccountCv}
+                  />
+                </View>
+              </View>
             </View>
-          </View>
+          </RectButton>
+          {account.type === "TokenAccount" && account.tokenAccounts && account.tokenAccounts.length !== 0 && (
+            <Fragment>
+              <View
+                style={
+                  (styles.tokenAccountList,
+                  { display: this.state.collapsed ? "none" : "flex" })
+                }
+              >
+                {account.tokenAccounts.map((tkn, i) => (
+                  <TokenRow
+                    nested
+                    key={i}
+                    account={tkn}
+                    onTokenAccountPress={this.onTokenAccountPress}
+                  />
+                ))}
+              </View>
+              <View style={styles.tokenButton}>
+                <Button
+                  type="lightSecondary"
+                  event="expandTokenList"
+                  title={
+                    <Trans
+                      i18nKey={
+                        this.state.collapsed
+                          ? "accounts.row.showTokens"
+                          : "accounts.row.hideTokens"
+                      }
+                      values={{ length: account.tokenAccounts.length }}
+                    />
+                  }
+                  IconRight={() => (
+                    <Icon
+                      color={colors.live}
+                      name={this.state.collapsed ? "angle-down" : "angle-up"}
+                      size={16}
+                    />
+                  )}
+                  onPress={this.onExpandTokenPress}
+                  size={13}
+                />
+              </View>
+            </Fragment>
+          )}
         </View>
-      </RectButton>
+        {!!this.state.collapsed &&
+        account.tokenAccounts &&
+        account.tokenAccounts.length ? (
+          <View style={styles.tokenAccountIndicator} />
+        ) : null}
+      </View>
     );
   }
 }
@@ -100,20 +184,69 @@ export default connect(mapStateToProps)(AccountRow);
 
 const styles = StyleSheet.create({
   root: {
+    marginTop: 8,
+    marginLeft: 8,
+    marginRight: 8,
+  },
+  accountRowCard: {
+    zIndex: 2,
     backgroundColor: colors.white,
+    borderRadius: 4,
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowColor: colors.black,
+        shadowOpacity: 0.03,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 4,
+        },
+      },
+    }),
   },
   innerContainer: {
     paddingHorizontal: 16,
     paddingVertical: 18,
     flexDirection: "row",
     alignItems: "center",
-
     overflow: "visible",
-    borderBottomWidth: 2,
-    borderBottomColor: colors.lightGrey,
   },
-  innerContainerLast: {
-    borderBottomWidth: 0,
+  tokenAccountIndicator: {
+    zIndex: 1,
+    height: 7,
+    marginRight: 5,
+    marginLeft: 5,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightGrey,
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowColor: colors.black,
+        shadowOpacity: 0.03,
+        shadowRadius: 4,
+        shadowOffset: {
+          height: 2,
+        },
+      },
+    }),
+  },
+  tokenAccountList: {
+    marginLeft: 26,
+    paddingLeft: 13,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.fog,
+    marginBottom: 20,
+  },
+  tokenButton: {
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
   inner: {
     flexGrow: 1,

@@ -3,23 +3,29 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, Image, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Receive from "../../icons/Receive";
 
 class EmptyStateAccount extends PureComponent<{
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<*>,
 }> {
   goToReceiveFunds = () => {
-    const { navigation, account } = this.props;
-    navigation.navigate("ReceiveConnectDevice", { accountId: account.id });
+    const { navigation, account, parentAccount } = this.props;
+    navigation.navigate("ReceiveConnectDevice", {
+      accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
+    });
   };
 
   render() {
-    const { account } = this.props;
+    const { account, parentAccount } = this.props;
+    const mainAccount = getMainAccount(account, parentAccount);
     return (
       <View style={styles.root}>
         <View style={styles.body}>
@@ -31,7 +37,7 @@ class EmptyStateAccount extends PureComponent<{
             <Trans i18nKey="common:account.emptyState.desc">
               {"Make sure the"}
               <LText semiBold style={styles.managerAppName}>
-                {account.currency.managerAppName}
+                {mainAccount.currency.managerAppName}
               </LText>
               {"app is installed and start receiving"}
             </Trans>

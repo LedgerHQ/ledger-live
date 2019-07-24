@@ -5,19 +5,20 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-
-import { accountScreenSelector } from "../../reducers/accounts";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import ValidateError from "./ValidateError";
 import { urls } from "../../config/urls";
 
 type Props = {
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
+      parentId: String,
       deviceId: string,
       transaction: *,
       error: Error,
@@ -72,8 +73,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state, props) => ({
-  account: accountScreenSelector(state, props),
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default connect(mapStateToProps)(translate()(ValidationError));

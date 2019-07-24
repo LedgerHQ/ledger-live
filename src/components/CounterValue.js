@@ -4,17 +4,14 @@ import type { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
 import type { State } from "../reducers";
-import Placeholder from "./Placeholder";
-
 import {
   counterValueCurrencySelector,
-  currencySettingsSelector,
-  counterValueExchangeSelector,
   intermediaryCurrency,
+  exchangeSettingsForPairSelector,
 } from "../reducers/settings";
 import CounterValues from "../countervalues";
-
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import LText from "./LText";
 
 type OwnProps = {
   // wich market to query
@@ -43,12 +40,19 @@ type Props = OwnProps & {
 const mapStateToProps = (state: State, props: OwnProps) => {
   const { currency, value, date, subMagnitude } = props;
   const counterValueCurrency = counterValueCurrencySelector(state);
-  const fromExchange = currencySettingsSelector(state, { currency }).exchange;
-  const toExchange = counterValueExchangeSelector(state);
+  const intermediary = intermediaryCurrency(currency, counterValueCurrency);
+  const fromExchange = exchangeSettingsForPairSelector(state, {
+    from: currency,
+    to: intermediary,
+  });
+  const toExchange = exchangeSettingsForPairSelector(state, {
+    from: intermediary,
+    to: counterValueCurrency,
+  });
   const counterValue = CounterValues.calculateWithIntermediarySelector(state, {
     from: currency,
     fromExchange,
-    intermediary: intermediaryCurrency,
+    intermediary,
     toExchange,
     to: counterValueCurrency,
     value,
@@ -83,7 +87,7 @@ class CounterValue extends Component<Props> {
     );
 
     if (!value) {
-      return withPlaceholder ? <Placeholder {...placeholderProps} /> : null;
+      return withPlaceholder ? <LText style={{ fontSize: 16 }}>-</LText> : null;
     }
 
     if (Wrapper) {

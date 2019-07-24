@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { Fragment, PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
 import type {
@@ -8,11 +8,11 @@ import type {
 } from "@ledgerhq/live-common/lib/types/currencies";
 import colors from "../../colors";
 import LText from "../../components/LText";
-import CurrencyIcon from "../../components/CurrencyIcon";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import ProgressBar from "../../components/ProgressBar";
 import CounterValue from "../../components/CounterValue";
 import CurrencyRate from "../../components/CurrencyRate";
+import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency,
@@ -43,7 +43,7 @@ class DistributionCard extends PureComponent<Props> {
     return (
       <View style={[styles.root, highlighting ? { borderColor: color } : {}]}>
         <View style={styles.currencyLogo}>
-          <CurrencyIcon size={18} currency={currency} />
+          <ParentCurrencyIcon currency={currency} size={18} />
         </View>
         <View style={styles.rightContainer}>
           <View style={styles.currencyRow}>
@@ -54,16 +54,23 @@ class DistributionCard extends PureComponent<Props> {
               {<CurrencyUnitValue unit={currency.units[0]} value={amount} />}
             </LText>
           </View>
-          <View style={styles.rateRow}>
-            <CurrencyRate currency={currency} />
-            <LText tertiary style={styles.counterValue}>
-              <CounterValue currency={currency} value={amount} />
-            </LText>
-          </View>
-          <View style={styles.distributionRow}>
-            <ProgressBar progress={percentage} progressColor={color} />
-            <LText tertiary style={styles.percentage}>{`${percentage}%`}</LText>
-          </View>
+          {distribution ? (
+            <Fragment>
+              <View style={styles.rateRow}>
+                <CurrencyRate currency={currency} />
+                <LText tertiary style={styles.counterValue}>
+                  <CounterValue currency={currency} value={amount} />
+                </LText>
+              </View>
+              <View style={styles.distributionRow}>
+                <ProgressBar progress={percentage} progressColor={color} />
+                <LText
+                  tertiary
+                  style={styles.percentage}
+                >{`${percentage}%`}</LText>
+              </View>
+            </Fragment>
+          ) : null}
         </View>
       </View>
     );

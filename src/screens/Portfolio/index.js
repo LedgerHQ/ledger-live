@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { View, StyleSheet, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import type {
+  TokenAccount,
   Account,
   Operation,
   Portfolio,
@@ -22,7 +23,10 @@ import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/Animat
 
 import colors from "../../colors";
 
-import { accountsSelector } from "../../reducers/accounts";
+import {
+  accountsSelector,
+  flattenAccountsSelector,
+} from "../../reducers/accounts";
 import {
   hasCompletedOnboardingSelector,
   hasAcceptedTradingWarningSelector,
@@ -51,6 +55,7 @@ const List = globalSyncRefreshControl(AnimatedSectionList);
 
 const mapStateToProps = createStructuredSelector({
   accounts: accountsSelector,
+  allAccounts: flattenAccountsSelector,
   hasCompletedOnboarding: hasCompletedOnboardingSelector,
   hasAcceptedTradingWarning: hasAcceptedTradingWarningSelector,
   counterValueCurrency: counterValueCurrencySelector,
@@ -65,6 +70,7 @@ class PortfolioScreen extends Component<
   {
     acceptTradingWarning: () => void,
     accounts: Account[],
+    allAccounts: (Account | TokenAccount)[],
     portfolio: Portfolio,
     navigation: *,
     hasCompletedOnboarding: boolean,
@@ -123,13 +129,19 @@ class PortfolioScreen extends Component<
     index: number,
     section: SectionBase<*>,
   }) => {
-    const account = this.props.accounts.find(a => a.id === item.accountId);
+    const { allAccounts, accounts } = this.props;
+    const account = allAccounts.find(a => a.id === item.accountId);
+    const parentAccount =
+      account && account.type === "TokenAccount"
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
 
     if (!account) return null;
 
     return (
       <OperationRow
         operation={item}
+        parentAccount={parentAccount}
         account={account}
         navigation={this.props.navigation}
         multipleAccounts
@@ -166,6 +178,7 @@ class PortfolioScreen extends Component<
 
     const { sections, completed } = groupAccountsOperationsByDay(accounts, {
       count: opCount,
+      withTokenAccounts: true,
     });
 
     return (

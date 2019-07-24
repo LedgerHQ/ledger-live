@@ -3,11 +3,14 @@ import {
   getBalanceHistoryWithCountervalue,
   getPortfolio,
 } from "@ledgerhq/live-common/lib/portfolio";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  TokenAccount,
+  PortfolioRange,
+} from "@ledgerhq/live-common/lib/types";
 import {
   counterValueCurrencySelector,
-  counterValueExchangeSelector,
-  exchangeSettingsForTickerSelector,
+  exchangeSettingsForPairSelector,
   intermediaryCurrency,
   selectedTimeRangeSelector,
 } from "../reducers/settings";
@@ -19,26 +22,32 @@ export const balanceHistoryWithCountervalueSelector = (
   state: State,
   {
     account,
+    range,
   }: {
-    account: Account,
+    account: Account | TokenAccount,
+    range: PortfolioRange,
   },
 ) => {
-  const range = selectedTimeRangeSelector(state);
   const counterValueCurrency = counterValueCurrencySelector(state);
-  const counterValueExchange = counterValueExchangeSelector(state);
   const currency =
-    account.type === "Account" ? account.currency : account.ticker;
-  const exchange = exchangeSettingsForTickerSelector(state, {
-    ticker: currency.ticker,
+    account.type === "Account" ? account.currency : account.token;
+  const intermediary = intermediaryCurrency(currency, counterValueCurrency);
+  const exchange = exchangeSettingsForPairSelector(state, {
+    from: currency,
+    to: intermediary,
+  });
+  const toExchange = exchangeSettingsForPairSelector(state, {
+    from: intermediary,
+    to: counterValueCurrency,
   });
   return getBalanceHistoryWithCountervalue(account, range, (_, value, date) =>
     CounterValues.calculateWithIntermediarySelector(state, {
       value,
       date,
-      from: account.currency,
+      from: currency,
       fromExchange: exchange,
-      intermediary: intermediaryCurrency,
-      toExchange: counterValueExchange,
+      intermediary,
+      toExchange,
       to: counterValueCurrency,
     }),
   );
@@ -48,18 +57,23 @@ export const portfolioSelector = (state: State) => {
   const accounts = accountsSelector(state);
   const range = selectedTimeRangeSelector(state);
   const counterValueCurrency = counterValueCurrencySelector(state);
-  const counterValueExchange = counterValueExchangeSelector(state);
-  return getPortfolio(accounts, range, (currency, value, date) =>
-    CounterValues.calculateWithIntermediarySelector(state, {
+  return getPortfolio(accounts, range, (currency, value, date) => {
+    const intermediary = intermediaryCurrency(currency, counterValueCurrency);
+    const toExchange = exchangeSettingsForPairSelector(state, {
+      from: intermediary,
+      to: counterValueCurrency,
+    });
+    return CounterValues.calculateWithIntermediarySelector(state, {
       value,
       date,
       from: currency,
-      fromExchange: exchangeSettingsForTickerSelector(state, {
-        ticker: currency.ticker,
+      fromExchange: exchangeSettingsForPairSelector(state, {
+        from: currency,
+        to: intermediary,
       }),
-      intermediary: intermediaryCurrency,
-      toExchange: counterValueExchange,
+      intermediary,
+      toExchange,
       to: counterValueCurrency,
-    }),
-  );
+    });
+  });
 };
