@@ -3,6 +3,7 @@
 import type { Account, TokenAccount, Operation } from "./types";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
+import { flattenOperationWithInternals } from "./operation";
 
 type Field = {
   title: string,
@@ -62,9 +63,11 @@ const accountRows = (
   account: Account | TokenAccount,
   parentAccount: ?Account
 ): Array<string[]> =>
-  account.operations.map(operation =>
-    fields.map(field => field.cell(account, parentAccount, operation))
-  );
+  account.operations
+    .reduce((ops, op) => ops.concat(flattenOperationWithInternals(op)), [])
+    .map(operation =>
+      fields.map(field => field.cell(account, parentAccount, operation))
+    );
 
 const accountsRows = (accounts: Account[]) =>
   flattenAccounts(accounts).reduce((all, account) => {
