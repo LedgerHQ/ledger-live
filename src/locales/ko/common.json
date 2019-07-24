@@ -38,6 +38,8 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
+    "slow": "slow",
+    "fast": "fast",
     "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
@@ -540,13 +542,11 @@
     }
   },
   "orderOption": {
-    "label": {
-      "balance": "Balance",
-      "name": "Name"
-    },
-    "ordering": {
-      "asc": "Ascending",
-      "desc": "Descending"
+    "choices": {
+      "name|asc": "Name A-Z",
+      "name|desc": "Name Z-A",
+      "balance|asc": "Lowest Balance",
+      "balance|desc": "Highest Balance"
     }
   },
   "operationDetails": {
@@ -567,6 +567,11 @@
     "viewInExplorer": "View in explorer",
     "sending": "Sending...",
     "receiving": "Receiving...",
+    "tokenOperations": "Token operations",
+    "tokenModal": {
+      "desc": "This operation is related to the following token operations"
+    },
+    "details": "{{ currency }} details",
     "extra": {
       "tag": "Tag"
     }
@@ -580,6 +585,11 @@
     "selectAll": "Select all"
   },
   "account": {
+    "tokens": {
+      "contractAddress": "Contract address",
+      "viewInExplorer": "View in explorer",
+      "howTo": "To add tokens accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+    },
     "send": "Send",
     "receive": "Receive",
     "lastOperations": "Last operations",
@@ -666,7 +676,9 @@
       "syncPending": "Synchronizing...",
       "upToDate": "Synchronized",
       "error": "Error",
-      "queued": "Awaiting"
+      "queued": "Awaiting",
+      "showTokens": "Show {{length}} tokens",
+      "hideTokens": "Hide tokens"
     }
   },
   "distribution": {
@@ -843,7 +855,8 @@
       "input": "Enter address"
     },
     "amount": {
-      "available": "<1><0>{{amount}}</></> available",
+      "available": "Total available",
+      "useMax": "Use max",
       "loadingNetwork": "Loading Network fees...",
       "noRateProvider": "Not available"
     },
@@ -876,9 +889,12 @@
       "title": "Network fees",
       "validate": "Confirm",
       "required": "Fees are required",
+      "chooseGas": "Choose a gas price",
+      "higherFaster": "Higher gas price means a faster confirmation",
       "edit": {
         "title": "Choose Unit"
-      }
+      },
+      "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH"
     }
   },
   "addAccounts": {
