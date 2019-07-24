@@ -19,10 +19,7 @@ export const findCurrencyExplorer = (
   const explorer = getEnv("EXPLORER");
   if (idV3 && (exp || !idV2)) {
     return {
-      endpoint:
-        exp && currency.id === "ethereum"
-          ? "https://eth-mainnet.explorers.dev.aws.ledger.fr" // HACK, fixed when new explorer version is deployed
-          : explorer,
+      endpoint: explorer,
       id: idV3,
       version: "v3"
     };
