@@ -1,6 +1,7 @@
 // @flow
 import invariant from "invariant";
 import type { Account, TokenAccount, Operation } from "../types";
+import { getEnv } from "../env";
 
 // by convention, a main account is the top level account
 // in case of an Account is the account itself
@@ -45,6 +46,22 @@ export function clearAccount<T: Account | TokenAccount>(account: T): T {
     tokenAccounts:
       account.tokenAccounts && account.tokenAccounts.map(clearAccount)
   };
+}
+
+export function findTokenAccountById(
+  account: Account,
+  id: string
+): ?TokenAccount {
+  return (account.tokenAccounts || []).find(a => a.id === id);
+}
+
+// get the token accounts of an account, ignoring those that are zero IF user don't want them
+export function listTokenAccounts(account: Account): TokenAccount[] {
+  const accounts = account.tokenAccounts || [];
+  if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
+    return accounts.filter(a => !a.balance.isZero());
+  }
+  return accounts;
 }
 
 export function flattenAccounts(

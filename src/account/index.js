@@ -11,7 +11,9 @@ import {
   clearAccount,
   flattenAccounts,
   addPendingOperation,
-  shortAddressPreview
+  shortAddressPreview,
+  findTokenAccountById,
+  listTokenAccounts
 } from "./helpers";
 import { groupAddAccounts, addAccounts, migrateAccounts } from "./addAccounts";
 import {
@@ -95,5 +97,7 @@ export {
   shortAddressPreview,
   importAccountsMakeItems,
   importAccountsReduce,
-  checkAccountSupported
+  checkAccountSupported,
+  listTokenAccounts,
+  findTokenAccountById
 };
