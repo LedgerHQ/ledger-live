@@ -119,20 +119,23 @@ class AccountRow extends PureComponent<Props, State> {
               </View>
             </View>
           </RectButton>
-          {account.tokenAccounts && account.tokenAccounts.length !== 0 && (
+          {account.type === "TokenAccount" && account.tokenAccounts && account.tokenAccounts.length !== 0 && (
             <Fragment>
-              {!this.state.collapsed && (
-                <View style={styles.tokenAccountList}>
-                  {account.tokenAccounts.map((tkn, i) => (
-                    <TokenRow
-                      nested
-                      key={i}
-                      account={tkn}
-                      onTokenAccountPress={this.onTokenAccountPress}
-                    />
-                  ))}
-                </View>
-              )}
+              <View
+                style={
+                  (styles.tokenAccountList,
+                  { display: this.state.collapsed ? "none" : "flex" })
+                }
+              >
+                {account.tokenAccounts.map((tkn, i) => (
+                  <TokenRow
+                    nested
+                    key={i}
+                    account={tkn}
+                    onTokenAccountPress={this.onTokenAccountPress}
+                  />
+                ))}
+              </View>
               <View style={styles.tokenButton}>
                 <Button
                   type="lightSecondary"
