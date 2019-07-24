@@ -3,12 +3,12 @@
 import { BigNumber } from "bignumber.js";
 import type { Operation } from "../../types";
 import type { CoreOperation } from "../../libcore/types";
-import { CoreEthereumLikeInternalTransaction } from "./types";
+import { CoreInternalTransaction } from "./types";
 import { OperationTypeMap } from "../../libcore/buildAccount/buildOperation";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 
 async function buildInternalOperation(
-  tx: CoreEthereumLikeInternalTransaction,
+  tx: CoreInternalTransaction,
   {
     accountId,
     internalTransactionIndex,
