@@ -70,7 +70,9 @@ export function groupAccountsOperationsByDay(
   let data: Operation[] = [];
   for (let i = 0; i < count && next; i++) {
     if (next.date < day) {
-      sections.push({ day, data });
+      if (data.length > 0) {
+        sections.push({ day, data });
+      }
       day = startOfDay(next.date);
       data = next.ops;
     } else {
@@ -78,7 +80,9 @@ export function groupAccountsOperationsByDay(
     }
     next = getNext();
   }
-  sections.push({ day, data });
+  if (data.length > 0) {
+    sections.push({ day, data });
+  }
   return {
     sections,
     completed: !next
