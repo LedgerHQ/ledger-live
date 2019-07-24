@@ -564,9 +564,9 @@
     "viewInExplorer": "View in explorer",
     "sending": "Sending...",
     "receiving": "Receiving...",
-    "tokenOperations": "Token transactions",
+    "tokenOperations": "Token operations",
     "tokenModal": {
-      "desc": "This operation is related to the following token transactions"
+      "desc": "This operation is related to the following token operations"
     },
     "details": "{{ currency }} details",
     "extra": {
@@ -891,7 +891,7 @@
       "edit": {
         "title": "Choose Unit"
       },
-      "ethTokenNetworkFees": "Network fees for ERC20 token transactions are paid in ETH"
+      "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH"
     }
   },
   "addAccounts": {
