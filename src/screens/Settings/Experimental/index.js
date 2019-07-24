@@ -27,7 +27,9 @@ class ExperimentalSettings extends PureComponent<{
       <ScrollView contentContainerStyle={styles.root}>
         <TrackScreen category="Settings" name="Experimental" />
         <View style={styles.container}>
-          <Disclaimer />
+          <View style={styles.disclaimerContainer}>
+            <Disclaimer />
+          </View>
           {experimentalFeatures.map(feat =>
             !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
               <FeatureRow key={feat.name} feature={feat} />
@@ -42,8 +44,11 @@ class ExperimentalSettings extends PureComponent<{
 const styles = StyleSheet.create({
   root: { paddingTop: 16, paddingBottom: 64 },
   container: {
-    padding: 16,
+    paddingVertical: 16,
     backgroundColor: colors.white,
+  },
+  disclaimerContainer: {
+    paddingHorizontal: 12,
   },
 });
 

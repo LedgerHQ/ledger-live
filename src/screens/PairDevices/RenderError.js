@@ -14,6 +14,7 @@ import GenericErrorView from "../../components/GenericErrorView";
 import HelpLink from "../../components/HelpLink";
 import IconArrowRight from "../../icons/ArrowRight";
 import colors from "../../colors";
+import { urls } from "../../config/urls";
 
 type Props = {
   error: Error,
@@ -45,6 +46,7 @@ class RenderError extends Component<Props> {
 
     const isPairingStatus = status === "pairing";
     const isGenuineCheckStatus = status === "genuinecheck";
+    const url = (isPairingStatus && urls.errors.PairingFailed) || undefined;
 
     const outerError = isPairingStatus
       ? new PairingFailed()
@@ -84,7 +86,7 @@ class RenderError extends Component<Props> {
               <IconArrowRight size={16} color={colors.live} />
             </Touchable>
           ) : (
-            <HelpLink style={styles.linkContainer} />
+            <HelpLink url={url} style={styles.linkContainer} />
           )}
         </View>
         {isGenuineCheckStatus ? (

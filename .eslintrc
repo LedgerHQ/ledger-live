@@ -6,7 +6,7 @@
     "prettier",
     "prettier/react"
   ],
-  "plugins": ["flowtype"],
+  "plugins": ["flowtype", "react-hooks"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -59,7 +59,9 @@
     "react/no-unused-prop-types": 0,
     "react/require-default-props": 0,
     "prefer-destructuring": 0,
-    "react/destructuring-assignment": 0
+    "react/destructuring-assignment": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "globals": {
     "__DEV__": false,

@@ -132,19 +132,23 @@ class AccountScreen extends PureComponent<Props, State> {
     const { countervalueAvailable } = this.props;
     const items = [
       { unit: cryptoCurrencyUnit, value: item.value },
-      item.countervalue
+      countervalueAvailable && item.countervalue
         ? { unit: counterValueUnit, value: item.countervalue }
         : null,
     ];
-    if (useCounterValue && countervalueAvailable && item.countervalue) {
+
+    const shouldUseCounterValue = countervalueAvailable && useCounterValue;
+    if (shouldUseCounterValue && item.countervalue) {
       items.reverse();
     }
 
     return (
       <Touchable
         event="SwitchAccountCurrency"
-        eventProperties={{ useCounterValue }}
-        onPress={this.onSwitchAccountCurrency}
+        eventProperties={{ useCounterValue: shouldUseCounterValue }}
+        onPress={
+          countervalueAvailable ? this.onSwitchAccountCurrency : undefined
+        }
       >
         <View style={styles.balanceContainer}>
           {items[0] ? (
@@ -183,8 +187,12 @@ class AccountScreen extends PureComponent<Props, State> {
       cryptoChange,
       countervalueChange,
     } = this.props;
+
     if (!account) return null;
+
     const empty = isAccountEmpty(account);
+    const shouldUseCounterValue = countervalueAvailable && useCounterValue;
+
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
@@ -193,8 +201,10 @@ class AccountScreen extends PureComponent<Props, State> {
             account={account}
             range={range}
             history={history}
-            useCounterValue={useCounterValue}
-            valueChange={useCounterValue ? countervalueChange : cryptoChange}
+            useCounterValue={shouldUseCounterValue}
+            valueChange={
+              shouldUseCounterValue ? countervalueChange : cryptoChange
+            }
             countervalueAvailable={countervalueAvailable}
             counterValueCurrency={counterValueCurrency}
             renderTitle={this.renderListHeaderTitle}
