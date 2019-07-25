@@ -119,13 +119,13 @@ class AccountRow extends PureComponent<Props, State> {
               </View>
             </View>
           </RectButton>
-          {account.type === "TokenAccount" && account.tokenAccounts && account.tokenAccounts.length !== 0 && (
+          {account.tokenAccounts && account.tokenAccounts.length !== 0 ? (
             <Fragment>
               <View
-                style={
-                  (styles.tokenAccountList,
-                  { display: this.state.collapsed ? "none" : "flex" })
-                }
+                style={[
+                  styles.tokenAccountList,
+                  { display: this.state.collapsed ? "none" : "flex" },
+                ]}
               >
                 {account.tokenAccounts.map((tkn, i) => (
                   <TokenRow
@@ -147,7 +147,11 @@ class AccountRow extends PureComponent<Props, State> {
                           ? "accounts.row.showTokens"
                           : "accounts.row.hideTokens"
                       }
-                      values={{ length: account.tokenAccounts.length }}
+                      values={{
+                        length: account.tokenAccounts
+                          ? account.tokenAccounts.length
+                          : 0,
+                      }}
                     />
                   }
                   IconRight={() => (
@@ -162,7 +166,7 @@ class AccountRow extends PureComponent<Props, State> {
                 />
               </View>
             </Fragment>
-          )}
+          ) : null}
         </View>
         {!!this.state.collapsed &&
         account.tokenAccounts &&
