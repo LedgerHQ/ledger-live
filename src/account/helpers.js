@@ -65,14 +65,17 @@ export function listTokenAccounts(account: Account): TokenAccount[] {
 }
 
 export function flattenAccounts(
-  topAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[]
+  topAccounts: Account[] | TokenAccount[] | (Account | TokenAccount)[],
+  o: { enforceHideEmptyTokenAccounts?: boolean } = {}
 ): (Account | TokenAccount)[] {
   const accounts = [];
   for (let i = 0; i < topAccounts.length; i++) {
     const account = topAccounts[i];
     accounts.push(account);
     if (account.type === "Account") {
-      const tokenAccounts = account.tokenAccounts || [];
+      const tokenAccounts = o.enforceHideEmptyTokenAccounts
+        ? listTokenAccounts(account)
+        : account.tokenAccounts || [];
       for (let j = 0; j < tokenAccounts.length; j++) {
         accounts.push(tokenAccounts[j]);
       }
