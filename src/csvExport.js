@@ -82,5 +82,5 @@ export const accountsOpToCSV = (accounts: Account[]) =>
   fields.map(field => field.title).join(",") +
   newLine +
   accountsRows(accounts)
-    .map(row => row.map(value => value.replace(/,\n\r/g, "")).join(","))
+    .map(row => row.map(value => value.replace(/[,\n\r]/g, "")).join(","))
     .join(newLine);

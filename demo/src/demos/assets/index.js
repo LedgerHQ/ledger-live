@@ -1,5 +1,11 @@
 // @flow
-import React, { Component, useEffect, useState, useMemo } from "react";
+import React, {
+  Component,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback
+} from "react";
 import ReactTable from "react-table";
 import { BigNumber } from "bignumber.js";
 import uniqWith from "lodash/uniqWith";
@@ -23,6 +29,33 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 
 const getRates = getDailyRatesBatched(50);
+
+const DownloadData = ({ data }) => {
+  const onClick = useCallback(() => {
+    const csv = [["id", "name", "ticker", "type", "live", "url", "USD"]]
+      .concat(
+        data.map(d => [
+          d.id,
+          d.name,
+          d.ticker,
+          d.type,
+          d.livesupport,
+          d.type === "TokenCurrency"
+            ? `https://etherscan.io/address/${d.contractAddress}`
+            : "",
+          d.usdValue
+        ])
+      )
+      .map(row =>
+        row.map(cell => String(cell).replace(/[,\n\r]/g, "")).join(",")
+      )
+      .join("\n");
+    const dataUrl = `data:text/csv,` + encodeURIComponent(csv);
+    window.open(dataUrl);
+  }, [data]);
+
+  return <button onClick={onClick}>CSV</button>;
+};
 
 const columns = [
   {
@@ -79,6 +112,7 @@ const columns = [
             {withExchange.length} supported (
             {Math.floor(realPercentageSupport * 1000) / 10}%)
           </div>
+          <DownloadData data={data} />
         </div>
       );
     },
@@ -87,7 +121,11 @@ const columns = [
 ];
 
 const counterpartFor = c =>
-  c === bitcoin ? usdFiat : c.type === "CryptoCurrency" ? bitcoin : ethereum;
+  c === bitcoin || c === ethereum
+    ? usdFiat
+    : c.type === "CryptoCurrency"
+    ? bitcoin
+    : ethereum;
 
 const Assets = () => {
   const tokens = listTokens();
@@ -101,6 +139,7 @@ const Assets = () => {
     let loading = false;
     let exchange;
     let formatted = "";
+    let usdValue = "";
     if (t.disableCountervalue) {
       countervalueStatus = "disabled";
     } else if (tickers.includes(t.ticker)) {
@@ -111,6 +150,30 @@ const Assets = () => {
         exchange = Object.keys(ratePerExchange)[0];
         if (exchange) {
           const latest = ratePerExchange[exchange].latest || 0;
+
+          if (counter !== usdFiat) {
+            if (rates[usdFiat.ticker]) {
+              const intermRatePerExchange =
+                (rates[usdFiat.ticker] || {})[counter.ticker] || {};
+              const intermExchange = Object.keys(intermRatePerExchange)[0];
+              if (intermExchange) {
+                const intermLatest =
+                  intermRatePerExchange[intermExchange].latest || 0;
+                usdValue = formatCurrencyUnit(
+                  usdFiat.units[0],
+                  BigNumber(latest)
+                    .times(intermLatest)
+                    .times(10 ** t.units[0].magnitude)
+                );
+              }
+            }
+          } else {
+            usdValue = formatCurrencyUnit(
+              counter.units[0],
+              BigNumber(latest).times(10 ** t.units[0].magnitude)
+            );
+          }
+
           formatted = formatCurrencyUnit(
             counter.units[0],
             BigNumber(latest).times(10 ** t.units[0].magnitude),
@@ -143,7 +206,8 @@ const Assets = () => {
       countervalueText,
       exchange,
       loading,
-      livesupport
+      livesupport,
+      usdValue
     };
   });
 
