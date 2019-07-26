@@ -32,7 +32,9 @@ const getRates = getDailyRatesBatched(50);
 
 const DownloadData = ({ data }) => {
   const onClick = useCallback(() => {
-    const csv = [["id", "name", "ticker", "type", "live", "url", "USD"]]
+    const csv = [
+      ["id", "name", "ticker", "type", "live", "url", "USD", "magnitude"]
+    ]
       .concat(
         data.map(d => [
           d.id,
@@ -43,7 +45,8 @@ const DownloadData = ({ data }) => {
           d.type === "TokenCurrency"
             ? `https://etherscan.io/address/${d.contractAddress}`
             : "",
-          d.usdValue
+          d.usdValue,
+          d.units[0].magnitude
         ])
       )
       .map(row =>
@@ -75,6 +78,12 @@ const columns = [
   {
     Header: "Ticker",
     accessor: "ticker",
+    width: 100
+  },
+  {
+    Header: "Magnitude",
+    id: "magnitude",
+    accessor: o => o.units[0].magnitude,
     width: 100
   },
   {
@@ -117,6 +126,11 @@ const columns = [
       );
     },
     accessor: "countervalueText"
+  },
+  {
+    Header: "USD",
+    accessor: "usdValue",
+    width: 100
   }
 ];
 
