@@ -7,6 +7,7 @@ import type {
   CryptoCurrency
 } from "../types";
 import { flattenAccounts } from "./helpers";
+import type { FlattenAccountsOptions } from "./helpers";
 
 type AccountComparator = (
   a: Account | TokenAccount,
@@ -72,9 +73,10 @@ export const comparatorSortAccounts = <TA: Account | TokenAccount>(
 // flatten accounts and sort between them (used for grid mode)
 export const flattenSortAccounts = (
   accounts: Account[],
-  comparator: AccountComparator
+  comparator: AccountComparator,
+  o?: FlattenAccountsOptions
 ): (Account | TokenAccount)[] => {
-  return comparatorSortAccounts(flattenAccounts(accounts), comparator);
+  return comparatorSortAccounts(flattenAccounts(accounts, o), comparator);
 };
 
 // sort top level accounts and the inner token accounts if necessary (used for lists)
