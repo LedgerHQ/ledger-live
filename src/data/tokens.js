@@ -45,6 +45,10 @@ const tokensById: { [_: string]: TokenCurrency } = {};
 const tokensByTicker: { [_: string]: TokenCurrency } = {};
 const tokensByAddress: { [_: string]: TokenCurrency } = {};
 
+function comparePriority(a: TokenCurrency, b: TokenCurrency) {
+  return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
+}
+
 export function add(type: string, list: any[]) {
   const converter = converters[type];
   if (!converter) {
@@ -54,7 +58,14 @@ export function add(type: string, list: any[]) {
     const token = converter(data);
     tokensArray.push(token);
     tokensById[token.id] = token;
-    tokensByTicker[token.ticker] = token;
+
+    if (
+      !tokensByTicker[token.ticker] ||
+      comparePriority(token, tokensByTicker[token.ticker]) > 0
+    ) {
+      tokensByTicker[token.ticker] = token;
+    }
+
     tokensByAddress[token.contractAddress.toLowerCase()] = token;
     const { parentCurrency } = token;
     if (!(parentCurrency.id in tokensByCryptoCurrency)) {
