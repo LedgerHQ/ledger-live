@@ -9,9 +9,10 @@ import IconHelp from "../icons/Info";
 
 export default class SettingsRow extends Component<{
   onPress: () => void,
-  onHelpPress: () => void,
+  onHelpPress?: () => void,
   title: React$Node,
   titleStyle?: *,
+  titleContainerStyle?: *,
   desc?: React$Node,
   selected?: boolean,
   arrowRight?: boolean,
@@ -32,6 +33,7 @@ export default class SettingsRow extends Component<{
       children,
       title,
       titleStyle,
+      titleContainerStyle,
       desc,
       arrowRight,
       iconLeft,
@@ -46,7 +48,7 @@ export default class SettingsRow extends Component<{
     } = this.props;
 
     let title$ = (
-      <View style={styles.titleContainer}>
+      <View style={[styles.titleContainer, titleContainerStyle]}>
         <LText
           semiBold={selected !== false}
           style={[styles.titleStyle, titleStyle]}
