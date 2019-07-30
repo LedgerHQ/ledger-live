@@ -4,10 +4,10 @@
  */
 
 import { BigNumber } from "bignumber.js";
-import type { Account, Operation } from "./types";
+import type { TokenAccount, Account, Operation } from "./types";
 
 export function findOperationInAccount(
-  { operations, pendingOperations }: Account,
+  { operations, pendingOperations }: Account | TokenAccount,
   operationId: string
 ): ?Operation {
   for (let i = 0; i < operations.length; i++) {
