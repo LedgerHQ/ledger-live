@@ -46,6 +46,12 @@ export const inferSubOperations = (
         all.push(op);
       }
     }
+    for (let j = 0; j < ta.pendingOperations.length; j++) {
+      const op = ta.pendingOperations[j];
+      if (op.hash === txHash) {
+        all.push(op);
+      }
+    }
   }
   return all;
 };
