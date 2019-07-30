@@ -291,7 +291,7 @@ class Content extends PureComponent<Props, State> {
             <LText style={styles.sectionTitle}>
               <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
             </LText>
-            <LText semiBold selectable>
+            <LText style={styles.sectionValue} semiBold selectable>
               {value}
             </LText>
           </View>
