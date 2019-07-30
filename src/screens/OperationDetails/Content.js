@@ -180,6 +180,7 @@ class Content extends PureComponent<Props, State> {
 
               return (
                 <OperationRow
+                  isSubOperation
                   key={op.id}
                   operation={op}
                   parentAccount={account}

@@ -32,6 +32,7 @@ type Props = {
   navigation: *,
   multipleAccounts?: boolean,
   isLast: boolean,
+  isSubOperation?: boolean,
 };
 
 const placeholderProps = {
@@ -45,12 +46,21 @@ class OperationRow extends PureComponent<Props, *> {
   };
 
   goToOperationDetails = () => {
-    const { navigation, account, parentAccount, operation } = this.props;
-    navigation.navigate("OperationDetails", {
+    const {
+      navigation,
+      account,
+      parentAccount,
+      operation,
+      isSubOperation,
+    } = this.props;
+    const params = {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       operation, // FIXME we should pass a operationId instead because data can changes over time.
-    });
+      isSubOperation,
+    };
+
+    navigation.push("OperationDetails", params);
   };
 
   render() {
