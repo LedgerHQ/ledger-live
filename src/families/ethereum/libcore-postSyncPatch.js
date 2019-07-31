@@ -8,31 +8,33 @@ import type { Account, TokenAccount } from "../../types";
 
 const postSyncPatchGen = <T: Account | TokenAccount>(
   initial: T,
-  synced: T
+  synced: T,
+  latestNonce: number // latest eth op nonce
 ): T => {
   let pendingOperations = initial.pendingOperations || [];
   if (pendingOperations.length === 0) return synced;
   const { operations } = synced;
-  const nonce =
-    (operations.length > 0 && operations[0].transactionSequenceNumber) || 0;
   synced.pendingOperations = pendingOperations.filter(
     ({ transactionSequenceNumber, hash }) =>
       transactionSequenceNumber &&
-      transactionSequenceNumber >= nonce &&
+      transactionSequenceNumber >= latestNonce &&
       !operations.some(op => op.hash === hash)
   );
   return synced;
 };
 
 const postSyncPatch = (initial: Account, synced: Account): Account => {
-  const acc = postSyncPatchGen(initial, synced);
+  const sendingOps = (synced.operations || []).filter(op => op.type === "OUT");
+  const latestNonce =
+    (sendingOps.length > 0 && sendingOps[0].transactionSequenceNumber) || 0;
+  const acc = postSyncPatchGen(initial, synced, latestNonce);
   const { tokenAccounts } = acc;
   const initialTAs = initial.tokenAccounts;
   if (tokenAccounts && initialTAs) {
     acc.tokenAccounts = tokenAccounts.map(ta => {
       const initialTA = initialTAs.find(t => t.id === ta.id);
       if (!initialTA) return ta;
-      return postSyncPatchGen(initialTA, ta);
+      return postSyncPatchGen(initialTA, ta, latestNonce);
     });
   }
   return acc;
