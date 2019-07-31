@@ -6,6 +6,10 @@ import { decodeAccountId } from "./accountId";
 import { getAllDerivationModes } from "../derivation";
 import { isCurrencySupported } from "../currencies";
 
+export const libcoreNoGo = [
+  "ethereum_classic" // LLC-308
+];
+
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode
@@ -18,6 +22,7 @@ export function canBeMigrated(account: Account) {
   const { type } = decodeAccountId(account.id);
   // at the moment migrations requires experimental libcore
   if (!getEnv("EXPERIMENTAL_LIBCORE")) return false;
+  if (libcoreNoGo.includes(account.currency.id)) return false;
   return type === "ethereumjs";
 }
 

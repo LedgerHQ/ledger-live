@@ -13,7 +13,7 @@ import {
   makeMockCurrencyBridge,
   makeMockAccountBridge
 } from "./makeMockBridge";
-import { checkAccountSupported } from "../account/support";
+import { checkAccountSupported, libcoreNoGo } from "../account/support";
 
 const mockCurrencyBridge = makeMockCurrencyBridge();
 const mockAccountBridge = makeMockAccountBridge();
@@ -25,7 +25,10 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
       return RippleJSBridge.currencyBridge;
     case "ethereum":
       // ethereum classic not yet stable
-      if (!getEnv("EXPERIMENTAL_LIBCORE")) {
+      if (
+        !getEnv("EXPERIMENTAL_LIBCORE") ||
+        libcoreNoGo.includes(currency.id)
+      ) {
         return EthereumJSBridge.currencyBridge;
       }
       return LibcoreCurrencyBridge;
