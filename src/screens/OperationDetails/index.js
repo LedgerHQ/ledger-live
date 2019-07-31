@@ -3,7 +3,7 @@ import React, { PureComponent } from "react";
 import i18next from "i18next";
 import { View, StyleSheet } from "react-native";
 // $FlowFixMe
-import { SafeAreaView, ScrollView } from "react-navigation";
+import { HeaderBackButton, SafeAreaView, ScrollView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type {
@@ -22,21 +22,50 @@ import { TrackScreen } from "../../analytics";
 import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
+import HeaderBackImage from "../../components/HeaderBackImage";
 
 type Props = {
   account: ?(Account | TokenAccount),
   parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      operation: Operation,
-    },
-  }>,
+  navigation: Navigation,
 };
+
+type Navigation = NavigationScreenProp<{
+  params: {
+    accountId: string,
+    operation: Operation,
+  },
+}>;
+
+const BackButton = ({ navigation }: { navigation: Navigation }) => (
+  <HeaderBackButton
+    tintColor={colors.grey}
+    onPress={() => {
+      navigation.goBack();
+    }}
+  >
+    <HeaderBackImage />
+  </HeaderBackButton>
+);
+
 class OperationDetails extends PureComponent<Props, *> {
-  static navigationOptions = {
-    title: i18next.t("operationDetails.title"),
-    headerLeft: null,
+  static navigationOptions = ({ navigation }) => {
+    const {
+      params: { isSubOperation },
+    } = navigation.state;
+
+    if (isSubOperation) {
+      return {
+        title: i18next.t("operationDetails.title"),
+        headerLeft: <BackButton navigation={navigation} />,
+        headerRight: null,
+      };
+    }
+
+    return {
+      title: i18next.t("operationDetails.title"),
+      headerLeft: null,
+    };
   };
 
   render() {
