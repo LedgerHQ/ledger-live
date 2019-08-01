@@ -225,35 +225,41 @@ class Content extends PureComponent<Props, State> {
             })}
           </LText>
         </View>
-        <View style={styles.section}>
-          <LText style={styles.sectionTitle}>
-            <Trans i18nKey="operationDetails.fees" />
-          </LText>
-          {operation.fee ? (
-            <View style={styles.feeValueContainer}>
-              <LText style={styles.sectionValue} semiBold>
-                <CurrencyUnitValue showCode unit={unit} value={operation.fee} />
-              </LText>
-              <LText style={styles.feeCounterValue} semiBold>
-                ≈
-              </LText>
-              <LText style={styles.feeCounterValue} semiBold>
-                <CounterValue
-                  showCode
-                  disableRounding={true}
-                  date={operation.date}
-                  subMagnitude={1}
-                  currency={currency}
-                  value={operation.fee}
-                />
-              </LText>
-            </View>
-          ) : (
-            <LText style={styles.sectionValue} semiBold>
-              <Trans i18nKey="operationDetails.noFees" />
+        {operation.type === "OUT" ? (
+          <View style={styles.section}>
+            <LText style={styles.sectionTitle}>
+              <Trans i18nKey="operationDetails.fees" />
             </LText>
-          )}
-        </View>
+            {operation.fee ? (
+              <View style={styles.feeValueContainer}>
+                <LText style={styles.sectionValue} semiBold>
+                  <CurrencyUnitValue
+                    showCode
+                    unit={unit}
+                    value={operation.fee}
+                  />
+                </LText>
+                <LText style={styles.feeCounterValue} semiBold>
+                  ≈
+                </LText>
+                <LText style={styles.feeCounterValue} semiBold>
+                  <CounterValue
+                    showCode
+                    disableRounding={true}
+                    date={operation.date}
+                    subMagnitude={1}
+                    currency={currency}
+                    value={operation.fee}
+                  />
+                </LText>
+              </View>
+            ) : (
+              <LText style={styles.sectionValue} semiBold>
+                <Trans i18nKey="operationDetails.noFees" />
+              </LText>
+            )}
+          </View>
+        ) : null}
         <View style={styles.section}>
           <LText style={styles.sectionTitle}>
             <Trans i18nKey="operationDetails.identifier" />
