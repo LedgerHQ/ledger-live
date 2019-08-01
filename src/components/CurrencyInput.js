@@ -1,12 +1,14 @@
 // @flow
 import React, { PureComponent } from "react";
-import { TextInput, StyleSheet, View } from "react-native";
+import { TextInput, StyleSheet, View, Dimensions } from "react-native";
 import { BigNumber } from "bignumber.js";
+
 import {
   formatCurrencyUnit,
   sanitizeValueString,
 } from "@ledgerhq/live-common/lib/currencies";
 import noop from "lodash/noop";
+import clamp from "lodash/clamp";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
@@ -139,6 +141,17 @@ class CurrencyInput extends PureComponent<Props, State> {
       placeholder,
     } = this.props;
     const { displayValue } = this.state;
+
+    // calculating an approximative font size
+    const screenWidth = Dimensions.get("window").width * 0.75;
+    const dynamicFontSize = Math.round(
+      clamp(
+        Math.sqrt((screenWidth * 32) / displayValue.length),
+        8,
+        isActive ? 32 : 24,
+      ),
+    );
+
     return (
       <View style={[styles.wrapper, style]}>
         <TextInput
@@ -146,9 +159,9 @@ class CurrencyInput extends PureComponent<Props, State> {
           hitSlop={{ top: 20, bottom: 20 }}
           style={[
             styles.input,
-            isActive ? styles.active : null,
             hasError ? styles.error : null,
             editable ? {} : styles.readOnly,
+            { fontSize: dynamicFontSize },
           ]}
           editable={editable}
           onChangeText={this.handleChange}
@@ -181,13 +194,10 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    height: 72,
     fontFamily: "Rubik",
     paddingRight: 8,
-    fontSize: 24,
     color: colors.darkBlue,
-  },
-  active: {
-    fontSize: 32,
   },
   readOnly: {
     color: colors.grey,

@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
+import debounce from "lodash/debounce";
+
 import type {
   Account,
   TokenAccount,
@@ -74,9 +76,9 @@ class AmountInput extends Component<Props, OwnState> {
     }
   };
 
-  onCryptoFieldChange = this.handleAmountChange("crypto");
+  onCryptoFieldChange = debounce(this.handleAmountChange("crypto"), 250);
 
-  onFiatFieldChange = this.handleAmountChange("fiat");
+  onFiatFieldChange = debounce(this.handleAmountChange("fiat"), 250);
 
   onFocus = (direction: "crypto" | "fiat") => () => {
     this.setState({ active: direction });
