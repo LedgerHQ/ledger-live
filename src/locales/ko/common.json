@@ -568,6 +568,7 @@
     "sending": "Sending...",
     "receiving": "Receiving...",
     "tokenOperations": "Token operations",
+    "internalOperations": "Internal operations",
     "tokenModal": {
       "desc": "This operation is related to the following token operations"
     },
