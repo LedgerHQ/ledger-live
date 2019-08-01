@@ -902,9 +902,18 @@
     },
     "imported": "Accounts successfully added",
     "sections": {
-      "accountsToImport": "Add existing account",
-      "addNewAccount": "Add new account",
-      "existing": "Accounts already in portfolio"
+      "importable": {
+        "title": "Add existing account"
+      },
+      "creatable": {
+        "title": "Add new account"
+      },
+      "imported": {
+        "title": "Accounts already in portfolio ({{length}})"
+      },
+      "migrate": {
+        "title": "Accounts to update"
+      }
     },
     "success": {
       "desc": "View your accounts or add more of them",

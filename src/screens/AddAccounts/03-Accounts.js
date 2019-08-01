@@ -1,13 +1,15 @@
 // @flow
 
-import React, { PureComponent, createRef } from "react";
+import React, { PureComponent, createRef, useEffect } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import i18next from "i18next";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
+import {
+  isAccountEmpty,
+  groupAddAccounts,
+} from "@ledgerhq/live-common/lib/account";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
-import findLast from "lodash/findLast";
 import { translate, Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 // $FlowFixMe
@@ -15,7 +17,7 @@ import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
-import { addAccount } from "../../actions/accounts";
+import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -31,6 +33,16 @@ import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 
+const SectionAccounts = ({ defaultSelected, ...rest }: *) => {
+  useEffect(() => {
+    if (defaultSelected && rest.onSelectAll) {
+      rest.onSelectAll(rest.accounts);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <SelectableAccountsList {...rest} />;
+};
+
 type Props = {
   navigation: NavigationScreenProp<{
     params: {
@@ -38,7 +50,11 @@ type Props = {
       deviceId: string,
     },
   }>,
-  addAccount: Account => void,
+  replaceAccounts: ({
+    scannedAccounts: Account[],
+    selectedIds: string[],
+    renamings: { [id: string]: string },
+  }) => void,
   existingAccounts: Account[],
 };
 
@@ -55,16 +71,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = {
-  addAccount,
-};
-
-const getLastNewAccount = scanRecords => {
-  const lastRecord = findLast(
-    scanRecords,
-    record => record.isNewAccount && !record.isAlreadyImported,
-  );
-
-  return lastRecord ? [lastRecord.id] : [];
+  replaceAccounts,
 };
 
 class AddAccountsAccounts extends PureComponent<Props, State> {
@@ -109,45 +116,31 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const currency = navigation.getParam("currency");
     const deviceId = navigation.getParam("deviceId");
     const bridge = getCurrencyBridge(currency);
-    let scanRecords = [];
-    let onlyNewAccounts = true;
-
     this.scanSubscription = bridge
       .scanAccountsOnDevice(currency, deviceId)
       .subscribe({
         next: account =>
-          this.setState(({ scannedAccounts }) => {
-            const isNewAccount = isAccountEmpty(account);
-            const isAlreadyImported = this.isExistingAccount(account);
-
-            // local account meta data for performance issues
-            scanRecords = [
-              ...scanRecords,
-              {
-                isNewAccount,
-                isAlreadyImported,
-                id: account.id,
-              },
-            ];
-
-            // will be set to false if an existing account is found
-            onlyNewAccounts =
-              onlyNewAccounts && (isNewAccount || isAlreadyImported);
-
-            const patch = {
-              scannedAccounts: [...scannedAccounts, account],
-            };
-            // $FlowFixMe
-            patch.selectedIds = onlyNewAccounts
-              ? getLastNewAccount(scanRecords)
-              : scanRecords.reduce((acc, record) => {
-                  if (!record.isNewAccount && !record.isAlreadyImported) {
-                    acc.push(record.id);
-                  }
-                  return acc;
-                }, []);
-            return patch;
-          }),
+          this.setState(
+            ({ scannedAccounts, selectedIds }, { existingAccounts }) => {
+              const hasAlreadyBeenScanned = !!scannedAccounts.find(
+                a => account.id === a.id,
+              );
+              const hasAlreadyBeenImported = !!existingAccounts.find(
+                a => account.id === a.id,
+              );
+              const isNewAccount = isAccountEmpty(account);
+              if (!hasAlreadyBeenScanned) {
+                return {
+                  scannedAccounts: [...scannedAccounts, account],
+                  selectedIds:
+                    !hasAlreadyBeenImported && !isNewAccount
+                      ? uniq([...selectedIds, account.id])
+                      : selectedIds,
+                };
+              }
+              return null;
+            },
+          ),
         complete: () => this.setState({ scanning: false }),
         error: error => this.setState({ error }),
       });
@@ -200,79 +193,17 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     }));
 
   import = () => {
-    const { addAccount, navigation } = this.props;
+    const { replaceAccounts, navigation } = this.props;
     const { scannedAccounts, selectedIds } = this.state;
     const currency = navigation.getParam("currency");
-    scannedAccounts.forEach(account => {
-      if (selectedIds.indexOf(account.id) === -1) return;
-      addAccount(account);
+    replaceAccounts({
+      scannedAccounts,
+      selectedIds,
+      renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
     });
     if (navigation.replace) {
       navigation.replace("AddAccountsSuccess", { currency });
     }
-  };
-
-  // FIXME: would be better to refactor these into pure (props,state) => functions because it's used not only in render()
-
-  isExistingAccount = account =>
-    this.props.existingAccounts.find(a => a.id === account.id) !== undefined;
-
-  getExistingAccounts = () => {
-    const { scannedAccounts } = this.state;
-    const { existingAccounts } = this.props;
-    return scannedAccounts
-      .filter(this.isExistingAccount)
-      .map(a => existingAccounts.find(acc => acc.id === a.id) || a);
-  };
-
-  getNewAccounts = () =>
-    this.state.scannedAccounts.filter(
-      a => isAccountEmpty(a) && !this.isExistingAccount(a),
-    );
-
-  getRegularAccounts = () =>
-    this.state.scannedAccounts.filter(
-      a => !isAccountEmpty(a) && !this.isExistingAccount(a),
-    );
-
-  EmptyStateNewAccounts = () => {
-    const { navigation } = this.props;
-    const currency = navigation.getParam("currency");
-    return (
-      <LText style={styles.paddingHorizontal}>
-        <Trans i18nKey="addAccounts.noAccountToCreate">
-          {"PLACEHOLDER-1"}
-          <LText semiBold>{currency.name}</LText>
-          {"PLACEHOLDER-2"}
-        </Trans>
-      </LText>
-    );
-  };
-
-  EmptyStateNewAccountsCantCreate = () => {
-    const { scannedAccounts } = this.state;
-    const { existingAccounts } = this.props;
-    const emptyAccount = scannedAccounts.find(isAccountEmpty);
-    if (!emptyAccount) {
-      // this should never happen
-      return null;
-    }
-    const correspondingAccount = existingAccounts.find(
-      a => a.id === emptyAccount.id,
-    );
-    if (!correspondingAccount) {
-      // this should never happen
-      return null;
-    }
-    return (
-      <LText style={styles.paddingHorizontal}>
-        <Trans i18nKey="addAccounts.cantCreateAccount">
-          {"PLACEHOLDER-1"}
-          <LText semiBold>{correspondingAccount.name}</LText>
-          {"PLACEHOLDER-2"}
-        </Trans>
-      </LText>
-    );
   };
 
   onCancel = () => {
@@ -302,15 +233,42 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   scrollView = createRef();
 
   render() {
+    const { existingAccounts, navigation } = this.props;
+    const currency = navigation.getParam("currency");
     const { selectedIds, scanning, scannedAccounts, error } = this.state;
-    const newAccounts = this.getNewAccounts();
-    const regularAccounts = this.getRegularAccounts();
-    const existingAccountsFiltered = this.getExistingAccounts();
-    const cantCreateAccount =
-      !!scannedAccounts.find(a => isAccountEmpty(a)) &&
-      newAccounts.length === 0;
-    const noImportableAccounts =
-      regularAccounts.length === 0 && newAccounts.length === 0;
+
+    const { sections, alreadyEmptyAccount } = groupAddAccounts(
+      existingAccounts,
+      scannedAccounts,
+      {
+        scanning,
+      },
+    );
+
+    const cantCreateAccount = !sections.some(s => s.id === "creatable");
+    const noImportableAccounts = !sections.some(
+      s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
+    );
+
+    const emptyTexts = {
+      creatable: alreadyEmptyAccount ? (
+        <LText style={styles.paddingHorizontal}>
+          <Trans i18nKey="addAccounts.cantCreateAccount">
+            {"PLACEHOLDER-1"}
+            <LText semiBold>{alreadyEmptyAccount.name}</LText>
+            {"PLACEHOLDER-2"}
+          </Trans>
+        </LText>
+      ) : (
+        <LText style={styles.paddingHorizontal}>
+          <Trans i18nKey="addAccounts.noAccountToCreate">
+            {"PLACEHOLDER-1"}
+            <LText semiBold>{currency.name}</LText>
+            {"PLACEHOLDER-2"}
+          </Trans>
+        </LText>
+      ),
+    };
 
     return (
       <SafeAreaView style={styles.root}>
@@ -322,49 +280,39 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           ref={this.scrollView}
           onContentSizeChange={this.handleContentSizeChange}
         >
-          {regularAccounts.length > 0 ? (
-            <SelectableAccountsList
-              showHint={true}
-              header={<Trans i18nKey="addAccounts.sections.accountsToImport" />}
-              onAccountNameChange={this.onAccountNameChange}
-              index={0}
-              accounts={regularAccounts}
-              onPressAccount={this.onPressAccount}
-              onSelectAll={this.selectAll}
-              onUnselectAll={this.unselectAll}
+          {sections.map(({ id, selectable, defaultSelected, data }, i) => (
+            <SectionAccounts
+              defaultSelected={defaultSelected}
+              key={id}
+              showHint={selectable && i === 0}
+              header={
+                <Trans
+                  values={{ length: data.length }}
+                  i18nKey={`addAccounts.sections.${id}.title`}
+                />
+              }
+              index={i}
+              accounts={data}
+              onAccountNameChange={
+                !selectable ? undefined : this.onAccountNameChange
+              }
+              onPressAccount={!selectable ? undefined : this.onPressAccount}
+              onSelectAll={!selectable ? undefined : this.selectAll}
+              onUnselectAll={!selectable ? undefined : this.unselectAll}
               selectedIds={selectedIds}
+              EmptyState={emptyTexts[id]}
+              isDisabled={!selectable}
+              forceSelected={id === "existing"}
             />
-          ) : scanning ? (
+          ))}
+
+          {sections.length === 0 && scanning ? (
             <LText style={styles.descText}>
               <Trans i18nKey="addAccounts.synchronizingDesc" />
             </LText>
           ) : null}
-          {scanning && <ScanLoading />}
-          {(newAccounts.length > 0 || !scanning) && (
-            <SelectableAccountsList
-              header={<Trans i18nKey="addAccounts.sections.addNewAccount" />}
-              onAccountNameChange={this.onAccountNameChange}
-              index={1}
-              showHint={regularAccounts.length === 0}
-              accounts={newAccounts}
-              onPressAccount={this.onPressAccount}
-              selectedIds={selectedIds}
-              EmptyState={
-                cantCreateAccount
-                  ? this.EmptyStateNewAccountsCantCreate
-                  : this.EmptyStateNewAccounts
-              }
-            />
-          )}
-          {existingAccountsFiltered.length > 0 && (
-            <SelectableAccountsList
-              header={<Trans i18nKey="addAccounts.sections.existing" />}
-              index={2}
-              accounts={existingAccountsFiltered}
-              forceSelected
-              isDisabled
-            />
-          )}
+
+          {scanning ? <ScanLoading /> : null}
         </ScrollView>
         {!!scannedAccounts.length && (
           <Footer

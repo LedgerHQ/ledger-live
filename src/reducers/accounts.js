@@ -4,6 +4,7 @@ import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import {
+  addAccounts,
   flattenAccounts,
   importAccountsReduce,
 } from "@ledgerhq/live-common/lib/account";
@@ -25,8 +26,13 @@ const handlers: Object = {
     active: importAccountsReduce(s.active, { items, selectedAccounts }),
   }),
 
-  ACCOUNTS_ADD: (s, { account }) => ({
-    active: s.active.concat(account),
+  ACCOUNTS_ADD: (s, { scannedAccounts, selectedIds, renamings }) => ({
+    active: addAccounts({
+      existingAccounts: s.active,
+      scannedAccounts,
+      selectedIds,
+      renamings,
+    }),
   }),
 
   SET_ACCOUNTS: (
