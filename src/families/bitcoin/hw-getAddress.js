@@ -35,24 +35,27 @@ const resolver: Resolver = async (
   if (!skipAppFailSafeCheck) {
     const { bitcoinLikeInfo } = currency;
     if (bitcoinLikeInfo) {
-      const { P2SH, P2PKH } = await getBitcoinLikeInfo(transport);
-      if (P2SH !== bitcoinLikeInfo.P2SH || P2PKH !== bitcoinLikeInfo.P2PKH) {
-        if (
-          currency.id in oldP2SH &&
-          P2SH === oldP2SH[currency.id] &&
-          P2PKH === bitcoinLikeInfo.P2PKH
-        ) {
+      const res = await getBitcoinLikeInfo(transport);
+      if (res) {
+        const { P2SH, P2PKH } = res;
+        if (P2SH !== bitcoinLikeInfo.P2SH || P2PKH !== bitcoinLikeInfo.P2PKH) {
+          if (
+            currency.id in oldP2SH &&
+            P2SH === oldP2SH[currency.id] &&
+            P2PKH === bitcoinLikeInfo.P2PKH
+          ) {
+            log(
+              "hw",
+              `getAddress ${currency.id} app is outdated. P2SH=${P2SH} P2PKH=${P2PKH}`
+            );
+            throw new UpdateYourApp(`UpdateYourApp ${currency.id}`, currency);
+          }
           log(
             "hw",
-            `getAddress ${currency.id} app is outdated. P2SH=${P2SH} P2PKH=${P2PKH}`
+            `getAddress ${currency.id} app is wrong. P2SH=${P2SH} P2PKH=${P2PKH}`
           );
-          throw new UpdateYourApp(`UpdateYourApp ${currency.id}`, currency);
+          throw new BtcUnmatchedApp(`BtcUnmatchedApp ${currency.id}`, currency);
         }
-        log(
-          "hw",
-          `getAddress ${currency.id} app is wrong. P2SH=${P2SH} P2PKH=${P2PKH}`
-        );
-        throw new BtcUnmatchedApp(`BtcUnmatchedApp ${currency.id}`, currency);
       }
     }
   }
