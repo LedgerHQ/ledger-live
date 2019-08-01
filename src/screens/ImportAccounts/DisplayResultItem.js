@@ -6,7 +6,7 @@ import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";
 import { track } from "../../analytics";
 
-const selectableModes = ["create", "patch"];
+const selectableModes = ["create", "update"];
 
 export default class DisplayResultItem extends Component<{
   account: Account,

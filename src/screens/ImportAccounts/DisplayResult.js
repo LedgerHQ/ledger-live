@@ -11,14 +11,13 @@ import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Result } from "@ledgerhq/live-common/lib/cross";
-import { accountDataToAccount } from "@ledgerhq/live-common/lib/cross";
+import type { ImportItem } from "@ledgerhq/live-common/lib/account";
+import { importAccountsMakeItems } from "@ledgerhq/live-common/lib/account";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 
-import logger from "../../logger";
-import { supportsExistingAccount } from "../../cryptocurrencies";
 import { importDesktopSettings } from "../../actions/settings";
-import { addAccount, updateAccount } from "../../actions/accounts";
+import { importAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -30,16 +29,6 @@ import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
 import HeaderBackImage from "../../components/HeaderBackImage";
 
-type Item = {
-  // current account, might be partially completed as sync happen in background
-  account: Account,
-  // create: account is a new entity to create
-  // patch: account exists and need to be patched
-  // id: account exists and nothing changes
-  // unsupported: we can't support adding this account
-  mode: "create" | "patch" | "id" | "unsupported",
-};
-
 type Nav = NavigationScreenProp<{
   params: {
     result: Result,
@@ -50,23 +39,15 @@ type Nav = NavigationScreenProp<{
 type Props = {
   navigation: Nav,
   accounts: Account[],
-  addAccount: Account => void,
-  updateAccount: ($Shape<Account>) => void,
+  importAccounts: ({ items: ImportItem[], selectedAccounts: string[] }) => void,
   importDesktopSettings: (*) => void,
 };
 
 type State = {
   selectedAccounts: string[],
-  items: Item[],
+  items: ImportItem[],
   importing: boolean,
   importSettings: boolean,
-};
-
-const itemModeDisplaySort = {
-  create: 1,
-  patch: 2,
-  id: 3,
-  unsupported: 4,
 };
 
 const BackButton = ({ navigation }: { navigation: Nav }) => (
@@ -105,51 +86,17 @@ class DisplayResult extends Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const items = nextProps.navigation
-      .getParam("result")
-      .accounts.map((accInput: *): ?Item => {
-        const prevItem = prevState.items.find(
-          item => item.account.id === accInput.id,
-        );
-        if (prevItem) return prevItem;
-        const existingAccount = nextProps.accounts.find(
-          a => a.id === accInput.id,
-        );
-        if (existingAccount) {
-          // only the name is supposed to change. rest is never changing
-          if (existingAccount.name === accInput.name) {
-            return {
-              account: existingAccount,
-              mode: "id",
-            };
-          }
-          return {
-            account: { ...existingAccount, name: accInput.name },
-            mode: "patch",
-          };
-        }
-        try {
-          const account = accountDataToAccount(accInput);
-          return {
-            account,
-            mode: supportsExistingAccount(accInput) ? "create" : "unsupported",
-          };
-        } catch (e) {
-          logger.critical(e);
-          return null;
-        }
-      })
-      .filter(Boolean)
-      .sort(
-        (a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode],
-      );
-
+    const items = importAccountsMakeItems({
+      result: nextProps.navigation.getParam("result"),
+      accounts: nextProps.accounts,
+      items: prevState.items,
+    });
     let selectedAccounts = prevState.selectedAccounts;
     if (prevState.items.length === 0) {
       // select all by default
       selectedAccounts = items.reduce(
         (acc, cur) =>
-          cur.mode === "create" || cur.mode === "patch"
+          cur.mode !== "id" && cur.mode !== "unsupported"
             ? concat(acc, cur.account.id)
             : acc,
         [],
@@ -165,30 +112,11 @@ class DisplayResult extends Component<Props, State> {
   };
 
   onImport = async () => {
-    const {
-      addAccount,
-      updateAccount,
-      importDesktopSettings,
-      navigation,
-    } = this.props;
+    const { importAccounts, importDesktopSettings, navigation } = this.props;
     const { selectedAccounts, items, importSettings } = this.state;
     const onFinish = navigation.getParam("onFinish");
     this.setState({ importing: true });
-    const selectedItems = items.filter(item =>
-      selectedAccounts.includes(item.account.id),
-    );
-    for (const { mode, account } of selectedItems) {
-      switch (mode) {
-        case "create":
-          addAccount(account);
-          break;
-        case "patch":
-          updateAccount({ id: account.id, name: account.name });
-          break;
-        default:
-      }
-    }
-
+    importAccounts({ items, selectedAccounts });
     if (importSettings) {
       importDesktopSettings(navigation.getParam("result").settings);
     }
@@ -251,7 +179,6 @@ class DisplayResult extends Component<Props, State> {
 
   render() {
     const { items } = this.state;
-
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
@@ -298,8 +225,7 @@ export default translate()(
   connect(
     createStructuredSelector({ accounts: accountsSelector }),
     {
-      addAccount,
-      updateAccount,
+      importAccounts,
       importDesktopSettings,
     },
   )(DisplayResult),

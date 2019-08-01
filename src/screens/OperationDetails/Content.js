@@ -84,6 +84,7 @@ class Content extends PureComponent<Props, State> {
     const { extra } = operation;
     const { hasFailed } = operation;
     const subOperations = operation.subOperations || [];
+    const internalOperations = operation.internalOperations || [];
 
     const isConfirmed = confirmations >= currencySettings.confirmationsNb;
     return (
@@ -191,18 +192,41 @@ class Content extends PureComponent<Props, State> {
                 />
               );
             })}
-            <View style={styles.section}>
-              <LText style={styles.sectionSeparator} semiBold>
-                <Trans
-                  i18nKey="operationDetails.details"
-                  values={{
-                    currency: account.currency.name || "",
-                  }}
-                />
-              </LText>
-            </View>
           </Fragment>
         )}
+        {internalOperations.length > 0 && account.type === "Account" && (
+          <Fragment>
+            <View style={[styles.section, styles.infoContainer]}>
+              <LText style={styles.sectionSeparator} semiBold>
+                <Trans i18nKey="operationDetails.internalOperations" />
+              </LText>
+            </View>
+            {internalOperations.map((op, i) => (
+              <OperationRow
+                key={op.id}
+                operation={op}
+                parentAccount={null}
+                account={account}
+                navigation={this.props.navigation}
+                multipleAccounts
+                isLast={internalOperations.length - 1 === i}
+              />
+            ))}
+          </Fragment>
+        )}
+
+        {internalOperations.length > 0 || subOperations.length > 0 ? (
+          <View style={styles.section}>
+            <LText style={styles.sectionSeparator} semiBold>
+              <Trans
+                i18nKey="operationDetails.details"
+                values={{
+                  currency: currency.name,
+                }}
+              />
+            </LText>
+          </View>
+        ) : null}
         <RectButton style={styles.section} onPress={this.onPress}>
           <LText style={styles.sectionTitle}>
             <Trans i18nKey="operationDetails.account" />

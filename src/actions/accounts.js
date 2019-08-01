@@ -13,6 +13,18 @@ export const importStore = (state: *) => ({
   },
 });
 
+export const importAccounts = ({
+  items,
+  selectedAccounts,
+}: {
+  items: any[],
+  selectedAccounts: string[],
+}) => ({
+  type: "ACCOUNTS_USER_IMPORT",
+  items,
+  selectedAccounts,
+});
+
 export const addAccount = (account: Account) => ({
   type: "ACCOUNTS_ADD",
   account,

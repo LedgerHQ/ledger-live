@@ -81,7 +81,7 @@ const EditFeeUnitEthereum = ({
       );
       setGasPrice(gp);
     },
-    [bridge, account, transaction],
+    [bridge, mainAccount, transaction],
   );
 
   const onValidateFees = useCallback(() => {
@@ -95,7 +95,7 @@ const EditFeeUnitEthereum = ({
         gasPrice,
       ),
     });
-  }, [account, gasPrice, navigation, mainAccount]);
+  }, [account, gasPrice, navigation, mainAccount, parentAccount]);
 
   const fees = bridge.getTransactionNetworkInfo(mainAccount, transaction);
 

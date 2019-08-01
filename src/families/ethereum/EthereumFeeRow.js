@@ -45,7 +45,7 @@ const EthereumFeeRow = ({
   const extraInfoFees = useCallback(() => {
     closeNetworkFeeHelpModal();
     Linking.openURL(urls.feesEthereum);
-  });
+  }, []);
 
   const openFees = useCallback(() => {
     navigation.navigate("EthereumEditFee", {
@@ -53,7 +53,7 @@ const EthereumFeeRow = ({
       parentId: parentAccount && parentAccount.id,
       transaction,
     });
-  }, [account, parentAccount, transaction]);
+  }, [navigation, account, parentAccount, transaction]);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, parentAccount);

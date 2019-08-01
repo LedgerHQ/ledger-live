@@ -3,7 +3,10 @@ import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
+import {
+  flattenAccounts,
+  importAccountsReduce,
+} from "@ledgerhq/live-common/lib/account";
 import accountModel from "../logic/accountModel";
 import { UP_TO_DATE_THRESHOLD } from "../constants";
 
@@ -17,15 +20,22 @@ const initialState: AccountsState = {
 
 const handlers: Object = {
   ACCOUNTS_IMPORT: (s, { state }) => state,
+
+  ACCOUNTS_USER_IMPORT: (s, { items, selectedAccounts }) => ({
+    active: importAccountsReduce(s.active, { items, selectedAccounts }),
+  }),
+
   ACCOUNTS_ADD: (s, { account }) => ({
     active: s.active.concat(account),
   }),
+
   SET_ACCOUNTS: (
     state: AccountsState,
     { payload }: { payload: Account[] },
   ) => ({
     active: payload,
   }),
+
   UPDATE_ACCOUNT: (
     state: AccountsState,
     { accountId, updater }: { accountId: string, updater: Account => Account },
@@ -41,12 +51,14 @@ const handlers: Object = {
       active: state.active.map(update),
     };
   },
+
   DELETE_ACCOUNT: (
     state: AccountsState,
     { payload: account }: { payload: Account },
   ): AccountsState => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
+
   CLEAN_CACHE: (state: AccountsState): AccountsState => ({
     active: state.active.map(account => ({
       ...account,
