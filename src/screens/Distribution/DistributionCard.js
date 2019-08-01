@@ -6,6 +6,8 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types/currencies";
+import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+
 import colors from "../../colors";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -36,8 +38,8 @@ class DistributionCard extends PureComponent<Props> {
       item: { currency, amount, distribution },
       highlighting,
     } = this.props;
-    // $FlowFixMe
-    const color = currency.color || colors.live;
+
+    const color = getCurrencyColor(currency);
     const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
 
     return (
