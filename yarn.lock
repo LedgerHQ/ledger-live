@@ -720,10 +720,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.68.2.tgz#634f132c9c95935668ac2af90991ce57ebc44d63"
   integrity sha512-JxMr4wj/9d7EQuTQ9khhJxQSzv5B6ZoLUm4spOY+FDfQo0ywx9qvD1NyBHHVzyn7uRtWvz/hOSfTSrlw2joM3w==
 
-"@ledgerhq/hw-app-btc@4.68.2":
-  version "4.68.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.68.2.tgz#df92bf47d251f0d33574b0d1635b453cc1f93432"
-  integrity sha512-9r/dmkrt1QfCy2rbpWBiXEQAKqXHmYBi8mAYJsNSiHb62dixaDpFLWyMkFau837A/4ZH3lQq9tnhvng+G9YlHA==
+"@ledgerhq/hw-app-btc@4.68.3":
+  version "4.68.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-4.68.3.tgz#8a73dfc02ed92fd098865a43b5cf9f3d60489afb"
+  integrity sha512-YfEzLO9Ozp5AHhJEA/MvVXlK0p/nMUeR02+FbqLb+HrZVx4jlzK8/ArCBP1TnT1H182gqVAUetRNYulW7DUOXQ==
   dependencies:
     "@ledgerhq/hw-transport" "^4.68.2"
     create-hash "^1.1.3"
