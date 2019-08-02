@@ -31,7 +31,7 @@
     "sync-flowtyped": "flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
     "debugSVG": "sh scripts/debugsvg.sh | node_modules/.bin/prettier --parser flow > src/screens/DebugSVG.js",
-    "internal": "bundle exec fastlane internal_release"
+    "internal": "FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=30 FASTLANE_XCODEBUILD_SETTINGS_RETRIES=5 bundle exec fastlane internal_release"
   },
   "jest": {
     "preset": "react-native",
