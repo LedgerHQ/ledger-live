@@ -292,6 +292,7 @@ export const accountDataToAccount = ({
     freshAddress,
     freshAddressPath,
     // these fields will be completed as we will sync
+    freshAddresses: [],
     blockHeight: 0,
     balance: BigNumber(balance),
     operations: [],

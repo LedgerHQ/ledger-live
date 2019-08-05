@@ -217,6 +217,12 @@ export function genAccount(
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
+  const derivationPath = runDerivationScheme(
+      getDerivationScheme({ currency, derivationMode: "" }),
+      currency
+  );
+  const freshAddress = { address, derivationPath };
+
   const account: $Exact<Account> = {
     type: "Account",
     id: `mock:1:${currency.id}:${id}:`,
@@ -225,10 +231,8 @@ export function genAccount(
     xpub: genHex(64, rng),
     index: 1,
     freshAddress: address,
-    freshAddressPath: runDerivationScheme(
-      getDerivationScheme({ currency, derivationMode: "" }),
-      currency
-    ),
+    freshAddressPath: derivationPath,
+    freshAddresses: [freshAddress],
     name: rng.nextString(rng.nextInt(4, 34)),
     balance: BigNumber(0),
     blockHeight: rng.nextInt(100000, 200000),
