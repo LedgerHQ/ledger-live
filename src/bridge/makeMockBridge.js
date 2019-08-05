@@ -2,7 +2,12 @@
 import Prando from "prando";
 import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
-import { SyncError, NotEnoughBalance } from "@ledgerhq/errors";
+import {
+  SyncError,
+  NotEnoughBalance,
+  NotEnoughBalanceBecauseDestinationNotCreated,
+  InvalidAddressBecauseDestinationIsAlsoSource
+} from "@ledgerhq/errors";
 import { genAccount, genOperation } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";
@@ -45,6 +50,15 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
 
   const checkValidTransaction = async (a, t) => {
     if (t.amount.isGreaterThan(a.balance)) throw new NotEnoughBalance();
+    if (
+      a.currency.family === "ripple" &&
+      t.amount
+        .plus(t.fee || 0)
+        .plus(10 ** a.currency.units[0].magnitude * 20)
+        .isGreaterThanOrEqualTo(a.balance)
+    ) {
+      throw new NotEnoughBalance();
+    }
     return null;
   };
 
@@ -95,10 +109,24 @@ export function makeMockAccountBridge(_opts?: Opts): AccountBridge<*> {
       };
     });
 
-  const checkValidRecipient = (account, recipient) =>
-    recipient.length > 3
-      ? Promise.resolve(null)
-      : Promise.reject(new Error("invalid recipient"));
+  const checkValidRecipient = (account, recipient) => {
+    if (account.freshAddress === recipient) {
+      switch (account.currency.family) {
+        case "ethereum":
+        case "ripple":
+          throw new InvalidAddressBecauseDestinationIsAlsoSource();
+      }
+    }
+
+    if (account.currency.family === "ripple" && recipient.includes("new")) {
+      throw new NotEnoughBalanceBecauseDestinationNotCreated("", {
+        minimalAmount: `XRP Minimum reserve`
+      });
+    }
+
+    if (recipient.length <= 3) throw new Error("invalid recipient");
+    return Promise.resolve(null);
+  };
 
   const createTransaction = () => ({
     amount: BigNumber(0),
