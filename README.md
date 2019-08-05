@@ -53,6 +53,13 @@ or `open ios/ledgerlivemobile.xcodproj`
 
 or open `android/` in Android Studio.
 
+### `yarn android:clean`
+Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings
+
+### `yarn android:import importDataString`
+Passing a base64 encoded export string (the export from desktop) will trigger an import activity and allow
+easy data setting for development.
+
 ## Environment variables
 
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively.
