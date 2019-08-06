@@ -845,7 +845,7 @@
       "summary": "Summary",
       "connectDevice": "Connect Device",
       "verification": "Verification",
-      "stepRange": "{{currentStep}} of {{totalSteps}}"
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "recipient": {
       "scan": "Scan QR Code",
