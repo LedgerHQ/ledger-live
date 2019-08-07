@@ -26,7 +26,7 @@ import java.util.Locale;
 
 public class MainActivity extends ReactFragmentActivity {
 
-    String importDataString = "";
+    String importDataString = null;
     /**
      * Returns the name of the main component registered from JavaScript.
      * This is used to schedule rendering of the component.
@@ -44,10 +44,7 @@ public class MainActivity extends ReactFragmentActivity {
             // Allow data override for debug builds
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
-                String importDataString = extras.getString("importDataString");
-                if(importDataString != null){
-                    this.importDataString = importDataString;
-                }
+                this.importDataString = extras.getString("importDataString");
             }
         }
         super.onCreate(savedInstanceState);

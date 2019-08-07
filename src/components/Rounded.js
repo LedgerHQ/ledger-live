@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "visible",
+    position: "relative",
   },
 });
 
