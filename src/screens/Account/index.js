@@ -216,8 +216,9 @@ class AccountScreen extends PureComponent<Props, State> {
             parentId={parentAccount && parentAccount.id}
           />
         )}
-        {account.type === "Account" && account.tokenAccounts ? (
+        {!empty && account.type === "Account" && account.tokenAccounts ? (
           <TokenAccountsList
+            accountId={account.id}
             onAccountPress={this.onAccountPress}
             tokenAccounts={account.tokenAccounts}
           />

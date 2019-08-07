@@ -1,20 +1,22 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
+import take from "lodash/take";
 import { FlatList, Platform, StyleSheet, View } from "react-native";
 import type { TokenAccount } from "@ledgerhq/live-common/lib/types";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
+import { withNavigation } from "react-navigation";
+import MaterialIcon from "react-native-vector-icons/dist/MaterialIcons";
 import TokenRow from "../../components/TokenRow";
 import colors from "../../colors";
 import LText from "../../components/LText";
+import Button from "../../components/Button";
+import Touchable from "../../components/Touchable";
 
 const keyExtractor = o => o.id;
 
 const styles = StyleSheet.create({
-  header: {
-    marginBottom: 16,
-  },
   footer: {
     borderRadius: 4,
     paddingHorizontal: 18,
@@ -32,6 +34,12 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingLeft: 12,
     flexDirection: "row",
+  },
+  header: {
+    marginBottom: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   tokenList: {
     paddingTop: 32,
@@ -63,36 +71,104 @@ const Card = ({ children }: { children: any }) => (
   <View style={styles.card}>{children}</View>
 );
 
-const Header = ({ tokenAccounts }: { tokenAccounts: TokenAccount[] }) => (
-  <View style={styles.header}>
-    <LText
-      fontWeight="500"
-      style={{ color: colors.darkBlue, fontSize: 16 }}
-    >{`Tokens (${tokenAccounts.length})`}</LText>
-  </View>
-);
-
-const Footer = () => (
-  <View style={styles.footer}>
-    <Icon color={colors.live} size={26} name="plus" />
-    <View style={styles.footerText}>
-      <LText style={{ fontSize: 16 }}>
-        <Trans i18nKey="account.tokens.howTo">
-          <LText semiBold>text</LText>
-          <LText semiBold>text</LText>
-        </Trans>
-      </LText>
-    </View>
-  </View>
-);
-
 const TokenAccountsList = ({
   tokenAccounts,
   onAccountPress,
+  navigation,
+  accountId,
 }: {
   tokenAccounts: TokenAccount[],
   onAccountPress: TokenAccount => *,
+  navigation: *,
+  accountId: string,
 }) => {
+  const [isCollapsed, setCollapsed] = useState(true);
+  const renderHeader = useCallback(
+    () => (
+      <View style={styles.header}>
+        <LText
+          fontWeight="500"
+          style={{ color: colors.darkBlue, fontSize: 16 }}
+        >{`Tokens (${tokenAccounts.length})`}</LText>
+        {tokenAccounts.length > 0 ? (
+          <Button
+            containerStyle={{ width: 120 }}
+            type="lightSecondary"
+            event="AccountReceiveToken"
+            title={<Trans i18nKey="account.tokens.addTokens" />}
+            IconLeft={() => (
+              <MaterialIcon color={colors.live} name="add" size={20} />
+            )}
+            onPress={() =>
+              navigation.navigate("ReceiveConnectDevice", { accountId })
+            }
+            size={14}
+          />
+        ) : null}
+      </View>
+    ),
+    [tokenAccounts, navigation, accountId],
+  );
+
+  const renderFooter = useCallback(() => {
+    // If there is no token accounts, we render the touchable rect
+    if (tokenAccounts.length === 0) {
+      return (
+        <Touchable
+          event="AccountReceiveToken"
+          onPress={() =>
+            navigation.navigate("ReceiveConnectDevice", { accountId })
+          }
+        >
+          <View style={styles.footer}>
+            <Icon color={colors.live} size={26} name="plus" />
+            <View style={styles.footerText}>
+              <LText style={{ fontSize: 16 }}>
+                <Trans i18nKey="account.tokens.howTo">
+                  <LText semiBold>text</LText>
+                  <LText semiBold>text</LText>
+                </Trans>
+              </LText>
+            </View>
+          </View>
+        </Touchable>
+      );
+    }
+
+    // If there is 3 or less token accounts, no need for collapse button
+    if (tokenAccounts.length <= 3) {
+      return null;
+    }
+
+    // else, we render the collapse button
+    return (
+      <Card>
+        <Button
+          type="lightSecondary"
+          event="accountExpandTokenList"
+          title={
+            <Trans
+              i18nKey={
+                isCollapsed
+                  ? "account.tokens.seeMore"
+                  : "account.tokens.seeLess"
+              }
+            />
+          }
+          IconRight={() => (
+            <Icon
+              color={colors.live}
+              name={isCollapsed ? "angle-down" : "angle-up"}
+              size={16}
+            />
+          )}
+          onPress={() => setCollapsed(isCollapsed => !isCollapsed)}
+          size={13}
+        />
+      </Card>
+    );
+  }, [isCollapsed, navigation, tokenAccounts, accountId]);
+
   const renderItem = useCallback(
     ({ item }) => (
       <Card>
@@ -101,17 +177,18 @@ const TokenAccountsList = ({
     ),
     [onAccountPress],
   );
+
   return (
     <View style={styles.tokenList}>
       <FlatList
-        data={tokenAccounts}
+        data={isCollapsed ? take(tokenAccounts, 3) : tokenAccounts}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        ListHeaderComponent={<Header tokenAccounts={tokenAccounts} />}
-        ListFooterComponent={<Footer />}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={renderFooter}
       />
     </View>
   );
 };
 
-export default TokenAccountsList;
+export default withNavigation(TokenAccountsList);
