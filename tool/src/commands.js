@@ -224,7 +224,7 @@ const all = {
           const appjsondata = opts.appjson
             ? JSON.parse(fs.readFileSync(opts.appjson, "utf-8"))
             : { data: { accounts: [] } };
-          if (typeof appjsondata.accounts === "string") {
+          if (typeof appjsondata.data.accounts === "string") {
             return throwError(
               new Error("encrypted ledger live data is not supported")
             );
