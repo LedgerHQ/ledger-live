@@ -583,7 +583,9 @@
   },
   "selectableAccountsList": {
     "deselectAll": "Deselect all",
-    "selectAll": "Select all"
+    "selectAll": "Select all",
+    "tokenCount": "+1 token",
+    "tokenCount_plural": "+{{count}} tokens"
   },
   "account": {
     "tokens": {
