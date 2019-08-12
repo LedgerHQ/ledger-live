@@ -32,7 +32,7 @@ export type Output =
 
 type F = Input => Promise<Output>;
 
-export const getFees: F = withLibcoreF(core => async ({ account }) => {
+export const getFees: F = withLibcoreF(core => async account => {
   try {
     const { derivationMode, currency } = account;
     const walletName = getWalletName(account);
@@ -52,12 +52,10 @@ export const getFees: F = withLibcoreF(core => async ({ account }) => {
 
     const f = byFamily[currency.family];
     if (!f) throw new Error("currency " + currency.id + " not supported");
-    const fees = await f({
+    return await f({
       account,
       coreAccount
     });
-
-    return fees;
   } catch (error) {
     throw remapLibcoreErrors(error);
   }

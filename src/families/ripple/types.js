@@ -1,6 +1,6 @@
 // @flow
 
-import type { CoreAmount, Spec } from "../../libcore/types";
+import type { CoreAmount, CoreBigInt, Spec } from "../../libcore/types";
 
 declare class CoreRippleLikeAddress {
   toBase58(): Promise<string>;
@@ -30,6 +30,7 @@ declare class CoreRippleLikeTransactionBuilder {
 declare class CoreRippleLikeAccount {
   buildTransaction(): Promise<CoreRippleLikeTransactionBuilder>;
   broadcastRawTransaction(signed: string): Promise<string>;
+  getFees(): Promise<CoreBigInt>;
 }
 
 export type CoreStatics = {
@@ -112,6 +113,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       },
       broadcastRawTransaction: {
         params: ["hex"]
+      },
+      getFees: {
+        returns: "BigInt"
       }
     }
   });

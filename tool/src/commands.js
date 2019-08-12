@@ -29,6 +29,7 @@ import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
 import signAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBroadcast";
 import { getFeesForTransaction } from "@ledgerhq/live-common/lib/libcore/getFeesForTransaction";
+import { getFees } from "@ledgerhq/live-common/lib/libcore/getFees";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { encode } from "@ledgerhq/live-common/lib/cross";
 import manager from "@ledgerhq/live-common/lib/manager";
@@ -558,6 +559,18 @@ const all = {
       scan(opts).pipe(
         map(account =>
           (accountFormatters[opts.format] || accountFormatters.default)(account)
+        )
+      )
+  },
+
+  getFees: {
+    description: "Get fees for account",
+    args: [
+      ...scanCommonOpts,
+    ],
+    job: opts =>
+      scan(opts).pipe(
+        map(async account => console.log(await getFees(account))
         )
       )
   },
