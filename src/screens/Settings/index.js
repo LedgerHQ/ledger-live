@@ -34,6 +34,7 @@ type Props = {
 const mapStateToProps = createStructuredSelector({
   currencies: cryptoCurrenciesSelector,
 });
+
 class Settings extends Component<Props, *> {
   static navigationOptions = {
     title: i18next.t("settings.header"),
@@ -41,18 +42,6 @@ class Settings extends Component<Props, *> {
 
   state = {
     debugVisible: Config.FORCE_DEBUG_VISIBLE || false,
-  };
-
-  navigateTo = (screenName: string) => {
-    const { navigation, currencies } = this.props;
-    if (screenName === "CurrencySettings") {
-      return currencies.length < 2
-        ? navigation.navigate("CurrencySettings", {
-            currencyId: currencies[0].id,
-          })
-        : navigation.navigate("CurrenciesList");
-    }
-    return navigation.navigate(screenName);
   };
 
   count = 0;
@@ -84,40 +73,44 @@ class Settings extends Component<Props, *> {
             title={t("settings.display.title")}
             desc={t("settings.display.desc")}
             icon={<Display size={16} color={colors.live} />}
-            onClick={() => this.navigateTo("GeneralSettings")}
+            onClick={() => this.props.navigation.navigate("GeneralSettings")}
           />
           {currencies.length > 0 && (
             <SettingsCard
-              title={t("settings.currencies.title")}
-              desc={t("settings.currencies.desc")}
+              title={t("settings.cryptoAssets.title")}
+              desc={t("settings.cryptoAssets.desc")}
               icon={<Assets size={16} color={colors.live} />}
-              onClick={() => this.navigateTo("CurrencySettings")}
+              onClick={() =>
+                this.props.navigation.navigate("CryptoAssetsSettings")
+              }
             />
           )}
           <SettingsCard
             title={t("settings.about.title")}
             desc={t("settings.about.desc")}
             icon={<LiveLogoIcon size={16} color={colors.live} />}
-            onClick={() => this.navigateTo("AboutSettings")}
+            onClick={() => this.props.navigation.navigate("AboutSettings")}
           />
           <SettingsCard
             title={t("settings.help.title")}
             desc={t("settings.help.desc")}
             icon={<Help size={16} color={colors.live} />}
-            onClick={() => this.navigateTo("HelpSettings")}
+            onClick={() => this.props.navigation.navigate("HelpSettings")}
           />
           <SettingsCard
             title={t("settings.experimental.title")}
             desc={t("settings.experimental.desc")}
             icon={<Atom size={16} color={colors.live} />}
-            onClick={() => this.navigateTo("ExperimentalSettings")}
+            onClick={() =>
+              this.props.navigation.navigate("ExperimentalSettings")
+            }
           />
           {debugVisible ? (
             <SettingsCard
               title="Debug"
               desc="Use at your own risk – Developer tools"
               icon={<Icon name="wind" size={16} color={colors.live} />}
-              onClick={() => this.navigateTo("DebugSettings")}
+              onClick={() => this.props.navigation.navigate("DebugSettings")}
             />
           ) : null}
           <TouchableWithoutFeedback onPress={this.onDebugHiddenPress}>

@@ -1,5 +1,6 @@
 // @flow
 import React from "react";
+import i18next from "i18next";
 import {
   createStackNavigator,
   createMaterialTopTabNavigator,
@@ -9,14 +10,12 @@ import {
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import type { NavigationScreenProp } from "react-navigation";
 import { Platform } from "react-native";
-import colors from "./colors";
 import PortfolioIcon from "./icons/Portfolio";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
 import AccountsIcon from "./icons/Accounts";
 import NanoXIcon from "./icons/TabNanoX";
 
-import { getFontStyle } from "./components/LText";
 import TabIcon from "./components/TabIcon";
 import Portfolio from "./screens/Portfolio";
 import Manager from "./screens/Manager";
@@ -34,7 +33,6 @@ import OnboardingStepShareData from "./screens/Onboarding/steps/share-data";
 import OnboardingStepScanQR from "./screens/Onboarding/steps/scan-qr";
 import OnboardingStepFinish from "./screens/Onboarding/steps/finish";
 import CountervalueSettings from "./screens/Settings/General/CountervalueSettings";
-import RateProviderSettings from "./screens/Settings/General/RateProviderSettings";
 import PasswordAdd from "./screens/Settings/General/PasswordAdd";
 import PasswordRemove from "./screens/Settings/General/PasswordRemove";
 import ConfirmPassword from "./screens/Settings/General/ConfirmPassword";
@@ -46,8 +44,10 @@ import DebugSettings, {
   DebugDevices,
   DebugMocks,
 } from "./screens/Settings/Debug";
-import CurrencySettings from "./screens/Settings/Currencies/CurrencySettings";
-import CurrenciesList from "./screens/Settings/Currencies/CurrenciesList";
+import CurrencySettings from "./screens/Settings/CryptoAssets/Currencies/CurrencySettings";
+import CurrenciesList from "./screens/Settings/CryptoAssets/Currencies/CurrenciesList";
+import RatesList from "./screens/Settings/CryptoAssets/Rates/RatesList";
+import RateProviderSettings from "./screens/Settings/CryptoAssets/Rates/RateProviderSettings";
 import ManagerAppsList from "./screens/Manager/AppsList";
 import ManagerDevice from "./screens/Manager/Device";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
@@ -90,6 +90,7 @@ import TransparentHeaderNavigationOptions from "./navigation/TransparentHeaderNa
 import {
   stackNavigatorConfig,
   closableStackNavigatorConfig,
+  topTabNavigatorConfig,
   defaultNavigationOptions,
 } from "./navigation/navigatorConfig";
 
@@ -114,19 +115,33 @@ import Distribution from "./screens/Distribution";
 
 // TODO look into all FlowFixMe
 
+const CryptoAssetsSettings = createMaterialTopTabNavigator(
+  {
+    RatesList,
+    CurrenciesList,
+  },
+  topTabNavigatorConfig,
+);
+
+CryptoAssetsSettings.navigationOptions = {
+  title: i18next.t("settings.cryptoAssets.header"),
+  headerStyle: styles.headerNoShadow,
+};
+
 const SettingsStack = createStackNavigator(
   {
+    // $FlowFixMe
     Settings,
     CountervalueSettings,
-    RateProviderSettings,
     // $FlowFixMe
     GeneralSettings,
     // $FlowFixMe
     AboutSettings,
     // $FlowFixMe
     HelpSettings,
-    CurrenciesList,
+    CryptoAssetsSettings,
     CurrencySettings,
+    RateProviderSettings,
     // $FlowFixMe
     RepairDevice,
     // $FlowFixMe
@@ -168,31 +183,11 @@ const ManagerMain = createMaterialTopTabNavigator(
     ManagerAppsList,
     ManagerDevice,
   },
-  {
-    tabBarOptions: {
-      allowFontScaling: false,
-      activeTintColor: colors.live,
-      inactiveTintColor: colors.grey,
-      upperCaseLabel: false,
-      labelStyle: {
-        fontSize: 14,
-        ...getFontStyle({
-          semiBold: true,
-        }),
-      },
-      style: {
-        backgroundColor: colors.white,
-        height: 48,
-      },
-      indicatorStyle: {
-        backgroundColor: colors.live,
-      },
-    },
-  },
+  topTabNavigatorConfig,
 );
 
 ManagerMain.navigationOptions = {
-  title: "Manager",
+  title: i18next.t("tabs.manager"),
   headerStyle: styles.headerNoShadow,
 };
 
@@ -377,7 +372,6 @@ const AccountSettings = createStackNavigator(
     EditAccountNode,
     AdvancedLogs,
     AccountCurrencySettings: CurrencySettings,
-    AccountRateProviderSettings: RateProviderSettings,
   },
   closableStackNavigatorConfig,
 );

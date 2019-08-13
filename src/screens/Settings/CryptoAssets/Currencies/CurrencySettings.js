@@ -8,16 +8,16 @@ import Slider from "react-native-slider";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import SettingsRow from "../../../components/SettingsRow";
-import LText from "../../../components/LText";
-import { confirmationsNbForCurrencySelector } from "../../../reducers/settings";
-import type { State } from "../../../reducers";
-import type { T } from "../../../types/common";
-import { updateCurrencySettings } from "../../../actions/settings";
-import colors from "../../../colors";
-import { TrackScreen } from "../../../analytics";
-import { currencySettingsDefaults } from "../../../helpers/CurrencySettingsDefaults";
-import CurrencyIcon from "../../../components/CurrencyIcon";
+import SettingsRow from "../../../../components/SettingsRow";
+import LText from "../../../../components/LText";
+import { confirmationsNbForCurrencySelector } from "../../../../reducers/settings";
+import type { State } from "../../../../reducers";
+import type { T } from "../../../../types/common";
+import { updateCurrencySettings } from "../../../../actions/settings";
+import colors from "../../../../colors";
+import { TrackScreen } from "../../../../analytics";
+import { currencySettingsDefaults } from "../../../../helpers/CurrencySettingsDefaults";
+import CurrencyIcon from "../../../../components/CurrencyIcon";
 
 type Props = {
   confirmationsNb: number,
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   sliderContainer: {
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     minHeight: 200,
   },
   confirmationNbValue: {
