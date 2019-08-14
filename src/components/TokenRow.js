@@ -28,42 +28,44 @@ class TokenRow extends PureComponent<Props> {
     } = this.props;
 
     return (
-      <View>
-        <RectButton onPress={() => onTokenAccountPress(account)}>
-          <View accessible style={styles.innerContainer}>
-            <CurrencyIcon size={24} currency={token} />
-            <View style={styles.inner}>
-              <LText
-                semiBold
-                numberOfLines={1}
-                ellipsizeMode="middle"
-                style={styles.accountNameText}
-              >
-                {token.name}
-              </LText>
-            </View>
-            <View style={styles.balanceContainer}>
-              <LText tertiary style={styles.balanceNumText}>
-                <CurrencyUnitValue
-                  showCode
-                  unit={token.units[0]}
-                  value={account.balance}
-                />
-              </LText>
-              <View style={styles.balanceCounterContainer}>
-                <CounterValue
-                  showCode
-                  currency={token}
-                  value={account.balance}
-                  withPlaceholder
-                  placeholderProps={placeholderProps}
-                  Wrapper={AccountCv}
-                />
-              </View>
+      <RectButton
+        style={styles.container}
+        underlayColor={colors.grey}
+        onPress={() => onTokenAccountPress(account)}
+      >
+        <View accessible style={styles.innerContainer}>
+          <CurrencyIcon size={24} currency={token} />
+          <View style={styles.inner}>
+            <LText
+              semiBold
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              style={styles.accountNameText}
+            >
+              {token.name}
+            </LText>
+          </View>
+          <View style={styles.balanceContainer}>
+            <LText tertiary style={styles.balanceNumText}>
+              <CurrencyUnitValue
+                showCode
+                unit={token.units[0]}
+                value={account.balance}
+              />
+            </LText>
+            <View style={styles.balanceCounterContainer}>
+              <CounterValue
+                showCode
+                currency={token}
+                value={account.balance}
+                withPlaceholder
+                placeholderProps={placeholderProps}
+                Wrapper={AccountCv}
+              />
             </View>
           </View>
-        </RectButton>
-      </View>
+        </View>
+      </RectButton>
     );
   }
 }
@@ -77,8 +79,11 @@ const AccountCv = ({ children }: { children: * }) => (
 export default TokenRow;
 
 const styles = StyleSheet.create({
+  container: {
+    borderRadius: 4,
+  },
   innerContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 14,
     flexDirection: "row",
     alignItems: "center",

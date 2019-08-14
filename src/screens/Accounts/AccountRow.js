@@ -81,7 +81,11 @@ class AccountRow extends PureComponent<Props, State> {
             },
           ]}
         >
-          <RectButton onPress={this.onAccountPress}>
+          <RectButton
+            style={styles.button}
+            underlayColor={colors.grey}
+            onPress={this.onAccountPress}
+          >
             <View accessible style={styles.innerContainer}>
               <CurrencyIcon size={24} currency={account.currency} />
               <View style={styles.inner}>
@@ -187,6 +191,10 @@ const AccountCv = ({ children }: { children: * }) => (
 export default connect(mapStateToProps)(AccountRow);
 
 const styles = StyleSheet.create({
+  button: {
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+  },
   root: {
     marginTop: 8,
     marginLeft: 8,
@@ -243,7 +251,8 @@ const styles = StyleSheet.create({
   },
   tokenAccountList: {
     marginLeft: 26,
-    paddingLeft: 13,
+    paddingLeft: 12,
+    paddingRight: 12,
     borderLeftWidth: 1,
     borderLeftColor: colors.fog,
     marginBottom: 20,
