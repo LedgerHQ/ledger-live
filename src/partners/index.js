@@ -50,9 +50,5 @@ export default [
   {
     id: "simplex",
     url: "https://partners.simplex.com/?partner=ledger"
-  },
-  {
-    id: "taxtoken",
-    url: "https://taxtoken.go2cloud.org/aff_c?offer_id=1&aff_id=1001"
   }
 ];
