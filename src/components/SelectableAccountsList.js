@@ -216,6 +216,8 @@ class SelectableAccount extends PureComponent<
   render() {
     const { showHint, isDisabled, isSelected, account } = this.props;
     const { stopAnimation } = this.state;
+    const tokenCount = account.tokenAccounts && account.tokenAccounts.length;
+
     const inner = (
       <View
         style={[
@@ -245,6 +247,19 @@ class SelectableAccount extends PureComponent<
           style={{ backgroundColor: "#ffffff" }}
         >
           {inner}
+          {tokenCount ? (
+            <View style={styles.tokenCountWrapper}>
+              <View style={styles.tokenCount}>
+                <LText semiBold style={styles.tokenCountText}>
+                  <Trans
+                    i18nKey="selectableAccountsList.tokenCount"
+                    count={tokenCount}
+                    values={{ count: tokenCount }}
+                  />
+                </LText>
+              </View>
+            </View>
+          ) : null}
           {showHint && (
             <TouchHintCircle
               stopAnimation={stopAnimation}
@@ -338,6 +353,20 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
+  },
+  tokenCountWrapper: {
+    flexDirection: "row",
+    marginLeft: 45,
+    marginTop: -11,
+  },
+  tokenCount: {
+    padding: 4,
+    borderRadius: 4,
+    backgroundColor: colors.pillActiveBackground,
+  },
+  tokenCountText: {
+    fontSize: 10,
+    color: colors.pillActiveForeground,
   },
 });
 
