@@ -31,7 +31,7 @@ export async function buildAccount({
   derivationMode: DerivationMode,
   seedIdentifier: string,
   existingAccount: ?Account
-}) {
+}): Promise<Account> {
   const nativeBalance = await coreAccount.getBalance();
   const balance = await libcoreAmountToBigNumber(nativeBalance);
 
@@ -45,17 +45,22 @@ export async function buildAccount({
   const coreBlock = await coreAccount.getLastBlock();
   const blockHeight = await coreBlock.getHeight();
 
-  const freshAddresses = await coreAccount.getFreshPublicAddresses();
-  const [coreFreshAddress] = freshAddresses;
-  if (!coreFreshAddress) throw new Error("expected at least one fresh address");
-  const [freshAddressStr, freshAddressPath] = await Promise.all([
-    coreFreshAddress.toString(),
-    coreFreshAddress.getDerivationPath()
-  ]);
-  const freshAddress = {
-    str: freshAddressStr,
-    path: freshAddressPath ? `${accountPath}/${freshAddressPath}` : accountPath
-  };
+  const coreFreshAddresses = await coreAccount.getFreshPublicAddresses();
+  if (coreFreshAddresses.length === 0)
+    throw new Error("expected at least one fresh address");
+
+  const freshAddresses = await Promise.all(
+    coreFreshAddresses.map(async item => {
+      const [address, path] = await Promise.all([
+        item.toString(),
+        item.getDerivationPath()
+      ]);
+
+      const derivationPath = path ? `${accountPath}/${path}` : accountPath;
+
+      return { address, derivationPath };
+    })
+  );
 
   const name =
     coreOperations.length === 0
@@ -107,8 +112,9 @@ export async function buildAccount({
     xpub,
     derivationMode,
     index: accountIndex,
-    freshAddress: freshAddress.str,
-    freshAddressPath: freshAddress.path,
+    freshAddress: freshAddresses[0].address,
+    freshAddressPath: freshAddresses[0].derivationPath,
+    freshAddresses,
     name,
     balance,
     blockHeight,

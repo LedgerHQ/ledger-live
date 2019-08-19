@@ -16,6 +16,11 @@ export type TokenAccount = {
   balance: BigNumber
 };
 
+export type Address = {|
+  address: string,
+  derivationPath: string,
+|};
+
 export type Account = {
   type: "Account",
   // unique account identifier
@@ -41,11 +46,17 @@ export type Account = {
   index: number,
 
   // next receive address. to be used to display to user.
+  // (deprecated - corresponds to freshAddresses[0].address)
   freshAddress: string,
 
   // The path linked to freshAddress. to be used to validate with the device if it corresponds to freshAddress.
   // exemple: 44'/0'/0'/0/0
+  // (deprecated - corresponds to freshAddresses[0].derivationPath)
   freshAddressPath: string,
+
+  // an array containing all fresh addresses and paths
+  // may be empty if no sync has occurred
+  freshAddresses: Address[],
 
   // account name
   name: string,
@@ -112,6 +123,7 @@ export type AccountRaw = {
   index: number,
   freshAddress: string,
   freshAddressPath: string,
+  freshAddresses: Address[],
   name: string,
   balance: string,
   blockHeight: number,

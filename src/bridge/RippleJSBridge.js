@@ -405,6 +405,10 @@ export const currencyBridge: CurrencyBridge = {
                     }),
                     freshAddress,
                     freshAddressPath,
+                    freshAddresses: [{
+                      address:freshAddress,
+                      derivationPath: freshAddressPath,
+                    }],
                     balance: BigNumber(0),
                     blockHeight: maxLedgerVersion,
                     index,
@@ -445,6 +449,10 @@ export const currencyBridge: CurrencyBridge = {
                 }),
                 freshAddress,
                 freshAddressPath,
+                freshAddresses: [{
+                  address: freshAddress,
+                  derivationPath: freshAddressPath,
+                }],
                 balance,
                 blockHeight: maxLedgerVersion,
                 index,
