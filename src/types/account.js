@@ -18,7 +18,7 @@ export type TokenAccount = {
 
 export type Address = {|
   address: string,
-  derivationPath: string,
+  derivationPath: string
 |};
 
 export type Account = {

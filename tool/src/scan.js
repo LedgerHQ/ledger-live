@@ -116,7 +116,15 @@ export const inferCurrency = ({ device, currency, file, xpub }) => {
 };
 
 export function scan(arg) {
-  const { device, xpub: xpubArray, file, appjsonFile, scheme, index, length } = arg;
+  const {
+    device,
+    xpub: xpubArray,
+    file,
+    appjsonFile,
+    scheme,
+    index,
+    length
+  } = arg;
 
   if (typeof appjsonFile === "string") {
     const appjsondata = appjsonFile
@@ -128,10 +136,12 @@ export function scan(arg) {
         new Error("encrypted ledger live data is not supported")
       );
     }
-    return from(appjsondata.data.accounts.map(a=>fromAccountRaw(a.data))).pipe(
+    return from(
+      appjsondata.data.accounts.map(a => fromAccountRaw(a.data))
+    ).pipe(
       skip(index || 0),
       take(length === undefined ? (index !== undefined ? 1 : Infinity) : length)
-    )
+    );
   }
 
   if (typeof file === "string") {

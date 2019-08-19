@@ -218,8 +218,8 @@ export function genAccount(
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
-      getDerivationScheme({ currency, derivationMode: "" }),
-      currency
+    getDerivationScheme({ currency, derivationMode: "" }),
+    currency
   );
   const freshAddress = { address, derivationPath };
 

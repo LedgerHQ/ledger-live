@@ -254,7 +254,8 @@ const all = {
 
   exportAccounts: {
     description: "Export given accounts to Live QR or console for importing",
-    args: [...scanCommonOpts,
+    args: [
+      ...scanCommonOpts,
       {
         name: "out",
         alias: "o",
@@ -274,9 +275,9 @@ const all = {
           });
           const frames = dataToFrames(data, 80, 4);
 
-          if (opts.out){
-            return of(Buffer.from(JSON.stringify(frames)).toString('base64'))
-          }else{
+          if (opts.out) {
+            return of(Buffer.from(JSON.stringify(frames)).toString("base64"));
+          } else {
             const qrObservables = frames.map(str =>
               asQR(str).pipe(shareReplay())
             );

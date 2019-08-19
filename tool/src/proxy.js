@@ -89,9 +89,7 @@ const job = ({ device, file, record, port, silent, verbose }) =>
         }
         log(
           "proxy",
-          `${
-            recordStore.queue.length
-          } mocked APDUs will be replayed from ${file}`
+          `${recordStore.queue.length} mocked APDUs will be replayed from ${file}`
         );
         Transport = createTransportReplayer(recordStore);
       }
