@@ -2,16 +2,14 @@
 
 import { BigNumber } from "bignumber.js";
 import { getWalletName } from "../account";
-import type { Account } from "../types";
+import type { Account, Unit } from "../types";
 import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
 import byFamily from "../generated/libcore-getFees";
 
-export type Input = {
-  account: Account
-};
+export type Input = Account;
 
 export type Output =
   | {
@@ -21,13 +19,15 @@ export type Output =
     }
   | {
       // eth?
-      type: "gas",
-      value: BigNumber
+      type: "gasPrice",
+      value: BigNumber,
+      unit: Unit
     }
   | {
       // ripple?
       type: "fee",
-      value: BigNumber
+      value: BigNumber,
+      unit: Unit
     };
 
 type F = Input => Promise<Output>;
@@ -52,10 +52,11 @@ export const getFees: F = withLibcoreF(core => async account => {
 
     const f = byFamily[currency.family];
     if (!f) throw new Error("currency " + currency.id + " not supported");
-    return await f({
+    const res = await f({
       account,
       coreAccount
     });
+    return res;
   } catch (error) {
     throw remapLibcoreErrors(error);
   }

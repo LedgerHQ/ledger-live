@@ -64,6 +64,32 @@ import { apdusFromFile } from "./stream";
 import { toAccountRaw } from "@ledgerhq/live-common/lib/account/serialization";
 import { Buffer } from "buffer";
 
+const getFeesFormatters = {
+  raw: e => e,
+  json: e => ({
+    type: e.type,
+    value: Array.isArray(e.value)
+      ? e.value.map(bn => bn.toNumber())
+      : e.value.toNumber()
+  }),
+  summary: e => {
+    switch (e.type) {
+      case "feePerBytes":
+        return "feePerBytes: " + e.value.map(bn => bn.toString());
+      case "gasPrice":
+        return (
+          "gasPrice: " + formatCurrencyUnit(e.unit, e.value, { showCode: true })
+        );
+      case "fee":
+        return (
+          "fee: " + formatCurrencyUnit(e.unit, e.value, { showCode: true })
+        );
+      default:
+        return e;
+    }
+  }
+};
+
 const asQR = str =>
   Observable.create(o =>
     qrcode.generate(str, r => {
@@ -564,14 +590,26 @@ const all = {
   },
 
   getFees: {
-    description: "Get fees for account",
+    description: "Get the currency fees for accounts",
     args: [
       ...scanCommonOpts,
+      {
+        name: "format",
+        alias: "f",
+        type: String,
+        typeDesc: Object.keys(getFeesFormatters).join(" | "),
+        desc: "how to display the data"
+      }
     ],
     job: opts =>
       scan(opts).pipe(
-        map(async account => console.log(await getFees(account))
-        )
+        mergeMap(account => from(getFees(account))),
+        map(e => {
+          const f = getFeesFormatters[opts.format || "summary"];
+          if (!f)
+            throw new Error("getFees: no such formatter '" + opts.format + "'");
+          return f(e);
+        })
       )
   },
 

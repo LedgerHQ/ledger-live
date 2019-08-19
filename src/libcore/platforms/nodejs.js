@@ -355,6 +355,10 @@ export default (arg: {
             };
           } else {
             const f = m.prototype[method];
+            if (!f) {
+              console.warn(`no such method '${method}' in ${id}`);
+              return;
+            }
             m.prototype[method] = async function met(...a) {
               const args = params
                 ? a.map((value, i) => unwrapArg(params[i], value))

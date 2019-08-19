@@ -30,7 +30,8 @@ declare class CoreRippleLikeTransactionBuilder {
 declare class CoreRippleLikeAccount {
   buildTransaction(): Promise<CoreRippleLikeTransactionBuilder>;
   broadcastRawTransaction(signed: string): Promise<string>;
-  getFees(): Promise<CoreBigInt>;
+  getFees(): Promise<CoreAmount>;
+  getBaseReserve(): Promise<CoreAmount>;
 }
 
 export type CoreStatics = {
@@ -115,7 +116,10 @@ export const reflect = (declare: (string, Spec) => void) => {
         params: ["hex"]
       },
       getFees: {
-        returns: "BigInt"
+        returns: "Amount"
+      },
+      getBaseReserve: {
+        returns: "Amount"
       }
     }
   });

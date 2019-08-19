@@ -51,7 +51,8 @@ declare class CoreEthereumLikeAccount {
   getERC20Accounts(): Promise<CoreERC20LikeAccount[]>;
   buildTransaction(): Promise<CoreEthereumLikeTransactionBuilder>;
   broadcastRawTransaction(signed: string): Promise<string>;
-  getFees(): Promise<CoreBigInt>;
+  getGasPrice(): Promise<CoreBigInt>;
+  getEstimatedGasLimit(address: string): Promise<CoreBigInt>;
 }
 
 declare class CoreERC20Token {
@@ -192,7 +193,10 @@ export const reflect = (declare: (string, Spec) => void) => {
       getERC20Accounts: {
         returns: ["ERC20LikeAccount"]
       },
-      getFees: {
+      getGasPrice: {
+        returns: "BigInt"
+      },
+      getEstimatedGasLimit: {
         returns: "BigInt"
       }
     }
