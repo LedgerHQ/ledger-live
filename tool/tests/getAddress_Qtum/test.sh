@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exit # FIXME @Arnaud97234
+
 c="Qtum"
 
 ledger-live app -o "$c"
