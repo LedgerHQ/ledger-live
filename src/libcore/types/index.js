@@ -529,11 +529,6 @@ export const reflect = (declare: (string, Spec) => void) => {
       newInstance: {
         returns: "ThreadDispatcher"
       }
-    },
-    methods: {
-      getMainExecutionContext: {
-        returns: "SerialContext"
-      }
     }
   });
 

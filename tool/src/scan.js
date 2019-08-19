@@ -3,6 +3,7 @@
 import { BigNumber } from "bignumber.js";
 import { from, defer, of, throwError } from "rxjs";
 import { skip, take, reduce, mergeMap, map, concatMap } from "rxjs/operators";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import { fromAccountRaw } from "@ledgerhq/live-common/lib/account";
 import { syncAccount } from "@ledgerhq/live-common/lib/libcore/syncAccount";
 import { scanAccountsOnDevice } from "@ledgerhq/live-common/lib/libcore/scanAccountsOnDevice";
@@ -161,7 +162,8 @@ export function scan(arg) {
         const derivationMode = scheme || "";
         return from(
           xpubArray.map(xpub => {
-            const account: Account = {
+            const account: $Exact<Account> = {
+              type: "Account",
               name:
                 cur.name +
                 " " +

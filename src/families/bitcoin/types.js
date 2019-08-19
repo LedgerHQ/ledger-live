@@ -1,6 +1,11 @@
 // @flow
 
-import type { CoreAmount, CoreDerivationPath, Spec } from "../../libcore/types";
+import type {
+  CoreBigInt,
+  CoreAmount,
+  CoreDerivationPath,
+  Spec
+} from "../../libcore/types";
 
 declare class CoreBitcoinLikeInput {
   getPreviousTransaction(): Promise<string>;
@@ -41,6 +46,7 @@ declare class CoreBitcoinLikeAccount {
     isPartial: boolean
   ): Promise<CoreBitcoinLikeTransactionBuilder>;
   broadcastRawTransaction(signed: string): Promise<string>;
+  getFees(): Promise<CoreBigInt[]>;
 }
 
 declare class CoreBitcoinLikeNetworkParameters {
@@ -150,6 +156,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       },
       broadcastRawTransaction: {
         params: ["hex"]
+      },
+      getFees: {
+        returns: ["BigInt"]
       }
     }
   });

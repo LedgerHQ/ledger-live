@@ -29,6 +29,7 @@ import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
 import signAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBroadcast";
 import { getFeesForTransaction } from "@ledgerhq/live-common/lib/libcore/getFeesForTransaction";
+import { getFees } from "@ledgerhq/live-common/lib/libcore/getFees";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { encode } from "@ledgerhq/live-common/lib/cross";
 import manager from "@ledgerhq/live-common/lib/manager";
@@ -62,6 +63,32 @@ import { inferTransactions, inferTransactionsOpts } from "./transaction";
 import { apdusFromFile } from "./stream";
 import { toAccountRaw } from "@ledgerhq/live-common/lib/account/serialization";
 import { Buffer } from "buffer";
+
+const getFeesFormatters = {
+  raw: e => e,
+  json: e => ({
+    type: e.type,
+    value: Array.isArray(e.value)
+      ? e.value.map(bn => bn.toNumber())
+      : e.value.toNumber()
+  }),
+  summary: e => {
+    switch (e.type) {
+      case "feePerBytes":
+        return "feePerBytes: " + e.value.map(bn => bn.toString());
+      case "gasPrice":
+        return (
+          "gasPrice: " + formatCurrencyUnit(e.unit, e.value, { showCode: true })
+        );
+      case "fee":
+        return (
+          "fee: " + formatCurrencyUnit(e.unit, e.value, { showCode: true })
+        );
+      default:
+        return e;
+    }
+  }
+};
 
 const asQR = str =>
   Observable.create(o =>
@@ -559,6 +586,30 @@ const all = {
         map(account =>
           (accountFormatters[opts.format] || accountFormatters.default)(account)
         )
+      )
+  },
+
+  getFees: {
+    description: "Get the currency fees for accounts",
+    args: [
+      ...scanCommonOpts,
+      {
+        name: "format",
+        alias: "f",
+        type: String,
+        typeDesc: Object.keys(getFeesFormatters).join(" | "),
+        desc: "how to display the data"
+      }
+    ],
+    job: opts =>
+      scan(opts).pipe(
+        mergeMap(account => from(getFees(account))),
+        map(e => {
+          const f = getFeesFormatters[opts.format || "summary"];
+          if (!f)
+            throw new Error("getFees: no such formatter '" + opts.format + "'");
+          return f(e);
+        })
       )
   },
 
