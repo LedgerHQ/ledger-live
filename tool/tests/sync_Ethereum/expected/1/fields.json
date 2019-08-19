@@ -560,7 +560,7 @@
   "pendingOperations": [],
   "currencyId": "ethereum",
   "unitMagnitude": 18,
-  "balance": "162057335906944",
+  "balance": "1704544335906944",
   "xpub": "xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg",
   "tokenAccounts": [
     {
@@ -755,7 +755,7 @@
           "transactionSequenceNumber": 14,
           "extra": {},
           "date": "2019-06-28T15:32:26.000Z",
-          "value": "3999999999999999500",
+          "value": "3999999999999999481",
           "fee": "487895120000000"
         }
       ],
@@ -802,7 +802,7 @@
           "transactionSequenceNumber": 15,
           "extra": {},
           "date": "2019-06-28T15:34:44.000Z",
-          "value": "4999999999999999000",
+          "value": "4999999999999999081",
           "fee": "703825000000000"
         }
       ],
@@ -945,6 +945,34 @@
           "date": "2019-07-09T12:32:30.000Z",
           "value": "30000",
           "fee": "163623000000000"
+        }
+      ],
+      "pendingOperations": []
+    },
+    {
+      "id": "libcore:1:ethereum:xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg:+0xD46bA6D942050d489DBd938a2C909A5d5039A161",
+      "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg:",
+      "tokenId": "ethereum/erc20/ampleforth",
+      "balance": "236533873",
+      "operations": [
+        {
+          "id": "libcore:1:ethereum:xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg:+0xD46bA6D942050d489DBd938a2C909A5d5039A161-0x7c02fce421dd522469c815b3b79dc5d18a3f7a52acc67635b1c1892d4f2c7cf6-IN",
+          "type": "IN",
+          "hash": "0x7c02fce421dd522469c815b3b79dc5d18a3f7a52acc67635b1c1892d4f2c7cf6",
+          "senders": [
+            "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5"
+          ],
+          "recipients": [
+            "0xBE6051057B83c2669Ac70530fE7271Db6A7caB6c"
+          ],
+          "blockHeight": 8271908,
+          "blockHash": null,
+          "accountId": "libcore:1:ethereum:xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg:+0xD46bA6D942050d489DBd938a2C909A5d5039A161",
+          "transactionSequenceNumber": 110,
+          "extra": {},
+          "date": "2019-08-02T14:53:48.000Z",
+          "value": "250000000",
+          "fee": "108054000000000"
         }
       ],
       "pendingOperations": []
