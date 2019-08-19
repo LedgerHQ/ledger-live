@@ -8,6 +8,7 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/lib/currencies";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import { createSelector } from "reselect";
 import type {
   CryptoCurrency,
@@ -94,14 +95,20 @@ const handlers: Object = {
     ...state,
     ...settings,
   }),
-  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => ({
-    ...state,
-    ...settings,
-    currenciesSettings: merge(
-      state.currenciesSettings,
-      settings.currenciesSettings,
-    ),
-  }),
+  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => {
+    const { developerModeEnabled, ...rest } = settings;
+
+    setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
+
+    return {
+      ...state,
+      ...rest,
+      currenciesSettings: merge(
+        state.currenciesSettings,
+        settings.currenciesSettings,
+      ),
+    };
+  },
   UPDATE_CURRENCY_SETTINGS: (
     { currenciesSettings, ...state }: SettingsState,
     { ticker, patch },
@@ -318,5 +325,24 @@ export const countervalueFirstSelector = (state: State) =>
 
 export const readOnlyModeEnabledSelector = (state: State) =>
   Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
+
+// $FlowFixMe
+export const exportSettingsSelector = createSelector(
+  counterValueCurrencySelector,
+  () => getEnv("MANAGER_DEV_MODE"),
+  state => state.settings.currenciesSettings,
+  state => state.settings.pairExchanges,
+  (
+    counterValueCurrency,
+    developerModeEnabled,
+    currenciesSettings,
+    pairExchanges,
+  ) => ({
+    counterValue: counterValueCurrency.ticker,
+    currenciesSettings,
+    pairExchanges,
+    developerModeEnabled,
+  }),
+);
 
 export default handleActions(handlers, INITIAL_STATE);

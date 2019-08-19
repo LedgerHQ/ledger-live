@@ -44,6 +44,7 @@ import DebugSettings, {
   DebugDevices,
   DebugMocks,
 } from "./screens/Settings/Debug";
+import DebugExport from "./screens/Settings/Debug/ExportAccounts"; 
 import CurrencySettings from "./screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import CurrenciesList from "./screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import RatesList from "./screens/Settings/CryptoAssets/Rates/RatesList";
@@ -151,6 +152,7 @@ const SettingsStack = createStackNavigator(
     // $FlowFixMe
     DebugDevices,
     DebugMocks,
+    DebugExport,
     DebugBLE,
     // $FlowFixMe
     DebugBLEBenchmark,
