@@ -1,7 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import { from, defer, of } from "rxjs";
+import { from, defer, of, throwError } from "rxjs";
 import { skip, take, reduce, mergeMap, map, concatMap } from "rxjs/operators";
 import { fromAccountRaw } from "@ledgerhq/live-common/lib/account";
 import { syncAccount } from "@ledgerhq/live-common/lib/libcore/syncAccount";
@@ -11,6 +11,7 @@ import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { jsonFromFile } from "./stream";
 import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
+import fs from "fs";
 
 export const deviceOpt = {
   name: "device",
@@ -40,6 +41,12 @@ export const scanCommonOpts = [
     type: String,
     typeDesc: "filename",
     desc: "use a JSON account file or '-' for stdin (alternatively to --device)"
+  },
+  {
+    name: "appjsonFile",
+    type: String,
+    typeDesc: "filename",
+    desc: "use a desktop app.json (alternatively to --device)"
   },
   currencyOpt,
   {
@@ -109,7 +116,24 @@ export const inferCurrency = ({ device, currency, file, xpub }) => {
 };
 
 export function scan(arg) {
-  const { device, xpub: xpubArray, file, scheme, index, length } = arg;
+  const { device, xpub: xpubArray, file, appjsonFile, scheme, index, length } = arg;
+
+  if (typeof appjsonFile === "string") {
+    const appjsondata = appjsonFile
+      ? JSON.parse(fs.readFileSync(appjsonFile, "utf-8"))
+      : { data: { accounts: [] } };
+
+    if (typeof appjsondata.data.accounts === "string") {
+      return throwError(
+        new Error("encrypted ledger live data is not supported")
+      );
+    }
+    return from(appjsondata.data.accounts.map(a=>fromAccountRaw(a.data))).pipe(
+      skip(index || 0),
+      take(length === undefined ? (index !== undefined ? 1 : Infinity) : length)
+    )
+  }
+
   if (typeof file === "string") {
     return jsonFromFile(file).pipe(
       map(fromAccountRaw),

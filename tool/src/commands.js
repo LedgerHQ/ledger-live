@@ -61,6 +61,7 @@ import {
 import { inferTransactions, inferTransactionsOpts } from "./transaction";
 import { apdusFromFile } from "./stream";
 import { toAccountRaw } from "@ledgerhq/live-common/lib/account/serialization";
+import { Buffer } from "buffer";
 
 const asQR = str =>
   Observable.create(o =>
@@ -251,9 +252,16 @@ const all = {
       )
   },
 
-  liveQR: {
-    description: "Show Live QR Code to export to mobile",
-    args: [...scanCommonOpts],
+  exportAccounts: {
+    description: "Export given accounts to Live QR or console for importing",
+    args: [...scanCommonOpts,
+      {
+        name: "out",
+        alias: "o",
+        type: Boolean,
+        desc: "output to console"
+      }
+    ],
     job: opts =>
       scan(opts).pipe(
         reduce((accounts, account) => accounts.concat(account), []),
@@ -265,12 +273,17 @@ const all = {
             exporterVersion: "0.0.0"
           });
           const frames = dataToFrames(data, 80, 4);
-          const qrObservables = frames.map(str =>
-            asQR(str).pipe(shareReplay())
-          );
-          return interval(300).pipe(
-            mergeMap(i => qrObservables[i % qrObservables.length])
-          );
+
+          if (opts.out){
+            return of(Buffer.from(JSON.stringify(frames)).toString('base64'))
+          }else{
+            const qrObservables = frames.map(str =>
+              asQR(str).pipe(shareReplay())
+            );
+            return interval(300).pipe(
+              mergeMap(i => qrObservables[i % qrObservables.length])
+            );
+          }
         }),
         tap(() => console.clear()) // eslint-disable-line no-console
       )
