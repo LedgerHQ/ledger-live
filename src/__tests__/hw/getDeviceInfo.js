@@ -5,6 +5,28 @@ import {
 } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 
+test("1.2.0", async () => {
+  const Transport = createTransportReplayer(
+    RecordStore.fromString(`
+      => e001000000
+      <= 3110000203312e32040600000004312e30009000
+    `)
+  );
+  const t = await Transport.create();
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "1.2",
+    mcuVersion: "1.0",
+    majMin: "1.2",
+    providerId: 1,
+    targetId: 823132162,
+    isOSU: false,
+    isBootloader: false,
+    managerAllowed: false,
+    pinValidated: false
+  });
+});
+
 test("1.3.1", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`

@@ -12,6 +12,25 @@ import { setNetwork } from "../../network";
 jest.setTimeout(20000);
 setNetwork(axios);
 
+/*
+// FIXME not yet there?
+test("1.2.0", async () => {
+  const deviceInfo = {
+    version: "1.2",
+    mcuVersion: "1.0",
+    majMin: "1.2",
+    providerId: 1,
+    targetId: 823132162,
+    isOSU: false,
+    isBootloader: false,
+    managerAllowed: false,
+    pinValidated: false
+  };
+  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  expect(res).toMatchObject({ final: {}, osu: {} });
+});
+*/
+
 test("1.3.1", async () => {
   const deviceInfo = {
     version: "1.3.1",
