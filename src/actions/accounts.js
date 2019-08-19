@@ -25,9 +25,13 @@ export const importAccounts = ({
   selectedAccounts,
 });
 
-export const addAccount = (account: Account) => ({
+export const replaceAccounts = (payload: {
+  scannedAccounts: Account[],
+  selectedIds: string[],
+  renamings: { [id: string]: string },
+}) => ({
   type: "ACCOUNTS_ADD",
-  account,
+  ...payload,
 });
 
 export type UpdateAccountWithUpdater = (
