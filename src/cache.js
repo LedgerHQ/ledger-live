@@ -10,7 +10,7 @@ export const makeLRUCache = <A: Array<*>, T>(
     maxAge: 5 * 60 * 1000
   }
 ): ((...args: A) => Promise<T>) => {
-  const cache = LRU(lruOpts);
+  const cache = new LRU(lruOpts);
   return (...args) => {
     const key = keyExtractor(...args);
     let promise = cache.get(key);
