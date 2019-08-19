@@ -1,4 +1,8 @@
 #!/bin/bash
+
+
+exit # FIXME @Arnaud97234
+
 c="Bitcoin"
 
 ledger-live app -o "$c"
