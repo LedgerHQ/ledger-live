@@ -339,7 +339,10 @@ export default (arg: {
 
       if (methods) {
         Object.keys(methods).forEach(method => {
-          const { njsField, params, returns } = methods[method];
+          const { njsField, params, returns, nodejsNotAvailable } = methods[
+            method
+          ];
+          if (nodejsNotAvailable) return;
           if (njsField) {
             m.prototype[method] = function met() {
               const value = this[njsField];

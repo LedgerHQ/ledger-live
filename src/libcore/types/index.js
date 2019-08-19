@@ -263,7 +263,8 @@ type SpecMapF = {
   returns?: string | string[],
   njsField?: string,
   njsInstanciateClass?: Array<Object>,
-  njsBuggyMethodIsNotStatic?: boolean
+  njsBuggyMethodIsNotStatic?: boolean,
+  nodejsNotAvailable?: boolean
 };
 
 export type Spec = {
@@ -528,6 +529,12 @@ export const reflect = (declare: (string, Spec) => void) => {
     statics: {
       newInstance: {
         returns: "ThreadDispatcher"
+      }
+    },
+    methods: {
+      getMainExecutionContext: {
+        nodejsNotAvailable: true,
+        returns: "SerialContext"
       }
     }
   });
