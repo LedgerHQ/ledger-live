@@ -472,9 +472,7 @@
         "step3": "Resetting Ledger Live does not affect your crypto assets."
       }
     },
-    "stepShareData": {
-
-    },
+    "stepShareData": {},
     "stepFinish": {
       "title": "Your device is ready!",
       "readOnlyTitle": "All set!",
@@ -591,6 +589,9 @@
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
+      "seeMore": "See more Tokens",
+      "seeLess": "See less Tokens",
+      "addTokens": "Add tokens",
       "howTo": "To add tokens accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
     },
     "send": "Send",
@@ -703,7 +704,6 @@
       "counterValueDesc": "Set the currency shown next to your balance and operations.",
       "exchange": "Rate provider",
       "exchangeDesc": "Set provider of exchange rate from Bitcoin to {{fiat}}",
-      "exchangeHeader": "Exchange",
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red.",
       "reportErrors": "Bug reports",
@@ -736,15 +736,27 @@
       "termsOfUse": "Terms of use",
       "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1> and <3>Privacy Policy</3>."
     },
+    "cryptoAssets": {
+      "header": "Crypto assets",
+      "title": "Crypto assets",
+      "desc": "Set rate providers and number of confirmations per crypto.",
+      "rateProviderHeader": "Rate provider"
+    },
     "currencies": {
       "header": "Currencies",
-      "title": "Currencies",
-      "desc": "Set rate provider and number of confirmations per crypto.",
       "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings"
+    },
+    "rates": {
+      "header": "Rates",
+      "desc": "Here are all the rates used by Ledger Live to calculate countervalues. Choose which rate providers are used for each rate.",
+      "pair": "{{from}} to {{to}}",
+      "cryptoToFiat": "Crypto to Fiat",
+      "cryptoToCrypto": "Crypto to Crypto",
+      "noRateProvider": "No rate provider available for this asset"
     },
     "about": {
       "title": "About",
@@ -850,7 +862,7 @@
       "summary": "Summary",
       "connectDevice": "Connect Device",
       "verification": "Verification",
-      "stepRange": "{{currentStep}} of {{totalSteps}}"
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "recipient": {
       "scan": "Scan QR Code",
@@ -907,9 +919,18 @@
     },
     "imported": "Accounts successfully added",
     "sections": {
-      "accountsToImport": "Add existing account",
-      "addNewAccount": "Add new account",
-      "existing": "Accounts already in portfolio"
+      "importable": {
+        "title": "Add existing account"
+      },
+      "creatable": {
+        "title": "Add new account"
+      },
+      "imported": {
+        "title": "Accounts already in portfolio ({{length}})"
+      },
+      "migrate": {
+        "title": "Accounts to update"
+      }
     },
     "success": {
       "desc": "View your accounts or add more of them",
