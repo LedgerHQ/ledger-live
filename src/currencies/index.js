@@ -17,7 +17,10 @@ import {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
   getFiatCurrencyByTicker,
-  hasFiatCurrencyTicker
+  hasFiatCurrencyTicker,
+  isFiatSupported,
+  listSupportedFiats,
+  setSupportedFiats
 } from "../data/fiat";
 
 import {
@@ -70,6 +73,9 @@ export {
   currenciesByMarketcap,
   useCurrenciesByMarketcap,
   listFiatCurrencies,
+  isFiatSupported,
+  listSupportedFiats,
+  setSupportedFiats,
   listCryptoCurrencies,
   setSupportedCurrencies,
   listSupportedCurrencies,
