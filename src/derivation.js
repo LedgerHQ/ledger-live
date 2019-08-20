@@ -37,6 +37,11 @@ const modes = Object.freeze({
     skipFirst: true, // already included in the normal bip44,
     tag: "metamask"
   },
+  // many users have wrongly sent BTC on BCH paths
+  legacy_on_bch: {
+    overridesCoinType: 145,
+    isInvalid: true
+  },
   // chrome app and LL wrongly used to derivate vertcoin on 128
   vertcoin_128: {
     tag: "legacy",
@@ -102,6 +107,7 @@ const modes = Object.freeze({
 (modes: { [_: DerivationMode]: ModeSpec }); // eslint-disable-line
 
 const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
+  bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "etcM", "ethMM"]
