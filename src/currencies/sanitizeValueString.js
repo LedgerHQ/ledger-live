@@ -24,11 +24,14 @@ export const sanitizeValueString = (
       if (decimals >= 0) {
         decimals++;
         if (decimals > unit.magnitude) break;
-        value += c;
+        value = value === "0" ? c : value + c;
         display += c;
       } else if (value !== "0") {
         value += c;
         display += c;
+      } else {
+        value = c;
+        display = c;
       }
     } else if (decimals === -1 && (c === "," || c === ".")) {
       if (unit.magnitude === 0) {

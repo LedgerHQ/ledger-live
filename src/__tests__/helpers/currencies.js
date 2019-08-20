@@ -561,4 +561,12 @@ test("sanitizeValueString", () => {
     display: "13",
     value: "13"
   });
+  expect(sanitizeValueString(btcUnit, "000.12345678")).toMatchObject({
+    display: "0.12345678",
+    value: "12345678"
+  });
+  expect(sanitizeValueString(btcUnit, "001.23456789")).toMatchObject({
+    display: "1.23456789",
+    value: "123456789"
+  });
 });
