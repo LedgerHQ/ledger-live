@@ -97,7 +97,7 @@ export default (arg: {
 
     NJSThreadDispatcher.getMainExecutionContext = getMainExecutionContext;
 
-    function createHttpConnection(res, err) {
+    function createHttpConnection(res, libcoreError) {
       if (!res) {
         return null;
       }
@@ -112,7 +112,7 @@ export default (arg: {
         getStatusText: () => res.statusText,
         getHeaders: () => headersMap,
         readBody: () => ({
-          error: err ? { code: 0, message: "something went wrong" } : null,
+          error: libcoreError,
           data: stringToBytesArray(res.data)
         })
       };
@@ -134,6 +134,10 @@ export default (arg: {
           method: lib.METHODS[method],
           url,
           headers,
+          validateStatus: status =>
+            // FIXME in future, everything should passthrough libcore
+            // for now as we need to have the server error we will only pass-in 2xx and 404
+            (status >= 200 && status < 300) || status === 404,
           // the default would parse the request, we want to preserve the string
           transformResponse: data => data
         };
@@ -154,14 +158,15 @@ export default (arg: {
         }
         try {
           res = await network(param);
-          const urlConnection = createHttpConnection(res);
+          const urlConnection = createHttpConnection(res, null);
           r.complete(urlConnection, null);
         } catch (err) {
-          const urlConnection = createHttpConnection(res, err.message);
-          r.complete(urlConnection, {
-            code: 0,
+          const libcoreError = {
+            code: lib.ERROR_CODE.HTTP_ERROR,
             message: JSON.stringify(serializeError(err))
-          });
+          };
+          const urlConnection = createHttpConnection(res, libcoreError);
+          r.complete(urlConnection, libcoreError);
         }
       }
     });
