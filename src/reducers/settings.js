@@ -68,6 +68,7 @@ export type SettingsState = {
   readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
+  hideEmptyTokenAccounts: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -86,6 +87,7 @@ const INITIAL_STATE: SettingsState = {
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
   countervalueFirst: false,
+  hideEmptyTokenAccounts: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -218,6 +220,11 @@ const handlers: Object = {
     ...state,
     countervalueFirst: !state.countervalueFirst,
   }),
+
+  SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (state, { hideEmptyTokenAccounts }) => ({
+    ...state,
+    hideEmptyTokenAccounts,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -344,5 +351,8 @@ export const exportSettingsSelector = createSelector(
     developerModeEnabled,
   }),
 );
+
+export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
+  state.settings.hideEmptyTokenAccounts;
 
 export default handleActions(handlers, INITIAL_STATE);

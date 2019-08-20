@@ -1,14 +1,17 @@
 // @flow
 
 import React, { useCallback, useState } from "react";
+import { compose } from "redux";
 import { Trans } from "react-i18next";
 import take from "lodash/take";
 import { FlatList, Platform, StyleSheet, View } from "react-native";
-import type { TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
-import { withNavigation } from "react-navigation";
 import MaterialIcon from "react-native-vector-icons/dist/MaterialIcons";
+import { withNavigation } from "react-navigation";
+import { listTokenAccounts } from "@ledgerhq/live-common/lib/account";
 import TokenRow from "../../components/TokenRow";
+import withEnv from "../../logic/withEnv";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -72,17 +75,19 @@ const Card = ({ children }: { children: any }) => (
 );
 
 const TokenAccountsList = ({
-  tokenAccounts,
+  parentAccount,
   onAccountPress,
   navigation,
   accountId,
 }: {
-  tokenAccounts: TokenAccount[],
+  parentAccount: Account,
   onAccountPress: TokenAccount => *,
   navigation: *,
   accountId: string,
 }) => {
   const [isCollapsed, setCollapsed] = useState(true);
+  const tokenAccounts = listTokenAccounts(parentAccount);
+
   const renderHeader = useCallback(
     () => (
       <View style={styles.header}>
@@ -191,4 +196,7 @@ const TokenAccountsList = ({
   );
 };
 
-export default withNavigation(TokenAccountsList);
+export default compose(
+  withNavigation,
+  withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
+)(TokenAccountsList);

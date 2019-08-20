@@ -220,7 +220,7 @@ class AccountScreen extends PureComponent<Props, State> {
           <TokenAccountsList
             accountId={account.id}
             onAccountPress={this.onAccountPress}
-            tokenAccounts={account.tokenAccounts}
+            parentAccount={account}
           />
         ) : null}
       </View>

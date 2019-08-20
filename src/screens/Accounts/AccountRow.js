@@ -3,8 +3,10 @@ import React, { Fragment, PureComponent } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import { RectButton } from "react-native-gesture-handler";
+import { compose } from "redux";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import { listTokenAccounts } from "@ledgerhq/live-common/lib/account";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import LText from "../../components/LText";
@@ -18,6 +20,7 @@ import type { AsyncState } from "../../reducers/bridgeSync";
 import AccountSyncStatus from "./AccountSyncStatus";
 import Button from "../../components/Button";
 import TokenRow from "../../components/TokenRow";
+import withEnv from "../../logic/withEnv";
 
 const mapStateToProps = createStructuredSelector({
   syncState: accountSyncStateSelector,
@@ -70,6 +73,7 @@ class AccountRow extends PureComponent<Props, State> {
 
   render() {
     const { account, isUpToDateAccount, syncState } = this.props;
+    const tokenAccounts = listTokenAccounts(account);
 
     return (
       <View style={styles.root}>
@@ -77,7 +81,7 @@ class AccountRow extends PureComponent<Props, State> {
           style={[
             styles.accountRowCard,
             {
-              elevation: account.tokenAccounts && this.state.collapsed ? 2 : 1,
+              elevation: tokenAccounts && this.state.collapsed ? 2 : 1,
             },
           ]}
         >
@@ -123,7 +127,7 @@ class AccountRow extends PureComponent<Props, State> {
               </View>
             </View>
           </RectButton>
-          {account.tokenAccounts && account.tokenAccounts.length !== 0 ? (
+          {tokenAccounts.length !== 0 ? (
             <Fragment>
               <View
                 style={[
@@ -131,7 +135,7 @@ class AccountRow extends PureComponent<Props, State> {
                   { display: this.state.collapsed ? "none" : "flex" },
                 ]}
               >
-                {account.tokenAccounts.map((tkn, i) => (
+                {tokenAccounts.map((tkn, i) => (
                   <TokenRow
                     nested
                     key={i}
@@ -152,9 +156,7 @@ class AccountRow extends PureComponent<Props, State> {
                           : "accounts.row.hideTokens"
                       }
                       values={{
-                        length: account.tokenAccounts
-                          ? account.tokenAccounts.length
-                          : 0,
+                        length: tokenAccounts.length,
                       }}
                     />
                   }
@@ -172,9 +174,7 @@ class AccountRow extends PureComponent<Props, State> {
             </Fragment>
           ) : null}
         </View>
-        {!!this.state.collapsed &&
-        account.tokenAccounts &&
-        account.tokenAccounts.length ? (
+        {!!this.state.collapsed && tokenAccounts.length ? (
           <View style={styles.tokenAccountIndicator} />
         ) : null}
       </View>
@@ -188,7 +188,10 @@ const AccountCv = ({ children }: { children: * }) => (
   </LText>
 );
 
-export default connect(mapStateToProps)(AccountRow);
+export default compose(
+  connect(mapStateToProps),
+  withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
+)(AccountRow);
 
 const styles = StyleSheet.create({
   button: {

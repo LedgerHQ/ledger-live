@@ -6,15 +6,17 @@ import { SafeAreaView, FlatList } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
+import { compose } from "redux";
 import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
 import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
 
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import {
-  flattenAccountsSelector,
+  flattenAccountsEnforceHideEmptyTokenSelector,
   accountsSelector,
 } from "../../reducers/accounts";
+import withEnv from "../../logic/withEnv";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -120,7 +122,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
 }
 
 const mapStateToProps = createStructuredSelector({
-  allAccounts: flattenAccountsSelector,
+  allAccounts: flattenAccountsEnforceHideEmptyTokenSelector,
   accounts: accountsSelector,
 });
 
@@ -161,4 +163,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(connect(mapStateToProps)(SendFundsSelectAccount));
+export default compose(
+  connect(mapStateToProps),
+  withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
+  translate(),
+)(SendFundsSelectAccount);

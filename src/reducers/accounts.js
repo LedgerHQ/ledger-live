@@ -90,6 +90,13 @@ export const flattenAccountsSelector = createSelector(
 );
 
 // $FlowFixMe
+export const flattenAccountsEnforceHideEmptyTokenSelector = createSelector(
+  accountsSelector,
+  accounts =>
+    flattenAccounts(accounts, { enforceHideEmptyTokenAccounts: true }),
+);
+
+// $FlowFixMe
 export const accountsCountSelector = createSelector(
   accountsSelector,
   acc => acc.length,
