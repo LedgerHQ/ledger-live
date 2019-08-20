@@ -734,7 +734,9 @@
         "bullet2": "Ledger Live version, OS region, language and region"
       },
       "termsOfUse": "Terms of use",
-      "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1> and <3>Privacy Policy</3>."
+      "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1> and <3>Privacy Policy</3>.",
+      "hideEmptyTokenAccounts": "Hide empty token accounts",
+      "hideEmptyTokenAccountsDesc": "Hide token accounts with zero balance on the Accounts page."
     },
     "cryptoAssets": {
       "header": "Crypto assets",
