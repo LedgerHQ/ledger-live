@@ -1,6 +1,7 @@
 // @flow
 import { log } from "@ledgerhq/logs";
-import { Observable, from, of, empty, concat } from "rxjs";
+import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
+import { Observable, from, of, empty, concat, throwError } from "rxjs";
 import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
 
 import ManagerAPI from "../api/Manager";
@@ -53,6 +54,19 @@ const repair = (
         if (!deviceInfo.isBootloader) {
           // finish earlier
           return empty();
+        }
+
+        // This is a special case where user is in firmware 1.3.1
+        // and the device shows MCU Not Genuine.
+        // User needs to press both keys three times to go back to dashboard
+        // and continue the update process
+        if (
+          forceMCU &&
+          forceMCU === "0.7" &&
+          (deviceInfo.majMin === "0.6" || deviceInfo.majMin === "0.7")
+        ) {
+          // finish earlier
+          return throwError(new MCUNotGenuineToDashboard());
         }
 
         if (forceMCU) {
