@@ -94,7 +94,10 @@ const TokenAccountsList = ({
         <LText
           fontWeight="500"
           style={{ color: colors.darkBlue, fontSize: 16 }}
-        >{`Tokens (${tokenAccounts.length})`}</LText>
+        >
+          <Trans i18nKey="common.token" count={tokenAccounts.length} />
+          {` (${tokenAccounts.length})`}
+        </LText>
         {tokenAccounts.length > 0 ? (
           <Button
             containerStyle={{ width: 120 }}
