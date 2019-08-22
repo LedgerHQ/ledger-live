@@ -27,14 +27,14 @@ export const fromFile = file =>
 export const apdusFromFile = file =>
   fromFile(file).pipe(
     map(b => b.toString()),
-    concatMap(
-      str =>
-        str
-          .replace(/ /g, "")
-          .split("\n")
-          // we supports => <= recorded files but will just clear out the <= and =>
-          .filter(line => !line.startsWith("<=")) // we remove the responses
-          .map(line => (line.startsWith("=>") ? line.slice(2) : line)) // we just keep the sending
+    concatMap(str =>
+      str
+        .replace(/ /g, "")
+        .split("\n")
+        // we supports => <= recorded files but will just clear out the <= and =>
+        .filter(line => !line.startsWith("<=")) // we remove the responses
+        .map(line => (line.startsWith("=>") ? line.slice(2) : line)) // we just keep the sending
+        .filter(Boolean)
     ),
     map(line => Buffer.from(line, "hex"))
   );
