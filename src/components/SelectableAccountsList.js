@@ -38,7 +38,7 @@ type ListProps = {
   selectedIds: string[],
   isDisabled?: boolean,
   forceSelected?: boolean,
-  EmptyState?: React$ComponentType<*>,
+  emptyState?: React$Node,
   header: React$Node,
   style?: *,
   index: number,
@@ -75,7 +75,7 @@ class SelectableAccountsList extends Component<ListProps> {
       selectedIds,
       isDisabled,
       forceSelected,
-      EmptyState,
+      emptyState,
       header,
       showHint,
       index,
@@ -108,7 +108,7 @@ class SelectableAccountsList extends Component<ListProps> {
             onPress={onPressAccount}
           />
         ))}
-        {accounts.length === 0 && EmptyState ? <EmptyState /> : null}
+        {accounts.length === 0 && emptyState ? emptyState : null}
       </View>
     );
   }
