@@ -574,7 +574,8 @@
     "details": "{{ currency }} details",
     "extra": {
       "tag": "Tag"
-    }
+    },
+    "multipleAddresses": "Why multiple addresses?"
   },
   "operationList": {
     "noOperations": "No Operations",

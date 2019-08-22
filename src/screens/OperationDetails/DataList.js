@@ -3,12 +3,13 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import LText from "../../components/LText";
-import colors from "../../colors";
 import Touchable from "../../components/Touchable";
+import colors from "../../colors";
 
 type Props = {
   data: string[],
   title?: React$Node,
+  rightComp?: React$Node,
 };
 type State = {
   showAll: boolean,
@@ -24,14 +25,15 @@ export default class DataList extends PureComponent<Props, State> {
 
   // TODO make it more generic with title definition in parent
   render() {
-    const { data, title } = this.props;
+    const { data, title, rightComp } = this.props;
     const { showAll } = this.state;
     const numToShow = 2;
     const shouldShowMore = data.length > numToShow;
     return (
       <View>
         <View style={{ flexDirection: "row" }}>
-          {title && <LText style={styles.sectionTitle}>{title}</LText>}
+          {title ? <LText style={styles.sectionTitle}>{title}</LText> : null}
+          {rightComp || null}
           {shouldShowMore && (
             <Touchable
               event="OperationDetailsShowMore"

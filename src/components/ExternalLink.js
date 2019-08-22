@@ -11,6 +11,7 @@ type Props = {
   onPress: () => void,
   event: string,
   eventProperties?: Object,
+  iconFirst?: boolean,
 };
 
 const Link = ({ text, onPress, event, eventProperties }: Props) => (
