@@ -158,6 +158,7 @@ class AccountRow extends PureComponent<Props, State> {
                       values={{
                         length: tokenAccounts.length,
                       }}
+                      count={tokenAccounts.length}
                     />
                   }
                   IconRight={() => (
