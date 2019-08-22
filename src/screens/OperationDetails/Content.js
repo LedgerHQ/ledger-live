@@ -73,7 +73,9 @@ class Content extends PureComponent<Props, State> {
     const { account, parentAccount, operation, currencySettings } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
     const unit = getAccountUnit(account);
+    const parentUnit = getAccountUnit(mainAccount);
     const currency = getAccountCurrency(account);
+    const parentCurrency = getAccountCurrency(mainAccount);
     const amount = getOperationAmountNumber(operation);
     const valueColor = amount.isNegative() ? colors.smoke : colors.green;
     const confirmations = operation.blockHeight
@@ -259,7 +261,7 @@ class Content extends PureComponent<Props, State> {
                 <LText style={styles.sectionValue} semiBold>
                   <CurrencyUnitValue
                     showCode
-                    unit={unit}
+                    unit={parentUnit}
                     value={operation.fee}
                   />
                 </LText>
@@ -272,7 +274,7 @@ class Content extends PureComponent<Props, State> {
                     disableRounding={true}
                     date={operation.date}
                     subMagnitude={1}
-                    currency={currency}
+                    currency={parentCurrency}
                     value={operation.fee}
                   />
                 </LText>
