@@ -9,8 +9,6 @@ import {
 import { setSupportedCurrencies } from "../../currencies";
 
 setSupportedCurrencies(["ethereum"]);
-setEnv("EXPERIMENTAL_LIBCORE", true);
-setEnv("EXPERIMENTAL_EXPLORERS", true);
 
 test("importAccountsMakeItems", () => {
   const result = {
