@@ -40,6 +40,8 @@
     "add": "Add",
     "slow": "slow",
     "fast": "fast",
+    "token": "Token",
+    "token_plural": "Tokens",
     "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
@@ -591,8 +593,8 @@
       "viewInExplorer": "View in explorer",
       "seeMore": "See more Tokens",
       "seeLess": "See less Tokens",
-      "addTokens": "Add tokens",
-      "howTo": "To add tokens accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+      "addTokens": "Add token",
+      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
     },
     "send": "Send",
     "receive": "Receive",
@@ -681,8 +683,10 @@
       "upToDate": "Synchronized",
       "error": "Error",
       "queued": "Awaiting",
-      "showTokens": "Show {{length}} tokens",
-      "hideTokens": "Hide tokens"
+      "showTokens": "Show {{length}} token",
+      "showTokens_plural": "Show {{length}} tokens",
+      "hideTokens": "Hide token",
+      "hideTokens_plural": "Hide tokens"
     }
   },
   "distribution": {
