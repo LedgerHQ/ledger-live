@@ -19,6 +19,7 @@ import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
 import AccountOrder from "./AccountOrder";
 import AddAccount from "./AddAccount";
+import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 
 const List = globalSyncRefreshControl(FlatList);
 
@@ -76,6 +77,7 @@ class Accounts extends Component<Props> {
           style={styles.list}
           contentContainerStyle={styles.contentContainer}
         />
+        <MigrateAccountsBanner />
       </Fragment>
     );
   }

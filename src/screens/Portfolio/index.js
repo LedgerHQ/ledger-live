@@ -49,6 +49,7 @@ import TradingDisclaimer from "../../modals/TradingDisclaimer";
 import TrackScreen from "../../analytics/TrackScreen";
 import NoOpStatePortfolio from "./NoOpStatePortfolio";
 import NoOperationFooter from "../../components/NoOperationFooter";
+import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
@@ -221,6 +222,7 @@ class PortfolioScreen extends Component<
             }
             ListEmptyComponent={this.ListEmptyComponent}
           />
+          <MigrateAccountsBanner />
         </SafeAreaView>
         {disclaimer}
       </View>
@@ -241,6 +243,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   inner: {
+    position: "relative",
     flex: 1,
   },
   list: {

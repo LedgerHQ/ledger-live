@@ -5,6 +5,7 @@ import uniq from "lodash/uniq";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import {
   addAccounts,
+  canBeMigrated,
   flattenAccounts,
   importAccountsReduce,
 } from "@ledgerhq/live-common/lib/account";
@@ -83,6 +84,9 @@ export const exportSelector = (s: *) => ({
 
 export const accountsSelector = (s: *): Account[] => s.accounts.active;
 
+export const migratableAccountsSelector = (s: *): Account[] =>
+  s.accounts.active.filter(canBeMigrated);
+
 // $FlowFixMe
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
@@ -100,6 +104,12 @@ export const flattenAccountsEnforceHideEmptyTokenSelector = createSelector(
 export const accountsCountSelector = createSelector(
   accountsSelector,
   acc => acc.length,
+);
+
+// $FlowFixMe
+export const someAccountsNeedMigrationSelector = createSelector(
+  accountsSelector,
+  accounts => accounts.some(canBeMigrated),
 );
 
 // $FlowFixMe

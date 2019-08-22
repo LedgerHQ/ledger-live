@@ -34,6 +34,13 @@ export const replaceAccounts = (payload: {
   ...payload,
 });
 
+export const setAccounts = (accounts: Account[]) => ({
+  type: "ACCOUNTS_IMPORT",
+  state: {
+    active: accounts,
+  },
+});
+
 export type UpdateAccountWithUpdater = (
   accountId: string,
   (Account) => Account,

@@ -22,6 +22,9 @@ import Manager from "./screens/Manager";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
 import Settings from "./screens/Settings";
+import MigrateAccountsOverview from "./screens/MigrateAccounts/01-Overview";
+import MigrateAccountsConnectDevice from "./screens/MigrateAccounts/02-ConnectDevice";
+import MigrateAccountsProgress from "./screens/MigrateAccounts/03-Progress";
 import OnboardingStepGetStarted from "./screens/Onboarding/steps/get-started";
 import OnboardingStepChooseDevice from "./screens/Onboarding/steps/choose-device";
 import OnboardingStepSetupPin from "./screens/Onboarding/steps/setup-pin";
@@ -346,6 +349,23 @@ SendFunds.navigationOptions = ({ navigation }) => ({
       : false,
 });
 
+const MigrateAccountsFlow = createStackNavigator(
+  {
+    MigrateAccountsOverview,
+    MigrateAccountsConnectDevice,
+    MigrateAccountsProgress,
+  },
+  closableStackNavigatorConfig,
+);
+
+MigrateAccountsFlow.navigationOptions = ({ navigation }) => ({
+  header: null,
+  gesturesEnabled:
+    Platform.OS === "ios"
+      ? navigation.getParam("allowNavigation", true)
+      : false,
+});
+
 const FirmwareUpdate = createStackNavigator(
   {
     // $FlowFixMe
@@ -439,6 +459,7 @@ const BaseNavigator = createStackNavigator(
     EditDeviceName,
     PasswordAddFlow,
     PasswordModifyFlow,
+    MigrateAccountsFlow,
     // $FlowFixMe
     Distribution,
     ScanRecipient: {
