@@ -300,7 +300,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
               onSelectAll={!selectable ? undefined : this.selectAll}
               onUnselectAll={!selectable ? undefined : this.unselectAll}
               selectedIds={selectedIds}
-              EmptyState={emptyTexts[id]}
+              emptyState={emptyTexts[id]}
               isDisabled={!selectable}
               forceSelected={id === "existing"}
             />
