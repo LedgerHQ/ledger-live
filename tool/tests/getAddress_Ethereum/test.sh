@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-export EXPERIMENTAL_LIBCORE=1
-export EXPERIMENTAL_EXPLORERS=1
 c="Ethereum"
 
 ledger-live app -o "$c"

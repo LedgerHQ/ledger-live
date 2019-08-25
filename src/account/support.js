@@ -20,8 +20,6 @@ export const shouldShowNewAccount = (
 
 export function canBeMigrated(account: Account) {
   const { type } = decodeAccountId(account.id);
-  // at the moment migrations requires experimental libcore
-  if (!getEnv("EXPERIMENTAL_LIBCORE")) return false;
   if (libcoreNoGo.includes(account.currency.id)) return false;
   return type === "ethereumjs";
 }
@@ -54,17 +52,6 @@ export function checkAccountSupported(account: Account): ?Error {
   if (!isCurrencySupported(account.currency)) {
     return new CurrencyNotSupported("currency not supported", {
       currencyName: account.currency.name
-    });
-  }
-
-  const { type } = decodeAccountId(account.id);
-  if (
-    type === "libcore" &&
-    account.currency.family === "ethereum" &&
-    !getEnv("EXPERIMENTAL_EXPLORERS")
-  ) {
-    return new AccountNotSupported("experimental explorer required", {
-      reason: "require Experimental Nodes"
     });
   }
 }

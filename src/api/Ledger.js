@@ -49,7 +49,7 @@ const ledgerExplorersV2 = {
   decred: "dcr",
   digibyte: "dgb",
   dogecoin: "doge",
-  ethereum: "eth",
+  // ethereum: "eth", // moved to v3!
   // ethereum_classic: "ethc", // libcore dropped support of this
   hcash: "hsr",
   komodo: "kmd",
