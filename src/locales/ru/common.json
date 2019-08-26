@@ -805,6 +805,46 @@
       "disclaimer": "These are experimental features we provide on an “as is” basis for our community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk. Your crypto assets remain secured by your Ledger hardware wallet."
     }
   },
+  "migrateAccounts": {
+    "banner": "Ledger Live accounts update",
+    "overview": {
+      "headerTitle": "Account update",
+      "title": "Ledger Live accounts update",
+      "subtitle": "New update of Ledger Live requires an update of your accounts",
+      "notice": "{{accountCount}} account could not be updated. Please connect the device associated to the account below.",
+      "notice_plural": "{{accountCount}} accounts could not be updated. Please connect the device associated to the accounts below.",
+      "currency": "1 {{currency}} account needs to be updated",
+      "currency_plural": "{{count}} {{currency}} accounts need to be updated",
+      "start": "Start update",
+      "continue": "Continue update"
+    },
+    "progress": {
+      "headerTitle": "Updating accounts",
+      "pending": {
+        "title": "{{currency}} update in progress",
+        "subtitle": "Please wait while your account is updated."
+      },
+      "notice": {
+        "title": "{{currency}} update incomplete",
+        "subtitle": "No {{currency}} accounts could be updated using this device.",
+        "cta": "Continue",
+        "ctaNextCurrency": "Continue with {{currency}}"
+      },
+      "done": {
+        "title": "{{currency}} update complete",
+        "subtitle": "Congratulations, your {{currency}} accounts were successfully updated.",
+        "cta": "Continue",
+        "ctaNextCurrency": "Continue with {{currency}}",
+        "ctaDone": "Done"
+      },
+      "error": {
+        "cta": "Retry"
+      }
+    },
+    "connectDevice": {
+      "headerTitle": "Connect device"
+    }
+  },
   "transfer": {
     "send": {
       "title": "Send"
