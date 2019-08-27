@@ -39,6 +39,7 @@ import {
 import {
   listTokens,
   listTokensForCryptoCurrency,
+  listTokenTypesForCryptoCurrency,
   findTokenByTicker,
   findTokenById,
   findTokenByAddress,
@@ -90,6 +91,7 @@ export {
   hasFiatCurrencyTicker,
   listTokens,
   listTokensForCryptoCurrency,
+  listTokenTypesForCryptoCurrency,
   findTokenByAddress,
   findTokenByTicker,
   findTokenById,
