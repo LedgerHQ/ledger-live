@@ -24,7 +24,7 @@ import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 
-const SEARCH_KEYS = ["name", "unit.code", "token.name"];
+const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
 type Navigation = NavigationScreenProp<{ params: {} }>;
 
