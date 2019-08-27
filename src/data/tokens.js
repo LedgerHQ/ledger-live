@@ -85,6 +85,20 @@ export function listTokensForCryptoCurrency(
   return tokensByCryptoCurrency[currency.id] || emptyArray;
 }
 
+export function listTokenTypesForCryptoCurrency(
+  currency: CryptoCurrency
+): string[] {
+  return listTokensForCryptoCurrency(currency).reduce((acc, cur) => {
+    const tokenType = cur.tokenType;
+
+    if (acc.indexOf(tokenType) < 0) {
+      return [...acc, tokenType];
+    }
+
+    return acc;
+  }, []);
+}
+
 export function findTokenByTicker(ticker: string): ?TokenCurrency {
   return tokensByTicker[ticker];
 }
