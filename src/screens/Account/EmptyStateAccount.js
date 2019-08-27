@@ -5,6 +5,7 @@ import { View, Image, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -26,6 +27,8 @@ class EmptyStateAccount extends PureComponent<{
   render() {
     const { account, parentAccount } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
+    const hasTokens = Array.isArray(mainAccount.tokenAccounts);
+
     return (
       <View style={styles.root}>
         <View style={styles.body}>
@@ -34,13 +37,36 @@ class EmptyStateAccount extends PureComponent<{
             <Trans i18nKey="account.emptyState.title" />
           </LText>
           <LText style={styles.desc}>
-            <Trans i18nKey="common:account.emptyState.desc">
-              {"Make sure the"}
-              <LText semiBold style={styles.managerAppName}>
-                {mainAccount.currency.managerAppName}
-              </LText>
-              {"app is installed and start receiving"}
-            </Trans>
+            {hasTokens ? (
+              <Trans i18nKey="common:account.emptyState.descToken">
+                {"Make sure the"}
+                <LText semiBold style={styles.managerAppName}>
+                  {mainAccount.currency.managerAppName}
+                </LText>
+                {"app is installed and start receiving"}
+                <LText semiBold style={styles.managerAppName}>
+                  {mainAccount.currency.ticker}
+                </LText>
+                {"and"}
+                <LText semiBold style={styles.managerAppName}>
+                  {account &&
+                    account.currency &&
+                    // $FlowFixMe
+                    listTokenTypesForCryptoCurrency(account.currency).join(
+                      ", ",
+                    )}
+                  {"tokens"}
+                </LText>
+              </Trans>
+            ) : (
+              <Trans i18nKey="common:account.emptyState.desc">
+                {"Make sure the"}
+                <LText semiBold style={styles.managerAppName}>
+                  {mainAccount.currency.managerAppName}
+                </LText>
+                {"app is installed and start receiving"}
+              </Trans>
+            )}
           </LText>
           <Button
             event="AccountEmptyStateReceive"
