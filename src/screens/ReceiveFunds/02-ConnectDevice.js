@@ -24,6 +24,8 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 
+const forceInset = { bottom: "always" };
+
 type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
@@ -111,7 +113,7 @@ class ConnectDevice extends Component<Props> {
     }
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
         <ScrollView
           style={styles.scroll}

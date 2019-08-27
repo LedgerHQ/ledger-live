@@ -11,6 +11,8 @@ import GenericSuccessView from "../../components/GenericSuccessView";
 import Button from "../../components/Button";
 import colors from "../../colors";
 
+const forceInset = { bottom: "always" };
+
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
@@ -34,7 +36,7 @@ class FirmwareUpdateConfirmation extends Component<Props, State> {
 
   render() {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="FirmwareUpdate" name="Confirmation" />
         <View style={styles.body}>
           <GenericSuccessView

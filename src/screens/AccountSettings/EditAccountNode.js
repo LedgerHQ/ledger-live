@@ -1,7 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import i18next from "i18next";
-// $FlowFixMe
 import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -21,6 +20,8 @@ import LText, { getFontStyle } from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
 
 import colors from "../../colors";
+
+const forceInset = { bottom: "always" };
 
 class ValidationError extends PureComponent<{ error: Error }> {
   render() {
@@ -120,7 +121,7 @@ class EditAccountNode extends PureComponent<Props, State> {
     const bridge = getAccountBridge(account);
 
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} forceInset={forceInset}>
         <KeyboardView style={styles.body}>
           <ScrollView
             contentContainerStyle={styles.root}

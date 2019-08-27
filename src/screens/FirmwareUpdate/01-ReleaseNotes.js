@@ -15,6 +15,8 @@ import Button from "../../components/Button";
 import LText, { getFontStyle } from "../../components/LText";
 import colors from "../../colors";
 
+const forceInset = { bottom: "always" };
+
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
@@ -47,7 +49,7 @@ class FirmwareUpdateReleaseNotes extends Component<Props, State> {
     const { osu } = firmware;
     const version = manager.getFirmwareVersion(osu);
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
         <ScrollView style={styles.body} contentContainerStyle={styles.content}>
           <LText style={styles.intro}>

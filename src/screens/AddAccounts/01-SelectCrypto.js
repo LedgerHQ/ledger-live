@@ -26,6 +26,7 @@ import colors from "../../colors";
 import withEnv from "../../logic/withEnv";
 
 const SEARCH_KEYS = ["name", "ticker"];
+const forceInset = { bottom: "always" };
 
 type Props = {
   devMode: boolean,
@@ -98,7 +99,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
 
   render() {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="AddAccounts" name="SelectCrypto" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>

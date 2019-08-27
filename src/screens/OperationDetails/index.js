@@ -24,6 +24,8 @@ import Content from "./Content";
 import colors from "../../colors";
 import HeaderBackImage from "../../components/HeaderBackImage";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: ?(Account | TokenAccount),
   parentAccount: ?Account,
@@ -78,7 +80,7 @@ class OperationDetails extends PureComponent<Props, *> {
       operation.hash,
     );
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} forceInset={forceInset}>
         <TrackScreen category="OperationDetails" />
         <ScrollView>
           <View style={styles.root}>

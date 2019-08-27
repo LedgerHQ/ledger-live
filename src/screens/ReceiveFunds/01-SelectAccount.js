@@ -25,6 +25,7 @@ import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
+const forceInset = { bottom: "always" };
 
 type Navigation = NavigationScreenProp<{ params: {} }>;
 
@@ -91,7 +92,7 @@ class ReceiveFunds extends Component<Props, State> {
   render() {
     const { allAccounts } = this.props;
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="ReceiveFunds" name="SelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>

@@ -28,6 +28,8 @@ import SectionSeparator from "../../components/SectionSeparator";
 import AlertTriangle from "../../icons/AlertTriangle";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
+const forceInset = { bottom: "always" };
+
 // TODO put this somewhere
 const similarError = (a, b) =>
   a === b || (a && b && a.name === b.name && a.message === b.message);
@@ -239,7 +241,7 @@ class SendSummary extends Component<
     );
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="SendFunds" name="Summary" />
         <ScrollView style={styles.body}>
           <SummaryFromSection account={account} parentAccount={parentAccount} />
