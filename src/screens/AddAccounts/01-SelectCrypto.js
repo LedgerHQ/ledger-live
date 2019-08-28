@@ -9,6 +9,7 @@ import i18next from "i18next";
 import { compose } from "redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import { listTokens } from "@ledgerhq/live-common/lib/currencies";
 
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
@@ -45,7 +46,9 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     ),
   };
 
-  cryptocurrencies = listCryptoCurrencies(this.props.devMode);
+  cryptocurrencies = listCryptoCurrencies(this.props.devMode).concat(
+    listTokens(),
+  );
 
   keyExtractor = currency => currency.id;
 
