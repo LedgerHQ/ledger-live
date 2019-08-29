@@ -6,7 +6,7 @@ import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";
 import { track } from "../../analytics";
 
-const selectableModes = ["create", "patch"];
+const selectableModes = ["create", "update"];
 
 export default class DisplayResultItem extends Component<{
   account: Account,
@@ -28,7 +28,11 @@ export default class DisplayResultItem extends Component<{
         onPress={importing ? undefined : this.onSwitch}
         style={[styles.root, { opacity: selectable ? 1 : 0.5 }]}
       >
-        <AccountCard account={account} style={styles.card} />
+        <AccountCard
+          account={account}
+          parentAccount={null}
+          style={styles.card}
+        />
         {!selectable ? null : (
           <CheckBox isChecked={checked} style={styles.marginLeft} />
         )}

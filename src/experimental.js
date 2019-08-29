@@ -33,24 +33,6 @@ export const experimentalFeatures: Feature[] = [
     title: "Developer mode",
     description: "Show developer and testnet apps in the Manager.",
   },
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_NATIVE_SEGWIT",
-    title: "Native Segwit",
-    description: "Experimental support of Native Segwit (bech32).",
-  },
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_EXPLORERS",
-    title: "Experimental nodes",
-    description: "Connect to Ledger's new blockchain nodes.",
-  },
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_LIBCORE",
-    title: "Experimental Core",
-    description: "Enable experimental Ledger lib-core features.",
-  },
 ];
 
 const storageKey = "experimentalFlags";

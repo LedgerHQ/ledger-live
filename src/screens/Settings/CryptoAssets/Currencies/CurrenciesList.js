@@ -8,9 +8,9 @@ import i18next from "i18next";
 import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import { currenciesSelector } from "../../../reducers/accounts";
-import SettingsRow from "../../../components/SettingsRow";
-import CurrencyIcon from "../../../components/CurrencyIcon";
+import { cryptoCurrenciesSelector } from "../../../../reducers/accounts";
+import SettingsRow from "../../../../components/SettingsRow";
+import CurrencyIcon from "../../../../components/CurrencyIcon";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -18,7 +18,7 @@ type Props = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  currencies: currenciesSelector,
+  currencies: cryptoCurrenciesSelector,
 });
 
 class CurrenciesList extends PureComponent<Props> {

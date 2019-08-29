@@ -5,6 +5,7 @@ import { PanResponder, View } from "react-native";
 import type { PressEvent } from "react-native/Libraries/Types/CoreEventTypes";
 import * as d3shape from "d3-shape";
 import Svg, { Path, G, Circle } from "react-native-svg";
+import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import colors from "../../colors";
 import type { DistributionItem } from "./DistributionCard";
 
@@ -101,7 +102,7 @@ class RingChart extends PureComponent<Props> {
 
     const parsedItem = {
       // $FlowFixMe
-      color: item.currency.color || colors.live,
+      color: getCurrencyColor(item.currency),
       pathData,
       endAngle: data.angle + increment,
       id: item.currency.id,

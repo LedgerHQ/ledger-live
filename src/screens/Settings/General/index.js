@@ -8,10 +8,10 @@ import i18next from "i18next";
 import { translate } from "react-i18next";
 import { TrackScreen } from "../../../analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
-import RateProviderSettingsRow from "./RateProviderSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
 import ReportErrorsRow from "./ReportErrorsRow";
 import AnalyticsRow from "./AnalyticsRow";
+import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 
 class GeneralSettings extends PureComponent<{
   navigation: NavigationScreenProp<*>,
@@ -26,7 +26,7 @@ class GeneralSettings extends PureComponent<{
       <ScrollView contentContainerStyle={styles.root}>
         <TrackScreen category="Settings" name="General" />
         <CountervalueSettingsRow navigation={navigation} />
-        <RateProviderSettingsRow navigation={navigation} />
+        <HideEmptyTokenAccountsRow />
         <AuthSecurityToggle navigation={navigation} />
         <ReportErrorsRow />
         <AnalyticsRow />

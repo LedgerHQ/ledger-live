@@ -11,6 +11,12 @@ export const urls = {
     "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
   feesMoreInfo:
     "https://support.ledgerwallet.com/hc/en-us/articles/360006535873",
+  feesEthereum: "https://support.ledger.com/hc/en-us/articles/115005197845",
   verifyTransactionDetails:
     "https://support.ledgerwallet.com/hc/en-us/articles/360006433934",
+  erc20:
+    "https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens",
+  errors: {
+    PairingFailed: "https://support.ledger.com/hc/en-us/articles/360025864773",
+  },
 };

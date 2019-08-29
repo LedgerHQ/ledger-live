@@ -8,21 +8,29 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/lib/currencies";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import { createSelector } from "reselect";
 import type {
   CryptoCurrency,
   Currency,
   Account,
+  TokenAccount,
 } from "@ledgerhq/live-common/lib/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { State } from ".";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 
-export const intermediaryCurrency = getCryptoCurrencyById("bitcoin");
+const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
+export const possibleIntermediaries = [bitcoin, ethereum];
+export const intermediaryCurrency = (from: Currency, _to: Currency) => {
+  if (from === ethereum || from.type === "TokenCurrency") return ethereum;
+  return bitcoin;
+};
 
 export type CurrencySettings = {
   confirmationsNb: number,
-  exchange: ?*,
 };
 
 export const timeRangeDaysByKey = {
@@ -49,6 +57,9 @@ export type SettingsState = {
   currenciesSettings: {
     [ticker: string]: CurrencySettings,
   },
+  pairExchanges: {
+    [pair: string]: ?string,
+  },
   selectedTimeRange: TimeRange,
   orderAccounts: string,
   hasCompletedOnboarding: boolean,
@@ -57,6 +68,7 @@ export type SettingsState = {
   readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
+  hideEmptyTokenAccounts: boolean,
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -66,6 +78,7 @@ const INITIAL_STATE: SettingsState = {
   reportErrorsEnabled: true,
   analyticsEnabled: true,
   currenciesSettings: {},
+  pairExchanges: {},
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
@@ -74,26 +87,30 @@ const INITIAL_STATE: SettingsState = {
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
   countervalueFirst: false,
+  hideEmptyTokenAccounts: false,
 };
 
-function asCryptoCurrency(c: Currency): ?CryptoCurrency {
-  // $FlowFixMe
-  return "coinType" in c ? c : null;
-}
+const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
 
 const handlers: Object = {
   SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
     ...state,
     ...settings,
   }),
-  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => ({
-    ...state,
-    ...settings,
-    currenciesSettings: merge(
-      state.currenciesSettings,
-      settings.currenciesSettings,
-    ),
-  }),
+  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => {
+    const { developerModeEnabled, ...rest } = settings;
+
+    setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
+
+    return {
+      ...state,
+      ...rest,
+      currenciesSettings: merge(
+        state.currenciesSettings,
+        settings.currenciesSettings,
+      ),
+    };
+  },
   UPDATE_CURRENCY_SETTINGS: (
     { currenciesSettings, ...state }: SettingsState,
     { ticker, patch },
@@ -158,22 +175,10 @@ const handlers: Object = {
       }>,
     },
   ) => {
-    const counterValueCurrency = counterValueCurrencyLocalSelector(state);
     const copy = { ...state };
-    copy.currenciesSettings = { ...copy.currenciesSettings };
+    copy.pairExchanges = { ...copy.pairExchanges };
     for (const { to, from, exchange } of pairs) {
-      const fromCrypto = asCryptoCurrency(from);
-      if (fromCrypto && to.ticker === intermediaryCurrency.ticker) {
-        copy.currenciesSettings[fromCrypto.ticker] = {
-          ...copy.currenciesSettings[fromCrypto.ticker],
-          exchange,
-        };
-      } else if (
-        from.ticker === intermediaryCurrency.ticker &&
-        to.ticker === counterValueCurrency.ticker
-      ) {
-        copy.counterValueExchange = exchange;
-      }
+      copy.pairExchanges[pairHash(from, to)] = exchange;
     }
     return copy;
   },
@@ -215,6 +220,11 @@ const handlers: Object = {
     ...state,
     countervalueFirst: !state.countervalueFirst,
   }),
+
+  SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (state, { hideEmptyTokenAccounts }) => ({
+    ...state,
+    hideEmptyTokenAccounts,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -239,7 +249,7 @@ export const counterValueExchangeSelector = createSelector(
   counterValueExchangeLocalSelector,
 );
 
-const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = crypto => {
+const defaultCurrencySettingsForCurrency: Currency => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb
@@ -252,20 +262,11 @@ const defaultCurrencySettingsForCurrency: CryptoCurrency => CurrencySettings = c
 // DEPRECATED
 export const currencySettingsSelector = (
   state: State,
-  { currency }: { currency: CryptoCurrency },
+  { currency }: { currency: Currency },
 ) => ({
-  exchange: null,
   ...defaultCurrencySettingsForCurrency(currency),
   ...state.settings.currenciesSettings[currency.ticker],
 });
-
-export const exchangeSettingsForTickerSelector = (
-  state: State,
-  { ticker }: { ticker: string },
-): ?string => {
-  const obj = state.settings.currenciesSettings[ticker];
-  return obj && obj.exchange;
-};
 
 // $FlowFixMe
 export const privacySelector = createSelector(
@@ -293,14 +294,23 @@ export const experimentalUSBEnabledSelector = createSelector(
 
 export const currencySettingsForAccountSelector = (
   s: *,
-  { account }: { account: Account },
-) => currencySettingsSelector(s, { currency: account.currency });
+  { account }: { account: TokenAccount | Account },
+) => currencySettingsSelector(s, { currency: getAccountCurrency(account) });
 
-// $FlowFixMe
-export const exchangeSettingsForAccountSelector = createSelector(
-  currencySettingsForAccountSelector,
-  settings => settings.exchange,
-);
+export const exchangeSettingsForPairSelector = (
+  state: State,
+  { from, to }: { from: Currency, to: Currency },
+): ?string => state.settings.pairExchanges[pairHash(from, to)];
+
+export const confirmationsNbForCurrencySelector = (
+  state: State,
+  { currency }: { currency: CryptoCurrency },
+): number => {
+  const obj = state.settings.currenciesSettings[currency.ticker];
+  if (obj) return obj.confirmationsNb;
+  const defs = currencySettingsDefaults(currency);
+  return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
+};
 
 export const selectedTimeRangeSelector = (state: State) =>
   state.settings.selectedTimeRange;
@@ -322,5 +332,27 @@ export const countervalueFirstSelector = (state: State) =>
 
 export const readOnlyModeEnabledSelector = (state: State) =>
   Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
+
+// $FlowFixMe
+export const exportSettingsSelector = createSelector(
+  counterValueCurrencySelector,
+  () => getEnv("MANAGER_DEV_MODE"),
+  state => state.settings.currenciesSettings,
+  state => state.settings.pairExchanges,
+  (
+    counterValueCurrency,
+    developerModeEnabled,
+    currenciesSettings,
+    pairExchanges,
+  ) => ({
+    counterValue: counterValueCurrency.ticker,
+    currenciesSettings,
+    pairExchanges,
+    developerModeEnabled,
+  }),
+);
+
+export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
+  state.settings.hideEmptyTokenAccounts;
 
 export default handleActions(handlers, INITIAL_STATE);

@@ -14,13 +14,19 @@ import org.devio.rn.splashscreen.SplashScreen;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+import android.util.Log;
+import android.os.Bundle;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 import java.util.Locale;
 
 
 public class MainActivity extends ReactFragmentActivity {
 
+    String importDataString = null;
     /**
      * Returns the name of the main component registered from JavaScript.
      * This is used to schedule rendering of the component.
@@ -34,6 +40,12 @@ public class MainActivity extends ReactFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         if (!BuildConfig.DEBUG) {
             SplashScreen.show(this, true);
+        } else {
+            // Allow data override for debug builds
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                this.importDataString = extras.getString("importDataString");
+            }
         }
         super.onCreate(savedInstanceState);
 
@@ -96,6 +108,17 @@ public class MainActivity extends ReactFragmentActivity {
             @Override
             protected ReactRootView createRootView() {
                 return new RNGestureHandlerEnabledRootView(MainActivity.this);
+            }
+
+            @Override
+            protected Bundle getLaunchOptions() {
+                if(importDataString != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("importDataString", importDataString);
+                    return bundle;
+                }else{
+                    return new Bundle();
+                }
             }
         };
     }

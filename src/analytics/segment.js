@@ -62,7 +62,7 @@ export const start = async (store: *) => {
       await analytics.identify(user.id, extraProperties(store));
     }
   }
-  track("Start", extraProperties(store));
+  track("Start", extraProperties(store), true);
 };
 
 export const stop = () => {

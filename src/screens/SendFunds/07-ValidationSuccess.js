@@ -4,16 +4,20 @@ import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-
-import { accountScreenSelector } from "../../reducers/accounts";
+import type {
+  TokenAccount,
+  Account,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "./ValideSuccess";
 
 type Props = {
-  account: Account,
+  account: ?(TokenAccount | Account),
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -39,11 +43,13 @@ class ValidationSuccess extends Component<Props> {
   };
 
   goToOperationDetails = () => {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+    if (!account) return;
     const result = navigation.getParam("result");
     if (!result) return;
     navigation.navigate("OperationDetails", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       operation: result,
     });
   };
@@ -69,8 +75,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state, props) => ({
-  account: accountScreenSelector(state, props),
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default connect(mapStateToProps)(translate()(ValidationSuccess));

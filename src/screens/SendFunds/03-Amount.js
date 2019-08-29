@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  Switch,
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -13,10 +14,13 @@ import { BigNumber } from "bignumber.js";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+import {
+  getMainAccount,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -30,7 +34,8 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import AmountInput from "./AmountInput";
 
 type Props = {
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -47,6 +52,7 @@ type State = {
   txValidationWarning: ?Error,
   totalSpent: ?BigNumber,
   leaving: boolean,
+  maxAmount: ?BigNumber,
 };
 
 const similarError = (a, b) =>
@@ -76,6 +82,7 @@ class SendAmount extends Component<Props, State> {
       txValidationWarning: null,
       totalSpent: null,
       leaving: false,
+      maxAmount: null,
     };
   }
 
@@ -96,24 +103,35 @@ class SendAmount extends Component<Props, State> {
   networkInfoPending = false;
   syncNetworkInfo = async () => {
     if (this.networkInfoPending) return;
-    const { account } = this.props;
-    const bridge = getAccountBridge(account);
+    const { account, parentAccount } = this.props;
+    if (!account) return;
+    const mainAccount = getMainAccount(account, parentAccount);
+    const bridge = getAccountBridge(account, parentAccount);
     if (
-      !bridge.getTransactionNetworkInfo(account, this.state.transaction) &&
+      !bridge.getTransactionNetworkInfo(mainAccount, this.state.transaction) &&
       !this.state.syncNetworkInfoError
     ) {
       try {
         this.networkInfoPending = true;
-        const networkInfo = await bridge.fetchTransactionNetworkInfo(account);
+        const networkInfo = await bridge.fetchTransactionNetworkInfo(
+          mainAccount,
+        );
         if (!this.networkInfoPending) return;
-        this.setState(({ transaction }, { account }) => ({
-          syncNetworkInfoError: null,
-          transaction: getAccountBridge(account).applyTransactionNetworkInfo(
-            account,
-            transaction,
-            networkInfo,
-          ),
-        }));
+        this.setState(({ transaction }, { account, parentAccount }) =>
+          !account
+            ? null
+            : {
+                syncNetworkInfoError: null,
+                transaction: getAccountBridge(
+                  account,
+                  parentAccount,
+                ).applyTransactionNetworkInfo(
+                  getMainAccount(account, parentAccount),
+                  transaction,
+                  networkInfo,
+                ),
+              },
+        );
       } catch (syncNetworkInfoError) {
         if (!this.networkInfoPending) return;
         this.setState(old => {
@@ -129,12 +147,14 @@ class SendAmount extends Component<Props, State> {
 
   nonceTotalSpent = 0;
   syncTotalSpent = async () => {
-    const { account } = this.props;
+    const { account, parentAccount } = this.props;
+    if (!account) return;
+    const mainAccount = getMainAccount(account, parentAccount);
     const { transaction } = this.state;
-    const bridge = getAccountBridge(account);
+    const bridge = getAccountBridge(account, parentAccount);
     const nonce = ++this.nonceTotalSpent;
     try {
-      const totalSpent = await bridge.getTotalSpent(account, transaction);
+      const totalSpent = await bridge.getTotalSpent(mainAccount, transaction);
       if (nonce !== this.nonceTotalSpent) return;
 
       this.setState(old => {
@@ -160,13 +180,15 @@ class SendAmount extends Component<Props, State> {
 
   nonceValidTransaction = 0;
   syncValidTransaction = async () => {
-    const { account } = this.props;
+    const { account, parentAccount } = this.props;
+    if (!account) return;
+    const mainAccount = getMainAccount(account, parentAccount);
     const { transaction } = this.state;
-    const bridge = getAccountBridge(account);
+    const bridge = getAccountBridge(account, parentAccount);
     const nonce = ++this.nonceValidTransaction;
     try {
       const txValidationWarning = await bridge.checkValidTransaction(
-        account,
+        mainAccount,
         transaction,
       );
       if (nonce !== this.nonceValidTransaction) return;
@@ -194,6 +216,40 @@ class SendAmount extends Component<Props, State> {
       });
     }
   };
+  nonceUseAllAmount = 0;
+  toggleUseAllAmount = async () => {
+    const { account, parentAccount } = this.props;
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    const { transaction: currentTransaction } = this.state;
+    const nonce = ++this.nonceUseAllAmount;
+    const mainAccount = getMainAccount(account, parentAccount);
+
+    const useAllAmount = !bridge.getTransactionExtra(
+      mainAccount,
+      currentTransaction,
+      "useAllAmount",
+    );
+
+    let transaction = bridge.editTransactionExtra(
+      mainAccount,
+      currentTransaction,
+      "useAllAmount",
+      useAllAmount,
+    );
+
+    transaction = bridge.editTransactionAmount(
+      mainAccount,
+      transaction,
+      BigNumber(0),
+    );
+    let maxAmount;
+    if (useAllAmount)
+      maxAmount = await bridge.getMaxAmount(mainAccount, transaction);
+    if (nonce !== this.nonceUseAllAmount) return;
+
+    this.setState({ transaction, maxAmount });
+  };
 
   validate = () => {
     this.syncNetworkInfo();
@@ -217,13 +273,20 @@ class SendAmount extends Component<Props, State> {
 
   onChange = (amount: BigNumber) => {
     if (!amount.isNaN()) {
-      this.setState(({ transaction }, { account }) => ({
-        transaction: getAccountBridge(account).editTransactionAmount(
-          account,
-          transaction,
-          amount,
-        ),
-      }));
+      this.setState(({ transaction }, { account, parentAccount }) =>
+        !account
+          ? null
+          : {
+              transaction: getAccountBridge(
+                account,
+                parentAccount,
+              ).editTransactionAmount(
+                getMainAccount(account, parentAccount),
+                transaction,
+                amount,
+              ),
+            },
+      );
     }
   };
 
@@ -232,16 +295,20 @@ class SendAmount extends Component<Props, State> {
   };
 
   navigate = () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return;
     const { transaction } = this.state;
     navigation.navigate("SendSummary", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction,
     });
   };
 
   render() {
-    const { account } = this.props;
+    const { account, parentAccount } = this.props;
+    if (!account) return null;
+    const mainAccount = getMainAccount(account, parentAccount);
     const {
       transaction,
       syncNetworkInfoError,
@@ -249,10 +316,19 @@ class SendAmount extends Component<Props, State> {
       syncTotalSpentError,
       totalSpent,
       leaving,
+      maxAmount,
     } = this.state;
-    const bridge = getAccountBridge(account);
-    const amount = bridge.getTransactionAmount(account, transaction);
-    const networkInfo = bridge.getTransactionNetworkInfo(account, transaction);
+    const bridge = getAccountBridge(account, parentAccount);
+    const amount = bridge.getTransactionAmount(mainAccount, transaction);
+    const useAllAmount = bridge.getTransactionExtra(
+      mainAccount,
+      transaction,
+      "useAllAmount",
+    );
+    const networkInfo = bridge.getTransactionNetworkInfo(
+      mainAccount,
+      transaction,
+    );
     const pending = !networkInfo && !syncNetworkInfoError;
 
     const criticalError = syncNetworkInfoError;
@@ -266,7 +342,10 @@ class SendAmount extends Component<Props, State> {
       !inlinedError &&
       !!totalSpent &&
       totalSpent.gt(0) &&
-      !transaction.amount.isZero();
+      (!transaction.amount.isZero() ||
+        (useAllAmount && !!maxAmount && !maxAmount.isZero()));
+
+    const unit = getAccountUnit(account);
 
     return (
       <>
@@ -276,27 +355,41 @@ class SendAmount extends Component<Props, State> {
             <TouchableWithoutFeedback onPress={this.blur}>
               <View style={{ flex: 1 }}>
                 <AmountInput
+                  editable={!useAllAmount}
                   account={account}
                   onChange={this.onChange}
-                  currency={account.unit.code}
-                  value={amount}
+                  currency={unit.code}
+                  value={useAllAmount ? maxAmount : amount}
                   error={inlinedError}
                 />
 
                 <View style={styles.bottomWrapper}>
-                  <LText style={styles.available}>
-                    <Trans i18nKey="send.amount.available">
-                      {"text"}
+                  <View style={styles.available}>
+                    <View style={styles.availableLeft}>
+                      <LText>
+                        <Trans i18nKey="send.amount.available" />
+                      </LText>
                       <LText tertiary style={styles.availableAmount}>
                         <CurrencyUnitValue
                           showCode
-                          unit={account.unit}
+                          unit={unit}
                           value={account.balance}
                         />
                       </LText>
-                      {"text"}
-                    </Trans>
-                  </LText>
+                    </View>
+                    {typeof useAllAmount === "boolean" ? (
+                      <View style={styles.availableRight}>
+                        <LText style={styles.maxLabel}>
+                          <Trans i18nKey="send.amount.useMax" />
+                        </LText>
+                        <Switch
+                          style={{ opacity: 0.99 }}
+                          value={useAllAmount}
+                          onValueChange={this.toggleUseAllAmount}
+                        />
+                      </View>
+                    ) : null}
+                  </View>
                   <View style={styles.continueWrapper}>
                     <Button
                       event="SendAmountContinue"
@@ -353,6 +446,9 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   available: {
+    flexDirection: "row",
+    display: "flex",
+    flexGrow: 1,
     fontSize: 16,
     color: colors.grey,
     marginBottom: 16,
@@ -360,10 +456,19 @@ const styles = StyleSheet.create({
   availableAmount: {
     color: colors.darkBlue,
   },
-  bottomWrapper: {
-    flex: 1,
+  availableRight: {
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flexDirection: "row",
+  },
+  availableLeft: {
+    justifyContent: "center",
     flexGrow: 1,
-    flexDirection: "column",
+  },
+  maxLabel: {
+    marginRight: 4,
+  },
+  bottomWrapper: {
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
@@ -383,11 +488,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state, props: Props): { account: Account } => ({
-  account: accountScreenSelector(state, props),
-});
-
 export default compose(
   translate(),
-  connect(mapStateToProps),
+  connect(accountAndParentScreenSelector),
 )(SendAmount);

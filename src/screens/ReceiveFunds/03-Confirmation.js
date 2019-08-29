@@ -6,19 +6,21 @@ import { from, of } from "rxjs";
 import { delay } from "rxjs/operators";
 import { View, StyleSheet, Linking, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import ReactNativeModal from "react-native-modal";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import type { DeviceModelId } from "@ledgerhq/devices";
-
 import getWindowDimensions from "../../logic/getWindowDimensions";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
@@ -53,7 +55,8 @@ type Navigation = NavigationScreenProp<{
 }>;
 
 type Props = {
-  account: Account,
+  account: ?(TokenAccount | Account),
+  parentAccount: ?Account,
   navigation: Navigation,
   readOnlyModeEnabled: boolean,
 };
@@ -66,9 +69,9 @@ type State = {
   zoom: boolean,
 };
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-  readOnlyModeEnabled: readOnlyModeEnabledSelector,
+const mapStateToProps = (s, p) => ({
+  ...accountAndParentScreenSelector(s, p),
+  readOnlyModeEnabled: readOnlyModeEnabledSelector(s),
 });
 
 class ReceiveConfirmation extends Component<Props, State> {
@@ -126,19 +129,21 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   verifyOnDevice = async (deviceId: string) => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
+    if (!account) return;
+    const mainAccount = getMainAccount(account, parentAccount);
 
     this.sub = withDevice(deviceId)(transport =>
-      account.id.startsWith("mock")
+      mainAccount.id.startsWith("mock")
         ? of({}).pipe(
             delay(1000),
             rejectionOp(),
           )
         : from(
             getAddress(transport, {
-              derivationMode: account.derivationMode,
-              currency: account.currency,
-              path: account.freshAddressPath,
+              derivationMode: mainAccount.derivationMode,
+              currency: mainAccount.currency,
+              path: mainAccount.freshAddressPath,
               verify: true,
             }),
           ),
@@ -194,12 +199,20 @@ class ReceiveConfirmation extends Component<Props, State> {
   };
 
   render() {
-    const { account, navigation, readOnlyModeEnabled } = this.props;
+    const {
+      account,
+      parentAccount,
+      navigation,
+      readOnlyModeEnabled,
+    } = this.props;
+    if (!account) return null;
     const { verified, error, isModalOpened, onModalHide, zoom } = this.state;
     const { width } = getWindowDimensions();
     const unsafe = !navigation.getParam("deviceId");
     const allowNavigation = navigation.getParam("allowNavigation");
     const QRSize = Math.round(width / 1.8 - 16);
+    const mainAccount = getMainAccount(account, parentAccount);
+    const currency = getAccountCurrency(account);
 
     return (
       <SafeAreaView style={styles.root}>
@@ -224,7 +237,11 @@ class ReceiveConfirmation extends Component<Props, State> {
                 </View>
               ) : (
                 <View style={styles.qrWrapper}>
-                  <QRCode size={QRSize} value={account.freshAddress} ecl="H" />
+                  <QRCode
+                    size={QRSize}
+                    value={mainAccount.freshAddress}
+                    ecl="H"
+                  />
                 </View>
               )}
             </Touchable>
@@ -234,27 +251,27 @@ class ReceiveConfirmation extends Component<Props, State> {
               </LText>
             </View>
             <View style={styles.addressWrapper}>
-              <CurrencyIcon currency={account.currency} size={20} />
+              <CurrencyIcon currency={currency} size={20} />
               <LText semiBold style={styles.addressTitleBold}>
-                {account.name}
+                {account.type === "Account" ? account.name : currency.name}
               </LText>
             </View>
             <View style={styles.address}>
               <DisplayAddress
-                address={account.freshAddress}
+                address={mainAccount.freshAddress}
                 verified={verified}
               />
             </View>
             <View style={styles.copyLink}>
               <CopyLink
                 style={styles.copyShare}
-                string={account.freshAddress}
+                string={mainAccount.freshAddress}
                 replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
               >
                 <Trans i18nKey="transfer.receive.copyAddress" />
               </CopyLink>
               <View style={styles.copyShare}>
-                <ShareLink value={account.freshAddress}>
+                <ShareLink value={mainAccount.freshAddress}>
                   <Trans i18nKey="transfer.receive.shareAddress" />
                 </ShareLink>
               </View>
@@ -287,7 +304,7 @@ class ReceiveConfirmation extends Component<Props, State> {
                         : "transfer.receive.verifySkipped"
                     }
                     values={{
-                      accountType: account.currency.managerAppName,
+                      accountType: mainAccount.currency.managerAppName,
                     }}
                   />
                 ) : verified ? (
@@ -296,7 +313,7 @@ class ReceiveConfirmation extends Component<Props, State> {
                   <Trans
                     i18nKey="transfer.receive.verifyPending"
                     values={{
-                      currencyName: account.currency.managerAppName,
+                      currencyName: mainAccount.currency.managerAppName,
                     }}
                   />
                 )
@@ -329,7 +346,11 @@ class ReceiveConfirmation extends Component<Props, State> {
           useNativeDriver
         >
           <View style={styles.qrZoomWrapper}>
-            <QRCode size={width - 66} value={account.freshAddress} ecl="H" />
+            <QRCode
+              size={width - 66}
+              value={mainAccount.freshAddress}
+              ecl="H"
+            />
           </View>
         </ReactNativeModal>
         <BottomModal

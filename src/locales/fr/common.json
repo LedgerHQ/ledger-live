@@ -38,6 +38,10 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
+    "slow": "slow",
+    "fast": "fast",
+    "token": "Token",
+    "token_plural": "Tokens",
     "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
@@ -470,9 +474,7 @@
         "step3": "Resetting Ledger Live does not affect your crypto assets."
       }
     },
-    "stepShareData": {
-
-    },
+    "stepShareData": {},
     "stepFinish": {
       "title": "Your device is ready!",
       "readOnlyTitle": "All set!",
@@ -540,13 +542,11 @@
     }
   },
   "orderOption": {
-    "label": {
-      "balance": "Solde",
-      "name": "Nom"
-    },
-    "ordering": {
-      "asc": "Croissant",
-      "desc": "Décroissant"
+    "choices": {
+      "name|asc": "Name A-Z",
+      "name|desc": "Name Z-A",
+      "balance|asc": "Lowest Balance",
+      "balance|desc": "Highest Balance"
     }
   },
   "operationDetails": {
@@ -567,6 +567,12 @@
     "viewInExplorer": "View in explorer",
     "sending": "Sending...",
     "receiving": "Receiving...",
+    "tokenOperations": "Token operations",
+    "internalOperations": "Internal operations",
+    "tokenModal": {
+      "desc": "This operation is related to the following token operations"
+    },
+    "details": "{{ currency }} details",
     "extra": {
       "tag": "Tag"
     }
@@ -577,9 +583,19 @@
   },
   "selectableAccountsList": {
     "deselectAll": "Deselect all",
-    "selectAll": "Select all"
+    "selectAll": "Select all",
+    "tokenCount": "+1 token",
+    "tokenCount_plural": "+{{count}} tokens"
   },
   "account": {
+    "tokens": {
+      "contractAddress": "Contract address",
+      "viewInExplorer": "View in explorer",
+      "seeMore": "See more Tokens",
+      "seeLess": "See less Tokens",
+      "addTokens": "Add token",
+      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+    },
     "send": "Send",
     "receive": "Receive",
     "lastOperations": "Last operations",
@@ -666,7 +682,11 @@
       "syncPending": "Synchronizing...",
       "upToDate": "Synchronized",
       "error": "Error",
-      "queued": "Awaiting"
+      "queued": "Awaiting",
+      "showTokens": "Show {{length}} token",
+      "showTokens_plural": "Show {{length}} tokens",
+      "hideTokens": "Hide token",
+      "hideTokens_plural": "Hide tokens"
     }
   },
   "distribution": {
@@ -688,7 +708,6 @@
       "counterValueDesc": "Set the currency shown next to your balance and operations.",
       "exchange": "Rate provider",
       "exchangeDesc": "Set provider of exchange rate from Bitcoin to {{fiat}}",
-      "exchangeHeader": "Exchange",
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display an increase in market value in green. Choose Eastern to display an increase in market value in red.",
       "reportErrors": "Bug reports",
@@ -719,17 +738,31 @@
         "bullet2": "Ledger Live version, OS region, language and region"
       },
       "termsOfUse": "Conditions d’utilisation",
-      "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1> and <3>Privacy Policy</3>."
+      "termsOfUseDesc": "By continuing you acknowledge that you have read and agree to the <1>Terms of Use</1> and <3>Privacy Policy</3>.",
+      "hideEmptyTokenAccounts": "Hide empty token accounts",
+      "hideEmptyTokenAccountsDesc": "Hide token accounts with zero balance on the Accounts page."
+    },
+    "cryptoAssets": {
+      "header": "Crypto assets",
+      "title": "Crypto assets",
+      "desc": "Set rate providers and number of confirmations per crypto.",
+      "rateProviderHeader": "Rate provider"
     },
     "currencies": {
       "header": "Devises",
-      "title": "Devises",
-      "desc": "Set rate provider and number of confirmations per crypto.",
       "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings"
+    },
+    "rates": {
+      "header": "Rates",
+      "desc": "Here are all the rates used by Ledger Live to calculate countervalues. Choose which rate providers are used for each rate.",
+      "pair": "{{from}} to {{to}}",
+      "cryptoToFiat": "Crypto to Fiat",
+      "cryptoToCrypto": "Crypto to Crypto",
+      "noRateProvider": "No rate provider available for this asset"
     },
     "about": {
       "title": "A propos",
@@ -770,6 +803,46 @@
       "title": "Experimental features",
       "desc": "Try out experimental features and let us know what you think",
       "disclaimer": "These are experimental features we provide on an “as is” basis for our community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk. Your crypto assets remain secured by your Ledger hardware wallet."
+    }
+  },
+  "migrateAccounts": {
+    "banner": "Ledger Live accounts update",
+    "overview": {
+      "headerTitle": "Account update",
+      "title": "Ledger Live accounts update",
+      "subtitle": "New update of Ledger Live requires an update of your accounts",
+      "notice": "{{accountCount}} account could not be updated. Please connect the device associated to the account below.",
+      "notice_plural": "{{accountCount}} accounts could not be updated. Please connect the device associated to the accounts below.",
+      "currency": "1 {{currency}} account needs to be updated",
+      "currency_plural": "{{count}} {{currency}} accounts need to be updated",
+      "start": "Start update",
+      "continue": "Continue update"
+    },
+    "progress": {
+      "headerTitle": "Updating accounts",
+      "pending": {
+        "title": "{{currency}} update in progress",
+        "subtitle": "Please wait while your account is updated."
+      },
+      "notice": {
+        "title": "{{currency}} update incomplete",
+        "subtitle": "No {{currency}} accounts could be updated using this device.",
+        "cta": "Continue",
+        "ctaNextCurrency": "Continue with {{currency}}"
+      },
+      "done": {
+        "title": "{{currency}} update complete",
+        "subtitle": "Congratulations, your {{currency}} accounts were successfully updated.",
+        "cta": "Continue",
+        "ctaNextCurrency": "Continue with {{currency}}",
+        "ctaDone": "Done"
+      },
+      "error": {
+        "cta": "Retry"
+      }
+    },
+    "connectDevice": {
+      "headerTitle": "Connect device"
     }
   },
   "transfer": {
@@ -835,7 +908,7 @@
       "summary": "Summary",
       "connectDevice": "Connect Device",
       "verification": "Verification",
-      "stepRange": "{{currentStep}} of {{totalSteps}}"
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "recipient": {
       "scan": "Scan QR Code",
@@ -843,7 +916,8 @@
       "input": "Enter address"
     },
     "amount": {
-      "available": "<1><0>{{amount}}</></> available",
+      "available": "Total available",
+      "useMax": "Use max",
       "loadingNetwork": "Loading Network fees...",
       "noRateProvider": "Indisponible"
     },
@@ -876,9 +950,12 @@
       "title": "Network fees",
       "validate": "Confirmer",
       "required": "Fees are required",
+      "chooseGas": "Choose a gas price",
+      "higherFaster": "Higher gas price means a faster confirmation",
       "edit": {
         "title": "Choose Unit"
-      }
+      },
+      "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH"
     }
   },
   "addAccounts": {
@@ -888,9 +965,18 @@
     },
     "imported": "Accounts successfully added",
     "sections": {
-      "accountsToImport": "Add existing account",
-      "addNewAccount": "Add new account",
-      "existing": "Accounts already in portfolio"
+      "importable": {
+        "title": "Add existing account"
+      },
+      "creatable": {
+        "title": "Add new account"
+      },
+      "imported": {
+        "title": "Accounts already in portfolio ({{length}})"
+      },
+      "migrate": {
+        "title": "Accounts to update"
+      }
     },
     "success": {
       "desc": "View your accounts or add more of them",

@@ -8,6 +8,7 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types/currencies";
+import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import colors from "../colors";
 import LText from "./LText";
 import CounterValue from "./CounterValue";
@@ -28,7 +29,7 @@ class CurrencyRate extends PureComponent<Props> {
     const { currency, fontStyle, iconSize } = this.props;
     const one = new BigNumber(10 ** currency.units[0].magnitude);
     // $FlowFixMe
-    const color = currency.color;
+    const color = getCurrencyColor(currency);
 
     return (
       <View style={styles.wrapper}>

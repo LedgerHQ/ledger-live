@@ -11,8 +11,10 @@ import { translate } from "react-i18next";
 import {
   isAccountEmpty,
   groupAccountOperationsByDay,
+  getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 import type {
+  TokenAccount,
   Account,
   Currency,
   Operation,
@@ -20,6 +22,7 @@ import type {
   BalanceHistoryWithCountervalue,
   PortfolioRange,
 } from "@ledgerhq/live-common/lib/types";
+import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { balanceHistoryWithCountervalueSelector } from "../../actions/portfolio";
 import {
@@ -27,7 +30,7 @@ import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "../../reducers/settings";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import OperationRow from "../../components/OperationRow";
@@ -46,17 +49,22 @@ import AccountGraphCard from "../../components/AccountGraphCard";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import Touchable from "../../components/Touchable";
 import type { Item } from "../../components/Graph/types";
+import TokenAccountsList from "./TokenAccountsList";
 
 type Props = {
   useCounterValue: boolean,
   switchCountervalueFirst: () => *,
-  account: Account,
+  account: Account | TokenAccount,
+  parentAccount: ?Account,
+  countervalueChange: ValueChange,
+  cryptoChange: ValueChange,
   range: PortfolioRange,
   history: BalanceHistoryWithCountervalue,
   counterValueCurrency: Currency,
   countervalueAvailable: boolean,
   navigation: { emit: (event: string) => void } & NavigationScreenProp<{
     accountId: string,
+    parentId?: string,
   }>,
 };
 
@@ -88,13 +96,14 @@ class AccountScreen extends PureComponent<Props, State> {
     index: number,
     section: SectionBase<*>,
   }) => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
     if (!account) return null;
 
     return (
       <OperationRow
         operation={item}
         account={account}
+        parentAccount={parentAccount}
         navigation={navigation}
         isLast={section.data.length - 1 === index}
       />
@@ -123,19 +132,23 @@ class AccountScreen extends PureComponent<Props, State> {
     const { countervalueAvailable } = this.props;
     const items = [
       { unit: cryptoCurrencyUnit, value: item.value },
-      item.countervalue
+      countervalueAvailable && item.countervalue
         ? { unit: counterValueUnit, value: item.countervalue }
         : null,
     ];
-    if (useCounterValue && countervalueAvailable && item.countervalue) {
+
+    const shouldUseCounterValue = countervalueAvailable && useCounterValue;
+    if (shouldUseCounterValue && item.countervalue) {
       items.reverse();
     }
 
     return (
       <Touchable
         event="SwitchAccountCurrency"
-        eventProperties={{ useCounterValue }}
-        onPress={this.onSwitchAccountCurrency}
+        eventProperties={{ useCounterValue: shouldUseCounterValue }}
+        onPress={
+          countervalueAvailable ? this.onSwitchAccountCurrency : undefined
+        }
       >
         <View style={styles.balanceContainer}>
           {items[0] ? (
@@ -153,6 +166,15 @@ class AccountScreen extends PureComponent<Props, State> {
     );
   };
 
+  onAccountPress = (tokenAccount: TokenAccount) => {
+    const { navigation, account } = this.props;
+    // $FlowFixMe
+    navigation.push("Account", {
+      parentId: account.id,
+      accountId: tokenAccount.id,
+    });
+  };
+
   ListHeaderComponent = () => {
     const {
       history,
@@ -161,34 +183,59 @@ class AccountScreen extends PureComponent<Props, State> {
       countervalueAvailable,
       range,
       account,
+      parentAccount,
+      cryptoChange,
+      countervalueChange,
     } = this.props;
+
     if (!account) return null;
+
     const empty = isAccountEmpty(account);
+    const shouldUseCounterValue = countervalueAvailable && useCounterValue;
+
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
-        {!empty && (
+        {empty ? null : (
           <AccountGraphCard
             account={account}
             range={range}
-            unit={account.unit}
             history={history}
-            useCounterValue={useCounterValue}
+            useCounterValue={shouldUseCounterValue}
+            valueChange={
+              shouldUseCounterValue ? countervalueChange : cryptoChange
+            }
             countervalueAvailable={countervalueAvailable}
             counterValueCurrency={counterValueCurrency}
             renderTitle={this.renderListHeaderTitle}
           />
         )}
-        {!empty && <AccountActions accountId={account.id} />}
+        {empty ? null : (
+          <AccountActions
+            accountId={account.id}
+            parentId={parentAccount && parentAccount.id}
+          />
+        )}
+        {!empty && account.type === "Account" && account.tokenAccounts ? (
+          <TokenAccountsList
+            accountId={account.id}
+            onAccountPress={this.onAccountPress}
+            parentAccount={account}
+          />
+        ) : null}
       </View>
     );
   };
 
   ListEmptyComponent = () => {
-    const { account, navigation } = this.props;
+    const { account, parentAccount, navigation } = this.props;
     return (
       isAccountEmpty(account) && (
-        <EmptyStateAccount account={account} navigation={navigation} />
+        <EmptyStateAccount
+          account={account}
+          parentAccount={parentAccount}
+          navigation={navigation}
+        />
       )
     );
   };
@@ -205,11 +252,12 @@ class AccountScreen extends PureComponent<Props, State> {
     const { account } = this.props;
     const { opCount } = this.state;
     if (!account) return null;
+    const currency = getAccountCurrency(account);
 
     const analytics = (
       <TrackScreen
         category="Account"
-        currency={account.currency.id}
+        currency={currency.id}
         operationsSize={account.operations.length}
       />
     );
@@ -255,14 +303,17 @@ class AccountScreen extends PureComponent<Props, State> {
 export default translate()(
   connect(
     (state, props) => {
-      const account = accountScreenSelector(state, props);
+      const { account, parentAccount } = accountAndParentScreenSelector(
+        state,
+        props,
+      );
       if (!account) return {};
       const range = selectedTimeRangeSelector(state);
       const counterValueCurrency = counterValueCurrencySelector(state);
       const useCounterValue = countervalueFirstSelector(state);
       const balanceHistoryWithCountervalue = balanceHistoryWithCountervalueSelector(
         state,
-        { account },
+        { account, range },
       );
       return {
         ...balanceHistoryWithCountervalue,
@@ -270,6 +321,7 @@ export default translate()(
         counterValueCurrency,
         range,
         account,
+        parentAccount,
       };
     },
     {

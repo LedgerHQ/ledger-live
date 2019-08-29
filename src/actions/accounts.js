@@ -13,9 +13,32 @@ export const importStore = (state: *) => ({
   },
 });
 
-export const addAccount = (account: Account) => ({
+export const importAccounts = ({
+  items,
+  selectedAccounts,
+}: {
+  items: any[],
+  selectedAccounts: string[],
+}) => ({
+  type: "ACCOUNTS_USER_IMPORT",
+  items,
+  selectedAccounts,
+});
+
+export const replaceAccounts = (payload: {
+  scannedAccounts: Account[],
+  selectedIds: string[],
+  renamings: { [id: string]: string },
+}) => ({
   type: "ACCOUNTS_ADD",
-  account,
+  ...payload,
+});
+
+export const setAccounts = (accounts: Account[]) => ({
+  type: "ACCOUNTS_IMPORT",
+  state: {
+    active: accounts,
+  },
 });
 
 export type UpdateAccountWithUpdater = (

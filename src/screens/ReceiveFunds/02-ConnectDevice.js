@@ -6,11 +6,10 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
-import { createStructuredSelector } from "reselect";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-
-import { accountScreenSelector } from "../../reducers/accounts";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import StepHeader from "../../components/StepHeader";
@@ -28,18 +27,20 @@ import NotSyncedWarning from "./NotSyncedWarning";
 type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
+    parentId: string,
   },
 }>;
 
 type Props = {
-  account: Account,
+  account: ?(TokenAccount | Account),
+  parentAccount: ?Account,
   navigation: Navigation,
   readOnlyModeEnabled: boolean,
 };
 
-const mapStateToProps = createStructuredSelector({
-  readOnlyModeEnabled: readOnlyModeEnabledSelector,
-  account: accountScreenSelector,
+const mapStateToProps = (s, p) => ({
+  ...accountAndParentScreenSelector(s, p),
+  readOnlyModeEnabled: readOnlyModeEnabledSelector(s),
 });
 
 class ConnectDevice extends Component<Props> {
@@ -62,7 +63,6 @@ class ConnectDevice extends Component<Props> {
 
   componentDidMount() {
     const { readOnlyModeEnabled } = this.props;
-
     if (readOnlyModeEnabled) {
       this.props.navigation.setParams({
         title: "transfer.receive.titleReadOnly",
@@ -72,37 +72,42 @@ class ConnectDevice extends Component<Props> {
   }
 
   onSelectDevice = (meta: *) => {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+    if (!account) return;
     navigation.navigate("ReceiveConfirmation", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       ...meta,
     });
   };
 
   onSkipDevice = () => {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
+    if (!account) return;
     navigation.navigate("ReceiveConfirmation", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
     });
   };
 
-  renderReadOnly = () => <ReadOnlyWarning continue={this.onSkipDevice} />;
-  renderNotSyncedOnly = () => (
-    <NotSyncedWarning
-      continue={this.onSkipDevice}
-      accountId={this.props.account.id}
-    />
-  );
-
   render() {
-    const { readOnlyModeEnabled, account } = this.props;
+    const { readOnlyModeEnabled, account, parentAccount } = this.props;
+
+    if (!account) return null;
+
+    const mainAccount = getMainAccount(account, parentAccount);
 
     if (readOnlyModeEnabled) {
-      return this.renderReadOnly();
+      return <ReadOnlyWarning continue={this.onSkipDevice} />;
     }
 
-    if (!account.freshAddress) {
-      return this.renderNotSyncedOnly();
+    if (!mainAccount.freshAddress) {
+      return (
+        <NotSyncedWarning
+          continue={this.onSkipDevice}
+          accountId={mainAccount.id}
+        />
+      );
     }
 
     return (
@@ -116,8 +121,8 @@ class ConnectDevice extends Component<Props> {
             onSelect={this.onSelectDevice}
             steps={[
               connectingStep,
-              accountApp(account),
-              receiveVerifyStep(account),
+              accountApp(mainAccount),
+              receiveVerifyStep(mainAccount),
             ]}
           />
         </ScrollView>

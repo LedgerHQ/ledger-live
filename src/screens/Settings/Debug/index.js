@@ -106,6 +106,10 @@ class DebugSettings extends PureComponent<{
           title="Debug Devices"
           onPress={() => navigation.navigate("DebugDevices")}
         />
+        <SettingsRow
+          title="Export accounts (LiveQR)"
+          onPress={() => navigation.navigate("DebugExport")}
+        />
       </ScrollView>
     );
   }

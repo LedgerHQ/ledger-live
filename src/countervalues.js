@@ -3,7 +3,11 @@
 import { AppState } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { createSelector } from "reselect";
-import createCounterValues from "@ledgerhq/live-common/lib/countervalues";
+import uniq from "lodash/uniq";
+import {
+  implementCountervalues,
+  getCountervalues,
+} from "@ledgerhq/live-common/lib/countervalues";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import {
@@ -16,37 +20,48 @@ import { setExchangePairsAction } from "./actions/settings";
 import { currenciesSelector } from "./reducers/accounts";
 import {
   counterValueCurrencySelector,
-  counterValueExchangeSelector,
-  currencySettingsSelector,
+  exchangeSettingsForPairSelector,
   intermediaryCurrency,
 } from "./reducers/settings";
 import network from "./api/network";
 
 const LEDGER_COUNTERVALUES_API = "https://countervalues.api.live.ledger.com";
 
-const pairsSelector = createSelector(
+// $FlowFixMe
+export const pairsSelector = createSelector(
   currenciesSelector,
   counterValueCurrencySelector,
-  counterValueExchangeSelector,
   state => state,
-  (currencies, counterValueCurrency, counterValueExchange, state) =>
-    currencies.length === 0
-      ? []
-      : [
-          {
-            from: intermediaryCurrency,
-            to: counterValueCurrency,
-            exchange: counterValueExchange,
-          },
-        ].concat(
-          currencies
-            .filter(c => c.ticker !== intermediaryCurrency.ticker)
-            .map(currency => ({
-              from: currency,
-              to: intermediaryCurrency,
-              exchange: currencySettingsSelector(state, { currency }).exchange,
-            })),
-        ),
+  (currencies, counterValueCurrency, state) => {
+    if (currencies.length === 0) return [];
+    const intermediaries = uniq(
+      currencies.map(c => intermediaryCurrency(c, counterValueCurrency)),
+    ).filter(c => c !== counterValueCurrency);
+    return intermediaries
+      .map(from => ({
+        from,
+        to: counterValueCurrency,
+        exchange: exchangeSettingsForPairSelector(state, {
+          from,
+          to: counterValueCurrency,
+        }),
+      }))
+      .concat(
+        currencies
+          .map(from => {
+            if (intermediaries.includes(from) || from.disableCountervalue)
+              return null;
+            const to = intermediaryCurrency(from, counterValueCurrency);
+            if (from === to) return null;
+            const exchange = exchangeSettingsForPairSelector(state, {
+              from,
+              to,
+            });
+            return { from, to, exchange };
+          })
+          .filter(p => p),
+      );
+  },
 );
 
 const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
@@ -89,7 +104,7 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
 };
 
 // $FlowFixMe
-const CounterValues = createCounterValues({
+implementCountervalues({
   log: __DEV__
     ? (...args) => console.log("CounterValues:", ...args) // eslint-disable-line no-console
     : undefined,
@@ -107,6 +122,8 @@ const CounterValues = createCounterValues({
       }
     : {}),
 });
+
+const CounterValues = getCountervalues();
 
 type PC = Promise<CryptoCurrency[]>;
 

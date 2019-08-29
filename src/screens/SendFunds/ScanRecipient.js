@@ -3,15 +3,15 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import { RNCamera } from "react-native-camera";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import Config from "react-native-config";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import CameraScreen from "../../components/CameraScreen";
@@ -23,7 +23,8 @@ type Props = {
   navigation: NavigationScreenProp<{
     accountId: string,
   }>,
-  account: Account,
+  account: ?(Account | TokenAccount),
+  parentAccount: ?Account,
 };
 
 type State = {
@@ -71,21 +72,24 @@ class ScanRecipient extends PureComponent<Props, State> {
   };
 
   onResult = (result: string) => {
-    const { account } = this.props;
-    const bridge = getAccountBridge(account);
+    const { account, parentAccount } = this.props;
+    if (!account) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
     const { amount, address, currency, ...rest } = decodeURIScheme(result);
-    let t = bridge.createTransaction(account);
-    t = bridge.editTransactionRecipient(account, t, address);
+    let t = bridge.createTransaction(mainAccount);
+    t = bridge.editTransactionRecipient(mainAccount, t, address);
     if (amount) {
-      t = bridge.editTransactionAmount(account, t, amount);
+      t = bridge.editTransactionAmount(mainAccount, t, amount);
     }
     t = Object.keys(rest).reduce(
-      (t, k) => bridge.editTransactionExtra(account, t, k, rest[k]),
+      (t, k) => bridge.editTransactionExtra(mainAccount, t, k, rest[k]),
       t,
     );
 
     this.props.navigation.navigate("SendSelectRecipient", {
       accountId: account.id,
+      parentId: parentAccount && parentAccount.id,
       transaction: t,
       justScanned: true,
     });
@@ -124,9 +128,7 @@ class ScanRecipient extends PureComponent<Props, State> {
   }
 }
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+const mapStateToProps = accountAndParentScreenSelector;
 
 export default translate()(connect(mapStateToProps)(ScanRecipient));
 

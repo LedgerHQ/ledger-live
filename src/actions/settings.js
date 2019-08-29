@@ -106,3 +106,8 @@ export const installAppFirstTime = () => ({
 export const switchCountervalueFirst = () => ({
   type: "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
 });
+
+export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) => ({
+  type: "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
+  hideEmptyTokenAccounts,
+});

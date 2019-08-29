@@ -26,6 +26,7 @@ import PairNewDeviceButton from "./PairNewDeviceButton";
 type Props = {
   onBluetoothDeviceAction?: (device: DeviceMeta) => any,
   onSelect: (meta: DeviceMeta) => void,
+  deviceMeta?: DeviceMeta,
   steps?: Step[],
   onStepEntered?: (number, Object) => void,
   withArrows?: boolean,
@@ -209,6 +210,7 @@ class SelectDevice extends Component<OwnProps, State> {
       usbOnly,
       withArrows,
       deviceModelId,
+      deviceMeta,
     } = this.props;
     const { connecting } = this.state;
 
@@ -241,7 +243,7 @@ class SelectDevice extends Component<OwnProps, State> {
         {other.length === 0 ? <USBEmpty /> : other.map(this.renderItem)}
 
         <DeviceJob
-          meta={connecting}
+          meta={deviceMeta || connecting}
           steps={steps}
           onCancel={this.onCancel}
           onStepEntered={onStepEntered}

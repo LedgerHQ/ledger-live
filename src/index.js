@@ -28,6 +28,7 @@ import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContex
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import AppContainer from "./navigators";
+import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 
 // useScreens();
 const styles = StyleSheet.create({
@@ -83,7 +84,11 @@ class App extends Component<*> {
 
         <SyncNewAccounts priority={5} />
 
-        <AppContainer />
+        <AppContainer
+          screenProps={{
+            importDataString: this.props.importDataString,
+          }}
+        />
 
         <DebugRejectSwitch />
       </View>
@@ -91,7 +96,10 @@ class App extends Component<*> {
   }
 }
 
-export default class Root extends Component<{}, { appState: * }> {
+export default class Root extends Component<
+  { importDataString?: string },
+  { appState: * },
+> {
   initTimeout: *;
 
   componentWillUnmount() {
@@ -113,6 +121,8 @@ export default class Root extends Component<{}, { appState: * }> {
   };
 
   render() {
+    const importDataString = __DEV__ && this.props.importDataString;
+
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
@@ -120,6 +130,7 @@ export default class Root extends Component<{}, { appState: * }> {
             ready ? (
               <Fragment>
                 <StyledStatusBar />
+                <SetEnvsFromSettings />
                 <HookSentry />
                 <HookAnalytics store={store} />
                 <AuthPass>
@@ -128,7 +139,7 @@ export default class Root extends Component<{}, { appState: * }> {
                       <CounterValues.PollingProvider>
                         <ButtonUseTouchable.Provider value={true}>
                           <OnboardingContextProvider>
-                            <App />
+                            <App importDataString={importDataString} />
                           </OnboardingContextProvider>
                         </ButtonUseTouchable.Provider>
                       </CounterValues.PollingProvider>
