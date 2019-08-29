@@ -29,6 +29,15 @@ export type AccountPortfolio = {
   countervalueChange: ValueChange // calculates the ROI. value in the countervalue unit.
 };
 
+export type CurrencyPortfolio = {
+  history: BalanceHistoryWithCountervalue,
+  countervalueAvailable: boolean,
+  histories: BalanceHistoryWithCountervalue[],
+  accounts: (TokenAccount | Account)[] | Account[] | TokenAccount[],
+  cryptoChange: ValueChange, // how much the account changes. value is in the account currency
+  countervalueChange: ValueChange // calculates the ROI. value in the countervalue unit.
+};
+
 export type Portfolio = {
   balanceHistory: BalanceHistory,
   balanceAvailable: boolean,
