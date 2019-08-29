@@ -1990,6 +1990,46 @@ Array [
 ]
 `;
 
+exports[`getCurrencyPortfolio works with one account and is identically to that account history 1`] = `
+Array [
+  Object {
+    "countervalue": "0",
+    "date": 2018-03-09T03:59:59.999Z,
+    "value": "0",
+  },
+  Object {
+    "countervalue": "0",
+    "date": 2018-03-10T03:59:59.999Z,
+    "value": "0",
+  },
+  Object {
+    "countervalue": "0",
+    "date": 2018-03-11T03:59:59.999Z,
+    "value": "0",
+  },
+  Object {
+    "countervalue": "6784819.4",
+    "date": 2018-03-12T03:59:59.999Z,
+    "value": "67848194",
+  },
+  Object {
+    "countervalue": "8072578.1",
+    "date": 2018-03-13T03:59:59.999Z,
+    "value": "80725781",
+  },
+  Object {
+    "countervalue": "13804071.2",
+    "date": 2018-03-14T03:59:59.999Z,
+    "value": "138040712",
+  },
+  Object {
+    "countervalue": "16841893.6",
+    "date": 2018-03-14T17:34:42.000Z,
+    "value": "168418936",
+  },
+]
+`;
+
 exports[`getPortfolio with lot of accounts 1`] = `
 Array [
   Object {

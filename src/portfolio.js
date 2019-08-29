@@ -12,6 +12,7 @@ import type {
   Account,
   BalanceHistory,
   AccountPortfolio,
+  CurrencyPortfolio,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
   Portfolio,
@@ -403,6 +404,100 @@ export function getPortfolio(
   };
 
   portfolioMemo[range] = ret;
+
+  return ret;
+}
+
+const currencyPortfolioMemo: { [_: *]: CurrencyPortfolio } = {};
+/**
+ * calculate the total balance history for all accounts in a reference fiat unit
+ * and using a CalculateCounterValue function (see countervalue helper)
+ * NB the last item of the array is actually the current total balance.
+ * @memberof account
+ */
+export function getCurrencyPortfolio(
+  accounts: (TokenAccount | Account)[] | Account[] | TokenAccount[],
+  range: PortfolioRange,
+  calc: (TokenCurrency | CryptoCurrency, BigNumber, Date) => ?BigNumber
+): CurrencyPortfolio {
+  const histories: BalanceHistoryWithCountervalue[] = [];
+
+  let countervalueAvailable = false;
+
+  for (let i = 0; i < accounts.length; i++) {
+    const account = accounts[i];
+    const r = getBalanceHistoryWithCountervalue(account, range, calc);
+    histories.push(r.history);
+    countervalueAvailable = r.countervalueAvailable;
+  }
+
+  const memo = currencyPortfolioMemo[range];
+  if (memo && memo.histories.length === histories.length) {
+    let sameHisto = true;
+    for (let i = 0; i < histories.length; i++) {
+      if (histories[i] !== memo.histories[i]) {
+        sameHisto = false;
+        break;
+      }
+    }
+    if (sameHisto) {
+      if (accounts.length === memo.accounts.length) {
+        return memo;
+      }
+      return {
+        history: memo.history,
+        accounts,
+        countervalueAvailable,
+        histories,
+        countervalueChange: memo.countervalueChange,
+        cryptoChange: memo.cryptoChange
+      };
+    }
+  }
+
+  const history = getDates(range).map(date => ({
+    date,
+    value: ZERO,
+    countervalue: ZERO
+  }));
+
+  for (let i = 0; i < histories.length; i++) {
+    const h = histories[i];
+    for (let j = 0; j < h.length; j++) {
+      const res = history[j];
+      res.value = res.value.plus(h[j].value);
+      res.countervalue = res.countervalue.plus(h[j].countervalue);
+    }
+  }
+
+  // previous existing implementation here
+  const from = history[0];
+  const to = history[history.length - 1];
+  const fromEffective =
+    find(history, record => record.value.isGreaterThan(0)) || from;
+  const cryptoChange = {
+    value: to.value.minus(from.value),
+    percentage: null
+  };
+  const countervalueChange = {
+    value: (to.countervalue || ZERO).minus(from.countervalue || ZERO),
+    percentage: meaningfulPercentage(
+      (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
+      fromEffective.countervalue
+    )
+  };
+
+  const ret = {
+    history,
+    countervalueAvailable,
+    accounts,
+    range,
+    histories,
+    cryptoChange,
+    countervalueChange
+  };
+
+  currencyPortfolioMemo[range] = ret;
 
   return ret;
 }
