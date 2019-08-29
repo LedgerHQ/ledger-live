@@ -1,6 +1,6 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import type {
   Account,
@@ -24,12 +24,27 @@ import OperationRow from "../../components/OperationRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Touchable from "../../components/Touchable";
+import { urls } from "../../config/urls";
 import Info from "../../icons/Info";
+import ExternalLink from "../../icons/ExternalLink";
 import type { CurrencySettings } from "../../reducers/settings";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import colors from "../../colors";
 import DataList from "./DataList";
 import Modal from "./Modal";
+
+type HelpLinkProps = {
+  event: string,
+  title: React$Node,
+  onPress: () => ?Promise<any>,
+};
+
+const HelpLink = ({ title, event, onPress }: HelpLinkProps) => (
+  <Touchable onPress={onPress} event={event} style={styles.helpLinkRoot}>
+    <ExternalLink size={12} color={colors.smoke} />
+    <LText style={styles.helpLinkText}>{title}</LText>
+  </Touchable>
+);
 
 type Props = {
   account: Account | TokenAccount,
@@ -317,6 +332,19 @@ class Content extends PureComponent<Props, State> {
                 values={{ count: uniqueRecipients.length }}
               />
             }
+            rightComp={
+              uniqueRecipients.length > 1 ? (
+                <View style={{ marginLeft: "auto" }}>
+                  <HelpLink
+                    event="MultipleAddressesSupport"
+                    onPress={() => Linking.openURL(urls.multipleAddresses)}
+                    title={
+                      <Trans i18nKey="operationDetails.multipleAddresses" />
+                    }
+                  />
+                </View>
+              ) : null
+            }
           />
         </View>
         {Object.entries(extra).map(([key, value]) => (
@@ -412,5 +440,16 @@ const styles = StyleSheet.create({
     width: 6,
     marginRight: 8,
     alignSelf: "center",
+  },
+  helpLinkRoot: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  helpLinkText: {
+    marginLeft: 5,
+    fontSize: 12,
+    textDecorationLine: "underline",
+    color: colors.smoke,
   },
 });

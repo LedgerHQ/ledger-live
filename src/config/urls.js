@@ -19,4 +19,6 @@ export const urls = {
   errors: {
     PairingFailed: "https://support.ledger.com/hc/en-us/articles/360025864773",
   },
+  multipleAddresses:
+    "https://support.ledger.com/hc/en-us/articles/360033802154",
 };
