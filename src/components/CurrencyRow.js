@@ -3,14 +3,17 @@
 import { StyleSheet } from "react-native";
 import React, { PureComponent } from "react";
 import { RectButton } from "react-native-gesture-handler";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 
 import LText from "./LText";
 import CurrencyIcon from "./CurrencyIcon";
 
 type Props = {
-  currency: CryptoCurrency,
-  onPress: CryptoCurrency => void,
+  currency: CryptoCurrency | TokenCurrency,
+  onPress: (CryptoCurrency | TokenCurrency) => void,
   style?: *,
 };
 
