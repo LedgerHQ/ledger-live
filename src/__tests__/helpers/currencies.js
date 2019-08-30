@@ -19,6 +19,7 @@ import {
   sanitizeValueString,
   findTokenByTicker
 } from "../../currencies";
+import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
 
 import "../../load/tokens/ethereum/erc20";
 
@@ -85,6 +86,22 @@ test("fiats list elements are correct", () => {
     expect(unit.magnitude).toBeGreaterThan(-1);
     expect(typeof unit.magnitude).toBe("number");
     tickers[fiat.ticker] = unit;
+  }
+});
+
+test("erc20 are all consistant with those on ledgerjs side", () => {
+  for (const token of listTokens()) {
+    if (token.tokenType === "erc20") {
+      const tokenData = byContractAddress(token.contractAddress);
+      if (!tokenData) {
+        throw new Error(token.name + " not available in ledgerjs data");
+      }
+      expect(token.ticker.toLowerCase()).toBe(tokenData.ticker.toLowerCase());
+      expect(token.contractAddress.toLowerCase()).toBe(
+        tokenData.contractAddress.toLowerCase()
+      );
+      expect(token.units[0].magnitude).toBe(tokenData.decimals);
+    }
   }
 });
 
