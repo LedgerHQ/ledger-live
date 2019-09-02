@@ -8,7 +8,11 @@ import { SafeAreaView, FlatList } from "react-navigation";
 import i18next from "i18next";
 import { compose } from "redux";
 import type { NavigationScreenProp } from "react-navigation";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
+import { listTokens } from "@ledgerhq/live-common/lib/currencies";
 
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
@@ -45,7 +49,9 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     ),
   };
 
-  cryptocurrencies = listCryptoCurrencies(this.props.devMode);
+  cryptocurrencies = listCryptoCurrencies(this.props.devMode).concat(
+    listTokens(),
+  );
 
   keyExtractor = currency => currency.id;
 
@@ -53,8 +59,22 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  renderItem = ({ item }: { item: CryptoCurrency }) => (
-    <CurrencyRow currency={item} onPress={this.onPressCurrency} />
+  onPressToken = (token: TokenCurrency) => {
+    this.props.navigation.navigate("AddAccountsTokenCurrencyDisclaimer", {
+      token,
+    });
+  };
+
+  onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
+    if (currencyOrToken.type === "TokenCurrency") {
+      this.onPressToken(currencyOrToken);
+    } else {
+      this.onPressCurrency(currencyOrToken);
+    }
+  };
+
+  renderItem = ({ item }: { item: CryptoCurrency | TokenCurrency }) => (
+    <CurrencyRow currency={item} onPress={this.onPressItem} />
   );
 
   renderList = items => (
