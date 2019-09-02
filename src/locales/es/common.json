@@ -993,7 +993,12 @@
     "synchronizing": "Synchronizing",
     "synchronizingDesc": "We are synchronizing your accounts, this can take a while...",
     "noAccountToCreate": "No <1><0>{{currencyName}}</></> account was found to create. Restart the flow and sync your accounts",
-    "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one."
+    "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one.",
+    "tokens": {
+      "title": "Add Token",
+      "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly on an Ethereum account",
+      "learnMore": "Learn more about ERC20"
+    }
   },
   "SelectDevice": {
     "title": "Pair new device",
