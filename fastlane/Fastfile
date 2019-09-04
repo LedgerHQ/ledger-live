@@ -73,7 +73,7 @@ platform :ios do
       gym(
         scheme: "ledgerlivemobile",
         project: "ios/ledgerlivemobile.xcodeproj",
-        output_directory: "ios",
+        output_directory: "./ios",
         clean: true,
         export_options: {
           method: method,
