@@ -62,7 +62,7 @@
     },
     "CantOpenDevice": {
       "title": "Désolé, échec de la connexion",
-      "description": "Votre Ledger Nano X doit être déverrouillé et à portée"
+      "description": "Your Ledger device should be unlocked and in range when using Bluetooth"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR-code: auto-verification not supported by this address"
