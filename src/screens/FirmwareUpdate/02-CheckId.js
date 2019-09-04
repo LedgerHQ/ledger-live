@@ -19,6 +19,8 @@ import Spinning from "../../components/Spinning";
 import FirmwareProgress from "../../components/FirmwareProgress";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
+const forceInset = { bottom: "always" };
+
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
@@ -101,7 +103,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const windowWidth = getWindowDimensions().width;
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
         <View style={styles.body}>
           <View style={styles.device}>

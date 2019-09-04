@@ -10,6 +10,7 @@ import {
   // $FlowFixMe
   SectionList,
   withNavigation,
+  SafeAreaView,
 } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -46,6 +47,8 @@ type Props = {
   migratableAccounts: Account[],
 };
 
+const forceInset = { bottom: "always" };
+
 const Overview = ({ navigation, migratableAccounts, currencyIds }: Props) => {
   const showNotice = navigation.getParam("showNotice");
   const startMigration = useCallback(() => {
@@ -74,7 +77,10 @@ const Overview = ({ navigation, migratableAccounts, currencyIds }: Props) => {
   );
 
   return (
-    <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
+    <SafeAreaView
+      forceInset={forceInset}
+      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+    >
       <Circle bg={colors.pillActiveBackground} size={56}>
         {showNotice ? (
           <IconExclamationCircle color={colors.live} size={24} />
@@ -119,7 +125,7 @@ const Overview = ({ navigation, migratableAccounts, currencyIds }: Props) => {
           onPress={startMigration}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -24,6 +24,8 @@ import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import colors from "../../colors";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: Account | TokenAccount,
   parentAccount: ?Account,
@@ -86,7 +88,7 @@ class EthereumEditGasLimit extends PureComponent<Props, State> {
     const { gasLimit } = this.state;
     const { t } = this.props;
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
         <KeyboardView style={styles.body}>
           <ScrollView contentContainerStyle={styles.root}>
             <TextInput

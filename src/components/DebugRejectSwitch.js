@@ -9,7 +9,7 @@ import { flatMap } from "rxjs/operators";
 import LText from "./LText";
 
 export const rejections: Subject<void> = new Subject();
-
+const forceInset = { bottom: "always" };
 const defaultErrorCreator = () => new Error("DebugRejectSwitch");
 
 // usage: observable.pipe(rejectionOp())
@@ -56,7 +56,7 @@ export default class DebugRejectSwitch extends PureComponent<{}> {
   render() {
     if (!Config.MOCK) return null;
     return (
-      <SafeAreaView>
+      <SafeAreaView forceInset={forceInset}>
         <TouchableOpacity onPress={this.onPress}>
           <View style={styles.root}>
             <LText bold style={styles.text}>

@@ -21,6 +21,8 @@ import colors from "../../colors";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   navigation: NavigationScreenProp<{
     params: {
@@ -90,7 +92,7 @@ class EditAccountName extends PureComponent<Props, State> {
     const initialAccountName = account ? account.name : accountFromAdd.name;
 
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} forceInset={forceInset}>
         <KeyboardView style={styles.body}>
           <ScrollView
             contentContainerStyle={styles.root}

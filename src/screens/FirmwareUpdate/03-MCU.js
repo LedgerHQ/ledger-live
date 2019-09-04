@@ -16,6 +16,8 @@ import { BulletItem } from "../../components/BulletList";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "../../components/Installing";
 
+const forceInset = { bottom: "always" };
+
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
@@ -87,7 +89,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const { width } = getWindowDimensions();
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="FirmwareUpdate" name="MCU" />
         {installing ? (
           <Installing progress={progress} installing={installing} />

@@ -11,6 +11,8 @@ import Button from "../../components/Button";
 import NeedHelp from "../../components/NeedHelp";
 import colors from "../../colors";
 
+const forceInset = { bottom: "always" };
+
 type Navigation = NavigationScreenProp<{
   params: {
     deviceId: string,
@@ -47,7 +49,7 @@ class FirmwareUpdateFailure extends Component<Props, State> {
     const { navigation } = this.props;
     const error = navigation.getParam("error");
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="FirmwareUpdate" name="Failure" />
         <View style={styles.body}>
           <GenericErrorView error={error} />

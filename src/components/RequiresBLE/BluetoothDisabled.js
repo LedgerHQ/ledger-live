@@ -12,11 +12,13 @@ import InfoIcon from "../InfoIcon";
 import colors from "../../colors";
 import { deviceNames } from "../../wording";
 
+const forceInset = { bottom: "always" };
+
 export default class BluetoothDisabled extends PureComponent<{}> {
   render() {
     // NB based on the state we could have different wording?
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} forceInset={forceInset}>
         <InfoIcon
           bg={colors.pillActiveBackground}
           floatingIcon={<Alert size={20} color={colors.white} />}

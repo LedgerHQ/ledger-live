@@ -33,6 +33,8 @@ import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 
+const forceInset = { bottom: "always" };
+
 const SectionAccounts = ({ defaultSelected, ...rest }: *) => {
   useEffect(() => {
     if (defaultSelected && rest.onSelectAll) {
@@ -271,7 +273,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     };
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="AddAccounts" name="Accounts" />
         <PreventNativeBack />
         <ScrollView

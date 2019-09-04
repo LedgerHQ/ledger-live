@@ -8,6 +8,8 @@ import { UserRefusedAddress } from "@ledgerhq/errors";
 import colors from "../colors";
 import DeviceNanoAction from "../components/DeviceNanoAction";
 
+const forceInset = { bottom: "always" };
+
 class DebugIcons extends Component<{}> {
   static navigationOptions = {
     title: "Debug Icons",
@@ -15,7 +17,7 @@ class DebugIcons extends Component<{}> {
 
   render() {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <DeviceNanoAction width={250} />
           <DeviceNanoAction width={250} action="accept" screen="validation" />

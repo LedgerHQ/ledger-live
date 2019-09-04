@@ -33,6 +33,8 @@ import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import AmountInput from "./AmountInput";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: ?(Account | TokenAccount),
   parentAccount: ?Account,
@@ -350,7 +352,7 @@ class SendAmount extends Component<Props, State> {
     return (
       <>
         <TrackScreen category="SendFunds" name="Amount" />
-        <SafeAreaView style={styles.root}>
+        <SafeAreaView style={styles.root} forceInset={forceInset}>
           <KeyboardView style={styles.container}>
             <TouchableWithoutFeedback onPress={this.blur}>
               <View style={{ flex: 1 }}>

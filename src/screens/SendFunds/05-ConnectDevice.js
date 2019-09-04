@@ -16,6 +16,8 @@ import StepHeader from "../../components/StepHeader";
 import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: ?(Account | TokenAccount),
   parentAccount: ?Account,
@@ -54,7 +56,7 @@ class ConnectDevice extends Component<Props> {
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContainer}

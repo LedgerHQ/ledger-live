@@ -25,6 +25,8 @@ import TextInput from "../../components/TextInput";
 import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: ?(Account | TokenAccount),
   parentAccount: ?Account,
@@ -204,7 +206,7 @@ class SendSelectRecipient extends Component<Props, State> {
     const { account, t } = this.props;
     if (!account) return null;
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="SendFunds" name="SelectRecipient" />
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />

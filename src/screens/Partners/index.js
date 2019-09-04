@@ -14,6 +14,8 @@ import colors from "../../colors";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   t: T,
@@ -30,6 +32,7 @@ class ExchangeScreen extends Component<Props> {
     return (
       <SafeAreaView
         style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+        forceInset={forceInset}
       >
         <TrackScreen category="Partners" />
         <ScrollView style={styles.scrollView}>

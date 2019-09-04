@@ -15,6 +15,8 @@ import type { T } from "../../types/common";
 import KeyboardView from "../../components/KeyboardView";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: Account | TokenAccount,
   parentAccount: ?Account,
@@ -38,7 +40,7 @@ class EthereumEditFee extends Component<Props> {
     const transaction: Transaction = navigation.getParam("transaction");
     if (!transaction) return null;
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <KeyboardView style={styles.container}>
           <EditFeeUnitEthereum
             account={account}

@@ -32,6 +32,8 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import { calculateCountervalueSelector } from "../../actions/general";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   distribution: AssetsDistribution,
@@ -129,7 +131,7 @@ class Distribution extends PureComponent<Props, *> {
 
     const Header = this.ListHeaderComponent;
     return (
-      <SafeAreaView style={styles.wrapper}>
+      <SafeAreaView style={styles.wrapper} forceInset={forceInset}>
         <TrackScreen category="Distribution" />
         <Header />
         <List

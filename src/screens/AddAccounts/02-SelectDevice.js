@@ -14,6 +14,8 @@ import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
 import StepHeader from "../../components/StepHeader";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   navigation: NavigationScreenProp<{
     params: {
@@ -47,7 +49,7 @@ class AddAccountsSelectDevice extends Component<Props, State> {
     const { navigation } = this.props;
     const currency = navigation.getParam("currency");
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContainer}
