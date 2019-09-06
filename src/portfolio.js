@@ -480,7 +480,7 @@ export function getCurrencyPortfolio(
     percentage: null
   };
   const countervalueChange = {
-    value: (to.countervalue || ZERO).minus(from.countervalue || ZERO),
+    value: (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
     percentage: meaningfulPercentage(
       (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
       fromEffective.countervalue
