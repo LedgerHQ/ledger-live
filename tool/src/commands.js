@@ -48,6 +48,7 @@ import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-p
 import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 import repairFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import signMessage from "@ledgerhq/live-common/lib/hw/signMessage";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import accountFormatters from "./accountFormatters";
 import proxy from "./proxy";
@@ -496,6 +497,35 @@ const all = {
             warning ? { type: "warning", warning } : { type: "success" },
           error => ({ type: "error", error: error.message })
         )
+  },
+
+  signMessage: {
+    description: "Sign a message with the device on specific derivations (advanced)",
+    args: [
+      currencyOpt,
+      { name: "path", type: String, desc: "HDD derivation path" },
+      { name: "derivationMode", type: String, desc: "derivationMode to use" },
+      { name: "message", type: String, desc: "the message to sign" },
+    ],
+    job: arg => inferCurrency(arg).pipe(
+      mergeMap(currency => {
+        if (!currency) {
+          throw new Error("no currency provided");
+        }
+        if (!arg.path) {
+          throw new Error("--path is required");
+        }
+        asDerivationMode(arg.derivationMode);
+        return withDevice(arg.device || "")(t =>
+          from(
+            signMessage(t, {
+              ...arg,
+              currency
+            })
+          )
+        );
+      })
+    )
   },
 
   getAddress: {
