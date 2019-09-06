@@ -77,6 +77,11 @@ const columns = [
     accessor: "typeText"
   },
   {
+    Header: "id",
+    width: 120,
+    accessor: "id"
+  },
+  {
     Header: "Name",
     accessor: "name"
   },
@@ -226,6 +231,7 @@ const Assets = () => {
       exchange,
       loading,
       livesupport,
+      delisted: t.delisted ? "yes" : "no",
       usdValue
     };
   });
