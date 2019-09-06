@@ -90,7 +90,13 @@ test("fiats list elements are correct", () => {
 });
 
 test("erc20 are all consistant with those on ledgerjs side", () => {
-  for (const token of listTokens()) {
+  const normalList = listTokens();
+  const delistedList = listTokens({ withDelisted: true });
+  expect(delistedList.length).toBeGreaterThan(normalList.length);
+  for (const token of delistedList) {
+    if (token.delisted) {
+      expect(normalList.find(o => o.id === token.id)).toBeUndefined();
+    }
     if (token.tokenType === "erc20") {
       const tokenData = byContractAddress(token.contractAddress);
       if (!tokenData) {
