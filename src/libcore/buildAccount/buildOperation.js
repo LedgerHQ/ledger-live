@@ -60,6 +60,7 @@ export async function buildOperation(arg: {
   };
 
   const rest = await buildOp(arg, partialOp);
+  if (!rest) return null;
   const id = `${accountId}-${rest.hash}-${type}`;
 
   const op: $Exact<Operation> = {

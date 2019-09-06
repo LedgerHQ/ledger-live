@@ -66,12 +66,15 @@ export function groupAccountsOperationsByDay(
   let next = getNext();
   if (!next) return emptyDailyOperations;
   const sections = [];
+  let totalOperations = 0;
   let day = startOfDay(next.date);
   let data: Operation[] = [];
-  for (let i = 0; i < count && next; i++) {
+  while (totalOperations < count && next) {
     if (next.date < day) {
       if (data.length > 0) {
-        sections.push({ day, data });
+        const slicedData = data.slice(0, count - totalOperations);
+        sections.push({ day, data: slicedData });
+        totalOperations += slicedData.length;
       }
       day = startOfDay(next.date);
       data = next.ops;
@@ -80,7 +83,7 @@ export function groupAccountsOperationsByDay(
     }
     next = getNext();
   }
-  if (data.length > 0) {
+  if (data.length > 0 && totalOperations < count) {
     sections.push({ day, data });
   }
   return {
