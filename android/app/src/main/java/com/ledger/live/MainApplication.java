@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactApplication;
+import com.rnfingerprint.FingerprintAuthPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
@@ -54,6 +55,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FingerprintAuthPackage(),
             new VectorIconsPackage(),
             new NetInfoPackage(),
             new LottiePackage(),
