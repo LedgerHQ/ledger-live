@@ -22,7 +22,8 @@ type CurrencyCommon = {
   // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
   symbol?: string,
   // tells if countervalue need to be disabled (typically because colliding with other coins)
-  disableCountervalue?: boolean
+  disableCountervalue?: boolean,
+  delisted?: boolean
 };
 
 export type TokenCurrency = CurrencyCommon & {
