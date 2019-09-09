@@ -9,6 +9,8 @@ import {
   CantOpenDevice,
   UpdateYourApp,
   BluetoothRequired,
+  TransportWebUSBGestureRequired,
+  TransportInterfaceNotAvailable,
   FirmwareOrAppUpdateRequired,
   TransportStatusError,
   DeviceHalted
@@ -121,6 +123,8 @@ export const withDevice = (deviceId: string) => <T>(
       .catch(e => {
         finish();
         if (e instanceof BluetoothRequired) throw e;
+        if (e instanceof TransportWebUSBGestureRequired) throw e;
+        if (e instanceof TransportInterfaceNotAvailable) throw e;
         throw new CantOpenDevice(e.message);
       })
       .then(transport => {
@@ -158,6 +162,8 @@ export const genericCanRetryOnError = (err: ?Error) => {
   if (err instanceof UpdateYourApp) return false;
   if (err instanceof FirmwareOrAppUpdateRequired) return false;
   if (err instanceof DeviceHalted) return false;
+  if (err instanceof TransportWebUSBGestureRequired) return false;
+  if (err instanceof TransportInterfaceNotAvailable) return false;
   return true;
 };
 
