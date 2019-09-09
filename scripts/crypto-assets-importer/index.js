@@ -47,6 +47,13 @@ axios
                 ? countervaluesTickers.includes(a[2])
                 : true)
           );
+          const contractGroup = {};
+          all.forEach(a => {
+            const matches = all.filter(b => a[6] === b[6]);
+            if (matches.length > 1 && !contractGroup[a[6]]) {
+              contractGroup[a[6]] = matches;
+            }
+          });
           const groups = {};
           all.forEach(a => {
             if (a[7]) return;
@@ -57,6 +64,17 @@ axios
               groups[a].length > 1 &&
               (WARN_IF_COUNTERVALUES ? countervaluesTickers.includes(a) : true)
           );
+
+          if (Object.keys(contractGroup).length > 0) {
+            console.warn("\nERC20 THAT HAVE SAME CONTRACT ADDRESSES:\n");
+            Object.keys(contractGroup).forEach(key => {
+              console.warn(
+                key +
+                  " contract used in erc20: " +
+                  contractGroup[key].map(a => a[2]).join(", ")
+              );
+            });
+          }
 
           if (fiatCollisions.length > 0) {
             console.warn("\nERC20 THAT COLLIDES WITH FIAT TICKERS:\n");
@@ -85,7 +103,7 @@ axios
             });
           }
 
-          return all;
+          return all.filter(a => !contractGroup[a[6]]);
         })
         .then(all =>
           fs.writeFileSync(output, imp.outputTemplate(all), "utf-8")

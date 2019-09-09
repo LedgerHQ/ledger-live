@@ -96,15 +96,15 @@ const defaultPostSyncPatch = (initial: Account, synced: Account): Account =>
   synced;
 
 export function syncAccount(
-  account: Account
+  existingAccount: Account
 ): Observable<(Account) => Account> {
-  const { derivationMode, seedIdentifier, currency } = account;
+  const { derivationMode, seedIdentifier, currency } = existingAccount;
   const postSyncPatch =
     postSyncPatchPerFamily[currency.family] || defaultPostSyncPatch;
   return defer(() =>
     from(
       withLibcore(core =>
-        getCoreObjects(core, account).then(
+        getCoreObjects(core, existingAccount).then(
           ({ coreWallet, coreAccount, walletName }) =>
             syncCoreAccount({
               core,
@@ -112,10 +112,10 @@ export function syncAccount(
               coreAccount,
               walletName,
               currency,
-              accountIndex: account.index,
+              accountIndex: existingAccount.index,
               derivationMode,
               seedIdentifier,
-              account
+              existingAccount
             })
         )
       )

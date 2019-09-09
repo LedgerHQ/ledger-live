@@ -7,8 +7,10 @@ import {
   getBalanceHistory,
   getBalanceHistoryWithCountervalue,
   getPortfolio,
+  getCurrencyPortfolio,
   getAssetsDistribution
 } from "../portfolio";
+import type { Account } from "../types";
 import { genAccount } from "../mock/account";
 import { baseMockBTCRates } from "../countervalues/mock";
 
@@ -75,6 +77,17 @@ test("getPortfolio works with one account and is identically to that account his
   expect(portfolio.balanceHistory).toMatchSnapshot();
 });
 
+test("getCurrencyPortfolio works with one account and is identically to that account history", () => {
+  const account = genAccount("seed_4", { tokenAccountsCount: 0 });
+  const calc = (account, value, date) => value.times(0.1);
+  const { history } = getBalanceHistoryWithCountervalue(account, "week", calc);
+  const accounts: Account[] = [account];
+  const portfolio = getCurrencyPortfolio(accounts, "week", calc);
+  expect(portfolio.countervalueAvailable).toBe(true);
+  expect(portfolio.history).toMatchObject(history);
+  expect(portfolio.history).toMatchSnapshot();
+});
+
 test("getBalanceHistoryWithCountervalue to have proper countervalues", () => {
   const account = genAccount("bro1", { tokenAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "week");
@@ -128,6 +141,20 @@ test("getPortfolio with twice same account will double the amounts", () => {
   });
 });
 
+test("getCurrencyPortfolio with twice same account will double the amounts", () => {
+  const account = genAccount("seed_5", { tokenAccountsCount: 0 });
+  const { history } = getBalanceHistory(account, "week");
+  const accounts: Account[] = [account, account];
+  const allHistory = getCurrencyPortfolio(
+    accounts,
+    "week",
+    (c, value, date) => value // using identity, at any time, 1 token = 1 USD
+  );
+  allHistory.history.forEach((h, i) => {
+    expect(h.value.toString()).toBe(history[i].value.times(2).toString());
+  });
+});
+
 test("getPortfolio calculateCounterValue is taken into account", () => {
   const account = genAccount("seed_6", { tokenAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "month");
@@ -137,6 +164,25 @@ test("getPortfolio calculateCounterValue is taken into account", () => {
     (c, value, date) => value.div(2)
   );
   expect(portfolio.balanceHistory).toMatchObject(history);
+});
+
+test("getCurrencyPortfolio calculateCounterValue is taken into account", () => {
+  const account = genAccount("seed_6", { tokenAccountsCount: 0 });
+  const { history } = getBalanceHistoryWithCountervalue(
+    account,
+    "month",
+    (c, value, date) => value
+  );
+  const accounts: Account[] = [account, account];
+  const portfolio = getCurrencyPortfolio(accounts, "month", (c, value, date) =>
+    value.div(2)
+  );
+  expect(portfolio.history.map(h => h.value.div(2).toString())).toMatchObject(
+    history.map(h => h.value.toString())
+  );
+  expect(portfolio.history.map(h => h.countervalue.toString())).toMatchObject(
+    history.map(h => h.countervalue.toString())
+  );
 });
 
 test("getPortfolio calculateCounterValue can returns missing countervalue", () => {
@@ -157,6 +203,25 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
   expect(portfolio.balanceHistory).toMatchObject(history);
   expect(portfolio.balanceAvailable).toBe(true);
   expect(portfolio.unavailableCurrencies.length).toBe(1);
+});
+
+test("getCurrencyPortfolio calculateCounterValue can miss countervalue", () => {
+  const account = genAccount("seed_6", {
+    currency: getCryptoCurrencyById("bitcoin"),
+    tokenAccountsCount: 0
+  });
+  const account2 = genAccount("seed_7", {
+    currency: getCryptoCurrencyById("bitcoin"),
+    tokenAccountsCount: 0
+  });
+  const { history } = getBalanceHistory(account, "month");
+  const { history: history2 } = getBalanceHistory(account2, "month");
+  const accs: Account[] = [account, account2];
+  const portfolio = getCurrencyPortfolio(accs, "month", () => null);
+  expect(portfolio.history).toMatchObject(
+    history.map((p, i) => ({ ...p, value: p.value.plus(history2[i].value) }))
+  );
+  expect(portfolio.countervalueAvailable).toBe(false);
 });
 
 test("getPortfolio calculateCounterValue can complete fails", () => {

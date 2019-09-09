@@ -170,7 +170,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     index,
     freshAddress,
     freshAddressPath,
-    freshAddresses,
+    freshAddresses: freshAddresses || [
+      // in case user come from an old data that didn't support freshAddresses
+      { derivationPath: freshAddressPath, address: freshAddress }
+    ],
     name,
     blockHeight,
     balance: BigNumber(balance),

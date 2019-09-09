@@ -69,6 +69,10 @@ async function ethereumBuildOperation(
   }
 
   const internalTransactions = await ethereumLikeOperation.getInternalTransactions();
+  if (partialOp.type === "NONE" && internalTransactions.length === 0) {
+    // side effect operation that does not even have internal transactions does not interest us at all
+    return null;
+  }
   const ops: Array<?Operation> = await Promise.all(
     internalTransactions.map((internalTx, internalTransactionIndex) =>
       buildInternalOperation(internalTx, {

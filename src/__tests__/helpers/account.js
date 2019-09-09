@@ -1,4 +1,5 @@
 // @flow
+import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import {
   getFiatCurrencyByTicker,
@@ -43,6 +44,26 @@ test("groupAccountsOperationsByDay", () => {
     // $FlowFixMe
     flatMap(res1.sections, s => s.data)
   );
+});
+
+test("groupAccountsOperationsByDay provide at least the requested count even if some op yield nothing", () => {
+  const ethAccount = genAccount("eth_1", {
+    currency: getCryptoCurrencyById("ethereum"),
+    operationsSize: 300
+  });
+  ethAccount.operations = Array(50)
+    .fill({
+      ...ethAccount.operations[0],
+      value: BigNumber(0),
+      type: "NONE"
+    })
+    .concat(ethAccount.operations);
+
+  const res1 = groupAccountOperationsByDay(ethAccount, { count: 100 });
+  expect(res1.completed).toBe(false);
+  expect(
+    res1.sections.reduce((acc, s) => acc.concat(s.data), []).length
+  ).toBeGreaterThanOrEqual(100);
 });
 
 test("shortAddressPreview", () => {

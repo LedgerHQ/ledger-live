@@ -67,9 +67,19 @@ const columns = [
     accessor: "livesupport"
   },
   {
+    Header: "Delisted?",
+    width: 80,
+    accessor: "delisted"
+  },
+  {
     Header: "type",
     width: 120,
     accessor: "typeText"
+  },
+  {
+    Header: "id",
+    width: 120,
+    accessor: "id"
   },
   {
     Header: "Name",
@@ -142,7 +152,7 @@ const counterpartFor = c =>
     : ethereum;
 
 const Assets = () => {
-  const tokens = listTokens();
+  const tokens = listTokens({ withDelisted: true });
   const currencies = listCryptoCurrencies();
   const all = useMemo(() => currencies.concat(tokens), [tokens, currencies]);
   const tickers = useMarketcapTickers() || [];
@@ -221,6 +231,7 @@ const Assets = () => {
       exchange,
       loading,
       livesupport,
+      delisted: t.delisted ? "yes" : "no",
       usdValue
     };
   });

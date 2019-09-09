@@ -13,7 +13,8 @@ const convertERC20 = ([
   name,
   ledgerSignature,
   contractAddress,
-  disableCountervalue
+  disableCountervalue,
+  delisted
 ]): TokenCurrency => ({
   type: "TokenCurrency",
   id: "ethereum/erc20/" + token,
@@ -23,6 +24,7 @@ const convertERC20 = ([
   tokenType: "erc20",
   name,
   ticker,
+  delisted,
   disableCountervalue:
     !!disableCountervalue || !!findCryptoCurrencyByTicker(ticker), // if it collides, disable
   units: [
@@ -40,7 +42,9 @@ const converters = {
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
+const tokensArrayWithDelisted: TokenCurrency[] = [];
 const tokensByCryptoCurrency: { [_: string]: TokenCurrency[] } = {};
+const tokensByCryptoCurrencyWithDelisted: { [_: string]: TokenCurrency[] } = {};
 const tokensById: { [_: string]: TokenCurrency } = {};
 const tokensByTicker: { [_: string]: TokenCurrency } = {};
 const tokensByAddress: { [_: string]: TokenCurrency } = {};
@@ -56,7 +60,8 @@ export function add(type: string, list: any[]) {
   }
   list.forEach(data => {
     const token = converter(data);
-    tokensArray.push(token);
+    if (!token.delisted) tokensArray.push(token);
+    tokensArrayWithDelisted.push(token);
     tokensById[token.id] = token;
 
     if (
@@ -71,18 +76,52 @@ export function add(type: string, list: any[]) {
     if (!(parentCurrency.id in tokensByCryptoCurrency)) {
       tokensByCryptoCurrency[parentCurrency.id] = [];
     }
-    tokensByCryptoCurrency[parentCurrency.id].push(token);
+    if (!(parentCurrency.id in tokensByCryptoCurrencyWithDelisted)) {
+      tokensByCryptoCurrencyWithDelisted[parentCurrency.id] = [];
+    }
+    if (!token.delisted) tokensByCryptoCurrency[parentCurrency.id].push(token);
+    tokensByCryptoCurrencyWithDelisted[parentCurrency.id].push(token);
   });
 }
 
-export function listTokens(): TokenCurrency[] {
-  return tokensArray;
+type TokensListOptions = {
+  withDelisted: boolean
+};
+
+const defaultTokenListOptions: TokensListOptions = {
+  withDelisted: false
+};
+
+export function listTokens(
+  options?: $Shape<TokensListOptions>
+): TokenCurrency[] {
+  const { withDelisted } = { ...defaultTokenListOptions, ...options };
+  return withDelisted ? tokensArrayWithDelisted : tokensArray;
 }
 
 export function listTokensForCryptoCurrency(
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
+  options?: $Shape<TokensListOptions>
 ): TokenCurrency[] {
+  const { withDelisted } = { ...defaultTokenListOptions, ...options };
+  if (withDelisted) {
+    return tokensByCryptoCurrencyWithDelisted[currency.id] || emptyArray;
+  }
   return tokensByCryptoCurrency[currency.id] || emptyArray;
+}
+
+export function listTokenTypesForCryptoCurrency(
+  currency: CryptoCurrency
+): string[] {
+  return listTokensForCryptoCurrency(currency).reduce((acc, cur) => {
+    const tokenType = cur.tokenType;
+
+    if (acc.indexOf(tokenType) < 0) {
+      return [...acc, tokenType];
+    }
+
+    return acc;
+  }, []);
 }
 
 export function findTokenByTicker(ticker: string): ?TokenCurrency {
