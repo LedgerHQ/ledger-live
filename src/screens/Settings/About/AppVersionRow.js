@@ -3,6 +3,7 @@ import React, { PureComponent } from "react";
 import VersionNumber from "react-native-version-number";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
+import cleanBuildVersion from "../../../logic/cleanBuildVersion";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
 import colors from "../../../colors";
@@ -10,7 +11,8 @@ import colors from "../../../colors";
 class AppVersionRow extends PureComponent<*> {
   render() {
     const { appVersion, buildVersion } = VersionNumber;
-    const version = `${appVersion || ""} (${buildVersion || ""})`;
+    const version = `${appVersion || ""} (${cleanBuildVersion(buildVersion) ||
+      ""})`;
     return (
       <SettingsRow
         event="AppVersionRow"
