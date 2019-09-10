@@ -877,10 +877,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-passcode-auth/-/react-native-passcode-auth-2.0.0.tgz#18f8fcc64d72b410300de203c2ddf8b4ae2a7fc3"
   integrity sha512-ZsdtZQuyAp+50zJGvyBMJ/Zf3wq5PN/ipOND+CmQghILvvrDPOzK23ch49zjUqnJfMSuUwqLqJuuOm72Weofmg==
 
-"@ledgerhq/react-native-touch-id@^4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-touch-id/-/react-native-touch-id-4.5.0.tgz#51cd20dd5bfd4949ba405402c5c1581276b0c11f"
-  integrity sha512-4qGn/Qt25/Cb2g6+v+wc5AqOMOFsQEVwrcZVXMClnJnm+/TrQm0TuCsxyO0Y7/GYMdewS3mC0eVCSRXIOgPysA==
+"@ledgerhq/react-native-touch-id@^4.6.3":
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-touch-id/-/react-native-touch-id-4.6.3.tgz#cd7ef3d98874eaca11fc1cf9a058e0adf573a3e7"
+  integrity sha512-+gxjR1SmB/aTdiVgJCIPy3EWt2Rl6+LHnEBHyqElZF0M2FJ5DUkAqjF4FnW2pXdoKk4jHiiGXQOZSxJc/RS4Yw==
 
 "@octokit/rest@^15.12.1":
   version "15.18.1"
