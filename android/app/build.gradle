@@ -176,6 +176,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@ledgerhq_react-native-touch-id')
     // Make sure to keep android-jsc as the first
     implementation "org.webkit:android-jsc-intl:r241213"
     implementation project(':react-native-vector-icons')

@@ -1,4 +1,4 @@
-import TouchID from "react-native-touch-id";
+import TouchID from "@ledgerhq/react-native-touch-id";
 import { Platform } from "react-native";
 import unsupported from "./unsupported";
 
