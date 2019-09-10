@@ -5,6 +5,7 @@ import type { CryptoCurrency, DerivationMode } from "../types";
 import { atomicQueue } from "../promise";
 import type { Core, CoreWallet } from "./types";
 import { findCurrencyExplorer } from "../api/Ledger";
+import { getEnv } from "../env";
 
 type F = ({
   core: Core,
@@ -18,6 +19,8 @@ export const getOrCreateWallet: F = atomicQueue(
     const poolInstance = core.getPoolInstance();
     let wallet;
 
+    const KEYCHAIN_OBSERVABLE_RANGE = getEnv("KEYCHAIN_OBSERVABLE_RANGE");
+
     const keychainEngine = getKeychainEngine(derivationMode);
     const config = await core.DynamicObject.newInstance();
     if (keychainEngine) {
@@ -26,6 +29,13 @@ export const getOrCreateWallet: F = atomicQueue(
 
     const derivationScheme = getDerivationScheme({ currency, derivationMode });
     await config.putString("KEYCHAIN_DERIVATION_SCHEME", derivationScheme);
+
+    if (KEYCHAIN_OBSERVABLE_RANGE) {
+      await config.putString(
+        "KEYCHAIN_OBSERVABLE_RANGE",
+        KEYCHAIN_OBSERVABLE_RANGE
+      );
+    }
 
     const ledgerExplorer = findCurrencyExplorer(currency);
     if (ledgerExplorer) {
