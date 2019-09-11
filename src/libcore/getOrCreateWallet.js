@@ -31,7 +31,7 @@ export const getOrCreateWallet: F = atomicQueue(
     await config.putString("KEYCHAIN_DERIVATION_SCHEME", derivationScheme);
 
     if (KEYCHAIN_OBSERVABLE_RANGE) {
-      await config.putString(
+      await config.putInt(
         "KEYCHAIN_OBSERVABLE_RANGE",
         KEYCHAIN_OBSERVABLE_RANGE
       );

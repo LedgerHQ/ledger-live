@@ -176,6 +176,7 @@ declare class CoreDynamicObject {
   static newInstance(): Promise<CoreDynamicObject>;
   static flush(): Promise<void>;
   putString(string, string): Promise<void>;
+  putInt(string, number): Promise<void>;
 }
 
 declare class CoreSerialContext {}
@@ -519,7 +520,8 @@ export const reflect = (declare: (string, Spec) => void) => {
       }
     },
     methods: {
-      putString: {}
+      putString: {},
+      putInt: {}
     }
   });
 
