@@ -1,10 +1,13 @@
 // @flow
 import React, { Component, PureComponent } from "react";
 import { StyleSheet, View, Linking, Platform } from "react-native";
+import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import FontAwesome from "react-native-vector-icons/dist/FontAwesome";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { createStructuredSelector } from "reselect";
+import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 
 import type { OnboardingStepProps } from "../types";
 import { TrackScreen } from "../../../analytics";
@@ -22,7 +25,15 @@ import StepLegacyModal from "../../../modals/StepLegacyModal";
 
 const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
 
-class OnboardingStepGetStarted extends Component<OnboardingStepProps, *> {
+type Props = OnboardingStepProps & {
+  hasCompletedOnboarding: boolean,
+};
+
+const mapStateToProps = createStructuredSelector({
+  hasCompletedOnboarding: hasCompletedOnboardingSelector,
+});
+
+class OnboardingStepGetStarted extends Component<Props, *> {
   state = {
     modalVisible: false,
   };
@@ -61,7 +72,7 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps, *> {
 
   render() {
     const { modalVisible } = this.state;
-    const { deviceModelId } = this.props;
+    const { deviceModelId, hasCompletedOnboarding } = this.props;
     const deviceModel = getDeviceModel(deviceModelId);
     const title = deviceModel.productName;
     const showAd = deviceModelId !== "nanoX";
@@ -73,12 +84,14 @@ class OnboardingStepGetStarted extends Component<OnboardingStepProps, *> {
         titleOverride={title}
       >
         <TrackScreen category="Onboarding" name="GetStarted" />
-        <Row
-          id="import"
-          Icon={IconImport}
-          label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
-          onPress={this.onImport}
-        />
+        {!hasCompletedOnboarding || deviceModelId !== "nanoX" ? (
+          <Row
+            id="import"
+            Icon={IconImport}
+            label={<Trans i18nKey="onboarding.stepGetStarted.import" />}
+            onPress={this.onImport}
+          />
+        ) : null}
         {deviceModelId === "nanoX" || Platform.OS === "android" ? (
           <>
             <Row
@@ -195,4 +208,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withOnboardingContext(OnboardingStepGetStarted);
+export default connect(mapStateToProps)(
+  withOnboardingContext(OnboardingStepGetStarted),
+);
