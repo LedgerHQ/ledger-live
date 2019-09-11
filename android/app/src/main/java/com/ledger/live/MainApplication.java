@@ -22,7 +22,6 @@ import org.reactnative.camera.RNCameraPackage;
 import io.fixd.rctlocale.RCTLocalePackage;
 import io.sentry.RNSentryPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.rnfingerprint.FingerprintAuthPackage;
 import com.polidea.reactnativeble.BlePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -55,7 +54,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new FingerprintAuthPackage(),
             new VectorIconsPackage(),
             new NetInfoPackage(),
             new LottiePackage(),

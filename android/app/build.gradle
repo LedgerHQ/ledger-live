@@ -176,9 +176,9 @@ android {
 }
 
 dependencies {
-    implementation project(':@ledgerhq_react-native-touch-id')
     // Make sure to keep android-jsc as the first
     implementation "org.webkit:android-jsc-intl:r241213"
+    implementation project(':@ledgerhq_react-native-touch-id')
     implementation project(':react-native-vector-icons')
     implementation project(':@react-native-community_netinfo')
     implementation project(':lottie-react-native')
@@ -196,7 +196,6 @@ dependencies {
     implementation project(':react-native-locale')
     implementation project(':react-native-sentry')
     implementation project(':react-native-splash-screen')
-    implementation project(':react-native-touch-id')
     implementation project(':react-native-ble-plx')
     implementation (project(':react-native-camera')) {
         exclude group: "com.google.android.gms"
