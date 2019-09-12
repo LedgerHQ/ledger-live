@@ -1,5 +1,5 @@
 // @flow
-import React, { Fragment, Component } from "react";
+import React, { Fragment, Component, useMemo } from "react";
 import { ObjectInspector } from "react-inspector";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -11,9 +11,44 @@ const messageLenses = {
   }
 };
 
+const extractAPDUs = logs =>
+  logs
+    .slice(0)
+    .reverse()
+    .filter(l => l.type === "apdu")
+    .reduce((all, l) => {
+      const last = all[all.length - 1];
+      if (last && last.message === l.message) return all;
+      return all.concat(l);
+    }, [])
+    .map(l => l.message)
+    .join("\n");
+
+const Header = ({ logs }: *) => {
+  const href = useMemo(
+    () => "data:text/plain;base64," + btoa(extractAPDUs(logs)),
+    [logs]
+  );
+  return (
+    <div>
+      <a download="apdus" href={href}>
+        extract APDUs
+      </a>
+    </div>
+  );
+};
+
 const ContentCell = (props: *) => {
   const log = props.original;
-  const { type, level, pname, message: _msg, timestamp, index: _index, ...rest } = log; // eslint-disable-line no-unused-vars
+  const {
+    type,
+    level,
+    pname,
+    message: _msg,
+    timestamp,
+    index: _index,
+    ...rest
+  } = log; // eslint-disable-line no-unused-vars
   const messageLense = messageLenses[type];
   const message = messageLense ? messageLense(log) : log.message;
   return (
@@ -103,10 +138,8 @@ class HeaderEmptyState extends Component<*> {
           LogsViewer
         </h1>
         <p>
-          Select a <code>*.json</code> log exported from Ledger Live (<code>
-            Ctrl+E
-          </code>{" "}
-          / Export Logs)
+          Select a <code>*.json</code> log exported from Ledger Live (
+          <code>Ctrl+E</code> / Export Logs)
         </p>
         <p>
           <input type="file" onChange={this.onChange} accept=".json" />
@@ -158,7 +191,10 @@ class LogsViewer extends Component<*, *> {
         {!logs ? (
           <HeaderEmptyState onFiles={this.onFiles} />
         ) : (
-          <Logs logs={logs} />
+          <>
+            <Header logs={logs} />
+            <Logs logs={logs} />
+          </>
         )}
       </div>
     );
