@@ -1,4 +1,5 @@
 // @flow
+import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
 import React, { Fragment } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import db from "../db";
@@ -27,8 +28,10 @@ export default class RebootProvider extends React.Component<
       rebootId: state.rebootId + 1,
     }));
     if (resetData) {
-      // $FlowFixMe https://github.com/flow-typed/flow-typed/pull/2805
       await db.delete(["settings", "accounts", "countervalues", "ble"]);
+      await withLibcore(async libcore => {
+        await libcore.getPoolInstance().freshResetAll();
+      });
     }
     if (onRebootEnd) onRebootEnd();
   };
