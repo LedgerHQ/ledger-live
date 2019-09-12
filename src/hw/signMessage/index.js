@@ -14,7 +14,11 @@ const dispatch: Resolver = (transport, opts) => {
   invariant(getAddress, `signMessage is not implemented for ${currency.id}`);
   return getAddress(transport, opts)
     .then(result => {
-      log("hw", `signMessage ${currency.id} on ${opts.path} with message [${opts.message}]`, result);
+      log(
+        "hw",
+        `signMessage ${currency.id} on ${opts.path} with message [${opts.message}]`,
+        result
+      );
       return result;
     })
     .catch(e => {

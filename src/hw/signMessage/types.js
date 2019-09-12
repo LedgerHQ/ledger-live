@@ -9,7 +9,7 @@ export type Result = {
     s: string,
     v: number
   },
-  signature: string,
+  signature: string
 };
 
 export type Resolver = (
@@ -19,6 +19,6 @@ export type Resolver = (
     path: string,
     verify?: boolean,
     derivationMode: DerivationMode,
-    message: string,
+    message: string
   }
 ) => Promise<Result>;
