@@ -127,7 +127,7 @@ export const setEnvUnsafe = (name: string, unsafeValue: mixed): boolean => {
   return true;
 };
 
- type ExtractEnvValue = <V>((mixed) => ?V) => V;
+type ExtractEnvValue = <V>((mixed) => ?V) => V;
 type EnvParsers = typeof envParsers;
 type Env = typeof env;
 export type EnvValue<Name> = $ElementType<Env, Name>;
