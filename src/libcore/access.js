@@ -16,8 +16,30 @@ export const libcoreJobBusy: Observable<boolean> = libcoreJobsCounterSubject.pip
   distinctUntilChanged()
 );
 
+type AfterGCJob<R> = {
+  job: Core => Promise<R>,
+  resolve: R => void
+};
+const afterLibcoreFlushes: Array<AfterGCJob<any>> = [];
+
 function flush(c: Core) {
-  lastFlush = c.flush().catch(e => console.error("libcore-flush-fail", e));
+  lastFlush = c
+    .flush()
+    .then(async () => {
+      let item;
+      while ((item = afterLibcoreFlushes.shift())) {
+        item.resolve(await item.job(c));
+      }
+    })
+    .catch(e => console.error("libcore-flush-fail", e));
+}
+
+export async function afterLibcoreGC<R>(
+  job: (core: Core) => Promise<R>
+): Promise<R> {
+  return new Promise(resolve => {
+    afterLibcoreFlushes.push({ job, resolve });
+  });
 }
 
 export async function withLibcore<R>(
