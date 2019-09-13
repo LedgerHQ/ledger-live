@@ -8,7 +8,7 @@ import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-common/lib/account";
-import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
+import { afterLibcoreGC } from "@ledgerhq/live-common/lib/libcore/access";
 import type { State } from "../reducers";
 import CounterValues from "../countervalues";
 import {
@@ -71,15 +71,11 @@ export const refreshAccountsOrdering = () => (dispatch: *, getState: *) => {
   });
 };
 
-const delay = ms => new Promise(success => setTimeout(success, ms));
-
 export const cleanCache = () => async (dispatch: *) => {
   dispatch({ type: "CLEAN_CACHE" });
   dispatch({ type: "LEDGER_CV:WIPE" });
-  await delay(100);
-  // TODO we must wait the sync to finish / stop it otherwise there can be dereferenced pointer issue.
 
-  await withLibcore(async libcore => {
+  await afterLibcoreGC(async libcore => {
     await libcore.getPoolInstance().freshResetAll();
   });
 

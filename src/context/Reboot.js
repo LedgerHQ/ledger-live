@@ -1,5 +1,5 @@
 // @flow
-import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
+import { afterLibcoreGC } from "@ledgerhq/live-common/lib/libcore/access";
 import React, { Fragment } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import db from "../db";
@@ -29,7 +29,9 @@ export default class RebootProvider extends React.Component<
     }));
     if (resetData) {
       await db.delete(["settings", "accounts", "countervalues", "ble"]);
-      await withLibcore(async libcore => {
+      await afterLibcoreGC(async libcore => {
+        // we delete again in case a libcore job was saving the data again
+        await db.delete(["settings", "accounts", "countervalues", "ble"]);
         await libcore.getPoolInstance().freshResetAll();
       });
     }
