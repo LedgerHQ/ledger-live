@@ -2003,7 +2003,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       {
         name: "XTZ",
         code: "XTZ",
-        magnitude: 8
+        magnitude: 6
       }
     ],
     explorerViews: [
