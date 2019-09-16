@@ -380,7 +380,8 @@
     }
   },
   "reset": {
-    "description": "Please uninstall and reinstall the app from your phone to remove Ledger Live data, including accounts and settings."
+    "description": "Reset all Ledger Live data, including accounts and settings? The private keys providing access to your crypto assets remain secure on your device and Recovery sheet.",
+    "button": "Reset"
   },
   "onboarding": {
     "stepCount": "{{current}} of {{total}}",
