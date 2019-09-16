@@ -176,15 +176,13 @@ class ValidateOnDevice extends PureComponent<Props, State> {
               unit={unit}
               value={useAllAmount && maxAmount ? maxAmount : amount}
             />
-            {
-              !fees.isZero() ? (
-                <DataRow
-                  label={<Trans i18nKey="send.validation.fees" />}
-                  unit={mainAccount.unit}
-                  value={fees}
-                />
-              ) : null
-            }
+            {!fees.isZero() ? (
+              <DataRow
+                label={<Trans i18nKey="send.validation.fees" />}
+                unit={mainAccount.unit}
+                value={fees}
+              />
+            ) : null}
           </View>
         </View>
 
