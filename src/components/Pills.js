@@ -55,7 +55,7 @@ class Pill extends PureComponent<{
           active && !isDisabled && styles.pillActiveText,
           active && isDisabled && styles.pillActiveDisabledText,
         ]}
-        semiBold={active}
+        bold
       >
         {item.label}
       </LText>
@@ -95,7 +95,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   pill: {
+    borderWidth: 1.5,
+    borderColor: colors.fog,
     height: 32,
+    marginHorizontal: 5,
     paddingHorizontal: 15,
     borderRadius: 4,
     justifyContent: "center",
@@ -114,9 +117,11 @@ const styles = StyleSheet.create({
   },
   pillActive: {
     backgroundColor: colors.pillActiveBackground,
+    borderColor: colors.live,
   },
   pillActiveDisabled: {
     backgroundColor: colors.lightGrey,
+    borderColor: colors.fog,
   },
 });
 
