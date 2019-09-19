@@ -19,7 +19,7 @@ class HeaderErrorTitle extends PureComponent<{
           <LText style={styles.icon}>
             <Icon name="x-circle" size={16} color={colors.alert} />
           </LText>
-          <LText secondary style={styles.title} semiBold>
+          <LText numberOfLines={2} secondary style={styles.title} semiBold>
             <TranslatedError error={error} />
           </LText>
         </View>
