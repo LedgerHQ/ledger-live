@@ -2053,7 +2053,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       {
         name: "TRX",
         code: "TRX",
-        magnitude: 8
+        magnitude: 6
       }
     ],
     explorerViews: [
