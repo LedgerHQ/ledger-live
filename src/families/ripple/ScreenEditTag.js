@@ -20,6 +20,8 @@ import colors from "../../colors";
 import type { T } from "../../types/common";
 import { track } from "../../analytics";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: Account,
   navigation: NavigationScreenProp<{
@@ -86,7 +88,7 @@ class RippleEditTag extends PureComponent<Props, State> {
     const { tag } = this.state;
     const { t } = this.props;
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
         <KeyboardView style={styles.body}>
           <ScrollView
             contentContainerStyle={styles.root}

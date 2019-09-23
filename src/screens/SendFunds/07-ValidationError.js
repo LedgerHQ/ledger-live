@@ -12,6 +12,8 @@ import colors from "../../colors";
 import ValidateError from "./ValidateError";
 import { urls } from "../../config/urls";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: ?(Account | TokenAccount),
   parentAccount: ?Account,
@@ -53,7 +55,7 @@ class ValidationError extends Component<Props> {
     const error = navigation.getParam("error");
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="SendFunds" name="ValidationError" />
         <ValidateError
           error={error}

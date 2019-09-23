@@ -1,4 +1,6 @@
 rootProject.name = 'ledgerlivemobile'
+include ':@ledgerhq_react-native-touch-id'
+project(':@ledgerhq_react-native-touch-id').projectDir = new File(rootProject.projectDir, '../node_modules/@ledgerhq/react-native-touch-id/android')
 include ':react-native-vector-icons'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':@react-native-community_netinfo'
@@ -35,8 +37,6 @@ include ':react-native-sentry'
 project(':react-native-sentry').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sentry/android')
 include ':react-native-splash-screen'
 project(':react-native-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-screen/android')
-include ':react-native-touch-id'
-project(':react-native-touch-id').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-touch-id/android')
 include ':react-native-ble-plx'
 project(':react-native-ble-plx').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-ble-plx/android')
 include ':react-native-version-number'

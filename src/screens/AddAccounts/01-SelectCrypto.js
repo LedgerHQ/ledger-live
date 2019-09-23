@@ -8,7 +8,11 @@ import { SafeAreaView, FlatList } from "react-navigation";
 import i18next from "i18next";
 import { compose } from "redux";
 import type { NavigationScreenProp } from "react-navigation";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
+import { listTokens } from "@ledgerhq/live-common/lib/currencies";
 
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
@@ -22,6 +26,7 @@ import colors from "../../colors";
 import withEnv from "../../logic/withEnv";
 
 const SEARCH_KEYS = ["name", "ticker"];
+const forceInset = { bottom: "always" };
 
 type Props = {
   devMode: boolean,
@@ -45,7 +50,9 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     ),
   };
 
-  cryptocurrencies = listCryptoCurrencies(this.props.devMode);
+  cryptocurrencies = listCryptoCurrencies(this.props.devMode).concat(
+    listTokens(),
+  );
 
   keyExtractor = currency => currency.id;
 
@@ -53,8 +60,22 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  renderItem = ({ item }: { item: CryptoCurrency }) => (
-    <CurrencyRow currency={item} onPress={this.onPressCurrency} />
+  onPressToken = (token: TokenCurrency) => {
+    this.props.navigation.navigate("AddAccountsTokenCurrencyDisclaimer", {
+      token,
+    });
+  };
+
+  onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
+    if (currencyOrToken.type === "TokenCurrency") {
+      this.onPressToken(currencyOrToken);
+    } else {
+      this.onPressCurrency(currencyOrToken);
+    }
+  };
+
+  renderItem = ({ item }: { item: CryptoCurrency | TokenCurrency }) => (
+    <CurrencyRow currency={item} onPress={this.onPressItem} />
   );
 
   renderList = items => (
@@ -78,7 +99,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
 
   render() {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="AddAccounts" name="SelectCrypto" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>

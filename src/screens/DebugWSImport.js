@@ -8,6 +8,8 @@ import { RNCamera } from "react-native-camera";
 import colors from "../colors";
 import CameraScreen from "../components/CameraScreen";
 
+const forceInset = { bottom: "always" };
+
 class DebugWSImport extends Component<
   { navigation: * },
   { ip: string, secret: string, scanning: boolean },
@@ -46,7 +48,7 @@ class DebugWSImport extends Component<
 
   render() {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <RNCamera
           barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
           onBarCodeRead={this.onBarCodeRead}

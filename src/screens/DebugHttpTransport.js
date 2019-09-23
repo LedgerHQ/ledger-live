@@ -17,6 +17,8 @@ import TextInput from "../components/TextInput";
 import KeyboardView from "../components/KeyboardView";
 import Button from "../components/Button";
 
+const forceInset = { bottom: "always" };
+
 class DebugHttpTransport extends Component<
   {
     navigation: NavigationScreenProp<*>,
@@ -55,7 +57,7 @@ class DebugHttpTransport extends Component<
   render() {
     const { text } = this.state;
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ flex: 1 }}>

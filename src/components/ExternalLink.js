@@ -8,9 +8,10 @@ import colors from "../colors";
 
 type Props = {
   text: React$Node,
-  onPress: () => void,
+  onPress: () => void | Promise<void>,
   event: string,
   eventProperties?: Object,
+  iconFirst?: boolean,
 };
 
 const Link = ({ text, onPress, event, eventProperties }: Props) => (

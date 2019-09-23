@@ -28,6 +28,8 @@ import FailBiometrics from "./FailBiometrics";
 import KeyboardBackgroundDismiss from "../../components/KeyboardBackgroundDismiss";
 import { VIBRATION_PATTERN_ERROR } from "../../constants";
 
+const forceInset = { bottom: "always" };
+
 type State = {
   passwordError: ?Error,
   password: string,
@@ -183,7 +185,7 @@ class AuthScreen extends PureComponent<Props, State> {
     } = this.state;
     return (
       <KeyboardBackgroundDismiss>
-        <SafeAreaView style={styles.root}>
+        <SafeAreaView style={styles.root} forceInset={forceInset}>
           <KeyboardView>
             <View style={{ flex: 1 }} />
 

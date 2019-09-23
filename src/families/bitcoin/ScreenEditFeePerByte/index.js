@@ -26,6 +26,8 @@ import FeesRow from "./FeesRow";
 import CustomFeesRow from "./CustomFeesRow";
 import { track } from "../../../analytics";
 
+const forceInset = { bottom: "always" };
+
 type Transaction = *;
 
 type Props = {
@@ -127,7 +129,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
     const isCustom = focusedItemKey === "custom";
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ flex: 1 }}>

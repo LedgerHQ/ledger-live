@@ -22,6 +22,8 @@ import ValidateOnDevice from "./ValidateOnDevice";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   account: ?(Account | TokenAccount),
   parentAccount: ?Account,
@@ -139,7 +141,7 @@ class Validation extends Component<Props, State> {
     const modelId = navigation.getParam("modelId");
     const wired = navigation.getParam("wired");
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="SendFunds" name="Validation" signed={signed} />
         {signing && (
           <>

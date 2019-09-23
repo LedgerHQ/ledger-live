@@ -51,6 +51,8 @@ import NoOpStatePortfolio from "./NoOpStatePortfolio";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 
+const forceInset = { bottom: "always" };
+
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
 
@@ -193,7 +195,7 @@ class PortfolioScreen extends Component<
         <SyncBackground />
         <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
-        <SafeAreaView style={styles.inner}>
+        <SafeAreaView style={styles.inner} forceInset={forceInset}>
           <List
             forwardedRef={this.ref}
             sections={sections}

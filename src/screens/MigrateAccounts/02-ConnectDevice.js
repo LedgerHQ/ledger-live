@@ -12,6 +12,8 @@ import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
 import StepHeader from "../../components/StepHeader";
 
+const forceInset = { bottom: "always" };
+
 type Props = {
   navigation: NavigationScreenProp<*>,
 };
@@ -28,7 +30,7 @@ const ConnectDevice = ({ navigation }: Props) => {
   );
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="MigrateAccount" name="ConnectDevice" />
       <ScrollView
         style={styles.scroll}

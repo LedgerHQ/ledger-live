@@ -2,6 +2,7 @@
 import React, { Fragment } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import db from "../db";
+import clearLibcore from "../helpers/clearLibcore";
 
 // $FlowFixMe
 export const RebootContext = React.createContext(() => {});
@@ -27,8 +28,9 @@ export default class RebootProvider extends React.Component<
       rebootId: state.rebootId + 1,
     }));
     if (resetData) {
-      // $FlowFixMe https://github.com/flow-typed/flow-typed/pull/2805
-      await db.delete(["settings", "accounts", "countervalues", "ble"]);
+      await clearLibcore(() =>
+        db.delete(["settings", "accounts", "countervalues", "ble"]),
+      );
     }
     if (onRebootEnd) onRebootEnd();
   };

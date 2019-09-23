@@ -102,6 +102,7 @@ import {
 import AddAccountsHeaderRightClose from "./screens/AddAccounts/AddAccountsHeaderRightClose";
 import AddAccountsSelectCrypto from "./screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "./screens/AddAccounts/02-SelectDevice";
+import AddAccountsTokenCurrencyDisclaimer from "./screens/AddAccounts/02-TokenCurrencyDisclaimer";
 import AddAccountsAccounts from "./screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
@@ -134,7 +135,6 @@ CryptoAssetsSettings.navigationOptions = {
 
 const SettingsStack = createStackNavigator(
   {
-    // $FlowFixMe
     Settings,
     CountervalueSettings,
     // $FlowFixMe
@@ -316,6 +316,8 @@ const AddAccounts = createStackNavigator(
     // $FlowFixMe
     AddAccountsSuccess,
     EditAccountName,
+    // $FlowFixMe
+    AddAccountsTokenCurrencyDisclaimer,
   },
   addAccountsNavigatorConfig,
 );
@@ -326,7 +328,6 @@ AddAccounts.navigationOptions = {
 
 const SendFunds = createStackNavigator(
   {
-    // $FlowFixMe
     SendFundsMain,
     // $FlowFixMe
     SendSelectRecipient,

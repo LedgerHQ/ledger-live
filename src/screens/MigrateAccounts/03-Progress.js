@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import { withNavigation } from "react-navigation";
+import { withNavigation, SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { reduce } from "rxjs/operators";
@@ -41,6 +41,8 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = {
   setAccounts,
 };
+
+const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -139,7 +141,10 @@ const Progress = ({
   }, [startScanAccountsDevice, unsub]);
 
   return (
-    <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
+    <SafeAreaView
+      forceInset={forceInset}
+      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+    >
       <View style={styles.content}>
         <RoundedCurrencyIcon
           currency={currency}
@@ -191,7 +196,7 @@ const Progress = ({
           />
         </View>
       ) : null}
-    </View>
+    </SafeAreaView>
   );
 };
 

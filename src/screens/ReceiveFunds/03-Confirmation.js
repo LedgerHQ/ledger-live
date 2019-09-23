@@ -44,6 +44,8 @@ import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 import { rejectionOp } from "../../components/DebugRejectSwitch";
 
+const forceInset = { bottom: "always" };
+
 type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
@@ -215,7 +217,7 @@ class ReceiveConfirmation extends Component<Props, State> {
     const currency = getAccountCurrency(account);
 
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen
           category="ReceiveFunds"
           name="Confirmation"

@@ -12,11 +12,12 @@ type Props = {
   currency: *,
   size: number,
   color?: string,
+  radius?: number,
 };
 
 export default class CurrencyIcon extends PureComponent<Props> {
   render() {
-    const { size, currency, color } = this.props;
+    const { size, currency, color, radius } = this.props;
 
     const currencyColor = color || getCurrencyColor(currency);
 
@@ -28,7 +29,13 @@ export default class CurrencyIcon extends PureComponent<Props> {
       };
 
       return (
-        <View style={[styles.tokenCurrencyIcon, dynamicStyle]}>
+        <View
+          style={[
+            styles.tokenCurrencyIcon,
+            dynamicStyle,
+            radius ? { borderRadius: radius } : null,
+          ]}
+        >
           <LText semiBold style={{ color: currencyColor, fontSize: size / 2 }}>
             {currency.ticker[0]}
           </LText>
@@ -39,7 +46,13 @@ export default class CurrencyIcon extends PureComponent<Props> {
     const IconComponent = getCryptoCurrencyIcon(currency);
     if (!IconComponent) {
       return (
-        <View style={[styles.altRoot, { width: size, height: size }]}>
+        <View
+          style={[
+            styles.altRoot,
+            { width: size, height: size },
+            radius ? { borderRadius: radius } : null,
+          ]}
+        >
           <LText style={{ fontSize: Math.floor(size / 3) }}>
             {currency.ticker}
           </LText>

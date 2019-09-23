@@ -1,7 +1,8 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { Keyboard, View, StyleSheet, SafeAreaView } from "react-native";
+import { Keyboard, View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
@@ -22,6 +23,8 @@ import { saveBleDeviceName } from "../actions/ble";
 import type { DeviceMeta } from "../components/DeviceJob/types";
 
 const MAX_DEVICE_NAME = 32;
+
+const forceInset = { bottom: "always" };
 
 class FooterError extends PureComponent<{ error: Error }> {
   render() {
@@ -123,7 +126,7 @@ class EditDeviceName extends PureComponent<
     const { name, error, connecting } = this.state;
     const remainingCount = MAX_DEVICE_NAME - name.length;
     return (
-      <SafeAreaView style={styles.safearea}>
+      <SafeAreaView style={styles.safearea} forceInset={forceInset}>
         <TrackScreen category="EditDeviceName" />
         <KeyboardView style={styles.root}>
           <View style={styles.body}>

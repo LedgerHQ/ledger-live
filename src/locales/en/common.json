@@ -62,7 +62,7 @@
     },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
-      "description": "Your Ledger Nano X should be unlocked and within range"
+      "description": "Your Ledger device should be unlocked and in range when using Bluetooth"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR-code: auto-verification not supported by this address"
@@ -379,7 +379,8 @@
     }
   },
   "reset": {
-    "description": "Please uninstall and reinstall the app from your phone to remove Ledger Live data, including accounts and settings."
+    "description": "Please uninstall and reinstall the app from your phone to remove Ledger Live data, including accounts and settings.",
+    "button": "Reset"
   },
   "onboarding": {
     "stepCount": "{{current}} of {{total}}",
@@ -574,7 +575,8 @@
     "details": "{{ currency }} details",
     "extra": {
       "tag": "Tag"
-    }
+    },
+    "multipleAddresses": "Why multiple addresses?"
   },
   "operationList": {
     "noOperations": "No Operations",
@@ -601,6 +603,7 @@
     "emptyState": {
       "title": "No crypto assets yet?",
       "desc": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving",
+      "descToken": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> tokens</5>",
       "buttons": {
         "receiveFunds": "Receive"
       }
@@ -991,7 +994,12 @@
     "synchronizing": "Synchronizing",
     "synchronizingDesc": "We are synchronizing your accounts, this can take a while...",
     "noAccountToCreate": "No <1><0>{{currencyName}}</></> account was found to create. Restart the flow and sync your accounts",
-    "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one."
+    "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one.",
+    "tokens": {
+      "title": "Add Token",
+      "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly on an Ethereum account",
+      "learnMore": "Learn more about ERC20"
+    }
   },
   "SelectDevice": {
     "title": "Pair new device",

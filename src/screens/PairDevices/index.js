@@ -225,7 +225,6 @@ class Screen extends Component<Props, State> {
 
   render() {
     return (
-      // $FlowFixMe
       <RequiresBLE>
         <SafeAreaView forceInset={forceInset} style={styles.root}>
           <PairDevices {...this.props} />
