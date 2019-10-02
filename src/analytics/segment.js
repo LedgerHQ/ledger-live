@@ -8,6 +8,10 @@ import { Platform } from "react-native";
 import analytics from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import Locale from "react-native-locale";
+import {
+  getAndroidArchitecture,
+  getAndroidVersionCode,
+} from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";
 import { analyticsEnabledSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
@@ -22,8 +26,11 @@ const extraProperties = store => {
   const state: State = store.getState();
   const { localeIdentifier, preferredLanguages } = Locale.constants();
   const devices = knownDevicesSelector(state);
+
   return {
     appVersion,
+    androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
+    androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
     localeIdentifier,
     preferredLanguage: preferredLanguages ? preferredLanguages[0] : null,
