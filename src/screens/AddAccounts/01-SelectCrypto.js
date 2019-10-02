@@ -11,8 +11,9 @@ import type { NavigationScreenProp } from "react-navigation";
 import type {
   CryptoCurrency,
   TokenCurrency,
+  Currency
 } from "@ledgerhq/live-common/lib/types";
-import { listTokens } from "@ledgerhq/live-common/lib/currencies";
+import { listTokens, currenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
 
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
@@ -35,7 +36,9 @@ type Props = {
   }>,
 };
 
-type State = {};
+type State = {
+  sortedCryptoCurrencies: Currency[]
+};
 
 class AddAccountsSelectCrypto extends Component<Props, State> {
   static navigationOptions = {
@@ -50,9 +53,19 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
     ),
   };
 
+  state = {
+    sortedCryptoCurrencies: []
+  }
+
   cryptocurrencies = listCryptoCurrencies(this.props.devMode).concat(
     listTokens(),
   );
+
+  async componentDidMount() {
+    const sortedCryptoCurrencies = await currenciesByMarketcap(this.cryptocurrencies)
+    this.setState({ sortedCryptoCurrencies })
+  }
+
 
   keyExtractor = currency => currency.id;
 
@@ -106,7 +119,7 @@ class AddAccountsSelectCrypto extends Component<Props, State> {
             <FilteredSearchBar
               keys={SEARCH_KEYS}
               inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-              list={this.cryptocurrencies}
+              list={this.state.sortedCryptoCurrencies}
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptyList}
             />
