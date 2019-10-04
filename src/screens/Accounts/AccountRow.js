@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   balanceCounterContainer: {
     marginLeft: 16,

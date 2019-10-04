@@ -65,7 +65,8 @@ class Distribution extends PureComponent<Props, *> {
 
   renderItem = ({ item, index }: { item: DistributionItem, index: number }) => (
     <TouchableOpacity
-      onPress={() =>
+      onPress={() => this.onHighlightChange(index)}
+      onLongPress={() =>
         this.props.navigation.navigate("Asset", {
           currency: item.currency,
         })
