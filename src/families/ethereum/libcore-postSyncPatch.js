@@ -1,12 +1,12 @@
 // @flow
-import type { Account, TokenAccount } from "../../types";
+import type { AccountLike, Account } from "../../types";
 
 // we need to preserve ETH pendingOperations because there is no mempool to do this
 // we assume we need to preserve until:
 // - that txid appears in operations
 // - the nonce is still lower than the last one in operations
 
-const postSyncPatchGen = <T: Account | TokenAccount>(
+const postSyncPatchGen = <T: AccountLike>(
   initial: T,
   synced: T,
   latestNonce: number // latest eth op nonce
@@ -28,10 +28,10 @@ const postSyncPatch = (initial: Account, synced: Account): Account => {
   const latestNonce =
     (sendingOps.length > 0 && sendingOps[0].transactionSequenceNumber) || 0;
   const acc = postSyncPatchGen(initial, synced, latestNonce);
-  const { tokenAccounts } = acc;
-  const initialTAs = initial.tokenAccounts;
-  if (tokenAccounts && initialTAs) {
-    acc.tokenAccounts = tokenAccounts.map(ta => {
+  const { subAccounts } = acc;
+  const initialTAs = initial.subAccounts;
+  if (subAccounts && initialTAs) {
+    acc.subAccounts = subAccounts.map(ta => {
       const initialTA = initialTAs.find(t => t.id === ta.id);
       if (!initialTA) return ta;
       return postSyncPatchGen(initialTA, ta, latestNonce);

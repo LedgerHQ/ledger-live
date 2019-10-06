@@ -3,18 +3,6 @@ import { BigNumber } from "bignumber.js";
 import type { CryptoCurrency } from "../types";
 import { getEstimatedFees } from "./Fees";
 
-export type FeeItem = {
-  key: string,
-  speed: string,
-  blockCount: number,
-  feePerByte: BigNumber
-};
-
-export type FeeItems = {
-  items: FeeItem[],
-  defaultFeePerByte: BigNumber
-};
-
 export const speeds = {
   "1": "high",
   "3": "standard",
@@ -23,9 +11,7 @@ export const speeds = {
 
 export const defaultBlockCount = 3;
 
-export const getFeeItems = async (
-  currency: CryptoCurrency
-): Promise<FeeItems> => {
+export const getFeeItems = async (currency: CryptoCurrency): Promise<*> => {
   let items = [];
   const fees = await getEstimatedFees(currency);
   let defaultFeePerByte = BigNumber(0);

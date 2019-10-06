@@ -1,11 +1,13 @@
 // @flow
 
-import { getKeychainEngine, getDerivationScheme } from "../derivation";
+import { log } from "@ledgerhq/logs";
+import { getLibcoreConfig, getDerivationScheme } from "../derivation";
 import type { CryptoCurrency, DerivationMode } from "../types";
 import { atomicQueue } from "../promise";
 import type { Core, CoreWallet } from "./types";
 import { findCurrencyExplorer } from "../api/Ledger";
 import { getEnv } from "../env";
+import { isNonExistingWalletError } from "./errors";
 
 type F = ({
   core: Core,
@@ -19,17 +21,22 @@ export const getOrCreateWallet: F = atomicQueue(
     const poolInstance = core.getPoolInstance();
     let wallet;
 
-    const KEYCHAIN_OBSERVABLE_RANGE = getEnv("KEYCHAIN_OBSERVABLE_RANGE");
-
-    const keychainEngine = getKeychainEngine(derivationMode);
     const config = await core.DynamicObject.newInstance();
-    if (keychainEngine) {
-      await config.putString("KEYCHAIN_ENGINE", keychainEngine);
+
+    const configExtra = getLibcoreConfig(derivationMode);
+    if (configExtra) {
+      for (let k in configExtra) {
+        const v = configExtra[k];
+        if (typeof v === "string") {
+          await config.putString(k, v);
+        }
+      }
     }
 
     const derivationScheme = getDerivationScheme({ currency, derivationMode });
     await config.putString("KEYCHAIN_DERIVATION_SCHEME", derivationScheme);
 
+    const KEYCHAIN_OBSERVABLE_RANGE = getEnv("KEYCHAIN_OBSERVABLE_RANGE");
     if (KEYCHAIN_OBSERVABLE_RANGE) {
       await config.putInt(
         "KEYCHAIN_OBSERVABLE_RANGE",
@@ -49,10 +56,14 @@ export const getOrCreateWallet: F = atomicQueue(
       );
     }
 
+    log("libcore", "getOrCreateWallet " + walletName);
     try {
       // check if wallet exists yet
       wallet = await poolInstance.getWallet(walletName);
     } catch (err) {
+      if (!isNonExistingWalletError(err)) {
+        throw err;
+      }
       // create it with the config
       const currencyCore = await poolInstance.getCurrency(currency.id);
       wallet = await poolInstance.createWallet(

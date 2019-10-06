@@ -1,7 +1,15 @@
 // @flow
 import invariant from "invariant";
-import type { AccountIdParams, CryptoCurrency, DerivationMode } from "../types";
+import type { CryptoCurrency, DerivationMode } from "../types";
 import { asDerivationMode } from "../derivation";
+
+export type AccountIdParams = {
+  type: string,
+  version: string,
+  currencyId: string,
+  xpubOrAddress: string,
+  derivationMode: DerivationMode
+};
 
 function ensureNoColon(value: string, ctx: string): string {
   invariant(

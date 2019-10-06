@@ -11,6 +11,7 @@ import {
 import type {
   TokenAccount,
   Account,
+  AccountLike,
   Operation,
   CryptoCurrency,
   TokenCurrency
@@ -21,6 +22,7 @@ import { getDerivationScheme, runDerivationScheme } from "../derivation";
 
 // if you use the mock, we need this
 import "../load/tokens/ethereum/erc20";
+import "../load/tokens/tron/trc10";
 
 function ensureNoNegative(operations) {
   let total = BigNumber(0);
@@ -200,7 +202,7 @@ export function genAddress(
  */
 export function genOperation(
   superAccount: Account,
-  account: Account | TokenAccount,
+  account: AccountLike,
   ops: *,
   rng: Prando
 ): $Exact<Operation> {
@@ -244,10 +246,10 @@ export function genOperation(
   };
 
   if (account.type === "Account") {
-    const { tokenAccounts } = account;
-    if (tokenAccounts) {
+    const { subAccounts } = account;
+    if (subAccounts) {
       // TODO make sure tokenAccounts sometimes reuse an existing op hash from main account
-      op.subOperations = inferSubOperations(hash, tokenAccounts);
+      op.subOperations = inferSubOperations(hash, subAccounts);
     }
   }
 
@@ -281,7 +283,7 @@ export function genAddingOperationsInAccount(
 type GenAccountOptions = {
   operationsSize?: number,
   currency?: CryptoCurrency,
-  tokenAccountsCount?: number
+  subAccountsCount?: number
 };
 
 function genTokenAccount(
@@ -350,10 +352,10 @@ export function genAccount(
 
   if (currency.id === "ethereum" || currency.id === "ethereum_ropsten") {
     const tokenCount =
-      typeof opts.tokenAccountsCount === "number"
-        ? opts.tokenAccountsCount
+      typeof opts.subAccountsCount === "number"
+        ? opts.subAccountsCount
         : rng.nextInt(0, 8);
-    account.tokenAccounts = Array(tokenCount)
+    account.subAccounts = Array(tokenCount)
       .fill(null)
       .map((_, i) => genTokenAccount(i, account));
   }

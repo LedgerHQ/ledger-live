@@ -1,65 +1,65 @@
 // @flow
-import { CurrencyNotSupported } from "@ledgerhq/errors";
-import type { CryptoCurrency, Account, TokenAccount } from "../types";
-import type { CurrencyBridge, AccountBridge } from "./types";
-import { decodeAccountId, getMainAccount } from "../account";
-import { getEnv } from "../env";
-import * as RippleJSBridge from "./RippleJSBridge";
-import * as EthereumJSBridge from "./EthereumJSBridge";
-import LibcoreCurrencyBridge from "./LibcoreCurrencyBridge";
-import LibcoreBitcoinAccountBridge from "./LibcoreBitcoinAccountBridge";
-import LibcoreEthereumAccountBridge from "./LibcoreEthereumAccountBridge";
-import {
-  makeMockCurrencyBridge,
-  makeMockAccountBridge
-} from "./makeMockBridge";
-import { checkAccountSupported, libcoreNoGo } from "../account/support";
+import type {
+  CryptoCurrency,
+  Account,
+  AccountLike,
+  CurrencyBridge,
+  AccountBridge,
+  ScanAccountEventRaw,
+  ScanAccountEvent
+} from "../types";
+import { fromAccountRaw, toAccountRaw } from "../account";
 
-const mockCurrencyBridge = makeMockCurrencyBridge();
-const mockAccountBridge = makeMockAccountBridge();
+import * as impl from "./impl";
 
-export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
-  if (getEnv("MOCK")) return mockCurrencyBridge;
-  switch (currency.family) {
-    case "ripple":
-      return RippleJSBridge.currencyBridge;
-    case "ethereum":
-      if (libcoreNoGo.includes(currency.id)) {
-        return EthereumJSBridge.currencyBridge;
-      }
-      return LibcoreCurrencyBridge;
-    case "bitcoin":
-      return LibcoreCurrencyBridge;
-    default:
-      return mockCurrencyBridge; // fallback mock until we implement it all!
-  }
+export type Proxy = {
+  getAccountBridge: typeof getAccountBridge,
+  getCurrencyBridge: typeof getCurrencyBridge
 };
+
+let proxy: ?Proxy;
+export const setBridgeProxy = (p: ?Proxy) => {
+  if (p && p.getAccountBridge === getAccountBridge) {
+    throw new Error(
+      "setBridgeProxy can't be called with same bridge functions!"
+    );
+  }
+  proxy = p;
+};
+
+export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge =>
+  (proxy || impl).getCurrencyBridge(currency);
 
 export const getAccountBridge = (
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account
-): AccountBridge<any> => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const { type } = decodeAccountId(mainAccount.id);
-  const supportedError = checkAccountSupported(mainAccount);
-  if (supportedError) {
-    throw supportedError;
-  }
-  if (type === "mock") return mockAccountBridge;
-  if (type === "libcore") {
-    if (mainAccount.currency.family === "ethereum") {
-      return LibcoreEthereumAccountBridge;
-    }
-    return LibcoreBitcoinAccountBridge;
-  }
-  switch (mainAccount.currency.family) {
-    case "ripple":
-      return RippleJSBridge.accountBridge;
-    case "ethereum":
-      return EthereumJSBridge.accountBridge;
+): AccountBridge<any> =>
+  (proxy || impl).getAccountBridge(account, parentAccount);
+
+export function fromScanAccountEventRaw(
+  raw: ScanAccountEventRaw
+): ScanAccountEvent {
+  switch (raw.type) {
+    case "discovered":
+      return {
+        type: raw.type,
+        account: fromAccountRaw(raw.account)
+      };
     default:
-      throw new CurrencyNotSupported("currency not supported", {
-        currencyName: mainAccount.currency.name
-      });
+      throw new Error("unsupported ScanAccountEvent " + raw.type);
   }
-};
+}
+
+export function toScanAccountEventRaw(
+  e: ScanAccountEvent
+): ScanAccountEventRaw {
+  switch (e.type) {
+    case "discovered":
+      return {
+        type: e.type,
+        account: toAccountRaw(e.account)
+      };
+    default:
+      throw new Error("unsupported ScanAccountEvent " + e.type);
+  }
+}

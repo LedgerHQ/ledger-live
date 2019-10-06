@@ -1,14 +1,14 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import type { Operation, Transaction, Account } from "../../types";
-import type { CoreEthereumLikeTransaction } from "./types";
+import type { Operation, Account } from "../../types";
+import type { CoreEthereumLikeTransaction, Transaction } from "./types";
 import type { CoreAccount } from "../../libcore/types";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { getEnv } from "../../env";
 
 async function ethereum({
-  account: { id: accountId, freshAddress, balance, tokenAccounts },
+  account: { id: accountId, freshAddress, balance, subAccounts },
   signedTransaction,
   builded,
   coreAccount,
@@ -38,7 +38,7 @@ async function ethereum({
     hash: txHash,
     transactionSequenceNumber,
     type: "OUT",
-    value: transaction.tokenAccountId
+    value: transaction.subAccountId
       ? fee
       : transaction.useAllAmount
       ? balance
@@ -53,27 +53,25 @@ async function ethereum({
     extra: {}
   };
 
-  const { tokenAccountId } = transaction;
-  if (tokenAccountId) {
-    const tokenAccount = (tokenAccounts || []).find(
-      a => a.id === tokenAccountId
-    );
+  const { subAccountId } = transaction;
+  if (subAccountId) {
+    const subAccount = (subAccounts || []).find(a => a.id === subAccountId);
     op.subOperations = [
       {
-        id: `${tokenAccountId}-${txHash}-OUT`,
+        id: `${subAccountId}-${txHash}-OUT`,
         hash: txHash,
         transactionSequenceNumber,
         type: "OUT",
         value:
-          transaction.useAllAmount && tokenAccount
-            ? tokenAccount.balance
+          transaction.useAllAmount && subAccount
+            ? subAccount.balance
             : BigNumber(transaction.amount || 0),
         fee,
         blockHash: null,
         blockHeight: null,
         senders,
         recipients: [transaction.recipient],
-        accountId: tokenAccountId,
+        accountId: subAccountId,
         date: new Date(),
         extra: {}
       }

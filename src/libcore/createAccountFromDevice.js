@@ -48,7 +48,10 @@ export const createAccountFromDevice: F = async ({
         if (isUnsubscribed()) return;
         const { publicKey, chainCode } = await getAddress(transport, {
           currency,
-          path: derivation,
+          path:
+            derivationMode === "tezbox"
+              ? "44'/1729'/0'/0'" // FIXME LIBCORE
+              : derivation,
           derivationMode,
           askChainCode: true,
           skipAppFailSafeCheck: true
@@ -61,6 +64,13 @@ export const createAccountFromDevice: F = async ({
   );
   if (isUnsubscribed()) return;
 
+  log("libcore", "AccountCreationInfo.init", {
+    index,
+    owners,
+    derivations,
+    publicKeys,
+    chainCodes
+  });
   const newAccountCreationInfos = await core.AccountCreationInfo.init(
     index,
     owners,

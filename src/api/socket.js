@@ -32,7 +32,7 @@ export type SocketEvent =
     }
   | {
       type: "result",
-      payload: string
+      payload: any
     }
   | {
       type: "warning",
@@ -75,7 +75,7 @@ export const createDeviceSocket = (
 ): Observable<SocketEvent> =>
   Observable.create(o => {
     let ws;
-    let lastMessage: ?string;
+    let lastMessage: ?any;
     let interrupted = false;
     let terminated = false;
     let inBulk = false;
@@ -113,7 +113,7 @@ export const createDeviceSocket = (
       log({ type: "socket-close" });
       if (!inBulk || !ignoreWebsocketErrorDuringBulk) {
         terminated = true;
-        o.next({ type: "result", payload: lastMessage || "" });
+        o.next({ type: "result", payload: lastMessage });
         o.complete();
       }
     };

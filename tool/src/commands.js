@@ -26,20 +26,23 @@ import fs from "fs";
 import qrcode from "qrcode-terminal";
 import { dataToFrames } from "qrloop/exporter";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
-import signAndBroadcast from "@ledgerhq/live-common/lib/libcore/signAndBroadcast";
-import { getFeesForTransaction } from "@ledgerhq/live-common/lib/libcore/getFeesForTransaction";
-import { getFees } from "@ledgerhq/live-common/lib/libcore/getFees";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountNetworkInfo } from "@ledgerhq/live-common/lib/libcore/getAccountNetworkInfo";
+import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
+import {
+  toTransactionStatusRaw,
+  toTransactionRaw
+} from "@ledgerhq/live-common/lib/transaction";
 import { encode } from "@ledgerhq/live-common/lib/cross";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { asDerivationMode } from "@ledgerhq/live-common/lib/derivation";
-import { withLibcore } from "@ledgerhq/live-common/lib/libcore/access";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
+import listApps from "@ledgerhq/live-common/lib/hw/listApps";
 import openApp from "@ledgerhq/live-common/lib/hw/openApp";
 import quitApp from "@ledgerhq/live-common/lib/hw/quitApp";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";
@@ -60,35 +63,22 @@ import {
   inferCurrency,
   inferManagerApp
 } from "./scan";
+import type { ScanCommonOpts } from "./scan";
+import type { InferTransactionsOpts } from "./transaction";
 import { inferTransactions, inferTransactionsOpts } from "./transaction";
 import { apdusFromFile } from "./stream";
 import { toAccountRaw } from "@ledgerhq/live-common/lib/account/serialization";
 import { Buffer } from "buffer";
 
-const getFeesFormatters = {
-  raw: e => e,
-  json: e => ({
-    type: e.type,
-    value: Array.isArray(e.value)
-      ? e.value.map(bn => bn.toNumber())
-      : e.value.toNumber()
-  }),
-  summary: e => {
-    switch (e.type) {
-      case "feePerBytes":
-        return "feePerBytes: " + e.value.map(bn => bn.toString());
-      case "gasPrice":
-        return (
-          "gasPrice: " + formatCurrencyUnit(e.unit, e.value, { showCode: true })
-        );
-      case "fee":
-        return (
-          "fee: " + formatCurrencyUnit(e.unit, e.value, { showCode: true })
-        );
-      default:
-        return e;
-    }
-  }
+const getAccountNetworkInfoFormatters = {
+  json: e => JSON.stringify(e)
+};
+
+const getTransactionStatusFormatters = {
+  json: ({ status, transaction }) => ({
+    status: JSON.stringify(toTransactionStatusRaw(status)),
+    transaction: JSON.stringify(toTransactionRaw(transaction))
+  })
 };
 
 const asQR = str =>
@@ -129,7 +119,7 @@ const all = {
 
   libcoreSetPassword: {
     args: [{ name: "password", type: String, desc: "the new password" }],
-    job: ({ password }) =>
+    job: ({ password }: $Shape<{ password: string }>) =>
       withLibcore(core =>
         core
           .getPoolInstance()
@@ -155,7 +145,13 @@ const all = {
           "interactive mode that accumulate the events instead of showing them"
       }
     ],
-    job: ({ module, interactive }) => {
+    job: ({
+      module,
+      interactive
+    }: $Shape<{
+      module: string,
+      interactive: boolean
+    }>) => {
       const events = discoverDevices(m =>
         !module ? true : module.split(",").includes(m.id)
       );
@@ -197,18 +193,20 @@ const all = {
 
   deviceVersion: {
     args: [deviceOpt],
-    job: ({ device }) => withDevice(device || "")(t => from(getVersion(t)))
+    job: ({ device }: $Shape<{ device: string }>) =>
+      withDevice(device || "")(t => from(getVersion(t)))
   },
 
   deviceAppVersion: {
     args: [deviceOpt],
-    job: ({ device }) =>
+    job: ({ device }: $Shape<{ device: string }>) =>
       withDevice(device || "")(t => from(getAppAndVersion(t)))
   },
 
   deviceInfo: {
     args: [deviceOpt],
-    job: ({ device }) => withDevice(device || "")(t => from(getDeviceInfo(t)))
+    job: ({ device }: $Shape<{ device: string }>) =>
+      withDevice(device || "")(t => from(getDeviceInfo(t)))
   },
 
   repl: {
@@ -223,7 +221,7 @@ const all = {
         desc: "A file can also be provided. By default stdin is used."
       }
     ],
-    job: ({ device, file }) =>
+    job: ({ device, file }: { device: string, file: string }) =>
       withDevice(device || "")(t =>
         apdusFromFile(file || "-").pipe(concatMap(apdu => t.exchange(apdu)))
       ).pipe(map(res => res.toString("hex")))
@@ -246,7 +244,13 @@ const all = {
         desc: "add accounts to live data"
       }
     ],
-    job: opts =>
+    job: (
+      opts: ScanCommonOpts &
+        $Shape<{
+          appjson: string,
+          add: boolean
+        }>
+    ) =>
       scan(opts).pipe(
         reduce((accounts, account) => accounts.concat(account), []),
         mergeMap(accounts => {
@@ -291,13 +295,21 @@ const all = {
         desc: "output to console"
       }
     ],
-    job: opts =>
+    job: (
+      opts: ScanCommonOpts &
+        $Shape<{
+          out: boolean
+        }>
+    ) =>
       scan(opts).pipe(
         reduce((accounts, account) => accounts.concat(account), []),
         mergeMap(accounts => {
           const data = encode({
             accounts,
-            settings: { currenciesSettings: {} },
+            settings: {
+              pairExchanges: {},
+              currenciesSettings: {}
+            },
             exporterName: "ledger-live-cli",
             exporterVersion: "0.0.0"
           });
@@ -321,7 +333,7 @@ const all = {
   genuineCheck: {
     description: "Perform a genuine check with Ledger's HSM",
     args: [deviceOpt],
-    job: ({ device }) =>
+    job: ({ device }: $Shape<{ device: string }>) =>
       withDevice(device || "")(t =>
         from(getDeviceInfo(t)).pipe(
           mergeMap(deviceInfo => genuineCheck(t, deviceInfo))
@@ -332,7 +344,7 @@ const all = {
   firmwareUpdate: {
     description: "Perform a firmware update",
     args: [deviceOpt],
-    job: ({ device }) =>
+    job: ({ device }: $Shape<{ device: string }>) =>
       withDevice(device || "")(t => from(getDeviceInfo(t))).pipe(
         mergeMap(manager.getLatestFirmwareForDevice),
         mergeMap(firmware => {
@@ -358,7 +370,8 @@ const all = {
         desc: "force a mcu version to install"
       }
     ],
-    job: ({ device, forceMCU }) => repairFirmwareUpdate(device || "", forceMCU)
+    job: ({ device, forceMCU }: $Shape<{ device: string, forceMCU: string }>) =>
+      repairFirmwareUpdate(device || "", forceMCU)
   },
 
   managerListApps: {
@@ -372,16 +385,26 @@ const all = {
         typeDesc: "raw | json | default"
       }
     ],
-    job: ({ device, format }) =>
+    job: ({ device, format }: $Shape<{ device: string, format: string }>) =>
       withDevice(device || "")(t =>
         from(getDeviceInfo(t)).pipe(
-          mergeMap(deviceInfo => from(manager.getAppsList(deviceInfo, true))),
+          mergeMap(deviceInfo => from(listApps(t, deviceInfo))),
           map(list =>
             format === "raw"
               ? list
               : format === "json"
               ? JSON.stringify(list)
-              : list.map(item => `- ${item.name} ${item.version}`).join("\n")
+              : list
+                  .map(
+                    item =>
+                      `- ${item.name} ${item.version}` +
+                      (item.installed
+                        ? item.updated
+                          ? " (installed)"
+                          : " (outdated!)"
+                        : "")
+                  )
+                  .join("\n")
           )
         )
       )
@@ -424,7 +447,21 @@ const all = {
         desc: "close current application"
       }
     ],
-    job: ({ device, verbose, install, uninstall, open, quit }) =>
+    job: ({
+      device,
+      verbose,
+      install,
+      uninstall,
+      open,
+      quit
+    }: $Shape<{
+      device: string,
+      verbose: boolean,
+      install: string[],
+      uninstall: string[],
+      open: string,
+      quit: string
+    }>) =>
       withDevice(device || "")(t => {
         if (quit) return from(quitApp(t));
         if (open) return from(openApp(t, inferManagerApp(open)));
@@ -483,7 +520,13 @@ const all = {
       currencyOpt,
       deviceOpt
     ],
-    job: arg =>
+    job: (
+      arg: $Shape<{
+        recipient: string,
+        currency: string,
+        device: string
+      }>
+    ) =>
       inferCurrency(arg)
         .toPromise()
         .then(currency =>
@@ -500,32 +543,34 @@ const all = {
   },
 
   signMessage: {
-    description: "Sign a message with the device on specific derivations (advanced)",
+    description:
+      "Sign a message with the device on specific derivations (advanced)",
     args: [
       currencyOpt,
       { name: "path", type: String, desc: "HDD derivation path" },
       { name: "derivationMode", type: String, desc: "derivationMode to use" },
-      { name: "message", type: String, desc: "the message to sign" },
+      { name: "message", type: String, desc: "the message to sign" }
     ],
-    job: arg => inferCurrency(arg).pipe(
-      mergeMap(currency => {
-        if (!currency) {
-          throw new Error("no currency provided");
-        }
-        if (!arg.path) {
-          throw new Error("--path is required");
-        }
-        asDerivationMode(arg.derivationMode);
-        return withDevice(arg.device || "")(t =>
-          from(
-            signMessage(t, {
-              ...arg,
-              currency
-            })
-          )
-        );
-      })
-    )
+    job: (arg: *) =>
+      inferCurrency(arg).pipe(
+        mergeMap(currency => {
+          if (!currency) {
+            throw new Error("no currency provided");
+          }
+          if (!arg.path) {
+            throw new Error("--path is required");
+          }
+          asDerivationMode(arg.derivationMode);
+          return withDevice(arg.device || "")(t =>
+            from(
+              signMessage(t, {
+                ...arg,
+                currency
+              })
+            )
+          );
+        })
+      )
   },
 
   getAddress: {
@@ -533,6 +578,7 @@ const all = {
       "Get an address with the device on specific derivations (advanced)",
     args: [
       currencyOpt,
+      deviceOpt,
       { name: "path", type: String, desc: "HDD derivation path" },
       { name: "derivationMode", type: String, desc: "derivationMode to use" },
       {
@@ -542,7 +588,15 @@ const all = {
         desc: "also ask verification on device"
       }
     ],
-    job: arg =>
+    job: (
+      arg: $Shape<{
+        currency: string,
+        device: string,
+        path: string,
+        derivationMode: string,
+        verify: boolean
+      }>
+    ) =>
       inferCurrency(arg).pipe(
         mergeMap(currency => {
           if (!currency) {
@@ -555,8 +609,9 @@ const all = {
           return withDevice(arg.device || "")(t =>
             from(
               getAddress(t, {
-                ...arg,
-                currency
+                currency,
+                path: arg.path,
+                derivationMode: asDerivationMode(arg.derivationMode || "")
               })
             )
           );
@@ -564,36 +619,51 @@ const all = {
       )
   },
 
-  feesForTransaction: {
-    description: "Calculate how much fees a given transaction is going to cost",
-    args: [...scanCommonOpts, ...inferTransactionsOpts],
-    job: opts =>
+  getTransactionStatus: {
+    description:
+      "Prepare a transaction and returns 'TransactionStatus' meta information",
+    args: [
+      ...scanCommonOpts,
+      ...inferTransactionsOpts,
+      {
+        name: "format",
+        alias: "f",
+        type: String,
+        typeDesc: Object.keys(getTransactionStatusFormatters).join(" | "),
+        desc: "how to display the data"
+      }
+    ],
+    job: (opts: ScanCommonOpts & InferTransactionsOpts & { format: string }) =>
       scan(opts).pipe(
-        concatMap((account: Account) =>
+        concatMap(account =>
           from(inferTransactions(account, opts)).pipe(
             mergeMap(inferred =>
               inferred.reduce(
-                (acc, t) =>
+                (acc, transaction) =>
                   concat(
                     acc,
                     from(
                       defer(() =>
-                        getFeesForTransaction({
-                          ...t,
-                          account
-                        })
+                        getAccountBridge(account)
+                          .getTransactionStatus(account, transaction)
+                          .then(status => ({ transaction, status }))
                       )
                     )
                   ),
                 empty()
               )
             ),
-            map(n =>
-              formatCurrencyUnit(account.unit, n, {
-                showCode: true,
-                disableRounding: true
-              })
-            )
+            map(e => {
+              const f = getTransactionStatusFormatters[opts.format || "json"];
+              if (!f) {
+                throw new Error(
+                  "getTransactionStatusFormatters: no such formatter '" +
+                    opts.format +
+                    "'"
+                );
+              }
+              return f(e);
+            })
           )
         )
       )
@@ -611,7 +681,7 @@ const all = {
         desc: "how to display the data"
       }
     ],
-    job: opts =>
+    job: (opts: ScanCommonOpts & { format: string }) =>
       scan(opts).pipe(
         map(account =>
           (accountFormatters[opts.format] || accountFormatters.default)(account)
@@ -619,25 +689,28 @@ const all = {
       )
   },
 
-  getFees: {
-    description: "Get the currency fees for accounts",
+  getAccountNetworkInfo: {
+    description: "Get the currency network info for accounts",
     args: [
       ...scanCommonOpts,
       {
         name: "format",
         alias: "f",
         type: String,
-        typeDesc: Object.keys(getFeesFormatters).join(" | "),
+        typeDesc: Object.keys(getAccountNetworkInfoFormatters).join(" | "),
         desc: "how to display the data"
       }
     ],
-    job: opts =>
+    job: (opts: ScanCommonOpts & { format: string }) =>
       scan(opts).pipe(
-        mergeMap(account => from(getFees(account))),
+        mergeMap(account => from(getAccountNetworkInfo(account))),
         map(e => {
-          const f = getFeesFormatters[opts.format || "summary"];
-          if (!f)
-            throw new Error("getFees: no such formatter '" + opts.format + "'");
+          const f = getAccountNetworkInfoFormatters[opts.format || "json"];
+          if (!f) {
+            throw new Error(
+              "getAccountNetworkInfo: no such formatter '" + opts.format + "'"
+            );
+          }
           return f(e);
         })
       )
@@ -653,7 +726,7 @@ const all = {
         desc: "also display a QR Code"
       }
     ],
-    job: opts =>
+    job: (opts: ScanCommonOpts & { qr: boolean }) =>
       scan(opts).pipe(
         concatMap(account =>
           concat(
@@ -692,9 +765,15 @@ const all = {
         desc: "when using multiple transactions, an error won't stop the flow"
       }
     ],
-    job: opts =>
+    job: (
+      opts: ScanCommonOpts &
+        InferTransactionsOpts & {
+          format: string,
+          "ignore-errors": boolean
+        }
+    ) =>
       scan(opts).pipe(
-        concatMap((account: Account) =>
+        concatMap(account =>
           from(inferTransactions(account, opts)).pipe(
             mergeMap(inferred =>
               inferred.reduce(
@@ -702,12 +781,9 @@ const all = {
                   concat(
                     acc,
                     from(
-                      defer(() =>
-                        signAndBroadcast({
-                          ...t,
-                          account,
-                          deviceId: ""
-                        }).pipe(
+                      defer(() => {
+                        const bridge = getAccountBridge(account);
+                        return bridge.signAndBroadcast(account, t, "").pipe(
                           ...(opts["ignore-errors"]
                             ? [
                                 catchError(e => {
@@ -719,8 +795,8 @@ const all = {
                                 })
                               ]
                             : [])
-                        )
-                      )
+                        );
+                      })
                     )
                   ),
                 empty()

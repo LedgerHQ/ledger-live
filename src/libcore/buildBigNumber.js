@@ -3,12 +3,16 @@
 import { BigNumber } from "bignumber.js";
 import type { Core, CoreCurrency, CoreAmount, CoreBigInt } from "./types";
 
-export async function bigNumberToLibcoreAmount(
+export function bigNumberToLibcoreAmount(
   core: Core,
   walletCurrency: CoreCurrency,
   amount: BigNumber
 ) {
   return core.Amount.fromHex(walletCurrency, amount.toString(16));
+}
+
+export function bigNumberToLibcoreBigInt(core: Core, n: BigNumber) {
+  return core.BigInt.fromDecimalString(n.toString(10), 10, ".");
 }
 
 export async function libcoreBigIntToBigNumber(

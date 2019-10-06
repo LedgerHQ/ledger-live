@@ -4,11 +4,12 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
 import { FeeNotLoaded, NotEnoughGas, NotEnoughBalance } from "@ledgerhq/errors";
-import type { Account, Transaction } from "../../types";
+import type { Account } from "../../types";
+import { getGasLimit } from "./transaction";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
-import type { CoreEthereumLikeTransaction } from "./types";
+import type { CoreEthereumLikeTransaction, Transaction } from "./types";
 
 const ethereumTransferMethodID = Buffer.from("a9059cbb", "hex");
 
@@ -30,10 +31,10 @@ export async function ethereumBuildTransaction({
   isPartial: boolean,
   isCancelled: () => boolean
 }): Promise<?CoreEthereumLikeTransaction> {
-  const { tokenAccountId } = transaction;
-  const tokenAccount = tokenAccountId
-    ? account.tokenAccounts &&
-      account.tokenAccounts.find(t => t.id === tokenAccountId)
+  const { subAccountId } = transaction;
+  const subAccount = subAccountId
+    ? account.subAccounts &&
+      account.subAccounts.find(t => t.id === subAccountId)
     : null;
   const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
 
@@ -44,7 +45,8 @@ export async function ethereumBuildTransaction({
 
   const recipient = eip55.encode(transaction.recipient);
 
-  const { gasPrice, gasLimit } = transaction;
+  const { gasPrice } = transaction;
+  const gasLimit = getGasLimit(transaction);
   if (!gasPrice || !gasLimit || !BigNumber(gasLimit).gt(ZERO)) {
     throw new FeeNotLoaded();
   }
@@ -64,15 +66,15 @@ export async function ethereumBuildTransaction({
   const transactionBuilder = await ethereumLikeAccount.buildTransaction();
   if (isCancelled()) return;
 
-  if (tokenAccount) {
-    const { balance, token } = tokenAccount;
+  if (subAccount && subAccount.type === "TokenAccount") {
+    const { balance, token } = subAccount;
     let amount;
     if (transaction.useAllAmount) {
       amount = balance;
     } else {
       if (!transaction.amount) throw new Error("amount is missing");
       amount = BigNumber(transaction.amount);
-      if (amount.gt(tokenAccount.balance)) {
+      if (amount.gt(subAccount.balance)) {
         throw new NotEnoughBalance();
       }
     }
@@ -129,7 +131,7 @@ export async function ethereumBuildTransaction({
 
     return builded;
   } catch (e) {
-    if (tokenAccount && e.message === "Cannot gather enough funds.") {
+    if (subAccount && e.message === "Cannot gather enough funds.") {
       // FIXME e.message usage: we need a universal error code way. not yet the case with diff bindings
       throw new NotEnoughGas();
     }

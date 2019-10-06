@@ -5,8 +5,12 @@ import type {
   AccountRaw,
   TokenAccount,
   TokenAccountRaw,
+  ChildAccount,
+  ChildAccountRaw,
   Operation,
-  OperationRaw
+  OperationRaw,
+  SubAccount,
+  SubAccountRaw
 } from "../types";
 import {
   getCryptoCurrencyById,
@@ -35,11 +39,11 @@ export const toOperationRaw = (
 
 export const inferSubOperations = (
   txHash: string,
-  tokenAccounts: TokenAccount[]
+  subAccounts: SubAccount[]
 ): Operation[] => {
   const all = [];
-  for (let i = 0; i < tokenAccounts.length; i++) {
-    const ta = tokenAccounts[i];
+  for (let i = 0; i < subAccounts.length; i++) {
+    const ta = subAccounts[i];
     for (let j = 0; j < ta.operations.length; j++) {
       const op = ta.operations[j];
       if (op.hash === txHash) {
@@ -67,7 +71,7 @@ export const fromOperationRaw = (
     ...op
   }: OperationRaw,
   accountId: string,
-  tokenAccounts?: ?(TokenAccount[])
+  subAccounts?: ?(SubAccount[])
 ): Operation => {
   const res: $Exact<Operation> = {
     ...op,
@@ -78,8 +82,8 @@ export const fromOperationRaw = (
     extra: extra || {}
   };
 
-  if (tokenAccounts) {
-    res.subOperations = inferSubOperations(op.hash, tokenAccounts);
+  if (subAccounts) {
+    res.subOperations = inferSubOperations(op.hash, subAccounts);
   } else if (subOperations) {
     res.subOperations = subOperations.map(o =>
       fromOperationRaw(o, o.accountId)
@@ -113,6 +117,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
 export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
   const { id, parentId, token, operations, pendingOperations, balance } = raw;
   return {
+    type: "TokenAccountRaw",
     id,
     parentId,
     tokenId: token.id,
@@ -120,6 +125,78 @@ export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
     operations: operations.map(o => toOperationRaw(o)),
     pendingOperations: pendingOperations.map(o => toOperationRaw(o))
   };
+}
+
+export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
+  const {
+    id,
+    parentId,
+    currencyId,
+    operations,
+    pendingOperations,
+    balance,
+    address,
+    capabilities
+  } = raw;
+  const currency = getCryptoCurrencyById(currencyId);
+  const convertOperation = op => fromOperationRaw(op, id);
+  return {
+    type: "ChildAccount",
+    id,
+    parentId,
+    currency,
+    address,
+    capabilities,
+    balance: BigNumber(balance),
+    operations: (operations || []).map(convertOperation),
+    pendingOperations: (pendingOperations || []).map(convertOperation)
+  };
+}
+
+export function toChildAccountRaw(raw: ChildAccount): ChildAccountRaw {
+  const {
+    id,
+    parentId,
+    currency,
+    operations,
+    pendingOperations,
+    balance,
+    address,
+    capabilities
+  } = raw;
+  return {
+    type: "ChildAccountRaw",
+    id,
+    parentId,
+    address,
+    capabilities,
+    currencyId: currency.id,
+    balance: balance.toString(),
+    operations: operations.map(o => toOperationRaw(o)),
+    pendingOperations: pendingOperations.map(o => toOperationRaw(o))
+  };
+}
+
+export function fromSubAccountRaw(raw: SubAccountRaw): SubAccount {
+  switch (raw.type) {
+    case "ChildAccountRaw":
+      return fromChildAccountRaw(raw);
+    case "TokenAccountRaw":
+      return fromTokenAccountRaw(raw);
+    default:
+      throw new Error("invalid raw.type=" + raw.type);
+  }
+}
+
+export function toSubAccountRaw(subAccount: SubAccount): SubAccountRaw {
+  switch (subAccount.type) {
+    case "ChildAccount":
+      return toChildAccountRaw(subAccount);
+    case "TokenAccount":
+      return toTokenAccountRaw(subAccount);
+    default:
+      throw new Error("invalid subAccount.type=" + subAccount.type);
+  }
 }
 
 export function fromAccountRaw(rawAccount: AccountRaw): Account {
@@ -141,15 +218,19 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     pendingOperations,
     lastSyncDate,
     balance,
-    tokenAccounts: tokenAccountsRaw
+    subAccounts: subAccountsRaw
   } = rawAccount;
 
-  const tokenAccounts =
-    tokenAccountsRaw &&
-    tokenAccountsRaw
+  const subAccounts =
+    subAccountsRaw &&
+    subAccountsRaw
       .map(ta => {
-        if (findTokenById(ta.tokenId)) {
-          return fromTokenAccountRaw(ta);
+        if (ta.type === "TokenAccountRaw") {
+          if (findTokenById(ta.tokenId)) {
+            return fromTokenAccountRaw(ta);
+          }
+        } else {
+          return fromSubAccountRaw(ta);
         }
       })
       .filter(Boolean);
@@ -160,7 +241,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     currency.units.find(u => u.magnitude === unitMagnitude) ||
     currency.units[0];
 
-  const convertOperation = op => fromOperationRaw(op, id, tokenAccounts);
+  const convertOperation = op => fromOperationRaw(op, id, subAccounts);
 
   const res: $Exact<Account> = {
     type: "Account",
@@ -192,8 +273,8 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.endpointConfig = endpointConfig;
   }
 
-  if (tokenAccounts) {
-    res.tokenAccounts = tokenAccounts;
+  if (subAccounts) {
+    res.subAccounts = subAccounts;
   }
 
   return res;
@@ -216,7 +297,7 @@ export function toAccountRaw({
   unit,
   lastSyncDate,
   balance,
-  tokenAccounts,
+  subAccounts,
   endpointConfig
 }: Account): AccountRaw {
   const res: $Exact<AccountRaw> = {
@@ -229,8 +310,8 @@ export function toAccountRaw({
     freshAddressPath,
     freshAddresses,
     blockHeight,
-    operations: operations.map(o => toOperationRaw(o)),
-    pendingOperations: pendingOperations.map(o => toOperationRaw(o)),
+    operations: (operations || []).map(o => toOperationRaw(o)),
+    pendingOperations: (pendingOperations || []).map(o => toOperationRaw(o)),
     currencyId: currency.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
@@ -242,8 +323,8 @@ export function toAccountRaw({
   if (xpub) {
     res.xpub = xpub;
   }
-  if (tokenAccounts) {
-    res.tokenAccounts = tokenAccounts.map(toTokenAccountRaw);
+  if (subAccounts) {
+    res.subAccounts = subAccounts.map(toSubAccountRaw);
   }
   return res;
 }

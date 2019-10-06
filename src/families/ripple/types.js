@@ -1,5 +1,11 @@
 // @flow
 
+import type { BigNumber } from "bignumber.js";
+import type { Unit } from "../../types";
+import type {
+  TransactionCommon,
+  TransactionCommonRaw
+} from "../../types/transaction";
 import type { CoreAmount, CoreBigInt, Spec } from "../../libcore/types";
 
 declare class CoreRippleLikeAddress {
@@ -14,6 +20,8 @@ declare class CoreRippleLikeTransaction {
   serialize(): Promise<string>;
   setSignature(string, string): Promise<void>;
   setDERSignature(string): Promise<void>;
+  getDestinationTag(): Promise<?number>;
+  getSequence(): Promise<CoreBigInt>;
 }
 
 declare class CoreRippleLikeOperation {
@@ -23,6 +31,7 @@ declare class CoreRippleLikeOperation {
 declare class CoreRippleLikeTransactionBuilder {
   wipeToAddress(address: string): Promise<void>;
   sendToAddress(amount: CoreAmount, recipient: string): Promise<void>;
+  setDestinationTag(tag: number): Promise<void>;
   setFees(fees: CoreAmount): Promise<void>;
   build(): Promise<CoreRippleLikeTransaction>;
 }
@@ -61,6 +70,36 @@ export type CoreOperationSpecifics = {
 
 export type CoreCurrencySpecifics = {};
 
+export type NetworkInfo = {|
+  family: "ripple",
+  serverFee: BigNumber,
+  baseReserve: BigNumber
+|};
+
+export type NetworkInfoRaw = {|
+  family: "ripple",
+  serverFee: string,
+  baseReserve: string
+|};
+
+export type Transaction = {|
+  ...TransactionCommon,
+  family: "ripple",
+  fee: ?BigNumber,
+  networkInfo: ?NetworkInfo,
+  tag: ?number,
+  feeCustomUnit: ?Unit
+|};
+
+export type TransactionRaw = {|
+  ...TransactionCommonRaw,
+  family: "ripple",
+  fee: ?string,
+  networkInfo: ?NetworkInfoRaw,
+  tag: ?number,
+  feeCustomUnit: ?Unit
+|};
+
 export const reflect = (declare: (string, Spec) => void) => {
   declare("RippleLikeAddress", {
     methods: {
@@ -79,6 +118,8 @@ export const reflect = (declare: (string, Spec) => void) => {
   declare("RippleLikeTransaction", {
     methods: {
       getHash: {},
+      getDestinationTag: {},
+      getSequence: { returns: "BigInt" },
       getFees: { returns: "Amount" },
       getReceiver: { returns: "RippleLikeAddress" },
       getSender: { returns: "RippleLikeAddress" },
@@ -101,6 +142,7 @@ export const reflect = (declare: (string, Spec) => void) => {
       setFees: {
         params: ["Amount"]
       },
+      setDestinationTag: {},
       build: {
         returns: "RippleLikeTransaction"
       }
@@ -123,4 +165,17 @@ export const reflect = (declare: (string, Spec) => void) => {
       }
     }
   });
+
+  return {
+    OperationMethods: {
+      asRippleLikeOperation: {
+        returns: "RippleLikeOperation"
+      }
+    },
+    AccountMethods: {
+      asRippleLikeAccount: {
+        returns: "RippleLikeAccount"
+      }
+    }
+  };
 };

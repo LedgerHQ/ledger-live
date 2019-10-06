@@ -32,6 +32,7 @@
  */
 
 import type { CryptoCurrency, Unit } from "../types";
+import { getEnv } from "../env";
 
 const makeTestnetUnit = u => ({
   ...u,
@@ -2495,14 +2496,28 @@ export function getCryptoCurrencyById(id: string): CryptoCurrency {
   return currency;
 }
 
-export function isCurrencySupported(currency: CryptoCurrency) {
-  return userSupportedCurrencies.includes(currency);
-}
-
 export function setSupportedCurrencies(ids: CryptoCurrencyIds[]) {
   userSupportedCurrencies = ids.map(id => getCryptoCurrencyById(id));
 }
 
+function getExperimentalSupports() {
+  return getEnv("EXPERIMENTAL_CURRENCIES")
+    .split(",")
+    .filter(
+      id =>
+        hasCryptoCurrencyId(id) &&
+        !userSupportedCurrencies.find(c => c.id === id)
+    )
+    .map(getCryptoCurrencyById);
+}
+
 export function listSupportedCurrencies(): CryptoCurrency[] {
-  return userSupportedCurrencies;
+  const experimentals = getExperimentalSupports();
+  return experimentals.length === 0
+    ? userSupportedCurrencies
+    : userSupportedCurrencies.concat(experimentals);
+}
+
+export function isCurrencySupported(currency: CryptoCurrency) {
+  return listSupportedCurrencies().includes(currency);
 }

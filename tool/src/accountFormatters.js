@@ -5,6 +5,7 @@ import {
   toAccountRaw,
   getAccountCurrency
 } from "@ledgerhq/live-common/lib/account";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import { getOperationAmountNumberWithInternals } from "@ledgerhq/live-common/lib/operation";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
@@ -26,7 +27,7 @@ const formatOp = unitByAccountId => {
     const spaces = Array((level + 1) * 2)
       .fill(" ")
       .join("");
-    const extra = level > 0 ? "" : ` ${op.hash}     ${op.date.toGMTString()}`;
+    const extra = level > 0 ? "" : ` ${op.hash}     ${op.date.toISOString()}`;
     const head = `${(spaces + amount).padEnd(26)} ${extra}`;
     const sub = (op.subOperations || [])
       .concat(op.internalOperations || [])
@@ -55,26 +56,28 @@ const cliFormat = (account, summaryOnly) => {
   const opsCount = `${operations.length} operations`;
   const freshInfo = `${freshAddress} on ${freshAddressPath}`;
   const derivationInfo = `${derivationMode}#${index}`;
-  const head = `${name}: ${balance} (${opsCount}) (${freshInfo}) (${derivationInfo} ${xpub})`;
+  const head = `${name}: ${balance} (${opsCount}) (${freshInfo}) (${derivationInfo} ${xpub ||
+    ""})`;
 
-  const tokenAccounts = account.tokenAccounts || [];
+  const subAccounts = account.subAccounts || [];
   const ops = operations
     .map(
-      formatOp(id =>
-        account.id === id
-          ? account.unit
-          : tokenAccounts.find(a => a.id === id).token.units[0]
-      )
+      formatOp(id => {
+        if (account.id === id) return account.unit;
+        const ta = subAccounts.find(a => a.id === id);
+        if (ta) return getAccountCurrency(ta).units[0];
+        throw new Error("unexpected missing token account");
+      })
     )
     .join("");
 
-  const tokens = tokenAccounts
+  const tokens = subAccounts
     .map(
       ta =>
         "\n  TOKEN " +
-        ta.token.name +
+        getAccountCurrency(ta).name +
         ": " +
-        formatCurrencyUnit(ta.token.units[0], ta.balance, {
+        formatCurrencyUnit(getAccountCurrency(ta).units[0], ta.balance, {
           showCode: true,
           disableRounding: true
         }) +
@@ -88,10 +91,10 @@ const cliFormat = (account, summaryOnly) => {
 };
 
 const stats = account => {
-  const { tokenAccounts, operations } = account;
+  const { subAccounts, operations } = account;
 
   const sumOfAllOpsNumber = operations.reduce(
-    (sum, op) => sum.plus(getOperationAmountNumberWithInternals(op)),
+    (sum: BigNumber, op) => sum.plus(getOperationAmountNumberWithInternals(op)),
     BigNumber(0)
   );
 
@@ -107,18 +110,20 @@ const stats = account => {
     balance,
     sumOfAllOps,
     opsCount: operations.length,
-    tokenAccountsCount: (tokenAccounts || []).length
+    subAccountsCount: (subAccounts || []).length
   };
 };
 
-export default {
+const all: { [_: string]: (Account) => any } = {
   json: account => JSON.stringify(toAccountRaw(account)),
   default: account => cliFormat(account),
   summary: account => cliFormat(account, true),
   stats: account => stats(account),
   significantTokenTickers: account =>
-    (account.tokenAccounts || [])
+    (account.subAccounts || [])
       .filter(isSignificantAccount)
-      .map(ta => ta.token.ticker)
+      .map(ta => getAccountCurrency(ta).ticker)
       .join("\n")
 };
+
+export default all;

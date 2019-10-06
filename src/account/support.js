@@ -3,20 +3,32 @@ import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
 import { getEnv } from "../env";
 import { decodeAccountId } from "./accountId";
-import { getAllDerivationModes } from "../derivation";
+import {
+  getAllDerivationModes,
+  getDerivationModesForCurrency
+} from "../derivation";
 import { isCurrencySupported } from "../currencies";
 
 export const libcoreNoGo = [
-  "ethereum_classic" // LLC-308
+  "ripple", // still WIP
+  "ethereum_classic", // LLC-308
+  "tron",
+  "neo"
 ];
 
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode
-) =>
-  derivationMode === ""
-    ? !!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || !currency.supportsSegwit
-    : derivationMode === "segwit" || derivationMode === "native_segwit";
+) => {
+  const modes = getDerivationModesForCurrency(currency);
+  // last mode is always creatable by convention
+  if (modes[modes.length - 1] === derivationMode) return true;
+  // legacy is only available with flag SHOW_LEGACY_NEW_ACCOUNT
+  if (derivationMode === "" && !!getEnv("SHOW_LEGACY_NEW_ACCOUNT")) return true;
+  // native segwit being not yet supported everywhere, segwit is always available for creation
+  if (derivationMode === "segwit") return true;
+  return false;
+};
 
 export function canBeMigrated(account: Account) {
   const { type } = decodeAccountId(account.id);

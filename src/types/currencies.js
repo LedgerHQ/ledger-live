@@ -29,7 +29,7 @@ type CurrencyCommon = {
 export type TokenCurrency = CurrencyCommon & {
   type: "TokenCurrency",
   id: string,
-  ledgerSignature: string,
+  ledgerSignature?: string,
   contractAddress: string,
   // the currency it belongs to. e.g. 'ethereum'
   parentCurrency: CryptoCurrency,

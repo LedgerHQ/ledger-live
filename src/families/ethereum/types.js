@@ -1,5 +1,11 @@
 // @flow
 
+import type { BigNumber } from "bignumber.js";
+import type { Unit } from "../../types";
+import type {
+  TransactionCommon,
+  TransactionCommonRaw
+} from "../../types/transaction";
 import type {
   CoreAmount,
   CoreBigInt,
@@ -114,6 +120,36 @@ export type CoreOperationSpecifics = {
 };
 
 export type CoreCurrencySpecifics = {};
+
+export type NetworkInfo = {|
+  family: "ethereum",
+  gasPrice: BigNumber
+|};
+
+export type NetworkInfoRaw = {|
+  family: "ethereum",
+  gasPrice: string
+|};
+
+export type Transaction = {|
+  ...TransactionCommon,
+  family: "ethereum",
+  gasPrice: ?BigNumber,
+  userGasLimit: ?BigNumber,
+  estimatedGasLimit: ?BigNumber,
+  feeCustomUnit: ?Unit,
+  networkInfo: ?NetworkInfo
+|};
+
+export type TransactionRaw = {|
+  ...TransactionCommonRaw,
+  family: "ethereum",
+  gasPrice: ?string,
+  userGasLimit: ?string,
+  estimatedGasLimit: ?string,
+  feeCustomUnit: ?Unit,
+  networkInfo: ?NetworkInfoRaw
+|};
 
 export const reflect = (declare: (string, Spec) => void) => {
   declare("InternalTransaction", {
@@ -236,4 +272,17 @@ export const reflect = (declare: (string, Spec) => void) => {
       }
     }
   });
+
+  return {
+    OperationMethods: {
+      asEthereumLikeOperation: {
+        returns: "EthereumLikeOperation"
+      }
+    },
+    AccountMethods: {
+      asEthereumLikeAccount: {
+        returns: "EthereumLikeAccount"
+      }
+    }
+  };
 };

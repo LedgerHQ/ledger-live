@@ -18,14 +18,19 @@ import {
   shouldShowNewAccount,
   isAccountEmpty
 } from "../account";
-import type { Account, CryptoCurrency, DerivationMode } from "../types";
+import type {
+  Account,
+  CryptoCurrency,
+  DerivationMode,
+  ScanAccountEvent
+} from "../types";
 import { withDevice } from "../hw/deviceAccess";
 import getAddress from "../hw/getAddress";
 import { withLibcoreF } from "./access";
 import { syncCoreAccount } from "./syncAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
 import { createAccountFromDevice } from "./createAccountFromDevice";
-import { remapLibcoreErrors } from "./errors";
+import { remapLibcoreErrors, isNonExistingAccountError } from "./errors";
 import type { Core, CoreWallet } from "./types";
 
 async function scanNextAccount(props: {
@@ -58,6 +63,9 @@ async function scanNextAccount(props: {
   try {
     coreAccount = await wallet.getAccount(accountIndex);
   } catch (err) {
+    if (!isNonExistingAccountError(err)) {
+      throw err;
+    }
     if (isUnsubscribed()) return;
     coreAccount = await createAccountFromDevice({
       core,
@@ -122,8 +130,8 @@ async function scanNextAccount(props: {
 export const scanAccountsOnDevice = (
   currency: CryptoCurrency,
   deviceId: string,
-  filterDerivationMode?: DerivationMode => boolean
-): Observable<Account> =>
+  scheme?: ?DerivationMode
+): Observable<ScanAccountEvent> =>
   withDevice(deviceId)(transport =>
     Observable.create(o => {
       let finished = false;
@@ -135,8 +143,8 @@ export const scanAccountsOnDevice = (
       const main = withLibcoreF(core => async () => {
         try {
           let derivationModes = getDerivationModesForCurrency(currency);
-          if (filterDerivationMode) {
-            derivationModes = derivationModes.filter(filterDerivationMode);
+          if (scheme !== undefined) {
+            derivationModes = derivationModes.filter(mode => mode === scheme);
           }
           for (let i = 0; i < derivationModes.length; i++) {
             const derivationMode = derivationModes[i];
@@ -194,7 +202,8 @@ export const scanAccountsOnDevice = (
             });
             if (isUnsubscribed()) return;
 
-            const onAccountScanned = account => o.next(account);
+            const onAccountScanned = account =>
+              o.next({ type: "discovered", account });
 
             // recursively scan all accounts on device on the given app
             // new accounts will be created in sqlite, existing ones will be updated

@@ -1,0 +1,227 @@
+// @flow
+
+import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
+import {
+  getDerivationModesForCurrency,
+  getDerivationScheme,
+  runDerivationScheme,
+  isIterableDerivationMode,
+  derivationModeSupportsIndex,
+  getMandatoryEmptyAccountSkip
+} from "../derivation";
+import {
+  getAccountPlaceholderName,
+  getNewAccountPlaceholderName
+} from "../account";
+import uniqBy from "lodash/uniqBy";
+import type {
+  Operation,
+  Account,
+  ScanAccountEvent,
+  CryptoCurrency
+} from "../types";
+import getAddress from "../hw/getAddress";
+import { open } from "../hw";
+
+type GetAccountShape = ({ address: string, id: string }) => Promise<
+  $Shape<Account>
+>;
+
+type AccountUpdater = Account => Account;
+
+export function mergeOps(
+  existing: Operation[],
+  newFetched: Operation[]
+): Operation[] {
+  const ids = existing.map(o => o.id);
+  const all = newFetched.filter(o => !ids.includes(o.id)).concat(existing);
+  return uniqBy(all.sort((a, b) => b.date - a.date), "id");
+}
+
+export const makeStartSync = (getAccountShape: GetAccountShape) => (
+  initial: Account
+): Observable<AccountUpdater> =>
+  Observable.create(o => {
+    async function main() {
+      try {
+        const shape = await getAccountShape({
+          id: initial.id,
+          address: initial.freshAddress
+        });
+        o.next(a => ({
+          ...a,
+          ...shape,
+          operations: mergeOps(a.operations, shape.operations || [])
+        }));
+        o.complete();
+      } catch (e) {
+        o.error(e);
+      }
+    }
+    main();
+  });
+
+export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
+  currency: CryptoCurrency,
+  deviceId: string
+): Observable<ScanAccountEvent> =>
+  Observable.create(o => {
+    let finished = false;
+    const unsubscribe = () => {
+      finished = true;
+    };
+
+    // in future ideally what we want is:
+    // return mergeMap(addressesObservable, address => fetchAccount(address))
+
+    let newAccountCount = 0;
+
+    async function stepAddress(
+      index,
+      { address, path: freshAddressPath },
+      derivationMode,
+      shouldSkipEmpty
+    ): { account?: Account, complete?: boolean } {
+      const accountId = `js:2:${currency.id}:${address}:${derivationMode}`;
+      const accountShape = await getAccountShape({ id: accountId, address });
+      if (finished) return { complete: true };
+
+      const freshAddress = address;
+      const operations = accountShape.operations || [];
+      const balance = accountShape.balance || BigNumber(0);
+
+      if (balance.isNaN()) throw new Error("invalid balance NaN");
+
+      if (operations.length === 0 && balance.isZero()) {
+        // this is an empty account
+        if (derivationMode === "") {
+          // is standard derivation
+          if (newAccountCount === 0) {
+            // first zero account will emit one account as opportunity to create a new account..
+            const account: $Exact<Account> = {
+              type: "Account",
+              id: accountId,
+              seedIdentifier: freshAddress,
+              freshAddress,
+              freshAddressPath,
+              freshAddresses: [
+                {
+                  address: freshAddress,
+                  derivationPath: freshAddressPath
+                }
+              ],
+              derivationMode,
+              name: getNewAccountPlaceholderName({
+                currency,
+                index,
+                derivationMode
+              }),
+              index,
+              currency,
+              operations: [],
+              pendingOperations: [],
+              unit: currency.units[0],
+              lastSyncDate: new Date(),
+              // overrides
+              balance: BigNumber(0),
+              blockHeight: 0,
+              ...accountShape
+            };
+            return { account, complete: true };
+          }
+          newAccountCount++;
+        }
+
+        if (shouldSkipEmpty) {
+          return {};
+        }
+        // NB for legacy addresses maybe we will continue at least for the first 10 addresses
+        return { complete: true };
+      }
+
+      const account: $Exact<Account> = {
+        type: "Account",
+        id: accountId,
+        seedIdentifier: freshAddress,
+        freshAddress,
+        freshAddressPath,
+        freshAddresses: [
+          {
+            address: freshAddress,
+            derivationPath: freshAddressPath
+          }
+        ],
+        derivationMode,
+        name: getAccountPlaceholderName({ currency, index, derivationMode }),
+        index,
+        currency,
+        operations: [],
+        pendingOperations: [],
+        unit: currency.units[0],
+        lastSyncDate: new Date(),
+        // overrides
+        balance: BigNumber(0),
+        blockHeight: 0,
+        ...accountShape
+      };
+      return { account };
+    }
+
+    async function main() {
+      let transport;
+      try {
+        transport = await open(deviceId);
+        const derivationModes = getDerivationModesForCurrency(currency);
+        for (const derivationMode of derivationModes) {
+          let emptyCount = 0;
+          const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(
+            derivationMode
+          );
+          const derivationScheme = getDerivationScheme({
+            derivationMode,
+            currency
+          });
+          const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
+          for (let index = 0; index < stopAt; index++) {
+            if (!derivationModeSupportsIndex(derivationMode, index)) continue;
+            const freshAddressPath = runDerivationScheme(
+              derivationScheme,
+              currency,
+              {
+                account: index
+              }
+            );
+            const res = await getAddress(transport, {
+              currency,
+              path: freshAddressPath,
+              derivationMode
+            });
+            const r = await stepAddress(
+              index,
+              res,
+              derivationMode,
+              emptyCount < mandatoryEmptyAccountSkip
+            );
+            if (r.account) {
+              o.next({ type: "discovered", account: r.account });
+            } else {
+              emptyCount++;
+            }
+            if (r.complete) {
+              break;
+            }
+          }
+        }
+        o.complete();
+      } catch (e) {
+        o.error(e);
+      } finally {
+        if (transport) transport.close();
+      }
+    }
+
+    main();
+
+    return unsubscribe;
+  });

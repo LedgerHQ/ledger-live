@@ -3,12 +3,10 @@
 import { Observable, from, defer } from "rxjs";
 import { map } from "rxjs/operators";
 import { SyncError } from "@ledgerhq/errors";
-import { getWalletName } from "../account";
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
 import { withLibcore } from "./access";
 import { buildAccount } from "./buildAccount";
-import { getOrCreateWallet } from "./getOrCreateWallet";
-import { getOrCreateAccount } from "./getOrCreateAccount";
+import { getCoreAccount } from "./getCoreAccount";
 import { remapLibcoreErrors } from "./errors";
 import postSyncPatchPerFamily from "../generated/libcore-postSyncPatch";
 
@@ -16,26 +14,6 @@ import postSyncPatchPerFamily from "../generated/libcore-postSyncPatch";
 const OperationOrderKey = {
   date: 0
 };
-
-async function getCoreObjects(core, account: Account) {
-  const walletName = getWalletName(account);
-  const { currency, derivationMode } = account;
-
-  const coreWallet = await getOrCreateWallet({
-    core,
-    walletName,
-    currency,
-    derivationMode
-  });
-
-  const coreAccount = await getOrCreateAccount({
-    core,
-    coreWallet,
-    account
-  });
-
-  return { coreWallet, coreAccount, walletName };
-}
 
 export async function syncCoreAccount({
   core,
@@ -104,7 +82,7 @@ export function syncAccount(
   return defer(() =>
     from(
       withLibcore(core =>
-        getCoreObjects(core, existingAccount).then(
+        getCoreAccount(core, existingAccount).then(
           ({ coreWallet, coreAccount, walletName }) =>
             syncCoreAccount({
               core,
@@ -131,7 +109,7 @@ export function syncAccount(
         blockHeight: syncedAccount.blockHeight,
         lastSyncDate: new Date(),
         operations: syncedAccount.operations,
-        tokenAccounts: syncedAccount.tokenAccounts,
+        subAccounts: syncedAccount.subAccounts,
         pendingOperations: []
       })
     )

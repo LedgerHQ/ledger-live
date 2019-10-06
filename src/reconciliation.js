@@ -9,14 +9,10 @@ import type {
   OperationRaw,
   Account,
   AccountRaw,
-  TokenAccount,
-  TokenAccountRaw
+  SubAccount,
+  SubAccountRaw
 } from "./types";
-import {
-  fromAccountRaw,
-  fromOperationRaw,
-  fromTokenAccountRaw
-} from "./account";
+import { fromAccountRaw, fromOperationRaw, fromSubAccountRaw } from "./account";
 
 const sameOp = (a: Operation, b: Operation) =>
   a === b ||
@@ -156,21 +152,21 @@ export function patchAccount(
   // id can change after a sync typically if changing the version or filling more info. in that case we consider all changes.
   if (account.id !== updatedRaw.id) return fromAccountRaw(updatedRaw);
 
-  let tokenAccounts;
-  if (updatedRaw.tokenAccounts) {
-    const existingTokenAccounts = account.tokenAccounts || [];
-    let tokenAccountsChanged =
-      updatedRaw.tokenAccounts.length !== existingTokenAccounts.length;
-    tokenAccounts = updatedRaw.tokenAccounts.map(ta => {
-      const existing = existingTokenAccounts.find(t => t.id === ta.id);
-      const patched = patchTokenAccount(existing, ta);
+  let subAccounts;
+  if (updatedRaw.subAccounts) {
+    const existingSubAccounts = account.subAccounts || [];
+    let subAccountsChanged =
+      updatedRaw.subAccounts.length !== existingSubAccounts.length;
+    subAccounts = updatedRaw.subAccounts.map(ta => {
+      const existing = existingSubAccounts.find(t => t.id === ta.id);
+      const patched = patchSubAccount(existing, ta);
       if (patched !== existing) {
-        tokenAccountsChanged = true;
+        subAccountsChanged = true;
       }
       return patched;
     });
-    if (!tokenAccountsChanged) {
-      tokenAccounts = existingTokenAccounts;
+    if (!subAccountsChanged) {
+      subAccounts = existingSubAccounts;
     }
   }
 
@@ -178,14 +174,14 @@ export function patchAccount(
     account.operations,
     updatedRaw.operations,
     updatedRaw.id,
-    tokenAccounts
+    subAccounts
   );
 
   const pendingOperations = patchOperations(
     account.pendingOperations,
     updatedRaw.pendingOperations,
     updatedRaw.id,
-    tokenAccounts
+    subAccounts
   );
 
   const next: $Exact<Account> = {
@@ -194,8 +190,8 @@ export function patchAccount(
 
   let changed = false;
 
-  if (tokenAccounts && account.tokenAccounts !== tokenAccounts) {
-    next.tokenAccounts = tokenAccounts;
+  if (subAccounts && account.subAccounts !== subAccounts) {
+    next.subAccounts = subAccounts;
     changed = true;
   }
 
@@ -239,17 +235,17 @@ export function patchAccount(
   return next;
 }
 
-export function patchTokenAccount(
-  account: ?TokenAccount,
-  updatedRaw: TokenAccountRaw
-): TokenAccount {
+export function patchSubAccount(
+  account: ?SubAccount,
+  updatedRaw: SubAccountRaw
+): SubAccount {
   // id can change after a sync typically if changing the version or filling more info. in that case we consider all changes.
   if (
     !account ||
     account.id !== updatedRaw.id ||
     account.parentId !== updatedRaw.parentId
   ) {
-    return fromTokenAccountRaw(updatedRaw);
+    return fromSubAccountRaw(updatedRaw);
   }
 
   const operations = patchOperations(
@@ -264,7 +260,8 @@ export function patchTokenAccount(
     updatedRaw.id
   );
 
-  const next: $Exact<TokenAccount> = {
+  // $FlowFixMe destructing union type?
+  const next: $Exact<SubAccount> = {
     ...account
   };
 
@@ -294,11 +291,11 @@ export function patchOperations(
   operations: Operation[],
   updated: OperationRaw[],
   accountId: string,
-  tokenAccounts: ?(TokenAccount[])
+  subAccounts: ?(SubAccount[])
 ): Operation[] {
   return minimalOperationsBuilderSync(
     operations,
     updated.slice(0).reverse(),
-    raw => fromOperationRaw(raw, accountId, tokenAccounts)
+    raw => fromOperationRaw(raw, accountId, subAccounts)
   );
 }

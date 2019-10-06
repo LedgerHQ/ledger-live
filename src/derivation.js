@@ -8,7 +8,7 @@ export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number,
   isNonIterable?: boolean,
   overridesDerivation?: string,
-  keychainEngine?: string,
+  libcoreConfig?: { [_: string]: mixed },
   isSegwit?: boolean, // TODO drop
   isUnsplit?: boolean, // TODO drop
   skipFirst?: true,
@@ -52,7 +52,9 @@ const modes = Object.freeze({
     overridesCoinType: 128,
     isSegwit: true,
     purpose: 49,
-    keychainEngine: "BIP49_P2SH",
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: "BIP49_P2SH"
+    },
     addressFormat: "p2sh"
   },
   // MEW legacy derivation for eth
@@ -64,9 +66,26 @@ const modes = Object.freeze({
   aeternity: {
     overridesDerivation: "<account>"
   },
+  // default derivation of tezbox offerred to users
+  tezbox: {
+    tag: "tezbox",
+    overridesDerivation: "44'/1729'/0'/0'",
+    isNonIterable: true,
+    libcoreConfig: {
+      TEZOS_XPUB_CURVE: "ED25519"
+    }
+  },
+  tezosbip44h: {
+    overridesDerivation: "44'/1729'/<account>'/0'/0'",
+    libcoreConfig: {
+      TEZOS_XPUB_CURVE: "ED25519"
+    }
+  },
   native_segwit: {
     purpose: 84,
-    keychainEngine: "BIP173_P2WPKH",
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: "BIP173_P2WPKH"
+    },
     addressFormat: "bech32",
     tag: "native segwit",
     isSegwit: true
@@ -74,26 +93,34 @@ const modes = Object.freeze({
   segwit: {
     isSegwit: true,
     purpose: 49,
-    keychainEngine: "BIP49_P2SH",
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: "BIP49_P2SH"
+    },
     tag: "segwit",
     addressFormat: "p2sh"
   },
   segwit_on_legacy: {
     isSegwit: true,
     purpose: 44,
-    keychainEngine: "BIP49_P2SH",
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: "BIP49_P2SH"
+    },
     addressFormat: "p2sh",
     isInvalid: true
   },
   legacy_on_segwit: {
     purpose: 49,
-    keychainEngine: "",
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: ""
+    },
     isInvalid: true
   },
   segwit_unsplit: {
     isSegwit: true,
     purpose: 49,
-    keychainEngine: "BIP49_P2SH",
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: "BIP49_P2SH"
+    },
     addressFormat: "p2sh",
     isUnsplit: true,
     tag: "segwit unsplit"
@@ -107,10 +134,12 @@ const modes = Object.freeze({
 (modes: { [_: DerivationMode]: ModeSpec }); // eslint-disable-line
 
 const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
+  aeternity: ["aeternity"],
   bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   ethereum: ["ethM", "ethMM"],
-  ethereum_classic: ["ethM", "etcM", "ethMM"]
+  ethereum_classic: ["ethM", "etcM", "ethMM"],
+  tezos: ["tezbox", "tezosbip44h"]
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
@@ -137,8 +166,9 @@ export const isSegwitDerivationMode = (
   derivationMode: DerivationMode
 ): boolean => modes[derivationMode].isSegwit || false;
 
-export const getKeychainEngine = (derivationMode: DerivationMode): ?string =>
-  modes[derivationMode].keychainEngine;
+export const getLibcoreConfig = (
+  derivationMode: DerivationMode
+): ?{ [_: string]: mixed } => modes[derivationMode].libcoreConfig;
 
 export const isUnsplitDerivationMode = (
   derivationMode: DerivationMode
@@ -225,6 +255,11 @@ export const runDerivationScheme = (
     .replace("<node>", String(opts.node || 0))
     .replace("<address>", String(opts.address || 0));
 
+const disableBIP44 = {
+  aeternity: true,
+  tezos: true // current workaround, device app does not seem to support bip44
+};
+
 // return an array of ways to derivate, by convention the latest is the standard one.
 export const getDerivationModesForCurrency = (
   currency: CryptoCurrency
@@ -243,15 +278,14 @@ export const getDerivationModesForCurrency = (
     all.push("segwit_on_legacy");
     all.push("legacy_on_segwit");
   }
-  all.push("");
+  if (!disableBIP44[currency.id]) {
+    all.push("");
+  }
   if (currency.supportsSegwit) {
     all.push("segwit");
   }
   if (currency.supportsNativeSegwit) {
     all.push("native_segwit");
-  }
-  if (currency.id === "aeternity") {
-    return ["aeternity"];
   }
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {
     return all.filter(a => !isInvalidDerivationMode(a));

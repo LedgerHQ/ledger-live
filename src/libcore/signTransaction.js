@@ -9,7 +9,7 @@ export default (opts: {
   isCancelled: () => boolean,
   transport: Transport<*>,
   account: Account,
-  tokenAccountId: ?string,
+  subAccountId: ?string,
   currency: CryptoCurrency,
   coreCurrency: CoreCurrency,
   coreTransaction: *

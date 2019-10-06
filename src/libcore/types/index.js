@@ -113,6 +113,12 @@ declare class CoreRandomNumberGenerator {
 }
 
 declare class CoreBigInt {
+  static fromDecimalString(
+    s: string,
+    radix: number,
+    sep: string
+  ): Promise<CoreBigInt>;
+
   toString(base: number): Promise<string>;
 }
 
@@ -283,6 +289,20 @@ export type Spec = {
 // We do this at runtime but ideally in the future, it will be at build time (generated code).
 
 export const reflect = (declare: (string, Spec) => void) => {
+  const { AccountMethods, OperationMethods } = reflectSpecifics(declare).reduce(
+    (all, extra) => ({
+      AccountMethods: {
+        ...all.AccountMethods,
+        ...(extra && extra.AccountMethods)
+      },
+      OperationMethods: {
+        ...all.OperationMethods,
+        ...(extra && extra.OperationMethods)
+      }
+    }),
+    {}
+  );
+
   declare("WalletPool", {
     statics: {
       newInstance: {
@@ -351,6 +371,7 @@ export const reflect = (declare: (string, Spec) => void) => {
 
   declare("Account", {
     methods: {
+      ...AccountMethods,
       getBalance: {
         returns: "Amount"
       },
@@ -361,12 +382,6 @@ export const reflect = (declare: (string, Spec) => void) => {
         returns: ["Address"]
       },
       getRestoreKey: {},
-      asBitcoinLikeAccount: {
-        returns: "BitcoinLikeAccount"
-      },
-      asEthereumLikeAccount: {
-        returns: "EthereumLikeAccount"
-      },
       synchronize: {
         returns: "EventBus"
       },
@@ -378,13 +393,8 @@ export const reflect = (declare: (string, Spec) => void) => {
 
   declare("Operation", {
     methods: {
+      ...OperationMethods,
       getDate: {},
-      asBitcoinLikeOperation: {
-        returns: "BitcoinLikeOperation"
-      },
-      asEthereumLikeOperation: {
-        returns: "EthereumLikeOperation"
-      },
       getOperationType: {},
       getAmount: { returns: "Amount" },
       getFees: { returns: "Amount" },
@@ -405,6 +415,12 @@ export const reflect = (declare: (string, Spec) => void) => {
   });
 
   declare("BigInt", {
+    statics: {
+      fromDecimalString: {
+        njsBuggyMethodIsNotStatic: true,
+        returns: "BigInt"
+      }
+    },
     methods: {
       toString: {}
     }
@@ -621,6 +637,4 @@ export const reflect = (declare: (string, Spec) => void) => {
       }
     }
   });
-
-  reflectSpecifics(declare);
 };

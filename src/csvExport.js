@@ -1,13 +1,13 @@
 // @flow
 
-import type { Account, TokenAccount, Operation } from "./types";
+import type { Account, AccountLike, Operation } from "./types";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternals } from "./operation";
 
 type Field = {
   title: string,
-  cell: (Account | TokenAccount, ?Account, Operation) => string
+  cell: (AccountLike, ?Account, Operation) => string
 };
 
 const newLine = "\r\n";
@@ -60,7 +60,7 @@ const fields: Field[] = [
 ];
 
 const accountRows = (
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account
 ): Array<string[]> =>
   account.operations

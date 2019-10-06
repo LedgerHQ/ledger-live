@@ -4,6 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "../types";
 import { atomicQueue } from "../promise";
 import type { Core, CoreWallet, CoreAccount } from "./types";
+import { isNonExistingAccountError } from "./errors";
 
 type Param = {
   core: Core,
@@ -19,6 +20,9 @@ export const getOrCreateAccount: F = atomicQueue(
     try {
       coreAccount = await coreWallet.getAccount(index);
     } catch (err) {
+      if (!isNonExistingAccountError(err)) {
+        throw err;
+      }
       log("libcore", "no account existed. restoring...");
       const extendedInfos = await coreWallet.getExtendedKeyAccountCreationInfo(
         index

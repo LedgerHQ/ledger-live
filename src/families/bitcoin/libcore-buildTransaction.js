@@ -2,11 +2,11 @@
 
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/errors";
-import type { Account, Transaction } from "../../types";
+import type { Account } from "../../types";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
-import type { CoreBitcoinLikeTransaction } from "./types";
+import type { CoreBitcoinLikeTransaction, Transaction } from "./types";
 
 async function bitcoinBuildTransaction({
   account,

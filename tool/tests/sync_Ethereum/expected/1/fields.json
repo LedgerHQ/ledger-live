@@ -11,7 +11,7 @@
   "unitMagnitude": 18,
   "balance": "0",
   "xpub": "xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW",
-  "tokenAccounts": [
+  "subAccounts": [
     {
       "id": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
       "parentId": "libcore:1:ethereum:xpub6DXuQW1FgeHbhwE9A8iL8ePrBq6ZRPLfdVFG8SLkeigxXNmPecYxr924U23ad5vMsPBLsm6BpqHyJEesCZB7uzdZS2xDZGphxqEJb1cphQW:ethM",
@@ -435,7 +435,7 @@
   "unitMagnitude": 18,
   "balance": "0",
   "xpub": "xpub6DXuQW1FgeHbjXRNR3mE7tmZGDqVeU6HLamgjqg1PaZpfc8f5sCxHSzkgYNhHu88jUU1L5jSrk4wX39Nxs2jXAGK2UH2DBC9BPjLJbdZQGF",
-  "tokenAccounts": []
+  "subAccounts": []
 }
 {
   "id": "libcore:1:ethereum:xpub6DXuQW1FgeHby7ayhNkfkEf4JW3J3pTqrjWfoRfHHzSuPVu5NE5p6hi9maQsFvwSztjiAjJqgisKuZACony9myfyJ9RZdymhW65AkD3n7Rp:ethM",
@@ -450,7 +450,7 @@
   "unitMagnitude": 18,
   "balance": "0",
   "xpub": "xpub6DXuQW1FgeHby7ayhNkfkEf4JW3J3pTqrjWfoRfHHzSuPVu5NE5p6hi9maQsFvwSztjiAjJqgisKuZACony9myfyJ9RZdymhW65AkD3n7Rp",
-  "tokenAccounts": []
+  "subAccounts": []
 }
 {
   "id": "libcore:1:ethereum:xpub6FR3GHXGtwxbaz9JAyVrQ17tdXKU8QLNPrPvvnC4qJ7Dpr8DpueoBxKpnB7WqebEbXZQ6KJtbPCLnH4N3J84CBLzF4cjSkfRZHmJJoEFhdY:ethMM",
@@ -465,7 +465,7 @@
   "unitMagnitude": 18,
   "balance": "97225400922728",
   "xpub": "xpub6FR3GHXGtwxbaz9JAyVrQ17tdXKU8QLNPrPvvnC4qJ7Dpr8DpueoBxKpnB7WqebEbXZQ6KJtbPCLnH4N3J84CBLzF4cjSkfRZHmJJoEFhdY",
-  "tokenAccounts": []
+  "subAccounts": []
 }
 {
   "id": "libcore:1:ethereum:xpub6BemYiVNp19ZzH73tAbE9guoQcyygwpWgmrch2J2WsbJhxUSnjZXpMnAKru6wXK3AWxU2fywYBCdojmwnFL6qiH3ByqXpDJ2PKGijdaNvAb:",
@@ -480,7 +480,7 @@
   "unitMagnitude": 18,
   "balance": "48167391707119",
   "xpub": "xpub6BemYiVNp19ZzH73tAbE9guoQcyygwpWgmrch2J2WsbJhxUSnjZXpMnAKru6wXK3AWxU2fywYBCdojmwnFL6qiH3ByqXpDJ2PKGijdaNvAb",
-  "tokenAccounts": [
+  "subAccounts": [
     {
       "id": "libcore:1:ethereum:xpub6BemYiVNp19ZzH73tAbE9guoQcyygwpWgmrch2J2WsbJhxUSnjZXpMnAKru6wXK3AWxU2fywYBCdojmwnFL6qiH3ByqXpDJ2PKGijdaNvAb:+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
       "parentId": "libcore:1:ethereum:xpub6BemYiVNp19ZzH73tAbE9guoQcyygwpWgmrch2J2WsbJhxUSnjZXpMnAKru6wXK3AWxU2fywYBCdojmwnFL6qiH3ByqXpDJ2PKGijdaNvAb:",
@@ -562,7 +562,7 @@
   "unitMagnitude": 18,
   "balance": "1704544335906944",
   "xpub": "xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg",
-  "tokenAccounts": [
+  "subAccounts": [
     {
       "id": "libcore:1:ethereum:xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg:+0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
       "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a2gr3M8NhZyc2hiexuJ3aAseCCqam3zuUCL6dKqDqdp3KyxVg85Q4TTonXFu8RxDa3awaYymiDYSrDtyc6GqbpLLQZ56Vqtg:",
@@ -992,7 +992,7 @@
   "unitMagnitude": 18,
   "balance": "8972",
   "xpub": "xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4",
-  "tokenAccounts": [
+  "subAccounts": [
     {
       "id": "libcore:1:ethereum:xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4:+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
       "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a5v5jEmfyEhiHqgomBV53gJ9Fz2W61fotANTEVnZusmGPNYKYQXmJtqTJUNmevsyfrGtiGNbH8qNBDnhEtb8o7eTf8MTxeC4:",
@@ -1112,5 +1112,5 @@
   "unitMagnitude": 18,
   "balance": "0",
   "xpub": "xpub6BemYiVNp19a8oyxzFsctpMEibsmhpzCUWNczmprm3kWHF52JgDpvquERk6qH5gmfHu35pGRDkFww4JKpCYL5Kh4biAD3kAbZ9maqxDLmrz",
-  "tokenAccounts": []
+  "subAccounts": []
 }

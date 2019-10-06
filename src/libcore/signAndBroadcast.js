@@ -4,11 +4,15 @@ import { Observable, from } from "rxjs";
 import { StatusCodes } from "@ledgerhq/hw-transport";
 import { UpdateYourApp } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { Account, Operation, Transaction } from "../types";
-import { getWalletName } from "../account";
+import type {
+  Account,
+  Operation,
+  Transaction,
+  SignAndBroadcastEvent
+} from "../types";
 import { withDevice } from "../hw/deviceAccess";
-import type { SignAndBroadcastEvent } from "../bridge/types";
-import { getOrCreateWallet } from "./getOrCreateWallet";
+import { toTransactionRaw } from "../transaction";
+import { getCoreAccount } from "./getCoreAccount";
 import { remapLibcoreErrors } from "./errors";
 import { withLibcoreF } from "./access";
 import signTransaction from "./signTransaction";
@@ -43,25 +47,15 @@ const doSignAndBroadcast = withLibcoreF(
     onOperationBroadcasted: (optimisticOp: Operation) => void
   }): Promise<void> => {
     if (isCancelled()) return;
-    const { currency, derivationMode, seedIdentifier, index } = account;
+    const { currency, derivationMode } = account;
 
-    const walletName = getWalletName({
-      currency,
-      seedIdentifier,
-      derivationMode
-    });
+    const { coreAccount, coreWallet } = await getCoreAccount(core, account);
+    if (isCancelled()) return;
 
-    const coreWallet = await getOrCreateWallet({
-      core,
-      walletName,
-      currency,
-      derivationMode
-    });
-    if (isCancelled()) return;
-    const coreAccount = await coreWallet.getAccount(index);
-    if (isCancelled()) return;
     const coreCurrency = await coreWallet.getCurrency();
     if (isCancelled()) return;
+
+    log("libcore", "buildTransaction", toTransactionRaw(transaction));
 
     const builded = await buildTransaction({
       account,
@@ -75,11 +69,12 @@ const doSignAndBroadcast = withLibcoreF(
 
     if (isCancelled() || !builded) return;
 
+    log("libcore", "signing transaction...");
     const signedTransaction = await withDevice(deviceId)(transport =>
       from(
         signTransaction({
           account,
-          tokenAccountId: transaction.tokenAccountId,
+          subAccountId: transaction.subAccountId,
           isCancelled,
           transport,
           currency,
@@ -95,6 +90,8 @@ const doSignAndBroadcast = withLibcoreF(
         })
       )
     ).toPromise();
+
+    log("libcore", "signed transaction: " + signedTransaction);
 
     if (isCancelled()) return;
 
@@ -116,6 +113,8 @@ const doSignAndBroadcast = withLibcoreF(
       coreAccount,
       transaction
     });
+
+    log("libcore", "op builded: " + op.id);
 
     if (!op) return;
 

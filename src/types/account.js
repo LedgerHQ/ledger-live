@@ -5,15 +5,33 @@ import type { CryptoCurrency, TokenCurrency, Unit } from "./currencies";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "../derivation";
 
+// A token belongs to an Account and share the parent account address
 export type TokenAccount = {
   type: "TokenAccount",
   id: string,
   // id of the parent account this token accuont belongs to
   parentId: string,
   token: TokenCurrency,
+  balance: BigNumber,
+  operations: Operation[],
+  pendingOperations: Operation[]
+};
+
+// A child account belongs to an Account but has its own address
+export type ChildAccount = {
+  type: "ChildAccount",
+  id: string,
+  // id of the parent account this token accuont belongs to
+  parentId: string,
+  currency: CryptoCurrency,
+  address: string,
+  balance: BigNumber,
   operations: Operation[],
   pendingOperations: Operation[],
-  balance: BigNumber
+  capabilities: {
+    isDelegatable?: boolean,
+    isSpendable?: boolean
+  }
 };
 
 export type Address = {|
@@ -90,29 +108,57 @@ export type Account = {
   lastSyncDate: Date,
 
   // A configuration for the endpoint to use. (usecase: Ripple node)
+  // FIXME drop and introduce a config{} object
   endpointConfig?: ?string,
 
-  // An account can have sub accounts, in that case they are called "token accounts".
-  // tokenAccounts are tokens among a blockchain of the parent account currency, attached to that same parent account.
+  // An account can have sub accounts.
+  // A sub account can be either a token account or a child account in some blockchain.
+  // They are attached to the parent account in the related blockchain.
   // CONVENTION:
-  // a TokenAccount is living inside an Account but is not an entity on its own,
+  // a SubAccount is living inside an Account but is not an entity on its own,
   // therefore, there is no .parentAccount in it, which will means you will need to always have a tuple of (parentAccount, account)
-  // we will use the naming (parentAccount, account) everywhere because a token account is not enough and you need the full context with this tuple.
+  // we will use the naming (parentAccount, account) everywhere because a sub account is not enough and you need the full context with this tuple.
   // These are two valid examples:
   // I'm inside a ZRX token account of Ethereum 1: { parentAccount: Ethereum 1, account: ZRX }
   // I'm just inside the Ethereum 1: { account: Ethereum 1, parentAccount: undefined }
-  // "account" is the primary account that you use/select/view. It is a `Account | TokenAccount`.
+  // "account" is the primary account that you use/select/view. It is a `AccountLike`.
   // "parentAccount", if available, is the contextual account. It is a `?Account`.
-  tokenAccounts?: TokenAccount[]
+  subAccounts?: SubAccount[]
 };
 
+export type SubAccount = TokenAccount | ChildAccount;
+export type AccountLike = Account | SubAccount;
+
+// Damn it flow. can't you support covariance.
+export type AccountLikeArray =
+  | AccountLike[]
+  | TokenAccount[]
+  | ChildAccount[]
+  | Account[];
+
 export type TokenAccountRaw = {
+  type: "TokenAccountRaw",
   id: string,
   parentId: string,
   tokenId: string,
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
   balance: string
+};
+
+export type ChildAccountRaw = {
+  type: "ChildAccountRaw",
+  id: string,
+  parentId: string,
+  currencyId: string,
+  address: string,
+  operations: OperationRaw[],
+  pendingOperations: OperationRaw[],
+  balance: string,
+  capabilities: {
+    isDelegatable?: boolean,
+    isSpendable?: boolean
+  }
 };
 
 export type AccountRaw = {
@@ -134,5 +180,8 @@ export type AccountRaw = {
   unitMagnitude: number,
   lastSyncDate: string,
   endpointConfig?: ?string,
-  tokenAccounts?: TokenAccountRaw[]
+  subAccounts?: SubAccountRaw[]
 };
+
+export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
+export type AccountRawLike = AccountRaw | SubAccountRaw;

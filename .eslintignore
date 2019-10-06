@@ -6,3 +6,4 @@ src/libcore/types/*.js
 src/families/*/types.js
 src/libcore/platforms/*.js
 src/generated
+mobile-test-app/

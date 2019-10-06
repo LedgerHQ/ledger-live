@@ -1,44 +1,5 @@
 // @flow
 import type { TokenCurrency, CryptoCurrency } from "../types";
-import {
-  getCryptoCurrencyById,
-  findCryptoCurrencyByTicker
-} from "./cryptocurrencies";
-
-const convertERC20 = ([
-  parentCurrencyId,
-  token,
-  ticker,
-  magnitude,
-  name,
-  ledgerSignature,
-  contractAddress,
-  disableCountervalue,
-  delisted
-]): TokenCurrency => ({
-  type: "TokenCurrency",
-  id: "ethereum/erc20/" + token,
-  ledgerSignature,
-  contractAddress,
-  parentCurrency: getCryptoCurrencyById(parentCurrencyId),
-  tokenType: "erc20",
-  name,
-  ticker,
-  delisted,
-  disableCountervalue:
-    !!disableCountervalue || !!findCryptoCurrencyByTicker(ticker), // if it collides, disable
-  units: [
-    {
-      name,
-      code: ticker,
-      magnitude
-    }
-  ]
-});
-
-const converters = {
-  erc20: convertERC20
-};
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -53,13 +14,8 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
   return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
 }
 
-export function add(type: string, list: any[]) {
-  const converter = converters[type];
-  if (!converter) {
-    throw new Error("unknown token type '" + type + "'");
-  }
-  list.forEach(data => {
-    const token = converter(data);
+export function addTokens(list: TokenCurrency[]) {
+  list.forEach(token => {
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
     tokensById[token.id] = token;

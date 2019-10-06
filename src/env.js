@@ -20,16 +20,17 @@ const stringParser = (v: mixed): ?string =>
 
 // This define the available environments
 const envParsers = {
-  USER_ID: stringParser,
   BASE_SOCKET_URL: stringParser,
+  BRIDGE_FORCE_IMPLEMENTATION: stringParser,
   DEVICE_PROXY_URL: stringParser,
   DISABLE_TRANSACTION_BROADCAST: boolParser,
   EXPERIMENTAL_BLE: boolParser,
+  EXPERIMENTAL_CURRENCIES: stringParser,
   EXPERIMENTAL_EXPLORERS: boolParser,
   EXPERIMENTAL_LANGUAGES: boolParser,
   EXPERIMENTAL_LIBCORE: boolParser,
-  EXPERIMENTAL_SEND_MAX: boolParser,
   EXPERIMENTAL_ROI_CALCULATION: boolParser,
+  EXPERIMENTAL_SEND_MAX: boolParser,
   EXPERIMENTAL_USB: boolParser,
   EXPLORER: stringParser,
   FORCE_PROVIDER: intParser,
@@ -43,22 +44,24 @@ const envParsers = {
   SCAN_FOR_INVALID_PATHS: boolParser,
   SHOW_LEGACY_NEW_ACCOUNT: boolParser,
   SYNC_MAX_CONCURRENT: intParser,
+  USER_ID: stringParser,
   WITH_DEVICE_POLLING_DELAY: floatParser
 };
 
 // This define the default values
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
-  USER_ID: "",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
+  BRIDGE_FORCE_IMPLEMENTATION: "",
   DEVICE_PROXY_URL: "",
   DISABLE_TRANSACTION_BROADCAST: false,
   EXPERIMENTAL_BLE: false,
+  EXPERIMENTAL_CURRENCIES: "",
   EXPERIMENTAL_EXPLORERS: false,
   EXPERIMENTAL_LANGUAGES: false,
   EXPERIMENTAL_LIBCORE: false,
+  EXPERIMENTAL_ROI_CALCULATION: false,
   EXPERIMENTAL_SEND_MAX: false,
   EXPERIMENTAL_USB: false,
-  EXPERIMENTAL_ROI_CALCULATION: false,
   EXPLORER: "https://explorers.api.live.ledger.com",
   FORCE_PROVIDER: 1,
   HIDE_EMPTY_TOKEN_ACCOUNTS: false,
@@ -71,6 +74,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   SCAN_FOR_INVALID_PATHS: false,
   SHOW_LEGACY_NEW_ACCOUNT: false,
   SYNC_MAX_CONCURRENT: 4,
+  USER_ID: "",
   WITH_DEVICE_POLLING_DELAY: 500
 };
 

@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable camelcase */
 
+import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import URL from "url";
 import {
@@ -17,7 +18,7 @@ import {
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError, map, filter } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
 import network from "../network";
@@ -316,7 +317,7 @@ const genuineCheck = (
             timeout = null;
           }
           if (e.type === "result") {
-            o.next(e);
+            o.next({ type: e.type, payload: String(e.payload || "") });
           } else if (e.nonce === 3) {
             if (e.type === "exchange-before") {
               timeout = setTimeout(() => {
@@ -340,6 +341,29 @@ const genuineCheck = (
   );
 };
 
+const listInstalledApps = (
+  transport: Transport<*>,
+  { targetId, perso }: { targetId: *, perso: * }
+): Observable<Array<{ hash: string, name: string }>> => {
+  log("manager", "listInstalledApps", { targetId, perso });
+  return createDeviceSocket(transport, {
+    url: URL.format({
+      pathname: `${getEnv("BASE_SOCKET_URL")}/apps/list`,
+      query: { targetId, perso, livecommonversion }
+    })
+  }).pipe(
+    remapSocketError("listInstalledApps"),
+    filter(o => o.type === "result"),
+    map(o =>
+      o.data.map(({ hash, name }) => {
+        invariant(typeof hash === "string", "hash is defined");
+        invariant(typeof name === "string", "name is defined");
+        return { hash, name };
+      })
+    )
+  );
+};
+
 const installMcu = (
   transport: Transport<*>,
   context: string,
@@ -358,6 +382,7 @@ const installMcu = (
 const API = {
   applicationsByDevice,
   listApps,
+  listInstalledApps,
   listCategories,
   getMcus,
   getLatestFirmware,

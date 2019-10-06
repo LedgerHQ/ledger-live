@@ -22,6 +22,7 @@ import {
 import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
 
 import "../../load/tokens/ethereum/erc20";
+import "../../load/tokens/tron/trc10";
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
@@ -117,7 +118,9 @@ test("tokens are correct", () => {
     expect(token.ticker).toBeTruthy();
     expect(typeof token.id).toBe("string");
     expect(typeof token.name).toBe("string");
-    expect(typeof token.ledgerSignature).toBe("string");
+    if (token.ledgerSignature) {
+      expect(typeof token.ledgerSignature).toBe("string");
+    }
     expect(typeof token.tokenType).toBe("string");
     expect(typeof token.parentCurrency).toBe("object");
     expect(hasCryptoCurrencyId(token.parentCurrency.id)).toBe(true);

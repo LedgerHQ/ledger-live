@@ -1,5 +1,10 @@
 // @flow
 
+import type { BigNumber } from "bignumber.js";
+import type {
+  TransactionCommon,
+  TransactionCommonRaw
+} from "../../types/transaction";
 import type {
   CoreBigInt,
   CoreAmount,
@@ -85,6 +90,52 @@ export type CoreOperationSpecifics = {
 export type CoreCurrencySpecifics = {
   getBitcoinLikeNetworkParameters(): Promise<CoreBitcoinLikeNetworkParameters>
 };
+
+export type FeeItem = {
+  key: string,
+  speed: string,
+  feePerByte: BigNumber
+};
+
+export type FeeItems = {
+  items: FeeItem[],
+  defaultFeePerByte: BigNumber
+};
+
+export type FeeItemRaw = {
+  key: string,
+  speed: string,
+  feePerByte: string
+};
+
+export type FeeItemsRaw = {
+  items: FeeItemRaw[],
+  defaultFeePerByte: string
+};
+
+export type NetworkInfo = {|
+  family: "bitcoin",
+  feeItems: FeeItems
+|};
+
+export type NetworkInfoRaw = {|
+  family: "bitcoin",
+  feeItems: FeeItemsRaw
+|};
+
+export type Transaction = {|
+  ...TransactionCommon,
+  family: "bitcoin",
+  feePerByte: ?BigNumber,
+  networkInfo: ?NetworkInfo
+|};
+
+export type TransactionRaw = {|
+  ...TransactionCommonRaw,
+  family: "bitcoin",
+  feePerByte: ?string,
+  networkInfo: ?NetworkInfoRaw
+|};
 
 export const reflect = (declare: (string, Spec) => void) => {
   declare("BitcoinLikeInput", {
@@ -175,4 +226,17 @@ export const reflect = (declare: (string, Spec) => void) => {
       }
     }
   });
+
+  return {
+    OperationMethods: {
+      asBitcoinLikeOperation: {
+        returns: "BitcoinLikeOperation"
+      }
+    },
+    AccountMethods: {
+      asBitcoinLikeAccount: {
+        returns: "BitcoinLikeAccount"
+      }
+    }
+  };
 };

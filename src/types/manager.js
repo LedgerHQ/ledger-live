@@ -1,6 +1,8 @@
 // @flow
 import type { CryptoCurrency } from "./currencies";
 
+// FIXME we need to clearly differenciate what is API types and what is our inner own type
+
 export type Id = number;
 
 export type LedgerScriptParams = {
@@ -117,7 +119,10 @@ export type ApplicationVersion = {
   providers: Array<Id>,
   date_creation: string,
   date_last_modified: string,
-  currency?: CryptoCurrency
+  // extra contextual info
+  currency?: CryptoCurrency,
+  installed?: boolean,
+  updated?: boolean
 };
 
 export type Application = {

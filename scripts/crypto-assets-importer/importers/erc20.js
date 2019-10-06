@@ -13,7 +13,7 @@ module.exports = {
   path: "tokens/ethereum/erc20",
 
   outputTemplate: data =>
-    'require("../../../data/tokens").add("erc20", ' +
+    'require("../../../families/ethereum/tokens").add("erc20", ' +
     JSONstringifyReadableArray(data) +
     ");",
 

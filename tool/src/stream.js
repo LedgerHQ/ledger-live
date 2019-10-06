@@ -21,10 +21,10 @@ export const fromNodeStream = (stream: *): Observable<Buffer> =>
     };
   });
 
-export const fromFile = file =>
+export const fromFile = (file: string) =>
   fromNodeStream(file === "-" ? process.stdin : fs.createReadStream(file));
 
-export const apdusFromFile = file =>
+export const apdusFromFile = (file: string) =>
   fromFile(file).pipe(
     map(b => b.toString()),
     concatMap(str =>

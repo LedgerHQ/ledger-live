@@ -1,6 +1,6 @@
 // @flow
 
-import type { Operation, CryptoCurrency, TokenAccount } from "../../types";
+import type { Operation, CryptoCurrency, SubAccount } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import { inferSubOperations } from "../../account";
 import type { CoreOperation } from "../types";
@@ -15,9 +15,9 @@ export async function buildOperation(arg: {
   coreOperation: CoreOperation,
   accountId: string,
   currency: CryptoCurrency,
-  contextualTokenAccounts?: ?(TokenAccount[])
+  contextualSubAccounts?: ?(SubAccount[])
 }) {
-  const { coreOperation, accountId, currency, contextualTokenAccounts } = arg;
+  const { coreOperation, accountId, currency, contextualSubAccounts } = arg;
   const buildOp = perFamily[currency.family];
   if (!buildOp) {
     throw new Error(currency.family + " family not supported");
@@ -65,8 +65,8 @@ export async function buildOperation(arg: {
 
   const op: $Exact<Operation> = {
     id,
-    subOperations: contextualTokenAccounts
-      ? inferSubOperations(rest.hash, contextualTokenAccounts)
+    subOperations: contextualSubAccounts
+      ? inferSubOperations(rest.hash, contextualSubAccounts)
       : undefined,
     ...partialOp,
     ...rest

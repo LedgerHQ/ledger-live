@@ -7,8 +7,9 @@ import memoize from "lodash/memoize";
 import last from "lodash/last";
 import find from "lodash/find";
 import type {
-  TokenAccount,
   Operation,
+  AccountLikeArray,
+  AccountLike,
   Account,
   BalanceHistory,
   AccountPortfolio,
@@ -22,7 +23,7 @@ import type {
   ValueChange
 } from "./types";
 import { getOperationAmountNumberWithInternals } from "./operation";
-import { flattenAccounts } from "./account";
+import { flattenAccounts, getAccountCurrency } from "./account";
 import { getEnv } from "./env";
 
 const dayIncrement = 24 * 60 * 60 * 1000;
@@ -62,7 +63,7 @@ export function getDates(r: PortfolioRange): Date[] {
 }
 
 type GetBalanceHistory = (
-  account: Account | TokenAccount,
+  account: AccountLike,
   r: PortfolioRange
 ) => { history: BalanceHistory, operations: Operation[] };
 
@@ -110,7 +111,7 @@ export const getBalanceHistory: GetBalanceHistory = memoize(
 );
 
 type GetBalanceHistoryWithCountervalue = (
-  account: Account | TokenAccount,
+  account: AccountLike,
   r: PortfolioRange,
   calculateAccountCounterValue: (
     TokenCurrency | CryptoCurrency,
@@ -142,7 +143,7 @@ const meaningfulPercentage = (
 
 const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
   const { history, operations } = getBalanceHistory(account, r);
-  const cur = account.type === "Account" ? account.currency : account.token;
+  const cur = getAccountCurrency(account);
   // a high enough value so we can compare if something changes
   const cacheReferenceValue = BigNumber("10").pow(3 + cur.units[0].magnitude);
   // pick a stable countervalue point in time to hash for the cache
@@ -300,11 +301,7 @@ export function getPortfolio(
   }
 
   const unavailableCurrencies = [
-    ...new Set(
-      unavailableAccounts.map(a =>
-        a.type === "Account" ? a.currency : a.token
-      )
-    )
+    ...new Set(unavailableAccounts.map(getAccountCurrency))
   ];
 
   const balanceAvailable =
@@ -416,7 +413,7 @@ const currencyPortfolioMemo: { [_: *]: CurrencyPortfolio } = {};
  * @memberof account
  */
 export function getCurrencyPortfolio(
-  accounts: (TokenAccount | Account)[] | Account[] | TokenAccount[],
+  accounts: AccountLikeArray,
   range: PortfolioRange,
   calc: (TokenCurrency | CryptoCurrency, BigNumber, Date) => ?BigNumber
 ): CurrencyPortfolio {
@@ -540,7 +537,7 @@ export function getAssetsDistribution(
   const accounts = flattenAccounts(topAccounts);
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
-    const cur = account.type === "Account" ? account.currency : account.token;
+    const cur = getAccountCurrency(account);
     const id = cur.id;
     if (account.balance.isGreaterThan(0)) {
       idCurrencies[id] = cur;

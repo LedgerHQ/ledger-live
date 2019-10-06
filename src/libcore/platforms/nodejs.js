@@ -163,7 +163,13 @@ export default (arg: {
         } catch (err) {
           const libcoreError = {
             code: lib.ERROR_CODE.HTTP_ERROR,
-            message: JSON.stringify(serializeError(err))
+            message: JSON.stringify(
+              serializeError({
+                message: err.message,
+                name: err.name,
+                stack: err.stack
+              })
+            )
           };
           const urlConnection = createHttpConnection(res, libcoreError);
           r.complete(urlConnection, libcoreError);
@@ -322,6 +328,9 @@ export default (arg: {
           } = statics[method];
           if (njsInstanciateClass) {
             m[method] = function met(...vargs) {
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-call", id + "." + method, vargs);
+              }
               const args = njsInstanciateClass.map(arg => {
                 if (typeof arg === "object") {
                   const o = {};
@@ -337,7 +346,12 @@ export default (arg: {
             };
           } else if (njsBuggyMethodIsNotStatic) {
             // There is a bug in the node bindings that don't expose the static functions
-            m[method] = (...args) => new m(...args)[method](...args);
+            m[method] = (...args) => {
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-call", id + "." + method, args);
+              }
+              return new m(...args)[method](...args);
+            };
           }
         });
       }
@@ -350,6 +364,9 @@ export default (arg: {
           if (nodejsNotAvailable) return;
           if (njsField) {
             m.prototype[method] = function met() {
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-call", id + "#" + method);
+              }
               const value = this[njsField];
               const Cls =
                 typeof returns === "string" && returns in mappings
@@ -368,6 +385,9 @@ export default (arg: {
               return;
             }
             m.prototype[method] = async function met(...a) {
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-call", id + "#" + method, a);
+              }
               const args = params
                 ? a.map((value, i) => unwrapArg(params[i], value))
                 : a;

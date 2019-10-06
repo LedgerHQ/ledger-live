@@ -2,12 +2,10 @@
 
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { getWalletName } from "../account";
 import type { Account, Transaction } from "../types";
 import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
-import { getOrCreateWallet } from "./getOrCreateWallet";
-import { getOrCreateAccount } from "./getOrCreateAccount";
+import { getCoreAccount } from "./getCoreAccount";
 import byFamily from "../generated/libcore-getFeesForTransaction";
 
 export type Input = {
@@ -20,21 +18,8 @@ type F = Input => Promise<BigNumber>;
 export const getFeesForTransaction: F = withLibcoreF(
   core => async ({ account, transaction }) => {
     try {
-      const { derivationMode, currency } = account;
-      const walletName = getWalletName(account);
-
-      const coreWallet = await getOrCreateWallet({
-        core,
-        walletName,
-        currency,
-        derivationMode
-      });
-
-      const coreAccount = await getOrCreateAccount({
-        core,
-        coreWallet,
-        account
-      });
+      const { currency } = account;
+      const { coreWallet, coreAccount } = await getCoreAccount(core, account);
 
       const coreCurrency = await coreWallet.getCurrency();
 

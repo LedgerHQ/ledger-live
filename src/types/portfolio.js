@@ -1,7 +1,7 @@
 // @flow
 
 import type { BigNumber } from "bignumber.js";
-import type { TokenAccount, Account } from "./account";
+import type { AccountLike, AccountLikeArray } from "./account";
 import type { CryptoCurrency, TokenCurrency } from "./currencies";
 
 export type BalanceHistory = Array<{
@@ -33,7 +33,7 @@ export type CurrencyPortfolio = {
   history: BalanceHistoryWithCountervalue,
   countervalueAvailable: boolean,
   histories: BalanceHistoryWithCountervalue[],
-  accounts: (TokenAccount | Account)[] | Account[] | TokenAccount[],
+  accounts: AccountLikeArray,
   cryptoChange: ValueChange, // how much the account changes. value is in the account currency
   countervalueChange: ValueChange // calculates the ROI. value in the countervalue unit.
 };
@@ -41,9 +41,9 @@ export type CurrencyPortfolio = {
 export type Portfolio = {
   balanceHistory: BalanceHistory,
   balanceAvailable: boolean,
-  availableAccounts: (Account | TokenAccount)[],
+  availableAccounts: AccountLike[],
   unavailableCurrencies: (CryptoCurrency | TokenCurrency)[],
-  accounts: (Account | TokenAccount)[],
+  accounts: AccountLike[],
   range: PortfolioRange,
   histories: BalanceHistoryWithCountervalue[],
   countervalueReceiveSum: BigNumber,

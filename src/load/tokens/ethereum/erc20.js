@@ -1,4 +1,4 @@
-require("../../../data/tokens").add("erc20", [
+require("../../../families/ethereum/tokens").add("erc20", [
 ["ethereum","0chain","ZCN",10,"0chain","30440220597706f051fcdf0de4eae36542d10ead0feabfe042e38177d5d319f83974574b02202b6889ae61797d8a74e2a8d1faa03d720e34cd68a78da2d908e0b0ba226c6144","0xb9EF770B6A5e12E45983C5D80545258aA38F3B78",false,false],
 ["ethereum","0x_project","ZRX",18,"0x Project","304402200ae8634c22762a8ba41d2acb1e068dcce947337c6dd984f13b820d396176952302203306a49d8a6c35b11a61088e1570b3928ca3a0db6bd36f577b5ef87628561ff7","0xE41d2489571d322189246DaFA5ebDe1F4699F498",false,false],
 ["ethereum","0xbitcoin","0XBTC",8,"0xBitcoin","3045022100d949220b51cc2b98bcefb01b9abd4e9bf684bd45e222ca97b865f48dcacf3f5302205b2984ac1c2c35cec627cdea4a88ba36b30f7c092c3c59738c04c2ebf76538bc","0xB6eD7644C69416d67B522e20bC294A9a9B405B31",false,false],

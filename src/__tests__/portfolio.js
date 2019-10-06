@@ -47,7 +47,7 @@ test("getBalanceHistory last item is now and have an amount equals to account ba
 });
 
 test("getBalanceHistoryWithCountervalue basic", () => {
-  const account = genAccount("bro4", { tokenAccountsCount: 0 });
+  const account = genAccount("bro4", { subAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "month");
   const cv = getBalanceHistoryWithCountervalue(
     account,
@@ -64,7 +64,7 @@ test("getBalanceHistoryWithCountervalue basic", () => {
 });
 
 test("getPortfolio works with one account and is identically to that account history", () => {
-  const account = genAccount("seed_4", { tokenAccountsCount: 0 });
+  const account = genAccount("seed_4", { subAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "week");
   const portfolio = getPortfolio(
     [account],
@@ -78,7 +78,7 @@ test("getPortfolio works with one account and is identically to that account his
 });
 
 test("getCurrencyPortfolio works with one account and is identically to that account history", () => {
-  const account = genAccount("seed_4", { tokenAccountsCount: 0 });
+  const account = genAccount("seed_4", { subAccountsCount: 0 });
   const calc = (account, value, date) => value.times(0.1);
   const { history } = getBalanceHistoryWithCountervalue(account, "week", calc);
   const accounts: Account[] = [account];
@@ -89,7 +89,7 @@ test("getCurrencyPortfolio works with one account and is identically to that acc
 });
 
 test("getBalanceHistoryWithCountervalue to have proper countervalues", () => {
-  const account = genAccount("bro1", { tokenAccountsCount: 0 });
+  const account = genAccount("bro1", { subAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "week");
   const calc = (account, value, date) => value.times(3);
   const cv = getBalanceHistoryWithCountervalue(account, "week", calc);
@@ -99,7 +99,7 @@ test("getBalanceHistoryWithCountervalue to have proper countervalues", () => {
 });
 
 test("getBalanceHistoryWithCountervalue is same as getPortfolio with one account", () => {
-  const account = genAccount("bro2", { tokenAccountsCount: 0 });
+  const account = genAccount("bro2", { subAccountsCount: 0 });
   const calc = (account, value, date) => value.times(3);
   const cv = getBalanceHistoryWithCountervalue(account, "month", calc);
   const portfolio = getPortfolio([account], "month", calc);
@@ -111,11 +111,11 @@ test("getBalanceHistoryWithCountervalue is same as getPortfolio with one account
 test("getPortfolio calculateCounterValue can returns missing countervalue", () => {
   const account = genAccount("seed_6", {
     currency: getCryptoCurrencyById("bitcoin"),
-    tokenAccountsCount: 0
+    subAccountsCount: 0
   });
   const account2 = genAccount("seed_7", {
     currency: getCryptoCurrencyById("ethereum"),
-    tokenAccountsCount: 0
+    subAccountsCount: 0
   });
   const { history } = getBalanceHistory(account, "month");
   const portfolio = getPortfolio(
@@ -129,7 +129,7 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
 });
 
 test("getPortfolio with twice same account will double the amounts", () => {
-  const account = genAccount("seed_5", { tokenAccountsCount: 0 });
+  const account = genAccount("seed_5", { subAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "week");
   const allHistory = getPortfolio(
     [account, account],
@@ -142,7 +142,7 @@ test("getPortfolio with twice same account will double the amounts", () => {
 });
 
 test("getCurrencyPortfolio with twice same account will double the amounts", () => {
-  const account = genAccount("seed_5", { tokenAccountsCount: 0 });
+  const account = genAccount("seed_5", { subAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "week");
   const accounts: Account[] = [account, account];
   const allHistory = getCurrencyPortfolio(
@@ -156,7 +156,7 @@ test("getCurrencyPortfolio with twice same account will double the amounts", () 
 });
 
 test("getPortfolio calculateCounterValue is taken into account", () => {
-  const account = genAccount("seed_6", { tokenAccountsCount: 0 });
+  const account = genAccount("seed_6", { subAccountsCount: 0 });
   const { history } = getBalanceHistory(account, "month");
   const portfolio = getPortfolio(
     [account, account],
@@ -167,7 +167,7 @@ test("getPortfolio calculateCounterValue is taken into account", () => {
 });
 
 test("getCurrencyPortfolio calculateCounterValue is taken into account", () => {
-  const account = genAccount("seed_6", { tokenAccountsCount: 0 });
+  const account = genAccount("seed_6", { subAccountsCount: 0 });
   const { history } = getBalanceHistoryWithCountervalue(
     account,
     "month",
@@ -188,11 +188,11 @@ test("getCurrencyPortfolio calculateCounterValue is taken into account", () => {
 test("getPortfolio calculateCounterValue can returns missing countervalue", () => {
   const account = genAccount("seed_6", {
     currency: getCryptoCurrencyById("bitcoin"),
-    tokenAccountsCount: 0
+    subAccountsCount: 0
   });
   const account2 = genAccount("seed_7", {
     currency: getCryptoCurrencyById("ethereum"),
-    tokenAccountsCount: 0
+    subAccountsCount: 0
   });
   const { history } = getBalanceHistory(account, "month");
   const portfolio = getPortfolio(
@@ -208,11 +208,11 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
 test("getCurrencyPortfolio calculateCounterValue can miss countervalue", () => {
   const account = genAccount("seed_6", {
     currency: getCryptoCurrencyById("bitcoin"),
-    tokenAccountsCount: 0
+    subAccountsCount: 0
   });
   const account2 = genAccount("seed_7", {
     currency: getCryptoCurrencyById("bitcoin"),
-    tokenAccountsCount: 0
+    subAccountsCount: 0
   });
   const { history } = getBalanceHistory(account, "month");
   const { history: history2 } = getBalanceHistory(account2, "month");
@@ -225,8 +225,8 @@ test("getCurrencyPortfolio calculateCounterValue can miss countervalue", () => {
 });
 
 test("getPortfolio calculateCounterValue can complete fails", () => {
-  const account = genAccount("seed_6", { tokenAccountsCount: 0 });
-  const account2 = genAccount("seed_7", { tokenAccountsCount: 0 });
+  const account = genAccount("seed_6", { subAccountsCount: 0 });
+  const account2 = genAccount("seed_7", { subAccountsCount: 0 });
   const portfolio = getPortfolio(
     [account, account2],
     "month",

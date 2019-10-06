@@ -10,7 +10,7 @@ import type { Account, CryptoCurrency, DerivationMode } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import type { CoreWallet, CoreAccount, CoreOperation } from "../types";
 import { buildOperation } from "./buildOperation";
-import { buildTokenAccounts } from "./buildTokenAccounts";
+import { buildSubAccounts } from "./buildSubAccounts";
 import { minimalOperationsBuilder } from "../../reconciliation";
 
 export async function buildAccount({
@@ -86,7 +86,7 @@ export async function buildAccount({
     derivationMode
   });
 
-  const tokenAccounts = await buildTokenAccounts({
+  const subAccounts = await buildSubAccounts({
     currency,
     coreAccount,
     accountId,
@@ -101,7 +101,7 @@ export async function buildAccount({
         coreOperation,
         accountId,
         currency,
-        contextualTokenAccounts: tokenAccounts
+        contextualSubAccounts: subAccounts
       })
   );
 
@@ -125,8 +125,8 @@ export async function buildAccount({
     lastSyncDate: new Date()
   };
 
-  if (tokenAccounts) {
-    account.tokenAccounts = tokenAccounts;
+  if (subAccounts) {
+    account.subAccounts = subAccounts;
   }
 
   return account;
