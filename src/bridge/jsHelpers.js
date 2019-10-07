@@ -3,6 +3,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import {
+  getSeedIdentifierDerivation,
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
@@ -81,7 +82,8 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
       index,
       { address, path: freshAddressPath },
       derivationMode,
-      shouldSkipEmpty
+      shouldSkipEmpty,
+      seedIdentifier
     ): { account?: Account, complete?: boolean } {
       const accountId = `js:2:${currency.id}:${address}:${derivationMode}`;
       const accountShape = await getAccountShape({ id: accountId, address });
@@ -102,7 +104,7 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
             const account: $Exact<Account> = {
               type: "Account",
               id: accountId,
-              seedIdentifier: freshAddress,
+              seedIdentifier,
               freshAddress,
               freshAddressPath,
               freshAddresses: [
@@ -174,6 +176,15 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
         transport = await open(deviceId);
         const derivationModes = getDerivationModesForCurrency(currency);
         for (const derivationMode of derivationModes) {
+          const path = getSeedIdentifierDerivation(currency, derivationMode);
+
+          const result = await getAddress(transport, {
+            currency,
+            path,
+            derivationMode
+          });
+          const seedIdentifier = result.publicKey;
+
           let emptyCount = 0;
           const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(
             derivationMode
@@ -201,7 +212,8 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
               index,
               res,
               derivationMode,
-              emptyCount < mandatoryEmptyAccountSkip
+              emptyCount < mandatoryEmptyAccountSkip,
+              seedIdentifier
             );
             if (r.account) {
               o.next({ type: "discovered", account: r.account });

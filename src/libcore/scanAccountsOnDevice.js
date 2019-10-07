@@ -4,11 +4,9 @@ import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError } from "@ledgerhq/errors";
-import { getCryptoCurrencyById } from "../currencies";
 import {
   getDerivationModesForCurrency,
-  isUnsplitDerivationMode,
-  getPurposeDerivationMode,
+  getSeedIdentifierDerivation,
   derivationModeSupportsIndex,
   isIterableDerivationMode,
   getMandatoryEmptyAccountSkip
@@ -148,15 +146,7 @@ export const scanAccountsOnDevice = (
           }
           for (let i = 0; i < derivationModes.length; i++) {
             const derivationMode = derivationModes[i];
-
-            const unsplitFork = isUnsplitDerivationMode(derivationMode)
-              ? currency.forkedFrom
-              : null;
-            const purpose = getPurposeDerivationMode(derivationMode);
-            const { coinType } = unsplitFork
-              ? getCryptoCurrencyById(unsplitFork)
-              : currency;
-            const path = `${purpose}'/${coinType}'`;
+            const path = getSeedIdentifierDerivation(currency, derivationMode);
 
             let result;
 

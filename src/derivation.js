@@ -260,6 +260,26 @@ const disableBIP44 = {
   tezos: true // current workaround, device app does not seem to support bip44
 };
 
+const seedIdentifierPath = {
+  neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  _: ({ purpose, coinType }) => `${purpose}'/${coinType}'`
+};
+
+export const getSeedIdentifierDerivation = (
+  currency: CryptoCurrency,
+  derivationMode: DerivationMode
+): string => {
+  const unsplitFork = isUnsplitDerivationMode(derivationMode)
+    ? currency.forkedFrom
+    : null;
+  const purpose = getPurposeDerivationMode(derivationMode);
+  const { coinType } = unsplitFork
+    ? getCryptoCurrencyById(unsplitFork)
+    : currency;
+  const f = seedIdentifierPath[currency.id] || seedIdentifierPath._;
+  return f({ purpose, coinType });
+};
+
 // return an array of ways to derivate, by convention the latest is the standard one.
 export const getDerivationModesForCurrency = (
   currency: CryptoCurrency
