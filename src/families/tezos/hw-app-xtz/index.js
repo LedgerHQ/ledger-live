@@ -31,8 +31,7 @@ export type Curve = $Values<typeof TezosCurves>;
 
 export type GetAddressResult = {|
   address: string,
-  publicKey: string,
-  chainCode?: string
+  publicKey: string
 |};
 
 export type SignOperationResult = {|
@@ -69,20 +68,18 @@ export default class Tezos {
    * get Tezos address for a given BIP 32 path.
    * @param path a path in BIP 32 format, must begin with 44'/1729'
    * @option options.verify optionally enable or not the display
-   * @option options.askChainCode optionally enable or not the chaincode request
    * @option options.curve
    * @option options.ins to use a custom apdu. This should currently only be unset (which will choose
              an appropriate APDU based on the boolDisplay parameter), or else set to 0x0A
              for the special "display" APDU which uses the alternate copy "Your Key"
-   * @return an object with address, publicKey and chainCode if requested
+   * @return an object with address, publicKey
    * @example
    * tez.getAddress("44'/1729'/0'/0'").then(o => o.address)
-   * tez.getAddress("44'/1729'/0'/0'", { verify: true, askChainCode: true })
+   * tez.getAddress("44'/1729'/0'/0'", { verify: true })
    */
   async getAddress(
     path: string,
     options: {
-      askChainCode?: boolean,
       verify?: boolean,
       curve?: Curve,
       ins?: number // TODO specify
@@ -115,12 +112,6 @@ export default class Tezos {
       publicKey: publicKey.toString("hex"),
       address: encodeAddress(publicKey, p2)
     };
-    if (options.askChainCode) {
-      let chainCodeLength = payload[1 + publicKeyLength];
-      res.chainCode = payload
-        .slice(2 + publicKeyLength, 2 + publicKeyLength + chainCodeLength)
-        .toString("hex");
-    }
     return res;
   }
 

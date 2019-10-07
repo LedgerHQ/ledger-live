@@ -16,8 +16,9 @@ import type {
   CoreTezosLikeTransaction,
   Transaction
 } from "./types";
+import { tezosOperationTag } from "./types";
+import { upperModulo } from "../../modulo";
 
-// TODO NotEnoughGas, NotEnoughBalance ?
 export async function tezosBuildTransaction({
   account,
   core,
@@ -63,17 +64,23 @@ export async function tezosBuildTransaction({
   await isValidRecipient({ currency, recipient });
   if (isCancelled()) return;
 
-  if (!fees || !gasLimit || !storageLimit || !BigNumber(gasLimit).gt(0)) {
+  if (!fees || !gasLimit || !storageLimit) {
     throw new FeeNotLoaded();
   }
 
   const feesAmount = await bigNumberToLibcoreAmount(core, coreCurrency, fees);
   if (isCancelled()) return;
 
+  let gasLimitRounded = gasLimit;
+
+  if (transaction.mode === "delegate") {
+    gasLimitRounded = upperModulo(gasLimit, BigNumber(136), BigNumber(1000));
+  }
+
   const gasLimitAmount = await bigNumberToLibcoreAmount(
     core,
     coreCurrency,
-    gasLimit
+    gasLimitRounded
   );
   if (isCancelled()) return;
 
@@ -83,7 +90,19 @@ export async function tezosBuildTransaction({
   const transactionBuilder = await tezosAccount.buildTransaction();
   if (isCancelled()) return;
 
-  await transactionBuilder.setType(transaction.type);
+  let type;
+  switch (transaction.mode) {
+    case "send":
+      type = tezosOperationTag.OPERATION_TAG_TRANSACTION;
+      break;
+    case "delegate":
+      type = tezosOperationTag.OPERATION_TAG_DELEGATION;
+      break;
+    default:
+      throw new Error("Unsupported transaction.mode = " + transaction.mode);
+  }
+
+  await transactionBuilder.setType(type);
   if (isCancelled()) return;
 
   if (transaction.useAllAmount) {

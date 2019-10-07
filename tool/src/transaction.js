@@ -80,6 +80,11 @@ export const inferTransactionsOpts = [
     desc: "how much fee"
   },
   {
+    name: "fees",
+    type: String,
+    desc: "how much fees"
+  },
+  {
     name: "tag",
     type: Number,
     desc: "ripple tag"
@@ -96,11 +101,26 @@ export const inferTransactionsOpts = [
     desc: "how much gasLimit. default is estimated with the recipient"
   },
   {
+    name: "storageLimit",
+    type: String,
+    desc: "how much storageLimit. default is estimated with the recipient"
+  },
+  {
     name: "token",
     alias: "t",
     type: String,
     desc: "use an token account children of the account",
     multiple: true
+  },
+  {
+    name: "subAccount",
+    type: String,
+    desc: "use a sub account instead of the parent by index"
+  },
+  {
+    name: "mode",
+    type: String,
+    desc: "mode of transaction"
   },
   {
     name: "shuffle",
@@ -141,22 +161,29 @@ export function inferTransactions(
 
     let acc;
     let subAccountId;
+    const subAccounts = account.subAccounts || [];
     if (token) {
       const tkn = token.toLowerCase();
-      const tokenAccounts = account.tokenAccounts || [];
-      const tokenAccount = tokenAccounts.find(
+      const subAccount = subAccounts.find(
         t => tkn === t.token.ticker.toLowerCase() || tkn === t.token.id
       );
-      if (!tokenAccount) {
+      if (!subAccount) {
         throw new Error(
           "token account '" +
             token +
             "' not found. Available: " +
-            tokenAccounts.map(t => t.token.ticker).join(", ")
+            subAccounts.map(t => t.token.ticker).join(", ")
         );
       }
-      acc = tokenAccount;
-      subAccountId = tokenAccount.id;
+      acc = subAccount;
+      subAccountId = subAccount.id;
+    } else if (opts.subAccount) {
+      const subAccount = subAccounts[opts.subAccount];
+      if (!subAccount) {
+        throw new Error("no sub account at index " + opts.subAccount);
+      }
+      acc = subAccount;
+      subAccountId = subAccount.id;
     } else {
       acc = account;
     }
@@ -215,6 +242,13 @@ export function inferTransactions(
         return {
           ...bridge.createTransaction(account),
           family: "tezos",
+          mode: opts.mode || "send",
+          subAccountId,
+          fees: opts.fees ? inferAmount(account, opts.fees) : null,
+          gasLimit: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
+          storageLimit: opts.storageLimit
+            ? new BigNumber(opts.storageLimit)
+            : null,
           recipient,
           amount,
           useAllAmount

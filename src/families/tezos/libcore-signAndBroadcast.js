@@ -29,11 +29,7 @@ async function tezos({
   const recipients = [await receiver.toBase58()];
   const senders = [await sender.toBase58()];
   const feesRaw = await builded.getFees();
-  const fees = await libcoreAmountToBigNumber(feesRaw);
-  const gasLimitRaw = await builded.getGasLimit();
-  const gasLimit = await libcoreAmountToBigNumber(gasLimitRaw);
-
-  const fee = fees.times(gasLimit);
+  const fee = await libcoreAmountToBigNumber(feesRaw);
 
   const accountId = transaction.subAccountId || id;
 

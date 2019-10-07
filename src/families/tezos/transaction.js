@@ -12,7 +12,7 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   return {
     ...common,
     family: tr.family,
-    type: tr.type,
+    mode: tr.mode,
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: BigNumber(networkInfo.fees)
@@ -29,7 +29,7 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
   return {
     ...common,
     family: t.family,
-    type: t.type,
+    mode: t.mode,
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: networkInfo.fees.toString()
