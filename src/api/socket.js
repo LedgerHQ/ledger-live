@@ -19,6 +19,7 @@ const warningsSubject = new Subject();
 export const logs: Observable<*> = logsSubject.asObservable();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 
+// TODO move to @ledgerhq/logs
 const log = (obj: *) => {
   logsSubject.next(obj);
 };

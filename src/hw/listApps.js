@@ -22,10 +22,12 @@ const listApps = async (
   deviceInfo: DeviceInfo,
   _sortBy?: "marketcap" | "name" // TODO use
 ): Promise<ApplicationVersion[]> => {
-  if (deviceInfo.isOSU || deviceInfo.isBootloader) return Promise.resolve([]);
+  if (deviceInfo.isOSU || deviceInfo.isBootloader) {
+    return Promise.resolve([]);
+  }
 
   const installedP = listInstalledApps(transport, deviceInfo).catch(e => {
-    log("hw", "failed to get installed apps: " + e);
+    log("hw", "failed to get installed apps: " + String(e) + "\n" + e.stack);
     return [];
   });
 
@@ -66,6 +68,12 @@ const listApps = async (
       listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
     )
   ]);
+
+  log(
+    "list-apps",
+    `${installed.length} apps installed. ${applicationsList.length} available.`,
+    { installed }
+  );
 
   const filtered = getEnv("MANAGER_DEV_MODE")
     ? compatibleAppVersionsList.slice(0)

@@ -355,7 +355,7 @@ const listInstalledApps = (
     remapSocketError("listInstalledApps"),
     filter(o => o.type === "result"),
     map(o =>
-      o.data.map(({ hash, name }) => {
+      o.payload.map(({ hash, name }) => {
         invariant(typeof hash === "string", "hash is defined");
         invariant(typeof name === "string", "name is defined");
         return { hash, name };
