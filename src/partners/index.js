@@ -33,7 +33,7 @@ export default [
   },
   {
     id: "luno",
-    url: "http://luno.go2cloud.org/aff_c?offer_id=4&aff_id=1001&source=ledger"
+    url: "https://www.luno.com/?utm_source=ledger&utm_medium=Affiliate"
   },
   {
     id: "ndax",
@@ -50,5 +50,9 @@ export default [
   {
     id: "simplex",
     url: "https://partners.simplex.com/?partner=ledger"
+  },
+  {
+    id: "voyager",
+    url: "https://go.onelink.me/4gTR/121986b9"
   }
 ];
