@@ -804,7 +804,6 @@
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
-				8F3AB69021F8C163005F3E8C /* Lottie.framework in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */,
 				B9E5B9A72153F4490053D868 /* libRNLibLedgerCore.a in Frameworks */,
@@ -820,6 +819,7 @@
 				124F2FAB14B44BE4AD6F1FCD /* libRNVersionNumber.a in Frameworks */,
 				EC6891A8F6714810A94CB27E /* libLottie.a in Frameworks */,
 				FA45230257444081B82E9ED3 /* libLottieReactNative.a in Frameworks */,
+				8F3AB69021F8C163005F3E8C /* Lottie.framework in Frameworks */,
 				E28B0F7EF80849148021E110 /* libRNCNetInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
