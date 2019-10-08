@@ -226,11 +226,13 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
       countervalueReceiveSum: BigNumber(0), // not available here
       countervalueSendSum: BigNumber(0),
       cryptoChange: {
-        value: to.value.minus(from.value),
+        value: to.value.minus(fromEffective.value),
         percentage: null
       },
       countervalueChange: {
-        value: (to.countervalue || ZERO).minus(from.countervalue || ZERO),
+        value: (to.countervalue || ZERO).minus(
+          fromEffective.countervalue || ZERO
+        ),
         percentage: meaningfulPercentage(
           (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
           fromEffective.countervalue
