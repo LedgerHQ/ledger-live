@@ -5,7 +5,6 @@ import { FeeNotLoaded, FeeTooHigh } from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
 import type { Transaction } from "../types";
-import { tezosOperationTag } from "../types";
 import { scanAccountsOnDevice } from "../../../libcore/scanAccountsOnDevice";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import { syncAccount } from "../../../libcore/syncAccount";
@@ -58,7 +57,7 @@ const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
 const createTransaction = () => ({
   family: "tezos",
-  type: tezosOperationTag.OPERATION_TAG_TRANSACTION,
+  mode: "send",
   amount: BigNumber(0),
   fees: null,
   gasLimit: null,
@@ -149,7 +148,7 @@ const prepareTransaction = async (a, t) => {
 
   let gasLimit = t.gasLimit;
   let storageLimit = t.storageLimit;
-  if (!gasLimit && t.recipient) {
+  if ((!gasLimit || !storageLimit) && t.recipient) {
     const { recipientError } = await validateRecipient(a.currency, t.recipient);
     if (!recipientError) {
       const r = await estimateGasLimitAndStorage(a, t.recipient);

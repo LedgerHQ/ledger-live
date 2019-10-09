@@ -26,7 +26,7 @@ export async function tezosSignTransaction({
     await coreTransaction.serialize()
   );
 
-  await coreTransaction.setDERSignature(signature);
+  await coreTransaction.setSignature(signature);
 
   const raw = await coreTransaction.serialize();
 

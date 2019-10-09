@@ -23,7 +23,7 @@ const dataset: DatasetTest = {
                 amount: "1000000",
                 recipient: "tz1bd2A1bdafn7kKTNFd8gPjnFiEWJUsVB39",
                 family: "tezos",
-                type: 8,
+                mode: "send",
                 networkInfo,
                 fees: "1420",
                 gasLimit: "10300",

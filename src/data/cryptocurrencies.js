@@ -2000,6 +2000,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     scheme: "tezos",
     color: "#007BFF",
     family: "tezos",
+    blockAvgTime: 60,
     units: [
       {
         name: "XTZ",

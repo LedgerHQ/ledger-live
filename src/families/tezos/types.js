@@ -27,6 +27,8 @@ export const tezosOperationTag = {
   OPERATION_TAG_DELEGATION: 10
 };
 
+export type TezosOperationMode = "send" | "delegate";
+
 export type TezosOperationTag = $Values<typeof tezosOperationTag>;
 
 declare class CoreTezosLikeAddress {
@@ -41,8 +43,7 @@ declare class CoreTezosLikeTransaction {
   getSender(): Promise<CoreTezosLikeAddress>;
   getGasLimit(): Promise<CoreAmount>;
   serialize(): Promise<string>;
-  setSignature(string, string, string): Promise<void>;
-  setDERSignature(string): Promise<void>;
+  setSignature(string): Promise<void>;
 }
 
 declare class CoreTezosLikeOperation {
@@ -124,7 +125,7 @@ export type NetworkInfoRaw = {|
 export type Transaction = {|
   ...TransactionCommon,
   family: "tezos",
-  type: TezosOperationTag,
+  mode: TezosOperationMode,
   networkInfo: ?NetworkInfo,
   fees: ?BigNumber,
   gasLimit: ?BigNumber,
@@ -134,7 +135,7 @@ export type Transaction = {|
 export type TransactionRaw = {|
   ...TransactionCommonRaw,
   family: "tezos",
-  type: TezosOperationTag,
+  mode: TezosOperationMode,
   networkInfo: ?NetworkInfoRaw,
   fees: ?string,
   gasLimit: ?string,
@@ -158,9 +159,6 @@ export const reflect = (declare: (string, Spec) => void) => {
       getSender: { returns: "TezosLikeAddress" },
       serialize: { returns: "hex" },
       setSignature: {
-        params: ["hex", "hex", "hex"]
-      },
-      setDERSignature: {
         params: ["hex"]
       }
     }

@@ -98,10 +98,24 @@ socketLogs.subscribe(({ type, ...rest }) => {
 
 setNetwork(axios);
 
-axios.interceptors.response.use(r => {
-  log("http", r.config.method + " " + r.config.url);
-  return r;
+axios.interceptors.request.use(config => {
+  log("http", config.method + " " + config.url, config);
+  return config;
 });
+
+axios.interceptors.response.use(
+  r => {
+    log("http-success", r.config.method + " " + r.config.url + " " + r.status);
+    return r;
+  },
+  e => {
+    if (e.response) {
+      const { data, status } = e.response;
+      log("http-error", "HTTP " + status + ": " + String(e), { data });
+    }
+    return Promise.reject(e);
+  }
+);
 
 setWebSocketImplementation(WebSocket);
 

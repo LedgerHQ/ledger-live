@@ -1,6 +1,5 @@
 // @flow
 import { log } from "@ledgerhq/logs";
-import invariant from "invariant";
 import Transport from "@ledgerhq/hw-transport";
 import type { Core, CoreWallet, CoreAccount } from "./types";
 import type { CryptoCurrency } from "../types";
@@ -48,17 +47,13 @@ export const createAccountFromDevice: F = async ({
         if (isUnsubscribed()) return;
         const { publicKey, chainCode } = await getAddress(transport, {
           currency,
-          path:
-            derivationMode === "tezbox"
-              ? "44'/1729'/0'/0'" // FIXME LIBCORE
-              : derivation,
+          path: derivation,
           derivationMode,
           askChainCode: true,
           skipAppFailSafeCheck: true
         });
-        invariant(chainCode, "createAccountFromDevice: chainCode is required");
         publicKeys.push(publicKey);
-        chainCodes.push(chainCode);
+        if (chainCode) chainCodes.push(chainCode);
       }),
     Promise.resolve()
   );
