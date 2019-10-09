@@ -1,9 +1,11 @@
 // @flow
-import { throttleTime, filter, map } from "rxjs/operators";
+import { Observable, throwError } from "rxjs";
+import { throttleTime, filter, map, catchError } from "rxjs/operators";
+import { ManagerAppDepInstallRequired } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import type { Observable } from "rxjs";
 import type { ApplicationVersion } from "../types/manager";
 import ManagerAPI from "../api/Manager";
+import { getDirectDep } from "../apps/logic";
 
 export default function installApp(
   transport: Transport<*>,
@@ -20,6 +22,19 @@ export default function installApp(
   }).pipe(
     filter(e => e.type === "bulk-progress"), // only bulk progress interests the UI
     throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
-    map(e => ({ progress: e.progress })) // extract a stream of progress percentage
+    map(e => ({ progress: e.progress })), // extract a stream of progress percentage
+    catchError((e: Error) => {
+      if (!e || !e.message) return throwError(e);
+      const status = e.message.slice(e.message.length - 4);
+      if (status === "6a83") {
+        return throwError(
+          new ManagerAppDepInstallRequired("", {
+            appName: app.name,
+            dependency: getDirectDep(app.name) || ""
+          })
+        );
+      }
+      return throwError(e);
+    })
   );
 }

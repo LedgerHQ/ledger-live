@@ -142,7 +142,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "AKA",
     scheme: "akroma",
     color: "#AA0087",
-    family: "akroma",
+    family: "ethereum",
     units: [
       {
         name: "AKA",
@@ -188,7 +188,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "ATH",
     scheme: "atheios",
     color: "#000000",
-    family: "atheios",
+    family: "ethereum",
     units: [
       {
         name: "ATH",
@@ -537,7 +537,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "CLO",
     scheme: "callisto",
     color: "#000000",
-    family: "callisto",
+    family: "ethereum",
     units: [
       {
         name: "CLO",
@@ -789,7 +789,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "ELLA",
     scheme: "ellaism",
     color: "#000000",
-    family: "ellaism",
+    family: "ethereum",
     units: [
       {
         name: "ELLA",
@@ -943,7 +943,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "EXP",
     scheme: "expanse",
     color: "#EE4500",
-    family: "expanse",
+    family: "ethereum",
     units: [
       {
         name: "EXP",
@@ -1027,7 +1027,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "GO",
     scheme: "gochain",
     color: "#000000",
-    family: "gochain",
+    family: "ethereum",
     units: [
       {
         name: "GO",
@@ -1615,7 +1615,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "PIRL",
     scheme: "pirl",
     color: "#A2D729",
-    family: "pirl",
+    family: "ethereum",
     units: [
       {
         name: "PIRL",
@@ -1672,7 +1672,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "POA",
     scheme: "poa",
     color: "#4D46BD",
-    family: "poa",
+    family: "ethereum",
     units: [
       {
         name: "POA",
@@ -2213,7 +2213,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "WAN",
     scheme: "wanchain",
     color: "#276097",
-    family: "wanchain",
+    family: "ethereum",
     units: [
       {
         name: "WAN",
@@ -2323,7 +2323,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "XZC",
     scheme: "zcoin",
     color: "#00C027",
-    family: "zcoin",
+    family: "bitcoin",
     units: [
       {
         name: "XZC",

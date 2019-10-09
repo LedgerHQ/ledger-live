@@ -8,11 +8,9 @@ import {
   DeviceOnDashboardExpected,
   LatestMCUInstalledError,
   ManagerAppAlreadyInstalledError,
-  ManagerAppRelyOnBTCError,
   ManagerDeviceLockedError,
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
-  ManagerUninstallBTCDep,
   UserRefusedAllowManager,
   UserRefusedFirmwareUpdate
 } from "@ledgerhq/errors";
@@ -53,11 +51,6 @@ const remapSocketError = (context?: string) =>
         return throwError(new ManagerAppAlreadyInstalledError());
       case "6982":
         return throwError(new ManagerDeviceLockedError());
-      case "6a83":
-        if (context === "uninstall-app") {
-          return throwError(new ManagerUninstallBTCDep());
-        }
-        return throwError(new ManagerAppRelyOnBTCError());
       case "6a84":
         if (context === "firmware" || context === "mcu") {
           return throwError(new ManagerFirmwareNotEnoughSpaceError());

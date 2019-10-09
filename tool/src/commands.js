@@ -42,7 +42,7 @@ import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
-import listApps from "@ledgerhq/live-common/lib/hw/listApps";
+import listApps from "@ledgerhq/live-common/lib/apps/list";
 import openApp from "@ledgerhq/live-common/lib/hw/openApp";
 import quitApp from "@ledgerhq/live-common/lib/hw/quitApp";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";
@@ -69,6 +69,7 @@ import { inferTransactions, inferTransactionsOpts } from "./transaction";
 import { apdusFromFile } from "./stream";
 import { toAccountRaw } from "@ledgerhq/live-common/lib/account/serialization";
 import { Buffer } from "buffer";
+import appsUpdateTestAll from "./cmds/appsUpdateTestAll";
 
 const getAccountNetworkInfoFormatters = {
   json: e => JSON.stringify(e)
@@ -374,6 +375,8 @@ const all = {
       repairFirmwareUpdate(device || "", forceMCU)
   },
 
+  appsUpdateTestAll,
+
   managerListApps: {
     description: "List apps that can be installed on the device",
     args: [
@@ -389,21 +392,23 @@ const all = {
       withDevice(device || "")(t =>
         from(getDeviceInfo(t)).pipe(
           mergeMap(deviceInfo => from(listApps(t, deviceInfo))),
-          map(list =>
+          map(r =>
             format === "raw"
-              ? list
+              ? r
               : format === "json"
-              ? JSON.stringify(list)
-              : list
-                  .map(
-                    item =>
+              ? JSON.stringify(r)
+              : r.apps
+                  .map(item => {
+                    const ins = r.installed.find(i => i.name === item.name);
+                    return (
                       `- ${item.name} ${item.version}` +
-                      (item.installed
-                        ? item.updated
+                      (ins
+                        ? ins.updated
                           ? " (installed)"
                           : " (outdated!)"
                         : "")
-                  )
+                    );
+                  })
                   .join("\n")
           )
         )
