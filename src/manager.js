@@ -107,7 +107,7 @@ const CacheAPI = {
     // TODO getFullListSortedCryptoCurrencies can be a local function.. too much dep for now
     getFullListSortedCryptoCurrencies: * = () => Promise.resolve([])
   ): Promise<ApplicationVersion[]> => {
-    console.warn("deprecated: use manager.getApps instead");
+    console.warn("deprecated: use @ledgerhq/live-common/src/apps/* instead");
 
     if (deviceInfo.isOSU || deviceInfo.isBootloader) return Promise.resolve([]);
 

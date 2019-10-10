@@ -1,7 +1,8 @@
 // @flow
 
 import { log } from "@ledgerhq/logs";
-import type { ApplicationVersion, DeviceInfo } from "../types/manager";
+import type { DeviceInfo } from "../types/manager";
+import type { ListAppsResult } from "./types";
 import { listCryptoCurrencies } from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
@@ -11,7 +12,7 @@ import Transport from "@ledgerhq/hw-transport";
 export const listInstalledApps = (
   transport: Transport<*>,
   deviceInfo: DeviceInfo
-): Promise<*> =>
+): Promise<Array<{ name: string, hash: string }>> =>
   ManagerAPI.listInstalledApps(transport, {
     targetId: deviceInfo.targetId,
     perso: "perso_11"
@@ -21,14 +22,21 @@ const listApps = async (
   transport: Transport<*>,
   deviceInfo: DeviceInfo,
   _sortBy?: "marketcap" | "name" // TODO use
-): Promise<ApplicationVersion[]> => {
+): Promise<ListAppsResult> => {
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
-    return Promise.resolve([]);
+    return Promise.resolve({
+      appByName: {},
+      apps: [],
+      installed: [],
+      deviceInfo
+    });
   }
 
   const installedP = listInstalledApps(transport, deviceInfo).catch(e => {
     log("hw", "failed to get installed apps: " + String(e) + "\n" + e.stack);
     return [];
+    // FIXME should we show to user the error
+    // firmware 1.2 works with listing apps?
   });
 
   const deviceVersionP = ManagerAPI.getDeviceVersion(
@@ -56,7 +64,7 @@ const listApps = async (
   );
 
   const [
-    installed,
+    installedList,
     applicationsList,
     compatibleAppVersionsList,
     sortedCryptoCurrencies
@@ -71,8 +79,8 @@ const listApps = async (
 
   log(
     "list-apps",
-    `${installed.length} apps installed. ${applicationsList.length} available.`,
-    { installed }
+    `${installedList.length} apps installed. ${applicationsList.length} available.`,
+    { installedList }
   );
 
   const filtered = getEnv("MANAGER_DEV_MODE")
@@ -97,14 +105,22 @@ const listApps = async (
     }
   });
 
-  return sortedCryptoApps.concat(filtered).map(app => {
-    const ins = installed.find(i => app.name === i.name);
+  const apps = sortedCryptoApps.concat(filtered);
+
+  const installed = installedList.map(({ name, hash }) => {
+    const ins = apps.find(i => name === i.name);
     return {
-      ...app,
-      installed: !!ins,
-      updated: ins ? ins.hash === app.hash : false
+      name,
+      updated: ins ? ins.hash === hash : false
     };
   });
+
+  const appByName = {};
+  compatibleAppVersionsList.concat(apps).forEach(app => {
+    appByName[app.name] = app;
+  });
+
+  return { appByName, apps, installed, deviceInfo };
 };
 
 export default listApps;

@@ -28,7 +28,13 @@ axios
       const folder = path.join(inputFolder, imp.path);
       const output = path.join(outputFolder, imp.path + ".js");
       const items = fs.readdirSync(folder);
-      Promise.all(items.sort().map(id => imp.loader({ folder, id })))
+      Promise.all(
+        items.sort().map(id =>
+          imp.loader({ folder, id }).catch(e => {
+            console.log("FAILED " + id + " " + e);
+          })
+        )
+      )
         .then(all => all.filter(Boolean))
         .then(all => {
           const fiatCollisions = all.filter(

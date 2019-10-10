@@ -119,10 +119,8 @@ export type ApplicationVersion = {
   providers: Array<Id>,
   date_creation: string,
   date_last_modified: string,
-  // extra contextual info
-  currency?: CryptoCurrency,
-  installed?: boolean,
-  updated?: boolean
+  // extra contextual info (should be deprecated? use a function for this derivated info)
+  currency?: CryptoCurrency
 };
 
 export type Application = {
