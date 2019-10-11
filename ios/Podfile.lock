@@ -1,0 +1,235 @@
+PODS:
+  - boost-for-react-native (1.63.0)
+  - DoubleConversion (1.1.6)
+  - Folly (2018.10.22.00):
+    - boost-for-react-native
+    - DoubleConversion
+    - glog
+  - glog (0.3.5)
+  - lottie-ios (2.5.3)
+  - lottie-react-native (2.6.1):
+    - lottie-ios (~> 2.5.0)
+    - React
+  - React (0.59.9):
+    - React/Core (= 0.59.9)
+  - react-native-ble-plx (1.1.0):
+    - React
+    - react-native-ble-plx-swift
+  - react-native-ble-plx-swift (1.1.0)
+  - react-native-camera (1.9.2):
+    - React
+    - react-native-camera/RCT (= 1.9.2)
+    - react-native-camera/RN (= 1.9.2)
+  - react-native-camera/RCT (1.9.2):
+    - React
+  - react-native-camera/RN (1.9.2):
+    - React
+  - react-native-config (0.11.7):
+    - React
+  - react-native-locale (0.0.19):
+    - React
+  - react-native-netinfo (2.0.5):
+    - React
+  - react-native-randombytes (3.5.3):
+    - React
+  - react-native-splash-screen (3.2.0):
+    - React
+  - react-native-version-number (0.3.6):
+    - React
+  - React/ART (0.59.9):
+    - React/Core
+  - React/Core (0.59.9):
+    - yoga (= 0.59.9.React)
+  - React/CxxBridge (0.59.9):
+    - Folly (= 2018.10.22.00)
+    - React/Core
+    - React/cxxreact
+    - React/jsiexecutor
+  - React/cxxreact (0.59.9):
+    - boost-for-react-native (= 1.63.0)
+    - DoubleConversion
+    - Folly (= 2018.10.22.00)
+    - glog
+    - React/jsinspector
+  - React/DevSupport (0.59.9):
+    - React/Core
+    - React/RCTWebSocket
+  - React/fishhook (0.59.9)
+  - React/jsi (0.59.9):
+    - DoubleConversion
+    - Folly (= 2018.10.22.00)
+    - glog
+  - React/jsiexecutor (0.59.9):
+    - DoubleConversion
+    - Folly (= 2018.10.22.00)
+    - glog
+    - React/cxxreact
+    - React/jsi
+  - React/jsinspector (0.59.9)
+  - React/RCTActionSheet (0.59.9):
+    - React/Core
+  - React/RCTAnimation (0.59.9):
+    - React/Core
+  - React/RCTBlob (0.59.9):
+    - React/Core
+  - React/RCTImage (0.59.9):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTLinkingIOS (0.59.9):
+    - React/Core
+  - React/RCTNetwork (0.59.9):
+    - React/Core
+  - React/RCTSettings (0.59.9):
+    - React/Core
+  - React/RCTText (0.59.9):
+    - React/Core
+  - React/RCTVibration (0.59.9):
+    - React/Core
+  - React/RCTWebSocket (0.59.9):
+    - React/Core
+    - React/fishhook
+    - React/RCTBlob
+  - RNGestureHandler (1.0.15):
+    - React
+  - RNKeychain (3.1.3):
+    - React
+  - RNScreens (1.0.0-alpha.22):
+    - React
+  - RNSVG (9.4.0):
+    - React
+  - RNVectorIcons (6.4.2):
+    - React
+  - Sentry (4.1.3):
+    - Sentry/Core (= 4.1.3)
+  - Sentry/Core (4.1.3)
+  - SentryReactNative (0.42.0):
+    - React
+    - Sentry (~> 4.1.3)
+  - TouchID (4.6.3):
+    - React
+  - yoga (0.59.9.React)
+
+DEPENDENCIES:
+  - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
+  - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
+  - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
+  - react-native-ble-plx-swift (from `../node_modules/react-native-ble-plx`)
+  - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-locale (from `../node_modules/react-native-locale`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-randombytes (from `../node_modules/react-native-randombytes`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
+  - react-native-version-number (from `../node_modules/react-native-version-number`)
+  - React/ART (from `../node_modules/react-native/`)
+  - React/Core (from `../node_modules/react-native/`)
+  - React/CxxBridge (from `../node_modules/react-native/`)
+  - React/cxxreact (from `../node_modules/react-native/`)
+  - React/DevSupport (from `../node_modules/react-native/`)
+  - React/fishhook (from `../node_modules/react-native/`)
+  - React/jsi (from `../node_modules/react-native/`)
+  - React/jsiexecutor (from `../node_modules/react-native/`)
+  - React/jsinspector (from `../node_modules/react-native/`)
+  - React/RCTActionSheet (from `../node_modules/react-native/`)
+  - React/RCTAnimation (from `../node_modules/react-native/`)
+  - React/RCTBlob (from `../node_modules/react-native/`)
+  - React/RCTImage (from `../node_modules/react-native/`)
+  - React/RCTLinkingIOS (from `../node_modules/react-native/`)
+  - React/RCTNetwork (from `../node_modules/react-native/`)
+  - React/RCTSettings (from `../node_modules/react-native/`)
+  - React/RCTText (from `../node_modules/react-native/`)
+  - React/RCTVibration (from `../node_modules/react-native/`)
+  - React/RCTWebSocket (from `../node_modules/react-native/`)
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - SentryReactNative (from `../node_modules/react-native-sentry`)
+  - "TouchID (from `../node_modules/@ledgerhq/react-native-touch-id`)"
+  - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+
+SPEC REPOS:
+  trunk:
+    - boost-for-react-native
+    - lottie-ios
+    - Sentry
+
+EXTERNAL SOURCES:
+  DoubleConversion:
+    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  Folly:
+    :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
+  glog:
+    :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
+  React:
+    :path: "../node_modules/react-native/"
+  react-native-ble-plx:
+    :path: "../node_modules/react-native-ble-plx"
+  react-native-ble-plx-swift:
+    :path: "../node_modules/react-native-ble-plx"
+  react-native-camera:
+    :path: "../node_modules/react-native-camera"
+  react-native-config:
+    :path: "../node_modules/react-native-config"
+  react-native-locale:
+    :path: "../node_modules/react-native-locale"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
+  react-native-randombytes:
+    :path: "../node_modules/react-native-randombytes"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
+  react-native-version-number:
+    :path: "../node_modules/react-native-version-number"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
+  SentryReactNative:
+    :path: "../node_modules/react-native-sentry"
+  TouchID:
+    :path: "../node_modules/@ledgerhq/react-native-touch-id"
+  yoga:
+    :path: "../node_modules/react-native/ReactCommon/yoga"
+
+SPEC CHECKSUMS:
+  boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
+  Folly: de497beb10f102453a1afa9edbf8cf8a251890de
+  glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
+  lottie-ios: a50d5c0160425cd4b01b852bb9578963e6d92d31
+  lottie-react-native: 3d8181d43619b1fe804c828bd5a09d20fe8bdea7
+  React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
+  react-native-ble-plx: 05e16667ebf56cf802986379fd58a377847885e8
+  react-native-ble-plx-swift: e0d041529bd7ae66eb9731123eca3df3d132e8ec
+  react-native-camera: 046f504650bf9a0a9ec9024107f555feaeca6671
+  react-native-config: 55548054279d92e0e4566ea15a8b9b81028ec342
+  react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
+  react-native-netinfo: 4a56b401acf438c6a681962e23b61f7deaaf0ba3
+  react-native-randombytes: 3638d24759d67c68f6ccba60c52a7a8a8faa6a23
+  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
+  react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
+  RNGestureHandler: 14c09a7361c272efea8f7f3799142c893a6a4485
+  RNKeychain: c658833a9cb2cbcba6423bdd6e16cce59e27da0e
+  RNScreens: 720a9e6968beb73e8196239801e887d8401f86ed
+  RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
+  RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0
+  Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
+  SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
+  TouchID: e70ee88b881ccf6afef10c0261166935256feb05
+  yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
+
+PODFILE CHECKSUM: 4de8c3635db6537a050420d2e3424b06d5301b4c
+
+COCOAPODS: 1.8.3

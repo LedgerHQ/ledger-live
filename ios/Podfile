@@ -1,0 +1,89 @@
+platform :ios, '9.0'
+
+target 'ledgerlivemobile' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for ledgerlivemobile
+  pod 'React', :path => '../node_modules/react-native/', :subspecs => [
+    'ART',
+    'Core',
+    'CxxBridge',
+    'cxxreact',
+    'DevSupport',
+    'fishhook',
+    'jsi',
+    'jsiexecutor',
+    'jsinspector',
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTBlob',
+    'RCTImage',
+    'RCTLinkingIOS',
+    'RCTNetwork',
+    'RCTSettings',
+    'RCTText',
+    'RCTVibration',
+    'RCTWebSocket',
+  ]
+
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
+  pod 'react-native-ble-plx-swift', :path => '../node_modules/react-native-ble-plx'
+
+  pod 'TouchID', :path => '../node_modules/@ledgerhq/react-native-touch-id'
+
+  pod 'react-native-version-number', :path => '../node_modules/react-native-version-number'
+
+  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
+
+  pod 'react-native-locale', :path => '../node_modules/react-native-locale'
+
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
+
+  pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
+
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
+
+  target 'ledgerlivemobileTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == 'react-native-config'
+      phase = target.project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+      phase.shell_script = "cd ../../"\
+      " && RNC_ROOT=./node_modules/react-native-config/"\
+      " && export SYMROOT=$RNC_ROOT/ios/ReactNativeConfig"\
+      " && ruby $RNC_ROOT/ios/ReactNativeConfig/BuildDotenvConfig.ruby"
+      
+      target.build_phases << phase
+      target.build_phases.move(phase,0)
+    end
+  end
+ end

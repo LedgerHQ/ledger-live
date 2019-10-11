@@ -78,3 +78,6 @@ yarn-error.log*
 third-party/
 
 xliffs/
+
+# Cocoa pods
+ios/Pods
