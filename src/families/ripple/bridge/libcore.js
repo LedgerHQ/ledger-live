@@ -23,7 +23,7 @@ const createTransaction = () => ({
   family: "ripple",
   amount: BigNumber(0),
   recipient: "",
-  tag: null,
+  tag: undefined,
   fee: null,
   feeCustomUnit: null,
   networkInfo: null
