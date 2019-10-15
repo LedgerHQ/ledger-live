@@ -66,7 +66,7 @@ async function doSignAndBroadcast({
       destination: {
         address: t.recipient,
         minAmount: amount,
-        tag: t.tag
+        tag: t.tag ? t.tag : undefined
       }
     };
     const instruction = {
@@ -572,7 +572,7 @@ const createTransaction = () => ({
   amount: BigNumber(0),
   recipient: "",
   fee: null,
-  tag: null,
+  tag: undefined,
   networkInfo: null,
   feeCustomUnit: null
 });
