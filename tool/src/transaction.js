@@ -255,6 +255,16 @@ export function inferTransactions(
         };
       }
 
+      case "tron": {
+        return {
+          family: "tron",
+          recipient,
+          amount,
+          token: token || "TRX",
+          useAllAmount
+        };
+      }
+
       default:
         throw new Error("family " + account.currency.family + " not supported");
     }

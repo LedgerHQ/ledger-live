@@ -1,6 +1,6 @@
 // @flow
-import { never } from "rxjs";
 import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
 import flatMap from "lodash/flatMap";
 import get from "lodash/get";
 import bs58check from "bs58check";
@@ -17,12 +17,97 @@ import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { findTokenById } from "../../../data/tokens";
 import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import network from "../../../network";
+import { open } from "../../../hw";
+import signTransaction from "../../../hw/signTransaction";
 import {
   makeStartSync,
   makeScanAccountsOnDevice
 } from "../../../bridge/jsHelpers";
 
 const b58 = hex => bs58check.encode(Buffer.from(hex, "hex"));
+const decode58Check = base58 =>
+  Buffer.from(bs58check.decode(base58)).toString("hex");
+async function doSignAndBroadcast({
+  a,
+  t,
+  deviceId,
+  isCancelled,
+  onSigned,
+  onOperationBroadcasted
+}) {
+  // Prepare transaction
+  const txData = {
+    to_address: decode58Check(t.recipient),
+    owner_address: decode58Check(a.freshAddress),
+    amount: t.amount.toNumber()
+  };
+  const preparedTransaction = await post(
+    "https://api.trongrid.io/wallet/createtransaction",
+    txData
+  );
+  const transport = await open(deviceId);
+  let transaction;
+  try {
+    // Sign by device
+    const signature = await signTransaction(
+      a.currency,
+      transport,
+      a.freshAddressPath,
+      preparedTransaction
+    );
+    transaction = {
+      ...preparedTransaction,
+      signature: [signature]
+    };
+  } finally {
+    transport.close();
+  }
+
+  if (!isCancelled()) {
+    onSigned();
+
+    // Broadcast
+    const submittedPayment = await broadcastTronTx(transaction);
+    if (submittedPayment.result !== true) {
+      throw new Error(submittedPayment.resultMessage);
+    }
+
+    const hash = transaction.txID;
+    const operation = {
+      id: `${a.id}-${hash}-OUT`,
+      hash,
+      accountId: a.id,
+      type: "OUT",
+      value: t.amount,
+      fee: BigNumber(0), // TBD
+      blockHash: null,
+      blockHeight: null,
+      senders: [a.freshAddress],
+      recipients: [t.recipient],
+      date: new Date(),
+      extra: {}
+    };
+    onOperationBroadcasted(operation);
+  }
+}
+
+async function post(url, body) {
+  const { data } = await network({
+    method: "POST",
+    url,
+    data: body
+  });
+  log("http", url);
+  return data;
+}
+
+async function broadcastTronTx(trxTransaction) {
+  const result = await post(
+    "https://api.trongrid.io/wallet/broadcasttransaction",
+    trxTransaction
+  );
+  return result;
+}
 
 const txToOps = ({ id, address }, token: ?TokenCurrency) => (
   tx: Object
@@ -188,7 +273,35 @@ const getTransactionStatus = a =>
     })
   );
 
-const signAndBroadcast = () => never();
+const signAndBroadcast = (a, t, deviceId) =>
+  Observable.create(o => {
+    let cancelled = false;
+    const isCancelled = () => cancelled;
+    const onSigned = () => {
+      o.next({ type: "signed" });
+    };
+    const onOperationBroadcasted = operation => {
+      o.next({ type: "broadcasted", operation });
+    };
+    doSignAndBroadcast({
+      a,
+      t,
+      deviceId,
+      isCancelled,
+      onSigned,
+      onOperationBroadcasted
+    }).then(
+      () => {
+        o.complete();
+      },
+      e => {
+        o.error(e);
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  });
 
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> =>
   Promise.resolve(t);
