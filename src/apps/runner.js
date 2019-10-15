@@ -2,9 +2,10 @@
 
 import { useReducer, useEffect } from "react";
 import { Observable, from, of, defer, concat } from "rxjs";
-import { map, materialize, reduce } from "rxjs/operators";
+import { map, materialize, reduce, ignoreElements } from "rxjs/operators";
 import type { Exec, State, AppOp, RunnerEvent, ListAppsResult } from "./types";
 import { reducer, initState } from "./logic";
+import { delay } from "../promise";
 
 export const getNextAppOp = (state: State): ?AppOp => {
   if (state.uninstallQueue.length) {
@@ -31,6 +32,8 @@ export const runAppOp = (
   }
   return concat(
     of({ type: "runStart", appOp }),
+    // we need to allow a 1s delay for the action to be achieved without glitch (bug in old firmware when you do things too closely)
+    defer(() => delay(1000)).pipe(ignoreElements()),
     defer(() => exec(appOp, state.deviceInfo.targetId, app)).pipe(
       materialize(),
       map(n => {
@@ -53,7 +56,6 @@ export const runAppOp = (
 export const runAll = (state: State, exec: Exec): Observable<State> =>
   concat(
     ...getActionPlan(state).map(appOp => runAppOp(state, appOp, exec))
-    // TODO try to interleave some delays
   ).pipe(
     map(event => ({ type: "onRunnerEvent", event })),
     reduce(reducer, state)

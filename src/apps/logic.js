@@ -32,7 +32,7 @@ listCryptoCurrencies(true, true).forEach(a => {
 
 // extra dependencies
 [
-  ["RSK", "Bitcoin"],
+  ["RSK", "Ethereum"],
   ["ZenCash", "Bitcoin"],
   ["kUSD", "Ethereum"],
   ["ThunderCore", "Ethereum"]
