@@ -34,7 +34,11 @@ export async function bitcoinSignTransaction({
   const networkParams = await coreCurrency.getBitcoinLikeNetworkParameters();
   if (isCancelled()) return;
 
-  const sigHashType = parseInt(await networkParams.getSigHash(), 16);
+  const sigHashTypeHex = await networkParams.getSigHash();
+  const sigHashType = parseInt(sigHashTypeHex, 16);
+  if (isNaN(sigHashType)) {
+    throw new Error("sigHashType should not be NaN");
+  }
   if (isCancelled()) return;
 
   const hasTimestamp = await networkParams.getUsesTimestampedTransaction();

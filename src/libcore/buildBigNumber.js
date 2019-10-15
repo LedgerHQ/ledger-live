@@ -12,7 +12,7 @@ export function bigNumberToLibcoreAmount(
 }
 
 export function bigNumberToLibcoreBigInt(core: Core, n: BigNumber) {
-  return core.BigInt.fromDecimalString(n.toString(10), 10, ".");
+  return core.BigInt.fromIntegerString(n.toString(10), 10);
 }
 
 export async function libcoreBigIntToBigNumber(

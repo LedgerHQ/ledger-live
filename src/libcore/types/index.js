@@ -113,11 +113,7 @@ declare class CoreRandomNumberGenerator {
 }
 
 declare class CoreBigInt {
-  static fromDecimalString(
-    s: string,
-    radix: number,
-    sep: string
-  ): Promise<CoreBigInt>;
+  static fromIntegerString(s: string, radix: number): Promise<CoreBigInt>;
 
   toString(base: number): Promise<string>;
 }
@@ -270,7 +266,7 @@ type SpecMapF = {
   returns?: string | string[],
   njsField?: string,
   njsInstanciateClass?: Array<Object>,
-  njsBuggyMethodIsNotStatic?: boolean,
+  njsBuggyMethodIsNotStatic?: boolean | Function,
   nodejsNotAvailable?: boolean
 };
 
@@ -416,8 +412,8 @@ export const reflect = (declare: (string, Spec) => void) => {
 
   declare("BigInt", {
     statics: {
-      fromDecimalString: {
-        njsBuggyMethodIsNotStatic: true,
+      fromIntegerString: {
+        njsBuggyMethodIsNotStatic: () => ["", 0, "."],
         returns: "BigInt"
       }
     },

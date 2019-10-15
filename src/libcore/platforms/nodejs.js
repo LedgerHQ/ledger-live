@@ -350,7 +350,11 @@ export default (arg: {
               if (process.env.VERBOSE_LIBCORE_CALL) {
                 log("libcore-call", id + "." + method, args);
               }
-              return new m(...args)[method](...args);
+              const constructorArgs =
+                typeof njsBuggyMethodIsNotStatic === "function"
+                  ? njsBuggyMethodIsNotStatic(args)
+                  : args;
+              return new m(...constructorArgs)[method](...args);
             };
           }
         });
