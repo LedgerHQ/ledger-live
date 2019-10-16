@@ -74,3 +74,12 @@ test("shortAddressPreview", () => {
     shortAddressPreview("0x112233445566778899001234567890aAbBcCdDeEfF", 30)
   ).toBe("0x11223344556...0aAbBcCdDeEfF");
 });
+
+test("groupAccountOperationsByDay to dedup", () => {
+  const account = genAccount("seed_8");
+  account.pendingOperations = account.operations.slice(0, 3);
+  const accountClone = genAccount("seed_8");
+  const res1 = groupAccountOperationsByDay(account, { count: 100 });
+  const res2 = groupAccountOperationsByDay(accountClone, { count: 100 });
+  expect(res1).toMatchObject(res2);
+});

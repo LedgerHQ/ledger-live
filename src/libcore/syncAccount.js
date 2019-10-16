@@ -8,6 +8,7 @@ import { withLibcore } from "./access";
 import { buildAccount } from "./buildAccount";
 import { getCoreAccount } from "./getCoreAccount";
 import { remapLibcoreErrors } from "./errors";
+import { shouldRetainPendingOperation } from "../account";
 import postSyncPatchPerFamily from "../generated/libcore-postSyncPatch";
 
 // FIXME how to get that
@@ -110,7 +111,9 @@ export function syncAccount(
         lastSyncDate: new Date(),
         operations: syncedAccount.operations,
         subAccounts: syncedAccount.subAccounts,
-        pendingOperations: []
+        pendingOperations: initialAccount.pendingOperations.filter(op =>
+          shouldRetainPendingOperation(syncedAccount, op)
+        )
       })
     )
   );

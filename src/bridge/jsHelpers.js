@@ -13,7 +13,8 @@ import {
 } from "../derivation";
 import {
   getAccountPlaceholderName,
-  getNewAccountPlaceholderName
+  getNewAccountPlaceholderName,
+  shouldRetainPendingOperation
 } from "../account";
 import uniqBy from "lodash/uniqBy";
 import type {
@@ -53,7 +54,10 @@ export const makeStartSync = (getAccountShape: GetAccountShape) => (
         o.next(a => ({
           ...a,
           ...shape,
-          operations: mergeOps(a.operations, shape.operations || [])
+          operations: mergeOps(a.operations, shape.operations || []),
+          pendingOperations: a.pendingOperations.filter(op =>
+            shouldRetainPendingOperation(a, op)
+          )
         }));
         o.complete();
       } catch (e) {
