@@ -111,7 +111,7 @@ const modes = Object.freeze({
   legacy_on_segwit: {
     purpose: 49,
     libcoreConfig: {
-      KEYCHAIN_ENGINE: ""
+      KEYCHAIN_ENGINE: "BIP32_P2PKH"
     },
     isInvalid: true
   },
