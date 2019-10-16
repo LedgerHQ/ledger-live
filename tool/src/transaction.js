@@ -260,7 +260,7 @@ export function inferTransactions(
           family: "tron",
           recipient,
           amount,
-          token: token || "TRX",
+          // token: token || "TRX",
           useAllAmount
         };
       }
