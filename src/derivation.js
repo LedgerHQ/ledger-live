@@ -81,9 +81,6 @@ const modes = Object.freeze({
       TEZOS_XPUB_CURVE: "SECP256K1" // FIXME bug in libcore? it should be ED25519
     }
   },
-  tron: {
-    overridesDerivation: "44'/195'/<account>'/0/0"
-  },
   native_segwit: {
     purpose: 84,
     libcoreConfig: {
