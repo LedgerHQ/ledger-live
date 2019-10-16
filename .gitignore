@@ -22,7 +22,6 @@ DerivedData
 *.ipa
 *.dSYM.zip
 *.xcuserstate
-project.xcworkspace
 
 # Android/IntelliJ
 #
@@ -42,6 +41,7 @@ yarn-error.log
 buck-out/
 \.buckd/
 *.keystore
+!debug.keystore
 
 # fastlane
 #
@@ -79,5 +79,5 @@ third-party/
 
 xliffs/
 
-# Cocoa pods
-ios/Pods
+# CocoaPods
+/ios/Pods/

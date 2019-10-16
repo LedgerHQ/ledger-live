@@ -34,7 +34,7 @@ if (__DEV__ && process.env.NODE_ENV !== "test") {
 }
 
 function setupDirtyHackToHandleLibcoreDoubleCallback() {
-  const ErrorUtils = require("ErrorUtils"); // eslint-disable-line import/no-unresolved
+  const { ErrorUtils } = global;
   ErrorUtils.setGlobalHandler((e, isFatal) => {
     try {
       if (
@@ -44,9 +44,10 @@ function setupDirtyHackToHandleLibcoreDoubleCallback() {
       ) {
         return;
       }
-      require("ExceptionsManager").handleException(e, isFatal); // eslint-disable-line import/no-unresolved
+      const ExceptionsManager = require("../node_modules/react-native/Libraries/Core/ExceptionsManager.js");
+      ExceptionsManager.handleException(e, isFatal);
     } catch (ee) {
-      console.log("Failed to print error: ", ee.message); // eslint-disable-line no-console
+      console.log("Failed to print error: ", ee.message);
     }
   });
 }

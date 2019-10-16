@@ -1,9 +1,8 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { translate } from "react-i18next";
-import { AppState } from "react-native";
+import { AppState, Linking } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import OpenSettings from "react-native-open-settings";
 import i18next from "i18next";
 import type { T } from "../../types/common";
 import FallbackCameraBody from "../../components/FallbackCameraBody";
@@ -49,7 +48,7 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
 
   openNativeSettings = () => {
     this.setState({ openSettingsPressed: true });
-    OpenSettings.openSettings();
+    Linking.openSettings();
   };
 
   render() {
