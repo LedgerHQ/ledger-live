@@ -31,9 +31,13 @@ export const shouldShowNewAccount = (
 };
 
 export function canBeMigrated(account: Account) {
-  const { type } = decodeAccountId(account.id);
-  if (libcoreNoGo.includes(account.currency.id)) return false;
-  return type === "ethereumjs";
+  try {
+    const { type } = decodeAccountId(account.id);
+    if (libcoreNoGo.includes(account.currency.id)) return false;
+    return type === "ethereumjs";
+  } catch (e) {
+    return false;
+  }
 }
 
 // attempt to find an account in scanned accounts that satisfy a migration
