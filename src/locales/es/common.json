@@ -384,6 +384,11 @@
     "description": "Please uninstall and reinstall the app from your phone to remove Ledger Live data, including accounts and settings.",
     "button": "Reset"
   },
+  "graph": {
+    "week": "1W",
+    "month": "1M",
+    "year": "1Y"
+  },
   "onboarding": {
     "stepCount": "{{current}} of {{total}}",
     "stepsTitles": {
