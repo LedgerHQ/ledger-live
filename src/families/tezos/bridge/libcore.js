@@ -1,7 +1,11 @@
 // @flow
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { FeeNotLoaded, FeeTooHigh } from "@ledgerhq/errors";
+import {
+  FeeNotLoaded,
+  FeeTooHigh,
+  InvalidAddressBecauseDestinationIsAlsoSource
+} from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
 import type { Transaction } from "../types";
@@ -115,17 +119,21 @@ const getTransactionStatus = async (a, t) => {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  const { recipientError, recipientWarning } = await validateRecipient(
-    a.currency,
-    t.recipient
-  );
+  if (a.freshAddress === t.recipient) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  } else {
+    const { recipientError, recipientWarning } = await validateRecipient(
+      a.currency,
+      t.recipient
+    );
 
-  if (recipientError) {
-    errors.recipient = recipientError;
-  }
+    if (recipientError) {
+      errors.recipient = recipientError;
+    }
 
-  if (recipientWarning) {
-    warnings.recipient = recipientWarning;
+    if (recipientWarning) {
+      warnings.recipient = recipientWarning;
+    }
   }
 
   return Promise.resolve({
