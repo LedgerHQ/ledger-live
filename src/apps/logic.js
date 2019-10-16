@@ -48,20 +48,17 @@ const reorderInstallQueue = (apps: string[]): string[] =>
   uniq(
     // deps first
     apps
-      .map(a => directDep[a])
-      .filter(a => a)
+      .map(a => {
+        const dep = directDep[a];
+        if (dep && apps.includes(dep)) return dep;
+        return null;
+      })
+      .filter(Boolean)
       .concat(apps)
   );
 
 const reorderUninstallQueue = (apps: string[]): string[] =>
   reorderInstallQueue(apps).reverse();
-
-/* TODO
- - logic does not yet handle the outdated apps to update.
-   - installing an app require all deps to be up to date
-   - add a updateAll action
- - 
-*/
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -96,7 +93,7 @@ export const reducer = (state: State, action: Action): State => {
             // remove apps to known installed apps
             installed: state.installed.filter(i => appOp.name !== i.name),
             // remove the uninstall action
-            uninstallQueue: state.installQueue.filter(
+            uninstallQueue: state.uninstallQueue.filter(
               name => appOp.name !== name
             )
           };
@@ -134,20 +131,75 @@ export const reducer = (state: State, action: Action): State => {
         )
       };
 
+    case "updateAll": {
+      let installList = state.installQueue.slice(0);
+      let uninstallList = state.uninstallQueue.slice(0);
+
+      state.installed.forEach(app => {
+        if (!app.updated) {
+          const dependents = state.installed
+            .filter(a => directDep[a.name] === app.name)
+            .map(a => a.name);
+          uninstallList = uninstallList.concat([app.name, ...dependents]);
+          installList = installList.concat([app.name, ...dependents]);
+        }
+      });
+
+      const installQueue = reorderInstallQueue(installList);
+      const uninstallQueue = reorderUninstallQueue(uninstallList);
+
+      return {
+        ...state,
+        currentError: null,
+        installQueue,
+        uninstallQueue
+      };
+    }
+
     case "install": {
       const { name } = action;
-      if (state.installQueue.includes(name)) return state; // already queued
+      if (state.installQueue.includes(name)) {
+        // already queued for install
+        return state;
+      }
+      const existing = state.installed.find(app => app.name === name);
+
+      if (existing && existing.updated) {
+        // already installed and up to date
+        return state;
+      }
 
       const dep = directDep[name];
+      const depInstall = dep && state.installed.find(a => a.name === dep);
 
-      const installQueue = reorderInstallQueue(
-        state.installQueue.concat(dep ? [dep, name] : [name])
-      );
-
+      let installList = state.installQueue;
       // installing an app will remove if planned for uninstalling
-      const uninstallQueue = state.uninstallQueue.filter(
+      let uninstallList = state.uninstallQueue.filter(
         u => name !== u && u !== dep
       );
+
+      // if app is already installed but outdated, we'll need to update related deps
+      if (
+        (existing && !existing.updated) ||
+        (depInstall && !depInstall.updated)
+      ) {
+        const outdated = state.installed
+          .filter(
+            a =>
+              !a.updated &&
+              [name, dep, ...getDependencies(dep)].includes(a.name)
+          )
+          .map(a => a.name);
+        uninstallList = uninstallList.concat(outdated);
+        installList = installList.concat(outdated);
+      }
+
+      installList = installList.concat(
+        dep && !depInstall ? [dep, name] : [name]
+      );
+
+      const installQueue = reorderInstallQueue(installList);
+      const uninstallQueue = reorderUninstallQueue(uninstallList);
 
       return {
         ...state,
@@ -159,16 +211,27 @@ export const reducer = (state: State, action: Action): State => {
 
     case "uninstall": {
       const { name } = action;
-      if (state.uninstallQueue.includes(name)) return state; // already queued
+      if (state.uninstallQueue.includes(name)) {
+        // already queued
+        return state;
+      }
 
       // uninstalling an app will remove from installQueue as well as direct deps
       const installQueue = state.installQueue.filter(
         u => name !== u && name !== !directDep[u]
       );
 
-      const uninstallQueue = reorderUninstallQueue(
-        state.installQueue.concat([...reverseDep[name], name])
-      );
+      let uninstallQueue = state.uninstallQueue;
+      if (state.installed.some(a => a.name === name) || action.force) {
+        uninstallQueue = reorderUninstallQueue(
+          uninstallQueue.concat([
+            ...getDependencies(name).filter(d =>
+              state.installed.some(a => a.name === d)
+            ),
+            name
+          ])
+        );
+      }
 
       return {
         ...state,

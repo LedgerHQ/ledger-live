@@ -8,13 +8,15 @@ export type Exec = (
   app: ApplicationVersion
 ) => Observable<{ progress: number }>;
 
+export type InstalledItem = {
+  name: string,
+  updated: boolean
+};
+
 export type ListAppsResult = {
   appByName: { [_: string]: ApplicationVersion },
   apps: ApplicationVersion[],
-  installed: Array<{
-    name: string,
-    updated: boolean
-  }>,
+  installed: Array<InstalledItem>,
   deviceInfo: DeviceInfo
 };
 
@@ -46,7 +48,7 @@ export type Action =
   // wipe will remove all apps of the device
   | { type: "wipe" }
   // uninstall a specific app by name
-  | { type: "uninstall", name: string }
+  | { type: "uninstall", name: string, force?: boolean }
   // install or update a specific app by name
   | { type: "install", name: string }
   // update all
