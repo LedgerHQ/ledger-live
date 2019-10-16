@@ -6,6 +6,7 @@ import { map, materialize, reduce, ignoreElements } from "rxjs/operators";
 import type { Exec, State, AppOp, RunnerEvent, ListAppsResult } from "./types";
 import { reducer, initState } from "./logic";
 import { delay } from "../promise";
+import { getEnv } from "../env";
 
 export const getNextAppOp = (state: State): ?AppOp => {
   if (state.uninstallQueue.length) {
@@ -33,7 +34,7 @@ export const runAppOp = (
   return concat(
     of({ type: "runStart", appOp }),
     // we need to allow a 1s delay for the action to be achieved without glitch (bug in old firmware when you do things too closely)
-    defer(() => delay(1000)).pipe(ignoreElements()),
+    defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))).pipe(ignoreElements()),
     defer(() => exec(appOp, state.deviceInfo.targetId, app)).pipe(
       materialize(),
       map(n => {
