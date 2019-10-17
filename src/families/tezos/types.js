@@ -218,6 +218,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       },
       getFees: {
         returns: "BigInt"
+      },
+      getOriginatedAccounts: {
+        returns: ["TezosLikeOriginatedAccount"]
       }
     }
   });
