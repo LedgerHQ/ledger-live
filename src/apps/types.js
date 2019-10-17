@@ -30,6 +30,7 @@ export type State = {
   }>,
   installQueue: string[],
   uninstallQueue: string[],
+  currentAppOp: ?AppOp,
   currentProgress: ?{
     appOp: AppOp,
     progress: number

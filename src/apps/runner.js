@@ -1,9 +1,16 @@
 // @flow
 
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useMemo } from "react";
 import { Observable, from, of, defer, concat } from "rxjs";
 import { map, materialize, reduce, ignoreElements } from "rxjs/operators";
-import type { Exec, State, AppOp, RunnerEvent, ListAppsResult } from "./types";
+import type {
+  Exec,
+  State,
+  Action,
+  AppOp,
+  RunnerEvent,
+  ListAppsResult
+} from "./types";
 import { reducer, initState } from "./logic";
 import { delay } from "../promise";
 import { getEnv } from "../env";
@@ -22,11 +29,11 @@ export const getActionPlan = (state: State): AppOp[] =>
     .concat(state.installQueue.map(name => ({ type: "install", name })));
 
 export const runAppOp = (
-  state: State,
+  { appByName, deviceInfo }: ListAppsResult,
   appOp: AppOp,
   exec: Exec
 ): Observable<RunnerEvent> => {
-  const app = state.appByName[appOp.name];
+  const app = appByName[appOp.name];
   if (!app) {
     // app not in list, we skip it.
     return from([{ type: "runStart", appOp }, { type: "runSuccess", appOp }]);
@@ -35,7 +42,7 @@ export const runAppOp = (
     of({ type: "runStart", appOp }),
     // we need to allow a 1s delay for the action to be achieved without glitch (bug in old firmware when you do things too closely)
     defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))).pipe(ignoreElements()),
-    defer(() => exec(appOp, state.deviceInfo.targetId, app)).pipe(
+    defer(() => exec(appOp, deviceInfo.targetId, app)).pipe(
       materialize(),
       map(n => {
         switch (n.kind) {
@@ -62,22 +69,29 @@ export const runAll = (state: State, exec: Exec): Observable<State> =>
     reduce(reducer, state)
   );
 
-// use for React apps. support dynamic change of the state.
-export const useAppsRunner = (listResult: ListAppsResult, exec: Exec) => {
-  // $FlowFixMe no clue why flow complains
-  const [state, dispatch] = useReducer(reducer, () => initState(listResult));
-  const appOp = state.currentAppOp || getNextAppOp(state);
+type UseAppsRunnerResult = [State, (Action) => void];
 
+// use for React apps. support dynamic change of the state.
+export const useAppsRunner = (
+  listResult: ListAppsResult,
+  exec: Exec
+): UseAppsRunnerResult => {
+  const [state, dispatch] = useReducer(reducer, null, () =>
+    initState(listResult)
+  );
+
+  const nextAppOp = useMemo(() => getNextAppOp(state), [state]);
+  const appOp = state.currentAppOp || nextAppOp;
   useEffect(() => {
     if (appOp) {
-      const sub = runAppOp(state, appOp, exec).subscribe(event => {
+      const sub = runAppOp(listResult, appOp, exec).subscribe(event => {
         dispatch({ type: "onRunnerEvent", event });
       });
       return () => {
         sub.unsubscribe();
       };
     }
-  }, [appOp, exec]);
+  }, [listResult, appOp, exec]);
 
   return [state, dispatch];
 };

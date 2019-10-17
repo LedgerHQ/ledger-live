@@ -10,6 +10,7 @@ import apps from "./apps";
 import Partners from "./Partners";
 import erc20 from "./erc20";
 import assets from "./assets";
+import manager from "./manager";
 
 export default {
   Countervalues,
@@ -23,5 +24,6 @@ export default {
   explorers,
   erc20,
   apps,
-  assets
+  assets,
+  manager
 };
