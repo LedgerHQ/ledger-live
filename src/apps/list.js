@@ -18,10 +18,9 @@ export const listInstalledApps = (
     perso: "perso_11"
   }).toPromise();
 
-const listApps = async (
+export const listApps = async (
   transport: Transport<*>,
-  deviceInfo: DeviceInfo,
-  _sortBy?: "marketcap" | "name" // TODO use
+  deviceInfo: DeviceInfo
 ): Promise<ListAppsResult> => {
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
     return Promise.resolve({
@@ -122,5 +121,3 @@ const listApps = async (
 
   return { appByName, apps, installed, deviceInfo };
 };
-
-export default listApps;

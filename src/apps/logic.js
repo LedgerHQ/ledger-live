@@ -67,13 +67,19 @@ export const reducer = (state: State, action: Action): State => {
       if (event.type === "runStart") {
         return {
           ...state,
-          currentAppOp: appOp
+          currentAppOp: appOp,
+          currentProgress: {
+            appOp: appOp,
+            progress: 0
+          }
         };
       } else if (event.type === "runSuccess") {
         if (appOp.type === "install") {
           return {
             ...state,
             currentAppOp: null,
+            currentProgress: null,
+            currentError: null,
             // append the app to known installed apps
             installed: state.installed
               .filter(o => o.name !== appOp.name)
@@ -88,6 +94,8 @@ export const reducer = (state: State, action: Action): State => {
           return {
             ...state,
             currentAppOp: null,
+            currentProgress: null,
+            currentError: null,
             // remove apps to known installed apps
             installed: state.installed.filter(i => appOp.name !== i.name),
             // remove the uninstall action
