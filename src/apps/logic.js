@@ -1,6 +1,5 @@
 // @flow
 
-import uniq from "lodash/uniq";
 import type { State, Action, ListAppsResult } from "./types";
 import {
   listCryptoCurrencies,
@@ -43,22 +42,21 @@ export const getDirectDep = (appName: string): ?string => directDep[appName];
 export const getDependencies = (appName: string): string[] =>
   reverseDep[appName] || [];
 
-const reorderInstallQueue = (apps: string[]): string[] =>
-  // we assume there is only one level of dep here.
-  uniq(
-    // deps first
-    apps
-      .map(a => {
-        const dep = directDep[a];
-        if (dep && apps.includes(dep)) return dep;
-        return null;
-      })
-      .filter(Boolean)
-      .concat(apps)
-  );
+const reorderInstallQueue = (apps: string[]): string[] => {
+  const list = [];
+  apps.forEach(app => {
+    if (list.includes(app)) return;
+    const dep = directDep[app];
+    if (dep && apps.includes(dep) && !list.includes(dep)) {
+      list.push(dep);
+    }
+    list.push(app);
+  });
+  return list;
+};
 
 const reorderUninstallQueue = (apps: string[]): string[] =>
-  reorderInstallQueue(apps).reverse();
+  reorderInstallQueue(apps.slice(0).reverse()).reverse();
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {

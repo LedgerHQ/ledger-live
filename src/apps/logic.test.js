@@ -20,7 +20,7 @@ const scenarios = [
     actions: [
       {
         dispatch: { type: "wipe" },
-        expectPlan: "-Ethereum Classic, -XRP, -Litecoin, -Ethereum, -Bitcoin",
+        expectPlan: "-Litecoin, -Bitcoin, -XRP, -Ethereum Classic, -Ethereum",
         expectInstalled: ""
       }
     ]
@@ -87,7 +87,7 @@ const scenarios = [
     actions: [
       {
         dispatch: { type: "uninstall", name: "Bitcoin" },
-        expectPlan: "-Litecoin, -Dogecoin, -Bitcoin",
+        expectPlan: "-Dogecoin, -Litecoin, -Bitcoin",
         expectInstalled: ""
       }
     ]
@@ -171,7 +171,6 @@ const scenarios = [
     ]
   },
 
-  // More than one action at a time (to do more of these)
   {
     name: "install and uninstall will undo (if top level dep)",
     apps: "Bitcoin",
@@ -183,6 +182,45 @@ const scenarios = [
           { type: "uninstall", name: "Bitcoin" }
         ],
         expectPlan: "",
+        expectInstalled: ""
+      }
+    ]
+  },
+
+  {
+    name: "order is preserved in install action plan",
+    apps: "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+    installed: "",
+    actions: [
+      {
+        dispatch: [
+          { type: "install", name: "XRP" },
+          { type: "install", name: "Ethereum Classic" },
+          { type: "install", name: "Dogecoin" },
+          { type: "install", name: "Zcash" }
+        ],
+        expectPlan:
+          "+XRP, +Ethereum, +Ethereum Classic, +Bitcoin, +Dogecoin, +Zcash",
+        expectInstalled:
+          "XRP, Ethereum, Ethereum Classic, Bitcoin, Dogecoin, Zcash"
+      }
+    ]
+  },
+
+  {
+    name: "order is preserved in uninstall action plan",
+    apps: "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+    installed: "XRP, Ethereum, Ethereum Classic, Bitcoin, Dogecoin, Zcash",
+    actions: [
+      {
+        dispatch: [
+          { type: "uninstall", name: "XRP" },
+          { type: "uninstall", name: "Ethereum" },
+          { type: "uninstall", name: "Dogecoin" },
+          { type: "uninstall", name: "Bitcoin" }
+        ],
+        expectPlan:
+          "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Zcash, -Bitcoin",
         expectInstalled: ""
       }
     ]
