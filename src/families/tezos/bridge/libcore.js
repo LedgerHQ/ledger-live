@@ -117,7 +117,7 @@ const getTransactionStatus = async (a, t) => {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (a.freshAddress === t.recipient) {
+  if (account.freshAddress === t.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else {
     const { recipientError, recipientWarning } = await validateRecipient(
@@ -165,19 +165,13 @@ const prepareTransaction = async (a, t) => {
 
   let fees = t.fees || networkInfo.fees;
 
-  let recipient = t.recipient;
-  if (t.subAccountId && !t.recipient) {
-    recipient = a.freshAddress;
-  }
-
   if (
     t.networkInfo !== networkInfo ||
     t.gasLimit !== gasLimit ||
     t.storageLimit !== storageLimit ||
-    t.fees !== fees ||
-    t.recipient !== recipient
+    t.fees !== fees
   ) {
-    return { ...t, networkInfo, storageLimit, gasLimit, fees, recipient };
+    return { ...t, networkInfo, storageLimit, gasLimit, fees };
   }
 
   return t;
