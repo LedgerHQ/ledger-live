@@ -97,11 +97,9 @@ const getTransactionStatus = async (a, t) => {
       },
       error => {
         if (error.name === "NotEnoughBalance") {
-          // FIXME this is not smart
           errors.amount = error;
         } else {
-          // FIXME What do we do with the rest of the errors?
-          errors.transaction = error;
+          throw error;
         }
       }
     );
