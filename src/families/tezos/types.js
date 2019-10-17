@@ -236,6 +236,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       isDelegatable: {},
       buildTransaction: {
         returns: "TezosLikeTransactionBuilder"
+      },
+      queryOperations: {
+        returns: "OperationQuery"
       }
     }
   });
