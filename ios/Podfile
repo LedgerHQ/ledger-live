@@ -41,35 +41,6 @@ target 'ledgerlivemobile' do
   pod 'ledger-core-objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
   pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
 
-  pod 'TouchID', :path => '../node_modules/@ledgerhq/react-native-touch-id'
-
-  pod 'react-native-version-number', :path => '../node_modules/react-native-version-number'
-
-  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
-
-  pod 'react-native-config', :path => '../node_modules/react-native-config'
-
-  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
-
-  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
-
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-
-  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
-
-  pod 'react-native-locale', :path => '../node_modules/react-native-locale'
-
-  pod 'RNScreens', :path => '../node_modules/react-native-screens'
-
-  pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
-
-  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
-
-  pod 'RNSVG', :path => '../node_modules/react-native-svg'
-
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
-  pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
 
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
