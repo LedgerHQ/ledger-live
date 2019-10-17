@@ -52,8 +52,32 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
       return instance.ref;
     }
 
+    const flushes = [];
+    const blacklistFlushes = [
+      "ThreadDispatcher",
+      "HttpClient",
+      "WebSocketClient",
+      "PathResolver",
+      "LogPrinter",
+      "RandomNumberGenerator",
+      "DatabaseBackend",
+      "DynamicObject",
+      "WalletPool",
+      "SerialContext"
+    ];
+
     function declare(id, { methods, statics }) {
       const native = getNativeModule(id);
+
+      if (!blacklistFlushes.includes(id)) {
+        flushes.push(() => {
+          try {
+            return native.flush();
+          } catch (e) {
+            console.warn("no flush for " + id);
+          }
+        });
+      }
 
       // There are lot of decoration done to abstract out libcore api.
       // The plan is to make it converge to this API in the future
@@ -159,16 +183,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
     const core: Core = {
       ...cs,
 
-      flush: () =>
-        Promise.all([
-          cs.HttpClient.flush(),
-          cs.WebSocketClient.flush(),
-          cs.PathResolver.flush(),
-          cs.LogPrinter.flush(),
-          cs.RandomNumberGenerator.flush(),
-          cs.DynamicObject.flush(),
-          cs.DatabaseBackend.flush()
-        ]).then(() => undefined),
+      flush: () => Promise.all(flushes.map(f => f())).then(() => undefined),
 
       getPoolInstance: () => walletPoolInstance,
 
