@@ -42,7 +42,7 @@ import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
-import listApps from "@ledgerhq/live-common/lib/apps/list";
+import { listApps } from "@ledgerhq/live-common/lib/apps";
 import openApp from "@ledgerhq/live-common/lib/hw/openApp";
 import quitApp from "@ledgerhq/live-common/lib/hw/quitApp";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";

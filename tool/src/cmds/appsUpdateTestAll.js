@@ -5,11 +5,15 @@ import { from, of } from "rxjs";
 import { mergeMap, ignoreElements } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import listApps from "@ledgerhq/live-common/lib/apps/list";
+import {
+  listApps,
+  initState,
+  reducer,
+  runAll,
+  getActionPlan,
+  execWithTransport
+} from "@ledgerhq/live-common/lib/apps";
 import type { AppOp } from "@ledgerhq/live-common/lib/apps/types";
-import { initState, reducer } from "@ledgerhq/live-common/lib/apps/logic";
-import { runAll, getActionPlan } from "@ledgerhq/live-common/lib/apps/runner";
-import { execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import { deviceOpt } from "../scan";
 
 const prettyActionPlan = (ops: AppOp[]) =>

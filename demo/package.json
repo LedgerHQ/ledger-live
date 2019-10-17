@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ledgerhq/hw-transport": "^4.71.0",
-    "@ledgerhq/hw-transport-u2f": "^4.71.0",
-    "@ledgerhq/hw-transport-web-ble": "^4.71.0",
-    "@ledgerhq/hw-transport-webusb": "^4.71.0",
-    "@ledgerhq/live-common": "^8.0.0-alpha.0",
+    "@ledgerhq/hw-transport": "^4.72.1",
+    "@ledgerhq/hw-transport-u2f": "^4.72.1",
+    "@ledgerhq/hw-transport-web-ble": "^4.72.1",
+    "@ledgerhq/hw-transport-webusb": "^4.72.1",
+    "@ledgerhq/live-common": "^8.0.0-alpha.6",
     "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^9.0.0",
@@ -30,7 +30,7 @@
     "rxjs": "^6.5.3",
     "styled-components": "^4.4.0",
     "timeago.js": "^4.0.0-beta.2",
-    "victory": "^33.1.0"
+    "victory": "^33.1.1"
   },
   "scripts": {
     "start": "HTTS=true react-scripts start",
