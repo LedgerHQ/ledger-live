@@ -24,10 +24,6 @@
 		A6419C7774BD44628FF928DB /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 57675DE3CEFA48B4AEFB711C /* OpenSans-Bold.ttf */; };
 		A854DAD55ED1456696918FDF /* MuseoSans-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CE7E1D553FBD49E0A85347D3 /* MuseoSans-Bold.otf */; };
 		AA971EB1796D4FD797316C3D /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44387CB2EE84464C83A75FD7 /* OpenSans-Regular.ttf */; };
-		B91C45DF21665C1200E250AB /* ledger-core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DE21665C1200E250AB /* ledger-core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B91C45E021665C3B00E250AB /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DE21665C1200E250AB /* ledger-core.framework */; };
-		B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = B91C45DB2166562200E250AB /* ledger-core.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B91C46CD216812DE00E250AB /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91C45DB2166562200E250AB /* ledger-core.framework */; };
 		BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F63C9E4AC284203A95B417E /* libz.tbd */; };
 		CB46822924B04E80814C603E /* libPasscodeAuth.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 976AEE7A15C2428DB85E53B3 /* libPasscodeAuth.a */; };
 		D5C1F1874ECE48F4AA5693AF /* MuseoSans-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CEDB8CDC561E4D4BBA7A64CD /* MuseoSans-SemiBold.otf */; };
@@ -79,7 +75,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B91C45DF21665C1200E250AB /* ledger-core.framework in Embed Frameworks */,
 				34EB1BF721B5837E00007D7D /* Analytics.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -91,7 +86,6 @@
 			dstPath = x86_64;
 			dstSubfolderSpec = 10;
 			files = (
-				B91C46CC216812D800E250AB /* ledger-core.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -128,8 +122,6 @@
 		854A3B027231E885CAD3722D /* libPods-ledgerlivemobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ledgerlivemobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		887CA7F3B5FF4445BB1C5960 /* libRNLibLedgerCore.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNLibLedgerCore.a; sourceTree = "<group>"; };
 		976AEE7A15C2428DB85E53B3 /* libPasscodeAuth.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libPasscodeAuth.a; sourceTree = "<group>"; };
-		B91C45DB2166562200E250AB /* ledger-core.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "ledger-core.framework"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks/x86/ledger-core.framework"; sourceTree = "<group>"; };
-		B91C45DE21665C1200E250AB /* ledger-core.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "ledger-core.framework"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks/universal/ledger-core.framework"; sourceTree = "<group>"; };
 		C7C5BB743ED04E53A2323979 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		CE7E1D553FBD49E0A85347D3 /* MuseoSans-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-Bold.otf"; path = "../assets/fonts/MuseoSans-Bold.otf"; sourceTree = "<group>"; };
 		CEDB8CDC561E4D4BBA7A64CD /* MuseoSans-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-SemiBold.otf"; path = "../assets/fonts/MuseoSans-SemiBold.otf"; sourceTree = "<group>"; };
@@ -155,8 +147,6 @@
 			files = (
 				F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */,
 				34EB1BF621B5837E00007D7D /* Analytics.framework in Frameworks */,
-				B91C45E021665C3B00E250AB /* ledger-core.framework in Frameworks */,
-				B91C46CD216812DE00E250AB /* ledger-core.framework in Frameworks */,
 				9B7ACA23F80A40489C69872B /* libRNAnalytics.a in Frameworks */,
 				BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */,
 				CB46822924B04E80814C603E /* libPasscodeAuth.a in Frameworks */,
@@ -295,8 +285,6 @@
 			isa = PBXGroup;
 			children = (
 				F837348622721A48009D747A /* JavaScriptCore.framework */,
-				B91C45DB2166562200E250AB /* ledger-core.framework */,
-				B91C45DE21665C1200E250AB /* ledger-core.framework */,
 				5F63C9E4AC284203A95B417E /* libz.tbd */,
 				31C4672E151A9F9D4A18DB00 /* libPods-ledgerlivemobile.a */,
 				854A3B027231E885CAD3722D /* libPods-ledgerlivemobileTests.a */,
@@ -340,6 +328,7 @@
 				76AF0529229C1BFA0087B066 /* ShellScript */,
 				A3B86A0A04E74A989A896DF8 /* Upload Debug Symbols to Sentry */,
 				601C0E870C26FBA5CE65E3B3 /* [CP] Copy Pods Resources */,
+				8E1A608415C2513D3DA0FD71 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -541,6 +530,24 @@
 			shellPath = /bin/sh;
 			shellScript = "rm -rf \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/x86_64\"\n";
 		};
+		8E1A608415C2513D3DA0FD71 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile-frameworks.sh",
+				"${PODS_ROOT}/../../node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks/universal/ledger-core.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ledger-core.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		A3B86A0A04E74A989A896DF8 /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -553,7 +560,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
 		};
 		CF42614A9FBDE8C6FA541F32 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

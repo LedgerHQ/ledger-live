@@ -37,6 +37,10 @@ target 'ledgerlivemobile' do
   pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
   pod 'react-native-ble-plx-swift', :path => '../node_modules/react-native-ble-plx'
 
+  pod 'djinni_objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
+  pod 'ledger-core-objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
+  pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
+
   pod 'TouchID', :path => '../node_modules/@ledgerhq/react-native-touch-id'
 
   pod 'react-native-version-number', :path => '../node_modules/react-native-version-number'
