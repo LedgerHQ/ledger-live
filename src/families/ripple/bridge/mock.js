@@ -5,6 +5,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   InvalidAddressBecauseDestinationIsAlsoSource,
   InvalidAddress,
+  RecipientRequired,
   FeeTooHigh
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
@@ -72,7 +73,9 @@ const getTransactionStatus = (a, t) => {
     });
   }
 
-  if (isInvalidRecipient(t.recipient)) {
+  if (!t.recipient) {
+    errors.recipient = new RecipientRequired("");
+  } else if (isInvalidRecipient(t.recipient)) {
     errors.recipient = new InvalidAddress("");
   } else if (a.freshAddress === t.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();

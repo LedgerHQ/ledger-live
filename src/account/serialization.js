@@ -130,6 +130,7 @@ export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
 export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
   const {
     id,
+    name,
     parentId,
     currencyId,
     operations,
@@ -143,6 +144,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
   return {
     type: "ChildAccount",
     id,
+    name,
     parentId,
     currency,
     address,
@@ -156,6 +158,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
 export function toChildAccountRaw(raw: ChildAccount): ChildAccountRaw {
   const {
     id,
+    name,
     parentId,
     currency,
     operations,
@@ -167,6 +170,7 @@ export function toChildAccountRaw(raw: ChildAccount): ChildAccountRaw {
   return {
     type: "ChildAccountRaw",
     id,
+    name,
     parentId,
     address,
     capabilities,

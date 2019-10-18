@@ -50,11 +50,10 @@ export const getAccountUnit = (account: AccountLike): Unit => {
 export const getAccountName = (account: AccountLike): string => {
   switch (account.type) {
     case "Account":
+    case "ChildAccount":
       return account.name;
     case "TokenAccount":
       return account.token.name;
-    case "ChildAccount":
-      return account.currency.name;
     default:
       throw new Error("invalid account.type=" + account.type);
   }

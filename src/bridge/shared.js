@@ -1,5 +1,5 @@
 // @flow
-import { InvalidAddress } from "@ledgerhq/errors";
+import { RecipientRequired } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "../types";
 import { isValidRecipient } from "../libcore/isValidRecipient";
 import { makeLRUCache } from "../cache";
@@ -14,9 +14,7 @@ export const validateRecipient: (
   async (currency, recipient) => {
     if (!recipient) {
       return {
-        recipientError: new InvalidAddress("", {
-          currencyName: currency.name
-        }),
+        recipientError: new RecipientRequired(""),
         recipientWarning: null
       };
     }

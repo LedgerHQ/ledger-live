@@ -21,6 +21,7 @@ export type TokenAccount = {
 export type ChildAccount = {
   type: "ChildAccount",
   id: string,
+  name: string,
   // id of the parent account this token accuont belongs to
   parentId: string,
   currency: CryptoCurrency,
@@ -149,6 +150,7 @@ export type TokenAccountRaw = {
 export type ChildAccountRaw = {
   type: "ChildAccountRaw",
   id: string,
+  name: string,
   parentId: string,
   currencyId: string,
   address: string,
