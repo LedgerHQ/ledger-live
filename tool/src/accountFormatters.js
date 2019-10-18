@@ -3,7 +3,9 @@
 import { BigNumber } from "bignumber.js";
 import {
   toAccountRaw,
-  getAccountCurrency
+  getAccountCurrency,
+  getAccountName,
+  getAccountUnit
 } from "@ledgerhq/live-common/lib/account";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { getOperationAmountNumberWithInternals } from "@ledgerhq/live-common/lib/operation";
@@ -12,7 +14,7 @@ import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 
 // TODO move to live common
 const isSignificantAccount = acc =>
-  acc.balance.gt(10 ** (getAccountCurrency(acc).units[0].magnitude - 6));
+  acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
 
 const formatOp = unitByAccountId => {
   const format = (op, level = 0) => {
@@ -65,7 +67,7 @@ const cliFormat = (account, summaryOnly) => {
       formatOp(id => {
         if (account.id === id) return account.unit;
         const ta = subAccounts.find(a => a.id === id);
-        if (ta) return getAccountCurrency(ta).units[0];
+        if (ta) return getAccountUnit(ta);
         throw new Error("unexpected missing token account");
       })
     )
@@ -74,10 +76,12 @@ const cliFormat = (account, summaryOnly) => {
   const tokens = subAccounts
     .map(
       ta =>
-        "\n  TOKEN " +
-        getAccountCurrency(ta).name +
+        "\n  " +
+        ta.type +
+        " " +
+        getAccountName(ta) +
         ": " +
-        formatCurrencyUnit(getAccountCurrency(ta).units[0], ta.balance, {
+        formatCurrencyUnit(getAccountUnit(ta), ta.balance, {
           showCode: true,
           disableRounding: true
         }) +
