@@ -9,6 +9,7 @@ import type {
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { buildOperation } from "../../libcore/buildAccount/buildOperation";
 import { minimalOperationsBuilder } from "../../reconciliation";
+import { shortAddressPreview } from "../../account";
 
 const OperationOrderKey = {
   date: 0
@@ -56,6 +57,7 @@ async function buildOriginatedAccount({
   const originatedAccount: $Exact<ChildAccount> = {
     type: "ChildAccount",
     id,
+    name: shortAddressPreview(address),
     parentId: parentAccountId,
     currency,
     address,
