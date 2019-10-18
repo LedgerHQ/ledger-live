@@ -13,7 +13,8 @@ import {
   ETHAddressNonEIP,
   InvalidAddress,
   FeeRequired,
-  GasLessThanEstimate
+  GasLessThanEstimate,
+  RecipientRequired
 } from "@ledgerhq/errors";
 import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import {
@@ -497,7 +498,10 @@ const getTransactionStatus = (a, t) => {
   if (recipientWarning) {
     warnings.recipient = recipientWarning;
   }
-  if (!isRecipientValid(a.currency, t.recipient)) {
+
+  if (!t.recipient) {
+    errors.recipient = new RecipientRequired("");
+  } else if (!isRecipientValid(a.currency, t.recipient)) {
     errors.recipient = new InvalidAddress("", {
       currencyName: a.currency.name
     });

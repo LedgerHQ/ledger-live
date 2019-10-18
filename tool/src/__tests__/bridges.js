@@ -3,7 +3,7 @@
 import "babel-polyfill";
 import { BigNumber } from "bignumber.js";
 import { reduce } from "rxjs/operators";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import {
   fromAccountRaw,
   toAccountRaw,
@@ -226,7 +226,7 @@ all
             ...bridge.createTransaction(account)
           };
           let status = await bridge.getTransactionStatus(account, t);
-          expect(status.errors.recipient).toEqual(new InvalidAddress());
+          expect(status.errors.recipient).toEqual(new RecipientRequired());
         });
 
         test("invalid recipient have a recipientError", async () => {

@@ -1,6 +1,11 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
+import {
+  NotEnoughBalance,
+  RecipientRequired,
+  InvalidAddress,
+  FeeTooHigh
+} from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getEstimatedFees } from "../../../api/Fees"; // FIXME drop. not stable.
@@ -65,7 +70,9 @@ const getTransactionStatus = (a, t) => {
   }
 
   // Fill up recipient errors...
-  if (isInvalidRecipient(t.recipient)) {
+  if (!t.recipient) {
+    errors.recipient = new RecipientRequired("");
+  } else if (isInvalidRecipient(t.recipient)) {
     errors.recipient = new InvalidAddress("");
   }
 
