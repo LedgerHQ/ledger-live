@@ -119,8 +119,8 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 48
-        versionName "1.6.0"
+        versionCode 49
+        versionName "1.6.1"
         resValue "string", "build_config_package", "com.ledger.live"
     }
     splits {
