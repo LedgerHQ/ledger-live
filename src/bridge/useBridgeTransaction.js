@@ -48,6 +48,21 @@ const initial: State = {
   errorStatus: null
 };
 
+const makeInit = (optionalInit: ?() => $Shape<State>) => (): State => {
+  let s = initial;
+  if (optionalInit) {
+    const patch = optionalInit();
+    const { account, parentAccount, transaction } = patch;
+    if (account) {
+      s = reducer(s, { type: "setAccount", account, parentAccount });
+    }
+    if (transaction) {
+      s = reducer(s, { type: "setTransaction", transaction });
+    }
+  }
+  return s;
+};
+
 const reducer = (s, a) => {
   switch (a.type) {
     case "setAccount":
@@ -103,7 +118,7 @@ const reducer = (s, a) => {
   }
 };
 
-export default (): Result => {
+const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
   const [
     {
       account,
@@ -115,7 +130,7 @@ export default (): Result => {
       errorStatus
     },
     dispatch
-  ] = useReducer(reducer, initial);
+  ] = useReducer(reducer, undefined, makeInit(optionalInit));
 
   const setAccount = useCallback(
     (account, parentAccount) =>
@@ -182,3 +197,5 @@ export default (): Result => {
     bridgePending: transaction !== statusOnTransaction
   };
 };
+
+export default useBridgeTransaction;
