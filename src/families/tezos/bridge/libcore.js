@@ -42,8 +42,6 @@ export const estimateGasLimitAndStorage: EstimateGasLimitAndStorage = makeLRUCac
 
 const calculateFees = makeLRUCache(
   async (a, t) => {
-    const { recipientError } = await validateRecipient(a.currency, t.recipient);
-    if (recipientError) throw recipientError;
     return getFeesForTransaction({
       account: a,
       transaction: t
@@ -87,10 +85,27 @@ const getTransactionStatus = async (a, t) => {
     : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
   const account = subAcc || a;
 
+  if (account.freshAddress === t.recipient) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  } else {
+    const { recipientError, recipientWarning } = await validateRecipient(
+      a.currency,
+      t.recipient
+    );
+
+    if (recipientError) {
+      errors.recipient = recipientError;
+    }
+
+    if (recipientWarning) {
+      warnings.recipient = recipientWarning;
+    }
+  }
+
   let estimatedFees = BigNumber(0);
   if (!t.fees) {
     errors.fees = new FeeNotLoaded();
-  } else {
+  } else if (!errors.recipient) {
     await calculateFees(a, t).then(
       f => {
         estimatedFees = f;
@@ -115,23 +130,6 @@ const getTransactionStatus = async (a, t) => {
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
-  }
-
-  if (account.freshAddress === t.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else {
-    const { recipientError, recipientWarning } = await validateRecipient(
-      a.currency,
-      t.recipient
-    );
-
-    if (recipientError) {
-      errors.recipient = recipientError;
-    }
-
-    if (recipientWarning) {
-      warnings.recipient = recipientWarning;
-    }
   }
 
   return Promise.resolve({
