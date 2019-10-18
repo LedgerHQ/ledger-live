@@ -3,10 +3,14 @@ import shuffle from "lodash/shuffle";
 import icons from "./icons/react";
 import partners from ".";
 
-const out: Array<{
+type PartnerList = Array<{
   Logo: React$ComponentType<*>,
   id: string,
   url: string
-}> = shuffle(partners.map(({ id, url }) => ({ Logo: icons[id], id, url })));
+}>
+
+const shuffledPartners = shuffle(partners);
+
+const out: boolean => PartnerList = (dark = false) => shuffledPartners.map(({ id, url }) => ({ Logo: dark ? icons[`${id}Dark`] : icons[id], id, url }));
 
 export default out;
