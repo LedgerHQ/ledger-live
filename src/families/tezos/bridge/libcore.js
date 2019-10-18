@@ -137,8 +137,7 @@ const getTransactionStatus = async (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent,
-    recipientIsReadOnly: !!t.subAccountId
+    totalSpent
   });
 };
 

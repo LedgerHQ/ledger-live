@@ -16,7 +16,8 @@ import {
   FeeTooHigh,
   NetworkDown,
   InvalidAddressBecauseDestinationIsAlsoSource,
-  FeeRequired
+  FeeRequired,
+  RecipientRequired
 } from "@ledgerhq/errors";
 import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import type { Account, Operation } from "../../../types";
@@ -680,7 +681,9 @@ const getTransactionStatus = async (a, t) => {
     });
   }
 
-  if (a.freshAddress === t.recipient) {
+  if (!t.recipient) {
+    errors.recipient = new RecipientRequired("");
+  } else if (a.freshAddress === t.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else {
     try {
