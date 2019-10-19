@@ -16,6 +16,7 @@ export type InstalledItem = {
 export type ListAppsResult = {
   appByName: { [_: string]: ApplicationVersion },
   apps: ApplicationVersion[],
+  installedAvailable: boolean,
   installed: Array<InstalledItem>,
   deviceInfo: DeviceInfo
 };
@@ -24,6 +25,7 @@ export type State = {
   deviceInfo: DeviceInfo,
   appByName: { [_: string]: ApplicationVersion },
   apps: ApplicationVersion[],
+  installedAvailable: boolean,
   installed: Array<{
     name: string,
     updated: boolean

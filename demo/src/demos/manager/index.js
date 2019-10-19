@@ -107,7 +107,15 @@ const InstalledApp = ({
   );
 };
 
-const AppItem = ({ app, installed, scheduled, dispatch, progress, error }) => {
+const AppItem = ({
+  app,
+  installed,
+  installedAvailable,
+  scheduled,
+  dispatch,
+  progress,
+  error
+}) => {
   const { name } = app;
   const onInstall = useCallback(() => dispatch({ type: "install", name }), [
     dispatch,
@@ -147,11 +155,12 @@ const AppItem = ({ app, installed, scheduled, dispatch, progress, error }) => {
         </div>
       ) : (
         <div>
-          {installed ? (
+          {installed || !installedAvailable ? (
             <button onClick={onUninstall}>uninstall</button>
-          ) : (
+          ) : null}
+          {!installed || !installedAvailable ? (
             <button onClick={onInstall}>install</button>
-          )}
+          ) : null}
         </div>
       )}
     </div>
@@ -192,6 +201,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
               name={name}
               updated={updated}
               dispatch={dispatch}
+              installedAvailable={state.installedAvailable}
             />
           ))}
         </div>
@@ -214,6 +224,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
               }
               installed={state.installed.find(ins => ins.name === app.name)}
               dispatch={dispatch}
+              installedAvailable={state.installedAvailable}
             />
           ))}
         </div>

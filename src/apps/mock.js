@@ -91,7 +91,8 @@ export function mockListAppsResult(
     apps,
     appByName,
     deviceInfo,
-    installed
+    installed,
+    installedAvailable: true
   };
 }
 

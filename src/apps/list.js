@@ -26,17 +26,20 @@ export const listApps = async (
     return Promise.resolve({
       appByName: {},
       apps: [],
+      installedAvailable: false,
       installed: [],
       deviceInfo
     });
   }
 
-  const installedP = listInstalledApps(transport, deviceInfo).catch(e => {
-    log("hw", "failed to get installed apps: " + String(e) + "\n" + e.stack);
-    return [];
-    // FIXME should we show to user the error
-    // firmware 1.2 works with listing apps?
-  });
+  const installedP: Promise<
+    [{ name: string, hash: string }[], boolean]
+  > = listInstalledApps(transport, deviceInfo)
+    .then(apps => [apps, true])
+    .catch(e => {
+      log("hw", "failed to get installed apps: " + String(e) + "\n" + e.stack);
+      return [[], false];
+    });
 
   const deviceVersionP = ManagerAPI.getDeviceVersion(
     deviceInfo.targetId,
@@ -63,7 +66,7 @@ export const listApps = async (
   );
 
   const [
-    installedList,
+    [installedList, installedAvailable],
     applicationsList,
     compatibleAppVersionsList,
     sortedCryptoCurrencies
@@ -119,5 +122,5 @@ export const listApps = async (
     appByName[app.name] = app;
   });
 
-  return { appByName, apps, installed, deviceInfo };
+  return { appByName, apps, installed, deviceInfo, installedAvailable };
 };
