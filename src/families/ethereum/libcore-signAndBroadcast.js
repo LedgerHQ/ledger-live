@@ -32,13 +32,14 @@ async function ethereum({
   const gasLimit = await libcoreAmountToBigNumber(await builded.getGasLimit());
   const fee = gasPrice.times(gasLimit);
   const transactionSequenceNumber = await builded.getNonce();
+  const { subAccountId } = transaction;
 
   const op: $Exact<Operation> = {
     id: `${accountId}-${txHash}-OUT`,
     hash: txHash,
     transactionSequenceNumber,
     type: "OUT",
-    value: transaction.subAccountId
+    value: subAccountId
       ? fee
       : transaction.useAllAmount
       ? balance
@@ -53,7 +54,6 @@ async function ethereum({
     extra: {}
   };
 
-  const { subAccountId } = transaction;
   if (subAccountId) {
     const subAccount = (subAccounts || []).find(a => a.id === subAccountId);
     op.subOperations = [

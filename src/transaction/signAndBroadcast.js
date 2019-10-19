@@ -29,7 +29,7 @@ export const toSignAndBroadcastEventRaw = (
     case "broadcasted":
       return {
         type: "broadcasted",
-        operation: toOperationRaw(e.operation)
+        operation: toOperationRaw(e.operation, true)
       };
     default:
       return e;
