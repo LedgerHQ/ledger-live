@@ -26,6 +26,9 @@ type GroupOpsByDayOpts = {
   withSubAccounts?: boolean
 };
 
+const hasStableOperation = (account, hash) =>
+  account.operations.some(op => op.hash === hash);
+
 /**
  * @memberof account
  */
@@ -55,8 +58,13 @@ export function groupAccountsOperationsByDay(
       // look in pending operations
       const opP = account.pendingOperations[indexesPending[i]];
       if (opP && (!bestOp || opP.date > bestOp.date)) {
-        bestOp = opP;
-        bestOpInfo = { accountI: i, fromPending: true };
+        if (hasStableOperation(account, opP.hash)) {
+          // DEDUP: operation has landed in operations, we will not append pendingOperations but just increment
+          indexesPending[i]++;
+        } else {
+          bestOp = opP;
+          bestOpInfo = { accountI: i, fromPending: true };
+        }
       }
     }
     if (bestOp) {
