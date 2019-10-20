@@ -170,7 +170,7 @@ export const reducer = (state: State, action: Action): State => {
       }
       const existing = state.installed.find(app => app.name === name);
 
-      if (existing && existing.updated) {
+      if (existing && existing.updated && state.installedAvailable) {
         // already installed and up to date
         return state;
       }
@@ -184,25 +184,30 @@ export const reducer = (state: State, action: Action): State => {
         u => name !== u && u !== dep
       );
 
-      // if app is already installed but outdated, we'll need to update related deps
-      if (
-        (existing && !existing.updated) ||
-        (depInstall && !depInstall.updated)
-      ) {
-        const outdated = state.installed
-          .filter(
-            a =>
-              !a.updated &&
-              [name, dep, ...getDependencies(dep)].includes(a.name)
-          )
-          .map(a => a.name);
-        uninstallList = uninstallList.concat(outdated);
-        installList = installList.concat(outdated);
-      }
+      if (state.uninstallQueue.length !== uninstallList.length) {
+        // app was asked for uninstall so it means we need to just cancel.
+        // TODO cover this in tests...
+      } else {
+        // if app is already installed but outdated, we'll need to update related deps
+        if (
+          (existing && !existing.updated) ||
+          (depInstall && !depInstall.updated)
+        ) {
+          const outdated = state.installed
+            .filter(
+              a =>
+                !a.updated &&
+                [name, dep, ...getDependencies(dep)].includes(a.name)
+            )
+            .map(a => a.name);
+          uninstallList = uninstallList.concat(outdated);
+          installList = installList.concat(outdated);
+        }
 
-      installList = installList.concat(
-        dep && !depInstall ? [dep, name] : [name]
-      );
+        installList = installList.concat(
+          dep && !depInstall ? [dep, name] : [name]
+        );
+      }
 
       const installQueue = reorderInstallQueue(installList);
       const uninstallQueue = reorderUninstallQueue(uninstallList);
@@ -228,7 +233,13 @@ export const reducer = (state: State, action: Action): State => {
       );
 
       let uninstallQueue = state.uninstallQueue;
-      if (state.installed.some(a => a.name === name) || action.force) {
+      if (
+        state.installed.some(a => a.name === name) ||
+        action.force ||
+        // if installed unavailable and it was not a cancellation
+        // TODO cover this in tests...
+        (!state.installedAvailable && !state.installQueue.includes(name))
+      ) {
         uninstallQueue = reorderUninstallQueue(
           uninstallQueue.concat([
             ...getDependencies(name).filter(d =>

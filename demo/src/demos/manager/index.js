@@ -12,100 +12,87 @@ import {
 } from "@ledgerhq/live-common/lib/apps";
 import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
 
-const CryptoName = styled.div`
-  padding: 6px;
-  font-size: 12px;
-  font-weight: bold;
+const Container = styled.div`
+  width: 600px;
+  margin: 20px auto;
+  font-family: Inter, sans-serif;
 `;
 
-const AppPreview = ({ app }: *) => {
-  return (
-    <>
-      <img alt="" src={manager.getIconUrl(app.icon)} width={40} height={40} />
-      <CryptoName>{`${app.name} ${app.version}`}</CryptoName>
-    </>
-  );
-};
+const AppRow = styled.div`
+  display: flex;
+  flex-sirection: row;
+  align-items: center;
+  &:not(:last-child) {
+    border-bottom: 1px solid #eee;
+  }
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  font-size: 12px;
+`;
 
-const ConnectDevice = ({
-  onConnect,
-  loading
-}: {
-  onConnect: (*) => *,
-  loading?: boolean
-}) => {
-  const onClick = useCallback(
-    async e => {
-      const transport = await open(e.target.name);
-      await onConnect(transport);
-    },
-    [onConnect]
-  );
-  return (
-    <div>
-      <h1>Please connect your device</h1>
-      {loading ? (
-        "loading..."
-      ) : (
-        <div>
-          <button name="webusb" onClick={onClick}>
-            CONNECT webusb
-          </button>
-          <button name="webble" onClick={onClick}>
-            CONNECT webble
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
+const AppName = styled.div`
+  flex-direction: column;
+  padding-left: 10px;
+  flex: 1;
+`;
 
-const InstalledApp = ({
-  name,
-  updated,
-  scheduled,
-  dispatch,
-  progress,
-  error
-}) => {
-  const onInstall = useCallback(() => dispatch({ type: "install", name }), [
-    dispatch,
-    name
-  ]);
-  const onUninstall = useCallback(() => dispatch({ type: "uninstall", name }), [
-    dispatch,
-    name
-  ]);
-  return (
-    <div style={{ padding: 5 }}>
-      <strong>{name}</strong>
-      {error ? <em style={{ color: "red" }}>{String(error)}</em> : null}
-      {progress || scheduled ? (
-        <div>
-          {progress ? (
-            <progress value={progress.progress} />
-          ) : (
-            <progress style={{ opacity: 0.3 }} />
-          )}
-          <button
-            onClick={
-              (progress ? progress.appOp : scheduled).type === "install"
-                ? onUninstall
-                : onInstall
-            }
-          >
-            x
-          </button>
-        </div>
-      ) : (
-        <div>
-          {updated ? null : <button onClick={onInstall}>update</button>}
-          <button onClick={onUninstall}>uninstall</button>
-        </div>
-      )}
-    </div>
-  );
-};
+const CryptoName = styled.div`
+  font-weight: bold;
+  padding: 2px 0;
+`;
+
+const CryptoVersion = styled.div`
+  color: #999;
+  padding: 2px 0;
+`;
+
+const AppActions = styled.div`
+  > *:not(:last-child) {
+    margin-right: 10px;
+  }
+`;
+
+const Progress = ({ value }) => (
+  <div
+    style={{
+      width: 90,
+      height: 5,
+      background: "#E6E6E6",
+      position: "relative",
+      borderRadius: 5
+    }}
+  >
+    <div
+      style={{
+        position: "absolute",
+        background: "#6490F1",
+        height: "100%",
+        borderRadius: 5,
+        width: (value * 100).toFixed(2) + "%"
+      }}
+    />
+  </div>
+);
+
+const Button = styled.button`
+  padding: 12px 16px;
+  border: none;
+  background: ${p =>
+    p.danger
+      ? "#FF483820"
+      : p.primary
+      ? "#6490F1"
+      : "rgba(100, 144, 241, 0.1)"};
+  color: ${p => (p.danger ? "#FF4838" : p.primary ? "#fff" : "#6490F1")};
+  border-radius: 4px;
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const AppPreview = ({ app }: *) => (
+  <img alt="" src={manager.getIconUrl(app.icon)} width={40} height={40} />
+);
 
 const AppItem = ({
   app,
@@ -126,44 +113,58 @@ const AppItem = ({
     name
   ]);
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 5
-      }}
-    >
+    <AppRow>
       <AppPreview app={app} />
-      {error ? <em style={{ color: "red" }}>{String(error)}</em> : null}
-      {progress || scheduled ? (
-        <div>
+      <AppName>
+        <CryptoName>{`${app.name}${
+          app.currency ? ` (${app.currency.ticker})` : ""
+        }`}</CryptoName>
+        <CryptoVersion>{`Version ${app.version}`}</CryptoVersion>
+      </AppName>
+      {error ? (
+        <Button danger style={{ color: "red" }} title={String(error)}>
+          !
+        </Button>
+      ) : progress || scheduled ? (
+        <div style={{ textAlign: "right" }}>
           {progress ? (
-            <progress value={progress.progress} />
+            <div style={{ color: "#6490F1", marginBottom: 5 }}>Updating...</div>
           ) : (
-            <progress style={{ opacity: 0.3 }} />
+            <div
+              style={{
+                display: "inline-block",
+                marginBottom: 5,
+                opacity: 0.5,
+                cursor: "pointer"
+              }}
+              onClick={
+                (progress ? progress.appOp : scheduled).type === "install"
+                  ? onUninstall
+                  : onInstall
+              }
+            >
+              Cancel
+            </div>
           )}
-          <button
-            onClick={
-              (progress ? progress.appOp : scheduled).type === "install"
-                ? onUninstall
-                : onInstall
-            }
-          >
-            x
-          </button>
+          <Progress value={progress ? progress.progress : 0} />
         </div>
       ) : (
-        <div>
+        <AppActions>
           {installed || !installedAvailable ? (
-            <button onClick={onUninstall}>uninstall</button>
+            <Button danger onClick={onUninstall}>
+              Uninstall
+            </Button>
           ) : null}
-          {!installed || !installedAvailable ? (
-            <button onClick={onInstall}>install</button>
+          {installed && !installed.updated ? (
+            <Button primary onClick={onInstall}>
+              Update
+            </Button>
+          ) : !installed ? (
+            <Button onClick={onInstall}>Install</Button>
           ) : null}
-        </div>
+        </AppActions>
       )}
-    </div>
+    </AppRow>
   );
 };
 
@@ -176,60 +177,97 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
   ]);
   const plan = getActionPlan(state);
 
+  // eslint-disable-next-line no-console
+  console.log(state);
+
+  const mapApp = useCallback(
+    app => (
+      <AppItem
+        scheduled={plan.find(a => a.name === app.name)}
+        app={app}
+        progress={
+          currentProgress && currentProgress.appOp.name === app.name
+            ? currentProgress
+            : null
+        }
+        error={
+          currentError && currentError.appOp.name === app.name
+            ? currentError.error
+            : null
+        }
+        installed={state.installed.find(ins => ins.name === app.name)}
+        dispatch={dispatch}
+        installedAvailable={state.installedAvailable}
+      />
+    ),
+    [state]
+  );
+
+  const installedApps = state.installed
+    .map(i => state.apps.find(a => a.name === i.name))
+    .filter(Boolean);
+  const nonInstalledApps = state.apps.filter(a => !installedApps.includes(a));
+
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <div style={{ width: 300 }}>
-        <div>Firmware {deviceInfo.version}</div>
-        <div>{prettyActionPlan(plan)}</div>
-        <div>
-          <button onClick={onUpdateAll}>UPDATE ALL</button>
-        </div>
-        <div>
-          {state.installed.map(({ name, updated }) => (
-            <InstalledApp
-              scheduled={plan.find(a => a.name === name)}
-              progress={
-                currentProgress && currentProgress.appOp.name === name
-                  ? currentProgress
-                  : null
-              }
-              error={
-                currentError && currentError.appOp.name === name
-                  ? currentError.error
-                  : null
-              }
-              name={name}
-              updated={updated}
-              dispatch={dispatch}
-              installedAvailable={state.installedAvailable}
-            />
-          ))}
-        </div>
+    <Container>
+      <div>Firmware {deviceInfo.version}</div>
+
+      <h2>
+        {"On Device "}
+        <Button onClick={onUpdateAll}>Update all</Button>
+      </h2>
+
+      {!state.installedAvailable ? (
+        <div style={{ color: "red" }}>HSM list apps not available!!</div>
+      ) : null}
+
+      <div>
+        {installedApps.length
+          ? installedApps.map(mapApp)
+          : "No apps installed."}
       </div>
-      <div style={{ flex: 1 }}>
-        <div>
-          {state.apps.map(app => (
-            <AppItem
-              scheduled={plan.find(a => a.name === app.name)}
-              app={app}
-              progress={
-                currentProgress && currentProgress.appOp.name === app.name
-                  ? currentProgress
-                  : null
-              }
-              error={
-                currentError && currentError.appOp.name === app.name
-                  ? currentError.error
-                  : null
-              }
-              installed={state.installed.find(ins => ins.name === app.name)}
-              dispatch={dispatch}
-              installedAvailable={state.installedAvailable}
-            />
-          ))}
-        </div>
+
+      <div style={{ fontSize: "10px", opacity: 0.3 }}>
+        {prettyActionPlan(plan)}
       </div>
-    </div>
+
+      <h2>Apps Store</h2>
+
+      <div>{nonInstalledApps.map(mapApp)}</div>
+    </Container>
+  );
+};
+
+const ConnectDevice = ({
+  onConnect,
+  loading
+}: {
+  onConnect: (*) => *,
+  loading?: boolean
+}) => {
+  const onClick = useCallback(
+    async e => {
+      const transport = await open(e.target.name);
+      await onConnect(transport);
+    },
+    [onConnect]
+  );
+  return (
+    <Container>
+      <h1>Please connect your device</h1>
+      {loading ? (
+        "loading..."
+      ) : (
+        <AppActions>
+          <Button primary name="webusb" onClick={onClick}>
+            USB
+          </Button>
+          <Button name="webble" onClick={onClick}>
+            Bluetooth
+          </Button>
+        </AppActions>
+      )}
+    </Container>
   );
 };
 
