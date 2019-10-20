@@ -1665,10 +1665,10 @@
     "@ledgerhq/errors" "^4.72.2"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^8.0.0-alpha.13":
-  version "8.0.0-alpha.13"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.0.0-alpha.13.tgz#d06a2334899bf4f6fa18691b82be567124a5e0bc"
-  integrity sha512-lRP8TaWFBuZKPvN7t76Cvqle5/muds8Xa/zC07H5ILMLiCtDFoTBjsXB9iwfk1Py8O28sumrQoTavLqZ6OFF8w==
+"@ledgerhq/live-common@^8.0.0-alpha.14":
+  version "8.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.0.0-alpha.14.tgz#d7a8b67232644bc2f8ed7fb71feff8bd93509e16"
+  integrity sha512-A4tSNIOo18idLj5BBBafPJGlxfRlm0V5yPT8+szG9lzzdcFm1qP3TT5BhSCuKGXIAr0iZUzPqJ4R9ZHkZAqFOA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/errors" "4.72.2"

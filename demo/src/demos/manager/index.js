@@ -180,27 +180,24 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
   // eslint-disable-next-line no-console
   console.log(state);
 
-  const mapApp = useCallback(
-    app => (
-      <AppItem
-        scheduled={plan.find(a => a.name === app.name)}
-        app={app}
-        progress={
-          currentProgress && currentProgress.appOp.name === app.name
-            ? currentProgress
-            : null
-        }
-        error={
-          currentError && currentError.appOp.name === app.name
-            ? currentError.error
-            : null
-        }
-        installed={state.installed.find(ins => ins.name === app.name)}
-        dispatch={dispatch}
-        installedAvailable={state.installedAvailable}
-      />
-    ),
-    [state]
+  const mapApp = app => (
+    <AppItem
+      scheduled={plan.find(a => a.name === app.name)}
+      app={app}
+      progress={
+        currentProgress && currentProgress.appOp.name === app.name
+          ? currentProgress
+          : null
+      }
+      error={
+        currentError && currentError.appOp.name === app.name
+          ? currentError.error
+          : null
+      }
+      installed={state.installed.find(ins => ins.name === app.name)}
+      dispatch={dispatch}
+      installedAvailable={state.installedAvailable}
+    />
   );
 
   const installedApps = state.installed

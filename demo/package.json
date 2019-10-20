@@ -7,7 +7,7 @@
     "@ledgerhq/hw-transport-u2f": "^4.72.2",
     "@ledgerhq/hw-transport-web-ble": "^4.72.2",
     "@ledgerhq/hw-transport-webusb": "^4.72.2",
-    "@ledgerhq/live-common": "^8.0.0-alpha.13",
+    "@ledgerhq/live-common": "^8.0.0-alpha.14",
     "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^9.0.0",
