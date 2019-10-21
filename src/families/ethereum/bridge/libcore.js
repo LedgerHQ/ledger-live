@@ -5,8 +5,7 @@ import {
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
-  GasLessThanEstimate,
-  InvalidAddressBecauseDestinationIsAlsoSource
+  GasLessThanEstimate
 } from "@ledgerhq/errors";
 import type { Account, AccountLike } from "../../../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
@@ -95,10 +94,6 @@ const getTransactionStatus = async (a, t) => {
     warnings.recipient = recipientWarning;
   }
 
-  if (tokenAccount && a.freshAddress === t.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  }
-
   let estimatedFees = BigNumber(0);
   const gasLimit = getGasLimit(t);
 
@@ -137,7 +132,7 @@ const getTransactionStatus = async (a, t) => {
       : account.balance.minus(estimatedFees)
     : BigNumber(t.amount || 0);
 
-  if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+  if (!tokenAccount && amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
