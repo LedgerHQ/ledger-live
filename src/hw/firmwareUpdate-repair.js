@@ -82,6 +82,8 @@ const repair = (
             return installMcu("1.6");
           case "0.9":
             return installMcu("1.7");
+          case "0.11":
+            return installMcu("1.11");
           default:
             return empty();
         }
