@@ -213,6 +213,24 @@ test("0.9 bootloader", async () => {
   });
 });
 
+test("0.11 bootloader", async () => {
+  const Transport = createTransportReplayer(
+    RecordStore.fromString(`
+    => e001000000
+    <= 0100000104302e3131080030009000
+    `)
+  );
+  const t = await Transport.create();
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    isBootloader: true,
+    isOSU: false,
+    majMin: "0.11",
+    version: "0.11",
+    mcuVersion: ""
+  });
+});
+
 test("0.0 bootloader", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
