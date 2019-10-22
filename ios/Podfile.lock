@@ -1,6 +1,7 @@
 PODS:
   - Analytics (3.7.0)
   - boost-for-react-native (1.63.0)
+  - djinni_objc (3.3.4)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.61.2)
   - FBReactNativeSpec (0.61.2):
@@ -20,8 +21,8 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - ledgerhq-react-native-ledger-core (3.3.0):
-    - React
+  - ledger-core-objc (3.3.4):
+    - djinni_objc
   - lottie-ios (3.1.3)
   - lottie-react-native (3.2.1):
     - lottie-ios (~> 3.1.3)
@@ -195,13 +196,13 @@ PODS:
     - React
     - react-native-ble-plx-swift
   - react-native-ble-plx-swift (1.1.0)
-  - react-native-camera (1.9.2):
+  - react-native-camera (3.7.2):
     - React
-    - react-native-camera/RCT (= 1.9.2)
-    - react-native-camera/RN (= 1.9.2)
-  - react-native-camera/RCT (1.9.2):
+    - react-native-camera/RCT (= 3.7.2)
+    - react-native-camera/RN (= 3.7.2)
+  - react-native-camera/RCT (3.7.2):
     - React
-  - react-native-camera/RN (1.9.2):
+  - react-native-camera/RN (3.7.2):
     - React
   - react-native-config (0.11.7):
     - React
@@ -258,6 +259,9 @@ PODS:
   - RNGestureHandler (1.4.1):
     - React
   - RNKeychain (3.1.3):
+    - React
+  - RNLibLedgerCore (3.3.4):
+    - ledger-core-objc
     - React
   - RNScreens (1.0.0-alpha.22):
     - React
@@ -430,12 +434,13 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Analytics: 77fd5fb102a4a5eedafa2c2b0245ceb7b7c15e45
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  djinni_objc: 98d3d73012b26f58e8a870ffdc18b80a2f57a5a8
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: 68b6a76960fbd8ecd9fb7ce0aadd3329c3340a99
   FBReactNativeSpec: 5a764c60abdc3336a213e5310c40b74741f32839
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  ledgerhq-react-native-ledger-core: e75c3999b7a3702040ceddbdc6d9af913ae01873
+  ledger-core-objc: b97129d757e3e0c52007d06a16e3ffda49df71a2
   lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   lottie-react-native: b123a79529cc732201091f585c62c89bb4747252
   PasscodeAuth: 667f2bfb0e78f652c11db4793d8077c189ce300e
@@ -450,7 +455,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 111d7d342b07a904c400592e02a2b958f1098b60
   react-native-ble-plx: 05e16667ebf56cf802986379fd58a377847885e8
   react-native-ble-plx-swift: e0d041529bd7ae66eb9731123eca3df3d132e8ec
-  react-native-camera: 046f504650bf9a0a9ec9024107f555feaeca6671
+  react-native-camera: 92877108e4c4d1d5a3f1c6f8733f1877ab1e8c1a
   react-native-config: 55548054279d92e0e4566ea15a8b9b81028ec342
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: 6bb847e64f45a2d69c6173741111cfd95c669301
@@ -471,6 +476,7 @@ SPEC CHECKSUMS:
   RNAnalytics: 5c242b7f8117f108f5df71e96b908185db3fb4ee
   RNGestureHandler: 4cb47a93019c1a201df2644413a0a1569a51c8aa
   RNKeychain: c658833a9cb2cbcba6423bdd6e16cce59e27da0e
+  RNLibLedgerCore: 86fd2291da9228a5c71ce869b075fbb3ef965f8b
   RNScreens: 720a9e6968beb73e8196239801e887d8401f86ed
   RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
   RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0

@@ -8,23 +8,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.facebook.react.ReactFragmentActivity;
+import com.facebook.react.ReactActivity;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import android.util.Log;
-import android.os.Bundle;
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 import java.util.Locale;
 
 
-public class MainActivity extends ReactFragmentActivity {
+public class MainActivity extends ReactActivity {
 
     String importDataString = null;
     /**

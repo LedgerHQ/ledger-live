@@ -27,6 +27,9 @@ import com.android.build.OutputFile
  *   // the entry file for bundle generation
  *   entryFile: "index.android.js",
  *
+ *   // https://facebook.github.io/react-native/docs/performance#enable-the-ram-format
+ *   bundleCommand: "ram-bundle",
+ *
  *   // whether to bundle JS and assets in debug mode
  *   bundleInDebug: false,
  *
@@ -82,7 +85,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js"
+    entryFile: "index.js",
+    enableHermes: false,  // clean and rebuild if changing
 ]
 project.ext.sentryCli = [
     logLevel: "debug"
@@ -106,6 +110,28 @@ def enableSeparateBuildPerCPUArchitecture = true
  */
 def enableProguardInReleaseBuilds = false
 
+/**
+ * The preferred build flavor of JavaScriptCore.
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US.  Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = 'org.webkit:android-jsc-intl:+'
+
+/**
+ * Whether to enable the Hermes VM.
+ *
+ * This should be set on project.ext.react and mirrored here.  If it is not set
+ * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
+ * and the benefits of using Hermes will therefore be sharply reduced.
+ */
+def enableHermes = project.ext.react.get("enableHermes", false);
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -122,6 +148,7 @@ android {
         versionCode 53
         versionName "1.7.0"
         resValue "string", "build_config_package", "com.ledger.live"
+        missingDimensionStrategy 'react-native-camera', 'general'
     }
     splits {
         abi {
@@ -132,6 +159,12 @@ android {
         }
     }
     signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
         stagingRelease {
             if (project.hasProperty('STAGING_STORE_FILE')) {
                 storeFile file(STAGING_STORE_FILE)
@@ -142,6 +175,9 @@ android {
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
@@ -158,8 +194,8 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
-            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
+            // https://developer.android.com/studio/build/configure-apk-splits.html
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -176,27 +212,6 @@ android {
 }
 
 dependencies {
-    // Make sure to keep android-jsc as the first
-    implementation "org.webkit:android-jsc-intl:r241213"
-    implementation project(':@ledgerhq_react-native-touch-id')
-    implementation project(':react-native-vector-icons')
-    implementation project(':@react-native-community_netinfo')
-    implementation project(':lottie-react-native')
-    implementation project(':react-native-extra-dimensions-android')
-    implementation project(':@segment_analytics-react-native')
-    implementation project(':react-native-keychain')
-    implementation project(':react-native-android-location-services-dialog-box')
-    implementation project(':react-native-randombytes')
-    implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-open-settings')
-    implementation project(':react-native-screens')
-    implementation project(':react-native-config')
-    implementation project(':react-native-svg')
-    implementation project(':@ledgerhq_react-native-hid')
-    implementation project(':react-native-locale')
-    implementation project(':react-native-sentry')
-    implementation project(':react-native-splash-screen')
-    implementation project(':react-native-ble-plx')
     implementation (project(':react-native-camera')) {
         exclude group: "com.google.android.gms"
         implementation 'com.android.support:exifinterface:27.+'
@@ -204,11 +219,16 @@ dependencies {
             force = true
         }
     }
-    implementation project(':react-native-version-number')
-    implementation project(':react-native-ledger-core')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
+
+    if (enableHermes) {
+        def hermesPath = "../../node_modules/hermes-engine/android/";
+        debugImplementation files(hermesPath + "hermes-debug.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+        implementation jscFlavor
+    }
 }
 
 // Run this once to be able to run the application with BUCK
@@ -217,3 +237,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

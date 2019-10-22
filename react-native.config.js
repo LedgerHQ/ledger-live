@@ -1,10 +1,10 @@
 module.exports = {
-  // dependencies: {
-  //   "@ledgerhq/react-native-passcode-auth": {
-  //     platforms: {
-  //       ios: null,
-  //     },
-  //   },
-  // },
+  dependencies: {
+    "react-native-camera": {
+      platforms: {
+        android: null, // disable Android platform, other platforms will still autolink if provided
+      },
+    },
+  },
   assets: ["./assets/fonts/"],
 };
