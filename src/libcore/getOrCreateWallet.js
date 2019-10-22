@@ -23,7 +23,7 @@ export const getOrCreateWallet: F = atomicQueue(
 
     const config = await core.DynamicObject.newInstance();
 
-    const configExtra = getLibcoreConfig(derivationMode);
+    const configExtra = getLibcoreConfig(currency, derivationMode);
     if (configExtra) {
       for (let k in configExtra) {
         const v = configExtra[k];
