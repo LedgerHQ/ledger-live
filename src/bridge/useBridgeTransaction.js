@@ -130,6 +130,7 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
       errorStatus
     },
     dispatch
+    // $FlowFixMe for ledger-live-mobile older react/flow version
   ] = useReducer(reducer, undefined, makeInit(optionalInit));
 
   const setAccount = useCallback(

@@ -76,6 +76,7 @@ export const useAppsRunner = (
   listResult: ListAppsResult,
   exec: Exec
 ): UseAppsRunnerResult => {
+  // $FlowFixMe for ledger-live-mobile older react/flow version
   const [state, dispatch] = useReducer(reducer, null, () =>
     initState(listResult)
   );

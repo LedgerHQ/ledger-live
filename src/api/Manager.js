@@ -19,6 +19,7 @@ import { throwError, Observable } from "rxjs";
 import { catchError, map, filter } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
+import type { SocketEvent } from "./socket";
 import network from "../network";
 import { getEnv } from "../env";
 import type {
@@ -282,6 +283,47 @@ const install = (
   }).pipe(remapSocketError(context));
 };
 
+const aggregateGenuineCheckEvents = (
+  input: Observable<SocketEvent>
+): Observable<GenuineCheckEvent> =>
+  Observable.create(o => {
+    let timeout;
+    let requested;
+    const sub = input.subscribe({
+      complete: () => {
+        o.complete();
+      },
+      error: e => {
+        o.error(e);
+      },
+      next: e => {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
+        if (e.type === "result") {
+          o.next({ type: "result", payload: String(e.payload || "") });
+        } else if (e.nonce === 3) {
+          if (e.type === "exchange-before") {
+            timeout = setTimeout(() => {
+              o.next({ type: "allow-manager-requested" });
+              requested = true;
+            }, ALLOW_MANAGER_APDU_DEBOUNCE);
+          } else if (e.type === "exchange") {
+            if (e.status.toString("hex") === "6985") {
+              o.error(new UserRefusedAllowManager());
+              return;
+            }
+            if (requested) {
+              o.next({ type: "allow-manager-accepted" });
+            }
+          }
+        }
+      }
+    });
+    return sub;
+  });
+
 const genuineCheck = (
   transport: Transport<*>,
   { targetId, perso }: { targetId: *, perso: * }
@@ -293,45 +335,7 @@ const genuineCheck = (
       query: { targetId, perso, livecommonversion }
     })
     // $FlowFixMe
-  }).pipe(input =>
-    Observable.create(o => {
-      let timeout;
-      let requested;
-      const sub = input.subscribe({
-        complete: () => {
-          o.complete();
-        },
-        error: e => {
-          o.error(e);
-        },
-        next: e => {
-          if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-          }
-          if (e.type === "result") {
-            o.next({ type: e.type, payload: String(e.payload || "") });
-          } else if (e.nonce === 3) {
-            if (e.type === "exchange-before") {
-              timeout = setTimeout(() => {
-                o.next({ type: "allow-manager-requested" });
-                requested = true;
-              }, ALLOW_MANAGER_APDU_DEBOUNCE);
-            } else if (e.type === "exchange") {
-              if (e.status.toString("hex") === "6985") {
-                o.error(new UserRefusedAllowManager());
-                return;
-              }
-              if (requested) {
-                o.next({ type: "allow-manager-accepted" });
-              }
-            }
-          }
-        }
-      });
-      return sub;
-    })
-  );
+  }).pipe(aggregateGenuineCheckEvents);
 };
 
 const listInstalledApps = (
