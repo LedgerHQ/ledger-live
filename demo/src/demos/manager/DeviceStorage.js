@@ -1,7 +1,8 @@
 // @flow
-import React from 'react';
+import React from "react";
 import styled from "styled-components";
-import {findCryptoCurrencyById} from "@ledgerhq/live-common/lib/currencies";
+
+import type { AppsDistribution } from "./sizes";
 
 import nanoS from "./images/nanoS.png";
 import nanoX from "./images/nanoX.png";
@@ -11,99 +12,61 @@ const illustrations = {
   nanoS,
   nanoX,
   blue
-}
-
-const hackyData = [ // Assuming percentage :shrug:
-  {
-    app: "os",
-    size: 20
-  },
-  {
-    app: "bitcoin",
-    size: 10
-  },
-  {
-    app: "ethereum",
-    size: 10
-  },
-  {
-    app: "tezos",
-    size: 10
-  },
-  {
-    app: "stellar",
-    size: 10
-  },
-  {
-    app: "rest",
-    size: 40
-  }
-]
-
-const DeviceStorage = ({device})=> {
-  return <Block>
-    <DeviceIllustration device={device}/>
-    <ContentWrapper>
-      <StorageBar data={hackyData}/>
-    </ContentWrapper>
-  </Block>
 };
 
-/**
- *
- * @param data that somehow includes the size of the installed apps
- */
-const StorageBar = ({data})=>{
-  return <StorageBarWrapper>
-    {data.map(({app, size})=>{
-      const currency = findCryptoCurrencyById(app)
-      const color = currency?currency.color:undefined
-      return <StorageBarItem size={size} color={color}/>
+export const DeviceIllustration = styled.img.attrs(p => ({
+  src: illustrations[p.deviceModel.id]
+}))`
+  max-height: 200px;
+`;
+
+export const StorageBar = ({
+  distribution
+}: {
+  distribution: AppsDistribution
+}) => (
+  <StorageBarWrapper>
+    <StorageBarItem ratio={distribution.osBlocks / distribution.totalBlocks} />
+    {distribution.apps.map(({ name, currency, blocks }) => {
+      const color = currency ? currency.color : "black"; // unknown color?
+      return (
+        <StorageBarItem
+          key={name}
+          style={{ background: color }}
+          ratio={blocks / distribution.totalBlocks}
+        />
+      );
     })}
   </StorageBarWrapper>
-}
-export const Block = styled.div`
-  display:flex;
-  flex-direction:row;
-`
+);
+
 export const StorageBarWrapper = styled.div`
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  border-radius:3px;
-  height:23px;
-`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border-radius: 3px;
+  height: 23px;
+  background: #f3f3f3;
+  overflow: hidden;
+`;
 // Dont judge me
-export const StorageBarItem = styled.div`
-  display:flex;
-  ${p=>p.color?`background:${p.color}`:'background-image:linear-gradient(-45deg, #6490f1 16.67%, #ffffff 16.67%, #ffffff 50%, #6490f1 50%, #6490f1 66.67%, #ffffff 66.67%, #ffffff 100%)'};
-  background-size:8.49px 8.49px;
-  width:${p=>p.size}%;
-  border-left:1px solid transparent;
-  border-right:1px solid transparent;
-  background-clip: content-box;
-  &:first-of-type{
-    border-left:none;
-    border-top-left-radius:5px;
-    border-bottom-left-radius:5px;
-  }
-  &:last-of-type{
-    border-right:none;
-    border-top-right-radius:5px;
-    border-bottom-right-radius:5px;
-    background:#ddd;
-  }
-`
-
-export const DeviceIllustration = styled.img.attrs((p) => ({
-  src: illustrations[p.device.id]
+export const StorageBarItem = styled.div.attrs(props => ({
+  width: `${(props.ratio * 100).toFixed(3)}%`
 }))`
-    max-height:200px;
-`
-
-export const ContentWrapper = styled.div`
-  padding:20px;
-  flex:1;
-`
-
-export default DeviceStorage;
+  display: flex;
+  background: linear-gradient(
+    -45deg,
+    #6490f1 16.67%,
+    #ffffff 16.67%,
+    #ffffff 50%,
+    #6490f1 50%,
+    #6490f1 66.67%,
+    #ffffff 66.67%,
+    #ffffff 100%
+  );
+  background-size: 8.49px 8.49px;
+  width: ${p => p.width};
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  background-clip: content-box;
+`;

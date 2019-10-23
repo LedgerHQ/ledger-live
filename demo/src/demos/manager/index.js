@@ -12,7 +12,8 @@ import {
   getActionPlan
 } from "@ledgerhq/live-common/lib/apps";
 import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
-import DeviceStorage from "./DeviceStorage";
+import { StorageBar, DeviceIllustration } from "./DeviceStorage";
+import { distribute } from "./sizes";
 
 const Container = styled.div`
   width: 600px;
@@ -209,12 +210,24 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     .map(i => state.apps.find(a => a.name === i.name))
     .filter(Boolean);
   const nonInstalledApps = state.apps.filter(a => !installedApps.includes(a));
-console.log({installedApps})
+
+  // TODO HACK we need installedApps to actually hodl the bytes info
+  const apps = installedApps.map(a => state.appByName[a.name]).filter(Boolean);
+
+  const distribution = distribute({ deviceModel, deviceInfo, apps });
+
   return (
     <Container>
-      <div>{deviceModel.productName}</div>
-      <div>Firmware {deviceInfo.version}</div>
-      <DeviceStorage device={deviceModel}/>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <DeviceIllustration deviceModel={deviceModel} />
+        <div style={{ flex: 1, paddingLeft: 20 }}>
+          <div style={{ marginBottom: 10 }}>
+            <strong>{deviceModel.productName}</strong>
+          </div>
+          <div style={{ marginBottom: 20 }}>Firmware {deviceInfo.version}</div>
+          <StorageBar distribution={distribution} />
+        </div>
+      </div>
       <h2>
         {"On Device "}
         <Button onClick={onUpdateAll}>Update all</Button>
