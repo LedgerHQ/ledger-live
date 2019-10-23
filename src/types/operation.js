@@ -2,7 +2,13 @@
 
 import type { BigNumber } from "bignumber.js";
 
-export type OperationType = "IN" | "OUT" | "NONE";
+export type OperationType =
+  | "IN"
+  | "OUT"
+  | "NONE"
+  | "CREATE"
+  | "REVEAL"
+  | "DELEGATE";
 
 export type Operation = {
   // unique identifier (usually hash)

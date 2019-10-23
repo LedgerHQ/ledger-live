@@ -1,6 +1,15 @@
 // @flow
-import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
-import type { Account, CryptoCurrency, DerivationMode } from "../types";
+import {
+  AccountNotSupported,
+  CurrencyNotSupported,
+  UnavailableTezosOriginatedAccountReceive
+} from "@ledgerhq/errors";
+import type {
+  Account,
+  AccountLike,
+  CryptoCurrency,
+  DerivationMode
+} from "../types";
 import { getEnv } from "../env";
 import { decodeAccountId } from "./accountId";
 import {
@@ -28,6 +37,15 @@ export const shouldShowNewAccount = (
   // native segwit being not yet supported everywhere, segwit is always available for creation
   if (derivationMode === "segwit") return true;
   return false;
+};
+
+export const getReceiveFlowError = (
+  account: AccountLike,
+  parentAccount: ?Account
+): ?Error => {
+  if (parentAccount && parentAccount.currency.id === "tezos") {
+    return new UnavailableTezosOriginatedAccountReceive("");
+  }
 };
 
 export function canBeMigrated(account: Account) {
