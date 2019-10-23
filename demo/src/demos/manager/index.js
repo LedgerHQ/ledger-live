@@ -12,6 +12,7 @@ import {
   getActionPlan
 } from "@ledgerhq/live-common/lib/apps";
 import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
+import DeviceStorage from "./DeviceStorage";
 
 const Container = styled.div`
   width: 600px;
@@ -208,12 +209,12 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     .map(i => state.apps.find(a => a.name === i.name))
     .filter(Boolean);
   const nonInstalledApps = state.apps.filter(a => !installedApps.includes(a));
-
+console.log({installedApps})
   return (
     <Container>
       <div>{deviceModel.productName}</div>
       <div>Firmware {deviceInfo.version}</div>
-
+      <DeviceStorage device={deviceModel}/>
       <h2>
         {"On Device "}
         <Button onClick={onUpdateAll}>Update all</Button>
