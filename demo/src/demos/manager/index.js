@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import styled from "styled-components";
 import { open } from "@ledgerhq/live-common/lib/hw";
+import { getDeviceModel } from "@ledgerhq/devices";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import manager from "@ledgerhq/live-common/lib/manager";
 import {
@@ -177,6 +178,9 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
   ]);
   const plan = getActionPlan(state);
 
+  // $FlowFixMe
+  const deviceModel = transport.deviceModel || getDeviceModel("nanoS");
+
   // eslint-disable-next-line no-console
   console.log(state);
 
@@ -207,6 +211,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
 
   return (
     <Container>
+      <div>{deviceModel.productName}</div>
       <div>Firmware {deviceInfo.version}</div>
 
       <h2>
