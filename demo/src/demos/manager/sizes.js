@@ -70,6 +70,6 @@ export const distribute = (a: {
       const currency = findCryptoCurrency(c => c.managerAppName === name);
       return { currency, name, blocks, bytes: blocks * blockSize };
     })
-    .sort((a: AppData, b: AppData) => a.blocks - b.blocks);
+    .sort((a: AppData, b: AppData) => b.blocks - a.blocks);
   return { totalBlocks, totalBytes, osBlocks, osBytes, apps };
 };
