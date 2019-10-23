@@ -1,5 +1,9 @@
 // @flow
-import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
+import {
+  AccountNotSupported,
+  CurrencyNotSupported,
+  UnavailableTezosOriginatedAccountReceive
+} from "@ledgerhq/errors";
 import type {
   Account,
   AccountLike,
@@ -40,7 +44,7 @@ export const getReceiveFlowError = (
   parentAccount: ?Account
 ): ?Error => {
   if (parentAccount && parentAccount.currency.id === "tezos") {
-    throw new Error("TODO custom error for tezos");
+    throw new UnavailableTezosOriginatedAccountReceive("");
   }
 };
 
