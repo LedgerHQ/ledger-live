@@ -60,6 +60,7 @@ export interface AccountBridge<T: Transaction> {
     observation: boolean
   ): Observable<(Account) => Account>;
 
+  // TODO we will remove it in favor of just feature detecting by doing createTransaction() for canSend.
   getCapabilities(account: Account): Capabilities;
 
   // a Transaction object is created on UI side as a black box to put all temporary information to build the transaction at the end.

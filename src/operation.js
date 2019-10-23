@@ -46,6 +46,9 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "IN":
       return op.value;
     case "OUT":
+    case "REVEAL":
+    case "CREATE":
+    case "DELEGATE":
       return op.value.negated();
     default:
       return BigNumber(0);

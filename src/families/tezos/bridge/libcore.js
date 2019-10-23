@@ -65,7 +65,8 @@ const createTransaction = () => ({
   gasLimit: null,
   storageLimit: null,
   recipient: "",
-  networkInfo: null
+  networkInfo: null,
+  useAllAmount: false
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
