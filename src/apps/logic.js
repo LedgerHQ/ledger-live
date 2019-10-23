@@ -75,6 +75,7 @@ export const reducer = (state: State, action: Action): State => {
         };
       } else if (event.type === "runSuccess") {
         if (appOp.type === "install") {
+          const app = state.apps.find(a => a.name === appOp.name);
           return {
             ...state,
             currentAppOp: null,
@@ -85,7 +86,9 @@ export const reducer = (state: State, action: Action): State => {
               .filter(o => o.name !== appOp.name)
               .concat({
                 name: appOp.name,
-                updated: true
+                updated: true,
+                hash: (app && state.hashesByKey[app.firmware]) || "", // today we don't trust the app.hash
+                blocks: (app && state.blocksByKey[app.firmware]) || 0
               }),
             // remove the install action
             installQueue: state.installQueue.filter(name => appOp.name !== name)

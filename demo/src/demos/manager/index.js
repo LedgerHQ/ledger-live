@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/live-common/lib/apps";
 import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
 import { StorageBar, DeviceIllustration } from "./DeviceStorage";
-import { distribute } from "./sizes";
+import { distribute, inferAppSize, lenseAppHash } from "./sizes";
 
 const Container = styled.div`
   width: 600px;
@@ -216,10 +216,11 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     .filter(Boolean);
   const nonInstalledApps = state.apps.filter(a => !installedApps.includes(a));
 
-  // TODO HACK we need installedApps to actually hodl the bytes info
-  const apps = installedApps.map(a => state.appByName[a.name]).filter(Boolean);
-
-  const distribution = distribute({ deviceModel, deviceInfo, apps });
+  const distribution = distribute({
+    deviceModel,
+    deviceInfo,
+    installed: state.installed
+  });
 
   return (
     <Container>
@@ -347,7 +348,10 @@ const Manager = ({ location }: *) => {
       const deviceInfo = await getDeviceInfo(transport);
       if (disconnected) return;
       setDeviceInfo(deviceInfo);
-      const listAppsRes = await listApps(transport, deviceInfo);
+      const listAppsRes = await listApps(transport, deviceInfo, {
+        inferAppSize,
+        lenseAppHash
+      });
       if (disconnected) return;
       setError(null);
       setListAppsRes(listAppsRes);

@@ -1,13 +1,22 @@
 // @flow
 
 import { log } from "@ledgerhq/logs";
-import type { DeviceInfo } from "../types/manager";
+import type { DeviceInfo, ApplicationVersion } from "../types/manager";
 import type { ListAppsResult } from "./types";
 import { listCryptoCurrencies } from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
 import { currenciesByMarketcap } from "../currencies";
+import hwListApps from "../hw/listApps";
 import Transport from "@ledgerhq/hw-transport";
+
+const defaults: {
+  inferAppSize: ({ key?: string, hash?: string }) => number,
+  lenseAppHash: ApplicationVersion => string
+} = {
+  inferAppSize: () => 0,
+  lenseAppHash: app => app.hash
+};
 
 export const listInstalledApps = (
   transport: Transport<*>,
@@ -20,10 +29,13 @@ export const listInstalledApps = (
 
 export const listApps = async (
   transport: Transport<*>,
-  deviceInfo: DeviceInfo
+  deviceInfo: DeviceInfo,
+  opts?: $Shape<typeof defaults>
 ): Promise<ListAppsResult> => {
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
     return Promise.resolve({
+      blocksByKey: {},
+      hashesByKey: {},
       appByName: {},
       apps: [],
       installedAvailable: false,
@@ -32,12 +44,25 @@ export const listApps = async (
     });
   }
 
-  const installedP: Promise<
-    [{ name: string, hash: string }[], boolean]
-  > = listInstalledApps(transport, deviceInfo)
+  const { lenseAppHash, inferAppSize } = { ...defaults, ...opts };
+
+  const installedP = listInstalledApps(transport, deviceInfo)
+    .then(apps =>
+      apps.map(({ name, hash }) => ({
+        name,
+        hash,
+        blocks: inferAppSize({ hash })
+      }))
+    )
+    .catch(e => {
+      log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
+      return hwListApps(transport).then(apps =>
+        apps.map(({ name, hash, blocks }) => ({ name, hash, blocks }))
+      );
+    })
     .then(apps => [apps, true])
     .catch(e => {
-      log("hw", "failed to get installed apps: " + String(e) + "\n" + e.stack);
+      log("hw", "failed to device list apps " + String(e) + "\n" + e.stack);
       return [[], false];
     });
 
@@ -109,18 +134,32 @@ export const listApps = async (
 
   const apps = sortedCryptoApps.concat(filtered);
 
-  const installed = installedList.map(({ name, hash }) => {
+  const installed = installedList.map(({ name, hash, blocks }) => {
     const ins = apps.find(i => name === i.name);
     return {
       name,
-      updated: ins ? ins.hash === hash : false
+      updated: ins ? lenseAppHash(ins) === hash : false,
+      blocks,
+      hash
     };
   });
 
   const appByName = {};
+  const blocksByKey = {};
+  const hashesByKey = {};
   compatibleAppVersionsList.concat(apps).forEach(app => {
     appByName[app.name] = app;
+    blocksByKey[app.firmware] = inferAppSize({ key: app.firmware });
+    hashesByKey[app.firmware] = lenseAppHash(app);
   });
 
-  return { appByName, apps, installed, deviceInfo, installedAvailable };
+  return {
+    blocksByKey,
+    hashesByKey,
+    appByName,
+    apps,
+    installed,
+    deviceInfo,
+    installedAvailable
+  };
 };

@@ -37,9 +37,9 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
       const trimmed = a.trim();
       const m = /(.*)\(outdated\)/.exec(trimmed);
       if (m) {
-        return { name: m[1].trim(), updated: false };
+        return { name: m[1].trim(), updated: false, hash: "", blocks: 0 };
       }
-      return { name: trimmed, updated: true };
+      return { name: trimmed, updated: true, hash: "", blocks: 0 };
     });
 
 export function mockListAppsResult(
@@ -81,8 +81,11 @@ export function mockListAppsResult(
       return o;
     });
   const appByName = {};
+  const blocksByKey = {};
+  const hashesByKey = { "": "" };
   apps.forEach(app => {
     appByName[app.name] = app;
+    blocksByKey[app.firmware] = 0;
   });
 
   const installed = parseInstalled(installedDesc);
@@ -90,6 +93,8 @@ export function mockListAppsResult(
   return {
     apps,
     appByName,
+    hashesByKey,
+    blocksByKey,
     deviceInfo,
     installed,
     installedAvailable: true
@@ -124,7 +129,12 @@ export const mockExecWithInstalledContext = (
     switch (appOp.type) {
       case "install":
         if (!installed.some(i => i.name === appOp.name)) {
-          installed = installed.concat({ name: appOp.name, updated: true });
+          installed = installed.concat({
+            name: appOp.name,
+            updated: true,
+            blocks: 0,
+            hash: ""
+          });
         }
         break;
 

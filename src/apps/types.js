@@ -10,26 +10,29 @@ export type Exec = (
 
 export type InstalledItem = {
   name: string,
-  updated: boolean
+  updated: boolean,
+  hash: string,
+  blocks: number
 };
 
 export type ListAppsResult = {
+  hashesByKey: { [_: string]: string },
+  blocksByKey: { [_: string]: number },
   appByName: { [_: string]: ApplicationVersion },
   apps: ApplicationVersion[],
   installedAvailable: boolean,
-  installed: Array<InstalledItem>,
+  installed: InstalledItem[],
   deviceInfo: DeviceInfo
 };
 
 export type State = {
   deviceInfo: DeviceInfo,
+  hashesByKey: { [_: string]: string },
+  blocksByKey: { [_: string]: number },
   appByName: { [_: string]: ApplicationVersion },
   apps: ApplicationVersion[],
   installedAvailable: boolean,
-  installed: Array<{
-    name: string,
-    updated: boolean
-  }>,
+  installed: InstalledItem[],
   installQueue: string[],
   uninstallQueue: string[],
   currentAppOp: ?AppOp,
