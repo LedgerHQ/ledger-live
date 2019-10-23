@@ -259,6 +259,9 @@ const ConnectDevice = ({
           <Button primary name="webusb" onClick={onClick}>
             USB
           </Button>
+          <Button name="webhid" onClick={onClick}>
+            WebHID
+          </Button>
           <Button name="webble" onClick={onClick}>
             Bluetooth
           </Button>

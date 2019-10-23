@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { implementCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
 import { map } from "rxjs/operators";
+import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import axios from "axios";
@@ -54,6 +55,23 @@ const webusbDevices = {};
 
 // Still a big WIP. not sure how this should work in web paradigm...
 // 'discover' is not practical paradigm, needs to fit the requestDevice paradigm!
+
+registerTransportModule({
+  id: "webhid",
+
+  // $FlowFixMe
+  open: (id: string): ?Promise<*> => {
+    if (id.startsWith("webhid")) {
+      return TransportWebHID.create();
+    }
+    return null;
+  },
+
+  disconnect: id =>
+    id.startsWith("webhid")
+      ? Promise.resolve() // nothing to do
+      : null
+});
 
 registerTransportModule({
   id: "webusb",
