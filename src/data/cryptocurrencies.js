@@ -2010,7 +2010,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     explorerViews: [
       {
-        tx: "https://tzscan.io/$hash"
+        tx: "https://tzstats.com/operation/$hash",
+        address: "https://tzstats.com/account/$address"
       }
     ]
   },
