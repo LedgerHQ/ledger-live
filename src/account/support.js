@@ -44,7 +44,7 @@ export const getReceiveFlowError = (
   parentAccount: ?Account
 ): ?Error => {
   if (parentAccount && parentAccount.currency.id === "tezos") {
-    throw new UnavailableTezosOriginatedAccountReceive("");
+    return new UnavailableTezosOriginatedAccountReceive("");
   }
 };
 
