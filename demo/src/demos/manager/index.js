@@ -1,6 +1,11 @@
 // @flow
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import styled from "styled-components";
+import {
+  getAllEnvs,
+  setEnvUnsafe,
+  setEnv
+} from "@ledgerhq/live-common/lib/env";
 import { open } from "@ledgerhq/live-common/lib/hw";
 import { getDeviceModel } from "@ledgerhq/devices";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
@@ -256,9 +261,11 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
 
 const ConnectDevice = ({
   onConnect,
-  loading
+  loading,
+  error
 }: {
   onConnect: (*) => *,
+  error: ?Error,
   loading?: boolean
 }) => {
   const onClick = useCallback(
@@ -271,7 +278,19 @@ const ConnectDevice = ({
   return (
     <Container>
       <h1>Please connect your device</h1>
-      {loading ? (
+
+      {error ? (
+        <div style={{ marginBottom: 10 }}>
+          <p>{String(error)}</p>
+          <p>
+            <a href="/manager?FORCE_PROVIDER=4">
+              You may try on /manager?FORCE_PROVIDER=4
+            </a>
+          </p>
+        </div>
+      ) : null}
+
+      {!error && loading ? (
         "loading..."
       ) : (
         <AppActions>
@@ -290,32 +309,59 @@ const ConnectDevice = ({
   );
 };
 
-const Manager = () => {
+const Manager = ({ location }: *) => {
   const [transport, setTransport] = useState(null);
   const [deviceInfo, setDeviceInfo] = useState(null);
   const [listAppsRes, setListAppsRes] = useState(null);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const entries = location.search
+      ? location.search
+          .slice(1)
+          .split("&")
+          .map(o => o.split("="))
+      : [];
+    if (entries.length === 0) return;
+    const beforeState = getAllEnvs();
+    entries.forEach(([key, value]) => {
+      if (key && value) {
+        setEnvUnsafe(key, value);
+      }
+    });
+    return () => {
+      for (const key in beforeState) {
+        // $FlowFixMe
+        setEnv(key, beforeState[key]);
+      }
+    };
+  }, [location]);
 
   const onConnect = useCallback(async transport => {
-    setTransport(transport);
-    let disconnected = false;
-    transport.on("disconnect", () => {
-      disconnected = true;
-      setTransport(null);
-    });
-    const deviceInfo = await getDeviceInfo(transport);
-    if (disconnected) return;
-    setDeviceInfo(deviceInfo);
-    const listAppsRes = await listApps(transport, deviceInfo);
-    if (disconnected) return;
-    setListAppsRes(listAppsRes);
+    try {
+      setTransport(transport);
+      let disconnected = false;
+      transport.on("disconnect", () => {
+        disconnected = true;
+        setTransport(null);
+      });
+      const deviceInfo = await getDeviceInfo(transport);
+      if (disconnected) return;
+      setDeviceInfo(deviceInfo);
+      const listAppsRes = await listApps(transport, deviceInfo);
+      if (disconnected) return;
+      setError(null);
+      setListAppsRes(listAppsRes);
+    } catch (error) {
+      setError(error);
+    }
   }, []);
 
   if (!transport) {
-    return <ConnectDevice onConnect={onConnect} />;
+    return <ConnectDevice error={error} onConnect={onConnect} />;
   }
 
   if (!listAppsRes || !deviceInfo) {
-    return <ConnectDevice onConnect={onConnect} loading />;
+    return <ConnectDevice error={error} onConnect={onConnect} loading />;
   }
 
   return (
