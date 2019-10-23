@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { implementCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
 import { map } from "rxjs/operators";
+import { listen } from "@ledgerhq/logs";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
@@ -16,6 +17,14 @@ import "@ledgerhq/live-common/lib/load/tokens/tron/trc10";
 
 import { pairsSelector } from "./reducers/markets";
 import { setExchangePairsAction } from "./actions/markets";
+
+listen(({ id: _id, date: _date, type, message, ...rest }) => {
+  Object.keys(rest).length === 0
+    ? // eslint-disable-next-line no-console
+      console.log(type + (message ? ": " + message : ""))
+    : // eslint-disable-next-line no-console
+      console.log(type + (message ? ": " + message : ""), rest);
+});
 
 // setEnv("FORCE_PROVIDER", 4);
 

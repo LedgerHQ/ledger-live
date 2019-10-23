@@ -1,4 +1,5 @@
 // @flow
+
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import {
@@ -193,6 +194,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
 
   const mapApp = app => (
     <AppItem
+      key={app.name}
       scheduled={plan.find(a => a.name === app.name)}
       app={app}
       progress={
@@ -278,7 +280,7 @@ const ConnectDevice = ({
   );
   return (
     <Container>
-      <h1>Please connect your device</h1>
+      {loading ? <h1>Loading...</h1> : <h1>Please connect your device</h1>}
 
       {error ? (
         <div style={{ marginBottom: 10 }}>
@@ -292,7 +294,7 @@ const ConnectDevice = ({
       ) : null}
 
       {!error && loading ? (
-        "loading..."
+        "Please allow permission on your device..."
       ) : (
         <AppActions>
           <Button primary name="webusb" onClick={onClick}>
