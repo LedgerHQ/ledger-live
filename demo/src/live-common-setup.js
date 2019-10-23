@@ -9,7 +9,7 @@ import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import axios from "axios";
 import { setNetwork } from "@ledgerhq/live-common/lib/network";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
-import { setEnv } from "@ledgerhq/live-common/lib/env";
+import { setEnv, getEnv } from "@ledgerhq/live-common/lib/env";
 
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
 import "@ledgerhq/live-common/lib/load/tokens/tron/trc10";
@@ -17,7 +17,10 @@ import "@ledgerhq/live-common/lib/load/tokens/tron/trc10";
 import { pairsSelector } from "./reducers/markets";
 import { setExchangePairsAction } from "./actions/markets";
 
-setEnv("FORCE_PROVIDER", 4);
+// setEnv("FORCE_PROVIDER", 4);
+
+window.setEnv = setEnv;
+window.getEnv = getEnv;
 
 setNetwork(axios);
 
