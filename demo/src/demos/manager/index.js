@@ -274,6 +274,10 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
   // eslint-disable-next-line no-console
   console.log(state);
 
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, [state.installed]);
+
   const mapApp = app => (
     <AppItem
       key={app.name}
