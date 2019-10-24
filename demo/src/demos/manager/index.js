@@ -20,7 +20,7 @@ import {
 import ReactTooltip from "react-tooltip";
 import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
 import { StorageBar, DeviceIllustration } from "./DeviceStorage";
-import { distribute, inferAppSize, lenseAppHash } from "./sizes";
+import { distribute, inferAppSize, lenseAppHash, formatSize } from "./sizes";
 
 const Container = styled.div`
   width: 600px;
@@ -63,31 +63,31 @@ const AppActions = styled.div`
 `;
 
 const Separator = styled.div`
-  height:1px;
-  margin:20px 0px;
-  background:#E1E3EA;
-  width:100%;
+  height: 1px;
+  margin: 20px 0px;
+  background: #e1e3ea;
+  width: 100%;
 `;
 
 const Info = styled.div`
   font-family: Inter;
-  display:flex;
-  margin-bottom:20px;
+  display: flex;
+  margin-bottom: 20px;
   font-size: 13px;
   line-height: 16px;
-  
+
   & > div {
-    display:flex;
-    flex-direction:row;
-    color:#999999;
-    & > :nth-child(2){
-      font-weight:bold;
-      color:#222222;
-      margin-left:10px;
+    display: flex;
+    flex-direction: row;
+    color: #999999;
+    & > :nth-child(2) {
+      font-weight: bold;
+      color: #222222;
+      margin-left: 10px;
     }
-    margin-right:30px;
+    margin-right: 30px;
   }
-`
+`;
 
 const Progress = ({ value }) => (
   <div
@@ -252,35 +252,67 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     installed: state.installed
   });
 
-  const totalUsedByApps = distribution.apps.reduce((t,{bytes})=>t+bytes,0)
-  const totalUsed = distribution.osBytes+totalUsedByApps
-
   return (
     <Container>
-      <ReactTooltip id="tooltip" effect="solid" getContent={(dataTip)=>{
-        if(!dataTip) return null;
-        const {name, size} = JSON.parse(dataTip);
-        return <>
-          <div style={{textAlign:'center',color:'rgba(255, 255, 255, 0.7)'}}>{name}</div>
-          <div style={{textAlign:'center',color:'white'}}>{size}Ko</div>
-        </>;
-      }}/>
+      <ReactTooltip
+        id="tooltip"
+        effect="solid"
+        getContent={dataTip => {
+          if (!dataTip) return null;
+          const { name, bytes } = JSON.parse(dataTip);
+          return (
+            <>
+              <div
+                style={{
+                  textAlign: "center",
+                  color: "rgba(255, 255, 255, 0.7)"
+                }}
+              >
+                {name}
+              </div>
+              <div style={{ textAlign: "center", color: "white" }}>
+                {formatSize(bytes)}
+              </div>
+            </>
+          );
+        }}
+      />
       <div style={{ display: "flex", flexDirection: "row" }}>
         <DeviceIllustration deviceModel={deviceModel} />
         <div style={{ flex: 1 }}>
-          <div style={{ marginBottom: 4, fontSize:"16px", lineHeight:"19px", fontFamily:'Inter' }}>
+          <div
+            style={{
+              marginBottom: 4,
+              fontSize: "16px",
+              lineHeight: "19px",
+              fontFamily: "Inter"
+            }}
+          >
             <strong>{deviceModel.productName}</strong>
           </div>
-          <div style={{ fontFamily:'Inter', fontSize:"13px", lineHeight:"16px", color:"#999999" }}>Firmware {deviceInfo.version}</div>
-          <Separator/>
+          <div
+            style={{
+              fontFamily: "Inter",
+              fontSize: "13px",
+              lineHeight: "16px",
+              color: "#999999"
+            }}
+          >
+            Firmware {deviceInfo.version}
+          </div>
+          <Separator />
           <Info>
             <div>
               <span>Used</span>
-              <span>{totalUsed/1024}Ko</span>
+              <span>
+                {formatSize(
+                  distribution.totalBytes - distribution.freeSpaceBytes
+                )}
+              </span>
             </div>
             <div>
               <span>Capacity</span>
-              <span>{distribution.totalBytes/1024}Ko</span>
+              <span>{formatSize(distribution.totalBytes)}</span>
             </div>
             <div>
               <span>Apps installed</span>
@@ -290,7 +322,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
           <StorageBar distribution={distribution} />
         </div>
       </div>
-      <h2 style={{marginTop:"30px"}}>
+      <h2 style={{ marginTop: "30px" }}>
         {"On Device "}
         <Button onClick={onUpdateAll}>Update all</Button>
       </h2>

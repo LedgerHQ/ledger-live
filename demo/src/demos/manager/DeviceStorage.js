@@ -19,22 +19,24 @@ export const DeviceIllustration = styled.img.attrs(p => ({
 }))`
   max-height: 153px;
   margin-right: 56px;
-  filter: drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.2))
+  filter: drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.2));
 `;
 
 export const StorageBar = ({
   distribution
 }: {
   distribution: AppsDistribution
-}) => (<StorageBarWrapper>
-    <ReactTooltip effect="solid"/>
+}) => (
+  <StorageBarWrapper>
+    <ReactTooltip effect="solid" />
     {/*<StorageBarItem ratio={distribution.osBlocks / distribution.totalBlocks} />*/}
     {distribution.apps.map(({ name, currency, bytes, blocks }) => {
       const color = currency ? currency.color : "black"; // unknown color?
-      return (//Stupid library is stupid
+      return (
+        //Stupid library is stupid
         <StorageBarItem
-          data-for='tooltip'
-          data-tip={JSON.stringify({ name, size:bytes/1024 })}
+          data-for="tooltip"
+          data-tip={JSON.stringify({ name, bytes })}
           key={name}
           style={{ background: color }}
           ratio={blocks / (distribution.totalBlocks - distribution.osBlocks)}
@@ -72,12 +74,12 @@ export const StorageBarItem = styled.div.attrs(props => ({
   width: ${p => p.width};
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
-  background-clip: content-box!important;
-  
-  &:nth-of-type(2){
-    border-left:none;
+  background-clip: content-box !important;
+
+  &:nth-of-type(2) {
+    border-left: none;
   }
-  &:last-of-type{
-    border-right:none;
+  &:last-of-type {
+    border-right: none;
   }
 `;
