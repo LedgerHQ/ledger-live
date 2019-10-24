@@ -64,6 +64,11 @@ export type AppsDistribution = {
   freeSpaceBytes: number
 };
 
+// TODO add this back into the apps/logic
+// we'll need just to make DeviceModel in the state
+// and that way this just take a states
+// it should also return the "planned size" of the current scheduling so we can render it.
+// potentially we can display AppData with "installing" and "uninstalling" states
 export const distribute = (a: {
   deviceModel: DeviceModel,
   deviceInfo: DeviceInfo,

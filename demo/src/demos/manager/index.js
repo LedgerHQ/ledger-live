@@ -539,8 +539,17 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
         </Section>
         <Section>
           <h2>Device Manager</h2>
-          <Card style={{ display: "flex", flexDirection: "row" }}>
-            <DeviceIllustration deviceModel={deviceModel} />
+          <Card
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center"
+            }}
+          >
+            <DeviceIllustration
+              deviceModel={deviceModel}
+              style={{ marginLeft: 36 }}
+            />
             <div style={{ flex: 1 }}>
               <div
                 style={{
