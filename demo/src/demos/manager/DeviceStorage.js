@@ -72,5 +72,12 @@ export const StorageBarItem = styled.div.attrs(props => ({
   width: ${p => p.width};
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
-  background-clip: content-box;
+  background-clip: content-box!important;
+  
+  &:nth-of-type(2){
+    border-left:none;
+  }
+  &:last-of-type{
+    border-right:none;
+  }
 `;
