@@ -29,6 +29,7 @@ export const StorageBar = ({
 }) => (
   <StorageBarWrapper>
     <ReactTooltip effect="solid" />
+    {/*
     <StorageBarItem
       data-for="tooltip"
       data-tip={JSON.stringify({
@@ -37,6 +38,7 @@ export const StorageBar = ({
       })}
       ratio={0.1}
     />
+    */}
     {distribution.apps.map(({ name, currency, bytes, blocks }) => {
       const color = currency ? currency.color : "black"; // unknown color?
       return (
@@ -46,9 +48,7 @@ export const StorageBar = ({
           data-tip={JSON.stringify({ name, bytes })}
           key={name}
           style={{ background: color }}
-          ratio={
-            (0.9 * blocks) / (distribution.totalBlocks - distribution.osBlocks)
-          }
+          ratio={blocks / (distribution.totalBlocks - distribution.osBlocks)}
         />
       );
     })}

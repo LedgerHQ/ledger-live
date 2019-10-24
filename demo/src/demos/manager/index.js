@@ -371,15 +371,11 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
           <Info>
             <div>
               <span>Used</span>
-              <span>
-                {formatSize(
-                  distribution.totalBytes - distribution.freeSpaceBytes
-                )}
-              </span>
+              <span>{formatSize(distribution.totalAppsBytes)}</span>
             </div>
             <div>
               <span>Capacity</span>
-              <span>{formatSize(distribution.totalBytes)}</span>
+              <span>{formatSize(distribution.appsSpaceBytes)}</span>
             </div>
             <div>
               <span>Apps installed</span>
