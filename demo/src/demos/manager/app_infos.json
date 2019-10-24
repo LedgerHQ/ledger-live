@@ -1,5 +1,535 @@
 [
   {
+    "key": "nanox/1.2.4-1/aeternity/app_0.3.3",
+    "size": 45378,
+    "hash": "3bc4138c4ed64267440bac4cf88fa3c7ab1299631463d04df2fd1ecf7ecd2259"
+  },
+  {
+    "key": "nanox/1.2.4-1/aion/app_1.0.1",
+    "size": 45373,
+    "hash": "f7691005c111e679d9623566d0707a6bdb69a9796984df4d995e3ebd840e05db"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/akroma/app_1.2.11",
+    "size": 873,
+    "hash": "3329a5c4ff1dea61c1e3385cb489082dea72af0f807557bd0ebe5ef02947fa44"
+  },
+  {
+    "key": "nanox/1.2.4-1/ark/app_0.1.5",
+    "size": 40773,
+    "hash": "1674b2b3bddc248da8aae6312c1c4a0d0bbf9963be0d047e201bdc695d697642"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/atheios/app_1.2.11",
+    "size": 874,
+    "hash": "8b60a12a9cb03f03cf3141c31f0970a6f8855fb52ca3cdee3122574743777b12"
+  },
+  {
+    "key": "nanox/1.2.4-1/banano/app_1.2.0",
+    "size": 582,
+    "hash": "8032e31ec10a06ecb1dc929016baa56126e7bd2ef0619334c2418a0dd56b54ce"
+  },
+  {
+    "key": "nanox/1.2.4-1/binance_chain/app_1.1.4",
+    "size": 63558,
+    "hash": "0d33dd3cb3a3f911cf39e1b4a264c3c41b49caab82b90f718773a8031343adca"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/bitcoin/app_1.3.13",
+    "size": 60728,
+    "hash": "a635236d532b42ed34c34d068c0ef34947ade4dfdfc737b30d87b43b7948ad1d"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/bitcoin_cash/app_1.3.13",
+    "size": 846,
+    "hash": "c94cf8a46da4f08211303dffc151652ef4ae7b92943667f4730dac339ea19a43"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/bitcoin_gold/app_1.3.13",
+    "size": 846,
+    "hash": "f3e9b1c4d4d0e8e4cab40a67149a856c26ebc876034023130ab30be70bca3e8a"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/bitcoin_private/app_1.3.13",
+    "size": 849,
+    "hash": "816b3470830ed3c16456a46bdd8641b308dde4ba9ca742b754ab86b274a0e3a7"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/bitcoin_testnet/app_1.3.13",
+    "size": 846,
+    "hash": "507dda6eb1308effd102dd37352bfd14bcdfa2b3610894734571dcc8afb009d2"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/callisto/app_1.2.11",
+    "size": 875,
+    "hash": "75b739f091e5f8984bed370febfedc937543a51875e25ea530386ee49d1718e7"
+  },
+  {
+    "key": "nanox/1.2.4-1/cardano_ada/app_1.1.0",
+    "size": 57156,
+    "hash": "aff398e526981334b1663682761b593d5d445b8c15c8f3f1710948bb60415500"
+  },
+  {
+    "key": "nanox/1.2.4-1/cosmos/app_1.5.3",
+    "size": 65087,
+    "hash": "e40ee9407f351642d902736e9d80f2d0356c10ad975cbd4176e212be7b41fa7a"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/dash/app_1.3.13",
+    "size": 838,
+    "hash": "37b013f3ef04cdc04dcac742e07878ac7fb0a7a766e34a91879b02f2750a5ac6"
+  },
+  {
+    "key": "nanox/1.2.4-1/decred/app_1.3.8",
+    "size": 55871,
+    "hash": "ab00ffaab1853517ccd68ab6fb43040036778aa8ab9b16c31cab772d05ff47de"
+  },
+  {
+    "key": "nanox/1.2.4-1/decred_testnet/app_1.3.8",
+    "size": 851,
+    "hash": "dedd9c3374b1d48a1562cc9d46dce9047d047db6747e1631098df0c9e1633c53"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/dexon/app_1.2.11",
+    "size": 872,
+    "hash": "42cb2f20edcaa025f28d001ba9fbb20bc093b47e7e5ce878514658610d1c777a"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/digibyte/app_1.3.13",
+    "size": 842,
+    "hash": "1a0a9801b5ace39dcbde641d1a6bab47d4148ff435b6e07acc560fa25cf34f22"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/dogecoin/app_1.3.13",
+    "size": 842,
+    "hash": "c9bb8b4a81226b0184704dccd44e3176bc31af3e0a7c527a8dd89a90840ab084"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ellaism/app_1.2.11",
+    "size": 874,
+    "hash": "186d9c07d66e5edfb630be8281f75119bd31f533524b0014e5b82aa5a982e644"
+  },
+  {
+    "key": "nanox/1.2.4-1.5/eos/app_1.3.0",
+    "size": 53308,
+    "hash": "57bbfe897bdfc3f9f9f07da451dc9247ecff78e5b71e57e0ef8167b6720b3faf"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ether1/app_1.2.11",
+    "size": 874,
+    "hash": "eacd5d004af4a622020c0f48b6401d946ddc5f0a226fb0904f09444d8eb742ee"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ethereum/app_1.2.11",
+    "size": 51801,
+    "hash": "9fdbe1d7d653210c47001d4ec9034a3cc2657a1f3c940980f70af0cd9576ebb9"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ethereum_classic/app_1.2.11",
+    "size": 892,
+    "hash": "06097659181b2f07085c23a915dab3a71f9fba894df020bb68a5b3ba3b4d4a27"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ethergem/app_1.2.11",
+    "size": 875,
+    "hash": "86e9aa5c6030da24db1bcf80bd5a0728da24d838e4c956a8918d6193fc1cab38"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ethersocial/app_1.2.11",
+    "size": 878,
+    "hash": "c0c7923ea228ce35956924b89b4cb3515fbdcabfde621d07e7c80c2411abf767"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/expanse/app_1.2.11",
+    "size": 874,
+    "hash": "b3f0fd0ac5cbc395dadc8c373a67632f4f8c2a78153a1ab64588a07656c1e02a"
+  },
+  {
+    "key": "nanox/1.2.4-1/factom/app_1.2.2",
+    "size": 43601,
+    "hash": "b11eb30e72440dbd2ac3e9cfa37c8736ea546c9c384d02f7053eb40a4540b099"
+  },
+  {
+    "key": "nanox/1.2.4-1/fic/app_3.0.2",
+    "size": 52028,
+    "hash": "3197215cffd9d29c24b39a8359eae3f74883be82b7fdb0aab187601e4e9c4c2e"
+  },
+  {
+    "key": "nanox/1.2.4-1.5/fido_u2f/app_1.2.6",
+    "size": 40509,
+    "hash": "d34c249a018cf04045d5b13b8ea84252189521ead70f7813c9d22b050406fe36"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/gamecredits/app_1.3.13",
+    "size": 845,
+    "hash": "2f24c50e2090a69cda4bf9cdfb19ad76a35bd4c06aa0198ec86260f1960db49b"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/gochain/app_1.2.11",
+    "size": 874,
+    "hash": "b1426771633dbd337176bddcfa413f77e168174e18c79ecd5319c4f7721507cc"
+  },
+  {
+    "key": "nanox/1.2.4-1/groestlcoin/app_1.3.3",
+    "size": 58683,
+    "hash": "a309fddf52d9d25c486cc4684c246dd78d929c80c59e6c50ff6799e9a376f959"
+  },
+  {
+    "key": "nanox/1.2.4-1/groestlcoin_testnet/app_1.3.3",
+    "size": 58688,
+    "hash": "b222c6e86e18b8f9db702296af0a23771aef732268c4cc96a6234fc2ef03c76e"
+  },
+  {
+    "key": "nanox/1.2.4-1/hello/app_1.1.0",
+    "size": 30773,
+    "hash": "858f647c7b37e5f67320169b8705adf991ffb1d51c27f69f0adeaa85ddff2fb2"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/horizen/app_1.3.13",
+    "size": 841,
+    "hash": "b9969aefa27de7e600ccbccede13464f7c1e2e57fe83d5f764350a0fcebda303"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/hpb/app_1.2.11",
+    "size": 870,
+    "hash": "d4b8e0b0d848732ed52908f41dca9e664d6b5f24ec7c2c3a00f6b4f83bd7a094"
+  },
+  {
+    "key": "nanox/1.2.4-1/hycon/app_0.2.2",
+    "size": 43326,
+    "hash": "c66d88e8f7ab7c877d2438b660416097f2512f71d915a36ee080c85ff8af3f26"
+  },
+  {
+    "key": "nanox/1.2.4-1/icon/app_1.0.5",
+    "size": 42557,
+    "hash": "2387008f206ad0615f8903285b8835d2c9f49f3e8274be3bcb5a008ea3bf4f31"
+  },
+  {
+    "key": "nanox/1.2.4-1/icon_testnet/app_1.0.5",
+    "size": 42565,
+    "hash": "bd68017d61da0e9cf83e4b0757a1c5aa205364c5a10e5b27b9ade470e2acad36"
+  },
+  {
+    "key": "nanox/1.2.4-1/iota/app_0.5.3",
+    "size": 45629,
+    "hash": "69b7d352d7ec9c7be57012499a0fc98a85702f14010a1274ff71bfad48d4ba6d"
+  },
+  {
+    "key": "nanox/1.2.4-1/kin/app_0.0.2",
+    "size": 52028,
+    "hash": "aeecd627042046cec5703986b0206eb882b830814036c0252fe1d6a77588169b"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/komodo/app_1.3.13",
+    "size": 840,
+    "hash": "f531e4b530c2b75052a663d2bdbbd7f4bcdfd3fbc1de40a24a24eae769ab7134"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/kusd/app_1.2.11",
+    "size": 871,
+    "hash": "c8946154fdd2bbeef6333ba4f43d94b00c6d27ac28edae18ffc3e8a111a3904a"
+  },
+  {
+    "key": "nanox/1.2.4-1/lisk/app_1.3.0",
+    "size": 43325,
+    "hash": "6b45a03b4c44f017b3dea9699b847c656b7c6344b24605a05cb266a69c554878"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/litecoin/app_1.3.13",
+    "size": 842,
+    "hash": "cf12d41ea1118470834c3c48cca608175a65eba4dcf1d9a007b6273012af8d73"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/mix/app_1.2.11",
+    "size": 870,
+    "hash": "892c9b31f032089d9b3cbf088424ae234b3867e4b50428dba5a3521ee946550a"
+  },
+  {
+    "key": "nanox/1.2.4-1/monero/app_1.3.2",
+    "size": 50495,
+    "hash": "8a8f84f047849787bdbb562312d78b8f080d5c3bec88a3cb036bb737087efecb"
+  },
+  {
+    "key": "nanox/1.2.4-1/monero/app_1.3.1",
+    "size": 50239,
+    "hash": "feb8ee655605bafcd87eb8e81bfc915d0141ea4eba7ed6408402b89a56a15edc"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/musicoin/app_1.2.11",
+    "size": 875,
+    "hash": "d6e08a72fc2d50b9ab6e68e88f473092159857c95d3a6da74bf7ea3ca4fdbd97"
+  },
+  {
+    "key": "nanox/1.2.4-1/nano/app_1.2.0",
+    "size": 47951,
+    "hash": "9cafa6f56a16c3d7f2aa6fe3e806f8bec0a2b4fd4da1fc33657f04afa46d69dd"
+  },
+  {
+    "key": "nanox/1.2.4-1/neo/app_1.3.5",
+    "size": 41029,
+    "hash": "ebd694310efa8b47962ed760bf20ae02dd47163180398ec2c520bb5e3a360fa4"
+  },
+  {
+    "key": "nanox/1.2.4-1/nimiq/app_1.4.2",
+    "size": 45374,
+    "hash": "c9c314336d0041d3c32c4855180f025c0117d8367ffd89252c1c1a37c613ff86"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/nix/app_1.3.13",
+    "size": 837,
+    "hash": "c24d2eeb3d40ae89c5ab1ced09cdce2daf0bb40da7925de4fb0721c1ae50d9dd"
+  },
+  {
+    "key": "nanox/1.2.4-1/nos/app_1.2.0",
+    "size": 579,
+    "hash": "d5fb4f635b8450da103ae412464c93838059abf9840529bd1ea7c3c5102287bf"
+  },
+  {
+    "key": "nanox/1.2.4-1/ontology/app_1.2.1",
+    "size": 41797,
+    "hash": "8e3aef437967273895362e05105dafebea2c74935d2b9c35836aa7a13975db9b"
+  },
+  {
+    "key": "nanox/1.2.4-1/particl/app_1.2.8",
+    "size": 55104,
+    "hash": "b0693dd8b5564cff88e6e347b7afcf298ee37d2c4fdba24a95510988bc1a44e7"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/peercoin/app_1.3.13",
+    "size": 842,
+    "hash": "5c61d86ba844b8109677943f18faa7fbcb81633ebd3095e12c074d435c70d3b9"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/pirl/app_1.2.11",
+    "size": 871,
+    "hash": "7360493e39edc99e8b4d3d58aafa040a5eb000bcf7902e3f9c16ae5b57b6afff"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/pivx/app_1.3.13",
+    "size": 838,
+    "hash": "f5833bb63b700ee4055527b38ec712113424bf1d2dd0b602b11eb79dc5c4eda9"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/poa/app_1.2.11",
+    "size": 870,
+    "hash": "6d73850a936666801495d74411007dfb7077a50208b6f854e1af0c897920ef9b"
+  },
+  {
+    "key": "nanox/1.2.4-1/qrl/app_1.1.2",
+    "size": 88124,
+    "hash": "444f3b81a9d5dda8ba62ce047cf6d801784db5dc37276135b78080c6ffe3363e"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/qtum/app_1.3.13",
+    "size": 878,
+    "hash": "4633bddf1a82f7160c912a30c9935032b3e5ea348a85dae8ea6cb3d1362991c9"
+  },
+  {
+    "key": "nanox/1.2.4-1/recovery_check/app_1.0.1",
+    "size": 43326,
+    "hash": "24a8c187b3383a018793b3dcc690a87fca10e754b44bd8ae07a897fa180cc32c"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/reosc/app_1.2.11",
+    "size": 872,
+    "hash": "c7cb979a005e2b9a9549019b999bd621262f23b934bf56b9a7c1b001d6cbe01f"
+  },
+  {
+    "key": "nanox/1.2.4-1/rise/app_1.3.0",
+    "size": 43325,
+    "hash": "7bdc366c5738ee8742e8ae9f2cd2f9b15bebdeaddae70d1fc45b45aa798dc348"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/rsk/app_1.2.11",
+    "size": 879,
+    "hash": "1b0a631647da95bdb0968c24fec718697108b709cdc368c95c5efae4d756b4aa"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/rsk_testnet/app_1.2.11",
+    "size": 875,
+    "hash": "6ef246aa2c48cfbceab029b09a22ced4200e49012fd06bd8eed1fa9e380c1ab4"
+  },
+  {
+    "key": "nanox/1.2.4-1/ssh/app_0.0.5",
+    "size": 37456,
+    "hash": "79421b3fc16a309288a44e2820103645ff2699d8f999f76684e310c8247bdae9"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/stealth/app_1.3.13",
+    "size": 841,
+    "hash": "87cecf90f5d6e2589c1425a62e1d52a8aa426370e75f1e396b9717de02bbcc8c"
+  },
+  {
+    "key": "nanox/1.2.4-1/stellar/app_3.0.4",
+    "size": 52544,
+    "hash": "eac863cbf61bbd4d6c92721b21f7602f535d0522c1ddcb0254bc206baa050968"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/stratis/app_1.3.13",
+    "size": 841,
+    "hash": "8dc29401ab454bd432369bc5ad8ac916c536187d473cc578c13deb8becd90b15"
+  },
+  {
+    "key": "nanox/1.2.4-1.5/tezos_wallet/app_2.2.0",
+    "size": 59717,
+    "hash": "7be9b892eaa305efb9a5b7cfa41749bcdd122dc3fbc08a7f242b3c7aa86abfea"
+  },
+  {
+    "key": "nanox/1.2.4-1.5/thundercore/app_1.2.10",
+    "size": 869,
+    "hash": "adf44f5b74232f24cb9129daf8318401e63df2febfcf005e5f512d98f3e40088"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/tomochain/app_1.2.11",
+    "size": 876,
+    "hash": "5f6ca39eea90c00caad210214069938199ef1d5f4659e401abbe275074649e29"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/tron/app_0.1.2",
+    "size": 62781,
+    "hash": "225b622026172b32ddd27b743e67b424eada90d703cf738aca66d98fb7dec8f9"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ubiq/app_1.2.11",
+    "size": 871,
+    "hash": "57a04fdc7412d4f85f21cdfb366987a03d4a70dc88d432b808fc3ea68733c57f"
+  },
+  {
+    "key": "nanox/1.2.4-1/vechain/app_1.0.3",
+    "size": 54601,
+    "hash": "98caab2cbf20664f79251d36550e832ab55f01700f2045f840826819e2976b04"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/vertcoin/app_1.3.13",
+    "size": 842,
+    "hash": "799795302b23cc8509f67c4dfd024aa6933ebecb46fd253116570a899dc2a982"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/viacoin/app_1.3.13",
+    "size": 841,
+    "hash": "f65aaf101207e75af3f3e7b2a35129e2abc7bc6763440aa6d682b388cf8e76ba"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/wanchain/app_1.2.11",
+    "size": 875,
+    "hash": "a0e74a23d13a5aa7ca4545ac4d53fc0f218465a34f4f4c6016a76d5010620542"
+  },
+  {
+    "key": "nanox/1.2.4-1/waves/app_1.0.1",
+    "size": 49982,
+    "hash": "b13878d78c6f31563987edef62dc9d4a147af75940e36f1869720605a1fdf72c"
+  },
+  {
+    "key": "nanox/1.2.4-1.5/xrp/app_1.1.0",
+    "size": 42300,
+    "hash": "8e82f413c1f7603722ab8374c33a734af73fb3f4d8cfe5672063e70961c6a663"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/xsn/app_1.3.13",
+    "size": 837,
+    "hash": "626ab9c76b6ec87c4352cca98f4aacf6bb0cd24293882e1cc3bd740bc5c7f6c0"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/zcash/app_1.3.13",
+    "size": 839,
+    "hash": "743f124ffef384543edc0839eaa8c6403e44bb8b76f2ca03ce47bbadcc674672"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/zclassic/app_1.3.13",
+    "size": 842,
+    "hash": "4d3d65dc852bbb78d96bbc8bec543cdf7e5bd8b897a7644f77b9dce7037f35fc"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/zcoin/app_1.3.13",
+    "size": 839,
+    "hash": "2f9b86f3c2194e79665dd2cf7ca2159c916415b1b51abea96412449f822a46f4"
+  },
+  {
+    "key": "nanox/1.2.4-1/aeternity/app_0.3.4",
+    "size": 44098,
+    "hash": "8bb4467160554b695d52b0002aa8ab60f97af8d1890d62ce84ed187412dcf88a"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/artis_sigma1/app_1.2.11",
+    "size": 879,
+    "hash": "92cfdbf3b04cb9ac5aa849e60d3d78ea940ffdecce6da146c76ff8ac4be703d5"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/artis_tau1/app_1.2.11",
+    "size": 877,
+    "hash": "5f4342a8dda76c10badda6b9d6a4b9af5fd7d13580e61f34c8c74ec54534a4a4"
+  },
+  {
+    "key": "nanox/1.2.4-1/banano/app_1.2.1",
+    "size": 582,
+    "hash": "3ae1cfe86bbab246a1bc8270c8bd8347756c67e1308b5785592aa0f6e094eb57"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/ewc/app_1.2.11",
+    "size": 881,
+    "hash": "fda5432f93662c96a765e299f988f477eb5100d242df12db0bf1faba29017bc8"
+  },
+  {
+    "key": "nanox/1.2.4-1/fic/app_3.0.3",
+    "size": 52028,
+    "hash": "e0659258586e9c5317519b5a2897a72be8874ce78e56cad4392d40fb98a9e47a"
+  },
+  {
+    "key": "nanox/1.2.4-1/kin/app_0.0.3",
+    "size": 52028,
+    "hash": "ea6067fa7192604a81131e5893bd4aeb69dbb3e1568ffbbad0d8dd5ce8df5ad5"
+  },
+  {
+    "key": "nanox/1.2.4-1/monero/app_1.4.0",
+    "size": 55871,
+    "hash": "7d797c457d1e2bf8f2117190bd005d0134e6758cfb52859149b1b1149f924da1"
+  },
+  {
+    "key": "nanox/1.2.4-1/nano/app_1.2.1",
+    "size": 47951,
+    "hash": "b675911dc2b217ea9ce6d92aed8136bfbc6ec8335429f8fbdadac73b235cd9bf"
+  },
+  {
+    "key": "nanox/1.2.4-1/nos/app_1.2.1",
+    "size": 579,
+    "hash": "7a379e6d88ebdc0267354bfd662797374a49c2a1f870ddf2f76e38ecde08b665"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/OpenPGP/app_1.3.2",
+    "size": 71484,
+    "hash": "ace9673c8821ab67581ff69d63186d705f49983b60619588382fc285f0e1bcd0"
+  },
+  {
+    "key": "nanox/1.2.4-1.4/OpenPGP.XL/app_1.3.2",
+    "size": 96063,
+    "hash": "c0cdf788ed084404563bf65ecab3a80627f240fd2951c1eca7dc219bf27388e1"
+  },
+  {
+    "key": "nanox/1.2.4-1/stellar/app_3.0.5",
+    "size": 52544,
+    "hash": "b6e0c1d19c6a16ee16b7e7e88464d701b840fd476f2dfdaa2ea0c6ef871b14c3"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/thundercore/app_1.2.11",
+    "size": 878,
+    "hash": "0cb3ec73207e0454ad9f2195f70a402750697a39f59ae5bdd1caaca2601b9560"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/vechain/app_1.0.4",
+    "size": 55625,
+    "hash": "7653c57f19621814a4dd12528d843398a12b4b64c1032891b437310d285632b5"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/volta/app_1.2.11",
+    "size": 872,
+    "hash": "f48506114f1207cb48ab8fd5bf762c3bd4927ba127a876c348a55edc05ca7f05"
+  },
+  {
+    "key": "nanox/1.2.4-1.6/webchain/app_1.2.11",
+    "size": 875,
+    "hash": "362c4ca762f2911a468a1f978912d670c410674bfb2987c178af8eed8de8d006"
+  },
+  {
     "key": "nanos/1.4.2/aeternity/app_0.3.0",
     "size": 23497,
     "hash": "1af0163f51d5fcde6c2144c6c7500322671087c1b1314a37ec0671584c892dd3"
