@@ -8,8 +8,10 @@ import type { InstalledItem } from "@ledgerhq/live-common/lib/apps/types";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { findCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import type { DeviceModel } from "@ledgerhq/devices";
-import appInfos from "./app_info_1.5.5_1.6.json";
+import appInfos from "./app_infos.json";
 import firmwareSize from "./firmware_size.json";
+
+const blockSize = 4 * 1024;
 
 export const formatSize = (size: number) =>
   !size ? "" : Math.round(100 * (size / 1024)) / 100 + "Kb";
@@ -29,16 +31,17 @@ const inferAppBytes = ({ key, hash }: *) => {
   return 0;
 };
 
+// we should just use bytes in the data to keep that precision in when possible.
 export const inferAppSize = (search: *) =>
   Math.ceil(inferAppBytes(search) / blockSize);
+
+export const blockToBytes = block => block * blockSize;
 
 export const getOsSize = (
   deviceModel: DeviceModel,
   deviceInfo: DeviceInfo
 ): number =>
   firmwareSize[deviceModel.id.toLowerCase() + "/" + deviceInfo.version] || 0;
-
-const blockSize = 4 * 1024;
 
 export type AppData = {
   currency: ?CryptoCurrency,

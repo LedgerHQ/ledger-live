@@ -20,7 +20,13 @@ import {
 import ReactTooltip from "react-tooltip";
 import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
 import { StorageBar, DeviceIllustration } from "./DeviceStorage";
-import { distribute, inferAppSize, lenseAppHash, formatSize } from "./sizes";
+import {
+  distribute,
+  blockToBytes,
+  inferAppSize,
+  lenseAppHash,
+  formatSize
+} from "./sizes";
 
 const Container = styled.div`
   width: 600px;
@@ -43,7 +49,12 @@ const AppRow = styled.div`
 const AppName = styled.div`
   flex-direction: column;
   padding-left: 10px;
+  width: 200px;
+`;
+
+const AppSize = styled.div`
   flex: 1;
+  color: #999;
 `;
 
 const CryptoName = styled.div`
@@ -87,6 +98,17 @@ const Info = styled.div`
     }
     margin-right: 30px;
   }
+`;
+
+const FreeInfo = styled.div`
+  padding: 10px 0;
+  font-size: 13px;
+  line-height: 16px;
+  color: ${p => (p.danger ? "#EB5757" : "#000")};
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 const Progress = ({ value }) => (
@@ -156,8 +178,15 @@ const AppItem = ({
         <CryptoName>{`${app.name}${
           app.currency ? ` (${app.currency.ticker})` : ""
         }`}</CryptoName>
-        <CryptoVersion>{`Version ${app.version}`}</CryptoVersion>
+        <CryptoVersion>{`Version ${app.version}${
+          installed && !installed.updated ? " (NEW)" : ""
+        }`}</CryptoVersion>
       </AppName>
+      <AppSize>
+        {formatSize(
+          blockToBytes((installed && installed.blocks) || inferAppSize(app))
+        )}
+      </AppSize>
       {error ? (
         <Button danger style={{ color: "red" }} title={String(error)}>
           !
@@ -205,6 +234,31 @@ const AppItem = ({
   );
 };
 
+const dangerIcon = (
+  <svg
+    width="24"
+    height="23"
+    viewBox="0 0 24 23"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8.94948 4.34368L2.51426 15.7841C1.20188 18.1172 2.88788 21 5.56477 21H18.4352C21.1121 21 22.7981 18.1172 21.4857 15.7841L15.0505 4.34368C13.7124 1.9649 10.2875 1.9649 8.94948 4.34368Z"
+      fill="#EB5757"
+      stroke="white"
+      stroke-width="4"
+    />
+    <circle cx="12" cy="16" r="1" fill="white" />
+    <path
+      d="M12 9.5V12.5"
+      stroke="white"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
 const Main = ({ transport, deviceInfo, listAppsRes }) => {
   const exec = useMemo(() => execWithTransport(transport), [transport]);
   const [state, dispatch] = useAppsRunner(listAppsRes, exec);
@@ -251,6 +305,8 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     deviceInfo,
     installed: state.installed
   });
+
+  const dangerSpace = distribution.freeSpaceBlocks < 6;
 
   return (
     <Container>
@@ -320,11 +376,18 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
             </div>
           </Info>
           <StorageBar distribution={distribution} />
+          <FreeInfo danger={dangerSpace}>
+            {dangerSpace ? dangerIcon : ""}{" "}
+            {formatSize(distribution.freeSpaceBytes)} Free
+          </FreeInfo>
         </div>
       </div>
-      <h2 style={{ marginTop: "30px" }}>
+      <h2 style={{ marginTop: "30px", display: "flex", flexDirection: "row" }}>
         {"On Device "}
-        <Button onClick={onUpdateAll}>Update all</Button>
+        <span style={{ flex: 1 }} />
+        {state.installed.some(i => !i.updated) ? (
+          <Button onClick={onUpdateAll}>Update all</Button>
+        ) : null}
       </h2>
 
       {!state.installedAvailable ? (
@@ -341,7 +404,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
         {prettyActionPlan(plan)}
       </div>
 
-      <h2>Apps Store</h2>
+      <h2>App Store</h2>
 
       <div>{nonInstalledApps.map(mapApp)}</div>
     </Container>
