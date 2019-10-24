@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import styled from "styled-components";
-
+import ReactTooltip from "react-tooltip";
 import type { AppsDistribution } from "./sizes";
 
 import nanoS from "./images/nanoS.png";
@@ -17,7 +17,9 @@ const illustrations = {
 export const DeviceIllustration = styled.img.attrs(p => ({
   src: illustrations[p.deviceModel.id]
 }))`
-  max-height: 200px;
+  max-height: 153px;
+  margin-right: 56px;
+  filter: drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.2));
 `;
 
 export const StorageBar = ({
@@ -26,14 +28,18 @@ export const StorageBar = ({
   distribution: AppsDistribution
 }) => (
   <StorageBarWrapper>
-    <StorageBarItem ratio={distribution.osBlocks / distribution.totalBlocks} />
-    {distribution.apps.map(({ name, currency, blocks }) => {
+    <ReactTooltip effect="solid" />
+    {/*<StorageBarItem ratio={distribution.osBlocks / distribution.totalBlocks} />*/}
+    {distribution.apps.map(({ name, currency, bytes, blocks }) => {
       const color = currency ? currency.color : "black"; // unknown color?
       return (
+        //Stupid library is stupid
         <StorageBarItem
+          data-for="tooltip"
+          data-tip={JSON.stringify({ name, bytes })}
           key={name}
           style={{ background: color }}
-          ratio={blocks / distribution.totalBlocks}
+          ratio={blocks / (distribution.totalBlocks - distribution.osBlocks)}
         />
       );
     })}
@@ -68,5 +74,12 @@ export const StorageBarItem = styled.div.attrs(props => ({
   width: ${p => p.width};
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
-  background-clip: content-box;
+  background-clip: content-box !important;
+
+  &:nth-of-type(2) {
+    border-left: none;
+  }
+  &:last-of-type {
+    border-right: none;
+  }
 `;

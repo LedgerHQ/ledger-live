@@ -104,12 +104,6 @@ export const listApps = async (
     )
   ]);
 
-  log(
-    "list-apps",
-    `${installedList.length} apps installed. ${applicationsList.length} available.`,
-    { installedList }
-  );
-
   const filtered = getEnv("MANAGER_DEV_MODE")
     ? compatibleAppVersionsList.slice(0)
     : compatibleAppVersionsList.filter(version => {
@@ -119,6 +113,12 @@ export const listApps = async (
         }
         return false;
       });
+
+  log(
+    "list-apps",
+    `${installedList.length} apps installed. ${applicationsList.length} apps store total. ${filtered.length} available.`,
+    { installedList }
+  );
 
   const sortedCryptoApps = [];
   // sort by crypto first

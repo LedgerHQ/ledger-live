@@ -52,7 +52,13 @@ export type AppsDistribution = {
   totalBytes: number,
   osBlocks: number,
   osBytes: number,
-  apps: Array<AppData>
+  apps: Array<AppData>,
+  appsSpaceBlocks: number,
+  appsSpaceBytes: number,
+  totalAppsBlocks: number,
+  totalAppsBytes: number,
+  freeSpaceBlocks: number,
+  freeSpaceBytes: number
 };
 
 export const distribute = (a: {
@@ -64,12 +70,31 @@ export const distribute = (a: {
   const totalBlocks = Math.floor(totalBytes / blockSize);
   const osBytes = getOsSize(a.deviceModel, a.deviceInfo);
   const osBlocks = Math.ceil(osBytes / blockSize);
+  const appsSpaceBlocks = totalBlocks - osBlocks;
+  const appsSpaceBytes = appsSpaceBlocks * blockSize;
+  let totalAppsBlocks = 0;
   const apps: AppData[] = a.installed
     .map(app => {
       const { name, blocks } = app;
+      totalAppsBlocks += blocks;
       const currency = findCryptoCurrency(c => c.managerAppName === name);
       return { currency, name, blocks, bytes: blocks * blockSize };
     })
     .sort((a: AppData, b: AppData) => b.blocks - a.blocks);
-  return { totalBlocks, totalBytes, osBlocks, osBytes, apps };
+  const totalAppsBytes = totalAppsBlocks * blockSize;
+  const freeSpaceBlocks = appsSpaceBlocks - totalAppsBlocks;
+  const freeSpaceBytes = freeSpaceBlocks * blockSize;
+  return {
+    totalBlocks,
+    totalBytes,
+    osBlocks,
+    osBytes,
+    apps,
+    appsSpaceBlocks,
+    appsSpaceBytes,
+    totalAppsBlocks,
+    totalAppsBytes,
+    freeSpaceBlocks,
+    freeSpaceBytes
+  };
 };
