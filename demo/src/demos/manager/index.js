@@ -17,6 +17,7 @@ import {
   execWithTransport,
   getActionPlan
 } from "@ledgerhq/live-common/lib/apps";
+import ReactTooltip from "react-tooltip";
 import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
 import { StorageBar, DeviceIllustration } from "./DeviceStorage";
 import { distribute, inferAppSize, lenseAppHash } from "./sizes";
@@ -60,6 +61,33 @@ const AppActions = styled.div`
     margin-right: 10px;
   }
 `;
+
+const Separator = styled.div`
+  height:1px;
+  margin:20px 0px;
+  background:#E1E3EA;
+  width:100%;
+`;
+
+const Info = styled.div`
+  font-family: Inter;
+  display:flex;
+  margin-bottom:20px;
+  font-size: 13px;
+  line-height: 16px;
+  
+  & > div {
+    display:flex;
+    flex-direction:row;
+    color:#999999;
+    & > :nth-child(2){
+      font-weight:bold;
+      color:#222222;
+      margin-left:10px;
+    }
+    margin-right:30px;
+  }
+`
 
 const Progress = ({ value }) => (
   <div
@@ -224,19 +252,45 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     installed: state.installed
   });
 
+  const totalUsedByApps = distribution.apps.reduce((t,{bytes})=>t+bytes,0)
+  const totalUsed = distribution.osBytes+totalUsedByApps
+
   return (
     <Container>
+      <ReactTooltip id="tooltip" effect="solid" getContent={(dataTip)=>{
+        if(!dataTip) return null;
+        const {name, size} = JSON.parse(dataTip);
+        return <>
+          <div style={{textAlign:'center',color:'rgba(255, 255, 255, 0.7)'}}>{name}</div>
+          <div style={{textAlign:'center',color:'white'}}>{size}Ko</div>
+        </>;
+      }}/>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <DeviceIllustration deviceModel={deviceModel} />
-        <div style={{ flex: 1, paddingLeft: 20 }}>
-          <div style={{ marginBottom: 10 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ marginBottom: 4, fontSize:"16px", lineHeight:"19px", fontFamily:'Inter' }}>
             <strong>{deviceModel.productName}</strong>
           </div>
-          <div style={{ marginBottom: 20 }}>Firmware {deviceInfo.version}</div>
+          <div style={{ fontFamily:'Inter', fontSize:"13px", lineHeight:"16px", color:"#999999" }}>Firmware {deviceInfo.version}</div>
+          <Separator/>
+          <Info>
+            <div>
+              <span>Used</span>
+              <span>{totalUsed/1024}Ko</span>
+            </div>
+            <div>
+              <span>Capacity</span>
+              <span>{distribution.totalBytes/1024}Ko</span>
+            </div>
+            <div>
+              <span>Apps installed</span>
+              <span>{distribution.apps.length}</span>
+            </div>
+          </Info>
           <StorageBar distribution={distribution} />
         </div>
       </div>
-      <h2>
+      <h2 style={{marginTop:"30px"}}>
         {"On Device "}
         <Button onClick={onUpdateAll}>Update all</Button>
       </h2>
