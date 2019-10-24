@@ -76,14 +76,13 @@ export const distribute = (a: {
   const appsSpaceBlocks = totalBlocks - osBlocks;
   const appsSpaceBytes = appsSpaceBlocks * blockSize;
   let totalAppsBlocks = 0;
-  const apps: AppData[] = a.installed
-    .map(app => {
-      const { name, blocks } = app;
-      totalAppsBlocks += blocks;
-      const currency = findCryptoCurrency(c => c.managerAppName === name);
-      return { currency, name, blocks, bytes: blocks * blockSize };
-    })
-    .sort((a: AppData, b: AppData) => b.blocks - a.blocks);
+  const apps: AppData[] = a.installed.map(app => {
+    const { name, blocks } = app;
+    totalAppsBlocks += blocks;
+    const currency = findCryptoCurrency(c => c.managerAppName === name);
+    return { currency, name, blocks, bytes: blocks * blockSize };
+  });
+  // .sort((a: AppData, b: AppData) => b.blocks - a.blocks);
   const totalAppsBytes = totalAppsBlocks * blockSize;
   const freeSpaceBlocks = appsSpaceBlocks - totalAppsBlocks;
   const freeSpaceBytes = freeSpaceBlocks * blockSize;
