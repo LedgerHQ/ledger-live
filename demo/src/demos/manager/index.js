@@ -184,7 +184,10 @@ const AppItem = ({
       </AppName>
       <AppSize>
         {formatSize(
-          blockToBytes((installed && installed.blocks) || inferAppSize(app))
+          blockToBytes(
+            (installed && installed.blocks) ||
+              inferAppSize({ key: app.firmware })
+          )
         )}
       </AppSize>
       {error ? (
@@ -194,7 +197,11 @@ const AppItem = ({
       ) : progress || scheduled ? (
         <div style={{ textAlign: "right" }}>
           {progress ? (
-            <div style={{ color: "#6490F1", marginBottom: 5 }}>Updating...</div>
+            <div style={{ color: "#6490F1", marginBottom: 5 }}>
+              {progress.appOp.type === "install"
+                ? "Installing..."
+                : "Uninstalling..."}
+            </div>
           ) : (
             <div
               style={{
