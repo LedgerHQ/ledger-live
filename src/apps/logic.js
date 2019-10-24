@@ -17,7 +17,7 @@ export const initState = (listAppsResult: ListAppsResult): State => ({
 
 const directDep = {};
 const reverseDep = {};
-function declareDep(name, dep) {
+export function declareDep(name: string, dep: string) {
   directDep[name] = dep;
   reverseDep[dep] = (reverseDep[dep] || []).concat(name);
 }
@@ -34,7 +34,8 @@ listCryptoCurrencies(true, true).forEach(a => {
   ["RSK", "Ethereum"],
   ["ZenCash", "Bitcoin"],
   ["kUSD", "Ethereum"],
-  ["ThunderCore", "Ethereum"]
+  ["ThunderCore", "Ethereum"],
+  ["ARTIS sigma1", "Ethereum"]
 ].forEach(([name, dep]) => declareDep(name, dep));
 
 export const getDirectDep = (appName: string): ?string => directDep[appName];
