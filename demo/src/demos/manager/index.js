@@ -278,6 +278,20 @@ const SuccessInstall = styled.div`
   }
 `;
 
+const InputSearch = styled.input`
+  border: none;
+  background: none;
+  width: 100%;
+  height: 60px;
+  margin-top: -24px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  box-sizing: border-box;
+  color: #222;
+  outline: none;
+`;
+
 const AppPreview = ({ app }: *) => (
   <img alt="" src={manager.getIconUrl(app.icon)} width={40} height={40} />
 );
@@ -427,6 +441,11 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
   const onUpdateAll = useCallback(() => dispatch({ type: "updateAll" }), [
     dispatch
   ]);
+  const [search, setSearch] = useState("");
+  const onChangeSearch = useCallback(e => {
+    setSearch(e.target.value);
+  }, []);
+
   const plan = getActionPlan(state);
 
   // $FlowFixMe
@@ -465,6 +484,13 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     .map(i => state.apps.find(a => a.name === i.name))
     .filter(Boolean);
 
+  const appsList = state.apps.filter(({ name, currency }) => {
+    if (!search) return true;
+    const terms =
+      name + " " + (currency ? currency.name + " " + currency.ticker : "");
+    return terms.toLowerCase().includes(search.toLowerCase().trim());
+  });
+
   const distribution = distribute({
     deviceModel,
     deviceInfo,
@@ -501,7 +527,15 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
         />
         <Section>
           <h2>App Store</h2>
-          <Card>{state.apps.map(app => mapApp(app, true))}</Card>
+          <Card>
+            <InputSearch
+              autoFocus
+              placeholder="Search app..."
+              value={search}
+              onChange={onChangeSearch}
+            />
+            {appsList.map(app => mapApp(app, true))}
+          </Card>
         </Section>
         <Section>
           <h2>Device Manager</h2>
