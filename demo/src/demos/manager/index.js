@@ -497,7 +497,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     installed: state.installed
   });
 
-  const dangerSpace = distribution.freeSpaceBlocks < 6;
+  const dangerSpace = distribution.freeSpaceBlocks < 6; // FIXME. ok for Nano S but too low for Nano X makes it a % of the total?
 
   return (
     <Container>
