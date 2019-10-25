@@ -9,7 +9,7 @@ import installOsuFirmware from "./installOsuFirmware";
 import { withDevice } from "./deviceAccess";
 import type { FirmwareUpdateContext } from "../types/manager";
 
-const waitEnd = of({ type: "wait" }).pipe(delay(1000));
+const waitEnd = of({ type: "wait" }).pipe(delay(3000));
 
 const checkId = (
   deviceId: string,
