@@ -4,11 +4,15 @@ import type { CryptoCurrency, CryptoCurrencyConfig } from "./types";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "./env";
 
+type LibcoreConfig = {
+  [_: string]: mixed
+};
+
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number,
   isNonIterable?: boolean,
   overridesDerivation?: string,
-  libcoreConfig?: { [_: string]: mixed },
+  libcoreConfig?: LibcoreConfig,
   isSegwit?: boolean, // TODO drop
   isUnsplit?: boolean, // TODO drop
   skipFirst?: true,
@@ -20,6 +24,13 @@ export type ModeSpec = {
 };
 
 export type DerivationMode = $Keys<typeof modes>;
+
+const extraConfigPerCurrency: { [_: string]: LibcoreConfig } = {
+  tezos: {
+    BLOCKCHAIN_EXPLORER_ENGINE: "TZSTATS_API",
+    TEZOS_PROTOCOL_UPDATE: "TEZOS_PROTOCOL_UPDATE_BABYLON"
+  }
+};
 
 const modes = Object.freeze({
   // this is "default" by convention
@@ -167,8 +178,12 @@ export const isSegwitDerivationMode = (
 ): boolean => modes[derivationMode].isSegwit || false;
 
 export const getLibcoreConfig = (
+  currency: CryptoCurrency,
   derivationMode: DerivationMode
-): ?{ [_: string]: mixed } => modes[derivationMode].libcoreConfig;
+): ?{ [_: string]: mixed } => ({
+  ...extraConfigPerCurrency[currency.id],
+  ...modes[derivationMode].libcoreConfig
+});
 
 export const isUnsplitDerivationMode = (
   derivationMode: DerivationMode

@@ -71,8 +71,8 @@ const ledgerExplorersV2 = {
 const ledgerExplorersV3 = {
   ethereum: "eth",
   ethereum_ropsten: "eth_ropsten",
-  ethereum_classic: "etc",
-  tezos: "xtz"
+  ethereum_classic: "etc"
+  // tezos: "xtz"
 };
 
 export const blockchainBaseURL = (currency: CryptoCurrency): string => {

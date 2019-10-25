@@ -139,7 +139,7 @@ export default class Tezos {
     }
 
     while (offset !== rawTx.length) {
-      let maxChunkSize = 255;
+      let maxChunkSize = 230;
       let chunkSize;
       if (offset + maxChunkSize >= rawTx.length) {
         chunkSize = rawTx.length - offset;
