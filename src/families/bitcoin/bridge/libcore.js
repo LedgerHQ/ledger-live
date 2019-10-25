@@ -1,7 +1,12 @@
 // @flow
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { FeeNotLoaded, FeeRequired, FeeTooHigh } from "@ledgerhq/errors";
+import {
+  FeeNotLoaded,
+  FeeRequired,
+  FeeTooHigh,
+  NotEnoughBalance
+} from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Account } from "../../../types/account";
@@ -87,6 +92,11 @@ const getTransactionStatus = async (a, t) => {
 
   const totalSpent = useAllAmount ? a.balance : t.amount.plus(estimatedFees);
   const amount = useAllAmount ? a.balance.minus(estimatedFees) : t.amount;
+
+  // FIXME libcore have a bug that don't detect some cases like when doing send max!
+  if (!errors.amount && useAllAmount && !amount.gt(0)) {
+    errors.amount = new NotEnoughBalance();
+  }
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
