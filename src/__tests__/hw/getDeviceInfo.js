@@ -231,6 +231,28 @@ test("0.11 bootloader", async () => {
   });
 });
 
+test("0.11 BL (2)", async () => {
+  const Transport = createTransportReplayer(
+    RecordStore.fromString(`
+    => e001000000
+    <= 0100000104302e313104f4d8aa439000
+    `)
+  );
+  const t = await Transport.create();
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "0.11",
+    mcuVersion: "",
+    majMin: "0.11",
+    providerId: 1,
+    targetId: 16777217,
+    isOSU: false,
+    isBootloader: true,
+    managerAllowed: false,
+    pinValidated: true
+  });
+});
+
 test("0.0 bootloader", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`

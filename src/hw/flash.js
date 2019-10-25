@@ -34,7 +34,12 @@ export default (finalFirmware: FinalFirmware) => (
               .join(".");
             isMCU = blVersion === mcuFromBootloader;
             version = isMCU ? mcuVersion.name : mcuFromBootloader;
-            log("firmware-update", `flash ${version} isMcu=${String(isMCU)}`);
+            log("firmware-update", `flash ${version} isMcu=${String(isMCU)}`, {
+              blVersion,
+              mcuFromBootloader,
+              version,
+              isMCU
+            });
           }
 
           return concat(
