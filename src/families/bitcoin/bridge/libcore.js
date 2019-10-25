@@ -94,7 +94,7 @@ const getTransactionStatus = async (a, t) => {
   const amount = useAllAmount ? a.balance.minus(estimatedFees) : t.amount;
 
   // FIXME libcore have a bug that don't detect some cases like when doing send max!
-  if (!errors.amount && totalSpent.gt(a.balance)) {
+  if (!errors.amount && useAllAmount && !amount.gt(0)) {
     errors.amount = new NotEnoughBalance();
   }
 
