@@ -1675,10 +1675,10 @@
     "@ledgerhq/errors" "^4.73.2"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^8.1.2":
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.1.2.tgz#1e63c7b771aaa8a20ce639c3dd34f5da2bb8e6ae"
-  integrity sha512-7UWE58hgKvZvJlE7vhMyl/gg/uX1/gjawPGhaVUwvfzHQVwZQ+GYujMTa7tXWIYBDmTw6t7ZBqHtCIHKv22k1Q==
+"@ledgerhq/live-common@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.3.0.tgz#dbf48b6d5abcd84be48c51bf235598a0a1731811"
+  integrity sha512-9ZdrlklKhO0ffeK8P2rk2F4/sh+YVNMZSd/rKhHa4g2X5smw9Ntz/k5AHMMxS5ZBaHTVIHIX9kYMKUbev/KmHg==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/errors" "4.73.2"
@@ -5534,10 +5534,10 @@ flatten@^1.0.2:
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
   integrity sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
 
-flow-bin@^0.110.0:
-  version "0.110.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.110.0.tgz#c6c140e239f662839d8f61b64b7b911f12d3306c"
-  integrity sha512-mmdEPEMoTuX+mguy/tjRlOlCtPfVdXZQeMgCAsEDVDgWMA5vwWhM2y653OcJiKX38t4gtZ2e/MNVo0qzyYeZDQ==
+flow-bin@^0.110.1:
+  version "0.110.1"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.110.1.tgz#24ac70bf0871a5d6bc181ba99801ded4d5e3b442"
+  integrity sha512-6FhvNKNvPQ523mx7sqNxTQvI/HgAWa/pbIsQuCst53qRqs387EFfYqgm4I3Zae5HLaVFacBwgWKmjKd92vf19w==
 
 flush-write-stream@^1.0.0:
   version "1.0.3"
