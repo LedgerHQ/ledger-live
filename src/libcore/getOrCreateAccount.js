@@ -13,8 +13,12 @@ type Param = {
 };
 type F = Param => Promise<CoreAccount>;
 
+const restoreWithAccountCreationInfo = {
+  tezos: true
+};
+
 export const getOrCreateAccount: F = atomicQueue(
-  async ({ core, coreWallet, account: { xpub, index } }) => {
+  async ({ core, coreWallet, account: { xpub, index, currency } }) => {
     log("libcore", "getOrCreateAccount", { xpub, index });
     let coreAccount;
     try {
@@ -24,25 +28,54 @@ export const getOrCreateAccount: F = atomicQueue(
         throw err;
       }
       log("libcore", "no account existed. restoring...");
-      const extendedInfos = await coreWallet.getExtendedKeyAccountCreationInfo(
-        index
-      );
-      const infosIndex = await extendedInfos.getIndex();
-      const extendedKeys = await extendedInfos.getExtendedKeys();
-      const owners = await extendedInfos.getOwners();
-      const derivations = await extendedInfos.getDerivations();
       invariant(xpub, "xpub is missing. Please reimport the account.");
-      extendedKeys.push(xpub);
-      const newExtendedKeys = await core.ExtendedKeyAccountCreationInfo.init(
-        infosIndex,
-        owners,
-        derivations,
-        extendedKeys
-      );
-      const account = await coreWallet.newAccountWithExtendedKeyInfo(
-        newExtendedKeys
-      );
-      return account;
+
+      if (restoreWithAccountCreationInfo[currency.id]) {
+        const accountCreationInfos = await coreWallet.getNextAccountCreationInfo();
+        const chainCodes = await accountCreationInfos.getChainCodes();
+        const publicKeys = await accountCreationInfos.getPublicKeys();
+        const index = await accountCreationInfos.getIndex();
+        const derivations = await accountCreationInfos.getDerivations();
+        const owners = await accountCreationInfos.getOwners();
+        publicKeys.push(xpub);
+        log("libcore", "AccountCreationInfo.init", {
+          index,
+          owners,
+          derivations,
+          publicKeys,
+          chainCodes
+        });
+        const newAccountCreationInfos = await core.AccountCreationInfo.init(
+          index,
+          owners,
+          derivations,
+          publicKeys,
+          chainCodes
+        );
+        const account = await coreWallet.newAccountWithInfo(
+          newAccountCreationInfos
+        );
+        return account;
+      } else {
+        const extendedInfos = await coreWallet.getExtendedKeyAccountCreationInfo(
+          index
+        );
+        const infosIndex = await extendedInfos.getIndex();
+        const extendedKeys = await extendedInfos.getExtendedKeys();
+        const owners = await extendedInfos.getOwners();
+        const derivations = await extendedInfos.getDerivations();
+        extendedKeys.push(xpub);
+        const newExtendedKeys = await core.ExtendedKeyAccountCreationInfo.init(
+          infosIndex,
+          owners,
+          derivations,
+          extendedKeys
+        );
+        const account = await coreWallet.newAccountWithExtendedKeyInfo(
+          newExtendedKeys
+        );
+        return account;
+      }
     }
     return coreAccount;
   },
