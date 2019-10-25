@@ -28,6 +28,7 @@ export type DerivationMode = $Keys<typeof modes>;
 const extraConfigPerCurrency: { [_: string]: LibcoreConfig } = {
   tezos: {
     BLOCKCHAIN_EXPLORER_ENGINE: "TZSTATS_API",
+    BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://tzstats.ledger.com/explorer",
     TEZOS_PROTOCOL_UPDATE: "TEZOS_PROTOCOL_UPDATE_BABYLON"
   }
 };
