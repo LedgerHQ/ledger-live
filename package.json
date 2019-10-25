@@ -25,7 +25,7 @@
     "staging-android": "yarn android:staging && yarn android:install",
     "mock-android": "yarn android:mock && yarn android:install",
     "prettier": "prettier --write \"src/**/*.js\"",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "flow": "flow",
     "test": "yarn check --integrity && ./scripts/check-no-dups.sh && yarn lint && yarn flow && prettier -l src/**/*.js",
     "sync-flowtyped": "flow-typed install -s -o && rm flow-typed/npm/axios_*",
@@ -59,6 +59,7 @@
     "@ledgerhq/react-native-ledger-core": "^3.8.0",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@ledgerhq/react-native-touch-id": "^4.6.3",
+    "@react-native-community/async-storage": "^1.6.2",
     "@react-native-community/netinfo": "^4.4.0",
     "@segment/analytics-ios": "github:LedgerHQ/analytics-ios#efb4cd1771dab568422473fd680ffb748b102f07",
     "@segment/analytics-react-native": "^0.1.0-beta.0",
@@ -168,6 +169,9 @@
     "react-test-renderer": "16.9.0",
     "rn-nodeify": "^10.2.0",
     "yarn-deduplicate": "^1.1.1"
+  },
+  "resolutions": {
+    "@react-native-community/eslint-config/babel-eslint": "^10.0.3"
   },
   "react-native": {
     "zlib": "browserify-zlib",

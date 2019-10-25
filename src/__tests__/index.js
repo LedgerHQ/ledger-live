@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-redeclare
 /* global jest */
 
 import React from "react";

@@ -1,6 +1,13 @@
 module.exports = {
   root: true,
   extends: ["@react-native-community", "airbnb", "prettier", "prettier/react"],
+  settings: {
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".android.js", ".ios.js"],
+      },
+    },
+  },
   rules: {
     "no-console": [
       "error",
