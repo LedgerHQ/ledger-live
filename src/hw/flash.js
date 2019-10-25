@@ -1,4 +1,5 @@
 // @flow
+import { log } from "@ledgerhq/logs";
 import type Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of, concat } from "rxjs";
 import { mergeMap } from "rxjs/operators";
@@ -25,6 +26,7 @@ export default (finalFirmware: FinalFirmware) => (
           let isMCU = false;
           if (typeof mcuVersion === "string") {
             version = mcuVersion;
+            log("firmware-update", `flash ${version} from mcuVersion`);
           } else {
             const mcuFromBootloader = (mcuVersion.from_bootloader_version || "")
               .split(".")
@@ -32,6 +34,7 @@ export default (finalFirmware: FinalFirmware) => (
               .join(".");
             isMCU = blVersion === mcuFromBootloader;
             version = isMCU ? mcuVersion.name : mcuFromBootloader;
+            log("firmware-update", `flash ${version} isMcu=${String(isMCU)}`);
           }
 
           return concat(

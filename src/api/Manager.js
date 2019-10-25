@@ -205,6 +205,9 @@ const getNextBLVersion = async (
       "there is no next mcu version to install"
     );
   }
+
+  log("firmware-update", `getNextBLVersion ${mcuversion} => ${String(data)}`);
+
   return data;
 };
 
