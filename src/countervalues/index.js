@@ -23,6 +23,7 @@ import type {
   PollAPIPair
 } from "./types";
 import network from "../network";
+import { getEnv } from "../env";
 
 type PollingProviderOwnProps = {
   children: React$Element<*>,
@@ -97,9 +98,11 @@ export const defaultTickerAliases = {
   WETH: "ETH"
 };
 
+const defaultGetAPIBaseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
+
 function createCounterValues<State>({
   tickerAliases,
-  getAPIBaseURL,
+  getAPIBaseURL: userGetAPIBaseURL,
   storeSelector,
   pairsSelector,
   setExchangePairsAction,
@@ -111,6 +114,8 @@ function createCounterValues<State>({
   fetchTickersByMarketcapImplementation
 }: Input<State>): Module<State> {
   type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
+
+  const getAPIBaseURL = userGetAPIBaseURL || defaultGetAPIBaseURL;
 
   const aliases = tickerAliases || defaultTickerAliases;
 
