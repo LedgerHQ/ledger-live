@@ -1,6 +1,7 @@
 // @flow
 import type Transport from "@ledgerhq/hw-transport";
 
+// TODO make it observable style
 export default async (transport: Transport<*>) => {
   const payload = await transport.send(0xe0, 0xde, 0, 0);
 

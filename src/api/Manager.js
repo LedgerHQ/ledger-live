@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
-import { catchError, map, filter } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
 import type { SocketEvent } from "./socket";
@@ -286,9 +286,14 @@ const install = (
   }).pipe(remapSocketError(context));
 };
 
-const aggregateGenuineCheckEvents = (
+export type WithAllowManagerEvent =
+  | { type: "result", payload: any }
+  | { type: "allow-manager-requested" }
+  | { type: "allow-manager-accepted" };
+
+const aggregateAllowManagerEvents = (
   input: Observable<SocketEvent>
-): Observable<GenuineCheckEvent> =>
+): Observable<WithAllowManagerEvent> =>
   Observable.create(o => {
     let timeout;
     let requested;
@@ -305,7 +310,7 @@ const aggregateGenuineCheckEvents = (
           timeout = null;
         }
         if (e.type === "result") {
-          o.next({ type: "result", payload: String(e.payload || "") });
+          o.next({ type: "result", payload: e.payload });
         } else if (e.nonce === 3) {
           if (e.type === "exchange-before") {
             timeout = setTimeout(() => {
@@ -338,13 +343,26 @@ const genuineCheck = (
       query: { targetId, perso, livecommonversion }
     })
     // $FlowFixMe
-  }).pipe(aggregateGenuineCheckEvents);
+  }).pipe(
+    aggregateAllowManagerEvents,
+    map(e => {
+      if (e.type === "result") {
+        return { type: "result", payload: String(e.payload || "") };
+      }
+      return e;
+    })
+  );
 };
+
+export type ListInstalledAppsEvent =
+  | { type: "result", payload: Array<{ hash: string, name: string }> }
+  | { type: "allow-manager-requested" }
+  | { type: "allow-manager-accepted" };
 
 const listInstalledApps = (
   transport: Transport<*>,
   { targetId, perso }: { targetId: *, perso: * }
-): Observable<Array<{ hash: string, name: string }>> => {
+): Observable<ListInstalledAppsEvent> => {
   log("manager", "listInstalledApps", { targetId, perso });
   return createDeviceSocket(transport, {
     url: URL.format({
@@ -353,14 +371,26 @@ const listInstalledApps = (
     })
   }).pipe(
     remapSocketError("listInstalledApps"),
-    filter(o => o.type === "result"),
-    map(o =>
-      o.payload.map(({ hash, name }) => {
-        invariant(typeof hash === "string", "hash is defined");
-        invariant(typeof name === "string", "name is defined");
-        return { hash, name };
-      })
-    )
+    // $FlowFixMe
+    aggregateAllowManagerEvents,
+    map(o => {
+      if (o.type === "result") {
+        return {
+          type: "result",
+          payload: [...o.payload].map(a => {
+            invariant(
+              typeof a === "object" && a,
+              "payload array item are objects"
+            );
+            const { hash, name } = a;
+            invariant(typeof hash === "string", "hash is defined");
+            invariant(typeof name === "string", "name is defined");
+            return { hash, name };
+          })
+        };
+      }
+      return o;
+    })
   );
 };
 

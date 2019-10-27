@@ -1,13 +1,18 @@
 // @flow
-import { initState, reducer } from "./logic";
-import { getActionPlan, runAll } from "./runner";
+import {
+  initState,
+  reducer,
+  distribute,
+  getActionPlan,
+  predictOptimisticState
+} from "./logic";
+import { runAll } from "./runner";
 import {
   deviceInfo155,
   mockListAppsResult,
-  mockExecWithInstalledContext,
-  prettyActionPlan,
-  prettyInstalled
+  mockExecWithInstalledContext
 } from "./mock";
+import { prettyActionPlan, prettyInstalled } from "./formatting";
 import { setEnv } from "../env";
 
 setEnv("MANAGER_INSTALL_DELAY", 0);
@@ -87,7 +92,7 @@ const scenarios = [
     actions: [
       {
         dispatch: { type: "uninstall", name: "Bitcoin" },
-        expectPlan: "-Dogecoin, -Litecoin, -Bitcoin",
+        expectPlan: "-Litecoin, -Dogecoin, -Bitcoin",
         expectInstalled: ""
       }
     ]
@@ -237,6 +242,7 @@ scenarios.forEach(scenario => {
     for (let action of scenario.actions) {
       state = [].concat(action.dispatch).reduce(reducer, state);
       expect(prettyActionPlan(getActionPlan(state))).toBe(action.expectPlan);
+      const optimisticState = predictOptimisticState(state);
       state = await runAll(
         state,
         mockExecWithInstalledContext(state.installed)
@@ -244,7 +250,14 @@ scenarios.forEach(scenario => {
       if (action.expectInstalled) {
         expect(prettyInstalled(state.installed)).toBe(action.expectInstalled);
       }
+      expect(state).toEqual(optimisticState);
       expect(prettyActionPlan(getActionPlan(state))).toBe("");
+      const d: any = distribute(state);
+      d.apps = d.apps.map(({ currency, ...rest }) => ({
+        ...rest,
+        currencyId: currency && currency.id
+      }));
+      expect(d).toMatchSnapshot();
     }
   });
 });

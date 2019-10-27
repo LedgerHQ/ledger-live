@@ -5,7 +5,7 @@ import { ManagerAppDepInstallRequired } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { ApplicationVersion } from "../types/manager";
 import ManagerAPI from "../api/Manager";
-import { getDirectDep } from "../apps/logic";
+import { getDirectDep } from "../apps/polyfill";
 
 export default function installApp(
   transport: Transport<*>,

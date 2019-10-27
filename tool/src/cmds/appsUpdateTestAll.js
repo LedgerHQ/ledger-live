@@ -2,17 +2,16 @@
 // @flow
 
 import { from, of } from "rxjs";
-import { mergeMap, ignoreElements } from "rxjs/operators";
+import { mergeMap, ignoreElements, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import {
-  listApps,
   initState,
   reducer,
   runAll,
-  getActionPlan,
-  execWithTransport
+  getActionPlan
 } from "@ledgerhq/live-common/lib/apps";
+import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import type { AppOp } from "@ledgerhq/live-common/lib/apps/types";
 import { deviceOpt } from "../scan";
 
@@ -25,11 +24,17 @@ export default {
   job: ({ device, index }: $Shape<{ device: string, index: number }>) =>
     withDevice(device || "")(t => {
       const exec = execWithTransport(t);
+      // $FlowFixMe
       return from(getDeviceInfo(t)).pipe(
-        mergeMap(deviceInfo => from(listApps(t, deviceInfo))),
+        mergeMap(deviceInfo =>
+          listApps(t, deviceInfo).pipe(
+            filter(e => e.type === "result"),
+            map(e => e.result)
+          )
+        ),
         mergeMap(listAppsResult => {
-          return listAppsResult.apps.slice(index || 0).reduce(
-            ($state, app) =>
+          return listAppsResult.appsListNames.slice(index || 0).reduce(
+            ($state, name) =>
               $state.pipe(
                 mergeMap(s => {
                   if (s.currentError) {
@@ -55,10 +60,10 @@ export default {
                   return runAll(s, exec);
                 }),
                 mergeMap(s => {
-                  s = reducer(s, { type: "install", name: app.name });
+                  s = reducer(s, { type: "install", name });
                   console.log(
                     "install '" +
-                      app.name +
+                      name +
                       "' action plan = " +
                       prettyActionPlan(getActionPlan(s))
                   );

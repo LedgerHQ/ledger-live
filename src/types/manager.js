@@ -89,7 +89,9 @@ export type FinalFirmware = BaseFirmware & {
   se_firmware: Id,
   osu_versions: Array<OsuFirmware>,
   mcu_versions: Array<Id>,
-  application_versions: Array<Id>
+  application_versions: Array<Id>,
+  // data to be added
+  blocks?: number
 };
 
 export type FirmwareUpdateContext = {
@@ -119,8 +121,12 @@ export type ApplicationVersion = {
   providers: Array<Id>,
   date_creation: string,
   date_last_modified: string,
-  // extra contextual info (should be deprecated? use a function for this derivated info)
-  currency?: CryptoCurrency
+  // DEPRECATED because not serializable
+  currency?: CryptoCurrency,
+  // Information we want to add
+  currencyId?: ?string,
+  dependency?: ?string,
+  bytes?: number
 };
 
 export type Application = {

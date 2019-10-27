@@ -56,7 +56,7 @@ export type Input<State> = {
   log?: (...args: *) => void,
 
   // example: () => "http://localhost:8088"
-  getAPIBaseURL: () => string,
+  getAPIBaseURL?: () => string,
 
   storeSelector: (state: State) => CounterValuesState,
   // yield a list of pairs & exchange to pull from, based on the store state

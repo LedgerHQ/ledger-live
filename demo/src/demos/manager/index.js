@@ -7,26 +7,31 @@ import {
   setEnvUnsafe,
   setEnv
 } from "@ledgerhq/live-common/lib/env";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { open } from "@ledgerhq/live-common/lib/hw";
-import { getDeviceModel } from "@ledgerhq/devices";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import manager from "@ledgerhq/live-common/lib/manager";
 import {
-  listApps,
   useAppsRunner,
-  execWithTransport,
-  getActionPlan
-} from "@ledgerhq/live-common/lib/apps";
-import ReactTooltip from "react-tooltip";
-import { prettyActionPlan } from "@ledgerhq/live-common/lib/apps/mock";
-import { StorageBar, DeviceIllustration } from "./DeviceStorage";
-import {
+  getActionPlan,
+  prettyActionPlan,
   distribute,
+  formatSize,
+  reducer,
+  predictOptimisticState,
+  isOutOfMemoryState
+} from "@ledgerhq/live-common/lib/apps";
+import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
+import ReactTooltip from "react-tooltip";
+import { StorageBar, DeviceIllustration } from "./DeviceStorage";
+
+/*
+import {
   blockToBytes,
   inferAppSize,
   lenseAppHash,
-  formatSize
 } from "./sizes";
+*/
 
 const Container = styled.div`
   display: flex;
@@ -187,8 +192,9 @@ const Button = styled.button`
       : "rgba(100, 144, 241, 0.1)"};
   color: ${p => (p.danger ? "#FF4838" : p.primary ? "#fff" : "#6490F1")};
   border-radius: 4px;
+  opacity: ${p => (p.disabled ? 0.3 : 1)};
   &:hover {
-    opacity: 0.8;
+    opacity: ${p => (p.disabled ? 0.3 : 0.8)};
   }
   display: flex;
   flex-direction: row;
@@ -297,6 +303,7 @@ const AppPreview = ({ app }: *) => (
 );
 
 const AppItem = ({
+  state,
   app,
   installed,
   installedAvailable,
@@ -304,7 +311,8 @@ const AppItem = ({
   dispatch,
   progress,
   error,
-  appStoreView
+  appStoreView,
+  deviceModel
 }) => {
   const { name } = app;
   const onInstall = useCallback(() => dispatch({ type: "install", name }), [
@@ -315,12 +323,21 @@ const AppItem = ({
     dispatch,
     name
   ]);
+  const notEnoughMemoryToInstall = useMemo(
+    () =>
+      isOutOfMemoryState(
+        predictOptimisticState(reducer(state, { type: "install", name }))
+      ),
+    [name, state]
+  );
   return (
     <AppRow>
       <AppPreview app={app} />
       <AppName>
         <CryptoName>{`${app.name}${
-          app.currency ? ` (${app.currency.ticker})` : ""
+          app.currencyId
+            ? ` (${getCryptoCurrencyById(app.currencyId).ticker})`
+            : ""
         }`}</CryptoName>
         <CryptoVersion>{`Version ${app.version}${
           installed && !installed.updated ? " (NEW)" : ""
@@ -328,10 +345,9 @@ const AppItem = ({
       </AppName>
       <AppSize>
         {formatSize(
-          blockToBytes(
-            (installed && installed.blocks) ||
-              inferAppSize({ key: app.firmware })
-          )
+          ((installed && installed.blocks) || 0) * deviceModel.deviceSize ||
+            app.bytes ||
+            0
         )}
       </AppSize>
       {error ? (
@@ -380,11 +396,20 @@ const AppItem = ({
           ) : null}
 
           {installed && !installed.updated ? (
-            <Button primary onClick={onInstall}>
+            <Button
+              disabled={notEnoughMemoryToInstall}
+              primary
+              onClick={notEnoughMemoryToInstall ? null : onInstall}
+            >
               {updateIcon} Update
             </Button>
           ) : !installed ? (
-            <Button onClick={onInstall}>{installIcon} Install</Button>
+            <Button
+              disabled={notEnoughMemoryToInstall}
+              onClick={notEnoughMemoryToInstall ? null : onInstall}
+            >
+              {installIcon} Install
+            </Button>
           ) : null}
         </AppActions>
       )}
@@ -448,9 +473,6 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
 
   const plan = getActionPlan(state);
 
-  // $FlowFixMe
-  const deviceModel = transport.deviceModel || getDeviceModel("nanoS");
-
   // eslint-disable-next-line no-console
   console.log(state);
 
@@ -460,6 +482,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
 
   const mapApp = (app, appStoreView) => (
     <AppItem
+      state={state}
       key={app.name}
       scheduled={plan.find(a => a.name === app.name)}
       app={app}
@@ -477,6 +500,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
       dispatch={dispatch}
       installedAvailable={state.installedAvailable}
       appStoreView={appStoreView}
+      deviceModel={state.deviceModel}
     />
   );
 
@@ -491,13 +515,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     return terms.toLowerCase().includes(search.toLowerCase().trim());
   });
 
-  const distribution = distribute({
-    deviceModel,
-    deviceInfo,
-    installed: state.installed
-  });
-
-  const dangerSpace = distribution.freeSpaceBlocks < 6; // FIXME. ok for Nano S but too low for Nano X makes it a % of the total?
+  const distribution = distribute(state);
 
   return (
     <Container>
@@ -547,7 +565,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
             }}
           >
             <DeviceIllustration
-              deviceModel={deviceModel}
+              deviceModel={state.deviceModel}
               style={{ marginLeft: 36 }}
             />
             <div style={{ flex: 1 }}>
@@ -559,7 +577,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
                   fontFamily: "Inter"
                 }}
               >
-                <strong>{deviceModel.productName}</strong>
+                <strong>{state.deviceModel.productName}</strong>
               </div>
               <div
                 style={{
@@ -587,8 +605,8 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
                 </div>
               </Info>
               <StorageBar distribution={distribution} />
-              <FreeInfo danger={dangerSpace}>
-                {dangerSpace ? dangerIcon : ""}{" "}
+              <FreeInfo danger={distribution.shouldWarnMemory}>
+                {distribution.shouldWarnMemory ? dangerIcon : ""}{" "}
                 {formatSize(distribution.freeSpaceBytes)} Free
               </FreeInfo>
             </div>
@@ -625,10 +643,12 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
 const ConnectDevice = ({
   onConnect,
   loading,
+  devicePermissionRequested,
   error
 }: {
   onConnect: (*) => *,
   error: ?Error,
+  devicePermissionRequested?: ?{ wording: string },
   loading?: boolean
 }) => {
   const onClick = useCallback(
@@ -641,7 +661,21 @@ const ConnectDevice = ({
   return (
     <Container center>
       <div>
-        {loading ? <h1>Loading...</h1> : <h1>Please connect your device</h1>}
+        {loading ? (
+          error ? (
+            <h1>Sorry, a problem occurred!</h1>
+          ) : !devicePermissionRequested ? (
+            <h1>Loading...</h1>
+          ) : (
+            <h1 style={{ fontWeight: "normal" }}>
+              {"Please "}
+              <strong>{devicePermissionRequested.wording}</strong>
+              {" on your device..."}
+            </h1>
+          )
+        ) : (
+          <h1>Please connect your device</h1>
+        )}
 
         {error ? (
           <div style={{ marginBottom: 10 }}>
@@ -654,9 +688,7 @@ const ConnectDevice = ({
           </div>
         ) : null}
 
-        {!error && loading ? (
-          "Please allow permission on your device..."
-        ) : (
+        {!error && loading ? null : (
           <AppActions>
             <Button primary name="webusb" onClick={onClick}>
               USB
@@ -676,6 +708,9 @@ const ConnectDevice = ({
 
 const Manager = ({ location }: *) => {
   const [transport, setTransport] = useState(null);
+  const [devicePermissionRequested, setDevicePermissionRequested] = useState(
+    null
+  );
   const [deviceInfo, setDeviceInfo] = useState(null);
   const [listAppsRes, setListAppsRes] = useState(null);
   const [error, setError] = useState(null);
@@ -708,18 +743,31 @@ const Manager = ({ location }: *) => {
       transport.on("disconnect", () => {
         disconnected = true;
         setTransport(null);
+        setDeviceInfo(null);
+        setListAppsRes(null);
       });
       const deviceInfo = await getDeviceInfo(transport);
       if (disconnected) return;
       setDeviceInfo(deviceInfo);
-      const listAppsRes = await listApps(transport, deviceInfo, {
-        inferAppSize,
-        lenseAppHash
+      const listAppsRes = await new Promise((resolve, reject) => {
+        listApps(transport, deviceInfo).subscribe({
+          error: reject,
+          next: e => {
+            if (e.type === "result") {
+              resolve(e.result);
+            } else if (e.type === "device-permission-requested") {
+              setDevicePermissionRequested({ wording: e.wording });
+            } else if (e.type === "device-permission-granted") {
+              setDevicePermissionRequested(null);
+            }
+          }
+        });
       });
       if (disconnected) return;
       setError(null);
       setListAppsRes(listAppsRes);
     } catch (error) {
+      setDevicePermissionRequested(null);
       setError(error);
     }
   }, []);
@@ -729,7 +777,14 @@ const Manager = ({ location }: *) => {
   }
 
   if (!listAppsRes || !deviceInfo) {
-    return <ConnectDevice error={error} onConnect={onConnect} loading />;
+    return (
+      <ConnectDevice
+        devicePermissionRequested={devicePermissionRequested}
+        error={error}
+        onConnect={onConnect}
+        loading
+      />
+    );
   }
 
   return (

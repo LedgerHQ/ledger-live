@@ -1,6 +1,12 @@
 // @flow
+import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import type { Observable } from "rxjs";
-import type { ApplicationVersion, DeviceInfo } from "../types/manager";
+import type { CryptoCurrency } from "../types/currencies";
+import type {
+  ApplicationVersion,
+  DeviceInfo,
+  FinalFirmware
+} from "../types/manager";
 
 export type Exec = (
   appOp: AppOp,
@@ -15,20 +21,25 @@ export type InstalledItem = {
   blocks: number
 };
 
+export type ListAppsEvent =
+  | { type: "device-permission-requested", wording: string }
+  | { type: "device-permission-granted" }
+  | { type: "result", result: ListAppsResult };
+
 export type ListAppsResult = {
-  hashesByKey: { [_: string]: string },
-  blocksByKey: { [_: string]: number },
   appByName: { [_: string]: ApplicationVersion },
-  apps: ApplicationVersion[],
+  appsListNames: string[],
   installedAvailable: boolean,
   installed: InstalledItem[],
-  deviceInfo: DeviceInfo
+  deviceInfo: DeviceInfo,
+  deviceModelId: DeviceModelId,
+  firmware: ?FinalFirmware
 };
 
 export type State = {
   deviceInfo: DeviceInfo,
-  hashesByKey: { [_: string]: string },
-  blocksByKey: { [_: string]: number },
+  deviceModel: DeviceModel,
+  firmware: ?FinalFirmware,
   appByName: { [_: string]: ApplicationVersion },
   apps: ApplicationVersion[],
   installedAvailable: boolean,
@@ -67,3 +78,30 @@ export type RunnerEvent =
   | { type: "runProgress", appOp: AppOp, progress: number }
   | { type: "runError", appOp: AppOp, error: Error }
   | { type: "runSuccess", appOp: AppOp };
+
+export type AppData = {
+  currency: ?CryptoCurrency,
+  name: string,
+  blocks: number,
+  bytes: number
+};
+
+export type UnrecognizedAppData = {
+  name: string,
+  hash: string
+};
+
+export type AppsDistribution = {
+  totalBlocks: number,
+  totalBytes: number,
+  osBlocks: number,
+  osBytes: number,
+  apps: Array<AppData>,
+  appsSpaceBlocks: number,
+  appsSpaceBytes: number,
+  totalAppsBlocks: number,
+  totalAppsBytes: number,
+  freeSpaceBlocks: number,
+  freeSpaceBytes: number,
+  shouldWarnMemory: boolean
+};
