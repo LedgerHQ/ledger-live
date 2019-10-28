@@ -435,8 +435,10 @@
     bindings "^1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@file:.yalc/@ledgerhq/live-common":
-  version "8.3.0-2c8832ec"
+"@ledgerhq/live-common@^8.4.0-alpha.0":
+  version "8.4.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.4.0-alpha.0.tgz#362e14bea889abcbc5bf4d5e3f2ba43f0610c7f6"
+  integrity sha512-wmrWygrdmY58oaD+soAVzDRd+87by4180LD86b9sWekIB5BT8jvMUNdE1tWDPsyl8hp+MtATJYz/FlV5hVLO2Q==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "^4.73.3"
