@@ -2,9 +2,11 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import {
+  NotEnoughBalance,
   FeeNotLoaded,
   FeeTooHigh,
-  InvalidAddressBecauseDestinationIsAlsoSource
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  UnavailableTezosOriginatedAccountSend
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
@@ -84,6 +86,12 @@ const getTransactionStatus = async (a, t) => {
   const subAcc = !t.subAccountId
     ? null
     : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
+
+  // For now until this is supported
+  if (subAcc) {
+    throw new UnavailableTezosOriginatedAccountSend("");
+  }
+
   const account = subAcc || a;
 
   if (account.freshAddress === t.recipient) {
@@ -121,13 +129,21 @@ const getTransactionStatus = async (a, t) => {
     );
   }
 
-  const totalSpent = !t.useAllAmount
+  let totalSpent = !t.useAllAmount
     ? t.amount.plus(estimatedFees)
     : account.balance;
 
-  const amount = t.useAllAmount
-    ? account.balance.minus(estimatedFees)
-    : t.amount;
+  let amount = t.useAllAmount ? account.balance.minus(estimatedFees) : t.amount;
+
+  if (
+    !errors.recipient &&
+    !errors.amount &&
+    (!amount.gt(0) || totalSpent.gt(account.balance))
+  ) {
+    errors.amount = new NotEnoughBalance();
+    totalSpent = BigNumber(0);
+    amount = BigNumber(0);
+  }
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
