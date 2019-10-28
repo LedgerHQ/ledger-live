@@ -1,7 +1,8 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import { useEffect, useReducer, useCallback } from "react";
+import { useEffect, useReducer, useCallback, useRef } from "react";
+import { log } from "@ledgerhq/logs";
 import type {
   Transaction,
   TransactionStatus,
@@ -63,7 +64,7 @@ const makeInit = (optionalInit: ?() => $Shape<State>) => (): State => {
   return s;
 };
 
-const reducer = (s, a) => {
+const reducer = (s: State, a): State => {
   switch (a.type) {
     case "setAccount":
       const { account, parentAccount } = a;
@@ -118,6 +119,9 @@ const reducer = (s, a) => {
   }
 };
 
+const INITIAL_ERROR_RETRY_DELAY = 1000;
+const ERROR_RETRY_DELAY_MULTIPLIER = 1.5;
+
 const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
   const [
     {
@@ -146,9 +150,12 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
+  const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
+
   // when transaction changes, prepare the transaction
   useEffect(() => {
     let ignore = false;
+    let errorTimeout;
     if (mainAccount && transaction) {
       Promise.resolve()
         .then(() => getAccountBridge(mainAccount, null))
@@ -170,6 +177,7 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
         .then(
           ({ preparedTransaction, status }) => {
             if (ignore) return;
+            errorDelay.current = INITIAL_ERROR_RETRY_DELAY; // reset delay
             dispatch({
               type: "onStatus",
               status,
@@ -179,11 +187,30 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
           e => {
             if (ignore) return;
             dispatch({ type: "onStatusError", error: e });
+            log(
+              "useBridgeTransaction",
+              "prepareTransaction failed " + String(e)
+            );
+            // After X seconds of hanging in this error case, we try again
+            log("useBridgeTransaction", "retrying prepareTransaction...");
+            errorTimeout = setTimeout(() => {
+              errorDelay.current *= ERROR_RETRY_DELAY_MULTIPLIER; // increase delay
+              // $FlowFixMe
+              const transactionCopy: Transaction = { ...transaction };
+              dispatch({
+                type: "setTransaction",
+                transaction: transactionCopy
+              });
+            }, errorDelay.current);
           }
         );
     }
     return () => {
       ignore = true;
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+        errorTimeout = null;
+      }
     };
   }, [transaction, mainAccount, dispatch]);
 
