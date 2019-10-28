@@ -4,10 +4,14 @@ import {
   ManagerAppDepInstallRequired,
   ManagerAppDepUninstallRequired
 } from "@ledgerhq/errors";
-import { getDirectDep, getDependencies } from "./logic";
-import { findCryptoCurrencyById } from "../currencies";
+import { getDirectDep, getDependencies } from "./polyfill";
+import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import type { ApplicationVersion, DeviceInfo } from "../types/manager";
+import type {
+  ApplicationVersion,
+  DeviceInfo,
+  FinalFirmware
+} from "../types/manager";
 
 export const deviceInfo155 = {
   version: "1.5.5",
@@ -21,13 +25,29 @@ export const deviceInfo155 = {
   targetId: 823132164
 };
 
-export const prettyActionPlan = (ops: AppOp[]) =>
-  ops.map(op => (op.type === "install" ? "+" : "-") + op.name).join(", ");
-
-export const prettyInstalled = (items: InstalledItem[]) =>
-  items
-    .map(({ name, updated }) => name + (updated ? "" : " (outdated)"))
-    .join(", ");
+const firmware155: FinalFirmware = {
+  id: 24,
+  name: "1.5.5",
+  version: "1.5.5",
+  se_firmware: 2,
+  description: "",
+  display_name: "",
+  notes: "",
+  perso: "perso_11",
+  firmware: "nanos/1.5.5/fw_1.4.2/upgrade_1.5.5",
+  firmware_key: "nanos/1.5.5/fw_1.4.2/upgrade_1.5.5_key",
+  hash: "",
+  distribution_ratio: null,
+  exclude_by_default: false,
+  osu_versions: [],
+  date_creation: "2019-01-08T13:29:35.839258Z",
+  date_last_modified: "2019-10-18T16:38:29.745993Z",
+  device_versions: [10],
+  mcu_versions: [6],
+  application_versions: [],
+  providers: [1, 4, 7, 9, 11, 12, 13],
+  blocks: 20
+};
 
 export const parseInstalled = (installedDesc: string): InstalledItem[] =>
   installedDesc
@@ -37,9 +57,15 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
       const trimmed = a.trim();
       const m = /(.*)\(outdated\)/.exec(trimmed);
       if (m) {
-        return { name: m[1].trim(), updated: false, hash: "", blocks: 0 };
+        const name = m[1].trim();
+        return { name, updated: false, hash: "hash_" + name, blocks: 1 };
       }
-      return { name: trimmed, updated: true, hash: "", blocks: 0 };
+      return {
+        name: trimmed,
+        updated: true,
+        hash: "hash_" + trimmed,
+        blocks: 1
+      };
     });
 
 export function mockListAppsResult(
@@ -52,6 +78,7 @@ export function mockListAppsResult(
     .map(a => a.trim())
     .filter(Boolean)
     .map((name, i) => {
+      const dependency = getDirectDep(name);
       const o: ApplicationVersion = {
         id: i,
         app: i,
@@ -63,8 +90,10 @@ export function mockListAppsResult(
         picture: 0,
         notes: null,
         perso: "",
-        hash: "",
-        firmware: "",
+        hash: "hash_" + name,
+        firmware: "firmware_" + name,
+        bytes: (!dependency ? 10 : 1) * 4 * 1024,
+        dependency,
         firmware_key: "",
         delete: "",
         delete_key: "",
@@ -74,28 +103,25 @@ export function mockListAppsResult(
         date_creation: "",
         date_last_modified: ""
       };
-      const currency = findCryptoCurrencyById(name);
+      const currency = findCryptoCurrency(c => c.managerAppName === name);
       if (currency) {
-        o.currency = currency;
+        o.currencyId = currency.id;
       }
       return o;
     });
   const appByName = {};
-  const blocksByKey = {};
-  const hashesByKey = { "": "" };
   apps.forEach(app => {
     appByName[app.name] = app;
-    blocksByKey[app.firmware] = 0;
   });
 
   const installed = parseInstalled(installedDesc);
 
   return {
-    apps,
     appByName,
-    hashesByKey,
-    blocksByKey,
+    appsListNames: apps.map(a => a.name),
     deviceInfo,
+    deviceModelId: "nanoS",
+    firmware: firmware155,
     installed,
     installedAvailable: true
   };

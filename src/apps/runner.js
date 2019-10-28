@@ -11,25 +11,12 @@ import type {
   RunnerEvent,
   ListAppsResult
 } from "./types";
-import { reducer, initState } from "./logic";
+import { reducer, initState, getActionPlan, getNextAppOp } from "./logic";
 import { delay } from "../promise";
 import { getEnv } from "../env";
 
-export const getNextAppOp = (state: State): ?AppOp => {
-  if (state.uninstallQueue.length) {
-    return { type: "uninstall", name: state.uninstallQueue[0] };
-  } else if (state.installQueue.length) {
-    return { type: "install", name: state.installQueue[0] };
-  }
-};
-
-export const getActionPlan = (state: State): AppOp[] =>
-  state.uninstallQueue
-    .map(name => ({ type: "uninstall", name }))
-    .concat(state.installQueue.map(name => ({ type: "install", name })));
-
 export const runAppOp = (
-  { appByName, deviceInfo }: ListAppsResult,
+  { appByName, deviceInfo }: State,
   appOp: AppOp,
   exec: Exec
 ): Observable<RunnerEvent> => {
@@ -85,7 +72,7 @@ export const useAppsRunner = (
   const appOp = state.currentAppOp || nextAppOp;
   useEffect(() => {
     if (appOp) {
-      const sub = runAppOp(listResult, appOp, exec).subscribe(event => {
+      const sub = runAppOp(state, appOp, exec).subscribe(event => {
         dispatch({ type: "onRunnerEvent", event });
       });
       return () => {

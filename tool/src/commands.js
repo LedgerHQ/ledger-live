@@ -12,6 +12,7 @@ import {
   throwError
 } from "rxjs";
 import {
+  filter,
   map,
   reduce,
   mergeMap,
@@ -42,7 +43,7 @@ import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
-import { listApps } from "@ledgerhq/live-common/lib/apps";
+import { listApps } from "@ledgerhq/live-common/lib/apps/hw";
 import openApp from "@ledgerhq/live-common/lib/hw/openApp";
 import quitApp from "@ledgerhq/live-common/lib/hw/quitApp";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";
@@ -391,14 +392,20 @@ const all = {
     job: ({ device, format }: $Shape<{ device: string, format: string }>) =>
       withDevice(device || "")(t =>
         from(getDeviceInfo(t)).pipe(
-          mergeMap(deviceInfo => from(listApps(t, deviceInfo))),
+          mergeMap(deviceInfo =>
+            listApps(t, deviceInfo).pipe(
+              filter(e => e.type === "result"),
+              map(e => e.result)
+            )
+          ),
           map(r =>
             format === "raw"
               ? r
               : format === "json"
               ? JSON.stringify(r)
-              : r.apps
-                  .map(item => {
+              : r.appsListNames
+                  .map(name => {
+                    const item = r.appByName[name];
                     const ins = r.installed.find(i => i.name === item.name);
                     return (
                       `- ${item.name} ${item.version}` +

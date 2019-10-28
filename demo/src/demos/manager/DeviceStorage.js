@@ -1,8 +1,8 @@
 // @flow
 import React from "react";
-import styled from "styled-components";
 import ReactTooltip from "react-tooltip";
-import type { AppsDistribution } from "./sizes";
+import styled from "styled-components";
+import type { AppsDistribution } from "@ledgerhq/live-common/lib/apps/types";
 
 import nanoS from "./images/nanoS.png";
 import nanoX from "./images/nanoX.png";
@@ -40,9 +40,8 @@ export const StorageBar = ({
     />
     */}
     {distribution.apps.map(({ name, currency, bytes, blocks }) => {
-      const color = currency ? currency.color : "black"; // unknown color?
+      const color = currency ? currency.color : "black";
       return (
-        //Stupid library is stupid
         <StorageBarItem
           data-for="tooltip"
           data-tip={JSON.stringify({ name, bytes })}
@@ -64,7 +63,7 @@ export const StorageBarWrapper = styled.div`
   background: #f3f3f3;
   overflow: hidden;
 `;
-// Dont judge me
+
 export const StorageBarItem = styled.div.attrs(props => ({
   width: `${(props.ratio * 100).toFixed(3)}%`
 }))`
@@ -81,14 +80,15 @@ export const StorageBarItem = styled.div.attrs(props => ({
   );
   background-size: 8.49px 8.49px;
   width: ${p => p.width};
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
   background-clip: content-box !important;
 
-  &:nth-of-type(2) {
-    border-left: none;
-  }
-  &:last-of-type {
-    border-right: none;
+  position: relative;
+  &::after {
+    content: " ";
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    background: #f3f3f3;
   }
 `;
