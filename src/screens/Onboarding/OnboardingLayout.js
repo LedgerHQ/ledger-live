@@ -23,7 +23,7 @@ type Props = Container & {
   header?: string,
   withSkip?: boolean,
   withNeedHelp?: boolean,
-  Footer?: React$ComponentType<*>,
+  Footer?: React$StatelessFunctionalComponent<any>,
   titleOverride?: string,
   isNanoS?: boolean,
 };

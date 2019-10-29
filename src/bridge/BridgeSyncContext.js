@@ -40,12 +40,29 @@ type AsyncState = {
   error: ?Error,
 };
 
+type BackgroundTick = { type: "BACKGROUND_TICK" };
+type SetSkipUnderPriority = {
+  type: "SET_SKIP_UNDER_PRIORITY",
+  priority: number,
+};
+type SyncOneAccount = {
+  type: "SYNC_ONE_ACCOUNT",
+  accountId: string,
+  priority: number,
+};
+type SyncSomeAccounts = {
+  type: "SYNC_SOME_ACCOUNTS",
+  accountIds: string[],
+  priority: number,
+};
+type SyncAllAccounts = { type: "SYNC_ALL_ACCOUNTS", priority: number };
+
 export type BehaviorAction =
-  | { type: "BACKGROUND_TICK" }
-  | { type: "SET_SKIP_UNDER_PRIORITY", priority: number }
-  | { type: "SYNC_ONE_ACCOUNT", accountId: string, priority: number }
-  | { type: "SYNC_SOME_ACCOUNTS", accountIds: string[], priority: number }
-  | { type: "SYNC_ALL_ACCOUNTS", priority: number };
+  | BackgroundTick
+  | SetSkipUnderPriority
+  | SyncOneAccount
+  | SyncSomeAccounts
+  | SyncAllAccounts;
 
 export type Sync = (action: BehaviorAction) => void;
 
@@ -181,7 +198,7 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
         }
       },
 
-      SET_SKIP_UNDER_PRIORITY: ({ priority }) => {
+      SET_SKIP_UNDER_PRIORITY: ({ priority }: SetSkipUnderPriority) => {
         if (priority === skipUnderPriority) return;
         skipUnderPriority = priority;
         syncQueue.remove(({ priority }) => priority < skipUnderPriority);
@@ -191,15 +208,15 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
         }
       },
 
-      SYNC_ALL_ACCOUNTS: ({ priority }) => {
+      SYNC_ALL_ACCOUNTS: ({ priority }: SyncAllAccounts) => {
         schedule(allAccountIds(), priority);
       },
 
-      SYNC_ONE_ACCOUNT: ({ accountId, priority }) => {
+      SYNC_ONE_ACCOUNT: ({ accountId, priority }: SyncOneAccount) => {
         schedule([accountId], priority);
       },
 
-      SYNC_SOME_ACCOUNTS: ({ accountIds, priority }) => {
+      SYNC_SOME_ACCOUNTS: ({ accountIds, priority }: SyncSomeAccounts) => {
         schedule(accountIds, priority);
       },
     };
