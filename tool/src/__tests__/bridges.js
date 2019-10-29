@@ -10,6 +10,7 @@ import {
   decodeAccountId,
   encodeAccountId
 } from "@ledgerhq/live-common/lib/account";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
   fromTransactionRaw,
   toTransactionRaw
@@ -83,6 +84,24 @@ all
           const account = await getSynced();
           expect(bridge).toBe(getAccountBridge(account, null));
         });
+
+        if (initialAccount.currency.id !== "ripple" && impl !== "mock") {
+          function expectBalanceIsOpsSum(a) {
+            expect(a.balance).toEqual(
+              a.operations.reduce(
+                (sum, op) => sum.plus(getOperationAmountNumber(op)),
+                BigNumber(0)
+              )
+            );
+          }
+          test("balance is sum of ops", async () => {
+            const account = await getSynced();
+            expectBalanceIsOpsSum(account);
+            if (account.subAccounts) {
+              account.subAccounts.forEach(expectBalanceIsOpsSum);
+            }
+          });
+        }
 
         test("existing operations object refs are preserved", async () => {
           const account = await getSynced();
