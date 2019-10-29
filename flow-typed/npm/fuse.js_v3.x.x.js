@@ -1,5 +1,5 @@
-// flow-typed signature: 5653c58c4f271417b17df2d0820a6505
-// flow-typed version: 10647261fc/fuse.js_v3.x.x/flow_>=v0.38.x
+// flow-typed signature: 744524102647f2da4c8dbea4d6895bc7
+// flow-typed version: c6154227d1/fuse.js_v3.x.x/flow_>=v0.104.x
 
 declare module "fuse.js" {
   declare type FuseOptions = {
@@ -20,7 +20,8 @@ declare module "fuse.js" {
     getFn?: (obj: any, path: string) => any,
     sortFn?: (a: any, b: any) => boolean,
     verbose?: boolean,
-    tokenSeparator?: RegExp
+    tokenSeparator?: RegExp,
+    ...
   };
   declare class Fuse<T> {
     constructor(items: $ReadOnlyArray<T>, options?: FuseOptions): Fuse<T>;

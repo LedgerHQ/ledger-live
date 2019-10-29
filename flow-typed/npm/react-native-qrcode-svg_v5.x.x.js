@@ -1,8 +1,8 @@
-// flow-typed signature: 9418d1f0ebf216da4165b4cca1232f49
-// flow-typed version: a93a0a6426/react-native-qrcode-svg_v5.x.x/flow_>=v0.69.x
+// flow-typed signature: dd0da31a1f70c39b7407507a57a73d81
+// flow-typed version: c6154227d1/react-native-qrcode-svg_v5.x.x/flow_>=v0.104.x
 
 declare module "react-native-qrcode-svg" {
-  declare export type ImageSourcePropType = number | { uri: string };
+  declare export type ImageSourcePropType = number | { uri: string, ... };
 
   declare export type QRCodeSvgProps = {
     /* what the qr code stands for */
@@ -27,7 +27,8 @@ declare module "react-native-qrcode-svg" {
     /* get svg ref for further usage */
     getRef?: (ref: any) => void,
     /* error correction level */
-    ecl?: "L" | "M" | "Q" | "H"
+    ecl?: "L" | "M" | "Q" | "H",
+    ...
   };
 
   declare class QRCodeSvg extends React$PureComponent<QRCodeSvgProps> {}
