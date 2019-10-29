@@ -138,7 +138,7 @@ const getTransactionStatus = async (a, t) => {
   if (
     !errors.recipient &&
     !errors.amount &&
-    (!amount.gt(0) || totalSpent.gt(account.balance))
+    (amount.lt(0) || totalSpent.gt(account.balance))
   ) {
     errors.amount = new NotEnoughBalance();
     totalSpent = BigNumber(0);
