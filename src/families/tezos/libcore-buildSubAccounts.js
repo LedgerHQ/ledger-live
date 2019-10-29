@@ -1,6 +1,5 @@
 // @flow
 
-import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency, ChildAccount, Account } from "../../types";
 import type { CoreAccount } from "../../libcore/types";
 import type {
@@ -11,8 +10,6 @@ import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { buildOperation } from "../../libcore/buildAccount/buildOperation";
 import { minimalOperationsBuilder } from "../../reconciliation";
 import { shortAddressPreview } from "../../account";
-import { parseCurrencyUnit } from "../../currencies";
-import network from "../../network";
 
 const OperationOrderKey = {
   date: 0
@@ -56,16 +53,6 @@ async function buildOriginatedAccount({
         currency
       })
   );
-
-  try {
-    log("libcore-buildSubAccounts", "fallback on fetching the balance from JS");
-    const { data } = await network(
-      `https://tzstats.ledger.com/explorer/account/${address}`
-    );
-    balance = parseCurrencyUnit(currency.units[0], String(data.total_balance));
-  } catch (e) {
-    log("libcore-buildSubAccounts", "fails with " + String(e));
-  }
 
   const originatedAccount: $Exact<ChildAccount> = {
     type: "ChildAccount",

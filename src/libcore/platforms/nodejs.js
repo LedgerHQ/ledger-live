@@ -166,10 +166,10 @@ export default (arg: {
             message: JSON.stringify(
               serializeError({
                 message: err.message,
-                name: err.name,
-                stack: err.stack
+                name: err.name
               })
-            )
+            ),
+            stack: err.stack
           };
           const urlConnection = createHttpConnection(res, libcoreError);
           r.complete(urlConnection, libcoreError);
@@ -467,11 +467,22 @@ export default (arg: {
     lazyLoad();
     const e: mixed = input;
     if (e && typeof e === "object") {
-      if (
-        typeof e.code === "number" &&
-        e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS
-      ) {
-        return new NotEnoughBalance();
+      if (typeof e.code === "number") {
+        if (e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS) {
+          return new NotEnoughBalance();
+        } else {
+          // re-deserialize error if it was a serialized errro
+          try {
+            const m = input.message.match(/[^{]*({.*}).*/);
+            if (m) {
+              const json = JSON.parse(m[1]);
+              if (json.name) {
+                return deserializeError(json);
+              }
+            }
+          } catch (_e) {}
+          return input;
+        }
       }
     }
     return input;
