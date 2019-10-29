@@ -194,6 +194,7 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
             // After X seconds of hanging in this error case, we try again
             log("useBridgeTransaction", "retrying prepareTransaction...");
             errorTimeout = setTimeout(() => {
+              // $FlowFixMe (mobile)
               errorDelay.current *= ERROR_RETRY_DELAY_MULTIPLIER; // increase delay
               // $FlowFixMe
               const transactionCopy: Transaction = { ...transaction };
@@ -201,6 +202,7 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
                 type: "setTransaction",
                 transaction: transactionCopy
               });
+              // $FlowFixMe (mobile)
             }, errorDelay.current);
           }
         );

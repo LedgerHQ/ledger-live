@@ -132,10 +132,8 @@ export type AccountLike = Account | SubAccount;
 
 // Damn it flow. can't you support covariance.
 export type AccountLikeArray =
-  | AccountLike[]
-  | TokenAccount[]
-  | ChildAccount[]
-  | Account[];
+  // $FlowFixMe wtf mobile
+  AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
 
 export type TokenAccountRaw = {
   type: "TokenAccountRaw",

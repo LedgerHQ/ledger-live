@@ -5,8 +5,7 @@ import {
   NotEnoughBalance,
   FeeNotLoaded,
   FeeTooHigh,
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  UnavailableTezosOriginatedAccountSend
+  InvalidAddressBecauseDestinationIsAlsoSource
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
@@ -67,8 +66,9 @@ const createTransaction = () => ({
   gasLimit: null,
   storageLimit: null,
   recipient: "",
-  networkInfo: null,
-  useAllAmount: false
+  networkInfo: null
+  // Problem with send max feature
+  // useAllAmount: false
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -86,11 +86,6 @@ const getTransactionStatus = async (a, t) => {
   const subAcc = !t.subAccountId
     ? null
     : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
-
-  // For now until this is supported
-  if (subAcc) {
-    throw new UnavailableTezosOriginatedAccountSend("");
-  }
 
   const account = subAcc || a;
 
