@@ -1,12 +1,16 @@
 // @flow
+import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
 import {
   getBalanceHistoryWithCountervalue,
+  getCurrencyPortfolio,
   getPortfolio,
 } from "@ledgerhq/live-common/lib/portfolio";
 import type {
   Account,
   TokenAccount,
   PortfolioRange,
+  TokenCurrency,
+  CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
 import {
   counterValueCurrencySelector,
@@ -58,6 +62,42 @@ export const portfolioSelector = (state: State) => {
   const range = selectedTimeRangeSelector(state);
   const counterValueCurrency = counterValueCurrencySelector(state);
   return getPortfolio(accounts, range, (currency, value, date) => {
+    const intermediary = intermediaryCurrency(currency, counterValueCurrency);
+    const toExchange = exchangeSettingsForPairSelector(state, {
+      from: intermediary,
+      to: counterValueCurrency,
+    });
+    return CounterValues.calculateWithIntermediarySelector(state, {
+      value,
+      date,
+      from: currency,
+      fromExchange: exchangeSettingsForPairSelector(state, {
+        from: currency,
+        to: intermediary,
+      }),
+      intermediary,
+      toExchange,
+      to: counterValueCurrency,
+    });
+  });
+};
+
+export const currencyPortfolioSelector = (
+  state: State,
+  {
+    currency,
+    range,
+  }: {
+    currency: CryptoCurrency | TokenCurrency,
+    range: PortfolioRange,
+  },
+) => {
+  const accounts = flattenAccounts(accountsSelector(state)).filter(
+    a => (a.type === "Account" ? a.currency : a.token) === currency,
+  );
+
+  const counterValueCurrency = counterValueCurrencySelector(state);
+  return getCurrencyPortfolio(accounts, range, (currency, value, date) => {
     const intermediary = intermediaryCurrency(currency, counterValueCurrency);
     const toExchange = exchangeSettingsForPairSelector(state, {
       from: intermediary,

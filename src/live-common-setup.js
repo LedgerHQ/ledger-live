@@ -46,8 +46,12 @@ setSupportedCurrencies([
 ]);
 
 if (Config.VERBOSE) {
-  listen(log => {
-    console.log(`${log.type}: ${log.message || ""}`); // eslint-disable-line no-console
+  listen(({ type, message, ...rest }) => {
+    if (Object.keys(rest).length) {
+      console.log(`${type}: ${message || ""}`, rest); // eslint-disable-line no-console
+    } else {
+      console.log(`${type}: ${message || ""}`); // eslint-disable-line no-console
+    }
   });
 }
 

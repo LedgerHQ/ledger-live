@@ -22,6 +22,7 @@ import Manager from "./screens/Manager";
 import Accounts from "./screens/Accounts";
 import Account from "./screens/Account";
 import Settings from "./screens/Settings";
+import Asset from "./screens/Asset";
 import MigrateAccountsOverview from "./screens/MigrateAccounts/01-Overview";
 import MigrateAccountsConnectDevice from "./screens/MigrateAccounts/02-ConnectDevice";
 import MigrateAccountsProgress from "./screens/MigrateAccounts/03-Progress";
@@ -463,6 +464,7 @@ const BaseNavigator = createStackNavigator(
     MigrateAccountsFlow,
     // $FlowFixMe
     Distribution,
+    Asset,
     ScanRecipient: {
       // $FlowFixMe
       screen: ScanRecipient,

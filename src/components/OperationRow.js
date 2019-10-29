@@ -58,9 +58,10 @@ class OperationRow extends PureComponent<Props, *> {
       parentId: parentAccount && parentAccount.id,
       operation, // FIXME we should pass a operationId instead because data can changes over time.
       isSubOperation,
+      key: operation.id,
     };
 
-    navigation.push("OperationDetails", params);
+    navigation.navigate("OperationDetails", params);
   };
 
   render() {

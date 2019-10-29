@@ -807,9 +807,9 @@
     events "^3.0.0"
 
 "@ledgerhq/live-common@^7.15.3":
-  version "7.15.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.15.3.tgz#4a5dae4eba07e7977d0f8d48ff163e91545bf645"
-  integrity sha512-KFc2mwuRWIpYwZT91IRglqimOf9vgifxnOW4xpnuYhUgpR+8y2vbxvHX+BwJPrDwDM3E9BIMNL4Aes/1ntvVmQ==
+  version "7.15.4"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-7.15.4.tgz#adac72bc103ee2c6b0b59156ae02f8c88743d754"
+  integrity sha512-RgyMYcOz/P/1gd7yoc7+pxyGK2iXK+HwyoZXR+wyi4iCiW+2s20jeBnaFKIaJOVa5c3HQW2A98TIwGw6t0NWdA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/errors" "4.70.0"
@@ -867,10 +867,10 @@
     rxjs "^6.5.3"
     uuid "^3.3.3"
 
-"@ledgerhq/react-native-ledger-core@^3.1.3":
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.1.3.tgz#3ceb63e76fbf21f512a8c5eda060cf5f9e689b3c"
-  integrity sha512-/KGTGGHA2X3metBDyNGkG5vKv+E+ZdmXK7JcGbovZv7HmAedHd8ofJERWqS2jemYa6XmAK35s8UlGxporAy+YA==
+"@ledgerhq/react-native-ledger-core@^3.3.3":
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.3.3.tgz#c20d39884d467b6422c80231b72bd033edce794f"
+  integrity sha512-mnnavi8H9U8Q9m9ZtgloSznKGwuE08GRJ1ENK5xjG2brtImXT9/xhB7xcOPz1o+ygBBrfWWjgxAuDQFp63I/Lw==
 
 "@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"
@@ -7086,10 +7086,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-ble-plx@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.0.3.tgz#d5068f633522c2420b5e095d4c67286c31515c84"
-  integrity sha512-JOagdLCjT9GrD3yT3kV0Ib2+tBl+IqQ4r7alXQdZoKLdT0Ceb1UaevSmM4S6eSE6XI2DOdpOEDqUGubmysPVyA==
+react-native-ble-plx@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.1.0.tgz#95ba0025f9bfb507633c7f1d1ffd6eaa54296d4d"
+  integrity sha512-+ddyRRf7QT4ldELC7hb0AZMYOSTga1l7sp7lT+HQX87rpBrGTwIBEE8gRFqriLpsTqL67Vt6xgIOj3Ko/vHhhw==
 
 react-native-camera@1.9.2:
   version "1.9.2"

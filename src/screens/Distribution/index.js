@@ -2,7 +2,6 @@
 import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-
 import { Trans, translate } from "react-i18next";
 import {
   TouchableOpacity,
@@ -12,7 +11,7 @@ import {
   Dimensions,
 } from "react-native";
 // $FlowFixMe
-import { FlatList, SafeAreaView } from "react-navigation";
+import { FlatList, SafeAreaView, withNavigation } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import i18next from "i18next";
 import { getAssetsDistribution } from "@ledgerhq/live-common/lib/portfolio";
@@ -65,7 +64,14 @@ class Distribution extends PureComponent<Props, *> {
   };
 
   renderItem = ({ item, index }: { item: DistributionItem, index: number }) => (
-    <TouchableOpacity onPress={() => this.onHighlightChange(index)}>
+    <TouchableOpacity
+      onPress={() => this.onHighlightChange(index)}
+      onLongPress={() =>
+        this.props.navigation.navigate("Asset", {
+          currency: item.currency,
+        })
+      }
+    >
       <DistributionCard
         item={item}
         highlighting={index === this.state.highlight}
@@ -151,7 +157,7 @@ class Distribution extends PureComponent<Props, *> {
 export default compose(
   translate(),
   connect(mapStateToProps),
-)(Distribution);
+)(withNavigation(Distribution));
 
 const styles = StyleSheet.create({
   wrapper: {

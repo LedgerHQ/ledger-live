@@ -20,11 +20,11 @@ export default class QRCodePreview extends Component<{
   };
 
   render() {
-    const { useURIScheme, address, currency, amount, size } = this.props;
+    const { useURIScheme, address, currency, size } = this.props;
     let value;
     if (useURIScheme) {
       invariant(currency, "when using URI scheme, currency is required");
-      value = encodeURIScheme({ address, currency, amount });
+      value = encodeURIScheme({ address });
     } else {
       value = address;
     }

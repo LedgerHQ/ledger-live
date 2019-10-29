@@ -3,7 +3,7 @@ import React, { Component, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 
 // $FlowFixMe
-import { HeaderBackButton, SectionList } from "react-navigation";
+import { HeaderBackButton, SectionList, SafeAreaView } from "react-navigation";
 import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
@@ -28,6 +28,8 @@ import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
 import HeaderBackImage from "../../components/HeaderBackImage";
+
+const forceInset = { bottom: "always" };
 
 type Nav = NavigationScreenProp<{
   params: {
@@ -182,7 +184,7 @@ class DisplayResult extends Component<Props, State> {
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
-      <View style={styles.root}>
+      <SafeAreaView forceInset={forceInset} style={styles.root}>
         <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
         <Fragment>
@@ -216,7 +218,7 @@ class DisplayResult extends Component<Props, State> {
             />
           </View>
         </Fragment>
-      </View>
+      </SafeAreaView>
     );
   }
 }

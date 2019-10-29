@@ -38,6 +38,7 @@
 		4DDC6F48AE30467DB99F9225 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F91D74A42E59456DBB925283 /* Rubik-Regular.ttf */; };
 		5A696D83ABD443C98CC17ECB /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4396DC4264644851ADA99A35 /* MaterialCommunityIcons.ttf */; };
 		66BAE44DC0E24A36AE0245DE /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1DA370D18E2494FA56F0D1D /* MaterialIcons.ttf */; };
+		76FE150823478B9300E8628A /* libTouchID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F8632A923291D79009B2EA6 /* libTouchID.a */; };
 		7803605C741B4AC289D51F0D /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6DC818670C904605A8FBA62A /* FontAwesome5_Regular.ttf */; };
 		7E87C9D031974B438C0F01F2 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D2EA4CD0AC843B4A69D57A5 /* FontAwesome5_Solid.ttf */; };
 		7EDEA35621D64751B73F49C7 /* libReact Native Open Settings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 88F6163E74364066BC1A5713 /* libReact Native Open Settings.a */; };
@@ -782,6 +783,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */,
+				76FE150823478B9300E8628A /* libTouchID.a in Frameworks */,
 				34C5E8A0215D25A500006DCF /* libBleClient.a in Frameworks */,
 				345E14A52154CDE8008C5BFC /* libRCTLinking.a in Frameworks */,
 				BF09D4FA214BF7730040397B /* libRNVectorIcons.a in Frameworks */,
@@ -802,7 +804,6 @@
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
-				8F3AB69021F8C163005F3E8C /* Lottie.framework in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				DEF1B1546B36491B9894A599 /* libz.tbd in Frameworks */,
 				B9E5B9A72153F4490053D868 /* libRNLibLedgerCore.a in Frameworks */,
@@ -818,6 +819,7 @@
 				124F2FAB14B44BE4AD6F1FCD /* libRNVersionNumber.a in Frameworks */,
 				EC6891A8F6714810A94CB27E /* libLottie.a in Frameworks */,
 				FA45230257444081B82E9ED3 /* libLottieReactNative.a in Frameworks */,
+				8F3AB69021F8C163005F3E8C /* Lottie.framework in Frameworks */,
 				E28B0F7EF80849148021E110 /* libRNCNetInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2361,7 +2363,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 60;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = X6LFS5BQKN;
 				ENABLE_BITCODE = NO;
@@ -2427,7 +2429,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 60;
 				DEVELOPMENT_TEAM = X6LFS5BQKN;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (

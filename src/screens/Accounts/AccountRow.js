@@ -92,37 +92,39 @@ class AccountRow extends PureComponent<Props, State> {
           >
             <View accessible style={styles.innerContainer}>
               <CurrencyIcon size={24} currency={account.currency} />
-              <View style={styles.inner}>
-                <LText
-                  semiBold
-                  numberOfLines={1}
-                  ellipsizeMode="middle"
-                  style={styles.accountNameText}
-                >
-                  {account.name}
-                </LText>
-                <AccountSyncStatus
-                  isUpToDateAccount={isUpToDateAccount}
-                  {...syncState}
-                />
-              </View>
-              <View style={styles.balanceContainer}>
-                <LText tertiary style={styles.balanceNumText}>
-                  <CurrencyUnitValue
-                    showCode
-                    unit={account.unit}
-                    value={account.balance}
+              <View style={styles.rowContainer}>
+                <View style={styles.topRow}>
+                  <LText
+                    semiBold
+                    numberOfLines={1}
+                    ellipsizeMode="middle"
+                    style={styles.accountNameText}
+                  >
+                    {account.name}
+                  </LText>
+                  <LText tertiary style={styles.balanceNumText}>
+                    <CurrencyUnitValue
+                      showCode
+                      unit={account.unit}
+                      value={account.balance}
+                    />
+                  </LText>
+                </View>
+                <View style={styles.bottomRow}>
+                  <AccountSyncStatus
+                    isUpToDateAccount={isUpToDateAccount}
+                    {...syncState}
                   />
-                </LText>
-                <View style={styles.balanceCounterContainer}>
-                  <CounterValue
-                    showCode
-                    currency={account.currency}
-                    value={account.balance}
-                    withPlaceholder
-                    placeholderProps={placeholderProps}
-                    Wrapper={AccountCv}
-                  />
+                  <View style={styles.balanceCounterContainer}>
+                    <CounterValue
+                      showCode
+                      currency={account.currency}
+                      value={account.balance}
+                      withPlaceholder
+                      placeholderProps={placeholderProps}
+                      Wrapper={AccountCv}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -229,6 +231,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "visible",
   },
+  rowContainer: {
+    flexDirection: "column",
+    flex: 1,
+  },
   tokenAccountIndicator: {
     zIndex: 1,
     height: 7,
@@ -265,28 +271,33 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.lightFog,
   },
-  inner: {
-    flexGrow: 1,
-    flexShrink: 1,
+  topRow: {
     marginLeft: 16,
-    flexDirection: "column",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
   },
   accountNameText: {
     color: colors.darkBlue,
     fontSize: 16,
     marginBottom: 4,
-  },
-  balanceContainer: {
-    marginLeft: 16,
-    alignItems: "flex-end",
+    flex: 1,
   },
   balanceNumText: {
     fontSize: 16,
     color: colors.darkBlue,
+    flex: 0,
+    marginLeft: 16,
+  },
+  bottomRow: {
+    marginLeft: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   balanceCounterContainer: {
-    marginTop: 5,
-    height: 20,
+    marginLeft: 16,
   },
   balanceCounterText: {
     fontSize: 14,
