@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { useMemo } from "react";
 import { translate, Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 // $FlowFixMe
@@ -11,9 +11,8 @@ import type { NavigationScreenProp } from "react-navigation";
 import type {
   CryptoCurrency,
   TokenCurrency,
-  Currency
 } from "@ledgerhq/live-common/lib/types";
-import { listTokens, currenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
+import { listTokens, useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
 
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
@@ -36,99 +35,82 @@ type Props = {
   }>,
 };
 
-type State = {
-  sortedCryptoCurrencies: Currency[]
-};
+const keyExtractor = currency => currency.id;
 
-class AddAccountsSelectCrypto extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("common.cryptoAsset")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "1",
-          totalSteps: "3",
-        })}
-      />
-    ),
-  };
+const renderEmptyList = () => (
+  <View style={styles.emptySearch}>
+    <LText style={styles.emptySearchText}>
+      <Trans i18nKey="common.noCryptoFound" />
+    </LText>
+  </View>
+);
 
-  state = {
-    sortedCryptoCurrencies: []
-  }
+const AddAccountsSelectCrypto = ({ devMode, navigation }: Props) => {
 
-  cryptocurrencies = listCryptoCurrencies(this.props.devMode).concat(
+  const cryptoCurrencies = useMemo(() => listCryptoCurrencies(devMode).concat(
     listTokens(),
-  );
+  ), [devMode]);
 
-  async componentDidMount() {
-    const sortedCryptoCurrencies = await currenciesByMarketcap(this.cryptocurrencies)
-    this.setState({ sortedCryptoCurrencies })
-  }
+  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
-
-  keyExtractor = currency => currency.id;
-
-  onPressCurrency = (currency: CryptoCurrency) => {
-    this.props.navigation.navigate("AddAccountsSelectDevice", { currency });
+  const onPressCurrency = (currency: CryptoCurrency) => {
+    navigation.navigate("AddAccountsSelectDevice", { currency });
   };
 
-  onPressToken = (token: TokenCurrency) => {
-    this.props.navigation.navigate("AddAccountsTokenCurrencyDisclaimer", {
-      token,
-    });
+  const onPressToken = (token: TokenCurrency) => {
+    navigation.navigate("AddAccountsTokenCurrencyDisclaimer", {
+       token,
+     });
   };
 
-  onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
-    if (currencyOrToken.type === "TokenCurrency") {
-      this.onPressToken(currencyOrToken);
-    } else {
-      this.onPressCurrency(currencyOrToken);
-    }
+  const onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
+     if (currencyOrToken.type === "TokenCurrency") {
+       onPressToken(currencyOrToken);
+     } else {
+       onPressCurrency(currencyOrToken);
+     }
   };
 
-  renderItem = ({ item }: { item: CryptoCurrency | TokenCurrency }) => (
-    <CurrencyRow currency={item} onPress={this.onPressItem} />
-  );
-
-  renderList = items => (
+  const renderList = (items) => (
     <FlatList
       contentContainerStyle={styles.list}
       data={items}
-      renderItem={this.renderItem}
-      keyExtractor={this.keyExtractor}
+      renderItem={({ item }) => <CurrencyRow currency={item} onPress={onPressItem} />}
+      keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
       keyboardDismissMode="on-drag"
     />
   );
 
-  renderEmptyList = () => (
-    <View style={styles.emptySearch}>
-      <LText style={styles.emptySearchText}>
-        <Trans i18nKey="common.noCryptoFound" />
-      </LText>
-    </View>
-  );
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="AddAccounts" name="SelectCrypto" />
+      <KeyboardView style={{ flex: 1 }}>
+        <View style={styles.searchContainer}>
+          <FilteredSearchBar
+            keys={SEARCH_KEYS}
+            inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
+            list={sortedCryptoCurrencies}
+            renderList={renderList}
+            renderEmptySearch={renderEmptyList}
+          />
+        </View>
+      </KeyboardView>
+    </SafeAreaView>
+  )
+};
 
-  render() {
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="AddAccounts" name="SelectCrypto" />
-        <KeyboardView style={{ flex: 1 }}>
-          <View style={styles.searchContainer}>
-            <FilteredSearchBar
-              keys={SEARCH_KEYS}
-              inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-              list={this.state.sortedCryptoCurrencies}
-              renderList={this.renderList}
-              renderEmptySearch={this.renderEmptyList}
-            />
-          </View>
-        </KeyboardView>
-      </SafeAreaView>
-    );
-  }
-}
+AddAccountsSelectCrypto.navigationOptions = {
+  headerTitle: (
+    <StepHeader
+      title={i18next.t("common.cryptoAsset")}
+      subtitle={i18next.t("send.stepperHeader.stepRange", {
+        currentStep: "1",
+        totalSteps: "3",
+      })}
+    />
+  ),
+};
 
 const styles = StyleSheet.create({
   root: {
