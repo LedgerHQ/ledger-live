@@ -20,6 +20,11 @@ import dataset from "@ledgerhq/live-common/lib/generated/test-dataset";
 import specifics from "@ledgerhq/live-common/lib/generated/test-specifics";
 import { setup } from "../live-common-setup-test";
 
+const blacklistOpsSumEq = {
+  currencies: ["ripple", "ethereum"],
+  impls: ["mock"]
+};
+
 setup("bridges");
 
 function syncAccount(bridge, account) {
@@ -38,7 +43,7 @@ Object.keys(dataset).forEach(family => {
   const { implementations, currencies } = data;
   Object.keys(currencies).forEach(currencyId => {
     const currencyData = currencies[currencyId];
-    currencyData.accounts.slice(0, 1).forEach(accountData =>
+    currencyData.accounts.forEach(accountData =>
       implementations.forEach(impl => {
         const account = fromAccountRaw({
           ...accountData.raw,
@@ -85,7 +90,10 @@ all
           expect(bridge).toBe(getAccountBridge(account, null));
         });
 
-        if (initialAccount.currency.id !== "ripple" && impl !== "mock") {
+        if (
+          !blacklistOpsSumEq.currencies.includes(initialAccount.currency.id) &&
+          !blacklistOpsSumEq.impls.includes(impl)
+        ) {
           function expectBalanceIsOpsSum(a) {
             expect(a.balance).toEqual(
               a.operations.reduce(

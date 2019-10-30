@@ -66,9 +66,8 @@ const createTransaction = () => ({
   gasLimit: null,
   storageLimit: null,
   recipient: "",
-  networkInfo: null
-  // Problem with send max feature
-  // useAllAmount: false
+  networkInfo: null,
+  useAllAmount: false
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -140,7 +139,7 @@ const getTransactionStatus = async (a, t) => {
     amount = BigNumber(0);
   }
 
-  if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+  if (t.mode === "send" && amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
