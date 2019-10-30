@@ -75,6 +75,14 @@ export const withLibcoreF = <A: Array<any>, R>(
 
 let loadCoreImpl: ?() => Promise<Core>;
 
+// reset the libcore data
+export async function reset() {
+  if (!core) return;
+  await core.getPoolInstance().freshResetAll();
+  core = null;
+  corePromise = null;
+}
+
 async function load(): Promise<Core> {
   if (core) {
     return core;
