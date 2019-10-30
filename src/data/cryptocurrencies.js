@@ -1441,7 +1441,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       {
         name: "NEO",
         code: "NEO",
-        magnitude: 8
+        magnitude: 0
       }
     ],
     explorerViews: [
