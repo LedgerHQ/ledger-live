@@ -5,14 +5,15 @@ import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import type {
   Unit,
-  TokenAccount,
   Account,
+  AccountLike,
+  TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
 import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import colors from "../../colors";
@@ -24,17 +25,11 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
-  action: () => void,
-  modelId: *,
-  transaction: *,
-  account: Account | TokenAccount,
-  parentAccount: ?Account,
+  modelId: DeviceModelId,
   wired: boolean,
-};
-
-type State = {
-  total: ?BigNumber,
-  maxAmount: ?BigNumber,
+  status: TransactionStatus,
+  account: AccountLike,
+  parentAccount: ?Account,
 };
 
 const { width } = getWindowDimensions();
@@ -58,141 +53,61 @@ class DataRow extends PureComponent<{
     );
   }
 }
+const ValidateOnDevice = ({
+  modelId,
+  wired,
+  account,
+  parentAccount,
+  status,
+}: Props) => {
+  const { amount, estimatedFees } = status;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccountUnit = getAccountUnit(mainAccount);
+  const unit = getAccountUnit(account);
 
-class ValidateOnDevice extends PureComponent<Props, State> {
-  state = {
-    total: null,
-    maxAmount: null,
-  };
-
-  componentDidMount() {
-    this.syncTotal();
-    this.syncMaxAmount();
-  }
-
-  componentDidUpdate({ account, transaction }: Props) {
-    if (
-      account !== this.props.account ||
-      transaction !== this.props.transaction
-    ) {
-      this.syncTotal();
-      this.syncMaxAmount();
-    }
-  }
-
-  componentWillUnmount() {
-    this.syncTotalId++;
-    this.syncMaxAmountId++;
-  }
-
-  syncTotalId = 0;
-  syncTotal = async () => {
-    const id = ++this.syncTotalId;
-    const { transaction, account, parentAccount } = this.props;
-    const bridge = getAccountBridge(account, parentAccount);
-    const mainAccount = getMainAccount(account, parentAccount);
-    const total = await bridge.getTotalSpent(mainAccount, transaction);
-    if (id === this.syncTotalId) {
-      this.setState({ total });
-    }
-  };
-
-  syncMaxAmountId = 0;
-  syncMaxAmount = async () => {
-    const id = ++this.syncMaxAmountId;
-    const { account, parentAccount, transaction } = this.props;
-    if (!account) return;
-    const bridge = getAccountBridge(account, parentAccount);
-    const mainAccount = getMainAccount(account, parentAccount);
-
-    const useAllAmount = bridge.getTransactionExtra(
-      mainAccount,
-      transaction,
-      "useAllAmount",
-    );
-
-    let maxAmount;
-    if (useAllAmount)
-      maxAmount = await bridge.getMaxAmount(mainAccount, transaction);
-
-    if (id === this.syncMaxAmountId) {
-      this.setState(old => {
-        if (
-          !maxAmount ||
-          (old.maxAmount && maxAmount && maxAmount.eq(old.maxAmount))
-        ) {
-          return null;
-        }
-        return { maxAmount };
-      });
-    }
-  };
-
-  render() {
-    const { transaction, account, parentAccount, modelId, wired } = this.props;
-    const { total, maxAmount } = this.state;
-    const bridge = getAccountBridge(account, parentAccount);
-    const mainAccount = getMainAccount(account, parentAccount);
-    const unit = getAccountUnit(account);
-    const amount = bridge.getTransactionAmount(mainAccount, transaction);
-
-    const useAllAmount = bridge.getTransactionExtra(
-      mainAccount,
-      transaction,
-      "useAllAmount",
-    );
-
-    // FIXME this is not the correct way. we will introduce new concept in the bridge.
-    const fees = total
-      ? maxAmount && useAllAmount
-        ? total.minus(maxAmount)
-        : total.minus(amount)
-      : BigNumber(0);
-
-    return (
-      <View style={styles.root}>
-        <View style={styles.innerContainer}>
-          <View style={styles.picture}>
-            <DeviceNanoAction
-              modelId={modelId}
-              wired={wired}
-              action="accept"
-              width={width * 0.8}
-              screen="validation"
+  return (
+    <View style={styles.root}>
+      <View style={styles.innerContainer}>
+        <View style={styles.picture}>
+          <DeviceNanoAction
+            modelId={modelId}
+            wired={wired}
+            action="accept"
+            width={width * 0.8}
+            screen="validation"
+          />
+        </View>
+        <View style={styles.titleContainer}>
+          <LText secondary semiBold style={styles.title}>
+            <Trans
+              i18nKey="send.validation.title"
+              values={getDeviceModel(modelId)}
             />
-          </View>
-          <View style={styles.titleContainer}>
-            <LText secondary semiBold style={styles.title}>
-              <Trans
-                i18nKey="send.validation.title"
-                values={getDeviceModel(modelId)}
-              />
-            </LText>
-          </View>
-
-          <View style={styles.dataRows}>
-            <DataRow
-              label={<Trans i18nKey="send.validation.amount" />}
-              unit={unit}
-              value={useAllAmount && maxAmount ? maxAmount : amount}
-            />
-            {!fees.isZero() ? (
-              <DataRow
-                label={<Trans i18nKey="send.validation.fees" />}
-                unit={mainAccount.unit}
-                value={fees}
-              />
-            ) : null}
-          </View>
+          </LText>
         </View>
 
-        <VerifyAddressDisclaimer
-          text={<Trans i18nKey="send.validation.disclaimer" />}
-        />
+        <View style={styles.dataRows}>
+          <DataRow
+            label={<Trans i18nKey="send.validation.amount" />}
+            unit={unit}
+            value={amount}
+          />
+          {!estimatedFees.isZero() ? (
+            <DataRow
+              label={<Trans i18nKey="send.validation.fees" />}
+              unit={mainAccountUnit}
+              value={estimatedFees}
+            />
+          ) : null}
+        </View>
       </View>
-    );
-  }
-}
+
+      <VerifyAddressDisclaimer
+        text={<Trans i18nKey="send.validation.disclaimer" />}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   root: {

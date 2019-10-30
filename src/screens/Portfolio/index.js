@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { View, StyleSheet, Animated } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import type {
-  TokenAccount,
+  AccountLikeArray,
   Account,
   Operation,
   Portfolio,
@@ -51,8 +51,6 @@ import NoOpStatePortfolio from "./NoOpStatePortfolio";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 
-const forceInset = { bottom: "always" };
-
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
 
@@ -73,7 +71,7 @@ class PortfolioScreen extends Component<
   {
     acceptTradingWarning: () => void,
     accounts: Account[],
-    allAccounts: (Account | TokenAccount)[],
+    allAccounts: AccountLikeArray,
     portfolio: Portfolio,
     navigation: *,
     hasCompletedOnboarding: boolean,
@@ -135,7 +133,7 @@ class PortfolioScreen extends Component<
     const { allAccounts, accounts } = this.props;
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
-      account && account.type === "TokenAccount"
+      account && account.type !== "Account"
         ? accounts.find(a => a.id === account.parentId)
         : null;
 
@@ -181,11 +179,13 @@ class PortfolioScreen extends Component<
 
     const { sections, completed } = groupAccountsOperationsByDay(accounts, {
       count: opCount,
-      withTokenAccounts: true,
+      withSubAccounts: true,
     });
 
     return (
-      <View style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
+      <SafeAreaView
+        style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      >
         <StickyHeader
           navigation={navigation}
           scrollY={scrollY}
@@ -195,7 +195,7 @@ class PortfolioScreen extends Component<
         <SyncBackground />
         <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
-        <SafeAreaView style={styles.inner} forceInset={forceInset}>
+        <View style={styles.inner}>
           <List
             forwardedRef={this.ref}
             sections={sections}
@@ -225,9 +225,9 @@ class PortfolioScreen extends Component<
             ListEmptyComponent={this.ListEmptyComponent}
           />
           <MigrateAccountsBanner />
-        </SafeAreaView>
+        </View>
         {disclaimer}
-      </View>
+      </SafeAreaView>
     );
   }
 }

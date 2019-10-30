@@ -2,6 +2,7 @@
 
 import {
   flattenAccounts,
+  getAccountCurrency,
   groupAccountsOperationsByDay,
   isAccountEmpty,
 } from "@ledgerhq/live-common/lib/account";
@@ -10,7 +11,6 @@ import type {
   Currency,
   Operation,
   PortfolioRange,
-  TokenAccount,
   Unit,
 } from "@ledgerhq/live-common/lib/types";
 import React, { PureComponent } from "react";
@@ -55,8 +55,8 @@ import {
 const List = globalSyncRefreshControl(SectionList);
 
 type Props = {
-  accounts: Account[],
-  allAccounts: (Account | TokenAccount)[],
+  accounts: any, // Fixme doesn't want AccountLikeArray
+  allAccounts: Account[],
   useCounterValue: boolean,
   counterValueUnit: Unit,
   switchCountervalueFirst: () => *,
@@ -181,10 +181,10 @@ class Asset extends PureComponent<Props, *> {
     section: SectionBase<*>,
   }) => {
     const { allAccounts, accounts, navigation } = this.props;
-    const account = allAccounts.find(a => a.id === item.accountId);
+    const account = accounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type === "TokenAccount"
-        ? accounts.find(a => a.id === account.parentId)
+        ? allAccounts.find(a => a.id === account.parentId)
         : null;
 
     if (!account) return null;
@@ -210,11 +210,11 @@ class Asset extends PureComponent<Props, *> {
 
   render() {
     const { opCount } = this.state;
-    const { accounts } = this.props;
+    const { accounts, currency } = this.props;
 
     const { sections, completed } = groupAccountsOperationsByDay(accounts, {
       count: opCount,
-      withTokenAccounts: false,
+      withSubAccounts: currency.type !== "CryptoCurrency", // Fixme, do sub accounts have 'tokens'?
     });
 
     return (
@@ -256,7 +256,7 @@ const mapStateToProps = (state: State, props: *) => {
     range: selectedTimeRangeSelector(state),
     counterValue: counterValueCurrencySelector(state),
     accounts: flattenAccounts(accountsSelector(state))
-      .filter(a => (a.type === "Account" ? a.currency : a.token) === currency)
+      .filter(a => getAccountCurrency(a) === currency)
       .sort((a, b) => b.balance.comparedTo(a.balance)),
     allAccounts: accountsSelector(state),
     counterValueCurrency: counterValueCurrencySelector(state),

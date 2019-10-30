@@ -111,12 +111,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
 
     navigation.navigate("SendSummary", {
       accountId: account.id,
-      transaction: bridge.editTransactionExtra(
-        account,
-        transaction,
-        "feePerByte",
-        feePerByte,
-      ),
+      transaction: bridge.updateTransaction(transaction, { feePerByte }),
     });
   };
 

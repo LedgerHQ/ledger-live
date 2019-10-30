@@ -19,6 +19,7 @@ import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
+import logger from "../../logger";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -121,7 +122,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     this.scanSubscription = bridge
       .scanAccountsOnDevice(currency, deviceId)
       .subscribe({
-        next: account =>
+        next: ({ account }) =>
           this.setState(
             ({ scannedAccounts, selectedIds }, { existingAccounts }) => {
               const hasAlreadyBeenScanned = !!scannedAccounts.find(
@@ -144,7 +145,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             },
           ),
         complete: () => this.setState({ scanning: false }),
-        error: error => this.setState({ error }),
+        error: error => {
+          logger.critical(error)
+          this.setState({ error })},
       });
   };
 

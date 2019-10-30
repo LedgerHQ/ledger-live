@@ -22,5 +22,5 @@ export const editTxFeeByFamily = (
 ) => {
   const transaction = navigation.getParam("transaction");
   const bridge = getAccountBridge(account);
-  return bridge.editTransactionExtra(account, transaction, field, fee);
+  return bridge.updateTransaction(transaction, { [field]: fee });
 };

@@ -1,5 +1,6 @@
 // @flow
 
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -22,11 +23,11 @@ const mapStateToProps = (state, props) => {
   return {
     accountDistribution: accounts.map(a => ({
       account: a,
-      currency: a.type === "Account" ? a.currency : a.token,
+      currency: getAccountCurrency(a),
       distribution: a.balance.div(total).toFixed(2),
       amount: a.balance,
       countervalue: calculateCountervalueSelector(state)(
-        a.type === "Account" ? a.currency : a.token,
+        getAccountCurrency(a),
         a.balance,
       ),
     })),

@@ -6,12 +6,11 @@ import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import type {
-  TokenAccount,
-  Account,
   Unit,
   BalanceHistoryWithCountervalue,
   Currency,
   PortfolioRange,
+  AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
@@ -38,7 +37,7 @@ const mapDispatchToProps = {
 };
 
 type Props = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   range: PortfolioRange,
   history: BalanceHistoryWithCountervalue,
   valueChange: ValueChange,

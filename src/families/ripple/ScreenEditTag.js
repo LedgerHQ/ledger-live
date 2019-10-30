@@ -10,7 +10,7 @@ import { translate } from "react-i18next";
 import i18next from "i18next";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
+import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
@@ -75,12 +75,9 @@ class RippleEditTag extends PureComponent<Props, State> {
     const transaction = navigation.getParam("transaction");
     navigation.navigate("SendSummary", {
       accountId: account.id,
-      transaction: bridge.editTransactionExtra(
-        account,
-        transaction,
-        "tag",
-        tag && tag.toNumber(),
-      ),
+      transaction: bridge.updateTransaction(transaction, {
+        tag: tag && tag.toNumber(),
+      }),
     });
   };
 

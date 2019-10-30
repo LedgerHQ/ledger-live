@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
@@ -7,7 +7,12 @@ import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+import type {
+  AccountLike,
+  Account,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -25,7 +30,7 @@ import logger from "../../logger";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: ?(Account | TokenAccount),
+  account: AccountLike,
   parentAccount: ?Account,
   updateAccountWithUpdater: (string, (Account) => Account) => void,
   navigation: NavigationScreenProp<{
@@ -34,85 +39,52 @@ type Props = {
       deviceId: string,
       modelId: DeviceModelId,
       wired: boolean,
-      transaction: *,
+      transaction: Transaction,
+      status: TransactionStatus,
     },
   }>,
 };
 
-const mapDispatchToProps = {
+const useSignWithDevice = ({
+  account,
+  parentAccount,
+  navigation,
   updateAccountWithUpdater,
-};
+}) => {
+  const [signing, setSigning] = useState(false);
+  const [signed, setSigned] = useState(false);
+  const subscription = useRef(null);
 
-type State = {
-  signing: boolean,
-  signed: boolean,
-};
-
-class Validation extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("send.stepperHeader.verification")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "6",
-          totalSteps: "6",
-        })}
-      />
-    ),
-    headerLeft: null,
-    headerRight: null,
-    gesturesEnabled: false,
-  };
-
-  state = {
-    signing: false,
-    signed: false,
-  };
-
-  sub = null;
-
-  componentDidMount() {
-    this.sign();
-  }
-
-  sign() {
-    const {
-      account,
-      parentAccount,
-      navigation,
-      updateAccountWithUpdater,
-    } = this.props;
-    if (!account) return;
+  const signWithDevice = useCallback(() => {
     const deviceId = navigation.getParam("deviceId");
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
-    this.sub = bridge
+
+    const n = navigation.dangerouslyGetParent();
+    if (n) n.setParams({ allowNavigation: false });
+    setSigning(true);
+
+    subscription.current = bridge
       .signAndBroadcast(mainAccount, transaction, deviceId)
       .subscribe({
         next: e => {
           switch (e.type) {
-            case "signing": {
-              const n = this.props.navigation.dangerouslyGetParent();
-              this.setState({ signing: true });
-              if (n) n.setParams({ allowNavigation: false });
-              break;
-            }
             case "signed":
-              this.setState({ signed: true });
+              setSigned(true);
               break;
+
             case "broadcasted":
               // $FlowFixMe
               navigation.replace("SendValidationSuccess", {
                 ...navigation.state.params,
                 result: e.operation,
               });
-
               updateAccountWithUpdater(mainAccount.id, account =>
                 addPendingOperation(account, e.operation),
               );
-
               break;
+
             default:
           }
         },
@@ -123,7 +95,6 @@ class Validation extends Component<Props, State> {
           } else {
             logger.critical(error);
           }
-
           // $FlowFixMe
           navigation.replace("SendValidationError", {
             ...navigation.state.params,
@@ -131,51 +102,81 @@ class Validation extends Component<Props, State> {
           });
         },
       });
-  }
+  }, [account, navigation, parentAccount, updateAccountWithUpdater]);
 
-  render() {
-    const { signed, signing } = this.state;
-    const { navigation, account, parentAccount } = this.props;
-    if (!account) return null;
-    const transaction = navigation.getParam("transaction");
-    const modelId = navigation.getParam("modelId");
-    const wired = navigation.getParam("wired");
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="SendFunds" name="Validation" signed={signed} />
-        {signing && (
-          <>
-            <PreventNativeBack />
-            <SkipLock />
-          </>
-        )}
+  useEffect(() => {
+    signWithDevice();
+    return () => {
+      const n = navigation.dangerouslyGetParent();
+      if (n) n.setParams({ allowNavigation: true });
+      if (subscription.current) {
+        subscription.current.unsubscribe();
+      }
+    };
+    // only this effect on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-        {signed ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" />
-          </View>
-        ) : (
-          <ValidateOnDevice
-            wired={wired}
-            modelId={modelId}
-            account={account}
-            parentAccount={parentAccount}
-            transaction={transaction}
-            action={this.sign}
-          />
-        )}
-      </SafeAreaView>
-    );
-  }
+  return [signing, signed];
+};
 
-  componentWillUnmount() {
-    if (this.sub) {
-      this.sub.unsubscribe();
-    }
-    const n = this.props.navigation.dangerouslyGetParent();
-    if (n) n.setParams({ allowNavigation: true });
-  }
-}
+const Validation = ({
+  account,
+  parentAccount,
+  navigation,
+  updateAccountWithUpdater,
+}: Props) => {
+  const [signing, signed] = useSignWithDevice({
+    account,
+    parentAccount,
+    navigation,
+    updateAccountWithUpdater,
+  });
+
+  const status = navigation.getParam("status");
+  const modelId = navigation.getParam("modelId");
+  const wired = navigation.getParam("wired");
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="SendFunds" name="Validation" signed={signed} />
+      {signing && (
+        <>
+          <PreventNativeBack />
+          <SkipLock />
+        </>
+      )}
+
+      {signed ? (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <ValidateOnDevice
+          wired={wired}
+          modelId={modelId}
+          account={account}
+          parentAccount={parentAccount}
+          status={status}
+        />
+      )}
+    </SafeAreaView>
+  );
+};
+
+Validation.navigationOptions = {
+  headerTitle: (
+    <StepHeader
+      title={i18next.t("send.stepperHeader.verification")}
+      subtitle={i18next.t("send.stepperHeader.stepRange", {
+        currentStep: "6",
+        totalSteps: "6",
+      })}
+    />
+  ),
+  headerLeft: null,
+  headerRight: null,
+  gesturesEnabled: false,
+};
 
 const styles = StyleSheet.create({
   root: {
@@ -191,6 +192,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = accountAndParentScreenSelector;
+
+const mapDispatchToProps = {
+  updateAccountWithUpdater,
+};
 
 export default connect(
   mapStateToProps,

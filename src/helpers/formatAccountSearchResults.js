@@ -4,11 +4,12 @@ import reduce from "lodash/reduce";
 import forEach from "lodash/forEach";
 import type {
   Account,
-  TokenAccount,
+  AccountLike,
+  AccountLikeArray,
 } from "@ledgerhq/live-common/lib/types/account";
 
 export type SearchResult = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   match?: boolean,
 };
 
@@ -26,13 +27,21 @@ const flattenStructuredSearchResults = structuredResults =>
   );
 
 export const formatSearchResults = (
-  searchResults: (Account | TokenAccount)[],
+  searchResults: AccountLikeArray,
   accounts: Account[],
 ): SearchResult[] => {
   const formated = reduce(
     searchResults,
-    (acc, account: TokenAccount | Account) => {
-      if (account.type === "TokenAccount") {
+    (acc, account: AccountLike) => {
+      if (account.type === "Account") {
+        if (!acc[account.id]) {
+          acc[account.id] = {
+            account,
+            tokenAccounts: [],
+          };
+        }
+        acc[account.id].match = true;
+      } else {
         const parentId = account.parentId;
         const parentAccount = accounts.find((a: Account) => a.id === parentId);
         if (!acc[account.parentId]) {
@@ -49,14 +58,6 @@ export const formatSearchResults = (
             match: true,
           },
         ];
-      } else if (account.type === "Account") {
-        if (!acc[account.id]) {
-          acc[account.id] = {
-            account,
-            tokenAccounts: [],
-          };
-        }
-        acc[account.id].match = true;
       }
       return acc;
     },

@@ -1,9 +1,9 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { Trans, translate } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
+import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -17,7 +17,7 @@ import colors from "../../colors";
 import type { T } from "../../types/common";
 
 type Props = {
-  account: Account,
+  account: AccountLike,
   transaction: Transaction,
   navigation: *,
   t: T,
@@ -37,6 +37,8 @@ class RippleFeeRow extends Component<Props> {
 
   render() {
     const { account, transaction } = this.props;
+    if (account.type !== "Account") return null;
+
     const bridge = getAccountBridge(account);
     const fee = bridge.getTransactionExtra(account, transaction, "fee");
     const feeCustomUnit = bridge.getTransactionExtra(

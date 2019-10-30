@@ -15,6 +15,7 @@ import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import {
   getMainAccount,
   getAccountCurrency,
+  getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
@@ -255,7 +256,7 @@ class ReceiveConfirmation extends Component<Props, State> {
             <View style={styles.addressWrapper}>
               <CurrencyIcon currency={currency} size={20} />
               <LText semiBold style={styles.addressTitleBold}>
-                {account.type === "Account" ? account.name : currency.name}
+                {getAccountName(account)}
               </LText>
             </View>
             <View style={styles.address}>

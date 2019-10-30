@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // @flow
 import { Sentry } from "react-native-sentry";
 import Config from "react-native-config";
@@ -6,6 +7,7 @@ import Config from "react-native-config";
 export default {
   critical: (e: Error) => {
     if (Config.DEBUG_ERROR) console.error(e);
+    else console.log(e);
     Sentry.captureException(e);
   },
 };

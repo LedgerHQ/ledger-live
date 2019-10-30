@@ -7,9 +7,9 @@ import { HeaderBackButton, SafeAreaView, ScrollView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type {
-  TokenAccount,
   Account,
   Operation,
+  AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import {
   getDefaultExplorerView,
@@ -27,7 +27,7 @@ import HeaderBackImage from "../../components/HeaderBackImage";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: ?(Account | TokenAccount),
+  account: AccountLike,
   parentAccount: ?Account,
   navigation: Navigation,
 };

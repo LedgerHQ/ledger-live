@@ -1,8 +1,13 @@
 // @flow
+import {
+  getAccountCurrency,
+  getAccountName,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import type { TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type { SubAccount } from "@ledgerhq/live-common/lib/types";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -10,8 +15,8 @@ import CurrencyIcon from "./CurrencyIcon";
 import colors from "../colors";
 
 type Props = {
-  account: TokenAccount,
-  onTokenAccountPress: TokenAccount => *,
+  account: SubAccount,
+  onSubAccountPress: SubAccount => *,
 };
 
 const placeholderProps = {
@@ -19,22 +24,22 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
-class TokenRow extends PureComponent<Props> {
+class SubAccountRow extends PureComponent<Props> {
   render() {
-    const {
-      account,
-      account: { token },
-      onTokenAccountPress,
-    } = this.props;
+    const { account, onSubAccountPress } = this.props;
+
+    const currency = getAccountCurrency(account);
+    const name = getAccountName(account);
+    const unit = getAccountUnit(account);
 
     return (
       <RectButton
         style={styles.container}
         underlayColor={colors.grey}
-        onPress={() => onTokenAccountPress(account)}
+        onPress={() => onSubAccountPress(account)}
       >
         <View accessible style={styles.innerContainer}>
-          <CurrencyIcon size={24} currency={token} />
+          <CurrencyIcon size={24} currency={currency} />
           <View style={styles.inner}>
             <LText
               semiBold
@@ -42,21 +47,17 @@ class TokenRow extends PureComponent<Props> {
               ellipsizeMode="middle"
               style={styles.accountNameText}
             >
-              {token.name}
+              {name}
             </LText>
           </View>
           <View style={styles.balanceContainer}>
             <LText tertiary style={styles.balanceNumText}>
-              <CurrencyUnitValue
-                showCode
-                unit={token.units[0]}
-                value={account.balance}
-              />
+              <CurrencyUnitValue showCode unit={unit} value={account.balance} />
             </LText>
             <View style={styles.balanceCounterContainer}>
               <CounterValue
                 showCode
-                currency={token}
+                currency={currency}
                 value={account.balance}
                 withPlaceholder
                 placeholderProps={placeholderProps}
@@ -76,7 +77,7 @@ const AccountCv = ({ children }: { children: * }) => (
   </LText>
 );
 
-export default TokenRow;
+export default SubAccountRow;
 
 const styles = StyleSheet.create({
   container: {

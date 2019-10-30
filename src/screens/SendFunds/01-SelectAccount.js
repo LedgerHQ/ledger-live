@@ -9,7 +9,10 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import i18next from "i18next";
 import { translate, Trans } from "react-i18next";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  AccountLikeArray,
+} from "@ledgerhq/live-common/lib/types";
 
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import {
@@ -32,7 +35,7 @@ const forceInset = { bottom: "always" };
 
 type Props = {
   accounts: Account[],
-  allAccounts: (Account | TokenAccount)[],
+  allAccounts: AccountLikeArray,
   navigation: NavigationScreenProp<{
     params: {},
   }>,
@@ -83,7 +86,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
             this.props.navigation.navigate("SendSelectRecipient", {
               accountId: account.id,
               parentId:
-                account.type === "TokenAccount" ? account.parentId : undefined,
+                account.type !== "Account" ? account.parentId : undefined,
             });
           }}
         />

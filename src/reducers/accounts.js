@@ -2,11 +2,12 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   addAccounts,
   canBeMigrated,
   flattenAccounts,
+  getAccountCurrency,
   importAccountsReduce,
 } from "@ledgerhq/live-common/lib/account";
 import accountModel from "../logic/accountModel";
@@ -116,11 +117,9 @@ export const someAccountsNeedMigrationSelector = createSelector(
 export const currenciesSelector = createSelector(
   accountsSelector,
   accounts =>
-    uniq(
-      flattenAccounts(accounts).map(a =>
-        a.type === "Account" ? a.currency : a.token,
-      ),
-    ).sort((a, b) => a.name.localeCompare(b.name)),
+    uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort(
+      (a, b) => a.name.localeCompare(b.name),
+    ),
 );
 
 // $FlowFixMe
@@ -152,11 +151,11 @@ export const accountAndParentScreenSelector = (state: *, { navigation }: *) => {
   const { accountId, parentId } = navigation.state.params;
   const parentAccount: ?Account =
     parentId && accountSelector(state, { accountId: parentId });
-  let account: ?(TokenAccount | Account);
+  let account: ?AccountLike;
   if (parentAccount) {
-    const { tokenAccounts } = parentAccount;
-    if (tokenAccounts) {
-      account = tokenAccounts.find(t => t.id === accountId);
+    const { subAccounts } = parentAccount;
+    if (subAccounts) {
+      account = subAccounts.find(t => t.id === accountId);
     }
   } else {
     account = accountSelector(state, { accountId });

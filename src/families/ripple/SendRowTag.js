@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { translate, Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "@ledgerhq/live-common/lib/bridge/RippleJSBridge";
+import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { T } from "../../types/common";
 import LText from "../../components/LText";

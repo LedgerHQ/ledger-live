@@ -2,7 +2,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -14,7 +14,7 @@ import LText from "../../components/LText";
 import colors from "../../colors";
 
 type Props = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account,
   amount: *,
 };

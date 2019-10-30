@@ -1,5 +1,6 @@
 // @flow
 
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import React, { PureComponent, Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -71,11 +72,7 @@ class GraphCard extends PureComponent<Props, State> {
 
     const graphColor =
       accounts.length === 1
-        ? getCurrencyColor(
-            accounts[0].type === "Account"
-              ? accounts[0].currency
-              : accounts[0].token,
-          )
+        ? getCurrencyColor(getAccountCurrency(accounts[0]))
         : undefined;
 
     return (

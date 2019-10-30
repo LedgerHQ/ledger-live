@@ -3,7 +3,7 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, Image, StyleSheet } from "react-native";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import colors from "../../colors";
@@ -12,7 +12,7 @@ import Button from "../../components/Button";
 import Receive from "../../icons/Receive";
 
 class EmptyStateAccount extends PureComponent<{
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account,
   navigation: NavigationScreenProp<*>,
 }> {
@@ -27,7 +27,9 @@ class EmptyStateAccount extends PureComponent<{
   render() {
     const { account, parentAccount } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
-    const hasTokens = Array.isArray(mainAccount.tokenAccounts);
+    const hasSubAccounts = Array.isArray(mainAccount.subAccounts);
+    const isToken =
+      listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
 
     return (
       <View style={styles.root}>
@@ -37,8 +39,8 @@ class EmptyStateAccount extends PureComponent<{
             <Trans i18nKey="account.emptyState.title" />
           </LText>
           <LText style={styles.desc}>
-            {hasTokens ? (
-              <Trans i18nKey="common:account.emptyState.descToken">
+            {hasSubAccounts && isToken ? (
+              <Trans i18nKey="account.emptyState.descToken">
                 {"Make sure the"}
                 <LText semiBold style={styles.managerAppName}>
                   {mainAccount.currency.managerAppName}
@@ -51,15 +53,14 @@ class EmptyStateAccount extends PureComponent<{
                 <LText semiBold style={styles.managerAppName}>
                   {account &&
                     account.currency &&
-                    // $FlowFixMe
-                    listTokenTypesForCryptoCurrency(account.currency).join(
+                    listTokenTypesForCryptoCurrency(mainAccount.currency).join(
                       ", ",
                     )}
                   {"tokens"}
                 </LText>
               </Trans>
             ) : (
-              <Trans i18nKey="common:account.emptyState.desc">
+              <Trans i18nKey="account.emptyState.desc">
                 {"Make sure the"}
                 <LText semiBold style={styles.managerAppName}>
                   {mainAccount.currency.managerAppName}

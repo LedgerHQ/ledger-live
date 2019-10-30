@@ -3,15 +3,18 @@ import React, { Component } from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import {
+  getAccountCurrency,
+  getAccountName,
+} from "@ledgerhq/live-common/lib/account";
 import LText from "../../components/LText";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  account: ?(Account | TokenAccount),
+  account: AccountLike,
 };
 const mapStateToProps = accountAndParentScreenSelector;
 
@@ -24,13 +27,14 @@ class AccountHeaderTitle extends Component<Props> {
   render() {
     const { account } = this.props;
     if (!account) return null;
-    const currency = getAccountCurrency(account);
-    const name = account.type === "Account" ? account.name : currency.name;
     return (
       <TouchableWithoutFeedback onPress={this.onPress}>
         <View style={styles.headerContainer}>
           <View style={styles.iconContainer}>
-            <ParentCurrencyIcon size={18} currency={currency} />
+            <ParentCurrencyIcon
+              size={18}
+              currency={getAccountCurrency(account)}
+            />
           </View>
           <LText
             semiBold
@@ -39,7 +43,7 @@ class AccountHeaderTitle extends Component<Props> {
             ellipsizeMode="tail"
             style={styles.title}
           >
-            {name}
+            {getAccountName(account)}
           </LText>
         </View>
       </TouchableWithoutFeedback>

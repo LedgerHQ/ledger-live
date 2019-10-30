@@ -8,9 +8,12 @@ import type { NavigationScreenProp } from "react-navigation";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  AccountLike,
+  Transaction,
+} from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
@@ -21,9 +24,12 @@ import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
   navigation: NavigationScreenProp<{
-    accountId: string,
+    params: {
+      accountId: string,
+      transaction: Transaction,
+    },
   }>,
-  account: ?(Account | TokenAccount),
+  account: AccountLike,
   parentAccount: ?Account,
 };
 
@@ -72,25 +78,26 @@ class ScanRecipient extends PureComponent<Props, State> {
   };
 
   onResult = (result: string) => {
-    const { account, parentAccount } = this.props;
+    const { account, parentAccount, navigation } = this.props;
     if (!account) return;
     const bridge = getAccountBridge(account, parentAccount);
-    const mainAccount = getMainAccount(account, parentAccount);
     const { amount, address, currency, ...rest } = decodeURIScheme(result);
-    let t = bridge.createTransaction(mainAccount);
-    t = bridge.editTransactionRecipient(mainAccount, t, address);
+    const transaction = navigation.getParam("transaction");
+    const patch: Object = {};
+    patch.recipient = address;
     if (amount) {
-      t = bridge.editTransactionAmount(mainAccount, t, amount);
+      patch.amount = amount;
     }
-    t = Object.keys(rest).reduce(
-      (t, k) => bridge.editTransactionExtra(mainAccount, t, k, rest[k]),
-      t,
-    );
+    for (const k in rest) {
+      if (k in transaction) {
+        patch[k] = rest[k];
+      }
+    }
 
     this.props.navigation.navigate("SendSelectRecipient", {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
-      transaction: t,
+      transaction: bridge.updateTransaction(transaction, patch),
       justScanned: true,
     });
   };

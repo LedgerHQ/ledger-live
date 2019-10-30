@@ -6,13 +6,14 @@ import { Trans } from "react-i18next";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
   getAccountCurrency,
+  getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 
 import type {
-  TokenAccount,
   Account,
   Operation,
+  AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 
 import LText from "./LText";
@@ -28,7 +29,7 @@ import Spinning from "./Spinning";
 type Props = {
   operation: Operation,
   parentAccount: ?Account,
-  account: TokenAccount | Account,
+  account: AccountLike,
   navigation: *,
   multipleAccounts?: boolean,
   isLast: boolean,
@@ -77,12 +78,8 @@ class OperationRow extends PureComponent<Props, *> {
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
 
-    const text =
-      operation.type === "IN" ? (
-        <Trans i18nKey="common.received" />
-      ) : (
-        <Trans i18nKey="common.sent" />
-      );
+    const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
+
     const isOptimistic = operation.blockHeight === null;
     const spinner = (
       <View
@@ -119,11 +116,7 @@ class OperationRow extends PureComponent<Props, *> {
                 ellipsizeMode="tail"
                 style={[styles.bodyLeft, styles.topRow]}
               >
-                {multipleAccounts
-                  ? account.type === "TokenAccount"
-                    ? currency.name
-                    : account.name
-                  : text}
+                {multipleAccounts ? getAccountName(account) : text}
               </LText>
               <LText
                 tertiary

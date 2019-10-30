@@ -16,8 +16,6 @@ import BalanceHeader from "./BalanceHeader";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 
-const forceInset = { bottom: "always" };
-
 class AnimatedTopBar extends PureComponent<
   {
     scrollY: AnimatedValue,
@@ -72,7 +70,7 @@ class AnimatedTopBar extends PureComponent<
       >
         <TouchableWithoutFeedback onPress={this.onPress}>
           <View style={[styles.outer, { paddingTop: extraStatusBarPadding }]}>
-            <SafeAreaView forceInset={forceInset}>
+            <SafeAreaView>
               {pending ? (
                 <View style={styles.content}>
                   <HeaderSynchronizing />

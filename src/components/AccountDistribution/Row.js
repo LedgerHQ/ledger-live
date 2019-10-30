@@ -1,10 +1,11 @@
 // @flow
 
+import { getAccountName } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import type {
   Account,
+  AccountLike,
   CryptoCurrency,
-  TokenAccount,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
@@ -23,7 +24,7 @@ import LText from "../LText";
 import ParentCurrencyIcon from "../ParentCurrencyIcon";
 
 export type AccountDistributionItem = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   distribution: number, // % of the total (normalized in 0-1)
   amount: BigNumber,
   currency: CryptoCurrency | TokenCurrency,
@@ -62,8 +63,6 @@ const Row = ({
   const color = getCurrencyColor(currency);
   const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
   const icon = <ParentCurrencyIcon currency={currency} size={18} />;
-  const displayName =
-    account.type === "TokenAccount" ? currency.name : account.name;
 
   return (
     <RectButton
@@ -74,7 +73,7 @@ const Row = ({
       <View style={styles.content}>
         <View style={styles.row}>
           <LText semiBold style={styles.darkBlue}>
-            {displayName}
+            {getAccountName(account)}
           </LText>
           <LText tertiary style={styles.darkBlue}>
             <CurrencyUnitValue unit={currency.units[0]} value={amount} />

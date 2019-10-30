@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import debounce from "lodash/debounce";
 
-import type {
-  Account,
-  TokenAccount,
-  Currency,
-} from "@ledgerhq/live-common/lib/types";
+import type { Currency, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -32,7 +28,7 @@ import TranslatedError from "../../components/TranslatedError";
 import type { T } from "../../types/common";
 
 type OwnProps = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   currency: string,
   value: BigNumber,
   onChange: BigNumber => void,

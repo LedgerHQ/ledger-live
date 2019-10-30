@@ -4,9 +4,9 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import type {
   Account,
-  TokenAccount,
   Operation,
   OperationType,
+  AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import ReceiveConfirmedIcon from "../icons/ReceiveConfirmed";
@@ -21,13 +21,16 @@ type Props = {
   size: number,
   confirmed: boolean,
   operation: Operation,
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account,
 };
 
 const icons = {
   OUT: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
   IN: [ReceiveUnconfirmedIcon, ReceiveConfirmedIcon],
+  CREATE: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
+  DELEGATE: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
+  REVEAL: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
   NONE: [],
 };
 

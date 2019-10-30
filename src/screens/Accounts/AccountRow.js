@@ -6,8 +6,9 @@ import { RectButton } from "react-native-gesture-handler";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { listTokenAccounts } from "@ledgerhq/live-common/lib/account";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/src/currencies";
+import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -19,7 +20,7 @@ import { accountSyncStateSelector } from "../../reducers/bridgeSync";
 import type { AsyncState } from "../../reducers/bridgeSync";
 import AccountSyncStatus from "./AccountSyncStatus";
 import Button from "../../components/Button";
-import TokenRow from "../../components/TokenRow";
+import SubAccountRow from "../../components/SubAccountRow";
 import withEnv from "../../logic/withEnv";
 
 const mapStateToProps = createStructuredSelector({
@@ -58,14 +59,14 @@ class AccountRow extends PureComponent<Props, State> {
     });
   };
 
-  onTokenAccountPress = (tokenAccount: TokenAccount) => {
+  onSubAccountPress = (subAccount: SubAccount) => {
     this.props.navigation.navigate("Account", {
       parentId: this.props.account.id,
-      accountId: tokenAccount.id,
+      accountId: subAccount.id,
     });
   };
 
-  onExpandTokenPress = () => {
+  onExpandSubAccountsPress = () => {
     this.setState(s => ({
       collapsed: !s.collapsed,
     }));
@@ -73,7 +74,10 @@ class AccountRow extends PureComponent<Props, State> {
 
   render() {
     const { account, isUpToDateAccount, syncState } = this.props;
-    const tokenAccounts = listTokenAccounts(account);
+    const subAccounts = listSubAccounts(account);
+
+    const isToken =
+      listTokenTypesForCryptoCurrency(account.currency).length > 0;
 
     return (
       <View style={styles.root}>
@@ -81,7 +85,7 @@ class AccountRow extends PureComponent<Props, State> {
           style={[
             styles.accountRowCard,
             {
-              elevation: tokenAccounts && this.state.collapsed ? 2 : 1,
+              elevation: subAccounts && this.state.collapsed ? 2 : 1,
             },
           ]}
         >
@@ -129,38 +133,42 @@ class AccountRow extends PureComponent<Props, State> {
               </View>
             </View>
           </RectButton>
-          {tokenAccounts.length !== 0 ? (
+          {subAccounts.length !== 0 ? (
             <Fragment>
               <View
                 style={[
-                  styles.tokenAccountList,
+                  styles.subAccountList,
                   { display: this.state.collapsed ? "none" : "flex" },
                 ]}
               >
-                {tokenAccounts.map((tkn, i) => (
-                  <TokenRow
+                {subAccounts.map((tkn, i) => (
+                  <SubAccountRow
                     nested
                     key={i}
                     account={tkn}
-                    onTokenAccountPress={this.onTokenAccountPress}
+                    onSubAccountPress={this.onSubAccountPress}
                   />
                 ))}
               </View>
-              <View style={styles.tokenButton}>
+              <View style={styles.subAccountButton}>
                 <Button
                   type="lightSecondary"
-                  event="expandTokenList"
+                  event="expandSubAccountList"
                   title={
                     <Trans
                       i18nKey={
                         this.state.collapsed
-                          ? "accounts.row.showTokens"
-                          : "accounts.row.hideTokens"
+                          ? `accounts.row.${
+                              isToken ? "showTokens" : "showSubAccounts"
+                            }`
+                          : `accounts.row.${
+                              isToken ? "hideTokens" : "hideSubAccounts"
+                            }`
                       }
                       values={{
-                        length: tokenAccounts.length,
+                        length: subAccounts.length,
                       }}
-                      count={tokenAccounts.length}
+                      count={subAccounts.length}
                     />
                   }
                   IconRight={() => (
@@ -170,15 +178,15 @@ class AccountRow extends PureComponent<Props, State> {
                       size={16}
                     />
                   )}
-                  onPress={this.onExpandTokenPress}
+                  onPress={this.onExpandSubAccountsPress}
                   size={13}
                 />
               </View>
             </Fragment>
           ) : null}
         </View>
-        {!!this.state.collapsed && tokenAccounts.length ? (
-          <View style={styles.tokenAccountIndicator} />
+        {!!this.state.collapsed && subAccounts.length ? (
+          <View style={styles.subAccountIndicator} />
         ) : null}
       </View>
     );
@@ -235,7 +243,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
   },
-  tokenAccountIndicator: {
+  subAccountIndicator: {
     zIndex: 1,
     height: 7,
     marginRight: 5,
@@ -259,7 +267,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  tokenAccountList: {
+  subAccountList: {
     marginLeft: 26,
     paddingLeft: 12,
     paddingRight: 12,
@@ -267,7 +275,7 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.fog,
     marginBottom: 20,
   },
-  tokenButton: {
+  subAccountButton: {
     borderTopWidth: 1,
     borderTopColor: colors.lightFog,
   },

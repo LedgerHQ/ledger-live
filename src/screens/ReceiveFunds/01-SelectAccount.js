@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { useCallback } from "react";
 import i18next from "i18next";
 import { View, StyleSheet } from "react-native";
 import { createStructuredSelector } from "reselect";
@@ -9,7 +9,10 @@ import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  AccountLikeArray,
+} from "@ledgerhq/live-common/lib/types";
 import {
   accountsSelector,
   flattenAccountsSelector,
@@ -31,90 +34,94 @@ type Navigation = NavigationScreenProp<{ params: {} }>;
 
 type Props = {
   accounts: Account[],
-  allAccounts: (Account | TokenAccount)[],
+  allAccounts: AccountLikeArray,
   navigation: Navigation,
 };
 
-type State = {};
+// type State = {};
 
-class ReceiveFunds extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("transfer.receive.headerTitle")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "1",
-          totalSteps: "3",
-        })}
-      />
-    ),
-  };
+const ReceiveFunds = ({ accounts, allAccounts, navigation }: Props) => {
+  const keyExtractor = item => item.account.id;
 
-  renderItem = ({ item: result }: { item: SearchResult }) => {
-    const { account } = result;
-    return (
-      <View
-        style={account.type === "Account" ? undefined : styles.tokenCardStyle}
-      >
-        <AccountCard
-          disabled={!result.match}
-          account={account}
-          style={styles.card}
-          onPress={() => {
-            this.props.navigation.navigate("ReceiveConnectDevice", {
-              accountId: account.id,
-              parentId:
-                account.type === "TokenAccount" ? account.parentId : undefined,
-            });
-          }}
+  const renderItem = useCallback(
+    ({ item: result }: { item: SearchResult }) => {
+      const { account } = result;
+      return (
+        <View
+          style={account.type === "Account" ? undefined : styles.tokenCardStyle}
+        >
+          <AccountCard
+            disabled={!result.match}
+            account={account}
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("ReceiveConnectDevice", {
+                accountId: account.id,
+                parentId:
+                  account.type === "TokenAccount"
+                    ? account.parentId
+                    : undefined,
+              });
+            }}
+          />
+        </View>
+      );
+    },
+    [navigation],
+  );
+
+  const renderList = useCallback(
+    items => {
+      const formatedList = formatSearchResults(items, accounts);
+
+      return (
+        <FlatList
+          data={formatedList}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
         />
-      </View>
-    );
-  };
+      );
+    },
+    [accounts, renderItem],
+  );
 
-  renderList = items => {
-    const { accounts } = this.props;
-    const formatedList = formatSearchResults(items, accounts);
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="ReceiveFunds" name="SelectAccount" />
+      <KeyboardView style={{ flex: 1 }}>
+        <View style={styles.searchContainer}>
+          <FilteredSearchBar
+            keys={SEARCH_KEYS}
+            inputWrapperStyle={styles.card}
+            list={allAccounts}
+            renderList={renderList}
+            renderEmptySearch={() => (
+              <View style={styles.emptyResults}>
+                <LText style={styles.emptyText}>
+                  <Trans i18nKey="transfer.receive.noAccount" />
+                </LText>
+              </View>
+            )}
+          />
+        </View>
+      </KeyboardView>
+    </SafeAreaView>
+  );
+};
 
-    return (
-      <FlatList
-        data={formatedList}
-        renderItem={this.renderItem}
-        keyExtractor={this.keyExtractor}
-        showsVerticalScrollIndicator={false}
-        keyboardDismissMode="on-drag"
-      />
-    );
-  };
-
-  keyExtractor = item => item.account.id;
-
-  render() {
-    const { allAccounts } = this.props;
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="ReceiveFunds" name="SelectAccount" />
-        <KeyboardView style={{ flex: 1 }}>
-          <View style={styles.searchContainer}>
-            <FilteredSearchBar
-              keys={SEARCH_KEYS}
-              inputWrapperStyle={styles.card}
-              list={allAccounts}
-              renderList={this.renderList}
-              renderEmptySearch={() => (
-                <View style={styles.emptyResults}>
-                  <LText style={styles.emptyText}>
-                    <Trans i18nKey="transfer.receive.noAccount" />
-                  </LText>
-                </View>
-              )}
-            />
-          </View>
-        </KeyboardView>
-      </SafeAreaView>
-    );
-  }
-}
+ReceiveFunds.navigationOptions = {
+  headerTitle: (
+    <StepHeader
+      title={i18next.t("transfer.receive.headerTitle")}
+      subtitle={i18next.t("send.stepperHeader.stepRange", {
+        currentStep: "1",
+        totalSteps: "3",
+      })}
+    />
+  ),
+};
 
 const mapStateToProps = createStructuredSelector({
   allAccounts: flattenAccountsSelector,

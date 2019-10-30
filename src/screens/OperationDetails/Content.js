@@ -4,14 +4,15 @@ import { View, StyleSheet, Linking } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import type {
   Account,
-  TokenAccount,
   Operation,
+  AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountUnit,
+  getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
@@ -47,7 +48,7 @@ const HelpLink = ({ title, event, onPress }: HelpLinkProps) => (
 );
 
 type Props = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account,
   operation: Operation,
   currencySettings: CurrencySettings,
@@ -92,7 +93,8 @@ class Content extends PureComponent<Props, State> {
     const currency = getAccountCurrency(account);
     const parentCurrency = getAccountCurrency(mainAccount);
     const amount = getOperationAmountNumber(operation);
-    const valueColor = amount.isNegative() ? colors.smoke : colors.green;
+    const isNegative = amount.isNegative();
+    const valueColor = isNegative ? colors.smoke : colors.green;
     const confirmations = operation.blockHeight
       ? mainAccount.blockHeight - operation.blockHeight
       : 0;
@@ -190,7 +192,7 @@ class Content extends PureComponent<Props, State> {
               </Touchable>
             </View>
             {subOperations.map((op, i) => {
-              const opAccount = (account.tokenAccounts || []).find(
+              const opAccount = (account.subAccounts || []).find(
                 acc => acc.id === op.accountId,
               );
 
@@ -249,7 +251,7 @@ class Content extends PureComponent<Props, State> {
             <Trans i18nKey="operationDetails.account" />
           </LText>
           <LText style={styles.sectionValue} semiBold>
-            {account.type === "Account" ? account.name : currency.name}
+            {getAccountName(account)}
           </LText>
         </RectButton>
         <View style={styles.section}>
@@ -266,7 +268,7 @@ class Content extends PureComponent<Props, State> {
             })}
           </LText>
         </View>
-        {operation.type === "OUT" ? (
+        {isNegative ? (
           <View style={styles.section}>
             <LText style={styles.sectionTitle}>
               <Trans i18nKey="operationDetails.fees" />

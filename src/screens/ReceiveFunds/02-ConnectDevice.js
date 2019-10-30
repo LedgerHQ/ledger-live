@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import i18next from "i18next";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
@@ -8,7 +8,10 @@ import { compose } from "redux";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import {
+  getMainAccount,
+  getReceiveFlowError,
+} from "@ledgerhq/live-common/lib/account";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -23,6 +26,7 @@ import {
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
+import GenericErrorView from "../../components/GenericErrorView";
 
 const forceInset = { bottom: "always" };
 
@@ -45,106 +49,127 @@ const mapStateToProps = (s, p) => ({
   readOnlyModeEnabled: readOnlyModeEnabledSelector(s),
 });
 
-class ConnectDevice extends Component<Props> {
-  static navigationOptions = ({ navigation }) => {
-    const { params } = navigation.state;
-    const key = (params && params.title) || "transfer.receive.titleDevice";
-
-    return {
-      headerTitle: (
-        <StepHeader
-          title={i18next.t(key)}
-          subtitle={i18next.t("send.stepperHeader.stepRange", {
-            currentStep: "2",
-            totalSteps: "3",
-          })}
-        />
-      ),
-    };
-  };
-
-  componentDidMount() {
-    const { readOnlyModeEnabled } = this.props;
+const ConnectDevice = ({
+  readOnlyModeEnabled,
+  navigation,
+  account,
+  parentAccount,
+}: Props) => {
+  useEffect(() => {
     if (readOnlyModeEnabled) {
-      this.props.navigation.setParams({
+      navigation.setParams({
         title: "transfer.receive.titleReadOnly",
         headerRight: null,
       });
     }
-  }
+  }, [navigation, readOnlyModeEnabled]);
 
-  onSelectDevice = (meta: *) => {
-    const { navigation, account, parentAccount } = this.props;
+  const error = useMemo(
+    () => (account ? getReceiveFlowError(account, parentAccount) : null),
+    [account, parentAccount],
+  );
+
+  const onSelectDevice = useCallback(
+    (meta: *) => {
+      if (!account) return;
+      navigation.navigate("ReceiveConfirmation", {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+        ...meta,
+      });
+    },
+    [account, navigation, parentAccount],
+  );
+
+  const onSkipDevice = useCallback(() => {
     if (!account) return;
     navigation.navigate("ReceiveConfirmation", {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
-      ...meta,
     });
-  };
+  }, [account, navigation, parentAccount]);
 
-  onSkipDevice = () => {
-    const { navigation, account, parentAccount } = this.props;
-    if (!account) return;
-    navigation.navigate("ReceiveConfirmation", {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
-    });
-  };
+  if (!account) return null;
 
-  render() {
-    const { readOnlyModeEnabled, account, parentAccount } = this.props;
-
-    if (!account) return null;
-
-    const mainAccount = getMainAccount(account, parentAccount);
-
-    if (readOnlyModeEnabled) {
-      return <ReadOnlyWarning continue={this.onSkipDevice} />;
-    }
-
-    if (!mainAccount.freshAddress) {
-      return (
-        <NotSyncedWarning
-          continue={this.onSkipDevice}
-          accountId={mainAccount.id}
-        />
-      );
-    }
-
+  if (error) {
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
-          <SelectDevice
-            onSelect={this.onSelectDevice}
-            steps={[
-              connectingStep,
-              accountApp(mainAccount),
-              receiveVerifyStep(mainAccount),
-            ]}
-          />
-        </ScrollView>
-        <View style={styles.footer}>
-          <Button
-            event="ReceiveWithoutDevice"
-            type="lightSecondary"
-            title={<Trans i18nKey="transfer.receive.withoutDevice" />}
-            onPress={this.onSkipDevice}
-          />
+        <View style={styles.bodyError}>
+          <GenericErrorView error={error} />
         </View>
       </SafeAreaView>
     );
   }
-}
+
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  if (readOnlyModeEnabled) {
+    return <ReadOnlyWarning continue={onSkipDevice} />;
+  }
+
+  if (!mainAccount.freshAddress) {
+    return (
+      <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContainer}
+      >
+        <SelectDevice
+          onSelect={onSelectDevice}
+          steps={[
+            connectingStep,
+            accountApp(mainAccount),
+            receiveVerifyStep(mainAccount),
+          ]}
+        />
+      </ScrollView>
+      <View style={styles.footer}>
+        <Button
+          event="ReceiveWithoutDevice"
+          type="lightSecondary"
+          title={<Trans i18nKey="transfer.receive.withoutDevice" />}
+          onPress={onSkipDevice}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
+
+ConnectDevice.navigationOptions = ({ navigation }) => {
+  const { params } = navigation.state;
+  const key = (params && params.title) || "transfer.receive.titleDevice";
+
+  return {
+    headerTitle: (
+      <StepHeader
+        title={i18next.t(key)}
+        subtitle={i18next.t("send.stepperHeader.stepRange", {
+          currentStep: "2",
+          totalSteps: "3",
+        })}
+      />
+    ),
+  };
+};
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  bodyError: {
+    flex: 1,
+    flexDirection: "column",
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 16,
   },
   scroll: {
     flex: 1,

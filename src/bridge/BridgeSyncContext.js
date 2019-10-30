@@ -3,23 +3,25 @@
 // it handles automatically re-calling synchronize
 // this is an even high abstraction than the bridge
 
-import React, { Component } from "react";
-import priorityQueue from "async/priorityQueue";
-import { connect } from "react-redux";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import priorityQueue from "async/priorityQueue";
+import React, { Component } from "react";
+import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-
-import logger from "../logger";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import { setAccountSyncState } from "../actions/bridgeSync";
+import { track } from "../analytics/segment";
+import { SYNC_MAX_CONCURRENT } from "../constants";
+
+import logger from "../logger";
+import { accountsSelector, isUpToDateSelector } from "../reducers/accounts";
+import type { BridgeSyncState } from "../reducers/bridgeSync";
 import {
   bridgeSyncSelector,
   syncStateLocalSelector,
 } from "../reducers/bridgeSync";
-import type { BridgeSyncState } from "../reducers/bridgeSync";
-import { accountsSelector, isUpToDateSelector } from "../reducers/accounts";
-import { SYNC_MAX_CONCURRENT } from "../constants";
 
 type BridgeSyncProviderProps = {
   children: *,
@@ -61,6 +63,8 @@ const actions = {
   setAccountSyncState,
 };
 
+const lastTimeAnalyticsTrackPerAccountId = {};
+
 class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
   constructor() {
     super();
@@ -83,12 +87,46 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
 
       this.props.setAccountSyncState(accountId, { pending: true, error: null });
 
+      const startSyncTime = Date.now();
+      const trackedRecently =
+        lastTimeAnalyticsTrackPerAccountId[accountId] &&
+        startSyncTime - lastTimeAnalyticsTrackPerAccountId[accountId] <
+          90 * 1000;
+      if (!trackedRecently) {
+        lastTimeAnalyticsTrackPerAccountId[accountId] = startSyncTime;
+      }
+      const trackEnd = event => {
+        if (trackedRecently) return;
+        const account = this.props.accounts.find(a => a.id === accountId);
+        if (!account) return;
+        const subAccounts = account.subAccounts || [];
+        track(event, {
+          duration: (Date.now() - startSyncTime) / 1000,
+          currencyName: account.currency.name,
+          derivationMode: account.derivationMode,
+          freshAddressPath: account.freshAddressPath,
+          operationsLength: account.operations.length,
+          tokensLength: subAccounts.length,
+        });
+        if (event === "SyncSuccess") {
+          subAccounts.forEach(a => {
+            track("SyncSuccessToken", {
+              tokenId: getAccountCurrency(a).id,
+              tokenTicker: getAccountCurrency(a).ticker,
+              operationsLength: a.operations.length,
+              parentCurrencyName: account.currency.name,
+              parentDerivationMode: account.derivationMode,
+            });
+          });
+        }
+      };
       // TODO migrate to the observation mode in future
       bridge.startSync(account, false).subscribe({
         next: accountUpdater => {
           this.props.updateAccountWithUpdater(accountId, accountUpdater);
         },
         complete: () => {
+          trackEnd("SyncSuccess");
           this.props.setAccountSyncState(accountId, {
             pending: false,
             error: null,
@@ -97,6 +135,9 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
         },
         error: error => {
           logger.critical(error);
+          if (!error || error.name !== "NetworkDown") {
+            trackEnd("SyncError");
+          }
           this.props.setAccountSyncState(accountId, {
             pending: false,
             error,
@@ -163,7 +204,7 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
       },
     };
 
-    const sync = (action: BehaviorAction) => {
+    this.api = (action: BehaviorAction) => {
       const handler = handlers[action.type];
       if (handler) {
         // $FlowFixMe
@@ -175,8 +216,6 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
         });
       }
     };
-
-    this.api = sync;
   }
 
   api: Sync;

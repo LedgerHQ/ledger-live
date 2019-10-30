@@ -2,8 +2,11 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import {
+  getAccountCurrency,
+  getAccountName,
+} from "@ledgerhq/live-common/lib/account";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";
 import LText from "../../components/LText";
@@ -13,7 +16,7 @@ import Wallet from "../../icons/Wallet";
 import colors from "../../colors";
 
 type Props = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account,
 };
 export default class SummaryFromSection extends PureComponent<Props> {
@@ -38,7 +41,7 @@ export default class SummaryFromSection extends PureComponent<Props> {
               ellipsizeMode="tail"
               style={styles.summaryRowText}
             >
-              {account.type === "Account" ? account.name : currency.name}
+              {getAccountName(account)}
             </LText>
           </View>
         }

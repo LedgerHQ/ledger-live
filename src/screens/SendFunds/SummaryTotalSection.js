@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -21,7 +21,7 @@ import Info from "../../icons/Info";
 import colors from "../../colors";
 
 type Props = {
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account,
   amount: *,
 };

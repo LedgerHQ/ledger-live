@@ -59,17 +59,12 @@ class EditFeeUnit extends PureComponent<Props, State> {
       : this.setState({ fee, isValid: true });
   };
 
-  updateTransaction = (item: any) => {
+  updateTransaction = (feeCustomUnit: any) => {
     const { account, navigation } = this.props;
     const transaction = navigation.getParam("transaction");
     const bridge = getAccountBridge(account);
     navigation.setParams({
-      transaction: bridge.editTransactionExtra(
-        account,
-        transaction,
-        "feeCustomUnit",
-        item,
-      ),
+      transaction: bridge.updateTransaction(transaction, { feeCustomUnit }),
     });
     this.onRequestClose();
   };

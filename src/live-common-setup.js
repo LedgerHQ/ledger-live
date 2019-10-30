@@ -29,6 +29,7 @@ setSupportedCurrencies([
   "ethereum_classic",
   "ethereum",
   "hcash",
+  "tezos",
   "komodo",
   "litecoin",
   "peercoin",

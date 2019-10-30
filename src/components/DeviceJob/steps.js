@@ -1,8 +1,9 @@
 // @flow
 
 import React from "react";
+import last from "lodash/last";
 import { Trans } from "react-i18next";
-import { from } from "rxjs";
+import { from, of } from "rxjs";
 import { map, first } from "rxjs/operators";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -11,6 +12,7 @@ import { WrongDeviceForAccount, CantOpenDevice } from "@ledgerhq/errors";
 import {
   getDerivationScheme,
   runDerivationScheme,
+  getDerivationModesForCurrency,
 } from "@ledgerhq/live-common/lib/derivation";
 import {
   withDevice,
@@ -180,25 +182,27 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
     );
   },
   run: meta =>
-    withDevicePolling(meta.deviceId)(transport =>
-      from(
-        meta.deviceId.startsWith("mock")
-          ? [
-              {
-                ...meta,
-                addressInfo: { address: "" },
-              },
-            ]
-          : getAddress(transport, {
-              currency,
-              derivationMode: "",
-              path: runDerivationScheme(
-                getDerivationScheme({ currency, derivationMode: "" }),
-                currency,
-              ),
-            }),
-      ),
-    ).pipe(
+    withDevicePolling(meta.deviceId)(transport => {
+      if (meta.deviceId.startsWith("mock")) {
+        return of({
+          ...meta,
+          addressInfo: { address: "" },
+        });
+      }
+
+      const derivationMode = last(getDerivationModesForCurrency(currency));
+
+      return from(
+        getAddress(transport, {
+          currency,
+          derivationMode,
+          path: runDerivationScheme(
+            getDerivationScheme({ currency, derivationMode }),
+            currency,
+          ),
+        }),
+      );
+    }).pipe(
       map(addressInfo => ({
         ...meta,
         addressInfo,

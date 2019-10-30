@@ -7,7 +7,12 @@ import { compose } from "redux";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import type { NavigationScreenProp } from "react-navigation";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  AccountLike,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -19,12 +24,13 @@ import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: ?(Account | TokenAccount),
+  account: AccountLike,
   parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
-      transaction: *,
+      transaction: Transaction,
+      status: TransactionStatus,
     },
   }>,
 };

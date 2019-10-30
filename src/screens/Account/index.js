@@ -21,6 +21,7 @@ import type {
   Unit,
   BalanceHistoryWithCountervalue,
   PortfolioRange,
+  AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
 import { switchCountervalueFirst } from "../../actions/settings";
@@ -49,12 +50,12 @@ import AccountGraphCard from "../../components/AccountGraphCard";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import Touchable from "../../components/Touchable";
 import type { Item } from "../../components/Graph/types";
-import TokenAccountsList from "./TokenAccountsList";
+import SubAccountsList from "./SubAccountsList";
 
 type Props = {
   useCounterValue: boolean,
   switchCountervalueFirst: () => *,
-  account: Account | TokenAccount,
+  account: AccountLike,
   parentAccount: ?Account,
   countervalueChange: ValueChange,
   cryptoChange: ValueChange,
@@ -216,8 +217,8 @@ class AccountScreen extends PureComponent<Props, State> {
             parentId={parentAccount && parentAccount.id}
           />
         )}
-        {!empty && account.type === "Account" && account.tokenAccounts ? (
-          <TokenAccountsList
+        {!empty && account.type === "Account" && account.subAccounts ? (
+          <SubAccountsList
             accountId={account.id}
             onAccountPress={this.onAccountPress}
             parentAccount={account}

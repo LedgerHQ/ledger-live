@@ -1,211 +1,133 @@
 /* @flow */
-import React, { Component } from "react";
-import { ScrollView, View, StyleSheet, Platform } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { RecipientRequired } from "@ledgerhq/errors";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import type {
+  Account,
+  AccountLike,
+  Transaction,
+} from "@ledgerhq/live-common/lib/types";
+import i18next from "i18next";
+import React, { useCallback, useRef, useEffect } from "react";
+import { Trans, translate } from "react-i18next";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
 import type { NavigationScreenProp } from "react-navigation";
+import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import i18next from "i18next";
-import { translate, Trans } from "react-i18next";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import throttle from "lodash/throttle";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
-import type { T } from "../../types/common";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { track, TrackScreen } from "../../analytics";
-import colors from "../../colors";
-import LText, { getFontStyle } from "../../components/LText";
-import Button from "../../components/Button";
-import StepHeader from "../../components/StepHeader";
-import KeyboardView from "../../components/KeyboardView";
-import TranslatedError from "../../components/TranslatedError";
-import TextInput from "../../components/TextInput";
-import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
+import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
+import colors from "../../colors";
+import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import type { T } from "../../types/common";
+import Button from "../../components/Button";
+import KeyboardView from "../../components/KeyboardView";
+import LText, { getFontStyle } from "../../components/LText";
+import StepHeader from "../../components/StepHeader";
+import TextInput from "../../components/TextInput";
+import TranslatedError from "../../components/TranslatedError";
+import RetryButton from "../../components/RetryButton";
+import CancelButton from "../../components/CancelButton";
+import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+
+const withoutHiddenError = error =>
+  error instanceof RecipientRequired ? null : error;
 
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: ?(Account | TokenAccount),
+  account: AccountLike,
   parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
       parentId: string,
-      transaction: *,
+      transaction: Transaction,
       justScanned?: boolean,
     },
   }>,
   t: T,
 };
 
-type State = {
-  addressStatus: string,
-  address: *,
-  error: ?Error,
-};
+const SendSelectRecipient = ({
+  account,
+  parentAccount,
+  navigation,
+  t,
+}: Props) => {
+  const {
+    transaction,
+    setTransaction,
+    status,
+    bridgePending,
+    bridgeError,
+  } = useBridgeTransaction(() => ({ account, parentAccount }));
 
-class SendSelectRecipient extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("send.stepperHeader.recipientAddress")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "2",
-          totalSteps: "6",
-        })}
-      />
-    ),
-  };
-
-  constructor() {
-    super();
-    this.validateAddress = throttle(this.validateAddress, 200);
-  }
-
-  unmounted = false;
-
-  preloadedNetworkInfo: ?Object;
-
-  componentDidMount() {
-    const { account, parentAccount } = this.props;
-    if (!account) return;
-    const bridge = getAccountBridge(account, parentAccount);
-    const mainAccount = getMainAccount(account, parentAccount);
-    bridge.fetchTransactionNetworkInfo(mainAccount).then(
-      networkInfo => {
-        this.preloadedNetworkInfo = networkInfo;
-      },
-      () => {
-        // error not handled here
-      },
-    );
-  }
-
-  componentWillUnmount() {
-    this.validateAddress.cancel();
-    this.unmounted = true;
-  }
-
-  componentDidUpdate(_, { address: prevAddress }) {
-    const { navigation, account, parentAccount } = this.props;
-    if (!account) return;
-    if (navigation.getParam("justScanned")) {
-      delete navigation.state.params.justScanned;
-      const transaction = navigation.getParam("transaction");
-      if (transaction) {
-        const bridge = getAccountBridge(account, parentAccount);
-        const mainAccount = getMainAccount(account, parentAccount);
-        const address = bridge.getTransactionRecipient(
-          mainAccount,
-          transaction,
-        );
-        if (address && prevAddress !== address) {
-          this.onChangeText(address);
-        }
-      }
+  // handle changes from camera qr code
+  const initialTransaction = useRef(transaction);
+  const navigationTransaction = navigation.getParam("transaction");
+  useEffect(() => {
+    if (
+      initialTransaction.current !== navigationTransaction &&
+      navigationTransaction
+    ) {
+      setTransaction(navigationTransaction);
     }
-  }
+  }, [setTransaction, navigationTransaction]);
 
-  state = {
-    addressStatus: "pending",
-    address: "",
-    error: null,
-  };
+  const onRecipientFieldFocus = useCallback(() => {
+    track("SendRecipientFieldFocused");
+  }, []);
 
-  input = React.createRef();
-
-  clear = () => {
-    if (this.input.current) {
-      this.input.current.clear();
-    }
-    this.onChangeText("");
-  };
-
-  onChangeText = (address: string) => {
-    this.setState({ address });
-    this.validateAddress(address);
-  };
-
-  nonceValidateAddress = 0;
-  validateAddress = async (address: string) => {
-    const nonce = ++this.nonceValidateAddress;
-    const { account, parentAccount } = this.props;
-    if (!account) return;
-    const bridge = getAccountBridge(account, parentAccount);
-    const mainAccount = getMainAccount(account, parentAccount);
-    try {
-      const res = await bridge.checkValidRecipient(mainAccount, address);
-      if (this.unmounted || nonce !== this.nonceValidateAddress) return;
-      if (!res) this.setState({ addressStatus: "valid", error: null });
-      else this.setState({ addressStatus: "warning", error: res });
-    } catch (e) {
-      if (this.unmounted || nonce !== this.nonceValidateAddress) return;
-      this.setState({
-        addressStatus: "invalid",
-        error: e,
-      });
-    }
-  };
-
-  onPressScan = () => {
-    const { navigation } = this.props;
+  const onPressScan = useCallback(() => {
     navigation.navigate("ScanRecipient", {
       accountId: navigation.getParam("accountId"),
       parentId: navigation.getParam("parentId"),
-    });
-  };
-
-  onPressContinue = async () => {
-    const { account, parentAccount, navigation } = this.props;
-    const { address } = this.state;
-    if (!account) return;
-    const bridge = getAccountBridge(account, parentAccount);
-    const mainAccount = getMainAccount(account, parentAccount);
-    let transaction =
-      navigation.getParam("transaction") ||
-      bridge.createTransaction(mainAccount);
-    const tokenAccountId = account.type === "TokenAccount" && account.id;
-    if (tokenAccountId && bridge.editTokenAccountId) {
-      transaction = bridge.editTokenAccountId(
-        mainAccount,
-        transaction,
-        tokenAccountId,
-      );
-    }
-
-    transaction = bridge.editTransactionRecipient(
-      mainAccount,
       transaction,
-      address,
-    );
+    });
+  }, [navigation, transaction]);
 
-    if (this.preloadedNetworkInfo) {
-      transaction = bridge.applyTransactionNetworkInfo(
-        mainAccount,
-        transaction,
-        this.preloadedNetworkInfo,
-      );
-    }
+  const onChangeText = useCallback(
+    recipient => {
+      const bridge = getAccountBridge(account, parentAccount);
+      setTransaction(bridge.updateTransaction(transaction, { recipient }));
+    },
+    [account, parentAccount, setTransaction, transaction],
+  );
+  const clear = useCallback(() => onChangeText(""), [onChangeText]);
 
-    transaction = await bridge.prepareTransaction(mainAccount, transaction);
+  const onBridgeErrorCancel = useCallback(() => {
+    const parent = navigation.dangerouslyGetParent();
+    if (parent) parent.goBack();
+  }, [navigation]);
+
+  const onBridgeErrorRetry = useCallback(() => {
+    if (!transaction) return;
+    const bridge = getAccountBridge(account, parentAccount);
+    setTransaction(bridge.updateTransaction(transaction, {}));
+  }, [setTransaction, account, parentAccount, transaction]);
+
+  const onPressContinue = useCallback(async () => {
+    if (!account) return;
 
     navigation.navigate("SendAmount", {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
     });
-  };
+  }, [account, parentAccount, navigation, transaction]);
 
-  onRecipientFieldFocus = () => track("SendRecipientFieldFocused");
+  const input = React.createRef();
 
-  render() {
-    const { address, error, addressStatus } = this.state;
-    const { account, t } = this.props;
-    if (!account) return null;
-    return (
+  if (!account || !transaction) return null;
+
+  const error = withoutHiddenError(status.errors.recipient);
+  const warning = status.warnings.recipient;
+
+  return (
+    <>
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="SendFunds" name="SelectRecipient" />
         <SyncSkipUnderPriority priority={100} />
@@ -220,7 +142,7 @@ class SendSelectRecipient extends Component<Props, State> {
               type="tertiary"
               title={<Trans i18nKey="send.recipient.scan" />}
               IconLeft={IconQRCode}
-              onPress={this.onPressScan}
+              onPress={onPressScan}
             />
             <View style={styles.separatorContainer}>
               <View style={styles.separatorLine} />
@@ -236,28 +158,28 @@ class SendSelectRecipient extends Component<Props, State> {
                 placeholderTextColor={colors.fog}
                 style={[
                   styles.addressInput,
-                  addressStatus === "invalid" && styles.invalidAddressInput,
-                  addressStatus === "warning" && styles.warning,
+                  error && styles.invalidAddressInput,
+                  warning && styles.warning,
                 ]}
-                onFocus={this.onRecipientFieldFocus}
-                onChangeText={this.onChangeText}
-                onInputCleared={this.clear}
-                value={address}
-                ref={this.input}
+                onFocus={onRecipientFieldFocus}
+                onChangeText={onChangeText}
+                onInputCleared={clear}
+                value={transaction.recipient}
+                ref={input}
                 multiline
                 blurOnSubmit
                 autoCapitalize="none"
                 clearButtonMode="always"
               />
             </View>
-            {!!address && addressStatus !== "valid" && (
+            {(error || warning) && (
               <LText
                 style={[
                   styles.warningBox,
-                  addressStatus === "invalid" ? styles.error : styles.warning,
+                  error ? styles.error : styles.warning,
                 ]}
               >
-                <TranslatedError error={error} />
+                <TranslatedError error={error || warning} />
               </LText>
             )}
           </ScrollView>
@@ -266,17 +188,45 @@ class SendSelectRecipient extends Component<Props, State> {
               event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              onPress={this.onPressContinue}
-              disabled={
-                addressStatus === "invalid" || addressStatus === "pending"
-              }
+              disabled={bridgePending || !!error}
+              pending={bridgePending}
+              onPress={onPressContinue}
             />
           </View>
         </KeyboardView>
       </SafeAreaView>
-    );
-  }
-}
+
+      <GenericErrorBottomModal
+        error={bridgeError}
+        onClose={onBridgeErrorRetry}
+        footerButtons={
+          <>
+            <CancelButton
+              containerStyle={styles.button}
+              onPress={onBridgeErrorCancel}
+            />
+            <RetryButton
+              containerStyle={[styles.button, styles.buttonRight]}
+              onPress={onBridgeErrorRetry}
+            />
+          </>
+        }
+      />
+    </>
+  );
+};
+
+SendSelectRecipient.navigationOptions = {
+  headerTitle: (
+    <StepHeader
+      title={i18next.t("send.stepperHeader.recipientAddress")}
+      subtitle={i18next.t("send.stepperHeader.stepRange", {
+        currentStep: "2",
+        totalSteps: "6",
+      })}
+    />
+  ),
+};
 
 const IconQRCode = ({ size, color }: { size: number, color: string }) => (
   <Icon name="qrcode" size={size} color={color} />
@@ -287,6 +237,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  a: {},
   container: {
     paddingHorizontal: 16,
     paddingVertical: 16,
@@ -337,11 +288,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-});
 
-const mapStateToProps = accountAndParentScreenSelector;
+  button: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  buttonRight: {
+    marginLeft: 8,
+  },
+});
 
 export default compose(
   translate(),
-  connect(mapStateToProps),
+  connect(accountAndParentScreenSelector),
 )(SendSelectRecipient);

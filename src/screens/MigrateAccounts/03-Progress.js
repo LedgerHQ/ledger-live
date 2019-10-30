@@ -3,6 +3,7 @@
 import { migrateAccounts } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import type { ScanAccountEvent } from "@ledgerhq/live-common/lib/types";
 import type { Account } from "@ledgerhq/live-common/src/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
@@ -119,7 +120,13 @@ const Progress = ({
     unsub();
     scanSubscription.current = getCurrencyBridge(currency)
       .scanAccountsOnDevice(currency, deviceMeta.deviceId)
-      .pipe(reduce<Account>((all, acc) => all.concat(acc), []))
+      .pipe(
+        reduce(
+          (all: Account[], event: ScanAccountEvent) =>
+            all.concat(event.account),
+          [],
+        ),
+      )
       .subscribe({
         next: scannedAccounts => {
           setAccounts(
