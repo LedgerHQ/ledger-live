@@ -1,4 +1,6 @@
 // @flow
+import { log } from "@ledgerhq/logs";
+import invariant from "invariant";
 import { Subject, Observable } from "rxjs";
 import { map, distinctUntilChanged } from "rxjs/operators";
 import type { Core } from "./types";
@@ -23,6 +25,7 @@ type AfterGCJob<R> = {
 const afterLibcoreFlushes: Array<AfterGCJob<any>> = [];
 
 function flush(c: Core) {
+  log("libcore/access", "flush");
   lastFlush = c
     .flush()
     .then(async () => {
@@ -30,15 +33,26 @@ function flush(c: Core) {
       while ((item = afterLibcoreFlushes.shift())) {
         item.resolve(await item.job(c));
       }
+      log("libcore/access", "flush end");
     })
-    .catch(e => console.error("libcore-flush-fail", e));
+    .catch(e => {
+      log("libcore/access", "flush error " + String(e));
+      console.error(e);
+    });
 }
 
 export async function afterLibcoreGC<R>(
   job: (core: Core) => Promise<R>
 ): Promise<R> {
   return new Promise(resolve => {
+    if (!core) return;
+    log("libcore/access", "new after gc job");
     afterLibcoreFlushes.push({ job, resolve });
+    if (libcoreJobsCounter === 0) {
+      log("libcore/access", "after gc job exec now");
+      clearTimeout(flushTimeout);
+      flushTimeout = setTimeout(flush.bind(null, core), GC_DELAY);
+    }
   });
 }
 
@@ -77,7 +91,9 @@ let loadCoreImpl: ?() => Promise<Core>;
 
 // reset the libcore data
 export async function reset() {
+  log("libcore/access", "reset");
   if (!core) return;
+  invariant(libcoreJobsCounter === 0, "some libcore jobs are still running");
   await core.getPoolInstance().freshResetAll();
   core = null;
   corePromise = null;
@@ -92,6 +108,7 @@ async function load(): Promise<Core> {
       console.warn("loadCore implementation is missing");
       throw new Error("loadCoreImpl missing");
     }
+    log("libcore/access", "load core impl");
     corePromise = loadCoreImpl();
   }
   core = await corePromise;
