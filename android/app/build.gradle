@@ -119,7 +119,7 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 50
+        versionCode 51
         versionName "1.7.0"
         resValue "string", "build_config_package", "com.ledger.live"
     }
