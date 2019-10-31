@@ -11,6 +11,7 @@ import type {
 } from "../types";
 import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
+import { delay } from "../promise";
 
 export type State = {
   account: ?AccountLike,
@@ -121,6 +122,7 @@ const reducer = (s: State, a): State => {
 
 const INITIAL_ERROR_RETRY_DELAY = 1000;
 const ERROR_RETRY_DELAY_MULTIPLIER = 1.5;
+const DEBOUNCED_STATUS = 300;
 
 const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
   const [
@@ -160,14 +162,21 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
       Promise.resolve()
         .then(() => getAccountBridge(mainAccount, null))
         .then(async bridge => {
+          const start = Date.now();
           const preparedTransaction = await bridge.prepareTransaction(
             mainAccount,
             transaction
           );
+          if (ignore) return;
           const status = await bridge.getTransactionStatus(
             mainAccount,
             preparedTransaction
           );
+          if (ignore) return;
+          const delta = Date.now() - start;
+          if (delta < DEBOUNCED_STATUS) {
+            await delay(DEBOUNCED_STATUS - delta);
+          }
 
           return {
             preparedTransaction,
@@ -175,8 +184,9 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
           };
         })
         .then(
-          ({ preparedTransaction, status }) => {
-            if (ignore) return;
+          result => {
+            if (ignore || !result) return;
+            const { preparedTransaction, status } = result;
             errorDelay.current = INITIAL_ERROR_RETRY_DELAY; // reset delay
             dispatch({
               type: "onStatus",
