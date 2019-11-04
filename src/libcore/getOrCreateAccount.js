@@ -31,10 +31,11 @@ export const getOrCreateAccount: F = atomicQueue(
       invariant(xpub, "xpub is missing. Please reimport the account.");
 
       if (restoreWithAccountCreationInfo[currency.id]) {
-        const accountCreationInfos = await coreWallet.getNextAccountCreationInfo();
+        const accountCreationInfos = await coreWallet.getAccountCreationInfo(
+          index
+        );
         const chainCodes = await accountCreationInfos.getChainCodes();
         const publicKeys = await accountCreationInfos.getPublicKeys();
-        const index = await accountCreationInfos.getIndex();
         const derivations = await accountCreationInfos.getDerivations();
         const owners = await accountCreationInfos.getOwners();
         publicKeys.push(xpub);
