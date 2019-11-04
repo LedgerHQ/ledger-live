@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
-import { getCurrencyColor } from "@ledgerhq/live-common/src/currencies";
+import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 
 import LText from "./LText";
 import { rgba } from "../colors";
