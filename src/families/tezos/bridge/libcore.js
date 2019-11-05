@@ -33,9 +33,13 @@ export const estimateGasLimitAndStorage: EstimateGasLimitAndStorage = makeLRUCac
       const gasLimit = await libcoreBigIntToBigNumber(
         await tezosLikeAccount.getEstimatedGasLimit(addr)
       );
+      // for babylon network 257 is the current cost of sending to new account.
+      const storage = BigNumber(257);
+      /*
       const storage = await libcoreBigIntToBigNumber(
         await tezosLikeAccount.getStorage(addr)
       );
+      */
       return { gasLimit, storage };
     }),
   (a, addr) => a.id + "|" + addr
