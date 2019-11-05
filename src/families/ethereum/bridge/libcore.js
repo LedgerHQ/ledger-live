@@ -226,6 +226,8 @@ const accountBridge: AccountBridge<Transaction> = {
 };
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 

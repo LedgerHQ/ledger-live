@@ -313,6 +313,8 @@ const cachedRecipientIsNew = (endpointConfig, recipient) => {
 };
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice: (currency, deviceId) =>
     Observable.create(o => {
       let finished = false;

@@ -195,6 +195,8 @@ const prepareTransaction = async (a, t) => {
 };
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 

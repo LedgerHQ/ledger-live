@@ -135,17 +135,15 @@ const prepareTransaction = async (
   };
 };
 
-const fillUpExtraFieldToApplyTransactionNetworkInfo = (a, t, networkInfo) => ({
-  feePerByte: t.feePerByte || networkInfo.feeItems.defaultFeePerByte
-});
-
 const getCapabilities = () => ({
   canSync: true,
   canSend: true
 });
 
 const currencyBridge: CurrencyBridge = {
-  scanAccountsOnDevice
+  scanAccountsOnDevice,
+  preload: () => Promise.resolve(),
+  hydrate: () => {}
 };
 
 const accountBridge: AccountBridge<Transaction> = {

@@ -255,6 +255,8 @@ const scanAccountsOnDevice = makeScanAccountsOnDevice(getAccountShape);
 const startSync = makeStartSync(getAccountShape);
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 

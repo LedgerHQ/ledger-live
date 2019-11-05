@@ -107,7 +107,9 @@ const accountBridge: AccountBridge<Transaction> = {
 };
 
 const currencyBridge: CurrencyBridge = {
-  scanAccountsOnDevice
+  scanAccountsOnDevice,
+  preload: () => Promise.resolve(),
+  hydrate: () => {}
 };
 
 export default { currencyBridge, accountBridge };

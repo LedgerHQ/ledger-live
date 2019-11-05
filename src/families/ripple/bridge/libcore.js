@@ -123,6 +123,8 @@ const getCapabilities = () => ({
 });
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 

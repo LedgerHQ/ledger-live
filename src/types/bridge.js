@@ -34,6 +34,17 @@ export type DeviceId = string;
 
 // Abstraction related to a currency
 export interface CurrencyBridge {
+  // Preload data required for the bridges to work. (e.g. tokens, delegators,...)
+  // Assume to call it at every load time but as lazy as possible (if user have such account already AND/OR if user is about to scanAccountsOnDevice)
+  // returned value is a serializable object
+  // fail if data was not able to load.
+  preload(): Promise<Object>;
+
+  // reinject the preloaded data (typically if it was cached)
+  // method need to treat the data object as unsafe and validate all fields / be backward compatible.
+  hydrate(data: mixed): void;
+
+  // Scan all available accounts with a device
   scanAccountsOnDevice(
     currency: CryptoCurrency,
     deviceId: DeviceId,
