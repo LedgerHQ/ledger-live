@@ -16,7 +16,6 @@ import {
   GasLessThanEstimate,
   RecipientRequired
 } from "@ledgerhq/errors";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
@@ -589,10 +588,6 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   };
 };
 
-const fillUpExtraFieldToApplyTransactionNetworkInfo = (a, t, networkInfo) => ({
-  gasPrice: t.gasPrice || networkInfo.gasPrice
-});
-
 const getCapabilities = () => ({
   canSync: true,
   canSend: true
@@ -605,14 +600,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "EthereumJSBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    fillUpExtraFieldToApplyTransactionNetworkInfo
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };

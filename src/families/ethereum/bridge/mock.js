@@ -9,7 +9,6 @@ import {
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getEstimatedFees } from "../../../api/Fees"; // FIXME drop. not stable.
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import {
   scanAccountsOnDevice,
   signAndBroadcast,
@@ -112,13 +111,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "EthereumMockBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 const currencyBridge: CurrencyBridge = {

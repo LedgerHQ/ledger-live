@@ -1,7 +1,6 @@
 // @flow
 
 export * from "./common";
-export * from "./deprecated";
 export * from "./status";
 export * from "./signAndBroadcast";
 import type { Transaction, TransactionRaw } from "../types";

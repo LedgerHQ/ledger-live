@@ -7,7 +7,6 @@ import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Transaction } from "../types";
 import { syncAccount } from "../../../libcore/syncAccount";
 import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import {
   FeeNotLoaded,
@@ -111,12 +110,6 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-// FIXME totally assuming this :shrug:
-const fillUpExtraFieldToApplyTransactionNetworkInfo = (a, t, networkInfo) => ({
-  serverFee: networkInfo.serverFee ? BigNumber(networkInfo.serverFee) : null,
-  unit: networkInfo.unit
-});
-
 const getCapabilities = () => ({
   canSync: true,
   canSend: true
@@ -135,14 +128,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "LibcoreRippleAccountBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    fillUpExtraFieldToApplyTransactionNetworkInfo
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };

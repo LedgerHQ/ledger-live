@@ -15,7 +15,6 @@ import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import { syncAccount } from "../../../libcore/syncAccount";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import { makeLRUCache } from "../../../cache";
 import { withLibcore } from "../../../libcore/access";
 import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
@@ -212,13 +211,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "LibcoreTezosAccountBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };

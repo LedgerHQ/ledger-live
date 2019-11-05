@@ -15,7 +15,6 @@ import type {
 import type { Transaction } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { findTokenById } from "../../../data/tokens";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import network from "../../../network";
 import { open } from "../../../hw";
 import signTransaction from "../../../hw/signTransaction";
@@ -320,13 +319,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "TronJSBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };

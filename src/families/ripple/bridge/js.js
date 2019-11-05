@@ -19,7 +19,6 @@ import {
   FeeRequired,
   RecipientRequired
 } from "@ledgerhq/errors";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import type { Account, Operation } from "../../../types";
 import {
   getDerivationModesForCurrency,
@@ -649,10 +648,6 @@ const prepareTransaction = async (a: Account, t: Transaction) => {
   return t;
 };
 
-const fillUpExtraFieldToApplyTransactionNetworkInfo = (a, t, networkInfo) => ({
-  fee: t.fee || networkInfo.serverFee
-});
-
 const getTransactionStatus = async (a, t) => {
   const errors = {};
   const warnings = {};
@@ -722,13 +717,6 @@ const accountBridge: AccountBridge<Transaction> = {
   startSync,
   signAndBroadcast,
   getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "RippleJSBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    fillUpExtraFieldToApplyTransactionNetworkInfo
-  }),
 
   getDefaultEndpointConfig: () => defaultEndpoint,
 

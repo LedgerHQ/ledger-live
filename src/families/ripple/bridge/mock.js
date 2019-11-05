@@ -11,7 +11,6 @@ import {
 import type { Transaction } from "../types";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
 import { getCryptoCurrencyById } from "../../../data/cryptocurrencies";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import {
   scanAccountsOnDevice,
   signAndBroadcast,
@@ -117,13 +116,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "RippleMockBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 const currencyBridge: CurrencyBridge = {
