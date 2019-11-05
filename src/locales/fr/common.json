@@ -42,6 +42,8 @@
     "fast": "fast",
     "token": "Token",
     "token_plural": "Tokens",
+    "subaccount": "Subaccount",
+    "subaccount_plural": "Subaccounts",
     "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
@@ -287,6 +289,14 @@
     "UnexpectedBootloader": {
       "title": "Opps, your device should not be in Bootloader mode",
       "description": "Please restart your device or contact us"
+    },
+    "UnavailableTezosOriginatedAccountReceive": {
+      "title": "Cannot receive on subaccounts, please select the parent account.",
+      "description": "If you want to receive funds, please use the parent account"
+    },
+    "UnavailableTezosOriginatedAccountSend": {
+      "title": "Cannot send from subaccounts yet",
+      "description": "This feature will be added at a later stage due to changes recently introduced by the Babylon amendment."
     },
     "generic": {
       "title": "{{message}}",
@@ -556,6 +566,15 @@
       "balance|desc": "Highest Balance"
     }
   },
+  "operations": {
+    "types": {
+      "IN": "Received",
+      "OUT": "Sent",
+      "CREATE": "Created",
+      "REVEAL": "Revealed",
+      "DELEGATE": "Delegated"
+    }
+  },
   "operationDetails": {
     "title": "Détails de l'opération",
     "account": "Compte",
@@ -603,6 +622,10 @@
       "seeLess": "See less Tokens",
       "addTokens": "Add token",
       "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+    },
+    "subaccounts": {
+      "seeMore": "See more subaccounts",
+      "seeLess": "See less subaccounts"
     },
     "send": "Send",
     "receive": "Receive",
@@ -694,8 +717,12 @@
       "queued": "Awaiting",
       "showTokens": "Show {{length}} token",
       "showTokens_plural": "Show {{length}} tokens",
+      "showSubAccounts": "Show {{length}} subaccount",
+      "showSubAccounts_plural": "Show {{length}} subaccounts",
       "hideTokens": "Hide token",
-      "hideTokens_plural": "Hide tokens"
+      "hideTokens_plural": "Hide tokens",
+      "hideSubAccounts": "Hide subaccount",
+      "hideSubAccounts_plural": "Hide subaccounts"
     }
   },
   "distribution": {
