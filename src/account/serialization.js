@@ -222,6 +222,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     pendingOperations,
     lastSyncDate,
     balance,
+    spendableBalance,
     subAccounts: subAccountsRaw
   } = rawAccount;
 
@@ -262,6 +263,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     name,
     blockHeight,
     balance: BigNumber(balance),
+    spendableBalance: BigNumber(spendableBalance || balance),
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     unit,
@@ -301,6 +303,7 @@ export function toAccountRaw({
   unit,
   lastSyncDate,
   balance,
+  spendableBalance,
   subAccounts,
   endpointConfig
 }: Account): AccountRaw {
@@ -319,7 +322,8 @@ export function toAccountRaw({
     currencyId: currency.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
-    balance: balance.toString()
+    balance: balance.toString(),
+    spendableBalance: spendableBalance.toString()
   };
   if (endpointConfig) {
     res.endpointConfig = endpointConfig;

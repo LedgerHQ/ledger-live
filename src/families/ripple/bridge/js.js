@@ -395,6 +395,7 @@ const currencyBridge: CurrencyBridge = {
                         }
                       ],
                       balance: BigNumber(0),
+                      spendableBalance: BigNumber(0),
                       blockHeight: maxLedgerVersion,
                       index,
                       currency,
@@ -442,6 +443,7 @@ const currencyBridge: CurrencyBridge = {
                   }
                 ],
                 balance,
+                spendableBalance: balance, // TODO calc with base reserve
                 blockHeight: maxLedgerVersion,
                 index,
                 currency,
@@ -548,6 +550,7 @@ const startSync = ({
           return {
             ...a,
             balance,
+            spendableBalance: balance, // TODO use reserve
             operations,
             pendingOperations,
             blockHeight: maxLedgerVersion,

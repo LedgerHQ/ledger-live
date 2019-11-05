@@ -117,6 +117,7 @@ export async function buildAccount({
     freshAddresses,
     name,
     balance,
+    spendableBalance: balance, // FIXME need libcore concept
     blockHeight,
     currency,
     unit: currency.units[0],

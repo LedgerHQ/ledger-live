@@ -254,6 +254,7 @@ const currencyBridge: CurrencyBridge = {
                   derivationMode
                 }),
                 balance,
+                spendableBalance: balance,
                 blockHeight: currentBlock.height,
                 index,
                 currency,
@@ -289,6 +290,7 @@ const currencyBridge: CurrencyBridge = {
           derivationMode,
           name: getAccountPlaceholderName({ currency, index, derivationMode }),
           balance,
+          spendableBalance: balance,
           blockHeight: currentBlock.height,
           index,
           currency,
@@ -435,6 +437,7 @@ const startSync = ({ freshAddress, blockHeight, currency, operations }) =>
               pendingOperations,
               operations: ops,
               balance,
+              spendableBalance: balance,
               blockHeight: block.height,
               lastSyncDate: new Date()
             };

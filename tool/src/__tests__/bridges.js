@@ -109,6 +109,15 @@ all
               account.subAccounts.forEach(expectBalanceIsOpsSum);
             }
           });
+
+          test("balance and spendableBalance boundaries", async () => {
+            const account = await getSynced();
+            expect(account.balance).toBeInstanceOf(BigNumber);
+            expect(account.spendableBalance).toBeInstanceOf(BigNumber);
+            expect(account.balance.lt(0)).toBe(false);
+            expect(account.spendableBalance.lt(0)).toBe(false);
+            expect(account.spendableBalance.lte(account.balance)).toBe(true);
+          });
         }
 
         test("existing operations object refs are preserved", async () => {

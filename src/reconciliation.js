@@ -210,6 +210,13 @@ export function patchAccount(
     changed = true;
   }
 
+  if (updatedRaw.spendableBalance !== account.spendableBalance.toString()) {
+    next.spendableBalance = BigNumber(
+      updatedRaw.spendableBalance || updatedRaw.balance
+    );
+    changed = true;
+  }
+
   if (updatedRaw.lastSyncDate !== account.lastSyncDate.toISOString()) {
     next.lastSyncDate = new Date(updatedRaw.lastSyncDate);
     changed = true;

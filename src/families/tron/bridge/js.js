@@ -212,9 +212,8 @@ const getAccountShape = async info => {
     return { balance: BigNumber(0) };
   }
   const acc = tronAcc[0];
-  // TODO introduce this concept back in the generic interface
-  const availableBalance = BigNumber(acc.balance);
-  const balance = availableBalance.plus(
+  const spendableBalance = BigNumber(acc.balance);
+  const balance = spendableBalance.plus(
     get(acc, "frozen", []).reduce(
       (sum, o) => sum.plus(o.frozen_balance),
       BigNumber(0)
@@ -245,6 +244,7 @@ const getAccountShape = async info => {
 
   return {
     balance,
+    spendableBalance,
     operations,
     subAccounts
   };
