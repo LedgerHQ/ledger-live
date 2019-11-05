@@ -11,6 +11,8 @@ const dataset: DatasetTest = {
       accounts: [
         {
           transactions: [
+            // no longer supported
+            /*
             {
               name: "to kt account",
               transaction: fromTransactionRaw({
@@ -35,6 +37,7 @@ const dataset: DatasetTest = {
                 totalSpent: BigNumber("1001420")
               }
             },
+            */
             {
               name: "regular tx",
               transaction: fromTransactionRaw({
@@ -95,9 +98,9 @@ const dataset: DatasetTest = {
               expectedStatus: {
                 errors: {},
                 warnings: {},
-                estimatedFees: BigNumber("3213"),
+                estimatedFees: BigNumber("6426"),
                 amount: BigNumber("230000"),
-                totalSpent: BigNumber("233213")
+                totalSpent: BigNumber("236426")
               }
             },
             {
