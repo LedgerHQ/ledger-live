@@ -152,17 +152,8 @@ export function inferTransactions(
     recipientArg: ?string,
     bridge: AccountBridge<any>
   ): Promise<Transaction> {
-    const recipient = opts["self-transaction"]
-      ? account.freshAddress
-      : recipientArg;
-
-    if (
-      !recipient &&
-      account.currency.family !== "tezos" &&
-      opts.mode !== "undelegate"
-    ) {
-      throw new Error("recipient is required");
-    }
+    const recipient =
+      (opts["self-transaction"] ? account.freshAddress : recipientArg) || "";
 
     const useAllAmount = !!opts["use-all-amount"];
 
