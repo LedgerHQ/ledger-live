@@ -3,8 +3,10 @@
 import { migrateAccounts } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import type { ScanAccountEvent } from "@ledgerhq/live-common/lib/types";
-import type { Account } from "@ledgerhq/live-common/src/types";
+import type {
+  ScanAccountEvent,
+  Account,
+} from "@ledgerhq/live-common/lib/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";

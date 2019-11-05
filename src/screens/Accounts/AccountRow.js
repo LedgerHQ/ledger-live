@@ -7,7 +7,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/src/currencies";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import LText from "../../components/LText";
