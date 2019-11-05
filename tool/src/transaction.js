@@ -155,7 +155,14 @@ export function inferTransactions(
     const recipient = opts["self-transaction"]
       ? account.freshAddress
       : recipientArg;
-    if (!recipient) throw new Error("recipient is required");
+
+    if (
+      !recipient &&
+      account.currency.family !== "tezos" &&
+      opts.mode !== "undelegate"
+    ) {
+      throw new Error("recipient is required");
+    }
 
     const useAllAmount = !!opts["use-all-amount"];
 

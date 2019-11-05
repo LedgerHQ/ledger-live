@@ -27,7 +27,7 @@ export const tezosOperationTag = {
   OPERATION_TAG_DELEGATION: 10
 };
 
-export type TezosOperationMode = "send" | "delegate";
+export type TezosOperationMode = "send" | "delegate" | "undelegate";
 
 export type TezosOperationTag = $Values<typeof tezosOperationTag>;
 

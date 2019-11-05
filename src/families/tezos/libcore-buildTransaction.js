@@ -61,8 +61,10 @@ export async function tezosBuildTransaction({
     tezosAccount = tezosLikeAccount;
   }
 
-  await isValidRecipient({ currency, recipient });
-  if (isCancelled()) return;
+  if (transaction.mode !== "undelegate") {
+    await isValidRecipient({ currency, recipient });
+    if (isCancelled()) return;
+  }
 
   if (!fees || !gasLimit || !storageLimit) {
     throw new FeeNotLoaded();
@@ -73,7 +75,7 @@ export async function tezosBuildTransaction({
 
   let gasLimitRounded = gasLimit;
 
-  if (transaction.mode === "delegate") {
+  if (["delegate", "undelegate"].includes(transaction.mode)) {
     gasLimitRounded = upperModulo(gasLimit, BigNumber(136), BigNumber(1000));
   }
 
@@ -96,6 +98,7 @@ export async function tezosBuildTransaction({
       type = tezosOperationTag.OPERATION_TAG_TRANSACTION;
       break;
     case "delegate":
+    case "undelegate":
       type = tezosOperationTag.OPERATION_TAG_DELEGATION;
       break;
     default:

@@ -92,20 +92,22 @@ const getTransactionStatus = async (a, t) => {
 
   const account = subAcc || a;
 
-  if (account.freshAddress === t.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else {
-    const { recipientError, recipientWarning } = await validateRecipient(
-      a.currency,
-      t.recipient
-    );
+  if (t.mode !== "undelegate") {
+    if (account.freshAddress === t.recipient) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    } else {
+      const { recipientError, recipientWarning } = await validateRecipient(
+        a.currency,
+        t.recipient
+      );
 
-    if (recipientError) {
-      errors.recipient = recipientError;
-    }
+      if (recipientError) {
+        errors.recipient = recipientError;
+      }
 
-    if (recipientWarning) {
-      warnings.recipient = recipientWarning;
+      if (recipientWarning) {
+        warnings.recipient = recipientWarning;
+      }
     }
   }
 
@@ -166,8 +168,11 @@ const prepareTransaction = async (a, t) => {
 
   let gasLimit = t.gasLimit;
   let storageLimit = t.storageLimit;
-  if ((!gasLimit || !storageLimit) && t.recipient) {
-    const { recipientError } = await validateRecipient(a.currency, t.recipient);
+  if (!gasLimit || !storageLimit) {
+    const { recipientError } =
+      t.mode === "undelegate"
+        ? {}
+        : await validateRecipient(a.currency, t.recipient);
     if (!recipientError) {
       const r = await estimateGasLimitAndStorage(a, t.recipient);
       gasLimit = r.gasLimit;
