@@ -881,9 +881,9 @@
     uuid "^3.3.3"
 
 "@ledgerhq/react-native-ledger-core@^3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.8.0.tgz#d3a210e1450cec4d9b9e4984321a79666875d005"
-  integrity sha512-RZdzH1Ks6l+2oE63nPqt6vkuOLKBsVxvI3InBxO6ngient9roZElFfCBv+luRYvpMr+pLaRSdZ0eXNVheoRJQA==
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.8.1.tgz#e961f9c30e2aebdbac3f174a054d8615f2fc0209"
+  integrity sha512-Sc4cpktkRwabWkhgH0AQ4vLR9cpGhlg/3pXsSOcGm3ly1LtPOhCO63RfZzBCg/Bi4kXJMUqp984ABqw/TdraqQ==
 
 "@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"
