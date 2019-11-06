@@ -12,7 +12,7 @@ class HookAnalytics extends Component<{
     this.sync();
   }
 
-  comopnentDidUpdate() {
+  componentDidUpdate() {
     this.sync();
   }
 

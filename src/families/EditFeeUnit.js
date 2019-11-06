@@ -84,10 +84,7 @@ class EditFeeUnit extends PureComponent<Props, State> {
     const { account, t, navigation } = this.props;
     const { isModalOpened, fee, isValid } = this.state;
     const transaction = navigation.getParam("transaction");
-    const bridge = getAccountBridge(account);
-    const feeCustomUnit =
-      bridge.getTransactionExtra(account, transaction, "feeCustomUnit") ||
-      account.unit;
+    const feeCustomUnit = transaction.feeCustomUnit || account.unit;
     return (
       <Fragment>
         <View style={styles.inputContainer}>

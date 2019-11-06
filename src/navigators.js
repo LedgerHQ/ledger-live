@@ -78,7 +78,6 @@ import Transfer from "./screens/Transfer";
 import AccountSettingsMain from "./screens/AccountSettings";
 import EditAccountUnits from "./screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "./screens/AccountSettings/EditAccountName";
-import EditAccountNode from "./screens/AccountSettings/EditAccountNode";
 import RepairDevice from "./screens/RepairDevice";
 import DebugBLE from "./screens/DebugBLE";
 import DebugBLEBenchmark from "./screens/DebugBLEBenchmark";
@@ -393,7 +392,6 @@ const AccountSettings = createStackNavigator(
     AccountSettingsMain,
     EditAccountUnits,
     EditAccountName,
-    EditAccountNode,
     AdvancedLogs,
     AccountCurrencySettings: CurrencySettings,
   },

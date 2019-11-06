@@ -47,12 +47,11 @@ class RippleEditTag extends PureComponent<Props, State> {
 
   onTagFieldFocus = () => track("SendTagFieldFocusedXRP");
 
-  constructor({ account, navigation }) {
+  constructor({ navigation }) {
     super();
-    const bridge = getAccountBridge(account);
     const transaction = navigation.getParam("transaction");
     this.state = {
-      tag: bridge.getTransactionExtra(account, transaction, "tag"),
+      tag: transaction.tag,
     };
   }
   onChangeTag = (str: string) => {
