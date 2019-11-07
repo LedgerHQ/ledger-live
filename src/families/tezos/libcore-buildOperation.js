@@ -17,12 +17,16 @@ async function tezosBuildOperation({
 }) {
   const tezosLikeOperation = await coreOperation.asTezosLikeOperation();
   const tezosLikeTransaction = await tezosLikeOperation.getTransaction();
+  const status = await tezosLikeTransaction.getStatus();
   const tezosType = await tezosLikeTransaction.getType();
   const hash = await tezosLikeTransaction.getHash();
   const out: $Shape<Operation> = { hash };
   const maybeCustomType = opTagToType[tezosType];
   if (maybeCustomType) {
     out.type = maybeCustomType;
+  }
+  if (status === 0) {
+    out.hasFailed = true;
   }
   return out;
 }

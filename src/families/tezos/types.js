@@ -44,6 +44,7 @@ declare class CoreTezosLikeTransaction {
   getGasLimit(): Promise<CoreAmount>;
   serialize(): Promise<string>;
   setSignature(string): Promise<void>;
+  getStatus(): Promise<number>;
 }
 
 declare class CoreTezosLikeOperation {
@@ -153,6 +154,7 @@ export const reflect = (declare: (string, Spec) => void) => {
     methods: {
       getType: {},
       getHash: {},
+      getStatus: {},
       getFees: { returns: "Amount" },
       getGasLimit: { returns: "Amount" },
       getReceiver: { returns: "TezosLikeAddress" },
