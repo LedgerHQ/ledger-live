@@ -666,9 +666,9 @@
     regenerator-runtime "^0.12.0"
 
 "@babel/runtime@^7.1.2":
-  version "7.6.3"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.3.tgz#935122c74c73d2240cafd32ddb5fc2a6cd35cf1f"
-  integrity sha512-kq6anf9JGjW8Nt5rYfEuGRaEAaH1mkv3Bbu6rYvLOpPh/RusSJXuKPEAoZ7L7gybZkchE8+NV5g9vKF4AGAtsA==
+  version "7.7.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.2.tgz#111a78002a5c25fc8e3361bedc9529c696b85a6a"
+  integrity sha512-JONRbXbTXc9WQE2mAZd1p0Z3DZ/6vaQIkgYMSTP3KjRCyd7rCZCcfhCyX+YjwcKxcZ82UrxbRD358bpExNgrjw==
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -814,9 +814,9 @@
     events "^3.0.0"
 
 "@ledgerhq/live-common@^8.7.0":
-  version "8.7.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.7.0.tgz#e7fdb754e388d49698c2b4668d919ce86fb46a1f"
-  integrity sha512-p0KZ7MdquG5325t2mYx/2/v5Pg9TvCCfAvFEPaNdemoFkBPkqE5Kz9S6KEpdHe6vMGQBTX5KXTdg2PA2QvHr9A==
+  version "8.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.8.0.tgz#5007c419efe290bc4d71fb2bc5e0b3423de3c5e2"
+  integrity sha512-GAl9l1XyesrhdSnyIcxVsk9ubFH1sSW3RtSH41v299bhHzeKzBUWx1bvMHhL5/UJsOU7DZiD+MocBgOvAkpg/A==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "4"
@@ -881,9 +881,9 @@
     uuid "^3.3.3"
 
 "@ledgerhq/react-native-ledger-core@^3.8.0":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.8.1.tgz#e961f9c30e2aebdbac3f174a054d8615f2fc0209"
-  integrity sha512-Sc4cpktkRwabWkhgH0AQ4vLR9cpGhlg/3pXsSOcGm3ly1LtPOhCO63RfZzBCg/Bi4kXJMUqp984ABqw/TdraqQ==
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.9.1.tgz#27537a938953d8dc9c21300d891f2deae27ccdbc"
+  integrity sha512-Oq1S/O079QRfsSD9lrfRvobH6XLl1saQTrIMhVDpvz966ado05YlHvl7j8TZlpjYn5jSDdc0cJDyURFgIvwY7g==
 
 "@ledgerhq/react-native-passcode-auth@^2.0.0":
   version "2.0.0"
@@ -8043,12 +8043,11 @@ ripple-lib@1.1.2:
     ws "^3.3.1"
 
 rlp@^2.0.0:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/rlp/-/rlp-2.2.3.tgz#7f94aef86cec412df87d5ea1d8cb116a47d45f0e"
-  integrity sha512-l6YVrI7+d2vpW6D6rS05x2Xrmq8oW7v3pieZOJKBEdjuTF4Kz/iwk55Zyh1Zaz+KOB2kC8+2jZlp2u9L4tTzCQ==
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/rlp/-/rlp-2.2.4.tgz#d6b0e1659e9285fc509a5d169a9bd06f704951c1"
+  integrity sha512-fdq2yYCWpAQBhwkZv+Z8o/Z4sPmYm1CUq6P7n6lVTOdb949CnqA0sndXal5C1NleSVSZm6q5F3iEbauyVln/iw==
   dependencies:
     bn.js "^4.11.1"
-    safe-buffer "^5.1.1"
 
 rn-nodeify@tradle/rn-nodeify:
   version "10.0.0"
