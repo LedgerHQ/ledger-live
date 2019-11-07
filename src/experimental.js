@@ -33,6 +33,15 @@ export const experimentalFeatures: Feature[] = [
     title: "Developer mode",
     description: "Show developer and testnet apps in the Manager.",
   },
+  {
+    type: "toggle",
+    name: "API_TEZOS_NODE",
+    valueOn: "https://xtz-node.explorers.prod.aws.ledger.fr/",
+    valueOff: "https://mainnet.tezrpc.me/",
+    title: "Experimental Tezos Send",
+    description:
+      "Workaround for Sending Tezos. Switch to another experimental node.",
+  },
 ];
 
 const storageKey = "experimentalFlags";
