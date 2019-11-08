@@ -705,6 +705,7 @@ const getTransactionStatus = async (a, t) => {
 };
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: true
 });

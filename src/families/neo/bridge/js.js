@@ -161,6 +161,7 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> =>
   Promise.resolve(t);
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: false
 });

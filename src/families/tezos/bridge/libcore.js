@@ -213,6 +213,7 @@ const currencyBridge: CurrencyBridge = {
 };
 
 const getCapabilities = () => ({
+  canDelegate: true,
   canSync: true,
   canSend: true
 });

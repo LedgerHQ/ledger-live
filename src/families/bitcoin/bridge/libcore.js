@@ -135,6 +135,7 @@ const prepareTransaction = async (
 };
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: true
 });

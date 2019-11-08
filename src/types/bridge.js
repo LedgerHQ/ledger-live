@@ -52,6 +52,7 @@ export interface CurrencyBridge {
 }
 
 export type Capabilities = {
+  canDelegate: boolean,
   canSync: boolean,
   canSend: boolean
 };
