@@ -9,7 +9,6 @@ import network from "../../network";
 
 const capacityStatuses: { [_: CapacityStatus]: * } = {
   normal: null,
-  busy: null,
   full: null
 };
 
