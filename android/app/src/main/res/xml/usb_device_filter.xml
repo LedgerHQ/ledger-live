@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <usb-device vendor-id="11415" product-id="00000" id='blue'/>
-    <usb-device vendor-id="11415" product-id="00001" id='nanoS'/>
-    <usb-device vendor-id="11415" product-id="00004" id='nanoX'/>
-    <usb-device vendor-id="11415" product-id="04113" id='nanoS16'/>
+    <usb-device vendor-id="11415" />
 </resources>
