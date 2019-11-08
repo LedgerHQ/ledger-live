@@ -857,9 +857,9 @@
   integrity sha512-o+TYF8vBcyySRsb2kqBDv/KMeme8a2nwWoG+lAWzbDmWfb2/MrVWYCVYDYvjXdSoI/Cujqy1i0gIDrkdxa9chA==
 
 "@ledgerhq/react-native-hid@4":
-  version "4.73.5"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.73.5.tgz#97bf7cd202d8cee91cd66831ff428929eb1a6555"
-  integrity sha512-ApjvWb3j+qSKtxpg62vrQuzcD7buzW2wr5hQezN/hxa6nYZERcI2tgDFEHWe6FMOkvTx04Q3iaQYqbX2e9DA7A==
+  version "4.73.6"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-4.73.6.tgz#0560d136c69edd2ab91fbc76f832e510ebcf47b5"
+  integrity sha512-pKUeBHuNgWB5VwjFKvax/LqhyG2QBUbp1fdptcNJtqu5Ku5KGJxHWFIUtFlPb3QoHgn9v0LgnFwnaxLVpt7Aaw==
   dependencies:
     "@ledgerhq/devices" "^4.73.5"
     "@ledgerhq/errors" "^4.73.5"
