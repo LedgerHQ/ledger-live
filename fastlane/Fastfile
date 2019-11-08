@@ -45,7 +45,6 @@ platform :ios do
 
   before_all do
     set_version_number
-    xcversion(version: "~> 11.0.0")
   end
 
   desc "private: set version number from package.json"
