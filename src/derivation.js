@@ -28,8 +28,10 @@ export type DerivationMode = $Keys<typeof modes>;
 const extraConfigPerCurrency: { [_: string]: LibcoreConfig } = {
   tezos: {
     BLOCKCHAIN_EXPLORER_ENGINE: "TZSTATS_API",
-    BLOCKCHAIN_EXPLORER_API_ENDPOINT: "https://tzstats.ledger.com/explorer",
-    TEZOS_PROTOCOL_UPDATE: "TEZOS_PROTOCOL_UPDATE_BABYLON"
+    BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
+      getEnv("API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
+    TEZOS_PROTOCOL_UPDATE: "TEZOS_PROTOCOL_UPDATE_BABYLON",
+    TEZOS_NODE: () => getEnv("API_TEZOS_NODE")
   }
 };
 
@@ -181,10 +183,22 @@ export const isSegwitDerivationMode = (
 export const getLibcoreConfig = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode
-): ?{ [_: string]: mixed } => ({
-  ...extraConfigPerCurrency[currency.id],
-  ...modes[derivationMode].libcoreConfig
-});
+): ?{ [_: string]: mixed } => {
+  const obj = {};
+  const extra = {
+    ...extraConfigPerCurrency[currency.id],
+    ...modes[derivationMode].libcoreConfig
+  };
+  for (let k in extra) {
+    const v = extra[k];
+    if (typeof v === "function") {
+      obj[k] = v();
+    } else {
+      obj[k] = v;
+    }
+  }
+  return obj;
+};
 
 export const isUnsplitDerivationMode = (
   derivationMode: DerivationMode

@@ -21,6 +21,8 @@ const stringParser = (v: mixed): ?string =>
 // This define the available environments
 const envParsers = {
   API_TEZOS_BAKER: stringParser,
+  API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: stringParser,
+  API_TEZOS_NODE: stringParser,
   BASE_SOCKET_URL: stringParser,
   BRIDGE_FORCE_IMPLEMENTATION: stringParser,
   DEVICE_PROXY_URL: stringParser,
@@ -55,6 +57,10 @@ const envParsers = {
 // This define the default values
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   API_TEZOS_BAKER: "https://tezos-bakers.api.live.ledger.com",
+  API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT:
+    "https://tzstats.ledger.com/explorer",
+  API_TEZOS_NODE: "https://mainnet.tezrpc.me/",
+  // "https://xtz-node.explorers.prod.aws.ledger.fr/"
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
   BRIDGE_FORCE_IMPLEMENTATION: "",
   DEVICE_PROXY_URL: "",
