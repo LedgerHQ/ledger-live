@@ -33,6 +33,7 @@ export const experimentalFeatures: Feature[] = [
     title: "Developer mode",
     description: "Show developer and testnet apps in the Manager.",
   },
+  /*
   {
     type: "toggle",
     name: "API_TEZOS_NODE",
@@ -42,6 +43,7 @@ export const experimentalFeatures: Feature[] = [
     description:
       "Workaround for Sending Tezos. Switch to another experimental node.",
   },
+*/
 ];
 
 const storageKey = "experimentalFlags";

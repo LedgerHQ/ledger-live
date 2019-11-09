@@ -12,7 +12,10 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
-import { listTokens, useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
+import {
+  listTokens,
+  useCurrenciesByMarketcap,
+} from "@ledgerhq/live-common/lib/currencies";
 
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
@@ -46,10 +49,10 @@ const renderEmptyList = () => (
 );
 
 const AddAccountsSelectCrypto = ({ devMode, navigation }: Props) => {
-
-  const cryptoCurrencies = useMemo(() => listCryptoCurrencies(devMode).concat(
-    listTokens(),
-  ), [devMode]);
+  const cryptoCurrencies = useMemo(
+    () => listCryptoCurrencies(devMode).concat(listTokens()),
+    [devMode],
+  );
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
@@ -59,23 +62,25 @@ const AddAccountsSelectCrypto = ({ devMode, navigation }: Props) => {
 
   const onPressToken = (token: TokenCurrency) => {
     navigation.navigate("AddAccountsTokenCurrencyDisclaimer", {
-       token,
-     });
+      token,
+    });
   };
 
   const onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
-     if (currencyOrToken.type === "TokenCurrency") {
-       onPressToken(currencyOrToken);
-     } else {
-       onPressCurrency(currencyOrToken);
-     }
+    if (currencyOrToken.type === "TokenCurrency") {
+      onPressToken(currencyOrToken);
+    } else {
+      onPressCurrency(currencyOrToken);
+    }
   };
 
-  const renderList = (items) => (
+  const renderList = items => (
     <FlatList
       contentContainerStyle={styles.list}
       data={items}
-      renderItem={({ item }) => <CurrencyRow currency={item} onPress={onPressItem} />}
+      renderItem={({ item }) => (
+        <CurrencyRow currency={item} onPress={onPressItem} />
+      )}
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
       keyboardDismissMode="on-drag"
@@ -97,7 +102,7 @@ const AddAccountsSelectCrypto = ({ devMode, navigation }: Props) => {
         </View>
       </KeyboardView>
     </SafeAreaView>
-  )
+  );
 };
 
 AddAccountsSelectCrypto.navigationOptions = {

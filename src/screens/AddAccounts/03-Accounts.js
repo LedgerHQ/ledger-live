@@ -146,8 +146,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           ),
         complete: () => this.setState({ scanning: false }),
         error: error => {
-          logger.critical(error)
-          this.setState({ error })},
+          logger.critical(error);
+          this.setState({ error });
+        },
       });
   };
 
