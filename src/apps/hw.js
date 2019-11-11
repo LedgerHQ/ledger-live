@@ -4,22 +4,30 @@ import Transport from "@ledgerhq/hw-transport";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError } from "rxjs";
-import type { Exec, AppOp, ListAppsEvent } from "./types";
-import type { ApplicationVersion, DeviceInfo } from "../types/manager";
+import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
+import type { App, DeviceInfo } from "../types/manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
 import { log } from "@ledgerhq/logs";
-import { listCryptoCurrencies } from "../currencies";
+import {
+  listCryptoCurrencies,
+  currenciesByMarketcap,
+  findCryptoCurrencyById
+} from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
-import { currenciesByMarketcap } from "../currencies";
 import hwListApps from "../hw/listApps";
-import { polyfillAppVersion, polyfillFinalFirmware } from "./polyfill";
+import {
+  polyfillApp,
+  polyfillAppVersion,
+  polyfillApplication,
+  polyfillFinalFirmware
+} from "./polyfill";
 
 export const execWithTransport = (transport: Transport<*>): Exec => (
   appOp: AppOp,
   targetId: string | number,
-  app: ApplicationVersion
+  app: App
 ) => {
   const fn = appOp.type === "install" ? installApp : uninstallApp;
   return fn(transport, targetId, app);
@@ -70,13 +78,24 @@ export const listApps = (
         )
         .catch(e => {
           log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
-          return hwListApps(transport).then(apps =>
-            apps.map(({ name, hash, blocks }) => ({ name, hash, blocks }))
-          );
+          if (getEnv("EXPERIMENTAL_FALLBACK_APDU_LISTAPPS")) {
+            return hwListApps(transport)
+              .then(apps =>
+                apps.map(({ name, hash, blocks }) => ({ name, hash, blocks }))
+              )
+              .catch(e => {
+                log(
+                  "hw",
+                  "failed to device list apps " + String(e) + "\n" + e.stack
+                );
+                throw e;
+              });
+          } else {
+            throw e;
+          }
         })
         .then(apps => [apps, true])
-        .catch(e => {
-          log("hw", "failed to device list apps " + String(e) + "\n" + e.stack);
+        .catch(() => {
           return [[], false];
         });
 
@@ -113,7 +132,7 @@ export const listApps = (
         sortedCryptoCurrencies
       ] = await Promise.all([
         installedP,
-        ManagerAPI.listApps(),
+        ManagerAPI.listApps().then(apps => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareDataP,
         currenciesByMarketcap(
@@ -121,50 +140,77 @@ export const listApps = (
         )
       ]);
 
-      const filtered = getEnv("MANAGER_DEV_MODE")
-        ? compatibleAppVersionsList.slice(0)
-        : compatibleAppVersionsList.filter(version => {
-            const app = applicationsList.find(e => e.id === version.app);
-            if (app) {
-              return app.category !== 2;
+      const apps = compatibleAppVersionsList
+        .map(version => {
+          const application = applicationsList.find(e => e.id === version.app);
+          if (!application) return;
+          // if user didn't opt-in, remove the dev apps (testnet,..)
+          if (!getEnv("MANAGER_DEV_MODE")) {
+            if (application.category === 2) return;
+          }
+
+          const currencyId = application.currencyId;
+          const crypto = currencyId && findCryptoCurrencyById(currencyId);
+          const indexOfMarketCap = crypto
+            ? sortedCryptoCurrencies.indexOf(crypto)
+            : -1;
+
+          const compatibleWallets = [];
+          if (application.compatibleWalletsJSON) {
+            try {
+              const parsed = JSON.parse(application.compatibleWalletsJSON);
+              if (parsed && Array.isArray(parsed)) {
+                parsed.forEach(w => {
+                  if (w && typeof w === "object" && w.name) {
+                    compatibleWallets.push({
+                      name: w.name,
+                      url: w.url
+                    });
+                  }
+                });
+              }
+            } catch (e) {
+              console.error(
+                "invalid compatibleWalletsJSON for " + version.name,
+                e
+              );
             }
-            return false;
+          }
+
+          const app: $Exact<App> = polyfillApp({
+            id: version.id,
+            name: version.name,
+            version: version.version,
+            currencyId,
+            description: version.description,
+            dateModified: version.date_last_modified,
+            icon: version.icon,
+            authorName: application.authorName,
+            supportURL: application.supportURL,
+            contactURL: application.contactURL,
+            sourceURL: application.sourceURL,
+            compatibleWallets,
+            hash: version.hash,
+            perso: version.perso,
+            firmware: version.firmware,
+            firmware_key: version.firmware_key,
+            delete: version.delete,
+            delete_key: version.delete_key,
+            dependencies: [],
+            bytes: version.bytes,
+            warning: version.warning,
+            indexOfMarketCap
           });
+
+          return app;
+        })
+        .filter(Boolean);
 
       log(
         "list-apps",
-        `${installedList.length} apps installed. ${applicationsList.length} apps store total. ${filtered.length} available.`,
+        `${installedList.length} apps installed. ${applicationsList.length} apps store total. ${apps.length} available.`,
         { installedList }
       );
-
-      const sortedCryptoApps = [];
-      // sort by crypto first
-      sortedCryptoCurrencies.forEach(crypto => {
-        const app = filtered.find(
-          item =>
-            item.name.toLowerCase() === crypto.managerAppName.toLowerCase()
-        );
-        if (app) {
-          filtered.splice(filtered.indexOf(app), 1);
-          let defined = false;
-          sortedCryptoApps.push({
-            ...app,
-            currencyId: crypto.id,
-            get currency() {
-              if (defined) {
-                console.warn(
-                  "ApplicationVersion: app.currency field is deprecated. use app.currencyId",
-                  new Error().stack
-                );
-              }
-              return crypto;
-            }
-          });
-          defined = true;
-        }
-      });
-
-      const apps = sortedCryptoApps.concat(filtered);
 
       const deviceModel = getDeviceModel(deviceModelId);
 
@@ -183,21 +229,23 @@ export const listApps = (
       });
 
       const appByName = {};
-      compatibleAppVersionsList.concat(apps).forEach(app => {
+      apps.forEach(app => {
         appByName[app.name] = app;
       });
 
+      const result: ListAppsResult = {
+        appByName,
+        appsListNames: apps.map(app => app.name),
+        installed,
+        installedAvailable,
+        deviceInfo,
+        deviceModelId,
+        firmware
+      };
+
       o.next({
         type: "result",
-        result: {
-          appByName,
-          appsListNames: apps.map(app => app.name),
-          installed,
-          installedAvailable,
-          deviceInfo,
-          deviceModelId,
-          firmware
-        }
+        result
       });
     }
 

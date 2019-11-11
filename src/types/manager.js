@@ -90,8 +90,7 @@ export type FinalFirmware = BaseFirmware & {
   osu_versions: Array<OsuFirmware>,
   mcu_versions: Array<Id>,
   application_versions: Array<Id>,
-  // data to be added
-  blocks?: number
+  bytes?: number
 };
 
 export type FirmwareUpdateContext = {
@@ -121,12 +120,11 @@ export type ApplicationVersion = {
   providers: Array<Id>,
   date_creation: string,
   date_last_modified: string,
+  // dependencies: Id[],
+  bytes: ?number,
+  warning: ?string,
   // DEPRECATED because not serializable
-  currency?: CryptoCurrency,
-  // Information we want to add
-  currencyId?: ?string,
-  dependency?: ?string,
-  bytes?: number
+  currency?: CryptoCurrency
 };
 
 export type Application = {
@@ -138,7 +136,42 @@ export type Application = {
   category: Id,
   publisher: ?Id,
   date_creation: string,
-  date_last_modified: string
+  date_last_modified: string,
+  currencyId: ?string,
+  authorName: ?string,
+  supportURL: ?string,
+  contactURL: ?string,
+  sourceURL: ?string,
+  compatibleWalletsJSON: ?string
+};
+
+// App is higher level on top of Application and ApplicationVersion
+// with all fields Live needs and in normalized form (but still serializable)
+export type App = {
+  id: Id,
+  name: string,
+  version: string,
+  currencyId: ?string,
+  description: ?string,
+  dateModified: string,
+  icon: string,
+  authorName: ?string,
+  supportURL: ?string,
+  contactURL: ?string,
+  sourceURL: ?string,
+  compatibleWallets: Array<{ name: string, url: ?string }>,
+  hash: string,
+  perso: string,
+  firmware: string,
+  firmware_key: string,
+  delete: string,
+  delete_key: string,
+  // we use names to identify an app
+  dependencies: string[],
+  bytes: ?number,
+  warning: ?string,
+  // -1 if coin not in marketcap, otherwise index in the tickers list of https://countervalues.api.live.ledger.com/tickers
+  indexOfMarketCap: number
 };
 
 export type Category = {
