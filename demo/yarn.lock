@@ -1162,7 +1162,7 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/devices@4", "@ledgerhq/devices@^4.73.4":
+"@ledgerhq/devices@4":
   version "4.73.4"
   resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-4.73.4.tgz#0a1866fd1f10e2afc57c5f002f60d52ad5e6bb99"
   integrity sha512-oEhd1UlbkdRFe5ZQCr8aXZ4Z/uFvrTsIhXv6bDlqA0sR2VYZRqQPR4C0xLdcDo3NG88fP+6Xfi6wq3wBbT5n3A==
@@ -1171,10 +1171,24 @@
     "@ledgerhq/logs" "^4.72.0"
     rxjs "^6.5.3"
 
-"@ledgerhq/errors@4", "@ledgerhq/errors@^4.73.4":
+"@ledgerhq/devices@^4.73.4", "@ledgerhq/devices@^4.73.5":
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-4.73.5.tgz#c2305e196b6b864ba338dd6afa78cc0c087a1b5f"
+  integrity sha512-Y9gXAn2ACj8aGL5AAIfJC2jCyY7W3hvuO4xfkJtcVdo1A+WX7QjCChTRw7wcMHLOxy9gJgoyKPTq2k68R7gccg==
+  dependencies:
+    "@ledgerhq/errors" "^4.73.5"
+    "@ledgerhq/logs" "^4.72.0"
+    rxjs "^6.5.3"
+
+"@ledgerhq/errors@4":
   version "4.73.4"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.73.4.tgz#df4705d11350f252c0f0c202e88a32723f409484"
   integrity sha512-5Wz48jm0NozGkipPcYRAAFcwm50xLhCWSpmP96Fs7v8BtM72E1AtqOud5SCyTKS6OP10mPuDB1459b7FGFoBcw==
+
+"@ledgerhq/errors@^4.73.4", "@ledgerhq/errors@^4.73.5":
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.73.5.tgz#925aa954667a69a8ad0db728bf599f0b44111649"
+  integrity sha512-aTtTzQ1JtjPeDF+8HSPOJzBUhsXVmKqzcFGAQBgxYKS8/JeFY9DGksTkSgqhN5F9Pw0sm2e9hNCECx5OOMV3kQ==
 
 "@ledgerhq/hw-app-btc@4":
   version "4.73.4"
@@ -1209,47 +1223,47 @@
     "@ledgerhq/logs" "^4.72.0"
 
 "@ledgerhq/hw-transport-u2f@^4.73.2":
-  version "4.73.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-u2f/-/hw-transport-u2f-4.73.4.tgz#d18e8c4fa9289fd078441397ba1d3a3ab3b608e2"
-  integrity sha512-GSi/obZ7p1H5orTed4o3HhCeLV+odbweinY5dSOcY4WWL/YmrZfYUZQ+eFTZrnNVwv1EGrLeBaSEZcdIXdIFXg==
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-u2f/-/hw-transport-u2f-4.73.5.tgz#44880519ebd88d85dce9c6ff37e47cef88d8d205"
+  integrity sha512-sBDfOz2agpu7qCa8t3oNoYTKOi8UvcgLIp1xn0Br5re+a/7p4zvrVnnegfO3dPofTBoUzsNYqvxJHaFn9ZBlhg==
   dependencies:
-    "@ledgerhq/errors" "^4.73.4"
-    "@ledgerhq/hw-transport" "^4.73.4"
+    "@ledgerhq/errors" "^4.73.5"
+    "@ledgerhq/hw-transport" "^4.73.5"
     "@ledgerhq/logs" "^4.72.0"
     u2f-api "0.2.7"
 
 "@ledgerhq/hw-transport-web-ble@^4.73.2":
-  version "4.73.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-web-ble/-/hw-transport-web-ble-4.73.4.tgz#ad3748549e990c01bbf5b8a18e662c96a48e9274"
-  integrity sha512-TeTNLt2sniu2JTQ9wxM7RpvS9sHK5V4Wi8n5T6A31RF8zCZlJWRUiRubCNSUB8+OyaWgHTVGHMBxA8a6i8mU+A==
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-web-ble/-/hw-transport-web-ble-4.73.5.tgz#04826ba0fd67d7afb3bfe834bcfdb75684876d25"
+  integrity sha512-oovh3HZVL7JrnIfNEzzan972utUhluZH8n8l13tt8q1OtvlvCGA2/NRCZPfOiWMihmns1KhgxIfYrg3M69ZERw==
   dependencies:
-    "@ledgerhq/devices" "^4.73.4"
-    "@ledgerhq/errors" "^4.73.4"
-    "@ledgerhq/hw-transport" "^4.73.4"
+    "@ledgerhq/devices" "^4.73.5"
+    "@ledgerhq/errors" "^4.73.5"
+    "@ledgerhq/hw-transport" "^4.73.5"
     "@ledgerhq/logs" "^4.72.0"
     rxjs "^6.5.3"
 
 "@ledgerhq/hw-transport-webhid@^4.73.2":
-  version "4.73.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webhid/-/hw-transport-webhid-4.73.4.tgz#96f37c42fb51950414658c1f3c1366583c0b47a8"
-  integrity sha512-a4IG+FVNaR2Cggiv/ISCMTmebJej7+5c3IWCyybu25E0pmfFX0y9aiKziTTiI0kJsp0/GIdjKuMVsHz7lDQqUA==
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webhid/-/hw-transport-webhid-4.73.5.tgz#64ac5cbdfbb9f6859948296eea269663dd1ed911"
+  integrity sha512-4shRFeT4foJSmPiB3IMwM1mcowUJsqH4xaKMgkOQQh8DbQUZbcRPYlQW2ZzU+g9MQePriIvPeb8A/DUHGQx9jw==
   dependencies:
-    "@ledgerhq/devices" "^4.73.4"
-    "@ledgerhq/errors" "^4.73.4"
-    "@ledgerhq/hw-transport" "^4.73.4"
+    "@ledgerhq/devices" "^4.73.5"
+    "@ledgerhq/errors" "^4.73.5"
+    "@ledgerhq/hw-transport" "^4.73.5"
     "@ledgerhq/logs" "^4.72.0"
 
 "@ledgerhq/hw-transport-webusb@^4.73.2":
-  version "4.73.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webusb/-/hw-transport-webusb-4.73.4.tgz#63ade8af29a02b16fd97a3a1c13732531f676d80"
-  integrity sha512-AKsIqMOhf4vHykSfvCUMvRIvsKkoVyqi92dNMR7M8ExCT1jh+Jh/FyjZvCHaHMJwyd1Dg9L81fUVeQTwvjC3JA==
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webusb/-/hw-transport-webusb-4.73.5.tgz#bb96c9b13bfd7ebe2a375956526287b8dcddd3f8"
+  integrity sha512-E3X7z9/KuoIbhq+p5I3eLtAUJZa+AiuRwOSKWejyIF7YSHHYHAITLlO7epX8Xgw7wnOLmYHGmPE6DsVPDfFb7Q==
   dependencies:
-    "@ledgerhq/devices" "^4.73.4"
-    "@ledgerhq/errors" "^4.73.4"
-    "@ledgerhq/hw-transport" "^4.73.4"
+    "@ledgerhq/devices" "^4.73.5"
+    "@ledgerhq/errors" "^4.73.5"
+    "@ledgerhq/hw-transport" "^4.73.5"
     "@ledgerhq/logs" "^4.72.0"
 
-"@ledgerhq/hw-transport@4", "@ledgerhq/hw-transport@^4.73.2", "@ledgerhq/hw-transport@^4.73.4":
+"@ledgerhq/hw-transport@4":
   version "4.73.4"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.73.4.tgz#e3b58eebbc99b003406838660b7d17611e02ebc7"
   integrity sha512-UAw7v+le8pyEz+q2sA0TVS9WGmifKqGxuwcYz+hN1quJkfTmivvcHCuSF5t7BDCuuuRNoCT36YjnIzf363Tf2w==
@@ -1258,10 +1272,19 @@
     "@ledgerhq/errors" "^4.73.4"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^8.4.0-alpha.0":
-  version "8.7.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.7.0.tgz#e7fdb754e388d49698c2b4668d919ce86fb46a1f"
-  integrity sha512-p0KZ7MdquG5325t2mYx/2/v5Pg9TvCCfAvFEPaNdemoFkBPkqE5Kz9S6KEpdHe6vMGQBTX5KXTdg2PA2QvHr9A==
+"@ledgerhq/hw-transport@^4.73.2", "@ledgerhq/hw-transport@^4.73.4", "@ledgerhq/hw-transport@^4.73.5":
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-4.73.5.tgz#4bdf9be9856eeae16f4e8478a2009ca6d5f8989e"
+  integrity sha512-c4tUFriMsE9UBwCOpWQDoZs1LNOoKyaGpTesf6BKric4QK9xpPPWNqCPgyK5LjiaNfsyVQKrdOIFtOPBBQFovQ==
+  dependencies:
+    "@ledgerhq/devices" "^4.73.5"
+    "@ledgerhq/errors" "^4.73.5"
+    events "^3.0.0"
+
+"@ledgerhq/live-common@^9.0.0-alpha.1":
+  version "9.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.1.tgz#81dd25ed73597f3a90d0242f4dff11b191d90242"
+  integrity sha512-2UhImndJO7CppOAp8xkANxLN7T3u67ex4Bx+PCt1yakoAG6ENbg8xFAXRDysBgXVP8z5sOYCu56ShWjxe/IzTg==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "4"
@@ -11297,10 +11320,10 @@ victory-box-plot@^33.1.2:
     prop-types "^15.5.8"
     victory-core "^33.1.2"
 
-victory-brush-container@^33.1.2:
-  version "33.1.2"
-  resolved "https://registry.yarnpkg.com/victory-brush-container/-/victory-brush-container-33.1.2.tgz#3a8c854f82ab58e5f28131f55c086705884b6e9e"
-  integrity sha512-spYsIR7nBXXLb7TEq7/PUpiNbejkPZpuvkEzH1x3vEkbY6OX5tui10bPZdFSEgeB8qQv8J6tgRFfdZxp5+aMSQ==
+victory-brush-container@^33.1.3:
+  version "33.1.3"
+  resolved "https://registry.yarnpkg.com/victory-brush-container/-/victory-brush-container-33.1.3.tgz#5ae8c8e301bd7d64662dd89744a2a8b7631e2255"
+  integrity sha512-7m2XV0UnkTrt2zdFAt/SnEoPzMCaC6JX3A4z9M/BCfeHDA12FP5BrPTFVduRmrS7f6xD7GlGacyepUg1XOPFQw==
   dependencies:
     lodash "^4.17.15"
     prop-types "^15.5.8"
@@ -11351,13 +11374,13 @@ victory-core@^33.1.2:
     prop-types "^15.5.8"
     react-fast-compare "^2.0.0"
 
-victory-create-container@^33.1.2:
-  version "33.1.2"
-  resolved "https://registry.yarnpkg.com/victory-create-container/-/victory-create-container-33.1.2.tgz#df14c6d2e3cf7cbd263f7fd319cd20214241e00c"
-  integrity sha512-HiZfU8vDSYASB6mngHIz/QE9dXhTI64tvQZnUfuK76Uq/66J+hwxGOh56efnBWmJJRGWq2EWgSz9yNSzXsOq6Q==
+victory-create-container@^33.1.3:
+  version "33.1.3"
+  resolved "https://registry.yarnpkg.com/victory-create-container/-/victory-create-container-33.1.3.tgz#cfb31158e61882bbafbb664d782498237e3b4419"
+  integrity sha512-qnAtIpmSBFW7cDzqkmVtVRD//iqFXQsndeJ+uDyRkHpRVdVvGwH5ATzl/z5Qj14r+f7cvgjYAZb+TbsINqdW2A==
   dependencies:
     lodash "^4.17.15"
-    victory-brush-container "^33.1.2"
+    victory-brush-container "^33.1.3"
     victory-core "^33.1.2"
     victory-cursor-container "^33.1.2"
     victory-selection-container "^33.1.2"
@@ -11508,20 +11531,20 @@ victory-zoom-container@^33.1.2:
     victory-core "^33.1.2"
 
 victory@^33.1.1:
-  version "33.1.2"
-  resolved "https://registry.yarnpkg.com/victory/-/victory-33.1.2.tgz#95d3afb21cb5d67e07a1f370e4cc34508976bf93"
-  integrity sha512-Fl08yjwCWbK9TIcbL7IbfhyHSeQ3wo0ALkk4sfOz3CAyDL/RabvBZemHk+uLkFcske3gFkYig9ZKu8Xl6L1GOw==
+  version "33.1.3"
+  resolved "https://registry.yarnpkg.com/victory/-/victory-33.1.3.tgz#b8a72ffd8f2169eadba885839459c8a3552fadd8"
+  integrity sha512-ZKLybovzd2GCO4n+A3vl8fZm1WNX9O4dxk3IDwMxexL6dwVttdolZCtW6P0efpslI2+nIKH6HNaMfHEisku+Zg==
   dependencies:
     victory-area "^33.1.2"
     victory-axis "^33.1.2"
     victory-bar "^33.1.2"
     victory-box-plot "^33.1.2"
-    victory-brush-container "^33.1.2"
+    victory-brush-container "^33.1.3"
     victory-brush-line "^33.1.2"
     victory-candlestick "^33.1.2"
     victory-chart "^33.1.2"
     victory-core "^33.1.2"
-    victory-create-container "^33.1.2"
+    victory-create-container "^33.1.3"
     victory-cursor-container "^33.1.2"
     victory-errorbar "^33.1.2"
     victory-group "^33.1.2"

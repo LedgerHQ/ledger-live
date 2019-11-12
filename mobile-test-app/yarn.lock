@@ -712,10 +712,15 @@
     "@ledgerhq/logs" "^4.72.0"
     rxjs "^6.5.3"
 
-"@ledgerhq/errors@4", "@ledgerhq/errors@^4.73.2", "@ledgerhq/errors@^4.73.4":
+"@ledgerhq/errors@4", "@ledgerhq/errors@^4.73.4":
   version "4.73.4"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.73.4.tgz#df4705d11350f252c0f0c202e88a32723f409484"
   integrity sha512-5Wz48jm0NozGkipPcYRAAFcwm50xLhCWSpmP96Fs7v8BtM72E1AtqOud5SCyTKS6OP10mPuDB1459b7FGFoBcw==
+
+"@ledgerhq/errors@^4.73.2":
+  version "4.73.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.73.5.tgz#925aa954667a69a8ad0db728bf599f0b44111649"
+  integrity sha512-aTtTzQ1JtjPeDF+8HSPOJzBUhsXVmKqzcFGAQBgxYKS8/JeFY9DGksTkSgqhN5F9Pw0sm2e9hNCECx5OOMV3kQ==
 
 "@ledgerhq/hw-app-btc@4":
   version "4.73.4"
@@ -758,10 +763,10 @@
     "@ledgerhq/errors" "^4.73.4"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^8.3.0":
-  version "8.8.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-8.8.0.tgz#5007c419efe290bc4d71fb2bc5e0b3423de3c5e2"
-  integrity sha512-GAl9l1XyesrhdSnyIcxVsk9ubFH1sSW3RtSH41v299bhHzeKzBUWx1bvMHhL5/UJsOU7DZiD+MocBgOvAkpg/A==
+"@ledgerhq/live-common@^9.0.0-alpha.1":
+  version "9.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.1.tgz#81dd25ed73597f3a90d0242f4dff11b191d90242"
+  integrity sha512-2UhImndJO7CppOAp8xkANxLN7T3u67ex4Bx+PCt1yakoAG6ENbg8xFAXRDysBgXVP8z5sOYCu56ShWjxe/IzTg==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "4"
@@ -802,9 +807,9 @@
   integrity sha512-o+TYF8vBcyySRsb2kqBDv/KMeme8a2nwWoG+lAWzbDmWfb2/MrVWYCVYDYvjXdSoI/Cujqy1i0gIDrkdxa9chA==
 
 "@ledgerhq/react-native-ledger-core@^3.4.0":
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.9.1.tgz#27537a938953d8dc9c21300d891f2deae27ccdbc"
-  integrity sha512-Oq1S/O079QRfsSD9lrfRvobH6XLl1saQTrIMhVDpvz966ado05YlHvl7j8TZlpjYn5jSDdc0cJDyURFgIvwY7g==
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-3.10.0.tgz#70db013f0998e43d1e9ce1fb990e3a8208572a82"
+  integrity sha512-6pI1QXJUnp5VagkQz49Lb2GJ+F0z+Fk1qiX8ZCicYVT9wLUw6o7VX6mwKqcz0+ypARADwzTlIs7HXMgy5g1SnA==
 
 "@react-native-community/cli@^1.2.1":
   version "1.11.2"
