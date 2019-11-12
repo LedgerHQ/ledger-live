@@ -27,6 +27,10 @@ export default [
     url: "http://go.coinmama.com/visit/?bta=51801&nci=5343"
   },
   {
+    id: "crypto",
+    url: "https://mco.onelink.me/PSQc/ledgerlivebuycrypto2019"
+  },
+  {
     id: "kyberswap",
     url:
       "http://kyber.network/swap?ref=0xE2D8481eeF31CDA994833974FFfEccd576f8D71E"
