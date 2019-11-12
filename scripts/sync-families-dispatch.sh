@@ -21,6 +21,7 @@ bridge/libcore.js \
 bridge/mock.js \
 test-dataset.js \
 test-specifics.js \
+cli-transaction.js \
 "
 
 cd ../src

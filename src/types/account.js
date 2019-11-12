@@ -83,6 +83,9 @@ export type Account = {
   // account balance in satoshi
   balance: BigNumber,
 
+  // part of the balance that can effectively be spent
+  spendableBalance: BigNumber,
+
   // the last block height currently synchronized
   blockHeight: number,
 
@@ -172,6 +175,7 @@ export type AccountRaw = {
   freshAddresses: Address[],
   name: string,
   balance: string,
+  spendableBalance?: string,
   blockHeight: number,
   // ------------------------------------- Specific raw fields
   currencyId: string,

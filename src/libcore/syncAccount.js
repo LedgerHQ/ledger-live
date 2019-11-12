@@ -107,6 +107,7 @@ export function syncAccount(
         freshAddress: syncedAccount.freshAddress,
         freshAddressPath: syncedAccount.freshAddressPath,
         balance: syncedAccount.balance,
+        spendableBalance: syncedAccount.spendableBalance,
         blockHeight: syncedAccount.blockHeight,
         lastSyncDate: new Date(),
         operations: syncedAccount.operations,

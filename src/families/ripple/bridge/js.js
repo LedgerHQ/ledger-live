@@ -19,7 +19,6 @@ import {
   FeeRequired,
   RecipientRequired
 } from "@ledgerhq/errors";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import type { Account, Operation } from "../../../types";
 import {
   getDerivationModesForCurrency,
@@ -313,6 +312,8 @@ const cachedRecipientIsNew = (endpointConfig, recipient) => {
 };
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice: (currency, deviceId) =>
     Observable.create(o => {
       let finished = false;
@@ -395,6 +396,7 @@ const currencyBridge: CurrencyBridge = {
                         }
                       ],
                       balance: BigNumber(0),
+                      spendableBalance: BigNumber(0),
                       blockHeight: maxLedgerVersion,
                       index,
                       currency,
@@ -442,6 +444,7 @@ const currencyBridge: CurrencyBridge = {
                   }
                 ],
                 balance,
+                spendableBalance: balance, // TODO calc with base reserve
                 blockHeight: maxLedgerVersion,
                 index,
                 currency,
@@ -548,6 +551,7 @@ const startSync = ({
           return {
             ...a,
             balance,
+            spendableBalance: balance, // TODO use reserve
             operations,
             pendingOperations,
             blockHeight: maxLedgerVersion,
@@ -644,10 +648,6 @@ const prepareTransaction = async (a: Account, t: Transaction) => {
   return t;
 };
 
-const fillUpExtraFieldToApplyTransactionNetworkInfo = (a, t, networkInfo) => ({
-  fee: t.fee || networkInfo.serverFee
-});
-
 const getTransactionStatus = async (a, t) => {
   const errors = {};
   const warnings = {};
@@ -705,6 +705,7 @@ const getTransactionStatus = async (a, t) => {
 };
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: true
 });
@@ -717,13 +718,6 @@ const accountBridge: AccountBridge<Transaction> = {
   startSync,
   signAndBroadcast,
   getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "RippleJSBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    fillUpExtraFieldToApplyTransactionNetworkInfo
-  }),
 
   getDefaultEndpointConfig: () => defaultEndpoint,
 

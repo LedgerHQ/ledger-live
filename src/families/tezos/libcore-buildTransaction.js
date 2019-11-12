@@ -99,6 +99,14 @@ export async function tezosBuildTransaction({
       break;
     case "delegate":
     case "undelegate":
+      invariant(
+        !transaction.useAllAmount,
+        "send max can't be used in delegation context"
+      );
+      invariant(
+        transaction.amount.isZero(),
+        "amount must be ZERO in delegation context"
+      );
       type = tezosOperationTag.OPERATION_TAG_DELEGATION;
       break;
     default:

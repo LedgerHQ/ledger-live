@@ -8,7 +8,6 @@
 // that would directly be called from UI needs.
 
 import type { Observable } from "rxjs";
-import type { BigNumber } from "bignumber.js";
 import type {
   Account,
   AccountRaw,
@@ -34,6 +33,17 @@ export type DeviceId = string;
 
 // Abstraction related to a currency
 export interface CurrencyBridge {
+  // Preload data required for the bridges to work. (e.g. tokens, delegators,...)
+  // Assume to call it at every load time but as lazy as possible (if user have such account already AND/OR if user is about to scanAccountsOnDevice)
+  // returned value is a serializable object
+  // fail if data was not able to load.
+  preload(): Promise<Object>;
+
+  // reinject the preloaded data (typically if it was cached)
+  // method need to treat the data object as unsafe and validate all fields / be backward compatible.
+  hydrate(data: mixed): void;
+
+  // Scan all available accounts with a device
   scanAccountsOnDevice(
     currency: CryptoCurrency,
     deviceId: DeviceId,
@@ -42,6 +52,7 @@ export interface CurrencyBridge {
 }
 
 export type Capabilities = {
+  canDelegate: boolean,
   canSync: boolean,
   canSend: boolean
 };
@@ -90,92 +101,4 @@ export interface AccountBridge<T: Transaction> {
     transaction: T,
     deviceId: DeviceId
   ): Observable<SignAndBroadcastEvent>;
-
-  // some coins will have a way to configure the API it hits.
-  // it is stored in account.endpointConfig
-  // this allow to customize it from UI. there is a default endpoint and a way to validate a new one.
-  // FIXME drop?
-  getDefaultEndpointConfig?: () => string;
-  validateEndpointConfig?: (endpointConfig: string) => Promise<void>;
-
-  //////////////////////////////
-  //~~~~~~~ DEPRECATED ~~~~~~~//
-  //////////////////////////////
-
-  // FIXME: the *TransactionNetworkInfo should be merged into prepareTransaction !
-
-  // fetch various information asynchronously: typically fees.
-  // ideally should be loaded before checking valid tranction / calculating total to spend / max amount / ..
-  fetchTransactionNetworkInfo(account: Account): Promise<Object>;
-
-  // apply network info that was previously fetched
-  // you might want to store the networkInfo so they can recovered in getTransactionNetworkInfo
-  applyTransactionNetworkInfo(
-    account: Account,
-    transaction: T,
-    networkInfo: Object
-  ): Transaction;
-
-  // synchronously retrieve the transactionNetworkInfo from a Transaction
-  // null/undefined means the data needs to be fetched and applied
-  getTransactionNetworkInfo(account: Account, transaction: T): ?Object;
-
-  // For doing token account transactions, everything remain the same except
-  // you need to build Transaction with a contextual TokenAccount
-  // otherwise, all reference to Account remains the mainAccount
-  editTokenAccountId?: (
-    account: Account,
-    transaction: T,
-    subAccountId: ?string
-  ) => T;
-
-  getTokenAccountId?: (account: Account, transaction: T) => ?string;
-
-  editTransactionAmount(account: Account, transaction: T, amount: BigNumber): T;
-
-  getTransactionAmount(account: Account, transaction: T): BigNumber;
-
-  editTransactionRecipient(
-    account: Account,
-    transaction: T,
-    recipient: string
-  ): T;
-
-  getTransactionRecipient(account: Account, transaction: T): string;
-
-  // edit any extra parameter (e.g. ripple tagId)
-  // nothing happen if field is not supported, undefined is returned if not supported.
-  editTransactionExtra(
-    account: Account,
-    transaction: T,
-    field: string,
-    value: any
-  ): T;
-
-  // edit any extra parameter (e.g. ripple tagId)
-  // undefined is returned if not supported.
-  getTransactionExtra(account: Account, transaction: T, field: string): any;
-
-  // checks if a recipient is valid and returns potential warnings
-  // - if promise is successful with null, all is fine
-  // - if promise is successful with an error object, it's a warning to display
-  // - if promise is unsuccessful, it's an error
-  // FIXME replace by getTransactionStatus
-  checkValidRecipient(account: Account, recipient: string): Promise<?Error>;
-
-  // Validates that the transaction is ready to be performed with all information provided and correct.
-  // - if promise is successful with null, it means transaction can be performed
-  // - if promise is successful with an error object, it's just a warning to display
-  // - otherwise it throws an error with the reason of the invalid case.
-  // FIXME replace by getTransactionStatus
-  checkValidTransaction(account: Account, transaction: T): Promise<?Error>;
-
-  // get the total amount that will be spend for a given transaction
-  // FIXME replace by getTransactionStatus
-  getTotalSpent(account: Account, transaction: T): Promise<BigNumber>;
-
-  // max amount an account can be wiped. this is to be connected to the "MAX" feature
-  // this can depends on fields of transaction itself because it depends on contextual information like if you send to a segwit/non-segwit address, etc..
-  // FIXME replace by getTransactionStatus
-  getMaxAmount(account: Account, transaction: T): Promise<BigNumber>;
 }

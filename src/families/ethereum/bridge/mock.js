@@ -9,7 +9,6 @@ import {
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getEstimatedFees } from "../../../api/Fees"; // FIXME drop. not stable.
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import {
   scanAccountsOnDevice,
   signAndBroadcast,
@@ -101,6 +100,7 @@ const prepareTransaction = async (a, t) => {
 };
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: true
 });
@@ -112,16 +112,12 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "EthereumMockBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 

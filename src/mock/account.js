@@ -342,6 +342,7 @@ export function genAccount(
     freshAddresses: [freshAddress],
     name: rng.nextString(rng.nextInt(4, 34)),
     balance: BigNumber(0),
+    spendableBalance: BigNumber(0),
     blockHeight: rng.nextInt(100000, 200000),
     currency,
     unit: rng.nextArrayItem(currency.units),

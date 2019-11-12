@@ -8,7 +8,6 @@ import type { Operation } from "../../../types";
 import type { Transaction } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { parseCurrencyUnit, getCryptoCurrencyById } from "../../../currencies";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import network from "../../../network";
 import {
   makeStartSync,
@@ -136,6 +135,8 @@ const scanAccountsOnDevice = makeScanAccountsOnDevice(getAccountShape);
 const startSync = makeStartSync(getAccountShape);
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 
@@ -160,6 +161,7 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> =>
   Promise.resolve(t);
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: false
 });
@@ -171,13 +173,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "NeoJSBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };

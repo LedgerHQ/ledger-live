@@ -53,6 +53,7 @@ export const makeStartSync = (getAccountShape: GetAccountShape) => (
         });
         o.next(a => ({
           ...a,
+          spendableBalance: shape.balance || a.balance,
           ...shape,
           operations: mergeOps(a.operations, shape.operations || []),
           pendingOperations: a.pendingOperations.filter(op =>
@@ -96,6 +97,7 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
       const freshAddress = address;
       const operations = accountShape.operations || [];
       const balance = accountShape.balance || BigNumber(0);
+      const spendableBalance = accountShape.spendableBalance || BigNumber(0);
 
       if (balance.isNaN()) throw new Error("invalid balance NaN");
 
@@ -130,7 +132,8 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
               unit: currency.units[0],
               lastSyncDate: new Date(),
               // overrides
-              balance: BigNumber(0),
+              balance,
+              spendableBalance,
               blockHeight: 0,
               ...accountShape
             };
@@ -167,7 +170,8 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
         unit: currency.units[0],
         lastSyncDate: new Date(),
         // overrides
-        balance: BigNumber(0),
+        balance,
+        spendableBalance,
         blockHeight: 0,
         ...accountShape
       };

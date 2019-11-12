@@ -15,11 +15,11 @@ import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import { syncAccount } from "../../../libcore/syncAccount";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import { makeLRUCache } from "../../../cache";
 import { withLibcore } from "../../../libcore/access";
 import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
+import { fetchAllBakers, hydrateBakers, asBaker } from "../bakers";
 
 type EstimateGasLimitAndStorage = (
   Account,
@@ -194,11 +194,26 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
+const preload = async () => {
+  const bakers = await fetchAllBakers();
+  return { bakers };
+};
+
+const hydrate = (data: mixed) => {
+  if (!data || typeof data !== "object") return;
+  const { bakers } = data;
+  if (!bakers || typeof bakers !== "object" || !Array.isArray(bakers)) return;
+  hydrateBakers(bakers.map(asBaker).filter(Boolean));
+};
+
 const currencyBridge: CurrencyBridge = {
+  preload,
+  hydrate,
   scanAccountsOnDevice
 };
 
 const getCapabilities = () => ({
+  canDelegate: true,
   canSync: true,
   canSend: true
 });
@@ -210,13 +225,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "LibcoreTezosAccountBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };

@@ -41,17 +41,21 @@ export const startSync = (
       }
       const ops = broadcasted[accountId] || [];
       broadcasted[accountId] = [];
-      o.next(acc => ({
-        ...acc,
-        blockHeight: acc.blockHeight + 1,
-        lastSyncDate: new Date(),
-        operations: ops.concat(acc.operations.slice(0)),
-        pendingOperations: [],
-        balance: ops.reduce(
+      o.next(acc => {
+        const balance = ops.reduce(
           (sum, op) => sum.plus(getOperationAmountNumber(op)),
           acc.balance
-        )
-      }));
+        );
+        return {
+          ...acc,
+          blockHeight: acc.blockHeight + 1,
+          lastSyncDate: new Date(),
+          operations: ops.concat(acc.operations.slice(0)),
+          pendingOperations: [],
+          balance,
+          spendableBalance: balance
+        };
+      });
       if (observation) {
         syncTimeouts[accountId] = setTimeout(sync, 20000);
       } else {

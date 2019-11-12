@@ -19,7 +19,6 @@ import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
 import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
 import { makeLRUCache } from "../../../cache";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Transaction } from "../types";
 
@@ -199,11 +198,8 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   return t;
 };
 
-const fillUpExtraFieldToApplyTransactionNetworkInfo = (a, t, networkInfo) => ({
-  gasPrice: t.gasPrice || networkInfo.gasPrice
-});
-
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: true
 });
@@ -215,17 +211,12 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "LibcoreEthereumAccountBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    fillUpExtraFieldToApplyTransactionNetworkInfo
-  })
+  getCapabilities
 };
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 

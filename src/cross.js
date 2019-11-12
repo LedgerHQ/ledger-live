@@ -280,6 +280,8 @@ export const accountDataToAccount = ({
     );
   }
 
+  const balanceBN = BigNumber(balance);
+
   const account: $Exact<Account> = {
     type: "Account",
     id,
@@ -294,7 +296,8 @@ export const accountDataToAccount = ({
     // these fields will be completed as we will sync
     freshAddresses: [],
     blockHeight: 0,
-    balance: BigNumber(balance),
+    balance: balanceBN,
+    spendableBalance: balanceBN,
     operations: [],
     pendingOperations: [],
     unit: currency.units[0],

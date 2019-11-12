@@ -15,7 +15,6 @@ import type {
 import type { Transaction } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { findTokenById } from "../../../data/tokens";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import network from "../../../network";
 import { open } from "../../../hw";
 import signTransaction from "../../../hw/signTransaction";
@@ -212,9 +211,8 @@ const getAccountShape = async info => {
     return { balance: BigNumber(0) };
   }
   const acc = tronAcc[0];
-  // TODO introduce this concept back in the generic interface
-  const availableBalance = BigNumber(acc.balance);
-  const balance = availableBalance.plus(
+  const spendableBalance = BigNumber(acc.balance);
+  const balance = spendableBalance.plus(
     get(acc, "frozen", []).reduce(
       (sum, o) => sum.plus(o.frozen_balance),
       BigNumber(0)
@@ -245,6 +243,7 @@ const getAccountShape = async info => {
 
   return {
     balance,
+    spendableBalance,
     operations,
     subAccounts
   };
@@ -255,6 +254,8 @@ const scanAccountsOnDevice = makeScanAccountsOnDevice(getAccountShape);
 const startSync = makeStartSync(getAccountShape);
 
 const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve(),
+  hydrate: () => {},
   scanAccountsOnDevice
 };
 
@@ -307,6 +308,7 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> =>
   Promise.resolve(t);
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: false
 });
@@ -318,13 +320,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "TronJSBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };

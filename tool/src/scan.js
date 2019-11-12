@@ -229,6 +229,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               lastSyncDate: new Date(0),
               blockHeight: 0,
               balance: new BigNumber(0),
+              spendableBalance: new BigNumber(0),
               operations: [],
               pendingOperations: []
             };

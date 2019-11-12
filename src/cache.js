@@ -2,6 +2,11 @@
 
 import LRU from "lru-cache";
 
+type Res<A, T> = {
+  (...args: A): Promise<T>,
+  hydrate: (string, T) => void
+};
+
 export const makeLRUCache = <A: Array<*>, T>(
   f: (...args: A) => Promise<T>,
   keyExtractor: (...args: A) => string = () => "",
@@ -9,9 +14,9 @@ export const makeLRUCache = <A: Array<*>, T>(
     max: 100,
     maxAge: 5 * 60 * 1000
   }
-): ((...args: A) => Promise<T>) => {
+): Res<A, T> => {
   const cache = new LRU(lruOpts);
-  return (...args) => {
+  const result = (...args) => {
     const key = keyExtractor(...args);
     let promise = cache.get(key);
     if (promise) return promise;
@@ -22,4 +27,8 @@ export const makeLRUCache = <A: Array<*>, T>(
     cache.set(key, promise);
     return promise;
   };
+  result.hydrate = (key: string, value: T) => {
+    cache.set(key, Promise.resolve(value));
+  };
+  return result;
 };

@@ -26,7 +26,9 @@ async function tezos({
     : await tezosLikeAccount.broadcastRawTransaction(signedTransaction);
   const receiver = await builded.getReceiver();
   const sender = await builded.getSender();
-  const recipients = [await receiver.toBase58()];
+  const recipients = [
+    transaction.mode === "undelegate" ? "" : await receiver.toBase58()
+  ];
   const senders = [await sender.toBase58()];
   const feesRaw = await builded.getFees();
   const fee = await libcoreAmountToBigNumber(feesRaw);
@@ -37,7 +39,10 @@ async function tezos({
   const op: $Exact<Operation> = {
     id: `${accountId}-${txHash}-OUT`,
     hash: txHash,
-    type: "OUT",
+    type:
+      transaction.mode === "undelegate" || transaction.mode === "delegate"
+        ? "DELEGATE"
+        : "OUT",
     value: transaction.useAllAmount ? balance : transaction.amount.plus(fee),
     fee,
     blockHash: null,

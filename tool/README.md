@@ -4,6 +4,7 @@
 
 ```
 
+
 Ledger Live @ https://github.com/LedgerHQ/ledger-live-common
 
 Usage: ledger-live <command> ...
@@ -44,6 +45,7 @@ Usage: ledger-live liveData   # utility for Ledger Live app.json file
      --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device)
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
+     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
  -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
@@ -60,8 +62,8 @@ Usage: ledger-live exportAccounts # Export given accounts to Live QR or console 
  -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
-     --out                    : instead of Live QR Code, output to consoleappjson
- 
+ -o, --out                    : output to console
+
 Usage: ledger-live genuineCheck # Perform a genuine check with Ledger's HSM
      --device <String>        : provide a specific HID path of a device
 
@@ -71,6 +73,10 @@ Usage: ledger-live firmwareUpdate # Perform a firmware update
 Usage: ledger-live firmwareRepair # Repair a firmware update
      --device <String>        : provide a specific HID path of a device
      --forceMCU <String>      : force a mcu version to install
+
+Usage: ledger-live appsUpdateTestAll # test script to install and uninstall all apps
+     --device <String>        : provide a specific HID path of a device
+     --index <Number>
 
 Usage: ledger-live managerListApps # List apps that can be installed on the device
      --device <String>        : provide a specific HID path of a device
@@ -89,16 +95,24 @@ Usage: ledger-live validRecipient # Validate a recipient address
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
      --device <String>        : provide a specific HID path of a device
 
+Usage: ledger-live signMessage # Sign a message with the device on specific derivations (advanced)
+ -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
+     --path <String>          : HDD derivation path
+     --derivationMode <String>: derivationMode to use
+     --message <String>       : the message to sign
+
 Usage: ledger-live getAddress # Get an address with the device on specific derivations (advanced)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
+     --device <String>        : provide a specific HID path of a device
      --path <String>          : HDD derivation path
      --derivationMode <String>: derivationMode to use
  -v, --verify                 : also ask verification on device
 
-Usage: ledger-live feesForTransaction # Calculate how much fees a given transaction is going to cost
+Usage: ledger-live getTransactionStatus # Prepare a transaction and returns 'TransactionStatus' meta information
      --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device)
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
+     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
  -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
@@ -107,26 +121,46 @@ Usage: ledger-live feesForTransaction # Calculate how much fees a given transact
      --use-all-amount         : Send MAX of the account balance
      --recipient <String>     : the address to send funds to
      --amount <String>        : how much to send in the main currency unit
+     --shuffle                : if using multiple token or recipient, order will be randomized
      --feePerByte <String>    : how much fee per byte
+ -t, --token <String>         : use an token account children of the account
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --gasLimit <String>      : how much gasLimit. default is estimated with the recipient
- -t, --token <String>         : use an token account children of the account
-     --shuffle                : if using multiple token or recipient, order will be randomized
+     --fee <String>           : how much fee
+     --tag <Number>           : ripple tag
+     --mode <String>          : mode of transaction
+     --storageLimit <String>  : how much storageLimit. default is estimated with the recipient
+     --subAccount <String>    : use a sub account instead of the parent by index
+     --fees <String>          : how much fees
+ -f, --format <json>          : how to display the data
 
 Usage: ledger-live sync       # Synchronize accounts with blockchain
      --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device)
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
+     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
  -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
- -f, --format <json | default | summary | significantTokenTickers>: how to display the data
+ -f, --format <json | default | summary | stats | significantTokenTickers>: how to display the data
+
+Usage: ledger-live getAccountNetworkInfo # Get the currency network info for accounts
+     --device <String>        : provide a specific HID path of a device
+     --xpub <String>          : use an xpub (alternatively to --device)
+     --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
+     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
+ -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
+ -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
+ -i, --index <Number>         : select the account by index
+ -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
+ -f, --format <json>          : how to display the data
 
 Usage: ledger-live receive    # Receive crypto-assets (verify on device)
      --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device)
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
+     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
  -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
@@ -137,6 +171,7 @@ Usage: ledger-live send       # Send crypto-assets
      --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device)
      --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
+     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
  -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
  -i, --index <Number>         : select the account by index
@@ -145,13 +180,20 @@ Usage: ledger-live send       # Send crypto-assets
      --use-all-amount         : Send MAX of the account balance
      --recipient <String>     : the address to send funds to
      --amount <String>        : how much to send in the main currency unit
+     --shuffle                : if using multiple token or recipient, order will be randomized
      --feePerByte <String>    : how much fee per byte
+ -t, --token <String>         : use an token account children of the account
      --gasPrice <String>      : how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)
      --gasLimit <String>      : how much gasLimit. default is estimated with the recipient
- -t, --token <String>         : use an token account children of the account
-     --shuffle                : if using multiple token or recipient, order will be randomized
+     --fee <String>           : how much fee
+     --tag <Number>           : ripple tag
+     --mode <String>          : mode of transaction
+     --storageLimit <String>  : how much storageLimit. default is estimated with the recipient
+     --subAccount <String>    : use a sub account instead of the parent by index
+     --fees <String>          : how much fees
  -f, --format <default | json>: how to display the data
      --ignore-errors          : when using multiple transactions, an error won't stop the flow
+
 
 
                 ``

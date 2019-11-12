@@ -9,7 +9,6 @@ import {
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getFeeItems } from "../../../api/FeesBitcoin";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 import {
   scanAccountsOnDevice,
   signAndBroadcast,
@@ -86,6 +85,7 @@ const prepareTransaction = async (a, t) => {
 };
 
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: true
 });
@@ -97,17 +97,13 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "BitcoinMockBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction
-  })
+  getCapabilities
 };
 
 const currencyBridge: CurrencyBridge = {
-  scanAccountsOnDevice
+  scanAccountsOnDevice,
+  preload: () => Promise.resolve(),
+  hydrate: () => {}
 };
 
 export default { currencyBridge, accountBridge };

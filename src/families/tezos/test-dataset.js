@@ -124,7 +124,7 @@ const dataset: DatasetTest = {
             {
               name: "delegate",
               transaction: fromTransactionRaw({
-                amount: "1000",
+                amount: "0",
                 recipient: "tz1ZshTmtorFVkcZ7CpceCAxCn7HBJqTfmpk",
                 useAllAmount: false,
                 family: "tezos",
@@ -138,8 +138,8 @@ const dataset: DatasetTest = {
                 errors: {},
                 warnings: {},
                 estimatedFees: BigNumber("4495"),
-                amount: BigNumber("1000"),
-                totalSpent: BigNumber("5495")
+                amount: BigNumber("0"),
+                totalSpent: BigNumber("4495")
               }
             }
           ],

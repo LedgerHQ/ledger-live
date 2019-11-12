@@ -10,12 +10,16 @@ import {
   decodeAccountId,
   encodeAccountId
 } from "@ledgerhq/live-common/lib/account";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
   fromTransactionRaw,
   toTransactionRaw
 } from "@ledgerhq/live-common/lib/transaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import {
+  getAccountBridge,
+  getCurrencyBridge
+} from "@ledgerhq/live-common/lib/bridge";
 import dataset from "@ledgerhq/live-common/lib/generated/test-dataset";
 import specifics from "@ledgerhq/live-common/lib/generated/test-specifics";
 import { setup } from "../live-common-setup-test";
@@ -36,13 +40,24 @@ function syncAccount(bridge, account) {
 
 // covers all bridges through many different accounts
 // to test the common shared properties of bridges.
-const all = [];
+const accountsRelated = [];
+const currenciesRelated = [];
 Object.keys(dataset).forEach(family => {
   if (process.env.FAMILY && process.env.FAMILY !== family) return;
   const data = dataset[family];
   const { implementations, currencies } = data;
   Object.keys(currencies).forEach(currencyId => {
     const currencyData = currencies[currencyId];
+    const currency = getCryptoCurrencyById(currencyId);
+
+    implementations.forEach(impl => {
+      currenciesRelated.push({
+        currencyData,
+        currency,
+        impl
+      });
+    });
+
     currencyData.accounts.forEach(accountData =>
       implementations.forEach(impl => {
         const account = fromAccountRaw({
@@ -52,7 +67,7 @@ Object.keys(dataset).forEach(family => {
             type: impl
           })
         });
-        all.push({
+        accountsRelated.push({
           currencyData,
           accountData,
           account,
@@ -62,10 +77,33 @@ Object.keys(dataset).forEach(family => {
     );
   });
 
-  return all;
+  return accountsRelated;
 });
 
-all
+currenciesRelated.map(({ currency, impl }) => {
+  const bridge = getCurrencyBridge(currency);
+  describe(impl + " " + currency.id + " currency bridge", () => {
+    test("functions are defined", () => {
+      expect(typeof bridge.scanAccountsOnDevice).toBe("function");
+      expect(typeof bridge.preload).toBe("function");
+      expect(typeof bridge.hydrate).toBe("function");
+    });
+
+    test("preload and rehydrate", async () => {
+      const data1 = await bridge.preload();
+      const serialized = JSON.stringify(data1);
+      if (data1) {
+        expect(serialized).toBeDefined();
+        const data2 = await bridge.preload();
+        expect(data1).toMatchObject(data2);
+        expect(JSON.parse(serialized)).toMatchObject(data2);
+        bridge.hydrate(data1);
+      }
+    });
+  });
+});
+
+accountsRelated
   .map(({ account, ...rest }) => {
     const bridge = getAccountBridge(account, null);
     if (!bridge) throw new Error("no bridge for " + account.id);
@@ -108,6 +146,15 @@ all
             if (account.subAccounts) {
               account.subAccounts.forEach(expectBalanceIsOpsSum);
             }
+          });
+
+          test("balance and spendableBalance boundaries", async () => {
+            const account = await getSynced();
+            expect(account.balance).toBeInstanceOf(BigNumber);
+            expect(account.spendableBalance).toBeInstanceOf(BigNumber);
+            expect(account.balance.lt(0)).toBe(false);
+            expect(account.spendableBalance.lt(0)).toBe(false);
+            expect(account.spendableBalance.lte(account.balance)).toBe(true);
           });
         }
 

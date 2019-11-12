@@ -17,7 +17,6 @@ import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
 import { makeLRUCache } from "../../../cache";
-import { inferDeprecatedMethods } from "../../../bridge/deprecationUtils";
 
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
@@ -135,17 +134,16 @@ const prepareTransaction = async (
   };
 };
 
-const fillUpExtraFieldToApplyTransactionNetworkInfo = (a, t, networkInfo) => ({
-  feePerByte: t.feePerByte || networkInfo.feeItems.defaultFeePerByte
-});
-
 const getCapabilities = () => ({
+  canDelegate: false,
   canSync: true,
   canSend: true
 });
 
 const currencyBridge: CurrencyBridge = {
-  scanAccountsOnDevice
+  scanAccountsOnDevice,
+  preload: () => Promise.resolve(),
+  hydrate: () => {}
 };
 
 const accountBridge: AccountBridge<Transaction> = {
@@ -155,14 +153,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   startSync,
   signAndBroadcast,
-  getCapabilities,
-  ...inferDeprecatedMethods({
-    name: "LibcoreBitcoinAccountBridge",
-    createTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    fillUpExtraFieldToApplyTransactionNetworkInfo
-  })
+  getCapabilities
 };
 
 export default { currencyBridge, accountBridge };
