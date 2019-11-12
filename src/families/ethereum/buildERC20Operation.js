@@ -43,9 +43,9 @@ export async function buildERC20Operation(arg: {
 
   const date = new Date(await coreOperation.getTime());
 
-  const transactionSequenceNumber = (await libcoreBigIntToBigNumber(
-    await coreOperation.getNonce()
-  )).toNumber();
+  const transactionSequenceNumber = (
+    await libcoreBigIntToBigNumber(await coreOperation.getNonce())
+  ).toNumber();
 
   const op: $Exact<Operation> = {
     id,

@@ -127,7 +127,10 @@ function getRecipientWarning(currency, recipient) {
 function mergeOps(existing: Operation[], newFetched: Operation[]) {
   const ids = existing.map(o => o.id);
   const all = newFetched.filter(o => !ids.includes(o.id)).concat(existing);
-  return uniqBy(all.sort((a, b) => b.date - a.date), "id");
+  return uniqBy(
+    all.sort((a, b) => b.date - a.date),
+    "id"
+  );
 }
 
 const doSignAndBroadcast = async ({

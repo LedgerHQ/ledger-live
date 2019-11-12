@@ -23,7 +23,10 @@ export const runAppOp = (
   const app = appByName[appOp.name];
   if (!app) {
     // app not in list, we skip it.
-    return from([{ type: "runStart", appOp }, { type: "runSuccess", appOp }]);
+    return from([
+      { type: "runStart", appOp },
+      { type: "runSuccess", appOp }
+    ]);
   }
   return concat(
     of({ type: "runStart", appOp }),

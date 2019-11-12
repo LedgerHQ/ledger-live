@@ -149,7 +149,10 @@ export default ({
           operation
         });
       }
-    }).then(() => o.complete(), e => o.error(remapLibcoreErrors(e)));
+    }).then(
+      () => o.complete(),
+      e => o.error(remapLibcoreErrors(e))
+    );
 
     return () => {
       unsubscribed = true;

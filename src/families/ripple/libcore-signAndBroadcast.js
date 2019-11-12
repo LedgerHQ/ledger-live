@@ -37,9 +37,9 @@ async function ripple({
   const fee = await libcoreAmountToBigNumber(feeRaw);
   const tag = await builded.getDestinationTag();
   const transactionSequenceNumberRaw = await builded.getSequence();
-  const transactionSequenceNumber = (await libcoreBigIntToBigNumber(
-    transactionSequenceNumberRaw
-  )).toNumber();
+  const transactionSequenceNumber = (
+    await libcoreBigIntToBigNumber(transactionSequenceNumberRaw)
+  ).toNumber();
 
   const op: $Exact<Operation> = {
     id: `${accountId}-${txHash}-OUT`,

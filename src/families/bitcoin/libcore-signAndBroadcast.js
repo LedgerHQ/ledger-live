@@ -19,14 +19,16 @@ async function bitcoin({
     : await bitcoinLikeAccount.broadcastRawTransaction(signedTransaction);
 
   const sendersInput = await builded.getInputs();
-  const senders = (await Promise.all(
-    sendersInput.map(senderInput => senderInput.getAddress())
-  )).filter(Boolean);
+  const senders = (
+    await Promise.all(sendersInput.map(senderInput => senderInput.getAddress()))
+  ).filter(Boolean);
 
   const recipientsOutput = await builded.getOutputs();
-  const recipients = (await Promise.all(
-    recipientsOutput.map(recipientOutput => recipientOutput.getAddress())
-  )).filter(Boolean);
+  const recipients = (
+    await Promise.all(
+      recipientsOutput.map(recipientOutput => recipientOutput.getAddress())
+    )
+  ).filter(Boolean);
 
   const coreAmountFees = await builded.getFees();
   if (!coreAmountFees) {
