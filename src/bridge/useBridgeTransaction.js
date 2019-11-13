@@ -1,6 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
+// $FlowFixMe not sure why this breaks in desktop side
 import { useEffect, useReducer, useCallback, useRef } from "react";
 import { log } from "@ledgerhq/logs";
 import type {
