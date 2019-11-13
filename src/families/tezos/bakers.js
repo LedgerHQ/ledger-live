@@ -1,5 +1,7 @@
 // @flow
 
+// $FlowFixMe not sure why this breaks in desktop side
+import { useEffect, useState } from "react";
 import type { Operation, Account } from "../../types";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
@@ -91,38 +93,48 @@ export const listBakers = async (
   return whitelistAddresses.map(addr => map[addr]).filter(Boolean);
 };
 
-function getAccountDelegationOperation(
-  account: Account
-): { isPending: boolean, operation: ?Operation } {
+export function getAccountDelegationSync(account: Account): ?Delegation {
   const op = account.operations.find(op => op.type === "DELEGATE");
   const pendingOp = !op
     ? account.pendingOperations.find(op => op.type === "DELEGATE")
     : null;
   const operation = op || pendingOp;
   if (!operation || !operation.recipients[0]) {
-    return { isPending: false, operation: null };
+    return null;
   }
-  return { isPending: !!pendingOp, operation };
+  return {
+    isPending: !!pendingOp,
+    operation,
+    address: operation.recipients[0],
+    baker: null
+  };
 }
 
 export function isAccountDelegating(account: Account): boolean {
-  return !!getAccountDelegationOperation(account).operation;
+  return !!getAccountDelegationSync(account);
 }
 
 export async function loadAccountDelegation(
   account: Account
 ): Promise<?Delegation> {
-  const { operation, isPending } = getAccountDelegationOperation(account);
-  if (!operation) return Promise.resolve(null);
-  const address = operation.recipients[0];
+  const d = getAccountDelegationSync(account);
+  if (!d) return Promise.resolve(null);
   const bakers = await cache();
-  const baker = bakers.find(baker => baker.address === address);
+  const baker = bakers.find(baker => baker.address === d.address);
   return {
-    address,
-    baker,
-    operation,
-    isPending
+    ...d,
+    baker
   };
+}
+
+export function useDelegation(account: Account): ?Delegation {
+  const [delegation, setDelegation] = useState(() =>
+    getAccountDelegationSync(account)
+  );
+  useEffect(() => {
+    loadAccountDelegation(account).then(setDelegation);
+  }, [account]);
+  return delegation;
 }
 
 export const asBaker = (data: mixed): ?Baker => {
