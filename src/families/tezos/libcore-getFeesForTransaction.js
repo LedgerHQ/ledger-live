@@ -17,8 +17,9 @@ async function tezos(args: {
 }) {
   const builded = await buildTransaction(args);
   if (!builded) return;
-  const fees = await libcoreAmountToBigNumber(await builded.getFees());
-  return fees;
+  const value = await libcoreAmountToBigNumber(await builded.getValue());
+  const estimatedFees = await libcoreAmountToBigNumber(await builded.getFees());
+  return { estimatedFees, value };
 }
 
 export default tezos;

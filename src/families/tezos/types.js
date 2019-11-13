@@ -39,6 +39,7 @@ declare class CoreTezosLikeTransaction {
   getType(): Promise<TezosOperationTag>;
   getHash(): Promise<string>;
   getFees(): Promise<CoreAmount>;
+  getValue(): Promise<CoreAmount>;
   getReceiver(): Promise<CoreTezosLikeAddress>;
   getSender(): Promise<CoreTezosLikeAddress>;
   getGasLimit(): Promise<CoreAmount>;
@@ -156,6 +157,7 @@ export const reflect = (declare: (string, Spec) => void) => {
       getHash: {},
       getStatus: {},
       getFees: { returns: "Amount" },
+      getValue: { returns: "Amount" },
       getGasLimit: { returns: "Amount" },
       getReceiver: { returns: "TezosLikeAddress" },
       getSender: { returns: "TezosLikeAddress" },

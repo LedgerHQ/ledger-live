@@ -102,7 +102,9 @@ const getTransactionStatus = async (a, t) => {
     errors.gasLimit = new FeeRequired();
   } else if (!errors.recipient) {
     await calculateFees(a, t).then(
-      _estimatedFees => (estimatedFees = _estimatedFees),
+      res => {
+        estimatedFees = res.estimatedFees;
+      },
       error => {
         if (error.name === "NotEnoughBalance") {
           errors.amount = error;

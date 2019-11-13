@@ -76,8 +76,8 @@ const getTransactionStatus = async (a, t) => {
     errors.feePerByte = new FeeRequired();
   } else if (!errors.recipient) {
     await calculateFees(a, t).then(
-      _estimatedFees => {
-        estimatedFees = _estimatedFees;
+      res => {
+        estimatedFees = res.estimatedFees;
       },
       error => {
         if (error.name === "NotEnoughBalance") {

@@ -1,7 +1,6 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import type { Account, Transaction } from "../types";
 import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
@@ -13,7 +12,10 @@ export type Input = {
   transaction: Transaction
 };
 
-type F = Input => Promise<BigNumber>;
+type F = Input => Promise<{
+  estimatedFees: BigNumber,
+  value: BigNumber
+}>;
 
 export const getFeesForTransaction: F = withLibcoreF(
   core => async ({ account, transaction }) => {
@@ -25,7 +27,7 @@ export const getFeesForTransaction: F = withLibcoreF(
 
       const f = byFamily[currency.family];
       if (!f) throw new Error("currency " + currency.id + " not supported");
-      let fees = await f({
+      const fees = await f({
         account,
         core,
         coreAccount,
@@ -34,18 +36,6 @@ export const getFeesForTransaction: F = withLibcoreF(
         isPartial: true,
         isCancelled: () => false
       });
-      if (!fees) {
-        fees = BigNumber(0);
-        log("libcore", "getFeesForTransaction: no fees");
-      } else if (fees.isLessThan(0)) {
-        fees = BigNumber(0);
-        log(
-          "libcore",
-          "getFeesForTransaction: negative fees! " + fees.toString()
-        );
-      } else {
-        log("libcore", "getFeesForTransaction: fees is " + fees.toString());
-      }
       return fees;
     } catch (error) {
       throw remapLibcoreErrors(error);

@@ -112,12 +112,15 @@ const getTransactionStatus = async (a, t) => {
   }
 
   let estimatedFees = BigNumber(0);
+  let amount = t.amount;
+
   if (!t.fees) {
     errors.fees = new FeeNotLoaded();
   } else if (!errors.recipient) {
     await calculateFees(a, t).then(
-      f => {
-        estimatedFees = f;
+      res => {
+        estimatedFees = res.estimatedFees;
+        amount = res.value;
       },
       error => {
         if (error.name === "NotEnoughBalance") {
@@ -132,8 +135,6 @@ const getTransactionStatus = async (a, t) => {
   let totalSpent = !t.useAllAmount
     ? t.amount.plus(estimatedFees)
     : account.balance;
-
-  let amount = t.useAllAmount ? account.balance.minus(estimatedFees) : t.amount;
 
   if (
     !errors.recipient &&

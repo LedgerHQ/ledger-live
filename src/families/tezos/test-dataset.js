@@ -54,9 +54,9 @@ const dataset: DatasetTest = {
               expectedStatus: {
                 errors: {},
                 warnings: {},
-                estimatedFees: BigNumber("3075"),
+                estimatedFees: BigNumber("6150"),
                 amount: BigNumber("1230000"),
-                totalSpent: BigNumber("1233075")
+                totalSpent: BigNumber("1236150")
               }
             },
             {
@@ -137,9 +137,9 @@ const dataset: DatasetTest = {
               expectedStatus: {
                 errors: {},
                 warnings: {},
-                estimatedFees: BigNumber("4495"),
+                estimatedFees: BigNumber("8990"),
                 amount: BigNumber("0"),
-                totalSpent: BigNumber("4495")
+                totalSpent: BigNumber("8990")
               }
             }
           ],
