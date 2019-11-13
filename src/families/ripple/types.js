@@ -41,6 +41,7 @@ declare class CoreRippleLikeAccount {
   broadcastRawTransaction(signed: string): Promise<string>;
   getFees(): Promise<CoreAmount>;
   getBaseReserve(): Promise<CoreAmount>;
+  isAddressActivated(address: string): Promise<boolean>;
 }
 
 export type CoreStatics = {
@@ -162,7 +163,8 @@ export const reflect = (declare: (string, Spec) => void) => {
       },
       getBaseReserve: {
         returns: "Amount"
-      }
+      },
+      isAddressActivated: {}
     }
   });
 

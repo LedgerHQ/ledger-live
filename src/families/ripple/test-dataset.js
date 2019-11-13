@@ -1,6 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughSpendableBalance } from "@ledgerhq/errors";
 import type { DatasetTest } from "../dataset";
 import { fromTransactionRaw } from "../../transaction";
 
@@ -12,7 +12,7 @@ const dataset: DatasetTest = {
         {
           transactions: [
             {
-              name: "not enough balance with base reserve",
+              name: "not enough spendable balance with base reserve",
               transaction: fromTransactionRaw({
                 family: "ripple",
                 recipient: "rMLgQYP7up5xP3f9o51F9k1q1JEf9doaAi",
@@ -26,7 +26,7 @@ const dataset: DatasetTest = {
                 amount: BigNumber("1000"),
                 estimatedFees: BigNumber("1"),
                 errors: {
-                  amount: new NotEnoughBalance()
+                  amount: new NotEnoughSpendableBalance()
                 },
                 warnings: {},
                 totalSpent: BigNumber("1001")

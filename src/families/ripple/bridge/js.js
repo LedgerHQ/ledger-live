@@ -10,7 +10,7 @@ import { computeBinaryTransactionHash } from "ripple-hashes";
 import throttle from "lodash/throttle";
 import {
   NotEnoughBalanceBecauseDestinationNotCreated,
-  NotEnoughBalance,
+  NotEnoughSpendableBalance,
   InvalidAddress,
   FeeNotLoaded,
   FeeTooHigh,
@@ -669,7 +669,7 @@ const getTransactionStatus = async (a, t) => {
   } else if (t.fee.eq(0)) {
     errors.fee = new FeeRequired();
   } else if (totalSpent.gt(a.balance.minus(reserveBaseXRP))) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = new NotEnoughSpendableBalance();
   } else if (
     t.recipient &&
     (await cachedRecipientIsNew(a.endpointConfig, t.recipient)) &&
