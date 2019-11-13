@@ -8,34 +8,75 @@ const Section = styled.div`
 `;
 
 const Intro = styled.div`
+  color: ${p=>p.dark?"white":"#142533"};
   margin-top: 20px;
-  padding: 0 40px;
+  padding: 40px 40px;
   font-size: 16px;
 `;
 
 const LogoWrapper = styled.div`
-  padding: 30px;
+  padding: 8px;
+  display:flex;
+  justify-content: center;
+  align-items:center;
+  border:1px solid #142533;
+  outline: 1px solid white;
+  &:empty{
+    background-color:#cc0000;
+  }
 `;
 
-const SectionHeader = styled.h1``;
+const PartnersContainer = styled.div`
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 10px;
+  margin-top:20px;
+`;
 
-class Partners extends Component<*, *> {
+const SectionHeader = styled.h1`
+  color: ${p=>p.dark?"white":"#142533"};`;
+const Button = styled.div`
+  padding: 0.6em 1.2em;
+  font-size: 16px;
+  color: ${props => (props.disabled ? "#999" : "#fff")};
+  background-color: ${props => (props.disabled ? "#eee" : "#6490f1")};
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+`;
+
+class Partners extends Component<*, {dark:boolean}> {
+  state = {
+    dark: false
+  }
+
   static demo = {
     title: "Partners",
     url: "/partners"
   };
 
+  toggleDark = ()=>{
+    this.setState(({dark})=>({dark: !dark}));
+  }
 
+  openPartner = (url)=>{
+    window.location.href = url
+  }
 
   render() {
+    const {dark} = this.state;
     return (
-      <div>
-        <Intro>
-          This shows a list of partner companies shown in the trade section of mobile/desktop apps
-        </Intro>
+      <div style={{backgroundColor:dark?"#142533":"white"}}>
+
         <Section>
-          <SectionHeader>Companies</SectionHeader>
-          {icons.map(({Logo, id, url})=><LogoWrapper key={id} partnerUrl={url}><Logo width="300"/></LogoWrapper>)}
+          <SectionHeader dark={dark}>Partners</SectionHeader>
+          <Intro dark={dark}>
+            This shows a list of partner companies shown in the trade section of mobile/desktop apps
+          </Intro>
+          <Button onClick={this.toggleDark}>Toggle darkmode</Button>
+          <PartnersContainer>
+            {icons(dark).map(({Logo, id, url})=><LogoWrapper key={id} title={id} onClick={()=>this.openPartner(url)}>{Logo && <Logo width="300"/>}</LogoWrapper>)}
+          </PartnersContainer>
         </Section>
       </div>
     );
