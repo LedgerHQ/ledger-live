@@ -91,15 +91,29 @@ export const listBakers = async (
   return whitelistAddresses.map(addr => map[addr]).filter(Boolean);
 };
 
-export async function loadAccountDelegation(
+function getAccountDelegationOperation(
   account: Account
-): Promise<?Delegation> {
+): { isPending: boolean, operation: ?Operation } {
   const op = account.operations.find(op => op.type === "DELEGATE");
   const pendingOp = !op
     ? account.pendingOperations.find(op => op.type === "DELEGATE")
     : null;
   const operation = op || pendingOp;
-  if (!operation || !operation.recipients[0]) return Promise.resolve(null);
+  if (!operation || !operation.recipients[0]) {
+    return { isPending: false, operation: null };
+  }
+  return { isPending: !!pendingOp, operation };
+}
+
+export function isAccountDelegating(account: Account): boolean {
+  return !!getAccountDelegationOperation(account).operation;
+}
+
+export async function loadAccountDelegation(
+  account: Account
+): Promise<?Delegation> {
+  const { operation, isPending } = getAccountDelegationOperation(account);
+  if (!operation) return Promise.resolve(null);
   const address = operation.recipients[0];
   const bakers = await cache();
   const baker = bakers.find(baker => baker.address === address);
@@ -107,7 +121,7 @@ export async function loadAccountDelegation(
     address,
     baker,
     operation,
-    isPending: !!pendingOp
+    isPending
   };
 }
 
