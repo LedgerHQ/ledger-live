@@ -98,9 +98,9 @@ const dataset: DatasetTest = {
               expectedStatus: {
                 errors: {},
                 warnings: {},
-                estimatedFees: BigNumber("6426"),
+                estimatedFees: BigNumber("3213"),
                 amount: BigNumber("230000"),
-                totalSpent: BigNumber("236426")
+                totalSpent: BigNumber("233213")
               }
             },
             {
