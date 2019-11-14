@@ -21,11 +21,11 @@ if [[ $DEBUG_RNDEBUGGER == "1" ]]; then
   rndebugger-open
 fi
 
-# if [ "$(uname)" == "Darwin" ]; then
-#   if ! [ -x "$(command -v pod)" ]; then
-#     echo 'Error: `pod` command is missing. Please install CocoaPods.' >&2
-#     exit 1
-#   fi
+if [ "$(uname)" == "Darwin" ]; then
+  if ! [ -x "$(command -v pod)" ]; then
+    echo 'Error: `pod` command is missing. Please install CocoaPods.' >&2
+    exit 1
+  fi
 
-#   cd ios && pod install
-# fi
+  cd ios && pod install
+fi
