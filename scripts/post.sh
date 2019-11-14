@@ -9,7 +9,6 @@ cp node_modules/react-native-camera/postinstall_project/projectWithoutFaceDetect
 rm -f 'node_modules/@segment/analytics-ios/.clang-format' 'third-party/glog-0.3.5/test-driver'
 
 patch --forward -i scripts/rnc-RNCameraManager.patch node_modules/react-native-camera/ios/RN/RNCameraManager.m
-patch --forward -i scripts/Swipeable.patch node_modules/react-native-gesture-handler/Swipeable.js
 
 rn-nodeify --hack
 

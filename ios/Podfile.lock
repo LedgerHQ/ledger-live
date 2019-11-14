@@ -256,7 +256,9 @@ PODS:
   - RNAnalytics (0.1.0-beta.0):
     - Analytics
     - React
-  - RNGestureHandler (1.4.1):
+  - RNCAsyncStorage (1.6.2):
+    - React
+  - RNGestureHandler (1.5.0):
     - React
   - RNKeychain (3.1.3):
     - React
@@ -275,17 +277,20 @@ PODS:
   - SentryReactNative (0.42.0):
     - React
     - Sentry (~> 4.1.3)
+  - TcpSockets (3.3.2):
+    - React
   - TouchID (4.6.3):
     - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
+  - "djinni_objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - "ledgerhq-react-native-ledger-core (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
+  - "ledger-core-objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - lottie-react-native (from `../node_modules/lottie-react-native`)
   - "PasscodeAuth (from `../node_modules/@ledgerhq/react-native-passcode-auth`)"
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -321,12 +326,15 @@ DEPENDENCIES:
   - ReactCommon/jscallinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNAnalytics (from `../node_modules/@segment/analytics-react-native`)"
+  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
+  - TcpSockets (from `../node_modules/react-native-tcp`)
   - "TouchID (from `../node_modules/@ledgerhq/react-native-touch-id`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -338,6 +346,8 @@ SPEC REPOS:
     - Sentry
 
 EXTERNAL SOURCES:
+  djinni_objc:
+    :path: "../node_modules/@ledgerhq/react-native-ledger-core"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -348,7 +358,7 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
-  ledgerhq-react-native-ledger-core:
+  ledger-core-objc:
     :path: "../node_modules/@ledgerhq/react-native-ledger-core"
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
@@ -414,10 +424,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNAnalytics:
     :path: "../node_modules/@segment/analytics-react-native"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-community/async-storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNLibLedgerCore:
+    :path: "../node_modules/@ledgerhq/react-native-ledger-core"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -426,6 +440,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   SentryReactNative:
     :path: "../node_modules/react-native-sentry"
+  TcpSockets:
+    :path: "../node_modules/react-native-tcp"
   TouchID:
     :path: "../node_modules/@ledgerhq/react-native-touch-id"
   Yoga:
@@ -474,7 +490,8 @@ SPEC CHECKSUMS:
   React-RCTVibration: fb54c732fd20405a76598e431aa2f8c2bf527de9
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
   RNAnalytics: 5c242b7f8117f108f5df71e96b908185db3fb4ee
-  RNGestureHandler: 4cb47a93019c1a201df2644413a0a1569a51c8aa
+  RNCAsyncStorage: 60a80e72d95bf02a01cace55d3697d9724f0d77f
+  RNGestureHandler: a4ddde1ffc6e590c8127b8b7eabfdade45475c74
   RNKeychain: c658833a9cb2cbcba6423bdd6e16cce59e27da0e
   RNLibLedgerCore: 86fd2291da9228a5c71ce869b075fbb3ef965f8b
   RNScreens: 720a9e6968beb73e8196239801e887d8401f86ed
@@ -482,9 +499,10 @@ SPEC CHECKSUMS:
   RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
+  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   TouchID: e70ee88b881ccf6afef10c0261166935256feb05
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 1c0db83ff11af39929bc0933dd4b9baea2eccc8c
+PODFILE CHECKSUM: 6b22e4f92a633a27f31d653752cdd3cdc4d3f15b
 
 COCOAPODS: 1.8.3
