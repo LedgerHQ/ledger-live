@@ -196,13 +196,13 @@ PODS:
     - React
     - react-native-ble-plx-swift
   - react-native-ble-plx-swift (1.1.0)
-  - react-native-camera (3.7.2):
+  - react-native-camera (3.9.0):
     - React
-    - react-native-camera/RCT (= 3.7.2)
-    - react-native-camera/RN (= 3.7.2)
-  - react-native-camera/RCT (3.7.2):
+    - react-native-camera/RCT (= 3.9.0)
+    - react-native-camera/RN (= 3.9.0)
+  - react-native-camera/RCT (3.9.0):
     - React
-  - react-native-camera/RN (3.7.2):
+  - react-native-camera/RN (3.9.0):
     - React
   - react-native-config (0.11.7):
     - React
@@ -471,7 +471,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 111d7d342b07a904c400592e02a2b958f1098b60
   react-native-ble-plx: 05e16667ebf56cf802986379fd58a377847885e8
   react-native-ble-plx-swift: e0d041529bd7ae66eb9731123eca3df3d132e8ec
-  react-native-camera: 92877108e4c4d1d5a3f1c6f8733f1877ab1e8c1a
+  react-native-camera: c529629e3ecd017dcdacfd0355576ef489d9d198
   react-native-config: 55548054279d92e0e4566ea15a8b9b81028ec342
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: 6bb847e64f45a2d69c6173741111cfd95c669301
