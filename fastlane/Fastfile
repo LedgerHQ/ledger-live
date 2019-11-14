@@ -133,6 +133,11 @@ platform :ios do
     upload_beta
   end
 
+  desc "build without uploading"
+  lane :build_ipa do
+    build(development: true)
+  end
+
   desc "upload to Waldo"
   lane :upload_waldo do
     build(development: true)

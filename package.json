@@ -18,6 +18,7 @@
     "android:install": "./scripts/install-and-run-apk.sh",
     "ios": "react-native run-ios",
     "ios:internal": "bundle exec fastlane ios redo_beta --env production",
+    "ios:ipa": "bundle exec fastlane ios build_ipa --env production",
     "preios:internal": "bundle install",
     "ios:waldo": "bundle exec fastlane ios upload_waldo --env mock",
     "preios:waldo": "bundle install",
