@@ -2,7 +2,7 @@
 
 // $FlowFixMe not sure why this breaks in desktop side
 import { useEffect, useState } from "react";
-import type { Operation, Account } from "../../types";
+import type { Operation, AccountLike } from "../../types";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import { makeLRUCache } from "../../cache";
@@ -93,7 +93,7 @@ export const listBakers = async (
   return whitelistAddresses.map(addr => map[addr]).filter(Boolean);
 };
 
-export function getAccountDelegationSync(account: Account): ?Delegation {
+export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const op = account.operations.find(op => op.type === "DELEGATE");
   const pendingOp = !op
     ? account.pendingOperations.find(op => op.type === "DELEGATE")
@@ -110,12 +110,12 @@ export function getAccountDelegationSync(account: Account): ?Delegation {
   };
 }
 
-export function isAccountDelegating(account: Account): boolean {
+export function isAccountDelegating(account: AccountLike): boolean {
   return !!getAccountDelegationSync(account);
 }
 
 export async function loadAccountDelegation(
-  account: Account
+  account: AccountLike
 ): Promise<?Delegation> {
   const d = getAccountDelegationSync(account);
   if (!d) return Promise.resolve(null);
@@ -127,7 +127,7 @@ export async function loadAccountDelegation(
   };
 }
 
-export function useDelegation(account: Account): ?Delegation {
+export function useDelegation(account: AccountLike): ?Delegation {
   const [delegation, setDelegation] = useState(() =>
     getAccountDelegationSync(account)
   );
