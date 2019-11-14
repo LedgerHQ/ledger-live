@@ -17,6 +17,8 @@ import {
   getDerivationModesForCurrency
 } from "../derivation";
 import { isCurrencySupported } from "../currencies";
+import { getMainAccount } from "../account";
+import { getAccountBridge } from "../bridge";
 
 export const libcoreNoGo = [
   "ripple", // still WIP
@@ -47,6 +49,20 @@ export const getReceiveFlowError = (
     return new UnavailableTezosOriginatedAccountReceive("");
   }
 };
+
+export function canSend(
+  account: AccountLike,
+  parentAccount: ?Account
+): boolean {
+  try {
+    getAccountBridge(account, parentAccount).createTransaction(
+      getMainAccount(account, parentAccount)
+    );
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 export function canBeMigrated(account: Account) {
   try {

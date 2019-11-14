@@ -134,12 +134,6 @@ const prepareTransaction = async (
   };
 };
 
-const getCapabilities = () => ({
-  canDelegate: false,
-  canSync: true,
-  canSend: true
-});
-
 const currencyBridge: CurrencyBridge = {
   scanAccountsOnDevice,
   preload: () => Promise.resolve(),
@@ -152,8 +146,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   getTransactionStatus,
   startSync,
-  signAndBroadcast,
-  getCapabilities
+  signAndBroadcast
 };
 
 export default { currencyBridge, accountBridge };

@@ -129,12 +129,6 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const getCapabilities = () => ({
-  canDelegate: false,
-  canSync: true,
-  canSend: true
-});
-
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
@@ -147,8 +141,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   getTransactionStatus,
   startSync,
-  signAndBroadcast,
-  getCapabilities
+  signAndBroadcast
 };
 
 export default { currencyBridge, accountBridge };

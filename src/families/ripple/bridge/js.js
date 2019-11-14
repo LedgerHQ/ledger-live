@@ -35,7 +35,6 @@ import getAddress from "../../../hw/getAddress";
 import { open } from "../../../hw";
 import {
   apiForEndpointConfig,
-  defaultEndpoint,
   parseAPIValue,
   parseAPICurrencyObject,
   formatAPICurrencyXRP
@@ -704,27 +703,13 @@ const getTransactionStatus = async (a, t) => {
   });
 };
 
-const getCapabilities = () => ({
-  canDelegate: false,
-  canSync: true,
-  canSend: true
-});
-
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
   startSync,
-  signAndBroadcast,
-  getCapabilities,
-
-  getDefaultEndpointConfig: () => defaultEndpoint,
-
-  validateEndpointConfig: async endpointConfig => {
-    const api = apiForEndpointConfig(RippleAPI, endpointConfig);
-    await api.connect();
-  }
+  signAndBroadcast
 };
 
 export default { currencyBridge, accountBridge };

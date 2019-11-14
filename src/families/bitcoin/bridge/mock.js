@@ -84,20 +84,13 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const getCapabilities = () => ({
-  canDelegate: false,
-  canSync: true,
-  canSend: true
-});
-
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,
   prepareTransaction,
   startSync,
-  signAndBroadcast,
-  getCapabilities
+  signAndBroadcast
 };
 
 const currencyBridge: CurrencyBridge = {

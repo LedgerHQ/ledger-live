@@ -259,11 +259,11 @@ const currencyBridge: CurrencyBridge = {
   scanAccountsOnDevice
 };
 
-const createTransaction = () => ({
-  family: "tron",
-  amount: BigNumber(0),
-  recipient: ""
-});
+const createTransaction = a => {
+  throw new CurrencyNotSupported("tron currency not supported", {
+    currencyName: a.currency.name
+  });
+};
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
@@ -307,20 +307,13 @@ const signAndBroadcast = (a, t, deviceId) =>
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> =>
   Promise.resolve(t);
 
-const getCapabilities = () => ({
-  canDelegate: false,
-  canSync: true,
-  canSend: false
-});
-
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
   startSync,
-  signAndBroadcast,
-  getCapabilities
+  signAndBroadcast
 };
 
 export default { currencyBridge, accountBridge };

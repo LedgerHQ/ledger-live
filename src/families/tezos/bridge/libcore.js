@@ -213,20 +213,13 @@ const currencyBridge: CurrencyBridge = {
   scanAccountsOnDevice
 };
 
-const getCapabilities = () => ({
-  canDelegate: true,
-  canSync: true,
-  canSend: true
-});
-
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
   startSync,
-  signAndBroadcast,
-  getCapabilities
+  signAndBroadcast
 };
 
 export default { currencyBridge, accountBridge };
