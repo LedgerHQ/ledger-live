@@ -94,7 +94,9 @@ export const listBakers = async (
 };
 
 export function getAccountDelegationSync(account: AccountLike): ?Delegation {
-  const op = account.operations.find(op => op.type === "DELEGATE");
+  const op = account.operations.find(
+    op => !op.hasFailed && op.type === "DELEGATE"
+  );
   const pendingOp = !op
     ? account.pendingOperations.find(op => op.type === "DELEGATE")
     : null;
