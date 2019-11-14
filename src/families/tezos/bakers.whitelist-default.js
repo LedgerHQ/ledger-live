@@ -2,8 +2,10 @@
 
 // unfinished list...
 const whitelist = [
-  "tz1d6Fx42mYgVFnHUW8T8A7WBfJ6nD9pVok8",
-  "tz3adcvQaKXTCg12zbninqo3q8ptKKtDFTLv"
+  "tz3adcvQaKXTCg12zbninqo3q8ptKKtDFTLv",
+  "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
+  "tz1Z3KCf8CLGAYfvVWPEr562jDDyWkwNF7sT",
+  "tz1Scdr2HsZiQjc7bHMeBbmDRXYVvdhjJbBh"
 ];
 
 // we give no ordering preference. it's settled at module load time
