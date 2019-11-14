@@ -57,7 +57,7 @@ const calculateFees = makeLRUCache(
       t.gasLimit ? t.gasLimit.toString() : ""
     }_${t.fees ? t.fees.toString() : ""}_${
       t.storageLimit ? t.storageLimit.toString() : ""
-    }`
+    }_${String(t.useAllAmount)}`
 );
 
 const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
