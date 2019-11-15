@@ -3,6 +3,7 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddressBecauseDestinationIsAlsoSource
@@ -130,6 +131,10 @@ const getTransactionStatus = async (a, t) => {
         }
       }
     );
+  }
+
+  if (!errors.amount && subAcc && estimatedFees.gt(a.balance)) {
+    errors.amount = new NotEnoughBalanceInParentAccount();
   }
 
   let totalSpent = !t.useAllAmount
