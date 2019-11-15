@@ -78,10 +78,18 @@ const SendSummary = ({ account, parentAccount, navigation }: Props) => {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
+      status,
     });
 
     setHighFeesOpen(false);
-  }, [setHighFeesOpen, account, parentAccount, navigation, transaction]);
+  }, [
+    setHighFeesOpen,
+    status,
+    account,
+    parentAccount,
+    navigation,
+    transaction,
+  ]);
 
   const onRejectFees = useCallback(() => {
     setHighFeesOpen(false);
