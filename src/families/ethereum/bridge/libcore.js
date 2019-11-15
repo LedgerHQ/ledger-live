@@ -5,6 +5,7 @@ import {
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
+  NotEnoughBalance,
   GasLessThanEstimate
 } from "@ledgerhq/errors";
 import type { Account, AccountLike } from "../../../types";
@@ -135,6 +136,10 @@ const getTransactionStatus = async (a, t) => {
 
   if (!tokenAccount && amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
+  }
+
+  if (!errors.amount && amount.eq(0)) {
+    errors.amount = new NotEnoughBalance();
   }
 
   return Promise.resolve({

@@ -3,6 +3,7 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
+  NotEnoughBalanceToDelegate,
   NotEnoughBalanceInParentAccount,
   FeeNotLoaded,
   FeeTooHigh,
@@ -151,8 +152,17 @@ const getTransactionStatus = async (a, t) => {
     amount = BigNumber(0);
   }
 
-  if (t.mode === "send" && amount.gt(0) && estimatedFees.times(10).gt(amount)) {
-    warnings.feeTooHigh = new FeeTooHigh();
+  if (t.mode === "send") {
+    if (!errors.amount && amount.eq(0)) {
+      errors.amount = new NotEnoughBalance();
+    } else if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+      warnings.feeTooHigh = new FeeTooHigh();
+    }
+  } else {
+    // delegation case, we remap NotEnoughBalance to a more precise error
+    if (errors.amount instanceof NotEnoughBalance) {
+      errors.amount = new NotEnoughBalanceToDelegate();
+    }
   }
 
   return Promise.resolve({

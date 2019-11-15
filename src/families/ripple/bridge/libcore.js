@@ -13,6 +13,7 @@ import {
   FeeRequired,
   FeeTooHigh,
   InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
   NotEnoughSpendableBalance,
   NotEnoughBalanceBecauseDestinationNotCreated
 } from "@ledgerhq/errors";
@@ -97,6 +98,10 @@ const getTransactionStatus = async (a, t) => {
     if (recipientWarning) {
       warnings.recipient = recipientWarning;
     }
+  }
+
+  if (!errors.amount && amount.eq(0)) {
+    errors.amount = new NotEnoughBalance();
   }
 
   return Promise.resolve({
