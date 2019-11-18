@@ -80,7 +80,12 @@ const cache = makeLRUCache(
   () => ""
 );
 
-export const fetchAllBakers = () => cache();
+let _lastBakers;
+export const fetchAllBakers = async () => {
+  const r = await cache();
+  _lastBakers = r;
+  return r;
+};
 
 export const listBakers = async (
   whitelistAddresses: string[]
@@ -92,6 +97,12 @@ export const listBakers = async (
   });
   return whitelistAddresses.map(addr => map[addr]).filter(Boolean);
 };
+
+export function getBakerSync(addr: string): ?Baker {
+  if (_lastBakers) {
+    return _lastBakers.find(baker => baker.address === addr);
+  }
+}
 
 export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const op = account.operations.find(
@@ -116,13 +127,20 @@ export function isAccountDelegating(account: AccountLike): boolean {
   return !!getAccountDelegationSync(account);
 }
 
+export async function loadBaker(addr: string): Promise<?Baker> {
+  const cacheBaker = getBakerSync(addr);
+  if (cacheBaker) return Promise.resolve(cacheBaker);
+  const bakers = await cache();
+  const baker = bakers.find(baker => baker.address === addr);
+  return baker;
+}
+
 export async function loadAccountDelegation(
   account: AccountLike
 ): Promise<?Delegation> {
   const d = getAccountDelegationSync(account);
   if (!d) return Promise.resolve(null);
-  const bakers = await cache();
-  const baker = bakers.find(baker => baker.address === d.address);
+  const baker = await loadBaker(d.address);
   return {
     ...d,
     baker
@@ -137,6 +155,14 @@ export function useDelegation(account: AccountLike): ?Delegation {
     loadAccountDelegation(account).then(setDelegation);
   }, [account]);
   return delegation;
+}
+
+export function useBaker(addr: string): ?Baker {
+  const [baker, setBaker] = useState(() => getBakerSync(addr));
+  useEffect(() => {
+    loadBaker(addr).then(setBaker);
+  }, [addr]);
+  return baker;
 }
 
 export const asBaker = (data: mixed): ?Baker => {
