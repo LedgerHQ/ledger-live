@@ -2,6 +2,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import {
+  AmountRequired,
   NotEnoughBalance,
   NotEnoughBalanceToDelegate,
   NotEnoughBalanceInParentAccount,
@@ -154,7 +155,7 @@ const getTransactionStatus = async (a, t) => {
 
   if (t.mode === "send") {
     if (!errors.amount && amount.eq(0)) {
-      errors.amount = new NotEnoughBalance();
+      errors.amount = new AmountRequired();
     } else if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
       warnings.feeTooHigh = new FeeTooHigh();
     }

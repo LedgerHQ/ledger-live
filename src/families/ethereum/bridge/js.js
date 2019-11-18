@@ -7,6 +7,7 @@ import flatMap from "lodash/flatMap";
 import uniqBy from "lodash/uniqBy";
 import eip55 from "eip55";
 import {
+  AmountRequired,
   NotEnoughBalance,
   FeeNotLoaded,
   FeeTooHigh,
@@ -512,6 +513,9 @@ const getTransactionStatus = (a, t) => {
     errors.recipient = new InvalidAddress("", {
       currencyName: a.currency.name
     });
+  }
+  if (!errors.amount && amount.eq(0)) {
+    errors.amount = new AmountRequired();
   }
 
   return Promise.resolve({

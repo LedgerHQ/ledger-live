@@ -9,11 +9,11 @@ import { syncAccount } from "../../../libcore/syncAccount";
 import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import {
+  AmountRequired,
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
   InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughBalance,
   NotEnoughSpendableBalance,
   NotEnoughBalanceBecauseDestinationNotCreated
 } from "@ledgerhq/errors";
@@ -101,7 +101,7 @@ const getTransactionStatus = async (a, t) => {
   }
 
   if (!errors.amount && amount.eq(0)) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = new AmountRequired();
   }
 
   return Promise.resolve({

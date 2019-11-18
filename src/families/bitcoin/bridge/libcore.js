@@ -2,6 +2,7 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import {
+  AmountRequired,
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
@@ -99,6 +100,10 @@ const getTransactionStatus = async (a, t) => {
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
+  }
+
+  if (!errors.amount && amount.eq(0)) {
+    errors.amount = new AmountRequired();
   }
 
   return Promise.resolve({

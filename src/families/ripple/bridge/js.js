@@ -9,7 +9,7 @@ import bs58check from "ripple-bs58check";
 import { computeBinaryTransactionHash } from "ripple-hashes";
 import throttle from "lodash/throttle";
 import {
-  NotEnoughBalance,
+  AmountRequired,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   InvalidAddress,
@@ -696,7 +696,7 @@ const getTransactionStatus = async (a, t) => {
   }
 
   if (!errors.amount && amount.eq(0)) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = new AmountRequired();
   }
 
   return Promise.resolve({

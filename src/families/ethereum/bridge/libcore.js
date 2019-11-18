@@ -2,10 +2,10 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import {
+  AmountRequired,
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
-  NotEnoughBalance,
   GasLessThanEstimate
 } from "@ledgerhq/errors";
 import type { Account, AccountLike } from "../../../types";
@@ -139,7 +139,7 @@ const getTransactionStatus = async (a, t) => {
   }
 
   if (!errors.amount && amount.eq(0)) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = new AmountRequired();
   }
 
   return Promise.resolve({
