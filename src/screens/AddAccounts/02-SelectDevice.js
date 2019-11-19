@@ -8,6 +8,7 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import i18next from "i18next";
 
+import { prepareCurrency } from "../../bridge/cache";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
@@ -38,6 +39,13 @@ class AddAccountsSelectDevice extends Component<Props, State> {
       />
     ),
   };
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    const currency = navigation.getParam("currency");
+    // load ahead of time
+    prepareCurrency(currency);
+  }
 
   onSelectDevice = (meta: *) => {
     const { navigation } = this.props;

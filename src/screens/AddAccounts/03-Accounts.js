@@ -1,6 +1,8 @@
 // @flow
 
 import React, { PureComponent, createRef, useEffect } from "react";
+import { concat, from } from "rxjs";
+import { ignoreElements } from "rxjs/operators";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import i18next from "i18next";
@@ -33,6 +35,7 @@ import LText from "../../components/LText";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import { prepareCurrency } from "../../bridge/cache";
 
 const forceInset = { bottom: "always" };
 
@@ -119,37 +122,38 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const currency = navigation.getParam("currency");
     const deviceId = navigation.getParam("deviceId");
     const bridge = getCurrencyBridge(currency);
-    this.scanSubscription = bridge
-      .scanAccountsOnDevice(currency, deviceId)
-      .subscribe({
-        next: ({ account }) =>
-          this.setState(
-            ({ scannedAccounts, selectedIds }, { existingAccounts }) => {
-              const hasAlreadyBeenScanned = !!scannedAccounts.find(
-                a => account.id === a.id,
-              );
-              const hasAlreadyBeenImported = !!existingAccounts.find(
-                a => account.id === a.id,
-              );
-              const isNewAccount = isAccountEmpty(account);
-              if (!hasAlreadyBeenScanned) {
-                return {
-                  scannedAccounts: [...scannedAccounts, account],
-                  selectedIds:
-                    !hasAlreadyBeenImported && !isNewAccount
-                      ? uniq([...selectedIds, account.id])
-                      : selectedIds,
-                };
-              }
-              return null;
-            },
-          ),
-        complete: () => this.setState({ scanning: false }),
-        error: error => {
-          logger.critical(error);
-          this.setState({ error });
-        },
-      });
+    this.scanSubscription = concat(
+      from(prepareCurrency(currency)).pipe(ignoreElements()),
+      bridge.scanAccountsOnDevice(currency, deviceId),
+    ).subscribe({
+      next: ({ account }) =>
+        this.setState(
+          ({ scannedAccounts, selectedIds }, { existingAccounts }) => {
+            const hasAlreadyBeenScanned = !!scannedAccounts.find(
+              a => account.id === a.id,
+            );
+            const hasAlreadyBeenImported = !!existingAccounts.find(
+              a => account.id === a.id,
+            );
+            const isNewAccount = isAccountEmpty(account);
+            if (!hasAlreadyBeenScanned) {
+              return {
+                scannedAccounts: [...scannedAccounts, account],
+                selectedIds:
+                  !hasAlreadyBeenImported && !isNewAccount
+                    ? uniq([...selectedIds, account.id])
+                    : selectedIds,
+              };
+            }
+            return null;
+          },
+        ),
+      complete: () => this.setState({ scanning: false }),
+      error: error => {
+        logger.critical(error);
+        this.setState({ error });
+      },
+    });
   };
 
   restartSubscription = () => {

@@ -4,7 +4,6 @@ import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { Trans, translate } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -38,14 +37,9 @@ class RippleFeeRow extends Component<Props> {
   render() {
     const { account, transaction } = this.props;
     if (account.type !== "Account") return null;
+    const fee = transaction.fee;
+    const feeCustomUnit = transaction.feeCustomUnit;
 
-    const bridge = getAccountBridge(account);
-    const fee = bridge.getTransactionExtra(account, transaction, "fee");
-    const feeCustomUnit = bridge.getTransactionExtra(
-      account,
-      transaction,
-      "feeCustomUnit",
-    );
     return (
       <SummaryRow
         onPress={this.extraInfoFees}

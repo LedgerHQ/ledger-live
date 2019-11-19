@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import invariant from "invariant";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike, Transaction } from "@ledgerhq/live-common/lib/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { Trans, translate } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -33,7 +32,6 @@ class BitcoinFeePerByteRow extends Component<Props> {
 
   render() {
     const { account, transaction } = this.props;
-    const bridge = getAccountBridge(account);
     invariant(account.type === "Account", "No SubAccounts should be here.");
 
     return (
@@ -50,11 +48,7 @@ class BitcoinFeePerByteRow extends Component<Props> {
         <View style={{ alignItems: "flex-end" }}>
           <View style={styles.accountContainer}>
             <LText style={styles.valueText} tertiary>
-              {`${bridge.getTransactionExtra(
-                account,
-                transaction,
-                "feePerByte",
-              )} `}
+              {`${(transaction.feePerByte || "").toString()} `}
               <Trans i18nKey="common.satPerByte" />
             </LText>
 

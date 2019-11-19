@@ -55,20 +55,15 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
 
   items: Array<*>;
 
-  constructor({ account, navigation }) {
+  constructor({ navigation }) {
     super();
-    const bridge = getAccountBridge(account);
-    const transaction: Transaction = navigation.getParam("transaction");
+    const transaction = navigation.getParam("transaction");
 
     this.items = transaction.networkInfo
       ? transaction.networkInfo.feeItems.items
       : [];
 
-    const feePerByte = bridge.getTransactionExtra(
-      account,
-      transaction,
-      "feePerByte",
-    );
+    const feePerByte = transaction.feePerByte;
 
     const selectedItem =
       feePerByte &&
@@ -79,11 +74,7 @@ class BitcoinEditFeePerByte extends Component<Props, State> {
     const focusedItemKey = selectedItem ? selectedItem.key : "custom";
 
     this.state = {
-      feePerByte: bridge.getTransactionExtra(
-        account,
-        transaction,
-        "feePerByte",
-      ),
+      feePerByte,
       focusedItemKey,
     };
   }

@@ -18,7 +18,6 @@ import { TrackScreen } from "../../analytics";
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
 import AccountCurrencyRow from "./AccountCurrencyRow";
-import AccountNodeRow from "./AccountNodeRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
 import AccountAdvancedLogsRow from "./AccountAdvancedLogsRow";
@@ -78,9 +77,6 @@ class AccountSettings extends PureComponent<Props, State> {
             currency={account.currency}
             navigation={navigation}
           />
-          {account.currency.id === "ripple" ? (
-            <AccountNodeRow account={account} navigation={navigation} />
-          ) : null}
           <AccountAdvancedLogsRow account={account} navigation={navigation} />
         </View>
         <View style={styles.sectionRow}>
