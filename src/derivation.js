@@ -82,8 +82,7 @@ const modes = Object.freeze({
   },
   // default derivation of tezbox offerred to users
   tezbox: {
-    overridesDerivation: "44'/1729'/0'/0'",
-    isNonIterable: true,
+    overridesDerivation: "44'/1729'/<account>'/0'",
     libcoreConfig: {
       TEZOS_XPUB_CURVE: "SECP256K1" // FIXME bug in libcore? it should be ED25519
     }
