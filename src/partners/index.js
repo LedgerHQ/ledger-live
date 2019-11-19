@@ -56,6 +56,10 @@ export default [
     url: "https://partners.simplex.com/?partner=ledger"
   },
   {
+    id: "swft",
+    url: "http://swap.swftcoin.com/?sourceFlag=Ledger"
+  },
+  {
     id: "voyager",
     url: "https://go.onelink.me/4gTR/121986b9"
   }
