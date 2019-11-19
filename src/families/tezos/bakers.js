@@ -98,6 +98,21 @@ export const listBakers = async (
   return whitelistAddresses.map(addr => map[addr]).filter(Boolean);
 };
 
+export function useBakers(whitelistAddresses: string[]) {
+  const [bakers, setBakers] = useState([]);
+
+  useEffect(() => {
+    async function fetchBakers() {
+      const newBakers = await listBakers(whitelistAddresses);
+      setBakers(newBakers);
+    }
+
+    fetchBakers();
+  }, [whitelistAddresses]);
+
+  return bakers;
+}
+
 export function getBakerSync(addr: string): ?Baker {
   if (_lastBakers) {
     return _lastBakers.find(baker => baker.address === addr);
