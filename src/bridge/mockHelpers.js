@@ -103,7 +103,7 @@ export const signAndBroadcast = (
 export const isInvalidRecipient = (recipient: string) =>
   recipient.includes("invalid") || recipient.length <= 3;
 
-const substractOneYear = date =>
+const subtractOneYear = date =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
 export const scanAccountsOnDevice = (
@@ -127,7 +127,7 @@ export const scanAccountsOnDevice = (
           ? []
           : account.operations.map(operation => ({
               ...operation,
-              date: substractOneYear(operation.date)
+              date: subtractOneYear(operation.date)
             }));
         account.name = "";
         account.name = validateNameEdition(account);

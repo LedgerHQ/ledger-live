@@ -50,7 +50,7 @@ export type CounterValuesState = {
 };
 
 export type Input<State> = {
-  // aliases to remap tickers (e.g. WETH: ETH). default implementation used if not overriden.
+  // aliases to remap tickers (e.g. WETH: ETH). default implementation used if not overridden.
   tickerAliases?: { [_: string]: string },
 
   log?: (...args: *) => void,

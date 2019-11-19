@@ -56,7 +56,7 @@ export type Account = {
   xpub?: string,
 
   // Identify the derivation used. it allows us to map this to a derivation scheme.
-  // exemple of values: segwit | unsplit | segwit_unsplit | mew | eth_mew (eg for etc accounts on eth)
+  // example of values: segwit | unsplit | segwit_unsplit | mew | eth_mew (eg for etc accounts on eth)
   // the special value of '' means it's bip44 with purpose 44.
   derivationMode: DerivationMode,
 
@@ -69,7 +69,7 @@ export type Account = {
   freshAddress: string,
 
   // The path linked to freshAddress. to be used to validate with the device if it corresponds to freshAddress.
-  // exemple: 44'/0'/0'/0/0
+  // example: 44'/0'/0'/0/0
   // (deprecated - corresponds to freshAddresses[0].derivationPath)
   freshAddressPath: string,
 

@@ -545,7 +545,7 @@ function createCounterValues<State>({
     };
 
     poll = throttle(() => {
-      // we are always scheduling the next poll() (for automatic poll mecanism)
+      // we are always scheduling the next poll() (for automatic poll mechanism)
       // this is not in a setInterval because we don't want poll() to happen too often & always will push the next automatic call as far as possible
       this.schedulePoll(this.props.autopollInterval);
 

@@ -1,7 +1,7 @@
 // @flow
 
 export type Unit = {
-  // display name of a given unit (exemple: satoshi)
+  // display name of a given unit (example: satoshi)
   name: string,
   // string to use when formatting the unit. like 'BTC' or 'USD'
   code: string,

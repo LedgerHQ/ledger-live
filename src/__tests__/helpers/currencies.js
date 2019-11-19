@@ -90,7 +90,7 @@ test("fiats list elements are correct", () => {
   }
 });
 
-test("erc20 are all consistant with those on ledgerjs side", () => {
+test("erc20 are all consistent with those on ledgerjs side", () => {
   const normalList = listTokens();
   const delistedList = listTokens({ withDelisted: true });
   expect(delistedList.length).toBeGreaterThan(normalList.length);
