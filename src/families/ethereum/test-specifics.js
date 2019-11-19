@@ -37,6 +37,7 @@ export default () => {
     test("valid recipient OR valid recipient lowercase should succeed", async () => {
       let t = {
         ...bridge.createTransaction(account),
+        amount: BigNumber(1),
         recipient: "0x5df0C369641B8Af3c7e9ae076E5466eF678319Cd"
       };
       let status = await bridge.getTransactionStatus(account, t);
@@ -46,6 +47,7 @@ export default () => {
       expect(status.errors.recipient).toBeUndefined();
       t = {
         ...bridge.createTransaction(account),
+        amount: BigNumber(1),
         recipient: "0x5df0c369641b8af3c7e9ae076e5466ef678319cd"
       };
       t = await bridge.prepareTransaction(account, t);

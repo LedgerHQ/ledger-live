@@ -11,33 +11,6 @@ const dataset: DatasetTest = {
       accounts: [
         {
           transactions: [
-            // no longer supported
-            /*
-            {
-              name: "to kt account",
-              transaction: fromTransactionRaw({
-                amount: "1000000",
-                recipient: "KT1Mfe3rRhQw9KnEUZzoxkhmyHXBeN3zCzXL",
-                useAllAmount: false,
-                family: "tezos",
-                mode: "send",
-                networkInfo: {
-                  family: "tezos",
-                  fees: "1420"
-                },
-                fees: "1420",
-                gasLimit: "10600",
-                storageLimit: "300"
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
-                estimatedFees: BigNumber("1420"),
-                amount: BigNumber("1000000"),
-                totalSpent: BigNumber("1001420")
-              }
-            },
-            */
             {
               name: "regular tx",
               transaction: fromTransactionRaw({
@@ -54,9 +27,9 @@ const dataset: DatasetTest = {
               expectedStatus: {
                 errors: {},
                 warnings: {},
-                estimatedFees: BigNumber("6150"),
+                estimatedFees: BigNumber("3075"),
                 amount: BigNumber("1230000"),
-                totalSpent: BigNumber("1236150")
+                totalSpent: BigNumber("1233075")
               }
             },
             {
@@ -137,9 +110,7 @@ const dataset: DatasetTest = {
               expectedStatus: {
                 errors: {},
                 warnings: {},
-                estimatedFees: BigNumber("8990"),
-                amount: BigNumber("0"),
-                totalSpent: BigNumber("8990")
+                amount: BigNumber("0")
               }
             }
           ],

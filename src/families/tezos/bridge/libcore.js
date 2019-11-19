@@ -93,6 +93,11 @@ const getTransactionStatus = async (a, t) => {
     ? null
     : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
 
+  invariant(
+    t.mode === "send" || !subAcc,
+    "delegation features not supported for sub accounts"
+  );
+
   const account = subAcc || a;
 
   if (t.mode !== "undelegate") {
