@@ -1259,9 +1259,9 @@
     events "^3.0.0"
 
 "@ledgerhq/live-common@^9.0.0-alpha.2":
-  version "9.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.2.tgz#b9eed4a2e9c9306a6d247fc476a0082f55f7c05a"
-  integrity sha512-82VvTuA0svf/qDq3rS4imV087/sCxWo40JxZbRf1Db4YHrdqdJdSl19MQOZofz6I9WRoBLWfhLCwHlaF4lMzGg==
+  version "9.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.9.tgz#9b9bb783dda982d65739bea277aee5a27b0d1300"
+  integrity sha512-FinBpjyk0dBJ0UQx/l6zaS2WKqshvBY5//G2Doz+oLgSF6L42wgB596+jdYyW53hHdvDUoTXPVw0TqGMcQuIBQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "4"
