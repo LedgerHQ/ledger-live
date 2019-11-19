@@ -471,7 +471,7 @@ export default (arg: {
         if (e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS) {
           return new NotEnoughBalance();
         } else {
-          // re-deserialize error if it was a serialized errro
+          // re-deserialize error if it was a serialized error
           try {
             const m = input.message.match(/[^{]*({.*}).*/);
             if (m) {

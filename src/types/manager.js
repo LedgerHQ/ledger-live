@@ -1,7 +1,7 @@
 // @flow
 import type { CryptoCurrency } from "./currencies";
 
-// FIXME we need to clearly differenciate what is API types and what is our inner own type
+// FIXME we need to clearly differentiate what is API types and what is our inner own type
 
 export type Id = number;
 

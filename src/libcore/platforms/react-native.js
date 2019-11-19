@@ -30,7 +30,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
       }
       const Clz = mappings[id];
       if (!Clz) {
-        console.warn(`Unkown wrapping '${id}'`);
+        console.warn(`Unknown wrapping '${id}'`);
         return ref;
       }
       return new Clz(ref);

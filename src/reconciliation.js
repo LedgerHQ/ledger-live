@@ -47,7 +47,7 @@ export async function minimalOperationsBuilder<CO>(
     const existingOp = findExistingOp(existingOps, newOp);
 
     if (existingOp && !immutableOpCmpDoneOnce) {
-      // an Operation is supposely immutable.
+      // an Operation is supposedly immutable.
       if (existingOp.blockHeight !== newOp.blockHeight) {
         // except for blockHeight that can temporarily be null
         operations.push(newOp);
@@ -57,7 +57,7 @@ export async function minimalOperationsBuilder<CO>(
         // we still check the first existing op we meet...
         if (!sameOp(existingOp, newOp)) {
           // this implement a failsafe in case an op changes (when we fix bugs)
-          // tradeoff: in such case, we assume all existingOps are to trash
+          // trade-off: in such case, we assume all existingOps are to trash
           console.warn("op mismatch. doing a full clear cache.");
           existingOps = [];
           operations.push(newOp);
@@ -72,7 +72,7 @@ export async function minimalOperationsBuilder<CO>(
       const rest = existingOps.slice(j);
       if (rest.length !== i + 1) {
         // if libcore happen to have different number of ops that what we have,
-        // we actualy need to continue because we don't know where hole will be,
+        // we actually need to continue because we don't know where hole will be,
         // but we can keep existingOp
         operations.push(existingOp);
       } else {
