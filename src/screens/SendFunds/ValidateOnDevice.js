@@ -87,11 +87,13 @@ const ValidateOnDevice = ({
         </View>
 
         <View style={styles.dataRows}>
-          <DataRow
-            label={<Trans i18nKey="send.validation.amount" />}
-            unit={unit}
-            value={amount}
-          />
+          {!amount.isZero() ? (
+            <DataRow
+              label={<Trans i18nKey="send.validation.amount" />}
+              unit={unit}
+              value={amount}
+            />
+          ) : null}
           {!estimatedFees.isZero() ? (
             <DataRow
               label={<Trans i18nKey="send.validation.fees" />}

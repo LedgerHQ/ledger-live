@@ -12,6 +12,7 @@ import {
   isAccountEmpty,
   groupAccountOperationsByDay,
   getAccountCurrency,
+  getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
 import type {
   TokenAccount,
@@ -51,6 +52,8 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import Touchable from "../../components/Touchable";
 import type { Item } from "../../components/Graph/types";
 import SubAccountsList from "./SubAccountsList";
+import perFamilyAccountHeader from "../../generated/AccountHeader";
+import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 
 type Props = {
   useCounterValue: boolean,
@@ -190,13 +193,23 @@ class AccountScreen extends PureComponent<Props, State> {
     } = this.props;
 
     if (!account) return null;
+    const mainAccount = getMainAccount(account, parentAccount);
 
     const empty = isAccountEmpty(account);
     const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
+    const AccountHeader = perFamilyAccountHeader[mainAccount.currency.family];
+    const AccountBodyHeader =
+      perFamilyAccountBodyHeader[mainAccount.currency.family];
+
     return (
       <View style={styles.header}>
         <Header accountId={account.id} />
+
+        {!empty && AccountHeader ? (
+          <AccountHeader account={account} parentAccount={parentAccount} />
+        ) : null}
+
         {empty ? null : (
           <AccountGraphCard
             account={account}
@@ -212,11 +225,12 @@ class AccountScreen extends PureComponent<Props, State> {
           />
         )}
         {empty ? null : (
-          <AccountActions
-            accountId={account.id}
-            parentId={parentAccount && parentAccount.id}
-          />
+          <AccountActions account={account} parent={parentAccount} />
         )}
+
+        {!empty && AccountBodyHeader ? (
+          <AccountBodyHeader account={account} parentAccount={parentAccount} />
+        ) : null}
         {!empty && account.type === "Account" && account.subAccounts ? (
           <SubAccountsList
             accountId={account.id}

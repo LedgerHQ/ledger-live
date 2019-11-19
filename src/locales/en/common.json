@@ -1224,5 +1224,31 @@
   },
   "StepLegacyModal": {
     "description": "Imported accounts only synchronize with the blockchain. Ledger Live does not synchronize accounts between mobile and desktop."
+  },
+  "tezos": {
+    "AccountHeader": {
+      "title": "You can earn staking rewards by delegating your account",
+      "btn": "Earn rewards"
+    }
+  },
+  "delegation": {
+    "delegationSendWarnDesc": "The amount to be sent will be deducted from the balance of your delegated account.",
+    "delegationReceiveWarnDesc": "The amount received on a delegated account will be added to the total staked amount. Choose another account if you want to avoid this.",
+    "delegation": "Delegation",
+    "viewDetails": "View details",
+    "validator": "Validator",
+    "validatorAddress": "Validator address",
+    "delegatedAccount": "Delegated account",
+    "duration": "Duration",
+    "transactionID": "Transaction ID",
+    "receive": "Receive more",
+    "changeValidator": "Change validator",
+    "endDelegation": "End delegation",
+    "durationForDays0": "Just now",
+    "durationForDays": "For a day",
+    "durationForDays_plural": "For {{count}} days",
+    "durationDays0": "Just now",
+    "durationDays": "1 day",
+    "durationDays_plural": "{{count}} days"
   }
 }

@@ -97,10 +97,7 @@ const SubAccountsList = ({
   const renderHeader = useCallback(
     () => (
       <View style={styles.header}>
-        <LText
-          fontWeight="500"
-          style={{ color: colors.darkBlue, fontSize: 16 }}
-        >
+        <LText semiBold style={{ color: colors.darkBlue, fontSize: 16 }}>
           <Trans
             i18nKey={isToken ? "common.token" : "common.subaccount"}
             count={subAccounts.length}

@@ -14,7 +14,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import type { T } from "../../types/common";
 
 import KeyboardView from "../../components/KeyboardView";
-import EditFeeUnit from "../EditFeeUnit";
+import EditFeeUnit from "../../components/EditFeeUnit";
 
 const forceInset = { bottom: "always" };
 

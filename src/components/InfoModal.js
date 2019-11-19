@@ -20,15 +20,27 @@ type BulletItem = {
 
 type Props = ModalProps & {
   id?: string,
-  title: string | React$Element<*>,
+  title?: string | React$Element<*>,
   desc: string | React$Element<*>,
-  bullets: BulletItem[],
+  bullets?: BulletItem[],
   Icon?: React$ComponentType<*>,
+  withCancel?: boolean,
+  onContinue?: () => void,
 };
 
 class InfoModal extends PureComponent<Props> {
   render() {
-    const { isOpened, onClose, id, title, desc, bullets, Icon } = this.props;
+    const {
+      isOpened,
+      onClose,
+      id,
+      title,
+      desc,
+      bullets,
+      Icon,
+      withCancel,
+      onContinue,
+    } = this.props;
     return (
       <BottomModal
         id={id}
@@ -42,19 +54,33 @@ class InfoModal extends PureComponent<Props> {
         <LText style={styles.modalTitle} semiBold>
           {title}
         </LText>
-        <LText style={styles.modalDesc}>{desc}</LText>
-        <View style={styles.bulletsContainer}>
-          {bullets.map(b => (
-            <BulletLine key={b.key}>{b.val}</BulletLine>
-          ))}
+        {desc ? <LText style={styles.modalDesc}>{desc}</LText> : null}
+        {bullets ? (
+          <View style={styles.bulletsContainer}>
+            {bullets.map(b => (
+              <BulletLine key={b.key}>{b.val}</BulletLine>
+            ))}
+          </View>
+        ) : null}
+
+        <View style={styles.footer}>
+          {withCancel ? (
+            <Button
+              event={(id || "") + "InfoModalClose"}
+              type="secondary"
+              title={<Trans i18nKey="common.cancel" />}
+              containerStyle={[styles.modalBtn, { marginRight: 16 }]}
+              onPress={onClose}
+            />
+          ) : null}
+          <Button
+            event={(id || "") + "InfoModalGotIt"}
+            type="primary"
+            title={<Trans i18nKey="common.gotit" />}
+            containerStyle={styles.modalBtn}
+            onPress={onContinue || onClose}
+          />
         </View>
-        <Button
-          event="InfoModalGotIt"
-          type="primary"
-          title={<Trans i18nKey="common.gotit" />}
-          containerStyle={styles.modalBtn}
-          onPress={onClose}
-        />
       </BottomModal>
     );
   }
@@ -102,9 +128,13 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     textAlign: "left",
   },
-  modalBtn: {
+  footer: {
     alignSelf: "stretch",
-    marginTop: 24,
+    paddingTop: 24,
+    flexDirection: "row",
+  },
+  modalBtn: {
+    flex: 1,
   },
 });
 

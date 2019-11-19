@@ -78,3 +78,5 @@ yarn-error.log*
 third-party/
 
 xliffs/
+
+src/generated/
