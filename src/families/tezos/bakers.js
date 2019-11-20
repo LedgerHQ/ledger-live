@@ -16,16 +16,16 @@ const capacityStatuses: { [_: CapacityStatus]: * } = {
 
 export type CapacityStatus = $Keys<typeof capacityStatuses>;
 
-export type Baker = {
+export type Baker = {|
   address: string,
   name: string,
   logoURL: string,
   nominalYield: string,
   capacityStatus: CapacityStatus
-};
+|};
 
 // type used by UI to facilitate business logic of current delegation data
-export type Delegation = {
+export type Delegation = {|
   // delegator address
   address: string,
   // if not defined, we need to render "Unknown" on the UI. we don't know who is delegator.
@@ -33,8 +33,12 @@ export type Delegation = {
   // operation related to delegation (to know the date info)
   operation: Operation,
   // true if the delegation is pending (optimistic update)
-  isPending: boolean
-};
+  isPending: boolean,
+  // true if a receive should inform it will top up the delegation
+  receiveShouldWarnDelegation: boolean,
+  // true if a send should inform it will top down the delegation
+  sendShouldWarnDelegation: boolean
+|};
 
 const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
@@ -131,11 +135,20 @@ export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   if (!operation || !operation.recipients[0]) {
     return null;
   }
+
+  const recentOps = account.operations
+    .filter(op => op.date > operation.date)
+    .concat(account.pendingOperations);
+  const sendShouldWarnDelegation = !recentOps.some(op => op.type === "OUT");
+  const receiveShouldWarnDelegation = !recentOps.some(op => op.type === "IN");
+
   return {
     isPending: !!pendingOp,
     operation,
     address: operation.recipients[0],
-    baker: null
+    baker: null,
+    sendShouldWarnDelegation,
+    receiveShouldWarnDelegation
   };
 }
 
