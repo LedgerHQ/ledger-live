@@ -164,6 +164,12 @@ class PortfolioScreen extends Component<
     this.setState({ isModalOpened: false });
   };
 
+  // componentDidMount() {
+  //   this.props.navigation.navigate("DelegationSummary", {
+  //     accountId: this.props.accounts.find(a => a.currency.id === "tezos").id,
+  //   });
+  // }
+
   render() {
     const {
       navigation,

@@ -6,11 +6,11 @@ import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
-import ValidateError from "../../components/ValidateError";
-import { urls } from "../../config/urls";
+import { accountAndParentScreenSelector } from "../../../reducers/accounts";
+import ValidateError from "../../../components/ValidateError";
+import { TrackScreen } from "../../../analytics";
+import colors from "../../../colors";
+import { urls } from "../../../config/urls";
 
 const forceInset = { bottom: "always" };
 
@@ -56,7 +56,7 @@ class ValidationError extends Component<Props> {
 
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="SendFunds" name="ValidationError" />
+        <TrackScreen category="DelegationFlow" name="ValidationError" />
         <ValidateError
           error={error}
           onRetry={this.retry}

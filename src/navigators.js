@@ -446,10 +446,14 @@ PasswordModifyFlow.navigationOptions = {
 };
 
 const sendScreens = {};
+const baseScreens = {};
 
 Object.values(perFamilyScreens).forEach(obj => {
   if (obj && obj.sendScreens) {
     Object.assign(sendScreens, obj.sendScreens);
+  }
+  if (obj && obj.baseScreens) {
+    Object.assign(baseScreens, obj.baseScreens);
   }
 });
 
@@ -479,6 +483,7 @@ const BaseNavigator = createStackNavigator(
     // $FlowFixMe
     FallbackCameraSend,
     ...sendScreens,
+    ...baseScreens,
   },
   {
     mode: "modal",

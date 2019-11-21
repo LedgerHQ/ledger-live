@@ -1,12 +1,11 @@
 // @flow
-import React, { PureComponent } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
+import { Trans, translate } from "react-i18next";
 import type {
-  Unit,
   Account,
   AccountLike,
+  Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
 import {
@@ -16,54 +15,43 @@ import {
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 
-import colors from "../../colors";
-
-import LText from "../../components/LText";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
-import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import getWindowDimensions from "../../logic/getWindowDimensions";
+import colors from "../colors";
+import LText from "./LText";
+import DeviceNanoAction from "./DeviceNanoAction";
+import VerifyAddressDisclaimer from "./VerifyAddressDisclaimer";
+import getWindowDimensions from "../logic/getWindowDimensions";
+import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
+import { DataRowUnitValue } from "./ValidateOnDeviceDataRow";
 
 type Props = {
   modelId: DeviceModelId,
   wired: boolean,
   status: TransactionStatus,
+  transaction: Transaction,
   account: AccountLike,
   parentAccount: ?Account,
+  t: *,
 };
 
 const { width } = getWindowDimensions();
 
-class DataRow extends PureComponent<{
-  label: *,
-  value: BigNumber,
-  unit: Unit,
-}> {
-  render() {
-    const { label, value, unit } = this.props;
-    return (
-      <View style={styles.dataRow}>
-        <LText numberOfLines={1} style={styles.dataRowLabel}>
-          {label}
-        </LText>
-        <LText tertiary style={styles.dataRowValue}>
-          <CurrencyUnitValue unit={unit} value={value} disableRounding />
-        </LText>
-      </View>
-    );
-  }
-}
 const ValidateOnDevice = ({
   modelId,
   wired,
   account,
   parentAccount,
   status,
+  transaction,
+  t,
 }: Props) => {
   const { amount, estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);
   const mainAccountUnit = getAccountUnit(mainAccount);
   const unit = getAccountUnit(account);
+  const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
+  const Pre = r && r.pre;
+  const Post = r && r.post;
+  const mode = t(`TransactionConfirm.modes.${transaction.mode || "send"}`);
 
   return (
     <View style={styles.root}>
@@ -80,32 +68,50 @@ const ValidateOnDevice = ({
         <View style={styles.titleContainer}>
           <LText secondary semiBold style={styles.title}>
             <Trans
-              i18nKey="send.validation.title"
+              i18nKey="ValidateOnDevice.title"
               values={getDeviceModel(modelId)}
             />
           </LText>
         </View>
 
         <View style={styles.dataRows}>
+          {Pre ? (
+            <Pre
+              account={account}
+              mainAccount={mainAccount}
+              transaction={transaction}
+              status={status}
+            />
+          ) : null}
+
           {!amount.isZero() ? (
-            <DataRow
+            <DataRowUnitValue
               label={<Trans i18nKey="send.validation.amount" />}
               unit={unit}
               value={amount}
             />
           ) : null}
           {!estimatedFees.isZero() ? (
-            <DataRow
+            <DataRowUnitValue
               label={<Trans i18nKey="send.validation.fees" />}
               unit={mainAccountUnit}
               value={estimatedFees}
+            />
+          ) : null}
+
+          {Post ? (
+            <Post
+              account={account}
+              mainAccount={mainAccount}
+              transaction={transaction}
+              status={status}
             />
           ) : null}
         </View>
       </View>
 
       <VerifyAddressDisclaimer
-        text={<Trans i18nKey="send.validation.disclaimer" />}
+        text={<Trans i18nKey="ValidateOnDevice.warning" values={{ mode }} />}
       />
     </View>
   );
@@ -119,25 +125,6 @@ const styles = StyleSheet.create({
   dataRows: {
     marginVertical: 24,
     alignSelf: "stretch",
-  },
-  dataRow: {
-    padding: 12,
-    borderRadius: 4,
-    backgroundColor: colors.lightGrey,
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  dataRowLabel: {
-    color: colors.grey,
-    textAlign: "left",
-    fontSize: 14,
-    paddingRight: 16,
-  },
-  dataRowValue: {
-    color: colors.darkBlue,
-    fontSize: 14,
-    flex: 1,
-    textAlign: "right",
   },
   container: {
     flex: 1,
@@ -162,4 +149,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ValidateOnDevice;
+export default translate()(ValidateOnDevice);

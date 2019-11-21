@@ -10,7 +10,7 @@ export const SendActionDefault = ({
   style,
 }: {
   onPress: () => void,
-  style: *,
+  style?: *,
 }) => (
   <Button
     event="AccountSend"
@@ -27,7 +27,7 @@ export const ReceiveActionDefault = ({
   style,
 }: {
   onPress: () => void,
-  style: *,
+  style?: *,
 }) => (
   <Button
     event="AccountReceive"

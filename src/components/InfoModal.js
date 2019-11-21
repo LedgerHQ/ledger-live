@@ -26,6 +26,9 @@ type Props = ModalProps & {
   Icon?: React$ComponentType<*>,
   withCancel?: boolean,
   onContinue?: () => void,
+  children?: React$Node,
+  confirmLabel?: string,
+  confirmProps?: *,
 };
 
 class InfoModal extends PureComponent<Props> {
@@ -40,6 +43,9 @@ class InfoModal extends PureComponent<Props> {
       Icon,
       withCancel,
       onContinue,
+      children,
+      confirmLabel,
+      confirmProps,
     } = this.props;
     return (
       <BottomModal
@@ -62,6 +68,7 @@ class InfoModal extends PureComponent<Props> {
             ))}
           </View>
         ) : null}
+        {children}
 
         <View style={styles.footer}>
           {withCancel ? (
@@ -76,9 +83,10 @@ class InfoModal extends PureComponent<Props> {
           <Button
             event={(id || "") + "InfoModalGotIt"}
             type="primary"
-            title={<Trans i18nKey="common.gotit" />}
+            title={confirmLabel || <Trans i18nKey="common.gotit" />}
             containerStyle={styles.modalBtn}
             onPress={onContinue || onClose}
+            {...confirmProps}
           />
         </View>
       </BottomModal>

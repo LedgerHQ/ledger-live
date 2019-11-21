@@ -6,6 +6,7 @@ import { StyleSheet, Image, View } from "react-native";
 type Props = {
   left: React$Node,
   right: React$Node,
+  undelegation?: boolean,
 };
 
 const styles = StyleSheet.create({
@@ -20,14 +21,23 @@ const styles = StyleSheet.create({
     height: 49,
     margin: 10,
   },
+  undelegationImage: {
+    width: 96,
+    height: 26,
+    margin: 10,
+  },
 });
 
-const DelegatingContainer = ({ left, right }: Props) => (
+const DelegatingContainer = ({ left, right, undelegation }: Props) => (
   <View style={styles.header}>
     {left}
     <Image
-      style={styles.delegationImage}
-      source={require("./delegation.png")}
+      style={undelegation ? styles.undelegationImage : styles.delegationImage}
+      source={
+        undelegation
+          ? require("./undelegation.png")
+          : require("./delegation.png")
+      }
     />
     {right}
   </View>

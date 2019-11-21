@@ -119,7 +119,7 @@ const Property = ({
   children,
   last,
 }: {
-  label: string,
+  label: React$Node,
   children: React$Node,
   last?: boolean,
 }) => (
@@ -134,13 +134,15 @@ const Property = ({
 const FooterBtn = ({
   label,
   icon,
+  event,
   onPress,
 }: {
-  label: string,
+  label: React$Node,
   icon: React$Node,
+  event: *,
   onPress: () => void,
 }) => (
-  <Touchable style={styles.footerBtn} onPress={onPress}>
+  <Touchable event={event} style={styles.footerBtn} onPress={onPress}>
     {icon}
     <LText semiBold style={styles.footerBtnLabel}>
       {label}
@@ -180,7 +182,7 @@ const DelegationDetailsModal = ({
   }, [txURL]);
 
   const onReceive = useCallback(() => {
-    navigation.navigate("SendSelectRecipient", {
+    navigation.navigate("ReceiveConnectDevice", {
       accountId,
       parentId,
     });
@@ -188,6 +190,7 @@ const DelegationDetailsModal = ({
   }, [accountId, parentId, navigation, onClose]);
 
   const onChangeValidator = useCallback(() => {
+    // FIXME how to get rid of Started step in nav stack?
     navigation.navigate("DelegationSummary", {
       accountId,
       parentId,
@@ -196,6 +199,7 @@ const DelegationDetailsModal = ({
   }, [accountId, parentId, navigation, onClose]);
 
   const onEndDelegation = useCallback(() => {
+    // FIXME how to get rid of Started step in nav stack?
     navigation.navigate("DelegationSummary", {
       accountId,
       parentId,
@@ -212,7 +216,11 @@ const DelegationDetailsModal = ({
       style={styles.modal}
     >
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <Touchable style={styles.close} onPress={onClose}>
+        <Touchable
+          event="DelegationDetailsModalClose"
+          style={styles.close}
+          onPress={onClose}
+        >
           <Circle size={32} bg={colors.lightFog}>
             <Close size={16} color={colors.grey} />
           </Circle>
@@ -242,7 +250,7 @@ const DelegationDetailsModal = ({
           </LText>
         </View>
 
-        <View style={styles.body}>
+        <View>
           {baker ? (
             <Property label={<Trans i18nKey="delegation.validator" />}>
               <LText
@@ -256,7 +264,7 @@ const DelegationDetailsModal = ({
             </Property>
           ) : null}
           <Property label={<Trans i18nKey="delegation.validatorAddress" />}>
-            <Touchable onPress={onOpenBaker}>
+            <Touchable event="DelegationDetailsOpenBaker" onPress={onOpenBaker}>
               <LText
                 semiBold
                 style={[
@@ -294,7 +302,10 @@ const DelegationDetailsModal = ({
             </LText>
           </Property>
           <Property last label={<Trans i18nKey="delegation.transactionID" />}>
-            <Touchable onPress={onOpenTransaction}>
+            <Touchable
+              event="DelegationDetailsOpenTx"
+              onPress={onOpenTransaction}
+            >
               <LText
                 semiBold
                 style={[
@@ -310,42 +321,47 @@ const DelegationDetailsModal = ({
           </Property>
         </View>
 
-        <View style={styles.footer}>
-          <FooterBtn
-            label={<Trans i18nKey="delegation.receive" />}
-            icon={
-              <Circle bg={rgba(colors.live, 0.2)} size={48}>
-                <IconReceive size={16} color={colors.live} />
-              </Circle>
-            }
-            onPress={onReceive}
-          />
-          <FooterBtn
-            label={<Trans i18nKey="delegation.changeValidator" />}
-            icon={
-              <Circle bg={rgba(colors.live, 0.2)} size={48}>
-                <Icon size={16} name="edit-2" color={colors.live} />
-              </Circle>
-            }
-            onPress={onChangeValidator}
-          />
-          <FooterBtn
-            label={<Trans i18nKey="delegation.endDelegation" />}
-            icon={
-              <Circle bg={rgba(colors.alert, 0.2)} size={48}>
-                <View
-                  style={{
-                    borderRadius: 4,
-                    backgroundColor: colors.alert,
-                    width: 16,
-                    height: 16,
-                  }}
-                />
-              </Circle>
-            }
-            onPress={onEndDelegation}
-          />
-        </View>
+        {account.type !== "Account" ? null : (
+          <View style={styles.footer}>
+            <FooterBtn
+              event="DelegationDetailsReceive"
+              label={<Trans i18nKey="delegation.receive" />}
+              icon={
+                <Circle bg={rgba(colors.live, 0.2)} size={48}>
+                  <IconReceive size={16} color={colors.live} />
+                </Circle>
+              }
+              onPress={onReceive}
+            />
+            <FooterBtn
+              event="DelegationDetailsChangeValidator"
+              label={<Trans i18nKey="delegation.changeValidator" />}
+              icon={
+                <Circle bg={rgba(colors.live, 0.2)} size={48}>
+                  <Icon size={16} name="edit-2" color={colors.live} />
+                </Circle>
+              }
+              onPress={onChangeValidator}
+            />
+            <FooterBtn
+              event="DelegationDetailsUndelegate"
+              label={<Trans i18nKey="delegation.endDelegation" />}
+              icon={
+                <Circle bg={rgba(colors.alert, 0.2)} size={48}>
+                  <View
+                    style={{
+                      borderRadius: 4,
+                      backgroundColor: colors.alert,
+                      width: 16,
+                      height: 16,
+                    }}
+                  />
+                </Circle>
+              }
+              onPress={onEndDelegation}
+            />
+          </View>
+        )}
       </SafeAreaView>
     </BottomModal>
   );

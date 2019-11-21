@@ -28,6 +28,7 @@ export default {
   fog: "#D8D8D8",
   white: "#ffffff",
   green: "rgb(102, 190, 84)",
+  ledgerGreen: "#41ccb4",
   black: "#000000",
   orange: "#ff7701",
   yellow: "#ffd24a",

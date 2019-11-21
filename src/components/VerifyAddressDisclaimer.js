@@ -17,6 +17,8 @@ type Props = {
   action?: React$Node,
 };
 
+// FIXME this component should be renamed to something more generic!
+// on desktop, we call it warnbox
 class VerifyAddressDisclaimer extends PureComponent<Props> {
   static defaultProps = {
     unsafe: false,

@@ -11,7 +11,7 @@ import LText from "./LText";
 
 type Props = {
   title: React$Node,
-  subtitle: React$Node,
+  subtitle?: React$Node,
   navigation: { emit: (event: string) => void } & NavigationScreenProp<*>,
 };
 

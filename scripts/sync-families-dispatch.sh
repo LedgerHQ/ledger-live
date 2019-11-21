@@ -5,6 +5,7 @@ cd $(dirname $0)
 
 targets="\
 accountActions.js \
+TransactionConfirmFields.js \
 AccountHeader.js \
 AccountBodyHeader.js \
 SendAmountFields.js \

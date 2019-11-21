@@ -58,7 +58,7 @@ const TezosAccountHeader = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const backgroundColor = getCurrencyColor(mainAccount.currency);
 
-  if (isAccountDelegating(account)) return null;
+  if (isAccountDelegating(account) || account.type !== "Account") return null;
   return (
     <View style={[styles.banner, { backgroundColor }]}>
       <LText semiBold style={styles.title}>

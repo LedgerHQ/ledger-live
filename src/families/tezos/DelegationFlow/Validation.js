@@ -1,4 +1,7 @@
 /* @flow */
+
+// FIXME this step to be shared with send as much as possible
+
 import React from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
@@ -13,15 +16,15 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import { updateAccountWithUpdater } from "../../actions/accounts";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
-import StepHeader from "../../components/StepHeader";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import ValidateOnDevice from "../../components/ValidateOnDevice";
-import SkipLock from "../../components/behaviour/SkipLock";
-import { useSignWithDevice } from "../../logic/screenTransactionHooks";
+import { updateAccountWithUpdater } from "../../../actions/accounts";
+import { accountAndParentScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "../../../analytics";
+import colors from "../../../colors";
+import StepHeader from "../../../components/StepHeader";
+import PreventNativeBack from "../../../components/PreventNativeBack";
+import ValidateOnDevice from "../../../components/ValidateOnDevice";
+import SkipLock from "../../../components/behaviour/SkipLock";
+import { useSignWithDevice } from "../../../logic/screenTransactionHooks";
 
 const forceInset = { bottom: "always" };
 
@@ -48,7 +51,7 @@ const Validation = ({
   updateAccountWithUpdater,
 }: Props) => {
   const [signing, signed] = useSignWithDevice({
-    context: "Send",
+    context: "Delegation",
     account,
     parentAccount,
     navigation,
@@ -61,7 +64,11 @@ const Validation = ({
   const wired = navigation.getParam("wired");
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
-      <TrackScreen category="SendFunds" name="Validation" signed={signed} />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Validation"
+        signed={signed}
+      />
       {signing && (
         <>
           <PreventNativeBack />
@@ -92,8 +99,8 @@ Validation.navigationOptions = {
     <StepHeader
       title={i18next.t("send.stepperHeader.verification")}
       subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "6",
-        totalSteps: "6",
+        currentStep: "3",
+        totalSteps: "3",
       })}
     />
   ),

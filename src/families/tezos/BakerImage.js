@@ -14,7 +14,7 @@ const BakerImage = ({ baker, size = 64 }: Props) => (
   <Circle crop size={size}>
     <Image
       style={{ width: size, height: size }}
-      source={baker ? { url: baker.logoURL } : null}
+      source={baker ? { uri: baker.logoURL } : null}
     />
   </Circle>
 );

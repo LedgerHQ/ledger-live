@@ -3,10 +3,10 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
-import GenericErrorView from "../../components/GenericErrorView";
-import Button from "../../components/Button";
-import NeedHelp from "../../components/NeedHelp";
-import colors from "../../colors";
+import GenericErrorView from "./GenericErrorView";
+import Button from "./Button";
+import NeedHelp from "./NeedHelp";
+import colors from "../colors";
 
 type Props = {
   error: Error,

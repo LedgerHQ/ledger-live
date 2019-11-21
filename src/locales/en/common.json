@@ -156,7 +156,9 @@
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts can't be the same"
     },
-    "InvalidRecipient": { "title": "Invalid recipient" },
+    "InvalidRecipient": {
+      "title": "Invalid recipient"
+    },
     "LatestMCUInstalledError": {
       "title": "Oops, nothing to update",
       "description": "Needlessly tried to update the device microcontroller. Contact Ledger Support if there's a problem with your device."
@@ -329,7 +331,6 @@
     "title": "Trade & Exchange",
     "subtitle": "Try a few services we've selected",
     "visit": "Visit website",
-
     "btcdirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot",
     "changelly": "Changelly is a popular instant crypto asset exchange with 100+ coins and tokens listed.",
     "changenow": "ChangeNOW is one of the leading custody-free instant exchange services",
@@ -888,7 +889,6 @@
     "fees": {
       "title": "Edit fees"
     },
-
     "receive": {
       "title": "Receive",
       "titleReadOnly": "Unverified address",
@@ -971,9 +971,7 @@
       "validateGasLimit": "Validate Gas Limit"
     },
     "validation": {
-      "title": "Please verify all transaction details on your {{productName}}",
       "message": "Confirm the transaction on your device to securely sign it",
-      "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
       "amount": "Amount",
       "fees": "Fees",
@@ -1234,6 +1232,10 @@
   "delegation": {
     "delegationSendWarnDesc": "The amount to be sent will be deducted from the balance of your delegated account.",
     "delegationReceiveWarnDesc": "The amount received on a delegated account will be added to the total staked amount. Choose another account if you want to avoid this.",
+    "iDelegateMy": "I delegate my",
+    "to": "to",
+    "forAnEstYield": "for an est. yield of",
+    "yieldPerYear": "{{yield}} / Year",
     "delegation": "Delegation",
     "viewDetails": "View details",
     "validator": "Validator",
@@ -1249,6 +1251,36 @@
     "durationForDays_plural": "For {{count}} days",
     "durationDays0": "Just now",
     "durationDays": "1 day",
-    "durationDays_plural": "{{count}} days"
+    "durationDays_plural": "{{count}} days",
+    "started": {
+      "title": "Earn staking rewards",
+      "description": "Delegate your Tezos account to a third party validator to earn staking rewards while keeping full security and control of your assets",
+      "steps": {
+        "0": "Delegated accounts stay yours",
+        "1": "You can access your assets anytime",
+        "2": "Delegate securely with your Ledger device"
+      },
+      "cta": "Delegate to earn rewards"
+    },
+    "broadcastSuccessTitle": {
+      "delegate": "Account successfully delegated",
+      "undelegate": "Account successfully undelegated"
+    },
+    "broadcastSuccessDescription": {
+      "delegate": "Delegation transaction broadcasted successfully. You should earn your first rewards within about 40 days, depending on the validator.",
+      "undelegate": "Undelegation transaction broadcasted successfully"
+    },
+    "summaryTitle": "Summary",
+    "goToAccount": "Go to account",
+    "howDelegationWorks": "How delegation works"
+  },
+  "ValidateOnDevice": {
+    "title": "Please verify all transaction details on your {{productName}}",
+    "warning": "Carefully verify all {{mode}} details on your device.",
+    "modes": {
+      "send": "transaction",
+      "delegate": "delegation",
+      "undelegate": "undelegation"
+    }
   }
 }

@@ -1,6 +1,7 @@
 // @flow
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { useDelegation } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import {
   ReceiveActionDefault,
@@ -8,7 +9,14 @@ import {
 } from "../../screens/Account/AccountActionsDefault";
 import InfoModal from "../../components/InfoModal";
 
-const SendAction = ({ onPress, account, ...rest }) => {
+const SendAction = ({
+  onPress,
+  account,
+  ...rest
+}: {
+  onPress: () => void,
+  account: AccountLike,
+}) => {
   const [isOpened, setOpened] = useState(false);
   const delegation = useDelegation(account);
   const sendShouldWarnDelegation =
@@ -42,7 +50,14 @@ const SendAction = ({ onPress, account, ...rest }) => {
   );
 };
 
-const ReceiveAction = ({ onPress, account, ...rest }) => {
+const ReceiveAction = ({
+  onPress,
+  account,
+  ...rest
+}: {
+  onPress: () => void,
+  account: AccountLike,
+}) => {
   const [isOpened, setOpened] = useState(false);
   const delegation = useDelegation(account);
   const receiveShouldWarnDelegation =

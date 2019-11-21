@@ -225,7 +225,7 @@ class AccountScreen extends PureComponent<Props, State> {
           />
         )}
         {empty ? null : (
-          <AccountActions account={account} parent={parentAccount} />
+          <AccountActions account={account} parentAccount={parentAccount} />
         )}
 
         {!empty && AccountBodyHeader ? (
