@@ -104,8 +104,8 @@ export default class BarInteraction extends Component<
         onHandlerStateChange={this.onHandlerStateChange}
         onGestureEvent={this.onPanGestureEvent}
         maxPointers={1}
-        minDeltaX={10} // nb of pixel to wait before start point
-        maxDeltaY={20} // allow to scroll
+        activeOffsetX={[-10, 10]} // nb of pixel to wait before start point
+        activeOffsetY={[-20, 20]} // allow to scroll
         simultaneousHandlers={longPressRef}
       >
         <LongPressGestureHandler
