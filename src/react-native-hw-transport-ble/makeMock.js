@@ -38,6 +38,7 @@ export default (opts: Opts) => {
     static setLogLevel = (_param: string) => {};
 
     static listen(observer: *) {
+      // $FlowFixMe
       return Observable.create(observer => {
         let timeout;
 
