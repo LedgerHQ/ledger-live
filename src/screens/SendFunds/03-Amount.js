@@ -109,9 +109,13 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const {
+  let {
     errors: { amount: amountError },
   } = status;
+
+  if (amount.eq(0)) {
+    amountError = null;
+  }
 
   return (
     <>

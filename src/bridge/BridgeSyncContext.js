@@ -9,12 +9,13 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import priorityQueue from "async/priorityQueue";
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { concat, from } from "rxjs";
+import { ignoreElements } from "rxjs/operators";
 import { createStructuredSelector } from "reselect";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import { setAccountSyncState } from "../actions/bridgeSync";
 import { track } from "../analytics/segment";
 import { SYNC_MAX_CONCURRENT } from "../constants";
-
 import logger from "../logger";
 import { accountsSelector, isUpToDateSelector } from "../reducers/accounts";
 import type { BridgeSyncState } from "../reducers/bridgeSync";
@@ -22,6 +23,7 @@ import {
   bridgeSyncSelector,
   syncStateLocalSelector,
 } from "../reducers/bridgeSync";
+import { prepareCurrency } from "./cache";
 
 type BridgeSyncProviderProps = {
   children: *,
@@ -137,8 +139,10 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
           });
         }
       };
-      // TODO migrate to the observation mode in future
-      bridge.startSync(account, false).subscribe({
+      concat(
+        from(prepareCurrency(account.currency)).pipe(ignoreElements()),
+        bridge.startSync(account, false),
+      ).subscribe({
         next: accountUpdater => {
           this.props.updateAccountWithUpdater(accountId, accountUpdater);
         },

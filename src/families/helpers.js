@@ -11,8 +11,7 @@ export const getFieldByFamily = (
   field: string,
 ) => {
   const transaction = navigation.getParam("transaction");
-  const bridge = getAccountBridge(account);
-  return bridge.getTransactionExtra(account, transaction, field);
+  return transaction[field];
 };
 export const editTxFeeByFamily = (
   account: Account,
