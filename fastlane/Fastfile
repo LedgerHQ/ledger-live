@@ -62,7 +62,7 @@ platform :ios do
     if options[:development]
       gym(
         scheme: "ledgerlivemobile",
-        project: "ios/ledgerlivemobile.xcodeproj",
+        workspace: "ios/ledgerlivemobile.xcworkspace",
         output_directory: "./ios",
         clean: true,
         export_options: {
@@ -72,7 +72,7 @@ platform :ios do
     else
       gym(
         scheme: "ledgerlivemobile",
-        project: "ios/ledgerlivemobile.xcodeproj",
+        workspace: "ios/ledgerlivemobile.xcworkspace",
         output_directory: "./ios",
         clean: true,
         export_options: {
@@ -131,6 +131,11 @@ platform :ios do
   lane :redo_beta do
     build
     upload_beta
+  end
+
+  desc "build without uploading"
+  lane :build_ipa do
+    build(development: true)
   end
 
   desc "upload to Waldo"

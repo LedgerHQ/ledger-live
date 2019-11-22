@@ -38,6 +38,7 @@ class HeaderRightClose extends Component<Props, State> {
       const dismissed = navigation.dismiss();
       if (!dismissed) navigation.goBack();
     }
+    // $FlowFixMe
     if (navigation.closeDrawer) navigation.closeDrawer();
 
     navigation.goBack();

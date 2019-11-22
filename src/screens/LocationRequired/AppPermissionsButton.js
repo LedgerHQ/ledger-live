@@ -1,8 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { AppState } from "react-native";
-import OpenSettings from "react-native-open-settings";
+import { AppState, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import SettingsIcon from "../../icons/SettingsIcon";
 import Button from "../../components/Button";
@@ -46,7 +45,7 @@ export default class AppPermissionsButton extends PureComponent<
 
   openAppSettings = () => {
     this.setState({ buttonPressed: true });
-    OpenSettings.openSettings();
+    Linking.openSettings();
   };
 
   render() {

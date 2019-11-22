@@ -1,28 +1,29 @@
-// flow-typed signature: b274c26891998a79187f137d3721e5ee
-// flow-typed version: 04792633f2/numeral_v2.x.x/flow_>=v0.25.x
+// flow-typed signature: 320fec36955955f4a7a3232f098627cb
+// flow-typed version: c6154227d1/numeral_v2.x.x/flow_>=v0.104.x
 
 
 declare interface NumeralJSLocale {
     delimiters: {
-        thousands: string,
-        decimal: string
+      thousands: string,
+      decimal: string,
+      ...
     },
     abbreviations: {
-        thousand: string,
-        million: string,
-        billion: string,
-        trillion: string
+      thousand: string,
+      million: string,
+      billion: string,
+      trillion: string,
+      ...
     },
     ordinal(num: number): string,
-    currency: {
-        symbol: string
-    }
+    currency: { symbol: string, ... }
 }
 declare type RoundingFunction = (value: number) => number;
 declare interface NumeralJsFormat {
     regexps: {
-        format: RegExp,
-        unformat: RegExp
+      format: RegExp,
+      unformat: RegExp,
+      ...
     },
     format(value: any, format: string, roundingFunction: RoundingFunction): string,
     unformat(value: string): number
@@ -71,4 +72,145 @@ declare var numeral: Numeral;
 
 declare module 'numeral' {
     declare module.exports: typeof numeral
+}
+
+
+declare module 'numeral/locales' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/bg' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/chs' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/cs' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/da-dk' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/de-ch' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/de' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/en-au' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/en-gb' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/en-za' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/es-es' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/es' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/et' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/fi' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/fr-ca' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/fr-ch' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/fr' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/hu' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/it' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/ja' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/lv' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/nl-be' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/nl-nl' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/no' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/pl' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/pt-br' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/pt-pt' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/ru-ua' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/ru' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/sk' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/sl' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/th' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/tr' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/uk-ua' {
+  declare module.exports: void
+}
+
+declare module 'numeral/locales/vi' {
+  declare module.exports: void
 }

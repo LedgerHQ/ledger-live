@@ -1,6 +1,6 @@
 // @flow
 import Config from "react-native-config";
-import { AsyncStorage } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 import { concatMap } from "rxjs/operators";
 import {
   setEnvUnsafe,

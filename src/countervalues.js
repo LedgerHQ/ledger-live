@@ -2,6 +2,7 @@
 /* eslint import/no-cycle: 0 */
 import { AppState } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
+import type { NetInfoState } from "@react-native-community/netinfo";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
 import {
@@ -80,7 +81,7 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
     }
   }
 
-  function handleConnectivityChange(isConnected: boolean) {
+  function handleConnectivityChange({ isConnected }: NetInfoState) {
     if (isConnected && !networkIsConnected && appIsActive) {
       // poll when recovering a connection
       schedulePoll(3000);
@@ -89,21 +90,16 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
   }
 
   AppState.addEventListener("change", handleAppStateChange);
-  NetInfo.isConnected.addEventListener(
-    "connectionChange",
+  const unsubConnectionChange = NetInfo.addEventListener(
     handleConnectivityChange,
   );
 
   return () => {
     AppState.removeEventListener("change", handleAppStateChange);
-    NetInfo.isConnected.removeEventListener(
-      "connectionChange",
-      handleConnectivityChange,
-    );
+    unsubConnectionChange();
   };
 };
 
-// $FlowFixMe
 implementCountervalues({
   log: __DEV__
     ? (...args) => console.log("CounterValues:", ...args) // eslint-disable-line no-console

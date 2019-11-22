@@ -16,7 +16,7 @@ import { translate, Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import type { NavigationStackProp } from "react-navigation-stack";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { replaceAccounts } from "../../actions/accounts";
@@ -50,7 +50,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: *) => {
 };
 
 type Props = {
-  navigation: NavigationScreenProp<{
+  navigation: NavigationStackProp<{
     params: {
       currency: CryptoCurrency,
       deviceId: string,
@@ -287,6 +287,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
         <ScrollView
           style={styles.inner}
           contentContainerStyle={styles.innerContent}
+          // $FlowFixMe
           ref={this.scrollView}
           onContentSizeChange={this.handleContentSizeChange}
         >
