@@ -6,6 +6,13 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
+export async function clearBridgeCache() {
+  const keys = await AsyncStorage.getAllKeys();
+  await AsyncStorage.multiRemove(
+    keys.filter(k => k.startsWith("bridgeproxypreload")),
+  );
+}
+
 function currencyCacheId(currency) {
   return `bridgeproxypreload_${currency.id}`;
 }

@@ -19,6 +19,7 @@ import {
 import { accountsSelector } from "../reducers/accounts";
 import { flushAll } from "../components/DBSave";
 import clearLibcore from "../helpers/clearLibcore";
+import { clearBridgeCache } from "../bridge/cache";
 
 export const calculateCountervalueSelector = (state: State) => {
   const counterValueCurrency = counterValueCurrencySelector(state);
@@ -74,8 +75,7 @@ export const refreshAccountsOrdering = () => (dispatch: *, getState: *) => {
 export const cleanCache = () => async (dispatch: *) => {
   dispatch({ type: "CLEAN_CACHE" });
   dispatch({ type: "LEDGER_CV:WIPE" });
-
+  await clearBridgeCache();
   await clearLibcore();
-
   flushAll();
 };
