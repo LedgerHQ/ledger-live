@@ -242,6 +242,7 @@ AccountsStack.navigationOptions = {
 const Main = createBottomTabNavigator(
   {
     Portfolio: {
+      // $FlowFixMe
       screen: Portfolio,
       navigationOptions: {
         tabBarIcon: (props: *) => (
@@ -250,6 +251,7 @@ const Main = createBottomTabNavigator(
       },
     },
     AccountsStack,
+    // $FlowFixMe
     Transfer,
     ManagerStack,
     SettingsStack,
