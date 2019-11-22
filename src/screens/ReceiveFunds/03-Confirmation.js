@@ -138,7 +138,8 @@ class ReceiveConfirmation extends Component<Props, State> {
 
     this.sub = withDevice(deviceId)(transport =>
       mainAccount.id.startsWith("mock")
-        ? of({}).pipe(
+        ? // $FlowFixMe
+          of({}).pipe(
             delay(1000),
             rejectionOp(),
           )

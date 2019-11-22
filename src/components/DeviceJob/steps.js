@@ -73,6 +73,7 @@ export const connectingStep: Step = {
     );
   },
   run: meta =>
+    // $FlowFixMe
     withDevice(meta.deviceId)(() => from([meta])).pipe(
       rejectionOp(() => new CantOpenDevice()),
     ),
@@ -97,6 +98,7 @@ export const dashboard: Step = {
     />
   ),
   run: meta =>
+    // $FlowFixMe
     withDevicePolling(meta.deviceId)(transport =>
       from(getDeviceInfo(transport)),
     ).pipe(
@@ -182,6 +184,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
     );
   },
   run: meta =>
+    // $FlowFixMe
     withDevicePolling(meta.deviceId)(transport => {
       if (meta.deviceId.startsWith("mock")) {
         return of({
@@ -238,6 +241,7 @@ export const accountApp: Account => Step = account => ({
     );
   },
   run: meta =>
+    // $FlowFixMe
     withDevicePolling(meta.deviceId)(transport =>
       from(
         account.id.startsWith("mock")

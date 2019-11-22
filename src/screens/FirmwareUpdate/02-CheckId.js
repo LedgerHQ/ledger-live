@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import type { NavigationStackProp } from "react-navigation-stack";
 import { translate, Trans } from "react-i18next";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
@@ -21,7 +21,7 @@ import getWindowDimensions from "../../logic/getWindowDimensions";
 
 const forceInset = { bottom: "always" };
 
-type Navigation = NavigationScreenProp<{
+type Navigation = NavigationStackProp<{
   params: {
     deviceId: string,
     firmware: FirmwareUpdateContext,

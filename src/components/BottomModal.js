@@ -47,8 +47,8 @@ class BottomModal extends Component<Props> {
       <ButtonUseTouchable.Provider value={true}>
         <ReactNativeModal
           isVisible={isOpened}
-          onBackdropPress={!preventBackdropClick && onClose}
-          onBackButtonPress={!preventBackdropClick && onClose}
+          onBackdropPress={preventBackdropClick ? () => {} : onClose}
+          onBackButtonPress={preventBackdropClick ? () => {} : onClose}
           deviceWidth={width}
           deviceHeight={height}
           useNativeDriver

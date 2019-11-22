@@ -1,13 +1,12 @@
 // @flow
 import React from "react";
 import i18next from "i18next";
+import { createSwitchNavigator, createAppContainer } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import {
-  createStackNavigator,
+  createBottomTabNavigator,
   createMaterialTopTabNavigator,
-  createSwitchNavigator,
-  createAppContainer,
-} from "react-navigation";
-import { createBottomTabNavigator } from "react-navigation-tabs";
+} from "react-navigation-tabs";
 import type { NavigationScreenProp } from "react-navigation";
 import { Platform } from "react-native";
 import PortfolioIcon from "./icons/Portfolio";
@@ -242,6 +241,7 @@ AccountsStack.navigationOptions = {
 const Main = createBottomTabNavigator(
   {
     Portfolio: {
+      // $FlowFixMe
       screen: Portfolio,
       navigationOptions: {
         tabBarIcon: (props: *) => (
@@ -250,6 +250,7 @@ const Main = createBottomTabNavigator(
       },
     },
     AccountsStack,
+    // $FlowFixMe
     Transfer,
     ManagerStack,
     SettingsStack,

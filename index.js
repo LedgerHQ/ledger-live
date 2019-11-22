@@ -1,4 +1,9 @@
 // @flow
+
+// Fix for crash with `Unsupported top level event type "onGestureHandlerStateChange" dispatched`
+// https://github.com/kmagiera/react-native-gesture-handler/issues/320#issuecomment-443815828
+import "react-native-gesture-handler";
+
 import { AppRegistry } from "react-native";
 import { Sentry } from "react-native-sentry";
 import Config from "react-native-config";

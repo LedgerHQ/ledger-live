@@ -1,5 +1,5 @@
-// flow-typed signature: f49b305a16431ce3b31c9f42da88ad38
-// flow-typed version: 1204f9886b/re-reselect_v2.x.x/flow_>=v0.67.1
+// flow-typed signature: 8d99d0475142d24a161fc86e99c8813a
+// flow-typed version: c6154227d1/re-reselect_v2.x.x/flow_>=v0.104.x
 
 type ExtractReturnType = <Return>((...rest: any[]) => Return) => Return;
 
@@ -18,10 +18,11 @@ declare module 're-reselect' {
   declare type OutputSelector<-TState, TProps, TResult> =
     & InputSelector<TState, TProps, TResult>
     & {
-      recomputations(): number,
-      resetRecomputations(): number,
-      resultFunc(state: TState, props: TProps, ...rest: Array<any>): TResult,
-    };
+    recomputations(): number,
+    resetRecomputations(): number,
+    resultFunc(state: TState, props: TProps, ...rest: Array<any>): TResult,
+    ...
+  };
 
   declare type CreateSelectorInstance = {
     <TState, TProps, TResult, T1>(
@@ -32,7 +33,6 @@ declare module 're-reselect' {
       selectors: [InputSelector<TState, TProps, T1>],
       resultFunc: (arg1: T1) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -42,7 +42,6 @@ declare module 're-reselect' {
       selectors: [InputSelector<TState, TProps, T1>, InputSelector<TState, TProps, T2>],
       resultFunc: (arg1: T1, arg2: T2) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -57,7 +56,6 @@ declare module 're-reselect' {
       ],
       resultFunc: (arg1: T1, arg2: T2, arg3: T3) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -74,7 +72,6 @@ declare module 're-reselect' {
       ],
       resultFunc: (arg1: T1, arg2: T2, arg3: T3, arg4: T4) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4, T5>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -93,7 +90,6 @@ declare module 're-reselect' {
       ],
       resultFunc: (arg1: T1, arg2: T2, arg3: T3, arg4: T4, arg5: T5) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4, T5, T6>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -128,7 +124,6 @@ declare module 're-reselect' {
         arg6: T6
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4, T5, T6, T7>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -167,7 +162,6 @@ declare module 're-reselect' {
         arg7: T7
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4, T5, T6, T7, T8>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -210,7 +204,6 @@ declare module 're-reselect' {
         arg8: T8
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4, T5, T6, T7, T8, T9>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -257,7 +250,6 @@ declare module 're-reselect' {
         arg9: T9
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -308,7 +300,6 @@ declare module 're-reselect' {
         arg10: T10
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <TState, TProps, TResult, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(
       selector1: InputSelector<TState, TProps, T1>,
       selector2: InputSelector<TState, TProps, T2>,
@@ -363,7 +354,6 @@ declare module 're-reselect' {
         arg11: T11
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <
       TState,
       TProps,
@@ -454,7 +444,6 @@ declare module 're-reselect' {
         arg12: T12
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <
       TState,
       TProps,
@@ -551,7 +540,6 @@ declare module 're-reselect' {
         arg13: T13
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <
       TState,
       TProps,
@@ -654,7 +642,6 @@ declare module 're-reselect' {
         arg14: T14
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <
       TState,
       TProps,
@@ -763,7 +750,6 @@ declare module 're-reselect' {
         arg15: T15
       ) => TResult
     ): OutputSelector<TState, TProps, TResult>,
-
     <
       TState,
       TProps,
@@ -877,36 +863,41 @@ declare module 're-reselect' {
         arg15: T15,
         arg16: T16
       ) => TResult
-    ): OutputSelector<TState, TProps, TResult>
+    ): OutputSelector<TState, TProps, TResult>,
+    ...
   };
   // End copied type
 
   declare type Options =
     | {
-        selectorCreator?: CreateSelectorInstance;
-        cacheObject: ICacheObject;
-      }
+    selectorCreator?: CreateSelectorInstance,
+    cacheObject: ICacheObject,
+    ...
+  }
     | {
-        selectorCreator: CreateSelectorInstance;
-        cacheObject?: ICacheObject;
-      }
+    selectorCreator: CreateSelectorInstance,
+    cacheObject?: ICacheObject,
+    ...
+  }
     | CreateSelectorInstance;
 
   declare type ReOutputSelector<S, R, C> = Selector<S, R> & {
-    resultFunc: C;
-    recomputations: () => number;
-    resetRecomputations: () => number;
+    resultFunc: C,
+    recomputations: () => number,
+    resetRecomputations: () => number,
+    ...
   };
 
   declare type OutputCachedSelector<S, R, C> = (
     resolver: Resolver<S>,
     optionsOrSelectorCreator?: Options
   ) => ReOutputSelector<S, R, C> & {
-    getMatchingSelector: (state: S, ...args: any[]) => ReOutputSelector<S, R, C>;
-    removeMatchingSelector: (state: S, ...args: any[]) => void;
-    clearCache: () => void;
-    resultFunc: C;
-    cache: ICacheObject;
+    getMatchingSelector: (state: S, ...args: any[]) => ReOutputSelector<S, R, C>,
+    removeMatchingSelector: (state: S, ...args: any[]) => void,
+    clearCache: () => void,
+    resultFunc: C,
+    cache: ICacheObject,
+    ...
   };
 
   declare type ParametricSelector<S, P, R> = (
@@ -926,9 +917,10 @@ declare module 're-reselect' {
     P,
     R
   > & {
-    resultFunc: C;
-    recomputations: () => number;
-    resetRecomputations: () => number;
+    resultFunc: C,
+    recomputations: () => number,
+    resetRecomputations: () => number,
+    ...
   };
 
   declare type OutputParametricCachedSelector<S, P, R, C> = (
@@ -939,11 +931,12 @@ declare module 're-reselect' {
       state: S,
       props: P,
       ...args: any[]
-    ) => OutputParametricSelector<S, P, R, C>;
-    removeMatchingSelector: (state: S, props: P, ...args: any[]) => void;
-    clearCache: () => void;
-    resultFunc: C;
-    cache: ICacheObject;
+    ) => OutputParametricSelector<S, P, R, C>,
+    removeMatchingSelector: (state: S, props: P, ...args: any[]) => void,
+    clearCache: () => void,
+    resultFunc: C,
+    cache: ICacheObject,
+    ...
   };
 
 
@@ -967,7 +960,7 @@ declare module 're-reselect' {
   }
 
   declare export class FifoObjectCache implements ICacheObject {
-    constructor(options: {cacheSize: number}): void;
+    constructor(options: { cacheSize: number, ... }): void;
     set(key: string | number, selectorFn: any): void;
     get(key: string | number): any;
     remove(key: string | number): void;
@@ -976,7 +969,7 @@ declare module 're-reselect' {
   }
 
   declare export class LruObjectCache implements ICacheObject {
-    constructor(options: {cacheSize: number}): void;
+    constructor(options: { cacheSize: number, ... }): void;
     set(key: string | number, selectorFn: any): void;
     get(key: string | number): any;
     remove(key: string | number): void;
@@ -992,7 +985,7 @@ declare module 're-reselect' {
   }
 
   declare export class FifoMapCache implements ICacheObject {
-    constructor(options: {cacheSize: number}): void;
+    constructor(options: { cacheSize: number, ... }): void;
     set(key: any, selectorFn: any): void;
     get(key: any): any;
     remove(key: any): void;
@@ -1000,7 +993,7 @@ declare module 're-reselect' {
   }
 
   declare export class LruMapCache implements ICacheObject {
-    constructor(options: {cacheSize: number}): void;
+    constructor(options: { cacheSize: number, ... }): void;
     set(key: any, selectorFn: any): void;
     get(key: any): any;
     remove(key: any): void;

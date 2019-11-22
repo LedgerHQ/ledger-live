@@ -8,7 +8,7 @@ import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import type { NavigationScreenProp } from "react-navigation";
+import type { NavigationStackProp } from "react-navigation-stack";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Result } from "@ledgerhq/live-common/lib/cross";
 import type { ImportItem } from "@ledgerhq/live-common/lib/account";
@@ -31,10 +31,10 @@ import HeaderBackImage from "../../components/HeaderBackImage";
 
 const forceInset = { bottom: "always" };
 
-type Nav = NavigationScreenProp<{
+type Nav = NavigationStackProp<{
   params: {
     result: Result,
-    onFinish?: (NavigationScreenProp<*>) => void,
+    onFinish?: (NavigationStackProp<*>) => void,
   },
 }>;
 
