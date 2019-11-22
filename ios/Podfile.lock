@@ -265,6 +265,8 @@ PODS:
   - RNLibLedgerCore (4.0.0-alpha.1):
     - ledger-core-objc
     - React
+  - RNReanimated (1.4.0):
+    - React
   - RNScreens (1.0.0-alpha.22):
     - React
   - RNSVG (9.4.0):
@@ -330,6 +332,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -432,6 +435,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNLibLedgerCore:
     :path: "../node_modules/@ledgerhq/react-native-ledger-core"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -494,6 +499,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: a4ddde1ffc6e590c8127b8b7eabfdade45475c74
   RNKeychain: c658833a9cb2cbcba6423bdd6e16cce59e27da0e
   RNLibLedgerCore: ded2fbcc335c296cb08155294f7f9bcbcb8d9ca7
+  RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 720a9e6968beb73e8196239801e887d8401f86ed
   RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
   RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0

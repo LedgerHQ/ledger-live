@@ -11,9 +11,9 @@ import colors from "../colors";
 
 export const defaultNavigationOptions = {
   headerStyle: styles.header,
-  headerTitle: HeaderTitle,
+  headerTitle: (props: {}) => <HeaderTitle {...props} />,
   headerBackTitle: null,
-  headerBackImage: HeaderBackImage,
+  headerBackImage: (props: {}) => <HeaderBackImage {...props} />,
   headerTitleAllowFontScaling: false,
 };
 
