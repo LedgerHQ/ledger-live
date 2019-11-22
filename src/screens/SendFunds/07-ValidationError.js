@@ -9,7 +9,7 @@ import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
-import ValidateError from "./ValidateError";
+import ValidateError from "../../components/ValidateError";
 import { urls } from "../../config/urls";
 
 const forceInset = { bottom: "always" };

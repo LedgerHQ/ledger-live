@@ -970,9 +970,7 @@
       "validateGasLimit": "Validate Gas Limit"
     },
     "validation": {
-      "title": "Please verify all transaction details on your {{productName}}",
       "message": "Confirm the transaction on your device to securely sign it",
-      "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
       "sent": "Transaction sent",
       "amount": "Amount",
       "fees": "Fees",
@@ -1223,5 +1221,9 @@
   },
   "StepLegacyModal": {
     "description": "Imported accounts only synchronize with the blockchain. Ledger Live does not synchronize accounts between mobile and desktop."
+  },
+  "ValidateOnDevice": {
+    "disclaimer": "Always verify that your device displays the address exactly as provided by the recipient",
+    "title": null
   }
 }

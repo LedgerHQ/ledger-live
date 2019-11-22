@@ -105,7 +105,7 @@ import AddAccountsTokenCurrencyDisclaimer from "./screens/AddAccounts/02-TokenCu
 import AddAccountsAccounts from "./screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "./screens/AddAccounts/04-Success";
 
-import sendScreens from "./families/sendScreens";
+import perFamilyScreens from "./generated/screens";
 import ReadOnlyTab from "./components/ReadOnlyTab";
 import HiddenTabBarIfKeyboardVisible from "./components/HiddenTabBarIfKeyboardVisible";
 import DebugStore from "./screens/DebugStore";
@@ -446,6 +446,18 @@ PasswordModifyFlow.navigationOptions = {
   header: null,
 };
 
+const sendScreens = {};
+const baseScreens = {};
+
+Object.values(perFamilyScreens).forEach(obj => {
+  if (obj && obj.sendScreens) {
+    Object.assign(sendScreens, obj.sendScreens);
+  }
+  if (obj && obj.baseScreens) {
+    Object.assign(baseScreens, obj.baseScreens);
+  }
+});
+
 const BaseNavigator = createStackNavigator(
   {
     Main,
@@ -472,6 +484,7 @@ const BaseNavigator = createStackNavigator(
     // $FlowFixMe
     FallbackCameraSend,
     ...sendScreens,
+    ...baseScreens,
   },
   {
     mode: "modal",

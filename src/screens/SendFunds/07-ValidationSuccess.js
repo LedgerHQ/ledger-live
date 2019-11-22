@@ -13,7 +13,7 @@ import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import ValidateSuccess from "./ValideSuccess";
+import ValidateSuccess from "../../components/ValidateSuccess";
 
 type Props = {
   account: ?(TokenAccount | Account),

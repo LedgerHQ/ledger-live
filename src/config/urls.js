@@ -21,4 +21,5 @@ export const urls = {
   },
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154",
+  delegation: "https://www.ledger.com/staking-tezos",
 };

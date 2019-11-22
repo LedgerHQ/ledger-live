@@ -22,6 +22,7 @@ const ANIM_DURATION = 300;
 
 type ButtonType =
   | "primary"
+  | "negativePrimary"
   | "secondary"
   | "lightSecondary"
   | "tertiary"
@@ -283,6 +284,9 @@ const styles = StyleSheet.create({
 
   primaryContainer: { backgroundColor: colors.live },
   primaryTitle: { color: "white" },
+
+  negativePrimaryContainer: { backgroundColor: "white" },
+  negativePrimaryTitle: { color: colors.live },
 
   secondaryContainer: { backgroundColor: "transparent" },
   secondaryTitle: { color: colors.grey },

@@ -2,12 +2,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { NavigationScreenProp } from "react-navigation";
-
-import ripple from "./ripple/SendRowsCustom";
-
-const perFamily: { [_: string]: * } = {
-  ripple,
-};
+import perFamily from "../generated/SendRowsCustom";
 
 export default ({
   transaction,

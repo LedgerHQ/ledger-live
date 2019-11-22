@@ -3,19 +3,30 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
-import colors from "../../colors";
-import CheckCircle from "../../icons/CheckCircle";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
+import colors from "../colors";
+import CheckCircle from "../icons/CheckCircle";
+import LText from "./LText";
+import Button from "./Button";
 
 type Props = {
-  onClose: () => void,
-  onViewDetails: () => void,
+  onClose?: () => void,
+  onViewDetails?: () => void,
+  title?: React$Node,
+  description?: React$Node,
+  primaryButton?: React$Node,
+  secondaryButton?: React$Node,
 };
 
 class ValidateSuccess extends PureComponent<Props> {
   render() {
-    const { onClose, onViewDetails } = this.props;
+    const {
+      onClose,
+      onViewDetails,
+      title,
+      description,
+      primaryButton,
+      secondaryButton,
+    } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
@@ -23,25 +34,29 @@ class ValidateSuccess extends PureComponent<Props> {
             <CheckCircle size={40} color={colors.success} />
           </View>
           <LText secondary semiBold style={styles.title}>
-            <Trans i18nKey="send.validation.sent" />
+            {title || <Trans i18nKey="send.validation.sent" />}
           </LText>
           <LText style={styles.message}>
-            <Trans i18nKey="send.validation.confirm" />
+            {description || <Trans i18nKey="send.validation.confirm" />}
           </LText>
-          <Button
-            event="SendSuccessViewDetails"
-            title={<Trans i18nKey="send.validation.button.details" />}
-            type="primary"
-            containerStyle={styles.button}
-            onPress={onViewDetails}
-          />
-          <Button
-            event="SendSuccessClose"
-            title={<Trans i18nKey="common.close" />}
-            type="lightSecondary"
-            containerStyle={styles.button}
-            onPress={onClose}
-          />
+          {primaryButton || (
+            <Button
+              event="SendSuccessViewDetails"
+              title={<Trans i18nKey="send.validation.button.details" />}
+              type="primary"
+              containerStyle={styles.button}
+              onPress={onViewDetails}
+            />
+          )}
+          {secondaryButton || (
+            <Button
+              event="SendSuccessClose"
+              title={<Trans i18nKey="common.close" />}
+              type="lightSecondary"
+              containerStyle={styles.button}
+              onPress={onClose}
+            />
+          )}
         </View>
       </View>
     );

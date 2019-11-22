@@ -1,62 +1,78 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
 import { withNavigation } from "react-navigation";
 import { createStructuredSelector } from "reselect";
+import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import connect from "react-redux/es/connect/connect";
-import Button from "../../components/Button";
-import IconSend from "../../icons/Send";
-import IconReceive from "../../icons/Receive";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import {
+  ReceiveActionDefault,
+  SendActionDefault,
+} from "./AccountActionsDefault";
+import perFamilyAccountActions from "../../generated/accountActions";
 
 type Props = {
-  accountId: string,
-  parentId: ?string,
+  account: AccountLike,
+  parentAccount: ?Account,
   navigation: *,
   readOnlyModeEnabled: boolean,
 };
 const mapStateToProps = createStructuredSelector({
   readOnlyModeEnabled: readOnlyModeEnabledSelector,
 });
-class AccountActions extends PureComponent<Props> {
-  render() {
-    const { readOnlyModeEnabled, navigation, accountId, parentId } = this.props;
 
-    return (
-      <View style={styles.root}>
-        {!readOnlyModeEnabled && (
-          <Button
-            event="AccountSend"
-            type="primary"
-            IconLeft={IconSend}
-            onPress={() =>
-              navigation.navigate("SendSelectRecipient", {
-                accountId,
-                parentId,
-              })
-            }
-            title={<Trans i18nKey="account.send" />}
-            containerStyle={[styles.btn, styles.marginRight]}
-          />
-        )}
-        <Button
-          event="AccountReceive"
-          type="primary"
-          IconLeft={IconReceive}
-          onPress={() =>
-            navigation.navigate("ReceiveConnectDevice", { accountId, parentId })
-          }
-          title={<Trans i18nKey="account.receive" />}
-          containerStyle={[
-            styles.btn,
-            !readOnlyModeEnabled ? styles.marginLeft : null,
-          ]}
+const AccountActions = ({
+  readOnlyModeEnabled,
+  navigation,
+  account,
+  parentAccount,
+}: Props) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const decorators = perFamilyAccountActions[mainAccount.currency.family];
+
+  const accountId = account.id;
+  const parentId = parentAccount && parentAccount.id;
+
+  const SendAction = (decorators && decorators.SendAction) || SendActionDefault;
+
+  const ReceiveAction =
+    (decorators && decorators.ReceiveAction) || ReceiveActionDefault;
+
+  const onSend = useCallback(() => {
+    navigation.navigate("SendSelectRecipient", {
+      accountId,
+      parentId,
+    });
+  }, [accountId, parentId, navigation]);
+
+  const onReceive = useCallback(() => {
+    navigation.navigate("ReceiveConnectDevice", {
+      accountId,
+      parentId,
+    });
+  }, [accountId, parentId, navigation]);
+
+  return (
+    <View style={styles.root}>
+      {!readOnlyModeEnabled && (
+        <SendAction
+          account={account}
+          parentAccount={parentAccount}
+          style={[styles.btn, styles.marginRight]}
+          onPress={onSend}
         />
-      </View>
-    );
-  }
-}
+      )}
+      <ReceiveAction
+        account={account}
+        parentAccount={parentAccount}
+        style={[styles.btn, !readOnlyModeEnabled ? styles.marginLeft : null]}
+        onPress={onReceive}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   root: {

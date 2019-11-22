@@ -5,6 +5,7 @@ import { View, StyleSheet, Animated } from "react-native";
 
 import Icon from "react-native-vector-icons/dist/Feather";
 import LText from "./LText";
+import Circle from "./Circle";
 import colors from "../colors";
 
 // TODO fade in animation
@@ -24,9 +25,14 @@ export class Bullet extends PureComponent<{ children: *, big?: boolean }> {
 
 export class BulletItemText extends PureComponent<{
   children: React$Node,
+  style?: *,
 }> {
   render() {
-    return <LText style={styles.text}>{this.props.children}</LText>;
+    return (
+      <LText style={[styles.text, this.props.style]}>
+        {this.props.children}
+      </LText>
+    );
   }
 }
 
@@ -35,6 +41,7 @@ export class BulletItem extends PureComponent<{
   index: number,
   animated?: boolean,
   itemStyle?: *,
+  itemTextStyle?: *,
   Bullet: React$ComponentType<*>,
 }> {
   static defaultProps = {
@@ -54,7 +61,7 @@ export class BulletItem extends PureComponent<{
   }
 
   render() {
-    const { index, value, Bullet, itemStyle } = this.props;
+    const { index, value, Bullet, itemStyle, itemTextStyle } = this.props;
     const { opacity } = this;
 
     return (
@@ -64,7 +71,7 @@ export class BulletItem extends PureComponent<{
           {typeof value === "function" ? (
             value()
           ) : (
-            <BulletItemText>{value}</BulletItemText>
+            <BulletItemText style={itemTextStyle}>{value}</BulletItemText>
           )}
         </View>
       </Animated.View>
@@ -82,19 +89,30 @@ export class BulletChevron extends PureComponent<{}> {
   }
 }
 
+export class BulletGreenCheck extends PureComponent<{}> {
+  render() {
+    return (
+      <Circle size={24} bg={colors.ledgerGreen}>
+        <Icon size={16} name="check" color={colors.white} />
+      </Circle>
+    );
+  }
+}
+
 class BulletList extends PureComponent<{
   list: *,
   animated?: boolean,
   Bullet: React$ComponentType<*>,
-  itemStyle?: {},
+  itemStyle?: *,
+  style?: *,
 }> {
   static defaultProps = {
     Bullet,
   };
   render() {
-    const { list, animated, Bullet, itemStyle } = this.props;
+    const { list, animated, Bullet, itemStyle, style } = this.props;
     return (
-      <View>
+      <View style={style}>
         {list.map((value, index) => (
           <BulletItem
             itemStyle={itemStyle}

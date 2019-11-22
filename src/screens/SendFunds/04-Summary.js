@@ -1,12 +1,6 @@
 /* @flow */
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import React, {
-  useState,
-  useRef,
-  useCallback,
-  Component,
-  useEffect,
-} from "react";
+import React, { useState, useCallback, Component } from "react";
 import { View, StyleSheet } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
@@ -23,14 +17,15 @@ import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
+import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
+import SendRowsCustom from "../../components/SendRowsCustom";
+import SendRowsFee from "../../components/SendRowsFee";
 import SummaryFromSection from "./SummaryFromSection";
 import SummaryToSection from "./SummaryToSection";
 import SummaryAmountSection from "./SummaryAmountSection";
-import SendRowsCustom from "../../families/SendRowsCustom";
-import SendRowsFee from "../../families/SendRowsFee";
 import SummaryTotalSection from "./SummaryTotalSection";
 import StepHeader from "../../components/StepHeader";
 import SectionSeparator from "../../components/SectionSeparator";
@@ -63,13 +58,10 @@ const SendSummary = ({ account, parentAccount, navigation }: Props) => {
   }));
 
   // handle any edit screen changes like fees changes
-  const initialTransaction = useRef(transaction);
-  const navigationTransaction = navigation.getParam("transaction");
-  useEffect(() => {
-    if (initialTransaction.current !== navigationTransaction) {
-      setTransaction(navigationTransaction);
-    }
-  }, [setTransaction, navigationTransaction]);
+  useTransactionChangeFromNavigation({
+    navigation,
+    setTransaction,
+  });
 
   const [highFeesOpen, setHighFeesOpen] = useState(false);
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+cd $(dirname $0)/..
+
+./scripts/sync-families-dispatch.sh
+
 # see https://github.com/react-native-community/react-native-camera#face-detection-steps
 if [ -e node_modules/react-native-camera/ios/FaceDetector ]; then
   rm -rf node_modules/react-native-camera/ios/FaceDetector
