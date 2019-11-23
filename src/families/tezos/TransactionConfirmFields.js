@@ -1,6 +1,12 @@
 // @flow
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Linking, StyleSheet } from "react-native";
+import type {
+  AccountLike,
+  Account,
+  Transaction,
+} from "@ledgerhq/live-common/lib/types";
 import { useBaker } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import {
   shortAddressPreview,
@@ -23,7 +29,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const Pre = ({ account, parentAccount, transaction }: *) => {
+const Pre = ({
+  account,
+  parentAccount,
+  transaction,
+}: {
+  account: AccountLike,
+  parentAccount: ?Account,
+  transaction: Transaction,
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const baker = useBaker(transaction.recipient);
   const explorerView = getDefaultExplorerView(mainAccount.currency);
@@ -32,13 +46,17 @@ const Pre = ({ account, parentAccount, transaction }: *) => {
     if (bakerURL) Linking.openURL(bakerURL);
   }, [bakerURL]);
 
+  invariant(transaction.family === "tezos", "tezos transaction");
+
   const isDelegateOperation = transaction.mode === "delegate";
 
   return (
     <>
       <DataRow label="Source">
         <LText semiBold style={styles.text}>
-          {account.freshAddress}
+          {account.type === "ChildAccount"
+            ? account.address
+            : mainAccount.freshAddress}
         </LText>
       </DataRow>
       {isDelegateOperation ? (
@@ -59,15 +77,17 @@ const Pre = ({ account, parentAccount, transaction }: *) => {
   );
 };
 
-const Post = ({ transaction }: *) => (
-  <>
+const Post = ({ transaction }: { transaction: Transaction }) => {
+  invariant(transaction.family === "tezos", "tezos transaction");
+
+  return (
     <DataRow label="Storage">
       <LText semiBold style={styles.text}>
-        {transaction.storageLimit.toString()}
+        {(transaction.storageLimit || "").toString()}
       </LText>
     </DataRow>
-  </>
-);
+  );
+};
 
 export default {
   pre: Pre,
