@@ -1,13 +1,14 @@
 // @flow
 
-import type { Account, Operation } from "../../types";
+import invariant from "invariant";
+import type { Account } from "../../types";
 import { getEnv } from "../../env";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import type { CoreTezosLikeTransaction, Transaction } from "./types";
 import type { CoreAccount } from "../../libcore/types";
 
 async function tezos({
-  account: { id, balance },
+  account: { id, balance, subAccounts },
   signedTransaction,
   builded,
   coreAccount,
@@ -33,26 +34,70 @@ async function tezos({
   const feesRaw = await builded.getFees();
   const fee = await libcoreAmountToBigNumber(feesRaw);
 
-  const accountId = transaction.subAccountId || id;
+  let op;
 
-  // FIXME we do not correctly handle subAccount
-  const op: $Exact<Operation> = {
-    id: `${accountId}-${txHash}-OUT`,
-    hash: txHash,
-    type:
-      transaction.mode === "undelegate" || transaction.mode === "delegate"
-        ? "DELEGATE"
-        : "OUT",
-    value: transaction.useAllAmount ? balance : transaction.amount.plus(fee),
-    fee,
-    blockHash: null,
-    blockHeight: null,
-    senders,
-    recipients,
-    accountId,
-    date: new Date(),
-    extra: {}
-  };
+  const subAccount = transaction.subAccountId
+    ? (subAccounts || []).find(a => a.id === transaction.subAccountId)
+    : null;
+  if (!subAccount) {
+    op = {
+      id: `${id}-${txHash}-OUT`,
+      hash: txHash,
+      type:
+        transaction.mode === "undelegate" || transaction.mode === "delegate"
+          ? "DELEGATE"
+          : "OUT",
+      value: transaction.useAllAmount ? balance : transaction.amount.plus(fee),
+      fee,
+      blockHash: null,
+      blockHeight: null,
+      senders,
+      recipients,
+      accountId: id,
+      date: new Date(),
+      extra: {}
+    };
+  } else {
+    invariant(
+      subAccount.type === "ChildAccount",
+      "tezos child account is ChildAccount"
+    );
+    op = {
+      id: `${id}-${txHash}-OUT`,
+      hash: txHash,
+      type: "OUT",
+      value: fee,
+      fee,
+      blockHash: null,
+      blockHeight: null,
+      senders,
+      recipients: [subAccount.address],
+      accountId: id,
+      date: new Date(),
+      extra: {},
+      subOperations: [
+        {
+          id: `${subAccount.id}-${txHash}-OUT`,
+          hash: txHash,
+          type:
+            transaction.mode === "undelegate" || transaction.mode === "delegate"
+              ? "DELEGATE"
+              : "OUT",
+          value: transaction.useAllAmount
+            ? subAccount.balance
+            : transaction.amount,
+          fee,
+          blockHash: null,
+          blockHeight: null,
+          senders,
+          recipients: [transaction.recipient],
+          accountId: subAccount.id,
+          date: new Date(),
+          extra: {}
+        }
+      ]
+    };
+  }
 
   return op;
 }
