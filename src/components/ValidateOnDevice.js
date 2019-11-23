@@ -78,7 +78,7 @@ const ValidateOnDevice = ({
           {Pre ? (
             <Pre
               account={account}
-              mainAccount={mainAccount}
+              parentAccount={parentAccount}
               transaction={transaction}
               status={status}
             />
@@ -102,7 +102,7 @@ const ValidateOnDevice = ({
           {Post ? (
             <Post
               account={account}
-              mainAccount={mainAccount}
+              parentAccount={parentAccount}
               transaction={transaction}
               status={status}
             />
