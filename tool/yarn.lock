@@ -129,9 +129,9 @@
     regenerator-runtime "^0.13.2"
 
 "@babel/runtime@^7.1.2":
-  version "7.7.2"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.2.tgz#111a78002a5c25fc8e3361bedc9529c696b85a6a"
-  integrity sha512-JONRbXbTXc9WQE2mAZd1p0Z3DZ/6vaQIkgYMSTP3KjRCyd7rCZCcfhCyX+YjwcKxcZ82UrxbRD358bpExNgrjw==
+  version "7.7.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.4.tgz#b23a856751e4bf099262f867767889c0e3fe175b"
+  integrity sha512-r24eVUUr0QqNZa+qrImUk8fn5SPhHq+IfYvIoIMg0do3GdK9sMdiLKP3GYVVaxpPKORgm8KRKaNTEhAjgIpLMw==
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -355,17 +355,17 @@
     events "^3.0.0"
 
 "@ledgerhq/ledger-core@^3.3.0":
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-3.10.0.tgz#c643197027935b85f79d659e1f4f1d398885e3c4"
-  integrity sha512-xztqbYQPRMR0h+DE/cUIv3CE8W2R/8Hbxy+etbFVfU0RCichuBP/CL+31wc0WSzvK0tQ+zEjW69EARzyIvMSJg==
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-3.11.0.tgz#b2d94aafd1c3130359123637b2daffb88ea0df0e"
+  integrity sha512-y8jn+jC6WclAz7q8QYJ23X+DffF7e9iqGVrxhlYfszeLFb3Vwp3CyjentWRAGmoBsrDt6S6v+ta4wNhqbXACSg==
   dependencies:
     bindings "1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@^9.0.0-alpha.11":
-  version "9.0.0-alpha.11"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.11.tgz#5c1c89aa643580e23df948a3f498fd02add8d817"
-  integrity sha512-RfYJMjJwFQV1wzdut49mTeL2mbKva6R0C4vNY2EI94sPPPAYiwhWvTiNtdjTWAmZ9BKydNVQTXPpFvNDcvW4jQ==
+"@ledgerhq/live-common@^9.0.0-alpha.15":
+  version "9.0.0-alpha.15"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.15.tgz#5f8ef8d2483db7f97388b12897d89fdf1076fa21"
+  integrity sha512-HJ/Y31Ge3dbo/v3XFneXTRSY/r0SIpC4FB6Fs3xOWrCNDH7VG+1ZbFt33RFTIWM+JaT6iiOv2Tv1obkuVE5lNQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "4"
@@ -525,9 +525,9 @@
   integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
 
 "@types/node@*":
-  version "12.12.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.10.tgz#c8b49f4c428cced07d8758ec45285be6597fb4d8"
-  integrity sha512-rhG2F0v4nNMqcPM4dMSne7R9iBzehUnARYbJq7G36CoczcqjNWuriAy6kd6quT30ISmfBhIRFVYDMSLrBASHNw==
+  version "12.12.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.12.tgz#529bc3e73dbb35dd9e90b0a1c83606a9d3264bdb"
+  integrity sha512-MGuvYJrPU0HUwqF7LqvIj50RZUX23Z+m583KBygKYUZLlZ88n6w28XRNJRJgsHukLEnLz6w6SvxZoLgbr5wLqQ==
 
 "@types/node@^12.11.1":
   version "12.12.9"
@@ -2552,9 +2552,9 @@ elliptic@^5.1.0:
     inherits "^2.0.1"
 
 elliptic@^6.4.1:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.1.tgz#c380f5f909bf1b9b4428d028cd18d3b0efd6b52b"
-  integrity sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.2.tgz#05c5678d7173c049d8ca433552224a495d0e3762"
+  integrity sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==
   dependencies:
     bn.js "^4.4.0"
     brorand "^1.0.1"
