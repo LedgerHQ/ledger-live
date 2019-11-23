@@ -28,7 +28,7 @@
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
-    "test": "yarn check --integrity && ./scripts/check-no-dups.sh && yarn lint && yarn flow && prettier -l src/**/*.js",
+    "test": "yarn check --integrity && ./scripts/check-no-dups.sh && yarn lint --quiet && yarn flow && prettier -l src/**/*.js",
     "sync-flowtyped": "NODE_OPTIONS=--max_old_space_size=10000 flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
     "debugSVG": "sh scripts/debugsvg.sh | node_modules/.bin/prettier --parser flow > src/screens/DebugSVG.js",
