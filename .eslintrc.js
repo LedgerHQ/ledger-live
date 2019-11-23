@@ -24,7 +24,6 @@ module.exports = {
         ignoreRestSiblings: true,
       },
     ],
-    "react-native/no-inline-styles": 0,
     "lines-between-class-members": 0,
     "flowtype/space-after-type-colon": 0,
     "no-continue": 0,
