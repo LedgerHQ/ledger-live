@@ -84,14 +84,14 @@ const modes = Object.freeze({
   tezbox: {
     overridesDerivation: "44'/1729'/<account>'/0'",
     libcoreConfig: {
-      TEZOS_XPUB_CURVE: "SECP256K1" // FIXME bug in libcore? it should be ED25519
+      TEZOS_XPUB_CURVE: "ED25519"
     }
   },
   tezosbip44h: {
     tag: "galleon",
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
     libcoreConfig: {
-      TEZOS_XPUB_CURVE: "SECP256K1" // FIXME bug in libcore? it should be ED25519
+      TEZOS_XPUB_CURVE: "ED25519"
     }
   },
   native_segwit: {
