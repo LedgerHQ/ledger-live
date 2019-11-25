@@ -3,6 +3,7 @@
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
+import i18next from "i18next";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -224,7 +225,9 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
 };
 
 SelectValidator.navigationOptions = {
-  headerTitle: <StepHeader title="__select validator__" />,
+  headerTitle: (
+    <StepHeader title={i18next.t("delegation.selectValidatorTitle")} />
+  ),
 };
 
 const styles = StyleSheet.create({

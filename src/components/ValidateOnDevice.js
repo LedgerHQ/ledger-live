@@ -51,7 +51,7 @@ const ValidateOnDevice = ({
   const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
   const Pre = r && r.pre;
   const Post = r && r.post;
-  const mode = t(`TransactionConfirm.modes.${transaction.mode || "send"}`);
+  const mode = t(`ValidateOnDevice.modes.${transaction.mode || "send"}`);
 
   return (
     <View style={styles.root}>

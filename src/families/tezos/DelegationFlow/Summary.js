@@ -11,7 +11,6 @@ import Icon from "react-native-vector-icons/dist/Feather";
 import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
-  getMainAccount,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
@@ -99,14 +98,22 @@ const Words = ({
   </LText>
 );
 
-const BakerSelection = ({ name }: { name: string }) => (
+const BakerSelection = ({
+  name,
+  readOnly,
+}: {
+  name: string,
+  readOnly?: boolean,
+}) => (
   <View style={styles.bakerSelection}>
     <LText bold numberOfLines={1} style={styles.bakerSelectionText}>
       {name}
     </LText>
-    <View style={styles.bakerSelectionIcon}>
-      <Icon size={16} name="edit-2" color={colors.white} />
-    </View>
+    {readOnly ? null : (
+      <View style={styles.bakerSelectionIcon}>
+        <Icon size={16} name="edit-2" color={colors.white} />
+      </View>
+    )}
   </View>
 );
 
@@ -120,38 +127,46 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
     status,
     bridgePending,
     bridgeError,
-  } = useBridgeTransaction(() => {
-    const transaction = {
-      ...getAccountBridge(account, parentAccount).createTransaction(
-        getMainAccount(account, parentAccount),
-      ),
-      mode: navigation.getParam("mode") || "delegate",
-      recipient: (firstBaker && firstBaker.address) || "",
-    };
-    return {
-      transaction,
-      account,
-      parentAccount,
-    };
-  });
+  } = useBridgeTransaction(() => ({
+    account,
+    parentAccount,
+  }));
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "tezos", "transaction tezos");
 
+  // make sure tx is in sync
   useEffect(() => {
-    if (
-      firstBaker &&
-      transaction.mode === "delegate" &&
-      !transaction.recipient
-    ) {
+    if (!transaction || !account) return;
+    invariant(transaction.family === "tezos", "tezos tx");
+
+    // make sure the mode is in sync (an account changes can reset it)
+    const patch: Object = {
+      mode: navigation.getParam("mode") || "delegate",
+    };
+
+    // make sure that in delegate mode, a transaction recipient is set (random pick)
+    if (patch.mode === "delegate" && !transaction.recipient && firstBaker) {
+      patch.recipient = firstBaker.address;
+    }
+
+    // when changes, we set again
+    if (patch.mode !== transaction.mode || "recipient" in patch) {
       setTransaction(
         getAccountBridge(account, parentAccount).updateTransaction(
           transaction,
-          { recipient: firstBaker.address },
+          patch,
         ),
       );
     }
-  }, [account, firstBaker, parentAccount, setTransaction, transaction]);
+  }, [
+    account,
+    firstBaker,
+    navigation,
+    parentAccount,
+    setTransaction,
+    transaction,
+  ]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
@@ -193,11 +208,13 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
     });
   }, [rotateAnim, navigation, transaction]);
 
-  const baker = useBaker(transaction.recipient);
-  const bakerName = baker
-    ? baker.name
-    : shortAddressPreview(transaction.recipient);
   const delegation = useDelegation(account);
+  const addr =
+    transaction.mode === "undelegate"
+      ? (delegation && delegation.address) || ""
+      : transaction.recipient;
+  const baker = useBaker(addr);
+  const bakerName = baker ? baker.name : shortAddressPreview(addr);
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
   const accountName = getAccountName(account);
@@ -253,9 +270,9 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
                   <ChangeDelegator />
                 </Circle>
               </Touchable>
-            ) : delegation ? (
-              <BakerImage baker={delegation.baker} />
-            ) : null
+            ) : (
+              <BakerImage baker={baker} />
+            )
           }
         />
 
@@ -273,21 +290,26 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
             </Words>
           </Line>
 
-          <Line>
-            <Words>
-              {transaction.mode === "delegate" ? (
+          {transaction.mode === "delegate" ? (
+            <Line>
+              <Words>
                 <Trans i18nKey="delegation.to" />
-              ) : (
+              </Words>
+              <Touchable
+                event="DelegationFlowSummaryChangeBtn"
+                onPress={onChangeDelegator}
+              >
+                <BakerSelection name={bakerName} />
+              </Touchable>
+            </Line>
+          ) : (
+            <Line>
+              <Words>
                 <Trans i18nKey="delegation.from" />
-              )}
-            </Words>
-            <Touchable
-              event="DelegationFlowSummaryChangeBtn"
-              onPress={onChangeDelegator}
-            >
-              <BakerSelection name={bakerName} />
-            </Touchable>
-          </Line>
+              </Words>
+              <BakerSelection readOnly name={bakerName} />
+            </Line>
+          )}
 
           {baker && transaction.mode === "delegate" ? (
             <Line>
@@ -308,9 +330,13 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
       </ScrollView>
       <View style={styles.footer}>
         {transaction.mode === "undelegate" ? (
-          <VerifyAddressDisclaimer text="Your account will be undelegated from the selected validator. Funds are safe on your device." />
+          <VerifyAddressDisclaimer
+            text={<Trans i18nKey="delegation.warnUndelegation" />}
+          />
         ) : (
-          <VerifyAddressDisclaimer text="Your account will be delegated to the selected validator. Funds are safe on your device." />
+          <VerifyAddressDisclaimer
+            text={<Trans i18nKey="delegation.warnDelegation" />}
+          />
         )}
 
         <Button

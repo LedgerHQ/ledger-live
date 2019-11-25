@@ -23,13 +23,18 @@ const SendAction = ({
     delegation && delegation.sendShouldWarnDelegation;
 
   const onPressDecorated = useCallback(() => {
-    if (!isOpened && sendShouldWarnDelegation) {
+    if (isOpened) return;
+    if (sendShouldWarnDelegation) {
       setOpened(true);
     } else {
-      if (isOpened) setOpened(false);
       onPress();
     }
   }, [isOpened, sendShouldWarnDelegation, onPress]);
+
+  const onContinue = useCallback(() => {
+    setOpened(false);
+    onPress();
+  }, [onPress]);
 
   const onClose = useCallback(() => {
     setOpened(false);
@@ -39,7 +44,7 @@ const SendAction = ({
     <>
       <InfoModal
         withCancel
-        onContinue={onPressDecorated}
+        onContinue={onContinue}
         onClose={onClose}
         isOpened={isOpened}
         id="TezosDelegateSendWarning"
@@ -64,13 +69,18 @@ const ReceiveAction = ({
     delegation && delegation.receiveShouldWarnDelegation;
 
   const onPressDecorated = useCallback(() => {
-    if (!isOpened && receiveShouldWarnDelegation) {
+    if (isOpened) return;
+    if (receiveShouldWarnDelegation) {
       setOpened(true);
     } else {
-      if (isOpened) setOpened(false);
       onPress();
     }
   }, [isOpened, receiveShouldWarnDelegation, onPress]);
+
+  const onContinue = useCallback(() => {
+    setOpened(false);
+    onPress();
+  }, [onPress]);
 
   const onClose = useCallback(() => {
     setOpened(false);
@@ -80,7 +90,7 @@ const ReceiveAction = ({
     <>
       <InfoModal
         withCancel
-        onContinue={onPressDecorated}
+        onContinue={onContinue}
         onClose={onClose}
         isOpened={isOpened}
         id="TezosDelegateReceiveWarning"
