@@ -66,6 +66,7 @@ async function ethereumBuildOperation(
   const out: $Shape<Operation> = { hash, transactionSequenceNumber };
   if (status === 0) {
     out.hasFailed = true;
+    out.value = partialOp.fee;
   }
 
   const internalTransactions = await ethereumLikeOperation.getInternalTransactions();
