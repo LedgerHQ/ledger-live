@@ -1,5 +1,5 @@
-import ScreenEditFeePerByte from "./ScreenEditFeePerByte";
+import BitcoinEditFeePerByte from "./ScreenEditFeePerByte";
 
 export default {
-  sendScreens: { ScreenEditFeePerByte },
+  sendScreens: { BitcoinEditFeePerByte },
 };
