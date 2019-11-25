@@ -1,6 +1,6 @@
-import ScreenEditFee from "./ScreenEditFee";
-import ScreenEditGasLimit from "./ScreenEditGasLimit";
+import EthereumEditFee from "./ScreenEditFee";
+import EthereumEditGasLimit from "./ScreenEditGasLimit";
 
 export default {
-  sendScreens: { ScreenEditFee, ScreenEditGasLimit },
+  sendScreens: { EthereumEditFee, EthereumEditGasLimit },
 };

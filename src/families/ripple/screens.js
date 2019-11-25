@@ -1,6 +1,6 @@
-import ScreenEditFee from "./ScreenEditFee";
-import ScreenEditTag from "./ScreenEditTag";
+import RippleEditFee from "./ScreenEditFee";
+import RippleEditTag from "./ScreenEditTag";
 
 export default {
-  sendScreens: { ScreenEditFee, ScreenEditTag },
+  sendScreens: { RippleEditFee, RippleEditTag },
 };
