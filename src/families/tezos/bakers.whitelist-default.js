@@ -2,6 +2,7 @@
 
 // unfinished list...
 const whitelist = [
+  "tz3adcvQaKXTCg12zbninqo3q8ptKKtDFTLv",
   "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
   "tz1Z3KCf8CLGAYfvVWPEr562jDDyWkwNF7sT",
   "tz1Scdr2HsZiQjc7bHMeBbmDRXYVvdhjJbBh",
@@ -19,8 +20,14 @@ const whitelist = [
   "tz1V4qCyvPKZ5UeqdH14HN42rxvNPQfc9UZg",
   "tz1Lhf4J9Qxoe3DZ2nfe8FGDnvVj7oKjnMY6",
   "tz1Pwgj6j55akKCyvTwwr9X4np1RskSXpQY4",
+  "tz1egbN6RK2bM5vt4aAZw6r9j4nL8z49bPdS",
   "tz1Ldzz6k1BHdhuKvAtMRX7h5kJSMHESMHLC",
-  "tz1NortRftucvAkD1J58L32EhSVrQEWJCEnB"
+  "tz1NortRftucvAkD1J58L32EhSVrQEWJCEnB",
+  "tz1Kf25fX1VdmYGSEzwFy1wNmkbSEZ2V83sY",
+  "tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv",
+  "tz1eEnQhbwf6trb8Q8mPb2RaPkNk2rN7BKi8",
+  "tz1RSWMYKGAykpizFteowByYMueCYv9TMn1L",
+  "tz1Tnjaxk6tbAeC2TmMApPh8UsrEVQvhHvx5"
 ];
 
 // we give no ordering preference. it's settled at module load time
