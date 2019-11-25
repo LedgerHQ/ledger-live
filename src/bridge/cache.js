@@ -1,6 +1,6 @@
 // @flow
 
-import { AsyncStorage } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 import { makeLRUCache } from "@ledgerhq/live-common/lib/cache";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { log } from "@ledgerhq/logs";
