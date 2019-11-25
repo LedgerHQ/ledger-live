@@ -3,7 +3,8 @@ import React, { PureComponent } from "react";
 import i18next from "i18next";
 import { View, StyleSheet } from "react-native";
 // $FlowFixMe
-import { HeaderBackButton, SafeAreaView, ScrollView } from "react-navigation";
+import { SafeAreaView, ScrollView } from "react-navigation";
+import { HeaderBackButton } from "react-navigation-stack";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type {

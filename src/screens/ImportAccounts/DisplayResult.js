@@ -3,7 +3,8 @@ import React, { Component, Fragment } from "react";
 import { View, StyleSheet } from "react-native";
 
 // $FlowFixMe
-import { HeaderBackButton, SectionList, SafeAreaView } from "react-navigation";
+import { SectionList, SafeAreaView } from "react-navigation";
+import { HeaderBackButton } from "react-navigation-stack";
 import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
