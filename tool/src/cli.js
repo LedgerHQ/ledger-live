@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable no-console */
 
-import "babel-polyfill";
+
 import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";

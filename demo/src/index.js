@@ -1,4 +1,3 @@
-import "babel-polyfill";
 import "./live-common-setup";
 import React, { Component } from "react";
 import ReactDOM from "react-dom";

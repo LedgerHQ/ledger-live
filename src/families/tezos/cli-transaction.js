@@ -2,6 +2,7 @@
 
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import flatMap from "lodash/flatMap";
 import type {
   Transaction,
   Account,
@@ -55,7 +56,7 @@ function inferTransactions(
   opts: Object,
   { inferAmount }: *
 ): Transaction[] {
-  return transactions.flatMap(({ transaction, account }) => {
+  return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "tezos", "tezos family");
     let subAccountId;
     if (account.type === "ChildAccount") {

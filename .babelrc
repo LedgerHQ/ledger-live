@@ -1,17 +1,22 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
-          "browsers": ["last 2 versions"],
-          "node": "current"
-        },
-        "forceAllTransforms": true
+          "node": "current",
+          "chrome": 55
+        }
       }
     ],
-    "flow",
-    "react",
-    "stage-0"
+    "@babel/preset-flow",
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-export-default-from",
+    "@babel/plugin-proposal-export-namespace-from",
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-syntax-import-meta",
+    ["@babel/plugin-proposal-class-properties", { "loose": true }]
   ]
 }

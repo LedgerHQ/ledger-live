@@ -1,6 +1,6 @@
 // @flow
 
-import "babel-polyfill";
+
 import { BigNumber } from "bignumber.js";
 import { reduce } from "rxjs/operators";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";

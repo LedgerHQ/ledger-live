@@ -2,6 +2,7 @@
 
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import flatMap from "lodash/flatMap";
 import { getAccountCurrency } from "../../account";
 import type {
   Transaction,
@@ -60,7 +61,7 @@ function inferTransactions(
   opts: Object,
   { inferAmount }: *
 ): Transaction[] {
-  return transactions.flatMap(({ transaction, account }) => {
+  return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "ethereum", "ethereum family");
     let subAccountId;
     if (account.type === "TokenAccount") {
