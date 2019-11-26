@@ -59,7 +59,7 @@ const envParsers = {
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   API_TEZOS_BAKER: "https://tezos-bakers.api.live.ledger.com",
   API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT:
-    "https://tzstats.ledger.com/explorer",
+    "https://xtz.explorers.prod.aws.ledger.fr/",
   API_TEZOS_NODE: "https://xtz-node.explorers.prod.aws.ledger.fr/",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
   BRIDGE_FORCE_IMPLEMENTATION: "",
