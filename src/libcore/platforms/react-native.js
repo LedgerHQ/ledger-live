@@ -180,6 +180,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
       walletDynObject
     );
 
+    // $FlowFixMe
     const core: Core = {
       ...cs,
 

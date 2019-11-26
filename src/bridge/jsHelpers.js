@@ -94,7 +94,10 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
       seedIdentifier
     ): { account?: Account, complete?: boolean } {
       const accountId = `js:2:${currency.id}:${address}:${derivationMode}`;
-      const accountShape = await getAccountShape({ id: accountId, address });
+      const accountShape: Account = await getAccountShape({
+        id: accountId,
+        address
+      });
       if (finished) return { complete: true };
 
       const freshAddress = address;
@@ -110,7 +113,7 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
           // is standard derivation
           if (newAccountCount === 0) {
             // first zero account will emit one account as opportunity to create a new account..
-            const account: $Exact<Account> = {
+            const account: Account = {
               type: "Account",
               id: accountId,
               seedIdentifier,
@@ -152,7 +155,7 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
         return { complete: true };
       }
 
-      const account: $Exact<Account> = {
+      const account: Account = {
         type: "Account",
         id: accountId,
         seedIdentifier: freshAddress,

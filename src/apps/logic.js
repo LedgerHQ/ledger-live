@@ -15,7 +15,7 @@ export const initState = ({
   deviceModelId,
   appsListNames,
   ...listAppsResult
-}: ListAppsResult): $Exact<State> => ({
+}: ListAppsResult): State => ({
   ...listAppsResult,
   apps: appsListNames.map(name => listAppsResult.appByName[name]),
   deviceModel: getDeviceModel(deviceModelId),

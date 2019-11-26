@@ -184,9 +184,7 @@ export function patchAccount(
     subAccounts
   );
 
-  const next: $Exact<Account> = {
-    ...account
-  };
+  const next: Account = { ...account };
 
   let changed = false;
 
