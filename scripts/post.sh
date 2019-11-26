@@ -26,12 +26,13 @@ if [[ $DEBUG_RNDEBUGGER == "1" ]]; then
 fi
 
 if [ "$(uname)" == "Darwin" ]; then
-  if ! [ -x "$(command -v pod)" ]; then
-    echo 'Error: `pod` command is missing. Please install CocoaPods.' >&2
+  if ! [ -x "$(command -v bundle)" ]; then
+    echo 'Error: `bundle` command is missing. Please install Bundler. https://bundler.io' >&2
     exit 1
   fi
 
-  cd ios && pod install
+  bundle install
+  cd ios && bundle exec pod install
 fi
 
 # We manually need to run Jetifier for React Native BLE PLX until they switch to AndroidX
