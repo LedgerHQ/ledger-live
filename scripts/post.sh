@@ -33,3 +33,7 @@ if [ "$(uname)" == "Darwin" ]; then
 
   cd ios && pod install
 fi
+
+# We manually need to run Jetifier for React Native BLE PLX until they switch to AndroidX
+# https://github.com/Polidea/react-native-ble-plx#android-example-setup
+yarn jetify
