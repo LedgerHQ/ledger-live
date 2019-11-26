@@ -14,6 +14,7 @@ import Touchable from "./Touchable";
 type State = {
   focused: boolean,
   value: string,
+  height: number,
 };
 
 class TextInput extends PureComponent<*, State> {
@@ -22,6 +23,7 @@ class TextInput extends PureComponent<*, State> {
     this.state = {
       focused: this.props.autoFocus || false,
       value: this.props.defaultValue || "",
+      height: 1,
     };
   }
 
@@ -53,6 +55,12 @@ class TextInput extends PureComponent<*, State> {
     }
   };
 
+  onContentSizeChange = event => {
+    const { height } = event.nativeEvent.contentSize;
+
+    this.setState({ height });
+  };
+
   clearInput = () => {
     this.setState({ value: "", focused: true });
     if (this.props.onInputCleared) {
@@ -73,6 +81,9 @@ class TextInput extends PureComponent<*, State> {
 
     const { value, focused } = this.state;
 
+    const flatStyle = style ? StyleSheet.flatten(style) : {};
+    const { fontSize, height } = flatStyle;
+
     const flags = {};
 
     if (!withSuggestions) {
@@ -86,20 +97,27 @@ class TextInput extends PureComponent<*, State> {
     // {...otherProps} needs to come first to allow an override.
 
     // Preprocess the font size to override system scaling
-    const overrideFontScaling = { fontSize: 20 / PixelRatio.getFontScale() };
-    if (style && style.fontSize) {
-      overrideFontScaling.fontSize = style.fontSize / PixelRatio.getFontScale();
+    const overrideFontScaling = {
+      fontSize: (fontSize || 20) / PixelRatio.getFontScale(),
+    };
+
+    const dynamicHeight = {};
+    if (!height && this.props.multiline) {
+      dynamicHeight.height = this.state.height;
     }
 
     return (
       <View style={[styles.container, containerStyle]}>
         <ReactNativeTextInput
           ref={innerRef}
-          style={[{ flex: 1 }, style, overrideFontScaling]}
+          style={[{ flex: 1 }, style, overrideFontScaling, dynamicHeight]}
           {...otherProps}
           onBlur={this.onBlur}
           onFocus={this.onFocus}
           onChangeText={this.onChangeText}
+          onContentSizeChange={
+            dynamicHeight.height ? this.onContentSizeChange : undefined
+          }
           autoFocus={focused}
           value={value}
           allowFontScaling={false}
