@@ -1,7 +1,13 @@
 // @flow
 // polyfill the unfinished support of apps logic
 
-import type { ApplicationVersion, FinalFirmware } from "../types/manager";
+import uniq from "lodash/uniq";
+import type {
+  App,
+  Application,
+  ApplicationVersion,
+  FinalFirmware
+} from "../types/manager";
 import appInfos from "./polyfill-data/app_infos";
 import firmwareBlocks from "./polyfill-data/firmware_blocks";
 import {
@@ -12,7 +18,7 @@ import {
 const directDep = {};
 const reverseDep = {};
 export function declareDep(name: string, dep: string) {
-  directDep[name] = dep;
+  directDep[name] = (directDep[name] || []).concat(dep);
   reverseDep[dep] = (reverseDep[dep] || []).concat(name);
 }
 listCryptoCurrencies(true, true).forEach(a => {
@@ -32,17 +38,36 @@ listCryptoCurrencies(true, true).forEach(a => {
   ["ARTIS sigma1", "Ethereum"]
 ].forEach(([name, dep]) => declareDep(name, dep));
 
-export const getDirectDep = (appName: string): ?string => directDep[appName];
-
 export const getDependencies = (appName: string): string[] =>
+  directDep[appName] || [];
+
+export const getDependents = (appName: string): string[] =>
   reverseDep[appName] || [];
 
 export const polyfillFinalFirmware = (
   firmware: FinalFirmware
 ): FinalFirmware => {
   const blocks = firmwareBlocks[firmware.version];
-  if (blocks) return { ...firmware, blocks };
+  if (blocks) return { ...firmware, bytes: blocks * 4 * 1024 };
   return firmware;
+};
+
+export const polyfillApplication = (app: Application): Application => {
+  const crypto = listCryptoCurrencies(true, true).find(
+    crypto => app.name.toLowerCase() === crypto.managerAppName.toLowerCase()
+  );
+  let o = app;
+  if (crypto && !app.currencyId) {
+    o = { ...o, currencyId: crypto.id };
+  }
+  return o;
+};
+
+export const polyfillApp = (app: $Exact<App>): $Exact<App> => {
+  return {
+    ...app,
+    dependencies: uniq(app.dependencies.concat(getDependencies(app.name)))
+  };
 };
 
 export const polyfillAppVersion = (
@@ -55,8 +80,7 @@ export const polyfillAppVersion = (
     return {
       ...app,
       bytes: entry.size,
-      hash: entry.hash,
-      dependency: getDirectDep(app.name)
+      hash: entry.hash
     };
   }
   return app;

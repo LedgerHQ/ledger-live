@@ -1,7 +1,8 @@
 // @flow
 
+import flatMap from "lodash/flatMap";
 import { getDeviceModel } from "@ledgerhq/devices";
-import type { ApplicationVersion } from "../types/manager";
+import type { App } from "../types/manager";
 import type {
   AppOp,
   State,
@@ -30,15 +31,19 @@ export const initState = ({
 // we should have dependency as part of the data!
 
 const reorderInstallQueue = (
-  appByName: { [_: string]: ApplicationVersion },
+  appByName: { [_: string]: App },
   apps: string[]
 ): string[] => {
-  const list = [];
+  let list = [];
   apps.forEach(app => {
     if (list.includes(app)) return;
-    const dep = app in appByName && appByName[app].dependency;
-    if (dep && apps.includes(dep) && !list.includes(dep)) {
-      list.push(dep);
+    if (app in appByName) {
+      const deps = appByName[app].dependencies;
+      deps.forEach(dep => {
+        if (apps.includes(dep) && !list.includes(dep)) {
+          list.push(dep);
+        }
+      });
     }
     list.push(app);
   });
@@ -46,19 +51,19 @@ const reorderInstallQueue = (
 };
 
 const reorderUninstallQueue = (
-  appByName: { [_: string]: ApplicationVersion },
+  appByName: { [_: string]: App },
   apps: string[]
 ): string[] =>
   reorderInstallQueue(appByName, apps.slice(0).reverse()).reverse();
 
 const findDependents = (
-  appByName: { [_: string]: ApplicationVersion },
+  appByName: { [_: string]: App },
   name: string
 ): string[] => {
   const all = [];
   for (const k in appByName) {
     const app = appByName[k];
-    if (app.dependency && app.dependency === name) {
+    if (app.dependencies.includes(name)) {
       all.push(app.name);
     }
   }
@@ -160,8 +165,7 @@ export const reducer = (state: State, action: Action): State => {
           const dependents = state.installed
             .filter(a => {
               const depApp = state.appByName[a.name];
-              const dep = depApp && depApp.dependency;
-              return dep === app.name;
+              return depApp && depApp.dependencies.includes(app.name);
             })
             .map(a => a.name);
           uninstallList = uninstallList.concat([app.name, ...dependents]);
@@ -197,14 +201,17 @@ export const reducer = (state: State, action: Action): State => {
       }
 
       const depApp = state.appByName[name];
-      const dep = depApp && depApp.dependency;
-      const dependentsOfDep = dep ? findDependents(state.appByName, dep) : [];
-      const depInstall = dep && state.installed.find(a => a.name === dep);
+      const deps = depApp && depApp.dependencies;
+      const dependentsOfDep =
+        deps && flatMap(deps, dep => findDependents(state.appByName, dep));
+      const depsInstalledOutdated =
+        deps &&
+        state.installed.filter(a => deps.includes(a.name) && !a.updated);
 
       let installList = state.installQueue;
       // installing an app will remove if planned for uninstalling
       let uninstallList = state.uninstallQueue.filter(
-        u => name !== u && u !== dep
+        u => name !== u && !deps.includes(u)
       );
 
       if (state.uninstallQueue.length !== uninstallList.length) {
@@ -212,23 +219,22 @@ export const reducer = (state: State, action: Action): State => {
         // TODO cover this in tests...
       } else {
         // if app is already installed but outdated, we'll need to update related deps
-        if (
-          (existing && !existing.updated) ||
-          (depInstall && !depInstall.updated)
-        ) {
+        if ((existing && !existing.updated) || depsInstalledOutdated.length) {
           const outdated = state.installed
             .filter(
               a =>
-                !a.updated && [name, dep, ...dependentsOfDep].includes(a.name)
+                !a.updated &&
+                [name, ...deps, ...dependentsOfDep].includes(a.name)
             )
             .map(a => a.name);
           uninstallList = uninstallList.concat(outdated);
           installList = installList.concat(outdated);
         }
 
-        installList = installList.concat(
-          dep && !depInstall ? [dep, name] : [name]
-        );
+        installList = installList.concat([
+          ...deps.filter(d => !state.installed.some(a => a.name === d)),
+          name
+        ]);
       }
 
       const installQueue = reorderInstallQueue(state.appByName, installList);
@@ -253,11 +259,7 @@ export const reducer = (state: State, action: Action): State => {
       }
 
       // uninstalling an app will remove from installQueue as well as direct deps
-      const installQueue = state.installQueue.filter(
-        u =>
-          name !== u &&
-          name !== !(state.appByName[u] && state.appByName[u].dependency)
-      );
+      const installQueue = state.installQueue.filter(u => name !== u);
 
       let uninstallQueue = state.uninstallQueue;
       if (
@@ -303,8 +305,8 @@ export const distribute = (
   const blockSize = state.deviceModel.blockSize;
   const totalBytes = state.deviceModel.memorySize;
   const totalBlocks = Math.floor(totalBytes / blockSize);
-  const osBlocks = (state.firmware && state.firmware.blocks) || 0;
-  const osBytes = blockSize * osBlocks;
+  const osBytes = (state.firmware && state.firmware.bytes) || 0;
+  const osBlocks = Math.ceil(osBytes / blockSize);
   const appsSpaceBlocks = totalBlocks - osBlocks;
   const appsSpaceBytes = appsSpaceBlocks * blockSize;
   let totalAppsBlocks = 0;
@@ -342,7 +344,8 @@ export const isOutOfMemoryState = (state: State): boolean => {
   const blockSize = state.deviceModel.blockSize;
   const totalBytes = state.deviceModel.memorySize;
   const totalBlocks = Math.floor(totalBytes / blockSize);
-  const osBlocks = (state.firmware && state.firmware.blocks) || 0;
+  const osBytes = (state.firmware && state.firmware.bytes) || 0;
+  const osBlocks = Math.ceil(osBytes / blockSize);
   const appsSpaceBlocks = totalBlocks - osBlocks;
   const totalAppsBlocks = state.installed.reduce(
     (sum, app) => sum + app.blocks,

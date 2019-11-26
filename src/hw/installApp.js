@@ -3,14 +3,14 @@ import { Observable, throwError } from "rxjs";
 import { throttleTime, filter, map, catchError } from "rxjs/operators";
 import { ManagerAppDepInstallRequired } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import type { ApplicationVersion } from "../types/manager";
+import type { ApplicationVersion, App } from "../types/manager";
 import ManagerAPI from "../api/Manager";
-import { getDirectDep } from "../apps/polyfill";
+import { getDependencies } from "../apps/polyfill";
 
 export default function installApp(
   transport: Transport<*>,
   targetId: string | number,
-  app: ApplicationVersion
+  app: ApplicationVersion | App
 ): Observable<{ progress: number }> {
   return ManagerAPI.install(transport, "install-app", {
     targetId,
@@ -27,10 +27,11 @@ export default function installApp(
       if (!e || !e.message) return throwError(e);
       const status = e.message.slice(e.message.length - 4);
       if (status === "6a83") {
+        const dependencies = getDependencies(app.name);
         return throwError(
           new ManagerAppDepInstallRequired("", {
             appName: app.name,
-            dependency: getDirectDep(app.name) || ""
+            dependency: dependencies.join(", ")
           })
         );
       }
