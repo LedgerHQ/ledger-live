@@ -8,7 +8,8 @@ export type OperationType =
   | "NONE"
   | "CREATE"
   | "REVEAL"
-  | "DELEGATE";
+  | "DELEGATE"
+  | "UNDELEGATE";
 
 export type Operation = {
   // unique identifier (usually hash)

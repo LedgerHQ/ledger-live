@@ -36,6 +36,13 @@ async function tezos({
 
   let op;
 
+  const type =
+    transaction.mode === "undelegate"
+      ? "UNDELEGATE"
+      : transaction.mode === "delegate"
+      ? "DELEGATE"
+      : "OUT";
+
   const subAccount = transaction.subAccountId
     ? (subAccounts || []).find(a => a.id === transaction.subAccountId)
     : null;
@@ -43,10 +50,7 @@ async function tezos({
     op = {
       id: `${id}-${txHash}-OUT`,
       hash: txHash,
-      type:
-        transaction.mode === "undelegate" || transaction.mode === "delegate"
-          ? "DELEGATE"
-          : "OUT",
+      type,
       value: transaction.useAllAmount ? balance : transaction.amount.plus(fee),
       fee,
       blockHash: null,
@@ -79,10 +83,7 @@ async function tezos({
         {
           id: `${subAccount.id}-${txHash}-OUT`,
           hash: txHash,
-          type:
-            transaction.mode === "undelegate" || transaction.mode === "delegate"
-              ? "DELEGATE"
-              : "OUT",
+          type,
           value: transaction.useAllAmount
             ? subAccount.balance
             : transaction.amount,
