@@ -1,7 +1,7 @@
 PODS:
   - Analytics (3.7.0)
   - boost-for-react-native (1.63.0)
-  - djinni_objc (4.0.0)
+  - djinni_objc (4.1.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.61.2)
   - FBReactNativeSpec (0.61.2):
@@ -21,7 +21,7 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - ledger-core-objc (4.0.0):
+  - ledger-core-objc (4.1.0):
     - djinni_objc
   - lottie-ios (3.1.3)
   - lottie-react-native (3.2.1):
@@ -264,7 +264,7 @@ PODS:
     - React
   - RNKeychain (3.1.3):
     - React
-  - RNLibLedgerCore (4.0.0):
+  - RNLibLedgerCore (4.1.0):
     - ledger-core-objc
     - React
   - RNReanimated (1.4.0):
@@ -460,13 +460,13 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Analytics: 77fd5fb102a4a5eedafa2c2b0245ceb7b7c15e45
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  djinni_objc: 6b80a7cf1421f6e459f12550658841a0c6e52a3f
+  djinni_objc: c5d357e4c384375eec275b3f8893270898c9ea0e
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: 68b6a76960fbd8ecd9fb7ce0aadd3329c3340a99
   FBReactNativeSpec: 5a764c60abdc3336a213e5310c40b74741f32839
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  ledger-core-objc: fe1a63d6b42151addbd84b4afe78f91565df31f5
+  ledger-core-objc: fc270e9f0c875fa65dd6778fdef397186140ec6e
   lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   lottie-react-native: b123a79529cc732201091f585c62c89bb4747252
   PasscodeAuth: 667f2bfb0e78f652c11db4793d8077c189ce300e
@@ -504,7 +504,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 60a80e72d95bf02a01cace55d3697d9724f0d77f
   RNGestureHandler: a4ddde1ffc6e590c8127b8b7eabfdade45475c74
   RNKeychain: c658833a9cb2cbcba6423bdd6e16cce59e27da0e
-  RNLibLedgerCore: 245d9a2eba9152a7e5a986faa04690f433f6c553
+  RNLibLedgerCore: 36e943d12ae3926f55094189e89dabce2d022646
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 720a9e6968beb73e8196239801e887d8401f86ed
   RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
