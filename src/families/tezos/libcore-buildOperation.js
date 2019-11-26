@@ -10,18 +10,24 @@ const opTagToType = {
   [tezosOperationTag.OPERATION_TAG_DELEGATION]: "DELEGATE"
 };
 
-async function tezosBuildOperation({
-  coreOperation
-}: {
-  coreOperation: CoreOperation
-}) {
+async function tezosBuildOperation(
+  {
+    coreOperation
+  }: {
+    coreOperation: CoreOperation
+  },
+  partialOp: $Shape<Operation>
+) {
   const tezosLikeOperation = await coreOperation.asTezosLikeOperation();
   const tezosLikeTransaction = await tezosLikeOperation.getTransaction();
   const status = await tezosLikeTransaction.getStatus();
   const tezosType = await tezosLikeTransaction.getType();
   const hash = await tezosLikeTransaction.getHash();
   const out: $Shape<Operation> = { hash };
-  const maybeCustomType = opTagToType[tezosType];
+  let maybeCustomType = opTagToType[tezosType];
+  if (maybeCustomType === "DELEGATE" && !partialOp.recipients[0]) {
+    maybeCustomType = "UNDELEGATE";
+  }
   if (maybeCustomType) {
     out.type = maybeCustomType;
   }

@@ -29,8 +29,10 @@ const formatOp = unitByAccountId => {
     const spaces = Array((level + 1) * 2)
       .fill(" ")
       .join("");
-    const extra = level > 0 ? "" : ` ${op.hash}     ${op.date.toISOString()}`;
-    const head = `${(spaces + amount).padEnd(26)} ${extra}`;
+    const extra = level > 0 ? "" : `${op.hash}     ${op.date.toISOString()}`;
+    const head = `${(spaces + amount).padEnd(20)} ${op.type.padEnd(
+      11
+    )}${extra}`;
     const sub = (op.subOperations || [])
       .concat(op.internalOperations || [])
       .map(subop => format(subop, level + 1))
