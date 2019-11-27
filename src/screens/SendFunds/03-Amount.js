@@ -109,13 +109,6 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  let {
-    errors: { amount: amountError },
-  } = status;
-
-  if (amount.eq(0)) {
-    amountError = null;
-  }
 
   return (
     <>
@@ -130,7 +123,8 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                 onChange={onChange}
                 currency={unit.code}
                 value={amount}
-                error={amountError}
+                error={amount.eq(0) ? null : status.errors.amount}
+                warning={status.warnings.amount}
               />
 
               <View style={styles.bottomWrapper}>
@@ -174,7 +168,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                       />
                     }
                     onPress={onContinue}
-                    disabled={!!amountError || bridgePending || amount.isZero()}
+                    disabled={!!status.errors.amount || bridgePending}
                     pending={bridgePending}
                   />
                 </View>

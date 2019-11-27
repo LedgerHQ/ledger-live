@@ -38,6 +38,7 @@ type Props = {
   allowZero: boolean,
   renderRight?: any,
   hasError?: boolean,
+  hasWarning?: boolean,
   autoFocus?: boolean,
   editable: boolean,
   placeholder?: string,
@@ -59,6 +60,7 @@ class CurrencyInput extends PureComponent<Props, State> {
     allowZero: false,
     isActive: false,
     hasError: false,
+    hasWarning: false,
     autoFocus: false,
     editable: true,
   };
@@ -136,6 +138,7 @@ class CurrencyInput extends PureComponent<Props, State> {
       isActive,
       renderRight,
       hasError,
+      hasWarning,
       autoFocus,
       editable,
       placeholder,
@@ -159,7 +162,7 @@ class CurrencyInput extends PureComponent<Props, State> {
           hitSlop={{ top: 20, bottom: 20 }}
           style={[
             styles.input,
-            hasError ? styles.error : null,
+            hasError ? styles.error : hasWarning ? styles.warning : null,
             editable ? {} : styles.readOnly,
             { fontSize: dynamicFontSize },
           ]}
@@ -204,6 +207,9 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.alert,
+  },
+  warning: {
+    color: colors.orange,
   },
 });
 
