@@ -2,16 +2,12 @@
 import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import type { Observable } from "rxjs";
 import type { CryptoCurrency } from "../types/currencies";
-import type {
-  ApplicationVersion,
-  DeviceInfo,
-  FinalFirmware
-} from "../types/manager";
+import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
 
 export type Exec = (
   appOp: AppOp,
   targetId: string | number,
-  app: ApplicationVersion
+  app: App
 ) => Observable<{ progress: number }>;
 
 export type InstalledItem = {
@@ -27,7 +23,7 @@ export type ListAppsEvent =
   | { type: "result", result: ListAppsResult };
 
 export type ListAppsResult = {
-  appByName: { [_: string]: ApplicationVersion },
+  appByName: { [_: string]: App },
   appsListNames: string[],
   installedAvailable: boolean,
   installed: InstalledItem[],
@@ -40,8 +36,8 @@ export type State = {
   deviceInfo: DeviceInfo,
   deviceModel: DeviceModel,
   firmware: ?FinalFirmware,
-  appByName: { [_: string]: ApplicationVersion },
-  apps: ApplicationVersion[],
+  appByName: { [_: string]: App },
+  apps: App[],
   installedAvailable: boolean,
   installed: InstalledItem[],
   installQueue: string[],

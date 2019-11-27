@@ -22,7 +22,7 @@ export const toOperationRaw = (
   { date, value, fee, subOperations, internalOperations, ...op }: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
-  const copy: $Exact<OperationRaw> = {
+  const copy: OperationRaw = {
     ...op,
     date: date.toISOString(),
     value: value.toString(),
@@ -73,7 +73,7 @@ export const fromOperationRaw = (
   accountId: string,
   subAccounts?: ?(SubAccount[])
 ): Operation => {
-  const res: $Exact<Operation> = {
+  const res: Operation = {
     ...op,
     accountId,
     date: new Date(date),

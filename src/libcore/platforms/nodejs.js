@@ -452,7 +452,7 @@ export default (arg: {
 
     // $FlowFixMe
     const cs: CoreStatics = mappings;
-
+    // $FlowFixMe
     const core: Core = {
       ...cs,
       flush: () => Promise.resolve(),

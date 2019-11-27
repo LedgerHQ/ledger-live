@@ -30,6 +30,7 @@ const envParsers = {
   EXPERIMENTAL_BLE: boolParser,
   EXPERIMENTAL_CURRENCIES: stringParser,
   EXPERIMENTAL_EXPLORERS: boolParser,
+  EXPERIMENTAL_FALLBACK_APDU_LISTAPPS: boolParser,
   EXPERIMENTAL_LANGUAGES: boolParser,
   EXPERIMENTAL_LIBCORE: boolParser,
   EXPERIMENTAL_MANAGER: boolParser,
@@ -59,8 +60,8 @@ const envParsers = {
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   API_TEZOS_BAKER: "https://tezos-bakers.api.live.ledger.com",
   API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT:
-    "https://tzstats.ledger.com/explorer",
-  API_TEZOS_NODE: "https://xtz-node.explorers.prod.aws.ledger.fr/",
+    "https://xtz.explorers.prod.aws.ledger.fr/explorer",
+  API_TEZOS_NODE: "https://xtz-node.explorers.prod.aws.ledger.fr",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
   BRIDGE_FORCE_IMPLEMENTATION: "",
   DEVICE_PROXY_URL: "",
@@ -68,6 +69,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   EXPERIMENTAL_BLE: false,
   EXPERIMENTAL_CURRENCIES: "",
   EXPERIMENTAL_EXPLORERS: false,
+  EXPERIMENTAL_FALLBACK_APDU_LISTAPPS: false,
   EXPERIMENTAL_LANGUAGES: false,
   EXPERIMENTAL_LIBCORE: false,
   EXPERIMENTAL_ROI_CALCULATION: false,

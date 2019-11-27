@@ -182,15 +182,17 @@ export const isSegwitDerivationMode = (
 export const getLibcoreConfig = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode
-): ?{ [_: string]: mixed } => {
+): { [_: string]: mixed } => {
   const obj = {};
   const extra = {
     ...extraConfigPerCurrency[currency.id],
+    // $FlowFixMe
     ...modes[derivationMode].libcoreConfig
   };
   for (let k in extra) {
     const v = extra[k];
     if (typeof v === "function") {
+      // $FlowFixMe
       obj[k] = v();
     } else {
       obj[k] = v;

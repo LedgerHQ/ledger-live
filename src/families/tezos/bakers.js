@@ -126,13 +126,15 @@ export function getBakerSync(addr: string): ?Baker {
 
 export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const op = account.operations.find(
-    op => !op.hasFailed && op.type === "DELEGATE"
+    op => !op.hasFailed && (op.type === "DELEGATE" || op.type === "UNDELEGATE")
   );
   const pendingOp = !op
-    ? account.pendingOperations.find(op => op.type === "DELEGATE")
+    ? account.pendingOperations.find(
+        op => op.type === "DELEGATE" || op.type === "UNDELEGATE"
+      )
     : null;
   const operation = op || pendingOp;
-  if (!operation || !operation.recipients[0]) {
+  if (!operation || operation.type === "UNDELEGATE") {
     return null;
   }
 

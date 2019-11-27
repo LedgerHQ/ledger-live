@@ -59,6 +59,7 @@ export function formatCurrencyUnitFragment(
     subMagnitude
   } = {
     ...defaultFormatOptions,
+    // $FlowFixMe
     ...unit,
     ...options
   };

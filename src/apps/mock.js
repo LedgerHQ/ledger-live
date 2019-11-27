@@ -4,14 +4,10 @@ import {
   ManagerAppDepInstallRequired,
   ManagerAppDepUninstallRequired
 } from "@ledgerhq/errors";
-import { getDirectDep, getDependencies } from "./polyfill";
+import { getDependencies, getDependents } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import type {
-  ApplicationVersion,
-  DeviceInfo,
-  FinalFirmware
-} from "../types/manager";
+import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
 
 export const deviceInfo155 = {
   version: "1.5.5",
@@ -46,7 +42,7 @@ const firmware155: FinalFirmware = {
   mcu_versions: [6],
   application_versions: [],
   providers: [1, 4, 7, 9, 11, 12, 13],
-  blocks: 20
+  bytes: 20 * 4 * 1024
 };
 
 export const parseInstalled = (installedDesc: string): InstalledItem[] =>
@@ -78,36 +74,33 @@ export function mockListAppsResult(
     .map(a => a.trim())
     .filter(Boolean)
     .map((name, i) => {
-      const dependency = getDirectDep(name);
-      const o: ApplicationVersion = {
+      const dependencies = getDependencies(name);
+      const currency = findCryptoCurrency(c => c.managerAppName === name);
+      return {
         id: i,
         app: i,
         name,
         version: "0.0.0",
         description: null,
-        display_name: name,
         icon: "",
-        picture: 0,
-        notes: null,
         perso: "",
+        authorName: "",
+        supportURL: "",
+        contactURL: "",
+        sourceURL: "",
         hash: "hash_" + name,
         firmware: "firmware_" + name,
-        bytes: (!dependency ? 10 : 1) * 4 * 1024,
-        dependency,
+        bytes: (dependencies.length === 0 ? 10 : 1) * 4 * 1024,
+        dependencies,
+        warning: "",
         firmware_key: "",
         delete: "",
         delete_key: "",
-        device_versions: [],
-        se_firmware_final_versions: [],
-        providers: [],
-        date_creation: "",
-        date_last_modified: ""
+        dateModified: "",
+        compatibleWallets: [],
+        currencyId: currency ? currency.id : null,
+        indexOfMarketCap: 0
       };
-      const currency = findCryptoCurrency(c => c.managerAppName === name);
-      if (currency) {
-        o.currencyId = currency.id;
-      }
-      return o;
     });
   const appByName = {};
   apps.forEach(app => {
@@ -131,25 +124,25 @@ export const mockExecWithInstalledContext = (
   installedInitial: InstalledItem[]
 ): Exec => {
   let installed = installedInitial.slice(0);
-  return (appOp: AppOp, targetId: string | number, app: ApplicationVersion) => {
+  return (appOp: AppOp, targetId: string | number, app: App) => {
     if (appOp.name !== app.name) {
       throw new Error("appOp.name must match app.name");
     }
 
     if (
-      getDependencies(app.name).some(dep => installed.some(i => i.name === dep))
+      getDependents(app.name).some(dep => installed.some(i => i.name === dep))
     ) {
       return throwError(new ManagerAppDepUninstallRequired(""));
     }
 
     if (appOp.type === "install") {
-      const dep = getDirectDep(app.name);
-      if (dep) {
+      const deps = getDependencies(app.name);
+      deps.forEach(dep => {
         const depInstalled = installed.find(i => i.name === dep);
         if (!depInstalled || !depInstalled.updated) {
           return throwError(new ManagerAppDepInstallRequired(""));
         }
-      }
+      });
     }
 
     switch (appOp.type) {
