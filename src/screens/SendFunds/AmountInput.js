@@ -32,7 +32,8 @@ type OwnProps = {
   currency: string,
   value: BigNumber,
   onChange: BigNumber => void,
-  error?: Error,
+  error?: ?Error,
+  warning?: ?Error,
 };
 
 type Props = OwnProps & {
@@ -99,6 +100,7 @@ class AmountInput extends Component<Props, OwnState> {
       getCounterValue,
       account,
       error,
+      warning,
       editable,
     } = this.props;
     const isCrypto = active === "crypto";
@@ -124,9 +126,13 @@ class AmountInput extends Component<Props, OwnState> {
               </LText>
             }
             hasError={!!error}
+            hasWarning={!!warning}
           />
-          <LText style={styles.error} numberOfLines={2}>
-            <TranslatedError error={error} />
+          <LText
+            style={[error ? styles.error : styles.warning]}
+            numberOfLines={2}
+          >
+            <TranslatedError error={error || warning} />
           </LText>
         </View>
         <CounterValuesSeparator />
@@ -173,6 +179,10 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.alert,
+    fontSize: 14,
+  },
+  warning: {
+    color: colors.orange,
     fontSize: 14,
   },
 });
