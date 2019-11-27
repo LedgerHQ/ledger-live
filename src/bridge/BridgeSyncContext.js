@@ -3,6 +3,7 @@
 // it handles automatically re-calling synchronize
 // this is an even high abstraction than the bridge
 
+import uniq from "lodash/uniq";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -23,7 +24,7 @@ import {
   bridgeSyncSelector,
   syncStateLocalSelector,
 } from "../reducers/bridgeSync";
-import { prepareCurrency } from "./cache";
+import { prepareCurrency, hydrateCurrency } from "./cache";
 
 type BridgeSyncProviderProps = {
   children: *,
@@ -240,6 +241,10 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
   }
 
   api: Sync;
+
+  componentDidMount() {
+    uniq(this.props.accounts.map(a => a.currency)).forEach(hydrateCurrency);
+  }
 
   render() {
     return (
