@@ -1,12 +1,13 @@
 /* @flow */
-import invariant from "invariant";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
+import sample from "lodash/sample";
+import invariant from "invariant";
 import Icon from "react-native-vector-icons/dist/Feather";
 import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -119,7 +120,7 @@ const BakerSelection = ({
 
 const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
   const bakers = useBakers(whitelist);
-  const firstBaker = bakers[0];
+  const randomBaker = useMemo(() => sample(bakers), [bakers]);
 
   const {
     transaction,
@@ -146,8 +147,8 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
     };
 
     // make sure that in delegate mode, a transaction recipient is set (random pick)
-    if (patch.mode === "delegate" && !transaction.recipient && firstBaker) {
-      patch.recipient = firstBaker.address;
+    if (patch.mode === "delegate" && !transaction.recipient && randomBaker) {
+      patch.recipient = randomBaker.address;
     }
 
     // when changes, we set again
@@ -161,7 +162,7 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
     }
   }, [
     account,
-    firstBaker,
+    randomBaker,
     navigation,
     parentAccount,
     setTransaction,
