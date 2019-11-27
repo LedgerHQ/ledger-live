@@ -104,11 +104,17 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
     status,
     bridgePending,
     bridgeError,
-  } = useBridgeTransaction(() => ({
-    account,
-    parentAccount,
-    transaction: navigation.getParam("transaction"),
-  }));
+  } = useBridgeTransaction(() => {
+    const bridge = getAccountBridge(account, parentAccount);
+    return {
+      account,
+      parentAccount,
+      transaction: bridge.updateTransaction(
+        navigation.getParam("transaction"),
+        { recipient: "" },
+      ),
+    };
+  });
 
   invariant(transaction, "transaction is defined");
 
