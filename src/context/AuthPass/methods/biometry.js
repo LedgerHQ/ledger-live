@@ -1,4 +1,4 @@
-import FingerprintScanner from 'react-native-fingerprint-scanner';
+import FingerprintScanner from "react-native-fingerprint-scanner";
 import { Platform } from "react-native";
 import unsupported from "./unsupported";
 

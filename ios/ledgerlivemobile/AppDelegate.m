@@ -29,17 +29,17 @@
                                             initialProperties:nil];
   
   [RNSentry installWithRootView:rootView];
-
+  
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
+  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  #ifndef DEBUG
-    [RNSplashScreen show];
-  #endif
+#ifndef DEBUG
+  [RNSplashScreen show];
+#endif
   return YES;
 }
 
@@ -58,7 +58,7 @@
                      restorationHandler:restorationHandler];
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application {
+- (void) showOverlay{
   UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
   UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
   UIImageView *logoView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Blurry"]];
@@ -75,14 +75,11 @@
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisVertical];
   logoView.frame = CGRectMake(0, 0, 128, 128);
-
   
   logoView.center = CGPointMake(self.window.frame.size.width  / 2,self.window.frame.size.height / 2);
-
-
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application {
+- (void) hideOverlay{
   UIView *blurEffectView = [self.window viewWithTag:12345];
   UIView *logoView = [self.window viewWithTag:12346];
   
@@ -94,6 +91,14 @@
     [blurEffectView removeFromSuperview];
     [logoView removeFromSuperview];
   }];
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+  [self hideOverlay];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+  [self showOverlay];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

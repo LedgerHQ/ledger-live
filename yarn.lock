@@ -7616,10 +7616,10 @@ react-native-extra-dimensions-android@^1.2.5:
   resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-1.2.5.tgz#8ade91029aaac7519bf305116d39019e618a60f0"
   integrity sha512-eorFo9X1vEqAWUkgcZ300yKBG1wtgNeE7tdWAH2CE+P50FGTniJg5Sr6l1iPWG8ZskQOuF+KeiSTFlDa4vLfMw==
 
-react-native-fingerprint-scanner@^2.6.0:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/react-native-fingerprint-scanner/-/react-native-fingerprint-scanner-2.6.2.tgz#e9b5d40fa0bf7f96ccbf48e8702b54962b233bae"
-  integrity sha512-7mXqE9GUiK+Bh5sG+aVq1RGV94Z0PPl6qTibh6i4+ApZ3DU3HxsJ2di7vHTvZsJ1YfmQCHmQIXs4bNuwp20wEg==
+react-native-fingerprint-scanner@^3.0.0:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-fingerprint-scanner/-/react-native-fingerprint-scanner-3.0.2.tgz#ca9994de4b30dcf5ad2f5b420bfdd4d8775e8831"
+  integrity sha512-e6EkSgThwHAI9y5y2G3HdEbuKBka2lu3gRzpWzQs8FQF3t2DIB7fRHdA3/fnd33T39P0vU6hSCc9xwSpDbSdyg==
 
 react-native-gesture-handler@1.5.0:
   version "1.5.0"
