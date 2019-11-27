@@ -64,6 +64,9 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
   return a.operations.length === 0 && a.balance.isZero() && !hasSubAccounts;
 };
 
+export const isAccountBalanceSignificant = (a: AccountLike): boolean =>
+  a.balance.gt(100); // in future, could be a per currency thing
+
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
 export function clearAccount<T: AccountLike>(account: T): T {

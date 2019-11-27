@@ -8,7 +8,9 @@ import {
   NotEnoughBalanceInParentAccount,
   FeeNotLoaded,
   FeeTooHigh,
-  InvalidAddressBecauseDestinationIsAlsoSource
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  RecommendSubAccountsToEmpty,
+  RecommendUndelegation
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
@@ -19,10 +21,16 @@ import { syncAccount } from "../../../libcore/syncAccount";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
 import { makeLRUCache } from "../../../cache";
+import { isAccountBalanceSignificant } from "../../../account";
 import { withLibcore } from "../../../libcore/access";
 import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
-import { fetchAllBakers, hydrateBakers, asBaker } from "../bakers";
+import {
+  fetchAllBakers,
+  hydrateBakers,
+  asBaker,
+  isAccountDelegating
+} from "../bakers";
 
 type EstimateGasLimitAndStorage = (
   Account,
@@ -163,6 +171,22 @@ const getTransactionStatus = async (a, t) => {
       errors.amount = new AmountRequired();
     } else if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
       warnings.feeTooHigh = new FeeTooHigh();
+    }
+
+    const thresholdWarning = 0.5 * 10 ** a.currency.units[0].magnitude;
+
+    if (
+      !errors.amount &&
+      account.balance.minus(totalSpent).lt(thresholdWarning)
+    ) {
+      if (isAccountDelegating(account)) {
+        warnings.amount = new RecommendUndelegation();
+      } else if (
+        !subAcc &&
+        (a.subAccounts || []).some(isAccountBalanceSignificant)
+      ) {
+        warnings.amount = new RecommendSubAccountsToEmpty();
+      }
     }
   } else {
     // delegation case, we remap NotEnoughBalance to a more precise error
