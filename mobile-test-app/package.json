@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "rn-nodeify --hack && scripts/copy.sh",
-    "start": "node node_modules/react-native/local-cli/cli.js start"
+    "start": "react-native start"
   },
   "dependencies": {
     "@ledgerhq/errors": "^4.73.2",
@@ -24,10 +24,10 @@
     "querystring": "^0.2.0",
     "querystring-es3": "^0.2.1",
     "react": "16.9.0",
-    "react-native": "0.59.10",
+    "react-native": "0.61.5",
     "react-native-crypto": "^2.2.0",
     "react-native-randombytes": "^3.5.3",
-    "react-native-tcp": "^3.3.1",
+    "react-native-tcp": "^3.3.2",
     "rn-nodeify": "tradle/rn-nodeify",
     "rxjs": "^6.5.3",
     "stream-browserify": "^2.0.2",
@@ -37,9 +37,9 @@
     "vm-browserify": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/runtime": "^7.6.0",
-    "flow-bin": "0.92.0",
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "flow-bin": "^0.105.0",
     "metro-react-native-babel-preset": "^0.56.0",
     "react-test-renderer": "16.9.0"
   },
