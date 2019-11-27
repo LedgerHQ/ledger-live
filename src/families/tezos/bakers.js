@@ -112,7 +112,14 @@ export function useBakers(whitelistAddresses: string[]) {
   );
 
   useEffect(() => {
-    listBakers(whitelistAddresses).then(setBakers);
+    let cancelled;
+    listBakers(whitelistAddresses).then(bakers => {
+      if (cancelled) return;
+      setBakers(bakers);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [whitelistAddresses]);
 
   return bakers;
@@ -183,7 +190,14 @@ export function useDelegation(account: AccountLike): ?Delegation {
     getAccountDelegationSync(account)
   );
   useEffect(() => {
-    loadAccountDelegation(account).then(setDelegation);
+    let cancelled;
+    loadAccountDelegation(account).then(delegation => {
+      if (cancelled) return;
+      setDelegation(delegation);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [account]);
   return delegation;
 }
@@ -191,7 +205,14 @@ export function useDelegation(account: AccountLike): ?Delegation {
 export function useBaker(addr: string): ?Baker {
   const [baker, setBaker] = useState(() => getBakerSync(addr));
   useEffect(() => {
-    loadBaker(addr).then(setBaker);
+    let cancelled;
+    loadBaker(addr).then(baker => {
+      if (cancelled) return;
+      setBaker(baker);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [addr]);
   return baker;
 }
