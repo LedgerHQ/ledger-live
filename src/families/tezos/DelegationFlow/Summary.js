@@ -328,8 +328,6 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
             </Line>
           ) : null}
         </View>
-      </ScrollView>
-      <View style={styles.footer}>
         {transaction.mode === "undelegate" ? (
           <VerifyAddressDisclaimer
             text={<Trans i18nKey="delegation.warnUndelegation" />}
@@ -339,6 +337,16 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
             text={<Trans i18nKey="delegation.warnDelegation" />}
           />
         )}
+      </ScrollView>
+      <View style={styles.footer}>
+        <LText style={styles.termsAndPrivacy}>
+          <Trans i18nKey="delegation.termsAndPrivacy">
+            {"I have read and I accept the "}
+            <LText semiBold>{"Ledger Live Terms of Use"}</LText>
+            {" and "}
+            <LText semiBold>{"Privacy Policy"}</LText>
+          </Trans>
+        </LText>
 
         <Button
           event="SummaryContinue"
@@ -453,7 +461,12 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     alignSelf: "stretch",
-    marginTop: 32,
+    marginTop: 12,
+  },
+  termsAndPrivacy: {
+    textAlign: "center",
+    fontSize: 14,
+    lineHeight: 22,
   },
   error: {
     color: colors.alert,
