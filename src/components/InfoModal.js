@@ -46,13 +46,14 @@ class InfoModal extends PureComponent<Props> {
       children,
       confirmLabel,
       confirmProps,
+      style,
     } = this.props;
     return (
       <BottomModal
         id={id}
         isOpened={isOpened}
         onClose={onClose}
-        style={styles.modal}
+        style={[styles.modal, style || {}]}
       >
         <Circle bg={rgba(colors.live, 0.1)} size={56}>
           {Icon ? <Icon /> : <IconHelp size={24} color={colors.live} />}
