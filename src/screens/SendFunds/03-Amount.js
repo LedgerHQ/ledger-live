@@ -123,7 +123,11 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                 onChange={onChange}
                 currency={unit.code}
                 value={amount}
-                error={amount.eq(0) ? null : status.errors.amount}
+                error={
+                  amount.eq(0) && (bridgePending || !transaction.useAllAmount)
+                    ? null
+                    : status.errors.amount
+                }
                 warning={status.warnings.amount}
               />
 
