@@ -111,7 +111,7 @@ class Content extends PureComponent<Props, State> {
         <View style={styles.header}>
           <View style={styles.icon}>
             <OperationIcon
-              size={40}
+              size={57}
               operation={operation}
               account={account}
               parentAccount={parentAccount}
