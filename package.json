@@ -33,7 +33,8 @@
     "sync-locales": "./scripts/sync-locales.sh",
     "debugSVG": "sh scripts/debugsvg.sh | node_modules/.bin/prettier --parser flow > src/screens/DebugSVG.js",
     "internal": "FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=30 FASTLANE_XCODEBUILD_SETTINGS_RETRIES=5 bundle exec fastlane internal_release",
-    "preinternal": "bundle install"
+    "preinternal": "bundle install",
+    "pod": "cd ios && bundle exec pod install"
   },
   "jest": {
     "preset": "react-native",

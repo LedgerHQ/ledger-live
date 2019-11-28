@@ -24,7 +24,31 @@ if [ "$(uname)" == "Darwin" ]; then
   fi
 
   bundle install
-  cd ios && bundle exec pod install
+  cd ios && bundle exec pod install --deployment
+
+  if [ $? -ne 0 ]; then
+    echo "
+     _________________________________________
+    / CocoaPods lockfile is probably out of   \\
+    | sync with native dependencies. Don't    |
+    | forget to run \`yarn pod\` after adding   |
+    | or updating dependencies, and commit    |
+    \\ the changes in Podfile.lock.            /
+     -----------------------------------------
+      \\
+       \\
+         __
+        /  \\
+        |  |
+        @  @
+        |  |
+        || |/
+        || ||
+        |\\_/|
+        \\___/
+    " >&2
+    exit 1
+  fi
 fi
 
 # We manually need to run Jetifier for React Native BLE PLX until they switch to AndroidX
