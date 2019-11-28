@@ -1,8 +1,8 @@
 /* @flow */
 
 import invariant from "invariant";
-import React, { useState, useCallback } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import React, { useState, useCallback, useEffect } from "react";
+import { View, StyleSheet, FlatList, Keyboard, Platform } from "react-native";
 import i18next from "i18next";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
@@ -97,6 +97,37 @@ const ModalIcon = () => <Icon name="user-plus" size={24} color={colors.live} />;
 const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
   const bakers = useBakers(whitelist);
   const [editingCustom, setEditingCustom] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  if (Platform.OS === "ios") {
+    const keyboardDidShow = event => {
+      const { height } = event.endCoordinates;
+
+      setKeyboardHeight(height);
+    };
+
+    const keyboardDidHide = () => {
+      setKeyboardHeight(0);
+    };
+
+    // The platform changing during runtime seems... unlikely
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      const keyboardDidShowListener = Keyboard.addListener(
+        "keyboardDidShow",
+        keyboardDidShow,
+      );
+      const keyboardDidHideListener = Keyboard.addListener(
+        "keyboardDidHide",
+        keyboardDidHide,
+      );
+
+      return () => {
+        keyboardDidShowListener.remove();
+        keyboardDidHideListener.remove();
+      };
+    });
+  }
 
   const {
     transaction,
@@ -198,6 +229,7 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
           disabled: bridgePending || !!error,
           pending: bridgePending,
         }}
+        style={keyboardHeight ? { marginBottom: keyboardHeight } : undefined}
       >
         <TextInput
           placeholder="Enter validator address"
