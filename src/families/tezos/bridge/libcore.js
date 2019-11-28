@@ -8,6 +8,7 @@ import {
   NotEnoughBalanceInParentAccount,
   FeeNotLoaded,
   FeeTooHigh,
+  NotSupportedLegacyAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecommendSubAccountsToEmpty,
   RecommendUndelegation
@@ -31,6 +32,7 @@ import {
   asBaker,
   isAccountDelegating
 } from "../bakers";
+import { getEnv } from "../../../env";
 
 type EstimateGasLimitAndStorage = (
   Account,
@@ -44,6 +46,7 @@ export const estimateGasLimitAndStorage: EstimateGasLimitAndStorage = makeLRUCac
       const gasLimit = await libcoreBigIntToBigNumber(
         await tezosLikeAccount.getEstimatedGasLimit(addr)
       );
+
       // for babylon network 257 is the current cost of sending to new account.
       const storage = BigNumber(257);
       /*
@@ -125,6 +128,14 @@ const getTransactionStatus = async (a, t) => {
         warnings.recipient = recipientWarning;
       }
     }
+  }
+
+  if (
+    !getEnv("LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK") &&
+    t.recipient.startsWith("KT") &&
+    !errors.recipient
+  ) {
+    errors.recipient = new NotSupportedLegacyAddress();
   }
 
   let estimatedFees = BigNumber(0);
