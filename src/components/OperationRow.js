@@ -100,7 +100,7 @@ class OperationRow extends PureComponent<Props, *> {
         <RectButton onPress={this.goToOperationDetails} style={styles.button}>
           <View style={isOptimistic ? styles.optimistic : null}>
             <OperationIcon
-              size={28}
+              size={40}
               operation={operation}
               account={account}
               parentAccount={parentAccount}

@@ -271,7 +271,7 @@ PODS:
     - React
   - RNScreens (1.0.0-alpha.22):
     - React
-  - RNSVG (9.4.0):
+  - RNSVG (9.13.3):
     - React
   - RNVectorIcons (6.4.2):
     - React
@@ -507,7 +507,7 @@ SPEC CHECKSUMS:
   RNLibLedgerCore: 94fd545671356e9cd67621589abf6917e94f1593
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 720a9e6968beb73e8196239801e887d8401f86ed
-  RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
+  RNSVG: f6177f8d7c095fada7cfee2e4bb7388ba426064c
   RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2

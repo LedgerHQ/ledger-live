@@ -9,11 +9,7 @@ import type {
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import ReceiveConfirmedIcon from "../icons/ReceiveConfirmed";
-import ReceiveUnconfirmedIcon from "../icons/ReceiveUnconfirmed";
-import SendConfirmedIcon from "../icons/SendConfirmed";
-import SendUnconfirmedIcon from "../icons/SendUnconfirmed";
-import SendFailed from "../icons/SendFailed";
+import OperationStatusIcon from "../icons/OperationStatusIcon";
 import { currencySettingsForAccountSelector } from "../reducers/settings";
 
 type Props = {
@@ -23,16 +19,6 @@ type Props = {
   operation: Operation,
   account: AccountLike,
   parentAccount: ?Account,
-};
-
-const icons = {
-  OUT: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
-  IN: [ReceiveUnconfirmedIcon, ReceiveConfirmedIcon],
-  CREATE: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
-  UNDELEGATE: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
-  DELEGATE: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
-  REVEAL: [SendUnconfirmedIcon, SendConfirmedIcon, SendFailed],
-  NONE: [],
 };
 
 class OperationIcon extends PureComponent<Props> {
@@ -47,11 +33,15 @@ class OperationIcon extends PureComponent<Props> {
       confirmed,
       operation: { hasFailed },
     } = this.props;
-    const Icon = icons[type][hasFailed ? 2 : confirmed ? 1 : 0];
 
-    if (!Icon) return null;
-
-    return <Icon size={size} />;
+    return (
+      <OperationStatusIcon
+        confirmed={confirmed}
+        type={type}
+        failed={hasFailed}
+        size={size}
+      />
+    );
   }
 }
 
