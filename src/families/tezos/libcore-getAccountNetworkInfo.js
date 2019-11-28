@@ -1,5 +1,5 @@
 // @flow
-import invariant from "invariant";
+import { BigNumber } from "bignumber.js";
 import type { Account } from "../../types";
 import type { NetworkInfo, CoreTezosLikeAccount } from "./types";
 import type { CoreAccount } from "../../libcore/types";
@@ -15,8 +15,9 @@ type Output = Promise<NetworkInfo>;
 async function tezos({ coreAccount }: Input): Output {
   const tezosLikeAccount: CoreTezosLikeAccount = await coreAccount.asTezosLikeAccount();
   const bigInt = await tezosLikeAccount.getFees();
-  const fees = await libcoreBigIntToBigNumber(bigInt);
-  invariant(fees.gt(0), "unexpected tezos fees = 0");
+  const networkFees = await libcoreBigIntToBigNumber(bigInt);
+  // workaround of a bug on server side. set some boundaries.
+  const fees = BigNumber.min(BigNumber.max(2500, networkFees), 30000);
   return {
     family: "tezos",
     fees
