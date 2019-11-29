@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   PanResponder,
 } from "react-native";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { withNavigation } from "react-navigation";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -217,6 +218,8 @@ class SelectableAccount extends PureComponent<
     const { showHint, isDisabled, isSelected, account } = this.props;
     const { stopAnimation } = this.state;
     const subAccountCount = account.subAccounts && account.subAccounts.length;
+    const isToken =
+      listTokenTypesForCryptoCurrency(account.currency).length > 0;
 
     const inner = (
       <View
@@ -252,7 +255,9 @@ class SelectableAccount extends PureComponent<
               <View style={styles.subAccountCount}>
                 <LText semiBold style={styles.subAccountCountText}>
                   <Trans
-                    i18nKey="selectableAccountsList.tokenCount"
+                    i18nKey={`selectableAccountsList.${
+                      isToken ? "tokenCount" : "subaccountCount"
+                    }`}
                     count={subAccountCount}
                     values={{ count: subAccountCount }}
                   />

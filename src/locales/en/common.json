@@ -623,7 +623,9 @@
     "deselectAll": "Deselect all",
     "selectAll": "Select all",
     "tokenCount": "+1 token",
-    "tokenCount_plural": "+{{count}} tokens"
+    "tokenCount_plural": "+{{count}} tokens",
+    "subaccountCount": "+1 subaccount",
+    "subaccountCount_plural": "+{{count}} subaccounts"
   },
   "account": {
     "tokens": {
