@@ -135,12 +135,12 @@ export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const op = account.operations.find(
     op => !op.hasFailed && (op.type === "DELEGATE" || op.type === "UNDELEGATE")
   );
-  const pendingOp = !op
-    ? account.pendingOperations.find(
-        op => op.type === "DELEGATE" || op.type === "UNDELEGATE"
-      )
-    : null;
-  const operation = op || pendingOp;
+  const pendingOp = account.pendingOperations
+    .filter(op => !account.operations.some(o => op.hash === o.hash))
+    .find(op => op.type === "DELEGATE" || op.type === "UNDELEGATE");
+
+  const isPending = !!pendingOp;
+  const operation = pendingOp && pendingOp.type === "DELEGATE" ? pendingOp : op;
   if (!operation || operation.type === "UNDELEGATE") {
     return null;
   }
@@ -152,7 +152,7 @@ export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const receiveShouldWarnDelegation = !recentOps.some(op => op.type === "IN");
 
   return {
-    isPending: !!pendingOp,
+    isPending,
     operation,
     address: operation.recipients[0],
     baker: null,
