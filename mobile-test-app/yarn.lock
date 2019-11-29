@@ -861,10 +861,15 @@
     "@ledgerhq/logs" "^4.72.0"
     rxjs "^6.5.3"
 
-"@ledgerhq/errors@4", "@ledgerhq/errors@^4.73.2", "@ledgerhq/errors@^4.77.0":
+"@ledgerhq/errors@4", "@ledgerhq/errors@^4.77.0":
   version "4.77.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.77.0.tgz#5a48b35622d5dcefefae632f84ddd81042f87d80"
   integrity sha512-JR9/GvgC6djQORyyDM5P8BjcxIRFQkx8yMQDgfY1tP+oDnJusNW8MVzOY9Ol0xtibP9xRtg3muUNG95sAtFhzw==
+
+"@ledgerhq/errors@^4.78.0":
+  version "4.78.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-4.78.0.tgz#23daf3af54d03b1bda3e616002b555da1bdb705a"
+  integrity sha512-FX6zHZeiNtegBvXabK6M5dJ+8OV8kQGGaGtuXDeK/Ss5EmG4Ltxc6Lnhe8hiHpm9pCHtktOsnUVL7IFBdHhYUg==
 
 "@ledgerhq/hw-app-btc@4":
   version "4.77.0"
@@ -907,10 +912,10 @@
     "@ledgerhq/errors" "^4.77.0"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^9.0.0-alpha.15":
-  version "9.0.0-alpha.22"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.22.tgz#e937bf355897963a88b47a4a464daa6cdde3b467"
-  integrity sha512-SOEpYJLwddIvIpONC9PpSnrzIFLhlPd55ydvkJvrsdjxbt2uyB2WzW5QU6Ij0taQqJ4xqbHGt02kldvArwBMZg==
+"@ledgerhq/live-common@^9.0.0-alpha.26":
+  version "9.0.0-alpha.26"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-9.0.0-alpha.26.tgz#13df61c04a984bff6aca4c7652d923a192fadd70"
+  integrity sha512-89I32dLkXK7H2VZ9Jqn7uz55NWLquCrG4vX7BS4np2vBkaFTucUptdSGaU5oYd1J+c3EZBOeCrq+bZ/Woa33uA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "4"
@@ -950,10 +955,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-4.72.0.tgz#43df23af013ad1135407e5cf33ca6e4c4c7708d5"
   integrity sha512-o+TYF8vBcyySRsb2kqBDv/KMeme8a2nwWoG+lAWzbDmWfb2/MrVWYCVYDYvjXdSoI/Cujqy1i0gIDrkdxa9chA==
 
-"@ledgerhq/react-native-ledger-core@^4.0.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.2.0.tgz#2a4b913f18c471b682fcbc328ef29face9a603ae"
-  integrity sha512-3lXO2XuatSxyetbvbbowbBBec5Yo3HrR3lxT6RiRBtUDCa9a/ooj51LNxzHG8jLcZvnTnIZpxtQjuLPcf/cgyw==
+"@ledgerhq/react-native-ledger-core@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.3.0.tgz#d6712f24ebb98fa56dc7cc759e0fa2cfbf1382b8"
+  integrity sha512-M5I+AkD6sh60TtZpN1R+tSX9x7IbKJ5p1rhS1uuWBF6GFReU0X2aQi3lH+hEJIuT/afKLahHz4kM//2SYQbshw==
 
 "@react-native-community/cli-debugger-ui@^3.0.0":
   version "3.0.0"
@@ -4891,15 +4896,6 @@ react@16.12.0:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.12.0.tgz#0c0a9c6a142429e3614834d5a778e18aa78a0b83"
   integrity sha512-fglqy3k5E+81pA8s+7K0/T3DBCF0ZDOher1elBFzF7O6arXJgzyu/FW+COxFvAWXJoJN9KIZbT2LXlukwphYTA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
-
-react@16.9.0:
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.9.0.tgz#40ba2f9af13bc1a38d75dbf2f4359a5185c4f7aa"
-  integrity sha512-+7LQnFBwkiw+BobzOF6N//BdoNw0ouwmSJTEm9cglOOmsg/TMiFHZLe2sEoN5M7LgJTj9oHH0gxklfnQe66S1w==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
