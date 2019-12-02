@@ -14,8 +14,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2372D3D5180104DBED4E22EE /* libPods-ledgerlivemobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C4672E151A9F9D4A18DB00 /* libPods-ledgerlivemobile.a */; };
 		3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */; };
-		34EB1BF621B5837E00007D7D /* Analytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 349EE85D21B285CE003E2552 /* Analytics.framework */; };
-		34EB1BF721B5837E00007D7D /* Analytics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 349EE85D21B285CE003E2552 /* Analytics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		381DCCBE6BFC414E8DC790E4 /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7C5BB743ED04E53A2323979 /* OpenSans-SemiBold.ttf */; };
 		4DDC6F48AE30467DB99F9225 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F91D74A42E59456DBB925283 /* Rubik-Regular.ttf */; };
 		769457482358A43200229746 /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 769457472358A43200229746 /* ledger-core.framework */; };
@@ -40,34 +38,6 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = ledgerlivemobile;
 		};
-		347788E921A5AA69000A4ED3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7E20942FF8CD4948B6197A46 /* RNAnalytics.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNAnalytics;
-		};
-		349EE85C21B285CE003E2552 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 349EE85621B285CD003E2552 /* Analytics.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EADEB85B1DECD080005322DA;
-			remoteInfo = Analytics;
-		};
-		349EE85E21B285CE003E2552 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 349EE85621B285CD003E2552 /* Analytics.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EADEB86A1DECD0EF005322DA;
-			remoteInfo = AnalyticsTests;
-		};
-		34EB1BF821B5837E00007D7D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 349EE85621B285CD003E2552 /* Analytics.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = EADEB85A1DECD080005322DA;
-			remoteInfo = Analytics;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -77,7 +47,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				34EB1BF721B5837E00007D7D /* Analytics.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,7 +82,6 @@
 		3263CCC7104E4B86AC2ADDB4 /* MuseoSans-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-Regular.otf"; path = "../assets/fonts/MuseoSans-Regular.otf"; sourceTree = "<group>"; };
 		3407D5D7215D2AB800C9D40B /* ledgerlivemobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ledgerlivemobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeededForBLE.swift; sourceTree = "<group>"; };
-		349EE85621B285CD003E2552 /* Analytics.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Analytics.xcodeproj; path = "../node_modules/@segment/analytics-ios/Analytics.xcodeproj"; sourceTree = "<group>"; };
 		44387CB2EE84464C83A75FD7 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		4DF02CF2330A6B120535EF53 /* Pods-ledgerlivemobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobileTests.release.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobileTests/Pods-ledgerlivemobileTests.release.xcconfig"; sourceTree = "<group>"; };
 		57675DE3CEFA48B4AEFB711C /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
@@ -122,7 +90,6 @@
 		612C2DE49D8C4046AE4FF442 /* Lottie.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Lottie.framework; path = System/Library/Frameworks/Lottie.framework; sourceTree = SDKROOT; };
 		769457472358A43200229746 /* ledger-core.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "ledger-core.framework"; path = "../node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks/x86/ledger-core.framework"; sourceTree = "<group>"; };
 		793F2C3B8DC0475194262928 /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
-		7E20942FF8CD4948B6197A46 /* RNAnalytics.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNAnalytics.xcodeproj; path = "../node_modules/@segment/analytics-react-native/ios/RNAnalytics.xcodeproj"; sourceTree = "<group>"; };
 		854A3B027231E885CAD3722D /* libPods-ledgerlivemobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ledgerlivemobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		887CA7F3B5FF4445BB1C5960 /* libRNLibLedgerCore.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNLibLedgerCore.a; sourceTree = "<group>"; };
 		976AEE7A15C2428DB85E53B3 /* libPasscodeAuth.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libPasscodeAuth.a; sourceTree = "<group>"; };
@@ -151,7 +118,6 @@
 			files = (
 				769457482358A43200229746 /* ledger-core.framework in Frameworks */,
 				F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */,
-				34EB1BF621B5837E00007D7D /* Analytics.framework in Frameworks */,
 				9B7ACA23F80A40489C69872B /* libRNAnalytics.a in Frameworks */,
 				BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */,
 				CB46822924B04E80814C603E /* libPasscodeAuth.a in Frameworks */,
@@ -219,23 +185,6 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		347788E621A5AA69000A4ED3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				347788EA21A5AA69000A4ED3 /* libRNAnalytics.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		349EE85721B285CD003E2552 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				349EE85D21B285CE003E2552 /* Analytics.framework */,
-				349EE85F21B285CE003E2552 /* AnalyticsTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		3F0372EE9483431D91FAB7D5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,8 +202,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				7E20942FF8CD4948B6197A46 /* RNAnalytics.xcodeproj */,
-				349EE85621B285CD003E2552 /* Analytics.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -339,7 +286,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				34EB1BF921B5837E00007D7D /* PBXTargetDependency */,
 			);
 			name = ledgerlivemobile;
 			productName = "Hello World";
@@ -390,16 +336,6 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 349EE85721B285CD003E2552 /* Products */;
-					ProjectRef = 349EE85621B285CD003E2552 /* Analytics.xcodeproj */;
-				},
-				{
-					ProductGroup = 347788E621A5AA69000A4ED3 /* Products */;
-					ProjectRef = 7E20942FF8CD4948B6197A46 /* RNAnalytics.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* ledgerlivemobile */,
@@ -407,30 +343,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		347788EA21A5AA69000A4ED3 /* libRNAnalytics.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNAnalytics.a;
-			remoteRef = 347788E921A5AA69000A4ED3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		349EE85D21B285CE003E2552 /* Analytics.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Analytics.framework;
-			remoteRef = 349EE85C21B285CE003E2552 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		349EE85F21B285CE003E2552 /* AnalyticsTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AnalyticsTests.xctest;
-			remoteRef = 349EE85E21B285CE003E2552 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
@@ -640,11 +552,6 @@
 			isa = PBXTargetDependency;
 			target = 13B07F861A680F5B00A75B9A /* ledgerlivemobile */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
-		};
-		34EB1BF921B5837E00007D7D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Analytics;
-			targetProxy = 34EB1BF821B5837E00007D7D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
