@@ -18,6 +18,7 @@ import {
 } from "@ledgerhq/live-common/lib/explorers";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import type { NavigationScreenProp } from "react-navigation";
+import byFamiliesOperationDetails from "../../generated/operationDetails";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import Footer from "./Footer";
@@ -80,6 +81,12 @@ class OperationDetails extends PureComponent<Props, *> {
       getDefaultExplorerView(mainAccount.currency),
       operation.hash,
     );
+    const specific = byFamiliesOperationDetails[mainAccount.currency.family];
+    const urlWhatIsThis =
+      specific &&
+      specific.getURLWhatIsThis &&
+      specific.getURLWhatIsThis(operation);
+
     return (
       <SafeAreaView style={styles.container} forceInset={forceInset}>
         <TrackScreen category="OperationDetails" />
@@ -93,7 +100,7 @@ class OperationDetails extends PureComponent<Props, *> {
             />
           </View>
         </ScrollView>
-        {url && <Footer url={url} />}
+        <Footer url={url} urlWhatIsThis={urlWhatIsThis} />
       </SafeAreaView>
     );
   }
