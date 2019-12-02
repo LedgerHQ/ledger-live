@@ -81,7 +81,7 @@ const Post = ({ transaction }: { transaction: Transaction }) => {
   invariant(transaction.family === "tezos", "tezos transaction");
 
   return (
-    <DataRow label="Storage">
+    <DataRow label="Storage Limit">
       <LText semiBold style={styles.text}>
         {(transaction.storageLimit || "").toString()}
       </LText>

@@ -51,7 +51,9 @@ const ValidateOnDevice = ({
   const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
   const Pre = r && r.pre;
   const Post = r && r.post;
-  const mode = t(`ValidateOnDevice.modes.${transaction.mode || "send"}`);
+  const recipientWording = t(
+    `ValidateOnDevice.recipientWording.${transaction.mode || "send"}`,
+  );
 
   return (
     <View style={styles.root}>
@@ -111,7 +113,12 @@ const ValidateOnDevice = ({
       </View>
 
       <VerifyAddressDisclaimer
-        text={<Trans i18nKey="ValidateOnDevice.warning" values={{ mode }} />}
+        text={
+          <Trans
+            i18nKey="ValidateOnDevice.warning"
+            values={{ recipientWording }}
+          />
+        }
       />
     </View>
   );

@@ -52,10 +52,10 @@ const keyExtractor = baker => baker.address;
 const BakerHead = () => (
   <View style={styles.bakerHead}>
     <LText style={styles.bakerHeadText} numberOfLines={1} semiBold>
-      Validators
+      Validator
     </LText>
     <LText style={styles.bakerHeadText} numberOfLines={1} semiBold>
-      Yield
+      Est. Yield
     </LText>
   </View>
 );
