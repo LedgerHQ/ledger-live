@@ -187,15 +187,13 @@ const getTransactionStatus = async (a, t) => {
     const thresholdWarning = 0.5 * 10 ** a.currency.units[0].magnitude;
 
     if (
+      !subAcc &&
       !errors.amount &&
       account.balance.minus(totalSpent).lt(thresholdWarning)
     ) {
       if (isAccountDelegating(account)) {
         warnings.amount = new RecommendUndelegation();
-      } else if (
-        !subAcc &&
-        (a.subAccounts || []).some(isAccountBalanceSignificant)
-      ) {
+      } else if ((a.subAccounts || []).some(isAccountBalanceSignificant)) {
         warnings.amount = new RecommendSubAccountsToEmpty();
       }
     }
