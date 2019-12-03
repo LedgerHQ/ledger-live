@@ -92,7 +92,7 @@
     "eslint-plugin-flowtype": "^4.3.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "flow-bin": "^0.112.0",
+    "flow-bin": "^0.113.0",
     "flow-copy-source": "^2.0.9",
     "flow-typed": "^2.6.2",
     "glob": "^7.1.5",

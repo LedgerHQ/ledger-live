@@ -11,7 +11,7 @@ const defaultGasLimit = BigNumber(0x5208);
 export const getGasLimit = (t: Transaction): BigNumber =>
   t.userGasLimit || t.estimatedGasLimit || defaultGasLimit;
 
-const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
   return {
@@ -30,7 +30,7 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-const toTransactionRaw = (t: Transaction): TransactionRaw => {
+export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;
   return {

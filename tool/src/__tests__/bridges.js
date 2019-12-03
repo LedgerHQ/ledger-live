@@ -80,7 +80,7 @@ Object.keys(dataset).forEach(family => {
   return accountsRelated;
 });
 
-currenciesRelated.map(({ currency, impl }) => {
+currenciesRelated.map(({ currencyData, currency, impl }) => {
   const bridge = getCurrencyBridge(currency);
   describe(impl + " " + currency.id + " currency bridge", () => {
     test("functions are defined", () => {
@@ -100,6 +100,13 @@ currenciesRelated.map(({ currency, impl }) => {
         bridge.hydrate(data1);
       }
     });
+
+    const currencyDataTest = currencyData.test;
+    if (currencyDataTest) {
+      test(currency.id + " specific test", () =>
+        currencyDataTest(expect, bridge)
+      );
+    }
   });
 });
 
@@ -116,6 +123,7 @@ accountsRelated
   })
   .forEach(arg => {
     const { getSynced, bridge, initialAccount, accountData, impl } = arg;
+
     describe(impl + " bridge on account " + initialAccount.name, () => {
       describe("startSync", () => {
         test("succeed", async () => {
@@ -179,19 +187,21 @@ accountsRelated
 
         test("pendingOperations are cleaned up", async () => {
           const account = await getSynced();
-          const operations = account.operations.slice(1);
-          const pendingOperations = [account.operations[0]];
-          const copy = {
-            ...account,
-            operations,
-            pendingOperations,
-            blockHeight: 0
-          };
-          const synced = await syncAccount(bridge, copy);
-          // same ops are restored
-          expect(synced.operations).toEqual(account.operations);
-          // pendingOperations is empty
-          expect(synced.pendingOperations).toEqual([]);
+          if (account.operations.length) {
+            const operations = account.operations.slice(1);
+            const pendingOperations = [account.operations[0]];
+            const copy = {
+              ...account,
+              operations,
+              pendingOperations,
+              blockHeight: 0
+            };
+            const synced = await syncAccount(bridge, copy);
+            // same ops are restored
+            expect(synced.operations).toEqual(account.operations);
+            // pendingOperations is empty
+            expect(synced.pendingOperations).toEqual([]);
+          }
         });
       });
 
@@ -313,21 +323,38 @@ accountsRelated
           expect(status.errors.recipient).toEqual(new InvalidAddress());
         });
 
+        const accountDataTest = accountData.test;
+        if (accountDataTest) {
+          test("account specific test", async () =>
+            accountDataTest(expect, await getSynced(), bridge));
+        }
+
         (accountData.transactions || []).forEach(
-          ({ name, transaction, expectedStatus }) => {
+          ({ name, transaction, expectedStatus, test: testFn }) => {
             describe("transaction " + name, () => {
-              test("matches expected status", async () => {
+              test("getTransactionStatus", async () => {
                 const account = await getSynced();
-                const t = await bridge.prepareTransaction(account, transaction);
+                let t =
+                  typeof transaction === "function"
+                    ? transaction(
+                        bridge.createTransaction(account),
+                        account,
+                        bridge
+                      )
+                    : transaction;
+                t = await bridge.prepareTransaction(account, t);
                 expect(t.networkInfo).toBeDefined();
                 const s = await bridge.getTransactionStatus(account, t);
-                expect(s).toMatchObject(expectedStatus);
-                /*
-                const raw = toTransactionStatusRaw(s);
-                expect(raw).toMatchObject({
-                  ...raw
-                });
-                */
+                if (expectedStatus) {
+                  const es =
+                    typeof expectedStatus === "function"
+                      ? expectedStatus(account, t, s)
+                      : expectedStatus;
+                  expect(s).toMatchObject(es);
+                }
+                if (testFn) {
+                  await testFn(expect, t, s, bridge);
+                }
               });
             });
           }

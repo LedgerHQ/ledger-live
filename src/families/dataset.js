@@ -2,26 +2,35 @@
 
 import type {
   CryptoCurrencyIds,
+  Account,
   AccountRaw,
   Transaction,
-  TransactionStatus
+  TransactionStatus,
+  AccountBridge,
+  CurrencyBridge
 } from "../types";
 
-export type CurrenciesData = {|
+type ExpectFn = Function;
+
+export type CurrenciesData<T: Transaction> = {|
   accounts: Array<{|
     raw: AccountRaw,
     transactions?: Array<{|
       name: string,
-      transaction: Transaction,
-      // introduce possibility to impl a test function: (expect, Account, TransactionStatus)=>void
-      expectedStatus: $Shape<TransactionStatus>
-    |}>
-  |}>
+      transaction: T | ((T, Account, AccountBridge<T>) => T),
+      expectedStatus?:
+        | $Shape<TransactionStatus>
+        | ((Account, T, TransactionStatus) => $Shape<TransactionStatus>),
+      test?: (ExpectFn, T, TransactionStatus, AccountBridge<T>) => any
+    |}>,
+    test?: (ExpectFn, Account, AccountBridge<T>) => any
+  |}>,
+  test?: (ExpectFn, CurrencyBridge) => any
 |};
 
-export type DatasetTest = {|
+export type DatasetTest<T> = {|
   implementations: string[],
   currencies: {
-    [_: CryptoCurrencyIds]: CurrenciesData
+    [_: CryptoCurrencyIds]: CurrenciesData<T>
   }
 |};

@@ -2,9 +2,10 @@
 import { BigNumber } from "bignumber.js";
 import { NotEnoughSpendableBalance } from "@ledgerhq/errors";
 import type { DatasetTest } from "../dataset";
-import { fromTransactionRaw } from "../../transaction";
+import { fromTransactionRaw } from "./transaction";
+import type { Transaction } from "./types";
 
-const dataset: DatasetTest = {
+const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore", "mock", "ripplejs"],
   currencies: {
     ripple: {

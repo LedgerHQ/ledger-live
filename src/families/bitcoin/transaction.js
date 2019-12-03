@@ -29,7 +29,7 @@ const toFeeItemsRaw = (fir: FeeItems): FeeItemsRaw => ({
   defaultFeePerByte: fir.defaultFeePerByte.toString()
 });
 
-const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,
@@ -42,7 +42,7 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-const toTransactionRaw = (t: Transaction): TransactionRaw => {
+export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {
     ...common,

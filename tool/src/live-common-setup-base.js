@@ -85,6 +85,7 @@ logger.add(
 listen(({ id, date, type, message, ...rest }) => {
   logger.log("debug", {
     message: type + (message ? ": " + message : ""),
+    // $FlowFixMe
     ...rest
   });
 });
