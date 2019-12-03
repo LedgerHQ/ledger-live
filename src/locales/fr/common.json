@@ -151,7 +151,7 @@
       "description": "Please retry or contact Ledger Support."
     },
     "InvalidAddress": {
-      "title": "This is not a valid {{currencyName}} address!"
+      "title": "This is not a valid {{currencyName}} address"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts can't be the same"
@@ -210,6 +210,15 @@
     "NotEnoughBalance": {
       "title": "Oops, insufficient balance",
       "description": "Make sure the account to debit has sufficient balance"
+    },
+    "NotEnoughBalanceToDelegate": {
+      "title": "Insufficient balance to delegate"
+    },
+    "NotEnoughBalanceInParentAccount": {
+      "title": "Insufficient balance in parent account"
+    },
+    "NotEnoughSpendableBalance": {
+      "title": "Insufficient balance for this operation"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
       "title": "Minimum of {{minimalAmount}} required to activate recipient address"
@@ -299,10 +308,10 @@
       "description": "This feature will be added at a later stage due to changes recently introduced by the Babylon amendment."
     },
     "RecommendUndelegation": {
-      "title": "You should end this account's delegation first"
+      "title": "Please undelegate account before emptying it"
     },
     "RecommendSubAccountsToEmpty": {
-      "title": "You should empty all subaccounts first"
+      "title": "Please empty all subaccounts first"
     },
     "NotSupportedLegacyAddress": {
       "title": "This legacy address format is no longer supported"
@@ -545,11 +554,6 @@
     "noOpState": {
       "title": "Pas encore d'opérations ?",
       "desc": "Simply send some crypto assets to your receiving address and wait for the app to sync"
-    },
-    "tradingDisclaimer": {
-      "title": "Trade Safely",
-      "text1": "Avant d’envoyer et de recevoir des crypto-actifs, renseignez-vous afin de prendre des décisions éclairées. Les crypto-actifs sont volatiles et les prix peuvent monter ou baisser. Évaluez attentivement vos objectifs de trading et les risques financiers que vous êtes prêt à prendre.",
-      "text2": "Veuillez noter que Ledger ne fournit aucun conseil financier, fiscal ou juridique. Vous devriez prendre de telles décisions par vous-même ou vous appuyer sur les conseils d'experts agréés."
     }
   },
   "addAccountsModal": {
@@ -593,12 +597,13 @@
     "confirmed": "Confirmed",
     "notConfirmed": "Not confirmed",
     "failed": "Failed",
-    "fees": "Frais",
+    "fees": "Network fees",
     "noFees": "Aucun frais",
     "from": "De ({{count}})",
     "to": "À ({{count}})",
     "identifier": "Numéro de transaction",
     "viewOperation": "View in explorer",
+    "whatIsThis": "What is this operation?",
     "seeAll": "See all",
     "seeLess": "See less",
     "viewInExplorer": "View in explorer",
@@ -739,8 +744,8 @@
     }
   },
   "distribution": {
-    "header": "Assets distribution",
-    "list": "Assets distribution ({{count}})",
+    "header": "Asset allocation",
+    "list": "Asset allocation ({{count}})",
     "assets": "assets",
     "total": "Total balance:"
   },
@@ -1246,8 +1251,8 @@
     "delegationReceiveWarnDesc": "The amount received on a delegated account will be added to the total staked amount. Choose another account if you want to avoid this.",
     "iDelegateMy": "I delegate my",
     "undelegateMy": "Undelegate my",
-    "warnUndelegation": "Your account will be undelegated from the selected validator. Funds are safe on your device.",
-    "warnDelegation": "Your account will be delegated to the selected validator. Funds are safe on your device.",
+    "warnUndelegation": "Your account will be undelegated.",
+    "warnDelegation": "Delegating your voting rights does not guarantee you will be paid any reward by your validator.",
     "to": "to",
     "from": "from",
     "forAnEstYield": "for an est. yield of",
@@ -1272,33 +1277,38 @@
     "selectValidatorTitle": "Select validator",
     "started": {
       "title": "Earn staking rewards",
-      "description": "Delegate your Tezos account to a third party validator to earn staking rewards while keeping full security and control of your assets",
+      "description": "Delegate your Tezos account to a third party validator to earn staking rewards while keeping full security and control of your assets.",
       "steps": {
-        "0": "Delegated accounts stay yours",
-        "1": "You can access your assets anytime",
-        "2": "Delegate securely with your Ledger device"
+        "0": "Delegated accounts stay yours.",
+        "1": "You can access your assets anytime.",
+        "2": "Delegate securely with your Ledger device."
       },
       "cta": "Delegate to earn rewards"
     },
     "broadcastSuccessTitle": {
-      "delegate": "Account successfully delegated",
-      "undelegate": "Account successfully undelegated"
+      "delegate": "Delegation sent",
+      "undelegate": "Operation sent"
     },
     "broadcastSuccessDescription": {
       "delegate": "Delegation transaction broadcasted successfully. You should earn your first rewards within about 40 days, depending on the validator.",
-      "undelegate": "Undelegation transaction broadcasted successfully"
+      "undelegate": "Your account delegation will end once the operation is confirmed. You can delegate your account again at any time."
     },
     "summaryTitle": "Summary",
     "goToAccount": "Go to account",
     "howDelegationWorks": "How delegation works"
   },
   "ValidateOnDevice": {
-    "title": "Please verify all transaction details on your {{productName}}",
-    "warning": "Carefully verify all {{mode}} details on your device.",
-    "modes": {
-      "send": "transaction",
-      "delegate": "delegation",
-      "undelegate": "undelegation"
+    "title": "Please confirm the operation on your {{productName}} to send it",
+    "warning": "Always verify that your device displays the address exactly as provided by the {{recipientWording}}",
+    "recipientWording": {
+      "send": "recipient",
+      "delegate": "validator",
+      "undelegate": "validator"
     }
+  },
+  "Terms": {
+    "title": "Terms of Use",
+    "read": "Read the Terms of Use",
+    "switchLabel": "I have read and agree with the Terms of Use and Privacy Policy"
   }
 }
