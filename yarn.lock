@@ -1100,11 +1100,6 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-passcode-auth/-/react-native-passcode-auth-2.1.0.tgz#d2073e9d1b9d81c9782cf3e0f9d8796eb729295a"
   integrity sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==
 
-"@ledgerhq/react-native-touch-id@^4.6.3":
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-touch-id/-/react-native-touch-id-4.6.3.tgz#cd7ef3d98874eaca11fc1cf9a058e0adf573a3e7"
-  integrity sha512-+gxjR1SmB/aTdiVgJCIPy3EWt2Rl6+LHnEBHyqElZF0M2FJ5DUkAqjF4FnW2pXdoKk4jHiiGXQOZSxJc/RS4Yw==
-
 "@octokit/endpoint@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@octokit/endpoint/-/endpoint-5.5.0.tgz#d7e7960ffe39096cb67062f07efa84db52b20edb"
@@ -7687,7 +7682,7 @@ react-native-extra-dimensions-android@^1.2.5:
   resolved "https://registry.yarnpkg.com/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-1.2.5.tgz#8ade91029aaac7519bf305116d39019e618a60f0"
   integrity sha512-eorFo9X1vEqAWUkgcZ300yKBG1wtgNeE7tdWAH2CE+P50FGTniJg5Sr6l1iPWG8ZskQOuF+KeiSTFlDa4vLfMw==
 
-react-native-fingerprint-scanner@^3.0.0:
+react-native-fingerprint-scanner@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/react-native-fingerprint-scanner/-/react-native-fingerprint-scanner-3.0.2.tgz#ca9994de4b30dcf5ad2f5b420bfdd4d8775e8831"
   integrity sha512-e6EkSgThwHAI9y5y2G3HdEbuKBka2lu3gRzpWzQs8FQF3t2DIB7fRHdA3/fnd33T39P0vU6hSCc9xwSpDbSdyg==

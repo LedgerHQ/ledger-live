@@ -285,8 +285,6 @@ PODS:
     - Sentry (~> 4.1.3)
   - TcpSockets (3.3.2):
     - React
-  - TouchID (4.6.3):
-    - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -344,7 +342,6 @@ DEPENDENCIES:
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
-  - "TouchID (from `../node_modules/@ledgerhq/react-native-touch-id`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -457,8 +454,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-sentry"
   TcpSockets:
     :path: "../node_modules/react-native-tcp"
-  TouchID:
-    :path: "../node_modules/@ledgerhq/react-native-touch-id"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -518,7 +513,6 @@ SPEC CHECKSUMS:
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
-  TouchID: e70ee88b881ccf6afef10c0261166935256feb05
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
 PODFILE CHECKSUM: 6b22e4f92a633a27f31d653752cdd3cdc4d3f15b
