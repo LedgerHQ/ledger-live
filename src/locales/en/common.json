@@ -608,6 +608,7 @@
     "to": "To ({{count}})",
     "identifier": "Transaction ID",
     "viewOperation": "View in explorer",
+    "whatIsThis": "What is this operation?",
     "seeAll": "See all",
     "seeLess": "See less",
     "viewInExplorer": "View in explorer",

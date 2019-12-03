@@ -7,22 +7,32 @@ import ExternalLink from "../../icons/ExternalLink";
 import Button from "../../components/Button";
 
 type Props = {
-  url: string,
+  url: ?string,
+  urlWhatIsThis: ?string,
 };
 
 class Footer extends PureComponent<Props, *> {
-  onPress = () => Linking.openURL(this.props.url);
-
   render() {
+    const { url, urlWhatIsThis } = this.props;
     return (
       <View style={styles.footer}>
-        <Button
-          event="OperationDetailViewInExplorer"
-          type="lightSecondary"
-          title={<Trans i18nKey="operationDetails.viewInExplorer" />}
-          IconLeft={ExternalLink}
-          onPress={this.onPress}
-        />
+        {urlWhatIsThis ? (
+          <Button
+            event="WhatIsThisOperation"
+            type="lightSecondary"
+            title={<Trans i18nKey="operationDetails.whatIsThis" />}
+            IconLeft={ExternalLink}
+            onPress={() => Linking.openURL(urlWhatIsThis)}
+          />
+        ) : null}
+        {url ? (
+          <Button
+            event="OperationDetailViewInExplorer"
+            type="primary"
+            title={<Trans i18nKey="operationDetails.viewInExplorer" />}
+            onPress={() => Linking.openURL(url)}
+          />
+        ) : null}
       </View>
     );
   }
