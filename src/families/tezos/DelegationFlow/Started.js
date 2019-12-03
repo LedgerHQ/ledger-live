@@ -11,7 +11,6 @@ import StepHeader from "../../../components/StepHeader";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import ExternalLink from "../../../components/ExternalLink";
-import Touchable from "../../../components/Touchable";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import IlluStaking from "../IlluStaking";
 import { urls } from "../../../config/urls";
