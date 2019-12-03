@@ -1252,7 +1252,7 @@
     "iDelegateMy": "I delegate my",
     "undelegateMy": "Undelegate my",
     "warnUndelegation": "Your account will be undelegated.",
-    "warnDelegation": "Your account will be delegated to the selected validator. You can send or receive anytime.",
+    "warnDelegation": "Delegating your voting rights does not guarantee you will be paid any reward by your validator.",
     "to": "to",
     "from": "from",
     "forAnEstYield": "for an est. yield of",
