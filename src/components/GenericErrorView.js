@@ -7,7 +7,7 @@ import LText from "./LText";
 import ErrorIcon from "./ErrorIcon";
 import TranslatedError from "./TranslatedError";
 
-class GenericErrorRendering extends PureComponent<{
+class GenericErrorView extends PureComponent<{
   error: Error,
   // sometimes we want to "hide" the technical error into a category
   // for instance, for Genuine check we want to express "Genuine check failed" because "<actual error>"
@@ -98,4 +98,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GenericErrorRendering;
+export default GenericErrorView;

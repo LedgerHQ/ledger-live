@@ -239,7 +239,7 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
-      <ScrollView style={styles.body}>
+      <View style={styles.body}>
         <DelegatingContainer
           undelegation={transaction.mode === "undelegate"}
           left={
@@ -337,17 +337,8 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
             text={<Trans i18nKey="delegation.warnDelegation" />}
           />
         )}
-      </ScrollView>
+      </View>
       <View style={styles.footer}>
-        <LText style={styles.termsAndPrivacy}>
-          <Trans i18nKey="delegation.termsAndPrivacy">
-            {"I have read and I accept the "}
-            <LText semiBold>{"Ledger Live Terms of Use"}</LText>
-            {" and "}
-            <LText semiBold>{"Privacy Policy"}</LText>
-          </Trans>
-        </LText>
-
         <Button
           event="SummaryContinue"
           type="primary"
@@ -384,6 +375,7 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     paddingHorizontal: 16,
+    justifyContent: "space-around",
   },
   bakerCircle: {
     borderWidth: 1,

@@ -63,7 +63,6 @@ export type SettingsState = {
   selectedTimeRange: TimeRange,
   orderAccounts: string,
   hasCompletedOnboarding: boolean,
-  hasAcceptedTradingWarning: boolean,
   hasInstalledAnyApp: boolean,
   readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
@@ -82,7 +81,6 @@ const INITIAL_STATE: SettingsState = {
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
-  hasAcceptedTradingWarning: false,
   hasInstalledAnyApp: false,
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
@@ -194,11 +192,6 @@ const handlers: Object = {
   SETTINGS_COMPLETE_ONBOARDING: state => ({
     ...state,
     hasCompletedOnboarding: true,
-  }),
-
-  SETTINGS_ACCEPT_TRADING_WARNING: state => ({
-    ...state,
-    hasAcceptedTradingWarning: true,
   }),
 
   SETTINGS_INSTALL_APP_FIRST_TIME: state => ({
@@ -320,9 +313,6 @@ export const orderAccountsSelector = (state: State) =>
 
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
-
-export const hasAcceptedTradingWarningSelector = (state: State) =>
-  state.settings.hasAcceptedTradingWarning;
 
 export const hasInstalledAnyAppSelector = (state: State) =>
   state.settings.hasInstalledAnyApp;

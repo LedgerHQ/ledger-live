@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, Linking } from "react-native";
+import { StyleSheet, View, ScrollView, Linking } from "react-native";
 import { withNavigation, SafeAreaView } from "react-navigation";
 import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
 import {
@@ -20,6 +20,7 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import Icon from "react-native-vector-icons/dist/Feather";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 import IconReceive from "../../icons/Receive";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -208,6 +209,8 @@ const DelegationDetailsModal = ({
     onClose();
   }, [accountId, parentId, navigation, onClose]);
 
+  const height = Math.min(getWindowDimensions().height - 400, 280);
+
   return (
     <BottomModal
       id="DelegationDetailsModal"
@@ -250,7 +253,7 @@ const DelegationDetailsModal = ({
           </LText>
         </View>
 
-        <View>
+        <ScrollView style={{ height }}>
           {baker ? (
             <Property label={<Trans i18nKey="delegation.validator" />}>
               <LText
@@ -319,7 +322,7 @@ const DelegationDetailsModal = ({
               </LText>
             </Touchable>
           </Property>
-        </View>
+        </ScrollView>
 
         {account.type !== "Account" ? null : (
           <View style={styles.footer}>

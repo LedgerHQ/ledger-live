@@ -1,10 +1,9 @@
 /* @flow */
-import React, { Component, PureComponent } from "react";
+import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import Markdown from "react-native-easy-markdown";
 import { translate, Trans } from "react-i18next";
 import i18next from "i18next";
 
@@ -12,7 +11,8 @@ import manager from "@ledgerhq/live-common/lib/manager";
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
-import LText, { getFontStyle } from "../../components/LText";
+import SafeMarkdown from "../../components/SafeMarkdown";
+import LText from "../../components/LText";
 import colors from "../../colors";
 
 const forceInset = { bottom: "always" };
@@ -84,39 +84,6 @@ class FirmwareUpdateReleaseNotes extends Component<Props, State> {
     );
   }
 }
-
-class SafeMarkdown extends PureComponent<
-  { markdown: string },
-  { error: ?Error },
-> {
-  state = {
-    error: null,
-  };
-
-  componentDidCatch(error) {
-    this.setState({ error });
-  }
-
-  render() {
-    const { markdown } = this.props;
-    const { error } = this.state;
-    if (error) {
-      return <LText style={markdownStyles.text}>{markdown}</LText>; // :(
-    }
-    return <Markdown markdownStyles={markdownStyles}>{markdown}</Markdown>;
-  }
-}
-
-const markdownStyles = StyleSheet.create({
-  text: {
-    ...getFontStyle(),
-    color: colors.darkBlue,
-    fontSize: 14,
-  },
-  strong: {
-    ...getFontStyle({ semiBold: true }),
-  },
-});
 
 const styles = StyleSheet.create({
   root: {
