@@ -12,16 +12,17 @@ type Props = {
   event: string,
   eventProperties?: Object,
   iconFirst?: boolean,
+  ltextProps?: *,
 };
 
-const Link = ({ text, onPress, event, eventProperties }: Props) => (
+const Link = ({ text, onPress, event, eventProperties, ltextProps }: Props) => (
   <Touchable
     event={event}
     eventProperties={eventProperties}
     onPress={onPress}
     style={styles.root}
   >
-    <LText bold style={styles.text}>
+    <LText bold style={styles.text} {...ltextProps}>
       {text}
     </LText>
     <ExternalLink size={14} color={colors.live} />

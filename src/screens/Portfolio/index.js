@@ -29,10 +29,8 @@ import {
 } from "../../reducers/accounts";
 import {
   hasCompletedOnboardingSelector,
-  hasAcceptedTradingWarningSelector,
   counterValueCurrencySelector,
 } from "../../reducers/settings";
-import { acceptTradingWarning } from "../../actions/settings";
 import { portfolioSelector } from "../../actions/portfolio";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
@@ -45,11 +43,11 @@ import StickyHeader from "./StickyHeader";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import SyncBackground from "../../bridge/SyncBackground";
-import TradingDisclaimer from "../../modals/TradingDisclaimer";
 import TrackScreen from "../../analytics/TrackScreen";
 import NoOpStatePortfolio from "./NoOpStatePortfolio";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
+import RequireTerms from "../../components/RequireTerms";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = globalSyncRefreshControl(AnimatedSectionList);
@@ -58,14 +56,11 @@ const mapStateToProps = createStructuredSelector({
   accounts: accountsSelector,
   allAccounts: flattenAccountsSelector,
   hasCompletedOnboarding: hasCompletedOnboardingSelector,
-  hasAcceptedTradingWarning: hasAcceptedTradingWarningSelector,
   counterValueCurrency: counterValueCurrencySelector,
   portfolio: portfolioSelector,
 });
 
-const mapDispatchToProps = {
-  acceptTradingWarning,
-};
+const mapDispatchToProps = null;
 
 class PortfolioScreen extends Component<
   {
@@ -75,18 +70,15 @@ class PortfolioScreen extends Component<
     portfolio: Portfolio,
     navigation: *,
     hasCompletedOnboarding: boolean,
-    hasAcceptedTradingWarning: boolean,
     counterValueCurrency: Currency,
   },
   {
     opCount: number,
     scrollY: AnimatedValue,
-    isModalOpened: boolean,
   },
 > {
   state = {
     opCount: 50,
-    isModalOpened: !this.props.hasAcceptedTradingWarning,
     scrollY: new Animated.Value(0),
   };
 
@@ -159,11 +151,6 @@ class PortfolioScreen extends Component<
     this.setState(({ opCount }) => ({ opCount: opCount + 50 }));
   };
 
-  onModalClose = () => {
-    this.props.acceptTradingWarning();
-    this.setState({ isModalOpened: false });
-  };
-
   // componentDidMount() {
   //   this.props.navigation.navigate("DelegationSummary", {
   //     accountId: this.props.accounts.find(a => a.currency.id === "tezos").id,
@@ -176,12 +163,8 @@ class PortfolioScreen extends Component<
       accounts,
       portfolio,
       counterValueCurrency,
-      hasAcceptedTradingWarning,
     } = this.props;
-    const { opCount, scrollY, isModalOpened } = this.state;
-    const disclaimer = !hasAcceptedTradingWarning && (
-      <TradingDisclaimer isOpened={isModalOpened} onClose={this.onModalClose} />
-    );
+    const { opCount, scrollY } = this.state;
 
     const { sections, completed } = groupAccountsOperationsByDay(accounts, {
       count: opCount,
@@ -199,6 +182,9 @@ class PortfolioScreen extends Component<
           counterValueCurrency={counterValueCurrency}
         />
         <SyncBackground />
+
+        <RequireTerms />
+
         <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
         <View style={styles.inner}>
@@ -232,7 +218,6 @@ class PortfolioScreen extends Component<
           />
           <MigrateAccountsBanner />
         </View>
-        {disclaimer}
       </SafeAreaView>
     );
   }

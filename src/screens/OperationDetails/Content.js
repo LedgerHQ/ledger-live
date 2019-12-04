@@ -1,5 +1,5 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import type {
@@ -105,9 +105,12 @@ class Content extends PureComponent<Props, State> {
     const subOperations = operation.subOperations || [];
     const internalOperations = operation.internalOperations || [];
 
+    const shouldDisplayTo =
+      uniqueRecipients.length > 0 && !!uniqueRecipients[0];
+
     const isConfirmed = confirmations >= currencySettings.confirmationsNb;
     return (
-      <Fragment>
+      <>
         <View style={styles.header}>
           <View style={styles.icon}>
             <OperationIcon
@@ -178,7 +181,7 @@ class Content extends PureComponent<Props, State> {
           </View>
         </View>
         {subOperations.length > 0 && account.type === "Account" && (
-          <Fragment>
+          <>
             <View style={[styles.section, styles.infoContainer]}>
               <LText style={styles.sectionSeparator} semiBold>
                 <Trans i18nKey="operationDetails.tokenOperations" />
@@ -211,10 +214,10 @@ class Content extends PureComponent<Props, State> {
                 />
               );
             })}
-          </Fragment>
+          </>
         )}
         {internalOperations.length > 0 && account.type === "Account" && (
-          <Fragment>
+          <>
             <View style={[styles.section, styles.infoContainer]}>
               <LText style={styles.sectionSeparator} semiBold>
                 <Trans i18nKey="operationDetails.internalOperations" />
@@ -231,7 +234,7 @@ class Content extends PureComponent<Props, State> {
                 isLast={internalOperations.length - 1 === i}
               />
             ))}
-          </Fragment>
+          </>
         )}
 
         {internalOperations.length > 0 || subOperations.length > 0 ? (
@@ -324,31 +327,33 @@ class Content extends PureComponent<Props, State> {
             titleStyle={styles.sectionTitle}
           />
         </View>
-        <View style={styles.section}>
-          <DataList
-            data={uniqueRecipients}
-            title={
-              <Trans
-                i18nKey="operationDetails.to"
-                count={uniqueRecipients.length}
-                values={{ count: uniqueRecipients.length }}
-              />
-            }
-            rightComp={
-              uniqueRecipients.length > 1 ? (
-                <View style={{ marginLeft: "auto" }}>
-                  <HelpLink
-                    event="MultipleAddressesSupport"
-                    onPress={() => Linking.openURL(urls.multipleAddresses)}
-                    title={
-                      <Trans i18nKey="operationDetails.multipleAddresses" />
-                    }
-                  />
-                </View>
-              ) : null
-            }
-          />
-        </View>
+        {shouldDisplayTo ? (
+          <View style={styles.section}>
+            <DataList
+              data={uniqueRecipients}
+              title={
+                <Trans
+                  i18nKey="operationDetails.to"
+                  count={uniqueRecipients.length}
+                  values={{ count: uniqueRecipients.length }}
+                />
+              }
+              rightComp={
+                uniqueRecipients.length > 1 ? (
+                  <View style={{ marginLeft: "auto" }}>
+                    <HelpLink
+                      event="MultipleAddressesSupport"
+                      onPress={() => Linking.openURL(urls.multipleAddresses)}
+                      title={
+                        <Trans i18nKey="operationDetails.multipleAddresses" />
+                      }
+                    />
+                  </View>
+                ) : null
+              }
+            />
+          </View>
+        ) : null}
         {Object.entries(extra).map(([key, value]) => (
           <View style={styles.section} key={key}>
             <LText style={styles.sectionTitle}>
@@ -363,7 +368,7 @@ class Content extends PureComponent<Props, State> {
           isOpened={this.state.isModalOpened}
           onClose={this.onModalClose}
         />
-      </Fragment>
+      </>
     );
   }
 }

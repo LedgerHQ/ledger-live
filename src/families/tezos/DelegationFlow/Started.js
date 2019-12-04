@@ -10,7 +10,7 @@ import { TrackScreen } from "../../../analytics";
 import StepHeader from "../../../components/StepHeader";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
-import Touchable from "../../../components/Touchable";
+import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import IlluStaking from "../IlluStaking";
 import { urls } from "../../../config/urls";
@@ -46,7 +46,7 @@ const DelegationStarted = ({ navigation }: Props) => {
         <LText semiBold style={styles.title}>
           <Trans secondary i18nKey="delegation.started.title" />
         </LText>
-        <LText style={styles.description}>
+        <LText secondary style={styles.description}>
           <Trans i18nKey="delegation.started.description" />
         </LText>
         <BulletList
@@ -61,15 +61,16 @@ const DelegationStarted = ({ navigation }: Props) => {
             </LText>
           ))}
         />
-        <Touchable
-          event="DelegationStartedHowDelegationWorks"
-          onPress={howDelegationWorks}
-          style={styles.howDelegationWorks}
-        >
-          <LText style={styles.howDelegationWorksText}>
-            <Trans i18nKey="delegation.howDelegationWorks" />
-          </LText>
-        </Touchable>
+        <View style={styles.howDelegationWorks}>
+          <ExternalLink
+            event="DelegationStartedHowDelegationWorks"
+            onPress={howDelegationWorks}
+            text={<Trans i18nKey="delegation.howDelegationWorks" />}
+            ltextProps={{
+              secondary: true,
+            }}
+          />
+        </View>
       </ScrollView>
       <View style={styles.footer}>
         <Button
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
   howDelegationWorks: {
     marginTop: 32,
     borderRadius: 32,
-    paddingVertical: 4,
+    paddingVertical: 8,
     paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: colors.live,

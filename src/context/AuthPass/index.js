@@ -7,9 +7,9 @@ import { createStructuredSelector } from "reselect";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
-import auth from "./auth";
 import type { Privacy } from "../../reducers/settings";
 import AuthScreen from "./AuthScreen";
+import RequestBiometricModal from "../../components/RequestBiometricModal";
 
 const mapStateToProps = createStructuredSelector({
   privacy: privacySelector,
@@ -21,6 +21,7 @@ type State = {
   appState: string,
   skipLockCount: number,
   setEnabled: (enabled: boolean) => void,
+  authModalOpen: boolean,
 };
 
 type Props = {
@@ -47,6 +48,7 @@ class AuthPass extends PureComponent<Props, State> {
 
     skipLockCount: 0,
     setEnabled: this.setEnabled,
+    authModalOpen: false,
   };
 
   static getDerivedStateFromProps({ privacy }, { isLocked }) {
@@ -81,25 +83,28 @@ class AuthPass extends PureComponent<Props, State> {
   };
 
   // auth: try to auth with biometrics and fallback on password
-  authPending = false;
   auth = () => {
-    const { privacy, t } = this.props;
-    const { isLocked } = this.state;
-    if (isLocked && privacy && privacy.biometricsEnabled) {
-      if (this.authPending) return;
-      this.authPending = true;
-      auth(t("auth.unlock.biometricsTitle"))
-        .then(() => {
-          this.authPending = false;
-          this.unlock();
-        })
-        .catch(error => {
-          this.authPending = false;
-          this.setState({
-            biometricsError: error,
-          });
-        });
+    const { privacy } = this.props;
+    const { isLocked, authModalOpen } = this.state;
+    if (isLocked && privacy && privacy.biometricsEnabled && !authModalOpen) {
+      this.setState({ authModalOpen: true });
     }
+  };
+
+  onSuccess = () => {
+    this.setState({ authModalOpen: false });
+    this.unlock();
+  };
+
+  onError = error => {
+    this.setState({ authModalOpen: false });
+    this.setState({
+      biometricsError: error,
+    });
+  };
+
+  onCancel = () => {
+    this.setState({ authModalOpen: false });
   };
 
   // lock the app
@@ -127,15 +132,23 @@ class AuthPass extends PureComponent<Props, State> {
 
   render() {
     const { children, privacy } = this.props;
-    const { isLocked, biometricsError, setEnabled } = this.state;
+    const { isLocked, biometricsError, setEnabled, authModalOpen } = this.state;
     if (isLocked && privacy) {
       return (
-        <AuthScreen
-          biometricsError={biometricsError}
-          privacy={privacy}
-          lock={this.lock}
-          unlock={this.unlock}
-        />
+        <>
+          <AuthScreen
+            biometricsError={biometricsError}
+            privacy={privacy}
+            lock={this.lock}
+            unlock={this.unlock}
+          />
+          <RequestBiometricModal
+            isVisible={authModalOpen}
+            onSuccess={this.onSuccess}
+            onError={this.onError}
+            onCancel={this.onCancel}
+          />
+        </>
       );
     }
     return (
