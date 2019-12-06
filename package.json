@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "./scripts/post.sh",
     "start": "react-native start",
-    "android": "react-native run-android",
+    "android": "react-native run-android --appIdSuffix=debug",
     "android:internal": "bundle exec fastlane android redo_beta",
     "preandroid:internal": "bundle install",
     "android:waldo": "bundle exec fastlane android upload_waldo --env mock",
