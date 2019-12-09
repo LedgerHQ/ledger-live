@@ -22,7 +22,6 @@ const whitelist = [
   "tz1Kf25fX1VdmYGSEzwFy1wNmkbSEZ2V83sY",
   "tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv",
   "tz1eEnQhbwf6trb8Q8mPb2RaPkNk2rN7BKi8",
-  "tz1RSWMYKGAykpizFteowByYMueCYv9TMn1L",
   "tz1PeZx7FXy7QRuMREGXGxeipb24RsMMzUNe"
 ];
 

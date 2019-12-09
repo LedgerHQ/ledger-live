@@ -203,6 +203,15 @@ accountsRelated
             expect(synced.pendingOperations).toEqual([]);
           }
         });
+
+        test("there are no Operation dups (by id)", async () => {
+          const account = await getSynced();
+          const seen = {};
+          account.operations.forEach(op => {
+            expect(seen[op.id]).toBeUndefined();
+            seen[op.id] = op.id;
+          });
+        });
       });
 
       describe("createTransaction", () => {
@@ -264,11 +273,12 @@ accountsRelated
             amount: BigNumber(1000),
             recipient: account.freshAddress
           };
-          const first = await bridge.prepareTransaction(account, t);
+          const stable = await bridge.prepareTransaction(account, t);
+          const first = await bridge.prepareTransaction(account, stable);
           const concur = await Promise.all(
             Array(3)
               .fill(null)
-              .map(() => bridge.prepareTransaction(account, t))
+              .map(() => bridge.prepareTransaction(account, stable))
           );
           concur.forEach(r => {
             expect(r).toEqual(first);
