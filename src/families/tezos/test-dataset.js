@@ -261,7 +261,7 @@ const dataset: DatasetTest<Transaction> = {
                 {
                   errors: {},
                   estimatedFees: fees.times(2),
-                  amount: account.balance.div(10).minus(fees.times(2)),
+                  amount: account.balance.div(10),
                   totalSpent: account.balance.div(10).plus(fees.times(2))
                 }
               )
