@@ -333,14 +333,17 @@ const dataset: DatasetTest<Transaction> = {
                   useAllAmount: true
                 }
               ),
-              expectedStatus: ({ subAccounts }, { fees }) => (
-                invariant(subAccounts && fees, "fees are required"),
+              expectedStatus: ({ subAccounts }, { fees, storageLimit }) => (
+                invariant(
+                  subAccounts && fees && storageLimit,
+                  "fees are required"
+                ),
                 {
                   errors: {},
                   warnings: {},
                   estimatedFees: fees,
-                  amount: subAccounts[1].balance,
-                  totalSpent: subAccounts[1].balance
+                  amount: subAccounts[1].balance.minus(storageLimit),
+                  totalSpent: subAccounts[1].balance.minus(storageLimit)
                 }
               )
             }

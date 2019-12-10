@@ -1,58 +1,51 @@
-# ledger-wallet-common
+## “Ledger Live Common” `@ledgerhq/live-common`
 
-Common ground for the Ledger Live apps
+`````
+                ````
+           `.--:::::
+        `.-:::::::::       ````
+       .://///:-..``     `-/+++/-`
+     `://///-`           -++++++o/.
+    `/+++/:`            -+++++osss+`
+   `:++++:`            ./++++-/osss/`
+   .+++++`             `-://- .ooooo.
+   -+ooo/`                ``  `/oooo-
+   .oooo+` .::-.`             `+++++.
+   `+oooo:./+++/.             -++++/`
+    -ossso+++++:`            -/+++/.
+     -ooo+++++:`           .://///.
+      ./+++++/`       ``.-://///:`
+        `---.`      -:::::///:-.
+                    :::::::-.`
+                    ....``
 
-## Install
+`````
 
-```
-yarn add @ledgerhq/live-common
-```
+Ledger Live Common (`@ledgerhq/live-common`) is a JavaScript library available via a [NPM package](https://npmjs.com/@ledgerhq/live-common).
 
-## Development
+This library depends on a bunch of [ledgerjs packages](https://github.com/LedgerHQ/ledgerjs) and put together the core business logic behind [Ledger Live Desktop](https://github.com/LedgerHQ/ledger-live-desktop) and [Ledger Live Mobile](https://github.com/LedgerHQ/ledger-live-mobile).
 
-```
-yarn          # install deps
-yarn build    # build live-common...
-yarn watch    # ...or watch to faster re-build
-yarn test     # test exclusively live-common
-```
+The stack is pretty standard for a ES6 and FlowType library. The notable dependencies are libraries like **RxJS** and **BigNumber.js**. There is also a bit of React and Redux but exposed in agnostic ways (meaning it's not mandatory to use – there will be dedicated entry point for them to offer utilities like React Hooks).
 
-### `tool` folder is a `ledger-live` command-line
+### Table of content
 
-To run it for development and have the latest sourcecode running we need to either copy the lib folder of live-common in tool/node*modules or use something like yalc. \_We used to use yarn link but symlink are not properly working and creating dup issues.*
-You likely want to run `yarn watch` in a terminal and do this in another terminal (from top level):
-
-```
-yalc publish # link live-common
-cd tool/
-yarn
-yalc add @ledgerhq/live-common
-yarn link    # will make ledger-live CLI available
-yarn watch   # incremental build as well
-```
-
-Assuming that `yarn global bin` is in your `$PATH`,
-
-You can run:
-
-```
-ledger-live
-```
-
-and it will always use your latest sourcecode.
-
-## Release flow
-
-to run **exclusively on master**
-
-```
-yarn publish
-git push
-git push --tags
-```
-
-you also likely want to update `tool` and release a new version as well (second commit).
-
-## Adding cryptocurrencies
-
-Please find instruction in [`src/data/cryptocurrencies.js`](src/data/cryptocurrencies.js).
+- Introduction, Goals and Tradeoffs
+  - [Quick gist of doing a transaction with ledger-live-common library](./docs/gist-tx.md)
+- Getting started
+  - [@ledgerhq/live-common setup](./docs/live-common-setup.md)
+  - [tool \(aka ledger-live cli\)](./docs/tool.md)
+  - demo project
+  - mobile-test-app project
+  - [Developing on Ledger Live Common](./docs/developing.md)
+- The Currency models
+- The Account models
+  - Account
+  - TokenAccount
+  - ChildAccount
+- Account and Portfolio logic
+- The Bridges
+  - CurrencyBridge
+  - AccountBridge
+- Countervalues
+- Apps store logic
+- Firmware Update logic
