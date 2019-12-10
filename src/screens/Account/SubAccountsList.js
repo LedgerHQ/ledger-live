@@ -4,11 +4,12 @@ import React, { useCallback, useState, useMemo } from "react";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
 import take from "lodash/take";
-import { FlatList, Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
+// !! Using nested list via react-navigation prompts some ui warnings some investigating needed to fully resolve this issue !!
+import { FlatList, withNavigation } from "react-navigation";
 import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import MaterialIcon from "react-native-vector-icons/dist/MaterialIcons";
-import { withNavigation } from "react-navigation";
 import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import SubAccountRow from "../../components/SubAccountRow";
