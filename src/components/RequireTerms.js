@@ -21,6 +21,7 @@ import ExternalLink from "./ExternalLink";
 import CheckBox from "./CheckBox";
 import Touchable from "./Touchable";
 import GenericErrorView from "./GenericErrorView";
+import RetryButtton from "./RetryButton";
 
 const forceInset = { bottom: "always" };
 
@@ -56,10 +57,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.lightFog,
   },
+  retryButton: {
+    marginTop: 16,
+  },
 });
 
-const RequireTermsModal = () => {
-  const [markdown, error] = useTerms();
+const RequireTermsModal = ({ onClose }: Props) => {
+  const [markdown, error, retry] = useTerms();
   const [accepted, accept] = useTermsAccept();
   const [toggle, setToggle] = useState(false);
   const onSwitch = useCallback(() => {
@@ -96,6 +100,9 @@ const RequireTermsModal = () => {
                 onPress={() => Linking.openURL(url)}
                 event="OpenTerms"
               />
+              <View style={styles.retryButton}>
+                <RetryButtton onPress={retry} />
+              </View>
             </View>
           ) : (
             <ActivityIndicator />

@@ -30,11 +30,13 @@ export const useTerms = () => {
   const [terms, setTerms] = useState(null);
   const [error, setError] = useState(null);
 
+  const loadTerms = () => load(url).then(setTerms, setError);
+
   useEffect(() => {
-    load().then(setTerms, setError);
+    loadTerms();
   }, []);
 
-  return [terms, error];
+  return [terms, error, loadTerms];
 };
 
 export const useTermsAccept = () => {
