@@ -1045,7 +1045,7 @@
     "@ledgerhq/errors" "^5.0.0-babel7.4+e70af39"
     events "^3.0.0"
 
-"@ledgerhq/logs@5.0.0-babel7.4", "@ledgerhq/logs@^5.0.0-babel7.1+fca2c7c":
+"@ledgerhq/logs@5.0.0-babel7.3", "@ledgerhq/logs@^5.0.0-babel7.1+fca2c7c":
   version "5.0.0-babel7.3"
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.0.0-babel7.3.tgz#b59b2c99aa87f0757fe7e2847aa450d361813791"
   integrity sha512-3pjLRfACLS4e3IJtc7gbuN0xdEedUIwidn5Tb+/ZFFdlBLg4lOHP80PqfkS7hEo41IXCmCK1m8ovOy34tDQqsA==
