@@ -12,7 +12,8 @@ import {
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
   UserRefusedAllowManager,
-  UserRefusedFirmwareUpdate
+  UserRefusedFirmwareUpdate,
+  NetworkDown
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
@@ -94,14 +95,17 @@ const applicationsByDevice: (params: {
 
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
   async () => {
-    const r = await network({
+    const { data } = await network({
       method: "GET",
       url: URL.format({
         pathname: `${getEnv("MANAGER_API_BASE")}/applications`,
         query: { livecommonversion }
       })
     });
-    return r.data;
+    if (!data || !Array.isArray(data)) {
+      throw new NetworkDown("");
+    }
+    return data;
   },
   () => ""
 );

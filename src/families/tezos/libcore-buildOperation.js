@@ -28,6 +28,9 @@ async function tezosBuildOperation(
   if (maybeCustomType === "DELEGATE" && !partialOp.recipients[0]) {
     maybeCustomType = "UNDELEGATE";
   }
+  if (maybeCustomType === "IN" && partialOp.value.eq(0)) {
+    maybeCustomType = "NONE";
+  }
   if (maybeCustomType) {
     out.type = maybeCustomType;
   }

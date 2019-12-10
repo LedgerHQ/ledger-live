@@ -2,9 +2,10 @@
 import { BigNumber } from "bignumber.js";
 import type { DatasetTest } from "../dataset";
 import { FeeTooHigh } from "@ledgerhq/errors";
-import { fromTransactionRaw } from "../../transaction";
+import { fromTransactionRaw } from "./transaction";
+import type { Transaction } from "./types";
 
-const dataset: DatasetTest = {
+const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore", "mock", "ethereumjs"],
   currencies: {
     ethereum: {

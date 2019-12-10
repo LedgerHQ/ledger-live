@@ -55,18 +55,21 @@ export function groupAccountsOperationsByDay(
         bestOp = op;
         bestOpInfo = { accountI: i, fromPending: false };
       }
+
       // look in pending operations
-      const opP = account.pendingOperations[indexesPending[i]];
+      let opP = account.pendingOperations[indexesPending[i]];
+
+      // skip all pending operations that are already in operations
+      while (opP && hasStableOperation(account, opP.hash)) {
+        opP = account.pendingOperations[++indexesPending[i]];
+      }
+
       if (opP && (!bestOp || opP.date > bestOp.date)) {
-        if (hasStableOperation(account, opP.hash)) {
-          // DEDUP: operation has landed in operations, we will not append pendingOperations but just increment
-          indexesPending[i]++;
-        } else {
-          bestOp = opP;
-          bestOpInfo = { accountI: i, fromPending: true };
-        }
+        bestOp = opP;
+        bestOpInfo = { accountI: i, fromPending: true };
       }
     }
+
     if (bestOp) {
       if (bestOpInfo.fromPending) {
         indexesPending[bestOpInfo.accountI]++;

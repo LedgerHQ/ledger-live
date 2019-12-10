@@ -2,8 +2,8 @@
 import { BigNumber } from "bignumber.js";
 import { FeeTooHigh } from "@ledgerhq/errors";
 import type { DatasetTest } from "../dataset";
-import type { NetworkInfoRaw } from "./types";
-import { fromTransactionRaw } from "../../transaction";
+import type { NetworkInfoRaw, Transaction } from "./types";
+import { fromTransactionRaw } from "./transaction";
 
 const networkInfo: NetworkInfoRaw = {
   family: "bitcoin",
@@ -17,7 +17,7 @@ const networkInfo: NetworkInfoRaw = {
   }
 };
 
-const dataset: DatasetTest = {
+const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore", "mock"],
   currencies: {
     bitcoin: {

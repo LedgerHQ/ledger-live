@@ -43,6 +43,7 @@ const envParsers = {
   KEYCHAIN_OBSERVABLE_RANGE: intParser,
   LEDGER_COUNTERVALUES_API: stringParser,
   LEDGER_REST_API_BASE: stringParser,
+  LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK: boolParser,
   LIBCORE_PASSWORD: stringParser,
   MANAGER_API_BASE: stringParser,
   MANAGER_DEV_MODE: boolParser,
@@ -60,8 +61,8 @@ const envParsers = {
 const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   API_TEZOS_BAKER: "https://tezos-bakers.api.live.ledger.com",
   API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT:
-    "https://xtz.explorers.prod.aws.ledger.fr/explorer",
-  API_TEZOS_NODE: "https://xtz-node.explorers.prod.aws.ledger.fr",
+    "https://xtz-explorer.api.live.ledger.com/explorer",
+  API_TEZOS_NODE: "https://xtz-node.api.live.ledger.com",
   BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
   BRIDGE_FORCE_IMPLEMENTATION: "",
   DEVICE_PROXY_URL: "",
@@ -82,6 +83,7 @@ const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
   KEYCHAIN_OBSERVABLE_RANGE: 0,
   LEDGER_COUNTERVALUES_API: "https://countervalues.api.live.ledger.com",
   LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
+  LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK: false,
   LIBCORE_PASSWORD: "",
   MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",
   MANAGER_DEV_MODE: false,

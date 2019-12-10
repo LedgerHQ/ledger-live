@@ -112,7 +112,14 @@ export function useBakers(whitelistAddresses: string[]) {
   );
 
   useEffect(() => {
-    listBakers(whitelistAddresses).then(setBakers);
+    let cancelled;
+    listBakers(whitelistAddresses).then(bakers => {
+      if (cancelled) return;
+      setBakers(bakers);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [whitelistAddresses]);
 
   return bakers;
@@ -128,12 +135,12 @@ export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const op = account.operations.find(
     op => !op.hasFailed && (op.type === "DELEGATE" || op.type === "UNDELEGATE")
   );
-  const pendingOp = !op
-    ? account.pendingOperations.find(
-        op => op.type === "DELEGATE" || op.type === "UNDELEGATE"
-      )
-    : null;
-  const operation = op || pendingOp;
+  const pendingOp = account.pendingOperations
+    .filter(op => !account.operations.some(o => op.hash === o.hash))
+    .find(op => op.type === "DELEGATE" || op.type === "UNDELEGATE");
+
+  const isPending = !!pendingOp;
+  const operation = pendingOp && pendingOp.type === "DELEGATE" ? pendingOp : op;
   if (!operation || operation.type === "UNDELEGATE") {
     return null;
   }
@@ -145,7 +152,7 @@ export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const receiveShouldWarnDelegation = !recentOps.some(op => op.type === "IN");
 
   return {
-    isPending: !!pendingOp,
+    isPending,
     operation,
     address: operation.recipients[0],
     baker: null,
@@ -183,7 +190,14 @@ export function useDelegation(account: AccountLike): ?Delegation {
     getAccountDelegationSync(account)
   );
   useEffect(() => {
-    loadAccountDelegation(account).then(setDelegation);
+    let cancelled;
+    loadAccountDelegation(account).then(delegation => {
+      if (cancelled) return;
+      setDelegation(delegation);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [account]);
   return delegation;
 }
@@ -191,7 +205,14 @@ export function useDelegation(account: AccountLike): ?Delegation {
 export function useBaker(addr: string): ?Baker {
   const [baker, setBaker] = useState(() => getBakerSync(addr));
   useEffect(() => {
-    loadBaker(addr).then(setBaker);
+    let cancelled;
+    loadBaker(addr).then(baker => {
+      if (cancelled) return;
+      setBaker(baker);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [addr]);
   return baker;
 }
