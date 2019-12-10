@@ -6,6 +6,10 @@ cd $(dirname $0)/..
 
 rm -f 'node_modules/@segment/analytics-ios/.clang-format' 'third-party/glog-0.3.5/test-driver'
 
+# Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
+# Why would anyone bundle an external lib available on CocoaPods anyway?
+rm -rf "node_modules/react-native-udp/ios/CocoaAsyncSocket" "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
+
 rn-nodeify --hack
 
 # Create the dev .env file with APP_NAME if it doesn't exist
