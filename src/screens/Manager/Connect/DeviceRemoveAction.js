@@ -10,17 +10,17 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { delay } from "@ledgerhq/live-common/lib/promise";
 
-import { removeKnownDevice } from "../../actions/ble";
-import Close from "../../icons/Close";
+import { removeKnownDevice } from "../../../actions/ble";
+import Close from "../../../icons/Close";
 
-import BottomModal from "../../components/BottomModal";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
-import Touchable from "../../components/Touchable";
-import Space from "../../components/Space";
+import BottomModal from "../../../components/BottomModal";
+import Button from "../../../components/Button";
+import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
+import Space from "../../../components/Space";
 
-import colors from "../../colors";
-import Trash from "../../icons/Trash";
+import colors from "../../../colors";
+import Trash from "../../../icons/Trash";
 
 const forceInset = { bottom: "always" };
 

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import Touchable from "../../components/Touchable";
-import LText from "../../components/LText";
-import colors from "../../colors";
-import ArrowRight from "../../icons/ArrowRight";
+import Touchable from "../../../components/Touchable";
+import LText from "../../../components/LText";
+import colors from "../../../colors";
+import ArrowRight from "../../../icons/ArrowRight";
 
 export default class SettingsRow extends Component<{
   onPress: () => void,

@@ -3,9 +3,9 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { withNavigation } from "react-navigation";
-import LText from "../../components/LText";
-import colors from "../../colors";
-import Check from "../../icons/Check";
+import LText from "../../../components/LText";
+import colors from "../../../colors";
+import Check from "../../../icons/Check";
 import Row from "./Row";
 
 type Props = {

@@ -13,13 +13,13 @@ import type {
 } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { removeKnownDevice } from "../../actions/ble";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
-import LText from "../../components/LText";
-import Space from "../../components/Space";
-import Circle from "../../components/Circle";
-import colors from "../../colors";
-import { TrackScreen } from "../../analytics";
+import { removeKnownDevice } from "../../../actions/ble";
+import DeviceNanoAction from "../../../components/DeviceNanoAction";
+import LText from "../../../components/LText";
+import Space from "../../../components/Space";
+import Circle from "../../../components/Circle";
+import colors from "../../../colors";
+import { TrackScreen } from "../../../analytics";
 
 import DeviceNameRow from "./DeviceNameRow";
 import FirmwareVersionRow from "./FirmwareVersionRow";

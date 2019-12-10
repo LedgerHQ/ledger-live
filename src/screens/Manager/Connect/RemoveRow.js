@@ -2,8 +2,8 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import Trash from "../../icons/Trash";
-import colors from "../../colors";
+import Trash from "../../../icons/Trash";
+import colors from "../../../colors";
 import Row from "./Row";
 
 type Props = {

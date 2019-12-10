@@ -5,8 +5,8 @@ import { StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 
-import LText from "../../components/LText";
-import colors from "../../colors";
+import colors from "../../../colors";
+import LText from "../../../components/LText";
 import Row from "./Row";
 
 type Props = {

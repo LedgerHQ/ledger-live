@@ -22,6 +22,7 @@ import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
+import { listApps as listAppsTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import type { GenuineCheckEvent } from "@ledgerhq/live-common/lib/types/manager";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
@@ -153,6 +154,55 @@ export const genuineCheck: Step = {
         return {
           ...meta,
           genuineAskedOnDevice: e.type === "allow-manager-requested",
+        };
+      }),
+    ),
+};
+
+export const listApps: Step = {
+  Body: ({ meta }: *) =>
+    meta.genuineAskedOnDevice ? (
+      <RenderStep
+        icon={
+          <DeviceNanoAction
+            screen="validation"
+            action="accept"
+            modelId={meta.modelId}
+            wired={meta.wired}
+          />
+        }
+        title={
+          <Trans
+            i18nKey="SelectDevice.steps.listApps.title"
+            values={inferWordingValues(meta)}
+          />
+        }
+      />
+    ) : (
+      <RenderStep
+        icon={
+          <Spinning>
+            <LiveLogo size={32} color={colors.grey} />
+          </Spinning>
+        }
+        title={<Trans i18nKey="SelectDevice.steps.listApps.title" />}
+      />
+    ),
+  run: meta =>
+    withDevice(meta.deviceId)(transport =>
+      listAppsTransport(transport, meta.deviceInfo),
+    ).pipe(
+      map((e: *) => {
+        // TODO
+        if (e.type === "result") {
+          return {
+            ...meta,
+            appRes: e.result,
+          };
+        }
+        // TODO we can catch genuine check request
+        return {
+          ...meta,
         };
       }),
     ),

@@ -8,8 +8,8 @@ import type {
   FirmwareUpdateContext,
 } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
-import LText from "../../components/LText";
-import colors from "../../colors";
+import LText from "../../../components/LText";
+import colors from "../../../colors";
 
 type Props = {
   navigation: *,

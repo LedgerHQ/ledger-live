@@ -9,6 +9,7 @@ import {
 } from "react-navigation-tabs";
 import type { NavigationScreenProp } from "react-navigation";
 import { Platform } from "react-native";
+import { useApps } from "./screens/Manager/shared";
 import PortfolioIcon from "./icons/Portfolio";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
@@ -52,8 +53,8 @@ import CurrencySettings from "./screens/Settings/CryptoAssets/Currencies/Currenc
 import CurrenciesList from "./screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import RatesList from "./screens/Settings/CryptoAssets/Rates/RatesList";
 import RateProviderSettings from "./screens/Settings/CryptoAssets/Rates/RateProviderSettings";
-import ManagerAppsList from "./screens/Manager/AppsList";
-import ManagerDevice from "./screens/Manager/Device";
+import ManagerTabCatalog from "./screens/Manager/TabCatalog";
+import ManagerTabDevice from "./screens/Manager/TabDevice";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
@@ -182,14 +183,25 @@ SettingsStack.navigationOptions = {
   ),
 };
 
-const ManagerMain = createMaterialTopTabNavigator(
+const InnerManager = createMaterialTopTabNavigator(
   {
-    ManagerAppsList,
-    ManagerDevice,
+    // $FlowFixMe
+    ManagerTabCatalog,
+    // $FlowFixMe
+    ManagerTabDevice,
   },
   topTabNavigatorConfig,
 );
 
+const ManagerMain = ({ navigation }: *) => {
+  const { appRes, deviceId } = navigation.state.params;
+  const [state, dispatch] = useApps(appRes, deviceId);
+
+  return (
+    <InnerManager screenProps={{ state, dispatch }} navigation={navigation} />
+  );
+};
+ManagerMain.router = InnerManager.router;
 ManagerMain.navigationOptions = {
   title: i18next.t("tabs.manager"),
   headerStyle: styles.headerNoShadow,
@@ -199,6 +211,7 @@ const ManagerStack = createStackNavigator(
   {
     // $FlowFixMe
     Manager,
+    // $FlowFixMe
     ManagerMain,
   },
   {
