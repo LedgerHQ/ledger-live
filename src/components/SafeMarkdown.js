@@ -13,7 +13,7 @@ export default class SafeMarkdown extends PureComponent<
     error: null,
   };
 
-  componentDidCatch(error) {
+  componentDidCatch(error: ?Error) {
     this.setState({ error });
   }
 

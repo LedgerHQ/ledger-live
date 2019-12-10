@@ -9,9 +9,7 @@ import {
   Linking,
   ActivityIndicator,
 } from "react-native";
-import { withNavigation, SafeAreaView } from "react-navigation";
-import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
-import type { Delegation } from "@ledgerhq/live-common/lib/families/tezos/bakers";
+import { SafeAreaView } from "react-navigation";
 import colors from "../colors";
 import { useTerms, useTermsAccept, url } from "../logic/terms";
 import getWindowDimensions from "../logic/getWindowDimensions";
@@ -23,15 +21,6 @@ import ExternalLink from "./ExternalLink";
 import CheckBox from "./CheckBox";
 import Touchable from "./Touchable";
 import GenericErrorView from "./GenericErrorView";
-
-type Props = {
-  isOpened: boolean,
-  onClose: () => void,
-  navigation: *,
-  account: AccountLike,
-  parentAccount: ?Account,
-  delegation: Delegation,
-};
 
 const forceInset = { bottom: "always" };
 
@@ -69,7 +58,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const RequireTermsModal = ({ onClose }: Props) => {
+const RequireTermsModal = () => {
   const [markdown, error] = useTerms();
   const [accepted, accept] = useTermsAccept();
   const [toggle, setToggle] = useState(false);
@@ -83,7 +72,6 @@ const RequireTermsModal = ({ onClose }: Props) => {
     <BottomModal
       id="RequireTermsModal"
       isOpened={!accepted}
-      onClose={onClose}
       style={styles.modal}
     >
       <SafeAreaView style={styles.root} forceInset={forceInset}>
@@ -115,7 +103,11 @@ const RequireTermsModal = ({ onClose }: Props) => {
         </ScrollView>
 
         <View style={styles.footer}>
-          <Touchable onPress={onSwitch} style={styles.switchRow}>
+          <Touchable
+            event="TermsAcceptSwitch"
+            onPress={onSwitch}
+            style={styles.switchRow}
+          >
             <CheckBox isChecked={toggle} />
             <LText semiBold style={styles.switchLabel}>
               <Trans i18nKey="Terms.switchLabel" />
@@ -123,6 +115,7 @@ const RequireTermsModal = ({ onClose }: Props) => {
           </Touchable>
 
           <Button
+            event="TermsConfirm"
             type="primary"
             disabled={!toggle}
             onPress={accept}
@@ -134,4 +127,4 @@ const RequireTermsModal = ({ onClose }: Props) => {
   );
 };
 
-export default withNavigation(RequireTermsModal);
+export default RequireTermsModal;

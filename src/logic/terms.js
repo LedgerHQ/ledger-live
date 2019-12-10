@@ -31,7 +31,7 @@ export const useTerms = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    load(url).then(setTerms, setError);
+    load().then(setTerms, setError);
   }, []);
 
   return [terms, error];
