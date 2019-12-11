@@ -30,22 +30,26 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
 ### Table of content
 
 - [Introduction, Goals and Tradeoffs](./docs/intro.md)
-  - [Quick gist of doing a transaction with ledger-live-common library](./docs/gist-tx.md)
 - Getting started
-  - [@ledgerhq/live-common setup](./docs/live-common-setup.md)
-  - [tool \(aka ledger-live cli\)](./docs/tool.md)
-  - demo project
-  - mobile-test-app project
-  - [Developing on Ledger Live Common](./docs/developing.md)
+  - [Setup to use `@ledgerhq/live-common`](./docs/live-common-setup.md)
+  - [Developing with Ledger Live Common](./docs/developing.md)
+  - [`ledger-live` CLI (tool)](./docs/tool.md)
+  - **demo** web playground
+  - `mobile-test-app` test project
+- Learn by example
+  - [gist: transaction with a Ledger device](./docs/gist-tx.md)
+  - gist: Update firmware of a Ledger device
 - [The Currency models](./docs/currency.md)
-- [The Account models](./docs/account.md)
-  - Account and Portfolio logic
-- The Bridges
-  - [CurrencyBridge](./docs/CurrencyBridge.md)
-  - [AccountBridge](./docs/CurrencyBridge.md)
-- [Countervalues](./docs/countervalues.md)
+- [The Account models and portfolio logic](./docs/account.md)
+- The [CurrencyBridge](./docs/CurrencyBridge.md): scan accounts with a device
+- The [AccountBridge](./docs/CurrencyBridge.md): synchronize an account and perform transaction
 - [Apps store logic](./docs/apps.md)
 - [Firmware Update logic](./docs/firmware-update.md)
+- [Countervalues logic](./docs/countervalues.md)
+- Coin integrations
+  - [Introduction](./docs/ci-intro.md)
+  - The address derivation (BIP44 and exceptions)
+  - Multi bridges implementations (JS, Libcore, Mock)
 - The different test approaches
   - Unit test of live-common logic
   - End-to-end tests of the `ledger-live` command

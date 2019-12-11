@@ -39,6 +39,4 @@ For instance, the Manager apps logic is imported from `@ledgerhq/live-common/lib
 
 Ledger Live Common is designed to have very generic models (for currencies, accounts) but to also facilitate new coin integrations and via different ways (pure JS implementation, lib-ledger-core integrations,...).
 
-The way this is structured is the folder `src/families` would contain the only specific bits a coin family will have and the rest is factorized and generic.
-
-The goal is to minimize the amount of effort to implement while guaranteeing the general library integrity (we want to avoid if logics in the generic parts).
+[More information in Coin Integration Introduction...](./ci-intro.md)

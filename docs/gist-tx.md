@@ -1,4 +1,4 @@
-# Basic gist of doing a transaction with `ledgerhq/live-common` library
+# gist: transaction with a Ledger device
 
 We start a new project and add live-common and some helpers
 
