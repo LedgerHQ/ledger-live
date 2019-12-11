@@ -207,7 +207,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ticker: "BANANO",
     scheme: "banano",
     color: "#000000",
-    family: "banano",
+    family: "nano",
     units: [
       {
         name: "BANANO",
