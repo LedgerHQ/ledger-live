@@ -29,7 +29,7 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
 
 ### Table of content
 
-- Introduction, Goals and Tradeoffs
+- [Introduction, Goals and Tradeoffs](./docs/intro.md)
   - [Quick gist of doing a transaction with ledger-live-common library](./docs/gist-tx.md)
 - Getting started
   - [@ledgerhq/live-common setup](./docs/live-common-setup.md)
@@ -37,15 +37,17 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
   - demo project
   - mobile-test-app project
   - [Developing on Ledger Live Common](./docs/developing.md)
-- The Currency models
-- The Account models
-  - Account
-  - TokenAccount
-  - ChildAccount
-- Account and Portfolio logic
+- [The Currency models](./docs/currency.md)
+- [The Account models](./docs/account.md)
+  - Account and Portfolio logic
 - The Bridges
-  - CurrencyBridge
-  - AccountBridge
-- Countervalues
-- Apps store logic
-- Firmware Update logic
+  - [CurrencyBridge](./docs/CurrencyBridge.md)
+  - [AccountBridge](./docs/CurrencyBridge.md)
+- [Countervalues](./docs/countervalues.md)
+- [Apps store logic](./docs/apps.md)
+- [Firmware Update logic](./docs/firmware-update.md)
+- The different test approaches
+  - Unit test of live-common logic
+  - End-to-end tests of the `ledger-live` command
+  - Bridge dataset tests
+  - Providing mocks to implement UI tests
