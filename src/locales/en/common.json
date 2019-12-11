@@ -47,7 +47,10 @@
     "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
-    }
+    },
+    "update": "Update",
+    "install": "Install",
+    "installed": "Installed"
   },
   "errors": {
     "AccountNameRequired": {
@@ -1151,7 +1154,8 @@
     "appList": {
       "title": "App catalog",
       "loading": "Loading apps...",
-      "noApps": "No apps found"
+      "noApps": "No apps found",
+      "searchApps": "Search apps..."
     },
     "remove": {
       "title": "Remove device",

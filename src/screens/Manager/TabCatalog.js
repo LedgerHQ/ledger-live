@@ -4,6 +4,7 @@ import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import React, { useCallback } from "react";
 import { View, Button } from "react-native";
+import AppsList from "./AppsList";
 import LText from "../../components/LText";
 
 type Props = {
@@ -22,7 +23,7 @@ const TabCatalog = ({ screenProps: { state, dispatch } }: Props) => {
     const currency = currencyId ? getCryptoCurrencyById(currencyId) : null;
     const terms = `${name} ${
       currency ? `${currency.name} ${currency.ticker}` : ""
-    }`;
+      }`;
     return terms.toLowerCase().includes(search.toLowerCase().trim());
   };
 
@@ -35,7 +36,13 @@ const TabCatalog = ({ screenProps: { state, dispatch } }: Props) => {
     .map(i => state.apps.find(a => a.name === i.name && !i.updated))
     .filter(Boolean);
 
-  const appsList = state.apps.filter(searchFilter);
+  const appsList = state.apps
+    .filter(searchFilter)
+    .map((app) => ({
+      ...app,
+      installed: state.installed.some(({ name }) => name === app.name),
+      canUpdate: state.installed.some(({ name, updated }) => name === app.name && !updated)
+    }));
   // .filter(typeFilter);
 
   const sampleInstall = useCallback(
@@ -47,6 +54,10 @@ const TabCatalog = ({ screenProps: { state, dispatch } }: Props) => {
     [dispatch],
   );
 
+  return <AppsList
+    appsList={appsList}
+  />
+
   return (
     <View>
       <LText>{`Updatable apps: ${updatableApps.length}`}</LText>
@@ -55,10 +66,9 @@ const TabCatalog = ({ screenProps: { state, dispatch } }: Props) => {
         <Button title="Install Bitcoin" onPress={sampleInstall} />
         <Button title="Uninstall Bitcoin" onPress={sampleUninstall} />
       </View>
-      <LText>All apps</LText>
-      {appsList.map(app => (
-        <LText key={app.name}>{app.name}</LText>
-      ))}
+      <AppsList
+        appsList={appsList}
+      />
     </View>
   );
 };
