@@ -5,3 +5,7 @@
 ```
 yarn add @ledgerhq/live-common
 ```
+
+## live-common-setup.js
+
+(TODO)

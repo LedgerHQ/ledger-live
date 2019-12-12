@@ -40,3 +40,16 @@ For instance, the Manager apps logic is imported from `@ledgerhq/live-common/lib
 Ledger Live Common is designed to have very generic models (for currencies, accounts) but to also facilitate new coin integrations and via different ways (pure JS implementation, lib-ledger-core integrations,...).
 
 [More information in Coin Integration Introduction...](./ci-intro.md)
+
+### The tech stack
+
+We use FlowType for type safety. There are plan to eventually migrate to TypeScript but no ETA yet.
+
+On top of Flowtype, we also use a extended set of JS incoming features like React, import syntax, class properties,... Therefore Babel is used to transpile our code from `src/` folder to `lib/` folder. (see
+`.babelrc`)
+
+> This is purely an internal technology, the target module is a regular JavaScript package and `@ledgerhq/live-common` can totally be used in JS context.
+
+### Code convention
+
+We use ESlint linter and Prettier code formatter.
