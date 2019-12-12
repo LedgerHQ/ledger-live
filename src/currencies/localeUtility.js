@@ -2,13 +2,32 @@
 
 import memoize from "lodash/memoize";
 
+const options = { style: "currency", currency: "USD" };
+const localeNotAvailable = (1.2).toLocaleString("en", options) !== "$1.20";
+const getFallback = locale =>
+  staticFallback[Object.keys(staticFallback).includes(locale) ? locale : "en"];
+const staticFallback: { [string]: [string, string] } = {
+  en: ["-$1.00", "10,000.2"],
+  es: ["-1,00 US$", "10.000,2"],
+  fr: ["-1,00 $US", "10 000,2"],
+  ja: ["-US$1.00", "10,000.2"],
+  ko: ["-US$1.00", "10,000.2"],
+  ru: ["-1,00 $", "10 000,2"],
+  zh: ["-US$1.00", "10,000.2"]
+};
+
 export const getFragPositions: (locale: string) => Array<*> = memoize(
   locale => {
-    const oneChar = (1).toLocaleString(locale)[0];
-    const res = (-1).toLocaleString(locale, {
-      currency: "USD",
-      style: "currency"
-    });
+    let oneChar;
+    let res;
+
+    if (localeNotAvailable) {
+      [oneChar, res] = ["1", ...getFallback(locale)];
+    } else {
+      oneChar = (1).toLocaleString(locale)[0];
+      res = (-1).toLocaleString(locale, options);
+    }
+
     const frags = [];
     let mandatoryFrags = 0;
     let codeFound = false;
@@ -47,7 +66,9 @@ export type GetSeparators = (
   thousands: ?string
 };
 export const getSeparators: GetSeparators = memoize(locale => {
-  const res = (10000.2).toLocaleString(locale);
+  let res = localeNotAvailable
+    ? getFallback(locale)[1]
+    : (10000.2).toLocaleString(locale);
   let decimal;
   let thousands;
   for (let i = 0; i < res.length; i++) {
