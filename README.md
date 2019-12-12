@@ -38,6 +38,7 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
 - Learn by example
   - [gist: transaction with a Ledger device](./docs/gist-tx.md)
   - gist: Update firmware of a Ledger device
+  - ...
 - [The Currency models](./docs/currency.md) and utilities
 - [The Account models and portfolio logic](./docs/account.md)
 - The [CurrencyBridge](./docs/CurrencyBridge.md): scan accounts with a device

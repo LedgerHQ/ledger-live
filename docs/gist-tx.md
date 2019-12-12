@@ -2,7 +2,7 @@
 
 We start a new project and add live-common and some helpers
 
-```js
+```bash
 yarn add @ledgerhq/live-common
 yarn add axios  # for networking
 yarn add rxjs   # for Observable
@@ -10,7 +10,7 @@ yarn add rxjs   # for Observable
 
 Now we need a concrete implementation of libcore and a Transport to use the ledger device with. _In our example we're going to do a Node.js script that works with USB_, so we're just going to install these:
 
-```
+```bash
 yarn add @ledgerhq/ledger-core
 yarn add @ledgerhq/hw-transport-node-hid-noevents
 ```
