@@ -54,7 +54,7 @@
     "@ledgerhq/hw-app-xrp": "canary",
     "@ledgerhq/hw-transport": "canary",
     "@ledgerhq/hw-transport-http": "canary",
-    "@ledgerhq/live-common": "alpha",
+    "@ledgerhq/live-common": "^10.0.0-alpha.3",
     "@ledgerhq/logs": "canary",
     "@ledgerhq/react-native-hid": "canary",
     "@ledgerhq/react-native-hw-transport-ble": "canary",
