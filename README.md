@@ -27,25 +27,51 @@ This library depends on a bunch of [ledgerjs packages](https://github.com/Ledger
 
 The stack is pretty standard for a ES6 and FlowType library. The notable dependencies are libraries like **RxJS** and **BigNumber.js**. There is also a bit of React and Redux but exposed in agnostic ways (meaning it's not mandatory to use – there will be dedicated entry point for them to offer utilities like React Hooks).
 
-### Table of content
+## Documentation
 
-- Introduction, Goals and Tradeoffs
-  - [Quick gist of doing a transaction with ledger-live-common library](./docs/gist-tx.md)
+- [Introduction, Goals and Tradeoffs](./docs/intro.md)
 - Getting started
-  - [@ledgerhq/live-common setup](./docs/live-common-setup.md)
-  - [tool \(aka ledger-live cli\)](./docs/tool.md)
-  - demo project
-  - mobile-test-app project
-  - [Developing on Ledger Live Common](./docs/developing.md)
-- The Currency models
-- The Account models
-  - Account
-  - TokenAccount
-  - ChildAccount
-- Account and Portfolio logic
-- The Bridges
-  - CurrencyBridge
-  - AccountBridge
-- Countervalues
-- Apps store logic
-- Firmware Update logic
+  - [Setup to use `@ledgerhq/live-common`](./docs/live-common-setup.md)
+  - [`ledger-live` CLI (tool)](./docs/tool.md)
+  - **demo** web playground
+  - `mobile-test-app` test project
+- Learn by example
+  - [gist: transaction with a Ledger device](./docs/gist-tx.md)
+  - gist: Update firmware of a Ledger device
+  - ...
+- [The Currency models](./docs/currency.md) and utilities
+- [The Account models and portfolio logic](./docs/account.md)
+- The [CurrencyBridge](./docs/CurrencyBridge.md): scan accounts with a device
+  - `preload` and `hydrate`
+  - `scanAccountsWithDevice`
+- The [AccountBridge](./docs/CurrencyBridge.md): synchronize an account and perform transaction
+  - `startSync`
+  - Build a transaction with `createTransaction` and `updateTransaction`
+  - `prepareTransaction`
+  - `getTransactionStatus`
+  - `signAndBroadcast`
+  - React: `useTransactionBridge` hook
+- [Apps store logic](./docs/apps.md)
+- [Firmware Update logic](./docs/firmware-update.md)
+- [Countervalues logic](./docs/countervalues.md)
+- Coin integration specifics
+  - [Introduction](./docs/ci-intro.md)
+  - Bridge implementations, where to start? (JS, Libcore, Mock)
+  - Implementing the hardware wallet logic of a new coin
+  - The account derivation (BIP44 and exceptions)
+- Advanced
+  - env.js: live-common configuration system
+  - Serialization and reconciliation
+  - libcore typing and wrapping
+  - cross.js and "LiveQR" protocol
+  - cache.js helpers
+  - Tokens management and ERC20
+
+### Developing with Ledger Live Common
+
+- [Developing setup](./docs/developing.md)
+- The different test approaches
+  - Unit test of live-common logic
+  - End-to-end tests of the `ledger-live` command
+  - Bridge dataset tests
+  - Providing mocks to implement UI tests
