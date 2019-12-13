@@ -1,12 +1,11 @@
 /* @flow */
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 // $FlowFixMe
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
-import sample from "lodash/sample";
 import invariant from "invariant";
 import Icon from "react-native-vector-icons/dist/Feather";
 import i18next from "i18next";
@@ -23,6 +22,7 @@ import {
   useDelegation,
   useBaker,
   useBakers,
+  useRandomBaker,
 } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/lib/families/tezos/bakers.whitelist-default";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -120,7 +120,7 @@ const BakerSelection = ({
 
 const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
   const bakers = useBakers(whitelist);
-  const randomBaker = useMemo(() => sample(bakers), [bakers]);
+  const randomBaker = useRandomBaker(bakers);
 
   const {
     transaction,
@@ -313,19 +313,28 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
           )}
 
           {baker && transaction.mode === "delegate" ? (
-            <Line>
-              <Words>
-                <Trans i18nKey="delegation.forAnEstYield" />
-              </Words>
-              <Words highlighted>
-                <Trans
-                  i18nKey="delegation.yieldPerYear"
-                  values={{
-                    yield: baker.nominalYield,
-                  }}
-                />
-              </Words>
-            </Line>
+            baker.capacityStatus === "full" ? null : (
+              /*
+              <Line>
+                <IconInfo size={16} color={colors.orange} />
+                <Words style={{ marginLeft: 8, color: colors.orange }}>
+                  <Trans i18nKey="delegation.overdelegated" />
+                </Words>
+              </Line>
+              */ <Line>
+                <Words>
+                  <Trans i18nKey="delegation.forAnEstYield" />
+                </Words>
+                <Words highlighted>
+                  <Trans
+                    i18nKey="delegation.yieldPerYear"
+                    values={{
+                      yield: baker.nominalYield,
+                    }}
+                  />
+                </Words>
+              </Line>
+            )
           ) : null}
         </View>
         {transaction.mode === "undelegate" ? (
