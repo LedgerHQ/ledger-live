@@ -94,7 +94,14 @@ const BakerRow = ({
             </LText>
           ) : null}
         </View>
-        <LText tertiary numberOfLines={1} style={styles.bakerYield}>
+        <LText
+          tertiary
+          numberOfLines={1}
+          style={[
+            styles.bakerYield,
+            baker.capacityStatus === "full" ? styles.bakerYieldFull : null,
+          ]}
+        >
           {baker.nominalYield}
         </LText>
       </View>
@@ -341,6 +348,9 @@ const styles = StyleSheet.create({
   bakerYield: {
     fontSize: 14,
     color: colors.smoke,
+  },
+  bakerYieldFull: {
+    opacity: 0.5,
   },
   addressInput: {
     alignSelf: "stretch",
