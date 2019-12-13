@@ -1197,7 +1197,8 @@
     "title": "Remove device"
   },
   "FirmwareVersionRow": {
-    "title": "Firmware version"
+    "title": "Firmware version",
+    "subtitle": "Firmware {{version}}" 
   },
   "FirmwareUpdateRow": {
     "title": "Firmware version {{version}} available",

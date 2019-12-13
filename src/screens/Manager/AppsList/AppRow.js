@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import {
     formatSize,

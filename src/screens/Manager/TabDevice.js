@@ -3,7 +3,7 @@
 import React from "react";
 import { View } from "react-native";
 import type { State, Action } from "@ledgerhq/live-common/lib/apps/types";
-import LText from "../../components/LText";
+import DeviceCard from './DeviceCard';
 
 type Props = {
   screenProps: {
@@ -14,10 +14,7 @@ type Props = {
 
 const TabDevice = ({ screenProps: { state } }: Props) => {
   return (
-    <View>
-      <LText>Wadus tab device</LText>
-      <LText>{state.installed.length}</LText>
-    </View>
+    <DeviceCard deviceModel={state.deviceModel} firmware={state.firmware}/>
   );
 };
 TabDevice.navigationOptions = {
