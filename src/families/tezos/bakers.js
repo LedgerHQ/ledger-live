@@ -86,7 +86,7 @@ const cache = makeLRUCache(
 
 let _lastBakers;
 export const fetchAllBakers = async () => {
-  const r = await cache();
+  const r = await cache.force();
   _lastBakers = r;
   return r;
 };
