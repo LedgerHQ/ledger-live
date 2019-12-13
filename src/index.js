@@ -7,6 +7,10 @@ import "./implement-react-native-libcore";
 import React, { Fragment, Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";
+import Transport from "@ledgerhq/hw-transport";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import logger from "./logger";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
@@ -29,6 +33,13 @@ import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import AppContainer from "./navigators";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
+
+checkLibs({
+  NotEnoughBalance,
+  React,
+  log,
+  Transport,
+});
 
 // useScreens();
 const styles = StyleSheet.create({
