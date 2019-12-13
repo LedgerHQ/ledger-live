@@ -1,8 +1,6 @@
-import React, { PureComponent } from "react";
+import React, { useCallback } from "react";
 
-import { View, StyleSheet } from 'react-native';
-
-import { Trans } from "react-i18next";
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 import {
     formatSize,
@@ -10,66 +8,33 @@ import {
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
 import colors from "../../../colors";
-import Check from "../../../icons/Check";
 import LText from "../../../components/LText";
-import Button from "../../../components/Button";
 import AppIcon from './AppIcon';
 
-const APP_CAN_UPDATE = 2;
-const APP_INSTALLED = 1;
-const APP_INSTALLABLE = 0;
+import AppInstallButton from './AppInstallButton';
 
-export default class AppRow extends PureComponent {
-
-    get appState() {
-        const { installed, canUpdate } = this.props;
-
-        return !installed
-            ? APP_INSTALLABLE
-            : canUpdate
-                ? APP_CAN_UPDATE
-                : APP_INSTALLED;
-    }
-
-    renderAppState() {
-        const appState = this.appState;
-
-        if (appState === APP_INSTALLED) {
-            return (
-                <View style={styles.installedLabel}>
-                    <Check color={colors.green} />
-                    <LText style={[styles.installedText]} >{<Trans i18nKey="common.installed" />}</LText>
-                </View>
-            );
-        }
-
-        return (
-            <Button
-                useTouchable
-                type={appState === APP_CAN_UPDATE ? "primary" : "lightPrimary"}
-                title={<Trans i18nKey={appState === APP_CAN_UPDATE ? "common.update" : "common.install"} />}
-                containerStyle={styles.appButton}
-                onPress={() => { }}
-            />
-        )
-    }
-
-    render() {
-        const { app } = this.props;
-
-        return (
-            <View style={styles.root}>
-                <AppIcon icon={app.icon} />
-                <View style={styles.labelContainer}>
-                    <LText numberOfLines={1} bold>{app.name}</LText>
-                    <LText numberOfLines={1} style={styles.versionText}>{app.version}</LText>
-                </View>
-                <LText style={[styles.versionText, styles.sizeText]}>{formatSize(app.bytes || 0)}</LText>
-                {this.renderAppState()}
+const AppRow = ({
+    app,
+    dispatch,
+}) => {
+    const {
+        name,
+        version,
+        bytes,
+        icon
+    } = app;
+    return (
+        <View style={styles.root}>
+            <AppIcon icon={icon} />
+            <View style={styles.labelContainer}>
+                <LText numberOfLines={1} bold>{name}</LText>
+                <LText numberOfLines={1} style={styles.versionText}>{version}</LText>
             </View>
-        )
-    }
-}
+            <LText style={[styles.versionText, styles.sizeText]}>{formatSize(bytes || 0)}</LText>
+            <AppInstallButton {...app} dispatch={dispatch} />
+        </View>
+    )
+};
 
 
 const styles = StyleSheet.create({
@@ -98,6 +63,7 @@ const styles = StyleSheet.create({
         color: colors.grey,
     },
     sizeText: {
+        fontSize: 12,
         width: 44,
         marginHorizontal: 10,
     },
@@ -123,6 +89,9 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         height: 38,
         paddingHorizontal: 10,
-        paddingVertical: 12
+        paddingVertical: 12,
+        zIndex: 5,
     }
-})
+});
+
+export default AppRow;

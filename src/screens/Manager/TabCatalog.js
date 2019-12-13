@@ -15,7 +15,7 @@ type Props = {
 };
 
 const TabCatalog = ({ screenProps: { state, dispatch } }: Props) => {
-  // const { currentProgress, currentError } = state;
+  const { apps, installQueue, uninstallQueue, installed, currentAppOp, currentProgress, currentError } = state;
 
   const search = ""; // TODO Well, you know, this should be in a state, and
   const searchFilter = ({ name, currencyId }) => {
@@ -27,50 +27,22 @@ const TabCatalog = ({ screenProps: { state, dispatch } }: Props) => {
     return terms.toLowerCase().includes(search.toLowerCase().trim());
   };
 
-  const installedApps = state.installed
-    .map(i => state.apps.find(a => a.name === i.name))
-    .filter(Boolean);
-  // .filter(searchFilter);
-
-  const updatableApps = state.installed
-    .map(i => state.apps.find(a => a.name === i.name && !i.updated))
-    .filter(Boolean);
-
-  const appsList = state.apps
+  const appsList = apps
     .filter(searchFilter)
     .map((app) => ({
       ...app,
-      installed: state.installed.some(({ name }) => name === app.name),
-      canUpdate: state.installed.some(({ name, updated }) => name === app.name && !updated)
+      installed: installed.some(({ name }) => name === app.name),
+      canUpdate: installed.some(({ name, updated }) => name === app.name && !updated),
+      installing: installQueue.indexOf(app.name) >= 0,
+      uninstalling: uninstallQueue.indexOf(app.name) >= 0,
+      progress: currentAppOp && currentAppOp.name === app.name ? currentProgress && currentProgress.progress : 0,
+      error: currentAppOp && currentAppOp.name === app.name ? currentError : null
     }));
-  // .filter(typeFilter);
 
-  const sampleInstall = useCallback(
-    () => dispatch({ type: "install", name: "Bitcoin" }),
-    [dispatch],
-  );
-  const sampleUninstall = useCallback(
-    () => dispatch({ type: "uninstall", name: "Bitcoin" }),
-    [dispatch],
-  );
-
-  return <AppsList
+  return (<AppsList
     appsList={appsList}
-  />
-
-  return (
-    <View>
-      <LText>{`Updatable apps: ${updatableApps.length}`}</LText>
-      <LText>{`Installed apps: ${installedApps.length}`}</LText>
-      <View>
-        <Button title="Install Bitcoin" onPress={sampleInstall} />
-        <Button title="Uninstall Bitcoin" onPress={sampleUninstall} />
-      </View>
-      <AppsList
-        appsList={appsList}
-      />
-    </View>
-  );
+    dispatch={dispatch}
+  />)
 };
 TabCatalog.navigationOptions = {
   title: "CATALOG",

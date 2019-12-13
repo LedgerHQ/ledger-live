@@ -18,6 +18,7 @@ export type Props = {
   children?: *,
   style?: *,
   preventBackdropClick?: boolean,
+  containerStyle?: *,
 };
 
 // Add some extra padding at the bottom of the modal
@@ -39,6 +40,7 @@ class BottomModal extends Component<Props> {
       style,
       preventBackdropClick,
       id,
+      containerStyle,
       ...rest
     } = this.props;
     const { width, height } = getWindowDimensions();
@@ -58,7 +60,7 @@ class BottomModal extends Component<Props> {
           }}
           {...rest}
         >
-          <View style={styles.modal}>
+          <View style={[styles.modal, containerStyle]}>
             <View style={style}>
               {isOpened && id ? <TrackScreen category={id} /> : null}
               <StyledStatusBar

@@ -44,6 +44,7 @@ type BaseProps = {
   IconLeft?: *,
   IconRight?: *,
   disabled?: boolean,
+  outline?: Boolean,
   // for analytics
   event: string,
   eventProperties?: Object,
@@ -67,6 +68,11 @@ class Button extends PureComponent<
     anim: Animated.Value,
   },
 > {
+
+  static defaultProps = {
+    outline: true,
+  };
+
   state = {
     pending: false,
     spinnerOn: false,
@@ -138,6 +144,7 @@ class Button extends PureComponent<
       disabled,
       type,
       useTouchable,
+      outline,
       // everything else
       containerStyle,
       ...otherProps
@@ -153,7 +160,7 @@ class Button extends PureComponent<
     const isDisabled = disabled || !onPress || pending;
 
     const needsBorder =
-      (type === "secondary" || type === "tertiary" || type === "darkSecondary") && !isDisabled;
+      (type === "secondary" || type === "tertiary" || type === "darkSecondary") && !isDisabled && outline;
 
     const mainContainerStyle = [
       styles.container,

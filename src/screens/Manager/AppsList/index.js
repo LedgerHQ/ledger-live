@@ -1,38 +1,44 @@
 // TODO fill me up!
 /* @flow */
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 import { FlatList } from 'react-navigation';
+import { Trans } from 'react-i18next';
 import i18next from "i18next";
 import AppRow from './AppRow';
+import AppFilter from './AppFilter';
 import colors from "../../../colors";
-import Search from "../../../icons/Search";
-import Filters from "../../../icons/Filters";
-import Button from "../../../components/Button";
+import SearchIcon from "../../../icons/Search";
+
 import TextInput from "../../../components/TextInput"
+import Search from "../../../components/Search";
 
 import type {
     DeviceInfo,
-    ApplicationVersion,
+        ApplicationVersion,
 } from "@ledgerhq/live-common/lib/types/manager";
-
-const renderRow = ({ item }: { item: ApplicationVersion }) => (
-    <AppRow app={item} />
-);
 
 const keyExtractor = (d: ApplicationVersion) => String(d.id);
 
-const AppList = ({ appsList }) => {
+const separator = () => <View style={styles.separator} />
 
-    const separator = () => <View style={styles.separator}/>
+const renderNoResults = () => (
+    <Text style={styles.noResultText}>
+        <Trans i18nKey="manager.appList.noApps" />
+    </Text>
+);
+
+const AppList = ({
+    appsList,
+    dispatch,
+}) => {
+    const [query, queryUpdate] = useState('');
 
     const searchBar = (
-        <View
-            style={[styles.searchBar]}
-        >
+        <View style={styles.searchBar}>
             <View style={styles.searchBarInput}>
                 <View style={styles.searchBarIcon}>
-                    <Search size={16} color={colors.smoke} />
+                    <SearchIcon size={16} color={colors.smoke} />
                 </View>
                 <TextInput
                     style={styles.searchBarTextInput}
@@ -40,37 +46,58 @@ const AppList = ({ appsList }) => {
                     placeholder={i18next.t("manager.appList.searchApps")}
                     placeholderTextColor={colors.smoke}
                     clearButtonMode="always"
+                    onInputCleared={() => queryUpdate("")}
+                    onChangeText={queryUpdate}
+                    value={query}
+                    numberOfLines={1}
                 />
             </View>
-            <Button
-                containerStyle={styles.searchBarFilters}
-                type="darkSecondary"
-                IconLeft={Filters}
-                onPress={() => {}}
-            />
+            <AppFilter dispatch={dispatch} />
         </View>
+    );
+
+    const renderRow = ({ item }: { item: ApplicationVersion }) => (
+        <AppRow
+            app={item}
+            dispatch={dispatch}
+        />
+    );
+
+    const renderList = (data) => (
+        <FlatList
+            style={styles.listStyle}
+            data={data}
+            ItemSeparatorComponent={separator}
+            renderItem={renderRow}
+            keyExtractor={keyExtractor}
+            showsVerticalScrollIndicator={false}
+            keyboardDismissMode="on-drag"
+        />
     );
 
     return (
         <View style={[styles.root]}>
-            { searchBar }
-            <FlatList
-                style={styles.listStyle}
-                data={appsList}
-                ItemSeparatorComponent={separator}
-                renderItem={renderRow}
-                keyExtractor={keyExtractor}
-                showsVerticalScrollIndicator={false}
-                keyboardDismissMode="on-drag"
+            {searchBar}
+            <Search
+                fuseOptions={{
+                    threshold: 0.1,
+                    keys: ['name'],
+                }}
+                value={query}
+                items={appsList}
+                render={renderList}
+                renderEmptySearch={renderNoResults}
             />
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     root: {
+        flex: 1,
         flexDirection: "column",
         borderRadius: 4,
+        backgroundColor: colors.white,
     },
     separator: {
         height: 1,
@@ -105,16 +132,17 @@ const styles = StyleSheet.create({
         borderRadius: 3
 
     },
-    searchBarTextInput: { 
+    searchBarTextInput: {
         flex: 1,
         fontSize: 14,
-        color: colors.smoke
-    },
-    searchBarFilters: {
-        width: 40,
+        color: colors.smoke,
         height: 38,
-        marginLeft: 10,
     },
+    noResultText: {
+        textAlign: "center",
+        paddingVertical: 26,
+        color: colors.smoke,
+    }
 })
 
 export default AppList;
