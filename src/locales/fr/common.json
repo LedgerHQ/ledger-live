@@ -1247,6 +1247,7 @@
     }
   },
   "delegation": {
+    "overdelegated": "Overdelegated",
     "delegationSendWarnDesc": "The amount to be sent will be deducted from the balance of your delegated account.",
     "delegationReceiveWarnDesc": "The amount received on a delegated account will be added to the total staked amount. Choose another account if you want to avoid this.",
     "iDelegateMy": "I delegate my",
