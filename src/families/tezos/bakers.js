@@ -103,6 +103,7 @@ export const listBakers = async (
   whitelistAddresses: string[]
 ): Promise<Baker[]> => {
   const all = await cache();
+  _lastBakers = all;
   return whitelist(all, whitelistAddresses);
 };
 
