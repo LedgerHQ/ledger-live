@@ -1,7 +1,7 @@
 // @flow
 
 // $FlowFixMe not sure why this breaks in desktop side
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { Operation, AccountLike } from "../../types";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
@@ -215,6 +215,22 @@ export function useBaker(addr: string): ?Baker {
     };
   }, [addr]);
   return baker;
+}
+
+//  select a random baker for the mount time (assuming bakers length don't change)
+export function useRandomBaker(bakers: Baker[]) {
+  const randomBakerIndex = useMemo(() => {
+    const nonFullBakers = bakers.filter(b => b.capacityStatus !== "full");
+    if (nonFullBakers.length > 0) {
+      // if there are non full bakers, we pick one
+      const i = Math.floor(Math.random() * nonFullBakers.length);
+      return bakers.indexOf(nonFullBakers[i]);
+    }
+    // fallback on random between only full bakers
+    return Math.floor(Math.random() * bakers.length);
+  }, [bakers.length]);
+
+  return bakers[randomBakerIndex];
 }
 
 export const asBaker = (data: mixed): ?Baker => {
