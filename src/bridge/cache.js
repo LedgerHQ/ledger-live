@@ -47,7 +47,6 @@ export const prepareCurrency: (
 ) => Promise<void> = makeLRUCache(
   async currency => {
     log("bridge/cache", "prepareCurrency " + currency.id + "...");
-    await hydrateCurrency(currency);
     const bridge = getCurrencyBridge(currency);
     const preloaded = await bridge.preload();
     await setCurrencyCache(currency, preloaded);
