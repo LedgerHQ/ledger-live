@@ -2,11 +2,11 @@
 import type { App } from "../types/manager";
 import type { InstalledItem } from "./types";
 import { getCryptoCurrencyById, isCurrencySupported } from "../currencies";
+import { useMemo } from "react";
 
 export type SortOptions = {
-  type: "name" | "marketcap",
-  order: "asc" | "desc",
-  marketcapTickers?: string[]
+  type: "name" | "marketcap" | "default",
+  order: "asc" | "desc"
 };
 
 export type FilterOptions = {
@@ -17,10 +17,6 @@ export type FilterOptions = {
 
 type UpdateAwareInstalledApps = {
   [string]: boolean // NB [AppName]: isUpdated
-};
-
-type ScoredApps = {
-  [string]: number // NB [AppName]: computed score for sorting
 };
 
 const searchFilter = (query?: string) => ({ name, currencyId }) => {
@@ -57,42 +53,29 @@ const typeFilter = (
 };
 
 export const sortApps = (apps: App[], _options: SortOptions): App[] => {
-  const { type, marketcapTickers, order } = _options;
+  const { type, order } = _options;
   const asc = order === "asc";
-  const sortedApps = [...apps];
-  const marketcapScoreBase = 10e6;
+  if (type === "default") return apps;
 
-  const scoredApps: ScoredApps = sortedApps.reduce(
-    (names, { name, currencyId }) => {
-      let appScore = 0;
+  const getScore = ({ indexOfMarketCap: i }: App, reverse: boolean) =>
+    i === -1 ? (reverse ? -10e6 : 10e6) : i;
 
-      if (marketcapTickers && type === "marketcap" && currencyId) {
-        const index = marketcapTickers.indexOf(
-          getCryptoCurrencyById(currencyId).ticker
-        );
-
-        appScore += index >= 0 ? marketcapScoreBase - 1000 * index : 0;
-      }
-
-      // By name
-      appScore += name[0].toLowerCase().charCodeAt(0);
-
-      return { ...names, [name]: appScore * (asc ? 1 : -1) };
-    },
-    {}
-  );
-
-  return sortedApps.sort(
-    (app1, app2) => scoredApps[app1.name] - scoredApps[app2.name]
-  );
+  return [...apps].sort((a1, b1) => {
+    const [a, b] = asc ? [a1, b1] : [b1, a1];
+    let diff = 0;
+    if (type === "marketcap") diff = getScore(b, asc) - getScore(a, asc);
+    if (diff === 0) diff = a.name.localeCompare(b.name);
+    return diff;
+  });
 };
 
 export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
   const { query, installedApps, type = "all" } = _options;
-  const updateAwareInstalledApps = installedApps.reduce(
-    (names, { name }) => ({ ...names, [name]: true }),
-    {}
-  );
+  const updateAwareInstalledApps: UpdateAwareInstalledApps = {};
+  for (let i = 0; i < installedApps.length; i++) {
+    updateAwareInstalledApps[installedApps[i].name] = installedApps[i].updated;
+  }
+
   return apps
     .filter(searchFilter(query))
     .filter(typeFilter(type, updateAwareInstalledApps));
@@ -104,4 +87,18 @@ export const sortFilterApps = (
   _sortOptions: SortOptions
 ): App[] => {
   return sortApps(filterApps(apps, _filterOptions), _sortOptions);
+};
+
+export const useSortedFilteredApps = (
+  apps: App[],
+  _filterOptions: FilterOptions,
+  _sortOptions: SortOptions
+) => {
+  const { query, installedApps, type: filterType } = _filterOptions;
+  const { type: sortType, order } = _sortOptions;
+
+  return useMemo(
+    () => sortApps(filterApps(apps, _filterOptions), _sortOptions),
+    [apps, query, installedApps, filterType, sortType, order]
+  );
 };
