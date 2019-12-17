@@ -8,7 +8,9 @@
 
 ## Architecture
 
-Ledger Live is a native mobile application built with React Native, React, Redux, RxJS,.. and some native libraries. The architecture is analog to the [desktop application](https://github.com/LedgerHQ/ledger-live-desktop) and also uses our C++ library, the [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core) to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-react-native-bindings). It communicates to the brand new [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) via Bluetooth to manage installed applications, to update the device firmware, to verify public addresses and to sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledgerjs). We also share some logic with [live-common](https://github.com/LedgerHQ/ledger-live-common).
+Ledger Live is a native mobile application built with React Native, React, Redux, RxJS, etc. and some native libraries.
+The architecture is analog to the [desktop application](https://github.com/LedgerHQ/ledger-live-desktop) and also uses our C++ library, [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core), to deal with blockchains (sync, broadcast...) via [ledger-core-react-native-bindings](https://github.com/LedgerHQ/lib-ledger-core-react-native-bindings).
+It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) via Bluetooth (or USB for using the Ledger Nano S on Android) to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live-common).
 
 ![](https://user-images.githubusercontent.com/211411/51758555-43865000-20c6-11e9-8ac9-06787ebb49eb.png)
 
@@ -47,16 +49,18 @@ yarn start -- --reset-cache
 
 ### `yarn run ios`
 
-or `open ios/ledgerlivemobile.xcodproj`
+or `open ios/ledgerlivemobile.xcworkspace`
 
 ### `yarn run android`
 
 or open `android/` in Android Studio.
 
 ### `yarn android:clean`
+
 Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings
 
 ### `yarn android:import importDataString`
+
 Passing a base64 encoded export string (the export from desktop) will trigger an import activity and allow
 easy data setting for development.
 
@@ -85,14 +89,35 @@ yarn sync-flowtyped
 yarn sync-locales
 ```
 
-## Troubleshooting
+## Debugging
 
-### XCode 10
+### Javascript / React
 
-When trying to build with XCode 10 and React Native v0.57.0, you might have issues with third party packages from React Native. To solve this issue you must:
+It's recommended to use [react-native-debugger](https://github.com/jhen0409/react-native-debugger) instead of Chrome dev tools as it features some additional React and Redux panels.
 
-```sh
-./node_modules/react-native/scripts/ios-install-third-party.sh
-```
+- Get the react-native-debugger app from the [official repo](https://github.com/jhen0409/react-native-debugger)
+- Run it
+- Run Ledger Live Mobile in debug mode (`yarn ios` or `yarn android`)
+- Open React Native _Development menu_ (shake gesture)
+- Chose _Enable Remote JS Debugging_
 
-The build on XCode 10 should then work.
+Keep in mind that doing so will run your Javascript code on a Chromium JS engine ([V8](https://v8.dev/)) on your computer, instead of iOS' system JS engine (JavaScript Core), or our bundled JS engine (JSC for now, soon to be replaced with [Hermes](https://github.com/facebook/hermes)) on Android.
+
+### Native code
+
+#### XCode / Android studio
+
+Run the app from the Apple or Google own IDE to get some native debugging features like breakpoints etc.
+
+### And more
+
+#### Flipper 🐬
+
+[Flipper](https://fbflipper.com/) has been integrated in the project, so you can use it to get additional debugging information (like network monitoring) and find other useful data you could previously get from scattered places, here neatly presented in a single interface (like logs and crash reports for both platforms).
+
+React Native integration seems pretty bleeding edge right now, so don't expect everything to work just yet.
+
+- Install [Flipper](https://fbflipper.com/) on your computer
+- Launch it 🚀
+- Run Ledger Live Mobile in debug as usual
+- No need to enable remote debug!
