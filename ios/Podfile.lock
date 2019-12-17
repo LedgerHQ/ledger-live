@@ -1,6 +1,8 @@
 PODS:
   - Analytics (3.7.0)
   - boost-for-react-native (1.63.0)
+  - CocoaAsyncSocket (7.6.3)
+  - CocoaLibEvent (1.0.0)
   - djinni_objc (4.4.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.61.2)
@@ -11,6 +13,48 @@ PODS:
     - React-Core (= 0.61.2)
     - React-jsi (= 0.61.2)
     - ReactCommon/turbomodule/core (= 0.61.2)
+  - Flipper (0.30.0):
+    - Flipper-Folly (~> 2.1)
+    - Flipper-RSocket (~> 1.0)
+  - Flipper-Folly (2.1.0):
+    - boost-for-react-native
+    - CocoaLibEvent (~> 1.0)
+    - DoubleConversion
+    - glog
+    - OpenSSL-Universal (= 1.0.2.19)
+  - Flipper-PeerTalk (0.0.4)
+  - Flipper-RSocket (1.0.0):
+    - Flipper-Folly (~> 2.0)
+  - FlipperKit (0.30.0):
+    - FlipperKit/Core (= 0.30.0)
+  - FlipperKit/Core (0.30.0):
+    - Flipper (~> 0.30.0)
+    - FlipperKit/CppBridge
+    - FlipperKit/FBCxxFollyDynamicConvert
+    - FlipperKit/FBDefines
+    - FlipperKit/FKPortForwarding
+  - FlipperKit/CppBridge (0.30.0):
+    - Flipper (~> 0.30.0)
+  - FlipperKit/FBCxxFollyDynamicConvert (0.30.0):
+    - Flipper-Folly (~> 2.1)
+  - FlipperKit/FBDefines (0.30.0)
+  - FlipperKit/FKPortForwarding (0.30.0):
+    - CocoaAsyncSocket (~> 7.6)
+    - Flipper-PeerTalk (~> 0.0.4)
+  - FlipperKit/FlipperKitHighlightOverlay (0.30.0)
+  - FlipperKit/FlipperKitLayoutPlugin (0.30.0):
+    - FlipperKit/Core
+    - FlipperKit/FlipperKitHighlightOverlay
+    - FlipperKit/FlipperKitLayoutTextSearchable
+    - YogaKit (~> 1.18)
+  - FlipperKit/FlipperKitLayoutTextSearchable (0.30.0)
+  - FlipperKit/FlipperKitNetworkPlugin (0.30.0):
+    - FlipperKit/Core
+  - FlipperKit/FlipperKitUserDefaultsPlugin (0.30.0):
+    - FlipperKit/Core
+  - FlipperKit/SKIOSNetworkPlugin (0.30.0):
+    - FlipperKit/Core
+    - FlipperKit/FlipperKitNetworkPlugin
   - Folly (2018.10.22.00):
     - boost-for-react-native
     - DoubleConversion
@@ -27,6 +71,9 @@ PODS:
   - lottie-react-native (3.2.1):
     - lottie-ios (~> 3.1.3)
     - React
+  - OpenSSL-Universal (1.0.2.19):
+    - OpenSSL-Universal/Static (= 1.0.2.19)
+  - OpenSSL-Universal/Static (1.0.2.19)
   - PasscodeAuth (2.1.0):
     - React
   - RCTRequired (0.61.2)
@@ -286,12 +333,18 @@ PODS:
   - TcpSockets (3.3.2):
     - React
   - Yoga (1.14.0)
+  - YogaKit (1.18.1):
+    - Yoga (~> 1.14)
 
 DEPENDENCIES:
   - "djinni_objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
+  - FlipperKit (~> 0.27)
+  - FlipperKit/FlipperKitLayoutPlugin (~> 0.27)
+  - FlipperKit/FlipperKitUserDefaultsPlugin (~> 0.27)
+  - FlipperKit/SKIOSNetworkPlugin (~> 0.27)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - "ledger-core-objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
@@ -348,8 +401,17 @@ SPEC REPOS:
   trunk:
     - Analytics
     - boost-for-react-native
+    - CocoaAsyncSocket
+    - CocoaLibEvent
+    - Flipper
+    - Flipper-Folly
+    - Flipper-PeerTalk
+    - Flipper-RSocket
+    - FlipperKit
     - lottie-ios
+    - OpenSSL-Universal
     - Sentry
+    - YogaKit
 
 EXTERNAL SOURCES:
   djinni_objc:
@@ -460,15 +522,23 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Analytics: 77fd5fb102a4a5eedafa2c2b0245ceb7b7c15e45
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
+  CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
   djinni_objc: bfac00bd517b8c2c3a48174e304391b93e3733b5
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: 68b6a76960fbd8ecd9fb7ce0aadd3329c3340a99
   FBReactNativeSpec: 5a764c60abdc3336a213e5310c40b74741f32839
+  Flipper: 8103c50b4bb4ee69693e78cd1641909b1f4efe1e
+  Flipper-Folly: bcae82405dafd18ac9f8d9d4902fd1c2ef2a7e77
+  Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
+  Flipper-RSocket: 1260a31c05c238eabfa9bb8a64e3983049048371
+  FlipperKit: bad8965ee4dc2900afae828381c3c19aa2105ff7
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   ledger-core-objc: 61e148f72688cc232526b5187593c40850616b8b
   lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   lottie-react-native: b123a79529cc732201091f585c62c89bb4747252
+  OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
   PasscodeAuth: 667f2bfb0e78f652c11db4793d8077c189ce300e
   RCTRequired: c639d59ed389cfb1f1203f65c2ea946d8ec586e2
   RCTTypeSafety: dc23fb655d6c77667c78e327bf661bc11e3b8aec
@@ -514,7 +584,8 @@ SPEC CHECKSUMS:
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
+  YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 6b22e4f92a633a27f31d653752cdd3cdc4d3f15b
+PODFILE CHECKSUM: 51082bff579ff6b3197b1bd32b97ecb26523e6c1
 
 COCOAPODS: 1.8.4

@@ -7,7 +7,7 @@ import i18next from "i18next";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import type {
   AccountLike,
@@ -81,10 +81,27 @@ const BakerRow = ({
     >
       <View style={styles.baker}>
         <BakerImage size={32} baker={baker} />
-        <LText numberOfLines={1} semiBold style={styles.bakerName}>
-          {baker.name}
-        </LText>
-        <LText numberOfLines={1} style={styles.bakerYield}>
+        {baker.capacityStatus === "full" ? (
+          <View style={styles.overdelegatedIndicator} />
+        ) : null}
+        <View style={styles.bakerBody}>
+          <LText numberOfLines={1} semiBold style={styles.bakerName}>
+            {baker.name}
+          </LText>
+          {baker.capacityStatus === "full" ? (
+            <LText semiBold numberOfLines={1} style={styles.overdelegated}>
+              <Trans i18nKey="delegation.overdelegated" />
+            </LText>
+          ) : null}
+        </View>
+        <LText
+          tertiary
+          numberOfLines={1}
+          style={[
+            styles.bakerYield,
+            baker.capacityStatus === "full" ? styles.bakerYieldFull : null,
+          ]}
+        >
           {baker.nominalYield}
         </LText>
       </View>
@@ -304,15 +321,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 56,
   },
-  bakerName: {
+  bakerBody: {
     flex: 1,
+    flexDirection: "column",
     marginLeft: 12,
+  },
+  bakerName: {
     fontSize: 14,
     color: colors.darkBlue,
+  },
+  overdelegatedIndicator: {
+    position: "absolute",
+    backgroundColor: colors.orange,
+    width: 10,
+    height: 10,
+    borderRadius: 10,
+    top: 34,
+    left: 24,
+    borderColor: colors.white,
+    borderWidth: 1,
+  },
+  overdelegated: {
+    fontSize: 12,
+    color: colors.orange,
   },
   bakerYield: {
     fontSize: 14,
     color: colors.smoke,
+  },
+  bakerYieldFull: {
+    opacity: 0.5,
   },
   addressInput: {
     alignSelf: "stretch",

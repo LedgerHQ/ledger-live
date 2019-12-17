@@ -18,11 +18,22 @@
 #import <React/RCTLinkingManager.h>
 #import "RNSplashScreen.h"
 
+#ifdef DEBUG
+  #import <FlipperKit/FlipperClient.h>
+  #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
+  #import <FlipperKitLayoutPlugin/SKDescriptorMapper.h>
+  #import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
+  #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
+  #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
+  #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
+#endif
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  
+  [self initializeFlipper:application];
+
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"ledgerlivemobile"
@@ -108,6 +119,17 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+- (void) initializeFlipper:(UIApplication *)application {
+  #ifdef DEBUG
+    FlipperClient *client = [FlipperClient sharedClient];
+    SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
+    [client addPlugin: [[FlipperKitLayoutPlugin alloc] initWithRootNode: application withDescriptorMapper: layoutDescriptorMapper]];
+    [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]]; [client start];
+    [client addPlugin: [[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
+    [client start];
+  #endif
 }
 
 @end
