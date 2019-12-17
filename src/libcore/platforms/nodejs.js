@@ -208,7 +208,14 @@ export default (arg: {
     });
 
     const NJSDatabaseBackend = new lib.NJSDatabaseBackend();
-    const NJSDynamicObject = new lib.NJSDynamicObject();
+    const config = new lib.NJSDynamicObject();
+
+    // We handle logs ourself with the logger
+    // still overridable by env
+    config.putBoolean(
+      "ENABLE_INTERNAL_LOGGING",
+      !!process.env.LIBCORE_ENABLE_INTERNAL_LOGGING
+    );
 
     let walletPoolInstance = null;
 
@@ -246,7 +253,7 @@ export default (arg: {
         NJSThreadDispatcher,
         NJSRandomNumberGenerator,
         NJSDatabaseBackend,
-        NJSDynamicObject
+        config
       );
 
       return walletPoolInstance;
