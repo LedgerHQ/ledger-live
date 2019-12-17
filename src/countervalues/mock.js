@@ -133,7 +133,7 @@ export const fetchExchangesForPairImplementation = async () => {
   ];
 };
 
-const tickersByMarketCap = [
+export const tickersByMarketCap = [
   "BTC",
   "ETH",
   "XRP",

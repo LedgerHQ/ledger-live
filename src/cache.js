@@ -4,6 +4,7 @@ import LRU from "lru-cache";
 
 type Res<A, T> = {
   (...args: A): Promise<T>,
+  force: (...args: A) => Promise<T>,
   hydrate: (string, T) => void
 };
 
@@ -21,6 +22,15 @@ export const makeLRUCache = <A: Array<*>, T>(
     let promise = cache.get(key);
     if (promise) return promise;
     promise = f(...args).catch(e => {
+      cache.del(key);
+      throw e;
+    });
+    cache.set(key, promise);
+    return promise;
+  };
+  result.force = (...args) => {
+    const key = keyExtractor(...args);
+    let promise = f(...args).catch(e => {
       cache.del(key);
       throw e;
     });

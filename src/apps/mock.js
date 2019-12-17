@@ -8,6 +8,7 @@ import { getDependencies, getDependents } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
 import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
+import { tickersByMarketCap } from "../countervalues/mock";
 
 export const deviceInfo155 = {
   version: "1.5.5",
@@ -76,6 +77,10 @@ export function mockListAppsResult(
     .map((name, i) => {
       const dependencies = getDependencies(name);
       const currency = findCryptoCurrency(c => c.managerAppName === name);
+      const indexOfMarketCap = currency
+        ? tickersByMarketCap.indexOf(currency.ticker)
+        : -1;
+
       return {
         id: i,
         app: i,
@@ -99,7 +104,7 @@ export function mockListAppsResult(
         dateModified: "",
         compatibleWallets: [],
         currencyId: currency ? currency.id : null,
-        indexOfMarketCap: 0
+        indexOfMarketCap
       };
     });
   const appByName = {};
