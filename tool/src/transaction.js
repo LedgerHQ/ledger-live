@@ -4,6 +4,7 @@ import "lodash.product";
 import { product } from "lodash";
 import uniqBy from "lodash/uniqBy";
 import shuffle from "lodash/shuffle";
+import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
 import type {
   Transaction,
@@ -68,7 +69,7 @@ export const inferTransactionsOpts = uniqBy(
       type: Boolean,
       desc: "if using multiple token or recipient, order will be randomized"
     }
-  ].concat(Object.values(perFamily).flatMap(m => (m && m.options) || [])),
+  ].concat(flatMap(Object.values(perFamily), m => (m && m.options) || [])),
   "name"
 );
 

@@ -1,6 +1,6 @@
 // @flow
 
-import "babel-polyfill";
+
 import {
   withLibcore,
   afterLibcoreGC
