@@ -98,7 +98,12 @@ export const useSortedFilteredApps = (
   const { type: sortType, order } = _sortOptions;
 
   return useMemo(
-    () => sortApps(filterApps(apps, _filterOptions), _sortOptions),
+    () =>
+      sortFilterApps(
+        apps,
+        { query, installedApps, type: filterType },
+        { type: sortType, order }
+      ),
     [apps, query, installedApps, filterType, sortType, order]
   );
 };
