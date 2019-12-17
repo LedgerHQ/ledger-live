@@ -18,7 +18,7 @@ jobs:
       - run: node -v
       - run: yarn install
       - run: yarn global add yalc
-      - run: yarn ci-test-tool
+      - run: yarn ci-test-cli
 
   debian:
     working_directory: ~/live-common
@@ -46,4 +46,4 @@ jobs:
       - run: yarn global add yalc
       - run: yarn ci-lint
       - run: yarn ci-test-common
-      - run: yarn ci-test-tool
+      - run: yarn ci-test-cli

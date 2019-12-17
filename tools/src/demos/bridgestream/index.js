@@ -150,7 +150,8 @@ class BridgeStream extends Component<*, *> {
 // $FlowFixMe
 BridgeStream.demo = {
   title: "BridgeStream",
-  url: "/bridgestream"
+  url: "/bridgestream",
+  hidden: true
 };
 
 export default BridgeStream;

@@ -31,5 +31,4 @@ src/data/icons/reactNative
 src/partners/icons/react
 src/partners/icons/reactNative
 
-
-tool/tests/*/output
+cli/tests/*/output

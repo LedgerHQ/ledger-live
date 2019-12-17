@@ -19,7 +19,7 @@
     "test": "cross-env TZ=America/New_York jest src",
     "ci-lint": "yarn lint && yarn flow && prettier --check src/**/*.js",
     "ci-test-common": "yarn test --runInBand",
-    "ci-test-tool": "yalc publish && cd tool && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link && yarn test"
+    "ci-test-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link && yarn test"
   },
   "files": [
     "lib",
@@ -36,7 +36,7 @@
     "testURL": "http://localhost",
     "testPathIgnorePatterns": [
       ".yalc",
-      "tool/"
+      "cli/"
     ]
   },
   "peerDependencies": {

@@ -194,7 +194,8 @@ class BridgeStream extends Component<*, *> {
 // $FlowFixMe
 BridgeStream.demo = {
   title: "QRStream benchmark",
-  url: "/qrstreambenchmark"
+  url: "/qrstreambenchmark",
+  hidden: true
 };
 
 export default BridgeStream;

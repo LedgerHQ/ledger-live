@@ -13,7 +13,8 @@ import { initStore } from "./store";
 class Dashboard extends Component {
   render() {
     return (
-      <div style={{ width: 600, margin: "40px auto", fontSize: "32px" }}>
+      <div style={{ width: 600, margin: "40px auto" }}>
+        <h1>Ledger Live Tools</h1>
         {Object.keys(Demos)
           .filter(key => !Demos[key].demo.hidden)
           .map(key => {
@@ -23,13 +24,17 @@ class Dashboard extends Component {
               <Link
                 key={key}
                 to={url}
-                style={{ display: "block", padding: 20 }}
+                style={{
+                  display: "block",
+                  padding: "0.8em 0",
+                  fontSize: "1.6em"
+                }}
               >
                 {title}
               </Link>
             );
           })}
-        <footer style={{ fontSize: "16px" }}>
+        <footer style={{ paddingTop: 20, fontSize: "1em" }}>
           @ledgerhq/live-common {version}
         </footer>
       </div>

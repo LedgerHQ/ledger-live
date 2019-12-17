@@ -5,7 +5,8 @@ const Demo = () => <App />;
 
 Demo.demo = {
   title: "Countervalues",
-  url: "/countervalues"
+  url: "/countervalues",
+  hidden: true
 };
 
 export default Demo;

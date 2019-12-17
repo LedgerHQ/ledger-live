@@ -131,7 +131,8 @@ const Demo = () => {
 
 Demo.demo = {
   title: "ERC20",
-  url: "/erc20"
+  url: "/erc20",
+  hidden: true
 };
 
 export default Demo;

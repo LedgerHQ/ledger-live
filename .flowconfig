@@ -1,6 +1,6 @@
 [ignore]
-<PROJECT_ROOT>/demo
-<PROJECT_ROOT>/tool
+<PROJECT_ROOT>/tools
+<PROJECT_ROOT>/cli
 <PROJECT_ROOT>/mobile-test-app
 <PROJECT_ROOT>/scripts
 

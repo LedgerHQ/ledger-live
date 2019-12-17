@@ -32,8 +32,8 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
 - [Introduction, Goals and Tradeoffs](./docs/intro.md)
 - Getting started
   - [Setup to use `@ledgerhq/live-common`](./docs/live-common-setup.md)
-  - [`ledger-live` CLI (tool)](./docs/tool.md)
-  - **demo** web playground
+  - [`ledger-live` CLI](./docs/cli.md)
+  - **tools** web playground
   - `mobile-test-app` test project
 - Learn by example
   - [gist: transaction with a Ledger device](./docs/gist-tx.md)
