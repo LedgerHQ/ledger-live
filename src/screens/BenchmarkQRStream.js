@@ -89,58 +89,68 @@ export default class BenchmarkQRStream extends PureComponent<
           captureAudio={false}
           style={[styles.camera, cameraDimensions]}
         >
-          <View style={wrapperStyle}>
-            <View style={[styles.darken, styles.centered, styles.topCell]}>
-              <LText semiBold style={styles.text}>
-                {"ledger-live-tools.netlify.com/qrstreambenchmark"}
-              </LText>
-            </View>
+          {({ status }) =>
+            status === "READY" ? (
+              <View style={wrapperStyle}>
+                <View style={[styles.darken, styles.centered, styles.topCell]}>
+                  <LText semiBold style={styles.text}>
+                    {"ledger-live-tools.netlify.com/qrstreambenchmark"}
+                  </LText>
+                </View>
 
-            <View style={styles.row}>
-              <View style={styles.darken} />
-              <View style={{ width: viewFinderSize, height: viewFinderSize }}>
-                <View style={styles.innerRow}>
+                <View style={styles.row}>
+                  <View style={styles.darken} />
                   <View
-                    style={[styles.border, styles.borderLeft, styles.borderTop]}
-                  />
-                  <View style={styles.border} />
-                  <View
-                    style={[
-                      styles.border,
-                      styles.borderRight,
-                      styles.borderTop,
-                    ]}
-                  />
+                    style={{ width: viewFinderSize, height: viewFinderSize }}
+                  >
+                    <View style={styles.innerRow}>
+                      <View
+                        style={[
+                          styles.border,
+                          styles.borderLeft,
+                          styles.borderTop,
+                        ]}
+                      />
+                      <View style={styles.border} />
+                      <View
+                        style={[
+                          styles.border,
+                          styles.borderRight,
+                          styles.borderTop,
+                        ]}
+                      />
+                    </View>
+                    <View style={styles.innerRow} />
+                    <View style={styles.innerRow}>
+                      <View
+                        style={[
+                          styles.border,
+                          styles.borderLeft,
+                          styles.borderBottom,
+                        ]}
+                      />
+                      <View style={styles.border} />
+                      <View
+                        style={[
+                          styles.border,
+                          styles.borderRight,
+                          styles.borderBottom,
+                        ]}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.darken} />
                 </View>
-                <View style={styles.innerRow} />
-                <View style={styles.innerRow}>
-                  <View
-                    style={[
-                      styles.border,
-                      styles.borderLeft,
-                      styles.borderBottom,
-                    ]}
-                  />
-                  <View style={styles.border} />
-                  <View
-                    style={[
-                      styles.border,
-                      styles.borderRight,
-                      styles.borderBottom,
-                    ]}
-                  />
+                <View style={[styles.darken, styles.centered]}>
+                  <View style={styles.centered}>
+                    <LText semiBold style={styles.text}>
+                      {summary}
+                    </LText>
+                  </View>
                 </View>
               </View>
-              <View style={styles.darken} />
-            </View>
-            <View style={[styles.darken, styles.centered]}>
-              <View style={styles.centered}>
-                <LText semiBold style={styles.text}>
-                  {summary}
-                </LText>
-              </View>
-            </View>
-          </View>
+            ) : null
+          }
         </RNCamera>
       </View>
     );

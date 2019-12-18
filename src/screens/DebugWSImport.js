@@ -55,7 +55,11 @@ class DebugWSImport extends Component<
           ratio="16:9"
           style={[styles.camera]}
         >
-          <CameraScreen width={200} height={200} />
+          {({ status }) =>
+            status === "READY" ? (
+              <CameraScreen width={200} height={200} />
+            ) : null
+          }
         </RNCamera>
       </SafeAreaView>
     );
