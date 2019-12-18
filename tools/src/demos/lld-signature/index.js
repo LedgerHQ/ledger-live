@@ -186,7 +186,13 @@ const LLDSignature = () => {
         {release ? <LiveDownloadOptions release={release} /> : null}
       </Field>
 
-      <h2>Verify my Ledger Live install binary are correct</h2>
+      <h2>Verify my Ledger Live install binary</h2>
+
+      <Blockquote>
+        You can verify with <strong>sha512</strong> that Ledger Live binary
+        installation file is correct by comparing its hash to the one available
+        in this file:
+      </Blockquote>
 
       {checksums ? (
         <>
@@ -229,6 +235,13 @@ const LLDSignature = () => {
       !checksumsFetchError ? (
         <>
           <h2>Verify that these checksums are from Ledger</h2>
+
+          <Blockquote>
+            For an extra security, you should also check that{" "}
+            <code>{checksumsFilename}</code> content available here is correctly
+            signed by Ledger. Internally, our setup involves signing this with
+            multiple Nano S devices (multisig quorum).
+          </Blockquote>
 
           <Field>
             <FieldHeader>
