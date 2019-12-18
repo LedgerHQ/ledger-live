@@ -128,7 +128,8 @@ class CurrencyDerivations extends Component<*, *> {
 class Derivations extends Component<*, *> {
   static demo = {
     title: "Derivations",
-    url: "/derivations"
+    url: "/derivations",
+    hidden: true
   };
 
   state = {
