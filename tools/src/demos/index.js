@@ -11,6 +11,7 @@ import Partners from "./Partners";
 import erc20 from "./erc20";
 import assets from "./assets";
 import manager from "./manager";
+import lldSignature from "./lld-signature";
 
 export default {
   Countervalues,
@@ -25,5 +26,6 @@ export default {
   erc20,
   apps,
   assets,
-  manager
+  manager,
+  lldSignature
 };

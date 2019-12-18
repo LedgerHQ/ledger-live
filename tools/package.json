@@ -30,6 +30,7 @@
     "redux-thunk": "^2.2.0",
     "reselect": "^4.0.0",
     "rxjs": "^6.5.3",
+    "semver": "^7.1.1",
     "styled-components": "^4.4.0",
     "timeago.js": "^4.0.0-beta.2",
     "victory": "^33.1.7"
