@@ -1,8 +1,7 @@
 // @flow
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Select from "react-select";
-import { Buffer } from "buffer";
 import logoSvg from "../../ledgerlive-logo.svg";
 
 const Main = styled.div`
@@ -256,6 +255,7 @@ const LLDSignature = () => {
             <Textarea style={{ height: 80 }}>{ledgerlivepem}</Textarea>
             <a
               target="_blank"
+              rel="noopener noreferrer"
               href="https://github.com/LedgerHQ/ledger-live-desktop/blob/master/src/main/updater/ledger-pubkey.js"
             >
               as embedded in Ledger Live source code
