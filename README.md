@@ -66,6 +66,7 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
   - cross.js and "LiveQR" protocol
   - cache.js helpers
   - Tokens management and ERC20
+  - [Developing with lib-ledger-core bindings](./docs/adding-libcore-bindings.md)
 
 ### Developing with Ledger Live Common
 
