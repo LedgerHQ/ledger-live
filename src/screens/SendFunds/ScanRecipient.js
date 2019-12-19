@@ -128,7 +128,11 @@ class ScanRecipient extends PureComponent<Props, State> {
           style={[styles.camera, cameraDimensions]}
           notAuthorizedView={<FallBackCamera navigation={navigation} />}
         >
-          <CameraScreen width={width} height={height} />
+          {({ status }) =>
+            status === "READY" ? (
+              <CameraScreen width={width} height={height} />
+            ) : null
+          }
         </RNCamera>
       </View>
     );
