@@ -216,7 +216,12 @@ const LLDSignature = () => {
               .filter(Boolean)
               .map(line => {
                 const [hash, filename] = line.split(/\s+/);
-                return `$ shasum -a 512 ${filename}\n${hash}\n`;
+                const cmd = filename.endsWith(".AppImage")
+                  ? `sha512sum ${filename}`
+                  : filename.endsWith(".exe")
+                  ? `Get-FileHash ${filename} -Algorithm SHA512`
+                  : `shasum -a 512 ${filename}`;
+                return `$ ${cmd}\n${hash}\n`;
               })
               .join("\n")}
           </BlockCode>
