@@ -13,7 +13,7 @@
     "@ledgerhq/hw-transport-node-ble": "5.0.0",
     "@ledgerhq/hw-transport-node-hid": "5.0.0",
     "@ledgerhq/ledger-core": "5.0.0-alpha.1",
-    "@ledgerhq/live-common": "10.0.0",
+    "@ledgerhq/live-common": "10.1.0",
     "@ledgerhq/logs": "5.0.0",
     "axios": "^0.19.0",
     "bignumber.js": "^9.0.0",
@@ -48,14 +48,14 @@
     "createTest": "./scripts/createTest.sh"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.0",
-    "@babel/core": "^7.7.4",
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
     "@babel/plugin-proposal-class-properties": "^7.7.0",
     "@babel/plugin-proposal-export-default-from": "^7.5.2",
     "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-syntax-import-meta": "^7.2.0",
-    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-env": "^7.7.7",
     "@babel/preset-flow": "^7.0.0",
     "babel-jest": "^24.9.0",
     "jest": "^24.9.0"
