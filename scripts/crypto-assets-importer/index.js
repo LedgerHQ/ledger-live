@@ -1,4 +1,3 @@
-require("babel-polyfill");
 const axios = require("axios");
 const invariant = require("invariant");
 const fs = require("fs");
@@ -29,11 +28,14 @@ axios
       const output = path.join(outputFolder, imp.path + ".js");
       const items = fs.readdirSync(folder);
       Promise.all(
-        items.sort().map(id =>
-          imp.loader({ folder, id }).catch(e => {
-            console.log("FAILED " + id + " " + e);
-          })
-        )
+        items
+          .sort()
+          .filter(a => !a.endsWith(".json"))
+          .map(id =>
+            imp.loader({ folder, id }).catch(e => {
+              console.log("FAILED " + id + " " + e);
+            })
+          )
       )
         .then(all => all.filter(Boolean))
         .then(all => {
