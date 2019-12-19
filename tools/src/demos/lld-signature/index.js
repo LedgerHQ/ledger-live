@@ -197,7 +197,7 @@ const LLDSignature = () => {
         <>
           <Field>
             <FieldHeader>
-              <Label for="checksums">SHA512 checksums</Label>
+              <Label for="checksums">sha512sum hashes</Label>
               <Download
                 href={`data:text/plain;base64,${btoa(checksums)}`}
                 name={checksumsFilename}
@@ -215,7 +215,6 @@ const LLDSignature = () => {
               .split("\n")
               .filter(Boolean)
               .map(line => {
-                console.log(line);
                 const [hash, filename] = line.split(/\s+/);
                 return `$ shasum -a 512 ${filename}\n${hash}\n`;
               })
@@ -223,7 +222,7 @@ const LLDSignature = () => {
           </BlockCode>
         </>
       ) : checksumsFetchError ? (
-        <p>Couldn't load the checksums: {checksumsFetchError.message}</p>
+        <p>Couldn't load the hashes: {checksumsFetchError.message}</p>
       ) : (
         <p>Loading...</p>
       )}
@@ -233,18 +232,19 @@ const LLDSignature = () => {
       checksumsSig &&
       !checksumsFetchError ? (
         <>
-          <h2>Verify that these checksums are from Ledger</h2>
+          <h2>Verify that sha512sum hashes are from Ledger</h2>
 
           <Blockquote>
             For an extra security, you should also check that{" "}
             <code>{checksumsFilename}</code> content available here is correctly
-            signed by Ledger. Internally, our setup involves signing this with
-            multiple Nano S devices (multisig quorum).
+            signed by Ledger. Internally, we have a multi-signature setup
+            implemented on Nano S devices. This mitigates the malicious insider
+            threat.
           </Blockquote>
 
           <Field>
             <FieldHeader>
-              <Label>This is Ledger Live's OpenSSL public key</Label>
+              <Label>This is Ledger Live's OpenSSL public key (ECDSA)</Label>
               <Download
                 href={`data:application/x-pem-file;base64,${btoa(
                   ledgerlivepem
@@ -264,7 +264,7 @@ const LLDSignature = () => {
 
           <Field>
             <FieldHeader>
-              <Label>Signature of checksums file:</Label>
+              <Label>Signature of sha512sum hashes file:</Label>
             </FieldHeader>
             <Download href={checksumsSig} name={checksumsFilename + ".sig"} />
           </Field>
