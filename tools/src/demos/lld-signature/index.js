@@ -124,7 +124,7 @@ const LLDSignature = () => {
 
   useEffect(() => {
     if (!releases) return;
-    selectRelease(releases[0]);
+    selectRelease(releases.find(r => !r.prerelease));
   }, [releases]);
 
   useEffect(() => {
