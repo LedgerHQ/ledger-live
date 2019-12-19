@@ -34,6 +34,7 @@ type Navigation = NavigationScreenProp<{
   params: {
     accountId: string,
     parentId: string,
+    title: string,
   },
 }>;
 
@@ -56,9 +57,10 @@ const ConnectDevice = ({
   parentAccount,
 }: Props) => {
   useEffect(() => {
-    if (readOnlyModeEnabled) {
+    const readOnlyTitle = "transfer.receive.titleReadOnly";
+    if (readOnlyModeEnabled && navigation.getParam("title") !== readOnlyTitle) {
       navigation.setParams({
-        title: "transfer.receive.titleReadOnly",
+        title: readOnlyTitle,
         headerRight: null,
       });
     }
