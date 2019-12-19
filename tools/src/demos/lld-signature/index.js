@@ -279,7 +279,7 @@ Verified OK`}
 
           <Blockquote>
             Once you have verified and installed Ledger Live, you can assume the
-            auto updates mechanism is secured: Ledger Live have hardcoded the
+            auto updates mechanism is secured: Ledger Live has hardcoded the
             public key of Ledger Live and will use it against the upcoming
             update to verify the update is legit and from Ledger (the same way
             described here).
