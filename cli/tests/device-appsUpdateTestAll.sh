@@ -1,8 +1,8 @@
 #!/bin/bash
 
 git clean -xdf &&
-git fetch Arnaud && git checkout device-appsUpdateTestAll &&
-git pull Arnaud device-appsUpdateTestAll &&
+git fetch upstream && git checkout master &&
+git pull &&
 rm -rf node_modules &&
 yarn &&
 yalc publish &&
