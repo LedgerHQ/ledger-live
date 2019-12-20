@@ -42,12 +42,10 @@ const Textarea = styled.textarea`
   box-sizing: border-box;
 `;
 
-const Blockquote = styled.blockquote`
-  border-left: 2px solid #aaa;
+const Block = styled.div`
   color: #888;
   padding: 8px 0;
-  padding-left: 32px;
-  margin-left: 0;
+  margin-bottom: 1em;
   font-family: serif;
   font-size: 1.2em;
   line-height: 1.4em;
@@ -187,11 +185,11 @@ const LLDSignature = () => {
 
       <h2>Verify my Ledger Live install binary</h2>
 
-      <Blockquote>
+      <Block>
         You can verify with <strong>sha512</strong> that Ledger Live binary
         installation file is correct by comparing its hash to the one available
         in this file:
-      </Blockquote>
+      </Block>
 
       {checksums ? (
         <>
@@ -239,13 +237,13 @@ const LLDSignature = () => {
         <>
           <h2>Verify that sha512sum hashes are from Ledger</h2>
 
-          <Blockquote>
+          <Block>
             For an extra security, you should also check that{" "}
             <code>{checksumsFilename}</code> content available here is correctly
             signed by Ledger. Internally, we have a multi-signature setup
             implemented on Nano S devices. This mitigates the malicious insider
             threat.
-          </Blockquote>
+          </Block>
 
           <Field>
             <FieldHeader>
@@ -282,13 +280,13 @@ Verified OK`}
 
           <h2>What about my Ledger Live auto update?</h2>
 
-          <Blockquote>
+          <Block>
             Once you have verified and installed Ledger Live, you can assume the
             auto updates mechanism is secured: Ledger Live has hardcoded the
             public key of Ledger Live and will use it against the upcoming
             update to verify the update is legit and from Ledger (the same way
             described here).
-          </Blockquote>
+          </Block>
         </>
       ) : null}
     </Main>
