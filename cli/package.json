@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "8.0.0",
+  "version": "10.1.2",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
