@@ -195,7 +195,8 @@
       "description": "Your device was locked. Please unlock it."
     },
     "ManagerNotEnoughSpace": {
-      "title": "Sorry, not enough storage left",
+      "title": "Not enough storage left",
+      "info": "There is not enough storage to install {{app}} app.\n\nPlease manage your storage by uninstalling one or several apps",
       "description": "Please uninstall some apps to make space. This will not affect your crypto assets."
     },
     "ManagerUninstallBTCDep": {
@@ -1141,6 +1142,7 @@
     }
   },
   "manager": {
+    "tabTitle": "Device manager",
     "title": "Manager",
     "connect": "Select your device",
     "readOnly": {
@@ -1155,12 +1157,22 @@
       "title": "App catalog",
       "loading": "Loading apps...",
       "noApps": "No apps found",
-      "searchApps": "Search apps..."
+      "searchApps": "Search apps...",
+      "uninstallAll": "Uninstall all",
+      "noAppsInstalled": "No apps installed on your device",
+      "noAppsDescription": "Go in Apps catalog section and install some apps on your device"
     },
     "remove": {
       "title": "Remove device",
       "description": "Are you sure? You can add your {{productName}} again at any time.",
       "button": "Remove"
+    },
+    "storage": {
+      "title": "Storage",
+      "used": "Used",
+      "capacity": "Capacity:",
+      "appsInstalled": "{{appsInstalled}} apps installed",
+      "storageAvailable": "available"
     }
   },
   "ManagerDevice": {

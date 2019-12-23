@@ -53,8 +53,7 @@ import CurrencySettings from "./screens/Settings/CryptoAssets/Currencies/Currenc
 import CurrenciesList from "./screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import RatesList from "./screens/Settings/CryptoAssets/Rates/RatesList";
 import RateProviderSettings from "./screens/Settings/CryptoAssets/Rates/RateProviderSettings";
-import ManagerTabCatalog from "./screens/Manager/TabCatalog";
-import ManagerTabDevice from "./screens/Manager/TabDevice";
+import AppCatalog from "./screens/Manager/AppCatalog";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
@@ -183,27 +182,17 @@ SettingsStack.navigationOptions = {
   ),
 };
 
-const InnerManager = createMaterialTopTabNavigator(
-  {
-    // $FlowFixMe
-    ManagerTabCatalog,
-    // $FlowFixMe
-    ManagerTabDevice,
-  },
-  topTabNavigatorConfig,
-);
-
 const ManagerMain = ({ navigation }: *) => {
   const { appRes, deviceId } = navigation.state.params;
   const [state, dispatch] = useApps(appRes, deviceId);
 
   return (
-    <InnerManager screenProps={{ state, dispatch }} navigation={navigation} />
+    <AppCatalog screenProps={{ state, dispatch }} navigation={navigation} />
   );
 };
-ManagerMain.router = InnerManager.router;
+
 ManagerMain.navigationOptions = {
-  title: i18next.t("tabs.manager"),
+  title: i18next.t("manager.tabTitle"),
   headerStyle: styles.headerNoShadow,
 };
 

@@ -1,7 +1,7 @@
 // @flow
-import React, { PureComponent } from "react";
-import { Image } from "react-native";
-import manager from "@ledgerhq/live-common/lib/manager";
+import React, { PureComponent } from 'react';
+import { Image } from 'react-native';
+import manager from '@ledgerhq/live-common/lib/manager';
 
 type Props = {
   icon: string,
