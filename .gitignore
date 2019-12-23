@@ -10,6 +10,7 @@ node_modules/
 
 # build
 /lib
+/lib-es
 
 # misc
 .DS_Store

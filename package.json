@@ -7,10 +7,11 @@
   },
   "version": "10.1.0",
   "main": "lib/index.js",
+  "module": "lib-es/index.js",
   "license": "MIT",
   "scripts": {
     "flow-typed": "flow-typed install -s",
-    "build": "rm -rf lib src/data/icons/react* && node scripts/buildPartnersReactLogos.js && bash ./scripts/sync-families-dispatch.sh && node scripts/buildReactIcons.js && babel --ignore __tests__ -s -d lib src && flow-copy-source -i \"__tests__/**\" src lib",
+    "build": "./scripts/build.sh",
     "prepublish": "yarn build",
     "watch": "node scripts/buildReactIcons.js && babel -wsd lib src && flow-copy-source -wv src lib",
     "prettier": "prettier --write 'src/**/*.js'",
