@@ -43,7 +43,8 @@
     "watch": "babel -wsd lib src",
     "flow": "flow",
     "test-jest": "rm -rf libcoredb && mkdir libcoredb && jest --maxWorkers 10",
-    "test": "yarn run test-jest && ./scripts/tests.sh",
+    "test-e2e": "./scripts/tests.sh",
+    "test": "yarn run test-jest && yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
     "createTest": "./scripts/createTest.sh"
   },
