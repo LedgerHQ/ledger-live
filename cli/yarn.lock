@@ -1093,7 +1093,7 @@
     bindings "1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@10.2.0":
+"@ledgerhq/live-common@^10.2.0":
   version "10.2.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-10.2.0.tgz#d7d9034dcae17c10445ab9ff71785d66770ae763"
   integrity sha512-WoyjIcTZfCLy6Xs57nRsF54kxJKPgJvnNqhthy1s1Sp5q/5FrD/6Z4XtNOYBejXy+Pm0Rf0js1AKtTMtUvaYrA==
