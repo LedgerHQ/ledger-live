@@ -69,6 +69,7 @@ const ledgerExplorersV2 = {
 };
 
 const ledgerExplorersV3 = {
+  bitcoin: "btc",
   ethereum: "eth",
   ethereum_ropsten: "eth_ropsten",
   ethereum_classic: "etc"
