@@ -58,7 +58,7 @@ const filterSections = [
 
 const keyExtractor = (item, index) => item + index;
 
-const SectionHeader = ({ section: { title } }) => (
+const SectionHeader = ({ section: { title } }: *) => (
   <View style={[styles.sectionLine, styles.paddingLine]}>
     <LText style={styles.sectionHeader}>{title}</LText>
   </View>
@@ -71,7 +71,13 @@ const Separator = ({ section: { footerSeparator } }) =>
     </View>
   );
 
-const FilterModalComponent = ({ isOpened, onFilter, onClose }) => {
+type Props = {
+  isOpened: Boolean,
+  onFilter: Function,
+  onClose: Function,
+};
+
+const FilterModalComponent = ({ isOpened, onFilter, onClose }: Props) => {
   const [selectedFilters, selectFilters] = useState([]);
   const [selectedSort, sortBy] = useState(null);
 

@@ -7,7 +7,7 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import type { Action } from "@ledgerhq/live-common/lib/apps";
+import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
 import i18next from "i18next";
 import { TabView, TabBar } from "react-native-tab-view";
@@ -17,6 +17,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import colors from "../../colors";
 
 import AppFilter from "./AppsList/AppFilter";
+import UninstallAllButton from "./AppsList/UninstallAllButton";
 
 import SearchIcon from "../../icons/Search";
 import TextInput from "../../components/TextInput";
@@ -24,18 +25,18 @@ import LText from "../../components/LText";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 
 import StorageWarningModal from "./Modals/StorageWarningModal";
+import AppDependenciesModal from "./Modals/AppDependenciesModal";
 
 import { ManagerProvider, ManagerContext } from "./ManagerContext";
 
 import DeviceCard from "./DeviceCard";
 import AppsList from "./AppsList";
-import Trash from "../../icons/Trash";
 
 const { interpolate, lessOrEq, greaterOrEq, set, cond, multiply } = Animated;
 
 type Props = {
   screenProps: {
-    state: *,
+    state: State,
     dispatch: Action => void,
   },
   navigation: *,
@@ -56,9 +57,13 @@ export const AppCatalog = ({
     .map(({ name }) => appByName[name])
     .filter(Boolean);
 
-  const { storageWarning, setStorageWarning, MANAGER_TABS } = useContext(
-    ManagerContext,
-  );
+  const {
+    storageWarning,
+    setStorageWarning,
+    MANAGER_TABS,
+    appInstallWithDependencies,
+    setAppInstallWithDependencies,
+  } = useContext(ManagerContext);
 
   const [query, queryUpdate] = useState("");
   const [index, setIndex] = React.useState(0);
@@ -69,7 +74,7 @@ export const AppCatalog = ({
   ]);
   const [error, setError] = useState(null);
 
-  useEffect(() => setError(currentError), [currentError]);
+  useEffect(() => setError(currentError), [setError, currentError]);
   const closeErrorModal = useCallback(() => setError(null), [setError]);
 
   const onInputFocus = useCallback(() => {}, []);
@@ -91,29 +96,33 @@ export const AppCatalog = ({
   const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
     dispatch,
   ]);
+  const resetAppInstallWithDependencies = useCallback(() => {
+    setAppInstallWithDependencies(null);
+  }, [setAppInstallWithDependencies]);
 
   const [position] = useState(() => new Animated.Value(0));
-  const [transX] = useState(new Animated.Value(0));
-  const searchBarTranslateX = cond(
-    lessOrEq(position, 0),
-    [transX],
-    [
-      cond(
-        greaterOrEq(position, 1),
-        [transX],
-        [
-          set(
-            transX,
-            interpolate(position, {
-              inputRange: [0, 1],
-              outputRange: [0, -(width * 2)],
-            }),
-          ),
-          transX,
-        ],
-      ),
-    ],
-  );
+  /** const [transX] = useState(new Animated.Value(0));
+   const searchBarTranslateX = cond(
+     lessOrEq(position, 0),
+     [transX],
+     [
+       cond(
+         greaterOrEq(position, 1),
+         [transX],
+         [
+           set(
+             transX,
+             interpolate(position, {
+               inputRange: [0, 1],
+               outputRange: [0, -(width * 2)],
+             }),
+           ),
+           transX,
+         ],
+       ),
+     ],
+   );
+  */
 
   const fadeInSearch = interpolate(multiply(position, 2), {
     inputRange: [0, 1],
@@ -229,18 +238,7 @@ export const AppCatalog = ({
                 values={{ appsInstalled: installedApps.length }}
               />
             </LText>
-            <TouchableOpacity
-              style={styles.uninstallButton}
-              activeOpacity={0.5}
-              onPress={onUninstallAll}
-            >
-              <View style={styles.uninstallIcon}>
-                <Trash size={16} color={colors.live} />
-              </View>
-              <LText style={styles.uninstallText}>
-                <Trans i18nKey="manager.appList.uninstallAll" />
-              </LText>
-            </TouchableOpacity>
+            <UninstallAllButton onUninstallAll={onUninstallAll} />
           </Animated.View>
         )}
       </View>
@@ -260,6 +258,12 @@ export const AppCatalog = ({
     <StorageWarningModal
       warning={storageWarning}
       onClose={setStorageWarning}
+    />,
+    <AppDependenciesModal
+      app={appInstallWithDependencies}
+      onClose={resetAppInstallWithDependencies}
+      appList={apps}
+      dispatch={dispatch}
     />,
   ];
 
@@ -364,23 +368,6 @@ const styles = StyleSheet.create({
   installedAppsText: {
     fontSize: 14,
     color: colors.grey,
-  },
-  uninstallButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-  },
-  uninstallIcon: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 38,
-    width: 38,
-  },
-  uninstallText: {
-    fontSize: 14,
-    color: colors.live,
   },
   noAppInstalledContainer: {
     flexDirection: "column",

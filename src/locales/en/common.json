@@ -50,7 +50,8 @@
     },
     "update": "Update available",
     "install": "Install",
-    "installed": "Installed"
+    "installed": "Installed",
+    "uninstall": "Uninstall"
   },
   "errors": {
     "AccountNameRequired": {
@@ -1158,9 +1159,13 @@
       "loading": "Loading apps...",
       "noApps": "No apps found",
       "searchApps": "Search apps...",
-      "uninstallAll": "Uninstall all",
       "noAppsInstalled": "No apps installed on your device",
       "noAppsDescription": "Go in Apps catalog section and install some apps on your device"
+    },
+    "uninstall": {
+      "title": "Uninstall all",
+      "subtitle": "Uninstal all apps",
+      "description": "You can reinstall your apps in the apps catalog section."
     },
     "remove": {
       "title": "Remove device",
@@ -1189,6 +1194,10 @@
       "done": {
         "title": "Successfully installed {{appName}} on your {{productName}}",
         "accounts": "Go to accounts"
+      },
+      "dependency": {
+        "title": "{{dependency}} app is required",
+        "description": "{{app}} app is dependent of {{dependency}} app.\nTo install {{app}} app, you need to install {{dependency}} app first.\n\nJust press continue to install {{dependency}} and {{app}} app."
       }
     },
     "uninstall": {

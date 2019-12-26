@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback, useContext } from "react";
 
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import {
@@ -10,21 +10,24 @@ import {
   isOutOfMemoryState,
   predictOptimisticState,
   reducer,
+  State,
+  Action,
 } from "@ledgerhq/live-common/lib/apps";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
 import Exclamation from "../../../icons/Exclamation";
 import AppIcon from "./AppIcon";
 
-import AppInstallButton from "./AppInstallButton";
+import AppStateButton from "./AppStateButton";
 
 import { ManagerContext } from "../ManagerContext";
 
 type Props = {
   app: ApplicationVersion,
-  state: *,
-  dispatch: *,
+  state: State,
+  dispatch: Action => void,
   listKey: String,
+  index: Number,
 };
 
 const AppRow = ({ app, state, dispatch, listKey, index }: Props) => {
@@ -48,7 +51,13 @@ const AppRow = ({ app, state, dispatch, listKey, index }: Props) => {
   const isInstalled = installed.some(i => i.name === name);
 
   return (
-    <Animatable.View style={styles.root} animation={ index <= 11 ? "fadeInUp" : "fadeIn" } duration={400} delay={index <= 11 ? index * 40 : 0} useNativeDriver >
+    <Animatable.View
+      style={styles.root}
+      animation={index <= 11 ? "fadeInUp" : "fadeIn"}
+      duration={400}
+      delay={index <= 11 ? index * 40 : 0}
+      useNativeDriver
+    >
       <AppIcon icon={icon} />
       <View style={styles.labelContainer}>
         <LText numberOfLines={1} bold>
@@ -85,7 +94,7 @@ const AppRow = ({ app, state, dispatch, listKey, index }: Props) => {
           {formatSize(bytes || 0)}
         </LText>
       )}
-      <AppInstallButton
+      <AppStateButton
         app={app}
         state={state}
         dispatch={dispatch}

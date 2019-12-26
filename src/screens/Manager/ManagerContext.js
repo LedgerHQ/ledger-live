@@ -4,6 +4,9 @@ export const ManagerContext = createContext();
 
 export const ManagerProvider = ({ children }: *) => {
   const [storageWarning, setStorageWarning] = useState(null);
+  const [appInstallWithDependencies, setAppInstallWithDependencies] = useState(
+    null,
+  );
   const MANAGER_TABS = {
     CATALOG: "CATALOG",
     INSTALLED_APPS: "INSTALLED_APPS",
@@ -15,6 +18,8 @@ export const ManagerProvider = ({ children }: *) => {
         storageWarning,
         setStorageWarning,
         MANAGER_TABS,
+        appInstallWithDependencies,
+        setAppInstallWithDependencies,
       }}
     >
       {children}

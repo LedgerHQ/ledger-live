@@ -30,7 +30,7 @@ type ButtonType =
   | "tertiary"
   | "alert";
 
-type BaseProps = {
+export type BaseButtonProps = {
   type: ButtonType,
   // when on press returns a promise,
   // the button will toggle in a pending state and
@@ -54,7 +54,7 @@ type Props = BaseProps & {
   useTouchable: boolean,
 };
 
-const ButtonWrapped = (props: BaseProps) => (
+const ButtonWrapped = (props: BaseButtonProps) => (
   <ButtonUseTouchable.Consumer>
     {useTouchable => <Button useTouchable={useTouchable} {...props} />}
   </ButtonUseTouchable.Consumer>

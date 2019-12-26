@@ -4,46 +4,44 @@ import { Trans } from "react-i18next";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
 import InfoIcon from "../../../components/InfoIcon";
-import Exclamation from "../../../icons/Exclamation";
-import Storage from "../../../icons/Storage";
-
+import Trash from "../../../icons/Trash";
 
 import ActionModal from "./ActionModal";
 
 type Props = {
-  warning: Boolean,
+  isOpened: Boolean,
   onClose: Function,
+  onConfirm: Function,
 };
 
-const StorageWarningModal = ({ warning, onClose }: Props) => {
+const UninstallAllModal = ({ isOpened, onClose, onConfirm }: Props) => {
   const modalActions = [
     {
-      title: "Close",
+      title: <Trans i18nKey="common.uninstall" />,
+      onPress: onConfirm,
+      type: "alert",
+    },
+    {
+      title: <Trans i18nKey="common.cancel" />,
       onPress: onClose,
-      type: "primary",
+      type: "secondary",
+      outline: false,
     },
   ];
 
   return (
-    <ActionModal isOpened={!!warning} onClose={onClose} actions={modalActions}>
-      <View style={styles.storageImage}>
-        <InfoIcon
-          bg={colors.lightLive}
-          floatingIcon={<Exclamation size={36} color={colors.white} />}
-          floatingBg={colors.yellow}
-        >
-          <Storage size={30} color={colors.live} />
+    <ActionModal isOpened={!!isOpened} onClose={onClose} actions={modalActions}>
+      <View style={styles.image}>
+        <InfoIcon bg={colors.lightLive}>
+          <Trash size={30} color={colors.live} />
         </InfoIcon>
       </View>
-      <View style={styles.storageRow}>
+      <View style={styles.infoRow}>
         <LText style={[styles.warnText, styles.title]} bold>
-          <Trans i18nKey="errors.ManagerNotEnoughSpace.title" />
+          <Trans i18nKey="manager.uninstall.subtitle" />
         </LText>
         <LText style={styles.warnText}>
-          <Trans
-            i18nKey="errors.ManagerNotEnoughSpace.info"
-            values={{ app: warning }}
-          />
+          <Trans i18nKey="manager.uninstall.description" />
         </LText>
       </View>
     </ActionModal>
@@ -51,7 +49,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  storageImage: {
+  image: {
     width: 80,
     marginBottom: 24,
   },
@@ -66,12 +64,12 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginVertical: 8,
   },
-  storageRow: {
+  infoRow: {
     paddingHorizontal: 16,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
 });
 
-export default memo(StorageWarningModal);
+export default memo(UninstallAllModal);

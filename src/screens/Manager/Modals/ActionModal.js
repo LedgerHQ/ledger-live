@@ -1,18 +1,19 @@
 import React, { memo } from "react";
-import {
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  View,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, SafeAreaView, View, Dimensions } from "react-native";
+import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import BottomModal from "../../../components/BottomModal";
 
 const { height } = Dimensions.get("window");
 
-const ActionModal = ({ isOpened, onClose, children, actions = [] }) => {
+type Props = {
+  isOpened: Boolean,
+  onClose: Function,
+  children: Node,
+  actions: Array<BaseButtonProps>,
+};
+
+const ActionModal = ({ isOpened, onClose, children, actions = [] }: Props) => {
   return (
     <BottomModal
       isOpened={isOpened}
@@ -22,12 +23,14 @@ const ActionModal = ({ isOpened, onClose, children, actions = [] }) => {
       <SafeAreaView style={styles.root}>
         {children}
         <View style={styles.modalFooter}>
-          {actions.map(({ title, onPress, type = "primary" }, i) => (
+          {actions.map(({ title, onPress, type = "primary", ...props }, i) => (
             <Button
+              key={i}
               containerStyle={styles.actionButton}
               type={type}
               title={title}
               onPress={onPress}
+              {...props}
             />
           ))}
         </View>

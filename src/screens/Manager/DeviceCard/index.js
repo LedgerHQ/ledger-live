@@ -2,6 +2,7 @@ import React, { memo } from "react";
 
 import { StyleSheet, View, Image } from "react-native";
 import { Trans } from "react-i18next";
+import type { State } from "@ledgerhq/live-common/lib/apps";
 import { formatSize, distribute } from "@ledgerhq/live-common/lib/apps";
 import LText from "../../../components/LText";
 import Genuine from "../../../icons/Genuine";
@@ -21,12 +22,14 @@ const illustrations = {
   blue,
 };
 
-const DeviceCard = ({ state }: *) => {
+type Props = {
+  state: State,
+};
+
+const DeviceCard = ({ state }: Props) => {
   const { deviceModel, firmware } = state;
   const distribution = distribute(state);
   const capacity = formatSize(distribution.freeSpaceBytes) || "0kb";
-
-  console.log(state);
 
   return (
     <View style={styles.root}>

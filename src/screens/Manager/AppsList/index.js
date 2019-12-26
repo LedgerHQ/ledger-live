@@ -1,16 +1,6 @@
 import React, { Component } from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  FlatList,
-  Animated,
-} from "react-native";
-import { Trans } from "react-i18next";
-
+import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import AppRow from "./AppRow";
 import colors from "../../../colors";
 
@@ -18,7 +8,7 @@ type Props = {
   apps: Array<ApplicationVersion>,
   listKey: String,
   active: Boolean,
-  state: *,
+  state: State,
   dispatch: *,
   renderNoResults: Function,
 };
@@ -26,8 +16,6 @@ type Props = {
 const { height } = Dimensions.get("window");
 class AppsList extends Component<Props> {
   keyExtractor = id => (d: ApplicationVersion) => String(d.id) + id;
-
-  separator = () => <View style={styles.separator} />;
 
   renderRow = ({ item, index }) => (
     <AppRow
@@ -56,7 +44,6 @@ class AppsList extends Component<Props> {
         <FlatList
           listKey={listKey}
           data={apps}
-          //ItemSeparatorComponent={this.separator}
           renderItem={this.renderRow}
           keyExtractor={this.keyExtractor(listKey)}
         />
@@ -68,12 +55,6 @@ class AppsList extends Component<Props> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  separator: {
-    height: 1,
-    width: "100%",
-    backgroundColor: colors.lightFog,
-    zIndex: 1,
   },
   renderNoResult: {
     flex: 1,

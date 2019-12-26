@@ -2,15 +2,22 @@ import React, { memo } from "react";
 
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+
+import type { AppsDistribution } from "@ledgerhq/live-common/lib/apps";
 import { formatSize } from "@ledgerhq/live-common/lib/apps";
 import LText from "../../../components/LText";
 import colors from "../../../colors";
 
 import Warning from "../../../icons/Warning";
 
+
+type Props = {
+  distribution: AppsDistribution,
+};
+
 const DeviceAppStorage = ({
   distribution: { freeSpaceBytes, shouldWarnMemory, totalAppsBytes, apps },
-}: *) => {
+}: Props) => {
   const installedApps = apps.filter(Boolean);
   const appSizes = installedApps.map(({ bytes, currency }) => ({
     ratio: Number((bytes / freeSpaceBytes) * 100).toFixed(2),
