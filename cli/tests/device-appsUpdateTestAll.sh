@@ -1,7 +1,9 @@
 #!/bin/bash
 
+GIT_REMOTE=git@github.com:LedgerHQ/ledger-live-common.git
+
 git clean -xdf &&
-git fetch upstream && git checkout master &&
+git fetch $GIT_REMOTE && git checkout master &&
 git pull &&
 rm -rf node_modules &&
 yarn &&
@@ -11,13 +13,18 @@ yalc add @ledgerhq/live-common &&
 yarn &&
 yarn link &&
 yarn build &&
-ledger-live appsUpdateTestAll 2> tests/tmp/error.log
+mkdir -p cli/tests/tmp/ &&
+ledger-live appsUpdateTestAll 2> cli/tests/tmp/error.log
 
-if grep "FAILED" .tests/tmp/error.log; then
-    echo "An error has occured"
-    curl -i -H 'Authorization: token 6fd7ff181cd04c8d9ba780945ac52a0fc06e0b69' \
--d '{"title": "device appsUpdateTestAll failed", "body":"An error has occured during the process. Find logs enclosed"}' \
-https://api.github.com/repos/Arnaud97234/ledger-live-common/issues
+LOG_FILE=cli/tests/tmp/error.log
+
+if [ ! -f $LOG_FILE ]; then
+    echo "Log file couldn't be find"
+elif grep -i "NoDevice" $LOG_FILE; then
+    echo "A Nano device needs to be connected"
+elif grep -i -E "FAILED|ERROR" $LOG_FILE; then
+    echo "An error has occured. Creating an issue..."
+    node cli/tests/create-issue.js "`cat $LOG_FILE`"
 else
-    echo "Success. All the app have been installed / updated / removed properly"
+    echo "Success. All the apps have been installed / updated / removed properly"
 fi
