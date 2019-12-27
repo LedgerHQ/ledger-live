@@ -26,11 +26,11 @@ type Props = {
   app: ApplicationVersion,
   state: State,
   dispatch: Action => void,
-  listKey: String,
+  listView: String,
   index: Number,
 };
 
-const AppRow = ({ app, state, dispatch, listKey, index }: Props) => {
+const AppRow = ({ app, state, dispatch, listView, index }: Props) => {
   const { name, version, bytes, icon } = app;
   const { installed } = state;
   const { setStorageWarning, MANAGER_TABS } = useContext(ManagerContext);
@@ -48,7 +48,10 @@ const AppRow = ({ app, state, dispatch, listKey, index }: Props) => {
     name,
   ]);
 
-  const isInstalled = installed.some(i => i.name === name);
+  const isInstalled = useMemo(() => installed.some(i => i.name === name), [
+    installed,
+    name,
+  ]);
 
   return (
     <Animatable.View
@@ -100,7 +103,7 @@ const AppRow = ({ app, state, dispatch, listKey, index }: Props) => {
         dispatch={dispatch}
         notEnoughMemoryToInstall={notEnoughMemoryToInstall}
         isInstalled={isInstalled}
-        isInstalledView={listKey === MANAGER_TABS.INSTALLED_APPS}
+        isInstalledView={listView === MANAGER_TABS.INSTALLED_APPS}
       />
     </Animatable.View>
   );

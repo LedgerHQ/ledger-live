@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
     height: 38,
     paddingHorizontal: 10,
     paddingVertical: 12,
-    zIndex: 5,
   },
 });
 

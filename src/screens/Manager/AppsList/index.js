@@ -1,11 +1,12 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
-import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
+import type { App } from "@ledgerhq/live-common/lib/types/manager";
+import type { State } from "@ledgerhq/live-common/lib/apps";
 import AppRow from "./AppRow";
 import colors from "../../../colors";
 
 type Props = {
-  apps: Array<ApplicationVersion>,
+  apps: Array<App>,
   listKey: String,
   active: Boolean,
   state: State,
@@ -14,16 +15,15 @@ type Props = {
 };
 
 const { height } = Dimensions.get("window");
-class AppsList extends Component<Props> {
-  keyExtractor = id => (d: ApplicationVersion) => String(d.id) + id;
+class AppsList extends PureComponent<Props> {
 
-  renderRow = ({ item, index }) => (
+  renderRow = ({ item, index }: { item: App, index: number }) => (
     <AppRow
       app={item}
       index={index}
       state={this.props.state}
       dispatch={this.props.dispatch}
-      listKey={this.props.listKey}
+      listView={this.props.listKey}
     />
   );
 
@@ -45,7 +45,7 @@ class AppsList extends Component<Props> {
           listKey={listKey}
           data={apps}
           renderItem={this.renderRow}
-          keyExtractor={this.keyExtractor(listKey)}
+          keyExtractor={(d: App) => String(d.id) + listKey}
         />
       </Animated.View>
     );

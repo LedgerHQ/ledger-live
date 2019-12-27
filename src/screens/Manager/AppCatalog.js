@@ -1,5 +1,11 @@
 // @flow
-import React, { useState, useCallback, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useContext,
+  useMemo,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -7,6 +13,7 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
 import i18next from "i18next";
@@ -32,8 +39,9 @@ import { ManagerProvider, ManagerContext } from "./ManagerContext";
 
 import DeviceCard from "./DeviceCard";
 import AppsList from "./AppsList";
+import AppUpdateAll from "./AppsList/AppUpdateAll";
 
-const { interpolate, lessOrEq, greaterOrEq, set, cond, multiply } = Animated;
+const { interpolate, multiply } = Animated;
 
 type Props = {
   screenProps: {
@@ -51,11 +59,31 @@ export const AppCatalog = ({
   screenProps: { state, dispatch },
   navigation,
 }: Props) => {
-  const { apps, appByName, installed, currentError, installQueue } = state;
+  const {
+    apps,
+    appByName,
+    installed,
+    currentError,
+    installQueue,
+    uninstallQueue,
+  } = state;
 
-  const installedApps = [...installed, ...installQueue]
-    .map((i: { name: String } | String) => appByName[i.name || i])
-    .filter(Boolean);
+  useEffect(() => {
+    const isUpdating = installQueue.concat(uninstallQueue).length > 0;
+   // navigation.setParams({ isUpdating });
+  }, [installQueue, uninstallQueue]);
+
+  const installedApps = useMemo(
+    () =>
+      [...installed, ...installQueue]
+        .map((i: { name: String } | String) => appByName[i.name || i])
+        .filter(Boolean)
+        .filter(
+          (app, i, apps) =>
+            apps.findIndex(({ name }) => name === app.name) === i,
+        ),
+    [installed, installQueue, appByName],
+  );
 
   const {
     storageWarning,
@@ -79,7 +107,7 @@ export const AppCatalog = ({
   useEffect(() => setError(currentError), [setError, currentError]);
   const closeErrorModal = useCallback(() => setError(null), [setError]);
 
-  const onInputFocus = useCallback(() => { }, []);
+  const onInputFocus = useCallback(() => {}, []);
   const onInputClear = useCallback(() => queryUpdate(""), [queryUpdate]);
   const onIndexChange = useCallback(
     i => {
@@ -90,10 +118,6 @@ export const AppCatalog = ({
   );
   const tabSwipe = useCallback(isSwiping => () => onTabSwipe(isSwiping), [
     onTabSwipe,
-  ]);
-
-  const onUpdateAll = useCallback(() => dispatch({ type: "updateAll" }), [
-    dispatch,
   ]);
   const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
     dispatch,
@@ -106,28 +130,6 @@ export const AppCatalog = ({
   }, [setAppUninstallWithDependencies]);
 
   const [position] = useState(() => new Animated.Value(0));
-  /** const [transX] = useState(new Animated.Value(0));
-   const searchBarTranslateX = cond(
-     lessOrEq(position, 0),
-     [transX],
-     [
-       cond(
-         greaterOrEq(position, 1),
-         [transX],
-         [
-           set(
-             transX,
-             interpolate(position, {
-               inputRange: [0, 1],
-               outputRange: [0, -(width * 2)],
-             }),
-           ),
-           transX,
-         ],
-       ),
-     ],
-   );
-  */
 
   const fadeInSearch = interpolate(multiply(position, 2), {
     inputRange: [0, 1],
@@ -158,7 +160,7 @@ export const AppCatalog = ({
       case MANAGER_TABS.CATALOG:
         return (
           <AppsList
-            listKey={route.key}
+            listKey={MANAGER_TABS.CATALOG}
             apps={apps}
             state={state}
             dispatch={dispatch}
@@ -168,7 +170,7 @@ export const AppCatalog = ({
       case MANAGER_TABS.INSTALLED_APPS:
         return (
           <AppsList
-            listKey={route.key}
+            listKey={MANAGER_TABS.INSTALLED_APPS}
             apps={installedApps}
             state={state}
             dispatch={dispatch}
@@ -183,6 +185,7 @@ export const AppCatalog = ({
 
   const elements = [
     <DeviceCard state={state} />,
+    <AppUpdateAll state={state} dispatch={dispatch} />,
     <View>
       <TabBar
         position={position}
@@ -259,32 +262,33 @@ export const AppCatalog = ({
       onSwipeEnd={tabSwipe(false)}
       sceneContainerStyle={{}}
     />,
-    <GenericErrorBottomModal error={error} onClose={closeErrorModal} />,
-    <StorageWarningModal
-      warning={storageWarning}
-      onClose={setStorageWarning}
-    />,
-    <AppDependenciesModal
-      app={appInstallWithDependencies}
-      onClose={resetAppInstallWithDependencies}
-      appList={apps}
-      dispatch={dispatch}
-    />,
-    <UninstallDependenciesModal
-      app={appUninstallWithDependencies}
-      onClose={resetAppUninstallWithDependencies}
-      state={state}
-      dispatch={dispatch}
-    />,
   ];
 
   return (
     <SafeAreaView style={styles.root}>
+      <NavigationEvents onWillBlur={_ => {}} />
       <FlatList
         data={elements}
         renderItem={({ item }) => item}
         keyExtractor={(_, i) => String(i)}
-        stickyHeaderIndices={[1]}
+        stickyHeaderIndices={[2]}
+      />
+      <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
+      <StorageWarningModal
+        warning={storageWarning}
+        onClose={setStorageWarning}
+      />
+      <AppDependenciesModal
+        app={appInstallWithDependencies}
+        onClose={resetAppInstallWithDependencies}
+        appList={apps}
+        dispatch={dispatch}
+      />
+      <UninstallDependenciesModal
+        app={appUninstallWithDependencies}
+        onClose={resetAppUninstallWithDependencies}
+        state={state}
+        dispatch={dispatch}
       />
     </SafeAreaView>
   );

@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 
 import { View, StyleSheet } from "react-native";
+import * as Animatable from "react-native-animatable";
 import { Trans } from "react-i18next";
 
 import type { AppsDistribution } from "@ledgerhq/live-common/lib/apps";
@@ -48,13 +49,18 @@ const DeviceAppStorage = ({
       </View>
       <View style={[styles.row, styles.graphRow]}>
         {appSizes.map(({ ratio, color }, i) => (
-          <View
+          <Animatable.View
+            animation="slideInLeft"
+            duration={400}
+            delay={(appSizes.length - i) * 100}
+            useNativeDriver
             key={i}
             style={[
               styles.graphBlock,
               {
                 width: `${ratio}%`,
                 backgroundColor: color,
+                zIndex: appSizes.length - i,
               },
             ]}
           />

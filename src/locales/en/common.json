@@ -1200,6 +1200,15 @@
         "description": "{{app}} app is dependent of {{dependency}} app.\nTo install {{app}} app, you need to install {{dependency}} app first.\n\nJust press continue to install {{dependency}} and {{app}} app."
       }
     },
+    "update": {
+      "title": "{{number}} app updates available",
+      "button": "Update all",
+      "version": "New {{version}}",
+      "buttonAction": "Update available",
+      "buttonModal": "Update all apps",
+      "loading": "Updating...",
+      "titleModal": "Updates available"
+    },
     "uninstall": {
       "loading": {
         "title": "Uninstalling {{appName}}",

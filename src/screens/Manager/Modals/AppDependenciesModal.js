@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
@@ -21,12 +21,12 @@ type Props = {
 };
 
 const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
-  const installAppDependencies = useCallback(() => {
+  if (!app) return null;
+
+  const installAppDependencies = () => {
     dispatch({ type: "install", name });
     onClose();
-  }, [dispatch, onClose]);
-
-  if (!app) return null;
+  };
 
   const { name, dependencies } = app;
   const dependentApps = appList.filter(a => dependencies.includes(a.name));

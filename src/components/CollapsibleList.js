@@ -55,7 +55,8 @@ const runCollapse = (clock, value, dest) => {
   ]);
 };
 
-const renderItem = ({ item, index }: *) => <View key={index}>{item}</View>;
+const renderListItem = ({ item, index }: *) => <View key={index}>{item}</View>;
+const keyExtractor = (_, index) => String(index);
 
 type Props = {
   title: string,
@@ -70,7 +71,7 @@ const CollapsibleList = ({
   containerStyle,
   data,
   itemHeight = 46,
-  renderItem = renderItem,
+  renderItem = renderListItem,
 }: Props) => {
   const [isOpen, setOpen] = useState(undefined);
   const onPress = useCallback(() => {
@@ -116,7 +117,7 @@ const CollapsibleList = ({
         </View>
       </TouchableWithoutFeedback>
       <Animated.View style={{ height, opacity: openingAnim }}>
-        <FlatList data={data} renderItem={renderItem} />
+        <FlatList data={data} renderItem={renderItem} keyExtractor={keyExtractor}/>
       </Animated.View>
     </View>
   );

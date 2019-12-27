@@ -1,7 +1,10 @@
 // @flow
 import React from "react";
 import i18next from "i18next";
-import { createSwitchNavigator, createAppContainer } from "react-navigation";
+import {
+  createSwitchNavigator,
+  createAppContainer
+} from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import {
   createBottomTabNavigator,
@@ -211,6 +214,22 @@ const ManagerStack = createStackNavigator(
     },
   },
 );
+
+const defaultManagerGetStateForAction = ManagerStack.router.getStateForAction;
+
+ManagerStack.router.getStateForAction = (action, state) => {
+  if (
+    state &&
+    state.routes[state.index].params &&
+    state.routes[state.index].params.isUpdating
+  ) {
+    // Returning null from getStateForAction means that the action
+    // has been handled/blocked, but there is not a new state
+    return null;
+  }
+
+  return defaultManagerGetStateForAction(action, state);
+};
 
 ManagerStack.navigationOptions = ({ navigation }) => ({
   tabBarIcon: (props: *) => (

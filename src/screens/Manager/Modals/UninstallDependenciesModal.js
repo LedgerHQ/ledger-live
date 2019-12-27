@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
 
@@ -39,11 +39,6 @@ const UninstallDependenciesModal = ({
   dispatch,
   onClose,
 }: Props) => {
-  const unInstallApp = useCallback(() => {
-    dispatch({ type: "uninstall", name });
-    onClose();
-  }, [dispatch, onClose]);
-
   if (!app) return null;
 
   const { name } = app;
@@ -52,6 +47,12 @@ const UninstallDependenciesModal = ({
   const dependentApps = apps
     .filter(a => installed.some(i => i.name === a.name))
     .filter(({ dependencies }) => dependencies.includes(name));
+
+  const unInstallApp = () => {
+    dispatch({ type: "uninstall", name });
+    onClose();
+  };
+
 
   const modalActions = [
     {
