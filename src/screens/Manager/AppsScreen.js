@@ -1,11 +1,5 @@
 // @flow
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useContext,
-  useMemo,
-} from "react";
+import React, { useState, useCallback, useContext, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -13,7 +7,6 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { NavigationEvents } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
 import i18next from "i18next";
@@ -29,13 +22,8 @@ import UninstallAllButton from "./AppsList/UninstallAllButton";
 import SearchIcon from "../../icons/Search";
 import TextInput from "../../components/TextInput";
 import LText from "../../components/LText";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 
-import StorageWarningModal from "./Modals/StorageWarningModal";
-import AppDependenciesModal from "./Modals/AppDependenciesModal";
-import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
-
-import { ManagerProvider, ManagerContext } from "./ManagerContext";
+import { ManagerContext } from "./Manager";
 
 import DeviceCard from "./DeviceCard";
 import AppsList from "./AppsList";
@@ -43,35 +31,14 @@ import AppUpdateAll from "./AppsList/AppUpdateAll";
 
 const { interpolate, multiply } = Animated;
 
-type Props = {
-  screenProps: {
-    state: State,
-    dispatch: Action => void,
-  },
-  navigation: *,
-};
+type Props = { state: State, dispatch: Action => void };
 
 const { width, height } = Dimensions.get("screen");
 
 const initialLayout = { width, height };
 
-export const AppCatalog = ({
-  screenProps: { state, dispatch },
-  navigation,
-}: Props) => {
-  const {
-    apps,
-    appByName,
-    installed,
-    currentError,
-    installQueue,
-    uninstallQueue,
-  } = state;
-
-  useEffect(() => {
-    const isUpdating = installQueue.concat(uninstallQueue).length > 0;
-   // navigation.setParams({ isUpdating });
-  }, [installQueue, uninstallQueue]);
+export const AppsScreen = ({ state, dispatch }: Props) => {
+  const { apps, appByName, installed, installQueue } = state;
 
   const installedApps = useMemo(
     () =>
@@ -85,15 +52,7 @@ export const AppCatalog = ({
     [installed, installQueue, appByName],
   );
 
-  const {
-    storageWarning,
-    setStorageWarning,
-    MANAGER_TABS,
-    appInstallWithDependencies,
-    setAppInstallWithDependencies,
-    appUninstallWithDependencies,
-    setAppUninstallWithDependencies,
-  } = useContext(ManagerContext);
+  const { MANAGER_TABS } = useContext(ManagerContext);
 
   const [query, queryUpdate] = useState("");
   const [index, setIndex] = React.useState(0);
@@ -102,10 +61,6 @@ export const AppCatalog = ({
     { key: MANAGER_TABS.CATALOG, title: "Apps catalog" },
     { key: MANAGER_TABS.INSTALLED_APPS, title: "Installed Apps" },
   ]);
-  const [error, setError] = useState(null);
-
-  useEffect(() => setError(currentError), [setError, currentError]);
-  const closeErrorModal = useCallback(() => setError(null), [setError]);
 
   const onInputFocus = useCallback(() => {}, []);
   const onInputClear = useCallback(() => queryUpdate(""), [queryUpdate]);
@@ -122,12 +77,6 @@ export const AppCatalog = ({
   const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
     dispatch,
   ]);
-  const resetAppInstallWithDependencies = useCallback(() => {
-    setAppInstallWithDependencies(null);
-  }, [setAppInstallWithDependencies]);
-  const resetAppUninstallWithDependencies = useCallback(() => {
-    setAppUninstallWithDependencies(null);
-  }, [setAppUninstallWithDependencies]);
 
   const [position] = useState(() => new Animated.Value(0));
 
@@ -266,29 +215,11 @@ export const AppCatalog = ({
 
   return (
     <SafeAreaView style={styles.root}>
-      <NavigationEvents onWillBlur={_ => {}} />
       <FlatList
         data={elements}
         renderItem={({ item }) => item}
         keyExtractor={(_, i) => String(i)}
         stickyHeaderIndices={[2]}
-      />
-      <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
-      <StorageWarningModal
-        warning={storageWarning}
-        onClose={setStorageWarning}
-      />
-      <AppDependenciesModal
-        app={appInstallWithDependencies}
-        onClose={resetAppInstallWithDependencies}
-        appList={apps}
-        dispatch={dispatch}
-      />
-      <UninstallDependenciesModal
-        app={appUninstallWithDependencies}
-        onClose={resetAppUninstallWithDependencies}
-        state={state}
-        dispatch={dispatch}
       />
     </SafeAreaView>
   );
@@ -408,8 +339,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ({ screenProps, navigation }: Props) => (
-  <ManagerProvider>
-    <AppCatalog screenProps={screenProps} navigation={navigation} />
-  </ManagerProvider>
-);
+export default AppsScreen;

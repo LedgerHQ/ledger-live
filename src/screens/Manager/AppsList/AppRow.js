@@ -20,7 +20,7 @@ import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
 
-import { ManagerContext } from "../ManagerContext";
+import { ManagerContext } from "../Manager";
 
 type Props = {
   app: ApplicationVersion,

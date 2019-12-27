@@ -52,7 +52,6 @@ const DeviceAppStorage = ({
           <Animatable.View
             animation="slideInLeft"
             duration={400}
-            delay={(appSizes.length - i) * 100}
             useNativeDriver
             key={i}
             style={[
@@ -60,7 +59,6 @@ const DeviceAppStorage = ({
               {
                 width: `${ratio}%`,
                 backgroundColor: color,
-                zIndex: appSizes.length - i,
               },
             ]}
           />

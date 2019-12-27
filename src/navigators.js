@@ -56,7 +56,7 @@ import CurrencySettings from "./screens/Settings/CryptoAssets/Currencies/Currenc
 import CurrenciesList from "./screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import RatesList from "./screens/Settings/CryptoAssets/Rates/RatesList";
 import RateProviderSettings from "./screens/Settings/CryptoAssets/Rates/RateProviderSettings";
-import AppCatalog from "./screens/Manager/AppCatalog";
+import ManagerScreen from "./screens/Manager/Manager";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
@@ -190,7 +190,7 @@ const ManagerMain = ({ navigation }: *) => {
   const [state, dispatch] = useApps(appRes, deviceId);
 
   return (
-    <AppCatalog screenProps={{ state, dispatch }} navigation={navigation} />
+    <ManagerScreen screenProps={{ state, dispatch }} navigation={navigation} />
   );
 };
 
@@ -204,7 +204,7 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     Manager,
     // $FlowFixMe
-    ManagerMain,
+    ManagerMain: { screen: ManagerMain, params: { isUpdating: false }},
   },
   {
     ...stackNavigatorConfig,
@@ -214,22 +214,6 @@ const ManagerStack = createStackNavigator(
     },
   },
 );
-
-const defaultManagerGetStateForAction = ManagerStack.router.getStateForAction;
-
-ManagerStack.router.getStateForAction = (action, state) => {
-  if (
-    state &&
-    state.routes[state.index].params &&
-    state.routes[state.index].params.isUpdating
-  ) {
-    // Returning null from getStateForAction means that the action
-    // has been handled/blocked, but there is not a new state
-    return null;
-  }
-
-  return defaultManagerGetStateForAction(action, state);
-};
 
 ManagerStack.navigationOptions = ({ navigation }) => ({
   tabBarIcon: (props: *) => (
@@ -559,6 +543,23 @@ const RootNavigator = createSwitchNavigator({
 });
 
 RootNavigator.navigationOptions = { header: null };
+
+
+const defaultManagerGetStateForAction = ManagerStack.router.getStateForAction;
+ManagerStack.router.getStateForAction = (action, state, opt) => {
+  if (
+    state &&
+    state.routes[state.index].params &&
+    state.routes[state.index].params.isUpdating
+  ) {
+    console.log(state.routes[state.index].params, opt);
+    // Returning null from getStateForAction means that the action
+    // has been handled/blocked, but there is not a new state
+    return state;
+  }
+
+  return defaultManagerGetStateForAction(action, state);
+};
 
 // $FlowFixMe
 const AppContainer = createAppContainer(RootNavigator);

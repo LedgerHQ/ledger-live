@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { ManagerContext } from "../ManagerContext";
+import { ManagerContext } from "../Manager";
 import Button from "../../../components/Button";
 
 type Props = {
