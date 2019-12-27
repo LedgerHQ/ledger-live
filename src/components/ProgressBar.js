@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
+import Animated from "react-native-reanimated";
 import colors from "../colors";
 
 type Props = {
@@ -28,10 +29,13 @@ class ProgressBar extends PureComponent<Props> {
     } = this.props;
     return (
       <View style={[styles.wrapper, { height, backgroundColor }, style]}>
-        <View
+        <Animated.View
           style={[
             styles.bar,
-            { width: `${progress}%`, backgroundColor: progressColor },
+            {
+              backgroundColor: progressColor,
+              width: `${progress}%`,
+            },
           ]}
         />
       </View>
@@ -46,6 +50,7 @@ const styles = StyleSheet.create({
   },
   bar: {
     height: "100%",
+    
     borderRadius: 6,
   },
 });

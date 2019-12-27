@@ -3,7 +3,7 @@ import { StyleSheet, SafeAreaView, View, Dimensions } from "react-native";
 import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
 import BottomModal from "../../../components/BottomModal";
-
+import colors from "../../../colors";
 const { height } = Dimensions.get("window");
 
 type Props = {
@@ -43,9 +43,23 @@ const styles = StyleSheet.create({
   root: {
     maxHeight: height - 100,
     flexDirection: "column",
-    paddingTop: 36,
     justifyContent: "flex-start",
     alignItems: "center",
+    paddingTop: 50,
+  },
+  dragZone: {
+    height: 50,
+    width: "100%",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  dragHandle: {
+    marginTop: 10,
+    height: 4,
+    width: 50,
+    backgroundColor: colors.lightFog,
+    borderRadius: 4,
   },
   modal: {
     borderTopLeftRadius: 30,

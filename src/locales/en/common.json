@@ -1207,6 +1207,11 @@
       },
       "done": {
         "title": "Successfully uninstalled {{appName}} on your {{productName}}"
+      },
+      "dependency": {
+        "title": "{{app}} app is used by other apps",
+        "showAll": "Show all dependencies",
+        "description": "Some apps are dependent of {{app}}.\nIf you continue uninstall, all dependent apps of {{app}} will be uninstalled too."
       }
     }
   },

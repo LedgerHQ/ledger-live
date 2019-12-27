@@ -7,6 +7,7 @@ import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
 import AppInstallButton from "./AppInstallButton";
+import AppUninstallButton from "./AppUninstallButton";
 
 import colors from "../../../colors";
 import Check from "../../../icons/Check";
@@ -15,6 +16,7 @@ import Trash from "../../../icons/Trash";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import ProgressBar from "../../../components/ProgressBar";
+import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
 
 type InstallProgressProps = {
   progress: Number,
@@ -51,12 +53,20 @@ const InstallProgress = memo(
             </TouchableOpacity>
           )}
         </View>
-        <ProgressBar
-          progressColor={color}
-          style={styles.progressBar}
-          height={6}
-          progress={progress * 1e2}
-        />
+        {isInstalling ? (
+          <ProgressBar
+            progressColor={color}
+            style={styles.progressBar}
+            height={6}
+            progress={progress * 1e2}
+          />
+        ) : (
+          <InfiniteProgressBar
+            progressColor={color}
+            style={styles.progressBar}
+            height={6}
+          />
+        )}
       </View>
     );
   },
@@ -119,13 +129,7 @@ const AppStateButton = ({
         );
       case isInstalledView && isInstalled:
         return (
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={styles.uninstallButton}
-            onPress={uninstallApp}
-          >
-            <Trash size={16} color={colors.grey} />
-          </TouchableOpacity>
+          <AppUninstallButton app={app} state={state} dispatch={dispatch} />
         );
       case isInstalled:
         return (
@@ -160,13 +164,6 @@ const styles = StyleSheet.create({
   },
   appStateText: {
     fontSize: 12,
-  },
-  uninstallButton: {
-    width: 38,
-    height: 38,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
   },
   installedLabel: {
     flexGrow: 1,

@@ -21,15 +21,15 @@ type Props = {
 };
 
 const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
-  if (!app) return null;
-
-  const { name, dependencies } = app;
-  const dependentApps = appList.filter(a => dependencies.includes(a.name));
-
   const installAppDependencies = useCallback(() => {
     dispatch({ type: "install", name });
     onClose();
   }, [dispatch, onClose]);
+
+  if (!app) return null;
+
+  const { name, dependencies } = app;
+  const dependentApps = appList.filter(a => dependencies.includes(a.name));
 
   const modalActions = [
     {

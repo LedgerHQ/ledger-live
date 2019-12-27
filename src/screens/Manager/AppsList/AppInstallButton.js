@@ -14,8 +14,6 @@ type Props = {
   state: State,
   dispatch: Action => void,
   notEnoughMemoryToInstall: Boolean,
-  isInstalled: Boolean,
-  isInstalledView: Boolean,
 };
 
 const AppInstallButton = ({
@@ -25,9 +23,8 @@ const AppInstallButton = ({
   notEnoughMemoryToInstall,
 }: Props) => {
   const { setAppInstallWithDependencies } = useContext(ManagerContext);
-  const { dependencies } = app;
+  const { dependencies, name } = app;
   const { installed } = state;
-  const { name } = app;
 
   const canUpdate = installed.some(
     ({ name, updated }) => name === app.name && !updated,

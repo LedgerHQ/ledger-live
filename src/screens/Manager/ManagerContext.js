@@ -7,6 +7,10 @@ export const ManagerProvider = ({ children }: *) => {
   const [appInstallWithDependencies, setAppInstallWithDependencies] = useState(
     null,
   );
+  const [
+    appUninstallWithDependencies,
+    setAppUninstallWithDependencies,
+  ] = useState(null);
   const MANAGER_TABS = {
     CATALOG: "CATALOG",
     INSTALLED_APPS: "INSTALLED_APPS",
@@ -20,6 +24,8 @@ export const ManagerProvider = ({ children }: *) => {
         MANAGER_TABS,
         appInstallWithDependencies,
         setAppInstallWithDependencies,
+        appUninstallWithDependencies,
+        setAppUninstallWithDependencies,
       }}
     >
       {children}

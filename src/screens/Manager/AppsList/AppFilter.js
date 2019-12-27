@@ -37,9 +37,8 @@ const AppFilter = ({ dispatch, disabled }: Props) => {
 
 const styles = StyleSheet.create({
   searchBarFilters: {
-    width: 40,
+    width: 38,
     height: 38,
-    marginLeft: 10,
   },
 });
 

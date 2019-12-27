@@ -26,6 +26,7 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import AppDependenciesModal from "./Modals/AppDependenciesModal";
+import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 
 import { ManagerProvider, ManagerContext } from "./ManagerContext";
 
@@ -50,11 +51,10 @@ export const AppCatalog = ({
   screenProps: { state, dispatch },
   navigation,
 }: Props) => {
-  const { apps, appByName, installed, currentError } = state;
+  const { apps, appByName, installed, currentError, installQueue } = state;
 
-  const installedApps = []
-    .concat(installed)
-    .map(({ name }) => appByName[name])
+  const installedApps = [...installed, ...installQueue]
+    .map((i: { name: String } | String) => appByName[i.name || i])
     .filter(Boolean);
 
   const {
@@ -63,6 +63,8 @@ export const AppCatalog = ({
     MANAGER_TABS,
     appInstallWithDependencies,
     setAppInstallWithDependencies,
+    appUninstallWithDependencies,
+    setAppUninstallWithDependencies,
   } = useContext(ManagerContext);
 
   const [query, queryUpdate] = useState("");
@@ -77,7 +79,7 @@ export const AppCatalog = ({
   useEffect(() => setError(currentError), [setError, currentError]);
   const closeErrorModal = useCallback(() => setError(null), [setError]);
 
-  const onInputFocus = useCallback(() => {}, []);
+  const onInputFocus = useCallback(() => { }, []);
   const onInputClear = useCallback(() => queryUpdate(""), [queryUpdate]);
   const onIndexChange = useCallback(
     i => {
@@ -99,6 +101,9 @@ export const AppCatalog = ({
   const resetAppInstallWithDependencies = useCallback(() => {
     setAppInstallWithDependencies(null);
   }, [setAppInstallWithDependencies]);
+  const resetAppUninstallWithDependencies = useCallback(() => {
+    setAppUninstallWithDependencies(null);
+  }, [setAppUninstallWithDependencies]);
 
   const [position] = useState(() => new Animated.Value(0));
   /** const [transX] = useState(new Animated.Value(0));
@@ -265,6 +270,12 @@ export const AppCatalog = ({
       appList={apps}
       dispatch={dispatch}
     />,
+    <UninstallDependenciesModal
+      app={appUninstallWithDependencies}
+      onClose={resetAppUninstallWithDependencies}
+      state={state}
+      dispatch={dispatch}
+    />,
   ];
 
   return (
@@ -326,7 +337,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   searchBarTextInput: {
-    flex: 1,
+    flexGrow: 1,
     fontSize: 14,
     color: colors.smoke,
     height: 38,
@@ -335,7 +346,9 @@ const styles = StyleSheet.create({
     width,
   },
   filterButton: {
+    flexBasis: 38,
     width: 38,
+    marginLeft: 10,
   },
   indicatorStyle: {
     height: 3,
