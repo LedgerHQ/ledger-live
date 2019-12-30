@@ -9,10 +9,18 @@ export type SortOptions = {
   order: "asc" | "desc"
 };
 
+type AppType =
+  | "all"
+  | "installed"
+  | "not_installed"
+  | "supported"
+  | "not_supported"
+  | "updatable";
+
 export type FilterOptions = {
   query?: string,
   installedApps: InstalledItem[],
-  type: "all" | "installed" | "not_installed" | "supported" | "updatable"
+  type: AppType[]
 };
 
 type UpdateAwareInstalledApps = {
@@ -29,27 +37,44 @@ const searchFilter = (query?: string) => ({ name, currencyId }) => {
 };
 
 const typeFilter = (
-  type = "all",
+  type: AppType[] = ["all"],
   updateAwareInstalledApps: UpdateAwareInstalledApps
 ) => app => {
-  switch (type) {
-    case "installed":
-      return updateAwareInstalledApps.hasOwnProperty(app.name);
-    case "not_installed":
-      return !updateAwareInstalledApps.hasOwnProperty(app.name);
-    case "updatable":
-      return (
-        updateAwareInstalledApps.hasOwnProperty(app.name) &&
-        !updateAwareInstalledApps[app.name]
-      );
-    case "supported":
-      return (
-        app.currencyId &&
-        isCurrencySupported(getCryptoCurrencyById(app.currencyId))
-      );
-    default:
-      return true;
-  }
+  let validApp = true;
+
+  type.forEach(filter => {
+    switch (filter) {
+      case "installed":
+        validApp =
+          validApp && updateAwareInstalledApps.hasOwnProperty(app.name);
+        break;
+      case "not_installed":
+        validApp =
+          validApp && !updateAwareInstalledApps.hasOwnProperty(app.name);
+        break;
+      case "updatable":
+        validApp =
+          validApp &&
+          updateAwareInstalledApps.hasOwnProperty(app.name) &&
+          !updateAwareInstalledApps[app.name];
+        break;
+      case "supported":
+        validApp =
+          validApp &&
+          app.currencyId &&
+          isCurrencySupported(getCryptoCurrencyById(app.currencyId));
+        break;
+      case "not_supported":
+        validApp =
+          validApp &&
+          !(
+            app.currencyId &&
+            isCurrencySupported(getCryptoCurrencyById(app.currencyId))
+          );
+        break;
+    }
+  });
+  return validApp;
 };
 
 export const sortApps = (apps: App[], _options: SortOptions): App[] => {
@@ -70,7 +95,7 @@ export const sortApps = (apps: App[], _options: SortOptions): App[] => {
 };
 
 export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
-  const { query, installedApps, type = "all" } = _options;
+  const { query, installedApps, type = ["all"] } = _options;
   const updateAwareInstalledApps: UpdateAwareInstalledApps = {};
   for (let i = 0; i < installedApps.length; i++) {
     updateAwareInstalledApps[installedApps[i].name] = installedApps[i].updated;
