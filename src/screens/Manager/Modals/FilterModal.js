@@ -15,19 +15,29 @@ const filterSections = [
   {
     title: "Filters",
     data: [
+      // {
+      //   label: "All",
+      //   value: "all",
+      //   isFilter: true,
+      // },
       {
-        label: "All",
-        value: "ALL",
+        label: "Installed",
+        value: "installed",
         isFilter: true,
       },
       {
         label: "Not installed",
-        value: "NOT_INSTALLED",
+        value: "not_installed",
         isFilter: true,
       },
       {
         label: "Live supported",
-        value: "LIVE",
+        value: "supported",
+        isFilter: true,
+      },
+      {
+        label: "Updatable",
+        value: "updatable",
         isFilter: true,
       },
     ],
@@ -37,20 +47,16 @@ const filterSections = [
     title: "Sort by",
     data: [
       {
-        label: "Market Cap",
-        value: "MARKET_CAP",
+        label: "Default",
+        value: "default",
       },
       {
         label: "Name",
-        value: "NAME",
+        value: "name",
       },
       {
-        label: "Weight",
-        value: "WEIGHT",
-      },
-      {
-        label: "Dependencies",
-        value: "DEPENDENCIES",
+        label: "Market Cap",
+        value: "marketcap",
       },
     ],
   },
@@ -72,16 +78,27 @@ const Separator = ({ section: { footerSeparator } }) =>
   );
 
 type Props = {
+  filter: string,
+  setFilter: Function,
+  sort: string,
+  setSort: Function,
   isOpened: Boolean,
-  onFilter: Function,
   onClose: Function,
 };
 
-const FilterModalComponent = ({ isOpened, onFilter, onClose }: Props) => {
-  const [selectedFilters, selectFilters] = useState([]);
-  const [selectedSort, sortBy] = useState(null);
+const FilterModalComponent = ({
+  filter,
+  setFilter,
+  sort,
+  setSort,
+  isOpened,
+  onClose,
+}: Props) => {
+  const [selectedFilters, selectFilters] = useState(filter);
+  const [selectedSort, sortBy] = useState(sort);
 
-  const toggleFilter = useCallback(
+  /** 
+   const toggleFilter = useCallback(
     value => {
       const filters = [].concat(selectedFilters);
       const index = filters.indexOf(value);
@@ -93,17 +110,30 @@ const FilterModalComponent = ({ isOpened, onFilter, onClose }: Props) => {
     },
     [selectedFilters, selectFilters],
   );
+  */
+
+  const onFilter = useCallback(() => {
+    setFilter(selectedFilters);
+    setSort(selectedSort);
+    onClose();
+  }, [selectedFilters, setFilter, selectedSort, setSort, onClose]);
 
   const FilterItem = useCallback(({ item: { label, value, isFilter } }) => {
     const isChecked = isFilter
-      ? selectedFilters.indexOf(value) >= 0
+      ? selectedFilters === value
       : selectedSort === value;
+
+    const onPress = () => {
+      const newValue = isChecked ? null : value;
+      if (isFilter) selectFilters(newValue);
+      else sortBy(newValue);
+    };
 
     return (
       <TouchableHighlight
         style={[styles.sectionLine, styles.paddingLine]}
         underlayColor={colors.lightFog}
-        onPress={() => (isFilter ? toggleFilter(value) : sortBy(value))}
+        onPress={onPress}
       >
         <>
           <LText bold={isChecked} style={styles.filterName}>

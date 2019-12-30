@@ -8,6 +8,16 @@ import {
   SafeAreaView,
 } from "react-native";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
+import type { App } from "@ledgerhq/live-common/lib/types/manager";
+import {
+  FilterOptions,
+  SortOptions,
+} from "@ledgerhq/live-common/lib/apps/filtering";
+import {
+  filterApps,
+  sortApps,
+  useSortedFilteredApps,
+} from "@ledgerhq/live-common/lib/apps/filtering";
 
 import i18next from "i18next";
 import { TabView, TabBar } from "react-native-tab-view";
@@ -52,9 +62,36 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
     [installed, installQueue, appByName],
   );
 
-  const { MANAGER_TABS } = useContext(ManagerContext);
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState(null);
+  const [sort, setSort] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
 
-  const [query, queryUpdate] = useState("");
+  const filterOptions: FilterOptions = useMemo(
+    () => ({
+      query,
+      installedApps,
+      type: filter,
+    }),
+    [query, installedApps, filter],
+  );
+  const sortOptions: SortOptions = useMemo(
+    () => ({
+      type: sort,
+      order: sortOrder,
+    }),
+    [sort, sortOrder],
+  );
+
+  const sortedApps: Array<App> = useSortedFilteredApps(
+    apps,
+    filterOptions,
+    sortOptions,
+  );
+
+  console.log(sortedApps, sort, filter);
+
+  const { MANAGER_TABS } = useContext(ManagerContext);
   const [index, setIndex] = React.useState(0);
   const [tabSwiping, onTabSwipe] = useState(false);
   const [routes] = React.useState([
@@ -63,14 +100,6 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
   ]);
 
   const onInputFocus = useCallback(() => {}, []);
-  const onInputClear = useCallback(() => queryUpdate(""), [queryUpdate]);
-  const onIndexChange = useCallback(
-    i => {
-      setIndex(i);
-      queryUpdate("");
-    },
-    [setIndex, queryUpdate],
-  );
   const tabSwipe = useCallback(isSwiping => () => onTabSwipe(isSwiping), [
     onTabSwipe,
   ]);
@@ -110,7 +139,7 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
         return (
           <AppsList
             listKey={MANAGER_TABS.CATALOG}
-            apps={apps}
+            apps={sortedApps}
             state={state}
             dispatch={dispatch}
             active={tabSwiping || index === 0}
@@ -169,14 +198,20 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
               placeholderTextColor={colors.smoke}
               clearButtonMode="always"
               onFocus={onInputFocus}
-              onInputCleared={onInputClear}
-              onChangeText={queryUpdate}
+              onInputCleared={_ => {}}
+              onChangeText={() => {}}
               value={query}
               numberOfLines={1}
             />
           </View>
           <View style={styles.filterButton}>
-            <AppFilter dispatch={dispatch} disabled={index !== 0} />
+            <AppFilter
+              filter={filter}
+              setFilter={setFilter}
+              sort={sort}
+              setSort={setSort}
+              disabled={index !== 0}
+            />
           </View>
         </Animated.View>
         {installedApps && installedApps.length > 0 && (
@@ -204,7 +239,7 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
       renderTabBar={() => null}
       navigationState={{ index, routes }}
       renderScene={renderScene}
-      onIndexChange={onIndexChange}
+      onIndexChange={setIndex}
       initialLayout={initialLayout}
       position={position}
       onSwipeStart={tabSwipe(true)}
