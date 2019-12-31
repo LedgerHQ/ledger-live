@@ -53,7 +53,7 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
 
   const [filter, setFilter] = useState(null);
   const [sort, setSort] = useState(null);
-  const [order, setOrder] = useState(null);
+  const [order, setOrder] = useState("asc");
 
   const filterOptions: FilterOptions = useMemo(
     () => ({

@@ -28,13 +28,11 @@ const AppFilter = ({
 }: Props) => {
   const [isOpened, openModal] = useState(false);
   const toggleModal = useCallback(value => () => openModal(value), [openModal]);
-  const hasFilters = useMemo(() => filter || sort || order, [
+  const hasFilters = useMemo(() => filter || (sort && order), [
     filter,
     sort,
     order,
   ]);
-
-  console.log(filter, sort, order);
 
   return (
     <>

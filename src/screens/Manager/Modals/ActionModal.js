@@ -22,18 +22,22 @@ const ActionModal = ({ isOpened, onClose, children, actions = [] }: Props) => {
     >
       <SafeAreaView style={styles.root}>
         {children}
-        <View style={styles.modalFooter}>
-          {actions.map(({ title, onPress, type = "primary", ...props }, i) => (
-            <Button
-              key={i}
-              containerStyle={styles.actionButton}
-              type={type}
-              title={title}
-              onPress={onPress}
-              {...props}
-            />
-          ))}
-        </View>
+        {actions.length > 0 && (
+          <View style={styles.modalFooter}>
+            {actions.map(
+              ({ title, onPress, type = "primary", ...props }, i) => (
+                <Button
+                  key={i}
+                  containerStyle={styles.actionButton}
+                  type={type}
+                  title={title}
+                  onPress={onPress}
+                  {...props}
+                />
+              ),
+            )}
+          </View>
+        )}
       </SafeAreaView>
     </BottomModal>
   );

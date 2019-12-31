@@ -200,6 +200,12 @@
       "info": "There is not enough storage to install {{app}} app.\n\nPlease manage your storage by uninstalling one or several apps",
       "description": "Please uninstall some apps to make space. This will not affect your crypto assets."
     },
+    "ManagerQuitPage": {
+      "title": "Quit manager?",
+      "description": "There is one or several app update in progress.\n\nIf you quit the manager, yoiu will have to restart the operation.",
+      "stay": "Stay in manager",
+      "quit": "Quit manager"
+    },
     "ManagerUninstallBTCDep": {
       "title": "Sorry, this app is required",
       "description": "Uninstall the Bitcoin or Ethereum app last."
@@ -1236,8 +1242,8 @@
     "sort": {
       "title": "Sort by",
       "default": "Default",
-      "name_desc": "Name A-Z",
-      "name_asc": "Name Z-A",
+      "name_asc": "Name A-Z",
+      "name_desc": "Name Z-A",
       "marketcap_desc": "Market Cap lowest first",
       "marketcap_asc": "Market Cap highest first"
     }

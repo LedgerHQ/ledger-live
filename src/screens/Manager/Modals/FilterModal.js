@@ -164,7 +164,7 @@ const FilterModalComponent = ({
         if (isFilter) filterBy(newValue);
         else {
           sortBy(newValue);
-          orderBy(isChecked ? null : orderValue);
+          orderBy(isChecked ? "asc" : orderValue);
         }
       };
 

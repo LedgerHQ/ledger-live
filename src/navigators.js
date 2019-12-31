@@ -1,7 +1,11 @@
 // @flow
 import React from "react";
 import i18next from "i18next";
-import { createSwitchNavigator, createAppContainer } from "react-navigation";
+import {
+  createSwitchNavigator,
+  createAppContainer,
+  NavigationActions,
+} from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import {
   createBottomTabNavigator,
@@ -203,7 +207,7 @@ const ManagerStack = createStackNavigator(
     // $FlowFixMe
     Manager,
     // $FlowFixMe
-    ManagerMain: { screen: ManagerMain, params: { isUpdating: false } },
+    ManagerMain,
   },
   {
     ...stackNavigatorConfig,
@@ -226,22 +230,6 @@ ManagerStack.navigationOptions = ({ navigation }) => ({
   ),
   tabBarVisible: !navigation.getParam("editMode"),
 });
-
-const defaultManagerGetStateForAction = ManagerStack.router.getStateForAction;
-ManagerStack.router.getStateForAction = (action, state, opt) => {
-  if (
-    state &&
-    state.routes[state.index].params &&
-    state.routes[state.index].params.isUpdating
-  ) {
-    console.log(state.routes[state.index].params, opt);
-    // Returning null from getStateForAction means that the action
-    // has been handled/blocked, but there is not a new state
-    // return state;
-  }
-
-  return defaultManagerGetStateForAction(action, state);
-};
 
 const AccountsStack = createStackNavigator(
   {
@@ -293,6 +281,23 @@ const Main = createBottomTabNavigator(
 Main.navigationOptions = {
   header: null,
 };
+
+const defaultManagerGetStateForAction = Main.router.getStateForAction;
+
+Object.assign(Main.router, {
+  getStateForAction(action, state) {
+    if (
+      state &&
+      action.type !== NavigationActions.SET_PARAMS &&
+      state.routes[state.index].params &&
+      state.routes[state.index].params.blockNavigation
+    ) {      
+      return null;
+    }
+
+    return defaultManagerGetStateForAction(action, state);
+  },
+});
 
 const ReceiveFunds = createStackNavigator(
   {

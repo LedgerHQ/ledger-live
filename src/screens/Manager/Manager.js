@@ -1,12 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
-
+import { NavigationActions } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
-
-import { NavigationEvents } from "react-navigation";
 
 import { ManagerContext } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
@@ -21,12 +20,26 @@ type Props = {
 
 export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
   const { apps, currentError, installQueue, uninstallQueue } = state;
+  const [quitManagerAction, setQuitManagerAction] = useState(false);
 
   useEffect(() => {
-    const isUpdating = installQueue.length + uninstallQueue.length > 0;
-    console.log('updating', isUpdating);
-    navigation.setParams({ isUpdating });
-  }, [installQueue.length, uninstallQueue.length]);
+    const blockNavigation = installQueue.length + uninstallQueue.length > 0;
+    const n = navigation.dangerouslyGetParent();
+    if (n) {
+      n.setParams({ blockNavigation });
+      let navListener;
+      if (blockNavigation) {
+        navListener = navigation.addListener("action", e => {
+          if (e.action && e.action.type !== NavigationActions.SET_PARAMS) {
+            setQuitManagerAction(e.action);
+          }
+        });
+      } else if (navListener) {
+        navListener.remove();
+        setQuitManagerAction(false);
+      }
+    }
+  }, [installQueue.length, uninstallQueue.length, setQuitManagerAction]);
 
   const [error, setError] = useState(null);
   useEffect(() => setError(currentError), [setError, currentError]);
@@ -51,6 +64,15 @@ export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
   const resetAppUninstallWithDependencies = useCallback(() => {
     setAppUninstallWithDependencies(null);
   }, [setAppUninstallWithDependencies]);
+  const closeQuitManagerModal = useCallback(() => setQuitManagerAction(null), [
+    setQuitManagerAction,
+  ]);
+  const quitManager = useCallback(() => {
+    const n = navigation.dangerouslyGetParent();
+    if (n) n.setParams({ blockNavigation: false });
+    navigation.dispatch(quitManagerAction);
+    setQuitManagerAction(null);
+  }, [quitManagerAction, setQuitManagerAction]);
 
   return (
     <ManagerContext.Provider
@@ -64,11 +86,13 @@ export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
         setAppUninstallWithDependencies,
       }}
     >
-      <NavigationEvents
-        onWillBlur={payload => console.log('will blur', payload)} // show modal if updating
-      />
       <AppsScreen state={state} dispatch={dispatch} navigation={navigation} />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
+      <QuitManagerModal
+        isOpened={quitManagerAction}
+        onConfirm={quitManager}
+        onClose={closeQuitManagerModal}
+      />
       <StorageWarningModal
         warning={storageWarning}
         onClose={setStorageWarning}
