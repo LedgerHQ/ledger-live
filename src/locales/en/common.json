@@ -1158,9 +1158,11 @@
       "title": "App catalog",
       "loading": "Loading apps...",
       "noApps": "No apps found",
-      "searchApps": "Search apps...",
+      "searchApps": "Search app in catalog...",
       "noAppsInstalled": "No apps installed on your device",
-      "noAppsDescription": "Go in Apps catalog section and install some apps on your device"
+      "noAppsDescription": "Go in Apps catalog section and install some apps on your device",
+      "noResultsFound": "No results found",
+      "noResultsDesc": "Please verify the spelling and try again"
     },
     "uninstall": {
       "title": "Uninstall all",

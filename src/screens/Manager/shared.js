@@ -1,10 +1,9 @@
 // @flow
-
 import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps";
 import { useAppsRunner } from "@ledgerhq/live-common/lib/apps";
 import { execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import { useCallback } from "react";
+import { useCallback, createContext } from "react";
 
 export function useApps(listAppsRes: ListAppsResult, deviceId: string) {
   const exec = useCallback(
@@ -15,3 +14,5 @@ export function useApps(listAppsRes: ListAppsResult, deviceId: string) {
 
   return useAppsRunner(listAppsRes, exec);
 }
+
+export const ManagerContext = createContext();

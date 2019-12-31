@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useEffect, createContext } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
 import { NavigationEvents } from "react-navigation";
 
+import { ManagerContext } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
@@ -17,8 +18,6 @@ type Props = {
   },
   navigation: *,
 };
-
-export const ManagerContext = createContext();
 
 export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
   const { apps, currentError, installQueue, uninstallQueue } = state;
@@ -68,7 +67,7 @@ export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
       <NavigationEvents
         onWillBlur={payload => console.log('will blur', payload)} // show modal if updating
       />
-      <AppsScreen state={state} dispatch={dispatch} />
+      <AppsScreen state={state} dispatch={dispatch} navigation={navigation} />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <StorageWarningModal
         warning={storageWarning}

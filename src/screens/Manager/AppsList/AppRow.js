@@ -20,7 +20,7 @@ import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
 
-import { ManagerContext } from "../Manager";
+import { ManagerContext } from "../shared";
 
 type Props = {
   app: ApplicationVersion,
@@ -28,9 +28,17 @@ type Props = {
   dispatch: Action => void,
   listView: String,
   index: Number,
+  animation: Boolean,
 };
 
-const AppRow = ({ app, state, dispatch, listView, index }: Props) => {
+const AppRow = ({
+  app,
+  state,
+  dispatch,
+  listView,
+  index,
+  animation,
+}: Props) => {
   const { name, version, bytes, icon } = app;
   const { installed } = state;
   const { setStorageWarning, MANAGER_TABS } = useContext(ManagerContext);
@@ -53,14 +61,18 @@ const AppRow = ({ app, state, dispatch, listView, index }: Props) => {
     name,
   ]);
 
+  const Container = animation ? Animatable.View : View;
+  const containerProps = animation
+    ? {
+        animation: index <= 15 ? "fadeInUp" : "fadeIn",
+        duration: 300,
+        delay: index <= 15 ? index * 100 : 0,
+        useNativeDriver: true,
+      }
+    : {};
+
   return (
-    <Animatable.View
-      style={styles.root}
-      animation={index <= 11 ? "fadeInUp" : "fadeIn"}
-      duration={400}
-      delay={index <= 11 ? index * 40 : 0}
-      useNativeDriver
-    >
+    <Container style={styles.root} {...containerProps}>
       <AppIcon icon={icon} />
       <View style={styles.labelContainer}>
         <LText numberOfLines={1} bold>
@@ -105,7 +117,7 @@ const AppRow = ({ app, state, dispatch, listView, index }: Props) => {
         isInstalled={isInstalled}
         isInstalledView={listView === MANAGER_TABS.INSTALLED_APPS}
       />
-    </Animatable.View>
+    </Container>
   );
 };
 

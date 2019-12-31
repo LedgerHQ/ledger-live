@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { ManagerContext } from "../Manager";
+import { ManagerContext } from "../shared";
 import Trash from "../../../icons/Trash";
 import colors from "../../../colors";
 

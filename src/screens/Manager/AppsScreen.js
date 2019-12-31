@@ -6,48 +6,37 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
-import {
-  FilterOptions,
-  SortOptions,
-} from "@ledgerhq/live-common/lib/apps/filtering";
-import {
-  filterApps,
-  sortApps,
-  useSortedFilteredApps,
-} from "@ledgerhq/live-common/lib/apps/filtering";
+import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
 
-import i18next from "i18next";
 import { TabView, TabBar } from "react-native-tab-view";
 import Animated from "react-native-reanimated";
 import { Trans } from "react-i18next";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import colors from "../../colors";
 
+import SearchModal from "./Modals/SearchModal";
 import AppFilter from "./AppsList/AppFilter";
 import UninstallAllButton from "./AppsList/UninstallAllButton";
 
 import SearchIcon from "../../icons/Search";
-import TextInput from "../../components/TextInput";
 import LText from "../../components/LText";
 
-import { ManagerContext } from "./Manager";
+import { ManagerContext } from "./shared";
 
 import DeviceCard from "./DeviceCard";
 import AppsList from "./AppsList";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 
 const { interpolate, multiply } = Animated;
-
-type Props = { state: State, dispatch: Action => void };
-
 const { width, height } = Dimensions.get("screen");
-
 const initialLayout = { width, height };
 
-export const AppsScreen = ({ state, dispatch }: Props) => {
+type Props = { state: State, dispatch: Action => void, navigation: * };
+
+export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
   const { apps, appByName, installed, installQueue } = state;
 
   const installedApps = useMemo(
@@ -89,8 +78,6 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
     sortOptions,
   );
 
-  console.log(sortedApps, sort, filter);
-
   const { MANAGER_TABS } = useContext(ManagerContext);
   const [index, setIndex] = React.useState(0);
   const [tabSwiping, onTabSwipe] = useState(false);
@@ -99,7 +86,6 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
     { key: MANAGER_TABS.INSTALLED_APPS, title: "Installed Apps" },
   ]);
 
-  const onInputFocus = useCallback(() => {}, []);
   const tabSwipe = useCallback(isSwiping => () => onTabSwipe(isSwiping), [
     onTabSwipe,
   ]);
@@ -187,23 +173,7 @@ export const AppsScreen = ({ state, dispatch }: Props) => {
             },
           ]}
         >
-          <View style={styles.searchBarInput}>
-            <View style={styles.searchBarIcon}>
-              <SearchIcon size={16} color={colors.smoke} />
-            </View>
-            <TextInput
-              style={styles.searchBarTextInput}
-              containerStyle={styles.searchBarTextInput}
-              placeholder={i18next.t("manager.appList.searchApps")}
-              placeholderTextColor={colors.smoke}
-              clearButtonMode="always"
-              onFocus={onInputFocus}
-              onInputCleared={_ => {}}
-              onChangeText={() => {}}
-              value={query}
-              numberOfLines={1}
-            />
-          </View>
+          <SearchModal state={state} dispatch={dispatch} />
           <View style={styles.filterButton}>
             <AppFilter
               filter={filter}
@@ -289,28 +259,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: colors.lightFog,
     width,
-  },
-  searchBarIcon: {
-    width: 38,
-    height: 38,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  searchBarInput: {
-    flexGrow: 1,
-    flexBasis: "auto",
-    flexDirection: "row",
-    height: 38,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    backgroundColor: colors.lightGrey,
-    borderRadius: 3,
-  },
-  searchBarTextInput: {
-    flexGrow: 1,
-    fontSize: 14,
-    color: colors.smoke,
-    height: 38,
   },
   listContainer: {
     width,

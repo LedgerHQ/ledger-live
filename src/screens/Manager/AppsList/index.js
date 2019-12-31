@@ -1,9 +1,10 @@
-import React, { PureComponent } from "react";
-import { View, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
+import React, { memo, useMemo, useCallback } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { State } from "@ledgerhq/live-common/lib/apps";
 import AppRow from "./AppRow";
 import colors from "../../../colors";
+import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 type Props = {
   apps: Array<App>,
@@ -14,43 +15,55 @@ type Props = {
   renderNoResults: Function,
 };
 
-const { height } = Dimensions.get("window");
-class AppsList extends PureComponent<Props> {
+const { height } = getWindowDimensions();
 
-  renderRow = ({ item, index }: { item: App, index: number }) => (
-    <AppRow
-      app={item}
-      index={index}
-      state={this.props.state}
-      dispatch={this.props.dispatch}
-      listView={this.props.listKey}
-    />
+const AppsList = ({
+  apps,
+  listKey,
+  active,
+  renderNoResults,
+  state,
+  dispatch,
+}: Props) => {
+  const viewHeight = useMemo(() => (active ? "auto" : height - 253), [active]);
+  const renderRow = useCallback(
+    ({ item, index }: { item: App, index: number }) => (
+      <AppRow
+        app={item}
+        index={index}
+        state={state}
+        dispatch={dispatch}
+        listView={listKey}
+      />
+    ),
   );
+  const keyExtractor = useCallback((d: App) => String(d.id) + listKey, [
+    listKey,
+  ]);
 
-  render() {
-    const { apps, listKey, active, renderNoResults } = this.props;
-
-    if (apps.length <= 0)
-      return (
-        renderNoResults && (
-          <View style={styles.renderNoResult}>{renderNoResults()}</View>
-        )
-      );
-
-    const viewHeight = active ? "auto" : height - 203;
-
+  if (apps.length <= 0)
     return (
-      <Animated.View style={{ height: viewHeight }}>
-        <FlatList
-          listKey={listKey}
-          data={apps}
-          renderItem={this.renderRow}
-          keyExtractor={(d: App) => String(d.id) + listKey}
-        />
-      </Animated.View>
+      <View style={styles.renderNoResult}>
+        {renderNoResults && renderNoResults()}
+      </View>
     );
-  }
-}
+
+  return (
+    <View style={{ height: viewHeight }}>
+      <FlatList
+        listKey={listKey}
+        data={apps}
+        renderItem={renderRow}
+        keyExtractor={keyExtractor}
+      />
+    </View>
+  );
+};
+
+AppsList.defaultProps = {
+  animation: true,
+  renderNoResults: () => {},
+};
 
 const styles = StyleSheet.create({
   root: {
@@ -65,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppsList;
+export default memo(AppsList);
