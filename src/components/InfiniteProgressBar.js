@@ -1,6 +1,6 @@
 // @flow
 
-import React, { memo, useState } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import Animated, { Easing } from "react-native-reanimated";
 import colors from "../colors";
@@ -17,9 +17,9 @@ const {
   interpolate,
 } = Animated;
 
-const runProgression = () => {
-  const clock = new Clock();
+const clock = new Clock();
 
+const runProgression = () => {
   const state = {
     finished: new Value(0),
     position: new Value(0),
@@ -56,6 +56,8 @@ const runProgression = () => {
   ]);
 };
 
+const progress = runProgression();
+
 type Props = {
   style?: *,
   height: number,
@@ -69,22 +71,17 @@ const InfiniteProgressBar = ({
   progressColor,
   backgroundColor,
 }: Props) => {
-  const [width, setWidth] = useState(100);
-  const progress = runProgression();
   const scaleX = interpolate(progress, {
     inputRange: [0, 0.4, 1],
     outputRange: [0, 0.9, 0],
   });
   const translateX = interpolate(progress, {
     inputRange: [0, 0.6, 1],
-    outputRange: [-width, 0, width],
+    outputRange: [-100, 0, 100],
   });
 
   return (
-    <View
-      style={[styles.wrapper, { height, backgroundColor }, style]}
-      onLayout={e => setWidth(e.nativeEvent.layout.width)}
-    >
+    <View style={[styles.wrapper, { height, backgroundColor }, style]}>
       <Animated.View
         style={[
           styles.bar,
