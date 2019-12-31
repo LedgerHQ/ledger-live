@@ -1,10 +1,11 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useState, useCallback, useEffect } from "react";
 import {
   StyleSheet,
   SectionList,
   View,
   TouchableHighlight,
 } from "react-native";
+import { Trans } from "react-i18next";
 import Check from "../../../icons/Check";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
@@ -13,30 +14,30 @@ import ActionModal from "./ActionModal";
 
 const filterSections = [
   {
-    title: "Filters",
+    title: "AppAction.filter.title",
     data: [
       // {
-      //   label: "All",
+      //   label: "AppAction.filter.all",
       //   value: "all",
       //   isFilter: true,
       // },
       {
-        label: "Installed",
+        label: "AppAction.filter.installed",
         value: "installed",
         isFilter: true,
       },
       {
-        label: "Not installed",
+        label: "AppAction.filter.not_installed",
         value: "not_installed",
         isFilter: true,
       },
       {
-        label: "Live supported",
+        label: "AppAction.filter.supported",
         value: "supported",
         isFilter: true,
       },
       {
-        label: "Updatable",
+        label: "AppAction.filter.updatable",
         value: "updatable",
         isFilter: true,
       },
@@ -44,19 +45,31 @@ const filterSections = [
     footerSeparator: true,
   },
   {
-    title: "Sort by",
+    title: "AppAction.sort.title",
     data: [
+      // {
+      //   label: "AppAction.sort.default",
+      //   value: "default",
+      // },
       {
-        label: "Default",
-        value: "default",
-      },
-      {
-        label: "Name",
+        label: "AppAction.sort.name_asc",
         value: "name",
+        orderValue: "asc",
       },
       {
-        label: "Market Cap",
+        label: "AppAction.sort.name_desc",
+        value: "name",
+        orderValue: "desc",
+      },
+      {
+        label: "AppAction.sort.marketcap_desc",
         value: "marketcap",
+        orderValue: "desc",
+      },
+      {
+        label: "AppAction.sort.marketcap_asc",
+        value: "marketcap",
+        orderValue: "asc",
       },
     ],
   },
@@ -66,7 +79,9 @@ const keyExtractor = (item, index) => item + index;
 
 const SectionHeader = ({ section: { title } }: *) => (
   <View style={[styles.sectionLine, styles.paddingLine]}>
-    <LText style={styles.sectionHeader}>{title}</LText>
+    <LText style={styles.sectionHeader}>
+      <Trans i18nKey={title} />
+    </LText>
   </View>
 );
 
@@ -82,6 +97,8 @@ type Props = {
   setFilter: Function,
   sort: string,
   setSort: Function,
+  order: string,
+  setOrder: Function,
   isOpened: Boolean,
   onClose: Function,
 };
@@ -91,11 +108,20 @@ const FilterModalComponent = ({
   setFilter,
   sort,
   setSort,
+  order,
+  setOrder,
   isOpened,
   onClose,
 }: Props) => {
-  const [selectedFilters, selectFilters] = useState(filter);
-  const [selectedSort, sortBy] = useState(sort);
+  const [selectedFilters, filterBy] = useState();
+  const [selectedSort, sortBy] = useState();
+  const [selectedOrder, orderBy] = useState();
+
+  useEffect(() => {
+    filterBy(filter);
+    sortBy(sort);
+    orderBy(order);
+  }, [isOpened, filter, sort, order]);
 
   /** 
    const toggleFilter = useCallback(
@@ -106,48 +132,63 @@ const FilterModalComponent = ({
       if (index >= 0) filters.splice(index, 1);
       else filters.push(value);
 
-      selectFilters(filters);
+      filterBy(filters);
     },
-    [selectedFilters, selectFilters],
+    [selectedFilters, filterBy],
   );
   */
 
   const onFilter = useCallback(() => {
     setFilter(selectedFilters);
     setSort(selectedSort);
+    setOrder(selectedOrder);
     onClose();
-  }, [selectedFilters, setFilter, selectedSort, setSort, onClose]);
+  }, [
+    selectedFilters,
+    setFilter,
+    selectedSort,
+    setSort,
+    setOrder,
+    selectedOrder,
+    onClose,
+  ]);
 
-  const FilterItem = useCallback(({ item: { label, value, isFilter } }) => {
-    const isChecked = isFilter
-      ? selectedFilters === value
-      : selectedSort === value;
+  const FilterItem = useCallback(
+    ({ item: { label, value, isFilter, orderValue } }) => {
+      const isChecked = isFilter
+        ? selectedFilters === value
+        : selectedSort === value && orderValue === selectedOrder;
 
-    const onPress = () => {
-      const newValue = isChecked ? null : value;
-      if (isFilter) selectFilters(newValue);
-      else sortBy(newValue);
-    };
+      const onPress = () => {
+        const newValue = isChecked ? null : value;
+        if (isFilter) filterBy(newValue);
+        else {
+          sortBy(newValue);
+          orderBy(isChecked ? null : orderValue);
+        }
+      };
 
-    return (
-      <TouchableHighlight
-        style={[styles.sectionLine, styles.paddingLine]}
-        underlayColor={colors.lightFog}
-        onPress={onPress}
-      >
-        <>
-          <LText bold={isChecked} style={styles.filterName}>
-            {label}
-          </LText>
-          {Boolean(isChecked) && (
-            <View style={styles.checkIcon}>
-              <Check color={colors.live} size={14} />
-            </View>
-          )}
-        </>
-      </TouchableHighlight>
-    );
-  });
+      return (
+        <TouchableHighlight
+          style={[styles.sectionLine, styles.paddingLine]}
+          underlayColor={colors.lightFog}
+          onPress={onPress}
+        >
+          <>
+            <LText bold={isChecked} style={styles.filterName}>
+              <Trans i18nKey={label} />
+            </LText>
+            {Boolean(isChecked) && (
+              <View style={styles.checkIcon}>
+                <Check color={colors.live} size={14} />
+              </View>
+            )}
+          </>
+        </TouchableHighlight>
+      );
+    },
+    [selectedFilters, selectedSort, selectedOrder],
+  );
 
   const onFilterActions = [
     {

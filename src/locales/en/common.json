@@ -1224,6 +1224,22 @@
         "showAll": "Show all dependencies",
         "description": "Some apps are dependent of {{app}}.\nIf you continue uninstall, all dependent apps of {{app}} will be uninstalled too."
       }
+    },
+    "filter": {
+      "title": "Filters",
+      "all": "All",
+      "installed": "Installed",
+      "not_installed": "Not installed",
+      "supported": "Live supported",
+      "updatable": "Updatable"
+    },
+    "sort": {
+      "title": "Sort by",
+      "default": "Default",
+      "name_desc": "Name A-Z",
+      "name_asc": "Name Z-A",
+      "marketcap_desc": "Market Cap lowest first",
+      "marketcap_asc": "Market Cap highest first"
     }
   },
   "AuthenticityRow": {

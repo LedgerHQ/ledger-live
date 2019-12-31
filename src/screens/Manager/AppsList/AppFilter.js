@@ -12,13 +12,29 @@ type Props = {
   setFilter: Function,
   sort: string,
   setSort: Function,
+  order: string,
+  setOrder: Function,
   disabled: Boolean,
 };
 
-const AppFilter = ({ filter, setFilter, sort, setSort, disabled }: Props) => {
+const AppFilter = ({
+  filter,
+  setFilter,
+  sort,
+  setSort,
+  order,
+  setOrder,
+  disabled,
+}: Props) => {
   const [isOpened, openModal] = useState(false);
   const toggleModal = useCallback(value => () => openModal(value), [openModal]);
-  const hasFilters = useMemo(() => filter || sort, [filter, sort]);
+  const hasFilters = useMemo(() => filter || sort || order, [
+    filter,
+    sort,
+    order,
+  ]);
+
+  console.log(filter, sort, order);
 
   return (
     <>
@@ -38,6 +54,8 @@ const AppFilter = ({ filter, setFilter, sort, setSort, disabled }: Props) => {
         setFilter={setFilter}
         sort={sort}
         setSort={setSort}
+        order={order}
+        setOrder={setOrder}
         onClose={toggleModal(false)}
       />
     </>

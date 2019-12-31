@@ -51,25 +51,24 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
     [installed, installQueue, appByName],
   );
 
-  const [query, setQuery] = useState("");
   const [filter, setFilter] = useState(null);
   const [sort, setSort] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [order, setOrder] = useState(null);
 
   const filterOptions: FilterOptions = useMemo(
     () => ({
-      query,
+      query: null,
       installedApps,
       type: filter,
     }),
-    [query, installedApps, filter],
+    [installedApps, filter],
   );
   const sortOptions: SortOptions = useMemo(
     () => ({
       type: sort,
-      order: sortOrder,
+      order,
     }),
-    [sort, sortOrder],
+    [sort, order],
   );
 
   const sortedApps: Array<App> = useSortedFilteredApps(
@@ -180,6 +179,8 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
               setFilter={setFilter}
               sort={sort}
               setSort={setSort}
+              order={order}
+              setOrder={setOrder}
               disabled={index !== 0}
             />
           </View>
