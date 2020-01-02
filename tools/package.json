@@ -8,7 +8,7 @@
     "@ledgerhq/hw-transport-web-ble": "^5.2.0",
     "@ledgerhq/hw-transport-webhid": "^5.2.0",
     "@ledgerhq/hw-transport-webusb": "^5.2.0",
-    "@ledgerhq/live-common": "10.3.0",
+    "@ledgerhq/live-common": "10.3.1",
     "@material-ui/core": "^4.8.2",
     "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
