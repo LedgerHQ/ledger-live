@@ -2,3 +2,5 @@ node_modules/
 lib/
 dbdata/
 libcoredb/
+cli/.yalc/@ledgerhq/live-common/
+cli/yalc.lock
