@@ -25,7 +25,7 @@ import {
 } from "rxjs/operators";
 import fs from "fs";
 import qrcode from "qrcode-terminal";
-import { dataToFrames } from "qrloop/exporter";
+import { dataToFrames } from "qrloop";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { isValidRecipient } from "@ledgerhq/live-common/lib/libcore/isValidRecipient";
