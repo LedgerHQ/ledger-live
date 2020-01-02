@@ -26,19 +26,12 @@ type Props = {
   app: ApplicationVersion,
   state: State,
   dispatch: Action => void,
-  listView: String,
-  index: Number,
-  animation: Boolean,
+  tab: string,
+  index: number,
+  animation: boolean,
 };
 
-const AppRow = ({
-  app,
-  state,
-  dispatch,
-  listView,
-  index,
-  animation,
-}: Props) => {
+const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
   const { name, version, bytes, icon } = app;
   const { installed } = state;
   const { setStorageWarning, MANAGER_TABS } = useContext(ManagerContext);
@@ -115,7 +108,7 @@ const AppRow = ({
         dispatch={dispatch}
         notEnoughMemoryToInstall={notEnoughMemoryToInstall}
         isInstalled={isInstalled}
-        isInstalledView={listView === MANAGER_TABS.INSTALLED_APPS}
+        isInstalledView={tab === MANAGER_TABS.INSTALLED_APPS}
       />
     </Container>
   );

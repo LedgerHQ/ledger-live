@@ -31,9 +31,10 @@ const { width, height } = getWindowDimensions();
 type Props = {
   state: State,
   dispatch: Action => void,
+  tab: string,
 };
 
-export default ({ state, dispatch }: Props) => {
+export default ({ state, dispatch, tab }: Props) => {
   const { MANAGER_TABS } = useContext(ManagerContext);
   const [isOpened, setIsOpen] = useState(false);
   const toggleSearchModal = useCallback(
@@ -64,9 +65,9 @@ export default ({ state, dispatch }: Props) => {
     () => ({
       query,
       installedApps,
-      type: null,
+      type: tab === MANAGER_TABS.INSTALLED_APPS ? "installed" : null,
     }),
-    [query, installedApps],
+    [query, installedApps, tab],
   );
   const [sortOptions] = useState({
     type: null,
@@ -111,6 +112,14 @@ export default ({ state, dispatch }: Props) => {
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH");
 
+  const placeholder = useMemo(
+    () =>
+      tab === MANAGER_TABS.CATALOG
+        ? i18next.t("manager.appList.searchAppsCatalog")
+        : i18next.t("manager.appList.searchAppsInstalled"),
+    [tab],
+  );
+
   const elements = [
     <View style={styles.header}>
       <View style={styles.searchBar}>
@@ -124,7 +133,7 @@ export default ({ state, dispatch }: Props) => {
           onChangeText={setQuery}
           clearButtonMode="always"
           style={styles.searchBarTextInput}
-          placeholder={i18next.t("manager.appList.searchApps")}
+          placeholder={placeholder}
           placeholderTextColor={colors.smoke}
           onInputCleared={clear}
           value={query}
@@ -161,7 +170,7 @@ export default ({ state, dispatch }: Props) => {
           <SearchIcon size={16} color={colors.smoke} />
         </View>
         <LText semiBold style={styles.searchBarTextInput}>
-          <Trans i18nKey="manager.appList.searchApps" />
+          {placeholder}
         </LText>
       </TouchableOpacity>
       <ReactNativeModal
@@ -188,16 +197,10 @@ export default ({ state, dispatch }: Props) => {
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: colors.lightGrey,
-    justifyContent: "flex-end",
-    margin: 0,
-  },
-  root: {
     height,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
     backgroundColor: colors.lightGrey,
+    justifyContent: "flex-start",
+    margin: 0,
   },
   header: {
     height: 54,
@@ -227,7 +230,6 @@ const styles = StyleSheet.create({
   },
   searchBarInput: {
     flexGrow: 1,
-    flexBasis: "auto",
     flexDirection: "row",
     height: 38,
     alignItems: "center",
@@ -256,7 +258,6 @@ const styles = StyleSheet.create({
   },
   searchList: {
     flex: 1,
-    minHeight: height,
     width: "100%",
   },
   noResult: {

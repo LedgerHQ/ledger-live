@@ -30,7 +30,7 @@ import DeviceCard from "./DeviceCard";
 import AppsList from "./AppsList";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 
-const { interpolate, multiply } = Animated;
+const { interpolate, multiply, Extrapolate } = Animated;
 const { width, height } = Dimensions.get("screen");
 const initialLayout = { width, height };
 
@@ -94,11 +94,11 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
 
   const [position] = useState(() => new Animated.Value(0));
 
-  const fadeInSearch = interpolate(multiply(position, 2), {
+  const translateFilter = interpolate(position, {
     inputRange: [0, 1],
-    outputRange: [1, 0],
+    outputRange: [0, 100],
+    extrapolate: Extrapolate.CLAMP,
   });
-  const fadeInInstalled = multiply(position, 2);
 
   const renderNoResults = useCallback(
     () => (
@@ -123,7 +123,7 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
       case MANAGER_TABS.CATALOG:
         return (
           <AppsList
-            listKey={MANAGER_TABS.CATALOG}
+            tab={MANAGER_TABS.CATALOG}
             apps={sortedApps}
             state={state}
             dispatch={dispatch}
@@ -132,14 +132,29 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
         );
       case MANAGER_TABS.INSTALLED_APPS:
         return (
-          <AppsList
-            listKey={MANAGER_TABS.INSTALLED_APPS}
-            apps={installedApps}
-            state={state}
-            dispatch={dispatch}
-            active={tabSwiping || index === 1}
-            renderNoResults={renderNoResults}
-          />
+          <>
+            <View>
+              {installedApps && installedApps.length > 0 && (
+                <View style={[styles.searchBarContainer]}>
+                  <LText style={styles.installedAppsText}>
+                    <Trans
+                      i18nKey="manager.storage.appsInstalled"
+                      values={{ appsInstalled: installedApps.length }}
+                    />
+                  </LText>
+                  <UninstallAllButton onUninstallAll={onUninstallAll} />
+                </View>
+              )}
+            </View>
+            <AppsList
+              tab={MANAGER_TABS.INSTALLED_APPS}
+              apps={installedApps}
+              state={state}
+              dispatch={dispatch}
+              active={tabSwiping || index === 1}
+              renderNoResults={renderNoResults}
+            />
+          </>
         );
       default:
         return null;
@@ -163,47 +178,27 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
         contentContainerStyle={styles.contentContainerStyle}
       />
       <View style={styles.searchBarContainer}>
+        <SearchModal
+          state={state}
+          dispatch={dispatch}
+          tab={index === 0 ? MANAGER_TABS.CATALOG : MANAGER_TABS.INSTALLED_APPS}
+        />
         <Animated.View
           style={[
-            styles.searchBar,
-            {
-              opacity: fadeInSearch,
-              zIndex: fadeInSearch,
-            },
+            styles.filterButton,
+            { transform: [{ translateX: translateFilter }] },
           ]}
         >
-          <SearchModal state={state} dispatch={dispatch} />
-          <View style={styles.filterButton}>
-            <AppFilter
-              filter={filter}
-              setFilter={setFilter}
-              sort={sort}
-              setSort={setSort}
-              order={order}
-              setOrder={setOrder}
-              disabled={index !== 0}
-            />
-          </View>
+          <AppFilter
+            filter={filter}
+            setFilter={setFilter}
+            sort={sort}
+            setSort={setSort}
+            order={order}
+            setOrder={setOrder}
+            disabled={index !== 0}
+          />
         </Animated.View>
-        {installedApps && installedApps.length > 0 && (
-          <Animated.View
-            style={[
-              styles.searchBar,
-              {
-                opacity: fadeInInstalled,
-                zIndex: fadeInInstalled,
-              },
-            ]}
-          >
-            <LText style={styles.installedAppsText}>
-              <Trans
-                i18nKey="manager.storage.appsInstalled"
-                values={{ appsInstalled: installedApps.length }}
-              />
-            </LText>
-            <UninstallAllButton onUninstallAll={onUninstallAll} />
-          </Animated.View>
-        )}
       </View>
     </View>,
     <TabView
@@ -241,21 +236,9 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: colors.white,
-    height: 64,
-    width,
-  },
-  searchBar: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    alignItems: "center",
-    justifyContent: "space-between",
     paddingVertical: 14,
     paddingHorizontal: 16,
-    borderRadius: 0,
+    backgroundColor: colors.white,
     height: 64,
     borderBottomWidth: 1,
     borderColor: colors.lightFog,
@@ -265,9 +248,18 @@ const styles = StyleSheet.create({
     width,
   },
   filterButton: {
-    flexBasis: 38,
-    width: 38,
-    marginLeft: 10,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    height: 64,
+    width: 64,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderColor: colors.lightFog,
+    zIndex: 1,
   },
   indicatorStyle: {
     height: 3,

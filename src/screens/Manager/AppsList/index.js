@@ -8,18 +8,18 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 type Props = {
   apps: Array<App>,
-  listKey: String,
-  active: Boolean,
+  tab: string,
+  active: boolean,
   state: State,
   dispatch: *,
-  renderNoResults: Function,
+  renderNoResults?: Function,
 };
 
 const { height } = getWindowDimensions();
 
 const AppsList = ({
   apps,
-  listKey,
+  tab,
   active,
   renderNoResults,
   state,
@@ -33,13 +33,11 @@ const AppsList = ({
         index={index}
         state={state}
         dispatch={dispatch}
-        listView={listKey}
+        tab={tab}
       />
     ),
   );
-  const keyExtractor = useCallback((d: App) => String(d.id) + listKey, [
-    listKey,
-  ]);
+  const keyExtractor = useCallback((d: App) => String(d.id) + tab, [tab]);
 
   if (apps.length <= 0)
     return (
@@ -51,7 +49,7 @@ const AppsList = ({
   return (
     <View style={{ height: viewHeight }}>
       <FlatList
-        listKey={listKey}
+        listKey={tab}
         data={apps}
         renderItem={renderRow}
         keyExtractor={keyExtractor}
