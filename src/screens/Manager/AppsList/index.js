@@ -34,6 +34,7 @@ const AppsList = ({
         state={state}
         dispatch={dispatch}
         tab={tab}
+        animation
       />
     ),
   );
