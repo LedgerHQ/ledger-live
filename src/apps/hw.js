@@ -94,10 +94,7 @@ export const listApps = (
             throw e;
           }
         })
-        .then(apps => [apps, true])
-        .catch(() => {
-          return [[], false];
-        });
+        .then(apps => [apps, true]);
 
       const deviceVersionP = ManagerAPI.getDeviceVersion(
         deviceInfo.targetId,
