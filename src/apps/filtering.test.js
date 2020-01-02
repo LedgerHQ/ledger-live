@@ -14,7 +14,14 @@ type FilteringScenario = {
   _sortOptions: SortOptions,
   _filterOptions: FilterOptions
 };
-setSupportedCurrencies(["ethereum", "bitcoin", "dogecoin"]);
+setSupportedCurrencies([
+  "ethereum",
+  "bitcoin",
+  "dogecoin",
+  "ethereum_classic",
+  "ripple",
+  "litecoin"
+]);
 
 const apps =
   "Bitcoin, Ethereum, Litecoin, Dogecoin, HODL, Password Manager, Ethereum Classic, XRP, Stellar ";
@@ -70,24 +77,39 @@ const scenarios: FilteringScenario[] = [
     apps,
     installed: "",
     _sortOptions: { type: "name", order: "asc" },
-    _filterOptions: { type: "supported", installedApps: [] },
-    expectedApps: "Bitcoin, Dogecoin, Ethereum"
+    _filterOptions: { type: ["supported"], installedApps: [] },
+    expectedApps: "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, Litecoin, XRP"
+  },
+  {
+    name: "Catalog - Only apps not supported by Live",
+    apps,
+    installed: "",
+    _sortOptions: { type: "name", order: "asc" },
+    _filterOptions: { type: ["not_supported"], installedApps: [] },
+    expectedApps: "HODL, Password Manager, Stellar"
   },
   {
     name: "Installed - Filtering outdated apps only",
     apps,
     installed: "Bitcoin (outdated), Dogecoin (outdated), XRP",
     _sortOptions: { type: "name", order: "asc" },
-    _filterOptions: { type: "updatable", installedApps: [] },
+    _filterOptions: { type: ["updatable"], installedApps: [] },
     expectedApps: "Bitcoin, Dogecoin"
   },
-
+  {
+    name: "Installed - Only not supported by live",
+    apps,
+    installed: "Bitcoin, Dogecoin, XRP, Stellar, HODL",
+    _sortOptions: { type: "name", order: "asc" },
+    _filterOptions: { type: ["installed", "not_supported"], installedApps: [] },
+    expectedApps: "HODL, Stellar"
+  },
   {
     name: "Installed - Marketcap sorting asc, no filters",
     apps,
     installed: "Bitcoin, Stellar, Ethereum",
     _sortOptions: { type: "marketcap", order: "asc" },
-    _filterOptions: { type: "installed", installedApps: [] },
+    _filterOptions: { type: ["installed"], installedApps: [] },
     expectedApps: "Stellar, Ethereum, Bitcoin"
   },
   {
@@ -97,7 +119,7 @@ const scenarios: FilteringScenario[] = [
     _sortOptions: {},
     _filterOptions: {
       query: "IMNOTHERE",
-      type: "installed",
+      type: ["installed"],
       installedApps: []
     },
     expectedApps: ""
@@ -109,10 +131,34 @@ const scenarios: FilteringScenario[] = [
     _sortOptions: { type: "name", order: "asc" },
     _filterOptions: {
       query: "ethereum",
-      type: "not_installed",
+      type: ["not_installed"],
       installedApps: []
     },
     expectedApps: "Ethereum, Ethereum Classic"
+  },
+  {
+    name: "Compatible compound filters - Installed and also supported by live",
+    apps,
+    installed: "Bitcoin, Ethereum, HODL",
+    _sortOptions: { type: "name", order: "asc" },
+    _filterOptions: {
+      query: "",
+      type: ["installed", "supported"],
+      installedApps: []
+    },
+    expectedApps: "Bitcoin, Ethereum"
+  },
+  {
+    name: "Incompatible compound filters - Installed but also not installed",
+    apps,
+    installed: "Bitcoin, Ethereum",
+    _sortOptions: { type: "name", order: "asc" },
+    _filterOptions: {
+      query: "",
+      type: ["not_installed", "installed"],
+      installedApps: []
+    },
+    expectedApps: ""
   }
 ];
 
