@@ -16,7 +16,6 @@ type Props = {
 };
 
 const QuitManagerModal = ({ isOpened, onConfirm, onClose }: Props) => {
-
   return (
     <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
       <View style={styles.storageImage}>

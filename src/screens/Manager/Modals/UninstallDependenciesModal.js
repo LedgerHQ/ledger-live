@@ -53,7 +53,6 @@ const UninstallDependenciesModal = ({
     onClose();
   };
 
-
   const modalActions = [
     {
       title: "Continue uninstall",

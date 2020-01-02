@@ -68,7 +68,6 @@ class Button extends PureComponent<
     anim: Animated.Value,
   },
 > {
-
   static defaultProps = {
     outline: true,
   };
@@ -160,7 +159,11 @@ class Button extends PureComponent<
     const isDisabled = disabled || !onPress || pending;
 
     const needsBorder =
-      (type === "secondary" || type === "tertiary" || type === "darkSecondary") && !isDisabled && outline;
+      (type === "secondary" ||
+        type === "tertiary" ||
+        type === "darkSecondary") &&
+      !isDisabled &&
+      outline;
 
     const mainContainerStyle = [
       styles.container,

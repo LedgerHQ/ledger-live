@@ -1,6 +1,6 @@
 // @flow
-import React, { PureComponent } from "react";
-import Svg, { Path, G, Circle } from "react-native-svg";
+import React from "react";
+import Svg, { Path } from "react-native-svg";
 
 type Props = {
   size: number,

@@ -7,7 +7,6 @@ import InfoIcon from "../../../components/InfoIcon";
 import Exclamation from "../../../icons/Exclamation";
 import Storage from "../../../icons/Storage";
 
-
 import ActionModal from "./ActionModal";
 
 type Props = {
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
 });
 
 export default memo(StorageWarningModal);

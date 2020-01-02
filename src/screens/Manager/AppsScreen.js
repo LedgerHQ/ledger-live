@@ -21,7 +21,6 @@ import SearchModal from "./Modals/SearchModal";
 import AppFilter from "./AppsList/AppFilter";
 import UninstallAllButton from "./AppsList/UninstallAllButton";
 
-import SearchIcon from "../../icons/Search";
 import LText from "../../components/LText";
 
 import { ManagerContext } from "./shared";
@@ -30,13 +29,13 @@ import DeviceCard from "./DeviceCard";
 import AppsList from "./AppsList";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 
-const { interpolate, multiply, Extrapolate } = Animated;
+const { interpolate, Extrapolate } = Animated;
 const { width, height } = Dimensions.get("screen");
 const initialLayout = { width, height };
 
-type Props = { state: State, dispatch: Action => void, navigation: * };
+type Props = { state: State, dispatch: Action => void };
 
-export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
+const AppsScreen = ({ state, dispatch }: Props) => {
   const { apps, appByName, installed, installQueue } = state;
 
   const installedApps = useMemo(
@@ -55,7 +54,7 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
   const [sort, setSort] = useState(null);
   const [order, setOrder] = useState("asc");
 
-  const filterOptions: FilterOptions = useMemo(
+  const filterOptions = useMemo(
     () => ({
       query: null,
       installedApps,
@@ -63,7 +62,7 @@ export const AppsScreen = ({ state, dispatch, navigation }: Props) => {
     }),
     [installedApps, filter],
   );
-  const sortOptions: SortOptions = useMemo(
+  const sortOptions = useMemo(
     () => ({
       type: sort,
       order,

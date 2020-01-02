@@ -7,7 +7,7 @@ type Props = {
 };
 
 // @TODO redo the whole svg as it is a bit malformed to be configurable (ie: color with mask)
-export default ({ size = 109, color }: Props) => (
+export default ({ size = 109 }: Props) => (
   <Svg width={size} height={size} viewBox="0 0 109 121" fill="none">
     <Path
       d="M39 84H25C11.7452 84 1 73.2548 1 60V25C1 11.7452 11.7452 1 25 1H59C72.2548 1 83 11.7452 83 25V51"

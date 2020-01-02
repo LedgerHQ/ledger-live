@@ -291,7 +291,7 @@ Object.assign(Main.router, {
       action.type !== NavigationActions.SET_PARAMS &&
       state.routes[state.index].params &&
       state.routes[state.index].params.blockNavigation
-    ) {      
+    ) {
       return null;
     }
 

@@ -4,6 +4,7 @@ import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
 import BottomModal from "../../../components/BottomModal";
 import colors from "../../../colors";
+
 const { height } = Dimensions.get("window");
 
 type Props = {
