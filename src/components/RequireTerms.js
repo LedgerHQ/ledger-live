@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const RequireTermsModal = ({ onClose }: Props) => {
+const RequireTermsModal = () => {
   const [markdown, error, retry] = useTerms();
   const [accepted, accept] = useTermsAccept();
   const [toggle, setToggle] = useState(false);
