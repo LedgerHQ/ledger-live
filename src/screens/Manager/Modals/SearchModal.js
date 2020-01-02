@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   searchList: {
     flex: 1,
-    height,
+    minHeight: height,
     width: "100%",
   },
   noResult: {

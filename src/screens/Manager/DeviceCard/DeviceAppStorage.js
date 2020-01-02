@@ -11,18 +11,23 @@ import colors from "../../../colors";
 
 import Warning from "../../../icons/Warning";
 
-
 type Props = {
   distribution: AppsDistribution,
 };
 
 const DeviceAppStorage = ({
-  distribution: { freeSpaceBytes, shouldWarnMemory, totalAppsBytes, apps },
+  distribution: {
+    freeSpaceBytes,
+    appsSpaceBytes,
+    shouldWarnMemory,
+    totalAppsBytes,
+    apps,
+  },
 }: Props) => {
   const installedApps = apps.filter(Boolean);
   const appSizes = installedApps.map(({ bytes, currency }) => ({
-    ratio: Number((bytes / freeSpaceBytes) * 100).toFixed(2),
-    color: currency.color || "#000000",
+    ratio: Number((bytes / appsSpaceBytes) * 100).toFixed(2),
+    color: (currency && currency.color) || "#000000",
   }));
 
   const storageWarnStyle = {

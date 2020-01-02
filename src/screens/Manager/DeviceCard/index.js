@@ -29,7 +29,7 @@ type Props = {
 const DeviceCard = ({ state }: Props) => {
   const { deviceModel, firmware } = state;
   const distribution = distribute(state);
-  const capacity = formatSize(distribution.freeSpaceBytes) || "0kb";
+  const capacity = formatSize(distribution.appsSpaceBytes) || "0kb";
 
   return (
     <View style={styles.root}>
