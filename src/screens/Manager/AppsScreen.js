@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   contentContainerStyle: {
+    marginTop: 16,
     backgroundColor: "transparent",
   },
   installedAppsText: {
