@@ -121,6 +121,10 @@ const AppStateButton = ({
     [currentAppOp, currentProgress, name],
   );
 
+  const installApp = useCallback(() => {
+    dispatch({ type: "install", name });
+  }, [dispatch, name]);
+
   const uninstallApp = useCallback(() => {
     dispatch({ type: "uninstall", name });
   }, [dispatch, name]);
@@ -129,6 +133,11 @@ const AppStateButton = ({
     dispatch({ type: "install", name });
   }, [dispatch, name]);
 
+  const onCancel = useCallback(() => {
+    if (installing) uninstallApp();
+    else if (uninstalling) installApp();
+  }, [installing, uninstalling, uninstallApp, installApp]);
+
   const renderAppState = () => {
     switch (true) {
       case uninstalling:
@@ -136,7 +145,7 @@ const AppStateButton = ({
         return (
           <InstallProgress
             progress={progress}
-            onCancel={uninstallApp}
+            onCancel={onCancel}
             isInstalling={installing}
             isUpdating={canUpdate}
           />
