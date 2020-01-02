@@ -13,7 +13,7 @@
     "@ledgerhq/hw-transport-node-ble": "5.2.0",
     "@ledgerhq/hw-transport-node-hid": "5.2.0",
     "@ledgerhq/ledger-core": "5.0.0",
-    "@ledgerhq/live-common": "^10.2.1",
+    "@ledgerhq/live-common": "file:.yalc/@ledgerhq/live-common",
     "@ledgerhq/logs": "5.2.0",
     "axios": "^0.19.0",
     "bignumber.js": "^9.0.0",
