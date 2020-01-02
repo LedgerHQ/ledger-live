@@ -23,7 +23,9 @@ const defaultFormatOptions = {
   // even if the currency don't allow more than this (sub-cent)
   // a value of 1 can display USD 0.006 for instance. 2 can display USD 0.0065
   // NB even if you set 3, USD 4.50 will be display as USD 4.50 , not 4.5000 (extra zeros are not displayed)
-  subMagnitude: 0
+  subMagnitude: 0,
+  // discrete mode will hide amounts
+  discreet: false
 };
 
 type FormatFragment =
@@ -56,7 +58,8 @@ export function formatCurrencyUnitFragment(
     locale,
     disableRounding,
     useGrouping,
-    subMagnitude
+    subMagnitude,
+    discreet
   } = {
     ...defaultFormatOptions,
     // $FlowFixMe
@@ -90,11 +93,13 @@ export function formatCurrencyUnitFragment(
           : "+"
         : null,
     code: showCode ? code : null,
-    value: toLocaleString(floatValueAbs, locale, {
-      maximumFractionDigits,
-      minimumFractionDigits,
-      useGrouping
-    }),
+    value: discreet
+      ? "***"
+      : toLocaleString(floatValueAbs, locale, {
+          maximumFractionDigits,
+          minimumFractionDigits,
+          useGrouping
+        }),
     separator: nonBreakableSpace
   };
 

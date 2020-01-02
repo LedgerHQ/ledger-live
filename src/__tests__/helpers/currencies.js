@@ -199,51 +199,65 @@ test("can get fiat by coin type", () => {
 });
 
 test("can format a currency unit", () => {
+  const btc = getCryptoCurrencyById("bitcoin").units[0];
+  expect(formatCurrencyUnit(btc, BigNumber(100000000))).toBe("1");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      BigNumber(100000000)
-    )
-  ).toBe("1");
-  expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      BigNumber(1000000),
-      {
-        showCode: true
-      }
-    )
+    formatCurrencyUnit(btc, BigNumber(1000000), {
+      showCode: true
+    })
   ).toBe("BTC 0.01");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      BigNumber(100000000),
-      {
-        showCode: true
-      }
-    )
+    formatCurrencyUnit(btc, BigNumber(100000000), {
+      showCode: true
+    })
   ).toBe("BTC 1");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      BigNumber(100000000),
-      {
-        showCode: true,
-        showAllDigits: true
-      }
-    )
+    formatCurrencyUnit(btc, BigNumber(100000000), {
+      showCode: true,
+      showAllDigits: true
+    })
   ).toBe("BTC 1.00000000");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      BigNumber(100000000),
-      {
-        showCode: true,
-        showAllDigits: true,
-        alwaysShowSign: true
-      }
-    )
+    formatCurrencyUnit(btc, BigNumber(100000000), {
+      showCode: true,
+      showAllDigits: true,
+      alwaysShowSign: true
+    })
   ).toBe("+ BTC 1.00000000");
+});
+
+test("can enable discreet mode", () => {
+  const btc = getCryptoCurrencyById("bitcoin").units[0];
+  expect(
+    formatCurrencyUnit(btc, BigNumber(100000000), { discreet: true })
+  ).toBe("***");
+  expect(
+    formatCurrencyUnit(btc, BigNumber(1000000), {
+      discreet: true,
+      showCode: true
+    })
+  ).toBe("BTC ***");
+  expect(
+    formatCurrencyUnit(btc, BigNumber(100000000), {
+      discreet: true,
+      showCode: true
+    })
+  ).toBe("BTC ***");
+  expect(
+    formatCurrencyUnit(btc, BigNumber(100000000), {
+      discreet: true,
+      showCode: true,
+      showAllDigits: true
+    })
+  ).toBe("BTC ***");
+  expect(
+    formatCurrencyUnit(btc, BigNumber(100000000), {
+      discreet: true,
+      showCode: true,
+      showAllDigits: true,
+      alwaysShowSign: true
+    })
+  ).toBe("+ BTC ***");
 });
 
 test("formatter will round values by default", () => {
