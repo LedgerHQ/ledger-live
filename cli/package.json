@@ -43,7 +43,7 @@
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",
     "flow": "flow",
-    "test-jest": "rm -rf libcoredb && mkdir libcoredb && jest --maxWorkers 10",
+    "test-jest": "rm -rf libcoredb && mkdir libcoredb && jest --maxWorkers 10 --verbose",
     "test-e2e": "./scripts/tests.sh",
     "test": "yarn run test-jest && yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
