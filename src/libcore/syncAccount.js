@@ -2,8 +2,14 @@
 
 import { Observable, from, defer } from "rxjs";
 import { map } from "rxjs/operators";
+import { log } from "@ledgerhq/logs";
 import { SyncError } from "@ledgerhq/errors";
-import type { Account, CryptoCurrency, DerivationMode } from "../types";
+import type {
+  SyncConfig,
+  Account,
+  CryptoCurrency,
+  DerivationMode
+} from "../types";
 import { withLibcore } from "./access";
 import { buildAccount } from "./buildAccount";
 import { getCoreAccount } from "./getCoreAccount";
@@ -11,10 +17,8 @@ import { remapLibcoreErrors } from "./errors";
 import { shouldRetainPendingOperation } from "../account";
 import postSyncPatchPerFamily from "../generated/libcore-postSyncPatch";
 
-// FIXME how to get that
-const OperationOrderKey = {
-  date: 0
-};
+let coreSyncCounter = 0;
+export const newSyncLogId = () => ++coreSyncCounter;
 
 export async function syncCoreAccount({
   core,
@@ -24,7 +28,9 @@ export async function syncCoreAccount({
   accountIndex,
   derivationMode,
   seedIdentifier,
-  existingAccount
+  existingAccount,
+  logId,
+  syncConfig
 }: {
   core: *,
   coreWallet: *,
@@ -33,57 +39,60 @@ export async function syncCoreAccount({
   accountIndex: number,
   derivationMode: DerivationMode,
   seedIdentifier: string,
-  existingAccount?: ?Account
+  existingAccount?: ?Account,
+  logId: number,
+  syncConfig: SyncConfig
 }): Promise<Account> {
-  let coreOperations;
   try {
-    const eventReceiver = await core.EventReceiver.newInstance();
-    const eventBus = await coreAccount.synchronize();
-    const serialContext = await core
-      .getThreadDispatcher()
-      .getMainExecutionContext();
+    if (!syncConfig.withoutSynchronize) {
+      log("libcore", `sync(${logId}) syncCoreAccount`);
+      const eventReceiver = await core.EventReceiver.newInstance();
+      const eventBus = await coreAccount.synchronize();
 
-    await eventBus.subscribe(serialContext, eventReceiver);
+      log("libcore", `sync(${logId}) DONE coreAccount.synchronize`);
+      const serialContext = await core
+        .getThreadDispatcher()
+        .getMainExecutionContext();
 
-    const query = await coreAccount.queryOperations();
-    const completedQuery = await query.complete();
-    const sortedQuery = await completedQuery.addOrder(
-      OperationOrderKey.date,
-      false
-    );
-    coreOperations = await sortedQuery.execute();
+      await eventBus.subscribe(serialContext, eventReceiver);
+      log("libcore", `sync(${logId}) DONE eventBus.subscribe`);
+    }
+
+    const account = await buildAccount({
+      coreWallet,
+      coreAccount,
+      currency,
+      accountIndex,
+      derivationMode,
+      seedIdentifier,
+      existingAccount,
+      logId,
+      syncConfig
+    });
+
+    return account;
   } catch (e) {
     if (e.name !== "Error") throw remapLibcoreErrors(e);
     throw new SyncError(e.message);
   }
-
-  const account = await buildAccount({
-    coreWallet,
-    coreAccount,
-    coreOperations,
-    currency,
-    accountIndex,
-    derivationMode,
-    seedIdentifier,
-    existingAccount
-  });
-
-  return account;
 }
 
 const defaultPostSyncPatch = (initial: Account, synced: Account): Account =>
   synced;
 
-export function syncAccount(
-  existingAccount: Account
+export function sync(
+  existingAccount: Account,
+  syncConfig: SyncConfig
 ): Observable<(Account) => Account> {
+  const logId = newSyncLogId();
   const { derivationMode, seedIdentifier, currency } = existingAccount;
   const postSyncPatch =
     postSyncPatchPerFamily[currency.family] || defaultPostSyncPatch;
   return defer(() =>
     from(
-      withLibcore(core =>
-        getCoreAccount(core, existingAccount).then(
+      withLibcore(core => {
+        log("libcore", `sync(${logId}) started. ${existingAccount.id}`);
+        return getCoreAccount(core, existingAccount).then(
           ({ coreWallet, coreAccount, walletName }) =>
             syncCoreAccount({
               core,
@@ -94,10 +103,12 @@ export function syncAccount(
               accountIndex: existingAccount.index,
               derivationMode,
               seedIdentifier,
-              existingAccount
+              existingAccount,
+              logId,
+              syncConfig
             })
-        )
-      )
+        );
+      })
     )
   ).pipe(
     map(syncedAccount => initialAccount =>

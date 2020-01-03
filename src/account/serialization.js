@@ -3,6 +3,10 @@ import { BigNumber } from "bignumber.js";
 import type {
   Account,
   AccountRaw,
+  BalanceHistory,
+  BalanceHistoryRaw,
+  BalanceHistoryMap,
+  BalanceHistoryRawMap,
   TokenAccount,
   TokenAccountRaw,
   ChildAccount,
@@ -17,6 +21,37 @@ import {
   getTokenById,
   findTokenById
 } from "../currencies";
+
+export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
+  return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
+}
+
+export function fromBalanceHistoryRaw(b: BalanceHistoryRaw): BalanceHistory {
+  return b.map(([date, value]) => ({
+    date: new Date(date),
+    value: new BigNumber(value)
+  }));
+}
+
+export function toBalanceHistoryRawMap(
+  bhm: BalanceHistoryMap
+): BalanceHistoryRawMap {
+  const map = {};
+  Object.keys(bhm).forEach(range => {
+    map[range] = toBalanceHistoryRaw(bhm[range]);
+  });
+  return map;
+}
+
+export function fromBalanceHistoryRawMap(
+  bhm: BalanceHistoryRawMap
+): BalanceHistoryMap {
+  const map = {};
+  Object.keys(bhm).forEach(range => {
+    map[range] = fromBalanceHistoryRaw(bhm[range]);
+  });
+  return map;
+}
 
 export const toOperationRaw = (
   { date, value, fee, subOperations, internalOperations, ...op }: Operation,
@@ -100,7 +135,15 @@ export const fromOperationRaw = (
 };
 
 export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
-  const { id, parentId, tokenId, operations, pendingOperations, balance } = raw;
+  const {
+    id,
+    parentId,
+    tokenId,
+    operations,
+    pendingOperations,
+    balance,
+    balanceHistory
+  } = raw;
   const token = getTokenById(tokenId);
   const convertOperation = op => fromOperationRaw(op, id);
   return {
@@ -109,19 +152,33 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     parentId,
     token,
     balance: BigNumber(balance),
+    balanceHistory: fromBalanceHistoryRawMap(balanceHistory || {}),
+    operationsCount:
+      raw.operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation)
   };
 }
 
-export function toTokenAccountRaw(raw: TokenAccount): TokenAccountRaw {
-  const { id, parentId, token, operations, pendingOperations, balance } = raw;
+export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
+  const {
+    id,
+    parentId,
+    token,
+    operations,
+    operationsCount,
+    pendingOperations,
+    balance,
+    balanceHistory
+  } = ta;
   return {
     type: "TokenAccountRaw",
     id,
     parentId,
     tokenId: token.id,
     balance: balance.toString(),
+    balanceHistory: toBalanceHistoryRawMap(balanceHistory || {}),
+    operationsCount,
     operations: operations.map(o => toOperationRaw(o)),
     pendingOperations: pendingOperations.map(o => toOperationRaw(o))
   };
@@ -134,10 +191,12 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     parentId,
     currencyId,
     operations,
+    operationsCount,
     pendingOperations,
     balance,
     address,
-    capabilities
+    capabilities,
+    balanceHistory
   } = raw;
   const currency = getCryptoCurrencyById(currencyId);
   const convertOperation = op => fromOperationRaw(op, id);
@@ -150,23 +209,27 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     address,
     capabilities,
     balance: BigNumber(balance),
+    balanceHistory: fromBalanceHistoryRawMap(balanceHistory || {}),
+    operationsCount: operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation)
   };
 }
 
-export function toChildAccountRaw(raw: ChildAccount): ChildAccountRaw {
+export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
   const {
     id,
     name,
     parentId,
     currency,
     operations,
+    operationsCount,
     pendingOperations,
     balance,
+    balanceHistory,
     address,
     capabilities
-  } = raw;
+  } = ca;
   return {
     type: "ChildAccountRaw",
     id,
@@ -174,8 +237,10 @@ export function toChildAccountRaw(raw: ChildAccount): ChildAccountRaw {
     parentId,
     address,
     capabilities,
+    operationsCount,
     currencyId: currency.id,
     balance: balance.toString(),
+    balanceHistory: toBalanceHistoryRawMap(balanceHistory || {}),
     operations: operations.map(o => toOperationRaw(o)),
     pendingOperations: pendingOperations.map(o => toOperationRaw(o))
   };
@@ -219,9 +284,11 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     currencyId,
     unitMagnitude,
     operations,
+    operationsCount,
     pendingOperations,
     lastSyncDate,
     balance,
+    balanceHistory,
     spendableBalance,
     subAccounts: subAccountsRaw
   } = rawAccount;
@@ -263,8 +330,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     name,
     blockHeight,
     balance: BigNumber(balance),
+    balanceHistory: fromBalanceHistoryRawMap(balanceHistory || {}),
     spendableBalance: BigNumber(spendableBalance || balance),
     operations: (operations || []).map(convertOperation),
+    operationsCount: operationsCount || (operations && operations.length) || 0,
     pendingOperations: (pendingOperations || []).map(convertOperation),
     unit,
     currency,
@@ -298,11 +367,13 @@ export function toAccountRaw({
   freshAddresses,
   blockHeight,
   currency,
+  operationsCount,
   operations,
   pendingOperations,
   unit,
   lastSyncDate,
   balance,
+  balanceHistory,
   spendableBalance,
   subAccounts,
   endpointConfig
@@ -317,12 +388,14 @@ export function toAccountRaw({
     freshAddressPath,
     freshAddresses,
     blockHeight,
+    operationsCount,
     operations: (operations || []).map(o => toOperationRaw(o)),
     pendingOperations: (pendingOperations || []).map(o => toOperationRaw(o)),
     currencyId: currency.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toString(),
+    balanceHistory: toBalanceHistoryRawMap(balanceHistory || {}),
     spendableBalance: spendableBalance.toString()
   };
   if (endpointConfig) {

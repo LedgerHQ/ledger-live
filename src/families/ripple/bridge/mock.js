@@ -12,9 +12,10 @@ import type { Transaction } from "../types";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
 import { getCryptoCurrencyById } from "../../../data/cryptocurrencies";
 import {
-  scanAccountsOnDevice,
-  signAndBroadcast,
-  startSync,
+  scanAccounts,
+  signOperation,
+  broadcast,
+  sync,
   isInvalidRecipient
 } from "../../../bridge/mockHelpers";
 
@@ -109,14 +110,15 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   getTransactionStatus,
   prepareTransaction,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice
+  scanAccounts
 };
 
 export default { currencyBridge, accountBridge };

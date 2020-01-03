@@ -28,6 +28,23 @@ export function findOperationInAccount(
   return null;
 }
 
+export function patchOperationWithHash(
+  operation: Operation,
+  hash: string
+): Operation {
+  return {
+    ...operation,
+    hash,
+    id: `${operation.accountId}-${hash}-${operation.type}`,
+    subOperations:
+      operation.subOperations &&
+      operation.subOperations.map(op => ({
+        ...op,
+        id: `${op.accountId}-${hash}-${op.type}`
+      }))
+  };
+}
+
 export function flattenOperationWithInternals(op: Operation): Operation[] {
   let ops = [];
   // ops of type NONE does not appear in lists

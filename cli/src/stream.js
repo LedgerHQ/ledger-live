@@ -39,7 +39,7 @@ export const apdusFromFile = (file: string) =>
     map(line => Buffer.from(line, "hex"))
   );
 
-export const jsonFromFile = (file: string) =>
+export const jsonFromFile = (file: string): Observable<any> =>
   Observable.create(o => {
     let acc = "";
     let count = 0;

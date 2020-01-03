@@ -8,29 +8,17 @@ import { SyncError } from "@ledgerhq/errors";
 import { genAccount, genOperation } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";
-import type {
-  Operation,
-  Account,
-  CryptoCurrency,
-  Transaction,
-  SignAndBroadcastEvent,
-  ScanAccountEvent
-} from "../types";
+import { delay } from "../promise";
+import type { Operation } from "../types";
+import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 
 const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
-
-const delay = ms => new Promise(success => setTimeout(success, ms));
 
 const broadcasted: { [_: string]: Operation[] } = {};
 
 const syncTimeouts = {};
 
-type SyncRes = Account => Account;
-
-export const startSync = (
-  initialAccount: Account,
-  observation: boolean
-): Observable<SyncRes> =>
+export const sync: $PropertyType<AccountBridge<*>, "sync"> = initialAccount =>
   Observable.create(o => {
     const accountId = initialAccount.id;
 
@@ -56,11 +44,7 @@ export const startSync = (
           spendableBalance: balance
         };
       });
-      if (observation) {
-        syncTimeouts[accountId] = setTimeout(sync, 20000);
-      } else {
-        o.complete();
-      }
+      o.complete();
     };
 
     syncTimeouts[accountId] = setTimeout(sync, 2000);
@@ -71,32 +55,64 @@ export const startSync = (
     };
   });
 
-export const signAndBroadcast = (
-  account: Account,
-  t: Transaction,
-  _deviceId: string
-): Observable<SignAndBroadcastEvent> =>
+export const broadcast: $PropertyType<AccountBridge<*>, "broadcast"> = ({
+  signedOperation
+}) => Promise.resolve(signedOperation.operation);
+
+export const signOperation: $PropertyType<
+  AccountBridge<any>,
+  "signOperation"
+> = ({ account, transaction }) =>
   Observable.create(o => {
-    let timeout = setTimeout(() => {
-      o.next({ type: "signed" });
-      timeout = setTimeout(() => {
-        const rng = new Prando();
-        const op = genOperation(account, account, account.operations, rng);
-        op.type = "OUT";
-        op.value = t.amount;
-        op.blockHash = null;
-        op.blockHeight = null;
-        op.senders = [account.freshAddress];
-        op.recipients = [t.recipient];
-        op.blockHeight = account.blockHeight;
-        op.date = new Date();
-        broadcasted[account.id] = (broadcasted[account.id] || []).concat(op);
-        o.next({ type: "broadcasted", operation: { ...op } });
-        o.complete();
-      }, 3000);
-    }, 3000);
+    let cancelled = false;
+
+    async function main() {
+      await delay(1000);
+      if (cancelled) return;
+
+      for (let i = 0; i <= 1; i += 0.1) {
+        o.next({ type: "device-streaming", progress: i });
+        await delay(300);
+      }
+
+      o.next({ type: "device-signature-requested" });
+
+      await delay(2000);
+      if (cancelled) return;
+
+      o.next({ type: "device-signature-granted" });
+
+      const rng = new Prando();
+      const op = genOperation(account, account, account.operations, rng);
+      op.type = "OUT";
+      op.value = transaction.amount;
+      op.blockHash = null;
+      op.blockHeight = null;
+      op.senders = [account.freshAddress];
+      op.recipients = [transaction.recipient];
+      op.blockHeight = account.blockHeight;
+      op.date = new Date();
+
+      await delay(1000);
+      if (cancelled) return;
+      broadcasted[account.id] = (broadcasted[account.id] || []).concat(op);
+      o.next({
+        type: "signed",
+        signedOperation: {
+          operation: { ...op },
+          expirationDate: null,
+          signature: ""
+        }
+      });
+    }
+
+    main().then(
+      () => o.complete(),
+      e => o.error(e)
+    );
+
     return () => {
-      clearTimeout(timeout);
+      cancelled = true;
     };
   });
 
@@ -106,9 +122,9 @@ export const isInvalidRecipient = (recipient: string) =>
 const subtractOneYear = date =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
-export const scanAccountsOnDevice = (
-  currency: CryptoCurrency
-): Observable<ScanAccountEvent> =>
+export const scanAccounts: $PropertyType<CurrencyBridge, "scanAccounts"> = ({
+  currency
+}) =>
   Observable.create(o => {
     let unsubscribed = false;
     async function job() {

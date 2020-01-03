@@ -82,6 +82,8 @@ export const useAppsRunner = (
         sub.unsubscribe();
       };
     }
+    // we only want to redo the effect on appOp changes here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listResult, appOp, exec]);
 
   return [state, dispatch];

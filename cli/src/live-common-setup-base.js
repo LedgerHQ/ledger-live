@@ -62,7 +62,13 @@ const logger = winston.createLogger({
   transports: []
 });
 
-const winstonFormat = winston.format.simple();
+const { format } = winston;
+const { printf, combine, timestamp } = format;
+
+const winstonFormat = combine(
+  timestamp(),
+  printf(info => `${info.timestamp} ${info.message}`)
+);
 
 if (VERBOSE_FILE) {
   logger.add(

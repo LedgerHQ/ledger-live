@@ -300,6 +300,7 @@ function genTokenAccount(
     id: account.id + "|" + index,
     parentId: account.id,
     token,
+    operationsCount: 0,
     operations: [],
     pendingOperations: [],
     balance: BigNumber(0)
@@ -312,6 +313,7 @@ function genTokenAccount(
       const op = genOperation(account, tokenAccount, ops, rng);
       return ops.concat(op);
     }, []);
+  tokenAccount.operationsCount = tokenAccount.operations.length;
   tokenAccount.balance = ensureNoNegative(tokenAccount.operations);
   return tokenAccount;
 }
@@ -346,6 +348,7 @@ export function genAccount(
     blockHeight: rng.nextInt(100000, 200000),
     currency,
     unit: rng.nextArrayItem(currency.units),
+    operationsCount: 0,
     operations: [],
     pendingOperations: [],
     lastSyncDate: new Date()
@@ -367,6 +370,8 @@ export function genAccount(
       const op = genOperation(account, account, ops, rng);
       return ops.concat(op);
     }, []);
+
+  account.operationsCount = account.operations.length;
 
   account.balance = ensureNoNegative(account.operations);
   return account;

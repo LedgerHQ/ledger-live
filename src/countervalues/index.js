@@ -20,6 +20,7 @@ import type {
   PairConversion,
   Exchange,
   RatesMap,
+  RateGranularity,
   PollAPIPair
 } from "./types";
 import network from "../network";
@@ -41,12 +42,14 @@ const IMPORT = "LEDGER_CV:IMPORT";
 
 type PollAction = {
   type: *,
-  data: *
+  hourly?: *,
+  daily?: *
 };
 
 type ImportAction = {
   type: *,
-  rates: *
+  hourly: *,
+  daily: *
 };
 
 const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
@@ -58,14 +61,24 @@ const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
 export const formatCounterValueDay = (d: Date) =>
   `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(d.getDate())}`;
 
+/**
+ * efficient implementation of YYYY-MM-DD formatter
+ * @memberof countervalue
+ */
+export const formatCounterValueHour = (d: Date) =>
+  `${d.getFullYear()}-${twoDigits(d.getMonth() + 1)}-${twoDigits(
+    d.getDate()
+  )}T${twoDigits(d.getHours())}`;
+
 // This do one big query to fetch everything
-export const getDailyRatesAllInOnce = async (
+export const getRatesAllInOnce = async (
   getAPIBaseURL: () => string,
-  pairs: PollAPIPair[]
+  pairs: PollAPIPair[],
+  rate: string
 ) => {
   const { data }: { data: mixed } = await network({
     method: "POST",
-    url: getAPIBaseURL() + "/rates/daily",
+    url: getAPIBaseURL() + "/rates/" + rate,
     data: {
       pairs
     }
@@ -73,11 +86,12 @@ export const getDailyRatesAllInOnce = async (
   return data;
 };
 
-export const getDailyRatesBatched = (batchSize: number) => async (
+export const getRatesBatched = (batchSize: number) => async (
   getAPIBaseURL: () => string,
-  allPairs: PollAPIPair[]
+  allPairs: PollAPIPair[],
+  rate: string
 ) => {
-  const url = getAPIBaseURL() + "/rates/daily";
+  const url = getAPIBaseURL() + "/rates/" + rate;
   const all = await Promise.all(
     chunk(allPairs, batchSize).map(pairs =>
       network({ method: "POST", url, data: { pairs } })
@@ -92,7 +106,7 @@ export const getDailyRatesBatched = (batchSize: number) => async (
 };
 
 // This do one query per rate (lighter query)
-export const getDailyRatesSplitPerRate = getDailyRatesBatched(1);
+export const getRatesSplitPerRate = getRatesBatched(1);
 
 export const defaultTickerAliases = {
   WETH: "ETH"
@@ -107,19 +121,28 @@ function createCounterValues<State>({
   pairsSelector,
   setExchangePairsAction,
   maximumDays,
+  maximumHours,
   addExtraPollingHooks,
   log,
   getDailyRatesImplementation,
+  getHourlyRatesImplementation,
   fetchExchangesForPairImplementation,
   fetchTickersByMarketcapImplementation
 }: Input<State>): Module<State> {
-  type Poll = () => (Dispatch<*>, () => State) => Promise<*>;
+  type Poll = () => (
+    Dispatch<*>,
+    () => State,
+    rate: RateGranularity
+  ) => Promise<*>;
 
   const getAPIBaseURL = userGetAPIBaseURL || defaultGetAPIBaseURL;
 
   const aliases = tickerAliases || defaultTickerAliases;
 
-  const getDailyRates = getDailyRatesImplementation || getDailyRatesBatched(10);
+  const getDailyRates = getDailyRatesImplementation || getRatesBatched(8);
+  const getHourlyRates = getHourlyRatesImplementation || getRatesBatched(2);
+
+  const maxHours = maximumHours || 7 * 24;
 
   const pairOptExchangeExtractor = (
     _store,
@@ -181,9 +204,16 @@ function createCounterValues<State>({
 
   const getRate = (store, pair, date) => {
     if (currencyTicker(pair.from) === currencyTicker(pair.to)) return 1;
-    const rates = lenseRatesInMap(store.rates, pair);
+    if (date) {
+      const hourly = lenseRatesInMap(store.hourly, pair);
+      if (hourly) {
+        const pick = hourly[formatCounterValueHour(date)];
+        if (pick) return pick;
+      }
+    }
+    const daily = lenseRatesInMap(store.daily, pair);
     return (
-      rates && ((date && rates[formatCounterValueDay(date)]) || rates.latest)
+      daily && ((date && daily[formatCounterValueDay(date)]) || daily.latest)
     );
   };
 
@@ -256,7 +286,7 @@ function createCounterValues<State>({
   );
 
   // if data format changes, increment this. we don't support importing old data
-  const EXPORT_VERSION = 1;
+  const EXPORT_VERSION = 2;
 
   const exportSelector = createSelector(
     storeSelector,
@@ -264,13 +294,18 @@ function createCounterValues<State>({
     (state, pairs) => {
       const res = {
         version: EXPORT_VERSION,
-        rates: {}
+        daily: {},
+        hourly: {}
       };
       // filter rates to only those of interest (in current pairs)
       pairs.forEach(pair => {
-        const map = lenseRatesInMap(state.rates, pair);
+        let map = lenseRatesInMap(state.daily, pair);
         if (map) {
-          putMapInRates(res.rates, pair, map);
+          putMapInRates(res.daily, pair, map);
+        }
+        map = lenseRatesInMap(state.hourly, pair);
+        if (map) {
+          putMapInRates(res.hourly, pair, map);
         }
       });
       return res;
@@ -370,48 +405,85 @@ function createCounterValues<State>({
     dispatch({ type: IMPORT, rates });
   };
 
-  const defaultAfterDay = maximumDays
-    ? formatCounterValueDay(
-        new Date(Date.now() - (maximumDays + 1) * 24 * 60 * 60 * 1000)
-      )
-    : null;
+  const defaultAfterPerRate = {
+    daily: maximumDays
+      ? formatCounterValueDay(
+          new Date(Date.now() - (maximumDays + 1) * 24 * 60 * 60 * 1000)
+        )
+      : null,
+    hourly: maxHours
+      ? formatCounterValueHour(
+          new Date(Date.now() - (maxHours + 1) * 60 * 60 * 1000)
+        )
+      : null
+  };
 
   const poll: Poll = () => async (dispatch, getState) => {
     const state = getState();
     const userPairs = pairsSelector(state);
     const store = storeSelector(state);
-    const pairs = [];
-    const dedupKeys = {};
-    userPairs.forEach(p => {
-      const fromTicker = currencyTicker(p.from);
-      const toTicker = currencyTicker(p.to);
-      const key = `${fromTicker}|${toTicker}|${p.exchange || ""}`;
-      if (key in dedupKeys) return;
-      dedupKeys[key] = 1;
-      const pair: PollAPIPair = { from: fromTicker, to: toTicker };
-      if (defaultAfterDay) {
-        pair.afterDay = defaultAfterDay;
-      }
-      if (p.exchange) {
-        pair.exchange = p.exchange;
-        const histodays = lenseRatesInMap(store.rates, p);
-        if (histodays) {
-          const keys = Object.keys(histodays)
-            .filter(a => a !== "latest")
-            .sort((a, b) => (a < b ? 1 : -1));
-          if (keys[0]) {
-            pair.afterDay = keys[0];
+
+    async function run({ rate, fetch, mandatory }) {
+      const pairs = [];
+      const dedupKeys = {};
+      userPairs.forEach(p => {
+        const fromTicker = currencyTicker(p.from);
+        const toTicker = currencyTicker(p.to);
+        const key = `${fromTicker}|${toTicker}|${p.exchange || ""}`;
+        if (key in dedupKeys) return;
+        dedupKeys[key] = 1;
+        const pair: PollAPIPair = { from: fromTicker, to: toTicker };
+        const defaultAfter = defaultAfterPerRate[rate];
+        if (defaultAfter) {
+          pair.after = defaultAfter;
+        }
+        if (p.exchange) {
+          pair.exchange = p.exchange;
+          const histodays = lenseRatesInMap(store[rate], p);
+          if (histodays) {
+            const keys = Object.keys(histodays)
+              .filter(a => a !== "latest")
+              .sort((a, b) => (a < b ? 1 : -1));
+            if (keys[0]) {
+              pair.after = keys[0];
+            }
           }
         }
-      }
-      pairs.push(pair);
-    });
-    if (pairs.length === 0) return;
-    const data = await getDailyRates(getAPIBaseURL, pairs);
-    if (data && typeof data === "object") {
-      const ev: PollAction = { type: POLL, data };
-      dispatch(ev);
+        pairs.push(pair);
+      });
+      if (pairs.length === 0) return;
+      log &&
+        log(
+          "fetch " +
+            rate +
+            " " +
+            pairs
+              .map(
+                ({ from, to, exchange }) => `${from}-${to}-${exchange || ""}`
+              )
+              .join(" ")
+        );
+      const data = await fetch(getAPIBaseURL, pairs, rate).catch(e => {
+        if (mandatory) {
+          throw e;
+        }
+        log && log("FAILED fetch " + rate + " " + String(e.message));
+        return null;
+      });
+      return data;
+    }
 
+    const daily = await run({
+      rate: "daily",
+      fetch: getDailyRates,
+      mandatory: true
+    });
+    if (daily) {
+      const ev: PollAction = { type: POLL, daily };
+      dispatch(ev);
+    }
+
+    if (daily && typeof daily === "object") {
       // for pairs requested without exchanges yet OR api don't have the requested exchange,
       // we need to dispatch which exchanges was used
       // so diffing can properly work the next time
@@ -421,7 +493,7 @@ function createCounterValues<State>({
         const { exchange } = pair;
         const toTicker = currencyTicker(pair.to);
         const fromTicker = currencyTicker(pair.from);
-        const a = data[toTicker] || {};
+        const a = daily[toTicker] || {};
         if (typeof a !== "object") return;
         const b = a[fromTicker] || {};
         if (typeof b !== "object") return;
@@ -447,23 +519,45 @@ function createCounterValues<State>({
         dispatch(setExchangePairsAction(pairsToUpdate));
       }
     }
+
+    const hourly = getEnv("EXPERIMENTAL_PORTFOLIO_RANGE")
+      ? await run({
+          rate: "hourly",
+          fetch: getHourlyRates,
+          mandatory: false
+        })
+      : null;
+
+    if (hourly) {
+      const ev: PollAction = { type: POLL, hourly };
+      dispatch(ev);
+    }
   };
 
   const wipe = () => ({ type: WIPE });
 
   const initialState: CounterValuesState = {
-    rates: {}
+    daily: {},
+    hourly: {}
   };
 
   const reducerImport = (state: CounterValuesState, action: ImportAction) => {
     return {
-      rates: merge({}, state.rates, action.rates)
+      daily: merge({}, state.daily, action.daily),
+      hourly: merge({}, state.hourly, action.hourly)
     };
   };
 
   const reducerPoll = (state: CounterValuesState, action: PollAction) => {
     return {
-      rates: merge({}, state.rates, action.data)
+      daily:
+        action.daily && typeof action.daily === "object"
+          ? merge({}, state.daily, action.daily)
+          : state.daily,
+      hourly:
+        action.hourly && typeof action.hourly === "object"
+          ? merge({}, state.hourly, action.hourly)
+          : state.hourly
     };
   };
 

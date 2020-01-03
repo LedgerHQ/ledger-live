@@ -18,10 +18,7 @@ import { findTokenById } from "../../../data/tokens";
 import network from "../../../network";
 import { open } from "../../../hw";
 import signTransaction from "../../../hw/signTransaction";
-import {
-  makeStartSync,
-  makeScanAccountsOnDevice
-} from "../../../bridge/jsHelpers";
+import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
 
 const b58 = hex => bs58check.encode(Buffer.from(hex, "hex"));
 const decode58Check = base58 =>
@@ -44,6 +41,7 @@ async function doSignAndBroadcast({
     "https://api.trongrid.io/wallet/createtransaction",
     txData
   );
+  // TODO use withDevice instead
   const transport = await open(deviceId);
   let transaction;
   try {
@@ -229,13 +227,15 @@ const getAccountShape = async info => {
     const token = findTokenById(`tron/trc10/${key}`);
     if (!token) return;
     const id = info.id + "+" + key;
+    const operations = flatMap(txs, txToOps({ ...info, id }, token));
     const sub: TokenAccount = {
       type: "TokenAccount",
       id,
       parentId: info.id,
       token,
       balance: BigNumber(value),
-      operations: flatMap(txs, txToOps({ ...info, id }, token)),
+      operationsCount: operations.length,
+      operations,
       pendingOperations: []
     };
     subAccounts.push(sub);
@@ -249,14 +249,14 @@ const getAccountShape = async info => {
   };
 };
 
-const scanAccountsOnDevice = makeScanAccountsOnDevice(getAccountShape);
+const scanAccounts = makeScanAccounts(getAccountShape);
 
-const startSync = makeStartSync(getAccountShape);
+const sync = makeSync(getAccountShape);
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice
+  scanAccounts
 };
 
 const createTransaction = a => {
@@ -312,8 +312,14 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signAndBroadcast,
+  signOperation: () => {
+    throw new Error("TODO: port to signOperation paradigm");
+  },
+  broadcast: () => {
+    throw new Error("TODO: port to broascast paradigm");
+  }
 };
 
 export default { currencyBridge, accountBridge };

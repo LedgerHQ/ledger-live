@@ -5,7 +5,16 @@ import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
 import { closeAllDevices } from "./live-common-setup";
-import commands from "./commands";
+import commandsMain from "./commands-index";
+// TODO cli-transaction.js => cli.js
+import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
+
+const commands = {
+  ...Object.values(perFamily)
+    .map(m => typeof m === "object" && m && m.commands)
+    .reduce((acc, c) => ({ ...acc, ...c }), {}),
+  ...commandsMain
+};
 
 const mainOptions = commandLineArgs(
   [

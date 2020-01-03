@@ -13,8 +13,9 @@
     "@ledgerhq/hw-transport-node-ble": "5.3.0",
     "@ledgerhq/hw-transport-node-hid": "5.3.0",
     "@ledgerhq/ledger-core": "5.1.0",
-    "@ledgerhq/live-common": "^10.5.0",
+    "@ledgerhq/live-common": "file:.yalc/@ledgerhq/live-common",
     "@ledgerhq/logs": "5.3.0",
+    "asciichart": "^1.5.9",
     "axios": "^0.19.0",
     "bignumber.js": "^9.0.0",
     "body-parser": "^1.19.0",
@@ -26,6 +27,7 @@
     "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
     "qrloop": "^1.0.2",
+    "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "rxjs": "^6.5.4",
     "winston": "^3.2.1",
@@ -39,6 +41,7 @@
     "lib"
   ],
   "scripts": {
+    "prepare": "./scripts/gen.sh",
     "build": "babel --ignore __tests__ -s -d lib src",
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",

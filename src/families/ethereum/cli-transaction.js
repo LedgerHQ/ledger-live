@@ -72,7 +72,7 @@ function inferTransactions(
       family: "ethereum",
       subAccountId,
       gasPrice: inferAmount(account, opts.gasPrice || "2gwei"),
-      userGasLimit: new BigNumber(opts.gasLimit),
+      userGasLimit: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       estimatedGasLimit: null
     };
   });

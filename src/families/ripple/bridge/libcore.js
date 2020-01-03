@@ -1,12 +1,11 @@
 // @flow
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { scanAccountsOnDevice } from "../../../libcore/scanAccountsOnDevice";
+import { scanAccounts } from "../../../libcore/scanAccounts";
 import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Transaction } from "../types";
-import { syncAccount } from "../../../libcore/syncAccount";
-import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
+import { sync } from "../../../libcore/syncAccount";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import {
   AmountRequired,
@@ -21,8 +20,8 @@ import { makeLRUCache } from "../../../cache";
 import type { Account } from "../../../types";
 import { withLibcore } from "../../../libcore/access";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
-
-const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
+import signOperation from "../libcore-signOperation";
+import broadcast from "../libcore-broadcast";
 
 const createTransaction = () => ({
   family: "ripple",
@@ -35,13 +34,6 @@ const createTransaction = () => ({
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
-
-const signAndBroadcast = (account, transaction, deviceId) =>
-  libcoreSignAndBroadcast({
-    account,
-    transaction,
-    deviceId
-  });
 
 const isAddressActivated = makeLRUCache(
   (account: Account, addr: string) =>
@@ -137,7 +129,7 @@ const prepareTransaction = async (a, t) => {
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice
+  scanAccounts
 };
 
 const accountBridge: AccountBridge<Transaction> = {
@@ -145,8 +137,9 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 export default { currencyBridge, accountBridge };

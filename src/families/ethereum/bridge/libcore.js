@@ -10,18 +10,19 @@ import {
 } from "@ledgerhq/errors";
 import type { Account, AccountLike } from "../../../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
-import { scanAccountsOnDevice } from "../../../libcore/scanAccountsOnDevice";
+import { scanAccounts } from "../../../libcore/scanAccounts";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import { withLibcore } from "../../../libcore/access";
 import { getGasLimit } from "../transaction";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
-import { syncAccount } from "../../../libcore/syncAccount";
+import { sync } from "../../../libcore/syncAccount";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
-import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
 import { makeLRUCache } from "../../../cache";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Transaction } from "../types";
+import signOperation from "../libcore-signOperation";
+import broadcast from "../libcore-broadcast";
 
 const getTransactionAccount = (a, t): AccountLike => {
   const { subAccountId } = t;
@@ -29,8 +30,6 @@ const getTransactionAccount = (a, t): AccountLike => {
     ? (a.subAccounts || []).find(ta => ta.id === subAccountId) || a
     : a;
 };
-
-const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
 
 const createTransaction = a => ({
   family: "ethereum",
@@ -50,13 +49,6 @@ const updateTransaction = (t, patch) => {
   }
   return { ...t, ...patch };
 };
-
-const signAndBroadcast = (account, transaction, deviceId) =>
-  libcoreSignAndBroadcast({
-    account,
-    transaction,
-    deviceId
-  });
 
 const calculateFees = makeLRUCache(
   async (a, t) => {
@@ -210,14 +202,15 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice
+  scanAccounts
 };
 
 export default { currencyBridge, accountBridge };

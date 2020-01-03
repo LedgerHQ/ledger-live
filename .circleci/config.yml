@@ -19,19 +19,21 @@ jobs:
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
+            - yarn-packages-{{ checksum "yarn.lock" }}-andcli-{{ checksum "cli/yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
+          command: |
+            yarn global add yalc codecov
+            yarn install --frozen-lockfile
       - save_cache:
           name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
+          key: yarn-packages-{{ checksum "yarn.lock" }}-andcli-{{ checksum "cli/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
       - run: yarn global add yalc codecov
       - run: yarn ci-lint
-      - run: yarn ci-test-common && codecov
+      - run: yarn ci-test-common && npx codecov
       - run:
           command: yarn ci-test-cli
           no_output_timeout: 1h
@@ -55,19 +57,20 @@ jobs:
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
+            - yarn-packages-{{ checksum "yarn.lock" }}-andcli-{{ checksum "cli/yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
+          command: |
+            yarn global add yalc codecov
+            yarn install --frozen-lockfile
       - save_cache:
           name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
+          key: yarn-packages-{{ checksum "yarn.lock" }}-andcli-{{ checksum "cli/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
-      - run: yarn global add yalc codecov
       - run: yarn ci-lint
-      - run: yarn ci-test-common && codecov
+      - run: yarn ci-test-common && npx codecov
       - run:
           command: yarn ci-test-cli
           no_output_timeout: 1h

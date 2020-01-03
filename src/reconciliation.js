@@ -70,8 +70,8 @@ export async function minimalOperationsBuilder<CO>(
       // as soon as we've found a first matching op in old op list,
       const j = existingOps.indexOf(existingOp);
       const rest = existingOps.slice(j);
-      if (rest.length !== i + 1) {
-        // if libcore happen to have different number of ops that what we have,
+      if (rest.length > i + 1) {
+        // if libcore happen to have less ops that what we had,
         // we actually need to continue because we don't know where hole will be,
         // but we can keep existingOp
         operations.push(existingOp);
@@ -128,7 +128,7 @@ export function minimalOperationsBuilderSync<CO>(
     if (existingOp) {
       const j = existingOps.indexOf(existingOp);
       const rest = existingOps.slice(j);
-      if (rest.length !== i + 1) {
+      if (rest.length > i + 1) {
         operations.push(existingOp);
       } else {
         if (operations.length === 0 && j === 0) {
@@ -195,6 +195,14 @@ export function patchAccount(
 
   if (account.operations !== operations) {
     next.operations = operations;
+    changed = true;
+  }
+
+  if (
+    account.operationsCount !== updatedRaw.operationsCount &&
+    updatedRaw.operationsCount
+  ) {
+    next.operationsCount = updatedRaw.operationsCount;
     changed = true;
   }
 
@@ -271,6 +279,14 @@ export function patchSubAccount(
   };
 
   let changed = false;
+
+  if (
+    account.operationsCount !== updatedRaw.operationsCount &&
+    updatedRaw.operationsCount
+  ) {
+    next.operationsCount = updatedRaw.operationsCount;
+    changed = true;
+  }
 
   if (account.operations !== operations) {
     next.operations = operations;

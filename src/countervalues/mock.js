@@ -13,23 +13,26 @@ type Pair = {
   rate: Date => number
 };
 
-export const genDateRange = ({ dateFrom, dateTo, rate }: Pair): Histodays => {
-  const histodays = {};
-  for (let d = dateFrom.getTime(); d < dateTo; d += 24 * 60 * 60 * 1000) {
+export const genDateRange = (
+  { dateFrom, dateTo, rate }: Pair,
+  incr: number
+): Histodays => {
+  const rates = {};
+  for (let d = dateFrom.getTime(); d < dateTo; d += incr) {
     const day = new Date(d);
-    histodays[formatCounterValueDay(day)] = rate(new Date(d));
+    rates[formatCounterValueDay(day)] = rate(new Date(d));
   }
-  histodays.latest = rate(new Date());
-  return histodays;
+  rates.latest = rate(new Date());
+  return rates;
 };
 
 export const genStoreState = (pairs: Pair[]): CounterValuesState => {
-  const state = { rates: {} };
+  const state = { daily: {}, hourly: {} };
   pairs.forEach(pair => {
     const { from, to, exchange } = pair;
-    const a = (state.rates[to.ticker] = state.rates[to.ticker] || {});
+    const a = (state.daily[to.ticker] = state.daily[to.ticker] || {});
     const b = (a[from.ticker] = a[from.ticker] || {});
-    b[exchange] = genDateRange(pair);
+    b[exchange] = genDateRange(pair, 24 * 60 * 60 * 1000);
   });
   return state;
 };

@@ -53,7 +53,8 @@ export type ScanCommonOpts = $Shape<{
   currency: string,
   scheme: string,
   index: number,
-  length: number
+  length: number,
+  paginateOperations: number
 }>;
 
 export const scanCommonOpts = [
@@ -96,6 +97,11 @@ export const scanCommonOpts = [
     type: Number,
     desc:
       "set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise."
+  },
+  {
+    name: "paginateOperations",
+    type: Number,
+    desc: "if defined, will paginate operations"
   }
 ];
 
@@ -148,7 +154,10 @@ export const inferCurrency = <
   return withDevice(device || "")(t =>
     from(
       getAppAndVersion(t)
-        .then(r => getCurrencyByKeyword(r.name), () => undefined)
+        .then(
+          r => getCurrencyByKeyword(r.name),
+          () => undefined
+        )
         .then(r => delay(500).then(() => r))
     )
   );
@@ -162,8 +171,15 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
     appjsonFile,
     scheme,
     index,
-    length
+    length,
+    paginateOperations
   } = arg;
+
+  const syncConfig = { paginationConfig: {} };
+
+  if (paginateOperations) {
+    syncConfig.paginationConfig.operations = paginateOperations;
+  }
 
   if (typeof appjsonFile === "string") {
     const appjsondata = appjsonFile
@@ -188,7 +204,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       map(fromAccountRaw),
       concatMap(account =>
         getAccountBridge(account, null)
-          .startSync(account, false)
+          .sync(account, syncConfig)
           .pipe(reduce((a, f) => f(a), account))
       )
     );
@@ -230,6 +246,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               blockHeight: 0,
               balance: new BigNumber(0),
               spendableBalance: new BigNumber(0),
+              operationsCount: 0,
               operations: [],
               pendingOperations: []
             };
@@ -238,17 +255,18 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
         ).pipe(
           concatMap(account =>
             getAccountBridge(account, null)
-              .startSync(account, false)
+              .sync(account, syncConfig)
               .pipe(reduce((a: Account, f: *) => f(a), account))
           )
         );
       }
       return getCurrencyBridge(cur)
-        .scanAccountsOnDevice(
-          cur,
-          device || "",
-          scheme && asDerivationMode(scheme)
-        )
+        .scanAccounts({
+          currency: cur,
+          deviceId: device || "",
+          scheme: scheme && asDerivationMode(scheme),
+          syncConfig
+        })
         .pipe(
           filter(e => e.type === "discovered"),
           map(e => e.account)

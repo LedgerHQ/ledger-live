@@ -68,7 +68,7 @@ const makeInit = (optionalInit: ?() => $Shape<State>) => (): State => {
 
 const reducer = (s: State, a): State => {
   switch (a.type) {
-    case "setAccount":
+    case "setAccount": {
       const { account, parentAccount } = a;
       try {
         const mainAccount = getMainAccount(account, parentAccount);
@@ -92,6 +92,7 @@ const reducer = (s: State, a): State => {
           errorAccount: e
         };
       }
+    }
 
     case "setTransaction":
       if (s.transaction === a.transaction) return s;

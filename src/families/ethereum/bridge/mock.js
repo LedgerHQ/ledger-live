@@ -10,9 +10,10 @@ import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getEstimatedFees } from "../../../api/Fees"; // FIXME drop. not stable.
 import {
-  scanAccountsOnDevice,
-  signAndBroadcast,
-  startSync,
+  scanAccounts,
+  signOperation,
+  broadcast,
+  sync,
   isInvalidRecipient
 } from "../../../bridge/mockHelpers";
 import { getGasLimit } from "../transaction";
@@ -104,14 +105,15 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   getTransactionStatus,
   prepareTransaction,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice
+  scanAccounts
 };
 
 export default { currencyBridge, accountBridge };

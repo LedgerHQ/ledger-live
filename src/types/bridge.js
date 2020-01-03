@@ -14,8 +14,11 @@ import type {
   CryptoCurrency,
   TransactionStatus,
   Transaction,
-  SignAndBroadcastEvent,
-  DerivationMode
+  SignOperationEvent,
+  SignedOperation,
+  Operation,
+  DerivationMode,
+  SyncConfig
 } from ".";
 
 export type ScanAccountEvent = {
@@ -34,7 +37,7 @@ export type DeviceId = string;
 // Abstraction related to a currency
 export interface CurrencyBridge {
   // Preload data required for the bridges to work. (e.g. tokens, delegators,...)
-  // Assume to call it at every load time but as lazy as possible (if user have such account already AND/OR if user is about to scanAccountsOnDevice)
+  // Assume to call it at every load time but as lazy as possible (if user have such account already AND/OR if user is about to scanAccounts)
   // returned value is a serializable object
   // fail if data was not able to load.
   preload(): Promise<Object>;
@@ -44,11 +47,12 @@ export interface CurrencyBridge {
   hydrate(data: mixed): void;
 
   // Scan all available accounts with a device
-  scanAccountsOnDevice(
+  scanAccounts({
     currency: CryptoCurrency,
     deviceId: DeviceId,
-    scheme?: ?DerivationMode
-  ): Observable<ScanAccountEvent>;
+    scheme?: ?DerivationMode,
+    syncConfig: SyncConfig
+  }): Observable<ScanAccountEvent>;
 }
 
 // Abstraction related to an account
@@ -60,9 +64,9 @@ export interface AccountBridge<T: Transaction> {
   // an update function is just a Account => Account that perform the changes (to avoid race condition issues)
   // initialAccount parameter is used to point which account is the synchronization on, but it should not be used in the emitted values.
   // the sync can be stopped at any time using Observable's subscription.unsubscribe()
-  startSync(
+  sync(
     initialAccount: Account,
-    observation: boolean
+    syncConfig: SyncConfig
   ): Observable<(Account) => Account>;
 
   // a Transaction object is created on UI side as a black box to put all temporary information to build the transaction at the end.
@@ -83,13 +87,19 @@ export interface AccountBridge<T: Transaction> {
     transaction: T
   ): Promise<TransactionStatus>;
 
-  // finalizes the transaction by
-  // - signing it with the ledger device
-  // - broadcasting it to network
-  // - retrieve and return the optimistic Operation that this transaction is likely to create in the future
-  signAndBroadcast(
+  // finalizing a transaction by signing it with the ledger device
+  // This results of a "signed" event with a signedOperation
+  // than can be locally saved and later broadcasted
+  signOperation({
     account: Account,
     transaction: T,
     deviceId: DeviceId
-  ): Observable<SignAndBroadcastEvent>;
+  }): Observable<SignOperationEvent>;
+
+  // broadcasting a signed transaction to network
+  // returns an optimistic Operation that this transaction is likely to create in the future
+  broadcast({
+    account: Account,
+    signedOperation: SignedOperation
+  }): Promise<Operation>;
 }

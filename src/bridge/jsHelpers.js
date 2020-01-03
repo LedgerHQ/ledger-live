@@ -21,14 +21,16 @@ import type {
   Operation,
   Account,
   ScanAccountEvent,
-  CryptoCurrency
+  SyncConfig
 } from "../types";
+import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
 import { open } from "../hw";
 
-type GetAccountShape = ({ address: string, id: string }) => Promise<
-  $Shape<Account>
->;
+type GetAccountShape = (
+  { address: string, id: string },
+  SyncConfig
+) => Promise<$Shape<Account>>;
 
 type AccountUpdater = Account => Account;
 
@@ -44,25 +46,35 @@ export function mergeOps(
   );
 }
 
-export const makeStartSync = (getAccountShape: GetAccountShape) => (
-  initial: Account
+export const makeSync = (
+  getAccountShape: GetAccountShape
+): $PropertyType<AccountBridge<any>, "sync"> => (
+  initial,
+  syncConfig
 ): Observable<AccountUpdater> =>
   Observable.create(o => {
     async function main() {
       try {
-        const shape = await getAccountShape({
-          id: initial.id,
-          address: initial.freshAddress
+        const shape = await getAccountShape(
+          {
+            id: initial.id,
+            address: initial.freshAddress
+          },
+          syncConfig
+        );
+        o.next(a => {
+          const operations = mergeOps(a.operations, shape.operations || []);
+          return {
+            ...a,
+            spendableBalance: shape.balance || a.balance,
+            operationsCount: shape.operationsCount || operations.length,
+            ...shape,
+            operations,
+            pendingOperations: a.pendingOperations.filter(op =>
+              shouldRetainPendingOperation(a, op)
+            )
+          };
         });
-        o.next(a => ({
-          ...a,
-          spendableBalance: shape.balance || a.balance,
-          ...shape,
-          operations: mergeOps(a.operations, shape.operations || []),
-          pendingOperations: a.pendingOperations.filter(op =>
-            shouldRetainPendingOperation(a, op)
-          )
-        }));
         o.complete();
       } catch (e) {
         o.error(e);
@@ -71,10 +83,13 @@ export const makeStartSync = (getAccountShape: GetAccountShape) => (
     main();
   });
 
-export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
-  currency: CryptoCurrency,
-  deviceId: string
-): Observable<ScanAccountEvent> =>
+export const makeScanAccounts = (
+  getAccountShape: GetAccountShape
+): $PropertyType<CurrencyBridge, "scanAccounts"> => ({
+  currency,
+  deviceId,
+  syncConfig
+}): Observable<ScanAccountEvent> =>
   Observable.create(o => {
     let finished = false;
     const unsubscribe = () => {
@@ -94,10 +109,13 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
       seedIdentifier
     ): { account?: Account, complete?: boolean } {
       const accountId = `js:2:${currency.id}:${address}:${derivationMode}`;
-      const accountShape: Account = await getAccountShape({
-        id: accountId,
-        address
-      });
+      const accountShape: Account = await getAccountShape(
+        {
+          id: accountId,
+          address
+        },
+        syncConfig
+      );
       if (finished) return { complete: true };
 
       const freshAddress = address;
@@ -133,6 +151,7 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
               }),
               index,
               currency,
+              operationsCount: 0,
               operations: [],
               pendingOperations: [],
               unit: currency.units[0],
@@ -171,6 +190,7 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
         name: getAccountPlaceholderName({ currency, index, derivationMode }),
         index,
         currency,
+        operationsCount: 0,
         operations: [],
         pendingOperations: [],
         unit: currency.units[0],
@@ -185,6 +205,7 @@ export const makeScanAccountsOnDevice = (getAccountShape: GetAccountShape) => (
     }
 
     async function main() {
+      // TODO switch to withDevice
       let transport;
       try {
         transport = await open(deviceId);

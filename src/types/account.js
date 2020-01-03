@@ -4,6 +4,19 @@ import type { BigNumber } from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency, Unit } from "./currencies";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "../derivation";
+import type {
+  BalanceHistory,
+  BalanceHistoryRaw,
+  PortfolioRange
+} from "./portfolio";
+
+export type BalanceHistoryMap = {
+  [_: PortfolioRange]: BalanceHistory
+};
+
+export type BalanceHistoryRawMap = {
+  [_: PortfolioRange]: BalanceHistoryRaw
+};
 
 // A token belongs to an Account and share the parent account address
 export type TokenAccount = {
@@ -13,8 +26,10 @@ export type TokenAccount = {
   parentId: string,
   token: TokenCurrency,
   balance: BigNumber,
+  operationsCount: number,
   operations: Operation[],
-  pendingOperations: Operation[]
+  pendingOperations: Operation[],
+  balanceHistory?: BalanceHistoryMap
 };
 
 // A child account belongs to an Account but has its own address
@@ -27,12 +42,14 @@ export type ChildAccount = {
   currency: CryptoCurrency,
   address: string,
   balance: BigNumber,
+  operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
   capabilities: {
     isDelegatable?: boolean,
     isSpendable?: boolean
-  }
+  },
+  balanceHistory?: BalanceHistoryMap
 };
 
 export type Address = {|
@@ -97,6 +114,9 @@ export type Account = {
   // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
   unit: Unit,
 
+  // The total number of operations (operations[] can be partial)
+  operationsCount: number,
+
   // lazy list of operations that exists on the blockchain.
   operations: Operation[],
 
@@ -127,7 +147,12 @@ export type Account = {
   // I'm just inside the Ethereum 1: { account: Ethereum 1, parentAccount: undefined }
   // "account" is the primary account that you use/select/view. It is a `AccountLike`.
   // "parentAccount", if available, is the contextual account. It is a `?Account`.
-  subAccounts?: SubAccount[]
+  subAccounts?: SubAccount[],
+
+  // balance history represented the balance evolution throughout time, used by chart.
+  // This is to be refreshed when necessary (typically in a sync)
+  // this is a map PER granularity to allow a fast feedback when user switch them
+  balanceHistory?: BalanceHistoryMap
 };
 
 export type SubAccount = TokenAccount | ChildAccount;
@@ -143,9 +168,11 @@ export type TokenAccountRaw = {
   id: string,
   parentId: string,
   tokenId: string,
+  operationsCount?: number,
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
-  balance: string
+  balance: string,
+  balanceHistory?: BalanceHistoryRawMap
 };
 
 export type ChildAccountRaw = {
@@ -155,13 +182,15 @@ export type ChildAccountRaw = {
   parentId: string,
   currencyId: string,
   address: string,
+  operationsCount?: number,
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
   balance: string,
   capabilities: {
     isDelegatable?: boolean,
     isSpendable?: boolean
-  }
+  },
+  balanceHistory?: BalanceHistoryRawMap
 };
 
 export type AccountRaw = {
@@ -177,6 +206,7 @@ export type AccountRaw = {
   balance: string,
   spendableBalance?: string,
   blockHeight: number,
+  operationsCount?: number, // this is optional for backward compat
   // ------------------------------------- Specific raw fields
   currencyId: string,
   operations: OperationRaw[],
@@ -184,7 +214,8 @@ export type AccountRaw = {
   unitMagnitude: number,
   lastSyncDate: string,
   endpointConfig?: ?string,
-  subAccounts?: SubAccountRaw[]
+  subAccounts?: SubAccountRaw[],
+  balanceHistory?: BalanceHistoryRawMap
 };
 
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;

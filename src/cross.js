@@ -298,6 +298,7 @@ export const accountDataToAccount = ({
     blockHeight: 0,
     balance: balanceBN,
     spendableBalance: balanceBN,
+    operationsCount: 0,
     operations: [],
     pendingOperations: [],
     unit: currency.units[0],

@@ -31,7 +31,7 @@ export async function ethereumBuildTransaction({
   isPartial: boolean,
   isCancelled: () => boolean
 }): Promise<?CoreEthereumLikeTransaction> {
-  const { subAccountId } = transaction;
+  const { subAccountId, gasPrice } = transaction;
   const subAccount = subAccountId
     ? account.subAccounts &&
       account.subAccounts.find(t => t.id === subAccountId)
@@ -45,8 +45,8 @@ export async function ethereumBuildTransaction({
 
   const recipient = eip55.encode(transaction.recipient);
 
-  const { gasPrice } = transaction;
   const gasLimit = getGasLimit(transaction);
+
   if (!gasPrice || !gasLimit || !BigNumber(gasLimit).gt(ZERO)) {
     throw new FeeNotLoaded();
   }

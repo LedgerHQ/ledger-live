@@ -20,7 +20,7 @@ import {
   formatCurrencyUnit
 } from "@ledgerhq/live-common/lib/currencies";
 import {
-  getDailyRatesBatched,
+  getRatesBatched,
   formatCounterValueDay
 } from "@ledgerhq/live-common/lib/countervalues";
 
@@ -28,7 +28,7 @@ const usdFiat = getFiatCurrencyByTicker("USD");
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 
-const getRates = getDailyRatesBatched(50);
+const getRates = getRatesBatched(50);
 
 const DownloadData = ({ data }) => {
   const onClick = useCallback(() => {
@@ -250,7 +250,8 @@ const Assets = () => {
             afterDay
           })),
         (a, b) => a.from === b.from && a.to === b.to
-      )
+      ),
+      "daily"
     ).then(setRates);
   }, [tickers, all]);
 

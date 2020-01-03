@@ -1,5 +1,4 @@
 // @flow
-import { never } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import { log } from "@ledgerhq/logs";
@@ -9,10 +8,7 @@ import type { Transaction } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { parseCurrencyUnit, getCryptoCurrencyById } from "../../../currencies";
 import network from "../../../network";
-import {
-  makeStartSync,
-  makeScanAccountsOnDevice
-} from "../../../bridge/jsHelpers";
+import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
 
 const neoAsset =
   "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b";
@@ -130,14 +126,14 @@ const getAccountShape = async info => {
   };
 };
 
-const scanAccountsOnDevice = makeScanAccountsOnDevice(getAccountShape);
+const scanAccounts = makeScanAccounts(getAccountShape);
 
-const startSync = makeStartSync(getAccountShape);
+const sync = makeSync(getAccountShape);
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice
+  scanAccounts
 };
 
 const createTransaction = a => {
@@ -155,8 +151,6 @@ const getTransactionStatus = a =>
     })
   );
 
-const signAndBroadcast = () => never();
-
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> =>
   Promise.resolve(t);
 
@@ -165,8 +159,13 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation: () => {
+    throw new Error("signOperation not implemented");
+  },
+  broadcast: () => {
+    throw new Error("broadcast not implemented");
+  }
 };
 
 export default { currencyBridge, accountBridge };

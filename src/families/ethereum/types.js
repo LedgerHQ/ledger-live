@@ -59,6 +59,7 @@ declare class CoreEthereumLikeAccount {
   broadcastRawTransaction(signed: string): Promise<string>;
   getGasPrice(): Promise<CoreBigInt>;
   getEstimatedGasLimit(address: string): Promise<CoreBigInt>;
+  getERC20Balances(erc20Addresses: string[]): Promise<CoreBigInt[]>;
 }
 
 declare class CoreERC20Token {
@@ -234,6 +235,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       },
       getEstimatedGasLimit: {
         returns: "BigInt"
+      },
+      getERC20Balances: {
+        returns: ["BigInt"]
       }
     }
   });

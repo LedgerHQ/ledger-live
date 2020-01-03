@@ -1012,10 +1012,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.3.0.tgz#5af8afa7af5e2cd8f2e071f16a9a2972a77e7bc4"
   integrity sha512-Sxd8xVjg5X6z3CaaLyh301fKQilH2wF2lEj0y+sD+ZnFp+yHVOXgRauwT0JJkSl6191iBJCcY+DsdoynY3oiEg==
 
-"@ledgerhq/hw-app-btc@5.4.0":
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.4.0.tgz#c4fb4d8d305ad777018d3bd65f9f64e211de13de"
-  integrity sha512-tOquz4vqZNMer5nvEoetO4tApK/3g5b1zuCFqQQp6BfH7tOy5NaXBTat7abE7/TDVeMiisZyQjW+DQf1qjNJ7A==
+"@ledgerhq/hw-app-btc@5.4.1":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.4.1.tgz#a6c109ad94dec9d7436c69908a480aa0992dca8e"
+  integrity sha512-XL4LTdtBQUMFiRsLKOHOqhTSyjHvhN8WYyOAvPcPpvS+B3Bg2N2IrWvluKYaLv/GZQ+Kfw3hX5iJGZ4WefEiwQ==
   dependencies:
     "@ledgerhq/hw-transport" "^5.3.0"
     bip32-path "^0.4.2"
@@ -2666,6 +2666,11 @@ eslint-plugin-jsx-a11y@^6.2.3:
     emoji-regex "^7.0.2"
     has "^1.0.3"
     jsx-ast-utils "^2.2.1"
+
+eslint-plugin-react-hooks@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-2.3.0.tgz#53e073961f1f5ccf8dd19558036c1fac8c29d99a"
+  integrity sha512-gLKCa52G4ee7uXzdLiorca7JIQZPPXRAQDXV83J4bUEeUuc5pIEyZYAZ45Xnxe5IuupxEqHS+hUhSLIimK1EMw==
 
 eslint-scope@^5.0.0:
   version "5.0.0"

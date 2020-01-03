@@ -56,8 +56,19 @@ declare class CoreWallet {
   ): Promise<CoreAccount>;
 }
 
+export const TimePeriod = {
+  DAY: 0,
+  WEEK: 1,
+  MONTH: 2
+};
+
 declare type CoreAccount = {
   getBalance(): Promise<CoreAmount>,
+  getBalanceHistory(
+    from: string,
+    to: string,
+    timePeriod: $Values<typeof TimePeriod>
+  ): Promise<CoreAmount[]>,
   getLastBlock(): Promise<CoreBlock>,
   getFreshPublicAddresses(): Promise<CoreAddress[]>,
   getRestoreKey(): Promise<string>,
@@ -142,8 +153,11 @@ declare class CoreAddress {
 }
 
 declare class CoreOperationQuery {
-  complete(): Promise<CoreOperationQuery>;
-  addOrder(number, boolean): Promise<CoreOperationQuery>;
+  offset(number): Promise<void>;
+  limit(number): Promise<void>;
+  partial(): Promise<void>;
+  complete(): Promise<void>;
+  addOrder(number, boolean): Promise<void>;
   execute(): Promise<CoreOperation[]>;
 }
 
@@ -371,6 +385,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       getBalance: {
         returns: "Amount"
       },
+      getBalanceHistory: {
+        returns: ["Amount"]
+      },
       getLastBlock: {
         returns: "Block"
       },
@@ -468,8 +485,11 @@ export const reflect = (declare: (string, Spec) => void) => {
 
   declare("OperationQuery", {
     methods: {
-      complete: { returns: "OperationQuery" },
-      addOrder: { returns: "OperationQuery" },
+      limit: {},
+      offset: {},
+      partial: {},
+      complete: {},
+      addOrder: {},
       execute: { returns: ["Operation"] }
     }
   });

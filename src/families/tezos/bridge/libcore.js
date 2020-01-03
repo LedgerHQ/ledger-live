@@ -16,11 +16,12 @@ import {
 import { validateRecipient } from "../../../bridge/shared";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
 import type { Transaction } from "../types";
-import { scanAccountsOnDevice } from "../../../libcore/scanAccountsOnDevice";
+import { scanAccounts } from "../../../libcore/scanAccounts";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
-import { syncAccount } from "../../../libcore/syncAccount";
+import { sync } from "../../../libcore/syncAccount";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
-import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
+import broadcast from "../libcore-broadcast";
+import signOperation from "../libcore-signOperation";
 import { makeLRUCache } from "../../../cache";
 import { isAccountBalanceSignificant } from "../../../account";
 import { withLibcore } from "../../../libcore/access";
@@ -74,8 +75,6 @@ const calculateFees = makeLRUCache(
     }_${String(t.useAllAmount)}`
 );
 
-const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
-
 const createTransaction = () => ({
   family: "tezos",
   mode: "send",
@@ -89,13 +88,6 @@ const createTransaction = () => ({
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
-
-const signAndBroadcast = (account, transaction, deviceId) =>
-  libcoreSignAndBroadcast({
-    account,
-    transaction,
-    deviceId
-  });
 
 const getTransactionStatus = async (a, t) => {
   const errors = {};
@@ -264,7 +256,7 @@ const hydrate = (data: mixed) => {
 const currencyBridge: CurrencyBridge = {
   preload,
   hydrate,
-  scanAccountsOnDevice
+  scanAccounts
 };
 
 const accountBridge: AccountBridge<Transaction> = {
@@ -272,8 +264,9 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 export default { currencyBridge, accountBridge };
