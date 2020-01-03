@@ -12,7 +12,7 @@
     "@ledgerhq/hw-transport-mocker": "5.2.0",
     "@ledgerhq/hw-transport-node-ble": "5.2.0",
     "@ledgerhq/hw-transport-node-hid": "5.2.0",
-    "@ledgerhq/ledger-core": "5.0.0",
+    "@ledgerhq/ledger-core": "5.1.0",
     "@ledgerhq/live-common": "^10.3.1",
     "@ledgerhq/logs": "5.2.0",
     "axios": "^0.19.0",

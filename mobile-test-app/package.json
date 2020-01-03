@@ -3,13 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "rn-nodeify --hack && scripts/copy.sh",
-    "start": "react-native start"
+    "postinstall": "rn-nodeify --hack && scripts/copy.sh && cd ios && pod install && cd -",
+    "start": "react-native start",
+    "ios": "react-native run-ios"
   },
   "dependencies": {
     "@ledgerhq/errors": "^5.2.0",
     "@ledgerhq/live-common": "^10.3.1",
-    "@ledgerhq/react-native-ledger-core": "^4.3.1",
+    "@ledgerhq/react-native-ledger-core": "^4.5.0",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
     "axios": "^0.19.0",
