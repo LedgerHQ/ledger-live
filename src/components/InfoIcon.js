@@ -10,7 +10,7 @@ type Props = {
   bg: string,
   floatingIcon?: React$Node,
   floatingBg?: string,
-  size: Number,
+  size: number,
 };
 
 class BluetoothDisabledIcon extends PureComponent<Props> {
@@ -25,7 +25,7 @@ class BluetoothDisabledIcon extends PureComponent<Props> {
         <Circle bg={bg} size={size}>
           {children}
         </Circle>
-        {floatingIcon && floatingBg ? (
+        {!!floatingIcon && floatingBg ? (
           <View style={styles.floating}>
             <Circle bg={floatingBg} size={30}>
               {floatingIcon}

@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback, useMemo } from "react";
+import React, { memo, useState, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 
 import Filters from "../../../icons/Filters";
@@ -9,12 +9,12 @@ import FilterModalComponent from "../Modals/FilterModal";
 
 type Props = {
   filter: string,
-  setFilter: Function,
+  setFilter: string => void,
   sort: string,
-  setSort: Function,
+  setSort: string => void,
   order: string,
-  setOrder: Function,
-  disabled: Boolean,
+  setOrder: string => void,
+  disabled: boolean,
 };
 
 const AppFilter = ({
@@ -26,13 +26,9 @@ const AppFilter = ({
   setOrder,
   disabled,
 }: Props) => {
-  const [isOpened, openModal] = useState(false);
-  const toggleModal = useCallback(value => () => openModal(value), [openModal]);
-  const hasFilters = useMemo(() => filter || (sort && order), [
-    filter,
-    sort,
-    order,
-  ]);
+  const [isOpened, setOpenModal] = useState(false);
+  const openModal = useCallback(() => setOpenModal(true), [setOpenModal]);
+  const closeModal = useCallback(() => setOpenModal(false), [setOpenModal]);
 
   return (
     <>
@@ -41,10 +37,10 @@ const AppFilter = ({
           containerStyle={styles.searchBarFilters}
           type="darkSecondary"
           IconLeft={Filters}
-          onPress={toggleModal(true)}
+          onPress={openModal}
           disabled={disabled}
         />
-        {hasFilters && <NotifBadge />}
+        {!!filter && <NotifBadge />}
       </View>
       <FilterModalComponent
         isOpened={!disabled && isOpened}
@@ -54,7 +50,7 @@ const AppFilter = ({
         setSort={setSort}
         order={order}
         setOrder={setOrder}
-        onClose={toggleModal(false)}
+        onClose={closeModal}
       />
     </>
   );

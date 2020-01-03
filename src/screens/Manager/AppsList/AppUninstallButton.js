@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
@@ -19,9 +19,13 @@ const AppUninstallButton = ({ app, state, dispatch }: Props) => {
   const { installed, apps } = state;
   const { name } = app;
 
-  const needsDependencies = apps
-    .filter(a => installed.some(i => i.name === a.name))
-    .some(({ dependencies }) => dependencies.includes(name));
+  const needsDependencies = useMemo(
+    () =>
+      apps
+        .filter(a => installed.some(i => i.name === a.name))
+        .some(({ dependencies }) => dependencies.includes(name)),
+    [apps, installed, name],
+  );
 
   const uninstallApp = useCallback(() => {
     if (needsDependencies) setAppUninstallWithDependencies(app);
@@ -49,4 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppUninstallButton);
+export default AppUninstallButton;

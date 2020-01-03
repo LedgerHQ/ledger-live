@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import colors from "../../../colors";
@@ -9,25 +9,28 @@ import Trash from "../../../icons/Trash";
 import ActionModal from "./ActionModal";
 
 type Props = {
-  isOpened: Boolean,
-  onClose: Function,
-  onConfirm: Function,
+  isOpened: boolean,
+  onClose: () => void,
+  onConfirm: () => void,
 };
 
 const UninstallAllModal = ({ isOpened, onClose, onConfirm }: Props) => {
-  const modalActions = [
-    {
-      title: <Trans i18nKey="common.uninstall" />,
-      onPress: onConfirm,
-      type: "alert",
-    },
-    {
-      title: <Trans i18nKey="common.cancel" />,
-      onPress: onClose,
-      type: "secondary",
-      outline: false,
-    },
-  ];
+  const modalActions = useMemo(
+    () => [
+      {
+        title: <Trans i18nKey="common.uninstall" />,
+        onPress: onConfirm,
+        type: "alert",
+      },
+      {
+        title: <Trans i18nKey="common.cancel" />,
+        onPress: onClose,
+        type: "secondary",
+        outline: false,
+      },
+    ],
+    [onConfirm, onClose],
+  );
 
   return (
     <ActionModal isOpened={!!isOpened} onClose={onClose} actions={modalActions}>

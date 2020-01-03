@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import colors from "../../../colors";
@@ -10,18 +10,21 @@ import Storage from "../../../icons/Storage";
 import ActionModal from "./ActionModal";
 
 type Props = {
-  warning: Boolean,
-  onClose: Function,
+  warning: boolean,
+  onClose: () => void,
 };
 
 const StorageWarningModal = ({ warning, onClose }: Props) => {
-  const modalActions = [
-    {
-      title: "Close",
-      onPress: onClose,
-      type: "primary",
-    },
-  ];
+  const modalActions = useMemo(
+    () => [
+      {
+        title: <Trans i18nKey="common.close" />,
+        onPress: onClose,
+        type: "primary",
+      },
+    ],
+    [onClose],
+  );
 
   return (
     <ActionModal isOpened={!!warning} onClose={onClose} actions={modalActions}>
@@ -40,7 +43,13 @@ const StorageWarningModal = ({ warning, onClose }: Props) => {
         </LText>
         <LText style={styles.warnText}>
           <Trans
-            i18nKey="errors.ManagerNotEnoughSpace.info"
+            i18nKey="errors.ManagerNotEnoughSpace.info_one"
+            values={{ app: warning }}
+          />
+        </LText>
+        <LText style={styles.warnText}>
+          <Trans
+            i18nKey="errors.ManagerNotEnoughSpace.info_two"
             values={{ app: warning }}
           />
         </LText>

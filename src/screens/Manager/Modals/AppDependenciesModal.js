@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
@@ -17,61 +17,83 @@ type Props = {
   app: App,
   appList: Array<App>,
   dispatch: Action => void,
-  onClose: Function,
+  onClose: () => void,
 };
 
 const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
-  if (!app) return null;
+  const name = useMemo(() => app && app.name, [app]);
+  const dependencies = useMemo(() => app && app.dependencies, [app]);
 
-  const installAppDependencies = () => {
+  const installAppDependencies = useCallback(() => {
     dispatch({ type: "install", name });
     onClose();
-  };
+  }, [dispatch, onClose, name]);
 
-  const { name, dependencies } = app;
-  const dependentApps = appList.filter(a => dependencies.includes(a.name));
+  const dependentApps = useMemo(
+    () => dependencies && appList.filter(a => dependencies.includes(a.name)),
+    [appList, dependencies],
+  );
 
-  const modalActions = [
-    {
-      title: "Continue install",
-      onPress: installAppDependencies,
-      type: "primary",
-    },
-    {
-      title: "Close",
-      onPress: onClose,
-      type: "secondary",
-      outline: false,
-    },
-  ];
+  const modalActions = useMemo(
+    () => [
+      {
+        title: <Trans i18nKey="AppAction.install.continueInstall" />,
+        onPress: installAppDependencies,
+        type: "primary",
+      },
+      {
+        title: <Trans i18nKey="common.close" />,
+        onPress: onClose,
+        type: "secondary",
+        outline: false,
+      },
+    ],
+    [installAppDependencies, onClose],
+  );
 
   return (
     <ActionModal isOpened={!!app} onClose={onClose} actions={modalActions}>
-      <View style={styles.imageSection}>
-        <AppIcon style={styles.appIcons} icon={app.icon} />
-        <View style={styles.separator} />
-        <InfoIcon bg={colors.lightLive} size={30}>
-          <LinkIcon color={colors.live} />
-        </InfoIcon>
-        <View style={styles.separator} />
-        {dependentApps.map(({ icon }, i) => (
-          <AppIcon style={styles.appIcons} icon={icon} key={i} />
-        ))}
-      </View>
-      <View style={styles.infoRow}>
-        <LText style={[styles.warnText, styles.title]} bold>
-          <Trans
-            i18nKey="AppAction.install.dependency.title"
-            values={{ dependency: dependencies.join(" ") }}
-          />
-        </LText>
-        <LText style={styles.warnText}>
-          <Trans
-            i18nKey="AppAction.install.dependency.description"
-            values={{ dependency: dependencies.join(" "), app: name }}
-          />
-        </LText>
-      </View>
+      {!!app && (
+        <>
+          <View style={styles.imageSection}>
+            <AppIcon style={styles.appIcons} icon={app.icon} />
+            <View style={styles.separator} />
+            <InfoIcon bg={colors.lightLive} size={30}>
+              <LinkIcon color={colors.live} />
+            </InfoIcon>
+            <View style={styles.separator} />
+            {dependentApps.map(({ icon }, i) => (
+              <AppIcon style={styles.appIcons} icon={icon} key={i} />
+            ))}
+          </View>
+          <View style={styles.infoRow}>
+            <LText style={[styles.warnText, styles.title]} bold>
+              <Trans
+                i18nKey="AppAction.install.dependency.title"
+                values={{ dependency: dependencies.join(" ") }}
+              />
+            </LText>
+            <LText style={[styles.warnText, styles.marginTop]}>
+              <Trans
+                i18nKey="AppAction.install.dependency.description_one"
+                values={{ dependency: dependencies.join(" "), app: name }}
+              />
+            </LText>
+            <LText style={styles.warnText}>
+              <Trans
+                i18nKey="AppAction.install.dependency.description_two"
+                values={{ dependency: dependencies.join(" "), app: name }}
+              />
+            </LText>
+            <LText style={[styles.warnText, styles.marginTop]}>
+              <Trans
+                i18nKey="AppAction.install.dependency.description_three"
+                values={{ dependency: dependencies.join(" "), app: name }}
+              />
+            </LText>
+          </View>
+        </>
+      )}
     </ActionModal>
   );
 };
@@ -106,7 +128,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.grey,
     lineHeight: 16,
-    marginVertical: 8,
+  },
+  marginTop: {
+    marginTop: 16,
   },
   infoRow: {
     paddingHorizontal: 16,

@@ -8,23 +8,24 @@ import UninstallAllModal from "../Modals/UninstallAllModal";
 import LText from "../../../components/LText";
 
 type Props = {
-  onUninstallAll: Function,
+  onUninstallAll: () => void,
 };
 
 const UninstallAllButton = ({ onUninstallAll }: Props) => {
-  const [isOpened, openModal] = useState(false);
-  const toggleModal = useCallback(value => () => openModal(value), [openModal]);
+  const [isOpened, setIsOpened] = useState(false);
+  const openModal = useCallback(() => setIsOpened(true), [setIsOpened]);
+  const closeModal = useCallback(() => setIsOpened(false), [setIsOpened]);
   const onConfirm = useCallback(() => {
     onUninstallAll();
-    openModal(false);
-  }, [onUninstallAll, openModal]);
+    setIsOpened(false);
+  }, [onUninstallAll, setIsOpened]);
 
   return (
     <>
       <TouchableOpacity
         style={styles.uninstallButton}
         activeOpacity={0.5}
-        onPress={toggleModal(true)}
+        onPress={openModal}
       >
         <View style={styles.uninstallIcon}>
           <Trash size={16} color={colors.live} />
@@ -35,7 +36,7 @@ const UninstallAllButton = ({ onUninstallAll }: Props) => {
       </TouchableOpacity>
       <UninstallAllModal
         isOpened={isOpened}
-        onClose={toggleModal(false)}
+        onClose={closeModal}
         onConfirm={onConfirm}
       />
     </>

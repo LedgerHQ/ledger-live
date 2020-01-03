@@ -11,43 +11,44 @@ import ActionModal from "./ActionModal";
 
 type Props = {
   isOpened: boolean,
-  onClose: Function,
-  onConfirm: Function,
+  onClose: () => void,
+  onConfirm: () => void,
 };
 
-const QuitManagerModal = ({ isOpened, onConfirm, onClose }: Props) => {
-  return (
-    <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
-      <View style={styles.storageImage}>
-        <InfoIcon bg={colors.lightLive}>
-          <Quit size={30} color={colors.live} />
-        </InfoIcon>
-      </View>
-      <View style={styles.storageRow}>
-        <LText style={[styles.warnText, styles.title]} bold>
-          <Trans i18nKey="errors.ManagerQuitPage.title" />
-        </LText>
-        <LText style={styles.warnText}>
-          <Trans i18nKey="errors.ManagerQuitPage.description" />
-        </LText>
-      </View>
-      <View style={styles.buttonRow}>
-        <Button
-          containerStyle={styles.button}
-          title={<Trans i18nKey="errors.ManagerQuitPage.stay" />}
-          onPress={onClose}
-          type={"secondary"}
-        />
-        <Button
-          containerStyle={[styles.button, { marginLeft: 16 }]}
-          title={<Trans i18nKey="errors.ManagerQuitPage.quit" />}
-          onPress={onConfirm}
-          type={"primary"}
-        />
-      </View>
-    </ActionModal>
-  );
-};
+const QuitManagerModal = ({ isOpened, onConfirm, onClose }: Props) => (
+  <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
+    <View style={styles.storageImage}>
+      <InfoIcon bg={colors.lightLive}>
+        <Quit size={30} color={colors.live} />
+      </InfoIcon>
+    </View>
+    <View style={styles.storageRow}>
+      <LText style={[styles.warnText, styles.title]} bold>
+        <Trans i18nKey="errors.ManagerQuitPage.title" />
+      </LText>
+      <LText style={styles.warnText}>
+        <Trans i18nKey="errors.ManagerQuitPage.description_one" />
+      </LText>
+      <LText style={styles.warnText}>
+        <Trans i18nKey="errors.ManagerQuitPage.description_two" />
+      </LText>
+    </View>
+    <View style={styles.buttonRow}>
+      <Button
+        containerStyle={styles.button}
+        title={<Trans i18nKey="errors.ManagerQuitPage.stay" />}
+        onPress={onClose}
+        type={"secondary"}
+      />
+      <Button
+        containerStyle={[styles.button, styles.buttonMargin]}
+        title={<Trans i18nKey="errors.ManagerQuitPage.quit" />}
+        onPress={onConfirm}
+        type={"primary"}
+      />
+    </View>
+  </ActionModal>
+);
 
 const styles = StyleSheet.create({
   storageImage: {
@@ -82,6 +83,9 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+  },
+  buttonMargin: {
+    marginLeft: 16,
   },
 });
 

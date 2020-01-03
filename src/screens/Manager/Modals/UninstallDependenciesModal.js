@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo, useCallback } from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
 
@@ -19,7 +19,7 @@ const renderDepLine = ({ item }: *) => (
     <View style={styles.depLineTree}>
       <ListTreeLine color={colors.grey} />
     </View>
-    <AppIcon icon={item.icon} />
+    <AppIcon icon={item.icon} size={22} />
     <LText semiBold style={styles.depLineText}>
       {item.name}
     </LText>
@@ -30,7 +30,7 @@ type Props = {
   app: App,
   state: State,
   dispatch: Action => void,
-  onClose: Function,
+  onClose: () => void,
 };
 
 const UninstallDependenciesModal = ({
@@ -39,62 +39,77 @@ const UninstallDependenciesModal = ({
   dispatch,
   onClose,
 }: Props) => {
-  if (!app) return null;
-
-  const { name } = app;
   const { installed, apps } = state;
 
-  const dependentApps = apps
-    .filter(a => installed.some(i => i.name === a.name))
-    .filter(({ dependencies }) => dependencies.includes(name));
+  const name = useMemo(() => app && app.name, [app]);
 
-  const unInstallApp = () => {
+  const dependentApps = useMemo(
+    () =>
+      app &&
+      apps
+        .filter(a => installed.some(i => i.name === a.name))
+        .filter(({ dependencies }) => dependencies.includes(name)),
+    [apps, installed, app, name],
+  );
+
+  const unInstallApp = useCallback(() => {
     dispatch({ type: "uninstall", name });
     onClose();
-  };
+  }, [dispatch, onClose, name]);
 
-  const modalActions = [
-    {
-      title: "Continue uninstall",
-      onPress: unInstallApp,
-      type: "alert",
-    },
-    {
-      title: "Close",
-      onPress: onClose,
-      type: "secondary",
-      outline: false,
-    },
-  ];
+  const modalActions = useMemo(
+    () => [
+      {
+        title: <Trans i18nKey="AppAction.uninstall.continueUninstall" />,
+        onPress: unInstallApp,
+        type: "alert",
+      },
+      {
+        title: <Trans i18nKey="common.close" />,
+        onPress: onClose,
+        type: "secondary",
+        outline: false,
+      },
+    ],
+    [unInstallApp, onClose],
+  );
 
   return (
     <ActionModal isOpened={!!app} onClose={onClose} actions={modalActions}>
-      <ScrollView>
-        <View style={styles.imageSection}>
-          <AppTree color={colors.fog} icon={app.icon} />
-        </View>
-        <View style={styles.infoRow}>
-          <LText style={[styles.warnText, styles.title]} bold>
-            <Trans
-              i18nKey="AppAction.uninstall.dependency.title"
-              values={{ app: name }}
+      {app && (
+        <ScrollView>
+          <View style={styles.imageSection}>
+            <AppTree color={colors.fog} icon={app.icon} />
+          </View>
+          <View style={styles.infoRow}>
+            <LText style={[styles.warnText, styles.title]} bold>
+              <Trans
+                i18nKey="AppAction.uninstall.dependency.title"
+                values={{ app: name }}
+              />
+            </LText>
+            <LText style={styles.warnText}>
+              <Trans
+                i18nKey="AppAction.uninstall.dependency.description_one"
+                values={{ app: name }}
+              />
+            </LText>
+            <LText style={styles.warnText}>
+              <Trans
+                i18nKey="AppAction.uninstall.dependency.description_two"
+                values={{ app: name }}
+              />
+            </LText>
+          </View>
+          <View style={styles.collapsibleList}>
+            <CollapsibleList
+              title={<Trans i18nKey="AppAction.uninstall.dependency.showAll" />}
+              data={dependentApps}
+              renderItem={renderDepLine}
             />
-          </LText>
-          <LText style={styles.warnText}>
-            <Trans
-              i18nKey="AppAction.uninstall.dependency.description"
-              values={{ app: name }}
-            />
-          </LText>
-        </View>
-        <View style={styles.collapsibleList}>
-          <CollapsibleList
-            title={<Trans i18nKey="AppAction.uninstall.dependency.showAll" />}
-            data={dependentApps}
-            renderItem={renderDepLine}
-          />
-        </View>
-      </ScrollView>
+          </View>
+        </ScrollView>
+      )}
     </ActionModal>
   );
 };

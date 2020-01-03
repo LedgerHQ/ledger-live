@@ -59,10 +59,10 @@ const runProgression = () => {
 const progress = runProgression();
 
 type Props = {
-  style?: *,
   height: number,
   progressColor: string,
   backgroundColor: string,
+  style?: *,
 };
 
 const InfiniteProgressBar = ({

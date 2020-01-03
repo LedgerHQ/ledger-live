@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useCallback, useContext } from "react";
+import React, { useMemo, useCallback, useContext } from "react";
 
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
@@ -54,15 +54,21 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
     name,
   ]);
 
-  const Container = animation ? Animatable.View : View;
-  const containerProps = animation
-    ? {
-        animation: index <= 15 ? "fadeInUp" : "fadeIn",
-        duration: 300,
-        delay: index <= 15 ? index * 100 : 0,
-        useNativeDriver: true,
-      }
-    : {};
+  const Container = useMemo(() => (animation ? Animatable.View : View), [
+    animation,
+  ]);
+  const containerProps = useMemo(
+    () =>
+      animation
+        ? {
+            animation: index <= 15 ? "fadeInUp" : "fadeIn",
+            duration: 300,
+            delay: index <= 15 ? index * 100 : 0,
+            useNativeDriver: true,
+          }
+        : {},
+    [animation, index],
+  );
 
   return (
     <Container style={styles.root} {...containerProps}>
@@ -186,4 +192,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppRow);
+export default AppRow;

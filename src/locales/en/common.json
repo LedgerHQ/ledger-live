@@ -197,12 +197,14 @@
     },
     "ManagerNotEnoughSpace": {
       "title": "Not enough storage left",
-      "info": "There is not enough storage to install {{app}} app.\n\nPlease manage your storage by uninstalling one or several apps",
+      "info_one": "There is not enough storage to install {{app}} app.",
+      "info_two": "Please manage your storage by uninstalling one or several apps",
       "description": "Please uninstall some apps to make space. This will not affect your crypto assets."
     },
     "ManagerQuitPage": {
       "title": "Quit manager?",
-      "description": "There is one or several app update in progress.\n\nIf you quit the manager, yoiu will have to restart the operation.",
+      "description_one": "There is one or several app update in progress.",
+      "description_two": "If you quit the manager, yoiu will have to restart the operation.",
       "stay": "Stay in manager",
       "quit": "Quit manager"
     },
@@ -1206,8 +1208,11 @@
       },
       "dependency": {
         "title": "{{dependency}} app is required",
-        "description": "{{app}} app is dependent of {{dependency}} app.\nTo install {{app}} app, you need to install {{dependency}} app first.\n\nJust press continue to install {{dependency}} and {{app}} app."
-      }
+        "description_one": "{{app}} app is dependent of {{dependency}} app.",
+        "description_two": "To install {{app}} app, you need to install {{dependency}} app first.",
+        "description_three": "Just press continue to install {{dependency}} and {{app}} app."
+      },
+      "continueInstall": "Continue install"
     },
     "update": {
       "title": "{{number}} app updates available",
@@ -1229,8 +1234,10 @@
       "dependency": {
         "title": "{{app}} app is used by other apps",
         "showAll": "Show all dependencies",
-        "description": "Some apps are dependent of {{app}}.\nIf you continue uninstall, all dependent apps of {{app}} will be uninstalled too."
-      }
+        "description_one": "Some apps are dependent of {{app}}.",
+        "description_two": "If you continue uninstall, all dependent apps of {{app}} will be uninstalled too."
+      },
+      "continueUninstall": "Continue uninstall"
     },
     "filter": {
       "title": "Filters",
@@ -1238,7 +1245,8 @@
       "installed": "Installed",
       "not_installed": "Not installed",
       "supported": "Live supported",
-      "updatable": "Updatable"
+      "updatable": "Updatable",
+      "apply": "Apply",
     },
     "sort": {
       "title": "Sort by",

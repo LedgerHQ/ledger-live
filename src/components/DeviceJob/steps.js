@@ -161,7 +161,7 @@ export const genuineCheck: Step = {
 
 export const listApps: Step = {
   Body: ({ meta }: *) =>
-    meta.genuineAskedOnDevice ? (
+    meta.allowManagerRequested ? (
       <RenderStep
         icon={
           <DeviceNanoAction

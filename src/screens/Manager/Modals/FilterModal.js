@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback, useEffect } from "react";
+import React, { memo, useCallback, useEffect, useReducer } from "react";
 import {
   StyleSheet,
   SectionList,
@@ -92,15 +92,36 @@ const Separator = ({ section: { footerSeparator } }) =>
     </View>
   );
 
+const initialFilterState = {
+  filter: null,
+  sort: null,
+  order: null,
+};
+
+const filterReducer = (state, { type, payload }) => {
+  switch (type) {
+    case "setFilter":
+      return { ...state, filter: payload };
+    case "setSort":
+      return { ...state, sort: payload };
+    case "setOrder":
+      return { ...state, order: payload };
+    case "setState":
+      return { ...state, ...payload };
+    default:
+      return state;
+  }
+};
+
 type Props = {
   filter: string,
-  setFilter: Function,
+  setFilter: () => void,
   sort: string,
-  setSort: Function,
+  setSort: () => void,
   order: string,
-  setOrder: Function,
+  setOrder: () => void,
   isOpened: Boolean,
-  onClose: Function,
+  onClose: () => void,
 };
 
 const FilterModalComponent = ({
@@ -113,14 +134,17 @@ const FilterModalComponent = ({
   isOpened,
   onClose,
 }: Props) => {
-  const [selectedFilters, filterBy] = useState();
-  const [selectedSort, sortBy] = useState();
-  const [selectedOrder, orderBy] = useState();
+  const [state, dispatch] = useReducer(filterReducer, initialFilterState);
 
   useEffect(() => {
-    filterBy(filter);
-    sortBy(sort);
-    orderBy(order);
+    dispatch({
+      type: "setState",
+      payload: {
+        filter,
+        sort,
+        order,
+      },
+    });
   }, [isOpened, filter, sort, order]);
 
   /** 
@@ -139,33 +163,26 @@ const FilterModalComponent = ({
   */
 
   const onFilter = useCallback(() => {
-    setFilter(selectedFilters);
-    setSort(selectedSort);
-    setOrder(selectedOrder);
+    setFilter(state.filter);
+    setSort(state.sort);
+    setOrder(state.order);
     onClose();
-  }, [
-    selectedFilters,
-    setFilter,
-    selectedSort,
-    setSort,
-    setOrder,
-    selectedOrder,
-    onClose,
-  ]);
+  }, [state, setFilter, setSort, setOrder, onClose]);
 
   const FilterItem = useCallback(
     ({ item: { label, value, isFilter, orderValue } }) => {
       const isChecked = isFilter
-        ? selectedFilters === value
-        : selectedSort === value && orderValue === selectedOrder;
+        ? state.filter === value
+        : state.sort === value && state.order === orderValue;
 
       const onPress = () => {
         const newValue = isChecked ? null : value;
-        if (isFilter) filterBy(newValue);
-        else {
-          sortBy(newValue);
-          orderBy(isChecked ? "asc" : orderValue);
-        }
+        if (isFilter) dispatch({ type: "setFilter", payload: newValue });
+        else
+          dispatch({
+            type: "setState",
+            payload: { sort: newValue, order: isChecked ? "asc" : orderValue },
+          });
       };
 
       return (
@@ -187,12 +204,12 @@ const FilterModalComponent = ({
         </TouchableHighlight>
       );
     },
-    [selectedFilters, selectedSort, selectedOrder],
+    [state],
   );
 
   const onFilterActions = [
     {
-      title: "Apply",
+      title: <Trans i18nKey="AppAction.filter.apply" />,
       onPress: onFilter,
       type: "primary",
     },

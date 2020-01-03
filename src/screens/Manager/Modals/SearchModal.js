@@ -67,7 +67,7 @@ export default ({ state, dispatch, tab }: Props) => {
       installedApps,
       type: tab === MANAGER_TABS.INSTALLED_APPS ? "installed" : null,
     }),
-    [query, installedApps, tab],
+    [query, installedApps, tab, MANAGER_TABS.INSTALLED_APPS],
   );
   const [sortOptions] = useState({
     type: null,
@@ -105,19 +105,20 @@ export default ({ state, dispatch, tab }: Props) => {
         index={index}
         state={state}
         dispatch={dispatch}
-        listView={MANAGER_TABS.CATALOG}
+        listView={tab}
         animation={false}
       />
     ),
+    [tab, dispatch, state],
   );
-  const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH");
+  const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
 
   const placeholder = useMemo(
     () =>
       tab === MANAGER_TABS.CATALOG
         ? i18next.t("manager.appList.searchAppsCatalog")
         : i18next.t("manager.appList.searchAppsInstalled"),
-    [tab],
+    [tab, MANAGER_TABS.CATALOG],
   );
 
   const elements = [

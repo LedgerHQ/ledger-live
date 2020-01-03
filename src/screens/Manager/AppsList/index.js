@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useCallback } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { State } from "@ledgerhq/live-common/lib/apps";
@@ -12,7 +12,7 @@ type Props = {
   active: boolean,
   state: State,
   dispatch: *,
-  renderNoResults?: Function,
+  renderNoResults?: (*) => Node,
 };
 
 const { height } = getWindowDimensions();
@@ -25,7 +25,7 @@ const AppsList = ({
   state,
   dispatch,
 }: Props) => {
-  const viewHeight = useMemo(() => (active ? "auto" : height - 253), [active]);
+  const viewHeight = active ? "auto" : height - 253;
   const renderRow = useCallback(
     ({ item, index }: { item: App, index: number }) => (
       <AppRow
@@ -37,6 +37,7 @@ const AppsList = ({
         animation
       />
     ),
+    [tab, dispatch, state],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + tab, [tab]);
 
@@ -61,7 +62,7 @@ const AppsList = ({
 
 AppsList.defaultProps = {
   animation: true,
-  renderNoResults: () => {},
+  renderNoResults: () => null,
 };
 
 const styles = StyleSheet.create({
@@ -77,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppsList);
+export default AppsList;

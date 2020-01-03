@@ -41,7 +41,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   const installedApps = useMemo(
     () =>
       [...installed, ...installQueue]
-        .map((i: { name: String } | String) => appByName[i.name || i])
+        .map((i: { name: string } | string) => appByName[i.name || i])
         .filter(Boolean)
         .filter(
           (app, i, apps) =>
@@ -77,7 +77,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   );
 
   const { MANAGER_TABS } = useContext(ManagerContext);
-  const [index, setIndex] = React.useState(0);
+  const [index, setIndex] = useState(0);
   const [tabSwiping, onTabSwipe] = useState(false);
   const [routes] = React.useState([
     { key: MANAGER_TABS.CATALOG, title: "Apps catalog" },

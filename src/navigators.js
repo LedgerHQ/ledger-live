@@ -284,6 +284,10 @@ Main.navigationOptions = {
 
 const defaultManagerGetStateForAction = Main.router.getStateForAction;
 
+/**
+ * blockNavigation nav params handling
+ * stops route changing actions by returning no new routing state
+ */
 Object.assign(Main.router, {
   getStateForAction(action, state) {
     if (

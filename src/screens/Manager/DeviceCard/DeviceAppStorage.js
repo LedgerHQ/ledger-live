@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 
 import { View, StyleSheet } from "react-native";
 import * as Animatable from "react-native-animatable";
@@ -24,11 +24,14 @@ const DeviceAppStorage = ({
     apps,
   },
 }: Props) => {
-  const installedApps = apps.filter(Boolean);
-  const appSizes = installedApps.map(({ bytes, currency }) => ({
-    ratio: Number((bytes / appsSpaceBytes) * 100).toFixed(2),
-    color: (currency && currency.color) || "#000000",
-  }));
+  const appSizes = useMemo(
+    () =>
+      apps.filter(Boolean).map(({ bytes, currency }) => ({
+        ratio: Number((bytes / appsSpaceBytes) * 100).toFixed(2),
+        color: (currency && currency.color) || "#000000",
+      })),
+    [apps, appsSpaceBytes],
+  );
 
   const storageWarnStyle = {
     color: shouldWarnMemory ? colors.alert : colors.darkBlue,
@@ -40,11 +43,11 @@ const DeviceAppStorage = ({
         <LText bold style={styles.storageText}>
           <Trans i18nKey="manager.storage.title" />
         </LText>
-        <View style={{ flexDirection: "row" }}>
+        <View style={styles.warnRow}>
           {shouldWarnMemory && <Warning color={colors.alert} size={15} />}
           <LText bold style={[styles.storageText, storageWarnStyle]}>
             {" "}
-            {formatSize(freeSpaceBytes) || "0kb"}
+            {formatSize(freeSpaceBytes)}
           </LText>
           <LText style={[styles.storageText, storageWarnStyle]}>
             {" "}
@@ -99,6 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  warnRow: { flexDirection: "row" },
   infoRow: {
     flexBasis: 16,
     justifyContent: "flex-start",

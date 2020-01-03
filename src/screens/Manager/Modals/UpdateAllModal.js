@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { StyleSheet, View, FlatList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { formatSize } from "@ledgerhq/live-common/lib/apps";
@@ -16,33 +16,36 @@ const renderAppLine = ({ item }: { item: App }) => (
       {item.name}
     </LText>
     <LText style={styles.appLineText}>{item.version}</LText>
-    <LText style={styles.appLineText}>{formatSize(item.bytes) || "0kb"}</LText>
+    <LText style={styles.appLineText}>{formatSize(item.bytes)}</LText>
   </View>
 );
 
 const keyExtractor = (item: App, index: number) => String(item.id) + index;
 
 type Props = {
-  isOpened: Boolean,
+  isOpened: boolean,
   apps: Array<App>,
-  onClose: Function,
-  onConfirm: Function,
+  onClose: () => void,
+  onConfirm: () => void,
 };
 
 const UpdateAllModal = ({ isOpened, apps, onClose, onConfirm }: Props) => {
-  const modalActions = [
-    {
-      title: <Trans i18nKey="AppAction.update.buttonModal" />,
-      onPress: onConfirm,
-      type: "primary",
-    },
-    {
-      title: <Trans i18nKey="common.cancel" />,
-      onPress: onClose,
-      type: "secondary",
-      outline: false,
-    },
-  ];
+  const modalActions = useMemo(
+    () => [
+      {
+        title: <Trans i18nKey="AppAction.update.buttonModal" />,
+        onPress: onConfirm,
+        type: "primary",
+      },
+      {
+        title: <Trans i18nKey="common.cancel" />,
+        onPress: onClose,
+        type: "secondary",
+        outline: false,
+      },
+    ],
+    [onConfirm, onClose],
+  );
 
   return (
     <ActionModal isOpened={isOpened} onClose={onClose} actions={modalActions}>

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { StyleSheet } from "react-native";
 
 import { Trans } from "react-i18next";
@@ -13,7 +13,7 @@ type Props = {
   app: App,
   state: State,
   dispatch: Action => void,
-  notEnoughMemoryToInstall: Boolean,
+  notEnoughMemoryToInstall: boolean,
 };
 
 const AppInstallButton = ({
@@ -26,18 +26,22 @@ const AppInstallButton = ({
   const { dependencies, name } = app;
   const { installed } = state;
 
-  const canUpdate = installed.some(
-    ({ name, updated }) => name === app.name && !updated,
+  const canUpdate = useMemo(
+    () => installed.some(({ name, updated }) => name === app.name && !updated),
+    [installed, app.name],
   );
 
-  const needsDependencies =
-    dependencies &&
-    dependencies.some(dep => installed.every(app => app.name !== dep));
+  const needsDependencies = useMemo(
+    () =>
+      dependencies &&
+      dependencies.some(dep => installed.every(app => app.name !== dep)),
+    [dependencies, installed],
+  );
 
   const installApp = useCallback(() => {
     if (needsDependencies) setAppInstallWithDependencies(app);
     else dispatch({ type: "install", name });
-  }, [dispatch, name]);
+  }, [dispatch, name, needsDependencies, setAppInstallWithDependencies, app]);
 
   return (
     <Button
@@ -67,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppInstallButton);
+export default AppInstallButton;

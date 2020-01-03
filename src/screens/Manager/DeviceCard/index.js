@@ -60,7 +60,7 @@ const DeviceCard = ({ state }: Props) => {
               <LText style={styles.deviceFirmware}>
                 <Trans i18nKey="manager.storage.capacity" />
               </LText>
-              <LText style={{ fontSize: 13 }} semiBold>
+              <LText style={styles.capacityText} semiBold>
                 {" "}
                 {capacity}
               </LText>
@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     paddingHorizontal: 16,
   },
+  capacityText: { fontSize: 13 },
   deviceSection: {
     height: 119,
     flexDirection: "row",

@@ -14,16 +14,17 @@ type Props = {
 };
 
 const AppUpdateAll = ({ state, dispatch }: Props) => {
-  const [modalOpen, openModal] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const { installed, apps } = state;
   const appsToUpdate = apps.filter(app =>
     installed.some(({ name, updated }) => name === app.name && !updated),
   );
-  const toggleModal = useCallback(value => () => openModal(value), [openModal]);
+  const openModal = useCallback(() => setModalOpen(true), [setModalOpen]);
+  const closeModal = useCallback(() => setModalOpen(false), [setModalOpen]);
   const updateAll = useCallback(() => {
     dispatch({ type: "updateAll" });
-    openModal(false);
-  }, [dispatch, openModal]);
+    setModalOpen(false);
+  }, [dispatch, setModalOpen]);
 
   if (appsToUpdate.length <= 0) return null;
 
@@ -32,7 +33,7 @@ const AppUpdateAll = ({ state, dispatch }: Props) => {
       <TouchableOpacity
         style={styles.infoLabel}
         activeOpacity={0.5}
-        onPress={toggleModal(true)}
+        onPress={openModal}
       >
         <LText semiBold style={styles.infoText}>
           <Trans
@@ -50,7 +51,7 @@ const AppUpdateAll = ({ state, dispatch }: Props) => {
       <UpdateAllModal
         isOpened={modalOpen}
         apps={appsToUpdate}
-        onClose={toggleModal(false)}
+        onClose={closeModal}
         onConfirm={updateAll}
       />
     </View>

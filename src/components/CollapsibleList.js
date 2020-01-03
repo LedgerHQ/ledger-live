@@ -25,6 +25,12 @@ const {
   and,
 } = Animated;
 
+/**
+ * @param {Animated.Clock} clock animation clock
+ * @param {Animated.Value} value current position
+ * @param {Animated.Value} dest position to interpolate to
+ * @returns {Animated.Node<number>}
+ */
 const runCollapse = (clock, value, dest) => {
   const state = {
     finished: new Value(0),
@@ -42,15 +48,22 @@ const runCollapse = (clock, value, dest) => {
   return block([
     // if clock running reset timer and switch position
     cond(clockRunning(clock), 0, [
+      // reset running state
       set(state.finished, 0),
+      // reset time
       set(state.time, 0),
+      // reset frame time count
       set(state.frameTime, 0),
+      // set current anim position
       set(state.position, value),
+      // set new anim destination
       set(config.toValue, dest),
+      // start clock animation
       startClock(clock),
     ]),
-    // run clock
+    // run clock timing
     timing(clock, state, config),
+    // return anim position
     state.position,
   ]);
 };
@@ -79,8 +92,11 @@ const CollapsibleList = ({
     setOpen(!isOpen);
   }, [setOpen, isOpen]);
 
+  // animation clock
   const clock = new Clock();
+  // animation Open state
   const [openState] = useState(new Value(0));
+  // animation opening anim node
   const openingAnim = cond(
     and(defined(isOpen), eq(isOpen, false)),
     [
@@ -95,11 +111,13 @@ const CollapsibleList = ({
     ],
   );
 
+  // interpolated height from opening anim state for list container
   const height = interpolate(openingAnim, {
     inputRange: [0, 1],
     outputRange: [0, 15 + itemHeight * data.length],
   });
 
+  // interpolated rotation from opening anim state for chevron icon
   const rotateZ = interpolate(openingAnim, {
     inputRange: [0, 1],
     outputRange: [-Math.PI / 2, 0],
