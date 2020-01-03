@@ -11,7 +11,9 @@ yarn test     # test exclusively live-common
 
 ## Testing your code
 
-Ledger Live Common is the central library that many project consumes: **`tool/`**, **`mobile-test-app/`**, [Ledger Live Desktop](https://github.com/LedgerHQ/ledger-live-desktop), [Ledger Live Mobile](https://github.com/LedgerHQ/ledger-live-mobile). We have tools to quickly develop on it and test it on there.
+Ledger Live Common is the central library that many project consumes: **`cli/`**, **`mobile-test-app/`**, [Ledger Live Desktop](https://github.com/LedgerHQ/ledger-live-desktop), [Ledger Live Mobile](https://github.com/LedgerHQ/ledger-live-mobile). We have tools to quickly develop on it and test it on there.
+
+**You can use `ledger-live` CLI to test your changes**, for this you will need to configure it, follow [Developing with `ledger-live` CLI](dev-with-cli.md)
 
 ## Release flow
 
