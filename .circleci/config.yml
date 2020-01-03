@@ -18,7 +18,9 @@ jobs:
       - run: node -v
       - run: yarn install
       - run: yarn global add yalc
-      - run: yarn ci-test-cli
+      - run:
+          command: yarn ci-test-cli
+          no_output_timeout: 1h
 
   debian:
     working_directory: ~/live-common
@@ -46,4 +48,6 @@ jobs:
       - run: yarn global add yalc
       - run: yarn ci-lint
       - run: yarn ci-test-common
-      - run: yarn ci-test-cli
+      - run:
+          command: yarn ci-test-cli
+          no_output_timeout: 1h
