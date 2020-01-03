@@ -87,29 +87,29 @@ const dataset: DatasetTest<Transaction> = {
           ],
           raw: {
             id:
-              "libcore:1:bitcoin:xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC:",
+            "libcore:1:bitcoin:xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn:",
             seedIdentifier:
-              "04b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a",
+              "041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498",
             name: "Bitcoin 1 (legacy)",
             derivationMode: "",
             index: 0,
-            freshAddress: "1ATftUjdUKXQX6bBPzARUqongDWjNCLMhH",
-            freshAddressPath: "44'/0'/0'/0/82",
+            freshAddress: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
+            freshAddressPath: "44'/0'/0'/0/59",
             freshAddresses: [
               {
-                address: "1ATftUjdUKXQX6bBPzARUqongDWjNCLMhH",
-                derivationPath: "44'/0'/0'/0/82"
+                address: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
+                derivationPath: "44'/0'/0'/0/59"
               }
             ],
             pendingOperations: [],
             operations: [],
             currencyId: "bitcoin",
             unitMagnitude: 8,
-            balance: "2825",
+            balance: "2757",
             blockHeight: 0,
             lastSyncDate: "",
             xpub:
-              "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC"
+              "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn"
           }
         },
         {
@@ -121,12 +121,12 @@ const dataset: DatasetTest<Transaction> = {
             name: "Bitcoin 2 (native segwit)",
             derivationMode: "native_segwit",
             index: 1,
-            freshAddress: "bc1qwqfns0rs5zxrrwf80k4xlp4lpnuyc69feh2r3d",
-            freshAddressPath: "84'/0'/1'/0/24",
+            freshAddress: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
+            freshAddressPath: "84'/0'/1'/0/53",
             freshAddresses: [
               {
-                address: "bc1qwqfns0rs5zxrrwf80k4xlp4lpnuyc69feh2r3d",
-                derivationPath: "84'/0'/1'/0/24"
+                address: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
+                derivationPath: "84'/0'/1'/0/53"
               }
             ],
             blockHeight: 0,
@@ -135,7 +135,7 @@ const dataset: DatasetTest<Transaction> = {
             currencyId: "bitcoin",
             unitMagnitude: 8,
             lastSyncDate: "",
-            balance: "150084",
+            balance: "2717",
             xpub:
               "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2"
           }
