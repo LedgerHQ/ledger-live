@@ -14,7 +14,10 @@ import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering"
 
 import { TabView, TabBar } from "react-native-tab-view";
 import Animated from "react-native-reanimated";
+
+import i18next from "i18next";
 import { Trans } from "react-i18next";
+
 import colors from "../../colors";
 
 import SearchModal from "./Modals/SearchModal";
@@ -80,8 +83,14 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   const [index, setIndex] = useState(0);
   const [tabSwiping, onTabSwipe] = useState(false);
   const [routes] = React.useState([
-    { key: MANAGER_TABS.CATALOG, title: "Apps catalog" },
-    { key: MANAGER_TABS.INSTALLED_APPS, title: "Installed Apps" },
+    {
+      key: MANAGER_TABS.CATALOG,
+      title: i18next.t("manager.appsCatalog"),
+    },
+    {
+      key: MANAGER_TABS.INSTALLED_APPS,
+      title: i18next.t("manager.installedApps"),
+    },
   ]);
 
   const tabSwipe = useCallback(isSwiping => () => onTabSwipe(isSwiping), [

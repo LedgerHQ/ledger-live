@@ -1154,6 +1154,8 @@
     "tabTitle": "Device manager",
     "title": "Manager",
     "connect": "Select your device",
+    "appsCatalog": "Apps Catalog",
+    "installedApps": "Installed Apps",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",

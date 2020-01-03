@@ -7,8 +7,8 @@ import {
   FlatList,
 } from "react-native";
 import ReactNativeModal from "react-native-modal";
-import i18next from "i18next";
 
+import i18next from "i18next";
 import { Trans } from "react-i18next";
 
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";

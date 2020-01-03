@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useState, useCallback, useMemo } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import type { State, Action } from "@ledgerhq/live-common/lib/apps";
 import { Trans } from "react-i18next";
@@ -16,8 +16,12 @@ type Props = {
 const AppUpdateAll = ({ state, dispatch }: Props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const { installed, apps } = state;
-  const appsToUpdate = apps.filter(app =>
-    installed.some(({ name, updated }) => name === app.name && !updated),
+  const appsToUpdate = useMemo(
+    () =>
+      apps.filter(app =>
+        installed.some(({ name, updated }) => name === app.name && !updated),
+      ),
+    [apps, installed],
   );
   const openModal = useCallback(() => setModalOpen(true), [setModalOpen]);
   const closeModal = useCallback(() => setModalOpen(false), [setModalOpen]);
