@@ -32,56 +32,54 @@ const DeviceCard = ({ state }: Props) => {
   const capacity = formatSize(distribution.appsSpaceBytes) || "0kb";
 
   return (
-    <View style={styles.root}>
-      <Card style={styles.card}>
-        <View style={styles.deviceSection}>
-          <View style={styles.deviceImageContainer}>
-            <Image
-              style={styles.deviceImage}
-              source={illustrations[deviceModel.id]}
-              resizeMode="contain"
-            />
-          </View>
-          <View style={styles.deviceInfoContainer}>
-            <View style={styles.deviceNameContainer}>
-              <LText bold style={styles.deviceName}>
-                {deviceModel.productName}
-              </LText>
-              <Genuine />
-            </View>
-
-            <LText style={styles.deviceFirmware}>
-              <Trans
-                i18nKey="FirmwareVersionRow.subtitle"
-                values={{ version: firmware.version }}
-              />
+    <Card style={styles.card}>
+      <View style={styles.deviceSection}>
+        <View style={styles.deviceImageContainer}>
+          <Image
+            style={styles.deviceImage}
+            source={illustrations[deviceModel.id]}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={styles.deviceInfoContainer}>
+          <View style={styles.deviceNameContainer}>
+            <LText bold style={styles.deviceName}>
+              {deviceModel.productName}
             </LText>
-            <View style={styles.deviceCapacity}>
-              <LText style={styles.deviceFirmware}>
-                <Trans i18nKey="manager.storage.capacity" />
-              </LText>
-              <LText style={styles.capacityText} semiBold>
-                {" "}
-                {capacity}
-              </LText>
-            </View>
+            <Genuine />
+          </View>
+
+          <LText style={styles.deviceFirmware}>
+            <Trans
+              i18nKey="FirmwareVersionRow.subtitle"
+              values={{ version: firmware.version }}
+            />
+          </LText>
+          <View style={styles.deviceCapacity}>
+            <LText style={styles.deviceFirmware}>
+              <Trans i18nKey="manager.storage.capacity" />
+            </LText>
+            <LText style={styles.capacityText} semiBold>
+              {" "}
+              {capacity}
+            </LText>
           </View>
         </View>
-        <View style={styles.separator} />
-        <View style={styles.storageSection}>
-          <DeviceAppStorage distribution={distribution} />
-        </View>
-      </Card>
-    </View>
+      </View>
+      <View style={styles.separator} />
+      <View style={styles.storageSection}>
+        <DeviceAppStorage distribution={distribution} />
+      </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {},
   card: {
     height: 265,
     flexDirection: "column",
     paddingHorizontal: 16,
+    marginTop: 16,
   },
   capacityText: { fontSize: 13 },
   deviceSection: {

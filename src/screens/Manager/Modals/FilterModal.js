@@ -1,10 +1,5 @@
 import React, { memo, useCallback, useEffect, useReducer } from "react";
-import {
-  StyleSheet,
-  SectionList,
-  View,
-  TouchableHighlight,
-} from "react-native";
+import { StyleSheet, SectionList, View, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import Check from "../../../icons/Check";
 import colors from "../../../colors";
@@ -21,11 +16,11 @@ const filterSections = [
       //   value: "all",
       //   isFilter: true,
       // },
-      {
-        label: "AppAction.filter.installed",
-        value: "installed",
-        isFilter: true,
-      },
+      // {
+      //   label: "AppAction.filter.installed",
+      //   value: "installed",
+      //   isFilter: true,
+      // },
       {
         label: "AppAction.filter.not_installed",
         value: "not_installed",
@@ -181,27 +176,25 @@ const FilterModalComponent = ({
         else
           dispatch({
             type: "setState",
-            payload: { sort: newValue, order: isChecked ? "asc" : orderValue },
+            payload: { sort: value, order: orderValue },
           });
       };
 
       return (
-        <TouchableHighlight
+        <TouchableOpacity
           style={[styles.sectionLine, styles.paddingLine]}
-          underlayColor={colors.lightFog}
+          activeOpacity={0.5}
           onPress={onPress}
         >
-          <>
-            <LText bold={isChecked} style={styles.filterName}>
-              <Trans i18nKey={label} />
-            </LText>
-            {Boolean(isChecked) && (
-              <View style={styles.checkIcon}>
-                <Check color={colors.live} size={14} />
-              </View>
-            )}
-          </>
-        </TouchableHighlight>
+          <LText bold={isChecked} style={styles.filterName}>
+            <Trans i18nKey={label} />
+          </LText>
+          {Boolean(isChecked) && (
+            <View style={styles.checkIcon}>
+              <Check color={colors.live} size={14} />
+            </View>
+          )}
+        </TouchableOpacity>
       );
     },
     [state],
@@ -246,7 +239,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   sectionHeader: {
-    fontSize: 11,
+    fontSize: 12,
     color: colors.grey,
     textTransform: "uppercase",
   },
@@ -265,6 +258,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 1,
     backgroundColor: colors.lightFog,
+    marginVertical: 16,
   },
 });
 

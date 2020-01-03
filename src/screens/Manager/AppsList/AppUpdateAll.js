@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
+    height: 38,
   },
   infoText: {
     fontSize: 14,

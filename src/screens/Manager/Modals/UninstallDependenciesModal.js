@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexWrap: "nowrap",
-    marginBottom: 24,
+    marginBottom: 16,
   },
   appIcons: {
     flexBasis: 50,
@@ -147,13 +147,13 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   infoRow: {
-    paddingHorizontal: 16,
+    padding: 16,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
   },
   collapsibleList: {
-    padding: 16,
+    paddingHorizontal: 16,
   },
   depLine: {
     height: 46,

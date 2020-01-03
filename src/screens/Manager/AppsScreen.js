@@ -43,7 +43,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
 
   const installedApps = useMemo(
     () =>
-      [...installed, ...installQueue]
+      [...installQueue, ...installed]
         .map((i: { name: string } | string) => appByName[i.name || i])
         .filter(Boolean)
         .filter(
@@ -54,7 +54,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   );
 
   const [filter, setFilter] = useState(null);
-  const [sort, setSort] = useState(null);
+  const [sort, setSort] = useState("name");
   const [order, setOrder] = useState("asc");
 
   const filterOptions = useMemo(
@@ -77,6 +77,19 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     apps,
     filterOptions,
     sortOptions,
+  );
+
+  const sortedInstalledApps = useSortedFilteredApps(
+    apps,
+    {
+      query: null,
+      installedApps,
+      type: "installed",
+    },
+    {
+      type: "name",
+      order: "asc",
+    },
   );
 
   const { MANAGER_TABS } = useContext(ManagerContext);
@@ -102,9 +115,9 @@ const AppsScreen = ({ state, dispatch }: Props) => {
 
   const [position] = useState(() => new Animated.Value(0));
 
-  const translateFilter = interpolate(position, {
+  const searchOpacity = interpolate(position, {
     inputRange: [0, 1],
-    outputRange: [0, 100],
+    outputRange: [1, 0],
     extrapolate: Extrapolate.CLAMP,
   });
 
@@ -156,7 +169,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
             </View>
             <AppsList
               tab={MANAGER_TABS.INSTALLED_APPS}
-              apps={installedApps}
+              apps={sortedInstalledApps}
               state={state}
               dispatch={dispatch}
               active={tabSwiping || index === 1}
@@ -185,26 +198,37 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         labelStyle={styles.labelStyle}
         contentContainerStyle={styles.contentContainerStyle}
       />
-      <View style={styles.searchBarContainer}>
-        <SearchModal
-          state={state}
-          dispatch={dispatch}
-          tab={index === 0 ? MANAGER_TABS.CATALOG : MANAGER_TABS.INSTALLED_APPS}
-        />
+      <View style={styles.searchBar}>
+        <Animated.View
+          style={[styles.searchBarContainer, { opacity: searchOpacity }]}
+        >
+          <SearchModal
+            state={state}
+            dispatch={dispatch}
+            tab={MANAGER_TABS.CATALOG}
+          />
+          <View style={styles.filterButton}>
+            <AppFilter
+              filter={filter}
+              setFilter={setFilter}
+              sort={sort}
+              setSort={setSort}
+              order={order}
+              setOrder={setOrder}
+            />
+          </View>
+        </Animated.View>
         <Animated.View
           style={[
-            styles.filterButton,
-            { transform: [{ translateX: translateFilter }] },
+            styles.searchBarContainer,
+            styles.searchBarInstalled,
+            { opacity: position },
           ]}
         >
-          <AppFilter
-            filter={filter}
-            setFilter={setFilter}
-            sort={sort}
-            setSort={setSort}
-            order={order}
-            setOrder={setOrder}
-            disabled={index !== 0}
+          <SearchModal
+            state={state}
+            dispatch={dispatch}
+            tab={MANAGER_TABS.INSTALLED_APPS}
           />
         </Animated.View>
       </View>
@@ -239,6 +263,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
+  searchBar: {
+    width,
+    backgroundColor: colors.white,
+    height: 64,
+  },
   searchBarContainer: {
     flexDirection: "row",
     flexWrap: "nowrap",
@@ -250,17 +279,20 @@ const styles = StyleSheet.create({
     height: 64,
     borderBottomWidth: 1,
     borderColor: colors.lightFog,
-    width,
+  },
+  searchBarInstalled: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: 2,
   },
   listContainer: {
     width,
   },
   filterButton: {
-    position: "absolute",
-    top: 0,
-    right: 0,
     height: 64,
-    width: 64,
+    width: 44,
+    marginLeft: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -272,7 +304,6 @@ const styles = StyleSheet.create({
   indicatorStyle: {
     height: 3,
     backgroundColor: colors.live,
-    left: 16,
   },
   tabBarStyle: {
     backgroundColor: colors.lightGrey,
@@ -281,8 +312,9 @@ const styles = StyleSheet.create({
   tabStyle: {
     backgroundColor: "transparent",
     width: "auto",
-    marginHorizontal: 16,
-    padding: 0,
+    paddingHorizontal: 16,
+    alignItems: "flex-start",
+    justifyContent: "center",
   },
   labelStyle: {
     backgroundColor: "transparent",
@@ -290,7 +322,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     lineHeight: 19,
-    padding: 0,
+    margin: 0,
+    paddingHorizontal: 0,
     textAlign: "left",
     width: "100%",
   },

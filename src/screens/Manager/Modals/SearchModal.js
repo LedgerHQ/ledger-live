@@ -51,7 +51,7 @@ export default ({ state, dispatch, tab }: Props) => {
 
   const installedApps = useMemo(
     () =>
-      [...installed, ...installQueue]
+      [...installQueue, ...installed]
         .map((i: { name: String } | String) => appByName[i.name || i])
         .filter(Boolean)
         .filter(
@@ -70,7 +70,7 @@ export default ({ state, dispatch, tab }: Props) => {
     [query, installedApps, tab, MANAGER_TABS.INSTALLED_APPS],
   );
   const [sortOptions] = useState({
-    type: null,
+    type: "name",
     order: "asc",
   });
 
@@ -85,7 +85,7 @@ export default ({ state, dispatch, tab }: Props) => {
       sortedApps.length <= 0 && (
         <View style={styles.noResult}>
           <View style={styles.noResultIcon}>
-            <NoResults color={colors.grey} />
+            <NoResults color={colors.fog} />
           </View>
           <LText bold style={styles.noResultText}>
             <Trans i18nKey="manager.appList.noResultsFound" />
@@ -105,7 +105,7 @@ export default ({ state, dispatch, tab }: Props) => {
         index={index}
         state={state}
         dispatch={dispatch}
-        listView={tab}
+        tab={tab}
         animation={false}
       />
     ),
@@ -170,9 +170,7 @@ export default ({ state, dispatch, tab }: Props) => {
         <View style={styles.searchBarIcon}>
           <SearchIcon size={16} color={colors.smoke} />
         </View>
-        <LText semiBold style={styles.searchBarTextInput}>
-          {placeholder}
-        </LText>
+        <LText style={styles.searchBarTextInput}>{placeholder}</LText>
       </TouchableOpacity>
       <ReactNativeModal
         isVisible={isOpened}
@@ -224,15 +222,15 @@ const styles = StyleSheet.create({
     paddingRight: 44,
   },
   searchBarIcon: {
-    width: 38,
-    height: 38,
+    width: 44,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
   },
   searchBarInput: {
     flexGrow: 1,
     flexDirection: "row",
-    height: 38,
+    height: 44,
     alignItems: "center",
     justifyContent: "flex-start",
     backgroundColor: colors.lightGrey,

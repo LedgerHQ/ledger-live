@@ -38,7 +38,7 @@ const AppUninstallButton = ({ app, state, dispatch }: Props) => {
       style={styles.uninstallButton}
       onPress={uninstallApp}
     >
-      <Trash size={16} color={colors.grey} />
+      <Trash size={18} color={colors.grey} />
     </TouchableOpacity>
   );
 };

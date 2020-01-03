@@ -15,7 +15,9 @@ const renderAppLine = ({ item }: { item: App }) => (
     <LText semiBold style={styles.appName}>
       {item.name}
     </LText>
-    <LText style={styles.appLineText}>{item.version}</LText>
+    <LText style={[styles.appLineText, styles.appLineVersion]}>
+      {item.version}
+    </LText>
     <LText style={styles.appLineText}>{formatSize(item.bytes)}</LText>
   </View>
 );
@@ -68,6 +70,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     color: colors.darkBlue,
+    marginBottom: 32,
   },
   warnText: {
     textAlign: "center",
@@ -84,20 +87,23 @@ const styles = StyleSheet.create({
   },
   list: {
     width: "100%",
-    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: colors.lightFog,
   },
   appLine: {
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
     flexWrap: "nowrap",
     height: 66,
-    borderTopColor: colors.lightFog,
-    borderTopWidth: 1,
+    borderBottomColor: colors.lightFog,
+    borderBottomWidth: 1,
   },
   appName: {
-    flexGrow: 1,
-    flexBasis: "40%",
+    flexGrow: 0,
+    flexBasis: "35%",
     marginHorizontal: 12,
     fontSize: 14,
     color: colors.darkBlue,
@@ -106,6 +112,9 @@ const styles = StyleSheet.create({
     flexBasis: 55,
     fontSize: 12,
     color: colors.grey,
+  },
+  appLineVersion: {
+    flexGrow: 1,
   },
 });
 

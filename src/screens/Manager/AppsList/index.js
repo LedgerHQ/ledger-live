@@ -25,7 +25,7 @@ const AppsList = ({
   state,
   dispatch,
 }: Props) => {
-  const viewHeight = active ? "auto" : height - 253;
+  const viewHeight = active ? "auto" : height - 267;
   const renderRow = useCallback(
     ({ item, index }: { item: App, index: number }) => (
       <AppRow

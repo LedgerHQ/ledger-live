@@ -31,7 +31,7 @@ export default function AppTree({ size = 163, color, icon }: Props) {
       <G opacity="0.25">
         <Rect y="86" width="22" height="22" rx="6.94737" fill={color} />
       </G>
-      <Image x="57" width="50" height="50" rx="15.7895" href={uri} />
+      <Image x="63" y="15" width="38" height="38" rx="15.7895" href={uri} />
       <Path
         d="M82 61V69.5H13C11.8954 69.5 11 70.3954 11 71.5V78"
         stroke={color}

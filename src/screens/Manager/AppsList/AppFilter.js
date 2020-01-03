@@ -14,7 +14,6 @@ type Props = {
   setSort: string => void,
   order: string,
   setOrder: string => void,
-  disabled: boolean,
 };
 
 const AppFilter = ({
@@ -24,7 +23,6 @@ const AppFilter = ({
   setSort,
   order,
   setOrder,
-  disabled,
 }: Props) => {
   const [isOpened, setOpenModal] = useState(false);
   const openModal = useCallback(() => setOpenModal(true), [setOpenModal]);
@@ -38,12 +36,11 @@ const AppFilter = ({
           type="darkSecondary"
           IconLeft={Filters}
           onPress={openModal}
-          disabled={disabled}
         />
         {!!filter && <NotifBadge />}
       </View>
       <FilterModalComponent
-        isOpened={!disabled && isOpened}
+        isOpened={isOpened}
         filter={filter}
         setFilter={setFilter}
         sort={sort}
@@ -58,8 +55,8 @@ const AppFilter = ({
 
 const styles = StyleSheet.create({
   searchBarFilters: {
-    width: 38,
-    height: 38,
+    width: 44,
+    height: 44,
   },
 });
 

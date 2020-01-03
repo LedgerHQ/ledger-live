@@ -32,7 +32,7 @@ type Props = {
 };
 
 const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
-  const { name, version, bytes, icon } = app;
+  const { name, version, bytes, icon, dependencies } = app;
   const { installed } = state;
   const { setStorageWarning, MANAGER_TABS } = useContext(ManagerContext);
 
@@ -70,6 +70,15 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
     [animation, index],
   );
 
+  const bytesWithDeps = useMemo(() => {
+    const depBytes =
+      dependencies.length > 0 &&
+      installed.every(i => dependencies[0] !== i.name)
+        ? state.appByName[dependencies[0]].bytes
+        : 0;
+    return bytes + depBytes;
+  }, [dependencies, bytes, installed, state.appByName]);
+
   return (
     <Container style={styles.root} {...containerProps}>
       <AppIcon icon={icon} />
@@ -94,7 +103,7 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
             semiBold
             style={[styles.versionText, styles.sizeText, styles.warnText]}
           >
-            {formatSize(bytes || 0)}
+            {formatSize(bytesWithDeps)}
           </LText>
         </TouchableOpacity>
       ) : (
@@ -105,7 +114,7 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
             notEnoughMemoryToInstall ? styles.warnText : {},
           ]}
         >
-          {formatSize(bytes || 0)}
+          {formatSize(bytesWithDeps)}
         </LText>
       )}
       <AppStateButton

@@ -30,8 +30,11 @@ const InstallProgress = ({
   isUpdating,
 }: InstallProgressProps) => {
   const color = isInstalling ? colors.live : colors.alert;
+  const canCancel = !progress && !!onCancel;
+  const Container = canCancel ? TouchableOpacity : View;
+
   return (
-    <View style={styles.progressContainer}>
+    <Container style={styles.progressContainer}>
       <View style={styles.progressLabel}>
         <LText semiBold style={[styles.appStateText, { color }]}>
           <Trans
@@ -44,7 +47,7 @@ const InstallProgress = ({
             }
           />
         </LText>
-        {!progress && (
+        {canCancel && (
           <TouchableOpacity
             style={styles.progressCloseButton}
             onPress={onCancel}
@@ -72,7 +75,7 @@ const InstallProgress = ({
           height={6}
         />
       )}
-    </View>
+    </Container>
   );
 };
 
@@ -132,20 +135,27 @@ const AppStateButton = ({
     dispatch({ type: "uninstall", name });
   }, [dispatch, name]);
 
-  const onCancel = useCallback(() => {
-    if (installing) uninstallApp();
-    else if (uninstalling) installApp();
-  }, [installing, uninstalling, uninstallApp, installApp]);
+  const onCancelUninstall = useMemo(
+    () => (uninstallQueue.indexOf(name) === 0 ? null : installApp),
+    [uninstallQueue, name, installApp],
+  );
 
   const renderAppState = () => {
     switch (true) {
       case uninstalling:
+        return (
+          <InstallProgress
+            progress={progress}
+            onCancel={onCancelUninstall}
+            isInstalling={false}
+          />
+        );
       case installing:
         return (
           <InstallProgress
             progress={progress}
-            onCancel={onCancel}
-            isInstalling={installing}
+            onCancel={uninstallApp}
+            isInstalling={true}
             isUpdating={canUpdate}
           />
         );
@@ -156,17 +166,15 @@ const AppStateButton = ({
       case canUpdate:
         return (
           <TouchableOpacity
-            style={[styles.installedLabel, styles.updatedLabel]}
+            style={styles.installedLabel}
             activeOpacity={0.5}
             onPress={installApp}
           >
-            <LText semiBold style={styles.updateText}>
-              <Trans
-                i18nKey="AppAction.update.version"
-                values={{ version: app.version }}
-              />
-            </LText>
-            <LText semiBold style={styles.updateText}>
+            <LText
+              semiBold
+              style={[styles.appStateText, styles.updateText]}
+              multiline
+            >
               <Trans i18nKey="AppAction.update.buttonAction" />
             </LText>
           </TouchableOpacity>
@@ -175,7 +183,11 @@ const AppStateButton = ({
         return (
           <View style={styles.installedLabel}>
             <Check color={colors.green} />
-            <LText semiBold style={[styles.installedText, styles.appStateText]}>
+            <LText
+              semiBold
+              style={[styles.installedText, styles.appStateText]}
+              multiline
+            >
               {<Trans i18nKey="common.installed" />}
             </LText>
           </View>
@@ -203,7 +215,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   appStateText: {
-    fontSize: 12,
+    fontSize: 13,
+    lineHeight: 16,
   },
   installedLabel: {
     flexGrow: 1,
@@ -211,24 +224,21 @@ const styles = StyleSheet.create({
     flexBasis: "auto",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
+    alignContent: "center",
     borderRadius: 4,
     overflow: "hidden",
-    paddingHorizontal: 10,
-    flexWrap: "wrap",
-  },
-  updatedLabel: {
     paddingHorizontal: 0,
+    flexWrap: "wrap",
+    height: 38,
   },
   updateText: {
     width: "100%",
     color: colors.live,
-    fontSize: 12,
-    lineHeight: 15,
     textAlign: "right",
   },
   installedText: {
-    paddingLeft: 10,
+    paddingLeft: 8,
     color: colors.green,
   },
   progressContainer: {
