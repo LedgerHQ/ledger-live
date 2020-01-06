@@ -20,11 +20,6 @@ for td in *; do
   fi
 done
 
-# all verbose logs are logs to stdout but not recorded by testOne.
-export VERBOSE_FILE=`mktemp`
-tail -F $VERBOSE_FILE &
-TAIL_PID=$!
-
 for td in $MANDATORY_TESTS; do
   bash $PWD/../scripts/testOne.sh $td $1
 done
@@ -35,5 +30,3 @@ if [ ! $MINIMAL_MODE ]; then
   done
 fi
 
-kill $TAIL_PID
-wait

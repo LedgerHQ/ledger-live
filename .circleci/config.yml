@@ -13,11 +13,26 @@ jobs:
     macos:
       xcode: "10.2.1"
     steps:
-      - run: brew unlink node && brew install node@8 jq && brew link --overwrite node@8 --force
       - checkout
       - run: node -v
-      - run: yarn install
-      - run: yarn global add yalc
+
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile && cd cli && yarn install --frozen-lockfile && yarn global add yalc
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - ~/node_modules
+            - ~/cli/node_modules
+
+      - run: yarn ci-lint
+      - run: yarn ci-test-common
       - run:
           command: yarn ci-test-cli
           no_output_timeout: 1h
@@ -37,15 +52,22 @@ jobs:
             sudo apt-get update && sudo apt-get install yarn
             sudo rm /usr/local/bin/yarn # remove docker yarn
       - checkout
+
       - restore_cache:
+          name: Restore Yarn Package Cache
           keys:
-            - v12-yarn-packages-{{ checksum "yarn.lock" }}
-      - run: yarn install
+            - yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile && cd cli && yarn install --frozen-lockfile && yarn global add yalc
       - save_cache:
-          key: v12-yarn-packages-{{ checksum "yarn.lock" }}
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
           paths:
-            - node_modules
-      - run: yarn global add yalc
+            - ~/.cache/yarn
+            - ~/node_modules
+            - ~/cli/node_modules
+
       - run: yarn ci-lint
       - run: yarn ci-test-common
       - run:
