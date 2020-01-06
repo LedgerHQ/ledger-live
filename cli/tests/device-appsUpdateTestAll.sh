@@ -15,7 +15,7 @@ yalc add @ledgerhq/live-common
 yarn
 yarn link
 yarn build
-mkdir -p tests/tmp/
+mkdir -p cli/tests/tmp/
 ledger-live appsUpdateTestAll 2> cli/tests/tmp/error.log
 
 LOG_FILE=cli/tests/tmp/error.log
