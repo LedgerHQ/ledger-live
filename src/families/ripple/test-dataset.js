@@ -1,7 +1,7 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import { NotEnoughSpendableBalance } from "@ledgerhq/errors";
 import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
+import { NotEnoughSpendableBalance, NotEnoughBalanceBecauseDestinationNotCreated } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 
@@ -31,6 +31,27 @@ const dataset: DatasetTest<Transaction> = {
                 },
                 warnings: {},
                 totalSpent: BigNumber("15000001")
+              }
+            },
+            {
+              name: "operation amount to low to create the recipient account",
+              transaction: fromTransactionRaw({
+                family: "ripple",
+                recipient: "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4",
+                amount: "10000000",
+                tag: null,
+                fee: "1",
+                feeCustomUnit: null,
+                networkInfo: null
+              }),
+              expectedStatus: {
+                amount: BigNumber("10000000"),
+                estimatedFees: BigNumber("1"),
+                errors: {
+                  amount: new NotEnoughBalanceBecauseDestinationNotCreated()
+                },
+                warnings: {},
+                totalSpent: BigNumber("10000001")
               }
             }
           ],
