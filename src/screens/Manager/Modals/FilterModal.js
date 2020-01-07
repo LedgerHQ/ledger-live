@@ -88,15 +88,25 @@ const Separator = ({ section: { footerSeparator } }) =>
   );
 
 const initialFilterState = {
-  filter: null,
+  filters: null,
   sort: null,
   order: null,
 };
 
 const filterReducer = (state, { type, payload }) => {
   switch (type) {
-    case "setFilter":
-      return { ...state, filter: payload };
+    case "setFilters":
+      return { ...state, filters: payload };
+    case "toggleFilter": {
+      const filters = [].concat(state.filters);
+
+      const i = filters.indexOf(payload);
+
+      if (i >= 0) filters.splice(i, 1);
+      else filters.push(payload);
+
+      return { ...state, filters };
+    }
     case "setSort":
       return { ...state, sort: payload };
     case "setOrder":
@@ -109,8 +119,8 @@ const filterReducer = (state, { type, payload }) => {
 };
 
 type Props = {
-  filter: string,
-  setFilter: () => void,
+  filters: string[],
+  setFilters: () => void,
   sort: string,
   setSort: () => void,
   order: string,
@@ -120,8 +130,8 @@ type Props = {
 };
 
 const FilterModalComponent = ({
-  filter,
-  setFilter,
+  filters,
+  setFilters,
   sort,
   setSort,
   order,
@@ -135,44 +145,28 @@ const FilterModalComponent = ({
     dispatch({
       type: "setState",
       payload: {
-        filter,
+        filters,
         sort,
         order,
       },
     });
-  }, [isOpened, filter, sort, order]);
-
-  /** 
-   const toggleFilter = useCallback(
-    value => {
-      const filters = [].concat(selectedFilters);
-      const index = filters.indexOf(value);
-
-      if (index >= 0) filters.splice(index, 1);
-      else filters.push(value);
-
-      filterBy(filters);
-    },
-    [selectedFilters, filterBy],
-  );
-  */
+  }, [isOpened, filters, sort, order]);
 
   const onFilter = useCallback(() => {
-    setFilter(state.filter);
+    setFilters(state.filters);
     setSort(state.sort);
     setOrder(state.order);
     onClose();
-  }, [state, setFilter, setSort, setOrder, onClose]);
+  }, [state, setFilters, setSort, setOrder, onClose]);
 
   const FilterItem = useCallback(
     ({ item: { label, value, isFilter, orderValue } }) => {
       const isChecked = isFilter
-        ? state.filter === value
+        ? state.filters.includes(value)
         : state.sort === value && state.order === orderValue;
 
       const onPress = () => {
-        const newValue = isChecked ? null : value;
-        if (isFilter) dispatch({ type: "setFilter", payload: newValue });
+        if (isFilter) dispatch({ type: "toggleFilter", payload: value });
         else
           dispatch({
             type: "setState",

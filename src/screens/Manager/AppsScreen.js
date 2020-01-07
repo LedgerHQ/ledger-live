@@ -53,17 +53,17 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     [installed, installQueue, appByName],
   );
 
-  const [filter, setFilter] = useState(null);
+  const [filters, setFilters] = useState([]);
   const [sort, setSort] = useState("name");
   const [order, setOrder] = useState("asc");
 
   const filterOptions = useMemo(
     () => ({
       query: null,
-      installedApps,
-      type: filter,
+      installedApps: installed,
+      type: filters,
     }),
-    [installedApps, filter],
+    [installed, filters],
   );
   const sortOptions = useMemo(
     () => ({
@@ -82,9 +82,9 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   const sortedInstalledApps = useSortedFilteredApps(
     apps,
     {
-      query: null,
-      installedApps,
-      type: "installed",
+      query: "",
+      installedApps: installed,
+      type: ["installed"],
     },
     {
       type: "name",
@@ -209,8 +209,8 @@ const AppsScreen = ({ state, dispatch }: Props) => {
           />
           <View style={styles.filterButton}>
             <AppFilter
-              filter={filter}
-              setFilter={setFilter}
+              filters={filters}
+              setFilters={setFilters}
               sort={sort}
               setSort={setSort}
               order={order}

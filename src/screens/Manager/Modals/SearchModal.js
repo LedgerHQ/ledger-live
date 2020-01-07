@@ -65,7 +65,7 @@ export default ({ state, dispatch, tab }: Props) => {
     () => ({
       query,
       installedApps,
-      type: tab === MANAGER_TABS.INSTALLED_APPS ? "installed" : null,
+      type: tab === MANAGER_TABS.INSTALLED_APPS ? ["installed"] : [],
     }),
     [query, installedApps, tab, MANAGER_TABS.INSTALLED_APPS],
   );

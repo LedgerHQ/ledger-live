@@ -8,8 +8,8 @@ import NotifBadge from "../../../components/NotifBadge";
 import FilterModalComponent from "../Modals/FilterModal";
 
 type Props = {
-  filter: string,
-  setFilter: string => void,
+  filters: string[],
+  setFilters: string => void,
   sort: string,
   setSort: string => void,
   order: string,
@@ -17,8 +17,8 @@ type Props = {
 };
 
 const AppFilter = ({
-  filter,
-  setFilter,
+  filters,
+  setFilters,
   sort,
   setSort,
   order,
@@ -37,12 +37,12 @@ const AppFilter = ({
           IconLeft={Filters}
           onPress={openModal}
         />
-        {!!filter && <NotifBadge />}
+        {filters.length > 0 && <NotifBadge />}
       </View>
       <FilterModalComponent
         isOpened={isOpened}
-        filter={filter}
-        setFilter={setFilter}
+        filters={filters}
+        setFilters={setFilters}
         sort={sort}
         setSort={setSort}
         order={order}
@@ -51,6 +51,10 @@ const AppFilter = ({
       />
     </>
   );
+};
+
+AppFilter.defaultProps = {
+  filters: [],
 };
 
 const styles = StyleSheet.create({
