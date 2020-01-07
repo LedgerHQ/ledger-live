@@ -222,7 +222,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
           style={[
             styles.searchBarContainer,
             styles.searchBarInstalled,
-            { opacity: position },
+            { opacity: position, zIndex: position },
           ]}
         >
           <SearchModal
@@ -279,12 +279,14 @@ const styles = StyleSheet.create({
     height: 64,
     borderBottomWidth: 1,
     borderColor: colors.lightFog,
+    zIndex: 1,
   },
   searchBarInstalled: {
     position: "absolute",
     top: 0,
     left: 0,
-    zIndex: 2,
+    zIndex: 1,
+    width,
   },
   listContainer: {
     width,

@@ -237,6 +237,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 41,
     paddingVertical: 12,
+    backgroundColor: colors.white,
   },
   sectionHeader: {
     fontSize: 12,
@@ -245,6 +246,7 @@ const styles = StyleSheet.create({
   },
   filterName: {
     fontSize: 14,
+    lineHeight: 17,
   },
   paddingLine: {
     paddingHorizontal: 20,
