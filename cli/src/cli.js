@@ -1,7 +1,6 @@
 // @flow
 /* eslint-disable no-console */
 
-
 import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
@@ -78,7 +77,7 @@ from(cmd.job(options)).subscribe({
   },
   error: error => {
     const e = error instanceof Error ? error : deserializeError(error);
-    if (process.env.VERBOSE) console.error(e);
+    if (process.env.VERBOSE || process.env.VERBOSE_FILE) console.error(e);
     else console.error(String(e.message || e));
     process.exit(1);
   },

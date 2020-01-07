@@ -30,7 +30,7 @@ ledger-live libcoreSetPassword --password foo
 
 echo try a sync with a wrong password
 set +e
-LIBCORE_PASSWORD=mistake ledger-live sync -c bitcoin --xpub xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj
+LIBCORE_PASSWORD=mistake ledger-live sync -c bitcoin --xpub xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj -f summary
 RES=$?
 set -e
 if [ $RES -eq 0 ]; then

@@ -47,8 +47,8 @@ export const jsonFromFile = (file: string) =>
       error: e => o.error(e),
       complete: () => o.complete(),
       next: chunk => {
-        const str = chunk.toString();
         let lastIndex = 0;
+        const str = chunk.toString();
         for (let i = 0; i < str.length; i++) {
           switch (str[i]) {
             case "[":
@@ -74,6 +74,7 @@ export const jsonFromFile = (file: string) =>
             default:
           }
         }
+        acc += str.slice(lastIndex);
       }
     });
   });

@@ -50,7 +50,7 @@ const dataset: DatasetTest<Transaction> = {
                 derivationPath: "44'/144'/0'/0/0"
               }
             ],
-            blockHeight: "",
+            blockHeight: 0,
             operations: [],
             pendingOperations: [],
             currencyId: "ripple",

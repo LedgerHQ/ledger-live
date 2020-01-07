@@ -183,7 +183,7 @@ export async function bitcoinSignTransaction({
     additionals,
     expiryHeight: expiryHeight && expiryHeight.toString("hex")
   });
-  const signedTransaction = await hwApp.createPaymentTransactionNew(
+  const signedTransaction = await hwApp.createPaymentTransactionNew({
     // $FlowFixMe not sure what's wrong
     inputs,
     associatedKeysets,
@@ -191,11 +191,11 @@ export async function bitcoinSignTransaction({
     outputScriptHex,
     lockTime,
     sigHashType,
-    isSegwitDerivationMode(derivationMode),
-    initialTimestamp || undefined,
+    segwit: isSegwitDerivationMode(derivationMode),
+    initialTimestamp: initialTimestamp || undefined,
     additionals,
     expiryHeight
-  );
+  });
 
   return signedTransaction; // eslint-disable-line
 }
