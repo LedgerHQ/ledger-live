@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "10.4.0",
+  "version": "10.5.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -103,10 +103,10 @@
     "glob": "^7.1.5",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
-    "svgr": "^1.10.0",
-    "timemachine": "^0.3.0",
     "react": "16",
     "react-dom": "16",
-    "react-redux": "7"
+    "react-redux": "7",
+    "svgr": "^1.10.0",
+    "timemachine": "^0.3.0"
   }
 }
