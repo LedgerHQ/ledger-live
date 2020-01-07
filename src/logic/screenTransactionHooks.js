@@ -1,5 +1,7 @@
 /* @flow */
 
+import { concat, of, from } from "rxjs";
+import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import type {
   Account,
@@ -57,7 +59,25 @@ export const useSignWithDevice = ({
     setSigning(true);
 
     subscription.current = bridge
-      .signAndBroadcast(mainAccount, transaction, deviceId)
+      .signOperation({ account: mainAccount, transaction, deviceId })
+      .pipe(
+        // FIXME later we will need to treat more events
+        filter(e => e.type === "signed"),
+        concatMap(e =>
+          // later we will have more events
+          concat(
+            of(e),
+            from(
+              bridge
+                .broadcast({
+                  account: mainAccount,
+                  signedOperation: e.signedOperation,
+                })
+                .then(operation => ({ type: "broadcasted", operation })),
+            ),
+          ),
+        ),
+      )
       .subscribe({
         next: e => {
           switch (e.type) {
@@ -66,7 +86,6 @@ export const useSignWithDevice = ({
               break;
 
             case "broadcasted":
-              // $FlowFixMe
               navigation.replace(context + "ValidationSuccess", {
                 ...navigation.state.params,
                 result: e.operation,
