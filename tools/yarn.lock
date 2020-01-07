@@ -1242,10 +1242,10 @@
     "@ledgerhq/logs" "^5.3.0"
     rxjs "^6.5.4"
 
-"@ledgerhq/hw-transport-webhid@^5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webhid/-/hw-transport-webhid-5.3.0.tgz#5cf83028c130399f30a7c4a87fab0c87b7f94d11"
-  integrity sha512-tjTzXQmpGXhYS3rylH3JEhWbPgLlddNMCEJhpCV79NvwjyDUp5SPpP9pDzpSQsYd/j1zdaLXxnXxZsLSaNJGWw==
+"@ledgerhq/hw-transport-webhid@^5.3.3":
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webhid/-/hw-transport-webhid-5.3.3.tgz#592ac7db5e57200bf3505ef54e78a3ccf1a2c4d7"
+  integrity sha512-9Cn37/gNbYp+dgDx/g92VAtmT6sKliRGyvmbOexAkLjGPCQ6NeEzCyNraGufITkoEGDNrmKbkgEZw3zRs76enQ==
   dependencies:
     "@ledgerhq/devices" "^5.3.0"
     "@ledgerhq/errors" "^5.3.0"
@@ -1271,10 +1271,10 @@
     "@ledgerhq/errors" "^5.3.0"
     events "^3.0.0"
 
-"@ledgerhq/live-common@10.4.0":
-  version "10.4.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-10.4.0.tgz#d1128310f6a6bb69865087bc9956b8e639506b83"
-  integrity sha512-l0sTDduT5PWzlJzED6LB7HVdJLRRXIAFl1R7iZojMY9p0nimnB3MbA6OrjdEz+QNcz06sysqkP0idw+CbpijQg==
+"@ledgerhq/live-common@10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-10.5.0.tgz#448a45d29c95fe770331775a0a745174276f9b40"
+  integrity sha512-5SaFuxiStlf/4AqoIhMCn5Bls1dDc4xIUFadXc4+ndGVmRZ9DDiUNosphDetNC+S+b7fX8xAOeKbCJTQRdPHaA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.3.0"
@@ -1297,9 +1297,6 @@
     lru-cache "5.1.1"
     numeral "^2.0.6"
     prando "^5.1.2"
-    react "16.12.0"
-    react-dom "^16.12.0"
-    react-redux "7.1.3"
     redux "^4.0.5"
     reselect "^4.0.0"
     ripple-binary-codec "^0.2.0"
@@ -1315,10 +1312,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.3.0.tgz#499e5b8c262204cf3712272eab848131db0a6870"
   integrity sha512-OeCSsXM6WuFLpNI4s9Lr69xwb/blmE4K67AlFTPRW6Xc4miXXqRVn0YmEkEi/4h7iS/3Aq24cytZawBzr+evdw==
 
-"@material-ui/core@^4.8.2":
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.8.2.tgz#883a53985a0e27d4ef73775767597e498a0162bc"
-  integrity sha512-4dILME6TVCTyi9enavqbYLU8HueaX5YQxfn2IiCiGwHpqp4pIhJCVUVlBf0ADG6lL2K1tWrsawGs/hePpHxAYw==
+"@material-ui/core@^4.8.3":
+  version "4.8.3"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.8.3.tgz#858f758b26d8417eb39310f07fb9d7a72beb8b03"
+  integrity sha512-ZJbfJQmkuZCSQTf0nzpfZwizmDdCq8ruZxnPNFnhoKDqgJpMvV8TJRi8vdI9ls1tMuTqxlhyhw8556fxOpWpFQ==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@material-ui/styles" "^4.8.2"
@@ -9419,7 +9416,7 @@ react-dev-utils@^10.0.0:
     strip-ansi "5.2.0"
     text-table "0.2.0"
 
-react-dom@^16.11.0, react-dom@^16.12.0:
+react-dom@^16.11.0:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.12.0.tgz#0da4b714b8d13c2038c9396b54a92baea633fe11"
   integrity sha512-LMxFfAGrcS3kETtQaCkTKjMiifahaMySFDn71fZUNpPHZQEzmk/GiAeIT8JSOrHB23fnuCOMruL2a8NYlw+8Gw==
@@ -9466,7 +9463,7 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-redux@7.1.3, react-redux@^7.1.3:
+react-redux@^7.1.3:
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.1.3.tgz#717a3d7bbe3a1b2d535c94885ce04cdc5a33fc79"
   integrity sha512-uI1wca+ECG9RoVkWQFF4jDMqmaw0/qnvaSvOoL/GA4dNxf6LoV8sUAcNDvE5NWKs4hFpn0t6wswNQnY3f7HT3w==
@@ -9618,7 +9615,7 @@ react-transition-group@^4.3.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@16.12.0, react@^16.11.0:
+react@^16.11.0:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.12.0.tgz#0c0a9c6a142429e3614834d5a778e18aa78a0b83"
   integrity sha512-fglqy3k5E+81pA8s+7K0/T3DBCF0ZDOher1elBFzF7O6arXJgzyu/FW+COxFvAWXJoJN9KIZbT2LXlukwphYTA==
