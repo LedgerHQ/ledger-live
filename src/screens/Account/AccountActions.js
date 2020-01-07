@@ -5,7 +5,7 @@ import { withNavigation } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import {
   ReceiveActionDefault,

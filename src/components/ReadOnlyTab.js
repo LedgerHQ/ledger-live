@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import TabIcon from "./TabIcon";
 
