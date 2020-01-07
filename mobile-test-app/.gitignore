@@ -1,4 +1,7 @@
-ledger/tests/
+ledger/live-common/
+
+fastlane/test_output
+fastlane/report.xml
 
 # OSX
 #

@@ -1,16 +1,14 @@
 // @flow
+import "./test-helpers/staticTime";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import {
-  getFiatCurrencyByTicker,
-  getCryptoCurrencyById
-} from "../../currencies";
+import { getCryptoCurrencyById } from "../currencies";
 import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   shortAddressPreview
-} from "../../account";
-import { genAccount } from "../../mock/account";
+} from "../account";
+import { genAccount } from "../mock/account";
 
 test("groupAccountOperationsByDay", () => {
   const account = genAccount("seed_7");

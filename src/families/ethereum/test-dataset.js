@@ -1,6 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import type { DatasetTest } from "../dataset";
+import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import { FeeTooHigh } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";

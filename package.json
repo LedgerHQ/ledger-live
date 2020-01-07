@@ -16,10 +16,12 @@
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
     "flow": "flow src",
-    "test": "cross-env TZ=America/New_York jest src",
+    "jest": "rm -rf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
+    "test": "yarn jest",
     "ci-lint": "yarn lint && yarn flow && prettier --check src/**/*.js",
-    "ci-test-common": "yarn test --runInBand",
-    "ci-test-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link && yarn test"
+    "ci-test-common": "yarn test --ci --verbose",
+    "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
+    "ci-test-cli": "cd cli && yarn test"
   },
   "files": [
     "lib",
@@ -32,13 +34,23 @@
   "jest": {
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
-    "setupFiles": [
-      "<rootDir>/jest/globals.js"
-    ],
     "testURL": "http://localhost",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/benchmark/.*",
+      "<rootDir>/cli/.yalc/.*"
+    ],
     "testPathIgnorePatterns": [
+      "benchmark/",
+      "tools/",
+      "mobile-test-app/",
+      "lib/",
       ".yalc",
-      "cli/"
+      "cli/",
+      "test-helpers/"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "cli/node_modules"
     ]
   },
   "peerDependencies": {
@@ -51,10 +63,10 @@
     "@ledgerhq/devices": "5.3.0",
     "@ledgerhq/errors": "5.3.0",
     "@ledgerhq/hw-app-btc": "5.4.1",
-    "@ledgerhq/hw-app-eth": "5.3.0",
+    "@ledgerhq/hw-app-eth": "5.4.2",
     "@ledgerhq/hw-app-xrp": "5.3.0",
     "@ledgerhq/hw-transport": "5.3.0",
-    "@ledgerhq/hw-transport-mocker": "5.3.0",
+    "@ledgerhq/hw-transport-mocker": "^5.3.0",
     "@ledgerhq/logs": "5.3.0",
     "bignumber.js": "^9.0.0",
     "bip32-path": "^0.4.2",
@@ -79,16 +91,16 @@
     "sha.js": "^2.4.11"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-proposal-class-properties": "^7.7.0",
-    "@babel/plugin-proposal-export-default-from": "^7.5.2",
-    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/plugin-syntax-import-meta": "^7.2.0",
-    "@babel/preset-env": "^7.7.7",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/preset-react": "^7.7.0",
+    "@babel/cli": "^7.8.0",
+    "@babel/core": "^7.8.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.0",
+    "@babel/plugin-proposal-export-default-from": "^7.8.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.8.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.0",
+    "@babel/plugin-syntax-import-meta": "^7.8.0",
+    "@babel/preset-env": "^7.8.2",
+    "@babel/preset-flow": "^7.8.0",
+    "@babel/preset-react": "^7.8.0",
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
@@ -96,8 +108,8 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.9.0",
-    "eslint-plugin-flowtype": "^4.5.3",
-    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react-hooks": "^2.3.0",
     "flow-bin": "^0.115.0",

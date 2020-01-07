@@ -1,6 +1,5 @@
 // @flow
 
-import { setEnv } from "../../env";
 import {
   importAccountsMakeItems,
   importAccountsReduce,

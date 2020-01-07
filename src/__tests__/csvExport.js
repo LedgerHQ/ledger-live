@@ -1,5 +1,6 @@
 // @flow
 
+import "./test-helpers/staticTime";
 import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";

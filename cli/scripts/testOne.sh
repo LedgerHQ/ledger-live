@@ -57,8 +57,10 @@ fi
 if [ -d "./expected" ]; then
   diff ./output ./expected
   if [ $? -ne 0 ]; then
-    tail -300 $VERBOSE_FILE
     echo "$name: Unexpected result."
+    echo "--- recent logs ---"
+    tail $VERBOSE_FILE
+    echo "$name: FAILED."
     exit 1
   fi
 fi

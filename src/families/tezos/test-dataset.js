@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { fromTransactionRaw } from "./transaction";
-import type { DatasetTest } from "../dataset";
+import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import type { Transaction } from "./types";
 
 const accountTZrevealedDelegating = makeAccount(
@@ -17,13 +17,13 @@ const accountTZrevealedDelegating = makeAccount(
   "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
   "tezbox"
 );
-/*
+
 const accountTZwithKT = makeAccount(
   "TZwithKT",
   "0294e8344ae6df2d3123fa100b5abd40cee339c67838b1c34c4f243cc582f4d2d8",
   "tezbox"
 );
-*/
+
 const accountTZnew = makeAccount(
   "TZnew",
   "02a9ae8b0ff5f9a43565793ad78e10db6f12177d904d208ada591b8a5b9999e3fd",
@@ -39,6 +39,7 @@ const accountTZRevealedNoDelegate = makeAccount(
   "029bfe70b3e94ff23623f6c42f6e081a9ca8cc78f74b0d8da58f0d4cdc41c33c1a",
   "tezosbip44h"
 );
+
 /*
 const accountTZemptyWithKT = makeAccount(
   "TZemptyWithKT",
@@ -63,6 +64,12 @@ const dataset: DatasetTest<Transaction> = {
     tezos: {
       accounts: [
         {
+          FIXME_tests: [
+            // LM-495
+            "balance is sum of ops",
+            // LM-495
+            "existing operations"
+          ],
           raw: accountTZrevealedDelegating,
           transactions: [
             {
@@ -294,12 +301,16 @@ const dataset: DatasetTest<Transaction> = {
               }
             }
           ]
-        }
+        },
 
-        // FIXME libcore bugs
-        /*
         {
           raw: accountTZwithKT,
+          FIXME_tests: [
+            // LM-495
+            "balance is sum of ops",
+            // because of prev bug we have bug on
+            "from KT 2, send max to existing account"
+          ],
           transactions: [
             {
               name: "from KT 1, send max to new account",
@@ -324,7 +335,7 @@ const dataset: DatasetTest<Transaction> = {
                   totalSpent: subAccounts[0].balance
                 }
               )
-            }
+            },
             {
               name: "from KT 2, send max to existing account",
               transaction: (t, account) => (
@@ -348,13 +359,14 @@ const dataset: DatasetTest<Transaction> = {
                   errors: {},
                   warnings: {},
                   estimatedFees: fees,
-                  amount: subAccounts[1].balance.minus(storageLimit),
-                  totalSpent: subAccounts[1].balance.minus(storageLimit)
+                  amount: subAccounts[1].balance,
+                  totalSpent: subAccounts[1].balance
                 }
               )
             }
           ]
-        },
+        }
+        /*
         {
           raw: accountTZemptyWithKT,
           transactions: [
@@ -387,7 +399,9 @@ const dataset: DatasetTest<Transaction> = {
                 }
               ),
               expectedStatus: {
-                errors: { amount: new NotEnoughBalanceInParentAccount() },
+                errors: { amount: new NotEnoughBalance() },
+                // FIXME shouldn't it be this?
+                // errors: { amount: new NotEnoughBalanceInParentAccount() },
                 warnings: {}
               }
             }

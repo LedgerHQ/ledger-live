@@ -12,8 +12,8 @@
     "@ledgerhq/hw-transport-mocker": "5.3.0",
     "@ledgerhq/hw-transport-node-ble": "5.3.0",
     "@ledgerhq/hw-transport-node-hid": "5.3.0",
-    "@ledgerhq/ledger-core": "5.1.0",
-    "@ledgerhq/live-common": "^11.0.0-rc.0",
+    "@ledgerhq/ledger-core": "5.2.0",
+    "@ledgerhq/live-common": "rc",
     "@ledgerhq/logs": "5.3.0",
     "asciichart": "^1.5.9",
     "axios": "0.19.0",
@@ -46,29 +46,20 @@
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",
     "flow": "flow",
-    "test-jest": "rm -rf libcoredb && mkdir libcoredb && jest --maxWorkers 10",
     "test-e2e": "./scripts/tests.sh",
-    "test": "yarn run test-jest && yarn run test-e2e",
+    "test": "yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
     "createTest": "./scripts/createTest.sh"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-proposal-class-properties": "^7.7.0",
-    "@babel/plugin-proposal-export-default-from": "^7.5.2",
-    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/plugin-syntax-import-meta": "^7.2.0",
-    "@babel/preset-env": "^7.7.7",
-    "@babel/preset-flow": "^7.0.0",
-    "babel-jest": "^24.9.0",
-    "jest": "^24.9.0"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      ".yalc",
-      "lib/"
-    ]
+    "@babel/cli": "^7.8.0",
+    "@babel/core": "^7.8.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.0",
+    "@babel/plugin-proposal-export-default-from": "^7.8.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.8.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.0",
+    "@babel/plugin-syntax-import-meta": "^7.8.0",
+    "@babel/preset-env": "^7.8.2",
+    "@babel/preset-flow": "^7.8.0"
   }
 }

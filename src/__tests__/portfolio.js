@@ -1,7 +1,7 @@
 // @flow
-import flatMap from "lodash/flatMap";
+import "./test-helpers/staticTime";
 import { BigNumber } from "bignumber.js";
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById } from "../currencies";
 import {
   getDates,
   getBalanceHistory,
@@ -52,7 +52,7 @@ test("getBalanceHistoryWithCountervalue basic", () => {
   const cv = getBalanceHistoryWithCountervalue(
     account,
     "month",
-    (c, value, date) => value
+    (c, value) => value
   );
   expect(cv.countervalueAvailable).toBe(true);
   expect(
@@ -69,7 +69,7 @@ test("getPortfolio works with one account and is identically to that account his
   const portfolio = getPortfolio(
     [account],
     "week",
-    (account, value, date) => value // using identity, at any time, 1 token = 1 USD
+    (account, value) => value // using identity, at any time, 1 token = 1 USD
   );
   expect(portfolio.availableAccounts).toMatchObject([account]);
   expect(portfolio.balanceAvailable).toBe(true);
@@ -79,7 +79,7 @@ test("getPortfolio works with one account and is identically to that account his
 
 test("getCurrencyPortfolio works with one account and is identically to that account history", () => {
   const account = genAccount("seed_4", { subAccountsCount: 0 });
-  const calc = (account, value, date) => value.times(0.1);
+  const calc = (account, value) => value.times(0.1);
   const { history } = getBalanceHistoryWithCountervalue(account, "week", calc);
   const accounts: Account[] = [account];
   const portfolio = getCurrencyPortfolio(accounts, "week", calc);
@@ -91,7 +91,7 @@ test("getCurrencyPortfolio works with one account and is identically to that acc
 test("getBalanceHistoryWithCountervalue to have proper countervalues", () => {
   const account = genAccount("bro1", { subAccountsCount: 0 });
   const history = getBalanceHistory(account, "week");
-  const calc = (account, value, date) => value.times(3);
+  const calc = (account, value) => value.times(3);
   const cv = getBalanceHistoryWithCountervalue(account, "week", calc);
   expect(
     cv.history.map(p => ({ date: p.date, value: p.countervalue.div(3) }))
@@ -100,7 +100,7 @@ test("getBalanceHistoryWithCountervalue to have proper countervalues", () => {
 
 test("getBalanceHistoryWithCountervalue is same as getPortfolio with one account", () => {
   const account = genAccount("bro2", { subAccountsCount: 0 });
-  const calc = (account, value, date) => value.times(3);
+  const calc = (account, value) => value.times(3);
   const cv = getBalanceHistoryWithCountervalue(account, "month", calc);
   const portfolio = getPortfolio([account], "month", calc);
   expect(
@@ -118,10 +118,8 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
     subAccountsCount: 0
   });
   const history = getBalanceHistory(account, "month");
-  const portfolio = getPortfolio(
-    [account, account2],
-    "month",
-    (c, value, date) => (c.id === "bitcoin" ? value : null)
+  const portfolio = getPortfolio([account, account2], "month", (c, value) =>
+    c.id === "bitcoin" ? value : null
   );
   expect(portfolio.balanceHistory).toMatchObject(history);
   expect(portfolio.balanceAvailable).toBe(true);
@@ -134,7 +132,7 @@ test("getPortfolio with twice same account will double the amounts", () => {
   const allHistory = getPortfolio(
     [account, account],
     "week",
-    (c, value, date) => value // using identity, at any time, 1 token = 1 USD
+    (c, value) => value // using identity, at any time, 1 token = 1 USD
   );
   allHistory.balanceHistory.forEach((h, i) => {
     expect(h.value.toString()).toBe(history[i].value.times(2).toString());
@@ -148,7 +146,7 @@ test("getCurrencyPortfolio with twice same account will double the amounts", () 
   const allHistory = getCurrencyPortfolio(
     accounts,
     "week",
-    (c, value, date) => value // using identity, at any time, 1 token = 1 USD
+    (c, value) => value // using identity, at any time, 1 token = 1 USD
   );
   allHistory.history.forEach((h, i) => {
     expect(h.value.toString()).toBe(history[i].value.times(2).toString());
@@ -158,10 +156,8 @@ test("getCurrencyPortfolio with twice same account will double the amounts", () 
 test("getPortfolio calculateCounterValue is taken into account", () => {
   const account = genAccount("seed_6", { subAccountsCount: 0 });
   const history = getBalanceHistory(account, "month");
-  const portfolio = getPortfolio(
-    [account, account],
-    "month",
-    (c, value, date) => value.div(2)
+  const portfolio = getPortfolio([account, account], "month", (c, value) =>
+    value.div(2)
   );
   expect(portfolio.balanceHistory).toMatchObject(history);
 });
@@ -171,10 +167,10 @@ test("getCurrencyPortfolio calculateCounterValue is taken into account", () => {
   const { history } = getBalanceHistoryWithCountervalue(
     account,
     "month",
-    (c, value, date) => value
+    (c, value) => value
   );
   const accounts: Account[] = [account, account];
-  const portfolio = getCurrencyPortfolio(accounts, "month", (c, value, date) =>
+  const portfolio = getCurrencyPortfolio(accounts, "month", (c, value) =>
     value.div(2)
   );
   expect(portfolio.history.map(h => h.value.div(2).toString())).toMatchObject(
@@ -195,10 +191,8 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
     subAccountsCount: 0
   });
   const history = getBalanceHistory(account, "month");
-  const portfolio = getPortfolio(
-    [account, account2],
-    "month",
-    (c, value, date) => (c.id === "bitcoin" ? value : null)
+  const portfolio = getPortfolio([account, account2], "month", (c, value) =>
+    c.id === "bitcoin" ? value : null
   );
   expect(portfolio.balanceHistory).toMatchObject(history);
   expect(portfolio.balanceAvailable).toBe(true);
@@ -227,11 +221,7 @@ test("getCurrencyPortfolio calculateCounterValue can miss countervalue", () => {
 test("getPortfolio calculateCounterValue can complete fails", () => {
   const account = genAccount("seed_6", { subAccountsCount: 0 });
   const account2 = genAccount("seed_7", { subAccountsCount: 0 });
-  const portfolio = getPortfolio(
-    [account, account2],
-    "month",
-    (c, value, date) => null
-  );
+  const portfolio = getPortfolio([account, account2], "month", () => null);
   expect(portfolio.balanceAvailable).toBe(false);
 });
 
@@ -239,7 +229,7 @@ test("getPortfolio with lot of accounts", () => {
   const portfolio = getPortfolio(
     accounts,
     "week",
-    (c, value, date) => value // using identity, at any time, 1 token = 1 USD
+    (c, value) => value // using identity, at any time, 1 token = 1 USD
   );
   expect(portfolio.balanceHistory).toMatchSnapshot();
 });
