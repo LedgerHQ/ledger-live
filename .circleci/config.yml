@@ -31,7 +31,7 @@ jobs:
 
       - run: yarn global add yalc codecov
       - run: yarn ci-lint
-      - run: yarn ci-test-common && codecov
+      - run: yarn ci-test-common && npx codecov
       - run:
           command: yarn ci-test-cli
           no_output_timeout: 1h
@@ -67,7 +67,7 @@ jobs:
 
       - run: yarn global add yalc codecov
       - run: yarn ci-lint
-      - run: yarn ci-test-common && codecov
+      - run: yarn ci-test-common && npx codecov
       - run:
           command: yarn ci-test-cli
           no_output_timeout: 1h
