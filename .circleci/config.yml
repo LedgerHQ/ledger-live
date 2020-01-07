@@ -19,20 +19,19 @@ jobs:
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
+            - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile && cd cli && yarn install --frozen-lockfile && yarn global add yalc
+          command: yarn install --frozen-lockfile
       - save_cache:
           name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
+          key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
-            - ~/node_modules
-            - ~/cli/node_modules
 
+      - run: yarn global add yalc codecov
       - run: yarn ci-lint
-      - run: yarn ci-test-common
+      - run: yarn ci-test-common && codecov
       - run:
           command: yarn ci-test-cli
           no_output_timeout: 1h
@@ -40,7 +39,7 @@ jobs:
   debian:
     working_directory: ~/live-common
     docker:
-      - image: circleci/node:8-stretch-browsers
+      - image: circleci/node:12-stretch-browsers
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get install -y libudev-dev libusb-1.0-0-dev jq
@@ -56,20 +55,19 @@ jobs:
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
+            - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile && cd cli && yarn install --frozen-lockfile && yarn global add yalc
+          command: yarn install --frozen-lockfile
       - save_cache:
           name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}-and-cli-{{ checksum "cli/yarn.lock" }}
+          key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
-            - ~/node_modules
-            - ~/cli/node_modules
 
+      - run: yarn global add yalc codecov
       - run: yarn ci-lint
-      - run: yarn ci-test-common
+      - run: yarn ci-test-common && codecov
       - run:
           command: yarn ci-test-cli
           no_output_timeout: 1h

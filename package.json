@@ -30,6 +30,8 @@
     ".flowconfig"
   ],
   "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
     "setupFiles": [
       "<rootDir>/jest/globals.js"
     ],
