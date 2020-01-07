@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "10.5.1",
+  "version": "10.5.2",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
