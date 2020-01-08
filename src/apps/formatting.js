@@ -1,8 +1,8 @@
 // @flow
 import type { AppOp, InstalledItem } from "./types";
 
-export const formatSize = (size: number) =>
-  !size ? "" : Math.round(size / 1024) + "Kb";
+export const formatSize = (size: number, defaultString: string = "") =>
+  !size ? defaultString : Math.round(size / 1024) + "Kb";
 
 export const prettyActionPlan = (ops: AppOp[]) =>
   ops.map(op => (op.type === "install" ? "+" : "-") + op.name).join(", ");
