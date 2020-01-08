@@ -16,8 +16,8 @@ yarn link
 yarn build
 
 mkdir -p cli/tests/tmp/
-ledger-live version 2> cli/tests/tmp/error.log
-ledger-live deviceVersion $* 2> cli/tests/tmp/error.log
+ledger-live version 2>&1 >> cli/tests/tmp/error.log
+ledger-live deviceVersion $* 2>&1 >> cli/tests/tmp/error.log
 ledger-live appsUpdateTestAll $* 2> cli/tests/tmp/error.log
 
 LOG_FILE=cli/tests/tmp/error.log
