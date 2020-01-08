@@ -1053,8 +1053,10 @@
     bindings "1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@file:.yalc/@ledgerhq/live-common":
-  version "10.5.1-8defd756"
+"@ledgerhq/live-common@^11.0.0-rc.0":
+  version "11.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.0.tgz#8d2cfb89e9359f17ec85d9497ad3746bbfbf9b3a"
+  integrity sha512-OYSL7MA5ZCFa9kmRFxDH0hxcEiG277LbnBw2mLnj6ZEqnX5MeAuWOo7hxPDV6KnwdjK/hOgo46rNKsn2YfEiEA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.3.0"
@@ -1465,6 +1467,13 @@ axios@^0.19.0:
   dependencies:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
+
+axios@^0.19.1:
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.1.tgz#8a6a04eed23dfe72747e1dd43c604b8f1677b5aa"
+  integrity sha512-Yl+7nfreYKaLRvAvjNPkvfjnQHJM1yLBY3zhqAwcJSwR/6ETkanUgylgtIvkvz0xJ+p/vZuNw8X7Hnb7Whsbpw==
+  dependencies:
+    follow-redirects "1.5.10"
 
 babel-jest@^24.9.0:
   version "24.9.0"
