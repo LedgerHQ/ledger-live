@@ -4,7 +4,7 @@ set -e
 
 GIT_REMOTE=git@github.com:LedgerHQ/ledger-live-common.git
 
-cd `mktemp`
+cd `mktemp -d`
 git clone $GIT_REMOTE
 cd ledger-live-common
 yarn
