@@ -30,7 +30,7 @@ jobs:
   debian:
     working_directory: ~/live-common
     docker:
-      - image: circleci/node:12-stretch-browsers
+      - image: circleci/node:8-stretch-browsers
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get install -y libudev-dev libusb-1.0-0-dev jq
