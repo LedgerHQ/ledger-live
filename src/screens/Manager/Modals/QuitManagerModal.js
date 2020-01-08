@@ -27,10 +27,7 @@ const QuitManagerModal = ({ isOpened, onConfirm, onClose }: Props) => (
         <Trans i18nKey="errors.ManagerQuitPage.title" />
       </LText>
       <LText style={styles.warnText}>
-        <Trans i18nKey="errors.ManagerQuitPage.description_one" />
-      </LText>
-      <LText style={styles.warnText}>
-        <Trans i18nKey="errors.ManagerQuitPage.description_two" />
+        <Trans i18nKey="errors.ManagerQuitPage.description" />
       </LText>
     </View>
     <View style={styles.buttonRow}>

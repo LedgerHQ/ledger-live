@@ -90,20 +90,19 @@ const UninstallDependenciesModal = ({
             </LText>
             <LText style={styles.warnText}>
               <Trans
-                i18nKey="AppAction.uninstall.dependency.description_one"
-                values={{ app: name }}
-              />
-            </LText>
-            <LText style={styles.warnText}>
-              <Trans
-                i18nKey="AppAction.uninstall.dependency.description_two"
+                i18nKey="AppAction.uninstall.dependency.description"
                 values={{ app: name }}
               />
             </LText>
           </View>
           <View style={styles.collapsibleList}>
             <CollapsibleList
-              title={<Trans i18nKey="AppAction.uninstall.dependency.showAll" />}
+              title={
+                <Trans
+                  i18nKey="AppAction.uninstall.dependency.showAll"
+                  values={{ app: name }}
+                />
+              }
               data={dependentApps}
               renderItem={renderDepLine}
             />

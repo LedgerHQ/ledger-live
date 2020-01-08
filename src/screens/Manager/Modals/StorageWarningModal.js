@@ -43,13 +43,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => {
         </LText>
         <LText style={styles.warnText}>
           <Trans
-            i18nKey="errors.ManagerNotEnoughSpace.info_one"
-            values={{ app: warning }}
-          />
-        </LText>
-        <LText style={styles.warnText}>
-          <Trans
-            i18nKey="errors.ManagerNotEnoughSpace.info_two"
+            i18nKey="errors.ManagerNotEnoughSpace.info"
             values={{ app: warning }}
           />
         </LText>

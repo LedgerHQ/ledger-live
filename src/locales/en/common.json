@@ -197,16 +197,14 @@
     },
     "ManagerNotEnoughSpace": {
       "title": "Not enough storage left",
-      "info_one": "There is not enough storage to install {{app}} app.",
-      "info_two": "Please manage your storage by uninstalling one or several apps",
-      "description": "Please uninstall some apps to make space. This will not affect your crypto assets."
+      "info": "Please uninstall some apps to make room for the {{app}} app.",
+      "description": "Your crypto assets stay safe when uninstalling apps."
     },
     "ManagerQuitPage": {
-      "title": "Quit manager?",
-      "description_one": "There is one or several app update in progress.",
-      "description_two": "If you quit the manager, yoiu will have to restart the operation.",
-      "stay": "Stay in manager",
-      "quit": "Quit manager"
+      "title": "Quit and cancel app updates?",
+      "description": "Quitting will cancel the app updates in progress.",
+      "stay": "Finish updates",
+      "quit": "Quit Manager"
     },
     "ManagerUninstallBTCDep": {
       "title": "Sorry, this app is required",
@@ -1154,7 +1152,7 @@
     "tabTitle": "Device manager",
     "title": "Manager",
     "connect": "Select your device",
-    "appsCatalog": "Apps Catalog",
+    "appsCatalog": "App catalog",
     "installedApps": "Installed Apps",
     "readOnly": {
       "title": "Nano X",
@@ -1171,14 +1169,14 @@
       "searchAppsCatalog": "Search app in catalog...",
       "searchAppsInstalled": "Search app installed...",
       "noAppsInstalled": "No apps installed on your device",
-      "noAppsDescription": "Go in Apps catalog section and install some apps on your device",
+      "noAppsDescription": "Go to the Apps catalog to install apps.",
       "noResultsFound": "No results found",
       "noResultsDesc": "Please verify the spelling and try again"
     },
     "uninstall": {
       "title": "Uninstall all",
       "subtitle": "Uninstal all apps",
-      "description": "You can reinstall your apps in the apps catalog section."
+      "description": "You can reinstall apps in the App catalog."
     },
     "remove": {
       "title": "Remove device",
@@ -1210,14 +1208,14 @@
       },
       "dependency": {
         "title": "{{dependency}} app is required",
-        "description_one": "{{app}} app is dependent of {{dependency}} app.",
+        "description_one": "The {{app}} app will also be installed because the {{dependency}} app needs it.",
         "description_two": "To install {{app}} app, you need to install {{dependency}} app first.",
         "description_three": "Just press continue to install {{dependency}} and {{app}} app."
       },
-      "continueInstall": "Continue install"
+      "continueInstall": "Install apps"
     },
     "update": {
-      "title": "{{number}} app updates available",
+      "title": "{{number}} app updates",
       "button": "Update all",
       "version": "New {{version}}",
       "buttonAction": "Update available",
@@ -1234,15 +1232,14 @@
         "title": "Successfully uninstalled {{appName}} on your {{productName}}"
       },
       "dependency": {
-        "title": "{{app}} app is used by other apps",
-        "showAll": "Show all dependencies",
-        "description_one": "Some apps are dependent of {{app}}.",
-        "description_two": "If you continue uninstall, all dependent apps of {{app}} will be uninstalled too."
+        "title": "Other apps need the {{app}} app",
+        "showAll": "Show apps to uninstall",
+        "description": "Apps on your device that are dependent on the {{app}} app will be uninstalled too."
       },
-      "continueUninstall": "Continue uninstall"
+      "continueUninstall": "Uninstall {{app}} and other apps"
     },
     "filter": {
-      "title": "Filters",
+      "title": "Show",
       "all": "All",
       "installed": "Installed",
       "not_installed": "Not installed",
@@ -1268,7 +1265,7 @@
   },
   "FirmwareVersionRow": {
     "title": "Firmware version",
-    "subtitle": "Firmware {{version}}" 
+    "subtitle": "Firmware {{version}}"
   },
   "FirmwareUpdateRow": {
     "title": "Firmware version {{version}} available",
