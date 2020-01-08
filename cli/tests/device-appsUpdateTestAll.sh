@@ -4,10 +4,9 @@ set -e
 
 GIT_REMOTE=git@github.com:LedgerHQ/ledger-live-common.git
 
-git clean -xdf
-git fetch $GIT_REMOTE && git checkout master
-git pull
-rm -rf node_modules
+cd `mktemp`
+git clone $GIT_REMOTE
+cd ledger-live-common
 yarn
 yalc publish
 cd cli
@@ -15,8 +14,11 @@ yalc add @ledgerhq/live-common
 yarn
 yarn link
 yarn build
+
 mkdir -p cli/tests/tmp/
-ledger-live appsUpdateTestAll 2> cli/tests/tmp/error.log
+ledger-live version 2> cli/tests/tmp/error.log
+ledger-live deviceVersion $* 2> cli/tests/tmp/error.log
+ledger-live appsUpdateTestAll $* 2> cli/tests/tmp/error.log
 
 LOG_FILE=cli/tests/tmp/error.log
 
