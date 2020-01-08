@@ -12,14 +12,13 @@ import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Account } from "../../../types/account";
 import type { Transaction } from "../types";
-import { syncAccount } from "../../../libcore/syncAccount";
-import { scanAccountsOnDevice } from "../../../libcore/scanAccountsOnDevice";
+import { sync } from "../../../libcore/syncAccount";
+import { scanAccounts } from "../../../libcore/scanAccounts";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
-import libcoreSignAndBroadcast from "../../../libcore/signAndBroadcast";
 import { makeLRUCache } from "../../../cache";
-
-const startSync = (initialAccount, _observation) => syncAccount(initialAccount);
+import broadcast from "../libcore-broadcast";
+import signOperation from "../libcore-signOperation";
 
 const calculateFees = makeLRUCache(
   async (a, t) => {
@@ -44,13 +43,6 @@ const createTransaction = () => ({
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
-
-const signAndBroadcast = (account, transaction, deviceId) =>
-  libcoreSignAndBroadcast({
-    account,
-    transaction,
-    deviceId
-  });
 
 const getTransactionStatus = async (a, t) => {
   const errors = {};
@@ -140,7 +132,7 @@ const prepareTransaction = async (
 };
 
 const currencyBridge: CurrencyBridge = {
-  scanAccountsOnDevice,
+  scanAccounts,
   preload: () => Promise.resolve(),
   hydrate: () => {}
 };
@@ -150,8 +142,9 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 export default { currencyBridge, accountBridge };

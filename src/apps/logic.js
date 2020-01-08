@@ -72,7 +72,7 @@ const findDependents = (
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "onRunnerEvent":
+    case "onRunnerEvent": {
       // an app operation was correctly prefered. update state accordingly
       const { event } = action;
       const { appOp } = event;
@@ -144,6 +144,7 @@ export const reducer = (state: State, action: Action): State => {
         };
       }
       return state;
+    }
 
     case "wipe":
       return {

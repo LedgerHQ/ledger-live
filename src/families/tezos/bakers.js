@@ -229,6 +229,8 @@ export function useRandomBaker(bakers: Baker[]) {
     }
     // fallback on random between only full bakers
     return Math.floor(Math.random() * bakers.length);
+    // for perf, we only want to re-calc on bakers.length changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bakers.length]);
 
   return bakers[randomBakerIndex];

@@ -1,10 +1,12 @@
 // @flow
 
+import { log } from "@ledgerhq/logs";
 import type { Operation, CryptoCurrency, SubAccount } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import { inferSubOperations } from "../../account";
 import type { CoreOperation } from "../types";
 import perFamily from "../../generated/libcore-buildOperation";
+import { getEnv } from "../../env";
 
 export const OperationTypeMap = {
   "0": "OUT",
@@ -71,6 +73,24 @@ export async function buildOperation(arg: {
     ...partialOp,
     ...rest
   };
+
+  const OPERATION_ADDRESSES_LIMIT = getEnv("OPERATION_ADDRESSES_LIMIT");
+
+  if (op.recipients.length > OPERATION_ADDRESSES_LIMIT) {
+    log(
+      "warning",
+      `operation.recipients too big (${op.recipients.length} > ${OPERATION_ADDRESSES_LIMIT}) – ${id}`
+    );
+    op.recipients.splice(OPERATION_ADDRESSES_LIMIT);
+  }
+
+  if (op.senders.length > OPERATION_ADDRESSES_LIMIT) {
+    log(
+      "warning",
+      `operation.senders too big (${op.recipients.length} > ${OPERATION_ADDRESSES_LIMIT}) – ${id}`
+    );
+    op.senders.splice(OPERATION_ADDRESSES_LIMIT);
+  }
 
   return op;
 }

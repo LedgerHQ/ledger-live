@@ -46,7 +46,8 @@ export type RatesMap = {
 };
 
 export type CounterValuesState = {
-  rates: RatesMap
+  daily: RatesMap,
+  hourly: RatesMap
 };
 
 export type Input<State> = {
@@ -78,6 +79,7 @@ export type Input<State> = {
   // if not provided, it will try to pull all history. if provided, it helps bandwidth performance
   // but you won't have any countervalue if you calculate older than this.
   maximumDays?: number,
+  maximumHours?: number,
 
   // takes a function called at mount of CounterValuePollingProvider
   // that provides schedulePoll / cancelPoll that is a way to hook
@@ -95,8 +97,16 @@ export type Input<State> = {
 
   getDailyRatesImplementation?: (
     getAPIBaseURL: () => string,
-    pairs: PollAPIPair[]
+    pairs: PollAPIPair[],
+    rate: RateGranularity
   ) => Promise<mixed>,
+
+  getHourlyRatesImplementation?: (
+    getAPIBaseURL: () => string,
+    pairs: PollAPIPair[],
+    rate: RateGranularity
+  ) => Promise<mixed>,
+
   fetchExchangesForPairImplementation?: () => Promise<Exchange[]>,
   fetchTickersByMarketcapImplementation?: () => Promise<string[]>
 };
@@ -105,7 +115,7 @@ export type PollAPIPair = {
   from: string,
   to: string,
   exchange?: string,
-  afterDay?: string
+  after?: string
 };
 
 export type Exchange = {
@@ -120,6 +130,8 @@ type PollingProviderProps = {
   pollInitDelay?: number,
   autopollInterval?: number
 };
+
+export type RateGranularity = "daily" | "hourly";
 
 export type Module<State> = {
   // The reducer to add in your redux store

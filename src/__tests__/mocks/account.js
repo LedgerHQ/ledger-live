@@ -21,7 +21,7 @@ test("allow specifying number of operations", () => {
 test("mock generators don't generate negative balances", () => {
   for (let i = 0; i < 100; i++) {
     const account = genAccount("negative?" + i);
-    const { history } = getBalanceHistory(account, "year");
+    const history = getBalanceHistory(account, "year");
     const invalidDataPoints = history.filter(h => h.value.isNegative());
     expect(invalidDataPoints).toMatchObject([]);
   }

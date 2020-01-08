@@ -1,6 +1,5 @@
 // @flow
 
-
 import { BigNumber } from "bignumber.js";
 import { reduce } from "rxjs/operators";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
@@ -23,6 +22,10 @@ import {
 import dataset from "@ledgerhq/live-common/lib/generated/test-dataset";
 import specifics from "@ledgerhq/live-common/lib/generated/test-specifics";
 import { setup } from "../live-common-setup-test";
+import {
+  getBalanceHistoryJS,
+  getRanges
+} from "@ledgerhq/live-common/lib/portfolio";
 
 const blacklistOpsSumEq = {
   currencies: ["ripple", "ethereum"],
@@ -31,9 +34,9 @@ const blacklistOpsSumEq = {
 
 setup("bridges");
 
-function syncAccount(bridge, account) {
+function syncAccount(bridge, account, syncConfig = { paginationConfig: {} }) {
   return bridge
-    .startSync(account, false)
+    .sync(account, syncConfig)
     .pipe(reduce((a, f) => f(a), account))
     .toPromise();
 }
@@ -84,7 +87,7 @@ currenciesRelated.map(({ currencyData, currency, impl }) => {
   const bridge = getCurrencyBridge(currency);
   describe(impl + " " + currency.id + " currency bridge", () => {
     test("functions are defined", () => {
-      expect(typeof bridge.scanAccountsOnDevice).toBe("function");
+      expect(typeof bridge.scanAccounts).toBe("function");
       expect(typeof bridge.preload).toBe("function");
       expect(typeof bridge.hydrate).toBe("function");
     });
@@ -125,7 +128,7 @@ accountsRelated
     const { getSynced, bridge, initialAccount, accountData, impl } = arg;
 
     describe(impl + " bridge on account " + initialAccount.name, () => {
-      describe("startSync", () => {
+      describe("sync", () => {
         test("succeed", async () => {
           const account = await getSynced();
           expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
@@ -211,6 +214,19 @@ accountsRelated
             expect(seen[op.id]).toBeUndefined();
             seen[op.id] = op.id;
           });
+        });
+      });
+
+      test("account balanceHistory (when exists) matches getBalanceHistoryJS", async () => {
+        const account = await getSynced();
+        getRanges().forEach(range => {
+          const balanceHistory =
+            account.balanceHistory && account.balanceHistory[range];
+          if (!balanceHistory) return;
+          const history = getBalanceHistoryJS(account, range);
+          expect(balanceHistory.map(b => b.value)).toEqual(
+            history.map(b => b.value)
+          );
         });
       });
 
@@ -371,9 +387,10 @@ accountsRelated
         );
       });
 
-      describe("signAndBroadcast", () => {
+      describe("signOperation and broadcast", () => {
         test("method is available on bridge", async () => {
-          expect(typeof bridge.signAndBroadcast).toBe("function");
+          expect(typeof bridge.signOperation).toBe("function");
+          expect(typeof bridge.broadcast).toBe("function");
         });
 
         // NB for now we are not going farther because most is covered by bash tests

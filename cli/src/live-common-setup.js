@@ -2,6 +2,11 @@
 
 export * from "./live-common-setup-base";
 
+import React from "react";
+import { connect } from "react-redux";
+import Transport from "@ledgerhq/hw-transport";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { first, switchMap, map } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
@@ -10,6 +15,15 @@ import {
   disconnect
 } from "@ledgerhq/live-common/lib/hw";
 import { retry } from "@ledgerhq/live-common/lib/promise";
+import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
+
+checkLibs({
+  NotEnoughBalance,
+  React,
+  log,
+  Transport,
+  connect
+});
 
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 implementLibcore({

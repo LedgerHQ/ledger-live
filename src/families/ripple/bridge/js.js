@@ -44,98 +44,118 @@ import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import signTransaction from "../../../hw/signTransaction";
 import type { Transaction, NetworkInfo } from "../types";
 
-async function doSignAndBroadcast({
-  a,
-  t,
-  deviceId,
-  isCancelled,
-  onSigned,
-  onOperationBroadcasted
-}) {
-  const api = apiForEndpointConfig(RippleAPI, a.endpointConfig);
-  const { fee } = t;
-  if (!fee) throw new FeeNotLoaded();
+const signOperation = ({ account, transaction, deviceId }) =>
+  Observable.create(o => {
+    delete cacheRecipientsNew[transaction.recipient];
+    const api = apiForEndpointConfig(RippleAPI, account.endpointConfig);
+    const { fee } = transaction;
+    if (!fee) throw new FeeNotLoaded();
+
+    async function main() {
+      try {
+        await api.connect();
+        const amount = formatAPICurrencyXRP(transaction.amount);
+        const payment = {
+          source: {
+            address: account.freshAddress,
+            amount
+          },
+          destination: {
+            address: transaction.recipient,
+            minAmount: amount,
+            tag: transaction.tag ? transaction.tag : undefined
+          }
+        };
+        const instruction = {
+          fee: formatAPICurrencyXRP(fee).value,
+          maxLedgerVersionOffset: 12
+        };
+
+        const prepared = await api.preparePayment(
+          account.freshAddress,
+          payment,
+          instruction
+        );
+
+        let signature;
+        const transport = await open(deviceId);
+        try {
+          o.next({ type: "device-signature-requested" });
+          signature = await signTransaction(
+            account.currency,
+            transport,
+            account.freshAddressPath,
+            JSON.parse(prepared.txJSON)
+          );
+          o.next({ type: "device-signature-granted" });
+        } finally {
+          transport.close();
+        }
+
+        const hash = computeBinaryTransactionHash(transaction);
+        const operation = {
+          id: `${account.id}-${hash}-OUT`,
+          hash,
+          accountId: account.id,
+          type: "OUT",
+          value: transaction.amount,
+          fee,
+          blockHash: null,
+          blockHeight: null,
+          senders: [account.freshAddress],
+          recipients: [transaction.recipient],
+          date: new Date(),
+          // we probably can't get it so it's a predictive value
+          transactionSequenceNumber:
+            (account.operations.length > 0
+              ? account.operations[0].transactionSequenceNumber
+              : 0) + account.pendingOperations.length,
+          extra: {}
+        };
+
+        if (transaction.tag) {
+          operation.extra.tag = transaction.tag;
+        }
+
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature,
+            expirationDate: null
+          }
+        });
+      } catch (e) {
+        if (e && e.name === "RippledError" && e.data.resultMessage) {
+          throw new Error(e.data.resultMessage);
+        }
+        throw e;
+      } finally {
+        api.disconnect();
+      }
+    }
+
+    main().then(
+      () => o.complete(),
+      e => o.error(e)
+    );
+  });
+
+const broadcast = async ({ signedOperation: { signature, operation } }) => {
+  const api = apiForEndpointConfig(RippleAPI);
   try {
     await api.connect();
-    const amount = formatAPICurrencyXRP(t.amount);
-    const payment = {
-      source: {
-        address: a.freshAddress,
-        amount
-      },
-      destination: {
-        address: t.recipient,
-        minAmount: amount,
-        tag: t.tag ? t.tag : undefined
-      }
-    };
-    const instruction = {
-      fee: formatAPICurrencyXRP(fee).value,
-      maxLedgerVersionOffset: 12
-    };
+    const submittedPayment = await api.submit(signature);
 
-    const prepared = await api.preparePayment(
-      a.freshAddress,
-      payment,
-      instruction
-    );
-
-    const transport = await open(deviceId);
-    let transaction;
-    try {
-      transaction = await signTransaction(
-        a.currency,
-        transport,
-        a.freshAddressPath,
-        JSON.parse(prepared.txJSON)
-      );
-    } finally {
-      transport.close();
+    if (submittedPayment.resultCode !== "tesSUCCESS") {
+      throw new Error(submittedPayment.resultMessage);
     }
 
-    if (!isCancelled()) {
-      onSigned();
-      const submittedPayment = await api.submit(transaction);
-
-      if (submittedPayment.resultCode !== "tesSUCCESS") {
-        throw new Error(submittedPayment.resultMessage);
-      }
-
-      const hash = computeBinaryTransactionHash(transaction);
-      const operation = {
-        id: `${a.id}-${hash}-OUT`,
-        hash,
-        accountId: a.id,
-        type: "OUT",
-        value: t.amount,
-        fee,
-        blockHash: null,
-        blockHeight: null,
-        senders: [a.freshAddress],
-        recipients: [t.recipient],
-        date: new Date(),
-        // we probably can't get it so it's a predictive value
-        transactionSequenceNumber:
-          (a.operations.length > 0
-            ? a.operations[0].transactionSequenceNumber
-            : 0) + a.pendingOperations.length,
-        extra: {}
-      };
-
-      if (t.tag) {
-        operation.extra.tag = t.tag;
-      }
-      onOperationBroadcasted(operation);
-    }
-  } catch (e) {
-    if (e && e.name === "RippledError" && e.data.resultMessage) {
-      throw new Error(e.data.resultMessage);
-    }
-    throw e;
+    return operation;
   } finally {
     api.disconnect();
   }
-}
+};
 
 function isRecipientValid(recipient) {
   try {
@@ -314,7 +334,7 @@ const cachedRecipientIsNew = (endpointConfig, recipient) => {
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice: (currency, deviceId) =>
+  scanAccounts: ({ currency, deviceId }) =>
     Observable.create(o => {
       let finished = false;
       const unsubscribe = () => {
@@ -400,6 +420,7 @@ const currencyBridge: CurrencyBridge = {
                       blockHeight: maxLedgerVersion,
                       index,
                       currency,
+                      operationsCount: 0,
                       operations: [],
                       pendingOperations: [],
                       unit: currency.units[0],
@@ -448,6 +469,7 @@ const currencyBridge: CurrencyBridge = {
                 blockHeight: maxLedgerVersion,
                 index,
                 currency,
+                operationsCount: 0,
                 operations: [],
                 pendingOperations: [],
                 unit: currency.units[0],
@@ -456,6 +478,7 @@ const currencyBridge: CurrencyBridge = {
               account.operations = transactions
                 .map(txToOperation(account))
                 .filter(Boolean);
+              account.operationsCount = account.operations.length;
               o.next({ type: "discovered", account });
             }
           }
@@ -476,7 +499,7 @@ const currencyBridge: CurrencyBridge = {
     })
 };
 
-const startSync = ({
+const sync = ({
   endpointConfig,
   freshAddress,
   blockHeight,
@@ -584,37 +607,6 @@ const createTransaction = () => ({
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
-const signAndBroadcast = (a, t, deviceId) =>
-  Observable.create(o => {
-    delete cacheRecipientsNew[t.recipient];
-    let cancelled = false;
-    const isCancelled = () => cancelled;
-    const onSigned = () => {
-      o.next({ type: "signed" });
-    };
-    const onOperationBroadcasted = operation => {
-      o.next({ type: "broadcasted", operation });
-    };
-    doSignAndBroadcast({
-      a,
-      t,
-      deviceId,
-      isCancelled,
-      onSigned,
-      onOperationBroadcasted
-    }).then(
-      () => {
-        o.complete();
-      },
-      e => {
-        o.error(e);
-      }
-    );
-    return () => {
-      cancelled = true;
-    };
-  });
-
 const prepareTransaction = async (a: Account, t: Transaction) => {
   let networkInfo: ?NetworkInfo = t.networkInfo;
   if (!networkInfo) {
@@ -713,8 +705,9 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 export default { currencyBridge, accountBridge };

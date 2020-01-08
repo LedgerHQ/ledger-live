@@ -27,6 +27,9 @@ export const libcoreNoGo = [
   "neo"
 ];
 
+export const libcoreNoGoBalanceHistory = () =>
+  getEnv("LIBCORE_BALANCE_HISTORY_NOGO").split(",");
+
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode

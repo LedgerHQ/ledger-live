@@ -5,13 +5,18 @@ module.exports = {
     node: true,
     jest: true
   },
-  extends: ["plugin:flowtype/recommended", "prettier", "prettier/react"],
+  extends: [
+    "eslint:recommended",
+    "plugin:flowtype/recommended",
+    "prettier",
+    "prettier/react"
+  ],
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly"
   },
   parser: "babel-eslint",
-  plugins: ["flowtype"],
+  plugins: ["flowtype", "react-hooks"],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "linebreak-style": ["error", "unix"],
@@ -34,6 +39,8 @@ module.exports = {
     "guard-for-in": 0,
     "no-continue": 0,
     "lines-between-class-members": 0,
-    "prefer-destructuring": 0
+    "prefer-destructuring": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 };

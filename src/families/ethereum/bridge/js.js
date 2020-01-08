@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable no-param-reassign */
-import { Observable } from "rxjs";
+import { Observable, concat, from, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { BigNumber } from "bignumber.js";
 import throttle from "lodash/throttle";
 import flatMap from "lodash/flatMap";
@@ -29,11 +30,13 @@ import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName
 } from "../../../account";
+import { patchOperationWithHash } from "../../../operation";
 import { getCryptoCurrencyById } from "../../../currencies";
 import type { Account, Operation } from "../../../types";
 import type { Transaction } from "../types";
 import { getGasLimit } from "../transaction";
 import getAddress from "../../../hw/getAddress";
+import { withDevice } from "../../../hw/deviceAccess";
 import { open } from "../../../hw";
 import { apiForCurrency } from "../../../api/Ethereum";
 import { getEstimatedFees } from "../../../api/Fees";
@@ -134,55 +137,65 @@ function mergeOps(existing: Operation[], newFetched: Operation[]) {
   );
 }
 
-const doSignAndBroadcast = async ({
-  a,
-  t,
-  deviceId,
-  isCancelled,
-  onSigned,
-  onOperationBroadcasted
-}) => {
-  const { gasPrice, amount } = t;
-  const gasLimit = getGasLimit(t);
+const signOperation = ({ account, transaction, deviceId }) => {
+  const { id: accountId, freshAddress, freshAddressPath, currency } = account;
+  const { gasPrice, amount } = transaction;
+  const gasLimit = getGasLimit(transaction);
   if (!gasPrice) throw new FeeNotLoaded();
-  const api = apiForCurrency(a.currency);
+  const api = apiForCurrency(account.currency);
 
-  const nonce = await api.getAccountNonce(a.freshAddress);
+  return from(api.getAccountNonce(freshAddress)).pipe(
+    mergeMap(nonce =>
+      concat(
+        of({ type: "device-signature-requested" }),
+        withDevice(deviceId)(transport =>
+          from(
+            signTransaction(currency, transport, freshAddressPath, {
+              ...serializeTransaction(transaction),
+              nonce
+            })
+          )
+        ).pipe(
+          mergeMap(signature =>
+            of(
+              { type: "device-signature-granted" },
+              {
+                type: "signed",
+                signedOperation: {
+                  signature,
+                  expirationTime: null,
+                  operation: {
+                    id: `${accountId}--OUT`,
+                    hash: "",
+                    type: "OUT",
+                    value: amount,
+                    fee: gasPrice.times(gasLimit),
+                    blockHeight: null,
+                    blockHash: null,
+                    accountId,
+                    senders: [freshAddress],
+                    recipients: [transaction.recipient],
+                    transactionSequenceNumber: nonce,
+                    date: new Date(),
+                    extra: {}
+                  }
+                }
+              }
+            )
+          )
+        )
+      )
+    )
+  );
+};
 
-  const transport = await open(deviceId);
-  let transaction;
-  try {
-    transaction = await signTransaction(
-      a.currency,
-      transport,
-      a.freshAddressPath,
-      { ...serializeTransaction(t), nonce }
-    );
-  } finally {
-    transport.close();
-  }
-
-  if (!isCancelled()) {
-    onSigned();
-
-    const hash = await api.broadcastTransaction(transaction);
-
-    onOperationBroadcasted({
-      id: `${a.id}-${hash}-OUT`,
-      hash,
-      type: "OUT",
-      value: amount,
-      fee: gasPrice.times(gasLimit),
-      blockHeight: null,
-      blockHash: null,
-      accountId: a.id,
-      senders: [a.freshAddress],
-      recipients: [t.recipient],
-      transactionSequenceNumber: nonce,
-      date: new Date(),
-      extra: {}
-    });
-  }
+const broadcast = async ({
+  account,
+  signedOperation: { operation, signature }
+}) => {
+  const api = apiForCurrency(account.currency);
+  const hash = await api.broadcastTransaction(signature);
+  return patchOperationWithHash(operation, hash);
 };
 
 const SAFE_REORG_THRESHOLD = 80;
@@ -205,7 +218,7 @@ const fetchCurrentBlock = (perCurrencyId => currency => {
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccountsOnDevice: (currency, deviceId) =>
+  scanAccounts: ({ currency, deviceId }) =>
     Observable.create(o => {
       let finished = false;
       const unsubscribe = () => {
@@ -263,6 +276,7 @@ const currencyBridge: CurrencyBridge = {
                 blockHeight: currentBlock.height,
                 index,
                 currency,
+                operationsCount: 0,
                 operations: [],
                 pendingOperations: [],
                 unit: currency.units[0],
@@ -299,6 +313,7 @@ const currencyBridge: CurrencyBridge = {
           blockHeight: currentBlock.height,
           index,
           currency,
+          operationsCount: 0,
           operations: [],
           pendingOperations: [],
           unit: currency.units[0],
@@ -318,6 +333,7 @@ const currencyBridge: CurrencyBridge = {
         }
         txs.reverse();
         account.operations = mergeOps([], flatMap(txs, txToOps(account)));
+        account.operationsCount = account.operations.length;
         return { account };
       }
 
@@ -393,7 +409,7 @@ const currencyBridge: CurrencyBridge = {
     })
 };
 
-const startSync = ({ freshAddress, blockHeight, currency, operations }) =>
+const sync = ({ freshAddress, blockHeight, currency, operations }) =>
   Observable.create(o => {
     let unsubscribed = false;
     const api = apiForCurrency(currency);
@@ -527,36 +543,6 @@ const getTransactionStatus = (a, t) => {
   });
 };
 
-const signAndBroadcast = (a, t, deviceId) =>
-  Observable.create(o => {
-    let cancelled = false;
-    const isCancelled = () => cancelled;
-    const onSigned = () => {
-      o.next({ type: "signed" });
-    };
-    const onOperationBroadcasted = operation => {
-      o.next({ type: "broadcasted", operation });
-    };
-    doSignAndBroadcast({
-      a,
-      t,
-      deviceId,
-      isCancelled,
-      onSigned,
-      onOperationBroadcasted
-    }).then(
-      () => {
-        o.complete();
-      },
-      e => {
-        o.error(e);
-      }
-    );
-    return () => {
-      cancelled = true;
-    };
-  });
-
 const getNetworkInfo = async c => {
   const { gas_price } = await getEstimatedFees(c);
   return { family: "ethereum", gasPrice: BigNumber(gas_price) };
@@ -600,8 +586,9 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 export default { currencyBridge, accountBridge };

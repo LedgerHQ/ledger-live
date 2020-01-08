@@ -10,9 +10,10 @@ import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getFeeItems } from "../../../api/FeesBitcoin";
 import {
-  scanAccountsOnDevice,
-  signAndBroadcast,
-  startSync,
+  scanAccounts,
+  signOperation,
+  broadcast,
+  sync,
   isInvalidRecipient
 } from "../../../bridge/mockHelpers";
 
@@ -89,12 +90,13 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   getTransactionStatus,
   prepareTransaction,
-  startSync,
-  signAndBroadcast
+  sync,
+  signOperation,
+  broadcast
 };
 
 const currencyBridge: CurrencyBridge = {
-  scanAccountsOnDevice,
+  scanAccounts,
   preload: () => Promise.resolve(),
   hydrate: () => {}
 };

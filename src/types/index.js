@@ -11,3 +11,4 @@ export * from "../account/accountId";
 export * from "./transaction";
 export * from "../generated/types";
 export * from "./bridge";
+export * from "./pagination";

@@ -43,12 +43,12 @@ const typeFilter = (
   filters.every(filter => {
     switch (filter) {
       case "installed":
-        return updateAwareInstalledApps.hasOwnProperty(app.name);
+        return app.name in updateAwareInstalledApps;
       case "not_installed":
-        return !updateAwareInstalledApps.hasOwnProperty(app.name);
+        return !(app.name in updateAwareInstalledApps);
       case "updatable":
         return (
-          updateAwareInstalledApps.hasOwnProperty(app.name) &&
+          app.name in updateAwareInstalledApps &&
           !updateAwareInstalledApps[app.name]
         );
       case "supported":

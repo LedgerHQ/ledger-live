@@ -3,15 +3,42 @@
 import type { BigNumber } from "bignumber.js";
 import type { Operation, OperationRaw } from "./operation";
 
-export type SignAndBroadcastEvent =
-  | { type: "signing" }
-  | { type: "signed" }
-  | { type: "broadcasted", operation: Operation };
+export type SignedOperation = {|
+  // prepared version of Operation before it's even broadcasted
+  // .id/.hash is potentially not settled yet
+  operation: Operation,
+  // usually the device signature hex OR anything that is needed to broadcast (can be an inline JSON)
+  signature: string,
+  // date calculated as expiring
+  expirationDate: ?Date
+|};
 
-export type SignAndBroadcastEventRaw =
-  | { type: "signing" }
-  | { type: "signed" }
-  | { type: "broadcasted", operation: OperationRaw };
+export type SignedOperationRaw = {|
+  // Operation before it's even optimistic, .id/.hash is potentially not settled yet
+  operation: OperationRaw,
+  // device signature hex
+  signature: string,
+  // date calculated as expiring
+  expirationDate: ?string
+|};
+
+export type SignOperationEvent =
+  // Used when lot of exchange is needed with the device to visually express a progress
+  // It can be used before and/or after the signature
+  // only used if it can takes >1s to show a visual progress to user (typically UTXO streaming)
+  | { type: "device-streaming", progress: number } // optional
+  // REQUIRED Indicates that a signature is now appearing and awaited on the device to confirm
+  | { type: "device-signature-requested" }
+  // REQUIRED Indicates user have confirmed the transaction
+  | { type: "device-signature-granted" }
+  // REQUIRED payload of the resulting signed operation
+  | { type: "signed", signedOperation: SignedOperation };
+
+export type SignOperationEventRaw =
+  | { type: "device-streaming", progress: number }
+  | { type: "device-signature-requested" }
+  | { type: "device-signature-granted" }
+  | { type: "signed", signedOperation: SignedOperationRaw };
 
 // Transaction is a generic object that holds all state for all transactions
 // there are generic fields and coin specific fields. That's why almost all fields are optionals

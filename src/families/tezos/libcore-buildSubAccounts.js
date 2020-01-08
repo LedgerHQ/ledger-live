@@ -34,12 +34,9 @@ async function buildOriginatedAccount({
   const isSpendable = await coreOriginatedAccount.isSpendable();
 
   const query = await coreOriginatedAccount.queryOperations();
-  const completedQuery = await query.complete();
-  const sortedQuery = await completedQuery.addOrder(
-    OperationOrderKey.date,
-    false
-  );
-  const coreOperations = await sortedQuery.execute();
+  await query.complete();
+  await query.addOrder(OperationOrderKey.date, false);
+  const coreOperations = await query.execute();
 
   const id = `${parentAccountId}+${address}`;
 
@@ -62,6 +59,7 @@ async function buildOriginatedAccount({
     currency,
     address,
     balance,
+    operationsCount: operations.length,
     operations,
     pendingOperations: [],
     capabilities: {

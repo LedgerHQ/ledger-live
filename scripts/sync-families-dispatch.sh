@@ -8,9 +8,6 @@ customAddressValidation.js \
 hw-getAddress.js \
 hw-signMessage.js \
 libcore-buildOperation.js \
-libcore-buildTransaction.js \
-libcore-hw-signTransaction.js \
-libcore-signAndBroadcast.js \
 libcore-buildSubAccounts.js \
 libcore-getFeesForTransaction.js \
 libcore-postSyncPatch.js \

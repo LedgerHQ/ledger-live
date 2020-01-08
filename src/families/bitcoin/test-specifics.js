@@ -25,7 +25,7 @@ export default () => {
 
     beforeAll(async () => {
       account = await bridge
-        .startSync(account, false)
+        .sync(account, { paginationConfig: {} })
         .toPromise()
         .then(f => f(account));
     });

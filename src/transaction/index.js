@@ -2,7 +2,7 @@
 
 export * from "./common";
 export * from "./status";
-export * from "./signAndBroadcast";
+export * from "./signOperation";
 import type { Transaction, TransactionRaw } from "../types";
 import transactionModulePerFamily from "../generated/transaction";
 

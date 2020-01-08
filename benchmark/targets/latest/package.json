@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "latest",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "yarn upgrade ledger-live --latest # intentionally force latest"
+  },
+  "dependencies": {
+    "ledger-live": "latest"
+  }
+}

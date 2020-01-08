@@ -15,20 +15,11 @@ jobs:
     steps:
       - checkout
       - run: node -v
-
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-
+          command: |
+            yarn global add yalc codecov
+            yarn install --frozen-lockfile
       - run: yarn global add yalc codecov
       - run: yarn ci-lint
       - run: yarn ci-test-common && npx codecov
@@ -39,7 +30,7 @@ jobs:
   debian:
     working_directory: ~/live-common
     docker:
-      - image: circleci/node:12-stretch-browsers
+      - image: circleci/node:8-stretch-browsers
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get install -y libudev-dev libusb-1.0-0-dev jq
@@ -58,14 +49,15 @@ jobs:
             - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
+          command: |
+            yarn global add yalc codecov
+            yarn install --frozen-lockfile
       - save_cache:
           name: Save Yarn Package Cache
           key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
-      - run: yarn global add yalc codecov
       - run: yarn ci-lint
       - run: yarn ci-test-common && npx codecov
       - run:

@@ -1188,14 +1188,15 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.3.0.tgz#5af8afa7af5e2cd8f2e071f16a9a2972a77e7bc4"
   integrity sha512-Sxd8xVjg5X6z3CaaLyh301fKQilH2wF2lEj0y+sD+ZnFp+yHVOXgRauwT0JJkSl6191iBJCcY+DsdoynY3oiEg==
 
-"@ledgerhq/hw-app-btc@5.3.2":
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.3.2.tgz#ecd6000df92d568e581114763f46fd0f3dc8e7d6"
-  integrity sha512-d9f7BHUWbBCVWYSZcgQlXLKshueWuHnZPAh46XHrOFAwv5RFwEV0DDbffir1HlqPxkXKRP2LXvEP76FX3oOitA==
+"@ledgerhq/hw-app-btc@5.4.1":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.4.1.tgz#a6c109ad94dec9d7436c69908a480aa0992dca8e"
+  integrity sha512-XL4LTdtBQUMFiRsLKOHOqhTSyjHvhN8WYyOAvPcPpvS+B3Bg2N2IrWvluKYaLv/GZQ+Kfw3hX5iJGZ4WefEiwQ==
   dependencies:
     "@ledgerhq/hw-transport" "^5.3.0"
     bip32-path "^0.4.2"
-    create-hash "^1.1.3"
+    ripemd160 "2"
+    sha.js "2"
 
 "@ledgerhq/hw-app-eth@5.3.0":
   version "5.3.0"
@@ -1271,15 +1272,15 @@
     "@ledgerhq/errors" "^5.3.0"
     events "^3.0.0"
 
-"@ledgerhq/live-common@10.5.0":
-  version "10.5.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-10.5.0.tgz#448a45d29c95fe770331775a0a745174276f9b40"
-  integrity sha512-5SaFuxiStlf/4AqoIhMCn5Bls1dDc4xIUFadXc4+ndGVmRZ9DDiUNosphDetNC+S+b7fX8xAOeKbCJTQRdPHaA==
+"@ledgerhq/live-common@^11.0.0-rc.0":
+  version "11.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.0.tgz#8d2cfb89e9359f17ec85d9497ad3746bbfbf9b3a"
+  integrity sha512-OYSL7MA5ZCFa9kmRFxDH0hxcEiG277LbnBw2mLnj6ZEqnX5MeAuWOo7hxPDV6KnwdjK/hOgo46rNKsn2YfEiEA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.3.0"
     "@ledgerhq/errors" "5.3.0"
-    "@ledgerhq/hw-app-btc" "5.3.2"
+    "@ledgerhq/hw-app-btc" "5.4.1"
     "@ledgerhq/hw-app-eth" "5.3.0"
     "@ledgerhq/hw-app-xrp" "5.3.0"
     "@ledgerhq/hw-transport" "5.3.0"
@@ -2222,13 +2223,20 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
   integrity sha512-ReZxvNHIOv88FlT7rxcXIIC0fPt4KZqZbOlivyWtXLt8ESx84zd3kMC6iK5jVeS2qt+g7ftS7ye4fi06X5rtRQ==
 
-axios@0.19.0, axios@^0.19.0:
+axios@0.19.0:
   version "0.19.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
   integrity sha512-1uvKqKQta3KBxIz14F2v06AEHZ/dIoeKfbTRkK1E5oqjDnuEerLmYTgJB5AiQZHJcljpg1TuRzdjDR06qNk0DQ==
   dependencies:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
+
+axios@^0.19.1:
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.1.tgz#8a6a04eed23dfe72747e1dd43c604b8f1677b5aa"
+  integrity sha512-Yl+7nfreYKaLRvAvjNPkvfjnQHJM1yLBY3zhqAwcJSwR/6ETkanUgylgtIvkvz0xJ+p/vZuNw8X7Hnb7Whsbpw==
+  dependencies:
+    follow-redirects "1.5.10"
 
 axobject-query@^2.0.2:
   version "2.0.2"
@@ -3411,7 +3419,7 @@ create-ecdh@^4.0.0:
     bn.js "^4.1.0"
     elliptic "^6.0.0"
 
-create-hash@^1.1.0, create-hash@^1.1.2, create-hash@^1.1.3, create-hash@^1.2.0:
+create-hash@^1.1.0, create-hash@^1.1.2, create-hash@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/create-hash/-/create-hash-1.2.0.tgz#889078af11a63756bcfb59bd221996be3a9ef196"
   integrity sha512-z00bCGNHDG8mHAkP7CtT1qVu+bFQUPjYq/4Iv3C3kWjTFV10zIjfSoeqXo9Asws8gwSHDGj/hl2u4OGIjapeCg==
@@ -10050,7 +10058,7 @@ rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.3, rimraf@^2.7.1:
   dependencies:
     glob "^7.1.3"
 
-ripemd160@^2.0.0, ripemd160@^2.0.1:
+ripemd160@2, ripemd160@^2.0.0, ripemd160@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/ripemd160/-/ripemd160-2.0.2.tgz#a1c1a6f624751577ba5d07914cbc92850585890c"
   integrity sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==
@@ -10419,7 +10427,7 @@ setprototypeof@1.1.1:
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.1.1.tgz#7e95acb24aa92f5885e0abef5ba131330d4ae683"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
-sha.js@^2.4.0, sha.js@^2.4.11, sha.js@^2.4.8:
+sha.js@2, sha.js@^2.4.0, sha.js@^2.4.11, sha.js@^2.4.8:
   version "2.4.11"
   resolved "https://registry.yarnpkg.com/sha.js/-/sha.js-2.4.11.tgz#37a5cf0b81ecbc6943de109ba2960d1b26584ae7"
   integrity sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ==
