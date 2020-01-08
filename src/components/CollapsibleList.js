@@ -114,7 +114,7 @@ const CollapsibleList = ({
   // interpolated height from opening anim state for list container
   const height = interpolate(openingAnim, {
     inputRange: [0, 1],
-    outputRange: [0, 15 + itemHeight * data.length],
+    outputRange: [itemHeight, 15 + itemHeight * data.length],
   });
 
   // interpolated rotation from opening anim state for chevron icon
@@ -123,8 +123,10 @@ const CollapsibleList = ({
     outputRange: [-Math.PI / 2, 0],
   });
 
+  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+
   return (
-    <View style={[styles.root, containerStyle]}>
+    <Animated.View style={[styles.root, { height }, containerStyle]}>
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.toggleButton}>
           <Animated.View
@@ -135,15 +137,14 @@ const CollapsibleList = ({
           <LText style={styles.toggleButtonText}>{title}</LText>
         </View>
       </TouchableWithoutFeedback>
-      <Animated.View style={{ height, opacity: openingAnim }}>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          {...props}
-        />
-      </Animated.View>
-    </View>
+      <AnimatedFlatList
+        style={{ opacity: openingAnim }}
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        {...props}
+      />
+    </Animated.View>
   );
 };
 
@@ -154,7 +155,6 @@ CollapsibleList.defaultProps = {
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
     backgroundColor: colors.lightGrey,
     borderRadius: 3,
     paddingHorizontal: 15,

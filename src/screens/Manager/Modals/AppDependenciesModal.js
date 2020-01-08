@@ -79,15 +79,9 @@ const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
                 values={{ dependency: dependencies.join(" "), app: name }}
               />
             </LText>
-            <LText style={styles.warnText}>
-              <Trans
-                i18nKey="AppAction.install.dependency.description_two"
-                values={{ dependency: dependencies.join(" "), app: name }}
-              />
-            </LText>
             <LText style={[styles.warnText, styles.marginTop]}>
               <Trans
-                i18nKey="AppAction.install.dependency.description_three"
+                i18nKey="AppAction.install.dependency.description_two"
                 values={{ dependency: dependencies.join(" "), app: name }}
               />
             </LText>

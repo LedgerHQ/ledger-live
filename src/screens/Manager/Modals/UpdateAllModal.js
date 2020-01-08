@@ -61,6 +61,7 @@ const UpdateAllModal = ({ isOpened, apps, onClose, onConfirm }: Props) => {
         data={apps}
         renderItem={renderAppLine}
         keyExtractor={keyExtractor}
+        bounces={false}
       />
     </ActionModal>
   );

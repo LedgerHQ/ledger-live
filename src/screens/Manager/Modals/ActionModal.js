@@ -20,6 +20,7 @@ const ActionModal = ({ isOpened, onClose, children, actions = [] }: Props) => (
     isOpened={isOpened}
     onClose={onClose}
     preventBackdropClick={false}
+    containerStyle={styles.modal}
   >
     <SafeAreaView style={styles.root}>
       {children}
@@ -42,26 +43,14 @@ const ActionModal = ({ isOpened, onClose, children, actions = [] }: Props) => (
 );
 
 const styles = StyleSheet.create({
+  modal: {
+    paddingTop: 32,
+  },
   root: {
     maxHeight: height - 100,
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: 32,
-  },
-  dragZone: {
-    height: 50,
-    width: "100%",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  dragHandle: {
-    marginTop: 10,
-    height: 4,
-    width: 50,
-    backgroundColor: colors.lightFog,
-    borderRadius: 4,
   },
   modalFooter: {
     width: "100%",

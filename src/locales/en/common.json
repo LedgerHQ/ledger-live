@@ -1209,8 +1209,7 @@
       "dependency": {
         "title": "{{dependency}} app is required",
         "description_one": "The {{app}} app will also be installed because the {{dependency}} app needs it.",
-        "description_two": "To install {{app}} app, you need to install {{dependency}} app first.",
-        "description_three": "Just press continue to install {{dependency}} and {{app}} app."
+        "description_two": "Just press continue to install {{dependency}} and {{app}} app."
       },
       "continueInstall": "Install apps"
     },

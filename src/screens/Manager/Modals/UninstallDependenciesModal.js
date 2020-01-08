@@ -12,7 +12,14 @@ import LText from "../../../components/LText";
 import AppTree from "../../../icons/AppTree";
 import ListTreeLine from "../../../icons/ListTreeLine";
 
+import getWindowDimensions from "../../../logic/getWindowDimensions";
+
 import ActionModal from "./ActionModal";
+
+const { height } = getWindowDimensions();
+
+const LIST_HEIGHT = height - 550;
+const LINE_HEIGHT = 46;
 
 const renderDepLine = ({ item }: *) => (
   <View style={styles.depLine}>
@@ -60,7 +67,12 @@ const UninstallDependenciesModal = ({
   const modalActions = useMemo(
     () => [
       {
-        title: <Trans i18nKey="AppAction.uninstall.continueUninstall" />,
+        title: (
+          <Trans
+            i18nKey="AppAction.uninstall.continueUninstall"
+            values={{ app: name }}
+          />
+        ),
         onPress: unInstallApp,
         type: "alert",
       },
@@ -71,13 +83,13 @@ const UninstallDependenciesModal = ({
         outline: false,
       },
     ],
-    [unInstallApp, onClose],
+    [unInstallApp, onClose, name],
   );
 
   return (
     <ActionModal isOpened={!!app} onClose={onClose} actions={modalActions}>
       {app && (
-        <ScrollView>
+        <View>
           <View style={styles.imageSection}>
             <AppTree color={colors.fog} icon={app.icon} />
           </View>
@@ -97,17 +109,17 @@ const UninstallDependenciesModal = ({
           </View>
           <View style={styles.collapsibleList}>
             <CollapsibleList
-              title={
-                <Trans
-                  i18nKey="AppAction.uninstall.dependency.showAll"
-                  values={{ app: name }}
-                />
-              }
+              title={<Trans i18nKey="AppAction.uninstall.dependency.showAll" />}
               data={dependentApps}
               renderItem={renderDepLine}
+              itemHeight={LINE_HEIGHT}
+              containerStyle={{
+                maxHeight:
+                  LIST_HEIGHT - (LIST_HEIGHT % LINE_HEIGHT) - LINE_HEIGHT / 2, // max height available but still cutting the list mid items for UX
+              }}
             />
           </View>
-        </ScrollView>
+        </View>
       )}
     </ActionModal>
   );
@@ -155,7 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   depLine: {
-    height: 46,
+    height: LINE_HEIGHT,
     flexDirection: "row",
     alignItems: "center",
     position: "relative",

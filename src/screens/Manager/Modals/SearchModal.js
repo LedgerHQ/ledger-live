@@ -186,6 +186,7 @@ export default ({ state, dispatch, tab }: Props) => {
             renderItem={({ item }) => item}
             keyExtractor={(_, i) => String(i)}
             stickyHeaderIndices={[0]}
+            bounces={false}
           />
           {NoResult}
         </SafeAreaView>
@@ -202,11 +203,11 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   header: {
-    height: 54,
+    height: 63,
     width: "100%",
     overflow: "hidden",
     paddingHorizontal: 14,
-    paddingBottom: 9,
+    paddingVertical: 9,
     flexDirection: "row",
     backgroundColor: colors.white,
   },
@@ -237,6 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   searchBarTextInput: {
+    flex: 1,
     fontSize: 14,
     lineHeight: 17,
     color: colors.smoke,

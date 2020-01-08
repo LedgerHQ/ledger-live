@@ -215,6 +215,7 @@ const FilterModalComponent = ({
         renderItem={FilterItem}
         renderSectionHeader={SectionHeader}
         renderSectionFooter={Separator}
+        bounces={false}
       />
     </ActionModal>
   );

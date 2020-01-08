@@ -200,7 +200,10 @@ const AppsScreen = ({ state, dispatch }: Props) => {
       />
       <View style={styles.searchBar}>
         <Animated.View
-          style={[styles.searchBarContainer, { opacity: searchOpacity }]}
+          style={[
+            styles.searchBarContainer,
+            { opacity: searchOpacity, zIndex: index === 0 ? 2 : 0 },
+          ]}
         >
           <SearchModal
             state={state}
@@ -222,7 +225,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
           style={[
             styles.searchBarContainer,
             styles.searchBarInstalled,
-            { opacity: position, zIndex: position },
+            { opacity: position, zIndex: index === 0 ? 0 : 2 },
           ]}
         >
           <SearchModal
@@ -279,7 +282,7 @@ const styles = StyleSheet.create({
     height: 64,
     borderBottomWidth: 1,
     borderColor: colors.lightFog,
-    zIndex: 1,
+    zIndex: 0,
   },
   searchBarInstalled: {
     position: "absolute",
