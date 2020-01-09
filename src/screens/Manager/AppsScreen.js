@@ -1,5 +1,11 @@
 // @flow
-import React, { useState, useCallback, useContext, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -41,6 +47,49 @@ type Props = { state: State, dispatch: Action => void };
 const AppsScreen = ({ state, dispatch }: Props) => {
   const { apps, appByName, installed, installQueue } = state;
 
+  const listRef = useRef();
+
+  const { MANAGER_TABS } = useContext(ManagerContext);
+
+  const [index, setIndex] = useState(0);
+  const [routes] = React.useState([
+    {
+      key: MANAGER_TABS.CATALOG,
+      title: i18next.t("manager.appsCatalog"),
+    },
+    {
+      key: MANAGER_TABS.INSTALLED_APPS,
+      title: i18next.t("manager.installedApps"),
+    },
+  ]);
+
+  const [filters, setFilters] = useState([]);
+  const [sort, setSort] = useState("name");
+  const [order, setOrder] = useState("asc");
+
+  const [position] = useState(() => new Animated.Value(0));
+
+  const searchOpacity = interpolate(position, {
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const [scrollY, setScrollY] = useState(0);
+
+  const onScroll = useCallback(
+    evt => setScrollY(evt.nativeEvent.contentOffset.y),
+    [setScrollY],
+  );
+
+  const onSwipeStart = useCallback(() => {
+    if (scrollY > 280) listRef.current.scrollToIndex({ index: 2 });
+  }, [scrollY]);
+
+  const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
+    dispatch,
+  ]);
+
   const installedApps = useMemo(
     () =>
       [...installQueue, ...installed]
@@ -53,13 +102,9 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     [installed, installQueue, appByName],
   );
 
-  const [filters, setFilters] = useState([]);
-  const [sort, setSort] = useState("name");
-  const [order, setOrder] = useState("asc");
-
   const filterOptions = useMemo(
     () => ({
-      query: null,
+      query: "",
       installedApps: installed,
       type: filters,
     }),
@@ -92,35 +137,6 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     },
   );
 
-  const { MANAGER_TABS } = useContext(ManagerContext);
-  const [index, setIndex] = useState(0);
-  const [tabSwiping, onTabSwipe] = useState(false);
-  const [routes] = React.useState([
-    {
-      key: MANAGER_TABS.CATALOG,
-      title: i18next.t("manager.appsCatalog"),
-    },
-    {
-      key: MANAGER_TABS.INSTALLED_APPS,
-      title: i18next.t("manager.installedApps"),
-    },
-  ]);
-
-  const tabSwipe = useCallback(isSwiping => () => onTabSwipe(isSwiping), [
-    onTabSwipe,
-  ]);
-  const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
-    dispatch,
-  ]);
-
-  const [position] = useState(() => new Animated.Value(0));
-
-  const searchOpacity = interpolate(position, {
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-    extrapolate: Extrapolate.CLAMP,
-  });
-
   const renderNoResults = useCallback(
     () => (
       <TouchableOpacity
@@ -148,7 +164,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
             apps={sortedApps}
             state={state}
             dispatch={dispatch}
-            active={tabSwiping || index === 0}
+            active={index === 0}
           />
         );
       case MANAGER_TABS.INSTALLED_APPS:
@@ -169,10 +185,10 @@ const AppsScreen = ({ state, dispatch }: Props) => {
             </View>
             <AppsList
               tab={MANAGER_TABS.INSTALLED_APPS}
-              apps={sortedInstalledApps}
+              apps={installedApps}
               state={state}
               dispatch={dispatch}
-              active={tabSwiping || index === 1}
+              active={index === 1}
               renderNoResults={renderNoResults}
             />
           </>
@@ -221,19 +237,23 @@ const AppsScreen = ({ state, dispatch }: Props) => {
             />
           </View>
         </Animated.View>
-        <Animated.View
-          style={[
-            styles.searchBarContainer,
-            styles.searchBarInstalled,
-            { opacity: position, zIndex: index === 0 ? 0 : 2 },
-          ]}
-        >
-          <SearchModal
-            state={state}
-            dispatch={dispatch}
-            tab={MANAGER_TABS.INSTALLED_APPS}
-          />
-        </Animated.View>
+        {installedApps.length > 0 && (
+          <Animated.View
+            style={[
+              styles.searchBarContainer,
+              styles.searchBarInstalled,
+              { opacity: position, zIndex: index === 0 ? 0 : 2 },
+            ]}
+          >
+            <SearchModal
+              state={state}
+              dispatch={dispatch}
+              tab={MANAGER_TABS.INSTALLED_APPS}
+              apps={installedApps}
+              sortOptions={{ type: null, order: null }}
+            />
+          </Animated.View>
+        )}
       </View>
     </View>,
     <TabView
@@ -243,8 +263,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
       onIndexChange={setIndex}
       initialLayout={initialLayout}
       position={position}
-      onSwipeStart={tabSwipe(true)}
-      onSwipeEnd={tabSwipe(false)}
+      onSwipeStart={onSwipeStart}
       sceneContainerStyle={{}}
     />,
   ];
@@ -252,10 +271,14 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   return (
     <SafeAreaView style={styles.root}>
       <FlatList
+        ref={listRef}
+        onScroll={onScroll}
+        scrollEventThrottle={50}
         data={elements}
         renderItem={({ item }) => item}
         keyExtractor={(_, i) => String(i)}
         stickyHeaderIndices={[2]}
+        snapToInterval={64}
       />
     </SafeAreaView>
   );

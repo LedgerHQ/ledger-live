@@ -32,9 +32,17 @@ type Props = {
   state: State,
   dispatch: Action => void,
   tab: string,
+  apps?: App[],
+  sortOptions: { type: string, order: string },
 };
 
-export default ({ state, dispatch, tab }: Props) => {
+export default ({
+  state,
+  dispatch,
+  tab,
+  apps,
+  sortOptions = { type: null, order: "asc" },
+}: Props) => {
   const { MANAGER_TABS } = useContext(ManagerContext);
   const [isOpened, setIsOpen] = useState(false);
   const toggleSearchModal = useCallback(
@@ -47,35 +55,17 @@ export default ({ state, dispatch, tab }: Props) => {
   const [query, setQuery] = useState(null);
   const clear = useCallback(() => setQuery(""), [setQuery]);
 
-  const { apps, appByName, installed, installQueue } = state;
-
-  const installedApps = useMemo(
-    () =>
-      [...installQueue, ...installed]
-        .map((i: { name: String } | String) => appByName[i.name || i])
-        .filter(Boolean)
-        .filter(
-          (app, i, apps) =>
-            apps.findIndex(({ name }) => name === app.name) === i,
-        ),
-    [installed, installQueue, appByName],
-  );
-
   const filterOptions: FilterOptions = useMemo(
     () => ({
       query,
-      installedApps,
-      type: tab === MANAGER_TABS.INSTALLED_APPS ? ["installed"] : [],
+      installedApps: [],
+      type: [],
     }),
-    [query, installedApps, tab, MANAGER_TABS.INSTALLED_APPS],
+    [query, tab, MANAGER_TABS.INSTALLED_APPS],
   );
-  const [sortOptions] = useState({
-    type: "name",
-    order: "asc",
-  });
 
   const sortedApps: Array<App> = useSortedFilteredApps(
-    apps,
+    apps || state.apps,
     filterOptions,
     sortOptions,
   );
