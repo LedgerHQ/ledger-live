@@ -90,9 +90,10 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     dispatch,
   ]);
 
+  /** installed apps sorted from most recent installed to the least */
   const installedApps = useMemo(
     () =>
-      [...installQueue, ...installed]
+      [...installQueue, ...installed.reverse()]
         .map((i: { name: string } | string) => appByName[i.name || i])
         .filter(Boolean)
         .filter(
@@ -122,19 +123,6 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     apps,
     filterOptions,
     sortOptions,
-  );
-
-  const sortedInstalledApps = useSortedFilteredApps(
-    apps,
-    {
-      query: "",
-      installedApps: installed,
-      type: ["installed"],
-    },
-    {
-      type: "name",
-      order: "asc",
-    },
   );
 
   const renderNoResults = useCallback(
