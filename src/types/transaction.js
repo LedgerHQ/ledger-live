@@ -9,16 +9,16 @@ export type SignedOperation = {|
   operation: Operation,
   // usually the device signature hex OR anything that is needed to broadcast (can be an inline JSON)
   signature: string,
+  // sometimes a coin needs the raw object (it must be serializable)
+  signatureRaw?: Object,
   // date calculated as expiring
   expirationDate: ?Date
 |};
 
 export type SignedOperationRaw = {|
-  // Operation before it's even optimistic, .id/.hash is potentially not settled yet
   operation: OperationRaw,
-  // device signature hex
   signature: string,
-  // date calculated as expiring
+  signatureRaw?: Object,
   expirationDate: ?string
 |};
 

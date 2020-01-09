@@ -10,22 +10,36 @@ import type {
 import { fromOperationRaw, toOperationRaw } from "../account";
 
 export const fromSignedOperationRaw = (
-  e: SignedOperationRaw,
+  signedOp: SignedOperationRaw,
   accountId: string
-): SignedOperation => ({
-  operation: fromOperationRaw(e.operation, accountId),
-  signature: e.signature,
-  expirationDate: e.expirationDate ? new Date(e.expirationDate) : null
-});
+): SignedOperation => {
+  const { operation, signature, expirationDate, signatureRaw } = signedOp;
+  const out: SignedOperation = {
+    operation: fromOperationRaw(operation, accountId),
+    signature,
+    expirationDate: expirationDate ? new Date(expirationDate) : null
+  };
+  if (signatureRaw) {
+    out.signatureRaw = signatureRaw;
+  }
+  return out;
+};
 
 export const toSignedOperationRaw = (
-  e: SignedOperation,
+  signedOp: SignedOperation,
   preserveSubOperation?: boolean
-): SignedOperationRaw => ({
-  operation: toOperationRaw(e.operation, preserveSubOperation),
-  signature: e.signature,
-  expirationDate: e.expirationDate ? e.expirationDate.toISOString() : null
-});
+): SignedOperationRaw => {
+  const { operation, signature, expirationDate, signatureRaw } = signedOp;
+  const out: SignedOperationRaw = {
+    operation: toOperationRaw(operation, preserveSubOperation),
+    signature,
+    expirationDate: expirationDate ? expirationDate.toISOString() : null
+  };
+  if (signatureRaw) {
+    out.signatureRaw = signatureRaw;
+  }
+  return out;
+};
 
 export const fromSignOperationEventRaw = (
   e: SignOperationEventRaw,
