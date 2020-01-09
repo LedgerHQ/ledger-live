@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import type { State, Action } from "@ledgerhq/live-common/lib/apps";
 import { Trans } from "react-i18next";
@@ -7,6 +7,7 @@ import UpdateAllModal from "../Modals/UpdateAllModal";
 import LText from "../../../components/LText";
 import colors from "../../../colors";
 import Info from "../../../icons/Info";
+import ProgressBar from "../../../components/ProgressBar";
 
 type Props = {
   state: State,
@@ -15,7 +16,8 @@ type Props = {
 
 const AppUpdateAll = ({ state, dispatch }: Props) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const { installed, apps } = state;
+  const [appsUpdating, setAppsUpdating] = useState([]);
+  const { installed, apps, installQueue } = state;
   const appsToUpdate = useMemo(
     () =>
       apps.filter(app =>
@@ -23,12 +25,47 @@ const AppUpdateAll = ({ state, dispatch }: Props) => {
       ),
     [apps, installed],
   );
+
+  const updateProgress = useMemo(
+    () =>
+      (1e2 * (appsUpdating.length - installQueue.length)) / appsUpdating.length,
+    [installQueue, appsUpdating],
+  );
+
+  useEffect(() => {
+    if (updateProgress === 100) {
+      setAppsUpdating([]);
+    }
+  }, [updateProgress]);
+
   const openModal = useCallback(() => setModalOpen(true), [setModalOpen]);
   const closeModal = useCallback(() => setModalOpen(false), [setModalOpen]);
   const updateAll = useCallback(() => {
     dispatch({ type: "updateAll" });
     setModalOpen(false);
-  }, [dispatch, setModalOpen]);
+    setAppsUpdating(appsToUpdate);
+  }, [appsToUpdate, dispatch]);
+
+  if (appsUpdating.length) {
+    return (
+      <View style={styles.root}>
+        <LText semiBold style={[styles.infoText, { flex: 1 }]}>
+          <Trans
+            i18nKey="AppAction.update.countdown"
+            values={{
+              total: appsUpdating.length,
+              number: appsUpdating.length - installQueue.length,
+            }}
+          />
+        </LText>
+        <ProgressBar
+          style={{ marginLeft: 16 }}
+          progress={updateProgress}
+          progressColor={colors.live}
+        />
+      </View>
+    );
+  }
 
   if (appsToUpdate.length <= 0) return null;
 
@@ -102,4 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppUpdateAll);
+export default AppUpdateAll;

@@ -26,7 +26,8 @@ const DeviceAppStorage = ({
 }: Props) => {
   const appSizes = useMemo(
     () =>
-      apps.filter(Boolean).map(({ bytes, currency }) => ({
+      apps.filter(Boolean).map(({ bytes, currency, name }) => ({
+        name,
         ratio: Number((bytes / appsSpaceBytes) * 100).toFixed(2),
         color: (currency && currency.color) || "#000000",
       })),
@@ -56,12 +57,12 @@ const DeviceAppStorage = ({
         </View>
       </View>
       <View style={[styles.row, styles.graphRow]}>
-        {appSizes.map(({ ratio, color }, i) => (
+        {appSizes.map(({ ratio, color, name }, i) => (
           <Animatable.View
             animation="slideInLeft"
             duration={400}
             useNativeDriver
-            key={i}
+            key={`${i}${name}`}
             style={[
               styles.graphBlock,
               {

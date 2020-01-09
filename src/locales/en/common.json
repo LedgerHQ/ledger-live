@@ -1215,6 +1215,7 @@
     },
     "update": {
       "title": "{{number}} app updates",
+      "countdown": "{{number}} / {{total}} apps updated",
       "button": "Update all",
       "version": "New {{version}}",
       "buttonAction": "Update available",
