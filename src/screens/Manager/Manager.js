@@ -111,6 +111,8 @@ export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
         setAppInstallWithDependencies,
         appUninstallWithDependencies,
         setAppUninstallWithDependencies,
+        deviceId: navigation.getParam("deviceId"),
+        initialDeviceName: navigation.getParam("deviceName"),
       }}
     >
       <AppsScreen state={state} dispatch={dispatch} navigation={navigation} />

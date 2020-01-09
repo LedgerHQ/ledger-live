@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useContext } from "react";
 
 import { StyleSheet, View, Image } from "react-native";
 import { Trans } from "react-i18next";
@@ -15,6 +15,9 @@ import blue from "./images/blue.png";
 import Card from "../../../components/Card";
 
 import colors from "../../../colors";
+import DeviceName from "./DeviceName";
+
+import { ManagerContext } from "../shared";
 
 const illustrations = {
   nanoS,
@@ -31,6 +34,8 @@ const DeviceCard = ({ state }: Props) => {
   const distribution = distribute(state);
   const capacity = formatSize(distribution.appsSpaceBytes) || "0kb";
 
+  const { deviceId, initialDeviceName } = useContext(ManagerContext);
+
   return (
     <Card style={styles.card}>
       <View style={styles.deviceSection}>
@@ -43,9 +48,21 @@ const DeviceCard = ({ state }: Props) => {
         </View>
         <View style={styles.deviceInfoContainer}>
           <View style={styles.deviceNameContainer}>
-            <LText bold style={styles.deviceName}>
-              {deviceModel.productName}
-            </LText>
+            {deviceModel.id !== "nanoS" ? (
+              <DeviceName
+                deviceId={deviceId}
+                initialDeviceName={initialDeviceName}
+              />
+            ) : (
+              <LText
+                bold
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.deviceName}
+              >
+                {deviceModel.productName}
+              </LText>
+            )}
             <Genuine />
           </View>
 

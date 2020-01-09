@@ -61,17 +61,18 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
     () =>
       animation
         ? {
-          animation: index <= 15 ? "fadeInUp" : "fadeIn",
-          duration: 300,
-          delay: index <= 15 ? index * 100 : 0,
-          useNativeDriver: true,
-        }
+            animation: index <= 15 ? "fadeInUp" : "fadeIn",
+            duration: 300,
+            delay: index <= 15 ? index * 100 : 0,
+            useNativeDriver: true,
+          }
         : {},
     [animation, index],
   );
 
   /**
-   * const bytesWithDeps = useMemo(() => {
+   
+   const bytesWithDeps = useMemo(() => {
     const depBytes =
       dependencies.length > 0 &&
       installed.every(i => dependencies[0] !== i.name)
@@ -109,16 +110,16 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
           </LText>
         </TouchableOpacity>
       ) : (
-          <LText
-            style={[
-              styles.versionText,
-              styles.sizeText,
-              notEnoughMemoryToInstall ? styles.warnText : {},
-            ]}
-          >
-            {formatSize(bytes)}
-          </LText>
-        )}
+        <LText
+          style={[
+            styles.versionText,
+            styles.sizeText,
+            notEnoughMemoryToInstall ? styles.warnText : {},
+          ]}
+        >
+          {formatSize(bytes)}
+        </LText>
+      )}
       <AppStateButton
         app={app}
         state={state}

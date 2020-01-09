@@ -34,7 +34,7 @@ import LText from "../../components/LText";
 
 import { ManagerContext } from "./shared";
 
-import DeviceCard from "./DeviceCard";
+import DeviceCard from "./Device";
 import AppsList from "./AppsList";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 
@@ -266,7 +266,6 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         renderItem={({ item }) => item}
         keyExtractor={(_, i) => String(i)}
         stickyHeaderIndices={[2]}
-        snapToInterval={64}
       />
     </SafeAreaView>
   );
