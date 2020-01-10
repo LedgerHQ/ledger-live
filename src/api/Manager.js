@@ -13,7 +13,8 @@ import {
   ManagerNotEnoughSpaceError,
   UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
-  NetworkDown
+  NetworkDown,
+  WebsocketConnectionFailed
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
@@ -291,7 +292,7 @@ const install = (
 };
 
 export type WithAllowManagerEvent =
-  | { type: "result", payload: any }
+  | { type: "result", payload: mixed }
   | { type: "allow-manager-requested" }
   | { type: "allow-manager-accepted" };
 
@@ -346,8 +347,8 @@ const genuineCheck = (
       pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
       query: { targetId, perso, livecommonversion }
     })
-    // $FlowFixMe
   }).pipe(
+    // $FlowFixMe
     aggregateAllowManagerEvents,
     map(e => {
       if (e.type === "result") {
@@ -378,6 +379,9 @@ const listInstalledApps = (
     // $FlowFixMe
     aggregateAllowManagerEvents,
     map(o => {
+      if (!o.payload) {
+        throw new WebsocketConnectionFailed();
+      }
       if (o.type === "result") {
         return {
           type: "result",
