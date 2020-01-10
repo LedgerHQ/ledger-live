@@ -1215,7 +1215,11 @@
     },
     "update": {
       "title": "{{number}} app updates",
-      "countdown": "{{number}} / {{total}} apps updated",
+      "step": "Update step {{step}}:",
+      "removingOldVersions": "removing old app versions",
+      "updateWarn": "Do not unplug your device",
+      "installingUpdates": "installing new app versions",
+      "progress": "Progress: {{progress}}%",
       "button": "Update all",
       "version": "New {{version}}",
       "buttonAction": "Update available",

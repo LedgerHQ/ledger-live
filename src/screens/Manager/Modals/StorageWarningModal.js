@@ -32,7 +32,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => {
         <InfoIcon
           bg={colors.lightLive}
           floatingIcon={<Exclamation size={36} color={colors.white} />}
-          floatingBg={colors.yellow}
+          floatingBg={colors.orange}
         >
           <Storage size={30} color={colors.live} />
         </InfoIcon>

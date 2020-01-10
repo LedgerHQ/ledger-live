@@ -35,7 +35,7 @@ const DeviceAppStorage = ({
   );
 
   const storageWarnStyle = {
-    color: shouldWarnMemory ? colors.alert : colors.darkBlue,
+    color: shouldWarnMemory ? colors.orange : colors.darkBlue,
   };
 
   return (
@@ -45,7 +45,7 @@ const DeviceAppStorage = ({
           <Trans i18nKey="manager.storage.title" />
         </LText>
         <View style={styles.warnRow}>
-          {shouldWarnMemory && <Warning color={colors.alert} size={15} />}
+          {shouldWarnMemory && <Warning color={colors.orange} size={15} />}
           <LText bold style={[styles.storageText, storageWarnStyle]}>
             {" "}
             {formatSize(freeSpaceBytes)}
