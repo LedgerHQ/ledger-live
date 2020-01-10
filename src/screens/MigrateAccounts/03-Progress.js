@@ -118,10 +118,16 @@ const Progress = ({
     noticeAwareStatus,
   ]);
 
+  const { deviceId } = deviceMeta;
   const startScanAccountsDevice = useCallback(() => {
+    const syncConfig = {
+      // TODO later we need to paginate only a few ops, not all (for add accounts)
+      // paginationConfig will come from redux
+      paginationConfig: {},
+    };
     unsub();
     scanSubscription.current = getCurrencyBridge(currency)
-      .scanAccountsOnDevice(currency, deviceMeta.deviceId)
+      .scanAccounts({ currency, deviceId, syncConfig })
       .pipe(
         reduce(
           (all: Account[], event: ScanAccountEvent) =>
@@ -142,7 +148,7 @@ const Progress = ({
           setError(err);
         },
       });
-  }, [currency, deviceMeta, setAccounts, unsub, accounts, setStatus, setError]);
+  }, [currency, deviceId, setAccounts, unsub, accounts, setStatus, setError]);
 
   useEffect(() => {
     startScanAccountsDevice();
