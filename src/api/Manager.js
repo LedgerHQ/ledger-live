@@ -379,10 +379,10 @@ const listInstalledApps = (
     // $FlowFixMe
     aggregateAllowManagerEvents,
     map(o => {
-      if (!o.payload) {
-        throw new WebsocketConnectionFailed();
-      }
       if (o.type === "result") {
+        if (!o.payload) {
+          throw new WebsocketConnectionFailed();
+        }
         return {
           type: "result",
           payload: [...o.payload].map(a => {
