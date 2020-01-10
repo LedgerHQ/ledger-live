@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { createWebSocket } from "../network";
+import { getEnv } from "../env";
 
 const logsSubject = new Subject();
 const warningsSubject = new Subject();
@@ -256,7 +257,9 @@ export const createDeviceSocket = (
     return () => {
       interrupted = true;
       if (!terminated) {
-        cancelDeviceAction(transport);
+        if (getEnv("DEVICE_CANCEL_APDU_FLUSH_MECHANISM")) {
+          cancelDeviceAction(transport);
+        }
       }
       if (ws.readyState !== 1) return;
       ws.close();
