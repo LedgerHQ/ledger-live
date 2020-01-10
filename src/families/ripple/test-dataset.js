@@ -1,12 +1,12 @@
 // @flow
 import { BigNumber } from "bignumber.js";
 import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
-import { NotEnoughSpendableBalance, NotEnoughBalanceBecauseDestinationNotCreated } from "@ledgerhq/errors";
+import { NotEnoughSpendableBalance, NotEnoughBalanceBecauseDestinationNotCreated, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["libcore", "mock", "ripplejs"],
+  implementations: ["mock", "ripplejs"],
   currencies: {
     ripple: {
       accounts: [
@@ -53,6 +53,46 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
                 totalSpent: BigNumber("10000001")
               }
+            },
+            {
+              name: "recipient and sender must not be the same",
+              transaction: fromTransactionRaw({
+                family: "ripple",
+                recipient: "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
+                amount: "10000000",
+                tag: null,
+                fee: "1",
+                feeCustomUnit: null,
+                networkInfo: null
+              }),
+              expectedStatus: {
+                amount: BigNumber("10000000"),
+                estimatedFees: BigNumber("1"),
+                errors: {
+                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource()
+                },
+                warnings: {},
+                totalSpent: BigNumber("10000001")
+              }
+            },
+            {
+              name: "Operation with tag succeed",
+              transaction: fromTransactionRaw({
+                family: "ripple",
+                recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
+                amount: "10000000",
+                tag: "12345",
+                fee: "1",
+                feeCustomUnit: null,
+                networkInfo: null
+              }),
+              expectedStatus: {
+                amount: BigNumber("10000000"),
+                estimatedFees: BigNumber("1"),
+                errors: {},
+                warnings: {},
+                totalSpent: BigNumber("10000001")
+              }
             }
           ],
           raw: {
@@ -77,7 +117,7 @@ const dataset: DatasetTest<Transaction> = {
             currencyId: "ripple",
             unitMagnitude: 6,
             lastSyncDate: "",
-            balance: "32259960",
+            balance: "31209950",
             xpub:
               "xpub6BemYiVNp19a2SqH5MuUUuMUsiMU4ZLcXQgfoFxbRSRjPEuzcwcjx5SXezUhwcmgCTKGzuGAqHxRFSCn6YLAqydEdq11LVYENwxNC6ctwrv"
           }
