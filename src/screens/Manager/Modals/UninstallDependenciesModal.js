@@ -18,7 +18,7 @@ import ActionModal from "./ActionModal";
 
 const { height } = getWindowDimensions();
 
-const LIST_HEIGHT = height - 550;
+const LIST_HEIGHT = height - 420;
 const LINE_HEIGHT = 46;
 
 const renderDepLine = ({ item }: *) => (
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexWrap: "nowrap",
-    marginBottom: 16,
+    marginBottom: 8,
   },
   appIcons: {
     flexBasis: 50,

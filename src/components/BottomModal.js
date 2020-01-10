@@ -54,6 +54,7 @@ class BottomModal extends Component<Props> {
           deviceWidth={width}
           deviceHeight={height}
           useNativeDriver
+          hideModalContentWhileAnimating
           style={{
             justifyContent: "flex-end",
             margin: 0,

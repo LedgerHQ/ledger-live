@@ -181,7 +181,7 @@ const AppStateButton = ({
         );
       case isInstalled:
         return (
-          <View style={styles.installedLabel}>
+          <View style={[styles.installedLabel, { flexWrap: "nowrap", overflow: "visible"}]}>
             <Check color={colors.green} />
             <LText
               semiBold

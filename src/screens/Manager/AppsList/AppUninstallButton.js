@@ -45,8 +45,8 @@ const AppUninstallButton = ({ app, state, dispatch }: Props) => {
 
 const styles = StyleSheet.create({
   uninstallButton: {
-    width: 38,
-    height: 38,
+    width: 44,
+    height: 44,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

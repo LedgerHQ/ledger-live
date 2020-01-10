@@ -82,9 +82,19 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     [setScrollY],
   );
 
-  const onSwipeStart = useCallback(() => {
-    if (scrollY > 280) listRef.current.scrollToIndex({ index: 2 });
+  const scrollToTop = useCallback((e) => {
+    if (scrollY > 280) setTimeout(() => listRef.current.scrollToIndex({ index: 3 }), 100);
   }, [scrollY]);
+
+  const jumpTo = useCallback(key => {
+    setIndex(key === MANAGER_TABS.CATALOG ? 0 : 1);
+    scrollToTop()
+  }, [setIndex, scrollToTop]);
+
+  const onIndexChange = useCallback((index) => {
+    setIndex(index);
+    scrollToTop()
+  }, [setIndex, scrollToTop]);
 
   const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
     dispatch,
@@ -193,7 +203,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
       <TabBar
         position={position}
         navigationState={{ index, routes }}
-        jumpTo={key => setIndex(key === MANAGER_TABS.CATALOG ? 0 : 1)}
+        jumpTo={jumpTo}
         style={styles.tabBarStyle}
         indicatorStyle={styles.indicatorStyle}
         tabStyle={styles.tabStyle}
@@ -206,13 +216,14 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         <Animated.View
           style={[
             styles.searchBarContainer,
-            { opacity: searchOpacity, zIndex: index === 0 ? 2 : 0 },
+            { opacity: searchOpacity, zIndex: index === 0 ? 2 : -1 },
           ]}
         >
           <SearchModal
             state={state}
             dispatch={dispatch}
             tab={MANAGER_TABS.CATALOG}
+            disabled={index !== 0}
           />
           <View style={styles.filterButton}>
             <AppFilter
@@ -222,6 +233,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
               setSort={setSort}
               order={order}
               setOrder={setOrder}
+              disabled={index !== 0}
             />
           </View>
         </Animated.View>
@@ -230,7 +242,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
             style={[
               styles.searchBarContainer,
               styles.searchBarInstalled,
-              { opacity: position, zIndex: index === 0 ? 0 : 2 },
+              { opacity: position, zIndex: index === 0 ? -1 : 2 },
             ]}
           >
             <SearchModal
@@ -248,10 +260,10 @@ const AppsScreen = ({ state, dispatch }: Props) => {
       renderTabBar={() => null}
       navigationState={{ index, routes }}
       renderScene={renderScene}
-      onIndexChange={setIndex}
+      onIndexChange={onIndexChange}
       initialLayout={initialLayout}
       position={position}
-      onSwipeStart={onSwipeStart}
+     // onSwipeEnd={onSwipeEnd}
       sceneContainerStyle={{}}
     />,
   ];

@@ -20,6 +20,7 @@ import SearchIcon from "../../../icons/Search";
 import NoResults from "../../../icons/NoResults";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
+import StyledStatusBar from "../../../components/StyledStatusBar";
 
 import AppRow from "../AppsList/AppRow";
 
@@ -34,6 +35,7 @@ type Props = {
   tab: string,
   apps?: App[],
   sortOptions: { type: string, order: string },
+  disabled: boolean,
 };
 
 export default ({
@@ -42,6 +44,7 @@ export default ({
   tab,
   apps,
   sortOptions = { type: null, order: "asc" },
+  disabled,
 }: Props) => {
   const { MANAGER_TABS } = useContext(ManagerContext);
   const [isOpened, setIsOpen] = useState(false);
@@ -156,6 +159,7 @@ export default ({
         activeOpacity={0.5}
         style={styles.searchBarInput}
         onPress={toggleSearchModal(true)}
+        disabled={disabled}
       >
         <View style={styles.searchBarIcon}>
           <SearchIcon size={16} color={colors.smoke} />
@@ -164,13 +168,15 @@ export default ({
       </TouchableOpacity>
       <ReactNativeModal
         isVisible={isOpened}
-        deviceWidth={width}
-        deviceHeight={height}
+        onBackdropPress={toggleSearchModal(false)}
         onBackButtonPress={toggleSearchModal(false)}
         useNativeDriver
+        hideModalContentWhileAnimating
+        coverScreen={false}
+        hasBackDrop={false}
         style={styles.modal}
       >
-        <SafeAreaView>
+        <View style={{ backgroundColor: colors.lightGrey }}>
           <FlatList
             data={elements}
             renderItem={({ item }) => item}
@@ -179,7 +185,7 @@ export default ({
             bounces={false}
           />
           {NoResult}
-        </SafeAreaView>
+        </View>
       </ReactNativeModal>
     </>
   );
@@ -188,16 +194,16 @@ export default ({
 const styles = StyleSheet.create({
   modal: {
     height,
-    backgroundColor: colors.lightGrey,
     justifyContent: "flex-start",
     margin: 0,
   },
   header: {
-    height: 63,
+    height: 81,
     width: "100%",
     overflow: "hidden",
     paddingHorizontal: 14,
-    paddingVertical: 9,
+    paddingBottom: 9,
+    paddingTop: 27,
     flexDirection: "row",
     backgroundColor: colors.white,
   },
@@ -210,9 +216,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: colors.lightGrey,
     borderRadius: 3,
-    paddingRight: 44,
+    paddingRight: 0,
   },
   searchBarIcon: {
+    flexBasis: 44,
+    flexGrow: 0,
     width: 44,
     height: 44,
     alignItems: "center",
@@ -240,7 +248,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 16,
+    paddingLeft: 16,
     borderRadius: 4,
   },
   cancelButtonText: {
