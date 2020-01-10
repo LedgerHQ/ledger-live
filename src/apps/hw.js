@@ -62,7 +62,7 @@ export const listApps = (
             } else if (e.type === "allow-manager-requested") {
               o.next({
                 type: "device-permission-requested",
-                wording: "Allow Manager"
+                wording: "Allow Ledger manager"
               });
             }
           },
