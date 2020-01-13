@@ -61,9 +61,9 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
     () =>
       animation
         ? {
-            animation: index <= 15 ? "fadeInUp" : "fadeIn",
-            duration: 300,
-            delay: index <= 15 ? index * 100 : 0,
+            animation: index <= 5 ? "fadeInUp" : "fadeIn",
+            duration: 200,
+            delay: index <= 5 ? index * 200 : 0,
             useNativeDriver: true,
           }
         : {},

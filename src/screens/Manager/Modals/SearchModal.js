@@ -140,7 +140,7 @@ export default ({
           maxLength={50}
           onChangeText={setQuery}
           clearButtonMode="always"
-          style={styles.searchBarTextInput}
+          style={[styles.searchBarText, styles.searchBarInput]}
           placeholder={placeholder}
           placeholderTextColor={colors.smoke}
           onInputCleared={clear}
@@ -179,7 +179,7 @@ export default ({
         <View style={styles.searchBarIcon}>
           <SearchIcon size={16} color={colors.smoke} />
         </View>
-        <LText style={styles.searchBarTextInput}>{placeholder}</LText>
+        <LText style={styles.searchBarText}>{placeholder}</LText>
       </TouchableOpacity>
       <ReactNativeModal
         isVisible={isOpened}
@@ -218,8 +218,8 @@ const styles = StyleSheet.create({
     width: "100%",
     overflow: "hidden",
     paddingHorizontal: 14,
-    paddingTop: 0,
-    height: 54,
+    paddingTop: Platform.OS === "ios" ? 24 : 0,
+    height: Platform.OS === "ios" ? 74 : 54,
     flexDirection: "row",
     backgroundColor: colors.white,
   },
@@ -251,11 +251,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
     borderRadius: 3,
   },
-  searchBarTextInput: {
+  searchBarText: {
     flex: 1,
     fontSize: 14,
     lineHeight: 17,
     color: colors.smoke,
+  },
+  searchBarTextInput: {
+    height: 44,
   },
   cancelButton: {
     flexBasis: "auto",
