@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@ledgerhq/errors": "^5.3.0",
-    "@ledgerhq/live-common": "^11.0.0-rc.0",
-    "@ledgerhq/react-native-ledger-core": "^4.5.1",
+    "@ledgerhq/live-common": "^11.0.0-rc.3",
+    "@ledgerhq/react-native-ledger-core": "^4.6.0",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
     "axios": "^0.19.1",
@@ -44,7 +44,7 @@
     "ws": "^7.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.7",
+    "@babel/core": "^7.8.0",
     "@babel/runtime": "^7.7.7",
     "flow-bin": "^0.105.0",
     "metro-react-native-babel-preset": "^0.57.0",

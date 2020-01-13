@@ -1198,10 +1198,10 @@
     ripemd160 "2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.3.0.tgz#e62a89c07c46c0a1814e534a1e5a9bcddf026693"
-  integrity sha512-u33jp06Is9rGTsw7dOK8zkPj5pnc7oRdu9bKDzzNkgzWLiYpHDylwtvgRyT6q0B5Vz0nvWAG19c0NK3mx7NnKA==
+"@ledgerhq/hw-app-eth@5.4.2":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.4.2.tgz#10ad439d08f8d757625b820587e994bf796c580c"
+  integrity sha512-bKRQzGSHG5LDOlumX3WtwZWTUI/pBBIW8gQo0DTPsQk0aD15qphhiWRnC4PWID7BDeOjbFnTLzw2mQg3GCFkvQ==
   dependencies:
     "@ledgerhq/errors" "^5.3.0"
     "@ledgerhq/hw-transport" "^5.3.0"
@@ -1214,7 +1214,7 @@
     "@ledgerhq/hw-transport" "^5.3.0"
     bip32-path "0.4.2"
 
-"@ledgerhq/hw-transport-mocker@5.3.0":
+"@ledgerhq/hw-transport-mocker@^5.3.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-mocker/-/hw-transport-mocker-5.3.0.tgz#bafea2cd712ab1dacd2f90be6263dd5e64c72ea8"
   integrity sha512-M6LJN/hrCw0/SGwWI9X2zeqORU6kscODx4Lp/hFXUD7LEuctPVq7Y6JhFC3ppLLhfCEfma+FkTw1RODdyTnVXw==
@@ -1272,19 +1272,19 @@
     "@ledgerhq/errors" "^5.3.0"
     events "^3.0.0"
 
-"@ledgerhq/live-common@^11.0.0-rc.0":
-  version "11.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.0.tgz#8d2cfb89e9359f17ec85d9497ad3746bbfbf9b3a"
-  integrity sha512-OYSL7MA5ZCFa9kmRFxDH0hxcEiG277LbnBw2mLnj6ZEqnX5MeAuWOo7hxPDV6KnwdjK/hOgo46rNKsn2YfEiEA==
+"@ledgerhq/live-common@^11.0.0-rc.3":
+  version "11.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.3.tgz#d3c96213e69bb2cb0664cff09152ab9c49167062"
+  integrity sha512-JrcKCj/QbGTZO+xhP5qhTexiQxZ1eMk2pDCAv+Q9IjIfeK4rv9CBxp9JQRZhB4zxFeH8ggSoxs9OTvyt+gvsaA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.3.0"
     "@ledgerhq/errors" "5.3.0"
     "@ledgerhq/hw-app-btc" "5.4.1"
-    "@ledgerhq/hw-app-eth" "5.3.0"
+    "@ledgerhq/hw-app-eth" "5.4.2"
     "@ledgerhq/hw-app-xrp" "5.3.0"
     "@ledgerhq/hw-transport" "5.3.0"
-    "@ledgerhq/hw-transport-mocker" "5.3.0"
+    "@ledgerhq/hw-transport-mocker" "^5.3.0"
     "@ledgerhq/logs" "5.3.0"
     bignumber.js "^9.0.0"
     bip32-path "^0.4.2"
