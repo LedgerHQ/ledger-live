@@ -197,10 +197,10 @@ const ManagerMain = ({ navigation }: *) => {
   );
 };
 
-ManagerMain.navigationOptions = {
+ManagerMain.navigationOptions = ({ navigation }) => ({
   title: i18next.t("manager.tabTitle"),
   headerStyle: styles.headerNoShadow,
-};
+});
 
 const ManagerStack = createStackNavigator(
   {

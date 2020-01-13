@@ -36,7 +36,11 @@ const InstallProgress = ({
   return (
     <Container style={styles.progressContainer}>
       <View style={styles.progressLabel}>
-        <LText semiBold numberOfLines={1} style={[styles.appStateText, { color }]}>
+        <LText
+          semiBold
+          numberOfLines={1}
+          style={[styles.appStateText, { color }]}
+        >
           <Trans
             i18nKey={
               isInstalling
@@ -181,7 +185,12 @@ const AppStateButton = ({
         );
       case isInstalled:
         return (
-          <View style={[styles.installedLabel, { flexWrap: "nowrap", overflow: "visible"}]}>
+          <View
+            style={[
+              styles.installedLabel,
+              { flexWrap: "nowrap", overflow: "visible" },
+            ]}
+          >
             <Check color={colors.green} />
             <LText
               semiBold

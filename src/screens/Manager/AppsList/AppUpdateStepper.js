@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 
 import * as Animatable from "react-native-animatable";
@@ -11,11 +11,16 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
 
+const AnimatableTouchableOpacity = Animatable.createAnimatableComponent(
+  TouchableOpacity,
+);
+
 type Props = {
   installQueue: string[],
   uninstallQueue: string[],
   appsUpdating: App[],
   onUpdateEnd: () => void,
+  onPress: () => void,
 };
 
 const AppUpdateStepper = ({
@@ -23,6 +28,7 @@ const AppUpdateStepper = ({
   uninstallQueue,
   appsUpdating,
   onUpdateEnd,
+  onPress,
 }: Props) => {
   const updateProgress = useMemo(
     () =>
@@ -46,31 +52,34 @@ const AppUpdateStepper = ({
   if (appsUpdating.length <= 0) return null;
 
   return (
-    <Animatable.View
+    <AnimatableTouchableOpacity
       animation="fadeIn"
       useNativeDriver
       duration={400}
       style={styles.root}
+      activeOpacity={0.5}
+      onPress={onPress}
     >
-      
-        <View style={{}}>
-          <LText bold style={styles.stepperText}>
-            <Trans
-              i18nKey="AppAction.update.step"
-              values={{
-                step,
-              }}
-            />
-          </LText>
-          <LText style={styles.infoText}>
-            <Trans i18nKey={
+      <View style={{}}>
+        <LText bold style={styles.stepperText}>
+          <Trans
+            i18nKey="AppAction.update.step"
+            values={{
+              step,
+            }}
+          />
+        </LText>
+        <LText style={styles.infoText}>
+          <Trans
+            i18nKey={
               step === 1
-              ? "AppAction.update.removingOldVersions"
-              : "AppAction.update.installingUpdates"
-             } />
-          </LText>
-        </View>
-      <View style={{flex: 1, alignItems: "flex-end"}}>
+                ? "AppAction.update.removingOldVersions"
+                : "AppAction.update.installingUpdates"
+            }
+          />
+        </LText>
+      </View>
+      <View style={{ flex: 1, alignItems: "flex-end" }}>
         <LText style={[styles.stepperWarn]} multiline>
           <Warning size={11} color={colors.orange} style={styles.warnIcon} />{" "}
           <Trans i18nKey="AppAction.update.updateWarn" />
@@ -90,7 +99,7 @@ const AppUpdateStepper = ({
         progress={updateProgress}
         progressColor={colors.live}
       />
-    </Animatable.View>
+    </AnimatableTouchableOpacity>
   );
 };
 
@@ -118,6 +127,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   stepperWarn: {
+    flex: 1,
     color: colors.orange,
     fontSize: 11,
   },
@@ -125,6 +135,7 @@ const styles = StyleSheet.create({
     width: 16,
   },
   progressText: {
+    flex: 1,
     fontSize: 11,
     textAlign: "right",
     color: colors.grey,

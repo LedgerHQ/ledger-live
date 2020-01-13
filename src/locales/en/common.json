@@ -201,9 +201,21 @@
       "description": "Your crypto assets stay safe when uninstalling apps."
     },
     "ManagerQuitPage": {
-      "title": "Quit and cancel app updates?",
-      "description": "Quitting will cancel the app updates in progress.",
-      "stay": "Finish updates",
+      "install": {
+        "title": "Quit and cancel app install?",
+        "description": "Quitting will cancel the app installing in progress.",
+        "stay": "Finish install"
+      },
+      "uninstall": {
+        "title": "Quit and cancel app uninstalling?",
+        "description": "Quitting will cancel the app uninstalls in progress.",
+        "stay": "Finish uninstalling"
+      },
+      "update": {
+        "title": "Quit and cancel app updates?",
+        "description": "Quitting will cancel the app updates in progress.",
+        "stay": "Finish updates"
+      },
       "quit": "Quit Manager"
     },
     "ManagerUninstallBTCDep": {

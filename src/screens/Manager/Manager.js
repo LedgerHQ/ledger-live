@@ -121,6 +121,8 @@ export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
         isOpened={quitManagerAction}
         onConfirm={quitManager}
         onClose={closeQuitManagerModal}
+        installQueue={installQueue}
+        uninstallQueue={uninstallQueue}
       />
       <StorageWarningModal
         warning={storageWarning}

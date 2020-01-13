@@ -82,19 +82,31 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     [setScrollY],
   );
 
-  const scrollToTop = useCallback((e) => {
-    if (scrollY > 280) setTimeout(() => listRef.current.scrollToIndex({ index: 3 }), 100);
+  const scrollToTop = useCallback(() => {
+    if (scrollY > 380)
+      setTimeout(() => listRef.current.scrollToIndex({ index: 3 }), 100);
   }, [scrollY]);
 
-  const jumpTo = useCallback(key => {
-    setIndex(key === MANAGER_TABS.CATALOG ? 0 : 1);
-    scrollToTop()
-  }, [setIndex, scrollToTop]);
+  const jumpTo = useCallback(
+    key => {
+      setIndex(key === MANAGER_TABS.CATALOG ? 0 : 1);
+      scrollToTop();
+    },
+    [MANAGER_TABS.CATALOG, scrollToTop],
+  );
 
-  const onIndexChange = useCallback((index) => {
-    setIndex(index);
-    scrollToTop()
-  }, [setIndex, scrollToTop]);
+  const onIndexChange = useCallback(
+    index => {
+      setIndex(index);
+      scrollToTop();
+    },
+    [setIndex, scrollToTop],
+  );
+
+  const onUpdateProgressPress = useCallback(() => {
+    setIndex(1);
+    listRef.current.scrollToIndex({ index: 1 });
+  });
 
   const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
     dispatch,
@@ -198,7 +210,11 @@ const AppsScreen = ({ state, dispatch }: Props) => {
 
   const elements = [
     <DeviceCard state={state} />,
-    <AppUpdateAll state={state} dispatch={dispatch} />,
+    <AppUpdateAll
+      state={state}
+      dispatch={dispatch}
+      onUpdateProgressPress={onUpdateProgressPress}
+    />,
     <View>
       <TabBar
         position={position}
@@ -263,7 +279,6 @@ const AppsScreen = ({ state, dispatch }: Props) => {
       onIndexChange={onIndexChange}
       initialLayout={initialLayout}
       position={position}
-     // onSwipeEnd={onSwipeEnd}
       sceneContainerStyle={{}}
     />,
   ];

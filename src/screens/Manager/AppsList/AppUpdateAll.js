@@ -12,9 +12,10 @@ import AppUpdateStepper from "./AppUpdateStepper";
 type Props = {
   state: State,
   dispatch: Action => void,
+  onUpdateProgressPress: () => void,
 };
 
-const AppUpdateAll = ({ state, dispatch }: Props) => {
+const AppUpdateAll = ({ state, dispatch, onUpdateProgressPress }: Props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [appsUpdating, setAppsUpdating] = useState([]);
 
@@ -44,6 +45,7 @@ const AppUpdateAll = ({ state, dispatch }: Props) => {
         installQueue={installQueue}
         uninstallQueue={uninstallQueue}
         onUpdateEnd={onUpdateEnd}
+        onPress={onUpdateProgressPress}
       />
       {appsToUpdate.length > 0 && appsUpdating.length <= 0 && (
         <View style={[styles.root, styles.rootMargin]}>
