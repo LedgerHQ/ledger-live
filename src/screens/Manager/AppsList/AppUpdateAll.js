@@ -45,7 +45,7 @@ const AppUpdateAll = ({ state, dispatch }: Props) => {
         uninstallQueue={uninstallQueue}
         onUpdateEnd={onUpdateEnd}
       />
-      {appsToUpdate.length > 0 && (
+      {appsToUpdate.length > 0 && appsUpdating.length <= 0 && (
         <View style={[styles.root, styles.rootMargin]}>
           <TouchableOpacity
             style={styles.infoLabel}

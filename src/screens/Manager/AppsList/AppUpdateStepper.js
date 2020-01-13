@@ -52,8 +52,8 @@ const AppUpdateStepper = ({
       duration={400}
       style={styles.root}
     >
-      {step === 1 ? (
-        <View>
+      
+        <View style={{}}>
           <LText bold style={styles.stepperText}>
             <Trans
               i18nKey="AppAction.update.step"
@@ -63,26 +63,15 @@ const AppUpdateStepper = ({
             />
           </LText>
           <LText style={styles.infoText}>
-            <Trans i18nKey="AppAction.update.removingOldVersions" />
+            <Trans i18nKey={
+              step === 1
+              ? "AppAction.update.removingOldVersions"
+              : "AppAction.update.installingUpdates"
+             } />
           </LText>
         </View>
-      ) : (
-        <View>
-          <LText bold style={styles.stepperText}>
-            <Trans
-              i18nKey="AppAction.update.step"
-              values={{
-                step,
-              }}
-            />
-          </LText>
-          <LText style={styles.infoText}>
-            <Trans i18nKey="AppAction.update.installingUpdates" />
-          </LText>
-        </View>
-      )}
-      <View>
-        <LText style={[styles.stepperWarn]}>
+      <View style={{flex: 1, alignItems: "flex-end"}}>
+        <LText style={[styles.stepperWarn]} multiline>
           <Warning size={11} color={colors.orange} style={styles.warnIcon} />{" "}
           <Trans i18nKey="AppAction.update.updateWarn" />
         </LText>
@@ -108,7 +97,7 @@ const AppUpdateStepper = ({
 const styles = StyleSheet.create({
   root: {
     height: 60,
-    width: "100%",
+    width,
     backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
@@ -131,14 +120,11 @@ const styles = StyleSheet.create({
   stepperWarn: {
     color: colors.orange,
     fontSize: 11,
-    lineHeight: 22,
-    flex: 1,
   },
   warnIcon: {
     width: 16,
   },
   progressText: {
-    flex: 1,
     fontSize: 11,
     textAlign: "right",
     color: colors.grey,

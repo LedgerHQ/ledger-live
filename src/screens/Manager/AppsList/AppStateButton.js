@@ -36,7 +36,7 @@ const InstallProgress = ({
   return (
     <Container style={styles.progressContainer}>
       <View style={styles.progressLabel}>
-        <LText semiBold style={[styles.appStateText, { color }]}>
+        <LText semiBold numberOfLines={1} style={[styles.appStateText, { color }]}>
           <Trans
             i18nKey={
               isInstalling
@@ -146,7 +146,7 @@ const AppStateButton = ({
         return (
           <InstallProgress
             progress={progress}
-            onCancel={onCancelUninstall}
+            //onCancel={onCancelUninstall}
             isInstalling={false}
           />
         );
@@ -252,10 +252,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
+    flexWrap: "nowrap",
     alignItems: "center",
     backgroundColor: colors.white,
   },
   progressCloseButton: {
+    flexBasis: 28,
     flexDirection: "row",
     justifyContent: "center",
     width: 28,
