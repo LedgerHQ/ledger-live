@@ -1,7 +1,7 @@
 // @flow
 import { BigNumber } from "bignumber.js";
 import { NotEnoughSpendableBalance } from "@ledgerhq/errors";
-import type { DatasetTest } from "../dataset";
+import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 

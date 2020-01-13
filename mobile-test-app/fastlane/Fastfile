@@ -1,0 +1,28 @@
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+    setup_circle_ci
+  end
+
+  desc "test"
+  lane :test do
+    scan(
+      scheme: "LLTool",
+      workspace: "ios/LLTool.xcworkspace"
+    )
+  end
+end
+
+platform :android do
+  desc "build"
+  lane :build do
+    gradle(build_type: "Release", project_dir: 'android/')
+  end
+
+  desc "test"
+  lane :test do
+    gradle(task: "connectedAndroidTest", project_dir: 'android/')
+  end
+end

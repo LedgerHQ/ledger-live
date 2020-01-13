@@ -1,5 +1,4 @@
 // @flow
-import flatMap from "lodash/flatMap";
 import { DeviceHalted, DeviceInOSUExpected } from "@ledgerhq/errors";
 import { deserializeError, serializeError } from "@ledgerhq/errors/lib/helpers";
 

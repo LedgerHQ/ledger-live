@@ -1,7 +1,8 @@
 // @flow
+import "./test-helpers/staticTime";
 import { genAccount } from "../mock/account";
 import { patchAccount } from "../reconciliation";
-import { toAccountRaw, fromAccountRaw } from "../account";
+import { toAccountRaw } from "../account";
 
 const accounts = Array(50)
   .fill(null)

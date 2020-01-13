@@ -9,6 +9,8 @@ import discoverDevices from "./commands/discoverDevices";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
+import generateTestScanAccounts from "./commands/generateTestScanAccounts";
+import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
 import getAccountNetworkInfo from "./commands/getAccountNetworkInfo";
 import getAddress from "./commands/getAddress";
@@ -38,6 +40,8 @@ export default {
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
+  generateTestScanAccounts,
+  generateTestTransaction,
   genuineCheck,
   getAccountNetworkInfo,
   getAddress,

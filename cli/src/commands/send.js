@@ -1,7 +1,7 @@
 // @flow
 
 import { from, defer, of, concat, empty } from "rxjs";
-import { map, mergeMap, concatMap, catchError } from "rxjs/operators";
+import { map, switchMap, concatMap, catchError } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { toSignOperationEventRaw } from "@ledgerhq/live-common/lib/transaction";
@@ -34,9 +34,9 @@ export default {
       }
   ) =>
     scan(opts).pipe(
-      concatMap(account =>
+      switchMap(account =>
         from(inferTransactions(account, opts)).pipe(
-          mergeMap(inferred =>
+          concatMap(inferred =>
             inferred.reduce(
               (acc, t) =>
                 concat(

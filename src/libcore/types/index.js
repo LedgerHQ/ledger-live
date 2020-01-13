@@ -57,9 +57,10 @@ declare class CoreWallet {
 }
 
 export const TimePeriod = {
-  DAY: 0,
-  WEEK: 1,
-  MONTH: 2
+  HOUR: 0,
+  DAY: 1,
+  WEEK: 2,
+  MONTH: 3
 };
 
 declare type CoreAccount = {

@@ -1,1 +1,2 @@
-import "./tests";
+import "./setup";
+import "./all-test";

@@ -1,6 +1,6 @@
 // @flow
+import "./test-helpers/staticTime";
 
-import flatMap from "lodash/flatMap";
 import { genAccount } from "../mock/account";
 import { getDerivationModesForCurrency } from "../derivation";
 import { listCryptoCurrencies } from "../currencies";
@@ -52,4 +52,50 @@ test("encode/decode", () => {
   expect(exp.meta.exporterName).toEqual(data.exporterName);
   expect(exp.accounts.length).toEqual(data.accounts.length);
   expect(exp.accounts).toMatchObject(data.accounts.map(accountToAccountData));
+});
+
+test("encode/decode", () => {
+  const accounts = Array(3)
+    .fill(null)
+    .map((_, i) => genAccount("export_" + i));
+  const arg = {
+    accounts,
+    settings: {
+      counterValue: "USD",
+      pairExchanges: {
+        BTC_USD: "KRAKEN"
+      },
+      currenciesSettings: {
+        bitcoin: {
+          confirmationsNb: 3
+        }
+      }
+    },
+    exporterName: "test",
+    exporterVersion: "0.0.0",
+    chunkSize: 100
+  };
+  const data = encode(arg);
+  const res = decode(data);
+  expect(res.accounts).toMatchObject(
+    accounts.map(a => ({
+      balance: a.balance.toString(),
+      currencyId: a.currency.id,
+      id: a.id,
+      name: a.name,
+      index: a.index
+    }))
+  );
+  expect(res.settings).toMatchObject({
+    counterValue: "USD",
+    pairExchanges: {
+      BTC_USD: "KRAKEN"
+    },
+    currenciesSettings: {
+      bitcoin: {
+        confirmationsNb: 3
+      }
+    }
+  });
+  expect(res).toMatchSnapshot();
 });

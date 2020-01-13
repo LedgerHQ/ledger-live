@@ -63,12 +63,9 @@ const logger = winston.createLogger({
 });
 
 const { format } = winston;
-const { printf, combine, timestamp } = format;
+const { combine, timestamp, json } = format;
 
-const winstonFormat = combine(
-  timestamp(),
-  printf(info => `${info.timestamp} ${info.message}`)
-);
+const winstonFormat = combine(timestamp(), json());
 
 if (VERBOSE_FILE) {
   logger.add(

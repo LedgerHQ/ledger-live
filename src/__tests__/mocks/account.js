@@ -1,3 +1,4 @@
+import "../test-helpers/staticTime";
 import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "../../portfolio";
 
