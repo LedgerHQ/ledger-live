@@ -1,10 +1,17 @@
-import React, { useState, useMemo, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useContext,
+  useRef,
+} from "react";
 import {
   View,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
   FlatList,
+  Platform,
 } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
@@ -20,14 +27,14 @@ import SearchIcon from "../../../icons/Search";
 import NoResults from "../../../icons/NoResults";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
-import StyledStatusBar from "../../../components/StyledStatusBar";
+import Styles from "../../../navigation/styles";
 
 import AppRow from "../AppsList/AppRow";
 
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import { ManagerContext } from "../shared";
 
-const { width, height } = getWindowDimensions();
+const { height } = getWindowDimensions();
 
 type Props = {
   state: State,
@@ -46,6 +53,7 @@ export default ({
   sortOptions = { type: null, order: "asc" },
   disabled,
 }: Props) => {
+  const listRef = useRef();
   const { MANAGER_TABS } = useContext(ManagerContext);
   const [isOpened, setIsOpen] = useState(false);
   const toggleSearchModal = useCallback(
@@ -64,7 +72,7 @@ export default ({
       installedApps: [],
       type: [],
     }),
-    [query, tab, MANAGER_TABS.INSTALLED_APPS],
+    [query],
   );
 
   const sortedApps: Array<App> = useSortedFilteredApps(
@@ -114,6 +122,12 @@ export default ({
     [tab, MANAGER_TABS.CATALOG],
   );
 
+  const onFocus = useCallback(() => {
+    if (listRef) {
+      listRef.current.scrollToIndex({ index: 0 });
+    }
+  }, [listRef]);
+
   const elements = [
     <View style={styles.header}>
       <View style={styles.searchBar}>
@@ -130,6 +144,7 @@ export default ({
           placeholder={placeholder}
           placeholderTextColor={colors.smoke}
           onInputCleared={clear}
+          onFocus={onFocus}
           value={query}
           numberOfLines={1}
         />
@@ -176,8 +191,9 @@ export default ({
         hasBackDrop={false}
         style={styles.modal}
       >
-        <View style={{ backgroundColor: colors.lightGrey }}>
+        <View style={{ height, backgroundColor: colors.lightGrey }}>
           <FlatList
+            ref={listRef}
             data={elements}
             renderItem={({ item }) => item}
             keyExtractor={(_, i) => String(i)}
@@ -198,12 +214,12 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   header: {
-    height: 81,
+    ...Styles.headerNoShadow,
     width: "100%",
     overflow: "hidden",
     paddingHorizontal: 14,
-    paddingBottom: 9,
-    paddingTop: 27,
+    paddingTop: 0,
+    height: 54,
     flexDirection: "row",
     backgroundColor: colors.white,
   },
@@ -216,7 +232,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: colors.lightGrey,
     borderRadius: 3,
-    paddingRight: 0,
+    paddingRight: Platform.OS === "ios" ? 0 : 44,
   },
   searchBarIcon: {
     flexBasis: 44,
