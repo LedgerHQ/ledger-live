@@ -32,7 +32,7 @@ type Props = {
 const DeviceCard = ({ state }: Props) => {
   const { deviceModel, firmware } = state;
   const distribution = distribute(state);
-  const capacity = formatSize(distribution.appsSpaceBytes) || "0kb";
+  const capacity = formatSize(distribution.appsSpaceBytes);
 
   const { deviceId, initialDeviceName } = useContext(ManagerContext);
 
