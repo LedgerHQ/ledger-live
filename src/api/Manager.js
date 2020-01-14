@@ -14,7 +14,8 @@ import {
   UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
   NetworkDown,
-  WebsocketConnectionFailed
+  WebsocketConnectionFailed,
+  FirmwareNotRecognized
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
@@ -270,6 +271,17 @@ const getDeviceVersion: (
         provider,
         target_id: targetId
       }
+    }).catch(error => {
+      const status =
+        // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
+        error && (error.status || (error.response && error.response.status));
+      if (status === 404) {
+        throw new FirmwareNotRecognized(
+          "manager api did not recognize targetId=" + targetId,
+          { targetId }
+        );
+      }
+      throw error;
     });
     return data;
   },
