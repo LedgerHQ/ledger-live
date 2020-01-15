@@ -48,7 +48,7 @@ const DeviceAppStorage = ({
           {shouldWarnMemory && <Warning color={colors.orange} size={15} />}
           <LText bold style={[styles.storageText, storageWarnStyle]}>
             {" "}
-            {formatSize(freeSpaceBytes)}
+            {formatSize(freeSpaceBytes) || "0kb"}
           </LText>
           <LText style={[styles.storageText, storageWarnStyle]}>
             {" "}
