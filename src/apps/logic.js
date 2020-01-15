@@ -340,6 +340,11 @@ export const distribute = (
   };
 };
 
+// tells if the state is "incomplete" to implement the Manager v2 feature
+// this happens when some apps are unrecognized
+export const isIncompleteState = (state: State): boolean =>
+  state.installed.some(a => !a.name);
+
 // calculate if a given state (typically a predicted one) is out of memory (meaning impossible to reach with a device)
 export const isOutOfMemoryState = (state: State): boolean => {
   const blockSize = state.deviceModel.blockSize;

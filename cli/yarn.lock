@@ -955,30 +955,10 @@
     bindings "1.3.0"
     nan "^2.6.2"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-"@ledgerhq/live-common@^11.0.0-rc.4":
-  version "11.0.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.4.tgz#5f42eb81c2e42ec8390299c42a4bdb0482fc7f79"
-  integrity sha512-gP0bi3VZh+nuqKct8Xi3biYaYu9ILJaQrgNRMpShYEOsDjTA5jHQCk8Cg4CCeBczyesJLDrTicQaEQlVSVJyNw==
-=======
-<<<<<<< HEAD
-"@ledgerhq/live-common@^11.0.0-rc.2":
-  version "11.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.2.tgz#b1179a9c0bb04ef85c96e84cb661bf3989d04825"
-  integrity sha512-eH2WVUs3LHpMQwPqWzxW+7b7dCeeHiJF/RWCRjkjr/eAb0OTOjtynOxTTONkbkadiNZ0YDktZFbQ47J/8cZbqg==
-=======
-<<<<<<< HEAD
-"@ledgerhq/live-common@^11.0.0-rc.0":
-  version "11.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.0.tgz#8d2cfb89e9359f17ec85d9497ad3746bbfbf9b3a"
-  integrity sha512-OYSL7MA5ZCFa9kmRFxDH0hxcEiG277LbnBw2mLnj6ZEqnX5MeAuWOo7hxPDV6KnwdjK/hOgo46rNKsn2YfEiEA==
-=======
-"@ledgerhq/live-common@file:.yalc/@ledgerhq/live-common":
-  version "10.3.1-7d9f87ac"
->>>>>>> add XRP error message when sending to new account
->>>>>>> add XRP error message when sending to new account
->>>>>>> add XRP error message when sending to new account
+"@ledgerhq/live-common@^11.0.0-rc.5":
+  version "11.0.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.5.tgz#cd3feb8153877b50444627ff391ec601acc308fe"
+  integrity sha512-AmLS9bwrr0ogkGeCc1XZJluBdkUE7b92629P8gcLyIl0mSTg3o7RDWOrC+EB+8mryZNoCob1Mb/bYAJ/I+2dJg==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.5.0"
@@ -988,19 +968,6 @@
     "@ledgerhq/hw-app-xrp" "5.5.0"
     "@ledgerhq/hw-transport" "5.5.0"
     "@ledgerhq/hw-transport-mocker" "^5.5.0"
-=======
-"@ledgerhq/live-common@file:.yalc/@ledgerhq/live-common":
-  version "11.0.0-rc.3-4e338a4d"
-  dependencies:
-    "@ledgerhq/compressjs" "1.3.2"
-    "@ledgerhq/devices" "5.3.0"
-    "@ledgerhq/errors" "5.3.0"
-    "@ledgerhq/hw-app-btc" "5.4.1"
-    "@ledgerhq/hw-app-eth" "5.4.2"
-    "@ledgerhq/hw-app-xrp" "5.3.0"
-    "@ledgerhq/hw-transport" "5.3.0"
-    "@ledgerhq/hw-transport-mocker" "^5.3.0"
->>>>>>> remove XRP libcore implem
     "@ledgerhq/logs" "5.3.0"
     bignumber.js "^9.0.0"
     bip32-path "^0.4.2"
@@ -1104,9 +1071,9 @@
   integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
 
 "@types/node@*", "@types/node@>= 8":
-  version "13.1.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.6.tgz#076028d0b0400be8105b89a0a55550c86684ffec"
-  integrity sha512-Jg1F+bmxcpENHP23sVKkNuU3uaxPnsBMW0cLjleiikFKomJQbsn0Cqk2yDvQArqzZN6ABfBkZ0To7pQ8sLdWDg==
+  version "13.1.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.7.tgz#db51d28b8dfacfe4fb2d0da88f5eb0a2eca00675"
+  integrity sha512-HU0q9GXazqiKwviVxg9SI/+t/nAsGkvLDkIdxz+ObejG2nX6Si00TeLqHMoS+a/1tjH7a8YpKVQwtgHuMQsldg==
 
 "@types/ws@^3.2.0":
   version "3.2.1"
@@ -1587,9 +1554,9 @@ camelcase@^5.0.0:
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
 caniuse-lite@^1.0.30001017:
-  version "1.0.30001020"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001020.tgz#3f04c1737500ffda78be9beb0b5c1e2070e15926"
-  integrity sha512-yWIvwA68wRHKanAVS1GjN8vajAv7MBFshullKCeq/eKpK7pJBVDgFFEqvgWTkcP2+wIDeQGYFRXECjKZnLkUjA==
+  version "1.0.30001021"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001021.tgz#e75ed1ef6dbadd580ac7e7720bb16f07b083f254"
+  integrity sha512-wuMhT7/hwkgd8gldgp2jcrUjOU9RXJ4XxGumQeOsUr91l3WwmM68Cpa/ymCnWEDqakwFXhuDQbaKNHXBPgeE9g==
 
 chainsaw@~0.1.0:
   version "0.1.0"
@@ -2042,9 +2009,9 @@ eip55@^1.0.3:
     keccak "^1.3.0"
 
 electron-to-chromium@^1.3.322:
-  version "1.3.333"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.333.tgz#b835de183afbaaf8655a14f542db06d67a00cba1"
-  integrity sha512-7MJfCpa/tmhqYy2lZ1NEbkSxH7q3KiZiepiSs2ayTPAweAjdzGXotij+7OKPPb3OwJD2ZuBKPrA2HIuuSi6ahw==
+  version "1.3.334"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.334.tgz#0588359f4ac5c4185ebacdf5fc7e1937e2c99872"
+  integrity sha512-RcjJhpsVaX0X6ntu/WSBlW9HE9pnCgXS9B8mTUObl1aDxaiOa0Lu+NMveIS5IDC+VELzhM32rFJDCC+AApVwcA==
 
 elliptic@^5.1.0:
   version "5.2.1"
@@ -2164,11 +2131,7 @@ ethjs-util@^0.1.3:
     is-hex-prefixed "1.0.0"
     strip-hex-prefix "1.0.0"
 
-<<<<<<< HEAD
 events@^3.1.0:
-=======
-events@^3.0.0:
->>>>>>> remove XRP libcore implem
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.1.0.tgz#84279af1b34cb75aa88bf5ff291f6d0bd9b31a59"
   integrity sha512-Rv+u8MLHNOdMjTAFeT3nCjHn2aGlx435FP/sDHNaRhDEMwyI/aB22Kj2qIN8R0cw3z28psEQLYwxVKLsKrMgWg==
@@ -2339,10 +2302,10 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-flow-bin@^0.115.0:
-  version "0.115.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.115.0.tgz#22e3ad9e5c7198967de80138ba8a9154ff387960"
-  integrity sha512-xW+U2SrBaAr0EeLvKmXAmsdnrH6x0Io17P6yRJTNgrrV42G8KXhBAD00s6oGbTTqRyHD0nP47kyuU34zljZpaQ==
+flow-bin@^0.116.0:
+  version "0.116.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.116.0.tgz#f2e5ef318838ceb760e3f588b66076bc8ee1dc87"
+  integrity sha512-6q1f84mhAzHlUp9eTpIIJqINFBXf2+HGQllYfrkdQ+DfOLkF2wEZNHpVlYX1DL0G3uS8D//XEfsN2seZAc7jiw==
 
 flow-typed@^2.6.1:
   version "2.6.2"
