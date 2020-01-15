@@ -122,7 +122,7 @@ export const listApps = (
         .then(apps => apps.map(polyfillAppVersion));
 
       const [
-        [installedList, installedAvailable],
+        [partialInstalledList, installedAvailable],
         applicationsList,
         compatibleAppVersionsList,
         firmware,
@@ -136,6 +136,24 @@ export const listApps = (
           listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
         )
       ]);
+
+      // unfortunately we sometimes (nano s 1.3.1) miss app.name (it's set as "" from list apps)
+      // the fallback strategy is to look it up in applications list
+      // for performance we might eventually only load applications in case one name is missing
+      let installedList = partialInstalledList;
+      const shouldCompleteInstalledList = partialInstalledList.some(
+        a => !a.name
+      );
+      if (shouldCompleteInstalledList) {
+        installedList = installedList.map(a => {
+          if (a.name) return a; // already present
+          const application = applicationsList.find(e =>
+            e.application_versions.some(v => v.hash === a.hash)
+          );
+          if (!application) return a; // still no luck with our api
+          return { ...a, name: application.name };
+        });
+      }
 
       const apps = compatibleAppVersionsList
         .map(version => {
