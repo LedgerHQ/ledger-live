@@ -26,186 +26,165 @@ const dataset: DatasetTest<Transaction> = {
         {
           name: "seedtest1",
           apdus: `
-          => e040000009028000002c80000000
-          <= 4104b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a2231324d455278336a7a5a64657a4a726551444c777a5242387363763778754e677976cdff3f19b89aab59d5804050b1c99f99cb079630c786144cd6cba8e84c29750c9000
-          => e016000000
-          <= 000000050107426974636f696e034254439000
-          => e040000009028000002c80000000
-          <= 4104b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a2231324d455278336a7a5a64657a4a726551444c777a5242387363763778754e677976cdff3f19b89aab59d5804050b1c99f99cb079630c786144cd6cba8e84c29750c9000
-          => e04000000d038000002c8000000080000000
-          <= 41041f6c89d7b896277954ddad21110dca739b67a5aaae58afe16c5cd212925339f8df8de52910a71ce7475bea7b51f24020fa4e0097622242ed7e3b17e275e1d889223139434a386e6b73465a703574486638694c4639367653435a4e55314b4c69446d6490489ace59735ee2a130e5db0a3cb43734d1e0f17c66c182dd6af01e325600859000
-          => e040000009028000002c80000000
-          <= 4104b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a2231324d455278336a7a5a64657a4a726551444c777a5242387363763778754e677976cdff3f19b89aab59d5804050b1c99f99cb079630c786144cd6cba8e84c29750c9000
-          => e04000000d038000002c8000000080000001
-          <= 4104c9bc195c9c0e1a51127f8b1c372b4543e14041431e6b57923dd52ba4174b25ef39cc32d8c50cc37214ae93ffcca926163269e729dc80bd95ee545f35dc3e0ed62231336b37795968346a6b4b694c7173503847716265555a336f4253523553705873615a31399b978a87550d7000702b7033d5c087434320794348fa622d26bdec1dfe9000
-          => e040000109028000003180000000
-          <= 4104b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f86912233467a48517a76375a36767537576e6a6568727269354c556644373177773873436fd0ce17bf8b118b0d5b5c93a905ae915e50e42d6f3f5afeea9e319d461388babd9000
-          => e016000000
-          <= 000000050107426974636f696e034254439000
-          => e040000109028000003180000000
-          <= 4104b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f86912233467a48517a76375a36767537576e6a6568727269354c556644373177773873436fd0ce17bf8b118b0d5b5c93a905ae915e50e42d6f3f5afeea9e319d461388babd9000
-          => e04000010d03800000318000000080000000
-          <= 41049367da0966f580263501b50bec1430730b742ba2866f0537310a9a45c493dc875fc7a38df3aab224b42962f13d1c22183a597cc21813aac9bbb0a1bab48e12362233443947787271714b5a32596f55314d39354a7a576d48357454545964444e7a32729d40147cfc05c038a58c03a8b6bb23b30774f6ef6ca3e2be8fc8cbb2329515fa9000
-          => e040000109028000003180000000
-          <= 4104b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f86912233467a48517a76375a36767537576e6a6568727269354c556644373177773873436fd0ce17bf8b118b0d5b5c93a905ae915e50e42d6f3f5afeea9e319d461388babd9000
-          => e04000010d03800000318000000080000001
-          <= 4104f8b1ef8090ebb036e3a0a67574e3930704dd18f26ccc7ca2d441031c8b8f1ffb4853a0db133622e6d15957d69e7077dc296665e1a75cb58456e880711b83fd92223341486a564b733874656d506978597148377047713571354c584c31783359694c4eadaa264cde663f664f6193417abd943d2a4c1dfb0002ad769843a92f370386279000
-          => e040000109028000003180000000
-          <= 4104b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f86912233467a48517a76375a36767537576e6a6568727269354c556644373177773873436fd0ce17bf8b118b0d5b5c93a905ae915e50e42d6f3f5afeea9e319d461388babd9000
-          => e04000010d03800000318000000080000002
-          <= 4104cb698d9ef78361d4bca22c4c2a40ce160ce441de12b844ceb6851508d9637eb6e08278059e842927d9fa236127fc8b7b145c5d14c2373f17e247404960a930812233416e5a53593576444c7031563569436b7839374a7661714e396f777238364e63646b64bdeeefff6354dc4616bf092c9ebd2090bc000f4fb1e370c4a0a1fbd1d75e9000
-          => e040000109028000003180000000
-          <= 4104b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f86912233467a48517a76375a36767537576e6a6568727269354c556644373177773873436fd0ce17bf8b118b0d5b5c93a905ae915e50e42d6f3f5afeea9e319d461388babd9000
-          => e04000010d03800000318000000080000003
-          <= 41042ddf54969196680ddf44ea9543c9ebffdd4e55beebd21daa1c4d71d33538bdd6362b0e344bfb80153405ca2068726e36c2e104ad2e7dfaca914593f82cd216d922334e795351483572734d3859554b6f3865464d7632446370657a6e6e6e7141436839a530b8188de29da54a0faf8383b6f9c30fd8cfd200b2c5d2bc535f12a919b9429000
-          => e040000209028000005480000000
-          <= 4104c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b1252a626331716c32377966776c6433796171666e6b6d38363472356d78366466766e7972633266786333766ce530784b710ea23b7becaaec152377edff93281e4e10a2fcd97cb1a0f3d9f5c29000
-          => e016000000
-          <= 000000050107426974636f696e034254439000
-          => e040000209028000005480000000
-          <= 4104c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b1252a626331716c32377966776c6433796171666e6b6d38363472356d78366466766e7972633266786333766ce530784b710ea23b7becaaec152377edff93281e4e10a2fcd97cb1a0f3d9f5c29000
-          => e04000020d03800000548000000080000000
-          <= 4104e636335b14fc4359d61d0342c9bd92985d225f9d21317d02c54223ee855290679de1eeef7da078455e026696f18b953cb58ff80ef774b9b60d45ca69f659a92a2a6263317130673465647366766e6b383575343938386579736768646d77307839726d6a7836776a6d797255e476ee6fe4aed00146cfc33279e7b80d103d030fbedf2e0e5b206318f93c1f9000
-          => e040000209028000005480000000
-          <= 4104c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b1252a626331716c32377966776c6433796171666e6b6d38363472356d78366466766e7972633266786333766ce530784b710ea23b7becaaec152377edff93281e4e10a2fcd97cb1a0f3d9f5c29000
-          => e04000020d03800000548000000080000001
-          <= 41043fd6856e4605f9c96d644d56ad7e654cecbcb19afac38add945ab4a3360a5b2c2ec856777d6178d01a8789a04323ce5177c1a59521b71a661c463cd336b77c362a626331717136326a6a777a6a6b3739713230383865327234676361747635637378767174333036616732f12cd174453b43384b526d8b2a7a08a8889fac6cd8f00db54f04e342ea39d4289000
+            => e040000009028000002c80000000
+            <= 41041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498223134384c484667516b6f504b48554665567a464e6d556a4b54375a774234376654529f819c7d45eb9eb1e9bd5fa695158cca9e493182f95068b22c8c440ae6eb07209000
+            => e016000000
+            <= 000000050107426974636f696e034254439000
+            => e040000009028000002c80000000
+            <= 41041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498223134384c484667516b6f504b48554665567a464e6d556a4b54375a774234376654529f819c7d45eb9eb1e9bd5fa695158cca9e493182f95068b22c8c440ae6eb07209000
+            => e04000000d038000002c8000000080000000
+            <= 4104238878d371ce61cdd04d22ccab50c542e94ffa7a27d02d6bcefaa22e4fcee6db4c2029fd4de0b595e98002c0be01fc1fbd3568671e394c97a6d52c3d4c113fb52231356f36754274527a4b6f6a6278714265344b6e69363642537658664b595432475944728146118df8d18d38c2615154eaffcdd53829957f4e26863344f35653364e9000
+            => e040000009028000002c80000000
+            <= 41041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498223134384c484667516b6f504b48554665567a464e6d556a4b54375a774234376654529f819c7d45eb9eb1e9bd5fa695158cca9e493182f95068b22c8c440ae6eb07209000
+            => e04000000d038000002c8000000080000001
+            <= 410415d2ae6368394c10962a92ab7b680e272f27c4951e2960ce11fe6d30ed9ca87dbbb1e0231da0caf45e2c7040adcb55b04eff0335ede12ca79600722846f0dc89223132675842717446627353316d566643637979436e35424d7566744d56736e334e4269c51a44ff9a3b3f2d041491ef614064b0193142057576c147763fe9493343879000
+            => e040000109028000003180000000
+            <= 41047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f52233334c79656578314a5165624779525a36586e77686e4738334b4255787a793668343de97255695c6fbec7459a688b0fddef585e98fae29c96655c3ff648131ca1c39000
+            => e016000000
+            <= 000000050107426974636f696e034254439000
+            => e040000109028000003180000000
+            <= 41047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f52233334c79656578314a5165624779525a36586e77686e4738334b4255787a793668343de97255695c6fbec7459a688b0fddef585e98fae29c96655c3ff648131ca1c39000
+            => e04000010d03800000318000000080000000
+            <= 410412f62e549eee10ea7df9c9b1acfa6d77abb7424c057d7d725f418e2124dcd8662e21fde9e0b5a4cb731933a68ca406f6efcdadc8fb52afdb9ae422a68cfe5bde2233483737566559675a584b4e4d6b426668653766634d416d334b376b794a67334734508666b8006f31778f6dbb06bdbf20088d9a84ea15776cf6073b3ea025d48d9e9000
+            => e040000109028000003180000000
+            <= 41047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f52233334c79656578314a5165624779525a36586e77686e4738334b4255787a793668343de97255695c6fbec7459a688b0fddef585e98fae29c96655c3ff648131ca1c39000
+            => e04000010d03800000318000000080000001
+            <= 4104ade4dbcec2e6dafc664eb9337f784f01eb64087e19cbbf1068b6bcc535b5f1fab6094958d8f2b18c1f922d31b4a63d1f595689e2f2b3725bd6876c61a5488673223350684b454372414d32424c66595770505a7255485343694346395054526d66616b7adba784bff55fb0b1ae8b5ab1d1aba2883613db2f674ef00bc8df2bd7c4358e9000
+            => e040000109028000003180000000
+            <= 41047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f52233334c79656578314a5165624779525a36586e77686e4738334b4255787a793668343de97255695c6fbec7459a688b0fddef585e98fae29c96655c3ff648131ca1c39000
+            => e04000010d03800000318000000080000002
+            <= 4104aab62ffcffe3bf9864b426d6f49b6bcd007f10f96f4be8fb28cd3a0ad4e6aded8a09965deca458a18a9d2151f2761844af9e473e3b4873670f097e470d73d72722333374654447684a7470793439707479763747635657347838437041344269706656881f8ad639081fb27a0db564011cf8a568a73ea1ac75b69e3e47ad6316165cfc9000
+            => e040000209028000005480000000
+            <= 41043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa5122a626331713636353767686b3368306e75786b717466716a6c383637637771796a6e63777677346c66386ccdddd55f0385b0a53a4803e47f24df989a42b4e3b0b1dda17c41f4381e5301cb9000
+            => e016000000
+            <= 000000050107426974636f696e034254439000
+            => e040000209028000005480000000
+            <= 41043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa5122a626331713636353767686b3368306e75786b717466716a6c383637637771796a6e63777677346c66386ccdddd55f0385b0a53a4803e47f24df989a42b4e3b0b1dda17c41f4381e5301cb9000
+            => e04000020d03800000548000000080000000
+            <= 4104985c77e031db7909b5bab541828faac7719bc3ac205907da16f379e693eb012217195cbb49c53854d1bfec204470abc73ab4fb51338653e5236c6a6ae57d34422a62633171723561783039386b6a73706a396c3737797a3234746e3733737878776d736367617479756533529d8a9f14d7c1b543bd6f288f167b3232e03fec8fe88746d74e958d1a101a489000
+            => e040000209028000005480000000
+            <= 41043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa5122a626331713636353767686b3368306e75786b717466716a6c383637637771796a6e63777677346c66386ccdddd55f0385b0a53a4803e47f24df989a42b4e3b0b1dda17c41f4381e5301cb9000
+            => e04000020d03800000548000000080000001
+            <= 4104495e8f35895184aca665882cbee1a0489c9f51aad1c981aabe6ce0684a953627f61b07f3fb79f8cd5da4a85149597dfacbd60836644300cb99a4257e21ff99bb2a62633171716c6e663567746171673070396836636376376e38677675787376786a65717332643576366ad71e3caf8b6840c9edfd48fecafd31fde2da5060edd6ce8b8c124841185896459000
+            => e040000209028000005480000000
+            <= 41043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa5122a626331713636353767686b3368306e75786b717466716a6c383637637771796a6e63777677346c66386ccdddd55f0385b0a53a4803e47f24df989a42b4e3b0b1dda17c41f4381e5301cb9000
+            => e04000020d03800000548000000080000002
+            <= 410418a42e7aa6f1ff07f1c284e5ef02b2b2df576856d8f5bd22454bb148a196b45cc35fddaa46229176f826557ff3db22b5149a258f8659ee2e9dfd9458dd0cbae92a626331716c766135707232707066386468367a6534756d6b70336d76766373376d376b7a7273636d7a61d525ad3db9e29a775891489f09a304d80f3cd1716dc47959645936ed075759f69000
           `,
           test: (expect, accounts) => {
             expect(accounts.map(toAccountRaw)).toMatchObject([
               {
-                balance: "0",
-                currencyId: "bitcoin",
-                derivationMode: "",
-                freshAddress: "1DuAJPh3eZWxampXYqAehmmtMUXsiKsMzD",
-                freshAddressPath: "44'/0'/0'/0/86",
-                id:
-                  "libcore:1:bitcoin:xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC:",
-                index: 0,
+                id: "libcore:1:bitcoin:xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn:",
+                seedIdentifier: "041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498",
                 name: "Bitcoin 1 (legacy)",
-                operationsCount: 172,
+                derivationMode: "",
+                index: 0,
+                freshAddress: "1Ktck8TvjnCUj2jNXexzBXJ2ihNikfCDii",
+                freshAddressPath: "44'/0'/0'/0/60",
+                operationsCount: 131,
                 pendingOperations: [],
-                seedIdentifier:
-                  "04b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a",
-                spendableBalance: "0",
+                currencyId: "bitcoin",
                 unitMagnitude: 8,
-                xpub:
-                  "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC"
+                balance: "2757",
+                spendableBalance: "2757",
+                xpub: "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn"
               },
               {
-                balance: "117395",
-                currencyId: "bitcoin",
-                derivationMode: "segwit",
-                freshAddress: "3AtghS1V9QLYA6DWr3sfhtmK2fRxXp3NLn",
-                freshAddressPath: "49'/0'/0'/0/38",
-                id:
-                  "libcore:1:bitcoin:xpub6BuPGsUw1Aaz92W5AjsuwjHYbjUKG8Xw4HEuQ2XzYSZWa8CZ4Hkhh6pBeZx2iSVuK7LZk4VKFytXuNNEPHbiuyYyXyDCiusnQ56Aoghhrcs:segwit",
-                index: 0,
+                id: "libcore:1:bitcoin:xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE:segwit",
+                seedIdentifier: "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
                 name: "Bitcoin 1 (segwit)",
-                operationsCount: 77,
-                pendingOperations: [],
-                seedIdentifier:
-                  "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-                spendableBalance: "117395",
-                unitMagnitude: 8,
-                xpub:
-                  "xpub6BuPGsUw1Aaz92W5AjsuwjHYbjUKG8Xw4HEuQ2XzYSZWa8CZ4Hkhh6pBeZx2iSVuK7LZk4VKFytXuNNEPHbiuyYyXyDCiusnQ56Aoghhrcs"
-              },
-              {
-                balance: "0",
-                currencyId: "bitcoin",
                 derivationMode: "segwit",
-                freshAddress: "3KyHUnYpJRejc84fVqEBPmH4WtSxvEtEgP",
-                freshAddressPath: "49'/0'/1'/0/135",
-                id:
-                  "libcore:1:bitcoin:xpub6BuPGsUw1AazBjooDr9dHzVm5hwQCQbEtreXX6hjAA5ahJdPNHuJkn8t3nR9e9rNQ8rqboGdnWkrcwmxp9Cvd2u7zEURkQVnnWQHJFcFiMV:segwit",
-                index: 1,
-                name: "Bitcoin 2 (segwit)",
-                operationsCount: 297,
-                pendingOperations: [],
-                seedIdentifier:
-                  "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-                spendableBalance: "0",
-                unitMagnitude: 8,
-                xpub:
-                  "xpub6BuPGsUw1AazBjooDr9dHzVm5hwQCQbEtreXX6hjAA5ahJdPNHuJkn8t3nR9e9rNQ8rqboGdnWkrcwmxp9Cvd2u7zEURkQVnnWQHJFcFiMV"
-              },
-              {
-                balance: "0",
-                currencyId: "bitcoin",
-                derivationMode: "segwit",
-                freshAddress: "38pozD9N9Sb4a2vJVvn1VsTESwhxvvTYDS",
-                freshAddressPath: "49'/0'/2'/0/1",
-                id:
-                  "libcore:1:bitcoin:xpub6BuPGsUw1AazDdNDNVPgRY1EYbM1xMxPdbrh8AD7ChSQKgECTEnVukh216M3Xz8f1VzNtJ7xCKMzbgFP7DFEMT2PVV8EbYkekVfY5Y9TTKh:segwit",
-                index: 2,
-                name: "Bitcoin 3 (segwit)",
-                operationsCount: 2,
-                pendingOperations: [],
-                seedIdentifier:
-                  "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-                spendableBalance: "0",
-                unitMagnitude: 8,
-                xpub:
-                  "xpub6BuPGsUw1AazDdNDNVPgRY1EYbM1xMxPdbrh8AD7ChSQKgECTEnVukh216M3Xz8f1VzNtJ7xCKMzbgFP7DFEMT2PVV8EbYkekVfY5Y9TTKh"
-              },
-              {
-                balance: "0",
-                currencyId: "bitcoin",
-                derivationMode: "segwit",
-                freshAddress: "32zC2Vt63WJttvkvtYtHEJFh2gjZRi1K29",
-                freshAddressPath: "49'/0'/3'/0/0",
-                id:
-                  "libcore:1:bitcoin:xpub6BuPGsUw1AazGkZvYGrhFX2t3Ag42rEgtPndss4r2cp5jyhSqdFouRERCUFXLUeEC5DpPBYw14Lt7Vjq4Vs8SzDWteTgSgdN5SMowDzAh78:segwit",
-                index: 3,
-                name: "Bitcoin 4 (segwit)",
-                operationsCount: 0,
-                pendingOperations: [],
-                seedIdentifier:
-                  "04b3b0982673f35bd288e681c371636145c7a8e17d4c59a6c8704100d366fa06da4246b7de1535511f9e11ad111683cbeafd992c4d1390b3a04fd79a51159f8691",
-                spendableBalance: "0",
-                unitMagnitude: 8,
-                xpub:
-                  "xpub6BuPGsUw1AazGkZvYGrhFX2t3Ag42rEgtPndss4r2cp5jyhSqdFouRERCUFXLUeEC5DpPBYw14Lt7Vjq4Vs8SzDWteTgSgdN5SMowDzAh78"
-              },
-              {
-                balance: "171611",
-                currencyId: "bitcoin",
-                derivationMode: "native_segwit",
-                freshAddress: "bc1qte9n4z62lfwyeg44ue9n3cue2hax46wxrvk2ew",
-                freshAddressPath: "84'/0'/0'/0/30",
-                id:
-                  "libcore:1:bitcoin:xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK:native_segwit",
                 index: 0,
-                name: "Bitcoin 1 (native segwit)",
-                operationsCount: 53,
+                freshAddress: "34WDB297Z1crydk6CMa1UvUpZ8G4cPXiYE",
+                freshAddressPath: "49'/0'/0'/0/34",
+                operationsCount: 71,
                 pendingOperations: [],
-                seedIdentifier:
-                  "04c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b125",
-                spendableBalance: "171611",
+                currencyId: "bitcoin",
                 unitMagnitude: 8,
-                xpub:
-                  "xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK"
+                balance: "0",
+                spendableBalance: "0",
+                xpub: "xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE"
               },
               {
-                balance: "0",
-                currencyId: "bitcoin",
-                derivationMode: "native_segwit",
-                freshAddress: "bc1q5rz9qj6dfme42fhygnuvxc9p6hgqgwn0nl48zj",
-                freshAddressPath: "84'/0'/1'/0/0",
-                id:
-                  "libcore:1:bitcoin:xpub6DVfEXXjv6nstPop8K6CPPiRp4fPJhGWYP7RBJ7BakvUhpkibRqTs6zhos3jQKD9bQWNecHyDN2YEr9EcPHfZ3W6vyBL12ouogv5rVNtGdy:native_segwit",
+                id: "libcore:1:bitcoin:xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6:segwit",
+                seedIdentifier: "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
+                name: "Bitcoin 2 (segwit)",
+                derivationMode: "segwit",
                 index: 1,
-                name: "Bitcoin 2 (native segwit)",
+                freshAddress: "3EyuXJk735CE5oBummZqzzFGN5qSMYLQ9w",
+                freshAddressPath: "49'/0'/1'/0/44",
+                operationsCount: 91,
+                pendingOperations: [],
+                currencyId: "bitcoin",
+                unitMagnitude: 8,
+                balance: "3000",
+                spendableBalance: "3000",
+                xpub: "xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6"
+              },
+              {
+                id: "libcore:1:bitcoin:xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ:segwit",
+                seedIdentifier: "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
+                name: "Bitcoin 3 (segwit)",
+                derivationMode: "segwit",
+                index: 2,
+                freshAddress: "3DUk27bxJm3y7txoPTK4GGBWcyoW6ibGuh",
+                freshAddressPath: "49'/0'/2'/0/0",
                 operationsCount: 0,
                 pendingOperations: [],
-                seedIdentifier:
-                  "04c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b125",
-                spendableBalance: "0",
+                currencyId: "bitcoin",
                 unitMagnitude: 8,
-                xpub:
-                  "xpub6DVfEXXjv6nstPop8K6CPPiRp4fPJhGWYP7RBJ7BakvUhpkibRqTs6zhos3jQKD9bQWNecHyDN2YEr9EcPHfZ3W6vyBL12ouogv5rVNtGdy"
-              }
+                balance: "0",
+                spendableBalance: "0",
+                xpub: "xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ"
+              },
+              {
+                id: "libcore:1:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit",
+                seedIdentifier: "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
+                name: "Bitcoin 1 (native segwit)",
+                derivationMode: "native_segwit",
+                index: 0,
+                freshAddress: "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64",
+                freshAddressPath: "84'/0'/0'/0/27",
+                operationsCount: 65,
+                pendingOperations: [],
+                currencyId: "bitcoin",
+                unitMagnitude: 8,
+                balance: "0",
+                spendableBalance: "0",
+                xpub: "xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy"
+              },
+              {
+                id: "libcore:1:bitcoin:xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2:native_segwit",
+                seedIdentifier: "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
+                name: "Bitcoin 2 (native segwit)",
+                derivationMode: "native_segwit",
+                index: 1,
+                freshAddress: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
+                freshAddressPath: "84'/0'/1'/0/53",
+                operationsCount: 118,
+                pendingOperations: [],
+                currencyId: "bitcoin",
+                unitMagnitude: 8,
+                balance: "2717",
+                spendableBalance: "2717",
+                xpub: "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2"
+              },
+              {
+                id: "libcore:1:bitcoin:xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc:native_segwit",
+                seedIdentifier: "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
+                name: "Bitcoin 3 (native segwit)",
+                derivationMode: "native_segwit",
+                index: 2,
+                freshAddress: "bc1qnqy7vyp0df7tl90mwz9jwca66t6hef4yj9hl6n",
+                freshAddressPath: "84'/0'/2'/0/0",
+                operationsCount: 0,
+                pendingOperations: [],
+                currencyId: "bitcoin",
+                unitMagnitude: 8,
+                balance: "0",
+                spendableBalance: "0",
+                xpub: "xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc"
+              }              
             ]);
           }
         }
