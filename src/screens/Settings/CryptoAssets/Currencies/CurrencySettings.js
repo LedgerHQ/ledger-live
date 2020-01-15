@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { translate } from "react-i18next";
+import { Trans, translate } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import Slider from "react-native-slider";
 import type { NavigationScreenProp } from "react-navigation";
@@ -84,7 +84,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
           name="Currency"
           currency={currency.id}
         />
-        {defaults.confirmationsNb && (
+        {defaults.confirmationsNb ? (
           <View style={styles.sliderContainer}>
             <SettingsRow
               event="CurrencyConfirmationsNb"
@@ -130,6 +130,12 @@ class EachCurrencySettings extends Component<Props, LocalState> {
               </View>
             </View>
           </View>
+        ) : (
+          <View style={styles.placeholer}>
+            <LText semiBold style={styles.placeholderText}>
+              <Trans i18nKey="settings.currencies.placeholder" />
+            </LText>
+          </View>
         )}
       </View>
     );
@@ -173,8 +179,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     minHeight: 200,
   },
+  placeholer: {
+    backgroundColor: colors.white,
+    padding: 16,
+    paddingVertical: 24,
+  },
+  placeholderText:{
+    fontSize: 16,
+    color: colors.darkBlue,
+  },
   confirmationNbValue: {
     fontSize: 16,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 
