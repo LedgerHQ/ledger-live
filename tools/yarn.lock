@@ -1174,7 +1174,7 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/devices@5.5.0", "@ledgerhq/devices@^5.3.0", "@ledgerhq/devices@^5.5.0":
+"@ledgerhq/devices@5.5.0", "@ledgerhq/devices@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-5.5.0.tgz#d191b6b8e52f30f623451ee1afd422b89d2e400d"
   integrity sha512-t3Xl2ObF4yTVz3rEdtETv1Vjy1FYQVcxAoTV52S2I/mT3Ac/z7UWBjKG/w4YRc/Itn371PkTguMoSKDL2GXq3g==
@@ -1183,7 +1183,7 @@
     "@ledgerhq/logs" "^5.3.0"
     rxjs "^6.5.4"
 
-"@ledgerhq/errors@5.5.0", "@ledgerhq/errors@^5.3.0", "@ledgerhq/errors@^5.5.0":
+"@ledgerhq/errors@5.5.0", "@ledgerhq/errors@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.5.0.tgz#b18173a3ddc28e9ae02b1cf9fb02e4d2b7d0fca0"
   integrity sha512-e6VlIVC3QR8EHXm/BtBcOeo+KqIKmeufr9cg38CK2KOD6CAEGJseipkyxVWWS0AR+kJIvWHl7aFqn2OdXe9EDQ==
@@ -1222,45 +1222,45 @@
     "@ledgerhq/hw-transport" "^5.5.0"
     "@ledgerhq/logs" "^5.3.0"
 
-"@ledgerhq/hw-transport-u2f@^5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-u2f/-/hw-transport-u2f-5.3.0.tgz#cf7259c138eb07a5994d678afb91411ec2a6ae9e"
-  integrity sha512-fv0SK3kBh1NTcBUliaEvGh/o3qKgP4dflmyAbfDwYqtIMzQj1WvaxTvwZGwOL3vZjBOy0jGyR17JSDe9GhL2Aw==
+"@ledgerhq/hw-transport-u2f@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-u2f/-/hw-transport-u2f-5.5.0.tgz#bf41aa86705868f5ceecdc64268f16df70ba979f"
+  integrity sha512-+bvFwW+adP9Ak4lCovtI0j1KTWgeUlMjnneuzuu7P9N7REAMGX68+yAslwVl4cs+8u7HbT/XN8A3O3kuR8yyXA==
   dependencies:
-    "@ledgerhq/errors" "^5.3.0"
-    "@ledgerhq/hw-transport" "^5.3.0"
+    "@ledgerhq/errors" "^5.5.0"
+    "@ledgerhq/hw-transport" "^5.5.0"
     "@ledgerhq/logs" "^5.3.0"
     u2f-api "0.2.7"
 
-"@ledgerhq/hw-transport-web-ble@^5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-web-ble/-/hw-transport-web-ble-5.3.0.tgz#e8a6e9c80c2404bf3e46c09e067446834607c6e5"
-  integrity sha512-lMjk01XZawrepiUPqotjpe6j5XEw8XtOAMuwxLLT/rVfqsu4xkUXYq/aZ7NAi2ClzVSxFPQOHr3M7YNkupPO9A==
+"@ledgerhq/hw-transport-web-ble@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-web-ble/-/hw-transport-web-ble-5.5.0.tgz#3297e16b0007909f2cbe36ee1c314d9426230363"
+  integrity sha512-3MPMYOLMuU67h4GFBTL3+6zBT4HmvBl7ka9IjAHUhPmcnZUkaOhjRttd/5LFs6wqb/Q8a8OCwNR7QPaV3gWPrQ==
   dependencies:
-    "@ledgerhq/devices" "^5.3.0"
-    "@ledgerhq/errors" "^5.3.0"
-    "@ledgerhq/hw-transport" "^5.3.0"
+    "@ledgerhq/devices" "^5.5.0"
+    "@ledgerhq/errors" "^5.5.0"
+    "@ledgerhq/hw-transport" "^5.5.0"
     "@ledgerhq/logs" "^5.3.0"
     rxjs "^6.5.4"
 
-"@ledgerhq/hw-transport-webhid@^5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webhid/-/hw-transport-webhid-5.3.3.tgz#592ac7db5e57200bf3505ef54e78a3ccf1a2c4d7"
-  integrity sha512-9Cn37/gNbYp+dgDx/g92VAtmT6sKliRGyvmbOexAkLjGPCQ6NeEzCyNraGufITkoEGDNrmKbkgEZw3zRs76enQ==
+"@ledgerhq/hw-transport-webhid@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webhid/-/hw-transport-webhid-5.5.0.tgz#cac5f0bfa7bdce6bd940518ace92c4bc6c7cea55"
+  integrity sha512-97bSPmiwKIztLANXYXjTKgGOmF2N4pIO25a/o1CtKTM9HdN1gl1nGeIF0LT0Q4+5Po0toQs7w1uPU7Qxsi/WiQ==
   dependencies:
-    "@ledgerhq/devices" "^5.3.0"
-    "@ledgerhq/errors" "^5.3.0"
-    "@ledgerhq/hw-transport" "^5.3.0"
+    "@ledgerhq/devices" "^5.5.0"
+    "@ledgerhq/errors" "^5.5.0"
+    "@ledgerhq/hw-transport" "^5.5.0"
     "@ledgerhq/logs" "^5.3.0"
 
-"@ledgerhq/hw-transport-webusb@^5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webusb/-/hw-transport-webusb-5.3.0.tgz#e790e4647f2680db1d3a188a6a316372fde1997f"
-  integrity sha512-pMakQuhSvWnrnzgk35F2K4YORwCtKBntYy8qDAlRp5M1/sPNn6iSDaQzxsKrbgSRcvuJRDdIpUG+zAvXPiF5vQ==
+"@ledgerhq/hw-transport-webusb@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-webusb/-/hw-transport-webusb-5.5.0.tgz#698202a1fd3b0ab8ee4d96c763c9cb904ab0123f"
+  integrity sha512-iwAgzsHlh135LsjKGxnIk1nipwJ2VMhDX+l1X4tCEi3kSG+foqInEzRnZgHiOjA9HNtBezBZAoeEXHjrBEWOmg==
   dependencies:
-    "@ledgerhq/devices" "^5.3.0"
-    "@ledgerhq/errors" "^5.3.0"
-    "@ledgerhq/hw-transport" "^5.3.0"
+    "@ledgerhq/devices" "^5.5.0"
+    "@ledgerhq/errors" "^5.5.0"
+    "@ledgerhq/hw-transport" "^5.5.0"
     "@ledgerhq/logs" "^5.3.0"
 
 "@ledgerhq/hw-transport@5.5.0", "@ledgerhq/hw-transport@^5.3.0", "@ledgerhq/hw-transport@^5.5.0":
@@ -1272,10 +1272,10 @@
     "@ledgerhq/errors" "^5.5.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^11.0.0-rc.5":
-  version "11.0.0-rc.5"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.5.tgz#cd3feb8153877b50444627ff391ec601acc308fe"
-  integrity sha512-AmLS9bwrr0ogkGeCc1XZJluBdkUE7b92629P8gcLyIl0mSTg3o7RDWOrC+EB+8mryZNoCob1Mb/bYAJ/I+2dJg==
+"@ledgerhq/live-common@^11.0.0-rc.6":
+  version "11.0.0-rc.6"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.6.tgz#3771e9b99a126e0e6f2f22845d15df18ba081625"
+  integrity sha512-cJ9X4faHIZtvwhLdAMSeOP1RMLTq+PsqWs5a7HeaB1cU4tLhVlFx+pwRN8ghhoJvQhYsQ9Pm5qSQIe9hyfMvuA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.5.0"
@@ -5027,10 +5027,10 @@ flatten@^1.0.2:
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
   integrity sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
 
-flow-bin@^0.115.0:
-  version "0.115.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.115.0.tgz#22e3ad9e5c7198967de80138ba8a9154ff387960"
-  integrity sha512-xW+U2SrBaAr0EeLvKmXAmsdnrH6x0Io17P6yRJTNgrrV42G8KXhBAD00s6oGbTTqRyHD0nP47kyuU34zljZpaQ==
+flow-bin@^0.116.0:
+  version "0.116.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.116.0.tgz#f2e5ef318838ceb760e3f588b66076bc8ee1dc87"
+  integrity sha512-6q1f84mhAzHlUp9eTpIIJqINFBXf2+HGQllYfrkdQ+DfOLkF2wEZNHpVlYX1DL0G3uS8D//XEfsN2seZAc7jiw==
 
 flush-write-stream@^1.0.0:
   version "1.0.3"

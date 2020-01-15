@@ -955,10 +955,10 @@
     bindings "1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@^11.0.0-rc.5":
-  version "11.0.0-rc.5"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.5.tgz#cd3feb8153877b50444627ff391ec601acc308fe"
-  integrity sha512-AmLS9bwrr0ogkGeCc1XZJluBdkUE7b92629P8gcLyIl0mSTg3o7RDWOrC+EB+8mryZNoCob1Mb/bYAJ/I+2dJg==
+"@ledgerhq/live-common@^11.0.0-rc.6":
+  version "11.0.0-rc.6"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.6.tgz#3771e9b99a126e0e6f2f22845d15df18ba081625"
+  integrity sha512-cJ9X4faHIZtvwhLdAMSeOP1RMLTq+PsqWs5a7HeaB1cU4tLhVlFx+pwRN8ghhoJvQhYsQ9Pm5qSQIe9hyfMvuA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.5.0"
