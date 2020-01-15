@@ -1,5 +1,7 @@
 // @flow
 
+import { from, Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
@@ -9,6 +11,9 @@ import type {
   AccountLike,
   AccountLikeArray
 } from "../../types";
+import type { Baker } from "./bakers";
+import { listBakers, fetchAllBakers } from "./bakers";
+import defaultList from "./bakers.whitelist-default";
 
 const options = [
   {
@@ -73,8 +78,50 @@ function inferTransactions(
   });
 }
 
+const bakersFormatters = {
+  json: list => JSON.stringify(list),
+  default: list =>
+    list
+      .map(
+        b =>
+          `${b.address} "${b.name}" ${b.nominalYield} ${b.capacityStatus} ${b.logoURL}`
+      )
+      .join("\n")
+};
+
+const tezosListBakers = {
+  args: [
+    {
+      name: "whitelist",
+      desc: "filter whitelist",
+      type: Boolean
+    },
+    {
+      name: "format",
+      desc: Object.keys(bakersFormatters).join(" | "),
+      type: String
+    }
+  ],
+  job: ({
+    whitelist,
+    format
+  }: $Shape<{
+    whitelist: boolean,
+    format: string
+  }>): Observable<string> =>
+    from(whitelist ? listBakers(defaultList) : fetchAllBakers()).pipe(
+      map((list: Baker[]) => {
+        const f = bakersFormatters[format] || bakersFormatters.default;
+        return f(list);
+      })
+    )
+};
+
 export default {
   options,
   inferAccounts,
-  inferTransactions
+  inferTransactions,
+  commands: {
+    tezosListBakers
+  }
 };
