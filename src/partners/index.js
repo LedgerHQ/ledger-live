@@ -2,10 +2,6 @@
 
 export default [
   {
-    id: "bitpanda",
-    url: "https://www.bitpanda.com/?ref=619506638974149182"
-  },
-  {
     id: "btcdirect",
     url: "https://btcdirect.eu/en-gb?partnerId=261"
   },
