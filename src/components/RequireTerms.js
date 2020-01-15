@@ -21,7 +21,7 @@ import ExternalLink from "./ExternalLink";
 import CheckBox from "./CheckBox";
 import Touchable from "./Touchable";
 import GenericErrorView from "./GenericErrorView";
-import RetryButtton from "./RetryButton";
+import RetryButton from "./RetryButton";
 
 const forceInset = { bottom: "always" };
 
@@ -101,7 +101,7 @@ const RequireTermsModal = () => {
                 event="OpenTerms"
               />
               <View style={styles.retryButton}>
-                <RetryButtton onPress={retry} />
+                <RetryButton onPress={retry} />
               </View>
             </View>
           ) : (
