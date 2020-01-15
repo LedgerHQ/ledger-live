@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import React, { useCallback, useState } from "react";
+import { View, StyleSheet, VirtualizedList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { State } from "@ledgerhq/live-common/lib/apps";
 import AppRow from "./AppRow";
@@ -17,6 +17,15 @@ type Props = {
 
 const { height } = getWindowDimensions();
 
+const viewabilityConfig = {
+  minimumViewTime: 0,
+  viewAreaCoveragePercentThreshold: 0,
+};
+
+const renderRow = ({ item }: { item: * }) => {
+  return <AppRow {...item} />;
+};
+
 const AppsList = ({
   apps,
   tab,
@@ -25,21 +34,18 @@ const AppsList = ({
   state,
   dispatch,
 }: Props) => {
-  const viewHeight = active ? "auto" : height - 267;
-  const renderRow = useCallback(
-    ({ item, index }: { item: App, index: number }) => (
-      <AppRow
-        app={item}
-        index={index}
-        state={state}
-        dispatch={dispatch}
-        tab={tab}
-        animation
-      />
-    ),
-    [tab, dispatch, state],
+  const [viewableBounds, setViewableBounds] = useState({ min: 0, max: 10 });
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }) => {
+      const indexes = viewableItems.map(({ index }) => index);
+      setViewableBounds({
+        min: Math.max(0, indexes[0] - 5),
+        max: indexes[indexes.length - 1] + 5,
+      });
+    },
+    [setViewableBounds],
   );
-  const keyExtractor = useCallback((d: App) => String(d.id) + tab, [tab]);
+  const viewHeight = active ? "auto" : height - 267;
 
   if (apps.length <= 0)
     return (
@@ -49,14 +55,27 @@ const AppsList = ({
     );
 
   return (
-    <View style={{ height: viewHeight }}>
-      <FlatList
-        listKey={tab}
-        data={apps}
-        renderItem={renderRow}
-        keyExtractor={keyExtractor}
-      />
-    </View>
+    <VirtualizedList
+      style={{ height: viewHeight }}
+      listKey={tab}
+      data={apps}
+      renderItem={renderRow}
+      getItem={(data, index) => ({
+        app: data[index],
+        index,
+        state,
+        dispatch,
+        key: String(data[index].id) + tab,
+        visible:
+          active && index >= viewableBounds.min && index <= viewableBounds.max,
+        tab,
+      })}
+      initialNumToRender={10}
+      maxToRenderPerBatch={15}
+      getItemCount={() => apps.length}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={onViewableItemsChanged}
+    />
   );
 };
 

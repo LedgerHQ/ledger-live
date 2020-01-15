@@ -108,6 +108,7 @@ export default ({
         dispatch={dispatch}
         tab={tab}
         animation={false}
+        visible
       />
     ),
     [tab, dispatch, state],

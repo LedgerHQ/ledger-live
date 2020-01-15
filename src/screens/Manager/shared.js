@@ -15,4 +15,5 @@ export function useApps(listAppsRes: ListAppsResult, deviceId: string) {
   return useAppsRunner(listAppsRes, exec);
 }
 
-export const ManagerContext = createContext("MANAGER");
+export const ManagerContext = createContext();
+export const ManagerProgressContext = createContext({ currentProgress: null });

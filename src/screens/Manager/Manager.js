@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { NavigationActions } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { ManagerContext } from "./shared";
+import { ManagerContext, ManagerProgressContext } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import QuitManagerModal from "./Modals/QuitManagerModal";
@@ -26,7 +26,19 @@ type Props = {
 let navListener;
 
 export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
-  const { apps, currentError, installQueue, uninstallQueue } = state;
+  const filteredState = {
+    apps: state.apps,
+    deviceInfo: state.deviceInfo,
+    deviceModel: state.deviceModel,
+    firmware: state.firmware,
+    appByName: state.appByName,
+    installed: state.installed,
+    installQueue: state.installQueue,
+    uninstallQueue: state.uninstallQueue,
+    currentAppOp: state.currentAppOp,
+    currentError: state.currentError,
+  };
+  const { apps, currentError, installQueue, uninstallQueue } = filteredState;
   const blockNavigation = installQueue.length + uninstallQueue.length > 0;
 
   const [quitManagerAction, setQuitManagerAction] = useState(false);
@@ -115,7 +127,15 @@ export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
         initialDeviceName: navigation.getParam("deviceName"),
       }}
     >
-      <AppsScreen state={state} dispatch={dispatch} navigation={navigation} />
+      <ManagerProgressContext.Provider
+        value={{ currentProgress: state.currentProgress }}
+      >
+        <AppsScreen
+          state={filteredState}
+          dispatch={dispatch}
+          navigation={navigation}
+        />
+      </ManagerProgressContext.Provider>
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal
         isOpened={quitManagerAction}

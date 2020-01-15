@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 
 import { Trans } from "react-i18next";
@@ -9,79 +9,13 @@ import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import AppInstallButton from "./AppInstallButton";
 import AppUninstallButton from "./AppUninstallButton";
 
+import { InstallProgress, UninstallProgress } from "./AppInstallProgress";
+
 import colors from "../../../colors";
 import Check from "../../../icons/Check";
-import CloseCircle from "../../../icons/CloseCircle";
 import LText from "../../../components/LText";
-import ProgressBar from "../../../components/ProgressBar";
-import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
 
-type InstallProgressProps = {
-  progress: number,
-  onCancel: () => void,
-  isInstalling: boolean,
-  isUpdating: boolean,
-};
-
-const InstallProgress = ({
-  progress,
-  onCancel,
-  isInstalling,
-  isUpdating,
-}: InstallProgressProps) => {
-  const color = isInstalling ? colors.live : colors.alert;
-  const canCancel = !progress && !!onCancel;
-  const Container = canCancel ? TouchableOpacity : View;
-
-  return (
-    <Container style={styles.progressContainer}>
-      <View style={styles.progressLabel}>
-        <LText
-          semiBold
-          numberOfLines={1}
-          style={[styles.appStateText, { color }]}
-        >
-          <Trans
-            i18nKey={
-              isInstalling
-                ? isUpdating
-                  ? "AppAction.update.loading"
-                  : "AppAction.install.loading.button"
-                : "AppAction.uninstall.loading.button"
-            }
-          />
-        </LText>
-        {canCancel && (
-          <TouchableOpacity
-            style={styles.progressCloseButton}
-            onPress={onCancel}
-            underlayColor={colors.lightFog}
-          >
-            <CloseCircle
-              style={styles.progressCloseIcon}
-              color={color}
-              size={14}
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-      {isInstalling ? (
-        <ProgressBar
-          progressColor={color}
-          style={styles.progressBar}
-          height={6}
-          progress={progress * 1e2}
-        />
-      ) : (
-        <InfiniteProgressBar
-          progressColor={color}
-          style={styles.progressBar}
-          height={6}
-        />
-      )}
-    </Container>
-  );
-};
+import { isEqual } from "lodash";
 
 type Props = {
   app: App,
@@ -100,13 +34,7 @@ const AppStateButton = ({
   isInstalled,
   isInstalledView,
 }: Props) => {
-  const {
-    installed,
-    installQueue,
-    uninstallQueue,
-    currentAppOp,
-    currentProgress,
-  } = state;
+  const { installed, installQueue, uninstallQueue } = state;
   const { name } = app;
 
   const installing = useMemo(() => installQueue.indexOf(name) >= 0, [
@@ -121,14 +49,6 @@ const AppStateButton = ({
   const canUpdate = useMemo(
     () => installed.some(({ name, updated }) => name === app.name && !updated),
     [app.name, installed],
-  );
-
-  const progress = useMemo(
-    () =>
-      currentAppOp && currentAppOp.name === name
-        ? currentProgress && currentProgress.progress
-        : 0,
-    [currentAppOp, currentProgress, name],
   );
 
   const installApp = useCallback(() => {
@@ -147,22 +67,9 @@ const AppStateButton = ({
   const renderAppState = () => {
     switch (true) {
       case uninstalling:
-        return (
-          <InstallProgress
-            progress={progress}
-            //onCancel={onCancelUninstall}
-            isInstalling={false}
-          />
-        );
+        return <UninstallProgress onCancel={onCancelUninstall} />;
       case installing:
-        return (
-          <InstallProgress
-            progress={progress}
-            onCancel={uninstallApp}
-            isInstalling={true}
-            isUpdating={canUpdate}
-          />
-        );
+        return <InstallProgress onCancel={uninstallApp} name={name} />;
       case isInstalledView && isInstalled:
         return (
           <AppUninstallButton app={app} state={state} dispatch={dispatch} />
@@ -250,28 +157,6 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     color: colors.green,
   },
-  progressContainer: {
-    flexDirection: "column",
-    zIndex: 10,
-    width: "100%",
-    height: 38,
-    backgroundColor: colors.white,
-  },
-  progressLabel: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    flexWrap: "nowrap",
-    alignItems: "center",
-    backgroundColor: colors.white,
-  },
-  progressCloseButton: {
-    flexBasis: 28,
-    flexDirection: "row",
-    justifyContent: "center",
-    width: 28,
-  },
-  progressBar: { flexShrink: 0, flexGrow: 0, flexBasis: 6 },
 });
 
-export default AppStateButton;
+export default memo(AppStateButton, isEqual);

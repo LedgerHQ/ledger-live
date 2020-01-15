@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useContext } from "react";
+import React, { memo, useMemo, useCallback, useContext } from "react";
 
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
@@ -22,26 +22,34 @@ import AppStateButton from "./AppStateButton";
 
 import { ManagerContext } from "../shared";
 
+import { isEqual } from "lodash";
+
 type Props = {
   app: ApplicationVersion,
   state: State,
   dispatch: Action => void,
   tab: string,
-  index: number,
-  animation: boolean,
+  visible: boolean,
 };
 
-const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
-  const { name, version, bytes, icon, dependencies } = app;
+const AppRow = ({ app, state, dispatch, tab, visible }: Props) => {
+  const { name, version, bytes, icon } = app;
   const { installed } = state;
   const { setStorageWarning, MANAGER_TABS } = useContext(ManagerContext);
 
+  const isInstalled = useMemo(() => installed.some(i => i.name === name), [
+    installed,
+    name,
+  ]);
+
   const notEnoughMemoryToInstall = useMemo(
     () =>
+      visible &&
+      !isInstalled &&
       isOutOfMemoryState(
         predictOptimisticState(reducer(state, { type: "install", name })),
       ),
-    [name, state],
+    [isInstalled, name, state, visible],
   );
 
   const onSizePress = useCallback(() => setStorageWarning(name), [
@@ -49,91 +57,70 @@ const AppRow = ({ app, state, dispatch, tab, index, animation }: Props) => {
     name,
   ]);
 
-  const isInstalled = useMemo(() => installed.some(i => i.name === name), [
-    installed,
-    name,
-  ]);
-
-  const Container = useMemo(() => (animation ? Animatable.View : View), [
-    animation,
-  ]);
-  const containerProps = useMemo(
-    () =>
-      animation
-        ? {
-            animation: index <= 5 ? "fadeInUp" : "fadeIn",
-            duration: 200,
-            delay: index <= 5 ? index * 200 : 0,
-            useNativeDriver: true,
-          }
-        : {},
-    [animation, index],
-  );
-
-  /**
-   
-   const bytesWithDeps = useMemo(() => {
-    const depBytes =
-      dependencies.length > 0 &&
-      installed.every(i => dependencies[0] !== i.name)
-        ? state.appByName[dependencies[0]].bytes
-        : 0;
-    return bytes + depBytes;
-  }, [dependencies, bytes, installed, state.appByName]);
-   */
-
   return (
-    <Container style={styles.root} {...containerProps}>
-      <AppIcon icon={icon} />
-      <View style={styles.labelContainer}>
-        <LText numberOfLines={1} bold>
-          {name}
-        </LText>
-        <LText numberOfLines={1} style={styles.versionText}>
-          {version}
-        </LText>
-      </View>
-      {!isInstalled && notEnoughMemoryToInstall ? (
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={onSizePress}
-          style={styles.warnText}
+    <View style={styles.root}>
+      {visible && (
+        <Animatable.View
+          style={styles.item}
+          animation="fadeIn"
+          duration={300}
+          useNativeDriver
         >
-          <View style={styles.warnIcon}>
-            <Exclamation size={16} color={colors.white} />
+          <AppIcon icon={icon} />
+          <View style={styles.labelContainer}>
+            <LText numberOfLines={1} bold>
+              {name}
+            </LText>
+            <LText numberOfLines={1} style={styles.versionText}>
+              {version}
+            </LText>
           </View>
-          <LText
-            semiBold
-            style={[styles.versionText, styles.sizeText, styles.warnText]}
-          >
-            {formatSize(bytes)}
-          </LText>
-        </TouchableOpacity>
-      ) : (
-        <LText
-          style={[
-            styles.versionText,
-            styles.sizeText,
-            notEnoughMemoryToInstall ? styles.warnText : {},
-          ]}
-        >
-          {formatSize(bytes)}
-        </LText>
+          {!isInstalled && notEnoughMemoryToInstall ? (
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={onSizePress}
+              style={styles.warnText}
+            >
+              <View style={styles.warnIcon}>
+                <Exclamation size={16} color={colors.white} />
+              </View>
+              <LText
+                semiBold
+                style={[styles.versionText, styles.sizeText, styles.warnText]}
+              >
+                {formatSize(bytes)}
+              </LText>
+            </TouchableOpacity>
+          ) : (
+            <LText
+              style={[
+                styles.versionText,
+                styles.sizeText,
+                notEnoughMemoryToInstall ? styles.warnText : {},
+              ]}
+            >
+              {formatSize(bytes)}
+            </LText>
+          )}
+          <AppStateButton
+            app={app}
+            state={state}
+            dispatch={dispatch}
+            notEnoughMemoryToInstall={notEnoughMemoryToInstall}
+            isInstalled={isInstalled}
+            isInstalledView={tab === MANAGER_TABS.INSTALLED_APPS}
+          />
+        </Animatable.View>
       )}
-      <AppStateButton
-        app={app}
-        state={state}
-        dispatch={dispatch}
-        notEnoughMemoryToInstall={notEnoughMemoryToInstall}
-        isInstalled={isInstalled}
-        isInstalledView={tab === MANAGER_TABS.INSTALLED_APPS}
-      />
-    </Container>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
+    height: 64,
+  },
+  item: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
@@ -142,7 +129,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 0,
     height: 64,
-    zIndex: 10,
     borderBottomColor: colors.lightFog,
     borderBottomWidth: 1,
   },
@@ -204,4 +190,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppRow;
+export default memo(
+  AppRow,
+  (prevProps, nextProps) =>
+    !nextProps.visible && isEqual(prevProps.state, nextProps.state),
+);
