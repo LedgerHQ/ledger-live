@@ -74,8 +74,10 @@ const dataset: DatasetTest<Transaction> = {
           test: (expect, accounts) => {
             expect(accounts.map(toAccountRaw)).toMatchObject([
               {
-                id: "libcore:1:bitcoin:xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn:",
-                seedIdentifier: "041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498",
+                id:
+                  "libcore:1:bitcoin:xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn:",
+                seedIdentifier:
+                  "041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498",
                 name: "Bitcoin 1 (legacy)",
                 derivationMode: "",
                 index: 0,
@@ -87,11 +89,14 @@ const dataset: DatasetTest<Transaction> = {
                 unitMagnitude: 8,
                 balance: "2757",
                 spendableBalance: "2757",
-                xpub: "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn"
+                xpub:
+                  "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn"
               },
               {
-                id: "libcore:1:bitcoin:xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE:segwit",
-                seedIdentifier: "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
+                id:
+                  "libcore:1:bitcoin:xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE:segwit",
+                seedIdentifier:
+                  "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
                 name: "Bitcoin 1 (segwit)",
                 derivationMode: "segwit",
                 index: 0,
@@ -103,11 +108,14 @@ const dataset: DatasetTest<Transaction> = {
                 unitMagnitude: 8,
                 balance: "0",
                 spendableBalance: "0",
-                xpub: "xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE"
+                xpub:
+                  "xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE"
               },
               {
-                id: "libcore:1:bitcoin:xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6:segwit",
-                seedIdentifier: "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
+                id:
+                  "libcore:1:bitcoin:xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6:segwit",
+                seedIdentifier:
+                  "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
                 name: "Bitcoin 2 (segwit)",
                 derivationMode: "segwit",
                 index: 1,
@@ -119,11 +127,14 @@ const dataset: DatasetTest<Transaction> = {
                 unitMagnitude: 8,
                 balance: "3000",
                 spendableBalance: "3000",
-                xpub: "xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6"
+                xpub:
+                  "xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6"
               },
               {
-                id: "libcore:1:bitcoin:xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ:segwit",
-                seedIdentifier: "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
+                id:
+                  "libcore:1:bitcoin:xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ:segwit",
+                seedIdentifier:
+                  "047615032ad01c87f38c5401a6765aee429eb5a57ccde63573fdfe602b4de7c7ac109d1f23fbdd847c483bd147ff8218f15858f16824ecff4ca3fcb4245e2d93f5",
                 name: "Bitcoin 3 (segwit)",
                 derivationMode: "segwit",
                 index: 2,
@@ -135,11 +146,14 @@ const dataset: DatasetTest<Transaction> = {
                 unitMagnitude: 8,
                 balance: "0",
                 spendableBalance: "0",
-                xpub: "xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ"
+                xpub:
+                  "xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ"
               },
               {
-                id: "libcore:1:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit",
-                seedIdentifier: "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
+                id:
+                  "libcore:1:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit",
+                seedIdentifier:
+                  "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
                 name: "Bitcoin 1 (native segwit)",
                 derivationMode: "native_segwit",
                 index: 0,
@@ -151,11 +165,14 @@ const dataset: DatasetTest<Transaction> = {
                 unitMagnitude: 8,
                 balance: "0",
                 spendableBalance: "0",
-                xpub: "xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy"
+                xpub:
+                  "xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy"
               },
               {
-                id: "libcore:1:bitcoin:xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2:native_segwit",
-                seedIdentifier: "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
+                id:
+                  "libcore:1:bitcoin:xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2:native_segwit",
+                seedIdentifier:
+                  "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
                 name: "Bitcoin 2 (native segwit)",
                 derivationMode: "native_segwit",
                 index: 1,
@@ -167,11 +184,14 @@ const dataset: DatasetTest<Transaction> = {
                 unitMagnitude: 8,
                 balance: "2717",
                 spendableBalance: "2717",
-                xpub: "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2"
+                xpub:
+                  "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2"
               },
               {
-                id: "libcore:1:bitcoin:xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc:native_segwit",
-                seedIdentifier: "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
+                id:
+                  "libcore:1:bitcoin:xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc:native_segwit",
+                seedIdentifier:
+                  "043188c7e9e184aa3f6c2967b9b2b19a5966efe88c526ac091687642540573ecfb4c988261e7b0b876c6aec0b393518676232b34289a5bfc0cc78cc2ef735fa512",
                 name: "Bitcoin 3 (native segwit)",
                 derivationMode: "native_segwit",
                 index: 2,
@@ -183,8 +203,9 @@ const dataset: DatasetTest<Transaction> = {
                 unitMagnitude: 8,
                 balance: "0",
                 spendableBalance: "0",
-                xpub: "xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc"
-              }              
+                xpub:
+                  "xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc"
+              }
             ]);
           }
         }
