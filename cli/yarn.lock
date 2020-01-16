@@ -947,18 +947,18 @@
     "@ledgerhq/errors" "^5.5.0"
     events "^3.1.0"
 
-"@ledgerhq/ledger-core@^5.3.0-alpha.1":
-  version "5.3.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-5.3.0-alpha.1.tgz#341bd377940c00d6b9480e99b2b8efcd87a4b605"
-  integrity sha512-D3Wc7HU8MfWIcSJG2cI4pCQHdxmynmkm6pnVQcZqQ9j/LpB99twqqbFGd7XX6PiRW03zzi8Gd24f4l4limCOtg==
+"@ledgerhq/ledger-core@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-5.3.0.tgz#8b4cb749ac74a619fac889d0e8c04941e00346f7"
+  integrity sha512-AtbmQ7QJ0rsomWURNz5tj6voLkHqqws4QcVE0zp+wtPGBtEal1IpX7TP9hleRyWOiH+c5BpKkCNk3GQ55QsgOw==
   dependencies:
     bindings "1.3.0"
     nan "^2.6.2"
 
-"@ledgerhq/live-common@^11.0.0-rc.6":
-  version "11.0.0-rc.6"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0-rc.6.tgz#3771e9b99a126e0e6f2f22845d15df18ba081625"
-  integrity sha512-cJ9X4faHIZtvwhLdAMSeOP1RMLTq+PsqWs5a7HeaB1cU4tLhVlFx+pwRN8ghhoJvQhYsQ9Pm5qSQIe9hyfMvuA==
+"@ledgerhq/live-common@^11.0.0":
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.0.0.tgz#86e79942f0af9aaea3a47b33fdfd587e2347b5b5"
+  integrity sha512-HqQGKY93c+VMsQAd0Olyd7yDI/NcuPxneqoCUGLJmKIC8vDCCtkKrFgpSeSZG0qSjqjYpW1z70erVbL2I7R+RA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.5.0"
