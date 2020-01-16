@@ -12,7 +12,7 @@ setup("libcore");
 
 test("libcore version", async () => {
   const v = await withLibcore(core => core.LedgerCore.getStringVersion());
-  expect(v).toBeString();
+  expect(typeof v).toBe("string");
   // eslint-disable-next-line no-console
   console.log("libcore version " + v);
 });
