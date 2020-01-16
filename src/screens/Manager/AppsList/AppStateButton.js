@@ -1,11 +1,12 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Trans } from "react-i18next";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
+import { isEqual } from "lodash";
 import AppInstallButton from "./AppInstallButton";
 import AppUninstallButton from "./AppUninstallButton";
 
@@ -14,8 +15,6 @@ import { InstallProgress, UninstallProgress } from "./AppInstallProgress";
 import colors from "../../../colors";
 import Check from "../../../icons/Check";
 import LText from "../../../components/LText";
-
-import { isEqual } from "lodash";
 
 type Props = {
   app: App,
@@ -76,11 +75,7 @@ const AppStateButton = ({
         );
       case canUpdate:
         return (
-          <TouchableOpacity
-            style={styles.installedLabel}
-            activeOpacity={0.5}
-            onPress={installApp}
-          >
+          <View style={styles.installedLabel}>
             <LText
               semiBold
               style={[styles.appStateText, styles.updateText]}
@@ -88,16 +83,11 @@ const AppStateButton = ({
             >
               <Trans i18nKey="AppAction.update.buttonAction" />
             </LText>
-          </TouchableOpacity>
+          </View>
         );
       case isInstalled:
         return (
-          <View
-            style={[
-              styles.installedLabel,
-              { flexWrap: "nowrap", overflow: "visible" },
-            ]}
-          >
+          <View style={[styles.installedLabel, styles.noWrapLabel]}>
             <Check color={colors.green} />
             <LText
               semiBold
@@ -147,6 +137,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     flexWrap: "wrap",
     height: 38,
+  },
+  noWrapLabel: {
+    flexWrap: "nowrap",
+    overflow: "visible",
   },
   updateText: {
     width: "100%",

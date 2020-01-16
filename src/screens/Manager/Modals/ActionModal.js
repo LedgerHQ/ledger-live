@@ -3,7 +3,6 @@ import { StyleSheet, SafeAreaView, View } from "react-native";
 import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
 import BottomModal from "../../../components/BottomModal";
-import colors from "../../../colors";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();

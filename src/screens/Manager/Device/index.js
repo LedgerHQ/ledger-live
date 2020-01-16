@@ -36,6 +36,20 @@ const DeviceCard = ({ state }: Props) => {
 
   const { deviceId, initialDeviceName } = useContext(ManagerContext);
 
+  const nameBlock =
+    deviceModel.id !== "nanoS" ? (
+      <DeviceName deviceId={deviceId} initialDeviceName={initialDeviceName} />
+    ) : (
+      <LText
+        bold
+        numberOfLines={1}
+        ellipsizeMode="tail"
+        style={styles.deviceName}
+      >
+        {deviceModel.productName}
+      </LText>
+    );
+
   return (
     <Card style={styles.card}>
       <View style={styles.deviceSection}>
@@ -48,21 +62,7 @@ const DeviceCard = ({ state }: Props) => {
         </View>
         <View style={styles.deviceInfoContainer}>
           <View style={styles.deviceNameContainer}>
-            {deviceModel.id !== "nanoS" ? (
-              <DeviceName
-                deviceId={deviceId}
-                initialDeviceName={initialDeviceName}
-              />
-            ) : (
-              <LText
-                bold
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.deviceName}
-              >
-                {deviceModel.productName}
-              </LText>
-            )}
+            {nameBlock}
             <Genuine />
           </View>
 

@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import type { State, Action } from "@ledgerhq/live-common/lib/apps";
+import type { Action } from "@ledgerhq/live-common/lib/apps";
 import { Trans } from "react-i18next";
 
 import UpdateAllModal from "../Modals/UpdateAllModal";
@@ -10,24 +10,20 @@ import Info from "../../../icons/Info";
 import AppUpdateStepper from "./AppUpdateStepper";
 
 type Props = {
-  state: State,
+  appsToUpdate: App[],
+  installQueue: string[],
+  uninstallQueue: string[],
   dispatch: Action => void,
-  onUpdateProgressPress: () => void,
 };
 
-const AppUpdateAll = ({ state, dispatch, onUpdateProgressPress }: Props) => {
+const AppUpdateAll = ({
+  appsToUpdate,
+  installQueue,
+  uninstallQueue,
+  dispatch,
+}: Props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [appsUpdating, setAppsUpdating] = useState([]);
-
-  const { installed, apps, installQueue, uninstallQueue } = state;
-
-  const appsToUpdate = useMemo(
-    () =>
-      apps.filter(app =>
-        installed.some(({ name, updated }) => name === app.name && !updated),
-      ),
-    [apps, installed],
-  );
 
   const openModal = useCallback(() => setModalOpen(true), [setModalOpen]);
   const closeModal = useCallback(() => setModalOpen(false), [setModalOpen]);
@@ -45,10 +41,9 @@ const AppUpdateAll = ({ state, dispatch, onUpdateProgressPress }: Props) => {
         installQueue={installQueue}
         uninstallQueue={uninstallQueue}
         onUpdateEnd={onUpdateEnd}
-        onPress={onUpdateProgressPress}
       />
       {appsToUpdate.length > 0 && appsUpdating.length <= 0 && (
-        <View style={[styles.root, styles.rootMargin]}>
+        <View style={[styles.root]}>
           <TouchableOpacity
             style={styles.infoLabel}
             activeOpacity={0.5}
@@ -89,13 +84,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 11,
-  },
-  rootMargin: {
-    marginTop: 30,
-  },
-  rootStepper: {
-    height: 64,
-    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightFog,
   },
   infoLabel: {
     flex: 1,
@@ -109,14 +99,6 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     color: colors.live,
     marginRight: 6,
-  },
-  stepperText: {
-    flex: 1,
-  },
-  progressBar: {
-    flexBasis: 6,
-    flexGrow: 0,
-    marginBottom: 8,
   },
   button: {
     flexBasis: "auto",

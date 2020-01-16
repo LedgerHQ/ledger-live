@@ -4,6 +4,8 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 import * as Animatable from "react-native-animatable";
 
+import { isEqual } from "lodash";
+
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import {
   formatSize,
@@ -21,8 +23,6 @@ import AppIcon from "./AppIcon";
 import AppStateButton from "./AppStateButton";
 
 import { ManagerContext } from "../shared";
-
-import { isEqual } from "lodash";
 
 type Props = {
   app: ApplicationVersion,

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { NavigationActions } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { ManagerContext, ManagerProgressContext } from "./shared";
+import { ManagerContext, ManagerProgressContext, useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import QuitManagerModal from "./Modals/QuitManagerModal";
@@ -25,7 +25,9 @@ type Props = {
 /** navigation action listener */
 let navListener;
 
-export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
+const Manager = ({ navigation }: Props) => {
+  const { appRes, deviceId } = navigation.state.params;
+  const [state, dispatch] = useApps(appRes, deviceId);
   const filteredState = {
     apps: state.apps,
     deviceInfo: state.deviceInfo,
@@ -163,3 +165,5 @@ export default ({ screenProps: { state, dispatch }, navigation }: Props) => {
     </ManagerContext.Provider>
   );
 };
+
+export default Manager;

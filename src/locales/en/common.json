@@ -1228,10 +1228,8 @@
     "update": {
       "title": "{{number}} app updates",
       "step": "Update step {{step}}:",
-      "removingOldVersions": "removing old app versions",
-      "updateWarn": "Do not unplug your device",
-      "installingUpdates": "installing new app versions",
-      "progress": "Progress: {{progress}}%",
+      "updateWarn": "Do not quit manager during update",
+      "progress": "Updating all...",
       "button": "Update all",
       "version": "New {{version}}",
       "buttonAction": "Update available",

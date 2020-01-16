@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useCallback } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";

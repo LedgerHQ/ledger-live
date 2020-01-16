@@ -13,7 +13,6 @@ import {
 } from "react-navigation-tabs";
 import type { NavigationScreenProp } from "react-navigation";
 import { Platform } from "react-native";
-import { useApps } from "./screens/Manager/shared";
 import PortfolioIcon from "./icons/Portfolio";
 import SettingsIcon from "./icons/Settings";
 import ManagerIcon from "./icons/Manager";
@@ -188,26 +187,17 @@ SettingsStack.navigationOptions = {
   ),
 };
 
-const ManagerMain = ({ navigation }: *) => {
-  const { appRes, deviceId } = navigation.state.params;
-  const [state, dispatch] = useApps(appRes, deviceId);
-
-  return (
-    <ManagerScreen screenProps={{ state, dispatch }} navigation={navigation} />
-  );
-};
-
-ManagerMain.navigationOptions = ({ navigation }) => ({
+ManagerScreen.navigationOptions = {
   title: i18next.t("manager.tabTitle"),
   headerStyle: styles.headerNoShadow,
-});
+};
 
 const ManagerStack = createStackNavigator(
   {
     // $FlowFixMe
     Manager,
     // $FlowFixMe
-    ManagerMain,
+    ManagerMain: ManagerScreen,
   },
   {
     ...stackNavigatorConfig,

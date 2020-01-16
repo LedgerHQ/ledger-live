@@ -60,12 +60,13 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     {
       key: MANAGER_TABS.INSTALLED_APPS,
       title: i18next.t("manager.installedApps"),
+      notif: null,
     },
   ]);
 
   const [filters, setFilters] = useState([]);
-  const [sort, setSort] = useState("name");
-  const [order, setOrder] = useState("asc");
+  const [sort, setSort] = useState("marketcap");
+  const [order, setOrder] = useState("desc");
 
   const [position] = useState(() => new Animated.Value(0));
 
@@ -83,8 +84,8 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   );
 
   const scrollToTop = useCallback(() => {
-    if (scrollY > 380)
-      setTimeout(() => listRef.current.scrollToIndex({ index: 3 }), 100);
+    if (scrollY > 280)
+      setTimeout(() => listRef.current.scrollToIndex({ index: 1 }), 100);
   }, [scrollY]);
 
   const jumpTo = useCallback(
@@ -103,11 +104,6 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     [setIndex, scrollToTop],
   );
 
-  const onUpdateProgressPress = useCallback(() => {
-    setIndex(1);
-    listRef.current.scrollToIndex({ index: 1 });
-  });
-
   const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
     dispatch,
   ]);
@@ -123,6 +119,14 @@ const AppsScreen = ({ state, dispatch }: Props) => {
             apps.findIndex(({ name }) => name === app.name) === i,
         ),
     [installed, installQueue, appByName],
+  );
+
+  const appsToUpdate = useMemo(
+    () =>
+      apps.filter(app =>
+        installed.some(({ name, updated }) => name === app.name && !updated),
+      ),
+    [apps, installed],
   );
 
   const filterOptions = useMemo(
@@ -180,6 +184,12 @@ const AppsScreen = ({ state, dispatch }: Props) => {
       case MANAGER_TABS.INSTALLED_APPS:
         return (
           <>
+            <AppUpdateAll
+              appsToUpdate={appsToUpdate}
+              installQueue={state.installQueue}
+              uninstallQueue={state.uninstallQueue}
+              dispatch={dispatch}
+            />
             <View>
               {installedApps && installedApps.length > 0 && (
                 <View style={[styles.searchBarContainer]}>
@@ -208,13 +218,36 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     }
   };
 
+  const renderLabel = useCallback(
+    ({
+      route,
+      color,
+    }: {
+      route: { title: String, key: string },
+      color: string,
+    }) => (
+      <View style={styles.labelStyle}>
+        <LText
+          bold
+          style={{
+            ...styles.labelStyle,
+            color,
+          }}
+        >
+          {route.title}
+        </LText>
+        {route.key === MANAGER_TABS.INSTALLED_APPS && appsToUpdate.length > 0 && (
+          <LText bold style={styles.updateBadge}>
+            {appsToUpdate.length}
+          </LText>
+        )}
+      </View>
+    ),
+    [appsToUpdate, MANAGER_TABS],
+  );
+
   const elements = [
     <DeviceCard state={state} />,
-    <AppUpdateAll
-      state={state}
-      dispatch={dispatch}
-      onUpdateProgressPress={onUpdateProgressPress}
-    />,
     <View>
       <TabBar
         position={position}
@@ -227,6 +260,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         inactiveColor={colors.grey}
         labelStyle={styles.labelStyle}
         contentContainerStyle={styles.contentContainerStyle}
+        renderLabel={renderLabel}
       />
       <View style={styles.searchBar}>
         <Animated.View
@@ -292,7 +326,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         data={elements}
         renderItem={({ item }) => item}
         keyExtractor={(_, i) => String(i)}
-        stickyHeaderIndices={[2]}
+        stickyHeaderIndices={[1]}
       />
     </SafeAreaView>
   );
@@ -359,6 +393,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   labelStyle: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "center",
     backgroundColor: "transparent",
     textTransform: "capitalize",
     fontWeight: "bold",
@@ -367,7 +404,18 @@ const styles = StyleSheet.create({
     margin: 0,
     paddingHorizontal: 0,
     textAlign: "left",
-    width: "100%",
+  },
+  updateBadge: {
+    marginTop: 2,
+    marginLeft: 8,
+    backgroundColor: colors.live,
+    minWidth: 15,
+    height: 15,
+    borderRadius: 20,
+    color: colors.white,
+    fontSize: 10,
+    textAlign: "center",
+    paddingHorizontal: 4,
   },
   contentContainerStyle: {
     marginTop: 16,

@@ -5,7 +5,6 @@ import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { deviceNameByDeviceIdSelector } from "../../../reducers/ble";
-import { saveBleDeviceName } from "../../../actions/ble";
 import LText from "../../../components/LText";
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
   deviceId: string,
   initialDeviceName: string,
   savedName: string,
-  saveBleDeviceName: (string, string) => *,
 };
 
 const DeviceNameRow = ({
@@ -49,7 +47,6 @@ export default connect(
   createStructuredSelector({
     savedName: deviceNameByDeviceIdSelector,
   }),
-  { saveBleDeviceName },
 )(withNavigation(DeviceNameRow));
 
 const styles = StyleSheet.create({
