@@ -62,7 +62,7 @@ class OperationRow extends PureComponent<Props, *> {
       key: operation.id,
     };
 
-    navigation.navigate("OperationDetails", params);
+    navigation.push("OperationDetails", params);
   };
 
   render() {

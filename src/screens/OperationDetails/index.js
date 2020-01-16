@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import i18next from "i18next";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { HeaderBackButton } from "react-navigation-stack";
@@ -25,6 +25,7 @@ import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
 import HeaderBackImage from "../../components/HeaderBackImage";
+import Close from "../../icons/Close";
 
 const forceInset = { bottom: "always" };
 
@@ -44,12 +45,19 @@ type Navigation = NavigationScreenProp<{
 const BackButton = ({ navigation }: { navigation: Navigation }) => (
   <HeaderBackButton
     tintColor={colors.grey}
-    onPress={() => {
-      navigation.goBack();
-    }}
+    onPress={() => navigation.popToTop()}
   >
     <HeaderBackImage />
   </HeaderBackButton>
+);
+
+const CloseButton = ({ navigation }: { navigation: Navigation }) => (
+  <TouchableOpacity
+    onPress={() => navigation.goBack()}
+    style={{ padding: 16, marginHorizontal: 8 }}
+  >
+    <Close size={18} color={colors.grey} />
+  </TouchableOpacity>
 );
 
 class OperationDetails extends PureComponent<Props, *> {
@@ -62,13 +70,14 @@ class OperationDetails extends PureComponent<Props, *> {
       return {
         title: i18next.t("operationDetails.title"),
         headerLeft: <BackButton navigation={navigation} />,
-        headerRight: null,
+        headerRight: <CloseButton navigation={navigation} />,
       };
     }
 
     return {
       title: i18next.t("operationDetails.title"),
-      headerLeft: null,
+      headerLeft: <BackButton navigation={navigation} />,
+      headerRight: null,
     };
   };
 
