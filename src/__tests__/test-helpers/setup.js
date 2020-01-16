@@ -21,7 +21,10 @@ axios.interceptors.response.use(
     if (e.response) {
       const { data, status } = e.response;
       console.warn("http error", e.response.status, e.request.path);
-      log("http-error", "HTTP " + status + ": " + String(e), { data });
+      log("http-error", "HTTP " + status + ": " + String(e), {
+        data,
+        path: e.request.path
+      });
     }
     return Promise.reject(e);
   }
