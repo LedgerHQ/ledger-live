@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import {
   NotEnoughBalance,
-  // NotEnoughBalanceInParentAccount,
+  NotEnoughBalanceInParentAccount,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecommendUndelegation,
   NotSupportedLegacyAddress
@@ -40,13 +40,11 @@ const accountTZRevealedNoDelegate = makeAccount(
   "tezosbip44h"
 );
 
-/*
 const accountTZemptyWithKT = makeAccount(
   "TZemptyWithKT",
   "020c38103f932f446dc4c09ac946e9643386609453e77716d3df45f1149aa52072",
   "tezbox"
 );
-*/
 
 const addressAccountTZrevealedDelegating =
   "tz1boBHAVpwcvKkNFAQHYr7mjxAz1PpVgKq7";
@@ -64,12 +62,6 @@ const dataset: DatasetTest<Transaction> = {
     tezos: {
       accounts: [
         {
-          FIXME_tests: [
-            // LM-495
-            "balance is sum of ops",
-            // LM-495
-            "existing operations"
-          ],
           raw: accountTZrevealedDelegating,
           transactions: [
             {
@@ -304,13 +296,12 @@ const dataset: DatasetTest<Transaction> = {
         },
 
         {
-          raw: accountTZwithKT,
           FIXME_tests: [
-            // LM-495
             "balance is sum of ops",
             // because of prev bug we have bug on
             "from KT 2, send max to existing account"
           ],
+          raw: accountTZwithKT,
           transactions: [
             {
               name: "from KT 1, send max to new account",
@@ -365,8 +356,7 @@ const dataset: DatasetTest<Transaction> = {
               )
             }
           ]
-        }
-        /*
+        },
         {
           raw: accountTZemptyWithKT,
           transactions: [
@@ -399,14 +389,12 @@ const dataset: DatasetTest<Transaction> = {
                 }
               ),
               expectedStatus: {
-                errors: { amount: new NotEnoughBalance() },
-                // FIXME shouldn't it be this?
-                // errors: { amount: new NotEnoughBalanceInParentAccount() },
+                errors: { amount: new NotEnoughBalanceInParentAccount() },
                 warnings: {}
               }
             }
           ]
-        }*/
+        }
       ]
     }
   }
