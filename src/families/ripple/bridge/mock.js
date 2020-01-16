@@ -19,6 +19,12 @@ import {
   isInvalidRecipient
 } from "../../../bridge/mockHelpers";
 
+const notCreatedAddresses = [];
+
+export function addNotCreatedRippleMockAddress(addr: string) {
+  notCreatedAddresses.push(addr);
+}
+
 const defaultGetFees = (a: Account, t: *) => t.fee || BigNumber(0);
 
 const createTransaction = (): Transaction => ({
@@ -64,7 +70,8 @@ const getTransactionStatus = (a, t) => {
     errors.amount = new NotEnoughSpendableBalance();
   } else if (
     minimalBaseAmount &&
-    t.recipient.includes("new") &&
+    (t.recipient.includes("new") ||
+      notCreatedAddresses.includes(t.recipient)) &&
     amount.lt(minimalBaseAmount)
   ) {
     // mimic XRP base minimal for new addresses

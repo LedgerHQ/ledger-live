@@ -8,6 +8,11 @@ import {
 } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
+import { addNotCreatedRippleMockAddress } from "./bridge/mock";
+
+const newAddress1 = "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4";
+
+addNotCreatedRippleMockAddress(newAddress1);
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "ripplejs"],
@@ -41,7 +46,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "operation amount to low to create the recipient account",
               transaction: fromTransactionRaw({
                 family: "ripple",
-                recipient: "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4",
+                recipient: newAddress1,
                 amount: "10000000",
                 tag: null,
                 fee: "1",
@@ -85,7 +90,7 @@ const dataset: DatasetTest<Transaction> = {
                 family: "ripple",
                 recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
                 amount: "10000000",
-                tag: "12345",
+                tag: 12345,
                 fee: "1",
                 feeCustomUnit: null,
                 networkInfo: null
