@@ -10,6 +10,13 @@ import type { DatasetTest } from "./test-helpers/bridge";
 
 setup("libcore");
 
+test("libcore version", async () => {
+  const v = await withLibcore(core => core.LedgerCore.getStringVersion());
+  expect(v).toBeString();
+  // eslint-disable-next-line no-console
+  console.log("libcore version " + v);
+});
+
 describe("libcore access", () => {
   test("withLibcore", async () => {
     const res = await withLibcore(async core => {

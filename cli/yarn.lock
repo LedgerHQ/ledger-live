@@ -947,10 +947,10 @@
     "@ledgerhq/errors" "^5.5.0"
     events "^3.1.0"
 
-"@ledgerhq/ledger-core@5.2.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-5.2.0.tgz#f4570d907554ea95ca87ec4ec213663904839f7e"
-  integrity sha512-Clk5uzxc4xUHOeoZ1eqMEko5dMEfmv0XFPn2DeVW1SHW2IOBoU6OypBfFIgW7DrFpWusaulp/TK8toIT8oeKTQ==
+"@ledgerhq/ledger-core@^5.3.0-alpha.0":
+  version "5.3.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-5.3.0-alpha.0.tgz#88b28b6632fe54580006293cf066b215413cf2e3"
+  integrity sha512-TYtWKlw4Rs/y9PGR2RE7LrQbwZhDa/wFPl1lPp/uF9m0WPhMGURbSE3lK+mYcg1035QRw7hUey/LSXRrWMCL6w==
   dependencies:
     bindings "1.3.0"
     nan "^2.6.2"
