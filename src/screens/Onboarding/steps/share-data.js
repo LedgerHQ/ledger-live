@@ -9,7 +9,6 @@ import { withOnboardingContext } from "../onboardingContext";
 import AnalyticsRow from "../../Settings/General/AnalyticsRow";
 import ReportErrorsRow from "../../Settings/General/ReportErrorsRow";
 import TechnicalDataRow from "../../Settings/General/TechnicalDataRow";
-import TermsOfUseRow from "../../Settings/General/TermsOfUseRow";
 
 import type { OnboardingStepProps } from "../types";
 
@@ -39,7 +38,6 @@ class OnboardingStepShareData extends Component<OnboardingStepProps> {
         <AnalyticsRow />
         <ReportErrorsRow borderTop />
         <TechnicalDataRow borderTop />
-        <TermsOfUseRow borderTop />
       </OnboardingLayout>
     );
   }
