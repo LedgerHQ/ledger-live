@@ -806,7 +806,8 @@
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin",
       "confirmationNb": "Number of confirmations",
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
-      "currencySettingsTitle": "{{currencyName}} Settings"
+      "currencySettingsTitle": "{{currencyName}} Settings",
+      "placeholder": "No settings for this asset",
     },
     "rates": {
       "header": "Rates",
