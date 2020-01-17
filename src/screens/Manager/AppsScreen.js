@@ -237,9 +237,11 @@ const AppsScreen = ({ state, dispatch }: Props) => {
           {route.title}
         </LText>
         {route.key === MANAGER_TABS.INSTALLED_APPS && appsToUpdate.length > 0 && (
-          <LText bold style={styles.updateBadge}>
-            {appsToUpdate.length}
-          </LText>
+          <View style={styles.updateBadge}>
+            <LText bold style={styles.updateBadgeText}>
+              {appsToUpdate.length}
+            </LText>
+          </View>
         )}
       </View>
     ),
@@ -412,10 +414,12 @@ const styles = StyleSheet.create({
     minWidth: 15,
     height: 15,
     borderRadius: 20,
+    paddingHorizontal: 4,
+  },
+  updateBadgeText: {
     color: colors.white,
     fontSize: 10,
     textAlign: "center",
-    paddingHorizontal: 4,
   },
   contentContainerStyle: {
     marginTop: 16,
