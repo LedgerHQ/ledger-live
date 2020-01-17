@@ -39,7 +39,6 @@ type Props = {
   counterValueCurrency: Currency,
   t: T,
 };
-const List = globalSyncRefreshControl(FlatList);
 
 const distributionSelector = createSelector(
   accountsSelector,
@@ -56,7 +55,7 @@ class Distribution extends PureComponent<Props, *> {
   state = {
     highlight: -1,
   };
-  flatListRef: *;
+  flatListRef = React.createRef();
 
   static navigationOptions = {
     title: i18next.t("distribution.header"),
@@ -81,7 +80,9 @@ class Distribution extends PureComponent<Props, *> {
 
   onHighlightChange = index => {
     this.setState({ highlight: index });
-    this.flatListRef.scrollToIndex({ index }, true);
+    if(this.flatListRef.current){
+      this.flatListRef.current.scrollToIndex({ index }, true);
+    }
   };
 
   keyExtractor = item => item.currency.id;
@@ -140,10 +141,8 @@ class Distribution extends PureComponent<Props, *> {
       <SafeAreaView style={styles.wrapper} forceInset={forceInset}>
         <TrackScreen category="Distribution" />
         <Header />
-        <List
-          forwardedRef={ref => {
-            this.flatListRef = ref;
-          }}
+        <FlatList
+          ref={this.flatListRef}
           data={distribution.list}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
