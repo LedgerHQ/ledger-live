@@ -1198,7 +1198,7 @@
     "storage": {
       "title": "Storage",
       "used": "Used",
-      "capacity": "Capacity:",
+      "genuine": "Your device is Genuine",
       "appsInstalled": "{{appsInstalled}} apps installed",
       "storageAvailable": "available"
     }

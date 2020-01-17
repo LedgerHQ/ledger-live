@@ -3,7 +3,7 @@ import React, { memo, useContext } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { Trans } from "react-i18next";
 import type { State } from "@ledgerhq/live-common/lib/apps";
-import { formatSize, distribute } from "@ledgerhq/live-common/lib/apps";
+import { distribute } from "@ledgerhq/live-common/lib/apps";
 import LText from "../../../components/LText";
 import Genuine from "../../../icons/Genuine";
 import DeviceAppStorage from "./DeviceAppStorage";
@@ -32,23 +32,8 @@ type Props = {
 const DeviceCard = ({ state }: Props) => {
   const { deviceModel, firmware } = state;
   const distribution = distribute(state);
-  const capacity = formatSize(distribution.appsSpaceBytes);
 
   const { deviceId, initialDeviceName } = useContext(ManagerContext);
-
-  const nameBlock =
-    deviceModel.id !== "nanoS" ? (
-      <DeviceName deviceId={deviceId} initialDeviceName={initialDeviceName} />
-    ) : (
-      <LText
-        bold
-        numberOfLines={1}
-        ellipsizeMode="tail"
-        style={styles.deviceName}
-      >
-        {deviceModel.productName}
-      </LText>
-    );
 
   return (
     <Card style={styles.card}>
@@ -62,8 +47,11 @@ const DeviceCard = ({ state }: Props) => {
         </View>
         <View style={styles.deviceInfoContainer}>
           <View style={styles.deviceNameContainer}>
-            {nameBlock}
-            <Genuine />
+            <DeviceName
+              deviceId={deviceId}
+              deviceModel={deviceModel}
+              initialDeviceName={initialDeviceName}
+            />
           </View>
 
           <LText style={styles.deviceFirmware}>
@@ -74,12 +62,9 @@ const DeviceCard = ({ state }: Props) => {
           </LText>
           <View style={styles.deviceCapacity}>
             <LText style={styles.deviceFirmware}>
-              <Trans i18nKey="manager.storage.capacity" />
+              <Trans i18nKey="manager.storage.genuine" />
             </LText>
-            <LText style={styles.capacityText} semiBold>
-              {" "}
-              {capacity}
-            </LText>
+            <Genuine />
           </View>
         </View>
       </View>
@@ -133,9 +118,11 @@ const styles = StyleSheet.create({
   deviceFirmware: {
     fontSize: 13,
     color: colors.grey,
+    paddingRight: 8,
   },
   deviceCapacity: {
     flexDirection: "row",
+    alignItems: "center",
     marginTop: 16,
   },
   storageSection: {

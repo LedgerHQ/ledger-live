@@ -17,7 +17,7 @@ import {
 } from "@ledgerhq/live-common/lib/apps";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
-import Exclamation from "../../../icons/Exclamation";
+import Warning from "../../../icons/Warning";
 import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
@@ -81,9 +81,7 @@ const AppRow = ({ app, state, dispatch, tab, visible }: Props) => {
               onPress={onSizePress}
               style={styles.warnText}
             >
-              <View style={styles.warnIcon}>
-                <Exclamation size={16} color={colors.white} />
-              </View>
+              <Warning size={16} color={colors.lightOrange} />
               <LText
                 semiBold
                 style={[styles.versionText, styles.sizeText, styles.warnText]}
@@ -152,16 +150,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   warnText: {
-    color: colors.orange,
+    color: colors.lightOrange,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  warnIcon: {
-    height: 16,
-    width: 16,
-    backgroundColor: colors.orange,
-    borderRadius: 16,
   },
   installedLabel: {
     flexGrow: 1,
