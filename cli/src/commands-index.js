@@ -19,6 +19,7 @@ import libcoreReset from "./commands/libcoreReset";
 import libcoreSetPassword from "./commands/libcoreSetPassword";
 import liveData from "./commands/liveData";
 import managerListApps from "./commands/managerListApps";
+import portfolio from "./commands/portfolio";
 import proxy from "./commands/proxy";
 import receive from "./commands/receive";
 import repl from "./commands/repl";
@@ -50,6 +51,7 @@ export default {
   libcoreSetPassword,
   liveData,
   managerListApps,
+  portfolio,
   proxy,
   receive,
   repl,
