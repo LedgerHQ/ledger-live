@@ -27,7 +27,8 @@ async function bitcoin({ coreAccount }: Input): Output {
       speed: speeds[i],
       feePerByte
     })),
-    defaultFeePerByte: normalized[Math.floor(normalized.length / 2)]
+    defaultFeePerByte:
+      normalized[Math.floor(normalized.length / 2)] || BigNumber(0)
   };
   return {
     family: "bitcoin",
