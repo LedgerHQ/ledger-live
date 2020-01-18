@@ -6,6 +6,11 @@ import type { CryptoCurrency } from "../types";
 import type { DerivationMode } from "../derivation";
 import getAddress from "../hw/getAddress";
 
+// In order to not re-query the same path, we use a temporary cache
+export class DerivationsCache {
+  store: { [_: string]: { publicKey: string, chainCode?: string } } = {};
+}
+
 type F = ({
   core: Core,
   wallet: CoreWallet,
@@ -13,7 +18,8 @@ type F = ({
   currency: CryptoCurrency,
   index: number,
   derivationMode: DerivationMode,
-  isUnsubscribed: () => boolean
+  isUnsubscribed: () => boolean,
+  derivationsCache: DerivationsCache
 }) => Promise<?CoreAccount>;
 
 export const createAccountFromDevice: F = async ({
@@ -22,7 +28,8 @@ export const createAccountFromDevice: F = async ({
   transport,
   currency,
   derivationMode,
-  isUnsubscribed
+  isUnsubscribed,
+  derivationsCache
 }) => {
   log(
     "libcore",
@@ -45,13 +52,19 @@ export const createAccountFromDevice: F = async ({
     (promise, derivation) =>
       promise.then(async () => {
         if (isUnsubscribed()) return;
-        const { publicKey, chainCode } = await getAddress(transport, {
-          currency,
-          path: derivation,
-          derivationMode,
-          askChainCode: true,
-          skipAppFailSafeCheck: true
-        });
+
+        let cache = derivationsCache.store[derivation];
+        if (!cache) {
+          cache = await getAddress(transport, {
+            currency,
+            path: derivation,
+            derivationMode,
+            askChainCode: true,
+            skipAppFailSafeCheck: true
+          });
+          derivationsCache.store[derivation] = cache;
+        }
+        const { publicKey, chainCode } = cache;
         publicKeys.push(publicKey);
         if (chainCode) chainCodes.push(chainCode);
       }),
