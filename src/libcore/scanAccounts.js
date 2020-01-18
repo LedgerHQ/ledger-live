@@ -29,7 +29,10 @@ import getAddress from "../hw/getAddress";
 import { withLibcoreF } from "./access";
 import { syncCoreAccount, newSyncLogId } from "./syncAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
-import { createAccountFromDevice } from "./createAccountFromDevice";
+import {
+  DerivationsCache,
+  createAccountFromDevice
+} from "./createAccountFromDevice";
 import { remapLibcoreErrors, isNonExistingAccountError } from "./errors";
 import type { Core, CoreWallet } from "./types";
 
@@ -45,7 +48,8 @@ async function scanNextAccount(props: {
   showNewAccount: boolean,
   isUnsubscribed: () => boolean,
   emptyCount?: number,
-  syncConfig: SyncConfig
+  syncConfig: SyncConfig,
+  derivationsCache: DerivationsCache
 }) {
   const logId = newSyncLogId();
 
@@ -60,7 +64,8 @@ async function scanNextAccount(props: {
     derivationMode,
     showNewAccount,
     isUnsubscribed,
-    syncConfig
+    syncConfig,
+    derivationsCache
   } = props;
 
   log(
@@ -83,7 +88,8 @@ async function scanNextAccount(props: {
       currency,
       index: accountIndex,
       derivationMode,
-      isUnsubscribed
+      isUnsubscribed,
+      derivationsCache
     });
   }
 
@@ -228,7 +234,8 @@ export const scanAccounts = ({
               derivationMode,
               showNewAccount: shouldShowNewAccount(currency, derivationMode),
               isUnsubscribed,
-              syncConfig
+              syncConfig,
+              derivationsCache: new DerivationsCache()
             });
           }
           o.complete();
