@@ -1,6 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
+import { Observable, defer, from } from "rxjs";
 import { reduce, filter, map } from "rxjs/operators";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import type {
@@ -22,7 +23,11 @@ import {
 } from "../../account";
 import { getCryptoCurrencyById } from "../../currencies";
 import { getOperationAmountNumber } from "../../operation";
-import { fromTransactionRaw, toTransactionRaw } from "../../transaction";
+import {
+  fromTransactionRaw,
+  toTransactionRaw,
+  toTransactionStatusRaw
+} from "../../transaction";
 import { getBalanceHistoryJS, getRanges } from "../../portfolio";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
@@ -33,9 +38,16 @@ export type CurrenciesData<T: Transaction> = {|
   scanAccounts?: Array<{|
     name: string,
     apdus: string,
-    test?: (ExpectFn, Account[], CurrencyBridge) => any
+    accountsSnapshot: AccountRaw[],
+    test?: (
+      expect: ExpectFn,
+      scanned: Account[],
+      snapshot: AccountRaw[],
+      bridge: CurrencyBridge
+    ) => any
   |}>,
-  accounts: Array<{|
+  accounts?: Array<{|
+    implementations?: string[],
     raw: AccountRaw,
     FIXME_tests?: Array<string | RegExp>,
     transactions?: Array<{|
@@ -105,16 +117,19 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
     const currencyData = currencies[currencyId];
     const currency = getCryptoCurrencyById(currencyId);
 
-    implementations.forEach(impl => {
-      currenciesRelated.push({
-        currencyData,
-        currency,
-        impl
-      });
+    currenciesRelated.push({
+      currencyData,
+      currency
     });
 
-    currencyData.accounts.forEach(accountData =>
+    (currencyData.accounts || []).forEach(accountData =>
       implementations.forEach(impl => {
+        if (
+          accountData.implementations &&
+          !accountData.implementations.includes(impl)
+        ) {
+          return;
+        }
         const account = fromAccountRaw({
           ...accountData.raw,
           id: encodeAccountId({
@@ -132,36 +147,98 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
     );
   });
 
-  currenciesRelated.map(({ currencyData, currency, impl }) => {
+  const accountsFoundInScanAccountsMap = {};
+  const preloadObservables: Array<Observable<any>> = [];
+
+  currenciesRelated.map(({ currencyData, currency }) => {
     const bridge = getCurrencyBridge(currency);
-    describe(impl + " " + currency.id + " currency bridge", () => {
+
+    const scanAccounts = async apdus => {
+      const deviceId = mockDeviceWithAPDUs(apdus);
+      try {
+        const accounts = await bridge
+          .scanAccounts({
+            currency,
+            deviceId,
+            syncConfig: {
+              paginationConfig: {}
+            }
+          })
+          .pipe(
+            filter(e => e.type === "discovered"),
+            map(e => e.account),
+            reduce((all, a) => all.concat(a), [])
+          )
+          .toPromise();
+
+        return accounts;
+      } finally {
+        releaseMockDevice(deviceId);
+      }
+    };
+
+    let scanAccountsCaches = {};
+    const scanAccountsCached = apdus =>
+      scanAccountsCaches[apdus] ||
+      (scanAccountsCaches[apdus] = scanAccounts(apdus));
+
+    describe(currency.id + " currency bridge", () => {
       const { scanAccounts } = currencyData;
-      if (scanAccounts && impl !== "mock") {
+      if (scanAccounts) {
         describe("scanAccounts", () => {
           scanAccounts.forEach(sa => {
-            test(sa.name, async () => {
-              const deviceId = mockDeviceWithAPDUs(sa.apdus);
-              try {
-                const accounts = await bridge
-                  .scanAccounts({
-                    currency,
-                    deviceId,
-                    syncConfig: {
-                      paginationConfig: {}
-                    }
-                  })
-                  .pipe(
-                    filter(e => e.type === "discovered"),
-                    map(e => e.account),
-                    reduce((all, a) => all.concat(a), [])
+            // we start running the scan accounts in parallel!
+            preloadObservables.push(
+              defer(() =>
+                from(
+                  scanAccountsCached(sa.apdus).then(
+                    () => null,
+                    () => {}
                   )
-                  .toPromise();
-                const testFn = sa.test;
-                if (testFn) {
-                  await testFn(expect, accounts, bridge);
-                }
-              } finally {
-                releaseMockDevice(deviceId);
+                )
+              )
+            );
+
+            test(sa.name, async () => {
+              const accounts = await scanAccountsCached(sa.apdus);
+
+              accounts.forEach(a => {
+                accountsFoundInScanAccountsMap[a.id] = a;
+              });
+
+              expect(accounts.map(a => toAccountRaw(a))).toMatchObject(
+                sa.accountsSnapshot.map(a => {
+                  const copy: Object = { ...a };
+                  delete copy.operations;
+                  delete copy.lastSyncDate;
+                  delete copy.blockHeight;
+                  delete copy.balanceHistory;
+                  return copy;
+                })
+              );
+
+              expect(
+                accounts.map(a =>
+                  toAccountRaw(a)
+                    .operations.slice(0)
+                    .sort((a, b) => a.id.localeCompare(b.id))
+                )
+              ).toMatchObject(
+                sa.accountsSnapshot.map(a =>
+                  a.operations
+                    .slice(0)
+                    .sort((a, b) => a.id.localeCompare(b.id))
+                    .map(op => {
+                      const copy: Object = { ...op };
+                      delete copy.date;
+                      return copy;
+                    })
+                )
+              );
+
+              const testFn = sa.test;
+              if (testFn) {
+                await testFn(expect, accounts, sa.accountsSnapshot, bridge);
               }
             });
           });
@@ -207,7 +284,14 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
       return { getSynced, bridge, initialAccount: account, ...rest };
     })
     .forEach(arg => {
-      const { getSynced, bridge, initialAccount, accountData, impl } = arg;
+      const {
+        getSynced,
+        bridge,
+        initialAccount,
+        accountData,
+        impl,
+        currencyData
+      } = arg;
 
       const makeTest = (name, fn) => {
         if (
@@ -228,6 +312,31 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
             const account = await getSynced();
             expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
           });
+
+          if (impl !== "mock") {
+            const accFromScanAccounts =
+              accountsFoundInScanAccountsMap[initialAccount.id];
+            if (accFromScanAccounts) {
+              makeTest(
+                "matches the same account from scanAccounts",
+                async () => {
+                  const acc = await getSynced();
+                  expect(acc).toMatchObject(accFromScanAccounts);
+                }
+              );
+            } else {
+              console.warn(
+                initialAccount.id +
+                  " is NOT present in scanAccounts tests. " +
+                  (currencyData.scanAccounts
+                    ? "scanAccounts tests should covers the same accounts & same account ids were used. "
+                    : "") +
+                  "ProTip: with the same seed and a fresh db, `ledger-live generateTestScanAccounts -c " +
+                  initialAccount.currency.id +
+                  "`"
+              );
+            }
+          }
 
           makeTest("bridge ref equality", async () => {
             const account = await getSynced();
@@ -494,7 +603,27 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                     typeof expectedStatus === "function"
                       ? expectedStatus(account, t, s)
                       : expectedStatus;
-                  expect(s).toMatchObject(es);
+                  const { errors, warnings } = es;
+                  // we match errors and warnings
+                  if (errors) {
+                    expect(s.errors).toMatchObject(errors);
+                  }
+                  if (warnings) {
+                    expect(s.warnings).toMatchObject(warnings);
+                  }
+                  // now we match rest of fields but using the raw version for better readability
+                  const restRaw: Object = toTransactionStatusRaw({
+                    ...s,
+                    ...es
+                  });
+                  delete restRaw.errors;
+                  delete restRaw.warnings;
+                  for (let k in restRaw) {
+                    if (!(k in es)) {
+                      delete restRaw[k];
+                    }
+                  }
+                  expect(toTransactionStatusRaw(s)).toMatchObject(restRaw);
                 }
                 if (testFn) {
                   await testFn(expect, t, s, bridge);
@@ -544,4 +673,8 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
         });
       });
     });
+
+  return {
+    preloadObservables
+  };
 }

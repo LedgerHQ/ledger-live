@@ -38,6 +38,11 @@ const args = [
     desc: "do not output the proxy logs"
   },
   {
+    name: "auto-skip",
+    type: Boolean,
+    desc: "auto skip apdu that don't replay instead of error"
+  },
+  {
     name: "port",
     alias: "p",
     type: String,
@@ -51,7 +56,15 @@ const args = [
   }
 ];
 
-const job = ({ device, file, record, port, silent, verbose }) =>
+const job = ({
+  device,
+  file,
+  record,
+  port,
+  silent,
+  verbose,
+  "auto-skip": autoSkipUnknownApdu
+}) =>
   Observable.create(o => {
     const unsub = listen(l => {
       if (verbose) {
@@ -83,7 +96,9 @@ const job = ({ device, file, record, port, silent, verbose }) =>
         recordStore = new RecordStore([]);
         Transport = createTransportRecorder(getTransportLike(), recordStore);
       } else {
-        recordStore = RecordStore.fromString(fs.readFileSync(file, "utf8"));
+        recordStore = RecordStore.fromString(fs.readFileSync(file, "utf8"), {
+          autoSkipUnknownApdu
+        });
         if (recordStore.isEmpty()) {
           process.exit(0);
         }

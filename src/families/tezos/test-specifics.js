@@ -1,7 +1,7 @@
 // @flow
 
 import { fromAccountRaw } from "../../account";
-import dataset from "./test-dataset";
+import { accountTZrevealedDelegating } from "./test-dataset";
 import { loadAccountDelegation, listBakers } from "./bakers";
 import whitelist from "./bakers.whitelist-default";
 
@@ -14,7 +14,7 @@ export default () => {
 
     // TODO we'll need two accounts to test diff cases
     test("load account baker info", async () => {
-      const account = fromAccountRaw(dataset.currencies.tezos.accounts[0].raw);
+      const account = fromAccountRaw(accountTZrevealedDelegating);
       const delegation = await loadAccountDelegation(account);
       expect(delegation).toBe(null);
     });

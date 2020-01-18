@@ -31,30 +31,24 @@ export default {
       reduce((all, a) => all.concat(a), []),
       map(accounts => {
         if (accounts.length === 0) throw new Error("no accounts!");
+        const { currency } = accounts[0];
         return `
-// Put that in a dataset, under currencies{${
-          accounts[0].currency.id
-        }{scanAccounts:[...
-{
-  name: "test seed 1",
-  apdus: \`
-${apdus.map(a => "  " + a).join("\n")}
-  \`,
-  test: (expect, accounts) => {
-    expect(accounts.map(toAccountRaw)).toMatchObject(
-${JSON.stringify(
-  accounts.map(a =>
-    toAccountRaw({
-      ...a,
-      operations: [],
-      balanceHistory: undefined,
-      freshAddresses: []
-    })
-  )
-)}
-    )
-  }
-}
+// @flow
+import type { CurrenciesData } from "../../../__tests__/test-helpers/bridge";
+import type { Transaction } from "../types";
+
+const dataset: CurrenciesData<Transaction> = {
+  scanAccounts: [
+    {
+      name: "${currency.id} seed 1",
+      apdus: \`\n${apdus.map(a => "      " + a).join("\n")}\n      \`,
+      // prettier-ignore
+      accountsSnapshot: ${JSON.stringify(accounts.map(a => toAccountRaw(a)))}
+    }
+  ]
+};
+
+export default dataset;
 `;
       })
     );

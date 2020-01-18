@@ -272,7 +272,7 @@ export function genAddingOperationsInAccount(
       const op = genOperation(copy, copy, ops, rng);
       return ops.concat(op);
     }, copy.operations);
-  copy.balance = ensureNoNegative(copy.operations);
+  copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
   return copy;
 }
 
@@ -373,6 +373,8 @@ export function genAccount(
 
   account.operationsCount = account.operations.length;
 
-  account.balance = ensureNoNegative(account.operations);
+  account.spendableBalance = account.balance = ensureNoNegative(
+    account.operations
+  );
   return account;
 }

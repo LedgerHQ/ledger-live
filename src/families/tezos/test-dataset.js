@@ -12,7 +12,7 @@ import { fromTransactionRaw } from "./transaction";
 import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import type { Transaction } from "./types";
 
-const accountTZrevealedDelegating = makeAccount(
+export const accountTZrevealedDelegating = makeAccount(
   "TZrevealedDelegating",
   "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
   "tezbox"
