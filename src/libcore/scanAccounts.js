@@ -111,6 +111,7 @@ async function scanNextAccount(props: {
 
   const isEmpty = isAccountEmpty(account);
   const shouldSkip =
+    accountIndex < getDerivationModeStartsAt(derivationMode) ||
     (isEmpty && !showNewAccount) ||
     !derivationModeSupportsIndex(derivationMode, accountIndex);
 
@@ -227,7 +228,7 @@ export const scanAccounts = ({
               wallet,
               transport,
               currency,
-              accountIndex: getDerivationModeStartsAt(derivationMode),
+              accountIndex: 0,
               onAccountScanned,
               seedIdentifier,
               derivationMode,
