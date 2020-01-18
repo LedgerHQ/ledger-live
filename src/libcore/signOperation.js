@@ -43,7 +43,11 @@ export type Arg<T, CT> = {
     transaction: T,
     coreTransaction: CT,
     isCancelled: () => boolean,
-    onDeviceStreaming: number => void,
+    onDeviceStreaming: ({
+      progress: number,
+      index: number,
+      total: number
+    }) => void,
     onDeviceSignatureRequested: () => void,
     onDeviceSignatureGranted: () => void
   }) => Promise<?SignedOperation>
@@ -95,8 +99,8 @@ export const makeSignOperation = <T: Transaction, CT>({
             transaction,
             coreTransaction: builded,
             isCancelled: () => cancelled,
-            onDeviceStreaming: progress =>
-              o.next({ type: "device-streaming", progress }),
+            onDeviceStreaming: ({ progress, index, total }) =>
+              o.next({ type: "device-streaming", progress, index, total }),
             onDeviceSignatureRequested: () =>
               o.next({ type: "device-signature-requested" }),
             onDeviceSignatureGranted: () =>

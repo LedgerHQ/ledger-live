@@ -71,7 +71,7 @@ export const signOperation: $PropertyType<
       if (cancelled) return;
 
       for (let i = 0; i <= 1; i += 0.1) {
-        o.next({ type: "device-streaming", progress: i });
+        o.next({ type: "device-streaming", progress: i, index: i, total: 10 });
         await delay(300);
       }
 

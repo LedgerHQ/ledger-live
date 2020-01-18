@@ -26,7 +26,7 @@ export type SignOperationEvent =
   // Used when lot of exchange is needed with the device to visually express a progress
   // It can be used before and/or after the signature
   // only used if it can takes >1s to show a visual progress to user (typically UTXO streaming)
-  | { type: "device-streaming", progress: number } // optional
+  | { type: "device-streaming", progress: number, index: number, total: number } // optional
   // REQUIRED Indicates that a signature is now appearing and awaited on the device to confirm
   | { type: "device-signature-requested" }
   // REQUIRED Indicates user have confirmed the transaction
@@ -35,7 +35,7 @@ export type SignOperationEvent =
   | { type: "signed", signedOperation: SignedOperation };
 
 export type SignOperationEventRaw =
-  | { type: "device-streaming", progress: number }
+  | { type: "device-streaming", progress: number, index: number, total: number }
   | { type: "device-signature-requested" }
   | { type: "device-signature-granted" }
   | { type: "signed", signedOperation: SignedOperationRaw };
