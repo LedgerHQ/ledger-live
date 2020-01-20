@@ -71,7 +71,7 @@ const AppRow = ({ app, state, dispatch, tab, visible }: Props) => {
           <Touchable
             activeOpacity={1}
             onPress={() => {}}
-            event="ManagerAppListRowInfoClick"
+            event="ManagerAppRowInfoClick"
             eventProperties={{ appName: name }}
             style={styles.labelContainer}
           >

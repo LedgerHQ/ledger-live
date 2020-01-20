@@ -39,6 +39,8 @@ const AppFilter = ({
           IconLeft={Filters}
           onPress={openModal}
           disabled={disabled}
+          useTouchable
+          event="ManagerAppFilterOpenModal"
         />
         {filters.length > 0 && <NotifBadge />}
       </View>
