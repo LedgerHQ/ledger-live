@@ -36,10 +36,12 @@ const fields: Field[] = [
   {
     title: "Operation Fees",
     cell: (account, parentAccount, op) =>
-      formatCurrencyUnit(getAccountCurrency(account).units[0], op.fee, {
-        disableRounding: true,
-        useGrouping: false
-      })
+      ["TokenAccount", "ChildAccount"].includes(account.type)
+        ? ""
+        : formatCurrencyUnit(getAccountCurrency(account).units[0], op.fee, {
+            disableRounding: true,
+            useGrouping: false
+          })
   },
   {
     title: "Operation Hash",
