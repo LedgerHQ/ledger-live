@@ -35,6 +35,9 @@
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
     "testURL": "http://localhost",
+    "coveragePathIgnorePatterns": [
+      "src/__tests__"
+    ],
     "modulePathIgnorePatterns": [
       "<rootDir>/benchmark/.*",
       "<rootDir>/cli/.yalc/.*"

@@ -148,7 +148,7 @@ export const scanAccounts: $PropertyType<CurrencyBridge, "scanAccounts"> = ({
         account.name = "";
         account.name = validateNameEdition(account);
         if (isLast) {
-          account.balance = BigNumber(0);
+          account.spendableBalance = account.balance = BigNumber(0);
         }
 
         if (!unsubscribed) o.next({ type: "discovered", account });

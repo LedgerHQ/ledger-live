@@ -4,7 +4,7 @@ import "./setup";
 import "../../load/tokens/ethereum/erc20";
 import "./implement-react-native-libcore";
 
-jest.setTimeout(120000);
+jest.setTimeout(180000);
 
 export const setup = testName => {
   global._JEST_SETUP(testName);

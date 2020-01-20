@@ -1,0 +1,103 @@
+// @flow
+
+import { reduce, filter, map } from "rxjs/operators";
+import "./test-helpers/setup";
+import { getAccountBridge, getCurrencyBridge } from "../bridge";
+import { setEnv } from "../env";
+import { getCryptoCurrencyById } from "../currencies";
+import { toAccountRaw } from "../account";
+
+jest.setTimeout(120000);
+
+const mockedCoins = [
+  "bitcoin",
+  "zcash",
+  "ethereum",
+  "ethereum_classic",
+  "ripple"
+];
+
+mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
+  describe("mock " + currency.id, () => {
+    setEnv("MOCK", true);
+    const bridge = getCurrencyBridge(currency);
+    setEnv("MOCK", false);
+    test("scanAccounts", async () => {
+      const accounts = await bridge
+        .scanAccounts({
+          currency,
+          deviceId: "",
+          syncConfig: { paginationConfig: {} }
+        })
+        .pipe(
+          filter(e => e.type === "discovered"),
+          map(e => e.account),
+          reduce((all, a) => all.concat(a), [])
+        )
+        .toPromise();
+
+      expect(accounts.length).toBeGreaterThan(0);
+
+      const [first, second] = await Promise.all(
+        accounts.map(async a => {
+          const bridge = getAccountBridge(a, null);
+          const synced = await bridge
+            .sync(a, { paginationConfig: {} })
+            .pipe(reduce((a, f) => f(a), a))
+            .toPromise();
+          const m: Object = toAccountRaw(a);
+          delete m.lastSyncDate;
+          delete m.blockHeight;
+          expect(toAccountRaw(synced)).toMatchObject(m);
+          return synced;
+        })
+      );
+
+      if (first && second) {
+        const bridge = getAccountBridge(first, null);
+        let t = bridge.createTransaction(first);
+        t = await bridge.prepareTransaction(first, t);
+        t = bridge.updateTransaction(t, {
+          recipient: second.freshAddress,
+          amount: second.balance.div(3)
+        });
+        t = await bridge.prepareTransaction(first, t);
+        const s = await bridge.getTransactionStatus(first, t);
+        expect(s).toMatchObject({
+          amount: t.amount,
+          errors: {},
+          warnings: {}
+        });
+        const signedOperation = await bridge
+          .signOperation({
+            account: first,
+            transaction: t,
+            deviceId: ""
+          })
+          .pipe(
+            filter(e => e.type === "signed"),
+            map(e => e.signedOperation)
+          )
+          .toPromise();
+
+        expect(signedOperation.operation).toBeDefined();
+
+        const operation = await bridge.broadcast({
+          account: first,
+          signedOperation
+        });
+
+        expect(operation.hash).toBeTruthy();
+
+        const firstResynced = await bridge
+          .sync(first, { paginationConfig: {} })
+          .pipe(reduce((a, f) => f(a), first))
+          .toPromise();
+
+        expect(firstResynced.operations.length).toBeGreaterThan(
+          first.operations.length
+        );
+      }
+    });
+  });
+});

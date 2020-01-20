@@ -1,5 +1,8 @@
 // @flow
 
+import { from } from "rxjs";
+import { mergeAll } from "rxjs/operators";
+import { flatMap } from "lodash";
 import { setup } from "./test-helpers/libcore-setup";
 import { withLibcore, afterLibcoreGC } from "../libcore/access";
 import { delay } from "../promise";
@@ -15,6 +18,25 @@ test("libcore version", async () => {
   expect(typeof v).toBe("string");
   // eslint-disable-next-line no-console
   console.log("libcore version " + v);
+});
+
+// covers all bridges through many different accounts
+// to test the common shared properties of bridges.
+const all = Object.keys(dataset)
+  .map(family => {
+    if (process.env.FAMILY && process.env.FAMILY !== family) return;
+    const data: DatasetTest<any> = dataset[family];
+    return testBridge(family, data);
+  })
+  .filter(Boolean);
+
+const MAX_CONCURRENT = 3;
+from(flatMap(all, r => r.preloadObservables))
+  .pipe(mergeAll(MAX_CONCURRENT))
+  .subscribe();
+
+Object.values(specifics).forEach((specific: Function) => {
+  specific();
 });
 
 describe("libcore access", () => {
@@ -63,16 +85,4 @@ describe("libcore access", () => {
     expect(count).toBe(3);
     expect(gcjob).toBe(1);
   });
-});
-
-// covers all bridges through many different accounts
-// to test the common shared properties of bridges.
-Object.keys(dataset).forEach(family => {
-  if (process.env.FAMILY && process.env.FAMILY !== family) return;
-  const data: DatasetTest<any> = dataset[family];
-  testBridge(family, data);
-});
-
-Object.values(specifics).forEach((specific: Function) => {
-  specific();
 });

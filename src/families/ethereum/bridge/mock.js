@@ -4,7 +4,8 @@ import {
   NotEnoughBalance,
   RecipientRequired,
   InvalidAddress,
-  FeeTooHigh
+  FeeTooHigh,
+  GasLessThanEstimate
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
@@ -27,7 +28,7 @@ const createTransaction = (account): Transaction => ({
   recipient: "",
   gasPrice: BigNumber(10000000000),
   userGasLimit: BigNumber(21000),
-  estimatedGasLimit: BigNumber(21000),
+  estimatedGasLimit: null,
   feeCustomUnit: account.currency.units[1],
   networkInfo: null,
   useAllAmount: false,
@@ -64,6 +65,14 @@ const getTransactionStatus = (a, t) => {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
+  if (
+    t.userGasLimit &&
+    t.estimatedGasLimit &&
+    t.userGasLimit.lt(t.estimatedGasLimit)
+  ) {
+    warnings.gasLimit = new GasLessThanEstimate();
+  }
+
   // Fill up transaction errors...
   if (totalSpent.gt(account.balance)) {
     errors.amount = new NotEnoughBalance();
@@ -86,18 +95,26 @@ const getTransactionStatus = (a, t) => {
 };
 
 const prepareTransaction = async (a, t) => {
-  // TODO it needs to set the fee if not in t as well
-  if (!t.networkInfo) {
+  let res = t;
+  if (!res.estimatedGasLimit) {
+    res = {
+      ...res,
+      estimatedGasLimit: t.subAccountId
+        ? BigNumber("100000")
+        : BigNumber("21000")
+    };
+  }
+  if (!res.networkInfo) {
     const { gas_price } = await getEstimatedFees(a.currency);
-    return {
-      ...t,
+    res = {
+      ...res,
       networkInfo: {
         family: "ethereum",
         gasPrice: BigNumber(gas_price)
       }
     };
   }
-  return t;
+  return res;
 };
 
 const accountBridge: AccountBridge<Transaction> = {

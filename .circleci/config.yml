@@ -112,7 +112,9 @@ jobs:
             cd -
             yarn ci-setup-cli
       - run: yarn ci-lint
-      - run: yarn ci-test-common && npx codecov
+      - run:
+          command: yarn ci-test-common && npx codecov
+          no_output_timeout: 1h
 
   debian-cli-tests:
     working_directory: ~/live-common
