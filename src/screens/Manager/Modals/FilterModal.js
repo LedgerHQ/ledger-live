@@ -1,9 +1,10 @@
 import React, { memo, useCallback, useEffect, useReducer } from "react";
-import { StyleSheet, SectionList, View, TouchableOpacity } from "react-native";
+import { StyleSheet, SectionList, View } from "react-native";
 import { Trans } from "react-i18next";
 import Check from "../../../icons/Check";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 
 import ActionModal from "./ActionModal";
 
@@ -31,11 +32,11 @@ const filterSections = [
         value: "supported",
         isFilter: true,
       },
-      {
-        label: "AppAction.filter.updatable",
-        value: "updatable",
-        isFilter: true,
-      },
+      // {
+      //   label: "AppAction.filter.updatable",
+      //   value: "updatable",
+      //   isFilter: true,
+      // },
     ],
     footerSeparator: true,
   },
@@ -175,10 +176,14 @@ const FilterModalComponent = ({
       };
 
       return (
-        <TouchableOpacity
+        <Touchable
           style={[styles.sectionLine, styles.paddingLine]}
           activeOpacity={0.5}
           onPress={onPress}
+          event="ManagerAppFilterClick"
+          eventProperties={{
+            value: `${value}${isFilter ? "" : `_${orderValue}`}`,
+          }}
         >
           <LText bold={isChecked} style={styles.filterName}>
             <Trans i18nKey={label} />
@@ -188,7 +193,7 @@ const FilterModalComponent = ({
               <Check color={colors.live} size={14} />
             </View>
           )}
-        </TouchableOpacity>
+        </Touchable>
       );
     },
     [state],
@@ -199,6 +204,8 @@ const FilterModalComponent = ({
       title: <Trans i18nKey="AppAction.filter.apply" />,
       onPress: onFilter,
       type: "primary",
+      event: "ManagerAppFilterApply",
+      eventProperties: { values: state },
     },
   ];
 

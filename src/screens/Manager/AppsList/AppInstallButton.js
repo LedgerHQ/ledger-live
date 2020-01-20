@@ -53,6 +53,8 @@ const AppInstallButton = ({
       containerStyle={styles.appButton}
       titleStyle={styles.appStateText}
       onPress={installApp}
+      event="ManagerAppInstall"
+      eventProperties={{ appName: name }}
     />
   );
 };

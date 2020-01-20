@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
@@ -7,6 +7,7 @@ import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import { ManagerContext } from "../shared";
 import Trash from "../../../icons/Trash";
 import colors from "../../../colors";
+import Touchable from "../../../components/Touchable";
 
 type Props = {
   app: App,
@@ -33,13 +34,15 @@ const AppUninstallButton = ({ app, state, dispatch }: Props) => {
   }, [needsDependencies, setAppUninstallWithDependencies, dispatch, name, app]);
 
   return (
-    <TouchableOpacity
+    <Touchable
       activeOpacity={0.5}
       style={styles.uninstallButton}
       onPress={uninstallApp}
+      event="ManagerAppUninstall"
+      eventProperties={{ appName: name }}
     >
       <Trash size={18} color={colors.grey} />
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 

@@ -9,7 +9,6 @@ import {
   View,
   StyleSheet,
   SafeAreaView,
-  TouchableOpacity,
   FlatList,
   Platform,
 } from "react-native";
@@ -22,11 +21,12 @@ import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
 
-import TextInput from "../../../components/TextInput";
 import SearchIcon from "../../../icons/Search";
 import NoResults from "../../../icons/NoResults";
 import colors from "../../../colors";
+import TextInput from "../../../components/TextInput";
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 import Styles from "../../../navigation/styles";
 
 import AppRow from "../AppsList/AppRow";
@@ -56,13 +56,15 @@ export default ({
   const listRef = useRef();
   const { MANAGER_TABS } = useContext(ManagerContext);
   const [isOpened, setIsOpen] = useState(false);
-  const toggleSearchModal = useCallback(
-    value => () => {
-      if (value) setQuery("");
-      setIsOpen(value);
-    },
-    [setIsOpen],
-  );
+  const openSearchModal = useCallback(() => {
+    setQuery("");
+    setIsOpen();
+  }, [setIsOpen]);
+
+  const closeSearchModal = useCallback(() => {
+    setIsOpen();
+  }, [setIsOpen]);
+
   const [query, setQuery] = useState(null);
   const clear = useCallback(() => setQuery(""), [setQuery]);
 
@@ -150,14 +152,15 @@ export default ({
           numberOfLines={1}
         />
       </View>
-      <TouchableOpacity
+      <Touchable
         style={styles.cancelButton}
-        onPress={toggleSearchModal(false)}
+        onPress={closeSearchModal}
+        event="ManagerAppSearchModalClose"
       >
         <LText style={styles.cancelButtonText}>
           <Trans i18nKey="common.cancel" />
         </LText>
-      </TouchableOpacity>
+      </Touchable>
     </View>,
     <SafeAreaView style={styles.searchList}>
       <FlatList
@@ -171,21 +174,23 @@ export default ({
 
   return (
     <>
-      <TouchableOpacity
+      <Touchable
         activeOpacity={0.5}
         style={styles.searchBarInput}
-        onPress={toggleSearchModal(true)}
+        onPress={openSearchModal}
+        event="ManagerAppSearchModalOpen"
+        eventProperties={{ open: true }}
         disabled={disabled}
       >
         <View style={styles.searchBarIcon}>
           <SearchIcon size={16} color={colors.smoke} />
         </View>
         <LText style={styles.searchBarText}>{placeholder}</LText>
-      </TouchableOpacity>
+      </Touchable>
       <ReactNativeModal
         isVisible={isOpened}
-        onBackdropPress={toggleSearchModal(false)}
-        onBackButtonPress={toggleSearchModal(false)}
+        onBackdropPress={closeSearchModal}
+        onBackButtonPress={closeSearchModal}
         useNativeDriver
         hideModalContentWhileAnimating
         coverScreen={false}

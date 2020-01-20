@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
 import * as Animatable from "react-native-animatable";
@@ -9,10 +9,6 @@ import ProgressBar from "../../../components/ProgressBar";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
-
-const AnimatableTouchableOpacity = Animatable.createAnimatableComponent(
-  TouchableOpacity,
-);
 
 type Props = {
   installQueue: string[],
@@ -47,12 +43,11 @@ const AppUpdateStepper = ({
   if (appsUpdating.length <= 0) return null;
 
   return (
-    <AnimatableTouchableOpacity
+    <Animatable.View
       animation="fadeIn"
       useNativeDriver
       duration={400}
       style={styles.root}
-      activeOpacity={0.5}
     >
       <View>
         <LText bold style={styles.stepperText}>
@@ -81,7 +76,7 @@ const AppUpdateStepper = ({
           </View>
         </View>
       </View>
-    </AnimatableTouchableOpacity>
+    </Animatable.View>
   );
 };
 

@@ -38,15 +38,18 @@ const UpdateAllModal = ({ isOpened, apps, onClose, onConfirm }: Props) => {
         title: <Trans i18nKey="AppAction.update.buttonModal" />,
         onPress: onConfirm,
         type: "primary",
+        event: "ManagerAppUpdateAllModalConfirm",
+        eventProperties: { appsList: apps.map(({ name }) => name) },
       },
       {
         title: <Trans i18nKey="common.cancel" />,
         onPress: onClose,
         type: "secondary",
         outline: false,
+        event: "ManagerAppUpdateAllModalCancel",
       },
     ],
-    [onConfirm, onClose],
+    [onConfirm, onClose, apps],
   );
 
   return (

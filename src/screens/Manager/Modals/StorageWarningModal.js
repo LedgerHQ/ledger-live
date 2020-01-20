@@ -21,6 +21,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => {
         title: <Trans i18nKey="common.close" />,
         onPress: onClose,
         type: "primary",
+        event: "ManagerStorageWarningModalClose",
       },
     ],
     [onClose],

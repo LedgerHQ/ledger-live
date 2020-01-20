@@ -1,12 +1,13 @@
 /* @flow */
 import React, { useCallback } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Trans } from "react-i18next";
 import { deviceNameByDeviceIdSelector } from "../../../reducers/ble";
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 import colors from "../../../colors";
 import Edit from "../../../icons/Edit";
 
@@ -45,16 +46,17 @@ const DeviceNameRow = ({
         {savedName || initialDeviceName || productName}
       </LText>
       {id !== "nanoS" && (
-        <TouchableOpacity
+        <Touchable
           style={styles.editButton}
           onPress={onPress}
           activeOpacity={0.5}
+          event="ManagerDeviceNameEdit"
         >
           <Edit size={13} color={colors.grey} />
           <LText style={styles.editButtonText}>
             <Trans i18nKey="common.edit" />
           </LText>
-        </TouchableOpacity>
+        </Touchable>
       )}
     </View>
   );

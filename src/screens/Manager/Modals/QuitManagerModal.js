@@ -57,14 +57,19 @@ const QuitManagerModal = ({
           title={
             <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.stay`} />
           }
+          useTouchable
           onPress={onClose}
           type={"secondary"}
+          event="ManagerCancelQuitApp"
         />
         <Button
           containerStyle={[styles.button, styles.buttonMargin]}
           title={<Trans i18nKey="errors.ManagerQuitPage.quit" />}
+          useTouchable
           onPress={onConfirm}
           type={"primary"}
+          event="ManagerQuitApp"
+          eventProperties={{ action: actionRunning }}
         />
       </View>
     </ActionModal>

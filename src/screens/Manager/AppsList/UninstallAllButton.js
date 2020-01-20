@@ -1,11 +1,12 @@
 import React, { memo, useState, useCallback } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import Trash from "../../../icons/Trash";
 import colors from "../../../colors";
 
 import UninstallAllModal from "../Modals/UninstallAllModal";
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 
 type Props = {
   onUninstallAll: () => void,
@@ -22,10 +23,11 @@ const UninstallAllButton = ({ onUninstallAll }: Props) => {
 
   return (
     <>
-      <TouchableOpacity
+      <Touchable
         style={styles.uninstallButton}
         activeOpacity={0.5}
         onPress={openModal}
+        event="ManagerAppUninstallAllModal"
       >
         <View style={styles.uninstallIcon}>
           <Trash size={16} color={colors.live} />
@@ -33,7 +35,7 @@ const UninstallAllButton = ({ onUninstallAll }: Props) => {
         <LText style={styles.uninstallText}>
           <Trans i18nKey="manager.uninstall.title" />
         </LText>
-      </TouchableOpacity>
+      </Touchable>
       <UninstallAllModal
         isOpened={isOpened}
         onClose={closeModal}

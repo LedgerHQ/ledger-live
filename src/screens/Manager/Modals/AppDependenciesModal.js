@@ -40,15 +40,19 @@ const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
         title: <Trans i18nKey="AppAction.install.continueInstall" />,
         onPress: installAppDependencies,
         type: "primary",
+        event: "ManagerAppDepsInstallConfirm",
+        eventProperties: { appName: name },
       },
       {
         title: <Trans i18nKey="common.close" />,
         onPress: onClose,
         type: "secondary",
         outline: false,
+        event: "ManagerAppDepsInstallCancel",
+        eventProperties: { appName: name },
       },
     ],
-    [installAppDependencies, onClose],
+    [installAppDependencies, onClose, name],
   );
 
   return (

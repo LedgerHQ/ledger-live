@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useContext } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import React, { useMemo, useContext } from "react";
+import { StyleSheet, View } from "react-native";
 
 import { Trans } from "react-i18next";
 
@@ -10,6 +10,7 @@ import CloseCircle from "../../../icons/CloseCircle";
 import LText from "../../../components/LText";
 import ProgressBar from "../../../components/ProgressBar";
 import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
+import Touchable from "../../../components/Touchable";
 
 type InstallProgressProps = {
   onCancel: () => void,
@@ -30,16 +31,14 @@ export const InstallProgress = ({ onCancel, name }: InstallProgressProps) => {
 
   const canCancel = !progress && !!onCancel;
 
-  const cancelInstall = useCallback(() => canCancel && onCancel(), [
-    canCancel,
-    onCancel,
-  ]);
-
   return (
-    <TouchableOpacity
+    <Touchable
       style={styles.progressContainer}
-      onPress={cancelInstall}
+      onPress={onCancel}
+      disabled={canCancel}
       underlayColor={colors.lightFog}
+      event="ManagerAppCancelInstall"
+      eventProperties={{ appName: name }}
     >
       <View style={styles.progressLabel}>
         <LText
@@ -65,15 +64,18 @@ export const InstallProgress = ({ onCancel, name }: InstallProgressProps) => {
         height={6}
         progress={progress * 1e2}
       />
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 
-export const UninstallProgress = ({ onCancel }: InstallProgressProps) => {
+export const UninstallProgress = ({ onCancel, name }: InstallProgressProps) => {
   return (
-    <TouchableOpacity
+    <Touchable
       style={styles.progressContainer}
       onPress={onCancel}
+      disabled={!onCancel}
+      event="ManagerAppCancelInstall"
+      eventProperties={{ appName: name }}
       underlayColor={colors.lightFog}
     >
       <View style={styles.progressLabel}>
@@ -99,9 +101,28 @@ export const UninstallProgress = ({ onCancel }: InstallProgressProps) => {
         style={styles.progressBar}
         height={6}
       />
-    </TouchableOpacity>
+    </Touchable>
   );
 };
+
+export const UpdateProgress = () => (
+  <View style={styles.progressContainer}>
+    <View style={styles.progressLabel}>
+      <LText
+        semiBold
+        numberOfLines={1}
+        style={[styles.appStateText, { color: colors.live }]}
+      >
+        <Trans i18nKey="AppAction.install.loading.button" />
+      </LText>
+    </View>
+    <InfiniteProgressBar
+      progressColor={colors.live}
+      style={styles.progressBar}
+      height={6}
+    />
+  </View>
+);
 
 const styles = StyleSheet.create({
   appStateText: {

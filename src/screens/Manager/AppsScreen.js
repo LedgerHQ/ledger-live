@@ -12,7 +12,6 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
-  TouchableOpacity,
 } from "react-native";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
@@ -31,6 +30,8 @@ import AppFilter from "./AppsList/AppFilter";
 import UninstallAllButton from "./AppsList/UninstallAllButton";
 
 import LText from "../../components/LText";
+import Touchable from "../../components/Touchable";
+import { track } from "../../analytics";
 
 import { ManagerContext } from "./shared";
 
@@ -90,6 +91,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
 
   const jumpTo = useCallback(
     key => {
+      track("ManagerTabBarClick", { tab: key });
       setIndex(key === MANAGER_TABS.CATALOG ? 0 : 1);
       scrollToTop();
     },
@@ -98,6 +100,9 @@ const AppsScreen = ({ state, dispatch }: Props) => {
 
   const onIndexChange = useCallback(
     index => {
+      track("ManagerTabSwipe", {
+        tab: index === 0 ? MANAGER_TABS.CATALOG : MANAGER_TABS.INSTALLED_APPS,
+      });
       setIndex(index);
       scrollToTop();
     },
@@ -111,7 +116,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   /** installed apps sorted from most recent installed to the least */
   const installedApps = useMemo(
     () =>
-      [...installQueue, ...installed.reverse()]
+      [...installQueue, ...installed]
         .map((i: { name: string } | string) => appByName[i.name || i])
         .filter(Boolean)
         .filter(
@@ -153,10 +158,11 @@ const AppsScreen = ({ state, dispatch }: Props) => {
 
   const renderNoResults = useCallback(
     () => (
-      <TouchableOpacity
+      <Touchable
         onPress={() => setIndex(0)}
         activeOpacity={0.5}
         style={styles.noAppInstalledContainer}
+        event="ManagerNoAppsInstalledClick"
       >
         <LText bold style={styles.noAppInstalledText}>
           <Trans i18nKey="manager.appList.noAppsInstalled" />
@@ -164,7 +170,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         <LText style={styles.noAppInstalledDescription}>
           <Trans i18nKey="manager.appList.noAppsDescription" />
         </LText>
-      </TouchableOpacity>
+      </Touchable>
     ),
     [setIndex],
   );

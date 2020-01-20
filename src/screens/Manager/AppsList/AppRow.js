@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback, useContext } from "react";
 
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import * as Animatable from "react-native-animatable";
 
@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/live-common/lib/apps";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 import Warning from "../../../icons/Warning";
 import AppIcon from "./AppIcon";
 
@@ -67,19 +68,27 @@ const AppRow = ({ app, state, dispatch, tab, visible }: Props) => {
           useNativeDriver
         >
           <AppIcon icon={icon} />
-          <View style={styles.labelContainer}>
+          <Touchable
+            activeOpacity={1}
+            onPress={() => {}}
+            event="ManagerAppListRowInfoClick"
+            eventProperties={{ appName: name }}
+            style={styles.labelContainer}
+          >
             <LText numberOfLines={1} bold>
               {name}
             </LText>
             <LText numberOfLines={1} style={styles.versionText}>
               {version}
             </LText>
-          </View>
+          </Touchable>
           {!isInstalled && notEnoughMemoryToInstall ? (
-            <TouchableOpacity
+            <Touchable
               activeOpacity={0.5}
               onPress={onSizePress}
               style={styles.warnText}
+              event="ManagerAppNotEnoughMemory"
+              eventProperties={{ appName: name }}
             >
               <Warning size={16} color={colors.lightOrange} />
               <LText
@@ -88,7 +97,7 @@ const AppRow = ({ app, state, dispatch, tab, visible }: Props) => {
               >
                 {formatSize(bytes)}
               </LText>
-            </TouchableOpacity>
+            </Touchable>
           ) : (
             <LText
               style={[

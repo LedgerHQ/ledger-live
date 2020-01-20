@@ -32,6 +32,7 @@ const ActionModal = ({ isOpened, onClose, children, actions = [] }: Props) => (
               type={type}
               title={title}
               onPress={onPress}
+              useTouchable
               {...props}
             />
           ))}

@@ -9,6 +9,7 @@ import LText from "../../../components/LText";
 import colors from "../../../colors";
 
 import Warning from "../../../icons/Warning";
+import Touchable from "../../../components/Touchable";
 
 type Props = {
   distribution: AppsDistribution,
@@ -55,7 +56,12 @@ const DeviceAppStorage = ({
           </LText>
         </View>
       </View>
-      <View style={[styles.row, styles.graphRow]}>
+      <Touchable
+        activeOpacity={1}
+        style={[styles.row, styles.graphRow]}
+        onPress={() => {}}
+        event="ManagerAppDeviceGraphClick"
+      >
         {appSizes.map(({ ratio, color, name }, i) => (
           <View
             key={`${i}${name}`}
@@ -68,7 +74,7 @@ const DeviceAppStorage = ({
             ]}
           />
         ))}
-      </View>
+      </Touchable>
       <View style={[styles.row, styles.infoRow]}>
         <LText style={styles.storageText} bold>
           {formatSize(totalAppsBytes) || "0kb"}

@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 import type { Action } from "@ledgerhq/live-common/lib/apps";
 import { Trans } from "react-i18next";
 
 import UpdateAllModal from "../Modals/UpdateAllModal";
 import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 import colors from "../../../colors";
 import Info from "../../../icons/Info";
 import AppUpdateStepper from "./AppUpdateStepper";
@@ -27,6 +28,7 @@ const AppUpdateAll = ({
 
   const openModal = useCallback(() => setModalOpen(true), [setModalOpen]);
   const closeModal = useCallback(() => setModalOpen(false), [setModalOpen]);
+  const appsList = appsToUpdate.map(({ name }) => name);
   const updateAll = useCallback(() => {
     dispatch({ type: "updateAll" });
     setModalOpen(false);
@@ -44,10 +46,11 @@ const AppUpdateAll = ({
       />
       {appsToUpdate.length > 0 && appsUpdating.length <= 0 && (
         <View style={[styles.root]}>
-          <TouchableOpacity
+          <Touchable
             style={styles.infoLabel}
             activeOpacity={0.5}
             onPress={openModal}
+            event="ManagerAppUpdateModalOpen"
           >
             <LText semiBold style={styles.infoText}>
               <Trans
@@ -56,12 +59,17 @@ const AppUpdateAll = ({
               />
             </LText>
             <Info size={17} color={colors.live} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={updateAll}>
+          </Touchable>
+          <Touchable
+            style={styles.button}
+            onPress={updateAll}
+            event="ManagerAppUpdateAll"
+            eventProperties={{ appsList }}
+          >
             <LText semiBold style={styles.buttonText}>
               <Trans i18nKey="AppAction.update.button" />
             </LText>
-          </TouchableOpacity>
+          </Touchable>
           <UpdateAllModal
             isOpened={modalOpen}
             apps={appsToUpdate}

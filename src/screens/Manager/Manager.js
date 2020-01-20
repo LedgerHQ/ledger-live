@@ -5,6 +5,7 @@ import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import { ManagerContext, ManagerProgressContext, useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import { TrackScreen } from "../../analytics";
 import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import AppDependenciesModal from "./Modals/AppDependenciesModal";
@@ -129,6 +130,7 @@ const Manager = ({ navigation }: Props) => {
         initialDeviceName: navigation.getParam("deviceName"),
       }}
     >
+      <TrackScreen category="Manager" name="AppsList" />
       <ManagerProgressContext.Provider
         value={{ currentProgress: state.currentProgress }}
       >

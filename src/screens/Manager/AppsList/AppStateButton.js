@@ -10,7 +10,11 @@ import { isEqual } from "lodash";
 import AppInstallButton from "./AppInstallButton";
 import AppUninstallButton from "./AppUninstallButton";
 
-import { InstallProgress, UninstallProgress } from "./AppInstallProgress";
+import {
+  InstallProgress,
+  UninstallProgress,
+  UpdateProgress,
+} from "./AppInstallProgress";
 
 import colors from "../../../colors";
 import Check from "../../../icons/Check";
@@ -65,10 +69,12 @@ const AppStateButton = ({
 
   const renderAppState = () => {
     switch (true) {
-      case uninstalling:
-        return <UninstallProgress onCancel={onCancelUninstall} />;
+      case installing && uninstalling:
+        return <UpdateProgress />;
       case installing:
         return <InstallProgress onCancel={uninstallApp} name={name} />;
+      case uninstalling:
+        return <UninstallProgress onCancel={onCancelUninstall} name={name} />;
       case isInstalledView && isInstalled:
         return (
           <AppUninstallButton app={app} state={state} dispatch={dispatch} />
