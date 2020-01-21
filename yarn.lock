@@ -1073,10 +1073,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.6.0.tgz#04277b3c90bee43bb2bd8a5489c5a8aac022687b"
   integrity sha512-pzJ8tQCTqMFaEFmfBcHuqA97gkxLgGb6ztysUCnWsBlG3dczQ0dbz4BRZswDkBkLIh0j8RzM4Ez2uRedxZCJ4w==
 
-"@ledgerhq/react-native-hid@5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-5.6.0.tgz#c06c15d7b3f3815669651c87c015a1fd2c6e13d5"
-  integrity sha512-N52vZJhLYK4VyitcY3JjgZTRZ/wxlaRgIRKs9P1F+VekviLp9TuE8yYSD3l3+RPNXPyO3ltBS4mdllPo2YNhCg==
+"@ledgerhq/react-native-hid@5.6.2":
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-5.6.2.tgz#42163ac500477ed1265cf70ba659120e32d424d9"
+  integrity sha512-zN0zTbTLGL5+8B5II8Kris9rkU8kXcfQ5Jd9u+onI1gYwGUgsA3qBOXEOBJJNUZVr9X874F72pPRprMW/zo6fw==
   dependencies:
     "@ledgerhq/devices" "^5.6.0"
     "@ledgerhq/errors" "^5.6.0"
