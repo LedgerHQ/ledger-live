@@ -126,7 +126,7 @@ export const createDeviceSocket = (
         response,
         data
       };
-      log({ type: "socket-send", message: msg });
+      log({ type: "socket-send", nonce, response });
       const strMsg = JSON.stringify(msg);
       ws.send(strMsg);
     };
@@ -229,7 +229,9 @@ export const createDeviceSocket = (
       if (interrupted) return;
       try {
         const msg = JSON.parse(e.data);
-        log({ type: "socket-receive", msg });
+        const l: Object = { ...msg, type: "socket-receive" };
+        delete l.data; // too verbose
+        log(l);
         if (!(msg.query in handlers)) {
           console.warn(`Cannot handle msg of type ${msg.query}`, {
             query: msg.query,
