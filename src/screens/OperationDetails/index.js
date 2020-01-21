@@ -23,8 +23,8 @@ import { TrackScreen } from "../../analytics";
 import Footer from "./Footer";
 import Content from "./Content";
 import colors from "../../colors";
-import HeaderBackImage from "../../components/HeaderBackImage";
 import Close from "../../icons/Close";
+import ArrowLeft from "../../icons/ArrowLeft";
 
 const forceInset = { bottom: "always" };
 
@@ -42,15 +42,15 @@ type Navigation = NavigationScreenProp<{
 }>;
 
 const BackButton = ({ navigation }: { navigation: Navigation }) => (
-  <TouchableOpacity style={{ padding: 14 }} onPress={() => navigation.goBack()}>
-    <HeaderBackImage />
+  <TouchableOpacity style={{ padding: 16 }} onPress={() => navigation.goBack()}>
+    <ArrowLeft size={18} color={colors.grey} />
   </TouchableOpacity>
 );
 
 const CloseButton = ({ navigation }: { navigation: Navigation }) => (
   <TouchableOpacity
     onPress={() => navigation.popToTop()}
-    style={{ padding: 16, marginHorizontal: 8 }}
+    style={{ padding: 16 }}
   >
     <Close size={18} color={colors.grey} />
   </TouchableOpacity>
