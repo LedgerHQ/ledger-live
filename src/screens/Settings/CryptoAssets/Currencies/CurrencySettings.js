@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingVertical: 24,
   },
-  placeholderText:{
+  placeholderText: {
     fontSize: 16,
     color: colors.darkBlue,
   },
