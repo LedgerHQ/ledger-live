@@ -28,7 +28,6 @@ import { counterValueCurrencySelector } from "../../reducers/settings";
 import colors from "../../colors";
 import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import { calculateCountervalueSelector } from "../../actions/general";
 
 const forceInset = { bottom: "always" };
@@ -80,7 +79,7 @@ class Distribution extends PureComponent<Props, *> {
 
   onHighlightChange = index => {
     this.setState({ highlight: index });
-    if(this.flatListRef.current){
+    if (this.flatListRef.current) {
       this.flatListRef.current.scrollToIndex({ index }, true);
     }
   };
