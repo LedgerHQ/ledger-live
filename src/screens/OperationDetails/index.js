@@ -4,7 +4,6 @@ import i18next from "i18next";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 // $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
-import { HeaderBackButton } from "react-navigation-stack";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import type {
@@ -43,17 +42,14 @@ type Navigation = NavigationScreenProp<{
 }>;
 
 const BackButton = ({ navigation }: { navigation: Navigation }) => (
-  <HeaderBackButton
-    tintColor={colors.grey}
-    onPress={() => navigation.popToTop()}
-  >
+  <TouchableOpacity style={{ padding: 14 }} onPress={() => navigation.goBack()}>
     <HeaderBackImage />
-  </HeaderBackButton>
+  </TouchableOpacity>
 );
 
 const CloseButton = ({ navigation }: { navigation: Navigation }) => (
   <TouchableOpacity
-    onPress={() => navigation.goBack()}
+    onPress={() => navigation.popToTop()}
     style={{ padding: 16, marginHorizontal: 8 }}
   >
     <Close size={18} color={colors.grey} />
