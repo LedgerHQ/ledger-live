@@ -84,6 +84,18 @@
     "@babel/helper-replace-supers" "^7.7.4"
     "@babel/helper-split-export-declaration" "^7.7.4"
 
+"@babel/helper-create-class-features-plugin@^7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.8.3.tgz#5b94be88c255f140fd2c10dd151e7f98f4bff397"
+  integrity sha512-qmp4pD7zeTxsv0JNecSBsEmG1ei2MqwJq4YQcK3ZWm/0t07QstWfvuV/vm3Qt5xNMFETn2SZqpMx2MQzbtq+KA==
+  dependencies:
+    "@babel/helper-function-name" "^7.8.3"
+    "@babel/helper-member-expression-to-functions" "^7.8.3"
+    "@babel/helper-optimise-call-expression" "^7.8.3"
+    "@babel/helper-plugin-utils" "^7.8.3"
+    "@babel/helper-replace-supers" "^7.8.3"
+    "@babel/helper-split-export-declaration" "^7.8.3"
+
 "@babel/helper-create-regexp-features-plugin@^7.7.4":
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/helper-create-regexp-features-plugin/-/helper-create-regexp-features-plugin-7.7.4.tgz#6d5762359fd34f4da1500e4cff9955b5299aaf59"
@@ -139,6 +151,13 @@
   dependencies:
     "@babel/types" "^7.7.4"
 
+"@babel/helper-member-expression-to-functions@^7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/helper-member-expression-to-functions/-/helper-member-expression-to-functions-7.8.3.tgz#659b710498ea6c1d9907e0c73f206eee7dadc24c"
+  integrity sha512-fO4Egq88utkQFjbPrSHGmGLFqmrshs11d46WI+WZDESt7Wu7wN2G2Iu+NMMZJFDOVRHAMIkB5SNh30NtwCA7RA==
+  dependencies:
+    "@babel/types" "^7.8.3"
+
 "@babel/helper-module-imports@^7.0.0", "@babel/helper-module-imports@^7.7.4":
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/helper-module-imports/-/helper-module-imports-7.7.4.tgz#e5a92529f8888bf319a6376abfbd1cebc491ad91"
@@ -165,10 +184,22 @@
   dependencies:
     "@babel/types" "^7.7.4"
 
+"@babel/helper-optimise-call-expression@^7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/helper-optimise-call-expression/-/helper-optimise-call-expression-7.8.3.tgz#7ed071813d09c75298ef4f208956006b6111ecb9"
+  integrity sha512-Kag20n86cbO2AvHca6EJsvqAd82gc6VMGule4HwebwMlwkpXuVqrNRj6CkCV2sKxgi9MyAUnZVnZ6lJ1/vKhHQ==
+  dependencies:
+    "@babel/types" "^7.8.3"
+
 "@babel/helper-plugin-utils@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0.tgz#bbb3fbee98661c569034237cc03967ba99b4f250"
   integrity sha512-CYAOUCARwExnEixLdB6sDm2dIJ/YgEAKDM1MOeMeZu9Ld/bDgVo8aiWrXwcY7OBh+1Ea2uUcVRcxKk0GJvW7QA==
+
+"@babel/helper-plugin-utils@^7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.8.3.tgz#9ea293be19babc0f52ff8ca88b34c3611b208670"
+  integrity sha512-j+fq49Xds2smCUNYmEHF9kGNkhbet6yVIBp4e6oeQpH1RUs/Ir06xUKzDjDkGcaaokPiTNs2JBWHjaE4csUkZQ==
 
 "@babel/helper-regex@^7.0.0", "@babel/helper-regex@^7.4.4":
   version "7.5.5"
@@ -197,6 +228,16 @@
     "@babel/helper-optimise-call-expression" "^7.7.4"
     "@babel/traverse" "^7.7.4"
     "@babel/types" "^7.7.4"
+
+"@babel/helper-replace-supers@^7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/helper-replace-supers/-/helper-replace-supers-7.8.3.tgz#91192d25f6abbcd41da8a989d4492574fb1530bc"
+  integrity sha512-xOUssL6ho41U81etpLoT2RTdvdus4VfHamCuAm4AHxGr+0it5fnwoVdwUJ7GFEqCsQYzJUhcbsN9wB9apcYKFA==
+  dependencies:
+    "@babel/helper-member-expression-to-functions" "^7.8.3"
+    "@babel/helper-optimise-call-expression" "^7.8.3"
+    "@babel/traverse" "^7.8.3"
+    "@babel/types" "^7.8.3"
 
 "@babel/helper-simple-access@^7.7.4":
   version "7.7.4"
@@ -370,6 +411,13 @@
   integrity sha512-77blgY18Hud4NM1ggTA8xVT/dBENQf17OpiToSa2jSmEY3fWXD2jwrdVlO4kq5yzUTeF15WSQ6b4fByNvJcjpQ==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
+
+"@babel/plugin-syntax-typescript@^7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-typescript/-/plugin-syntax-typescript-7.8.3.tgz#c1f659dda97711a569cef75275f7e15dcaa6cabc"
+  integrity sha512-GO1MQ/SGGGoiEXY0e0bSpHimJvxqB7lktLLIq2pv8xG7WZ8IMEle74jIe1FhprHBWjwjZtXHkycDLZXIWM5Wfg==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.8.3"
 
 "@babel/plugin-transform-arrow-functions@^7.0.0":
   version "7.7.4"
@@ -596,6 +644,15 @@
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-syntax-typescript" "^7.7.4"
 
+"@babel/plugin-transform-typescript@^7.5.0":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.8.3.tgz#be6f01a7ef423be68e65ace1f04fc407e6d88917"
+  integrity sha512-Ebj230AxcrKGZPKIp4g4TdQLrqX95TobLUWKd/CwG7X1XHUH1ZpkpFvXuXqWbtGRWb7uuEWNlrl681wsOArAdQ==
+  dependencies:
+    "@babel/helper-create-class-features-plugin" "^7.8.3"
+    "@babel/helper-plugin-utils" "^7.8.3"
+    "@babel/plugin-syntax-typescript" "^7.8.3"
+
 "@babel/plugin-transform-unicode-regex@^7.0.0":
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-unicode-regex/-/plugin-transform-unicode-regex-7.7.4.tgz#a3c0f65b117c4c81c5b6484f2a5e7b95346b83ae"
@@ -747,76 +804,76 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/devices@5.6.0", "@ledgerhq/devices@^5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-5.6.0.tgz#90d0201047561afaa7821fe3cc795da8aba7a48e"
-  integrity sha512-okjWx/jg16yHmU8dx4wFMAmx6ckKePuA2/uve8udj4isbGVvceXTGsmKkcA/iaV5E3co07XFnD41Jlvnq15i3Q==
+"@ledgerhq/devices@5.7.0", "@ledgerhq/devices@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-5.7.0.tgz#f671f13ce73ad07160ad22d0323705129d3bf35a"
+  integrity sha512-bEASH3tk36ozr2kM7YjMcxy3Ja6mCaHU+30SxTaxOulRj3TAVl8EyF3RQZqZ88e1qntV3JnGQaEPgW5MomWLWg==
   dependencies:
-    "@ledgerhq/errors" "^5.6.0"
+    "@ledgerhq/errors" "^5.7.0"
     "@ledgerhq/logs" "^5.6.0"
     rxjs "^6.5.4"
 
-"@ledgerhq/errors@5.6.0", "@ledgerhq/errors@^5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.6.0.tgz#878851b961a34c1bda3618b3568b4e8faed532bd"
-  integrity sha512-zdEYEsmfhFHv7f89srh7qI5XP0DIkV9xkONsE8dVHhqpoFx732yKozpVDFUp4zhaCCT/xNL5wbCDxM9edk6Uig==
+"@ledgerhq/errors@5.7.0", "@ledgerhq/errors@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.7.0.tgz#2bff5ae2e178e69c64002d47c0f0f0c9c502a9b0"
+  integrity sha512-a6j49Seh2x7ho2WXpR9xO7Z/wZfwP48jGJIQ5ZdAR8g/Uz3Sb1+FsVoQY7YPmZOLhPvQ5EeIj+cL+7CaK0fOtA==
 
-"@ledgerhq/hw-app-btc@5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.6.0.tgz#cd72375303695936eaee2d3b1f5a60508c0aebcc"
-  integrity sha512-qFh1LQGtH9zAwtVW1LujUTCqov6wyX+m+Tt/2zdwiLxXUUXhOTqhGxReVe8QKnzoiH9wA+6XvzsB+TBGYahJwg==
+"@ledgerhq/hw-app-btc@5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.7.0.tgz#e241df56147e76176ea40668963542382b75b49e"
+  integrity sha512-vYZJS6107W4xzt0hVrTYQEgphEWUDy3FtFhSSndKE1Fe3F4X0JyPsegOvqkKTBio20qsKA5nQfSaB3YxfZpGOA==
   dependencies:
-    "@ledgerhq/hw-transport" "^5.6.0"
+    "@ledgerhq/hw-transport" "^5.7.0"
     bip32-path "^0.4.2"
     ripemd160 "2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.6.0.tgz#14907d36a74065532cd614d782de520c7a8a203a"
-  integrity sha512-sUqgQOdRtFtf6hZP/ucMzMap74D0PylsAjjz92Khcfxl65Lu8A3fdC8nIgKJ6tZQoaHH16yN8ouiRpNo3eKqHg==
+"@ledgerhq/hw-app-eth@5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.7.0.tgz#120546b246bfddaf2d2012b8c03899bf87edc536"
+  integrity sha512-nu5lvSfWmyjaJP2k4wHpnZL/mmfHicUf30Eq70IhRD5S4415QvQ1IyztNpKNKCNRIhX+W7/llA0RgvPVwlrnMQ==
   dependencies:
-    "@ledgerhq/errors" "^5.6.0"
-    "@ledgerhq/hw-transport" "^5.6.0"
+    "@ledgerhq/errors" "^5.7.0"
+    "@ledgerhq/hw-transport" "^5.7.0"
 
-"@ledgerhq/hw-app-xrp@5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-xrp/-/hw-app-xrp-5.6.0.tgz#64886812b5e9604fb9e3df97551f3de062da504c"
-  integrity sha512-8+wJLOXAZBrImrSVU2j+sRvg73QAThKpYKOw4ncGz2kP4aGSoEx9NRQ3LZHV/xvIvJzpP1u1dcgj6AzxQaEIig==
+"@ledgerhq/hw-app-xrp@5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-xrp/-/hw-app-xrp-5.7.0.tgz#ef93c57a1fab74800e91f31a9c49779463165a98"
+  integrity sha512-s4kFzsi1b8spUgednNx0MHV30GPAM8YpqK+qS/ThlJyLhg8zNG0EGBSQx63wNLUN9N5Cf7XHp7OQlMw/xhtzeQ==
   dependencies:
-    "@ledgerhq/hw-transport" "^5.6.0"
+    "@ledgerhq/hw-transport" "^5.7.0"
     bip32-path "0.4.2"
 
-"@ledgerhq/hw-transport-mocker@^5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-mocker/-/hw-transport-mocker-5.6.0.tgz#2f3d77d76923caa5e06eef0a9fed5e37f8098161"
-  integrity sha512-3h5Mn6qThSy45b3d2MQ/IeA6UU4H1JCIQqYz83mt/+xtL1j6Qf5oHwfnmpJ5gGt2BMnwm+NeCPQrAhu1vqQ/vw==
+"@ledgerhq/hw-transport-mocker@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-mocker/-/hw-transport-mocker-5.7.0.tgz#929c3796e240054e6875fe360483ac710786b748"
+  integrity sha512-2FHmLY1ccelb/c9dCfL/U5ylLvH/Y4OdQaPP2LdtBSAB6Efn1gJkl8mKdEGlrcR8DRZtC2NOaPDa+L3fXF7oxA==
   dependencies:
-    "@ledgerhq/hw-transport" "^5.6.0"
+    "@ledgerhq/hw-transport" "^5.7.0"
     "@ledgerhq/logs" "^5.6.0"
 
-"@ledgerhq/hw-transport@5.6.0", "@ledgerhq/hw-transport@^5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-5.6.0.tgz#033a3bef894623079884bd7b52c1b953b1617385"
-  integrity sha512-lQRzl3LWoyEWyVxVd8LbcE5LwPbTNCqmtYEhGCROvK+3kDxfJBrgg3XNaynxZd3Bew0nu4GUPY45KS6gmgQY1g==
+"@ledgerhq/hw-transport@5.7.0", "@ledgerhq/hw-transport@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-5.7.0.tgz#6da4f1511551a27071155aeed813c1b03200ff96"
+  integrity sha512-F1Kr61iByP2I3gcE88SbfymRF2dQ6fECvS4nQCBSz3mSMsoeHxXK+EhuuzXrYhTzqGkl+kD5yitBw7KRHV1AiA==
   dependencies:
-    "@ledgerhq/devices" "^5.6.0"
-    "@ledgerhq/errors" "^5.6.0"
+    "@ledgerhq/devices" "^5.7.0"
+    "@ledgerhq/errors" "^5.7.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^11.1.1":
-  version "11.1.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.1.1.tgz#049e68082ca87658e909860aed56fd28c28e90d0"
-  integrity sha512-peUBQzQzem/mRbtKliRQP2MxwSHNkJQEKjCfMSjbwN6SuK8bjYcm47SrQ1BiKBA8NsdIYNOx6s9z7vKM4vnWVw==
+"@ledgerhq/live-common@^11.2.0":
+  version "11.2.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.2.0.tgz#b3fe23dab2a030a3fcda0c8e87f99fc07925c0f3"
+  integrity sha512-/JsRbRxGLLe7y5r197l7QcdTpkuZkkUnZ0wxQA8MYKUSDsMMT66i2q/dloWv+HNdJF+nVnD2gqdgV/GeAZk+VQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
-    "@ledgerhq/devices" "5.6.0"
-    "@ledgerhq/errors" "5.6.0"
-    "@ledgerhq/hw-app-btc" "5.6.0"
-    "@ledgerhq/hw-app-eth" "5.6.0"
-    "@ledgerhq/hw-app-xrp" "5.6.0"
-    "@ledgerhq/hw-transport" "5.6.0"
-    "@ledgerhq/hw-transport-mocker" "^5.6.0"
+    "@ledgerhq/devices" "5.7.0"
+    "@ledgerhq/errors" "5.7.0"
+    "@ledgerhq/hw-app-btc" "5.7.0"
+    "@ledgerhq/hw-app-eth" "5.7.0"
+    "@ledgerhq/hw-app-xrp" "5.7.0"
+    "@ledgerhq/hw-transport" "5.7.0"
+    "@ledgerhq/hw-transport-mocker" "^5.7.0"
     "@ledgerhq/logs" "5.6.0"
     bignumber.js "^9.0.0"
     bip32-path "^0.4.2"
@@ -3635,10 +3692,10 @@ metro-react-native-babel-preset@0.56.3:
     "@babel/template" "^7.0.0"
     react-refresh "^0.4.0"
 
-metro-react-native-babel-preset@^0.57.0:
-  version "0.57.0"
-  resolved "https://registry.yarnpkg.com/metro-react-native-babel-preset/-/metro-react-native-babel-preset-0.57.0.tgz#bbbce26a20d9ca3fdc08f0df564bc982b82651b7"
-  integrity sha512-pvLh1QOwdxsjgYE2a+4aTKs3LSF3+t4jscxHtkND6wsJnKVVspLt8FkDaORa6zr3Fq12tVpEt5NJMdgtWqBpaA==
+metro-react-native-babel-preset@^0.58.0:
+  version "0.58.0"
+  resolved "https://registry.yarnpkg.com/metro-react-native-babel-preset/-/metro-react-native-babel-preset-0.58.0.tgz#18f48d33fe124280ffabc000ab8b42c488d762a2"
+  integrity sha512-MRriNW+fF6jxABsgPphocUY6mIhmCm8idcrQZ58fT3Iti2vCdtkaK32TyCGUNUptzhUe2/cbE57j4aC+eaodAA==
   dependencies:
     "@babel/plugin-proposal-class-properties" "^7.0.0"
     "@babel/plugin-proposal-export-default-from" "^7.0.0"
@@ -3671,7 +3728,7 @@ metro-react-native-babel-preset@^0.57.0:
     "@babel/plugin-transform-spread" "^7.0.0"
     "@babel/plugin-transform-sticky-regex" "^7.0.0"
     "@babel/plugin-transform-template-literals" "^7.0.0"
-    "@babel/plugin-transform-typescript" "^7.0.0"
+    "@babel/plugin-transform-typescript" "^7.5.0"
     "@babel/plugin-transform-unicode-regex" "^7.0.0"
     "@babel/template" "^7.0.0"
     react-refresh "^0.4.0"
