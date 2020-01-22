@@ -1070,10 +1070,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.6.0.tgz#878851b961a34c1bda3618b3568b4e8faed532bd"
   integrity sha512-zdEYEsmfhFHv7f89srh7qI5XP0DIkV9xkONsE8dVHhqpoFx732yKozpVDFUp4zhaCCT/xNL5wbCDxM9edk6Uig==
 
-"@ledgerhq/hw-app-btc@5.6.1":
-  version "5.6.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.6.1.tgz#86ccb3d44ae7c476f43b291514555cd71cfb4163"
-  integrity sha512-T6nQGYTFyMABlnwuP0QuLFh4Prw07Mn+ExMi9tjWXNImMQ093G1jt8GUKxdrXGuJ2rjHYCxi7UsgT5jYd7hiKA==
+"@ledgerhq/hw-app-btc@5.6.3":
+  version "5.6.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.6.3.tgz#3d71d8dd74f33f13b226e6e3960a9a89b879f900"
+  integrity sha512-WCDzBbxEXs1xeXr0MS/OGOm7IdqLmpur5BT+/COCrssdDjnDks83BPfQ9S6Cm36H3yEUkdjx3zvjV9gwJ+I6gA==
   dependencies:
     "@ledgerhq/hw-transport" "^5.6.0"
     bip32-path "^0.4.2"
