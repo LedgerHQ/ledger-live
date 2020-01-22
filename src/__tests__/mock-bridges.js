@@ -14,7 +14,8 @@ const mockedCoins = [
   "zcash",
   "ethereum",
   "ethereum_classic",
-  "ripple"
+  "ripple",
+  "tezos"
 ];
 
 mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
