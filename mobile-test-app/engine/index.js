@@ -5,6 +5,13 @@ import invariant from "invariant";
 import expect from "expect";
 import App from "./ui";
 
+// toMatchSnapshot is not supported
+e.extend({
+  toMatchSnapshot() {
+    return { pass: true };
+  }
+});
+
 const testFiles = [];
 const scopeStack = [];
 

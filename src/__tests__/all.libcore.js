@@ -1,8 +1,10 @@
 // @flow
 
+/*
 import { from } from "rxjs";
 import { mergeAll } from "rxjs/operators";
 import { flatMap } from "lodash";
+*/
 import { setup } from "./test-helpers/libcore-setup";
 import { withLibcore, afterLibcoreGC } from "../libcore/access";
 import { delay } from "../promise";
@@ -22,7 +24,8 @@ test("libcore version", async () => {
 
 // covers all bridges through many different accounts
 // to test the common shared properties of bridges.
-const all = Object.keys(dataset)
+// const all =
+Object.keys(dataset)
   .map(family => {
     if (process.env.FAMILY && process.env.FAMILY !== family) return;
     const data: DatasetTest<any> = dataset[family];
@@ -30,10 +33,13 @@ const all = Object.keys(dataset)
   })
   .filter(Boolean);
 
-const MAX_CONCURRENT = 3;
+// FIXME overkill atm but could help perf
+/*
+const MAX_CONCURRENT = 2;
 from(flatMap(all, r => r.preloadObservables))
   .pipe(mergeAll(MAX_CONCURRENT))
   .subscribe();
+*/
 
 Object.values(specifics).forEach((specific: Function) => {
   specific();
