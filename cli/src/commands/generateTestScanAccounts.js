@@ -1,6 +1,5 @@
 // @flow
 
-import { toAccountRaw } from "@ledgerhq/live-common/lib/account";
 import { listen } from "@ledgerhq/logs";
 import { map, reduce } from "rxjs/operators";
 import accountFormatters from "../accountFormatters";
@@ -41,9 +40,7 @@ const dataset: CurrenciesData<Transaction> = {
   scanAccounts: [
     {
       name: "${currency.id} seed 1",
-      apdus: \`\n${apdus.map(a => "      " + a).join("\n")}\n      \`,
-      // prettier-ignore
-      accountsSnapshot: ${JSON.stringify(accounts.map(a => toAccountRaw(a)))}
+      apdus: \`\n${apdus.map(a => "      " + a).join("\n")}\n      \`
     }
   ]
 };

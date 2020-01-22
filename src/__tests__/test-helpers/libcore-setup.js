@@ -7,7 +7,7 @@ import { logs as socketLogs } from "../../api/socket";
 import implementLibcore from "../../libcore/platforms/nodejs";
 import "../../load/tokens/ethereum/erc20";
 
-jest.setTimeout(120000);
+jest.setTimeout(180000);
 
 let setupCalled = null;
 export const setup = testId => {
