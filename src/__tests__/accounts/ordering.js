@@ -154,5 +154,14 @@ test("Accounts ordering | all accounts starred, then balance, then name", () => 
     ]
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => a.name)).toEqual([ "AA", "C", "CA", "B", "A"]);
+  expect(sortedAccounts.map(a => a.name)).toEqual(["AA", "C", "CA", "B", "A"]);
+});
+
+test("Accounts ordering | backwards compatible when no starred accounts are passed", () => {
+  const compareFn = sortAccountsComparatorFromOrder(
+    "balance|desc",
+    mockedCalculateCountervalue
+  );
+  const sortedAccounts = accounts.sort(compareFn);
+  expect(sortedAccounts.map(a => a.name)).toEqual(["AA", "C", "CA", "B", "A"]);
 });

@@ -30,7 +30,7 @@ export const sortAccountsComparatorFromOrder = (
     currency: TokenCurrency | CryptoCurrency,
     value: BigNumber
   ) => ?BigNumber,
-  starredAccountIds: string[]
+  starredAccountIds: string[] = []
 ): AccountComparator => {
   const [order, sort] = orderAccounts.split("|");
   const ascValue = sort === "desc" ? -1 : 1;
