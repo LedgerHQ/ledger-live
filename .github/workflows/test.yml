@@ -1,4 +1,4 @@
-name: TESTS
+name: Tests
 on: [pull_request]
 
 jobs:
@@ -35,7 +35,6 @@ jobs:
       - name: Run tests
         run: yarn ci-test-common && npx codecov
         timeout-minutes: 60
-
   debian-cli-tests:
     runs-on: ubuntu-latest
     steps:

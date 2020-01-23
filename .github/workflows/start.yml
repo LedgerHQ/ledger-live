@@ -1,9 +1,0 @@
-name: Hello World
-on: [pull_request]
-
-jobs:
-  greeting:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Say Hello
-        run: echo "Hello"
