@@ -11,6 +11,7 @@ import { BigNumber } from "bignumber.js";
 import { fromTransactionRaw } from "./transaction";
 import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import type { Transaction } from "./types";
+import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1.js";
 
 export const accountTZrevealedDelegating = makeAccount(
   "TZrevealedDelegating",
@@ -60,6 +61,8 @@ const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore"],
   currencies: {
     tezos: {
+      FIXME_ignoreOperationFields: ["blockHeight"],
+      scanAccounts: [tezosScanAccounts1],
       accounts: [
         {
           raw: accountTZrevealedDelegating,

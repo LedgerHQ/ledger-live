@@ -3,6 +3,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, defer, from } from "rxjs";
 import { reduce, filter, map } from "rxjs/operators";
+import flatMap from "lodash/flatMap";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import type {
   CryptoCurrencyIds,
@@ -35,6 +36,7 @@ import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 type ExpectFn = Function;
 
 export type CurrenciesData<T: Transaction> = {|
+  FIXME_ignoreOperationFields?: string[],
   scanAccounts?: Array<{|
     name: string,
     apdus: string,
@@ -177,8 +179,15 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
       (scanAccountsCaches[apdus] = scanAccounts(apdus));
 
     describe(currency.id + " currency bridge", () => {
-      const { scanAccounts } = currencyData;
+      const { scanAccounts, FIXME_ignoreOperationFields } = currencyData;
       if (scanAccounts) {
+        if (FIXME_ignoreOperationFields) {
+          console.warn(
+            currency.id +
+              " is ignoring operation fields: " +
+              FIXME_ignoreOperationFields.join(", ")
+          );
+        }
         describe("scanAccounts", () => {
           scanAccounts.forEach(sa => {
             // we start running the scan accounts in parallel!
@@ -200,7 +209,12 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                 accountsFoundInScanAccountsMap[a.id] = a;
               });
 
-              const raws = accounts.map(a => toAccountRaw(a));
+              const raws = flatMap(accounts, a => {
+                const main = toAccountRaw(a);
+                if (!main.subAccounts) return [main];
+                return [{ ...main, subAccounts: [] }, ...main.subAccounts];
+              });
+
               const heads = raws.map(a => {
                 const copy: Object = { ...a };
                 delete copy.operations;
@@ -209,6 +223,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                 delete copy.balanceHistory;
                 return copy;
               });
+
               const ops = raws.map(({ operations }) =>
                 operations
                   .slice(0)
@@ -216,6 +231,9 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                   .map(op => {
                     const copy: Object = { ...op };
                     delete copy.date;
+                    (FIXME_ignoreOperationFields || []).forEach(k => {
+                      delete copy[k];
+                    });
                     return copy;
                   })
               );
