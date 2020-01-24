@@ -29,13 +29,20 @@ export const sortAccountsComparatorFromOrder = (
   calculateCountervalue: (
     currency: TokenCurrency | CryptoCurrency,
     value: BigNumber
-  ) => ?BigNumber
+  ) => ?BigNumber,
+  starredAccountIds: string[] = []
 ): AccountComparator => {
   const [order, sort] = orderAccounts.split("|");
   const ascValue = sort === "desc" ? -1 : 1;
   if (order === "name") {
-    return (a, b) =>
-      ascValue * sortNameLense(a).localeCompare(sortNameLense(b));
+    return (a, b) => {
+      const starDiff =
+        Number(starredAccountIds.includes(b.id)) -
+        Number(starredAccountIds.includes(a.id));
+      if (starDiff === 0)
+        return ascValue * sortNameLense(a).localeCompare(sortNameLense(b));
+      return starDiff;
+    };
   }
   const cvCaches = {};
   const lazyCalcCV = a => {
@@ -46,13 +53,19 @@ export const sortAccountsComparatorFromOrder = (
     return v;
   };
   return (a, b) => {
-    const diff =
-      ascValue *
-      lazyCalcCV(a)
-        .minus(lazyCalcCV(b))
-        .toNumber();
-    if (diff === 0) return sortNameLense(a).localeCompare(sortNameLense(b));
-    return diff;
+    const starDiff =
+      Number(starredAccountIds.includes(b.id)) -
+      Number(starredAccountIds.includes(a.id));
+    if (starDiff === 0) {
+      const diff =
+        ascValue *
+        lazyCalcCV(a)
+          .minus(lazyCalcCV(b))
+          .toNumber();
+      if (diff === 0) return sortNameLense(a).localeCompare(sortNameLense(b));
+      return diff;
+    }
+    return starDiff;
   };
 };
 
