@@ -6,13 +6,15 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
+  "peerDependencies": {
+    "@ledgerhq/hw-transport-node-ble": "5.7.0"
+  },
   "dependencies": {
     "@ledgerhq/errors": "5.7.0",
     "@ledgerhq/hw-transport-http": "5.7.0",
     "@ledgerhq/hw-transport-mocker": "5.7.0",
-    "@ledgerhq/hw-transport-node-ble": "5.7.0",
     "@ledgerhq/hw-transport-node-hid": "5.7.0",
-    "@ledgerhq/ledger-core": "^5.3.0",
+    "@ledgerhq/ledger-core": "^5.3.2",
     "@ledgerhq/live-common": "^11.2.0",
     "@ledgerhq/logs": "5.6.0",
     "asciichart": "^1.5.9",
@@ -41,7 +43,7 @@
     "lib"
   ],
   "scripts": {
-    "prepare": "./scripts/gen.sh",
+    "prepare": "./scripts/gen.sh && yarn build",
     "build": "babel --ignore __tests__ -s -d lib src",
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",

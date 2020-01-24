@@ -30,6 +30,10 @@ jobs:
           yarn --frozen-lockfile
           cd -
           yarn ci-setup-cli
+      - name: Deps versions
+        run: |
+          yarn flow --version
+          yarn jest --version
       - name: Lint
         run: yarn ci-lint
       - name: Run tests

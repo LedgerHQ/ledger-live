@@ -9,6 +9,7 @@ import {
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import ethereumScanAccounts1 from "./datasets/ethereum.scanAccounts.1";
+import ethereum_classic from "./datasets/ethereum_classic";
 
 export const ethereum2 = {
   id:
@@ -163,7 +164,8 @@ const dataset: DatasetTest<Transaction> = {
           raw: ethereum2
         }
       ]
-    }
+    },
+    ethereum_classic
   }
 };
 
