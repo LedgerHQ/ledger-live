@@ -1,6 +1,19 @@
 // @flow
 // set and get environment & config variables
 import { Subject } from "rxjs";
+import mapValues from "lodash/mapValues";
+
+type EnvDef<V> = {
+  desc: string,
+  def: V,
+  parser: mixed => ?V
+};
+
+type ExtractEnvValue = <V>(EnvDef<V>) => V;
+type EnvDefs = typeof envDefinitions;
+type Env = typeof env;
+export type EnvValue<Name> = $ElementType<Env, Name>;
+export type EnvName = $Keys<EnvDefs>;
 
 const intParser = (v: mixed): ?number => {
   if (!Number.isNaN(v)) return parseInt(v, 10);
@@ -18,138 +31,308 @@ const boolParser = (v: mixed): ?boolean => {
 const stringParser = (v: mixed): ?string =>
   typeof v === "string" ? v : undefined;
 
-// This define the available environments
-const envParsers = {
-  API_TEZOS_BAKER: stringParser,
-  API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: stringParser,
-  API_TEZOS_NODE: stringParser,
-  BASE_SOCKET_URL: stringParser,
-  BRIDGE_FORCE_IMPLEMENTATION: stringParser,
-  DEVICE_CANCEL_APDU_FLUSH_MECHANISM: boolParser,
-  DEVICE_PROXY_URL: stringParser,
-  DISABLE_TRANSACTION_BROADCAST: boolParser,
-  EXPERIMENTAL_BLE: boolParser,
-  EXPERIMENTAL_PORTFOLIO_RANGE: boolParser,
-  EXPERIMENTAL_CURRENCIES: stringParser,
-  EXPERIMENTAL_EXPLORERS: boolParser,
-  EXPERIMENTAL_FALLBACK_APDU_LISTAPPS: boolParser,
-  EXPERIMENTAL_LANGUAGES: boolParser,
-  EXPERIMENTAL_LIBCORE: boolParser,
-  EXPERIMENTAL_MANAGER: boolParser,
-  EXPERIMENTAL_ROI_CALCULATION: boolParser,
-  EXPERIMENTAL_SEND_MAX: boolParser,
-  EXPERIMENTAL_USB: boolParser,
-  EXPLORER: stringParser,
-  FORCE_PROVIDER: intParser,
-  HIDE_EMPTY_TOKEN_ACCOUNTS: boolParser,
-  KEYCHAIN_OBSERVABLE_RANGE: intParser,
-  LEDGER_COUNTERVALUES_API: stringParser,
-  LEDGER_REST_API_BASE: stringParser,
-  LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK: boolParser,
-  LIBCORE_BALANCE_HISTORY_NOGO: stringParser,
-  LIBCORE_PASSWORD: stringParser,
-  MANAGER_API_BASE: stringParser,
-  MANAGER_DEV_MODE: boolParser,
-  MANAGER_INSTALL_DELAY: intParser,
-  MOCK: boolParser,
-  OPERATION_ADDRESSES_LIMIT: intParser,
-  OPERATION_OPTIMISTIC_RETENTION: intParser,
-  OPERATION_PAGE_SIZE_INITIAL: intParser,
-  SCAN_FOR_INVALID_PATHS: boolParser,
-  SHOW_LEGACY_NEW_ACCOUNT: boolParser,
-  SYNC_MAX_CONCURRENT: intParser,
-  USER_ID: stringParser,
-  WITH_DEVICE_POLLING_DELAY: floatParser
+const envDefinitions = {
+  API_TEZOS_BAKER: {
+    parser: stringParser,
+    def: "https://tezos-bakers.api.live.ledger.com",
+    desc: "bakers API for tezos"
+  },
+  API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
+    def: "https://xtz-explorer.api.live.ledger.com/explorer",
+    parser: stringParser,
+    desc: "Ledger explorer API for tezos"
+  },
+  API_TEZOS_NODE: {
+    def: "https://xtz-node.api.live.ledger.com",
+    parser: stringParser,
+    desc: "node API for tezos (for broadcast only)"
+  },
+  BASE_SOCKET_URL: {
+    def: "wss://api.ledgerwallet.com/update",
+    parser: stringParser,
+    desc: "Ledger script runner API"
+  },
+  BRIDGE_FORCE_IMPLEMENTATION: {
+    def: "",
+    parser: stringParser,
+    desc:
+      "force implementation for ALL currency bridges (affects scanning accounts)"
+  },
+  DEVICE_CANCEL_APDU_FLUSH_MECHANISM: {
+    def: true,
+    parser: boolParser,
+    desc:
+      "enable a mechanism that send a 0x00 apdu to force device to awake from its 'Processing' UI state"
+  },
+  DEVICE_PROXY_URL: {
+    def: "",
+    parser: stringParser,
+    desc: "enable a proxy to use instead of a physical device"
+  },
+  DISABLE_TRANSACTION_BROADCAST: {
+    def: false,
+    parser: boolParser,
+    desc: "disable broadcast of transactions"
+  },
+  EXPERIMENTAL_BLE: {
+    def: false,
+    parser: boolParser,
+    desc: "enable experimental support of Bluetooth"
+  },
+  EXPERIMENTAL_CURRENCIES: {
+    def: "",
+    parser: stringParser,
+    desc: "enable experimental support of currencies (comma separated)"
+  },
+  EXPERIMENTAL_EXPLORERS: {
+    def: false,
+    parser: boolParser,
+    desc: "enable experimental explorer APIs"
+  },
+  EXPERIMENTAL_FALLBACK_APDU_LISTAPPS: {
+    def: false,
+    parser: boolParser,
+    desc: "if HSM list apps fails, fallback on APDU version (>=1.6.0)"
+  },
+  EXPERIMENTAL_LANGUAGES: {
+    def: false,
+    parser: boolParser,
+    desc: "enable experimental languages"
+  },
+  EXPERIMENTAL_LIBCORE: {
+    def: false,
+    parser: boolParser,
+    desc:
+      "enable experimental libcore implementation of a currency (affects scan accounts)"
+  },
+  EXPERIMENTAL_MANAGER: {
+    def: false,
+    parser: boolParser,
+    desc: "enable an experimental version of Manager"
+  },
+  EXPERIMENTAL_PORTFOLIO_RANGE: {
+    def: false,
+    parser: boolParser,
+    desc:
+      "enable an experimental version of available graph ranges and granularity"
+  },
+  EXPERIMENTAL_ROI_CALCULATION: {
+    def: false,
+    parser: boolParser,
+    desc:
+      "enable an experimental version of the portfolio percentage calculation"
+  },
+  EXPERIMENTAL_SEND_MAX: {
+    def: false,
+    parser: boolParser,
+    desc: "force enabling SEND MAX even if not yet stable"
+  },
+  EXPERIMENTAL_USB: {
+    def: false,
+    parser: boolParser,
+    desc: "enable an experimental implementation of USB support"
+  },
+  EXPLORER: {
+    def: "https://explorers.api.live.ledger.com",
+    parser: stringParser,
+    desc: "Ledger main explorer API (multi currencies)"
+  },
+  FORCE_PROVIDER: {
+    def: 1,
+    parser: intParser,
+    desc: "use a different provider for app store (for developers only)"
+  },
+  GET_CALLS_RETRY: {
+    def: 2,
+    parser: intParser,
+    desc: "how many times to retry a GET http call"
+  },
+  GET_CALLS_TIMEOUT: {
+    def: 60 * 1000,
+    parser: intParser,
+    desc: "how much time to timeout a GET http call"
+  },
+  HIDE_EMPTY_TOKEN_ACCOUNTS: {
+    def: false,
+    parser: boolParser,
+    desc: "hide the sub accounts when they are empty"
+  },
+  KEYCHAIN_OBSERVABLE_RANGE: {
+    def: 0,
+    parser: intParser,
+    desc: "overrides the gap limit specified by BIP44 (default to 20)"
+  },
+  LEDGER_COUNTERVALUES_API: {
+    def: "https://countervalues.api.live.ledger.com",
+    parser: stringParser,
+    desc: "Ledger countervalues API"
+  },
+  LEDGER_REST_API_BASE: {
+    def: "https://explorers.api.live.ledger.com",
+    parser: stringParser,
+    desc: "DEPRECATED"
+  },
+  LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK: {
+    def: false,
+    parser: boolParser,
+    desc: "enable sending to KT accounts. Not tested."
+  },
+  LIBCORE_BALANCE_HISTORY_NOGO: {
+    def: "ripple,ethereum,tezos", // LLC-475
+    parser: stringParser,
+    desc:
+      "comma-separated list of currencies which does not properly support balance history libcore implementation"
+  },
+  LIBCORE_PASSWORD: {
+    def: "",
+    parser: stringParser,
+    desc: "libcore encryption password"
+  },
+  MANAGER_API_BASE: {
+    def: "https://manager.api.live.ledger.com/api",
+    parser: stringParser,
+    desc: "Ledger Manager API"
+  },
+  MANAGER_DEV_MODE: {
+    def: false,
+    parser: boolParser,
+    desc: "enable visibility of utility apps in Manager"
+  },
+  MANAGER_INSTALL_DELAY: {
+    def: 1000,
+    parser: intParser,
+    desc:
+      "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs"
+  },
+  MAX_ACCOUNT_NAME_SIZE: {
+    def: 50,
+    parser: intParser,
+    desc: "maximum size of account names"
+  },
+  MOCK: {
+    def: false,
+    parser: boolParser,
+    desc: "switch the app into a MOCK mode for test purpose"
+  },
+  OPERATION_ADDRESSES_LIMIT: {
+    def: 100,
+    parser: intParser,
+    desc: "limit the number of addresses in from/to of operations"
+  },
+  OPERATION_OPTIMISTIC_RETENTION: {
+    def: 30 * 60 * 1000,
+    parser: intParser,
+    desc:
+      "timeout to keep an optimistic operation that was broadcasted but not yet visible from libcore or the API"
+  },
+  OPERATION_PAGE_SIZE_INITIAL: {
+    def: 100,
+    parser: intParser,
+    desc: "defines the initial default operation length page to use"
+  },
+  SCAN_FOR_INVALID_PATHS: {
+    def: false,
+    parser: boolParser,
+    desc: "enable searching accounts in exotic derivation paths"
+  },
+  SHOW_LEGACY_NEW_ACCOUNT: {
+    def: false,
+    parser: boolParser,
+    desc: "allow the creation of legacy accounts"
+  },
+  SKIP_ONBOARDING: {
+    def: false,
+    parser: boolParser,
+    desc: "dev flag to skip onboarding flow"
+  },
+  SYNC_ALL_INTERVAL: {
+    def: 2 * 60 * 1000,
+    parser: intParser,
+    desc: "delay between successive sync"
+  },
+  SYNC_BOOT_DELAY: {
+    def: 2 * 1000,
+    parser: intParser,
+    desc: "delay before the sync starts"
+  },
+  SYNC_PENDING_INTERVAL: {
+    def: 10 * 1000,
+    parser: intParser,
+    desc: "delay between sync when an operation is still pending"
+  },
+  SYNC_OUTDATED_CONSIDERED_DELAY: {
+    def: 2 * 60 * 1000,
+    parser: intParser,
+    desc: "delay until Live consider a sync outdated"
+  },
+  SYNC_MAX_CONCURRENT: {
+    def: 4,
+    parser: intParser,
+    desc: "maximum limit to synchronize accounts concurrently to limit overload"
+  },
+  USER_ID: {
+    def: "",
+    parser: stringParser,
+    desc:
+      "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment)."
+  },
+  WITH_DEVICE_POLLING_DELAY: {
+    def: 500,
+    parser: floatParser,
+    desc: "delay when polling device"
+  }
 };
 
-// This define the default values
-const defaults: $ObjMap<EnvParsers, ExtractEnvValue> = {
-  API_TEZOS_BAKER: "https://tezos-bakers.api.live.ledger.com",
-  API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT:
-    "https://xtz-explorer.api.live.ledger.com/explorer",
-  API_TEZOS_NODE: "https://xtz-node.api.live.ledger.com",
-  BASE_SOCKET_URL: "wss://api.ledgerwallet.com/update",
-  BRIDGE_FORCE_IMPLEMENTATION: "",
-  DEVICE_CANCEL_APDU_FLUSH_MECHANISM: true,
-  DEVICE_PROXY_URL: "",
-  DISABLE_TRANSACTION_BROADCAST: false,
-  EXPERIMENTAL_BLE: false,
-  EXPERIMENTAL_PORTFOLIO_RANGE: false,
-  EXPERIMENTAL_CURRENCIES: "",
-  EXPERIMENTAL_EXPLORERS: false,
-  EXPERIMENTAL_FALLBACK_APDU_LISTAPPS: false,
-  EXPERIMENTAL_LANGUAGES: false,
-  EXPERIMENTAL_LIBCORE: false,
-  EXPERIMENTAL_ROI_CALCULATION: false,
-  EXPERIMENTAL_MANAGER: false,
-  EXPERIMENTAL_SEND_MAX: false,
-  EXPERIMENTAL_USB: false,
-  EXPLORER: "https://explorers.api.live.ledger.com",
-  FORCE_PROVIDER: 1,
-  HIDE_EMPTY_TOKEN_ACCOUNTS: false,
-  KEYCHAIN_OBSERVABLE_RANGE: 0,
-  LEDGER_COUNTERVALUES_API: "https://countervalues.api.live.ledger.com",
-  LEDGER_REST_API_BASE: "https://explorers.api.live.ledger.com",
-  LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK: false,
-  LIBCORE_BALANCE_HISTORY_NOGO: "ripple,ethereum,tezos", // LLC-475
-  LIBCORE_PASSWORD: "",
-  MANAGER_API_BASE: "https://manager.api.live.ledger.com/api",
-  MANAGER_DEV_MODE: false,
-  MANAGER_INSTALL_DELAY: 1000,
-  MOCK: false,
-  OPERATION_ADDRESSES_LIMIT: 100,
-  OPERATION_OPTIMISTIC_RETENTION: 30 * 60 * 1000,
-  OPERATION_PAGE_SIZE_INITIAL: 100,
-  SCAN_FOR_INVALID_PATHS: false,
-  SHOW_LEGACY_NEW_ACCOUNT: false,
-  SYNC_MAX_CONCURRENT: 4,
-  USER_ID: "",
-  WITH_DEVICE_POLLING_DELAY: 500
-};
+const getDefinition = (name: string): ?EnvDef<any> => envDefinitions[name];
+
+(envDefinitions: { [_: string]: EnvDef<any> });
+
+const defaults: $ObjMap<EnvDefs, ExtractEnvValue> = mapValues(
+  envDefinitions,
+  o => o.def
+);
 
 // private local state
-const env: $ObjMap<EnvParsers, ExtractEnvValue> = {
-  ...defaults
-};
+const env: $ObjMap<EnvDefs, ExtractEnvValue> = { ...defaults };
 
-export const getAllEnvNames = (): EnvName[] => Object.keys(env);
+export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions);
 
 export const getAllEnvs = (): Env => ({ ...env });
 
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
-export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> =>
-  // $FlowFixMe flow don't seem to type proof it
-  env[name];
+export const getEnv = <Name: EnvName>(name: Name): EnvValue<Name> => env[name];
 
 export const getEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> =>
-  // $FlowFixMe flow don't seem to type proof it
   defaults[name];
 
 export const isEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> =>
-  // $FlowFixMe flow don't seem to type proof it
-  env[name] === defaults[name];
+  defaults[name];
 
-export const changes: Subject<{
+export const getEnvDesc = <Name: EnvName>(name: Name): string =>
+  envDefinitions[name].desc;
+
+type ChangeValue<T> = {
   name: EnvName,
-  value: EnvValue<*>,
-  oldValue: EnvValue<*>
-}> = new Subject();
+  value: EnvValue<T>,
+  oldValue: EnvValue<T>
+};
+
+export const changes: Subject<ChangeValue<any>> = new Subject();
 
 // change one environment
 export const setEnv = <Name: EnvName>(name: Name, value: EnvValue<Name>) => {
   const oldValue = env[name];
   if (oldValue !== value) {
-    // $FlowFixMe flow don't seem to type proof it
     env[name] = value;
-    // $FlowFixMe
     changes.next({ name, value, oldValue });
   }
 };
 
 // change one environment with safety. returns true if it succeed
 export const setEnvUnsafe = (name: string, unsafeValue: mixed): boolean => {
-  if (!(name in envParsers)) return false;
-  const parser = envParsers[name];
+  const definition = getDefinition(name);
+  if (!definition) return false;
+  const { parser } = definition;
   const value = parser(unsafeValue);
   if (value === undefined || value === null) {
     console.warn(`Invalid ENV value for ${name}`);
@@ -159,9 +342,3 @@ export const setEnvUnsafe = (name: string, unsafeValue: mixed): boolean => {
   setEnv(name, value);
   return true;
 };
-
-type ExtractEnvValue = <V>((mixed) => ?V) => V;
-type EnvParsers = typeof envParsers;
-type Env = typeof env;
-export type EnvValue<Name> = $ElementType<Env, Name>;
-export type EnvName = $Keys<EnvParsers>;

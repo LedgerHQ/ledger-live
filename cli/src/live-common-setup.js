@@ -8,7 +8,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
-import { first, switchMap, map } from "rxjs/operators";
+import { map, first, switchMap } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
 import {
   registerTransportModule,
@@ -44,17 +44,22 @@ if (process.env.DEVICE_PROXY_URL) {
 const cacheBle = {};
 
 if (!process.env.CI) {
-  const {
-    default: TransportNodeBle
-  } = require("@ledgerhq/hw-transport-node-ble");
+  let TransportNodeBle;
+  const getTransport = () => {
+    if (!TransportNodeBle) {
+      TransportNodeBle = require("@ledgerhq/hw-transport-node-ble").default;
+    }
+    return TransportNodeBle;
+  };
+
   const openBleByQuery = async query => {
     const m = query.match(/^ble:?(.*)/);
     if (!m) throw new Error("ble regexp should match");
     const [, q] = m;
     if (cacheBle[query]) return cacheBle[query];
     const t = await (!q
-      ? TransportNodeBle.create()
-      : Observable.create(TransportNodeBle.listen)
+      ? getTransport().create()
+      : Observable.create(getTransport().listen)
           .pipe(
             first(
               e =>
@@ -77,7 +82,10 @@ if (!process.env.CI) {
         return openBleByQuery(query);
       }
     },
-    discovery: Observable.create(TransportNodeBle.listen).pipe(
+    discovery: Observable.create(o => {
+      const s = getTransport().listen(o);
+      return () => s.unsubscribe();
+    }).pipe(
       map(e => ({
         type: e.type,
         id: "ble:" + e.device.id,
@@ -87,7 +95,7 @@ if (!process.env.CI) {
     disconnect: query =>
       query.startsWith("ble")
         ? cacheBle[query]
-          ? TransportNodeBle.disconnect(cacheBle[query].id)
+          ? getTransport().disconnect(cacheBle[query].id)
           : Promise.resolve()
         : null
   });

@@ -8,9 +8,7 @@ cd `mktemp -d`
 git clone $GIT_REMOTE
 cd ledger-live-common
 yarn
-yalc publish
 cd cli
-yalc add @ledgerhq/live-common
 yarn
 yarn link
 yarn build
