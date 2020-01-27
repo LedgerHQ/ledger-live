@@ -43,7 +43,7 @@ jobs:
       - name: Lint
         run: yarn ci-lint
       - name: Run tests
-        run: codecov_token=${{ secrets.CODECOV_TOKEN }} yarn ci-test-common && npx codecov
+        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} yarn ci-test-common && npx codecov
         timeout-minutes: 60
   #
   # debian-cli-tests:
