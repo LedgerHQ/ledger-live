@@ -807,7 +807,7 @@
       "confirmationNb": "Number of confirmations",
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings",
-      "placeholder": "No settings for this asset",
+      "placeholder": "No settings for this asset"
     },
     "rates": {
       "header": "Rates",
@@ -1257,6 +1257,7 @@
     "from": "from",
     "forAnEstYield": "for an est. yield of",
     "yieldPerYear": "{{yield}} / Year",
+    "yieldInfos": "Yield rates provided by",
     "termsAndPrivacy": "I have read and I accept the <1>Ledger Live Terms of Use</1> and <3>Privacy Policy</3>",
     "delegation": "Delegation",
     "viewDetails": "View details",

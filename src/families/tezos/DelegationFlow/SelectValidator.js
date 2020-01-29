@@ -2,7 +2,14 @@
 
 import invariant from "invariant";
 import React, { useState, useCallback, useEffect } from "react";
-import { View, StyleSheet, FlatList, Keyboard, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Keyboard,
+  Platform,
+  Linking,
+} from "react-native";
 import i18next from "i18next";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
@@ -31,6 +38,8 @@ import Touchable from "../../../components/Touchable";
 import Button from "../../../components/Button";
 import TextInput from "../../../components/TextInput";
 import TranslatedError from "../../../components/TranslatedError";
+import ExternalLink from "../../../components/ExternalLink";
+import Info from "../../../icons/Info";
 import BakerImage from "../BakerImage";
 
 const forceInset = { bottom: "always" };
@@ -49,14 +58,23 @@ type Props = {
 
 const keyExtractor = baker => baker.address;
 
-const BakerHead = () => (
+const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => (
   <View style={styles.bakerHead}>
     <LText style={styles.bakerHeadText} numberOfLines={1} semiBold>
       Validator
     </LText>
-    <LText style={styles.bakerHeadText} numberOfLines={1} semiBold>
-      Est. Yield
-    </LText>
+    <View style={styles.bakerHeadContainer}>
+      <LText style={styles.bakerHeadText} numberOfLines={1} semiBold>
+        Est. Yield
+      </LText>
+      <Touchable
+        style={styles.bakerHeadInfo}
+        event="StepValidatorShowProvidedBy"
+        onPress={onPressHelp}
+      >
+        <Info color={colors.smoke} size={14} />
+      </Touchable>
+    </View>
   </View>
 );
 
@@ -115,6 +133,7 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
   const bakers = useBakers(whitelist);
   const [editingCustom, setEditingCustom] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [showInfos, setShowInfos] = useState(false);
 
   if (Platform.OS === "ios") {
     const keyboardDidShow = event => {
@@ -198,6 +217,14 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
     setEditingCustom(false);
   }, []);
 
+  const displayInfos = useCallback(() => {
+    setShowInfos(true);
+  }, []);
+
+  const hideInfos = useCallback(() => {
+    setShowInfos(false);
+  }, []);
+
   const onItemPress = useCallback(
     (baker: Baker) => {
       const bridge = getAccountBridge(account, parentAccount);
@@ -223,7 +250,7 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <View style={styles.header}>
         {/* TODO SEARCH */}
-        <BakerHead />
+        <BakerHead onPressHelp={displayInfos} />
       </View>
       <FlatList
         contentContainerStyle={styles.list}
@@ -265,6 +292,24 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
             <TranslatedError error={error} />
           </LText>
         )}
+      </InfoModal>
+
+      <InfoModal
+        id="SelectValidatorInfos"
+        isOpened={showInfos}
+        onClose={hideInfos}
+        confirmLabel={i18next.t("common.close")}
+      >
+        <View style={styles.providedByContainer}>
+          <LText semiBold style={styles.providedByText}>
+            <Trans i18nKey="delegation.yieldInfos" />
+          </LText>
+          <ExternalLink
+            text={<LText bold>MyTezosBaker</LText>}
+            event="SelectValidatorOpen"
+            onPress={() => Linking.openURL("https://mytezosbaker.com/")}
+          />
+        </View>
       </InfoModal>
 
       <View style={styles.footer}>
@@ -315,6 +360,13 @@ const styles = StyleSheet.create({
   bakerHeadText: {
     color: colors.smoke,
     fontSize: 14,
+  },
+  bakerHeadContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  bakerHeadInfo: {
+    marginLeft: 5,
   },
   baker: {
     flexDirection: "row",
@@ -368,6 +420,15 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.alert,
+  },
+  providedByContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  providedByText: {
+    fontSize: 14,
+    marginRight: 5,
+    color: colors.grey,
   },
 });
 
