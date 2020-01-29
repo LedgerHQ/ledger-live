@@ -57,7 +57,7 @@ const Row = ({
   );
 
   const parentAccount =
-    account.type === "TokenAccount"
+    account.type !== "Account"
       ? accounts.find(a => a.id === account.parentId)
       : null;
   const color = getCurrencyColor(currency);
