@@ -6,7 +6,6 @@ import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { setNetwork } from "@ledgerhq/live-common/lib/network";
-import { logs } from "@ledgerhq/live-common/lib/api/socket";
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
@@ -53,12 +52,6 @@ if (Config.VERBOSE) {
     } else {
       console.log(`${type}: ${message || ""}`); // eslint-disable-line no-console
     }
-  });
-}
-
-if (Config.DEBUG_SOCKET) {
-  logs.subscribe(e => {
-    console.log(e); // eslint-disable-line no-console
   });
 }
 
