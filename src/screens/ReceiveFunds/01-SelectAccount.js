@@ -58,9 +58,7 @@ const ReceiveFunds = ({ accounts, allAccounts, navigation }: Props) => {
               navigation.navigate("ReceiveConnectDevice", {
                 accountId: account.id,
                 parentId:
-                  account.type === "TokenAccount"
-                    ? account.parentId
-                    : undefined,
+                  account.type !== "Account" ? account.parentId : undefined,
               });
             }}
           />

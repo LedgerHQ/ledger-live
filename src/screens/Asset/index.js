@@ -183,7 +183,7 @@ class Asset extends PureComponent<Props, *> {
     const { allAccounts, accounts, navigation } = this.props;
     const account = accounts.find(a => a.id === item.accountId);
     const parentAccount =
-      account && account.type === "TokenAccount"
+      account && account.type !== "Account"
         ? allAccounts.find(a => a.id === account.parentId)
         : null;
 
