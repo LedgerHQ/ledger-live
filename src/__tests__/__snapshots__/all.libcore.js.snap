@@ -57119,7 +57119,7 @@ Array [
 exports[`ripple currency bridge scanAccounts ripple seed 1 1`] = `
 Array [
   Object {
-    "balance": "23058408",
+    "balance": "21804846",
     "currencyId": "ripple",
     "derivationMode": "",
     "freshAddress": "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
@@ -57133,14 +57133,14 @@ Array [
     "id": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
     "index": 0,
     "name": "XRP 1",
-    "operationsCount": 85,
+    "operationsCount": 87,
     "pendingOperations": Array [],
     "seedIdentifier": "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
-    "spendableBalance": "23058408",
+    "spendableBalance": "21804846",
     "unitMagnitude": 6,
   },
   Object {
-    "balance": "33701452",
+    "balance": "34956104",
     "currencyId": "ripple",
     "derivationMode": "",
     "freshAddress": "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
@@ -57154,10 +57154,10 @@ Array [
     "id": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
     "index": 1,
     "name": "XRP 2",
-    "operationsCount": 90,
+    "operationsCount": 92,
     "pendingOperations": Array [],
     "seedIdentifier": "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
-    "spendableBalance": "33701452",
+    "spendableBalance": "34956104",
     "unitMagnitude": 6,
   },
   Object {
@@ -57956,6 +57956,26 @@ Array [
     Object {
       "accountId": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
       "blockHash": null,
+      "blockHeight": 53046291,
+      "extra": Object {
+        "tag": 3564565655,
+      },
+      "fee": "10",
+      "hash": "67E8F2F1F07B8BF1B350AE236B92B26F84A1E2D11341DE6671DDAA3B598FE859",
+      "id": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:-67E8F2F1F07B8BF1B350AE236B92B26F84A1E2D11341DE6671DDAA3B598FE859-IN",
+      "recipients": Array [
+        "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
+      ],
+      "senders": Array [
+        "rJXvTXRLvQVhLGLaBsLE8JEFzRvNs9SY5e",
+      ],
+      "transactionSequenceNumber": 528,
+      "type": "IN",
+      "value": "100",
+    },
+    Object {
+      "accountId": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
+      "blockHash": null,
       "blockHeight": 52113814,
       "extra": Object {
         "tag": 2842,
@@ -58658,6 +58678,26 @@ Array [
       "transactionSequenceNumber": 23,
       "type": "OUT",
       "value": "1800010",
+    },
+    Object {
+      "accountId": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
+      "blockHash": null,
+      "blockHeight": 53047732,
+      "extra": Object {
+        "tag": 534645487,
+      },
+      "fee": "10",
+      "hash": "E412B08FCAC305646595FDEE63C7194278A5E6B1C1CC4CE802BFD8FB735C91F3",
+      "id": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:-E412B08FCAC305646595FDEE63C7194278A5E6B1C1CC4CE802BFD8FB735C91F3-OUT",
+      "recipients": Array [
+        "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
+      ],
+      "senders": Array [
+        "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
+      ],
+      "transactionSequenceNumber": 46,
+      "type": "OUT",
+      "value": "1253662",
     },
     Object {
       "accountId": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
@@ -59366,6 +59406,24 @@ Array [
       "transactionSequenceNumber": 5,
       "type": "OUT",
       "value": "500010",
+    },
+    Object {
+      "accountId": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
+      "blockHash": null,
+      "blockHeight": 53066129,
+      "extra": Object {},
+      "fee": "10",
+      "hash": "5999076053D9273F18D31C425ABE5115A43FC13B21222D3879D9079982D2F6A0",
+      "id": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:-5999076053D9273F18D31C425ABE5115A43FC13B21222D3879D9079982D2F6A0-IN",
+      "recipients": Array [
+        "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
+      ],
+      "senders": Array [
+        "rKDrwGDKDsLAsaqNKWoEWzUUnvLHaFvxCg",
+      ],
+      "transactionSequenceNumber": 3,
+      "type": "IN",
+      "value": "1000",
     },
     Object {
       "accountId": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
@@ -60268,6 +60326,26 @@ Array [
       "transactionSequenceNumber": 48,
       "type": "IN",
       "value": "3056142",
+    },
+    Object {
+      "accountId": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
+      "blockHash": null,
+      "blockHeight": 53047732,
+      "extra": Object {
+        "tag": 534645487,
+      },
+      "fee": "10",
+      "hash": "E412B08FCAC305646595FDEE63C7194278A5E6B1C1CC4CE802BFD8FB735C91F3",
+      "id": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:-E412B08FCAC305646595FDEE63C7194278A5E6B1C1CC4CE802BFD8FB735C91F3-IN",
+      "recipients": Array [
+        "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
+      ],
+      "senders": Array [
+        "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
+      ],
+      "transactionSequenceNumber": 46,
+      "type": "IN",
+      "value": "1253652",
     },
     Object {
       "accountId": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
@@ -67354,7 +67432,7 @@ Array [
   },
   Object {
     "address": "KT1Ge8wsYeBmUahzXEbR8gm1omHFxNod5jhk",
-    "balance": "1005152",
+    "balance": "1005637",
     "capabilities": Object {
       "isDelegatable": false,
       "isSpendable": false,
@@ -67362,7 +67440,7 @@ Array [
     "currencyId": "tezos",
     "id": "libcore:1:tezos:0294e8344ae6df2d3123fa100b5abd40cee339c67838b1c34c4f243cc582f4d2d8:tezbox+KT1Ge8wsYeBmUahzXEbR8gm1omHFxNod5jhk",
     "name": "KT1Ge8ws...xNod5jhk",
-    "operationsCount": 83,
+    "operationsCount": 84,
     "parentId": "libcore:1:tezos:0294e8344ae6df2d3123fa100b5abd40cee339c67838b1c34c4f243cc582f4d2d8:tezbox",
     "pendingOperations": Array [],
     "type": "ChildAccountRaw",
@@ -67383,7 +67461,7 @@ Array [
     "type": "ChildAccountRaw",
   },
   Object {
-    "balance": "1372384",
+    "balance": "1373047",
     "currencyId": "tezos",
     "derivationMode": "tezbox",
     "freshAddress": "tz1boBHAVpwcvKkNFAQHYr7mjxAz1PpVgKq7",
@@ -67397,10 +67475,10 @@ Array [
     "id": "libcore:1:tezos:02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce:tezbox",
     "index": 1,
     "name": "Tezos 2",
-    "operationsCount": 138,
+    "operationsCount": 139,
     "pendingOperations": Array [],
     "seedIdentifier": "0280ca1bdf81e50b0c09df34557084edafcc9f7e1f749fe47596405bb6d802f002",
-    "spendableBalance": "1372384",
+    "spendableBalance": "1373047",
     "subAccounts": Array [],
     "unitMagnitude": 6,
     "xpub": "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
@@ -71114,6 +71192,22 @@ Array [
       "accountId": "libcore:1:tezos:0294e8344ae6df2d3123fa100b5abd40cee339c67838b1c34c4f243cc582f4d2d8:tezbox+KT1Ge8wsYeBmUahzXEbR8gm1omHFxNod5jhk",
       "blockHash": null,
       "extra": Object {},
+      "fee": "2120",
+      "hash": "oo3geA8iSkWsit61MpSwC3bCMbgXJAuVoutPz7BWqFZ5bb6UuVz",
+      "id": "libcore:1:tezos:0294e8344ae6df2d3123fa100b5abd40cee339c67838b1c34c4f243cc582f4d2d8:tezbox+KT1Ge8wsYeBmUahzXEbR8gm1omHFxNod5jhk-oo3geA8iSkWsit61MpSwC3bCMbgXJAuVoutPz7BWqFZ5bb6UuVz-IN",
+      "recipients": Array [
+        "KT1Ge8wsYeBmUahzXEbR8gm1omHFxNod5jhk",
+      ],
+      "senders": Array [
+        "tz1cNARmnRRrvZgspPr2rSTUWq5xtGTuKuHY",
+      ],
+      "type": "IN",
+      "value": "485",
+    },
+    Object {
+      "accountId": "libcore:1:tezos:0294e8344ae6df2d3123fa100b5abd40cee339c67838b1c34c4f243cc582f4d2d8:tezbox+KT1Ge8wsYeBmUahzXEbR8gm1omHFxNod5jhk",
+      "blockHash": null,
+      "extra": Object {},
       "fee": "5828",
       "hash": "oo4Pdu6H2Uv1xxTXFNG2sMeHd8XPP6QYiGWppzAvYQQX8P7Q1G2",
       "id": "libcore:1:tezos:0294e8344ae6df2d3123fa100b5abd40cee339c67838b1c34c4f243cc582f4d2d8:tezbox+KT1Ge8wsYeBmUahzXEbR8gm1omHFxNod5jhk-oo4Pdu6H2Uv1xxTXFNG2sMeHd8XPP6QYiGWppzAvYQQX8P7Q1G2-IN",
@@ -74240,6 +74334,22 @@ Array [
       ],
       "type": "IN",
       "value": "10000",
+    },
+    Object {
+      "accountId": "libcore:1:tezos:02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce:tezbox",
+      "blockHash": null,
+      "extra": Object {},
+      "fee": "2120",
+      "hash": "opC15uALyvSzS8GoV45X7SwoMn4T2q2zXwAkW8C4GB67WSsqo5S",
+      "id": "libcore:1:tezos:02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce:tezbox-opC15uALyvSzS8GoV45X7SwoMn4T2q2zXwAkW8C4GB67WSsqo5S-IN",
+      "recipients": Array [
+        "tz1boBHAVpwcvKkNFAQHYr7mjxAz1PpVgKq7",
+      ],
+      "senders": Array [
+        "tz1cNARmnRRrvZgspPr2rSTUWq5xtGTuKuHY",
+      ],
+      "type": "IN",
+      "value": "663",
     },
     Object {
       "accountId": "libcore:1:tezos:02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce:tezbox",
