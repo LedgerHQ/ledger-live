@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/live-common/lib/network";
 import { implementCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import { log, listen } from "@ledgerhq/logs";
-import { logs as socketLogs } from "@ledgerhq/live-common/lib/api/socket";
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
@@ -89,13 +88,6 @@ listen(({ id, date, type, message, ...rest }) => {
   logger.log("debug", {
     message: type + (message ? ": " + message : ""),
     // $FlowFixMe
-    ...rest
-  });
-});
-
-socketLogs.subscribe(({ type, ...rest }) => {
-  logger.log("debug", {
-    message: "socket:" + type,
     ...rest
   });
 });

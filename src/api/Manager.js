@@ -11,10 +11,8 @@ import {
   ManagerDeviceLockedError,
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
-  UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
   NetworkDown,
-  WebsocketConnectionFailed,
   FirmwareNotRecognized
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
@@ -22,7 +20,13 @@ import { throwError, Observable } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
-import type { SocketEvent } from "./socket";
+import {
+  createMockSocket,
+  bulkSocketMock,
+  secureChannelMock,
+  resultMock
+} from "./socket.mock";
+import type { SocketEvent } from "../types/manager";
 import network from "../network";
 import { getEnv } from "../env";
 import type {
@@ -33,13 +37,10 @@ import type {
   Application,
   Category,
   Id,
-  McuVersion,
-  GenuineCheckEvent
+  McuVersion
 } from "../types/manager";
 import { makeLRUCache } from "../cache";
 import { getUserHashes } from "../user";
-
-const ALLOW_MANAGER_APDU_DEBOUNCE = 500;
 
 const remapSocketError = (context?: string) =>
   catchError((e: Error) => {
@@ -293,6 +294,9 @@ const install = (
   context: string,
   params: *
 ): Observable<*> => {
+  if (getEnv("MOCK")) {
+    return createMockSocket(secureChannelMock(true), bulkSocketMock(3000));
+  }
   log("manager", "install " + context, params);
   return createDeviceSocket(transport, {
     url: URL.format({
@@ -303,56 +307,13 @@ const install = (
   }).pipe(remapSocketError(context));
 };
 
-export type WithAllowManagerEvent =
-  | { type: "result", payload: mixed }
-  | { type: "allow-manager-requested" }
-  | { type: "allow-manager-accepted" };
-
-const aggregateAllowManagerEvents = (
-  input: Observable<SocketEvent>
-): Observable<WithAllowManagerEvent> =>
-  Observable.create(o => {
-    let timeout;
-    let requested;
-    const sub = input.subscribe({
-      complete: () => {
-        o.complete();
-      },
-      error: e => {
-        o.error(e);
-      },
-      next: e => {
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
-        }
-        if (e.type === "result") {
-          o.next({ type: "result", payload: e.payload });
-        } else if (e.nonce === 3) {
-          if (e.type === "exchange-before") {
-            timeout = setTimeout(() => {
-              o.next({ type: "allow-manager-requested" });
-              requested = true;
-            }, ALLOW_MANAGER_APDU_DEBOUNCE);
-          } else if (e.type === "exchange") {
-            if (e.status.toString("hex") === "6985") {
-              o.error(new UserRefusedAllowManager());
-              return;
-            }
-            if (requested) {
-              o.next({ type: "allow-manager-accepted" });
-            }
-          }
-        }
-      }
-    });
-    return sub;
-  });
-
 const genuineCheck = (
   transport: Transport<*>,
   { targetId, perso }: { targetId: *, perso: * }
-): Observable<GenuineCheckEvent> => {
+): Observable<SocketEvent> => {
+  if (getEnv("MOCK")) {
+    return createMockSocket(secureChannelMock(false), resultMock("0000"));
+  }
   log("manager", "genuineCheck", { targetId, perso });
   return createDeviceSocket(transport, {
     url: URL.format({
@@ -360,8 +321,6 @@ const genuineCheck = (
       query: { targetId, perso, livecommonversion }
     })
   }).pipe(
-    // $FlowFixMe
-    aggregateAllowManagerEvents,
     map(e => {
       if (e.type === "result") {
         return { type: "result", payload: String(e.payload || "") };
@@ -372,14 +331,21 @@ const genuineCheck = (
 };
 
 export type ListInstalledAppsEvent =
-  | { type: "result", payload: Array<{ hash: string, name: string }> }
-  | { type: "allow-manager-requested" }
-  | { type: "allow-manager-accepted" };
+  | SocketEvent
+  | { type: "result", payload: Array<{ hash: string, name: string }> };
 
 const listInstalledApps = (
   transport: Transport<*>,
   { targetId, perso }: { targetId: *, perso: * }
 ): Observable<ListInstalledAppsEvent> => {
+  if (getEnv("MOCK")) {
+    const result = global._listInstalledApps_mock_result;
+    invariant(
+      result,
+      "using MOCK, global._listInstalledApps_mock_result must be set"
+    );
+    return createMockSocket(secureChannelMock(false), resultMock(result));
+  }
   log("manager", "listInstalledApps", { targetId, perso });
   return createDeviceSocket(transport, {
     url: URL.format({
@@ -388,13 +354,8 @@ const listInstalledApps = (
     })
   }).pipe(
     remapSocketError("listInstalledApps"),
-    // $FlowFixMe
-    aggregateAllowManagerEvents,
     map(o => {
       if (o.type === "result") {
-        if (!o.payload) {
-          throw new WebsocketConnectionFailed();
-        }
         return {
           type: "result",
           payload: [...o.payload].map(a => {
@@ -419,6 +380,9 @@ const installMcu = (
   context: string,
   { targetId, version }: { targetId: *, version: * }
 ): Observable<*> => {
+  if (getEnv("MOCK")) {
+    return createMockSocket(secureChannelMock(false), bulkSocketMock(5000));
+  }
   log("manager", "installMCU " + context, { targetId, version });
   return createDeviceSocket(transport, {
     url: URL.format({

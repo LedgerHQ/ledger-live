@@ -1,4 +1,5 @@
 import app from "./commands/app";
+import appsInstallAll from "./commands/appsInstallAll";
 import appsUpdateTestAll from "./commands/appsUpdateTestAll";
 import balanceHistory from "./commands/balanceHistory";
 import broadcast from "./commands/broadcast";
@@ -31,6 +32,7 @@ import version from "./commands/version";
 
 export default {
   app,
+  appsInstallAll,
   appsUpdateTestAll,
   balanceHistory,
   broadcast,

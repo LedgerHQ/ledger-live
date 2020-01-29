@@ -3,7 +3,6 @@ import winston from "winston";
 import { listen } from "@ledgerhq/logs";
 import "./setup";
 import { setEnvUnsafe } from "../../env";
-import { logs as socketLogs } from "../../api/socket";
 import implementLibcore from "../../libcore/platforms/nodejs";
 import "../../load/tokens/ethereum/erc20";
 
@@ -59,13 +58,6 @@ listen(({ id, date, type, message, ...rest }) => {
   logger.log("debug", {
     message: type + (message ? ": " + message : ""),
     // $FlowFixMe
-    ...rest
-  });
-});
-
-socketLogs.subscribe(({ type, ...rest }) => {
-  logger.log("debug", {
-    message: "socket:" + type,
     ...rest
   });
 });
