@@ -59,7 +59,7 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
   - [Introduction](./docs/ci-intro.md)
   - Bridge implementations, where to start? (JS, Libcore, Mock)
   - Implementing the hardware wallet logic of a new coin
-  - The account derivation (BIP44 and exceptions)
+  - [The account derivation (BIP44 and exceptions)](./docs/derivation.md)
 - Advanced
   - [api/socket `createDeviceSocket` and script runner](./docs/socket.md)
   - env.js: live-common configuration system
