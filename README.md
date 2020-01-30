@@ -44,13 +44,14 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
 - The [CurrencyBridge](./docs/CurrencyBridge.md): scan accounts with a device
   - `preload` and `hydrate`
   - `scanAccountsWithDevice`
-- The [AccountBridge](./docs/CurrencyBridge.md): synchronize an account and perform transaction
+- The [AccountBridge](./docs/AccountBridge.md): synchronize an account and perform transaction
   - `startSync`
   - Build a transaction with `createTransaction` and `updateTransaction`
   - `prepareTransaction`
   - `getTransactionStatus`
   - `signAndBroadcast`
   - React: `useTransactionBridge` hook
+- [Hardware Wallet logic](./docs/hw.md)
 - [Apps store logic](./docs/apps.md)
 - [Firmware Update logic](./docs/firmware-update.md)
 - [Countervalues logic](./docs/countervalues.md)
@@ -60,6 +61,7 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
   - Implementing the hardware wallet logic of a new coin
   - The account derivation (BIP44 and exceptions)
 - Advanced
+  - [api/socket `createDeviceSocket` and script runner](./docs/socket.md)
   - env.js: live-common configuration system
   - Serialization and reconciliation
   - libcore typing and wrapping
