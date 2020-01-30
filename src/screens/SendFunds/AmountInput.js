@@ -27,6 +27,8 @@ import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
 import type { T } from "../../types/common";
 
+import normalizeZize from "../../logic/normalizeSize";
+
 type OwnProps = {
   account: AccountLike,
   currency: string,
@@ -166,24 +168,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   wrapper: {
-    minHeight: 100,
+    flexBasis: 100,
+    flexShrink: 0.5,
     flexDirection: "column",
     justifyContent: "center",
   },
   currency: {
-    fontSize: 24,
+    fontSize: normalizeZize(20),
     color: colors.grey,
   },
   active: {
-    fontSize: 32,
+    fontSize: normalizeZize(27),
   },
   error: {
     color: colors.alert,
-    fontSize: 14,
+    fontSize: normalizeZize(12),
   },
   warning: {
     color: colors.orange,
-    fontSize: 14,
+    fontSize: normalizeZize(12),
   },
 });
 
