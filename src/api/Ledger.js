@@ -70,6 +70,7 @@ const ledgerExplorersV2 = {
 
 const ledgerExplorersV3 = {
   bitcoin: "btc",
+  bitcoin_testnet: "btc_testnet",
   ethereum: "eth",
   ethereum_ropsten: "eth_ropsten",
   ethereum_classic: "etc"
