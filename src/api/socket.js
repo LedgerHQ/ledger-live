@@ -19,7 +19,9 @@ import type { SocketEvent } from "../types/manager";
 const warningsSubject = new Subject();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 
-const UNRESPONSIVE_DELAY = 1000;
+const ALLOW_MANAGER_DELAY = 500;
+const UNRESPONSIVE_DELAY = 3000;
+const UNRESPONSIVE_DELAY_FIRST_CHUNK = 15000; // more time is expected due to firmware limitation
 
 /**
  * use Ledger WebSocket API to exchange data with the device
@@ -40,6 +42,11 @@ export const createDeviceSocket = (
     let inBulk = false; // bulk is a mode where we have many apdu to run on device and no longer need the connection
 
     const ws = createWebSocket(url);
+
+    const unresponsiveLockHandling = () => {
+      if (unsubscribed) return;
+      o.error(new ManagerDeviceLockedError());
+    };
 
     ws.onopen = () => {
       o.next({ type: "opened" });
@@ -76,16 +83,17 @@ export const createDeviceSocket = (
 
             // specific logic for detecting allow manager
             let requested = false;
-            const timeout = setTimeout(() => {
-              if (unsubscribed) return;
-              if (apdu.slice(0, 2).toString("hex") === "e051") {
-                requested = true;
-                o.next({
-                  type: "device-permission-requested",
-                  wording: "Allow Ledger manager"
-                });
-              }
-            }, UNRESPONSIVE_DELAY);
+            const timeout =
+              apdu.slice(0, 2).toString("hex") === "e051"
+                ? setTimeout(() => {
+                    if (unsubscribed) return;
+                    requested = true;
+                    o.next({
+                      type: "device-permission-requested",
+                      wording: "Allow Ledger manager"
+                    });
+                  }, ALLOW_MANAGER_DELAY)
+                : setTimeout(unresponsiveLockHandling, UNRESPONSIVE_DELAY);
 
             const r = await transport.exchange(apdu);
             clearTimeout(timeout);
@@ -130,15 +138,13 @@ export const createDeviceSocket = (
                 total: data.length
               });
 
-            const unresponsive = () => {
-              if (unsubscribed) return;
-              o.error(new ManagerDeviceLockedError());
-            };
-
             notify(0);
             let timeout;
             for (let i = 0; i < data.length; i++) {
-              timeout = setTimeout(unresponsive, UNRESPONSIVE_DELAY);
+              timeout = setTimeout(
+                unresponsiveLockHandling,
+                i === 0 ? UNRESPONSIVE_DELAY_FIRST_CHUNK : UNRESPONSIVE_DELAY
+              );
               const r = await transport.exchange(Buffer.from(data[i], "hex"));
               clearTimeout(timeout);
               if (unsubscribed) return;
