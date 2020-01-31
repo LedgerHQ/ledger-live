@@ -2,7 +2,13 @@
 
 import { useReducer, useEffect, useMemo } from "react";
 import { Observable, from, of, defer, concat } from "rxjs";
-import { map, materialize, reduce, ignoreElements } from "rxjs/operators";
+import {
+  map,
+  materialize,
+  reduce,
+  ignoreElements,
+  throttleTime
+} from "rxjs/operators";
 import type {
   Exec,
   State,
@@ -33,6 +39,7 @@ export const runAppOp = (
     // we need to allow a 1s delay for the action to be achieved without glitch (bug in old firmware when you do things too closely)
     defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))).pipe(ignoreElements()),
     defer(() => exec(appOp, deviceInfo.targetId, app)).pipe(
+      throttleTime(100),
       materialize(),
       map(n => {
         switch (n.kind) {

@@ -184,14 +184,19 @@ export type Category = {
   date_last_modified: string
 };
 
-export type GenuineCheckEvent =
+export type SocketEvent =
+  | { type: "bulk-progress", progress: number, index: number, total: number }
+  | { type: "result", payload: any }
+  | { type: "warning", message: string }
+  | { type: "device-permission-requested", wording: string }
+  | { type: "device-permission-granted" }
+  | { type: "exchange-before", nonce: number, apdu: Buffer }
   | {
-      type: "result",
-      payload: string
+      type: "exchange",
+      nonce: number,
+      apdu: Buffer,
+      data: Buffer,
+      status: Buffer
     }
-  | {
-      type: "allow-manager-requested"
-    }
-  | {
-      type: "allow-manager-accepted"
-    };
+  | { type: "opened" }
+  | { type: "closed" };

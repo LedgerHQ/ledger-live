@@ -4,13 +4,13 @@
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import type { DeviceInfo, GenuineCheckEvent } from "../types/manager";
+import type { DeviceInfo, SocketEvent } from "../types/manager";
 import ManagerAPI from "../api/Manager";
 
 export default (
   transport: Transport<*>,
   deviceInfo: DeviceInfo
-): Observable<GenuineCheckEvent> =>
+): Observable<SocketEvent> =>
   from(
     ManagerAPI.getDeviceVersion(deviceInfo.targetId, deviceInfo.providerId)
   ).pipe(

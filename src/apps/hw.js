@@ -57,13 +57,11 @@ export const listApps = (
           next: e => {
             if (e.type === "result") {
               resolve(e.payload);
-            } else if (e.type === "allow-manager-accepted") {
-              o.next({ type: "device-permission-granted" });
-            } else if (e.type === "allow-manager-requested") {
-              o.next({
-                type: "device-permission-requested",
-                wording: "Allow Ledger manager"
-              });
+            } else if (
+              e.type === "device-permission-granted" ||
+              e.type === "device-permission-requested"
+            ) {
+              o.next(e);
             }
           },
           error: reject
