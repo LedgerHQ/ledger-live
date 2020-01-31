@@ -125,6 +125,18 @@ const scenarios: FilteringScenario[] = [
     expectedApps: ""
   },
   {
+    name: "Installed - With install queue param no sort",
+    apps,
+    installed: "Bitcoin, Stellar, Ethereum",
+    _sortOptions: {},
+    _filterOptions: {
+      type: ["installed"],
+      installQueue: ["XRP", "Dogecoin"],
+      installedApps: []
+    },
+    expectedApps: "XRP, Stellar, Ethereum, Dogecoin, Bitcoin"
+  },
+  {
     name: "Not Installed - Search query 'ethereum'",
     apps,
     installed: "Bitcoin",

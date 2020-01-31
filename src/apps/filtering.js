@@ -19,6 +19,7 @@ type AppType =
 
 export type FilterOptions = {
   query?: string,
+  installQueue?: string[],
   installedApps: InstalledItem[],
   type: AppType[]
 };
@@ -38,12 +39,16 @@ const searchFilter = (query?: string) => ({ name, currencyId }) => {
 
 const typeFilter = (
   filters: AppType[] = ["all"],
-  updateAwareInstalledApps: UpdateAwareInstalledApps
+  updateAwareInstalledApps: UpdateAwareInstalledApps,
+  installQueue: string[] = []
 ) => app =>
   filters.every(filter => {
     switch (filter) {
       case "installed":
-        return app.name in updateAwareInstalledApps;
+        return (
+          installQueue.includes(app.name) ||
+          app.name in updateAwareInstalledApps
+        );
       case "not_installed":
         return !(app.name in updateAwareInstalledApps);
       case "updatable":
@@ -83,7 +88,7 @@ export const sortApps = (apps: App[], _options: SortOptions): App[] => {
 };
 
 export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
-  const { query, installedApps, type = ["all"] } = _options;
+  const { query, installedApps, installQueue, type = ["all"] } = _options;
   const updateAwareInstalledApps: UpdateAwareInstalledApps = {};
   for (let i = 0; i < installedApps.length; i++) {
     updateAwareInstalledApps[installedApps[i].name] = installedApps[i].updated;
@@ -91,7 +96,7 @@ export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
 
   return apps
     .filter(searchFilter(query))
-    .filter(typeFilter(type, updateAwareInstalledApps));
+    .filter(typeFilter(type, updateAwareInstalledApps, installQueue));
 };
 
 export const sortFilterApps = (
@@ -107,16 +112,21 @@ export const useSortedFilteredApps = (
   _filterOptions: FilterOptions,
   _sortOptions: SortOptions
 ) => {
-  const { query, installedApps, type: filterType } = _filterOptions;
+  const {
+    query,
+    installedApps,
+    type: filterType,
+    installQueue
+  } = _filterOptions;
   const { type: sortType, order } = _sortOptions;
 
   return useMemo(
     () =>
       sortFilterApps(
         apps,
-        { query, installedApps, type: filterType },
+        { query, installedApps, type: filterType, installQueue },
         { type: sortType, order }
       ),
-    [apps, query, installedApps, filterType, sortType, order]
+    [apps, query, installedApps, filterType, installQueue, sortType, order]
   );
 };
