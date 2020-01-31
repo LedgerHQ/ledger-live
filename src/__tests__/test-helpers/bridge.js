@@ -40,6 +40,7 @@ export type CurrenciesData<T: Transaction> = {|
   scanAccounts?: Array<{|
     name: string,
     apdus: string,
+    unstableAccounts?: boolean,
     test?: (expect: ExpectFn, scanned: Account[], bridge: CurrencyBridge) => any
   |}>,
   accounts?: Array<{|
@@ -209,37 +210,39 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                 accountsFoundInScanAccountsMap[a.id] = a;
               });
 
-              const raws = flatMap(accounts, a => {
-                const main = toAccountRaw(a);
-                if (!main.subAccounts) return [main];
-                return [{ ...main, subAccounts: [] }, ...main.subAccounts];
-              });
+              if (!sa.unstableAccounts) {
+                const raws = flatMap(accounts, a => {
+                  const main = toAccountRaw(a);
+                  if (!main.subAccounts) return [main];
+                  return [{ ...main, subAccounts: [] }, ...main.subAccounts];
+                });
 
-              const heads = raws.map(a => {
-                const copy: Object = { ...a };
-                delete copy.operations;
-                delete copy.lastSyncDate;
-                delete copy.blockHeight;
-                delete copy.balanceHistory;
-                return copy;
-              });
+                const heads = raws.map(a => {
+                  const copy: Object = { ...a };
+                  delete copy.operations;
+                  delete copy.lastSyncDate;
+                  delete copy.blockHeight;
+                  delete copy.balanceHistory;
+                  return copy;
+                });
 
-              const ops = raws.map(({ operations }) =>
-                operations
-                  .slice(0)
-                  .sort((a, b) => a.id.localeCompare(b.id))
-                  .map(op => {
-                    const copy: Object = { ...op };
-                    delete copy.date;
-                    (FIXME_ignoreOperationFields || []).forEach(k => {
-                      delete copy[k];
-                    });
-                    return copy;
-                  })
-              );
+                const ops = raws.map(({ operations }) =>
+                  operations
+                    .slice(0)
+                    .sort((a, b) => a.id.localeCompare(b.id))
+                    .map(op => {
+                      const copy: Object = { ...op };
+                      delete copy.date;
+                      (FIXME_ignoreOperationFields || []).forEach(k => {
+                        delete copy[k];
+                      });
+                      return copy;
+                    })
+                );
 
-              expect(heads).toMatchSnapshot();
-              expect(ops).toMatchSnapshot();
+                expect(heads).toMatchSnapshot();
+                expect(ops).toMatchSnapshot();
+              }
 
               const testFn = sa.test;
               if (testFn) {
