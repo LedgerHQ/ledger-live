@@ -7,6 +7,7 @@ import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
 import deviceVersion from "./commands/deviceVersion";
 import discoverDevices from "./commands/discoverDevices";
+import envs from "./commands/envs";
 import exportAccounts from "./commands/exportAccounts";
 import firmwareRepair from "./commands/firmwareRepair";
 import firmwareUpdate from "./commands/firmwareUpdate";
@@ -40,6 +41,7 @@ export default {
   deviceInfo,
   deviceVersion,
   discoverDevices,
+  envs,
   exportAccounts,
   firmwareRepair,
   firmwareUpdate,
