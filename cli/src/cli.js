@@ -21,7 +21,9 @@ const mainOptions = commandLineArgs(
     { name: "command", defaultOption: true },
     { name: "help", alias: "h", type: Boolean, desc: "display this help" }
   ],
-  { stopAtFirstUnknown: true }
+  {
+    stopAtFirstUnknown: true
+  }
 );
 
 if (mainOptions.help || !mainOptions.command) {

@@ -6,6 +6,24 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
+  "bin": {
+    "ledger-live": "./cli.js"
+  },
+  "files": [
+    "cli.js",
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "./scripts/gen.sh && yarn build",
+    "build": "babel --ignore __tests__ -s -d lib src && ncc build lib/cli.js -s -o dist",
+    "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
+    "watch": "babel -wsd lib src",
+    "flow": "flow",
+    "test-e2e": "./scripts/tests.sh",
+    "test": "yarn run test-e2e",
+    "testOne": "./scripts/testOne.sh",
+    "createTest": "./scripts/createTest.sh"
+  },
   "peerDependencies": {
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
@@ -35,24 +53,6 @@
     "winston": "^3.2.1",
     "ws": "^7.1.2"
   },
-  "bin": {
-    "ledger-live": "./cli.js"
-  },
-  "files": [
-    "cli.js",
-    "lib"
-  ],
-  "scripts": {
-    "prepare": "./scripts/gen.sh && yarn build",
-    "build": "babel --ignore __tests__ -s -d lib src",
-    "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
-    "watch": "babel -wsd lib src",
-    "flow": "flow",
-    "test-e2e": "./scripts/tests.sh",
-    "test": "yarn run test-e2e",
-    "testOne": "./scripts/testOne.sh",
-    "createTest": "./scripts/createTest.sh"
-  },
   "devDependencies": {
     "@babel/cli": "^7.8.3",
     "@babel/core": "^7.8.3",
@@ -62,6 +62,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-syntax-import-meta": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
-    "@babel/preset-flow": "^7.8.3"
+    "@babel/preset-flow": "^7.8.3",
+    "@zeit/ncc": "^0.21.0"
   }
 }
