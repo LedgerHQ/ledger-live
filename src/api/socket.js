@@ -20,7 +20,7 @@ const warningsSubject = new Subject();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 
 const ALLOW_MANAGER_DELAY = 500;
-const UNRESPONSIVE_DELAY = 3000;
+const UNRESPONSIVE_DELAY = 12000;
 const UNRESPONSIVE_DELAY_FIRST_CHUNK = 15000; // more time is expected due to firmware limitation
 
 /**
@@ -86,13 +86,13 @@ export const createDeviceSocket = (
             const timeout =
               apdu.slice(0, 2).toString("hex") === "e051"
                 ? setTimeout(() => {
-                    if (unsubscribed) return;
-                    requested = true;
-                    o.next({
-                      type: "device-permission-requested",
-                      wording: "Allow Ledger manager"
-                    });
-                  }, ALLOW_MANAGER_DELAY)
+                  if (unsubscribed) return;
+                  requested = true;
+                  o.next({
+                    type: "device-permission-requested",
+                    wording: "Allow Ledger manager"
+                  });
+                }, ALLOW_MANAGER_DELAY)
                 : setTimeout(unresponsiveLockHandling, UNRESPONSIVE_DELAY);
 
             const r = await transport.exchange(apdu);
