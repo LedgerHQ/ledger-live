@@ -610,6 +610,7 @@
     "sending": "Sending...",
     "receiving": "Receiving...",
     "tokenOperations": "Token operations",
+    "subAccountOperations": "Subaccount operations",
     "internalOperations": "Internal operations",
     "tokenModal": {
       "desc": "This operation is related to the following token operations"

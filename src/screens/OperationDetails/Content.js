@@ -18,6 +18,7 @@ import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Trans } from "react-i18next";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/data/tokens";
 import { localeIds } from "../../languages";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -88,6 +89,8 @@ class Content extends PureComponent<Props, State> {
   render() {
     const { account, parentAccount, operation, currencySettings } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
+    const isToken =
+      listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
     const unit = getAccountUnit(account);
     const parentUnit = getAccountUnit(mainAccount);
     const currency = getAccountCurrency(account);
@@ -184,15 +187,23 @@ class Content extends PureComponent<Props, State> {
           <>
             <View style={[styles.section, styles.infoContainer]}>
               <LText style={styles.sectionSeparator} semiBold>
-                <Trans i18nKey="operationDetails.tokenOperations" />
+                <Trans
+                  i18nKey={
+                    isToken
+                      ? "operationDetails.tokenOperations"
+                      : "operationDetails.subAccountOperations"
+                  }
+                />
               </LText>
-              <Touchable
-                style={styles.info}
-                onPress={this.onPressInfo}
-                event="TokenOperationsInfo"
-              >
-                <Info size={12} color={colors.grey} />
-              </Touchable>
+              {isToken ? (
+                <Touchable
+                  style={styles.info}
+                  onPress={this.onPressInfo}
+                  event="TokenOperationsInfo"
+                >
+                  <Info size={12} color={colors.grey} />
+                </Touchable>
+              ) : null}
             </View>
             {subOperations.map((op, i) => {
               const opAccount = (account.subAccounts || []).find(
