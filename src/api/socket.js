@@ -20,8 +20,7 @@ const warningsSubject = new Subject();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 
 const ALLOW_MANAGER_DELAY = 500;
-const UNRESPONSIVE_DELAY = 12000;
-const UNRESPONSIVE_DELAY_FIRST_CHUNK = 15000; // more time is expected due to firmware limitation
+const UNRESPONSIVE_DELAY = 15000;
 
 /**
  * use Ledger WebSocket API to exchange data with the device
@@ -143,7 +142,7 @@ export const createDeviceSocket = (
             for (let i = 0; i < data.length; i++) {
               timeout = setTimeout(
                 unresponsiveLockHandling,
-                i === 0 ? UNRESPONSIVE_DELAY_FIRST_CHUNK : UNRESPONSIVE_DELAY
+                UNRESPONSIVE_DELAY
               );
               const r = await transport.exchange(Buffer.from(data[i], "hex"));
               clearTimeout(timeout);
