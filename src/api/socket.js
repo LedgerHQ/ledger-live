@@ -86,13 +86,13 @@ export const createDeviceSocket = (
             const timeout =
               apdu.slice(0, 2).toString("hex") === "e051"
                 ? setTimeout(() => {
-                  if (unsubscribed) return;
-                  requested = true;
-                  o.next({
-                    type: "device-permission-requested",
-                    wording: "Allow Ledger manager"
-                  });
-                }, ALLOW_MANAGER_DELAY)
+                    if (unsubscribed) return;
+                    requested = true;
+                    o.next({
+                      type: "device-permission-requested",
+                      wording: "Allow Ledger manager"
+                    });
+                  }, ALLOW_MANAGER_DELAY)
                 : setTimeout(unresponsiveLockHandling, UNRESPONSIVE_DELAY);
 
             const r = await transport.exchange(apdu);
