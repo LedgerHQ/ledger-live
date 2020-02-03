@@ -55,3 +55,15 @@ export const atomicQueue = <R, A: Array<*>>(
     return p;
   };
 };
+
+export function execAndWaitAtLeast<A>(
+  ms: number,
+  cb: () => Promise<A>
+): Promise<A> {
+  const startTime = Date.now();
+  return cb().then(r => {
+    const remaining = ms - (Date.now() - startTime);
+    if (remaining <= 0) return r;
+    return delay(remaining).then(() => r);
+  });
+}
