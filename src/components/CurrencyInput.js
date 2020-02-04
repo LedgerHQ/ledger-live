@@ -197,7 +197,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 72,
     fontFamily: "Rubik",
     paddingRight: 8,
     color: colors.darkBlue,
