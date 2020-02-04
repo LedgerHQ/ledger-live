@@ -16,7 +16,7 @@ module.exports = {
     SharedArrayBuffer: "readonly"
   },
   parser: "babel-eslint",
-  plugins: ["flowtype", "react-hooks"],
+  plugins: ["flowtype", "react-hooks", "prettier"],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "linebreak-style": ["error", "unix"],
@@ -41,6 +41,7 @@ module.exports = {
     "lines-between-class-members": 0,
     "prefer-destructuring": 0,
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "prettier/prettier": "error"
   }
 };
