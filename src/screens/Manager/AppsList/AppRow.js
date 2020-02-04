@@ -1,10 +1,8 @@
-import React, { memo, useMemo, useCallback, useContext } from "react";
+import React, { memo, useMemo, useCallback } from "react";
 
 import { View, StyleSheet } from "react-native";
 
 import * as Animatable from "react-native-animatable";
-
-import { isEqual } from "lodash";
 
 import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
 import {
@@ -23,20 +21,32 @@ import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
 
-import { ManagerContext } from "../shared";
-
 type Props = {
   app: ApplicationVersion,
   state: State,
   dispatch: Action => void,
-  tab: string,
+  isInstalledView: boolean,
   visible: boolean,
+  currentProgress: number,
+  setAppInstallWithDependencies: () => void,
+  setAppUninstallWithDependencies: () => void,
+  setStorageWarning: () => void,
+  managerTabs: *,
 };
 
-const AppRow = ({ app, state, dispatch, tab, visible }: Props) => {
+const AppRow = ({
+  app,
+  state,
+  dispatch,
+  isInstalledView,
+  visible,
+  currentProgress,
+  setAppInstallWithDependencies,
+  setAppUninstallWithDependencies,
+  setStorageWarning,
+}: Props) => {
   const { name, version, bytes, icon } = app;
   const { installed } = state;
-  const { setStorageWarning, MANAGER_TABS } = useContext(ManagerContext);
 
   const isInstalled = useMemo(() => installed.some(i => i.name === name), [
     installed,
@@ -115,7 +125,10 @@ const AppRow = ({ app, state, dispatch, tab, visible }: Props) => {
             dispatch={dispatch}
             notEnoughMemoryToInstall={notEnoughMemoryToInstall}
             isInstalled={isInstalled}
-            isInstalledView={tab === MANAGER_TABS.INSTALLED_APPS}
+            isInstalledView={isInstalledView}
+            currentProgress={currentProgress}
+            setAppInstallWithDependencies={setAppInstallWithDependencies}
+            setAppUninstallWithDependencies={setAppUninstallWithDependencies}
           />
         </Animatable.View>
       )}
@@ -193,6 +206,19 @@ const styles = StyleSheet.create({
 
 export default memo(
   AppRow,
-  (prevProps, nextProps) =>
-    !nextProps.visible && isEqual(prevProps.state, nextProps.state),
+  (
+    {
+      currentProgress: _currentProgress,
+      state: { installQueue: _installQueue, uninstallQueue: _uninstallQueue },
+    },
+    { currentProgress, visible, state: { installQueue, uninstallQueue } },
+  ) => {
+    /** compare _prev to next props that if different should trigger a rerender */
+    return (
+      !visible &&
+      currentProgress === _currentProgress &&
+      installQueue.length === _installQueue.length &&
+      uninstallQueue.length === _uninstallQueue.length
+    );
+  },
 );

@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, memo } from "react";
 import { NavigationActions } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { ManagerContext, ManagerProgressContext, useApps } from "./shared";
+import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { TrackScreen } from "../../analytics";
@@ -61,7 +61,11 @@ const Manager = ({ navigation }: Props) => {
   ] = useState(null);
 
   /** open error modal each time a new error appears in state.currentError */
-  useEffect(() => setError(currentError), [setError, currentError]);
+  useEffect(() => {
+    if (currentError) {
+      setError(currentError.error);
+    }
+  }, [setError, currentError]);
 
   /**
    * updates navigation params to block it if un/installation is running
@@ -117,29 +121,20 @@ const Manager = ({ navigation }: Props) => {
   ]);
 
   return (
-    <ManagerContext.Provider
-      value={{
-        storageWarning,
-        setStorageWarning,
-        MANAGER_TABS,
-        appInstallWithDependencies,
-        setAppInstallWithDependencies,
-        appUninstallWithDependencies,
-        setAppUninstallWithDependencies,
-        deviceId: navigation.getParam("deviceId"),
-        initialDeviceName: navigation.getParam("deviceName"),
-      }}
-    >
+    <>
       <TrackScreen category="Manager" name="AppsList" />
-      <ManagerProgressContext.Provider
-        value={{ currentProgress: state.currentProgress }}
-      >
-        <AppsScreen
-          state={filteredState}
-          dispatch={dispatch}
-          navigation={navigation}
-        />
-      </ManagerProgressContext.Provider>
+      <AppsScreen
+        state={filteredState}
+        dispatch={dispatch}
+        navigation={navigation}
+        currentProgress={state.currentProgress}
+        setAppInstallWithDependencies={setAppInstallWithDependencies}
+        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+        setStorageWarning={setStorageWarning}
+        managerTabs={MANAGER_TABS}
+        deviceId={navigation.getParam("deviceId")}
+        initialDeviceName={navigation.getParam("deviceName")}
+      />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal
         isOpened={quitManagerAction}
@@ -164,8 +159,8 @@ const Manager = ({ navigation }: Props) => {
         state={state}
         dispatch={dispatch}
       />
-    </ManagerContext.Provider>
+    </>
   );
 };
 
-export default Manager;
+export default memo(Manager);

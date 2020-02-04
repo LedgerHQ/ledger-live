@@ -68,7 +68,7 @@ const DeviceAppStorage = ({
             style={[
               styles.graphBlock,
               {
-                width: `${ratio}%`,
+                flexBasis: `${ratio}%`,
                 backgroundColor: color,
               },
             ]}
@@ -140,10 +140,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   graphBlock: {
-    minWidth: "1%",
+    flexBasis: 0,
+    flexGrow: 0.005,
+    flexShrink: 1,
     height: "100%",
     borderRightColor: colors.white,
-    borderRightWidth: 2,
+    borderRightWidth: StyleSheet.hairlineWidth,
   },
 });
 

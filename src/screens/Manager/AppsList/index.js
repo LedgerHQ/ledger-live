@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, memo } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { State } from "@ledgerhq/live-common/lib/apps";
@@ -8,11 +8,15 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 type Props = {
   apps: Array<App>,
-  tab: string,
+  isInstalledView: boolean,
   active: boolean,
   state: State,
   dispatch: *,
   renderNoResults?: (*) => Node,
+  currentProgress: *,
+  setAppInstallWithDependencies: () => void,
+  setAppUninstallWithDependencies: () => void,
+  setStorageWarning: () => void,
 };
 
 const { height } = getWindowDimensions();
@@ -28,11 +32,15 @@ const renderRow = ({ item }: { item: * }) => {
 
 const AppsList = ({
   apps,
-  tab,
   active,
   renderNoResults,
   state,
   dispatch,
+  currentProgress,
+  setAppInstallWithDependencies,
+  setAppUninstallWithDependencies,
+  setStorageWarning,
+  isInstalledView,
 }: Props) => {
   const [viewableBounds, setViewableBounds] = useState({ min: 0, max: 10 });
   const onViewableItemsChanged = useCallback(
@@ -47,6 +55,39 @@ const AppsList = ({
   );
   const viewHeight = active ? "auto" : height - 267;
 
+  const getItem = useCallback(
+    (data, index) => ({
+      app: data[index],
+      index,
+      state,
+      dispatch,
+      key: `${data[index].id}_${isInstalledView ? "Installed" : "Catalog"}`,
+      visible:
+        active && index >= viewableBounds.min && index <= viewableBounds.max,
+      isInstalledView,
+      currentProgress:
+        (currentProgress &&
+          currentProgress.appOp.name === data[index].name &&
+          currentProgress.progress) ||
+        0,
+      setAppInstallWithDependencies,
+      setAppUninstallWithDependencies,
+      setStorageWarning,
+    }),
+    [
+      state,
+      dispatch,
+      isInstalledView,
+      active,
+      viewableBounds.min,
+      viewableBounds.max,
+      currentProgress,
+      setAppInstallWithDependencies,
+      setAppUninstallWithDependencies,
+      setStorageWarning,
+    ],
+  );
+
   if (apps.length <= 0)
     return (
       <View style={styles.renderNoResult}>
@@ -57,19 +98,10 @@ const AppsList = ({
   return (
     <VirtualizedList
       style={{ height: viewHeight }}
-      listKey={tab}
+      listKey={isInstalledView ? "Installed" : "Catalog"}
       data={apps}
       renderItem={renderRow}
-      getItem={(data, index) => ({
-        app: data[index],
-        index,
-        state,
-        dispatch,
-        key: String(data[index].id) + tab,
-        visible:
-          active && index >= viewableBounds.min && index <= viewableBounds.max,
-        tab,
-      })}
+      getItem={getItem}
       initialNumToRender={10}
       maxToRenderPerBatch={15}
       getItemCount={() => apps.length}
@@ -97,4 +129,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppsList;
+export default memo(AppsList);

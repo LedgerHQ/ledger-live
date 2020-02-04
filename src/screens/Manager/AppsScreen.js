@@ -1,11 +1,5 @@
 // @flow
-import React, {
-  useState,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-} from "react";
+import React, { useState, useCallback, useMemo, useRef, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -33,8 +27,6 @@ import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import { track } from "../../analytics";
 
-import { ManagerContext } from "./shared";
-
 import DeviceCard from "./Device";
 import AppsList from "./AppsList";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
@@ -43,23 +35,41 @@ const { interpolate, Extrapolate } = Animated;
 const { width, height } = Dimensions.get("screen");
 const initialLayout = { width, height };
 
-type Props = { state: State, dispatch: Action => void };
+type Props = {
+  state: State,
+  dispatch: Action => void,
+  currentProgress: *,
+  setAppInstallWithDependencies: () => void,
+  setAppUninstallWithDependencies: () => void,
+  setStorageWarning: () => void,
+  managerTabs: *,
+  deviceId: string,
+  initialDeviceName: string,
+};
 
-const AppsScreen = ({ state, dispatch }: Props) => {
-  const { apps, appByName, installed, installQueue } = state;
+const AppsScreen = ({
+  state,
+  dispatch,
+  currentProgress,
+  setAppInstallWithDependencies,
+  setAppUninstallWithDependencies,
+  setStorageWarning,
+  managerTabs,
+  deviceId,
+  initialDeviceName,
+}: Props) => {
+  const { apps, installed, installQueue } = state;
 
   const listRef = useRef();
-
-  const { MANAGER_TABS } = useContext(ManagerContext);
 
   const [index, setIndex] = useState(0);
   const [routes] = React.useState([
     {
-      key: MANAGER_TABS.CATALOG,
+      key: managerTabs.CATALOG,
       title: i18next.t("manager.appsCatalog"),
     },
     {
-      key: MANAGER_TABS.INSTALLED_APPS,
+      key: managerTabs.INSTALLED_APPS,
       title: i18next.t("manager.installedApps"),
       notif: null,
     },
@@ -92,39 +102,26 @@ const AppsScreen = ({ state, dispatch }: Props) => {
   const jumpTo = useCallback(
     key => {
       track("ManagerTabBarClick", { tab: key });
-      setIndex(key === MANAGER_TABS.CATALOG ? 0 : 1);
+      setIndex(key === managerTabs.CATALOG ? 0 : 1);
       scrollToTop();
     },
-    [MANAGER_TABS.CATALOG, scrollToTop],
+    [managerTabs.CATALOG, scrollToTop],
   );
 
   const onIndexChange = useCallback(
     index => {
       track("ManagerTabSwipe", {
-        tab: index === 0 ? MANAGER_TABS.CATALOG : MANAGER_TABS.INSTALLED_APPS,
+        tab: index === 0 ? managerTabs.CATALOG : managerTabs.INSTALLED_APPS,
       });
       setIndex(index);
       scrollToTop();
     },
-    [setIndex, scrollToTop],
+    [managerTabs.CATALOG, managerTabs.INSTALLED_APPS, scrollToTop],
   );
 
   const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
     dispatch,
   ]);
-
-  /** installed apps sorted from most recent installed to the least */
-  const installedApps = useMemo(
-    () =>
-      [...installQueue, ...installed]
-        .map((i: { name: string } | string) => appByName[i.name || i])
-        .filter(Boolean)
-        .filter(
-          (app, i, apps) =>
-            apps.findIndex(({ name }) => name === app.name) === i,
-        ),
-    [installed, installQueue, appByName],
-  );
 
   const appsToUpdate = useMemo(
     () =>
@@ -156,6 +153,14 @@ const AppsScreen = ({ state, dispatch }: Props) => {
     sortOptions,
   );
 
+  const installedApps: Array<App> = useSortedFilteredApps(
+    apps,
+    { type: ["installed"], installedApps: installed, installQueue, query: "" },
+    { type: "marketcap", order: "desc" },
+  ).sort((a, b) =>
+    installQueue.indexOf(a.name) > installQueue.indexOf(b.name) ? -1 : 0,
+  );
+
   const renderNoResults = useCallback(
     () => (
       <Touchable
@@ -177,17 +182,20 @@ const AppsScreen = ({ state, dispatch }: Props) => {
 
   const renderScene = ({ route }: *) => {
     switch (route.key) {
-      case MANAGER_TABS.CATALOG:
+      case managerTabs.CATALOG:
         return (
           <AppsList
-            tab={MANAGER_TABS.CATALOG}
             apps={sortedApps}
             state={state}
             dispatch={dispatch}
             active={index === 0}
+            currentProgress={currentProgress}
+            setAppInstallWithDependencies={setAppInstallWithDependencies}
+            setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+            setStorageWarning={setStorageWarning}
           />
         );
-      case MANAGER_TABS.INSTALLED_APPS:
+      case managerTabs.INSTALLED_APPS:
         return (
           <>
             <AppUpdateAll
@@ -210,12 +218,16 @@ const AppsScreen = ({ state, dispatch }: Props) => {
               )}
             </View>
             <AppsList
-              tab={MANAGER_TABS.INSTALLED_APPS}
+              isInstalledView
               apps={installedApps}
               state={state}
               dispatch={dispatch}
               active={index === 1}
               renderNoResults={renderNoResults}
+              currentProgress={currentProgress}
+              setAppInstallWithDependencies={setAppInstallWithDependencies}
+              setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+              setStorageWarning={setStorageWarning}
             />
           </>
         );
@@ -242,7 +254,7 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         >
           {route.title}
         </LText>
-        {route.key === MANAGER_TABS.INSTALLED_APPS && appsToUpdate.length > 0 && (
+        {route.key === managerTabs.INSTALLED_APPS && appsToUpdate.length > 0 && (
           <View style={styles.updateBadge}>
             <LText bold style={styles.updateBadgeText}>
               {appsToUpdate.length}
@@ -251,11 +263,15 @@ const AppsScreen = ({ state, dispatch }: Props) => {
         )}
       </View>
     ),
-    [appsToUpdate, MANAGER_TABS],
+    [appsToUpdate, managerTabs],
   );
 
   const elements = [
-    <DeviceCard state={state} />,
+    <DeviceCard
+      state={state}
+      deviceId={deviceId}
+      initialDeviceName={initialDeviceName}
+    />,
     <View>
       <TabBar
         position={position}
@@ -280,7 +296,6 @@ const AppsScreen = ({ state, dispatch }: Props) => {
           <SearchModal
             state={state}
             dispatch={dispatch}
-            tab={MANAGER_TABS.CATALOG}
             disabled={index !== 0}
           />
           <View style={styles.filterButton}>
@@ -306,9 +321,8 @@ const AppsScreen = ({ state, dispatch }: Props) => {
             <SearchModal
               state={state}
               dispatch={dispatch}
-              tab={MANAGER_TABS.INSTALLED_APPS}
+              isInstalledView
               apps={installedApps}
-              sortOptions={{ type: null, order: null }}
             />
           </Animated.View>
         )}
@@ -457,4 +471,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppsScreen;
+export default memo(AppsScreen);

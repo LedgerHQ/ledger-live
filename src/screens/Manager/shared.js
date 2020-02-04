@@ -1,5 +1,5 @@
 // @flow
-import { useCallback, createContext } from "react";
+import { useCallback } from "react";
 import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps";
 import { useAppsRunner } from "@ledgerhq/live-common/lib/apps";
 import { execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
@@ -14,6 +14,3 @@ export function useApps(listAppsRes: ListAppsResult, deviceId: string) {
 
   return useAppsRunner(listAppsRes, exec);
 }
-
-export const ManagerContext = createContext();
-export const ManagerProgressContext = createContext({ currentProgress: null });

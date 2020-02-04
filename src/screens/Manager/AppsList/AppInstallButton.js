@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 
 import { Trans } from "react-i18next";
@@ -6,7 +6,6 @@ import { Trans } from "react-i18next";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { ManagerContext } from "../shared";
 import Button from "../../../components/Button";
 
 type Props = {
@@ -14,6 +13,7 @@ type Props = {
   state: State,
   dispatch: Action => void,
   notEnoughMemoryToInstall: boolean,
+  setAppInstallWithDependencies: () => void,
 };
 
 const AppInstallButton = ({
@@ -21,8 +21,8 @@ const AppInstallButton = ({
   state,
   dispatch,
   notEnoughMemoryToInstall,
+  setAppInstallWithDependencies,
 }: Props) => {
-  const { setAppInstallWithDependencies } = useContext(ManagerContext);
   const { dependencies, name } = app;
   const { installed } = state;
 

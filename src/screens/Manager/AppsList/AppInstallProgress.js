@@ -1,9 +1,7 @@
-import React, { useMemo, useContext } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Trans } from "react-i18next";
-
-import { ManagerProgressContext } from "../shared";
 
 import colors from "../../../colors";
 import CloseCircle from "../../../icons/CloseCircle";
@@ -15,21 +13,15 @@ import Touchable from "../../../components/Touchable";
 type InstallProgressProps = {
   onCancel: () => void,
   name: string,
+  currentProgress: *,
 };
 
-export const InstallProgress = ({ onCancel, name }: InstallProgressProps) => {
-  const { currentProgress } = useContext(ManagerProgressContext);
-
-  const progress = useMemo(
-    () =>
-      (currentProgress &&
-        currentProgress.appOp.name === name &&
-        currentProgress.progress) ||
-      0,
-    [currentProgress, name],
-  );
-
-  const canCancel = !progress && !!onCancel;
+export const InstallProgress = ({
+  onCancel,
+  name,
+  currentProgress,
+}: InstallProgressProps) => {
+  const canCancel = !currentProgress && !!onCancel;
 
   return (
     <Touchable
@@ -62,7 +54,7 @@ export const InstallProgress = ({ onCancel, name }: InstallProgressProps) => {
         progressColor={colors.live}
         style={styles.progressBar}
         height={6}
-        progress={progress * 1e2}
+        progress={currentProgress * 1e2}
       />
     </Touchable>
   );
@@ -82,7 +74,7 @@ export const UninstallProgress = ({ onCancel, name }: InstallProgressProps) => {
         <LText
           semiBold
           numberOfLines={1}
-          style={[styles.appStateText, { color: colors.alert }]}
+          style={[styles.appStateText, { color: colors.live }]}
         >
           <Trans i18nKey="AppAction.uninstall.loading.button" />
         </LText>
@@ -90,14 +82,14 @@ export const UninstallProgress = ({ onCancel, name }: InstallProgressProps) => {
           <View style={styles.progressCloseButton}>
             <CloseCircle
               style={styles.progressCloseIcon}
-              color={colors.alert}
+              color={colors.live}
               size={14}
             />
           </View>
         )}
       </View>
       <InfiniteProgressBar
-        progressColor={colors.alert}
+        progressColor={colors.live}
         style={styles.progressBar}
         height={6}
       />

@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useContext,
-  useRef,
-} from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -32,37 +26,33 @@ import Styles from "../../../navigation/styles";
 import AppRow from "../AppsList/AppRow";
 
 import getWindowDimensions from "../../../logic/getWindowDimensions";
-import { ManagerContext } from "../shared";
 
 const { height } = getWindowDimensions();
 
 type Props = {
   state: State,
   dispatch: Action => void,
-  tab: string,
+  isInstalledView: boolean,
   apps?: App[],
-  sortOptions: { type: string, order: string },
   disabled: boolean,
 };
 
 export default ({
   state,
   dispatch,
-  tab,
+  isInstalledView,
   apps,
-  sortOptions = { type: null, order: "asc" },
   disabled,
 }: Props) => {
   const listRef = useRef();
-  const { MANAGER_TABS } = useContext(ManagerContext);
   const [isOpened, setIsOpen] = useState(false);
   const openSearchModal = useCallback(() => {
     setQuery("");
-    setIsOpen();
+    setIsOpen(true);
   }, [setIsOpen]);
 
   const closeSearchModal = useCallback(() => {
-    setIsOpen();
+    setIsOpen(false);
   }, [setIsOpen]);
 
   const [query, setQuery] = useState(null);
@@ -80,7 +70,7 @@ export default ({
   const sortedApps: Array<App> = useSortedFilteredApps(
     apps || state.apps,
     filterOptions,
-    sortOptions,
+    { type: "marketcap", order: "desc" },
   );
 
   const NoResult = useMemo(
@@ -108,21 +98,21 @@ export default ({
         index={index}
         state={state}
         dispatch={dispatch}
-        tab={tab}
+        isInstalledView={isInstalledView}
         animation={false}
         visible
       />
     ),
-    [tab, dispatch, state],
+    [isInstalledView, dispatch, state],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
 
   const placeholder = useMemo(
     () =>
-      tab === MANAGER_TABS.CATALOG
+      !isInstalledView
         ? i18next.t("manager.appList.searchAppsCatalog")
         : i18next.t("manager.appList.searchAppsInstalled"),
-    [tab, MANAGER_TABS.CATALOG],
+    [isInstalledView],
   );
 
   const onFocus = useCallback(() => {
@@ -283,6 +273,7 @@ const styles = StyleSheet.create({
   searchList: {
     flex: 1,
     width: "100%",
+    paddingBottom: Platform.OS === "ios" ? 74 : 54,
   },
   noResult: {
     position: "absolute",

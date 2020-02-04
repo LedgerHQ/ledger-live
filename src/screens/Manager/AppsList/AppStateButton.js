@@ -6,7 +6,6 @@ import { Trans } from "react-i18next";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { isEqual } from "lodash";
 import AppInstallButton from "./AppInstallButton";
 import AppUninstallButton from "./AppUninstallButton";
 
@@ -27,6 +26,9 @@ type Props = {
   notEnoughMemoryToInstall: boolean,
   isInstalled: boolean,
   isInstalledView: boolean,
+  currentProgress: number,
+  setAppInstallWithDependencies: () => void,
+  setAppUninstallWithDependencies: () => void,
 };
 
 const AppStateButton = ({
@@ -36,6 +38,9 @@ const AppStateButton = ({
   notEnoughMemoryToInstall,
   isInstalled,
   isInstalledView,
+  currentProgress,
+  setAppInstallWithDependencies,
+  setAppUninstallWithDependencies,
 }: Props) => {
   const { installed, installQueue, uninstallQueue } = state;
   const { name } = app;
@@ -72,12 +77,23 @@ const AppStateButton = ({
       case installing && uninstalling:
         return <UpdateProgress />;
       case installing:
-        return <InstallProgress onCancel={uninstallApp} name={name} />;
+        return (
+          <InstallProgress
+            currentProgress={currentProgress}
+            onCancel={uninstallApp}
+            name={name}
+          />
+        );
       case uninstalling:
         return <UninstallProgress onCancel={onCancelUninstall} name={name} />;
       case isInstalledView && isInstalled:
         return (
-          <AppUninstallButton app={app} state={state} dispatch={dispatch} />
+          <AppUninstallButton
+            app={app}
+            state={state}
+            dispatch={dispatch}
+            setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+          />
         );
       case canUpdate:
         return (
@@ -111,6 +127,7 @@ const AppStateButton = ({
             dispatch={dispatch}
             app={app}
             notEnoughMemoryToInstall={notEnoughMemoryToInstall}
+            setAppInstallWithDependencies={setAppInstallWithDependencies}
           />
         );
     }
@@ -159,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppStateButton, isEqual);
+export default memo(AppStateButton);

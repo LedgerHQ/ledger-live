@@ -1266,8 +1266,7 @@
       "default": "Default",
       "name_asc": "Name A-Z",
       "name_desc": "Name Z-A",
-      "marketcap_desc": "Market Cap - High to Low",
-      "marketcap_asc": "Market Cap - Low to High"
+      "marketcap_desc": "Market Cap",
     }
   },
   "AuthenticityRow": {

@@ -114,7 +114,7 @@ const CollapsibleList = ({
   // interpolated height from opening anim state for list container
   const height = interpolate(openingAnim, {
     inputRange: [0, 1],
-    outputRange: [itemHeight, 15 + itemHeight * data.length],
+    outputRange: [itemHeight, 61 + itemHeight * data.length],
   });
 
   // interpolated rotation from opening anim state for chevron icon
@@ -142,6 +142,7 @@ const CollapsibleList = ({
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
         {...props}
       />
     </Animated.View>

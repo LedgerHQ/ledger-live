@@ -1,4 +1,4 @@
-import React, { memo, useContext } from "react";
+import React, { memo } from "react";
 
 import { StyleSheet, View, Image } from "react-native";
 import { Trans } from "react-i18next";
@@ -17,8 +17,6 @@ import Card from "../../../components/Card";
 import colors from "../../../colors";
 import DeviceName from "./DeviceName";
 
-import { ManagerContext } from "../shared";
-
 const illustrations = {
   nanoS,
   nanoX,
@@ -27,13 +25,13 @@ const illustrations = {
 
 type Props = {
   state: State,
+  deviceId: string,
+  initialDeviceName: string,
 };
 
-const DeviceCard = ({ state }: Props) => {
+const DeviceCard = ({ state, deviceId, initialDeviceName }: Props) => {
   const { deviceModel, firmware } = state;
   const distribution = distribute(state);
-
-  const { deviceId, initialDeviceName } = useContext(ManagerContext);
 
   return (
     <Card style={styles.card}>

@@ -62,11 +62,6 @@ const filterSections = [
         value: "marketcap",
         orderValue: "desc",
       },
-      {
-        label: "AppAction.sort.marketcap_asc",
-        value: "marketcap",
-        orderValue: "asc",
-      },
     ],
   },
 ];

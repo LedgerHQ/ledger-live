@@ -1,10 +1,9 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { ManagerContext } from "../shared";
 import Trash from "../../../icons/Trash";
 import colors from "../../../colors";
 import Touchable from "../../../components/Touchable";
@@ -13,10 +12,15 @@ type Props = {
   app: App,
   state: State,
   dispatch: Action => void,
+  setAppUninstallWithDependencies: () => void,
 };
 
-const AppUninstallButton = ({ app, state, dispatch }: Props) => {
-  const { setAppUninstallWithDependencies } = useContext(ManagerContext);
+const AppUninstallButton = ({
+  app,
+  state,
+  dispatch,
+  setAppUninstallWithDependencies,
+}: Props) => {
   const { installed, apps } = state;
   const { name } = app;
 
