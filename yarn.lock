@@ -1032,10 +1032,10 @@
     "@ledgerhq/errors" "^5.7.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^11.3.0":
-  version "11.3.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.3.0.tgz#c7112d0c75fa6b90f04dc4bec60be51d9984763c"
-  integrity sha512-CXGd3Ogsnh/+TBIuOX4lmuJYONmSPdZKj7sTX2IjRQ0Tbon6tqjtLCnNKPwZrkhO2j+Eic1/7cZLnELGT1+4WA==
+"@ledgerhq/live-common@^11.4.0-beta.0":
+  version "11.4.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.4.0-beta.0.tgz#911bc15207c7ce5ea45b7551a1ac2edeb7d10f00"
+  integrity sha512-zxIwLnFmCrK++auWSwiwvcNN3DUuvdoPM17++sQ7PjxzaIdwkiYOUboqOjMEUQdf/zNgeNFnJxkntoNj1NJ4HA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.7.0"
