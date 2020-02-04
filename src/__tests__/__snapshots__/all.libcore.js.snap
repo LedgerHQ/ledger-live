@@ -54540,7 +54540,7 @@ Array [
 exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
 Array [
   Object {
-    "balance": "6214370",
+    "balance": "36214370",
     "currencyId": "qtum",
     "derivationMode": "",
     "freshAddress": "Qht4N9PNgSTYnXgSNoqfFtotBcXj6qapSQ",
@@ -54630,10 +54630,10 @@ Array [
     "id": "libcore:1:qtum:xpub6DJLR2MpQNBsVL8Pn3HuqwGAtQWZM7v4o1W4dnYCLJrLsB5MsQbfZJQjGyHS892pUcHPS2R3AXyY1VE1RPka2Tazu5jNTnpKJLuv2xqtrt4:",
     "index": 0,
     "name": "Qtum 1 (legacy)",
-    "operationsCount": 36,
+    "operationsCount": 37,
     "pendingOperations": Array [],
     "seedIdentifier": "0401c6fc8ab21b53b54bb76a93ffb767f57b2d9f38460bd6ea577728b4b0e6b82e21168498e065f0eeb8dd48e9fa90e30a1e5f07586ec33cd3c9f445541deaca4c",
-    "spendableBalance": "6214370",
+    "spendableBalance": "36214370",
     "unitMagnitude": 8,
     "xpub": "xpub6DJLR2MpQNBsVL8Pn3HuqwGAtQWZM7v4o1W4dnYCLJrLsB5MsQbfZJQjGyHS892pUcHPS2R3AXyY1VE1RPka2Tazu5jNTnpKJLuv2xqtrt4",
   },
@@ -55232,6 +55232,24 @@ Array [
       ],
       "type": "OUT",
       "value": "40261000",
+    },
+    Object {
+      "accountId": "libcore:1:qtum:xpub6DJLR2MpQNBsVL8Pn3HuqwGAtQWZM7v4o1W4dnYCLJrLsB5MsQbfZJQjGyHS892pUcHPS2R3AXyY1VE1RPka2Tazu5jNTnpKJLuv2xqtrt4:",
+      "blockHash": null,
+      "blockHeight": 540078,
+      "extra": Object {},
+      "fee": "169500",
+      "hash": "57857c9064f9748e95a145750a486928cae3408cc3595e8e6438834a76dcdd63",
+      "id": "libcore:1:qtum:xpub6DJLR2MpQNBsVL8Pn3HuqwGAtQWZM7v4o1W4dnYCLJrLsB5MsQbfZJQjGyHS892pUcHPS2R3AXyY1VE1RPka2Tazu5jNTnpKJLuv2xqtrt4:-57857c9064f9748e95a145750a486928cae3408cc3595e8e6438834a76dcdd63-IN",
+      "recipients": Array [
+        "QhpbXpX5xXavAtKEG97fcbQjNqcGjpMFo4",
+        "QRXAXKxF7JGXJzWr5MTPLekaSFwZLCAvmw",
+      ],
+      "senders": Array [
+        "QSpWTM95cofXwyTw3ATL9NVTWtEzwQ2k35",
+      ],
+      "type": "IN",
+      "value": "30000000",
     },
     Object {
       "accountId": "libcore:1:qtum:xpub6DJLR2MpQNBsVL8Pn3HuqwGAtQWZM7v4o1W4dnYCLJrLsB5MsQbfZJQjGyHS892pUcHPS2R3AXyY1VE1RPka2Tazu5jNTnpKJLuv2xqtrt4:",
