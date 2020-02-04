@@ -192,19 +192,10 @@ export const listApps: Step = {
     withDevice(meta.deviceId)(transport =>
       listAppsTransport(transport, meta.deviceInfo),
     ).pipe(
-      map((e: *) => {
-        // TODO
-        if (e.type === "result") {
-          return {
-            ...meta,
-            appRes: e.result,
-          };
-        }
-        // TODO we can catch genuine check request
-        return {
-          ...meta,
-        };
-      }),
+      map((e: *) => ({
+        ...meta,
+        ...(e.type === "result" ? { appRes: e.result } : {}),
+      })),
     ),
 };
 
