@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   wrapper: {
-    minHeight: 100,
+    flexBasis: 100,
+    flexShrink: 0.5,
     flexDirection: "column",
     justifyContent: "center",
   },
