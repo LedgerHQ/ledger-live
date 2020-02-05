@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "11.4.1",
+  "version": "11.4.3",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "@ledgerhq/errors": "5.7.0",
-    "@ledgerhq/hw-transport-http": "5.7.0",
-    "@ledgerhq/hw-transport-mocker": "5.7.0",
-    "@ledgerhq/hw-transport-node-hid": "5.7.0",
-    "@ledgerhq/ledger-core": "^5.3.2",
-    "@ledgerhq/live-common": "^11.3.0",
+    "@ledgerhq/hw-transport-http": "5.8.0",
+    "@ledgerhq/hw-transport-mocker": "5.8.0",
+    "@ledgerhq/hw-transport-node-hid": "5.8.0",
+    "@ledgerhq/ledger-core": "^5.3.4",
+    "@ledgerhq/live-common": "^11.4.2",
     "@ledgerhq/logs": "5.6.0",
     "asciichart": "^1.5.9",
     "axios": "0.19.0",
@@ -42,7 +42,7 @@
     "command-line-args": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "flow-bin": "^0.116.1",
+    "flow-bin": "^0.117.0",
     "flow-typed": "^2.6.1",
     "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
