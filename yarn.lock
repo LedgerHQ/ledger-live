@@ -1135,17 +1135,26 @@
     bip32-path "0.4.2"
 
 "@ledgerhq/hw-transport-mocker@^5.7.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-mocker/-/hw-transport-mocker-5.7.0.tgz#929c3796e240054e6875fe360483ac710786b748"
-  integrity sha512-2FHmLY1ccelb/c9dCfL/U5ylLvH/Y4OdQaPP2LdtBSAB6Efn1gJkl8mKdEGlrcR8DRZtC2NOaPDa+L3fXF7oxA==
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-mocker/-/hw-transport-mocker-5.8.0.tgz#a6bb6bb292eaddd1b02ce672e855e62a55900dba"
+  integrity sha512-ybnhNEBFdp7TbDmQFDYh8A9l6FL4EwjBgkTpSePKL15jW7sX3C1OjDF3c2qn7NWz4A1yVjFGqXrIYPeXUaXp5g==
   dependencies:
-    "@ledgerhq/hw-transport" "^5.7.0"
+    "@ledgerhq/hw-transport" "^5.8.0"
     "@ledgerhq/logs" "^5.6.0"
 
-"@ledgerhq/hw-transport@5.7.0", "@ledgerhq/hw-transport@^5.7.0":
+"@ledgerhq/hw-transport@5.7.0":
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-5.7.0.tgz#6da4f1511551a27071155aeed813c1b03200ff96"
   integrity sha512-F1Kr61iByP2I3gcE88SbfymRF2dQ6fECvS4nQCBSz3mSMsoeHxXK+EhuuzXrYhTzqGkl+kD5yitBw7KRHV1AiA==
+  dependencies:
+    "@ledgerhq/devices" "^5.7.0"
+    "@ledgerhq/errors" "^5.7.0"
+    events "^3.1.0"
+
+"@ledgerhq/hw-transport@^5.7.0", "@ledgerhq/hw-transport@^5.8.0":
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-5.8.0.tgz#47427b2920c9e1562e94a053ef54b3fc4de98e93"
+  integrity sha512-zDIefyQMvSUiTiB9XVkcUW9wzfsSQb+tzRXNiI6KN/YN8c2LaLcNG82jmKOa0F6ajBcki1fty6wlcIhGmz+NhA==
   dependencies:
     "@ledgerhq/devices" "^5.7.0"
     "@ledgerhq/errors" "^5.7.0"
