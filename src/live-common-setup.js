@@ -38,6 +38,7 @@ setSupportedCurrencies([
   "qtum",
   "ripple",
   "stealthcoin",
+  "stellar",
   "stratis",
   "vertcoin",
   "viacoin",

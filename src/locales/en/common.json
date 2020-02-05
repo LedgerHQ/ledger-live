@@ -1103,7 +1103,15 @@
       "infoTotalTitle": "Total to spend",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas Limit",
-      "validateGasLimit": "Validate Gas Limit"
+      "validateGasLimit": "Validate Gas Limit",
+      "memo": {
+        "type": "Memo Type",
+        "value": "Memo Value"
+      },
+      "validateMemo": {
+          "value": "Validate Memo Value",
+          "type": "Validate Memo Type"
+      }
     },
     "validation": {
       "message": "Confirm the transaction on your device to securely sign it",
