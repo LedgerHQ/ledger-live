@@ -264,7 +264,7 @@ export const reducer = (state: State, action: Action): State => {
 
       let uninstallQueue = state.uninstallQueue;
       if (
-        state.installed.some(a => a.name === name) ||
+        state.installed.some(a => a.name === name || a.name === "") ||
         action.force ||
         // if installed unavailable and it was not a cancellation
         // TODO cover this in tests...
