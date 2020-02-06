@@ -58,8 +58,6 @@ export interface CurrencyBridge {
 // Abstraction related to an account
 export interface AccountBridge<T: Transaction> {
   // synchronizes an account continuously to update with latest blochchains state.
-  // (NOT YET SUPPORTED) if used with observation=true, it will keep the Observable opened and emit to it new updates.
-  // if used with observation=false, it stops at first sync and you will have to call it again.
   // The function emits updater functions each time there are data changes (e.g. blockchains updates)
   // an update function is just a Account => Account that perform the changes (to avoid race condition issues)
   // initialAccount parameter is used to point which account is the synchronization on, but it should not be used in the emitted values.
