@@ -8,6 +8,7 @@ module.exports = {
       },
     },
   },
+  plugins: ["prettier"],
   rules: {
     "no-console": [
       "error",
@@ -74,6 +75,7 @@ module.exports = {
     "react-native/no-inline-styles": "warn",
     "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
+    "prettier/prettier": "error",
   },
   globals: {
     __DEV__: false,
