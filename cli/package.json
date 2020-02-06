@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "11.4.3",
+  "version": "11.4.5",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
     "@ledgerhq/hw-transport-mocker": "5.8.0",
     "@ledgerhq/hw-transport-node-hid": "5.8.0",
     "@ledgerhq/ledger-core": "^5.3.4",
-    "@ledgerhq/live-common": "^11.4.2",
+    "@ledgerhq/live-common": "^11.4.5",
     "@ledgerhq/logs": "5.6.0",
     "asciichart": "^1.5.9",
     "axios": "0.19.0",
