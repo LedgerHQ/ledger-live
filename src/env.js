@@ -48,7 +48,7 @@ const envDefinitions = {
     desc: "node API for tezos (for broadcast only)"
   },
   BASE_SOCKET_URL: {
-    def: "wss://api.ledgerwallet.com/update",
+    def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
     desc: "Ledger script runner API"
   },
