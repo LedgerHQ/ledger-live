@@ -13,7 +13,8 @@ import {
   ManagerNotEnoughSpaceError,
   UserRefusedFirmwareUpdate,
   NetworkDown,
-  FirmwareNotRecognized
+  FirmwareNotRecognized,
+  TransportStatusError
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
@@ -49,7 +50,10 @@ const remapSocketError = (context?: string) =>
       // hack to detect the case you're not in good condition (not in dashboard)
       return throwError(new DeviceOnDashboardExpected());
     }
-    const status = e.message.slice(e.message.length - 4);
+    const status =
+      e instanceof TransportStatusError
+        ? e.statusCode.toString(16)
+        : e.message.slice(e.message.length - 4);
     switch (status) {
       case "6a80":
       case "6a81":
