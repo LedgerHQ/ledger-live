@@ -150,6 +150,7 @@ export const makeScanAccounts = (
                 index,
                 derivationMode
               }),
+              starred: false,
               index,
               currency,
               operationsCount: 0,
@@ -189,6 +190,7 @@ export const makeScanAccounts = (
         ],
         derivationMode,
         name: getAccountPlaceholderName({ currency, index, derivationMode }),
+        starred: false,
         index,
         currency,
         operationsCount: 0,

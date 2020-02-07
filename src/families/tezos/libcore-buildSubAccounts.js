@@ -55,6 +55,7 @@ async function buildOriginatedAccount({
     type: "ChildAccount",
     id,
     name: shortAddressPreview(address),
+    starred: false,
     parentId: parentAccountId,
     currency,
     address,

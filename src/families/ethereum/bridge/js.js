@@ -271,6 +271,7 @@ const currencyBridge: CurrencyBridge = {
                   index,
                   derivationMode
                 }),
+                starred: false,
                 balance,
                 spendableBalance: balance,
                 blockHeight: currentBlock.height,
@@ -308,6 +309,7 @@ const currencyBridge: CurrencyBridge = {
           ],
           derivationMode,
           name: getAccountPlaceholderName({ currency, index, derivationMode }),
+          starred: false,
           balance,
           spendableBalance: balance,
           blockHeight: currentBlock.height,
