@@ -16,31 +16,36 @@ const mapStateToProps = (state: State, props: *) => ({
     ? props.navigation.state.params.transaction.memoType
     : "NO_MEMO",
   items,
-});
-
-const mapDispatchToProps = {
-  onValueChange: ({ value }, props: *) => {
+  cancelNavigateBack: true,
+  onValueChange: ({ value }) => {
     const { navigation } = props;
-    const account = navigation.getParam("account");
-    const bridge = getAccountBridge(account);
     const transaction = navigation.getParam("transaction");
-    navigation.navigate("StellarEditMemoValue", {
-      accountId: account.id,
-      transaction,
-      memoType: value,
-    });
+    const account = navigation.getParam("account");
+    if (value === "NO_MEMO") {
+      const bridge = getAccountBridge(account);
+      navigation.navigate("SendSummary", {
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          memoType: value,
+          memoValue: null,
+        }),
+      });
+    } else {
+      navigation.navigate("StellarEditMemoValue", {
+        accountId: account.id,
+        transaction,
+        memoType: value,
+      });
+    }
   },
-};
+});
 
 const Screen = makeGenericSelectScreen({
   id: "StellarEditMemoType",
   itemEventProperties: item => ({ memoType: item.value }),
-  title: i18next.t("send.summary.validateMemo.type"),
+  title: i18next.t("send.summary.memo.type"),
   keyExtractor: item => item.value,
   formatItem: item => item.label,
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Screen);
+export default connect(mapStateToProps)(Screen);

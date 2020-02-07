@@ -28,6 +28,7 @@ type Props = {
     params: {
       accountId: string,
       transaction: Transaction,
+      memoType: string,
     },
   }>,
   t: T,
@@ -95,7 +96,7 @@ class StellarEditMemoValue extends PureComponent<Props, State> {
               <Button
                 event="StellarEditMemoValue"
                 type="primary"
-                title={t("send.summary.validateMemo.value")}
+                title={t("send.summary.validateMemo")}
                 onPress={this.onValidateText}
                 containerStyle={styles.buttonContainer}
               />
