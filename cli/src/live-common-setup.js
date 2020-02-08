@@ -10,6 +10,7 @@ import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { map, first, switchMap } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
+import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
 import {
   registerTransportModule,
   disconnect
@@ -37,6 +38,27 @@ if (process.env.DEVICE_PROXY_URL) {
     id: "http",
     open: () =>
       retry(() => Tr.create(3000, 5000), { context: "open-http-proxy" }),
+    disconnect: () => Promise.resolve()
+  });
+}
+
+const { SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
+if (SPECULOS_APDU_PORT) {
+  const req: Object = {
+    apduPort: parseInt(SPECULOS_APDU_PORT, 10)
+  };
+  if (SPECULOS_BUTTON_PORT) {
+    req.buttonPort = parseInt(SPECULOS_BUTTON_PORT, 10);
+  }
+  if (SPECULOS_HOST) {
+    req.host = SPECULOS_HOST;
+  }
+  registerTransportModule({
+    id: "tcp",
+    open: () =>
+      retry(() => SpeculosTransport.open(req), {
+        context: "open-tcp-speculos"
+      }),
     disconnect: () => Promise.resolve()
   });
 }

@@ -910,6 +910,15 @@
     node-hid "^1.1.0"
     usb "^1.6.0"
 
+"@ledgerhq/hw-transport-node-speculos@^5.8.0":
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-speculos/-/hw-transport-node-speculos-5.8.0.tgz#c9d7ec397f1a984f16a7af7c1e834b2a1fa6b716"
+  integrity sha512-KBqsdv9f6qD+tY7+MeDkXZQ1G5Aa8woTYlEIfbzEIYjrNiNy51dEZ3y8JMYE8S9SaaOEjUPC1+WWUGJ+S8kDYw==
+  dependencies:
+    "@ledgerhq/errors" "^5.7.0"
+    "@ledgerhq/hw-transport" "^5.8.0"
+    "@ledgerhq/logs" "^5.6.0"
+
 "@ledgerhq/hw-transport@5.8.0", "@ledgerhq/hw-transport@^5.8.0":
   version "5.8.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-5.8.0.tgz#47427b2920c9e1562e94a053ef54b3fc4de98e93"
