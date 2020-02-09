@@ -45,10 +45,6 @@ export type ChildAccount = {
   operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
-  capabilities: {
-    isDelegatable?: boolean,
-    isSpendable?: boolean
-  },
   balanceHistory?: BalanceHistoryMap
 };
 
@@ -186,10 +182,6 @@ export type ChildAccountRaw = {
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
   balance: string,
-  capabilities: {
-    isDelegatable?: boolean,
-    isSpendable?: boolean
-  },
   balanceHistory?: BalanceHistoryRawMap
 };
 
