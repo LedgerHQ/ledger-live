@@ -2,6 +2,7 @@
 
 import type Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
+import WS from "ws";
 import { Observable, Subject } from "rxjs";
 import {
   WebsocketConnectionError,
@@ -12,7 +13,6 @@ import {
   ManagerDeviceLockedError
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
-import { createWebSocket } from "../network";
 import { getEnv } from "../env";
 import type { SocketEvent } from "../types/manager";
 
@@ -40,7 +40,7 @@ export const createDeviceSocket = (
     let normallyFinished = false; // the socket logic reach a normal termination
     let inBulk = false; // bulk is a mode where we have many apdu to run on device and no longer need the connection
 
-    const ws = createWebSocket(url);
+    const ws = new WS(url);
 
     const unresponsiveLockHandling = () => {
       if (unsubscribed) return;

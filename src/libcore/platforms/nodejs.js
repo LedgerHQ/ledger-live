@@ -157,6 +157,7 @@ export default (arg: {
           }
         }
         try {
+          // $FlowFixMe not sure what's wrong
           res = await network(param);
           const urlConnection = createHttpConnection(res, null);
           r.complete(urlConnection, null);
