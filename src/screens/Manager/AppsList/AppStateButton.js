@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, memo } from "react";
+import React, { useMemo, memo } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Trans } from "react-i18next";
@@ -59,33 +59,14 @@ const AppStateButton = ({
     [app.name, installed],
   );
 
-  const installApp = useCallback(() => {
-    dispatch({ type: "install", name });
-  }, [dispatch, name]);
-
-  const uninstallApp = useCallback(() => {
-    dispatch({ type: "uninstall", name });
-  }, [dispatch, name]);
-
-  const onCancelUninstall = useMemo(
-    () => (uninstallQueue.indexOf(name) === 0 ? null : installApp),
-    [uninstallQueue, name, installApp],
-  );
-
   const renderAppState = () => {
     switch (true) {
       case installing && uninstalling:
         return <UpdateProgress />;
       case installing:
-        return (
-          <InstallProgress
-            currentProgress={currentProgress}
-            onCancel={uninstallApp}
-            name={name}
-          />
-        );
+        return <InstallProgress currentProgress={currentProgress} />;
       case uninstalling:
-        return <UninstallProgress onCancel={onCancelUninstall} name={name} />;
+        return <UninstallProgress />;
       case isInstalledView && isInstalled:
         return (
           <AppUninstallButton

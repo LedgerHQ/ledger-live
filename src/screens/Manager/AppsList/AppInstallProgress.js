@@ -4,34 +4,17 @@ import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
 import colors from "../../../colors";
-import CloseCircle from "../../../icons/CloseCircle";
 import LText from "../../../components/LText";
 import ProgressBar from "../../../components/ProgressBar";
 import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
-import Touchable from "../../../components/Touchable";
 
 type InstallProgressProps = {
-  onCancel: () => void,
-  name: string,
   currentProgress: *,
 };
 
-export const InstallProgress = ({
-  onCancel,
-  name,
-  currentProgress,
-}: InstallProgressProps) => {
-  const canCancel = !currentProgress && !!onCancel;
-
+export const InstallProgress = ({ currentProgress }: InstallProgressProps) => {
   return (
-    <Touchable
-      style={styles.progressContainer}
-      onPress={onCancel}
-      disabled={canCancel}
-      underlayColor={colors.lightFog}
-      event="ManagerAppCancelInstall"
-      eventProperties={{ appName: name }}
-    >
+    <View style={styles.progressContainer}>
       <View style={styles.progressLabel}>
         <LText
           semiBold
@@ -40,36 +23,28 @@ export const InstallProgress = ({
         >
           <Trans i18nKey="AppAction.install.loading.button" />
         </LText>
-        {canCancel && (
-          <View style={styles.progressCloseButton}>
-            <CloseCircle
-              style={styles.progressCloseIcon}
-              color={colors.live}
-              size={14}
-            />
-          </View>
-        )}
       </View>
-      <ProgressBar
-        progressColor={colors.live}
-        style={styles.progressBar}
-        height={6}
-        progress={currentProgress * 1e2}
-      />
-    </Touchable>
+      {currentProgress > 0 ? (
+        <ProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+          progress={currentProgress * 1e2}
+        />
+      ) : (
+          <InfiniteProgressBar
+            progressColor={colors.live}
+            style={styles.progressBar}
+            height={6}
+          />
+        )}
+    </View>
   );
 };
 
-export const UninstallProgress = ({ onCancel, name }: InstallProgressProps) => {
+export const UninstallProgress = () => {
   return (
-    <Touchable
-      style={styles.progressContainer}
-      onPress={onCancel}
-      disabled={!onCancel}
-      event="ManagerAppCancelInstall"
-      eventProperties={{ appName: name }}
-      underlayColor={colors.lightFog}
-    >
+    <View style={styles.progressContainer}>
       <View style={styles.progressLabel}>
         <LText
           semiBold
@@ -78,22 +53,13 @@ export const UninstallProgress = ({ onCancel, name }: InstallProgressProps) => {
         >
           <Trans i18nKey="AppAction.uninstall.loading.button" />
         </LText>
-        {onCancel && (
-          <View style={styles.progressCloseButton}>
-            <CloseCircle
-              style={styles.progressCloseIcon}
-              color={colors.live}
-              size={14}
-            />
-          </View>
-        )}
       </View>
       <InfiniteProgressBar
         progressColor={colors.live}
         style={styles.progressBar}
         height={6}
       />
-    </Touchable>
+    </View>
   );
 };
 
@@ -135,12 +101,6 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     alignItems: "center",
     backgroundColor: colors.white,
-  },
-  progressCloseButton: {
-    flexBasis: 28,
-    flexDirection: "row",
-    justifyContent: "center",
-    width: 28,
   },
   progressBar: { flexShrink: 0, flexGrow: 0, flexBasis: 6 },
 });
