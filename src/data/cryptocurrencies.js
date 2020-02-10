@@ -878,8 +878,9 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     },
     explorerViews: [
       {
-        tx: "https://gastracker.io/tx/$hash",
-        address: "https://gastracker.io/address/$address"
+        tx: "https://blockscout.com/etc/mainnet/tx/$hash/internal_transactions",
+        address:
+          "https://blockscout.com/etc/mainnet/address/$address/transactions"
       }
     ]
   },
