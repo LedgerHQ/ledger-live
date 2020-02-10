@@ -32,12 +32,12 @@ export const InstallProgress = ({ currentProgress }: InstallProgressProps) => {
           progress={currentProgress * 1e2}
         />
       ) : (
-          <InfiniteProgressBar
-            progressColor={colors.live}
-            style={styles.progressBar}
-            height={6}
-          />
-        )}
+        <InfiniteProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+        />
+      )}
     </View>
   );
 };

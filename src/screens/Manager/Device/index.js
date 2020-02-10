@@ -2,8 +2,7 @@ import React, { memo } from "react";
 
 import { StyleSheet, View, Image } from "react-native";
 import { Trans } from "react-i18next";
-import type { State } from "@ledgerhq/live-common/lib/apps";
-import { distribute } from "@ledgerhq/live-common/lib/apps";
+import type { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
 import LText from "../../../components/LText";
 import Genuine from "../../../icons/Genuine";
 import DeviceAppStorage from "./DeviceAppStorage";
@@ -24,14 +23,19 @@ const illustrations = {
 };
 
 type Props = {
+  distribution: AppsDistribution,
   state: State,
   deviceId: string,
   initialDeviceName: string,
 };
 
-const DeviceCard = ({ state, deviceId, initialDeviceName }: Props) => {
+const DeviceCard = ({
+  distribution,
+  state,
+  deviceId,
+  initialDeviceName,
+}: Props) => {
   const { deviceModel, firmware } = state;
-  const distribution = distribute(state);
 
   return (
     <Card style={styles.card}>

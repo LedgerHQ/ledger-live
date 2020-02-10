@@ -7,6 +7,7 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
+import { distribute } from "@ledgerhq/live-common/lib/apps";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
@@ -59,6 +60,7 @@ const AppsScreen = ({
   initialDeviceName,
 }: Props) => {
   const { apps, installed, installQueue } = state;
+  const distribution = distribute(state);
 
   const listRef = useRef();
 
@@ -96,7 +98,10 @@ const AppsScreen = ({
 
   const scrollToTop = useCallback(() => {
     if (scrollY > 280)
-      setTimeout(() => listRef.current.scrollToIndex({ index: 1 }), 100);
+      setTimeout(() => {
+        if (listRef.current && listRef.current.scrollToIndex)
+          listRef.current.scrollToIndex({ index: 1 });
+      }, 100);
   }, [scrollY]);
 
   const jumpTo = useCallback(
@@ -153,13 +158,23 @@ const AppsScreen = ({
     sortOptions,
   );
 
+  const distributionOrder = distribution.apps.map(({ name }) => name);
+
   const installedApps: Array<App> = useSortedFilteredApps(
     apps,
     { type: ["installed"], installedApps: installed, installQueue, query: "" },
-    { type: "marketcap", order: "desc" },
-  ).sort((a, b) =>
-    installQueue.indexOf(a.name) > installQueue.indexOf(b.name) ? -1 : 0,
-  );
+    { type: "default", order: "asc" },
+  )
+    .sort(
+      ({ name: _name }, { name }) =>
+        distributionOrder.indexOf(_name) > distributionOrder.indexOf(name)
+          ? -1
+          : 0, // order by distribution in device
+    )
+    .sort(
+      ({ name: _name }, { name }) =>
+        installQueue.indexOf(_name) > installQueue.indexOf(name) ? -1 : 0, // place install queue on top of list
+    );
 
   const renderNoResults = useCallback(
     () => (
@@ -268,6 +283,7 @@ const AppsScreen = ({
 
   const elements = [
     <DeviceCard
+      distribution={distribution}
       state={state}
       deviceId={deviceId}
       initialDeviceName={initialDeviceName}
@@ -471,4 +487,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppsScreen);
+export default memo<Props>(AppsScreen);
