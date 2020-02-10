@@ -804,10 +804,10 @@
     "@ledgerhq/errors" "^5.7.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^11.4.3":
-  version "11.4.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.4.3.tgz#e8bd1ef9a57a00efdeaec04a93567a9defb1a103"
-  integrity sha512-bRBIyA4R5nmdzhUfZ/R5h4Fx1SHkcz3Dn+qToYYBijViFS7O9LGHDDaSCNwU1rlbZx+kKOZKcciaDjAHuaPtzQ==
+"@ledgerhq/live-common@^11.5.0":
+  version "11.5.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-11.5.0.tgz#69fe3f5c785958e74ce4728492da0ccde654433a"
+  integrity sha512-O1DBwUTXFt2OQCAtlAU5xtA351X470k8wbHlDn++a0UvgFybUs3ngQaSQrb26M+8cL4DXnx/oXCySJxDLZH44g==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.7.0"
@@ -2555,10 +2555,10 @@ findit@^2.0.0:
   resolved "https://registry.yarnpkg.com/findit/-/findit-2.0.0.tgz#6509f0126af4c178551cfa99394e032e13a4d56e"
   integrity sha1-ZQnwEmr0wXhVHPqZOU4DLhOk1W4=
 
-flow-bin@^0.116.1:
-  version "0.116.1"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.116.1.tgz#797964df40f2e32cad7e334583535105161434f4"
-  integrity sha512-ZSvjx+S4PtDNKcA4U0Afm8sHzzSlTdBBT//N2AltcaN6M/gyxAOGXjC6VkMMGqKWttw+5Psq6fU+RIvD1q/ocA==
+flow-bin@^0.118.0:
+  version "0.118.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.118.0.tgz#fb706364a58c682d67a2ca7df39396467dc397d1"
+  integrity sha512-jlbUu0XkbpXeXhan5xyTqVK1jmEKNxE8hpzznI3TThHTr76GiFwK0iRzhDo4KNy+S9h/KxHaqVhTP86vA6wHCg==
 
 follow-redirects@1.5.10:
   version "1.5.10"
