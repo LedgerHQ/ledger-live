@@ -25,6 +25,7 @@ import type {
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
+import debounce from "lodash/debounce";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { balanceHistoryWithCountervalueSelector } from "../../actions/portfolio";
 import {
@@ -170,14 +171,14 @@ class AccountScreen extends PureComponent<Props, State> {
     );
   };
 
-  onAccountPress = (tokenAccount: TokenAccount) => {
+  onAccountPress = debounce((tokenAccount: TokenAccount) => {
     const { navigation, account } = this.props;
     // $FlowFixMe
     navigation.push("Account", {
       parentId: account.id,
       accountId: tokenAccount.id,
     });
-  };
+  }, 100);
 
   ListHeaderComponent = () => {
     const {
