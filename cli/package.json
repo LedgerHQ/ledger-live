@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "prepare": "./scripts/gen.sh && yarn build",
-    "build": "babel --ignore __tests__ -s -d lib src && ncc build lib/cli.js -s -o dist",
+    "build": "babel --ignore __tests__ -s -d lib src",
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",
     "flow": "flow",
@@ -64,7 +64,6 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-syntax-import-meta": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
-    "@babel/preset-flow": "^7.8.3",
-    "@zeit/ncc": "^0.21.0"
+    "@babel/preset-flow": "^7.8.3"
   }
 }
