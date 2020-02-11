@@ -90,6 +90,7 @@
     "ripple-lib": "1.1.2",
     "rxjs": "^6.5.4",
     "rxjs-compat": "^6.5.4",
+    "semver": "^7.1.2",
     "sha.js": "^2.4.11"
   },
   "devDependencies": {
