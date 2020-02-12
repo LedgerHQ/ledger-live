@@ -1,6 +1,5 @@
 // @flow
 
-import { useReducer, useEffect, useMemo } from "react";
 import { Observable, from, of, defer, concat } from "rxjs";
 import {
   map,
@@ -9,15 +8,8 @@ import {
   ignoreElements,
   throttleTime
 } from "rxjs/operators";
-import type {
-  Exec,
-  State,
-  Action,
-  AppOp,
-  RunnerEvent,
-  ListAppsResult
-} from "./types";
-import { reducer, initState, getActionPlan, getNextAppOp } from "./logic";
+import type { Exec, State, AppOp, RunnerEvent } from "./types";
+import { reducer, getActionPlan } from "./logic";
 import { delay } from "../promise";
 import { getEnv } from "../env";
 
@@ -65,33 +57,3 @@ export const runAll = (state: State, exec: Exec): Observable<State> =>
     map(event => ({ type: "onRunnerEvent", event })),
     reduce(reducer, state)
   );
-
-type UseAppsRunnerResult = [State, (Action) => void];
-
-// use for React apps. support dynamic change of the state.
-export const useAppsRunner = (
-  listResult: ListAppsResult,
-  exec: Exec
-): UseAppsRunnerResult => {
-  // $FlowFixMe for ledger-live-mobile older react/flow version
-  const [state, dispatch] = useReducer(reducer, null, () =>
-    initState(listResult)
-  );
-
-  const nextAppOp = useMemo(() => getNextAppOp(state), [state]);
-  const appOp = state.currentAppOp || nextAppOp;
-  useEffect(() => {
-    if (appOp) {
-      const sub = runAppOp(state, appOp, exec).subscribe(event => {
-        dispatch({ type: "onRunnerEvent", event });
-      });
-      return () => {
-        sub.unsubscribe();
-      };
-    }
-    // we only want to redo the effect on appOp changes here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listResult, appOp, exec]);
-
-  return [state, dispatch];
-};

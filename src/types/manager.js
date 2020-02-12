@@ -196,7 +196,7 @@ export type SocketEvent =
       nonce: number,
       apdu: Buffer,
       data: Buffer,
-      status: Buffer
+      status: number
     }
   | { type: "opened" }
   | { type: "closed" };
