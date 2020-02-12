@@ -28,9 +28,11 @@ const ALLOW_MANAGER_DELAY = 500;
 export const createDeviceSocket = (
   transport: Transport<*>,
   {
-    url
+    url,
+    unresponsiveExpectedDuringBulk
   }: {
-    url: string
+    url: string,
+    unresponsiveExpectedDuringBulk?: boolean
   }
 ): Observable<SocketEvent> =>
   Observable.create(o => {
@@ -194,6 +196,7 @@ export const createDeviceSocket = (
     };
 
     const onUnresponsiveDevice = () => {
+      if (inBulk && unresponsiveExpectedDuringBulk) return; // firmware identifier is blocking in bulk
       if (timeoutForAllowManager) return; // allow manager is not a locked case
       if (unsubscribed) return;
       o.error(new ManagerDeviceLockedError());
