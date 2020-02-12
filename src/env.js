@@ -316,7 +316,7 @@ export const getEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> =>
   defaults[name];
 
 export const isEnvDefault = <Name: EnvName>(name: Name): EnvValue<Name> =>
-  defaults[name];
+  env[name] === defaults[name];
 
 export const getEnvDesc = <Name: EnvName>(name: Name): string =>
   envDefinitions[name].desc;

@@ -6,7 +6,6 @@ import { log } from "@ledgerhq/logs";
 import URL from "url";
 import {
   DeviceOnDashboardExpected,
-  LatestMCUInstalledError,
   ManagerAppAlreadyInstalledError,
   ManagerDeviceLockedError,
   ManagerFirmwareNotEnoughSpaceError,
@@ -27,7 +26,8 @@ import {
   secureChannelMock,
   resultMock
 } from "./socket.mock";
-import type { SocketEvent } from "../types/manager";
+import semver from "semver";
+import type { DeviceInfo, McuVersion, SocketEvent } from "../types/manager";
 import network from "../network";
 import { getEnv } from "../env";
 import type {
@@ -37,8 +37,7 @@ import type {
   ApplicationVersion,
   Application,
   Category,
-  Id,
-  McuVersion
+  Id
 } from "../types/manager";
 import { makeLRUCache } from "../cache";
 import { getUserHashes } from "../user";
@@ -142,6 +141,28 @@ const getMcus: () => Promise<*> = makeLRUCache(
   () => ""
 );
 
+const compatibleMCUForDeviceInfo = (
+  mcus: McuVersion[],
+  deviceInfo: DeviceInfo
+): McuVersion[] =>
+  mcus.filter(
+    m =>
+      deviceInfo.majMin === m.from_bootloader_version ||
+      deviceInfo.version === m.from_bootloader_version
+  );
+
+const findBestMCU = (compatibleMCU: McuVersion[]) => {
+  let best = compatibleMCU[0];
+  for (let i = 1; i < compatibleMCU.length; i++) {
+    if (
+      semver.gt(semver.coerce(compatibleMCU[i].name), semver.coerce(best.name))
+    ) {
+      best = compatibleMCU[i];
+    }
+  }
+  return best;
+};
+
 const getLatestFirmware: ({
   current_se_firmware_final_version: Id,
   device_version: Id,
@@ -199,28 +220,6 @@ const getCurrentOSU: (input: {
   },
   a => `${a.version}_${a.deviceId}_${a.provider}`
 );
-
-const getNextBLVersion = async (
-  mcuversion: string | number
-): Promise<McuVersion> => {
-  const { data }: { data: McuVersion | "default" } = await network({
-    method: "GET",
-    url: URL.format({
-      pathname: `${getEnv("MANAGER_API_BASE")}/mcu_versions/${mcuversion}`,
-      query: { livecommonversion }
-    })
-  });
-
-  if (data === "default" || !data.name) {
-    throw new LatestMCUInstalledError(
-      "there is no next mcu version to install"
-    );
-  }
-
-  log("firmware-update", `getNextBLVersion ${mcuversion} => ${String(data)}`);
-
-  return data;
-};
 
 const getCurrentFirmware: (input: {
   version: string,
@@ -296,7 +295,8 @@ const getDeviceVersion: (
 const install = (
   transport: Transport<*>,
   context: string,
-  params: *
+  params: *,
+  unresponsiveExpectedDuringBulk?: boolean
 ): Observable<*> => {
   if (getEnv("MOCK")) {
     return createMockSocket(secureChannelMock(true), bulkSocketMock(3000));
@@ -307,7 +307,7 @@ const install = (
       pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
       query: { ...params, livecommonversion }
     }),
-    ignoreWebsocketErrorDuringBulk: true
+    unresponsiveExpectedDuringBulk
   }).pipe(remapSocketError(context));
 };
 
@@ -405,7 +405,8 @@ const API = {
   getMcus,
   getLatestFirmware,
   getCurrentOSU,
-  getNextBLVersion,
+  compatibleMCUForDeviceInfo,
+  findBestMCU,
   getCurrentFirmware,
   getFinalFirmwareById,
   getDeviceVersion,

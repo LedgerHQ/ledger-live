@@ -1,7 +1,7 @@
 // @flow
 import { log } from "@ledgerhq/logs";
 import type Transport from "@ledgerhq/hw-transport";
-import { Observable, from, of, concat } from "rxjs";
+import { Observable, from, of, concat, empty } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import getDeviceInfo from "./getDeviceInfo";
@@ -18,9 +18,19 @@ export default (finalFirmware: FinalFirmware) => (
     mergeMap(({ majMin: blVersion, targetId }: DeviceInfo) =>
       (blVersion in blVersionAliases
         ? of(blVersionAliases[blVersion])
-        : from(ManagerAPI.getNextBLVersion(finalFirmware.mcu_versions[0]))
+        : from(
+            // we pick the best MCU to install in the context of the firmware
+            ManagerAPI.getMcus().then(mcus =>
+              ManagerAPI.findBestMCU(
+                finalFirmware.mcu_versions
+                  .map(id => mcus.find(mcu => mcu.id === id))
+                  .filter(Boolean)
+              )
+            )
+          )
       ).pipe(
-        mergeMap((mcuVersion: McuVersion | string) => {
+        mergeMap((mcuVersion: ?McuVersion | string) => {
+          if (!mcuVersion) return empty();
           let version;
 
           let isMCU = false;

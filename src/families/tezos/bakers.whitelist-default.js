@@ -17,7 +17,7 @@ const whitelist = [
   "tz1QLXqnfN51dkjeghXvKHkJfhvGiM5gK4tc",
   "tz1Lhf4J9Qxoe3DZ2nfe8FGDnvVj7oKjnMY6",
   "tz1Pwgj6j55akKCyvTwwr9X4np1RskSXpQY4",
-  "tz1egbN6RK2bM5vt4aAZw6r9j4nL8z49bPdS",
+  "tz1NEKxGEHsFufk87CVZcrqWu8o22qh46GK6",
   "tz1Ldzz6k1BHdhuKvAtMRX7h5kJSMHESMHLC",
   "tz1NortRftucvAkD1J58L32EhSVrQEWJCEnB",
   "tz1Kf25fX1VdmYGSEzwFy1wNmkbSEZ2V83sY",
