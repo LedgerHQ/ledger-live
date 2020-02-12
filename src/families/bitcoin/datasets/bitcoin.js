@@ -40,7 +40,7 @@ const dataset: CurrenciesData<Transaction> = {
             // totalSpent: BigNumber("1249"),
             errors: {},
             warnings: {
-              feeTooHigh: new FeeTooHigh()
+              // feeTooHigh: new FeeTooHigh()
             }
           }
         },
@@ -60,7 +60,7 @@ const dataset: CurrenciesData<Transaction> = {
             // totalSpent: BigNumber("1248"),
             errors: {},
             warnings: {
-              feeTooHigh: new FeeTooHigh()
+              // feeTooHigh: new FeeTooHigh()
             }
           }
         },
