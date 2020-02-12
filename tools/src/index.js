@@ -75,7 +75,7 @@ class App extends Component<*, *> {
     if (window.location.host === "ledger-live-tools.netlify.com") {
       return (
         <h1>
-          {"The tools have moved to: "}
+          {"The tools has moved to: "}
           {window.location.href.replace(
             "ledger-live-tools.netlify.com",
             "ledger-live-tools.now.sh"

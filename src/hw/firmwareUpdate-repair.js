@@ -3,7 +3,6 @@ import { log } from "@ledgerhq/logs";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
 import { Observable, from, of, empty, concat, throwError } from "rxjs";
 import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
-
 import ManagerAPI from "../api/Manager";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
@@ -28,6 +27,7 @@ const repair = (
   forceMCU_: ?string
 ): Observable<{ progress: number }> => {
   log("hw", "firmwareUpdate-repair");
+  const mcusPromise = ManagerAPI.getMcus();
 
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
@@ -82,10 +82,16 @@ const repair = (
             return installMcu("1.6");
           case "0.9":
             return installMcu("1.7");
-          case "0.11":
-            return installMcu("1.11");
           default:
-            return empty();
+            return from(mcusPromise).pipe(
+              concatMap(mcus => {
+                const next = ManagerAPI.findBestMCU(
+                  ManagerAPI.compatibleMCUForDeviceInfo(mcus, deviceInfo)
+                );
+                if (next) return installMcu(next.name);
+                return empty();
+              })
+            );
         }
       })
     );
