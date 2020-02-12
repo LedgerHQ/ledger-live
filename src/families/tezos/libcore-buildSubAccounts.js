@@ -30,9 +30,6 @@ async function buildOriginatedAccount({
     await coreOriginatedAccount.getBalance()
   );
   const address = await coreOriginatedAccount.getAddress();
-  const isDelegatable = await coreOriginatedAccount.isDelegatable();
-  const isSpendable = await coreOriginatedAccount.isSpendable();
-
   const query = await coreOriginatedAccount.queryOperations();
   await query.complete();
   await query.addOrder(OperationOrderKey.date, false);
@@ -62,11 +59,7 @@ async function buildOriginatedAccount({
     balance,
     operationsCount: operations.length,
     operations,
-    pendingOperations: [],
-    capabilities: {
-      isDelegatable,
-      isSpendable
-    }
+    pendingOperations: []
   };
 
   return originatedAccount;

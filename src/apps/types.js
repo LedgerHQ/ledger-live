@@ -42,6 +42,8 @@ export type State = {
   installed: InstalledItem[],
   installQueue: string[],
   uninstallQueue: string[],
+  // queue saved at the time of a "updateAll" action
+  updateAllQueue: string[],
   currentAppOp: ?AppOp,
   currentProgress: ?{
     appOp: AppOp,
@@ -58,6 +60,8 @@ export type AppOp =
   | { type: "uninstall", name: string };
 
 export type Action =
+  // recover from an error
+  | { type: "recover" }
   // wipe will remove all apps of the device
   | { type: "wipe" }
   // uninstall a specific app by name

@@ -12,6 +12,7 @@ import erc20 from "./erc20";
 import assets from "./assets";
 import manager from "./manager";
 import lldSignature from "./lld-signature";
+import mcurepair from "./mcu-repair";
 
 export default {
   Countervalues,
@@ -27,5 +28,6 @@ export default {
   apps,
   assets,
   manager,
-  lldSignature
+  lldSignature,
+  mcurepair
 };

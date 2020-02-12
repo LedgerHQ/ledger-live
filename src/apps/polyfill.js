@@ -2,14 +2,7 @@
 // polyfill the unfinished support of apps logic
 
 import uniq from "lodash/uniq";
-import type {
-  App,
-  Application,
-  ApplicationVersion,
-  FinalFirmware
-} from "../types/manager";
-import appInfos from "./polyfill-data/app_infos";
-import firmwareBlocks from "./polyfill-data/firmware_blocks";
+import type { App, Application } from "../types/manager";
 import {
   listCryptoCurrencies,
   findCryptoCurrencyById
@@ -35,7 +28,8 @@ listCryptoCurrencies(true, true).forEach(a => {
   ["ZenCash", "Bitcoin"],
   ["kUSD", "Ethereum"],
   ["ThunderCore", "Ethereum"],
-  ["ARTIS sigma1", "Ethereum"]
+  ["ARTIS sigma1", "Ethereum"],
+  ["Volta", "Ethereum"]
 ].forEach(([name, dep]) => declareDep(name, dep));
 
 export const getDependencies = (appName: string): string[] =>
@@ -43,14 +37,6 @@ export const getDependencies = (appName: string): string[] =>
 
 export const getDependents = (appName: string): string[] =>
   reverseDep[appName] || [];
-
-export const polyfillFinalFirmware = (
-  firmware: FinalFirmware
-): FinalFirmware => {
-  const blocks = firmwareBlocks[firmware.version];
-  if (blocks) return { ...firmware, bytes: blocks * 4 * 1024 };
-  return firmware;
-};
 
 export const polyfillApplication = (app: Application): Application => {
   const crypto = listCryptoCurrencies(true, true).find(
@@ -68,20 +54,4 @@ export const polyfillApp = (app: $Exact<App>): $Exact<App> => {
     ...app,
     dependencies: uniq(app.dependencies.concat(getDependencies(app.name)))
   };
-};
-
-export const polyfillAppVersion = (
-  app: ApplicationVersion
-): ApplicationVersion => {
-  const entry = appInfos.find(
-    a => a.key === app.firmware || a.hash === app.hash
-  );
-  if (entry) {
-    return {
-      ...app,
-      bytes: entry.size,
-      hash: entry.hash
-    };
-  }
-  return app;
 };

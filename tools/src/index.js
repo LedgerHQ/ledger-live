@@ -72,6 +72,17 @@ class App extends Component<*, *> {
   }
   render() {
     const { CounterValues, store } = this.state;
+    if (window.location.host === "ledger-live-tools.netlify.com") {
+      return (
+        <h1>
+          {"The tools have moved to: "}
+          {window.location.href.replace(
+            "ledger-live-tools.netlify.com",
+            "ledger-live-tools.now.sh"
+          )}
+        </h1>
+      );
+    }
     return (
       <Provider store={store}>
         <CounterValues.PollingProvider>
