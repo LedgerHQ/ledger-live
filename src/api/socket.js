@@ -20,7 +20,6 @@ const warningsSubject = new Subject();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 
 const ALLOW_MANAGER_DELAY = 500;
-const UNRESPONSIVE_DELAY = 15000;
 
 /**
  * use Ledger WebSocket API to exchange data with the device
@@ -29,39 +28,37 @@ const UNRESPONSIVE_DELAY = 15000;
 export const createDeviceSocket = (
   transport: Transport<*>,
   {
-    url
+    url,
+    unresponsiveExpectedDuringBulk
   }: {
-    url: string
+    url: string,
+    unresponsiveExpectedDuringBulk?: boolean
   }
 ): Observable<SocketEvent> =>
   Observable.create(o => {
     let deviceError = null; // the socket was interrupted by device problem
     let unsubscribed = false; // subscriber wants to stops everything
-    let normallyFinished = false; // the socket logic reach a normal termination
+    let correctlyFinished = false; // the socket logic reach a normal termination
     let inBulk = false; // bulk is a mode where we have many apdu to run on device and no longer need the connection
+    let timeoutForAllowManager = null; // track if there is an ongoing allow manager step
 
     const ws = createWebSocket(url);
 
-    const unresponsiveLockHandling = () => {
-      if (unsubscribed) return;
-      o.error(new ManagerDeviceLockedError());
-    };
-
     ws.onopen = () => {
-      o.next({ type: "opened" });
       log("socket-opened", url);
+      o.next({ type: "opened" });
     };
 
     ws.onerror = e => {
       log("socket-error", e.message);
-      if (inBulk) return;
+      if (inBulk) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
       o.error(new WebsocketConnectionError(e.message, { url }));
     };
 
     ws.onclose = () => {
       log("socket-close");
-      if (inBulk) return;
-      if (normallyFinished) {
+      if (inBulk) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
+      if (correctlyFinished) {
         o.complete();
       } else {
         o.error(new WebsocketConnectionError("closed"));
@@ -81,27 +78,32 @@ export const createDeviceSocket = (
             o.next({ type: "exchange-before", nonce, apdu });
 
             // specific logic for detecting allow manager
-            let requested = false;
-            const timeout =
-              apdu.slice(0, 2).toString("hex") === "e051"
-                ? setTimeout(() => {
-                    if (unsubscribed) return;
-                    requested = true;
-                    o.next({
-                      type: "device-permission-requested",
-                      wording: "Allow Ledger Manager"
-                    });
-                  }, ALLOW_MANAGER_DELAY)
-                : setTimeout(unresponsiveLockHandling, UNRESPONSIVE_DELAY);
+            let allowManagerAwaitingUser = false;
+            if (apdu.slice(0, 2).toString("hex") === "e051") {
+              timeoutForAllowManager = setTimeout(() => {
+                if (unsubscribed) return;
+                allowManagerAwaitingUser = true;
+                o.next({
+                  type: "device-permission-requested",
+                  wording: "Allow Ledger Manager"
+                });
+              }, ALLOW_MANAGER_DELAY);
+            }
 
             const r = await transport.exchange(apdu);
-            clearTimeout(timeout);
+
+            if (timeoutForAllowManager) {
+              // if the exchange is faster than the timeout, we pass through because it's not "awaiting" user action
+              clearTimeout(timeoutForAllowManager);
+              timeoutForAllowManager = null;
+            }
+
             if (unsubscribed) return;
-            const status = r.slice(r.length - 2);
+            const status = r.readUInt16BE(r.length - 2);
 
             // if allow manager was requested, we either throw if deny or emit accepted
-            if (requested) {
-              if (status.toString("hex") === "6985") {
+            if (allowManagerAwaitingUser) {
+              if (status === 0x6985) {
                 o.error(new UserRefusedAllowManager());
                 return;
               }
@@ -110,10 +112,9 @@ export const createDeviceSocket = (
 
             const data = r.slice(0, r.length - 2);
             o.next({ type: "exchange", nonce, apdu, status, data });
-            const strStatus = status.toString("hex");
             const msg = {
               nonce,
-              response: strStatus === "9000" ? "success" : "error",
+              response: status === 0x9000 ? "success" : "error",
               data: data.toString("hex")
             };
             log("socket-out", msg.response);
@@ -138,20 +139,15 @@ export const createDeviceSocket = (
               });
 
             notify(0);
-            let timeout;
             for (let i = 0; i < data.length; i++) {
-              timeout = setTimeout(
-                unresponsiveLockHandling,
-                UNRESPONSIVE_DELAY
-              );
               const r = await transport.exchange(Buffer.from(data[i], "hex"));
-              clearTimeout(timeout);
               if (unsubscribed) return;
               const status = r.readUInt16BE(r.length - 2);
+              // any non success intermediary status will interrupt everything
               if (status !== 0x9000) throw new TransportStatusError(status);
               notify(i + 1);
             }
-            normallyFinished = true;
+            correctlyFinished = true;
             o.complete();
             break;
           }
@@ -160,7 +156,7 @@ export const createDeviceSocket = (
             // a final success event with some data payload
             const payload = input.result || input.data;
             if (payload) o.next({ type: "result", payload });
-            normallyFinished = true;
+            correctlyFinished = true;
             o.complete();
             break;
           }
@@ -198,18 +194,30 @@ export const createDeviceSocket = (
       deviceError = error;
       o.error(error);
     };
+
+    const onUnresponsiveDevice = () => {
+      if (inBulk && unresponsiveExpectedDuringBulk) return; // firmware identifier is blocking in bulk
+      if (timeoutForAllowManager) return; // allow manager is not a locked case
+      if (unsubscribed) return;
+      o.error(new ManagerDeviceLockedError());
+    };
+
     transport.on("disconnect", onDisconnect);
+    transport.on("unresponsive", onUnresponsiveDevice);
 
     return () => {
       unsubscribed = true;
-      if (!normallyFinished && !deviceError && inBulk) {
+      transport.off("disconnect", onDisconnect);
+      transport.off("unresponsive", onUnresponsiveDevice);
+
+      if (!correctlyFinished && !deviceError && inBulk) {
         // if it was not normally ended, we might have to flush it
         if (getEnv("DEVICE_CANCEL_APDU_FLUSH_MECHANISM")) {
           cancelDeviceAction(transport);
         }
       }
       if (ws.readyState === 1) {
-        // connection still active. we close it (unsubscribe)
+        // connection still active. we close it from client (e.g. user unsubscribe)
         ws.close();
       }
     };

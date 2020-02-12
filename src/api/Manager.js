@@ -296,7 +296,8 @@ const getDeviceVersion: (
 const install = (
   transport: Transport<*>,
   context: string,
-  params: *
+  params: *,
+  unresponsiveExpectedDuringBulk?: boolean
 ): Observable<*> => {
   if (getEnv("MOCK")) {
     return createMockSocket(secureChannelMock(true), bulkSocketMock(3000));
@@ -307,7 +308,7 @@ const install = (
       pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
       query: { ...params, livecommonversion }
     }),
-    ignoreWebsocketErrorDuringBulk: true
+    unresponsiveExpectedDuringBulk
   }).pipe(remapSocketError(context));
 };
 

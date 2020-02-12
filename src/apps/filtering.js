@@ -9,7 +9,7 @@ export type SortOptions = {
   order: "asc" | "desc"
 };
 
-type AppType =
+export type AppType =
   | "all"
   | "installed"
   | "not_installed"
