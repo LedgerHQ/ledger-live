@@ -7,7 +7,6 @@ import { listen } from "@ledgerhq/logs";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
-import axios from "axios";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import { setEnv, getEnv } from "@ledgerhq/live-common/lib/env";
 
@@ -166,7 +165,6 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
 };
 
 implementCountervalues({
-  network: axios,
   log: (...args) => console.log(...args), // eslint-disable-line no-console
   getAPIBaseURL: () => window.LEDGER_CV_API,
   storeSelector: state => state.countervalues,
