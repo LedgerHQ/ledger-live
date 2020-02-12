@@ -195,7 +195,6 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     pendingOperations,
     balance,
     address,
-    capabilities,
     balanceHistory
   } = raw;
   const currency = getCryptoCurrencyById(currencyId);
@@ -207,7 +206,6 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     parentId,
     currency,
     address,
-    capabilities,
     balance: BigNumber(balance),
     balanceHistory: fromBalanceHistoryRawMap(balanceHistory || {}),
     operationsCount: operationsCount || (operations && operations.length) || 0,
@@ -227,8 +225,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     pendingOperations,
     balance,
     balanceHistory,
-    address,
-    capabilities
+    address
   } = ca;
   return {
     type: "ChildAccountRaw",
@@ -236,7 +233,6 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     name,
     parentId,
     address,
-    capabilities,
     operationsCount,
     currencyId: currency.id,
     balance: balance.toString(),
