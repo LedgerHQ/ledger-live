@@ -184,6 +184,7 @@ export async function buildAccount({
     freshAddressPath: freshAddresses[0].derivationPath,
     freshAddresses,
     name,
+    starred: false,
     balance,
     balanceHistory,
     spendableBalance: balance, // FIXME need libcore concept

@@ -297,6 +297,7 @@ function genTokenAccount(
   const token = rng.nextArrayItem(tokens);
   const tokenAccount = {
     type: "TokenAccount",
+    starred: false,
     id: account.id + "|" + index,
     parentId: account.id,
     token,
@@ -343,6 +344,7 @@ export function genAccount(
     freshAddressPath: derivationPath,
     freshAddresses: [freshAddress],
     name: rng.nextString(rng.nextInt(4, 34)),
+    starred: false,
     balance: BigNumber(0),
     spendableBalance: BigNumber(0),
     blockHeight: rng.nextInt(100000, 200000),

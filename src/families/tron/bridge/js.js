@@ -231,6 +231,7 @@ const getAccountShape = async info => {
     const sub: TokenAccount = {
       type: "TokenAccount",
       id,
+      starred: false,
       parentId: info.id,
       token,
       balance: BigNumber(value),

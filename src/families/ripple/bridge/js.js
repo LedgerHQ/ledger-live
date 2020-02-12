@@ -407,6 +407,7 @@ const currencyBridge: CurrencyBridge = {
                         index,
                         derivationMode
                       }),
+                      starred: false,
                       freshAddress,
                       freshAddressPath,
                       freshAddresses: [
@@ -456,6 +457,7 @@ const currencyBridge: CurrencyBridge = {
                   index,
                   derivationMode
                 }),
+                starred: false,
                 freshAddress,
                 freshAddressPath,
                 freshAddresses: [
