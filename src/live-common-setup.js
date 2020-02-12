@@ -5,14 +5,12 @@ import { map } from "rxjs/operators/map";
 import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
-import { setNetwork } from "@ledgerhq/live-common/lib/network";
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import BluetoothTransport from "./react-native-hw-transport-ble";
-import network from "./api/network";
 import "./experimental";
 
 setSupportedCurrencies([
@@ -57,7 +55,6 @@ if (Config.VERBOSE) {
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
 
-setNetwork(network);
 setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
 
 // Add support of HID (experimental until we stabilize it)
