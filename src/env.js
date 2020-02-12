@@ -58,6 +58,11 @@ const envDefinitions = {
     desc:
       "force implementation for ALL currency bridges (affects scanning accounts)"
   },
+  DEBUG_HTTP_RESPONSE: {
+    def: false,
+    parser: boolParser,
+    desc: "includes HTTP response body in logs"
+  },
   DEVICE_CANCEL_APDU_FLUSH_MECHANISM: {
     def: true,
     parser: boolParser,
@@ -73,6 +78,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "disable broadcast of transactions"
+  },
+  DISABLE_SYNC_TOKEN: {
+    def: false,
+    parser: boolParser,
+    desc: "Hack to disable a problematic mechanism of our API"
   },
   EXPERIMENTAL_BLE: {
     def: false,
