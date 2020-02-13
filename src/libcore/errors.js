@@ -2,11 +2,13 @@
 
 let impl = e => e;
 
-export function setRemapLibcoreErrorsImplementation(remap: Error => Error) {
+export function setRemapLibcoreErrorsImplementation(
+  remap: (Error | string) => Error
+) {
   impl = remap;
 }
 
-export function remapLibcoreErrors(error: Error): Error {
+export function remapLibcoreErrors(error: Error | string): Error {
   return impl(error);
 }
 

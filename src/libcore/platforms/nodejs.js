@@ -470,7 +470,7 @@ export default (arg: {
     return Promise.resolve(core);
   };
 
-  function parseError(error: string): Error {
+  function parseError(error: string): ?Error {
     const m = error.match(/[^{]*({.*}).*/);
     if (m) {
       const json = JSON.parse(m[1]);
@@ -480,9 +480,17 @@ export default (arg: {
     }
   }
 
-  const remapLibcoreErrors = (input: Error) => {
+  const remapLibcoreErrors = (input: Error | string) => {
     lazyLoad();
     const e: mixed = input;
+    if (typeof input === 'string') {
+      try {
+        return parseError(input);
+      } catch (e) {
+        return input
+      }
+    }
+
     if (e && typeof e === "object") {
       if (typeof e.code === "number") {
         if (e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS) {
@@ -494,14 +502,6 @@ export default (arg: {
           } catch (_e) {}
           return input;
         }
-      }
-    }
-
-    if (typeof input === 'string') {
-      try {
-        return parseError(input);
-      } catch (e) {
-        return input
       }
     }
 
