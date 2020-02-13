@@ -7,7 +7,7 @@
   },
   "version": "12.0.0-beta.3",
   "main": "lib/index.js",
-  "license": "Apache2",
+  "license": "Apache-2.0",
   "scripts": {
     "flow-typed": "flow-typed install -s",
     "build": "./scripts/build.sh",
