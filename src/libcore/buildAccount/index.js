@@ -166,6 +166,10 @@ export async function buildAccount({
         // compare the last data point {value} with `balance`, re-calc if differ
         // also compare the last data point {date} with current date to force a re-calc every X hours.
         const h = await getAccountBalanceHistory(coreAccount, range);
+        if (!h[h.length - 1].value.isEqualTo(balance)) {
+          log("libcore", "last data point DOES NOT match the balance!");
+          return;
+        }
         balanceHistory[range] = h;
       })
     );
