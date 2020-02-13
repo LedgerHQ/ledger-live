@@ -470,6 +470,16 @@ export default (arg: {
     return Promise.resolve(core);
   };
 
+  function parseError(error: string): Error {
+    const m = error.match(/[^{]*({.*}).*/);
+    if (m) {
+      const json = JSON.parse(m[1]);
+      if (json.name) {
+        return deserializeError(json);
+      }
+    }
+  }
+
   const remapLibcoreErrors = (input: Error) => {
     lazyLoad();
     const e: mixed = input;
@@ -480,18 +490,21 @@ export default (arg: {
         } else {
           // re-deserialize error if it was a serialized error
           try {
-            const m = input.message.match(/[^{]*({.*}).*/);
-            if (m) {
-              const json = JSON.parse(m[1]);
-              if (json.name) {
-                return deserializeError(json);
-              }
-            }
+            return parseError(input.message);
           } catch (_e) {}
           return input;
         }
       }
     }
+
+    if (typeof input === 'string') {
+      try {
+        return parseError(input);
+      } catch (e) {
+        return input
+      }
+    }
+
     return input;
   };
 

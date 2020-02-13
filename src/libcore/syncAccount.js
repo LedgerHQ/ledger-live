@@ -3,7 +3,6 @@
 import { Observable, from, defer } from "rxjs";
 import { map } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
-import { SyncError } from "@ledgerhq/errors";
 import type {
   SyncConfig,
   Account,
@@ -72,8 +71,7 @@ export async function syncCoreAccount({
 
     return account;
   } catch (e) {
-    if (e.name !== "Error") throw remapLibcoreErrors(e);
-    throw new SyncError(e.message);
+    throw remapLibcoreErrors(e);
   }
 }
 
