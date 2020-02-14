@@ -29,6 +29,7 @@ export type TokenAccount = {
   operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
+  starred: boolean,
   balanceHistory?: BalanceHistoryMap
 };
 
@@ -37,6 +38,7 @@ export type ChildAccount = {
   type: "ChildAccount",
   id: string,
   name: string,
+  starred: boolean,
   // id of the parent account this token accuont belongs to
   parentId: string,
   currency: CryptoCurrency,
@@ -45,10 +47,6 @@ export type ChildAccount = {
   operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
-  capabilities: {
-    isDelegatable?: boolean,
-    isSpendable?: boolean
-  },
   balanceHistory?: BalanceHistoryMap
 };
 
@@ -96,6 +94,9 @@ export type Account = {
 
   // account name
   name: string,
+
+  // starred
+  starred: boolean,
 
   // account balance in satoshi
   balance: BigNumber,
@@ -166,6 +167,7 @@ export type AccountLikeArray =
 export type TokenAccountRaw = {
   type: "TokenAccountRaw",
   id: string,
+  starred?: boolean,
   parentId: string,
   tokenId: string,
   operationsCount?: number,
@@ -179,6 +181,7 @@ export type ChildAccountRaw = {
   type: "ChildAccountRaw",
   id: string,
   name: string,
+  starred?: boolean,
   parentId: string,
   currencyId: string,
   address: string,
@@ -186,10 +189,6 @@ export type ChildAccountRaw = {
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
   balance: string,
-  capabilities: {
-    isDelegatable?: boolean,
-    isSpendable?: boolean
-  },
   balanceHistory?: BalanceHistoryRawMap
 };
 
@@ -203,6 +202,7 @@ export type AccountRaw = {
   freshAddressPath: string,
   freshAddresses: Address[],
   name: string,
+  starred?: boolean,
   balance: string,
   spendableBalance?: string,
   blockHeight: number,

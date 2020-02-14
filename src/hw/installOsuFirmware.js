@@ -15,5 +15,5 @@ export default (
     perso: firmware.perso,
     firmwareKey: firmware.firmware_key
   };
-  return ManagerAPI.install(transport, "firmware", params);
+  return ManagerAPI.install(transport, "firmware", params, true);
 };

@@ -58,6 +58,11 @@ const envDefinitions = {
     desc:
       "force implementation for ALL currency bridges (affects scanning accounts)"
   },
+  DEBUG_HTTP_RESPONSE: {
+    def: false,
+    parser: boolParser,
+    desc: "includes HTTP response body in logs"
+  },
   DEVICE_CANCEL_APDU_FLUSH_MECHANISM: {
     def: true,
     parser: boolParser,
@@ -74,6 +79,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable broadcast of transactions"
   },
+  DISABLE_SYNC_TOKEN: {
+    def: false,
+    parser: boolParser,
+    desc: "Hack to disable a problematic mechanism of our API"
+  },
   EXPERIMENTAL_BLE: {
     def: false,
     parser: boolParser,
@@ -83,6 +93,12 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)"
+  },
+  EXPERIMENTAL_DEVICE_FLOW: {
+    def: false,
+    parser: boolParser,
+    desc:
+      "enable a new flow implementation (at the moment we're having early support of 'openApp')"
   },
   EXPERIMENTAL_EXPLORERS: {
     def: false,

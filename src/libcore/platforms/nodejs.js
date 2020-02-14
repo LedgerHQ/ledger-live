@@ -18,6 +18,16 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
+const hexToBytes = str =>
+  Array.from(Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex"));
+
+const bytesToHex = buf => Buffer.from(buf).toString("hex");
+
+const bytesArrayToString = (bytesArray = []) =>
+  Buffer.from(bytesArray).toString();
+
+const stringToBytesArray = str => Array.from(Buffer.from(str));
+
 export default (arg: {
   // the actual @ledgerhq/ledger-core lib or a function that returns it
   lib: any,
@@ -42,20 +52,15 @@ export default (arg: {
   const loadCore = (): Promise<Core> => {
     lazyLoad();
 
+    // feature detect if the bindings uses hex or array bytes
+    const isUsingArrayOfBytes =
+      "object" === typeof new lib.NJSDynamicArray().serialize();
+
     const MAX_RANDOM = 2684869021;
 
     const lcore = new lib.NJSLedgerCore();
     const stringVersion = lcore.getStringVersion();
     const sqlitePrefix = `v${stringVersion.split(".")[0]}`;
-
-    const hexToBytes = str =>
-      Array.from(Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex"));
-    const bytesToHex = buf => Buffer.from(buf).toString("hex");
-
-    const bytesArrayToString = (bytesArray = []) =>
-      Buffer.from(bytesArray).toString();
-
-    const stringToBytesArray = str => Array.from(Buffer.from(str));
 
     const NJSExecutionContextImpl = {
       execute: runnable => {
@@ -113,7 +118,7 @@ export default (arg: {
         getHeaders: () => headersMap,
         readBody: () => ({
           error: libcoreError,
-          data: stringToBytesArray(res.data)
+          data: isUsingArrayOfBytes ? stringToBytesArray(res.data) : res.data
         })
       };
       return new lib.NJSHttpUrlConnection(NJSHttpUrlConnectionImpl);
@@ -142,14 +147,21 @@ export default (arg: {
           transformResponse: data => data
         };
 
-        if (Array.isArray(data)) {
-          if (data.length === 0) {
-            data = null;
-          } else {
-            // we transform back to a string
-            data = bytesArrayToString(data);
+        if (isUsingArrayOfBytes) {
+          if (Array.isArray(data)) {
+            if (data.length === 0) {
+              data = null;
+            } else {
+              // we transform back to a string
+              data = bytesArrayToString(data);
+            }
+          }
+        } else {
+          if (typeof data === "string" && data) {
+            data = Buffer.from(data, "hex").toString();
           }
         }
+
         if (data) {
           param.data = data;
           if (!headers["Content-Type"]) {
@@ -157,6 +169,7 @@ export default (arg: {
           }
         }
         try {
+          // $FlowFixMe not sure what's wrong
           res = await network(param);
           const urlConnection = createHttpConnection(res, null);
           r.complete(urlConnection, null);
@@ -201,8 +214,9 @@ export default (arg: {
     });
 
     const NJSRandomNumberGenerator = new lib.NJSRandomNumberGenerator({
-      getRandomBytes: size =>
-        Array.from(Buffer.from(crypto.randomBytes(size), "hex")),
+      getRandomBytes: isUsingArrayOfBytes
+        ? size => Array.from(Buffer.from(crypto.randomBytes(size), "hex"))
+        : size => "0x" + crypto.randomBytes(size).toString("hex"),
       getRandomInt: () => Math.random() * MAX_RANDOM,
       getRandomLong: () => Math.random() * MAX_RANDOM * MAX_RANDOM
     });
@@ -275,10 +289,14 @@ export default (arg: {
     });
 
     const wrappers = {
-      hex: hexToBytes
+      hex: isUsingArrayOfBytes
+        ? hexToBytes
+        : str => (str.startsWith("0x") ? str : "0x" + str)
     };
     const unwrappers = {
-      hex: bytesToHex
+      hex: isUsingArrayOfBytes
+        ? bytesToHex
+        : str => (str.startsWith("0x") ? str.slice(2) : str)
     };
 
     function wrapResult(id, value) {
@@ -349,7 +367,11 @@ export default (arg: {
                 }
                 return arg;
               });
-              return new m(...args);
+              const value = new m(...args);
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-result", id + "." + method, { value });
+              }
+              return value;
             };
           } else if (njsBuggyMethodIsNotStatic) {
             // There is a bug in the node bindings that don't expose the static functions
@@ -361,7 +383,11 @@ export default (arg: {
                 typeof njsBuggyMethodIsNotStatic === "function"
                   ? njsBuggyMethodIsNotStatic(args)
                   : args;
-              return new m(...constructorArgs)[method](...args);
+              const value = new m(...constructorArgs)[method](...args);
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-result", id + "." + method, { value });
+              }
+              return value;
             };
           }
         });
@@ -379,6 +405,9 @@ export default (arg: {
                 log("libcore-call", id + "#" + method);
               }
               const value = this[njsField];
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-result", id + "#" + method, { value });
+              }
               const Cls =
                 typeof returns === "string" && returns in mappings
                   ? mappings[returns]
@@ -402,8 +431,11 @@ export default (arg: {
               const args = params
                 ? a.map((value, i) => unwrapArg(params[i], value))
                 : a;
-              const result = await f.apply(this, args);
-              return wrapResult(returns, result);
+              const value = await f.apply(this, args);
+              if (process.env.VERBOSE_LIBCORE_CALL) {
+                log("libcore-result", id + "#" + method, { value });
+              }
+              return wrapResult(returns, value);
             };
           }
         });

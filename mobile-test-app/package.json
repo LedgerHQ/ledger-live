@@ -12,12 +12,11 @@
     "android:build": "yarn start & bundle exec fastlane android build"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^5.7.0",
-    "@ledgerhq/live-common": "^11.5.0",
+    "@ledgerhq/errors": "^5.9.0",
+    "@ledgerhq/live-common": "^12.0.0-beta.1",
     "@ledgerhq/react-native-ledger-core": "^4.7.1",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
-    "axios": "^0.19.1",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^9.0.0",
     "buffer": "^5.4.3",
@@ -40,8 +39,7 @@
     "timers-browserify": "^2.0.11",
     "tty-browserify": "^0.0.1",
     "url": "^0.11.0",
-    "vm-browserify": "^1.1.0",
-    "ws": "^7.2.1"
+    "vm-browserify": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",

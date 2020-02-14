@@ -289,6 +289,7 @@ export const accountDataToAccount = ({
     seedIdentifier,
     xpub,
     name,
+    starred: false,
     currency,
     index,
     freshAddress,
