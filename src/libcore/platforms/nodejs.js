@@ -502,9 +502,28 @@ export default (arg: {
     return Promise.resolve(core);
   };
 
-  const remapLibcoreErrors = (input: Error) => {
+  function parseError(error: string): Error {
+    const m = error.match(/[^{]*({.*}).*/);
+    if (m) {
+      const json = JSON.parse(m[1]);
+      if (json.name) {
+        return deserializeError(json);
+      }
+    }
+
+    return new Error(String(error));
+  }
+
+  const remapLibcoreErrors = (e: mixed): Error => {
     lazyLoad();
-    const e: mixed = input;
+    if (typeof e === "string") {
+      try {
+        return parseError(e);
+      } catch (e2) {
+        return e2;
+      }
+    }
+
     if (e && typeof e === "object") {
       if (typeof e.code === "number") {
         if (e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS) {
@@ -512,19 +531,21 @@ export default (arg: {
         } else {
           // re-deserialize error if it was a serialized error
           try {
-            const m = input.message.match(/[^{]*({.*}).*/);
-            if (m) {
-              const json = JSON.parse(m[1]);
-              if (json.name) {
-                return deserializeError(json);
-              }
-            }
-          } catch (_e) {}
-          return input;
+            return e.message === "string"
+              ? parseError(e.message)
+              : new Error(e);
+          } catch (_e2) {
+            return new Error(e);
+          }
         }
       }
     }
-    return input;
+
+    if (e instanceof Error) {
+      return e;
+    }
+
+    return new Error(String(e));
   };
 
   setLoadCoreImplementation(loadCore);
