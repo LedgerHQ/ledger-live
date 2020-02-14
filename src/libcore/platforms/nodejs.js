@@ -18,6 +18,16 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
+const hexToBytes = str =>
+  Array.from(Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex"));
+
+const bytesToHex = buf => Buffer.from(buf).toString("hex");
+
+const bytesArrayToString = (bytesArray = []) =>
+  Buffer.from(bytesArray).toString();
+
+const stringToBytesArray = str => Array.from(Buffer.from(str));
+
 export default (arg: {
   // the actual @ledgerhq/ledger-core lib or a function that returns it
   lib: any,
@@ -41,6 +51,10 @@ export default (arg: {
 
   const loadCore = (): Promise<Core> => {
     lazyLoad();
+
+    // feature detect if the bindings uses hex or array bytes
+    const isUsingArrayOfBytes =
+      "object" === typeof new lib.NJSDynamicArray().serialize();
 
     const MAX_RANDOM = 2684869021;
 
@@ -104,7 +118,7 @@ export default (arg: {
         getHeaders: () => headersMap,
         readBody: () => ({
           error: libcoreError,
-          data: res.data
+          data: isUsingArrayOfBytes ? stringToBytesArray(res.data) : res.data
         })
       };
       return new lib.NJSHttpUrlConnection(NJSHttpUrlConnectionImpl);
@@ -133,8 +147,19 @@ export default (arg: {
           transformResponse: data => data
         };
 
-        if (typeof data === "string" && data) {
-          data = Buffer.from(data, "hex").toString();
+        if (isUsingArrayOfBytes) {
+          if (Array.isArray(data)) {
+            if (data.length === 0) {
+              data = null;
+            } else {
+              // we transform back to a string
+              data = bytesArrayToString(data);
+            }
+          }
+        } else {
+          if (typeof data === "string" && data) {
+            data = Buffer.from(data, "hex").toString();
+          }
         }
 
         if (data) {
@@ -189,7 +214,9 @@ export default (arg: {
     });
 
     const NJSRandomNumberGenerator = new lib.NJSRandomNumberGenerator({
-      getRandomBytes: size => "0x" + crypto.randomBytes(size).toString("hex"),
+      getRandomBytes: isUsingArrayOfBytes
+        ? size => Array.from(Buffer.from(crypto.randomBytes(size), "hex"))
+        : size => "0x" + crypto.randomBytes(size).toString("hex"),
       getRandomInt: () => Math.random() * MAX_RANDOM,
       getRandomLong: () => Math.random() * MAX_RANDOM * MAX_RANDOM
     });
@@ -262,10 +289,14 @@ export default (arg: {
     });
 
     const wrappers = {
-      hex: str => (str.startsWith("0x") ? str : "0x" + str)
+      hex: isUsingArrayOfBytes
+        ? hexToBytes
+        : str => (str.startsWith("0x") ? str : "0x" + str)
     };
     const unwrappers = {
-      hex: str => (str.startsWith("0x") ? str.slice(2) : str)
+      hex: isUsingArrayOfBytes
+        ? bytesToHex
+        : str => (str.startsWith("0x") ? str.slice(2) : str)
     };
 
     function wrapResult(id, value) {
