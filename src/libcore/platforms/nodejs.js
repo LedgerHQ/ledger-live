@@ -502,7 +502,7 @@ export default (arg: {
     return Promise.resolve(core);
   };
 
-  function parseError(error: string): ?Error {
+  function parseError(error: string): Error {
     const m = error.match(/[^{]*({.*}).*/);
     if (m) {
       const json = JSON.parse(m[1]);
@@ -510,16 +510,17 @@ export default (arg: {
         return deserializeError(json);
       }
     }
+
+    return new Error(String(error));
   }
 
-  const remapLibcoreErrors = (input: Error | string) => {
+  const remapLibcoreErrors = (e: mixed): Error => {
     lazyLoad();
-    const e: mixed = input;
-    if (typeof input === 'string') {
+    if (typeof e === "string") {
       try {
-        return parseError(input);
-      } catch (e) {
-        return input
+        return parseError(e);
+      } catch (e2) {
+        return e2;
       }
     }
 
@@ -530,14 +531,17 @@ export default (arg: {
         } else {
           // re-deserialize error if it was a serialized error
           try {
-            return parseError(input.message);
-          } catch (_e) {}
-          return input;
+            return e.message === "string"
+              ? parseError(e.message)
+              : new Error(e);
+          } catch (_e2) {
+            return new Error(e);
+          }
         }
       }
     }
 
-    return input;
+    return new Error(String(e));
   };
 
   setLoadCoreImplementation(loadCore);

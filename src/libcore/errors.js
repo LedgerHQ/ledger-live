@@ -1,14 +1,15 @@
 // @flow
 
-let impl = e => e;
+let impl = (e: mixed): Error =>
+  e && e instanceof Error ? e : new Error(String(e));
 
 export function setRemapLibcoreErrorsImplementation(
-  remap: (Error | string) => Error
+  remap: (error: mixed) => Error
 ) {
   impl = remap;
 }
 
-export function remapLibcoreErrors(error: Error | string): Error {
+export function remapLibcoreErrors(error: mixed): Error {
   return impl(error);
 }
 

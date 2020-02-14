@@ -194,7 +194,11 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
     return core;
   }
 
-  function remapLibcoreErrors(error: Error): Error {
+  function remapLibcoreErrors(error: mixed): Error {
+    if (!(error && error instanceof Error)) {
+      return new Error(String(error));
+    }
+
     if (!error || !error.message) return error;
     const msg = error.message;
 
