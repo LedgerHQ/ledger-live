@@ -4,13 +4,10 @@ import {
   RecordStore
 } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
-import axios from "axios";
 import manager from "../../manager";
 import { fetchNextFirmware } from "../../hw/installFinalFirmware";
-import { setNetwork } from "../../network";
 
 jest.setTimeout(20000);
-setNetwork(axios);
 
 /*
 // FIXME not yet there?

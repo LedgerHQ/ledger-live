@@ -7,8 +7,6 @@ import { listen } from "@ledgerhq/logs";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
-import axios from "axios";
-import { setNetwork } from "@ledgerhq/live-common/lib/network";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import { setEnv, getEnv } from "@ledgerhq/live-common/lib/env";
 
@@ -30,8 +28,6 @@ listen(({ id: _id, date: _date, type, message, ...rest }) => {
 
 window.setEnv = setEnv;
 window.getEnv = getEnv;
-
-setNetwork(axios);
 
 setSupportedCurrencies([
   "bitcoin",
@@ -169,7 +165,6 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
 };
 
 implementCountervalues({
-  network: axios,
   log: (...args) => console.log(...args), // eslint-disable-line no-console
   getAPIBaseURL: () => window.LEDGER_CV_API,
   storeSelector: state => state.countervalues,

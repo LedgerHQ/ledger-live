@@ -17,12 +17,7 @@ import {
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
 import hwListApps from "../hw/listApps";
-import {
-  polyfillApp,
-  polyfillAppVersion,
-  polyfillApplication,
-  polyfillFinalFirmware
-} from "./polyfill";
+import { polyfillApp, polyfillApplication } from "./polyfill";
 
 export const execWithTransport = (transport: Transport<*>): Exec => (
   appOp: AppOp,
@@ -99,25 +94,24 @@ export const listApps = (
         deviceInfo.providerId
       );
 
-      const firmwareDataP = deviceVersionP
-        .then(deviceVersion =>
-          ManagerAPI.getCurrentFirmware({
-            deviceId: deviceVersion.id,
-            version: deviceInfo.version,
-            provider: deviceInfo.providerId
-          })
-        )
-        .then(polyfillFinalFirmware);
+      const firmwareDataP = deviceVersionP.then(deviceVersion =>
+        ManagerAPI.getCurrentFirmware({
+          deviceId: deviceVersion.id,
+          version: deviceInfo.version,
+          provider: deviceInfo.providerId
+        })
+      );
 
-      const applicationsByDeviceP = Promise.all([deviceVersionP, firmwareDataP])
-        .then(([deviceVersion, firmwareData]) =>
-          ManagerAPI.applicationsByDevice({
-            provider: deviceInfo.providerId,
-            current_se_firmware_final_version: firmwareData.id,
-            device_version: deviceVersion.id
-          })
-        )
-        .then(apps => apps.map(polyfillAppVersion));
+      const applicationsByDeviceP = Promise.all([
+        deviceVersionP,
+        firmwareDataP
+      ]).then(([deviceVersion, firmwareData]) =>
+        ManagerAPI.applicationsByDevice({
+          provider: deviceInfo.providerId,
+          current_se_firmware_final_version: firmwareData.id,
+          device_version: deviceVersion.id
+        })
+      );
 
       const [
         [partialInstalledList, installedAvailable],

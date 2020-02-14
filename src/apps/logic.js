@@ -2,6 +2,7 @@
 
 import flatMap from "lodash/flatMap";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { ManagerDeviceLockedError } from "@ledgerhq/errors";
 import type { App } from "../types/manager";
 import type {
   AppOp,
@@ -22,6 +23,7 @@ export const initState = ({
   deviceModel: getDeviceModel(deviceModelId),
   installQueue: [],
   uninstallQueue: [],
+  updateAllQueue: [],
   currentProgress: null,
   currentError: null,
   currentAppOp: null
@@ -86,9 +88,10 @@ export const reducer = (state: State, action: Action): State => {
           }
         };
       } else if (event.type === "runSuccess") {
+        let nextState;
         if (appOp.type === "install") {
           const app = state.apps.find(a => a.name === appOp.name);
-          return {
+          nextState = {
             ...state,
             currentAppOp: null,
             currentProgress: null,
@@ -109,7 +112,7 @@ export const reducer = (state: State, action: Action): State => {
             installQueue: state.installQueue.filter(name => appOp.name !== name)
           };
         } else {
-          return {
+          nextState = {
             ...state,
             currentAppOp: null,
             currentProgress: null,
@@ -122,12 +125,32 @@ export const reducer = (state: State, action: Action): State => {
             )
           };
         }
+
+        if (
+          nextState.installQueue.length + nextState.uninstallQueue.length ===
+          0
+        ) {
+          nextState.updateAllQueue = [];
+        }
+
+        return nextState;
       } else if (event.type === "runError") {
+        const error = event.error;
+        if (error instanceof ManagerDeviceLockedError) {
+          return {
+            ...state,
+            currentError: {
+              appOp: appOp,
+              error: event.error
+            }
+          };
+        }
+        // any other error stops everything
         return {
           ...state,
-          // an error stops everything
           uninstallQueue: [],
           installQueue: [],
+          updateAllQueue: [],
           currentAppOp: null,
           currentError: {
             appOp: appOp,
@@ -145,6 +168,12 @@ export const reducer = (state: State, action: Action): State => {
       }
       return state;
     }
+
+    case "recover":
+      return {
+        ...state,
+        currentError: null
+      };
 
     case "wipe":
       return {
@@ -180,11 +209,14 @@ export const reducer = (state: State, action: Action): State => {
         uninstallList
       );
 
+      const updateAllQueue = uninstallQueue.concat(installQueue);
+
       return {
         ...state,
         currentError: null,
         installQueue,
-        uninstallQueue
+        uninstallQueue,
+        updateAllQueue
       };
     }
 
@@ -358,6 +390,13 @@ export const isOutOfMemoryState = (state: State): boolean => {
     0
   );
   return totalAppsBlocks > appsSpaceBlocks;
+};
+
+export const updateAllProgress = (state: State): number => {
+  const total = state.updateAllQueue.length;
+  const current = state.uninstallQueue.length + state.installQueue.length;
+  if (total === 0 || current === 0) return 1;
+  return (total - current) / total;
 };
 
 // a series of operation to perform on the device for current state

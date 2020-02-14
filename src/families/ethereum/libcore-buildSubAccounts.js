@@ -37,6 +37,7 @@ async function buildERC20TokenAccount({
     type: "TokenAccount",
     id,
     parentId: parentAccountId,
+    starred: false,
     token,
     operationsCount: operations.length,
     operations,

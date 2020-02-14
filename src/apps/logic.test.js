@@ -1,4 +1,5 @@
 // @flow
+import { ManagerDeviceLockedError } from "@ledgerhq/errors";
 import {
   initState,
   reducer,
@@ -262,4 +263,48 @@ scenarios.forEach(scenario => {
   });
 });
 
-// TO DO test dispatch of actions DURING action plan execution
+test("a lock error that occurs will not cancel the queue, another error will", () => {
+  let state = initState(
+    mockListAppsResult(
+      "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+      "",
+      deviceInfo155
+    )
+  );
+
+  state = [
+    { type: "install", name: "Dogecoin" },
+    { type: "install", name: "Ethereum Classic" }
+  ].reduce(reducer, state);
+
+  const plan = getActionPlan(state);
+
+  state = reducer(state, {
+    type: "onRunnerEvent",
+    event: {
+      type: "runError",
+      appOp: plan[0],
+      error: new ManagerDeviceLockedError()
+    }
+  });
+
+  expect(getActionPlan(state)).toEqual(plan);
+  expect(state.currentError).toEqual({
+    appOp: plan[0],
+    error: new ManagerDeviceLockedError()
+  });
+
+  state = reducer(state, { type: "recover" });
+  expect(state.currentError).toBe(null);
+
+  state = reducer(state, {
+    type: "onRunnerEvent",
+    event: {
+      type: "runError",
+      appOp: plan[0],
+      error: new Error()
+    }
+  });
+
+  expect(getActionPlan(state)).toEqual([]);
+});
