@@ -170,7 +170,8 @@ export type App = {
   bytes: ?number,
   warning: ?string,
   // -1 if coin not in marketcap, otherwise index in the tickers list of https://countervalues.api.live.ledger.com/tickers
-  indexOfMarketCap: number
+  indexOfMarketCap: number,
+  isDevTools: boolean
 };
 
 export type Category = {

@@ -55,13 +55,22 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
       const m = /(.*)\(outdated\)/.exec(trimmed);
       if (m) {
         const name = m[1].trim();
-        return { name, updated: false, hash: "hash_" + name, blocks: 1 };
+        return {
+          name,
+          updated: false,
+          hash: "hash_" + name,
+          blocks: 1,
+          version: "0.0.0",
+          availableVersion: "1.0.0"
+        };
       }
       return {
         name: trimmed,
         updated: true,
         hash: "hash_" + trimmed,
-        blocks: 1
+        blocks: 1,
+        version: "1.0.0",
+        availableVersion: "1.0.0"
       };
     });
 
@@ -104,7 +113,8 @@ export function mockListAppsResult(
         dateModified: "",
         compatibleWallets: [],
         currencyId: currency ? currency.id : null,
-        indexOfMarketCap
+        indexOfMarketCap,
+        isDevTools: false
       };
     });
   const appByName = {};
@@ -157,7 +167,9 @@ export const mockExecWithInstalledContext = (
             name: appOp.name,
             updated: true,
             blocks: 0,
-            hash: ""
+            hash: "",
+            version: "1.0.0",
+            availableVersion: "1.0.0"
           });
         }
         break;

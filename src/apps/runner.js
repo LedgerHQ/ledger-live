@@ -9,7 +9,7 @@ import {
   throttleTime
 } from "rxjs/operators";
 import type { Exec, State, AppOp, RunnerEvent } from "./types";
-import { reducer, getActionPlan } from "./logic";
+import { reducer, getActionPlan, getNextAppOp } from "./logic";
 import { delay } from "../promise";
 import { getEnv } from "../env";
 
@@ -57,3 +57,19 @@ export const runAll = (state: State, exec: Exec): Observable<State> =>
     map(event => ({ type: "onRunnerEvent", event })),
     reduce(reducer, state)
   );
+
+export const runOneAppOp = (
+  state: State,
+  appOp: AppOp,
+  exec: Exec
+): Observable<State> =>
+  runAppOp(state, appOp, exec).pipe(
+    map(event => ({ type: "onRunnerEvent", event })),
+    reduce(reducer, state)
+  );
+
+export const runOne = (state: State, exec: Exec): Observable<State> => {
+  const next = getNextAppOp(state);
+  if (!next) return of(state);
+  return runOneAppOp(state, next, exec);
+};

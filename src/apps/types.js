@@ -14,7 +14,9 @@ export type InstalledItem = {
   name: string,
   updated: boolean,
   hash: string,
-  blocks: number
+  blocks: number,
+  version: string,
+  availableVersion: string
 };
 
 export type ListAppsEvent =
@@ -40,6 +42,7 @@ export type State = {
   apps: App[],
   installedAvailable: boolean,
   installed: InstalledItem[],
+  recentlyInstalledApps: string[],
   installQueue: string[],
   uninstallQueue: string[],
   // queue saved at the time of a "updateAll" action
