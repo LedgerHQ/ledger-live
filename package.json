@@ -78,6 +78,7 @@
     "eip55": "^1.0.3",
     "ethereumjs-tx": "^1.3.7",
     "invariant": "^2.2.2",
+    "isomorphic-ws": "^4.0.1",
     "lodash": "^4.17.15",
     "lru-cache": "5.1.1",
     "numeral": "^2.0.6",
