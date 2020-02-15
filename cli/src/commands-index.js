@@ -3,6 +3,7 @@ import appsInstallAll from "./commands/appsInstallAll";
 import appsUpdateTestAll from "./commands/appsUpdateTestAll";
 import balanceHistory from "./commands/balanceHistory";
 import broadcast from "./commands/broadcast";
+import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
 import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
 import deviceVersion from "./commands/deviceVersion";
@@ -37,6 +38,7 @@ export default {
   appsUpdateTestAll,
   balanceHistory,
   broadcast,
+  devDeviceAppsScenario,
   deviceAppVersion,
   deviceInfo,
   deviceVersion,

@@ -228,6 +228,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
                 shortAddressPreview(xpub),
               xpub,
               seedIdentifier: xpub,
+              starred: true,
               id: encodeAccountId({
                 type: getEnv("BRIDGE_FORCE_IMPLEMENTATION") || "libcore",
                 version: "1",

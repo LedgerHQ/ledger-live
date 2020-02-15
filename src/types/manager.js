@@ -107,7 +107,6 @@ export type ApplicationVersion = {
   description: ?string,
   display_name: string,
   icon: string,
-  picture: Id,
   notes: ?string,
   perso: string,
   hash: string,
