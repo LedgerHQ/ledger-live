@@ -65,12 +65,27 @@ const NoHidSupport = () => {
 
 const Main = ({ deviceId }: { deviceId: string }) => {
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    repair(deviceId).subscribe(e => {
-      setProgress(e.progress);
-    });
+    repair(deviceId).subscribe(
+      e => {
+        setProgress(e.progress);
+      },
+      error => {
+        setError(error);
+      }
+    );
   }, [deviceId]);
+
+  if (error) {
+    return (
+      <Container center>
+        <h1>An error occurred. Please retry or contact us</h1>
+        <h2>{String((error && error.message) || error)}</h2>
+      </Container>
+    );
+  }
 
   return progress === 0 ? (
     <Container center>
