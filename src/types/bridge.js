@@ -76,10 +76,10 @@ export interface AccountBridge<T: Transaction> {
 
   // prepare the remaining missing part of a transaction typically from network (e.g. fees)
   // and fulfill it in a new transaction object that is returned (async)
+  // It can fails if the the network is down.
   prepareTransaction(account: Account, transaction: T): Promise<T>;
 
-  // calculate / get derived state of the Transaction, useful to display summary / errors / warnings. tell if the transaction is ready.
-  // ? MUST not fail even without network
+  // calculate derived state of the Transaction, useful to display summary / errors / warnings. tells if the transaction is ready.
   getTransactionStatus(
     account: Account,
     transaction: T

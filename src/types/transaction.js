@@ -58,9 +58,9 @@ export type TransactionCommonRaw = {|
 
 // TransactionStatus is a view of Transaction with general info to be used on the UI and status info.
 export type TransactionStatus = {|
-  // array of field based error messages for a transaction
+  // potential error for each (user) field of the transaction
   errors: { [string]: Error },
-  // array of field based warning messages for a transaction
+  // potential warning for each (user) field for a transaction
   warnings: { [string]: Error },
   // estimated total fees the tx is going to cost. (in the mainAccount currency)
   estimatedFees: BigNumber,
