@@ -23,7 +23,6 @@ This library does not have/is agnostic of:
 
 - The actual HW transport you use. But you can easily find one on [ledgerjs libraries](https://github.com/LedgerHQ/ledgerjs) (or implement your own). _There are many communication channel possible: webusb, u2f, webhid, webble, node-hid, react-native-hid, react-native bluetooth,...)_
 - A [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core) implementation (but you can attach a binding easily)
-- A networking implementation (but you can set one easily)
 
 ### One library, multiple usecases
 

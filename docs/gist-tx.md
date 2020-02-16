@@ -4,7 +4,6 @@ We start a new project and add live-common and some helpers
 
 ```bash
 yarn add @ledgerhq/live-common
-yarn add axios  # for networking
 yarn add rxjs   # for Observable
 ```
 
@@ -49,16 +48,12 @@ const TransportNodeHid = require("@ledgerhq/hw-transport-node-hid-noevents")
   .default;
 const implementLibcore = require("@ledgerhq/live-common/lib/libcore/platforms/nodejs")
   .default;
-const { setNetwork } = require("@ledgerhq/live-common/lib/network");
 const {
   setSupportedCurrencies
 } = require("@ledgerhq/live-common/lib/data/cryptocurrencies");
 
 // configure which coins to enable
 setSupportedCurrencies([currencyId]);
-
-// provide a network function
-setNetwork(require("axios"));
 
 // provide a libcore implementation
 implementLibcore({
