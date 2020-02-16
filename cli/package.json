@@ -7,15 +7,15 @@
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
   "bin": {
-    "ledger-live": "./cli.js"
+    "ledger-live": "./bin/index.js"
   },
   "files": [
-    "cli.js",
+    "bin",
     "lib"
   ],
   "scripts": {
     "prepare": "./scripts/gen.sh && yarn build",
-    "build": "babel --ignore __tests__ -s -d lib src",
+    "build": "babel --ignore __tests__ -s -d lib src && tsc",
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",
     "flow": "flow",
@@ -62,6 +62,8 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-syntax-import-meta": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
-    "@babel/preset-flow": "^7.8.3"
+    "@babel/preset-flow": "^7.8.3",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
   }
 }
