@@ -11,7 +11,11 @@ import type {
   ListAppsResult,
   AppsDistribution
 } from "./types";
-import { findCryptoCurrency } from "../data/cryptocurrencies";
+import {
+  findCryptoCurrency,
+  findCryptoCurrencyById,
+  isCurrencySupported
+} from "../currencies";
 
 export const initState = ({
   deviceModelId,
@@ -21,6 +25,7 @@ export const initState = ({
   ...listAppsResult,
   apps: appsListNames.map(name => listAppsResult.appByName[name]),
   deviceModel: getDeviceModel(deviceModelId),
+  recentlyInstalledApps: [],
   installQueue: [],
   uninstallQueue: [],
   updateAllQueue: [],
@@ -96,6 +101,9 @@ export const reducer = (state: State, action: Action): State => {
             currentAppOp: null,
             currentProgress: null,
             currentError: null,
+            recentlyInstalledApps: state.recentlyInstalledApps.concat(
+              appOp.name
+            ),
             // append the app to known installed apps
             installed: state.installed
               .filter(o => o.name !== appOp.name)
@@ -106,7 +114,9 @@ export const reducer = (state: State, action: Action): State => {
                 blocks:
                   app && app.bytes
                     ? Math.ceil(app.bytes / state.deviceModel.blockSize)
-                    : 0
+                    : 0,
+                version: app ? app.version : "",
+                availableVersion: app ? app.version : ""
               }),
             // remove the install action
             installQueue: state.installQueue.filter(name => appOp.name !== name)
@@ -392,11 +402,18 @@ export const isOutOfMemoryState = (state: State): boolean => {
   return totalAppsBlocks > appsSpaceBlocks;
 };
 
+export const isLiveSupportedApp = (app: App): boolean => {
+  const currency = app.currencyId
+    ? findCryptoCurrencyById(app.currencyId)
+    : null;
+  return currency ? isCurrencySupported(currency) : false;
+};
+
 export const updateAllProgress = (state: State): number => {
   const total = state.updateAllQueue.length;
   const current = state.uninstallQueue.length + state.installQueue.length;
   if (total === 0 || current === 0) return 1;
-  return (total - current) / total;
+  return Math.max(0, Math.min((total - current) / total, 1));
 };
 
 // a series of operation to perform on the device for current state

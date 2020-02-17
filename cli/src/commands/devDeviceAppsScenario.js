@@ -49,7 +49,7 @@ const scenariosValues = Object.keys(scenarios).join(" | ");
 const installScenario = (apps, transport, deviceInfo, scene) => {
   const appVersionsPerId = {};
   apps.forEach(a =>
-    a.forEach(av => {
+    a.application_versions.forEach(av => {
       appVersionsPerId[av.id] = av;
     })
   );
