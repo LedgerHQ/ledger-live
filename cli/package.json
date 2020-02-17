@@ -15,15 +15,15 @@
   ],
   "scripts": {
     "prepare": "./scripts/gen.sh && yarn build",
-    "build": "babel --ignore __tests__ -s -d lib src",
+    "build": "babel --ignore __tests__ -s -d lib src --extensions '.js,.ts'",
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
-    "watch": "babel -wsd lib src",
+    "watch": "babel -wsd lib src --extensions '.js,.ts'",
     "flow": "flow",
     "test-e2e": "./scripts/tests.sh",
     "test": "yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
     "createTest": "./scripts/createTest.sh",
-    "typecheck": "flow && tsc"
+    "type-check": "flow && tsc"
   },
   "peerDependencies": {
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
