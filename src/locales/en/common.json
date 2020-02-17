@@ -1201,6 +1201,15 @@
       "genuine": "Your device is Genuine",
       "appsInstalled": "{{appsInstalled}} apps installed",
       "storageAvailable": "available"
+    },
+    "installSuccess": {
+      "title": "App succesfully installed",
+      "subtitle": "You can now add your {{appName}} accounts",
+      "subtitle_plural": "You can now add your accounts",
+      "notSupported": "find out more about the installed apps on our site",
+      "manageAccount": "Add accounts",
+      "learnMore": "Learn more",
+      "later": "Do it later"
     }
   },
   "ManagerDevice": {

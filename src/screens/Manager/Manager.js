@@ -10,6 +10,7 @@ import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
+import InstallProgressBar from "./AppsList/InstallProgressBar";
 
 const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -159,6 +160,7 @@ const Manager = ({ navigation }: Props) => {
         state={state}
         dispatch={dispatch}
       />
+      <InstallProgressBar state={filteredState} navigation={navigation} />
     </>
   );
 };

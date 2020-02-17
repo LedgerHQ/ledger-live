@@ -116,7 +116,7 @@ export default ({
   );
 
   const onFocus = useCallback(() => {
-    if (listRef) {
+    if (listRef && listRef.current) {
       listRef.current.scrollToIndex({ index: 0 });
     }
   }, [listRef]);
@@ -183,8 +183,9 @@ export default ({
         onBackButtonPress={closeSearchModal}
         useNativeDriver
         hideModalContentWhileAnimating
-        coverScreen={false}
+        coverScreen={true}
         hasBackDrop={false}
+        backdropColor="transparent"
         style={styles.modal}
       >
         <View style={{ height, backgroundColor: colors.lightGrey }}>

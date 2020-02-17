@@ -12,14 +12,21 @@ type Props = {
   onClose: () => void,
   children: Node,
   actions: Array<BaseButtonProps>,
+  ...
 };
 
-const ActionModal = ({ isOpened, onClose, children, actions = [] }: Props) => (
+const ActionModal = ({
+  isOpened,
+  onClose,
+  children,
+  actions = [],
+  ...rest
+}: Props) => (
   <BottomModal
+    {...rest}
     isOpened={isOpened}
     onClose={onClose}
     preventBackdropClick={false}
-    containerStyle={styles.modal}
   >
     <SafeAreaView style={styles.root}>
       {children}

@@ -1,9 +1,10 @@
 // @flow
 
-import React, { Component } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
+import Animated from "react-native-reanimated";
 import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
@@ -28,66 +29,106 @@ export type Props = {
 // See Jira LL-451 and GitHub #617
 const EXTRA_PADDING_SAMSUNG_FIX = 100;
 
-class BottomModal extends Component<Props> {
-  static defaultProps = {
-    onClose: () => {},
-  };
-  render() {
-    const {
-      isOpened,
-      onClose,
-      children,
-      style,
-      preventBackdropClick,
-      id,
-      containerStyle,
-      ...rest
-    } = this.props;
-    const { width, height } = getWindowDimensions();
+const { width, height } = getWindowDimensions();
 
-    return (
-      <ButtonUseTouchable.Provider value={true}>
-        <ReactNativeModal
-          isVisible={isOpened}
-          onBackdropPress={preventBackdropClick ? () => {} : onClose}
-          onBackButtonPress={preventBackdropClick ? () => {} : onClose}
-          deviceWidth={width}
-          deviceHeight={height}
-          useNativeDriver
-          hideModalContentWhileAnimating
-          style={{
-            justifyContent: "flex-end",
-            margin: 0,
-          }}
-          {...rest}
+const BottomModal = ({
+  isOpened,
+  onClose = () => {},
+  children,
+  style,
+  preventBackdropClick,
+  id,
+  containerStyle,
+  ...rest
+}: Props) => {
+  const [top] = useState(new Animated.Value(0));
+
+  const onSwipeMove = a => top.setValue((1 - a) * 100);
+  const onSwipeCancel = () => top.setValue(0);
+  const onSwipeComplete = useCallback(() => {
+    onClose();
+  }, [onClose, top]);
+
+  const gesturesCloseProps = preventBackdropClick
+    ? {}
+    : {
+        onBackdropPress: onClose,
+        onBackButtonPress: onClose,
+        onSwipeComplete,
+        onSwipeMove,
+        onSwipeCancel,
+        swipeDirection: "down",
+        onModalHide: onSwipeCancel,
+      };
+
+  return (
+    <ButtonUseTouchable.Provider value={true}>
+      <ReactNativeModal
+        isVisible={isOpened}
+        deviceWidth={width}
+        deviceHeight={height}
+        useNativeDriver
+        hideModalContentWhileAnimating
+        style={{
+          justifyContent: "flex-end",
+          margin: 0,
+        }}
+        {...gesturesCloseProps}
+        {...rest}
+      >
+        <Animated.View
+          style={[
+            styles.modal,
+            containerStyle,
+            !preventBackdropClick ? { transform: [{ translateY: top }] } : {},
+          ]}
         >
-          <View style={[styles.modal, containerStyle]}>
-            <View style={style}>
-              {isOpened && id ? <TrackScreen category={id} /> : null}
-              <StyledStatusBar
-                backgroundColor={
-                  Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
-                }
-                barStyle="light-content"
-              />
-              {children}
+          {!preventBackdropClick && (
+            <View style={styles.swipeIndicator}>
+              <View style={styles.swipeIndicatorBar} />
             </View>
+          )}
+          <View style={style}>
+            {isOpened && id ? <TrackScreen category={id} /> : null}
+            <StyledStatusBar
+              backgroundColor={
+                Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
+              }
+              barStyle="light-content"
+            />
+            {children}
           </View>
-          <DebugRejectSwitch />
-        </ReactNativeModal>
-      </ButtonUseTouchable.Provider>
-    );
-  }
-}
+        </Animated.View>
+        <DebugRejectSwitch />
+      </ReactNativeModal>
+    </ButtonUseTouchable.Provider>
+  );
+};
 
 const styles = StyleSheet.create({
   modal: {
     backgroundColor: colors.white,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    paddingTop: 8,
+    paddingTop: 32,
     paddingBottom: EXTRA_PADDING_SAMSUNG_FIX + 24,
     marginBottom: EXTRA_PADDING_SAMSUNG_FIX * -1,
+  },
+  swipeIndicator: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: 24,
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  swipeIndicatorBar: {
+    width: "50%",
+    height: 6,
+    borderRadius: 6,
+    backgroundColor: colors.lightFog,
   },
 });
 
