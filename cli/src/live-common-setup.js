@@ -69,6 +69,7 @@ if (!process.env.CI) {
   let TransportNodeBle;
   const getTransport = () => {
     if (!TransportNodeBle) {
+      // $FlowFixMe
       TransportNodeBle = require("@ledgerhq/hw-transport-node-ble").default;
     }
     return TransportNodeBle;

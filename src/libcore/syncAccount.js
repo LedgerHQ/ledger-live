@@ -72,8 +72,9 @@ export async function syncCoreAccount({
 
     return account;
   } catch (e) {
-    if (e.name !== "Error") throw remapLibcoreErrors(e);
-    throw new SyncError(e.message);
+    const specificError = remapLibcoreErrors(e);
+    if (specificError.name !== "Error") throw specificError;
+    throw new SyncError(specificError.message);
   }
 }
 

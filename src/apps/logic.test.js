@@ -5,9 +5,11 @@ import {
   reducer,
   distribute,
   getActionPlan,
-  predictOptimisticState
+  predictOptimisticState,
+  updateAllProgress,
+  getNextAppOp
 } from "./logic";
-import { runAll } from "./runner";
+import { runAll, runOneAppOp } from "./runner";
 import {
   deviceInfo155,
   mockListAppsResult,
@@ -307,4 +309,35 @@ test("a lock error that occurs will not cancel the queue, another error will", (
   });
 
   expect(getActionPlan(state)).toEqual([]);
+});
+
+test("global progress", async () => {
+  let state = initState(
+    mockListAppsResult(
+      "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+      "Bitcoin (outdated), Ethereum (outdated)",
+      deviceInfo155
+    )
+  );
+
+  expect(updateAllProgress(state)).toBe(1);
+
+  state = [{ type: "updateAll" }].reduce(reducer, state);
+
+  expect(updateAllProgress(state)).toBe(0);
+
+  let next;
+  let i = 0;
+  const total = 4;
+  while ((next = getNextAppOp(state))) {
+    state = await runOneAppOp(
+      state,
+      next,
+      mockExecWithInstalledContext(state.installed)
+    ).toPromise();
+    expect(updateAllProgress(state)).toBe(++i / total);
+  }
+
+  expect(i).toBe(total);
+  expect(updateAllProgress(state)).toBe(1);
 });

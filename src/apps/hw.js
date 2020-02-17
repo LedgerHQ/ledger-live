@@ -62,19 +62,17 @@ export const listApps = (
           error: reject
         });
       })
-        .then(apps =>
-          apps.map(({ name, hash }) => ({
-            name,
-            hash,
-            blocks: 0
-          }))
-        )
+        .then(apps => apps.map(({ name, hash }) => ({ name, hash, blocks: 0 })))
         .catch(e => {
           log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
           if (getEnv("EXPERIMENTAL_FALLBACK_APDU_LISTAPPS")) {
             return hwListApps(transport)
               .then(apps =>
-                apps.map(({ name, hash, blocks }) => ({ name, hash, blocks }))
+                apps.map(({ name, hash, blocks }) => ({
+                  name,
+                  hash,
+                  blocks
+                }))
               )
               .catch(e => {
                 log(
@@ -151,10 +149,7 @@ export const listApps = (
         .map(version => {
           const application = applicationsList.find(e => e.id === version.app);
           if (!application) return;
-          // if user didn't opt-in, remove the dev apps (testnet,..)
-          if (!getEnv("MANAGER_DEV_MODE")) {
-            if (application.category === 2) return;
-          }
+          const isDevTools = application.category === 2;
 
           const currencyId = application.currencyId;
           const crypto = currencyId && findCryptoCurrencyById(currencyId);
@@ -206,7 +201,8 @@ export const listApps = (
             dependencies: [],
             bytes: version.bytes,
             warning: version.warning,
-            indexOfMarketCap
+            indexOfMarketCap,
+            isDevTools
           });
 
           return app;
@@ -221,28 +217,50 @@ export const listApps = (
 
       const deviceModel = getDeviceModel(deviceModelId);
 
-      const installed = installedList.map(({ name, hash, blocks }) => {
-        const ins =
-          (hash && apps.find(i => hash === i.hash)) ||
-          apps.find(i => name === i.name);
-        return {
-          name,
-          updated: ins ? ins.hash === hash : false,
-          blocks:
-            blocks ||
-            Math.ceil(((ins && ins.bytes) || 0) / deviceModel.blockSize),
-          hash
-        };
-      });
-
       const appByName = {};
       apps.forEach(app => {
         appByName[app.name] = app;
       });
 
+      // Infer more data on the app installed
+      const installed = installedList.map(({ name, hash, blocks }) => {
+        const app = applicationsList.find(a => a.name === name);
+        const installedAppVersion =
+          app && hash
+            ? app.application_versions.find(v => v.hash === hash)
+            : null;
+        const availableAppVersion = appByName[name];
+        const blocksSize =
+          blocks ||
+          Math.ceil(
+            ((installedAppVersion || availableAppVersion || { bytes: 0 })
+              .bytes || 0) / deviceModel.blockSize
+          );
+        const updated = availableAppVersion
+          ? availableAppVersion.hash === hash
+          : false;
+        const version = installedAppVersion ? installedAppVersion.version : "";
+        const availableVersion = availableAppVersion
+          ? availableAppVersion.version
+          : "";
+        return {
+          name,
+          updated,
+          blocks: blocksSize,
+          hash,
+          version,
+          availableVersion
+        };
+      });
+
+      const appsListNames = (getEnv("MANAGER_DEV_MODE")
+        ? apps
+        : apps.filter(a => !a.isDevTools)
+      ).map(a => a.name);
+
       const result: ListAppsResult = {
         appByName,
-        appsListNames: apps.map(app => app.name),
+        appsListNames,
         installed,
         installedAvailable,
         deviceInfo,

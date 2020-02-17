@@ -4,7 +4,6 @@ We start a new project and add live-common and some helpers
 
 ```bash
 yarn add @ledgerhq/live-common
-yarn add axios  # for networking
 yarn add rxjs   # for Observable
 ```
 
@@ -18,7 +17,7 @@ yarn add @ledgerhq/hw-transport-node-hid-noevents
 **We're all set up, let's write a script that send some bitcoin!**
 
 ```js
-const { first, map, reduce } = require("rxjs/operators");
+const { first, map, reduce, tap } = require("rxjs/operators");
 const {
   getCryptoCurrencyById,
   formatCurrencyUnit,
@@ -49,16 +48,12 @@ const TransportNodeHid = require("@ledgerhq/hw-transport-node-hid-noevents")
   .default;
 const implementLibcore = require("@ledgerhq/live-common/lib/libcore/platforms/nodejs")
   .default;
-const { setNetwork } = require("@ledgerhq/live-common/lib/network");
 const {
   setSupportedCurrencies
 } = require("@ledgerhq/live-common/lib/data/cryptocurrencies");
 
 // configure which coins to enable
 setSupportedCurrencies([currencyId]);
-
-// provide a network function
-setNetwork(require("axios"));
 
 // provide a libcore implementation
 implementLibcore({
@@ -82,9 +77,12 @@ async function main() {
   // some currency requires some data to be loaded (today it's not highly used but will be more and more)
   await currencyBridge.preload();
 
+  // in our case, we don't need to paginate
+  const syncConfig = { paginationConfig: {} };
+
   // NB scanAccountsOnDevice returns an observable but we'll just get the first account as a promise.
   const scannedAccount = await currencyBridge
-    .scanAccountsOnDevice(currency, deviceId)
+    .scanAccounts({ currency, deviceId, syncConfig })
     .pipe(
       // there can be many accounts, for sake of example we take first non empty
       first(e => e.type === "discovered" && e.account.balance.gt(0)),
@@ -98,7 +96,7 @@ async function main() {
   // Minimal way to synchronize an account.
   // NB: our scannedAccount is already sync in fact, this is just for the example
   const account = await accountBridge
-    .startSync(scannedAccount, false)
+    .sync(scannedAccount, syncConfig)
     .pipe(reduce((a, f) => f(a), scannedAccount))
     .toPromise();
 
@@ -122,15 +120,19 @@ async function main() {
     throw errors[0];
   }
 
-  // We're good now, we can sign the transaction and broadcast it
-  const operation = await accountBridge
-    .signAndBroadcast(account, t, deviceId)
+  // We're good now, we can sign the transaction with the device
+  const signedOperation = await accountBridge
+    .signOperation({ account, transaction: t, deviceId })
     .pipe(
-      // there are many events. we just take the final broadcasted
-      first(e => e.type === "broadcasted"),
-      map(e => e.operation)
+      tap(e => console.log(e)), // log events
+      // there are many events. we just take the final signed
+      first(e => e.type === "signed"),
+      map(e => e.signedOperation)
     )
     .toPromise();
+
+  // We can then broadcast it
+  const operation = await accountBridge.broadcast({ account, signedOperation });
 
   // the transaction is broadcasted!
   // the resulting operation is an "optimistic" response that can be prepended to our account.operations[]
