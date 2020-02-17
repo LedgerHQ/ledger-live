@@ -57277,7 +57277,7 @@ Array [
 exports[`ripple currency bridge scanAccounts ripple seed 1 1`] = `
 Array [
   Object {
-    "balance": "21804846",
+    "balance": "20804836",
     "currencyId": "ripple",
     "derivationMode": "",
     "freshAddress": "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
@@ -57291,15 +57291,15 @@ Array [
     "id": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
     "index": 0,
     "name": "XRP 1",
-    "operationsCount": 87,
+    "operationsCount": 88,
     "pendingOperations": Array [],
     "seedIdentifier": "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
-    "spendableBalance": "21804846",
+    "spendableBalance": "20804836",
     "starred": false,
     "unitMagnitude": 6,
   },
   Object {
-    "balance": "34956104",
+    "balance": "35956104",
     "currencyId": "ripple",
     "derivationMode": "",
     "freshAddress": "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
@@ -57313,10 +57313,10 @@ Array [
     "id": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
     "index": 1,
     "name": "XRP 2",
-    "operationsCount": 92,
+    "operationsCount": 93,
     "pendingOperations": Array [],
     "seedIdentifier": "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
-    "spendableBalance": "34956104",
+    "spendableBalance": "35956104",
     "starred": false,
     "unitMagnitude": 6,
   },
@@ -58019,6 +58019,26 @@ Array [
       "transactionSequenceNumber": 13,
       "type": "OUT",
       "value": "2000010",
+    },
+    Object {
+      "accountId": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
+      "blockHash": null,
+      "blockHeight": 53427214,
+      "extra": Object {
+        "tag": 1324565,
+      },
+      "fee": "10",
+      "hash": "590619FCD50C75EFF986A632073C3D9374F9D00F8DD2C15AD51FEF13943AEAEC",
+      "id": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:-590619FCD50C75EFF986A632073C3D9374F9D00F8DD2C15AD51FEF13943AEAEC-OUT",
+      "recipients": Array [
+        "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
+      ],
+      "senders": Array [
+        "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
+      ],
+      "transactionSequenceNumber": 47,
+      "type": "OUT",
+      "value": "1000010",
     },
     Object {
       "accountId": "ripplejs:2:ripple:rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR:",
@@ -59567,6 +59587,26 @@ Array [
       "transactionSequenceNumber": 5,
       "type": "OUT",
       "value": "500010",
+    },
+    Object {
+      "accountId": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
+      "blockHash": null,
+      "blockHeight": 53427214,
+      "extra": Object {
+        "tag": 1324565,
+      },
+      "fee": "10",
+      "hash": "590619FCD50C75EFF986A632073C3D9374F9D00F8DD2C15AD51FEF13943AEAEC",
+      "id": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:-590619FCD50C75EFF986A632073C3D9374F9D00F8DD2C15AD51FEF13943AEAEC-IN",
+      "recipients": Array [
+        "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
+      ],
+      "senders": Array [
+        "rJfzRJHcM9qGuMdULGM7mU4RikqRY47FxR",
+      ],
+      "transactionSequenceNumber": 47,
+      "type": "IN",
+      "value": "1000000",
     },
     Object {
       "accountId": "ripplejs:2:ripple:rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi:",
