@@ -18,8 +18,11 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
-const hexToBytes = str =>
-  Array.from(Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex"));
+const prefixHex0x = str => (str.startsWith("0x") ? str : "0x" + str);
+
+const unprefixHex0x = str => (str.startsWith("0x") ? str.slice(2) : str);
+
+const hexToBytes = str => Array.from(Buffer.from(unprefixHex0x(str), "hex"));
 
 const bytesToHex = buf => Buffer.from(buf).toString("hex");
 
@@ -55,6 +58,15 @@ export default (arg: {
     // feature detect if the bindings uses hex or array bytes
     const isUsingArrayOfBytes =
       "object" === typeof new lib.NJSDynamicArray().serialize();
+
+    log("libcore", "using array of bytes = " + String(isUsingArrayOfBytes));
+
+    const wrappers = {
+      hex: isUsingArrayOfBytes ? hexToBytes : prefixHex0x
+    };
+    const unwrappers = {
+      hex: isUsingArrayOfBytes ? bytesToHex : unprefixHex0x
+    };
 
     const MAX_RANDOM = 2684869021;
 
@@ -158,7 +170,7 @@ export default (arg: {
           }
         } else {
           if (typeof data === "string" && data) {
-            data = Buffer.from(data, "hex").toString();
+            data = Buffer.from(unprefixHex0x(data), "hex").toString();
           }
         }
 
@@ -287,17 +299,6 @@ export default (arg: {
         mappings[k.slice(3)] = lib[k];
       }
     });
-
-    const wrappers = {
-      hex: isUsingArrayOfBytes
-        ? hexToBytes
-        : str => (str.startsWith("0x") ? str : "0x" + str)
-    };
-    const unwrappers = {
-      hex: isUsingArrayOfBytes
-        ? bytesToHex
-        : str => (str.startsWith("0x") ? str.slice(2) : str)
-    };
 
     function wrapResult(id, value) {
       if (!value || !id) return value;
