@@ -109,6 +109,7 @@ class OnboardingStepSecurityChecklist extends Component<
           pagingEnabled
           style={styles.pager}
           showsHorizontalScrollIndicator={false}
+          scrollEnabled={false}
         >
           <View style={styles.page}>
             <Bullet big>1</Bullet>
