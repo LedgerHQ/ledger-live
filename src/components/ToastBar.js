@@ -122,11 +122,13 @@ class ToastBar extends Component<Props> {
 const styles = StyleSheet.create({
   root: {
     width,
-    left: -20,
+    left: 0,
+    bottom: 0,
+    margin: 0,
+    padding: 0,
     position: "absolute",
     zIndex: 100,
     overflow: "hidden",
-    bottom: -20,
     backgroundColor: colors.white,
   },
   toast: {
