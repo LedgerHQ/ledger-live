@@ -29,16 +29,13 @@ export const sortAccountsComparatorFromOrder = (
   calculateCountervalue: (
     currency: TokenCurrency | CryptoCurrency,
     value: BigNumber
-  ) => ?BigNumber,
-  starredAccountIds: string[] = []
+  ) => ?BigNumber
 ): AccountComparator => {
   const [order, sort] = orderAccounts.split("|");
   const ascValue = sort === "desc" ? -1 : 1;
   if (order === "name") {
     return (a, b) => {
-      const starDiff =
-        Number(starredAccountIds.includes(b.id)) -
-        Number(starredAccountIds.includes(a.id));
+      const starDiff = Number(b.starred) - Number(a.starred);
       if (starDiff === 0)
         return ascValue * sortNameLense(a).localeCompare(sortNameLense(b));
       return starDiff;
@@ -53,9 +50,7 @@ export const sortAccountsComparatorFromOrder = (
     return v;
   };
   return (a, b) => {
-    const starDiff =
-      Number(starredAccountIds.includes(b.id)) -
-      Number(starredAccountIds.includes(a.id));
+    const starDiff = Number(b.starred) - Number(a.starred);
     if (starDiff === 0) {
       const diff =
         ascValue *

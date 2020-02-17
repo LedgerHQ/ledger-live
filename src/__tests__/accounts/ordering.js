@@ -94,8 +94,7 @@ const mockedCalculateCountervalue = (_, balance) => balance;
 test("Accounts ordering | name asc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "name|asc",
-    mockedCalculateCountervalue,
-    []
+    mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
   expect(sortedAccounts.map(a => a.name)).toEqual(["A", "AA", "B", "C", "CA"]);
@@ -104,8 +103,7 @@ test("Accounts ordering | name asc", () => {
 test("Accounts ordering | name desc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "name|desc",
-    mockedCalculateCountervalue,
-    []
+    mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
   expect(sortedAccounts.map(a => a.name)).toEqual(["CA", "C", "B", "AA", "A"]);
@@ -114,8 +112,7 @@ test("Accounts ordering | name desc", () => {
 test("Accounts ordering | balance asc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "balance|asc",
-    mockedCalculateCountervalue,
-    []
+    mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
   expect(sortedAccounts.map(a => a.name)).toEqual(["A", "B", "C", "CA", "AA"]);
@@ -124,44 +121,44 @@ test("Accounts ordering | balance asc", () => {
 test("Accounts ordering | balance desc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "balance|desc",
-    mockedCalculateCountervalue,
-    []
+    mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
   expect(sortedAccounts.map(a => a.name)).toEqual(["AA", "C", "CA", "B", "A"]);
 });
 
 test("Accounts ordering | starred + name", () => {
+  const starredIds = ["ethereumjs:2:ethereum:0x01:"];
   const compareFn = sortAccountsComparatorFromOrder(
     "name|desc",
-    mockedCalculateCountervalue,
-    ["ethereumjs:2:ethereum:0x01:"]
+    mockedCalculateCountervalue
   );
-  const sortedAccounts = accounts.sort(compareFn);
+  const sortedAccounts = accounts
+    .map(a => ({
+      ...a,
+      starred: starredIds.includes(a.id)
+    }))
+    .sort(compareFn);
   expect(sortedAccounts.map(a => a.name)).toEqual(["A", "CA", "C", "B", "AA"]);
 });
 
 test("Accounts ordering | all accounts starred, then balance, then name", () => {
-  const compareFn = sortAccountsComparatorFromOrder(
-    "balance|desc",
-    mockedCalculateCountervalue,
-    [
-      "ethereumjs:2:ethereum:0x01:",
-      "ethereumjs:2:ethereum:0x02:",
-      "libcore:1:ethereum:xpub3:",
-      "libcore:1:ethereum:xpub3B:",
-      "libcore:1:ethereum:xpub1B:"
-    ]
-  );
-  const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => a.name)).toEqual(["AA", "C", "CA", "B", "A"]);
-});
-
-test("Accounts ordering | backwards compatible when no starred accounts are passed", () => {
+  const starredIds = [
+    "ethereumjs:2:ethereum:0x01:",
+    "ethereumjs:2:ethereum:0x02:",
+    "libcore:1:ethereum:xpub3:",
+    "libcore:1:ethereum:xpub3B:",
+    "libcore:1:ethereum:xpub1B:"
+  ];
   const compareFn = sortAccountsComparatorFromOrder(
     "balance|desc",
     mockedCalculateCountervalue
   );
-  const sortedAccounts = accounts.sort(compareFn);
+  const sortedAccounts = accounts
+    .map(a => ({
+      ...a,
+      starred: starredIds.includes(a.id)
+    }))
+    .sort(compareFn);
   expect(sortedAccounts.map(a => a.name)).toEqual(["AA", "C", "CA", "B", "A"]);
 });
