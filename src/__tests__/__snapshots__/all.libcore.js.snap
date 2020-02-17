@@ -18894,7 +18894,7 @@ Array [
 exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
 Array [
   Object {
-    "balance": "13321389680",
+    "balance": "8321385940",
     "currencyId": "digibyte",
     "derivationMode": "",
     "freshAddress": "DMtVdcKhnbntP1dSYYmSFNg8GK1T8aCwCb",
@@ -18984,10 +18984,10 @@ Array [
     "id": "libcore:1:digibyte:xpub6DUeEdRmKaQSJnJBJURNcg4ss2fsjQvPFLkgQdmDsJ6aH9FJjurpgt3jxMbs2n3ctHsDYztMWiZ7H27wLRevnkFggwK8HVyKZf5Kij3PjuG:",
     "index": 0,
     "name": "DigiByte 1 (legacy)",
-    "operationsCount": 26,
+    "operationsCount": 27,
     "pendingOperations": Array [],
     "seedIdentifier": "04ad8d18368af30dd84743b3c330389438a9b51f527027c6778acd02cf99f8969de4b26e5e09252aeb0a4be6dcb5e302c13d5852c42f0a83017390dc9d044c9d84",
-    "spendableBalance": "13321389680",
+    "spendableBalance": "8321385940",
     "starred": false,
     "unitMagnitude": 8,
     "xpub": "xpub6DUeEdRmKaQSJnJBJURNcg4ss2fsjQvPFLkgQdmDsJ6aH9FJjurpgt3jxMbs2n3ctHsDYztMWiZ7H27wLRevnkFggwK8HVyKZf5Kij3PjuG",
@@ -19475,6 +19475,24 @@ Array [
       ],
       "type": "OUT",
       "value": "12300002260",
+    },
+    Object {
+      "accountId": "libcore:1:digibyte:xpub6DUeEdRmKaQSJnJBJURNcg4ss2fsjQvPFLkgQdmDsJ6aH9FJjurpgt3jxMbs2n3ctHsDYztMWiZ7H27wLRevnkFggwK8HVyKZf5Kij3PjuG:",
+      "blockHash": null,
+      "blockHeight": 10328944,
+      "extra": Object {},
+      "fee": "3740",
+      "hash": "61d80371c9b5a342951749d7426e7728cded26f83b7f68d8ddc06d760fa7a3c6",
+      "id": "libcore:1:digibyte:xpub6DUeEdRmKaQSJnJBJURNcg4ss2fsjQvPFLkgQdmDsJ6aH9FJjurpgt3jxMbs2n3ctHsDYztMWiZ7H27wLRevnkFggwK8HVyKZf5Kij3PjuG:-61d80371c9b5a342951749d7426e7728cded26f83b7f68d8ddc06d760fa7a3c6-OUT",
+      "recipients": Array [
+        "DNzBaw5dzkgv1uYrqK8jqX6dhnBMXb6sft",
+      ],
+      "senders": Array [
+        "DCAsbRU3iVJfXCkar1cNKLeZcTysreHzUb",
+        "DTsLUWavkuJhVDfy3aeLa9WpKRxSq9pMEE",
+      ],
+      "type": "OUT",
+      "value": "5000003740",
     },
     Object {
       "accountId": "libcore:1:digibyte:xpub6DUeEdRmKaQSJnJBJURNcg4ss2fsjQvPFLkgQdmDsJ6aH9FJjurpgt3jxMbs2n3ctHsDYztMWiZ7H27wLRevnkFggwK8HVyKZf5Kij3PjuG:",
