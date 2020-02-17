@@ -15,14 +15,15 @@
   ],
   "scripts": {
     "prepare": "./scripts/gen.sh && yarn build",
-    "build": "babel --ignore __tests__ -s -d lib src && tsc",
+    "build": "babel --ignore __tests__ -s -d lib src",
     "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
     "watch": "babel -wsd lib src",
     "flow": "flow",
     "test-e2e": "./scripts/tests.sh",
     "test": "yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
-    "createTest": "./scripts/createTest.sh"
+    "createTest": "./scripts/createTest.sh",
+    "typecheck": "flow && tsc"
   },
   "peerDependencies": {
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
@@ -63,6 +64,7 @@
     "@babel/plugin-syntax-import-meta": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-flow": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
     "@types/command-line-args": "^5.0.0",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
