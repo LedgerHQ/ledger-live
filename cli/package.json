@@ -23,7 +23,7 @@
     "test": "yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
     "createTest": "./scripts/createTest.sh",
-    "type-check": "flow && tsc"
+    "type-check": "flow && tsc --noEmit"
   },
   "peerDependencies": {
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
