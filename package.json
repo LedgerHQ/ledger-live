@@ -117,7 +117,7 @@
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-react-hooks": "^2.4.0",
     "flow-bin": "^0.118.0",
     "flow-copy-source": "^2.0.9",
     "flow-typed": "^2.6.2",
@@ -126,7 +126,7 @@
     "prettier": "^1.18.2",
     "react": "16",
     "react-dom": "16",
-    "react-redux": "7",
+    "react-redux": "7.2.0",
     "svgr": "^1.10.0",
     "timemachine": "^0.3.0"
   }
