@@ -526,24 +526,27 @@ export default (arg: {
     }
 
     if (e && typeof e === "object") {
-      if (typeof e.code === "number") {
-        if (e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS) {
-          return new NotEnoughBalance();
-        } else {
-          // re-deserialize error if it was a serialized error
+      if (
+        typeof e.code === "number" &&
+        e.code === lib.ERROR_CODE.NOT_ENOUGH_FUNDS
+      ) {
+        return new NotEnoughBalance();
+      } else {
+        // re-deserialize error if it was a serialized error
+        if (e.message === "string") {
           try {
-            return e.message === "string"
-              ? parseError(e.message)
-              : new Error(e);
-          } catch (_e2) {
-            return new Error(e);
-          }
+            return parseError(e.message);
+          } catch (_e2) {}
         }
       }
     }
 
     if (e instanceof Error) {
       return e;
+    }
+
+    if (e && typeof e.message === "string") {
+      return new Error(e.message);
     }
 
     return new Error(String(e));
