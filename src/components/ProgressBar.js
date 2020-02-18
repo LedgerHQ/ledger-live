@@ -47,10 +47,10 @@ const styles = StyleSheet.create({
   wrapper: {
     flexGrow: 1,
     borderRadius: 6,
+    overflow: "hidden",
   },
   bar: {
     height: "100%",
-
     borderRadius: 6,
   },
 });

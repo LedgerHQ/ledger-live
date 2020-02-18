@@ -8,8 +8,8 @@ import NotifBadge from "../../../components/NotifBadge";
 import FilterModalComponent from "../Modals/FilterModal";
 
 type Props = {
-  filters: string[],
-  setFilters: string => void,
+  filter: ?string,
+  setFilter: string => void,
   sort: string,
   setSort: string => void,
   order: string,
@@ -18,8 +18,8 @@ type Props = {
 };
 
 const AppFilter = ({
-  filters,
-  setFilters,
+  filter,
+  setFilter,
   sort,
   setSort,
   order,
@@ -42,12 +42,12 @@ const AppFilter = ({
           useTouchable
           event="ManagerAppFilterOpenModal"
         />
-        {filters.length > 0 && <NotifBadge />}
+        {filter !== "all" && <NotifBadge />}
       </View>
       <FilterModalComponent
         isOpened={isOpened}
-        filters={filters}
-        setFilters={setFilters}
+        filter={filter}
+        setFilter={setFilter}
         sort={sort}
         setSort={setSort}
         order={order}

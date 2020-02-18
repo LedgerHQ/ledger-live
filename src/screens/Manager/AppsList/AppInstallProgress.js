@@ -24,7 +24,7 @@ export const InstallProgress = ({ currentProgress }: InstallProgressProps) => {
           <Trans i18nKey="AppAction.install.loading.button" />
         </LText>
       </View>
-      {currentProgress > 0 ? (
+      {currentProgress !== 1 ? (
         <ProgressBar
           progressColor={colors.live}
           style={styles.progressBar}

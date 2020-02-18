@@ -1,8 +1,13 @@
-import React, { useMemo, useEffect } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
+import type { State } from "@ledgerhq/live-common/lib/apps";
+
 import * as Animatable from "react-native-animatable";
+
+import { updateAllProgress } from "@ledgerhq/live-common/lib/apps/logic";
+
 import LText from "../../../components/LText";
 import colors from "../../../colors";
 import ProgressBar from "../../../components/ProgressBar";
@@ -11,36 +16,14 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 const { width } = getWindowDimensions();
 
 type Props = {
-  installQueue: string[],
-  uninstallQueue: string[],
-  appsUpdating: App[],
-  onUpdateEnd: () => void,
+  state: State,
 };
 
-const AppUpdateStepper = ({
-  installQueue,
-  uninstallQueue,
-  appsUpdating,
-  onUpdateEnd,
-}: Props) => {
-  const updateProgress = useMemo(
-    () =>
-      Math.round(
-        (1e2 *
-          (appsUpdating.length * 2 -
-            (uninstallQueue.length + installQueue.length))) /
-          (appsUpdating.length * 2),
-      ) || 0,
-    [uninstallQueue, installQueue, appsUpdating],
-  );
+const AppUpdateStepper = ({ state }: Props) => {
+  const { updateAllQueue } = state;
+  const updateProgress = updateAllProgress(state);
 
-  useEffect(() => {
-    if (updateProgress === 100) {
-      onUpdateEnd();
-    }
-  }, [onUpdateEnd, updateProgress]);
-
-  if (appsUpdating.length <= 0) return null;
+  if (updateProgress === 1) return null;
 
   return (
     <Animatable.View
@@ -54,7 +37,7 @@ const AppUpdateStepper = ({
           <Trans
             i18nKey="AppAction.update.title"
             values={{
-              number: appsUpdating.length,
+              number: updateAllQueue.length,
             }}
           />
         </LText>
@@ -70,7 +53,7 @@ const AppUpdateStepper = ({
           <View style={styles.progressBar}>
             <ProgressBar
               height={6}
-              progress={updateProgress}
+              progress={updateProgress * 100}
               progressColor={colors.live}
             />
           </View>

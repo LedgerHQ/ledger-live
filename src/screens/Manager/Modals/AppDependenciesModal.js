@@ -14,25 +14,23 @@ import LinkIcon from "../../../icons/LinkIcon";
 import ActionModal from "./ActionModal";
 
 type Props = {
-  app: App,
-  appList: Array<App>,
+  appInstallWithDependencies: ?{ app: App, dependencies: App[] },
   dispatch: Action => void,
   onClose: () => void,
 };
 
-const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
-  const name = useMemo(() => app && app.name, [app]);
-  const dependencies = useMemo(() => app && app.dependencies, [app]);
+const AppDependenciesModal = ({
+  appInstallWithDependencies,
+  dispatch,
+  onClose,
+}: Props) => {
+  const { app, dependencies = [] } = appInstallWithDependencies || {};
+  const { name } = app || {};
 
   const installAppDependencies = useCallback(() => {
     dispatch({ type: "install", name });
     onClose();
   }, [dispatch, onClose, name]);
-
-  const dependentApps = useMemo(
-    () => dependencies && appList.filter(a => dependencies.includes(a.name)),
-    [appList, dependencies],
-  );
 
   const modalActions = useMemo(
     () => [
@@ -57,7 +55,7 @@ const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
 
   return (
     <ActionModal isOpened={!!app} onClose={onClose} actions={modalActions}>
-      {!!app && (
+      {!!app && !!dependencies.length && (
         <>
           <View style={styles.imageSection}>
             <AppIcon style={styles.appIcons} icon={app.icon} />
@@ -66,27 +64,25 @@ const AppDependenciesModal = ({ app, appList, dispatch, onClose }: Props) => {
               <LinkIcon color={colors.live} />
             </InfoIcon>
             <View style={styles.separator} />
-            {dependentApps.map(({ icon }, i) => (
-              <AppIcon style={styles.appIcons} icon={icon} key={i} />
-            ))}
+            <AppIcon style={styles.appIcons} icon={dependencies[0].icon} />
           </View>
           <View style={styles.infoRow}>
             <LText style={[styles.warnText, styles.title]} bold>
               <Trans
                 i18nKey="AppAction.install.dependency.title"
-                values={{ dependency: dependencies.join(" ") }}
+                values={{ dependency: dependencies[0].name }}
               />
             </LText>
             <LText style={[styles.warnText, styles.marginTop]}>
               <Trans
                 i18nKey="AppAction.install.dependency.description_one"
-                values={{ dependency: dependencies.join(" "), app: name }}
+                values={{ dependency: dependencies[0].name, app: name }}
               />
             </LText>
             <LText style={[styles.warnText, styles.marginTop]}>
               <Trans
                 i18nKey="AppAction.install.dependency.description_two"
-                values={{ dependency: dependencies.join(" "), app: name }}
+                values={{ dependency: dependencies[0].name, app: name }}
               />
             </LText>
           </View>

@@ -24,7 +24,6 @@ import {
   exchangeSettingsForPairSelector,
   intermediaryCurrency,
 } from "./reducers/settings";
-import network from "./api/network";
 
 const LEDGER_COUNTERVALUES_API = "https://countervalues.api.live.ledger.com";
 
@@ -109,7 +108,6 @@ implementCountervalues({
   pairsSelector,
   setExchangePairsAction,
   addExtraPollingHooks,
-  network,
   ...(Config.MOCK
     ? {
         getDailyRatesImplementation,

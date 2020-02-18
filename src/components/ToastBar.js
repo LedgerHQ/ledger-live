@@ -4,11 +4,11 @@ import React, { Component } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
-import ButtonUseTouchable from "../context/ButtonUseTouchable";
+import type { BaseButtonProps } from "./Button";
+
 import getWindowDimensions from "../logic/getWindowDimensions";
 
 import Close from "../icons/Close";
-
 import colors from "../colors";
 import LText from "./LText";
 import Button from "./Button";
@@ -20,8 +20,8 @@ export type Props = {
   isOpened: boolean,
   type: "default" | "primary" | "error",
   title: string,
-  primaryAction: *,
-  secondaryAction: *,
+  primaryAction: BaseButtonProps,
+  secondaryAction: ?BaseButtonProps,
   onClose: () => *,
   children?: *,
   style?: *,
@@ -63,58 +63,56 @@ class ToastBar extends Component<Props> {
     }
 
     return (
-      <ButtonUseTouchable.Provider value={true}>
-        <ReactNativeModal
-          isVisible={isOpened}
-          onClose={onClose}
-          hasBackdrop={false}
-          coverScreen={false}
-          deviceWidth={width}
-          deviceHeight={height}
-          useNativeDriver
-          hideModalContentWhileAnimating
-          style={styles.root}
-        >
-          <View style={[styles.toast, containerStyle, { backgroundColor }]}>
-            <TouchableOpacity
-              style={[styles.closeButton]}
-              onPress={onClose}
-              activeOpacity={0.5}
-            >
-              <Close size={16} color={color} />
-            </TouchableOpacity>
-            <View style={styles.storageRow}>
-              <LText style={[styles.title, { color }]} semiBold>
-                {title}
-              </LText>
-            </View>
-            {(primaryAction || secondaryAction) && (
-              <View style={styles.buttonRow}>
-                {secondaryAction ? (
-                  <Button
-                    containerStyle={[styles.button, { borderColor: color }]}
-                    titleStyle={{ color, fontSize: 12 }}
-                    {...secondaryAction}
-                  />
-                ) : (
-                  <View style={styles.button} />
-                )}
-                {primaryAction && (
-                  <Button
-                    containerStyle={[
-                      styles.button,
-                      styles.buttonMargin,
-                      { backgroundColor: color, borderColor: color },
-                    ]}
-                    titleStyle={{ color: backgroundColor, fontSize: 12 }}
-                    {...primaryAction}
-                  />
-                )}
-              </View>
-            )}
+      <ReactNativeModal
+        isVisible={isOpened}
+        onClose={onClose}
+        hasBackdrop={false}
+        coverScreen={false}
+        deviceWidth={width}
+        deviceHeight={height}
+        useNativeDriver
+        hideModalContentWhileAnimating
+        style={styles.root}
+      >
+        <View style={[styles.toast, containerStyle, { backgroundColor }]}>
+          <TouchableOpacity
+            style={[styles.closeButton]}
+            onPress={onClose}
+            activeOpacity={0.5}
+          >
+            <Close size={16} color={color} />
+          </TouchableOpacity>
+          <View style={styles.storageRow}>
+            <LText style={[styles.title, { color }]} semiBold>
+              {title}
+            </LText>
           </View>
-        </ReactNativeModal>
-      </ButtonUseTouchable.Provider>
+          {(primaryAction || secondaryAction) && (
+            <View style={styles.buttonRow}>
+              {secondaryAction ? (
+                <Button
+                  containerStyle={[styles.button, { borderColor: color }]}
+                  titleStyle={{ color, fontSize: 12 }}
+                  {...secondaryAction}
+                />
+              ) : (
+                <View style={styles.button} />
+              )}
+              {primaryAction && (
+                <Button
+                  containerStyle={[
+                    styles.button,
+                    styles.buttonMargin,
+                    { backgroundColor: color, borderColor: color },
+                  ]}
+                  titleStyle={{ color: backgroundColor, fontSize: 12 }}
+                  {...primaryAction}
+                />
+              )}
+            </View>
+          )}
+        </View>
+      </ReactNativeModal>
     );
   }
 }

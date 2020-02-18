@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect, memo } from "react";
 import { NavigationActions } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
+import { useAppInstallProgress } from "@ledgerhq/live-common/lib/apps/react";
+
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
@@ -10,7 +12,6 @@ import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
-import InstallProgressBar from "./AppsList/InstallProgressBar";
 
 const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -30,20 +31,11 @@ let navListener;
 const Manager = ({ navigation }: Props) => {
   const { appRes, deviceId } = navigation.state.params;
   const [state, dispatch] = useApps(appRes, deviceId);
-  const filteredState = {
-    apps: state.apps,
-    deviceInfo: state.deviceInfo,
-    deviceModel: state.deviceModel,
-    firmware: state.firmware,
-    appByName: state.appByName,
-    installed: state.installed,
-    installQueue: state.installQueue,
-    uninstallQueue: state.uninstallQueue,
-    currentAppOp: state.currentAppOp,
-    currentError: state.currentError,
-  };
-  const { apps, currentError, installQueue, uninstallQueue } = filteredState;
+
+  const { apps, currentError, installQueue, uninstallQueue } = state;
   const blockNavigation = installQueue.length + uninstallQueue.length > 0;
+
+  const currentProgress = useAppInstallProgress(state, installQueue[0]);
 
   const [quitManagerAction, setQuitManagerAction] = useState(false);
 
@@ -125,10 +117,10 @@ const Manager = ({ navigation }: Props) => {
     <>
       <TrackScreen category="Manager" name="AppsList" />
       <AppsScreen
-        state={filteredState}
+        state={state}
         dispatch={dispatch}
         navigation={navigation}
-        currentProgress={state.currentProgress}
+        currentProgress={currentProgress}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         setStorageWarning={setStorageWarning}
@@ -149,18 +141,16 @@ const Manager = ({ navigation }: Props) => {
         onClose={setStorageWarning}
       />
       <AppDependenciesModal
-        app={appInstallWithDependencies}
+        appInstallWithDependencies={appInstallWithDependencies}
         onClose={resetAppInstallWithDependencies}
         appList={apps}
         dispatch={dispatch}
       />
       <UninstallDependenciesModal
-        app={appUninstallWithDependencies}
+        appUninstallWithDependencies={appUninstallWithDependencies}
         onClose={resetAppUninstallWithDependencies}
-        state={state}
         dispatch={dispatch}
       />
-      <InstallProgressBar state={filteredState} navigation={navigation} />
     </>
   );
 };

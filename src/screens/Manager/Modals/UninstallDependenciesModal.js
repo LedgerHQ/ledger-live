@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
-import type { Action, State } from "@ledgerhq/live-common/lib/apps";
+import type { Action } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 
 import AppIcon from "../AppsList/AppIcon";
@@ -34,30 +34,18 @@ const renderDepLine = ({ item }: *) => (
 );
 
 type Props = {
-  app: App,
-  state: State,
+  appUninstallWithDependencies: ?{ app: App, dependents: App[] },
   dispatch: Action => void,
   onClose: () => void,
 };
 
 const UninstallDependenciesModal = ({
-  app,
-  state,
+  appUninstallWithDependencies,
   dispatch,
   onClose,
 }: Props) => {
-  const { installed, apps } = state;
-
-  const name = useMemo(() => app && app.name, [app]);
-
-  const dependentApps = useMemo(
-    () =>
-      app &&
-      apps
-        .filter(a => installed.some(i => i.name === a.name))
-        .filter(({ dependencies }) => dependencies.includes(name)),
-    [apps, installed, app, name],
-  );
+  const { app, dependents = [] } = appUninstallWithDependencies || {};
+  const { name } = app || {};
 
   const unInstallApp = useCallback(() => {
     dispatch({ type: "uninstall", name });
@@ -92,7 +80,7 @@ const UninstallDependenciesModal = ({
 
   return (
     <ActionModal isOpened={!!app} onClose={onClose} actions={modalActions}>
-      {app && (
+      {app && dependents.length && (
         <View>
           <View style={styles.imageSection}>
             <AppTree color={colors.fog} icon={app.icon} />
@@ -114,7 +102,7 @@ const UninstallDependenciesModal = ({
           <View style={styles.collapsibleList}>
             <CollapsibleList
               title={<Trans i18nKey="AppAction.uninstall.dependency.showAll" />}
-              data={dependentApps}
+              data={dependents}
               renderItem={renderDepLine}
               itemHeight={LINE_HEIGHT}
               containerStyle={{

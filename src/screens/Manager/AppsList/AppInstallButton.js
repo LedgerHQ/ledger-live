@@ -3,6 +3,8 @@ import { StyleSheet } from "react-native";
 
 import { Trans } from "react-i18next";
 
+import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/lib/apps/react";
+
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
@@ -13,7 +15,7 @@ type Props = {
   state: State,
   dispatch: Action => void,
   notEnoughMemoryToInstall: boolean,
-  setAppInstallWithDependencies: () => void,
+  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
 };
 
 const AppInstallButton = ({
@@ -23,7 +25,7 @@ const AppInstallButton = ({
   notEnoughMemoryToInstall,
   setAppInstallWithDependencies,
 }: Props) => {
-  const { dependencies, name } = app;
+  const { name } = app;
   const { installed } = state;
 
   const canUpdate = useMemo(
@@ -31,17 +33,12 @@ const AppInstallButton = ({
     [installed, app.name],
   );
 
-  const needsDependencies = useMemo(
-    () =>
-      dependencies &&
-      dependencies.some(dep => installed.every(app => app.name !== dep)),
-    [dependencies, installed],
-  );
+  const needsDependencies = useAppInstallNeedsDeps(state, app);
 
   const installApp = useCallback(() => {
-    if (needsDependencies) setAppInstallWithDependencies(app);
+    if (needsDependencies) setAppInstallWithDependencies(needsDependencies);
     else dispatch({ type: "install", name });
-  }, [dispatch, name, needsDependencies, setAppInstallWithDependencies, app]);
+  }, [dispatch, name, needsDependencies, setAppInstallWithDependencies]);
 
   return (
     <Button

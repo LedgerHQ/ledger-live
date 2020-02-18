@@ -13,9 +13,9 @@ type Props = {
   state: State,
   dispatch: *,
   renderNoResults?: (*) => Node,
-  currentProgress: *,
-  setAppInstallWithDependencies: () => void,
-  setAppUninstallWithDependencies: () => void,
+  currentProgress: number,
+  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
+  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
 };
 
@@ -65,11 +65,7 @@ const AppsList = ({
       visible:
         active && index >= viewableBounds.min && index <= viewableBounds.max,
       isInstalledView,
-      currentProgress:
-        (currentProgress &&
-          currentProgress.appOp.name === data[index].name &&
-          currentProgress.progress) ||
-        0,
+      currentProgress,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,

@@ -27,8 +27,8 @@ type Props = {
   isInstalled: boolean,
   isInstalledView: boolean,
   currentProgress: number,
-  setAppInstallWithDependencies: () => void,
-  setAppUninstallWithDependencies: () => void,
+  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
+  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
 };
 
 const AppStateButton = ({

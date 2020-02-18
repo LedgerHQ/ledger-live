@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
@@ -41,25 +41,26 @@ const BottomModal = ({
   containerStyle,
   ...rest
 }: Props) => {
-  const [top] = useState(new Animated.Value(0));
+  const [translateY] = useState(new Animated.Value(0));
 
-  const onSwipeMove = a => top.setValue((1 - a) * 100);
-  const onSwipeCancel = () => top.setValue(0);
-  const onSwipeComplete = useCallback(() => {
-    onClose();
-  }, [onClose, top]);
+  const onSwipeMove = a => translateY.setValue((1 - a) * 150);
+  const onSwipeCancel = () => translateY.setValue(0);
 
   const gesturesCloseProps = preventBackdropClick
     ? {}
     : {
         onBackdropPress: onClose,
         onBackButtonPress: onClose,
-        onSwipeComplete,
+        onSwipeComplete: onClose,
         onSwipeMove,
         onSwipeCancel,
         swipeDirection: "down",
         onModalHide: onSwipeCancel,
       };
+
+  const extraStyles = preventBackdropClick
+    ? {}
+    : { paddingTop: 32, transform: [{ translateY }] };
 
   return (
     <ButtonUseTouchable.Provider value={true}>
@@ -69,20 +70,11 @@ const BottomModal = ({
         deviceHeight={height}
         useNativeDriver
         hideModalContentWhileAnimating
-        style={{
-          justifyContent: "flex-end",
-          margin: 0,
-        }}
+        style={styles.root}
         {...gesturesCloseProps}
         {...rest}
       >
-        <Animated.View
-          style={[
-            styles.modal,
-            containerStyle,
-            !preventBackdropClick ? { transform: [{ translateY: top }] } : {},
-          ]}
-        >
+        <Animated.View style={[styles.modal, containerStyle, extraStyles]}>
           {!preventBackdropClick && (
             <View style={styles.swipeIndicator}>
               <View style={styles.swipeIndicatorBar} />
@@ -106,11 +98,15 @@ const BottomModal = ({
 };
 
 const styles = StyleSheet.create({
+  root: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
   modal: {
     backgroundColor: colors.white,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    paddingTop: 32,
+    paddingTop: 8,
     paddingBottom: EXTRA_PADDING_SAMSUNG_FIX + 24,
     marginBottom: EXTRA_PADDING_SAMSUNG_FIX * -1,
   },

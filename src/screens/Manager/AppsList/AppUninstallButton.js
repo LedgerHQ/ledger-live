@@ -1,5 +1,7 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
+
+import { useAppUninstallNeedsDeps } from "@ledgerhq/live-common/lib/apps/react";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
@@ -12,7 +14,7 @@ type Props = {
   app: App,
   state: State,
   dispatch: Action => void,
-  setAppUninstallWithDependencies: () => void,
+  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
 };
 
 const AppUninstallButton = ({
@@ -21,21 +23,14 @@ const AppUninstallButton = ({
   dispatch,
   setAppUninstallWithDependencies,
 }: Props) => {
-  const { installed, apps } = state;
   const { name } = app;
 
-  const needsDependencies = useMemo(
-    () =>
-      apps
-        .filter(a => installed.some(i => i.name === a.name))
-        .some(({ dependencies }) => dependencies.includes(name)),
-    [apps, installed, name],
-  );
+  const needsDependencies = useAppUninstallNeedsDeps(state, app);
 
   const uninstallApp = useCallback(() => {
-    if (needsDependencies) setAppUninstallWithDependencies(app);
+    if (needsDependencies) setAppUninstallWithDependencies(needsDependencies);
     else dispatch({ type: "uninstall", name });
-  }, [needsDependencies, setAppUninstallWithDependencies, dispatch, name, app]);
+  }, [needsDependencies, setAppUninstallWithDependencies, dispatch, name]);
 
   return (
     <Touchable

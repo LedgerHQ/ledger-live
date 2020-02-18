@@ -9,8 +9,7 @@ import {
 } from "react-native";
 import { distribute } from "@ledgerhq/live-common/lib/apps";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
-import type { App } from "@ledgerhq/live-common/lib/types/manager";
-import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
+import { useAppsSections } from "@ledgerhq/live-common/lib/apps/react";
 
 import { TabView, TabBar } from "react-native-tab-view";
 import Animated from "react-native-reanimated";
@@ -32,6 +31,8 @@ import DeviceCard from "./Device";
 import AppsList from "./AppsList";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 
+import InstallProgressBar from "./AppsList/InstallProgressBar";
+
 const { interpolate, Extrapolate } = Animated;
 const { width, height } = Dimensions.get("screen");
 const initialLayout = { width, height };
@@ -39,13 +40,14 @@ const initialLayout = { width, height };
 type Props = {
   state: State,
   dispatch: Action => void,
-  currentProgress: *,
-  setAppInstallWithDependencies: () => void,
-  setAppUninstallWithDependencies: () => void,
+  currentProgress: number,
+  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
+  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
   managerTabs: *,
   deviceId: string,
   initialDeviceName: string,
+  navigation: *,
 };
 
 const AppsScreen = ({
@@ -58,8 +60,8 @@ const AppsScreen = ({
   managerTabs,
   deviceId,
   initialDeviceName,
+  navigation,
 }: Props) => {
-  const { apps, installed, installQueue } = state;
   const distribution = distribute(state);
 
   const listRef = useRef();
@@ -77,7 +79,7 @@ const AppsScreen = ({
     },
   ]);
 
-  const [filters, setFilters] = useState([]);
+  const [appFilter, setFilter] = useState("all");
   const [sort, setSort] = useState("marketcap");
   const [order, setOrder] = useState("desc");
 
@@ -128,22 +130,6 @@ const AppsScreen = ({
     dispatch,
   ]);
 
-  const appsToUpdate = useMemo(
-    () =>
-      apps.filter(app =>
-        installed.some(({ name, updated }) => name === app.name && !updated),
-      ),
-    [apps, installed],
-  );
-
-  const filterOptions = useMemo(
-    () => ({
-      query: "",
-      installedApps: installed,
-      type: filters,
-    }),
-    [installed, filters],
-  );
   const sortOptions = useMemo(
     () => ({
       type: sort,
@@ -152,29 +138,11 @@ const AppsScreen = ({
     [sort, order],
   );
 
-  const sortedApps: Array<App> = useSortedFilteredApps(
-    apps,
-    filterOptions,
-    sortOptions,
-  );
-
-  const distributionOrder = distribution.apps.map(({ name }) => name);
-
-  const installedApps: Array<App> = useSortedFilteredApps(
-    apps,
-    { type: ["installed"], installedApps: installed, installQueue, query: "" },
-    { type: "default", order: "asc" },
-  )
-    .sort(
-      ({ name: _name }, { name }) =>
-        distributionOrder.indexOf(_name) > distributionOrder.indexOf(name)
-          ? -1
-          : 0, // order by distribution in device
-    )
-    .sort(
-      ({ name: _name }, { name }) =>
-        installQueue.indexOf(_name) > installQueue.indexOf(name) ? -1 : 0, // place install queue on top of list
-    );
+  const { update, device, catalog } = useAppsSections(state, {
+    query: "",
+    appFilter,
+    sort: sortOptions,
+  });
 
   const renderNoResults = useCallback(
     () => (
@@ -200,7 +168,7 @@ const AppsScreen = ({
       case managerTabs.CATALOG:
         return (
           <AppsList
-            apps={sortedApps}
+            apps={catalog}
             state={state}
             dispatch={dispatch}
             active={index === 0}
@@ -214,18 +182,17 @@ const AppsScreen = ({
         return (
           <>
             <AppUpdateAll
-              appsToUpdate={appsToUpdate}
-              installQueue={state.installQueue}
-              uninstallQueue={state.uninstallQueue}
+              state={state}
+              appsToUpdate={update}
               dispatch={dispatch}
             />
             <View>
-              {installedApps && installedApps.length > 0 && (
+              {device && device.length > 0 && (
                 <View style={[styles.searchBarContainer]}>
                   <LText style={styles.installedAppsText}>
                     <Trans
                       i18nKey="manager.storage.appsInstalled"
-                      values={{ appsInstalled: installedApps.length }}
+                      values={{ appsInstalled: device.length }}
                     />
                   </LText>
                   <UninstallAllButton onUninstallAll={onUninstallAll} />
@@ -234,7 +201,7 @@ const AppsScreen = ({
             </View>
             <AppsList
               isInstalledView
-              apps={installedApps}
+              apps={device}
               state={state}
               dispatch={dispatch}
               active={index === 1}
@@ -269,16 +236,16 @@ const AppsScreen = ({
         >
           {route.title}
         </LText>
-        {route.key === managerTabs.INSTALLED_APPS && appsToUpdate.length > 0 && (
+        {route.key === managerTabs.INSTALLED_APPS && update.length > 0 && (
           <View style={styles.updateBadge}>
             <LText bold style={styles.updateBadgeText}>
-              {appsToUpdate.length}
+              {update.length}
             </LText>
           </View>
         )}
       </View>
     ),
-    [appsToUpdate, managerTabs],
+    [update, managerTabs],
   );
 
   const elements = [
@@ -316,8 +283,8 @@ const AppsScreen = ({
           />
           <View style={styles.filterButton}>
             <AppFilter
-              filters={filters}
-              setFilters={setFilters}
+              filter={appFilter}
+              setFilter={setFilter}
               sort={sort}
               setSort={setSort}
               order={order}
@@ -326,7 +293,7 @@ const AppsScreen = ({
             />
           </View>
         </Animated.View>
-        {installedApps.length > 0 && (
+        {device.length > 0 && (
           <Animated.View
             style={[
               styles.searchBarContainer,
@@ -338,7 +305,7 @@ const AppsScreen = ({
               state={state}
               dispatch={dispatch}
               isInstalledView
-              apps={installedApps}
+              apps={device}
             />
           </Animated.View>
         )}
@@ -365,6 +332,11 @@ const AppsScreen = ({
         renderItem={({ item }) => item}
         keyExtractor={(_, i) => String(i)}
         stickyHeaderIndices={[1]}
+      />
+      <InstallProgressBar
+        disable={update && update.length > 0}
+        state={state}
+        navigation={navigation}
       />
     </SafeAreaView>
   );

@@ -4,15 +4,11 @@ import { View, StyleSheet } from "react-native";
 
 import * as Animatable from "react-native-animatable";
 
-import type { ApplicationVersion } from "@ledgerhq/live-common/lib/types/manager";
-import {
-  formatSize,
-  isOutOfMemoryState,
-  predictOptimisticState,
-  reducer,
-  State,
-  Action,
-} from "@ledgerhq/live-common/lib/apps";
+import type { App } from "@ledgerhq/live-common/lib/types/manager";
+
+import { formatSize, State, Action } from "@ledgerhq/live-common/lib/apps";
+import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/lib/apps/react";
+import { Trans } from "react-i18next";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
@@ -22,14 +18,14 @@ import AppIcon from "./AppIcon";
 import AppStateButton from "./AppStateButton";
 
 type Props = {
-  app: ApplicationVersion,
+  app: App,
   state: State,
   dispatch: Action => void,
   isInstalledView: boolean,
   visible: boolean,
   currentProgress: number,
-  setAppInstallWithDependencies: () => void,
-  setAppUninstallWithDependencies: () => void,
+  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
+  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
   managerTabs: *,
 };
@@ -45,23 +41,19 @@ const AppRow = ({
   setAppUninstallWithDependencies,
   setStorageWarning,
 }: Props) => {
-  const { name, version, bytes, icon } = app;
+  const { name, bytes, icon, version: appVersion } = app;
   const { installed } = state;
 
-  const isInstalled = useMemo(() => installed.some(i => i.name === name), [
+  const isInstalled = useMemo(() => installed.find(i => i.name === name), [
     installed,
     name,
   ]);
 
-  const notEnoughMemoryToInstall = useMemo(
-    () =>
-      visible &&
-      !isInstalled &&
-      isOutOfMemoryState(
-        predictOptimisticState(reducer(state, { type: "install", name })),
-      ),
-    [isInstalled, name, state, visible],
-  );
+  const version = (isInstalled && isInstalled.version) || appVersion;
+  const availableVersion =
+    (isInstalled && isInstalled.availableVersion) || appVersion;
+
+  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(state, name);
 
   const onSizePress = useCallback(() => setStorageWarning(name), [
     setStorageWarning,
@@ -78,20 +70,25 @@ const AppRow = ({
           useNativeDriver
         >
           <AppIcon icon={icon} />
-          <Touchable
-            activeOpacity={1}
-            onPress={() => {}}
-            event="ManagerAppRowInfoClick"
-            eventProperties={{ appName: name }}
-            style={styles.labelContainer}
-          >
+          <View style={styles.labelContainer}>
             <LText numberOfLines={1} bold>
               {name}
             </LText>
             <LText numberOfLines={1} style={styles.versionText}>
-              {version}
+              {version}{" "}
+              {isInstalled && !isInstalled.updated && (
+                <Trans
+                  i18nKey="manager.appList.versionNew"
+                  values={{
+                    newVersion:
+                      availableVersion !== version
+                        ? ` ${availableVersion}`
+                        : "",
+                  }}
+                />
+              )}
             </LText>
-          </Touchable>
+          </View>
           {!isInstalled && notEnoughMemoryToInstall ? (
             <Touchable
               activeOpacity={0.5}
@@ -124,7 +121,7 @@ const AppRow = ({
             state={state}
             dispatch={dispatch}
             notEnoughMemoryToInstall={notEnoughMemoryToInstall}
-            isInstalled={isInstalled}
+            isInstalled={!!isInstalled}
             isInstalledView={isInstalledView}
             currentProgress={currentProgress}
             setAppInstallWithDependencies={setAppInstallWithDependencies}

@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { StyleSheet, View, FlatList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
+import type { InstalledItem } from "@ledgerhq/live-common/lib/apps";
 import { formatSize } from "@ledgerhq/live-common/lib/apps";
 
 import { Trans } from "react-i18next";
@@ -9,29 +10,53 @@ import LText from "../../../components/LText";
 import AppIcon from "../AppsList/AppIcon";
 import ActionModal from "./ActionModal";
 
-const renderAppLine = ({ item }: { item: App }) => (
-  <View style={styles.appLine}>
-    <AppIcon icon={item.icon} />
-    <LText semiBold style={styles.appName}>
-      {item.name}
-    </LText>
-    <LText style={[styles.appLineText, styles.appLineVersion]}>
-      {item.version}
-    </LText>
-    <LText style={styles.appLineText}>{formatSize(item.bytes)}</LText>
-  </View>
-);
+const renderAppLine = ({
+  item: { name, icon, bytes, version: appVersion, installed },
+}: {
+  item: App & { installed: ?InstalledItem },
+}) => {
+  const version = (installed && installed.version) || appVersion;
+  const availableVersion =
+    (installed && installed.availableVersion) || appVersion;
+
+  return (
+    <View style={styles.appLine}>
+      <AppIcon icon={icon} />
+      <LText semiBold style={styles.appName}>
+        {name}
+      </LText>
+      <LText style={[styles.appLineText, styles.appLineVersion]}>
+        {version}{" "}
+        <Trans
+          i18nKey="manager.appList.versionNew"
+          values={{
+            newVersion:
+              availableVersion !== version ? ` ${availableVersion}` : "",
+          }}
+        />
+      </LText>
+      <LText style={styles.appLineText}>{formatSize(bytes)}</LText>
+    </View>
+  );
+};
 
 const keyExtractor = (item: App, index: number) => String(item.id) + index;
 
 type Props = {
   isOpened: boolean,
-  apps: Array<App>,
+  apps: App[],
+  installed: InstalledItem[],
   onClose: () => void,
   onConfirm: () => void,
 };
 
-const UpdateAllModal = ({ isOpened, apps, onClose, onConfirm }: Props) => {
+const UpdateAllModal = ({
+  isOpened,
+  apps,
+  installed,
+  onClose,
+  onConfirm,
+}: Props) => {
   const modalActions = useMemo(
     () => [
       {
@@ -52,6 +77,11 @@ const UpdateAllModal = ({ isOpened, apps, onClose, onConfirm }: Props) => {
     [onConfirm, onClose, apps],
   );
 
+  const data = apps.map(app => ({
+    ...app,
+    installed: installed.find(({ name }) => name === app.name),
+  }));
+
   return (
     <ActionModal isOpened={isOpened} onClose={onClose} actions={modalActions}>
       <View style={styles.infoRow}>
@@ -61,7 +91,7 @@ const UpdateAllModal = ({ isOpened, apps, onClose, onConfirm }: Props) => {
       </View>
       <FlatList
         style={styles.list}
-        data={apps}
+        data={data}
         renderItem={renderAppLine}
         keyExtractor={keyExtractor}
         bounces={false}
@@ -107,7 +137,7 @@ const styles = StyleSheet.create({
   },
   appName: {
     flexGrow: 0,
-    flexBasis: "35%",
+    flexBasis: "30%",
     marginHorizontal: 12,
     fontSize: 14,
     color: colors.darkBlue,

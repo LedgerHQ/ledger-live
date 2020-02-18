@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import Svg, { Path, G, Rect, Image } from "react-native-svg";
+import Svg, { Path, G, Image } from "react-native-svg";
 import manager from "@ledgerhq/live-common/lib/manager";
 
 type Props = {
@@ -20,16 +20,16 @@ export default function AppTree({ size = 163, color, icon }: Props) {
       fill="none"
     >
       <G opacity="0.25">
-        <Rect x="141" y="86" width="22" height="22" rx="6.94737" fill={color} />
+        <Image x="141" y="86" width="22" height="22" rx="6.94737" href={uri} />
       </G>
       <G opacity="0.25">
-        <Rect x="94" y="86" width="22" height="22" rx="6.94737" fill={color} />
+        <Image x="94" y="86" width="22" height="22" rx="6.94737" href={uri} />
       </G>
       <G opacity="0.25">
-        <Rect x="47" y="86" width="22" height="22" rx="6.94737" fill={color} />
+        <Image x="47" y="86" width="22" height="22" rx="6.94737" href={uri} />
       </G>
       <G opacity="0.25">
-        <Rect y="86" width="22" height="22" rx="6.94737" fill={color} />
+        <Image y="86" width="22" height="22" rx="6.94737" href={uri} />
       </G>
       <Image x="63" y="15" width="38" height="38" rx="15.7895" href={uri} />
       <Path

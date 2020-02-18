@@ -1,11 +1,9 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { StyleSheet, Linking, Platform } from "react-native";
 import { Trans } from "react-i18next";
 
 import type { State } from "@ledgerhq/live-common/lib/apps";
-
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import { isCurrencySupported } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
+import { isLiveSupportedApp } from "@ledgerhq/live-common/lib/apps/logic";
 
 import { urls } from "../../../config/urls";
 
@@ -16,19 +14,20 @@ import ToastBar from "../../../components/ToastBar";
 type Props = {
   state: State,
   navigation: *,
+  disable: boolean,
 };
 
-let installs = new Set([]);
-
-const InstallProgressBar = ({ state, navigation }: Props) => {
-  const [hasBeenShown, setHasBeenShown] = useState(false);
-  const [installSuccess, setInstallSuccess] = useState([]);
-  const [hasLiveSupported, setHasLiveSupported] = useState(false);
-  const { installQueue, uninstallQueue, installed, appByName } = state;
+const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
+  const [hasBeenShown, setHasBeenShown] = useState(disable);
+  const {
+    installQueue,
+    uninstallQueue,
+    recentlyInstalledApps,
+    appByName,
+  } = state;
 
   const onAddAccount = useCallback(() => {
     navigation.navigate("AddAccounts");
-    setInstallSuccess([]);
     setHasBeenShown(true);
   }, [navigation]);
 
@@ -37,60 +36,43 @@ const InstallProgressBar = ({ state, navigation }: Props) => {
     setHasBeenShown(true);
   }, []);
 
-  const onInstallSuccess = useCallback(() => {
-    const installArray = Array.from(installs)
-      .map(n => appByName[n])
-      .filter(
-        app => app && installed.findIndex(ins => ins.name === app.name) >= 0,
-      );
-    setInstallSuccess(installArray);
+  const successInstalls = useMemo(
+    () =>
+      !hasBeenShown && installQueue.length <= 0 && uninstallQueue.length <= 0
+        ? recentlyInstalledApps.map(name => appByName[name])
+        : [],
+    [
+      appByName,
+      hasBeenShown,
+      installQueue.length,
+      recentlyInstalledApps,
+      uninstallQueue.length,
+    ],
+  );
 
-    const hasLiveSupport = installArray.some(
-      app =>
-        app.currencyId &&
-        isCurrencySupported(getCryptoCurrencyById(app.currencyId)),
-    );
-    setHasLiveSupported(hasLiveSupport);
-    installs = new Set([]);
-  }, [appByName, installed]);
+  const hasLiveSupported = useMemo(
+    () => successInstalls.find(isLiveSupportedApp),
+    [successInstalls],
+  );
 
-  useEffect(() => {
-    if (!hasBeenShown) {
-      if (installQueue.length > 0) {
-        installs = new Set([...installs, ...installQueue]);
-        setInstallSuccess([]);
-      } else {
-        setTimeout(onInstallSuccess, 200);
-      }
-    }
-  }, [hasBeenShown, installQueue, onInstallSuccess]);
-
-  useEffect(() => {
-    if (uninstallQueue.length > 0 && installSuccess.length > 0) {
-      setInstallSuccess([]);
-      installs = new Set([]);
-    }
-  }, [installSuccess.length, uninstallQueue]);
-
-  const onClose = useCallback(() => setInstallSuccess([]), [setInstallSuccess]);
+  const onClose = useCallback(() => setHasBeenShown(true), []);
 
   return (
     <ToastBar
-      isOpened={installSuccess.length >= 1}
+      isOpened={successInstalls.length >= 1}
       onClose={onClose}
       containerStyle={styles.containerStyle}
       type={"primary"}
       title={
         <>
-          <Trans i18nKey="manager.installSuccess.title" />{" "}
           {hasLiveSupported ? (
-            installSuccess.length === 1 ? (
+            successInstalls.length === 1 ? (
               <Trans
-                i18nKey="manager.installSuccess.subtitle"
-                values={{ appName: installSuccess[0].name }}
+                i18nKey="manager.installSuccess.title"
+                values={{ app: successInstalls[0].name }}
               />
             ) : (
-              <Trans i18nKey="manager.installSuccess.subtitle_plural" />
+              <Trans i18nKey="manager.installSuccess.title_plural" />
             )
           ) : (
             <Trans i18nKey="manager.installSuccess.notSupported" />
@@ -163,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InstallProgressBar;
+export default InstallSuccessBar;

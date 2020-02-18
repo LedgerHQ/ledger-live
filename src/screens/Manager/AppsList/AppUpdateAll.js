@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import type { Action } from "@ledgerhq/live-common/lib/apps";
+import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import { Trans } from "react-i18next";
 
 import UpdateAllModal from "../Modals/UpdateAllModal";
@@ -11,20 +11,14 @@ import Info from "../../../icons/Info";
 import AppUpdateStepper from "./AppUpdateStepper";
 
 type Props = {
+  state: State,
   appsToUpdate: App[],
-  installQueue: string[],
-  uninstallQueue: string[],
   dispatch: Action => void,
 };
 
-const AppUpdateAll = ({
-  appsToUpdate,
-  installQueue,
-  uninstallQueue,
-  dispatch,
-}: Props) => {
+const AppUpdateAll = ({ state, appsToUpdate, dispatch }: Props) => {
+  const { updateAllQueue } = state;
   const [modalOpen, setModalOpen] = useState(false);
-  const [appsUpdating, setAppsUpdating] = useState([]);
 
   const openModal = useCallback(() => setModalOpen(true), [setModalOpen]);
   const closeModal = useCallback(() => setModalOpen(false), [setModalOpen]);
@@ -32,19 +26,12 @@ const AppUpdateAll = ({
   const updateAll = useCallback(() => {
     dispatch({ type: "updateAll" });
     setModalOpen(false);
-    setAppsUpdating(appsToUpdate);
-  }, [appsToUpdate, dispatch]);
-  const onUpdateEnd = useCallback(() => setAppsUpdating([]), [setAppsUpdating]);
+  }, [dispatch]);
 
   return (
     <View>
-      <AppUpdateStepper
-        appsUpdating={appsUpdating}
-        installQueue={installQueue}
-        uninstallQueue={uninstallQueue}
-        onUpdateEnd={onUpdateEnd}
-      />
-      {appsToUpdate.length > 0 && appsUpdating.length <= 0 && (
+      <AppUpdateStepper state={state} />
+      {appsToUpdate.length > 0 && updateAllQueue.length <= 0 && (
         <View style={[styles.root]}>
           <Touchable
             style={styles.infoLabel}
@@ -72,6 +59,7 @@ const AppUpdateAll = ({
           </Touchable>
           <UpdateAllModal
             isOpened={modalOpen}
+            installed={state.installed}
             apps={appsToUpdate}
             onClose={closeModal}
             onConfirm={updateAll}
