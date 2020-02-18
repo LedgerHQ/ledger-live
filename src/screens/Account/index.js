@@ -178,7 +178,7 @@ class AccountScreen extends PureComponent<Props, State> {
       parentId: account.id,
       accountId: tokenAccount.id,
     });
-  }, 100);
+  }, 300);
 
   ListHeaderComponent = () => {
     const {

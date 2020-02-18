@@ -63,7 +63,7 @@ class OperationRow extends PureComponent<Props, *> {
     };
 
     navigation.push("OperationDetails", params);
-  }, 100);
+  }, 300);
 
   render() {
     const {
