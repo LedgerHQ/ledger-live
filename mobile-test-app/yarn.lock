@@ -804,10 +804,10 @@
     "@ledgerhq/errors" "^5.9.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^12.0.0-beta.6":
-  version "12.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.0.0-beta.6.tgz#390b65e669a7b3c3fe05da74870b0499c4054756"
-  integrity sha512-V+kczAggCSp2lbvs+G+3cjlY4VjLE723rkq8OZxznxb7SkRZtTiFJ1L9VfuuRr8gLGMCbqj8Rj3ZDdMMU7pWow==
+"@ledgerhq/live-common@^12.0.0-beta.10":
+  version "12.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.0.0-beta.10.tgz#aea6ab8b1930e8c5fb81a6124c85782959c8f48b"
+  integrity sha512-+dO6+/FMeKyhoIkpb5VXt9TfzrFbf5X+rGpC+ZUW+K2UobKa+RfzJnPWIc2WrGZU2AJwrIMV1AmOaQ4mS4a5DQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.9.0"
@@ -841,17 +841,16 @@
     rxjs-compat "^6.5.4"
     semver "^7.1.3"
     sha.js "^2.4.11"
-    ws "6"
 
 "@ledgerhq/logs@5.9.0", "@ledgerhq/logs@^5.9.0":
   version "5.9.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.9.0.tgz#63ecc770748f198a1e9f5d6e227545510721cfa2"
   integrity sha512-ZOselB67bTgdUpqKpXjAEO1ioaYXm+/ST81W3YvmZDLaGrhboQSs7kth/wpv3cAgV+pcA3bdebZUN9i6YRMp0w==
 
-"@ledgerhq/react-native-ledger-core@^4.7.1":
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.7.1.tgz#47de6a004b2437fa1067270fd475ec08f266b5bc"
-  integrity sha512-1cZdFNlb5qqD+uXQnn64R+1qAGpe7n72+p0YVFp3m/TNmgxWrU3KPCwVKPruCnJhndbdYNIM1YdNcg4K5elBbg==
+"@ledgerhq/react-native-ledger-core@^4.8.0":
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.8.0.tgz#3b2335d445188293e2e74ddface882a996fd8dca"
+  integrity sha512-oNlIVaxNo1sOffqrt4isUYfLWTvMNm9VCPbMV5JqcXILnAKvnV5/bPXWLTAis8CmvuXY2Pb2KdEEA+zxoLLh0w==
 
 "@react-native-community/cli-debugger-ui@^3.0.0":
   version "3.0.0"
@@ -4658,14 +4657,13 @@ react-native@0.61.5:
     stacktrace-parser "^0.1.3"
     whatwg-fetch "^3.0.0"
 
-react-redux@^7.1.3:
-  version "7.1.3"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.1.3.tgz#717a3d7bbe3a1b2d535c94885ce04cdc5a33fc79"
-  integrity sha512-uI1wca+ECG9RoVkWQFF4jDMqmaw0/qnvaSvOoL/GA4dNxf6LoV8sUAcNDvE5NWKs4hFpn0t6wswNQnY3f7HT3w==
+react-redux@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.0.tgz#f970f62192b3981642fec46fd0db18a074fe879d"
+  integrity sha512-EvCAZYGfOLqwV7gh849xy9/pt55rJXPwmYvI4lilPM5rUT/1NxuuN59ipdBksRVSvz0KInbPnp4IfoXJXCqiDA==
   dependencies:
     "@babel/runtime" "^7.5.5"
     hoist-non-react-statics "^3.3.0"
-    invariant "^2.2.4"
     loose-envify "^1.4.0"
     prop-types "^15.7.2"
     react-is "^16.9.0"
@@ -5871,13 +5869,6 @@ write-file-atomic@^1.2.0:
     graceful-fs "^4.1.11"
     imurmurhash "^0.1.4"
     slide "^1.1.5"
-
-ws@6:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
-  integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
-  dependencies:
-    async-limiter "~1.0.0"
 
 ws@^1.1.0, ws@^1.1.5:
   version "1.1.5"
