@@ -126,7 +126,9 @@
     "react": "16",
     "react-dom": "16",
     "react-redux": "7.2.0",
+    "react-test-renderer": "^16.12.0",
     "svgr": "^1.10.0",
-    "timemachine": "^0.3.0"
+    "timemachine": "^0.3.0",
+    "@testing-library/react-hooks": "^3.2.1"
   }
 }
