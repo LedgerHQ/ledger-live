@@ -75,7 +75,6 @@ const Row = ({
           <LText
             numberOfLines={1}
             semiBold
-            ellipsizeMode="tail"
             style={[styles.darkBlue, styles.bodyLeft]}
           >
             {getAccountName(account)}

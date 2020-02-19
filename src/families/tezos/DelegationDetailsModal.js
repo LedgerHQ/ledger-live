@@ -260,7 +260,6 @@ const DelegationDetailsModal = ({
                 semiBold
                 style={styles.propertyValueText}
                 numberOfLines={1}
-                ellipsizeMode="tail"
               >
                 {baker.name}
               </LText>

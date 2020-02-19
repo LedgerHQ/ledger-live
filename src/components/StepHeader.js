@@ -26,13 +26,7 @@ class StepHeader extends PureComponent<Props> {
       <TouchableWithoutFeedback onPress={this.onPress}>
         <View style={styles.root}>
           <LText style={styles.subtitle}>{subtitle}</LText>
-          <LText
-            semiBold
-            secondary
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.title}
-          >
+          <LText semiBold secondary numberOfLines={1} style={styles.title}>
             {title}
           </LText>
         </View>
@@ -59,7 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  withNavigation,
-  translate(),
-)(StepHeader);
+export default compose(withNavigation, translate())(StepHeader);
