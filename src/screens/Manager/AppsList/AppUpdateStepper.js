@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   progressSection: {
+    flexShrink: 1,
     flexDirection: "column",
     alignContent: "center",
     justifyContent: "center",

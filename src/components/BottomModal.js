@@ -60,7 +60,7 @@ const BottomModal = ({
 
   const extraStyles = preventBackdropClick
     ? {}
-    : { paddingTop: 32, transform: [{ translateY }] };
+    : { paddingTop: 16, transform: [{ translateY }] };
 
   return (
     <ButtonUseTouchable.Provider value={true}>

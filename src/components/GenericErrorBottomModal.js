@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   close: {
     position: "absolute",
     right: 10,
-    top: 10,
+    top: -10,
   },
   buttonsContainer: {
     flexDirection: "row",
