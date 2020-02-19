@@ -16,7 +16,7 @@
   "scripts": {
     "prepare": "./scripts/gen.sh && yarn build",
     "build": "babel --ignore __tests__ -s -d lib src --extensions '.js,.ts'",
-    "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src",
+    "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src --extensions '.js,.ts'",
     "watch": "babel -wsd lib src --extensions '.js,.ts'",
     "flow": "flow",
     "test-e2e": "./scripts/tests.sh",
