@@ -24,12 +24,15 @@ listCryptoCurrencies(true, true).forEach(a => {
 
 // extra dependencies
 [
-  ["RSK", "Ethereum"],
-  ["ZenCash", "Bitcoin"],
-  ["kUSD", "Ethereum"],
-  ["ThunderCore", "Ethereum"],
   ["ARTIS sigma1", "Ethereum"],
-  ["Volta", "Ethereum"]
+  ["kUSD", "Ethereum"],
+  ["LBRY", "Bitcoin"],
+  ["Resistance", "Bitcoin"],
+  ["RSK Test", "Ethereum"],
+  ["RSK", "Ethereum"],
+  ["ThunderCore", "Ethereum"],
+  ["Volta", "Ethereum"],
+  ["ZenCash", "Bitcoin"]
 ].forEach(([name, dep]) => declareDep(name, dep));
 
 export const getDependencies = (appName: string): string[] =>
