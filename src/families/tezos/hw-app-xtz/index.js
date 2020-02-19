@@ -98,7 +98,7 @@ export default class Tezos {
     const p2 = options.curve || 0;
 
     let paths = splitPath(path);
-    let buffer = new Buffer(1 + paths.length * 4);
+    let buffer = Buffer.alloc(1 + paths.length * 4);
     buffer[0] = paths.length;
     paths.forEach((element, index) => {
       buffer.writeUInt32BE(element, 1 + 4 * index);
@@ -125,12 +125,12 @@ export default class Tezos {
     const curve = options.curve || 0;
     let paths = splitPath(path);
     let offset = 0;
-    let rawTx = new Buffer(rawTxHex, "hex");
+    let rawTx = Buffer.from(rawTxHex, "hex");
     let toSend = [];
 
     // Initial key setting
     {
-      let buffer = new Buffer(paths.length * 4 + 1);
+      let buffer = Buffer.alloc(paths.length * 4 + 1);
       buffer[0] = paths.length;
       paths.forEach((element, index) => {
         buffer.writeUInt32BE(element, 1 + 4 * index);
@@ -146,7 +146,7 @@ export default class Tezos {
       } else {
         chunkSize = maxChunkSize;
       }
-      let buffer = new Buffer(chunkSize);
+      let buffer = Buffer.alloc(chunkSize);
       rawTx.copy(buffer, 0, offset, offset + chunkSize);
       toSend.push(buffer);
       offset += chunkSize;
@@ -174,7 +174,7 @@ export default class Tezos {
       0x00,
       0x00,
       0x00,
-      new Buffer(0)
+      Buffer.alloc(0)
     );
     const bakingApp = appFlag === 1;
     return { major, minor, patch, bakingApp };
@@ -242,7 +242,7 @@ const encodeAddress = (publicKey: Buffer, curve: Curve) => {
   const keyHashSize = 20;
   let hash = blake2b(keyHashSize);
   hash.update(key);
-  hash.digest((hash = new Buffer(keyHashSize)));
+  hash.digest((hash = Buffer.alloc(keyHashSize)));
   const address = bs58check.encode(
     Buffer.concat([curveData.pkhB58Prefix, hash])
   );

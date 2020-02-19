@@ -47,6 +47,12 @@ const envDefinitions = {
     parser: stringParser,
     desc: "node API for tezos (for broadcast only)"
   },
+  API_TRONGRID_PROXY: {
+    parser: stringParser,
+    //def: "https://api.trongrid.io",
+    def: "https://trx.dev.aws.ledger.fr",
+    desc: "proxy url for trongrid API"
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,

@@ -126,7 +126,12 @@ export const makeScanAccounts = (
 
       if (balance.isNaN()) throw new Error("invalid balance NaN");
 
-      if (operations.length === 0 && balance.isZero()) {
+      const isAccountEmpty =
+        currency.id === "tron" && accountShape.tronResources
+          ? accountShape.tronResources.bandwidth.freeLimit === 0
+          : operations.length === 0 && balance.isZero();
+
+      if (isAccountEmpty) {
         // this is an empty account
         if (derivationMode === "") {
           // is standard derivation

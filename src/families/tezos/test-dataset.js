@@ -266,6 +266,7 @@ const dataset: DatasetTest<Transaction> = {
                 invariant(fees, "fees are required"),
                 {
                   errors: {},
+                  warnings: {},
                   estimatedFees: fees.times(2),
                   amount: account.balance.div(10),
                   totalSpent: account.balance.div(10).plus(fees.times(2))

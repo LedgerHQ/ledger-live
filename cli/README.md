@@ -272,14 +272,26 @@ Usage: ledger-live sync       # Synchronize accounts with blockchain
      --paginateOperations <Number>: if defined, will paginate operations
  -f, --format <json | default | summary | stats | significantTokenTickers>: how to display the data
 
+Usage: ledger-live tezosListBakers
+     --whitelist              : filter whitelist
+     --format <String>        : json | default
+
+Usage: ledger-live tronSuperRepresentative
+     --max <Number>           : max number of super representatives to return
+     --format <String>        : json | default
+
 Usage: ledger-live validRecipient # Validate a recipient address
  -r, --recipient <String>     : the address to validate
  -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
      --device <String>        : provide a specific HID path of a device
 
 Usage: ledger-live version
-
-
+     --duration <String>      : duration in day
+     --resource <String>      : reward ENERGY or BANDWIDTH
+     --tronVoteAddress <String>: address of the super representative voting
+     --tronVoteCount <String> : number of votes for the vote address
+     --ignore-errors          : when using multiple transactions, an error won't stop the flow
+     --disable-broadcast      : do not broadcast the transaction
 
                 ``
            `.--:::::

@@ -4,6 +4,7 @@ import type { BigNumber } from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency, Unit } from "./currencies";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "../derivation";
+import type { TronResources, TronResourcesRaw } from "../families/tron/types";
 import type {
   BalanceHistory,
   BalanceHistoryRaw,
@@ -153,7 +154,10 @@ export type Account = {
   // balance history represented the balance evolution throughout time, used by chart.
   // This is to be refreshed when necessary (typically in a sync)
   // this is a map PER granularity to allow a fast feedback when user switch them
-  balanceHistory?: BalanceHistoryMap
+  balanceHistory?: BalanceHistoryMap,
+
+  // On some blockchain, an account can have resources (gained, delegated, ...)
+  tronResources?: TronResources
 };
 
 export type SubAccount = TokenAccount | ChildAccount;
@@ -215,7 +219,8 @@ export type AccountRaw = {
   lastSyncDate: string,
   endpointConfig?: ?string,
   subAccounts?: SubAccountRaw[],
-  balanceHistory?: BalanceHistoryRawMap
+  balanceHistory?: BalanceHistoryRawMap,
+  tronResources?: TronResourcesRaw
 };
 
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;

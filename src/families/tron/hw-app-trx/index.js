@@ -58,7 +58,7 @@ export default class Trx {
    */
   getAddress(path, boolDisplay, boolChaincode) {
     let paths = splitPath(path);
-    let buffer = new Buffer(1 + paths.length * 4);
+    let buffer = Buffer.alloc(1 + paths.length * 4);
     buffer[0] = paths.length;
     paths.forEach((element, index) => {
       buffer.writeUInt32BE(element, 1 + 4 * index);
@@ -85,7 +85,7 @@ export default class Trx {
    */
   async signTransaction(path, rawTxHex) {
     let paths = splitPath(path);
-    let rawTx = new Buffer(rawTxHex, "hex");
+    let rawTx = Buffer.from(rawTxHex, "hex");
     let buffers = [];
     let offset = 0;
     while (offset !== rawTx.length) {
@@ -97,7 +97,7 @@ export default class Trx {
         offset + maxChunkSize > rawTx.length
           ? rawTx.length - offset
           : maxChunkSize;
-      let buffer = new Buffer(
+      let buffer = Buffer.alloc(
         offset === 0 ? 1 + paths.length * PATH_SIZE + chunkSize : chunkSize
       );
       if (offset === 0) {
@@ -153,7 +153,7 @@ export default class Trx {
   async signTransactionWithTokenName(path, rawTxHex, tokenSignatures) {
     //const bipPath = BIPPath.fromString(path).toPathArray();
     let paths = splitPath(path);
-    const rawTx = new Buffer(rawTxHex, "hex");
+    const rawTx = Buffer.from(rawTxHex, "hex");
     let buffers = [];
     let offset = 0;
     while (offset !== rawTx.length) {
@@ -167,7 +167,7 @@ export default class Trx {
           ? rawTx.length - offset
           : maxChunkSize;
 
-      let buffer = new Buffer.alloc(
+      let buffer = Buffer.alloc(
         offset === 0 ? 1 + paths.length * PATH_SIZE + chunkSize : chunkSize
       );
 
@@ -192,7 +192,7 @@ export default class Trx {
 
     if (tokenSignatures !== undefined) {
       for (let i = 0; i < tokenSignatures.length; i++) {
-        let buffer = new Buffer(tokenSignatures[i], "hex");
+        let buffer = Buffer.from(tokenSignatures[i], "hex");
         buffers.push(buffer);
       }
     }

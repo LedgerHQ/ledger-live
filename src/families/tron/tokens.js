@@ -4,22 +4,27 @@ import type { TokenCurrency } from "../../types";
 import { getCryptoCurrencyById } from "../../data/cryptocurrencies";
 import { addTokens } from "../../data/tokens";
 
-const convertTRC10 = ([
+type TokenType = "trc10" | "trc20";
+
+const convertTokens = (type: TokenType) => ([
   id,
   abbr,
   name,
   contractAddress,
-  precision
+  precision,
+  delisted,
+  ledgerSignature
 ]): TokenCurrency => ({
   type: "TokenCurrency",
-  id: "tron/trc10/" + id,
+  id: `tron/${type}/${id}`,
   contractAddress,
   parentCurrency: getCryptoCurrencyById("tron"),
-  tokenType: "trc10",
+  tokenType: type,
   name,
   ticker: abbr,
-  delisted: true, // not yet supported
+  delisted,
   disableCountervalue: true,
+  ledgerSignature,
   units: [
     {
       name,
@@ -30,10 +35,11 @@ const convertTRC10 = ([
 });
 
 const converters = {
-  trc10: convertTRC10
+  trc10: convertTokens("trc10"),
+  trc20: convertTokens("trc20")
 };
 
-export function add(type: string, list: any[]) {
+export function add(type: TokenType, list: any[]) {
   const converter = converters[type];
   if (!converter) {
     throw new Error("unknown token type '" + type + "'");

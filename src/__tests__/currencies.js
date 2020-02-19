@@ -23,6 +23,7 @@ import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
 
 import "../load/tokens/ethereum/erc20";
 import "../load/tokens/tron/trc10";
+import "../load/tokens/tron/trc20";
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({

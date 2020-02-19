@@ -9,7 +9,11 @@ export type OperationType =
   | "CREATE"
   | "REVEAL"
   | "DELEGATE"
-  | "UNDELEGATE";
+  | "UNDELEGATE"
+  | "FREEZE"
+  | "UNFREEZE"
+  | "VOTE"
+  | "REWARD";
 
 export type Operation = {
   // unique identifier (usually hash)

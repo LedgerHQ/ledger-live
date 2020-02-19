@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable, defer, from } from "rxjs";
 import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
+import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import type {
   CryptoCurrencyIds,
@@ -36,6 +37,7 @@ import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 type ExpectFn = Function;
 
 export type CurrenciesData<T: Transaction> = {|
+  FIXME_ignoreAccountFields?: string[],
   FIXME_ignoreOperationFields?: string[],
   scanAccounts?: Array<{|
     name: string,
@@ -180,13 +182,24 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
       (scanAccountsCaches[apdus] = scanAccounts(apdus));
 
     describe(currency.id + " currency bridge", () => {
-      const { scanAccounts, FIXME_ignoreOperationFields } = currencyData;
+      const {
+        scanAccounts,
+        FIXME_ignoreAccountFields,
+        FIXME_ignoreOperationFields
+      } = currencyData;
       if (scanAccounts) {
         if (FIXME_ignoreOperationFields) {
           console.warn(
             currency.id +
               " is ignoring operation fields: " +
               FIXME_ignoreOperationFields.join(", ")
+          );
+        }
+        if (FIXME_ignoreAccountFields) {
+          console.warn(
+            currency.id +
+              " is ignoring account fields: " +
+              FIXME_ignoreAccountFields.join(", ")
           );
         }
         describe("scanAccounts", () => {
@@ -218,11 +231,15 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                 });
 
                 const heads = raws.map(a => {
-                  const copy: Object = { ...a };
-                  delete copy.operations;
-                  delete copy.lastSyncDate;
-                  delete copy.blockHeight;
-                  delete copy.balanceHistory;
+                  const copy = omit(
+                    a,
+                    [
+                      "operations",
+                      "lastSyncDate",
+                      "blockHeight",
+                      "balanceHistory"
+                    ].concat(FIXME_ignoreAccountFields || [])
+                  );
                   return copy;
                 });
 
@@ -231,11 +248,10 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                     .slice(0)
                     .sort((a, b) => a.id.localeCompare(b.id))
                     .map(op => {
-                      const copy: Object = { ...op };
-                      delete copy.date;
-                      (FIXME_ignoreOperationFields || []).forEach(k => {
-                        delete copy[k];
-                      });
+                      const copy = omit(
+                        op,
+                        ["date"].concat(FIXME_ignoreOperationFields || [])
+                      );
                       return copy;
                     })
                 );
@@ -266,7 +282,8 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
           expect(serialized).toBeDefined();
           const data2 = await bridge.preload();
           expect(data1).toMatchObject(data2);
-          expect(JSON.parse(serialized)).toMatchObject(data2);
+          const serialized2 = JSON.stringify(data2);
+          expect(JSON.parse(serialized)).toMatchObject(JSON.parse(serialized2));
           bridge.hydrate(data1);
         }
       });
@@ -613,10 +630,10 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                       : expectedStatus;
                   const { errors, warnings } = es;
                   // we match errors and warnings
-                  if (errors) {
+                  if (s.errors) {
                     expect(s.errors).toMatchObject(errors);
                   }
-                  if (warnings) {
+                  if (s.warnings) {
                     expect(s.warnings).toMatchObject(warnings);
                   }
                   // now we match rest of fields but using the raw version for better readability

@@ -43,7 +43,8 @@ setSupportedCurrencies([
   "clubcoin",
   "decred",
   "bitcoin_testnet",
-  "ethereum_ropsten"
+  "ethereum_ropsten",
+  "tron"
 ]);
 
 for (const k in process.env) setEnvUnsafe(k, process.env[k]);

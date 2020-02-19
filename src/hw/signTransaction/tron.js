@@ -9,8 +9,14 @@ export default async (
   path: string,
   txArg: Object
 ) => {
-  const tx = { ...txArg };
   const trx = new Trx(transport);
-  const signature = await trx.signTransaction(path, tx.raw_data_hex);
+
+  const signature = txArg.assetName
+    ? await trx.signTransactionWithTokenName(
+        path,
+        txArg.rawDataHex,
+        txArg.assetName
+      )
+    : await trx.signTransaction(path, txArg.rawDataHex);
   return Buffer.from(signature).toString("hex");
 };
