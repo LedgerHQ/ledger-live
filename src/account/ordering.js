@@ -34,12 +34,8 @@ export const sortAccountsComparatorFromOrder = (
   const [order, sort] = orderAccounts.split("|");
   const ascValue = sort === "desc" ? -1 : 1;
   if (order === "name") {
-    return (a, b) => {
-      const starDiff = Number(b.starred) - Number(a.starred);
-      if (starDiff === 0)
-        return ascValue * sortNameLense(a).localeCompare(sortNameLense(b));
-      return starDiff;
-    };
+    return (a, b) =>
+      ascValue * sortNameLense(a).localeCompare(sortNameLense(b));
   }
   const cvCaches = {};
   const lazyCalcCV = a => {
@@ -50,17 +46,13 @@ export const sortAccountsComparatorFromOrder = (
     return v;
   };
   return (a, b) => {
-    const starDiff = Number(b.starred) - Number(a.starred);
-    if (starDiff === 0) {
-      const diff =
-        ascValue *
-        lazyCalcCV(a)
-          .minus(lazyCalcCV(b))
-          .toNumber();
-      if (diff === 0) return sortNameLense(a).localeCompare(sortNameLense(b));
-      return diff;
-    }
-    return starDiff;
+    const diff =
+      ascValue *
+      lazyCalcCV(a)
+        .minus(lazyCalcCV(b))
+        .toNumber();
+    if (diff === 0) return sortNameLense(a).localeCompare(sortNameLense(b));
+    return diff;
   };
 };
 
