@@ -64,11 +64,15 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
           availableVersion: "1.0.0"
         };
       }
+
+      // Check if the name contains the number of blocks too
+      const b = /(.*)_(\d*)blocks/.exec(trimmed);
+      const _name = b ? b[1] : trimmed;
       return {
-        name: trimmed,
+        name: _name,
         updated: true,
-        hash: "hash_" + trimmed,
-        blocks: 1,
+        hash: "hash_" + _name,
+        blocks: Number(b ? b[2] : 1),
         version: "1.0.0",
         availableVersion: "1.0.0"
       };
