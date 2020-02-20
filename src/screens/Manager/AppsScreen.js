@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { distribute } from "@ledgerhq/live-common/lib/apps";
-import type { Action, State } from "@ledgerhq/live-common/lib/apps";
+import type { Action, State, App } from "@ledgerhq/live-common/lib/apps";
 import { useAppsSections } from "@ledgerhq/live-common/lib/apps/react";
 
 import { TabView, TabBar } from "react-native-tab-view";
@@ -289,6 +289,8 @@ const AppsScreen = ({
             state={state}
             dispatch={dispatch}
             disabled={index !== 0}
+            setAppInstallWithDependencies={setAppInstallWithDependencies}
+            setAppUninstallWithDependencies={setAppUninstallWithDependencies}
           />
           <View style={styles.filterButton}>
             <AppFilter
@@ -315,6 +317,8 @@ const AppsScreen = ({
               dispatch={dispatch}
               isInstalledView
               apps={device}
+              setAppInstallWithDependencies={setAppInstallWithDependencies}
+              setAppUninstallWithDependencies={setAppUninstallWithDependencies}
             />
           </Animated.View>
         )}

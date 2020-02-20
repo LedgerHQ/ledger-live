@@ -35,6 +35,8 @@ type Props = {
   isInstalledView: boolean,
   apps?: App[],
   disabled: boolean,
+  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
+  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
 };
 
 export default ({
@@ -43,6 +45,8 @@ export default ({
   isInstalledView,
   apps,
   disabled,
+  setAppInstallWithDependencies,
+  setAppUninstallWithDependencies,
 }: Props) => {
   const textInput = useRef();
   const listRef = useRef();
@@ -101,6 +105,8 @@ export default ({
         dispatch={dispatch}
         isInstalledView={isInstalledView}
         animation={false}
+        setAppInstallWithDependencies={setAppInstallWithDependencies}
+        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         visible
       />
     ),
@@ -187,7 +193,6 @@ export default ({
         isVisible={isOpened}
         useNativeDriver
         hideModalContentWhileAnimating
-        coverScreen={true}
         hasBackDrop={false}
         style={styles.modal}
         onModalShow={focusInput}
