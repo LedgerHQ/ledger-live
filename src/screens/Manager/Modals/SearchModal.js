@@ -44,6 +44,7 @@ export default ({
   apps,
   disabled,
 }: Props) => {
+  const textInput = useRef();
   const listRef = useRef();
   const [isOpened, setIsOpen] = useState(false);
   const openSearchModal = useCallback(() => {
@@ -115,6 +116,11 @@ export default ({
     [isInstalledView],
   );
 
+  /** use this on modal show instead of textinput autofocus since we have to wait for the modal to be visible before focusing */
+  const focusInput = useCallback(() => {
+    if (textInput && textInput.current) textInput.current.focus();
+  }, []);
+
   const onFocus = useCallback(() => {
     if (listRef && listRef.current) {
       listRef.current.scrollToIndex({ index: 0 });
@@ -128,7 +134,7 @@ export default ({
           <SearchIcon size={16} color={colors.smoke} />
         </View>
         <TextInput
-          autoFocus
+          ref={textInput}
           returnKeyType="search"
           maxLength={50}
           onChangeText={setQuery}
@@ -179,14 +185,12 @@ export default ({
       </Touchable>
       <ReactNativeModal
         isVisible={isOpened}
-        onBackdropPress={closeSearchModal}
-        onBackButtonPress={closeSearchModal}
         useNativeDriver
         hideModalContentWhileAnimating
         coverScreen={true}
         hasBackDrop={false}
-        backdropColor="transparent"
         style={styles.modal}
+        onModalShow={focusInput}
       >
         <View style={{ height, backgroundColor: colors.lightGrey }}>
           <FlatList

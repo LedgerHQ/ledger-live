@@ -206,6 +206,7 @@ export default memo(
   (
     {
       currentProgress: _currentProgress,
+      visible: _visible,
       state: { installQueue: _installQueue, uninstallQueue: _uninstallQueue },
     },
     { currentProgress, visible, state: { installQueue, uninstallQueue } },

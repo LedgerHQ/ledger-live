@@ -42,14 +42,10 @@ const AppsList = ({
   setStorageWarning,
   isInstalledView,
 }: Props) => {
-  const [viewableBounds, setViewableBounds] = useState({ min: 0, max: 10 });
+  const [viewableBounds, setViewableBounds] = useState([]);
   const onViewableItemsChanged = useCallback(
     ({ viewableItems }) => {
-      const indexes = viewableItems.map(({ index }) => index);
-      setViewableBounds({
-        min: Math.max(0, indexes[0] - 5),
-        max: indexes[indexes.length - 1] + 5,
-      });
+      setViewableBounds(viewableItems.map(({ index }) => index));
     },
     [setViewableBounds],
   );
@@ -62,10 +58,13 @@ const AppsList = ({
       state,
       dispatch,
       key: `${data[index].id}_${isInstalledView ? "Installed" : "Catalog"}`,
-      visible:
-        active && index >= viewableBounds.min && index <= viewableBounds.max,
+      visible: active && viewableBounds.includes(index),
       isInstalledView,
-      currentProgress,
+      currentProgress:
+        (currentProgress &&
+          currentProgress.appOp.name === data[index].name &&
+          currentProgress.progress) ||
+        0,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,
@@ -75,8 +74,7 @@ const AppsList = ({
       dispatch,
       isInstalledView,
       active,
-      viewableBounds.min,
-      viewableBounds.max,
+      viewableBounds,
       currentProgress,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
@@ -99,7 +97,6 @@ const AppsList = ({
       renderItem={renderRow}
       getItem={getItem}
       initialNumToRender={10}
-      maxToRenderPerBatch={15}
       getItemCount={() => apps.length}
       viewabilityConfig={viewabilityConfig}
       onViewableItemsChanged={onViewableItemsChanged}

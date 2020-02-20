@@ -64,7 +64,12 @@ const AppStateButton = ({
       case installing && uninstalling:
         return <UpdateProgress />;
       case installing:
-        return <InstallProgress currentProgress={currentProgress} />;
+        return (
+          <InstallProgress
+            installing={installQueue[0] === name}
+            currentProgress={currentProgress}
+          />
+        );
       case uninstalling:
         return <UninstallProgress />;
       case isInstalledView && isInstalled:

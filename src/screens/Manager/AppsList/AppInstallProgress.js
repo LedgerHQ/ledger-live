@@ -10,9 +10,13 @@ import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
 
 type InstallProgressProps = {
   currentProgress: *,
+  installing: boolean,
 };
 
-export const InstallProgress = ({ currentProgress }: InstallProgressProps) => {
+export const InstallProgress = ({
+  currentProgress,
+  installing,
+}: InstallProgressProps) => {
   return (
     <View style={styles.progressContainer}>
       <View style={styles.progressLabel}>
@@ -24,7 +28,7 @@ export const InstallProgress = ({ currentProgress }: InstallProgressProps) => {
           <Trans i18nKey="AppAction.install.loading.button" />
         </LText>
       </View>
-      {currentProgress !== 1 ? (
+      {currentProgress !== 0 && installing ? (
         <ProgressBar
           progressColor={colors.live}
           style={styles.progressBar}

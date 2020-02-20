@@ -40,7 +40,7 @@ const initialLayout = { width, height };
 type Props = {
   state: State,
   dispatch: Action => void,
-  currentProgress: number,
+  currentProgress: *,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
@@ -48,6 +48,8 @@ type Props = {
   deviceId: string,
   initialDeviceName: string,
   navigation: *,
+  blockNavigation: boolean,
+  deviceInfo: *,
 };
 
 const AppsScreen = ({
@@ -61,6 +63,8 @@ const AppsScreen = ({
   deviceId,
   initialDeviceName,
   navigation,
+  blockNavigation,
+  deviceInfo,
 }: Props) => {
   const distribution = distribute(state);
 
@@ -192,10 +196,13 @@ const AppsScreen = ({
                   <LText style={styles.installedAppsText}>
                     <Trans
                       i18nKey="manager.storage.appsInstalled"
-                      values={{ appsInstalled: device.length }}
+                      count={device.length}
+                      values={{ number: device.length }}
                     />
                   </LText>
-                  <UninstallAllButton onUninstallAll={onUninstallAll} />
+                  {!state.updateAllQueue.length && (
+                    <UninstallAllButton onUninstallAll={onUninstallAll} />
+                  )}
                 </View>
               )}
             </View>
@@ -254,6 +261,8 @@ const AppsScreen = ({
       state={state}
       deviceId={deviceId}
       initialDeviceName={initialDeviceName}
+      blockNavigation={blockNavigation}
+      deviceInfo={deviceInfo}
     />,
     <View>
       <TabBar

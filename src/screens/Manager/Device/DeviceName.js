@@ -17,6 +17,7 @@ type Props = {
   initialDeviceName: string,
   savedName: string,
   deviceModel: { id: string, productName: string },
+  disabled: boolean,
 };
 
 const DeviceNameRow = ({
@@ -25,6 +26,7 @@ const DeviceNameRow = ({
   deviceId,
   initialDeviceName,
   deviceModel: { id, productName },
+  disabled,
 }: Props) => {
   const onPress = useCallback(
     () =>
@@ -51,6 +53,7 @@ const DeviceNameRow = ({
           onPress={onPress}
           activeOpacity={0.5}
           event="ManagerDeviceNameEdit"
+          disabled={disabled}
         >
           <Edit size={13} color={colors.grey} />
           <LText style={styles.editButtonText}>

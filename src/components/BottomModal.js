@@ -20,6 +20,7 @@ export type Props = {
   style?: *,
   preventBackdropClick?: boolean,
   containerStyle?: *,
+  swipeEnabled?: boolean,
 };
 
 // Add some extra padding at the bottom of the modal
@@ -39,6 +40,7 @@ const BottomModal = ({
   preventBackdropClick,
   id,
   containerStyle,
+  swipeEnabled,
   ...rest
 }: Props) => {
   const [translateY] = useState(new Animated.Value(0));
@@ -46,21 +48,26 @@ const BottomModal = ({
   const onSwipeMove = a => translateY.setValue((1 - a) * 150);
   const onSwipeCancel = () => translateY.setValue(0);
 
-  const gesturesCloseProps = preventBackdropClick
+  const backDropProps = preventBackdropClick
     ? {}
     : {
         onBackdropPress: onClose,
         onBackButtonPress: onClose,
+      };
+
+  const gesturesCloseProps = swipeEnabled
+    ? {
         onSwipeComplete: onClose,
         onSwipeMove,
         onSwipeCancel,
         swipeDirection: "down",
         onModalHide: onSwipeCancel,
-      };
+      }
+    : {};
 
-  const extraStyles = preventBackdropClick
-    ? {}
-    : { paddingTop: 16, transform: [{ translateY }] };
+  const extraStyles = swipeEnabled
+    ? { paddingTop: 16, transform: [{ translateY }] }
+    : {};
 
   return (
     <ButtonUseTouchable.Provider value={true}>
@@ -71,11 +78,12 @@ const BottomModal = ({
         useNativeDriver
         hideModalContentWhileAnimating
         style={styles.root}
+        {...backDropProps}
         {...gesturesCloseProps}
         {...rest}
       >
         <Animated.View style={[styles.modal, containerStyle, extraStyles]}>
-          {!preventBackdropClick && (
+          {swipeEnabled && (
             <View style={styles.swipeIndicator}>
               <View style={styles.swipeIndicatorBar} />
             </View>
@@ -121,7 +129,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   swipeIndicatorBar: {
-    width: "50%",
+    width: 100,
     height: 6,
     borderRadius: 6,
     backgroundColor: colors.lightFog,

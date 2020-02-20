@@ -95,6 +95,7 @@ const UpdateAllModal = ({
         renderItem={renderAppLine}
         keyExtractor={keyExtractor}
         bounces={false}
+        scrollEnabled
       />
     </ActionModal>
   );
@@ -121,6 +122,7 @@ const styles = StyleSheet.create({
   },
   list: {
     width: "100%",
+    maxHeight: 300,
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.lightFog,

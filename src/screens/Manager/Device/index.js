@@ -27,6 +27,8 @@ type Props = {
   state: State,
   deviceId: string,
   initialDeviceName: string,
+  blockNavigation: boolean,
+  deviceInfo: *,
 };
 
 const DeviceCard = ({
@@ -34,8 +36,10 @@ const DeviceCard = ({
   state,
   deviceId,
   initialDeviceName,
+  blockNavigation,
+  deviceInfo,
 }: Props) => {
-  const { deviceModel, firmware } = state;
+  const { deviceModel } = state;
 
   return (
     <Card style={styles.card}>
@@ -53,13 +57,14 @@ const DeviceCard = ({
               deviceId={deviceId}
               deviceModel={deviceModel}
               initialDeviceName={initialDeviceName}
+              disabled={blockNavigation}
             />
           </View>
 
           <LText style={styles.deviceFirmware}>
             <Trans
               i18nKey="FirmwareVersionRow.subtitle"
-              values={{ version: firmware.version }}
+              values={{ version: deviceInfo.version }}
             />
           </LText>
           <View style={styles.deviceCapacity}>

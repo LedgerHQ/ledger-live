@@ -1113,6 +1113,9 @@
       },
       "editDeviceName": {
         "title": "Press both buttons to allow set device name"
+      },
+      "listApps": {
+        "title": "Loading..."
       }
     }
   },
@@ -1200,7 +1203,8 @@
       "title": "Storage",
       "used": "Used",
       "genuine": "Your device is Genuine",
-      "appsInstalled": "{{appsInstalled}} apps installed",
+      "appsInstalled": "{{number}} app installed",
+      "appsInstalled_plural": "{{number}} apps installed",
       "storageAvailable": "available"
     },
     "installSuccess": {
@@ -1235,7 +1239,8 @@
       "continueInstall": "Install apps"
     },
     "update": {
-      "title": "{{number}} app updates",
+      "title": "{{number}} app update",
+      "title_plural": "{{number}} app updates",
       "step": "Update step {{step}}:",
       "updateWarn": "Do not quit manager during update",
       "progress": "Updating all...",
@@ -1268,14 +1273,14 @@
       "not_installed": "Not installed",
       "supported": "Live supported",
       "updatable": "Updatable",
-      "apply": "Apply",
+      "apply": "Apply"
     },
     "sort": {
       "title": "Sort by",
       "default": "Default",
       "name_asc": "Name A-Z",
       "name_desc": "Name Z-A",
-      "marketcap_desc": "Market Cap",
+      "marketcap_desc": "Market Cap"
     }
   },
   "AuthenticityRow": {

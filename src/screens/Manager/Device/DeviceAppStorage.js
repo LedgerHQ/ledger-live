@@ -87,7 +87,11 @@ const DeviceAppStorage = ({
           {apps.length}
         </LText>
         <LText style={styles.storageText}>
-          <Trans values={{}} i18nKey="manager.storage.appsInstalled" />
+          <Trans
+            count={apps.length}
+            values={{ number: "" }}
+            i18nKey="manager.storage.appsInstalled"
+          />
         </LText>
       </View>
     </View>

@@ -17,6 +17,7 @@ const { width } = getWindowDimensions();
 
 type Props = {
   state: State,
+  disabled: boolean,
 };
 
 const AppUpdateStepper = ({ state }: Props) => {
@@ -24,6 +25,8 @@ const AppUpdateStepper = ({ state }: Props) => {
   const updateProgress = updateAllProgress(state);
 
   if (updateProgress === 1) return null;
+
+  const count = updateAllQueue.length;
 
   return (
     <Animatable.View
@@ -36,8 +39,9 @@ const AppUpdateStepper = ({ state }: Props) => {
         <LText bold style={styles.stepperText}>
           <Trans
             i18nKey="AppAction.update.title"
+            count={count}
             values={{
-              number: updateAllQueue.length,
+              number: count,
             }}
           />
         </LText>

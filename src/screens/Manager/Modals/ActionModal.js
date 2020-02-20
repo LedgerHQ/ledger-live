@@ -50,14 +50,12 @@ const ActionModal = ({
 );
 
 const styles = StyleSheet.create({
-  modal: {
-    paddingTop: 32,
-  },
   root: {
     maxHeight: height - 100,
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
+    paddingTop: 24,
   },
   modalFooter: {
     width: "100%",
