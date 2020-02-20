@@ -510,9 +510,11 @@ export function toAccountRaw({
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toString(),
-    balanceHistory: toBalanceHistoryRawMap(balanceHistory || {}),
     spendableBalance: spendableBalance.toString()
   };
+  if (balanceHistory) {
+    res.balanceHistory = toBalanceHistoryRawMap(balanceHistory);
+  }
   if (endpointConfig) {
     res.endpointConfig = endpointConfig;
   }
