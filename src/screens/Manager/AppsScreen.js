@@ -291,6 +291,7 @@ const AppsScreen = ({
             disabled={index !== 0}
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+            currentProgress={currentProgress}
           />
           <View style={styles.filterButton}>
             <AppFilter
@@ -319,6 +320,7 @@ const AppsScreen = ({
               apps={device}
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+              currentProgress={currentProgress}
             />
           </Animated.View>
         )}

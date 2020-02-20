@@ -37,6 +37,7 @@ type Props = {
   disabled: boolean,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
+  currentProgress: *,
 };
 
 export default ({
@@ -47,6 +48,7 @@ export default ({
   disabled,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
+  currentProgress,
 }: Props) => {
   const textInput = useRef();
   const listRef = useRef();
@@ -107,6 +109,12 @@ export default ({
         animation={false}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+        currentProgress={
+          (currentProgress &&
+            currentProgress.appOp.name === item.name &&
+            currentProgress.progress) ||
+          0
+        }
         visible
       />
     ),

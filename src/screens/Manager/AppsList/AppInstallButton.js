@@ -26,7 +26,7 @@ const AppInstallButton = ({
   setAppInstallWithDependencies,
 }: Props) => {
   const { name } = app;
-  const { installed } = state;
+  const { installed, updateAllQueue } = state;
 
   const canUpdate = useMemo(
     () => installed.some(({ name, updated }) => name === app.name && !updated),
@@ -42,7 +42,7 @@ const AppInstallButton = ({
 
   return (
     <Button
-      disabled={notEnoughMemoryToInstall}
+      disabled={notEnoughMemoryToInstall || updateAllQueue.length > 0}
       useTouchable
       type={canUpdate ? "tertiary" : "lightPrimary"}
       outline={!canUpdate}

@@ -39,8 +39,12 @@ const AppUninstallButton = ({
       onPress={uninstallApp}
       event="ManagerAppUninstall"
       eventProperties={{ appName: name }}
+      disabled={state.updateAllQueue.length > 0}
     >
-      <Trash size={18} color={colors.grey} />
+      <Trash
+        size={18}
+        color={state.updateAllQueue.length > 0 ? colors.fog : colors.grey}
+      />
     </Touchable>
   );
 };
