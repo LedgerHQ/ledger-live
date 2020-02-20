@@ -235,6 +235,9 @@ export function patchAccount(
       next.balanceHistory = fromBalanceHistoryRawMap(updatedRaw.balanceHistory);
       changed = true;
     }
+  } else if (account.balanceHistory) {
+    delete next.balanceHistory;
+    changed = true;
   }
 
   if (updatedRaw.spendableBalance !== account.spendableBalance.toString()) {
