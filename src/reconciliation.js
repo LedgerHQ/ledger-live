@@ -16,7 +16,8 @@ import {
   fromAccountRaw,
   fromOperationRaw,
   fromSubAccountRaw,
-  fromTronResourcesRaw
+  fromTronResourcesRaw,
+  fromBalanceHistoryRawMap
 } from "./account";
 
 const sameOp = (a: Operation, b: Operation) =>
@@ -219,6 +220,21 @@ export function patchAccount(
   if (updatedRaw.balance !== account.balance.toString()) {
     next.balance = BigNumber(updatedRaw.balance);
     changed = true;
+  }
+
+  if (updatedRaw.balanceHistory) {
+    const { week } = updatedRaw.balanceHistory;
+    const accountWeek = account.balanceHistory && account.balanceHistory.week;
+    const refreshBalanceHistory =
+      !week || // there is no week yet
+      !accountWeek || // there were no balance history yet
+      // last datapoint changes will force a refresh
+      week[week.length - 1][1] !==
+        accountWeek[accountWeek.length - 1].value.toString();
+    if (refreshBalanceHistory) {
+      next.balanceHistory = fromBalanceHistoryRawMap(updatedRaw.balanceHistory);
+      changed = true;
+    }
   }
 
   if (updatedRaw.spendableBalance !== account.spendableBalance.toString()) {
