@@ -2,8 +2,6 @@ import React, { useState, useCallback, useEffect, memo } from "react";
 import { NavigationActions } from "react-navigation";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
-import { useAppInstallProgress } from "@ledgerhq/live-common/lib/apps/react";
-
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
