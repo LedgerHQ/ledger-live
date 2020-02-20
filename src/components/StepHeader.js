@@ -53,4 +53,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(withNavigation, translate())(StepHeader);
+export default compose(
+  withNavigation,
+  translate(),
+)(StepHeader);
