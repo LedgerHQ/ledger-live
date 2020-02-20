@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo } from "react";
+import React, { useCallback, memo } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { State } from "@ledgerhq/live-common/lib/apps";
@@ -21,11 +21,6 @@ type Props = {
 
 const { height } = getWindowDimensions();
 
-const viewabilityConfig = {
-  minimumViewTime: 0,
-  viewAreaCoveragePercentThreshold: 0,
-};
-
 const renderRow = ({ item }: { item: * }) => {
   return <AppRow {...item} />;
 };
@@ -42,13 +37,6 @@ const AppsList = ({
   setStorageWarning,
   isInstalledView,
 }: Props) => {
-  const [viewableBounds, setViewableBounds] = useState([]);
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }) => {
-      setViewableBounds(viewableItems.map(({ index }) => index));
-    },
-    [setViewableBounds],
-  );
   const viewHeight = active ? "auto" : height - 267;
 
   const getItem = useCallback(
@@ -58,7 +46,6 @@ const AppsList = ({
       state,
       dispatch,
       key: `${data[index].id}_${isInstalledView ? "Installed" : "Catalog"}`,
-      visible: active && viewableBounds.includes(index),
       isInstalledView,
       currentProgress:
         (currentProgress &&
@@ -73,8 +60,6 @@ const AppsList = ({
       state,
       dispatch,
       isInstalledView,
-      active,
-      viewableBounds,
       currentProgress,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
@@ -98,8 +83,6 @@ const AppsList = ({
       getItem={getItem}
       initialNumToRender={10}
       getItemCount={() => apps.length}
-      viewabilityConfig={viewabilityConfig}
-      onViewableItemsChanged={onViewableItemsChanged}
     />
   );
 };

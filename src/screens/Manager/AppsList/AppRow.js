@@ -22,7 +22,6 @@ type Props = {
   state: State,
   dispatch: Action => void,
   isInstalledView: boolean,
-  visible: boolean,
   currentProgress: number,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
@@ -35,7 +34,6 @@ const AppRow = ({
   state,
   dispatch,
   isInstalledView,
-  visible,
   currentProgress,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
@@ -62,73 +60,69 @@ const AppRow = ({
 
   return (
     <View style={styles.root}>
-      {visible && (
-        <Animatable.View
-          style={styles.item}
-          animation="fadeIn"
-          duration={300}
-          useNativeDriver
-        >
-          <AppIcon icon={icon} />
-          <View style={styles.labelContainer}>
-            <LText numberOfLines={1} bold>
-              {name}
-            </LText>
-            <LText numberOfLines={1} style={styles.versionText}>
-              {version}{" "}
-              {isInstalled && !isInstalled.updated && (
-                <Trans
-                  i18nKey="manager.appList.versionNew"
-                  values={{
-                    newVersion:
-                      availableVersion !== version
-                        ? ` ${availableVersion}`
-                        : "",
-                  }}
-                />
-              )}
-            </LText>
-          </View>
-          {!isInstalled && notEnoughMemoryToInstall ? (
-            <Touchable
-              activeOpacity={0.5}
-              onPress={onSizePress}
-              style={styles.warnText}
-              event="ManagerAppNotEnoughMemory"
-              eventProperties={{ appName: name }}
-            >
-              <Warning size={16} color={colors.lightOrange} />
-              <LText
-                semiBold
-                style={[styles.versionText, styles.sizeText, styles.warnText]}
-              >
-                {formatSize(bytes)}
-              </LText>
-            </Touchable>
-          ) : (
+      <Animatable.View
+        style={styles.item}
+        animation="fadeIn"
+        duration={300}
+        useNativeDriver
+      >
+        <AppIcon icon={icon} />
+        <View style={styles.labelContainer}>
+          <LText numberOfLines={1} bold>
+            {name}
+          </LText>
+          <LText numberOfLines={1} style={styles.versionText}>
+            {version}{" "}
+            {isInstalled && !isInstalled.updated && (
+              <Trans
+                i18nKey="manager.appList.versionNew"
+                values={{
+                  newVersion:
+                    availableVersion !== version ? ` ${availableVersion}` : "",
+                }}
+              />
+            )}
+          </LText>
+        </View>
+        {!isInstalled && notEnoughMemoryToInstall ? (
+          <Touchable
+            activeOpacity={0.5}
+            onPress={onSizePress}
+            style={styles.warnText}
+            event="ManagerAppNotEnoughMemory"
+            eventProperties={{ appName: name }}
+          >
+            <Warning size={16} color={colors.lightOrange} />
             <LText
-              style={[
-                styles.versionText,
-                styles.sizeText,
-                notEnoughMemoryToInstall ? styles.warnText : {},
-              ]}
+              semiBold
+              style={[styles.versionText, styles.sizeText, styles.warnText]}
             >
               {formatSize(bytes)}
             </LText>
-          )}
-          <AppStateButton
-            app={app}
-            state={state}
-            dispatch={dispatch}
-            notEnoughMemoryToInstall={notEnoughMemoryToInstall}
-            isInstalled={!!isInstalled}
-            isInstalledView={isInstalledView}
-            currentProgress={currentProgress}
-            setAppInstallWithDependencies={setAppInstallWithDependencies}
-            setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-          />
-        </Animatable.View>
-      )}
+          </Touchable>
+        ) : (
+          <LText
+            style={[
+              styles.versionText,
+              styles.sizeText,
+              notEnoughMemoryToInstall ? styles.warnText : {},
+            ]}
+          >
+            {formatSize(bytes)}
+          </LText>
+        )}
+        <AppStateButton
+          app={app}
+          state={state}
+          dispatch={dispatch}
+          notEnoughMemoryToInstall={notEnoughMemoryToInstall}
+          isInstalled={!!isInstalled}
+          isInstalledView={isInstalledView}
+          currentProgress={currentProgress}
+          setAppInstallWithDependencies={setAppInstallWithDependencies}
+          setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+        />
+      </Animatable.View>
     </View>
   );
 };
@@ -213,7 +207,7 @@ export default memo(
   ) => {
     /** compare _prev to next props that if different should trigger a rerender */
     return (
-      !visible &&
+      visible === _visible &&
       currentProgress === _currentProgress &&
       installQueue.length === _installQueue.length &&
       uninstallQueue.length === _uninstallQueue.length

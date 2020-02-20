@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: colors.live,
     paddingVertical: 4,
-    textAlign: "center",
+    textAlign: "right",
+    width: "100%",
     paddingHorizontal: 10,
   },
   progressBar: {

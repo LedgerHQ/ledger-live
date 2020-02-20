@@ -28,12 +28,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => {
   );
 
   return (
-    <ActionModal
-      isOpened={!!warning}
-      onClose={onClose}
-      actions={modalActions}
-      swipeEnabled
-    >
+    <ActionModal isOpened={!!warning} onClose={onClose} actions={modalActions}>
       <View style={styles.storageImage}>
         <InfoIcon
           bg={colors.lightLive}

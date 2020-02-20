@@ -145,11 +145,13 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
   },
   appLineText: {
+    textAlign: "right",
     flexBasis: 55,
     fontSize: 12,
     color: colors.grey,
   },
   appLineVersion: {
+    textAlign: "center",
     flexGrow: 1,
   },
 });

@@ -1,10 +1,9 @@
 // @flow
 
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
-import Animated from "react-native-reanimated";
 import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
@@ -20,7 +19,6 @@ export type Props = {
   style?: *,
   preventBackdropClick?: boolean,
   containerStyle?: *,
-  swipeEnabled?: boolean,
 };
 
 // Add some extra padding at the bottom of the modal
@@ -40,34 +38,14 @@ const BottomModal = ({
   preventBackdropClick,
   id,
   containerStyle,
-  swipeEnabled,
   ...rest
 }: Props) => {
-  const [translateY] = useState(new Animated.Value(0));
-
-  const onSwipeMove = a => translateY.setValue((1 - a) * 150);
-  const onSwipeCancel = () => translateY.setValue(0);
-
   const backDropProps = preventBackdropClick
     ? {}
     : {
         onBackdropPress: onClose,
         onBackButtonPress: onClose,
       };
-
-  const gesturesCloseProps = swipeEnabled
-    ? {
-        onSwipeComplete: onClose,
-        onSwipeMove,
-        onSwipeCancel,
-        swipeDirection: "down",
-        onModalHide: onSwipeCancel,
-      }
-    : {};
-
-  const extraStyles = swipeEnabled
-    ? { paddingTop: 16, transform: [{ translateY }] }
-    : {};
 
   return (
     <ButtonUseTouchable.Provider value={true}>
@@ -79,15 +57,9 @@ const BottomModal = ({
         hideModalContentWhileAnimating
         style={styles.root}
         {...backDropProps}
-        {...gesturesCloseProps}
         {...rest}
       >
-        <Animated.View style={[styles.modal, containerStyle, extraStyles]}>
-          {swipeEnabled && (
-            <View style={styles.swipeIndicator}>
-              <View style={styles.swipeIndicatorBar} />
-            </View>
-          )}
+        <View style={[styles.modal, containerStyle]}>
           <View style={style}>
             {isOpened && id ? <TrackScreen category={id} /> : null}
             <StyledStatusBar
@@ -98,7 +70,7 @@ const BottomModal = ({
             />
             {children}
           </View>
-        </Animated.View>
+        </View>
         <DebugRejectSwitch />
       </ReactNativeModal>
     </ButtonUseTouchable.Provider>

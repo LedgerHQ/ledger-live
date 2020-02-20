@@ -35,12 +35,7 @@ const UninstallAllModal = ({ isOpened, onClose, onConfirm }: Props) => {
   );
 
   return (
-    <ActionModal
-      isOpened={!!isOpened}
-      onClose={onClose}
-      actions={modalActions}
-      swipeEnabled
-    >
+    <ActionModal isOpened={!!isOpened} onClose={onClose} actions={modalActions}>
       <View style={styles.image}>
         <InfoIcon bg={colors.lightLive}>
           <Trash size={30} color={colors.live} />

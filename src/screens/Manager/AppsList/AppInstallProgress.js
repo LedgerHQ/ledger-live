@@ -11,11 +11,13 @@ import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
 type InstallProgressProps = {
   currentProgress: *,
   installing: boolean,
+  updating: boolean,
 };
 
 export const InstallProgress = ({
   currentProgress,
   installing,
+  updating,
 }: InstallProgressProps) => {
   return (
     <View style={styles.progressContainer}>
@@ -25,7 +27,13 @@ export const InstallProgress = ({
           numberOfLines={1}
           style={[styles.appStateText, { color: colors.live }]}
         >
-          <Trans i18nKey="AppAction.install.loading.button" />
+          <Trans
+            i18nKey={
+              updating
+                ? "AppAction.update.loading"
+                : "AppAction.install.loading.button"
+            }
+          />
         </LText>
       </View>
       {currentProgress !== 0 && installing ? (
@@ -67,29 +75,12 @@ export const UninstallProgress = () => {
   );
 };
 
-export const UpdateProgress = () => (
-  <View style={styles.progressContainer}>
-    <View style={styles.progressLabel}>
-      <LText
-        semiBold
-        numberOfLines={1}
-        style={[styles.appStateText, { color: colors.live }]}
-      >
-        <Trans i18nKey="AppAction.install.loading.button" />
-      </LText>
-    </View>
-    <InfiniteProgressBar
-      progressColor={colors.live}
-      style={styles.progressBar}
-      height={6}
-    />
-  </View>
-);
-
 const styles = StyleSheet.create({
   appStateText: {
     fontSize: 13,
     lineHeight: 16,
+    width: "100%",
+    textAlign: "right",
   },
   progressContainer: {
     flexDirection: "column",

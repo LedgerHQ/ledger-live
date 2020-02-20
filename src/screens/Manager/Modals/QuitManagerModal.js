@@ -35,12 +35,7 @@ const QuitManagerModal = ({
   );
 
   return (
-    <ActionModal
-      isOpened={!!isOpened}
-      onClose={onClose}
-      actions={[]}
-      swipeEnabled
-    >
+    <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
       <View style={styles.storageImage}>
         <InfoIcon bg={colors.lightLive}>
           <Quit size={30} color={colors.live} />

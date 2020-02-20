@@ -115,10 +115,16 @@ export default ({
             currentProgress.progress) ||
           0
         }
-        visible
       />
     ),
-    [isInstalledView, dispatch, state],
+    [
+      state,
+      dispatch,
+      isInstalledView,
+      setAppInstallWithDependencies,
+      setAppUninstallWithDependencies,
+      currentProgress,
+    ],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
 

@@ -54,12 +54,7 @@ const AppDependenciesModal = ({
   );
 
   return (
-    <ActionModal
-      isOpened={!!app}
-      onClose={onClose}
-      actions={modalActions}
-      swipeEnabled
-    >
+    <ActionModal isOpened={!!app} onClose={onClose} actions={modalActions}>
       {!!app && !!dependencies.length && (
         <>
           <View style={styles.imageSection}>

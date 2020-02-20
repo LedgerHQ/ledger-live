@@ -191,7 +191,7 @@ const AppsScreen = ({
               dispatch={dispatch}
             />
             <View>
-              {device && device.length > 0 && (
+              {device && device.length > 0 && !state.updateAllQueue.length && (
                 <View style={[styles.searchBarContainer]}>
                   <LText style={styles.installedAppsText}>
                     <Trans
@@ -200,9 +200,7 @@ const AppsScreen = ({
                       values={{ number: device.length }}
                     />
                   </LText>
-                  {!state.updateAllQueue.length && (
-                    <UninstallAllButton onUninstallAll={onUninstallAll} />
-                  )}
+                  <UninstallAllButton onUninstallAll={onUninstallAll} />
                 </View>
               )}
             </View>

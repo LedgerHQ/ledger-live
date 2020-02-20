@@ -9,11 +9,7 @@ import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import AppInstallButton from "./AppInstallButton";
 import AppUninstallButton from "./AppUninstallButton";
 
-import {
-  InstallProgress,
-  UninstallProgress,
-  UpdateProgress,
-} from "./AppInstallProgress";
+import { InstallProgress, UninstallProgress } from "./AppInstallProgress";
 
 import colors from "../../../colors";
 import Check from "../../../icons/Check";
@@ -42,14 +38,20 @@ const AppStateButton = ({
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
 }: Props) => {
-  const { installed, installQueue, uninstallQueue } = state;
+  const { installed, installQueue, uninstallQueue, updateAllQueue } = state;
   const { name } = app;
 
-  const installing = useMemo(() => installQueue.indexOf(name) >= 0, [
+  const installing = useMemo(() => installQueue.includes(name), [
     installQueue,
     name,
   ]);
-  const uninstalling = useMemo(() => uninstallQueue.indexOf(name) >= 0, [
+
+  const updating = useMemo(() => updateAllQueue.includes(name), [
+    updateAllQueue,
+    name,
+  ]);
+
+  const uninstalling = useMemo(() => uninstallQueue.includes(name), [
     uninstallQueue,
     name,
   ]);
@@ -61,11 +63,10 @@ const AppStateButton = ({
 
   const renderAppState = () => {
     switch (true) {
-      case installing && uninstalling:
-        return <UpdateProgress />;
       case installing:
         return (
           <InstallProgress
+            updating={updating}
             installing={installQueue[0] === name}
             currentProgress={currentProgress}
           />
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
   },
   updateText: {
     width: "100%",
-    color: colors.live,
+    color: colors.grey,
     textAlign: "right",
   },
   installedText: {
