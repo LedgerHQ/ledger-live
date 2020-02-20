@@ -42,6 +42,7 @@ const AppUpdateAll = ({ state, appsToUpdate, dispatch }: Props) => {
             <LText semiBold style={styles.infoText}>
               <Trans
                 i18nKey="AppAction.update.title"
+                count={appsToUpdate.length}
                 values={{ number: appsToUpdate.length }}
               />
             </LText>

@@ -1168,7 +1168,7 @@
     "title": "Manager",
     "connect": "Select your device",
     "appsCatalog": "App catalog",
-    "installedApps": "Installed Apps",
+    "installedApps": "Installed apps",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",
@@ -1182,7 +1182,7 @@
       "loading": "Loading apps...",
       "noApps": "No apps found",
       "searchAppsCatalog": "Search app in catalog...",
-      "searchAppsInstalled": "Search app installed...",
+      "searchAppsInstalled": "Search installed apps...",
       "noAppsInstalled": "No apps installed on your device",
       "noAppsDescription": "Go to the Apps catalog to install apps.",
       "noResultsFound": "No results found",
@@ -1191,8 +1191,8 @@
     },
     "uninstall": {
       "title": "Uninstall all",
-      "subtitle": "Uninstal all apps",
-      "description": "You can reinstall apps in the App catalog."
+      "subtitle": "Uninstall all apps?",
+      "description": "Don’t worry, uninstalling apps does not affect your crypto assets. You can reinstall apps in the App catalog"
     },
     "remove": {
       "title": "Remove device",
@@ -1260,7 +1260,7 @@
         "title": "Successfully uninstalled {{appName}} on your {{productName}}"
       },
       "dependency": {
-        "title": "Other apps need the {{app}} app",
+        "title": "Uninstall {{app}} and its related apps?",
         "showAll": "Show apps to uninstall",
         "description": "Apps on your device that are dependent on the {{app}} app will be uninstalled too."
       },
@@ -1280,7 +1280,7 @@
       "default": "Default",
       "name_asc": "Name A-Z",
       "name_desc": "Name Z-A",
-      "marketcap_desc": "Market Cap"
+      "marketcap_desc": "Market cap"
     }
   },
   "AuthenticityRow": {
