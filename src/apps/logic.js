@@ -219,7 +219,8 @@ export const reducer = (state: State, action: Action): State => {
         uninstallList
       );
 
-      const updateAllQueue = uninstallQueue.concat(installQueue);
+      /** since install queue === uninstall queue in this case we can map the update queue to either one */
+      const updateAllQueue = installQueue;
 
       return {
         ...state,
@@ -411,7 +412,8 @@ export const isLiveSupportedApp = (app: App): boolean => {
 
 export const updateAllProgress = (state: State): number => {
   const total = state.updateAllQueue.length;
-  const current = state.uninstallQueue.length + state.installQueue.length;
+  /** each uninstall and install comes in a pair and have a weight of 0.5 in the progress */
+  const current = (state.uninstallQueue.length + state.installQueue.length) / 2;
   if (total === 0 || current === 0) return 1;
   return Math.max(0, Math.min((total - current) / total, 1));
 };
