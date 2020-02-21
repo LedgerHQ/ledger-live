@@ -9,7 +9,7 @@ type Props = {
   icon: string,
 };
 
-export default function AppTree({ size = 163, color, icon }: Props) {
+export default function AppTree({ size = 150, color, icon }: Props) {
   const uri = manager.getIconUrl(icon);
 
   return (

@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     color: colors.darkBlue,
-    marginBottom: 32,
+    marginVertical: 24,
   },
   warnText: {
     textAlign: "center",

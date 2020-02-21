@@ -27,6 +27,7 @@ const ActionModal = ({
     isOpened={isOpened}
     onClose={onClose}
     preventBackdropClick={false}
+    containerStyle={{ paddingBottom: 116 }}
   >
     <SafeAreaView style={styles.root}>
       {children}
@@ -51,11 +52,10 @@ const ActionModal = ({
 
 const styles = StyleSheet.create({
   root: {
-    maxHeight: height - 100,
+    maxHeight: height - 60,
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: 24,
   },
   modalFooter: {
     width: "100%",
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
   actionButton: {
     height: 48,
     borderRadius: 3,
-    marginTop: 16,
   },
 });
 

@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexWrap: "nowrap",
-    marginBottom: 24,
+    marginVertical: 24,
   },
   appIcons: {
     flexBasis: 50,

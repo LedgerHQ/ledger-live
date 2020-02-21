@@ -56,7 +56,7 @@ const UninstallAllModal = ({ isOpened, onClose, onConfirm }: Props) => {
 const styles = StyleSheet.create({
   image: {
     width: 80,
-    marginBottom: 24,
+    marginVertical: 24,
   },
   title: {
     fontSize: 16,

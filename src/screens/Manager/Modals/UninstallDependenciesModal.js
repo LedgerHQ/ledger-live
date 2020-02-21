@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useCallback } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
 
 import type { Action } from "@ledgerhq/live-common/lib/apps";
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexWrap: "nowrap",
     marginBottom: 8,
+    height: 90,
   },
   appIcons: {
     flexBasis: 50,
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.grey,
     lineHeight: 16,
-    marginVertical: 8,
+    marginVertical: 6,
   },
   infoRow: {
     padding: 16,

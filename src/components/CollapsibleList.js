@@ -21,8 +21,6 @@ const {
   Value,
   interpolate,
   eq,
-  defined,
-  and,
 } = Animated;
 
 /**
@@ -71,6 +69,9 @@ const runCollapse = (clock, value, dest) => {
 const renderListItem = ({ item, index }: *) => <View key={index}>{item}</View>;
 const keyExtractor = (_, index) => String(index);
 
+const OPEN = 1;
+const CLOSE = 2;
+
 type Props = {
   title: string,
   data: Array<*>,
@@ -87,9 +88,9 @@ const CollapsibleList = ({
   renderItem,
   ...props
 }: Props) => {
-  const [isOpen, setOpen] = useState(undefined);
+  const [isOpen, setOpen] = useState(CLOSE);
   const onPress = useCallback(() => {
-    setOpen(!isOpen);
+    setOpen(isOpen !== OPEN ? OPEN : CLOSE);
   }, [setOpen, isOpen]);
 
   // animation clock
@@ -98,7 +99,7 @@ const CollapsibleList = ({
   const [openState] = useState(new Value(0));
   // animation opening anim node
   const openingAnim = cond(
-    and(defined(isOpen), eq(isOpen, false)),
+    eq(isOpen, OPEN),
     [
       // opening
       set(openState, runCollapse(clock, openState, 1)),
