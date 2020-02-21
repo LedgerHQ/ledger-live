@@ -1,16 +1,16 @@
 # The Currency models
 
-Ledger Live deals with different kind of currencies and assets: fiat currencies, crypto-currencies and tokens.
-They all share similar concept but have specifics.
+Ledger Live deals with different kinds of currencies and assets: fiat currencies, cryptocurrencies, and tokens.
+They all share similar concepts but have specifics.
 
 ## The types
 
 The types are defined in [types/currencies](../src/types/currencies.js).
 
 live-common exposes 3 different types: `CryptoCurrency`, `TokenCurrency` and `FiatCurrency`.
-It also exposes a union type `Currency` that is either of these 3 types. _Make sure you use the correct type, sometimes you want the union type Currency, sometimes you are really in context of a CryptoCurrency_.
+It also exposes a union type `Currency` that is either of these 3 types. _Make sure you use the correct type, sometimes you want the union type Currency, sometimes you are really in the context of a CryptoCurrency_.
 
-To ease the differentiation of types, live-common data also introduces a _discriminator field_, `.type`, which have the same name of the type.
+To ease the differentiation of types, live-common's data also introduces a _discriminator field_, `.type`, which has the same name as the type.
 
 ### Common fields
 
@@ -18,8 +18,8 @@ Essentially all currencies share this common ground:
 
 - `name: string`: the display name of a currency. For instance `"Bitcoin"` or `"Euro"`.
 - `ticker: string`: the ticker name in exchanges and used for rates (for instance BTC or EUR).
-- `units: Unit[]`: all available `Unit` of the currency (see below what is a Unit). by convention, [0] is the default and have "highest" magnitude.
-- `disableCountervalue?: boolean`: if available, this field express that we should assume there is not valable countervalue for this coin. (because either we can't trade it or it's not available enough to assume enabling its value)
+- `units: Unit[]`: all available `Unit` of the currency (see below what is a Unit). by convention, [0] is the default and has the "highest" magnitude.
+- `disableCountervalue?: boolean`: if available, this field expresses that we should assume there is not valid counter value for this coin. (because either we can't trade it or it's not available enough to assume enabling its value)
 - `symbol?: string`: if available, it's a short symbol for the coin. _in practice it's currently not used and might be dropped._
 
 #### Unit
@@ -37,12 +37,12 @@ type Unit = {
 };
 ```
 
-A unit describes a given representation of a currency for humans. A currency can have many units, for instance we can assume Euro have euros and cents. We can define Bitcoin to have: bitcoin, mBTC, bit, satoshi (but that's up to us really).
+A unit describes a given representation of a currency for humans. A currency can have many units, for instance, we can assume Euro have euros and cents. We can define Bitcoin to have: bitcoin, mBTC, bit, satoshi (but that's up to us really).
 
-There are however two essential property we must respect:
+There are however two essential properties we must respect:
 
-- the first unit (`[0]`) in an array of unit is the **highest unit**, typically the default and commonly used unit (euro, bitcoin)
-- the last unit must have a **magnitude of 0**: it is the smallest unit which in fine determine the magnitude of the coin (the most atomic unit representable in this currency) and drive integers representation.
+- the first unit (`[0]`) in an array of units is the **highest unit**, typically the default and commonly used unit (euro, bitcoin)
+- the last unit must have a **magnitude of 0**: it is the smallest unit which in fine determines the magnitude of the coin (the most atomic unit representable in this currency) and drives integers representation.
 
 Here is an example of Bitcoin units:
 
@@ -71,9 +71,9 @@ Here is an example of Bitcoin units:
 ];
 ```
 
-The field `showAllDigits` is generally unset for all crypto currencies and set for fiat currencies to true (but there are exceptions). It forces a unit to displayed all digits even if it's all zeros.
+The field `showAllDigits` is generally unset for all cryptocurrencies and set for fiat currencies to true (but there are exceptions). It forces a unit to display all digits even if it's all zeros.
 
-We don't want showAllDigits for currencies because they generally have a lot of magnitude, for instance Ethereum have 18 which would turn `ETH 42.100000000000000000`. Instead we want `ETH 42.1`.
+We don't want showAllDigits for currencies because they generally have a lot of magnitudes, for instance, Ethereum has 18 which would turn `ETH 42.100000000000000000`. Instead, we want `ETH 42.1`.
 
 At the opposite, it is commonly wanted that for popular fiats like EUR we will always display `EUR 42.10` and never `EUR 42.1`.
 
