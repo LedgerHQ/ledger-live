@@ -55,11 +55,7 @@ class DeviceNameRow extends PureComponent<Props> {
         compact
         top
       >
-        <LText
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          style={styles.accountName}
-        >
+        <LText numberOfLines={1} style={styles.accountName}>
           {savedName}
         </LText>
       </Row>

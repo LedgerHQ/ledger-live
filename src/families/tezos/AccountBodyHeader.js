@@ -81,12 +81,7 @@ const styles = StyleSheet.create({
 });
 
 const OpCounterValue = ({ children }: *) => (
-  <LText
-    tertiary
-    numberOfLines={1}
-    ellipsizeMode="tail"
-    style={styles.counterValue}
-  >
+  <LText tertiary numberOfLines={1} style={styles.counterValue}>
     {children}
   </LText>
 );
@@ -141,12 +136,7 @@ const TezosAccountBodyHeader = ({
               <LText semiBold style={styles.delegatorName}>
                 {name}
               </LText>
-              <LText
-                tertiary
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.currencyValue}
-              >
+              <LText tertiary numberOfLines={1} style={styles.currencyValue}>
                 <CurrencyUnitValue showCode unit={unit} value={amount} />
               </LText>
             </View>

@@ -101,7 +101,6 @@ class AccountRow extends PureComponent<Props, State> {
                   <LText
                     semiBold
                     numberOfLines={1}
-                    ellipsizeMode="middle"
                     style={styles.accountNameText}
                   >
                     {account.name}

@@ -113,7 +113,6 @@ class OperationRow extends PureComponent<Props, *> {
               <LText
                 numberOfLines={1}
                 semiBold
-                ellipsizeMode="tail"
                 style={[styles.bodyLeft, styles.topRow]}
               >
                 {multipleAccounts ? getAccountName(account) : text}
@@ -121,7 +120,6 @@ class OperationRow extends PureComponent<Props, *> {
               <LText
                 tertiary
                 numberOfLines={1}
-                ellipsizeMode="tail"
                 style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
               >
                 <CurrencyUnitValue
@@ -176,12 +174,7 @@ class OperationRow extends PureComponent<Props, *> {
 }
 
 const OpCounterValue = ({ children }: { children: * }) => (
-  <LText
-    tertiary
-    numberOfLines={1}
-    ellipsizeMode="tail"
-    style={styles.bottomRow}
-  >
+  <LText tertiary numberOfLines={1} style={styles.bottomRow}>
     {children}
   </LText>
 );

@@ -41,12 +41,7 @@ class SubAccountRow extends PureComponent<Props> {
         <View accessible style={styles.innerContainer}>
           <CurrencyIcon size={24} currency={currency} />
           <View style={styles.inner}>
-            <LText
-              semiBold
-              numberOfLines={1}
-              ellipsizeMode="middle"
-              style={styles.accountNameText}
-            >
+            <LText semiBold numberOfLines={1} style={styles.accountNameText}>
               {name}
             </LText>
           </View>
