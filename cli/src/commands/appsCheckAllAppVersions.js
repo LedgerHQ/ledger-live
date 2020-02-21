@@ -145,7 +145,12 @@ const findCandidates = async (
     return app.application_versions
       .filter(
         v =>
-          v.providers.includes(1) && v.device_versions.includes(deviceVersionId)
+          v.providers.includes(1) &&
+          v.device_versions.includes(deviceVersionId) &&
+          // heuristic to see if app is compatible...
+          v.firmware.startsWith(
+            deviceModel.id.toLowerCase() + "/" + deviceInfo.version
+          )
       )
       .map(version => {
         return {
@@ -209,37 +214,38 @@ const getCandidateName = (candidate: Candidate) => {
 const checkInstalled = (installed, candidate: Candidate) => {
   const name = getCandidateName(candidate);
   const ins = installed.find(i => i.name === candidate.version.name);
-  if (!ins) {
-    console.error("FAIL " + name + " was not correctly installed");
-    return;
-  }
-  const hashMatches = ins.hash === candidate.version.hash;
-  const hasBytes = !!candidate.version.bytes;
   let result;
 
-  if (hashMatches && hasBytes) {
-    result = {
-      versionId: candidate.version.id,
-      appPath: candidate.version.firmware,
-      status: "OK"
-    };
-    console.log("OK " + name);
+  if (!ins) {
+    console.error("FAIL " + name + " was not correctly installed");
+    return empty();
   } else {
-    const message =
-      (hashMatches
-        ? ""
-        : " have BAD HASH. API have " +
-          candidate.version.hash +
-          " but device have " +
-          ins.hash) + (hasBytes ? "" : " DOES NOT have bytes defined!");
+    const hashMatches = ins.hash === candidate.version.hash;
+    const hasBytes = !!candidate.version.bytes;
+    if (hashMatches && hasBytes) {
+      result = {
+        versionId: candidate.version.id,
+        appPath: candidate.version.firmware,
+        status: "OK"
+      };
+      console.log("OK " + name);
+    } else {
+      const message =
+        (hashMatches
+          ? ""
+          : " have BAD HASH. API have " +
+            candidate.version.hash +
+            " but device have " +
+            ins.hash) + (hasBytes ? "" : " DOES NOT have bytes defined!");
 
-    result = {
-      versionId: candidate.version.id,
-      appPath: candidate.version.firmware,
-      status: "KO",
-      error: message
-    };
-    console.error("FAIL " + name + message);
+      result = {
+        versionId: candidate.version.id,
+        appPath: candidate.version.firmware,
+        status: "KO",
+        error: message
+      };
+      console.error("FAIL " + name + message);
+    }
   }
 
   results = results
@@ -302,7 +308,7 @@ export default {
               candidatesNew = [];
               candidates.forEach(c => {
                 const result = results.find(r => r.versionId === c.version.id);
-                if (process.env.VERBOSE) {
+                if (process.env.VERBOSE_CANDIDATE) {
                   console.log(
                     c.version.id,
                     c.version.firmware,
@@ -362,7 +368,7 @@ export default {
                         versionId: candidate.version.id,
                         appPath: candidate.version.firmware,
                         status: "KO",
-                        error: "FAILED installing"
+                        error: "FAILED installing, got " + String(e.message)
                       };
                       results = results
                         .filter(r => r.versionId !== result.versionId)
