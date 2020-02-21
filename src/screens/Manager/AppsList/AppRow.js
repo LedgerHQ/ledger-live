@@ -2,8 +2,6 @@ import React, { memo, useMemo, useCallback } from "react";
 
 import { View, StyleSheet } from "react-native";
 
-import * as Animatable from "react-native-animatable";
-
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 
 import { formatSize, State, Action } from "@ledgerhq/live-common/lib/apps";

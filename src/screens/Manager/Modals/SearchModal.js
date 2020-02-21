@@ -38,8 +38,6 @@ type Props = {
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   currentProgress: *,
-  onOpen: () => void,
-  onClose: () => void,
 };
 
 export default ({
@@ -51,8 +49,6 @@ export default ({
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   currentProgress,
-  onOpen,
-  onClose,
 }: Props) => {
   const textInput = useRef();
   const listRef = useRef();
@@ -77,7 +73,12 @@ export default ({
   const onModalHide = useCallback(() => {
     if (depInstall) setAppInstallWithDependencies(depInstall);
     else if (depUninstall) setAppUninstallWithDependencies(depUninstall);
-  });
+  }, [
+    depInstall,
+    depUninstall,
+    setAppInstallWithDependencies,
+    setAppUninstallWithDependencies,
+  ]);
 
   const [query, setQuery] = useState(null);
   const clear = useCallback(() => setQuery(""), [setQuery]);
@@ -125,7 +126,7 @@ export default ({
         isInstalledView={isInstalledView}
         animation={false}
         setAppInstallWithDependencies={closeSearchModal}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+        setAppUninstallWithDependencies={closeSearchModal}
         currentProgress={
           (currentProgress &&
             currentProgress.appOp.name === item.name &&
@@ -134,14 +135,7 @@ export default ({
         }
       />
     ),
-    [
-      state,
-      dispatch,
-      isInstalledView,
-      setAppInstallWithDependencies,
-      setAppUninstallWithDependencies,
-      currentProgress,
-    ],
+    [state, dispatch, isInstalledView, closeSearchModal, currentProgress],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
 
@@ -188,7 +182,6 @@ export default ({
         coverScreen
         style={styles.modal}
         onModalShow={focusInput}
-        onModalWillShow={onOpen}
         onModalHide={onModalHide}
       >
         <View style={{ height, backgroundColor: colors.lightGrey }}>
