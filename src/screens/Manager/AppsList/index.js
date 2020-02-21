@@ -46,6 +46,7 @@ const AppsList = ({
       state,
       dispatch,
       key: `${data[index].id}_${isInstalledView ? "Installed" : "Catalog"}`,
+      visible: active,
       isInstalledView,
       currentProgress:
         (currentProgress &&
@@ -60,6 +61,7 @@ const AppsList = ({
       state,
       dispatch,
       isInstalledView,
+      active,
       currentProgress,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,

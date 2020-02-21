@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexWrap: "nowrap",
-    marginBottom: 8,
+    marginVertical: 8,
     height: 90,
   },
   appIcons: {

@@ -38,6 +38,8 @@ type Props = {
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   currentProgress: *,
+  onOpen: () => void,
+  onClose: () => void,
 };
 
 export default ({
@@ -49,6 +51,8 @@ export default ({
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   currentProgress,
+  onOpen,
+  onClose,
 }: Props) => {
   const textInput = useRef();
   const listRef = useRef();
@@ -56,11 +60,11 @@ export default ({
   const openSearchModal = useCallback(() => {
     setQuery("");
     setIsOpen(true);
-  }, [setIsOpen]);
+  }, []);
 
   const closeSearchModal = useCallback(() => {
     setIsOpen(false);
-  }, [setIsOpen]);
+  }, []);
 
   const [query, setQuery] = useState(null);
   const clear = useCallback(() => setQuery(""), [setQuery]);
@@ -109,6 +113,7 @@ export default ({
         animation={false}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
+        visible
         currentProgress={
           (currentProgress &&
             currentProgress.appOp.name === item.name &&
@@ -210,6 +215,8 @@ export default ({
         hasBackDrop={false}
         style={styles.modal}
         onModalShow={focusInput}
+        onModalWillShow={onOpen}
+        onModalWillHide={onClose}
       >
         <View style={{ height, backgroundColor: colors.lightGrey }}>
           <FlatList
