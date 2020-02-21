@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   Platform,
   VirtualizedList,
+  ScrollView,
 } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
@@ -14,6 +15,10 @@ import { Trans } from "react-i18next";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
+
+import { listTokens } from "@ledgerhq/live-common/lib/currencies";
+
+import Button from "../../../components/Button";
 
 import SearchIcon from "../../../icons/Search";
 import NoResults from "../../../icons/NoResults";
@@ -26,7 +31,129 @@ import Styles from "../../../navigation/styles";
 import AppRow from "../AppsList/AppRow";
 
 import getWindowDimensions from "../../../logic/getWindowDimensions";
+import AppIcon from "../AppsList/AppIcon";
 
+const tokens = listTokens();
+
+type PlaceholderProps = {
+  query: string,
+  addAccount: () => void,
+  onInstall: (name: string) => void,
+  installed: InstalledItem[],
+  apps: App[],
+};
+
+const Placeholder = ({
+  query,
+  addAccount,
+  onInstall,
+  installed,
+  apps,
+}: PlaceholderProps) => {
+  const found = useMemo(
+    () =>
+      tokens.find(
+        token =>
+          token.name.toLocaleLowerCase().includes(query.toLowerCase()) ||
+          token.ticker.toLocaleLowerCase().includes(query.toLowerCase()),
+      ),
+    [query],
+  );
+
+  const parentInstalled = useMemo(
+    () =>
+      found &&
+      found.parentCurrency &&
+      installed.find(({ name }) => name === found.parentCurrency.name),
+    [found, installed],
+  );
+
+  const parent = useMemo(
+    () =>
+      found &&
+      found.parentCurrency &&
+      apps.find(({ name }) => name === found.parentCurrency.name),
+    [found, apps],
+  );
+
+  const install = useCallback(() => parent && onInstall(parent.name), [
+    parent,
+    onInstall,
+  ]);
+
+  return found && parent ? (
+    <ScrollView>
+      <View style={styles.noResult}>
+        <View style={styles.placeholderIcon}>
+          <AppIcon icon={parent.icon} size={60} />
+        </View>
+        {!parentInstalled && (
+          <LText semiBold style={styles.noResultText}>
+            <Trans
+              i18nKey="manager.noAppNeededForToken"
+              values={{
+                appName: parent.name,
+                tokenName: `${found.name} (${found.ticker})`,
+              }}
+            />
+          </LText>
+        )}
+        <LText style={styles.noResultDesc}>
+          <Trans
+            i18nKey={
+              !parentInstalled
+                ? "manager.tokenAppDisclaimer"
+                : "manager.tokenAppDisclaimerInstalled"
+            }
+            values={{
+              appName: parent.name,
+              tokenName: found.name,
+              tokenType: found.tokenType.toUpperCase(),
+            }}
+          >
+            {"placeholder"}
+            <LText bold>{"placeholder"}</LText>
+            {"placeholder"}
+            <LText bold>{"placeholder"}</LText>
+          </Trans>
+        </LText>
+        <View style={styles.placeholderButtons}>
+          {!parentInstalled && (
+            <Button
+              type="primary"
+              onPress={install}
+              containerStyle={styles.placeholderButton}
+              title={
+                <Trans
+                  i18nKey="manager.intallParentApp"
+                  values={{ appName: parent.name }}
+                />
+              }
+            />
+          )}
+          <Button
+            onPress={addAccount}
+            type="secondary"
+            title={<Trans i18nKey="manager.goToAccounts" />}
+            containerStyle={styles.placeholderButton}
+          />
+        </View>
+      </View>
+    </ScrollView>
+  ) : (
+    <View style={styles.noResult}>
+      <View style={styles.noResultIcon}>
+        <NoResults color={colors.fog} />
+      </View>
+      <LText bold style={styles.noResultText}>
+        <Trans i18nKey="manager.appList.noResultsFound" />
+      </LText>
+      <LText style={styles.noResultDesc}>
+        <Trans i18nKey="manager.appList.noResultsDesc" />
+      </LText>
+    </View>
+  );
+};
 const { height } = getWindowDimensions();
 
 type Props = {
@@ -38,6 +165,7 @@ type Props = {
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   currentProgress: *,
+  navigation: *,
 };
 
 export default ({
@@ -49,6 +177,7 @@ export default ({
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   currentProgress,
+  navigation,
 }: Props) => {
   const textInput = useRef();
   const listRef = useRef();
@@ -98,22 +227,38 @@ export default ({
     { type: "marketcap", order: "desc" },
   );
 
+  const addAccount = useCallback(() => {
+    navigation.navigate("AddAccounts");
+    setIsOpen(false);
+  }, [navigation]);
+
+  const onInstall = useCallback(
+    name => {
+      dispatch({ type: "install", name });
+      setIsOpen(false);
+    },
+    [dispatch],
+  );
+
   const NoResult = useMemo(
     () =>
       sortedApps.length <= 0 && (
-        <View style={styles.noResult}>
-          <View style={styles.noResultIcon}>
-            <NoResults color={colors.fog} />
-          </View>
-          <LText bold style={styles.noResultText}>
-            <Trans i18nKey="manager.appList.noResultsFound" />
-          </LText>
-          <LText style={styles.noResultDesc}>
-            <Trans i18nKey="manager.appList.noResultsDesc" />
-          </LText>
-        </View>
+        <Placeholder
+          query={query}
+          addAccount={addAccount}
+          onInstall={onInstall}
+          installed={state.installed}
+          apps={state.apps}
+        />
       ),
-    [sortedApps.length],
+    [
+      addAccount,
+      onInstall,
+      query,
+      sortedApps.length,
+      state.apps,
+      state.installed,
+    ],
   );
 
   const renderRow = useCallback(
@@ -184,7 +329,7 @@ export default ({
         onModalShow={focusInput}
         onModalHide={onModalHide}
       >
-        <View style={{ height, backgroundColor: colors.lightGrey }}>
+        <SafeAreaView style={{ height, backgroundColor: colors.lightGrey }}>
           <View style={styles.header}>
             <View style={styles.searchBar}>
               <View style={styles.searchBarIcon}>
@@ -215,7 +360,8 @@ export default ({
               </LText>
             </Touchable>
           </View>
-          <SafeAreaView style={styles.searchList}>
+          {NoResult}
+          <View style={styles.searchList}>
             <VirtualizedList
               listKey="SEARCH"
               keyExtractor={keyExtractor}
@@ -225,9 +371,8 @@ export default ({
               getItem={(d, i) => d[i]}
               getItemCount={() => sortedApps.length}
             />
-          </SafeAreaView>
-          {NoResult}
-        </View>
+          </View>
+        </SafeAreaView>
       </ReactNativeModal>
     </>
   );
@@ -306,15 +451,13 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "ios" ? 74 : 54,
   },
   noResult: {
-    position: "absolute",
-    top: 54,
-    left: 0,
+    flex: 2,
     width: "100%",
-    height: height / 2,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 0,
+    padding: 48,
   },
   noResultIcon: {
     marginLeft: 25,
@@ -324,11 +467,25 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 21,
     color: colors.darkBlue,
-    marginBottom: 8,
+    marginBottom: 16,
+    textAlign: "center",
   },
   noResultDesc: {
     fontSize: 14,
     lineHeight: 17,
     color: colors.grey,
+    textAlign: "center",
   },
+  placeholderIcon: {
+    padding: 16,
+  },
+  placeholderButtons: {
+    flexBasis: "auto",
+    flexDirection: "column",
+    width: "100%",
+    alignContent: "center",
+    justifyContent: "center",
+    marginTop: 32,
+  },
+  placeholderButton: { height: 48, marginBottom: 16 },
 });

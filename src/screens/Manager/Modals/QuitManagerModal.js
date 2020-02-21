@@ -53,23 +53,23 @@ const QuitManagerModal = ({
       </View>
       <View style={styles.buttonRow}>
         <Button
-          containerStyle={styles.button}
+          containerStyle={[styles.button]}
+          title={<Trans i18nKey="errors.ManagerQuitPage.quit" />}
+          useTouchable
+          onPress={onConfirm}
+          type={"secondary"}
+          event="ManagerQuitApp"
+          eventProperties={{ action: actionRunning }}
+        />
+        <Button
+          containerStyle={[styles.button, styles.buttonMargin]}
           title={
             <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.stay`} />
           }
           useTouchable
           onPress={onClose}
-          type={"secondary"}
-          event="ManagerCancelQuitApp"
-        />
-        <Button
-          containerStyle={[styles.button, styles.buttonMargin]}
-          title={<Trans i18nKey="errors.ManagerQuitPage.quit" />}
-          useTouchable
-          onPress={onConfirm}
           type={"primary"}
-          event="ManagerQuitApp"
-          eventProperties={{ action: actionRunning }}
+          event="ManagerCancelQuitApp"
         />
       </View>
     </ActionModal>
@@ -79,7 +79,7 @@ const QuitManagerModal = ({
 const styles = StyleSheet.create({
   storageImage: {
     width: 80,
-    marginBottom: 24,
+    marginVertical: 24,
   },
   title: {
     lineHeight: 24,
