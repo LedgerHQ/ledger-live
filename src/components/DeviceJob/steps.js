@@ -173,7 +173,7 @@ export const listApps: Step = {
         }
         title={
           <Trans
-            i18nKey="SelectDevice.steps.listApps.title"
+            i18nKey="SelectDevice.steps.genuineCheck.title"
             values={inferWordingValues(meta)}
           />
         }
@@ -195,6 +195,7 @@ export const listApps: Step = {
       map((e: *) => ({
         ...meta,
         ...(e.type === "result" ? { appRes: e.result } : {}),
+        allowManagerRequested: e.type === "device-permission-requested",
       })),
     ),
 };
