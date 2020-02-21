@@ -28,6 +28,7 @@ const ActionModal = ({
     onClose={onClose}
     preventBackdropClick={false}
     containerStyle={{ paddingBottom: 116 }}
+    coverScreen
   >
     <SafeAreaView style={styles.root}>
       {children}

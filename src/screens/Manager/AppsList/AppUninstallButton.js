@@ -28,7 +28,8 @@ const AppUninstallButton = ({
   const needsDependencies = useAppUninstallNeedsDeps(state, app);
 
   const uninstallApp = useCallback(() => {
-    if (needsDependencies) setAppUninstallWithDependencies(needsDependencies);
+    if (needsDependencies && setAppUninstallWithDependencies)
+      setAppUninstallWithDependencies(needsDependencies);
     else dispatch({ type: "uninstall", name });
   }, [needsDependencies, setAppUninstallWithDependencies, dispatch, name]);
 

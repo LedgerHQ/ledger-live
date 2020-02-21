@@ -27,6 +27,8 @@ const AppDependenciesModal = ({
   const { app, dependencies = [] } = appInstallWithDependencies || {};
   const { name } = app || {};
 
+  console.log(app, dependencies);
+
   const installAppDependencies = useCallback(() => {
     dispatch({ type: "install", name });
     onClose();

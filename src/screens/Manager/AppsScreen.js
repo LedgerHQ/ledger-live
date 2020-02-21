@@ -87,8 +87,6 @@ const AppsScreen = ({
   const [sort, setSort] = useState("marketcap");
   const [order, setOrder] = useState("desc");
 
-  const [searchOpen, setSearchOpen] = useState(false);
-
   const [position] = useState(() => new Animated.Value(0));
 
   const searchOpacity = interpolate(position, {
@@ -111,9 +109,6 @@ const AppsScreen = ({
           listRef.current.scrollToIndex({ index: 1 });
       }, 100);
   }, [scrollY]);
-
-  const openSearch = useCallback(() => setSearchOpen(true), []);
-  const closeSearch = useCallback(() => setSearchOpen(false), []);
 
   const jumpTo = useCallback(
     key => {
@@ -180,7 +175,7 @@ const AppsScreen = ({
             apps={catalog}
             state={state}
             dispatch={dispatch}
-            active={!searchOpen}
+            active={index === 0}
             currentProgress={currentProgress}
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
@@ -214,7 +209,7 @@ const AppsScreen = ({
               apps={device}
               state={state}
               dispatch={dispatch}
-              active={!searchOpen}
+              active={index === 1}
               renderNoResults={renderNoResults}
               currentProgress={currentProgress}
               setAppInstallWithDependencies={setAppInstallWithDependencies}
@@ -295,8 +290,6 @@ const AppsScreen = ({
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
             currentProgress={currentProgress}
-            onOpen={openSearch}
-            onClose={closeSearch}
           />
           <View style={styles.filterButton}>
             <AppFilter
@@ -326,8 +319,6 @@ const AppsScreen = ({
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               currentProgress={currentProgress}
-              onOpen={openSearch}
-              onClose={closeSearch}
             />
           </Animated.View>
         )}

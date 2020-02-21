@@ -36,7 +36,8 @@ const AppInstallButton = ({
   const needsDependencies = useAppInstallNeedsDeps(state, app);
 
   const installApp = useCallback(() => {
-    if (needsDependencies) setAppInstallWithDependencies(needsDependencies);
+    if (needsDependencies && setAppInstallWithDependencies)
+      setAppInstallWithDependencies(needsDependencies);
     else dispatch({ type: "install", name });
   }, [dispatch, name, needsDependencies, setAppInstallWithDependencies]);
 

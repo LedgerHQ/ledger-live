@@ -3,8 +3,8 @@ import {
   View,
   StyleSheet,
   SafeAreaView,
-  FlatList,
   Platform,
+  VirtualizedList,
 } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
@@ -57,14 +57,27 @@ export default ({
   const textInput = useRef();
   const listRef = useRef();
   const [isOpened, setIsOpen] = useState(false);
+  const [depInstall, setDepsInstall] = useState();
+  const [depUninstall, setDepsUninstall] = useState();
   const openSearchModal = useCallback(() => {
     setQuery("");
     setIsOpen(true);
+    setDepsInstall();
+    setDepsUninstall();
   }, []);
 
-  const closeSearchModal = useCallback(() => {
+  const closeSearchModal = useCallback(deps => {
     setIsOpen(false);
+    if (deps) {
+      if (deps.dependencies) setDepsInstall(deps);
+      else if (deps.dependents) setDepsUninstall(deps);
+    }
   }, []);
+
+  const onModalHide = useCallback(() => {
+    if (depInstall) setAppInstallWithDependencies(depInstall);
+    else if (depUninstall) setAppUninstallWithDependencies(depUninstall);
+  });
 
   const [query, setQuery] = useState(null);
   const clear = useCallback(() => setQuery(""), [setQuery]);
@@ -111,9 +124,8 @@ export default ({
         dispatch={dispatch}
         isInstalledView={isInstalledView}
         animation={false}
-        setAppInstallWithDependencies={setAppInstallWithDependencies}
+        setAppInstallWithDependencies={closeSearchModal}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-        visible
         currentProgress={
           (currentProgress &&
             currentProgress.appOp.name === item.name &&
@@ -152,47 +164,6 @@ export default ({
     }
   }, [listRef]);
 
-  const elements = [
-    <View style={styles.header}>
-      <View style={styles.searchBar}>
-        <View style={styles.searchBarIcon}>
-          <SearchIcon size={16} color={colors.smoke} />
-        </View>
-        <TextInput
-          ref={textInput}
-          returnKeyType="search"
-          maxLength={50}
-          onChangeText={setQuery}
-          clearButtonMode="always"
-          style={[styles.searchBarText, styles.searchBarInput]}
-          placeholder={placeholder}
-          placeholderTextColor={colors.smoke}
-          onInputCleared={clear}
-          onFocus={onFocus}
-          value={query}
-          numberOfLines={1}
-        />
-      </View>
-      <Touchable
-        style={styles.cancelButton}
-        onPress={closeSearchModal}
-        event="ManagerAppSearchModalClose"
-      >
-        <LText style={styles.cancelButtonText}>
-          <Trans i18nKey="common.cancel" />
-        </LText>
-      </Touchable>
-    </View>,
-    <SafeAreaView style={styles.searchList}>
-      <FlatList
-        listKey="SEARCH"
-        data={sortedApps}
-        renderItem={renderRow}
-        keyExtractor={keyExtractor}
-      />
-    </SafeAreaView>,
-  ];
-
   return (
     <>
       <Touchable
@@ -212,21 +183,56 @@ export default ({
         isVisible={isOpened}
         useNativeDriver
         hideModalContentWhileAnimating
-        hasBackDrop={false}
+        onBackButtonPress={closeSearchModal}
+        onBackdropPress={closeSearchModal}
+        coverScreen
         style={styles.modal}
         onModalShow={focusInput}
         onModalWillShow={onOpen}
-        onModalWillHide={onClose}
+        onModalHide={onModalHide}
       >
         <View style={{ height, backgroundColor: colors.lightGrey }}>
-          <FlatList
-            ref={listRef}
-            data={elements}
-            renderItem={({ item }) => item}
-            keyExtractor={(_, i) => String(i)}
-            stickyHeaderIndices={[0]}
-            bounces={false}
-          />
+          <View style={styles.header}>
+            <View style={styles.searchBar}>
+              <View style={styles.searchBarIcon}>
+                <SearchIcon size={16} color={colors.smoke} />
+              </View>
+              <TextInput
+                ref={textInput}
+                returnKeyType="search"
+                maxLength={50}
+                onChangeText={setQuery}
+                clearButtonMode="always"
+                style={[styles.searchBarText, styles.searchBarInput]}
+                placeholder={placeholder}
+                placeholderTextColor={colors.smoke}
+                onInputCleared={clear}
+                onFocus={onFocus}
+                value={query}
+                numberOfLines={1}
+              />
+            </View>
+            <Touchable
+              style={styles.cancelButton}
+              onPress={closeSearchModal}
+              event="ManagerAppSearchModalClose"
+            >
+              <LText style={styles.cancelButtonText}>
+                <Trans i18nKey="common.cancel" />
+              </LText>
+            </Touchable>
+          </View>
+          <SafeAreaView style={styles.searchList}>
+            <VirtualizedList
+              listKey="SEARCH"
+              keyExtractor={keyExtractor}
+              data={sortedApps}
+              renderItem={renderRow}
+              initialNumToRender={10}
+              getItem={(d, i) => d[i]}
+              getItemCount={() => sortedApps.length}
+            />
+          </SafeAreaView>
           {NoResult}
         </View>
       </ReactNativeModal>

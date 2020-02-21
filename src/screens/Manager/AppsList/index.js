@@ -83,7 +83,6 @@ const AppsList = ({
       data={apps}
       renderItem={renderRow}
       getItem={getItem}
-      initialNumToRender={10}
       getItemCount={() => apps.length}
     />
   );
