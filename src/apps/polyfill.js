@@ -20,6 +20,9 @@ listCryptoCurrencies(true, true).forEach(a => {
   if (!dep || !dep.managerAppName) return; // no dep
   if (dep.managerAppName === a.managerAppName) return; // same app
   declareDep(a.managerAppName, dep.managerAppName);
+  if (!a.isTestnetFor) {
+    declareDep(a.managerAppName + " Test", dep.managerAppName);
+  }
 });
 
 // extra dependencies

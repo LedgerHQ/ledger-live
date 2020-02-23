@@ -89,6 +89,13 @@ class MemoFile {
 
   writeResults(results: Result[]): Promise<void> {
     const data = results
+      .slice(0)
+      .sort(
+        (a, b) =>
+          1000000 * a.status.localeCompare(b.status) +
+          100000 * a.appPath.localeCompare(b.appPath) +
+          (a.versionId - b.versionId)
+      )
       .map(result =>
         [
           result.versionId,
@@ -116,41 +123,47 @@ type Candidate = {
   installQueue: ApplicationVersion[]
 };
 
-const getAPIDeviceVersionId = async (
+const getAPIDeviceVersionIds = async (
   deviceInfo: DeviceInfo
-): Promise<?number> => {
+): Promise<number[]> => {
   const targetId = String(deviceInfo.targetId);
   const { data } = await network({
     method: "GET",
     url: `${getEnv("MANAGER_API_BASE")}/devices`
   });
+  const all = [];
   for (const device of data) {
     for (const deviceVersion of device.device_versions) {
       if (deviceVersion.target_id === targetId) {
-        return deviceVersion.id;
+        all.push(deviceVersion.id);
       }
     }
   }
+  return all;
 };
+
+const compatibleAppVersion = (v, deviceVersionIds, deviceModel, deviceInfo) =>
+  v.providers.includes(1) &&
+  deviceVersionIds.some(id => v.device_versions.includes(id)) &&
+  // heuristic to see if app is compatible...
+  v.firmware.startsWith(
+    deviceModel.id.toLowerCase() + "/" + deviceInfo.version
+  );
 
 const findCandidates = async (
   deviceModel,
   applications: Application[],
   deviceInfo: DeviceInfo
 ): Promise<Candidate[]> => {
-  const deviceVersionId = await getAPIDeviceVersionId(deviceInfo);
-  if (!deviceVersionId) throw new Error("unknown device version plugged");
+  console.log(deviceInfo);
+  const deviceVersionIds = await getAPIDeviceVersionIds(deviceInfo);
+  if (!deviceVersionIds.length)
+    throw new Error("unknown device version plugged");
   const candidates = applications.flatMap(app => {
     const deps = getDependencies(app.name);
     return app.application_versions
-      .filter(
-        v =>
-          v.providers.includes(1) &&
-          v.device_versions.includes(deviceVersionId) &&
-          // heuristic to see if app is compatible...
-          v.firmware.startsWith(
-            deviceModel.id.toLowerCase() + "/" + deviceInfo.version
-          )
+      .filter(v =>
+        compatibleAppVersion(v, deviceVersionIds, deviceModel, deviceInfo)
       )
       .map(version => {
         return {
@@ -163,7 +176,12 @@ const findCandidates = async (
                 return depApp
                   ? depApp.application_versions.find(
                       v =>
-                        v.providers.includes(1) && v.version === version.version
+                        compatibleAppVersion(
+                          v,
+                          deviceVersionIds,
+                          deviceModel,
+                          deviceInfo
+                        ) && v.version === version.version
                     )
                   : null;
               })
@@ -211,14 +229,37 @@ const getCandidateName = (candidate: Candidate) => {
   );
 };
 
+let lastResult;
+
 const checkInstalled = (installed, candidate: Candidate) => {
   const name = getCandidateName(candidate);
-  const ins = installed.find(i => i.name === candidate.version.name);
+  const ins = installed.find(
+    i => i.name === candidate.version.name || i.hash === candidate.version.hash
+  );
   let result;
-
   if (!ins) {
-    console.error("FAIL " + name + " was not correctly installed");
-    return empty();
+    if (installed.length > 0) {
+      const message =
+        " list apps don't find installed app? Found these: " +
+        JSON.stringify(installed);
+      result = {
+        versionId: candidate.version.id,
+        appPath: candidate.version.firmware,
+        status: "KO",
+        error: message
+      };
+      if (
+        lastResult &&
+        lastResult.versionId === result.versionId &&
+        lastResult.status === "KO"
+      ) {
+        result.error += " – " + lastResult.error;
+      }
+      console.error("FAIL " + name + message);
+    } else {
+      console.error("FAIL " + name + " was not correctly installed");
+      return empty();
+    }
   } else {
     const hashMatches = ins.hash === candidate.version.hash;
     const hasBytes = !!candidate.version.bytes;
@@ -331,19 +372,23 @@ export default {
 
             const all = [...candidatesNew, ...candidatesErrors];
 
-            console.log(
-              (
-                (100 * (candidates.length - candidatesNew.length)) /
-                candidates.length
-              ).toFixed(0) +
-                "% of apps versions remaining to test. (" +
-                candidates.length +
-                " in total. " +
-                candidatesNew.length +
-                " new. " +
-                candidatesErrors.length +
-                " errors)"
-            );
+            if (candidates.length) {
+              console.log(
+                (
+                  (100 * (candidates.length - candidatesNew.length)) /
+                  candidates.length
+                ).toFixed(0) +
+                  "% of apps versions tested. (" +
+                  candidates.length +
+                  " in total. " +
+                  candidatesNew.length +
+                  " new. " +
+                  candidatesErrors.length +
+                  " errors)"
+              );
+            } else {
+              console.log("No apps candidate found");
+            }
 
             return [deviceInfo, all];
           }
@@ -370,6 +415,7 @@ export default {
                         status: "KO",
                         error: "FAILED installing, got " + String(e.message)
                       };
+                      lastResult = result;
                       results = results
                         .filter(r => r.versionId !== result.versionId)
                         .concat(result);
