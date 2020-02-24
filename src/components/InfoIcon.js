@@ -10,18 +10,22 @@ type Props = {
   bg: string,
   floatingIcon?: React$Node,
   floatingBg?: string,
+  size: number,
 };
 
 class BluetoothDisabledIcon extends PureComponent<Props> {
+  static defaultProps = {
+    size: 80,
+  };
   render() {
-    const { children, bg, floatingIcon, floatingBg } = this.props;
+    const { children, bg, floatingIcon, floatingBg, size } = this.props;
 
     return (
       <View style={styles.root}>
-        <Circle bg={bg} size={80}>
+        <Circle bg={bg} size={size}>
           {children}
         </Circle>
-        {floatingIcon && floatingBg ? (
+        {!!floatingIcon && floatingBg ? (
           <View style={styles.floating}>
             <Circle bg={floatingBg} size={30}>
               {floatingIcon}

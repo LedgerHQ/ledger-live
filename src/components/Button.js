@@ -22,13 +22,15 @@ const ANIM_DURATION = 300;
 
 type ButtonType =
   | "primary"
+  | "lightPrimary"
   | "negativePrimary"
   | "secondary"
   | "lightSecondary"
+  | "darkSecondary"
   | "tertiary"
   | "alert";
 
-type BaseProps = {
+export type BaseButtonProps = {
   type: ButtonType,
   // when on press returns a promise,
   // the button will toggle in a pending state and
@@ -42,6 +44,7 @@ type BaseProps = {
   IconLeft?: *,
   IconRight?: *,
   disabled?: boolean,
+  outline?: Boolean,
   // for analytics
   event: string,
   eventProperties?: Object,
@@ -51,7 +54,7 @@ type Props = BaseProps & {
   useTouchable: boolean,
 };
 
-const ButtonWrapped = (props: BaseProps) => (
+const ButtonWrapped = (props: BaseButtonProps) => (
   <ButtonUseTouchable.Consumer>
     {useTouchable => <Button useTouchable={useTouchable} {...props} />}
   </ButtonUseTouchable.Consumer>
@@ -65,6 +68,10 @@ class Button extends PureComponent<
     anim: Animated.Value,
   },
 > {
+  static defaultProps = {
+    outline: true,
+  };
+
   state = {
     pending: false,
     spinnerOn: false,
@@ -136,6 +143,7 @@ class Button extends PureComponent<
       disabled,
       type,
       useTouchable,
+      outline,
       // everything else
       containerStyle,
       ...otherProps
@@ -151,7 +159,11 @@ class Button extends PureComponent<
     const isDisabled = disabled || !onPress || pending;
 
     const needsBorder =
-      (type === "secondary" || type === "tertiary") && !isDisabled;
+      (type === "secondary" ||
+        type === "tertiary" ||
+        type === "darkSecondary") &&
+      !isDisabled &&
+      outline;
 
     const mainContainerStyle = [
       styles.container,
@@ -221,19 +233,19 @@ class Button extends PureComponent<
 
         <Animated.View style={titleSliderStyle}>
           {IconLeft ? (
-            <View style={title ? { marginRight: 10 } : {}}>
+            <View style={title ? { paddingRight: 10 } : {}}>
               <IconLeft size={16} color={iconColor} />
             </View>
           ) : null}
 
           {title ? (
-            <LText secondary semiBold style={textStyle}>
+            <LText secondary numberOfLines={1} semiBold style={textStyle}>
               {title}
             </LText>
           ) : null}
 
           {IconRight ? (
-            <View style={title ? { marginLeft: 10 } : {}}>
+            <View style={title ? { paddingLeft: 10 } : {}}>
               <IconRight size={16} color={iconColor} />
             </View>
           ) : null}
@@ -265,6 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 10,
   },
   title: {
     fontSize: 16,
@@ -285,6 +298,9 @@ const styles = StyleSheet.create({
   primaryContainer: { backgroundColor: colors.live },
   primaryTitle: { color: "white" },
 
+  lightPrimaryContainer: { backgroundColor: colors.lightLive },
+  lightPrimaryTitle: { color: colors.live },
+
   negativePrimaryContainer: { backgroundColor: "white" },
   negativePrimaryTitle: { color: colors.live },
 
@@ -294,6 +310,10 @@ const styles = StyleSheet.create({
 
   lightSecondaryContainer: { backgroundColor: "transparent" },
   lightSecondaryTitle: { color: colors.live },
+
+  darkSecondaryContainer: { backgroundColor: "transparent" },
+  darkSecondaryTitle: { color: colors.smoke },
+  darkSecondaryOutlineBorder: { borderColor: colors.smoke },
 
   tertiaryContainer: { backgroundColor: "transparent" },
   tertiaryTitle: { color: colors.live },

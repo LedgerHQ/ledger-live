@@ -22,4 +22,6 @@ export const urls = {
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154",
   delegation: "https://www.ledger.com/staking-tezos",
+  appSupport:
+    "https://support.ledger.com/hc/en-us/categories/115000811829-Apps",
 };

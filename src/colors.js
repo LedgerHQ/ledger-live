@@ -38,6 +38,7 @@ export default {
   lightAlert: "#ea2e490c",
   lightFog: "#EEEEEE",
   lightGrey: "#F9F9F9",
+  lightOrange: "#FF984F",
   translucentGreen: "rgba(102, 190, 84, 0.2)",
   translucentGrey: "rgba(153, 153, 153, 0.2)",
 

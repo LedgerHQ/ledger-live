@@ -1,7 +1,11 @@
 // @flow
 import React from "react";
 import i18next from "i18next";
-import { createSwitchNavigator, createAppContainer } from "react-navigation";
+import {
+  createSwitchNavigator,
+  createAppContainer,
+  NavigationActions,
+} from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import {
   createBottomTabNavigator,
@@ -52,8 +56,6 @@ import CurrencySettings from "./screens/Settings/CryptoAssets/Currencies/Currenc
 import CurrenciesList from "./screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import RatesList from "./screens/Settings/CryptoAssets/Rates/RatesList";
 import RateProviderSettings from "./screens/Settings/CryptoAssets/Rates/RateProviderSettings";
-import ManagerAppsList from "./screens/Manager/AppsList";
-import ManagerDevice from "./screens/Manager/Device";
 import ReceiveSelectAccount from "./screens/ReceiveFunds/01-SelectAccount";
 import ReceiveConnectDevice from "./screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
@@ -96,6 +98,9 @@ import {
   topTabNavigatorConfig,
   defaultNavigationOptions,
 } from "./navigation/navigatorConfig";
+
+// app manager
+import ManagerScreen from "./screens/Manager/Manager";
 
 // add accounts
 import AddAccountsHeaderRightClose from "./screens/AddAccounts/AddAccountsHeaderRightClose";
@@ -182,16 +187,8 @@ SettingsStack.navigationOptions = {
   ),
 };
 
-const ManagerMain = createMaterialTopTabNavigator(
-  {
-    ManagerAppsList,
-    ManagerDevice,
-  },
-  topTabNavigatorConfig,
-);
-
-ManagerMain.navigationOptions = {
-  title: i18next.t("tabs.manager"),
+ManagerScreen.navigationOptions = {
+  title: i18next.t("manager.tabTitle"),
   headerStyle: styles.headerNoShadow,
 };
 
@@ -199,7 +196,8 @@ const ManagerStack = createStackNavigator(
   {
     // $FlowFixMe
     Manager,
-    ManagerMain,
+    // $FlowFixMe
+    ManagerMain: ManagerScreen,
   },
   {
     ...stackNavigatorConfig,
@@ -273,6 +271,27 @@ const Main = createBottomTabNavigator(
 Main.navigationOptions = {
   header: null,
 };
+
+const defaultManagerGetStateForAction = Main.router.getStateForAction;
+
+/**
+ * blockNavigation nav params handling
+ * stops route changing actions by returning no new routing state
+ */
+Object.assign(Main.router, {
+  getStateForAction(action, state) {
+    if (
+      state &&
+      action.type !== NavigationActions.SET_PARAMS &&
+      state.routes[state.index].params &&
+      state.routes[state.index].params.blockNavigation
+    ) {
+      return null;
+    }
+
+    return defaultManagerGetStateForAction(action, state);
+  },
+});
 
 const ReceiveFunds = createStackNavigator(
   {

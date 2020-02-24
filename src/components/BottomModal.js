@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 
@@ -18,6 +18,7 @@ export type Props = {
   children?: *,
   style?: *,
   preventBackdropClick?: boolean,
+  containerStyle?: *,
 };
 
 // Add some extra padding at the bottom of the modal
@@ -27,57 +28,60 @@ export type Props = {
 // See Jira LL-451 and GitHub #617
 const EXTRA_PADDING_SAMSUNG_FIX = 100;
 
-class BottomModal extends Component<Props> {
-  static defaultProps = {
-    onClose: () => {},
-  };
-  render() {
-    const {
-      isOpened,
-      onClose,
-      children,
-      style,
-      preventBackdropClick,
-      id,
-      ...rest
-    } = this.props;
-    const { width, height } = getWindowDimensions();
+const { width, height } = getWindowDimensions();
 
-    return (
-      <ButtonUseTouchable.Provider value={true}>
-        <ReactNativeModal
-          isVisible={isOpened}
-          onBackdropPress={preventBackdropClick ? () => {} : onClose}
-          onBackButtonPress={preventBackdropClick ? () => {} : onClose}
-          deviceWidth={width}
-          deviceHeight={height}
-          useNativeDriver
-          style={{
-            justifyContent: "flex-end",
-            margin: 0,
-          }}
-          {...rest}
-        >
-          <View style={styles.modal}>
-            <View style={style}>
-              {isOpened && id ? <TrackScreen category={id} /> : null}
-              <StyledStatusBar
-                backgroundColor={
-                  Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
-                }
-                barStyle="light-content"
-              />
-              {children}
-            </View>
+const BottomModal = ({
+  isOpened,
+  onClose = () => {},
+  children,
+  style,
+  preventBackdropClick,
+  id,
+  containerStyle,
+  ...rest
+}: Props) => {
+  const backDropProps = preventBackdropClick
+    ? {}
+    : {
+        onBackdropPress: onClose,
+        onBackButtonPress: onClose,
+      };
+
+  return (
+    <ButtonUseTouchable.Provider value={true}>
+      <ReactNativeModal
+        isVisible={isOpened}
+        deviceWidth={width}
+        deviceHeight={height}
+        useNativeDriver
+        hideModalContentWhileAnimating
+        style={styles.root}
+        {...backDropProps}
+        {...rest}
+      >
+        <View style={[styles.modal, containerStyle]}>
+          <View style={style}>
+            {isOpened && id ? <TrackScreen category={id} /> : null}
+            <StyledStatusBar
+              backgroundColor={
+                Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
+              }
+              barStyle="light-content"
+            />
+            {children}
           </View>
-          <DebugRejectSwitch />
-        </ReactNativeModal>
-      </ButtonUseTouchable.Provider>
-    );
-  }
-}
+        </View>
+        <DebugRejectSwitch />
+      </ReactNativeModal>
+    </ButtonUseTouchable.Provider>
+  );
+};
 
 const styles = StyleSheet.create({
+  root: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
   modal: {
     backgroundColor: colors.white,
     borderTopLeftRadius: 10,
@@ -85,6 +89,22 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: EXTRA_PADDING_SAMSUNG_FIX + 24,
     marginBottom: EXTRA_PADDING_SAMSUNG_FIX * -1,
+  },
+  swipeIndicator: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: 24,
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  swipeIndicatorBar: {
+    width: 100,
+    height: 6,
+    borderRadius: 6,
+    backgroundColor: colors.lightFog,
   },
 });
 

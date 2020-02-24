@@ -77,6 +77,7 @@ const RequireTermsModal = () => {
       id="RequireTermsModal"
       isOpened={!accepted}
       style={styles.modal}
+      preventBackdropClick
     >
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <View style={styles.header}>
