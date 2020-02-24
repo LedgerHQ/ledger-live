@@ -584,9 +584,9 @@
     "ctaImport": "Import desktop accounts"
   },
   "byteSize": {
-    "bytes": "{{size}}bytes",
-    "kbUnit": "{{size}}Kb",
-    "mbUnit": "{{size}}Mb"
+    "bytes": "{{size}} bytes",
+    "kbUnit": "{{size}} Kb",
+    "mbUnit": "{{size}} Mb"
   },
   "time": {
     "day": "Day",

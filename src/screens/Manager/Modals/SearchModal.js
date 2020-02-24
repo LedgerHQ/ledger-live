@@ -54,8 +54,8 @@ const Placeholder = ({
     () =>
       tokens.find(
         token =>
-          token.name.toLocaleLowerCase().includes(query.toLowerCase()) ||
-          token.ticker.toLocaleLowerCase().includes(query.toLowerCase()),
+          token.name.toLowerCase().includes(query.toLowerCase()) ||
+          token.ticker.toLowerCase().includes(query.toLowerCase()),
       ),
     [query],
   );
@@ -389,8 +389,8 @@ const styles = StyleSheet.create({
     width: "100%",
     overflow: "hidden",
     paddingHorizontal: 14,
-    paddingTop: Platform.OS === "ios" ? 24 : 0,
-    height: Platform.OS === "ios" ? 74 : 54,
+    paddingTop: Platform.OS === "ios" ? 44 : 0,
+    height: Platform.OS === "ios" ? 94 : 54,
     flexDirection: "row",
     backgroundColor: colors.white,
   },
