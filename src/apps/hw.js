@@ -28,6 +28,8 @@ export const execWithTransport = (transport: Transport<*>): Exec => (
   return fn(transport, targetId, app);
 };
 
+const appsThatKeepChangingHashes = ["Fido U2F"];
+
 export const listApps = (
   transport: Transport<*>,
   deviceInfo: DeviceInfo
@@ -236,9 +238,9 @@ export const listApps = (
             ((installedAppVersion || availableAppVersion || { bytes: 0 })
               .bytes || 0) / deviceModel.blockSize
           );
-        const updated = availableAppVersion
-          ? availableAppVersion.hash === hash
-          : false;
+        const updated =
+          appsThatKeepChangingHashes.includes(name) ||
+          (availableAppVersion ? availableAppVersion.hash === hash : false);
         const version = installedAppVersion ? installedAppVersion.version : "";
         const availableVersion = availableAppVersion
           ? availableAppVersion.version
