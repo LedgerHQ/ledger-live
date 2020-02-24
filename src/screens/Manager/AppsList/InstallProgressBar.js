@@ -24,6 +24,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
     uninstallQueue,
     recentlyInstalledApps,
     appByName,
+    installed,
   } = state;
 
   const onAddAccount = useCallback(() => {
@@ -39,7 +40,9 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const successInstalls = useMemo(
     () =>
       !hasBeenShown && installQueue.length <= 0 && uninstallQueue.length <= 0
-        ? recentlyInstalledApps.map(name => appByName[name])
+        ? recentlyInstalledApps
+            .filter(appName => installed.some(({ name }) => name === appName))
+            .map(name => appByName[name])
         : [],
     [
       appByName,
@@ -47,6 +50,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
       installQueue.length,
       recentlyInstalledApps,
       uninstallQueue.length,
+      installed,
     ],
   );
 
