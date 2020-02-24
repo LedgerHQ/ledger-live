@@ -329,7 +329,7 @@ export default ({
         onModalShow={focusInput}
         onModalHide={onModalHide}
       >
-        <SafeAreaView style={{ height, backgroundColor: colors.lightGrey }}>
+        <View style={{ height, backgroundColor: colors.lightGrey }}>
           <View style={styles.header}>
             <View style={styles.searchBar}>
               <View style={styles.searchBarIcon}>
@@ -372,7 +372,7 @@ export default ({
               getItemCount={() => sortedApps.length}
             />
           </View>
-        </SafeAreaView>
+        </View>
       </ReactNativeModal>
     </>
   );
@@ -448,7 +448,6 @@ const styles = StyleSheet.create({
   searchList: {
     flex: 1,
     width: "100%",
-    paddingBottom: Platform.OS === "ios" ? 74 : 54,
   },
   noResult: {
     flex: 2,
