@@ -10,6 +10,10 @@ import {
 } from "../account";
 import { genAccount } from "../mock/account";
 
+import "../load/tokens/ethereum/erc20";
+import "../load/tokens/tron/trc10";
+import "../load/tokens/tron/trc20";
+
 test("groupAccountOperationsByDay", () => {
   const account = genAccount("seed_7");
   const res1 = groupAccountOperationsByDay(account, { count: 10 });

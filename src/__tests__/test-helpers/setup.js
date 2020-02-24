@@ -1,7 +1,10 @@
 /* eslint-disable no-console */
 import { implementCountervalues } from "../../countervalues";
-import "../../load/tokens/ethereum/erc20";
 import { setSupportedCurrencies } from "../../data/cryptocurrencies";
+
+import "../../load/tokens/ethereum/erc20";
+import "../../load/tokens/tron/trc10";
+import "../../load/tokens/tron/trc20";
 
 implementCountervalues({
   getAPIBaseURL: () => window.LEDGER_CV_API,
