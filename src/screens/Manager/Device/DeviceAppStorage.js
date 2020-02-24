@@ -3,19 +3,22 @@ import React, { memo, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
+import type { DeviceModel } from "@ledgerhq/devices";
 import type { AppsDistribution } from "@ledgerhq/live-common/lib/apps";
-import { formatSize } from "@ledgerhq/live-common/lib/apps";
 import LText from "../../../components/LText";
 import colors from "../../../colors";
 
 import Warning from "../../../icons/Warning";
 import Touchable from "../../../components/Touchable";
+import ByteSize from "../../../components/ByteSize";
 
 type Props = {
+  deviceModel: DeviceModel,
   distribution: AppsDistribution,
 };
 
 const DeviceAppStorage = ({
+  deviceModel,
   distribution: {
     freeSpaceBytes,
     appsSpaceBytes,
@@ -48,7 +51,7 @@ const DeviceAppStorage = ({
           {shouldWarnMemory && <Warning color={colors.lightOrange} size={15} />}
           <LText bold style={[styles.storageText, storageWarnStyle]}>
             {" "}
-            {formatSize(freeSpaceBytes) || "0kb"}
+            <ByteSize value={freeSpaceBytes} deviceModel={deviceModel} />
           </LText>
           <LText style={[styles.storageText, storageWarnStyle]}>
             {" "}
@@ -77,7 +80,7 @@ const DeviceAppStorage = ({
       </Touchable>
       <View style={[styles.row, styles.infoRow]}>
         <LText style={styles.storageText} bold>
-          {formatSize(totalAppsBytes) || "0kb"}
+          <ByteSize value={totalAppsBytes} deviceModel={deviceModel} />
         </LText>
         <LText style={styles.storageText}>
           {" "}

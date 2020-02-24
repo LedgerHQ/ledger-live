@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 
-import { formatSize, State, Action } from "@ledgerhq/live-common/lib/apps";
+import type { State, Action } from "@ledgerhq/live-common/lib/apps";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/lib/apps/react";
 import { Trans } from "react-i18next";
 import colors from "../../../colors";
@@ -14,6 +14,7 @@ import Warning from "../../../icons/Warning";
 import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
+import ByteSize from "../../../components/ByteSize";
 
 type Props = {
   app: App,
@@ -90,7 +91,7 @@ const AppRow = ({
               semiBold
               style={[styles.versionText, styles.sizeText, styles.warnText]}
             >
-              {formatSize(bytes)}
+              <ByteSize value={bytes} deviceModel={state.deviceModel} />
             </LText>
           </Touchable>
         ) : (
@@ -101,7 +102,7 @@ const AppRow = ({
               notEnoughMemoryToInstall ? styles.warnText : {},
             ]}
           >
-            {formatSize(bytes)}
+            <ByteSize value={bytes} deviceModel={state.deviceModel} />
           </LText>
         )}
         <AppStateButton

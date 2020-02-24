@@ -64,6 +64,7 @@ const AppUpdateAll = ({ state, appsToUpdate, dispatch }: Props) => {
             apps={appsToUpdate}
             onClose={closeModal}
             onConfirm={updateAll}
+            state={state}
           />
         </View>
       )}

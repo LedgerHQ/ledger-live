@@ -77,7 +77,10 @@ const DeviceCard = ({
       </View>
       <View style={styles.separator} />
       <View style={styles.storageSection}>
-        <DeviceAppStorage distribution={distribution} />
+        <DeviceAppStorage
+          distribution={distribution}
+          deviceModel={deviceModel}
+        />
       </View>
     </Card>
   );

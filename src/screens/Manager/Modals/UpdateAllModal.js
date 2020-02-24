@@ -1,44 +1,14 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useCallback } from "react";
 import { StyleSheet, View, FlatList } from "react-native";
-import type { App } from "@ledgerhq/live-common/lib/types/manager";
+import type { State, App } from "@ledgerhq/live-common/lib/types/manager";
 import type { InstalledItem } from "@ledgerhq/live-common/lib/apps";
-import { formatSize } from "@ledgerhq/live-common/lib/apps";
 
 import { Trans } from "react-i18next";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
 import AppIcon from "../AppsList/AppIcon";
 import ActionModal from "./ActionModal";
-
-const renderAppLine = ({
-  item: { name, icon, bytes, version: appVersion, installed },
-}: {
-  item: App & { installed: ?InstalledItem },
-}) => {
-  const version = (installed && installed.version) || appVersion;
-  const availableVersion =
-    (installed && installed.availableVersion) || appVersion;
-
-  return (
-    <View style={styles.appLine}>
-      <AppIcon icon={icon} />
-      <LText semiBold style={styles.appName}>
-        {name}
-      </LText>
-      <LText style={[styles.appLineText, styles.appLineVersion]}>
-        {version}{" "}
-        <Trans
-          i18nKey="manager.appList.versionNew"
-          values={{
-            newVersion:
-              availableVersion !== version ? ` ${availableVersion}` : "",
-          }}
-        />
-      </LText>
-      <LText style={styles.appLineText}>{formatSize(bytes)}</LText>
-    </View>
-  );
-};
+import ByteSize from "../../../components/ByteSize";
 
 const keyExtractor = (item: App, index: number) => String(item.id) + index;
 
@@ -48,6 +18,7 @@ type Props = {
   installed: InstalledItem[],
   onClose: () => void,
   onConfirm: () => void,
+  state: State,
 };
 
 const UpdateAllModal = ({
@@ -56,6 +27,7 @@ const UpdateAllModal = ({
   installed,
   onClose,
   onConfirm,
+  state,
 }: Props) => {
   const modalActions = useMemo(
     () => [
@@ -81,6 +53,41 @@ const UpdateAllModal = ({
     ...app,
     installed: installed.find(({ name }) => name === app.name),
   }));
+
+  const renderAppLine = useCallback(
+    ({
+      item: { name, icon, bytes, version: appVersion, installed },
+    }: {
+      item: App & { installed: ?InstalledItem },
+    }) => {
+      const version = (installed && installed.version) || appVersion;
+      const availableVersion =
+        (installed && installed.availableVersion) || appVersion;
+
+      return (
+        <View style={styles.appLine}>
+          <AppIcon icon={icon} />
+          <LText semiBold style={styles.appName}>
+            {name}
+          </LText>
+          <LText style={[styles.appLineText, styles.appLineVersion]}>
+            {version}{" "}
+            <Trans
+              i18nKey="manager.appList.versionNew"
+              values={{
+                newVersion:
+                  availableVersion !== version ? ` ${availableVersion}` : "",
+              }}
+            />
+          </LText>
+          <LText style={styles.appLineText}>
+            <ByteSize value={bytes} deviceModel={state.deviceModel} />
+          </LText>
+        </View>
+      );
+    },
+    [state.deviceModel],
+  );
 
   return (
     <ActionModal isOpened={isOpened} onClose={onClose} actions={modalActions}>
