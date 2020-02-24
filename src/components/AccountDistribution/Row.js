@@ -72,10 +72,14 @@ const Row = ({
       {icon}
       <View style={styles.content}>
         <View style={styles.row}>
-          <LText semiBold style={styles.darkBlue}>
+          <LText
+            numberOfLines={1}
+            semiBold
+            style={[styles.darkBlue, styles.bodyLeft]}
+          >
             {getAccountName(account)}
           </LText>
-          <LText tertiary style={styles.darkBlue}>
+          <LText tertiary style={[styles.darkBlue, styles.bodyRight]}>
             <CurrencyUnitValue unit={currency.units[0]} value={amount} />
           </LText>
         </View>
@@ -155,6 +159,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     color: colors.grey,
+  },
+  bodyLeft: {
+    flexGrow: 1,
+    flexShrink: 1,
+    height: 20,
+  },
+  bodyRight: {
+    paddingLeft: 4,
   },
 });
 

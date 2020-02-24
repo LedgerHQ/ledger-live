@@ -43,7 +43,6 @@ class AccountCard extends PureComponent<Props> {
               styles.accountNameText,
               { color: disabled ? colors.grey : colors.darkBlue },
             ]}
-            ellipsizeMode="tail"
           >
             {getAccountName(account)}
           </LText>

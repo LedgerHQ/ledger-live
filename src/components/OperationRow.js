@@ -1,7 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
@@ -16,6 +15,7 @@ import type {
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 
+import debounce from "lodash/debounce";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -46,7 +46,7 @@ class OperationRow extends PureComponent<Props, *> {
     displayCurrencyLogo: false,
   };
 
-  goToOperationDetails = () => {
+  goToOperationDetails = debounce(() => {
     const {
       navigation,
       account,
@@ -63,7 +63,7 @@ class OperationRow extends PureComponent<Props, *> {
     };
 
     navigation.push("OperationDetails", params);
-  };
+  }, 300);
 
   render() {
     const {
@@ -97,7 +97,10 @@ class OperationRow extends PureComponent<Props, *> {
 
     return (
       <View style={[styles.root, isLast ? styles.last : null]}>
-        <RectButton onPress={this.goToOperationDetails} style={styles.button}>
+        <TouchableOpacity
+          onPress={this.goToOperationDetails}
+          style={styles.button}
+        >
           <View style={isOptimistic ? styles.optimistic : null}>
             <OperationIcon
               size={40}
@@ -113,7 +116,6 @@ class OperationRow extends PureComponent<Props, *> {
               <LText
                 numberOfLines={1}
                 semiBold
-                ellipsizeMode="tail"
                 style={[styles.bodyLeft, styles.topRow]}
               >
                 {multipleAccounts ? getAccountName(account) : text}
@@ -121,7 +123,6 @@ class OperationRow extends PureComponent<Props, *> {
               <LText
                 tertiary
                 numberOfLines={1}
-                ellipsizeMode="tail"
                 style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
               >
                 <CurrencyUnitValue
@@ -169,19 +170,14 @@ class OperationRow extends PureComponent<Props, *> {
               </View>
             </View>
           </View>
-        </RectButton>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
 const OpCounterValue = ({ children }: { children: * }) => (
-  <LText
-    tertiary
-    numberOfLines={1}
-    ellipsizeMode="tail"
-    style={styles.bottomRow}
-  >
+  <LText tertiary numberOfLines={1} style={styles.bottomRow}>
     {children}
   </LText>
 );

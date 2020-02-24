@@ -36,11 +36,7 @@ export default class SummaryFromSection extends PureComponent<Props> {
             <View style={styles.currencyIcon}>
               <CurrencyIcon size={14} currency={currency} />
             </View>
-            <LText
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.summaryRowText}
-            >
+            <LText numberOfLines={1} style={styles.summaryRowText}>
               {getAccountName(account)}
             </LText>
           </View>
