@@ -2,7 +2,6 @@ import React, { useState, useMemo, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
-  SafeAreaView,
   Platform,
   VirtualizedList,
   ScrollView,
