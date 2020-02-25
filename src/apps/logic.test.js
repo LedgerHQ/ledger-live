@@ -180,6 +180,19 @@ const scenarios = [
   },
 
   {
+    name: "update all still works with unknown apps",
+    apps: "Bitcoin, Litecoin, Ethereum",
+    installed: "Bitcoin (outdated), Litecoin (outdated), Ethereum, Unknown",
+    actions: [
+      {
+        dispatch: { type: "updateAll" },
+        expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin",
+        expectInstalled: "Ethereum, Unknown, Bitcoin, Litecoin"
+      }
+    ]
+  },
+
+  {
     name: "install and uninstall will undo (if top level dep)",
     apps: "Bitcoin",
     installed: "",

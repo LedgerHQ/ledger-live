@@ -409,6 +409,48 @@ Object {
 }
 `;
 
+exports[`Scenario: update all still works with unknown apps 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "ethereum",
+      "name": "Ethereum",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": undefined,
+      "name": "Unknown",
+    },
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "litecoin",
+      "name": "Litecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 47,
+  "freeSpaceBytes": 192512,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 13,
+  "totalAppsBytes": 53248,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
 exports[`Scenario: update all will reinstall the outdated 1`] = `
 Object {
   "apps": Array [
