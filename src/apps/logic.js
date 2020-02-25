@@ -102,9 +102,9 @@ export const reducer = (state: State, action: Action): State => {
             currentAppOp: null,
             currentProgress: null,
             currentError: null,
-            recentlyInstalledApps: state.recentlyInstalledApps
-              .concat(app && app.name)
-              .filter(Boolean),
+            recentlyInstalledApps: state.recentlyInstalledApps.concat(
+              appOp.name
+            ),
             // append the app to known installed apps
             installed: state.installed
               .filter(o => o.name !== appOp.name)
@@ -206,8 +206,9 @@ export const reducer = (state: State, action: Action): State => {
       let installList = state.installQueue.slice(0);
       let uninstallList = state.uninstallQueue.slice(0);
 
-      state.installed.forEach(app => {
-        if (!app.updated) {
+      state.installed
+        .filter(({ updated, name }) => !updated && state.appByName[name])
+        .forEach(app => {
           const dependents = state.installed
             .filter(a => {
               const depApp = state.appByName[a.name];
@@ -216,8 +217,7 @@ export const reducer = (state: State, action: Action): State => {
             .map(a => a.name);
           uninstallList = uninstallList.concat([app.name, ...dependents]);
           installList = installList.concat([app.name, ...dependents]);
-        }
-      });
+        });
 
       const installQueue = reorderInstallQueue(state.appByName, installList);
       const uninstallQueue = reorderUninstallQueue(
