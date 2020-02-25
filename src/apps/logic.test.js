@@ -265,6 +265,7 @@ scenarios.forEach(scenario => {
   });
 });
 
+/*
 test("a lock error that occurs will not cancel the queue, another error will", () => {
   let state = initState(
     mockListAppsResult(
@@ -310,6 +311,7 @@ test("a lock error that occurs will not cancel the queue, another error will", (
 
   expect(getActionPlan(state)).toEqual([]);
 });
+*/
 
 test("global progress", async () => {
   let state = initState(

@@ -2,7 +2,6 @@
 
 import flatMap from "lodash/flatMap";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { ManagerDeviceLockedError } from "@ledgerhq/errors";
 import type { App } from "../types/manager";
 import type {
   AppOp,
@@ -145,6 +144,9 @@ export const reducer = (state: State, action: Action): State => {
 
         return nextState;
       } else if (event.type === "runError") {
+        // TO BE CONTINUED LL-2138
+        // to handle recovering from error. however we are not correctly using it at the moment.
+        /*
         const error = event.error;
         if (error instanceof ManagerDeviceLockedError) {
           return {
@@ -155,6 +157,8 @@ export const reducer = (state: State, action: Action): State => {
             }
           };
         }
+        */
+
         // any other error stops everything
         return {
           ...state,
