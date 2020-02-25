@@ -47,7 +47,11 @@
     "forgetDevice": "Remove device",
     "sync": {
       "ago": "Synchronized {{time}}"
-    }
+    },
+    "update": "Update available",
+    "install": "Install",
+    "installed": "Installed",
+    "uninstall": "Uninstall"
   },
   "errors": {
     "AccountNameRequired": {
@@ -192,8 +196,27 @@
       "description": "Your device was locked. Please unlock it."
     },
     "ManagerNotEnoughSpace": {
-      "title": "Sorry, not enough storage left",
-      "description": "Please uninstall some apps to make space. This will not affect your crypto assets."
+      "title": "Not enough storage left",
+      "info": "Please uninstall some apps to make room for the {{app}} app.",
+      "description": "Your crypto assets stay safe when uninstalling apps."
+    },
+    "ManagerQuitPage": {
+      "install": {
+        "title": "Quit and cancel app install?",
+        "description": "Quitting will cancel the app installing in progress.",
+        "stay": "Finish install"
+      },
+      "uninstall": {
+        "title": "Quit and cancel app uninstalling?",
+        "description": "Quitting will cancel the app uninstalls in progress.",
+        "stay": "Finish uninstalling"
+      },
+      "update": {
+        "title": "Quit and cancel app updates?",
+        "description": "Quitting will cancel the app updates in progress.",
+        "stay": "Finish updates"
+      },
+      "quit": "Quit Manager"
     },
     "ManagerUninstallBTCDep": {
       "title": "Sorry, this app is required",
@@ -559,6 +582,11 @@
   "addAccountsModal": {
     "ctaAdd": "Add accounts",
     "ctaImport": "Import desktop accounts"
+  },
+  "byteSize": {
+    "bytes": "{{size}} bytes",
+    "kbUnit": "{{size}} Kb",
+    "mbUnit": "{{size}} Mb"
   },
   "time": {
     "day": "Day",
@@ -1090,6 +1118,9 @@
       },
       "editDeviceName": {
         "title": "Press both buttons to allow set device name"
+      },
+      "listApps": {
+        "title": "Loading..."
       }
     }
   },
@@ -1138,8 +1169,16 @@
     }
   },
   "manager": {
+    "tabTitle": "Device manager",
     "title": "Manager",
     "connect": "Select your device",
+    "appsCatalog": "App catalog",
+    "installedApps": "Installed apps",
+    "noAppNeededForToken": "Install {{appName}} app for {{tokenName}}",
+    "tokenAppDisclaimer": "{{tokenName}} is an {{tokenType}} token using the {{appName}} app. To manage {{tokenName}}, <1>install the {{appName}} app</1> and send the tokens <3>to your {{appName}} account</3>",
+    "tokenAppDisclaimerInstalled": "{{tokenName}} is an {{tokenType}} token using the {{appName}} app. To manage {{tokenName}}, <1>open the {{appName}} app</1> and send the tokens <3>to your {{appName}} account</3>",
+    "goToAccounts": "Go to accounts",
+    "intallParentApp": "Install {{appName}} app",
     "readOnly": {
       "title": "Nano X",
       "description": "Set up Ledger Live with your Ledger Nano X to install apps, create accounts and manage  secure transactions everywhere you go.",
@@ -1151,12 +1190,40 @@
     "appList": {
       "title": "App catalog",
       "loading": "Loading apps...",
-      "noApps": "No apps found"
+      "noApps": "No apps found",
+      "searchAppsCatalog": "Search app in catalog...",
+      "searchAppsInstalled": "Search installed apps...",
+      "noAppsInstalled": "No apps installed on your device",
+      "noAppsDescription": "Go to the Apps catalog to install apps.",
+      "noResultsFound": "No results found",
+      "noResultsDesc": "Please verify the spelling and try again",
+      "versionNew": "(NEW{{newVersion}})"
+    },
+    "uninstall": {
+      "title": "Uninstall all",
+      "subtitle": "Uninstall all apps?",
+      "description": "Don’t worry, uninstalling apps does not affect your crypto assets. You can reinstall apps in the App catalog"
     },
     "remove": {
       "title": "Remove device",
       "description": "Are you sure? You can add your {{productName}} again at any time.",
       "button": "Remove"
+    },
+    "storage": {
+      "title": "Storage",
+      "used": "Used",
+      "genuine": "Your device is Genuine",
+      "appsInstalled": "{{number}} app installed",
+      "appsInstalled_plural": "{{number}} apps installed",
+      "storageAvailable": "available"
+    },
+    "installSuccess": {
+      "title": "App successfully installed, you can now add your {{app}} accounts",
+      "title_plural": "Apps successfully installed, you can now add your accounts",
+      "notSupported": "App successfully installed, find out more about the installed apps on our site",
+      "manageAccount": "Add accounts",
+      "learnMore": "Learn more",
+      "later": "Do it later"
     }
   },
   "ManagerDevice": {
@@ -1173,7 +1240,26 @@
       "done": {
         "title": "Successfully installed {{appName}} on your {{productName}}",
         "accounts": "Go to accounts"
-      }
+      },
+      "dependency": {
+        "title": "{{dependency}} app is required",
+        "description_one": "The {{dependency}} app will also be installed because the {{app}} app needs it.",
+        "description_two": "Just press continue to install {{app}} and {{dependency}} app."
+      },
+      "continueInstall": "Install apps"
+    },
+    "update": {
+      "title": "{{number}} app update",
+      "title_plural": "{{number}} app updates",
+      "step": "Update step {{step}}:",
+      "updateWarn": "Do not quit manager during update",
+      "progress": "Updating all...",
+      "button": "Update all",
+      "version": "New {{version}}",
+      "buttonAction": "Update available",
+      "buttonModal": "Update all apps",
+      "loading": "Updating...",
+      "titleModal": "Updates available"
     },
     "uninstall": {
       "loading": {
@@ -1182,7 +1268,29 @@
       },
       "done": {
         "title": "Successfully uninstalled {{appName}} on your {{productName}}"
-      }
+      },
+      "dependency": {
+        "title": "Uninstall {{app}} and its related apps?",
+        "showAll": "Show apps to uninstall",
+        "description": "Apps on your device that are dependent on the {{app}} app will be uninstalled too."
+      },
+      "continueUninstall": "Uninstall {{app}} and other apps"
+    },
+    "filter": {
+      "title": "Show",
+      "all": "All",
+      "installed": "Installed",
+      "not_installed": "Not installed",
+      "supported": "Live supported",
+      "updatable": "Updatable",
+      "apply": "Apply"
+    },
+    "sort": {
+      "title": "Sort by",
+      "default": "Default",
+      "name_asc": "Name A-Z",
+      "name_desc": "Name Z-A",
+      "marketcap_desc": "Market cap"
     }
   },
   "AuthenticityRow": {
@@ -1193,7 +1301,8 @@
     "title": "Remove device"
   },
   "FirmwareVersionRow": {
-    "title": "Firmware version"
+    "title": "Firmware version",
+    "subtitle": "Firmware {{version}}"
   },
   "FirmwareUpdateRow": {
     "title": "Firmware version {{version}} available",
