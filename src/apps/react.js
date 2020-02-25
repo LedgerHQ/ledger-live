@@ -146,6 +146,7 @@ export function useAppInstallNeedsDeps(
       .map(name => appByName[name])
       .filter(
         dep =>
+          dep &&
           !installedList.some(app => app.name === dep.name) &&
           !installQueue.includes(dep.name)
       );

@@ -22,7 +22,9 @@ export const initState = ({
   ...listAppsResult
 }: ListAppsResult): State => ({
   ...listAppsResult,
-  apps: appsListNames.map(name => listAppsResult.appByName[name]),
+  apps: appsListNames
+    .map(name => listAppsResult.appByName[name])
+    .filter(Boolean),
   deviceModel: getDeviceModel(deviceModelId),
   recentlyInstalledApps: [],
   installQueue: [],
