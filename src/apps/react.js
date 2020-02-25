@@ -75,7 +75,7 @@ export function useAppsSections(
   const { updateAllQueue, appByName, installed, installQueue, apps } = state;
 
   const appsUpdating = useMemo(
-    () => updateAllQueue.map(name => appByName[name]),
+    () => updateAllQueue.map(name => appByName[name]).filter(Boolean),
     [appByName, updateAllQueue]
   );
 
@@ -146,6 +146,7 @@ export function useAppInstallNeedsDeps(
       .map(name => appByName[name])
       .filter(
         dep =>
+          dep &&
           !installedList.some(app => app.name === dep.name) &&
           !installQueue.includes(dep.name)
       );

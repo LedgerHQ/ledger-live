@@ -2,7 +2,6 @@
 
 import flatMap from "lodash/flatMap";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { ManagerDeviceLockedError } from "@ledgerhq/errors";
 import type { App } from "../types/manager";
 import type {
   AppOp,
@@ -23,7 +22,9 @@ export const initState = ({
   ...listAppsResult
 }: ListAppsResult): State => ({
   ...listAppsResult,
-  apps: appsListNames.map(name => listAppsResult.appByName[name]),
+  apps: appsListNames
+    .map(name => listAppsResult.appByName[name])
+    .filter(Boolean),
   deviceModel: getDeviceModel(deviceModelId),
   recentlyInstalledApps: [],
   installQueue: [],
@@ -145,6 +146,9 @@ export const reducer = (state: State, action: Action): State => {
 
         return nextState;
       } else if (event.type === "runError") {
+        // TO BE CONTINUED LL-2138
+        // to handle recovering from error. however we are not correctly using it at the moment.
+        /*
         const error = event.error;
         if (error instanceof ManagerDeviceLockedError) {
           return {
@@ -155,6 +159,8 @@ export const reducer = (state: State, action: Action): State => {
             }
           };
         }
+        */
+
         // any other error stops everything
         return {
           ...state,
@@ -200,8 +206,9 @@ export const reducer = (state: State, action: Action): State => {
       let installList = state.installQueue.slice(0);
       let uninstallList = state.uninstallQueue.slice(0);
 
-      state.installed.forEach(app => {
-        if (!app.updated) {
+      state.installed
+        .filter(({ updated, name }) => !updated && state.appByName[name])
+        .forEach(app => {
           const dependents = state.installed
             .filter(a => {
               const depApp = state.appByName[a.name];
@@ -210,8 +217,7 @@ export const reducer = (state: State, action: Action): State => {
             .map(a => a.name);
           uninstallList = uninstallList.concat([app.name, ...dependents]);
           installList = installList.concat([app.name, ...dependents]);
-        }
-      });
+        });
 
       const installQueue = reorderInstallQueue(state.appByName, installList);
       const uninstallQueue = reorderUninstallQueue(
