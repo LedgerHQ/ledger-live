@@ -1,5 +1,5 @@
 // @flow
-import { ManagerDeviceLockedError } from "@ledgerhq/errors";
+// import { ManagerDeviceLockedError } from "@ledgerhq/errors";
 import {
   initState,
   reducer,
