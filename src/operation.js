@@ -40,6 +40,7 @@ export function patchOperationWithHash(
       operation.subOperations &&
       operation.subOperations.map(op => ({
         ...op,
+        hash,
         id: `${op.accountId}-${hash}-${op.type}`
       }))
   };
