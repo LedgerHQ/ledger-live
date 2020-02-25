@@ -102,9 +102,9 @@ export const reducer = (state: State, action: Action): State => {
             currentAppOp: null,
             currentProgress: null,
             currentError: null,
-            recentlyInstalledApps: state.recentlyInstalledApps.concat(
-              appOp.name
-            ),
+            recentlyInstalledApps: state.recentlyInstalledApps
+              .concat(app && app.name)
+              .filter(Boolean),
             // append the app to known installed apps
             installed: state.installed
               .filter(o => o.name !== appOp.name)
