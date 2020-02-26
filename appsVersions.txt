@@ -437,47 +437,43 @@
 1223: blue/2.1.1/zcoin/app_1.3.7: KO: have BAD HASH. API have c5f950bf1c1b2d0a079a9f1b98cf2c4b27fe25bb0b9b60b13fe9dd24abfeaeab but device have 5c810a872bb8f5acba8861e7c706cd1ac58a05831c61b2c771fa4fc7f0f03404
 1486: blue/2.1.1/zcoin/app_1.3.8: KO: have BAD HASH. API have f62891f123c0978b8ae84a2070f0782b3bd06a0aa06fb31140e2e4c519a2d4d3 but device have 60036f78a6fa0bfebf8e9be94bdaf32d0db7e843be082aa707c362007be23ec4
 1993: blue/2.1.1/zcoin/app_1.3.9: KO: have BAD HASH. API have 63341745e34071346c5fae059b4a598a924f0ed3fd49595c14c80268f9d1031c but device have 0da002f75f78767307ea15aa3d274fd98d8bd4d572c537d86e60f54ebf2bf454
-117: nanos/1.3.1-das/dascoin/app_1.1.1: KO: DOES NOT have bytes defined!
-94: nanos/1.3.1/ark/app_0.1.1: KO: list apps don't find installed app? Found these: [{"hash": "5ac22115b3ae66c2ab6596596ce5c824d7db35331152605058b20ab370a23498","name": ""}]
-79: nanos/1.3.1/bitcoin_cash/app_1.1.8: KO: DOES NOT have bytes defined!
-114: nanos/1.3.1/bitcoin_cash/app_1.1.8: KO: DOES NOT have bytes defined!
-103: nanos/1.3.1/bitcoin_gold/app_1.1.16: KO: list apps don't find installed app? Found these: [{"hash": "4417bdc2172b7d93e880d068b68b1b46c3475288eb16d8e431add112430837c2","name": ""}]
-78: nanos/1.3.1/bitcoin/app_1.1.18: KO: list apps don't find installed app? Found these: [{"hash": "34f28da0ebdd24381ab74c7012b2718eb98e58da09c071a1dff1d33d07c19357","name": ""}]
-113: nanos/1.3.1/bitcoin/app_1.1.9: KO: DOES NOT have bytes defined!
-80: nanos/1.3.1/dash/st31_dash_1.1.5: KO: DOES NOT have bytes defined!
-105: nanos/1.3.1/digibyte/app_1.1.17: KO: list apps don't find installed app? Found these: [{"hash": "9718bda39f8ba7c7c3fa856361c4ebe320f71c621bb041e98e108bab07f4b365","name": ""}]
-81: nanos/1.3.1/dogecoin/st31_dogecoin_1.1.5: KO: DOES NOT have bytes defined!
-115: nanos/1.3.1/ethereum/app_1.0.18: KO: DOES NOT have bytes defined!
-82: nanos/1.3.1/ethereum/app_1.0.22: KO: list apps don't find installed app? Found these: [{"hash": "a558379b0fe955df7003701384530b72e98884f775fc5c3f9bc41d5e97ca1a47","name": ""}]
-96: nanos/1.3.1/expanse/app_1.0.20: KO: list apps don't find installed app? Found these: [{"hash": "dddb0649c5d113aacc47d4f18ea2928d6accff643dfe95e00db0035d938c2590","name": ""}]
-83: nanos/1.3.1/fido_u2f/st31_fido_u2f_1.2.1: KO: DOES NOT have bytes defined!
-106: nanos/1.3.1/hcash/app_1.1.17: KO: list apps don't find installed app? Found these: [{"hash": "8137959c7489cc6ed4ce8acbb3b995ff18e7ae52dc37b79233332f455506a18a","name": ""}]
-91: nanos/1.3.1/hello/app_1.0.0: KO: DOES NOT have bytes defined!
-84: nanos/1.3.1/komodo/st31_komodo_1.1.5: KO: DOES NOT have bytes defined!
-85: nanos/1.3.1/litecoin/app_1.1.9: KO: DOES NOT have bytes defined!
-102: nanos/1.3.1/neo/app_1.1.1: KO: list apps don't find installed app? Found these: [{"hash": "2c6c9e049bf55b10b05811ad8d693e71d34e9b1448ce0bbd2dd4fd71c056d74e","name": ""}]
-90: nanos/1.3.1/openpgp/app_1.1.0: KO: DOES NOT have bytes defined!
-97: nanos/1.3.1/pivx/app_1.1.12: KO: list apps don't find installed app? Found these: [{"hash": "c820ac6d111d3a9b4bbc21277906d4a360932597a0b2f44aec8945d9c985bf28","name": ""}]
-93: nanos/1.3.1/posw/app_1.1.7: KO: list apps don't find installed app? Found these: [{"hash": "94b069af4f0849d29b271b059b1d324e9f11c330436839c81a9f6da0c02d02c6","name": ""}]
-89: nanos/1.3.1/pwmgr/app_0.0.3: KO: DOES NOT have bytes defined!
-107: nanos/1.3.1/qtum/app_1.1.17: KO: list apps don't find installed app? Found these: [{"hash": "2cc27db3d79ab941853c0cfd37a0132a203618d573afb636672267be262df23b","name": ""}]
-92: nanos/1.3.1/ripple/app_1.0.3: KO: DOES NOT have bytes defined!
-116: nanos/1.3.1/ripple/app_1.0.3: KO: DOES NOT have bytes defined!
-88: nanos/1.3.1/ssh-agent/st31_gpg_0.0.3: KO: DOES NOT have bytes defined!
-98: nanos/1.3.1/stealthcoin/app_1.1.10: KO: list apps don't find installed app? Found these: [{"hash": "c94b7c3b4465d8ba51186823d3ceecae4511cdd1a3935fbd4302c06b422f0eb5","name": ""}]
-104: nanos/1.3.1/stellar/app_2.0.0: KO: list apps don't find installed app? Found these: [{"hash": "4cb9b7250f32bf22414112af37b428c6772c7a10bdacd91ebd05f9ddfbd8efed","name": ""}]
-86: nanos/1.3.1/stratis/st31_stratis_1.1.5: KO: DOES NOT have bytes defined!
-95: nanos/1.3.1/ubiq/app_1.0.22: KO: list apps don't find installed app? Found these: [{"hash": "0271e17361dcad024b0cdff04a7b07ada8e0e2206d8bf9483a9eafc73e5e3f85","name": ""},{"hash": "adfe6f490779639b4724e2835b17c6e093e989bd1304ebafdbe8dd44ab5ee495","name": ""}]
-99: nanos/1.3.1/vertcoin/app_1.1.10: KO: DOES NOT have bytes defined!
-100: nanos/1.3.1/viacoin/app_1.1.10: KO: list apps don't find installed app? Found these: [{"hash": "a086e32dde8f0c49a3eb77f3af3f6fd1207f7ae86d22b3a9fb5144260edc08c7","name": ""}]
-87: nanos/1.3.1/zcash/st31_zcash_1.1.5: KO: DOES NOT have bytes defined!
+117: nanos/1.3.1-das/dascoin/app_1.1.1: KO:  DOES NOT have bytes defined!
+94: nanos/1.3.1/ark/app_0.1.1: KO:  list apps don't find installed app? Found these: [{"hash":"5ac22115b3ae66c2ab6596596ce5c824d7db35331152605058b20ab370a23498","name":""}]
+79: nanos/1.3.1/bitcoin_cash/app_1.1.8: KO:  DOES NOT have bytes defined!
+114: nanos/1.3.1/bitcoin_cash/app_1.1.8: KO:  DOES NOT have bytes defined!
+103: nanos/1.3.1/bitcoin_gold/app_1.1.16: KO:  list apps don't find installed app? Found these: [{"hash":"4417bdc2172b7d93e880d068b68b1b46c3475288eb16d8e431add112430837c2","name":""}]
+78: nanos/1.3.1/bitcoin/app_1.1.18: KO:  list apps don't find installed app? Found these: [{"hash":"34f28da0ebdd24381ab74c7012b2718eb98e58da09c071a1dff1d33d07c19357","name":""}]
+113: nanos/1.3.1/bitcoin/app_1.1.9: KO:  DOES NOT have bytes defined!
+80: nanos/1.3.1/dash/st31_dash_1.1.5: KO:  DOES NOT have bytes defined!
+105: nanos/1.3.1/digibyte/app_1.1.17: KO:  list apps don't find installed app? Found these: [{"hash":"9718bda39f8ba7c7c3fa856361c4ebe320f71c621bb041e98e108bab07f4b365","name":""}]
+81: nanos/1.3.1/dogecoin/st31_dogecoin_1.1.5: KO:  DOES NOT have bytes defined!
+115: nanos/1.3.1/ethereum/app_1.0.18: KO:  DOES NOT have bytes defined!
+82: nanos/1.3.1/ethereum/app_1.0.22: KO:  list apps don't find installed app? Found these: [{"hash":"a558379b0fe955df7003701384530b72e98884f775fc5c3f9bc41d5e97ca1a47","name":""}]
+96: nanos/1.3.1/expanse/app_1.0.20: KO:  list apps don't find installed app? Found these: [{"hash":"dddb0649c5d113aacc47d4f18ea2928d6accff643dfe95e00db0035d938c2590","name":""}]
+106: nanos/1.3.1/hcash/app_1.1.17: KO:  list apps don't find installed app? Found these: [{"hash":"8137959c7489cc6ed4ce8acbb3b995ff18e7ae52dc37b79233332f455506a18a","name":""}]
+91: nanos/1.3.1/hello/app_1.0.0: KO:  DOES NOT have bytes defined!
+84: nanos/1.3.1/komodo/st31_komodo_1.1.5: KO:  DOES NOT have bytes defined!
+85: nanos/1.3.1/litecoin/app_1.1.9: KO:  DOES NOT have bytes defined!
+102: nanos/1.3.1/neo/app_1.1.1: KO:  list apps don't find installed app? Found these: [{"hash":"2c6c9e049bf55b10b05811ad8d693e71d34e9b1448ce0bbd2dd4fd71c056d74e","name":""}]
+90: nanos/1.3.1/openpgp/app_1.1.0: KO:  DOES NOT have bytes defined!
+97: nanos/1.3.1/pivx/app_1.1.12: KO:  list apps don't find installed app? Found these: [{"hash":"c820ac6d111d3a9b4bbc21277906d4a360932597a0b2f44aec8945d9c985bf28","name":""}]
+93: nanos/1.3.1/posw/app_1.1.7: KO:  list apps don't find installed app? Found these: [{"hash":"94b069af4f0849d29b271b059b1d324e9f11c330436839c81a9f6da0c02d02c6","name":""}]
+89: nanos/1.3.1/pwmgr/app_0.0.3: KO:  DOES NOT have bytes defined!
+107: nanos/1.3.1/qtum/app_1.1.17: KO:  list apps don't find installed app? Found these: [{"hash":"2cc27db3d79ab941853c0cfd37a0132a203618d573afb636672267be262df23b","name":""}]
+92: nanos/1.3.1/ripple/app_1.0.3: KO:  DOES NOT have bytes defined!
+116: nanos/1.3.1/ripple/app_1.0.3: KO:  DOES NOT have bytes defined!
+88: nanos/1.3.1/ssh-agent/st31_gpg_0.0.3: KO:  DOES NOT have bytes defined!
+98: nanos/1.3.1/stealthcoin/app_1.1.10: KO:  list apps don't find installed app? Found these: [{"hash":"c94b7c3b4465d8ba51186823d3ceecae4511cdd1a3935fbd4302c06b422f0eb5","name":""}]
+104: nanos/1.3.1/stellar/app_2.0.0: KO:  list apps don't find installed app? Found these: [{"hash":"4cb9b7250f32bf22414112af37b428c6772c7a10bdacd91ebd05f9ddfbd8efed","name":""}]
+86: nanos/1.3.1/stratis/st31_stratis_1.1.5: KO:  DOES NOT have bytes defined!
+95: nanos/1.3.1/ubiq/app_1.0.22: KO:  list apps don't find installed app? Found these: [{"hash":"0271e17361dcad024b0cdff04a7b07ada8e0e2206d8bf9483a9eafc73e5e3f85","name":""},{"hash":"a558379b0fe955df7003701384530b72e98884f775fc5c3f9bc41d5e97ca1a47","name":""}]
+99: nanos/1.3.1/vertcoin/app_1.1.10: KO:  DOES NOT have bytes defined!
+100: nanos/1.3.1/viacoin/app_1.1.10: KO:  list apps don't find installed app? Found these: [{"hash":"a086e32dde8f0c49a3eb77f3af3f6fd1207f7ae86d22b3a9fb5144260edc08c7","name":""}]
+87: nanos/1.3.1/zcash/st31_zcash_1.1.5: KO:  DOES NOT have bytes defined!
 740: nanos/1.4.2/decred_testnet/app_1.3.0: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 508: nanos/1.4.2/hcash/app_1.2.10: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-2785: nanos/1.5.5.6-tryfix-webusb/fido_u2f/app_1.2.6: KO: have BAD HASH. API have d71d05a63c8b45a55ddba6ca5acf9a025c7ee2621d72879ea500bff197ca161b but device have fcaa5d8d79277a8ef91cc696f557580535e5b95375bdb1c9da100f8ea24172e7
 1038: nanos/1.5.5/decred_testnet/app_1.3.0: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1039: nanos/1.5.5/none/app_1.0.1: KO: list apps don't find installed app? Found these: [{"hash": "049d9ca6c77d181687c63035719bfc9b5acbe943a8e3ffc871a230ebf88308c4","name": "MISC"}]
-3173: nanos/1.6.0/fido_u2f/app_1.2.7: KO:  have BAD HASH. API have 391f668eb84bee657408bd06a7bee7aa1af0e674dd336877cf9a5f47afbe1d3a but device have f32c267a071da5493e66e77d88b770279417cde1b8461cf43a231ad568d553d4
-2786: nanox/1.2.4-1.5/fido_u2f/app_1.2.6: KO: have BAD HASH. API have 2739bd88c3d80d358031393dd232a23ca7b8a029b1a3a89aea2755866ffa3879 but device have d23a432cf8693fcebd79de8b1530e84a883ceef3ce1d2dfded758f714448bec2
 3717: nanox/1.2.4-1.6/bitcoin_cash/app_1.3.21: KO: have BAD HASH. API have 5eff7b6f90f5993eed988da39fc2843d2b96722276981201939c8807be808b8c but device have 07c40fff644853d52e71b11b1d5e7e99b5e9d49a9f43b002645639026bb653d5
 3715: nanox/1.2.4-1.6/bitcoin_gold/app_1.3.21: KO: have BAD HASH. API have e8d67c154c2e2702f088412e1614aa761813de481eed705ad399f0b0fe6c99ab but device have 642fc0decb3370904e0e5632e6b4a95c7d895bffafb5da98732a783154c18934
 3720: nanox/1.2.4-1.6/bitcoin_private/app_1.3.21: KO: have BAD HASH. API have c240b00d18d5555f6eab2fc7cc61d972ea69daf95083db6ecff51d9f0138e537 but device have a436986726bb84f63c4f47d385aa23ee02fa31f9fb5d6aba8ff8e94cc797cf92
@@ -1031,7 +1027,6 @@
 1500: nanos/1.5.5/factom/app_1.2.1: OK: 
 1296: nanos/1.5.5/fic/app_3.0.1: OK: 
 1734: nanos/1.5.5/fic/app_3.0.2: OK: 
-1079: nanos/1.5.5/fido_u2f/app_1.2.5: OK: 
 2344: nanos/1.5.5/gamecredits/app_1.3.11: OK: 
 1033: nanos/1.5.5/gamecredits/app_1.3.2: OK: 
 1062: nanos/1.5.5/gamecredits/app_1.3.4: OK: 

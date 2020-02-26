@@ -43,6 +43,8 @@ type Result =
       error: string
     };
 
+const blacklistApps = ["Fido U2F"];
+
 class MemoFile {
   file: string;
   constructor(file: string) {
@@ -159,38 +161,40 @@ const findCandidates = async (
   const deviceVersionIds = await getAPIDeviceVersionIds(deviceInfo);
   if (!deviceVersionIds.length)
     throw new Error("unknown device version plugged");
-  const candidates = applications.flatMap(app => {
-    const deps = getDependencies(app.name);
-    return app.application_versions
-      .filter(v =>
-        compatibleAppVersion(v, deviceVersionIds, deviceModel, deviceInfo)
-      )
-      .map(version => {
-        return {
-          app,
-          version,
-          installQueue: [
-            ...deps
-              .map(name => {
-                const depApp = applications.find(a => a.name === name);
-                return depApp
-                  ? depApp.application_versions.find(
-                      v =>
-                        compatibleAppVersion(
-                          v,
-                          deviceVersionIds,
-                          deviceModel,
-                          deviceInfo
-                        ) && v.version === version.version
-                    )
-                  : null;
-              })
-              .filter(Boolean),
-            version
-          ]
-        };
-      });
-  });
+  const candidates = applications
+    .filter(a => !blacklistApps.includes(a.name))
+    .flatMap(app => {
+      const deps = getDependencies(app.name);
+      return app.application_versions
+        .filter(v =>
+          compatibleAppVersion(v, deviceVersionIds, deviceModel, deviceInfo)
+        )
+        .map(version => {
+          return {
+            app,
+            version,
+            installQueue: [
+              ...deps
+                .map(name => {
+                  const depApp = applications.find(a => a.name === name);
+                  return depApp
+                    ? depApp.application_versions.find(
+                        v =>
+                          compatibleAppVersion(
+                            v,
+                            deviceVersionIds,
+                            deviceModel,
+                            deviceInfo
+                          ) && v.version === version.version
+                      )
+                    : null;
+                })
+                .filter(Boolean),
+              version
+            ]
+          };
+        });
+    });
 
   if (process.env.RANDOM_APPS_ORDER) {
     candidates.sort(() => Math.random() - 0.5);
