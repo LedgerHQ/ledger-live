@@ -117,7 +117,7 @@ class ChooseDevice extends Component<
       mcuVersion,
     });
 
-    navigation.push("ManagerMain", meta);
+    navigation.navigate("ManagerMain", meta);
   };
 
   onStepEntered = (i: number, meta: Object) => {
