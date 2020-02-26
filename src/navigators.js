@@ -205,6 +205,7 @@ const ManagerStack = createStackNavigator(
     defaultNavigationOptions: {
       ...stackNavigatorConfig.defaultNavigationOptions,
       headerStyle: styles.header,
+      gestureEnabled: false,
     },
   },
 );

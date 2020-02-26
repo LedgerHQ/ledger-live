@@ -152,6 +152,8 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: "column",
     justifyContent: "center",
+    flexBasis: "auto",
+    flexShrink: 1,
     flexGrow: 1,
     marginLeft: 24,
   },
