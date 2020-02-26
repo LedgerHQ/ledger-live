@@ -30,6 +30,7 @@ listCryptoCurrencies(true, true).forEach(a => {
   ["ARTIS sigma1", "Ethereum"],
   ["kUSD", "Ethereum"],
   ["LBRY", "Bitcoin"],
+  ["Ravencoin", "Bitcoin"],
   ["Resistance", "Bitcoin"],
   ["RSK Test", "Ethereum"],
   ["RSK", "Ethereum"],
