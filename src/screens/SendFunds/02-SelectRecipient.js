@@ -188,7 +188,7 @@ const SendSelectRecipient = ({
               event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              disabled={bridgePending || !!error}
+              disabled={bridgePending || !!status.errors.recipient}
               pending={bridgePending}
               onPress={onPressContinue}
             />
