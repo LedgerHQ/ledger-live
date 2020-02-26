@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "12.0.0-beta.10",
+  "version": "12.0.3",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "@ledgerhq/hw-transport-node-hid": "5.10.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.9.0",
     "@ledgerhq/ledger-core": "^6.0.0-rc.5",
-    "@ledgerhq/live-common": "^12.0.0-beta.10",
+    "@ledgerhq/live-common": "^12.0.3",
     "@ledgerhq/logs": "5.9.0",
     "asciichart": "^1.5.9",
     "bignumber.js": "^9.0.0",
@@ -43,8 +43,8 @@
     "command-line-args": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "flow-bin": "^0.118.0",
-    "flow-typed": "^2.6.1",
+    "flow-bin": "^0.119.1",
+    "flow-typed": "^3.0.0",
     "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
     "qrloop": "^1.0.2",
@@ -67,6 +67,6 @@
     "@babel/preset-typescript": "^7.8.3",
     "@types/command-line-args": "^5.0.0",
     "ts-node": "^8.6.2",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.2"
   }
 }
