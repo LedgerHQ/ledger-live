@@ -87,6 +87,20 @@ const AppWithCoinPreview = ({ app }: *) => {
 
 const choices = [
   {
+    label: "Nano S 1.6.0",
+    deviceInfo: {
+      version: "1.6.0",
+      mcuVersion: "1.12",
+      majMin: "1.6",
+      providerId: 1,
+      targetId: 823132164,
+      isOSU: false,
+      isBootloader: false,
+      managerAllowed: true,
+      pinValidated: true
+    }
+  },
+  {
     label: "Nano S 1.5.5",
     deviceInfo: {
       version: "1.5.5",
