@@ -23,8 +23,6 @@ export const initState = ({
 }: ListAppsResult): State => ({
   ...listAppsResult,
   apps: appsListNames
-    .concat(listAppsResult.installed.map(({ name }) => name)) // append installed app names including potential dev-mode ones
-    .filter((val, i, arr) => arr.indexOf(val) === i) // filter duplicates
     .map(name => listAppsResult.appByName[name])
     .filter(Boolean),
   deviceModel: getDeviceModel(deviceModelId),

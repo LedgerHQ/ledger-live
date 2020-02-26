@@ -257,7 +257,9 @@ export const listApps = (
 
       const appsListNames = (getEnv("MANAGER_DEV_MODE")
         ? apps
-        : apps.filter(a => !a.isDevTools)
+        : apps.filter(
+            a => !a.isDevTools || installed.some(({ name }) => name === a.name)
+          )
       ).map(a => a.name);
 
       const result: ListAppsResult = {
