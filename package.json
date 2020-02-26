@@ -16,7 +16,7 @@
     "prettier": "prettier --write 'src/**/*.js'",
     "lint": "eslint src",
     "flow": "flow src",
-    "jest": "rm -rf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
+    "jest": "rimraf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
     "test": "yarn jest",
     "ci-lint": "yarn lint && yarn flow",
     "ci-test-common": "yarn test --ci --verbose",
@@ -128,6 +128,7 @@
     "react-dom": "16",
     "react-redux": "7.2.0",
     "react-test-renderer": "^16.12.0",
+    "rimraf": "^3.0.2",
     "svgr": "^1.10.0",
     "timemachine": "^0.3.0"
   }

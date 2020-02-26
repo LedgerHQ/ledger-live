@@ -12,13 +12,25 @@
 #import <React/RCTRootView.h>
 
 #define TIMEOUT_SECONDS 1800
-#define TEXT_TO_LOOK_FOR @"success OVERALL"
+#define SUCCESSTEXT @"success OVERALL"
+#define ERRORTEXT @"failure OVERALL"
 
 @interface LLToolTests : XCTestCase
 
 @end
 
 @implementation LLToolTests
+
+- (void)invokeTest
+{
+  self.continueAfterFailure = NO;
+  
+  @try {
+    [super invokeTest];
+  } @finally {
+    self.continueAfterFailure = YES;
+  }
+}
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {
@@ -44,18 +56,26 @@
     [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
 
     foundElement = [self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
-      if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
+      if ([view.accessibilityLabel isEqualToString:SUCCESSTEXT]) {
         return YES;
       }
       return NO;
     }];
+
+
+    XCTAssertTrue(![self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
+      if ([view.accessibilityLabel isEqualToString:ERRORTEXT]) {
+        return YES;
+      }
+      return NO;
+    }], @"error was found"); // TODO how to get the actual text of the error.
   }
-  
+
 #ifdef DEBUG
   RCTSetLogFunction(RCTDefaultLogFunction);
 #endif
 
-  XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
+  XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", SUCCESSTEXT, TIMEOUT_SECONDS);
 }
 
 

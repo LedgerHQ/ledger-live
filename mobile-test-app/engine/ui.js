@@ -31,7 +31,7 @@ const groupStatus = node => {
   const pending = all.filter(a => a === "pending").length;
   const failure = all.filter(a => a === "failure").length;
   const success = all.filter(a => a === "success").length;
-  const status = pending > 0 ? "pending" : failure > 0 ? "failure" : all[0];
+  const status = failure > 0 ? "failure" : pending > 0 ? "pending" : all[0];
   return {
     status,
     total: all.length,

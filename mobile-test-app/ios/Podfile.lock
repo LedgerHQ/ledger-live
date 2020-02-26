@@ -1,6 +1,6 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - djinni_objc (4.5.1)
+  - djinni_objc (4.8.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.61.5)
   - FBReactNativeSpec (0.61.5):
@@ -20,7 +20,7 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - ledger-core-objc (4.5.1):
+  - ledger-core-objc (4.8.0):
     - djinni_objc
   - RCTRequired (0.61.5)
   - RCTTypeSafety (0.61.5):
@@ -222,7 +222,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RNLibLedgerCore (4.5.1):
+  - RNLibLedgerCore (4.8.0):
     - ledger-core-objc
     - React
   - TcpSockets (3.3.2):
@@ -332,13 +332,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  djinni_objc: 15c7abc0c3c28a1520d448c55a6556e997e8a061
+  djinni_objc: c7a88366e3feef7513b244f0acc6ea9116a5be85
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
   FBReactNativeSpec: 118d0d177724c2d67f08a59136eb29ef5943ec75
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  ledger-core-objc: 78090efd14a379cee35f9f12c0245b42bc648744
+  ledger-core-objc: 68144024e8892647283fcb2a25f67376d5fad9ed
   RCTRequired: b153add4da6e7dbc44aebf93f3cf4fcae392ddf1
   RCTTypeSafety: 9aa1b91d7f9310fc6eadc3cf95126ffe818af320
   React: b6a59ef847b2b40bb6e0180a97d0ca716969ac78
@@ -359,7 +359,7 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RNLibLedgerCore: fca28b490b5d3ff502a9bcfa614dcdadf5eaaeec
+  RNLibLedgerCore: 72fbd312030b698e3a391a3b6eaa9bc9be945d11
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 

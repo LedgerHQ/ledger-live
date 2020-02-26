@@ -85,27 +85,39 @@ export const reducer = (state: State, action: *): State => {
   }
 };
 
+const successMessage = (names = [], time) =>
+  console.log(`✅ ${names.join(" > ")} SUCCESS in ${time}ms`);
+const errorMessage = (names = [], error) => {
+  console.log(`❌ ${names.join(" > ")} FAILED`);
+  console.log(error.stack);
+};
+
 export const runTests = (testFiles: *, dispatch: *) => {
-  async function rec(nodes, rootPath) {
+  async function rec(nodes, rootPath, rootNames) {
     for (let i = 0; i < nodes.length; i++) {
+      const { children, beforeAll, testFunction, name } = nodes[i];
+      const newNames = rootNames.concat([name]);
       const path = rootPath.concat([i]);
       dispatch({ type: "run-start", path });
       try {
-        const { children, beforeAll, testFunction } = nodes[i];
         for (let j = 0; j < beforeAll.length; j++) {
           await beforeAll[j]();
         }
         if (testFunction) {
+          const start = Date.now();
           await testFunction();
+          const timeSpent = Date.now() - start;
+          successMessage(newNames, timeSpent);
           dispatch({ type: "run-success", path });
         } else {
-          await rec(children, path);
+          await rec(children, path, newNames);
           dispatch({ type: "run-done", path });
         }
       } catch (error) {
+        errorMessage(newNames, error);
         dispatch({ type: "run-failure", path, error });
       }
     }
   }
-  return rec(testFiles, []);
+  return rec(testFiles, [], []);
 };

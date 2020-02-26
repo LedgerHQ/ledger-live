@@ -1,20 +1,21 @@
 name: Tests
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: [push, pull_request]
 
 jobs:
-  macos-main-test:
-    runs-on: macos-latest
+  jest:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest] # ubuntu not working yet
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@master
         with:
           node-version: 12.x
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "2.7.x"
       - name: Versions
         run: |
           node -v
@@ -32,28 +33,45 @@ jobs:
         run: |
           yarn global add yalc codecov
           yarn --frozen-lockfile
+      - name: Install CLI dependencies
+        run: |
           cd cli
           yarn --frozen-lockfile
-          cd -
-          yarn ci-setup-cli
+      - name: Setup Tests
+        run: yarn ci-setup-cli
       - name: Deps versions
         run: |
           yarn flow --version
           yarn jest --version
       - name: Lint
         run: yarn ci-lint
+        if: runner.os != 'Windows'
+      - name: Setup TimeZone for Windows
+        run: tzutil /s "Eastern Standard Time"
+        if: runner.os == 'Windows'
       - name: Run tests
-        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} yarn ci-test-common && npx codecov
+        run: yarn ci-test-common
         timeout-minutes: 60
+      - name: Run coverage
+        if: runner.os == 'macOS'
+        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
 
-  debian-cli-tests:
-    runs-on: ubuntu-latest
+  cli:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@master
         with:
           node-version: 12.x
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "2.7.x"
       - name: Install linux deps
+        if: runner.os == 'Linux'
         run: sudo apt-get install -y libusb-1.0-0-dev jq
       - name: Get yarn cache
         id: yarn-cache
@@ -66,12 +84,89 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install dependencies
         run: |
-          yarn global add yalc codecov
-          yarn install --frozen-lockfile
+          yarn global add yalc
+          yarn --frozen-lockfile
+      - name: Install CLI dependencies
+        run: |
           cd cli
           yarn --frozen-lockfile
-          cd -
-          yarn ci-setup-cli
+      - name: Setup Tests
+        run: yarn ci-setup-cli
       - name: Run CLI tests
         run: yarn ci-test-cli
         timeout-minutes: 60
+  # cli-windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: actions/setup-node@master
+  #       with:
+  #         node-version: 12.x
+  #     - uses: actions/setup-python@v1
+  #       with:
+  #         python-version: "2.7.x"
+  #     - name: Get yarn cache
+  #       id: yarn-cache
+  #       run: echo "::set-output name=dir::$(yarn cache dir)"
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ${{ steps.yarn-cache.outputs.dir }}
+  #         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-yarn-
+  #     - name: Install dependencies
+  #       run: |
+  #         yarn global add yalc
+  #         yarn --frozen-lockfile
+  #     - name: Install CLI dependencies
+  #       run: |
+  #         cd cli
+  #         yarn --frozen-lockfile
+  #     - name: Setup Tests
+  #       run: yarn ci-setup-cli
+  #     - name: Run CLI tests
+  #       run: |
+  #         cd cli
+  #         yarn test
+  #       timeout-minutes: 60
+  # ios:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: actions/setup-node@master
+  #       with:
+  #         node-version: 12.x
+  #     - name: set xCode version
+  #       run: sudo xcode-select -s /Applications/Xcode_11.3.app/Contents/Developer
+  #     - name: get yarn cache
+  #       id: yarn-cache
+  #       run: echo "::set-output name=dir::$(yarn cache dir)"
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ${{ steps.yarn-cache.outputs.dir }}
+  #         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-yarn-
+  #     - name: install all dependencies
+  #       run: |
+  #         yarn install
+  #         cd mobile-test-app
+  #         bundle install
+  #         yarn
+  #         cd ios
+  #         bundle exec pod install
+  #     - name: setup process
+  #       run: |
+  #         cd mobile-test-app
+  #         echo 'process.env.BRANCH = "${{ github.head_ref }}";' > process.js
+  #     - name: run tests
+  #       run: |
+  #         cd mobile-test-app
+  #         yarn ios:test
+  #       timeout-minutes: 60
+  #     - name: upload logs
+  #       if: failure() || success()
+  #       uses: actions/upload-artifact@v1
+  #       with:
+  #         name: LLTool-LLTool.log
+  #         path: mobile-test-app/fastlane/test_output/LLTool-LLTool.log

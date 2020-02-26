@@ -6,7 +6,7 @@ import expect from "expect";
 import App from "./ui";
 
 // toMatchSnapshot is not supported
-e.extend({
+expect.extend({
   toMatchSnapshot() {
     return { pass: true };
   }

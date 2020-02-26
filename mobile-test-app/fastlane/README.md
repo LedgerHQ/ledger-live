@@ -25,6 +25,11 @@ test
 ----
 
 ## Android
+### android build
+```
+fastlane android build
+```
+build
 ### android test
 ```
 fastlane android test
