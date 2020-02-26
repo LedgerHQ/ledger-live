@@ -79,22 +79,28 @@ const DeviceAppStorage = ({
         ))}
       </Touchable>
       <View style={[styles.row, styles.infoRow]}>
-        <LText style={styles.storageText} bold>
-          <ByteSize value={totalAppsBytes} deviceModel={deviceModel} />
-        </LText>
-        <LText style={styles.storageText}>
-          {" "}
-          <Trans i18nKey="manager.storage.used" />,{" "}
-        </LText>
-        <LText style={styles.storageText} bold>
-          {apps.length}
-        </LText>
+        {totalAppsBytes > 0 && (
+          <>
+            <LText style={styles.storageText} bold>
+              <ByteSize value={totalAppsBytes} deviceModel={deviceModel} />
+            </LText>
+            <LText style={styles.storageText}>
+              {" "}
+              <Trans i18nKey="manager.storage.used" />,{" "}
+            </LText>
+          </>
+        )}
         <LText style={styles.storageText}>
           <Trans
             count={apps.length}
-            values={{ number: "" }}
+            values={{ number: apps.length }}
             i18nKey="manager.storage.appsInstalled"
-          />
+          >
+            <LText style={styles.storageText} bold>
+              {"placeholder"}
+            </LText>
+            {"placeholder"}
+          </Trans>
         </LText>
       </View>
     </View>

@@ -190,6 +190,7 @@ SettingsStack.navigationOptions = {
 ManagerScreen.navigationOptions = {
   title: i18next.t("manager.tabTitle"),
   headerStyle: styles.headerNoShadow,
+  gestureEnabled: false,
 };
 
 const ManagerStack = createStackNavigator(
@@ -204,6 +205,7 @@ const ManagerStack = createStackNavigator(
     defaultNavigationOptions: {
       ...stackNavigatorConfig.defaultNavigationOptions,
       headerStyle: styles.header,
+      gestureEnabled: false,
     },
   },
 );
