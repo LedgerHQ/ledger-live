@@ -195,10 +195,15 @@ const AppsScreen = ({
                 <View style={[styles.searchBarContainer]}>
                   <LText style={styles.installedAppsText}>
                     <Trans
-                      i18nKey="manager.storage.appsInstalled"
                       count={device.length}
                       values={{ number: device.length }}
-                    />
+                      i18nKey="manager.storage.appsInstalled"
+                    >
+                      <LText style={styles.installedAppsText} bold>
+                        {"placeholder"}
+                      </LText>
+                      {"placeholder"}
+                    </Trans>
                   </LText>
                   <UninstallAllButton onUninstallAll={onUninstallAll} />
                 </View>
