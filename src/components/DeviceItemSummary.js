@@ -92,6 +92,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: "auto",
     marginLeft: 24,
   },
   deviceNameText: {
