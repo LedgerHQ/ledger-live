@@ -46,7 +46,11 @@ export default class Delta extends PureComponent<Props> {
 
     return (
       <View style={[styles.root, style]}>
-        {delta.isGreaterThanOrEqualTo(0) ? arrowUp : arrowDown}
+        {!delta.isZero()
+          ? delta.isGreaterThan(0)
+            ? arrowUp
+            : arrowDown
+          : null}
         <View style={styles.content}>
           <LText tertiary style={styles.text}>
             {unit ? (
