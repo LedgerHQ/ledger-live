@@ -11,6 +11,7 @@ import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import BluetoothTransport from "./react-native-hw-transport-ble";
+import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
 import "./experimental";
 
 setSupportedCurrencies([
