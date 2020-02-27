@@ -270,7 +270,7 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
         desc="Please enter the address of the custom validator to delegate your account to."
         confirmLabel="Confirm validator"
         confirmProps={{
-          disabled: bridgePending || !!error,
+          disabled: bridgePending || !!status.errors.recipient,
           pending: bridgePending,
         }}
         style={keyboardHeight ? { marginBottom: keyboardHeight } : undefined}
