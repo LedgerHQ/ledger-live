@@ -47,6 +47,7 @@ class InfoModal extends PureComponent<Props> {
       confirmLabel,
       confirmProps,
       style,
+      containerStyle,
     } = this.props;
     return (
       <BottomModal
@@ -73,7 +74,10 @@ class InfoModal extends PureComponent<Props> {
           </View>
         ) : null}
         <View
-          style={!title && !desc && !bullets ? styles.childrenContainer : null}
+          style={[
+            !title && !desc && !bullets ? styles.childrenContainer : null,
+            containerStyle,
+          ]}
         >
           {children}
         </View>

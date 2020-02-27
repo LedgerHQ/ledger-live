@@ -274,6 +274,7 @@ const SelectValidator = ({ account, parentAccount, navigation }: Props) => {
           pending: bridgePending,
         }}
         style={keyboardHeight ? { marginBottom: keyboardHeight } : undefined}
+        containerStyle={{ alignSelf: "stretch" }}
       >
         <TextInput
           placeholder="Enter validator address"
@@ -405,7 +406,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   addressInput: {
-    alignSelf: "stretch",
     color: colors.darkBlue,
     ...getFontStyle({ semiBold: true }),
     fontSize: 20,
