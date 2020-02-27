@@ -1213,8 +1213,8 @@
       "title": "Storage",
       "used": "Used",
       "genuine": "Your device is Genuine",
-      "appsInstalled": "{{number}} app installed",
-      "appsInstalled_plural": "{{number}} apps installed",
+      "appsInstalled": "<0>{{number}}</0> app installed",
+      "appsInstalled_plural": "<0>{{number}}</0> apps installed",
       "storageAvailable": "available"
     },
     "installSuccess": {

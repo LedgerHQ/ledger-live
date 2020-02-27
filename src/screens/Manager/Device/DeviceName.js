@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontSize: 16,
     lineHeight: 19,
+    flexShrink: 1,
+    flexBasis: "auto",
   },
   editButton: {
     flexDirection: "row",
