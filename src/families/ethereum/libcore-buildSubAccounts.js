@@ -11,6 +11,7 @@ import {
   findTokenByAddress,
   listTokensForCryptoCurrency
 } from "../../currencies";
+import { promiseAllBatched } from "../../promise";
 
 async function buildERC20TokenAccount({
   parentAccountId,
@@ -81,8 +82,10 @@ async function ethereumBuildTokenAccounts({
     }
   }
 
-  const coreTAContractAddresses = await Promise.all(
-    coreTAS.map(getERC20Address)
+  const coreTAContractAddresses = await promiseAllBatched(
+    4,
+    coreTAS,
+    getERC20Address
   );
 
   const coreTAB: CoreBigInt[] = await ethAccount.getERC20Balances(
