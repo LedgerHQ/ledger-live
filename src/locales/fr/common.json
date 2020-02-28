@@ -1194,7 +1194,7 @@
       "searchAppsCatalog": "Search app in catalog...",
       "searchAppsInstalled": "Search installed apps...",
       "noAppsInstalled": "No apps installed on your device",
-      "noAppsDescription": "Go to the Apps catalog to install apps.",
+      "noAppsDescription": "Go to the Apps catalog to install apps",
       "noResultsFound": "No results found",
       "noResultsDesc": "Please verify the spelling and try again",
       "versionNew": "(NEW{{newVersion}})"
@@ -1252,7 +1252,7 @@
       "title": "{{number}} app update",
       "title_plural": "{{number}} app updates",
       "step": "Update step {{step}}:",
-      "updateWarn": "Do not quit manager during update",
+      "updateWarn": "Do not quit Manager during update.",
       "progress": "Updating all...",
       "button": "Update all",
       "version": "New {{version}}",
@@ -1279,7 +1279,7 @@
     "filter": {
       "title": "Show",
       "all": "All",
-      "installed": "Installed",
+      "installed": "Apps",
       "not_installed": "Not installed",
       "supported": "Live supported",
       "updatable": "Updatable",
@@ -1388,7 +1388,7 @@
     "selectValidatorTitle": "Select validator",
     "started": {
       "title": "Earn staking rewards",
-      "description": "Delegate your Tezos account to a third party validator to earn staking rewards while keeping full security and control of your assets.",
+      "description": "Delegate your Tezos account to a third-party validator to earn staking rewards while keeping full security and control of your assets.",
       "steps": {
         "0": "Delegated accounts stay yours.",
         "1": "You can access your assets anytime.",
