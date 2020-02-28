@@ -11,6 +11,7 @@ import type {
   Transaction
 } from "./types";
 import type { Operation } from "../../types";
+import { promiseAllBatched } from "../../promise";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
@@ -68,58 +69,58 @@ async function signTransaction({
 
   const hasExtraData = currency.id === "zcash" || currency.id === "komodo";
 
-  const inputs = await Promise.all(
-    rawInputs.map(async (input, i) => {
-      const hexPreviousTransaction = await input.getPreviousTransaction();
-      log("libcore", "splitTransaction " + String(hexPreviousTransaction));
-      // v1 of XST txs have timestamp but not v2
-      const inputHasTimestamp =
-        (currency.id === "stealthcoin" &&
-          hexPreviousTransaction.slice(0, 2) === "01") ||
-        hasTimestamp;
+  const inputs = await promiseAllBatched(5, rawInputs, async (input, i) => {
+    const hexPreviousTransaction = await input.getPreviousTransaction();
+    log("libcore", "splitTransaction " + String(hexPreviousTransaction));
+    // v1 of XST txs have timestamp but not v2
+    const inputHasTimestamp =
+      (currency.id === "stealthcoin" &&
+        hexPreviousTransaction.slice(0, 2) === "01") ||
+      hasTimestamp;
 
-      log("hw", `splitTransaction`, {
-        hexPreviousTransaction,
-        supportsSegwit: currency.supportsSegwit,
-        inputHasTimestamp,
-        hasExtraData,
-        additionals
-      });
-      const previousTransaction = hwApp.splitTransaction(
-        hexPreviousTransaction,
-        currency.supportsSegwit,
-        inputHasTimestamp,
-        hasExtraData,
-        additionals
-      );
+    log("hw", `splitTransaction`, {
+      hexPreviousTransaction,
+      supportsSegwit: currency.supportsSegwit,
+      inputHasTimestamp,
+      hasExtraData,
+      additionals
+    });
+    const previousTransaction = hwApp.splitTransaction(
+      hexPreviousTransaction,
+      currency.supportsSegwit,
+      inputHasTimestamp,
+      hasExtraData,
+      additionals
+    );
 
-      const outputIndex = await input.getPreviousOutputIndex();
+    const outputIndex = await input.getPreviousOutputIndex();
 
-      const sequence = await input.getSequence();
+    const sequence = await input.getSequence();
 
-      log("libcore", "inputs[" + i + "]", {
-        previousTransaction: JSON.stringify(previousTransaction),
-        outputIndex,
-        sequence
-      });
-      return [
-        previousTransaction,
-        outputIndex,
-        undefined, // we don't use that TODO: document
-        sequence // 0xffffffff,
-      ];
-    })
-  );
+    log("libcore", "inputs[" + i + "]", {
+      previousTransaction: JSON.stringify(previousTransaction),
+      outputIndex,
+      sequence
+    });
+    return [
+      previousTransaction,
+      outputIndex,
+      undefined, // we don't use that TODO: document
+      sequence // 0xffffffff,
+    ];
+  });
   if (isCancelled()) return;
 
-  const associatedKeysets = await Promise.all(
-    rawInputs.map(async input => {
+  const associatedKeysets = await promiseAllBatched(
+    5,
+    rawInputs,
+    async input => {
       const derivationPaths = await input.getDerivationPath();
       const [first] = derivationPaths;
       if (!first) throw new Error("unexpected empty derivationPaths");
       const r = await first.toString();
       return r;
-    })
+    }
   );
   if (isCancelled()) return;
 
@@ -200,13 +201,15 @@ async function signTransaction({
 
   const sendersInput = await coreTransaction.getInputs();
   const senders = (
-    await Promise.all(sendersInput.map(senderInput => senderInput.getAddress()))
+    await promiseAllBatched(5, sendersInput, senderInput =>
+      senderInput.getAddress()
+    )
   ).filter(Boolean);
 
   const recipientsOutput = await coreTransaction.getOutputs();
   const recipients = (
-    await Promise.all(
-      recipientsOutput.map(recipientOutput => recipientOutput.getAddress())
+    await promiseAllBatched(5, recipientsOutput, recipientOutput =>
+      recipientOutput.getAddress()
     )
   ).filter(Boolean);
 

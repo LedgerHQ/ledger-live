@@ -67,3 +67,24 @@ export function execAndWaitAtLeast<A>(
     return delay(remaining).then(() => r);
   });
 }
+
+/**
+ * promiseAllBatched(n, items, i => f(i))
+ * is essentially like
+ * Promise.all(items.map(i => f(i)))
+ * but with a guarantee that it will not create more than n concurrent call to f
+ * where f is a function that returns a promise
+ */
+export async function promiseAllBatched<A, B>(
+  batch: number,
+  items: Array<A>,
+  fn: (A, number) => Promise<B>
+): Promise<B[]> {
+  let data = [];
+  for (let i = 0; i < items.length; i += batch) {
+    data = data.concat(
+      await Promise.all(items.slice(i, i + batch).map((o, j) => fn(o, i + j)))
+    );
+  }
+  return data;
+}

@@ -6,6 +6,7 @@ import type { CoreOperation } from "../../libcore/types";
 import { CoreInternalTransaction } from "./types";
 import { OperationTypeMap } from "../../libcore/buildAccount/buildOperation";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
+import { promiseAllBatched } from "../../promise";
 
 async function buildInternalOperation(
   tx: CoreInternalTransaction,
@@ -74,8 +75,10 @@ async function ethereumBuildOperation(
     // side effect operation that does not even have internal transactions does not interest us at all
     return null;
   }
-  const ops: Array<?Operation> = await Promise.all(
-    internalTransactions.map((internalTx, internalTransactionIndex) =>
+  const ops: Array<?Operation> = await promiseAllBatched(
+    5,
+    internalTransactions,
+    (internalTx, internalTransactionIndex) =>
       buildInternalOperation(internalTx, {
         accountId: partialOp.accountId,
         internalTransactionIndex,
@@ -85,7 +88,6 @@ async function ethereumBuildOperation(
         status,
         transactionSequenceNumber
       })
-    )
   );
   out.internalOperations = ops.filter(Boolean);
 

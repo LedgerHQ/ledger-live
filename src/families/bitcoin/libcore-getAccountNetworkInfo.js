@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { NetworkInfo } from "./types";
 import type { Account } from "../../types";
 import type { CoreAccount } from "../../libcore/types";
+import { promiseAllBatched } from "../../promise";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 
 type Input = {
@@ -17,7 +18,11 @@ const speeds = ["high", "standard", "low"];
 async function bitcoin({ coreAccount }: Input): Output {
   const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
   const bigInts = await bitcoinLikeAccount.getFees();
-  const bigNumbers = await Promise.all(bigInts.map(libcoreBigIntToBigNumber));
+  const bigNumbers = await promiseAllBatched(
+    10,
+    bigInts,
+    libcoreBigIntToBigNumber
+  );
   const normalized = bigNumbers.map(bn =>
     bn.div(1000).integerValue(BigNumber.ROUND_CEIL)
   );

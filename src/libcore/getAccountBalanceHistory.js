@@ -5,6 +5,7 @@ import type { PortfolioRange, BalanceHistory } from "../types";
 import type { CoreAccount } from "./types";
 import { TimePeriod } from "./types";
 import { libcoreAmountToBigNumber } from "./buildBigNumber";
+import { promiseAllBatched } from "../promise";
 import { getDates, getPortfolioRangeConfig } from "../portfolio";
 import invariant from "invariant";
 
@@ -28,8 +29,10 @@ const getAccountBalanceHistory = async (
 
   const rawBalances = await coreA.getBalanceHistory(fromISO, toISO, period);
 
-  const balances = await Promise.all(
-    rawBalances.map(balance => libcoreAmountToBigNumber(balance))
+  const balances = await promiseAllBatched(
+    5,
+    rawBalances,
+    libcoreAmountToBigNumber
   );
 
   invariant(
