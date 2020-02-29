@@ -36,13 +36,7 @@ class AccountHeaderTitle extends Component<Props> {
               currency={getAccountCurrency(account)}
             />
           </View>
-          <LText
-            semiBold
-            secondary
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.title}
-          >
+          <LText semiBold secondary numberOfLines={1} style={styles.title}>
             {getAccountName(account)}
           </LText>
         </View>

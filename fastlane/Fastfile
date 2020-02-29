@@ -36,8 +36,6 @@ lane :internal_release do
 
   Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
   Fastlane::LaneManager.cruise_lane('android', 'beta')
-  Fastlane::LaneManager.cruise_lane('ios', 'upload_waldo', nil, 'mock')
-  Fastlane::LaneManager.cruise_lane('android', 'upload_waldo', nil, 'mock')
 
 end
 
@@ -137,15 +135,6 @@ platform :ios do
   lane :build_ipa do
     build(development: true)
   end
-
-  desc "upload to Waldo"
-  lane :upload_waldo do
-    build(development: true)
-    waldo(
-      ipa_path: 'ios/ledgerlivemobile.ipa',
-      upload_token: ENV["WALDO_UPLOAD_TOKEN_IOS"]
-    )
-  end
 end
 
 platform :android do
@@ -221,11 +210,5 @@ platform :android do
       track: 'internal',
       package_name: 'com.ledger.live'
     )
-  end
-
-  desc "upload to Waldo"
-  lane :upload_waldo do
-    build(type: "StagingRelease")
-    waldo(upload_token: ENV["WALDO_UPLOAD_TOKEN_ANDROID"])
   end
 end

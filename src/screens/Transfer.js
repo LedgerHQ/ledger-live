@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import Touchable from "../components/Touchable";
 import TabIcon from "../components/TabIcon";
 import CreateModal from "../modals/Create";
@@ -14,7 +14,7 @@ const hitSlop = {
 };
 
 class Transfer extends Component<
-  { tintColor: string },
+  { tintColor: string, navigation: * },
   { isModalOpened: boolean },
 > {
   state = {
@@ -25,11 +25,33 @@ class Transfer extends Component<
 
   onModalClose = () => this.setState({ isModalOpened: false });
 
+  isDisabled() {
+    const { navigation } = this.props;
+    const n =
+      navigation &&
+      navigation.dangerouslyGetParent &&
+      navigation.dangerouslyGetParent();
+    if (n && n.state) {
+      const { state } = n;
+      return (
+        state.routes[state.index].params &&
+        state.routes[state.index].params.blockNavigation
+      );
+    }
+
+    return false;
+  }
+
   render() {
     const { isModalOpened } = this.state;
     return (
-      <Fragment>
-        <Touchable event="Transfer" hitSlop={hitSlop} onPress={this.openModal}>
+      <>
+        <Touchable
+          event="Transfer"
+          disabled={this.isDisabled()}
+          hitSlop={hitSlop}
+          onPress={this.openModal}
+        >
           {/* $FlowFixMe */}
           <TabIcon
             Icon={TransferIcon}
@@ -38,16 +60,18 @@ class Transfer extends Component<
           />
         </Touchable>
         <CreateModal isOpened={isModalOpened} onClose={this.onModalClose} />
-      </Fragment>
+      </>
     );
   }
 }
 
 export default class Create extends Component<*> {
-  static navigationOptions = {
-    tabBarIcon: (props: *) => <Transfer {...props} />,
+  static navigationOptions = (navOpts: { navigation: * }) => ({
+    tabBarIcon: (props: *) => (
+      <Transfer {...props} navigation={navOpts.navigation} />
+    ),
     tabBarOnPress: () => {}, // noop
-  };
+  });
 
   render() {
     const { ...props } = this.props;

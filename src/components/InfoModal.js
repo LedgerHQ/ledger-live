@@ -21,7 +21,7 @@ type BulletItem = {
 type Props = ModalProps & {
   id?: string,
   title?: string | React$Element<*>,
-  desc: string | React$Element<*>,
+  desc?: string | React$Element<*>,
   bullets?: BulletItem[],
   Icon?: React$ComponentType<*>,
   withCancel?: boolean,
@@ -47,6 +47,7 @@ class InfoModal extends PureComponent<Props> {
       confirmLabel,
       confirmProps,
       style,
+      containerStyle,
     } = this.props;
     return (
       <BottomModal
@@ -58,9 +59,12 @@ class InfoModal extends PureComponent<Props> {
         <Circle bg={rgba(colors.live, 0.1)} size={56}>
           {Icon ? <Icon /> : <IconHelp size={24} color={colors.live} />}
         </Circle>
-        <LText style={styles.modalTitle} semiBold>
-          {title}
-        </LText>
+        {title ? (
+          <LText style={styles.modalTitle} semiBold>
+            {title}
+          </LText>
+        ) : null}
+
         {desc ? <LText style={styles.modalDesc}>{desc}</LText> : null}
         {bullets ? (
           <View style={styles.bulletsContainer}>
@@ -69,7 +73,14 @@ class InfoModal extends PureComponent<Props> {
             ))}
           </View>
         ) : null}
-        {children}
+        <View
+          style={[
+            !title && !desc && !bullets ? styles.childrenContainer : null,
+            containerStyle,
+          ]}
+        >
+          {children}
+        </View>
 
         <View style={styles.footer}>
           {withCancel ? (
@@ -136,6 +147,9 @@ const styles = StyleSheet.create({
     color: colors.smoke,
     marginLeft: 4,
     textAlign: "left",
+  },
+  childrenContainer: {
+    paddingTop: 24,
   },
   footer: {
     alignSelf: "stretch",

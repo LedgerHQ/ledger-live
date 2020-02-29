@@ -1,6 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet } from "react-native";
 // $FlowFixMe
 import { withNavigationFocus, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
@@ -15,7 +15,7 @@ import { removeKnownDevice } from "../../actions/ble";
 import {
   connectingStep,
   dashboard,
-  genuineCheck,
+  listApps,
   getDeviceName,
 } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
@@ -29,7 +29,7 @@ import type { DeviceLike } from "../../reducers/ble";
 import Trash from "../../icons/Trash";
 import BottomModal from "../../components/BottomModal";
 import ModalBottomAction from "../../components/ModalBottomAction";
-import ReadOnlyNanoX from "./ReadOnlyNanoX";
+import ReadOnlyNanoX from "./Connect/ReadOnlyNanoX";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 const RemoveDeviceModal = ({
@@ -111,31 +111,19 @@ class ChooseDevice extends Component<
 
   onSelect = (meta: Object) => {
     const { version, mcuVersion } = meta.deviceInfo;
+    const { navigation } = this.props;
     track("ManagerDeviceEntered", {
       version,
       mcuVersion,
     });
-    this.props.navigation.navigate("ManagerMain", {
-      meta,
-    });
+
+    navigation.navigate("ManagerMain", meta);
   };
 
   onStepEntered = (i: number, meta: Object) => {
     if (i === 2) {
-      Promise.all([
-        // Step dashboard, we preload the applist before entering manager while we're still doing the genuine check
-        manager
-          .getAppsList(meta.deviceInfo)
-          .then(apps =>
-            Promise.all(
-              apps.map(app => Image.prefetch(manager.getIconUrl(app.icon))),
-            ),
-          ),
-        // we also preload as much info as possible in case of a MCU
-        manager.getLatestFirmwareForDevice(meta.deviceInfo),
-      ]).catch(e => {
-        console.warn(e);
-      });
+      // we also preload as much info as possible in case of a MCU
+      manager.getLatestFirmwareForDevice(meta.deviceInfo);
     }
   };
 
@@ -176,7 +164,7 @@ class ChooseDevice extends Component<
 
         <SelectDevice
           onSelect={this.onSelect}
-          steps={[connectingStep, dashboard, genuineCheck, getDeviceName]}
+          steps={[connectingStep, dashboard, listApps, getDeviceName]}
           onStepEntered={this.onStepEntered}
           onBluetoothDeviceAction={this.onShowMenu}
         />

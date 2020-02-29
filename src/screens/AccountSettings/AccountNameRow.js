@@ -30,12 +30,7 @@ class AccountNameRow extends PureComponent<Props> {
           })
         }
       >
-        <LText
-          semiBold
-          numberOfLines={1}
-          ellipsizeMode="middle"
-          style={styles.accountName}
-        >
+        <LText semiBold numberOfLines={1} style={styles.accountName}>
           {account.name}
         </LText>
       </SettingsRow>

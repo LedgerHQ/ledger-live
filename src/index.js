@@ -5,6 +5,7 @@ import "./polyfill";
 import "./live-common-setup";
 import "./implement-react-native-libcore";
 import React, { Fragment, Component } from "react";
+import { connect } from "react-redux";
 import { StyleSheet, View, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import Transport from "@ledgerhq/hw-transport";
@@ -39,6 +40,7 @@ checkLibs({
   React,
   log,
   Transport,
+  connect,
 });
 
 // useScreens();

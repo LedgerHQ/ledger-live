@@ -4,7 +4,7 @@ import React, { Component, PureComponent } from "react";
 import { BackHandler, StyleSheet } from "react-native";
 
 import { Trans } from "react-i18next";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";

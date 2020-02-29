@@ -348,6 +348,7 @@ class ReceiveConfirmation extends Component<Props, State> {
           onBackdropPress={this.onZoom}
           onBackButtonPress={this.onZoom}
           useNativeDriver
+          hideModalContentWhileAnimating
         >
           <View style={styles.qrZoomWrapper}>
             <QRCode

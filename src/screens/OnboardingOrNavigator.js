@@ -1,6 +1,6 @@
 import React from "react";
 import { compose } from "redux";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import Config from "react-native-config";
 import { createStructuredSelector } from "reselect";
 import { withNavigation } from "react-navigation";
