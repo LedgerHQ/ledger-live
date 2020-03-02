@@ -1,14 +1,15 @@
 // @flow
-import { renderHook } from "@testing-library/react-hooks";
-import { initState } from "../../lib/apps";
-import { deviceInfo155, mockListAppsResult } from "../../lib/apps/mock";
+import { Subject } from "rxjs";
+import { renderHook, act } from "@testing-library/react-hooks";
+import { initState } from ".";
+import { deviceInfo155, mockListAppsResult } from "./mock";
 import {
   useAppInstallNeedsDeps,
   useAppInstallProgress,
   useAppsSections,
   useAppUninstallNeedsDeps
 } from "./react";
-import { useNotEnoughMemoryToInstall } from "../../lib/apps/react";
+import { useNotEnoughMemoryToInstall } from "./react";
 
 const mockedState = initState(
   mockListAppsResult(
@@ -60,18 +61,20 @@ test("Apps hooks - useAppInstallProgress - Queued or unknown app", () => {
 });
 
 test("Apps hooks - useAppInstallProgress - Current app", () => {
+  const currentProgressSubject = new Subject();
   const { result } = renderHook(() =>
     useAppInstallProgress(
       {
         ...mockedState,
-        currentProgress: {
-          appOp: { type: "install", name: "XRP" },
-          progress: 0.71
-        }
+        currentProgressSubject,
+        currentAppOp: { type: "install", name: "XRP" }
       },
       "XRP"
     )
   );
+  act(() => {
+    currentProgressSubject.next(0.71);
+  });
   expect(result.current).toBe(0.71);
 });
 

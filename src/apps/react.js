@@ -1,6 +1,6 @@
 // @flow
 
-import { useReducer, useEffect, useMemo } from "react";
+import { useState, useReducer, useEffect, useMemo } from "react";
 import type { Exec, State, Action, ListAppsResult } from "./types";
 import type { App } from "../types/manager";
 import type { AppType, SortOptions } from "./filtering";
@@ -123,12 +123,24 @@ export function useAppsSections(
   return { update, catalog, device };
 }
 
-// at the moment it will uses State but in future, we'll refine!
 export function useAppInstallProgress(state: State, name: string) {
-  // $FlowFixMe
-  const { currentProgress } = state;
-  if (currentProgress && currentProgress.appOp.name === name) {
-    return currentProgress.progress;
+  const { currentProgressSubject, currentAppOp } = state;
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    if (
+      !currentAppOp ||
+      !currentProgressSubject ||
+      currentAppOp.name !== name
+    ) {
+      setProgress(0);
+      return;
+    }
+    const sub = currentProgressSubject.subscribe(setProgress);
+    return () => sub.unsubscribe();
+  }, [currentProgressSubject, currentAppOp, name]);
+
+  if (currentProgressSubject && currentAppOp && currentAppOp.name === name) {
+    return progress;
   }
   return 1;
 }
