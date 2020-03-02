@@ -59,7 +59,7 @@ jobs:
         if: failure() || success()
         uses: actions/upload-artifact@v1
         with:
-          name: tests_output.txt
+          name: tests_output-${{ runner.os }}.txt
           path: tests_output.txt
 
   cli:
