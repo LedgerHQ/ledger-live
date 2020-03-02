@@ -1,5 +1,6 @@
 // @flow
 
+import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { App } from "../types/manager";
@@ -30,7 +31,7 @@ export const initState = ({
   installQueue: [],
   uninstallQueue: [],
   updateAllQueue: [],
-  currentProgress: null,
+  currentProgressSubject: new Subject(),
   currentError: null,
   currentAppOp: null
 });
@@ -88,10 +89,7 @@ export const reducer = (state: State, action: Action): State => {
         return {
           ...state,
           currentAppOp: appOp,
-          currentProgress: {
-            appOp: appOp,
-            progress: 0
-          }
+          currentProgressSubject: new Subject()
         };
       } else if (event.type === "runSuccess") {
         let nextState;
@@ -100,7 +98,7 @@ export const reducer = (state: State, action: Action): State => {
           nextState = {
             ...state,
             currentAppOp: null,
-            currentProgress: null,
+            currentProgressSubject: null,
             currentError: null,
             recentlyInstalledApps: state.recentlyInstalledApps.concat(
               appOp.name
@@ -126,7 +124,7 @@ export const reducer = (state: State, action: Action): State => {
           nextState = {
             ...state,
             currentAppOp: null,
-            currentProgress: null,
+            currentProgressSubject: null,
             currentError: null,
             // remove apps to known installed apps
             installed: state.installed.filter(i => appOp.name !== i.name),
@@ -168,19 +166,18 @@ export const reducer = (state: State, action: Action): State => {
           installQueue: [],
           updateAllQueue: [],
           currentAppOp: null,
+          currentProgressSubject: null,
           currentError: {
             appOp: appOp,
             error: event.error
           }
         };
       } else if (event.type === "runProgress") {
-        return {
-          ...state,
-          currentProgress: {
-            appOp: appOp,
-            progress: event.progress
-          }
-        };
+        // we just emit on the subject
+        if (state.currentProgressSubject) {
+          state.currentProgressSubject.next(event.progress);
+        }
+        return state; // identity state will not re-render the UI
       }
       return state;
     }

@@ -1,6 +1,6 @@
 // @flow
 import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import type { Observable } from "rxjs";
+import type { Observable, Subject } from "rxjs";
 import type { CryptoCurrency } from "../types/currencies";
 import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
 
@@ -48,10 +48,7 @@ export type State = {
   // queue saved at the time of a "updateAll" action
   updateAllQueue: string[],
   currentAppOp: ?AppOp,
-  currentProgress: ?{
-    appOp: AppOp,
-    progress: number
-  },
+  currentProgressSubject: ?Subject<number>,
   currentError: ?{
     error: Error,
     appOp: AppOp
