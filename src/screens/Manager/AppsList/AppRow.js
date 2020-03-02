@@ -21,7 +21,6 @@ type Props = {
   state: State,
   dispatch: Action => void,
   isInstalledView: boolean,
-  currentProgress: number,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
@@ -33,7 +32,6 @@ const AppRow = ({
   state,
   dispatch,
   isInstalledView,
-  currentProgress,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   setStorageWarning,
@@ -112,7 +110,6 @@ const AppRow = ({
           notEnoughMemoryToInstall={notEnoughMemoryToInstall}
           isInstalled={!!isInstalled}
           isInstalledView={isInstalledView}
-          currentProgress={currentProgress}
           setAppInstallWithDependencies={setAppInstallWithDependencies}
           setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         />
@@ -189,22 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(
-  AppRow,
-  (
-    {
-      currentProgress: _currentProgress,
-      visible: _visible,
-      state: { installQueue: _installQueue, uninstallQueue: _uninstallQueue },
-    },
-    { currentProgress, visible, state: { installQueue, uninstallQueue } },
-  ) => {
-    /** compare _prev to next props that if different should trigger a rerender */
-    return (
-      visible === _visible &&
-      currentProgress === _currentProgress &&
-      installQueue.length === _installQueue.length &&
-      uninstallQueue.length === _uninstallQueue.length
-    );
-  },
-);
+export default memo(AppRow);

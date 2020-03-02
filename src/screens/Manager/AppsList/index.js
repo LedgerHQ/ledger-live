@@ -13,7 +13,6 @@ type Props = {
   state: State,
   dispatch: *,
   renderNoResults?: (*) => Node,
-  currentProgress: number,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
@@ -31,7 +30,6 @@ const AppsList = ({
   renderNoResults,
   state,
   dispatch,
-  currentProgress,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   setStorageWarning,
@@ -48,11 +46,6 @@ const AppsList = ({
       key: `${data[index].id}_${isInstalledView ? "Installed" : "Catalog"}`,
       visible: active,
       isInstalledView,
-      currentProgress:
-        (currentProgress &&
-          currentProgress.appOp.name === data[index].name &&
-          currentProgress.progress) ||
-        0,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,
@@ -62,7 +55,6 @@ const AppsList = ({
       dispatch,
       isInstalledView,
       active,
-      currentProgress,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,

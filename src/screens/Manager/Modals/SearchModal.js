@@ -163,7 +163,6 @@ type Props = {
   disabled: boolean,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
-  currentProgress: *,
   navigation: *,
 };
 
@@ -175,7 +174,6 @@ export default ({
   disabled,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
-  currentProgress,
   navigation,
 }: Props) => {
   const textInput = useRef();
@@ -271,15 +269,9 @@ export default ({
         animation={false}
         setAppInstallWithDependencies={closeSearchModal}
         setAppUninstallWithDependencies={closeSearchModal}
-        currentProgress={
-          (currentProgress &&
-            currentProgress.appOp.name === item.name &&
-            currentProgress.progress) ||
-          0
-        }
       />
     ),
-    [state, dispatch, isInstalledView, closeSearchModal, currentProgress],
+    [state, dispatch, isInstalledView, closeSearchModal],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
 
