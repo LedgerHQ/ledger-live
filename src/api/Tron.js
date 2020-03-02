@@ -14,7 +14,7 @@ import type {
   SuperRepresentativeData,
   TronResources
 } from "../families/tron/types";
-import type { Account, SubAccount, Operation } from "../types";
+import type { Account, SubAccount } from "../types";
 import {
   decode58Check,
   encode58Check,
@@ -24,7 +24,7 @@ import {
 } from "../families/tron/utils";
 import { log } from "@ledgerhq/logs";
 import network from "../network";
-import { retry } from "../promise";
+import { promiseAllBatched } from "../promise";
 import { makeLRUCache } from "../cache";
 import { getEnv } from "../env";
 import get from "lodash/get";
@@ -42,7 +42,10 @@ async function post(url: string, body: Object) {
   });
 
   // Ugly but trongrid send a 200 status event if there are errors
-  if (data.Error) throw new Error(data.Error);
+  if (data.Error) {
+    log("tron-error", data.Error, { url, body });
+    throw new Error(data.Error);
+  }
 
   return data;
 }
@@ -54,7 +57,10 @@ async function fetch(url: string) {
   });
 
   // Ugly but trongrid send a 200 status event if there are errors
-  if (data.Error) throw new Error(data.Error);
+  if (data.Error) {
+    log("tron-error", data.Error, { url });
+    throw new Error(data.Error);
+  }
 
   return data;
 }
@@ -161,25 +167,32 @@ export async function fetchTronAccount(addr: string) {
 }
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction
-async function fetchTronTxDetail(txId: string) {
-  return await post(`${baseApiUrl}/wallet/gettransactioninfobyid`, {
-    value: txId
-  });
+function fetchTronTxDetail(txId: string) {
+  return fetch(
+    `${baseApiUrl}/wallet/gettransactioninfobyid?value=${encodeURIComponent(
+      txId
+    )}`
+  );
 }
 
 export async function fetchTronAccountTxs(
   addr: string,
-  shouldFetchMoreTxs: (Operation[]) => boolean
+  shouldFetchMoreTxs: (Object[]) => boolean
 ): Promise<TrongridTxInfo[]> {
   const getTxs = async (url: string) =>
     fetch(url).then(resp => {
       const nextUrl = get(resp, "meta.links.next");
 
-      const resultsWithTxInfo = Promise.all(
-        (resp.data || []).map(tx => {
-          const fetchedTxDetail = fetchTronTxDetail(tx.txID);
-          return fetchedTxDetail.then(detail => ({ ...tx, detail }));
-        })
+      const resultsWithTxInfo = promiseAllBatched(
+        3,
+        resp.data || [],
+        async tx => {
+          if (!tx.txID) {
+            return tx;
+          }
+          const detail = await fetchTronTxDetail(tx.txID);
+          return { ...tx, detail };
+        }
       ).then(results => ({ results, nextUrl }));
 
       return resultsWithTxInfo;
@@ -220,9 +233,11 @@ export async function fetchTronAccountTxs(
 export const getTronAccountNetwork = async (
   address: string
 ): Promise<NetworkInfo> => {
-  const result = await post(`${baseApiUrl}/wallet/getaccountresource`, {
-    address: decode58Check(address)
-  });
+  const result = await fetch(
+    `${baseApiUrl}/wallet/getaccountresource?address=${encodeURIComponent(
+      decode58Check(address)
+    )}`
+  );
   return result;
 };
 
@@ -231,10 +246,10 @@ export const validateAddress = async (address: string): Promise<boolean> => {
     const result = await post(`${baseApiUrl}/wallet/validateaddress`, {
       address: decode58Check(address)
     });
-
     return result.result || false;
   } catch (e) {
-    // dont throw anything
+    // FIXME we should not silent errors!
+    log("tron-error", "validateAddress fails with " + e.message, { address });
     return false;
   }
 };
@@ -272,9 +287,9 @@ export const getAccountName = async (addr: string): Promise<?string> => {
 };
 
 export const getBrokerage = async (addr: string): Promise<number> => {
-  const { brokerage } = await post(`${baseApiUrl}/wallet/getBrokerage`, {
-    address: addr
-  });
+  const { brokerage } = await fetch(
+    `${baseApiUrl}/wallet/getBrokerage?address=${encodeURIComponent(addr)}`
+  );
 
   srBrokeragesCache.hydrate(addr, brokerage); // put it in cache
 
@@ -312,44 +327,30 @@ export const hydrateSuperRepresentatives = (list: SuperRepresentative[]) => {
 };
 
 const fetchSuperRepresentatives = async (): Promise<SuperRepresentative[]> => {
-  try {
-    const result = await post(`${baseApiUrl}/wallet/listwitnesses`, {});
-    const sorted = result.witnesses.sort((a, b) => b.voteCount - a.voteCount);
+  const result = await fetch(`${baseApiUrl}/wallet/listwitnesses`);
+  const sorted = result.witnesses.sort((a, b) => b.voteCount - a.voteCount);
 
-    const superRepresentatives = await Promise.all(
-      sorted.map(w => {
-        const encodedAddress = encode58Check(w.address);
+  const superRepresentatives = await promiseAllBatched(3, sorted, async w => {
+    const encodedAddress = encode58Check(w.address);
+    const accountName = await accountNamesCache(encodedAddress);
+    const brokerage = await srBrokeragesCache(encodedAddress);
+    return {
+      ...w,
+      address: encodedAddress,
+      name: accountName,
+      brokerage,
+      voteCount: w.voteCount || 0,
+      isJobs: w.isJobs || false
+    };
+  });
 
-        // we neeed to retry because trongrid returns '408 Request Timeout' sometimes
-        // in case of mutiple fetch in parallell
-        const doGetAccountName = retry(() => accountNamesCache(encodedAddress));
-        const doGetBrokerage = retry(() => srBrokeragesCache(encodedAddress));
+  hydrateSuperRepresentatives(superRepresentatives); // put it in cache
 
-        return doGetAccountName.then(accountName =>
-          doGetBrokerage.then(brokerage => ({
-            ...w,
-            address: encodedAddress,
-            name: accountName,
-            brokerage,
-            voteCount: w.voteCount || 0,
-            isJobs: w.isJobs || false
-          }))
-        );
-      })
-    );
-
-    hydrateSuperRepresentatives(superRepresentatives); // put it in cache
-
-    return superRepresentatives;
-  } catch (e) {
-    throw new Error(
-      "Unexpected error occured when calling fetchSuperRepresentatives"
-    );
-  }
+  return superRepresentatives;
 };
 
 export const getNextVotingDate = async (): Promise<Date> => {
-  const { num } = await post(`${baseApiUrl}/wallet/getnextmaintenancetime`);
+  const { num } = await fetch(`${baseApiUrl}/wallet/getnextmaintenancetime`);
   return new Date(num);
 };
 
@@ -408,111 +409,109 @@ export const getTronResources = async (
   acc: Object,
   txs: TrongridTxInfo[]
 ): Promise<TronResources> => {
-  try {
-    const frozenBandwidth = get(acc, "frozen[0]", undefined);
-    const frozenEnergy = get(
-      acc,
-      "account_resource.frozen_balance_for_energy",
-      undefined
-    );
+  const frozenBandwidth = get(acc, "frozen[0]", undefined);
+  const frozenEnergy = get(
+    acc,
+    "account_resource.frozen_balance_for_energy",
+    undefined
+  );
 
-    const delegatedFrozenBandwidth = get(
-      acc,
-      "delegated_frozen_balance_for_bandwidth",
-      undefined
-    );
-    const delegatedFrozenEnergy = get(
-      acc,
-      "account_resource.delegated_frozen_balance_for_energy",
-      undefined
-    );
+  const delegatedFrozenBandwidth = get(
+    acc,
+    "delegated_frozen_balance_for_bandwidth",
+    undefined
+  );
+  const delegatedFrozenEnergy = get(
+    acc,
+    "account_resource.delegated_frozen_balance_for_energy",
+    undefined
+  );
 
-    const lastDelegatedFrozenBandwidthOp = txs.find(
-      t =>
-        t.type === "FreezeBalanceContract" && t.to && t.resource === "BANDWIDTH"
-    );
+  const lastDelegatedFrozenBandwidthOp = txs.find(
+    t =>
+      t.type === "FreezeBalanceContract" && t.to && t.resource === "BANDWIDTH"
+  );
 
-    const lastDelegatedFrozenEnergyOp = txs.find(
-      t => t.type === "FreezeBalanceContract" && t.to && t.resource === "ENERGY"
-    );
+  const lastDelegatedFrozenEnergyOp = txs.find(
+    t => t.type === "FreezeBalanceContract" && t.to && t.resource === "ENERGY"
+  );
 
-    const encodedAddress = encode58Check(acc.address);
+  const encodedAddress = encode58Check(acc.address);
 
-    const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
-    const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
+  const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
+  const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
 
-    const energy = tronNetworkInfo.EnergyLimit || 0;
-    const bandwidth = extractBandwidthInfo(tronNetworkInfo);
-    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+  const energy = tronNetworkInfo.EnergyLimit || 0;
+  const bandwidth = extractBandwidthInfo(tronNetworkInfo);
+  const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
 
-    const frozen = {
-      bandwidth: frozenBandwidth
+  const frozen = {
+    bandwidth: frozenBandwidth
+      ? {
+          amount: BigNumber(frozenBandwidth.frozen_balance),
+          expiredAt: new Date(frozenBandwidth.expire_time)
+        }
+      : undefined,
+    energy: frozenEnergy
+      ? {
+          amount: BigNumber(frozenEnergy.frozen_balance),
+          expiredAt: new Date(frozenEnergy.expire_time)
+        }
+      : undefined
+  };
+
+  const delegatedFrozen = {
+    bandwidth:
+      delegatedFrozenBandwidth && lastDelegatedFrozenBandwidthOp
         ? {
-            amount: BigNumber(frozenBandwidth.frozen_balance),
-            expiredAt: new Date(frozenBandwidth.expire_time)
+            amount: BigNumber(delegatedFrozenBandwidth),
+            expiredAt: new Date(
+              lastDelegatedFrozenBandwidthOp.date.getTime() + threeDaysInMs
+            ) // + 3 days
           }
         : undefined,
-      energy: frozenEnergy
+    energy:
+      delegatedFrozenEnergy && lastDelegatedFrozenEnergyOp
         ? {
-            amount: BigNumber(frozenEnergy.frozen_balance),
-            expiredAt: new Date(frozenEnergy.expire_time)
+            amount: BigNumber(delegatedFrozenEnergy),
+            expiredAt: new Date(
+              lastDelegatedFrozenEnergyOp.date.getTime() + threeDaysInMs
+            ) // + 3 days
           }
         : undefined
-    };
+  };
 
-    const delegatedFrozen = {
-      bandwidth:
-        delegatedFrozenBandwidth && lastDelegatedFrozenBandwidthOp
-          ? {
-              amount: BigNumber(delegatedFrozenBandwidth),
-              expiredAt: new Date(
-                lastDelegatedFrozenBandwidthOp.date.getTime() + threeDaysInMs
-              ) // + 3 days
-            }
-          : undefined,
-      energy:
-        delegatedFrozenEnergy && lastDelegatedFrozenEnergyOp
-          ? {
-              amount: BigNumber(delegatedFrozenEnergy),
-              expiredAt: new Date(
-                lastDelegatedFrozenEnergyOp.date.getTime() + threeDaysInMs
-              ) // + 3 days
-            }
-          : undefined
-    };
+  const tronPower = BigNumber(get(frozen, "bandwidth.amount", 0))
+    .plus(get(frozen, "energy.amount", 0))
+    .plus(get(delegatedFrozen, "bandwidth.amount", 0))
+    .plus(get(delegatedFrozen, "energy.amount", 0))
+    .dividedBy(1000000)
+    .decimalPlaces(3, BigNumber.ROUND_HALF_DOWN)
+    .toNumber();
 
-    const tronPower = BigNumber(get(frozen, "bandwidth.amount", 0))
-      .plus(get(frozen, "energy.amount", 0))
-      .plus(get(delegatedFrozen, "bandwidth.amount", 0))
-      .plus(get(delegatedFrozen, "energy.amount", 0))
-      .dividedBy(1000000)
-      .decimalPlaces(3, BigNumber.ROUND_HALF_DOWN)
-      .toNumber();
+  const votes = get(acc, "votes", []).map(v => ({
+    address: encode58Check(v.vote_address),
+    voteCount: v.vote_count
+  }));
 
-    const votes = get(acc, "votes", []).map(v => ({
-      address: encode58Check(v.vote_address),
-      voteCount: v.vote_count
-    }));
-
-    return {
-      energy,
-      bandwidth,
-      frozen,
-      delegatedFrozen,
-      votes,
-      tronPower,
-      unwithdrawnReward
-    };
-  } catch (e) {
-    throw new Error("Unexpected error occured when calling getTronResources");
-  }
+  return {
+    energy,
+    bandwidth,
+    frozen,
+    delegatedFrozen,
+    votes,
+    tronPower,
+    unwithdrawnReward
+  };
 };
 
 export const getUnwithdrawnReward = async (addr: string): Promise<number> => {
   try {
-    const { reward = 0 } = await post(`${baseApiUrl}/wallet/getReward`, {
-      address: decode58Check(addr)
-    });
+    const { reward = 0 } = await fetch(
+      `${baseApiUrl}/wallet/getReward?address=${encodeURIComponent(
+        decode58Check(addr)
+      )}`
+    );
     return reward;
   } catch (e) {
     return Promise.resolve(0);
