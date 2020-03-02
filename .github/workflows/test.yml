@@ -50,7 +50,7 @@ jobs:
         run: tzutil /s "Eastern Standard Time"
         if: runner.os == 'Windows'
       - name: Run tests
-        run: cross-env VERBOSE_FILE=tests_output.txt yarn ci-test-common
+        run: npx cross-env VERBOSE_FILE=tests_output.txt yarn ci-test-common
         timeout-minutes: 60
       - name: Run coverage
         if: runner.os == 'macOS'
