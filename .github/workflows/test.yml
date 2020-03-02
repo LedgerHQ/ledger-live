@@ -50,11 +50,17 @@ jobs:
         run: tzutil /s "Eastern Standard Time"
         if: runner.os == 'Windows'
       - name: Run tests
-        run: yarn ci-test-common
+        run: VERBOSE_FILE=tests_output.txt yarn ci-test-common
         timeout-minutes: 60
       - name: Run coverage
         if: runner.os == 'macOS'
         run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
+      - name: upload logs
+        if: failure() || success()
+        uses: actions/upload-artifact@v1
+        with:
+          name: tests_output.txt
+          path: tests_output.txt
 
   cli:
     strategy:
