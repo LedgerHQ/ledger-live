@@ -28,7 +28,7 @@ where
 - `account` is the index of the account
 - `change` and `address_index` are ways to generate new addresses inside the account. This follow a strict rule described in the spec (with the importance of the Gap limit)
 
-So a typically derivation is
+So a typical derivation is
 
 ```
 44'/0'/0'/0/0
@@ -42,7 +42,7 @@ So for instance, if `44'/0'/0'/0/0` is empty, by following the spec, it's assume
 
 This is a strict limit that allows the scanning algorithm that search for accounts to terminate.
 
-Now, for Bitcoin, we have more than one "purpose": there were important upgrade in how to format addresses and make transactions on the Bitcoin network that required to move to a fundamentally different account: this is why Segwit accounts are going to be on `49'/0'/account'` and Native Segwit are going to be on `84'/0'/account'`.
+Now, for Bitcoin, we have more than one "purpose": there were important upgrades in how to format addresses and make transactions on the Bitcoin network that required to move to a fundamentally different account: this is why Segwit accounts are going to be on `49'/0'/account'` and Native Segwit are going to be on `84'/0'/account'`.
 
 In live-common, and for Bitcoin, we will scan for at least these 3 differents derivation schemes (that we call "DerivationMode").
 
@@ -92,7 +92,7 @@ We have also some special "custom" accounts (by enabling _Experimental Settings 
 
 `segwit_on_legacy` and `legacy_on_segwit` are ways to recover from classical user mistake of having sent funds on a Segwit addressed derived on a legacy account, or reversely. That way allows these users to create (in advanced mode way) the accounts to recover the funds.
 
-The returned value really different for each coin, because some coins supports segwit some don't, same for native segwit. Some coins also are **hard fork of Bitcoin** which force us to support a special derivation (we called `"unsplit"`, because it's the derivation path before splitting the funds out of the parent derivation path).
+The returned values differ for each coin, because some coins supports segwit some don't, same for native segwit. Some coins also are **hard fork of Bitcoin** which force us to support a special derivation (we called `"unsplit"`, because it's the derivation path before splitting the funds out of the parent derivation path).
 
 `""` defacto means "BIP 44" with the default settings of purpose=44. We even can have some coins that don't support BIP 44 (example of Tezos which only was supporting hardened path when it was integrated) so we sometimes will have dedicated path.
 
