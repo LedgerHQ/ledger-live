@@ -18,7 +18,7 @@ Holds transport logic to execute App operations on your device and fetch the App
 
 `execWithTransport` executes a given App operation - [AppOp](../src/apps/types.js) on the device
 
-Used to install uninstall or update device Apps.
+Used to install, uninstall or update device Apps.
 
 Returns [Observable<{ progress: number }>](../src/apps/types.js)
 
