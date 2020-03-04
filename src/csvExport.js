@@ -74,7 +74,7 @@ const accountRows = (
 const accountsRows = (accounts: Account[]) =>
   flattenAccounts(accounts).reduce((all, account) => {
     const parentAccount =
-      account.type === "TokenAccount"
+      account.type !== "Account"
         ? accounts.find(a => a.id === account.parentId)
         : null;
     return all.concat(accountRows(account, parentAccount));

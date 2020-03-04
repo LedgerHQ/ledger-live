@@ -1971,7 +1971,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     managerAppName: "Stellar",
     ticker: "XLM",
     scheme: "stellar",
-    color: "#07B5E5",
+    color: "#000000",
     family: "stellar",
     units: [
       {

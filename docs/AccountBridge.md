@@ -7,6 +7,8 @@ AccountBridge offers a generic abstraction to synchronize accounts and perform t
 
 It is designed for the end user frontend interface and is agnostic of the way it runs, has multiple implementations and does not know how the data is even stored: in fact **it's just a set of stateless functions**.
 
+![](account-bridge-flow.png)
+
 **[types](../src/types/bridge.js)**
 
 ```js

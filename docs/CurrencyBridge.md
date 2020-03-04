@@ -4,6 +4,8 @@
 
 CurrencyBridge offers a generic abstraction (for all crypto currencies) to add accounts with a Ledger device.
 
+![](currency-bridge-flow.png)
+
 **[types](../src/types/bridge.js)**
 
 ```js
