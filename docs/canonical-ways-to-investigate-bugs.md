@@ -185,7 +185,7 @@ Now, we go to a new Terminal and we do the actual scan accounts via the `ledger-
 DEVICE_PROXY_URL=ws://localhost:8435 ledger-live sync -c zen
 ```
 
-which correctly results of
+which correctly results in
 
 ```
 Horizen 1: ZEN 0.4005 (1 operations) (znaE1JH6YjjWiG23bqdCkBiC4KwZ9vo7hB6 on 44'/121'/0'/0/1) (#0 xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT)
