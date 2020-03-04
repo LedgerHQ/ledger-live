@@ -4,34 +4,34 @@ This document will give some hints on efficient ways to investigate a user probl
 
 ## Prerequisite
 
-The particularity of Ledger is that we have many users that have various computers or accounts condition and it is often not easy to reproduce some specific bugs in the same conditions. Most of the time, we can investigate things by knowing the Account's xpub (public key) which allows us to add the accounts and see what happens. Obviously in that condition we will not be able to test the Send (we only have the public keys, we will never ask the private keys or seed to our users) but with logs we should have enough information to investigate.
+The particularity of Ledger is that we have many users that have various computers or account conditions and it is often not easy to reproduce some specific bugs in the same conditions. Most of the time, we can investigate things by knowing the Account's xpub (public key) which allows us to add the accounts and see what happens. Obviously, in that condition we will not be able to test the Send (we only have the public keys, we will never ask the private keys or seed to our users) but with logs we should have enough information to investigate.
 
 ### It's a bug on Ledger Live Desktop?
 
-If the bug is related to an UI issues or specific to the desktop platform, users can either contact our Customer support (preferred way) or [create an issue on GitHub](https://github.com/LedgerHQ/ledger-live-desktop).
+If the bug is related to UI issues or is specific to the desktop platform, users can either contact our Customer support (preferred way) or [create an issue on GitHub](https://github.com/LedgerHQ/ledger-live-desktop).
 
-If it's not, we generally will suspect the bugs can be reproduce in Live Common and using our CLI.
+If it's not, we generally will suspect the bugs can be reproduced in Live Common and using our CLI.
 
 In that case, we will ask users to **Export Logs** in the app (either via a button or via Ctrl+E).
 
 ### It's a bug on Ledger Live Mobile?
 
-If the bug is related to an UI issues, users can either contact our Customer support (preferred way) or [create an issue on GitHub](https://github.com/LedgerHQ/ledger-live-mobile).
+If the bug is related to UI issues, users can either contact our Customer support (preferred way) or [create an issue on GitHub](https://github.com/LedgerHQ/ledger-live-mobile).
 
-We assume that most of the bugs on the mobile app, unless they are mobile platform specific or UI issues, are going to be common with what can be experienced on Desktop as we use the same stack shared with our Live Common library. We will therefore usually invite users to go back to desktop, try to reproduce the issue with the same set of accounts and issue or not we ask users to Export Logs from desktop (on our side we can try to export them back to mobile to see if we reproduce the issue).
+We assume that most of the bugs on the mobile app, unless they are mobile platform-specific or UI issues, are going to be common with what can be experienced on Desktop as we use the same stack shared with our Live Common library. We will therefore usually invite users to go back to desktop, try to reproduce the issue with the same set of accounts and issue or not we ask users to Export Logs from desktop (on our side we can try to export them back to mobile to see if we reproduce the issue).
 
 ## Investigate Ledger Live Desktop logs
 
-A log file from Ledger Live Desktop is essentially a list of JSON object separated by new lines.
+A logfile from Ledger Live Desktop is essentially a list of JSON objects separated by newlines.
 
-From our [tools](../tools) project, we have a /logsviewer page that allow to visualize a log file:
+From our [tools](../tools) project, we have a /logsviewer page that allows visualizing a log file:
 
 https://ledger-live-tools.now.sh/logsviewer
 
-This page allows to quickly browser and search through the logs.
-Logs are ordered from the most recent to the older.
+This page allows us to quickly browse and search through the logs.
+Logs are ordered from the most recent to the oldest.
 
-One of the important log that appears at the end is the "exportLogsMeta", which have some important user contextual information (Typically we want to check which envs has been used)
+One of the important log that appears at the end is the "exportLogsMeta", which has some important user contextual information (Typically we want to check which envs has been used)
 
 <img width="1367" alt="Capture d’écran 2020-03-03 à 15 08 34" src="https://user-images.githubusercontent.com/211411/75783543-07a9c980-5d61-11ea-99d2-6c41e6076180.png">
 
@@ -43,7 +43,7 @@ or going more low level and look at the device binary exchanges
 
 <img width="1294" alt="Capture d’écran 2020-03-03 à 15 09 18" src="https://user-images.githubusercontent.com/211411/75783551-0bd5e700-5d61-11ea-9c8f-2cb21234e03a.png">
 
-In any cases, our logs will also contain some analytics events (like the part of the app being navigated on) so we can have a big picture of what the user has been doing.
+In any case, our logs will also contain some analytics events (like the part of the app being navigated on) so we can have a big picture of what the user has been doing.
 
 **On every investigation, we will usually want to reproduce on our side and it's often more practical to do it in the terminal with `ledger-live` CLI. Let's look at classical investigation examples.**
 
@@ -51,13 +51,13 @@ In any cases, our logs will also contain some analytics events (like the part of
 
 When a Synchronisation bug occurs, which usually is spotted by seeing a failure in the Sync icon or global notification, we can easily spot the problem in the logs.
 
-Usually, just seeing the logs will be enough, but sometimes we need to go deeper and try to reproduce in our side. For instance, we had a lot of Tezos bugs that was specific to some accounts, for instance Tezos KT accounts with more than 100 transactions. It was easier to spot the problem by putting ourself in the foot of our users.
+Usually, just seeing the logs will be enough, but sometimes we need to go deeper and try to reproduce on our side. We had a lot of Tezos bugs that were specific to some accounts, for instance, Tezos KT accounts with more than 100 transactions. It was easier to spot the problem by putting ourselves in the feet of our users.
 
 **What you essentially will need is the Account xpub.** It can either be asked to the user or spotted in the logs:
 
 <img width="976" alt="Capture d’écran 2020-03-03 à 16 01 07" src="https://user-images.githubusercontent.com/211411/75788726-ed73e980-5d68-11ea-9314-08f3468ab14b.png">
 
-> **It's important to know you will also need the [DerivationMode](derivation.md)**, in this specific case, it's a legacy account which is the default, but in any other case you will see the derivation mode after the xpub, for instance "segwit" or "native_segwit". You will have to add command parameter `-s segwit` (depending on the derivation mode)
+> **It's important to know you will also need the [DerivationMode](derivation.md)**, in this specific case, it's a legacy account which is the default, but in any other case you will see the derivation mode after the xpub, for instance, "segwit" or "native_segwit". You will have to add command parameter `-s segwit` (depending on the derivation mode)
 
 Now we the xpub, we can try to sync the account:
 
@@ -178,7 +178,7 @@ DEVICE_PROXY_URL=ws://192.168.0.25:8435
 Nano S proxy started on 192.168.0.25
 ```
 
-Now, we go to a new Terminal and we do the actual scan accounts via the `ledger-live sync -c ZEN` command. But we also need to make sure to use the environment DEVICE_PROXY_URL to use the proxy instead of a real device. (btw make sure to have removed `dbdata` folder that is used by ledger-live CLI)
+Now, we go to a new Terminal and we do the actual scan accounts via the `ledger-live sync -c ZEN` command. But we also need to make sure to use the environment `DEVICE_PROXY_URL` to use the proxy instead of a real device. (btw make sure to have removed `dbdata` folder that is used by ledger-live CLI)
 
 ```
 DEVICE_PROXY_URL=ws://localhost:8435 ledger-live sync -c zen
