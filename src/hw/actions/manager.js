@@ -12,13 +12,13 @@ import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "../../types/manager";
 import type { ListAppsResult } from "../../apps/types";
+import { useReplaySubject } from "../../observable";
 import manager from "../../manager";
 import type {
   ConnectManagerEvent,
   Input as ConnectManagerInput
 } from "../connectManager";
-import { useReplaySubject } from "./shared";
-import type { Action, Device } from "./shared";
+import type { Action, Device } from "./types";
 
 type State = {|
   isLoading: boolean,

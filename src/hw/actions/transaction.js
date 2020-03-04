@@ -17,7 +17,7 @@ import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
-import type { Action, Device } from "./shared";
+import type { Action, Device } from "./types";
 import type { AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 

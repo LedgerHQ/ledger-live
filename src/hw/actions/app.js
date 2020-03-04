@@ -22,9 +22,9 @@ import type {
   Input as ConnectAppInput
 } from "../connectApp";
 import type { Account, CryptoCurrency, TokenCurrency } from "../../types";
+import { useReplaySubject } from "../../observable";
 import { getAccountName } from "../../account";
-import type { Device, Action } from "./shared";
-import { useReplaySubject } from "./shared";
+import type { Device, Action } from "./types";
 
 type State = {|
   isLoading: boolean,
