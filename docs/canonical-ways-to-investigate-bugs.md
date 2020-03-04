@@ -169,7 +169,7 @@ We do this:
 ledger-live proxy -f apdus.txt
 ```
 
-which starts a server that will be able to respond like a device. It should logs something like
+which starts a server that will be able to respond like a device. It should log something like
 
 ```
 5 mocked APDUs will be replayed from /Users/grenaudeau/Desktop/logs.txt
