@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "12.2.1",
+  "version": "12.3.0",
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "scripts": {
