@@ -10,11 +10,11 @@ The Apps store logic provides a set of tools and interfaces to manage your ledge
 
 You can install, uninstall, update and check your ledger device status.
 
-**[filtering](../src/apps/filtering.js)**
-
-React hooks used to search and filter through a given list of apps.
+# Communicate with your device
 
 **[hw](../src/apps/hw.js)**
+
+Holds transport logic to execute App operations on your device and fetch the Apps State.
 
 `execWithTransport` executes a given App operation - [AppOp](../src/apps/types.js) on the device
 
@@ -45,6 +45,8 @@ const appsObservable$ = listApps(transport, deviceInfo).pipe(
 );
 ```
 
+# View and manage your device state
+
 **[logic](../src/apps/logic.js)**
 
 Hold the device state logic used by the [AppOp](../src/apps/types.js) [runner](../src/apps/runner.js).
@@ -55,9 +57,18 @@ Hold the device state logic used by the [AppOp](../src/apps/types.js) [runner](.
 
 Returns [AppsDistribution](../src/apps/types.js).
 
+`predictOptimisticState` helps retrieve the future [State](../src/apps/types.js) after an [AppOp](../src/apps/types.js) is successfully run on your device.
+
 **[react](../src/apps/react.js)**
 
 Holds react specific logic with hooks to manage the device state.
+
+`useAppsRunner` react hook to handle a device State with an AppOp dispatcher.
+Returns UseAppsRunnerResult
+
+**[filtering](../src/apps/filtering.js)**
+
+React hooks used to search and filter through a given list of apps.
 
 **[runner](../src/apps/runner.js)**
 
