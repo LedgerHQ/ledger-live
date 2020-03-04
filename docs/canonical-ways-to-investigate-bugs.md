@@ -51,7 +51,7 @@ In any case, our logs will also contain some analytics events (like the part of 
 
 When a Synchronisation bug occurs, which usually is spotted by seeing a failure in the Sync icon or global notification, we can easily spot the problem in the logs.
 
-Usually, just seeing the logs will be enough, but sometimes we need to go deeper and try to reproduce on our side. We had a lot of Tezos bugs that were specific to some accounts, for instance, Tezos KT accounts with more than 100 transactions. It was easier to spot the problem by putting ourselves in the feet of our users.
+Usually, just seeing the logs will be enough, but sometimes we need to go deeper and try to reproduce on our side. We had a lot of Tezos bugs that were specific to some accounts, for instance, Tezos KT accounts with more than 100 transactions. It was easier to spot the problem by putting ourselves in the shoes of our users.
 
 **What you essentially will need is the Account xpub.** It can either be asked to the user or spotted in the logs:
 
@@ -59,7 +59,7 @@ Usually, just seeing the logs will be enough, but sometimes we need to go deeper
 
 > **It's important to know you will also need the [DerivationMode](derivation.md)**, in this specific case, it's a legacy account which is the default, but in any other case you will see the derivation mode after the xpub, for instance, "segwit" or "native_segwit". You will have to add command parameter `-s segwit` (depending on the derivation mode)
 
-Now we the xpub, we can try to sync the account:
+Now that we have the xpub, we can try to sync the account:
 
 ```
 ledger-live sync -c zen --xpub xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT
@@ -139,7 +139,8 @@ It's very verbose but you will see things like
 
 ### A problem during "Add Account"
 
-The _Add Account_ flow involves the [`currencyBridge.scanAccounts`](CurrencyBridge.md) logic which itself is mostly about performing synchronisation. The main problem is that you might not know the XPUB at this point in time and it might breaks before. What we can do easily however is to reuse the APDUs that appears in the log and replay them against the CLI.
+
+The _Add Account_ flow involves the [`currencyBridge.scanAccounts`](CurrencyBridge.md) logic which itself is mostly about performing synchronisation. The main problem is that you might not know the XPUB at this point in time and it might break before. What we can do easily however is to reuse the [APDUs](apdu.md) that appears in the log and replay them against the CLI.
 
 On top of the /logsviewer page, there is a handy button "Export APDUs" that we can use to retrieve ALL the apdus. Now, you need to locate the part that concerns the add accounts.
 
@@ -184,7 +185,7 @@ Now, we go to a new Terminal and we do the actual scan accounts via the `ledger-
 DEVICE_PROXY_URL=ws://localhost:8435 ledger-live sync -c zen
 ```
 
-which correctly result of
+which correctly results of
 
 ```
 Horizen 1: ZEN 0.4005 (1 operations) (znaE1JH6YjjWiG23bqdCkBiC4KwZ9vo7hB6 on 44'/121'/0'/0/1) (#0 xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT)
@@ -248,7 +249,7 @@ export default dataset;
 
 Problems can appear at the beginning of the Send flow, typically when inputting the transaction data in the send form.
 
-We have in live-common a "TransactionStatus" concept which virtually everything is good to broadcast the transaction. The error is likely to be contained in that.
+We have in live-common a "TransactionStatus" concept which virtually checks everything is good to broadcast the transaction. The error is likely to be contained in that.
 
 An easy way to try that is to use `ledger-live getTransactionStatus`. The parameters it takes correspond to the Send form fields. Each family can add more field parameter (see the `families/*/cli-transaction.js` definition or `ledger-live help`)
 
@@ -276,11 +277,12 @@ But if all is good, I will have some data:
 }
 ```
 
-Just using `getTransactionStatus` will show you if a problem occur typically related to fetching fees or any other problem related to building a transaction. Now if the problem occurs at the device time, this will not be enough...
+Just using `getTransactionStatus` will show you if a problem occurs related to fetching fees or any other problem related to building a transaction. Now if the problem occurs at the device time, this will not be enough...
+
 
 ### A problem during send flow, _during the device step_
 
-Complex user's problem can appear during the Send flow. It often occur that the problem is specific to the user's Account and that we don't reproduce on our side.
+Complex user's problem can appear during the Send flow. It often occurs that the problem is specific to the user's Account and that we don't reproduce on our side.
 
 In such case, the same technique can also be used by replaying APDUs. **Make sure to use `--disable-broadcast` to not broadcast the transaction.**
 
@@ -292,7 +294,7 @@ Essentially we can do this:
  DEVICE_PROXY_URL=ws://localhost:8435 ledger-live send --disable-broadcast -c ZEN --xpub xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT --recipient znaE1JH6YjjWiG23bqdCkBiC4KwZ9vo7hB6 --amount 0.1
 ```
 
-By using the exact same parameter as the user we could be able to reproduce, even tho in practice we will likely fall into problems because transactions tends to not be identically reproductible / deterministic.
+By using the exact same parameter as the user we could be able to reproduce, even though in practice we will likely fall into problems because transactions tends to not be identically reproductible / deterministic.
 
 This might be a dead end and we might want to study the logs more deeply and/or try to reproduce user's conditions with our accounts or with regtest / testnets.
 
