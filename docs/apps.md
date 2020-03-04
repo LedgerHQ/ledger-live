@@ -1,4 +1,4 @@
-# `Apps store logic`: manage your ledger device apps
+# Apps store logic: manage your ledger device apps
 
 > Don't know what is an App?
 >
