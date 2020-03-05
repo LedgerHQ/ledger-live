@@ -49,13 +49,12 @@
 508: nanos/1.4.2/hcash/app_1.2.10: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1038: nanos/1.5.5/decred_testnet/app_1.3.0: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1039: nanos/1.5.5/none/app_1.0.1: KO: list apps don't find installed app? Found these: [{"hash": "049d9ca6c77d181687c63035719bfc9b5acbe943a8e3ffc871a230ebf88308c4","name": "MISC"}]
-3629: nanox/1.2.4-1.6/monero/app_1.5.0: KO: have BAD HASH. API have 501e2e7edb2a60f7a8a1d91bc632103f7c95e5410c95d988d368a8194364b79d but device have 83a7bb59b622096f300fb2d8d1b05965b53873e9e86c34b69773882185765a3a
-3764: nanox/1.2.4-1.6/monero/app_1.5.1: KO: have BAD HASH. API have f2c18d1460094db116ad006c15677fa597b81e897e7884203f010f007c27a207 but device have c29cc2c8b3073bfb94485a0c240a2de3f643cf22bec610bd36d4131d80f8506f
-3765: nanox/1.2.4-1.6/stellar/app_3.1.0: KO: have BAD HASH. API have 387891e143df221e0857a87a3177b72bfaf4eba2e2e3e57b9b83b0b8b808bca3 but device have 0af3b85a344f94f024d6184b536630ffbfa0720ce106b8fb7768aed2a4068b91
-3638: nanox/1.2.4-1.6/tron/app_0.1.6: KO: have BAD HASH. API have 4741ae8b287103a04df2723476d700ba30c7fd352c6e03dbbedb9d2b7ee456c1 but device have 8b2226f12733921c7588ca48b915dbf140b9195e5343362d6088c3dcadc77c43
-1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-2073: nanox/1.2.4-1/xrp/app_1.0.9: KO: have BAD HASH. API have ec0aa53d8dbe453d78f3541013ae4ef622ddbb6ef4b1fe2e3c3afa397e32179 but device have ec0aa53d8dbe453d78f3541013ae4ef622ddbb6ef4b1fe2e3c3afa397e321791
+3770: nanox/1.2.4-1.6/algorand/app_1.0.5: KO:  have BAD HASH. API have 85409df9f0b46c1a69647914ba05088d3ebc6e279800fcad9e8c1c6d72ca670a but device have e7f8f0e12d0b01abf80c353b429d8431cfce74a02516e0abac17d500815749e1
+3638: nanox/1.2.4-1.6/tron/app_0.1.6: KO:  have BAD HASH. API have 8b2226f12733921c7588ca48b915dbf140b9195e5343362d6088c3dcadc77c4 but device have 8b2226f12733921c7588ca48b915dbf140b9195e5343362d6088c3dcadc77c43
+3774: nanox/1.2.4-1.6/vechain/app_1.0.7: KO:  have BAD HASH. API have 06d0f022eb51a3537f5d17671650c86e5b5227da3af21ab29e8eb2c5d0df76b1 but device have 9af2eb58c4cb6b249fde377b38cbb7d42989d620a90ba27f721c0ea6a02ad2f1
+1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+2073: nanox/1.2.4-1/xrp/app_1.0.9: KO:  have BAD HASH. API have ec0aa53d8dbe453d78f3541013ae4ef622ddbb6ef4b1fe2e3c3afa397e32179 but device have ec0aa53d8dbe453d78f3541013ae4ef622ddbb6ef4b1fe2e3c3afa397e321791
 2619: blue/2.1.1.1/bitcoin_cash/app_1.3.13: OK: 
 2623: blue/2.1.1.1/bitcoin_gold/app_1.3.13: OK: 
 2632: blue/2.1.1.1/bitcoin_private/app_1.3.13: OK: 
@@ -1249,6 +1248,7 @@
 1517: nanos/1.5.5/zcoin/app_1.3.8: OK: 
 1956: nanos/1.5.5/zcoin/app_1.3.9: OK: 
 3266: nanos/1.6.0/akroma/app_1.2.12: OK: 
+3769: nanos/1.6.0/algorand/app_1.0.5: OK: 
 3636: nanos/1.6.0/ark/app_2.0.1: OK: 
 3268: nanos/1.6.0/atheios/app_1.2.12: OK: 
 3305: nanos/1.6.0/bitcoin_cash/app_1.3.16: OK: 
@@ -1342,6 +1342,7 @@
 3263: nanos/1.6.0/tomochain/app_1.2.12: OK: 
 3640: nanos/1.6.0/tron/app_0.1.6: OK: 
 3261: nanos/1.6.0/ubiq/app_1.2.12: OK: 
+3773: nanos/1.6.0/vechain/app_1.0.7: OK: 
 3318: nanos/1.6.0/vertcoin/app_1.3.16: OK: 
 3445: nanos/1.6.0/vertcoin/app_1.3.17: OK: 
 3728: nanos/1.6.0/vertcoin/app_1.3.21: OK: 
@@ -1460,6 +1461,8 @@
 3704: nanox/1.2.4-1.6/litecoin/app_1.3.21: OK: 
 3007: nanox/1.2.4-1.6/mix/app_1.2.11: OK: 
 3345: nanox/1.2.4-1.6/monero/app_1.4.2: OK: 
+3629: nanox/1.2.4-1.6/monero/app_1.5.0: OK: 
+3764: nanox/1.2.4-1.6/monero/app_1.5.1: OK: 
 3014: nanox/1.2.4-1.6/musicoin/app_1.2.11: OK: 
 3477: nanox/1.2.4-1.6/nix/app_1.3.17: OK: 
 3705: nanox/1.2.4-1.6/nix/app_1.3.21: OK: 
@@ -1478,6 +1481,7 @@
 3455: nanox/1.2.4-1.6/stealth/app_1.3.17: OK: 
 3718: nanox/1.2.4-1.6/stealth/app_1.3.21: OK: 
 3574: nanox/1.2.4-1.6/stellar/app_3.0.7: OK: 
+3765: nanox/1.2.4-1.6/stellar/app_3.1.0: OK: 
 3457: nanox/1.2.4-1.6/stratis/app_1.3.17: OK: 
 3714: nanox/1.2.4-1.6/stratis/app_1.3.21: OK: 
 3422: nanox/1.2.4-1.6/tezos_wallet/app_2.2.5: OK: 
