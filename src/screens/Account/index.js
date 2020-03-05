@@ -55,6 +55,7 @@ import type { Item } from "../../components/Graph/types";
 import SubAccountsList from "./SubAccountsList";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
+import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 
 type Props = {
   useCounterValue: boolean,
@@ -121,6 +122,17 @@ class AccountScreen extends PureComponent<Props, State> {
 
   onSwitchAccountCurrency = () => {
     this.props.switchCountervalueFirst();
+  };
+
+  renderAccountSummary = () => {
+    const { account, parentAccount } = this.props;
+    const mainAccount = getMainAccount(account, parentAccount);
+    const AccountBalanceSummaryFooter =
+      perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
+
+    if (AccountBalanceSummaryFooter)
+      return <AccountBalanceSummaryFooter account={mainAccount} />;
+    return null;
   };
 
   renderListHeaderTitle = ({
@@ -223,6 +235,7 @@ class AccountScreen extends PureComponent<Props, State> {
             countervalueAvailable={countervalueAvailable}
             counterValueCurrency={counterValueCurrency}
             renderTitle={this.renderListHeaderTitle}
+            renderAccountSummary={this.renderAccountSummary}
           />
         )}
         {empty ? null : (

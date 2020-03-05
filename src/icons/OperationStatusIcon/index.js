@@ -8,6 +8,10 @@ import OperationStatusIconDelegate from "./Delegate";
 import OperationStatusIconUndelegate from "./Undelegate";
 import OperationStatusIconReveal from "./Reveal";
 import OperationStatusIconCreate from "./Create";
+import OperationStatusIconFreeze from "./Freeze";
+import OperationStatusIconUnfreeze from "./Unfreeze";
+import OperationStatusIconVote from "./Vote";
+import OperationStatusIconClaimRewards from "./ClaimReward";
 
 export default ({
   type,
@@ -28,6 +32,10 @@ export default ({
     REVEAL: OperationStatusIconReveal,
     CREATE: OperationStatusIconCreate,
     NONE: OperationStatusIconSend,
+    FREEZE: OperationStatusIconFreeze,
+    UNFREEZE: OperationStatusIconUnfreeze,
+    VOTE: OperationStatusIconVote,
+    REWARD: OperationStatusIconClaimRewards,
   };
 
   const Icon = IconsComponent[type] || OperationStatusIconSend;

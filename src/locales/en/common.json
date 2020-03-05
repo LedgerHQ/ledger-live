@@ -51,7 +51,15 @@
     "update": "Update available",
     "install": "Install",
     "installed": "Installed",
-    "uninstall": "Uninstall"
+    "uninstall": "Uninstall",
+    "fromNow": {
+      "minutes": "in one minute",
+      "minutes_plural": "in {{time}} minutes",
+      "hours": "in one hour",
+      "hours_plural": "in {{time}} hours",
+      "days": "in one day",
+      "days_plural": "in {{time}} days"
+    }
   },
   "errors": {
     "AccountNameRequired": {
@@ -615,7 +623,11 @@
       "CREATE": "Created",
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
-      "UNDELEGATE": "Undelegated"
+      "UNDELEGATE": "Undelegated",
+      "VOTE": "Voted",
+      "FREEZE": "Frozen",
+      "UNFREEZE": "Unfrozen",
+      "REWARD": "Claimed reward"
     }
   },
   "operationDetails": {
@@ -676,6 +688,7 @@
     },
     "send": "Send",
     "receive": "Receive",
+    "manage": "Manage",
     "lastOperations": "Last operations",
     "emptyState": {
       "title": "No crypto assets yet?",
@@ -750,7 +763,11 @@
         "desc": "Please enable Camera in Settings to scan QR codes",
         "buttonTitle": "Go to Settings"
       }
-    }
+    },
+    "availableBalance": "TRX available",
+    "tronPower": "Tron Power",
+    "bandwidth": "Bandwidth",
+    "energy": "Energy"
   },
   "accounts": {
     "title": "Accounts",
@@ -1353,6 +1370,61 @@
     "AccountHeader": {
       "title": "You can earn staking rewards by delegating your account",
       "btn": "Earn rewards"
+    }
+  },
+  "tron": {
+    "voting": {
+      "earnRewars": "Earn rewards",
+      "delegationEarn": "You need to freeze assets to earn Tron staking rewards by delegating your account.",
+      "howItWorks": "How delegation works",
+      "startEarning": "Start earning rewards",
+      "manageTP": "Manage Tron Power",
+      "title": "Claim rewards",
+      "header": "Votes",
+      "Amount": "Amount",
+      "percentageTP": "% of used TP",
+      "noRewards": "No rewards available",
+      "rewards": {
+        "title": "Voting rewards",
+        "button": "Collect"
+      },
+      "allVotesUsed": "All votes are used",
+      "remainingVotes": {
+        "title": "You still have {{amount}}TP remaining",
+        "description": "You didn't use all of your frozen assets to vote for a SR.",
+        "button": "Vote now"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "title": "Earn staking rewards",
+            "description": "Delegate TRX to a third party candidate to earn staking rewards. Click on continue to freeze assets and vote.",
+            "bullet": {
+              "delegate": "Delegated assets stay yours.",
+              "access": "You can access your assets 3 days after you froze them.",
+              "ledger": "Delegate securely with your Ledger device."
+            },
+            "button": {
+              "cta": "Continue"
+            }
+          }
+        }
+      }
+    },
+    "manage": {
+      "title": "Manage Tron Power",
+      "freeze": {
+        "title": "Freeze",
+        "description": "Freeze TRX to earn Bandwidth or Energy. You'll also earn TRON Power to vote for Super Representatives."
+      },
+      "unfreeze": {
+        "title": "Unfreeze",
+        "description": "Unfreeze TRX if you want to spend them. You will stop earning rewards and TRON Power to vote with."
+      },
+      "vote": {
+        "title": "Vote",
+        "description": "Cast votes for Super Representatives using your TRON Power to earn TRX rewards."
+      }
     }
   },
   "delegation": {

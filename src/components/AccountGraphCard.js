@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
@@ -46,6 +46,7 @@ type Props = {
   setSelectedTimeRange: string => void,
   useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
+  renderAccountSummary: () => ?React$Node,
 };
 
 type State = {
@@ -81,6 +82,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
       renderTitle,
       useCounterValue,
       valueChange,
+      renderAccountSummary,
     } = this.props;
 
     const isAvailable = !useCounterValue || countervalueAvailable;
@@ -124,6 +126,9 @@ class AccountGraphCard extends PureComponent<Props, State> {
             items={this.timeRangeItems}
           />
         </View>
+        {renderAccountSummary && (
+          <View style={styles.accountSummary}>{renderAccountSummary()}</View>
+        )}
       </Card>
     );
   }
@@ -155,7 +160,7 @@ class GraphCardHeader extends PureComponent<{
     const item = hoveredItem || to;
 
     return (
-      <Fragment>
+      <>
         <View style={styles.balanceTextContainer}>
           {renderTitle ? (
             renderTitle({
@@ -172,30 +177,30 @@ class GraphCardHeader extends PureComponent<{
         </View>
         <View style={styles.subtitleContainer}>
           {isLoading ? (
-            <Fragment>
+            <>
               <Placeholder
                 width={50}
                 containerHeight={19}
                 style={{ marginRight: 10 }}
               />
               <Placeholder width={50} containerHeight={19} />
-            </Fragment>
+            </>
           ) : hoveredItem ? (
             <LText>
               <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
             </LText>
           ) : valueChange ? (
-            <Fragment>
+            <>
               <Delta
                 percent
                 valueChange={valueChange}
                 style={styles.deltaPercent}
               />
               <Delta valueChange={valueChange} unit={unit} />
-            </Fragment>
+            </>
           ) : null}
         </View>
-      </Fragment>
+      </>
     );
   }
 }
@@ -236,6 +241,13 @@ const styles = StyleSheet.create({
   pillsContainer: {
     marginTop: 16,
     alignItems: "center",
+  },
+  accountSummary: {
+    marginTop: 16,
+    alignItems: "center",
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    overflow: "hidden",
   },
   deltaPercent: {
     marginRight: 20,

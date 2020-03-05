@@ -40,6 +40,8 @@ const AccountActions = ({
   const ReceiveAction =
     (decorators && decorators.ReceiveAction) || ReceiveActionDefault;
 
+  const ManageAction = (decorators && decorators.ManageAction) || null;
+
   const onSend = useCallback(() => {
     navigation.navigate("SendSelectRecipient", {
       accountId,
@@ -70,6 +72,13 @@ const AccountActions = ({
         style={[styles.btn, !readOnlyModeEnabled ? styles.marginLeft : null]}
         onPress={onReceive}
       />
+      {ManageAction && (
+        <ManageAction
+          account={account}
+          parentAccount={parentAccount}
+          style={[styles.btn, styles.manageAction]}
+        />
+      )}
     </View>
   );
 };
@@ -89,6 +98,9 @@ const styles = StyleSheet.create({
   },
   marginLeft: {
     marginLeft: 8,
+  },
+  manageAction: {
+    marginLeft: 16,
   },
 });
 
