@@ -1,17 +1,20 @@
-363: blue/2.1.1/akroma/app_1.1.5: KO: have BAD HASH. API have 6851451f6fc42564422b7476c63d6055583f9a5b0f95f31f186372a77d6cfbd1 but device have 8009d91f5d6d165e44acfd0d13d491b35ab21b37fd0897faa581e15073c65d25
-742: blue/2.1.1/decred_testnet/app_1.3.0: KO: list apps don't find installed app? Found these: [{"hash": "264d2140b20b25792bb9f5afef1b4c35015f78f1a063d05a9a38571cf9a81eb4","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-368: blue/2.1.1/ethereum_classic/app_1.1.5: KO: have BAD HASH. API have 9e4f90968cf4344e13c75b55179787bb5fe112294f338d51daf59f760cf9bf4e but device have 5da1ce725d0d70fe943491fa3ea4540df4cd54425827b55590b10c01b72007ba
-377: blue/2.1.1/expanse/app_1.1.5: KO: have BAD HASH. API have 99b20c54f12861e827de56039d0df0ce8ca694ae7743ff90345f4da7c5e1a651 but device have c7e10f1e132815e7c130c0b5878c91df7cc1efcca258bd7e3414a8cf1617a537
+363: blue/2.1.1/akroma/app_1.1.5: KO:  have BAD HASH. API have 6851451f6fc42564422b7476c63d6055583f9a5b0f95f31f186372a77d6cfbd1 but device have 8009d91f5d6d165e44acfd0d13d491b35ab21b37fd0897faa581e15073c65d25
+742: blue/2.1.1/decred_testnet/app_1.3.0: KO:  list apps don't find installed app? Found these: [{"hash":"264d2140b20b25792bb9f5afef1b4c35015f78f1a063d05a9a38571cf9a81eb4","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+368: blue/2.1.1/ethereum_classic/app_1.1.5: KO:  have BAD HASH. API have 9e4f90968cf4344e13c75b55179787bb5fe112294f338d51daf59f760cf9bf4e but device have 5da1ce725d0d70fe943491fa3ea4540df4cd54425827b55590b10c01b72007ba
+377: blue/2.1.1/expanse/app_1.1.5: KO:  have BAD HASH. API have 99b20c54f12861e827de56039d0df0ce8ca694ae7743ff90345f4da7c5e1a651 but device have c7e10f1e132815e7c130c0b5878c91df7cc1efcca258bd7e3414a8cf1617a537
 299: blue/2.1.1/horizen/app_1.2.8: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1919: blue/2.1.1/hpb/app_1.2.4: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-370: blue/2.1.1/kusd/app_1.1.5: KO: have BAD HASH. API have 79c769a2b976475ed3cf50e69927f17e4990810994364527367b9e6912ba0703 but device have f3c6fe2e7c57a60cea74f65930be9ce3f58cd8841e036437bf7c1616790fe3ab
-278: blue/2.1.1/ontology/app_1.2: KO: list apps don't find installed app? Found these: [{"hash": "4aa6cec58b29d494371474b7efe1a35c51b7abbf5a69c2eadb01c5d16777b708","name": "ONT"}]
-296: blue/2.1.1/pirl/app_1.1.4: KO: have BAD HASH. API have 5d53c28e06bd0a68773053e3bc8d8b8c898fcf529b163282ad5266521efa0ed1 but device have dedd1bac27960758f6a8a4d85f5f8b7a69c45a51e481554098cc924f41141521
-366: blue/2.1.1/pirl/app_1.1.5: KO: list apps don't find installed app? Found these: [{"hash": "bca1affe698c5d0973d1c134f4f6a671468e9917e8b31c4f27133ce715be0a04","name": "Ethereum"}] – FAILED installing, got ManagerAppAlreadyInstalled
-382: blue/2.1.1/poa/app_1.1.5: KO: have BAD HASH. API have 6b7b3d9175a1daf08f189ea54b849ba8b568dedb3b70c831364d8f579b307974 but device have 207209e6ea0b027cc2b5377e5614daef6790065c8b040363029db8a1d03c8b56
-380: blue/2.1.1/rsk/app_1.1.5: KO: have BAD HASH. API have e06b1ab606119f3845a60cedfcc8a96edc7ce8ef6316e636e54c84d3cf4e2cc8 but device have 3d4efa8502a1f28cd8264f08d77023e4be62f481723220a3dedd83e66ec0edc6
-365: blue/2.1.1/ubiq/app_1.1.5: KO: have BAD HASH. API have bef90cc4ce8febf4d015c1c2167bb4a88f6a8e4a77cd8a7cea9df4326fbb2422 but device have a89fc6d05cc0cf689083351a2569d3d7319d393f3d3d4bd4804ce63a6aa2814c
-369: blue/2.1.1/wanchain/app_1.1.5: KO: have BAD HASH. API have 37163ba271f5bc683634e76cc331602f33636a726542faaea3bbf1ba4d54c521 but device have 789d152963b817f87042a809ae3bc863e111454fa11b3b30b48920cdc11f672b
+370: blue/2.1.1/kusd/app_1.1.5: KO:  have BAD HASH. API have 79c769a2b976475ed3cf50e69927f17e4990810994364527367b9e6912ba0703 but device have f3c6fe2e7c57a60cea74f65930be9ce3f58cd8841e036437bf7c1616790fe3ab
+278: blue/2.1.1/ontology/app_1.2: KO:  list apps don't find installed app? Found these: [{"hash":"4aa6cec58b29d494371474b7efe1a35c51b7abbf5a69c2eadb01c5d16777b708","name":"ONT"}]
+296: blue/2.1.1/pirl/app_1.1.4: KO:  have BAD HASH. API have 5d53c28e06bd0a68773053e3bc8d8b8c898fcf529b163282ad5266521efa0ed1 but device have dedd1bac27960758f6a8a4d85f5f8b7a69c45a51e481554098cc924f41141521
+366: blue/2.1.1/pirl/app_1.1.5: KO:  list apps don't find installed app? Found these: [{"hash":"bca1affe698c5d0973d1c134f4f6a671468e9917e8b31c4f27133ce715be0a04","name":"Ethereum"}] – FAILED installing, got ManagerAppAlreadyInstalled
+382: blue/2.1.1/poa/app_1.1.5: KO:  have BAD HASH. API have 6b7b3d9175a1daf08f189ea54b849ba8b568dedb3b70c831364d8f579b307974 but device have 207209e6ea0b027cc2b5377e5614daef6790065c8b040363029db8a1d03c8b56
+380: blue/2.1.1/rsk/app_1.1.5: KO:  have BAD HASH. API have e06b1ab606119f3845a60cedfcc8a96edc7ce8ef6316e636e54c84d3cf4e2cc8 but device have 3d4efa8502a1f28cd8264f08d77023e4be62f481723220a3dedd83e66ec0edc6
+3767: blue/2.1.1/stellar/app_3.1.0: KO:  have BAD HASH. API have a6fa554d36800015cb94b1d1eb38dc29a5d4c9decb90cadcdd7d070b60eb4fea but device have 738db1ccfcbe0819cb39dcb3cfb1971fe234f98e900a664ac9d81440e7cf2214
+3775: blue/2.1.1/stellar/app_3.1.1: KO:  have BAD HASH. API have 1a0136e0a24de038b084a2d29153aff3698cdeddb698676216fbd4f22c29c8a6 but device have 07671c449a105e13738d0f0274b8de091ee9aa01d35a91fdc4f41a3a38a3756e
+3639: blue/2.1.1/tron/app_0.1.6: KO:  have BAD HASH. API have 918cb3ce78ed72ef843839d8483773e0a58bdc90c0c5ee996299419d79ec6930 but device have 279ffe6c8d732bdc68c53b4738b0a047a275ee14b609486e6104f1b94dca5a73
+365: blue/2.1.1/ubiq/app_1.1.5: KO:  have BAD HASH. API have bef90cc4ce8febf4d015c1c2167bb4a88f6a8e4a77cd8a7cea9df4326fbb2422 but device have a89fc6d05cc0cf689083351a2569d3d7319d393f3d3d4bd4804ce63a6aa2814c
+369: blue/2.1.1/wanchain/app_1.1.5: KO:  have BAD HASH. API have 37163ba271f5bc683634e76cc331602f33636a726542faaea3bbf1ba4d54c521 but device have 789d152963b817f87042a809ae3bc863e111454fa11b3b30b48920cdc11f672b
 117: nanos/1.3.1-das/dascoin/app_1.1.1: KO: DOES NOT have bytes defined!
 94: nanos/1.3.1/ark/app_0.1.1: KO: list apps don't find installed app? Found these: [{"hash": "5ac22115b3ae66c2ab6596596ce5c824d7db35331152605058b20ab370a23498","name": ""}]
 79: nanos/1.3.1/bitcoin_cash/app_1.1.8: KO: DOES NOT have bytes defined!
@@ -49,8 +52,8 @@
 508: nanos/1.4.2/hcash/app_1.2.10: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1038: nanos/1.5.5/decred_testnet/app_1.3.0: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1039: nanos/1.5.5/none/app_1.0.1: KO: list apps don't find installed app? Found these: [{"hash": "049d9ca6c77d181687c63035719bfc9b5acbe943a8e3ffc871a230ebf88308c4","name": "MISC"}]
-1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 2619: blue/2.1.1.1/bitcoin_cash/app_1.3.13: OK: 
 2623: blue/2.1.1.1/bitcoin_gold/app_1.3.13: OK: 
 2632: blue/2.1.1.1/bitcoin_private/app_1.3.13: OK: 
