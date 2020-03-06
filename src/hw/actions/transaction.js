@@ -131,7 +131,7 @@ export const createAction = (
         .signOperation({
           account: mainAccount,
           transaction,
-          deviceId: device.path
+          deviceId: device.deviceId
         })
         .pipe(
           catchError(error => of({ type: "error", error })),

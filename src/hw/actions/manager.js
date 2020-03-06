@@ -152,7 +152,7 @@ export const createAction = (
       of({ type: "deviceChange", device }),
       !device
         ? empty()
-        : connectManagerExec({ devicePath: device.path }).pipe(
+        : connectManagerExec({ devicePath: device.deviceId }).pipe(
             catchError((error: Error) => of({ type: "error", error }))
           )
     );
