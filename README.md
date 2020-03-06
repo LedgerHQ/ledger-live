@@ -27,7 +27,7 @@ This library depends on a bunch of [ledgerjs packages](https://github.com/Ledger
 
 The stack is pretty standard for a ES6 and FlowType library. The notable dependencies are libraries like **RxJS** and **BigNumber.js**. There is also a bit of React and Redux but exposed in agnostic ways (meaning it's not mandatory to use – there will be dedicated entry point for them to offer utilities like React Hooks).
 
-## Documentation
+## Table of Contents
 
 - [Introduction, Goals and Tradeoffs](./docs/intro.md)
 - Getting started
