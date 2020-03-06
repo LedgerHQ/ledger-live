@@ -3,8 +3,10 @@
 import type { DeviceModelId } from "@ledgerhq/devices";
 
 export type Device = {
-  path: string,
-  modelId: DeviceModelId
+  deviceId: string,
+  deviceName?: string,
+  modelId: DeviceModelId,
+  wired: boolean
 };
 
 export type Action<Request, HookState, Result> = {|
