@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { distribute } from "@ledgerhq/live-common/lib/apps";
-import type { Action, State, App } from "@ledgerhq/live-common/lib/apps";
+import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import { useAppsSections } from "@ledgerhq/live-common/lib/apps/react";
 
 import { TabView, TabBar } from "react-native-tab-view";
@@ -40,7 +40,6 @@ const initialLayout = { width, height };
 type Props = {
   state: State,
   dispatch: Action => void,
-  currentProgress: *,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
@@ -55,7 +54,6 @@ type Props = {
 const AppsScreen = ({
   state,
   dispatch,
-  currentProgress,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   setStorageWarning,
@@ -176,7 +174,6 @@ const AppsScreen = ({
             state={state}
             dispatch={dispatch}
             active={index === 0}
-            currentProgress={currentProgress}
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
             setStorageWarning={setStorageWarning}
@@ -216,7 +213,6 @@ const AppsScreen = ({
               dispatch={dispatch}
               active={index === 1}
               renderNoResults={renderNoResults}
-              currentProgress={currentProgress}
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               setStorageWarning={setStorageWarning}
@@ -294,7 +290,6 @@ const AppsScreen = ({
             disabled={index !== 0}
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-            currentProgress={currentProgress}
             navigation={navigation}
           />
           <View style={styles.filterButton}>
@@ -324,7 +319,6 @@ const AppsScreen = ({
               apps={device}
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-              currentProgress={currentProgress}
               navigation={navigation}
             />
           </Animated.View>

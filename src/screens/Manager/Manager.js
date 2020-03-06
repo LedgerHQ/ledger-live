@@ -28,28 +28,10 @@ let navListener;
 
 const Manager = ({ navigation }: Props) => {
   const { appRes, deviceId, deviceInfo } = navigation.state.params;
-  const [unfilteredState, dispatch] = useApps(appRes, deviceId);
-
-  const state = {
-    deviceInfo: unfilteredState.deviceInfo,
-    deviceModel: unfilteredState.deviceModel,
-    firmware: unfilteredState.firmware,
-    appByName: unfilteredState.appByName,
-    apps: unfilteredState.apps,
-    installedAvailable: unfilteredState.installedAvailable,
-    installed: unfilteredState.installed,
-    recentlyInstalledApps: unfilteredState.recentlyInstalledApps,
-    installQueue: unfilteredState.installQueue,
-    uninstallQueue: unfilteredState.uninstallQueue,
-    updateAllQueue: unfilteredState.updateAllQueue,
-    currentAppOp: unfilteredState.currentAppOp,
-    currentError: unfilteredState.currentError,
-  };
+  const [state, dispatch] = useApps(appRes, deviceId);
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
   const blockNavigation = installQueue.length + uninstallQueue.length > 0;
-
-  const currentProgress = unfilteredState.currentProgress;
 
   const [quitManagerAction, setQuitManagerAction] = useState(false);
 
@@ -134,7 +116,6 @@ const Manager = ({ navigation }: Props) => {
         state={state}
         dispatch={dispatch}
         navigation={navigation}
-        currentProgress={currentProgress}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         setStorageWarning={setStorageWarning}

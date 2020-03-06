@@ -3,22 +3,30 @@ import { StyleSheet, View } from "react-native";
 
 import { Trans } from "react-i18next";
 
+import type { State } from "@ledgerhq/live-common/lib/apps";
+
+import { useAppInstallProgress } from "@ledgerhq/live-common/lib/apps/react";
+
 import colors from "../../../colors";
 import LText from "../../../components/LText";
 import ProgressBar from "../../../components/ProgressBar";
 import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
 
 type InstallProgressProps = {
-  currentProgress: *,
+  state: State,
+  name: string,
   installing: boolean,
   updating: boolean,
 };
 
 export const InstallProgress = ({
-  currentProgress,
+  state,
+  name,
   installing,
   updating,
 }: InstallProgressProps) => {
+  const progress = useAppInstallProgress(state, name);
+
   return (
     <View style={styles.progressContainer}>
       <View style={styles.progressLabel}>
@@ -36,12 +44,12 @@ export const InstallProgress = ({
           />
         </LText>
       </View>
-      {currentProgress !== 0 && installing ? (
+      {progress !== 1 && installing ? (
         <ProgressBar
           progressColor={colors.live}
           style={styles.progressBar}
           height={6}
-          progress={currentProgress * 1e2}
+          progress={progress * 1e2}
         />
       ) : (
         <InfiniteProgressBar

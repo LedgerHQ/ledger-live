@@ -22,7 +22,6 @@ type Props = {
   notEnoughMemoryToInstall: boolean,
   isInstalled: boolean,
   isInstalledView: boolean,
-  currentProgress: number,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
 };
@@ -34,7 +33,6 @@ const AppStateButton = ({
   notEnoughMemoryToInstall,
   isInstalled,
   isInstalledView,
-  currentProgress,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
 }: Props) => {
@@ -66,9 +64,10 @@ const AppStateButton = ({
       case installing:
         return (
           <InstallProgress
+            state={state}
+            name={name}
             updating={updating}
             installing={installQueue[0] === name}
-            currentProgress={currentProgress}
           />
         );
       case uninstalling:
