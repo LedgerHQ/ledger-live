@@ -79,7 +79,7 @@ const userFriendlyError = <A>(p: Promise<A>, meta): Promise<A> =>
     throw error;
   });
 
-const implementation = (arg: Object) => {
+const implementation = (arg: Object): Promise<*> => {
   let promise;
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
@@ -101,16 +101,20 @@ const implementation = (arg: Object) => {
   };
 
   log("network", `${meta.method} ${meta.url}`, { data: arg.data });
-  promise.then(response => {
-    log(
-      "network-success",
-      `${response.status} ${meta.method} ${meta.url} (${(
-        Date.now() - meta.startTime
-      ).toFixed(0)}ms)`,
-      getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : {}
-    );
-  });
-  return userFriendlyError(promise, meta);
+
+  return userFriendlyError(
+    promise.then(response => {
+      log(
+        "network-success",
+        `${response.status} ${meta.method} ${meta.url} (${(
+          Date.now() - meta.startTime
+        ).toFixed(0)}ms)`,
+        getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : {}
+      );
+      return response;
+    }),
+    meta
+  );
 };
 
 function SyncTokenDisabled(response) {
