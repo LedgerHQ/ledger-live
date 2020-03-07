@@ -1,4 +1,7 @@
 module.exports = {
+  settings: {
+    react: { version: "16" }
+  },
   env: {
     browser: true,
     es6: true,
@@ -7,6 +10,7 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:flowtype/recommended",
     "prettier",
     "prettier/react"

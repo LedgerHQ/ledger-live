@@ -212,6 +212,8 @@ export type Module<State> = {
     children: Polling => *
   }>,
 
+  PollingContext: React$Context<Polling>,
+
   // Complementary APIs, independently of the store
 
   fetchExchangesForPair: (from: Currency, to: Currency) => Promise<Exchange[]>,
