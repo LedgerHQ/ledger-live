@@ -65,6 +65,9 @@ const dataset: DatasetTest<Transaction> = {
       scanAccounts: [tezosScanAccounts1],
       accounts: [
         {
+          FIXME_tests: [
+            "balance is sum of ops" // https://ledgerhq.atlassian.net/browse/LLC-591
+          ],
           raw: accountTZrevealedDelegating,
           transactions: [
             {
@@ -180,6 +183,9 @@ const dataset: DatasetTest<Transaction> = {
         },
 
         {
+          FIXME_tests: [
+            "balance is sum of ops" // https://ledgerhq.atlassian.net/browse/LLC-591
+          ],
           raw: accountTZRevealedNoDelegate,
           transactions: [
             {
@@ -301,8 +307,8 @@ const dataset: DatasetTest<Transaction> = {
 
         {
           FIXME_tests: [
-            "balance is sum of ops",
-            // because of prev bug we have bug on
+            "balance is sum of ops", // https://ledgerhq.atlassian.net/browse/LLC-503
+            // because of prev bug we have bug on:
             "from KT 2, send max to existing account"
           ],
           raw: accountTZwithKT,
@@ -362,6 +368,9 @@ const dataset: DatasetTest<Transaction> = {
           ]
         },
         {
+          FIXME_tests: [
+            "balance is sum of ops" // https://ledgerhq.atlassian.net/browse/LLC-591
+          ],
           raw: accountTZemptyWithKT,
           transactions: [
             {
