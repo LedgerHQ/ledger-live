@@ -408,7 +408,10 @@
       "title": "A minimum balance is required to be kept in a Stellar account"
     },
     "NewAccountMinimumTransaction": {
-      "title": "A new account required at least 1 XLM to be activated"
+      "title": "A new account requires at least 1 XLM to be activated"
+    },
+    "SourceHasMultiSign": {
+      "title": "Please disable multisign to send XLM"
     },
     "generic": {
       "title": "{{message}}",
