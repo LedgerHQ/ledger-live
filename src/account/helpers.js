@@ -8,6 +8,7 @@ import type {
   SubAccount
 } from "../types";
 import { getEnv } from "../env";
+import { isAccountDelegating } from "../families/tezos/bakers";
 
 // by convention, a main account is the top level account
 // in case of an Account is the account itself
@@ -137,4 +138,29 @@ export const shortAddressPreview = (addr: string, target: number = 20) => {
   return addr.length < target - 3
     ? addr
     : `${addr.slice(0, slice)}...${addr.slice(addr.length - slice)}`;
+};
+
+export const isUpToDateAccount = (account: ?Account) => {
+  if (!account) return true;
+  const { lastSyncDate, currency } = account;
+  const { blockAvgTime } = currency;
+  if (!blockAvgTime) return true;
+  const outdated =
+    Date.now() - (lastSyncDate || 0) >
+    blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
+  return !outdated;
+};
+
+export const getVotesCount = (
+  account: AccountLike,
+  parentAccount: ?Account
+) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  // FIXME find a way to make it per family?
+  if (mainAccount.currency.id === "tezos") {
+    return isAccountDelegating(account) ? 1 : 0;
+  } else if (mainAccount.tronResources) {
+    return mainAccount.tronResources.votes.length;
+  }
+  return 0;
 };

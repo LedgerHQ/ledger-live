@@ -729,6 +729,7 @@ function createCounterValues<State>({
     reverseSelector,
     reverseWithIntermediarySelector,
     reducer,
+    PollingContext,
     PollingProvider,
     PollingConsumer,
     fetchExchangesForPair,
