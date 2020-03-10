@@ -271,7 +271,7 @@ function useSync({ syncQueue, accounts }) {
       syncQueue.push(ids, -priority);
     };
 
-    // don't always sync in same order to avoid potential "never account never reached"
+    // don't always sync in the same order to avoid potential "account never reached"
     const shuffledAccountIds = () => shuffle(accounts.map(a => a.id));
 
     const handlers = {
