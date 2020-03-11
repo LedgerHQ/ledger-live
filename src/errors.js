@@ -8,33 +8,39 @@ export const TransactionRefusedOnDevice = createCustomErrorClass(
   "TransactionRefusedOnDevice"
 );
 
-export const ResourceNotSupported = createCustomErrorClass(
-  "ResourceNotSupported"
+export const TronNoFrozenForBandwidth = createCustomErrorClass(
+  "TronNoFrozenForBandwidth"
 );
 
-export const NoFrozenForBandwidth = createCustomErrorClass(
-  "NoFrozenForBandwidth"
+export const TronNoFrozenForEnergy = createCustomErrorClass(
+  "TronNoFrozenForEnergy"
+);
+export const TronUnfreezeNotExpired = createCustomErrorClass(
+  "TronUnfreezeNotExpired"
 );
 
-export const NoFrozenForEnergy = createCustomErrorClass("NoFrozenForEnergy");
-export const UnfreezeNotExpired = createCustomErrorClass("UnfreezeNotExpired");
+export const TronVoteRequired = createCustomErrorClass("TronVoteRequired");
 
-export const VoteRequired = createCustomErrorClass("VoteRequired");
-
-export const InvalidVoteCount = createCustomErrorClass("InvalidVoteCount");
-
-export const RewardNotAvailable = createCustomErrorClass("RewardNotAvailable");
-
-export const NoReward = createCustomErrorClass("NoReward");
-
-export const InvalidFreezeAmount = createCustomErrorClass(
-  "InvalidFreezeAmount"
+export const TronInvalidVoteCount = createCustomErrorClass(
+  "TronInvalidVoteCount"
 );
 
-export const SendTrc20ToNewAccountForbidden = createCustomErrorClass(
-  "SendTrc20ToNewAccountForbidden"
+export const TronRewardNotAvailable = createCustomErrorClass(
+  "TronRewardNotAvailable"
 );
 
-export const UnexpectedFees = createCustomErrorClass("UnexpectedFees");
+export const TronNoReward = createCustomErrorClass("TronNoReward");
 
-export const NotEnoughTronPower = createCustomErrorClass("NotEnoughTronPower");
+export const TronInvalidFreezeAmount = createCustomErrorClass(
+  "TronInvalidFreezeAmount"
+);
+
+export const TronSendTrc20ToNewAccountForbidden = createCustomErrorClass(
+  "TronSendTrc20ToNewAccountForbidden"
+);
+
+export const TronUnexpectedFees = createCustomErrorClass("TronUnexpectedFees");
+
+export const TronNotEnoughTronPower = createCustomErrorClass(
+  "TronNotEnoughTronPower"
+);

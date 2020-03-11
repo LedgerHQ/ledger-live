@@ -1,5 +1,4 @@
 // @flow
-
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import invariant from "invariant";

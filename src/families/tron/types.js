@@ -24,20 +24,20 @@ export type TronResource = "BANDWIDTH" | "ENERGY";
 
 export type NetworkInfo = {|
   family: "tron",
-  freeNetUsed: number,
-  freeNetLimit: number,
-  NetUsed: number,
-  NetLimit: number,
-  EnergyLimit: ?number
+  freeNetUsed: BigNumber,
+  freeNetLimit: BigNumber,
+  netUsed: BigNumber,
+  netLimit: BigNumber,
+  energyLimit: ?BigNumber
 |};
 
 export type NetworkInfoRaw = {|
   family: "tron",
-  freeNetUsed: number,
-  freeNetLimit: number,
-  NetUsed: number,
-  NetLimit: number,
-  EnergyLimit: ?number
+  freeNetUsed: string,
+  freeNetLimit: string,
+  netUsed: string,
+  netLimit: string,
+  energyLimit: ?string
 |};
 
 export type Transaction = {|
@@ -79,9 +79,31 @@ export type TrongridTxInfo = {|
   to?: string,
   value?: BigNumber,
   fee?: BigNumber,
-  resource?: TronResource
+  resource?: TronResource,
+  blockHeight?: number,
+  extra?: TrongridExtraTxInfo
 |};
 
+export type TrongridExtraTxInfo =
+  | TrongridFreezeTxInfo
+  | TrongridUnfreezeTxInfo
+  | TrongridVotesTxInfo;
+
+export type TrongridFreezeTxInfo = {|
+  frozenAmount: BigNumber,
+  resource: TronResource
+|};
+
+export type TrongridUnfreezeTxInfo = {|
+  unfreezeAmount: BigNumber,
+  resource: TronResource
+|};
+
+export type TrongridVotesTxInfo = {|
+  votes: Vote[]
+|};
+
+/** Payload types to send to trongrid */
 export type SendTransactionData = {|
   to_address: string,
   owner_address: string,
@@ -120,6 +142,7 @@ export type SendTransactionDataSuccess = {|
   txID: string,
   signature: ?(string[])
 |};
+/** */
 
 export const reflect = (_declare: *) => {};
 
@@ -153,9 +176,9 @@ export type TronResources = {|
   },
   votes: Vote[],
   tronPower: number,
-  energy: number,
+  energy: BigNumber,
   bandwidth: BandwidthInfo,
-  unwithdrawnReward: number
+  unwithdrawnReward: BigNumber
 |};
 
 export type TronResourcesRaw = {|
@@ -169,9 +192,9 @@ export type TronResourcesRaw = {|
   },
   votes: Vote[],
   tronPower: number,
-  energy: number,
-  bandwidth: BandwidthInfo,
-  unwithdrawnReward: number
+  energy: string,
+  bandwidth: BandwidthInfoRaw,
+  unwithdrawnReward: string
 |};
 
 export type Vote = {|
@@ -190,8 +213,15 @@ export type FrozenInfoRaw = {|
 |};
 
 export type BandwidthInfo = {|
-  freeUsed: number,
-  freeLimit: number,
-  gainedUsed: number,
-  gainedLimit: number
+  freeUsed: BigNumber,
+  freeLimit: BigNumber,
+  gainedUsed: BigNumber,
+  gainedLimit: BigNumber
+|};
+
+export type BandwidthInfoRaw = {|
+  freeUsed: string,
+  freeLimit: string,
+  gainedUsed: string,
+  gainedLimit: string
 |};

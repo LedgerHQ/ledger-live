@@ -12,7 +12,7 @@ import type {
   SubAccount,
   TransactionStatus
 } from "../../../types";
-import type { NetworkInfo, Transaction } from "../types";
+import type { NetworkInfo, Transaction, TrongridExtraTxInfo } from "../types";
 import {
   isParentTx,
   txInfoToOperation,
@@ -34,17 +34,17 @@ import {
   AmountRequired
 } from "@ledgerhq/errors";
 import {
-  NoFrozenForBandwidth,
-  NoFrozenForEnergy,
-  UnfreezeNotExpired,
-  VoteRequired,
-  InvalidVoteCount,
-  InvalidFreezeAmount,
-  RewardNotAvailable,
-  NoReward,
-  SendTrc20ToNewAccountForbidden,
-  UnexpectedFees,
-  NotEnoughTronPower
+  TronNoFrozenForBandwidth,
+  TronNoFrozenForEnergy,
+  TronUnfreezeNotExpired,
+  TronVoteRequired,
+  TronInvalidVoteCount,
+  TronInvalidFreezeAmount,
+  TronRewardNotAvailable,
+  TronNoReward,
+  TronSendTrc20ToNewAccountForbidden,
+  TronUnexpectedFees,
+  TronNotEnoughTronPower
 } from "../../../errors";
 import {
   broadcastTron,
@@ -80,7 +80,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
         subAccount.token.tokenType === "trc20" &&
         (await fetchTronAccount(transaction.recipient)).length === 0
       ) {
-        throw new SendTrc20ToNewAccountForbidden();
+        throw new TronSendTrc20ToNewAccountForbidden();
       }
 
       const getPreparedTransaction = () => {
@@ -111,8 +111,8 @@ const signOperation = ({ account, transaction, deviceId }) =>
           account.freshAddressPath,
           {
             rawDataHex: preparedTransaction.raw_data_hex,
-            // only for trc10, we need to put the assetName hex message
-            assetName:
+            // only for trc10, we need to put the token ledger signature
+            tokenSignature:
               subAccount &&
               subAccount.type === "TokenAccount" &&
               subAccount.token.id.includes("trc10")
@@ -127,10 +127,51 @@ const signOperation = ({ account, transaction, deviceId }) =>
 
         const fee = await getEstimatedFees(account, transaction);
 
-        const value =
-          transaction.mode === "send" ? transaction.amount : BigNumber(0);
+        const getValue = (): BigNumber => {
+          switch (transaction.mode) {
+            case "send":
+              return transaction.amount;
+            case "claimReward":
+              return account.tronResources
+                ? account.tronResources.unwithdrawnReward
+                : BigNumber(0);
+            default:
+              return BigNumber(0);
+          }
+        };
+
+        const value = getValue();
 
         const operationType = getOperationTypefromMode(transaction.mode);
+
+        const resource = transaction.resource || "BANDWIDTH";
+
+        const getExtra = (): ?TrongridExtraTxInfo => {
+          switch (transaction.mode) {
+            case "freeze":
+              return {
+                frozenAmount: transaction.amount,
+                resource
+              };
+            case "unfreeze":
+              return {
+                unfreezeAmount: get(
+                  account.tronResources,
+                  `frozen.${resource.toLocaleLowerCase()}.amount`,
+                  BigNumber(0)
+                ),
+                resource
+              };
+            case "vote":
+              return {
+                votes: transaction.votes
+              };
+            default:
+              return undefined;
+          }
+        };
+
+        const extra = getExtra() || {};
 
         const operation = {
           id: `${account.id}-${hash}-${operationType}`,
@@ -144,7 +185,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
           senders: [account.freshAddress],
           recipients: [transaction.recipient],
           date: new Date(),
-          extra: {}
+          extra
         };
 
         o.next({
@@ -328,11 +369,14 @@ const getFeesFromBandwidth = (a: Account, t: Transaction): BigNumber => {
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = extractBandwidthInfo(
     t.networkInfo
   );
-  const available = freeLimit - freeUsed + gainedLimit - gainedUsed;
+  const available = freeLimit
+    .minus(freeUsed)
+    .plus(gainedLimit)
+    .minus(gainedUsed);
 
   const estimatedBandwidthCost = getEstimatedBlockSize(a, t);
 
-  if (available < estimatedBandwidthCost) {
+  if (available.lt(estimatedBandwidthCost)) {
     return BigNumber(2000); // cost is around 0.002 TRX
   }
 
@@ -346,11 +390,11 @@ const getFeesFromAccountActivation = async (
 ): Promise<BigNumber> => {
   const recipientAccount = await fetchTronAccount(t.recipient);
   const { gainedUsed, gainedLimit } = extractBandwidthInfo(t.networkInfo);
-  const available = gainedLimit - gainedUsed;
+  const available = gainedLimit.minus(gainedUsed);
 
   const estimatedBandwidthCost = getEstimatedBlockSize(a, t);
 
-  if (recipientAccount.length === 0 && available < estimatedBandwidthCost) {
+  if (recipientAccount.length === 0 && available.lt(estimatedBandwidthCost)) {
     return BigNumber(100000); // cost is around 0.1 TRX
   }
 
@@ -406,12 +450,12 @@ const getTransactionStatus = async (
       (await fetchTronAccount(recipient)).length === 0
     ) {
       // send trc20 to a new account is forbidden by us (because it will not activate the account)
-      errors.recipient = new SendTrc20ToNewAccountForbidden();
+      errors.recipient = new TronSendTrc20ToNewAccountForbidden();
     }
   }
 
   if (mode === "freeze" && amount.lt(BigNumber(1000000))) {
-    errors.amount = new InvalidFreezeAmount();
+    errors.amount = new TronInvalidFreezeAmount();
   }
 
   if (mode === "unfreeze") {
@@ -425,12 +469,12 @@ const getTransactionStatus = async (
 
     if (!expirationDate) {
       if (resource === "BANDWIDTH") {
-        errors.resource = new NoFrozenForBandwidth();
+        errors.resource = new TronNoFrozenForBandwidth();
       } else {
-        errors.resource = new NoFrozenForEnergy();
+        errors.resource = new TronNoFrozenForEnergy();
       }
     } else if (now.getTime() < expirationDate.getTime()) {
-      errors.resource = new UnfreezeNotExpired(null, {
+      errors.resource = new TronUnfreezeNotExpired(null, {
         until: expirationDate.toISOString()
       });
     }
@@ -438,7 +482,7 @@ const getTransactionStatus = async (
 
   if (mode === "vote") {
     if (votes.length === 0) {
-      errors.vote = new VoteRequired();
+      errors.vote = new TronVoteRequired();
     } else {
       const superRepresentatives = await getTronSuperRepresentatives();
       const isValidVoteCounts = votes.every(v => v.voteCount > 0);
@@ -449,12 +493,12 @@ const getTransactionStatus = async (
       if (!isValidAddresses) {
         errors.vote = new InvalidAddress();
       } else if (!isValidVoteCounts) {
-        errors.vote = new InvalidVoteCount();
+        errors.vote = new TronInvalidVoteCount();
       } else {
         const totalVoteCount = sumBy(votes, "voteCount");
         const tronPower = (a.tronResources && a.tronResources.tronPower) || 0;
         if (totalVoteCount > tronPower) {
-          errors.vote = new NotEnoughTronPower();
+          errors.vote = new TronNotEnoughTronPower();
         }
       }
     }
@@ -466,10 +510,10 @@ const getTransactionStatus = async (
       ? new Date(lastRewardOp.date.getTime() + 24 * 60 * 60 * 1000) // date + 24 hours
       : new Date();
 
-    if (a.tronResources && a.tronResources.unwithdrawnReward === 0) {
-      errors.reward = new NoReward();
+    if (a.tronResources && a.tronResources.unwithdrawnReward.eq(0)) {
+      errors.reward = new TronNoReward();
     } else if (lastRewardOp && claimableRewardDate > new Date().getTime()) {
-      errors.reward = new RewardNotAvailable("Reward is not claimable", {
+      errors.reward = new TronRewardNotAvailable("Reward is not claimable", {
         until: claimableRewardDate.toISOString()
       });
     }
@@ -502,7 +546,7 @@ const getTransactionStatus = async (
       disableRounding: true
     });
 
-    warnings.fee = new UnexpectedFees("Estimated fees", { fees });
+    warnings.fee = new TronUnexpectedFees("Estimated fees", { fees });
   }
 
   return Promise.resolve({

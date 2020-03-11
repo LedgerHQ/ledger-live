@@ -2,7 +2,12 @@
 import bs58check from "bs58check";
 import { BigNumber } from "bignumber.js";
 import get from "lodash/get";
-import type { Transaction, TronOperationMode, TrongridTxInfo } from "./types";
+import type {
+  Transaction,
+  TronOperationMode,
+  TrongridTxInfo,
+  TrongridExtraTxInfo
+} from "./types";
 import type { Account, Operation, OperationType } from "../../types";
 
 export const decode58Check = (base58: string) =>
@@ -38,7 +43,10 @@ export const isParentTx = (tx: TrongridTxInfo): boolean =>
   parentTx.includes(tx.type);
 
 // This is an estimation, there is no endpoint to calculate the real size of a block before broadcasting it.
-export const getEstimatedBlockSize = (a: Account, t: Transaction): number => {
+export const getEstimatedBlockSize = (
+  a: Account,
+  t: Transaction
+): BigNumber => {
   switch (t.mode) {
     case "send": {
       const subAccount =
@@ -46,19 +54,19 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): number => {
           ? a.subAccounts.find(sa => sa.id === t.subAccountId)
           : null;
       if (subAccount && subAccount.type === "TokenAccount") {
-        if (subAccount.token.tokenType === "trc10") return 285;
-        if (subAccount.token.tokenType === "trc20") return 350;
+        if (subAccount.token.tokenType === "trc10") return BigNumber(285);
+        if (subAccount.token.tokenType === "trc20") return BigNumber(350);
       }
-      return 270;
+      return BigNumber(270);
     }
     case "freeze":
     case "unfreeze":
     case "claimReward":
-      return 260;
+      return BigNumber(260);
     case "vote":
-      return 290 + t.votes.length * 19;
+      return BigNumber(290 + t.votes.length * 19);
     default:
-      return 0;
+      return BigNumber(0);
   }
 };
 
@@ -107,10 +115,10 @@ const getOperationType = (
 
 export const formatTrongridTxResponse = (
   tx: Object,
-  isInTrc20: boolean = false
+  isTrc20InTx: boolean = false
 ): TrongridTxInfo => {
   try {
-    if (isInTrc20) {
+    if (isTrc20InTx) {
       const {
         from,
         to,
@@ -126,6 +134,7 @@ export const formatTrongridTxResponse = (
       const tokenId = get(token_info, "address", undefined);
       const formattedValue = value ? BigNumber(value) : BigNumber(0);
       const fee = detail && detail.fee ? BigNumber(detail.fee) : undefined;
+      const blockHeight = detail ? detail.blockNumber : undefined;
 
       return {
         txID,
@@ -134,6 +143,7 @@ export const formatTrongridTxResponse = (
         tokenId,
         from,
         to,
+        blockHeight,
         value: formattedValue,
         fee
       };
@@ -151,7 +161,9 @@ export const formatTrongridTxResponse = (
         to_address,
         resource_type,
         contract_address,
-        quant
+        quant,
+        frozen_balance,
+        votes
       } = get(tx, "raw_data.contract[0].parameter.value", {});
 
       const tokenId =
@@ -182,7 +194,9 @@ export const formatTrongridTxResponse = (
 
       const fee = detail && detail.fee ? BigNumber(detail.fee) : undefined;
 
-      return {
+      const blockHeight = detail ? detail.blockNumber : undefined;
+
+      const txInfo: TrongridTxInfo = {
         txID,
         date,
         type,
@@ -191,8 +205,41 @@ export const formatTrongridTxResponse = (
         to,
         value,
         fee,
-        resource
+        resource,
+        blockHeight
       };
+
+      const getExtra = (): ?TrongridExtraTxInfo => {
+        switch (type) {
+          case "FreezeBalanceContract":
+            return {
+              frozenAmount: BigNumber(frozen_balance),
+              resource
+            };
+          case "UnfreezeBalanceContract":
+            return {
+              unfreezeAmount: BigNumber(detail.unfreeze_amount),
+              resource
+            };
+          case "VoteWitnessContract":
+            return {
+              votes: votes.map(v => ({
+                address: v.vote_address,
+                count: v.vote_count
+              }))
+            };
+          default:
+            return undefined;
+        }
+      };
+
+      const extra = getExtra();
+
+      if (extra) {
+        txInfo.extra = extra;
+      }
+
+      return txInfo;
     }
   } catch (e) {
     // Should not happen unless Trongrid change response models.
@@ -214,7 +261,9 @@ export const txInfoToOperation = (
     to,
     type,
     value = BigNumber(0),
-    fee = BigNumber(0)
+    fee = BigNumber(0),
+    blockHeight,
+    extra = {}
   } = tx;
   const hash = txID;
 
@@ -230,13 +279,13 @@ export const txInfoToOperation = (
           ? value.plus(fee)
           : value, // fee is not charged in TRC tokens
       fee: fee,
-      blockHeight: 0,
+      blockHeight,
       blockHash: null,
       accountId: id,
       senders: [from],
       recipients: to ? [to] : [],
       date,
-      extra: {}
+      extra
     };
   }
 
