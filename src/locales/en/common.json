@@ -1690,7 +1690,10 @@
     "memo": {
       "title": "Memo",
       "warning": "When using a Memo, carefully verify the type used with the recipient"
-    }
+    },
+    "network": "Network",
+    "networkPublic": "Public",
+    "sourceAddress": "Source address"
   },
   "delegation": {
     "overdelegated": "Overdelegated",
