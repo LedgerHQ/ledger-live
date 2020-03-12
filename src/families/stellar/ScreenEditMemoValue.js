@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import i18next from "i18next";
-import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -18,7 +17,6 @@ import { accountScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
 import type { T } from "../../types/common";
-import { track } from "../../analytics";
 
 const forceInset = { bottom: "always" };
 

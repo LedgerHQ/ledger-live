@@ -2,8 +2,9 @@
 import { connect } from "react-redux";
 import { StellarMemoType } from "@ledgerhq/live-common/lib/families/stellar/types";
 import i18next from "i18next";
-import type { State } from "../../reducers";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+
+import type { State } from "../../reducers";
 import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
 
 const items = StellarMemoType.map(type => ({

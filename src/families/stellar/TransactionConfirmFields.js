@@ -2,14 +2,12 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import {
-  shortAddressPreview,
-  getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+import { shortAddressPreview } from "@ledgerhq/live-common/lib/account";
+import { translate } from "react-i18next";
+
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import colors from "../../colors";
-import { translate } from "react-i18next";
 import type { T } from "../../types/common";
 
 const styles = StyleSheet.create({
