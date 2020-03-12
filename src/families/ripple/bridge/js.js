@@ -28,6 +28,7 @@ import {
   isIterableDerivationMode,
   derivationModeSupportsIndex
 } from "../../../derivation";
+import { formatCurrencyUnit } from "../../../currencies";
 import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName
@@ -663,7 +664,13 @@ const getTransactionStatus = async (a, t) => {
   } else if (t.fee.eq(0)) {
     errors.fee = new FeeRequired();
   } else if (totalSpent.gt(a.balance.minus(reserveBaseXRP))) {
-    errors.amount = new NotEnoughSpendableBalance();
+    errors.amount = new NotEnoughSpendableBalance(null, {
+      minimumAmount: formatCurrencyUnit(a.currency.units[0], reserveBaseXRP, {
+        disableRounding: true,
+        useGrouping: false,
+        showCode: true
+      })
+    });
   } else if (
     t.recipient &&
     (await cachedRecipientIsNew(a.endpointConfig, t.recipient)) &&

@@ -22,6 +22,7 @@ import { withLibcore } from "../../../libcore/access";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
 import signOperation from "../libcore-signOperation";
 import broadcast from "../libcore-broadcast";
+import { formatCurrencyUnit } from "../../../currencies";
 
 const createTransaction = () => ({
   family: "ripple",
@@ -67,7 +68,13 @@ const getTransactionStatus = async (a, t) => {
     errors.fee = new FeeRequired();
     totalSpent.gt(a.balance.minus(baseReserve));
   } else if (totalSpent.gt(a.balance.minus(baseReserve))) {
-    errors.amount = new NotEnoughSpendableBalance();
+    errors.amount = new NotEnoughSpendableBalance(null, {
+      minimumAmount: formatCurrencyUnit(a.currency.units[0], baseReserve, {
+        disableRounding: true,
+        useGrouping: false,
+        showCode: true
+      })
+    });
   } else if (
     amount.lt(baseReserve) &&
     !(await isAddressActivated(a, t.recipient))

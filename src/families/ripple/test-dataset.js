@@ -9,11 +9,13 @@ import {
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import { addNotCreatedRippleMockAddress } from "./bridge/mock";
+import { getCryptoCurrencyById } from "../../data/cryptocurrencies";
+import { formatCurrencyUnit } from "../../currencies";
 
 const newAddress1 = "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4";
 
 addNotCreatedRippleMockAddress(newAddress1);
-
+const rippleUnit = getCryptoCurrencyById("ripple").units[0];
 const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "ripplejs"],
   currencies: {
@@ -49,7 +51,17 @@ const dataset: DatasetTest<Transaction> = {
                 amount: BigNumber("15000000"),
                 estimatedFees: BigNumber("1"),
                 errors: {
-                  amount: new NotEnoughSpendableBalance()
+                  amount: new NotEnoughSpendableBalance(null, {
+                    minimumAmount: formatCurrencyUnit(
+                      rippleUnit,
+                      BigNumber("20"),
+                      {
+                        disableRounding: true,
+                        useGrouping: false,
+                        showCode: true
+                      }
+                    )
+                  })
                 },
                 warnings: {},
                 totalSpent: BigNumber("15000001")
