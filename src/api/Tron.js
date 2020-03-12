@@ -238,7 +238,23 @@ export const getTronAccountNetwork = async (
       decode58Check(address)
     )}`
   );
-  return result;
+
+  const {
+    freeNetUsed = 0,
+    freeNetLimit = 0,
+    NetUsed = 0,
+    NetLimit = 0,
+    EnergyLimit = 0
+  } = result;
+
+  return {
+    family: "tron",
+    freeNetUsed: BigNumber(freeNetUsed),
+    freeNetLimit: BigNumber(freeNetLimit),
+    netUsed: BigNumber(NetUsed),
+    netLimit: BigNumber(NetLimit),
+    energyLimit: EnergyLimit ? BigNumber(EnergyLimit) : undefined
+  };
 };
 
 export const validateAddress = async (address: string): Promise<boolean> => {
@@ -387,22 +403,22 @@ export const extractBandwidthInfo = (
 ): BandwidthInfo => {
   // Calculate bandwidth info :
   if (networkInfo) {
-    const {
-      freeNetUsed = 0,
-      freeNetLimit = 0,
-      NetUsed = 0,
-      NetLimit = 0
-    } = networkInfo;
+    const { freeNetUsed, freeNetLimit, netUsed, netLimit } = networkInfo;
 
     return {
       freeUsed: freeNetUsed,
       freeLimit: freeNetLimit,
-      gainedUsed: NetUsed,
-      gainedLimit: NetLimit
+      gainedUsed: netUsed,
+      gainedLimit: netLimit
     };
   }
 
-  return { freeUsed: 0, freeLimit: 0, gainedUsed: 0, gainedLimit: 0 };
+  return {
+    freeUsed: BigNumber(0),
+    freeLimit: BigNumber(0),
+    gainedUsed: BigNumber(0),
+    gainedLimit: BigNumber(0)
+  };
 };
 
 export const getTronResources = async (
@@ -441,7 +457,7 @@ export const getTronResources = async (
   const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
   const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
 
-  const energy = tronNetworkInfo.EnergyLimit || 0;
+  const energy = BigNumber(tronNetworkInfo.energyLimit || 0);
   const bandwidth = extractBandwidthInfo(tronNetworkInfo);
   const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
 
@@ -505,16 +521,18 @@ export const getTronResources = async (
   };
 };
 
-export const getUnwithdrawnReward = async (addr: string): Promise<number> => {
+export const getUnwithdrawnReward = async (
+  addr: string
+): Promise<BigNumber> => {
   try {
     const { reward = 0 } = await fetch(
       `${baseApiUrl}/wallet/getReward?address=${encodeURIComponent(
         decode58Check(addr)
       )}`
     );
-    return reward;
+    return BigNumber(reward);
   } catch (e) {
-    return Promise.resolve(0);
+    return Promise.resolve(BigNumber(0));
   }
 };
 

@@ -11,15 +11,15 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource
 } from "@ledgerhq/errors";
 import {
-  NoFrozenForBandwidth,
-  NoFrozenForEnergy,
-  NoReward,
-  InvalidFreezeAmount,
-  InvalidVoteCount,
-  NotEnoughTronPower,
-  SendTrc20ToNewAccountForbidden,
-  VoteRequired,
-  UnexpectedFees
+  TronNoFrozenForBandwidth,
+  TronNoFrozenForEnergy,
+  TronNoReward,
+  TronInvalidFreezeAmount,
+  TronInvalidVoteCount,
+  TronNotEnoughTronPower,
+  TronSendTrc20ToNewAccountForbidden,
+  TronVoteRequired,
+  TronUnexpectedFees
 } from "../../errors";
 
 const dataset: DatasetTest<Transaction> = {
@@ -264,13 +264,13 @@ const dataset: DatasetTest<Transaction> = {
               expectedStatus: {
                 amount: BigNumber("1000000"),
                 errors: {},
-                warnings: { fee: new UnexpectedFees("Estimated fees") },
+                warnings: { fee: new TronUnexpectedFees("Estimated fees") },
                 totalSpent: BigNumber("1100000"),
                 estimatedFees: BigNumber("100000")
               }
             },
             {
-              name: "sendTrc20ToNewAccountForbidden",
+              name: "tronSendTrc20ToNewAccountForbidden",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD",
@@ -285,14 +285,14 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("1000000"),
-                errors: { recipient: new SendTrc20ToNewAccountForbidden() },
+                errors: { recipient: new TronSendTrc20ToNewAccountForbidden() },
                 warnings: {},
                 totalSpent: BigNumber("1000000"),
                 estimatedFees: BigNumber("0")
               }
             },
             {
-              name: "invalidFreezeAmount",
+              name: "tronInvalidFreezeAmount",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "",
@@ -305,14 +305,14 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("100000"),
-                errors: { amount: new InvalidFreezeAmount() },
+                errors: { amount: new TronInvalidFreezeAmount() },
                 warnings: {},
                 totalSpent: BigNumber("100000"),
                 estimatedFees: BigNumber("0")
               }
             },
             {
-              name: "noFrozenForEnergy",
+              name: "tronNoFrozenForEnergy",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "",
@@ -325,14 +325,14 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("0"),
-                errors: { resource: new NoFrozenForEnergy() },
+                errors: { resource: new TronNoFrozenForEnergy() },
                 warnings: {},
                 totalSpent: BigNumber("0"),
                 estimatedFees: BigNumber("0")
               }
             },
             {
-              name: "voteRequired",
+              name: "tronVoteRequired",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "",
@@ -345,7 +345,7 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("0"),
-                errors: { vote: new VoteRequired() },
+                errors: { vote: new TronVoteRequired() },
                 warnings: {},
                 totalSpent: BigNumber("0"),
                 estimatedFees: BigNumber("0")
@@ -372,7 +372,7 @@ const dataset: DatasetTest<Transaction> = {
               }
             },
             {
-              name: "invalidVoteCount",
+              name: "tronInvalidVoteCount",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
@@ -390,14 +390,14 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("0"),
-                errors: { vote: new InvalidVoteCount() },
+                errors: { vote: new TronInvalidVoteCount() },
                 warnings: {},
                 totalSpent: BigNumber("0"),
                 estimatedFees: BigNumber("0")
               }
             },
             {
-              name: "notEnoughTronPower",
+              name: "tronNotEnoughTronPower",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
@@ -419,14 +419,14 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("0"),
-                errors: { vote: new NotEnoughTronPower() },
+                errors: { vote: new TronNotEnoughTronPower() },
                 warnings: {},
                 totalSpent: BigNumber("0"),
                 estimatedFees: BigNumber("0")
               }
             },
             {
-              name: "noReward",
+              name: "tronNoReward",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "",
@@ -439,7 +439,7 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("0"),
-                errors: { reward: new NoReward() },
+                errors: { reward: new TronNoReward() },
                 warnings: {},
                 totalSpent: BigNumber("0"),
                 estimatedFees: BigNumber("0")
@@ -494,7 +494,7 @@ const dataset: DatasetTest<Transaction> = {
               }
             },
             {
-              name: "noFrozenForBandwidth",
+              name: "tronNoFrozenForBandwidth",
               transaction: fromTransactionRaw({
                 family: "tron",
                 recipient: "",
@@ -507,7 +507,7 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 amount: BigNumber("0"),
-                errors: { resource: new NoFrozenForBandwidth() },
+                errors: { resource: new TronNoFrozenForBandwidth() },
                 warnings: {},
                 totalSpent: BigNumber("0"),
                 estimatedFees: BigNumber("0")

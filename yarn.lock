@@ -1134,6 +1134,14 @@
     "@ledgerhq/errors" "^5.11.0"
     "@ledgerhq/hw-transport" "^5.11.0"
 
+"@ledgerhq/hw-app-trx@5.11.1":
+  version "5.11.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-trx/-/hw-app-trx-5.11.1.tgz#c7bae2825f48e1ecacf509ee064439e717ff2fdd"
+  integrity sha512-3GxAHZ2NoDvx1WoqIzkH7LgiXKbNFCI2G99X0pR+HRrOcRPN78urdWIoQE2yUmbtMMd3+2YbtQH9xxLL9O7H6Q==
+  dependencies:
+    "@ledgerhq/errors" "^5.11.0"
+    "@ledgerhq/hw-transport" "^5.11.0"
+
 "@ledgerhq/hw-app-xrp@5.11.0":
   version "5.11.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-xrp/-/hw-app-xrp-5.11.0.tgz#53768b81f54c0603791134f0f02d32d4c69472d9"

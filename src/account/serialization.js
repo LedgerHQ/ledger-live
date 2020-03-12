@@ -148,6 +148,7 @@ export const toTronResourcesRaw = ({
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
+
   return {
     frozen: {
       bandwidth: frozenBandwidth
@@ -179,9 +180,14 @@ export const toTronResourcesRaw = ({
     },
     votes,
     tronPower,
-    energy,
-    bandwidth,
-    unwithdrawnReward
+    energy: energy.toString(),
+    bandwidth: {
+      freeUsed: bandwidth.freeUsed.toString(),
+      freeLimit: bandwidth.freeLimit.toString(),
+      gainedUsed: bandwidth.gainedUsed.toString(),
+      gainedLimit: bandwidth.gainedLimit.toString()
+    },
+    unwithdrawnReward: unwithdrawnReward.toString()
   };
 };
 
@@ -229,9 +235,14 @@ export const fromTronResourcesRaw = ({
     },
     votes,
     tronPower,
-    energy,
-    bandwidth,
-    unwithdrawnReward
+    energy: BigNumber(energy),
+    bandwidth: {
+      freeUsed: BigNumber(bandwidth.freeUsed),
+      freeLimit: BigNumber(bandwidth.freeLimit),
+      gainedUsed: BigNumber(bandwidth.gainedUsed),
+      gainedLimit: BigNumber(bandwidth.gainedLimit)
+    },
+    unwithdrawnReward: BigNumber(unwithdrawnReward)
   };
 };
 

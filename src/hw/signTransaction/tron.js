@@ -1,5 +1,5 @@
 // @flow
-import Trx from "../../families/tron/hw-app-trx";
+import Trx from "@ledgerhq/hw-app-trx";
 import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "../../types";
 
@@ -11,12 +11,11 @@ export default async (
 ) => {
   const trx = new Trx(transport);
 
-  const signature = txArg.assetName
-    ? await trx.signTransactionWithTokenName(
-        path,
-        txArg.rawDataHex,
-        txArg.assetName
-      )
-    : await trx.signTransaction(path, txArg.rawDataHex);
-  return Buffer.from(signature).toString("hex");
+  const signature = await trx.signTransaction(
+    path,
+    txArg.rawDataHex,
+    txArg.tokenSignature ? [txArg.tokenSignature] : []
+  );
+
+  return signature;
 };
