@@ -18,6 +18,7 @@ import {
   sync,
   isInvalidRecipient
 } from "../../../bridge/mockHelpers";
+import { formatCurrencyUnit } from "../../../currencies";
 
 const notCreatedAddresses = [];
 
@@ -32,7 +33,7 @@ const createTransaction = (): Transaction => ({
   amount: BigNumber(0),
   recipient: "",
   fee: BigNumber(10),
-  feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
+  feeCustomUnit: getCryptoCurrencyById("ripple").units[1],
   tag: undefined,
   networkInfo: null,
   useAllAmount: false
@@ -62,12 +63,32 @@ const getTransactionStatus = (a, t) => {
   }
 
   if (totalSpent.gt(a.balance)) {
-    errors.amount = new NotEnoughSpendableBalance();
+    errors.amount = new NotEnoughSpendableBalance(null, {
+      minimumAmount: formatCurrencyUnit(
+        a.currency.units[0],
+        BigNumber(minimalBaseAmount),
+        {
+          disableRounding: true,
+          useGrouping: false,
+          showCode: true
+        }
+      )
+    });
   } else if (
     minimalBaseAmount &&
     a.balance.minus(totalSpent).lt(minimalBaseAmount)
   ) {
-    errors.amount = new NotEnoughSpendableBalance();
+    errors.amount = new NotEnoughSpendableBalance(null, {
+      minimumAmount: formatCurrencyUnit(
+        a.currency.units[0],
+        BigNumber(minimalBaseAmount),
+        {
+          disableRounding: true,
+          useGrouping: false,
+          showCode: true
+        }
+      )
+    });
   } else if (
     minimalBaseAmount &&
     (t.recipient.includes("new") ||
