@@ -2062,7 +2062,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     explorerViews: [
       {
-        tx: "https://tronscan.org/#/transaction/$hash"
+        tx: "https://tronscan.org/#/transaction/$hash",
+        address: "https://tronscan.org/#/address/$address"
       }
     ]
   },
