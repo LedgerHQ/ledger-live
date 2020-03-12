@@ -224,7 +224,7 @@ export const formatTrongridTxResponse = (
           case "VoteWitnessContract":
             return {
               votes: votes.map(v => ({
-                address: v.vote_address,
+                address: encode58Check(v.vote_address),
                 count: v.vote_count
               }))
             };
