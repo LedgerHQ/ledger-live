@@ -25,7 +25,7 @@ import { open } from "../../../hw";
 import signTransaction from "../../../hw/signTransaction";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
-import { getAccountUnit } from "../../../account";
+import { getAccountUnit, getMainAccount } from "../../../account";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -558,6 +558,23 @@ const getTransactionStatus = async (
   });
 };
 
+const estimateMaxSpendable = async ({
+  account,
+  parentAccount,
+  transaction
+}) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const t = await prepareTransaction(mainAccount, {
+    ...createTransaction(),
+    subAccountId: account.type === "Account" ? null : account.id,
+    ...transaction,
+    useAllAmount: true,
+    recipient: "0x0000000000000000000000000000000000000000"
+  });
+  const s = await getTransactionStatus(mainAccount, t);
+  return s.amount;
+};
+
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   const networkInfo: NetworkInfo =
     t.networkInfo || (await getTronAccountNetwork(a.freshAddress));
@@ -570,6 +587,7 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   sync,
   signOperation,
   broadcast

@@ -15,7 +15,7 @@ import {
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
-import { isAccountBalanceSignificant } from "../../../account";
+import { isAccountBalanceSignificant, getMainAccount } from "../../../account";
 import {
   scanAccounts,
   signOperation,
@@ -39,6 +39,16 @@ const estimateGasLimitAndStorage = () => {
 
 const defaultGetFees = (a, t: *) =>
   (t.fees || BigNumber(0)).times(t.gasLimit || BigNumber(0));
+
+const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const estimatedFees = transaction
+    ? defaultGetFees(mainAccount, transaction)
+    : BigNumber(10);
+  return Promise.resolve(
+    BigNumber.max(0, account.balance.minus(estimatedFees))
+  );
+};
 
 const createTransaction = (): Transaction => ({
   family: "tezos",
@@ -192,6 +202,7 @@ const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   prepareTransaction,
   sync,
   signOperation,

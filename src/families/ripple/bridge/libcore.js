@@ -6,6 +6,7 @@ import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Transaction } from "../types";
 import { sync } from "../../../libcore/syncAccount";
+import { getMainAccount } from "../../../account";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import {
   AmountRequired,
@@ -133,6 +134,22 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
+const estimateMaxSpendable = async ({
+  account,
+  parentAccount,
+  transaction
+}) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const t = await prepareTransaction(mainAccount, {
+    ...createTransaction(),
+    ...transaction,
+    useAllAmount: true,
+    recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3" // public testing seed abandonx11,about
+  });
+  const s = await getTransactionStatus(mainAccount, t);
+  return s.amount;
+};
+
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
@@ -143,6 +160,7 @@ const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
+  estimateMaxSpendable,
   getTransactionStatus,
   sync,
   signOperation,

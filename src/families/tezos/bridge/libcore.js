@@ -23,7 +23,7 @@ import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { makeLRUCache } from "../../../cache";
-import { isAccountBalanceSignificant } from "../../../account";
+import { isAccountBalanceSignificant, getMainAccount } from "../../../account";
 import { withLibcore } from "../../../libcore/access";
 import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
@@ -72,7 +72,7 @@ const calculateFees = makeLRUCache(
       t.gasLimit ? t.gasLimit.toString() : ""
     }_${t.fees ? t.fees.toString() : ""}_${
       t.storageLimit ? t.storageLimit.toString() : ""
-    }_${String(t.useAllAmount)}`
+    }_${String(t.useAllAmount)}_${String(t.subAccountId)}`
 );
 
 const createTransaction = () => ({
@@ -241,6 +241,24 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
+const estimateMaxSpendable = async ({
+  account,
+  parentAccount,
+  transaction
+}) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const t = await prepareTransaction(mainAccount, {
+    ...createTransaction(),
+    subAccountId: account.type === "Account" ? null : account.id,
+    ...transaction,
+    useAllAmount: true,
+    // this seed is empty (worse case scenario is to send to new). addr from: 1. eyebrow 2. odor 3. rice 4. attack 5. loyal 6. tray 7. letter 8. harbor 9. resemble 10. sphere 11. system 12. forward 13. onion 14. buffalo 15. crumble
+    recipient: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6"
+  });
+  const s = await getTransactionStatus(mainAccount, t);
+  return s.amount;
+};
+
 const preload = async () => {
   const bakers = await fetchAllBakers();
   return { bakers };
@@ -264,6 +282,7 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   sync,
   signOperation,
   broadcast

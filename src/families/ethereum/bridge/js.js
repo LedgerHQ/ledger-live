@@ -28,7 +28,8 @@ import {
 } from "../../../derivation";
 import {
   getAccountPlaceholderName,
-  getNewAccountPlaceholderName
+  getNewAccountPlaceholderName,
+  getMainAccount
 } from "../../../account";
 import { patchOperationWithHash } from "../../../operation";
 import { getCryptoCurrencyById } from "../../../currencies";
@@ -583,10 +584,27 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   };
 };
 
+const estimateMaxSpendable = async ({
+  account,
+  parentAccount,
+  transaction
+}) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const t = await prepareTransaction(mainAccount, {
+    ...createTransaction(),
+    ...transaction,
+    useAllAmount: true,
+    recipient: "0x0000000000000000000000000000000000000000"
+  });
+  const s = await getTransactionStatus(mainAccount, t);
+  return s.amount;
+};
+
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
+  estimateMaxSpendable,
   getTransactionStatus,
   sync,
   signOperation,

@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
-import { getEstimatedFees } from "../../../api/Fees"; // FIXME drop. not stable.
+import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
   signOperation,
@@ -36,6 +36,18 @@ const createTransaction = (account): Transaction => ({
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
+
+const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const estimatedFees = parentAccount
+    ? BigNumber(0)
+    : transaction
+    ? defaultGetFees(mainAccount, transaction)
+    : BigNumber(1000000000000);
+  return Promise.resolve(
+    BigNumber.max(0, account.balance.minus(estimatedFees))
+  );
+};
 
 const getTransactionStatus = (a, t) => {
   const errors = {};
@@ -105,12 +117,11 @@ const prepareTransaction = async (a, t) => {
     };
   }
   if (!res.networkInfo) {
-    const { gas_price } = await getEstimatedFees(a.currency);
     res = {
       ...res,
       networkInfo: {
         family: "ethereum",
-        gasPrice: BigNumber(gas_price)
+        gasPrice: BigNumber(300000)
       }
     };
   }
@@ -121,6 +132,7 @@ const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   prepareTransaction,
   sync,
   signOperation,
