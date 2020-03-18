@@ -590,7 +590,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     blockAvgTime: 140,
     bitcoinLikeInfo: {
       P2PKH: 28,
-      P2SH: 85
+      P2SH: 85,
+      hasTimestamp: true
     },
     units: [
       {
@@ -1075,7 +1076,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 40,
-      P2SH: 100
+      P2SH: 100,
+      hasTimestamp: true
     },
     units: [
       {
@@ -1586,7 +1588,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     blockAvgTime: 450,
     bitcoinLikeInfo: {
       P2PKH: 55,
-      P2SH: 117
+      P2SH: 117,
+      hasTimestamp: true
     },
     units: [
       {
@@ -1700,7 +1703,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 55,
-      P2SH: 85
+      P2SH: 85,
+      hasTimestamp: true
     },
     units: [
       {
@@ -1908,7 +1912,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 63,
-      P2SH: 125
+      P2SH: 125,
+      hasTimestamp: true
     },
     units: [
       {
@@ -1942,7 +1947,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     blockAvgTime: 150,
     bitcoinLikeInfo: {
       P2PKH: 62,
-      P2SH: 85
+      P2SH: 85,
+      hasTimestamp: true
     },
     units: [
       {

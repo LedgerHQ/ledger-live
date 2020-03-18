@@ -1108,10 +1108,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.11.0.tgz#722151b36ce1d53f555eeaae3e66f819c2362b28"
   integrity sha512-o9Mx10+qZwuS6tKe6Z2mQJMClIvVtRNt/tdz4P/pNcGeT/0d6jdUfyF+J5P7RF3au0e9HTxG2LMCPFPZ2Tnibg==
 
-"@ledgerhq/hw-app-btc@5.11.0":
-  version "5.11.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.11.0.tgz#e552b5aabfe6e2969def004336c26e05db479723"
-  integrity sha512-Lm7O/0Yjg2Mpf+Y1IOsZeGIPallWvypRkqhWAUcn2SBlS0KAzqzfP51wIlODu+NdHfpfvdUeIR74e4/p2YrIIQ==
+"@ledgerhq/hw-app-btc@^5.11.4":
+  version "5.11.4"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.11.4.tgz#fde5a3ce30fbb19cfcf8e56da789beb92429ba89"
+  integrity sha512-brxxLTxizsH9Uo4zt+B/Il1JAvkvI1sHx4hcGoHmcMZK/cqwJxPDj39kgRbc3KWFbbiLXuoRMRwmCKr9umaSbA==
   dependencies:
     "@ledgerhq/hw-transport" "^5.11.0"
     bip32-path "^0.4.2"

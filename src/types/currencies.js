@@ -70,7 +70,8 @@ export type CryptoCurrency = CurrencyCommon & {
   // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
   bitcoinLikeInfo?: {
     P2PKH: number,
-    P2SH: number
+    P2SH: number,
+    hasTimestamp?: boolean
   },
   ethereumLikeInfo?: {
     chainId: number
