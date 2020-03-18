@@ -34,7 +34,7 @@ export const mockAccount = fromAccountRaw({
       accountId: "js:2:tron:TRON_ID:",
       senders: ["TRON_ID"],
       recipients: [],
-      date: __NEXT_REWARD_DATE__,
+      date: __NEXT_REWARD_DATE__.toISOString(),
       value: "622168",
       fee: "0",
       extra: {},
