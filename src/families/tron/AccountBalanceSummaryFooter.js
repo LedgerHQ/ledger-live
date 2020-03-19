@@ -9,6 +9,7 @@ import {
   findCryptoCurrencyById,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
@@ -162,12 +163,16 @@ const styles = StyleSheet.create({
 });
 
 function getInfoCandidates(t: TFunction): { [key: InfoName]: ModalInfo[] } {
-  const TronIcon = getTronIcon();
+  const currency: CryptoCurrency = (findCryptoCurrencyById("tron"): any);
+  const TronIcon: React$ComponentType<{
+    color: string,
+    size: number,
+  }> = (getCryptoCurrencyIcon(currency): any);
 
   return {
     available: [
       {
-        Icon: () => <TronIcon />,
+        Icon: () => <TronIcon color={currency.color} size={18} />,
         title: t("tron.info.available.title"),
         description: t("tron.info.available.description"),
       },
@@ -194,10 +199,4 @@ function getInfoCandidates(t: TFunction): { [key: InfoName]: ModalInfo[] } {
       },
     ],
   };
-}
-
-function getTronIcon(): React$ComponentType<{}> {
-  const currency = findCryptoCurrencyById("tron");
-  const TronIcon = getCryptoCurrencyIcon(currency);
-  return () => <TronIcon color={currency.color} size={18} />;
 }
