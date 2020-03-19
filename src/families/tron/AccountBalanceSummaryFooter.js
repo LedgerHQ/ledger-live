@@ -1,12 +1,18 @@
 // @flow
 
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import {
+  formatCurrencyUnit,
+  findCryptoCurrencyById,
+} from "@ledgerhq/live-common/lib/currencies";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
+import InfoModal from "../../modals/Info";
+import type { ModalInfo } from "../../modals/Info";
 
 type Props = {
   account: any,
@@ -20,23 +26,55 @@ const formatConfig = {
 };
 
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
-  if (!account.tronResources) return null;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
-    energy,
+    energy: formatedEnergy,
     bandwidth: { freeUsed, freeLimit, gainedUsed, gainedLimit } = {},
     tronPower,
   } = account.tronResources;
 
-  const spendableBalance = formatCurrencyUnit(
-    account.unit,
-    account.spendableBalance,
-    formatConfig,
+  const spendableBalance = useMemo(
+    () =>
+      formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig),
+    [account.unit, account.spendableBalance],
   );
 
-  const formatedEnergy = energy;
+  const formatedBandwidth = useMemo(
+    () => freeLimit + gainedLimit - gainedUsed - freeUsed,
+    [freeLimit, gainedLimit, gainedUsed, freeUsed],
+  );
 
-  const formatedBandwidth = freeLimit + gainedLimit - gainedUsed - freeUsed;
+  const infos = useMemo<ModalInfo[]>(() => {
+    const currency = findCryptoCurrencyById("tron");
+    if (!currency) {
+      return [];
+    }
+
+    const TronIcon = getCryptoCurrencyIcon(currency);
+    if (!TronIcon) {
+      return [];
+    }
+
+    return [
+      {
+        Icon: () => <TronIcon color={currency.color} size={18} />,
+        title: "TRX available",
+        description:
+          "Bandwidth Points (BP) are used for transactions you do not want to pay for. As such freezing TRX for BP will increase your daily free transactions quantity.",
+      },
+    ];
+  }, []);
+
+  const onPressBalance = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const onCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  if (!account.tronResources) return null;
 
   return (
     <ScrollView
@@ -44,10 +82,9 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       showsHorizontalScrollIndicator={false}
       style={styles.root}
     >
+      <InfoModal isOpened={isModalOpen} onClose={onCloseModal} infos={infos} />
       <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
+        onPress={onPressBalance}
         style={styles.balanceContainer}
       >
         <View style={styles.balanceLabelContainer}>
