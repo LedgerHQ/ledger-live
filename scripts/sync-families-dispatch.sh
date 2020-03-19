@@ -13,6 +13,7 @@ SendAmountFields.js \
 screens.js \
 SendRowsCustom.js \
 SendRowsFee.js \
+AccountBalanceSummaryFooter.js \
 "
 
 cd ../src
