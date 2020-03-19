@@ -2,8 +2,17 @@
 import { useState, useEffect } from "react";
 import { getTronSuperRepresentatives, getNextVotingDate } from "../../api/Tron";
 
+import { BigNumber } from "bignumber.js";
+
 import type { SuperRepresentative, Vote } from "./types";
 import type { Account } from "../../types";
+
+import { getCryptoCurrencyById } from "../../currencies";
+
+const oneTrx = BigNumber(10).pow(
+  getCryptoCurrencyById("tron").units[0].magnitude
+);
+export const MIN_TRANSACTION_AMOUNT = oneTrx;
 
 /** Fetch the list of super representatives */
 export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
