@@ -21564,7 +21564,7 @@ Array [
     "type": "TokenAccountRaw",
   },
   Object {
-    "balance": "1",
+    "balance": "0",
     "id": "libcore:1:ethereum:xpub6BemYiVNp19a1XgWqLcpWd1pBDZTgzPEcVvhR15cpXPVQjuEnrU7fa3TUatX2NbRWNkqx51jmyukisqGokHq5dyK5uYcbwQBF7nJyAdpYZy:+0xD46bA6D942050d489DBd938a2C909A5d5039A161",
     "operationsCount": 5,
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a1XgWqLcpWd1pBDZTgzPEcVvhR15cpXPVQjuEnrU7fa3TUatX2NbRWNkqx51jmyukisqGokHq5dyK5uYcbwQBF7nJyAdpYZy:",
@@ -21818,7 +21818,7 @@ Array [
     "type": "TokenAccountRaw",
   },
   Object {
-    "balance": "1",
+    "balance": "0",
     "id": "libcore:1:ethereum:xpub6BemYiVNp19a56t4FLHBhvys6iThqTAyC44jUX5b8fpPWSjrGaBMVdXo49wVVBVGVcRVPGo1eUUZPMFrKriqtL68pEeGCt37UzYXP4h3WX5:+0xD46bA6D942050d489DBd938a2C909A5d5039A161",
     "operationsCount": 2,
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a56t4FLHBhvys6iThqTAyC44jUX5b8fpPWSjrGaBMVdXo49wVVBVGVcRVPGo1eUUZPMFrKriqtL68pEeGCt37UzYXP4h3WX5:",
