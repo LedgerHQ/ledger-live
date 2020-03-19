@@ -14,7 +14,7 @@ interface Props {
 
 export interface ModalInfo {
   description: string;
-  Icon: any;
+  Icon: () => React$Element<React$ElementType>;
   title: string;
 }
 
