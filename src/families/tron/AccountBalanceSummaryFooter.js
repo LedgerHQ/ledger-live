@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { Trans, translate } from "react-i18next";
+import { translate } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import {
   formatCurrencyUnit,
@@ -14,6 +14,9 @@ import LText from "../../components/LText";
 import Info from "../../icons/Info";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
+import PowerIcon from "../../icons/Power";
+import BandwidthIcon from "../../icons/Bandwidth";
+import EnergyIcon from "../../icons/Energy";
 
 interface Props {
   account: any;
@@ -171,21 +174,21 @@ function getInfoCandidates(t: TFunction): { [key: InfoName]: ModalInfo[] } {
     ],
     power: [
       {
-        Icon: () => <TronIcon />,
+        Icon: () => <PowerIcon size={18} />,
         title: t("tron.info.power.title"),
         description: t("tron.info.power.description"),
       },
     ],
     bandwidth: [
       {
-        Icon: () => <TronIcon />,
+        Icon: () => <BandwidthIcon size={18} />,
         title: t("tron.info.bandwidth.title"),
         description: t("tron.info.bandwidth.description"),
       },
     ],
     energy: [
       {
-        Icon: () => <TronIcon />,
+        Icon: () => <EnergyIcon size={18} />,
         title: t("tron.info.energy.title"),
         description: t("tron.info.energy.description"),
       },
