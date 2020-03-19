@@ -3,20 +3,25 @@
 import React, { useCallback } from "react";
 import { View, Linking, StyleSheet, TouchableOpacity } from "react-native";
 
+import { getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
+
+import type { ExplorerView } from "@ledgerhq/live-common/lib/types";
+
 import LText from "../../../components/LText";
 import colors from "../../../colors";
 import Clock from "../../../icons/Clock";
+import Trophy from "../../../icons/Trophy";
 
 type Props = {
   validator: *,
   address: string,
   amount: number,
-  duration: React$Node,
-  percentTP: string,
+  duration: ?React$Node,
+  explorerView: ?ExplorerView,
 };
 
-const Row = ({ validator, address, amount, duration, percentTP }: Props) => {
-  const srURL = validator && validator.url;
+const Row = ({ validator, address, amount, duration, explorerView }: Props) => {
+  const srURL = explorerView && getAddressExplorer(explorerView, address);
 
   const openSR = useCallback(() => {
     if (srURL) Linking.openURL(srURL);
@@ -24,6 +29,9 @@ const Row = ({ validator, address, amount, duration, percentTP }: Props) => {
 
   return (
     <View style={styles.root}>
+      <View style={styles.icon}>
+        <Trophy size={16} color={colors.live} />
+      </View>
       <View style={styles.labelContainer}>
         <TouchableOpacity onPress={openSR}>
           <LText semiBold style={styles.title}>
@@ -37,9 +45,8 @@ const Row = ({ validator, address, amount, duration, percentTP }: Props) => {
       </View>
       <View style={[styles.labelContainer, styles.labelContainerRight]}>
         <LText semiBold style={styles.title}>
-          TP {amount}
+          {amount}
         </LText>
-        <LText style={styles.label}>{percentTP}%</LText>
       </View>
     </View>
   );
@@ -51,6 +58,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
+  },
+  icon: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 36,
+    height: 36,
+    borderRadius: 5,
+    backgroundColor: colors.lightLive,
+    marginRight: 12,
   },
   title: {
     fontSize: 14,

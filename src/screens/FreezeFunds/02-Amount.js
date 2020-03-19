@@ -335,6 +335,7 @@ FreezeAmount.navigationOptions = {
       })}
     />
   ),
+  headerLeft: null,
 };
 
 const styles = StyleSheet.create({

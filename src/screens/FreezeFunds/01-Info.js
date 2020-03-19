@@ -13,7 +13,7 @@ import LText from "../../components/LText";
 import ExternalLink from "../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../components/BulletList";
 import { urls } from "../../config/urls";
-import IlluRewards from "./IlluRewards";
+import IlluRewards from "../../families/tron/IlluRewards";
 
 const forceInset = { bottom: "always" };
 

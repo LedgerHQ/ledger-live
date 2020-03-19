@@ -38,8 +38,8 @@ class ConnectDevice extends Component<Props> {
   static navigationOptions = {
     headerTitle: (
       <StepHeader
-        title={i18next.t("freeze.stepperHeader.connectDevice")}
-        subtitle={i18next.t("freeze.stepperHeader.stepRange", {
+        title={i18next.t("unfreeze.stepperHeader.connectDevice")}
+        subtitle={i18next.t("unfreeze.stepperHeader.stepRange", {
           currentStep: "2",
           totalSteps: "3",
         })}
@@ -50,7 +50,7 @@ class ConnectDevice extends Component<Props> {
   onSelectDevice = (meta: *) => {
     const { navigation } = this.props;
     // $FlowFixMe
-    navigation.replace("FreezeValidation", {
+    navigation.replace("UnfreezeValidation", {
       ...navigation.state.params,
       ...meta,
     });
@@ -66,7 +66,7 @@ class ConnectDevice extends Component<Props> {
           style={styles.scroll}
           contentContainerStyle={styles.scrollContainer}
         >
-          <TrackScreen category="FreezeFunds" name="ConnectDevice" />
+          <TrackScreen category="UnfreezeFunds" name="ConnectDevice" />
           <SelectDevice
             onSelect={this.onSelectDevice}
             steps={[connectingStep, accountApp(mainAccount)]}

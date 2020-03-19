@@ -51,9 +51,23 @@ const ValidateOnDevice = ({
   const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
   const Pre = r && r.pre;
   const Post = r && r.post;
-  const recipientWording = t(
+  const transRecipientWording = t(
     `ValidateOnDevice.recipientWording.${transaction.mode || "send"}`,
   );
+  const recipientWording =
+    transRecipientWording !==
+    `ValidateOnDevice.recipientWording.${transaction.mode || "send"}`
+      ? transRecipientWording
+      : t("ValidateOnDevice.recipientWording.send");
+
+  const transTitleWording = t(
+    `ValidateOnDevice.title.${transaction.mode || "send"}`,
+    getDeviceModel(modelId),
+  );
+  const titleWording =
+    transTitleWording !== `ValidateOnDevice.title.${transaction.mode || "send"}`
+      ? transTitleWording
+      : t("ValidateOnDevice.title.send", getDeviceModel(modelId));
 
   return (
     <View style={styles.root}>
@@ -69,10 +83,7 @@ const ValidateOnDevice = ({
         </View>
         <View style={styles.titleContainer}>
           <LText secondary semiBold style={styles.title}>
-            <Trans
-              i18nKey="ValidateOnDevice.title"
-              values={getDeviceModel(modelId)}
-            />
+            {titleWording}
           </LText>
         </View>
 

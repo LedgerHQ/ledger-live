@@ -47,7 +47,7 @@ const Validation = ({
   updateAccountWithUpdater,
 }: Props) => {
   const [signing, signed] = useSignWithDevice({
-    context: "Freeze",
+    context: "ClaimRewards",
     account,
     parentAccount,
     navigation,
@@ -61,7 +61,7 @@ const Validation = ({
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
-      <TrackScreen category="FreezeFunds" name="Validation" signed={signed} />
+      <TrackScreen category="ClaimRewards" name="Validation" signed={signed} />
       {signing && (
         <>
           <PreventNativeBack />
@@ -90,8 +90,8 @@ const Validation = ({
 Validation.navigationOptions = {
   headerTitle: (
     <StepHeader
-      title={i18next.t("freeze.stepperHeader.verification")}
-      subtitle={i18next.t("freeze.stepperHeader.stepRange", {
+      title={i18next.t("claimReward.stepperHeader.verification")}
+      subtitle={i18next.t("claimReward.stepperHeader.stepRange", {
         currentStep: "3",
         totalSteps: "3",
       })}

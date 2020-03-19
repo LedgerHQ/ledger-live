@@ -4,11 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { translate, Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
-import type {
-  TokenAccount,
-  Account,
-  Operation,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
@@ -39,7 +35,7 @@ const useTimer = (timer: number) => {
 };
 
 type Props = {
-  account: ?(TokenAccount | Account),
+  account: ?Account,
   parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {

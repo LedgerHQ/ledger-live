@@ -4,34 +4,36 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import LText from "../../../components/LText";
-import Check from "../../../icons/Check";
 import Close from "../../../icons/Close";
 import colors from "../../../colors";
+import Button from "../../../components/Button";
 import ProgressCircle from "../../../components/ProgressCircle";
 
 type Props = {
   total: number,
   used: number,
+  count: number,
   onPress: () => void,
 };
 
-const Header = ({ total, used }: Props) => {
+const Header = ({ total, used, count }: Props) => {
   const percentVotesUsed = used / total;
 
   return (
     <>
       <View style={styles.root}>
         <LText style={styles.title} semiBold>
-          <Trans i18nKey="tron.voting.header" />
+          <Trans i18nKey="tron.voting.header" values={{ total: count }} />
         </LText>
-        {percentVotesUsed >= 1 && (
-          <View style={styles.labelContainer}>
-            <Check size={12} color={colors.grey} />
-            <LText style={styles.label}>
-              <Trans i18nKey="tron.voting.allVotesUsed" />
-            </LText>
-          </View>
-        )}
+        <Button
+          containerStyle={{ flexGrow: 0.5 }}
+          type="lightSecondary"
+          event="TronManageVotes"
+          onPress={() => {
+            /** @TODO redirect to voting flow */
+          }}
+          title={<Trans i18nKey="tron.voting.manageVotes" />}
+        />
       </View>
       {percentVotesUsed < 1 && (
         <View style={[styles.root, styles.warn]}>
@@ -69,9 +71,7 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightFog,
+    paddingVertical: 8,
   },
   warn: {
     backgroundColor: colors.lightFog,
@@ -88,21 +88,22 @@ const styles = StyleSheet.create({
     color: colors.live,
     marginLeft: 0,
   },
-  title: {
-    fontSize: 14,
-    lineHeight: 16,
-    color: colors.darkBlue,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
+  cta: {
     flex: 1,
+    flexGrow: 0.5,
   },
   label: {
-    fontSize: 13,
-    color: colors.grey,
-    marginLeft: 6,
+    fontSize: 18,
+    color: colors.darkBlue,
+    marginRight: 6,
+  },
+  title: {
+    flex: 1,
+    fontSize: 18,
+    lineHeight: 22,
+    textAlign: "left",
+    paddingVertical: 4,
+    color: colors.darkBlue,
   },
   closeButton: {
     width: 38,

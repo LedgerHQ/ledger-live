@@ -56,7 +56,7 @@ class ValidationError extends Component<Props> {
 
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="FreezeFunds" name="ValidationError" />
+        <TrackScreen category="UnfreezeFunds" name="ValidationError" />
         <ValidateError
           error={error}
           onRetry={this.retry}
