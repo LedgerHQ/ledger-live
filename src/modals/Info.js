@@ -7,7 +7,7 @@ import LText from "../components/LText";
 import colors from "../colors";
 
 interface Props {
-  infos: ModalInfo[];
+  data: ModalInfo[];
   isOpened: boolean;
   onClose: () => void;
 }
@@ -18,7 +18,7 @@ export interface ModalInfo {
   title: string;
 }
 
-export default function InfoModal({ infos, isOpened, onClose }: Props) {
+export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (
     <BottomModal
       id="InfoModal"
@@ -26,7 +26,7 @@ export default function InfoModal({ infos, isOpened, onClose }: Props) {
       isOpened={isOpened}
       onClose={onClose}
     >
-      {infos.map(({ description, Icon, title }, i) => (
+      {data.map(({ description, Icon, title }, i) => (
         <View key={i}>
           <View style={styles.header}>
             <View style={styles.iconWrapper}>

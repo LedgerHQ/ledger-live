@@ -14,10 +14,10 @@ import Info from "../../icons/Info";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 
-type Props = {
-  account: any,
-  countervalue: any,
-};
+interface Props {
+  account: any;
+  countervalue: any;
+}
 
 const formatConfig = {
   disableRounding: true,
@@ -25,11 +25,14 @@ const formatConfig = {
   showCode: true,
 };
 
-const AccountBalanceSummaryFooter = ({ account }: Props) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+type InfoName = "available" | "power" | "bandwidth" | "energy";
+
+export default function AccountBalanceSummaryFooter({ account }: Props) {
+  const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
+  const infoCandidates = useMemo(getInfoCandidates, []);
 
   const {
-    energy: formatedEnergy,
+    energy: formattedEnergy,
     bandwidth: { freeUsed, freeLimit, gainedUsed, gainedLimit } = {},
     tronPower,
   } = account.tronResources;
@@ -40,39 +43,26 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     [account.unit, account.spendableBalance],
   );
 
-  const formatedBandwidth = useMemo(
+  const formattedBandwidth = useMemo(
     () => freeLimit + gainedLimit - gainedUsed - freeUsed,
     [freeLimit, gainedLimit, gainedUsed, freeUsed],
   );
 
-  const infos = useMemo<ModalInfo[]>(() => {
-    const currency = findCryptoCurrencyById("tron");
-    if (!currency) {
-      return [];
-    }
-
-    const TronIcon = getCryptoCurrencyIcon(currency);
-    if (!TronIcon) {
-      return [];
-    }
-
-    return [
-      {
-        Icon: () => <TronIcon color={currency.color} size={18} />,
-        title: "TRX available",
-        description:
-          "Bandwidth Points (BP) are used for transactions you do not want to pay for. As such freezing TRX for BP will increase your daily free transactions quantity.",
-      },
-    ];
-  }, []);
-
-  const onPressBalance = useCallback(() => {
-    setIsModalOpen(true);
-  }, []);
-
   const onCloseModal = useCallback(() => {
-    setIsModalOpen(false);
+    setInfoName(undefined);
   }, []);
+
+  const onPressInfoCreator = useCallback(
+    (infoName: InfoName) => () => setInfoName(infoName),
+    [],
+  );
+
+  const isModalOpen = useMemo(() => !!infoName, [infoName]);
+
+  const data = useMemo(() => (infoName ? infoCandidates[infoName] : []), [
+    infoName,
+    infoCandidates,
+  ]);
 
   if (!account.tronResources) return null;
 
@@ -82,74 +72,45 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       showsHorizontalScrollIndicator={false}
       style={styles.root}
     >
-      <InfoModal isOpened={isModalOpen} onClose={onCloseModal} infos={infos} />
-      <TouchableOpacity
-        onPress={onPressBalance}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.availableBalance" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
-        <LText semiBold style={styles.balance}>
-          {spendableBalance}
-        </LText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.tronPower" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
+      <InfoModal isOpened={isModalOpen} onClose={onCloseModal} data={data} />
 
-        <LText semiBold style={styles.balance}>
-          {tronPower}
-        </LText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.bandwidth" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
-
-        <LText semiBold style={styles.balance}>
-          {formatedBandwidth || "–"}
-        </LText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.energy" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
-        <LText semiBold style={styles.balance}>
-          {formatedEnergy || "–"}
-        </LText>
-      </TouchableOpacity>
+      <InfoItem
+        onPress={onPressInfoCreator("available")}
+        value={spendableBalance}
+      />
+      <InfoItem onPress={onPressInfoCreator("power")} value={tronPower} />
+      <InfoItem
+        onPress={onPressInfoCreator("bandwidth")}
+        value={formattedBandwidth.toString() || "–"}
+      />
+      <InfoItem
+        onPress={onPressInfoCreator("energy")}
+        value={formattedEnergy.toString() || "-"}
+      />
     </ScrollView>
   );
-};
+}
+
+interface InfoItemProps {
+  value: string;
+  onPress: () => void;
+}
+
+function InfoItem({ onPress, value }: InfoItemProps) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.balanceContainer}>
+      <View style={styles.balanceLabelContainer}>
+        <LText style={styles.balanceLabel}>
+          <Trans i18nKey="account.energy" />
+        </LText>
+        <Info size={12} color={colors.grey} />
+      </View>
+      <LText semiBold style={styles.balance}>
+        {value}
+      </LText>
+    </TouchableOpacity>
+  );
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -187,4 +148,52 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountBalanceSummaryFooter;
+function getInfoCandidates(): { [key: InfoName]: ModalInfo[] } {
+  const TronIcon = getTronIcon();
+
+  return {
+    available: [
+      {
+        Icon: () => <TronIcon />,
+        title: "TRX available",
+        description:
+          "Bandwidth Points (BP) are used for transactions you do not want to pay for. As such freezing TRX for BP will increase your daily free transactions quantity.",
+      },
+    ],
+    power: [
+      {
+        Icon: () => <TronIcon />,
+        title: "TRON Power",
+        description: `
+TRX can be frozen to gain TRON Power and enable additional features. For example, with TRON Power you can vote for Super Representatives.You can gain bandwith or energy as well.
+
+Frozen tokens are "locked" for a period of 3 days. During this period the frozen TRX cannot be traded. After this period you can unfreeze the TRX and trade the tokens.
+
+Either one of bandwidth or energy can be acquired by each freeze. You cannot acquire both resources at the same time. When a user unfreeze a certain resource, his previous votes will be completely voided. If a user would like to vote using the remaining TRON Power, he will have to perform his voting operations all over again.
+`,
+      },
+    ],
+    bandwidth: [
+      {
+        Icon: () => <TronIcon />,
+        title: "Bandwidth",
+        description:
+          "Bandwidth Points (BP) are used for transactions you do not want to pay for. As such freezing TRX for BP will increase your daily free transactions quantity.",
+      },
+    ],
+    energy: [
+      {
+        Icon: () => <TronIcon />,
+        title: "Energy",
+        description:
+          "Bandwidth Points (BP) are used for transactions you do not want to pay for. As such freezing TRX for BP will increase your daily free transactions quantity.",
+      },
+    ],
+  };
+}
+
+function getTronIcon(): React$ComponentType<{}> {
+  const currency = findCryptoCurrencyById("tron");
+  const TronIcon = getCryptoCurrencyIcon(currency);
+  return () => <TronIcon color={currency.color} size={18} />;
+}
