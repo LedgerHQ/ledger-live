@@ -1425,6 +1425,24 @@
         "title": "Vote",
         "description": "Cast votes for Super Representatives using your TRON Power to earn TRX rewards."
       }
+    },
+    "info": {
+      "available": {
+        "title": "TRX available",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sem velit, bibendum in velit non, iaculis placerat elit. Sed suscipit maximus erat, eu vehicula ante tincidunt at. Curabitur ante risus, porta eget finibus ut, vestibulum a nunc. Pellentesque sed pellentesque lectus."
+      },
+      "power": {
+        "title": "TRON Power",
+        "description": "TRX can be frozen to gain TRON Power and enable additional features. For example, with TRON Power you can vote for Super Representatives.You can gain bandwith or energy as well.\n\nFrozen tokens are \"locked\" for a period of 3 days. During this period the frozen TRX cannot be traded. After this period you can unfreeze the TRX and trade the tokens.\n\nEither one of bandwidth or energy can be acquired by each freeze. You cannot acquire both resources at the same time. When a user unfreeze a certain resource, his previous votes will be completely voided. If a user would like to vote using the remaining TRON Power, he will have to perform his voting operations all over again."
+      },
+      "bandwidth": {
+        "title": "Bandwidth",
+        "description": "Bandwidth Points (BP) are used for transactions you do not want to pay for. As such freezing TRX for BP will increase your daily free transactions quantity."
+      },
+      "energy": {
+        "title": "Energy",
+        "description": "Energy Points are used when executing smart contracts. As such freezing TRX for Energy will allow you to avoid additional fees when interacting with a smart contract."
+      }
     }
   },
   "delegation": {
