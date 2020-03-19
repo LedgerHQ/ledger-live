@@ -15,7 +15,7 @@ import LText from "../../components/LText";
 import Info from "../../icons/Info";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
-import PowerIcon from "../../icons/Power";
+import FreezeIcon from "../../icons/Freeze";
 import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
 
@@ -31,7 +31,7 @@ const formatConfig = {
   showCode: true,
 };
 
-type InfoName = "available" | "power" | "bandwidth" | "energy";
+type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
 function AccountBalanceSummaryFooter({ account, t }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
@@ -86,8 +86,8 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
         value={spendableBalance}
       />
       <InfoItem
-        title={t("account.tronPower")}
-        onPress={onPressInfoCreator("power")}
+        title={t("account.tronFrozen")}
+        onPress={onPressInfoCreator("frozen")}
         value={tronPower}
       />
       <InfoItem
@@ -177,11 +177,11 @@ function getInfoCandidates(t: TFunction): { [key: InfoName]: ModalInfo[] } {
         description: t("tron.info.available.description"),
       },
     ],
-    power: [
+    frozen: [
       {
-        Icon: () => <PowerIcon size={18} />,
-        title: t("tron.info.power.title"),
-        description: t("tron.info.power.description"),
+        Icon: () => <FreezeIcon size={18} />,
+        title: t("tron.info.frozen.title"),
+        description: t("tron.info.frozen.description"),
       },
     ],
     bandwidth: [
