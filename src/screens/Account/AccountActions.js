@@ -42,19 +42,23 @@ const AccountActions = ({
 
   const ManageAction = (decorators && decorators.ManageAction) || null;
 
+  const onNavigate = useCallback(
+    (route: string) => {
+      navigation.navigate(route, {
+        accountId,
+        parentId,
+      });
+    },
+    [accountId, parentId, navigation],
+  );
+
   const onSend = useCallback(() => {
-    navigation.navigate("SendSelectRecipient", {
-      accountId,
-      parentId,
-    });
-  }, [accountId, parentId, navigation]);
+    onNavigate("SendSelectRecipient");
+  }, [onNavigate]);
 
   const onReceive = useCallback(() => {
-    navigation.navigate("ReceiveConnectDevice", {
-      accountId,
-      parentId,
-    });
-  }, [accountId, parentId, navigation]);
+    onNavigate("ReceiveConnectDevice");
+  }, [onNavigate]);
 
   return (
     <View style={styles.root}>
@@ -76,6 +80,7 @@ const AccountActions = ({
         <ManageAction
           account={account}
           parentAccount={parentAccount}
+          onNavigate={onNavigate}
           style={[styles.btn, styles.manageAction]}
         />
       )}

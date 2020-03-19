@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
   dataRow: {
     padding: 12,
     borderRadius: 4,
+    marginVertical: 1,
     backgroundColor: colors.lightGrey,
     alignItems: "center",
     flexDirection: "row",
@@ -31,16 +32,18 @@ const styles = StyleSheet.create({
 });
 
 export class DataRow extends PureComponent<{
-  label: React$Node,
+  label?: React$Node,
   children: React$Node,
 }> {
   render() {
     const { label, children } = this.props;
     return (
       <View style={styles.dataRow}>
-        <LText numberOfLines={1} style={styles.dataRowLabel}>
-          {label}
-        </LText>
+        {label ? (
+          <LText numberOfLines={1} style={styles.dataRowLabel}>
+            {label}
+          </LText>
+        ) : null}
         {children}
       </View>
     );
