@@ -77738,7 +77738,7 @@ Array [
         "votes": Array [
           Object {
             "address": "TTcYhypP8m4phDhN6oRexz2174zAerjEWP",
-            "count": 12,
+            "voteCount": 12,
           },
         ],
       },
@@ -78258,7 +78258,7 @@ Array [
         "votes": Array [
           Object {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
-            "count": 3,
+            "voteCount": 3,
           },
         ],
       },
@@ -78333,7 +78333,7 @@ Array [
         "votes": Array [
           Object {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
-            "count": 46,
+            "voteCount": 46,
           },
         ],
       },
@@ -78389,7 +78389,7 @@ Array [
         "votes": Array [
           Object {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
-            "count": 10,
+            "voteCount": 10,
           },
         ],
       },
@@ -78619,7 +78619,7 @@ Array [
         "votes": Array [
           Object {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
-            "count": 51,
+            "voteCount": 51,
           },
         ],
       },
@@ -79378,7 +79378,7 @@ Array [
         "votes": Array [
           Object {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
-            "count": 31,
+            "voteCount": 31,
           },
         ],
       },
@@ -79558,11 +79558,11 @@ Array [
         "votes": Array [
           Object {
             "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
-            "count": 6,
+            "voteCount": 6,
           },
           Object {
             "address": "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
-            "count": 3,
+            "voteCount": 3,
           },
         ],
       },
@@ -79584,7 +79584,7 @@ Array [
         "votes": Array [
           Object {
             "address": "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
-            "count": 3,
+            "voteCount": 3,
           },
         ],
       },
@@ -79780,11 +79780,11 @@ Array [
         "votes": Array [
           Object {
             "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
-            "count": 15,
+            "voteCount": 15,
           },
           Object {
             "address": "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
-            "count": 1,
+            "voteCount": 1,
           },
         ],
       },
