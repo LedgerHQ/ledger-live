@@ -57,6 +57,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.lightFog,
   },
+  footerClose: {
+    marginTop: 16,
+  },
   retryButton: {
     marginTop: 16,
   },
@@ -136,3 +139,68 @@ const RequireTermsModal = () => {
 };
 
 export default RequireTermsModal;
+
+export const TermModals = ({
+  isOpened,
+  close,
+}: {
+  isOpened: boolean,
+  close: () => void,
+}) => {
+  const [markdown, error, retry] = useTerms();
+  const height = getWindowDimensions().height - 320;
+
+  const onClose = useCallback(() => {
+    close();
+  }, [close]);
+
+  return (
+    <BottomModal
+      id="TermsModal"
+      isOpened={isOpened}
+      style={styles.modal}
+      preventBackdropClick
+    >
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
+        <View style={styles.header}>
+          <LText semiBold style={styles.title}>
+            <Trans i18nKey="Terms.title" />
+          </LText>
+        </View>
+
+        <ScrollView style={[styles.body, { height }]}>
+          {markdown ? (
+            <SafeMarkdown markdown={markdown} />
+          ) : error ? (
+            <View>
+              <GenericErrorView
+                error={error}
+                withIcon={false}
+                withDescription={false}
+              />
+              <ExternalLink
+                text={<Trans i18nKey="Terms.read" />}
+                onPress={() => Linking.openURL(url)}
+                event="OpenTerms"
+              />
+              <View style={styles.retryButton}>
+                <RetryButton onPress={retry} />
+              </View>
+            </View>
+          ) : (
+            <ActivityIndicator />
+          )}
+        </ScrollView>
+
+        <View style={[styles.footer, styles.footerClose]}>
+          <Button
+            event="TermsClose"
+            type="primary"
+            onPress={onClose}
+            title={<Trans i18nKey="common.close" />}
+          />
+        </View>
+      </SafeAreaView>
+    </BottomModal>
+  );
+};

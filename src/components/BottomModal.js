@@ -14,7 +14,7 @@ import DebugRejectSwitch from "./DebugRejectSwitch";
 export type Props = {
   id?: string,
   isOpened: boolean,
-  onClose: () => *,
+  onClose?: () => *,
   children?: *,
   style?: *,
   preventBackdropClick?: boolean,
