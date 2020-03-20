@@ -225,7 +225,7 @@ export const formatTrongridTxResponse = (
             return {
               votes: votes.map(v => ({
                 address: encode58Check(v.vote_address),
-                count: v.vote_count
+                voteCount: v.vote_count
               }))
             };
           default:
