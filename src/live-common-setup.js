@@ -12,8 +12,8 @@ import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
-// import "@ledgerhq/live-common/lib/load/tokens/tron/trc10";
-// import "@ledgerhq/live-common/lib/load/tokens/tron/trc20";
+import "@ledgerhq/live-common/lib/load/tokens/tron/trc10";
+import "@ledgerhq/live-common/lib/load/tokens/tron/trc20";
 import "./experimental";
 
 setSupportedCurrencies([
@@ -44,7 +44,7 @@ setSupportedCurrencies([
   "stakenet",
   "zcash",
   "zencash",
-  // "tron",
+  "tron",
 ]);
 
 if (Config.VERBOSE) {
