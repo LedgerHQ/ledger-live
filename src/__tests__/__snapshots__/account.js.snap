@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`accountWithMandatoryTokens ethereum 1`] = `
+Array [
+  "mock:1:ethereum::|0",
+  "mock:1:ethereum::|1",
+  "mock:1:ethereum::|2",
+  "mock:1:ethereum::|3",
+  "mock:1:ethereum::|4",
+  "mock:1:ethereum::+0xE41d2489571d322189246DaFA5ebDe1F4699F498",
+]
+`;
+
 exports[`groupAccountOperationsByDay 1`] = `
 Object {
   "completed": false,

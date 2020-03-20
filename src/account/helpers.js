@@ -1,11 +1,13 @@
 // @flow
+import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import type {
   AccountLike,
   AccountLikeArray,
   Account,
   Unit,
-  SubAccount
+  SubAccount,
+  TokenCurrency
 } from "../types";
 import { getEnv } from "../env";
 import { isAccountDelegating } from "../families/tezos/bakers";
@@ -163,4 +165,44 @@ export const getVotesCount = (
     return mainAccount.tronResources.votes.length;
   }
   return 0;
+};
+
+/**
+ * Enhance an account to force token accounts presence
+ */
+export const accountWithMandatoryTokens = (
+  account: Account,
+  tokenCurrencies: TokenCurrency[]
+): Account => {
+  const { subAccounts } = account;
+  if (!subAccounts) return account;
+  const existingTokens = subAccounts
+    .map(a => a.type === "TokenAccount" && a.token)
+    .filter(Boolean);
+  const addition = tokenCurrencies
+    .filter(
+      t =>
+        // token of the same currency
+        t.parentCurrency === account.currency &&
+        // not yet in the sub accounts
+        !existingTokens.includes(t)
+    )
+    .map(token => ({
+      type: "TokenAccount",
+      id: account.id + "+" + token.contractAddress,
+      parentId: account.id,
+      token,
+      balance: BigNumber(0),
+      operationsCount: 0,
+      operations: [],
+      pendingOperations: [],
+      starred: false
+    }));
+
+  if (addition.length === 0) return account;
+
+  return {
+    ...account,
+    subAccounts: subAccounts.concat(addition)
+  };
 };
