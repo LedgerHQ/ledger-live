@@ -2,11 +2,12 @@
 import "./test-helpers/staticTime";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById, getTokenById } from "../currencies";
 import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
-  shortAddressPreview
+  shortAddressPreview,
+  accountWithMandatoryTokens
 } from "../account";
 import { genAccount } from "../mock/account";
 
@@ -84,4 +85,21 @@ test("groupAccountOperationsByDay to dedup", () => {
   const res1 = groupAccountOperationsByDay(account, { count: 100 });
   const res2 = groupAccountOperationsByDay(accountClone, { count: 100 });
   expect(res1).toMatchObject(res2);
+});
+
+test("accountWithMandatoryTokens ethereum", () => {
+  const currency = getCryptoCurrencyById("ethereum");
+  const account = genAccount("", { currency, subAccountsCount: 5 });
+  const enhance = accountWithMandatoryTokens(account, [
+    getTokenById("ethereum/erc20/0x_project")
+  ]);
+  const doubleEnhance = accountWithMandatoryTokens(enhance, [
+    getTokenById("ethereum/erc20/0x_project")
+  ]);
+  expect(doubleEnhance).toEqual(enhance);
+  expect({ ...enhance, subAccounts: [] }).toMatchObject({
+    ...account,
+    subAccounts: []
+  });
+  expect((enhance.subAccounts || []).map(a => a.id)).toMatchSnapshot();
 });
