@@ -35,7 +35,7 @@ type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
 function AccountBalanceSummaryFooter({ account, t }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
-  const infoCandidates = getInfoCandidates(t);
+  const infoCandidates = useMemo(() => getInfoCandidates(t), [t]);
 
   const {
     energy: formattedEnergy,
