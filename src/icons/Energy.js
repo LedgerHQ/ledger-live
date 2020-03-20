@@ -8,7 +8,10 @@ interface Props {
   size?: number;
 }
 
-export default function EnergyIcon({ color = colors.black, size = 16 }: Props) {
+export default function EnergyIcon({
+  color = colors.darkBlue,
+  size = 16,
+}: Props) {
   return (
     <Svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
       <Mask id="path-2-inside-1" fill="white">

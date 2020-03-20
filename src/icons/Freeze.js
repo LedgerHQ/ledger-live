@@ -6,7 +6,7 @@ import colors from "../colors";
 
 export default function Freeze({
   size = 16,
-  color = colors.black,
+  color = colors.darkBlue,
 }: {
   size?: number,
   color?: string,

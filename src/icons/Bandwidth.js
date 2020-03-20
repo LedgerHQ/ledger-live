@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function BandwidthIcon({
-  color = colors.black,
+  color = colors.darkBlue,
   size = 16,
 }: Props) {
   return (
